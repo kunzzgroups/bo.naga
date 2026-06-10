@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>User Management</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="assets/css/reports.css" rel="stylesheet" />
+  </head>
+  <body class="report-body">
+    <div class="report-shell">
+      <aside class="report-sidebar" id="reportSidebar">
+        <div class="report-brand">
+          <div>Backoffice<br /><small>Admin Panel</small></div>
+          <button class="close-side" data-close-sidebar>
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <nav class="report-nav">
+          <a href="user.html" class="active"
+            ><span><i class="bi bi-people me-2"></i>User Management</span></a
+          >
+          <div class="nav-group open">
+            <button type="button" class="nav-group-btn">
+              <span><i class="bi bi-bar-chart-line me-2"></i>Report</span
+              ><i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="nav-group-list">
+              <a href="transaction-report.html" class="report-sub"
+                ><span
+                  ><i class="bi bi-arrow-left-right me-2"></i>Transaction</span
+                ></a
+              ><a href="customer-report.html" class="report-sub"
+                ><span><i class="bi bi-people me-2"></i>Customer</span></a
+              ><a href="top-customer-report.html" class="report-sub"
+                ><span><i class="bi bi-trophy me-2"></i>Top Customer</span></a
+              ><a href="promotion-report.html" class="report-sub"
+                ><span><i class="bi bi-gift me-2"></i>Promotion</span></a
+              ><a href="bank-report.html" class="report-sub"
+                ><span><i class="bi bi-bank me-2"></i>Bank</span></a
+              ><a href="commission-report.html" class="report-sub"
+                ><span><i class="bi bi-diagram-3 me-2"></i>Commission</span></a
+              ><a href="payment-gateway-report.html" class="report-sub"
+                ><span
+                  ><i class="bi bi-credit-card me-2"></i>Payment Gateway</span
+                ></a
+              ><a href="rebate-angpao-report.html" class="report-sub"
+                ><span
+                  ><i class="bi bi-cash-coin me-2"></i>Rebate / Angpao</span
+                ></a
+              ><a href="manual-report.html" class="report-sub"
+                ><span
+                  ><i class="bi bi-pencil-square me-2"></i>Manual / Other</span
+                ></a
+              ><a href="lucky-draw-4d-report.html" class="report-sub"
+                ><span><i class="bi bi-dice-4 me-2"></i>Lucky Draw 4D</span></a
+              ><a href="staff-report.html" class="report-sub"
+                ><span><i class="bi bi-person-badge me-2"></i>Staff</span></a
+              ><a href="activity-log-report.html" class="report-sub"
+                ><span
+                  ><i class="bi bi-clock-history me-2"></i>Activity Log</span
+                ></a
+              ><a href="game-winlose-report.html" class="report-sub"
+                ><span
+                  ><i class="bi bi-controller me-2"></i>Game WinLose</span
+                ></a
+              ><a href="feedback-report.html" class="report-sub"
+                ><span
+                  ><i class="bi bi-chat-left-text me-2"></i>Feedback</span
+                ></a
+              ><a href="leaderboard-report.html" class="report-sub"
+                ><span><i class="bi bi-list-ol me-2"></i>Leaderboard</span></a
+              ><a href="top-referrer-report.html" class="report-sub"
+                ><span><i class="bi bi-share me-2"></i>Top Referrer</span></a
+              ><a href="referrer-click-report.html" class="report-sub"
+                ><span
+                  ><i class="bi bi-link-45deg me-2"></i>Referrer Click</span
+                ></a
+              >
+            </div>
+          </div>
+        </nav>
+      </aside>
+      <div class="sidebar-overlay" id="reportOverlay" data-close-sidebar></div>
+      <main class="report-main">
+        <header class="report-topbar">
+          <button class="hamb" data-open-sidebar>
+            <i class="bi bi-list"></i>
+          </button>
+          <div>
+            <h1>User Management</h1>
+          </div>
+          <div class="report-actions">
+            <div class="report-profile-wrap">
+              <button
+                class="report-profile-btn"
+                type="button"
+                data-profile-toggle
+              >
+                <span class="report-avatar">J</span><span>Jung Hao</span
+                ><i class="bi bi-chevron-down small"></i>
+              </button>
+              <div class="report-profile-menu">
+                <div class="head">
+                  <b>Jung Hao</b><small>Administrator</small>
+                </div>
+                <a href="#profile"><i class="bi bi-person"></i>Profile</a
+                ><a href="change-password.html"
+                  ><i class="bi bi-key"></i>Change Password</a
+                ><a class="danger" href="#logout"
+                  ><i class="bi bi-box-arrow-right"></i>Logout</a
+                >
+              </div>
+            </div>
+          </div>
+        </header>
+        <section class="report-content">
+          <div class="quick-stats">
+            <div class="metric">
+              <span>Total Users</span><strong>1,248</strong>
+            </div>
+            <div class="metric">
+              <span>Active Users</span><strong>1,102</strong>
+            </div>
+            <div class="metric">
+              <span>Total Deposit</span><strong>18,450.00</strong>
+            </div>
+            <div class="metric">
+              <span>Online Today</span><strong>38</strong>
+            </div>
+          </div>
+          <div class="filter-card">
+            <div class="table-title-row">
+              <h2>Member Account List</h2>
+              <span
+                >Click View to open all user detail sections in one modal.</span
+              >
+            </div>
+            <div class="user-search-grid">
+              <div class="field">
+                <label>Name</label><input placeholder="Search name" />
+              </div>
+              <div class="field">
+                <label>Mobile No.</label><input placeholder="Search mobile" />
+              </div>
+              <div class="field">
+                <label>Agent</label><input placeholder="Agent" />
+              </div>
+              <div class="field">
+                <label>Bank</label><input placeholder="Bank" />
+              </div>
+              <div class="field">
+                <label>Status</label
+                ><select>
+                  <option>ACTIVE</option>
+                  <option>INACTIVE</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Last Visit</label
+                ><select>
+                  <option>Please select</option>
+                  <option>Today</option>
+                  <option>This Week</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Activity</label
+                ><select>
+                  <option>Please select</option>
+                  <option>Online</option>
+                  <option>Offline</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>&nbsp;</label
+                ><button class="btn-primary-clean w-100">Search</button>
+              </div>
+            </div>
+          </div>
+          <div class="table-card">
+            <div class="user-toolbar mb-3">
+              <div class="user-badge">
+                <i class="bi bi-people"></i><span>Member List</span>
+              </div>
+              <div>
+                <button class="clean-btn success">
+                  <i class="bi bi-plus-lg"></i> Create
+                </button>
+                <button class="clean-btn">
+                  <i class="bi bi-download"></i> Export
+                </button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="report-table user-main-table">
+                <thead>
+                  <tr>
+                    <th>Register Date</th>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Bank Account</th>
+                    <th>Bank</th>
+                    <th>Referrer</th>
+                    <th>Top Referrer</th>
+                    <th>Deposit</th>
+                    <th>Withdraw</th>
+                    <th>Win/Loss</th>
+                    <th>Bonus</th>
+                    <th>Manual</th>
+                    <th>Commission</th>
+                    <th>Last Deposit</th>
+                    <th>Last Login</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>2025-06-26 15:00</td>
+                    <td>TEST</td>
+                    <td>6123456789</td>
+                    <td>88888888</td>
+                    <td>PAYID</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>50.00</td>
+                    <td>0.00</td>
+                    <td>-</td>
+                    <td>2026-06-03 14:11</td>
+                    <td>
+                      <button class="clean-btn primary" data-open-user>
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>2026-06-01 11:22</td>
+                    <td>ALAN</td>
+                    <td>60123456780</td>
+                    <td>12345678</td>
+                    <td>MAYBANK</td>
+                    <td>TEST</td>
+                    <td>MASTER</td>
+                    <td>1,250.00</td>
+                    <td>200.00</td>
+                    <td>80.00</td>
+                    <td>25.00</td>
+                    <td>0.00</td>
+                    <td>12.50</td>
+                    <td>2026-06-02</td>
+                    <td>2026-06-03 13:20</td>
+                    <td>
+                      <button class="clean-btn primary" data-open-user>
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>2026-06-02 09:45</td>
+                    <td>LEE</td>
+                    <td>60198765432</td>
+                    <td>99887766</td>
+                    <td>CIMB</td>
+                    <td>TEST</td>
+                    <td>MASTER</td>
+                    <td>800.00</td>
+                    <td>100.00</td>
+                    <td>-40.00</td>
+                    <td>10.00</td>
+                    <td>0.00</td>
+                    <td>8.00</td>
+                    <td>2026-06-03</td>
+                    <td>2026-06-03 09:55</td>
+                    <td>
+                      <button class="clean-btn primary" data-open-user>
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="scroll-hint">
+              Swipe left / right to view more columns.
+            </div>
+            <div class="member-card-list mt-3">
+              <div class="member-card">
+                <h3>TEST</h3>
+                <div class="meta">6123456789 • 2026-06-03 14:11</div>
+                <div class="member-grid">
+                  <span>Bank</span><b>PAYID</b><span>Deposit</span><b>0.00</b
+                  ><span>Manual</span><b>50.00</b><span>Commission</span
+                  ><b>0.00</b>
+                </div>
+                <button class="clean-btn primary w-100 mt-3" data-open-user>
+                  View Details
+                </button>
+              </div>
+              <div class="member-card">
+                <h3>ALAN</h3>
+                <div class="meta">60123456780 • 2026-06-03 13:20</div>
+                <div class="member-grid">
+                  <span>Bank</span><b>MAYBANK</b><span>Deposit</span
+                  ><b>1,250.00</b><span>Manual</span><b>0.00</b
+                  ><span>Commission</span><b>12.50</b>
+                </div>
+                <button class="clean-btn primary w-100 mt-3" data-open-user>
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="assets/js/reports.js"></script>
+  </body>
+</html>
