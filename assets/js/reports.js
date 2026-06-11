@@ -1,5 +1,3 @@
-// Shared responsive layout behaviour for all BO pages.
-// Works without relying on Bootstrap JS, so sidebar/profile/menu remain clickable offline.
 document.addEventListener('DOMContentLoaded', () => {
   const sidebar = document.getElementById('reportSidebar');
   let overlay = document.getElementById('reportOverlay') || document.querySelector('.sidebar-overlay,.sidebar-backdrop');
@@ -134,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-/* FIX: stable desktop + mobile profile dropdown (no Bootstrap conflict) */
 (function(){
   function closeAllProfileMenus(except){
     document.querySelectorAll('.dropdown-menu.show, .report-profile-menu.show').forEach(function(menu){
