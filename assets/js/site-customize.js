@@ -2,7 +2,7 @@
 const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     API_CONFIG.BASE_URL +
     API_CONFIG.ENDPOINTS.CUSTOMIZE_MAIN_LAYOUT;
-const CUSTOM_IMAGE_BASE_URL = '../../../html/assets/custom/images/';
+const CUSTOM_IMAGE_BASE_URL = 'https://corepayx.com/assets/custom/images/';
 const CUSTOM_IMAGE_VERSION = '1.0.0';
 
 function customImage(filename) {
