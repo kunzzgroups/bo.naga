@@ -1,12 +1,11 @@
-
 const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     API_CONFIG.BASE_URL +
     API_CONFIG.ENDPOINTS.CUSTOMIZE_MAIN_LAYOUT;
-const CUSTOM_IMAGE_BASE_URL = 'https://corepayx.com/assets/custom/images/';
-const CUSTOM_IMAGE_VERSION = '1.0.0';
+
+const CUSTOM_IMAGE_VERSION = '1.0.3';
 
 function customImage(filename) {
-    return `${CUSTOM_IMAGE_BASE_URL}${filename}?v=${CUSTOM_IMAGE_VERSION}`;
+    return API_CONFIG.ASSET_BASE_URL + filename + '?v=' + CUSTOM_IMAGE_VERSION;
 }
 
 (function () {
@@ -17,29 +16,18 @@ function customImage(filename) {
         { field: 'faviconUrl', fileKey: 'favicon', label: 'favicon', fallback: customImage('favicon.png') },
         { field: 'faviconUrl2', fileKey: 'favicon2', label: 'favicon 32x32', fallback: customImage('favicon2.png') },
         { field: 'faviconUrl3', fileKey: 'favicon3', label: 'favicon 180x180', fallback: customImage('favicon3.png') },
-
-        {
-            field: 'pageBackgroundUrl',
-            fileKey: 'background',
-            label: 'background',
-            fallback: customImage('background.jpg'),
-            apiKeys: ['backgroundUrl', 'pageBackgroundUrl', 'background']
-        },
-
+        { field: 'pageBackgroundUrl', fileKey: 'background', label: 'background', fallback: customImage('background.jpg'), apiKeys: ['backgroundUrl', 'pageBackgroundUrl', 'background'] },
         { field: 'referralUrl', fileKey: 'referral', label: 'referral', fallback: customImage('referral.png') },
         { field: 'shareUrl', fileKey: 'share', label: 'share', fallback: customImage('share.png') },
         { field: 'downlineUrl', fileKey: 'downline', label: 'downline', fallback: customImage('downline.png') },
         { field: 'copylinkUrl', fileKey: 'copylink', label: 'copy link', fallback: customImage('copylink.png') },
-
         { field: 'facebookUrl', fileKey: 'facebook', label: 'Facebook', fallback: customImage('facebook.png') },
         { field: 'telegramUrl', fileKey: 'telegram', label: 'Telegram', fallback: customImage('telegram.png') },
-
         { field: 'loginUrl', fileKey: 'login', label: 'login', fallback: customImage('login.png') },
         { field: 'registerUrl', fileKey: 'register', label: 'register', fallback: customImage('register.png') },
         { field: 'depositUrl', fileKey: 'deposit', label: 'deposit', fallback: customImage('deposit.png') },
         { field: 'withdrawUrl', fileKey: 'withdraw', label: 'withdraw', fallback: customImage('withdraw.png') },
         { field: 'refreshUrl', fileKey: 'refresh', label: 'refresh', fallback: customImage('refresh.png') },
-
         { field: 'homeUrl', fileKey: 'home', label: 'home', fallback: customImage('home.png') },
         { field: 'historyUrl', fileKey: 'history', label: 'history', fallback: customImage('history.png') },
         { field: 'bonusUrl', fileKey: 'bonus', label: 'bonus', fallback: customImage('bonus.png') },

@@ -1,6 +1,7 @@
 const API_CONFIG = {
     // BASE_URL: "http://localhost:8080/api",
     BASE_URL: "https://bo.corepayx.com/api",
+    ASSET_BASE_URL: "https://corepayx.com/assets/custom/images/",
 
     ENDPOINTS: {
         UPLOAD_IMAGE: "/uploads/image",
