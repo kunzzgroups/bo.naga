@@ -2,10 +2,35 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     API_CONFIG.BASE_URL +
     API_CONFIG.ENDPOINTS.CUSTOMIZE_MAIN_LAYOUT;
 
-const CUSTOM_IMAGE_VERSION = '1.0.3';
+const CUSTOM_IMAGE_VERSION = '1.0.4';
 
 function customImage(filename) {
     return API_CONFIG.ASSET_BASE_URL + filename + '?v=' + CUSTOM_IMAGE_VERSION;
+}
+
+function fixAssetUrl(url) {
+    if (!url) return '';
+
+    let value = String(url).trim();
+
+    // Fix old saved value from localStorage/API that points to BO domain.
+    value = value.replace(
+        /^https?:\/\/bo\.corepayx\.com\/assets\/custom\/images\//i,
+        API_CONFIG.ASSET_BASE_URL
+    );
+
+    // Fix relative paths saved before, because site-customize runs under bo.corepayx.com.
+    value = value.replace(
+        /^(?:\.\.\/)?(?:naga\/)?assets\/custom\/images\//i,
+        API_CONFIG.ASSET_BASE_URL
+    );
+
+    value = value.replace(
+        /^\/assets\/custom\/images\//i,
+        API_CONFIG.ASSET_BASE_URL
+    );
+
+    return value.replace(/([^:])\/\/+/g, '$1/');
 }
 
 (function () {
@@ -83,9 +108,10 @@ function customImage(filename) {
         assets.forEach((asset) => {
             const input = fields[asset.field];
             if (!input) return;
-            input.value = data[asset.field] || '';
+            const fixedUrl = fixAssetUrl(data[asset.field] || '');
+            input.value = fixedUrl;
             updateAssetText(asset.field, data[asset.field] ? 'Current ' + asset.label + ' uploaded' : 'No ' + asset.label + ' uploaded', false);
-            updatePreview(asset.field, data[asset.field]);
+            updatePreview(asset.field, fixedUrl);
         });
     }
 
@@ -96,7 +122,9 @@ function customImage(filename) {
     function loadSettings() {
         try {
             const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-            setSettings(Object.keys(saved).length ? saved : defaultSettings);
+            const next = Object.keys(saved).length ? saved : defaultSettings;
+            setSettings(next);
+            saveLocal(next);
         } catch (e) {
             setSettings(defaultSettings);
         }
@@ -123,7 +151,7 @@ function customImage(filename) {
         assets.forEach((asset) => {
             const keys = asset.apiKeys || [asset.field, asset.fileKey];
             const fallback = defaultSettings[asset.field].replace('1.0.0', version);
-            next[asset.field] = normalizeUrl(getFirstValue(responseAssets, keys) || fallback);
+            next[asset.field] = fixAssetUrl(normalizeUrl(getFirstValue(responseAssets, keys) || fallback));
         });
 
         setSettings(next);
