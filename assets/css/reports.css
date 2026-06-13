@@ -346,3 +346,107 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 .layout-editor-note{margin-top:12px;color:#667085;font-weight:700}.layout-editor-note code{background:#f2f4f7;border:1px solid #e4e7ec;border-radius:8px;padding:4px 7px;color:#344054}
 @media(max-width:1200px){.layout-code-grid{grid-template-columns:1fr}.layout-code-editor,.layout-code-input-wrap,.layout-code-highlight,.layout-code-pane textarea{min-height:300px}}
 @media(max-width:760px){.layout-editor-shell{grid-template-columns:1fr}.layout-section-menu{border-right:0;border-bottom:1px solid var(--line);max-height:230px}.layout-editor-actions{justify-content:flex-start;margin-top:10px}.layout-editor-current{display:block}.layout-editor-current small{display:inline-block;margin-top:6px}}
+
+/* ===== Slider Banner page ===== */
+.slider-page-grid{display:grid;grid-template-columns:minmax(320px,430px) 1fr;gap:18px;align-items:start}
+.slider-form-card,.slider-list-card{background:#fff;border:1px solid var(--line,#e4e7ec);border-radius:18px;box-shadow:0 14px 35px rgba(15,23,42,.06);padding:18px;min-width:0}
+.slider-form-card{position:sticky;top:86px}
+.slider-form .field{margin-bottom:12px}
+.slider-form .field label{display:block;font-weight:800;color:#0b2745;margin-bottom:6px;font-size:13px}
+.slider-form .field input,.slider-form .field select{width:100%;border:1px solid #d7deea;border-radius:12px;padding:11px 12px;background:#fff;outline:none;font-weight:700;color:#0f172a}
+.slider-form .field input:focus,.slider-form .field select:focus{border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.10)}
+.slider-two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.slider-upload-box{position:relative;border:1.5px dashed #b9c7dc;background:linear-gradient(180deg,#f8fbff,#fff);border-radius:18px;min-height:220px;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;transition:.18s ease}
+.slider-upload-box.dragover{border-color:#2563eb;background:#eff6ff}
+.slider-upload-box input{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2}
+.slider-upload-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#344054;gap:6px;padding:22px}
+.slider-upload-placeholder i{font-size:42px;color:#2563eb}
+.slider-upload-placeholder strong{font-size:16px;color:#0b2745}
+.slider-upload-placeholder small{font-size:12px;color:#667085}
+#sliderPreview{width:100%;height:100%;min-height:220px;object-fit:contain;background:#f8fafc;padding:8px}
+.slider-current-image{font-size:12px;color:#667085;margin-top:8px;font-weight:700}
+.slider-form-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.slider-list-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.slider-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.slider-card{border:1px solid #e5eaf2;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 10px 26px rgba(15,23,42,.05);display:flex;flex-direction:column;min-width:0}
+.slider-card-img{height:150px;background:#f5f7fb;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.slider-card-img img{width:100%;height:100%;object-fit:cover}
+.slider-card-body{padding:13px;display:grid;gap:8px}
+.slider-card-title{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.slider-card-title b{font-size:15px;color:#0f172a;word-break:break-word}
+.slider-pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;white-space:nowrap}
+.slider-pill.active{background:#dcfce7;color:#166534}
+.slider-pill.inactive{background:#fee2e2;color:#991b1b}
+.slider-meta{display:grid;gap:4px;color:#667085;font-size:12px;font-weight:700}
+.slider-meta span{word-break:break-all}
+.slider-card-actions{display:flex;gap:8px;flex-wrap:wrap;padding:0 13px 13px}
+.slider-card-actions .clean-btn{padding:8px 10px;font-size:12px}
+.slider-empty{min-height:260px;border:1px dashed #cbd5e1;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#667085;text-align:center;background:#f8fafc}
+.slider-empty i{font-size:46px;color:#94a3b8}
+.slider-empty b{color:#0f172a}
+@media(max-width:1199.98px){.slider-page-grid{grid-template-columns:1fr}.slider-form-card{position:static}.slider-list{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}}
+@media(max-width:575.98px){.slider-form-card,.slider-list-card{padding:14px;border-radius:14px}.slider-two-col{grid-template-columns:1fr}.slider-list{grid-template-columns:1fr}.slider-list-title{align-items:flex-start;flex-direction:column}.slider-upload-box{min-height:180px}#sliderPreview{min-height:180px}}
+
+
+/* Game management pages */
+.manage-page-grid{display:grid;grid-template-columns:minmax(320px,420px) minmax(0,1fr);gap:18px;align-items:start}
+.manage-form-card,.manage-list-card{background:#fff;border:1px solid #e4e7ec;border-radius:18px;box-shadow:0 8px 24px rgba(16,24,40,.06);padding:18px;min-width:0}
+.manage-form-card{position:sticky;top:82px}
+.manage-list{display:grid;gap:12px}
+.manage-card{border:1px solid #e5eaf2;border-radius:18px;background:#fff;box-shadow:0 10px 26px rgba(15,23,42,.05);display:grid;grid-template-columns:118px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px;min-width:0}
+.manage-card.compact{grid-template-columns:58px minmax(0,1fr) auto}
+.manage-thumb{width:118px;height:90px;border-radius:14px;background:#f5f7fb;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #edf2f7}
+.manage-thumb img{width:100%;height:100%;object-fit:cover}
+.manage-thumb.game-thumb{height:104px}
+.manage-icon{width:48px;height:48px;border-radius:16px;background:#eff6ff;color:#1d4ed8;display:grid;place-items:center;font-size:24px}
+.manage-card-body{min-width:0;display:grid;gap:8px}
+.manage-filter-select{height:39px;border:1px solid #d0d5dd;border-radius:10px;background:#fff;padding:0 10px;color:#344054;font-weight:700;min-width:180px}
+#categoryPreview,#gamePreview{width:100%;height:100%;min-height:220px;object-fit:contain;background:#f8fafc;padding:8px}
+.report-nav .nav-group-list a.active{background:#eff6ff;color:#1d4ed8}
+.report-nav .nav-group-list a.active i{color:#1d4ed8}
+@media(max-width:1199.98px){
+  .manage-page-grid{grid-template-columns:1fr}
+  .manage-form-card{position:static}
+  .manage-card{grid-template-columns:100px minmax(0,1fr);align-items:start}
+  .manage-card.compact{grid-template-columns:52px minmax(0,1fr)}
+  .manage-card .slider-card-actions{grid-column:1/-1;padding:0}
+}
+@media(max-width:575.98px){
+  .manage-form-card,.manage-list-card{padding:14px;border-radius:14px}
+  .manage-card,.manage-card.compact{grid-template-columns:1fr}
+  .manage-thumb{width:100%;height:150px}
+  .manage-icon{width:100%;height:58px}
+  .manage-filter-select{width:100%;min-width:0}
+  #categoryPreview,#gamePreview{min-height:180px}
+}
+#bonusPreview{width:100%;height:100%;min-height:220px;object-fit:contain;background:#f8fafc;padding:8px}
+@media(max-width:575.98px){#bonusPreview{min-height:180px}}
+
+
+#bonusItemPreview{width:100%;height:100%;min-height:220px;object-fit:contain;background:#f8fafc;padding:8px}
+.bonus-item-group{border:1px solid #e5eaf2;background:#f8fafc;border-radius:14px;padding:10px 12px;margin-top:6px}
+.bonus-item-group-title{display:flex;align-items:center;gap:8px;color:#1d2939;font-size:14px}
+.bonus-item-group-title i{color:#1d4ed8}
+.bonus-item-group-title span{margin-left:auto;color:#667085;font-size:12px;font-weight:800}
+.bonus-item-card{grid-template-columns:160px minmax(0,1fr) auto}
+.bonus-item-thumb{width:160px;height:92px}
+@media(max-width:1199.98px){.bonus-item-card{grid-template-columns:130px minmax(0,1fr)}.bonus-item-thumb{width:130px;height:86px}}
+@media(max-width:575.98px){#bonusItemPreview{min-height:180px}.bonus-item-card{grid-template-columns:1fr}.bonus-item-thumb{width:100%;height:150px}.bonus-item-group-title{flex-wrap:wrap}.bonus-item-group-title span{margin-left:0}}
+
+.layout-class-preview {
+  margin: 10px 0 16px;
+  padding: 12px 14px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.layout-class-preview code {
+  color: #0f172a;
+  background: #e2e8f0;
+  border-radius: 6px;
+  padding: 2px 6px;
+}

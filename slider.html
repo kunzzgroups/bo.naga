@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Slider Banner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="assets/css/reports.css" rel="stylesheet" />
+  </head>
+  <body class="report-body">
+    <div class="report-shell">
+      <aside class="report-sidebar" id="reportSidebar">
+        <div class="report-brand">
+          <div>Backoffice<br /><small>Admin Panel</small></div>
+          <button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button>
+        </div>
+        <nav class="report-nav">
+          <a href="index.html"><span><i class="bi bi-people me-2"></i>User Management</span></a>
+          <a href="image-to-url.html"><span><i class="bi bi-image me-2"></i>Image To URL</span></a>
+          <a href="slider.html" class="active"><span><i class="bi bi-images me-2"></i>Slider Banner</span></a>
+          <div class="nav-group">
+            <button type="button" class="nav-group-btn">
+              <span><i class="bi bi-controller me-2"></i>Game Management</span><i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="nav-group-list">
+              <a href="game-category.html" class="report-sub"><span><i class="bi bi-grid-3x3-gap me-2"></i>Category</span></a>
+            </div>
+          </div>
+          <a href="site-customize.html"><span><i class="bi bi-palette me-2"></i>Site Customize</span></a>
+          <a href="layout-section.html"><span><i class="bi bi-code-square me-2"></i>Layout Section</span></a>
+          <div class="nav-group open">
+            <button type="button" class="nav-group-btn">
+              <span><i class="bi bi-bar-chart-line me-2"></i>Report</span><i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="nav-group-list">
+              <a href="transaction-report.html" class="report-sub"><span><i class="bi bi-arrow-left-right me-2"></i>Transaction</span></a>
+            </div>
+          </div>
+        </nav>
+      </aside>
+      <div class="sidebar-overlay" id="reportOverlay" data-close-sidebar></div>
+      <main class="report-main">
+        <header class="report-topbar">
+          <button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button>
+          <div><h1>Slider Banner</h1></div>
+          <div class="report-actions">
+            <div class="report-profile-wrap">
+              <button class="report-profile-btn" type="button" data-profile-toggle>
+                <span class="report-avatar">J</span><span>Jung Hao</span><i class="bi bi-chevron-down small"></i>
+              </button>
+              <div class="report-profile-menu">
+                <div class="head"><b>Jung Hao</b><small>Administrator</small></div>
+                <a href="#profile"><i class="bi bi-person"></i>Profile</a>
+                <a href="change-password.html"><i class="bi bi-key"></i>Change Password</a>
+                <a class="danger" href="#logout"><i class="bi bi-box-arrow-right"></i>Logout</a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="report-content">
+          <div class="slider-page-grid">
+            <div class="slider-form-card">
+              <div class="section-title mb-3">
+                <div>
+                  <h2 id="sliderFormTitle">Create Slider</h2>
+                  <span>Upload banner image, set link, order and status.</span>
+                </div>
+              </div>
+
+              <form id="sliderForm" class="slider-form">
+                <input type="hidden" id="sliderId" name="id" />
+                <div class="slider-upload-box" id="sliderDropZone">
+                  <input type="file" id="sliderImage" name="image" accept="image/*" />
+                  <div class="slider-upload-placeholder" id="sliderUploadPlaceholder">
+                    <i class="bi bi-cloud-arrow-up"></i>
+                    <strong>Choose image or drag here</strong>
+                    <small>PNG, JPG, WEBP, GIF accepted</small>
+                  </div>
+                  <img id="sliderPreview" alt="Slider preview" hidden />
+                </div>
+                <div class="slider-current-image" id="sliderCurrentImage" hidden>
+                  Current image will remain if no new image selected.
+                </div>
+
+                <div class="field mt-3">
+                  <label>Title</label>
+                  <input id="sliderTitle" name="title" type="text" placeholder="Example: Weekly Ranking Bonus" />
+                </div>
+                <div class="field">
+                  <label>Link URL</label>
+                  <input id="sliderLinkUrl" name="linkUrl" type="text" placeholder="https://example.com or bonus.html" />
+                </div>
+                <div class="slider-two-col">
+                  <div class="field">
+                    <label>Sort Order</label>
+                    <input id="sliderSortOrder" name="sortOrder" type="number" min="0" value="0" />
+                  </div>
+                  <div class="field">
+                    <label>Status</label>
+                    <select id="sliderStatus" name="status">
+                      <option value="1">Active</option>
+                      <option value="2">Inactive</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="slider-form-actions">
+                  <button class="clean-btn primary" id="saveSliderBtn" type="submit"><i class="bi bi-save"></i> Save Slider</button>
+                  <button class="clean-btn" id="resetSliderBtn" type="button"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
+                </div>
+                <div class="upload-status" id="sliderStatusBox"></div>
+              </form>
+            </div>
+
+            <div class="slider-list-card">
+              <div class="section-title slider-list-title">
+                <div>
+                  <h2>Slider List</h2>
+                </div>
+                <button class="clean-btn" id="refreshSliderBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+              </div>
+
+              <div class="slider-empty" id="sliderEmpty" hidden>
+                <i class="bi bi-images"></i>
+                <b>No sliders found</b>
+                <small>Create your first slider banner from the form.</small>
+              </div>
+
+              <div class="slider-list" id="sliderList"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/reports.js"></script>
+    <script src="assets/js/slider.js"></script>
+  </body>
+</html>

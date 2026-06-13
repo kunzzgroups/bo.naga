@@ -11,8 +11,14 @@ const API_CONFIG = {
         BONUS_CATEGORY_LIST: "/bonus-category/list",
         BONUS_CATEGORY_CREATE: "/bonus-category/create",
         BONUS_CATEGORY_UPDATE: "/bonus-category/update",
-        SLIDER_LIST: "/slider/list",
-        SLIDER_CREATE: "/slider/create",
-        SLIDER_UPDATE: "/slider/update"
+        SLIDER_LIST: "/admin/slider/list",
+        SLIDER_CREATE: "/admin/slider/create",
+        SLIDER_UPDATE: "/admin/slider/update",
+        SLIDER_DELETE: "/admin/slider/delete",
+
+        GAME_CATEGORY_LIST: "/admin/game-category/list",
+        GAME_CATEGORY_CREATE: "/admin/game-category/create",
+        GAME_CATEGORY_UPDATE: "/admin/game-category/update",
+        GAME_CATEGORY_DELETE: "/admin/game-category/delete",
     }
 };
