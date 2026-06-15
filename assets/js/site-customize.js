@@ -4,29 +4,34 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 
 (function () {
     const STORAGE_KEY = 'naga_main_layout_customize_files';
+    const CUSTOM_ASSET_BASE_URL = (API_CONFIG.CUSTOM_ASSET_BASE_URL || 'https://corepayx.com/assets/custom/images').replace(/\/+$/, '');
+
+    function assetUrl(fileName) {
+        return CUSTOM_ASSET_BASE_URL + '/' + fileName + '?v=1.0.0';
+    }
 
     const assets = [
-        { field: 'logoUrl', fileKey: 'logo', label: 'logo', fallback: '../naga/assets/custom/images/logo.png?v=1.0.0' },
-        { field: 'faviconUrl', fileKey: 'favicon', label: 'favicon', fallback: '../naga/assets/custom/images/favicon.png?v=1.0.0' },
-        { field: 'faviconUrl2', fileKey: 'favicon2', label: 'favicon 32x32', fallback: '../naga/assets/custom/images/favicon2.png?v=1.0.0' },
-        { field: 'faviconUrl3', fileKey: 'favicon3', label: 'favicon 180x180', fallback: '../naga/assets/custom/images/favicon3.png?v=1.0.0' },
-        { field: 'pageBackgroundUrl', fileKey: 'background', label: 'background', fallback: '../naga/assets/custom/images/background.png?v=1.0.0', apiKeys: ['backgroundUrl', 'pageBackgroundUrl', 'background'] },
-        { field: 'referralUrl', fileKey: 'referral', label: 'referral', fallback: '../naga/assets/custom/images/referral.png?v=1.0.0' },
-        { field: 'shareUrl', fileKey: 'share', label: 'share', fallback: '../naga/assets/custom/images/share.png?v=1.0.0' },
-        { field: 'downlineUrl', fileKey: 'downline', label: 'downline', fallback: '../naga/assets/custom/images/downline.png?v=1.0.0' },
-        { field: 'copylinkUrl', fileKey: 'copylink', label: 'copy link', fallback: '../naga/assets/custom/images/copylink.png?v=1.0.0' },
-        { field: 'facebookUrl', fileKey: 'facebook', label: 'Facebook', fallback: '../naga/assets/custom/images/facebook.png?v=1.0.0' },
-        { field: 'telegramUrl', fileKey: 'telegram', label: 'Telegram', fallback: '../naga/assets/custom/images/telegram.png?v=1.0.0' },
-        { field: 'loginUrl', fileKey: 'login', label: 'login', fallback: '../naga/assets/custom/images/login.gif?v=1.0.0' },
-        { field: 'registerUrl', fileKey: 'register', label: 'register', fallback: '../naga/assets/custom/images/register.gif?v=1.0.0' },
-        { field: 'depositUrl', fileKey: 'deposit', label: 'deposit', fallback: '../naga/assets/custom/images/deposit.png?v=1.0.0' },
-        { field: 'withdrawUrl', fileKey: 'withdraw', label: 'withdraw', fallback: '../naga/assets/custom/images/withdraw.png?v=1.0.0' },
-        { field: 'refreshUrl', fileKey: 'refresh', label: 'refresh', fallback: '../naga/assets/custom/images/refresh.png?v=1.0.0' },
-        { field: 'homeUrl', fileKey: 'home', label: 'home', fallback: '../naga/assets/custom/images/home.png?v=1.0.0' },
-        { field: 'historyUrl', fileKey: 'history', label: 'history', fallback: '../naga/assets/custom/images/history.png?v=1.0.0' },
-        { field: 'bonusUrl', fileKey: 'bonus', label: 'bonus', fallback: '../naga/assets/custom/images/bonus.png?v=1.0.0' },
-        { field: 'livechatUrl', fileKey: 'livechat', label: 'live chat', fallback: '../naga/assets/custom/images/livechat.png?v=1.0.0' },
-        { field: 'settingUrl', fileKey: 'setting', label: 'setting', fallback: '../naga/assets/custom/images/setting.png?v=1.0.0' }
+        { field: 'logoUrl', fileKey: 'logo', label: 'logo', fallback: assetUrl('logo.png') },
+        { field: 'faviconUrl', fileKey: 'favicon', label: 'favicon', fallback: assetUrl('favicon.png') },
+        { field: 'faviconUrl2', fileKey: 'favicon2', label: 'favicon 32x32', fallback: assetUrl('favicon2.png') },
+        { field: 'faviconUrl3', fileKey: 'favicon3', label: 'favicon 180x180', fallback: assetUrl('favicon3.png') },
+        { field: 'pageBackgroundUrl', fileKey: 'background', label: 'background', fallback: assetUrl('background.png'), apiKeys: ['backgroundUrl', 'pageBackgroundUrl', 'background'] },
+        { field: 'referralUrl', fileKey: 'referral', label: 'referral', fallback: assetUrl('referral.png') },
+        { field: 'shareUrl', fileKey: 'share', label: 'share', fallback: assetUrl('share.png') },
+        { field: 'downlineUrl', fileKey: 'downline', label: 'downline', fallback: assetUrl('downline.png') },
+        { field: 'copylinkUrl', fileKey: 'copylink', label: 'copy link', fallback: assetUrl('copylink.png') },
+        { field: 'facebookUrl', fileKey: 'facebook', label: 'Facebook', fallback: assetUrl('facebook.png') },
+        { field: 'telegramUrl', fileKey: 'telegram', label: 'Telegram', fallback: assetUrl('telegram.png') },
+        { field: 'loginUrl', fileKey: 'login', label: 'login', fallback: assetUrl('login.gif') },
+        { field: 'registerUrl', fileKey: 'register', label: 'register', fallback: assetUrl('register.gif') },
+        { field: 'depositUrl', fileKey: 'deposit', label: 'deposit', fallback: assetUrl('deposit.png') },
+        { field: 'withdrawUrl', fileKey: 'withdraw', label: 'withdraw', fallback: assetUrl('withdraw.png') },
+        { field: 'refreshUrl', fileKey: 'refresh', label: 'refresh', fallback: assetUrl('refresh.png') },
+        { field: 'homeUrl', fileKey: 'home', label: 'home', fallback: assetUrl('home.png') },
+        { field: 'historyUrl', fileKey: 'history', label: 'history', fallback: assetUrl('history.png') },
+        { field: 'bonusUrl', fileKey: 'bonus', label: 'bonus', fallback: assetUrl('bonus.png') },
+        { field: 'livechatUrl', fileKey: 'livechat', label: 'live chat', fallback: assetUrl('livechat.png') },
+        { field: 'settingUrl', fileKey: 'setting', label: 'setting', fallback: assetUrl('setting.png') }
     ];
 
     const fields = {};
@@ -38,7 +43,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         fields[asset.field] = document.getElementById(asset.field);
         selectedFiles[asset.fileKey] = null;
         fieldToFileKey[asset.field] = asset.fileKey;
-        defaultSettings[asset.field] = asset.fallback;
+        defaultSettings[asset.field] = normalizeUrl(asset.fallback);
     });
 
     if (!fields.logoUrl) return;
@@ -93,9 +98,9 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         assets.forEach((asset) => {
             const input = fields[asset.field];
             if (!input) return;
-            input.value = data[asset.field] || '';
+            input.value = normalizeUrl(data[asset.field] || '');
             updateAssetText(asset.field, data[asset.field] ? 'Current ' + asset.label + ' uploaded' : 'No ' + asset.label + ' uploaded', false);
-            updatePreview(asset.field, data[asset.field]);
+            updatePreview(asset.field, input.value);
         });
     }
 
@@ -114,7 +119,19 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 
     function normalizeUrl(value) {
         if (!value) return '';
-        return String(value).replace(/([^:])\/\/+/g, '$1/');
+
+        let url = String(value).trim();
+
+        // Old saved/local values may point to BO domain or a relative ../naga path.
+        // Force all custom image previews to the real frontend asset domain.
+        url = url.replace(/^https?:\/\/bo\.corepayx\.com\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
+        url = url.replace(/^https?:\/\/www\.corepayx\.com\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
+        url = url.replace(/^https?:\/\/corepayx\.com\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
+        url = url.replace(/^\.\.\/naga\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
+        url = url.replace(/^\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
+        url = url.replace(/^assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
+
+        return url.replace(/([^:])\/\/+/g, '$1/');
     }
 
     function getFirstValue(source, keys) {

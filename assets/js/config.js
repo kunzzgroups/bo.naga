@@ -2,22 +2,22 @@ const API_CONFIG = {
     // BASE_URL: "http://localhost:8080/api",
     BASE_URL: "https://bo.corepayx.com/api",
 
+    // Frontend custom assets are served from corepayx.com, not bo.corepayx.com.
+    CUSTOM_ASSET_BASE_URL: "https://corepayx.com/assets/custom/images",
+
     ENDPOINTS: {
         UPLOAD_IMAGE: "/uploads/image",
         CUSTOMIZE_MAIN_LAYOUT: "/customize/main-layout",
         CUSTOMIZE_SECTION: "/customize/section",
-
         BONUS_CATEGORY_TITLE_LIST: "/bonus-category-title",
         BONUS_CATEGORY_TITLE_CREATE: "/bonus-category-title",
         BONUS_CATEGORY_TITLE_UPDATE: "/bonus-category-title/update",
         BONUS_CATEGORY_TITLE_DELETE: "/bonus-category-title/delete",
-
         BONUS_CATEGORY_ITEM_LIST: "/bonus-category-item",
         BONUS_CATEGORY_ITEM_DETAIL: "/bonus-category-item/detail",
         BONUS_CATEGORY_ITEM_CREATE: "/bonus-category-item",
         BONUS_CATEGORY_ITEM_UPDATE: "/bonus-category-item/update",
         BONUS_CATEGORY_ITEM_DELETE: "/bonus-category-item/delete",
-
         SLIDER_LIST: "/admin/slider/list",
         SLIDER_CREATE: "/admin/slider/create",
         SLIDER_UPDATE: "/admin/slider/update",
