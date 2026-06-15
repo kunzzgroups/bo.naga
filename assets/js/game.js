@@ -98,11 +98,17 @@ const GAME_API = {
   const categoryId = document.getElementById('gameCategoryId');
   const subCategoryId = document.getElementById('gameSubCategoryId');
   const name = document.getElementById('gameName');
+  const nameZh = document.getElementById('gameNameZh');
   const gameUrl = document.getElementById('gameUrl');
   const providerCode = document.getElementById('gameProviderCode');
   const sortOrder = document.getElementById('gameSortOrder');
   const status = document.getElementById('gameStatus');
   const imageInput = document.getElementById('gameImage');
+  const imageInputZh = document.getElementById('gameImageZh');
+  const dropZoneZh = document.getElementById('gameDropZoneZh');
+  const previewZh = document.getElementById('gamePreviewZh');
+  const placeholderZh = document.getElementById('gameUploadPlaceholderZh');
+  const currentImageZh = document.getElementById('gameCurrentImageZh');
   const dropZone = document.getElementById('gameDropZone');
   const preview = document.getElementById('gamePreview');
   const placeholder = document.getElementById('gameUploadPlaceholder');
@@ -117,10 +123,12 @@ const GAME_API = {
   const empty = document.getElementById('gameEmpty');
 
   let selectedFile = null;
+  let selectedFileZh = null;
   let currentItems = [];
   let categories = [];
   let subCategories = [];
   let picker;
+  let pickerZh;
 
   function setStatus(message, type) {
     statusBox.textContent = message || '';
@@ -187,18 +195,38 @@ const GAME_API = {
     fillOptions();
   }
 
+
+  function resolveImageUrl(url, filename, fallbackUrl) {
+    if (url) return url;
+    if (!filename) return '';
+    const value = String(filename).trim();
+    if (!value) return '';
+    if (/^(https?:)?\/\//i.test(value) || value.startsWith('/') || value.startsWith('data:') || value.startsWith('blob:')) {
+      return value;
+    }
+    if (fallbackUrl) {
+      const cleanFallback = String(fallbackUrl).split('?')[0];
+      const slashIndex = cleanFallback.lastIndexOf('/');
+      if (slashIndex >= 0) return cleanFallback.substring(0, slashIndex + 1) + value;
+    }
+    return value;
+  }
+
   function resetForm() {
     id.value = '';
     if (categories[0]) categoryId.value = String(categories[0].id);
     refreshSubCategoryOptions();
     name.value = '';
+    if (nameZh) nameZh.value = '';
     gameUrl.value = '';
     providerCode.value = '';
     sortOrder.value = '0';
     status.value = '1';
     selectedFile = null;
     picker && picker.clearPreview();
+    pickerZh && pickerZh.clearPreview();
     currentImage.hidden = true;
+    if (currentImageZh) currentImageZh.hidden = true;
     formTitle.textContent = 'Create Game';
     setStatus('', '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -210,15 +238,23 @@ const GAME_API = {
     refreshSubCategoryOptions(item.subCategoryId);
     subCategoryId.value = String(item.subCategoryId || '');
     name.value = item.name || '';
+    if (nameZh) nameZh.value = item.nameZh || '';
     gameUrl.value = item.gameUrl || '';
     providerCode.value = item.providerCode || '';
     sortOrder.value = item.sortOrder ?? 0;
     status.value = String(item.status ?? 1);
     selectedFile = null;
+    selectedFileZh = null;
     imageInput.value = '';
-    if (item.imageUrl) picker.showPreview(item.imageUrl);
+    if (imageInputZh) imageInputZh.value = '';
+    const previewUrl = resolveImageUrl(item.imageUrl, item.image, '');
+    const previewUrlZh = resolveImageUrl(item.imageZhUrl, item.imageZh, previewUrl);
+    if (previewUrl) picker.showPreview(previewUrl);
     else picker.clearPreview();
+    if (previewUrlZh && pickerZh) pickerZh.showPreview(previewUrlZh);
+    else if (pickerZh) pickerZh.clearPreview();
     currentImage.hidden = false;
+    if (currentImageZh) currentImageZh.hidden = false;
     formTitle.textContent = 'Edit Game #' + item.id;
     setStatus('Editing game. Choose new image only if you want to replace it.', 'success');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -296,11 +332,13 @@ const GAME_API = {
     fd.append('categoryId', categoryId.value);
     fd.append('subCategoryId', subCategoryId.value || '0');
     fd.append('name', name.value.trim());
+    fd.append('nameZh', nameZh ? nameZh.value.trim() : '');
     fd.append('gameUrl', gameUrl.value.trim());
     fd.append('providerCode', providerCode.value.trim());
     fd.append('sortOrder', sortOrder.value || '0');
     fd.append('status', status.value || '1');
     if (selectedFile) fd.append('image', selectedFile);
+    if (selectedFileZh) fd.append('imageZh', selectedFileZh);
 
     setBusy(true);
     setStatus(isUpdate ? 'Updating game...' : 'Creating game...', '');
@@ -346,6 +384,13 @@ const GAME_API = {
     loadGames();
   });
   subCategoryFilter.addEventListener('change', loadGames);
+
+
+  pickerZh = setupImagePicker(imageInputZh, dropZoneZh, previewZh, placeholderZh, (file, showPreview) => {
+    selectedFileZh = file;
+    showPreview(URL.createObjectURL(file));
+    setStatus('Chinese image ready. Click Save to upload.', 'success');
+  }, setStatus);
 
   form.addEventListener('submit', saveGame);
   resetBtn.addEventListener('click', resetForm);
