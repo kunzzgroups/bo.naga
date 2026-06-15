@@ -63,13 +63,29 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         const img = document.querySelector('[data-preview="' + key + '"]');
         if (!img) return;
         const wrap = img.closest('.asset-preview');
-        if (url) {
-            img.src = url;
+        const cleanUrl = (url || '').trim();
+
+        img.onerror = null;
+        img.onload = null;
+        wrap.classList.remove('has-image', 'preview-error');
+
+        if (!cleanUrl) {
+            img.removeAttribute('src');
+            return;
+        }
+
+        img.onload = function () {
             wrap.classList.add('has-image');
-        } else {
+            wrap.classList.remove('preview-error');
+        };
+
+        img.onerror = function () {
             img.removeAttribute('src');
             wrap.classList.remove('has-image');
-        }
+            wrap.classList.add('preview-error');
+        };
+
+        img.src = cleanUrl;
     }
 
     function setSettings(settings) {
@@ -142,12 +158,20 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 
 
     function isAllowedByInputAccept(file, accept) {
-        if (!accept || accept.trim() === '') return true;
-
+        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
         const fileName = (file.name || '').toLowerCase();
         const fileType = (file.type || '').toLowerCase();
-        const rules = accept.split(',').map(item => item.trim().toLowerCase()).filter(Boolean);
+        const hasAllowedExtension = allowedExtensions.some(ext => fileName.endsWith(ext));
+        const hasAllowedType = allowedTypes.includes(fileType);
 
+        if (!hasAllowedExtension || (fileType && !hasAllowedType)) {
+            return false;
+        }
+
+        if (!accept || accept.trim() === '') return true;
+
+        const rules = accept.split(',').map(item => item.trim().toLowerCase()).filter(Boolean);
         return rules.some((rule) => {
             if (rule === '*/*') return true;
             if (rule.endsWith('/*')) return fileType.startsWith(rule.slice(0, -1));
@@ -226,7 +250,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             if (!file) return;
 
             if (!isAllowedByInputAccept(file, fileInput.accept)) {
-                setStatus('This file type is not allowed. Please choose a valid image file.', 'error');
+                setStatus('This file type is not allowed. Please choose JPG, JPEG, PNG, WEBP or GIF only.', 'error');
                 fileInput.value = '';
                 selectedFiles[fileKey] = null;
                 return;

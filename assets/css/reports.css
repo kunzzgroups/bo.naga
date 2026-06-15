@@ -282,6 +282,9 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 .asset-preview{width:92px;height:76px;border:1px solid #cfd8e6;border-radius:10px;background:#fff;display:grid;place-items:center;overflow:hidden}
 .asset-preview img{max-width:100%;max-height:100%;object-fit:contain;display:none}
 .asset-preview.has-image img{display:block}
+
+.asset-preview.preview-error::after{content:'No preview';font-size:12px;font-weight:700;color:#667085;text-align:center;padding:4px}
+.asset-preview.preview-error img{display:none}
 .asset-preview.favicon-preview{width:58px;height:58px;justify-self:center}
 .asset-preview.bg-preview img{width:100%;height:100%;object-fit:cover}
 .asset-field label,.code-grid label{display:block;font-weight:800;color:#182230;margin-bottom:6px}
