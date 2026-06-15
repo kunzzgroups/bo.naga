@@ -160,6 +160,22 @@ const BONUS_CATEGORY_ITEM_API = {
     renderTitleOptions();
   }
 
+  function resolveImageUrl(url, filename, fallbackUrl) {
+    if (url) return url;
+    if (!filename) return '';
+    const value = String(filename).trim();
+    if (!value) return '';
+    if (/^(https?:)?\/\//i.test(value) || value.startsWith('/') || value.startsWith('data:') || value.startsWith('blob:')) {
+      return value;
+    }
+    if (fallbackUrl) {
+      const cleanFallback = String(fallbackUrl).split('?')[0];
+      const slashIndex = cleanFallback.lastIndexOf('/');
+      if (slashIndex >= 0) return cleanFallback.substring(0, slashIndex + 1) + value;
+    }
+    return value;
+  }
+
   function resetForm() {
     id.value = '';
     titleId.value = filterTitle.value || '';
@@ -197,7 +213,8 @@ const BONUS_CATEGORY_ITEM_API = {
     selectedFile = null;
     imageInput.value = '';
 
-    if (item.imageUrl) picker.showPreview(item.imageUrl);
+    const previewUrl = resolveImageUrl(item.imageUrl, item.image, '');
+    if (previewUrl) picker.showPreview(previewUrl);
     else picker.clearPreview();
 
     currentImage.hidden = false;
@@ -339,11 +356,10 @@ const BONUS_CATEGORY_ITEM_API = {
       setStatus(err.message || 'Delete failed.', 'error');
     }
   }
-
   picker = setupImagePicker(imageInput, dropZone, preview, placeholder, (file, showPreview) => {
     selectedFile = file;
     showPreview(URL.createObjectURL(file));
-    setStatus('Image ready. Click Save Item to upload.', 'success');
+    setStatus('Image ready. Click Save to upload.', 'success');
   }, setStatus);
 
   form.addEventListener('submit', saveItem);

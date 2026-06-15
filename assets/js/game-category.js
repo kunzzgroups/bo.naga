@@ -88,15 +88,9 @@ const GAME_CATEGORY_API = {
   const formTitle = document.getElementById('categoryFormTitle');
   const id = document.getElementById('categoryId');
   const name = document.getElementById('categoryName');
-  const nameZh = document.getElementById('categoryNameZh');
   const sortOrder = document.getElementById('categorySortOrder');
   const status = document.getElementById('categoryStatus');
   const imageInput = document.getElementById('categoryImage');
-  const imageInputZh = document.getElementById('categoryImageZh');
-  const dropZoneZh = document.getElementById('categoryDropZoneZh');
-  const previewZh = document.getElementById('categoryPreviewZh');
-  const placeholderZh = document.getElementById('categoryUploadPlaceholderZh');
-  const currentImageZh = document.getElementById('categoryCurrentImageZh');
   const dropZone = document.getElementById('categoryDropZone');
   const preview = document.getElementById('categoryPreview');
   const placeholder = document.getElementById('categoryUploadPlaceholder');
@@ -109,10 +103,8 @@ const GAME_CATEGORY_API = {
   const empty = document.getElementById('categoryEmpty');
 
   let selectedFile = null;
-  let selectedFileZh = null;
   let currentItems = [];
   let picker;
-  let pickerZh;
 
   function setStatus(message, type) {
     statusBox.textContent = message || '';
@@ -124,7 +116,6 @@ const GAME_CATEGORY_API = {
     refreshBtn.disabled = isBusy;
     saveBtn.innerHTML = isBusy ? '<i class="bi bi-hourglass-split"></i> Saving...' : '<i class="bi bi-save"></i> Save Category';
   }
-
 
   function resolveImageUrl(url, filename, fallbackUrl) {
     if (url) return url;
@@ -145,14 +136,11 @@ const GAME_CATEGORY_API = {
   function resetForm() {
     id.value = '';
     name.value = '';
-    if (nameZh) nameZh.value = '';
     sortOrder.value = '0';
     status.value = '1';
     selectedFile = null;
     picker && picker.clearPreview();
-    pickerZh && pickerZh.clearPreview();
     currentImage.hidden = true;
-    if (currentImageZh) currentImageZh.hidden = true;
     formTitle.textContent = 'Create Category';
     setStatus('', '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -161,21 +149,14 @@ const GAME_CATEGORY_API = {
   function editItem(item) {
     id.value = item.id || '';
     name.value = item.name || '';
-    if (nameZh) nameZh.value = item.nameZh || '';
     sortOrder.value = item.sortOrder ?? 0;
     status.value = String(item.status ?? 1);
     selectedFile = null;
-    selectedFileZh = null;
     imageInput.value = '';
-    if (imageInputZh) imageInputZh.value = '';
     const previewUrl = resolveImageUrl(item.imageUrl, item.image, '');
-    const previewUrlZh = resolveImageUrl(item.imageZhUrl, item.imageZh, previewUrl);
     if (previewUrl) picker.showPreview(previewUrl);
     else picker.clearPreview();
-    if (previewUrlZh && pickerZh) pickerZh.showPreview(previewUrlZh);
-    else if (pickerZh) pickerZh.clearPreview();
     currentImage.hidden = false;
-    if (currentImageZh) currentImageZh.hidden = false;
     formTitle.textContent = 'Edit Category #' + item.id;
     setStatus('Editing category. Choose new image only if you want to replace it.', 'success');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -239,11 +220,9 @@ const GAME_CATEGORY_API = {
     const fd = new FormData();
     if (isUpdate) fd.append('id', id.value);
     fd.append('name', name.value.trim());
-    fd.append('nameZh', nameZh ? nameZh.value.trim() : '');
     fd.append('sortOrder', sortOrder.value || '0');
     fd.append('status', status.value || '1');
     if (selectedFile) fd.append('image', selectedFile);
-    if (selectedFileZh) fd.append('imageZh', selectedFileZh);
 
     setBusy(true);
     setStatus(isUpdate ? 'Updating category...' : 'Creating category...', '');
@@ -276,18 +255,10 @@ const GAME_CATEGORY_API = {
       setStatus(err.message || 'Delete failed.', 'error');
     }
   }
-
   picker = setupImagePicker(imageInput, dropZone, preview, placeholder, (file, showPreview) => {
     selectedFile = file;
     showPreview(URL.createObjectURL(file));
-    setStatus('Image ready. Click Save Category to upload.', 'success');
-  }, setStatus);
-
-
-  pickerZh = setupImagePicker(imageInputZh, dropZoneZh, previewZh, placeholderZh, (file, showPreview) => {
-    selectedFileZh = file;
-    showPreview(URL.createObjectURL(file));
-    setStatus('Chinese image ready. Click Save to upload.', 'success');
+    setStatus('Image ready. Click Save to upload.', 'success');
   }, setStatus);
 
   form.addEventListener('submit', saveCategory);

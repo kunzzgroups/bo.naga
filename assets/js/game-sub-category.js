@@ -93,7 +93,6 @@ const GAME_SUB_CATEGORY_API = {
   const id = document.getElementById('subCategoryId');
   const categoryId = document.getElementById('subCategoryCategoryId');
   const name = document.getElementById('subCategoryName');
-  const nameZh = document.getElementById('subCategoryNameZh');
   const sortOrder = document.getElementById('subCategorySortOrder');
   const status = document.getElementById('subCategoryStatus');
   const saveBtn = document.getElementById('saveSubCategoryBtn');
@@ -139,7 +138,6 @@ const GAME_SUB_CATEGORY_API = {
     id.value = '';
     if (categories[0]) categoryId.value = String(categories[0].id);
     name.value = '';
-    if (nameZh) nameZh.value = '';
     sortOrder.value = '0';
     status.value = '1';
     formTitle.textContent = 'Create Sub Category';
@@ -151,7 +149,6 @@ const GAME_SUB_CATEGORY_API = {
     id.value = item.id || '';
     categoryId.value = String(item.categoryId || '');
     name.value = item.name || '';
-    if (nameZh) nameZh.value = item.nameZh || '';
     sortOrder.value = item.sortOrder ?? 0;
     status.value = String(item.status ?? 1);
     formTitle.textContent = 'Edit Sub Category #' + item.id;
@@ -222,7 +219,6 @@ const GAME_SUB_CATEGORY_API = {
     if (isUpdate) fd.append('id', id.value);
     fd.append('categoryId', categoryId.value);
     fd.append('name', name.value.trim());
-    fd.append('nameZh', nameZh ? nameZh.value.trim() : '');
     fd.append('sortOrder', sortOrder.value || '0');
     fd.append('status', status.value || '1');
 

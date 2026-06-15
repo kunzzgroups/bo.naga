@@ -603,17 +603,3 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 @media(max-width:1399.98px){.admin-create-form-grid{grid-template-columns:repeat(3,minmax(180px,1fr))}.admin-create-form-grid.three{grid-template-columns:repeat(3,minmax(180px,1fr))}}
 @media(max-width:991.98px){.admin-create-form-grid,.admin-create-form-grid.two,.admin-create-form-grid.three{grid-template-columns:1fr 1fr}.admin-wide-card.admin-form-card{padding:18px!important}.admin-card-head{align-items:center}.admin-card-icon{width:46px;height:46px;font-size:21px}}
 @media(max-width:575.98px){.admin-create-form-grid,.admin-create-form-grid.two,.admin-create-form-grid.three{grid-template-columns:1fr}.admin-card-head{display:block}.admin-card-icon{margin-top:12px;width:44px;height:44px}.admin-wide-card.admin-form-card{padding:14px!important}.admin-form-actions .clean-btn,.admin-profile-form .clean-btn,.admin-password-card .clean-btn{width:100%}}
-
-/* Site Customize language translation uses the same asset card UI as default asset uploads. */
-#dynamicMainLayoutTranslationForm{width:100%;max-width:100%}
-#dynamicMainLayoutTranslationForm .site-dynamic-translation-panel{margin-top:18px;padding:16px;background:#fff;border-radius:16px}
-#dynamicMainLayoutTranslationForm .dynamic-translation-head{border-bottom:1px solid #eef2f6;padding-bottom:12px;margin-bottom:16px}
-#dynamicMainLayoutTranslationForm .dynamic-lang-card{background:#fbfdff;border:1px solid #dbe3ef;border-radius:16px;padding:14px}
-#dynamicMainLayoutTranslationForm .site-translation-assets-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-#dynamicMainLayoutTranslationForm .site-translation-asset-row{margin:0;align-items:center}
-#dynamicMainLayoutTranslationForm .site-translation-asset-row .asset-preview img[src=""]{display:none}
-#dynamicMainLayoutTranslationForm .site-translation-asset-row .asset-field{min-width:0}
-#dynamicMainLayoutTranslationForm .site-translation-asset-row .choose-btn,
-#dynamicMainLayoutTranslationForm .site-translation-asset-row .upload-asset-btn{width:100%;margin-top:8px}
-@media(max-width:1100px){#dynamicMainLayoutTranslationForm .site-translation-assets-grid{grid-template-columns:1fr}}
-@media(max-width:560px){#dynamicMainLayoutTranslationForm .site-translation-asset-row{grid-template-columns:1fr}#dynamicMainLayoutTranslationForm .site-translation-asset-row .asset-preview{justify-self:start}}

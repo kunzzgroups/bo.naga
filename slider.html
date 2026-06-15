@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Slider Banner</title>
+    <title>Banner</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-    <link href="assets/css/reports.css?v=1.0.4" rel="stylesheet" />
+    <link href="assets/css/reports.css?v=1.0.9" rel="stylesheet" />
   </head>
   <body class="report-body">
     <div class="report-shell">
@@ -17,8 +17,11 @@
         </div>
         <nav class="report-nav">
           
+          <a href="admin-user.html"><span><i class="bi bi-shield-lock me-2"></i>Admin Management</span></a>
+          <div class="nav-group open"><button type="button" class="nav-group-btn"><span><i class="bi bi-person-badge me-2"></i>Access Control</span><i class="bi bi-chevron-down"></i></button><div class="nav-group-list"><a href="role.html" class="report-sub"><span><i class="bi bi-person-badge me-2"></i>Role</span></a><a href="menu-permission.html" class="report-sub"><span><i class="bi bi-menu-button-wide me-2"></i>Menu Permission</span></a><a href="account-lock.html" class="report-sub"><span><i class="bi bi-lock me-2"></i>Account Lock</span></a></div></div>
+          <a href="language.html"><span><i class="bi bi-translate me-2"></i>Language & Translation</span></a>
           <a href="image-to-url.html"><span><i class="bi bi-image me-2"></i>Image To URL</span></a>
-          <a href="slider.html" class="active"><span><i class="bi bi-images me-2"></i>Slider Banner</span></a>
+          <a href="slider.html" class="active"><span><i class="bi bi-images me-2"></i>Banner</span></a>
           <div class="nav-group open">
             <button type="button" class="nav-group-btn">
               <span><i class="bi bi-controller me-2"></i>Game Management</span><i class="bi bi-chevron-down"></i>
@@ -38,20 +41,8 @@
       <main class="report-main">
         <header class="report-topbar">
           <button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button>
-          <div><h1>Slider Banner</h1></div>
-          <div class="report-actions">
-            <div class="report-profile-wrap">
-              <button class="report-profile-btn" type="button" data-profile-toggle>
-                <span class="report-avatar">J</span><span>Jung Hao</span><i class="bi bi-chevron-down small"></i>
-              </button>
-              <div class="report-profile-menu">
-                <div class="head"><b>Jung Hao</b><small>Administrator</small></div>
-                <a href="#profile"><i class="bi bi-person"></i>Profile</a>
-                <a href="change-password.html"><i class="bi bi-key"></i>Change Password</a>
-                <a class="danger" href="#logout"><i class="bi bi-box-arrow-right"></i>Logout</a>
-              </div>
-            </div>
-          </div>
+          <div><h1>Banner Management</h1></div>
+          <div class="report-actions" data-bo-profile></div>
         </header>
 
         <section class="report-content">
@@ -59,8 +50,7 @@
             <div class="slider-form-card">
               <div class="section-title mb-3">
                 <div>
-                  <h2 id="sliderFormTitle">Create Slider</h2>
-                  <span>Upload banner image, set link, order and status.</span>
+                  <h3 id="sliderFormTitle">Create Banner</h3>
                 </div>
               </div>
 
@@ -73,7 +63,7 @@
                     <strong>Choose image or drag here</strong>
                     <small>PNG, JPG, WEBP, GIF accepted</small>
                   </div>
-                  <img id="sliderPreview" alt="Slider preview" hidden />
+                  <img id="sliderPreview" alt="Banner preview" hidden />
                 </div>
                 <div class="slider-current-image" id="sliderCurrentImage" hidden>
                   Current image will remain if no new image selected.
@@ -123,7 +113,7 @@
                 </div>
 
                 <div class="slider-form-actions">
-                  <button class="clean-btn primary" id="saveSliderBtn" type="submit"><i class="bi bi-save"></i> Save Slider</button>
+                  <button class="clean-btn primary" id="saveSliderBtn" type="submit"><i class="bi bi-save"></i> Save Banner</button>
                   <button class="clean-btn" id="resetSliderBtn" type="button"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
                 </div>
                 <div class="upload-status" id="sliderStatusBox"></div>
@@ -133,7 +123,7 @@
             <div class="slider-list-card">
               <div class="section-title slider-list-title">
                 <div>
-                  <h2>Slider List</h2>
+                  <h2>Banner List</h2>
                 </div>
                 <button class="clean-btn" id="refreshSliderBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
               </div>
@@ -151,8 +141,11 @@
       </main>
     </div>
 
-    <script src="assets/js/config.js?v=1.0.2"></script>
-    <script src="assets/js/reports.js?v=1.0.2"></script>
-    <script src="assets/js/slider.js?v=1.0.5"></script>
+    <script src="assets/js/config.js?v=1.0.1"></script>
+    <script src="assets/js/auth.js?v=1.0.7"></script>
+    <script src="assets/js/reports.js?v=1.0.1"></script>
+    <script src="assets/js/dynamic-translation.js?v=1.0.4"></script>
+    <script src="assets/js/slider.js?v=1.0.4"></script>
+      <script src="assets/js/dynamic-translation-init.js?v=1.0.0"></script>
   </body>
 </html>

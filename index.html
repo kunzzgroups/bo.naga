@@ -12,7 +12,7 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
       rel="stylesheet"
     />
-    <link href="assets/css/reports.css" rel="stylesheet" />
+    <link href="assets/css/reports.css?v=1.0.9" rel="stylesheet" />
   </head>
   <body class="report-body">
     <div class="report-shell">
@@ -25,6 +25,10 @@
         </div>
         <nav class="report-nav">
           <a href="index.html" class="active"><span><i class="bi bi-people me-2"></i>User Management</span></a>
+          
+          <div class="nav-group open"><button type="button" class="nav-group-btn"><span><i class="bi bi-person-badge me-2"></i>Access Control</span><i class="bi bi-chevron-down"></i></button><div class="nav-group-list"><a href="role.html" class="report-sub"><span><i class="bi bi-person-badge me-2"></i>Role</span></a><a href="menu-permission.html" class="report-sub"><span><i class="bi bi-menu-button-wide me-2"></i>Menu Permission</span></a><a href="account-lock.html" class="report-sub"><span><i class="bi bi-lock me-2"></i>Account Lock</span></a></div></div>
+          <a href="admin-user.html"><span><i class="bi bi-shield-lock me-2"></i>Admin Management</span></a>
+          <a href="language.html"><span><i class="bi bi-translate me-2"></i>Language & Translation</span></a>
           <a href="image-to-url.html"><span><i class="bi bi-image me-2"></i>Image To URL</span></a>
           <a href="slider.html"><span><i class="bi bi-images me-2"></i>Slider Banner</span></a>
           <div class="nav-group open">
@@ -51,91 +55,65 @@
           <div>
             <h1>User Management</h1>
           </div>
-          <div class="report-actions">
-            <div class="report-profile-wrap">
-              <button
-                class="report-profile-btn"
-                type="button"
-                data-profile-toggle
-              >
-                <span class="report-avatar">J</span><span>Jung Hao</span
-                ><i class="bi bi-chevron-down small"></i>
-              </button>
-              <div class="report-profile-menu">
-                <div class="head">
-                  <b>Jung Hao</b><small>Administrator</small>
-                </div>
-                <a href="#profile"><i class="bi bi-person"></i>Profile</a
-                ><a href="change-password.html"
-                  ><i class="bi bi-key"></i>Change Password</a
-                ><a class="danger" href="#logout"
-                  ><i class="bi bi-box-arrow-right"></i>Logout</a
-                >
-              </div>
-            </div>
-          </div>
+          <div class="report-actions" data-bo-profile></div>
         </header>
         <section class="report-content">
           <div class="quick-stats">
             <div class="metric">
-              <span>Total Users</span><strong>1,248</strong>
+              <span>Total Users</span><strong id="metricTotalUsers">0</strong>
             </div>
             <div class="metric">
-              <span>Active Users</span><strong>1,102</strong>
+              <span>Active Users</span><strong id="metricActiveUsers">0</strong>
             </div>
             <div class="metric">
-              <span>Total Deposit</span><strong>18,450.00</strong>
+              <span>Total Deposit</span><strong id="metricTotalDeposit">0.00</strong>
             </div>
             <div class="metric">
-              <span>Online Today</span><strong>38</strong>
+              <span>Online Today</span><strong id="metricOnlineToday">0</strong>
             </div>
           </div>
           <div class="filter-card">
-            <div class="table-title-row">
-              <h2>Member Account List</h2>
-              <span
-                >Click View to open all user detail sections in one modal.</span
-              >
-            </div>
             <div class="user-search-grid">
               <div class="field">
-                <label>Name</label><input placeholder="Search name" />
+                <label>Name / Username</label><input id="memberSearchName" placeholder="Search name or username" />
               </div>
               <div class="field">
-                <label>Mobile No.</label><input placeholder="Search mobile" />
+                <label>Mobile No.</label><input id="memberSearchMobile" placeholder="Search mobile" />
               </div>
               <div class="field">
-                <label>Agent</label><input placeholder="Agent" />
+                <label>Agent</label><input id="memberSearchAgent" placeholder="Agent / referrer" />
               </div>
               <div class="field">
-                <label>Bank</label><input placeholder="Bank" />
+                <label>Bank</label><input id="memberSearchBank" placeholder="Bank" />
               </div>
               <div class="field">
                 <label>Status</label
-                ><select>
-                  <option>ACTIVE</option>
-                  <option>INACTIVE</option>
+                ><select id="memberSearchStatus">
+                  <option value="">All</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                  <option value="locked">Locked</option>
                 </select>
               </div>
               <div class="field">
                 <label>Last Visit</label
-                ><select>
-                  <option>Please select</option>
-                  <option>Today</option>
-                  <option>This Week</option>
+                ><select id="memberSearchVisit">
+                  <option value="">All</option>
+                  <option value="today">Today</option>
+                  <option value="this week">This Week</option>
                 </select>
               </div>
               <div class="field">
-                <label>Activity</label
-                ><select>
-                  <option>Please select</option>
-                  <option>Online</option>
-                  <option>Offline</option>
+                <label>Lock</label
+                ><select id="memberSearchLock">
+                  <option value="">All</option>
+                  <option value="normal">Normal</option>
+                  <option value="locked">Locked</option>
                 </select>
               </div>
               <div class="field">
                 <label>&nbsp;</label
-                ><button class="btn-primary-clean w-100">Search</button>
+                ><button class="btn-primary-clean w-100" type="button" id="memberSearchBtn">Search</button>
               </div>
             </div>
           </div>
@@ -144,14 +122,7 @@
               <div class="user-badge">
                 <i class="bi bi-people"></i><span>Member List</span>
               </div>
-              <div>
-                <button class="clean-btn success">
-                  <i class="bi bi-plus-lg"></i> Create
-                </button>
-                <button class="clean-btn">
-                  <i class="bi bi-download"></i> Export
-                </button>
-              </div>
+              <div class="user-toolbar-actions"><button class="clean-btn" type="button" id="memberResetBtn"><i class="bi bi-arrow-clockwise"></i> Reset Search</button></div>
             </div>
             <div class="table-wrap">
               <table class="report-table user-main-table">
@@ -278,6 +249,9 @@
         </section>
       </main>
     </div>
-    <script src="assets/js/reports.js"></script>
+    <script src="assets/js/config.js?v=1.0.7"></script>
+    <script src="assets/js/reports.js?v=1.0.3"></script>
+    <script src="assets/js/auth.js?v=1.0.7"></script>
+    <script src="assets/js/member-management.js?v=1.0.2"></script>
   </body>
 </html>

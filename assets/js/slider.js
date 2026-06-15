@@ -10,20 +10,14 @@ const SLIDER_API = {
   const formTitle = document.getElementById('sliderFormTitle');
   const sliderId = document.getElementById('sliderId');
   const title = document.getElementById('sliderTitle');
-  const titleZh = document.getElementById('sliderTitleZh');
   const linkUrl = document.getElementById('sliderLinkUrl');
   const sortOrder = document.getElementById('sliderSortOrder');
   const status = document.getElementById('sliderStatus');
   const imageInput = document.getElementById('sliderImage');
-  const imageInputZh = document.getElementById('sliderImageZh');
   const dropZone = document.getElementById('sliderDropZone');
-  const dropZoneZh = document.getElementById('sliderDropZoneZh');
   const preview = document.getElementById('sliderPreview');
-  const previewZh = document.getElementById('sliderPreviewZh');
   const uploadPlaceholder = document.getElementById('sliderUploadPlaceholder');
-  const uploadPlaceholderZh = document.getElementById('sliderUploadPlaceholderZh');
   const currentImage = document.getElementById('sliderCurrentImage');
-  const currentImageZh = document.getElementById('sliderCurrentImageZh');
   const statusBox = document.getElementById('sliderStatusBox');
   const resetBtn = document.getElementById('resetSliderBtn');
   const saveBtn = document.getElementById('saveSliderBtn');
@@ -32,7 +26,6 @@ const SLIDER_API = {
   const empty = document.getElementById('sliderEmpty');
 
   let selectedFile = null;
-  let selectedFileZh = null;
   let currentItems = [];
 
   if (!form) return;
@@ -52,34 +45,16 @@ const SLIDER_API = {
 
   function clearPreview() {
     selectedFile = null;
-    selectedFileZh = null;
     imageInput.value = '';
-    if (imageInputZh) imageInputZh.value = '';
     preview.src = '';
     preview.hidden = true;
     uploadPlaceholder.hidden = false;
-    clearPreviewZh(false);
   }
 
   function showPreview(src) {
     preview.src = src;
     preview.hidden = false;
     uploadPlaceholder.hidden = true;
-  }
-
-  function clearPreviewZh(clearFile = true) {
-    selectedFileZh = null;
-    if (clearFile && imageInputZh) imageInputZh.value = '';
-    if (previewZh) previewZh.src = '';
-    if (previewZh) previewZh.hidden = true;
-    if (uploadPlaceholderZh) uploadPlaceholderZh.hidden = false;
-  }
-
-  function showPreviewZh(src) {
-    if (!previewZh || !uploadPlaceholderZh) return;
-    previewZh.src = src;
-    previewZh.hidden = false;
-    uploadPlaceholderZh.hidden = true;
   }
 
   function resolveImageUrl(url, filename, fallbackUrl) {
@@ -98,7 +73,6 @@ const SLIDER_API = {
     return value;
   }
 
-
   function handleFile(file) {
     if (!file) return;
     if (!file.type || !file.type.startsWith('image/')) {
@@ -110,28 +84,14 @@ const SLIDER_API = {
     setStatus('Image ready. Click Save Slider to upload.', 'success');
   }
 
-  function handleFileZh(file) {
-    if (!file) return;
-    if (!file.type || !file.type.startsWith('image/')) {
-      setStatus('Please choose Chinese image file only.', 'error');
-      if (imageInputZh) imageInputZh.value = '';
-      return;
-    }
-    selectedFileZh = file;
-    showPreviewZh(URL.createObjectURL(file));
-    setStatus('Chinese image ready. Click Save Slider to upload.', 'success');
-  }
-
   function resetForm() {
     sliderId.value = '';
     title.value = '';
-    if (titleZh) titleZh.value = '';
     linkUrl.value = '';
     sortOrder.value = '0';
     status.value = '1';
     clearPreview();
     currentImage.hidden = true;
-    if (currentImageZh) currentImageZh.hidden = true;
     formTitle.textContent = 'Create Slider';
     setStatus('', '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -140,22 +100,15 @@ const SLIDER_API = {
   function editItem(item) {
     sliderId.value = item.id || '';
     title.value = item.title || '';
-    if (titleZh) titleZh.value = item.titleZh || '';
     linkUrl.value = item.linkUrl || '';
     sortOrder.value = item.sortOrder ?? 0;
     status.value = String(item.status ?? 1);
     selectedFile = null;
-    selectedFileZh = null;
     imageInput.value = '';
-    if (imageInputZh) imageInputZh.value = '';
     const previewUrl = resolveImageUrl(item.imageUrl, item.image, '');
-    const previewUrlZh = resolveImageUrl(item.imageZhUrl, item.imageZh, previewUrl);
     if (previewUrl) showPreview(previewUrl);
     else clearPreview();
-    if (previewUrlZh) showPreviewZh(previewUrlZh);
-    else clearPreviewZh(false);
     currentImage.hidden = false;
-    if (currentImageZh) currentImageZh.hidden = false;
     formTitle.textContent = 'Edit Slider #' + item.id;
     setStatus('Editing slider. Choose new image only if you want to replace it.', 'success');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -196,7 +149,6 @@ const SLIDER_API = {
             <span><i class="bi bi-sort-numeric-down me-1"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span>
             <span><i class="bi bi-link-45deg me-1"></i>${escapeHtml(item.linkUrl || '-')}</span>
             <span><i class="bi bi-file-image me-1"></i>${escapeHtml(item.image || '-')}</span>
-            <span><i class="bi bi-translate me-1"></i>ZH: ${escapeHtml(item.titleZh || '-')} / ${escapeHtml(item.imageZh || '-')}</span>
           </div>
         </div>
         <div class="slider-card-actions">
@@ -240,12 +192,10 @@ const SLIDER_API = {
     const fd = new FormData();
     if (isUpdate) fd.append('id', sliderId.value);
     fd.append('title', title.value.trim());
-    fd.append('titleZh', titleZh ? titleZh.value.trim() : '');
     fd.append('linkUrl', linkUrl.value.trim());
     fd.append('sortOrder', sortOrder.value || '0');
     fd.append('status', status.value || '1');
     if (selectedFile) fd.append('image', selectedFile);
-    if (selectedFileZh) fd.append('imageZh', selectedFileZh);
 
     setBusy(true);
     setStatus(isUpdate ? 'Updating slider...' : 'Creating slider...', '');
@@ -283,7 +233,6 @@ const SLIDER_API = {
   }
 
   imageInput.addEventListener('change', () => handleFile(imageInput.files[0]));
-  if (imageInputZh) imageInputZh.addEventListener('change', () => handleFileZh(imageInputZh.files[0]));
 
   ['dragenter', 'dragover'].forEach(evt => {
     dropZone.addEventListener(evt, e => {
@@ -298,24 +247,7 @@ const SLIDER_API = {
     });
   });
   dropZone.addEventListener('drop', e => handleFile(e.dataTransfer.files[0]));
-
-  if (dropZoneZh) {
-    ['dragenter', 'dragover'].forEach(evt => {
-      dropZoneZh.addEventListener(evt, e => {
-        e.preventDefault();
-        dropZoneZh.classList.add('dragover');
-      });
-    });
-    ['dragleave', 'drop'].forEach(evt => {
-      dropZoneZh.addEventListener(evt, e => {
-        e.preventDefault();
-        dropZoneZh.classList.remove('dragover');
-      });
-    });
-    dropZoneZh.addEventListener('drop', e => handleFileZh(e.dataTransfer.files[0]));
-  }
-
-  form.addEventListener('submit', saveSlider);
+form.addEventListener('submit', saveSlider);
   resetBtn.addEventListener('click', resetForm);
   refreshBtn.addEventListener('click', loadSliders);
 
