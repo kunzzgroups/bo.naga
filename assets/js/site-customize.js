@@ -1,13 +1,23 @@
+const NAGA_API_CONFIG = (window.API_CONFIG || (typeof API_CONFIG !== 'undefined' ? API_CONFIG : {}));
 const API_CUSTOMIZE_MAIN_LAYOUT_URL =
-    API_CONFIG.BASE_URL +
-    API_CONFIG.ENDPOINTS.CUSTOMIZE_MAIN_LAYOUT;
+    (NAGA_API_CONFIG.BASE_URL || 'https://bo.corepayx.com/api') +
+    ((NAGA_API_CONFIG.ENDPOINTS && NAGA_API_CONFIG.ENDPOINTS.CUSTOMIZE_MAIN_LAYOUT) || '/customize/main-layout');
 
 (function () {
     const STORAGE_KEY = 'naga_main_layout_customize_files';
-    const CUSTOM_ASSET_BASE_URL = (API_CONFIG.CUSTOM_ASSET_BASE_URL || 'https://corepayx.com/assets/custom/images').replace(/\/+$/, '');
+
+    function cleanCustomBaseUrl(value) {
+        const fallback = 'https://corepayx.com/assets/custom/images';
+        const text = String(value || '').trim();
+        if (!text || text === 'undefined' || text === 'null') return fallback;
+        return text.replace(/\/+$/, '');
+    }
+
+    const CUSTOM_ASSET_BASE_URL = cleanCustomBaseUrl(NAGA_API_CONFIG.CUSTOM_ASSET_BASE_URL);
 
     function assetUrl(fileName) {
-        return CUSTOM_ASSET_BASE_URL + '/' + fileName + '?v=1.0.0';
+        const cleanFileName = String(fileName || '').replace(/^\/+/, '');
+        return CUSTOM_ASSET_BASE_URL + '/' + cleanFileName + '?v=1.0.0';
     }
 
     const assets = [
@@ -308,7 +318,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 
     if (!saveBtn || !htmlEditor || !cssEditor || !jsEditor) return;
 
-    const API_CUSTOMIZE_SECTION_URL = API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.CUSTOMIZE_SECTION;
+    const API_CUSTOMIZE_SECTION_URL = (NAGA_API_CONFIG.BASE_URL || 'https://bo.corepayx.com/api') + ((NAGA_API_CONFIG.ENDPOINTS && NAGA_API_CONFIG.ENDPOINTS.CUSTOMIZE_SECTION) || '/customize/section');
     let activeSection = document.querySelector('.layout-section-item.active')?.dataset.section || 'right-panel';
 
     function setStatus(message, type) {
