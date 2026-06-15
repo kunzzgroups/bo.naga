@@ -1,6 +1,6 @@
 const API_CONFIG = window.API_CONFIG || {
-    BASE_URL: "http://localhost:8080/api",
-    // BASE_URL: "https://bo.corepayx.com/api",
+    // BASE_URL: "http://localhost:8080/api",
+    BASE_URL: "https://bo.corepayx.com/api",
 
     CUSTOM_ASSET_BASE_URL: "https://corepayx.com/assets/custom/images",
 
