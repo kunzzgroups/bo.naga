@@ -2,62 +2,31 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     API_CONFIG.BASE_URL +
     API_CONFIG.ENDPOINTS.CUSTOMIZE_MAIN_LAYOUT;
 
-const CUSTOM_IMAGE_VERSION = '1.0.4';
-
-function customImage(filename) {
-    return API_CONFIG.ASSET_BASE_URL + filename + '?v=' + CUSTOM_IMAGE_VERSION;
-}
-
-function fixAssetUrl(url) {
-    if (!url) return '';
-
-    let value = String(url).trim();
-
-    // Fix old saved value from localStorage/API that points to BO domain.
-    value = value.replace(
-        /^https?:\/\/bo\.corepayx\.com\/assets\/custom\/images\//i,
-        API_CONFIG.ASSET_BASE_URL
-    );
-
-    // Fix relative paths saved before, because site-customize runs under bo.corepayx.com.
-    value = value.replace(
-        /^(?:\.\.\/)?(?:naga\/)?assets\/custom\/images\//i,
-        API_CONFIG.ASSET_BASE_URL
-    );
-
-    value = value.replace(
-        /^\/assets\/custom\/images\//i,
-        API_CONFIG.ASSET_BASE_URL
-    );
-
-    return value.replace(/([^:])\/\/+/g, '$1/');
-}
-
 (function () {
     const STORAGE_KEY = 'naga_main_layout_customize_files';
 
     const assets = [
-        { field: 'logoUrl', fileKey: 'logo', label: 'logo', fallback: customImage('logo.png') },
-        { field: 'faviconUrl', fileKey: 'favicon', label: 'favicon', fallback: customImage('favicon.png') },
-        { field: 'faviconUrl2', fileKey: 'favicon2', label: 'favicon 32x32', fallback: customImage('favicon2.png') },
-        { field: 'faviconUrl3', fileKey: 'favicon3', label: 'favicon 180x180', fallback: customImage('favicon3.png') },
-        { field: 'pageBackgroundUrl', fileKey: 'background', label: 'background', fallback: customImage('background.jpg'), apiKeys: ['backgroundUrl', 'pageBackgroundUrl', 'background'] },
-        { field: 'referralUrl', fileKey: 'referral', label: 'referral', fallback: customImage('referral.png') },
-        { field: 'shareUrl', fileKey: 'share', label: 'share', fallback: customImage('share.png') },
-        { field: 'downlineUrl', fileKey: 'downline', label: 'downline', fallback: customImage('downline.png') },
-        { field: 'copylinkUrl', fileKey: 'copylink', label: 'copy link', fallback: customImage('copylink.png') },
-        { field: 'facebookUrl', fileKey: 'facebook', label: 'Facebook', fallback: customImage('facebook.png') },
-        { field: 'telegramUrl', fileKey: 'telegram', label: 'Telegram', fallback: customImage('telegram.png') },
-        { field: 'loginUrl', fileKey: 'login', label: 'login', fallback: customImage('login.png') },
-        { field: 'registerUrl', fileKey: 'register', label: 'register', fallback: customImage('register.png') },
-        { field: 'depositUrl', fileKey: 'deposit', label: 'deposit', fallback: customImage('deposit.png') },
-        { field: 'withdrawUrl', fileKey: 'withdraw', label: 'withdraw', fallback: customImage('withdraw.png') },
-        { field: 'refreshUrl', fileKey: 'refresh', label: 'refresh', fallback: customImage('refresh.png') },
-        { field: 'homeUrl', fileKey: 'home', label: 'home', fallback: customImage('home.png') },
-        { field: 'historyUrl', fileKey: 'history', label: 'history', fallback: customImage('history.png') },
-        { field: 'bonusUrl', fileKey: 'bonus', label: 'bonus', fallback: customImage('bonus.png') },
-        { field: 'livechatUrl', fileKey: 'livechat', label: 'live chat', fallback: customImage('livechat.png') },
-        { field: 'settingUrl', fileKey: 'setting', label: 'setting', fallback: customImage('setting.png') }
+        { field: 'logoUrl', fileKey: 'logo', label: 'logo', fallback: '../naga/assets/custom/images/logo.png?v=1.0.0' },
+        { field: 'faviconUrl', fileKey: 'favicon', label: 'favicon', fallback: '../naga/assets/custom/images/favicon.png?v=1.0.0' },
+        { field: 'faviconUrl2', fileKey: 'favicon2', label: 'favicon 32x32', fallback: '../naga/assets/custom/images/favicon2.png?v=1.0.0' },
+        { field: 'faviconUrl3', fileKey: 'favicon3', label: 'favicon 180x180', fallback: '../naga/assets/custom/images/favicon3.png?v=1.0.0' },
+        { field: 'pageBackgroundUrl', fileKey: 'background', label: 'background', fallback: '../naga/assets/custom/images/background.jpg?v=1.0.0', apiKeys: ['backgroundUrl', 'pageBackgroundUrl', 'background'] },
+        { field: 'referralUrl', fileKey: 'referral', label: 'referral', fallback: '../naga/assets/custom/images/referral.png?v=1.0.0' },
+        { field: 'shareUrl', fileKey: 'share', label: 'share', fallback: '../naga/assets/custom/images/share.png?v=1.0.0' },
+        { field: 'downlineUrl', fileKey: 'downline', label: 'downline', fallback: '../naga/assets/custom/images/downline.png?v=1.0.0' },
+        { field: 'copylinkUrl', fileKey: 'copylink', label: 'copy link', fallback: '../naga/assets/custom/images/copylink.png?v=1.0.0' },
+        { field: 'facebookUrl', fileKey: 'facebook', label: 'Facebook', fallback: '../naga/assets/custom/images/facebook.png?v=1.0.0' },
+        { field: 'telegramUrl', fileKey: 'telegram', label: 'Telegram', fallback: '../naga/assets/custom/images/telegram.png?v=1.0.0' },
+        { field: 'loginUrl', fileKey: 'login', label: 'login', fallback: '../naga/assets/custom/images/login.png?v=1.0.0' },
+        { field: 'registerUrl', fileKey: 'register', label: 'register', fallback: '../naga/assets/custom/images/register.png?v=1.0.0' },
+        { field: 'depositUrl', fileKey: 'deposit', label: 'deposit', fallback: '../naga/assets/custom/images/deposit.png?v=1.0.0' },
+        { field: 'withdrawUrl', fileKey: 'withdraw', label: 'withdraw', fallback: '../naga/assets/custom/images/withdraw.png?v=1.0.0' },
+        { field: 'refreshUrl', fileKey: 'refresh', label: 'refresh', fallback: '../naga/assets/custom/images/refresh.png?v=1.0.0' },
+        { field: 'homeUrl', fileKey: 'home', label: 'home', fallback: '../naga/assets/custom/images/home.png?v=1.0.0' },
+        { field: 'historyUrl', fileKey: 'history', label: 'history', fallback: '../naga/assets/custom/images/history.png?v=1.0.0' },
+        { field: 'bonusUrl', fileKey: 'bonus', label: 'bonus', fallback: '../naga/assets/custom/images/bonus.png?v=1.0.0' },
+        { field: 'livechatUrl', fileKey: 'livechat', label: 'live chat', fallback: '../naga/assets/custom/images/livechat.png?v=1.0.0' },
+        { field: 'settingUrl', fileKey: 'setting', label: 'setting', fallback: '../naga/assets/custom/images/setting.png?v=1.0.0' }
     ];
 
     const fields = {};
@@ -108,10 +77,9 @@ function fixAssetUrl(url) {
         assets.forEach((asset) => {
             const input = fields[asset.field];
             if (!input) return;
-            const fixedUrl = fixAssetUrl(data[asset.field] || '');
-            input.value = fixedUrl;
+            input.value = data[asset.field] || '';
             updateAssetText(asset.field, data[asset.field] ? 'Current ' + asset.label + ' uploaded' : 'No ' + asset.label + ' uploaded', false);
-            updatePreview(asset.field, fixedUrl);
+            updatePreview(asset.field, data[asset.field]);
         });
     }
 
@@ -122,9 +90,7 @@ function fixAssetUrl(url) {
     function loadSettings() {
         try {
             const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-            const next = Object.keys(saved).length ? saved : defaultSettings;
-            setSettings(next);
-            saveLocal(next);
+            setSettings(Object.keys(saved).length ? saved : defaultSettings);
         } catch (e) {
             setSettings(defaultSettings);
         }
@@ -151,7 +117,7 @@ function fixAssetUrl(url) {
         assets.forEach((asset) => {
             const keys = asset.apiKeys || [asset.field, asset.fileKey];
             const fallback = defaultSettings[asset.field].replace('1.0.0', version);
-            next[asset.field] = fixAssetUrl(normalizeUrl(getFirstValue(responseAssets, keys) || fallback));
+            next[asset.field] = normalizeUrl(getFirstValue(responseAssets, keys) || fallback);
         });
 
         setSettings(next);
