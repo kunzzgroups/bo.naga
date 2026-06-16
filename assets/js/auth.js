@@ -18,8 +18,7 @@
     access: { title: 'Access Control', icon: 'bi-shield-lock' },
     game: { title: 'Game Management', icon: 'bi-controller' },
     bonus: { title: 'Bonus Management', icon: 'bi-gift' },
-    support: { title: 'Support', icon: 'bi-headset' },
-    design: { title: 'Design', icon: 'bi-palette'}
+    support: { title: 'Support', icon: 'bi-headset' }
   };
 
   // Used only when backend has not returned menu data yet.
@@ -31,6 +30,7 @@
     {menuKey:'menu_permission', title:'Menu Permission', url:'menu-permission.html', icon:'bi-menu-button-wide', parentKey:'access', sortOrder:33},
     {menuKey:'account_lock', title:'Account Lock', url:'account-lock.html', icon:'bi-lock', parentKey:'access', sortOrder:34},
     {menuKey:'live_chat', title:'Live Chat', url:'livechat.html', icon:'bi-chat-dots', parentKey:'support', sortOrder:55},
+    {menuKey:'livechat_template', title:'Template Messages', url:'livechat-template.html', icon:'bi-chat-square-text', parentKey:'support', sortOrder:56},
     {menuKey:'language', title:'Language & Translation', url:'language.html', icon:'bi-translate', parentKey:'', sortOrder:40},
     {menuKey:'image', title:'Image To URL', url:'image-to-url.html', icon:'bi-image', parentKey:'', sortOrder:50},
     {menuKey:'slider', title:'Slider Banner', url:'slider.html', icon:'bi-images', parentKey:'', sortOrder:60},

@@ -122,6 +122,43 @@ const GAME_API = {
   let subCategories = [];
   let picker;
 
+  function valueOf(obj, keys) {
+    for (const key of keys) {
+      if (obj && obj[key] !== undefined && obj[key] !== null && obj[key] !== '') return obj[key];
+    }
+    return '';
+  }
+
+  function getCategoryId(item) {
+    return valueOf(item, ['categoryId', 'gameCategoryId', 'category_id', 'game_category_id', 'parentCategoryId']);
+  }
+
+  function getSubCategoryId(item) {
+    return valueOf(item, ['subCategoryId', 'gameSubCategoryId', 'sub_category_id', 'game_sub_category_id', 'subcategoryId']);
+  }
+
+  function normalizeCategory(item) {
+    return Object.assign({}, item, {
+      id: valueOf(item, ['id', 'categoryId', 'category_id']),
+      name: valueOf(item, ['name', 'title', 'categoryName'])
+    });
+  }
+
+  function normalizeSubCategory(item) {
+    return Object.assign({}, item, {
+      id: valueOf(item, ['id', 'subCategoryId', 'sub_category_id']),
+      categoryId: valueOf(item, ['categoryId', 'gameCategoryId', 'category_id', 'game_category_id', 'parentCategoryId']),
+      name: valueOf(item, ['name', 'title', 'subCategoryName'])
+    });
+  }
+
+  function normalizeGame(item) {
+    return Object.assign({}, item, {
+      categoryId: getCategoryId(item),
+      subCategoryId: getSubCategoryId(item)
+    });
+  }
+
   function setStatus(message, type) {
     statusBox.textContent = message || '';
     statusBox.className = 'upload-status' + (type ? ' ' + type : '');
@@ -182,8 +219,8 @@ const GAME_API = {
       fetchJson(GAME_CATEGORY_API.list),
       fetchJson(GAME_SUB_CATEGORY_API.list)
     ]);
-    categories = catJson.data || [];
-    subCategories = subJson.data || [];
+    categories = (catJson.data || []).map(normalizeCategory);
+    subCategories = (subJson.data || []).map(normalizeSubCategory);
     fillOptions();
   }
 
@@ -222,9 +259,9 @@ const GAME_API = {
 
   function editItem(item) {
     id.value = item.id || '';
-    categoryId.value = String(item.categoryId || '');
-    refreshSubCategoryOptions(item.subCategoryId);
-    subCategoryId.value = String(item.subCategoryId || '');
+    categoryId.value = String(getCategoryId(item) || '');
+    refreshSubCategoryOptions(getSubCategoryId(item));
+    subCategoryId.value = String(getSubCategoryId(item) || '');
     name.value = item.name || '';
     gameUrl.value = item.gameUrl || '';
     providerCode.value = item.providerCode || '';
@@ -260,8 +297,8 @@ const GAME_API = {
           </div>
           <div class="slider-meta">
             <span><i class="bi bi-hash me-1"></i>ID: ${escapeHtml(item.id)}</span>
-            <span><i class="bi bi-grid-3x3-gap me-1"></i>${escapeHtml(categoryName(item.categoryId))}</span>
-            <span><i class="bi bi-diagram-3 me-1"></i>${escapeHtml(subCategoryName(item.subCategoryId))}</span>
+            <span><i class="bi bi-grid-3x3-gap me-1"></i>${escapeHtml(categoryName(getCategoryId(item)))}</span>
+            <span><i class="bi bi-diagram-3 me-1"></i>${escapeHtml(subCategoryName(getSubCategoryId(item)))}</span>
             <span><i class="bi bi-cpu me-1"></i>${escapeHtml(item.providerCode || '-')}</span>
             <span><i class="bi bi-link-45deg me-1"></i>${escapeHtml(item.gameUrl || '-')}</span>
             <span><i class="bi bi-sort-numeric-down me-1"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span>
@@ -280,12 +317,22 @@ const GAME_API = {
     list.innerHTML = '<div class="slider-empty"><i class="bi bi-hourglass-split"></i><b>Loading games...</b></div>';
     empty.hidden = true;
     try {
-      const params = new URLSearchParams();
-      if (categoryFilter.value) params.append('categoryId', categoryFilter.value);
-      if (subCategoryFilter.value) params.append('subCategoryId', subCategoryFilter.value);
-      const qs = params.toString() ? '?' + params.toString() : '';
-      const json = await fetchJson(GAME_API.list + qs);
-      renderList(json.data || []);
+      // Load full list then filter in BO side.
+      // This keeps the filter working even when backend ignores query params or uses different param names.
+      const json = await fetchJson(GAME_API.list);
+      let rows = (json.data || []).map(normalizeGame);
+
+      const selectedCategory = String(categoryFilter.value || '');
+      const selectedSubCategory = String(subCategoryFilter.value || '');
+
+      if (selectedCategory) {
+        rows = rows.filter(item => String(getCategoryId(item)) === selectedCategory);
+      }
+      if (selectedSubCategory) {
+        rows = rows.filter(item => String(getSubCategoryId(item)) === selectedSubCategory);
+      }
+
+      renderList(rows);
     } catch (err) {
       list.innerHTML = '';
       empty.hidden = false;
@@ -362,6 +409,14 @@ const GAME_API = {
     await loadSetup();
     await loadGames();
   });
+
+  categoryFilter.addEventListener('change', async () => {
+    refreshFilterSubCategoryOptions();
+    subCategoryFilter.value = '';
+    await loadGames();
+  });
+
+  subCategoryFilter.addEventListener('change', loadGames);
 
   list.addEventListener('click', e => {
     const editBtn = e.target.closest('[data-edit-id]');

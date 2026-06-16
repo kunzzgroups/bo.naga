@@ -6,7 +6,7 @@
     <title>Live Chat</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-    <link href="assets/css/reports.css?v=1.0.2" rel="stylesheet" />
+    <link href="assets/css/reports.css?v=1.1.0" rel="stylesheet" />
   </head>
   <body class="report-body livechat-bo-page">
     <div class="report-shell">
@@ -50,8 +50,16 @@
                 <div class="livechat-empty big">No conversation selected.</div>
               </div>
               <form class="livechat-compose" id="livechatForm">
+                <div class="livechat-template-box">
+                  <div class="template-head">
+                    <b><i class="bi bi-chat-square-text"></i> Template Messages</b>
+                    <a class="clean-btn small" href="livechat-template.html"><i class="bi bi-gear"></i> Manage</a>
+                  </div>
+                  <div class="livechat-template-hint">Click a template to fill the reply box. You can edit before sending.</div>
+                  <div class="livechat-template-panel" id="livechatTemplatePanel"></div>
+                </div>
                 <div class="livechat-attach-preview" id="livechatAttachPreview"></div>
-                <textarea id="livechatInput" rows="2" placeholder="Type reply or description..."></textarea>
+                <textarea id="livechatInput" rows="2" placeholder="Click template or type reply / description..."></textarea>
                 <div class="livechat-compose-actions">
                   <button class="clean-btn" type="button" id="livechatAttachBtn"><i class="bi bi-paperclip"></i> Attachment</button>
                   <input type="file" id="livechatFileInput" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip" hidden>
@@ -63,13 +71,13 @@
         </section>
       </main>
     </div>
-    <script src="assets/js/config.js?v=1.0.1"></script>
+    <script src="assets/js/config.js?v=1.0.0"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script>
-    <script src="assets/js/firebase-config.js?v=1.0.1"></script>
-    <script src="assets/js/auth.js?v=1.0.8"></script>
+    <script src="assets/js/firebase-config.js?v=1.0.0"></script>
+    <script src="assets/js/auth.js?v=1.1.0"></script>
     <script src="assets/js/reports.js?v=1.0.5"></script>
-    <script src="assets/js/livechat.js?v=1.0.1"></script>
+    <script src="assets/js/livechat.js?v=1.2.1"></script>
   </body>
 </html>

@@ -9,6 +9,7 @@
   const attachBtn = document.getElementById('livechatAttachBtn');
   const fileInput = document.getElementById('livechatFileInput');
   const attachPreview = document.getElementById('livechatAttachPreview');
+  const templatePanel = document.getElementById('livechatTemplatePanel');
 
   let db = null;
   let storage = null;
@@ -17,15 +18,30 @@
   let unsubscribeConversations = null;
   let unsubscribeMessages = null;
   let pendingFiles = [];
+  let lastUnreadTotal = Number(localStorage.getItem('bo_livechat_last_unread_total') || '0');
+  let originalTitle = document.title;
+  let templateMessages = [];
+  let unsubscribeTemplates = null;
+  const DEFAULT_TEMPLATES = [
+    {title:'Greeting', message:'Hi dear, how can I help you?'},
+    {title:'Need Screenshot', message:'Please provide your username and issue screenshot.'},
+    {title:'Deposit Delay', message:'Deposit usually takes a few minutes to update. Please wait a while and refresh.'},
+    {title:'Withdrawal Processing', message:'Withdrawal is processing. We will update you once completed.'},
+    {title:'Checking', message:'Thank you dear. We will check and reply shortly.'}
+  ];
 
   document.addEventListener('DOMContentLoaded', init);
 
   function init(){
     bindEvents();
+    setComposerVisible(false);
+    requestBrowserNotificationPermission();
     if(!initFirebase()){
+      renderTemplates(getLocalTemplates());
       renderInboxMessage('Firebase not configured. Update assets/js/firebase-config.js first.');
       return;
     }
+    listenTemplates();
     listenConversations();
   }
 
@@ -65,6 +81,17 @@
     }
   }
 
+
+  function setComposerVisible(show){
+    if(!form) return;
+    form.style.display = show ? '' : 'none';
+    if(!show){
+      if(input) input.value = '';
+      pendingFiles = [];
+      renderAttachPreview();
+    }
+  }
+
   function listenConversations(){
     if(!db) return;
     if(unsubscribeConversations) unsubscribeConversations();
@@ -76,6 +103,7 @@
           conversations.push(Object.assign({id: doc.id}, doc.data() || {}));
         });
         renderInbox();
+        handleUnreadNotification();
         if(selectedId && !conversations.some(c => c.id === selectedId)) clearRoom();
       }, function(error){
         renderInboxMessage('Unable to load conversations. ' + (error && error.message ? error.message : ''));
@@ -95,10 +123,11 @@
     }
     inboxList.innerHTML = list.map(function(c){
       const active = c.id === selectedId ? ' active' : '';
-      return '<button type="button" class="livechat-inbox-item' + active + '" data-id="' + esc(c.id) + '">' +
+      const unread = Number(c.adminUnreadCount || 0);
+      return '<button type="button" class="livechat-inbox-item' + active + (unread ? ' unread' : '') + '" data-id="' + esc(c.id) + '">' +
         '<span class="avatar">' + esc(initials(c.memberName || c.memberUsername || 'M')) + '</span>' +
-        '<span class="copy"><b>' + esc(c.memberName || 'Member') + '</b><small>' + esc(c.memberUsername || c.id) + '</small><em>' + esc(c.lastMessage || 'No message') + '</em></span>' +
-        '<span class="time">' + esc(formatTime(c.updatedAt)) + '</span>' +
+        '<span class="copy"><b>' + esc(c.memberName || 'Member') + (unread ? ' <span class="unread-dot">NEW</span>' : '') + '</b><small>' + esc(c.memberUsername || c.id) + '</small><em>' + esc(c.lastMessage || 'No message') + '</em></span>' +
+        '<span class="time">' + (unread ? '<b class="unread-count">' + unread + '</b>' : '') + esc(formatTime(c.updatedAt)) + '</span>' +
       '</button>';
     }).join('');
     inboxList.querySelectorAll('[data-id]').forEach(function(btn){
@@ -112,9 +141,11 @@
 
   function selectConversation(id){
     selectedId = id;
+    setComposerVisible(true);
     renderInbox();
     const conv = conversations.find(c => c.id === id) || {id:id};
     roomHead.innerHTML = '<div class="livechat-room-avatar">' + esc(initials(conv.memberName || 'M')) + '</div><div><h2>' + esc(conv.memberName || 'Member') + '</h2><p>' + esc(conv.memberUsername || conv.id) + '</p></div>';
+    markConversationRead(id);
     if(unsubscribeMessages) unsubscribeMessages();
     messagesEl.innerHTML = '<div class="livechat-empty big">Loading messages...</div>';
     unsubscribeMessages = db.collection('conversations').doc(id).collection('messages').orderBy('createdAt','asc')
@@ -136,6 +167,7 @@
     if(unsubscribeMessages) unsubscribeMessages();
     roomHead.innerHTML = '<div class="livechat-room-avatar">?</div><div><h2>Select a conversation</h2><p>Choose member from left inbox to start reply.</p></div>';
     messagesEl.innerHTML = '<div class="livechat-empty big">No conversation selected.</div>';
+    setComposerVisible(false);
   }
 
   function renderMessage(msg){
@@ -187,7 +219,8 @@
         lastMessage: text || (attachments.length ? '[Attachment]' : ''),
         lastSenderType: 'admin',
         status: 'open',
-        updatedAt: now
+        updatedAt: now,
+        memberUnreadCount: firebase.firestore.FieldValue.increment(1)
       }, {merge:true});
     }catch(e){
       alert(e.message || 'Send failed.');
@@ -228,6 +261,149 @@
     attachPreview.querySelectorAll('[data-remove]').forEach(function(btn){
       btn.addEventListener('click', function(){ pendingFiles.splice(Number(btn.dataset.remove),1); renderAttachPreview(); });
     });
+  }
+
+
+  function getLocalTemplates(){
+    try{
+      const saved = JSON.parse(localStorage.getItem('bo_livechat_templates') || 'null');
+      if(Array.isArray(saved) && saved.length){
+        return saved.map(function(item, idx){
+          if(typeof item === 'string') return {id:'local-' + idx, title:item.slice(0,40), message:item};
+          return {id:item.id || ('local-' + idx), title:item.title || ('Template ' + (idx+1)), message:item.message || item.text || ''};
+        }).filter(function(x){ return x.message; });
+      }
+    }catch(e){}
+    return DEFAULT_TEMPLATES.slice();
+  }
+
+  function listenTemplates(){
+    if(!templatePanel) return;
+
+    // If Firebase is not configured, use local/default templates only as a fallback.
+    // If Firebase is configured, always use livechat_templates collection as the source of truth.
+    if(!db){
+      renderTemplates(getLocalTemplates(), true);
+      return;
+    }
+
+    if(unsubscribeTemplates) unsubscribeTemplates();
+    templatePanel.innerHTML = '<span class="livechat-template-hint">Loading templates...</span>';
+
+    // Do not use where/orderBy here. Firestore composite indexes are not needed.
+    // We load templates then filter/sort in JavaScript, same as livechat-template.js.
+    unsubscribeTemplates = db.collection('livechat_templates')
+      .onSnapshot(function(snapshot){
+        templateMessages = [];
+
+        snapshot.forEach(function(doc){
+          const data = doc.data() || {};
+          const status = Number(data.status == null ? 1 : data.status);
+          const message = data.message || data.text || '';
+
+          if(status === 1 && message){
+            templateMessages.push({
+              id: doc.id,
+              title: data.title || 'Template',
+              message: message,
+              sortOrder: Number(data.sortOrder || 0),
+              createdAt: data.createdAt
+            });
+          }
+        });
+
+        templateMessages.sort(function(a,b){
+          const sortA = Number(a.sortOrder || 0);
+          const sortB = Number(b.sortOrder || 0);
+          if(sortA !== sortB) return sortA - sortB;
+
+          const timeA = a.createdAt && a.createdAt.seconds ? a.createdAt.seconds : 0;
+          const timeB = b.createdAt && b.createdAt.seconds ? b.createdAt.seconds : 0;
+          return timeB - timeA;
+        });
+
+        renderTemplates(templateMessages, false);
+      }, function(error){
+        templatePanel.innerHTML = '<span class="livechat-template-hint error">Unable to load templates: ' + esc(error && error.message ? error.message : '') + '</span>';
+      });
+  }
+
+  function renderTemplates(list, allowFallback){
+    if(!templatePanel) return;
+
+    list = Array.isArray(list) ? list.filter(function(item){ return item && (item.message || item.text); }) : [];
+
+    if(!list.length && allowFallback){
+      list = getLocalTemplates();
+    }
+
+    if(!list.length){
+      templatePanel.innerHTML = '<span class="livechat-template-hint">No active template. Add one in Template Messages.</span>';
+      return;
+    }
+
+    templatePanel.innerHTML = list.map(function(item, idx){
+      const title = item.title || item.message || 'Template';
+      const msg = item.message || item.text || '';
+      return '<button type="button" class="template-chip" title="' + esc(msg) + '" data-template-index="' + idx + '">' + esc(title) + '</button>';
+    }).join('');
+
+    templatePanel.querySelectorAll('[data-template-index]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        const item = list[Number(btn.dataset.templateIndex)] || {};
+        const text = item.message || item.text || '';
+        if(!input) return;
+        input.value = text;
+        input.focus();
+      });
+    });
+  }
+
+  async function markConversationRead(id){
+    if(!db || !id) return;
+    try{
+      await db.collection('conversations').doc(id).set({
+        adminUnreadCount: 0,
+        adminReadAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, {merge:true});
+    }catch(e){}
+  }
+
+  function getUnreadTotal(){
+    return conversations.reduce(function(sum, c){ return sum + Number(c.adminUnreadCount || 0); }, 0);
+  }
+
+  function handleUnreadNotification(){
+    const total = getUnreadTotal();
+    document.title = total ? '(' + total + ') ' + originalTitle : originalTitle;
+    const badge = document.querySelector('[data-livechat-unread-total]');
+    if(badge){
+      badge.textContent = total;
+      badge.style.display = total ? 'inline-flex' : 'none';
+    }
+    if(total > lastUnreadTotal){
+      const latest = conversations.find(function(c){ return Number(c.adminUnreadCount || 0) > 0 && c.lastSenderType === 'member'; });
+      if(latest) notifyIncoming(latest);
+    }
+    lastUnreadTotal = total;
+    localStorage.setItem('bo_livechat_last_unread_total', String(total));
+  }
+
+  function requestBrowserNotificationPermission(){
+    if('Notification' in window && Notification.permission === 'default'){
+      setTimeout(function(){ Notification.requestPermission().catch(function(){}); }, 1200);
+    }
+  }
+
+  function notifyIncoming(c){
+    try{
+      if('Notification' in window && Notification.permission === 'granted'){
+        new Notification('New live chat message', {
+          body: (c.memberName || c.memberUsername || 'Member') + ': ' + (c.lastMessage || 'New message'),
+          tag: 'livechat-' + c.id
+        });
+      }
+    }catch(e){}
   }
 
   function safeFileName(name){ return String(name || 'attachment').replace(/[^a-zA-Z0-9._-]/g, '_'); }
