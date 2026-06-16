@@ -315,6 +315,10 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     const currentName = document.getElementById('currentSectionName');
     const currentKey = document.getElementById('currentSectionKey');
     const sectionBtns = document.querySelectorAll('.layout-section-item');
+    const codeGrid = document.getElementById('layoutCodeGrid');
+    const htmlPane = document.querySelector('[data-code-pane="html"]');
+    const cssPane = document.querySelector('[data-code-pane="css"]');
+    const jsPane = document.querySelector('[data-code-pane="js"]');
 
     if (!saveBtn || !htmlEditor || !cssEditor || !jsEditor) return;
 
@@ -327,10 +331,25 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         statusBox.className = 'custom-status' + (type ? ' ' + type : '');
     }
 
+    function updateEditorMode() {
+        const isCssStyling = activeSection === 'home';
+
+        if (htmlPane) htmlPane.style.display = isCssStyling ? 'none' : '';
+        if (jsPane) jsPane.style.display = isCssStyling ? 'none' : '';
+        if (cssPane) cssPane.style.display = '';
+
+        if (codeGrid) {
+            codeGrid.style.gridTemplateColumns = isCssStyling
+                ? 'minmax(0, 1fr)'
+                : 'repeat(3, minmax(0, 1fr))';
+        }
+    }
+
     function updateHeader(button) {
         const label = button ? button.textContent.trim() : activeSection;
         if (currentName) currentName.textContent = label;
         if (currentKey) currentKey.textContent = activeSection;
+        updateEditorMode();
     }
 
     function escapeHtml(value) {
@@ -472,7 +491,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             });
             const json = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(json.message || 'Save failed');
-            setStatus('Saved. Old active files were backed up as draft files.', 'success');
+            setStatus('Saved. Only non-empty or changed files were written; empty new files are skipped.', 'success');
         } catch (err) {
             setStatus(err.message || 'Save failed. Please check Spring Boot API.', 'error');
         } finally {
