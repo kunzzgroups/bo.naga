@@ -18,7 +18,8 @@
     access: { title: 'Access Control', icon: 'bi-shield-lock' },
     game: { title: 'Game Management', icon: 'bi-controller' },
     bonus: { title: 'Bonus Management', icon: 'bi-gift' },
-    support: { title: 'Support', icon: 'bi-headset' }
+    support: { title: 'Support', icon: 'bi-headset' },
+    design: { title: 'Design', icon: 'bi-palette'}
   };
 
   // Used only when backend has not returned menu data yet.
