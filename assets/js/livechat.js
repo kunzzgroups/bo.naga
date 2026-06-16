@@ -397,20 +397,37 @@
     if(!selectedId) return;
     if(e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return;
 
-    const tag = (e.target && e.target.tagName || '').toLowerCase();
-    const isTypingField =
-      tag === 'input' ||
-      tag === 'textarea' ||
-      tag === 'select' ||
-      (e.target && e.target.isContentEditable);
-
-    if(isTypingField) return;
-
     const key = e.key;
     if(!/^[1-9]$/.test(key)) return;
 
+    const target = e.target;
+
+    // If user is typing in another field, don't trigger template
+    if (
+      target &&
+      target !== input &&
+      (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable
+      )
+    ) {
+      return;
+    }
+
+    // If cursor is in message box and already has content,
+    // treat 1/2/3 as normal typing
+    if (
+      document.activeElement === input &&
+      input.value.trim() !== ''
+    ) {
+      return;
+    }
+
     const buttons = templatePanel.querySelectorAll('[data-template-index]');
     const btn = buttons[Number(key) - 1];
+
     if(!btn) return;
 
     e.preventDefault();
