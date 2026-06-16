@@ -398,9 +398,13 @@
     if(e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return;
 
     const tag = (e.target && e.target.tagName || '').toLowerCase();
-    const isTyping = tag === 'input' || tag === 'textarea' || tag === 'select' || (e.target && e.target.isContentEditable);
+    const isTypingField =
+      tag === 'input' ||
+      tag === 'textarea' ||
+      tag === 'select' ||
+      (e.target && e.target.isContentEditable);
 
-    if(isTyping && e.target !== input) return;
+    if(isTypingField) return;
 
     const key = e.key;
     if(!/^[1-9]$/.test(key)) return;
