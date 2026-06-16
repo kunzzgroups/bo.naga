@@ -56,6 +56,9 @@
   function bindEvents(){
     if(searchInput) searchInput.addEventListener('input', renderInbox);
     if(refreshBtn) refreshBtn.addEventListener('click', listenConversations);
+
+    document.addEventListener('keydown', handleTemplateHotkey);
+
     if(attachBtn && fileInput){
       attachBtn.addEventListener('click', function(){ fileInput.click(); });
       fileInput.addEventListener('change', function(){
@@ -328,6 +331,36 @@
       });
   }
 
+  // function renderTemplates(list, allowFallback){
+  //   if(!templatePanel) return;
+
+  //   list = Array.isArray(list) ? list.filter(function(item){ return item && (item.message || item.text); }) : [];
+
+  //   if(!list.length && allowFallback){
+  //     list = getLocalTemplates();
+  //   }
+
+  //   if(!list.length){
+  //     templatePanel.innerHTML = '<span class="livechat-template-hint">No active template. Add one in Template Messages.</span>';
+  //     return;
+  //   }
+
+  //   templatePanel.innerHTML = list.map(function(item, idx){
+  //     const title = item.title || item.message || 'Template';
+  //     const msg = item.message || item.text || '';
+  //     return '<button type="button" class="template-chip" title="' + esc(msg) + '" data-template-index="' + idx + '">' + esc(title) + '</button>';
+  //   }).join('');
+
+  //   templatePanel.querySelectorAll('[data-template-index]').forEach(function(btn){
+  //     btn.addEventListener('click', function(){
+  //       const item = list[Number(btn.dataset.templateIndex)] || {};
+  //       const text = item.message || item.text || '';
+  //       if(!input) return;
+  //       input.value = text;
+  //       input.focus();
+  //     });
+  //   });
+  // }
   function renderTemplates(list, allowFallback){
     if(!templatePanel) return;
 
@@ -345,18 +378,48 @@
     templatePanel.innerHTML = list.map(function(item, idx){
       const title = item.title || item.message || 'Template';
       const msg = item.message || item.text || '';
-      return '<button type="button" class="template-chip" title="' + esc(msg) + '" data-template-index="' + idx + '">' + esc(title) + '</button>';
+      const hotkey = idx < 9 ? (idx + 1) : '';
+      return '<button type="button" class="template-chip" title="' + esc(msg) + '" data-template-index="' + idx + '">' +
+        (hotkey ? '<span class="template-hotkey">' + hotkey + '</span>' : '') +
+        esc(title) +
+      '</button>';
     }).join('');
 
     templatePanel.querySelectorAll('[data-template-index]').forEach(function(btn){
       btn.addEventListener('click', function(){
-        const item = list[Number(btn.dataset.templateIndex)] || {};
-        const text = item.message || item.text || '';
-        if(!input) return;
-        input.value = text;
-        input.focus();
+        applyTemplateByIndex(Number(btn.dataset.templateIndex), list);
       });
     });
+  }
+
+  function handleTemplateHotkey(e){
+    if(!templatePanel || !input) return;
+    if(!selectedId) return;
+    if(e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return;
+
+    const tag = (e.target && e.target.tagName || '').toLowerCase();
+    const isTyping = tag === 'input' || tag === 'textarea' || tag === 'select' || (e.target && e.target.isContentEditable);
+
+    if(isTyping && e.target !== input) return;
+
+    const key = e.key;
+    if(!/^[1-9]$/.test(key)) return;
+
+    const buttons = templatePanel.querySelectorAll('[data-template-index]');
+    const btn = buttons[Number(key) - 1];
+    if(!btn) return;
+
+    e.preventDefault();
+    btn.click();
+  }
+
+  function applyTemplateByIndex(index, list){
+    const item = list[Number(index)] || {};
+    const text = item.message || item.text || '';
+    if(!input || !text) return;
+
+    input.value = text;
+    input.focus();
   }
 
   async function markConversationRead(id){

@@ -646,3 +646,17 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 .form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.template-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.form-status{margin-top:12px;font-weight:800}.form-status.success{color:#067647}.form-status.error{color:#b42318}
 .template-list{display:flex;flex-direction:column;gap:12px}.template-list-item{border:1px solid #e4e7ec;border-radius:16px;padding:14px;background:#f8fafc;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:start}.template-title-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.template-title-line b{font-size:16px;color:#101828}.template-list-item pre{white-space:pre-wrap;margin:8px 0 6px;font-family:inherit;color:#344054;line-height:1.5}.template-list-item small{color:#667085}.template-list-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.status-pill{display:inline-flex;align-items:center;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:900}.status-pill.active{background:#dcfae6;color:#067647}.status-pill.off{background:#fee4e2;color:#b42318}.clean-btn.danger{color:#b42318;border-color:#fecaca;background:#fff}
 @media(max-width:991.98px){.livechat-template-layout{grid-template-columns:1fr}.template-list-item{grid-template-columns:1fr}.template-list-actions{justify-content:flex-start}.form-grid-2{grid-template-columns:1fr}}
+
+.template-hotkey{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:18px;
+  height:18px;
+  margin-right:6px;
+  border-radius:50%;
+  background:#1d4ed8;
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+}
