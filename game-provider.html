@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Game Provider</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="assets/css/reports.css?v=1.0.11" rel="stylesheet" />
+  </head>
+  <body class="report-body">
+    <div class="report-shell">
+      <aside class="report-sidebar" id="reportSidebar">
+          <div class="report-brand">
+              <div>Backoffice<br /><small>Admin Panel</small></div><button class="close-side" data-close-sidebar><i
+                      class="bi bi-x-lg"></i></button>
+          </div>
+          <nav class="report-nav"></nav>
+      </aside>
+      <div class="sidebar-overlay" id="reportOverlay" data-close-sidebar></div>
+      <main class="report-main">
+        <header class="report-topbar"><button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button><div><h1>Game Provider</h1></div><div class="report-actions" data-bo-profile></div></header>
+        <section class="report-content">
+          <div class="manage-page-grid">
+            <div class="manage-form-card">
+              <div class="section-title mb-3"><div><h3 id="providerFormTitle">Create Provider</h3></div></div>
+              <div class="upload-status" id="providerStatusBoxTop"></div>
+              <form id="providerForm" class="slider-form">
+                <input type="hidden" id="providerId" name="id" />
+                <div class="slider-two-col"><div class="field"><label>Provider Code</label><input id="providerCode" name="code" placeholder="Example: JDB" required /></div><div class="field"><label>Provider Name</label><input id="providerName" name="name" placeholder="Example: JDB Gaming" required /></div></div>
+                <div class="slider-two-col"><div class="field"><label>Provider Type</label><select id="providerType" name="providerType"><option>SPORT</option><option>SLOT</option><option>LIVE</option><option>FISHING</option><option>OTHER</option></select></div><div class="field"><label>Wallet Mode</label><select id="walletMode" name="walletMode"><option value="TRANSFER">Transfer Wallet</option><option value="SEAMLESS">Seamless Wallet</option></select></div></div>
+                <div class="slider-two-col"><div class="field"><label>Integration Type</label><select id="integrationType" name="integrationType"><option value="GENERIC_API">Generic API Mapping</option><option value="CUSTOM_ADAPTER">Custom Java Adapter</option><option value="MANUAL">Manual / Mock</option></select></div><div class="field"><label>HTTP Method</label><select id="httpMethod" name="httpMethod"><option>POST</option><option>GET</option></select></div></div>
+                <div class="slider-two-col"><div class="field"><label>Currency</label><input id="currency" name="currency" value="MYR" /></div><div class="field"><label>Sort Order</label><input id="sortOrder" name="sortOrder" type="number" min="0" value="0" /></div></div>
+                <div class="field"><label>API Base URL</label><input id="apiBaseUrl" name="apiBaseUrl" placeholder="https://provider-api.com" /></div>
+                <div class="slider-two-col"><div class="field"><label>Operator ID</label><input id="operatorId" name="operatorId" /></div><div class="field"><label>Secret Key</label><input id="secretKey" name="secretKey" /></div></div>
+                <div class="field"><label>Dynamic Provider Variables</label><textarea id="providerVariables" name="providerVariables" rows="7" placeholder='{
+  "merchant_id": "abc001",
+  "merchant_key": "xxxxx",
+  "nonce": "UUID",
+  "random_key": "RANDOM_8",
+  "player": "${account_id}",
+  "unix_time": "TIMESTAMP"
+}'></textarea><small class="text-secondary">Create any ${key} here. Value can be static, ${account_id}, ${member_id}, RANDOM_8, UUID, TIMESTAMP, DATETIME, TXID.</small></div>
+
+                <div class="field action-config-box">
+                  <label>API Action Configs <span class="text-secondary small">(one formula/path/template per provider API)</span></label>
+                  <div class="d-flex gap-2 flex-wrap mb-2">
+                    <button class="clean-btn" type="button" id="fillLive22ActionPresetBtn"><i class="bi bi-magic"></i> Fill Live22 Preset</button>
+                    <button class="clean-btn" type="button" id="formatActionConfigBtn"><i class="bi bi-braces"></i> Format JSON</button>
+                  </div>
+                  <textarea id="apiActionConfigs" name="apiActionConfigs" rows="12" placeholder='{
+  "GAME_LIST": {
+    "functionName": "GetGameList",
+    "path": "/GetGameList",
+    "httpMethod": "POST",
+    "signatureTemplate": "${function_name}${request_datetime}${OperatorId}${SecretKey}",
+    "requestTemplate": "{ \"OperatorId\":\"${OperatorId}\", \"RequestDateTime\":\"${request_datetime}\", \"Signature\":\"${signature}\" }"
+  },
+  "CREATE_PLAYER": {
+    "functionName": "CreatePlayer",
+    "path": "/CreatePlayer",
+    "httpMethod": "POST",
+    "signatureTemplate": "${function_name}${request_datetime}${OperatorId}${SecretKey}${PlayerId}",
+    "requestTemplate": "{ \"OperatorId\":\"${OperatorId}\", \"RequestDateTime\":\"${request_datetime}\", \"Signature\":\"${signature}\", \"PlayerId\":\"${PlayerId}\" }"
+  }
+}'></textarea>
+                  <small class="text-secondary">This overrides the old single Signature Formula Builder for each action. Supported actions: GAME_LIST, CREATE_PLAYER, BALANCE, DEPOSIT, WITHDRAW, LAUNCH.</small>
+                </div>
+                <div class="slider-two-col"><div class="field"><label>Signature Type</label><select id="signatureType" name="signatureType"><option>MD5</option><option>SHA256</option><option>NONE</option></select></div><div class="field"><label>Signature Output Case</label><select id="signatureOutputCase" name="signatureOutputCase"><option value="LOWER">Lowercase</option><option value="UPPER">Uppercase</option><option value="RAW">Raw / No Convert</option></select></div></div>
+                <div class="field"><label>Signature Formula Builder</label><input id="signatureTemplate" name="signatureTemplate" placeholder="${method}${operator_id}${account_id}${ukey}${secret_key}" /><small class="text-secondary">Use provider document formula here. Example: ${method}${operator_id}${account_id}${ukey}${secret_key}</small></div>
+                <div class="slider-two-col"><div class="field"><label>Random UKey Length</label><input id="ukeyLength" name="ukeyLength" type="number" min="1" max="64" value="8" /></div><div class="field"><label>UKey Prefix / Static Value</label><input id="ukeyPrefix" name="ukeyPrefix" placeholder="Optional prefix" /><input id="ukeyStaticValue" class="mt-2" name="ukeyStaticValue" placeholder="Optional fixed ukey, normally empty" /></div></div>
+                <div class="field"><label>Available Variables</label><div class="p-2 bg-light rounded small" style="line-height:1.8">Built-in: ${operator_id}, ${secret_key}, ${account_id}, ${username}, ${member_id}, ${ukey}, ${method}, ${amount}, ${transaction_id}, ${game_code}, ${currency}, ${request_date_time}, ${timestamp}, ${signature}<br/>Custom: any key added in Dynamic Provider Variables, example ${merchant_id}, ${nonce}, ${token}</div></div>
+                <div class="slider-two-col"><div class="field"><label>Create Player Path</label><input id="createPlayerPath" name="createPlayerPath" placeholder="/CreatePlayer" /></div><div class="field"><label>Balance Path</label><input id="balancePath" name="balancePath" placeholder="/GetBalance" /></div></div>
+                <div class="slider-two-col"><div class="field"><label>Deposit Path</label><input id="depositPath" name="depositPath" placeholder="/Deposit" /></div><div class="field"><label>Withdraw Path</label><input id="withdrawPath" name="withdrawPath" placeholder="/Withdrawal" /></div></div>
+                <div class="slider-two-col"><div class="field"><label>Launch Path</label><input id="launchPath" name="launchPath" placeholder="/LaunchSport" /></div><div class="field"><label>Game List Path</label><input id="gameListPath" name="gameListPath" placeholder="/GetGameList" /></div></div>
+                <div class="field"><label>Create Player Request Template</label><textarea id="createPlayerRequestTemplate" rows="4" placeholder='{ "OperatorId":"${operatorId}", "AccountId":"${accountId}", "Signature":"${signature}" }'></textarea></div>
+                <div class="field"><label>Balance Request Template</label><textarea id="balanceRequestTemplate" rows="3" placeholder='{ "OperatorId":"${operatorId}", "AccountId":"${accountId}", "Signature":"${signature}" }'></textarea></div>
+                <div class="field"><label>Deposit Request Template</label><textarea id="depositRequestTemplate" rows="3" placeholder='{ "OperatorId":"${operatorId}", "AccountId":"${accountId}", "Amount":"${amount}", "TransactionId":"${transactionId}", "Signature":"${signature}" }'></textarea></div>
+                <div class="field"><label>Withdraw Request Template</label><textarea id="withdrawRequestTemplate" rows="3" placeholder='{ "OperatorId":"${operatorId}", "AccountId":"${accountId}", "Amount":"${amount}", "TransactionId":"${transactionId}", "Signature":"${signature}" }'></textarea></div>
+                <div class="field"><label>Launch Request Template</label><textarea id="launchRequestTemplate" rows="3" placeholder='{ "OperatorId":"${operatorId}", "AccountId":"${accountId}", "GameCode":"${gameCode}", "Signature":"${signature}" }'></textarea></div>
+                <div class="field"><label>Game List Request Template</label><textarea id="gameListRequestTemplate" rows="3" placeholder='{ "OperatorId":"${operatorId}", "Signature":"${signature}" }'></textarea></div>
+                <div class="slider-two-col"><div class="field"><label>Balance Response Path</label><input id="responseBalancePath" placeholder="data.balance" /></div><div class="field"><label>Launch URL Response Path</label><input id="responseLaunchUrlPath" placeholder="data.launchUrl" /></div></div>
+                <div class="slider-two-col"><div class="field"><label>Game List Response Path</label><input id="responseGameListPath" placeholder="data.games" /></div><div class="field"><label>Game Code / Name Path</label><input id="responseGameCodePath" placeholder="gameCode" /><input id="responseGameNamePath" class="mt-2" placeholder="gameName" /></div></div>
+                <div class="slider-two-col"><div class="field"><label>Game Image / Category Path</label><input id="responseGameImagePath" name="responseGameImagePath" placeholder="imageUrl" /><input id="responseGameCategoryPath" name="responseGameCategoryPath" class="mt-2" placeholder="category" /></div><div class="field"><label>Success / Error Mapping</label><input id="responseSuccessPath" name="responseSuccessPath" placeholder="status" /><input id="responseSuccessValue" name="responseSuccessValue" class="mt-2" placeholder="success" /><input id="responseErrorMessagePath" name="responseErrorMessagePath" class="mt-2" placeholder="message" /></div></div>
+                <div class="field"><label>Callback Mapping</label><div class="slider-two-col"><input id="callbackMemberPath" name="callbackMemberPath" placeholder="username / data.player" /><input id="callbackEventTypePath" name="callbackEventTypePath" placeholder="type / event" /></div><div class="slider-two-col mt-2"><input id="callbackGameCodePath" name="callbackGameCodePath" placeholder="gameCode" /><input id="callbackBetIdPath" name="callbackBetIdPath" placeholder="betId" /></div><div class="slider-two-col mt-2"><input id="callbackTxIdPath" name="callbackTxIdPath" placeholder="transactionId" /><input id="callbackBetAmountPath" name="callbackBetAmountPath" placeholder="betAmount" /></div><div class="slider-two-col mt-2"><input id="callbackWinAmountPath" name="callbackWinAmountPath" placeholder="winAmount" /><input id="callbackValidBetAmountPath" name="callbackValidBetAmountPath" placeholder="validBetAmount / turnover" /></div><div class="slider-two-col mt-2"><input id="callbackRoundIdPath" name="callbackRoundIdPath" placeholder="roundId" /><input id="callbackStatusPath" name="callbackStatusPath" placeholder="status" /></div><div class="slider-two-col mt-2"><input id="callbackSignaturePath" name="callbackSignaturePath" placeholder="signature" /><input disabled placeholder="Reserved for provider signature verification" /></div><small class="text-secondary">Used by the generic callback parser. Provider callback URL: /api/provider/callback/{PROVIDER_CODE}/{BET|WIN|SETTLE|ROLLBACK}</small></div>
+                <div class="slider-two-col"><div class="field"><label>Callback Success Response</label><textarea id="callbackSuccessResponse" name="callbackSuccessResponse" rows="2" placeholder='{ "status":"success" }'></textarea></div><div class="field"><label>Callback Duplicate Response</label><textarea id="callbackDuplicateResponse" name="callbackDuplicateResponse" rows="2" placeholder='{ "status":"success", "message":"duplicate" }'></textarea></div></div>
+                <div class="field"><label>Status</label><select id="providerStatus" name="status"><option value="1">Active</option><option value="2">Inactive</option></select></div>
+                <div class="slider-form-actions"><button class="clean-btn primary" id="saveProviderBtn" type="submit"><i class="bi bi-save"></i> Save Provider</button><button class="clean-btn" id="resetProviderBtn" type="button"><i class="bi bi-arrow-counterclockwise"></i> Reset</button></div>
+                <div class="upload-status" id="providerStatusBox"></div>
+              </form>
+            </div>
+            <div class="manage-list-card">
+              <div class="section-title slider-list-title"><div><h2>Provider List</h2></div><div class="d-flex gap-2 flex-wrap"><button disabled class="clean-btn primary" id="syncSelectedProviderBtn" type="button"><i class="bi bi-cloud-download"></i> Sync Selected Games</button><button disabled class="clean-btn" id="debugSelectedProviderBtn" type="button"><i class="bi bi-bug"></i> Debug Game List</button><button class="clean-btn" id="refreshProviderBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button></div></div>
+              <div class="slider-empty" id="providerEmpty" hidden><i class="bi bi-hdd-network"></i><b>No providers found</b><small>Create your first provider.</small></div>
+              <div class="manage-list" id="providerList"></div>
+            </div>
+          </div>
+          <div class="manage-list-card mt-4">
+            <div class="section-title slider-list-title"><div><h2>API Debug Tools</h2></div></div>
+            <form id="walletForm" class="slider-form">
+              <div class="slider-two-col"><div class="field"><label>Member ID</label><input id="walletMemberId" type="number" min="1" placeholder="Example: 1" /></div><div class="field"><label>Provider</label><select id="walletProviderCode"></select></div></div>
+              <div class="slider-two-col"><div class="field"><label>Transfer Amount</label><input id="walletAmount" type="number" min="0" step="0.01" placeholder="Optional. For transfer to/back or launch auto-transfer" /></div><div class="field"><label>Game Code</label><input id="walletGameCode" placeholder="For launch sport/game" /></div></div>
+              <div class="slider-form-actions">
+                <button class="clean-btn" type="button" data-wallet-action="main-balance">Check Main Wallet</button>
+                <button class="clean-btn" type="button" data-wallet-action="create-player">Create Player Now</button>
+                <button class="clean-btn" type="button" data-wallet-action="balance">Provider Balance</button>
+                <button class="clean-btn primary" type="button" data-wallet-action="deposit">Manual Transfer To Provider</button>
+                <button class="clean-btn danger" type="button" data-wallet-action="withdraw">Manual Transfer Back</button>
+                <button class="clean-btn" type="button" data-wallet-action="launch-sport">Launch / Test URL</button>
+                <select id="previewAction" class="form-select" style="width:auto;max-width:180px"><option value="CREATE_PLAYER">Create Player Preview</option><option value="BALANCE">Balance Preview</option><option value="DEPOSIT">Deposit Preview</option><option value="WITHDRAW">Withdraw Preview</option><option value="LAUNCH">Launch Preview</option><option value="GAME_LIST">Game List Preview</option><option value="PULL_LOG">Pull Log Preview</option></select>
+                <button class="clean-btn" type="button" data-wallet-action="api-preview">API Payload Preview</button>
+                <button class="clean-btn" type="button" data-wallet-action="pull-log-debug"><i class="bi bi-journal-text"></i> Pull Log / Bet Log</button>
+              </div>
+              <div class="upload-status" id="walletStatusBox"></div><pre class="mt-3 p-3 bg-light rounded small" id="walletResult" style="white-space:pre-wrap;max-height:300px;overflow:auto;"></pre>
+            </form>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="assets/js/config.js?v=1.0.9"></script><script src="assets/js/auth.js?v=1.0.9"></script><script src="assets/js/reports.js?v=1.0.4"></script><script src="assets/js/game-provider.js?v=1.0.4"></script>
+  </body>
+</html>

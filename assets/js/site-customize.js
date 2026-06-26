@@ -1,13 +1,13 @@
 const NAGA_API_CONFIG = (window.API_CONFIG || (typeof API_CONFIG !== 'undefined' ? API_CONFIG : {}));
 const API_CUSTOMIZE_MAIN_LAYOUT_URL =
-    (NAGA_API_CONFIG.BASE_URL || 'https://bo.titanxgaming.com/api') +
+    (NAGA_API_CONFIG.BASE_URL || 'https://bo.corepayx.com/api') +
     ((NAGA_API_CONFIG.ENDPOINTS && NAGA_API_CONFIG.ENDPOINTS.CUSTOMIZE_MAIN_LAYOUT) || '/customize/main-layout');
 
 (function () {
     const STORAGE_KEY = 'naga_main_layout_customize_files';
 
     function cleanCustomBaseUrl(value) {
-        const fallback = 'https://titanxgaming.com/assets/custom/images';
+        const fallback = 'https://corepayx.com/assets/custom/images';
         const text = String(value || '').trim();
         if (!text || text === 'undefined' || text === 'null') return fallback;
         return text.replace(/\/+$/, '');
@@ -322,7 +322,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 
     if (!saveBtn || !htmlEditor || !cssEditor || !jsEditor) return;
 
-    const API_CUSTOMIZE_SECTION_URL = (NAGA_API_CONFIG.BASE_URL || 'https://bo.titanxgaming.com/api') + ((NAGA_API_CONFIG.ENDPOINTS && NAGA_API_CONFIG.ENDPOINTS.CUSTOMIZE_SECTION) || '/customize/section');
+    const API_CUSTOMIZE_SECTION_URL = (NAGA_API_CONFIG.BASE_URL || 'https://bo.corepayx.com/api') + ((NAGA_API_CONFIG.ENDPOINTS && NAGA_API_CONFIG.ENDPOINTS.CUSTOMIZE_SECTION) || '/customize/section');
     let activeSection = document.querySelector('.layout-section-item.active')?.dataset.section || 'right-panel';
 
     function setStatus(message, type) {

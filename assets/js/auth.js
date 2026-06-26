@@ -18,13 +18,25 @@
     access: { title: 'Access Control', icon: 'bi-shield-lock' },
     game: { title: 'Game Management', icon: 'bi-controller' },
     bonus: { title: 'Bonus Management', icon: 'bi-gift' },
-    support: { title: 'Support', icon: 'bi-headset' }
+    support: { title: 'Support', icon: 'bi-headset' },
+    wallet: { title: 'Wallet Management', icon: 'bi-wallet2' },
+    setting: { title: 'Setting', icon: 'bi-gear' }
   };
 
   // Used only when backend has not returned menu data yet.
   // Normal sidebar is rendered from /auth/admin/me => user.menus.
   const FALLBACK_MENUS = [
     {menuKey:'user', title:'User Management', url:'index.html', icon:'bi-people', parentKey:'', sortOrder:10},
+    {menuKey:'member_wallet', title:'Member Wallet Listing', url:'member-wallet.html', icon:'bi-wallet2', parentKey:'wallet', sortOrder:11},
+    {menuKey:'wallet_ledger', title:'Wallet Ledger', url:'wallet-ledger.html', icon:'bi-receipt', parentKey:'wallet', sortOrder:12},
+    {menuKey:'member_deposit', title:'Deposit Approval', url:'member-deposit.html', icon:'bi-bank', parentKey:'wallet', sortOrder:13},
+    {menuKey:'member_withdraw', title:'Withdraw Approval', url:'member-withdraw.html', icon:'bi-cash-coin', parentKey:'wallet', sortOrder:14},
+    {menuKey:'payment_method', title:'Payment Method Config', url:'payment-method.html', icon:'bi-credit-card', parentKey:'wallet', sortOrder:15},
+    {menuKey:'referral', title:'Referral Network', url:'referral.html', icon:'bi-diagram-3', parentKey:'wallet', sortOrder:16},
+    {menuKey:'provider_session', title:'Provider Sessions', url:'player-provider-session.html', icon:'bi-box-arrow-up-right', parentKey:'wallet', sortOrder:14},
+    {menuKey:'provider_bet_report', title:'Provider Bet Report', url:'provider-bet-report.html', icon:'bi-graph-up-arrow', parentKey:'wallet', sortOrder:15},
+    {menuKey:'wbet_bet_limit', title:'WBET Bet Limit', url:'wbet-bet-limit.html', icon:'bi-sliders', parentKey:'wallet', sortOrder:16},
+    {menuKey:'provider_wallet_transaction', title:'Provider Transactions', url:'provider-wallet-transaction.html', icon:'bi-journal-text', parentKey:'wallet', sortOrder:16},
     {menuKey:'admin', title:'Admin Management', url:'admin-user.html', icon:'bi-shield-lock', parentKey:'', sortOrder:20},
     {menuKey:'role', title:'Role', url:'role.html', icon:'bi-person-badge', parentKey:'access', sortOrder:30},
     {menuKey:'menu_permission', title:'Menu Permission', url:'menu-permission.html', icon:'bi-menu-button-wide', parentKey:'access', sortOrder:33},
@@ -34,11 +46,14 @@
     {menuKey:'language', title:'Language & Translation', url:'language.html', icon:'bi-translate', parentKey:'', sortOrder:40},
     {menuKey:'image', title:'Image To URL', url:'image-to-url.html', icon:'bi-image', parentKey:'', sortOrder:50},
     {menuKey:'slider', title:'Slider Banner', url:'slider.html', icon:'bi-images', parentKey:'', sortOrder:60},
+    {menuKey:'game_provider', title:'Provider', url:'game-provider.html', icon:'bi-hdd-network', parentKey:'game', sortOrder:69},
     {menuKey:'game_category', title:'Game Category', url:'game-category.html', icon:'bi-grid-3x3-gap', parentKey:'game', sortOrder:70},
     {menuKey:'game_sub_category', title:'Game Sub Category', url:'game-sub-category.html', icon:'bi-diagram-3', parentKey:'game', sortOrder:71},
     {menuKey:'game', title:'Game', url:'game.html', icon:'bi-joystick', parentKey:'game', sortOrder:72},
     {menuKey:'bonus_title', title:'Bonus Title', url:'bonus-category-title.html', icon:'bi-gift', parentKey:'bonus', sortOrder:80},
     {menuKey:'bonus_item', title:'Bonus Item', url:'bonus-category-item.html', icon:'bi-gift-fill', parentKey:'bonus', sortOrder:81},
+    {menuKey:'promotion_bonus', title:'Promotion Bonus', url:'promotion.html', icon:'bi-gift', parentKey:'bonus', sortOrder:82},
+    {menuKey:'promotion_debug', title:'Promotion Debug', url:'promotion-debug.html', icon:'bi-bug', parentKey:'bonus', sortOrder:83},
     {menuKey:'site_customize', title:'Site Customize', url:'site-customize.html', icon:'bi-palette', parentKey:'', sortOrder:90},
     {menuKey:'layout_section', title:'Layout Section', url:'layout-section.html', icon:'bi-code-square', parentKey:'', sortOrder:91}
   ];

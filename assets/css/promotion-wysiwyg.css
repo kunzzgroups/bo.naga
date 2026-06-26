@@ -1,0 +1,14 @@
+.promo-wysiwyg-wrap{border:1px solid #d5ddeb;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 8px 22px rgba(15,23,42,.06)}
+.promo-wysiwyg-toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:10px;background:#f6f8fc;border-bottom:1px solid #d5ddeb}
+.promo-wysiwyg-toolbar button{height:34px;border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:0 10px;font-weight:800;color:#243044;cursor:pointer}
+.promo-wysiwyg-toolbar button:hover,.promo-wysiwyg-toolbar button.active{background:#0f172a;color:#fff;border-color:#0f172a}
+.promo-wysiwyg-toolbar .sep{width:1px;height:24px;background:#cbd5e1;margin:0 3px}
+.promo-wysiwyg-editor{min-height:260px;padding:14px 16px;outline:none;line-height:1.55;color:#111827;background:#fff;font-size:14px}
+.promo-wysiwyg-editor:empty:before{content:attr(data-placeholder);color:#94a3b8}
+.promo-wysiwyg-editor h2,.promo-wysiwyg-editor h3{margin:8px 0 10px;color:#0f172a}
+.promo-wysiwyg-editor p{margin:6px 0}
+.promo-wysiwyg-editor hr{border:0;border-top:1px solid #cbd5e1;margin:14px 0}
+.promo-wysiwyg-editor.html-mode{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;white-space:pre-wrap;background:#0f172a;color:#e5e7eb}
+#promoDetailText.promo-hidden-source{display:none}
+
+.promo-image-preview-wrap{margin-top:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}.promo-image-preview{max-width:260px;max-height:110px;border-radius:12px;border:1px solid #d5def0;background:#f8fafc;object-fit:contain;padding:4px}.promo-category-hint{font-size:12px;color:#64748b;margin-top:4px}

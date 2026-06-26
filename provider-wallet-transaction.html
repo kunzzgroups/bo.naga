@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Provider Transactions</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link href="assets/css/reports.css?v=1.0.11" rel="stylesheet" />
+</head>
+<body class="report-body pwt-page">
+<div class="report-shell">
+  <aside class="report-sidebar" id="reportSidebar">
+    <div class="report-brand">
+      <div class="logo"><i class="bi bi-shield-check"></i></div>
+      <div>Backoffice<br><small>Admin Panel</small></div>
+      <button class="close-side" type="button" data-close-sidebar><i class="bi bi-x-lg"></i></button>
+    </div>
+    <nav class="report-nav"></nav>
+  </aside>
+  <div class="sidebar-overlay" id="reportOverlay" data-close-sidebar></div>
+
+  <main class="report-main">
+    <header class="report-topbar">
+      <button class="hamb" type="button" data-open-sidebar><i class="bi bi-list"></i></button>
+      <div class="topbar-title">
+        <h1>Provider Transactions</h1>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="report-actions" data-bo-profile></div>
+    </header>
+
+    <div class="report-content pwt-content">
+      <section class="filter-card pwt-hero">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+          <div>
+            <div class="eyebrow"><i class="bi bi-bug"></i> Provider API Log</div>
+            <h2>Provider Transactions</h2>
+          </div>
+          <button id="txRefreshBtn" class="clean-btn primary" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+        </div>
+      </section>
+
+      <section class="filter-card">
+        <div class="filter-grid pwt-filter-grid">
+          <div class="field"><label>Member ID</label><input id="txMemberId" class="form-control" placeholder="e.g. 2"></div>
+          <div class="field"><label>Provider Code</label><input id="txProviderCode" class="form-control" placeholder="e.g. WBET"></div>
+          <div class="field"><label>Transaction Type</label><input id="txType" class="form-control" placeholder="LAUNCH / CREATE_PLAYER / BALANCE / DEPOSIT / WITHDRAW"></div>
+          <div class="field"><label>Status</label><select id="txStatus" class="form-select"><option value="">All Status</option><option>SUCCESS</option><option>FAILED</option><option>PENDING</option></select></div>
+          <div class="field"><label>From</label><input id="txFrom" type="date" class="form-control"></div>
+          <div class="field"><label>To</label><input id="txTo" type="date" class="form-control"></div>
+          <div class="field action-field"><button id="txSearchBtn" class="btn-primary-clean w-100" type="button"><i class="bi bi-search"></i> Search</button></div>
+          <div class="field action-field"><button id="txResetBtn" class="clean-btn w-100" type="button"><i class="bi bi-arrow-counterclockwise"></i> Reset</button></div>
+        </div>
+      </section>
+
+      <section class="table-card">
+        <div class="table-title-row">
+          <div>
+            <h2>Transaction Records</h2>
+          </div>
+          <span id="txRecordCount" class="badge text-bg-light">0 records</span>
+        </div>
+        <div class="table-wrap">
+          <table class="report-table pwt-table">
+            <thead>
+              <tr>
+                <th>ID</th><th>Member</th><th>Provider</th><th>Type</th><th>Amount</th><th>Status</th><th>HTTP</th><th>API URL</th><th>Created</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="txBody"><tr><td colspan="10" class="text-center py-4">Loading...</td></tr></tbody>
+          </table>
+        </div>
+        <div class="pwt-pager">
+          <button class="clean-btn" id="txPrevBtn" type="button"><i class="bi bi-chevron-left"></i> Previous</button>
+          <span id="txPager" class="text-muted small">Page 1 / 1</span>
+          <button class="clean-btn" id="txNextBtn" type="button">Next <i class="bi bi-chevron-right"></i></button>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="modal fade pwt-modal" id="txPayloadModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h5 class="modal-title">Provider API Payload</h5>
+          <small id="txPayloadMeta" class="text-muted">Request / response debug</small>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="payload-grid">
+          <div class="payload-block full"><label>API URL</label><pre id="txApiUrl" class="payload-box"></pre></div>
+          <div class="payload-block"><label>Request Payload</label><pre id="txRequestPayload" class="payload-box"></pre></div>
+          <div class="payload-block"><label>Response Payload</label><pre id="txResponsePayload" class="payload-box"></pre></div>
+          <div class="payload-block full"><label>Error Message</label><pre id="txErrorMessage" class="payload-box error-box"></pre></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="clean-btn" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/reports.js?v=1.0.11"></script>
+<script src="assets/js/provider-wallet-transaction.js?v=1.0.2"></script>
+</body>
+</html>

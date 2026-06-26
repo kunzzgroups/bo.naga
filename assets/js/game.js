@@ -100,6 +100,7 @@ const GAME_API = {
   const name = document.getElementById('gameName');
   const gameUrl = document.getElementById('gameUrl');
   const providerCode = document.getElementById('gameProviderCode');
+  const gameCode = document.getElementById('gameCode');
   const sortOrder = document.getElementById('gameSortOrder');
   const status = document.getElementById('gameStatus');
   const imageInput = document.getElementById('gameImage');
@@ -152,10 +153,20 @@ const GAME_API = {
     });
   }
 
+  function getProviderCode(item) {
+    return valueOf(item, ['providerCode', 'provider_code', 'provider', 'provider_code_name']);
+  }
+
+  function getGameCode(item) {
+    return valueOf(item, ['gameCode', 'game_code', 'code', 'launchCode', 'launch_code', 'providerGameCode', 'provider_game_code']);
+  }
+
   function normalizeGame(item) {
     return Object.assign({}, item, {
       categoryId: getCategoryId(item),
-      subCategoryId: getSubCategoryId(item)
+      subCategoryId: getSubCategoryId(item),
+      providerCode: getProviderCode(item),
+      gameCode: getGameCode(item)
     });
   }
 
@@ -247,6 +258,7 @@ const GAME_API = {
     name.value = '';
     gameUrl.value = '';
     providerCode.value = '';
+    if (gameCode) gameCode.value = '';
     sortOrder.value = '0';
     status.value = '1';
     selectedFile = null;
@@ -265,6 +277,7 @@ const GAME_API = {
     name.value = item.name || '';
     gameUrl.value = item.gameUrl || '';
     providerCode.value = item.providerCode || '';
+    if (gameCode) gameCode.value = item.gameCode || '';
     sortOrder.value = item.sortOrder ?? 0;
     status.value = String(item.status ?? 1);
     selectedFile = null;
@@ -299,7 +312,8 @@ const GAME_API = {
             <span><i class="bi bi-hash me-1"></i>ID: ${escapeHtml(item.id)}</span>
             <span><i class="bi bi-grid-3x3-gap me-1"></i>${escapeHtml(categoryName(getCategoryId(item)))}</span>
             <span><i class="bi bi-diagram-3 me-1"></i>${escapeHtml(subCategoryName(getSubCategoryId(item)))}</span>
-            <span><i class="bi bi-cpu me-1"></i>${escapeHtml(item.providerCode || '-')}</span>
+            <span><i class="bi bi-cpu me-1"></i>Provider: ${escapeHtml(item.providerCode || '-')}</span>
+            <span><i class="bi bi-controller me-1"></i>Game Code: ${escapeHtml(item.gameCode || '-')}</span>
             <span><i class="bi bi-link-45deg me-1"></i>${escapeHtml(item.gameUrl || '-')}</span>
             <span><i class="bi bi-sort-numeric-down me-1"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span>
           </div>
@@ -354,6 +368,16 @@ const GAME_API = {
       name.focus();
       return;
     }
+    if (!providerCode.value.trim()) {
+      setStatus('Please enter provider code. This is required for frontend launch.', 'error');
+      providerCode.focus();
+      return;
+    }
+    if (gameCode && !gameCode.value.trim()) {
+      setStatus('Please enter game code. This is required for frontend launch.', 'error');
+      gameCode.focus();
+      return;
+    }
 
     const fd = new FormData();
     if (isUpdate) fd.append('id', id.value);
@@ -362,6 +386,11 @@ const GAME_API = {
     fd.append('name', name.value.trim());
     fd.append('gameUrl', gameUrl.value.trim());
     fd.append('providerCode', providerCode.value.trim());
+    if (gameCode) {
+      fd.append('gameCode', gameCode.value.trim());
+      fd.append('code', gameCode.value.trim());
+      fd.append('launchCode', gameCode.value.trim());
+    }
     fd.append('sortOrder', sortOrder.value || '0');
     fd.append('status', status.value || '1');
     if (selectedFile) fd.append('image', selectedFile);

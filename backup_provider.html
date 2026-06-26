@@ -1,0 +1,25 @@
+ <div class="manage-list-card mt-4">
+            <div class="section-title slider-list-title"><div><h2>Callback / Report Test</h2><small>Preview callback mapping and check wallet ledger summary.</small></div></div>
+            <div class="slider-two-col"><div class="field"><label>Callback Provider</label><select id="callbackProviderCode"></select></div><div class="field"><label>Report Date</label><input id="reportFrom" type="date" /><input id="reportTo" type="date" class="mt-2" /></div></div>
+            <div class="field"><label>Sample Callback JSON</label><textarea id="callbackSample" rows="6" placeholder='{ "username":"jacky863_jdb", "event":"SETTLE", "txId":"tx001", "gameCode":"1001", "betAmount":10, "winAmount":15 }'></textarea></div>
+            <div class="slider-form-actions"><button class="clean-btn" type="button" id="callbackPreviewBtn">Callback Mapping Preview</button><button class="clean-btn" type="button" id="ledgerSummaryBtn">Wallet Ledger Summary</button></div>
+            <pre class="mt-3 p-3 bg-light rounded small" id="callbackResult" style="white-space:pre-wrap;min-height:120px"></pre>
+          </div>
+          </div>
+
+          <div class="manage-form-card mt-3">
+            <div class="section-title slider-list-title"><div><h2>Frontend Player Launch API</h2><small>Use this one backend API for all provider/game launch. Provider URL, path, payload and response path are controlled above in BO.</small></div></div>
+            <div class="p-3 bg-light rounded small" style="line-height:1.8">
+              <b>Frontend call:</b> <code>POST /api/player/provider/launch</code><br>
+              <b>Header:</b> <code>Authorization: Bearer MEMBER_JWT_TOKEN</code><br>
+              <b>Body by game ID:</b> <code>{ "gameId": 1, "amount": 10 }</code><br>
+              <b>Body by provider/game code:</b> <code>{ "providerCode":"JDB", "gameCode":"1001", "amount": 10 }</code><br>
+              Backend will auto create provider player if missing, optionally transfer main wallet to provider, call configured launch API, then return <code>data.launchUrl</code>.
+            </div>
+            <div class="slider-two-col mt-3">
+              <div class="field"><label>Member Token for Frontend Test</label><textarea id="playerLaunchToken" rows="3" placeholder="Paste member JWT token here, not admin token"></textarea></div>
+              <div class="field"><label>Player Launch Test Body</label><textarea id="playerLaunchBody" rows="3">{ "providerCode":"", "gameCode":"", "amount": 0 }</textarea></div>
+            </div>
+            <div class="slider-actions"><button class="clean-btn primary" type="button" id="playerLaunchTestBtn"><i class="bi bi-play-circle"></i> Test Frontend Launch API</button></div>
+            <pre class="mt-3 bg-dark text-light p-3 rounded" id="playerLaunchResult">Result will show here</pre>
+          </div>
