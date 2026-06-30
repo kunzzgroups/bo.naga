@@ -20,7 +20,8 @@
     bonus: { title: 'Bonus Management', icon: 'bi-gift' },
     support: { title: 'Support', icon: 'bi-headset' },
     wallet: { title: 'Wallet Management', icon: 'bi-wallet2' },
-    setting: { title: 'Setting', icon: 'bi-gear' }
+    setting: { title: 'Setting', icon: 'bi-gear' },
+    report: { title: 'Report', icon: 'bi-wallet2' }
   };
 
   // Used only when backend has not returned menu data yet.

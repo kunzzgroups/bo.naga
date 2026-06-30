@@ -15,6 +15,20 @@
     el.className = 'upload-status mb-3 ' + (type || '');
   }
 
+
+
+  function dt(value){
+    if(!value) return '-';
+    try{
+      const d = new Date(value);
+      if(isNaN(d.getTime())) return String(value).replace('T',' ').replace(/\.\d+.*$/,'');
+      const pad = n => String(n).padStart(2,'0');
+      return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+    }catch(e){
+      return String(value || '-');
+    }
+  }
+
   function esc(value){
     return String(value == null ? '' : value).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   }
@@ -49,7 +63,7 @@
           '<td><b>'+esc(row.username)+'</b><br><small>'+esc(row.displayName || row.username)+'</small></td>'+
           '<td><span class="badge '+(active?'text-bg-success':'text-bg-secondary')+'">'+(active?'Active':'Inactive')+'</span><br><small>'+esc(roleMap[String(row.roleId)] || ('Role #'+(row.roleId||1)))+'</small></td>'+
           '<td>'+esc(dt(row.createdAt || row.created_at))+'</td>'+
-          '<td>'+esc(row.updatedAt || '-')+'</td>'+
+          '<td>'+esc(dt(row.updatedAt || row.updated_at))+'</td>'+
           '<td>'+ (Number(row.id) === Number((BO_AUTH.user() || {}).id) ? '<span class="badge text-bg-primary">Current login</span>' : '') +'</td>'+
           '<td><button class="clean-btn primary admin-edit-btn" data-id="'+esc(row.id)+'" data-row=\''+JSON.stringify(row).replace(/'/g,'&#39;')+'\'><i class="bi bi-pencil-square"></i> Edit</button></td>'+
         '</tr>';

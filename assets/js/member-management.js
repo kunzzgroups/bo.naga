@@ -272,9 +272,15 @@
   }
 
   function renderMembers(rows){
-    const table=document.querySelector('.user-main-table tbody'); if(!table) return;
+    const table=document.querySelector('.user-main-table tbody');
+    const cards=document.querySelector('.member-card-list');
+    if(!table) return;
     updateStats(rows);
-    if(!rows.length){ table.innerHTML='<tr><td colspan="17">No member found.</td></tr>'; return; }
+    if(!rows.length){
+      table.innerHTML='<tr><td colspan="17">No member found.</td></tr>';
+      if(cards) cards.innerHTML='<div class="member-card"><h3>No member found</h3><div class="meta">Try another search filter.</div></div>';
+      return;
+    }
     table.innerHTML=rows.map(m=>{
       const status = memberStatus(m);
       const locked = status === 'LOCKED';
@@ -283,7 +289,7 @@
         <td>${esc(dt(first(m,['createdAt','registerDate','created_at'], '')))}</td>
         <td><b>${esc(first(m,['username'], '-'))}</b><br><small>${esc(first(m,['fullName','name','displayName'], ''))}</small></td>
         <td>${esc(first(m,['mobile','phone','mobileNo'], '-'))}</td>
-        <td>${esc(first(m,['bankAccount','bankAccountNo','accountNo'], '-'))}</td>
+        <td>${esc(first(m,['bankAccount','bankAccountNumber','bankAccountNo','accountNo'], '-'))}</td>
         <td>${esc(first(m,['bank','bankName'], '-'))}</td>
         <td>${esc(first(m,['referrerCode','referrer','agent'], '-'))}</td>
         <td>${esc(first(m,['topReferrer','topAgent','upline'], '-'))}</td>
@@ -299,6 +305,31 @@
         <td><div class="d-flex gap-2 flex-wrap"><button class="clean-btn primary" data-member-wallet="${esc(id)}">View</button><button class="clean-btn" data-member-lock="${esc(id)}" data-lock="${locked?0:1}">${locked?'Unlock':'Lock'}</button></div></td>
       </tr>`;
     }).join('');
+    if(cards){
+      cards.innerHTML = rows.map(m=>{
+        const status = memberStatus(m);
+        const locked = status === 'LOCKED';
+        const id = first(m,['id','memberId','userId'], '');
+        return `<div class="member-card">
+          <div class="member-card-head"><h3>${esc(first(m,['username'], '-'))}</h3><span class="status-pill ${locked?'off':''}">${esc(status)}</span></div>
+          <div class="meta">${esc(first(m,['fullName','name','displayName'], '-'))} • ${esc(first(m,['mobile','phone','mobileNo'], '-'))}</div>
+          <div class="meta">Registered: ${esc(dt(first(m,['createdAt','registerDate','created_at'], '')))}</div>
+          <div class="member-grid">
+            <span>Bank</span><b>${esc(first(m,['bank','bankName'], '-'))}</b>
+            <span>Main Wallet</span><b>${money(first(m,['mainWalletBalance','mainBalance','balance'],0))}</b>
+            <span>Deposit</span><b>${money(first(m,MONEY_KEYS.deposit,0))}</b>
+            <span>Withdraw</span><b>${money(first(m,MONEY_KEYS.withdraw,0))}</b>
+            <span>Win/Loss</span><b>${money(first(m,MONEY_KEYS.winLoss,0))}</b>
+            <span>Bonus</span><b>${money(first(m,MONEY_KEYS.bonus,0))}</b>
+            <span>Commission</span><b>${money(first(m,MONEY_KEYS.commission,0))}</b>
+          </div>
+          <div class="d-grid gap-2 mt-3">
+            <button class="clean-btn primary w-100" data-member-wallet="${esc(id)}">View Details</button>
+            <button class="clean-btn w-100" data-member-lock="${esc(id)}" data-lock="${locked?0:1}">${locked?'Unlock':'Lock'} Member</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
   }
 
   function applySearch(){ renderMembers(allMembers.filter(memberMatches)); }

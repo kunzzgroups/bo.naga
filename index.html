@@ -12,11 +12,12 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
       rel="stylesheet"
     />
-    <link href="assets/css/reports.css?v=1.0.11" rel="stylesheet" />
+    <link href="assets/css/reports.css?v=1.0.12" rel="stylesheet" />
 
     <style>
-      .wallet-modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.38);z-index:2000;display:flex;align-items:center;justify-content:center;padding:18px}
+      .wallet-modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.38);z-index:2000;display:flex;align-items:center;justify-content:center;padding:18px;overscroll-behavior:contain}
       .wallet-modal-overlay[hidden]{display:none}
+      body.wallet-modal-open{overflow:hidden!important;position:fixed;width:100%;left:0;right:0}
       .wallet-modal-card{width:min(1120px,100%);max-height:92vh;overflow:hidden;background:#fff;border:1px solid #d9e2ef;border-radius:18px;box-shadow:0 25px 60px rgba(15,23,42,.22);display:flex;flex-direction:column}
       .wallet-modal-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px;border-bottom:1px solid #e8eef6;flex:0 0 auto}
       .wallet-modal-body{padding:0;min-height:0;display:grid;grid-template-columns:230px 1fr;overflow:hidden;flex:1 1 auto}
@@ -31,7 +32,18 @@
       .wallet-adjust-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.wallet-adjust-grid .field.full{grid-column:1/-1}
       .wallet-actions-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
       .wallet-mini-table{width:100%;border-collapse:separate;border-spacing:0}.wallet-mini-table th,.wallet-mini-table td{padding:10px 12px;border-bottom:1px solid #edf2f7;text-align:left;white-space:nowrap}.wallet-mini-table th{background:#f8fafc;color:#475569;font-size:12px}.wallet-empty{padding:16px;border:1px dashed #cbd5e1;border-radius:12px;background:#f8fafc;color:#64748b}
-      @media(max-width:760px){.wallet-modal-card{max-height:95vh}.wallet-modal-body{grid-template-columns:1fr;overflow:auto}.wallet-member-panel{border-right:0;border-bottom:1px solid #e8eef6}.wallet-side-tabs{display:flex;overflow:auto}.wallet-side-tab{min-width:max-content}.wallet-tab-content{overflow:visible}.wallet-adjust-grid,.wallet-balance-box{grid-template-columns:1fr}}
+      @media(max-width:760px){
+        .wallet-modal-overlay{align-items:stretch;padding:10px}
+        .wallet-modal-card{width:100%;height:calc(100vh - 20px);max-height:none;border-radius:16px}
+        .wallet-modal-head{padding:16px 20px}.wallet-modal-head h3{font-size:24px;line-height:1.15}
+        .wallet-modal-body{display:flex;flex-direction:column;overflow:hidden}
+        .wallet-member-panel{flex:0 0 auto;padding:12px 16px;border-right:0;border-bottom:1px solid #e8eef6;overflow:visible;background:#f8fbff}
+        .wallet-member-line{margin-bottom:10px;display:flex;align-items:center}
+        .wallet-side-tabs{display:flex!important;gap:8px;overflow-x:auto;overflow-y:hidden;margin-top:8px;padding-bottom:6px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+        .wallet-side-tab{width:auto;min-width:max-content;white-space:nowrap;padding:9px 11px;border-radius:999px;font-size:12px;flex:0 0 auto}
+        .wallet-tab-content{flex:1 1 auto;overflow:auto;padding:16px;min-height:0}
+        .wallet-adjust-grid,.wallet-balance-box{grid-template-columns:1fr}.wallet-actions-row .clean-btn{width:100%;justify-content:center}
+      }
     </style>
   </head>
   <body class="report-body">
@@ -152,32 +164,7 @@
             <div class="scroll-hint">
               Swipe left / right to view more columns.
             </div>
-            <div class="member-card-list mt-3">
-              <div class="member-card">
-                <h3>TEST</h3>
-                <div class="meta">6123456789 • 2026-06-03 14:11</div>
-                <div class="member-grid">
-                  <span>Bank</span><b>PAYID</b><span>Deposit</span><b>0.00</b
-                  ><span>Manual</span><b>50.00</b><span>Commission</span
-                  ><b>0.00</b>
-                </div>
-                <button class="clean-btn primary w-100 mt-3" data-open-user>
-                  View Details
-                </button>
-              </div>
-              <div class="member-card">
-                <h3>ALAN</h3>
-                <div class="meta">60123456780 • 2026-06-03 13:20</div>
-                <div class="member-grid">
-                  <span>Bank</span><b>MAYBANK</b><span>Deposit</span
-                  ><b>1,250.00</b><span>Manual</span><b>0.00</b
-                  ><span>Commission</span><b>12.50</b>
-                </div>
-                <button class="clean-btn primary w-100 mt-3" data-open-user>
-                  View Details
-                </button>
-              </div>
-            </div>
+            <div class="member-card-list mt-3"><div class="member-card"><h3>Loading members...</h3><div class="meta">Please wait.</div></div></div>
           </div>
         </section>
       </main>
@@ -261,9 +248,9 @@
         </div>
       </div>
     </div>
-    <script src="assets/js/config.js?v=1.0.9"></script>
+    <script src="assets/js/config.js?v=1.0.10"></script>
     <script src="assets/js/reports.js?v=1.0.4"></script>
-    <script src="assets/js/auth.js?v=1.0.9"></script>
+    <script src="assets/js/auth.js?v=1.0.10"></script>
     <script src="assets/js/member-management.js?v=1.0.3"></script>
   </body>
 </html>
