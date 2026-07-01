@@ -112,6 +112,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
   function formatProviderDebug(data){
     const d = data || {};
     const arrayPaths = (d.availablePaths || []).filter(x => x.isArray).map(x => x.path + ' (' + (x.size ?? '-') + ')');
+    const objectPaths = (d.availablePaths || []).filter(x => x.type === 'object').map(x => x.path);
     return JSON.stringify({
       providerCode: d.providerCode,
       httpStatus: d.httpStatus,
@@ -119,7 +120,10 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       configuredGameListPath: d.configuredGameListPath,
       configuredPathType: d.configuredPathType,
       configuredPathIsArray: d.configuredPathIsArray,
+      configuredPathIsObject: d.configuredPathIsObject,
+      normalizedGameRows: d.normalizedGameRows,
       suggestedArrayPaths: arrayPaths,
+      suggestedObjectPaths: objectPaths,
       requestPayload: d.requestPayload,
       responseBody: (() => { try { return JSON.parse(d.responseBody); } catch(e) { return d.responseBody; } })(),
       availablePaths: d.availablePaths,
@@ -129,7 +133,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
   }
 
   async function syncGames(){ const providerCode = walletProviderCode.value || (rows[0] && rows[0].code); if(!providerCode){ setStatus('Please create/select provider first.', 'error'); return; } if(!confirm('Sync games from provider ' + providerCode + '?')) return; try{ setStatus('Syncing provider games...', ''); const data=new FormData(); data.append('providerCode', providerCode); const json=await fetchJson(PROVIDER_GAME_API.sync, {method:'POST', body:data}); setStatus('Game sync completed. Inserted: '+json.data.inserted+', Updated: '+json.data.updated+'. Path: '+(json.data.gameListPath || '-'), 'success'); if(window.walletResult) walletResult.textContent=JSON.stringify(json.data, null, 2); await load(); }catch(err){ setStatus(err.message || 'Game sync failed.', 'error'); if(window.walletResult) walletResult.textContent='Sync error:\n' + (err.message || 'Game sync failed') + '\n\nOpen Provider Transactions page and filter Tx Type = GAME_LIST to inspect request/response.'; } }
-  async function debugGames(){ const providerCode = walletProviderCode.value || (rows[0] && rows[0].code); if(!providerCode){ setStatus('Please create/select provider first.', 'error'); return; } try{ setStatus('Debugging provider game list...', ''); const data=new FormData(); data.append('providerCode', providerCode); const json=await fetchJson(PROVIDER_GAME_API.debug, {method:'POST', body:data}); setStatus('Debug completed. Check result box below and Provider Transactions page.', json.data.configuredPathIsArray ? 'success' : 'error'); if(window.walletResult) walletResult.textContent=formatProviderDebug(json.data); }catch(err){ setStatus(err.message || 'Debug failed.', 'error'); if(window.walletResult) walletResult.textContent='Debug error:\n' + (err.message || 'Debug failed') + '\n\nOpen Provider Transactions page and filter Tx Type = GAME_LIST.'; } }
+  async function debugGames(){ const providerCode = walletProviderCode.value || (rows[0] && rows[0].code); if(!providerCode){ setStatus('Please create/select provider first.', 'error'); return; } try{ setStatus('Debugging provider game list...', ''); const data=new FormData(); data.append('providerCode', providerCode); const json=await fetchJson(PROVIDER_GAME_API.debug, {method:'POST', body:data}); setStatus('Debug completed. Check result box below and Provider Transactions page.', (json.data.configuredPathIsArray || json.data.normalizedGameRows > 0) ? 'success' : 'error'); if(window.walletResult) walletResult.textContent=formatProviderDebug(json.data); }catch(err){ setStatus(err.message || 'Debug failed.', 'error'); if(window.walletResult) walletResult.textContent='Debug error:\n' + (err.message || 'Debug failed') + '\n\nOpen Provider Transactions page and filter Tx Type = GAME_LIST.'; } }
   async function callbackPreview(){ const code=document.getElementById('callbackProviderCode').value; const raw=document.getElementById('callbackSample').value || '{}'; const box=document.getElementById('callbackResult'); try{ const json=await fetchJson(CALLBACK_API.previewBase + '/' + encodeURIComponent(code), {method:'POST', headers:{'Content-Type':'application/json'}, body:raw}); box.textContent=JSON.stringify(json.data,null,2); }catch(err){ box.textContent=err.message || 'Callback preview failed'; } }
   async function ledgerSummary(){ const code=document.getElementById('callbackProviderCode').value; const from=document.getElementById('reportFrom').value; const to=document.getElementById('reportTo').value; const box=document.getElementById('callbackResult'); let url=CALLBACK_API.report + '?providerCode=' + encodeURIComponent(code); if(from) url += '&from=' + encodeURIComponent(from); if(to) url += '&to=' + encodeURIComponent(to); try{ const json=await fetchJson(url); box.textContent=JSON.stringify(json.data,null,2); }catch(err){ box.textContent=err.message || 'Report failed'; } }
 
@@ -188,6 +192,49 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       }
     };
   }
+  function fachaiActionPreset(){
+    return {
+      GAME_LIST: {
+        functionName: 'GetGameIconList',
+        path: '/GetGameIconList',
+        httpMethod: 'POST',
+        signatureTemplate: '${rawJson}',
+        requestTemplate: '{\n  "AgentCode": "${AgentCode}",\n  "Currency": "${Currency}",\n  "Params": "${aes128ecb_base64:${rawJson}:${AgentKey}}",\n  "Sign": "${signature}"\n}',
+        responseListPath: 'GetGameIconList',
+        gameCodePath: '@key',
+        gameNamePath: 'gameNameOfEnglish',
+        gameImagePath: 'enUrl',
+        gameCategoryPath: '@group',
+        successPath: 'Result',
+        successValue: '0'
+      }
+    };
+  }
+  function fillFachaiPreset(){
+    if(!el.apiActionConfigs) return;
+    el.providerCode.value = el.providerCode.value || 'FACHAI';
+    el.providerName.value = el.providerName.value || 'FaChai Gaming';
+    el.providerType.value = 'SLOT';
+    el.apiBaseUrl.value = el.apiBaseUrl.value || 'https://api.fcg666.net';
+    el.gameListPath.value = '/GetGameIconList';
+    el.signatureType.value = 'MD5';
+    el.signatureOutputCase.value = 'LOWER';
+    el.signatureTemplate.value = '${rawJson}';
+    el.apiActionConfigs.value = JSON.stringify(fachaiActionPreset(), null, 2);
+    if(!el.providerVariables.value.trim()){
+      el.providerVariables.value = JSON.stringify({AgentCode: 'TIT', Currency: el.currency.value || 'MYR', AgentKey: 'Ks7mUzBnRGoGn0Es', rawJson: '{}'}, null, 2);
+    }
+    el.gameListRequestTemplate.value = '{\n  "AgentCode": "${AgentCode}",\n  "Currency": "${Currency}",\n  "Params": "${aes128ecb_base64:${rawJson}:${AgentKey}}",\n  "Sign": "${signature}"\n}';
+    el.responseGameListPath.value = 'GetGameIconList';
+    el.responseGameCodePath.value = '@key';
+    el.responseGameNamePath.value = 'gameNameOfEnglish';
+    el.responseGameImagePath.value = 'enUrl';
+    el.responseGameCategoryPath.value = '@group';
+    el.responseSuccessPath.value = 'Result';
+    el.responseSuccessValue.value = '0';
+    setStatus('FaChai/JDB game list preset filled. Save provider, then use Debug Game List or Sync Selected Games.', 'success');
+  }
+
   function fillLive22Preset(){
     if(!el.apiActionConfigs) return;
     el.apiActionConfigs.value = JSON.stringify(live22ActionPreset(), null, 2);
@@ -210,7 +257,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     catch(err){ setStatus('API Action Configs JSON invalid: ' + err.message, 'error'); }
   }
 
-  form.addEventListener('submit', save); const live22PresetBtn=document.getElementById('fillLive22ActionPresetBtn'); if(live22PresetBtn) live22PresetBtn.addEventListener('click', fillLive22Preset); const formatActionBtn=document.getElementById('formatActionConfigBtn'); if(formatActionBtn) formatActionBtn.addEventListener('click', formatActionConfig); resetBtn.addEventListener('click', reset); refreshBtn.addEventListener('click', load); list.addEventListener('click', e => { const eb=e.target.closest('[data-edit-id]'), db=e.target.closest('[data-delete-id]'); if(eb){ const item=rows.find(x=>String(x.id)===String(eb.dataset.editId)); if(item) edit(item); } if(db) remove(db.dataset.deleteId); }); document.querySelectorAll('[data-wallet-action]').forEach(btn => btn.addEventListener('click', () => wallet(btn.dataset.walletAction))); const syncBtn=document.getElementById('syncSelectedProviderBtn'); if(syncBtn) syncBtn.addEventListener('click', syncGames); const debugBtn=document.getElementById('debugSelectedProviderBtn'); if(debugBtn) debugBtn.addEventListener('click', debugGames); const cbBtn=document.getElementById('callbackPreviewBtn'); if(cbBtn) cbBtn.addEventListener('click', callbackPreview); const reportBtn=document.getElementById('ledgerSummaryBtn'); if(reportBtn) reportBtn.addEventListener('click', ledgerSummary); reset(); load();
+  form.addEventListener('submit', save); const live22PresetBtn=document.getElementById('fillLive22ActionPresetBtn'); if(live22PresetBtn) live22PresetBtn.addEventListener('click', fillLive22Preset); const fachaiPresetBtn=document.getElementById('fillFachaiActionPresetBtn'); if(fachaiPresetBtn) fachaiPresetBtn.addEventListener('click', fillFachaiPreset); const formatActionBtn=document.getElementById('formatActionConfigBtn'); if(formatActionBtn) formatActionBtn.addEventListener('click', formatActionConfig); resetBtn.addEventListener('click', reset); refreshBtn.addEventListener('click', load); list.addEventListener('click', e => { const eb=e.target.closest('[data-edit-id]'), db=e.target.closest('[data-delete-id]'); if(eb){ const item=rows.find(x=>String(x.id)===String(eb.dataset.editId)); if(item) edit(item); } if(db) remove(db.dataset.deleteId); }); document.querySelectorAll('[data-wallet-action]').forEach(btn => btn.addEventListener('click', () => wallet(btn.dataset.walletAction))); const syncBtn=document.getElementById('syncSelectedProviderBtn'); if(syncBtn) syncBtn.addEventListener('click', syncGames); const debugBtn=document.getElementById('debugSelectedProviderBtn'); if(debugBtn) debugBtn.addEventListener('click', debugGames); const cbBtn=document.getElementById('callbackPreviewBtn'); if(cbBtn) cbBtn.addEventListener('click', callbackPreview); const reportBtn=document.getElementById('ledgerSummaryBtn'); if(reportBtn) reportBtn.addEventListener('click', ledgerSummary); reset(); load();
 })();
 
 (function(){

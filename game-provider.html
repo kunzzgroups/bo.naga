@@ -40,12 +40,13 @@
   "random_key": "RANDOM_8",
   "player": "${account_id}",
   "unix_time": "TIMESTAMP"
-}'></textarea><small class="text-secondary">Create any ${key} here. Value can be static, ${account_id}, ${member_id}, RANDOM_8, UUID, TIMESTAMP, DATETIME, TXID.</small></div>
+}'></textarea><small class="text-secondary">Create any ${key} here. Value can be static, ${account_id}, ${member_id}, RANDOM_8, UUID, TIMESTAMP, DATETIME, TXID. Crypto helper supported: ${aes128ecb_base64:${rawJson}:${AgentKey}}.</small></div>
 
                 <div class="field action-config-box">
                   <label>API Action Configs <span class="text-secondary small">(one formula/path/template per provider API)</span></label>
                   <div class="d-flex gap-2 flex-wrap mb-2">
                     <button class="clean-btn" type="button" id="fillLive22ActionPresetBtn"><i class="bi bi-magic"></i> Fill Live22 Preset</button>
+                    <button class="clean-btn" type="button" id="fillFachaiActionPresetBtn"><i class="bi bi-magic"></i> Fill FaChai/JDB Game List</button>
                     <button class="clean-btn" type="button" id="formatActionConfigBtn"><i class="bi bi-braces"></i> Format JSON</button>
                   </div>
                   <textarea id="apiActionConfigs" name="apiActionConfigs" rows="12" placeholder='{
@@ -69,7 +70,7 @@
                 <div class="slider-two-col"><div class="field"><label>Signature Type</label><select id="signatureType" name="signatureType"><option>MD5</option><option>SHA256</option><option>NONE</option></select></div><div class="field"><label>Signature Output Case</label><select id="signatureOutputCase" name="signatureOutputCase"><option value="LOWER">Lowercase</option><option value="UPPER">Uppercase</option><option value="RAW">Raw / No Convert</option></select></div></div>
                 <div class="field"><label>Signature Formula Builder</label><input id="signatureTemplate" name="signatureTemplate" placeholder="${method}${operator_id}${account_id}${ukey}${secret_key}" /><small class="text-secondary">Use provider document formula here. Example: ${method}${operator_id}${account_id}${ukey}${secret_key}</small></div>
                 <div class="slider-two-col"><div class="field"><label>Random UKey Length</label><input id="ukeyLength" name="ukeyLength" type="number" min="1" max="64" value="8" /></div><div class="field"><label>UKey Prefix / Static Value</label><input id="ukeyPrefix" name="ukeyPrefix" placeholder="Optional prefix" /><input id="ukeyStaticValue" class="mt-2" name="ukeyStaticValue" placeholder="Optional fixed ukey, normally empty" /></div></div>
-                <div class="field"><label>Available Variables</label><div class="p-2 bg-light rounded small" style="line-height:1.8">Built-in: ${operator_id}, ${secret_key}, ${account_id}, ${username}, ${member_id}, ${ukey}, ${method}, ${amount}, ${transaction_id}, ${game_code}, ${currency}, ${request_date_time}, ${timestamp}, ${signature}<br/>Custom: any key added in Dynamic Provider Variables, example ${merchant_id}, ${nonce}, ${token}</div></div>
+                <div class="field"><label>Available Variables</label><div class="p-2 bg-light rounded small" style="line-height:1.8">Built-in: ${operator_id}, ${secret_key}, ${account_id}, ${username}, ${member_id}, ${ukey}, ${method}, ${amount}, ${transaction_id}, ${game_code}, ${currency}, ${request_date_time}, ${timestamp}, ${signature}<br/>Crypto: ${aes128ecb_base64:${rawJson}:${AgentKey}} for AES-128-ECB + Base64 Params<br/>Nested map game list: use Game Code Path @key and Category Path @group<br/>Custom: any key added in Dynamic Provider Variables, example ${merchant_id}, ${nonce}, ${token}</div></div>
                 <div class="slider-two-col"><div class="field"><label>Create Player Path</label><input id="createPlayerPath" name="createPlayerPath" placeholder="/CreatePlayer" /></div><div class="field"><label>Balance Path</label><input id="balancePath" name="balancePath" placeholder="/GetBalance" /></div></div>
                 <div class="slider-two-col"><div class="field"><label>Deposit Path</label><input id="depositPath" name="depositPath" placeholder="/Deposit" /></div><div class="field"><label>Withdraw Path</label><input id="withdrawPath" name="withdrawPath" placeholder="/Withdrawal" /></div></div>
                 <div class="slider-two-col"><div class="field"><label>Launch Path</label><input id="launchPath" name="launchPath" placeholder="/LaunchSport" /></div><div class="field"><label>Game List Path</label><input id="gameListPath" name="gameListPath" placeholder="/GetGameList" /></div></div>
@@ -117,7 +118,7 @@
         </section>
       </main>
     </div>
-    <script src="assets/js/config.js?v=1.0.10"></script><script src="assets/js/auth.js?v=1.0.10"></script><script src="assets/js/reports.js?v=1.0.4"></script><script src="assets/js/game-provider.js?v=1.0.4"></script>
+    <script src="assets/js/config.js?v=1.0.10"></script><script src="assets/js/auth.js?v=1.0.10"></script><script src="assets/js/reports.js?v=1.0.4"></script><script src="assets/js/game-provider.js?v=1.0.6"></script>
       <script src="assets/js/crud-modal-pattern.js?v=1.0.0"></script>
   </body>
 </html>
