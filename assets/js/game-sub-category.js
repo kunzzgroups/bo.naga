@@ -78,6 +78,10 @@ const GAME_CATEGORY_API = {
   list: adminApi('GAME_CATEGORY_LIST')
 };
 
+const GAME_PROVIDER_API = {
+  list: adminApi('GAME_PROVIDER_LIST')
+};
+
 const GAME_SUB_CATEGORY_API = {
   list: adminApi('GAME_SUB_CATEGORY_LIST'),
   create: adminApi('GAME_SUB_CATEGORY_CREATE'),
@@ -92,6 +96,7 @@ const GAME_SUB_CATEGORY_API = {
   const formTitle = document.getElementById('subCategoryFormTitle');
   const id = document.getElementById('subCategoryId');
   const categoryId = document.getElementById('subCategoryCategoryId');
+  const providerCode = document.getElementById('subCategoryProviderCode');
   const name = document.getElementById('subCategoryName');
   const sortOrder = document.getElementById('subCategorySortOrder');
   const status = document.getElementById('subCategoryStatus');
@@ -105,6 +110,7 @@ const GAME_SUB_CATEGORY_API = {
 
   let currentItems = [];
   let categories = [];
+  let providers = [];
 
   function setStatus(message, type) {
     statusBox.textContent = message || '';
@@ -122,21 +128,42 @@ const GAME_SUB_CATEGORY_API = {
     return item ? item.name : '-';
   }
 
+  function providerCodeOf(item) {
+    return String(item?.code || item?.providerCode || item?.provider_code || '').trim().toUpperCase();
+  }
+
+  function providerName(code) {
+    const clean = String(code || '').trim().toUpperCase();
+    const item = providers.find(x => providerCodeOf(x) === clean);
+    return item ? (item.name || clean) : (clean || '-');
+  }
+
+  function fillProviderOptions() {
+    const options = providers.map(item => `<option value="${escapeHtml(providerCodeOf(item))}">${escapeHtml(item.name || providerCodeOf(item))}</option>`).join('');
+    providerCode.innerHTML = options || '<option value="">No provider found</option>';
+  }
+
   function fillCategoryOptions() {
     const options = categories.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join('');
     categoryId.innerHTML = options || '<option value="">No category found</option>';
     filter.innerHTML = '<option value="">All Categories</option>' + options;
+    fillProviderOptions();
   }
 
   async function loadCategories() {
-    const json = await fetchJson(GAME_CATEGORY_API.list);
-    categories = json.data || [];
+    const [catJson, providerJson] = await Promise.all([
+      fetchJson(GAME_CATEGORY_API.list),
+      fetchJson(GAME_PROVIDER_API.list).catch(() => ({ data: [] }))
+    ]);
+    categories = catJson.data || [];
+    providers = providerJson.data || [];
     fillCategoryOptions();
   }
 
   function resetForm() {
     id.value = '';
     if (categories[0]) categoryId.value = String(categories[0].id);
+    if (providers[0]) providerCode.value = providerCodeOf(providers[0]);
     name.value = '';
     sortOrder.value = '0';
     status.value = '1';
@@ -148,6 +175,7 @@ const GAME_SUB_CATEGORY_API = {
   function editItem(item) {
     id.value = item.id || '';
     categoryId.value = String(item.categoryId || '');
+    providerCode.value = String(item.providerCode || '').toUpperCase();
     name.value = item.name || '';
     sortOrder.value = item.sortOrder ?? 0;
     status.value = String(item.status ?? 1);
@@ -174,6 +202,7 @@ const GAME_SUB_CATEGORY_API = {
           <div class="slider-meta">
             <span><i class="bi bi-hash me-1"></i>ID: ${escapeHtml(item.id)}</span>
             <span><i class="bi bi-grid-3x3-gap me-1"></i>${escapeHtml(categoryName(item.categoryId))}</span>
+            <span><i class="bi bi-cpu me-1"></i>Provider: ${escapeHtml(providerName(item.providerCode))}</span>
             <span><i class="bi bi-sort-numeric-down me-1"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span>
           </div>
         </div>
@@ -209,6 +238,11 @@ const GAME_SUB_CATEGORY_API = {
       categoryId.focus();
       return;
     }
+    if (!providerCode.value) {
+      setStatus('Please select provider.', 'error');
+      providerCode.focus();
+      return;
+    }
     if (!name.value.trim()) {
       setStatus('Please enter sub category name.', 'error');
       name.focus();
@@ -218,6 +252,7 @@ const GAME_SUB_CATEGORY_API = {
     const fd = new FormData();
     if (isUpdate) fd.append('id', id.value);
     fd.append('categoryId', categoryId.value);
+    fd.append('providerCode', providerCode.value);
     fd.append('name', name.value.trim());
     fd.append('sortOrder', sortOrder.value || '0');
     fd.append('status', status.value || '1');

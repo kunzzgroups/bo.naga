@@ -82,6 +82,10 @@ const GAME_SUB_CATEGORY_API = {
   list: adminApi('GAME_SUB_CATEGORY_LIST')
 };
 
+const GAME_PROVIDER_API = {
+  list: adminApi('GAME_PROVIDER_LIST')
+};
+
 const GAME_API = {
   list: adminApi('GAME_LIST'),
   create: adminApi('GAME_CREATE'),
@@ -114,6 +118,7 @@ const GAME_API = {
   const statusBox = document.getElementById('gameStatusBox');
   const categoryFilter = document.getElementById('gameCategoryFilter');
   const subCategoryFilter = document.getElementById('gameSubCategoryFilter');
+  const providerFilter = document.getElementById('gameProviderFilter');
   const list = document.getElementById('gameList');
   const empty = document.getElementById('gameEmpty');
 
@@ -121,6 +126,7 @@ const GAME_API = {
   let currentItems = [];
   let categories = [];
   let subCategories = [];
+  let providers = [];
   let picker;
 
   function valueOf(obj, keys) {
@@ -149,6 +155,7 @@ const GAME_API = {
     return Object.assign({}, item, {
       id: valueOf(item, ['id', 'subCategoryId', 'sub_category_id']),
       categoryId: valueOf(item, ['categoryId', 'gameCategoryId', 'category_id', 'game_category_id', 'parentCategoryId']),
+      providerCode: valueOf(item, ['providerCode', 'provider_code']).toString().toUpperCase(),
       name: valueOf(item, ['name', 'title', 'subCategoryName'])
     });
   }
@@ -196,22 +203,38 @@ const GAME_API = {
     return (withAll ? '<option value="">All Categories</option>' : '') + (options || '<option value="">No category found</option>');
   }
 
-  function subCategoryOptions(catId, withAll) {
-    const filtered = catId ? subCategories.filter(x => String(x.categoryId) === String(catId)) : subCategories;
-    const options = filtered.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join('');
+  function subCategoryOptions(catId, withAll, providerVal) {
+    const cleanProvider = String(providerVal || '').trim().toUpperCase();
+    const filtered = subCategories.filter(x => {
+      const categoryOk = !catId || String(x.categoryId) === String(catId);
+      const providerOk = !cleanProvider || !x.providerCode || String(x.providerCode).toUpperCase() === cleanProvider;
+      return categoryOk && providerOk;
+    });
+    const options = filtered.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}${item.providerCode ? ' - ' + escapeHtml(item.providerCode) : ''}</option>`).join('');
     return (withAll ? '<option value="">All Sub Categories</option>' : '') + (options || '<option value="">No sub category found</option>');
+  }
+
+  function providerCodeOf(item) {
+    return valueOf(item, ['code', 'providerCode', 'provider_code']).toString().toUpperCase();
+  }
+
+  function fillProviderFilter() {
+    if (!providerFilter) return;
+    const options = providers.map(item => `<option value="${escapeHtml(providerCodeOf(item))}">${escapeHtml(item.name || providerCodeOf(item))}</option>`).join('');
+    providerFilter.innerHTML = '<option value="">All Providers</option>' + options;
   }
 
   function fillOptions() {
     categoryId.innerHTML = categoryOptions(false);
     categoryFilter.innerHTML = categoryOptions(true);
+    fillProviderFilter();
     refreshSubCategoryOptions();
     refreshFilterSubCategoryOptions();
   }
 
   function refreshSubCategoryOptions(keepValue) {
     const oldValue = keepValue || subCategoryId.value;
-    subCategoryId.innerHTML = subCategoryOptions(categoryId.value, false);
+    subCategoryId.innerHTML = subCategoryOptions(categoryId.value, false, providerCode.value);
     if (oldValue && Array.from(subCategoryId.options).some(o => o.value === String(oldValue))) {
       subCategoryId.value = String(oldValue);
     }
@@ -219,19 +242,21 @@ const GAME_API = {
 
   function refreshFilterSubCategoryOptions() {
     const oldValue = subCategoryFilter.value;
-    subCategoryFilter.innerHTML = subCategoryOptions(categoryFilter.value, true);
+    subCategoryFilter.innerHTML = subCategoryOptions(categoryFilter.value, true, providerFilter?.value || "");
     if (oldValue && Array.from(subCategoryFilter.options).some(o => o.value === String(oldValue))) {
       subCategoryFilter.value = String(oldValue);
     }
   }
 
   async function loadSetup() {
-    const [catJson, subJson] = await Promise.all([
+    const [catJson, subJson, providerJson] = await Promise.all([
       fetchJson(GAME_CATEGORY_API.list),
-      fetchJson(GAME_SUB_CATEGORY_API.list)
+      fetchJson(GAME_SUB_CATEGORY_API.list),
+      fetchJson(GAME_PROVIDER_API.list).catch(() => ({ data: [] }))
     ]);
     categories = (catJson.data || []).map(normalizeCategory);
     subCategories = (subJson.data || []).map(normalizeSubCategory);
+    providers = (providerJson.data || []);
     fillOptions();
   }
 
@@ -338,12 +363,16 @@ const GAME_API = {
 
       const selectedCategory = String(categoryFilter.value || '');
       const selectedSubCategory = String(subCategoryFilter.value || '');
+      const selectedProvider = String(providerFilter?.value || '').toUpperCase();
 
       if (selectedCategory) {
         rows = rows.filter(item => String(getCategoryId(item)) === selectedCategory);
       }
       if (selectedSubCategory) {
         rows = rows.filter(item => String(getSubCategoryId(item)) === selectedSubCategory);
+      }
+      if (selectedProvider) {
+        rows = rows.filter(item => String(item.providerCode || '').toUpperCase() === selectedProvider);
       }
 
       renderList(rows);
@@ -446,6 +475,8 @@ const GAME_API = {
   });
 
   subCategoryFilter.addEventListener('change', loadGames);
+  if (providerCode) providerCode.addEventListener('input', () => refreshSubCategoryOptions());
+  if (providerFilter) providerFilter.addEventListener('change', () => { refreshFilterSubCategoryOptions(); subCategoryFilter.value = ''; loadGames(); });
 
   list.addEventListener('click', e => {
     const editBtn = e.target.closest('[data-edit-id]');

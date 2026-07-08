@@ -88,6 +88,7 @@ const GAME_CATEGORY_API = {
   const formTitle = document.getElementById('categoryFormTitle');
   const id = document.getElementById('categoryId');
   const name = document.getElementById('categoryName');
+  const displayMode = document.getElementById('categoryDisplayMode');
   const sortOrder = document.getElementById('categorySortOrder');
   const status = document.getElementById('categoryStatus');
   const imageInput = document.getElementById('categoryImage');
@@ -138,6 +139,7 @@ const GAME_CATEGORY_API = {
     name.value = '';
     sortOrder.value = '0';
     status.value = '1';
+    if (displayMode) displayMode.value = 'PROVIDER';
     selectedFile = null;
     picker && picker.clearPreview();
     currentImage.hidden = true;
@@ -151,6 +153,7 @@ const GAME_CATEGORY_API = {
     name.value = item.name || '';
     sortOrder.value = item.sortOrder ?? 0;
     status.value = String(item.status ?? 1);
+    if (displayMode) displayMode.value = item.displayMode || item.display_mode || 'PROVIDER';
     selectedFile = null;
     imageInput.value = '';
     const previewUrl = resolveImageUrl(item.imageUrl, item.image, '');
@@ -182,6 +185,7 @@ const GAME_CATEGORY_API = {
           <div class="slider-meta">
             <span><i class="bi bi-hash me-1"></i>ID: ${escapeHtml(item.id)}</span>
             <span><i class="bi bi-sort-numeric-down me-1"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span>
+            <span><i class="bi bi-layout-text-window me-1"></i>Mode: ${escapeHtml(item.displayMode || item.display_mode || 'PROVIDER')}</span>
             <span><i class="bi bi-file-image me-1"></i>${escapeHtml(item.image || '-')}</span>
           </div>
         </div>
@@ -222,6 +226,7 @@ const GAME_CATEGORY_API = {
     fd.append('name', name.value.trim());
     fd.append('sortOrder', sortOrder.value || '0');
     fd.append('status', status.value || '1');
+    if (displayMode) fd.append('displayMode', displayMode.value || 'PROVIDER');
     if (selectedFile) fd.append('image', selectedFile);
 
     setBusy(true);

@@ -17,6 +17,31 @@
     manual: ['manual','manualAdjust','manualAmount'],
     commission: ['commission','totalCommission','commissionAmount']
   };
+  const MEMBER_TABLE_COLUMNS = [
+    {key:'no', label:'#'},
+    {key:'registerDate', label:'Register Date'},
+    {key:'name', label:'Name / Username', always:true},
+    {key:'mobile', label:'Mobile'},
+    {key:'bankAccount', label:'Bank Account', extra:true},
+    {key:'bank', label:'Bank'},
+    {key:'referrer', label:'Referrer', extra:true},
+    {key:'topReferrer', label:'Top Referrer', extra:true},
+    {key:'mainWallet', label:'Main Wallet', always:true},
+    {key:'deposit', label:'Deposit'},
+    {key:'withdraw', label:'Withdraw'},
+    {key:'winLoss', label:'Win/Loss'},
+    {key:'bonus', label:'Bonus'},
+    {key:'manual', label:'Manual', extra:true},
+    {key:'commission', label:'Commission', extra:true},
+    {key:'lastDeposit', label:'Last Deposit', extra:true},
+    {key:'lastLogin', label:'Last Login', extra:true},
+    {key:'status', label:'Status', always:true},
+    {key:'action', label:'Action', always:true}
+  ];
+  const MAX_VISIBLE_MEMBER_COLUMNS = 12;
+  const DEFAULT_MEMBER_COLUMNS = ['no','registerDate','name','mobile','bank','mainWallet','status','deposit','withdraw','winLoss','bonus','action'];
+  let visibleMemberColumns = new Set(DEFAULT_MEMBER_COLUMNS);
+
 
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   async function api(url,opt){const r=await fetch(url,opt||{});const j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw new Error(j.message||'Request failed');return j;}
@@ -271,38 +296,139 @@
     return true;
   }
 
+  function isColVisible(key){ return visibleMemberColumns.has(key); }
+  function cell(key, html, cls=''){ return isColVisible(key) ? `<td data-col="${esc(key)}"${cls ? ' class="'+cls+'"' : ''}>${html}</td>` : ''; }
+  function renderTableHead(){
+    const head = document.querySelector('.user-main-table thead tr');
+    const table = document.querySelector('.user-main-table');
+    if(!head) return;
+    const count = visibleColCount();
+    if(table){
+      table.dataset.visibleCols = String(count);
+      table.classList.toggle('many-columns', false);
+      table.classList.add('member-max-12');
+    }
+    head.innerHTML = MEMBER_TABLE_COLUMNS.filter(c=>isColVisible(c.key)).map(c=>`<th data-col="${c.key}">${esc(c.label)}</th>`).join('');
+  }
+  function visibleColCount(){ return MEMBER_TABLE_COLUMNS.filter(c=>isColVisible(c.key)).length || 1; }
+  function visibleMemberColumnCount(){ return MEMBER_TABLE_COLUMNS.filter(c=>isColVisible(c.key)).length; }
+  function showColumnLimitNotice(){
+    const el=document.getElementById('memberColumnLimitNotice');
+    if(!el) return;
+    el.textContent = `Maximum ${MAX_VISIBLE_MEMBER_COLUMNS} columns only. Untick one column first.`;
+    el.hidden = false;
+    clearTimeout(showColumnLimitNotice._timer);
+    showColumnLimitNotice._timer = setTimeout(()=>{ el.hidden = true; }, 2200);
+  }
+  function buildColumnsMenu(){
+    const menu=document.getElementById('memberColumnsMenu'); if(!menu) return;
+    const count = visibleMemberColumnCount();
+    const limitReached = count >= MAX_VISIBLE_MEMBER_COLUMNS;
+    menu.innerHTML = '<div class="column-menu-title">Show / Hide Columns</div><div class="column-limit-text">Showing '+count+'/'+MAX_VISIBLE_MEMBER_COLUMNS+' columns</div><div class="column-limit-notice" id="memberColumnLimitNotice" hidden></div>' + MEMBER_TABLE_COLUMNS.filter(c=>!c.always).map(c=>{
+      const checked = isColVisible(c.key);
+      const disabled = !checked && limitReached;
+      return `<label class="${disabled?'is-disabled':''}"><input type="checkbox" data-member-col="${c.key}" ${checked?'checked':''} ${disabled?'disabled':''}> <span>${esc(c.label)}</span></label>`;
+    }).join('') + '<button type="button" class="column-default-btn" id="memberColumnsDefaultBtn">Default View</button>';
+    document.getElementById('memberColumnsDefaultBtn')?.addEventListener('click', function(){ visibleMemberColumns = new Set(DEFAULT_MEMBER_COLUMNS); buildColumnsMenu(); applySearch(); });
+  }
+  function bindColumnTools(){
+    buildColumnsMenu();
+    const btn=document.getElementById('memberColumnsBtn');
+    const menu=document.getElementById('memberColumnsMenu');
+    btn?.addEventListener('click', (e)=>{ e.stopPropagation(); if(menu) menu.hidden = !menu.hidden; });
+    menu?.addEventListener('click', e=>e.stopPropagation());
+    menu?.addEventListener('change', e=>{
+      const input=e.target.closest('[data-member-col]'); if(!input) return;
+      const key = input.dataset.memberCol;
+      if(input.checked){
+        if(visibleMemberColumnCount() >= MAX_VISIBLE_MEMBER_COLUMNS){
+          input.checked = false;
+          showColumnLimitNotice();
+          buildColumnsMenu();
+          return;
+        }
+        visibleMemberColumns.add(key);
+      } else {
+        visibleMemberColumns.delete(key);
+      }
+      buildColumnsMenu();
+      applySearch();
+    });
+    document.addEventListener('click', ()=>{ if(menu) menu.hidden = true; });
+  }
+  function currentFilteredMembers(){ return allMembers.filter(memberMatches); }
+  function downloadCsv(filename, rows){
+    const cols = MEMBER_TABLE_COLUMNS.filter(c=>isColVisible(c.key) && c.key !== 'action');
+    const valueFor = (m,key,idx)=>{
+      if(key==='no') return idx+1;
+      if(key==='registerDate') return dt(first(m,['createdAt','registerDate','created_at'], ''));
+      if(key==='name') return `${first(m,['username'], '-')} ${first(m,['fullName','name','displayName'], '')}`.trim();
+      if(key==='mobile') return first(m,['mobile','phone','mobileNo'], '-');
+      if(key==='bankAccount') return first(m,['bankAccount','bankAccountNumber','bankAccountNo','accountNo'], '-');
+      if(key==='bank') return first(m,['bank','bankName'], '-');
+      if(key==='referrer') return first(m,['referrerCode','referrer','agent','agentName'], '-');
+      if(key==='topReferrer') return first(m,['topReferrer','topAgent','upline'], '-');
+      if(key==='mainWallet') return money(first(m,['mainWalletBalance','mainBalance','balance'],0));
+      if(key==='deposit') return money(first(m,MONEY_KEYS.deposit,0));
+      if(key==='withdraw') return money(first(m,MONEY_KEYS.withdraw,0));
+      if(key==='winLoss') return money(first(m,MONEY_KEYS.winLoss,0));
+      if(key==='bonus') return money(first(m,MONEY_KEYS.bonus,0));
+      if(key==='manual') return money(first(m,MONEY_KEYS.manual,0));
+      if(key==='commission') return money(first(m,MONEY_KEYS.commission,0));
+      if(key==='lastDeposit') return dt(first(m,['lastDepositAt','lastDeposit','last_deposit_at'], ''));
+      if(key==='lastLogin') return dt(first(m,['lastLoginAt','lastLogin','last_login_at'], ''));
+      if(key==='status') return memberStatus(m);
+      return '';
+    };
+    const csv = [cols.map(c=>c.label), ...rows.map((m,i)=>cols.map(c=>valueFor(m,c.key,i)))].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+    const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 500);
+  }
+  function bindExportTool(){
+    document.getElementById('memberExportBtn')?.addEventListener('click', ()=>{
+      downloadCsv('member-list-' + todayStr() + '.csv', currentFilteredMembers());
+    });
+  }
+
   function renderMembers(rows){
     const table=document.querySelector('.user-main-table tbody');
     const cards=document.querySelector('.member-card-list');
     if(!table) return;
     updateStats(rows);
+    renderTableHead();
+    const foundBadge=document.getElementById('usersFoundBadge');
+    if(foundBadge) foundBadge.textContent = rows.length + ' Users Found';
     if(!rows.length){
-      table.innerHTML='<tr><td colspan="17">No member found.</td></tr>';
+      table.innerHTML='<tr><td colspan="'+visibleColCount()+'">No member found.</td></tr>';
       if(cards) cards.innerHTML='<div class="member-card"><h3>No member found</h3><div class="meta">Try another search filter.</div></div>';
       return;
     }
-    table.innerHTML=rows.map(m=>{
+    table.innerHTML=rows.map((m, idx)=>{
       const status = memberStatus(m);
       const locked = status === 'LOCKED';
       const id = first(m,['id','memberId','userId'], '');
       return `<tr>
-        <td>${esc(dt(first(m,['createdAt','registerDate','created_at'], '')))}</td>
-        <td><b>${esc(first(m,['username'], '-'))}</b><br><small>${esc(first(m,['fullName','name','displayName'], ''))}</small></td>
-        <td>${esc(first(m,['mobile','phone','mobileNo'], '-'))}</td>
-        <td>${esc(first(m,['bankAccount','bankAccountNumber','bankAccountNo','accountNo'], '-'))}</td>
-        <td>${esc(first(m,['bank','bankName'], '-'))}</td>
-        <td>${esc(first(m,['referrerCode','referrer','agent'], '-'))}</td>
-        <td>${esc(first(m,['topReferrer','topAgent','upline'], '-'))}</td>
-        <td><b>${money(first(m,['mainWalletBalance','mainBalance','balance'],0))}</b></td>
-        <td>${money(first(m,MONEY_KEYS.deposit,0))}</td>
-        <td>${money(first(m,MONEY_KEYS.withdraw,0))}</td>
-        <td>${money(first(m,MONEY_KEYS.winLoss,0))}</td>
-        <td>${money(first(m,MONEY_KEYS.bonus,0))}</td>
-        <td>${money(first(m,MONEY_KEYS.manual,0))}</td>
-        <td>${money(first(m,MONEY_KEYS.commission,0))}</td>
-        <td>${esc(dt(first(m,['lastDepositAt','lastDeposit','last_deposit_at'], '')))}</td>
-        <td>${esc(dt(first(m,['lastLoginAt','lastLogin','last_login_at'], '')))}<br><small class="status-pill ${locked?'off':''}">${esc(status)}</small></td>
-        <td><div class="d-flex gap-2 flex-wrap"><button class="clean-btn primary" data-member-wallet="${esc(id)}">View</button><button class="clean-btn" data-member-lock="${esc(id)}" data-lock="${locked?0:1}">${locked?'Unlock':'Lock'}</button></div></td>
+        ${cell('no', idx + 1, 'col-no')}
+        ${cell('registerDate', esc(dt(first(m,['createdAt','registerDate','created_at'], ''))))}
+        ${cell('name', `<b>${esc(first(m,['username'], '-'))}</b><br><small>${esc(first(m,['fullName','name','displayName'], ''))}</small>`, 'member-name-cell')}
+        ${cell('mobile', esc(first(m,['mobile','phone','mobileNo'], '-')))}
+        ${cell('bankAccount', esc(first(m,['bankAccount','bankAccountNumber','bankAccountNo','accountNo'], '-')))}
+        ${cell('bank', esc(first(m,['bank','bankName'], '-')))}
+        ${cell('referrer', esc(first(m,['referrerCode','referrer','agent','agentName'], '-')))}
+        ${cell('topReferrer', esc(first(m,['topReferrer','topAgent','upline'], '-')))}
+        ${cell('mainWallet', money(first(m,['mainWalletBalance','mainBalance','balance'],0)), 'money-strong')}
+        ${cell('deposit', money(first(m,MONEY_KEYS.deposit,0)))}
+        ${cell('withdraw', money(first(m,MONEY_KEYS.withdraw,0)))}
+        ${cell('winLoss', money(first(m,MONEY_KEYS.winLoss,0)))}
+        ${cell('bonus', money(first(m,MONEY_KEYS.bonus,0)))}
+        ${cell('manual', money(first(m,MONEY_KEYS.manual,0)))}
+        ${cell('commission', money(first(m,MONEY_KEYS.commission,0)))}
+        ${cell('lastDeposit', esc(dt(first(m,['lastDepositAt','lastDeposit','last_deposit_at'], ''))))}
+        ${cell('lastLogin', esc(dt(first(m,['lastLoginAt','lastLogin','last_login_at'], ''))))}
+        ${cell('status', `<small class="status-pill ${locked?'off':''}">${esc(status)}</small>`)}
+        ${cell('action', `<div class="user-row-actions"><button class="icon-action view" title="View" data-member-wallet="${esc(id)}"><i class="bi bi-eye"></i></button><button class="icon-action" title="${locked?'Unlock':'Lock'}" data-member-lock="${esc(id)}" data-lock="${locked?0:1}"><i class="bi ${locked?'bi-unlock':'bi-lock'}"></i></button></div>`)}
       </tr>`;
     }).join('');
     if(cards){
@@ -393,7 +519,7 @@
 
   async function loadMembers(){
     const table=document.querySelector('.user-main-table tbody'); if(!table) return;
-    table.innerHTML='<tr><td colspan="17">Loading members...</td></tr>';
+    table.innerHTML='<tr><td colspan="'+visibleColCount()+'">Loading members...</td></tr>';
     try{
       const res = await api(BO_AUTH.memberListUrl(),{headers:{...BO_AUTH.authHeader()}});
       const members = Array.isArray(res.data) ? res.data : (res.data && Array.isArray(res.data.content) ? res.data.content : []);
@@ -403,7 +529,7 @@
       applySearch();
     } catch(e){
       allMembers=[]; updateStats([]);
-      table.innerHTML='<tr><td colspan="17" class="text-danger">'+esc(e.message||'Load member failed')+'</td></tr>';
+      table.innerHTML='<tr><td colspan="'+visibleColCount()+'" class="text-danger">'+esc(e.message||'Load member failed')+'</td></tr>';
     }
   }
 
@@ -411,10 +537,12 @@
     ['memberSearchName','memberSearchMobile','memberSearchAgent','memberSearchBank'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input', applySearch); });
     ['memberSearchStatus','memberSearchVisit','memberSearchLock'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('change', applySearch); });
     document.getElementById('memberSearchBtn')?.addEventListener('click', applySearch);
-    document.getElementById('memberResetBtn')?.addEventListener('click', function(){
+    const resetSearch=function(){
       ['memberSearchName','memberSearchMobile','memberSearchAgent','memberSearchBank','memberSearchStatus','memberSearchVisit','memberSearchLock'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
       applySearch();
-    });
+    };
+    document.getElementById('memberResetBtn')?.addEventListener('click', resetSearch);
+    document.getElementById('memberFilterResetBtn')?.addEventListener('click', resetSearch);
   }
 
   document.addEventListener('click',async e=>{
@@ -430,7 +558,7 @@
     catch(err){ alert(err.message || 'Update failed'); }
   });
   document.addEventListener('DOMContentLoaded',()=>{
-    bindSearch(); loadMembers();
+    bindSearch(); bindColumnTools(); bindExportTool(); loadMembers();
     document.getElementById('walletModalClose')?.addEventListener('click', closeWalletModal);
     document.getElementById('memberWalletModal')?.addEventListener('click', e=>{ if(e.target.id==='memberWalletModal') closeWalletModal(); });
     document.getElementById('walletRefreshBtn')?.addEventListener('click', ()=>{ if(selectedWalletMember) loadMemberWallet(first(selectedWalletMember,['id','memberId','userId'], '')).catch(err=>walletStatus(err.message || 'Load wallet failed', 'error')); });
