@@ -3,25 +3,111 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin Login</title>
+  <meta name="theme-color" content="#f5f7fb" />
+  <title>Backoffice Login</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/css/reports.css?v=1.0.14" rel="stylesheet" />
+  <link href="assets/css/reports.css?v=1.0.15" rel="stylesheet" />
+  <link href="assets/css/login.css?v=1.0.2" rel="stylesheet" />
 </head>
-<body class="report-body">
+<body class="report-body bo-login-body">
   <main class="auth-page">
-    <section class="auth-card">
-      <h1>Backoffice Login</h1>
-      <p class="text-muted">Secure admin login with token.</p>
+    <section class="auth-card" aria-labelledby="loginTitle">
+      <header class="auth-heading">
+        <div class="auth-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="10" width="16" height="11" rx="3"/>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+            <path d="M12 14v3"/>
+          </svg>
+        </div>
+        <h1 id="loginTitle">Welcome back</h1>
+        <p class="auth-subtitle">Sign in securely to manage your backoffice operations.</p>
+      </header>
+
       <form id="adminLoginForm">
-        <label>Username</label>
-        <input class="form-control mb-3" id="adminUsername" autocomplete="username" required>
-        <label>Password</label>
-        <input class="form-control mb-3" id="adminPassword" type="password" autocomplete="current-password" required>
-        <div class="upload-status mb-3" id="adminLoginStatus"></div>
-        <button class="btn btn-primary w-100" id="adminLoginBtn" type="submit">Login</button>
+        <div class="auth-field">
+          <label for="adminUsername">Username</label>
+          <div class="auth-input-wrap">
+            <svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 21a8 8 0 0 0-16 0"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <input class="form-control" id="adminUsername" type="text" placeholder="Enter your username" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+          </div>
+        </div>
+
+        <div class="auth-field">
+          <label for="adminPassword">Password</label>
+          <div class="auth-input-wrap">
+            <svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="4" y="10" width="16" height="11" rx="3"/>
+              <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+            </svg>
+            <input class="form-control" id="adminPassword" type="password" placeholder="Enter your password" autocomplete="current-password" required>
+            <button class="password-toggle" id="passwordToggle" type="button" aria-label="Show password" aria-pressed="false">
+              <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/>
+                <circle cx="12" cy="12" r="2.7"/>
+              </svg>
+              <svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
+                <path d="m3 3 18 18"/>
+                <path d="M10.6 6.2A9.9 9.9 0 0 1 12 6c6 0 9.5 6 9.5 6a16 16 0 0 1-2.1 2.9"/>
+                <path d="M6.2 6.2C3.8 7.9 2.5 12 2.5 12s3.5 6 9.5 6c1.7 0 3.2-.5 4.5-1.2"/>
+                <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="auth-form-meta">
+          <span class="secure-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 3 5 6v5c0 4.6 2.8 7.7 7 9.5 4.2-1.8 7-4.9 7-9.5V6l-7-3Z"/>
+              <path d="m9.5 12 1.6 1.6 3.5-3.6"/>
+            </svg>
+            Protected admin access
+          </span>
+        </div>
+
+        <div class="upload-status" id="adminLoginStatus" role="status" aria-live="polite"></div>
+
+        <button class="btn auth-submit w-100" id="adminLoginBtn" type="submit">
+          <span>Sign in to Backoffice</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14"/>
+            <path d="m13 6 6 6-6 6"/>
+          </svg>
+        </button>
       </form>
+
+      <footer class="auth-footer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="5" y="11" width="14" height="10" rx="2.5"/>
+          <path d="M8 11V8a4 4 0 0 1 8 0v3"/>
+        </svg>
+        Authorized personnel only
+      </footer>
     </section>
   </main>
+
+  <script>
+    (function(){
+      const toggle = document.getElementById('passwordToggle');
+      const input = document.getElementById('adminPassword');
+      if(!toggle || !input) return;
+      toggle.addEventListener('click', function(){
+        const show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        toggle.setAttribute('aria-pressed', String(show));
+        toggle.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+        const openEye = toggle.querySelector('.eye-open');
+        const closedEye = toggle.querySelector('.eye-closed');
+        if(openEye) openEye.hidden = show;
+        if(closedEye) closedEye.hidden = !show;
+        input.focus({preventScroll:true});
+      });
+    })();
+  </script>
   <script src="assets/js/config.js?v=1.0.10"></script>
   <script src="assets/js/auth.js?v=1.0.11"></script>
   <script src="assets/js/admin-login.js?v=1.0.0"></script>
