@@ -121,6 +121,13 @@ const GAME_API = {
   const providerFilter = document.getElementById('gameProviderFilter');
   const list = document.getElementById('gameList');
   const empty = document.getElementById('gameEmpty');
+  const searchInput = document.getElementById('gameSearchInput');
+  const sortFilter = document.getElementById('gameSortFilter');
+  const applyFiltersBtn = document.getElementById('applyGameFilters');
+  const resetFiltersBtn = document.getElementById('resetGameFilters');
+  const totalCountEl = document.getElementById('gameTotalCount');
+  const activeCountEl = document.getElementById('gameActiveCount');
+  const showingTextEl = document.getElementById('gameShowingText');
 
   let selectedFile = null;
   let currentItems = [];
@@ -313,42 +320,52 @@ const GAME_API = {
     currentImage.hidden = false;
     formTitle.textContent = 'Edit Game #' + item.id;
     setStatus('Editing game. Choose new image only if you want to replace it.', 'success');
+    if (window.CrudModalPattern) window.CrudModalPattern.open('Edit Game');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function renderList(items) {
     currentItems = Array.isArray(items) ? items : [];
-    list.innerHTML = '';
-    empty.hidden = currentItems.length > 0;
+    const query = (searchInput?.value || '').trim().toLowerCase();
+    const sortValue = sortFilter?.value || 'newest';
+    let visible = currentItems.filter(item => !query || String(item.name || '').toLowerCase().includes(query));
+    visible.sort((a, b) => {
+      if (sortValue === 'sortAsc') return Number(a.sortOrder || 0) - Number(b.sortOrder || 0);
+      if (sortValue === 'sortDesc') return Number(b.sortOrder || 0) - Number(a.sortOrder || 0);
+      if (sortValue === 'nameAsc') return String(a.name || '').localeCompare(String(b.name || ''));
+      if (sortValue === 'nameDesc') return String(b.name || '').localeCompare(String(a.name || ''));
+      return Number(b.id || 0) - Number(a.id || 0);
+    });
 
-    currentItems.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'manage-card';
-      card.innerHTML = `
-        <div class="manage-thumb game-thumb">
-          ${item.imageUrl ? `<img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name || 'Game')}">` : '<i class="bi bi-image text-secondary fs-1"></i>'}
+    if (totalCountEl) totalCountEl.textContent = currentItems.length;
+    if (activeCountEl) activeCountEl.textContent = currentItems.filter(item => Number(item.status) === 1).length;
+    if (showingTextEl) showingTextEl.textContent = visible.length ? `Showing 1 to ${visible.length} of ${visible.length} entries` : 'Showing 0 entries';
+    list.innerHTML = '';
+    empty.hidden = visible.length > 0;
+
+    visible.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'game-table-row';
+      const imageUrl = resolveImageUrl(item.imageUrl, item.image, '');
+      row.innerHTML = `
+        <div class="game-main-cell">
+          <div class="game-thumb-full">${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(item.name || 'Game')}">` : '<i class="bi bi-image"></i>'}</div>
+          <b>${escapeHtml(item.name || 'Untitled Game')}</b>
         </div>
-        <div class="manage-card-body">
-          <div class="slider-card-title">
-            <b>${escapeHtml(item.name || 'Untitled Game')}</b>
-            ${statusPill(item.status)}
-          </div>
-          <div class="slider-meta">
-            <span><i class="bi bi-hash me-1"></i>ID: ${escapeHtml(item.id)}</span>
-            <span><i class="bi bi-grid-3x3-gap me-1"></i>${escapeHtml(categoryName(getCategoryId(item)))}</span>
-            <span><i class="bi bi-diagram-3 me-1"></i>${escapeHtml(subCategoryName(getSubCategoryId(item)))}</span>
-            <span><i class="bi bi-cpu me-1"></i>Provider: ${escapeHtml(item.providerCode || '-')}</span>
-            <span><i class="bi bi-controller me-1"></i>Game Code: ${escapeHtml(item.gameCode || '-')}</span>
-            <span><i class="bi bi-link-45deg me-1"></i>${escapeHtml(item.gameUrl || '-')}</span>
-            <span><i class="bi bi-sort-numeric-down me-1"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span>
-          </div>
+        <div class="game-detail-cell">
+          <span><i class="bi bi-hash"></i>ID: ${escapeHtml(item.id)}</span>
+          <span><i class="bi bi-tag"></i>Category: ${escapeHtml(categoryName(getCategoryId(item)))}</span>
+          <span><i class="bi bi-folder"></i>Sub Category: ${escapeHtml(subCategoryName(getSubCategoryId(item)))}</span>
+          <span><i class="bi bi-building"></i>Provider: ${escapeHtml(item.providerCode || '-')}</span>
+          <span><i class="bi bi-code-slash"></i>Game Code: ${escapeHtml(item.gameCode || '-')}</span>
+          <span><i class="bi bi-arrow-down-up"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span>
         </div>
-        <div class="slider-card-actions">
-          <button class="clean-btn primary" type="button" data-edit-id="${escapeHtml(item.id)}"><i class="bi bi-pencil-square"></i> Edit</button>
-          <button class="clean-btn danger" type="button" data-delete-id="${escapeHtml(item.id)}"><i class="bi bi-trash"></i> Delete</button>
-        </div>
-      `;
-      list.appendChild(card);
+        <div class="game-status-cell">${statusPill(item.status)}</div>
+        <div class="game-action-cell">
+          <button class="icon-action-btn edit edit-btn" type="button" data-edit-id="${escapeHtml(item.id)}" aria-label="Edit" title="Edit"><i class="bi bi-pencil-square"></i></button>
+          <button class="icon-action-btn delete" type="button" data-delete-id="${escapeHtml(item.id)}" aria-label="Delete" title="Delete"><i class="bi bi-trash"></i></button>
+        </div>`;
+      list.appendChild(row);
     });
   }
 
@@ -477,6 +494,18 @@ const GAME_API = {
   subCategoryFilter.addEventListener('change', loadGames);
   if (providerCode) providerCode.addEventListener('input', () => refreshSubCategoryOptions());
   if (providerFilter) providerFilter.addEventListener('change', () => { refreshFilterSubCategoryOptions(); subCategoryFilter.value = ''; loadGames(); });
+  if (searchInput) searchInput.addEventListener('input', () => renderList(currentItems));
+  if (sortFilter) sortFilter.addEventListener('change', () => renderList(currentItems));
+  if (applyFiltersBtn) applyFiltersBtn.addEventListener('click', () => renderList(currentItems));
+  if (resetFiltersBtn) resetFiltersBtn.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
+    if (categoryFilter) categoryFilter.value = '';
+    refreshFilterSubCategoryOptions();
+    if (subCategoryFilter) subCategoryFilter.value = '';
+    if (providerFilter) providerFilter.value = '';
+    if (sortFilter) sortFilter.value = 'newest';
+    loadGames();
+  });
 
   list.addEventListener('click', e => {
     const editBtn = e.target.closest('[data-edit-id]');

@@ -2,6 +2,17 @@
   let page = 1;
   let totalPages = 1;
   let lastRows = [];
+  function pageButtons(current,total){
+    total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
+    const pages=[]; const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};
+    add(1); for(let n=current-2;n<=current+2;n++) add(n); add(total); pages.sort((a,b)=>a-b);
+    let html='<div class="smart-pagination" role="navigation" aria-label="Table pagination">';
+    html+='<button type="button" class="smart-page first" data-page="1" '+(current<=1?'disabled':'')+' title="First page"><i class="bi bi-chevron-bar-left"></i></button>';
+    let prev=0; pages.forEach(n=>{if(prev&&n-prev>1)html+='<span class="smart-page-ellipsis">…</span>'; html+='<button type="button" class="smart-page '+(n===current?'active':'')+'" data-page="'+n+'" '+(n===current?'aria-current="page"':'')+'>'+n+'</button>'; prev=n;});
+    html+='<button type="button" class="smart-page last" data-page="'+total+'" '+(current>=total?'disabled':'')+' title="Last page"><i class="bi bi-chevron-bar-right"></i></button>';
+    html+='</div><span class="smart-page-summary">Page '+current+' / '+total+'</span>'; return html;
+  }
+
   const $ = (id) => document.getElementById(id);
 
   function esc(v){
@@ -32,7 +43,7 @@
 
   function setPager(){
     const el = $('txPager');
-    if (el) el.textContent = 'Page ' + page + ' / ' + totalPages;
+    if (el) el.innerHTML = pageButtons(page, totalPages);
     if ($('txPrevBtn')) $('txPrevBtn').disabled = page <= 1;
     if ($('txNextBtn')) $('txNextBtn').disabled = page >= totalPages;
   }
@@ -124,6 +135,7 @@
     $('txResetBtn')?.addEventListener('click', resetFilters);
     $('txPrevBtn')?.addEventListener('click', () => { if(page > 1){ page--; load(); } });
     $('txNextBtn')?.addEventListener('click', () => { if(page < totalPages){ page++; load(); } });
+    $('txPager')?.addEventListener('click', e => { const b=e.target.closest('[data-page]'); if(!b)return; const n=Number(b.dataset.page); if(n>=1&&n<=totalPages&&n!==page){page=n;load();} });
     load();
   });
 })();

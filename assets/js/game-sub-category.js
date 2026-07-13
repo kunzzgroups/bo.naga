@@ -107,6 +107,12 @@ const GAME_SUB_CATEGORY_API = {
   const filter = document.getElementById('subCategoryFilter');
   const list = document.getElementById('subCategoryList');
   const empty = document.getElementById('subCategoryEmpty');
+  const totalCountEl = document.getElementById('subCategoryTotalCount');
+  const activeCountEl = document.getElementById('subCategoryActiveCount');
+  const activeTextEl = document.getElementById('subCategoryActiveText');
+  const categoryCountEl = document.getElementById('subCategoryCategoryCount');
+  const providerCountEl = document.getElementById('subCategoryProviderCount');
+  const showingTextEl = document.getElementById('subCategoryShowingText');
 
   let currentItems = [];
   let categories = [];
@@ -181,6 +187,7 @@ const GAME_SUB_CATEGORY_API = {
     status.value = String(item.status ?? 1);
     formTitle.textContent = 'Edit Sub Category #' + item.id;
     setStatus('Editing sub category.', 'success');
+    if (window.CrudModalPattern) window.CrudModalPattern.open('Edit Sub Category');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -189,29 +196,37 @@ const GAME_SUB_CATEGORY_API = {
     list.innerHTML = '';
     empty.hidden = currentItems.length > 0;
 
+    const activeCount = currentItems.filter(item => Number(item.status) === 1).length;
+    const categoryCount = new Set(currentItems.map(item => String(item.categoryId || '')).filter(Boolean)).size;
+    const providerCount = new Set(currentItems.map(item => String(item.providerCode || '').trim().toUpperCase()).filter(Boolean)).size;
+    if (totalCountEl) totalCountEl.textContent = currentItems.length;
+    if (activeCountEl) activeCountEl.textContent = activeCount;
+    if (activeTextEl) activeTextEl.textContent = currentItems.length ? `${Math.round(activeCount / currentItems.length * 100)}% of total` : '0% of total';
+    if (categoryCountEl) categoryCountEl.textContent = categoryCount;
+    if (providerCountEl) providerCountEl.textContent = providerCount;
+    if (showingTextEl) showingTextEl.textContent = currentItems.length ? `Showing 1 to ${currentItems.length} of ${currentItems.length} entries` : 'Showing 0 entries';
+
     currentItems.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'manage-card compact';
-      card.innerHTML = `
-        <div class="manage-icon"><i class="bi bi-diagram-3"></i></div>
-        <div class="manage-card-body">
-          <div class="slider-card-title">
-            <b>${escapeHtml(item.name || 'Untitled Sub Category')}</b>
-            ${statusPill(item.status)}
-          </div>
-          <div class="slider-meta">
-            <span><i class="bi bi-hash me-1"></i>ID: ${escapeHtml(item.id)}</span>
-            <span><i class="bi bi-grid-3x3-gap me-1"></i>${escapeHtml(categoryName(item.categoryId))}</span>
-            <span><i class="bi bi-cpu me-1"></i>Provider: ${escapeHtml(providerName(item.providerCode))}</span>
-            <span><i class="bi bi-sort-numeric-down me-1"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span>
-          </div>
+      const row = document.createElement('div');
+      row.className = 'subcategory-table-row';
+      row.innerHTML = `
+        <div class="subcategory-main-cell">
+          <span class="subcategory-row-icon"><i class="bi bi-diagram-3"></i></span>
+          <b>${escapeHtml(item.name || 'Untitled Sub Category')}</b>
         </div>
-        <div class="slider-card-actions">
-          <button class="clean-btn primary" type="button" data-edit-id="${escapeHtml(item.id)}"><i class="bi bi-pencil-square"></i> Edit</button>
-          <button class="clean-btn danger" type="button" data-delete-id="${escapeHtml(item.id)}"><i class="bi bi-trash"></i> Delete</button>
+        <div class="subcategory-detail-cell">
+          <span><i class="bi bi-hash"></i>ID: ${escapeHtml(item.id)}</span><span class="dot">•</span>
+          <span><i class="bi bi-grid-3x3-gap"></i>${escapeHtml(categoryName(item.categoryId))}</span><span class="dot">•</span>
+          <span><i class="bi bi-building"></i>Provider: ${escapeHtml(providerName(item.providerCode))}</span><span class="dot">•</span>
+          <span><i class="bi bi-arrow-down-up"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span>
+        </div>
+        <div class="subcategory-status-actions">
+          ${statusPill(item.status)}
+          <button class="icon-action-btn edit edit-btn" type="button" data-edit-id="${escapeHtml(item.id)}" aria-label="Edit" title="Edit"><i class="bi bi-pencil-square"></i></button>
+          <button class="icon-action-btn delete" type="button" data-delete-id="${escapeHtml(item.id)}" aria-label="Delete" title="Delete"><i class="bi bi-trash"></i></button>
         </div>
       `;
-      list.appendChild(card);
+      list.appendChild(row);
     });
   }
 

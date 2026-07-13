@@ -119,6 +119,17 @@
     return actions;
   }
   function addToolbarButton(listCard, formCard){
+    var existingPageAdd = listCard.querySelector('.crud-add-btn');
+    if(existingPageAdd){
+      existingPageAdd.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var resetBtn = formCard.querySelector('button[id*="reset" i], button[type="reset"]');
+        if(resetBtn) resetBtn.click();
+        setTimeout(function(){ openModal('Add ' + pageLabel()); }, 80);
+      });
+      return;
+    }
     var sectionTitle = listCard.querySelector('.section-title') || listCard.querySelector('.card-clean-title') || listCard.firstElementChild;
     var addBtn = document.createElement('button');
     addBtn.type = 'button';

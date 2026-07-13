@@ -102,6 +102,16 @@ const GAME_CATEGORY_API = {
   const statusBox = document.getElementById('categoryStatusBox');
   const list = document.getElementById('categoryList');
   const empty = document.getElementById('categoryEmpty');
+  const searchInput = document.getElementById('categorySearchInput');
+  const modeFilter = document.getElementById('categoryModeFilter');
+  const statusFilter = document.getElementById('categoryStatusFilter');
+  const sortFilter = document.getElementById('categorySortFilter');
+  const applyFiltersBtn = document.getElementById('applyCategoryFilters');
+  const resetFiltersBtn = document.getElementById('resetCategoryFilters');
+  const totalCountEl = document.getElementById('categoryTotalCount');
+  const activeCountEl = document.getElementById('categoryActiveCount');
+  const activePercentEl = document.getElementById('categoryActivePercent');
+  const showingTextEl = document.getElementById('categoryShowingText');
 
   let selectedFile = null;
   let currentItems = [];
@@ -162,41 +172,59 @@ const GAME_CATEGORY_API = {
     currentImage.hidden = false;
     formTitle.textContent = 'Edit Category #' + item.id;
     setStatus('Editing category. Choose new image only if you want to replace it.', 'success');
+    if (window.CrudModalPattern) window.CrudModalPattern.open('Edit Category');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function renderList(items) {
     currentItems = Array.isArray(items) ? items : [];
-    list.innerHTML = '';
-    empty.hidden = currentItems.length > 0;
+    const total = currentItems.length;
+    const active = currentItems.filter(item => Number(item.status) === 1).length;
+    if (totalCountEl) totalCountEl.textContent = total;
+    if (activeCountEl) activeCountEl.textContent = active;
+    if (activePercentEl) activePercentEl.textContent = `${total ? Math.round(active / total * 100) : 0}% of total`;
 
-    currentItems.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'manage-card';
-      card.innerHTML = `
-        <div class="manage-thumb">
-          ${item.imageUrl ? `<img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name || 'Category')}">` : '<i class="bi bi-image text-secondary fs-1"></i>'}
+    const query = (searchInput?.value || '').trim().toLowerCase();
+    const mode = modeFilter?.value || '';
+    const statusValue = statusFilter?.value || '';
+    const sortValue = sortFilter?.value || 'sortAsc';
+    let visible = currentItems.filter(item => {
+      const itemMode = String(item.displayMode || item.display_mode || 'PROVIDER');
+      return (!query || String(item.name || '').toLowerCase().includes(query)) &&
+        (!mode || itemMode === mode) &&
+        (!statusValue || String(item.status) === statusValue);
+    });
+    visible.sort((a,b) => {
+      if (sortValue === 'sortDesc') return Number(b.sortOrder || 0) - Number(a.sortOrder || 0);
+      if (sortValue === 'nameAsc') return String(a.name || '').localeCompare(String(b.name || ''));
+      if (sortValue === 'nameDesc') return String(b.name || '').localeCompare(String(a.name || ''));
+      return Number(a.sortOrder || 0) - Number(b.sortOrder || 0);
+    });
+
+    list.innerHTML = '';
+    empty.hidden = visible.length > 0;
+    if (showingTextEl) showingTextEl.textContent = `Showing 1 to ${visible.length} of ${visible.length} entries`;
+
+    visible.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'category-table-row';
+      const imageUrl = resolveImageUrl(item.imageUrl, item.image, '');
+      row.innerHTML = `
+        <div class="category-drag"><i class="bi bi-grip-vertical"></i></div>
+        <div class="category-main-cell">
+          <div class="category-thumb-full">${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(item.name || 'Category')}">` : '<i class="bi bi-image"></i>'}</div>
+          <div class="category-copy"><b>${escapeHtml(item.name || 'Untitled Category')}</b><small>ID: ${escapeHtml(item.id)} <span>•</span> Sort: ${escapeHtml(item.sortOrder ?? 0)} <span>•</span> Mode: ${escapeHtml(item.displayMode || item.display_mode || 'PROVIDER')}</small></div>
         </div>
-        <div class="manage-card-body">
-          <div class="slider-card-title">
-            <b>${escapeHtml(item.name || 'Untitled Category')}</b>
-            ${statusPill(item.status)}
-          </div>
-          <div class="slider-meta">
-            <span><i class="bi bi-hash me-1"></i>ID: ${escapeHtml(item.id)}</span>
-            <span><i class="bi bi-sort-numeric-down me-1"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span>
-            <span><i class="bi bi-layout-text-window me-1"></i>Mode: ${escapeHtml(item.displayMode || item.display_mode || 'PROVIDER')}</span>
-            <span><i class="bi bi-file-image me-1"></i>${escapeHtml(item.image || '-')}</span>
-          </div>
-        </div>
-        <div class="slider-card-actions">
-          <button class="clean-btn primary" type="button" data-edit-id="${escapeHtml(item.id)}"><i class="bi bi-pencil-square"></i> Edit</button>
-          <button class="clean-btn danger" type="button" data-delete-id="${escapeHtml(item.id)}"><i class="bi bi-trash"></i> Delete</button>
-        </div>
-      `;
-      list.appendChild(card);
+        <div class="category-status-cell">${statusPill(item.status)}</div>
+        <div class="category-action-cell">
+          <button class="icon-action-btn edit edit-btn" type="button" data-edit-id="${escapeHtml(item.id)}" aria-label="Edit"><i class="bi bi-pencil-square"></i></button>
+          <button class="icon-action-btn delete" type="button" data-delete-id="${escapeHtml(item.id)}" aria-label="Delete"><i class="bi bi-trash"></i></button>
+        </div>`;
+      list.appendChild(row);
     });
   }
+
+  function applyCategoryFilters(){ renderList(currentItems); }
 
   async function loadCategories() {
     list.innerHTML = '<div class="slider-empty"><i class="bi bi-hourglass-split"></i><b>Loading categories...</b></div>';
@@ -280,5 +308,16 @@ const GAME_CATEGORY_API = {
     if (deleteBtn) deleteCategory(deleteBtn.dataset.deleteId);
   });
 
+
+  applyFiltersBtn && applyFiltersBtn.addEventListener('click', applyCategoryFilters);
+  searchInput && searchInput.addEventListener('input', applyCategoryFilters);
+  [modeFilter, statusFilter, sortFilter].forEach(el => el && el.addEventListener('change', applyCategoryFilters));
+  resetFiltersBtn && resetFiltersBtn.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
+    if (modeFilter) modeFilter.value = '';
+    if (statusFilter) statusFilter.value = '';
+    if (sortFilter) sortFilter.value = 'sortAsc';
+    applyCategoryFilters();
+  });
   loadCategories();
 })();

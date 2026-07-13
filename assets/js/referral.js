@@ -188,7 +188,7 @@
     if(!el)return;
     if(f && t) el.textContent = `${dmy(f)} - ${dmy(t)}`;
     else if(f) el.textContent = `${dmy(f)} - Select end date`;
-    else el.textContent = label === 'custom' ? 'Custom date range' : 'Select date range';
+    else el.textContent = 'Select date range';
   }
   function markPreset(name){
     document.querySelectorAll('[data-range-preset]').forEach(b=>b.classList.remove('active'));
@@ -249,33 +249,43 @@
     renderCalendar(); updateDateLabel();
     trigger.addEventListener('click',e=>{e.stopPropagation(); picker.classList.toggle('show'); renderCalendar();});
     document.addEventListener('click',e=>{if(!e.target.closest('.ref-range-wrap'))picker.classList.remove('show');});
-    document.querySelectorAll('[data-range-preset]').forEach(btn=>btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-range-preset]').forEach(btn=>btn.addEventListener('click',(e)=>{
+      e.stopPropagation();
       const key=btn.dataset.rangePreset;
-      if(key==='custom'){
-        document.getElementById('refDateFrom').value='';
-        document.getElementById('refDateTo').value='';
-        refDatePicker.selectingStart=true;
-        markPreset('custom');
-        updateDateLabel('custom');
-        renderCalendar();
-        renderMembers();
-        return;
-      }
       const [a,b]=presetRange(key);
       refDatePicker.view=new Date(a+'T00:00:00');
       setDateRange(a,b,key);
+      picker.classList.remove('show');
     }));
-    document.getElementById('refCalPrev')?.addEventListener('click',()=>{refDatePicker.view.setMonth(refDatePicker.view.getMonth()-1); renderCalendar();});
-    document.getElementById('refCalNext')?.addEventListener('click',()=>{refDatePicker.view.setMonth(refDatePicker.view.getMonth()+1); renderCalendar();});
-    document.getElementById('refCalMonth')?.addEventListener('change',e=>{refDatePicker.view.setMonth(Number(e.target.value)); renderCalendar();});
-    document.getElementById('refCalYear')?.addEventListener('change',e=>{refDatePicker.view.setFullYear(Number(e.target.value)); renderCalendar();});
+    document.getElementById('refCalPrev')?.addEventListener('click',(e)=>{e.stopPropagation(); refDatePicker.view.setMonth(refDatePicker.view.getMonth()-1); renderCalendar();});
+    document.getElementById('refCalNext')?.addEventListener('click',(e)=>{e.stopPropagation(); refDatePicker.view.setMonth(refDatePicker.view.getMonth()+1); renderCalendar();});
+    document.getElementById('refCalMonth')?.addEventListener('click',e=>e.stopPropagation());
+    document.getElementById('refCalYear')?.addEventListener('click',e=>e.stopPropagation());
+    document.getElementById('refCalMonth')?.addEventListener('change',e=>{e.stopPropagation(); refDatePicker.view.setMonth(Number(e.target.value)); renderCalendar();});
+    document.getElementById('refCalYear')?.addEventListener('change',e=>{e.stopPropagation(); refDatePicker.view.setFullYear(Number(e.target.value)); renderCalendar();});
     document.getElementById('refCalDays')?.addEventListener('click',e=>{
+      e.stopPropagation();
       const btn=e.target.closest('[data-cal-day]'); if(!btn)return;
       const f=document.getElementById('refDateFrom'); const t=document.getElementById('refDateTo');
       const val=btn.dataset.calDay;
-      if(!f.value || (f.value&&t.value) || val<f.value){f.value=val; t.value=''; refDatePicker.selectingStart=false; markPreset('custom');}
-      else {t.value=val; refDatePicker.selectingStart=true; markPreset('custom');}
-      updateDateLabel('custom'); renderCalendar(); renderMembers();
+      if(!f.value || (f.value&&t.value) || val<f.value){
+        f.value=val;
+        t.value='';
+        refDatePicker.selectingStart=false;
+        markPreset('');
+        updateDateLabel();
+        renderCalendar();
+        renderMembers();
+        picker.classList.add('show');
+        return;
+      }
+      t.value=val;
+      refDatePicker.selectingStart=true;
+      markPreset('');
+      updateDateLabel();
+      renderCalendar();
+      renderMembers();
+      picker.classList.remove('show');
     });
   }
 

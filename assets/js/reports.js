@@ -188,3 +188,102 @@ document.addEventListener('DOMContentLoaded', () => {
     if(!isDesktop()) document.body.classList.remove('sidebar-mini');
   });
 })();
+
+// Global table action icon normalizer.
+(function(){
+  const actionMap = {
+    'view': ['bi-eye','is-view'],
+    'edit': ['bi-pencil','is-edit'],
+    'delete': ['bi-trash','is-delete'],
+    'remove': ['bi-trash','is-delete'],
+    'ledger': ['bi-journal-text','is-ledger'],
+    'adjust': ['bi-sliders','is-adjust'],
+    'approve': ['bi-check-lg','is-approve'],
+    'reject': ['bi-x-lg','is-reject'],
+    'lock': ['bi-lock','is-edit'],
+    'unlock': ['bi-unlock','is-approve']
+  };
+  function normalize(root){
+    (root || document).querySelectorAll('.report-table tbody td:last-child a, .report-table tbody td:last-child button').forEach(function(btn){
+      if(btn.classList.contains('bo-icon-action')) return;
+      const raw=(btn.textContent || '').trim().replace(/\s+/g,' ').toLowerCase();
+      const key=Object.keys(actionMap).find(function(k){ return raw === k || raw.startsWith(k+' '); });
+      if(!key) return;
+      const cfg=actionMap[key];
+      btn.classList.add('bo-icon-action',cfg[1]);
+      btn.setAttribute('title',key.charAt(0).toUpperCase()+key.slice(1));
+      btn.setAttribute('aria-label',key.charAt(0).toUpperCase()+key.slice(1));
+      btn.innerHTML='<i class="bi '+cfg[0]+'" aria-hidden="true"></i>';
+    });
+  }
+  function boot(){
+    normalize(document);
+    new MutationObserver(function(mutations){
+      mutations.forEach(function(m){ m.addedNodes.forEach(function(n){ if(n.nodeType===1) normalize(n); }); });
+    }).observe(document.body,{childList:true,subtree:true});
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
+})();
+
+// Unified summary-card icons and secondary descriptions.
+(function(){
+  const iconRules=[
+    [/user|member|admin|account/i,'bi-people'],[/active|online/i,'bi-person-check'],[/deposit|wallet|balance|credit/i,'bi-wallet2'],
+    [/downline|referral|network/i,'bi-diagram-3'],[/commission|win|bet|profit|loss/i,'bi-graph-up-arrow'],[/disabled|locked/i,'bi-lock'],
+    [/month|today|login|new/i,'bi-clock-history'],[/provider/i,'bi-hdd-network'],[/withdraw|transfer/i,'bi-arrow-left-right']
+  ];
+  function decorate(card,index){
+    if(card.querySelector('.bo-summary-icon')) return;
+    const text=(card.textContent||'').trim();
+    const match=iconRules.find(r=>r[0].test(text));
+    const icon=(match&&match[1])||['bi-people','bi-person-check','bi-wallet2','bi-clock-history'][index%4];
+    const node=document.createElement('div');node.className='bo-summary-icon';node.innerHTML='<i class="bi '+icon+'"></i>';card.prepend(node);
+    const spans=card.querySelectorAll(':scope > span');
+    if(!card.querySelector('.bo-summary-note')){
+      const note=document.createElement('div');note.className='bo-summary-note';
+      const label=spans[0] ? spans[0].textContent.trim() : '';
+      note.textContent=/wallet|balance/i.test(label)?'Current total':/active|online/i.test(label)?'Currently active':/deposit/i.test(label)?'All time deposits':/bet/i.test(label)?'All time bets':/commission/i.test(label)?'All time earned':'Overview total';
+      card.appendChild(note);
+    }
+  }
+  function run(root){
+    (root||document).querySelectorAll('.quick-stats:not(.user-stats) .metric,.manage-summary .manage-card').forEach(decorate);
+  }
+  function boot(){run(document);new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)run(n)}))).observe(document.body,{childList:true,subtree:true});}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+
+/* Unified rounded native-select replacement. Delayed so page-specific controls initialize first. */
+(function(){
+  function enhanceSelect(select){
+    if(!select || select.dataset.roundedReady==='1' || select.multiple || select.size>1 || select.closest('.rounded-select-wrap')) return;
+    if(select.disabled && !select.options.length) return;
+    select.dataset.roundedReady='1';
+    const wrap=document.createElement('div'); wrap.className='rounded-select-wrap';
+    select.parentNode.insertBefore(wrap,select); wrap.appendChild(select);
+    const btn=document.createElement('button'); btn.type='button'; btn.className='rounded-select-btn';
+    const menu=document.createElement('div'); menu.className='rounded-select-menu';
+    wrap.appendChild(btn); wrap.appendChild(menu);
+    function label(){ const o=select.options[select.selectedIndex]; return o ? o.textContent.trim() : 'Select'; }
+    function render(){
+      btn.innerHTML='<span>'+escapeHtml(label())+'</span><i class="bi bi-chevron-down"></i>';
+      menu.innerHTML='';
+      Array.from(select.options).forEach(function(opt){
+        const item=document.createElement('button'); item.type='button'; item.className='rounded-select-option'+(opt.selected?' active':'');
+        item.textContent=opt.textContent; item.disabled=opt.disabled;
+        item.addEventListener('click',function(){ select.value=opt.value; select.dispatchEvent(new Event('change',{bubbles:true})); close(); });
+        menu.appendChild(item);
+      });
+    }
+    function close(){ menu.classList.remove('show'); btn.classList.remove('open'); }
+    btn.addEventListener('click',function(e){ e.stopPropagation(); const open=!menu.classList.contains('show'); document.querySelectorAll('.rounded-select-menu.show').forEach(m=>m.classList.remove('show')); document.querySelectorAll('.rounded-select-btn.open').forEach(b=>b.classList.remove('open')); if(open){menu.classList.add('show');btn.classList.add('open');} });
+    select.addEventListener('change',render);
+    new MutationObserver(render).observe(select,{childList:true,subtree:true,attributes:true});
+    render();
+  }
+  function escapeHtml(v){return String(v||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+  function run(){ document.querySelectorAll('select').forEach(enhanceSelect); }
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(run,20);});
+  document.addEventListener('click',function(e){if(!e.target.closest('.rounded-select-wrap')){document.querySelectorAll('.rounded-select-menu.show').forEach(m=>m.classList.remove('show'));document.querySelectorAll('.rounded-select-btn.open').forEach(b=>b.classList.remove('open'));}});
+  new MutationObserver(function(){setTimeout(run,0);}).observe(document.documentElement,{childList:true,subtree:true});
+})();

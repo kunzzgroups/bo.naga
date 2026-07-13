@@ -3,6 +3,8 @@
   if(!form)return;
   const $=id=>document.getElementById(id);
   const box=$('promoStatusBox'), list=$('promoList'), empty=$('promoEmpty');
+  const searchInput=$('promoSearchInput'), categoryFilter=$('promoCategoryFilter'), statusFilter=$('promoStatusFilter'), sortFilter=$('promoSortFilter');
+  const totalCount=$('promoTotalCount'), activeCount=$('promoActiveCount'), activePercent=$('promoActivePercent'), showingText=$('promoShowingText');
   let rows=[];
   let categoryTitles=[];
   let selectedPromoImage=null;
@@ -17,7 +19,7 @@
   function showImagePreview(src){ const img=$('promoImagePreview'), cur=$('promoImageCurrent'); if(img&&src){img.src=src;img.hidden=false;} if(cur)cur.textContent=src?'Current/selected image preview':''; }
   function clearImagePreview(){ selectedPromoImage=null; const input=$('promoImage'); if(input) input.value=''; const img=$('promoImagePreview'); if(img){img.src='';img.hidden=true;} const cur=$('promoImageCurrent'); if(cur)cur.textContent=''; }
   function categoryName(id){ const f=categoryTitles.find(x=>String(x.id)===String(id)); return f?f.name:''; }
-  async function loadCategoryTitles(){ try{ const j=await req(promoApi('BONUS_CATEGORY_TITLE_LIST')+'?page=1&size=300'); categoryTitles=Array.isArray(j.data)?j.data:[]; const sel=$('promoBonusCategoryTitleId'); if(sel){ sel.innerHTML='<option value="">Select bonus category title</option>'+categoryTitles.map(x=>`<option value="${esc(x.id)}">${esc(x.name||('Title #'+x.id))}</option>`).join(''); } }catch(e){ console.warn('Load bonus category title failed',e); } }
+  async function loadCategoryTitles(){ try{ const j=await req(promoApi('BONUS_CATEGORY_TITLE_LIST')+'?page=1&size=300'); categoryTitles=Array.isArray(j.data)?j.data:[]; const options=categoryTitles.map(x=>`<option value="${esc(x.id)}">${esc(x.name||('Title #'+x.id))}</option>`).join(''); const sel=$('promoBonusCategoryTitleId'); if(sel) sel.innerHTML='<option value="">Select bonus category title</option>'+options; if(categoryFilter) categoryFilter.innerHTML='<option value="">All Categories</option>'+options; }catch(e){ console.warn('Load bonus category title failed',e); } }
 
   function initDetailEditor(){
     const textarea=$('promoDetailText');
@@ -142,13 +144,47 @@
     window.scrollTo({top:0,behavior:'smooth'});
   }
 
+  function filteredRows(){
+    const q=(searchInput?.value||'').trim().toLowerCase();
+    const cat=categoryFilter?.value||'';
+    const status=statusFilter?.value||'';
+    const mode=sortFilter?.value||'orderAsc';
+    const result=rows.filter(x=>{
+      const name=String(x.name||'').toLowerCase();
+      const cname=String(x.bonusCategoryTitleName||categoryName(x.bonusCategoryTitleId)||'').toLowerCase();
+      return (!q || name.includes(q) || cname.includes(q)) && (!cat || String(x.bonusCategoryTitleId)===cat) && (!status || String(x.status)===status);
+    });
+    result.sort((a,b)=>{
+      if(mode==='orderDesc') return Number(b.displayOrder||0)-Number(a.displayOrder||0);
+      if(mode==='nameAsc') return String(a.name||'').localeCompare(String(b.name||''));
+      if(mode==='nameDesc') return String(b.name||'').localeCompare(String(a.name||''));
+      return Number(a.displayOrder||0)-Number(b.displayOrder||0);
+    });
+    return result;
+  }
+
   function render(){
+    const filtered=filteredRows();
     list.innerHTML='';
-    empty.hidden=rows.length>0;
-    rows.forEach(x=>{
+    empty.hidden=filtered.length>0;
+    const active=rows.filter(x=>Number(x.status)===1).length;
+    if(totalCount) totalCount.textContent=rows.length;
+    if(activeCount) activeCount.textContent=active;
+    if(activePercent) activePercent.textContent=(rows.length?Math.round(active*100/rows.length):0)+'% of total';
+    if(showingText) showingText.textContent=`Showing ${filtered.length} of ${rows.length} entries`;
+    filtered.forEach(x=>{
       const d=document.createElement('div');
-      d.className='promo-list-item';
-      d.innerHTML=`<div>${x.bonusImageUrl?`<img src="${esc(x.bonusImageUrl)}" style="width:120px;max-height:55px;object-fit:contain;border-radius:8px;margin-bottom:8px">`:''}<h4>${esc(x.name||'-')}</h4><div class="promo-meta"><span class="promo-chip">${esc(x.bonusCategoryTitleName||categoryName(x.bonusCategoryTitleId)||'No Category')}</span><span class="promo-chip">${esc(x.claimCondition||'MANUAL')}</span><span class="promo-chip">${esc(x.claimReset||'NONE')}</span><span class="promo-chip">${esc(x.bonusType||'FIXED')}</span><span class="promo-chip">${Number(x.status)===1?'Active':'Inactive'}</span><span class="promo-chip">Fixed ${money(x.bonusFixedAmount)} / ${money(x.bonusPercentage)}%</span></div><small>${esc(x.ruleText||'')}</small><small>${esc((x.description||x.detailText||'').replace(/<[^>]*>/g,'').slice(0,160))}</small></div><div class="promo-list-actions"><button class="clean-btn" data-edit="${x.id}"><i class="bi bi-pencil"></i> Edit</button><button class="clean-btn danger" data-del="${x.id}"><i class="bi bi-trash"></i> Delete</button></div>`;
+      d.className='promotion-table-row';
+      const category=x.bonusCategoryTitleName||categoryName(x.bonusCategoryTitleId)||'No Category';
+      const desc=(x.description||x.detailText||'').replace(/<[^>]*>/g,'').slice(0,120);
+      d.innerHTML=`
+        <div class="promotion-main-cell">
+          <div class="promotion-thumb">${x.bonusImageUrl?`<img src="${esc(x.bonusImageUrl)}" alt="${esc(x.name||'Promotion')}">`:'<i class="bi bi-image"></i>'}</div>
+          <div class="promotion-copy"><b>${esc(x.name||'-')}</b><small>${esc(category)} <span>•</span> Order: ${esc(x.displayOrder??0)}</small><p>${esc(desc||x.ruleText||'No description')}</p></div>
+        </div>
+        <div class="promotion-detail-cell"><span class="promo-chip">${esc(x.claimCondition||'MANUAL')}</span><span class="promo-chip">${esc(x.bonusType||'FIXED')}</span><small>Fixed ${money(x.bonusFixedAmount)} / ${money(x.bonusPercentage)}%</small></div>
+        <div class="promotion-status-cell"><span class="slider-pill ${Number(x.status)===1?'active':'inactive'}"><i class="bi ${Number(x.status)===1?'bi-check-circle':'bi-pause-circle'}"></i>${Number(x.status)===1?'Active':'Inactive'}</span></div>
+        <div class="promotion-action-cell"><button class="icon-action-btn edit edit-btn" title="Edit" aria-label="Edit" data-edit="${x.id}"><i class="bi bi-pencil-square"></i></button><button class="icon-action-btn delete btn-delete" title="Delete" aria-label="Delete" data-del="${x.id}"><i class="bi bi-trash"></i></button></div>`;
       list.appendChild(d);
     });
   }
@@ -169,6 +205,9 @@
   });
   $('promoResetBtn').onclick=reset;
   $('promoRefreshBtn').onclick=load;
+  $('applyPromoFilters').onclick=render;
+  $('resetPromoFilters').onclick=()=>{ if(searchInput)searchInput.value=''; if(categoryFilter)categoryFilter.value=''; if(statusFilter)statusFilter.value=''; if(sortFilter)sortFilter.value='orderAsc'; render(); };
+  searchInput?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();render();}});
   list.addEventListener('click',async e=>{
     const eb=e.target.closest('[data-edit]'),db=e.target.closest('[data-del]');
     if(eb){fill(rows.find(x=>String(x.id)===eb.dataset.edit)||{});}

@@ -1,6 +1,17 @@
 
 (function(){
   let page=1,totalPages=1;
+  function pageButtons(current,total){
+    total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
+    const pages=[]; const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};
+    add(1); for(let n=current-2;n<=current+2;n++) add(n); add(total); pages.sort((a,b)=>a-b);
+    let html='<div class="smart-pagination" role="navigation" aria-label="Table pagination">';
+    html+='<button type="button" class="smart-page first" data-page="1" '+(current<=1?'disabled':'')+' title="First page"><i class="bi bi-chevron-bar-left"></i></button>';
+    let prev=0; pages.forEach(n=>{if(prev&&n-prev>1)html+='<span class="smart-page-ellipsis">…</span>'; html+='<button type="button" class="smart-page '+(n===current?'active':'')+'" data-page="'+n+'" '+(n===current?'aria-current="page"':'')+'>'+n+'</button>'; prev=n;});
+    html+='<button type="button" class="smart-page last" data-page="'+total+'" '+(current>=total?'disabled':'')+' title="Last page"><i class="bi bi-chevron-bar-right"></i></button>';
+    html+='</div><span class="smart-page-summary">Page '+current+' / '+total+'</span>'; return html;
+  }
+
   let memberMap = {};
   const $=id=>document.getElementById(id);
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -26,7 +37,7 @@
   async function get(url){const res=await fetch(url,{headers:{...BO_AUTH.authHeader()}});const json=await res.json().catch(()=>({}));if(!res.ok||json.status==='error')throw new Error(json.message||'Request failed');return json.data||{};}
   function readList(data){return data.items||data.list||data.content||data.rows||(Array.isArray(data)?data:[]);}
   function readTotalPages(data){return Number((data.pagination&&data.pagination.totalPages)||data.totalPages||data.pages||1)||1;}
-  function setPager(){const el=$('betPager'); if(el) el.textContent='Page '+page+' / '+totalPages;}
+  function setPager(){const el=$('betPager'); if(el) el.innerHTML=pageButtons(page,totalPages); const prev=$('betPrevBtn'),next=$('betNextBtn'); if(prev)prev.disabled=page<=1;if(next)next.disabled=page>=totalPages;}
   function setFromUrl(){const sp=new URLSearchParams(location.search); if(sp.get('memberId') && $('betMemberId')) $('betMemberId').value=sp.get('memberId');}
 
   function sessionQuery(){
@@ -82,5 +93,5 @@
       setPager();
     }catch(e){$('betBody').innerHTML='<tr><td colspan="11" class="text-danger">'+esc(e.message)+'</td></tr>';}
   }
-  document.addEventListener('DOMContentLoaded',()=>{BO_AUTH.requireLogin();BO_AUTH.renderProfile&&BO_AUTH.renderProfile();BO_AUTH.renderSidebar&&BO_AUTH.renderSidebar();setFromUrl();$('betSearchBtn')?.addEventListener('click',()=>{page=1;loadMemberMap().finally(load);});$('betPrevBtn')?.addEventListener('click',()=>{if(page>1){page--;load();}});$('betNextBtn')?.addEventListener('click',()=>{if(page<totalPages){page++;load();}});loadMemberMap().finally(load);});
+  document.addEventListener('DOMContentLoaded',()=>{BO_AUTH.requireLogin();BO_AUTH.renderProfile&&BO_AUTH.renderProfile();BO_AUTH.renderSidebar&&BO_AUTH.renderSidebar();setFromUrl();$('betSearchBtn')?.addEventListener('click',()=>{page=1;loadMemberMap().finally(load);});$('betPrevBtn')?.addEventListener('click',()=>{if(page>1){page--;load();}});$('betNextBtn')?.addEventListener('click',()=>{if(page<totalPages){page++;load();}});$('betPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(!b)return;const n=Number(b.dataset.page);if(n>=1&&n<=totalPages&&n!==page){page=n;load();}});loadMemberMap().finally(load);});
 })();

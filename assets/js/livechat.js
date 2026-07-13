@@ -10,6 +10,8 @@
   const fileInput = document.getElementById('livechatFileInput');
   const attachPreview = document.getElementById('livechatAttachPreview');
   const templatePanel = document.getElementById('livechatTemplatePanel');
+  const editState = document.getElementById('livechatEditState');
+  const editCancel = document.getElementById('livechatEditCancel');
 
   let db = null;
   let storage = null;
@@ -18,6 +20,8 @@
   let unsubscribeConversations = null;
   let unsubscribeMessages = null;
   let pendingFiles = [];
+  let editingMessageId = '';
+  let editingOriginalText = '';
   let lastUnreadTotal = Number(localStorage.getItem('bo_livechat_last_unread_total') || '0');
   let originalTitle = document.title;
   let templateMessages = [];
@@ -58,6 +62,10 @@
     if(refreshBtn) refreshBtn.addEventListener('click', listenConversations);
 
     document.addEventListener('keydown', handleTemplateHotkey);
+    if(editCancel) editCancel.addEventListener('click', cancelEditing);
+    document.addEventListener('click', function(e){
+      if(!e.target.closest('.livechat-msg-actions')) document.querySelectorAll('.livechat-msg-menu.show').forEach(function(m){m.classList.remove('show');});
+    });
 
     if(attachBtn && fileInput){
       attachBtn.addEventListener('click', function(){ fileInput.click(); });
@@ -143,6 +151,7 @@
   }
 
   function selectConversation(id){
+    cancelEditing();
     selectedId = id;
     setComposerVisible(true);
     renderInbox();
@@ -157,7 +166,7 @@
         if(snapshot.empty){
           messagesEl.innerHTML = '<div class="livechat-empty big">No message yet.</div>';
         }else{
-          snapshot.forEach(function(doc){ renderMessage(doc.data()); });
+          snapshot.forEach(function(doc){ renderMessage(doc.id, doc.data()); });
         }
         messagesEl.scrollTop = messagesEl.scrollHeight;
       }, function(error){
@@ -166,6 +175,7 @@
   }
 
   function clearRoom(){
+    cancelEditing();
     selectedId = '';
     if(unsubscribeMessages) unsubscribeMessages();
     roomHead.innerHTML = '<div class="livechat-room-avatar">?</div><div><h2>Select a conversation</h2><p>Choose member from left inbox to start reply.</p></div>';
@@ -173,35 +183,85 @@
     setComposerVisible(false);
   }
 
-  function renderMessage(msg){
+  function renderMessage(messageId, msg){
     const isAdmin = msg.senderType === 'admin';
     const wrap = document.createElement('div');
     wrap.className = 'livechat-msg ' + (isAdmin ? 'admin' : 'member');
+    wrap.dataset.messageId = messageId;
     let html = '<div class="bubble"><div class="name">' + esc(msg.senderName || (isAdmin ? 'Admin' : 'Member')) + '</div>';
-    if(msg.text) html += '<div class="text">' + formatText(msg.text) + '</div>';
-    const files = Array.isArray(msg.attachments) ? msg.attachments : [];
+    if(isAdmin && !msg.recalled){
+      const hasFiles = Array.isArray(msg.attachments) && msg.attachments.length > 0;
+      const hasText = !!String(msg.text || '').trim();
+      let actionButtons = '';
+      if(hasFiles){
+        actionButtons += '<button type="button" data-msg-action="recall">Recall Message</button>'+
+          '<button type="button" data-msg-action="delete">Delete Message</button>';
+      }else if(hasText){
+        actionButtons += '<button type="button" data-msg-action="edit">Edit Message</button>'+          '<button type="button" data-msg-action="recall">Recall Message</button>'+          '<button type="button" data-msg-action="delete">Delete Message</button>';
+      }
+      if(actionButtons){
+        html += '<div class="livechat-msg-actions"><button type="button" class="livechat-msg-menu-btn" aria-label="Message actions"><i class="bi bi-three-dots-vertical"></i></button>'+
+          '<div class="livechat-msg-menu">'+actionButtons+'</div></div>';
+      }
+    }
+    if(msg.recalled){
+      html += '<div class="livechat-recalled"><i class="bi bi-arrow-counterclockwise"></i> Message recalled</div>';
+    }else if(msg.text){
+      html += '<div class="text">' + formatText(msg.text) + '</div>';
+    }
+    const files = msg.recalled ? [] : (Array.isArray(msg.attachments) ? msg.attachments : []);
     if(files.length){
       html += '<div class="files">';
       files.forEach(function(file){
-        const name = esc(file.name || 'attachment');
-        const url = esc(file.url || '#');
-        const type = String(file.type || '');
-        if(type.indexOf('image/') === 0){
-          html += '<a href="' + url + '" target="_blank" class="img-file"><img src="' + url + '" alt="' + name + '"><span>' + name + '</span></a>';
-        }else{
-          html += '<a href="' + url + '" target="_blank" class="doc-file"><i class="bi bi-file-earmark"></i><span>' + name + '<small>' + formatFileSize(file.size || 0) + '</small></span></a>';
-        }
+        const name = esc(file.name || 'attachment'); const url = esc(file.url || '#'); const type = String(file.type || '');
+        if(type.indexOf('image/') === 0) html += '<a href="' + url + '" target="_blank" class="img-file"><img src="' + url + '" alt="' + name + '"><span>' + name + '</span></a>';
+        else html += '<a href="' + url + '" target="_blank" class="doc-file"><i class="bi bi-file-earmark"></i><span>' + name + '<small>' + formatFileSize(file.size || 0) + '</small></span></a>';
       });
       html += '</div>';
     }
-    html += '<div class="msg-time">' + esc(formatTime(msg.createdAt)) + '</div></div>';
+    html += '<div class="msg-time">' + esc(formatTime(msg.createdAt)) + (msg.editedAt && !msg.recalled ? ' · Edited' : '') + '</div></div>';
     wrap.innerHTML = html;
     messagesEl.appendChild(wrap);
+    const menuBtn=wrap.querySelector('.livechat-msg-menu-btn');
+    if(menuBtn) menuBtn.addEventListener('click',function(e){e.stopPropagation(); const menu=wrap.querySelector('.livechat-msg-menu'); document.querySelectorAll('.livechat-msg-menu.show').forEach(function(m){if(m!==menu)m.classList.remove('show');}); menu.classList.toggle('show');});
+    wrap.querySelectorAll('[data-msg-action]').forEach(function(btn){btn.addEventListener('click',function(){handleMessageAction(btn.dataset.msgAction,messageId,msg);});});
+  }
+
+  function handleMessageAction(action, messageId, msg){
+    document.querySelectorAll('.livechat-msg-menu.show').forEach(function(m){m.classList.remove('show');});
+    if(action==='edit') startEditing(messageId,msg.text||'');
+    if(action==='recall') recallMessage(messageId,msg);
+    if(action==='delete') deleteMessage(messageId,msg);
+  }
+  function startEditing(messageId,text){
+    editingMessageId=messageId; editingOriginalText=text; input.value=text; pendingFiles=[]; renderAttachPreview();
+    if(editState) editState.classList.add('show'); input.focus(); input.setSelectionRange(input.value.length,input.value.length);
+  }
+  function cancelEditing(){editingMessageId='';editingOriginalText='';if(editState)editState.classList.remove('show');if(input)input.value='';}
+  async function recallMessage(messageId,msg){
+    if(!confirm('Recall this message?')) return;
+    try{
+      await db.collection('conversations').doc(selectedId).collection('messages').doc(messageId).update({recalled:true,originalText:msg.text||'',text:'',attachments:[],recalledAt:firebase.firestore.FieldValue.serverTimestamp()});
+      if(editingMessageId===messageId) cancelEditing();
+    }catch(e){alert(e.message||'Recall failed.');}
+  }
+  async function deleteMessage(messageId){
+    if(!confirm('Delete this message permanently?')) return;
+    try{await db.collection('conversations').doc(selectedId).collection('messages').doc(messageId).delete();if(editingMessageId===messageId)cancelEditing();}
+    catch(e){alert(e.message||'Delete failed.');}
   }
 
   async function sendReply(){
     if(!selectedId){ alert('Please select a conversation first.'); return; }
     const text = (input.value || '').trim();
+    if(editingMessageId){
+      if(!text) return;
+      try{
+        await db.collection('conversations').doc(selectedId).collection('messages').doc(editingMessageId).update({text:text,editedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        cancelEditing();
+      }catch(e){alert(e.message||'Edit failed.');}
+      return;
+    }
     if(!text && !pendingFiles.length) return;
     const files = pendingFiles.slice();
     input.value = '';
@@ -502,4 +562,31 @@
     }catch(e){ return ''; }
   }
   function esc(value){ return String(value == null ? '' : value).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]; }); }
+})();
+
+// Keep reply composer visible and provide a one-click jump to the newest message.
+(function(){
+  function initScrollHelper(){
+    const room=document.querySelector('.livechat-room-card');
+    const box=document.getElementById('livechatMessages');
+    if(!room||!box||room.querySelector('.livechat-scroll-bottom')) return;
+    const btn=document.createElement('button');
+    btn.type='button';btn.className='livechat-scroll-bottom';btn.title='Scroll to latest message';btn.setAttribute('aria-label','Scroll to latest message');
+    btn.innerHTML='<i class="bi bi-arrow-down"></i>';
+    room.appendChild(btn);
+    const nearBottom=()=>box.scrollHeight-box.scrollTop-box.clientHeight<90;
+    const update=()=>btn.classList.toggle('show',!nearBottom()&&box.scrollHeight>box.clientHeight+40);
+    btn.addEventListener('click',()=>box.scrollTo({top:box.scrollHeight,behavior:'smooth'}));
+    box.addEventListener('scroll',update,{passive:true});
+    new MutationObserver(function(){
+      const shouldFollow=box.dataset.followLatest!=='false';
+      if(shouldFollow||nearBottom()) requestAnimationFrame(()=>box.scrollTo({top:box.scrollHeight,behavior:'smooth'}));
+      requestAnimationFrame(update);
+    }).observe(box,{childList:true,subtree:true});
+    box.addEventListener('wheel',()=>{box.dataset.followLatest=nearBottom()?'true':'false'},{passive:true});
+    box.addEventListener('touchmove',()=>{box.dataset.followLatest=nearBottom()?'true':'false'},{passive:true});
+    btn.addEventListener('click',()=>{box.dataset.followLatest='true'});
+    update();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initScrollHelper);else initScrollHelper();
 })();

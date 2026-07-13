@@ -1,4 +1,15 @@
 (function(){
+  function pageButtons(current,total){
+    total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
+    const pages=[]; const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};
+    add(1); for(let n=current-2;n<=current+2;n++) add(n); add(total); pages.sort((a,b)=>a-b);
+    let html='<div class="smart-pagination" role="navigation" aria-label="Table pagination">';
+    html+='<button type="button" class="smart-page first" data-page="1" '+(current<=1?'disabled':'')+' title="First page"><i class="bi bi-chevron-bar-left"></i></button>';
+    let prev=0; pages.forEach(n=>{if(prev&&n-prev>1)html+='<span class="smart-page-ellipsis">…</span>'; html+='<button type="button" class="smart-page '+(n===current?'active':'')+'" data-page="'+n+'" '+(n===current?'aria-current="page"':'')+'>'+n+'</button>'; prev=n;});
+    html+='<button type="button" class="smart-page last" data-page="'+total+'" '+(current>=total?'disabled':'')+' title="Last page"><i class="bi bi-chevron-bar-right"></i></button>';
+    html+='</div><span class="smart-page-summary">Page '+current+' / '+total+'</span>'; return html;
+  }
+
   const createForm = document.getElementById('createAdminForm');
   const createStatus = document.getElementById('createAdminStatus');
   const createBtn = document.getElementById('createAdminBtn');
@@ -120,7 +131,7 @@
     const start = (currentPage - 1) * pageSize;
     const rows = filteredAdmins.slice(start, start + pageSize);
     if(countBadge) countBadge.textContent = total + ' Account' + (total === 1 ? '' : 's');
-    if(pageNoEl) pageNoEl.textContent = currentPage;
+    if(pageNoEl) pageNoEl.innerHTML = pageButtons(currentPage, totalPages);
     if(infoEl) infoEl.textContent = total ? ('Showing '+(start+1)+' to '+(start+rows.length)+' of '+total+' entries') : 'Showing 0 to 0 of 0 entries';
     if(prevBtn) prevBtn.disabled = currentPage <= 1;
     if(nextBtn) nextBtn.disabled = currentPage >= totalPages;
@@ -141,7 +152,7 @@
         '<td><span class="admin-status-pill '+(active?'active':'disabled')+'"><i></i>'+(active?'Active':'Disabled')+'</span></td>'+
         '<td>'+shortDt(row.lastLoginAt || row.lastLogin || row.loginAt)+'</td>'+
         '<td>'+shortDt(row.createdAt || row.created_at)+'</td>'+
-        '<td><div class="user-row-actions admin-actions"><button class="icon-action view admin-view-btn" title="View" data-id="'+esc(row.id)+'" data-row=\''+JSON.stringify(row).replace(/'/g,'&#39;')+'\'><i class="bi bi-eye"></i></button><button class="icon-action admin-edit-btn" title="Edit" data-id="'+esc(row.id)+'" data-row=\''+JSON.stringify(row).replace(/'/g,'&#39;')+'\'><i class="bi bi-pencil"></i></button><button class="icon-action danger admin-delete-btn" title="Delete" type="button"><i class="bi bi-trash"></i></button></div></td>'+
+        '<td><div class="user-row-actions admin-actions"><button class="icon-action admin-edit-btn" title="Edit" data-id="'+esc(row.id)+'" data-row=\''+JSON.stringify(row).replace(/'/g,'&#39;')+'\'><i class="bi bi-pencil"></i></button><button class="icon-action danger admin-delete-btn" title="Delete" type="button"><i class="bi bi-trash"></i></button></div></td>'+
       '</tr>';
     }).join('');
     if(mobileCards){
@@ -204,7 +215,7 @@
   }
 
   document.addEventListener('click', function(e){
-    const edit = e.target.closest && e.target.closest('.admin-edit-btn,.admin-view-btn');
+    const edit = e.target.closest && e.target.closest('.admin-edit-btn');
     if(edit){ openEdit(edit); return; }
     const del = e.target.closest && e.target.closest('.admin-delete-btn');
     if(del){ alert('Delete API is not available for this page yet.'); return; }
@@ -241,6 +252,7 @@
   pageSizeEl && pageSizeEl.addEventListener('change', () => { currentPage = 1; renderAdmins(); });
   prevBtn && prevBtn.addEventListener('click', () => { currentPage--; renderAdmins(); });
   nextBtn && nextBtn.addEventListener('click', () => { currentPage++; renderAdmins(); });
+  pageNoEl && pageNoEl.addEventListener('click', e => { const b=e.target.closest('[data-page]'); if(!b)return; const pageSize=Number(pageSizeEl&&pageSizeEl.value||10); const totalPages=Math.max(1,Math.ceil(filteredAdmins.length/pageSize)); const n=Number(b.dataset.page); if(n>=1&&n<=totalPages&&n!==currentPage){currentPage=n;renderAdmins();} });
   selectAll && selectAll.addEventListener('change', () => document.querySelectorAll('.admin-row-check').forEach(cb => cb.checked = selectAll.checked));
   const remark = document.getElementById('newAdminRemark');
   remark && remark.addEventListener('input', () => { const rc=document.getElementById('adminRemarkCount'); if(rc) rc.textContent = remark.value.length; });

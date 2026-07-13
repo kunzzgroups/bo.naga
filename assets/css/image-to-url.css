@@ -136,3 +136,6 @@ textarea {
     height: 42px;
   }
 }
+
+/* Smart table pagination: direct page, first and last page access */
+.smart-pagination{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;vertical-align:middle}.smart-page{min-width:36px;height:36px;padding:0 10px;border:1px solid #d6deeb;border-radius:10px;background:#fff;color:#17233c;font-weight:700;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.smart-page:hover:not(:disabled){border-color:#2864ed;color:#2864ed;background:#f4f7ff}.smart-page.active{background:#2864ed;border-color:#2864ed;color:#fff}.smart-page:disabled{opacity:.42;cursor:not-allowed}.smart-page-ellipsis{padding:0 2px;color:#7c879a}.smart-page-summary{display:block;margin-top:7px;color:#667085;font-size:12px;text-align:center}.pagination-clean #adminPageNo{padding:0;border:0;background:transparent;min-width:auto;height:auto}.pagination-clean #adminPageNo .smart-page-summary{display:none}@media(max-width:767px){.smart-pagination{gap:4px}.smart-page{min-width:32px;height:34px;padding:0 8px;border-radius:9px}.smart-pagination .smart-page:nth-of-type(n+7):not(.last){display:none}.smart-page-summary{font-size:11px}}

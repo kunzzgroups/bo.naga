@@ -41,6 +41,20 @@
   const MAX_VISIBLE_MEMBER_COLUMNS = 12;
   const DEFAULT_MEMBER_COLUMNS = ['no','registerDate','name','mobile','bank','mainWallet','status','deposit','withdraw','winLoss','bonus','action'];
   let visibleMemberColumns = new Set(DEFAULT_MEMBER_COLUMNS);
+  let memberCurrentPage = 1;
+  let memberPageSize = 10;
+  let memberFilteredRows = [];
+
+  function memberPageButtons(current,total){
+    total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
+    const pages=[]; const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};
+    add(1); for(let n=current-2;n<=current+2;n++) add(n); add(total); pages.sort((a,b)=>a-b);
+    let html='<div class="smart-pagination" role="navigation" aria-label="Member table pagination">';
+    html+='<button type="button" class="smart-page first" data-member-page="1" '+(current<=1?'disabled':'')+' title="First page"><i class="bi bi-chevron-bar-left"></i></button>';
+    let prev=0; pages.forEach(n=>{if(prev&&n-prev>1)html+='<span class="smart-page-ellipsis">…</span>'; html+='<button type="button" class="smart-page '+(n===current?'active':'')+'" data-member-page="'+n+'" '+(n===current?'aria-current="page"':'')+'>'+n+'</button>'; prev=n;});
+    html+='<button type="button" class="smart-page last" data-member-page="'+total+'" '+(current>=total?'disabled':'')+' title="Last page"><i class="bi bi-chevron-bar-right"></i></button></div>';
+    return html;
+  }
 
 
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -399,7 +413,7 @@
     updateStats(rows);
     renderTableHead();
     const foundBadge=document.getElementById('usersFoundBadge');
-    if(foundBadge) foundBadge.textContent = rows.length + ' Users Found';
+    if(foundBadge) foundBadge.textContent = memberFilteredRows.length + ' Users Found';
     if(!rows.length){
       table.innerHTML='<tr><td colspan="'+visibleColCount()+'">No member found.</td></tr>';
       if(cards) cards.innerHTML='<div class="member-card"><h3>No member found</h3><div class="meta">Try another search filter.</div></div>';
@@ -410,7 +424,7 @@
       const locked = status === 'LOCKED';
       const id = first(m,['id','memberId','userId'], '');
       return `<tr>
-        ${cell('no', idx + 1, 'col-no')}
+        ${cell('no', ((memberCurrentPage-1)*memberPageSize)+idx+1, 'col-no')}
         ${cell('registerDate', esc(dt(first(m,['createdAt','registerDate','created_at'], ''))))}
         ${cell('name', `<b>${esc(first(m,['username'], '-'))}</b><br><small>${esc(first(m,['fullName','name','displayName'], ''))}</small>`, 'member-name-cell')}
         ${cell('mobile', esc(first(m,['mobile','phone','mobileNo'], '-')))}
@@ -458,7 +472,20 @@
     }
   }
 
-  function applySearch(){ renderMembers(allMembers.filter(memberMatches)); }
+  function applySearch(resetPage=true){
+    memberFilteredRows = allMembers.filter(memberMatches);
+    if(resetPage) memberCurrentPage = 1;
+    const total = memberFilteredRows.length;
+    const totalPages = Math.max(1, Math.ceil(total / memberPageSize));
+    memberCurrentPage = Math.max(1, Math.min(memberCurrentPage, totalPages));
+    const start = (memberCurrentPage - 1) * memberPageSize;
+    const rows = memberFilteredRows.slice(start, start + memberPageSize);
+    renderMembers(rows);
+    const info=document.getElementById('memberPageInfo');
+    if(info) info.textContent = total ? `Showing ${start+1} to ${start+rows.length} of ${total} entries` : 'Showing 0 to 0 of 0 entries';
+    const pager=document.getElementById('memberPager');
+    if(pager) pager.innerHTML = memberPageButtons(memberCurrentPage,totalPages);
+  }
 
 
   function memberKey(m){
@@ -533,12 +560,77 @@
     }
   }
 
+
+  function bindMemberPagination(){
+    const size=document.getElementById('memberPageSize');
+    if(size){ memberPageSize=Number(size.value)||10; size.addEventListener('change',()=>{memberPageSize=Number(size.value)||10; memberCurrentPage=1; applySearch(false);}); }
+    document.getElementById('memberPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-member-page]'); if(!b||b.disabled)return; memberCurrentPage=Number(b.dataset.memberPage)||1; applySearch(false); document.querySelector('.user-main-table')?.scrollIntoView({behavior:'smooth',block:'start'});});
+  }
+
+  function initRoundedMemberSelects(){
+    const ids=['memberSearchStatus','memberSearchVisit','memberSearchLock'];
+    ids.forEach(id=>{
+      const select=document.getElementById(id);
+      if(!select || select.dataset.roundedReady==='1') return;
+      select.dataset.roundedReady='1';
+      select.classList.add('rounded-native-hidden');
+      const wrap=document.createElement('div');
+      wrap.className='rounded-select-wrap';
+      const btn=document.createElement('button');
+      btn.type='button';
+      btn.className='rounded-select-btn';
+      btn.innerHTML='<span></span><i class="bi bi-chevron-down"></i>';
+      const menu=document.createElement('div');
+      menu.className='rounded-select-menu';
+      function currentText(){return select.options[select.selectedIndex]?.text || 'All';}
+      function sync(){btn.querySelector('span').textContent=currentText();}
+      Array.from(select.options).forEach(opt=>{
+        const item=document.createElement('button');
+        item.type='button';
+        item.className='rounded-select-option';
+        item.dataset.value=opt.value;
+        item.textContent=opt.text;
+        item.addEventListener('click',()=>{
+          select.value=opt.value;
+          sync();
+          menu.classList.remove('show');
+          btn.classList.remove('open');
+          select.dispatchEvent(new Event('change',{bubbles:true}));
+        });
+        menu.appendChild(item);
+      });
+      btn.addEventListener('click',e=>{
+        e.stopPropagation();
+        document.querySelectorAll('.rounded-select-menu.show').forEach(m=>{ if(m!==menu)m.classList.remove('show'); });
+        document.querySelectorAll('.rounded-select-btn.open').forEach(b=>{ if(b!==btn)b.classList.remove('open'); });
+        menu.classList.toggle('show');
+        btn.classList.toggle('open', menu.classList.contains('show'));
+      });
+      select.addEventListener('change',sync);
+      select.parentNode.insertBefore(wrap, select.nextSibling);
+      wrap.appendChild(btn);
+      wrap.appendChild(menu);
+      sync();
+    });
+    if(!window.__roundedSelectCloseBound){
+      window.__roundedSelectCloseBound=true;
+      document.addEventListener('click',()=>{
+        document.querySelectorAll('.rounded-select-menu.show').forEach(m=>m.classList.remove('show'));
+        document.querySelectorAll('.rounded-select-btn.open').forEach(b=>b.classList.remove('open'));
+      });
+    }
+  }
+  function refreshRoundedMemberSelects(){
+    document.querySelectorAll('.rounded-native-hidden').forEach(select=>select.dispatchEvent(new Event('change',{bubbles:false})));
+  }
+
   function bindSearch(){
     ['memberSearchName','memberSearchMobile','memberSearchAgent','memberSearchBank'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input', applySearch); });
     ['memberSearchStatus','memberSearchVisit','memberSearchLock'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('change', applySearch); });
     document.getElementById('memberSearchBtn')?.addEventListener('click', applySearch);
     const resetSearch=function(){
       ['memberSearchName','memberSearchMobile','memberSearchAgent','memberSearchBank','memberSearchStatus','memberSearchVisit','memberSearchLock'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+      refreshRoundedMemberSelects();
       applySearch();
     };
     document.getElementById('memberResetBtn')?.addEventListener('click', resetSearch);
@@ -558,7 +650,7 @@
     catch(err){ alert(err.message || 'Update failed'); }
   });
   document.addEventListener('DOMContentLoaded',()=>{
-    bindSearch(); bindColumnTools(); bindExportTool(); loadMembers();
+    initRoundedMemberSelects(); bindSearch(); bindColumnTools(); bindExportTool(); bindMemberPagination(); loadMembers();
     document.getElementById('walletModalClose')?.addEventListener('click', closeWalletModal);
     document.getElementById('memberWalletModal')?.addEventListener('click', e=>{ if(e.target.id==='memberWalletModal') closeWalletModal(); });
     document.getElementById('walletRefreshBtn')?.addEventListener('click', ()=>{ if(selectedWalletMember) loadMemberWallet(first(selectedWalletMember,['id','memberId','userId'], '')).catch(err=>walletStatus(err.message || 'Load wallet failed', 'error')); });

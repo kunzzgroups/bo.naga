@@ -24,14 +24,12 @@
   }
   function params(){
     const p = new URLSearchParams();
-    const period = document.getElementById('casinoPeriod')?.value || 'daily';
     const from = document.getElementById('casinoFrom')?.value || '';
     const to = document.getElementById('casinoTo')?.value || '';
-    p.set('period', period);
-    if(period === 'custom'){
-      if(from) p.set('from', from);
-      if(to) p.set('to', to);
-    }
+    // Date Range is now the single source of truth for every casino report.
+    p.set('period', 'custom');
+    if(from) p.set('from', from);
+    if(to) p.set('to', to);
     return p.toString();
   }
   function setMetric(id, value, isMoney){ const el=document.getElementById(id); if(el) el.textContent = isMoney ? money(value) : whole(value); }
@@ -50,7 +48,7 @@
     const h = document.querySelector('[data-report-title]');
     if(h) h.textContent = title;
     const range = document.getElementById('casinoRangeText');
-    if(range) range.textContent = `Showing ${data.period || '-'} report from ${data.from || '-'} to ${data.to || '-'}`;
+    if(range) range.textContent = `Showing report from ${data.from || '-'} to ${data.to || '-'}`;
   }
   function renderOverview(data){
     const dw = data.depositWithdraw || {};
@@ -209,19 +207,40 @@
     });
   }
 
-  function toggleCustom(){
-    const custom = (document.getElementById('casinoPeriod')?.value || 'daily') === 'custom';
+  function setTodayAndLoad(){
+    const preset = document.querySelector('.bo-range-field [data-preset="today"]');
+    if(preset){
+      preset.click();
+      load();
+      return;
+    }
+    const today = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const value = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
     const from = document.getElementById('casinoFrom');
     const to = document.getElementById('casinoTo');
-    if(from) from.disabled = !custom;
-    if(to) to.disabled = !custom;
+    if(from) from.value = value;
+    if(to) to.value = value;
+    load();
   }
   document.addEventListener('DOMContentLoaded', function(){
     initDepositWithdrawTabs();
-    toggleCustom();
-    document.getElementById('casinoPeriod')?.addEventListener('change', function(){ toggleCustom(); load(); });
     document.getElementById('casinoSearchBtn')?.addEventListener('click', load);
-    document.getElementById('casinoResetBtn')?.addEventListener('click', function(){ document.getElementById('casinoPeriod').value='daily'; document.getElementById('casinoFrom').value=''; document.getElementById('casinoTo').value=''; toggleCustom(); load(); });
+    document.getElementById('casinoResetBtn')?.addEventListener('click', setTodayAndLoad);
+
+    // Match Referral Network behaviour: once a complete date range is selected,
+    // refresh the report immediately without requiring the Search button.
+    let dateRangeLoadTimer = null;
+    function autoLoadSelectedRange(){
+      const from = document.getElementById('casinoFrom')?.value || '';
+      const to = document.getElementById('casinoTo')?.value || '';
+      if(!from || !to) return; // wait until both start and end dates are chosen
+      clearTimeout(dateRangeLoadTimer);
+      dateRangeLoadTimer = setTimeout(load, 120);
+    }
+    document.getElementById('casinoFrom')?.addEventListener('change', autoLoadSelectedRange);
+    document.getElementById('casinoTo')?.addEventListener('change', autoLoadSelectedRange);
+
     load();
   });
 })();

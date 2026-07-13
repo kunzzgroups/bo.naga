@@ -90,6 +90,14 @@ const BONUS_CATEGORY_TITLE_API = {
   const statusBox = document.getElementById('bonusStatusBox');
   const list = document.getElementById('bonusList');
   const empty = document.getElementById('bonusEmpty');
+  const searchInput = document.getElementById('bonusSearchInput');
+  const sortFilter = document.getElementById('bonusSortFilter');
+  const resetFilters = document.getElementById('resetBonusFilters');
+  const applyFilters = document.getElementById('applyBonusFilters');
+  const totalCount = document.getElementById('bonusTotalCount');
+  const imageCount = document.getElementById('bonusImageCount');
+  const imagePercent = document.getElementById('bonusImagePercent');
+  const showingText = document.getElementById('bonusShowingText');
 
   let selectedFile = null;
   let currentItems = [];
@@ -153,36 +161,47 @@ const BONUS_CATEGORY_TITLE_API = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function renderList(items) {
-    currentItems = Array.isArray(items) ? items : [];
-    list.innerHTML = '';
-    empty.hidden = currentItems.length > 0;
+  function filteredItems() {
+    const q = (searchInput?.value || '').trim().toLowerCase();
+    const mode = sortFilter?.value || 'sortAsc';
+    const result = currentItems.filter(item => !q || String(item.name || '').toLowerCase().includes(q));
+    result.sort((a, b) => {
+      if (mode === 'sortDesc') return Number(b.sortOrder || 0) - Number(a.sortOrder || 0);
+      if (mode === 'nameAsc') return String(a.name || '').localeCompare(String(b.name || ''));
+      if (mode === 'nameDesc') return String(b.name || '').localeCompare(String(a.name || ''));
+      return Number(a.sortOrder || 0) - Number(b.sortOrder || 0);
+    });
+    return result;
+  }
 
-    currentItems.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'manage-card';
-      card.innerHTML = `
-        <div class="manage-thumb">
-          ${item.imageUrl ? `<img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name || 'Bonus category')}">` : '<i class="bi bi-image text-secondary fs-1"></i>'}
+  function renderList(items) {
+    if (Array.isArray(items)) currentItems = items;
+    const rows = filteredItems();
+    list.innerHTML = '';
+    empty.hidden = rows.length > 0;
+    const withImages = currentItems.filter(x => x.imageUrl || x.image).length;
+    if (totalCount) totalCount.textContent = currentItems.length;
+    if (imageCount) imageCount.textContent = withImages;
+    if (imagePercent) imagePercent.textContent = (currentItems.length ? Math.round(withImages * 100 / currentItems.length) : 0) + '% of total';
+    if (showingText) showingText.textContent = `Showing ${rows.length} of ${currentItems.length} entries`;
+
+    rows.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'category-table-row bonus-title-table-row';
+      const imageUrl = resolveImageUrl(item.imageUrl, item.image, '');
+      row.innerHTML = `
+        <span class="category-drag"><i class="bi bi-grip-vertical"></i></span>
+        <div class="category-main-cell">
+          <div class="category-thumb-full">${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(item.name || 'Bonus category')}">` : '<i class="bi bi-image text-secondary fs-4"></i>'}</div>
+          <div class="category-copy"><b>${escapeHtml(item.name || 'Untitled Category')}</b><small>ID: ${escapeHtml(item.id)} <span>•</span> Sort: ${escapeHtml(item.sortOrder ?? 0)} <span>•</span> ${escapeHtml(item.image || 'No image')}</small></div>
         </div>
-        <div class="manage-card-body">
-          <div class="slider-card-title">
-            <b>${escapeHtml(item.name || 'Untitled Category')}</b>
-            <span class="slider-pill active"><i class="bi bi-check-circle"></i>Active</span>
-          </div>
-          <div class="slider-meta">
-            <span><i class="bi bi-hash me-1"></i>ID: ${escapeHtml(item.id)}</span>
-            <span><i class="bi bi-sort-numeric-down me-1"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span>
-            <span><i class="bi bi-file-image me-1"></i>${escapeHtml(item.image || '-')}</span>
-          </div>
-        </div>
-        <div class="slider-card-actions">
-          <a class="clean-btn" href="bonus-category-item.html?titleId=${escapeHtml(item.id)}"><i class="bi bi-card-image"></i> Items</a>
-          <button class="clean-btn primary" type="button" data-edit-id="${escapeHtml(item.id)}"><i class="bi bi-pencil-square"></i> Edit</button>
-          <button class="clean-btn danger" type="button" data-delete-id="${escapeHtml(item.id)}"><i class="bi bi-trash"></i> Delete</button>
-        </div>
-      `;
-      list.appendChild(card);
+        <div class="category-status-cell"><span class="slider-pill active"><i class="bi bi-check-circle"></i> Active</span></div>
+        <div class="category-action-cell">
+          <a class="icon-action-btn" title="Manage Items" aria-label="Manage Items" href="bonus-category-item.html?titleId=${escapeHtml(item.id)}"><i class="bi bi-card-image"></i></a>
+          <button class="icon-action-btn edit edit-btn" title="Edit" aria-label="Edit" type="button" data-edit="${escapeHtml(item.id)}" data-edit-id="${escapeHtml(item.id)}"><i class="bi bi-pencil-square"></i></button>
+          <button class="icon-action-btn delete btn-delete" title="Delete" aria-label="Delete" type="button" data-delete-id="${escapeHtml(item.id)}"><i class="bi bi-trash"></i></button>
+        </div>`;
+      list.appendChild(row);
     });
   }
 
@@ -263,6 +282,9 @@ const BONUS_CATEGORY_TITLE_API = {
   form.addEventListener('submit', saveCategory);
   resetBtn.addEventListener('click', resetForm);
   refreshBtn.addEventListener('click', loadCategories);
+  applyFilters?.addEventListener('click', () => renderList());
+  resetFilters?.addEventListener('click', () => { if (searchInput) searchInput.value = ''; if (sortFilter) sortFilter.value = 'sortAsc'; renderList(); });
+  searchInput?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); renderList(); } });
 
   list.addEventListener('click', e => {
     const editBtn = e.target.closest('[data-edit-id]');
