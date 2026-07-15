@@ -2901,3 +2901,17 @@ body:has(#gameSearchInput) .game-filter-actions .clean-btn{
   outline:0!important;
   box-shadow:0 0 0 3px rgba(47,102,237,.10)!important;
 }
+
+/* Date range month/year column picker (image-1 layout) */
+.bo-range-cal-head{grid-template-columns:32px minmax(72px,1fr) minmax(84px,1fr) 32px!important}
+.bo-range-cal-head .bo-range-head-pick,.ref-cal-head .ref-head-pick{height:36px;border:1px solid #d2dbea;border-radius:10px;background:#fff;color:#25324a;font-weight:900;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 10px}
+.bo-range-cal-head .bo-range-head-pick:hover,.bo-range-cal-head .bo-range-head-pick:focus,.ref-cal-head .ref-head-pick:hover,.ref-cal-head .ref-head-pick:focus{border-color:#5b6cff;box-shadow:0 0 0 3px rgba(91,108,255,.11);outline:0}
+.bo-range-month-grid,.bo-range-year-grid,.ref-cal-month-grid,.ref-cal-year-grid{display:none;grid-template-columns:repeat(3,1fr);gap:9px;padding:14px 2px 4px}
+.bo-range-month-grid.show,.bo-range-year-grid.show,.ref-cal-month-grid.show,.ref-cal-year-grid.show{display:grid}
+.bo-range-month-grid button,.bo-range-year-grid button,.ref-cal-month-grid button,.ref-cal-year-grid button{height:36px;border:0;border-radius:10px;background:#f7f9fc;color:#344054;font-size:12px;font-weight:900;transition:.15s ease}
+.bo-range-month-grid button:hover,.bo-range-year-grid button:hover,.ref-cal-month-grid button:hover,.ref-cal-year-grid button:hover{background:#eaf0ff;color:#4053e8}
+.bo-range-month-grid button.active,.bo-range-year-grid button.active,.ref-cal-month-grid button.active,.ref-cal-year-grid button.active{background:linear-gradient(180deg,#4ca4ff,#096cf5);color:#fff;box-shadow:0 7px 14px rgba(13,110,253,.28)}
+.bo-range-day-view.hide,.ref-cal-day-view.hide{display:none}
+.ref-cal-head{grid-template-columns:30px minmax(72px,1fr) minmax(84px,1fr) 30px!important}
+.ref-cal-head .ref-head-pick{height:32px;font-size:13px}
+@media(max-width:575.98px){.bo-range-month-grid,.bo-range-year-grid,.ref-cal-month-grid,.ref-cal-year-grid{gap:7px}.bo-range-month-grid button,.bo-range-year-grid button,.ref-cal-month-grid button,.ref-cal-year-grid button{height:34px}}

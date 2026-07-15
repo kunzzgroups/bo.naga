@@ -166,7 +166,7 @@
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
   }
 
-  const refDatePicker={view:new Date(),selectingStart:true};
+  const refDatePicker={view:new Date(),selectingStart:true,mode:'days',yearPageStart:new Date().getFullYear()-5};
   function pad2(n){return String(n).padStart(2,'0');}
   function ymd(d){return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());}
   function dmy(v){if(!v)return ''; const a=String(v).split('-'); return a.length===3?`${a[2]}/${a[1]}/${a[0]}`:v;}
@@ -211,35 +211,28 @@
     return [ymd(a),ymd(b)];
   }
   function renderCalendar(){
-    const monthSel=document.getElementById('refCalMonth');
-    const yearSel=document.getElementById('refCalYear');
+    const monthBtn=document.getElementById('refCalMonth');
+    const yearBtn=document.getElementById('refCalYear');
+    const monthGrid=document.getElementById('refCalMonthGrid');
+    const yearGrid=document.getElementById('refCalYearGrid');
+    const dayView=document.getElementById('refCalDayView');
     const days=document.getElementById('refCalDays');
-    if(!monthSel||!yearSel||!days)return;
+    if(!monthBtn||!yearBtn||!monthGrid||!yearGrid||!dayView||!days)return;
     const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    if(!monthSel.options.length) months.forEach((m,i)=>monthSel.add(new Option(m,i)));
-    if(!yearSel.options.length){
-      const y=new Date().getFullYear();
-      for(let i=y-5;i<=y+5;i++) yearSel.add(new Option(i,i));
-    }
-    monthSel.value=refDatePicker.view.getMonth();
-    yearSel.value=refDatePicker.view.getFullYear();
-    const y=refDatePicker.view.getFullYear(), m=refDatePicker.view.getMonth();
-    const first=new Date(y,m,1), last=new Date(y,m+1,0);
-    const start=first.getDay();
-    const total=last.getDate();
-    const from=document.getElementById('refDateFrom')?.value||'';
-    const to=document.getElementById('refDateTo')?.value||'';
-    let html='';
-    const prevLast=new Date(y,m,0).getDate();
-    for(let i=0;i<start;i++) html+=`<button type="button" class="muted" disabled>${prevLast-start+i+1}</button>`;
-    for(let d=1;d<=total;d++){
-      const val=ymd(new Date(y,m,d));
-      const inRange=from&&to&&val>=from&&val<=to;
-      const isEdge=val===from||val===to;
-      html+=`<button type="button" data-cal-day="${val}" class="${inRange?'in-range':''} ${isEdge?'selected':''}">${d}</button>`;
-    }
-    const cells=start+total;
-    for(let i=1;i<=42-cells;i++) html+=`<button type="button" class="muted" disabled>${i}</button>`;
+    monthBtn.innerHTML=months[refDatePicker.view.getMonth()]+' <i class="bi bi-chevron-down"></i>';
+    yearBtn.innerHTML=refDatePicker.view.getFullYear()+' <i class="bi bi-chevron-down"></i>';
+    monthGrid.innerHTML=months.map((m,i)=>`<button type="button" data-ref-month="${i}" class="${i===refDatePicker.view.getMonth()?'active':''}">${m}</button>`).join('');
+    yearGrid.innerHTML=Array.from({length:12},(_,i)=>refDatePicker.yearPageStart+i).map(y=>`<button type="button" data-ref-year="${y}" class="${y===refDatePicker.view.getFullYear()?'active':''}">${y}</button>`).join('');
+    monthGrid.classList.toggle('show',refDatePicker.mode==='months');
+    yearGrid.classList.toggle('show',refDatePicker.mode==='years');
+    dayView.classList.toggle('hide',refDatePicker.mode!=='days');
+    const y=refDatePicker.view.getFullYear(),m=refDatePicker.view.getMonth();
+    const first=new Date(y,m,1),last=new Date(y,m+1,0),start=first.getDay(),total=last.getDate();
+    const from=document.getElementById('refDateFrom')?.value||'',to=document.getElementById('refDateTo')?.value||'';
+    let html='',prevLast=new Date(y,m,0).getDate();
+    for(let i=0;i<start;i++)html+=`<button type="button" class="muted" disabled>${prevLast-start+i+1}</button>`;
+    for(let d=1;d<=total;d++){const val=ymd(new Date(y,m,d)),inRange=from&&to&&val>=from&&val<=to,isEdge=val===from||val===to;html+=`<button type="button" data-cal-day="${val}" class="${inRange?'in-range':''} ${isEdge?'selected':''}">${d}</button>`;}
+    const cells=start+total;for(let i=1;i<=42-cells;i++)html+=`<button type="button" class="muted" disabled>${i}</button>`;
     days.innerHTML=html;
   }
   function initDatePicker(){
@@ -247,7 +240,7 @@
     const picker=document.getElementById('refRangePicker');
     if(!trigger||!picker)return;
     renderCalendar(); updateDateLabel();
-    trigger.addEventListener('click',e=>{e.stopPropagation(); picker.classList.toggle('show'); renderCalendar();});
+    trigger.addEventListener('click',e=>{e.stopPropagation(); picker.classList.toggle('show'); refDatePicker.mode='days'; renderCalendar();});
     document.addEventListener('click',e=>{if(!e.target.closest('.ref-range-wrap'))picker.classList.remove('show');});
     document.querySelectorAll('[data-range-preset]').forEach(btn=>btn.addEventListener('click',(e)=>{
       e.stopPropagation();
@@ -257,12 +250,12 @@
       setDateRange(a,b,key);
       picker.classList.remove('show');
     }));
-    document.getElementById('refCalPrev')?.addEventListener('click',(e)=>{e.stopPropagation(); refDatePicker.view.setMonth(refDatePicker.view.getMonth()-1); renderCalendar();});
-    document.getElementById('refCalNext')?.addEventListener('click',(e)=>{e.stopPropagation(); refDatePicker.view.setMonth(refDatePicker.view.getMonth()+1); renderCalendar();});
-    document.getElementById('refCalMonth')?.addEventListener('click',e=>e.stopPropagation());
-    document.getElementById('refCalYear')?.addEventListener('click',e=>e.stopPropagation());
-    document.getElementById('refCalMonth')?.addEventListener('change',e=>{e.stopPropagation(); refDatePicker.view.setMonth(Number(e.target.value)); renderCalendar();});
-    document.getElementById('refCalYear')?.addEventListener('change',e=>{e.stopPropagation(); refDatePicker.view.setFullYear(Number(e.target.value)); renderCalendar();});
+    document.getElementById('refCalPrev')?.addEventListener('click',(e)=>{e.stopPropagation(); if(refDatePicker.mode==='years')refDatePicker.yearPageStart-=12; else refDatePicker.view.setMonth(refDatePicker.view.getMonth()-1); renderCalendar();});
+    document.getElementById('refCalNext')?.addEventListener('click',(e)=>{e.stopPropagation(); if(refDatePicker.mode==='years')refDatePicker.yearPageStart+=12; else refDatePicker.view.setMonth(refDatePicker.view.getMonth()+1); renderCalendar();});
+    document.getElementById('refCalMonth')?.addEventListener('click',e=>{e.stopPropagation();refDatePicker.mode=refDatePicker.mode==='months'?'days':'months';renderCalendar();});
+    document.getElementById('refCalYear')?.addEventListener('click',e=>{e.stopPropagation();refDatePicker.yearPageStart=refDatePicker.view.getFullYear()-5;refDatePicker.mode=refDatePicker.mode==='years'?'days':'years';renderCalendar();});
+    document.getElementById('refCalMonthGrid')?.addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-ref-month]');if(!b)return;refDatePicker.view.setMonth(Number(b.dataset.refMonth));refDatePicker.mode='days';renderCalendar();});
+    document.getElementById('refCalYearGrid')?.addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-ref-year]');if(!b)return;refDatePicker.view.setFullYear(Number(b.dataset.refYear));refDatePicker.mode='months';renderCalendar();});
     document.getElementById('refCalDays')?.addEventListener('click',e=>{
       e.stopPropagation();
       const btn=e.target.closest('[data-cal-day]'); if(!btn)return;
