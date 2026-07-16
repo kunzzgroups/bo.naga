@@ -1,6 +1,6 @@
 
 :root{
-  --sidebar-w:232px;
+  --sidebar-w:280px;
   --bg:#f5f7fb;
   --card:#ffffff;
   --text:#182230;
@@ -134,7 +134,7 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 @media(max-width:575.98px){.dropdown-menu,.report-profile-menu{position:fixed!important;top:54px!important;right:8px!important;width:min(300px,calc(100vw - 16px))!important;max-width:calc(100vw - 16px)!important}}
 
 /* ===== Sidebar mini / hover layout update ===== */
-:root{--rail-w:72px;--sidebar-w:232px}
+:root{--rail-w:72px;--sidebar-w:280px}
 .report-topbar .hamb{display:inline-flex;align-items:center;justify-content:center;font-size:20px;border:0;background:#fff;color:#0b2745;box-shadow:none}
 .report-sidebar{width:var(--sidebar-w);transition:width .22s ease,transform .22s ease,box-shadow .22s ease;overflow-x:hidden}
 .report-main{transition:margin-left .22s ease}
@@ -2915,3 +2915,72 @@ body:has(#gameSearchInput) .game-filter-actions .clean-btn{
 .ref-cal-head{grid-template-columns:30px minmax(72px,1fr) minmax(84px,1fr) 30px!important}
 .ref-cal-head .ref-head-pick{height:32px;font-size:13px}
 @media(max-width:575.98px){.bo-range-month-grid,.bo-range-year-grid,.ref-cal-month-grid,.ref-cal-year-grid{gap:7px}.bo-range-month-grid button,.bo-range-year-grid button,.ref-cal-month-grid button,.ref-cal-year-grid button{height:34px}}
+
+
+/* 2026-07-16 sidebar hover, payment modal and admin modal update */
+@media(min-width:992px){
+  body.sidebar-mini .report-sidebar{overflow-y:auto!important;overflow-x:visible!important}
+  body.sidebar-mini .report-sidebar:hover{overflow-x:visible!important}
+  body.sidebar-mini .report-sidebar:hover .report-brand{width:var(--sidebar-w);min-width:var(--sidebar-w);padding:0 14px!important;justify-content:flex-start!important}
+  body.sidebar-mini .report-sidebar:hover .report-brand>div:not(.logo){display:block!important;min-width:140px!important;width:auto!important;max-width:none!important;overflow:visible!important;white-space:normal!important;opacity:1!important;visibility:visible!important;font-size:14px!important;line-height:1.25!important}
+}
+.pm-list-card{margin-bottom:0}.pm-list-card .user-toolbar-actions,.admin-list-card .user-toolbar-actions{display:flex;gap:10px;align-items:center}.pm-main-table td:last-child{white-space:nowrap}.pm-table-footer{margin-top:14px;display:flex;justify-content:space-between;align-items:center}.pm-modal,.admin-create-modal{position:fixed;inset:0;background:rgba(15,23,42,.48);z-index:10000;display:none;align-items:center;justify-content:center;padding:24px}.pm-modal.show,.admin-create-modal.show{display:flex!important}.pm-modal-panel{width:min(760px,96vw);max-height:94vh;overflow:auto;border-radius:14px}.pm-modal-head{position:sticky;top:0;background:#fff;z-index:2}.pm-modal-head h3{font-size:21px;margin:0 0 4px}.pm-modal-head small{color:#667085}.pm-modal-body{padding:0 24px 18px}.pm-form-section{padding:16px 0;border-top:1px solid #e4e7ec}.pm-form-section:first-of-type{border-top:0}.pm-form-section h4{font-size:13px;font-weight:900;color:#344054;margin:0 0 14px;display:flex;gap:8px;align-items:center}.pm-form-grid{display:grid;gap:14px}.pm-grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}.pm-form-section .field label b{color:#ef4444}.pm-form-section .field input,.pm-form-section .field select,.pm-form-section .field textarea{width:100%;border:1px solid #d0d5dd;border-radius:9px;background:#fff;color:#182230;outline:0;padding:0 11px}.pm-form-section .field input,.pm-form-section .field select{height:40px}.pm-form-section .field textarea{padding:11px;resize:vertical}.pm-upload-zone{min-height:92px;border:1.5px dashed #b9c4d6;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:#667085;text-align:center}.pm-upload-zone>i{font-size:25px;color:#4f63f5}.pm-upload-zone b{color:#4f63f5}.pm-upload-zone small{font-size:11px;color:#98a2b3}.pm-upload-zone input{display:none}.pm-modal-actions{position:sticky;bottom:0;background:#fff;border-top:1px solid #e4e7ec;margin:0 -24px -18px;padding:14px 24px;display:flex;justify-content:flex-end;gap:12px}.pm-modal-actions .clean-btn{min-width:110px}.admin-list-card{width:100%;margin-bottom:0}.admin-create-modal-panel{width:min(620px,96vw);max-height:92vh;overflow:auto}.admin-create-modal-body{padding:20px}.admin-create-modal .admin-create-stack{display:grid;grid-template-columns:1fr 1fr;gap:14px}.admin-create-modal .admin-field{margin:0}.admin-create-modal .admin-two-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;grid-column:1/-1}.admin-create-modal .admin-field:nth-child(5),.admin-create-modal .admin-field:nth-child(6){grid-column:1/-1}.admin-create-modal .admin-form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}.admin-create-modal .upload-status{margin-top:12px}.admin-list-card .user-toolbar{align-items:center}
+@media(max-width:767.98px){.pm-grid-4{grid-template-columns:1fr 1fr}.pm-modal,.admin-create-modal{padding:10px}.pm-modal-body{padding:0 14px 14px}.pm-modal-actions{margin:0 -14px -14px;padding:12px 14px}.admin-create-modal .admin-create-stack{grid-template-columns:1fr}.admin-create-modal .admin-two-fields,.admin-create-modal .admin-field:nth-child(5),.admin-create-modal .admin-field:nth-child(6){grid-column:auto}.admin-create-modal .admin-two-fields{grid-template-columns:1fr}.pm-list-card .user-toolbar-actions,.admin-list-card .user-toolbar-actions{width:100%;justify-content:flex-end}}
+@media(max-width:480px){.pm-grid-4{grid-template-columns:1fr}.pm-modal-head h3{font-size:18px}.pm-modal-actions .clean-btn{min-width:0;flex:1}}
+
+/* 2026-07-16 final collapsed-sidebar alignment fix
+   Keep the rail anchored at the viewport edge and let the topbar hamburger
+   remain aligned with the main content. Hover expansion overlays from x=0. */
+@media (min-width: 992px){
+  .report-sidebar,
+  body.sidebar-mini .report-sidebar,
+  body.sidebar-mini .report-sidebar:hover{
+    left:0!important;
+    right:auto!important;
+    transform:none!important;
+  }
+  body.sidebar-mini .report-main{
+    margin-left:var(--rail-w)!important;
+  }
+  body.sidebar-mini .report-topbar{
+    padding-left:20px!important;
+  }
+  body.sidebar-mini .report-topbar .hamb{
+    margin-left:0!important;
+    flex:0 0 auto!important;
+  }
+  body.sidebar-mini .report-sidebar:hover .report-brand{
+    padding-left:10px!important;
+    padding-right:14px!important;
+    justify-content:flex-start!important;
+    overflow:visible!important;
+  }
+  body.sidebar-mini .report-sidebar:hover .report-brand > div:not(.logo){
+    display:block!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    white-space:nowrap!important;
+    overflow:visible!important;
+    opacity:1!important;
+    visibility:visible!important;
+  }
+}
+
+/* 2026-07-16 mini sidebar conditional hamburger alignment
+   Normal collapsed state keeps the hamburger aligned beside the icon rail.
+   Only while the sidebar is hovered does it move to the expanded edge. */
+@media (min-width:992px){
+  body.sidebar-mini .report-topbar{
+    padding-left:20px!important;
+  }
+  body.sidebar-mini:has(.report-sidebar:hover) .report-topbar{
+    padding-left:calc((var(--sidebar-w) - var(--rail-w)) + 20px)!important;
+  }
+  body.sidebar-mini .report-topbar > .hamb{
+    margin-left:0!important;
+  }
+  body.sidebar-mini .report-sidebar:hover{
+    z-index:6000!important;
+  }
+}

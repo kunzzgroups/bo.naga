@@ -197,9 +197,19 @@
       createForm.reset();
       const rc = document.getElementById('adminRemarkCount'); if(rc) rc.textContent = '0';
       await loadAdmins();
+      closeCreateAdmin();
     }catch(err){ setStatus(createStatus, err.message || 'Create admin failed', 'error'); }
     finally{ createBtn.disabled = false; }
   });
+
+
+  const createModal = document.getElementById('adminCreateModal');
+  const openCreateBtn = document.getElementById('openCreateAdminBtn');
+  function openCreateAdmin(){ createForm && createForm.reset(); setStatus(createStatus,'',''); const rc=document.getElementById('adminRemarkCount'); if(rc) rc.textContent='0'; createModal && createModal.classList.add('show'); }
+  function closeCreateAdmin(){ createModal && createModal.classList.remove('show'); }
+  openCreateBtn && openCreateBtn.addEventListener('click', openCreateAdmin);
+  document.querySelectorAll('[data-close-create-admin]').forEach(btn => btn.addEventListener('click', closeCreateAdmin));
+  createModal && createModal.addEventListener('click', e => { if(e.target === createModal) closeCreateAdmin(); });
 
   function openEdit(btn){
     let row = {};
@@ -248,7 +258,7 @@
   searchBtn && searchBtn.addEventListener('click', applyFilters);
   searchInput && searchInput.addEventListener('keydown', e => { if(e.key === 'Enter') applyFilters(); });
   resetBtn && resetBtn.addEventListener('click', () => { if(searchInput) searchInput.value=''; if(roleFilter) roleFilter.value=''; if(statusFilter) statusFilter.value=''; applyFilters(); });
-  cancelBtn && cancelBtn.addEventListener('click', () => { createForm && createForm.reset(); setStatus(createStatus,'',''); });
+  cancelBtn && cancelBtn.addEventListener('click', closeCreateAdmin);
   pageSizeEl && pageSizeEl.addEventListener('change', () => { currentPage = 1; renderAdmins(); });
   prevBtn && prevBtn.addEventListener('click', () => { currentPage--; renderAdmins(); });
   nextBtn && nextBtn.addEventListener('click', () => { currentPage++; renderAdmins(); });
