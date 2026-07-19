@@ -3289,3 +3289,27 @@ body[data-report-page] tbody td[colspan]{
   box-shadow:none!important;
   border-radius:0!important;
 }
+
+/* v1.1.33 - Keep report date range, Search and Today controls together */
+body[data-report-page] .filter-card .user-search-grid{
+  grid-template-columns:minmax(280px,380px) 124px 124px!important;
+  justify-content:start!important;
+  column-gap:12px!important;
+}
+body[data-report-page] .filter-card .bo-range-field{
+  width:100%!important;
+  min-width:0!important;
+}
+@media(max-width:767.98px){
+  body[data-report-page] .filter-card .user-search-grid{
+    grid-template-columns:minmax(0,1fr) 124px 124px!important;
+  }
+}
+@media(max-width:575.98px){
+  body[data-report-page] .filter-card .user-search-grid{
+    grid-template-columns:1fr 1fr!important;
+  }
+  body[data-report-page] .filter-card .bo-range-field{
+    grid-column:1/-1!important;
+  }
+}
