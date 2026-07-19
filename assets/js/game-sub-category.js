@@ -113,8 +113,11 @@ const GAME_SUB_CATEGORY_API = {
   const categoryCountEl = document.getElementById('subCategoryCategoryCount');
   const providerCountEl = document.getElementById('subCategoryProviderCount');
   const showingTextEl = document.getElementById('subCategoryShowingText');
+  const paginationEl = document.getElementById('subCategoryPagination');
+  const pageSizeEl = document.getElementById('subCategoryPageSize');
 
   let currentItems = [];
+  let currentPage = 1;
   let categories = [];
   let providers = [];
 
@@ -178,23 +181,87 @@ const GAME_SUB_CATEGORY_API = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  function firstValue(item, keys) {
+    for (const key of keys) {
+      const value = item && item[key];
+      if (value !== undefined && value !== null && String(value).trim() !== '') return value;
+    }
+    return '';
+  }
+
+  function syncRoundedSelect(select) {
+    if (!select) return;
+    select.dispatchEvent(new Event('change', { bubbles: false }));
+  }
+
   function editItem(item) {
-    id.value = item.id || '';
-    categoryId.value = String(item.categoryId || '');
-    providerCode.value = String(item.providerCode || '').toUpperCase();
-    name.value = item.name || '';
-    sortOrder.value = item.sortOrder ?? 0;
-    status.value = String(item.status ?? 1);
-    formTitle.textContent = 'Edit Sub Category #' + item.id;
+    id.value = firstValue(item, ['id', 'subCategoryId', 'sub_category_id']);
+
+    const savedCategoryId = String(firstValue(item, [
+      'categoryId', 'category_id', 'gameCategoryId', 'game_category_id'
+    ]));
+    const savedProviderCode = String(firstValue(item, [
+      'providerCode', 'provider_code', 'code'
+    ])).trim().toUpperCase();
+
+    categoryId.value = savedCategoryId;
+    providerCode.value = savedProviderCode;
+    name.value = firstValue(item, ['name', 'subCategoryName', 'sub_category_name']) || '';
+    sortOrder.value = firstValue(item, ['sortOrder', 'sort_order']) || 0;
+    status.value = String(firstValue(item, ['status']) || 1);
+
+    // The rounded dropdown is a visual wrapper around the native select.
+    // Programmatic value changes must emit change so its displayed label matches DB values.
+    syncRoundedSelect(categoryId);
+    syncRoundedSelect(providerCode);
+    syncRoundedSelect(status);
+
+    formTitle.textContent = 'Edit Sub Category #' + id.value;
     setStatus('Editing sub category.', 'success');
     if (window.CrudModalPattern) window.CrudModalPattern.open('Edit Sub Category');
+
+    // Re-sync once after the modal is visible in case its dropdown wrapper rendered late.
+    requestAnimationFrame(() => {
+      syncRoundedSelect(categoryId);
+      syncRoundedSelect(providerCode);
+      syncRoundedSelect(status);
+    });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function renderList(items) {
+  function buildPagination(totalPages) {
+    if (!paginationEl) return;
+    if (totalPages <= 1) {
+      paginationEl.innerHTML = '';
+      return;
+    }
+    const buttons = [];
+    const add = (page, label, disabled = false, active = false, extraClass = '') => {
+      buttons.push(`<button class="smart-page ${active ? 'active' : ''} ${extraClass}" type="button" data-page="${page}" ${disabled ? 'disabled' : ''}>${label}</button>`);
+    };
+    add(currentPage - 1, '&lsaquo;', currentPage <= 1, false, 'prev');
+    const pages = new Set([1, totalPages, currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2]);
+    let last = 0;
+    [...pages].filter(page => page >= 1 && page <= totalPages).sort((a, b) => a - b).forEach(page => {
+      if (last && page - last > 1) buttons.push('<span class="smart-page-ellipsis">…</span>');
+      add(page, page, false, page === currentPage);
+      last = page;
+    });
+    add(currentPage + 1, '&rsaquo;', currentPage >= totalPages, false, 'next');
+    paginationEl.innerHTML = buttons.join('');
+  }
+
+  function renderList(items, resetPage = false) {
     currentItems = Array.isArray(items) ? items : [];
+    if (resetPage) currentPage = 1;
     list.innerHTML = '';
     empty.hidden = currentItems.length > 0;
+
+    const pageSize = Math.max(1, Number(pageSizeEl?.value || 10));
+    const totalPages = Math.max(1, Math.ceil(currentItems.length / pageSize));
+    if (currentPage > totalPages) currentPage = totalPages;
+    const startIndex = (currentPage - 1) * pageSize;
+    const pageItems = currentItems.slice(startIndex, startIndex + pageSize);
 
     const activeCount = currentItems.filter(item => Number(item.status) === 1).length;
     const categoryCount = new Set(currentItems.map(item => String(item.categoryId || '')).filter(Boolean)).size;
@@ -204,30 +271,34 @@ const GAME_SUB_CATEGORY_API = {
     if (activeTextEl) activeTextEl.textContent = currentItems.length ? `${Math.round(activeCount / currentItems.length * 100)}% of total` : '0% of total';
     if (categoryCountEl) categoryCountEl.textContent = categoryCount;
     if (providerCountEl) providerCountEl.textContent = providerCount;
-    if (showingTextEl) showingTextEl.textContent = currentItems.length ? `Showing 1 to ${currentItems.length} of ${currentItems.length} entries` : 'Showing 0 entries';
+    if (showingTextEl) showingTextEl.textContent = currentItems.length ? `Showing ${startIndex + 1} to ${Math.min(startIndex + pageItems.length, currentItems.length)} of ${currentItems.length} entries` : 'Showing 0 entries';
 
-    currentItems.forEach(item => {
+    pageItems.forEach(item => {
       const row = document.createElement('div');
       row.className = 'subcategory-table-row';
       row.innerHTML = `
+        <span class="subcategory-drag"><i class="bi bi-grip-vertical"></i></span>
         <div class="subcategory-main-cell">
           <span class="subcategory-row-icon"><i class="bi bi-diagram-3"></i></span>
-          <b>${escapeHtml(item.name || 'Untitled Sub Category')}</b>
+          <div class="subcategory-copy">
+            <b>${escapeHtml(item.name || 'Untitled Sub Category')}</b>
+            <small>
+              <span>ID: ${escapeHtml(item.id)}</span><span class="dot">•</span>
+              <span>${escapeHtml(categoryName(item.categoryId))}</span><span class="dot">•</span>
+              <span>Provider: ${escapeHtml(providerName(item.providerCode))}</span><span class="dot">•</span>
+              <span>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span>
+            </small>
+          </div>
         </div>
-        <div class="subcategory-detail-cell">
-          <span><i class="bi bi-hash"></i>ID: ${escapeHtml(item.id)}</span><span class="dot">•</span>
-          <span><i class="bi bi-grid-3x3-gap"></i>${escapeHtml(categoryName(item.categoryId))}</span><span class="dot">•</span>
-          <span><i class="bi bi-building"></i>Provider: ${escapeHtml(providerName(item.providerCode))}</span><span class="dot">•</span>
-          <span><i class="bi bi-arrow-down-up"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span>
-        </div>
-        <div class="subcategory-status-actions">
-          ${statusPill(item.status)}
+        <div class="subcategory-status-cell">${statusPill(item.status)}</div>
+        <div class="subcategory-action-cell">
           <button class="icon-action-btn edit edit-btn" type="button" data-edit-id="${escapeHtml(item.id)}" aria-label="Edit" title="Edit"><i class="bi bi-pencil-square"></i></button>
           <button class="icon-action-btn delete" type="button" data-delete-id="${escapeHtml(item.id)}" aria-label="Delete" title="Delete"><i class="bi bi-trash"></i></button>
         </div>
       `;
       list.appendChild(row);
     });
+    buildPagination(totalPages);
   }
 
   async function loadSubCategories() {
@@ -236,7 +307,7 @@ const GAME_SUB_CATEGORY_API = {
     try {
       const params = filter.value ? '?categoryId=' + encodeURIComponent(filter.value) : '';
       const json = await fetchJson(GAME_SUB_CATEGORY_API.list + params);
-      renderList(json.data || []);
+      renderList(json.data || [], true);
     } catch (err) {
       list.innerHTML = '';
       empty.hidden = false;
@@ -308,6 +379,18 @@ const GAME_SUB_CATEGORY_API = {
   resetBtn.addEventListener('click', resetForm);
   refreshBtn.addEventListener('click', loadSubCategories);
   filter.addEventListener('change', loadSubCategories);
+
+
+  if (pageSizeEl) pageSizeEl.addEventListener('change', () => renderList(currentItems, true));
+  if (paginationEl) paginationEl.addEventListener('click', e => {
+    const button = e.target.closest('[data-page]');
+    if (!button || button.disabled) return;
+    const page = Number(button.dataset.page);
+    if (!Number.isFinite(page) || page < 1) return;
+    currentPage = page;
+    renderList(currentItems);
+    list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 
   list.addEventListener('click', e => {
     const editBtn = e.target.closest('[data-edit-id]');

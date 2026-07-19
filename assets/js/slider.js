@@ -63,7 +63,11 @@ const SLIDER_API = {
     $('bannerDetailUpdated').textContent=item.updatedAt||item.modifiedAt||item.createdAt||'-'; $('bannerDetailUpdatedBy').textContent=item.updatedBy||'Super Admin';
     list.querySelectorAll('.banner-thumb-card').forEach((el,i)=>el.classList.toggle('selected',i===selectedIndex));
     $('bannerDots').innerHTML=filteredItems.map((_,i)=>`<button type="button" class="${i===selectedIndex?'active':''}" data-dot-index="${i}" aria-label="Go to banner ${i+1}"></button>`).join('');
-    const selected=list.children[selectedIndex];if(selected)selected.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    const selected=list.children[selectedIndex];
+    if(selected){
+      const targetLeft=selected.offsetLeft-(list.clientWidth-selected.offsetWidth)/2;
+      list.scrollTo({left:Math.max(0,targetLeft),behavior:'smooth'});
+    }
   }
 
   function renderList(){

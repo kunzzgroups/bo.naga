@@ -7,112 +7,23 @@
     <title>Promotion Debug</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-    <link href="assets/css/reports.css?v=1.0.17" rel="stylesheet" />
+    <link href="assets/css/reports.css?v=1.0.23" rel="stylesheet" />
     <style>
-        .debug-grid {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(160px, 1fr));
-            gap: 12px
-        }
-
-        .debug-card {
-            background: #fff;
-            border: 1px solid #d9e2ef;
-            border-radius: 16px;
-            padding: 16px;
-            box-shadow: 0 8px 24px rgba(15, 23, 42, .05)
-        }
-
-        .debug-card b {
-            display: block;
-            font-size: 22px;
-            color: #0f2b55
-        }
-
-        .progress-mini {
-            height: 8px;
-            background: #edf2f7;
-            border-radius: 50px;
-            overflow: hidden;
-            min-width: 140px
-        }
-
-        .progress-mini span {
-            display: block;
-            height: 100%;
-            background: #0d6efd;
-            border-radius: 50px
-        }
-
-        .debug-actions {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap
-        }
-
-        .debug-actions button {
-            border: 1px solid #d9e2ef;
-            background: #fff;
-            border-radius: 8px;
-            padding: 6px 8px;
-            font-size: 12px;
-            font-weight: 700
-        }
-
-        .debug-actions button.primary {
-            background: #0d6efd;
-            color: #fff
-        }
-
-        .debug-actions button.warn {
-            background: #fff7ed;
-            color: #c2410c
-        }
-
-        .debug-actions button.danger {
-            background: #fee2e2;
-            color: #b91c1c
-        }
-
-        .debug-actions button.success {
-            background: #dcfce7;
-            color: #166534
-        }
-
-        .debug-filter {
-            display: grid;
-            grid-template-columns: 1fr 180px 160px auto;
-            gap: 12px
-        }
-
-        .debug-status {
-            margin-top: 12px;
-            font-weight: 700
-        }
-
-        .debug-status.ok {
-            color: #16a34a
-        }
-
-        .debug-status.err {
-            color: #dc2626
-        }
-
-        .nowrap {
-            white-space: nowrap
-        }
-
-        @media(max-width:900px) {
-
-            .debug-grid,
-            .debug-filter {
-                grid-template-columns: 1fr
-            }
-
-            .table-wrap {
-                overflow: auto
-            }
-        }
+        .debug-grid{display:grid;grid-template-columns:repeat(4,minmax(190px,1fr));gap:16px}
+        .debug-card{background:#fff;border:1px solid #dbe3ef;border-radius:16px;padding:18px 20px;box-shadow:0 5px 18px rgba(15,23,42,.035);display:flex;align-items:center;gap:16px;min-height:102px}
+        .debug-card-icon{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:27px;flex:0 0 56px}
+        .debug-card:nth-child(1) .debug-card-icon{background:#f1efff;color:#5865f2}.debug-card:nth-child(2) .debug-card-icon{background:#eef6ff;color:#3284e8}.debug-card:nth-child(3) .debug-card-icon{background:#eef9f0;color:#35a853}.debug-card:nth-child(4) .debug-card-icon{background:#fff0f0;color:#ef4444}
+        .debug-card span{display:block;font-size:13px;font-weight:700;color:#475467;margin-bottom:4px}.debug-card b{display:block;font-size:25px;line-height:1;color:#2563eb}.debug-card:nth-child(3) b{color:#34a853}.debug-card:nth-child(4) b{color:#e5484d}
+        .debug-filter{display:grid;grid-template-columns:minmax(320px,1.85fr) minmax(180px,.75fr) minmax(190px,.8fr) auto;gap:14px;align-items:end}
+        .debug-filter .field{min-width:0}.debug-filter .field input,.debug-filter .field select{width:100%;height:42px}
+        .debug-filter-actions{display:flex;gap:10px;align-items:end}.debug-filter-actions .clean-btn,.debug-filter-actions .btn-primary-clean{height:42px;min-width:124px;justify-content:center}
+        .debug-status{margin-top:10px;font-weight:700}.debug-status.ok{color:#16a34a}.debug-status.err{color:#dc2626}
+        .promotion-table-card{padding:14px}.promotion-table-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px;padding:0 0 12px;border-bottom:1px solid #e3e8f1;background:transparent!important;box-shadow:none!important;border-radius:0!important}.promotion-title-wrap{display:flex;align-items:center;gap:9px;font-size:16px;font-weight:800;color:#101828}.promotion-result-count{font-size:11px;color:#4f46e5;background:#eef2ff;border-radius:6px;padding:4px 8px;text-transform:none}.promotion-head-actions{display:flex;gap:10px;align-items:center}.promotion-head-actions .clean-btn{height:38px;font-size:12px}.promotion-head-actions .icon-only{width:44px;padding:0;justify-content:center}.promotion-head-actions .primary-action{background:#2f66e9;color:#fff;border-color:#2f66e9;text-decoration:none!important}.promotion-head-actions .primary-action:hover,.promotion-head-actions .primary-action:focus{text-decoration:none!important}
+        .progress-mini{height:7px;background:#edf2f7;border-radius:50px;overflow:hidden;min-width:140px}.progress-mini span{display:block;height:100%;background:#4f66f6;border-radius:50px}
+        .debug-actions{display:flex;gap:8px;align-items:center;white-space:nowrap}.debug-actions button{border:1px solid #d9e2ef;background:#fff;border-radius:8px;padding:8px 11px;font-size:12px;font-weight:700}.debug-actions button.primary{background:#4f5ff0;color:#fff;border-color:#4f5ff0}.action-menu-wrap{position:relative}.action-menu-toggle{width:40px;height:40px;padding:0!important;font-size:18px!important}.action-menu{display:none;position:fixed;z-index:9999;min-width:156px;background:#fff;border:1px solid #dbe3ef;border-radius:10px;box-shadow:0 12px 30px rgba(15,23,42,.18);padding:6px}.action-menu.open{display:block}.action-menu button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:9px 10px}.action-menu button:hover{background:#f4f7fb}.action-menu .danger{color:#dc2626}.action-menu .warn{color:#c2410c}.action-menu .success{color:#15803d}
+        .nowrap{white-space:nowrap}.report-table td{vertical-align:middle}.report-table th{white-space:nowrap}.promotion-table-card .report-table th{font-size:11px}.promotion-table-card .report-table td{font-size:12px}
+        @media(max-width:1100px){.debug-grid{grid-template-columns:repeat(2,1fr)}.debug-filter{grid-template-columns:1fr 1fr}.debug-filter .keyword-field{grid-column:1/-1}.debug-filter-actions{grid-column:1/-1}}
+        @media(max-width:700px){.debug-grid{grid-template-columns:1fr}.debug-filter{grid-template-columns:1fr}.debug-filter .keyword-field,.debug-filter-actions{grid-column:auto}.debug-filter-actions{flex-wrap:wrap}.promotion-table-head{align-items:flex-start;flex-direction:column}.promotion-head-actions{width:100%;flex-wrap:wrap}.table-wrap{overflow:auto}}
     </style>
 </head>
 
@@ -138,36 +49,25 @@
                 <div class="report-actions" data-bo-profile></div>
             </header>
             <section class="report-content">
-                <div class="debug-grid mb-3">
-                    <div class="debug-card"><span>Total Claims</span><b id="dbgTotal">0</b></div>
-                    <div class="debug-card"><span>Active</span><b id="dbgActive">0</b></div>
-                    <div class="debug-card"><span>Completed</span><b id="dbgCompleted">0</b></div>
-                    <div class="debug-card"><span>Forfeited</span><b id="dbgForfeited">0</b></div>
+                <div class="debug-grid mb-4">
+                    <div class="debug-card"><div class="debug-card-icon"><i class="bi bi-journal-text"></i></div><div><span>Total Claims</span><b id="dbgTotal">0</b></div></div>
+                    <div class="debug-card"><div class="debug-card-icon"><i class="bi bi-clock"></i></div><div><span>Active</span><b id="dbgActive">0</b></div></div>
+                    <div class="debug-card"><div class="debug-card-icon"><i class="bi bi-check-circle"></i></div><div><span>Completed</span><b id="dbgCompleted">0</b></div></div>
+                    <div class="debug-card"><div class="debug-card-icon"><i class="bi bi-x-octagon"></i></div><div><span>Forfeited</span><b id="dbgForfeited">0</b></div></div>
                 </div>
                 <div class="filter-card mb-3">
                     <div class="debug-filter">
-                        <div class="field"><label>Member Username / Mobile</label><input id="dbgKeyword"
-                                placeholder="e.g. test001 or mobile"></div>
-                        <div class="field"><label>Status</label><select id="dbgStatus">
-                                <option value="">All</option>
-                                <option value="ACTIVE">Active</option>
-                                <option value="COMPLETED">Completed</option>
-                                <option value="FORFEITED">Forfeited</option>
-                            </select></div>
-                        <div class="field"><label>Promotion ID</label><input id="dbgPromotionId" type="number"
-                                placeholder="optional"></div>
-                        <div class="field"><label>&nbsp;</label><button class="btn-primary-clean w-100"
-                                id="dbgSearchBtn" type="button"><i class="bi bi-search"></i> Search</button></div>
+                        <div class="field keyword-field"><label>Member Username / Mobile</label><input id="dbgKeyword" placeholder="e.g. test001 or mobile"></div>
+                        <div class="field"><label>Status</label><select id="dbgStatus"><option value="">All</option><option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option><option value="FORFEITED">Forfeited</option></select></div>
+                        <div class="field"><label>Promotion ID</label><input id="dbgPromotionId" type="number" placeholder="optional"></div>
+                        <div class="debug-filter-actions"><button class="clean-btn" id="dbgResetBtn" type="button"><i class="bi bi-arrow-counterclockwise"></i> Reset</button><button class="btn-primary-clean" id="dbgSearchBtn" type="button"><i class="bi bi-search"></i> Search</button></div>
                     </div>
                     <div class="debug-status" id="dbgMsg"></div>
                 </div>
-                <div class="table-card">
-                    <div class="user-toolbar mb-3">
-                        <div class="user-badge"><i class="bi bi-gift"></i><span>Promotion Claim</span></div>
-                        <div class="user-toolbar-actions"><button class="clean-btn" type="button" id="dbgSyncBetLogsBtn"><i
-                                    class="bi bi-database-check"></i> Sync Bet Logs</button><button class="clean-btn" type="button" id="dbgRefreshBtn"><i
-                                    class="bi bi-arrow-clockwise"></i> Refresh</button><a class="clean-btn"
-                                href="promotion.html"><i class="bi bi-plus-circle"></i> Create Promotion</a></div>
+                <div class="table-card promotion-table-card">
+                    <div class="promotion-table-head">
+                        <div class="promotion-title-wrap"><i class="bi bi-clipboard2"></i><span>Promotion Claims</span><span class="promotion-result-count" id="dbgResultCount">0 results</span></div>
+                        <div class="promotion-head-actions"><button class="clean-btn" type="button" id="dbgSyncBetLogsBtn"><i class="bi bi-database-check"></i> Sync Bet Logs</button><button class="clean-btn icon-only" type="button" id="dbgRefreshBtn" title="Refresh"><i class="bi bi-arrow-clockwise"></i></button><a class="clean-btn primary-action" href="promotion.html"><i class="bi bi-plus-lg"></i> Create Promotion</a></div>
                     </div>
                     <div class="table-wrap">
                         <table class="report-table">
@@ -195,10 +95,10 @@
             </section>
         </main>
     </div>
-    <script src="assets/js/config.js?v=1.0.10"></script>
+    <script src="assets/js/config.js?v=1.0.11"></script>
     <script src="assets/js/auth.js?v=1.0.11"></script>
     <script src="assets/js/reports.js?v=1.0.7"></script>
-    <script src="assets/js/promotion-debug.js?v=1.0.1"></script>
+    <script src="assets/js/promotion-debug.js?v=1.0.2"></script>
 </body>
 
 </html>

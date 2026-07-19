@@ -7,6 +7,9 @@ const API_CONFIG = window.API_CONFIG || {
     // Static upload domain for BO preview links/images (QR, payment proof, uploaded media)
     STATIC_UPLOAD_BASE_URL: "https://static.titanxgaming.com",
 
+    // Change this one value when the public game-image host changes.
+    GAME_IMAGE_PUBLIC_BASE_URL: "https://static.titanxgaming.com/uploads/game",
+
     ENDPOINTS: {
         UPLOAD_IMAGE: "/uploads/image",
         AUTH_ADMIN_LOGIN: "/auth/admin/login",
@@ -109,7 +112,8 @@ const API_CONFIG = window.API_CONFIG || {
         GAME_LIST: "/admin/game/list",
         GAME_CREATE: "/admin/game/create",
         GAME_UPDATE: "/admin/game/update",
-        GAME_DELETE: "/admin/game/delete"
+        GAME_DELETE: "/admin/game/delete",
+        GAME_DOWNLOAD_IMAGES: "/admin/game/download-images"
     }
 };
 

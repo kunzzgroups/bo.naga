@@ -90,7 +90,8 @@ const GAME_API = {
   list: adminApi('GAME_LIST'),
   create: adminApi('GAME_CREATE'),
   update: adminApi('GAME_UPDATE'),
-  delete: adminApi('GAME_DELETE')
+  delete: adminApi('GAME_DELETE'),
+  downloadImages: adminApi('GAME_DOWNLOAD_IMAGES')
 };
 
 (function () {
@@ -115,6 +116,7 @@ const GAME_API = {
   const saveBtn = document.getElementById('saveGameBtn');
   const resetBtn = document.getElementById('resetGameBtn');
   const refreshBtn = document.getElementById('refreshGameBtn');
+  const downloadImagesBtn = document.getElementById('downloadGameImagesBtn');
   const statusBox = document.getElementById('gameStatusBox');
   const categoryFilter = document.getElementById('gameCategoryFilter');
   const subCategoryFilter = document.getElementById('gameSubCategoryFilter');
@@ -128,13 +130,17 @@ const GAME_API = {
   const totalCountEl = document.getElementById('gameTotalCount');
   const activeCountEl = document.getElementById('gameActiveCount');
   const showingTextEl = document.getElementById('gameShowingText');
+  const paginationEl = document.getElementById('gamePagination');
+  const pageSizeEl = document.getElementById('gamePageSize');
 
   let selectedFile = null;
   let currentItems = [];
+  let currentPage = 1;
   let categories = [];
   let subCategories = [];
   let providers = [];
   let picker;
+  let isRestoringSelection = false;
 
   function valueOf(obj, keys) {
     for (const key of keys) {
@@ -143,12 +149,34 @@ const GAME_API = {
     return '';
   }
 
+  function primitiveId(value) {
+    if (value && typeof value === 'object') {
+      return valueOf(value, ['id', 'categoryId', 'subCategoryId', 'category_id', 'sub_category_id']);
+    }
+    return value;
+  }
+
   function getCategoryId(item) {
-    return valueOf(item, ['categoryId', 'gameCategoryId', 'category_id', 'game_category_id', 'parentCategoryId']);
+    return primitiveId(valueOf(item, ['categoryId', 'gameCategoryId', 'category_id', 'game_category_id', 'parentCategoryId', 'gameCategory', 'category']));
   }
 
   function getSubCategoryId(item) {
-    return valueOf(item, ['subCategoryId', 'gameSubCategoryId', 'sub_category_id', 'game_sub_category_id', 'subcategoryId']);
+    return primitiveId(valueOf(item, ['subCategoryId', 'gameSubCategoryId', 'sub_category_id', 'game_sub_category_id', 'subcategoryId', 'gameSubCategory', 'subCategory', 'subcategory']));
+  }
+
+  function nestedName(value) {
+    if (!value || typeof value !== 'object') return '';
+    return valueOf(value, ['name', 'title', 'categoryName', 'subCategoryName', 'category_name', 'sub_category_name']);
+  }
+
+  function getCategoryName(item) {
+    return valueOf(item, ['categoryName', 'gameCategoryName', 'category_name', 'game_category_name'])
+      || nestedName(valueOf(item, ['gameCategory', 'category']));
+  }
+
+  function getSubCategoryName(item) {
+    return valueOf(item, ['subCategoryName', 'gameSubCategoryName', 'sub_category_name', 'game_sub_category_name', 'subcategoryName'])
+      || nestedName(valueOf(item, ['gameSubCategory', 'subCategory', 'subcategory']));
   }
 
   function normalizeCategory(item) {
@@ -192,6 +220,7 @@ const GAME_API = {
   function setBusy(isBusy) {
     saveBtn.disabled = isBusy;
     refreshBtn.disabled = isBusy;
+    if (downloadImagesBtn) downloadImagesBtn.disabled = isBusy;
     saveBtn.innerHTML = isBusy ? '<i class="bi bi-hourglass-split"></i> Saving...' : '<i class="bi bi-save"></i> Save Game';
   }
 
@@ -301,14 +330,70 @@ const GAME_API = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  function normalizeCompareValue(value) {
+    return String(value ?? '').trim().toLowerCase().replace(/[_\-]+/g, ' ').replace(/\s+/g, ' ');
+  }
+
+  function findOptionValue(select, desiredId, desiredName) {
+    const idText = String(desiredId ?? '').trim();
+    if (idText) {
+      const idMatch = Array.from(select.options).find(option => String(option.value).trim() === idText);
+      if (idMatch) return idMatch.value;
+    }
+
+    const nameText = normalizeCompareValue(desiredName);
+    if (!nameText) return '';
+    const match = Array.from(select.options).find(option => {
+      const optionText = normalizeCompareValue(option.textContent.replace(/\s+-\s+[^-]+$/, ''));
+      return optionText === nameText;
+    });
+    return match ? match.value : '';
+  }
+
+  function notifySelectChanged(select) {
+    // Keep the native select and the rounded visual dropdown in sync.
+    // reports.js redraws the visible button/menu when a change event is fired.
+    select.dispatchEvent(new Event('change', { bubbles: false }));
+  }
+
+  function applySavedCategorySelection(item) {
+    // Game list API returns the exact database foreign keys as categoryId and
+    // subCategoryId. Always prefer those normalized values instead of guessing
+    // from the displayed category/sub-category names.
+    const wantedCategoryId = String(item.categoryId ?? getCategoryId(item) ?? '').trim();
+    const wantedSubCategoryId = String(item.subCategoryId ?? getSubCategoryId(item) ?? '').trim();
+
+    isRestoringSelection = true;
+    try {
+      const categoryExists = Array.from(categoryId.options).some(option => String(option.value) === wantedCategoryId);
+      categoryId.value = categoryExists ? wantedCategoryId : '';
+
+      // Rebuild only after the exact category ID and provider code are assigned.
+      // This guarantees the sub-category dropdown contains the database row that
+      // belongs to the selected category/provider before selecting it.
+      subCategoryId.innerHTML = subCategoryOptions(wantedCategoryId, false, providerCode.value);
+
+      const subCategoryExists = Array.from(subCategoryId.options).some(option => String(option.value) === wantedSubCategoryId);
+      subCategoryId.value = subCategoryExists ? wantedSubCategoryId : '';
+    } finally {
+      isRestoringSelection = false;
+    }
+
+    // Update the visible rounded dropdowns after both native selects are final.
+    categoryId.dispatchEvent(new Event('change', { bubbles: true }));
+    subCategoryId.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
   function editItem(item) {
     id.value = item.id || '';
-    categoryId.value = String(getCategoryId(item) || '');
-    refreshSubCategoryOptions(getSubCategoryId(item));
-    subCategoryId.value = String(getSubCategoryId(item) || '');
+
+    // Provider must be assigned before rebuilding sub-category options because
+    // some sub-categories are provider-specific.
+    providerCode.value = getProviderCode(item) || '';
+    applySavedCategorySelection(item);
+
     name.value = item.name || '';
     gameUrl.value = item.gameUrl || '';
-    providerCode.value = item.providerCode || '';
     if (gameCode) gameCode.value = item.gameCode || '';
     sortOrder.value = item.sortOrder ?? 0;
     status.value = String(item.status ?? 1);
@@ -321,11 +406,40 @@ const GAME_API = {
     formTitle.textContent = 'Edit Game #' + item.id;
     setStatus('Editing game. Choose new image only if you want to replace it.', 'success');
     if (window.CrudModalPattern) window.CrudModalPattern.open('Edit Game');
+
+    // Re-apply after the modal is visible. This prevents a late modal/select repaint
+    // from restoring the first category option (for example, Hot Game).
+    requestAnimationFrame(() => applySavedCategorySelection(item));
+    [60, 180, 350].forEach(delay => setTimeout(() => applySavedCategorySelection(item), delay));
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function renderList(items) {
+  function buildPagination(totalPages) {
+    if (!paginationEl) return;
+    if (totalPages <= 1) {
+      paginationEl.innerHTML = '';
+      return;
+    }
+    const buttons = [];
+    const add = (page, label, disabled = false, active = false, extraClass = '') => {
+      buttons.push(`<button class="smart-page ${active ? 'active' : ''} ${extraClass}" type="button" data-page="${page}" ${disabled ? 'disabled' : ''}>${label}</button>`);
+    };
+    add(currentPage - 1, '&lsaquo;', currentPage <= 1, false, 'prev');
+    const pages = new Set([1, totalPages, currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2]);
+    let last = 0;
+    [...pages].filter(page => page >= 1 && page <= totalPages).sort((a, b) => a - b).forEach(page => {
+      if (last && page - last > 1) buttons.push('<span class="smart-page-ellipsis">…</span>');
+      add(page, page, false, page === currentPage);
+      last = page;
+    });
+    add(currentPage + 1, '&rsaquo;', currentPage >= totalPages, false, 'next');
+    paginationEl.innerHTML = buttons.join('');
+  }
+
+  function renderList(items, resetPage = false) {
     currentItems = Array.isArray(items) ? items : [];
+    if (resetPage) currentPage = 1;
     const query = (searchInput?.value || '').trim().toLowerCase();
     const sortValue = sortFilter?.value || 'newest';
     let visible = currentItems.filter(item => !query || String(item.name || '').toLowerCase().includes(query));
@@ -337,13 +451,19 @@ const GAME_API = {
       return Number(b.id || 0) - Number(a.id || 0);
     });
 
+    const pageSize = Math.max(1, Number(pageSizeEl?.value || 10));
+    const totalPages = Math.max(1, Math.ceil(visible.length / pageSize));
+    if (currentPage > totalPages) currentPage = totalPages;
+    const startIndex = (currentPage - 1) * pageSize;
+    const pageItems = visible.slice(startIndex, startIndex + pageSize);
+
     if (totalCountEl) totalCountEl.textContent = currentItems.length;
     if (activeCountEl) activeCountEl.textContent = currentItems.filter(item => Number(item.status) === 1).length;
-    if (showingTextEl) showingTextEl.textContent = visible.length ? `Showing 1 to ${visible.length} of ${visible.length} entries` : 'Showing 0 entries';
+    if (showingTextEl) showingTextEl.textContent = visible.length ? `Showing ${startIndex + 1} to ${Math.min(startIndex + pageItems.length, visible.length)} of ${visible.length} entries` : 'Showing 0 entries';
     list.innerHTML = '';
     empty.hidden = visible.length > 0;
 
-    visible.forEach(item => {
+    pageItems.forEach(item => {
       const row = document.createElement('div');
       row.className = 'game-table-row';
       const imageUrl = resolveImageUrl(item.imageUrl, item.image, '');
@@ -359,6 +479,7 @@ const GAME_API = {
           <span><i class="bi bi-building"></i>Provider: ${escapeHtml(item.providerCode || '-')}</span>
           <span><i class="bi bi-code-slash"></i>Game Code: ${escapeHtml(item.gameCode || '-')}</span>
           <span><i class="bi bi-arrow-down-up"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span>
+          <span><i class="bi ${item.imageDownloaded ? 'bi-cloud-check' : 'bi-cloud-arrow-down'}"></i>Image: ${item.imageDownloaded ? 'Downloaded' : 'Provider URL'}</span>
         </div>
         <div class="game-status-cell">${statusPill(item.status)}</div>
         <div class="game-action-cell">
@@ -367,6 +488,7 @@ const GAME_API = {
         </div>`;
       list.appendChild(row);
     });
+    buildPagination(totalPages);
   }
 
   async function loadGames() {
@@ -392,7 +514,7 @@ const GAME_API = {
         rows = rows.filter(item => String(item.providerCode || '').toUpperCase() === selectedProvider);
       }
 
-      renderList(rows);
+      renderList(rows, true);
     } catch (err) {
       list.innerHTML = '';
       empty.hidden = false;
@@ -457,6 +579,28 @@ const GAME_API = {
     }
   }
 
+
+  async function downloadAllImages() {
+    if (!downloadImagesBtn) return;
+    const original = downloadImagesBtn.innerHTML;
+    downloadImagesBtn.disabled = true;
+    downloadImagesBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Downloading...';
+    setStatus('Downloading only game images that are not yet labelled as downloaded...', '');
+    try {
+      const res = await fetch(GAME_API.downloadImages, { method: 'POST' });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || json.status === 'error') throw new Error(json.message || 'Image download failed');
+      const d = json.data || {};
+      setStatus(`Image download completed: ${d.downloaded || 0} downloaded, ${d.skipped || 0} skipped, ${d.failed || 0} failed.`, Number(d.failed || 0) ? 'error' : 'success');
+      await loadGames();
+    } catch (err) {
+      setStatus(err.message || 'Image download failed.', 'error');
+    } finally {
+      downloadImagesBtn.disabled = false;
+      downloadImagesBtn.innerHTML = original;
+    }
+  }
+
   async function deleteGame(gameId) {
     if (!confirm('Delete this game?')) return;
     const fd = new FormData();
@@ -480,9 +624,17 @@ const GAME_API = {
 
   form.addEventListener('submit', saveGame);
   resetBtn.addEventListener('click', resetForm);
+  if (downloadImagesBtn) downloadImagesBtn.addEventListener('click', downloadAllImages);
+
   refreshBtn.addEventListener('click', async () => {
     await loadSetup();
     await loadGames();
+  });
+
+  categoryId.addEventListener('change', () => {
+    // During edit restore, both IDs are assigned together and must not be cleared.
+    if (isRestoringSelection) return;
+    refreshSubCategoryOptions('');
   });
 
   categoryFilter.addEventListener('change', async () => {
@@ -494,9 +646,9 @@ const GAME_API = {
   subCategoryFilter.addEventListener('change', loadGames);
   if (providerCode) providerCode.addEventListener('input', () => refreshSubCategoryOptions());
   if (providerFilter) providerFilter.addEventListener('change', () => { refreshFilterSubCategoryOptions(); subCategoryFilter.value = ''; loadGames(); });
-  if (searchInput) searchInput.addEventListener('input', () => renderList(currentItems));
-  if (sortFilter) sortFilter.addEventListener('change', () => renderList(currentItems));
-  if (applyFiltersBtn) applyFiltersBtn.addEventListener('click', () => renderList(currentItems));
+  if (searchInput) searchInput.addEventListener('input', () => renderList(currentItems, true));
+  if (sortFilter) sortFilter.addEventListener('change', () => renderList(currentItems, true));
+  if (applyFiltersBtn) applyFiltersBtn.addEventListener('click', () => renderList(currentItems, true));
   if (resetFiltersBtn) resetFiltersBtn.addEventListener('click', () => {
     if (searchInput) searchInput.value = '';
     if (categoryFilter) categoryFilter.value = '';
@@ -505,6 +657,18 @@ const GAME_API = {
     if (providerFilter) providerFilter.value = '';
     if (sortFilter) sortFilter.value = 'newest';
     loadGames();
+  });
+
+
+  if (pageSizeEl) pageSizeEl.addEventListener('change', () => renderList(currentItems, true));
+  if (paginationEl) paginationEl.addEventListener('click', e => {
+    const button = e.target.closest('[data-page]');
+    if (!button || button.disabled) return;
+    const page = Number(button.dataset.page);
+    if (!Number.isFinite(page) || page < 1) return;
+    currentPage = page;
+    renderList(currentItems);
+    list.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
   list.addEventListener('click', e => {

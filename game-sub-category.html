@@ -6,7 +6,7 @@
     <title>Game Sub Category</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-    <link href="assets/css/reports.css?v=1.0.17" rel="stylesheet" />
+    <link href="assets/css/reports.css?v=1.0.18" rel="stylesheet" />
   </head>
   <body class="report-body standardized-game-management">
     <div class="report-shell">
@@ -87,8 +87,8 @@
               <div class="section-title slider-list-title subcategory-toolbar-title">
                 <div class="subcategory-toolbar-controls">
                   <select class="manage-filter-select" id="subCategoryFilter"></select>
-                  <button class="clean-btn" id="refreshSubCategoryBtn" type="button"><i class="bi bi-arrow-clockwise"></i> <span class="btn-label">Refresh</span></button>
                 </div>
+                <button class="clean-btn" id="refreshSubCategoryBtn" type="button"><i class="bi bi-arrow-clockwise"></i> <span class="btn-label">Refresh</span></button>
               </div>
 
               <div class="subcategory-summary-grid">
@@ -102,20 +102,24 @@
                 <small>Create your first game sub category.</small>
               </div>
               <div class="subcategory-table-wrap">
-                <div class="subcategory-table-head"><span>Sub Category</span><span>Details</span><span>Status &amp; Actions</span></div>
+                <div class="subcategory-table-head"><span class="subcategory-head-name">SUB CATEGORY</span><span class="subcategory-head-status">STATUS</span><span class="subcategory-head-actions">ACTIONS</span></div>
                 <div class="manage-list subcategory-table" id="subCategoryList"></div>
               </div>
-              <div class="subcategory-table-footer"><span id="subCategoryShowingText">Showing 0 entries</span></div>
+              <div class="subcategory-table-footer admin-table-footer">
+                <div class="entries-control"><span>Show</span><select id="subCategoryPageSize"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select><span>entries</span></div>
+                <span id="subCategoryShowingText">Showing 0 entries</span>
+                <div class="smart-pagination" id="subCategoryPagination" role="navigation" aria-label="Game sub category pagination"></div>
+              </div>
             </div>
           </div>
         </section>
       </main>
     </div>
-    <script src="assets/js/config.js?v=1.0.10"></script>
+    <script src="assets/js/config.js?v=1.0.11"></script>
     <script src="assets/js/auth.js?v=1.0.11"></script>
     <script src="assets/js/reports.js?v=1.0.7"></script>
     <script src="assets/js/dynamic-translation.js?v=1.0.4"></script>
-    <script src="assets/js/game-sub-category.js?v=1.0.5"></script>
+    <script src="assets/js/game-sub-category.js?v=1.0.6"></script>
       <script src="assets/js/dynamic-translation-init.js?v=1.0.0"></script>
       <script src="assets/js/crud-modal-pattern.js?v=1.0.0"></script>
   </body>

@@ -49,8 +49,14 @@
     const meta=[full,mobile].filter(Boolean).join(' • ');
     return `<div class="ref-member-cell"><span class="ref-avatar">${initials(r)}</span><div class="ref-member-name"><b>${username}</b>${meta?`<small>${meta}</small>`:''}</div></div>`;
   }
+  function hasReferral(r){
+    return num(firstVal(r,['level1Count','l1Count','totalDownline','downlineCount'],0)) > 0;
+  }
+  function visibleMembers(){
+    return state.members.filter(r=>hasReferral(r) && inDateRange(r));
+  }
   function renderMembers(){
-    const rows=state.members.filter(inDateRange);
+    const rows=visibleMembers();
     const body=document.getElementById('refMemberBody');
     const cards=document.getElementById('refMemberCards');
     updateStats(rows);
@@ -150,7 +156,7 @@
     loadMembers();
   }
   function exportCsv(type){
-    const rows=type==='downline'?state.downline:state.members.filter(inDateRange);
+    const rows=type==='downline'?state.downline:visibleMembers();
     const headers=type==='downline'?['No','Username','Full Name','Mobile','Referral Code','Joined Date','Commission']:['No','Username','Full Name','Mobile','Referral Code','L1','Joined Date'];
     const lines=[headers];
     rows.forEach((r,i)=>{

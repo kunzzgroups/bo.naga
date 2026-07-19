@@ -325,6 +325,61 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     const API_CUSTOMIZE_SECTION_URL = (NAGA_API_CONFIG.BASE_URL || 'https://bo.corepayx.com/api') + ((NAGA_API_CONFIG.ENDPOINTS && NAGA_API_CONFIG.ENDPOINTS.CUSTOMIZE_SECTION) || '/customize/section');
     let activeSection = document.querySelector('.layout-section-item.active')?.dataset.section || 'right-panel';
 
+    // These are the current Naga site-shell defaults. They are shown in the BO editor
+    // when no custom section has been saved yet. CSS and JS intentionally stay empty,
+    // so the frontend continues using assets/css/style.css and its existing shell logic.
+    const DEFAULT_SECTION_HTML = {
+        'frontend-header': `<div data-layout-section="home-header"></div>
+<div class="logo-box mobile-style-logo">
+  <img class="site-logo" src="assets/custom/images/logo.png" decoding="async" loading="eager" fetchpriority="high" alt="Logo">
+</div>
+<div class="top-header-actions">
+  <div class="top-auth-actions">
+    <a class="top-login-btn" href="login.html" data-i18n="login">LOGIN</a>
+    <a class="top-register-btn" href="register.html"><span data-i18n="register">REGISTER</span></a>
+  </div>
+  <div class="top-member-actions">
+    <a class="top-wallet-pill" href="deposit.html"><span data-main-wallet-balance>MYR 0.00</span></a>
+    <button type="button" class="top-logout-btn" data-member-logout data-i18n="logout">Logout</button>
+  </div>
+</div>`,
+        'frontend-sidebar': `<div class="mobile-menu-head">
+  <div class="mobile-avatar"><i class="fa-solid fa-user"></i></div>
+  <div class="mobile-menu-auth">
+    <a href="login.html" class="mobile-login-btn" data-i18n="login">LOGIN</a>
+    <a href="register.html" class="mobile-register-btn"><span data-i18n="register">REGISTER</span></a>
+  </div>
+  <div class="mobile-menu-member">
+    <div class="mobile-menu-wallet"><span data-main-wallet-balance>MYR 0.00</span></div>
+  </div>
+</div>
+<div class="mobile-menu-list">
+  <a href="index.html"><i class="fa-solid fa-house mobile-menu-icon" aria-hidden="true"></i><span data-i18n="side_home">Home</span><i class="fa-solid fa-chevron-right mobile-menu-arrow" aria-hidden="true"></i></a>
+  <a href="downline.html"><i class="fa-solid fa-users mobile-menu-icon" aria-hidden="true"></i><span data-i18n="side_downline">Downline</span><i class="fa-solid fa-chevron-right mobile-menu-arrow" aria-hidden="true"></i></a>
+  <a href="vip.html"><i class="fa-solid fa-crown mobile-menu-icon" aria-hidden="true"></i><span data-i18n="side_vip">VIP</span><i class="fa-solid fa-chevron-right mobile-menu-arrow" aria-hidden="true"></i></a>
+  <a href="bonus.html"><i class="fa-solid fa-gift mobile-menu-icon" aria-hidden="true"></i><span data-i18n="side_bonus">Bonus</span><i class="fa-solid fa-chevron-right mobile-menu-arrow" aria-hidden="true"></i></a>
+  <a href="spin.html"><i class="fa-solid fa-dharmachakra mobile-menu-icon" aria-hidden="true"></i><span data-i18n="side_spin">Spin</span><i class="fa-solid fa-chevron-right mobile-menu-arrow" aria-hidden="true"></i></a>
+  <a href="policies.html"><i class="fa-solid fa-shield-halved mobile-menu-icon" aria-hidden="true"></i><span data-i18n="side_compliance_policy">Compliance Policy</span><i class="fa-solid fa-chevron-right mobile-menu-arrow" aria-hidden="true"></i></a>
+  <a href="chat.html"><i class="fa-solid fa-headset mobile-menu-icon" aria-hidden="true"></i><span data-i18n="side_live_chat">Live Chat</span><i class="fa-solid fa-chevron-right mobile-menu-arrow" aria-hidden="true"></i></a>
+  <button type="button" class="mobile-menu-list-logout" data-member-logout><i class="fa-solid fa-right-from-bracket mobile-menu-icon" aria-hidden="true"></i><span data-i18n="side_logout">Logout</span><i class="fa-solid fa-chevron-right mobile-menu-arrow" aria-hidden="true"></i></button>
+</div>
+<div class="mobile-menu-lang" id="sideLangBtn"><span>🌐 简体中文</span><span>CN ›</span></div>
+<div class="mobile-menu-version"><span data-i18n="side_version">Version:</span> 1.1.0</div>`
+    };
+
+    function withSectionDefaults(sectionKey, data) {
+        const normalized = {
+            html: data?.html || '',
+            css: data?.css || '',
+            js: data?.js || ''
+        };
+        if (DEFAULT_SECTION_HTML[sectionKey] && !normalized.html.trim()) {
+            normalized.html = DEFAULT_SECTION_HTML[sectionKey];
+            normalized.usingDefaultHtml = true;
+        }
+        return normalized;
+    }
+
     function setStatus(message, type) {
         if (!statusBox) return;
         statusBox.textContent = message || '';
@@ -464,8 +519,11 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             const res = await fetch(API_CUSTOMIZE_SECTION_URL + '?key=' + encodeURIComponent(sectionKey) + '&v=' + Date.now());
             const json = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(json.message || 'Load failed');
-            setEditors(json.data || {});
-            setStatus('Latest active files loaded.', 'success');
+            const sectionData = withSectionDefaults(sectionKey, json.data || {});
+            setEditors(sectionData);
+            setStatus(sectionData.usingDefaultHtml
+                ? 'Current Naga default HTML loaded. CSS and JS are blank so style.css and existing frontend scripts remain in use until you add overrides.'
+                : 'Latest active files loaded.', 'success');
         } catch (err) {
             setEditors({});
             setStatus(err.message || 'Load failed. Section files may not exist yet.', 'error');
@@ -491,7 +549,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             });
             const json = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(json.message || 'Save failed');
-            setStatus('Saved. Only non-empty or changed files were written; empty new files are skipped.', 'success');
+            setStatus(activeSection === 'home' ? 'Saved. This CSS now overrides the Naga frontend after refresh.' : 'Saved. Section content now applies to the Naga frontend after refresh.', 'success');
         } catch (err) {
             setStatus(err.message || 'Save failed. Please check Spring Boot API.', 'error');
         } finally {
