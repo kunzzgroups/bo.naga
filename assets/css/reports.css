@@ -3313,3 +3313,241 @@ body[data-report-page] .filter-card .bo-range-field{
     grid-column:1/-1!important;
   }
 }
+
+/* v1.1.34 - Provider Sessions compact single-row filters and Promotion Log action heading */
+/* Desktop: keep Date Range, Member ID, Provider Code, Game ID, Status and Search in one row. */
+body:has(#sessionFrom) .user-search-grid{
+  grid-template-columns:minmax(300px,2fr) minmax(150px,1fr) minmax(150px,1fr) minmax(140px,.9fr) minmax(150px,1fr) 124px!important;
+  align-items:end!important;
+  column-gap:12px!important;
+  row-gap:12px!important;
+}
+body:has(#sessionFrom) .bo-date-range-field,
+body:has(#sessionFrom) .bo-range-field,
+body:has(#sessionFrom) [data-bo-date-range]{
+  grid-column:auto!important;
+  min-width:0!important;
+}
+body:has(#sessionFrom) .user-search-grid .field:has(#sessionSearchBtn){
+  width:124px!important;
+  max-width:124px!important;
+  justify-self:start!important;
+}
+body:has(#sessionFrom) #sessionSearchBtn{
+  width:124px!important;
+  min-width:124px!important;
+  max-width:124px!important;
+  padding-left:16px!important;
+  padding-right:16px!important;
+}
+
+/* Promotion Log: keep the Action column heading left-aligned like the other headings. */
+body:has(#dbgRows) .report-table thead th:last-child{
+  text-align:left!important;
+}
+
+@media(max-width:1200px){
+  body:has(#sessionFrom) .user-search-grid{
+    grid-template-columns:minmax(280px,2fr) repeat(3,minmax(145px,1fr)) minmax(145px,1fr) 124px!important;
+  }
+}
+@media(max-width:1050px){
+  body:has(#sessionFrom) .user-search-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+  body:has(#sessionFrom) .bo-date-range-field,
+  body:has(#sessionFrom) .bo-range-field,
+  body:has(#sessionFrom) [data-bo-date-range]{grid-column:1 / span 2!important;}
+}
+@media(max-width:700px){
+  body:has(#sessionFrom) .user-search-grid{grid-template-columns:1fr!important;}
+  body:has(#sessionFrom) .bo-date-range-field,
+  body:has(#sessionFrom) .bo-range-field,
+  body:has(#sessionFrom) [data-bo-date-range]{grid-column:auto!important;}
+  body:has(#sessionFrom) .user-search-grid .field:has(#sessionSearchBtn),
+  body:has(#sessionFrom) #sessionSearchBtn{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+}
+
+
+/* Compact desktop filters + listing header alignment (v1.0.21) */
+@media (min-width: 1100px){
+  .provider-bet-report-page .user-search-grid{
+    grid-template-columns:repeat(6,minmax(0,1fr))!important;
+    gap:12px!important;
+    align-items:end!important;
+  }
+  .provider-transaction-page .pwt-filter-grid{
+    grid-template-columns:repeat(7,minmax(0,1fr))!important;
+    gap:12px!important;
+    align-items:end!important;
+  }
+  .withdraw-approval-page .user-search-grid,
+  .deposit-approval-page .user-search-grid{
+    grid-template-columns:minmax(260px,1.35fr) minmax(170px,1fr) minmax(150px,1fr) minmax(150px,1fr) minmax(150px,1fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+  }
+  .provider-bet-report-page .filter-card,
+  .provider-transaction-page .filter-card,
+  .withdraw-approval-page .filter-card,
+  .deposit-approval-page .filter-card{
+    padding-top:16px!important;
+    padding-bottom:16px!important;
+  }
+  .provider-bet-report-page .user-search-grid > .field,
+  .provider-transaction-page .pwt-filter-grid > .field,
+  .withdraw-approval-page .user-search-grid > .field,
+  .deposit-approval-page .user-search-grid > .field{
+    min-width:0!important;
+  }
+  .provider-transaction-page .pwt-filter-grid .action-field{
+    align-self:end!important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1099.98px){
+  .provider-bet-report-page .user-search-grid,
+  .provider-transaction-page .pwt-filter-grid,
+  .withdraw-approval-page .user-search-grid,
+  .deposit-approval-page .user-search-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+}
+
+/* Keep requested final column headings aligned to the left. */
+.withdraw-approval-page .report-table thead th:last-child,
+.deposit-approval-page .report-table thead th:last-child,
+.member-wallet-page .report-table thead th:last-child,
+.wallet-ledger-page .report-table thead th:last-child{
+  text-align:left!important;
+}
+
+/* User Management and Admin Management search buttons follow Referral Network blue. */
+.user-management-page #memberSearchBtn,
+.admin-management-page #searchAdminBtn{
+  background:#4656f6!important;
+  border-color:#4656f6!important;
+  color:#fff!important;
+}
+.user-management-page #memberSearchBtn:hover,
+.admin-management-page #searchAdminBtn:hover{
+  background:#3f4ee6!important;
+  border-color:#3f4ee6!important;
+}
+
+/* v1.0.22 - Provider Bet Report filter follows Provider Sessions full-width desktop layout. */
+@media (min-width:1100px){
+  .provider-bet-report-page .user-search-grid{
+    grid-template-columns:minmax(300px,2fr) repeat(4,minmax(150px,1fr)) 124px!important;
+    align-items:end!important;
+    column-gap:12px!important;
+    row-gap:12px!important;
+  }
+  .provider-bet-report-page .bo-date-range-field,
+  .provider-bet-report-page .bo-range-field,
+  .provider-bet-report-page [data-bo-date-range]{
+    grid-column:auto!important;
+    min-width:0!important;
+  }
+  .provider-bet-report-page .user-search-grid .field:has(#betSearchBtn){
+    width:124px!important;
+    min-width:124px!important;
+    max-width:124px!important;
+    justify-self:stretch!important;
+  }
+  .provider-bet-report-page #betSearchBtn{
+    width:124px!important;
+    min-width:124px!important;
+    max-width:124px!important;
+    padding-left:16px!important;
+    padding-right:16px!important;
+  }
+}
+@media (min-width:1100px) and (max-width:1200px){
+  .provider-bet-report-page .user-search-grid{
+    grid-template-columns:minmax(280px,2fr) repeat(4,minmax(140px,1fr)) 124px!important;
+  }
+}
+
+/* v1.0.23 - Keep requested final-column table data left-aligned. */
+.wallet-ledger-page #walletLedgerBody td:last-child,
+.deposit-approval-page #depositBody td:last-child,
+.withdraw-approval-page #withdrawBody td:last-child{
+  text-align:left!important;
+}
+
+/* Approval action controls must begin from the left edge of the Action cell. */
+.deposit-approval-page #depositBody td:last-child > .d-flex,
+.withdraw-approval-page #withdrawBody td:last-child > .d-flex{
+  justify-content:flex-start!important;
+  align-items:center!important;
+  width:100%!important;
+}
+
+/* v1.0.24 - Standardize User/Admin filter action buttons with Referral Network. */
+.user-management-page .user-filter-actions .filter-action-row,
+.admin-management-page .user-filter-actions .filter-action-row{
+  display:grid!important;
+  grid-template-columns:.72fr 1fr!important;
+  gap:12px!important;
+  width:100%!important;
+  align-items:center!important;
+}
+.user-management-page .user-filter-actions .filter-action-row .clean-btn,
+.user-management-page .user-filter-actions .filter-action-row .btn-primary-clean,
+.admin-management-page .user-filter-actions .filter-action-row .clean-btn,
+.admin-management-page .user-filter-actions .filter-action-row .btn-primary-clean{
+  width:100%!important;
+  height:42px!important;
+  min-height:42px!important;
+  border-radius:10px!important;
+  padding:0 16px!important;
+  font-size:13px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+  white-space:nowrap!important;
+}
+@media(max-width:420px){
+  .user-management-page .user-filter-actions .filter-action-row,
+  .admin-management-page .user-filter-actions .filter-action-row{
+    grid-template-columns:1fr!important;
+  }
+}
+
+
+/* v1.0.25 - Wallet Ledger compact single-row desktop filter. */
+@media (min-width:1100px){
+  .wallet-ledger-page .filter-card .user-search-grid{
+    grid-template-columns:minmax(300px,1.35fr) repeat(4,minmax(145px,1fr)) minmax(130px,.72fr) minmax(130px,.72fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+  }
+  .wallet-ledger-page .filter-card .user-search-grid > .field,
+  .wallet-ledger-page .filter-card .user-search-grid > .bo-range-field{
+    min-width:0!important;
+  }
+  .wallet-ledger-page #ledgerSearchBtn,
+  .wallet-ledger-page #ledgerResetBtn{
+    width:100%!important;
+    height:42px!important;
+    min-height:42px!important;
+    border-radius:10px!important;
+    padding:0 16px!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:7px!important;
+    white-space:nowrap!important;
+  }
+}
+@media (min-width:768px) and (max-width:1099.98px){
+  .wallet-ledger-page .filter-card .user-search-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+}
