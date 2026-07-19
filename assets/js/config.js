@@ -113,7 +113,10 @@ const API_CONFIG = window.API_CONFIG || {
         GAME_CREATE: "/admin/game/create",
         GAME_UPDATE: "/admin/game/update",
         GAME_DELETE: "/admin/game/delete",
-        GAME_DOWNLOAD_IMAGES: "/admin/game/download-images"
+        GAME_DOWNLOAD_IMAGES: "/admin/game/download-images",
+
+        COMPLIANCE_POLICY_LIST: "/admin/compliance-policies",
+        COMPLIANCE_POLICY_SAVE: "/admin/compliance-policies/save"
     }
 };
 

@@ -56,7 +56,8 @@
     {menuKey:'promotion_bonus', title:'Promotion Bonus', url:'promotion.html', icon:'bi-gift', parentKey:'bonus', sortOrder:82},
     {menuKey:'promotion_debug', title:'Promotion Debug', url:'promotion-debug.html', icon:'bi-bug', parentKey:'bonus', sortOrder:83},
     {menuKey:'site_customize', title:'Site Customize', url:'site-customize.html', icon:'bi-palette', parentKey:'', sortOrder:90},
-    {menuKey:'layout_section', title:'Layout Section', url:'layout-section.html', icon:'bi-code-square', parentKey:'', sortOrder:91}
+    {menuKey:'layout_section', title:'Layout Section', url:'layout-section.html', icon:'bi-code-square', parentKey:'', sortOrder:91},
+    {menuKey:'compliance_policy', title:'Compliance Policy', url:'compliance-policy.html', icon:'bi-file-earmark-lock', parentKey:'setting', sortOrder:92}
   ];
 
   function normalizeMenu(m){
