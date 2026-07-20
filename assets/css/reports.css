@@ -4788,3 +4788,260 @@ body[data-report-page] .filter-card .field:has(#casinoResetBtn){
     min-height: 280px;
   }
 }
+
+/* v1.0.38 - MacBook 13-inch compact date-range sizing
+   Keep large desktop styling unchanged, but reduce the 390px date control to 75%
+   on laptop-width mouse/trackpad screens so following filters stay inside the card. */
+@media (min-width:1200px) and (max-width:1599.98px) and (hover:hover) and (pointer:fine){
+  .bo-range-field,
+  .bo-date-range-field,
+  [data-bo-date-range],
+  .ref-date-field,
+  .ref-range-wrap,
+  body[data-report-page] .filter-card .bo-range-field,
+  body:has(#betFrom) .filter-card .bo-range-field,
+  body:has(#txFrom) .filter-card .bo-range-field,
+  body:has(#sessionFrom) .filter-card .bo-range-field,
+  body:has(#ledgerFrom) .filter-card .bo-range-field{
+    width:292px!important;
+    min-width:292px!important;
+    max-width:292px!important;
+  }
+
+  /* Wallet Ledger: reserve the real compact width instead of allowing the date
+     trigger to overlap Member ID. */
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:292px minmax(105px,1fr) minmax(110px,1fr) minmax(90px,.72fr) minmax(82px,.58fr) minmax(105px,.8fr) minmax(125px,1fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .bo-range-field{grid-column:1!important;grid-row:1!important;margin:0!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerMemberId){grid-column:2!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerProviderCode){grid-column:3!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerType){grid-column:4!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerSize){grid-column:5!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-reset-field{grid-column:6!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-search-field{grid-column:7!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .user-search-grid > *{min-width:0!important;max-width:none!important}
+
+  /* Provider Bet Report and Provider Sessions: compact first column and let the
+     remaining filters share all available laptop width evenly. */
+  .provider-bet-report-page .filter-card .user-search-grid,
+  body:has(#sessionFrom) .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:292px repeat(4,minmax(0,1fr))!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  .provider-bet-report-page .filter-card .bo-range-field,
+  body:has(#sessionFrom) .filter-card .bo-range-field{
+    grid-column:1!important;
+    grid-row:1!important;
+    margin:0!important;
+  }
+  .provider-bet-report-page .filter-card .user-search-grid > *,
+  body:has(#sessionFrom) .filter-card .user-search-grid > *{min-width:0!important;max-width:none!important}
+
+  /* Provider Transactions: remove the oversized 390px reservation that pushed
+     Status/actions outside the right edge on 13-inch MacBooks. */
+  .provider-transaction-page .pwt-filter-grid{
+    display:grid!important;
+    grid-template-columns:292px minmax(125px,.8fr) minmax(140px,.9fr) minmax(180px,1.15fr) minmax(130px,.8fr) minmax(210px,1.2fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  .provider-transaction-page .pwt-filter-grid .bo-range-field{grid-column:1!important;grid-row:1!important;margin:0!important}
+  .provider-transaction-page .pwt-filter-grid .field:has(#txMemberId){grid-column:2!important;grid-row:1!important}
+  .provider-transaction-page .pwt-filter-grid .field:has(#txProviderCode){grid-column:3!important;grid-row:1!important}
+  .provider-transaction-page .pwt-filter-grid .field:has(#txType){grid-column:4!important;grid-row:1!important}
+  .provider-transaction-page .pwt-filter-grid .field:has(#txStatus){grid-column:5!important;grid-row:1!important}
+  .provider-transaction-page .tx-filter-actions{grid-column:6!important;grid-row:1!important;width:100%!important;min-width:0!important;max-width:none!important}
+  .provider-transaction-page .tx-filter-actions .filter-action-row{width:100%!important;grid-template-columns:minmax(88px,.72fr) minmax(112px,1fr)!important}
+  .provider-transaction-page .pwt-filter-grid > *{min-width:0!important;max-width:none!important}
+
+  /* Simple report pages keep Search and Today directly after the compact date. */
+  body[data-report-page] .filter-card .user-search-grid{
+    grid-template-columns:292px 124px 124px!important;
+    justify-content:start!important;
+  }
+}
+
+/* v1.0.39 - Reliable 13-inch MacBook compact filters.
+   Do not depend on hover/pointer detection because browser emulation and some
+   trackpad environments can report a coarse pointer. */
+@media (min-width:1200px) and (max-width:1799.98px){
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:292px minmax(120px,1fr) minmax(120px,.9fr) minmax(100px,.72fr) minmax(90px,.62fr) minmax(120px,.8fr) minmax(150px,1fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .bo-range-field,
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .bo-range-field .bo-range-trigger{
+    width:292px!important;
+    min-width:292px!important;
+    max-width:292px!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .user-search-grid > *{
+    min-width:0!important;
+    max-width:none!important;
+  }
+
+  .provider-transaction-page .pwt-filter-grid{
+    display:grid!important;
+    grid-template-columns:292px minmax(120px,.78fr) minmax(135px,.88fr) minmax(180px,1.15fr) minmax(125px,.78fr) minmax(190px,1.08fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  .provider-transaction-page .pwt-filter-grid .bo-range-field,
+  .provider-transaction-page .pwt-filter-grid .bo-range-field .bo-range-trigger{
+    width:292px!important;
+    min-width:292px!important;
+    max-width:292px!important;
+  }
+  .provider-transaction-page .tx-filter-actions{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  .provider-transaction-page .pwt-filter-grid > *{
+    min-width:0!important;
+    max-width:none!important;
+  }
+
+  .provider-bet-report-page .filter-card .user-search-grid,
+  body:has(#sessionFrom) .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:292px repeat(4,minmax(0,1fr))!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  .provider-bet-report-page .filter-card .bo-range-field,
+  .provider-bet-report-page .filter-card .bo-range-field .bo-range-trigger,
+  body:has(#sessionFrom) .filter-card .bo-range-field,
+  body:has(#sessionFrom) .filter-card .bo-range-field .bo-range-trigger{
+    width:292px!important;
+    min-width:292px!important;
+    max-width:292px!important;
+  }
+  .provider-bet-report-page .filter-card .user-search-grid > *,
+  body:has(#sessionFrom) .filter-card .user-search-grid > *{
+    min-width:0!important;
+    max-width:none!important;
+  }
+}
+
+/* v1.0.40 - Width-safe desktop filter rows.
+   Uses flexible grid tracks instead of viewport-specific fixed widths, so the
+   layout remains stable at browser zoom levels and at 1367px+ dimensions. */
+@media (min-width:992px){
+  body.wallet-ledger-page .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:minmax(220px,1.45fr) minmax(120px,.8fr) minmax(120px,.78fr) minmax(95px,.58fr) minmax(88px,.5fr) minmax(115px,.72fr) minmax(135px,.9fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  body.wallet-ledger-page .filter-card .bo-range-field,
+  body.wallet-ledger-page .filter-card .bo-range-field .bo-range-trigger{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  body.wallet-ledger-page .filter-card .bo-range-field{grid-column:1!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .field:has(#ledgerMemberId){grid-column:2!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .field:has(#ledgerProviderCode){grid-column:3!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .field:has(#ledgerType){grid-column:4!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .field:has(#ledgerSize){grid-column:5!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .ledger-reset-field{grid-column:6!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .ledger-search-field{grid-column:7!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .user-search-grid > *{
+    min-width:0!important;
+    max-width:none!important;
+  }
+
+  .provider-transaction-page .pwt-filter-grid,
+  .provider-bet-report-page .filter-card .user-search-grid,
+  body:has(#sessionFrom) .filter-card .user-search-grid{
+    width:100%!important;
+    min-width:0!important;
+  }
+  .provider-transaction-page .pwt-filter-grid .bo-range-field,
+  .provider-transaction-page .pwt-filter-grid .bo-range-trigger,
+  .provider-bet-report-page .filter-card .bo-range-field,
+  .provider-bet-report-page .filter-card .bo-range-trigger,
+  body:has(#sessionFrom) .filter-card .bo-range-field,
+  body:has(#sessionFrom) .filter-card .bo-range-trigger{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+}
+
+/* v1.0.41 - Stable compact-desktop Wallet Ledger filters.
+   At 1367px-class viewports the sidebar leaves too little content width for
+   seven controls in one row. Keep all fields readable and move only the two
+   action buttons to a clean second row instead of allowing horizontal overflow. */
+@media (min-width:992px) and (max-width:1499.98px){
+  body.wallet-ledger-page .filter-card{
+    overflow:hidden!important;
+  }
+  body.wallet-ledger-page .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:minmax(220px,1.5fr) minmax(110px,.72fr) minmax(110px,.72fr) minmax(92px,.55fr) minmax(82px,.48fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  body.wallet-ledger-page .filter-card .bo-range-field{grid-column:1!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .field:has(#ledgerMemberId){grid-column:2!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .field:has(#ledgerProviderCode){grid-column:3!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .field:has(#ledgerType){grid-column:4!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .field:has(#ledgerSize){grid-column:5!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .ledger-reset-field{
+    grid-column:4!important;
+    grid-row:2!important;
+  }
+  body.wallet-ledger-page .filter-card .ledger-search-field{
+    grid-column:5!important;
+    grid-row:2!important;
+  }
+  body.wallet-ledger-page .filter-card .bo-range-field,
+  body.wallet-ledger-page .filter-card .bo-range-trigger,
+  body.wallet-ledger-page .filter-card .user-search-grid > *{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  body.wallet-ledger-page .filter-card .ledger-reset-field label,
+  body.wallet-ledger-page .filter-card .ledger-search-field label{
+    display:none!important;
+  }
+}
+
+/* v1.0.42 - Compact desktop action row starts from the left. */
+@media (min-width:992px) and (max-width:1499.98px){
+  body.wallet-ledger-page .filter-card .ledger-reset-field{
+    grid-column:1!important;
+    grid-row:2!important;
+  }
+  body.wallet-ledger-page .filter-card .ledger-search-field{
+    grid-column:2!important;
+    grid-row:2!important;
+  }
+}
