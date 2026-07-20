@@ -367,6 +367,49 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 <div class="mobile-menu-version"><span data-i18n="side_version">Version:</span> 1.1.0</div>`
     };
 
+    function upgradeAuthButtonsToImages(sectionKey, html) {
+        if (!html || (sectionKey !== 'frontend-header' && sectionKey !== 'frontend-sidebar')) {
+            return { html: html || '', upgraded: false };
+        }
+
+        let upgradedHtml = html;
+        const replacements = sectionKey === 'frontend-header'
+            ? [
+                {
+                    pattern: /<a\b([^>]*\bclass=["'][^"']*\btop-login-btn\b[^"']*["'][^>]*)>[\s\S]*?<\/a>/i,
+                    render: (attrs) => `<a${attrs} aria-label="Login"><img class="header-auth-image header-login-image" src="assets/custom/images/login.png" alt="LOGIN" decoding="async" loading="eager"></a>`
+                },
+                {
+                    pattern: /<a\b([^>]*\bclass=["'][^"']*\btop-register-btn\b[^"']*["'][^>]*)>[\s\S]*?<\/a>/i,
+                    render: (attrs) => `<a${attrs} aria-label="Register"><img class="header-auth-image header-register-image" src="assets/custom/images/register.png" alt="REGISTER" decoding="async" loading="eager"></a>`
+                }
+            ]
+            : [
+                {
+                    pattern: /<a\b([^>]*\bclass=["'][^"']*\bmobile-login-btn\b[^"']*["'][^>]*)>[\s\S]*?<\/a>/i,
+                    render: (attrs) => `<a${attrs} aria-label="Login"><img class="sidebar-auth-image sidebar-login-image" src="assets/custom/images/login.png" alt="LOGIN" decoding="async" loading="eager"></a>`
+                },
+                {
+                    pattern: /<a\b([^>]*\bclass=["'][^"']*\bmobile-register-btn\b[^"']*["'][^>]*)>[\s\S]*?<\/a>/i,
+                    render: (attrs) => `<a${attrs} aria-label="Register"><img class="sidebar-auth-image sidebar-register-image" src="assets/custom/images/register.png" alt="REGISTER" decoding="async" loading="eager"></a>`
+                }
+            ];
+
+        replacements.forEach(({ pattern, render }) => {
+            upgradedHtml = upgradedHtml.replace(pattern, (match, attrs) => {
+                let cleanAttrs = attrs
+                    .replace(/\saria-label=["'][^"']*["']/ig, '')
+                    .replace(/\sauth-image-link\b/ig, '');
+                if (/\bclass=["']/.test(cleanAttrs) && !/\bauth-image-link\b/.test(cleanAttrs)) {
+                    cleanAttrs = cleanAttrs.replace(/\bclass=(["'])([^"']*)\1/i, (m, quote, classes) => `class=${quote}${classes} auth-image-link${quote}`);
+                }
+                return render(cleanAttrs);
+            });
+        });
+
+        return { html: upgradedHtml, upgraded: upgradedHtml !== html };
+    }
+
     function withSectionDefaults(sectionKey, data) {
         const normalized = {
             html: data?.html || '',
@@ -376,7 +419,12 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         if (DEFAULT_SECTION_HTML[sectionKey] && !normalized.html.trim()) {
             normalized.html = DEFAULT_SECTION_HTML[sectionKey];
             normalized.usingDefaultHtml = true;
+            return normalized;
         }
+
+        const upgraded = upgradeAuthButtonsToImages(sectionKey, normalized.html);
+        normalized.html = upgraded.html;
+        normalized.upgradedAuthImages = upgraded.upgraded;
         return normalized;
     }
 
@@ -523,7 +571,9 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             setEditors(sectionData);
             setStatus(sectionData.usingDefaultHtml
                 ? 'Current Naga default HTML loaded. CSS and JS are blank so style.css and existing frontend scripts remain in use until you add overrides.'
-                : 'Latest active files loaded.', 'success');
+                : sectionData.upgradedAuthImages
+                    ? 'Existing text Login/Register buttons were converted to uploaded image HTML. Click Save Section to publish this updated layout.'
+                    : 'Latest active files loaded.', 'success');
         } catch (err) {
             setEditors({});
             setStatus(err.message || 'Load failed. Section files may not exist yet.', 'error');
