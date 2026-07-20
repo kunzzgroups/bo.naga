@@ -26,6 +26,9 @@
   let originalTitle = document.title;
   let templateMessages = [];
   let unsubscribeTemplates = null;
+  let notificationAudioContext = null;
+  let notificationAudioUnlocked = false;
+  let notificationSoundQueued = false;
   const DEFAULT_TEMPLATES = [
     {title:'Greeting', message:'Hi dear, how can I help you?'},
     {title:'Need Screenshot', message:'Please provide your username and issue screenshot.'},
@@ -38,6 +41,7 @@
 
   function init(){
     bindEvents();
+    installNotificationSoundUnlock();
     setComposerVisible(false);
     requestBrowserNotificationPermission();
     if(!initFirebase()){
@@ -578,13 +582,91 @@
     }
   }
 
+  function installNotificationSoundUnlock(){
+    const unlock = function(){
+      unlockNotificationSound();
+      document.removeEventListener('pointerdown', unlock, true);
+      document.removeEventListener('keydown', unlock, true);
+      document.removeEventListener('touchstart', unlock, true);
+    };
+    document.addEventListener('pointerdown', unlock, true);
+    document.addEventListener('keydown', unlock, true);
+    document.addEventListener('touchstart', unlock, true);
+  }
+
+  function unlockNotificationSound(){
+    try{
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if(!AudioContextClass) return;
+      if(!notificationAudioContext) notificationAudioContext = new AudioContextClass();
+      const ready = function(){
+        notificationAudioUnlocked = true;
+        if(notificationSoundQueued){
+          notificationSoundQueued = false;
+          playIncomingMessageSound();
+        }
+      };
+      if(notificationAudioContext.state === 'suspended'){
+        const resumed = notificationAudioContext.resume();
+        if(resumed && typeof resumed.then === 'function') resumed.then(ready).catch(function(){});
+      }else{
+        ready();
+      }
+    }catch(e){}
+  }
+
+  function playIncomingMessageSound(){
+    try{
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if(!AudioContextClass) return;
+      if(!notificationAudioContext) notificationAudioContext = new AudioContextClass();
+      if(notificationAudioContext.state === 'suspended'){
+        notificationSoundQueued = true;
+        unlockNotificationSound();
+        return;
+      }
+
+      notificationAudioUnlocked = true;
+      const now = notificationAudioContext.currentTime;
+      const master = notificationAudioContext.createGain();
+      master.gain.setValueAtTime(0.0001, now);
+      master.gain.exponentialRampToValueAtTime(0.22, now + 0.015);
+      master.gain.exponentialRampToValueAtTime(0.0001, now + 0.62);
+      master.connect(notificationAudioContext.destination);
+
+      [
+        {frequency: 880, start: 0, duration: 0.16},
+        {frequency: 1175, start: 0.20, duration: 0.24}
+      ].forEach(function(note){
+        const oscillator = notificationAudioContext.createOscillator();
+        const gain = notificationAudioContext.createGain();
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(note.frequency, now + note.start);
+        gain.gain.setValueAtTime(0.0001, now + note.start);
+        gain.gain.exponentialRampToValueAtTime(0.75, now + note.start + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + note.start + note.duration);
+        oscillator.connect(gain);
+        gain.connect(master);
+        oscillator.start(now + note.start);
+        oscillator.stop(now + note.start + note.duration + 0.03);
+      });
+    }catch(e){}
+  }
+
   function notifyIncoming(c){
+    playIncomingMessageSound();
     try{
       if('Notification' in window && Notification.permission === 'granted'){
-        new Notification('New live chat message', {
+        const notification = new Notification('New live chat message', {
           body: (c.memberName || c.memberUsername || 'Member') + ': ' + (c.lastMessage || 'New message'),
-          tag: 'livechat-' + c.id
+          tag: 'livechat-' + c.id,
+          renotify: true
         });
+        notification.onclick = function(){
+          try{ window.focus(); }catch(e){}
+          if(c && c.id) selectConversation(c.id);
+          notification.close();
+        };
       }
     }catch(e){}
   }
