@@ -5045,3 +5045,77 @@ body[data-report-page] .filter-card .field:has(#casinoResetBtn){
     grid-row:2!important;
   }
 }
+
+/* v1.0.43 - MacBook compact filters: casino reports + Provider Transactions */
+@media (min-width:1100px) and (max-width:1700px){
+  /* All casino report pages: compact Date Range followed by Search and Today. */
+  body[data-report-page] .filter-card .user-search-grid{
+    grid-template-columns:292px 124px 124px!important;
+    gap:12px!important;
+    justify-content:start!important;
+    align-items:end!important;
+  }
+  body[data-report-page] .filter-card .bo-range-field,
+  body[data-report-page] .filter-card .bo-date-range-field,
+  body[data-report-page] .filter-card [data-bo-date-range],
+  body[data-report-page] .filter-card .bo-range-trigger{
+    width:292px!important;
+    min-width:292px!important;
+    max-width:292px!important;
+  }
+  body[data-report-page] .filter-card .field:has(#casinoSearchBtn){
+    grid-column:2!important;
+    width:124px!important;
+    max-width:124px!important;
+  }
+  body[data-report-page] .filter-card .field:has(#casinoResetBtn){
+    grid-column:3!important;
+    width:124px!important;
+    max-width:124px!important;
+  }
+
+  /* Provider Transactions: keep every filter and both actions inside one row. */
+  .provider-transaction-page .pwt-filter-grid{
+    display:grid!important;
+    grid-template-columns:292px minmax(120px,.72fr) minmax(135px,.8fr) minmax(190px,1.12fr) minmax(130px,.74fr) 220px!important;
+    column-gap:12px!important;
+    row-gap:12px!important;
+    justify-content:stretch!important;
+    align-items:end!important;
+    width:100%!important;
+  }
+  .provider-transaction-page .pwt-filter-grid .bo-range-field,
+  .provider-transaction-page .pwt-filter-grid .bo-date-range-field,
+  .provider-transaction-page .pwt-filter-grid [data-bo-date-range],
+  .provider-transaction-page .pwt-filter-grid .bo-range-trigger{
+    grid-column:1!important;
+    width:292px!important;
+    min-width:292px!important;
+    max-width:292px!important;
+  }
+  .provider-transaction-page .pwt-filter-grid > .field{
+    min-width:0!important;
+    width:auto!important;
+    max-width:none!important;
+  }
+  .provider-transaction-page .pwt-filter-grid input,
+  .provider-transaction-page .pwt-filter-grid select{
+    width:100%!important;
+    min-width:0!important;
+  }
+  .provider-transaction-page .tx-filter-actions{
+    grid-column:6!important;
+    width:220px!important;
+    min-width:220px!important;
+    max-width:220px!important;
+  }
+  .provider-transaction-page .tx-filter-actions .filter-action-row{
+    grid-template-columns:1fr 1.15fr!important;
+    gap:10px!important;
+  }
+  .provider-transaction-page .tx-filter-actions button{
+    min-width:0!important;
+    padding-left:10px!important;
+    padding-right:10px!important;
+  }
+}
