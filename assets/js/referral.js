@@ -1,5 +1,5 @@
 (function(){
-  const state={members:[],downline:[],selected:null};
+  const state={members:[],downline:[],selected:null,rewardMember:null};
   function endpoint(k){return API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS[k];}
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function num(v){const n=Number(v||0);return Number.isFinite(n)?n:0;}
@@ -49,6 +49,14 @@
     const meta=[full,mobile].filter(Boolean).join(' • ');
     return `<div class="ref-member-cell"><span class="ref-avatar">${initials(r)}</span><div class="ref-member-name"><b>${username}</b>${meta?`<small>${meta}</small>`:''}</div></div>`;
   }
+  function rewardSettingHtml(r){
+    const enabled=Number(firstVal(r,['rewardEnabled'],0))===1;
+    const mode=String(firstVal(r,['rewardMode'],'FIXED')).toUpperCase();
+    const value=num(firstVal(r,['rewardValue'],0));
+    const source=String(firstVal(r,['rewardConfigSource'],'DEFAULT')).toUpperCase();
+    const label=!enabled?'Disabled':(mode==='PERCENTAGE'?`${value}% of Default`:`MYR ${money(value)} Fixed`);
+    return `<div class="ref-reward-setting"><b>${esc(label)}</b><small class="${source==='MEMBER'?'personal':'default'}">${source==='MEMBER'?'Personal':'Default'}</small></div>`;
+  }
   function hasReferral(r){
     return num(firstVal(r,['level1Count','l1Count','totalDownline','downlineCount'],0)) > 0;
   }
@@ -61,7 +69,7 @@
     const cards=document.getElementById('refMemberCards');
     updateStats(rows);
     if(!rows.length){
-      body.innerHTML='<tr><td colspan="6" class="ref-empty">No member found.</td></tr>';
+      body.innerHTML='<tr><td colspan="7" class="ref-empty">No member found.</td></tr>';
       cards.innerHTML='<div class="ref-mobile-card"><h3>No member found</h3><div class="meta">Try another search filter.</div></div>';
       return;
     }
@@ -72,7 +80,7 @@
       const l1=esc(firstVal(r,['level1Count','l1Count','totalDownline','downlineCount'],0));
       const joined=esc(dateOnly(firstVal(r,['createdAt','registerDate','registeredAt','joinedAt'],'')));
       const active=state.selected && String(state.selected.id)===String(firstVal(r,['id','memberId'],''));
-      return `<tr class="${active?'active':''}"><td>${i+1}</td><td>${memberNameHtml(r)}</td><td><b>${ref}</b></td><td>${l1}</td><td>${joined}</td><td><button class="ref-view-btn ref-view-icon" data-view="${id}" data-name="${name}" title="View downline" aria-label="View downline"><i class="bi bi-eye"></i></button></td></tr>`;
+      return `<tr class="${active?'active':''}"><td>${i+1}</td><td>${memberNameHtml(r)}</td><td><b>${ref}</b></td><td>${l1}</td><td>${rewardSettingHtml(r)}</td><td>${joined}</td><td><div class="ref-action-buttons"><button class="ref-view-btn ref-view-icon" data-view="${id}" data-name="${name}" title="View downline" aria-label="View downline"><i class="bi bi-eye"></i></button><button class="ref-config-btn" data-reward-member="${id}" data-name="${name}" title="Configure reward" aria-label="Configure reward"><i class="bi bi-gear"></i></button></div></td></tr>`;
     }).join('');
     cards.innerHTML=rows.map((r,i)=>{
       const id=esc(firstVal(r,['id','memberId'],''));
@@ -80,7 +88,7 @@
       const ref=esc(firstVal(r,['referrerCode','referralCode','code'],'-'));
       const l1=esc(firstVal(r,['level1Count','l1Count','totalDownline','downlineCount'],0));
       const joined=esc(dateOnly(firstVal(r,['createdAt','registerDate','registeredAt','joinedAt'],'')));
-      return `<div class="ref-mobile-card"><div class="ref-mobile-card-head"><div>${memberNameHtml(r)}</div><b>#${i+1}</b></div><div class="ref-mobile-grid"><span>Referral Code</span><b>${ref}</b><span>L1</span><b>${l1}</b><span>Joined Date</span><b>${joined}</b></div><button class="ref-view-btn ref-view-mobile" data-view="${id}" data-name="${name}"><i class="bi bi-eye"></i> View Downline</button></div>`;
+      return `<div class="ref-mobile-card"><div class="ref-mobile-card-head"><div>${memberNameHtml(r)}</div><b>#${i+1}</b></div><div class="ref-mobile-grid"><span>Referral Code</span><b>${ref}</b><span>L1</span><b>${l1}</b><span>Reward Setting</span><b>${rewardSettingHtml(r)}</b><span>Joined Date</span><b>${joined}</b></div><div class="ref-mobile-actions"><button class="ref-view-btn ref-view-mobile" data-view="${id}" data-name="${name}"><i class="bi bi-eye"></i> View Downline</button><button class="ref-config-btn ref-config-mobile" data-reward-member="${id}" data-name="${name}"><i class="bi bi-gear"></i> Reward</button></div></div>`;
     }).join('');
   }
   function renderDownline(rows){
@@ -288,16 +296,78 @@
     });
   }
 
+  function memberRewardLabel(){
+    const mode=document.getElementById('refMemberRewardMode')?.value;
+    const label=document.getElementById('refMemberRewardValueLabel');
+    if(label) label.textContent=mode==='PERCENTAGE'?'Percentage of Default Registration Reward (%)':'Fixed Reward Amount';
+  }
+  function toggleMemberConfigFields(){
+    const useDefault=document.getElementById('refMemberUseDefault')?.checked!==false;
+    document.getElementById('refMemberConfigFields')?.classList.toggle('disabled',useDefault);
+    document.querySelectorAll('#refMemberConfigFields input,#refMemberConfigFields select').forEach(el=>el.disabled=useDefault);
+  }
+  function closeMemberReward(){
+    const modal=document.getElementById('refMemberRewardModal');
+    if(modal){modal.classList.remove('show');modal.setAttribute('aria-hidden','true');}
+    state.rewardMember=null;
+  }
+  async function openMemberReward(id,name){
+    const modal=document.getElementById('refMemberRewardModal');
+    state.rewardMember={id,name};
+    document.getElementById('refMemberRewardMeta').textContent=`${name} • Member ID ${id}`;
+    modal?.classList.add('show'); modal?.setAttribute('aria-hidden','false');
+    try{
+      const j=await api(endpoint('REFERRAL_MEMBER_CONFIG')+'?memberId='+encodeURIComponent(id));
+      const d=j.data||{};
+      document.getElementById('refMemberUseDefault').checked=Boolean(d.usesDefault);
+      document.getElementById('refMemberRewardEnabled').value=String(Number(d.enabled??d.effectiveEnabled??1));
+      document.getElementById('refMemberRewardMode').value=d.mode||d.effectiveMode||'FIXED';
+      document.getElementById('refMemberRewardValue').value=Number(d.value??d.effectiveValue??0);
+      const effective=!Number(d.effectiveEnabled)?'Disabled':(d.effectiveMode==='PERCENTAGE'?`${Number(d.effectiveValue||0)}% of the default registration reward`:`MYR ${money(d.effectiveValue)} fixed per referral`);
+      document.getElementById('refEffectiveRewardNote').innerHTML=`Current effective reward: <b>${esc(effective)}</b> <span>${d.source==='MEMBER'?'Personal setting':'Default setting'}</span>`;
+      memberRewardLabel();toggleMemberConfigFields();
+    }catch(e){alert(e.message);closeMemberReward();}
+  }
+  async function saveMemberReward(){
+    if(!state.rewardMember)return;
+    const btn=document.getElementById('refMemberRewardSave');
+    try{
+      btn.disabled=true;
+      const useDefault=document.getElementById('refMemberUseDefault').checked;
+      let j;
+      if(useDefault){
+        j=await api(endpoint('REFERRAL_MEMBER_CONFIG')+'?memberId='+encodeURIComponent(state.rewardMember.id),{method:'DELETE',headers:{...BO_AUTH.authHeader()}});
+      }else{
+        const body={memberId:Number(state.rewardMember.id),enabled:Number(document.getElementById('refMemberRewardEnabled').value),mode:document.getElementById('refMemberRewardMode').value,value:Number(document.getElementById('refMemberRewardValue').value||0)};
+        j=await api(endpoint('REFERRAL_MEMBER_CONFIG'),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(body)});
+      }
+      alert(j.message||'Member reward setting saved');closeMemberReward();await loadMembers();
+    }catch(e){alert(e.message);}finally{btn.disabled=false;}
+  }
+
   document.addEventListener('click',e=>{
     const b=e.target.closest('[data-view]'); if(b)loadDownline(b.dataset.view,b.dataset.name);
+    const rc=e.target.closest('[data-reward-member]'); if(rc)openMemberReward(rc.dataset.rewardMember,rc.dataset.name);
     const ex=e.target.closest('[data-export]'); if(ex)exportCsv(ex.dataset.export);
   });
+
+  async function loadRewardConfig(){try{const j=await api(endpoint('REFERRAL_CONFIG'));const d=j.data||{};document.getElementById('refRewardEnabled').value=String(Number(d.enabled||0));document.getElementById('refRewardMode').value=d.mode||'FIXED';document.getElementById('refRewardValue').value=Number(d.value||0);updateRewardLabel();}catch(e){console.warn(e);}}
+  function updateRewardLabel(){const mode=document.getElementById('refRewardMode')?.value;const l=document.getElementById('refRewardValueLabel');if(l)l.textContent=mode==='PERCENTAGE'?'Percentage of Default Registration Reward (%)':'Fixed Reward Amount';}
+  async function saveRewardConfig(){const b=document.getElementById('refRewardSave');try{b.disabled=true;const body={enabled:Number(document.getElementById('refRewardEnabled').value),mode:document.getElementById('refRewardMode').value,value:Number(document.getElementById('refRewardValue').value||0)};const j=await api(endpoint('REFERRAL_CONFIG'),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(body)});alert(j.message||'Saved');loadMembers();}catch(e){alert(e.message);}finally{b.disabled=false;}}
+
   document.addEventListener('DOMContentLoaded',()=>{
     document.getElementById('refSearch')?.addEventListener('click',loadMembers);
     document.getElementById('refReset')?.addEventListener('click',resetFilters);
     initDatePicker();
     document.getElementById('refKeyword')?.addEventListener('keydown',e=>{if(e.key==='Enter')loadMembers();});
     document.getElementById('refLevel')?.addEventListener('change',()=>{if(state.selected)loadDownline(state.selected.id,state.selected.name);});
+    document.getElementById('refRewardMode')?.addEventListener('change',updateRewardLabel);
+    document.getElementById('refRewardSave')?.addEventListener('click',saveRewardConfig);
+    document.getElementById('refMemberUseDefault')?.addEventListener('change',toggleMemberConfigFields);
+    document.getElementById('refMemberRewardMode')?.addEventListener('change',memberRewardLabel);
+    document.getElementById('refMemberRewardSave')?.addEventListener('click',saveMemberReward);
+    document.querySelectorAll('[data-close-member-reward]').forEach(el=>el.addEventListener('click',closeMemberReward));
+    loadRewardConfig();
     loadMembers();
   });
 })();

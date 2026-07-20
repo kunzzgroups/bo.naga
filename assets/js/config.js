@@ -76,6 +76,8 @@ const API_CONFIG = window.API_CONFIG || {
         PAYMENT_METHOD_DELETE: "/admin/payment-method/delete",
         REFERRAL_LIST: "/admin/referral/list",
         REFERRAL_DOWNLINE: "/admin/referral/downline",
+        REFERRAL_CONFIG: "/admin/referral/config",
+        REFERRAL_MEMBER_CONFIG: "/admin/referral/member-config",
         MEMBER_WITHDRAW_LIST: "/admin/member-withdraw/list",
         MEMBER_WITHDRAW_CREATE: "/admin/member-withdraw/create",
         MEMBER_WITHDRAW_APPROVE: "/admin/member-withdraw/approve",
