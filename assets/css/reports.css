@@ -351,7 +351,7 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 @media(max-width:760px){.layout-editor-shell{grid-template-columns:1fr}.layout-section-menu{border-right:0;border-bottom:1px solid var(--line);max-height:230px}.layout-editor-actions{justify-content:flex-start;margin-top:10px}.layout-editor-current{display:block}.layout-editor-current small{display:inline-block;margin-top:6px}}
 
 /* ===== Slider Banner page ===== */
-.slider-page-grid{display:grid;grid-template-columns:minmax(320px,430px) 1fr;gap:18px;align-items:start}
+.slider-page-grid{display:grid;grid-template-columns:minmax(320px,390px) 1fr;gap:18px;align-items:start}
 .slider-form-card,.slider-list-card{background:#fff;border:1px solid var(--line,#e4e7ec);border-radius:18px;box-shadow:0 14px 35px rgba(15,23,42,.06);padding:18px;min-width:0}
 .slider-form-card{position:sticky;top:86px}
 .slider-form .field{margin-bottom:12px}
@@ -1153,12 +1153,12 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 .field input::placeholder{color:#98a2b3!important;}
 .filter-action-row{display:grid;grid-template-columns:78px 1fr;gap:10px;align-items:center;}
 .filter-action-row .clean-btn,.filter-action-row .btn-primary-clean{height:40px!important;border-radius:9px!important;font-size:12px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;padding:0 12px!important;white-space:nowrap!important;}
-.filter-action-row .btn-primary-clean{width:100%!important;background:#5b5ff0!important;border:1px solid #5b5ff0!important;color:#fff!important;box-shadow:0 6px 14px rgba(91,95,240,.18)!important;}
+.filter-action-row .btn-primary-clean{width:100%!important;background:#2563eb!important;border:1px solid #2563eb!important;color:#fff!important;box-shadow:0 6px 14px rgba(91,95,240,.18)!important;}
 .table-card{border-radius:16px!important;border:1px solid #e4e7ec!important;background:#fff!important;box-shadow:0 8px 22px rgba(16,24,40,.04)!important;padding:16px!important;}
 .user-toolbar{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;margin-bottom:14px!important;}
 .user-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .user-badge{height:36px!important;border-radius:10px!important;padding:0 12px!important;font-size:15px!important;font-weight:900!important;color:#101828!important;background:#fff!important;border:0!important;}
-.users-found-badge{display:inline-flex;align-items:center;height:24px;border-radius:999px;background:#eef2ff;color:#5b5ff0;font-size:11px;font-weight:900;padding:0 9px;}
+.users-found-badge{display:inline-flex;align-items:center;height:24px;border-radius:999px;background:#eef2ff;color:#2563eb;font-size:11px;font-weight:900;padding:0 9px;}
 .user-toolbar-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .user-toolbar-actions .clean-btn{height:36px!important;border-radius:9px!important;font-size:12px!important;padding:0 12px!important;display:inline-flex;align-items:center;gap:6px;background:#fff!important;}
 .table-card .table-wrap:has(.user-main-table){overflow-x:hidden!important;border-radius:12px!important;border:1px solid #edf0f5!important;}
@@ -1166,7 +1166,7 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 .user-main-table th{background:#f8fafc!important;color:#344054!important;border-right:1px solid #edf0f5!important;border-bottom:1px solid #edf0f5!important;font-size:10.5px!important;line-height:1.15!important;font-weight:900!important;padding:9px 6px!important;white-space:normal!important;}
 .user-main-table td{font-size:11px!important;line-height:1.2!important;padding:9px 6px!important;white-space:normal!important;word-break:break-word!important;color:#344054!important;border-right:1px solid #edf0f5!important;border-bottom:1px solid #edf0f5!important;}
 .user-main-table th:nth-child(1),.user-main-table td:nth-child(1){width:4%;text-align:center}.user-main-table th:nth-child(2),.user-main-table td:nth-child(2){width:14%}.user-main-table th:nth-child(3),.user-main-table td:nth-child(3){width:12%}.user-main-table th:nth-child(4),.user-main-table td:nth-child(4){width:12%}.user-main-table th:nth-child(5),.user-main-table td:nth-child(5){width:8%}.user-main-table th:nth-child(6),.user-main-table td:nth-child(6){width:9%}.user-main-table th:nth-child(7),.user-main-table td:nth-child(7){width:8%}.user-main-table th:nth-child(8),.user-main-table td:nth-child(8){width:8%}.user-main-table th:nth-child(9),.user-main-table td:nth-child(9){width:8%}.user-main-table th:nth-child(10),.user-main-table td:nth-child(10){width:7%}.user-main-table th:nth-child(11),.user-main-table td:nth-child(11){width:6%;text-align:center}.user-main-table th:nth-child(12),.user-main-table td:nth-child(12){width:7%;text-align:center}
-.member-name-cell b,.money-strong{color:#4f46e5!important;font-weight:900!important}.member-name-cell small{color:#667085!important;font-size:10px!important;font-weight:700!important}.status-pill{border-radius:999px!important;background:#dcfce7!important;color:#16a34a!important;font-size:9.5px!important;font-weight:900!important;padding:4px 7px!important;}.status-pill.off{background:#fee2e2!important;color:#dc2626!important}.user-row-actions{display:flex!important;justify-content:center!important;gap:6px!important}.icon-action{width:27px!important;height:27px!important;border-radius:8px!important}.icon-action.view{background:#eef2ff!important;color:#5b5ff0!important;border-color:#d8ddff!important}
+.member-name-cell b,.money-strong{color:#4f46e5!important;font-weight:900!important}.member-name-cell small{color:#667085!important;font-size:10px!important;font-weight:700!important}.status-pill{border-radius:999px!important;background:#dcfce7!important;color:#16a34a!important;font-size:9.5px!important;font-weight:900!important;padding:4px 7px!important;}.status-pill.off{background:#fee2e2!important;color:#dc2626!important}.user-row-actions{display:flex!important;justify-content:center!important;gap:6px!important}.icon-action{width:27px!important;height:27px!important;border-radius:8px!important}.icon-action.view{background:#eef2ff!important;color:#2563eb!important;border-color:#d8ddff!important}
 .member-card-list{display:none;}
 @media(max-width:1199.98px){.report-content{padding:16px 14px!important}.quick-stats.user-stats .user-metric{padding:16px!important}.user-metric .metric-icon{width:46px!important;height:46px!important}.user-search-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}.user-main-table th,.user-main-table td{font-size:10px!important;padding:8px 4px!important}.desktop-only{display:none!important}}
 @media(max-width:767.98px){.report-content{padding:14px 10px!important}.quick-stats.user-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}.quick-stats.user-stats .user-metric{min-height:86px!important;padding:14px 16px!important}.user-metric .metric-icon{display:none!important}.user-search-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px 12px!important}.user-filter-actions{grid-column:1/-1!important}.filter-action-row{grid-template-columns:1fr 1fr!important}.filter-action-row .clean-btn,.filter-action-row .btn-primary-clean{width:100%!important}.user-toolbar{display:grid!important;grid-template-columns:1fr!important}.user-title-row,.user-toolbar-actions{width:100%!important}.user-toolbar-actions .clean-btn{width:100%!important;justify-content:center!important}.table-card .table-wrap:has(.user-main-table),.report-table.user-main-table{display:none!important}.member-card-list{display:grid!important;gap:12px!important}.member-card{border-radius:14px!important;padding:14px!important;box-shadow:0 6px 16px rgba(16,24,40,.04)!important}.member-card h3{font-size:18px!important}.member-grid{grid-template-columns:1fr 1fr!important;gap:8px 12px!important}.member-grid b{text-align:right!important}}
@@ -1367,7 +1367,7 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 
 /* Referral Network - image 1 style */
 .referral-page{--ref-blue:#3f55ff;--ref-card:#fff;--ref-soft:#f7f8ff;--ref-border:#e8ecf5;--ref-text:#101828;--ref-muted:#667085}
-.referral-page .report-content{padding:18px 20px 24px;background:#f7f8fc}.referral-page .report-topbar{background:#fff;border-bottom:1px solid #eef1f6;box-shadow:none}.referral-title-wrap{display:flex;align-items:center;gap:12px}.referral-title-icon{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;color:#4755ff;background:#f0f2ff;font-size:20px}.referral-page .report-topbar h1{font-size:22px}.referral-page .report-topbar p{display:block;color:#667085;margin-top:4px;font-size:12px}.referral-stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:0 0 16px}.ref-stat-card{height:96px;background:#fff;border:1px solid var(--ref-border);border-radius:16px;box-shadow:0 8px 24px rgba(16,24,40,.04);padding:18px 22px;display:flex;align-items:center;gap:18px;min-width:0}.ref-stat-card span{display:block;font-size:12px;color:#667085;font-weight:700}.ref-stat-card strong{display:block;font-size:24px;line-height:1.1;margin:5px 0 3px;color:#061225;font-weight:900}.ref-stat-card small{display:block;font-size:12px;color:#667085}.ref-stat-icon{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:24px;flex:0 0 auto}.ref-stat-icon.purple{background:#f0efff;color:#6366f1}.ref-stat-icon.green{background:#eaf9ef;color:#36a85b}.ref-stat-icon.violet{background:#f4ecff;color:#8b5cf6}.ref-stat-icon.orange{background:#fff2e1;color:#e59b39}.referral-filter-card{background:#fff;border:1px solid var(--ref-border);border-radius:16px;box-shadow:0 8px 24px rgba(16,24,40,.04);padding:18px;margin-bottom:18px}.referral-filter-grid{display:grid;grid-template-columns:1.25fr 1.15fr 1fr 1fr;gap:16px;align-items:end}.referral-page .field label{font-size:12px;margin-bottom:8px;color:#344054}.referral-page .field input,.referral-page .field select{height:42px;border-radius:10px;border-color:#d9dfeb;font-size:13px}.ref-input-icon{position:relative}.ref-input-icon input{padding-right:38px}.ref-input-icon i{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#667085}.ref-date-control{height:42px;border:1px solid #d9dfeb;border-radius:10px;background:#fff;display:flex;align-items:center;gap:9px;padding:0 10px;min-width:0}.ref-date-control i{color:#667085}.ref-date-control input{border:0!important;box-shadow:none!important;padding:0!important;height:36px!important;border-radius:0!important;min-width:0;font-size:13px}.ref-date-control span{color:#667085}.ref-date-control button{border:0;background:transparent;color:#667085;padding:0 2px}.ref-filter-actions{display:grid;grid-template-columns:.72fr 1fr;gap:12px}.referral-page .clean-btn{height:42px;border-radius:10px;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:13px;white-space:nowrap}.referral-page .clean-btn.primary{background:#4656f6;border-color:#4656f6}.referral-panels-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}.referral-panel-card{background:#fff;border:1px solid var(--ref-border);border-radius:16px;box-shadow:0 8px 24px rgba(16,24,40,.04);padding:18px;min-width:0}.ref-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.ref-panel-title{display:flex;align-items:center;gap:12px;min-width:0}.ref-panel-title span{font-size:16px;font-weight:900;color:#182230}.ref-panel-title small{background:#eef0ff;color:#4c5cff;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:900;white-space:nowrap}.ref-export{height:36px!important;padding:0 12px!important}.ref-table-wrap{width:100%;overflow:hidden;border:1px solid #e7ebf3;border-radius:14px;background:#fff}.ref-table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed;background:#fff}.ref-table th{background:#fafbff;color:#344054;text-align:left;padding:13px 10px;font-size:11px;font-weight:900;border-bottom:1px solid #e7ebf3;white-space:normal}.ref-table td{padding:13px 10px;border-bottom:1px solid #edf1f7;color:#101828;font-size:12px;vertical-align:middle;word-break:break-word}.ref-table tr:last-child td{border-bottom:0}.ref-table tbody tr:nth-child(even) td{background:#fcfcff}.ref-table tbody tr:hover td,.ref-table tbody tr.active td{background:#f2f5ff}.ref-table b{font-weight:900;color:#102033}.ref-table small{color:#667085;font-size:11px;font-weight:700}.ref-members-table th:nth-child(1),.ref-members-table td:nth-child(1){width:44px;text-align:center}.ref-members-table th:nth-child(2),.ref-members-table td:nth-child(2){width:32%}.ref-members-table th:nth-child(3),.ref-members-table td:nth-child(3){width:22%}.ref-members-table th:nth-child(4),.ref-members-table td:nth-child(4){width:50px;text-align:center}.ref-members-table th:nth-child(5),.ref-members-table td:nth-child(5){width:24%}.ref-members-table th:nth-child(6),.ref-members-table td:nth-child(6){width:80px;text-align:center}.ref-downline-table th:nth-child(1),.ref-downline-table td:nth-child(1){width:44px;text-align:center}.ref-downline-table th:nth-child(2),.ref-downline-table td:nth-child(2){width:32%}.ref-downline-table th:nth-child(3),.ref-downline-table td:nth-child(3){width:22%}.ref-downline-table th:nth-child(4),.ref-downline-table td:nth-child(4){width:25%}.ref-downline-table th:nth-child(5),.ref-downline-table td:nth-child(5){width:95px;text-align:right}.ref-view-btn{height:34px;border:0;border-radius:8px;background:#4656f6;color:#fff;font-size:12px;font-weight:900;padding:0 16px}.ref-avatar{width:30px;height:30px;border-radius:50%;display:inline-grid;place-items:center;background:#eef0ff;color:#4656f6;font-size:11px;font-weight:900;flex:0 0 auto}.ref-member-cell{display:flex;align-items:center;gap:9px;min-width:0}.ref-member-name{min-width:0}.ref-member-name b{display:block}.ref-commission{font-weight:900;color:#16a34a}.ref-downline-summary{height:46px;border-radius:12px;background:#fafbff;margin-bottom:12px;padding:0 16px;display:flex;align-items:center;gap:44px;color:#667085;font-size:12px}.ref-downline-summary strong{color:#101828;margin-left:8px}.ref-pagination-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;color:#667085;font-size:12px}.ref-pagination-row select{height:34px;border:1px solid #d9dfeb;border-radius:8px;background:#fff;padding:0 10px}.ref-pager{display:flex;align-items:center;gap:8px}.ref-pager button,.ref-pager b{width:34px;height:34px;border:1px solid #e5eaf2;background:#fff;border-radius:9px;display:grid;place-items:center;color:#667085;text-decoration:none}.ref-pager b{background:#4656f6;color:#fff;border-color:#4656f6}.ref-info-note{margin-top:16px;background:#f2f4ff;border-radius:12px;padding:14px 16px;color:#667085;font-size:12px}.ref-info-note i{color:#5865f2;margin-right:8px}.ref-mobile-list{display:none}.ref-empty{text-align:center;color:#667085;padding:20px!important}.ref-loading{text-align:center;color:#667085;padding:20px!important}.referral-page .text-danger{color:#dc2626!important}
+.referral-page .report-content{padding:18px 20px 24px;background:#f7f8fc}.referral-page .report-topbar{background:#fff;border-bottom:1px solid #eef1f6;box-shadow:none}.referral-title-wrap{display:flex;align-items:center;gap:12px}.referral-title-icon{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;color:#4755ff;background:#f0f2ff;font-size:20px}.referral-page .report-topbar h1{font-size:22px}.referral-page .report-topbar p{display:block;color:#667085;margin-top:4px;font-size:12px}.referral-stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:0 0 16px}.ref-stat-card{height:96px;background:#fff;border:1px solid var(--ref-border);border-radius:16px;box-shadow:0 8px 24px rgba(16,24,40,.04);padding:18px 22px;display:flex;align-items:center;gap:18px;min-width:0}.ref-stat-card span{display:block;font-size:12px;color:#667085;font-weight:700}.ref-stat-card strong{display:block;font-size:24px;line-height:1.1;margin:5px 0 3px;color:#061225;font-weight:900}.ref-stat-card small{display:block;font-size:12px;color:#667085}.ref-stat-icon{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:24px;flex:0 0 auto}.ref-stat-icon.purple{background:#f0efff;color:#6366f1}.ref-stat-icon.green{background:#eaf9ef;color:#36a85b}.ref-stat-icon.violet{background:#f4ecff;color:#8b5cf6}.ref-stat-icon.orange{background:#fff2e1;color:#e59b39}.referral-filter-card{background:#fff;border:1px solid var(--ref-border);border-radius:16px;box-shadow:0 8px 24px rgba(16,24,40,.04);padding:18px;margin-bottom:18px}.referral-filter-grid{display:grid;grid-template-columns:1.25fr 1.15fr 1fr 1fr;gap:16px;align-items:end}.referral-page .field label{font-size:12px;margin-bottom:8px;color:#344054}.referral-page .field input,.referral-page .field select{height:42px;border-radius:10px;border-color:#d9dfeb;font-size:13px}.ref-input-icon{position:relative}.ref-input-icon input{padding-right:38px}.ref-input-icon i{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#667085}.ref-date-control{height:42px;border:1px solid #d9dfeb;border-radius:10px;background:#fff;display:flex;align-items:center;gap:9px;padding:0 10px;min-width:0}.ref-date-control i{color:#667085}.ref-date-control input{border:0!important;box-shadow:none!important;padding:0!important;height:36px!important;border-radius:0!important;min-width:0;font-size:13px}.ref-date-control span{color:#667085}.ref-date-control button{border:0;background:transparent;color:#667085;padding:0 2px}.ref-filter-actions{display:grid;grid-template-columns:.72fr 1fr;gap:12px}.referral-page .clean-btn{height:42px;border-radius:10px;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:13px;white-space:nowrap}.referral-page .clean-btn.primary{background:#2563eb;border-color:#2563eb}.referral-panels-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}.referral-panel-card{background:#fff;border:1px solid var(--ref-border);border-radius:16px;box-shadow:0 8px 24px rgba(16,24,40,.04);padding:18px;min-width:0}.ref-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.ref-panel-title{display:flex;align-items:center;gap:12px;min-width:0}.ref-panel-title span{font-size:16px;font-weight:900;color:#182230}.ref-panel-title small{background:#eef0ff;color:#4c5cff;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:900;white-space:nowrap}.ref-export{height:36px!important;padding:0 12px!important}.ref-table-wrap{width:100%;overflow:hidden;border:1px solid #e7ebf3;border-radius:14px;background:#fff}.ref-table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed;background:#fff}.ref-table th{background:#fafbff;color:#344054;text-align:left;padding:13px 10px;font-size:11px;font-weight:900;border-bottom:1px solid #e7ebf3;white-space:normal}.ref-table td{padding:13px 10px;border-bottom:1px solid #edf1f7;color:#101828;font-size:12px;vertical-align:middle;word-break:break-word}.ref-table tr:last-child td{border-bottom:0}.ref-table tbody tr:nth-child(even) td{background:#fcfcff}.ref-table tbody tr:hover td,.ref-table tbody tr.active td{background:#f2f5ff}.ref-table b{font-weight:900;color:#102033}.ref-table small{color:#667085;font-size:11px;font-weight:700}.ref-members-table th:nth-child(1),.ref-members-table td:nth-child(1){width:44px;text-align:center}.ref-members-table th:nth-child(2),.ref-members-table td:nth-child(2){width:32%}.ref-members-table th:nth-child(3),.ref-members-table td:nth-child(3){width:22%}.ref-members-table th:nth-child(4),.ref-members-table td:nth-child(4){width:50px;text-align:center}.ref-members-table th:nth-child(5),.ref-members-table td:nth-child(5){width:24%}.ref-members-table th:nth-child(6),.ref-members-table td:nth-child(6){width:80px;text-align:center}.ref-downline-table th:nth-child(1),.ref-downline-table td:nth-child(1){width:44px;text-align:center}.ref-downline-table th:nth-child(2),.ref-downline-table td:nth-child(2){width:32%}.ref-downline-table th:nth-child(3),.ref-downline-table td:nth-child(3){width:22%}.ref-downline-table th:nth-child(4),.ref-downline-table td:nth-child(4){width:25%}.ref-downline-table th:nth-child(5),.ref-downline-table td:nth-child(5){width:95px;text-align:right}.ref-view-btn{height:34px;border:0;border-radius:8px;background:#2563eb;color:#fff;font-size:12px;font-weight:900;padding:0 16px}.ref-avatar{width:30px;height:30px;border-radius:50%;display:inline-grid;place-items:center;background:#eef0ff;color:#2563eb;font-size:11px;font-weight:900;flex:0 0 auto}.ref-member-cell{display:flex;align-items:center;gap:9px;min-width:0}.ref-member-name{min-width:0}.ref-member-name b{display:block}.ref-commission{font-weight:900;color:#16a34a}.ref-downline-summary{height:46px;border-radius:12px;background:#fafbff;margin-bottom:12px;padding:0 16px;display:flex;align-items:center;gap:44px;color:#667085;font-size:12px}.ref-downline-summary strong{color:#101828;margin-left:8px}.ref-pagination-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;color:#667085;font-size:12px}.ref-pagination-row select{height:34px;border:1px solid #d9dfeb;border-radius:8px;background:#fff;padding:0 10px}.ref-pager{display:flex;align-items:center;gap:8px}.ref-pager button,.ref-pager b{width:34px;height:34px;border:1px solid #e5eaf2;background:#fff;border-radius:9px;display:grid;place-items:center;color:#667085;text-decoration:none}.ref-pager b{background:#2563eb;color:#fff;border-color:#2563eb}.ref-info-note{margin-top:16px;background:#f2f4ff;border-radius:12px;padding:14px 16px;color:#667085;font-size:12px}.ref-info-note i{color:#5865f2;margin-right:8px}.ref-mobile-list{display:none}.ref-empty{text-align:center;color:#667085;padding:20px!important}.ref-loading{text-align:center;color:#667085;padding:20px!important}.referral-page .text-danger{color:#dc2626!important}
 @media(max-width:1199.98px){.referral-filter-grid{grid-template-columns:1fr 1fr}.referral-panels-grid{grid-template-columns:1fr}.referral-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:767.98px){.referral-page .report-content{padding:12px}.referral-title-icon{display:none}.referral-page .report-topbar p{display:none}.referral-stats-grid{grid-template-columns:1fr 1fr;gap:10px}.ref-stat-card{height:auto;min-height:88px;padding:14px;gap:10px}.ref-stat-icon{width:40px;height:40px;font-size:18px}.ref-stat-card strong{font-size:20px}.referral-filter-card,.referral-panel-card{padding:14px;border-radius:16px}.referral-filter-grid{grid-template-columns:1fr;gap:12px}.ref-filter-actions{grid-template-columns:1fr 1fr}.ref-date-control{height:auto;min-height:44px;flex-wrap:wrap;padding:8px 10px}.ref-date-control input{flex:1 1 120px}.ref-table-wrap{display:none}.ref-mobile-list{display:grid;gap:10px}.ref-mobile-card{border:1px solid #e7ebf3;border-radius:14px;padding:13px;background:#fff}.ref-mobile-card-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.ref-mobile-card h3{font-size:15px;margin:0;font-weight:900;color:#102033}.ref-mobile-card .meta{font-size:12px;color:#667085;margin-top:4px}.ref-mobile-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;font-size:12px}.ref-mobile-grid span{color:#667085}.ref-mobile-grid b{text-align:right}.ref-mobile-card .ref-view-btn{width:100%}.ref-pagination-row{font-size:11px;align-items:flex-start}.ref-panel-title{gap:8px;flex-wrap:wrap}.ref-panel-title span{font-size:15px}.ref-downline-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;height:auto;padding:12px}.ref-info-note{font-size:11px}.referral-page .clean-btn{height:40px;padding:0 10px}}
 @media(max-width:420px){.referral-stats-grid{grid-template-columns:1fr 1fr}.ref-stat-card{display:block}.ref-stat-icon{margin-bottom:8px}.ref-panel-head{align-items:flex-start}.ref-export{padding:0 10px!important}.ref-pagination-row{display:block}.ref-pagination-row>div{margin-top:8px}.ref-pager{justify-content:flex-end}.ref-filter-actions{grid-template-columns:1fr}.referral-page .clean-btn{width:100%}}
@@ -1381,8 +1381,8 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 
 /* Referral Network v2: use compact eye icon button to avoid Action column wrapping/overlap */
 .ref-members-table th:nth-child(6),.ref-members-table td:nth-child(6){width:58px!important;text-align:center!important;white-space:nowrap!important;word-break:normal!important}
-.ref-view-btn.ref-view-icon{width:32px!important;height:32px!important;min-width:32px!important;padding:0!important;border-radius:8px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;background:#eef0ff!important;color:#4656f6!important;border:1px solid #dbe1ff!important;font-size:15px!important;line-height:1!important}
-.ref-view-btn.ref-view-icon:hover{background:#4656f6!important;color:#fff!important;border-color:#4656f6!important}
+.ref-view-btn.ref-view-icon{width:32px!important;height:32px!important;min-width:32px!important;padding:0!important;border-radius:8px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;background:#eef0ff!important;color:#2563eb!important;border:1px solid #dbe1ff!important;font-size:15px!important;line-height:1!important}
+.ref-view-btn.ref-view-icon:hover{background:#2563eb!important;color:#fff!important;border-color:#2563eb!important}
 .ref-view-btn.ref-view-mobile{width:100%!important;height:38px!important;display:flex!important;gap:7px;align-items:center;justify-content:center;white-space:nowrap!important}
 .ref-table th,.ref-table td{overflow:hidden;text-overflow:ellipsis}
 .ref-member-name b,.ref-member-name small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;display:block}
@@ -1391,7 +1391,7 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 .ref-members-table th:nth-child(5),.ref-members-table td:nth-child(5){width:24%!important}
 
 /* Referral date range picker */
-.ref-range-wrap{position:relative;min-width:0}.ref-range-trigger{height:42px;width:100%;border:1px solid #d9dfeb;border-radius:10px;background:#fff;display:flex;align-items:center;gap:10px;padding:0 12px;color:#344054;font-size:13px;font-weight:800;text-align:left}.ref-range-trigger:focus{outline:0;border-color:#4656f6;box-shadow:0 0 0 3px rgba(70,86,246,.12)}.ref-range-icon{height:42px;width:42px;margin-left:-12px;border-radius:10px 0 0 10px;background:#4656f6;color:#fff;display:grid;place-items:center;flex:0 0 auto}.ref-range-picker{position:absolute;left:0;top:calc(100% + 6px);z-index:80;width:390px;max-width:calc(100vw - 28px);background:#fff;border:1px solid #d9dfeb;border-radius:12px;box-shadow:0 18px 50px rgba(16,24,40,.16);display:none;overflow:hidden}.ref-range-picker.show{display:flex}.ref-range-presets{width:112px;background:#f8fafc;border-right:1px solid #e7ebf3;padding:8px 0}.ref-range-presets button{width:100%;border:0;background:transparent;text-align:left;padding:9px 12px;color:#344054;font-size:12px;font-weight:900}.ref-range-presets button:hover{background:#eef3ff}.ref-range-presets button.active{background:#4656f6;color:#fff}.ref-range-calendar{flex:1;padding:12px}.ref-cal-head{display:grid;grid-template-columns:30px 1fr 1fr 30px;gap:8px;align-items:center;margin-bottom:12px}.ref-cal-head button{height:30px;border:0;background:transparent;border-radius:8px;color:#344054}.ref-cal-head button:hover{background:#f1f5ff}.ref-cal-head select{height:32px;border:1px solid #d9dfeb;border-radius:8px;background:#fff;color:#344054;font-size:13px;font-weight:900;padding:0 8px}.ref-cal-week,.ref-cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.ref-cal-week span{text-align:center;color:#98a2b3;font-size:11px;font-weight:900;padding-bottom:5px}.ref-cal-days button{height:32px;border:0;border-radius:0;background:#fff;color:#101828;font-size:12px;font-weight:800}.ref-cal-days button:hover{background:#eef3ff}.ref-cal-days button.muted{color:#cbd5e1;background:#fff}.ref-cal-days button.in-range{background:#eaf0ff}.ref-cal-days button.selected{background:#4656f6;color:#fff;border-radius:6px;box-shadow:0 6px 12px rgba(70,86,246,.24)}
+.ref-range-wrap{position:relative;min-width:0}.ref-range-trigger{height:42px;width:100%;border:1px solid #d9dfeb;border-radius:10px;background:#fff;display:flex;align-items:center;gap:10px;padding:0 12px;color:#344054;font-size:13px;font-weight:800;text-align:left}.ref-range-trigger:focus{outline:0;border-color:#2563eb;box-shadow:0 0 0 3px rgba(70,86,246,.12)}.ref-range-icon{height:42px;width:42px;margin-left:-12px;border-radius:10px 0 0 10px;background:#2563eb;color:#fff;display:grid;place-items:center;flex:0 0 auto}.ref-range-picker{position:absolute;left:0;top:calc(100% + 6px);z-index:80;width:390px;max-width:calc(100vw - 28px);background:#fff;border:1px solid #d9dfeb;border-radius:12px;box-shadow:0 18px 50px rgba(16,24,40,.16);display:none;overflow:hidden}.ref-range-picker.show{display:flex}.ref-range-presets{width:112px;background:#f8fafc;border-right:1px solid #e7ebf3;padding:8px 0}.ref-range-presets button{width:100%;border:0;background:transparent;text-align:left;padding:9px 12px;color:#344054;font-size:12px;font-weight:900}.ref-range-presets button:hover{background:#eef3ff}.ref-range-presets button.active{background:#2563eb;color:#fff}.ref-range-calendar{flex:1;padding:12px}.ref-cal-head{display:grid;grid-template-columns:30px 1fr 1fr 30px;gap:8px;align-items:center;margin-bottom:12px}.ref-cal-head button{height:30px;border:0;background:transparent;border-radius:8px;color:#344054}.ref-cal-head button:hover{background:#f1f5ff}.ref-cal-head select{height:32px;border:1px solid #d9dfeb;border-radius:8px;background:#fff;color:#344054;font-size:13px;font-weight:900;padding:0 8px}.ref-cal-week,.ref-cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.ref-cal-week span{text-align:center;color:#98a2b3;font-size:11px;font-weight:900;padding-bottom:5px}.ref-cal-days button{height:32px;border:0;border-radius:0;background:#fff;color:#101828;font-size:12px;font-weight:800}.ref-cal-days button:hover{background:#eef3ff}.ref-cal-days button.muted{color:#cbd5e1;background:#fff}.ref-cal-days button.in-range{background:#eaf0ff}.ref-cal-days button.selected{background:#2563eb;color:#fff;border-radius:6px;box-shadow:0 6px 12px rgba(70,86,246,.24)}
 @media(max-width:767.98px){.ref-range-picker{position:fixed;left:12px;right:12px;top:96px;width:auto;max-width:none}.ref-range-picker.show{display:block}.ref-range-presets{width:100%;display:grid;grid-template-columns:repeat(2,1fr);border-right:0;border-bottom:1px solid #e7ebf3}.ref-range-presets button{text-align:center}.ref-range-calendar{padding:10px}.ref-cal-days button{height:30px}.ref-range-trigger{height:44px}.ref-range-icon{height:44px}}
 
 /* Admin Management - reference dashboard layout */
@@ -1478,7 +1478,7 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
   font-size:0!important;text-decoration:none!important;vertical-align:middle!important;
 }
 .bo-icon-action i{font-size:13px!important;line-height:1!important}
-.bo-icon-action.is-view,.bo-icon-action.is-ledger{background:#eef2ff!important;border-color:#d8ddff!important;color:#5b5ff0!important}
+.bo-icon-action.is-view,.bo-icon-action.is-ledger{background:#eef2ff!important;border-color:#d8ddff!important;color:#2563eb!important}
 .bo-icon-action.is-edit,.bo-icon-action.is-adjust{background:#eef5ff!important;border-color:#cfe0ff!important;color:#2563eb!important}
 .bo-icon-action.is-delete,.bo-icon-action.is-reject{background:#fff5f5!important;border-color:#fecaca!important;color:#ef4444!important}
 .bo-icon-action.is-approve{background:#ecfdf3!important;border-color:#bbf7d0!important;color:#16a34a!important}
@@ -1521,7 +1521,7 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 }
 .bo-summary-icon{
   grid-row:1 / 4;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;
-  background:#eef2ff;color:#5b5ff0;font-size:22px;flex:0 0 auto;
+  background:#eef2ff;color:#2563eb;font-size:22px;flex:0 0 auto;
 }
 .report-content .quick-stats:not(.user-stats) .metric:nth-child(2) .bo-summary-icon,
 .report-content .manage-summary .manage-card:nth-child(2) .bo-summary-icon{background:#eaf9f0;color:#16a34a}
@@ -1561,7 +1561,7 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 .livechat-bo-page .livechat-compose{flex:0 0 auto!important;margin-top:10px!important;max-height:245px;overflow-y:auto;background:#fff;box-shadow:0 -8px 24px rgba(16,24,40,.04)}
 .livechat-scroll-bottom{
   position:absolute;right:28px;bottom:210px;z-index:20;width:40px;height:40px;border-radius:50%;
-  border:1px solid #d8e0ec;background:#fff;color:#4656f6;box-shadow:0 8px 22px rgba(16,24,40,.16);
+  border:1px solid #d8e0ec;background:#fff;color:#2563eb;box-shadow:0 8px 22px rgba(16,24,40,.16);
   display:none;align-items:center;justify-content:center;font-size:18px
 }
 .livechat-scroll-bottom.show{display:flex}
@@ -3429,8 +3429,8 @@ body:has(#dbgRows) .report-table thead th:last-child{
 /* User Management and Admin Management search buttons follow Referral Network blue. */
 .user-management-page #memberSearchBtn,
 .admin-management-page #searchAdminBtn{
-  background:#4656f6!important;
-  border-color:#4656f6!important;
+  background:#2563eb!important;
+  border-color:#2563eb!important;
   color:#fff!important;
 }
 .user-management-page #memberSearchBtn:hover,
@@ -3560,6 +3560,1231 @@ body:has(#dbgRows) .report-table thead th:last-child{
 .ref-members-table th:nth-child(5),.ref-members-table td:nth-child(5){width:17%}
 .ref-members-table th:nth-child(6),.ref-members-table td:nth-child(6){width:18%}
 .ref-members-table th:nth-child(7),.ref-members-table td:nth-child(7){width:94px;text-align:center}
-.ref-reward-setting{display:flex;flex-direction:column;gap:3px}.ref-reward-setting>b{font-size:11px;color:#182230}.ref-reward-setting small{width:max-content;border-radius:999px;padding:3px 7px;font-size:9px;font-weight:900}.ref-reward-setting small.default{background:#eef2ff;color:#4656f6}.ref-reward-setting small.personal{background:#ecfdf3;color:#15803d}.ref-action-buttons{display:flex;align-items:center;justify-content:center;gap:6px}.ref-config-btn{height:34px;min-width:34px;border:0;border-radius:8px;background:#eef0ff;color:#4656f6;font-size:13px;font-weight:900;padding:0 10px}.ref-config-btn:hover{background:#4656f6;color:#fff}.ref-mobile-actions{display:grid;grid-template-columns:1fr auto;gap:8px}.ref-config-mobile{height:34px}.ref-mobile-grid .ref-reward-setting{align-items:flex-end}
-.ref-reward-modal{position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;padding:18px}.ref-reward-modal.show{display:flex}.ref-reward-modal-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(2px)}.ref-reward-dialog{position:relative;width:min(660px,100%);background:#fff;border-radius:18px;box-shadow:0 24px 80px rgba(15,23,42,.28);overflow:hidden}.ref-reward-dialog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:20px 22px;border-bottom:1px solid #edf0f5}.ref-reward-dialog-head h3{font-size:18px;margin:0;color:#101828;font-weight:900}.ref-reward-dialog-head p{font-size:12px;color:#667085;margin:5px 0 0}.ref-reward-close{width:34px;height:34px;border:0;border-radius:9px;background:#f2f4f7;color:#344054}.ref-reward-dialog-body{padding:20px 22px}.ref-default-toggle{display:flex;align-items:flex-start;gap:11px;border:1px solid #dfe4ee;border-radius:12px;padding:13px;cursor:pointer}.ref-default-toggle input{margin-top:3px}.ref-default-toggle b,.ref-default-toggle small{display:block}.ref-default-toggle b{font-size:13px;color:#182230}.ref-default-toggle small{font-size:11px;color:#667085;margin-top:3px}.ref-member-config-fields{display:grid;grid-template-columns:105px minmax(0,1fr) 155px;gap:12px;margin-top:16px}.ref-member-config-fields>.field{min-width:0}.ref-member-config-fields .field label{display:block;line-height:1.35;overflow-wrap:anywhere}.ref-member-config-fields .field select,.ref-member-config-fields .field input{min-width:0;max-width:100%}.ref-member-config-fields.disabled{opacity:.45}.ref-effective-note{margin-top:15px;padding:11px 13px;border-radius:10px;background:#f7f8ff;color:#667085;font-size:12px}.ref-effective-note b{color:#182230}.ref-effective-note span{margin-left:5px;color:#4656f6;font-weight:800}.ref-reward-dialog-actions{display:flex;justify-content:flex-end;gap:10px;padding:15px 22px;border-top:1px solid #edf0f5;background:#fafbfc}
+.ref-reward-setting{display:flex;flex-direction:column;gap:3px}.ref-reward-setting>b{font-size:11px;color:#182230}.ref-reward-setting small{width:max-content;border-radius:999px;padding:3px 7px;font-size:9px;font-weight:900}.ref-reward-setting small.default{background:#eef2ff;color:#2563eb}.ref-reward-setting small.personal{background:#ecfdf3;color:#15803d}.ref-action-buttons{display:flex;align-items:center;justify-content:center;gap:6px}.ref-config-btn{height:34px;min-width:34px;border:0;border-radius:8px;background:#eef0ff;color:#2563eb;font-size:13px;font-weight:900;padding:0 10px}.ref-config-btn:hover{background:#2563eb;color:#fff}.ref-mobile-actions{display:grid;grid-template-columns:1fr auto;gap:8px}.ref-config-mobile{height:34px}.ref-mobile-grid .ref-reward-setting{align-items:flex-end}
+.ref-reward-modal{position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;padding:18px}.ref-reward-modal.show{display:flex}.ref-reward-modal-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(2px)}.ref-reward-dialog{position:relative;width:min(660px,100%);background:#fff;border-radius:18px;box-shadow:0 24px 80px rgba(15,23,42,.28);overflow:hidden}.ref-reward-dialog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:20px 22px;border-bottom:1px solid #edf0f5}.ref-reward-dialog-head h3{font-size:18px;margin:0;color:#101828;font-weight:900}.ref-reward-dialog-head p{font-size:12px;color:#667085;margin:5px 0 0}.ref-reward-close{width:34px;height:34px;border:0;border-radius:9px;background:#f2f4f7;color:#344054}.ref-reward-dialog-body{padding:20px 22px}.ref-default-toggle{display:flex;align-items:flex-start;gap:11px;border:1px solid #dfe4ee;border-radius:12px;padding:13px;cursor:pointer}.ref-default-toggle input{margin-top:3px}.ref-default-toggle b,.ref-default-toggle small{display:block}.ref-default-toggle b{font-size:13px;color:#182230}.ref-default-toggle small{font-size:11px;color:#667085;margin-top:3px}.ref-member-config-fields{display:grid;grid-template-columns:105px minmax(0,1fr) 155px;gap:12px;margin-top:16px}.ref-member-config-fields>.field{min-width:0}.ref-member-config-fields .field label{display:block;line-height:1.35;overflow-wrap:anywhere}.ref-member-config-fields .field select,.ref-member-config-fields .field input{min-width:0;max-width:100%}.ref-member-config-fields.disabled{opacity:.45}.ref-effective-note{margin-top:15px;padding:11px 13px;border-radius:10px;background:#f7f8ff;color:#667085;font-size:12px}.ref-effective-note b{color:#182230}.ref-effective-note span{margin-left:5px;color:#2563eb;font-weight:800}.ref-reward-dialog-actions{display:flex;justify-content:flex-end;gap:10px;padding:15px 22px;border-top:1px solid #edf0f5;background:#fafbfc}
 @media(max-width:767.98px){.ref-member-config-fields{grid-template-columns:1fr}.ref-reward-dialog{max-height:90vh;overflow:auto}.ref-reward-dialog-actions .clean-btn{width:auto}.ref-mobile-actions{grid-template-columns:1fr 1fr}}
+
+
+/* v1.0.23 - Unified report date-range width and User Management action order */
+/* Every generated Date Range control uses the same visual width as report pages. */
+.bo-range-field,
+.bo-date-range-field,
+[data-bo-date-range],
+.ref-date-field{
+  min-width:0!important;
+}
+.bo-range-trigger,
+.ref-range-trigger{
+  width:100%!important;
+}
+
+/* Standard report-only date filter: Date Range stays compact instead of stretching. */
+body[data-report-page] .filter-card .user-search-grid{
+  grid-template-columns:minmax(320px,390px) minmax(140px,170px) minmax(140px,170px)!important;
+  justify-content:start!important;
+}
+body[data-report-page] .filter-card .bo-range-field{
+  grid-column:1!important;
+  width:100%!important;
+  max-width:430px!important;
+}
+body[data-report-page] .filter-card .field:has(#casinoResetBtn){grid-column:2!important}
+body[data-report-page] .filter-card .field:has(#casinoSearchBtn){grid-column:3!important}
+
+/* Provider reports/sessions: same Date Range width, remaining controls share available space. */
+body:has(#betFrom) .filter-card .user-search-grid,
+body:has(#txFrom) .filter-card .user-search-grid,
+body:has(#sessionFrom) .filter-card .user-search-grid{
+  grid-template-columns:minmax(320px,390px) repeat(3,minmax(140px,1fr)) minmax(130px,170px)!important;
+  justify-content:stretch!important;
+}
+body:has(#betFrom) .filter-card .bo-range-field,
+body:has(#txFrom) .filter-card .bo-range-field,
+body:has(#sessionFrom) .filter-card .bo-range-field{
+  grid-column:1!important;
+  width:100%!important;
+  max-width:430px!important;
+}
+
+/* Member Wallet Listing follows User Management: fields first, Reset then Search. */
+body:has(#walletKeyword) .filter-card .user-search-grid{
+  grid-template-columns:minmax(280px,1.7fr) minmax(130px,.7fr) minmax(130px,.75fr) minmax(160px,.9fr)!important;
+}
+body:has(#walletKeyword) .wallet-reset-field{grid-column:3!important}
+body:has(#walletKeyword) .wallet-search-field{grid-column:4!important}
+body:has(#walletKeyword) #walletResetBtn,
+body:has(#walletKeyword) #walletSearchBtn{height:42px!important}
+
+/* Wallet Ledger: standard Date Range first; compact Type/Page Size; Reset then Search. */
+body:has(#ledgerFrom) .filter-card .user-search-grid{
+  grid-template-columns:minmax(320px,390px) minmax(120px,.65fr) minmax(135px,.75fr) minmax(115px,.58fr) minmax(95px,.46fr) minmax(130px,.64fr) minmax(150px,.76fr)!important;
+}
+body:has(#ledgerFrom) .filter-card .bo-range-field{
+  grid-column:1!important;
+  width:100%!important;
+  max-width:430px!important;
+}
+body:has(#ledgerFrom) .field:has(#ledgerMemberId){grid-column:2!important}
+body:has(#ledgerFrom) .field:has(#ledgerProviderCode){grid-column:3!important}
+body:has(#ledgerFrom) .field:has(#ledgerType){grid-column:4!important}
+body:has(#ledgerFrom) .field:has(#ledgerSize){grid-column:5!important}
+body:has(#ledgerFrom) .ledger-reset-field{grid-column:6!important}
+body:has(#ledgerFrom) .ledger-search-field{grid-column:7!important}
+body:has(#ledgerFrom) #ledgerResetBtn,
+body:has(#ledgerFrom) #ledgerSearchBtn{height:42px!important}
+
+/* Deposit / Withdraw approval use the same balanced filter and action order. */
+body:has(#depositKeyword) .filter-card .user-search-grid,
+body:has(#withdrawKeyword) .filter-card .user-search-grid{
+  grid-template-columns:minmax(300px,1.6fr) minmax(150px,.8fr) minmax(110px,.55fr) minmax(130px,.68fr) minmax(160px,.82fr)!important;
+}
+body:has(#depositKeyword) .deposit-reset-field,
+body:has(#withdrawKeyword) .withdraw-reset-field{grid-column:4!important}
+body:has(#depositKeyword) .deposit-search-field,
+body:has(#withdrawKeyword) .withdraw-search-field{grid-column:5!important}
+body:has(#depositKeyword) #depositResetBtn,
+body:has(#depositKeyword) #depositSearchBtn,
+body:has(#withdrawKeyword) #withdrawResetBtn,
+body:has(#withdrawKeyword) #withdrawSearchBtn{height:42px!important}
+
+/* Referral Date Range follows the same standard width. */
+body:has(#refDateTrigger) .referral-filter-grid{
+  grid-template-columns:minmax(320px,390px) minmax(230px,1fr) minmax(150px,.75fr) minmax(130px,.65fr) minmax(160px,.8fr)!important;
+}
+body:has(#refDateTrigger) .ref-date-field{width:100%!important;max-width:430px!important}
+
+@media(max-width:1200px){
+  body[data-report-page] .filter-card .user-search-grid,
+  body:has(#betFrom) .filter-card .user-search-grid,
+  body:has(#txFrom) .filter-card .user-search-grid,
+  body:has(#sessionFrom) .filter-card .user-search-grid,
+  body:has(#ledgerFrom) .filter-card .user-search-grid,
+  body:has(#walletKeyword) .filter-card .user-search-grid,
+  body:has(#depositKeyword) .filter-card .user-search-grid,
+  body:has(#withdrawKeyword) .filter-card .user-search-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  body[data-report-page] .filter-card .bo-range-field,
+  body:has(#betFrom) .filter-card .bo-range-field,
+  body:has(#txFrom) .filter-card .bo-range-field,
+  body:has(#sessionFrom) .filter-card .bo-range-field,
+  body:has(#ledgerFrom) .filter-card .bo-range-field{
+    grid-column:1/-1!important;
+    max-width:none!important;
+  }
+  body:has(#walletKeyword) .wallet-reset-field,
+  body:has(#walletKeyword) .wallet-search-field,
+  body:has(#ledgerFrom) .ledger-reset-field,
+  body:has(#ledgerFrom) .ledger-search-field,
+  body:has(#depositKeyword) .deposit-reset-field,
+  body:has(#depositKeyword) .deposit-search-field,
+  body:has(#withdrawKeyword) .withdraw-reset-field,
+  body:has(#withdrawKeyword) .withdraw-search-field{grid-column:auto!important}
+}
+@media(max-width:700px){
+  body[data-report-page] .filter-card .user-search-grid,
+  body:has(#betFrom) .filter-card .user-search-grid,
+  body:has(#txFrom) .filter-card .user-search-grid,
+  body:has(#sessionFrom) .filter-card .user-search-grid,
+  body:has(#ledgerFrom) .filter-card .user-search-grid,
+  body:has(#walletKeyword) .filter-card .user-search-grid,
+  body:has(#depositKeyword) .filter-card .user-search-grid,
+  body:has(#withdrawKeyword) .filter-card .user-search-grid{
+    grid-template-columns:1fr!important;
+  }
+  body:has(#walletKeyword) .wallet-reset-field,
+  body:has(#walletKeyword) .wallet-search-field,
+  body:has(#ledgerFrom) .ledger-reset-field,
+  body:has(#ledgerFrom) .ledger-search-field,
+  body:has(#depositKeyword) .deposit-reset-field,
+  body:has(#depositKeyword) .deposit-search-field,
+  body:has(#withdrawKeyword) .withdraw-reset-field,
+  body:has(#withdrawKeyword) .withdraw-search-field{grid-column:auto!important}
+}
+
+/* v1.0.24 - Date Range trigger width matches the calendar popup width. */
+@media (min-width:768px){
+  .bo-range-field,
+  .bo-date-range-field,
+  [data-bo-date-range],
+  .ref-date-field,
+  .ref-range-wrap{
+    width:390px!important;
+    min-width:390px!important;
+    max-width:390px!important;
+  }
+
+  .bo-range-trigger,
+  .ref-range-trigger{
+    width:390px!important;
+    min-width:390px!important;
+    max-width:390px!important;
+  }
+
+  .bo-range-pop,
+  .ref-range-picker{
+    width:390px!important;
+    max-width:390px!important;
+  }
+
+
+  body[data-report-page] .filter-card .bo-range-field,
+  body:has(#betFrom) .filter-card .bo-range-field,
+  body:has(#txFrom) .filter-card .bo-range-field,
+  body:has(#sessionFrom) .filter-card .bo-range-field,
+  body:has(#ledgerFrom) .filter-card .bo-range-field{
+    width:390px!important;
+    min-width:390px!important;
+    max-width:390px!important;
+  }
+}
+
+@media (max-width:767.98px){
+  .bo-range-field,
+  .bo-date-range-field,
+  [data-bo-date-range],
+  .ref-date-field,
+  .ref-range-wrap,
+  .bo-range-trigger,
+  .ref-range-trigger{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+}
+
+/* v1.0.26 - compact report filters and User Management action standard */
+@media (min-width:1100px){
+  /* Provider Sessions: one compact row without stretching every field across the card. */
+  body:has(#sessionFrom) .filter-card .user-search-grid{
+    grid-template-columns:390px 210px 210px 190px 170px 124px!important;
+    gap:12px!important;
+    justify-content:start!important;
+    align-items:end!important;
+  }
+
+  /* Provider Bet Report: one compact row with balanced field widths. */
+  .provider-bet-report-page .filter-card .user-search-grid{
+    grid-template-columns:390px 190px 190px 180px 170px 124px!important;
+    gap:12px!important;
+    justify-content:start!important;
+    align-items:end!important;
+  }
+
+  /* Provider Transactions intentionally uses two balanced rows instead of squeezed controls. */
+  .provider-transaction-page .pwt-filter-grid{
+    grid-template-columns:repeat(4,minmax(210px,260px))!important;
+    gap:14px 16px!important;
+    justify-content:start!important;
+    align-items:end!important;
+  }
+  .provider-transaction-page .tx-filter-actions{
+    grid-column:auto!important;
+  }
+
+  /* Member Wallet keeps normal control widths and grouped actions like User Management. */
+  .member-wallet-page .user-search-grid{
+    grid-template-columns:minmax(320px,460px) 150px 260px!important;
+    gap:16px!important;
+    justify-content:start!important;
+  }
+}
+
+/* Every casino report keeps Date Range, Search and Today on one compact row. */
+body[data-report-page] .filter-card .user-search-grid{
+  display:grid!important;
+  grid-template-columns:390px 124px 124px!important;
+  gap:12px!important;
+  justify-content:start!important;
+  align-items:end!important;
+}
+body[data-report-page] .filter-card .field:has(#casinoSearchBtn),
+body[data-report-page] .filter-card .field:has(#casinoResetBtn){
+  width:124px!important;
+  max-width:124px!important;
+  justify-self:start!important;
+}
+
+/* Reset + Search grouped in the same standard action cell. */
+.member-wallet-page .wallet-filter-actions .filter-action-row,
+.provider-transaction-page .tx-filter-actions .filter-action-row{
+  display:grid!important;
+  grid-template-columns:.72fr 1fr!important;
+  gap:12px!important;
+  width:100%!important;
+}
+.member-wallet-page .wallet-filter-actions button,
+.provider-transaction-page .tx-filter-actions button{
+  width:100%!important;
+  height:42px!important;
+  min-height:42px!important;
+  border-radius:10px!important;
+  padding:0 16px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+  white-space:nowrap!important;
+}
+
+@media (min-width:768px) and (max-width:1099.98px){
+  body:has(#sessionFrom) .filter-card .user-search-grid,
+  .provider-bet-report-page .filter-card .user-search-grid,
+  .provider-transaction-page .pwt-filter-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+  .member-wallet-page .user-search-grid{
+    grid-template-columns:1fr 160px 260px!important;
+  }
+}
+@media (max-width:767.98px){
+  body[data-report-page] .filter-card .user-search-grid{
+    grid-template-columns:1fr 1fr!important;
+  }
+  body[data-report-page] .filter-card .bo-range-field{grid-column:1/-1!important}
+  .provider-transaction-page .pwt-filter-grid,
+  .member-wallet-page .user-search-grid{grid-template-columns:1fr 1fr!important}
+  .member-wallet-page .wallet-filter-actions,
+  .provider-transaction-page .tx-filter-actions{grid-column:1/-1!important}
+}
+@media (max-width:575.98px){
+  body[data-report-page] .filter-card .user-search-grid,
+  body:has(#sessionFrom) .filter-card .user-search-grid,
+  .provider-bet-report-page .filter-card .user-search-grid,
+  .provider-transaction-page .pwt-filter-grid,
+  .member-wallet-page .user-search-grid{grid-template-columns:1fr!important}
+  .member-wallet-page .wallet-filter-actions .filter-action-row,
+  .provider-transaction-page .tx-filter-actions .filter-action-row{grid-template-columns:1fr 1fr!important}
+}
+
+/* v1.0.27 - final report filter alignment standardisation */
+@media (min-width:1400px){
+  /* Wallet Ledger: fixed compact columns and the same 12px gap between every control. */
+  .wallet-ledger-page .filter-card .user-search-grid{
+    grid-template-columns:390px 160px 190px 150px 120px 168px 200px!important;
+    column-gap:12px!important;
+    row-gap:12px!important;
+    justify-content:start!important;
+    align-items:end!important;
+  }
+
+  /* Provider Bet Report follows the exact Provider Sessions filter rhythm. */
+  .provider-bet-report-page .filter-card .user-search-grid{
+    grid-template-columns:390px 210px 210px 190px 170px 124px!important;
+    gap:12px!important;
+    justify-content:start!important;
+    align-items:end!important;
+  }
+
+  /* Provider Transactions: wide Date Range column prevents collision with Member ID. */
+  .provider-transaction-page .pwt-filter-grid{
+    grid-template-columns:390px 260px 260px 260px!important;
+    column-gap:16px!important;
+    row-gap:14px!important;
+    justify-content:start!important;
+    align-items:end!important;
+  }
+  .provider-transaction-page .pwt-filter-grid .bo-range-field{
+    width:390px!important;
+    min-width:390px!important;
+    max-width:390px!important;
+    grid-column:auto!important;
+  }
+  .provider-transaction-page .tx-filter-actions{
+    grid-column:auto!important;
+    width:260px!important;
+  }
+}
+
+/* Casino report filter order: Date Range -> Search -> Today, always on one desktop row. */
+@media (min-width:768px){
+  body[data-report-page] .filter-card .user-search-grid{
+    grid-template-columns:390px 124px 124px!important;
+    gap:12px!important;
+    justify-content:start!important;
+    align-items:end!important;
+  }
+  body[data-report-page] .filter-card .field:has(#casinoSearchBtn){
+    grid-column:2!important;
+    grid-row:1!important;
+  }
+  body[data-report-page] .filter-card .field:has(#casinoResetBtn){
+    grid-column:3!important;
+    grid-row:1!important;
+  }
+}
+
+/* Mid-size desktop/tablet: wrap cleanly instead of squeezing or overlapping controls. */
+@media (min-width:768px) and (max-width:1399.98px){
+  .wallet-ledger-page .filter-card .user-search-grid,
+  .provider-bet-report-page .filter-card .user-search-grid,
+  body:has(#sessionFrom) .filter-card .user-search-grid,
+  .provider-transaction-page .pwt-filter-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:12px!important;
+  }
+  .wallet-ledger-page .filter-card .bo-range-field,
+  .provider-bet-report-page .filter-card .bo-range-field,
+  body:has(#sessionFrom) .filter-card .bo-range-field,
+  .provider-transaction-page .pwt-filter-grid .bo-range-field{
+    grid-column:1/-1!important;
+    width:390px!important;
+    min-width:390px!important;
+    max-width:390px!important;
+  }
+  .provider-transaction-page .tx-filter-actions{
+    grid-column:auto!important;
+    width:auto!important;
+  }
+}
+
+/* v1.0.28 - strict report filter placement */
+@media (min-width:1400px){
+  /* Wallet Ledger: fixed columns with a true 12px gap after Date Range. */
+  .wallet-ledger-page .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:390px 170px 198px 152px 120px 168px 200px!important;
+    gap:12px!important;
+    justify-content:start!important;
+    align-items:end!important;
+  }
+  .wallet-ledger-page .filter-card .bo-range-field{grid-column:1!important;grid-row:1!important;width:390px!important;min-width:390px!important;max-width:390px!important;margin:0!important}
+  .wallet-ledger-page .filter-card .field:has(#ledgerMemberId){grid-column:2!important;grid-row:1!important}
+  .wallet-ledger-page .filter-card .field:has(#ledgerProviderCode){grid-column:3!important;grid-row:1!important}
+  .wallet-ledger-page .filter-card .field:has(#ledgerType){grid-column:4!important;grid-row:1!important}
+  .wallet-ledger-page .filter-card .field:has(#ledgerSize){grid-column:5!important;grid-row:1!important}
+  .wallet-ledger-page .filter-card .ledger-reset-field{grid-column:6!important;grid-row:1!important}
+  .wallet-ledger-page .filter-card .ledger-search-field{grid-column:7!important;grid-row:1!important}
+
+  /* Provider Bet Report: identical one-row rhythm to Provider Sessions. */
+  .provider-bet-report-page .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:390px 210px 210px 190px 170px 124px!important;
+    gap:12px!important;
+    justify-content:start!important;
+    align-items:end!important;
+  }
+  .provider-bet-report-page .filter-card .bo-range-field{grid-column:1!important;grid-row:1!important;width:390px!important;min-width:390px!important;max-width:390px!important;margin:0!important}
+  .provider-bet-report-page .filter-card .field:has(#betMemberId){grid-column:2!important;grid-row:1!important}
+  .provider-bet-report-page .filter-card .field:has(#betProviderCode){grid-column:3!important;grid-row:1!important}
+  .provider-bet-report-page .filter-card .field:has(#betGameCode){grid-column:4!important;grid-row:1!important}
+  .provider-bet-report-page .filter-card .field:has(#betEventType){grid-column:5!important;grid-row:1!important}
+  .provider-bet-report-page .filter-card .field:has(#betSearchBtn){grid-column:6!important;grid-row:1!important;width:124px!important;max-width:124px!important}
+
+  /* Provider Transactions: all inputs including Status on row 1; actions only on row 2. */
+  .provider-transaction-page .pwt-filter-grid{
+    display:grid!important;
+    grid-template-columns:390px 210px 260px 260px 180px!important;
+    gap:12px!important;
+    justify-content:start!important;
+    align-items:end!important;
+  }
+  .provider-transaction-page .pwt-filter-grid .bo-range-field{grid-column:1!important;grid-row:1!important;width:390px!important;min-width:390px!important;max-width:390px!important;margin:0!important}
+  .provider-transaction-page .pwt-filter-grid .field:has(#txMemberId){grid-column:2!important;grid-row:1!important}
+  .provider-transaction-page .pwt-filter-grid .field:has(#txProviderCode){grid-column:3!important;grid-row:1!important}
+  .provider-transaction-page .pwt-filter-grid .field:has(#txType){grid-column:4!important;grid-row:1!important}
+  .provider-transaction-page .pwt-filter-grid .field:has(#txStatus){grid-column:5!important;grid-row:1!important}
+  .provider-transaction-page .tx-filter-actions{grid-column:1 / span 2!important;grid-row:2!important;width:390px!important;max-width:390px!important}
+  .provider-transaction-page .tx-filter-actions .filter-action-row{display:grid!important;grid-template-columns:104px 144px!important;gap:12px!important;justify-content:start!important;width:auto!important}
+}
+
+/* v1.0.29 - one-row provider transactions + iPad/tablet report safety */
+
+/* Provider Transactions: keep the complete filter, including actions, on one desktop row. */
+@media (min-width:1400px){
+  .provider-transaction-page .pwt-filter-grid{
+    display:grid!important;
+    grid-template-columns:390px 170px 180px 220px 150px 260px!important;
+    column-gap:12px!important;
+    row-gap:12px!important;
+    justify-content:start!important;
+    align-items:end!important;
+  }
+  .provider-transaction-page .pwt-filter-grid .bo-range-field{
+    grid-column:1!important;
+    grid-row:1!important;
+    width:390px!important;
+    min-width:390px!important;
+    max-width:390px!important;
+    margin:0!important;
+  }
+  .provider-transaction-page .pwt-filter-grid .field:has(#txMemberId){grid-column:2!important;grid-row:1!important}
+  .provider-transaction-page .pwt-filter-grid .field:has(#txProviderCode){grid-column:3!important;grid-row:1!important}
+  .provider-transaction-page .pwt-filter-grid .field:has(#txType){grid-column:4!important;grid-row:1!important}
+  .provider-transaction-page .pwt-filter-grid .field:has(#txStatus){grid-column:5!important;grid-row:1!important}
+  .provider-transaction-page .tx-filter-actions{
+    grid-column:6!important;
+    grid-row:1!important;
+    width:260px!important;
+    min-width:260px!important;
+    max-width:260px!important;
+  }
+  .provider-transaction-page .tx-filter-actions .filter-action-row{
+    display:grid!important;
+    grid-template-columns:104px 144px!important;
+    gap:12px!important;
+    justify-content:start!important;
+    width:260px!important;
+  }
+}
+
+/* iPad/tablet: report filters wrap predictably and never exceed the content card. */
+@media (min-width:768px) and (max-width:1399.98px){
+  .provider-transaction-page .pwt-filter-grid,
+  .provider-bet-report-page .filter-card .user-search-grid,
+  body:has(#sessionFrom) .filter-card .user-search-grid,
+  .wallet-ledger-page .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  .provider-transaction-page .pwt-filter-grid > .field,
+  .provider-bet-report-page .filter-card .user-search-grid > .field,
+  body:has(#sessionFrom) .filter-card .user-search-grid > .field,
+  .wallet-ledger-page .filter-card .user-search-grid > .field{
+    min-width:0!important;
+    max-width:none!important;
+  }
+  .provider-transaction-page .pwt-filter-grid .bo-range-field,
+  .provider-bet-report-page .filter-card .bo-range-field,
+  body:has(#sessionFrom) .filter-card .bo-range-field,
+  .wallet-ledger-page .filter-card .bo-range-field{
+    grid-column:1/-1!important;
+    width:min(390px,100%)!important;
+    min-width:0!important;
+    max-width:390px!important;
+  }
+  .provider-transaction-page .tx-filter-actions{
+    grid-column:auto!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  .provider-transaction-page .tx-filter-actions .filter-action-row{
+    grid-template-columns:minmax(88px,.72fr) minmax(112px,1fr)!important;
+    width:100%!important;
+  }
+
+  /* Casino reports: preserve Date Range -> Search -> Today order on iPad. */
+  body[data-report-page] .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:minmax(0,390px) 124px 124px!important;
+    gap:12px!important;
+    justify-content:start!important;
+    align-items:end!important;
+    width:100%!important;
+  }
+  body[data-report-page] .filter-card .bo-range-field{
+    grid-column:1!important;
+    grid-row:1!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:390px!important;
+  }
+  body[data-report-page] .filter-card .field:has(#casinoSearchBtn){grid-column:2!important;grid-row:1!important}
+  body[data-report-page] .filter-card .field:has(#casinoResetBtn){grid-column:3!important;grid-row:1!important}
+}
+
+/* Narrow tablet / large phone: date first, action buttons beneath it; no reversed visual order. */
+@media (min-width:576px) and (max-width:767.98px){
+  body[data-report-page] .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:124px 124px!important;
+    gap:12px!important;
+    justify-content:start!important;
+    align-items:end!important;
+  }
+  body[data-report-page] .filter-card .bo-range-field{
+    grid-column:1/-1!important;
+    grid-row:1!important;
+    width:min(390px,100%)!important;
+    min-width:0!important;
+    max-width:390px!important;
+  }
+  body[data-report-page] .filter-card .field:has(#casinoSearchBtn){grid-column:1!important;grid-row:2!important}
+  body[data-report-page] .filter-card .field:has(#casinoResetBtn){grid-column:2!important;grid-row:2!important}
+}
+
+/* Small screens: every report control remains inside the card. */
+@media (max-width:575.98px){
+  body[data-report-page] .filter-card .user-search-grid,
+  .provider-transaction-page .pwt-filter-grid,
+  .provider-bet-report-page .filter-card .user-search-grid,
+  body:has(#sessionFrom) .filter-card .user-search-grid,
+  .wallet-ledger-page .filter-card .user-search-grid{
+    width:100%!important;
+    min-width:0!important;
+  }
+  body[data-report-page] .filter-card .bo-range-field{
+    grid-row:1!important;
+  }
+  body[data-report-page] .filter-card .field:has(#casinoSearchBtn){grid-row:2!important}
+  body[data-report-page] .filter-card .field:has(#casinoResetBtn){grid-row:3!important}
+}
+
+/* v1.0.30 - Referral Network and Wallet Ledger iPad/tablet alignment fixes */
+@media (min-width:768px) and (max-width:1199.98px){
+  /* Referral Network: keep every control inside the card on iPad widths. */
+  .referral-page .referral-filter-grid,
+  body:has(#refDateTrigger) .referral-filter-grid{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:12px!important;
+    width:100%!important;
+    min-width:0!important;
+    align-items:end!important;
+  }
+  .referral-page .referral-filter-grid > *,
+  .referral-page .referral-filter-grid .field,
+  .referral-page .ref-filter-actions{
+    min-width:0!important;
+    max-width:none!important;
+    width:100%!important;
+  }
+  .referral-page .referral-filter-card:not(.referral-reward-config) .ref-date-field{
+    grid-column:1!important;
+    width:100%!important;
+    max-width:none!important;
+  }
+  .referral-page .referral-filter-card:not(.referral-reward-config) .ref-filter-actions{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+  }
+  .referral-reward-config .ref-panel-title{
+    display:block!important;
+    width:100%!important;
+  }
+  .referral-reward-config .ref-panel-title span,
+  .referral-reward-config .ref-panel-title small{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+  }
+  .referral-reward-config .ref-panel-title small{
+    margin-top:6px!important;
+    line-height:1.45!important;
+  }
+  .referral-reward-config .ref-filter-actions{
+    display:flex!important;
+  }
+  .referral-reward-config .ref-filter-actions .clean-btn{
+    width:100%!important;
+    min-width:0!important;
+    padding-inline:12px!important;
+  }
+
+  /* Wallet Ledger: date first, four compact fields second, actions last. */
+  .wallet-ledger-page .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:12px!important;
+    width:100%!important;
+    min-width:0!important;
+    align-items:end!important;
+  }
+  .wallet-ledger-page .filter-card .bo-range-field{
+    grid-column:1 / span 2!important;
+    grid-row:1!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    margin:0!important;
+  }
+  .wallet-ledger-page .filter-card .field:has(#ledgerMemberId){grid-column:1!important;grid-row:2!important}
+  .wallet-ledger-page .filter-card .field:has(#ledgerProviderCode){grid-column:2!important;grid-row:2!important}
+  .wallet-ledger-page .filter-card .field:has(#ledgerType){grid-column:3!important;grid-row:2!important}
+  .wallet-ledger-page .filter-card .field:has(#ledgerSize){grid-column:4!important;grid-row:2!important}
+  .wallet-ledger-page .filter-card .ledger-reset-field{grid-column:1 / span 2!important;grid-row:3!important}
+  .wallet-ledger-page .filter-card .ledger-search-field{grid-column:3 / span 2!important;grid-row:3!important}
+  .wallet-ledger-page .filter-card .user-search-grid > .field,
+  .wallet-ledger-page .filter-card .user-search-grid > .bo-range-field{
+    min-width:0!important;
+    max-width:none!important;
+    width:100%!important;
+  }
+}
+
+/* v1.0.31 - Wallet Ledger iPad exact grid placement (override legacy ID-specific rules) */
+@media (min-width:768px) and (max-width:1199.98px){
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:minmax(0,1.35fr) minmax(0,1.15fr) minmax(0,.48fr) minmax(0,.42fr)!important;
+    column-gap:12px!important;
+    row-gap:16px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .bo-range-field{
+    grid-column:1 / span 2!important;
+    grid-row:1!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    margin:0!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerMemberId){
+    grid-column:1!important;
+    grid-row:2!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerProviderCode){
+    grid-column:2!important;
+    grid-row:2!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerType){
+    grid-column:3!important;
+    grid-row:2!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerSize){
+    grid-column:4!important;
+    grid-row:2!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-reset-field{
+    grid-column:1!important;
+    grid-row:3!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-search-field{
+    grid-column:2!important;
+    grid-row:3!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .user-search-grid > .field,
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .user-search-grid > .bo-range-field{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+}
+
+/* v1.0.32 - iPad/tablet compact date ranges + iPad Pro referral configuration */
+/* Tablet date-range controls use half of the 390px desktop width. Calendar popups keep
+   their normal width so dates remain readable. Desktop mouse layouts are untouched. */
+@media (min-width:768px) and (max-width:1199.98px),
+       (min-width:1200px) and (max-width:1366px) and (hover:none) and (pointer:coarse){
+  .bo-range-field,
+  .bo-date-range-field,
+  [data-bo-date-range],
+  .ref-date-field,
+  .ref-range-wrap,
+  .bo-range-trigger,
+  .ref-range-trigger,
+  body[data-report-page] .filter-card .bo-range-field,
+  body:has(#betFrom) .filter-card .bo-range-field,
+  body:has(#txFrom) .filter-card .bo-range-field,
+  body:has(#sessionFrom) .filter-card .bo-range-field,
+  body:has(#ledgerFrom) .filter-card .bo-range-field{
+    width:195px!important;
+    min-width:195px!important;
+    max-width:195px!important;
+  }
+
+  /* Keep the popup large enough for the two-month/date preset interface. */
+  .bo-range-pop,
+  .ref-range-picker{
+    width:390px!important;
+    max-width:min(390px,calc(100vw - 32px))!important;
+  }
+}
+
+/* iPad Pro landscape/large-tablet only: give the save action a real column and stop
+   the reward amount/button content from colliding. */
+@media (min-width:1200px) and (max-width:1366px) and (hover:none) and (pointer:coarse){
+  .referral-reward-config .referral-filter-grid{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,.62fr) minmax(0,1fr)!important;
+    gap:14px!important;
+    align-items:end!important;
+    width:100%!important;
+  }
+  .referral-reward-config .referral-filter-grid > .field,
+  .referral-reward-config .ref-filter-actions{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  .referral-reward-config .ref-filter-actions{
+    display:flex!important;
+  }
+  .referral-reward-config .ref-filter-actions .clean-btn{
+    width:100%!important;
+    min-width:0!important;
+    padding-inline:10px!important;
+    font-size:12px!important;
+    white-space:nowrap!important;
+  }
+  .referral-reward-config .ref-panel-title{
+    display:block!important;
+    width:100%!important;
+  }
+  .referral-reward-config .ref-panel-title small{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    margin-top:6px!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+    line-height:1.4!important;
+  }
+
+  /* Wallet Ledger remains one row on iPad Pro, now with a compact date range. */
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .user-search-grid{
+    grid-template-columns:195px minmax(110px,1fr) minmax(120px,1fr) minmax(90px,.55fr) minmax(80px,.45fr) minmax(105px,.68fr) minmax(120px,.78fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .bo-range-field,
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerMemberId),
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerProviderCode),
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerType),
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerSize),
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-reset-field,
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-search-field{
+    grid-row:1!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .bo-range-field{grid-column:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerMemberId){grid-column:2!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerProviderCode){grid-column:3!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerType){grid-column:4!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerSize){grid-column:5!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-reset-field{grid-column:6!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-search-field{grid-column:7!important}
+}
+
+/* v1.0.33 - Compact tablet date-range flow: following controls start immediately after date */
+@media (min-width:768px) and (max-width:1199.98px),
+       (min-width:1200px) and (max-width:1366px) and (hover:none) and (pointer:coarse){
+  /* Referral filter: remove the unused half-column left behind by the compact date control. */
+  .referral-page .referral-filter-card:not(.referral-reward-config) .referral-filter-grid,
+  body:has(#refDateTrigger) .referral-filter-card:not(.referral-reward-config) .referral-filter-grid{
+    display:grid!important;
+    grid-template-columns:195px minmax(190px,1fr) minmax(110px,.58fr) auto!important;
+    gap:12px!important;
+    justify-content:start!important;
+    align-items:end!important;
+  }
+  .referral-page .referral-filter-card:not(.referral-reward-config) .ref-date-field{
+    grid-column:1!important;
+    grid-row:1!important;
+  }
+  .referral-page .referral-filter-card:not(.referral-reward-config) .referral-filter-grid > .field:nth-child(2){
+    grid-column:2!important;
+    grid-row:1!important;
+  }
+  .referral-page .referral-filter-card:not(.referral-reward-config) .referral-filter-grid > .field:nth-child(3){
+    grid-column:3!important;
+    grid-row:1!important;
+  }
+  .referral-page .referral-filter-card:not(.referral-reward-config) .ref-filter-actions{
+    grid-column:4!important;
+    grid-row:1!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(78px,1fr))!important;
+    width:auto!important;
+  }
+
+  /* Simple casino report filters: Date Range, Search and Today stay tightly grouped. */
+  body[data-report-page] .filter-card .user-search-grid{
+    grid-template-columns:195px 124px 124px!important;
+    justify-content:start!important;
+  }
+  body[data-report-page] .filter-card .bo-range-field{grid-column:1!important;grid-row:1!important}
+  body[data-report-page] .filter-card .field:has(#casinoSearchBtn){grid-column:2!important;grid-row:1!important}
+  body[data-report-page] .filter-card .field:has(#casinoResetBtn){grid-column:3!important;grid-row:1!important}
+
+  /* Provider report/session filters: compact date occupies only its real column. */
+  .provider-bet-report-page .filter-card .user-search-grid,
+  body:has(#sessionFrom) .filter-card .user-search-grid{
+    grid-template-columns:195px repeat(2,minmax(120px,1fr))!important;
+    grid-auto-flow:row!important;
+    gap:12px!important;
+    justify-content:stretch!important;
+  }
+  .provider-bet-report-page .filter-card .bo-range-field,
+  body:has(#sessionFrom) .filter-card .bo-range-field{
+    grid-column:1!important;
+    grid-row:1!important;
+  }
+
+  /* Provider Transactions follows the same compact flow without a blank date column. */
+  .provider-transaction-page .pwt-filter-grid{
+    grid-template-columns:195px repeat(2,minmax(120px,1fr))!important;
+    grid-auto-flow:row!important;
+    gap:12px!important;
+    justify-content:stretch!important;
+  }
+  .provider-transaction-page .pwt-filter-grid .bo-range-field{
+    grid-column:1!important;
+    grid-row:1!important;
+  }
+
+  /* Wallet Ledger at regular tablet widths: continue fields directly after Date Range. */
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .user-search-grid{
+    grid-template-columns:195px minmax(125px,1fr) minmax(135px,1fr) minmax(85px,.55fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .bo-range-field{grid-column:1!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerMemberId){grid-column:2!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerProviderCode){grid-column:3!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerType){grid-column:4!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerSize){grid-column:1!important;grid-row:2!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-reset-field{grid-column:2!important;grid-row:2!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-search-field{grid-column:3!important;grid-row:2!important}
+}
+
+/* Keep the established one-row Wallet Ledger layout on iPad Pro. */
+@media (min-width:1200px) and (max-width:1366px) and (hover:none) and (pointer:coarse){
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .user-search-grid{
+    grid-template-columns:195px minmax(110px,1fr) minmax(120px,1fr) minmax(90px,.55fr) minmax(80px,.45fr) minmax(105px,.68fr) minmax(120px,.78fr)!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerSize){grid-column:5!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-reset-field{grid-column:6!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-search-field{grid-column:7!important;grid-row:1!important}
+}
+
+/* v1.0.34 - Provider Bet Report iPad Pro compact continuous filter flow */
+@media (min-width:1200px) and (max-width:1366px){
+  .provider-bet-report-page .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:195px repeat(4,minmax(0,1fr))!important;
+    gap:12px!important;
+    align-items:end!important;
+    justify-content:start!important;
+  }
+  .provider-bet-report-page .filter-card .bo-range-field{
+    grid-column:1!important;
+    grid-row:1!important;
+    width:195px!important;
+    min-width:195px!important;
+    max-width:195px!important;
+    margin:0!important;
+  }
+  .provider-bet-report-page .filter-card .field:has(#betMemberId){grid-column:2!important;grid-row:1!important}
+  .provider-bet-report-page .filter-card .field:has(#betProviderCode){grid-column:3!important;grid-row:1!important}
+  .provider-bet-report-page .filter-card .field:has(#betGameCode){grid-column:4!important;grid-row:1!important}
+  .provider-bet-report-page .filter-card .field:has(#betEventType){grid-column:5!important;grid-row:1!important}
+  .provider-bet-report-page .filter-card .field:has(#betSearchBtn){
+    grid-column:1!important;
+    grid-row:2!important;
+    width:124px!important;
+    max-width:124px!important;
+    margin:6px 0 0!important;
+  }
+  .provider-bet-report-page .filter-card .user-search-grid > .field{
+    min-width:0!important;
+    width:100%!important;
+    max-width:none!important;
+  }
+}
+
+/* v1.0.35 - Mobile filter/input responsiveness across BO pages */
+@media (max-width:767.98px){
+  /* Never allow a filter control to keep tablet/desktop fixed widths on phones. */
+  .filter-card,
+  .referral-filter-card,
+  .game-filter-card,
+  .category-filter-card,
+  .promotion-filter-card{
+    min-width:0!important;
+    overflow:visible!important;
+  }
+  .filter-card .user-search-grid,
+  body[data-report-page] .filter-card .user-search-grid,
+  .provider-bet-report-page .filter-card .user-search-grid,
+  body:has(#betFrom) .filter-card .user-search-grid,
+  body:has(#sessionFrom) .filter-card .user-search-grid,
+  body:has(#ledgerFrom) .filter-card .user-search-grid,
+  body:has(#walletKeyword) .filter-card .user-search-grid,
+  body:has(#depositKeyword) .filter-card .user-search-grid,
+  body:has(#withdrawKeyword) .filter-card .user-search-grid,
+  .provider-transaction-page .pwt-filter-grid{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-auto-flow:row!important;
+    gap:12px!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  .filter-card .user-search-grid > *,
+  .provider-transaction-page .pwt-filter-grid > *,
+  .referral-filter-grid > *{
+    grid-column:1!important;
+    grid-row:auto!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    margin:0!important;
+    justify-self:stretch!important;
+  }
+  .bo-range-field,
+  .bo-date-range-field,
+  [data-bo-date-range],
+  .bo-range-trigger,
+  .ref-date-field,
+  .ref-range-wrap,
+  .ref-range-trigger,
+  body[data-report-page] .filter-card .bo-range-field,
+  body:has(#betFrom) .filter-card .bo-range-field,
+  body:has(#txFrom) .filter-card .bo-range-field,
+  body:has(#sessionFrom) .filter-card .bo-range-field,
+  body:has(#ledgerFrom) .filter-card .bo-range-field{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  .bo-range-trigger,
+  .ref-range-trigger{
+    display:flex!important;
+    overflow:hidden!important;
+  }
+  .bo-range-trigger > span:not(.bo-range-icon),
+  .ref-range-trigger > span:not(.ref-range-icon){
+    min-width:0!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+  }
+  .bo-range-pop,
+  .ref-range-picker{
+    width:min(390px,calc(100vw - 28px))!important;
+    min-width:0!important;
+    max-width:calc(100vw - 28px)!important;
+    left:0!important;
+    right:auto!important;
+  }
+
+  /* Referral configuration and search filters stack cleanly instead of overflowing sideways. */
+  .referral-reward-config .referral-filter-grid,
+  .referral-page .referral-filter-card:not(.referral-reward-config) .referral-filter-grid,
+  body:has(#refDateTrigger) .referral-filter-grid{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:12px!important;
+    width:100%!important;
+  }
+  .referral-reward-config .ref-panel-title small{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+  }
+  .referral-filter-grid .field input,
+  .referral-filter-grid .field select,
+  .filter-card .field input,
+  .filter-card .field select,
+  .pwt-filter-grid .field input,
+  .pwt-filter-grid .field select{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  .referral-reward-config .ref-filter-actions{
+    display:block!important;
+  }
+  .referral-reward-config .ref-filter-actions .clean-btn{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    white-space:normal!important;
+  }
+  .referral-page .referral-filter-card:not(.referral-reward-config) .ref-filter-actions{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;
+  }
+
+  /* All standard action rows stay visible and balanced. */
+  .ledger-reset-field,
+  .ledger-search-field,
+  .wallet-reset-field,
+  .wallet-search-field,
+  .deposit-reset-field,
+  .deposit-search-field,
+  .withdraw-reset-field,
+  .withdraw-search-field,
+  .action-field,
+  .user-search-grid .field:has(button){
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  .filter-card button.clean-btn,
+  .filter-card .field > button,
+  .pwt-filter-grid button,
+  #ledgerResetBtn,#ledgerSearchBtn,
+  #betSearchBtn,#sessionSearchBtn,
+  #depositResetBtn,#depositSearchBtn,
+  #withdrawResetBtn,#withdrawSearchBtn,
+  #walletResetBtn,#walletSearchBtn{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+
+  /* Wallet Ledger uses full-width fields and keeps Reset/Search side by side. */
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .user-search-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .bo-range-field,
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerMemberId),
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerProviderCode),
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerType),
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerSize){
+    grid-column:1/-1!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-reset-field{grid-column:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-search-field{grid-column:2!important}
+}
+
+@media (max-width:420px){
+  .report-content{padding-left:8px!important;padding-right:8px!important}
+  .filter-card,.referral-filter-card{padding:14px!important}
+  .referral-page .referral-filter-card:not(.referral-reward-config) .ref-filter-actions{
+    grid-template-columns:1fr 1fr!important;
+  }
+}
+
+/* v1.0.36 - Casino report mobile filter alignment */
+@media (max-width:767.98px){
+  body[data-report-page] .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-auto-flow:row!important;
+    gap:10px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  body[data-report-page] .filter-card .user-search-grid > .bo-range-field{
+    grid-column:1/-1!important;
+    grid-row:1!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  body[data-report-page] .filter-card .user-search-grid > .field:has(#casinoSearchBtn){
+    grid-column:1!important;
+    grid-row:2!important;
+  }
+  body[data-report-page] .filter-card .user-search-grid > .field:has(#casinoResetBtn){
+    grid-column:2!important;
+    grid-row:2!important;
+  }
+  body[data-report-page] .filter-card .user-search-grid > .field:has(#casinoSearchBtn),
+  body[data-report-page] .filter-card .user-search-grid > .field:has(#casinoResetBtn){
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    margin:0!important;
+  }
+  body[data-report-page] .filter-card .user-search-grid > .field:has(#casinoSearchBtn) > label,
+  body[data-report-page] .filter-card .user-search-grid > .field:has(#casinoResetBtn) > label{
+    display:none!important;
+  }
+  body[data-report-page] #casinoSearchBtn,
+  body[data-report-page] #casinoResetBtn{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    margin:0!important;
+    white-space:nowrap!important;
+  }
+  body[data-report-page] .filter-card > #casinoRangeText{
+    display:block!important;
+    margin-top:10px!important;
+    overflow-wrap:anywhere!important;
+  }
+}
+
+/* Layout Section responsive stacking: tablet/iPad/mobile only */
+@media (max-width: 1500px) {
+  .layout-editor-shell {
+    grid-template-columns: minmax(0, 1fr) !important;
+    min-height: 0;
+  }
+
+  .layout-section-menu {
+    width: 100%;
+    max-width: none;
+    max-height: none;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .layout-section-item {
+    width: 100%;
+  }
+
+  .layout-editor-main {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .layout-code-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100%;
+    min-height: 0;
+  }
+
+  .layout-code-pane,
+  .layout-code-editor,
+  .layout-code-input-wrap,
+  .layout-code-highlight,
+  .layout-code-pane textarea {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .layout-code-editor,
+  .layout-code-input-wrap,
+  .layout-code-highlight,
+  .layout-code-pane textarea {
+    min-height: 320px;
+  }
+}
+
+@media (max-width: 760px) {
+  .layout-page-card {
+    padding: 14px;
+  }
+
+  .layout-page-title {
+    align-items: flex-start;
+  }
+
+  .layout-editor-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .layout-editor-actions .clean-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .layout-editor-main {
+    padding: 12px;
+  }
+
+  .layout-code-editor {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+
+  .layout-code-editor,
+  .layout-code-input-wrap,
+  .layout-code-highlight,
+  .layout-code-pane textarea {
+    min-height: 280px;
+  }
+}

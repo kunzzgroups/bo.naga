@@ -108,23 +108,60 @@
     if(unsubscribeConversations) unsubscribeConversations();
     renderInboxMessage('Loading conversations...');
     unsubscribeConversations = db.collection('conversations').orderBy('updatedAt','desc').limit(100)
-      .onSnapshot(function(snapshot){
+      .onSnapshot(async function(snapshot){
         conversations = [];
         snapshot.forEach(function(doc){
           conversations.push(Object.assign({id: doc.id}, doc.data() || {}));
         });
+
+        // A blank/placeholder lastMessage does not always mean the chat is empty
+        // (for example, older attachment conversations). Verify the messages
+        // subcollection before hiding those conversation rows.
+        await Promise.all(conversations.map(async function(conversation){
+          if(hasDisplayableLastMessage(conversation)){
+            conversation._hasActualMessage = true;
+            return;
+          }
+          try{
+            const messageSnapshot = await db.collection('conversations').doc(conversation.id)
+              .collection('messages').limit(1).get();
+            conversation._hasActualMessage = !messageSnapshot.empty;
+          }catch(error){
+            // Keep the conversation visible when verification fails so an
+            // existing chat is never hidden because of a temporary read error.
+            conversation._hasActualMessage = true;
+          }
+        }));
+
         renderInbox();
         handleUnreadNotification();
-        if(selectedId && !conversations.some(c => c.id === selectedId)) clearRoom();
+        if(selectedId && !conversations.some(function(c){ return c.id === selectedId && hasActualConversationMessage(c); })) clearRoom();
       }, function(error){
         renderInboxMessage('Unable to load conversations. ' + (error && error.message ? error.message : ''));
       });
+  }
+
+
+  function hasDisplayableLastMessage(conversation){
+    const lastMessage = String(conversation && conversation.lastMessage || '').trim();
+    if(!lastMessage) return false;
+
+    const normalized = lastMessage.toLowerCase();
+    return normalized !== 'no message' &&
+      normalized !== 'no message yet' &&
+      normalized !== 'no message yet.' &&
+      normalized !== 'new chat opened';
+  }
+
+  function hasActualConversationMessage(conversation){
+    return hasDisplayableLastMessage(conversation) || conversation._hasActualMessage === true;
   }
 
   function renderInbox(){
     if(!inboxList) return;
     const q = (searchInput && searchInput.value || '').trim().toLowerCase();
     const list = conversations.filter(function(c){
+      if(!hasActualConversationMessage(c)) return false;
       const hay = [c.memberName, c.memberUsername, c.conversationId, c.lastMessage].join(' ').toLowerCase();
       return !q || hay.indexOf(q) >= 0;
     });
@@ -164,7 +201,9 @@
       .onSnapshot(function(snapshot){
         messagesEl.innerHTML = '';
         if(snapshot.empty){
-          messagesEl.innerHTML = '<div class="livechat-empty big">No message yet.</div>';
+          clearRoom();
+          renderInbox();
+          return;
         }else{
           snapshot.forEach(function(doc){ renderMessage(doc.id, doc.data()); });
         }
