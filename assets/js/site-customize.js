@@ -599,7 +599,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             });
             const json = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(json.message || 'Save failed');
-            setStatus(activeSection === 'home' ? 'Saved. This CSS now overrides the Naga frontend after refresh.' : 'Saved. Section content now applies to the Naga frontend after refresh.', 'success');
+            setStatus(activeSection === 'home' ? 'Saved. This CSS now overrides the TitanXgaming frontend after refresh.' : 'Saved. Section content now applies to the TitanXgaming frontend after refresh.', 'success');
         } catch (err) {
             setStatus(err.message || 'Save failed. Please check Spring Boot API.', 'error');
         } finally {
