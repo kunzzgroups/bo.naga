@@ -212,6 +212,8 @@
               <button class="wallet-side-tab" type="button" data-wallet-tab="ledger"><i class="bi bi-journal-text"></i>Wallet Ledger</button>
               <button class="wallet-side-tab" type="button" data-wallet-tab="bet"><i class="bi bi-dice-5"></i>Bet Records</button>
               <button class="wallet-side-tab" type="button" data-wallet-tab="profile"><i class="bi bi-person-lines-fill"></i>Member Info</button>
+              <button class="wallet-side-tab" type="button" data-wallet-tab="password"><i class="bi bi-key"></i>Change Password</button>
+              <button class="wallet-side-tab" type="button" data-wallet-tab="transactionPassword"><i class="bi bi-shield-lock"></i>Transaction Password</button>
               <button class="wallet-side-tab" type="button" data-wallet-tab="bank"><i class="bi bi-bank"></i>Bank Info</button>
               <button class="wallet-side-tab" type="button" data-wallet-tab="activity"><i class="bi bi-clock-history"></i>Activity</button>
             </div>
@@ -248,6 +250,26 @@
               <div class="table-wrap"><table class="wallet-mini-table"><thead><tr><th>Date</th><th>Provider</th><th>Game</th><th>Bet ID</th><th>Bet</th><th>Valid Bet</th><th>Win</th><th>Net</th></tr></thead><tbody id="walletBetPreviewBody"><tr><td colspan="8">Select this tab to load latest bet records.</td></tr></tbody></table></div>
             </div>
             <div class="wallet-tab-pane" data-wallet-pane="profile"><h5>Member Info</h5><div id="walletProfileInfo" class="wallet-empty">-</div></div>
+            <div class="wallet-tab-pane" data-wallet-pane="password">
+              <h5>Change Member Password</h5>
+              <p class="text-secondary small mb-3">Reset the selected member's login password.</p>
+              <div class="wallet-adjust-grid">
+                <div class="field"><label>New Password</label><input id="memberNewPassword" type="password" minlength="8" maxlength="20" autocomplete="new-password" placeholder="8 - 20 characters" /></div>
+                <div class="field"><label>Confirm New Password</label><input id="memberConfirmPassword" type="password" minlength="8" maxlength="20" autocomplete="new-password" placeholder="Enter again" /></div>
+              </div>
+              <div class="wallet-actions-row"><button class="clean-btn primary" type="button" id="resetMemberPasswordBtn"><i class="bi bi-key"></i> Reset Login Password</button></div>
+              <div class="upload-status mt-2" id="memberPasswordStatus"></div>
+            </div>
+            <div class="wallet-tab-pane" data-wallet-pane="transactionPassword">
+              <h5>Reset Transaction Password</h5>
+              <p class="text-secondary small mb-3">Set a new transaction password for withdrawals and secured wallet actions.</p>
+              <div class="wallet-adjust-grid">
+                <div class="field"><label>New Transaction Password</label><input id="memberNewTransactionPassword" type="password" minlength="6" maxlength="20" autocomplete="new-password" placeholder="6 - 20 characters" /></div>
+                <div class="field"><label>Confirm Transaction Password</label><input id="memberConfirmTransactionPassword" type="password" minlength="6" maxlength="20" autocomplete="new-password" placeholder="Enter again" /></div>
+              </div>
+              <div class="wallet-actions-row"><button class="clean-btn primary" type="button" id="resetMemberTransactionPasswordBtn"><i class="bi bi-shield-lock"></i> Reset Transaction Password</button></div>
+              <div class="upload-status mt-2" id="memberTransactionPasswordStatus"></div>
+            </div>
             <div class="wallet-tab-pane" data-wallet-pane="bank"><h5>Bank Info</h5>
               <div id="walletBankInfo" class="wallet-empty mb-3">-</div>
               <div class="wallet-adjust-grid">
@@ -270,6 +292,6 @@
     <script src="assets/js/config.js?v=1.0.14"></script>
     <script src="assets/js/reports.js?v=1.0.7"></script>
     <script src="assets/js/auth.js?v=1.0.13"></script>
-    <script src="assets/js/member-management.js?v=1.0.4"></script>
+    <script src="assets/js/member-management.js?v=1.0.0"></script>
   </body>
 </html>

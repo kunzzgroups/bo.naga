@@ -410,6 +410,65 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         return { html: upgradedHtml, upgraded: upgradedHtml !== html };
     }
 
+    function ensureAuthFeedbackMarkup(sectionKey, html) {
+        if (!html || (sectionKey !== 'login-page' && sectionKey !== 'register-page')) {
+            return html || '';
+        }
+
+        let result = html;
+        const forms = [
+            {
+                formId: 'loginForm',
+                messageId: 'loginMessage',
+                errorId: 'loginError',
+                statusId: 'loginStatus',
+                label: 'Login message'
+            },
+            {
+                formId: 'registerForm',
+                messageId: 'registerMessage',
+                errorId: 'registerError',
+                statusId: 'registerStatus',
+                label: 'Register message'
+            }
+        ];
+
+        forms.forEach((item) => {
+            const formPattern = new RegExp(`(<form\\b[^>]*\\bid=[\"']${item.formId}[\"'][^>]*>)([\\s\\S]*?)(</form>)`, 'i');
+            const match = result.match(formPattern);
+            if (!match) return;
+
+            let body = match[2];
+            const requiredIds = [item.messageId, item.errorId, item.statusId];
+            const missing = requiredIds.filter((id) => !new RegExp(`\\bid=[\"']${id}[\"']`, 'i').test(body));
+            if (!missing.length) return;
+
+            const feedback = missing.map((id) => {
+                const extraClass = id.endsWith('Error') ? ' auth-error-message' : '';
+                return '\n      <div id="' + id + '" class="auth-form-message' + extraClass + '" role="alert" aria-live="polite" aria-label="' + item.label + '"></div>';
+            }).join('');
+
+            body += feedback + '\n    ';
+            result = result.replace(formPattern, match[1] + body + match[3]);
+        });
+
+        return result;
+    }
+
+    function ensureAuthFeedbackCss(sectionKey, css) {
+        if (sectionKey !== 'login-page' && sectionKey !== 'register-page') return css || '';
+        const current = css || '';
+        if (current.includes('/* auth feedback compatibility */')) return current;
+        return current + `
+
+/* auth feedback compatibility */
+.auth-form-message:empty { display: none; }
+.auth-form-message { margin-top: 10px; font-size: 13px; line-height: 1.4; }
+.auth-error-message, .auth-form-message.error { color: #dc2626; }
+.auth-form-message.success { color: #16a34a; }
+`;
+    }
+
     function withSectionDefaults(sectionKey, data) {
         const normalized = {
             html: data?.html || '',
@@ -423,7 +482,8 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         }
 
         const upgraded = upgradeAuthButtonsToImages(sectionKey, normalized.html);
-        normalized.html = upgraded.html;
+        normalized.html = ensureAuthFeedbackMarkup(sectionKey, upgraded.html);
+        normalized.css = ensureAuthFeedbackCss(sectionKey, normalized.css);
         normalized.upgradedAuthImages = upgraded.upgraded;
         return normalized;
     }
@@ -582,9 +642,17 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 
     async function saveSection() {
         const payload = new URLSearchParams();
+        const safeHtml = ensureAuthFeedbackMarkup(activeSection, htmlEditor.value || '');
+        const safeCss = ensureAuthFeedbackCss(activeSection, cssEditor.value || '');
+        if (safeHtml !== htmlEditor.value || safeCss !== cssEditor.value) {
+            htmlEditor.value = safeHtml;
+            cssEditor.value = safeCss;
+            updateAllLineNumbers();
+        }
+
         payload.append('key', activeSection);
-        payload.append('html', htmlEditor.value || '');
-        payload.append('css', cssEditor.value || '');
+        payload.append('html', safeHtml);
+        payload.append('css', safeCss);
         payload.append('js', jsEditor.value || '');
 
         saveBtn.disabled = true;
