@@ -219,6 +219,8 @@
     document.getElementById('editAdminDisplayName').value = row.displayName || '';
     document.getElementById('editAdminStatus').value = String(row.status == null ? 1 : row.status);
     document.getElementById('editAdminRole').value = String(row.roleId || 1);
+    document.getElementById('editAdminStatus').dispatchEvent(new Event('change', {bubbles:true}));
+    document.getElementById('editAdminRole').dispatchEvent(new Event('change', {bubbles:true}));
     document.getElementById('editAdminPassword').value = '';
     setStatus(document.getElementById('editAdminStatusMsg'), '', '');
     editModal && editModal.classList.add('show');

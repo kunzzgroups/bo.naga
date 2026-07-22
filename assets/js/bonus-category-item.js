@@ -339,7 +339,7 @@ const BONUS_CATEGORY_ITEM_API = {
   }
 
   async function deleteItem(itemId) {
-    if (!confirm('Delete this bonus item?')) return;
+    if (!(await BO_DIALOG.confirm('Delete this bonus item?', {title:'Delete Bonus Item', confirmText:'Delete'}))) return;
 
     setStatus('Deleting bonus item...', '');
 

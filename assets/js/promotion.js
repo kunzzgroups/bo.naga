@@ -211,7 +211,7 @@
   list.addEventListener('click',async e=>{
     const eb=e.target.closest('[data-edit]'),db=e.target.closest('[data-del]');
     if(eb){fill(rows.find(x=>String(x.id)===eb.dataset.edit)||{});}
-    if(db&&confirm('Delete this promotion?')){await req(promoApi('PROMOTION_DELETE'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:Number(db.dataset.del)})});load();}
+    if(db&&await BO_DIALOG.confirm('Delete this promotion?', {title:'Delete Promotion', confirmText:'Delete'})){await req(promoApi('PROMOTION_DELETE'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:Number(db.dataset.del)})});load();}
   });
 
   const promoImageInput=$('promoImage');

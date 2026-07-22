@@ -165,7 +165,7 @@
 
   async function deleteTemplate(id){
     if(!id) return;
-    if(!confirm('Delete this template?')) return;
+    if(!(await BO_DIALOG.confirm('Delete this template?', {title:'Delete Template', confirmText:'Delete'}))) return;
     try{
       if(db){
         await db.collection('livechat_templates').doc(id).delete();

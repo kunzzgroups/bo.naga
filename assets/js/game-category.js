@@ -274,7 +274,7 @@ const GAME_CATEGORY_API = {
   }
 
   async function deleteCategory(categoryId) {
-    if (!confirm('Delete this category?')) return;
+    if (!(await BO_DIALOG.confirm('Delete this category?', {title:'Delete Category', confirmText:'Delete'}))) return;
     const fd = new FormData();
     fd.append('id', categoryId);
     try {
