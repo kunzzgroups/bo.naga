@@ -5119,3 +5119,90 @@ body[data-report-page] .filter-card .field:has(#casinoResetBtn){
     padding-right:10px!important;
   }
 }
+
+/* v1.0.44 - Layout editor fixed viewport height.
+   Keep HTML, CSS and JS panes the same height as Frontend Header/Sidebar.
+   Long code scrolls inside each editor instead of increasing the page height. */
+@media (min-width: 1201px) {
+  .layout-code-grid {
+    height: 560px !important;
+    min-height: 560px !important;
+    max-height: 560px !important;
+    align-items: stretch !important;
+    overflow: hidden !important;
+  }
+
+  .layout-code-pane {
+    height: 560px !important;
+    min-height: 0 !important;
+    max-height: 560px !important;
+    overflow: hidden !important;
+  }
+
+  .layout-code-editor {
+    height: 560px !important;
+    min-height: 560px !important;
+    max-height: 560px !important;
+    overflow: hidden !important;
+  }
+
+  .layout-line-numbers,
+  .layout-code-input-wrap,
+  .layout-code-highlight,
+  .layout-code-pane textarea {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 560px !important;
+  }
+
+  .layout-line-numbers {
+    overflow: hidden !important;
+  }
+
+  .layout-code-input-wrap {
+    overflow: hidden !important;
+  }
+
+  .layout-code-highlight,
+  .layout-code-pane textarea {
+    overflow: auto !important;
+  }
+}
+
+/* v1.0.45 - Preserve the complete rounded editor frame at fixed height.
+   The previous pane height included the label, which clipped the editor's
+   bottom border and lower corner radius. Keep only the editor itself at
+   560px and allow the labelled pane/grid to include that full frame. */
+@media (min-width: 1201px) {
+  .layout-code-grid {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    align-items: start !important;
+    overflow: visible !important;
+  }
+
+  .layout-code-pane {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .layout-code-editor {
+    height: 560px !important;
+    min-height: 560px !important;
+    max-height: 560px !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+  }
+
+  .layout-code-input-wrap,
+  .layout-line-numbers,
+  .layout-code-highlight,
+  .layout-code-pane textarea {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+  }
+}
