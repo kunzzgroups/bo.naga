@@ -26,7 +26,8 @@
   let originalTitle = document.title;
   let templateMessages = [];
   let unsubscribeTemplates = null;
-  let notificationAudioContext = null;
+  const LIVECHAT_NOTIFICATION_SOUND_URL = 'assets/audio/livechat_sound.mp3';
+  let notificationAudio = null;
   let notificationAudioUnlocked = false;
   let notificationSoundQueued = false;
   const DEFAULT_TEMPLATES = [
@@ -594,62 +595,54 @@
     document.addEventListener('touchstart', unlock, true);
   }
 
+  function getNotificationAudio(){
+    if(!notificationAudio){
+      notificationAudio = new Audio(LIVECHAT_NOTIFICATION_SOUND_URL);
+      notificationAudio.preload = 'auto';
+      notificationAudio.volume = 1;
+      notificationAudio.load();
+    }
+    return notificationAudio;
+  }
+
   function unlockNotificationSound(){
     try{
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      if(!AudioContextClass) return;
-      if(!notificationAudioContext) notificationAudioContext = new AudioContextClass();
-      const ready = function(){
-        notificationAudioUnlocked = true;
-        if(notificationSoundQueued){
-          notificationSoundQueued = false;
-          playIncomingMessageSound();
-        }
-      };
-      if(notificationAudioContext.state === 'suspended'){
-        const resumed = notificationAudioContext.resume();
-        if(resumed && typeof resumed.then === 'function') resumed.then(ready).catch(function(){});
-      }else{
-        ready();
+      const audio = getNotificationAudio();
+      const previousMuted = audio.muted;
+      audio.muted = true;
+      const started = audio.play();
+      if(started && typeof started.then === 'function'){
+        started.then(function(){
+          audio.pause();
+          audio.currentTime = 0;
+          audio.muted = previousMuted;
+          notificationAudioUnlocked = true;
+          if(notificationSoundQueued){
+            notificationSoundQueued = false;
+            playIncomingMessageSound();
+          }
+        }).catch(function(){
+          audio.muted = previousMuted;
+        });
       }
     }catch(e){}
   }
 
   function playIncomingMessageSound(){
     try{
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      if(!AudioContextClass) return;
-      if(!notificationAudioContext) notificationAudioContext = new AudioContextClass();
-      if(notificationAudioContext.state === 'suspended'){
-        notificationSoundQueued = true;
-        unlockNotificationSound();
-        return;
+      const audio = getNotificationAudio();
+      audio.pause();
+      audio.currentTime = 0;
+      audio.muted = false;
+      const played = audio.play();
+      if(played && typeof played.catch === 'function'){
+        played.then(function(){
+          notificationAudioUnlocked = true;
+          notificationSoundQueued = false;
+        }).catch(function(){
+          notificationSoundQueued = true;
+        });
       }
-
-      notificationAudioUnlocked = true;
-      const now = notificationAudioContext.currentTime;
-      const master = notificationAudioContext.createGain();
-      master.gain.setValueAtTime(0.0001, now);
-      master.gain.exponentialRampToValueAtTime(0.22, now + 0.015);
-      master.gain.exponentialRampToValueAtTime(0.0001, now + 0.62);
-      master.connect(notificationAudioContext.destination);
-
-      [
-        {frequency: 880, start: 0, duration: 0.16},
-        {frequency: 1175, start: 0.20, duration: 0.24}
-      ].forEach(function(note){
-        const oscillator = notificationAudioContext.createOscillator();
-        const gain = notificationAudioContext.createGain();
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(note.frequency, now + note.start);
-        gain.gain.setValueAtTime(0.0001, now + note.start);
-        gain.gain.exponentialRampToValueAtTime(0.75, now + note.start + 0.012);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + note.start + note.duration);
-        oscillator.connect(gain);
-        gain.connect(master);
-        oscillator.start(now + note.start);
-        oscillator.stop(now + note.start + note.duration + 0.03);
-      });
     }catch(e){}
   }
 
@@ -660,7 +653,8 @@
         const notification = new Notification('New live chat message', {
           body: (c.memberName || c.memberUsername || 'Member') + ': ' + (c.lastMessage || 'New message'),
           tag: 'livechat-' + c.id,
-          renotify: true
+          renotify: true,
+          silent: true
         });
         notification.onclick = function(){
           try{ window.focus(); }catch(e){}
