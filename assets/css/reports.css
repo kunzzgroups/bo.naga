@@ -5224,7 +5224,6 @@ body[data-report-page] .filter-card .field:has(#casinoResetBtn){
 /* Admin edit selects use the same rounded dropdown component as BO filters. */
 #adminEditModal .admin-select-wrap{display:block!important}.admin-select-wrap .rounded-select-wrap{width:100%}.admin-select-wrap .rounded-select-btn{height:46px;border-radius:12px!important;padding:0 14px!important;font-size:14px}.admin-select-wrap .rounded-select-menu{border-radius:14px!important;padding:8px;box-shadow:0 16px 35px rgba(15,23,42,.16)}.admin-select-wrap .rounded-select-option{border-radius:10px!important;min-height:38px}
 @media(max-width:600px){.bo-dialog-box{padding:22px 18px;grid-template-columns:42px 1fr;border-radius:18px}.bo-dialog-icon{width:42px;height:42px}.bo-dialog-copy h3{font-size:18px}.bo-dialog-actions{display:grid;grid-template-columns:1fr 1fr}.bo-dialog-actions button{width:100%;min-width:0}}
-<<<<<<< HEAD
 
 /* Standardized BO popup system v2 */
 .bo-alert-dialog{width:min(430px,100%);padding:0;overflow:hidden;display:block}
@@ -5327,5 +5326,3 @@ body[data-report-page] .filter-card .field:has(#casinoResetBtn){
   .standardized-game-management .game-image-upload{width:100%;height:190px;min-height:190px}
   .standardized-game-management .game-image-upload-zh{height:150px;min-height:150px}
 }
-=======
->>>>>>> f6f474b4792d289fa81f7a4d34e0d9b91257e665
