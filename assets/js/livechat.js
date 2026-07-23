@@ -282,14 +282,14 @@
   }
   function cancelEditing(){editingMessageId='';editingOriginalText='';if(editState)editState.classList.remove('show');if(input)input.value='';}
   async function recallMessage(messageId,msg){
-    if(!confirm('Recall this message?')) return;
+    if(!(await BO_DIALOG.confirm('Recall this message?', {title:'Recall Message'}))) return;
     try{
       await db.collection('conversations').doc(selectedId).collection('messages').doc(messageId).update({recalled:true,originalText:msg.text||'',text:'',attachments:[],recalledAt:firebase.firestore.FieldValue.serverTimestamp()});
       if(editingMessageId===messageId) cancelEditing();
     }catch(e){alert(e.message||'Recall failed.');}
   }
   async function deleteMessage(messageId){
-    if(!confirm('Delete this message permanently?')) return;
+    if(!(await BO_DIALOG.confirm('Delete this message permanently?', {title:'Delete Message', confirmText:'Delete'}))) return;
     try{await db.collection('conversations').doc(selectedId).collection('messages').doc(messageId).delete();if(editingMessageId===messageId)cancelEditing();}
     catch(e){alert(e.message||'Delete failed.');}
   }

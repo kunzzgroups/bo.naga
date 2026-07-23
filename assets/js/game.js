@@ -602,7 +602,7 @@ const GAME_API = {
   }
 
   async function deleteGame(gameId) {
-    if (!confirm('Delete this game?')) return;
+    if (!(await BO_DIALOG.confirm('Delete this game?', {title:'Delete Game', confirmText:'Delete'}))) return;
     const fd = new FormData();
     fd.append('id', gameId);
     try {

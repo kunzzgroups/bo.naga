@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
 /* Unified rounded native-select replacement. Delayed so page-specific controls initialize first. */
 (function(){
   function enhanceSelect(select){
-    if(!select || select.dataset.roundedReady==='1' || select.multiple || select.size>1 || select.closest('.rounded-select-wrap')) return;
+    if(!select || select.dataset.noRounded==='1' || select.dataset.roundedReady==='1' || select.multiple || select.size>1 || select.closest('.rounded-select-wrap')) return;
     if(select.disabled && !select.options.length) return;
     select.dataset.roundedReady='1';
     const wrap=document.createElement('div'); wrap.className='rounded-select-wrap';
@@ -286,4 +286,79 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('DOMContentLoaded',function(){setTimeout(run,20);});
   document.addEventListener('click',function(e){if(!e.target.closest('.rounded-select-wrap')){document.querySelectorAll('.rounded-select-menu.show').forEach(m=>m.classList.remove('show'));document.querySelectorAll('.rounded-select-btn.open').forEach(b=>b.classList.remove('open'));}});
   new MutationObserver(function(){setTimeout(run,0);}).observe(document.documentElement,{childList:true,subtree:true});
+})();
+
+
+/* Global standardized alert modal: replaces browser alert() across the BO. */
+(function(){
+  let modal, titleEl, messageEl, iconEl, okButton;
+  function classify(text){
+    const value=String(text||'').toLowerCase();
+    if(/delete|deleted|remove|removed|trash/.test(value)) return {type:'delete',title:'Deleted',icon:'bi-trash3'};
+    if(/fail|failed|error|invalid|missing|not available|unable|denied/.test(value)) return {type:'error',title:'Error',icon:'bi-exclamation-triangle'};
+    if(/success|saved|updated|done|completed|approved|rejected|sent|created/.test(value)) return {type:'success',title:'Success',icon:'bi-check-circle'};
+    if(/warning|please|select|choose|required/.test(value)) return {type:'warning',title:'Attention',icon:'bi-exclamation-circle'};
+    return {type:'info',title:'Notification',icon:'bi-info-circle'};
+  }
+  function ensure(){
+    if(modal) return;
+    modal=document.createElement('div');
+    modal.className='bo-alert-modal';
+    modal.setAttribute('aria-hidden','true');
+    modal.innerHTML='<div class="bo-alert-backdrop"></div><div class="bo-alert-dialog" role="alertdialog" aria-modal="true" aria-labelledby="boAlertTitle"><div class="bo-alert-head"><div class="bo-alert-icon"><i class="bi bi-info-circle"></i></div><div class="bo-alert-copy"><h3 id="boAlertTitle">Notification</h3><div class="bo-alert-message"></div></div></div><div class="bo-alert-actions"><button type="button" class="bo-alert-ok">OK</button></div></div>';
+    document.body.appendChild(modal);
+    titleEl=modal.querySelector('#boAlertTitle'); messageEl=modal.querySelector('.bo-alert-message'); iconEl=modal.querySelector('.bo-alert-icon i'); okButton=modal.querySelector('.bo-alert-ok');
+    const close=()=>{modal.classList.remove('show');modal.setAttribute('aria-hidden','true');};
+    okButton.addEventListener('click',close);
+    modal.querySelector('.bo-alert-backdrop').addEventListener('click',close);
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('show'))close();});
+  }
+  window.alert=function(text){
+    ensure(); const c=classify(text); modal.dataset.type=c.type; titleEl.textContent=c.title; iconEl.className='bi '+c.icon; messageEl.textContent=String(text??''); modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); setTimeout(()=>okButton.focus(),0);
+  };
+})();
+
+
+/* Global standardized confirmation and input dialogs. */
+(function(){
+  let modal, titleEl, messageEl, iconEl, warningEl, inputWrap, inputEl, okBtn, cancelBtn, resolver;
+  function ensure(){
+    if(modal) return;
+    modal=document.createElement('div');
+    modal.className='bo-dialog-modal';
+    modal.setAttribute('aria-hidden','true');
+    modal.innerHTML='<div class="bo-dialog-backdrop"></div><div class="bo-dialog-box" role="dialog" aria-modal="true" aria-labelledby="boDialogTitle"><button type="button" class="bo-dialog-close" aria-label="Close"><i class="bi bi-x-lg"></i></button><div class="bo-dialog-head"><div class="bo-dialog-icon"><i class="bi bi-question-circle"></i></div><div class="bo-dialog-copy"><h3 id="boDialogTitle">Confirm Action</h3><div class="bo-dialog-message"></div></div></div><div class="bo-dialog-warning"><i class="bi bi-exclamation-triangle"></i><span>This action cannot be undone.</span></div><label class="bo-dialog-input-wrap"><span class="bo-dialog-input-label">Admin remark</span><input type="text" class="bo-dialog-input" autocomplete="off"></label><div class="bo-dialog-actions"><button type="button" class="bo-dialog-cancel">Cancel</button><button type="button" class="bo-dialog-ok">Confirm</button></div></div>';
+    document.body.appendChild(modal);
+    titleEl=modal.querySelector('#boDialogTitle'); messageEl=modal.querySelector('.bo-dialog-message'); iconEl=modal.querySelector('.bo-dialog-icon i'); warningEl=modal.querySelector('.bo-dialog-warning'); inputWrap=modal.querySelector('.bo-dialog-input-wrap'); inputEl=modal.querySelector('.bo-dialog-input'); okBtn=modal.querySelector('.bo-dialog-ok'); cancelBtn=modal.querySelector('.bo-dialog-cancel');
+    function finish(value){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); const r=resolver; resolver=null; if(r) r(value); }
+    okBtn.addEventListener('click',()=>finish(inputWrap.classList.contains('show')?inputEl.value:true));
+    cancelBtn.addEventListener('click',()=>finish(inputWrap.classList.contains('show')?null:false));
+    modal.querySelector('.bo-dialog-close').addEventListener('click',()=>finish(inputWrap.classList.contains('show')?null:false));
+    modal.querySelector('.bo-dialog-backdrop').addEventListener('click',()=>finish(inputWrap.classList.contains('show')?null:false));
+    inputEl.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();okBtn.click();}});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('show')){e.preventDefault();cancelBtn.click();}});
+  }
+  function inferType(o){
+    const value=((o.title||'')+' '+(o.message||'')+' '+(o.confirmText||'')).toLowerCase();
+    if(/delete|remove|trash/.test(value)) return 'delete';
+    if(/reject|forfeit|reset|disable|recall/.test(value)) return 'warning';
+    if(o.input) return 'input';
+    if(/sync|approve|confirm|continue|save|update|add/.test(value)) return 'confirm';
+    return 'confirm';
+  }
+  function iconFor(type){return {delete:'bi-trash3',warning:'bi-exclamation-triangle',input:'bi-pencil-square',confirm:'bi-question-circle'}[type]||'bi-question-circle';}
+  function open(options){
+    ensure(); const o=options||{}; const type=o.type||inferType(o); modal.dataset.type=type;
+    titleEl.textContent=o.title||'Confirm Action'; messageEl.textContent=String(o.message||''); iconEl.className='bi '+(o.icon||iconFor(type));
+    okBtn.textContent=o.confirmText||'Confirm'; cancelBtn.textContent=o.cancelText||'Cancel';
+    warningEl.classList.toggle('show',type==='delete'); warningEl.querySelector('span').textContent=o.warningText||'This action cannot be undone.';
+    inputWrap.classList.toggle('show',!!o.input);
+    if(o.input){ inputWrap.querySelector('.bo-dialog-input-label').textContent=o.inputLabel||'Remark'; inputEl.value=o.defaultValue||''; inputEl.placeholder=o.placeholder||''; }
+    modal.classList.add('show'); modal.setAttribute('aria-hidden','false');
+    return new Promise(resolve=>{resolver=resolve;setTimeout(()=>o.input?inputEl.focus():okBtn.focus(),0);});
+  }
+  window.BO_DIALOG={
+    confirm(message,options){return open(Object.assign({message:message,input:false},options||{}));},
+    prompt(message,defaultValue,options){return open(Object.assign({message:message,input:true,defaultValue:defaultValue||''},options||{}));}
+  };
 })();

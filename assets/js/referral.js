@@ -385,7 +385,11 @@
 
   async function loadRewardConfig(){try{const j=await api(endpoint('REFERRAL_CONFIG'));const d=j.data||{};state.defaultReward={enabled:Number(d.enabled||0),mode:d.mode||'FIXED',value:Number(d.value||0)};document.getElementById('refRewardEnabled').value=String(state.defaultReward.enabled);document.getElementById('refRewardMode').value=state.defaultReward.mode;document.getElementById('refRewardValue').value=state.defaultReward.value;updateRewardLabel();if(document.getElementById('refMemberUseDefault')?.checked)applyDefaultRewardToMemberForm();}catch(e){console.warn(e);}}
   function updateRewardLabel(){const mode=document.getElementById('refRewardMode')?.value;const l=document.getElementById('refRewardValueLabel');if(l)l.textContent=mode==='PERCENTAGE'?'Percentage of Default Registration Reward (%)':'Fixed Reward Amount';}
-  async function saveRewardConfig(){const b=document.getElementById('refRewardSave');try{b.disabled=true;const body={enabled:Number(document.getElementById('refRewardEnabled').value),mode:document.getElementById('refRewardMode').value,value:Number(document.getElementById('refRewardValue').value||0)};const j=await api(endpoint('REFERRAL_CONFIG'),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(body)});state.defaultReward={...body};const d=j.data||{};const extra=Number(d.creditedCount||0)>0?`\nCredited ${d.creditedCount} missing referral reward(s), total MYR ${money(d.creditedAmount)}.`:'';alert((j.message||'Saved')+extra);await loadRewardConfig();await loadMembers();}catch(e){alert(e.message);}finally{b.disabled=false;}}
+
+  function openRewardConfig(){const m=document.getElementById('refRewardConfigModal');if(!m)return;m.classList.add('show');m.setAttribute('aria-hidden','false');document.body.classList.add('modal-open');}
+  function closeRewardConfig(){const m=document.getElementById('refRewardConfigModal');if(!m)return;m.classList.remove('show');m.setAttribute('aria-hidden','true');document.body.classList.remove('modal-open');}
+
+  async function saveRewardConfig(){const b=document.getElementById('refRewardSave');try{b.disabled=true;const body={enabled:Number(document.getElementById('refRewardEnabled').value),mode:document.getElementById('refRewardMode').value,value:Number(document.getElementById('refRewardValue').value||0)};const j=await api(endpoint('REFERRAL_CONFIG'),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(body)});state.defaultReward={...body};const d=j.data||{};const extra=Number(d.creditedCount||0)>0?`\nCredited ${d.creditedCount} missing referral reward(s), total MYR ${money(d.creditedAmount)}.`:'';alert((j.message||'Saved')+extra);closeRewardConfig();await loadRewardConfig();await loadMembers();}catch(e){alert(e.message);}finally{b.disabled=false;}}
 
   document.addEventListener('DOMContentLoaded',()=>{
     document.getElementById('refSearch')?.addEventListener('click',loadMembers);
@@ -395,6 +399,8 @@
     document.getElementById('refLevel')?.addEventListener('change',()=>{if(state.selected)loadDownline(state.selected.id,state.selected.name);});
     document.getElementById('refRewardMode')?.addEventListener('change',updateRewardLabel);
     document.getElementById('refRewardSave')?.addEventListener('click',saveRewardConfig);
+    document.getElementById('refRewardConfigOpen')?.addEventListener('click',openRewardConfig);
+    document.querySelectorAll('[data-close-reward-config]').forEach(el=>el.addEventListener('click',closeRewardConfig));
     document.getElementById('refMemberUseDefault')?.addEventListener('change',toggleMemberConfigFields);
     document.getElementById('refMemberRewardMode')?.addEventListener('change',memberRewardLabel);
     document.getElementById('refMemberRewardSave')?.addEventListener('click',saveMemberReward);

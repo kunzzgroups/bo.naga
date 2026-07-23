@@ -91,20 +91,17 @@
   function renderMemberInfo(member){
     const profile = document.getElementById('walletProfileInfo');
     const bank = document.getElementById('walletBankInfo');
-    const activity = document.getElementById('walletActivityInfo');
     if(profile) profile.innerHTML = infoGrid([
       ['Username', first(member,['username'], '-')], ['Full Name', first(member,['fullName','name','displayName'], '-')],
       ['Mobile', first(member,['mobile','phone','mobileNo'], '-')], ['Status', memberStatus(member)],
-      ['Referrer', first(member,['referrerCode','referrer','agent'], '-')], ['Top Referrer', first(member,['topReferrer','topAgent','upline'], '-')]
+      ['Referrer', first(member,['referrerCode','referrer','agent'], '-')], ['Top Referrer', first(member,['topReferrer','topAgent','upline'], '-')],
+      ['Register Date', dt(first(member,['createdAt','registerDate','created_at'], ''))], ['Last Login', dt(first(member,['lastLoginAt','lastLogin','last_login_at'], ''))],
+      ['Last Deposit', dt(first(member,['lastDepositAt','lastDeposit','last_deposit_at'], ''))]
     ]);
     if(bank) bank.innerHTML = infoGrid([
       ['Bank', first(member,['bank','bankName'], '-')], ['Bank Account', first(member,['bankAccount','bankAccountNumber','bankAccountNo','accountNo'], '-')],
       ['Account Name', first(member,['bankAccountName','accountName','fullName','name'], '-')], ['Bank BSB', first(member,['bankBsb'], '-')],
       ['Pay ID', first(member,['payId'], '-')], ['Show BSB', Number(first(member,['showBankBsb'],1))===1?'Yes':'No'], ['Show Pay ID', Number(first(member,['showPayId'],1))===1?'Yes':'No']
-    ]);
-    if(activity) activity.innerHTML = infoGrid([
-      ['Register Date', dt(first(member,['createdAt','registerDate','created_at'], ''))], ['Last Login', dt(first(member,['lastLoginAt','lastLogin','last_login_at'], ''))],
-      ['Last Deposit', dt(first(member,['lastDepositAt','lastDeposit','last_deposit_at'], ''))]
     ]);
   }
   function fillBankEdit(member){
@@ -118,6 +115,34 @@
     set('editShowPayId', Number(first(member,['showPayId'],1))===1 ? '1' : '0');
   }
   function bankStatus(msg,type){ const el=document.getElementById('bankProfileStatus'); if(el){ el.textContent=msg||''; el.className='upload-status' + (type ? ' ' + type : ''); } }
+  function securityStatus(id,msg,type){ const el=document.getElementById(id); if(el){ el.textContent=msg||''; el.className='upload-status' + (type ? ' ' + type : ''); } }
+  async function resetMemberPassword(){
+    const memberId=memberIdOfSelected(); if(!memberId) return;
+    const password=document.getElementById('memberNewPassword')?.value || '';
+    const confirmPassword=document.getElementById('memberConfirmPassword')?.value || '';
+    if(password.length<8 || password.length>20){ securityStatus('memberPasswordStatus','Password must be 8 - 20 characters.','error'); return; }
+    if(password!==confirmPassword){ securityStatus('memberPasswordStatus','Confirm password does not match.','error'); return; }
+    try{
+      securityStatus('memberPasswordStatus','Resetting password...','');
+      const json=await api(API_CONFIG.BASE_URL+'/admin/member/reset-password/'+encodeURIComponent(memberId),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify({password,confirmPassword})});
+      securityStatus('memberPasswordStatus',json.message||'Login password reset successfully.','success');
+      document.getElementById('memberNewPassword').value=''; document.getElementById('memberConfirmPassword').value='';
+    }catch(err){ securityStatus('memberPasswordStatus',err.message||'Password reset failed.','error'); }
+  }
+  async function resetMemberTransactionPassword(){
+    const memberId=memberIdOfSelected(); if(!memberId) return;
+    const password=document.getElementById('memberNewTransactionPassword')?.value || '';
+    const confirmPassword=document.getElementById('memberConfirmTransactionPassword')?.value || '';
+    if(password.length<6 || password.length>20){ securityStatus('memberTransactionPasswordStatus','Transaction password must be 6 - 20 characters.','error'); return; }
+    if(password!==confirmPassword){ securityStatus('memberTransactionPasswordStatus','Confirm password does not match.','error'); return; }
+    try{
+      securityStatus('memberTransactionPasswordStatus','Resetting transaction password...','');
+      const json=await api(API_CONFIG.BASE_URL+'/admin/member/reset-transaction-password/'+encodeURIComponent(memberId),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify({password,confirmPassword})});
+      securityStatus('memberTransactionPasswordStatus',json.message||'Transaction password reset successfully.','success');
+      document.getElementById('memberNewTransactionPassword').value=''; document.getElementById('memberConfirmTransactionPassword').value='';
+      if(selectedWalletMember) selectedWalletMember.hasTransactionPassword=true;
+    }catch(err){ securityStatus('memberTransactionPasswordStatus',err.message||'Transaction password reset failed.','error'); }
+  }
   async function saveBankProfile(){
     if(!selectedWalletMember) return;
     const memberId = memberIdOfSelected();
@@ -230,6 +255,8 @@
     document.getElementById('walletMemberAvatar').textContent = String(username || 'M').slice(0,1).toUpperCase();
     document.getElementById('walletMemberName').textContent = username;
     document.getElementById('walletMemberInfo').textContent = 'ID: ' + id + ' • ' + first(member,['mobile','phone','mobileNo'], '-');
+    ['memberNewPassword','memberConfirmPassword','memberNewTransactionPassword','memberConfirmTransactionPassword'].forEach(fid=>{ const el=document.getElementById(fid); if(el) el.value=''; });
+    securityStatus('memberPasswordStatus','',''); securityStatus('memberTransactionPasswordStatus','','');
     document.getElementById('walletAdjustAmount').value = '';
     document.getElementById('walletAdjustRemark').value = '';
     walletStatus('', ''); walletResult(null);
@@ -660,5 +687,7 @@
     document.getElementById('walletProviderRefreshBtn')?.addEventListener('click', ()=>loadWalletProviderAccounts().catch(err=>renderProviderError(err.message)));
     document.getElementById('walletAdjustAmount')?.addEventListener('input', updateWalletPreview);
     document.getElementById('saveBankProfileBtn')?.addEventListener('click', saveBankProfile);
+    document.getElementById('resetMemberPasswordBtn')?.addEventListener('click', resetMemberPassword);
+    document.getElementById('resetMemberTransactionPasswordBtn')?.addEventListener('click', resetMemberTransactionPassword);
   });
 })();

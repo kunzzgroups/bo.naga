@@ -4788,3 +4788,541 @@ body[data-report-page] .filter-card .field:has(#casinoResetBtn){
     min-height: 280px;
   }
 }
+
+/* v1.0.38 - MacBook 13-inch compact date-range sizing
+   Keep large desktop styling unchanged, but reduce the 390px date control to 75%
+   on laptop-width mouse/trackpad screens so following filters stay inside the card. */
+@media (min-width:1200px) and (max-width:1599.98px) and (hover:hover) and (pointer:fine){
+  .bo-range-field,
+  .bo-date-range-field,
+  [data-bo-date-range],
+  .ref-date-field,
+  .ref-range-wrap,
+  body[data-report-page] .filter-card .bo-range-field,
+  body:has(#betFrom) .filter-card .bo-range-field,
+  body:has(#txFrom) .filter-card .bo-range-field,
+  body:has(#sessionFrom) .filter-card .bo-range-field,
+  body:has(#ledgerFrom) .filter-card .bo-range-field{
+    width:292px!important;
+    min-width:292px!important;
+    max-width:292px!important;
+  }
+
+  /* Wallet Ledger: reserve the real compact width instead of allowing the date
+     trigger to overlap Member ID. */
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:292px minmax(105px,1fr) minmax(110px,1fr) minmax(90px,.72fr) minmax(82px,.58fr) minmax(105px,.8fr) minmax(125px,1fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .bo-range-field{grid-column:1!important;grid-row:1!important;margin:0!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerMemberId){grid-column:2!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerProviderCode){grid-column:3!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerType){grid-column:4!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .field:has(#ledgerSize){grid-column:5!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-reset-field{grid-column:6!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-search-field{grid-column:7!important;grid-row:1!important}
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .user-search-grid > *{min-width:0!important;max-width:none!important}
+
+  /* Provider Bet Report and Provider Sessions: compact first column and let the
+     remaining filters share all available laptop width evenly. */
+  .provider-bet-report-page .filter-card .user-search-grid,
+  body:has(#sessionFrom) .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:292px repeat(4,minmax(0,1fr))!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  .provider-bet-report-page .filter-card .bo-range-field,
+  body:has(#sessionFrom) .filter-card .bo-range-field{
+    grid-column:1!important;
+    grid-row:1!important;
+    margin:0!important;
+  }
+  .provider-bet-report-page .filter-card .user-search-grid > *,
+  body:has(#sessionFrom) .filter-card .user-search-grid > *{min-width:0!important;max-width:none!important}
+
+  /* Provider Transactions: remove the oversized 390px reservation that pushed
+     Status/actions outside the right edge on 13-inch MacBooks. */
+  .provider-transaction-page .pwt-filter-grid{
+    display:grid!important;
+    grid-template-columns:292px minmax(125px,.8fr) minmax(140px,.9fr) minmax(180px,1.15fr) minmax(130px,.8fr) minmax(210px,1.2fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  .provider-transaction-page .pwt-filter-grid .bo-range-field{grid-column:1!important;grid-row:1!important;margin:0!important}
+  .provider-transaction-page .pwt-filter-grid .field:has(#txMemberId){grid-column:2!important;grid-row:1!important}
+  .provider-transaction-page .pwt-filter-grid .field:has(#txProviderCode){grid-column:3!important;grid-row:1!important}
+  .provider-transaction-page .pwt-filter-grid .field:has(#txType){grid-column:4!important;grid-row:1!important}
+  .provider-transaction-page .pwt-filter-grid .field:has(#txStatus){grid-column:5!important;grid-row:1!important}
+  .provider-transaction-page .tx-filter-actions{grid-column:6!important;grid-row:1!important;width:100%!important;min-width:0!important;max-width:none!important}
+  .provider-transaction-page .tx-filter-actions .filter-action-row{width:100%!important;grid-template-columns:minmax(88px,.72fr) minmax(112px,1fr)!important}
+  .provider-transaction-page .pwt-filter-grid > *{min-width:0!important;max-width:none!important}
+
+  /* Simple report pages keep Search and Today directly after the compact date. */
+  body[data-report-page] .filter-card .user-search-grid{
+    grid-template-columns:292px 124px 124px!important;
+    justify-content:start!important;
+  }
+}
+
+/* v1.0.39 - Reliable 13-inch MacBook compact filters.
+   Do not depend on hover/pointer detection because browser emulation and some
+   trackpad environments can report a coarse pointer. */
+@media (min-width:1200px) and (max-width:1799.98px){
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:292px minmax(120px,1fr) minmax(120px,.9fr) minmax(100px,.72fr) minmax(90px,.62fr) minmax(120px,.8fr) minmax(150px,1fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .bo-range-field,
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .bo-range-field .bo-range-trigger{
+    width:292px!important;
+    min-width:292px!important;
+    max-width:292px!important;
+  }
+  body.wallet-ledger-page:has(#ledgerFrom) .filter-card .user-search-grid > *{
+    min-width:0!important;
+    max-width:none!important;
+  }
+
+  .provider-transaction-page .pwt-filter-grid{
+    display:grid!important;
+    grid-template-columns:292px minmax(120px,.78fr) minmax(135px,.88fr) minmax(180px,1.15fr) minmax(125px,.78fr) minmax(190px,1.08fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  .provider-transaction-page .pwt-filter-grid .bo-range-field,
+  .provider-transaction-page .pwt-filter-grid .bo-range-field .bo-range-trigger{
+    width:292px!important;
+    min-width:292px!important;
+    max-width:292px!important;
+  }
+  .provider-transaction-page .tx-filter-actions{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  .provider-transaction-page .pwt-filter-grid > *{
+    min-width:0!important;
+    max-width:none!important;
+  }
+
+  .provider-bet-report-page .filter-card .user-search-grid,
+  body:has(#sessionFrom) .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:292px repeat(4,minmax(0,1fr))!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  .provider-bet-report-page .filter-card .bo-range-field,
+  .provider-bet-report-page .filter-card .bo-range-field .bo-range-trigger,
+  body:has(#sessionFrom) .filter-card .bo-range-field,
+  body:has(#sessionFrom) .filter-card .bo-range-field .bo-range-trigger{
+    width:292px!important;
+    min-width:292px!important;
+    max-width:292px!important;
+  }
+  .provider-bet-report-page .filter-card .user-search-grid > *,
+  body:has(#sessionFrom) .filter-card .user-search-grid > *{
+    min-width:0!important;
+    max-width:none!important;
+  }
+}
+
+/* v1.0.40 - Width-safe desktop filter rows.
+   Uses flexible grid tracks instead of viewport-specific fixed widths, so the
+   layout remains stable at browser zoom levels and at 1367px+ dimensions. */
+@media (min-width:992px){
+  body.wallet-ledger-page .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:minmax(220px,1.45fr) minmax(120px,.8fr) minmax(120px,.78fr) minmax(95px,.58fr) minmax(88px,.5fr) minmax(115px,.72fr) minmax(135px,.9fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  body.wallet-ledger-page .filter-card .bo-range-field,
+  body.wallet-ledger-page .filter-card .bo-range-field .bo-range-trigger{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  body.wallet-ledger-page .filter-card .bo-range-field{grid-column:1!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .field:has(#ledgerMemberId){grid-column:2!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .field:has(#ledgerProviderCode){grid-column:3!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .field:has(#ledgerType){grid-column:4!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .field:has(#ledgerSize){grid-column:5!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .ledger-reset-field{grid-column:6!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .ledger-search-field{grid-column:7!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .user-search-grid > *{
+    min-width:0!important;
+    max-width:none!important;
+  }
+
+  .provider-transaction-page .pwt-filter-grid,
+  .provider-bet-report-page .filter-card .user-search-grid,
+  body:has(#sessionFrom) .filter-card .user-search-grid{
+    width:100%!important;
+    min-width:0!important;
+  }
+  .provider-transaction-page .pwt-filter-grid .bo-range-field,
+  .provider-transaction-page .pwt-filter-grid .bo-range-trigger,
+  .provider-bet-report-page .filter-card .bo-range-field,
+  .provider-bet-report-page .filter-card .bo-range-trigger,
+  body:has(#sessionFrom) .filter-card .bo-range-field,
+  body:has(#sessionFrom) .filter-card .bo-range-trigger{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+}
+
+/* v1.0.41 - Stable compact-desktop Wallet Ledger filters.
+   At 1367px-class viewports the sidebar leaves too little content width for
+   seven controls in one row. Keep all fields readable and move only the two
+   action buttons to a clean second row instead of allowing horizontal overflow. */
+@media (min-width:992px) and (max-width:1499.98px){
+  body.wallet-ledger-page .filter-card{
+    overflow:hidden!important;
+  }
+  body.wallet-ledger-page .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:minmax(220px,1.5fr) minmax(110px,.72fr) minmax(110px,.72fr) minmax(92px,.55fr) minmax(82px,.48fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  body.wallet-ledger-page .filter-card .bo-range-field{grid-column:1!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .field:has(#ledgerMemberId){grid-column:2!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .field:has(#ledgerProviderCode){grid-column:3!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .field:has(#ledgerType){grid-column:4!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .field:has(#ledgerSize){grid-column:5!important;grid-row:1!important}
+  body.wallet-ledger-page .filter-card .ledger-reset-field{
+    grid-column:4!important;
+    grid-row:2!important;
+  }
+  body.wallet-ledger-page .filter-card .ledger-search-field{
+    grid-column:5!important;
+    grid-row:2!important;
+  }
+  body.wallet-ledger-page .filter-card .bo-range-field,
+  body.wallet-ledger-page .filter-card .bo-range-trigger,
+  body.wallet-ledger-page .filter-card .user-search-grid > *{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  body.wallet-ledger-page .filter-card .ledger-reset-field label,
+  body.wallet-ledger-page .filter-card .ledger-search-field label{
+    display:none!important;
+  }
+}
+
+/* v1.0.42 - Compact desktop action row starts from the left. */
+@media (min-width:992px) and (max-width:1499.98px){
+  body.wallet-ledger-page .filter-card .ledger-reset-field{
+    grid-column:1!important;
+    grid-row:2!important;
+  }
+  body.wallet-ledger-page .filter-card .ledger-search-field{
+    grid-column:2!important;
+    grid-row:2!important;
+  }
+}
+
+/* v1.0.43 - MacBook compact filters: casino reports + Provider Transactions */
+@media (min-width:1100px) and (max-width:1700px){
+  /* All casino report pages: compact Date Range followed by Search and Today. */
+  body[data-report-page] .filter-card .user-search-grid{
+    grid-template-columns:292px 124px 124px!important;
+    gap:12px!important;
+    justify-content:start!important;
+    align-items:end!important;
+  }
+  body[data-report-page] .filter-card .bo-range-field,
+  body[data-report-page] .filter-card .bo-date-range-field,
+  body[data-report-page] .filter-card [data-bo-date-range],
+  body[data-report-page] .filter-card .bo-range-trigger{
+    width:292px!important;
+    min-width:292px!important;
+    max-width:292px!important;
+  }
+  body[data-report-page] .filter-card .field:has(#casinoSearchBtn){
+    grid-column:2!important;
+    width:124px!important;
+    max-width:124px!important;
+  }
+  body[data-report-page] .filter-card .field:has(#casinoResetBtn){
+    grid-column:3!important;
+    width:124px!important;
+    max-width:124px!important;
+  }
+
+  /* Provider Transactions: keep every filter and both actions inside one row. */
+  .provider-transaction-page .pwt-filter-grid{
+    display:grid!important;
+    grid-template-columns:292px minmax(120px,.72fr) minmax(135px,.8fr) minmax(190px,1.12fr) minmax(130px,.74fr) 220px!important;
+    column-gap:12px!important;
+    row-gap:12px!important;
+    justify-content:stretch!important;
+    align-items:end!important;
+    width:100%!important;
+  }
+  .provider-transaction-page .pwt-filter-grid .bo-range-field,
+  .provider-transaction-page .pwt-filter-grid .bo-date-range-field,
+  .provider-transaction-page .pwt-filter-grid [data-bo-date-range],
+  .provider-transaction-page .pwt-filter-grid .bo-range-trigger{
+    grid-column:1!important;
+    width:292px!important;
+    min-width:292px!important;
+    max-width:292px!important;
+  }
+  .provider-transaction-page .pwt-filter-grid > .field{
+    min-width:0!important;
+    width:auto!important;
+    max-width:none!important;
+  }
+  .provider-transaction-page .pwt-filter-grid input,
+  .provider-transaction-page .pwt-filter-grid select{
+    width:100%!important;
+    min-width:0!important;
+  }
+  .provider-transaction-page .tx-filter-actions{
+    grid-column:6!important;
+    width:220px!important;
+    min-width:220px!important;
+    max-width:220px!important;
+  }
+  .provider-transaction-page .tx-filter-actions .filter-action-row{
+    grid-template-columns:1fr 1.15fr!important;
+    gap:10px!important;
+  }
+  .provider-transaction-page .tx-filter-actions button{
+    min-width:0!important;
+    padding-left:10px!important;
+    padding-right:10px!important;
+  }
+}
+
+/* v1.0.44 - Layout editor fixed viewport height.
+   Keep HTML, CSS and JS panes the same height as Frontend Header/Sidebar.
+   Long code scrolls inside each editor instead of increasing the page height. */
+@media (min-width: 1201px) {
+  .layout-code-grid {
+    height: 560px !important;
+    min-height: 560px !important;
+    max-height: 560px !important;
+    align-items: stretch !important;
+    overflow: hidden !important;
+  }
+
+  .layout-code-pane {
+    height: 560px !important;
+    min-height: 0 !important;
+    max-height: 560px !important;
+    overflow: hidden !important;
+  }
+
+  .layout-code-editor {
+    height: 560px !important;
+    min-height: 560px !important;
+    max-height: 560px !important;
+    overflow: hidden !important;
+  }
+
+  .layout-line-numbers,
+  .layout-code-input-wrap,
+  .layout-code-highlight,
+  .layout-code-pane textarea {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 560px !important;
+  }
+
+  .layout-line-numbers {
+    overflow: hidden !important;
+  }
+
+  .layout-code-input-wrap {
+    overflow: hidden !important;
+  }
+
+  .layout-code-highlight,
+  .layout-code-pane textarea {
+    overflow: auto !important;
+  }
+}
+
+/* v1.0.45 - Preserve the complete rounded editor frame at fixed height.
+   The previous pane height included the label, which clipped the editor's
+   bottom border and lower corner radius. Keep only the editor itself at
+   560px and allow the labelled pane/grid to include that full frame. */
+@media (min-width: 1201px) {
+  .layout-code-grid {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    align-items: start !important;
+    overflow: visible !important;
+  }
+
+  .layout-code-pane {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .layout-code-editor {
+    height: 560px !important;
+    min-height: 560px !important;
+    max-height: 560px !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+  }
+
+  .layout-code-input-wrap,
+  .layout-line-numbers,
+  .layout-code-highlight,
+  .layout-code-pane textarea {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+  }
+}
+
+
+/* v1.0.27: admin edit native selects + global alert modal */
+.admin-edit-modal .admin-select-wrap{display:block!important;position:relative!important;}
+.admin-edit-modal .admin-select-wrap>select.form-control{width:100%!important;height:46px!important;padding:0 42px 0 14px!important;border:1px solid #d0d5dd!important;border-radius:13px!important;background:#fff!important;color:#182230!important;font-weight:700!important;appearance:auto!important;}
+.admin-edit-modal .admin-select-wrap>i{display:none!important;}
+.bo-alert-modal{position:fixed;inset:0;z-index:50000;display:none;align-items:center;justify-content:center;padding:20px}.bo-alert-modal.show{display:flex}.bo-alert-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.56);backdrop-filter:blur(3px)}.bo-alert-dialog{position:relative;width:min(430px,calc(100vw - 32px));background:#fff;border:1px solid #e4e7ec;border-radius:20px;box-shadow:0 28px 75px rgba(15,23,42,.3);padding:24px;display:grid;grid-template-columns:46px 1fr;gap:14px}.bo-alert-icon{width:46px;height:46px;border-radius:14px;background:#eff6ff;color:#2563eb;display:grid;place-items:center;font-size:22px}.bo-alert-copy h3{margin:1px 0 7px;font-size:19px;color:#101828;font-weight:900}.bo-alert-message{color:#475467;font-size:14px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.bo-alert-ok{grid-column:1/-1;justify-self:end;min-width:100px;height:40px;border:0;border-radius:10px;background:#2563eb;color:#fff;font-weight:800;padding:0 20px}.bo-alert-ok:hover{background:#1d4ed8}
+
+
+/* Referral reward configuration moved into modal beside Search. */
+.referral-page .ref-filter-actions{grid-template-columns:.72fr 1fr 1.08fr!important}.ref-config-dialog{width:min(620px,100%)}.ref-config-fields{display:grid;grid-template-columns:1fr;gap:15px}.ref-config-fields .field label{display:block;font-size:12px;font-weight:800;color:#344054;margin-bottom:7px}.ref-config-fields .field input,.ref-config-fields .field select{width:100%;height:44px;border:1px solid #d9dfeb;border-radius:10px;padding:0 12px;color:#182230;background:#fff}.ref-config-fields .field input[readonly]{background:#f8fafc;color:#667085}.referral-page .referral-filter-card:not(.referral-reward-config) .referral-filter-grid{grid-template-columns:1.25fr 1.15fr .8fr 1.45fr!important}@media(max-width:991px){.referral-page .ref-filter-actions{grid-template-columns:repeat(3,1fr)!important}}@media(max-width:767px){.referral-page .ref-filter-actions{grid-template-columns:1fr!important}}
+
+/* Shared BO confirmation / input modal */
+.bo-dialog-modal{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;padding:20px}.bo-dialog-modal.show{display:flex}.bo-dialog-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(5px)}.bo-dialog-box{position:relative;width:min(480px,100%);background:#fff;border:1px solid #e2e8f0;border-radius:22px;box-shadow:0 24px 70px rgba(15,23,42,.28);padding:26px;display:grid;grid-template-columns:48px 1fr;gap:0 16px}.bo-dialog-close{position:absolute;right:18px;top:18px;width:40px;height:40px;border:1px solid #d5deea;border-radius:12px;background:#fff;color:#475569;display:grid;place-items:center;cursor:pointer}.bo-dialog-icon{width:48px;height:48px;border-radius:14px;background:#eaf2ff;color:#2563eb;display:grid;place-items:center;font-size:22px}.bo-dialog-copy{padding-right:42px}.bo-dialog-copy h3{margin:0 0 6px;color:#0f172a;font-size:20px;font-weight:900}.bo-dialog-message{color:#52637a;font-size:13px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.bo-dialog-input-wrap{display:none;grid-column:1/-1;margin-top:20px}.bo-dialog-input-wrap.show{display:block}.bo-dialog-input-label{display:block;margin-bottom:7px;color:#27364b;font-size:12px;font-weight:800}.bo-dialog-input{width:100%;height:44px;border:1px solid #cbd5e1;border-radius:12px;background:#fff;padding:0 13px;color:#172033;font:inherit;outline:none;box-sizing:border-box}.bo-dialog-input:focus{border-color:#4f7cff;box-shadow:0 0 0 3px rgba(79,124,255,.14)}.bo-dialog-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:10px;margin-top:24px;padding-top:18px;border-top:1px solid #e8edf4}.bo-dialog-actions button{min-width:104px;height:42px;border-radius:11px;font-weight:800;cursor:pointer}.bo-dialog-cancel{border:1px solid #cbd5e1;background:#fff;color:#27364b}.bo-dialog-ok{border:1px solid #2563eb;background:#2563eb;color:#fff;box-shadow:0 7px 16px rgba(37,99,235,.22)}
+
+/* Admin edit selects use the same rounded dropdown component as BO filters. */
+#adminEditModal .admin-select-wrap{display:block!important}.admin-select-wrap .rounded-select-wrap{width:100%}.admin-select-wrap .rounded-select-btn{height:46px;border-radius:12px!important;padding:0 14px!important;font-size:14px}.admin-select-wrap .rounded-select-menu{border-radius:14px!important;padding:8px;box-shadow:0 16px 35px rgba(15,23,42,.16)}.admin-select-wrap .rounded-select-option{border-radius:10px!important;min-height:38px}
+@media(max-width:600px){.bo-dialog-box{padding:22px 18px;grid-template-columns:42px 1fr;border-radius:18px}.bo-dialog-icon{width:42px;height:42px}.bo-dialog-copy h3{font-size:18px}.bo-dialog-actions{display:grid;grid-template-columns:1fr 1fr}.bo-dialog-actions button{width:100%;min-width:0}}
+
+/* Standardized BO popup system v2 */
+.bo-alert-dialog{width:min(430px,100%);padding:0;overflow:hidden;display:block}
+.bo-alert-head{display:grid;grid-template-columns:48px 1fr;gap:14px;padding:25px 25px 20px;align-items:start}
+.bo-alert-copy{min-width:0}.bo-alert-copy h3{margin:0 0 5px}.bo-alert-actions{display:flex;justify-content:flex-end;padding:17px 24px 23px;border-top:1px solid #e7edf5}.bo-alert-ok{min-width:100px}
+.bo-alert-modal[data-type="success"] .bo-alert-icon{background:#eaf9ef;color:#16a34a}.bo-alert-modal[data-type="error"] .bo-alert-icon,.bo-alert-modal[data-type="delete"] .bo-alert-icon{background:#fff0f1;color:#ef3340}.bo-alert-modal[data-type="warning"] .bo-alert-icon{background:#fff7e6;color:#f59e0b}
+.bo-dialog-box{padding:0;display:block;overflow:hidden}.bo-dialog-head{display:grid;grid-template-columns:48px 1fr;gap:14px;padding:25px 68px 20px 26px;align-items:start}.bo-dialog-copy{padding:0;min-width:0}.bo-dialog-warning{display:none;margin:0 26px 4px;padding:12px 14px;border-radius:10px;background:#fff0f1;color:#ef3340;font-size:12px;font-weight:700;align-items:center;gap:9px}.bo-dialog-warning.show{display:flex}.bo-dialog-input-wrap{margin:18px 26px 0}.bo-dialog-actions{margin:20px 26px 0;padding:18px 0 23px}.bo-dialog-modal[data-type="delete"] .bo-dialog-icon{background:#fff0f1;color:#ef3340}.bo-dialog-modal[data-type="delete"] .bo-dialog-ok{background:#ef3340;border-color:#ef3340;box-shadow:0 7px 16px rgba(239,51,64,.22)}.bo-dialog-modal[data-type="warning"] .bo-dialog-icon{background:#fff7e6;color:#f59e0b}.bo-dialog-modal[data-type="warning"] .bo-dialog-ok{background:#f59e0b;border-color:#f59e0b}.bo-dialog-modal[data-type="input"] .bo-dialog-icon{background:#eef4ff;color:#2563eb}
+@media(max-width:600px){.bo-alert-head{padding:22px 20px 18px}.bo-alert-actions{padding:16px 20px 20px}.bo-dialog-head{grid-template-columns:42px 1fr;padding:22px 58px 18px 20px}.bo-dialog-warning{margin-left:20px;margin-right:20px}.bo-dialog-input-wrap{margin-left:20px;margin-right:20px}.bo-dialog-actions{margin-left:20px;margin-right:20px}}
+
+/* Category provider/game rules */
+.category-provider-selector{text-align:center;display:flex;flex-wrap:wrap;gap:10px;padding:12px;border:1px solid #d7e1f0;border-radius:14px;background:#f8fbff}.category-provider-choice{display:flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid #d7e1f0;border-radius:12px;background:#fff}.category-provider-rules{display:grid;gap:12px;margin-top:12px}.category-provider-rule{border:1px solid #d7e1f0;border-radius:14px;padding:14px;background:#fff}.category-provider-rule-head{display:flex;align-items:center;gap:18px;flex-wrap:wrap}.category-provider-rule-head b{margin-right:auto}.category-provider-game-list{margin-top:12px;max-height:220px;overflow:auto;border-top:1px solid #e5ebf4;padding-top:10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.category-provider-game-list[hidden]{display:none}.category-provider-game-list label{display:flex;gap:7px;align-items:center;padding:7px 9px;border-radius:9px;background:#f7f9fc}@media(max-width:700px){.category-provider-game-list{grid-template-columns:1fr}}
+
+/* Category provider/game assignment UX v2 */
+.category-provider-config{margin-top:18px}
+.category-provider-selector{display:flex;flex-wrap:wrap;gap:10px;padding:12px;border:1px solid #cfdced;border-radius:14px;background:#f7faff}
+.category-provider-choice{position:relative;display:flex;align-items:center;gap:9px;padding:9px 13px;border:1px solid #d5dfed;border-radius:12px;background:#fff;cursor:pointer;transition:.18s ease;user-select:none}
+.category-provider-choice:hover{border-color:#8eb2f7;box-shadow:0 4px 12px rgba(35,98,220,.08)}
+.category-provider-choice input{position:absolute;opacity:0;pointer-events:none}
+.category-provider-check{display:grid;place-items:center;width:23px;height:23px;border:1.5px solid #aebed2;border-radius:7px;background:#fff;color:transparent;transition:.18s ease}
+.category-provider-choice.is-selected{border-color:#2b6df2;background:#edf4ff;box-shadow:0 0 0 2px rgba(43,109,242,.08)}
+.category-provider-choice.is-selected .category-provider-check{border-color:#1769ff;background:#1769ff;color:#fff}
+.category-provider-choice-name{font-weight:700;color:#14233b}
+.category-provider-rules{display:grid;gap:16px;margin-top:14px}
+.category-provider-rule{overflow:hidden;border:1px solid #cedaea;border-radius:16px;background:#fff;box-shadow:0 4px 14px rgba(22,44,78,.05)}
+.category-provider-rule-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 16px;border-bottom:1px solid #e2e8f1;background:#fbfdff}
+.category-provider-rule-title{display:flex;align-items:center;gap:11px;min-width:0}
+.category-provider-rule-title>div{display:grid;gap:2px;min-width:0}.category-provider-rule-title b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#10213a}.category-provider-rule-title small{color:#718096}
+.category-provider-rule-icon{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:11px;background:#eaf2ff;color:#1769ff;font-size:18px}
+.category-provider-mode-switch{display:flex;gap:6px;padding:4px;border:1px solid #d5dfed;border-radius:12px;background:#f3f6fb}
+.category-provider-mode-switch label{margin:0;cursor:pointer}.category-provider-mode-switch input{position:absolute;opacity:0;pointer-events:none}
+.category-provider-mode-switch span{display:flex;align-items:center;gap:7px;padding:8px 12px;border-radius:9px;font-size:13px;font-weight:700;color:#536176;white-space:nowrap}
+.category-provider-mode-switch input:checked+span{background:#fff;color:#1769ff;box-shadow:0 2px 7px rgba(26,62,120,.12)}
+.category-provider-assignment{padding:14px 16px 16px}.category-provider-assignment[hidden]{display:none}
+.category-provider-assignment-note{display:flex;align-items:center;gap:9px;margin-bottom:12px;padding:11px 13px;border:1px solid #87d7ed;border-radius:9px;background:#d9f5fc;color:#075f79}
+.category-provider-assignment-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.category-provider-game-column{min-width:0}.category-provider-column-head{display:grid;gap:8px;margin-bottom:9px}.category-provider-column-head>div{display:flex;align-items:center;justify-content:space-between;gap:8px}.category-provider-column-head small{display:inline-grid;place-items:center;min-width:25px;height:22px;padding:0 7px;border-radius:999px;background:#edf3ff;color:#2b60c9;font-weight:700}
+.category-provider-game-search{width:100%;height:39px;padding:0 12px;border:1px solid #d3deeb;border-radius:9px;background:#fff;outline:none}.category-provider-game-search:focus{border-color:#3d79f2;box-shadow:0 0 0 3px rgba(61,121,242,.11)}
+.category-provider-game-list{display:block;margin:0;padding:0;max-height:310px;overflow:auto;border:1px solid #d5dfeb;border-radius:10px;background:#fff}
+.category-provider-game-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:61px;padding:10px 11px;border-bottom:1px solid #e2e7ef;background:#fff}.category-provider-game-row:last-child{border-bottom:0}.category-provider-game-row:hover{background:#f7faff}
+.category-provider-game-info{display:grid;gap:2px;min-width:0}.category-provider-game-info b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;color:#111827}.category-provider-game-info small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#667085}
+.category-provider-game-action{display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;border-radius:6px;background:#fff;cursor:pointer}.category-provider-game-action.add{border:1px solid #169b62;color:#087a49}.category-provider-game-action.remove{border:1px solid #ff4964;color:#e52243}.category-provider-game-action:hover{transform:translateY(-1px)}
+.category-provider-empty{padding:26px 12px;text-align:center;color:#7a8798}.category-provider-empty-state{display:grid;justify-items:center;gap:5px;padding:28px;border:1px dashed #c9d6e6;border-radius:14px;background:#f8fbff;color:#6f7f94}.category-provider-empty-state i{font-size:28px;color:#5d8ff2}.category-provider-empty-state b{color:#21324b}
+@media(max-width:900px){.category-provider-rule-head{align-items:flex-start;flex-direction:column}.category-provider-mode-switch{width:100%}.category-provider-mode-switch label{flex:1}.category-provider-mode-switch span{justify-content:center}.category-provider-assignment-grid{grid-template-columns:1fr}.category-provider-game-list{max-height:245px}}
+@media(max-width:560px){.category-provider-selector{display:grid;grid-template-columns:1fr 1fr}.category-provider-choice{min-width:0;padding:9px}.category-provider-choice-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.category-provider-rule-head,.category-provider-assignment{padding:12px}.category-provider-mode-switch{display:grid;grid-template-columns:1fr}.category-provider-assignment-note{align-items:flex-start}.category-provider-game-list{max-height:220px}}
+
+/* Game Category provider tiles: the whole tile is the selector, without a visible checkbox. */
+.category-provider-choice{justify-content:center;padding:10px 16px;min-width:132px}
+.category-provider-choice input{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
+.category-provider-choice .category-provider-check{display:none!important}
+.category-provider-choice.is-selected{border-color:#1769ff;background:#edf4ff;box-shadow:0 0 0 2px rgba(23,105,255,.10)}
+.category-provider-choice.is-selected .category-provider-choice-name{color:#075ee8}
+
+/* Game Category: keep image upload and preview at a compact standard size, including inside CRUD modal. */
+.standardized-game-management .category-image-upload{
+  width:min(100%,360px);
+  height:220px;
+  min-height:220px;
+  margin:0 auto;
+}
+.standardized-game-management .category-image-upload-zh{
+  height:170px;
+  min-height:170px;
+}
+.standardized-game-management .category-image-upload #categoryPreview,
+.standardized-game-management .category-image-upload #categoryPreviewZh{
+  width:100%;
+  height:100%;
+  min-height:0;
+  max-height:100%;
+  object-fit:contain;
+  padding:10px;
+}
+@media(max-width:575.98px){
+  .standardized-game-management .category-image-upload{width:100%;height:190px;min-height:190px}
+  .standardized-game-management .category-image-upload-zh{height:150px;min-height:150px}
+}
+
+
+/* Game Management: match the compact Game Category image upload and preview standard. */
+.standardized-game-management .game-image-upload{
+  width:min(100%,360px);
+  height:220px;
+  min-height:220px;
+  margin:0 auto;
+}
+.standardized-game-management .game-image-upload-zh{
+  height:170px;
+  min-height:170px;
+}
+.standardized-game-management .game-image-upload #gamePreview,
+.standardized-game-management .game-image-upload #gamePreviewZh{
+  width:100%;
+  height:100%;
+  min-height:0;
+  max-height:100%;
+  object-fit:contain;
+  padding:10px;
+}
+@media(max-width:575.98px){
+  .standardized-game-management .game-image-upload{width:100%;height:190px;min-height:190px}
+  .standardized-game-management .game-image-upload-zh{height:150px;min-height:150px}
+}

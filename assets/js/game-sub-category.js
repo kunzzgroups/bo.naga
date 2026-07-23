@@ -360,7 +360,7 @@ const GAME_SUB_CATEGORY_API = {
   }
 
   async function deleteSubCategory(subCategoryId) {
-    if (!confirm('Delete this sub category?')) return;
+    if (!(await BO_DIALOG.confirm('Delete this sub category?', {title:'Delete Subcategory', confirmText:'Delete'}))) return;
     const fd = new FormData();
     fd.append('id', subCategoryId);
     try {

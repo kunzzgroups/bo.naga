@@ -91,9 +91,9 @@
   async function action(id, type){
     const row = currentRows.find(x => String(x.id) === String(id));
     const label = type === 'approve' ? 'approve and deduct main wallet' : 'reject';
-    const adminRemark = prompt(`Enter admin remark to ${label} this withdraw request${row ? ' #' + row.id + ' (' + money(row.amount) + ')' : ''}:`, '');
+    const adminRemark = await BO_DIALOG.prompt(`Enter admin remark to ${label} this withdraw request${row ? ' #' + row.id + ' (' + money(row.amount) + ')' : ''}.`, '', {title:'Admin Remark',inputLabel:'Admin remark',confirmText:'Continue'});
     if(adminRemark === null) return;
-    if(!confirm(`Confirm to ${label} this withdraw request?`)) return;
+    if(!(await BO_DIALOG.confirm(`Confirm to ${label} this withdraw request?`, {title:'Confirm Withdrawal Action'}))) return;
     try{
       const key = type === 'approve' ? 'MEMBER_WITHDRAW_APPROVE' : 'MEMBER_WITHDRAW_REJECT';
       const json = await api(endpoint(key) + '/' + encodeURIComponent(id), {method:'POST', headers:{'Content-Type':'application/json', ...BO_AUTH.authHeader()}, body: JSON.stringify({adminRemark})});

@@ -257,7 +257,7 @@ const BONUS_CATEGORY_TITLE_API = {
   }
 
   async function deleteCategory(categoryId) {
-    if (!confirm('Delete this bonus category title?')) return;
+    if (!(await BO_DIALOG.confirm('Delete this bonus category title?', {title:'Delete Category Title', confirmText:'Delete'}))) return;
 
     setStatus('Deleting category...', '');
     try {
