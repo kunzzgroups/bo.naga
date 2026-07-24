@@ -23,14 +23,35 @@
     function setMode(next){mode=next;monthGrid.classList.toggle('show',mode==='months');yearGrid.classList.toggle('show',mode==='years');dayView.classList.toggle('hide',mode!=='days')}
     function renderMonthGrid(){monthGrid.innerHTML=MONTHS.map((m,i)=>`<button type="button" data-month="${i}" class="${i===view.getMonth()?'active':''}">${m}</button>`).join('')}
     function renderYearGrid(){yearGrid.innerHTML=Array.from({length:12},(_,i)=>yearPageStart+i).map(y=>`<button type="button" data-year="${y}" class="${y===view.getFullYear()?'active':''}">${y}</button>`).join('')}
-    function render(){monthBtn.innerHTML=`${MONTHS[view.getMonth()]} <i class="bi bi-chevron-down"></i>`;yearBtn.innerHTML=`${view.getFullYear()} <i class="bi bi-chevron-down"></i>`;renderMonthGrid();renderYearGrid();days.innerHTML='';const first=new Date(view.getFullYear(),view.getMonth(),1),offset=first.getDay();for(let i=0;i<42;i++){const d=new Date(view.getFullYear(),view.getMonth(),i-offset+1),v=iso(d),b=document.createElement('button');b.type='button';b.textContent=d.getDate();b.className='bo-range-day'+(d.getMonth()!==view.getMonth()?' muted':'')+(v===start?' start':'')+(v===end?' end':'')+(start&&end&&v>start&&v<end?' in-range':'');b.addEventListener('click',()=>{if(!start||end){start=v;end='';from.value=start;to.value='';syncText();render()}else{if(v<start){end=start;start=v}else end=v;from.value=start;to.value=end;from.dispatchEvent(new Event('change',{bubbles:true}));to.dispatchEvent(new Event('change',{bubbles:true}));syncText();render();setTimeout(()=>pop.classList.remove('show'),120)}});days.appendChild(b)}setMode(mode)}
+    function render(){monthBtn.innerHTML=`${MONTHS[view.getMonth()]} <i class="bi bi-chevron-down"></i>`;yearBtn.innerHTML=`${view.getFullYear()} <i class="bi bi-chevron-down"></i>`;renderMonthGrid();renderYearGrid();days.innerHTML='';const first=new Date(view.getFullYear(),view.getMonth(),1),offset=first.getDay();for(let i=0;i<42;i++){const d=new Date(view.getFullYear(),view.getMonth(),i-offset+1),v=iso(d),b=document.createElement('button');b.type='button';b.textContent=d.getDate();b.className='bo-range-day'+(d.getMonth()!==view.getMonth()?' muted':'')+(v===start?' start':'')+(v===end?' end':'')+(start&&end&&v>start&&v<end?' in-range':'');b.addEventListener('click',(e)=>{
+        // Keep the same picker open after choosing the start date so the user can
+        // immediately choose the end date without reopening it. render() replaces
+        // the clicked day button, therefore stopping propagation here also prevents
+        // the document outside-click handler from treating that removed button as
+        // an outside click.
+        e.preventDefault();
+        e.stopPropagation();
+        if(!start||end){
+          start=v;end='';
+          from.value=start;to.value='';
+          syncText();render();
+          pop.classList.add('show');
+        }else{
+          if(v<start){end=start;start=v}else end=v;
+          from.value=start;to.value=end;
+          from.dispatchEvent(new Event('change',{bubbles:true}));
+          to.dispatchEvent(new Event('change',{bubbles:true}));
+          syncText();render();
+          setTimeout(()=>pop.classList.remove('show'),120);
+        }
+      });days.appendChild(b)}setMode(mode)}
     trig.addEventListener('click',e=>{e.stopPropagation();document.querySelectorAll('.bo-range-pop.show').forEach(x=>{if(x!==pop)x.classList.remove('show')});pop.classList.toggle('show');mode='days';render()});
     host.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{const r=rangeFor(b.dataset.preset);commit(r[0],r[1]);view=new Date(r[0]);mode='days';render();pop.classList.remove('show')}));
     host.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{if(mode==='years'){yearPageStart+=Number(b.dataset.nav)*12}else{view.setMonth(view.getMonth()+Number(b.dataset.nav))}render()}));
     monthBtn.addEventListener('click',e=>{e.stopPropagation();mode=mode==='months'?'days':'months';render()});yearBtn.addEventListener('click',e=>{e.stopPropagation();yearPageStart=view.getFullYear()-5;mode=mode==='years'?'days':'years';render()});
     monthGrid.addEventListener('click',e=>{const b=e.target.closest('[data-month]');if(!b)return;const selectedMonth=Number(b.dataset.month),selectedYear=view.getFullYear();view=new Date(selectedYear,selectedMonth,1);commit(new Date(selectedYear,selectedMonth,1),new Date(selectedYear,selectedMonth+1,0));mode='days';render();pop.classList.remove('show')});
     yearGrid.addEventListener('click',e=>{const b=e.target.closest('[data-year]');if(!b)return;const selectedYear=Number(b.dataset.year);view=new Date(selectedYear,0,1);commit(new Date(selectedYear,0,1),new Date(selectedYear,11,31));mode='days';render();pop.classList.remove('show')});
-    document.addEventListener('click',e=>{if(!host.contains(e.target))pop.classList.remove('show')});syncText();render();
+    document.addEventListener('click',e=>{const path=typeof e.composedPath==='function'?e.composedPath():[];if(!host.contains(e.target)&&!path.includes(host))pop.classList.remove('show')});syncText();render();
   }
   document.addEventListener('DOMContentLoaded',()=>PAIRS.forEach(p=>build(document.getElementById(p[0]),document.getElementById(p[1]))));
 })();
