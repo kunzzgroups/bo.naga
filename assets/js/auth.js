@@ -55,10 +55,15 @@
     {menuKey:'bonus_item', title:'Bonus Item', url:'bonus-category-item.html', icon:'bi-gift-fill', parentKey:'bonus', sortOrder:81},
     {menuKey:'promotion_bonus', title:'Promotion Bonus', url:'promotion.html', icon:'bi-gift', parentKey:'bonus', sortOrder:82},
     {menuKey:'promotion_debug', title:'Promotion Debug', url:'promotion-debug.html', icon:'bi-bug', parentKey:'bonus', sortOrder:83},
+    {menuKey:'vip_management', title:'VIP Management', url:'vip-management.html', icon:'bi-gem', parentKey:'bonus', sortOrder:84},
+    {menuKey:'vip_exp_log', title:'VIP EXP Log', url:'vip-exp-log.html', icon:'bi-clock-history', parentKey:'bonus', sortOrder:85},
+    {menuKey:'vip_reward_log', title:'VIP Reward Log', url:'vip-reward-log.html', icon:'bi-cash-stack', parentKey:'bonus', sortOrder:86},
+    {menuKey:'vip_worker_settings', title:'VIP Worker Settings', url:'vip-worker-settings.html', icon:'bi-clock-history', parentKey:'bonus', sortOrder:87},
     {menuKey:'site_customize', title:'Site Customize', url:'site-customize.html', icon:'bi-palette', parentKey:'', sortOrder:90},
     {menuKey:'layout_section', title:'Layout Section', url:'layout-section.html', icon:'bi-code-square', parentKey:'', sortOrder:91},
     {menuKey:'frontend_display', title:'Frontend Display', url:'frontend-display.html', icon:'bi-display', parentKey:'setting', sortOrder:91},
-    {menuKey:'compliance_policy', title:'Compliance Policy', url:'compliance-policy.html', icon:'bi-file-earmark-lock', parentKey:'setting', sortOrder:92}
+    {menuKey:'social', title:'Social', url:'social.html', icon:'bi-share', parentKey:'setting', sortOrder:92},
+    {menuKey:'compliance_policy', title:'Compliance Policy', url:'compliance-policy.html', icon:'bi-file-earmark-lock', parentKey:'setting', sortOrder:93}
   ];
 
   function normalizeMenu(m){

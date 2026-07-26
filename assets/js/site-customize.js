@@ -47,7 +47,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     const fields = {};
     const selectedFiles = {};
     const fieldToFileKey = {};
-    const defaultSettings = { version: '1.0.0' };
+    const defaultSettings = { version: '1.0.0', facebookHref: '', telegramHref: '' };
 
     assets.forEach((asset) => {
         fields[asset.field] = document.getElementById(asset.field);
@@ -162,6 +162,8 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             const fallback = defaultSettings[asset.field].replace('1.0.0', version);
             next[asset.field] = normalizeUrl(getFirstValue(responseAssets, keys) || fallback);
         });
+        next.facebookHref = data.facebookHref || responseAssets.facebookHref || '';
+        next.telegramHref = data.telegramHref || responseAssets.telegramHref || '';
 
         setSettings(next);
         saveLocal(next);
@@ -220,7 +222,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         });
 
         if (!hasFile) {
-            setStatus('Please choose at least one image before saving.', 'error');
+            setStatus('Please choose at least one image to upload.', 'error');
             return;
         }
 

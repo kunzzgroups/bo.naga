@@ -34,6 +34,7 @@ const API_CONFIG = window.API_CONFIG || {
         TRANSLATION_TEXT: "/admin/language/translation/text",
         TRANSLATION_IMAGE: "/admin/language/translation/image",
         CUSTOMIZE_MAIN_LAYOUT: "/customize/main-layout",
+        CUSTOMIZE_SOCIAL: "/customize/social",
         CUSTOMIZE_SECTION: "/customize/section",
         BONUS_CATEGORY_TITLE_LIST: "/bonus-category-title",
         BONUS_CATEGORY_TITLE_CREATE: "/bonus-category-title",
@@ -119,7 +120,19 @@ const API_CONFIG = window.API_CONFIG || {
 
         FRONTEND_DISPLAY_SETTING: "/admin/frontend/display-setting",
         COMPLIANCE_POLICY_LIST: "/admin/compliance-policies",
-        COMPLIANCE_POLICY_SAVE: "/admin/compliance-policies/save"
+        COMPLIANCE_POLICY_SAVE: "/admin/compliance-policies/save",
+        VIP_LEVEL_LIST: "/admin/vip/levels",
+        VIP_LEVEL_SAVE: "/admin/vip/levels/save",
+        VIP_IMAGE_UPLOAD: "/admin/vip/levels/image",
+        VIP_LEVEL_DELETE: "/admin/vip/levels",
+        VIP_EXP_SETTINGS: "/admin/vip/experience-settings",
+        VIP_EXP_LOGS: "/admin/vip/experience-logs",
+        VIP_EXP_ADJUST: "/admin/vip/experience-logs/adjust",
+        VIP_REWARD_LOGS: "/admin/vip/rewards",
+        VIP_REWARD_RUN: "/admin/vip/rewards/run",
+        VIP_WORKER_SETTINGS: "/admin/vip/worker-settings",
+        SPIN2_REWARDS: "/admin/spin2/rewards",
+        SPIN2_MEMBER: "/admin/spin2/member"
     }
 };
 
