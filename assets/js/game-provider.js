@@ -88,7 +88,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
   }
 
   function edit(item){ el.providerId.value=item.id||''; el.providerCode.value=item.code||''; el.providerName.value=item.name||''; renderCategoryOptions(item.categoryIds || item.category_ids || ''); el.providerImageUrl.value=item.providerImageUrl||''; el.walletMode.value=item.walletMode||'TRANSFER'; el.currency.value=item.currency||'MYR'; el.integrationType.value=item.integrationType||'GENERIC_API'; el.httpMethod.value=item.httpMethod||'POST'; el.apiBaseUrl.value=item.apiBaseUrl||''; el.operatorId.value=item.operatorId||''; el.secretKey.value=item.secretKey||''; if(el.providerVariables) el.providerVariables.value=item.providerVariables||''; if(el.apiActionConfigs) el.apiActionConfigs.value=item.apiActionConfigs||''; syncWithdrawNegativeFromJson(); el.signatureType.value=item.signatureType||'MD5'; el.signatureOutputCase.value=item.signatureOutputCase||'LOWER'; el.signatureTemplate.value=item.signatureTemplate||''; el.ukeyLength.value=item.ukeyLength||8; el.ukeyPrefix.value=item.ukeyPrefix||''; el.ukeyStaticValue.value=item.ukeyStaticValue||''; el.createPlayerPath.value=item.createPlayerPath||''; el.balancePath.value=item.balancePath||''; el.depositPath.value=item.depositPath||''; el.withdrawPath.value=item.withdrawPath||''; el.launchPath.value=item.launchPath||''; el.gameListPath.value=item.gameListPath||''; el.createPlayerRequestTemplate.value=item.createPlayerRequestTemplate||''; el.balanceRequestTemplate.value=item.balanceRequestTemplate||''; el.depositRequestTemplate.value=item.depositRequestTemplate||''; el.withdrawRequestTemplate.value=item.withdrawRequestTemplate||''; el.launchRequestTemplate.value=item.launchRequestTemplate||''; el.gameListRequestTemplate.value=item.gameListRequestTemplate||''; el.responseBalancePath.value=item.responseBalancePath||''; el.responseLaunchUrlPath.value=item.responseLaunchUrlPath||''; el.responseGameListPath.value=item.responseGameListPath||''; el.responseGameCodePath.value=item.responseGameCodePath||''; el.responseGameNamePath.value=item.responseGameNamePath||''; ['responseGameImagePath','gameImageApiUrlTemplate','gameImageRemoteApiUrlTemplate','gameImageRemoteApiHttpMethod','gameImageRemoteApiRequestTemplate','gameImageRemoteApiResponsePath','gameImageFallbackUrlTemplate','frontendGameFallbackImageUrl','responseGameCategoryPath','responseSuccessPath','responseSuccessValue','responseErrorMessagePath','callbackMemberPath','callbackGameCodePath','callbackBetIdPath','callbackTxIdPath','callbackBetAmountPath','callbackWinAmountPath','callbackValidBetAmountPath','callbackRoundIdPath','callbackStatusPath','callbackEventTypePath','callbackSignaturePath','callbackSuccessResponse','callbackDuplicateResponse'].forEach(k=>{ if(el[k]) el[k].value=item[k]||''; }); if(el.gameImageRemoteApiHttpMethod && !el.gameImageRemoteApiHttpMethod.value) el.gameImageRemoteApiHttpMethod.value='GET'; el.sortOrder.value=item.sortOrder??0; el.providerStatus.value=String(item.status??1); el.providerCode.disabled=true; title.textContent='Edit Provider #' + item.id; setStatus('Editing provider. Games using this Provider Code will group under this provider.', 'success'); window.scrollTo({top:0, behavior:'smooth'}); }
-  function providerOptions(){ const opts = rows.map(x => `<option value="${escapeHtml(x.code)}">${escapeHtml(x.code)} - ${escapeHtml(x.name)}</option>`).join('') || '<option value="">No provider</option>'; walletProviderCode.innerHTML = opts; const cb=document.getElementById('callbackProviderCode'); if(cb) cb.innerHTML=opts; }
+  function providerOptions(){ const opts = rows.map(x => `<option value="${escapeHtml(x.code)}" data-provider-id="${escapeHtml(x.id)}">${escapeHtml(x.code)} - ${escapeHtml(x.name)}</option>`).join('') || '<option value="">No provider</option>'; walletProviderCode.innerHTML = opts; const cb=document.getElementById('callbackProviderCode'); if(cb) cb.innerHTML=opts; }
   function render(){ list.innerHTML=''; empty.hidden = rows.length > 0; providerOptions(); rows.forEach(item => { const linkedGames = games.filter(g => String(g.providerCode || '').toUpperCase() === String(item.code || '').toUpperCase()); const gameHtml = linkedGames.length ? linkedGames.slice(0, 8).map(g => `<span class="slider-pill active"><i class="bi bi-joystick"></i>${escapeHtml(g.name || ('Game #' + g.id))}</span>`).join('') + (linkedGames.length > 8 ? `<span class="slider-pill inactive">+${linkedGames.length - 8} more</span>` : '') : '<small class="text-secondary">No game linked yet. Set this code in Game → Provider Code.</small>'; const card=document.createElement('div'); card.className='manage-card'; card.innerHTML=`<div class="manage-thumb game-thumb">${item.providerImageUrl ? `<img src="${escapeHtml(item.providerImageUrl)}" alt="${escapeHtml(item.name || item.code)}" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;">` : `<i class="bi bi-hdd-network fs-1 text-secondary"></i>`}</div><div class="manage-card-body"><div class="slider-card-title"><b>${escapeHtml(item.code)} - ${escapeHtml(item.name)}</b>${statusPill(item.status)}</div><div class="slider-meta"><span><i class="bi bi-tag me-1"></i>${escapeHtml((item.categoryIds || item.category_ids || '').split(',').map(id => (categories.find(c => String(c.id) === String(id)) || {}).name).filter(Boolean).join(', ') || 'No category')}</span><span><i class="bi bi-wallet2 me-1"></i>${escapeHtml(item.walletMode || 'TRANSFER')}</span><span><i class="bi bi-plug me-1"></i>${escapeHtml(item.integrationType || 'GENERIC_API')}</span><span><i class="bi bi-cash me-1"></i>${escapeHtml(item.currency || 'MYR')}</span><span><i class="bi bi-controller me-1"></i>${linkedGames.length} games</span><span><i class="bi bi-link-45deg me-1"></i>${escapeHtml(item.apiBaseUrl || '-')}</span><span><i class="bi bi-sort-numeric-down me-1"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span></div><div class="d-flex gap-2 flex-wrap mt-2">${gameHtml}</div></div><div class="slider-card-actions"><button class="clean-btn primary" type="button" data-edit-id="${escapeHtml(item.id)}"><i class="bi bi-pencil-square"></i> Edit</button><button class="clean-btn danger" type="button" data-delete-id="${escapeHtml(item.id)}"><i class="bi bi-trash"></i> Delete</button></div>`; list.appendChild(card); }); }
   async function load(){
     setStatus('Loading...', '');
@@ -171,6 +171,112 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
 
   async function syncGames(){ const providerCode = walletProviderCode.value || (rows[0] && rows[0].code); if(!providerCode){ setStatus('Please create/select provider first.', 'error'); return; } if(!(await BO_DIALOG.confirm('Sync games from provider ' + providerCode + '?', {title:'Sync Provider Games', confirmText:'Sync'}))) return; try{ setStatus('Syncing provider games...', ''); const data=new FormData(); data.append('providerCode', providerCode); const json=await fetchJson(PROVIDER_GAME_API.sync, {method:'POST', body:data}); setStatus('Game sync completed. Inserted: '+json.data.inserted+', Updated: '+json.data.updated+'. Images — provider: '+(json.data.imagesFromProvider||0)+', generated URL: '+(json.data.imagesFromImageApiTemplate||0)+', separate image API: '+(json.data.imagesFromRemoteApi||0)+', image API failures: '+(json.data.remoteImageApiFailures||0)+', fallback: '+(json.data.imagesFromFallbackTemplate||0)+', missing: '+(json.data.imagesMissing||0)+'. Path: '+(json.data.gameListPath || '-'), 'success'); if(window.walletResult) walletResult.textContent=JSON.stringify(json.data, null, 2); await load(); }catch(err){ setStatus(err.message || 'Game sync failed.', 'error'); if(window.walletResult) walletResult.textContent='Sync error:\n' + (err.message || 'Game sync failed') + '\n\nOpen Provider Transactions page and filter Tx Type = GAME_LIST to inspect request/response.'; } }
   async function debugGames(){ const providerCode = walletProviderCode.value || (rows[0] && rows[0].code); if(!providerCode){ setStatus('Please create/select provider first.', 'error'); return; } try{ setStatus('Debugging provider game list...', ''); const data=new FormData(); data.append('providerCode', providerCode); const json=await fetchJson(PROVIDER_GAME_API.debug, {method:'POST', body:data}); setStatus('Debug completed. Check result box below and Provider Transactions page.', (json.data.configuredPathIsArray || json.data.normalizedGameRows > 0) ? 'success' : 'error'); if(window.walletResult) walletResult.textContent=formatProviderDebug(json.data); }catch(err){ setStatus(err.message || 'Debug failed.', 'error'); if(window.walletResult) walletResult.textContent='Debug error:\n' + (err.message || 'Debug failed') + '\n\nOpen Provider Transactions page and filter Tx Type = GAME_LIST.'; } }
+  function walletStatus(message, type){
+    if(!walletStatusBox) return;
+    walletStatusBox.textContent = message || '';
+    walletStatusBox.className = 'upload-status' + (type ? ' ' + type : '');
+  }
+
+  function walletInputs(){
+    const memberId = Number(document.getElementById('walletMemberId')?.value || 0);
+    const providerCode = (walletProviderCode?.value || '').trim();
+    const providerId = Number(walletProviderCode?.selectedOptions?.[0]?.dataset?.providerId || 0);
+    const amountRaw = (document.getElementById('walletAmount')?.value || '').trim();
+    const gameCode = (document.getElementById('walletGameCode')?.value || '').trim();
+    const previewAction = (document.getElementById('previewAction')?.value || 'CREATE_PLAYER').trim();
+    return {
+      memberId,
+      providerCode,
+      providerId,
+      amount: amountRaw === '' ? null : Number(amountRaw),
+      gameCode,
+      action: previewAction
+    };
+  }
+
+  async function wallet(action){
+    const input = walletInputs();
+    if(action !== 'pull-log-debug' && (!input.memberId || input.memberId < 1)){
+      walletStatus('Please enter a valid Member ID.', 'error');
+      return;
+    }
+    if(action !== 'main-balance' && !input.providerCode){
+      walletStatus('Please select a provider.', 'error');
+      return;
+    }
+    if((action === 'deposit' || action === 'withdraw') && (!(input.amount > 0) || !Number.isFinite(input.amount))){
+      walletStatus('Please enter a transfer amount greater than 0.', 'error');
+      return;
+    }
+
+    const labels = {
+      'main-balance':'Checking main wallet...',
+      'create-player':'Creating provider player...',
+      'balance':'Checking provider balance...',
+      'deposit':'Transferring to provider...',
+      'withdraw':'Transferring back to main wallet...',
+      'launch-sport':'Requesting launch URL...',
+      'api-preview':'Generating API payload preview...',
+      'pull-log-debug':'Running pull log / bet log debug...'
+    };
+    walletStatus(labels[action] || 'Processing...', '');
+    if(walletResult) walletResult.textContent = '';
+
+    try{
+      let url;
+      let options = {};
+      const authHeaders = (window.BO_AUTH && BO_AUTH.authHeader) ? BO_AUTH.authHeader() : {};
+
+      if(action === 'main-balance'){
+        url = WALLET_API.mainBalance + '?memberId=' + encodeURIComponent(input.memberId);
+        options = {headers: authHeaders};
+      } else if(action === 'balance'){
+        url = WALLET_API.balance
+          + '?memberId=' + encodeURIComponent(input.memberId)
+          + '&providerCode=' + encodeURIComponent(input.providerCode);
+        options = {method:'GET', headers: authHeaders};
+      } else if(action === 'pull-log-debug'){
+        url = WALLET_API.pullLogDebug + '?providerCode=' + encodeURIComponent(input.providerCode);
+        options = {method:'POST', headers: authHeaders};
+      } else {
+        const endpointMap = {
+          'create-player': WALLET_API.createPlayer,
+          'deposit': WALLET_API.deposit,
+          'withdraw': WALLET_API.withdraw,
+          'launch-sport': WALLET_API.launchSport,
+          'api-preview': WALLET_API.apiPreview
+        };
+        url = endpointMap[action];
+        if(!url) throw new Error('Unsupported debug action: ' + action);
+
+        const data = new FormData();
+        data.append('memberId', String(input.memberId));
+        data.append('providerCode', input.providerCode.trim());
+        if(input.gameCode) data.append('gameCode', input.gameCode);
+        if(input.amount !== null && Number.isFinite(input.amount)) data.append('amount', String(input.amount));
+        data.append('externalTxId', 'BO-' + Date.now());
+        if(action === 'api-preview'){
+          url += '?action=' + encodeURIComponent(input.action || 'CREATE_PLAYER');
+        }
+        options = {method:'POST', headers: authHeaders, body:data};
+      }
+
+      const json = await fetchJson(url, options);
+      const data = Object.prototype.hasOwnProperty.call(json, 'data') ? json.data : json;
+      walletStatus(json.message || 'Request completed successfully.', 'success');
+      if(walletResult) walletResult.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+
+      if(action === 'launch-sport'){
+        const launchUrl = data && (data.launchUrl || data.url || data.gameUrl);
+        if(launchUrl && /^https?:\/\//i.test(launchUrl)) window.open(launchUrl, '_blank', 'noopener');
+      }
+    }catch(err){
+      walletStatus(err.message || 'Request failed.', 'error');
+      if(walletResult) walletResult.textContent = 'Error:\n' + (err.message || 'Request failed.');
+    }
+  }
+
+
   async function callbackPreview(){ const code=document.getElementById('callbackProviderCode').value; const raw=document.getElementById('callbackSample').value || '{}'; const box=document.getElementById('callbackResult'); try{ const json=await fetchJson(CALLBACK_API.previewBase + '/' + encodeURIComponent(code), {method:'POST', headers:{'Content-Type':'application/json'}, body:raw}); box.textContent=JSON.stringify(json.data,null,2); }catch(err){ box.textContent=err.message || 'Callback preview failed'; } }
   async function ledgerSummary(){ const code=document.getElementById('callbackProviderCode').value; const from=document.getElementById('reportFrom').value; const to=document.getElementById('reportTo').value; const box=document.getElementById('callbackResult'); let url=CALLBACK_API.report + '?providerCode=' + encodeURIComponent(code); if(from) url += '&from=' + encodeURIComponent(from); if(to) url += '&to=' + encodeURIComponent(to); try{ const json=await fetchJson(url); box.textContent=JSON.stringify(json.data,null,2); }catch(err){ box.textContent=err.message || 'Report failed'; } }
 
