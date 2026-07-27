@@ -150,9 +150,10 @@
   function resetFilters(){
     document.getElementById('refKeyword').value='';
     document.getElementById('refLevel').value='1';
-    document.getElementById('refDateFrom').value='';
-    document.getElementById('refDateTo').value='';
-    updateDateLabel(); markPreset(''); renderCalendar();
+    const today=ymd(new Date());
+    document.getElementById('refDateFrom').value=today;
+    document.getElementById('refDateTo').value=today;
+    updateDateLabel(); markPreset('today'); renderCalendar();
     state.selected=null; state.downline=[];
     document.getElementById('refDownlineTitle').textContent='Downline';
     document.getElementById('refSelectedMeta').textContent='Select member';
@@ -253,6 +254,12 @@
     const trigger=document.getElementById('refDateTrigger');
     const picker=document.getElementById('refRangePicker');
     if(!trigger||!picker)return;
+    const today=ymd(new Date());
+    const from=document.getElementById('refDateFrom');
+    const to=document.getElementById('refDateTo');
+    if(from && !from.value) from.value=today;
+    if(to && !to.value) to.value=today;
+    markPreset('today');
     renderCalendar(); updateDateLabel();
     trigger.addEventListener('click',e=>{e.stopPropagation(); picker.classList.toggle('show'); refDatePicker.mode='days'; renderCalendar();});
     document.addEventListener('click',e=>{if(!e.target.closest('.ref-range-wrap'))picker.classList.remove('show');});

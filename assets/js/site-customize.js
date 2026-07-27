@@ -30,8 +30,6 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         { field: 'shareUrl', fileKey: 'share', label: 'share', fallback: assetUrl('share.png') },
         { field: 'downlineUrl', fileKey: 'downline', label: 'downline', fallback: assetUrl('downline.png') },
         { field: 'copylinkUrl', fileKey: 'copylink', label: 'copy link', fallback: assetUrl('copylink.png') },
-        { field: 'facebookUrl', fileKey: 'facebook', label: 'Facebook', fallback: assetUrl('facebook.png') },
-        { field: 'telegramUrl', fileKey: 'telegram', label: 'Telegram', fallback: assetUrl('telegram.png') },
         { field: 'loginUrl', fileKey: 'login', label: 'login', fallback: assetUrl('login.gif') },
         { field: 'registerUrl', fileKey: 'register', label: 'register', fallback: assetUrl('register.gif') },
         { field: 'depositUrl', fileKey: 'deposit', label: 'deposit', fallback: assetUrl('deposit.png') },
@@ -47,7 +45,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     const fields = {};
     const selectedFiles = {};
     const fieldToFileKey = {};
-    const defaultSettings = { version: '1.0.0', facebookHref: '', telegramHref: '' };
+    const defaultSettings = { version: '1.0.0' };
 
     assets.forEach((asset) => {
         fields[asset.field] = document.getElementById(asset.field);
@@ -162,8 +160,6 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             const fallback = defaultSettings[asset.field].replace('1.0.0', version);
             next[asset.field] = normalizeUrl(getFirstValue(responseAssets, keys) || fallback);
         });
-        next.facebookHref = data.facebookHref || responseAssets.facebookHref || '';
-        next.telegramHref = data.telegramHref || responseAssets.telegramHref || '';
 
         setSettings(next);
         saveLocal(next);

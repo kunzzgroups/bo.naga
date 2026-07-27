@@ -17,7 +17,10 @@
       '</div><div class="bo-range-calendar"><div class="bo-range-cal-head"><button type="button" data-nav="-1"><i class="bi bi-chevron-left"></i></button><button type="button" class="bo-range-head-pick bo-range-month-btn"></button><button type="button" class="bo-range-head-pick bo-range-year-btn"></button><button type="button" data-nav="1"><i class="bi bi-chevron-right"></i></button></div><div class="bo-range-month-grid"></div><div class="bo-range-year-grid"></div><div class="bo-range-day-view"><div class="bo-range-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div class="bo-range-days"></div><div class="bo-range-hint">Select start date, then select end date.</div></div></div></div>';
     fField.parentNode.insertBefore(host,fField);fField.style.display='none';tField.style.display='none';
     const trig=host.querySelector('.bo-range-trigger'),pop=host.querySelector('.bo-range-pop'),txt=host.querySelector('.bo-range-text'),days=host.querySelector('.bo-range-days'),monthBtn=host.querySelector('.bo-range-month-btn'),yearBtn=host.querySelector('.bo-range-year-btn'),monthGrid=host.querySelector('.bo-range-month-grid'),yearGrid=host.querySelector('.bo-range-year-grid'),dayView=host.querySelector('.bo-range-day-view');
-    let view=new Date(),start=from.value||'',end=to.value||'',mode='days',yearPageStart=view.getFullYear()-5;
+    const todayValue=iso(new Date());
+    if(!from.value) from.value=todayValue;
+    if(!to.value) to.value=todayValue;
+    let view=new Date(),start=from.value||todayValue,end=to.value||todayValue,mode='days',yearPageStart=view.getFullYear()-5;
     function syncText(){txt.textContent=start?(fmt(start)+(end?' - '+fmt(end):' - Select end date')):'Select date range'}
     function commit(a,b){start=iso(a);end=iso(b);from.value=start;to.value=end;from.dispatchEvent(new Event('change',{bubbles:true}));to.dispatchEvent(new Event('change',{bubbles:true}));syncText()}
     function setMode(next){mode=next;monthGrid.classList.toggle('show',mode==='months');yearGrid.classList.toggle('show',mode==='years');dayView.classList.toggle('hide',mode!=='days')}

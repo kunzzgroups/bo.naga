@@ -94,7 +94,16 @@
     document.getElementById('ledgerSearchBtn')?.addEventListener('click', ()=>{ page=1; load(); });
     ['ledgerMemberId','ledgerProviderCode'].forEach(id=>document.getElementById(id)?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ page=1; load(); } }));
     ['ledgerType','ledgerFrom','ledgerTo','ledgerSize'].forEach(id=>document.getElementById(id)?.addEventListener('change', ()=>{ page=1; load(); }));
-    document.getElementById('ledgerResetBtn')?.addEventListener('click', ()=>{ ['ledgerMemberId','ledgerProviderCode','ledgerType','ledgerFrom','ledgerTo'].forEach(id=>document.getElementById(id).value=''); page=1; load(); });
+    document.getElementById('ledgerResetBtn')?.addEventListener('click', ()=>{
+      ['ledgerMemberId','ledgerProviderCode','ledgerType'].forEach(id=>document.getElementById(id).value='');
+      const now=new Date(), pad=n=>String(n).padStart(2,'0');
+      const today=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+      document.getElementById('ledgerFrom').value=today;
+      document.getElementById('ledgerTo').value=today;
+      document.getElementById('ledgerFrom').dispatchEvent(new Event('change',{bubbles:true}));
+      document.getElementById('ledgerTo').dispatchEvent(new Event('change',{bubbles:true}));
+      page=1; load();
+    });
     document.getElementById('ledgerPrevBtn')?.addEventListener('click', ()=>{ if(page>1){ page--; load(); } });
     document.getElementById('ledgerNextBtn')?.addEventListener('click', ()=>{ if(page<totalPages){ page++; load(); } });
     document.getElementById('ledgerPager')?.addEventListener('click', e=>{ const b=e.target.closest('[data-page]'); if(!b)return; const n=Number(b.dataset.page); if(n>=1&&n<=totalPages&&n!==page){page=n;load();} });

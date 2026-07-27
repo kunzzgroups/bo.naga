@@ -121,7 +121,14 @@
   }
 
   function resetFilters(){
-    ['txMemberId','txProviderCode','txType','txStatus','txFrom','txTo'].forEach(id => { const el = $(id); if (el) el.value = ''; });
+    ['txMemberId','txProviderCode','txType','txStatus'].forEach(id => { const el = $(id); if (el) el.value = ''; });
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const today = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+    if ($('txFrom')) $('txFrom').value = today;
+    if ($('txTo')) $('txTo').value = today;
+    $('txFrom')?.dispatchEvent(new Event('change', {bubbles:true}));
+    $('txTo')?.dispatchEvent(new Event('change', {bubbles:true}));
     page = 1;
     load();
   }
