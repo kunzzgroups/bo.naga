@@ -25,6 +25,12 @@
         const json = await res.json().catch(() => ({}));
         if(!res.ok || json.status === 'error') throw new Error(json.message || 'Login failed');
         BO_AUTH.save(json);
+        try {
+          const loginMarker = Date.now() + '-' + Math.random().toString(36).slice(2);
+          sessionStorage.setItem('bo_operation_login_marker', loginMarker);
+          localStorage.setItem('bo_operation_login_marker', loginMarker);
+          sessionStorage.removeItem('bo_operation_login_played');
+        } catch(ignore){}
         let user = json.data || {};
         try{
           const meRes = await fetch(BO_AUTH.adminMeUrl(), {headers: {...BO_AUTH.authHeader()}});

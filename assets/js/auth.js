@@ -95,7 +95,7 @@
     user: function(){ try { return JSON.parse(localStorage.getItem(this.userKey) || '{}'); } catch(e){ return {}; } },
     save: function(json){ localStorage.setItem(this.tokenKey, json.token || ''); localStorage.setItem(this.userKey, JSON.stringify(json.data || {})); },
     saveUser: function(user){ localStorage.setItem(this.userKey, JSON.stringify(user || {})); this.renderProfile(); this.renderSidebar(user); },
-    logout: function(){ localStorage.removeItem(this.tokenKey); localStorage.removeItem(this.userKey); window.location.href = 'login.html'; },
+    logout: function(){ localStorage.removeItem(this.tokenKey); localStorage.removeItem(this.userKey); try{ sessionStorage.removeItem('bo_operation_login_marker'); sessionStorage.removeItem('bo_operation_login_played'); }catch(e){} window.location.href = 'login.html'; },
     requireLogin: function(){ if(!this.token() && !location.pathname.endsWith('/login.html')) window.location.href = 'login.html'; },
     allowedMenus: function(user){
       user = user || this.user();
@@ -233,15 +233,15 @@
     },
     headerCountersHtml: function(){
       return '<div class="bo-header-counters" data-bo-header-counters>' +
-        '<a class="bo-header-counter" href="index.html" title="New members registered today" aria-label="New members registered today">' +
+        '<a class="bo-header-counter" href="index.html" data-operation-notification-ack="members" title="New members registered today" aria-label="New members registered today">' +
           '<span class="bo-header-counter-icon members"><i class="bi bi-person-plus"></i></span>' +
           '<span class="bo-header-counter-text"><small>Members</small><b data-header-new-members>0</b></span>' +
         '</a>' +
-        '<a class="bo-header-counter" href="member-deposit.html" title="Pending deposit requests" aria-label="Pending deposit requests">' +
+        '<a class="bo-header-counter" href="member-deposit.html" data-operation-notification-ack="wallet" title="Pending deposit requests" aria-label="Pending deposit requests">' +
           '<span class="bo-header-counter-icon deposit"><i class="bi bi-wallet2"></i></span>' +
           '<span class="bo-header-counter-text"><small>Deposit</small><b data-header-pending-deposit>0</b></span>' +
         '</a>' +
-        '<a class="bo-header-counter" href="member-withdraw.html" title="Pending withdrawal requests" aria-label="Pending withdrawal requests">' +
+        '<a class="bo-header-counter" href="member-withdraw.html" data-operation-notification-ack="wallet" title="Pending withdrawal requests" aria-label="Pending withdrawal requests">' +
           '<span class="bo-header-counter-icon withdraw"><i class="bi bi-arrow-left-right"></i></span>' +
           '<span class="bo-header-counter-text"><small>Withdraw</small><b data-header-pending-withdraw>0</b></span>' +
         '</a>' +
