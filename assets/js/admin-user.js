@@ -3,11 +3,11 @@
     total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
     const pages=[]; const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};
     add(1); for(let n=current-2;n<=current+2;n++) add(n); add(total); pages.sort((a,b)=>a-b);
-    let html='<div class="smart-pagination" role="navigation" aria-label="Table pagination">';
+    let html='';
     html+='<button type="button" class="smart-page first" data-page="1" '+(current<=1?'disabled':'')+' title="First page"><i class="bi bi-chevron-bar-left"></i></button>';
     let prev=0; pages.forEach(n=>{if(prev&&n-prev>1)html+='<span class="smart-page-ellipsis">…</span>'; html+='<button type="button" class="smart-page '+(n===current?'active':'')+'" data-page="'+n+'" '+(n===current?'aria-current="page"':'')+'>'+n+'</button>'; prev=n;});
     html+='<button type="button" class="smart-page last" data-page="'+total+'" '+(current>=total?'disabled':'')+' title="Last page"><i class="bi bi-chevron-bar-right"></i></button>';
-    html+='</div><span class="smart-page-summary">Page '+current+' / '+total+'</span>'; return html;
+    return html;
   }
 
   const createForm = document.getElementById('createAdminForm');
@@ -27,7 +27,7 @@
   const pageSizeEl = document.getElementById('adminPageSize');
   const prevBtn = document.getElementById('adminPrevPage');
   const nextBtn = document.getElementById('adminNextPage');
-  const pageNoEl = document.getElementById('adminPageNo');
+  const pageNoEl = document.getElementById('adminPager');
   const infoEl = document.getElementById('adminTableInfo');
   const countBadge = document.getElementById('adminCountBadge');
   const selectAll = document.getElementById('adminSelectAll');

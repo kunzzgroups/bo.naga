@@ -1,121 +1,105 @@
-/* Table-only pagination standard: horizontal desktop layout */
-.table-footer,
-.admin-table-footer,
-.table-pagination-wrap{
-  width:100%;
-  display:grid!important;
-  grid-template-columns:minmax(180px,1fr) minmax(220px,1fr) minmax(180px,1fr)!important;
-  align-items:center!important;
-  gap:16px!important;
-  margin-top:14px!important;
-  padding:0!important;
-  color:#667085!important;
-  font-size:12px!important;
+/* BO table pagination standard — one shared layout for every paginated table. */
+:root{--bo-page-blue:#2f66ed;--bo-page-border:#d5ddea;--bo-page-text:#344054}
+
+.table-footer,.admin-table-footer,.table-pagination-wrap,.ref-pagination-row,
+.game-table-footer,.subcategory-table-footer,.bo-table-pagination,.bo-pagination-standard{
+  box-sizing:border-box!important;width:100%!important;min-height:58px!important;
+  display:grid!important;grid-template-columns:minmax(190px,1fr) minmax(260px,1fr) minmax(190px,1fr)!important;
+  align-items:center!important;gap:16px!important;margin:0!important;padding:12px 0 0!important;
+  color:#667085!important;font-size:12px!important;background:transparent!important;border:0!important;
 }
-.table-footer>.entries-control,
-.admin-table-footer>.entries-control,
-.table-pagination-wrap>.table-page-size{
-  justify-self:start!important;
-  display:flex!important;
-  align-items:center!important;
-  gap:8px!important;
-  white-space:nowrap!important;
+
+.table-footer>.entries-control,.admin-table-footer>.entries-control,.table-pagination-wrap>.table-page-size,
+.ref-pagination-row>:first-child,.game-table-footer>.entries-control,.subcategory-table-footer>.entries-control,
+.bo-table-pagination>.entries-control,.bo-pagination-standard>.entries-control{
+  grid-column:1!important;justify-self:start!important;display:inline-flex!important;align-items:center!important;
+  gap:8px!important;width:auto!important;margin:0!important;white-space:nowrap!important;color:#667085!important;font-weight:500!important;
 }
-.table-footer>.table-info,
-.admin-table-footer>.table-info,
-.table-pagination-wrap>.table-pagination-info{
-  justify-self:center!important;
-  text-align:center!important;
-  font-weight:700!important;
-  color:#667085!important;
-  white-space:nowrap!important;
+
+.table-footer>.table-info,.admin-table-footer>.table-info,.table-pagination-wrap>.table-pagination-info,
+.ref-pagination-row>:nth-child(2),.game-table-footer>#gameShowingText,.subcategory-table-footer>#subCategoryShowingText,
+.bo-table-pagination>.table-info,.bo-pagination-standard>.table-info{
+  grid-column:2!important;justify-self:center!important;width:auto!important;margin:0!important;text-align:center!important;
+  white-space:nowrap!important;color:#667085!important;font-weight:700!important;
 }
-.table-footer>.pagination-clean,
-.admin-table-footer>.pagination-clean,
-.table-pagination-wrap>.table-pagination,
-.table-pagination-wrap>.smart-pagination{
-  justify-self:end!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:flex-end!important;
-  gap:8px!important;
-  flex-wrap:nowrap!important;
+
+.table-footer>.pagination-clean,.admin-table-footer>.pagination-clean,.table-pagination-wrap>#memberPager,
+.table-pagination-wrap>.table-pagination,.ref-pagination-row>.ref-pager,.game-table-footer>.smart-pagination,
+.subcategory-table-footer>.smart-pagination,.bo-table-pagination>.pagination-clean,.bo-pagination-standard>.pagination-clean{
+  grid-column:3!important;justify-self:end!important;display:inline-flex!important;align-items:center!important;
+  justify-content:flex-end!important;gap:8px!important;width:auto!important;min-width:0!important;margin:0!important;padding:0!important;
+  background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important;
 }
-.entries-control select,
-.table-page-size select{
-  width:auto!important;
-  min-width:68px!important;
-  max-width:90px!important;
-  height:40px!important;
-  padding:0 28px 0 12px!important;
-  border:1px solid #d5ddea!important;
-  border-radius:10px!important;
-  background-color:#fff!important;
-  color:#1d2939!important;
-  font-weight:800!important;
+
+.entries-control select,.table-page-size select,.ref-pagination-row select,.bo-pagination-standard select{
+  box-sizing:border-box!important;display:inline-block!important;flex:0 0 68px!important;width:68px!important;min-width:68px!important;
+  max-width:68px!important;height:40px!important;margin:0!important;padding:0 28px 0 12px!important;border:1px solid var(--bo-page-border)!important;
+  border-radius:10px!important;background-color:#fff!important;color:#1d2939!important;font-size:13px!important;font-weight:800!important;
+  line-height:40px!important;box-shadow:none!important;
 }
-.pagination-clean .page-btn,
-.table-page-btn,
-.smart-page{
-  min-width:40px!important;
-  height:40px!important;
-  padding:0 12px!important;
-  border:1px solid #d5ddea!important;
-  border-radius:10px!important;
-  background:#fff!important;
-  color:#344054!important;
-  font-size:13px!important;
-  font-weight:800!important;
-  display:inline-flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  box-shadow:none!important;
+
+.pagination-clean .page-btn,.pagination-clean button,.table-page-btn,.smart-page,
+.ref-pager button,.ref-pager b,.pwt-pager button,.vip-log-pagination button{
+  box-sizing:border-box!important;flex:0 0 auto!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  min-width:40px!important;width:auto!important;max-width:none!important;height:40px!important;min-height:40px!important;margin:0!important;
+  padding:0 12px!important;border:1px solid var(--bo-page-border)!important;border-radius:10px!important;background:#fff!important;
+  color:var(--bo-page-text)!important;font-size:13px!important;font-weight:800!important;line-height:1!important;text-decoration:none!important;
+  box-shadow:none!important;overflow:visible!important;
 }
-.pagination-clean .page-btn.active,
-.table-page-btn.active,
-.smart-page.active{
-  background:#2f66ed!important;
-  border-color:#2f66ed!important;
-  color:#fff!important;
+.pagination-clean .page-btn.active,.pagination-clean button.active,.table-page-btn.active,.smart-page.active,.ref-pager b,
+.pwt-pager button.active,.vip-log-pagination button.active{
+  background:var(--bo-page-blue)!important;border-color:var(--bo-page-blue)!important;color:#fff!important;
 }
-.pagination-clean .page-btn:disabled,
-.table-page-btn:disabled,
-.smart-page:disabled{
-  opacity:.42!important;
-  cursor:not-allowed!important;
+.pagination-clean button:disabled,.pagination-clean .page-btn:disabled,.table-page-btn:disabled,.smart-page:disabled,
+.ref-pager button:disabled,.pwt-pager button:disabled,.vip-log-pagination button:disabled{
+  opacity:.42!important;cursor:not-allowed!important;background:#fff!important;color:#98a2b3!important;
 }
-.pagination-clean #adminPageNo{
-  display:flex!important;
-  align-items:center!important;
-  gap:8px!important;
-  padding:0!important;
-  border:0!important;
+.smart-page-ellipsis{min-width:20px!important;text-align:center!important;color:#98a2b3!important;font-weight:800!important}.smart-page-summary{display:none!important}
+
+/* Remove old full-width / previous-next layouts once standardized. */
+.bo-pagination-standard.d-flex{display:grid!important}.bo-pagination-standard>.clean-btn{width:auto!important}
+
+@media(max-width:767.98px){
+ .table-footer,.admin-table-footer,.table-pagination-wrap,.ref-pagination-row,.game-table-footer,.subcategory-table-footer,
+ .bo-table-pagination,.bo-pagination-standard{grid-template-columns:1fr!important;justify-items:center!important;text-align:center!important;gap:10px!important}
+ .table-footer>*,.admin-table-footer>*,.table-pagination-wrap>*,.ref-pagination-row>*,.game-table-footer>*,
+ .subcategory-table-footer>*,.bo-table-pagination>*,.bo-pagination-standard>*{grid-column:1!important;justify-self:center!important}
+}
+
+/* v2.0.1 safe legacy pagination normalization */
+.pagination-clean-inner{display:flex!important;align-items:center!important;gap:8px!important;margin:0!important;padding:0!important;color:inherit!important}
+.pagination-clean-inner>.smart-pagination{display:flex!important;align-items:center!important;gap:8px!important;margin:0!important}
+.pagination-clean-inner .smart-page-summary{display:none!important}
+.pagination-clean-inner .smart-page.first,.pagination-clean-inner .smart-page.last{min-width:34px!important;width:34px!important;height:34px!important;padding:0!important}
+.pagination-clean-inner>.text-muted,.pagination-clean-inner.small{margin:0!important}
+.bo-pagination-standard>.pagination-clean{justify-self:end!important;display:flex!important;align-items:center!important;gap:8px!important}
+
+
+/* v2.0.2: pager containers must never inherit active button backgrounds */
+.pagination-clean>span,
+.pagination-clean>.pagination-clean-inner,
+.pagination-clean-inner,
+.pagination-clean-inner>.smart-pagination,
+.pagination-clean>[id*="Pager"],
+.pagination-clean>[id*="Pagination"]{
   background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  min-width:0!important;
+  width:auto!important;
+  height:auto!important;
+  padding:0!important;
+  border-radius:0!important;
+}
+.pagination-clean .smart-page-ellipsis,
+.pagination-clean .smart-page-summary{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  color:#98a2b3!important;
+  width:auto!important;
   min-width:0!important;
   height:auto!important;
-}
-.pagination-clean #adminPageNo>.smart-page-summary{display:none!important}
-.pagination-clean>#adminPrevPage,
-.pagination-clean>#adminNextPage{display:none!important}
-@media(max-width:767.98px){
-  .table-footer,
-  .admin-table-footer,
-  .table-pagination-wrap{
-    grid-template-columns:1fr!important;
-    justify-items:center!important;
-    text-align:center!important;
-    gap:10px!important;
-  }
-  .table-footer>.entries-control,
-  .admin-table-footer>.entries-control,
-  .table-pagination-wrap>.table-page-size,
-  .table-footer>.table-info,
-  .admin-table-footer>.table-info,
-  .table-pagination-wrap>.table-pagination-info,
-  .table-footer>.pagination-clean,
-  .admin-table-footer>.pagination-clean,
-  .table-pagination-wrap>.table-pagination,
-  .table-pagination-wrap>.smart-pagination{
-    justify-self:center!important;
-  }
+  padding:0 2px!important;
 }

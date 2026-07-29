@@ -231,10 +231,69 @@
       document.querySelectorAll('[data-admin-username]').forEach(el => el.textContent = user.username || 'admin');
       document.querySelectorAll('[data-admin-avatar]').forEach(el => el.textContent = initials(name));
     },
+    headerCountersHtml: function(){
+      return '<div class="bo-header-counters" data-bo-header-counters>' +
+        '<a class="bo-header-counter" href="index.html" title="New members registered today" aria-label="New members registered today">' +
+          '<span class="bo-header-counter-icon members"><i class="bi bi-person-plus"></i></span>' +
+          '<span class="bo-header-counter-text"><small>Members</small><b data-header-new-members>0</b></span>' +
+        '</a>' +
+        '<a class="bo-header-counter" href="member-deposit.html" title="Pending deposit requests" aria-label="Pending deposit requests">' +
+          '<span class="bo-header-counter-icon deposit"><i class="bi bi-wallet2"></i></span>' +
+          '<span class="bo-header-counter-text"><small>Deposit</small><b data-header-pending-deposit>0</b></span>' +
+        '</a>' +
+        '<a class="bo-header-counter" href="member-withdraw.html" title="Pending withdrawal requests" aria-label="Pending withdrawal requests">' +
+          '<span class="bo-header-counter-icon withdraw"><i class="bi bi-arrow-left-right"></i></span>' +
+          '<span class="bo-header-counter-text"><small>Withdraw</small><b data-header-pending-withdraw>0</b></span>' +
+        '</a>' +
+      '</div>';
+    },
+    countFromListResponse: function(json){
+      const data = json && json.data;
+      if(Array.isArray(data)) return data.length;
+      if(data && data.pagination && data.pagination.totalElements != null) return Number(data.pagination.totalElements) || 0;
+      if(data && data.totalElements != null) return Number(data.totalElements) || 0;
+      if(data && Array.isArray(data.content)) return data.content.length;
+      return 0;
+    },
+    loadHeaderCounters: async function(){
+      if(!this.token()) return;
+      const headers = {...this.authHeader()};
+      const today = new Date();
+      const y = today.getFullYear();
+      const m = String(today.getMonth()+1).padStart(2,'0');
+      const d = String(today.getDate()).padStart(2,'0');
+      const todayKey = y+'-'+m+'-'+d;
+      const set = function(selector, value){ document.querySelectorAll(selector).forEach(function(el){ el.textContent = Number(value || 0).toLocaleString(); }); };
+      const safeJson = async function(url){
+        const res = await fetch(url,{headers:headers});
+        const json = await res.json().catch(function(){ return {}; });
+        if(!res.ok || json.status === 'error') throw new Error(json.message || 'Request failed');
+        return json;
+      };
+      try{
+        const json = await safeJson(this.memberListUrl());
+        const data = json && json.data;
+        const rows = Array.isArray(data) ? data : (data && Array.isArray(data.content) ? data.content : []);
+        const count = rows.filter(function(row){
+          const raw = row && (row.createdAt || row.registerDate || row.created_at);
+          if(!raw) return false;
+          return String(raw).replace('T',' ').slice(0,10) === todayKey;
+        }).length;
+        set('[data-header-new-members]', count);
+      }catch(e){ set('[data-header-new-members]', 0); }
+      try{
+        const json = await safeJson(api('MEMBER_DEPOSIT_LIST') + '?status=PENDING&page=1&size=1');
+        set('[data-header-pending-deposit]', this.countFromListResponse(json));
+      }catch(e){ set('[data-header-pending-deposit]', 0); }
+      try{
+        const json = await safeJson(api('MEMBER_WITHDRAW_LIST') + '?status=PENDING&page=1&size=1');
+        set('[data-header-pending-withdraw]', this.countFromListResponse(json));
+      }catch(e){ set('[data-header-pending-withdraw]', 0); }
+    },
     profileHtml: function(){
       const user = this.user();
       const name = displayName(user);
-      return '<div class="report-profile-wrap">' +
+      return this.headerCountersHtml() + '<div class="report-profile-wrap">' +
         '<button class="report-profile-btn" type="button" data-profile-toggle>' +
         '<span class="report-avatar" data-admin-avatar>' + initials(name) + '</span><span data-admin-name>' + esc(name) + '</span><i class="bi bi-chevron-down small"></i>' +
         '</button>' +
@@ -248,6 +307,7 @@
     injectProfile: function(){
       document.querySelectorAll('[data-bo-profile]').forEach(el => { el.innerHTML = this.profileHtml(); });
       this.renderProfile();
+      this.loadHeaderCounters();
     }
   };
 
