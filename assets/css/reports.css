@@ -2492,53 +2492,6 @@ body:has(#gameSearchInput) .game-filter-actions .clean-btn{
 }
 
 
-/* v28 - unified, user-friendly pagination for every table */
-.smart-pagination,
-.table-pagination,
-.pagination-clean{
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  gap:8px!important;flex-wrap:wrap!important;
-}
-.smart-page,.table-page-btn,.pagination-clean .page-btn{
-  min-width:40px!important;height:40px!important;padding:0 12px!important;
-  border:1px solid #d5ddea!important;border-radius:10px!important;
-  background:#fff!important;color:#1d2939!important;font-size:13px!important;
-  font-weight:800!important;line-height:1!important;display:inline-flex!important;
-  align-items:center!important;justify-content:center!important;box-shadow:none!important;
-  cursor:pointer!important;text-decoration:none!important;
-}
-.smart-page:hover:not(:disabled),.table-page-btn:hover:not(:disabled),.pagination-clean .page-btn:hover:not(:disabled){
-  border-color:#2f66ed!important;color:#2f66ed!important;background:#f5f8ff!important;
-}
-.smart-page.active,.table-page-btn.active,.pagination-clean .page-btn.active{
-  background:#2f66ed!important;border-color:#2f66ed!important;color:#fff!important;
-  box-shadow:0 5px 12px rgba(47,102,237,.2)!important;
-}
-.smart-page:disabled,.table-page-btn:disabled,.pagination-clean .page-btn:disabled{
-  opacity:.42!important;cursor:not-allowed!important;background:#f7f9fc!important;
-}
-.smart-page.first,.smart-page.last{min-width:42px!important}
-.smart-page-ellipsis{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:40px;color:#667085;font-weight:800}
-.smart-page-summary{display:block!important;margin-top:8px!important;color:#667085!important;font-size:12px!important;text-align:center!important}
-.table-pagination-wrap{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;margin-top:16px;padding:14px 0 2px;color:#667085;font-size:12px}
-.table-pagination-info{text-align:center;color:#667085;font-weight:600}
-.table-page-size{display:flex;align-items:center;gap:8px;white-space:nowrap}
-.table-page-size select{height:40px;min-width:72px;border:1px solid #d5ddea;border-radius:10px;background:#fff;padding:0 12px;color:#1d2939;font-weight:800}
-.admin-table-footer{display:grid!important;grid-template-columns:auto 1fr auto!important;align-items:center!important;gap:16px!important}
-.admin-table-footer .pagination-clean{justify-self:end!important}
-.pagination-clean #adminPageNo{display:flex!important;align-items:center!important;gap:8px!important;padding:0!important;border:0!important;background:transparent!important;min-width:0!important;height:auto!important}
-.pagination-clean #adminPageNo>.smart-page-summary{display:none!important}
-.pagination-clean>#adminPrevPage,.pagination-clean>#adminNextPage{display:none!important}
-@media(max-width:767.98px){
- .table-pagination-wrap,.admin-table-footer{grid-template-columns:1fr!important;justify-items:center!important;text-align:center!important;gap:10px!important}
- .admin-table-footer .pagination-clean{justify-self:center!important}
- .smart-pagination,.table-pagination,.pagination-clean{gap:6px!important}
- .smart-page,.table-page-btn,.pagination-clean .page-btn{min-width:36px!important;height:38px!important;padding:0 10px!important;border-radius:9px!important}
- .smart-page.first,.smart-page.last{min-width:38px!important}
- .smart-page-ellipsis{height:38px!important}
-}
-
-
 /* v1.1.32 - mobile polish for Game Provider and Bonus Category Title */
 @media (max-width:700px){
   /* Game Provider toolbar: clean 2 x 2 button grid */

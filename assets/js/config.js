@@ -16,6 +16,7 @@ const API_CONFIG = window.API_CONFIG || {
         AUTH_ADMIN_CREATE: "/auth/admin/create",
         AUTH_ADMIN_ME: "/auth/admin/me",
         AUTH_ADMIN_LIST: "/auth/admin/list",
+        AUTH_ADMIN_LOGIN_LOGS: "/auth/admin/login-logs",
         AUTH_ADMIN_UPDATE: "/auth/admin/update",
         AUTH_ADMIN_DELETE: "/auth/admin/delete",
         AUTH_ADMIN_PROFILE_UPDATE: "/auth/admin/profile/update",
