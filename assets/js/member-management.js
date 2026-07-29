@@ -2,9 +2,11 @@
   let allMembers = [];
   let selectedWalletMember = null;
   let selectedWalletBalance = 0;
+  const bulkSelectedMemberIds = new Set();
   const MEMBER_WALLET_API = {
     balance: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.MEMBER_WALLET_BALANCE,
     adjust: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.MEMBER_WALLET_ADJUST,
+    bulkAdjust: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.MEMBER_WALLET_BULK_ADJUST,
     providerAccounts: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.MEMBER_WALLET_PROVIDER_ACCOUNTS,
     ledgerList: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.WALLET_LEDGER_LIST,
     betList: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.PROVIDER_BET_REPORT_LIST
@@ -18,6 +20,7 @@
     commission: ['commission','totalCommission','commissionAmount']
   };
   const MEMBER_TABLE_COLUMNS = [
+    {key:'select', label:'', always:true},
     {key:'no', label:'#'},
     {key:'registerDate', label:'Register Date'},
     {key:'name', label:'Name / Username', always:true},
@@ -39,7 +42,7 @@
     {key:'action', label:'Action', always:true}
   ];
   const MAX_VISIBLE_MEMBER_COLUMNS = 12;
-  const DEFAULT_MEMBER_COLUMNS = ['no','registerDate','name','mobile','bank','mainWallet','status','deposit','withdraw','winLoss','bonus','action'];
+  const DEFAULT_MEMBER_COLUMNS = ['select','no','registerDate','name','mobile','bank','mainWallet','status','deposit','withdraw','winLoss','bonus','action'];
   let visibleMemberColumns = new Set(DEFAULT_MEMBER_COLUMNS);
   let memberCurrentPage = 1;
   let memberPageSize = 10;
@@ -349,7 +352,7 @@
       table.classList.toggle('many-columns', false);
       table.classList.add('member-max-12');
     }
-    head.innerHTML = MEMBER_TABLE_COLUMNS.filter(c=>isColVisible(c.key)).map(c=>`<th data-col="${c.key}">${esc(c.label)}</th>`).join('');
+    head.innerHTML = MEMBER_TABLE_COLUMNS.filter(c=>isColVisible(c.key)).map(c=>c.key==='select' ? `<th data-col="select" class="member-select-col"><input type="checkbox" id="memberSelectPage" title="Select current page"></th>` : `<th data-col="${c.key}">${esc(c.label)}</th>`).join('');
   }
   function visibleColCount(){ return MEMBER_TABLE_COLUMNS.filter(c=>isColVisible(c.key)).length || 1; }
   function visibleMemberColumnCount(){ return MEMBER_TABLE_COLUMNS.filter(c=>isColVisible(c.key)).length; }
@@ -451,6 +454,7 @@
       const locked = status === 'LOCKED';
       const id = first(m,['id','memberId','userId'], '');
       return `<tr>
+        ${cell('select', `<input class="member-row-select" type="checkbox" data-member-select="${esc(id)}" ${bulkSelectedMemberIds.has(String(id))?'checked':''}>`, 'member-select-col')}
         ${cell('no', ((memberCurrentPage-1)*memberPageSize)+idx+1, 'col-no')}
         ${cell('registerDate', esc(dt(first(m,['createdAt','registerDate','created_at'], ''))))}
         ${cell('name', `<b>${esc(first(m,['username'], '-'))}</b><br><small>${esc(first(m,['fullName','name','displayName'], ''))}</small>`, 'member-name-cell')}
@@ -478,7 +482,7 @@
         const locked = status === 'LOCKED';
         const id = first(m,['id','memberId','userId'], '');
         return `<div class="member-card">
-          <div class="member-card-head"><h3>${esc(first(m,['username'], '-'))}</h3><span class="status-pill ${locked?'off':''}">${esc(status)}</span></div>
+          <div class="member-card-head"><label><input class="member-row-select" type="checkbox" data-member-select="${esc(id)}" ${bulkSelectedMemberIds.has(String(id))?'checked':''}> <h3 style="display:inline">${esc(first(m,['username'], '-'))}</h3></label><span class="status-pill ${locked?'off':''}">${esc(status)}</span></div>
           <div class="meta">${esc(first(m,['fullName','name','displayName'], '-'))} • ${esc(first(m,['mobile','phone','mobileNo'], '-'))}</div>
           <div class="meta">Registered: ${esc(dt(first(m,['createdAt','registerDate','created_at'], '')))}</div>
           <div class="member-grid">
@@ -517,6 +521,7 @@
 
   function memberKey(m){
     return String(first(m, ['id','memberId','userId'], '') || '');
+    updateBulkSelectionUi();
   }
 
   function normalizePageRows(data){
@@ -578,7 +583,16 @@
       const res = await api(BO_AUTH.memberListUrl(),{headers:{...BO_AUTH.authHeader()}});
       const members = Array.isArray(res.data) ? res.data : (res.data && Array.isArray(res.data.content) ? res.data.content : []);
       const walletMap = await loadWalletSummaryMap();
-      allMembers = mergeMemberRuntimeData(members, walletMap);
+      allMembers = mergeMemberRuntimeData(members, walletMap).sort((a, b) => {
+        const dateValue = row => {
+          const raw = first(row, ['createdAt','registerDate','created_at'], '');
+          const time = raw ? new Date(raw).getTime() : 0;
+          return Number.isFinite(time) ? time : 0;
+        };
+        const byDate = dateValue(b) - dateValue(a);
+        if (byDate !== 0) return byDate;
+        return num(first(b, ['id','memberId','userId'], 0)) - num(first(a, ['id','memberId','userId'], 0));
+      });
       updateStats(allMembers);
       applySearch();
     } catch(e){
@@ -651,6 +665,58 @@
     document.querySelectorAll('.rounded-native-hidden').forEach(select=>select.dispatchEvent(new Event('change',{bubbles:false})));
   }
 
+
+  function selectedBulkMembers(){
+    return allMembers.filter(m=>bulkSelectedMemberIds.has(String(first(m,['id','memberId','userId'],''))));
+  }
+  function updateBulkSelectionUi(){
+    const count=bulkSelectedMemberIds.size;
+    const btn=document.getElementById('bulkWalletAdjustBtn'); if(btn) btn.disabled=count===0;
+    const badge=document.getElementById('bulkSelectedBadge'); if(badge) badge.textContent=String(count);
+    document.querySelectorAll('[data-member-select]').forEach(el=>{el.checked=bulkSelectedMemberIds.has(String(el.dataset.memberSelect));});
+    const pageBox=document.getElementById('memberSelectPage');
+    const visibleIds=memberFilteredRows.slice((memberCurrentPage-1)*memberPageSize, memberCurrentPage*memberPageSize).map(m=>String(first(m,['id','memberId','userId'],''))).filter(Boolean);
+    if(pageBox){const selected=visibleIds.filter(id=>bulkSelectedMemberIds.has(id)).length;pageBox.checked=visibleIds.length>0&&selected===visibleIds.length;pageBox.indeterminate=selected>0&&selected<visibleIds.length;}
+  }
+  function bulkStatus(msg,type){const el=document.getElementById('bulkWalletStatus');if(el){el.textContent=msg||'';el.className='upload-status'+(type?' '+type:'');}}
+  function updateBulkPreview(){
+    const members=selectedBulkMembers(); const amount=Math.max(0,num(document.getElementById('bulkAdjustmentAmount')?.value));
+    const type=document.getElementById('bulkAdjustmentType')?.value||'CREDIT';
+    const count=document.getElementById('bulkMemberCount');if(count)count.textContent=String(members.length);
+    const total=document.getElementById('bulkTotalAmount');if(total)total.textContent=(type==='DEBIT'?'-':'')+money(amount*members.length);
+    const list=document.getElementById('bulkSelectedList');if(list)list.innerHTML=members.map(m=>{const id=String(first(m,['id','memberId','userId'],''));return `<span class="bulk-member-chip"><b>${esc(first(m,['username'],'-'))}</b><small>${money(first(m,['mainWalletBalance','mainBalance','balance'],0))}</small><button type="button" data-bulk-remove="${esc(id)}"><i class="bi bi-x"></i></button></span>`;}).join('');
+  }
+  function openBulkWalletModal(){
+    if(!bulkSelectedMemberIds.size)return;
+    document.getElementById('bulkAdjustmentAmount').value=''; document.getElementById('bulkAdjustmentRemark').value=''; document.getElementById('bulkReferenceNo').value='';
+    document.getElementById('bulkWalletResult').hidden=true; bulkStatus('',''); updateBulkPreview();
+    document.getElementById('bulkWalletModal').hidden=false; document.body.classList.add('bulk-modal-open');
+  }
+  function closeBulkWalletModal(){document.getElementById('bulkWalletModal').hidden=true;document.body.classList.remove('bulk-modal-open');}
+  async function submitBulkWalletAdjustment(){
+    const members=selectedBulkMembers(); const amount=num(document.getElementById('bulkAdjustmentAmount').value); const remark=String(document.getElementById('bulkAdjustmentRemark').value||'').trim();
+    if(!members.length){bulkStatus('Please select at least one member.','error');return;} if(amount<=0){bulkStatus('Please enter an amount greater than 0.','error');return;} if(!remark){bulkStatus('Remark is required for audit purposes.','error');return;}
+    const type=document.getElementById('bulkAdjustmentType').value; const total=amount*members.length;
+    if(!(await BO_DIALOG.confirm(`${type==='CREDIT'?'Credit':'Debit'} ${money(amount)} for ${members.length} member(s)? Total: ${money(total)}`, {title:'Confirm Bulk Wallet Adjustment', confirmText:'Confirm Adjustment'})))return;
+    const submit=document.getElementById('bulkWalletSubmit');submit.disabled=true;bulkStatus('Processing bulk adjustment...','');
+    try{
+      const payload={memberIds:members.map(m=>Number(first(m,['id','memberId','userId'],0))).filter(Boolean),adjustmentType:type,amount,reasonCode:document.getElementById('bulkAdjustmentReason').value,insufficientPolicy:document.getElementById('bulkInsufficientPolicy').value,referenceNo:String(document.getElementById('bulkReferenceNo').value||'').trim(),remark};
+      const json=await api(MEMBER_WALLET_API.bulkAdjust,{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(payload)});
+      const d=json.data||{}; bulkStatus(json.message||'Bulk adjustment completed.','success');
+      const result=document.getElementById('bulkWalletResult');result.hidden=false;result.innerHTML=`<b>Batch: ${esc(d.batchNo||'-')}</b><br>Success: ${esc(d.successCount||0)} &nbsp; Skipped: ${esc(d.skippedCount||0)} &nbsp; Total adjusted: ${money(d.totalAdjusted||0)}`;
+      bulkSelectedMemberIds.clear(); updateBulkSelectionUi(); await loadMembers();
+    }catch(err){bulkStatus(err.message||'Bulk adjustment failed.','error');}finally{submit.disabled=false;}
+  }
+  function bindBulkWalletTools(){
+    document.getElementById('bulkWalletAdjustBtn')?.addEventListener('click',openBulkWalletModal);
+    document.getElementById('bulkWalletClose')?.addEventListener('click',closeBulkWalletModal);document.getElementById('bulkWalletCancel')?.addEventListener('click',closeBulkWalletModal);
+    document.getElementById('bulkWalletModal')?.addEventListener('click',e=>{if(e.target.id==='bulkWalletModal')closeBulkWalletModal();});
+    document.getElementById('bulkWalletSubmit')?.addEventListener('click',submitBulkWalletAdjustment);
+    document.getElementById('bulkAdjustmentAmount')?.addEventListener('input',updateBulkPreview);document.getElementById('bulkAdjustmentType')?.addEventListener('change',updateBulkPreview);
+    document.addEventListener('change',e=>{const row=e.target.closest('[data-member-select]');if(row){const id=String(row.dataset.memberSelect);row.checked?bulkSelectedMemberIds.add(id):bulkSelectedMemberIds.delete(id);updateBulkSelectionUi();return;}if(e.target.id==='memberSelectPage'){const ids=memberFilteredRows.slice((memberCurrentPage-1)*memberPageSize,memberCurrentPage*memberPageSize).map(m=>String(first(m,['id','memberId','userId'],''))).filter(Boolean);ids.forEach(id=>e.target.checked?bulkSelectedMemberIds.add(id):bulkSelectedMemberIds.delete(id));updateBulkSelectionUi();renderMembers(memberFilteredRows.slice((memberCurrentPage-1)*memberPageSize,memberCurrentPage*memberPageSize));}});
+    document.addEventListener('click',e=>{const rm=e.target.closest('[data-bulk-remove]');if(!rm)return;bulkSelectedMemberIds.delete(String(rm.dataset.bulkRemove));updateBulkSelectionUi();updateBulkPreview();});
+  }
+
   function bindSearch(){
     ['memberSearchName','memberSearchMobile','memberSearchAgent','memberSearchBank'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input', applySearch); });
     ['memberSearchStatus','memberSearchVisit','memberSearchLock'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('change', applySearch); });
@@ -677,7 +743,7 @@
     catch(err){ alert(err.message || 'Update failed'); }
   });
   document.addEventListener('DOMContentLoaded',()=>{
-    initRoundedMemberSelects(); bindSearch(); bindColumnTools(); bindExportTool(); bindMemberPagination(); loadMembers();
+    initRoundedMemberSelects(); bindSearch(); bindColumnTools(); bindExportTool(); bindMemberPagination(); bindBulkWalletTools(); loadMembers();
     document.getElementById('walletModalClose')?.addEventListener('click', closeWalletModal);
     document.getElementById('memberWalletModal')?.addEventListener('click', e=>{ if(e.target.id==='memberWalletModal') closeWalletModal(); });
     document.getElementById('walletRefreshBtn')?.addEventListener('click', ()=>{ if(selectedWalletMember) loadMemberWallet(first(selectedWalletMember,['id','memberId','userId'], '')).catch(err=>walletStatus(err.message || 'Load wallet failed', 'error')); });

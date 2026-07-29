@@ -358,6 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return new Promise(resolve=>{resolver=resolve;setTimeout(()=>o.input?inputEl.focus():okBtn.focus(),0);});
   }
   window.BO_DIALOG={
+    alert(message,options){ window.alert(message); return Promise.resolve(true); },
     confirm(message,options){return open(Object.assign({message:message,input:false},options||{}));},
     prompt(message,defaultValue,options){return open(Object.assign({message:message,input:true,defaultValue:defaultValue||''},options||{}));}
   };

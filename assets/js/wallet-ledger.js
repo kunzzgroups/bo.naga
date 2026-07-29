@@ -47,15 +47,15 @@
   function metric(id, v){ const el=document.getElementById(id); if(el) el.textContent = money(v); }
   function updateMetrics(rows){
     const byType = rows.reduce((m,r)=>{ m[r.ledgerType] = (m[r.ledgerType] || 0) + num(r.amount); return m; },{});
-    metric('wlDeposit', byType.DEPOSIT || 0);
-    metric('wlWithdraw', Math.abs(byType.WITHDRAW || 0));
+    metric('wlDeposit', (byType.DEPOSIT || 0) + (byType.ADMIN_DEPOSIT || 0));
+    metric('wlWithdraw', Math.abs((byType.WITHDRAW || 0) + (byType.ADMIN_WITHDRAW || 0)));
     metric('wlTransfer', (byType.TRANSFER_IN || 0) + (byType.TRANSFER_OUT || 0));
     metric('wlBetWinLose', (byType.BET || 0) + (byType.WIN || 0) + (byType.LOSE || 0) + (byType.SETTLE || 0));
   }
   function render(rows, pagination){
     const body=document.getElementById('walletLedgerBody'); if(!body) return;
     updateMetrics(rows);
-    if(!rows.length){ body.innerHTML='<tr><td colspan="10">No ledger records found.</td></tr>'; }
+    if(!rows.length){ body.innerHTML='<tr><td colspan="12">No ledger records found.</td></tr>'; }
     else body.innerHTML = rows.map(r => {
       const amt = num(r.amount);
       return `<tr>
@@ -68,6 +68,8 @@
         <td>${money(r.afterBalance)}</td>
         <td>${esc(r.gameCode || '-')}</td>
         <td><small>${esc(r.referenceNo || '-')}</small></td>
+        <td><b>${esc(r.adjustedBy || '-')}</b></td>
+        <td><small>${esc(r.remark || '-')}</small></td>
         <td>${esc(r.status || '-')}</td>
       </tr>`;
     }).join('');
@@ -79,14 +81,14 @@
     document.getElementById('ledgerNextBtn').disabled = page >= totalPages;
   }
   async function load(){
-    const body=document.getElementById('walletLedgerBody'); if(body) body.innerHTML='<tr><td colspan="10">Loading ledger...</td></tr>';
+    const body=document.getElementById('walletLedgerBody'); if(body) body.innerHTML='<tr><td colspan="12">Loading ledger...</td></tr>';
     try{
       const json = await api(url('WALLET_LEDGER_LIST') + '?' + params());
       const data = json.data || {};
       render(Array.isArray(data.content) ? data.content : [], data.pagination || {});
     }catch(e){
       updateMetrics([]);
-      if(body) body.innerHTML='<tr><td colspan="10" class="text-danger">'+esc(e.message || 'Load failed')+'</td></tr>';
+      if(body) body.innerHTML='<tr><td colspan="12" class="text-danger">'+esc(e.message || 'Load failed')+'</td></tr>';
     }
   }
   document.addEventListener('DOMContentLoaded', function(){

@@ -56,9 +56,12 @@
     const withdraw = dw.withdraw || {};
     const betting = data.betting || {};
     const overview = data.overview || {};
+    const adjustment = data.adjustment || {};
     const bonusRows = Array.isArray(data.bonus) ? data.bonus : [];
     const bonusTotal = bonusRows.reduce((s,r)=>s+num(r.bonusAmount),0);
     setMetric('crDeposit', approvedAmount(deposit), true);
+    setMetric('crAdjustmentIn', adjustment.adjustmentIn, true);
+    setMetric('crAdjustmentOut', adjustment.adjustmentOut, true);
     setMetric('crWithdraw', approvedAmount(withdraw), true);
     setMetric('crBetAmount', betting.betAmount, true);
     setMetric('crValidBet', betting.validBetAmount, true);

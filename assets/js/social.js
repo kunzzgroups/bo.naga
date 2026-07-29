@@ -127,11 +127,11 @@
     var image = document.getElementById('socialImage').files[0];
 
     if (!/^https?:\/\//i.test(url)) {
-      alert('URL must start with http:// or https://');
+      await BO_DIALOG.alert('URL must start with http:// or https://');
       return;
     }
     if (!id && !image) {
-      alert('Please choose a social image.');
+      await BO_DIALOG.alert('Please choose a social image.');
       return;
     }
 
@@ -144,11 +144,11 @@
     submit.disabled = true;
     try {
       var json = await api(endpoint('SOCIAL_SAVE'), { method: 'POST', body: formData });
-      alert(json.message || 'Social link saved');
+      await BO_DIALOG.alert(json.message || 'Social link saved');
       resetForm(true);
       await load();
     } catch (error) {
-      alert(error.message || 'Save failed');
+      await BO_DIALOG.alert(error.message || 'Save failed');
     } finally {
       submit.disabled = false;
     }
@@ -158,10 +158,10 @@
     if (!(await BO_DIALOG.confirm('Delete this social link?', { title: 'Delete Social Link', confirmText: 'Delete' }))) return;
     try {
       var json = await api(endpoint('SOCIAL_DELETE') + '/' + encodeURIComponent(id), { method: 'POST' });
-      alert(json.message || 'Social link deleted');
+      await BO_DIALOG.alert(json.message || 'Social link deleted');
       await load();
     } catch (error) {
-      alert(error.message || 'Delete failed');
+      await BO_DIALOG.alert(error.message || 'Delete failed');
     }
   }
 

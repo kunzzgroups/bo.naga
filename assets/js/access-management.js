@@ -78,7 +78,13 @@
       if(!roleId)throw new Error('Role saved but role ID was not returned.');
       await api(BO_AUTH.roleMenusUrl(roleId),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify({menuIds:ids})});
       msg(roleStatusEl,editId?'Group updated successfully.':'Group created successfully.','success');await loadRoleList();setTimeout(closeModal,500);
-    }catch(err){msg(roleStatusEl,err.message,'error');}finally{btn.disabled=false;}
+    }catch(err){
+      const raw=String(err?.message||'Unable to save the permission group.');
+      const friendly=/duplicate entry|constraint|could not execute statement|sql \[/i.test(raw)
+        ? 'Unable to update permissions. Please refresh and try again.'
+        : raw;
+      msg(roleStatusEl,friendly,'error');
+    }finally{btn.disabled=false;}
   }
 
   document.addEventListener('change',e=>{
