@@ -39,8 +39,7 @@
     {menuKey:'wbet_bet_limit', title:'WBET Bet Limit', url:'wbet-bet-limit.html', icon:'bi-sliders', parentKey:'wallet', sortOrder:16},
     {menuKey:'provider_wallet_transaction', title:'Provider Transactions', url:'provider-wallet-transaction.html', icon:'bi-journal-text', parentKey:'wallet', sortOrder:16},
     {menuKey:'admin', title:'Admin Management', url:'admin-user.html', icon:'bi-shield-lock', parentKey:'', sortOrder:20},
-    {menuKey:'role', title:'Role', url:'role.html', icon:'bi-person-badge', parentKey:'access', sortOrder:30},
-    {menuKey:'menu_permission', title:'Menu Permission', url:'menu-permission.html', icon:'bi-menu-button-wide', parentKey:'access', sortOrder:33},
+    {menuKey:'role', title:'Role & Menu Permission', url:'role.html', icon:'bi-person-badge', parentKey:'access', sortOrder:30},
     {menuKey:'account_lock', title:'Account Lock', url:'account-lock.html', icon:'bi-lock', parentKey:'access', sortOrder:34},
     {menuKey:'live_chat', title:'Live Chat', url:'livechat.html', icon:'bi-chat-dots', parentKey:'support', sortOrder:55},
     {menuKey:'livechat_template', title:'Template Messages', url:'livechat-template.html', icon:'bi-chat-square-text', parentKey:'support', sortOrder:56},
@@ -96,6 +95,34 @@
     saveUser: function(user){ localStorage.setItem(this.userKey, JSON.stringify(user || {})); this.renderProfile(); this.renderSidebar(user); },
     logout: function(){ localStorage.removeItem(this.tokenKey); localStorage.removeItem(this.userKey); window.location.href = 'login.html'; },
     requireLogin: function(){ if(!this.token() && !location.pathname.endsWith('/login.html')) window.location.href = 'login.html'; },
+    allowedMenus: function(user){
+      user = user || this.user();
+      return (Array.isArray(user && user.menus) ? user.menus : [])
+        .map(normalizeMenu)
+        .filter(function(m){ return m.status === 1 && m.url && m.url !== '#' && m.menuKey !== 'menu_permission'; })
+        .sort(function(a,b){ return a.sortOrder - b.sortOrder || a.title.localeCompare(b.title); });
+    },
+    landingPage: function(user){
+      const menus = this.allowedMenus(user);
+      return menus.length ? menus[0].url : 'login.html';
+    },
+    enforcePageAccess: function(user){
+      const current = pageName();
+      const alwaysAllowed = ['profile.html','change-password.html'];
+      if(alwaysAllowed.indexOf(current) !== -1) return true;
+      const menus = this.allowedMenus(user);
+      if(!menus.length){
+        this.logout();
+        return false;
+      }
+      const allowed = menus.some(function(m){ return (m.url || '').split('/').pop() === current; });
+      if(!allowed){
+        const landing = this.landingPage(user);
+        if(landing && landing !== current) window.location.replace(landing);
+        return false;
+      }
+      return true;
+    },
     authHeader: function(){ return this.token() ? {'Authorization':'Bearer ' + this.token()} : {}; },
     loginUrl: function(){ return api('AUTH_ADMIN_LOGIN'); },
     createAdminUrl: function(){ return api('AUTH_ADMIN_CREATE'); },
@@ -117,11 +144,12 @@
       try{
         const res = await fetch(this.adminMeUrl(), {headers: {...this.authHeader()}});
         const json = await res.json().catch(() => ({}));
-        if(res.ok && json.status !== 'error' && json.data){ this.saveUser(json.data); return json.data; }
+        if(res.ok && json.status !== 'error' && json.data){ this.saveUser(json.data); this.enforcePageAccess(json.data); return json.data; }
         if(json.message === 'Unauthorized') this.logout();
       }catch(e){}
       const user = this.user();
       this.renderSidebar(user);
+      this.enforcePageAccess(user);
       return user;
     },
     applyMenuPermission: function(user){
@@ -136,7 +164,8 @@
       if(!menus.length && !this.token()) menus = FALLBACK_MENUS;
       if(!menus.length) return;
 
-      menus = menus.map(normalizeMenu).filter(m => m.status === 1 && m.url && m.url !== '#')
+      menus = menus.map(normalizeMenu).filter(m => m.status === 1 && m.url && m.url !== '#' && m.menuKey !== 'menu_permission')
+        .map(m => m.menuKey === 'role' ? Object.assign({}, m, {title:'Role & Menu Permission'}) : m)
         .sort((a,b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
 
       const top = [];
