@@ -96,7 +96,7 @@
     if(!(await BO_DIALOG.confirm(`Confirm to ${label} this withdraw request?`, {title:'Confirm Withdrawal Action'}))) return;
     try{
       const key = type === 'approve' ? 'MEMBER_WITHDRAW_APPROVE' : 'MEMBER_WITHDRAW_REJECT';
-      const json = await api(endpoint(key) + '/' + encodeURIComponent(id), {method:'POST', headers:{'Content-Type':'application/json', ...BO_AUTH.authHeader()}, body: JSON.stringify({adminRemark})});
+      const json = await api(endpoint(key) + '/' + encodeURIComponent(id), {method:'POST', headers:{'Content-Type':'application/json','X-Admin-Username':String(BO_AUTH.user()?.username||'ADMIN'), ...BO_AUTH.authHeader()}, body: JSON.stringify({adminRemark})});
       alert(json.message || 'Done');
       load();
     }catch(e){ alert(e.message || 'Action failed'); }

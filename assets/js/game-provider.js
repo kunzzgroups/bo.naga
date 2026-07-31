@@ -296,7 +296,19 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         httpMethod: 'POST',
         signatureTemplate: '${function_name}${request_datetime}${OperatorId}${SecretKey}',
         requestTemplate: '{\n  "OperatorId": "${OperatorId}",\n  "RequestDateTime": "${request_datetime}",\n  "Signature": "${signature}"\n}',
-        responseListPath: 'Logs'
+        responseListPath: 'Logs',
+        playerIdPath: 'PlayerId',
+        providerTxIdPath: 'TransactionId',
+        betAmountPath: 'BetAmount',
+        validBetAmountPath: 'ValidBetAmount',
+        winAmountPath: 'WinAmount',
+        netAmountPath: 'WinLose',
+        gameCodePath: 'GameCode',
+        roundIdPath: 'RoundId',
+        eventTypePath: 'Status',
+        settlementTimePath: 'SettlementTime',
+        sequencePath: 'Sequence',
+        originalTxIdPath: 'OriginalTransactionId'
       },
       CREATE_PLAYER: {
         functionName: 'CreatePlayer',

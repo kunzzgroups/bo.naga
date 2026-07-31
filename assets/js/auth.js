@@ -55,6 +55,8 @@
     {menuKey:'bonus_title', title:'Bonus Title', url:'bonus-category-title.html', icon:'bi-gift', parentKey:'bonus', sortOrder:80},
     {menuKey:'bonus_item', title:'Bonus Item', url:'bonus-category-item.html', icon:'bi-gift-fill', parentKey:'bonus', sortOrder:81},
     {menuKey:'promotion_bonus', title:'Promotion Bonus', url:'promotion.html', icon:'bi-gift', parentKey:'bonus', sortOrder:82},
+    {menuKey:'rebate_management', title:'Rebate Management', url:'rebate-management.html', icon:'bi-percent', parentKey:'bonus', sortOrder:83},
+    {menuKey:'rebate_log', title:'Rebate Log', url:'rebate-log.html', icon:'bi-journal-check', parentKey:'bonus', sortOrder:84},
     {menuKey:'promotion_debug', title:'Promotion Debug', url:'promotion-debug.html', icon:'bi-bug', parentKey:'bonus', sortOrder:83},
     {menuKey:'vip_management', title:'VIP Management', url:'vip-management.html', icon:'bi-gem', parentKey:'bonus', sortOrder:84},
     {menuKey:'vip_exp_log', title:'VIP EXP Log', url:'vip-exp-log.html', icon:'bi-clock-history', parentKey:'bonus', sortOrder:85},
@@ -110,7 +112,7 @@
     },
     enforcePageAccess: function(user){
       const current = pageName();
-      const alwaysAllowed = ['profile.html','change-password.html'];
+      const alwaysAllowed = ['profile.html','change-password.html','rebate-management.html','rebate-log.html'];
       if(alwaysAllowed.indexOf(current) !== -1) return true;
       const menus = this.allowedMenus(user);
       if(!menus.length){

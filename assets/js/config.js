@@ -116,7 +116,8 @@ const API_CONFIG = window.API_CONFIG || {
         PROMOTION_LIST: "/admin/promotion/list",
         PROMOTION_SAVE: "/admin/promotion/save",
         PROMOTION_SAVE_FORM: "/admin/promotion/save-form",
-        PROMOTION_DELETE: "/admin/promotion/delete",
+        PROMOTION_CLONE: '/admin/promotion/clone/{id}',
+    PROMOTION_DELETE: "/admin/promotion/delete",
         PROMOTION_DEBUG_CLAIMS: "/admin/promotion/debug/claims",
 
         GAME_LIST: "/admin/game/list",
@@ -144,6 +145,10 @@ const API_CONFIG = window.API_CONFIG || {
 };
 
 window.API_CONFIG = API_CONFIG;
+// Compatibility globals used by newer BO modules. Keep login and legacy pages isolated
+// from module load order and avoid referencing undeclared variables during config init.
+window.API_BASE = String(API_CONFIG.BASE_URL || '').replace(/\/api\/?$/, '');
+window.API_ENDPOINTS = API_CONFIG.ENDPOINTS || {};
 
 window.BO_FORMAT = window.BO_FORMAT || {
   dateTime: function(value){

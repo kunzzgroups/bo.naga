@@ -5346,3 +5346,87 @@ body.modal-open{overflow:hidden!important}
 @media(max-width:1199.98px){.bo-header-counter{min-width:42px;width:42px;padding:5px;justify-content:center}.bo-header-counter-text{position:absolute;right:-4px;top:-5px;display:block;width:auto;height:auto;overflow:visible}.bo-header-counter-text small{display:none}.bo-header-counter-text b{display:grid;place-items:center;min-width:18px;height:18px;padding:0 4px;border-radius:999px;background:#ef4444;color:#fff;font-size:10px;border:2px solid #fff;margin:0}.bo-header-counter{position:relative}}
 @media(max-width:767.98px){.bo-header-counters{gap:5px}.bo-header-counter{width:36px;min-width:36px;height:38px;border-radius:10px}.bo-header-counter-icon{width:27px;height:27px}.report-actions{gap:5px!important}}
 @media(max-width:575.98px){.bo-header-counter{display:flex!important}.bo-header-counters .bo-header-counter:nth-child(1){display:none!important}}
+
+/* Promotion modal: rebate-rule style section sequence */
+#crudPatternModal .promo-standard-sections{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+#crudPatternModal .promo-standard-section{
+  border:1px solid #d9e3f1;
+  border-radius:15px;
+  background:#fff;
+  padding:16px;
+}
+#crudPatternModal .promo-standard-section-head{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  margin-bottom:14px;
+  color:#253858;
+}
+#crudPatternModal .promo-standard-section-head>i{
+  font-size:15px;
+  line-height:1.3;
+  margin-top:1px;
+}
+#crudPatternModal .promo-standard-section-head b{
+  display:block;
+  font-size:14px;
+  line-height:1.3;
+  font-weight:800;
+}
+#crudPatternModal .promo-standard-section-head small{
+  display:block;
+  margin-top:3px;
+  color:#70809a;
+  font-size:11px;
+  line-height:1.45;
+  font-weight:500;
+}
+#crudPatternModal .promo-standard-section-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px 13px;
+  align-items:start;
+}
+#crudPatternModal .promo-standard-section-grid>.field{
+  min-width:0;
+  margin:0;
+}
+#crudPatternModal .promo-standard-section-grid>.field.full{
+  grid-column:1/-1;
+}
+#crudPatternModal .promo-standard-section-grid label{
+  margin-bottom:6px;
+}
+#crudPatternModal .promo-standard-section-grid input,
+#crudPatternModal .promo-standard-section-grid select,
+#crudPatternModal .promo-standard-section-grid textarea{
+  width:100%;
+}
+#crudPatternModal .promo-standard-section-grid .promo-image-preview-wrap{
+  margin-top:8px;
+}
+#crudPatternModal .promo-standard-section-grid .promo-rule-box{
+  color:#667085;
+  border:1px dashed #d5deea;
+  background:#f8fafc;
+  border-radius:10px;
+  padding:10px 12px;
+}
+#crudPatternModal .promo-standard-section-grid .promo-wysiwyg-wrap{
+  margin-top:0;
+}
+#crudPatternModal .crud-pattern-dialog{
+  width:min(920px,calc(100vw - 32px));
+}
+@media(max-width:900px){
+  #crudPatternModal .promo-standard-section-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:575.98px){
+  #crudPatternModal .promo-standard-section{padding:13px;border-radius:13px;}
+  #crudPatternModal .promo-standard-section-grid{grid-template-columns:1fr;gap:12px;}
+  #crudPatternModal .promo-standard-section-grid>.field.full{grid-column:auto;}
+}

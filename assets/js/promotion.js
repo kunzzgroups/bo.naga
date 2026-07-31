@@ -6,6 +6,7 @@
   const searchInput=$('promoSearchInput'), categoryFilter=$('promoCategoryFilter'), statusFilter=$('promoStatusFilter'), sortFilter=$('promoSortFilter');
   const totalCount=$('promoTotalCount'), activeCount=$('promoActiveCount'), activePercent=$('promoActivePercent'), showingText=$('promoShowingText');
   let rows=[];
+  let promoPage=0;
   let categoryTitles=[];
   let selectedPromoImage=null;
   let detailHtmlMode=false;
@@ -70,6 +71,38 @@
   function syncEditor(){ const t=$('promoDetailText'); if(t&&t._syncEditor)t._syncEditor(); }
   function setDetailEditorContent(html){ const t=$('promoDetailText'); if(t&&t._setEditorContent)t._setEditorContent(html||''); else if(t)t.value=html||''; }
 
+  function togglePolicyField(name,show){ document.querySelectorAll(`[data-policy-field="${name}"]`).forEach(el=>el.classList.toggle('policy-hidden',!show)); }
+  function updatePolicyVisibility(){
+    const deadline=val('promoCompletionDeadlineMode');
+    togglePolicyField('completion-days',deadline==='DAYS_AFTER_CLAIM');
+    togglePolicyField('completion-fixed',deadline==='FIXED_DATE');
+    const policy=val('promoRebatePolicy');
+    const conditional=policy==='CONDITIONAL';
+    togglePolicyField('rebate-condition',conditional);
+    const cond=val('promoRebateStartCondition');
+    const balance=conditional && (cond==='ELIGIBLE_BALANCE_BELOW'||cond==='BALANCE_BELOW_AND_NEW_DEPOSIT');
+    togglePolicyField('eligible-balance-type',balance);
+    togglePolicyField('eligible-balance-threshold',balance);
+    const wr=val('promoWithdrawalRestriction');
+    togglePolicyField('max-withdraw',wr!=='NONE'&&wr!=='MANUAL_REVIEW');
+    togglePolicyField('excess-action',wr!=='NONE');
+  }
+  function validatePolicy(){
+    const displayStart=val('promoStartAt'),displayEnd=val('promoEndAt');
+    if(displayStart&&displayEnd&&new Date(displayEnd)<=new Date(displayStart)) throw new Error('Display End must be later than Display Start');
+    const start=val('promoClaimStartAt'),end=val('promoClaimEndAt');
+    if(start&&end&&new Date(end)<=new Date(start)) throw new Error('Claim End must be later than Claim Start');
+    const deadline=val('promoCompletionDeadlineMode');
+    if(deadline==='DAYS_AFTER_CLAIM'&&num('promoCompletionDays')<=0) throw new Error('Completion Days must be greater than 0');
+    if(deadline==='FIXED_DATE'&&!val('promoCompletionFixedAt')) throw new Error('Fixed Completion Date is required');
+    if(val('promoRebatePolicy')==='CONDITIONAL'){
+      const cond=val('promoRebateStartCondition');
+      if((cond==='ELIGIBLE_BALANCE_BELOW'||cond==='BALANCE_BELOW_AND_NEW_DEPOSIT')&&num('promoEligibleBalanceThreshold')===null) throw new Error('Eligible Balance Threshold is required');
+    }
+    const wr=val('promoWithdrawalRestriction');
+    if(wr!=='NONE'&&wr!=='MANUAL_REVIEW'&&(num('promoMaxWithdraw')===null||num('promoMaxWithdraw')<=0)) throw new Error('Max Withdraw / Multiplier Value must be greater than 0');
+  }
+
   function payload(){
     syncEditor();
     const fd=new FormData();
@@ -77,6 +110,7 @@
     const name=val('promoItemName') || val('promoName');
     const fields={
       name:name,
+      promotionCode:val('promoCode'),
       bonusCategoryTitleId:num('promoBonusCategoryTitleId'),
       linkUrl:val('promoLinkUrl'),
       desktopColumns:num('promoDesktopColumns'),
@@ -84,7 +118,7 @@
       desktopSpan:num('promoDesktopSpan'),
       mobileSpan:num('promoMobileSpan'),
       singleLeft:num('promoSingleLeft'),
-      bonusType:val('promoBonusType'),claimCondition:val('promoClaimCondition'),bonusPercentage:num('promoPercentage'),bonusFixedAmount:num('promoFixed'),bonusRandomMin:num('promoRandomMin'),bonusRandomMax:num('promoRandomMax'),maxPayout:num('promoMaxPayout'),minTopupAmount:num('promoMinTopup'),maxTopupAmount:num('promoMaxTopup'),minTimesOfTopup:num('promoMinTimes'),claimLimit:num('promoClaimLimit'),claimReset:val('promoClaimReset'),rollover:num('promoRollover'),turnover:num('promoTurnover'),maxWithdraw:num('promoMaxWithdraw'),description:val('promoDescription'),detailText:val('promoDetailText'),displayAmount:num('promoDisplayAmount'),freeCreditWallet:val('promoWallet'),allowedGames:val('promoAllowedGames'),displayOrder:num('promoDisplayOrder'),status:num('promoStatus')
+      bonusType:val('promoBonusType'),claimCondition:val('promoClaimCondition'),bonusPercentage:num('promoPercentage'),bonusFixedAmount:num('promoFixed'),bonusRandomMin:num('promoRandomMin'),bonusRandomMax:num('promoRandomMax'),maxPayout:num('promoMaxPayout'),minTopupAmount:num('promoMinTopup'),maxTopupAmount:num('promoMaxTopup'),minTimesOfTopup:num('promoMinTimes'),claimLimit:num('promoClaimLimit'),claimReset:val('promoClaimReset'),rollover:num('promoRollover'),turnover:num('promoTurnover'),maxWithdraw:num('promoMaxWithdraw'),description:val('promoDescription'),detailText:val('promoDetailText'),displayAmount:num('promoDisplayAmount'),freeCreditWallet:val('promoWallet'),allowedGames:val('promoAllowedGames'),displayOrder:num('promoDisplayOrder'),status:num('promoStatus'),startAt:val('promoStartAt'),endAt:val('promoEndAt'),claimStartAt:val('promoClaimStartAt'),claimEndAt:val('promoClaimEndAt'),completionDeadlineMode:val('promoCompletionDeadlineMode'),completionDays:num('promoCompletionDays'),completionFixedAt:val('promoCompletionFixedAt'),rebatePolicy:val('promoRebatePolicy'),rebateStartCondition:val('promoRebateStartCondition'),eligibleBalanceType:val('promoEligibleBalanceType'),eligibleBalanceThreshold:num('promoEligibleBalanceThreshold'),newDepositRequired:num('promoNewDepositRequired'),canClaimRebate:val('promoCanClaimRebate'),completionMode:val('promoCompletionMode'),rewardClaimMode:val('promoRewardClaimMode'),walletConsumptionPriority:val('promoWalletConsumptionPriority'),winAllocationRule:val('promoWinAllocationRule'),withdrawalRestriction:val('promoWithdrawalRestriction'),excessBalanceAction:val('promoExcessBalanceAction')
     };
     Object.entries(fields).forEach(([k,v])=>{ if(v!==null && v!==undefined) fd.append(k,v); });
     if(selectedPromoImage) fd.append('image', selectedPromoImage);
@@ -94,10 +128,19 @@
   function reset(){
     form.reset();
     $('promoId').value='';
+    if($('promoCode')) $('promoCode').value='';
     if($('promoBonusCategoryTitleId')) $('promoBonusCategoryTitleId').value='';
     clearImagePreview();
     $('promoClaimLimit').value='1';
     $('promoDisplayOrder').value='0';
+    if($('promoRebatePolicy')) $('promoRebatePolicy').value='DISABLED';
+    if($('promoStartAt')) $('promoStartAt').value='';
+    if($('promoEndAt')) $('promoEndAt').value='';
+    if($('promoClaimStartAt')) $('promoClaimStartAt').value='';
+    if($('promoClaimEndAt')) $('promoClaimEndAt').value='';
+    if($('promoCompletionDeadlineMode')) $('promoCompletionDeadlineMode').value='NO_EXPIRY';
+    if($('promoWithdrawalRestriction')) $('promoWithdrawalRestriction').value='NONE';
+    updatePolicyVisibility();
     setDetailEditorContent('');
     $('promoFormTitle').textContent='Create Promotion';
     set('','');
@@ -107,6 +150,7 @@
   function fill(x){
     $('promoId').value=x.id||'';
     $('promoName').value=x.name||'';
+    if($('promoCode')) $('promoCode').value=x.promotionCode||'';
     if($('promoItemName')) $('promoItemName').value=x.name||'';
     if($('promoBonusCategoryTitleId')) $('promoBonusCategoryTitleId').value=x.bonusCategoryTitleId||'';
     if($('promoLinkUrl')) $('promoLinkUrl').value=x.linkUrl||'';
@@ -139,6 +183,8 @@
     $('promoAllowedGames').value=x.allowedGames||'';
     $('promoDisplayOrder').value=x.displayOrder??0;
     $('promoStatus').value=String(x.status??1);
+    const dt=v=>v?String(v).slice(0,16):''; $('promoStartAt').value=dt(x.startAt); $('promoEndAt').value=dt(x.endAt); $('promoClaimStartAt').value=dt(x.claimStartAt); $('promoClaimEndAt').value=dt(x.claimEndAt); $('promoCompletionDeadlineMode').value=x.completionDeadlineMode||'NO_EXPIRY'; $('promoCompletionDays').value=x.completionDays??''; $('promoCompletionFixedAt').value=dt(x.completionFixedAt); $('promoRebatePolicy').value=x.rebatePolicy||'DISABLED'; $('promoRebateStartCondition').value=x.rebateStartCondition||'PROMOTION_COMPLETED'; $('promoEligibleBalanceType').value=x.eligibleBalanceType||'MAIN_PLUS_BONUS'; $('promoEligibleBalanceThreshold').value=x.eligibleBalanceThreshold??''; $('promoNewDepositRequired').value=String(x.newDepositRequired??0); $('promoCanClaimRebate').value=x.canClaimRebate||'AFTER_PROMOTION_COMPLETED'; $('promoCompletionMode').value=x.completionMode||'AUTO_COMPLETE'; $('promoRewardClaimMode').value=x.rewardClaimMode||'NO_ADDITIONAL_CLAIM'; $('promoWalletConsumptionPriority').value=x.walletConsumptionPriority||'BONUS_FIRST'; $('promoWinAllocationRule').value=x.winAllocationRule||'RETURN_TO_STAKE_SOURCE'; $('promoWithdrawalRestriction').value=x.withdrawalRestriction||'NONE'; $('promoExcessBalanceAction').value=x.excessBalanceAction||'KEEP_LOCKED';
+    updatePolicyVisibility();
     $('promoFormTitle').textContent='Edit Promotion #'+x.id;
     set('Editing promotion. Save to update.','success');
     window.scrollTo({top:0,behavior:'smooth'});
@@ -165,37 +211,40 @@
 
   function render(){
     const filtered=filteredRows();
-    list.innerHTML='';
-    empty.hidden=filtered.length>0;
+    const pageSize=Number(($('promoPageSize')&&$('promoPageSize').value)||20);
+    const pages=Math.ceil(filtered.length/pageSize); if(pages===0)promoPage=0; else promoPage=Math.min(promoPage,pages-1);
+    const start=promoPage*pageSize, visible=filtered.slice(start,start+pageSize);
+    list.innerHTML=''; empty.hidden=filtered.length>0;
     const active=rows.filter(x=>Number(x.status)===1).length;
     if(totalCount) totalCount.textContent=rows.length;
     if(activeCount) activeCount.textContent=active;
     if(activePercent) activePercent.textContent=(rows.length?Math.round(active*100/rows.length):0)+'% of total';
-    if(showingText) showingText.textContent=`Showing ${filtered.length} of ${rows.length} entries`;
-    filtered.forEach(x=>{
-      const d=document.createElement('div');
-      d.className='promotion-table-row';
+    if(showingText) showingText.textContent=`Showing ${filtered.length?start+1:0} to ${Math.min(start+pageSize,filtered.length)} of ${filtered.length} entries`;
+    visible.forEach(x=>{
+      const d=document.createElement('div'); d.className='promotion-table-row';
       const category=x.bonusCategoryTitleName||categoryName(x.bonusCategoryTitleId)||'No Category';
       const desc=(x.description||x.detailText||'').replace(/<[^>]*>/g,'').slice(0,120);
       d.innerHTML=`
         <div class="promotion-main-cell">
           <div class="promotion-thumb">${x.bonusImageUrl?`<img src="${esc(x.bonusImageUrl)}" alt="${esc(x.name||'Promotion')}">`:'<i class="bi bi-image"></i>'}</div>
-          <div class="promotion-copy"><b>${esc(x.name||'-')}</b><small>${esc(category)} <span>•</span> Order: ${esc(x.displayOrder??0)}</small><p>${esc(desc||x.ruleText||'No description')}</p></div>
+          <div class="promotion-copy"><b>${esc(x.name||'-')}</b><small>${esc(x.promotionCode||('PROMO-'+x.id))} <span>•</span> ${esc(category)} <span>•</span> Order: ${esc(x.displayOrder??0)}</small><p>${esc(desc||x.ruleText||'No description')}</p></div>
         </div>
-        <div class="promotion-detail-cell"><span class="promo-chip">${esc(x.claimCondition||'MANUAL')}</span><span class="promo-chip">${esc(x.bonusType||'FIXED')}</span><small>Fixed ${money(x.bonusFixedAmount)} / ${money(x.bonusPercentage)}%</small></div>
+        <div class="promotion-detail-cell"><span class="promo-chip">${esc(x.claimCondition||'MANUAL')}</span><span class="promo-chip">${esc(x.bonusType||'FIXED')}</span><small>Rebate: ${esc((x.rebatePolicy||'DISABLED').replaceAll('_',' '))}</small></div>
         <div class="promotion-status-cell"><span class="slider-pill ${Number(x.status)===1?'active':'inactive'}"><i class="bi ${Number(x.status)===1?'bi-check-circle':'bi-pause-circle'}"></i>${Number(x.status)===1?'Active':'Inactive'}</span></div>
-        <div class="promotion-action-cell"><button class="icon-action-btn edit edit-btn" title="Edit" aria-label="Edit" data-edit="${x.id}"><i class="bi bi-pencil-square"></i></button><button class="icon-action-btn delete btn-delete" title="Delete" aria-label="Delete" data-del="${x.id}"><i class="bi bi-trash"></i></button></div>`;
+        <div class="promotion-action-cell"><button class="icon-action-btn" title="Clone" aria-label="Clone" data-clone="${x.id}"><i class="bi bi-copy"></i></button><button class="icon-action-btn edit edit-btn" title="Edit" aria-label="Edit" data-edit="${x.id}"><i class="bi bi-pencil-square"></i></button><button class="icon-action-btn delete btn-delete" title="Delete" aria-label="Delete" data-del="${x.id}"><i class="bi bi-trash"></i></button></div>`;
       list.appendChild(d);
     });
+    const pager=$('promoPager'); if(pager){let h=`<button class="page-btn" ${promoPage<=0?'disabled':''} data-p="${promoPage-1}"><i class="bi bi-chevron-left"></i></button>`;for(let i=Math.max(0,promoPage-2);i<=Math.min(pages-1,promoPage+2);i++)h+=`<button class="page-btn ${i===promoPage?'active':''}" data-p="${i}">${i+1}</button>`;h+=`<button class="page-btn" ${promoPage>=pages-1||!pages?'disabled':''} data-p="${promoPage+1}"><i class="bi bi-chevron-right"></i></button>`;pager.innerHTML=h;}
   }
 
-  async function req(url,opt){const r=await fetch(url,opt);const j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw new Error(j.message||'Request failed');return j;}
+  async function req(url,opt){opt=opt||{};const u=window.BO_AUTH&&BO_AUTH.user?BO_AUTH.user():{};const actor=u.username||u.displayName||localStorage.getItem('adminUsername')||localStorage.getItem('admin_username')||'ADMIN';opt.headers=Object.assign({},window.BO_AUTH&&BO_AUTH.authHeader?BO_AUTH.authHeader():{}, {'X-Admin-Username':actor},opt.headers||{});const r=await fetch(url,opt);const j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw new Error(j.message||'Request failed');return j;}
   async function load(){set('Loading...','');const j=await req(promoApi('PROMOTION_LIST'));rows=Array.isArray(j.data)?j.data:[];render();set('','');}
 
   form.addEventListener('submit',async e=>{
     e.preventDefault();
     try{
       if(!val('promoName'))throw new Error('Name is required');
+      validatePolicy();
       set('Saving...','');
       await req(promoApi('PROMOTION_SAVE_FORM'),{method:'POST',body:payload()});
       set('Saved successfully','success');
@@ -205,17 +254,21 @@
   });
   $('promoResetBtn').onclick=reset;
   $('promoRefreshBtn').onclick=load;
-  $('applyPromoFilters').onclick=render;
-  $('resetPromoFilters').onclick=()=>{ if(searchInput)searchInput.value=''; if(categoryFilter)categoryFilter.value=''; if(statusFilter)statusFilter.value=''; if(sortFilter)sortFilter.value='orderAsc'; render(); };
+  $('applyPromoFilters').onclick=()=>{promoPage=0;render();};
+  $('resetPromoFilters').onclick=()=>{ if(searchInput)searchInput.value=''; if(categoryFilter)categoryFilter.value=''; if(statusFilter)statusFilter.value=''; if(sortFilter)sortFilter.value='orderAsc'; promoPage=0; render(); };
   searchInput?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();render();}});
   list.addEventListener('click',async e=>{
-    const eb=e.target.closest('[data-edit]'),db=e.target.closest('[data-del]');
-    if(eb){fill(rows.find(x=>String(x.id)===eb.dataset.edit)||{});}
+    const eb=e.target.closest('[data-edit]'),cb=e.target.closest('[data-clone]'),db=e.target.closest('[data-del]');
+    if(eb){fill(rows.find(x=>String(x.id)===eb.dataset.edit)||{});} if(cb&&await BO_DIALOG.confirm('Clone this promotion as an inactive draft?',{title:'Clone Promotion',confirmText:'Clone'})){await req(promoApi('PROMOTION_CLONE').replace('{id}',cb.dataset.clone),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});load();}
     if(db&&await BO_DIALOG.confirm('Delete this promotion?', {title:'Delete Promotion', confirmText:'Delete'})){await req(promoApi('PROMOTION_DELETE'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:Number(db.dataset.del)})});load();}
   });
 
+  $('promoPageSize')?.addEventListener('change',()=>{promoPage=0;render();});
+  $('promoPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(!b||b.disabled)return;promoPage=Number(b.dataset.p);render();});
   const promoImageInput=$('promoImage');
   if(promoImageInput){ promoImageInput.addEventListener('change',()=>{ const f=promoImageInput.files&&promoImageInput.files[0]; selectedPromoImage=f||null; if(f) showImagePreview(URL.createObjectURL(f)); }); }
+  ['promoCompletionDeadlineMode','promoRebatePolicy','promoRebateStartCondition','promoWithdrawalRestriction'].forEach(id=>$(id)?.addEventListener('change',updatePolicyVisibility));
+  updatePolicyVisibility();
   initDetailEditor();
   loadCategoryTitles().then(()=>load()).catch(e=>set(e.message,'error'));
 })();

@@ -44,7 +44,8 @@
     const p=new URLSearchParams();
     const memberId=$('betMemberId')?.value.trim(); if(memberId) p.set('memberId', memberId);
     const provider=$('betProviderCode')?.value.trim(); if(provider) p.set('providerCode', provider);
-    const game=$('betGameCode')?.value.trim(); if(game){ p.set('gameId', game); p.set('gameCode', game); }
+    const game=$('betGameCode')?.value.trim(); if(game) p.set('gameCode', game);
+    const eventType=$('betEventType')?.value.trim(); if(eventType) p.set('eventType', eventType);
     const from=$('betFrom')?.value.trim(); if(from) p.set('from', from);
     const to=$('betTo')?.value.trim(); if(to) p.set('to', to);
     p.set('page',page); p.set('size','20');
@@ -93,5 +94,19 @@
       setPager();
     }catch(e){$('betBody').innerHTML='<tr><td colspan="11" class="text-danger">'+esc(e.message)+'</td></tr>';}
   }
-  document.addEventListener('DOMContentLoaded',()=>{BO_AUTH.requireLogin();BO_AUTH.renderProfile&&BO_AUTH.renderProfile();BO_AUTH.renderSidebar&&BO_AUTH.renderSidebar();setFromUrl();$('betSearchBtn')?.addEventListener('click',()=>{page=1;loadMemberMap().finally(load);});$('betPrevBtn')?.addEventListener('click',()=>{if(page>1){page--;load();}});$('betNextBtn')?.addEventListener('click',()=>{if(page<totalPages){page++;load();}});$('betPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(!b)return;const n=Number(b.dataset.page);if(n>=1&&n<=totalPages&&n!==page){page=n;load();}});loadMemberMap().finally(load);});
+  document.addEventListener('DOMContentLoaded',()=>{
+    BO_AUTH.requireLogin();
+    BO_AUTH.renderProfile&&BO_AUTH.renderProfile();
+    BO_AUTH.renderSidebar&&BO_AUTH.renderSidebar();
+    setFromUrl();
+    const runSearch=()=>{page=1;loadMemberMap().finally(load);};
+    $('betSearchBtn')?.addEventListener('click',runSearch);
+    ['betMemberId','betProviderCode','betGameCode','betEventType','betFrom','betTo'].forEach(id=>{
+      $(id)?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runSearch();}});
+    });
+    $('betPrevBtn')?.addEventListener('click',()=>{if(page>1){page--;load();}});
+    $('betNextBtn')?.addEventListener('click',()=>{if(page<totalPages){page++;load();}});
+    $('betPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(!b)return;const n=Number(b.dataset.page);if(n>=1&&n<=totalPages&&n!==page){page=n;load();}});
+    loadMemberMap().finally(load);
+  });
 })();

@@ -1,230 +1,713 @@
 <!doctype html>
 <html lang="en">
 
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Promotion Bonus</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-    <link href="assets/css/reports.css?v=1.0.31" rel="stylesheet" />
-    <link href="assets/css/promotion-wysiwyg.css?v=1.0.1" rel="stylesheet" />
-</head>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Promotion Bonus</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet" />
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet" />
+        <link href="assets/css/reports.css?v=1.0.32" rel="stylesheet" />
+        <link href="assets/css/promotion-wysiwyg.css?v=1.0.1"
+            rel="stylesheet" />
+        <link href="assets/css/promotion-policy.css?v=1.0.1" rel="stylesheet" />
+        <link href="assets/css/table-pagination-horizontal.css?v=2.0.2"
+            rel="stylesheet" />
+    </head>
 
-<body class="report-body standardized-content-management">
-    <div class="report-shell">
-        <aside class="report-sidebar" id="reportSidebar">
-            <div class="report-brand">
-                <div>Backoffice<br /><small>Admin Panel</small></div><button class="close-side" data-close-sidebar><i
-                        class="bi bi-x-lg"></i></button>
-            </div>
-            <nav class="report-nav"></nav>
-        </aside>
-        <div class="sidebar-overlay" id="reportOverlay" data-close-sidebar></div>
-        <main class="report-main">
-            <header class="report-topbar"><button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button>
-                <div class="user-title-wrap">
-                    <div class="user-title-icon"><i class="bi bi-megaphone"></i></div>
-                    <div>
-                        <h1>Promotion Bonus</h1>
-                        <p>Manage promotion bonuses, rewards, rules and display status.</p>
-                    </div>
+    <body class="report-body standardized-content-management">
+        <div class="report-shell">
+            <aside class="report-sidebar" id="reportSidebar">
+                <div class="report-brand">
+                    <div>Backoffice<br /><small>Admin Panel</small></div><button
+                        class="close-side" data-close-sidebar><i
+                            class="bi bi-x-lg"></i></button>
                 </div>
-                <div class="report-actions" data-bo-profile></div>
-            </header>
-            <section class="report-content">
-                <div class="manage-page-grid">
-                    <div class="manage-form-card">
-                        <div class="section-title mb-3">
-                            <div>
-                                <h3 id="promoFormTitle">Create Promotion</h3>
-                            </div>
+                <nav class="report-nav"></nav>
+            </aside>
+            <div class="sidebar-overlay" id="reportOverlay"
+                data-close-sidebar></div>
+            <main class="report-main">
+                <header class="report-topbar"><button class="hamb"
+                        data-open-sidebar><i class="bi bi-list"></i></button>
+                    <div class="user-title-wrap">
+                        <div class="user-title-icon"><i
+                                class="bi bi-megaphone"></i></div>
+                        <div>
+                            <h1>Promotion Bonus</h1>
+                            <p>Manage promotion bonuses, rewards, rules and
+                                display status.</p>
                         </div>
-                        <form id="promoForm" class="slider-form"><input type="hidden" id="promoId">
-                            <div class="promo-form-grid">
-                                <div class="field full"><label>Bonus Category Title</label><select id="promoBonusCategoryTitleId"><option value="">Select bonus category title</option></select>
-                                    
-                                </div>
-                                <div class="field full"><label>Promotion / Bonus Image</label>
-                                    <input id="promoImage" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
-                                    <div class="promo-image-preview-wrap"><img id="promoImagePreview" class="promo-image-preview" hidden><span id="promoImageCurrent" class="promo-help"></span></div>
-                                </div>
-                                <div class="field full"><label>Item Name (Optional)</label><input id="promoItemName" placeholder="Optional display/admin item name. Leave blank to use promotion name."></div>
-                                <div class="field full"><label>Link URL (Optional)</label><input id="promoLinkUrl" placeholder="Optional. If empty, click opens promotion detail popup."></div>
-                                <div class="field"><label>Desktop Grid</label><select id="promoDesktopColumns"><option value="1">d-cols-1</option><option value="2" selected>d-cols-2</option><option value="3">d-cols-3</option><option value="4">d-cols-4</option><option value="5">d-cols-5</option><option value="6">d-cols-6</option></select></div>
-                                <div class="field"><label>Mobile Grid</label><select id="promoMobileColumns"><option value="1" selected>m-cols-1</option><option value="2">m-cols-2</option><option value="3">m-cols-3</option></select></div>
-                                <div class="field"><label>Desktop Card Span</label><select id="promoDesktopSpan"><option value="1" selected>Normal</option><option value="2">Span 2</option><option value="3">Span 3</option><option value="4">Span 4</option><option value="5">Span 5</option><option value="6">Span 6</option></select></div>
-                                <div class="field"><label>Mobile Card Span</label><select id="promoMobileSpan"><option value="1" selected>Normal</option><option value="2">Span 2</option><option value="3">Span 3</option></select></div>
-                                <div class="field"><label>Single Item Align</label><select id="promoSingleLeft"><option value="0">Normal</option><option value="1">Left align if single item</option></select></div>
-
-                                <div class="field full"><label>Name</label><input id="promoName"
-                                        placeholder="e.g. Welcome Deposit Bonus 10%"></div>
-                                <div class="field"><label>Bonus Type</label><select id="promoBonusType">
-                                        <option value="FIXED">Fixed Amount</option>
-                                        <option value="PERCENTAGE">Percentage</option>
-                                        <option value="RANDOM">Random Angpao</option>
-                                        <option value="REBATE">Rebate / Cashback</option>
-                                    </select></div>
-                                <div class="field"><label>Claim Condition</label><select id="promoClaimCondition">
-                                        <option value="MANUAL">Manual Claim</option>
-                                        <option value="REGISTER">Register Credit</option>
-                                        <option value="FIRST_DEPOSIT">First Deposit</option>
-                                        <option value="DEPOSIT">Deposit / Topup</option>
-                                        <option value="DAILY_FIRST_DEPOSIT">Daily First Deposit</option>
-                                        <option value="TURNOVER">Turnover Reached</option>
-                                        <option value="LOSS_REBATE">Loss Rebate</option>
-                                        <option value="REFERRAL">Referral Bonus</option>
-                                        <option value="VIP">VIP Bonus</option>
-                                        <option value="BIRTHDAY">Birthday Bonus</option>
-                                    </select></div>
-                                <div class="field"><label>Bonus Percentage</label><input id="promoPercentage"
-                                        type="number" step="0.0001" placeholder="e.g. 20"></div>
-                                <div class="field"><label>Bonus Fixed Amount</label><input id="promoFixed" type="number"
-                                        step="0.0001" placeholder="e.g. 20"></div>
-                                <div class="field"><label>Random Min</label><input id="promoRandomMin" type="number"
-                                        step="0.0001" placeholder="e.g. 0.20"></div>
-                                <div class="field"><label>Random Max</label><input id="promoRandomMax" type="number"
-                                        step="0.0001" placeholder="e.g. 8.80"></div>
-                                <div class="field"><label>Max Payout</label><input id="promoMaxPayout" type="number"
-                                        step="0.0001" placeholder="optional"></div>
-                                <div class="field"><label>Min Topup Amount</label><input id="promoMinTopup"
-                                        type="number" step="0.0001" placeholder="optional"></div>
-                                <div class="field"><label>Max Topup Amount</label><input id="promoMaxTopup"
-                                        type="number" step="0.0001" placeholder="optional"></div>
-                                <div class="field"><label>Min Times of Topup</label><input id="promoMinTimes"
-                                        type="number" placeholder="optional"></div>
-                                <div class="field"><label>Claim Limit</label><input id="promoClaimLimit" type="number"
-                                        value="1">
-                                    <div class="promo-help">0 = unlimited. DAILY/WEEKLY/MONTHLY reset counts inside the
-                                        current period.</div>
-                                </div>
-                                <div class="field"><label>Claim Reset</label><select id="promoClaimReset">
-                                        <option value="NONE">None</option>
-                                        <option value="DAILY">Daily</option>
-                                        <option value="WEEKLY">Weekly</option>
-                                        <option value="MONTHLY">Monthly</option>
-                                    </select>
-                                    <div class="promo-help">Example: daily first deposit = Claim Condition
-                                        DAILY_FIRST_DEPOSIT + Claim Reset DAILY + Claim Limit 1.</div>
-                                </div>
-                                <div class="field"><label>Rollover</label><input id="promoRollover" type="number"
-                                        step="0.0001" placeholder="e.g. 3">
-                                    <div class="promo-help">Percentage bonus: R x (Deposit + Bonus). Fixed/Random: R x
-                                        Bonus.</div>
-                                </div>
-                                <div class="field"><label>Turnover</label><input id="promoTurnover" type="number"
-                                        step="0.0001" placeholder="e.g. 1">
-                                    <div class="promo-help">Percentage bonus: T x (Deposit + Bonus). Fixed/Random: T x
-                                        Bonus.</div>
-                                </div>
-                                <div class="field"><label>Max Withdraw</label><input id="promoMaxWithdraw" type="number"
-                                        step="0.0001" placeholder="e.g. 100">
-                                    <div class="promo-help">Value below 1 means percentage, e.g. 0.9 = 90%.</div>
-                                </div>
-                                <div class="field"><label>Display Order</label><input id="promoDisplayOrder"
-                                        type="number" value="0"></div>
-                                <div class="field"><label>Status</label><select id="promoStatus">
-                                        <option value="1">Active</option>
-                                        <option value="2">Inactive</option>
-                                    </select></div>
-                                <div class="field"><label>Free Credit Wallet</label><select id="promoWallet">
-                                        <option value="MAIN_WALLET">Main Wallet</option>
-                                        <option value="PROVIDER_WALLET">Provider Wallet Later</option>
-                                    </select></div>
-                                <div class="field"><label>Display Amount</label><select id="promoDisplayAmount">
-                                        <option value="1">Yes</option>
-                                        <option value="0">No</option>
-                                    </select></div>
-                                <div class="field full"><label>Deposit / Winover Logic Note</label>
-                                    <div class="promo-help promo-rule-box">For DEPOSIT / FIRST_DEPOSIT /
-                                        DAILY_FIRST_DEPOSIT / PERCENTAGE bonus, backend checks wallet ledger DEPOSIT
-                                        record. If frontend does not send amount, latest matching deposit amount will be
-                                        used. Required winover calculation: Percentage/Rebate = Multiplier x (Deposit +
-                                        Bonus). Fixed/Random = Multiplier x Bonus only. Claim record stores
-                                        requiredTurnover/currentTurnover and requiredRollover/currentRollover.</div>
-                                </div>
-                                <div class="field full"><label>Allowed Game / Provider Code</label><textarea
-                                        id="promoAllowedGames" rows="2"
-                                        placeholder="Optional. e.g. LIVE22, WBET, SLOT only"></textarea></div>
-                                <div class="field full"><label>Description / Terms</label><textarea
-                                        id="promoDescription" rows="6"
-                                        placeholder="Requirements, terms and conditions shown in TitanXgaming frontend modal"></textarea>
-                                </div>
-                                <div class="field full"><label>Popup Detail Content (WYSIWYG Editor)</label>
-                                    <div class="promo-wysiwyg-wrap">
-                                        <div class="promo-wysiwyg-toolbar" id="promoDetailToolbar"><button type="button"
-                                                data-cmd="bold"><b>B</b></button><button type="button"
-                                                data-cmd="italic"><i>I</i></button><button type="button"
-                                                data-cmd="underline"><u>U</u></button><span class="sep"></span><button
-                                                type="button" data-cmd="formatBlock" data-value="H2">H2</button><button
-                                                type="button" data-cmd="formatBlock" data-value="H3">H3</button><button
-                                                type="button" data-cmd="formatBlock" data-value="P">P</button><span
-                                                class="sep"></span><button type="button"
-                                                data-cmd="insertUnorderedList">• List</button><button type="button"
-                                                data-cmd="insertOrderedList">1. List</button><button type="button"
-                                                data-cmd="justifyLeft">Left</button><button type="button"
-                                                data-cmd="justifyCenter">Center</button><span class="sep"></span><button
-                                                type="button" data-cmd="insertCheck">✅ Row</button><button type="button"
-                                                data-cmd="insertCross">❌ Row</button><button type="button"
-                                                data-cmd="insertHr">Line</button><button type="button"
-                                                data-cmd="clear">Clear</button><button type="button"
-                                                data-cmd="toggleHtml">HTML Mode</button></div>
-                                        <div id="promoDetailEditor" class="promo-wysiwyg-editor" contenteditable="true"
-                                            data-placeholder="Type promotion popup content here. Example: title, requirements, terms, VIP rules...">
-                                        </div>
-                                    </div><textarea id="promoDetailText" class="promo-hidden-source"
-                                        rows="12"></textarea>
-                                    <div class="promo-help">Type normally like Word. Use ✅ Row / ❌ Row for requirement
-                                        lines. HTML Mode is optional if you want to paste custom HTML.</div>
+                    </div>
+                    <div class="report-actions" data-bo-profile></div>
+                </header>
+                <section class="report-content">
+                    <div class="manage-page-grid">
+                        <div class="manage-form-card">
+                            <div class="section-title mb-3">
+                                <div>
+                                    <h3 id="promoFormTitle">Create
+                                        Promotion</h3>
                                 </div>
                             </div>
-                            <div class="slider-form-actions"><button class="clean-btn primary" id="promoSaveBtn"
-                                    type="submit"><i class="bi bi-save"></i> Save Promotion</button><button
-                                    class="clean-btn" id="promoResetBtn" type="button"><i
-                                        class="bi bi-arrow-counterclockwise"></i> Reset</button></div>
-                            <div class="upload-status" id="promoStatusBox"></div>
-                        </form>
+                            <form id="promoForm" class="slider-form"><input
+                                    type="hidden" id="promoId">
+                                <div class="promo-form-grid">
+                                    <div class="field full"><label>Bonus
+                                            Category Title</label><select
+                                            id="promoBonusCategoryTitleId"><option
+                                                value>Select bonus category
+                                                title</option></select>
+
+                                    </div>
+                                    <div class="field full"><label>Promotion /
+                                            Bonus Image</label>
+                                        <input id="promoImage" type="file"
+                                            accept="image/png,image/jpeg,image/webp,image/gif">
+                                        <div
+                                            class="promo-image-preview-wrap"><img
+                                                id="promoImagePreview"
+                                                class="promo-image-preview"
+                                                hidden><span
+                                                id="promoImageCurrent"
+                                                class="promo-help"></span></div>
+                                    </div>
+                                    <div class="field full"><label>Item Name
+                                            (Optional)</label><input
+                                            id="promoItemName"
+                                            placeholder="Optional display/admin item name. Leave blank to use promotion name."></div>
+                                    <div class="field full"><label>Link URL
+                                            (Optional)</label><input
+                                            id="promoLinkUrl"
+                                            placeholder="Optional. If empty, click opens promotion detail popup."></div>
+                                    <div class="field"><label>Desktop
+                                            Grid</label><select
+                                            id="promoDesktopColumns"><option
+                                                value="1">d-cols-1</option><option
+                                                value="2"
+                                                selected>d-cols-2</option><option
+                                                value="3">d-cols-3</option><option
+                                                value="4">d-cols-4</option><option
+                                                value="5">d-cols-5</option><option
+                                                value="6">d-cols-6</option></select></div>
+                                    <div class="field"><label>Mobile
+                                            Grid</label><select
+                                            id="promoMobileColumns"><option
+                                                value="1"
+                                                selected>m-cols-1</option><option
+                                                value="2">m-cols-2</option><option
+                                                value="3">m-cols-3</option></select></div>
+                                    <div class="field"><label>Desktop Card
+                                            Span</label><select
+                                            id="promoDesktopSpan"><option
+                                                value="1"
+                                                selected>Normal</option><option
+                                                value="2">Span 2</option><option
+                                                value="3">Span 3</option><option
+                                                value="4">Span 4</option><option
+                                                value="5">Span 5</option><option
+                                                value="6">Span
+                                                6</option></select></div>
+                                    <div class="field"><label>Mobile Card
+                                            Span</label><select
+                                            id="promoMobileSpan"><option
+                                                value="1"
+                                                selected>Normal</option><option
+                                                value="2">Span 2</option><option
+                                                value="3">Span
+                                                3</option></select></div>
+                                    <div class="field"><label>Single Item
+                                            Align</label><select
+                                            id="promoSingleLeft"><option
+                                                value="0">Normal</option><option
+                                                value="1">Left align if single
+                                                item</option></select></div>
+
+                                    <div class="field"><label>Name</label><input
+                                            id="promoName"
+                                            placeholder="e.g. Welcome Deposit Bonus 10%"></div>
+                                    <div class="field"><label>Promotion
+                                            Code</label><input id="promoCode"
+                                            placeholder="Auto-generated if empty, e.g. WELCOME-20"></div>
+                                    <div class="field"><label>Bonus
+                                            Type</label><select
+                                            id="promoBonusType">
+                                            <option value="FIXED">Fixed
+                                                Amount</option>
+                                            <option
+                                                value="PERCENTAGE">Percentage</option>
+                                            <option value="RANDOM">Random
+                                                Angpao</option>
+                                            <option value="REBATE">Rebate /
+                                                Cashback</option>
+                                        </select></div>
+                                    <div class="field"><label>Claim
+                                            Condition</label><select
+                                            id="promoClaimCondition">
+                                            <option value="MANUAL">Manual
+                                                Claim</option>
+                                            <option value="REGISTER">Register
+                                                Credit</option>
+                                            <option value="FIRST_DEPOSIT">First
+                                                Deposit</option>
+                                            <option value="DEPOSIT">Deposit /
+                                                Topup</option>
+                                            <option
+                                                value="DAILY_FIRST_DEPOSIT">Daily
+                                                First Deposit</option>
+                                            <option value="TURNOVER">Turnover
+                                                Reached</option>
+                                            <option value="LOSS_REBATE">Loss
+                                                Rebate</option>
+                                            <option value="REFERRAL">Referral
+                                                Bonus</option>
+                                            <option value="VIP">VIP
+                                                Bonus</option>
+                                            <option value="BIRTHDAY">Birthday
+                                                Bonus</option>
+                                        </select></div>
+                                    <div class="field"><label>Bonus
+                                            Percentage</label><input
+                                            id="promoPercentage"
+                                            type="number" step="0.0001"
+                                            placeholder="e.g. 20"></div>
+                                    <div class="field"><label>Bonus Fixed
+                                            Amount</label><input id="promoFixed"
+                                            type="number"
+                                            step="0.0001"
+                                            placeholder="e.g. 20"></div>
+                                    <div class="field"><label>Random
+                                            Min</label><input
+                                            id="promoRandomMin" type="number"
+                                            step="0.0001"
+                                            placeholder="e.g. 0.20"></div>
+                                    <div class="field"><label>Random
+                                            Max</label><input
+                                            id="promoRandomMax" type="number"
+                                            step="0.0001"
+                                            placeholder="e.g. 8.80"></div>
+                                    <div class="field"><label>Max
+                                            Payout</label><input
+                                            id="promoMaxPayout" type="number"
+                                            step="0.0001"
+                                            placeholder="optional"></div>
+                                    <div class="field"><label>Min Topup
+                                            Amount</label><input
+                                            id="promoMinTopup"
+                                            type="number" step="0.0001"
+                                            placeholder="optional"></div>
+                                    <div class="field"><label>Max Topup
+                                            Amount</label><input
+                                            id="promoMaxTopup"
+                                            type="number" step="0.0001"
+                                            placeholder="optional"></div>
+                                    <div class="field"><label>Min Times of
+                                            Topup</label><input
+                                            id="promoMinTimes"
+                                            type="number"
+                                            placeholder="optional"></div>
+                                    <div class="field"><label>Claim
+                                            Limit</label><input
+                                            id="promoClaimLimit" type="number"
+                                            value="1">
+                                        <div class="promo-help">0 = unlimited.
+                                            DAILY/WEEKLY/MONTHLY reset counts
+                                            inside the
+                                            current period.</div>
+                                    </div>
+                                    <div class="field"><label>Claim
+                                            Reset</label><select
+                                            id="promoClaimReset">
+                                            <option value="NONE">None</option>
+                                            <option value="DAILY">Daily</option>
+                                            <option
+                                                value="WEEKLY">Weekly</option>
+                                            <option
+                                                value="MONTHLY">Monthly</option>
+                                        </select>
+                                        <div class="promo-help">Example: daily
+                                            first deposit = Claim Condition
+                                            DAILY_FIRST_DEPOSIT + Claim Reset
+                                            DAILY + Claim Limit 1.</div>
+                                    </div>
+                                    <div
+                                        class="field"><label>Rollover</label><input
+                                            id="promoRollover" type="number"
+                                            step="0.0001" placeholder="e.g. 3">
+                                        <div class="promo-help">Percentage
+                                            bonus: R x (Deposit + Bonus).
+                                            Fixed/Random: R x
+                                            Bonus.</div>
+                                    </div>
+                                    <div
+                                        class="field"><label>Turnover</label><input
+                                            id="promoTurnover" type="number"
+                                            step="0.0001" placeholder="e.g. 1">
+                                        <div class="promo-help">Percentage
+                                            bonus: T x (Deposit + Bonus).
+                                            Fixed/Random: T x
+                                            Bonus.</div>
+                                    </div>
+                                    <div class="field"><label>Display
+                                            Order</label><input
+                                            id="promoDisplayOrder"
+                                            type="number" value="0"></div>
+
+                                    <div
+                                        class="field full promo-policy-section"><div
+                                            class="promo-policy-heading"><i
+                                                class="bi bi-calendar-range"></i><div><b>Promotion
+                                                    Period &
+                                                    Completion</b><small>Display
+                                                    period controls frontend
+                                                    visibility. Claim period
+                                                    controls new claims.
+                                                    Completion deadline controls
+                                                    already claimed
+                                                    promotions.</small></div></div></div>
+                                    <div class="field"><label>Display
+                                            Start</label><input
+                                            id="promoStartAt"
+                                            type="datetime-local"><div
+                                            class="promo-help">Optional.
+                                            Frontend can display from this
+                                            date.</div></div>
+                                    <div class="field"><label>Display
+                                            End</label><input id="promoEndAt"
+                                            type="datetime-local"><div
+                                            class="promo-help">Optional.
+                                            Frontend stops showing after this
+                                            date.</div></div>
+                                    <div class="field"><label>Claim
+                                            Start</label><input
+                                            id="promoClaimStartAt"
+                                            type="datetime-local"><div
+                                            class="promo-help">Optional. Members
+                                            cannot claim before this
+                                            date.</div></div>
+                                    <div class="field"><label>Claim
+                                            End</label><input
+                                            id="promoClaimEndAt"
+                                            type="datetime-local"><div
+                                            class="promo-help">Optional. New
+                                            claims stop after this
+                                            date.</div></div>
+                                    <div class="field"><label>Completion
+                                            Deadline</label><select
+                                            id="promoCompletionDeadlineMode"><option
+                                                value="NO_EXPIRY">No
+                                                Expiry</option><option
+                                                value="DAYS_AFTER_CLAIM">Days
+                                                After Claim</option><option
+                                                value="FIXED_DATE">Fixed
+                                                Date</option></select></div>
+                                    <div class="field"
+                                        data-policy-field="completion-days"><label>Completion
+                                            Days</label><input
+                                            id="promoCompletionDays"
+                                            type="number" min="1"
+                                            placeholder="e.g. 7"></div>
+                                    <div class="field"
+                                        data-policy-field="completion-fixed"><label>Fixed
+                                            Completion Date</label><input
+                                            id="promoCompletionFixedAt"
+                                            type="datetime-local"></div>
+                                    <div class="field"><label>Completion
+                                            Mode</label><select
+                                            id="promoCompletionMode"><option
+                                                value="AUTO_COMPLETE">Auto
+                                                Complete</option><option
+                                                value="MANUAL_REVIEW">Manual
+                                                Review</option><option
+                                                value="REMAIN_ACTIVE">Remain
+                                                Active</option></select></div>
+                                    <div class="field"><label>Reward Claim
+                                            Mode</label><select
+                                            id="promoRewardClaimMode"><option
+                                                value="NO_ADDITIONAL_CLAIM">No
+                                                Additional Claim</option><option
+                                                value="AUTOMATIC">Automatic</option><option
+                                                value="MANUAL_CLAIM">Manual
+                                                Claim</option><option
+                                                value="ADMIN_APPROVAL">Admin
+                                                Approval</option></select></div>
+
+                                    <div
+                                        class="field full promo-policy-section"><div
+                                            class="promo-policy-heading"><i
+                                                class="bi bi-wallet2"></i><div><b>Wallet
+                                                    Behaviour</b><small>Choose
+                                                    whether granted credit
+                                                    enters Main or Bonus Wallet,
+                                                    then define stake
+                                                    consumption and win
+                                                    allocation. All values are
+                                                    snapshotted on
+                                                    claim.</small></div></div></div>
+                                    <div class="field"><label>Wallet Consumption
+                                            Priority</label><select
+                                            id="promoWalletConsumptionPriority"><option
+                                                value="BONUS_FIRST">Bonus
+                                                First</option><option
+                                                value="CASH_FIRST">Main Wallet
+                                                First</option><option
+                                                value="PROPORTIONAL">Proportional</option></select></div>
+                                    <div class="field"><label>Win Allocation
+                                            Rule</label><select
+                                            id="promoWinAllocationRule"><option
+                                                value="RETURN_TO_STAKE_SOURCE">Return
+                                                to Stake Source</option><option
+                                                value="WIN_TO_MAIN">Win to Main
+                                                Wallet</option><option
+                                                value="WIN_TO_BONUS">Win to
+                                                Bonus Wallet</option><option
+                                                value="PROPORTIONAL_TO_STAKE_SOURCE">Proportional
+                                                to Stake
+                                                Source</option></select></div>
+
+                                    <div
+                                        class="field full promo-policy-section"><div
+                                            class="promo-policy-heading"><i
+                                                class="bi bi-percent"></i><div><b>Rebate
+                                                    Policy</b><small>Promotion
+                                                    controls eligibility. Rebate
+                                                    Management controls provider
+                                                    rate, tier and
+                                                    settlement.</small></div></div></div>
+                                    <div class="field"><label>Active Bonus
+                                            Rebate</label><select
+                                            id="promoRebatePolicy"><option
+                                                value="DISABLED">Disable
+                                                Rebate</option><option
+                                                value="ENABLED_IMMEDIATELY">Enable
+                                                Immediately</option><option
+                                                value="CONDITIONAL">Enable By
+                                                Condition</option></select></div>
+                                    <div class="field"
+                                        data-policy-field="rebate-condition"><label>Rebate
+                                            Start Condition</label><select
+                                            id="promoRebateStartCondition"><option
+                                                value="PROMOTION_COMPLETED">Promotion
+                                                Completed</option>
+                                                <!-- <option
+                                                value="BONUS_WALLET_EXHAUSTED">Bonus
+                                                Wallet Exhausted</option>
+                                                <option
+                                                value="MAIN_WALLET_EXHAUSTED">Main
+                                                Wallet Exhausted</option> -->
+                                                <option
+                                                value="ELIGIBLE_BALANCE_BELOW">Eligible
+                                                Balance Below</option><option
+                                                value="NEW_DEPOSIT_REQUIRED">New
+                                                Deposit Required</option>
+                                                <option
+                                                value="BALANCE_BELOW_AND_NEW_DEPOSIT">Balance
+                                                Below + New
+                                                Deposit</option>
+                                            </select></div>
+                                    <div class="field"
+                                        data-policy-field="eligible-balance-type"><label>Eligible
+                                            Balance Type</label><select
+                                            id="promoEligibleBalanceType"><option
+                                                value="MAIN">Main
+                                                Wallet</option><option
+                                                value="BONUS">Bonus
+                                                Wallet</option><option
+                                                value="MAIN_PLUS_BONUS">Main +
+                                                Bonus
+                                                Wallet</option></select></div>
+                                    <div class="field"
+                                        data-policy-field="eligible-balance-threshold"><label>Eligible
+                                            Balance Threshold</label><input
+                                            id="promoEligibleBalanceThreshold"
+                                            type="number" min="0" step="0.0001"
+                                            placeholder="e.g. 50"></div>
+                                    <div class="field"><label>Require New
+                                            Deposit After
+                                            Condition</label><select
+                                            id="promoNewDepositRequired"><option
+                                                value="0">No</option><option
+                                                value="1">Yes</option></select></div>
+                                    <div class="field"><label>Can Claim
+                                            Rebate</label><select
+                                            id="promoCanClaimRebate"><option
+                                                value="NO">No</option><option
+                                                value="YES">Yes</option><option
+                                                value="ONLY_AFTER_UNLOCK">Only
+                                                After Unlock</option><option
+                                                value="AFTER_PROMOTION_COMPLETED">Only
+                                                After Promotion
+                                                Completed</option></select></div>
+
+                                    <div
+                                        class="field full promo-policy-section"><div
+                                            class="promo-policy-heading"><i
+                                                class="bi bi-cash-stack"></i><div><b>Withdrawal
+                                                    Restriction</b><small>Optional.
+                                                    When set to None, withdrawal
+                                                    will not check a promotion
+                                                    cap.</small></div></div></div>
+                                    <div class="field"><label>Withdrawal
+                                            Restriction</label><select
+                                            id="promoWithdrawalRestriction"><option
+                                                value="NONE">None</option><option
+                                                value="FIXED_MAX_WITHDRAW">Fixed
+                                                Max Withdraw</option><option
+                                                value="MULTIPLE_OF_BONUS">Multiple
+                                                of Bonus</option><option
+                                                value="MULTIPLE_OF_DEPOSIT">Multiple
+                                                of Deposit</option><option
+                                                value="MANUAL_REVIEW">Manual
+                                                Review</option></select></div>
+                                    <div class="field"
+                                        data-policy-field="max-withdraw"><label>Max
+                                            Withdraw / Multiplier
+                                            Value</label><input
+                                            id="promoMaxWithdraw" type="number"
+                                            min="0" step="0.0001"
+                                            placeholder="e.g. 100"></div>
+                                    <div class="field"
+                                        data-policy-field="excess-action"><label>Excess
+                                            Balance Action</label><select
+                                            id="promoExcessBalanceAction"><option
+                                                value="CLEAR_EXCESS">Clear
+                                                Excess</option><option
+                                                value="KEEP_LOCKED">Keep
+                                                Locked</option><option
+                                                value="RETURN_TO_BONUS">Return
+                                                to Bonus Wallet</option><option
+                                                value="MANUAL_REVIEW">Manual
+                                                Review</option></select></div>
+
+                                    <div
+                                        class="field"><label>Status</label><select
+                                            id="promoStatus">
+                                            <option value="1">Active</option>
+                                            <option value="2">Inactive</option>
+                                        </select></div>
+                                    <div class="field"><label>Free Credit
+                                            Wallet</label><select
+                                            id="promoWallet">
+                                            <option value="MAIN_WALLET">Main
+                                                Wallet</option>
+                                            <option value="BONUS_WALLET">Bonus
+                                                Wallet</option>
+                                        </select></div>
+                                    <div class="field"><label>Display
+                                            Amount</label><select
+                                            id="promoDisplayAmount">
+                                            <option value="1">Yes</option>
+                                            <option value="0">No</option>
+                                        </select></div>
+                                    <div class="field full"><label>Deposit /
+                                            Winover Logic Note</label>
+                                        <div
+                                            class="promo-help promo-rule-box">For
+                                            DEPOSIT / FIRST_DEPOSIT /
+                                            DAILY_FIRST_DEPOSIT / PERCENTAGE
+                                            bonus, backend checks wallet ledger
+                                            DEPOSIT
+                                            record. If frontend does not send
+                                            amount, latest matching deposit
+                                            amount will be
+                                            used. Required winover calculation:
+                                            Percentage/Rebate = Multiplier x
+                                            (Deposit +
+                                            Bonus). Fixed/Random = Multiplier x
+                                            Bonus only. Claim record stores
+                                            requiredTurnover/currentTurnover and
+                                            requiredRollover/currentRollover.</div>
+                                    </div>
+                                    <div class="field full"><label>Allowed Game
+                                            / Provider Code</label><textarea
+                                            id="promoAllowedGames" rows="2"
+                                            placeholder="Optional. e.g. LIVE22, WBET, SLOT only"></textarea></div>
+                                    <div class="field full"><label>Description /
+                                            Terms</label><textarea
+                                            id="promoDescription" rows="6"
+                                            placeholder="Requirements, terms and conditions shown in TitanXgaming frontend modal"></textarea>
+                                    </div>
+                                    <div class="field full"><label>Popup Detail
+                                            Content (WYSIWYG Editor)</label>
+                                        <div class="promo-wysiwyg-wrap">
+                                            <div class="promo-wysiwyg-toolbar"
+                                                id="promoDetailToolbar"><button
+                                                    type="button"
+                                                    data-cmd="bold"><b>B</b></button><button
+                                                    type="button"
+                                                    data-cmd="italic"><i>I</i></button><button
+                                                    type="button"
+                                                    data-cmd="underline"><u>U</u></button><span
+                                                    class="sep"></span><button
+                                                    type="button"
+                                                    data-cmd="formatBlock"
+                                                    data-value="H2">H2</button><button
+                                                    type="button"
+                                                    data-cmd="formatBlock"
+                                                    data-value="H3">H3</button><button
+                                                    type="button"
+                                                    data-cmd="formatBlock"
+                                                    data-value="P">P</button><span
+                                                    class="sep"></span><button
+                                                    type="button"
+                                                    data-cmd="insertUnorderedList">•
+                                                    List</button><button
+                                                    type="button"
+                                                    data-cmd="insertOrderedList">1.
+                                                    List</button><button
+                                                    type="button"
+                                                    data-cmd="justifyLeft">Left</button><button
+                                                    type="button"
+                                                    data-cmd="justifyCenter">Center</button><span
+                                                    class="sep"></span><button
+                                                    type="button"
+                                                    data-cmd="insertCheck">✅
+                                                    Row</button><button
+                                                    type="button"
+                                                    data-cmd="insertCross">❌
+                                                    Row</button><button
+                                                    type="button"
+                                                    data-cmd="insertHr">Line</button><button
+                                                    type="button"
+                                                    data-cmd="clear">Clear</button><button
+                                                    type="button"
+                                                    data-cmd="toggleHtml">HTML
+                                                    Mode</button></div>
+                                            <div id="promoDetailEditor"
+                                                class="promo-wysiwyg-editor"
+                                                contenteditable="true"
+                                                data-placeholder="Type promotion popup content here. Example: title, requirements, terms, VIP rules...">
+                                            </div>
+                                        </div><textarea id="promoDetailText"
+                                            class="promo-hidden-source"
+                                            rows="12"></textarea>
+                                        <div class="promo-help">Type normally
+                                            like Word. Use ✅ Row / ❌ Row for
+                                            requirement
+                                            lines. HTML Mode is optional if you
+                                            want to paste custom HTML.</div>
+                                    </div>
+                                </div>
+                                <div class="slider-form-actions"><button
+                                        class="clean-btn primary"
+                                        id="promoSaveBtn"
+                                        type="submit"><i class="bi bi-save"></i>
+                                        Save Promotion</button><button
+                                        class="clean-btn" id="promoResetBtn"
+                                        type="button"><i
+                                            class="bi bi-arrow-counterclockwise"></i>
+                                        Reset</button></div>
+                                <div class="upload-status"
+                                    id="promoStatusBox"></div>
+                            </form>
+                        </div>
+                        <div
+                            class="manage-list-card game-modern-page promotion-modern-page">
+                            <div
+                                class="section-title slider-list-title standardized-toolbar-title game-toolbar-title">
+                                <button class="clean-btn" id="promoRefreshBtn"
+                                    type="button"><i
+                                        class="bi bi-arrow-clockwise"></i>
+                                    Refresh</button>
+                            </div>
+
+                            <div
+                                class="game-summary-grid promotion-summary-grid">
+                                <article class="game-summary-card"><span
+                                        class="game-summary-icon blue"><i
+                                            class="bi bi-megaphone"></i></span><div><small>Total
+                                            Promotions</small><strong
+                                            id="promoTotalCount">0</strong><p>All
+                                            promotion
+                                            bonuses</p></div></article>
+                                <article class="game-summary-card"><span
+                                        class="game-summary-icon green"><i
+                                            class="bi bi-shield-check"></i></span><div><small>Active</small><strong
+                                            id="promoActiveCount">0</strong><p
+                                            id="promoActivePercent">0% of
+                                            total</p></div></article>
+                            </div>
+
+                            <div class="game-filter-card promotion-filter-card">
+                                <label><span>Search Promotion</span><div
+                                        class="category-search-control"><i
+                                            class="bi bi-search"></i><input
+                                            id="promoSearchInput" type="search"
+                                            placeholder="Search by name or category..." /></div></label>
+                                <label><span>Category</span><select
+                                        id="promoCategoryFilter"><option
+                                            value>All
+                                            Categories</option></select></label>
+                                <label><span>Status</span><select
+                                        id="promoStatusFilter"><option value>All
+                                            Statuses</option><option
+                                            value="1">Active</option><option
+                                            value="2">Inactive</option></select></label>
+                                <label><span>Sort By</span><select
+                                        id="promoSortFilter"><option
+                                            value="orderAsc">Display Order
+                                            (Asc)</option><option
+                                            value="orderDesc">Display Order
+                                            (Desc)</option><option
+                                            value="nameAsc">Name
+                                            (A-Z)</option><option
+                                            value="nameDesc">Name
+                                            (Z-A)</option></select></label>
+                                <div class="game-filter-actions"><button
+                                        class="clean-btn" id="resetPromoFilters"
+                                        type="button"><i
+                                            class="bi bi-arrow-counterclockwise"></i>
+                                        Reset</button><button
+                                        class="clean-btn primary"
+                                        id="applyPromoFilters" type="button"><i
+                                            class="bi bi-search"></i>
+                                        Search</button></div>
+                            </div>
+
+                            <div id="promoEmpty" class="promo-empty" hidden>No
+                                promotion found.</div>
+                            <div class="promotion-table-wrap">
+                                <div
+                                    class="promotion-table-head"><span>Promotion</span><span>Bonus
+                                        Details</span><span>Status</span><span>Actions</span></div>
+                                <div id="promoList"
+                                    class="promotion-table"></div>
+                            </div>
+                            <div class="table-footer standard-promo-pagination">
+                                <div class="entries-control">Show <select
+                                        id="promoPageSize"><option>10</option><option
+                                            selected>20</option><option>50</option><option>100</option></select>
+                                    entries</div>
+                                <div class="table-info"
+                                    id="promoShowingText">Showing 0 to 0 of 0
+                                    entries</div>
+                                <div class="pagination-clean"
+                                    id="promoPager"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="manage-list-card game-modern-page promotion-modern-page">
-                        <div class="section-title slider-list-title standardized-toolbar-title game-toolbar-title">
-                            <button class="clean-btn" id="promoRefreshBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
-                        </div>
+                </section>
+            </main>
+        </div>
+        <script src="assets/js/config.js?v=1.0.23"></script>
+        <script src="assets/js/auth.js?v=1.0.23"></script>
+        <script src="assets/js/reports.js?v=1.0.11"></script>
+        <script src="assets/js/promotion.js?v=1.0.7"></script>
+        <script src="assets/js/promotion-form-sections.js?v=1.0.0"></script>
+        <script src="assets/js/crud-modal-pattern.js?v=1.0.0"></script>
 
-                        <div class="game-summary-grid promotion-summary-grid">
-                            <article class="game-summary-card"><span class="game-summary-icon blue"><i class="bi bi-megaphone"></i></span><div><small>Total Promotions</small><strong id="promoTotalCount">0</strong><p>All promotion bonuses</p></div></article>
-                            <article class="game-summary-card"><span class="game-summary-icon green"><i class="bi bi-shield-check"></i></span><div><small>Active</small><strong id="promoActiveCount">0</strong><p id="promoActivePercent">0% of total</p></div></article>
-                        </div>
-
-                        <div class="game-filter-card promotion-filter-card">
-                            <label><span>Search Promotion</span><div class="category-search-control"><i class="bi bi-search"></i><input id="promoSearchInput" type="search" placeholder="Search by name or category..." /></div></label>
-                            <label><span>Category</span><select id="promoCategoryFilter"><option value="">All Categories</option></select></label>
-                            <label><span>Status</span><select id="promoStatusFilter"><option value="">All Statuses</option><option value="1">Active</option><option value="2">Inactive</option></select></label>
-                            <label><span>Sort By</span><select id="promoSortFilter"><option value="orderAsc">Display Order (Asc)</option><option value="orderDesc">Display Order (Desc)</option><option value="nameAsc">Name (A-Z)</option><option value="nameDesc">Name (Z-A)</option></select></label>
-                            <div class="game-filter-actions"><button class="clean-btn" id="resetPromoFilters" type="button"><i class="bi bi-arrow-counterclockwise"></i> Reset</button><button class="clean-btn primary" id="applyPromoFilters" type="button"><i class="bi bi-search"></i> Search</button></div>
-                        </div>
-
-                        <div id="promoEmpty" class="promo-empty" hidden>No promotion found.</div>
-                        <div class="promotion-table-wrap">
-                          <div class="promotion-table-head"><span>Promotion</span><span>Bonus Details</span><span>Status</span><span>Actions</span></div>
-                          <div id="promoList" class="promotion-table"></div>
-                        </div>
-                        <div class="category-table-footer"><span id="promoShowingText">Showing 0 entries</span></div>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-    <script src="assets/js/config.js?v=1.0.22"></script>
-    <script src="assets/js/auth.js?v=1.0.22"></script>
-    <script src="assets/js/reports.js?v=1.0.11"></script>
-    <script src="assets/js/promotion.js?v=1.0.6"></script>
-    <script src="assets/js/crud-modal-pattern.js?v=1.0.0"></script>
-
-<!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-<script src="assets/js/firebase-config.js?v=1.0.0"></script>
-<script src="assets/js/livechat-global-notification.js?v=20260724-global-v2"></script>
-</body>
+        <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
+        <script
+            src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+        <script src="assets/js/firebase-config.js?v=1.0.0"></script>
+        <script
+            src="assets/js/livechat-global-notification.js?v=20260724-global-v2"></script>
+    </body>
 
 </html>
