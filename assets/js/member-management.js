@@ -88,6 +88,7 @@
     if(name === 'provider') loadWalletProviderAccounts().catch(err=>renderProviderError(err.message));
     if(name === 'ledger') loadWalletLedgerPreview().catch(err=>renderLedgerError(err.message));
     if(name === 'bet') loadWalletBetPreview().catch(err=>renderBetError(err.message));
+    if(name === 'insight') loadGameInsight().catch(err=>renderInsightError(err.message));
   }
   function memberIdOfSelected(){ return selectedWalletMember ? first(selectedWalletMember,['id','memberId','userId'], '') : ''; }
   function infoGrid(items){ return '<div class="wallet-balance-box">' + items.map(([k,v])=>`<div class="mini-box"><span>${esc(k)}</span><b style="font-size:15px">${esc(v || '-')}</b></div>`).join('') + '</div>'; }
@@ -119,6 +120,18 @@
   }
   function bankStatus(msg,type){ const el=document.getElementById('bankProfileStatus'); if(el){ el.textContent=msg||''; el.className='upload-status' + (type ? ' ' + type : ''); } }
   function securityStatus(id,msg,type){ const el=document.getElementById(id); if(el){ el.textContent=msg||''; el.className='upload-status' + (type ? ' ' + type : ''); } }
+
+  function renderInsightRows(targetId, rows, frequent){
+    const body=document.getElementById(targetId); if(!body) return;
+    if(!Array.isArray(rows)||!rows.length){body.innerHTML='<tr><td colspan="6">No settled game records found.</td></tr>';return;}
+    body.innerHTML=rows.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.providerCode||'-')}</td><td>${esc(r.gameCode||'-')}</td>${frequent?`<td>${num(r.playCount)}</td><td>${money(r.totalTurnover)}</td>`:`<td>${money(r.totalTurnover)}</td><td>${num(r.playCount)}</td>`}<td>${dt(r.lastPlayedAt)}</td></tr>`).join('');
+  }
+  function renderInsightError(message){['walletTopTurnoverBody','walletFrequentGamesBody'].forEach(id=>{const b=document.getElementById(id);if(b)b.innerHTML='<tr><td colspan="6">'+esc(message||'Unable to load game insight')+'</td></tr>';});}
+  async function loadGameInsight(){
+    const memberId=memberIdOfSelected(); if(!memberId)return;
+    const json=await api(API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS.MEMBER_GAME_INSIGHT+'/'+encodeURIComponent(memberId)+'?limit=10',{headers:BO_AUTH.authHeader()});
+    const data=json.data||{}; renderInsightRows('walletTopTurnoverBody',data.highestTurnover||[],false); renderInsightRows('walletFrequentGamesBody',data.frequentGames||[],true);
+  }
   async function resetMemberPassword(){
     const memberId=memberIdOfSelected(); if(!memberId) return;
     const password=document.getElementById('memberNewPassword')?.value || '';
@@ -756,4 +769,5 @@
     document.getElementById('resetMemberPasswordBtn')?.addEventListener('click', resetMemberPassword);
     document.getElementById('resetMemberTransactionPasswordBtn')?.addEventListener('click', resetMemberTransactionPassword);
   });
+  document.getElementById('walletInsightRefreshBtn')?.addEventListener('click',()=>loadGameInsight().catch(err=>renderInsightError(err.message)));
 })();

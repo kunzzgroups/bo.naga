@@ -28,6 +28,9 @@
   // Normal sidebar is rendered from /auth/admin/me => user.menus.
   const FALLBACK_MENUS = [
     {menuKey:'user', title:'User Management', url:'index.html', icon:'bi-people', parentKey:'', sortOrder:10},
+    {menuKey:'duplicate_ip', title:'Duplicate IP Checker', url:'duplicate-ip.html', icon:'bi-diagram-3', parentKey:'', sortOrder:11},
+    {menuKey:'highest_turnover_games', title:'Highest Turnover Games', url:'highest-turnover-games.html', icon:'bi-graph-up-arrow', parentKey:'', sortOrder:12},
+    {menuKey:'frequently_played_games', title:'Frequently Played Games', url:'frequently-played-games.html', icon:'bi-controller', parentKey:'', sortOrder:13},
     {menuKey:'member_wallet', title:'Member Wallet Listing', url:'member-wallet.html', icon:'bi-wallet2', parentKey:'wallet', sortOrder:11},
     {menuKey:'wallet_ledger', title:'Wallet Ledger', url:'wallet-ledger.html', icon:'bi-receipt', parentKey:'wallet', sortOrder:12},
     {menuKey:'member_deposit', title:'Deposit Approval', url:'member-deposit.html', icon:'bi-bank', parentKey:'wallet', sortOrder:13},
