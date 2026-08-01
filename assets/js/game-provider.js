@@ -291,6 +291,29 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         requestTemplate: '{\n  "OperatorId": "${OperatorId}",\n  "RequestDateTime": "${request_datetime}",\n  "Signature": "${signature}",\n  "Lang": "${Lang}",\n  "Currency": "${Currency}"\n}'
       },
 
+      PLAYER_PULL_LOG: {
+        functionName: 'GetGameRounds',
+        path: '/GetGameRounds/',
+        httpMethod: 'POST',
+        providerTimezone: 'Asia/Kuala_Lumpur',
+        signatureTemplate: '${secureLogin}${provider_player_id}${datePlayed}${timeZone}${game_code}${hour}${SecretKey}',
+        requestTemplate: '{\n  "secureLogin": "${secureLogin}",\n  "playerId": "${provider_player_id}",\n  "datePlayed": "${datePlayed}",\n  "timeZone": "${timeZone}",\n  "gameId": "${game_code}",\n  "hour": "${hour}",\n  "hash": "${signature}"\n}',
+        successPath: 'error',
+        successValue: '0',
+        errorMessagePath: 'description',
+        responseListPath: 'rounds',
+        providerTxIdPath: 'roundId',
+        betIdPath: 'roundId',
+        roundIdPath: 'roundId',
+        gameCodePath: 'gameId',
+        gameNamePath: 'gameName',
+        currencyPath: 'currency',
+        betAmountPath: 'betAmount',
+        validBetAmountPath: 'betAmount',
+        winAmountPath: 'winAmount',
+        settlementTimePath: 'dateTime'
+      },
+
       PULL_LOG: {
         functionName: 'PullLog',
         path: '/PullLog',

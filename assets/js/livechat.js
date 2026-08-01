@@ -192,6 +192,27 @@
     if(inboxList) inboxList.innerHTML = '<div class="livechat-empty">' + esc(text) + '</div>';
   }
 
+  async function loadMemberCasinoStats(username){
+    let box=document.getElementById('livechatMemberCasinoStats');
+    if(!box){box=document.createElement('div');box.id='livechatMemberCasinoStats';box.className='livechat-member-stats';roomHead.appendChild(box);}
+    box.textContent='Loading VIP and wallet summary...';
+    try{
+      const configBase=String((window.API_CONFIG&&window.API_CONFIG.BASE_URL)||window.API_BASE_URL||'').replace(/\/$/,'');
+      const memberListPath=String((window.API_CONFIG&&window.API_CONFIG.ENDPOINTS&&window.API_CONFIG.ENDPOINTS.MEMBER_LIST)||'/admin/member/list');
+      const memberListUrl=configBase + (memberListPath.startsWith('/') ? memberListPath : '/' + memberListPath);
+      const headers=(window.BO_AUTH&&typeof window.BO_AUTH.authHeader==='function')
+        ? window.BO_AUTH.authHeader()
+        : {Authorization:'Bearer '+(localStorage.getItem('admin_token')||localStorage.getItem('token')||'')};
+      const r=await fetch(memberListUrl,{headers:headers});
+      const j=await r.json().catch(function(){return {};});
+      if(!r.ok) throw new Error(j.message||('Member API error '+r.status));
+      const list=Array.isArray(j.data)?j.data:(j.data&&Array.isArray(j.data.content)?j.data.content:[]);const key=String(username||'').toLowerCase();const m=list.find(x=>String(x.username||'').toLowerCase()===key);
+      if(!m){box.textContent='Member summary unavailable';return;}
+      const money=v=>Number(v||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+      box.innerHTML='<span>VIP <b>'+esc(m.vipLevel||0)+'</b></span><span>Total Deposit <b>'+money(m.totalDeposit)+'</b></span><span>Total Withdrawal <b>'+money(m.totalWithdraw)+'</b></span><span>Total Bonus <b>'+money(m.totalBonus)+'</b></span>';
+    }catch(e){box.textContent='Member summary unavailable';}
+  }
+
   function selectConversation(id){
     cancelEditing();
     selectedId = id;
@@ -199,6 +220,7 @@
     renderInbox();
     const conv = conversations.find(c => c.id === id) || {id:id};
     roomHead.innerHTML = '<div class="livechat-room-avatar">' + esc(initials(conv.memberName || 'M')) + '</div><div><h2>' + esc(conv.memberName || 'Member') + '</h2><p>' + esc(conv.memberUsername || conv.id) + '</p></div>';
+    loadMemberCasinoStats(conv.memberUsername || conv.id);
     markConversationRead(id);
     if(unsubscribeMessages) unsubscribeMessages();
     messagesEl.innerHTML = '<div class="livechat-empty big">Loading messages...</div>';

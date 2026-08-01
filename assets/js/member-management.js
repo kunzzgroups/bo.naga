@@ -38,11 +38,13 @@
     {key:'commission', label:'Commission', extra:true},
     {key:'lastDeposit', label:'Last Deposit', extra:true},
     {key:'lastLogin', label:'Last Login', extra:true},
+    {key:'vipLevel', label:'VIP Level'},
+    {key:'kycStatus', label:'KYC Status'},
     {key:'status', label:'Status', always:true},
     {key:'action', label:'Action', always:true}
   ];
   const MAX_VISIBLE_MEMBER_COLUMNS = 12;
-  const DEFAULT_MEMBER_COLUMNS = ['select','no','registerDate','name','mobile','bank','mainWallet','status','deposit','withdraw','winLoss','bonus','action'];
+  const DEFAULT_MEMBER_COLUMNS = ['select','no','registerDate','name','mobile','bank','mainWallet','vipLevel','kycStatus','lastLogin','status','action'];
   let visibleMemberColumns = new Set(DEFAULT_MEMBER_COLUMNS);
   let memberCurrentPage = 1;
   let memberPageSize = 10;
@@ -485,6 +487,8 @@
         ${cell('commission', money(first(m,MONEY_KEYS.commission,0)))}
         ${cell('lastDeposit', esc(dt(first(m,['lastDepositAt','lastDeposit','last_deposit_at'], ''))))}
         ${cell('lastLogin', esc(dt(first(m,['lastLoginAt','lastLogin','last_login_at'], ''))))}
+        ${cell('vipLevel', 'VIP '+esc(first(m,['vipLevel'],0)))}
+        ${cell('kycStatus', esc(first(m,['kycStatus'],'UNVERIFIED')))}
         ${cell('status', `<small class="status-pill ${locked?'off':''}">${esc(status)}</small>`)}
         ${cell('action', `<div class="user-row-actions"><button class="icon-action view" title="View" data-member-wallet="${esc(id)}"><i class="bi bi-eye"></i></button><button class="icon-action" title="${locked?'Unlock':'Lock'}" data-member-lock="${esc(id)}" data-lock="${locked?0:1}"><i class="bi ${locked?'bi-unlock':'bi-lock'}"></i></button></div>`)}
       </tr>`;
@@ -505,7 +509,7 @@
             <span>Withdraw</span><b>${money(first(m,MONEY_KEYS.withdraw,0))}</b>
             <span>Win/Loss</span><b>${money(first(m,MONEY_KEYS.winLoss,0))}</b>
             <span>Bonus</span><b>${money(first(m,MONEY_KEYS.bonus,0))}</b>
-            <span>Commission</span><b>${money(first(m,MONEY_KEYS.commission,0))}</b>
+            <span>Commission</span><b>${money(first(m,MONEY_KEYS.commission,0))}</b><span>VIP / KYC / Risk</span><b>VIP ${esc(first(m,['vipLevel'],0))} · ${esc(first(m,['kycStatus'],'UNVERIFIED'))} · ${esc(first(m,['riskStatus'],'NORMAL'))}</b>
           </div>
           <div class="d-grid gap-2 mt-3">
             <button class="clean-btn primary w-100" data-member-wallet="${esc(id)}">View Details</button>
@@ -770,4 +774,13 @@
     document.getElementById('resetMemberTransactionPasswordBtn')?.addEventListener('click', resetMemberTransactionPassword);
   });
   document.getElementById('walletInsightRefreshBtn')?.addEventListener('click',()=>loadGameInsight().catch(err=>renderInsightError(err.message)));
+})();
+
+
+// Operations upgrade: bulk bonus adjustment uses selected member checkboxes from existing bulk selection.
+(function(){
+ const btn=document.getElementById('bulkBonusAdjustBtn'); if(!btn)return;
+ const selected=()=>Array.from(document.querySelectorAll('.member-row-select:checked')).map(x=>Number(x.value||x.dataset.memberId)).filter(Boolean);
+ const sync=()=>btn.disabled=selected().length===0; document.addEventListener('change',e=>{if(e.target.matches('.member-row-select,#memberSelectAll'))setTimeout(sync)});sync();
+ btn.addEventListener('click',async()=>{const ids=selected();if(!ids.length)return;const raw=prompt('Bonus amount per member. Positive = credit, negative = debit');if(raw===null)return;const amount=Number(raw);if(!Number.isFinite(amount)||amount===0)return alert('Amount cannot be zero');const remark=prompt('Remark / reason','Bulk bonus adjustment')||'';const base=(window.API_BASE_URL||window.API_BASE||'').replace(/\/$/,'');const res=await fetch(base+'/api/admin/operations/bulk-bonus',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+(localStorage.getItem('admin_token')||''),'X-Admin-Username':localStorage.getItem('admin_username')||'Admin'},body:JSON.stringify({memberIds:ids,amount,reasonCode:'BONUS_ADJUSTMENT',remark})});const j=await res.json();alert(j.message||'Completed');location.reload();});
 })();
