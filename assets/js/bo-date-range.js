@@ -1,5 +1,5 @@
 (function(){
-  const PAIRS=[['betFrom','betTo'],['txFrom','txTo'],['sessionFrom','sessionTo'],['ledgerFrom','ledgerTo'],['casinoFrom','casinoTo'],['reportFrom','reportTo']];
+  const PAIRS=[['betFrom','betTo'],['txFrom','txTo'],['sessionFrom','sessionTo'],['ledgerFrom','ledgerTo'],['casinoFrom','casinoTo'],['reportFrom','reportTo'],['manualFrom','manualTo']];
   const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const pad=n=>String(n).padStart(2,'0');
   const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -11,11 +11,11 @@
     if(!from||!to||from.dataset.rangeBuilt||to.dataset.rangeBuilt)return;
     from.dataset.rangeBuilt=to.dataset.rangeBuilt='1';
     const fField=from.closest('.field'),tField=to.closest('.field');if(!fField||!tField)return;
-    const host=document.createElement('div');host.className='bo-range-field field';
+    const host=document.createElement('div');host.className='bo-range-field field bo-filter-item bo-filter-range-item';
     host.innerHTML='<label>Date Range</label><button type="button" class="bo-range-trigger"><span class="bo-range-icon"><i class="bi bi-calendar3"></i></span><span class="bo-range-text">Select date range</span><i class="bi bi-chevron-down bo-range-arrow"></i></button><div class="bo-range-pop"><div class="bo-range-presets">'+
       [['today','Today'],['yesterday','Yesterday'],['this-week','This Week'],['last-week','Last Week'],['this-month','This Month'],['last-month','Last Month'],['this-year','This Year'],['last-year','Last Year']].map(x=>`<button type="button" data-preset="${x[0]}">${x[1]}</button>`).join('')+
-      '</div><div class="bo-range-calendar"><div class="bo-range-cal-head"><button type="button" data-nav="-1"><i class="bi bi-chevron-left"></i></button><button type="button" class="bo-range-head-pick bo-range-month-btn"></button><button type="button" class="bo-range-head-pick bo-range-year-btn"></button><button type="button" data-nav="1"><i class="bi bi-chevron-right"></i></button></div><div class="bo-range-month-grid"></div><div class="bo-range-year-grid"></div><div class="bo-range-day-view"><div class="bo-range-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div class="bo-range-days"></div><div class="bo-range-hint">Select start date, then select end date.</div></div></div></div>';
-    fField.parentNode.insertBefore(host,fField);fField.style.display='none';tField.style.display='none';
+      '</div><div class="bo-range-calendar"><div class="bo-range-cal-head"><button type="button" data-nav="-1"><i class="bi bi-chevron-left"></i></button><button type="button" class="bo-range-head-pick bo-range-month-btn"></button><button type="button" class="bo-range-head-pick bo-range-year-btn"></button><button type="button" data-nav="1"><i class="bi bi-chevron-right"></i></button></div><div class="bo-range-month-grid"></div><div class="bo-range-year-grid"></div><div class="bo-range-day-view"><div class="bo-range-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div class="bo-range-days"></div></div></div></div>';
+    fField.parentNode.insertBefore(host,fField);fField.classList.add('bo-filter-item','bo-filter-hidden-item');tField.classList.add('bo-filter-item','bo-filter-hidden-item');fField.style.display='none';tField.style.display='none';
     const trig=host.querySelector('.bo-range-trigger'),pop=host.querySelector('.bo-range-pop'),txt=host.querySelector('.bo-range-text'),days=host.querySelector('.bo-range-days'),monthBtn=host.querySelector('.bo-range-month-btn'),yearBtn=host.querySelector('.bo-range-year-btn'),monthGrid=host.querySelector('.bo-range-month-grid'),yearGrid=host.querySelector('.bo-range-year-grid'),dayView=host.querySelector('.bo-range-day-view');
     const todayValue=iso(new Date());
     if(!from.value) from.value=todayValue;
@@ -49,7 +49,7 @@
         }
       });days.appendChild(b)}setMode(mode)}
     trig.addEventListener('click',e=>{e.stopPropagation();document.querySelectorAll('.bo-range-pop.show').forEach(x=>{if(x!==pop)x.classList.remove('show')});pop.classList.toggle('show');mode='days';render()});
-    host.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{const r=rangeFor(b.dataset.preset);commit(r[0],r[1]);view=new Date(r[0]);mode='days';render();pop.classList.remove('show')}));
+    host.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{host.querySelectorAll('[data-preset]').forEach(x=>{x.classList.remove('active');x.removeAttribute('aria-current')});b.classList.add('active');b.setAttribute('aria-current','true');const r=rangeFor(b.dataset.preset);commit(r[0],r[1]);view=new Date(r[0]);mode='days';render();pop.classList.remove('show')}));
     host.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{if(mode==='years'){yearPageStart+=Number(b.dataset.nav)*12}else{view.setMonth(view.getMonth()+Number(b.dataset.nav))}render()}));
     monthBtn.addEventListener('click',e=>{e.stopPropagation();mode=mode==='months'?'days':'months';render()});yearBtn.addEventListener('click',e=>{e.stopPropagation();yearPageStart=view.getFullYear()-5;mode=mode==='years'?'days':'years';render()});
     monthGrid.addEventListener('click',e=>{const b=e.target.closest('[data-month]');if(!b)return;const selectedMonth=Number(b.dataset.month),selectedYear=view.getFullYear();view=new Date(selectedYear,selectedMonth,1);commit(new Date(selectedYear,selectedMonth,1),new Date(selectedYear,selectedMonth+1,0));mode='days';render();pop.classList.remove('show')});

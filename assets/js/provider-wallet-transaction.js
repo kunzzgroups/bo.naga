@@ -83,14 +83,28 @@
     return '<span class="badge ' + cls + '">' + esc(s) + '</span>';
   }
 
-  window.showProviderTxPayload = function(i){
-    const x = lastRows[i] || {};
-    if ($('txPayloadMeta')) $('txPayloadMeta').textContent = 'ID ' + (x.id || '-') + ' · ' + (x.providerCode || '-') + ' · ' + (x.txType || '-');
-    if ($('txApiUrl')) $('txApiUrl').textContent = pretty(x.apiUrl || x.url || '');
-    if ($('txRequestPayload')) $('txRequestPayload').textContent = pretty(x.requestPayload || x.request_payload || '');
-    if ($('txResponsePayload')) $('txResponsePayload').textContent = pretty(x.responsePayload || x.response_payload || '');
-    if ($('txErrorMessage')) $('txErrorMessage').textContent = pretty(x.errorMessage || x.error_message || '');
-    new bootstrap.Modal($('txPayloadModal')).show();
+  window.showProviderTxPayload = async function(i){
+    const summary = lastRows[i] || {};
+    const modalEl = $('txPayloadModal');
+    const modal = new bootstrap.Modal(modalEl);
+    if ($('txPayloadMeta')) $('txPayloadMeta').textContent = 'ID ' + (summary.id || '-') + ' · ' + (summary.providerCode || '-') + ' · ' + (summary.txType || '-');
+    if ($('txApiUrl')) $('txApiUrl').textContent = pretty(summary.apiUrl || summary.url || '');
+    if ($('txRequestPayload')) $('txRequestPayload').textContent = 'Loading payload...';
+    if ($('txResponsePayload')) $('txResponsePayload').textContent = 'Loading payload...';
+    if ($('txErrorMessage')) $('txErrorMessage').textContent = 'Loading payload...';
+    modal.show();
+    try {
+      const x = await get(endpoint('PROVIDER_WALLET_TRANSACTION_LIST').replace(/\/list$/, '') + '/' + encodeURIComponent(summary.id));
+      if ($('txPayloadMeta')) $('txPayloadMeta').textContent = 'ID ' + (x.id || '-') + ' · ' + (x.providerCode || '-') + ' · ' + (x.txType || '-');
+      if ($('txApiUrl')) $('txApiUrl').textContent = pretty(x.apiUrl || x.url || '');
+      if ($('txRequestPayload')) $('txRequestPayload').textContent = pretty(x.requestPayload || x.request_payload || '');
+      if ($('txResponsePayload')) $('txResponsePayload').textContent = pretty(x.responsePayload || x.response_payload || '');
+      if ($('txErrorMessage')) $('txErrorMessage').textContent = pretty(x.errorMessage || x.error_message || '');
+    } catch (e) {
+      if ($('txRequestPayload')) $('txRequestPayload').textContent = '-';
+      if ($('txResponsePayload')) $('txResponsePayload').textContent = '-';
+      if ($('txErrorMessage')) $('txErrorMessage').textContent = e.message || 'Unable to load payload';
+    }
   };
 
   async function load(){

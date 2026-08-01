@@ -81,6 +81,7 @@ const API_CONFIG = window.API_CONFIG || {
         MEMBER_WALLET_BALANCE: "/admin/member-wallet/balance",
         MEMBER_WALLET_ADJUST: "/admin/member-wallet/adjust",
         MEMBER_WALLET_BULK_ADJUST: "/admin/member-wallet/bulk-adjustment",
+        MEMBER_BULK_BONUS_ADJUST: "/admin/operations/bulk-bonus",
         MEMBER_DEPOSIT_LIST: "/admin/member-deposit/list",
         MEMBER_DEPOSIT_APPROVE: "/admin/member-deposit/approve",
         MEMBER_DEPOSIT_REJECT: "/admin/member-deposit/reject",

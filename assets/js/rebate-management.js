@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 const base=window.API_BASE||'';const $=id=>document.getElementById(id);const admin=()=>{const u=window.BO_AUTH&&BO_AUTH.user?BO_AUTH.user():{};return u.username||u.displayName||localStorage.getItem('adminUsername')||localStorage.getItem('admin_username')||'ADMIN';};
-const state={rules:[],rulePage:0,batches:[],batchPage:0,auditPage:0,auditLast:0,reconPage:0,reconLast:0};
+const state={rules:[],rulePage:0,batches:[],batchPage:0,auditPage:0,auditLast:0,reconPage:0,reconLast:0,vipLevels:[],gameCategories:[]};
 const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=v=>Number(v||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:4});
 const date=v=>{if(!v)return '-';const d=new Date(v);return isNaN(d)?esc(v):d.toLocaleString('en-GB',{hour12:false});};
@@ -19,10 +19,50 @@ async function loadRules(){try{state.rules=await request(base+'/api/admin/rebate
 function renderRules(){const size=Number($('rulePageSize').value||20),d=clientPage(state.rules,state.rulePage,size);state.rulePage=d.page;$('rebateRows').innerHTML=d.rows.length?d.rows.map((x,i)=>'<tr><td>'+(d.start+i+1)+'</td><td><div class="table-primary">'+esc(x.name)+'</div><small>#'+esc(x.id)+'</small></td><td><div class="table-primary">'+esc(x.providerCode||'All Providers')+'</div><small>'+esc(x.gameCategory||'All Categories')+(x.vipLevel?' · VIP '+esc(x.vipLevel):'')+'</small></td><td>'+money(x.minValidBet||0)+' – '+(x.maxValidBet==null||Number(x.maxValidBet)<=0?'No limit':money(x.maxValidBet))+'</td><td><b>'+Number(x.rebateRate||0).toFixed(6).replace(/0+$/,'').replace(/\.$/,'')+'%</b><small>Cap: '+(x.maxRebate==null||Number(x.maxRebate)<=0?'None':money(x.maxRebate))+'</small></td><td>'+esc((x.combinationMode||'HIGHER_RATE').replaceAll('_',' '))+'</td><td>'+esc((x.claimMode||'MANUAL').replaceAll('_',' '))+'</td><td>'+statusBadge(x.status===1?'Active':'Inactive')+'</td><td><div class="standard-actions"><button class="icon-action-btn edit" data-edit="'+x.id+'" title="Edit"><i class="bi bi-pencil"></i></button><button class="icon-action-btn delete" data-delete="'+x.id+'" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>').join(''):'<tr><td colspan="9" class="table-empty">No rebate rules found.</td></tr>';const from=d.total?d.start+1:0,to=Math.min(d.start+size,d.total);$('rebateShowing').textContent='Showing '+from+' to '+to+' of '+d.total+' entries';pager('rebatePager',d.page,d.pages,p=>{state.rulePage=p;renderRules();});}
 function input(id,v){const e=$(id);if(e)e.value=v==null?'':v;}
 function localDate(v){if(!v)return'';return String(v).slice(0,16);}
-function openRule(x){x=x||{};$('ruleModalTitle').textContent=x.id?'Edit Rebate Rule':'Add Rebate Rule';input('rrId',x.id);input('rrName',x.name);input('rrProviderCode',x.providerCode);input('rrGameCategory',x.gameCategory);input('rrVipLevel',x.vipLevel);input('rrMinValidBet',x.minValidBet);input('rrMaxValidBet',x.maxValidBet);input('rrRebateRate',x.rebateRate);input('rrMaxRebate',x.maxRebate);input('rrPriority',x.priority==null?0:x.priority);input('rrCombinationMode',x.combinationMode||'HIGHER_RATE');input('rrClaimMode',x.claimMode||'MANUAL');input('rrSettlementCycle',x.settlementCycle||'DAILY');input('rrStatus',x.status==null?1:x.status);input('rrStartAt',localDate(x.startAt));input('rrEndAt',localDate(x.endAt));setModal('ruleModal',true);}
-function ruleBody(){const get=id=>$(id).value.trim(),num=id=>get(id)===''?null:Number(get(id));return{id:num('rrId'),name:get('rrName'),providerCode:get('rrProviderCode')||null,gameCategory:get('rrGameCategory')||null,vipLevel:num('rrVipLevel'),minValidBet:num('rrMinValidBet'),maxValidBet:num('rrMaxValidBet'),rebateRate:num('rrRebateRate'),maxRebate:num('rrMaxRebate'),priority:num('rrPriority')||0,combinationMode:get('rrCombinationMode'),claimMode:get('rrClaimMode'),settlementCycle:get('rrSettlementCycle'),status:num('rrStatus'),startAt:get('rrStartAt')||null,endAt:get('rrEndAt')||null};}
-$('addRule').onclick=()=>openRule();$('closeRule').onclick=()=>setModal('ruleModal',false);$('cancelRule').onclick=()=>setModal('ruleModal',false);$('rulePageSize').onchange=()=>{state.rulePage=0;renderRules();};
-$('ruleForm').onsubmit=async e=>{e.preventDefault();try{const body=ruleBody();if(!body.name)throw Error('Rule name is required');if(body.rebateRate==null||body.rebateRate<0)throw Error('Rebate rate is required');if(body.maxValidBet!=null&&body.minValidBet!=null&&body.maxValidBet<body.minValidBet)throw Error('Maximum valid bet must be greater than minimum');await request(base+'/api/admin/rebate/rules/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});setModal('ruleModal',false);await loadRules();BO_DIALOG.alert('Rebate rule saved successfully.',{title:'Saved'});}catch(err){showError(err);}};
+function apiEndpoint(key,fallback){
+  const cfg=window.API_CONFIG||{};
+  return String(cfg.BASE_URL||'')+String((cfg.ENDPOINTS&&cfg.ENDPOINTS[key])||fallback||'');
+}
+function optionValue(x){return String(x==null?'':x).trim();}
+function normalizeCategoryValue(x){
+  const raw=optionValue(x.code||x.categoryCode||x.key||x.name).toUpperCase();
+  if(raw.includes('SLOT'))return 'SLOT';
+  if(raw.includes('LIVE')||raw.includes('CASINO'))return 'LIVE';
+  if(raw.includes('SPORT')||raw.includes('SOCCER'))return 'SPORTS';
+  return raw.replace(/\s+/g,'_');
+}
+function renderRuleMetadata(selectedCategory,selectedVip){
+  const cat=$('rrGameCategory'),vip=$('rrVipLevel');
+  if(cat){
+    const defaults=[{value:'SLOT',label:'Slot'},{value:'LIVE',label:'Live'},{value:'SPORTS',label:'Sports'}];
+    const map=new Map(defaults.map(x=>[x.value,x.label]));
+    state.gameCategories.forEach(x=>{const value=normalizeCategoryValue(x);if(value)map.set(value,x.name||x.categoryName||value.replaceAll('_',' '));});
+    if(selectedCategory&&!map.has(String(selectedCategory)))map.set(String(selectedCategory),String(selectedCategory));
+    cat.innerHTML='<option value="">All Categories</option>'+[...map].map(([value,label])=>'<option value="'+esc(value)+'">'+esc(label)+'</option>').join('');
+    cat.value=selectedCategory||'';
+  }
+  if(vip){
+    const ordered=[...state.vipLevels].sort((a,b)=>Number(a.sortOrder||a.order||0)-Number(b.sortOrder||b.order||0));
+    vip.innerHTML='<option value="">Select VIP Level</option>'+ordered.map(x=>{const order=x.sortOrder??x.order??x.vipLevel;const name=x.name||x.levelName||x.levelKey||('VIP '+order);return '<option value="'+esc(order)+'">VIP '+esc(order)+' - '+esc(name)+'</option>';}).join('');
+    if(selectedVip!=null&&selectedVip!==''&&!ordered.some(x=>String(x.sortOrder??x.order??x.vipLevel)===String(selectedVip)))vip.insertAdjacentHTML('beforeend','<option value="'+esc(selectedVip)+'">VIP '+esc(selectedVip)+'</option>');
+    vip.value=selectedVip==null?'':String(selectedVip);
+  }
+}
+async function loadRuleMetadata(){
+  const headers=window.BO_AUTH&&BO_AUTH.authHeader?BO_AUTH.authHeader():{};
+  const [vipResult,categoryResult]=await Promise.allSettled([
+    fetch(apiEndpoint('VIP_LEVEL_LIST','/admin/vip/levels'),{headers}).then(r=>r.ok?r.json():Promise.reject(Error('VIP list failed'))),
+    fetch(apiEndpoint('GAME_CATEGORY_LIST','/admin/game-category/list'),{headers}).then(r=>r.ok?r.json():Promise.reject(Error('Category list failed')))
+  ]);
+  if(vipResult.status==='fulfilled')state.vipLevels=Array.isArray(vipResult.value.data)?vipResult.value.data:[];
+  if(categoryResult.status==='fulfilled')state.gameCategories=Array.isArray(categoryResult.value.data)?categoryResult.value.data:[];
+  renderRuleMetadata($('rrGameCategory')&&$('rrGameCategory').value,$('rrVipLevel')&&$('rrVipLevel').value);
+}
+function syncVipScope(){const scope=$('rrVipScope'),vip=$('rrVipLevel');if(!scope||!vip)return;const all=scope.value==='ALL';vip.disabled=all;if(all)vip.value='';}
+function openRule(x){x=x||{};$('ruleModalTitle').textContent=x.id?'Edit Rebate Rule':'Add Rebate Rule';input('rrId',x.id);input('rrName',x.name);input('rrProviderCode',x.providerCode);renderRuleMetadata(x.gameCategory,x.vipLevel);input('rrVipScope',x.id?(x.vipLevel==null?'ALL':'SPECIFIC'):'SPECIFIC');if(!x.id&&$('rrVipLevel')&&!$('rrVipLevel').value){const first=[...$('rrVipLevel').options].find(o=>o.value);if(first)$('rrVipLevel').value=first.value;}syncVipScope();input('rrMinValidBet',x.minValidBet);input('rrMaxValidBet',x.maxValidBet);input('rrRebateRate',x.rebateRate);input('rrMaxRebate',x.maxRebate);input('rrPriority',x.priority==null?0:x.priority);input('rrCombinationMode',x.combinationMode||'HIGHER_RATE');input('rrClaimMode',x.claimMode||'MANUAL');input('rrSettlementCycle',x.settlementCycle||'DAILY');input('rrStatus',x.status==null?1:x.status);input('rrStartAt',localDate(x.startAt));input('rrEndAt',localDate(x.endAt));setModal('ruleModal',true);}
+function ruleBody(){const get=id=>$(id).value.trim(),num=id=>get(id)===''?null:Number(get(id));const vipLevel=get('rrVipScope')==='ALL'?null:num('rrVipLevel');return{id:num('rrId'),name:get('rrName'),providerCode:get('rrProviderCode')||null,gameCategory:get('rrGameCategory')||null,vipLevel:vipLevel,minValidBet:num('rrMinValidBet'),maxValidBet:num('rrMaxValidBet'),rebateRate:num('rrRebateRate'),maxRebate:num('rrMaxRebate'),priority:num('rrPriority')||0,combinationMode:get('rrCombinationMode'),claimMode:get('rrClaimMode'),settlementCycle:get('rrSettlementCycle'),status:num('rrStatus'),startAt:get('rrStartAt')||null,endAt:get('rrEndAt')||null};}
+$('rrVipScope').onchange=syncVipScope;$('addRule').onclick=()=>openRule();$('closeRule').onclick=()=>setModal('ruleModal',false);$('cancelRule').onclick=()=>setModal('ruleModal',false);$('rulePageSize').onchange=()=>{state.rulePage=0;renderRules();};
+$('ruleForm').onsubmit=async e=>{e.preventDefault();try{const body=ruleBody();if(!body.name)throw Error('Rule name is required');if($('rrVipScope').value==='SPECIFIC'&&body.vipLevel==null)throw Error('Please select a VIP level');if(body.rebateRate==null||body.rebateRate<0)throw Error('Rebate rate is required');if(body.maxValidBet!=null&&body.minValidBet!=null&&body.maxValidBet<body.minValidBet)throw Error('Maximum valid bet must be greater than minimum');await request(base+'/api/admin/rebate/rules/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});setModal('ruleModal',false);await loadRules();BO_DIALOG.alert('Rebate rule saved successfully.',{title:'Saved'});}catch(err){showError(err);}};
 $('rebateRows').onclick=async e=>{const edit=e.target.closest('[data-edit]'),del=e.target.closest('[data-delete]');if(edit)openRule(state.rules.find(x=>String(x.id)===edit.dataset.edit));if(del){const x=state.rules.find(r=>String(r.id)===del.dataset.delete);if(await BO_DIALOG.confirm('Delete '+(x?x.name:'this rebate rule')+'?',{title:'Delete Rebate Rule',confirmText:'Delete',danger:true})){try{await request(base+'/api/admin/rebate/rules/delete/'+del.dataset.delete,{method:'POST'});await loadRules();}catch(err){showError(err);}}}};
 $('runSettle').onclick=async()=>{if(!await BO_DIALOG.confirm('Run yesterday rebate settlement now? The cursor batch is idempotent and will not duplicate completed records.',{title:'Run Rebate Settlement',confirmText:'Run Settlement'}))return;try{const out=await request(base+'/api/admin/rebate/settle',{method:'POST'});BO_DIALOG.alert('Settlement completed. Batch #'+(out&&out.id||'-'),{title:'Settlement Complete'});loadBatches();}catch(e){showError(e);}};
 

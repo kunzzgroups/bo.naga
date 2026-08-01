@@ -309,23 +309,23 @@
     try{
       await db.collection('conversations').doc(selectedId).collection('messages').doc(messageId).update({recalled:true,originalText:msg.text||'',text:'',attachments:[],recalledAt:firebase.firestore.FieldValue.serverTimestamp()});
       if(editingMessageId===messageId) cancelEditing();
-    }catch(e){alert(e.message||'Recall failed.');}
+    }catch(e){BO_DIALOG.alert(e.message||'Recall failed.',{title:'Recall Failed',type:'error'});}
   }
   async function deleteMessage(messageId){
     if(!(await BO_DIALOG.confirm('Delete this message permanently?', {title:'Delete Message', confirmText:'Delete'}))) return;
     try{await db.collection('conversations').doc(selectedId).collection('messages').doc(messageId).delete();if(editingMessageId===messageId)cancelEditing();}
-    catch(e){alert(e.message||'Delete failed.');}
+    catch(e){BO_DIALOG.alert(e.message||'Delete failed.',{title:'Delete Failed',type:'error'});}
   }
 
   async function sendReply(){
-    if(!selectedId){ alert('Please select a conversation first.'); return; }
+    if(!selectedId){ BO_DIALOG.alert('Please select a conversation first.',{title:'Select Conversation'}); return; }
     const text = (input.value || '').trim();
     if(editingMessageId){
       if(!text) return;
       try{
         await db.collection('conversations').doc(selectedId).collection('messages').doc(editingMessageId).update({text:text,editedAt:firebase.firestore.FieldValue.serverTimestamp()});
         cancelEditing();
-      }catch(e){alert(e.message||'Edit failed.');}
+      }catch(e){BO_DIALOG.alert(e.message||'Edit failed.',{title:'Edit Failed',type:'error'});}
       return;
     }
     if(!text && !pendingFiles.length) return;
@@ -352,7 +352,7 @@
         memberUnreadCount: firebase.firestore.FieldValue.increment(1)
       }, {merge:true});
     }catch(e){
-      alert(e.message || 'Send failed.');
+      BO_DIALOG.alert(e.message || 'Send failed.',{title:'Send Failed',type:'error'});
     }
   }
 

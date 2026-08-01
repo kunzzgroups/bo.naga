@@ -9,7 +9,8 @@
     bulkAdjust: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.MEMBER_WALLET_BULK_ADJUST,
     providerAccounts: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.MEMBER_WALLET_PROVIDER_ACCOUNTS,
     ledgerList: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.WALLET_LEDGER_LIST,
-    betList: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.PROVIDER_BET_REPORT_LIST
+    betList: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.PROVIDER_BET_REPORT_LIST,
+    bulkBonus: API_CONFIG.BASE_URL + (API_CONFIG.ENDPOINTS.MEMBER_BULK_BONUS_ADJUST || '/admin/operations/bulk-bonus')
   };
   const MONEY_KEYS = {
     deposit: ['deposit','totalDeposit','depositAmount','total_deposit'],
@@ -689,6 +690,7 @@
   function updateBulkSelectionUi(){
     const count=bulkSelectedMemberIds.size;
     const btn=document.getElementById('bulkWalletAdjustBtn'); if(btn) btn.disabled=count===0;
+    const bonusBtn=document.getElementById('bulkBonusAdjustBtn'); if(bonusBtn) bonusBtn.disabled=count===0;
     const badge=document.getElementById('bulkSelectedBadge'); if(badge) badge.textContent=String(count);
     document.querySelectorAll('[data-member-select]').forEach(el=>{el.checked=bulkSelectedMemberIds.has(String(el.dataset.memberSelect));});
     const pageBox=document.getElementById('memberSelectPage');
@@ -724,13 +726,74 @@
       bulkSelectedMemberIds.clear(); updateBulkSelectionUi(); await loadMembers();
     }catch(err){bulkStatus(err.message||'Bulk adjustment failed.','error');}finally{submit.disabled=false;}
   }
+  async function submitBulkBonusAdjustment(){
+    const members=selectedBulkMembers();
+    if(!members.length){
+      if(window.BO_DIALOG?.alert) await BO_DIALOG.alert('Please select at least one member.', {title:'Bulk Bonus Adjustment'});
+      else alert('Please select at least one member.');
+      return;
+    }
+    const raw=await BO_DIALOG.prompt('Bonus amount per member. Positive = credit, negative = debit','',{title:'Bulk Bonus Adjustment',inputLabel:'Amount per member',inputType:'number',step:'0.01',confirmText:'Continue'});
+    if(raw===null)return;
+    const amount=Number(raw);
+    if(!Number.isFinite(amount)||amount===0){
+      if(window.BO_DIALOG?.alert) await BO_DIALOG.alert('Amount cannot be zero.', {title:'Bulk Bonus Adjustment'});
+      else alert('Amount cannot be zero.');
+      return;
+    }
+    const remark=String((await BO_DIALOG.prompt('Enter a remark or reason for audit purposes.','Bulk bonus adjustment',{title:'Bulk Bonus Adjustment',inputLabel:'Remark / reason',confirmText:'Continue'}))||'').trim();
+    if(!remark){
+      if(window.BO_DIALOG?.alert) await BO_DIALOG.alert('Remark is required for audit purposes.', {title:'Bulk Bonus Adjustment'});
+      else alert('Remark is required for audit purposes.');
+      return;
+    }
+    const memberIds=members.map(m=>Number(first(m,['id','memberId','userId'],0))).filter(Boolean);
+    const confirmed=await BO_DIALOG.confirm(`${amount>0?'Credit':'Debit'} ${money(Math.abs(amount))} bonus for ${memberIds.length} member(s)?`, {title:'Confirm Bulk Bonus Adjustment',confirmText:'Confirm'});
+    if(!confirmed)return;
+    const button=document.getElementById('bulkBonusAdjustBtn');
+    if(button)button.disabled=true;
+    try{
+      const json=await api(MEMBER_WALLET_API.bulkBonus,{
+        method:'POST',
+        headers:{'Content-Type':'application/json',...BO_AUTH.authHeader(),'X-Admin-Username':localStorage.getItem('admin_username')||'Admin'},
+        body:JSON.stringify({memberIds,amount,reasonCode:'BONUS_ADJUSTMENT',remark})
+      });
+      if(window.BO_DIALOG?.alert) await BO_DIALOG.alert(json.message||'Bulk bonus adjustment completed.', {title:'Completed'});
+      else alert(json.message||'Bulk bonus adjustment completed.');
+      bulkSelectedMemberIds.clear();
+      updateBulkSelectionUi();
+      await loadMembers();
+    }catch(err){
+      if(window.BO_DIALOG?.alert) await BO_DIALOG.alert(err.message||'Bulk bonus adjustment failed.', {title:'Failed'});
+      else alert(err.message||'Bulk bonus adjustment failed.');
+    }finally{
+      updateBulkSelectionUi();
+    }
+  }
+
   function bindBulkWalletTools(){
     document.getElementById('bulkWalletAdjustBtn')?.addEventListener('click',openBulkWalletModal);
+    document.getElementById('bulkBonusAdjustBtn')?.addEventListener('click',submitBulkBonusAdjustment);
     document.getElementById('bulkWalletClose')?.addEventListener('click',closeBulkWalletModal);document.getElementById('bulkWalletCancel')?.addEventListener('click',closeBulkWalletModal);
     document.getElementById('bulkWalletModal')?.addEventListener('click',e=>{if(e.target.id==='bulkWalletModal')closeBulkWalletModal();});
     document.getElementById('bulkWalletSubmit')?.addEventListener('click',submitBulkWalletAdjustment);
     document.getElementById('bulkAdjustmentAmount')?.addEventListener('input',updateBulkPreview);document.getElementById('bulkAdjustmentType')?.addEventListener('change',updateBulkPreview);
-    document.addEventListener('change',e=>{const row=e.target.closest('[data-member-select]');if(row){const id=String(row.dataset.memberSelect);row.checked?bulkSelectedMemberIds.add(id):bulkSelectedMemberIds.delete(id);updateBulkSelectionUi();return;}if(e.target.id==='memberSelectPage'){const ids=memberFilteredRows.slice((memberCurrentPage-1)*memberPageSize,memberCurrentPage*memberPageSize).map(m=>String(first(m,['id','memberId','userId'],''))).filter(Boolean);ids.forEach(id=>e.target.checked?bulkSelectedMemberIds.add(id):bulkSelectedMemberIds.delete(id));updateBulkSelectionUi();renderMembers(memberFilteredRows.slice((memberCurrentPage-1)*memberPageSize,memberCurrentPage*memberPageSize));}});
+    document.addEventListener('change',e=>{
+      if(e.target.id==='memberSelectPage'){
+        const shouldSelect=Boolean(e.target.checked);
+        const ids=memberFilteredRows.slice((memberCurrentPage-1)*memberPageSize,memberCurrentPage*memberPageSize).map(m=>String(first(m,['id','memberId','userId'],''))).filter(Boolean);
+        ids.forEach(id=>shouldSelect?bulkSelectedMemberIds.add(id):bulkSelectedMemberIds.delete(id));
+        document.querySelectorAll('[data-member-select]').forEach(el=>{if(ids.includes(String(el.dataset.memberSelect)))el.checked=shouldSelect;});
+        updateBulkSelectionUi();
+        return;
+      }
+      const row=e.target.closest('[data-member-select]');
+      if(row){
+        const id=String(row.dataset.memberSelect);
+        row.checked?bulkSelectedMemberIds.add(id):bulkSelectedMemberIds.delete(id);
+        updateBulkSelectionUi();
+      }
+    });
     document.addEventListener('click',e=>{const rm=e.target.closest('[data-bulk-remove]');if(!rm)return;bulkSelectedMemberIds.delete(String(rm.dataset.bulkRemove));updateBulkSelectionUi();updateBulkPreview();});
   }
 
@@ -776,11 +839,3 @@
   document.getElementById('walletInsightRefreshBtn')?.addEventListener('click',()=>loadGameInsight().catch(err=>renderInsightError(err.message)));
 })();
 
-
-// Operations upgrade: bulk bonus adjustment uses selected member checkboxes from existing bulk selection.
-(function(){
- const btn=document.getElementById('bulkBonusAdjustBtn'); if(!btn)return;
- const selected=()=>Array.from(document.querySelectorAll('.member-row-select:checked')).map(x=>Number(x.value||x.dataset.memberId)).filter(Boolean);
- const sync=()=>btn.disabled=selected().length===0; document.addEventListener('change',e=>{if(e.target.matches('.member-row-select,#memberSelectAll'))setTimeout(sync)});sync();
- btn.addEventListener('click',async()=>{const ids=selected();if(!ids.length)return;const raw=prompt('Bonus amount per member. Positive = credit, negative = debit');if(raw===null)return;const amount=Number(raw);if(!Number.isFinite(amount)||amount===0)return alert('Amount cannot be zero');const remark=prompt('Remark / reason','Bulk bonus adjustment')||'';const base=(window.API_BASE_URL||window.API_BASE||'').replace(/\/$/,'');const res=await fetch(base+'/api/admin/operations/bulk-bonus',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+(localStorage.getItem('admin_token')||''),'X-Admin-Username':localStorage.getItem('admin_username')||'Admin'},body:JSON.stringify({memberIds:ids,amount,reasonCode:'BONUS_ADJUSTMENT',remark})});const j=await res.json();alert(j.message||'Completed');location.reload();});
-})();

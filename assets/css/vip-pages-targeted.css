@@ -1,0 +1,166 @@
+
+/* Targeted VIP page refinements only: VIP Management, VIP EXP Log, VIP Reward Log */
+.vip-management-page .vip-settings-grid{
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  gap:10px !important;
+}
+.vip-management-page .vip-settings-grid > label{
+  display:flex !important;
+  flex-direction:column !important;
+  min-width:0 !important;
+  width:100% !important;
+}
+.vip-management-page .vip-settings-grid input,
+.vip-management-page .vip-settings-grid select{
+  box-sizing:border-box !important;
+  width:100% !important;
+  min-width:0 !important;
+  max-width:none !important;
+  height:42px !important;
+  margin-top:7px !important;
+  padding:0 12px !important;
+}
+@media (max-width:1100px){
+  .vip-management-page .vip-settings-grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
+}
+@media (max-width:640px){
+  .vip-management-page .vip-settings-grid{grid-template-columns:1fr !important;}
+}
+
+.vip-log-page .vip-log-card{padding:0 !important;overflow:hidden !important;}
+.vip-log-page .vip-section-title{padding:20px 20px 0 !important;margin-bottom:0 !important;}
+.vip-log-page .vip-log-filters{
+  display:flex !important;
+  flex-wrap:wrap !important;
+  align-items:flex-end !important;
+  gap:10px !important;
+  padding:16px 20px !important;
+  margin:0 !important;
+}
+.vip-log-page .vip-log-filters input{width:300px !important;min-width:220px !important;height:42px !important;}
+.vip-log-page .vip-log-filters select{width:auto !important;min-width:150px !important;height:42px !important;}
+.vip-log-page .vip-log-filters button{height:42px !important;}
+.vip-log-page .vip-admin-table-wrap{
+  overflow:auto !important;
+  border-top:1px solid #dbe3f1 !important;
+  border-bottom:1px solid #dbe3f1 !important;
+}
+.vip-log-page .vip-admin-table{
+  width:100% !important;
+  min-width:1050px !important;
+  border-collapse:separate !important;
+  border-spacing:0 !important;
+}
+.vip-log-page .vip-admin-table th,
+.vip-log-page .vip-admin-table td{
+  padding:14px 16px !important;
+  border-right:1px solid #dfe6f1 !important;
+  border-bottom:1px solid #dfe6f1 !important;
+  vertical-align:middle !important;
+}
+.vip-log-page .vip-admin-table th:last-child,
+.vip-log-page .vip-admin-table td:last-child{border-right:0 !important;}
+.vip-log-page .vip-admin-table tbody tr:last-child td{border-bottom:0 !important;}
+.vip-log-page .vip-admin-table th{
+  background:#f7f9fc !important;
+  color:#23314f !important;
+  font-size:12px !important;
+  font-weight:800 !important;
+  text-transform:uppercase !important;
+  white-space:nowrap !important;
+}
+.vip-log-page .vip-admin-table td{font-size:13px !important;color:#263550 !important;}
+.vip-log-page .vip-admin-table td small{display:block;margin-top:3px;color:#7b8496;}
+.vip-log-page .vip-table-footer{
+  display:grid !important;
+  grid-template-columns:auto 1fr auto !important;
+  align-items:center !important;
+  gap:10px !important;
+  padding:14px 20px 18px !important;
+}
+.vip-log-page .vip-page-size{display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.vip-log-page .vip-page-size select{height:38px;min-width:70px;border:1px solid #d6dfed;border-radius:10px;padding:0 10px;background:#fff;}
+.vip-log-page .vip-page-info{text-align:center;color:#58667e;font-size:13px;font-weight:600;}
+.vip-log-page .vip-log-pagination{display:flex !important;justify-content:flex-end !important;gap:8px !important;padding:0 !important;}
+.vip-log-page .vip-log-pagination button{min-width:38px;height:38px;border:1px solid #d6dfed;border-radius:10px;background:#fff;}
+.vip-log-page .vip-log-pagination button.active{background:#2864ee;color:#fff;border-color:#2864ee;}
+@media (max-width:760px){
+  .vip-log-page .vip-section-title{padding:14px 14px 0 !important;}
+  .vip-log-page .vip-log-filters{padding:14px !important;display:grid !important;grid-template-columns:1fr !important;}
+  .vip-log-page .vip-log-filters input,
+  .vip-log-page .vip-log-filters select,
+  .vip-log-page .vip-log-filters button{width:100% !important;min-width:0 !important;}
+  .vip-log-page .vip-table-footer{grid-template-columns:1fr auto !important;padding:12px 14px 16px !important;}
+  .vip-log-page .vip-page-info{grid-column:1/-1;grid-row:2;text-align:center;}
+  .vip-log-page .vip-log-pagination{grid-column:2;grid-row:1;max-width:55vw;overflow-x:auto;justify-content:flex-end !important;}
+  .vip-log-page .vip-page-size{grid-column:1;grid-row:1;}
+}
+
+/* VIP table card standard v1.1.0 - scoped only to VIP Management / EXP Log / Reward Log */
+.vip-management-page .vip-admin-card{
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  overflow:visible !important;
+}
+.vip-management-page .vip-admin-table-wrap{
+  width:100% !important;
+  background:#fff !important;
+  border:1px solid #dbe3f1 !important;
+  border-radius:14px !important;
+  overflow:auto !important;
+  box-shadow:0 4px 16px rgba(35,55,100,.035) !important;
+}
+.vip-management-page .vip-admin-table{
+  border-collapse:separate !important;
+  border-spacing:0 !important;
+}
+.vip-management-page .vip-admin-table th,
+.vip-management-page .vip-admin-table td{
+  border-right:1px solid #dfe6f1 !important;
+  border-bottom:1px solid #dfe6f1 !important;
+}
+.vip-management-page .vip-admin-table th:last-child,
+.vip-management-page .vip-admin-table td:last-child{border-right:0 !important;}
+.vip-management-page .vip-admin-table tbody tr:last-child td{border-bottom:0 !important;}
+.vip-management-page .vip-admin-table thead th:first-child{border-top-left-radius:13px !important;}
+.vip-management-page .vip-admin-table thead th:last-child{border-top-right-radius:13px !important;}
+.vip-management-page .vip-admin-table tbody tr:last-child td:first-child{border-bottom-left-radius:13px !important;}
+.vip-management-page .vip-admin-table tbody tr:last-child td:last-child{border-bottom-right-radius:13px !important;}
+
+.vip-log-page .vip-log-card{
+  padding:18px !important;
+  border:1px solid #dbe3f1 !important;
+  border-radius:18px !important;
+  overflow:visible !important;
+}
+.vip-log-page .vip-section-title{
+  padding:0 !important;
+  margin:0 0 16px !important;
+}
+.vip-log-page .vip-log-filters{
+  padding:0 !important;
+  margin:0 0 16px !important;
+}
+.vip-log-page .vip-admin-table-wrap{
+  width:100% !important;
+  margin:0 !important;
+  background:#fff !important;
+  border:1px solid #dbe3f1 !important;
+  border-radius:14px !important;
+  overflow:auto !important;
+  box-shadow:0 4px 16px rgba(35,55,100,.025) !important;
+}
+.vip-log-page .vip-admin-table thead th:first-child{border-top-left-radius:13px !important;}
+.vip-log-page .vip-admin-table thead th:last-child{border-top-right-radius:13px !important;}
+.vip-log-page .vip-admin-table tbody tr:last-child td:first-child{border-bottom-left-radius:13px !important;}
+.vip-log-page .vip-admin-table tbody tr:last-child td:last-child{border-bottom-right-radius:13px !important;}
+.vip-log-page .vip-table-footer{
+  padding:14px 0 0 !important;
+}
+@media (max-width:760px){
+  .vip-log-page .vip-log-card{padding:14px !important;}
+  .vip-log-page .vip-table-footer{padding-top:12px !important;}
+}

@@ -10,6 +10,34 @@
   let categoryTitles=[];
   let selectedPromoImage=null;
   let detailHtmlMode=false;
+  let vipLevels=[];
+
+  function selectedVipTierCsv(){
+    const el=$('promoClaimableVipTiers');
+    if(!el)return '';
+    return [...el.selectedOptions].map(o=>o.value).filter(Boolean).join(',');
+  }
+  function setSelectedVipTiers(csv){
+    const el=$('promoClaimableVipTiers');
+    if(!el)return;
+    const values=new Set(String(csv||'').split(',').map(v=>v.trim()).filter(Boolean));
+    [...el.options].forEach(o=>{o.selected=o.value?values.has(o.value):values.size===0;});
+  }
+  function renderPromotionVipOptions(selected){
+    const el=$('promoClaimableVipTiers');
+    if(!el)return;
+    const ordered=[...vipLevels].filter(x=>Number(x.enabled??1)===1).sort((a,b)=>Number(a.sortOrder||0)-Number(b.sortOrder||0));
+    el.innerHTML='<option value="">All VIP Levels</option>'+ordered.map(x=>`<option value="${esc(x.sortOrder)}">VIP ${esc(x.sortOrder)} - ${esc(x.name||x.levelKey||'')}</option>`).join('');
+    setSelectedVipTiers(selected);
+  }
+  async function loadPromotionVipLevels(){
+    try{
+      const r=await fetch(promoApi('VIP_LEVEL_LIST'),{headers:window.BO_AUTH?BO_AUTH.authHeader():{}});
+      const j=await r.json();
+      vipLevels=Array.isArray(j.data)?j.data:[];
+    }catch(_){vipLevels=[];}
+    renderPromotionVipOptions('');
+  }
 
   function promoApi(k){ return API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS[k]; }
   function val(id){const el=$(id); const v=el?el.value:''; return v===''?null:v;}
@@ -118,7 +146,7 @@
       desktopSpan:num('promoDesktopSpan'),
       mobileSpan:num('promoMobileSpan'),
       singleLeft:num('promoSingleLeft'),
-      bonusType:val('promoBonusType'),claimCondition:val('promoClaimCondition'),bonusPercentage:num('promoPercentage'),bonusFixedAmount:num('promoFixed'),bonusRandomMin:num('promoRandomMin'),bonusRandomMax:num('promoRandomMax'),maxPayout:num('promoMaxPayout'),minTopupAmount:num('promoMinTopup'),maxTopupAmount:num('promoMaxTopup'),minTimesOfTopup:num('promoMinTimes'),claimLimit:num('promoClaimLimit'),claimReset:val('promoClaimReset'),rollover:num('promoRollover'),turnover:num('promoTurnover'),maxWithdraw:num('promoMaxWithdraw'),description:val('promoDescription'),detailText:val('promoDetailText'),displayAmount:num('promoDisplayAmount'),freeCreditWallet:val('promoWallet'),allowedGames:val('promoAllowedGames'),displayOrder:num('promoDisplayOrder'),status:num('promoStatus'),startAt:val('promoStartAt'),endAt:val('promoEndAt'),claimStartAt:val('promoClaimStartAt'),claimEndAt:val('promoClaimEndAt'),completionDeadlineMode:val('promoCompletionDeadlineMode'),completionDays:num('promoCompletionDays'),completionFixedAt:val('promoCompletionFixedAt'),rebatePolicy:val('promoRebatePolicy'),rebateStartCondition:val('promoRebateStartCondition'),eligibleBalanceType:val('promoEligibleBalanceType'),eligibleBalanceThreshold:num('promoEligibleBalanceThreshold'),newDepositRequired:num('promoNewDepositRequired'),canClaimRebate:val('promoCanClaimRebate'),completionMode:val('promoCompletionMode'),rewardClaimMode:val('promoRewardClaimMode'),walletConsumptionPriority:val('promoWalletConsumptionPriority'),winAllocationRule:val('promoWinAllocationRule'),withdrawalRestriction:val('promoWithdrawalRestriction'),excessBalanceAction:val('promoExcessBalanceAction')
+      bonusType:val('promoBonusType'),claimCondition:val('promoClaimCondition'),bonusPercentage:num('promoPercentage'),bonusFixedAmount:num('promoFixed'),bonusRandomMin:num('promoRandomMin'),bonusRandomMax:num('promoRandomMax'),maxPayout:num('promoMaxPayout'),minTopupAmount:num('promoMinTopup'),maxTopupAmount:num('promoMaxTopup'),minTimesOfTopup:num('promoMinTimes'),claimLimit:num('promoClaimLimit'),claimReset:val('promoClaimReset'),rollover:num('promoRollover'),turnover:num('promoTurnover'),maxWithdraw:num('promoMaxWithdraw'),description:val('promoDescription'),detailText:val('promoDetailText'),displayAmount:num('promoDisplayAmount'),freeCreditWallet:val('promoWallet'),allowedGames:val('promoAllowedGames'),displayOrder:num('promoDisplayOrder'),status:num('promoStatus'),startAt:val('promoStartAt'),endAt:val('promoEndAt'),claimStartAt:val('promoClaimStartAt'),claimEndAt:val('promoClaimEndAt'),completionDeadlineMode:val('promoCompletionDeadlineMode'),completionDays:num('promoCompletionDays'),completionFixedAt:val('promoCompletionFixedAt'),rebatePolicy:val('promoRebatePolicy'),rebateStartCondition:val('promoRebateStartCondition'),eligibleBalanceType:val('promoEligibleBalanceType'),eligibleBalanceThreshold:num('promoEligibleBalanceThreshold'),newDepositRequired:num('promoNewDepositRequired'),canClaimRebate:val('promoCanClaimRebate'),completionMode:val('promoCompletionMode'),rewardClaimMode:val('promoRewardClaimMode'),walletConsumptionPriority:val('promoWalletConsumptionPriority'),winAllocationRule:val('promoWinAllocationRule'),withdrawalRestriction:val('promoWithdrawalRestriction'),excessBalanceAction:val('promoExcessBalanceAction'),claimableVipTiers:selectedVipTierCsv(),eligibleForDailyRebate:num('promoEligibleForDailyRebate')
     };
     Object.entries(fields).forEach(([k,v])=>{ if(v!==null && v!==undefined) fd.append(k,v); });
     if(selectedPromoImage) fd.append('image', selectedPromoImage);
@@ -134,6 +162,8 @@
     $('promoClaimLimit').value='1';
     $('promoDisplayOrder').value='0';
     if($('promoRebatePolicy')) $('promoRebatePolicy').value='DISABLED';
+    if($('promoEligibleForDailyRebate')) $('promoEligibleForDailyRebate').value='1';
+    renderPromotionVipOptions('');
     if($('promoStartAt')) $('promoStartAt').value='';
     if($('promoEndAt')) $('promoEndAt').value='';
     if($('promoClaimStartAt')) $('promoClaimStartAt').value='';
@@ -162,6 +192,8 @@
     clearImagePreview();
     if(x.bonusImageUrl) showImagePreview(x.bonusImageUrl);
     $('promoBonusType').value=x.bonusType||'FIXED';
+    renderPromotionVipOptions(x.claimableVipTiers||'');
+    if($('promoEligibleForDailyRebate')) $('promoEligibleForDailyRebate').value=String(x.eligibleForDailyRebate??1);
     $('promoClaimCondition').value=x.claimCondition||'MANUAL';
     $('promoPercentage').value=x.bonusPercentage??'';
     $('promoFixed').value=x.bonusFixedAmount??'';
@@ -271,4 +303,5 @@
   updatePolicyVisibility();
   initDetailEditor();
   loadCategoryTitles().then(()=>load()).catch(e=>set(e.message,'error'));
+  loadPromotionVipLevels();
 })();
