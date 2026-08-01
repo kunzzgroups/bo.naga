@@ -38,7 +38,7 @@
   font-weight:700!important;
   box-shadow:none!important;
 }
-.bo-ui-button-primary{background:var(--bo-ui-blue)!important;border-color:var(--bo-ui-blue)!important;color:#ffffff;}
+.bo-ui-button-primary{background:var(--bo-ui-blue)!important;border-color:var(--bo-ui-blue)!important;color:#000000;}
 .bo-ui-button-primary:hover{background:var(--bo-ui-blue-hover)!important;border-color:var(--bo-ui-blue-hover)!important;color:#fff!important}
 .bo-ui-button-secondary{background:#fff!important;border-color:var(--bo-ui-border)!important;color:var(--bo-ui-text)!important}
 .bo-ui-button-danger{background:#fff3f4!important;border-color:#ffc9cd!important;color:var(--bo-ui-danger)!important}
