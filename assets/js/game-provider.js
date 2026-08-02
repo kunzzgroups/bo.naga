@@ -35,7 +35,6 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
   const pullLogDateTimeFormat = document.getElementById('pullLogDateTimeFormat');
   const walletProviderCode = document.getElementById('walletProviderCode'), walletStatusBox = document.getElementById('walletStatusBox'), walletResult = document.getElementById('walletResult');
   let rows = [];
-  let games = [];
   let categories = [];
   function setStatus(message, type){ statusBox.textContent = message || ''; statusBox.className = 'upload-status' + (type ? ' ' + type : ''); const top=document.getElementById('providerStatusBoxTop'); if(top){ top.textContent=message||''; top.className=statusBox.className; } }
   function setBusy(busy){ saveBtn.disabled = busy; refreshBtn.disabled = busy; saveBtn.innerHTML = busy ? '<i class="bi bi-hourglass-split"></i> Saving...' : '<i class="bi bi-save"></i> Save Provider'; }
@@ -181,33 +180,31 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     empty.hidden = rows.length > 0;
     providerOptions();
     rows.forEach(item => {
-      const linkedGames = games.filter(g => String(g.providerCode || '').toUpperCase() === String(item.code || '').toUpperCase());
-      const gameHtml = linkedGames.length
-        ? linkedGames.slice(0, 8).map(g => `<span class="slider-pill active"><i class="bi bi-joystick"></i>${escapeHtml(g.name || ('Game #' + g.id))}</span>`).join('') + (linkedGames.length > 8 ? `<span class="slider-pill inactive">+${linkedGames.length - 8} more</span>` : '')
-        : '<small class="text-secondary">No game linked yet. Set this code in Game → Provider Code.</small>';
+      const linkedGameCount = Number(item.gameCount ?? item.game_count ?? 0);
+      const gameHtml = linkedGameCount > 0
+        ? `<small class="text-secondary provider-game-summary"><i class="bi bi-controller me-1"></i>${linkedGameCount} linked game${linkedGameCount === 1 ? '' : 's'}</small>`
+        : '<small class="text-secondary provider-game-summary">No game linked yet. Set this code in Game → Provider Code.</small>';
       const env = String(item.keyEnvironment || item.key_environment || 'STAGING').toUpperCase() === 'LIVE' ? 'LIVE' : 'STAGING';
       const boUrl = item.boLoginUrl || item.bo_login_url || '';
       const boUsername = item.boUsername || item.bo_username || '';
       const boPassword = item.boPassword || item.bo_password || '';
       const card=document.createElement('div');
       card.className='manage-card';
-      card.innerHTML=`<div class="manage-thumb game-thumb">${item.providerImageUrl ? `<img src="${escapeHtml(item.providerImageUrl)}" alt="${escapeHtml(item.name || item.code)}" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;">` : `<i class="bi bi-hdd-network fs-1 text-secondary"></i>`}</div><div class="manage-card-body"><div class="slider-card-title"><b>${escapeHtml(item.code)} - ${escapeHtml(item.name)}</b>${statusPill(item.status)}<span class="slider-pill ${env === 'LIVE' ? 'active' : 'inactive'}"><i class="bi ${env === 'LIVE' ? 'bi-broadcast' : 'bi-tools'}"></i>${env === 'LIVE' ? 'Live Key' : 'Staging Key'}</span></div><div class="slider-meta"><span><i class="bi bi-tag me-1"></i>${escapeHtml((item.categoryIds || item.category_ids || '').split(',').map(id => (categories.find(c => String(c.id) === String(id)) || {}).name).filter(Boolean).join(', ') || 'No category')}</span><span><i class="bi bi-wallet2 me-1"></i>${escapeHtml(item.walletMode || 'TRANSFER')}</span><span><i class="bi bi-plug me-1"></i>${escapeHtml(item.integrationType || 'GENERIC_API')}</span><span><i class="bi bi-cash me-1"></i>${escapeHtml(item.currency || 'MYR')}</span><span><i class="bi bi-controller me-1"></i>${linkedGames.length} games</span><span><i class="bi bi-link-45deg me-1"></i>${escapeHtml(item.apiBaseUrl || '-')}</span><span><i class="bi bi-sort-numeric-down me-1"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span></div><div class="provider-access-record mt-3 p-3 border rounded-3 bg-light"><div class="fw-bold mb-2"><i class="bi bi-shield-lock me-1"></i>Provider BO Login Record</div><div class="row g-2 small"><div class="col-12 col-xl-5"><span class="text-secondary">URL:</span> ${boUrl ? `<a href="${escapeHtml(boUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(boUrl)}</a>` : '-'}</div><div class="col-12 col-md-5 col-xl-3"><span class="text-secondary">Username:</span> <code>${escapeHtml(boUsername || '-')}</code></div><div class="col-12 col-md-7 col-xl-4"><span class="text-secondary">Password:</span> <code data-provider-password-id="${escapeHtml(item.id)}">${escapeHtml(maskCredential(boPassword))}</code>${boPassword ? ` <button class="clean-btn py-1 px-2 ms-1" type="button" data-reveal-password-id="${escapeHtml(item.id)}"><i class="bi bi-eye"></i> Reveal</button><button class="clean-btn py-1 px-2 ms-1" type="button" data-copy-password-id="${escapeHtml(item.id)}"><i class="bi bi-copy"></i> Copy</button>` : ''}</div></div></div><div class="d-flex gap-2 flex-wrap mt-2">${gameHtml}</div></div><div class="slider-card-actions"><button class="clean-btn primary" type="button" data-edit-id="${escapeHtml(item.id)}"><i class="bi bi-pencil-square"></i> Edit</button><button class="clean-btn danger" type="button" data-delete-id="${escapeHtml(item.id)}"><i class="bi bi-trash"></i> Delete</button></div>`;
+      card.innerHTML=`<div class="manage-thumb game-thumb">${item.providerImageUrl ? `<img src="${escapeHtml(item.providerImageUrl)}" alt="${escapeHtml(item.name || item.code)}" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;">` : `<i class="bi bi-hdd-network fs-1 text-secondary"></i>`}</div><div class="manage-card-body"><div class="slider-card-title"><b>${escapeHtml(item.code)} - ${escapeHtml(item.name)}</b>${statusPill(item.status)}<span class="slider-pill ${env === 'LIVE' ? 'active' : 'inactive'}"><i class="bi ${env === 'LIVE' ? 'bi-broadcast' : 'bi-tools'}"></i>${env === 'LIVE' ? 'Live Key' : 'Staging Key'}</span></div><div class="slider-meta"><span><i class="bi bi-tag me-1"></i>${escapeHtml((item.categoryIds || item.category_ids || '').split(',').map(id => (categories.find(c => String(c.id) === String(id)) || {}).name).filter(Boolean).join(', ') || 'No category')}</span><span><i class="bi bi-wallet2 me-1"></i>${escapeHtml(item.walletMode || 'TRANSFER')}</span><span><i class="bi bi-plug me-1"></i>${escapeHtml(item.integrationType || 'GENERIC_API')}</span><span><i class="bi bi-cash me-1"></i>${escapeHtml(item.currency || 'MYR')}</span><span><i class="bi bi-controller me-1"></i>${linkedGameCount} games</span><span><i class="bi bi-link-45deg me-1"></i>${escapeHtml(item.apiBaseUrl || '-')}</span><span><i class="bi bi-sort-numeric-down me-1"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span></div><div class="provider-access-record mt-3 p-3 border rounded-3 bg-light"><div class="fw-bold mb-2"><i class="bi bi-shield-lock me-1"></i>Provider BO Login Record</div><div class="row g-2 small"><div class="col-12 col-xl-5"><span class="text-secondary">URL:</span> ${boUrl ? `<a href="${escapeHtml(boUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(boUrl)}</a>` : '-'}</div><div class="col-12 col-md-5 col-xl-3"><span class="text-secondary">Username:</span> <code>${escapeHtml(boUsername || '-')}</code></div><div class="col-12 col-md-7 col-xl-4"><span class="text-secondary">Password:</span> <code data-provider-password-id="${escapeHtml(item.id)}">${escapeHtml(maskCredential(boPassword))}</code>${boPassword ? ` <button class="clean-btn py-1 px-2 ms-1" type="button" data-reveal-password-id="${escapeHtml(item.id)}"><i class="bi bi-eye"></i> Reveal</button><button class="clean-btn py-1 px-2 ms-1" type="button" data-copy-password-id="${escapeHtml(item.id)}"><i class="bi bi-copy"></i> Copy</button>` : ''}</div></div></div><div class="d-flex gap-2 flex-wrap mt-2">${gameHtml}</div></div><div class="slider-card-actions"><button class="clean-btn primary" type="button" data-edit-id="${escapeHtml(item.id)}"><i class="bi bi-pencil-square"></i> Edit</button><button class="clean-btn danger" type="button" data-delete-id="${escapeHtml(item.id)}"><i class="bi bi-trash"></i> Delete</button></div>`;
       list.appendChild(card);
     });
   }
   async function load(){
     setStatus('Loading...', '');
     try{
-      const [providerJson, gameJson, categoryJson] = await Promise.all([
-        fetchJson(PROVIDER_API.list),
-        fetchJson(GAME_API.list),
+      const [providerJson, categoryJson] = await Promise.all([
+        fetchJson(PROVIDER_API.list + (PROVIDER_API.list.includes('?') ? '&' : '?') + '_ts=' + Date.now(), { cache: 'no-store' }),
         fetchJson(CATEGORY_API.list)
       ]);
       rows = providerJson.data || providerJson || [];
-      games = gameJson.data || gameJson || [];
       categories = categoryJson.data || categoryJson || [];
       renderCategoryOptions(el.providerId.value ? (rows.find(r => String(r.id) === String(el.providerId.value)) || {}).categoryIds : '');
-      render(); providerOptions(); setStatus('Latest provider, category and game data loaded.', 'success');
+      render(); providerOptions(); setStatus('Latest provider and category data loaded.', 'success');
     }catch(err){ setStatus(err.message || 'Failed to load.', 'error'); }
   }
 
@@ -439,6 +436,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         originalTxIdPath: 'OriginalTransactionId'
       },
       CREATE_PLAYER: {
+        enabled: true,
         functionName: 'CreatePlayer',
         path: '/CreatePlayer',
         httpMethod: 'POST',

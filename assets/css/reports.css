@@ -5538,3 +5538,36 @@ body.modal-open{overflow:hidden!important}
     max-width:calc(100vw - 24px)!important;
   }
 }
+
+/* v1.1.33 - Provider Management fast list + desktop alignment */
+.page-game-provider #providerList .manage-card{
+  grid-template-columns:120px minmax(0,1fr) 96px!important;
+  align-items:start!important;
+  gap:16px!important;
+}
+.page-game-provider #providerList .manage-card-body{width:100%!important;min-width:0!important;overflow:hidden!important}
+.page-game-provider #providerList .slider-card-title{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto auto!important;
+  align-items:center!important;
+  gap:8px!important;
+}
+.page-game-provider #providerList .slider-card-title .slider-pill{margin:0!important;white-space:nowrap!important}
+.page-game-provider #providerList .slider-meta{min-width:0!important;display:flex!important;flex-wrap:wrap!important;gap:7px 14px!important}
+.page-game-provider #providerList .slider-meta span{min-width:0!important;max-width:100%!important;overflow-wrap:anywhere!important}
+.page-game-provider #providerList .provider-access-record{min-width:0!important;overflow:hidden!important}
+.page-game-provider #providerList .provider-access-record a,
+.page-game-provider #providerList .provider-access-record code{overflow-wrap:anywhere!important;word-break:break-word!important;white-space:normal!important}
+.page-game-provider #providerList .provider-game-summary{display:block!important;margin-top:2px!important}
+.page-game-provider #providerList .slider-card-actions{min-width:0!important;width:96px!important;padding:0!important;align-self:start!important}
+@media(max-width:1100px){
+  .page-game-provider #providerList .manage-card{grid-template-columns:96px minmax(0,1fr)!important}
+  .page-game-provider #providerList .manage-thumb{width:96px!important;height:72px!important}
+  .page-game-provider #providerList .slider-card-actions{grid-column:1/-1!important;width:100%!important;justify-content:flex-end!important}
+}
+@media(max-width:700px){
+  .page-game-provider #providerList .manage-card{grid-template-columns:70px minmax(0,1fr)!important}
+  .page-game-provider #providerList .slider-card-title{grid-template-columns:minmax(0,1fr) auto!important}
+  .page-game-provider #providerList .slider-card-title .slider-pill:nth-of-type(2){grid-column:2!important}
+  .page-game-provider #providerList .slider-card-actions{width:100%!important}
+}
