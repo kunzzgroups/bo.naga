@@ -40,6 +40,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         { field: 'bonusUrl', fileKey: 'bonus', label: 'bonus', fallback: assetUrl('bonus.png') },
         { field: 'livechatUrl', fileKey: 'livechat', label: 'live chat', fallback: assetUrl('livechat.png') },
         { field: 'settingUrl', fileKey: 'setting', label: 'setting', fallback: assetUrl('setting.png') },
+        { field: 'providerAllUrl', fileKey: 'providerAll', label: 'All provider image', fallback: '', apiKeys: ['providerAllUrl', 'providerAll'] },
     ];
 
     const fields = {};
