@@ -94,6 +94,21 @@
                     <label class="form-check-label" for="withdrawNegativeAmount"><b>WITHDRAW sends negative amount</b></label>
                     <small class="text-secondary d-block">Optional. When enabled, BO stores <code>"negativeAmount": true</code> inside the WITHDRAW action config. Spring Boot converts the amount to a negative value before signature generation and before sending the request. Disabled is the default.</small>
                   </div>
+                  <div class="action-config-box mt-3 pull-log-timing-box">
+                    <div class="form-check mb-2">
+                      <input class="form-check-input" type="checkbox" id="pullLogTimingEnabled">
+                      <label class="form-check-label" for="pullLogTimingEnabled"><b>Custom PULL_LOG time window</b></label>
+                    </div>
+                    <div class="slider-two-col">
+                      <div class="field"><label>Window</label><div class="input-group"><input id="pullLogWindowValue" type="number" min="0" step="1" value="15"><select id="pullLogWindowUnit"><option value="minutes">Minutes</option><option value="seconds">Seconds</option></select></div></div>
+                      <div class="field"><label>End Delay (seconds)</label><input id="pullLogEndDelaySeconds" type="number" min="0" step="1" value="0"><small class="text-secondary">Optional safety delay so unsettled latest records are not queried too early.</small></div>
+                    </div>
+                    <div class="slider-two-col">
+                      <div class="field"><label>Provider Timezone</label><input id="pullLogTimezone" value="Asia/Kuala_Lumpur" placeholder="UTC, -04:00, Asia/Kuala_Lumpur"><small class="text-secondary">Supports UTC, numeric offsets and IANA timezone names.</small></div>
+                      <div class="field"><label>Date/Time Format</label><input id="pullLogDateTimeFormat" value="yyyy-MM-dd HH:mm:ss" placeholder="Java DateTimeFormatter pattern"><small class="text-secondary">Examples: <code>yyyy-MM-dd HH:mm:ss</code> or <code>yyyy-MM-dd'T'HH:mm:ss.SSSxxx</code>.</small></div>
+                    </div>
+                    <small class="text-secondary d-block">When enabled, BO stores generic timing keys inside <code>PULL_LOG</code>: <code>pullWindowMinutes</code> or <code>pullWindowSeconds</code>, <code>pullEndDelaySeconds</code>, <code>pullTimezone</code> and <code>pullDateTimeFormat</code>. Use <code>${start_datetime}</code> and <code>${end_datetime}</code> in the request template. This works for future providers without adding provider-specific Java variables.</small>
+                  </div>
                   <small class="text-secondary">This overrides the old single Signature Formula Builder for each action. Supported actions: GAME_LIST, CREATE_PLAYER, BALANCE, DEPOSIT, WITHDRAW, LAUNCH, PLAYER_PULL_LOG and PULL_LOG. BET_CALLBACK is inbound and uses the fixed Spring Boot callback URL.</small>
                   <div class="alert alert-light border mt-3 mb-0 small">
                     <b>Settlement mapping:</b> Use <code>PLAYER_PULL_LOG</code> for providers that only expose a player/game round API requiring playerId, gameId, date, hour or timezone. Use <code>PULL_LOG</code> for provider-wide reports. Both actions share the same bet mapping fields. <br><br><b>PULL_LOG bet-log mapping:</b> configure <code>responseListPath</code>, or use <code>responseJsonStringPath</code> when the provider returns an escaped JSON array inside a field such as <code>result</code>. Then configure <code>playerIdPath</code>, <code>providerTxIdPath</code>, <code>betAmountPath</code>, <code>validBetAmountPath</code>, <code>winAmountPath</code>, <code>netAmountPath</code>, <code>settlementTimePath</code>, <code>sequencePath</code>, <code>eventTypePath</code> and <code>originalTxIdPath</code>. Provider transaction ID must be unique. Rollback/void rows must point to the original transaction ID. PLAYER_PULL_LOG runs immediately on normal exit, page close recovery and stale-session auto settlement. When PLAYER_PULL_LOG is absent, Spring Boot falls back to PULL_LOG. PULL_LOG also runs every minute as a safety net; the debug button is only for inspection/manual retry.
@@ -156,7 +171,7 @@
         </section>
       </main>
     </div>
-    <script src="assets/js/config.js?v=1.0.25"></script><script src="assets/js/auth.js?v=1.0.25"></script><script src="assets/js/reports.js?v=1.0.11"></script><script src="assets/js/game-provider.js?v=1.0.14"></script>
+    <script src="assets/js/config.js?v=1.0.25"></script><script src="assets/js/auth.js?v=1.0.25"></script><script src="assets/js/reports.js?v=1.0.11"></script><script src="assets/js/game-provider.js?v=1.0.15"></script>
       <script src="assets/js/crud-modal-pattern.js?v=1.0.0"></script>
 
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
