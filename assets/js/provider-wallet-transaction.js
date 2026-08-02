@@ -91,6 +91,10 @@
     if ($('txApiUrl')) $('txApiUrl').textContent = pretty(summary.apiUrl || summary.url || '');
     if ($('txRequestPayload')) $('txRequestPayload').textContent = 'Loading payload...';
     if ($('txResponsePayload')) $('txResponsePayload').textContent = 'Loading payload...';
+    if ($('txRequestHeaders')) $('txRequestHeaders').textContent = 'Loading headers...';
+    if ($('txSignaturePlainText')) $('txSignaturePlainText').textContent = 'Loading signature input...';
+    if ($('txGeneratedSignature')) $('txGeneratedSignature').textContent = 'Loading signature...';
+    if ($('txRawJson')) $('txRawJson').textContent = 'Loading raw JSON...';
     if ($('txErrorMessage')) $('txErrorMessage').textContent = 'Loading payload...';
     modal.show();
     try {
@@ -99,10 +103,18 @@
       if ($('txApiUrl')) $('txApiUrl').textContent = pretty(x.apiUrl || x.url || '');
       if ($('txRequestPayload')) $('txRequestPayload').textContent = pretty(x.requestPayload || x.request_payload || '');
       if ($('txResponsePayload')) $('txResponsePayload').textContent = pretty(x.responsePayload || x.response_payload || '');
+      if ($('txRequestHeaders')) $('txRequestHeaders').textContent = pretty(x.requestHeaders || x.request_headers || '');
+      if ($('txSignaturePlainText')) $('txSignaturePlainText').textContent = pretty(x.signaturePlainText || x.signature_plain_text || '');
+      if ($('txGeneratedSignature')) $('txGeneratedSignature').textContent = pretty(x.generatedSignature || x.generated_signature || '');
+      if ($('txRawJson')) $('txRawJson').textContent = pretty(x.rawJson || x.raw_json || '');
       if ($('txErrorMessage')) $('txErrorMessage').textContent = pretty(x.errorMessage || x.error_message || '');
     } catch (e) {
       if ($('txRequestPayload')) $('txRequestPayload').textContent = '-';
       if ($('txResponsePayload')) $('txResponsePayload').textContent = '-';
+      if ($('txRequestHeaders')) $('txRequestHeaders').textContent = '-';
+      if ($('txSignaturePlainText')) $('txSignaturePlainText').textContent = '-';
+      if ($('txGeneratedSignature')) $('txGeneratedSignature').textContent = '-';
+      if ($('txRawJson')) $('txRawJson').textContent = '-';
       if ($('txErrorMessage')) $('txErrorMessage').textContent = e.message || 'Unable to load payload';
     }
   };

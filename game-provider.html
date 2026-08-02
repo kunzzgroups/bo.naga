@@ -64,7 +64,7 @@
   "random_key": "RANDOM_8",
   "player": "${account_id}",
   "unix_time": "TIMESTAMP"
-}'></textarea><small class="text-secondary">Create any ${key} here. Value can be static, ${account_id}, ${member_id}, RANDOM_8, UUID, TIMESTAMP, TIMESTAMP_SECONDS, TIMESTAMP_MILLISECONDS, NONCE_32, SESSION_ID, UUID, REQUEST_ID, ISO8601_NOW, RAW_JSON, DATETIME, TXID. Crypto helper supported: ${aes128ecb_base64:${rawJson}:${AgentKey}}.</small></div>
+}'></textarea><small class="text-secondary">Create any ${key} here. Value can be static, ${account_id}, ${member_id}, RANDOM_8, UUID, TIMESTAMP, TIMESTAMP_SECONDS, TIMESTAMP_MILLISECONDS, NONCE_32, SESSION_ID, UUID, REQUEST_ID, ISO8601_NOW, RAW_JSON, AMOUNT_NUMBER, AMOUNT_CENTS, DATETIME, TXID. Crypto helper supported: ${aes128ecb_base64:${rawJson}:${AgentKey}}.</small></div>
 
                 <div class="field action-config-box">
                   <label>API Action Configs <span class="text-secondary small">(one formula/path/template per provider API)</span></label>
@@ -91,15 +91,25 @@
     "signatureTemplate": "${function_name}${request_datetime}${OperatorId}${SecretKey}",
     "requestTemplate": "{ \"OperatorId\":\"${OperatorId}\", \"RequestDateTime\":\"${request_datetime}\", \"Signature\":\"${signature}\" }"
   },
-  "CREATE_PLAYER": {
+  "ACCESS_TOKEN": {
     "enabled": true,
-    "functionName": "CreatePlayer",
-    "path": "/CreatePlayer",
+    "path": "/api/auth/token",
     "httpMethod": "POST",
-    "signatureTemplate": "${function_name}${request_datetime}${OperatorId}${SecretKey}${PlayerId}",
-    "requestTemplate": "{ \"OperatorId\":\"${OperatorId}\", \"RequestDateTime\":\"${request_datetime}\", \"Signature\":\"${signature}\", \"PlayerId\":\"${PlayerId}\" }"
+    "requestTemplate": { "merchantId": "${merchant_id}", "merchantKey": "${merchant_key}" },
+    "successPath": "code",
+    "successValue": "0",
+    "responseVariables": { "access_token": "data.access_token" }
+  },
+  "LAUNCH": {
+    "beforeAction": "ACCESS_TOKEN",
+    "path": "/api/game/launch",
+    "httpMethod": "POST",
+    "headers": { "Authorization": "Bearer ${access_token}" },
+    "requestTemplate": { "playerId": "${account_id}", "gameCode": "${game_code}" },
+    "launchUrlPath": "data.game_url"
   }
 }'></textarea>
+                  <small class="text-secondary d-block mt-2"><b>Optional chained launch:</b> set <code>LAUNCH.beforeAction</code> to an action such as <code>ACCESS_TOKEN</code>, then map its response using <code>responseVariables</code>. Extracted values such as <code>${access_token}</code> are request-scoped, can be used in launch headers/body/signature, and never overwrite saved provider variables. Existing providers without <code>beforeAction</code> are unchanged.</small>
                   <div class="form-check mt-2">
                     <input class="form-check-input" type="checkbox" id="withdrawNegativeAmount">
                     <label class="form-check-label" for="withdrawNegativeAmount"><b>WITHDRAW sends negative amount</b></label>
@@ -120,7 +130,7 @@
                     </div>
                     <small class="text-secondary d-block">When enabled, BO stores generic timing keys inside <code>PULL_LOG</code>: <code>pullWindowMinutes</code> or <code>pullWindowSeconds</code>, <code>pullEndDelaySeconds</code>, <code>pullTimezone</code> and <code>pullDateTimeFormat</code>. Use <code>${start_datetime}</code> and <code>${end_datetime}</code> in the request template. This works for future providers without adding provider-specific Java variables.</small>
                   </div>
-                  <small class="text-secondary">This overrides the old single Signature Formula Builder for each action. Supported actions: GAME_LIST, CREATE_PLAYER, BALANCE, DEPOSIT, WITHDRAW, LAUNCH, PLAYER_PULL_LOG and PULL_LOG. For providers without a Create Player API, set <code>"CREATE_PLAYER": { "enabled": false }</code>. Use root-level <code>"walletFlow": "TRANSFER_AFTER_LAUNCH"</code> when login must happen before transfer-in, such as 759Gaming. Missing <code>enabled</code> remains enabled and missing <code>walletFlow</code> defaults to the original transfer-before-launch sequence, so existing live providers are unchanged. BET_CALLBACK is inbound and uses the fixed Spring Boot callback URL.</small>
+                  <small class="text-secondary">This overrides the old single Signature Formula Builder for each action. Supported actions: GAME_LIST, CREATE_PLAYER, BALANCE, DEPOSIT, WITHDRAW, LAUNCH, PLAYER_PULL_LOG and PULL_LOG. For providers without a Create Player API, set <code>"CREATE_PLAYER": { "enabled": false }</code>. Use root-level <code>"walletFlow": "TRANSFER_AFTER_LAUNCH"</code> when login must happen before transfer-in, such as 759Gaming. Optional actions such as BALANCE now fully respect <code>"enabled": false</code>. For providers that remain online after launch, set root-level <code>"autoSettleStaleSeconds": 120</code> (or longer) to prevent premature transfer-out while the game session is still active. Missing <code>enabled</code> remains enabled and missing <code>walletFlow</code> defaults to the original transfer-before-launch sequence, so existing live providers are unchanged. BET_CALLBACK is inbound and uses the fixed Spring Boot callback URL.</small>
                   <div class="alert alert-light border mt-3 mb-0 small">
                     <b>Settlement mapping:</b> Use <code>PLAYER_PULL_LOG</code> for providers that only expose a player/game round API requiring playerId, gameId, date, hour or timezone. Use <code>PULL_LOG</code> for provider-wide reports. Both actions share the same bet mapping fields. <br><br><b>PULL_LOG bet-log mapping:</b> configure <code>responseListPath</code>, or use <code>responseJsonStringPath</code> when the provider returns an escaped JSON array inside a field such as <code>result</code>. Then configure <code>playerIdPath</code>, <code>providerTxIdPath</code>, <code>betAmountPath</code>, <code>validBetAmountPath</code>, <code>winAmountPath</code>, <code>netAmountPath</code>, <code>settlementTimePath</code>, <code>sequencePath</code>, <code>eventTypePath</code> and <code>originalTxIdPath</code>. Provider transaction ID must be unique. Rollback/void rows must point to the original transaction ID. PLAYER_PULL_LOG runs immediately on normal exit, page close recovery and stale-session auto settlement. When PLAYER_PULL_LOG is absent, Spring Boot falls back to PULL_LOG. PULL_LOG also runs every minute as a safety net; the debug button is only for inspection/manual retry.
                   </div>
@@ -128,7 +138,7 @@
                 <div class="slider-two-col"><div class="field"><label>Signature Type</label><select id="signatureType" name="signatureType"><option>MD5</option><option>SHA256</option><option>NONE</option></select></div><div class="field"><label>Signature Output Case</label><select id="signatureOutputCase" name="signatureOutputCase"><option value="LOWER">Lowercase</option><option value="UPPER">Uppercase</option><option value="RAW">Raw / No Convert</option></select></div></div>
                 <div class="field"><label>Signature Formula Builder</label><input id="signatureTemplate" name="signatureTemplate" placeholder="${method}${operator_id}${account_id}${ukey}${secret_key}" /><small class="text-secondary">Use provider document formula here. Example: ${method}${operator_id}${account_id}${ukey}${secret_key}</small></div>
                 <div class="slider-two-col"><div class="field"><label>Random UKey Length</label><input id="ukeyLength" name="ukeyLength" type="number" min="1" max="64" value="8" /></div><div class="field"><label>UKey Prefix / Static Value</label><input id="ukeyPrefix" name="ukeyPrefix" placeholder="Optional prefix" /><input id="ukeyStaticValue" class="mt-2" name="ukeyStaticValue" placeholder="Optional fixed ukey, normally empty" /></div></div>
-                <div class="field"><label>Available Variables</label><div class="p-2 bg-light rounded small" style="line-height:1.8">Image templates: ${game_code}, ${game_name}, ${provider_code}, ${provider_name}, ${category}, ${key}, and row fields such as ${gameID}<br/>Player round: ${provider_player_id}, ${datePlayed}, ${hour}, ${timeZone}, ${session_start_date_time}, ${session_end_date_time}<br/>Built-in: ${operator_id}, ${secret_key}, ${account_id}, ${username}, ${member_id}, ${ukey}, ${method}, ${amount}, ${transaction_id}, ${game_code}, ${currency}, ${request_date_time}, ${timestamp}, ${TIMESTAMP_SECONDS}, ${TIMESTAMP_MILLISECONDS}, ${NONCE_32}, ${SESSION_ID}, ${UUID}, ${REQUEST_ID}, ${ISO8601_NOW}, ${RAW_JSON}, ${signature}<br/>Signature types: MD5, SHA1, SHA256, HMAC_SHA256, HMAC_SHA1, HMAC_SHA256_BASE64, HMAC_SHA1_BASE64<br/>Crypto: ${aes128ecb_base64:${rawJson}:${AgentKey}} for AES-128-ECB + Base64 Params<br/>Nested map game list: use Game Code Path @key and Category Path @group<br/>Custom: any key added in Dynamic Provider Variables, example ${merchant_id}, ${nonce}, ${token}</div></div>
+                <div class="field"><label>Available Variables</label><div class="p-2 bg-light rounded small" style="line-height:1.8">Image templates: ${game_code}, ${game_name}, ${provider_code}, ${provider_name}, ${category}, ${key}, and row fields such as ${gameID}<br/>Player round: ${provider_player_id}, ${datePlayed}, ${hour}, ${timeZone}, ${session_start_date_time}, ${session_end_date_time}<br/>Built-in: ${operator_id}, ${secret_key}, ${account_id}, ${username}, ${member_id}, ${ukey}, ${method}, ${amount}, ${amountNumber}, ${amountCents}, ${transaction_id}, ${game_code}, ${currency}, ${request_date_time}, ${timestamp}, ${TIMESTAMP_SECONDS}, ${TIMESTAMP_MILLISECONDS}, ${NONCE_32}, ${SESSION_ID}, ${UUID}, ${REQUEST_ID}, ${ISO8601_NOW}, ${RAW_JSON}, ${signature}<br/>Signature types: MD5, SHA1, SHA256, HMAC_SHA256, HMAC_SHA1, HMAC_SHA256_BASE64, HMAC_SHA1_BASE64<br/>Crypto: ${aes128ecb_base64:${rawJson}:${AgentKey}} for AES-128-ECB + Base64 Params<br/>Nested map game list: use Game Code Path @key and Category Path @group<br/>Typed JSON: use ${amountNumber} / ${amount_number} / ${AMOUNT_NUMBER} as the complete value to send a JSON number while existing ${amount} remains a string. Use ${amountCents} / ${amount_cents} / ${AMOUNT_CENTS} to multiply by 100 and send an integer smallest-unit value (RM 10.50 → 1050). Use ${UUID} for an RFC 4122 UUID such as provider plat_sn.<br/>Custom: any key added in Dynamic Provider Variables, example ${merchant_id}, ${nonce}, ${token}</div></div>
                 <div class="slider-two-col"><div class="field"><label>Create Player Path</label><input id="createPlayerPath" name="createPlayerPath" placeholder="/CreatePlayer" /></div><div class="field"><label>Balance Path</label><input id="balancePath" name="balancePath" placeholder="/GetBalance" /></div></div>
                 <div class="slider-two-col"><div class="field"><label>Deposit Path</label><input id="depositPath" name="depositPath" placeholder="/Deposit" /></div><div class="field"><label>Withdraw Path</label><input id="withdrawPath" name="withdrawPath" placeholder="/Withdrawal" /></div></div>
                 <div class="slider-two-col"><div class="field"><label>Launch Path</label><input id="launchPath" name="launchPath" placeholder="/LaunchSport" /></div><div class="field"><label>Game List Path</label><input id="gameListPath" name="gameListPath" placeholder="/GetGameList" /></div></div>
@@ -182,7 +192,7 @@
         </section>
       </main>
     </div>
-    <script src="assets/js/config.js?v=1.0.25"></script><script src="assets/js/auth.js?v=1.0.25"></script><script src="assets/js/reports.js?v=1.0.11"></script><script src="assets/js/game-provider.js?v=1.0.17"></script>
+    <script src="assets/js/config.js?v=1.0.25"></script><script src="assets/js/auth.js?v=1.0.25"></script><script src="assets/js/reports.js?v=1.0.11"></script><script src="assets/js/game-provider.js?v=1.0.18"></script>
       <script src="assets/js/crud-modal-pattern.js?v=1.0.0"></script>
 
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
