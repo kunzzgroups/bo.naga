@@ -234,6 +234,31 @@ const GAME_API = {
     return item ? item.name : '-';
   }
 
+
+  function selectedSubCategory() {
+    return subCategories.find(item => String(item.id) === String(subCategoryId.value || '')) || null;
+  }
+
+  function syncProviderFromSubCategory(options = {}) {
+    if (!providerCode || !subCategoryId) return;
+    const selected = selectedSubCategory();
+    const code = selected ? String(selected.providerCode || '').trim().toUpperCase() : '';
+    if (!code) {
+      if (options.clearWhenMissing) providerCode.value = '';
+      return;
+    }
+
+    providerCode.value = code;
+    const provider = providers.find(item => providerCodeOf(item) === code);
+    const providerName = provider ? String(provider.name || '').trim() : '';
+    providerCode.title = providerName && providerName.toUpperCase() !== code
+      ? `${providerName} (${code}) - auto-filled from sub category`
+      : `${code} - auto-filled from sub category`;
+    providerCode.dataset.autoFilledFromSubCategory = '1';
+    providerCode.dispatchEvent(new Event('input', { bubbles: true }));
+    providerCode.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
   function categoryOptions(withAll) {
     const options = categories.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join('');
     return (withAll ? '<option value="">All Categories</option>' : '') + (options || '<option value="">No category found</option>');
@@ -270,10 +295,13 @@ const GAME_API = {
 
   function refreshSubCategoryOptions(keepValue) {
     const oldValue = keepValue || subCategoryId.value;
-    subCategoryId.innerHTML = subCategoryOptions(categoryId.value, false, providerCode.value);
+    // Do not filter the form sub-category list by the current provider input.
+    // The selected sub-category is the source of truth and will auto-fill provider code.
+    subCategoryId.innerHTML = subCategoryOptions(categoryId.value, false, '');
     if (oldValue && Array.from(subCategoryId.options).some(o => o.value === String(oldValue))) {
       subCategoryId.value = String(oldValue);
     }
+    if (!isRestoringSelection) syncProviderFromSubCategory({ clearWhenMissing: true });
   }
 
   function refreshFilterSubCategoryOptions() {
@@ -314,11 +342,14 @@ const GAME_API = {
 
   function resetForm() {
     id.value = '';
+    providerCode.value = '';
+    providerCode.removeAttribute('title');
+    delete providerCode.dataset.autoFilledFromSubCategory;
     if (categories[0]) categoryId.value = String(categories[0].id);
     refreshSubCategoryOptions();
+    syncProviderFromSubCategory({ clearWhenMissing: true });
     name.value = '';
     gameUrl.value = '';
-    providerCode.value = '';
     if (gameCode) gameCode.value = '';
     sortOrder.value = '0';
     status.value = '1';
@@ -371,7 +402,7 @@ const GAME_API = {
       // Rebuild only after the exact category ID and provider code are assigned.
       // This guarantees the sub-category dropdown contains the database row that
       // belongs to the selected category/provider before selecting it.
-      subCategoryId.innerHTML = subCategoryOptions(wantedCategoryId, false, providerCode.value);
+      subCategoryId.innerHTML = subCategoryOptions(wantedCategoryId, false, '');
 
       const subCategoryExists = Array.from(subCategoryId.options).some(option => String(option.value) === wantedSubCategoryId);
       subCategoryId.value = subCategoryExists ? wantedSubCategoryId : '';
@@ -635,6 +666,12 @@ const GAME_API = {
     // During edit restore, both IDs are assigned together and must not be cleared.
     if (isRestoringSelection) return;
     refreshSubCategoryOptions('');
+    syncProviderFromSubCategory({ clearWhenMissing: true });
+  });
+
+  subCategoryId.addEventListener('change', () => {
+    if (isRestoringSelection) return;
+    syncProviderFromSubCategory({ clearWhenMissing: true });
   });
 
   categoryFilter.addEventListener('change', async () => {
@@ -644,7 +681,6 @@ const GAME_API = {
   });
 
   subCategoryFilter.addEventListener('change', loadGames);
-  if (providerCode) providerCode.addEventListener('input', () => refreshSubCategoryOptions());
   if (providerFilter) providerFilter.addEventListener('change', () => { refreshFilterSubCategoryOptions(); subCategoryFilter.value = ''; loadGames(); });
   if (searchInput) searchInput.addEventListener('input', () => renderList(currentItems, true));
   if (sortFilter) sortFilter.addEventListener('change', () => renderList(currentItems, true));

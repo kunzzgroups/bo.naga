@@ -120,6 +120,7 @@ const API_CONFIG = window.API_CONFIG || {
         CASINO_REPORT_SUMMARY: "/admin/casino-report/summary",
 
         PROMOTION_LIST: "/admin/promotion/list",
+        PROMOTION_DETAIL: "/admin/promotion/detail/{id}",
         PROMOTION_SAVE: "/admin/promotion/save",
         PROMOTION_SAVE_FORM: "/admin/promotion/save-form",
         PROMOTION_CLONE: '/admin/promotion/clone/{id}',

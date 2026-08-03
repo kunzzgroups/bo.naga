@@ -187,6 +187,22 @@
     var modal = ensureModal();
     var body = modal.querySelector('#crudPatternBody');
     body.appendChild(formCard);
+
+    // Game creation contains a long translation panel. Keep Save/Reset permanently
+    // visible in the modal footer so bulk game entry does not require scrolling down.
+    var gameForm = formCard.querySelector('#gameForm');
+    if(gameForm){
+      var gameActions = gameForm.querySelector('.slider-form-actions');
+      var dialog = modal.querySelector('.crud-pattern-dialog');
+      if(gameActions && dialog && !dialog.querySelector('.crud-pattern-fixed-actions')){
+        gameActions.classList.add('crud-pattern-fixed-actions');
+        Array.from(gameActions.querySelectorAll('button')).forEach(function(button){
+          button.setAttribute('form', 'gameForm');
+        });
+        dialog.appendChild(gameActions);
+      }
+    }
+
     addToolbarButton(listCard, formCard);
     watchSuccessClose(formCard);
 

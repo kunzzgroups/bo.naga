@@ -253,41 +253,241 @@ document.addEventListener('DOMContentLoaded', () => {
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
 
-/* Unified rounded native-select replacement. Delayed so page-specific controls initialize first. */
+/* Unified rounded native-select replacement.
+   Keeps the visible rounded dropdown synchronized with the real <select>
+   after edit population, async option loading, direct .value assignment,
+   and form.reset(). */
 (function(){
-  function enhanceSelect(select){
-    if(!select || select.dataset.noRounded==='1' || select.dataset.roundedReady==='1' || select.multiple || select.size>1 || select.closest('.rounded-select-wrap')) return;
-    if(select.disabled && !select.options.length) return;
-    select.dataset.roundedReady='1';
-    const wrap=document.createElement('div'); wrap.className='rounded-select-wrap';
-    select.parentNode.insertBefore(wrap,select); wrap.appendChild(select);
-    const btn=document.createElement('button'); btn.type='button'; btn.className='rounded-select-btn';
-    const menu=document.createElement('div'); menu.className='rounded-select-menu';
-    wrap.appendChild(btn); wrap.appendChild(menu);
-    function label(){ const o=select.options[select.selectedIndex]; return o ? o.textContent.trim() : 'Select'; }
-    function render(){
-      btn.innerHTML='<span>'+escapeHtml(label())+'</span><i class="bi bi-chevron-down"></i>';
-      menu.innerHTML='';
-      Array.from(select.options).forEach(function(opt){
-        const item=document.createElement('button'); item.type='button'; item.className='rounded-select-option'+(opt.selected?' active':'');
-        item.textContent=opt.textContent; item.disabled=opt.disabled;
-        item.addEventListener('click',function(){ select.value=opt.value; select.dispatchEvent(new Event('change',{bubbles:true})); close(); });
-        menu.appendChild(item);
+  const pending=new WeakSet();
+
+  function escapeHtml(v){
+    return String(v==null?'':v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  }
+
+  function selectedLabel(select){
+    const option=select && select.options ? select.options[select.selectedIndex] : null;
+    return option ? String(option.textContent||'').trim() : 'Select';
+  }
+
+  function findParts(select){
+    const wrap=select && select.closest ? select.closest('.rounded-select-wrap') : null;
+    if(!wrap) return {};
+    return {
+      wrap,
+      button: wrap.querySelector('.rounded-select-btn'),
+      menu: wrap.querySelector('.rounded-select-menu')
+    };
+  }
+
+  function renderExisting(select){
+    if(!select) return;
+    const parts=findParts(select);
+    if(!parts.wrap || !parts.button || !parts.menu) return;
+
+    parts.button.innerHTML='<span>'+escapeHtml(selectedLabel(select))+'</span><i class="bi bi-chevron-down"></i>';
+    const options=Array.from(select.options||[]);
+    const currentItems=Array.from(parts.menu.querySelectorAll('.rounded-select-option'));
+
+    // Rebuild only when the option collection changed. This preserves page-specific handlers.
+    const needsRebuild=currentItems.length!==options.length ||
+      currentItems.some((item,index)=>String(item.dataset.value??'')!==String(options[index]?.value??'') ||
+        item.textContent!==String(options[index]?.textContent??''));
+
+    if(needsRebuild){
+      parts.menu.innerHTML='';
+      options.forEach(function(opt){
+        const item=document.createElement('button');
+        item.type='button';
+        item.className='rounded-select-option';
+        item.dataset.value=String(opt.value??'');
+        item.textContent=opt.textContent;
+        item.disabled=opt.disabled;
+        item.addEventListener('click',function(){
+          select.value=opt.value;
+          select.dispatchEvent(new Event('input',{bubbles:true}));
+          select.dispatchEvent(new Event('change',{bubbles:true}));
+          parts.menu.classList.remove('show');
+          parts.button.classList.remove('open');
+          queueSync(select);
+        });
+        parts.menu.appendChild(item);
       });
     }
-    function close(){ menu.classList.remove('show'); btn.classList.remove('open'); }
-    btn.addEventListener('click',function(e){ e.stopPropagation(); const open=!menu.classList.contains('show'); document.querySelectorAll('.rounded-select-menu.show').forEach(m=>m.classList.remove('show')); document.querySelectorAll('.rounded-select-btn.open').forEach(b=>b.classList.remove('open')); if(open){menu.classList.add('show');btn.classList.add('open');} });
-    select.addEventListener('change',render);
-    new MutationObserver(render).observe(select,{childList:true,subtree:true,attributes:true});
-    render();
-  }
-  function escapeHtml(v){return String(v||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
-  function run(){ document.querySelectorAll('select').forEach(enhanceSelect); }
-  document.addEventListener('DOMContentLoaded',function(){setTimeout(run,20);});
-  document.addEventListener('click',function(e){if(!e.target.closest('.rounded-select-wrap')){document.querySelectorAll('.rounded-select-menu.show').forEach(m=>m.classList.remove('show'));document.querySelectorAll('.rounded-select-btn.open').forEach(b=>b.classList.remove('open'));}});
-  new MutationObserver(function(){setTimeout(run,0);}).observe(document.documentElement,{childList:true,subtree:true});
-})();
 
+    Array.from(parts.menu.querySelectorAll('.rounded-select-option')).forEach(function(item,index){
+      const opt=options[index];
+      item.classList.toggle('active',!!opt && opt.selected);
+      item.disabled=!!opt && opt.disabled;
+    });
+  }
+
+  function queueSync(select){
+    if(!select || pending.has(select)) return;
+    pending.add(select);
+    queueMicrotask(function(){
+      pending.delete(select);
+      renderExisting(select);
+    });
+    requestAnimationFrame(function(){ renderExisting(select); });
+  }
+
+  function enhanceSelect(select){
+    if(!select || select.dataset.noRounded==='1' || select.multiple || select.size>1) return;
+
+    if(select.closest('.rounded-select-wrap')){
+      select.dataset.roundedReady='1';
+      queueSync(select);
+      return;
+    }
+    if(select.dataset.roundedReady==='1') return;
+    if(select.disabled && !select.options.length) return;
+
+    select.dataset.roundedReady='1';
+    const wrap=document.createElement('div');
+    wrap.className='rounded-select-wrap';
+    select.parentNode.insertBefore(wrap,select);
+    wrap.appendChild(select);
+
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='rounded-select-btn';
+    const menu=document.createElement('div');
+    menu.className='rounded-select-menu';
+    wrap.appendChild(btn);
+    wrap.appendChild(menu);
+
+    function close(){
+      menu.classList.remove('show');
+      btn.classList.remove('open');
+    }
+
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      const open=!menu.classList.contains('show');
+      document.querySelectorAll('.rounded-select-menu.show').forEach(m=>m.classList.remove('show'));
+      document.querySelectorAll('.rounded-select-btn.open').forEach(b=>b.classList.remove('open'));
+      if(open){
+        menu.classList.add('show');
+        btn.classList.add('open');
+      }
+    });
+
+    select.addEventListener('input',function(){ queueSync(select); });
+    select.addEventListener('change',function(){ queueSync(select); });
+    select.addEventListener('bo:select-sync',function(){ queueSync(select); });
+
+    new MutationObserver(function(){ queueSync(select); })
+      .observe(select,{childList:true,subtree:true,attributes:true,attributeFilter:['selected','disabled','label','value']});
+
+    queueSync(select);
+  }
+
+  function syncScope(scope){
+    const root=scope && scope.querySelectorAll ? scope : document;
+    if(root.matches && root.matches('select')) enhanceSelect(root);
+    root.querySelectorAll('select').forEach(function(select){
+      enhanceSelect(select);
+      queueSync(select);
+    });
+  }
+
+  // Direct element.value assignments do not emit change/input events.
+  // Patch only the visual synchronization; business change handlers remain untouched.
+  try{
+    const descriptor=Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,'value');
+    if(descriptor && descriptor.get && descriptor.set && !HTMLSelectElement.prototype.__boRoundedValuePatched){
+      Object.defineProperty(HTMLSelectElement.prototype,'value',{
+        configurable:descriptor.configurable,
+        enumerable:descriptor.enumerable,
+        get:descriptor.get,
+        set:function(value){
+          descriptor.set.call(this,value);
+          queueSync(this);
+        }
+      });
+      Object.defineProperty(HTMLSelectElement.prototype,'__boRoundedValuePatched',{value:true});
+    }
+  }catch(_){}
+
+  try{
+    const descriptor=Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,'selectedIndex');
+    if(descriptor && descriptor.get && descriptor.set && !HTMLSelectElement.prototype.__boRoundedIndexPatched){
+      Object.defineProperty(HTMLSelectElement.prototype,'selectedIndex',{
+        configurable:descriptor.configurable,
+        enumerable:descriptor.enumerable,
+        get:descriptor.get,
+        set:function(value){
+          descriptor.set.call(this,value);
+          queueSync(this);
+        }
+      });
+      Object.defineProperty(HTMLSelectElement.prototype,'__boRoundedIndexPatched',{value:true});
+    }
+  }catch(_){}
+
+  try{
+    const descriptor=Object.getOwnPropertyDescriptor(HTMLOptionElement.prototype,'selected');
+    if(descriptor && descriptor.get && descriptor.set && !HTMLOptionElement.prototype.__boRoundedSelectedPatched){
+      Object.defineProperty(HTMLOptionElement.prototype,'selected',{
+        configurable:descriptor.configurable,
+        enumerable:descriptor.enumerable,
+        get:descriptor.get,
+        set:function(value){
+          descriptor.set.call(this,value);
+          const select=this.closest && this.closest('select');
+          if(select) queueSync(select);
+        }
+      });
+      Object.defineProperty(HTMLOptionElement.prototype,'__boRoundedSelectedPatched',{value:true});
+    }
+  }catch(_){}
+
+  // form.reset() updates the native controls after the reset event dispatches.
+  // Refresh twice so both the immediate state and the browser's final reset state are reflected.
+  document.addEventListener('reset',function(event){
+    const form=event.target;
+    setTimeout(function(){ syncScope(form); },0);
+    requestAnimationFrame(function(){ syncScope(form); });
+  },true);
+
+  document.addEventListener('change',function(event){
+    if(event.target && event.target.matches && event.target.matches('select')) queueSync(event.target);
+  },true);
+
+  document.addEventListener('input',function(event){
+    if(event.target && event.target.matches && event.target.matches('select')) queueSync(event.target);
+  },true);
+
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('.rounded-select-wrap')){
+      document.querySelectorAll('.rounded-select-menu.show').forEach(m=>m.classList.remove('show'));
+      document.querySelectorAll('.rounded-select-btn.open').forEach(b=>b.classList.remove('open'));
+    }
+  });
+
+  function boot(){
+    syncScope(document);
+    new MutationObserver(function(records){
+      records.forEach(function(record){
+        record.addedNodes.forEach(function(node){
+          if(node.nodeType===1) syncScope(node);
+        });
+      });
+    }).observe(document.documentElement,{childList:true,subtree:true});
+  }
+
+  window.BOSelectSync={
+    one:function(select){ enhanceSelect(select); queueSync(select); },
+    scope:syncScope,
+    all:function(){ syncScope(document); }
+  };
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){ setTimeout(boot,20); });
+  }else{
+    setTimeout(boot,20);
+  }
+})();
 
 /* Global standardized alert modal: replaces browser alert() across the BO. */
 (function(){
