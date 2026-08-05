@@ -8,7 +8,7 @@
   const dmy=v=>{if(!v)return '';const a=String(v).split('-');return a.length===3?`${a[2]}/${a[1]}/${a[0]}`:v};
   const startOfWeek=d=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-x.getDay());return x};
   const endOfWeek=d=>{const x=startOfWeek(d);x.setDate(x.getDate()+6);return x};
-  const today=ymd(new Date());
+  const today=window.BO_FORMAT?.today?BO_FORMAT.today():ymd(new Date());
   f.value=t.value=today;
 
   function updateDateLabel(){
@@ -74,7 +74,7 @@
   const cards=[['Members','members','bi-people','index.html'],['New Members','newMembers','bi-person-plus','index.html'],['Approved Deposit','depositAmount','bi-wallet2','member-deposit.html'],['Pending Deposit','pendingDepositAmount','bi-hourglass-split','member-deposit.html?status=PENDING'],['Approved Withdrawal','withdrawAmount','bi-cash-stack','member-withdraw.html'],['Pending Withdrawal','pendingWithdrawalAmount','bi-exclamation-circle','member-withdraw.html?status=PENDING'],['Valid Bet','validBet','bi-graph-up-arrow','provider-bet-report.html'],['Bet Amount','betAmount','bi-dice-5','provider-bet-report.html'],['Win Amount','winAmount','bi-trophy','provider-bet-report.html'],['Net Win/Loss','netWinLoss','bi-activity','provider-bet-report.html'],['Bonus','bonusAmount','bi-gift','promotion-report.html'],['Rebate','rebateAmount','bi-percent','daily-rebate-report.html'],['Adjustment','adjustmentAmount','bi-sliders','transaction-report.html?type=ADJUST']];
   function fmt(v,k){return /(Amount|Bet|Win|Loss|Bonus|Rebate|Adjustment)/.test(k)?Number(v||0).toFixed(2):Number(v||0).toLocaleString()}
   async function load(){
-    const z=document.getElementById('dashTimezone').value,u=`${base}/api/admin/dashboard/summary?from=${f.value}&to=${t.value}&timezone=${encodeURIComponent(z)}`;
+    const z=localStorage.getItem('bo_timezone')||'Asia/Kuala_Lumpur';document.getElementById('dashTimezoneLabel').textContent=z;const u=`${base}/api/admin/dashboard/summary?from=${f.value}&to=${t.value}&timezone=${encodeURIComponent(z)}`;
     const r=await fetch(u,{headers:{Authorization:'Bearer '+(localStorage.getItem('admin_token')||localStorage.getItem('token')||'')}}),j=await r.json(),d=j.data||{};
     document.getElementById('dashClock').textContent=`${d.timezone||z} · ${(d.serverTime||'').replace('T',' ').slice(0,19)}`;
     document.getElementById('dashboardCards').innerHTML=cards.map(c=>`<a class="ops-card" href="${c[3]}?from=${f.value}&to=${t.value}${c[3].includes('?')?'&':'&'}"><div class="top"><span>${c[0]}</span><i class="bi ${c[2]}"></i></div><div class="value">${fmt(d[c[1]],c[0])}</div><small>Click to view matching report</small></a>`).join('');

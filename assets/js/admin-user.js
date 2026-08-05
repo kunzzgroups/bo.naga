@@ -136,7 +136,7 @@
     if(prevBtn) prevBtn.disabled = currentPage <= 1;
     if(nextBtn) nextBtn.disabled = currentPage >= totalPages;
     if(!rows.length){
-      tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4">No admin found.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9" class="text-center py-4">No admin found.</td></tr>';
       if(mobileCards) mobileCards.innerHTML = '';
       return;
     }
@@ -152,17 +152,18 @@
         '<td><span class="admin-status-pill '+(active?'active':'disabled')+'"><i></i>'+(active?'Active':'Disabled')+'</span></td>'+
         '<td>'+shortDt(row.lastLoginAt || row.lastLogin || row.loginAt)+'</td>'+
         '<td>'+shortDt(row.createdAt || row.created_at)+'</td>'+
+        '<td><b>'+esc(row.createdByName || row.createdByUsername || row.createdBy || row.creator || '-')+'</b></td>'+
         '<td><div class="user-row-actions admin-actions"><button class="icon-action admin-edit-btn" title="Edit" data-id="'+esc(row.id)+'" data-row=\''+JSON.stringify(row).replace(/'/g,'&#39;')+'\'><i class="bi bi-pencil"></i></button><button class="icon-action danger admin-delete-btn" title="Delete" type="button" data-id="'+esc(row.id)+'"><i class="bi bi-trash"></i></button></div></td>'+
       '</tr>';
     }).join('');
     if(mobileCards){
-      mobileCards.innerHTML = rows.map(row => '<div class="member-card admin-mobile-card"><div class="member-card-head"><h3>'+esc(row.username)+'</h3><span class="admin-status-pill '+(Number(row.status)===1?'active':'disabled')+'"><i></i>'+(Number(row.status)===1?'Active':'Disabled')+'</span></div><div class="member-grid"><span>Display Name</span><b>'+esc(row.displayName || '-')+'</b><span>Role</span><b>'+esc(roleName(row))+'</b><span>Created</span><b>'+esc(dt(row.createdAt || row.created_at))+'</b></div><div class="admin-mobile-actions"><button class="clean-btn primary admin-edit-btn" data-id="'+esc(row.id)+'" data-row=\''+JSON.stringify(row).replace(/'/g,'&#39;')+'\'>Edit</button><button class="clean-btn danger admin-delete-btn" data-id="'+esc(row.id)+'">Delete</button></div></div>').join('');
+      mobileCards.innerHTML = rows.map(row => '<div class="member-card admin-mobile-card"><div class="member-card-head"><h3>'+esc(row.username)+'</h3><span class="admin-status-pill '+(Number(row.status)===1?'active':'disabled')+'"><i></i>'+(Number(row.status)===1?'Active':'Disabled')+'</span></div><div class="member-grid"><span>Display Name</span><b>'+esc(row.displayName || '-')+'</b><span>Role</span><b>'+esc(roleName(row))+'</b><span>Created</span><b>'+esc(dt(row.createdAt || row.created_at))+'</b><span>Created By</span><b>'+esc(row.createdByName || row.createdByUsername || row.createdBy || row.creator || '-')+'</b></div><div class="admin-mobile-actions"><button class="clean-btn primary admin-edit-btn" data-id="'+esc(row.id)+'" data-row=\''+JSON.stringify(row).replace(/'/g,'&#39;')+'\'>Edit</button><button class="clean-btn danger admin-delete-btn" data-id="'+esc(row.id)+'">Delete</button></div></div>').join('');
     }
   }
 
   async function loadAdmins(){
     if(!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="8">Loading admin accounts...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9">Loading admin accounts...</td></tr>';
     try{
       const json = await apiJson(BO_AUTH.adminListUrl(), {headers: {...BO_AUTH.authHeader()}});
       allAdmins = Array.isArray(json.data) ? json.data : [];
@@ -170,7 +171,7 @@
       filteredAdmins = allAdmins.slice();
       renderAdmins();
     }catch(err){
-      tbody.innerHTML = '<tr><td colspan="8" class="text-danger">'+esc(err.message || 'Load admin failed')+'</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9" class="text-danger">'+esc(err.message || 'Load admin failed')+'</td></tr>';
     }
   }
 

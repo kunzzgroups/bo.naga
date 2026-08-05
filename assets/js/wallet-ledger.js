@@ -65,11 +65,12 @@
   function render(rows, pagination, meta){
     const body=document.getElementById('walletLedgerBody'); if(!body) return;
     updateMetrics(rows);
-    if(!rows.length){ body.innerHTML='<tr><td colspan="12">No ledger records found.</td></tr>'; }
+    if(!rows.length){ body.innerHTML='<tr><td colspan="15">No ledger records found.</td></tr>'; }
     else body.innerHTML = rows.map(r => {
       const amt = num(r.amount);
       return `<tr>
         <td>${esc(dt(r.createdAt || r.created_at))}</td>
+        <td>${esc(dt(r.postedAt || r.posted_at || r.completedAt || r.approvedAt))}</td>
         <td><b>${esc(r.username || '-')}</b><br><small>ID: ${esc(r.memberId || '')}</small></td>
         <td>${esc(r.providerCode || '-')}</td>
         <td><span class="status-pill">${esc(r.ledgerType || '-')}</span></td>
@@ -77,8 +78,10 @@
         <td>${money(r.beforeBalance)}</td>
         <td>${money(r.afterBalance)}</td>
         <td>${esc(r.gameCode || '-')}</td>
-        <td><small>${esc(r.referenceNo || '-')}</small></td>
-        <td><b>${esc(r.adjustedBy || '-')}</b></td>
+        <td><b>${esc(r.createdBy || r.adjustedBy || '-')}</b></td>
+        <td><b>${esc(r.approvedBy || r.reviewedBy || '-')}</b></td>
+        <td>${esc(r.reasonCode || r.reason || '-')}</td>
+        <td><small>${esc(r.relatedId || r.referenceNo || r.depositId || r.withdrawalId || r.bonusId || r.rebateId || '-')}</small></td>
         <td><small>${esc(r.remark || '-')}</small></td>
         <td>${esc(r.status || '-')}</td>
       </tr>`;
@@ -94,14 +97,14 @@
     document.getElementById('ledgerNextBtn').disabled = page >= totalPages;
   }
   async function load(){
-    const body=document.getElementById('walletLedgerBody'); if(body) body.innerHTML='<tr><td colspan="12">Loading ledger...</td></tr>';
+    const body=document.getElementById('walletLedgerBody'); if(body) body.innerHTML='<tr><td colspan="15">Loading ledger...</td></tr>';
     try{
       const json = await api(url('WALLET_LEDGER_LIST') + '?' + params());
       const data = json.data || {};
       render(Array.isArray(data.content) ? data.content : [], data.pagination || {}, data);
     }catch(e){
       updateMetrics([]);
-      if(body) body.innerHTML='<tr><td colspan="12" class="text-danger">'+esc(e.message || 'Load failed')+'</td></tr>';
+      if(body) body.innerHTML='<tr><td colspan="15" class="text-danger">'+esc(e.message || 'Load failed')+'</td></tr>';
     }
   }
   document.addEventListener('DOMContentLoaded', function(){

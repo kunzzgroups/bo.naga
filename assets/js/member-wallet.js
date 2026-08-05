@@ -48,7 +48,7 @@
       return `<tr>
         <td><b>${esc(r.username || '-')}</b><br><small>ID: ${esc(r.memberId)} ${r.mobile ? '• '+esc(r.mobile) : ''}</small></td>
         <td><b>${money(r.mainWalletBalance)}</b></td>
-        <td>${money(r.providerWalletBalance)}</td>
+        <td><button class="wallet-total-link provider-wallet-total-link" type="button" data-provider-wallet-detail="${esc(r.memberId)}" data-provider-wallet-user="${esc(r.username||'')}" title="View provider wallet detail">${money(r.providerWalletBalance)}</button></td>
         <td><b>${money(r.totalBalance)}</b></td>
         <td>${money(r.totalDeposit)}</td>
         <td>${money(r.totalWithdraw)}</td>
@@ -58,9 +58,9 @@
         <td>${money(r.totalWin)}</td>
         <td>${money(r.totalLose)}</td>
         <td><span class="status-pill ${wl >= 0 ? 'active' : 'off'}">${money(wl)}</span></td>
-        <td><b>${money(r.totalAdjustment)}</b><br><a class="small" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}&type=ADJUSTMENT&scope=all">View detail</a></td>
-        <td><b>${money(r.totalBonus)}</b><br><a class="small" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}&type=BONUS&scope=all">View detail</a></td>
-        <td><b>${money(r.dailyRebate)}</b><br><a class="small" href="daily-rebate-report.html?memberId=${encodeURIComponent(r.memberId)}">View detail</a></td>
+        <td><a class="wallet-total-link" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}&type=ADJUSTMENT&scope=all" title="View adjustment detail">${money(r.totalAdjustment)}</a></td>
+        <td><a class="wallet-total-link" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}&type=BONUS&scope=all" title="View bonus detail">${money(r.totalBonus)}</a></td>
+        <td><a class="wallet-total-link" href="daily-rebate-report.html?memberId=${encodeURIComponent(r.memberId)}" title="View daily rebate detail">${money(r.dailyRebate)}</a></td>
         <td><div class="d-flex gap-2 flex-wrap"><a class="clean-btn" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}">Ledger</a><a class="clean-btn primary" href="index.html?memberId=${encodeURIComponent(r.memberId)}">Adjust</a></div></td>
       </tr>`;
     }).join('');
@@ -82,6 +82,24 @@
       if(body) body.innerHTML='<tr><td colspan="16" class="text-danger">'+esc(e.message || 'Load failed')+'</td></tr>';
     }
   }
+
+  async function showProviderWalletDetail(memberId, username){
+    const modal=document.getElementById('providerWalletDetailModal'), body=document.getElementById('providerWalletDetailBody');
+    if(!modal||!body)return;
+    document.getElementById('providerWalletDetailTitle').textContent=`Provider Wallet Detail — ${username||('Member #'+memberId)}`;
+    modal.hidden=false; document.body.classList.add('modal-open'); body.innerHTML='<tr><td colspan="6">Loading provider accounts...</td></tr>';
+    try{
+      const json=await api(url('MEMBER_WALLET_PROVIDER_ACCOUNTS')+'?memberId='+encodeURIComponent(memberId));
+      const rows = Array.isArray(json.data)
+        ? json.data
+        : (Array.isArray(json.data?.accounts)
+            ? json.data.accounts
+            : (Array.isArray(json.data?.content) ? json.data.content : []));
+      body.innerHTML=rows.length?rows.map(r=>`<tr><td><b>${esc(r.providerName||r.providerCode||'-')}</b><br><small>${esc(r.providerCode||'')}</small></td><td>${esc(r.providerUsername||r.accountId||r.playerId||'-')}</td><td><b>${money(r.balance??r.providerBalance??r.walletBalance)}</b></td><td>${esc(r.status||r.sessionStatus||'-')}</td><td>${esc(r.updatedAt||r.lastSyncAt||r.lastUpdatedAt||'-')}</td><td>${esc(r.sessionId||r.activeSessionId||'-')}</td></tr>`).join(''):'<tr><td colspan="6">No provider wallet account found for this member.</td></tr>';
+    }catch(e){ body.innerHTML='<tr><td colspan="6" class="text-danger">'+esc(e.message||'Unable to load provider wallet details')+'</td></tr>'; }
+  }
+  function closeProviderWalletDetail(){ const m=document.getElementById('providerWalletDetailModal'); if(m)m.hidden=true; document.body.classList.remove('modal-open'); }
+
   document.addEventListener('DOMContentLoaded', function(){
     document.getElementById('walletSearchBtn')?.addEventListener('click', ()=>{ page=1; load(); });
     document.getElementById('walletKeyword')?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ page=1; load(); } });
@@ -89,6 +107,10 @@
     document.getElementById('walletResetBtn')?.addEventListener('click', ()=>{ document.getElementById('walletKeyword').value=''; page=1; load(); });
     document.getElementById('walletPrevBtn')?.addEventListener('click', ()=>{ if(page>1){ page--; load(); } });
     document.getElementById('walletNextBtn')?.addEventListener('click', ()=>{ if(page<totalPages){ page++; load(); } });
+    document.getElementById('memberWalletBody')?.addEventListener('click',e=>{const b=e.target.closest('[data-provider-wallet-detail]');if(b)showProviderWalletDetail(b.dataset.providerWalletDetail,b.dataset.providerWalletUser);});
+    document.getElementById('providerWalletDetailClose')?.addEventListener('click',closeProviderWalletDetail);
+    document.getElementById('providerWalletDetailClose2')?.addEventListener('click',closeProviderWalletDetail);
+    document.getElementById('providerWalletDetailModal')?.addEventListener('click',e=>{if(e.target.id==='providerWalletDetailModal')closeProviderWalletDetail();});
     document.getElementById('walletPager')?.addEventListener('click', e=>{ const b=e.target.closest('[data-page]'); if(!b)return; const n=Number(b.dataset.page); if(n>=1&&n<=totalPages&&n!==page){page=n;load();} });
     load();
   });

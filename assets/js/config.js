@@ -158,26 +158,17 @@ window.API_CONFIG = API_CONFIG;
 window.API_BASE = String(API_CONFIG.BASE_URL || '').replace(/\/api\/?$/, '');
 window.API_ENDPOINTS = API_CONFIG.ENDPOINTS || {};
 
-window.BO_FORMAT = window.BO_FORMAT || {
+window.BO_TIMEZONE = { get: function(){ return localStorage.getItem('bo_timezone') || 'Asia/Kuala_Lumpur'; } };
+window.BO_FORMAT = {
   dateTime: function(value){
     if(value === undefined || value === null || value === '') return '-';
-    if(value && typeof value === 'object' && typeof value.toDate === 'function') value = value.toDate();
-    let d = value instanceof Date ? value : null;
-    if(!d){
-      let str = String(value).trim();
-      if(!str) return '-';
-      // Keep local DB datetime as-is, only normalize separator/milliseconds/timezone.
-      str = str.replace('T',' ');
-      str = str.replace(/\.\d+$/, '').replace(/\.\d+(Z|[+-]\d{2}:?\d{2})$/, '');
-      str = str.replace(/(Z|[+-]\d{2}:?\d{2})$/, '');
-      const m = str.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})/);
-      if(m) return m[1] + ' ' + m[2];
-      const m2 = str.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})$/);
-      if(m2) return m2[1] + ' ' + m2[2] + ':00';
-      d = new Date(String(value));
-      if(Number.isNaN(d.getTime())) return str;
+    if(value && typeof value === 'object' && typeof value.toDate === 'function') value=value.toDate();
+    let d=value instanceof Date?value:new Date(value);
+    if(Number.isNaN(d.getTime())){
+      const raw=String(value).trim().replace(' ','T'); d=new Date(raw + (/Z$|[+-]\d{2}:?\d{2}$/.test(raw)?'':'Z'));
     }
-    const pad = n => String(n).padStart(2,'0');
-    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
-  }
+    if(Number.isNaN(d.getTime())) return String(value).replace('T',' ').slice(0,19);
+    try{ return new Intl.DateTimeFormat('en-CA',{timeZone:window.BO_TIMEZONE.get(),year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(d).replace(',', ''); }catch(_){ return d.toISOString().replace('T',' ').slice(0,19); }
+  },
+  today: function(){ const parts=new Intl.DateTimeFormat('en-CA',{timeZone:window.BO_TIMEZONE.get(),year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()); const x={};parts.forEach(p=>x[p.type]=p.value);return x.year+'-'+x.month+'-'+x.day; }
 };
