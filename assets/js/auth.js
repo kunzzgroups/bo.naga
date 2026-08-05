@@ -1,4 +1,69 @@
 (function(){
+  // Apply the authenticated admin identity to every BO API request. This keeps
+  // legacy pages covered by the central Spring Boot admin-operation audit trail
+  // without changing each working page one by one.
+  (function installAdminAuditHeaders(){
+    if(window.__boAdminAuditFetchInstalled || !window.fetch) return;
+    window.__boAdminAuditFetchInstalled = true;
+    const nativeFetch = window.fetch.bind(window);
+    window.fetch = function(input, init){
+      init = init ? Object.assign({}, init) : {};
+      let url = '';
+      try { url = typeof input === 'string' ? input : (input && input.url) || ''; } catch(e){}
+      let isApi = false;
+      try {
+        const absolute = new URL(url, location.href);
+        const configuredBase = window.API_CONFIG && API_CONFIG.BASE_URL ? new URL(API_CONFIG.BASE_URL, location.href) : null;
+        isApi = absolute.pathname.indexOf('/api/') !== -1 && (!configuredBase || absolute.origin === configuredBase.origin);
+      } catch(e) { isApi = String(url).indexOf('/api/') !== -1; }
+      if(isApi && String(url).indexOf('/api/auth/admin/login') === -1){
+        const headers = new Headers(init.headers || (input && input.headers) || {});
+        const token = localStorage.getItem('bo_admin_token') || '';
+        let user = {};
+        try { user = JSON.parse(localStorage.getItem('bo_admin_user') || '{}'); } catch(e){}
+        if(token && !headers.has('Authorization')) headers.set('Authorization', 'Bearer ' + token);
+        if(user && user.username && !headers.has('X-Admin-Username')) headers.set('X-Admin-Username', String(user.username));
+        if(!headers.has('X-Request-Id')) headers.set('X-Request-Id', 'bo-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,10));
+
+        // Attach a compact, sanitized business context so the backend audit log can
+        // say exactly which game/member/configuration was changed. This is metadata
+        // only and never changes the original request body or API behavior.
+        try {
+          const method = String(init.method || (input && input.method) || 'GET').toUpperCase();
+          if(method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS' && !headers.has('X-Admin-Audit-Context')){
+            const sensitive = /password|token|authorization|secret|signature|api.?key|transaction.?password|pin/i;
+            const useful = {};
+            const put = function(k,v){
+              if(!k || sensitive.test(k) || v == null || v === '' || typeof v === 'object') return;
+              const text = String(v);
+              useful[k] = text.length > 300 ? text.slice(0,300) : text;
+            };
+            const body = init.body;
+            if(typeof body === 'string'){
+              try {
+                const parsed = JSON.parse(body);
+                if(parsed && typeof parsed === 'object' && !Array.isArray(parsed)) Object.keys(parsed).forEach(k=>put(k, parsed[k]));
+              } catch(e){}
+            } else if(window.FormData && body instanceof FormData){
+              body.forEach((v,k)=>{ if(!(window.File && v instanceof File)) put(k,v); });
+            } else if(window.URLSearchParams && body instanceof URLSearchParams){
+              body.forEach((v,k)=>put(k,v));
+            }
+            const absolute = new URL(url, location.href);
+            const context = {
+              page: (document.title || '').trim(),
+              pathname: absolute.pathname,
+              fields: useful
+            };
+            const raw = JSON.stringify(context);
+            if(raw.length < 6000) headers.set('X-Admin-Audit-Context', encodeURIComponent(raw));
+          }
+        } catch(e){}
+        init.headers = headers;
+      }
+      return nativeFetch(input, init);
+    };
+  })();
   function api(pathKey){ return API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS[pathKey]; }
   function initials(name){
     name = (name || 'A').trim();
@@ -45,6 +110,7 @@
     {menuKey:'role', title:'Role & Menu Permission', url:'role.html', icon:'bi-person-badge', parentKey:'access', sortOrder:30},
     {menuKey:'menu_management', title:'Menu Management', url:'menu-management.html', icon:'bi-list-check', parentKey:'access', sortOrder:31},
     {menuKey:'admin_login_log', title:'Admin Login Log', url:'admin-login-log.html', icon:'bi-clock-history', parentKey:'access', sortOrder:32},
+    {menuKey:'admin_operation_log', title:'Admin Operation Log', url:'admin-operation-log.html', icon:'bi-journal-text', parentKey:'access', sortOrder:33},
     {menuKey:'account_lock', title:'Account Lock', url:'account-lock.html', icon:'bi-lock', parentKey:'access', sortOrder:34},
     {menuKey:'live_chat', title:'Live Chat', url:'livechat.html', icon:'bi-chat-dots', parentKey:'support', sortOrder:55},
     {menuKey:'livechat_template', title:'Template Messages', url:'livechat-template.html', icon:'bi-chat-square-text', parentKey:'support', sortOrder:56},
@@ -116,7 +182,7 @@
     },
     enforcePageAccess: function(user){
       const current = pageName();
-      const alwaysAllowed = ['profile.html','change-password.html','rebate-management.html','rebate-log.html','manual-rebate-approval.html', 'admin-login-log.html'];
+      const alwaysAllowed = ['profile.html','change-password.html','rebate-management.html','rebate-log.html','manual-rebate-approval.html', 'admin-login-log.html','admin-operation-log.html'];
       if(alwaysAllowed.indexOf(current) !== -1) return true;
       const menus = this.allowedMenus(user);
       if(!menus.length){
@@ -209,6 +275,11 @@
       nav.innerHTML = html;
     },
     bindDynamicSidebarEvents: function(){
+      // Some legacy pages call this explicitly while auth.js also initializes it
+      // on DOMContentLoaded. Bind only once; duplicate delegated listeners would
+      // toggle an accordion open and immediately closed on the same click.
+      if(window.__boDynamicSidebarEventsBound) return;
+      window.__boDynamicSidebarEventsBound = true;
       document.addEventListener('click', function(e){
         const btn = e.target.closest && e.target.closest('.nav-group-btn');
         if(btn){

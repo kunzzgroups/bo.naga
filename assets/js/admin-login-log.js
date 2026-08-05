@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  BO_AUTH.requireLogin(); BO_AUTH.refreshMe(); BO_AUTH.renderProfile(); BO_AUTH.bindDynamicSidebarEvents();
+  BO_AUTH.requireLogin(); BO_AUTH.refreshMe(); BO_AUTH.renderProfile();
   const body=document.getElementById('loginLogBody'), search=document.getElementById('loginLogSearch'), status=document.getElementById('loginLogStatus'), ip=document.getElementById('loginLogIp'), size=document.getElementById('loginLogPageSize');
   let all=[], filtered=[], page=1;
   const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
