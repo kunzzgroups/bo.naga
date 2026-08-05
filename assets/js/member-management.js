@@ -840,7 +840,7 @@
     const username = first(member,['username'], 'this member');
     const confirmed = window.BO_DIALOG && BO_DIALOG.confirm
       ? await BO_DIALOG.confirm(`${willLock?'Lock':'Unlock'} ${username}? ${willLock?'The member will be unable to log in until unlocked.':''}`, {title: willLock?'Confirm Member Lock':'Confirm Member Unlock', confirmText: willLock?'Lock Member':'Unlock Member'})
-      : window.confirm(`${willLock?'Lock':'Unlock'} ${username}?`);
+      : false;
     if(!confirmed) return;
     try{ await api(BO_AUTH.memberUpdateUrl(b.dataset.memberLock),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify({locked:Number(b.dataset.lock)})}); loadMembers(); }
     catch(err){ alert(err.message || 'Update failed'); }
