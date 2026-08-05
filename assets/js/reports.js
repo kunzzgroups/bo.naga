@@ -110,23 +110,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Keep every CRUD modal closed on initial page load. Some pages have multiple
+  // modal containers in the HTML, and the shared overlay CSS must not let them
+  // participate in layout until a user explicitly opens one.
+  document.querySelectorAll('.modal-clean').forEach(modal => {
+    if (!modal.classList.contains('show')) {
+      modal.setAttribute('aria-hidden', 'true');
+    }
+  });
+
+  const syncModalBodyState = () => {
+    document.body.classList.toggle('modal-open', !!document.querySelector('.modal-clean.show'));
+  };
+
   // Shared modal open/close for pages with modal actions.
   document.querySelectorAll('[data-open-modal]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const target = document.querySelector(btn.dataset.openModal);
-      target && target.classList.add('show');
+      if (target) { document.querySelectorAll('.modal-clean.show').forEach(m => { if (m !== target) { m.classList.remove('show'); m.setAttribute('aria-hidden','true'); } }); target.classList.add('show'); target.setAttribute('aria-hidden','false'); syncModalBodyState(); }
     });
   });
   document.querySelectorAll('[data-close-modal]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      btn.closest('.modal-clean')?.classList.remove('show');
+      const modal = btn.closest('.modal-clean'); if (modal) { modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); syncModalBodyState(); }
     });
   });
   document.querySelectorAll('.modal-clean').forEach(modal => {
     modal.addEventListener('click', (e) => {
-      if (e.target === modal) modal.classList.remove('show');
+      if (e.target === modal) { modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); syncModalBodyState(); }
     });
   });
 });

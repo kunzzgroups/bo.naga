@@ -37,6 +37,12 @@
   let filteredAdmins = [];
   let currentPage = 1;
 
+  // Defensive initial state: neither Create nor Edit modal may open by itself.
+  [document.getElementById('adminCreateModal'), editModal].forEach(function(modal){
+    if(modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); }
+  });
+  document.body.classList.remove('modal-open');
+
   function setStatus(el, message, type){
     if(!el) return;
     el.textContent = message || '';
@@ -206,8 +212,8 @@
 
   const createModal = document.getElementById('adminCreateModal');
   const openCreateBtn = document.getElementById('openCreateAdminBtn');
-  function openCreateAdmin(){ createForm && createForm.reset(); setStatus(createStatus,'',''); const rc=document.getElementById('adminRemarkCount'); if(rc) rc.textContent='0'; createModal && createModal.classList.add('show'); }
-  function closeCreateAdmin(){ createModal && createModal.classList.remove('show'); }
+  function openCreateAdmin(){ createForm && createForm.reset(); setStatus(createStatus,'',''); const rc=document.getElementById('adminRemarkCount'); if(rc) rc.textContent='0'; if(editModal){ editModal.classList.remove('show'); editModal.setAttribute('aria-hidden','true'); } if(createModal){ createModal.classList.add('show'); createModal.setAttribute('aria-hidden','false'); document.body.classList.add('modal-open'); } }
+  function closeCreateAdmin(){ if(createModal){ createModal.classList.remove('show'); createModal.setAttribute('aria-hidden','true'); } if(!document.querySelector('.modal-clean.show')) document.body.classList.remove('modal-open'); }
   openCreateBtn && openCreateBtn.addEventListener('click', openCreateAdmin);
   document.querySelectorAll('[data-close-create-admin]').forEach(btn => btn.addEventListener('click', closeCreateAdmin));
   createModal && createModal.addEventListener('click', e => { if(e.target === createModal) closeCreateAdmin(); });
@@ -224,7 +230,8 @@
     document.getElementById('editAdminRole').dispatchEvent(new Event('change', {bubbles:true}));
     document.getElementById('editAdminPassword').value = '';
     setStatus(document.getElementById('editAdminStatusMsg'), '', '');
-    editModal && editModal.classList.add('show');
+    if(createModal){ createModal.classList.remove('show'); createModal.setAttribute('aria-hidden','true'); }
+    if(editModal){ editModal.classList.add('show'); editModal.setAttribute('aria-hidden','false'); document.body.classList.add('modal-open'); }
   }
 
   document.addEventListener('click', function(e){
