@@ -53,6 +53,7 @@
         if(pickerState.selectingStart||!f.value||t.value){f.value=v;t.value='';pickerState.selectingStart=false;updateDateLabel();renderCalendar();document.getElementById('dashRangePicker').classList.add('show');return}
         if(v<f.value){t.value=f.value;f.value=v}else t.value=v;
         pickerState.selectingStart=true;updateDateLabel();renderCalendar();setTimeout(()=>document.getElementById('dashRangePicker').classList.remove('show'),120);
+        load().catch(e=>document.getElementById('dashboardCards').innerHTML=`<div class="alert alert-danger">${e.message}</div>`);
       });
       days.appendChild(btn);
     }
@@ -61,7 +62,7 @@
     const trigger=document.getElementById('dashDateTrigger'),picker=document.getElementById('dashRangePicker');
     updateDateLabel();markPreset('today');renderCalendar();
     trigger.addEventListener('click',e=>{e.stopPropagation();picker.classList.toggle('show');pickerState.mode='days';renderCalendar()});
-    document.querySelectorAll('[data-dash-range-preset]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();const [a,b]=presetRange(btn.dataset.dashRangePreset);f.value=a;t.value=b;pickerState.view=new Date(a+'T00:00:00');pickerState.selectingStart=true;updateDateLabel();markPreset(btn.dataset.dashRangePreset);renderCalendar();picker.classList.remove('show')}));
+    document.querySelectorAll('[data-dash-range-preset]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();const [a,b]=presetRange(btn.dataset.dashRangePreset);f.value=a;t.value=b;pickerState.view=new Date(a+'T00:00:00');pickerState.selectingStart=true;updateDateLabel();markPreset(btn.dataset.dashRangePreset);renderCalendar();picker.classList.remove('show');load().catch(e=>document.getElementById('dashboardCards').innerHTML=`<div class="alert alert-danger">${e.message}</div>`)}));
     document.getElementById('dashCalPrev').addEventListener('click',e=>{e.stopPropagation();if(pickerState.mode==='years')pickerState.yearPageStart-=12;else pickerState.view.setMonth(pickerState.view.getMonth()-1);renderCalendar()});
     document.getElementById('dashCalNext').addEventListener('click',e=>{e.stopPropagation();if(pickerState.mode==='years')pickerState.yearPageStart+=12;else pickerState.view.setMonth(pickerState.view.getMonth()+1);renderCalendar()});
     document.getElementById('dashCalMonth').addEventListener('click',e=>{e.stopPropagation();pickerState.mode=pickerState.mode==='months'?'days':'months';renderCalendar()});
@@ -74,12 +75,11 @@
   const cards=[['Members','members','bi-people','index.html'],['New Members','newMembers','bi-person-plus','index.html'],['Approved Deposit','depositAmount','bi-wallet2','member-deposit.html'],['Pending Deposit','pendingDepositAmount','bi-hourglass-split','member-deposit.html?status=PENDING'],['Approved Withdrawal','withdrawAmount','bi-cash-stack','member-withdraw.html'],['Pending Withdrawal','pendingWithdrawalAmount','bi-exclamation-circle','member-withdraw.html?status=PENDING'],['Valid Bet','validBet','bi-graph-up-arrow','provider-bet-report.html'],['Bet Amount','betAmount','bi-dice-5','provider-bet-report.html'],['Win Amount','winAmount','bi-trophy','provider-bet-report.html'],['Net Win/Loss','netWinLoss','bi-activity','provider-bet-report.html'],['Bonus','bonusAmount','bi-gift','promotion-report.html'],['Rebate','rebateAmount','bi-percent','daily-rebate-report.html'],['Adjustment','adjustmentAmount','bi-sliders','transaction-report.html?type=ADJUST']];
   function fmt(v,k){return /(Amount|Bet|Win|Loss|Bonus|Rebate|Adjustment)/.test(k)?Number(v||0).toFixed(2):Number(v||0).toLocaleString()}
   async function load(){
-    const z=localStorage.getItem('bo_timezone')||'Asia/Kuala_Lumpur';document.getElementById('dashTimezoneLabel').textContent=z;const u=`${base}/api/admin/dashboard/summary?from=${f.value}&to=${t.value}&timezone=${encodeURIComponent(z)}`;
+    const z=localStorage.getItem('bo_timezone')||'Asia/Kuala_Lumpur';const u=`${base}/api/admin/dashboard/summary?from=${f.value}&to=${t.value}&timezone=${encodeURIComponent(z)}`;
     const r=await fetch(u,{headers:{Authorization:'Bearer '+(localStorage.getItem('admin_token')||localStorage.getItem('token')||'')}}),j=await r.json(),d=j.data||{};
     document.getElementById('dashClock').textContent=`${d.timezone||z} · ${(d.serverTime||'').replace('T',' ').slice(0,19)}`;
     document.getElementById('dashboardCards').innerHTML=cards.map(c=>`<a class="ops-card" href="${c[3]}?from=${f.value}&to=${t.value}${c[3].includes('?')?'&':'&'}"><div class="top"><span>${c[0]}</span><i class="bi ${c[2]}"></i></div><div class="value">${fmt(d[c[1]],c[0])}</div><small>Click to view matching report</small></a>`).join('');
   }
   initPicker();
-  document.getElementById('dashSearch').onclick=load;
   load().catch(e=>document.getElementById('dashboardCards').innerHTML=`<div class="alert alert-danger">${e.message}</div>`);
 })();

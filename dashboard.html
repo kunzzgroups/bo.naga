@@ -10,6 +10,53 @@
     <link href="assets/css/reports.css?v=1.0.31" rel="stylesheet">
     <link href="assets/css/operations-upgrade.css?v=1.0.1" rel="stylesheet">
     <link href="assets/css/bo-ui-standard.css?v=1.0.1" rel="stylesheet">
+    <style>
+        /* Dashboard only: keep date range on the left and pin timezone to the far right. */
+        .report-main .report-content > .ops-filter {
+            position: relative !important;
+            display: block !important;
+            width: 100% !important;
+            min-height: 96px !important;
+            padding-right: 330px !important;
+        }
+        .report-main .report-content > .ops-filter .dash-date-field {
+            width: 390px !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+            margin: 0 !important;
+        }
+        .report-main .report-content > .ops-filter .dashboard-timezone-clock {
+            position: absolute !important;
+            right: 20px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            margin: 0 !important;
+            white-space: nowrap !important;
+            text-align: right !important;
+        }
+        @media (max-width: 900px) {
+            .report-main .report-content > .ops-filter {
+                padding-right: 16px !important;
+                padding-bottom: 16px !important;
+                min-height: 0 !important;
+            }
+            .report-main .report-content > .ops-filter .dash-date-field {
+                width: 100% !important;
+            }
+            .report-main .report-content > .ops-filter .dashboard-timezone-clock {
+                position: static !important;
+                display: block !important;
+                width: 100% !important;
+                margin: 14px 0 0 !important;
+                transform: none !important;
+                white-space: normal !important;
+                overflow-wrap: anywhere !important;
+                text-align: right !important;
+                line-height: 1.35 !important;
+                text-align: right !important;
+            }
+        }
+    </style>
 </head>
 
 <body class="report-body">
@@ -69,9 +116,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="field"><label>Timezone</label><div class="timezone-chip" id="dashTimezoneLabel">GMT+8 — Kuala Lumpur</div></div><button id="dashSearch" class="btn-primary-clean"><i class="bi bi-search"></i>
-                        Apply</button>
-                        <span id="dashClock" class="timezone-chip"></span>
+                    <span id="dashClock" class="timezone-chip dashboard-timezone-clock" aria-label="Dashboard timezone and current time"></span>
                 </div>
                 <br>
                 <div class="ops-grid" id="dashboardCards"></div>
@@ -80,7 +125,7 @@
     </div>
     <script src="assets/js/config.js?v=1.0.28"></script>
     <script src="assets/js/bo-date-range.js?v=1.0.9"></script>
-    <script src="assets/js/dashboard.js?v=1.0.2"></script>
+    <script src="assets/js/dashboard.js?v=1.0.3"></script>
     <script src="assets/js/reports.js?v=1.0.13"></script>
     <script src="assets/js/auth.js?v=1.0.29"></script>
     <script defer src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
