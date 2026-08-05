@@ -1,5 +1,5 @@
 (function(){
-  const PAIRS=[['betFrom','betTo'],['txFrom','txTo'],['sessionFrom','sessionTo'],['ledgerFrom','ledgerTo'],['casinoFrom','casinoTo'],['reportFrom','reportTo'],['manualFrom','manualTo']];
+  const PAIRS=[['betFrom','betTo'],['txFrom','txTo'],['sessionFrom','sessionTo'],['ledgerFrom','ledgerTo'],['casinoFrom','casinoTo'],['reportFrom','reportTo'],['manualFrom','manualTo'],['wlFrom','wlTo']];
   const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const pad=n=>String(n).padStart(2,'0');
   const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -18,10 +18,15 @@
     fField.parentNode.insertBefore(host,fField);fField.classList.add('bo-filter-item','bo-filter-hidden-item');tField.classList.add('bo-filter-item','bo-filter-hidden-item');fField.style.display='none';tField.style.display='none';
     const trig=host.querySelector('.bo-range-trigger'),pop=host.querySelector('.bo-range-pop'),txt=host.querySelector('.bo-range-text'),days=host.querySelector('.bo-range-days'),monthBtn=host.querySelector('.bo-range-month-btn'),yearBtn=host.querySelector('.bo-range-year-btn'),monthGrid=host.querySelector('.bo-range-month-grid'),yearGrid=host.querySelector('.bo-range-year-grid'),dayView=host.querySelector('.bo-range-day-view');
     const todayValue=iso(new Date());
-    if(!from.value) from.value=todayValue;
-    if(!to.value) to.value=todayValue;
-    let view=new Date(),start=from.value||todayValue,end=to.value||todayValue,mode='days',yearPageStart=view.getFullYear()-5;
-    function syncText(){txt.textContent=start?(fmt(start)+(end?' - '+fmt(end):' - Select end date')):'Select date range'}
+    const isLedgerAllTime = from.id === 'ledgerFrom' && new URLSearchParams(location.search).get('scope') === 'all';
+    if(!isLedgerAllTime){
+      if(!from.value) from.value=todayValue;
+      if(!to.value) to.value=todayValue;
+    } else {
+      from.value=''; to.value=''; host.classList.add('bo-range-all-time');
+    }
+    let view=new Date(),start=isLedgerAllTime?'':(from.value||todayValue),end=isLedgerAllTime?'':(to.value||todayValue),mode='days',yearPageStart=view.getFullYear()-5;
+    function syncText(){txt.textContent=isLedgerAllTime && !start && !end ? 'All Time' : (start?(fmt(start)+(end?' - '+fmt(end):' - Select end date')):'Select date range')}
     function commit(a,b){start=iso(a);end=iso(b);from.value=start;to.value=end;from.dispatchEvent(new Event('change',{bubbles:true}));to.dispatchEvent(new Event('change',{bubbles:true}));syncText()}
     function setMode(next){mode=next;monthGrid.classList.toggle('show',mode==='months');yearGrid.classList.toggle('show',mode==='years');dayView.classList.toggle('hide',mode!=='days')}
     function renderMonthGrid(){monthGrid.innerHTML=MONTHS.map((m,i)=>`<button type="button" data-month="${i}" class="${i===view.getMonth()?'active':''}">${m}</button>`).join('')}

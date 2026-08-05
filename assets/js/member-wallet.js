@@ -42,7 +42,7 @@
     const body = document.getElementById('memberWalletBody');
     if(!body) return;
     updateMetrics(rows);
-    if(!rows.length){ body.innerHTML = '<tr><td colspan="13">No wallet records found.</td></tr>'; }
+    if(!rows.length){ body.innerHTML = '<tr><td colspan="16">No wallet records found.</td></tr>'; }
     else body.innerHTML = rows.map(r => {
       const wl = num(r.winLoss);
       return `<tr>
@@ -58,7 +58,10 @@
         <td>${money(r.totalWin)}</td>
         <td>${money(r.totalLose)}</td>
         <td><span class="status-pill ${wl >= 0 ? 'active' : 'off'}">${money(wl)}</span></td>
-        <td><div class="d-flex gap-2 flex-wrap"><a class="clean-btn" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}">Ledger</a><a class="clean-btn primary" href="index.html">Adjust</a></div></td>
+        <td><b>${money(r.totalAdjustment)}</b><br><a class="small" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}&type=ADJUSTMENT&scope=all">View detail</a></td>
+        <td><b>${money(r.totalBonus)}</b><br><a class="small" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}&type=BONUS&scope=all">View detail</a></td>
+        <td><b>${money(r.dailyRebate)}</b><br><a class="small" href="daily-rebate-report.html?memberId=${encodeURIComponent(r.memberId)}">View detail</a></td>
+        <td><div class="d-flex gap-2 flex-wrap"><a class="clean-btn" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}">Ledger</a><a class="clean-btn primary" href="index.html?memberId=${encodeURIComponent(r.memberId)}">Adjust</a></div></td>
       </tr>`;
     }).join('');
     totalPages = Number(pagination && pagination.totalPages) || 1;
@@ -69,14 +72,14 @@
     document.getElementById('walletNextBtn').disabled = page >= totalPages;
   }
   async function load(){
-    const body=document.getElementById('memberWalletBody'); if(body) body.innerHTML='<tr><td colspan="13">Loading wallet list...</td></tr>';
+    const body=document.getElementById('memberWalletBody'); if(body) body.innerHTML='<tr><td colspan="16">Loading wallet list...</td></tr>';
     try{
       const json = await api(url('MEMBER_WALLET_LIST') + '?' + query());
       const data = json.data || {};
       render(Array.isArray(data.content) ? data.content : [], data.pagination || {});
     }catch(e){
       updateMetrics([]);
-      if(body) body.innerHTML='<tr><td colspan="13" class="text-danger">'+esc(e.message || 'Load failed')+'</td></tr>';
+      if(body) body.innerHTML='<tr><td colspan="16" class="text-danger">'+esc(e.message || 'Load failed')+'</td></tr>';
     }
   }
   document.addEventListener('DOMContentLoaded', function(){

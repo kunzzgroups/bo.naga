@@ -117,6 +117,7 @@ const API_CONFIG = window.API_CONFIG || {
         WALLET_LEDGER_LIST: "/admin/wallet-ledger/list",
         WALLET_LEDGER_SUMMARY: "/admin/wallet-ledger/summary",
 
+        WIN_LOSE_REPORT_LIST: "/admin/win-lose-report/list",
         CASINO_REPORT_SUMMARY: "/admin/casino-report/summary",
 
         PROMOTION_LIST: "/admin/promotion/list",

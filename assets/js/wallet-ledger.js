@@ -1,6 +1,8 @@
 (function(){
   let page = 1;
   let totalPages = 1;
+  const initialParams = new URLSearchParams(location.search);
+  const allTimeScope = initialParams.get('scope') === 'all';
 
   function pageButtons(current,total){
     total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
@@ -26,6 +28,14 @@
   function setFromUrl(){
     const sp = new URLSearchParams(location.search);
     if(sp.get('memberId')) document.getElementById('ledgerMemberId').value = sp.get('memberId');
+    if(sp.get('type')) document.getElementById('ledgerType').value = sp.get('type').toUpperCase();
+    if(sp.get('scope') === 'all'){
+      document.body.dataset.walletLedgerAllTime = '1';
+      const from = document.getElementById('ledgerFrom');
+      const to = document.getElementById('ledgerTo');
+      if(from) from.value = '';
+      if(to) to.value = '';
+    }
   }
   function params(){
     const p = new URLSearchParams();
@@ -52,7 +62,7 @@
     metric('wlTransfer', (byType.TRANSFER_IN || 0) + (byType.TRANSFER_OUT || 0));
     metric('wlBetWinLose', (byType.BET || 0) + (byType.WIN || 0) + (byType.LOSE || 0) + (byType.SETTLE || 0));
   }
-  function render(rows, pagination){
+  function render(rows, pagination, meta){
     const body=document.getElementById('walletLedgerBody'); if(!body) return;
     updateMetrics(rows);
     if(!rows.length){ body.innerHTML='<tr><td colspan="12">No ledger records found.</td></tr>'; }
@@ -76,7 +86,10 @@
     totalPages = Number(pagination && pagination.totalPages) || 1;
     const total = Number(pagination && pagination.totalElements) || rows.length;
     document.getElementById('ledgerPager').innerHTML = pageButtons(page, totalPages);
-    document.getElementById('ledgerPageInfo').textContent = `${total.toLocaleString()} record(s)`;
+    const filteredTotal = Number(meta && meta.filteredTotalAmount);
+    const selectedType = document.getElementById('ledgerType')?.value || 'ALL';
+    const scopeLabel = (meta && meta.filterScope === 'ALL_TIME') || allTimeScope ? 'All Time' : 'Selected Date';
+    document.getElementById('ledgerPageInfo').textContent = `${total.toLocaleString()} record(s) · ${scopeLabel} ${selectedType} Total: ${money(Number.isFinite(filteredTotal) ? filteredTotal : rows.reduce((a,r)=>a+num(r.amount),0))}`;
     document.getElementById('ledgerPrevBtn').disabled = page <= 1;
     document.getElementById('ledgerNextBtn').disabled = page >= totalPages;
   }
@@ -85,7 +98,7 @@
     try{
       const json = await api(url('WALLET_LEDGER_LIST') + '?' + params());
       const data = json.data || {};
-      render(Array.isArray(data.content) ? data.content : [], data.pagination || {});
+      render(Array.isArray(data.content) ? data.content : [], data.pagination || {}, data);
     }catch(e){
       updateMetrics([]);
       if(body) body.innerHTML='<tr><td colspan="12" class="text-danger">'+esc(e.message || 'Load failed')+'</td></tr>';

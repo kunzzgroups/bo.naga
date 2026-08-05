@@ -24,6 +24,8 @@
     {key:'select', label:'', always:true},
     {key:'no', label:'#'},
     {key:'registerDate', label:'Register Date'},
+    {key:'registerSource', label:'Register Domain + IP', extra:true},
+    {key:'referCode', label:'Refer Code', extra:true},
     {key:'name', label:'Name / Username', always:true},
     {key:'mobile', label:'Mobile'},
     {key:'bankAccount', label:'Bank Account', extra:true},
@@ -39,6 +41,7 @@
     {key:'commission', label:'Commission', extra:true},
     {key:'lastDeposit', label:'Last Deposit', extra:true},
     {key:'lastLogin', label:'Last Login', extra:true},
+    {key:'lastLoginSource', label:'Last Login IP + Domain', extra:true},
     {key:'vipLevel', label:'VIP Level'},
     {key:'kycStatus', label:'KYC Status'},
     {key:'status', label:'Status', always:true},
@@ -347,6 +350,11 @@
     if(visit){
       const last = String(first(m,['lastLoginAt','lastLogin','last_login_at'], '')).slice(0,10);
       if(visit === 'today' && last !== todayStr()) return false;
+      if(visit === 'this month'){
+        const d = last ? new Date(last+'T00:00:00') : null;
+        const now = new Date();
+        if(!d || d.getFullYear() !== now.getFullYear() || d.getMonth() !== now.getMonth()) return false;
+      }
       if(visit === 'this week'){
         const d = last ? new Date(last+'T00:00:00') : null;
         const start = new Date(); start.setDate(start.getDate()-6); start.setHours(0,0,0,0);
@@ -473,6 +481,8 @@
         ${cell('select', `<input class="member-row-select" type="checkbox" data-member-select="${esc(id)}" ${bulkSelectedMemberIds.has(String(id))?'checked':''}>`, 'member-select-col')}
         ${cell('no', ((memberCurrentPage-1)*memberPageSize)+idx+1, 'col-no')}
         ${cell('registerDate', esc(dt(first(m,['createdAt','registerDate','created_at'], ''))))}
+        ${cell('registerSource', `<b>${esc(first(m,['registrationDomain','registerDomain'],'-'))}</b><br><small>${esc(first(m,['registrationIp','registerIp'],'-'))}</small>`)}
+        ${cell('referCode', esc(first(m,['referrerCode','referralCode'],'-')))}
         ${cell('name', `<b>${esc(first(m,['username'], '-'))}</b><br><small>${esc(first(m,['fullName','name','displayName'], ''))}</small>`, 'member-name-cell')}
         ${cell('mobile', esc(first(m,['mobile','phone','mobileNo'], '-')))}
         ${cell('bankAccount', esc(first(m,['bankAccount','bankAccountNumber','bankAccountNo','accountNo'], '-')))}
@@ -488,6 +498,7 @@
         ${cell('commission', money(first(m,MONEY_KEYS.commission,0)))}
         ${cell('lastDeposit', esc(dt(first(m,['lastDepositAt','lastDeposit','last_deposit_at'], ''))))}
         ${cell('lastLogin', esc(dt(first(m,['lastLoginAt','lastLogin','last_login_at'], ''))))}
+        ${cell('lastLoginSource', `<b>${esc(first(m,['lastLoginDomain'],'-'))}</b><br><small>${esc(first(m,['lastLoginIp'],'-'))}</small>`)}
         ${cell('vipLevel', 'VIP '+esc(first(m,['vipLevel'],0)))}
         ${cell('kycStatus', esc(first(m,['kycStatus'],'UNVERIFIED')))}
         ${cell('status', `<small class="status-pill ${locked?'off':''}">${esc(status)}</small>`)}
@@ -613,6 +624,11 @@
       });
       updateStats(allMembers);
       applySearch();
+      const requestedMemberId = new URLSearchParams(location.search).get('memberId');
+      if(requestedMemberId){
+        const requested = allMembers.find(m => String(first(m,['id','memberId','userId'],'')) === String(requestedMemberId));
+        if(requested) setTimeout(()=>openWalletModal(requested), 0);
+      }
     } catch(e){
       allMembers=[]; updateStats([]);
       table.innerHTML='<tr><td colspan="'+visibleColCount()+'" class="text-danger">'+esc(e.message||'Load member failed')+'</td></tr>';
@@ -819,6 +835,13 @@
     }
     const b=e.target.closest('[data-member-lock]'); if(!b)return;
     if(!b.dataset.memberLock) return alert('Missing member ID');
+    const member = allMembers.find(m => String(first(m,['id','memberId','userId'],'')) === String(b.dataset.memberLock));
+    const willLock = Number(b.dataset.lock) === 1;
+    const username = first(member,['username'], 'this member');
+    const confirmed = window.BO_DIALOG && BO_DIALOG.confirm
+      ? await BO_DIALOG.confirm(`${willLock?'Lock':'Unlock'} ${username}? ${willLock?'The member will be unable to log in until unlocked.':''}`, {title: willLock?'Confirm Member Lock':'Confirm Member Unlock', confirmText: willLock?'Lock Member':'Unlock Member'})
+      : window.confirm(`${willLock?'Lock':'Unlock'} ${username}?`);
+    if(!confirmed) return;
     try{ await api(BO_AUTH.memberUpdateUrl(b.dataset.memberLock),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify({locked:Number(b.dataset.lock)})}); loadMembers(); }
     catch(err){ alert(err.message || 'Update failed'); }
   });
