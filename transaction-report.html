@@ -28,7 +28,7 @@
           <div class="user-title-icon"><i class="bi bi-table"></i></div>
           <div>
             <h1>Transaction Report</h1>
-            <p>Detailed casino operational records.</p>
+            <p>Wallet-to-wallet transfer records only.</p>
           </div>
         </div>
         <div class="report-actions" data-bo-profile></div>
@@ -37,13 +37,8 @@
         <div class="ops-filter bo-filter-row">
           <div class="field transaction-from-field"><label>From</label><input id="reportFrom" type="date"></div>
           <div class="field transaction-to-field"><label>To</label><input id="reportTo" type="date"></div>
-          <div id="typeBox"><label>Type</label><select id="reportType">
-              <option value="">All</option>
-              <option>DEPOSIT</option>
-              <option>WITHDRAW</option>
-              <option>BONUS</option>
-              <option>ADJUSTMENT</option>
-              <option>REBATE</option>
+          <div id="typeBox" class="bo-filter-hidden-item" aria-hidden="true"><label>Type</label><select id="reportType">
+              <option value="WALLET_TO_WALLET" selected>Wallet to Wallet</option>
             </select></div><button class="btn-primary-clean" id="reportSearch">Search</button>
         </div>
         <br>
@@ -71,7 +66,7 @@
   <script>window.OP_REPORT_ENDPOINT = '/api/admin/operations/transaction-report'; window.OP_REPORT_KIND = 'transaction-report';</script>
   <script src="assets/js/config.js?v=1.0.28"></script>
   <script src="assets/js/bo-date-range.js?v=1.0.9"></script>
-  <script src="assets/js/operations-report.js?v=1.0.1"></script>
+  <script src="assets/js/operations-report.js?v=1.0.2"></script>
   <script src="assets/js/reports.js?v=1.0.13"></script>
   <script src="assets/js/auth.js?v=1.0.29"></script>
   <script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>

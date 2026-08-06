@@ -3,6 +3,9 @@
   let totalPages = 1;
   const initialParams = new URLSearchParams(location.search);
   const allTimeScope = initialParams.get('scope') === 'all';
+  const LEDGER_TYPES = ['DEPOSIT','WITHDRAW','ADJUSTMENT','BONUS','ADMIN_DEPOSIT','ADMIN_WITHDRAW','ADMIN_ADJUSTMENT','BULK_ADJUSTMENT','REFERRAL_REWARD','BET','WIN','LOSE','SETTLE','ROLLBACK'];
+  const WALLET_TO_WALLET_TYPES = new Set(['TRANSFER_IN','TRANSFER_OUT']);
+  const selectedTypes = new Set();
 
   function pageButtons(current,total){
     total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
@@ -25,10 +28,48 @@
     if(!res.ok || json.status === 'error') throw new Error(json.message || 'Request failed');
     return json;
   }
+  function selectedTypeList(){ return [...selectedTypes].filter(type => !WALLET_TO_WALLET_TYPES.has(type)); }
+  function effectiveTypeList(){
+    const selected = selectedTypeList();
+    // Wallet Ledger intentionally excludes wallet-to-wallet transfers. When no
+    // individual type is selected, explicitly request every supported non-transfer
+    // type so the backend can keep pagination and totals accurate.
+    return selected.length ? selected : [...LEDGER_TYPES];
+  }
+  function syncTypeControl(){
+    const list=selectedTypeList();
+    const hidden=document.getElementById('ledgerType');
+    const label=document.getElementById('ledgerTypeLabel');
+    const all=document.getElementById('ledgerTypeAll');
+    if(hidden) hidden.value=list.join(',');
+    if(all) all.checked=list.length===0;
+    document.querySelectorAll('[data-ledger-type]').forEach(cb=>{cb.checked=selectedTypes.has(cb.dataset.ledgerType);});
+    if(label) label.textContent=list.length===0?'All':(list.length===1?list[0]:`${list.length} selected`);
+  }
+  function setSelectedTypes(values){
+    selectedTypes.clear();
+    (values||[]).map(v=>String(v||'').trim().toUpperCase()).filter(v=>LEDGER_TYPES.includes(v)).forEach(v=>selectedTypes.add(v));
+    syncTypeControl();
+  }
+  function initTypeMulti(){
+    const options=document.getElementById('ledgerTypeOptions');
+    const wrap=document.getElementById('ledgerTypeMulti');
+    const trigger=document.getElementById('ledgerTypeTrigger');
+    const menu=document.getElementById('ledgerTypeMenu');
+    if(!options||!wrap||!trigger||!menu)return;
+    options.innerHTML=LEDGER_TYPES.map(t=>`<label class="ledger-type-option"><input type="checkbox" data-ledger-type="${t}"><span>${t}</span></label>`).join('');
+    trigger.addEventListener('click',()=>{const open=menu.hidden;menu.hidden=!open;wrap.classList.toggle('open',open);trigger.setAttribute('aria-expanded',String(open));});
+    options.addEventListener('change',e=>{const cb=e.target.closest('[data-ledger-type]');if(!cb)return;cb.checked?selectedTypes.add(cb.dataset.ledgerType):selectedTypes.delete(cb.dataset.ledgerType);syncTypeControl();});
+    document.getElementById('ledgerTypeAll')?.addEventListener('change',e=>{if(e.target.checked)setSelectedTypes([]);});
+    document.addEventListener('click',e=>{if(!wrap.contains(e.target)){menu.hidden=true;wrap.classList.remove('open');trigger.setAttribute('aria-expanded','false');}});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){menu.hidden=true;wrap.classList.remove('open');trigger.setAttribute('aria-expanded','false');}});
+    syncTypeControl();
+  }
   function setFromUrl(){
     const sp = new URLSearchParams(location.search);
     if(sp.get('memberId')) document.getElementById('ledgerMemberId').value = sp.get('memberId');
-    if(sp.get('type')) document.getElementById('ledgerType').value = sp.get('type').toUpperCase();
+    const rawTypes = sp.get('types') || sp.get('type') || '';
+    if(rawTypes) setSelectedTypes(rawTypes.split(','));
     if(sp.get('scope') === 'all'){
       document.body.dataset.walletLedgerAllTime = '1';
       const from = document.getElementById('ledgerFrom');
@@ -41,13 +82,13 @@
     const p = new URLSearchParams();
     const memberId = document.getElementById('ledgerMemberId')?.value.trim();
     const provider = document.getElementById('ledgerProviderCode')?.value.trim();
-    const type = document.getElementById('ledgerType')?.value;
+    const types = selectedTypeList();
     const from = document.getElementById('ledgerFrom')?.value;
     const to = document.getElementById('ledgerTo')?.value;
     const size = document.getElementById('ledgerSize')?.value || '20';
     if(memberId) p.set('memberId', memberId);
     if(provider) p.set('providerCode', provider);
-    if(type) p.set('ledgerType', type);
+    p.set('types', effectiveTypeList().join(','));
     if(from) p.set('from', from);
     if(to) p.set('to', to);
     p.set('page', page);
@@ -90,7 +131,7 @@
     const total = Number(pagination && pagination.totalElements) || rows.length;
     document.getElementById('ledgerPager').innerHTML = pageButtons(page, totalPages);
     const filteredTotal = Number(meta && meta.filteredTotalAmount);
-    const selectedType = document.getElementById('ledgerType')?.value || 'ALL';
+    const selectedType = selectedTypeList().length ? selectedTypeList().join(', ') : 'ALL EXCEPT WALLET-TO-WALLET';
     const scopeLabel = (meta && meta.filterScope === 'ALL_TIME') || allTimeScope ? 'All Time' : 'Selected Date';
     document.getElementById('ledgerPageInfo').textContent = `${total.toLocaleString()} record(s) · ${scopeLabel} ${selectedType} Total: ${money(Number.isFinite(filteredTotal) ? filteredTotal : rows.reduce((a,r)=>a+num(r.amount),0))}`;
     document.getElementById('ledgerPrevBtn').disabled = page <= 1;
@@ -108,12 +149,14 @@
     }
   }
   document.addEventListener('DOMContentLoaded', function(){
+    initTypeMulti();
     setFromUrl();
     document.getElementById('ledgerSearchBtn')?.addEventListener('click', ()=>{ page=1; load(); });
     ['ledgerMemberId','ledgerProviderCode'].forEach(id=>document.getElementById(id)?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ page=1; load(); } }));
-    ['ledgerType','ledgerFrom','ledgerTo','ledgerSize'].forEach(id=>document.getElementById(id)?.addEventListener('change', ()=>{ page=1; load(); }));
+    ['ledgerFrom','ledgerTo','ledgerSize'].forEach(id=>document.getElementById(id)?.addEventListener('change', ()=>{ page=1; load(); }));
     document.getElementById('ledgerResetBtn')?.addEventListener('click', ()=>{
-      ['ledgerMemberId','ledgerProviderCode','ledgerType'].forEach(id=>document.getElementById(id).value='');
+      ['ledgerMemberId','ledgerProviderCode'].forEach(id=>document.getElementById(id).value='');
+      setSelectedTypes([]);
       const now=new Date(), pad=n=>String(n).padStart(2,'0');
       const today=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
       document.getElementById('ledgerFrom').value=today;

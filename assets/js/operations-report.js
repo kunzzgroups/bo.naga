@@ -25,14 +25,29 @@
     const lo=Math.max(1,page-2),hi=Math.min(pages,page+2);for(let i=lo;i<=hi;i++)h+=btn(String(i),i,false,i===page);
     h+=btn('Next',page+1,page>=pages,false,'bi-chevron-right')+btn('Last',pages,page>=pages,false,'bi-chevron-bar-right');pagerEl.innerHTML=h;
   }
-  async function load(){
+  async function fetchRows(type){
     let u=`${base}${window.OP_REPORT_ENDPOINT}?from=${encodeURIComponent(from.value)}&to=${encodeURIComponent(to.value)}`;
-    if(window.OP_REPORT_KIND!=='promotion-report')u+=`&type=${encodeURIComponent(document.getElementById('reportType').value)}`;
+    if(type)u+=`&type=${encodeURIComponent(type)}`;
+    const r=await fetch(u,{headers:{Authorization:'Bearer '+token(),'Cache-Control':'no-cache, no-store'}});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||j.status==='error')throw new Error(j.message||`Unable to load report (${r.status})`);
+    return Array.isArray(j.data)?j.data:(j.data?.content||[]);
+  }
+  async function load(){
     bodyEl.innerHTML=`<tr><td colspan="${cols.length}" class="table-empty">Loading...</td></tr>`;
     try{
-      const r=await fetch(u,{headers:{Authorization:'Bearer '+token(),'Cache-Control':'no-cache, no-store'}});
-      const j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw new Error(j.message||`Unable to load report (${r.status})`);
-      allRows=Array.isArray(j.data)?j.data:(j.data?.content||[]);page=1;render();
+      if(window.OP_REPORT_KIND==='transaction-report'){
+        const [outRows,inRows]=await Promise.all([fetchRows('TRANSFER_OUT'),fetchRows('TRANSFER_IN')]);
+        const seen=new Set();
+        allRows=[...outRows,...inRows].filter(row=>{
+          const key=String(row.id??`${row.memberId}|${row.ledgerType}|${row.referenceNo}|${row.createdAt}|${row.amount}`);
+          if(seen.has(key))return false; seen.add(key); return true;
+        }).sort((a,b)=>String(b.createdAt||b.postedAt||'').localeCompare(String(a.createdAt||a.postedAt||'')));
+      }else{
+        const type=window.OP_REPORT_KIND==='promotion-report'?'':document.getElementById('reportType').value;
+        allRows=await fetchRows(type);
+      }
+      page=1;render();
     }catch(e){allRows=[];render();if(window.BO_DIALOG)await BO_DIALOG.alert(e.message||'Unable to load report.',{title:'Report Error',type:'error'});}
   }
   document.getElementById('reportSearch').onclick=load;
