@@ -438,15 +438,28 @@
   }
   function currentFilteredMembers(){ return allMembers.filter(memberMatches); }
   function downloadCsv(filename, rows){
-    const cols = MEMBER_TABLE_COLUMNS.filter(c=>isColVisible(c.key) && c.key !== 'action');
+    // Export only data columns. UI checkbox/action columns are never useful in CSV.
+    // The on-screen Name / Username cell intentionally stays stacked, but export
+    // splits it into two independent columns so Excel cannot merge the values.
+    const visible = MEMBER_TABLE_COLUMNS.filter(c=>isColVisible(c.key) && !['select','action'].includes(c.key));
+    const exportCols=[];
+    visible.forEach(c=>{
+      if(c.key==='name'){
+        exportCols.push({label:'Name', value:(m)=>first(m,['fullName','name','displayName'],'')});
+        exportCols.push({label:'Username', value:(m)=>first(m,['username'],'-')});
+        return;
+      }
+      exportCols.push({label:c.label,key:c.key});
+    });
     const valueFor = (m,key,idx)=>{
       if(key==='no') return idx+1;
       if(key==='registerDate') return dt(first(m,['createdAt','registerDate','created_at'], ''));
-      if(key==='name') return `${first(m,['username'], '-')} ${first(m,['fullName','name','displayName'], '')}`.trim();
+      if(key==='registerSource') return [first(m,['registrationDomain','registerDomain'],''),first(m,['registrationIp','registerIp'],'')].filter(Boolean).join(' / ');
+      if(key==='referCode') return first(m,['referralCode','referCode','referrerCode'],'-');
       if(key==='mobile') return first(m,['mobile','phone','mobileNo'], '-');
       if(key==='bankAccount') return first(m,['bankAccount','bankAccountNumber','bankAccountNo','accountNo'], '-');
       if(key==='bank') return first(m,['bank','bankName'], '-');
-      if(key==='referrer') return first(m,['referrerCode','referrer','agent','agentName'], '-');
+      if(key==='referrer') return first(m,['referrerUsername','referrerName','agentName','referrer','referrerCode'], '-');
       if(key==='topReferrer') return first(m,['topReferrer','topAgent','upline'], '-');
       if(key==='mainWallet') return money(first(m,['mainWalletBalance','mainBalance','balance'],0));
       if(key==='deposit') return money(first(m,MONEY_KEYS.deposit,0));
@@ -457,10 +470,15 @@
       if(key==='commission') return money(first(m,MONEY_KEYS.commission,0));
       if(key==='lastDeposit') return dt(first(m,['lastDepositAt','lastDeposit','last_deposit_at'], ''));
       if(key==='lastLogin') return dt(first(m,['lastLoginAt','lastLogin','last_login_at'], ''));
+      if(key==='lastLoginSource') return [first(m,['lastLoginDomain'],''),first(m,['lastLoginIp'],'')].filter(Boolean).join(' / ');
+      if(key==='vipLevel') return 'VIP '+first(m,['vipLevel'],0);
+      if(key==='kycStatus') return first(m,['kycStatus'],'UNVERIFIED');
       if(key==='status') return memberStatus(m);
       return '';
     };
-    const csv = [cols.map(c=>c.label), ...rows.map((m,i)=>cols.map(c=>valueFor(m,c.key,i)))].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+    const headers=exportCols.map(c=>c.label);
+    const body=rows.map((m,i)=>exportCols.map(c=>c.value?c.value(m,i):valueFor(m,c.key,i)));
+    const csv = [headers, ...body].map(r=>r.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(',')).join('\n');
     const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8;'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove();

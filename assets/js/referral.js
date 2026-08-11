@@ -49,6 +49,25 @@
     const meta=[full,mobile].filter(Boolean).join(' • ');
     return `<div class="ref-member-cell"><span class="ref-avatar">${initials(r)}</span><div class="ref-member-name"><b>${username}</b>${meta?`<small>${meta}</small>`:''}</div></div>`;
   }
+  function referrerMember(r){
+    const parentId=firstVal(r,['referrerMemberId','referrer_member_id','referredByMemberId'],null);
+    if(parentId==null||parentId==='') return null;
+    return state.members.find(m=>String(firstVal(m,['id','memberId'],''))===String(parentId))||null;
+  }
+  function referrerName(r){
+    const direct=firstVal(r,['referrerUsername','referredByUsername','uplineUsername','agentUsername'],null);
+    if(direct) return String(direct);
+    const parent=referrerMember(r);
+    return parent?String(firstVal(parent,['username','fullName','name','mobile'],'-')):'-';
+  }
+  function referrerHtml(r){
+    const parent=referrerMember(r);
+    const directUser=firstVal(r,['referrerUsername','referredByUsername','uplineUsername','agentUsername'],null);
+    const user=directUser||firstVal(parent,['username','mobile'],null);
+    const full=firstVal(r,['referrerFullName','referredByName','uplineName','agentName'],null)||firstVal(parent,['fullName','name'],null);
+    if(!user&&!full) return '<span class="text-secondary">-</span>';
+    return `<div class="ref-member-name"><b>${esc(user||full)}</b>${full&&String(full)!==String(user)?`<small>${esc(full)}</small>`:''}</div>`;
+  }
   function rewardSettingHtml(r){
     const enabled=Number(firstVal(r,['rewardEnabled'],0))===1;
     const mode=String(firstVal(r,['rewardMode'],'FIXED')).toUpperCase();
@@ -69,7 +88,7 @@
     const cards=document.getElementById('refMemberCards');
     updateStats(rows);
     if(!rows.length){
-      body.innerHTML='<tr><td colspan="7" class="ref-empty">No member found.</td></tr>';
+      body.innerHTML='<tr><td colspan="8" class="ref-empty">No member found.</td></tr>';
       cards.innerHTML='<div class="ref-mobile-card"><h3>No member found</h3><div class="meta">Try another search filter.</div></div>';
       return;
     }
@@ -80,7 +99,7 @@
       const l1=esc(firstVal(r,['level1Count','l1Count','totalDownline','downlineCount'],0));
       const joined=esc(dateOnly(firstVal(r,['createdAt','registerDate','registeredAt','joinedAt'],'')));
       const active=state.selected && String(state.selected.id)===String(firstVal(r,['id','memberId'],''));
-      return `<tr class="${active?'active':''}"><td>${i+1}</td><td>${memberNameHtml(r)}</td><td><b>${ref}</b></td><td>${l1}</td><td>${rewardSettingHtml(r)}</td><td>${joined}</td><td><div class="ref-action-buttons"><button class="ref-view-btn ref-view-icon" data-view="${id}" data-name="${name}" title="View downline" aria-label="View downline"><i class="bi bi-eye"></i></button><button class="ref-config-btn" data-reward-member="${id}" data-name="${name}" title="Configure reward" aria-label="Configure reward"><i class="bi bi-gear"></i></button></div></td></tr>`;
+      return `<tr class="${active?'active':''}"><td>${i+1}</td><td>${memberNameHtml(r)}</td><td><b>${ref}</b></td><td>${referrerHtml(r)}</td><td>${l1}</td><td>${rewardSettingHtml(r)}</td><td>${joined}</td><td><div class="ref-action-buttons"><button class="ref-view-btn ref-view-icon" data-view="${id}" data-name="${name}" title="View downline" aria-label="View downline"><i class="bi bi-eye"></i></button><button class="ref-config-btn" data-reward-member="${id}" data-name="${name}" title="Configure reward" aria-label="Configure reward"><i class="bi bi-gear"></i></button></div></td></tr>`;
     }).join('');
     cards.innerHTML=rows.map((r,i)=>{
       const id=esc(firstVal(r,['id','memberId'],''));
@@ -88,7 +107,7 @@
       const ref=esc(firstVal(r,['referrerCode','referralCode','code'],'-'));
       const l1=esc(firstVal(r,['level1Count','l1Count','totalDownline','downlineCount'],0));
       const joined=esc(dateOnly(firstVal(r,['createdAt','registerDate','registeredAt','joinedAt'],'')));
-      return `<div class="ref-mobile-card"><div class="ref-mobile-card-head"><div>${memberNameHtml(r)}</div><b>#${i+1}</b></div><div class="ref-mobile-grid"><span>Referral Code</span><b>${ref}</b><span>L1</span><b>${l1}</b><span>Reward Setting</span><b>${rewardSettingHtml(r)}</b><span>Joined Date</span><b>${joined}</b></div><div class="ref-mobile-actions"><button class="ref-view-btn ref-view-mobile" data-view="${id}" data-name="${name}"><i class="bi bi-eye"></i> View Downline</button><button class="ref-config-btn ref-config-mobile" data-reward-member="${id}" data-name="${name}"><i class="bi bi-gear"></i> Reward</button></div></div>`;
+      return `<div class="ref-mobile-card"><div class="ref-mobile-card-head"><div>${memberNameHtml(r)}</div><b>#${i+1}</b></div><div class="ref-mobile-grid"><span>Referral Code</span><b>${ref}</b><span>Referrer</span><b>${esc(referrerName(r))}</b><span>L1</span><b>${l1}</b><span>Reward Setting</span><b>${rewardSettingHtml(r)}</b><span>Joined Date</span><b>${joined}</b></div><div class="ref-mobile-actions"><button class="ref-view-btn ref-view-mobile" data-view="${id}" data-name="${name}"><i class="bi bi-eye"></i> View Downline</button><button class="ref-config-btn ref-config-mobile" data-reward-member="${id}" data-name="${name}"><i class="bi bi-gear"></i> Reward</button></div></div>`;
     }).join('');
   }
   function renderDownline(rows){
@@ -99,7 +118,7 @@
     document.getElementById('refSelectedCommission').textContent=money(totalCommission);
     document.getElementById('refDownlineShowing').textContent=rows.length?`Showing 1 to ${rows.length} of ${rows.length} entries`:'Showing 0 to 0 of 0 entries';
     if(!rows.length){
-      body.innerHTML='<tr><td colspan="5" class="ref-empty">No downline found.</td></tr>';
+      body.innerHTML='<tr><td colspan="6" class="ref-empty">No downline found.</td></tr>';
       cards.innerHTML='<div class="ref-mobile-card"><h3>No downline found</h3><div class="meta">This member has no downline for selected level.</div></div>';
       return;
     }
@@ -107,18 +126,18 @@
       const ref=esc(firstVal(r,['referrerCode','referralCode','code'],'-'));
       const joined=esc(dateOnly(firstVal(r,['createdAt','registerDate','registeredAt','joinedAt'],'')));
       const comm=money(firstVal(r,['commission','totalCommission'],0));
-      return `<tr><td>${i+1}</td><td>${memberNameHtml(r)}</td><td>${ref}</td><td>${joined}</td><td class="ref-commission">${comm}</td></tr>`;
+      return `<tr><td>${i+1}</td><td>${memberNameHtml(r)}</td><td>${ref}</td><td>${referrerHtml(r)}</td><td>${joined}</td><td class="ref-commission">${comm}</td></tr>`;
     }).join('');
     cards.innerHTML=rows.map((r,i)=>{
       const ref=esc(firstVal(r,['referrerCode','referralCode','code'],'-'));
       const joined=esc(dateOnly(firstVal(r,['createdAt','registerDate','registeredAt','joinedAt'],'')));
       const comm=money(firstVal(r,['commission','totalCommission'],0));
-      return `<div class="ref-mobile-card"><div class="ref-mobile-card-head"><div>${memberNameHtml(r)}</div><b>#${i+1}</b></div><div class="ref-mobile-grid"><span>Referral Code</span><b>${ref}</b><span>Joined Date</span><b>${joined}</b><span>Commission</span><b class="ref-commission">${comm}</b></div></div>`;
+      return `<div class="ref-mobile-card"><div class="ref-mobile-card-head"><div>${memberNameHtml(r)}</div><b>#${i+1}</b></div><div class="ref-mobile-grid"><span>Referral Code</span><b>${ref}</b><span>Referrer</span><b>${esc(referrerName(r))}</b><span>Joined Date</span><b>${joined}</b><span>Commission</span><b class="ref-commission">${comm}</b></div></div>`;
     }).join('');
   }
   async function loadMembers(){
     const body=document.getElementById('refMemberBody');
-    body.innerHTML='<tr><td colspan="6" class="ref-loading">Loading...</td></tr>';
+    body.innerHTML='<tr><td colspan="8" class="ref-loading">Loading...</td></tr>';
     document.getElementById('refMemberCards').innerHTML='<div class="ref-mobile-card"><h3>Loading...</h3></div>';
     const kw=document.getElementById('refKeyword').value.trim();
     const url=endpoint('REFERRAL_LIST')+(kw?'?keyword='+encodeURIComponent(kw):'');
@@ -127,7 +146,7 @@
       state.members=getRows(json);
       renderMembers();
     }catch(e){
-      body.innerHTML='<tr><td colspan="6" class="text-danger">'+esc(e.message)+'</td></tr>';
+      body.innerHTML='<tr><td colspan="8" class="text-danger">'+esc(e.message)+'</td></tr>';
     }
   }
   async function loadDownline(id,name){
@@ -137,14 +156,14 @@
     const level=document.getElementById('refLevel').value||1;
     document.getElementById('refDownlineTitle').textContent='Downline of '+name;
     document.getElementById('refSelectedMeta').textContent='Level '+level;
-    body.innerHTML='<tr><td colspan="5" class="ref-loading">Loading...</td></tr>';
+    body.innerHTML='<tr><td colspan="6" class="ref-loading">Loading...</td></tr>';
     document.getElementById('refDownlineCards').innerHTML='<div class="ref-mobile-card"><h3>Loading...</h3></div>';
     try{
       const json=await api(endpoint('REFERRAL_DOWNLINE')+'?memberId='+encodeURIComponent(id)+'&level='+encodeURIComponent(level));
       state.downline=getRows(json);
       renderDownline(state.downline);
     }catch(e){
-      body.innerHTML='<tr><td colspan="5" class="text-danger">'+esc(e.message)+'</td></tr>';
+      body.innerHTML='<tr><td colspan="6" class="text-danger">'+esc(e.message)+'</td></tr>';
     }
   }
   function resetFilters(){
@@ -159,17 +178,17 @@
     document.getElementById('refSelectedMeta').textContent='Select member';
     document.getElementById('refSelectedDownline').textContent='0';
     document.getElementById('refSelectedCommission').textContent='0.00';
-    document.getElementById('refDownlineBody').innerHTML='<tr><td colspan="5">Select member to view downline members.</td></tr>';
+    document.getElementById('refDownlineBody').innerHTML='<tr><td colspan="6">Select member to view downline members.</td></tr>';
     document.getElementById('refDownlineCards').innerHTML='';
     document.getElementById('refDownlineShowing').textContent='Showing 0 to 0 of 0 entries';
     loadMembers();
   }
   function exportCsv(type){
     const rows=type==='downline'?state.downline:visibleMembers();
-    const headers=type==='downline'?['No','Username','Full Name','Mobile','Referral Code','Joined Date','Commission']:['No','Username','Full Name','Mobile','Referral Code','L1','Joined Date'];
+    const headers=type==='downline'?['No','Username','Full Name','Mobile','Referral Code','Referrer','Joined Date','Commission']:['No','Username','Full Name','Mobile','Referral Code','Referrer','L1','Joined Date'];
     const lines=[headers];
     rows.forEach((r,i)=>{
-      const base=[i+1, firstVal(r,['username'],'-'), firstVal(r,['fullName','name'],''), firstVal(r,['mobile','phone'],''), firstVal(r,['referrerCode','referralCode','code'],'-')];
+      const base=[i+1, firstVal(r,['username'],'-'), firstVal(r,['fullName','name'],''), firstVal(r,['mobile','phone'],''), firstVal(r,['referrerCode','referralCode','code'],'-'), referrerName(r)];
       if(type==='downline') base.push(dateOnly(firstVal(r,['createdAt','registerDate','registeredAt','joinedAt'],'')), money(firstVal(r,['commission','totalCommission'],0)));
       else base.push(firstVal(r,['level1Count','l1Count','totalDownline','downlineCount'],0), dateOnly(firstVal(r,['createdAt','registerDate','registeredAt','joinedAt'],'')));
       lines.push(base);

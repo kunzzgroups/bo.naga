@@ -10,6 +10,21 @@
   const endOfWeek=d=>{const x=startOfWeek(d);x.setDate(x.getDate()+6);return x};
   const today=window.BO_FORMAT?.today?BO_FORMAT.today():ymd(new Date());
   f.value=t.value=today;
+  let dashboardClockTimer=null;
+  function dashboardTimezone(){return localStorage.getItem('bo_timezone')||'Asia/Kuala_Lumpur';}
+  function renderDashboardClock(){
+    const el=document.getElementById('dashClock'); if(!el)return;
+    const z=dashboardTimezone();
+    try{
+      const parts=new Intl.DateTimeFormat('en-CA',{timeZone:z,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(new Date());
+      const v={}; parts.forEach(p=>{if(p.type!=='literal')v[p.type]=p.value;});
+      el.textContent=`${z} · ${v.year}-${v.month}-${v.day} ${v.hour}:${v.minute}:${v.second}`;
+    }catch(_){ el.textContent=`${z} · ${new Date().toLocaleString()}`; }
+  }
+  function startDashboardClock(){
+    if(dashboardClockTimer)clearInterval(dashboardClockTimer);
+    renderDashboardClock(); dashboardClockTimer=setInterval(renderDashboardClock,1000);
+  }
 
   function updateDateLabel(){
     const el=document.getElementById('dashDateLabel');
@@ -77,9 +92,12 @@
   async function load(){
     const z=localStorage.getItem('bo_timezone')||'Asia/Kuala_Lumpur';const u=`${base}/api/admin/dashboard/summary?from=${f.value}&to=${t.value}&timezone=${encodeURIComponent(z)}`;
     const r=await fetch(u,{headers:{Authorization:'Bearer '+(localStorage.getItem('admin_token')||localStorage.getItem('token')||'')}}),j=await r.json(),d=j.data||{};
-    document.getElementById('dashClock').textContent=`${d.timezone||z} · ${(d.serverTime||'').replace('T',' ').slice(0,19)}`;
+    // Clock is rendered independently every second from the selected BO timezone.
+    renderDashboardClock();
     document.getElementById('dashboardCards').innerHTML=cards.map(c=>`<a class="ops-card" href="${c[3]}?from=${f.value}&to=${t.value}${c[3].includes('?')?'&':'&'}"><div class="top"><span>${c[0]}</span><i class="bi ${c[2]}"></i></div><div class="value">${fmt(d[c[1]],c[0])}</div><small>Click to view matching report</small></a>`).join('');
   }
   initPicker();
+  startDashboardClock();
+  window.addEventListener('storage',e=>{if(e.key==='bo_timezone')renderDashboardClock();});
   load().catch(e=>document.getElementById('dashboardCards').innerHTML=`<div class="alert alert-danger">${e.message}</div>`);
 })();
