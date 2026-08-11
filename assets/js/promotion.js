@@ -11,6 +11,10 @@
   let selectedPromoImage=null;
   let detailHtmlMode=false;
   let vipLevels=[];
+  let promoProviders=[];
+  let promoGames=[];
+  let promoLegacyAllowedTokens=[];
+  let promotionGameConfigReady=Promise.resolve();
 
   function selectedVipTierCsv(){
     const el=$('promoClaimableVipTiers');
@@ -83,6 +87,182 @@
     notifySelect(sel);
   }
   async function loadCategoryTitles(){ try{ const j=await req(promoApi('BONUS_CATEGORY_TITLE_LIST')+'?page=1&size=300'); categoryTitles=Array.isArray(j.data)?j.data:[]; const options=categoryTitles.map(x=>`<option value="${esc(x.id)}">${esc(x.name||('Title #'+x.id))}</option>`).join(''); const sel=$('promoBonusCategoryTitleId'); if(sel) sel.innerHTML='<option value="">Select bonus category title</option>'+options; if(categoryFilter) categoryFilter.innerHTML='<option value="">All Categories</option>'+options; }catch(e){ console.warn('Load bonus category title failed',e); } }
+
+  function promoGameProviderCode(item){
+    return String(item?.code ?? item?.providerCode ?? item?.provider_code ?? '').trim().toUpperCase();
+  }
+  function promoGameProviderName(item){
+    return String(item?.name ?? item?.displayName ?? item?.providerName ?? item?.provider_name ?? promoGameProviderCode(item) ?? '').trim();
+  }
+  function promoGameCode(item){
+    return String(item?.gameCode ?? item?.game_code ?? item?.code ?? item?.externalGameId ?? item?.external_game_id ?? item?.id ?? '').trim();
+  }
+  function promoGameName(item){
+    return String(item?.name ?? item?.gameName ?? item?.game_name ?? ('Game '+promoGameCode(item))).trim();
+  }
+  function splitAllowedGameTokens(value){
+    if(Array.isArray(value)) return value.map(v=>String(v).trim()).filter(Boolean);
+    return String(value||'').split(/[\n,|;]+/).map(v=>v.trim()).filter(Boolean);
+  }
+  function selectedPromotionProviderCodes(){
+    const root=$('promoGameAccessConfig');
+    if(!root)return [];
+    return [...root.querySelectorAll('.promo-provider-choice input:checked')].map(x=>String(x.value||'').toUpperCase());
+  }
+  function promoGameAssignmentRow(game, assigned){
+    const token=promoGameCode(game);
+    return `<div class="category-provider-game-row ${assigned?'is-assigned':''}" data-game-token="${esc(token)}" data-search="${esc((promoGameName(game)+' '+token).toLowerCase())}">
+      <div class="category-provider-game-info"><b>${esc(promoGameName(game))}</b><small>${esc(token)}</small></div>
+      <button type="button" class="category-provider-game-action ${assigned?'remove':'add'}" aria-label="${assigned?'Remove game':'Add game'}"><i class="bi ${assigned?'bi-dash-lg':'bi-plus-lg'}"></i></button>
+    </div>`;
+  }
+  function currentPromoProviderRules(){
+    const root=$('promoGameAccessConfig');
+    const map=new Map();
+    root?.querySelectorAll('.promo-provider-rule').forEach(card=>{
+      const providerCode=String(card.dataset.providerCode||'').toUpperCase();
+      const mode=card.querySelector('input[type="radio"]:checked')?.value||'ALL';
+      const gameTokens=[...card.querySelectorAll('.category-provider-game-row.is-assigned')].map(row=>row.dataset.gameToken).filter(Boolean);
+      map.set(providerCode,{providerCode,mode,gameTokens});
+    });
+    return map;
+  }
+  function refreshPromoAssignmentCard(card){
+    if(!card)return;
+    const availableList=card.querySelector('.available-list');
+    const assignedList=card.querySelector('.assigned-list');
+    const allRows=[...card.querySelectorAll('.category-provider-game-row')];
+    const availableRows=allRows.filter(row=>!row.classList.contains('is-assigned'));
+    const assignedRows=allRows.filter(row=>row.classList.contains('is-assigned'));
+    availableRows.forEach(row=>availableList.appendChild(row));
+    assignedRows.forEach(row=>assignedList.appendChild(row));
+    const ac=card.querySelector('.available-count'), sc=card.querySelector('.assigned-count');
+    if(ac)ac.textContent=availableRows.length;
+    if(sc)sc.textContent=assignedRows.length;
+    availableList.querySelector('.category-provider-empty')?.remove();
+    assignedList.querySelector('.category-provider-empty')?.remove();
+    if(!availableRows.length)availableList.insertAdjacentHTML('beforeend','<div class="category-provider-empty">No available games.</div>');
+    if(!assignedRows.length)assignedList.insertAdjacentHTML('beforeend','<div class="category-provider-empty">No assigned games.</div>');
+  }
+  function rebuildPromoProviderCards(existingRules=new Map()){
+    const root=$('promoGameAccessConfig');
+    const rulesBox=root?.querySelector('.promo-provider-rules');
+    if(!rulesBox)return;
+    const codes=selectedPromotionProviderCodes();
+    rulesBox.innerHTML=codes.map(code=>{
+      const provider=promoProviders.find(p=>promoGameProviderCode(p)===code)||{code,name:code};
+      const games=promoGames.filter(g=>promoGameProviderCode(g)===code);
+      const existing=existingRules.get(code)||{mode:'ALL',gameTokens:[]};
+      const selected=new Set((existing.gameTokens||[]).map(String));
+      const mode=String(existing.mode||'ALL').toUpperCase()==='SELECTED'?'SELECTED':'ALL';
+      const available=games.filter(g=>!selected.has(promoGameCode(g))).map(g=>promoGameAssignmentRow(g,false)).join('');
+      const assigned=games.filter(g=>selected.has(promoGameCode(g))).map(g=>promoGameAssignmentRow(g,true)).join('');
+      return `<section class="category-provider-rule promo-provider-rule" data-provider-code="${esc(code)}">
+        <div class="category-provider-rule-head">
+          <div class="category-provider-rule-title"><span class="category-provider-rule-icon"><i class="bi bi-controller"></i></span><div><b>${esc(promoGameProviderName(provider)||code)}</b><small>${games.length} game(s) available</small></div></div>
+          <div class="category-provider-mode-switch" role="radiogroup" aria-label="Allowed games mode">
+            <label><input type="radio" name="promoProviderMode_${esc(code)}" value="ALL" ${mode!=='SELECTED'?'checked':''}><span><i class="bi bi-collection-play"></i> All Games</span></label>
+            <label><input type="radio" name="promoProviderMode_${esc(code)}" value="SELECTED" ${mode==='SELECTED'?'checked':''}><span><i class="bi bi-check2-square"></i> Selected Games</span></label>
+          </div>
+        </div>
+        <div class="category-provider-assignment" ${mode==='SELECTED'?'':'hidden'}>
+          <div class="category-provider-assignment-note"><i class="bi bi-info-circle"></i><span>Assigning allowed games to: <b>${esc(promoGameProviderName(provider)||code)}</b></span></div>
+          <div class="category-provider-assignment-grid">
+            <div class="category-provider-game-column"><div class="category-provider-column-head"><div><b>Available Games</b><small class="available-count">${games.length-selected.size}</small></div><input class="category-provider-game-search" data-side="available" type="search" placeholder="Search games..."></div><div class="category-provider-game-list available-list">${available||'<div class="category-provider-empty">No available games.</div>'}</div></div>
+            <div class="category-provider-game-column"><div class="category-provider-column-head"><div><b>Assigned Games</b><small class="assigned-count">${selected.size}</small></div><input class="category-provider-game-search" data-side="assigned" type="search" placeholder="Search games..."></div><div class="category-provider-game-list assigned-list">${assigned||'<div class="category-provider-empty">No assigned games.</div>'}</div></div>
+          </div>
+        </div>
+      </section>`;
+    }).join('')||'<div class="category-provider-empty-state"><i class="bi bi-controller"></i><b>No provider restriction selected</b><small>This promotion is allowed for all games/providers.</small></div>';
+  }
+  function syncAllowedGamesField(){
+    const field=$('promoAllowedGames');
+    if(!field)return '';
+    const tokens=[];
+    currentPromoProviderRules().forEach(rule=>{
+      if(rule.mode==='SELECTED') tokens.push(...rule.gameTokens);
+      else tokens.push(rule.providerCode);
+    });
+    tokens.push(...promoLegacyAllowedTokens);
+    const unique=[...new Set(tokens.map(v=>String(v).trim()).filter(Boolean))];
+    field.value=unique.join(',');
+    updatePromoAllowedSummary();
+    return field.value;
+  }
+  function updatePromoAllowedSummary(){
+    const root=$('promoGameAccessConfig');
+    const summary=root?.querySelector('.promo-game-access-summary');
+    if(!summary)return;
+    const rules=[...currentPromoProviderRules().values()];
+    const allProviders=rules.filter(r=>r.mode!=='SELECTED').length;
+    const selectedGames=rules.reduce((n,r)=>n+(r.mode==='SELECTED'?r.gameTokens.length:0),0);
+    let text=!rules.length&&!promoLegacyAllowedTokens.length?'All games/providers allowed':`${allProviders} provider(s) all games · ${selectedGames} individually selected game(s)`;
+    if(promoLegacyAllowedTokens.length) text+=` · ${promoLegacyAllowedTokens.length} legacy rule(s) preserved`;
+    summary.innerHTML=`<i class="bi bi-shield-check"></i><span>${esc(text)}</span>`;
+  }
+  function applyAllowedGamesToSelector(value){
+    const root=$('promoGameAccessConfig');
+    if(!root||!promoProviders.length)return;
+    const tokens=splitAllowedGameTokens(value);
+    const providerCodes=new Set(promoProviders.map(p=>promoGameProviderCode(p)));
+    const gameByToken=new Map();
+    promoGames.forEach(g=>{
+      const token=promoGameCode(g);
+      if(token)gameByToken.set(token.toUpperCase(),g);
+    });
+    const rules=new Map();
+    promoLegacyAllowedTokens=[];
+    tokens.forEach(raw=>{
+      const key=String(raw).toUpperCase();
+      if(providerCodes.has(key)){
+        rules.set(key,{providerCode:key,mode:'ALL',gameTokens:[]});
+      }else if(gameByToken.has(key)){
+        const game=gameByToken.get(key), code=promoGameProviderCode(game);
+        if(!code){promoLegacyAllowedTokens.push(raw);return;}
+        const existing=rules.get(code);
+        if(existing?.mode==='ALL')return;
+        const rule=existing||{providerCode:code,mode:'SELECTED',gameTokens:[]};
+        rule.mode='SELECTED';
+        if(!rule.gameTokens.includes(promoGameCode(game)))rule.gameTokens.push(promoGameCode(game));
+        rules.set(code,rule);
+      }else promoLegacyAllowedTokens.push(raw);
+    });
+    root.querySelectorAll('.promo-provider-choice input').forEach(input=>{
+      input.checked=rules.has(String(input.value).toUpperCase());
+      input.closest('.promo-provider-choice')?.classList.toggle('is-selected',input.checked);
+    });
+    rebuildPromoProviderCards(rules);
+    updatePromoAllowedSummary();
+  }
+  function renderPromoGameAccessShell(){
+    const root=$('promoGameAccessConfig');
+    if(!root)return;
+    root.innerHTML=`<div class="promo-game-access-summary"><i class="bi bi-shield-check"></i><span>All games/providers allowed</span></div>
+      <div class="promo-game-access-section-title"><b>Select Provider</b><small>Choose one or more providers to restrict this promotion.</small></div>
+      <div class="category-provider-selector promo-provider-selector">${promoProviders.map(p=>{const code=promoGameProviderCode(p);return `<label class="category-provider-choice promo-provider-choice" role="button"><input type="checkbox" value="${esc(code)}"><span class="category-provider-choice-name">${esc(promoGameProviderName(p)||code)}</span></label>`;}).join('')||'<small class="text-muted">No active provider available.</small>'}</div>
+      <div class="category-provider-rules promo-provider-rules"></div>`;
+    rebuildPromoProviderCards(new Map());
+  }
+  async function loadPromotionGameConfig(){
+    const root=$('promoGameAccessConfig');
+    try{
+      const [providersJson,gamesJson]=await Promise.all([req(promoApi('GAME_PROVIDER_LIST')+'?_='+Date.now()),req(promoApi('GAME_LIST')+'?_='+Date.now())]);
+      promoProviders=(Array.isArray(providersJson.data)?providersJson.data:[]).filter(x=>Number(x.status??1)===1);
+      promoGames=Array.isArray(gamesJson.data)?gamesJson.data:[];
+      renderPromoGameAccessShell();
+      applyAllowedGamesToSelector($('promoAllowedGames')?.value||'');
+    }catch(err){
+      if(root)root.innerHTML=`<div class="promo-game-access-error"><i class="bi bi-exclamation-triangle"></i><span>Unable to load provider/game list: ${esc(err.message||'Request failed')}</span></div>`;
+    }
+  }
+  function resetPromoGameAccess(){
+    promoLegacyAllowedTokens=[];
+    if($('promoAllowedGames'))$('promoAllowedGames').value='';
+    const root=$('promoGameAccessConfig');
+    root?.querySelectorAll('.promo-provider-choice input').forEach(input=>{input.checked=false;input.closest('.promo-provider-choice')?.classList.remove('is-selected');});
+    rebuildPromoProviderCards(new Map());
+    updatePromoAllowedSummary();
+  }
 
   function initDetailEditor(){
     const textarea=$('promoDetailText');
@@ -214,6 +394,7 @@
 
   function payload(){
     syncEditor();
+    syncAllowedGamesField();
     const fd=new FormData();
     const id=num('promoId'); if(id!=null) fd.append('id',id);
     const name=val('promoItemName') || val('promoName');
@@ -236,6 +417,7 @@
 
   function reset(){
     form.reset();
+    resetPromoGameAccess();
     $('promoId').value='';
     if($('promoCode')) $('promoCode').value='';
     if($('promoBonusCategoryTitleId')) $('promoBonusCategoryTitleId').value='';
@@ -298,6 +480,7 @@
     $('promoDisplayAmount').value=String(x.displayAmount??1);
     $('promoWallet').value=x.freeCreditWallet||'MAIN_WALLET';
     $('promoAllowedGames').value=x.allowedGames||'';
+    promotionGameConfigReady.then(()=>applyAllowedGamesToSelector(x.allowedGames||''));
     $('promoDisplayOrder').value=x.displayOrder??0;
     $('promoStatus').value=String(x.status??1);
     const dt=v=>v?String(v).slice(0,16):''; $('promoStartAt').value=dt(x.startAt); $('promoEndAt').value=dt(x.endAt); $('promoClaimStartAt').value=dt(x.claimStartAt); $('promoClaimEndAt').value=dt(x.claimEndAt); $('promoCompletionDeadlineMode').value=x.completionDeadlineMode||'NO_EXPIRY'; $('promoCompletionDays').value=x.completionDays??''; $('promoCompletionFixedAt').value=dt(x.completionFixedAt); $('promoRebatePolicy').value=x.rebatePolicy||'DISABLED'; $('promoRebateStartCondition').value=x.rebateStartCondition||'PROMOTION_COMPLETED'; $('promoEligibleBalanceType').value=x.eligibleBalanceType||'MAIN_PLUS_BONUS'; $('promoEligibleBalanceThreshold').value=x.eligibleBalanceThreshold??''; $('promoNewDepositRequired').value=String(x.newDepositRequired??0); $('promoCanClaimRebate').value=x.canClaimRebate||'AFTER_PROMOTION_COMPLETED'; $('promoCompletionMode').value=x.completionMode||'AUTO_COMPLETE'; $('promoRewardClaimMode').value=x.rewardClaimMode||'NO_ADDITIONAL_CLAIM'; $('promoWalletConsumptionPriority').value=x.walletConsumptionPriority||'BONUS_FIRST'; $('promoWinAllocationRule').value=x.winAllocationRule||'RETURN_TO_STAKE_SOURCE'; $('promoWithdrawalRestriction').value=x.withdrawalRestriction||'NONE'; $('promoExcessBalanceAction').value=x.excessBalanceAction||'KEEP_LOCKED';
@@ -395,6 +578,46 @@
     if(db&&await BO_DIALOG.confirm('Delete this promotion?', {title:'Delete Promotion', confirmText:'Delete'})){await req(promoApi('PROMOTION_DELETE'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:Number(db.dataset.del)})});load();}
   });
 
+  $('promoGameAccessConfig')?.addEventListener('change',e=>{
+    const providerInput=e.target.closest('.promo-provider-choice input');
+    if(providerInput){
+      const existing=currentPromoProviderRules();
+      providerInput.closest('.promo-provider-choice')?.classList.toggle('is-selected',providerInput.checked);
+      rebuildPromoProviderCards(existing);
+      syncAllowedGamesField();
+      return;
+    }
+    const modeInput=e.target.closest('.promo-provider-rule input[type="radio"]');
+    if(modeInput){
+      const card=modeInput.closest('.promo-provider-rule');
+      const assignment=card?.querySelector('.category-provider-assignment');
+      if(assignment)assignment.hidden=modeInput.value!=='SELECTED';
+      syncAllowedGamesField();
+    }
+  });
+  $('promoGameAccessConfig')?.addEventListener('click',e=>{
+    const btn=e.target.closest('.category-provider-game-action');
+    if(!btn)return;
+    const row=btn.closest('.category-provider-game-row'), card=btn.closest('.promo-provider-rule');
+    if(!row||!card)return;
+    row.classList.toggle('is-assigned');
+    const assigned=row.classList.contains('is-assigned');
+    btn.classList.toggle('add',!assigned);btn.classList.toggle('remove',assigned);
+    btn.innerHTML=`<i class="bi ${assigned?'bi-dash-lg':'bi-plus-lg'}"></i>`;
+    btn.setAttribute('aria-label',assigned?'Remove game':'Add game');
+    refreshPromoAssignmentCard(card);
+    syncAllowedGamesField();
+  });
+  $('promoGameAccessConfig')?.addEventListener('input',e=>{
+    const input=e.target.closest('.category-provider-game-search');
+    if(!input)return;
+    const card=input.closest('.promo-provider-rule');
+    const side=input.dataset.side;
+    const list=card?.querySelector(side==='assigned'?'.assigned-list':'.available-list');
+    const q=input.value.trim().toLowerCase();
+    list?.querySelectorAll('.category-provider-game-row').forEach(row=>{row.hidden=!!q&&!String(row.dataset.search||'').includes(q);});
+  });
+
   $('promoPageSize')?.addEventListener('change',()=>{promoPage=0;render();});
   $('promoPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(!b||b.disabled)return;promoPage=Number(b.dataset.p);render();});
   const promoImageInput=$('promoImage');
@@ -405,6 +628,7 @@
   ['promoCompletionDeadlineMode','promoRebatePolicy','promoRebateStartCondition','promoWithdrawalRestriction'].forEach(id=>$(id)?.addEventListener('change',updatePolicyVisibility));
   updatePolicyVisibility();
   initDetailEditor();
+  promotionGameConfigReady=loadPromotionGameConfig();
   loadCategoryTitles().then(()=>load()).catch(e=>set(e.message,'error'));
   loadPromotionVipLevels();
 })();

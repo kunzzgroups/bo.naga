@@ -137,6 +137,7 @@ const API_CONFIG = window.API_CONFIG || {
         GAME_DOWNLOAD_IMAGES: "/admin/game/download-images",
 
         FRONTEND_DISPLAY_SETTING: "/admin/frontend/display-setting",
+        ADVERTISEMENT_POPUP: "/admin/frontend/ad-popup",
         COMPLIANCE_POLICY_LIST: "/admin/compliance-policies",
         COMPLIANCE_POLICY_SAVE: "/admin/compliance-policies/save",
         VIP_LEVEL_LIST: "/admin/vip/levels",

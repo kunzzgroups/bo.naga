@@ -139,6 +139,7 @@
     {menuKey:'site_customize', title:'Site Customize', url:'site-customize.html', icon:'bi-palette', parentKey:'', sortOrder:90},
     {menuKey:'layout_section', title:'Layout Section', url:'layout-section.html', icon:'bi-code-square', parentKey:'', sortOrder:91},
     {menuKey:'frontend_display', title:'Frontend Display', url:'frontend-display.html', icon:'bi-display', parentKey:'setting', sortOrder:91},
+    {menuKey:'advertisement_popup', title:'Advertisement Popup', url:'advertisement-popup.html', icon:'bi-window-stack', parentKey:'setting', sortOrder:94},
     {menuKey:'social', title:'Social', url:'social.html', icon:'bi-share', parentKey:'setting', sortOrder:92},
     {menuKey:'compliance_policy', title:'Compliance Policy', url:'compliance-policy.html', icon:'bi-file-earmark-lock', parentKey:'setting', sortOrder:93},
     {menuKey:'timezone_setting', title:'Timezone Setting', url:'timezone-setting.html', icon:'bi-globe2', parentKey:'setting', sortOrder:94}
@@ -187,7 +188,7 @@
     },
     enforcePageAccess: function(user){
       const current = pageName();
-      const alwaysAllowed = ['profile.html','change-password.html','rebate-management.html','rebate-log.html','manual-rebate-approval.html', 'timezone-setting.html', 'win-lose-report.html', 'bank-deposit-usage.html', 'daily-rebate-report.html'];
+      const alwaysAllowed = ['profile.html','change-password.html','rebate-management.html','rebate-log.html','manual-rebate-approval.html', 'timezone-setting.html', 'win-lose-report.html', 'bank-deposit-usage.html', 'daily-rebate-report.html', 'advertisement-popup.html'];
       if(alwaysAllowed.indexOf(current) !== -1) return true;
       const menus = this.allowedMenus(user);
       if(!menus.length){
@@ -249,6 +250,13 @@
       // Local companion page: anyone allowed to manage payment methods can also view bank deposit usage.
       if(menus.some(m => String(m.menuKey||'') === 'payment_method') && !menus.some(m => String(m.menuKey||'') === 'bank_deposit_usage')){
         menus = menus.concat([{menuKey:'bank_deposit_usage', title:'Bank Deposit Usage', url:'bank-deposit-usage.html', icon:'bi-bar-chart-line', parentKey:'wallet', sortOrder:15.1, status:1}]);
+      }
+
+      // Advertisement Popup is a companion frontend-configuration page. Keep it visible
+      // immediately for admins that already have frontend/site customization access.
+      if(menus.some(m => ['site_customize','frontend_display'].includes(String(m.menuKey||'')))
+          && !menus.some(m => String(m.menuKey||'') === 'advertisement_popup')){
+        menus = menus.concat([{menuKey:'advertisement_popup', title:'Advertisement Popup', url:'advertisement-popup.html', icon:'bi-window-stack', parentKey:'setting', sortOrder:94, status:1}]);
       }
 
       menus = menus.map(normalizeMenu).filter(m => m.status === 1 && m.url && m.url !== '#' && m.menuKey !== 'menu_permission')
