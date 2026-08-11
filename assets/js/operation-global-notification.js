@@ -8,6 +8,8 @@
   // Deposit and withdraw intentionally reuse the existing Live Chat MP3.
   var WALLET_REQUEST_SOUND_URL = 'assets/audio/livechat_sound.mp3';
   var POLL_INTERVAL_MS = 1000;
+  var TAB_ID = 'bo-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+  var wakeWorker = null;
   var REPEAT_INTERVAL_MS = 5000;
   var LOGIN_MARKER_KEY = 'bo_operation_login_marker';
   var STATE_KEY = 'bo_operation_notification_state_v3';
@@ -30,12 +32,50 @@
     installUnlock();
     bindHeaderAcknowledgement();
     check(true);
-    pollTimer = window.setInterval(function(){ check(false); }, POLL_INTERVAL_MS);
+    startBackgroundPolling();
     repeatTimer = window.setInterval(repeatPendingSounds, REPEAT_INTERVAL_MS);
+    window.addEventListener('storage', handleSharedNotificationState);
+    try {
+      if ('BroadcastChannel' in window) {
+        window.__BO_NOTIFY_CHANNEL__ = new BroadcastChannel('bo-operation-notifications');
+        window.__BO_NOTIFY_CHANNEL__.onmessage = function(){ check(false); repeatPendingSounds(); };
+      }
+    } catch(e){}
     window.addEventListener('beforeunload', function(){
       if (pollTimer) clearInterval(pollTimer);
+      if (wakeWorker) { try { wakeWorker.terminate(); } catch(e){} wakeWorker = null; }
       if (repeatTimer) clearInterval(repeatTimer);
+      try { if (window.__BO_NOTIFY_CHANNEL__) window.__BO_NOTIFY_CHANNEL__.close(); } catch(e){}
     });
+  }
+
+
+
+  function startBackgroundPolling(){
+    // A dedicated worker timer is less affected by normal background-tab timer throttling.
+    // The normal interval remains as a fallback for browsers that disallow Blob workers.
+    try{
+      var code = "setInterval(function(){postMessage('tick')}," + POLL_INTERVAL_MS + ");";
+      var blob = new Blob([code], {type:'application/javascript'});
+      wakeWorker = new Worker(URL.createObjectURL(blob));
+      wakeWorker.onmessage = function(){ check(false); };
+    }catch(e){
+      wakeWorker = null;
+    }
+    if (!wakeWorker) pollTimer = window.setInterval(function(){ check(false); }, POLL_INTERVAL_MS);
+  }
+
+  function handleSharedNotificationState(e){
+    if (!e || (e.key !== PENDING_KEY && e.key !== STATE_KEY)) return;
+    // If another BO tab detects a new request, this tab can also attempt the sound.
+    // This is especially useful when the detecting tab has no usable audio permission.
+    repeatPendingSounds();
+  }
+
+  function broadcastRefresh(){
+    try{
+      if (window.__BO_NOTIFY_CHANNEL__) window.__BO_NOTIFY_CHANNEL__.postMessage({type:'refresh', at:Date.now()});
+    }catch(e){}
   }
 
   function todayKey(){
@@ -147,6 +187,7 @@
       }
 
       writeJson(STATE_KEY, next);
+      broadcastRefresh();
       updateHeader(next);
       repeatPendingSounds();
     }catch(e){
@@ -241,10 +282,17 @@
     var now = Date.now();
     try{
       var lock = readJson(PLAY_LOCK_KEY, {});
-      if (lock.kind === kind && now - Number(lock.time || 0) < REPEAT_INTERVAL_MS - 500) return false;
-      writeJson(PLAY_LOCK_KEY, {kind:kind,time:now});
+      if (lock.kind === kind && lock.owner !== TAB_ID && now - Number(lock.time || 0) < REPEAT_INTERVAL_MS - 500) return false;
+      writeJson(PLAY_LOCK_KEY, {kind:kind,time:now,owner:TAB_ID});
     }catch(e){}
     return true;
+  }
+
+  function releasePlayLock(kind){
+    try{
+      var lock = readJson(PLAY_LOCK_KEY, {});
+      if (lock.kind === kind && lock.owner === TAB_ID) localStorage.removeItem(PLAY_LOCK_KEY);
+    }catch(e){}
   }
 
   function flushQueue(){
@@ -252,8 +300,10 @@
     var kind = queued.shift();
     if (!getPending()[kind]) return flushQueue();
     if (!claimPlay(kind)) return;
-    play(kind).finally(function(){
-      if (kind === 'members') setPending('members', false);
+    play(kind).then(function(played){
+      // Do not let a background tab that Chrome blocked from autoplay silence all other BO tabs.
+      if (!played) releasePlayLock(kind);
+      if (kind === 'members' && played) setPending('members', false);
       if (queued.length) setTimeout(flushQueue, 350);
     });
   }
@@ -266,9 +316,9 @@
         player.currentTime = 0;
         player.muted = false;
         var p = player.play();
-        if (p && p.then) p.then(function(){ unlocked = true; resolve(); }).catch(function(){ resolve(); });
-        else resolve();
-      }catch(e){ resolve(); }
+        if (p && p.then) p.then(function(){ unlocked = true; resolve(true); }).catch(function(){ resolve(false); });
+        else resolve(true);
+      }catch(e){ resolve(false); }
     });
   }
 })();
