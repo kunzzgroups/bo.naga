@@ -63,7 +63,7 @@
       if (el && el.value && el.value.trim()) p.set(map[id], el.value.trim());
     });
     p.set('page', page);
-    p.set('size', '20');
+    p.set('size', $('txSize')?.value || '20');
     return p.toString();
   }
 
@@ -227,6 +227,7 @@
     BO_AUTH.renderSidebar && BO_AUTH.renderSidebar();
     $('txSearchBtn')?.addEventListener('click', () => { page = 1; load(); });
     $('txRefreshBtn')?.addEventListener('click', () => load());
+    $('txSize')?.addEventListener('change', () => { page = 1; load(); });
     $('txResetBtn')?.addEventListener('click', resetFilters);
     $('txPrevBtn')?.addEventListener('click', () => { if(page > 1){ page--; load(); } });
     $('txNextBtn')?.addEventListener('click', () => { if(page < totalPages){ page++; load(); } });

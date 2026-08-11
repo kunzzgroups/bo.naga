@@ -48,7 +48,7 @@
     const eventType=$('betEventType')?.value.trim(); if(eventType) p.set('eventType', eventType);
     const from=$('betFrom')?.value.trim(); if(from) p.set('from', from);
     const to=$('betTo')?.value.trim(); if(to) p.set('to', to);
-    p.set('page',page); p.set('size','20');
+    p.set('page',page); p.set('size',$('betSize')?.value||'20');
     return p.toString();
   }
 
@@ -101,6 +101,7 @@
     setFromUrl();
     const runSearch=()=>{page=1;loadMemberMap().finally(load);};
     $('betSearchBtn')?.addEventListener('click',runSearch);
+    $('betSize')?.addEventListener('change',()=>{page=1;load();});
     ['betMemberId','betProviderCode','betGameCode','betEventType','betFrom','betTo'].forEach(id=>{
       $(id)?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runSearch();}});
     });
