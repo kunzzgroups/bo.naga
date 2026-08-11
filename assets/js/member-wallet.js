@@ -87,7 +87,11 @@
     const modal=document.getElementById('providerWalletDetailModal'), body=document.getElementById('providerWalletDetailBody');
     if(!modal||!body)return;
     document.getElementById('providerWalletDetailTitle').textContent=`Provider Wallet Detail — ${username||('Member #'+memberId)}`;
-    modal.hidden=false; document.body.classList.add('modal-open'); body.innerHTML='<tr><td colspan="6">Loading provider accounts...</td></tr>';
+    modal.hidden=false;
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden','false');
+    document.body.classList.add('modal-open');
+    body.innerHTML='<tr><td colspan="6">Loading provider accounts...</td></tr>';
     try{
       const json=await api(url('MEMBER_WALLET_PROVIDER_ACCOUNTS')+'?memberId='+encodeURIComponent(memberId));
       const rows = Array.isArray(json.data)
@@ -95,10 +99,19 @@
         : (Array.isArray(json.data?.accounts)
             ? json.data.accounts
             : (Array.isArray(json.data?.content) ? json.data.content : []));
-      body.innerHTML=rows.length?rows.map(r=>`<tr><td><b>${esc(r.providerName||r.providerCode||'-')}</b><br><small>${esc(r.providerCode||'')}</small></td><td>${esc(r.providerUsername||r.accountId||r.playerId||'-')}</td><td><b>${money(r.balance??r.providerBalance??r.walletBalance)}</b></td><td>${esc(r.status||r.sessionStatus||'-')}</td><td>${esc(r.updatedAt||r.lastSyncAt||r.lastUpdatedAt||'-')}</td><td>${esc(r.sessionId||r.activeSessionId||'-')}</td></tr>`).join(''):'<tr><td colspan="6">No provider wallet account found for this member.</td></tr>';
+      const sorted=rows.slice().sort((a,b)=>num(b.balance??b.providerBalance??b.walletBalance)-num(a.balance??a.providerBalance??a.walletBalance));
+      const totalLeft=sorted.reduce((sum,r)=>sum+num(r.balance??r.providerBalance??r.walletBalance),0);
+      body.innerHTML=sorted.length?(sorted.map(r=>{
+        const balance=num(r.balance??r.providerBalance??r.walletBalance);
+        return `<tr><td><b>${esc(r.providerName||r.providerCode||'-')}</b><br><small>${esc(r.providerCode||'')}</small></td><td>${esc(r.providerUsername||r.accountId||r.playerId||'-')}</td><td><b>${money(balance)}</b>${balance>0?' <span class="status-pill active">Balance inside</span>':''}</td><td>${esc(r.status||r.sessionStatus||'-')}</td><td>${esc(r.updatedAt||r.lastSyncAt||r.lastUpdatedAt||'-')}</td><td>${esc(r.sessionId||r.activeSessionId||'-')}</td></tr>`;
+      }).join('')+`<tr class="provider-wallet-detail-total"><td colspan="2"><b>Provider Wallet Total</b></td><td><b>${money(totalLeft)}</b></td><td colspan="3"></td></tr>`):'<tr><td colspan="6">No provider wallet account found for this member.</td></tr>';
     }catch(e){ body.innerHTML='<tr><td colspan="6" class="text-danger">'+esc(e.message||'Unable to load provider wallet details')+'</td></tr>'; }
   }
-  function closeProviderWalletDetail(){ const m=document.getElementById('providerWalletDetailModal'); if(m)m.hidden=true; document.body.classList.remove('modal-open'); }
+  function closeProviderWalletDetail(){
+    const m=document.getElementById('providerWalletDetailModal');
+    if(m){ m.classList.remove('show'); m.setAttribute('aria-hidden','true'); m.hidden=true; }
+    document.body.classList.remove('modal-open');
+  }
 
   document.addEventListener('DOMContentLoaded', function(){
     document.getElementById('walletSearchBtn')?.addEventListener('click', ()=>{ page=1; load(); });

@@ -97,6 +97,7 @@ const API_CONFIG = window.API_CONFIG || {
         MEMBER_WITHDRAW_CREATE: "/admin/member-withdraw/create",
         MEMBER_WITHDRAW_APPROVE: "/admin/member-withdraw/approve",
         MEMBER_WITHDRAW_REJECT: "/admin/member-withdraw/reject",
+        OPERATION_NOTIFICATION_SUMMARY: "/admin/notifications/pending-summary",
 
         PROVIDER_WALLET_CREATE_PLAYER: "/admin/provider-wallet/create-player",
         PROVIDER_WALLET_BALANCE: "/admin/provider-wallet/balance",

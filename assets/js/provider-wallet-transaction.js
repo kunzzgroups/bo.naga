@@ -74,6 +74,61 @@
     try { return JSON.stringify(JSON.parse(s), null, 2); } catch(e) { return s; }
   }
 
+  function jsonValue(v, preserveString){
+    if (v == null || v === '') return null;
+    if (typeof v === 'object') return v;
+    const s = String(v);
+    if (preserveString) return s;
+    try { return JSON.parse(s); } catch(e) { return s; }
+  }
+
+  function buildFullDebugJson(x){
+    const data = x || {};
+    return {
+      transaction: {
+        id: data.id ?? null,
+        memberId: data.memberId ?? data.member_id ?? null,
+        providerCode: data.providerCode ?? data.provider_code ?? null,
+        transactionType: data.txType ?? data.tx_type ?? null,
+        amount: data.amount ?? null,
+        status: data.status ?? null,
+        httpStatus: data.httpStatus ?? data.http_status ?? null,
+        createdAt: data.createdAt ?? data.created_at ?? null
+      },
+      apiUrl: data.apiUrl ?? data.api_url ?? data.url ?? null,
+      requestPayload: jsonValue(data.requestPayload ?? data.request_payload),
+      responsePayload: jsonValue(data.responsePayload ?? data.response_payload),
+      requestHeaders: jsonValue(data.requestHeaders ?? data.request_headers),
+      signaturePlainText: data.signaturePlainText ?? data.signature_plain_text ?? null,
+      generatedSignature: data.generatedSignature ?? data.generated_signature ?? null,
+      exactRawJsonUsedForSigning: jsonValue(data.rawJson ?? data.raw_json, true),
+      errorMessage: data.errorMessage ?? data.error_message ?? null
+    };
+  }
+
+  function setFullDebugJson(x){
+    const el = $('txFullDebugJson');
+    if (!el) return;
+    el.textContent = JSON.stringify(buildFullDebugJson(x), null, 2);
+  }
+
+  async function copyText(text){
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    const area = document.createElement('textarea');
+    area.value = text;
+    area.setAttribute('readonly', '');
+    area.style.position = 'fixed';
+    area.style.opacity = '0';
+    document.body.appendChild(area);
+    area.select();
+    const ok = document.execCommand('copy');
+    area.remove();
+    if (!ok) throw new Error('Copy failed');
+  }
+
   function statusBadge(status){
     const s = String(status || '-').toUpperCase();
     let cls = 'text-bg-secondary';
@@ -96,6 +151,7 @@
     if ($('txGeneratedSignature')) $('txGeneratedSignature').textContent = 'Loading signature...';
     if ($('txRawJson')) $('txRawJson').textContent = 'Loading raw JSON...';
     if ($('txErrorMessage')) $('txErrorMessage').textContent = 'Loading payload...';
+    if ($('txFullDebugJson')) $('txFullDebugJson').textContent = 'Loading full debug JSON...';
     modal.show();
     try {
       const x = await get(endpoint('PROVIDER_WALLET_TRANSACTION_LIST').replace(/\/list$/, '') + '/' + encodeURIComponent(summary.id));
@@ -108,6 +164,7 @@
       if ($('txGeneratedSignature')) $('txGeneratedSignature').textContent = pretty(x.generatedSignature || x.generated_signature || '');
       if ($('txRawJson')) $('txRawJson').textContent = pretty(x.rawJson || x.raw_json || '');
       if ($('txErrorMessage')) $('txErrorMessage').textContent = pretty(x.errorMessage || x.error_message || '');
+      setFullDebugJson(x);
     } catch (e) {
       if ($('txRequestPayload')) $('txRequestPayload').textContent = '-';
       if ($('txResponsePayload')) $('txResponsePayload').textContent = '-';
@@ -116,6 +173,11 @@
       if ($('txGeneratedSignature')) $('txGeneratedSignature').textContent = '-';
       if ($('txRawJson')) $('txRawJson').textContent = '-';
       if ($('txErrorMessage')) $('txErrorMessage').textContent = e.message || 'Unable to load payload';
+      setFullDebugJson({
+        ...summary,
+        apiUrl: summary.apiUrl || summary.api_url || summary.url || null,
+        errorMessage: e.message || 'Unable to load payload'
+      });
     }
   };
 
@@ -169,6 +231,20 @@
     $('txPrevBtn')?.addEventListener('click', () => { if(page > 1){ page--; load(); } });
     $('txNextBtn')?.addEventListener('click', () => { if(page < totalPages){ page++; load(); } });
     $('txPager')?.addEventListener('click', e => { const b=e.target.closest('[data-page]'); if(!b)return; const n=Number(b.dataset.page); if(n>=1&&n<=totalPages&&n!==page){page=n;load();} });
+    $('txCopyDebugJson')?.addEventListener('click', async () => {
+      const btn = $('txCopyDebugJson');
+      const source = $('txFullDebugJson')?.textContent || '';
+      if (!source || source === '-' || source.startsWith('Loading')) return;
+      const original = btn ? btn.innerHTML : '';
+      try {
+        await copyText(source);
+        if (btn) btn.innerHTML = '<i class="bi bi-check2"></i> Copied';
+      } catch (e) {
+        if (btn) btn.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Copy failed';
+      } finally {
+        if (btn) setTimeout(() => { btn.innerHTML = original; }, 1400);
+      }
+    });
     load();
   });
 })();

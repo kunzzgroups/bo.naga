@@ -683,6 +683,18 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 .pwt-page .modal-body{background:#f8fafc;padding:18px}
 .pwt-page .modal-footer{background:#fff;border-top:1px solid var(--line)}
 .pwt-page .modal-backdrop.show{opacity:.45}
+/* Provider payload modal must cover the sticky BO header just like other BO detail modals. */
+body.pwt-page .pwt-modal{z-index:7000!important}
+body.pwt-page > .modal-backdrop{z-index:6900!important;background:#0f172a!important}
+body.pwt-page > .modal-backdrop.show{opacity:.55!important;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+body.pwt-page.modal-open .report-topbar,
+body.pwt-page.modal-open .report-sidebar,
+body.pwt-page.modal-open .report-main{pointer-events:none}
+body.pwt-page.modal-open .pwt-modal{pointer-events:auto}
+.pwt-page .debug-json-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.pwt-page .debug-json-head label{margin:0}
+.pwt-page .debug-copy-btn{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px}
+.pwt-page .debug-json-box{min-height:220px;max-height:520px}
 .pwt-page .report-user{align-items:center;gap:8px}
 .pwt-page .report-user span{width:30px;height:30px;border-radius:999px;background:#dbeafe;color:#1d4ed8;display:grid;place-items:center;font-weight:900}
 .pwt-page .logout-btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;font-weight:800;color:#344054}

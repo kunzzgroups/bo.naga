@@ -7,12 +7,12 @@
   var NEW_MEMBER_SOUND_URL = 'assets/audio/new_member_sound.mp3';
   // Deposit and withdraw intentionally reuse the existing Live Chat MP3.
   var WALLET_REQUEST_SOUND_URL = 'assets/audio/livechat_sound.mp3';
-  var POLL_INTERVAL_MS = 2000;
+  var POLL_INTERVAL_MS = 1000;
   var REPEAT_INTERVAL_MS = 5000;
   var LOGIN_MARKER_KEY = 'bo_operation_login_marker';
-  var STATE_KEY = 'bo_operation_notification_state_v2';
-  var PENDING_KEY = 'bo_operation_notification_pending_v2';
-  var SESSION_KEY = 'bo_operation_notification_session_v2';
+  var STATE_KEY = 'bo_operation_notification_state_v3';
+  var PENDING_KEY = 'bo_operation_notification_pending_v3';
+  var SESSION_KEY = 'bo_operation_notification_session_v3';
   var PLAY_LOCK_KEY = 'bo_operation_notification_play_lock_v2';
 
   var audioMap = {};
@@ -52,41 +52,27 @@
     return json;
   }
 
-  function totalFrom(json){
-    var data = json && json.data;
-    if (data && data.pagination && data.pagination.totalElements != null) return Number(data.pagination.totalElements) || 0;
-    if (data && data.totalElements != null) return Number(data.totalElements) || 0;
-    if (data && data.page && data.page.totalElements != null) return Number(data.page.totalElements) || 0;
-    if (Array.isArray(data)) return data.length;
-    if (data && Array.isArray(data.content)) return data.content.length;
-    return 0;
+  function normalizeIds(value){
+    return Array.isArray(value) ? value.map(function(id){ return String(id); }).filter(Boolean) : [];
   }
 
-  function memberRows(json){
-    var data = json && json.data;
-    if (Array.isArray(data)) return data;
-    if (data && Array.isArray(data.content)) return data.content;
-    if (data && Array.isArray(data.records)) return data.records;
-    return [];
+  function hasNewRequestIds(nextIds, prevIds){
+    if (!Array.isArray(nextIds) || !nextIds.length) return false;
+    if (!Array.isArray(prevIds)) return false;
+    var oldSet = new Set(prevIds.map(String));
+    return nextIds.some(function(id){ return !oldSet.has(String(id)); });
   }
 
   async function getCounts(){
-    var memberJson = await fetchJson(BO_AUTH.memberListUrl());
-    var today = todayKey();
-    var newMembers = memberRows(memberJson).filter(function(row){
-      var raw = row && (row.createdAt || row.registerDate || row.created_at);
-      return raw && String(raw).replace('T',' ').slice(0,10) === today;
-    }).length;
-
-    var results = await Promise.all([
-      fetchJson(endpoint('MEMBER_DEPOSIT_LIST') + '?status=PENDING&page=1&size=1'),
-      fetchJson(endpoint('MEMBER_WITHDRAW_LIST') + '?status=PENDING&page=1&size=1')
-    ]);
+    var json = await fetchJson(endpoint('OPERATION_NOTIFICATION_SUMMARY') + '?_boNotifyTs=' + Date.now());
+    var data = (json && json.data) || {};
     return {
-      date: today,
-      members: newMembers,
-      deposit: totalFrom(results[0]),
-      withdraw: totalFrom(results[1])
+      date: String(data.date || todayKey()),
+      members: Number(data.members || data.newMembersToday || 0) || 0,
+      deposit: Number(data.deposit || data.depositPendingCount || 0) || 0,
+      withdraw: Number(data.withdraw || data.withdrawPendingCount || 0) || 0,
+      depositIds: normalizeIds(data.depositIds || data.latestDepositIds),
+      withdrawIds: normalizeIds(data.withdrawIds || data.latestWithdrawIds)
     };
   }
 
@@ -124,7 +110,7 @@
   }
 
   async function check(initial){
-    if (busy || document.hidden) return;
+    if (busy) return;
     busy = true;
     try{
       var next = await getCounts();
@@ -133,7 +119,7 @@
 
       if (newLogin){
         // Member sound must NOT play merely because the admin logged in.
-        // Existing pending deposit/withdraw must keep ringing until either header icon is opened.
+        // Existing real pending wallet requests may alert after the admin has interacted with the BO.
         setPending('members', false);
         setPending('wallet', next.deposit > 0 || next.withdraw > 0);
         markSessionInitialized();
@@ -143,7 +129,21 @@
           prev.date = next.date;
         }
         if (next.members > Number(prev.members || 0)) setPending('members', true);
-        if (next.deposit > Number(prev.deposit || 0) || next.withdraw > Number(prev.withdraw || 0)) setPending('wallet', true);
+
+        // Detect a newly-created request by ID as well as by total count. This avoids missing
+        // a new request when another request is approved/rejected between two polling cycles.
+        var newWalletRequest = hasNewRequestIds(next.depositIds, prev.depositIds) ||
+          hasNewRequestIds(next.withdrawIds, prev.withdrawIds) ||
+          next.deposit > Number(prev.deposit || 0) ||
+          next.withdraw > Number(prev.withdraw || 0);
+        if (newWalletRequest) setPending('wallet', true);
+      }
+
+      // Notification state must follow the REAL pending queue. Once every deposit/withdraw
+      // has been approved/rejected, immediately stop the repeating sound and clear stale state.
+      if (next.deposit <= 0 && next.withdraw <= 0){
+        setPending('wallet', false);
+        stopAudio('wallet');
       }
 
       writeJson(STATE_KEY, next);
@@ -173,7 +173,6 @@
   }
 
   function repeatPendingSounds(){
-    if (document.hidden) return;
     var pending = getPending();
     // Member notification is one-shot only for each newly detected increase.
     // Deposit/withdraw continues repeating until either wallet header icon is opened.
@@ -197,6 +196,18 @@
     window.addEventListener('focus', function(){ unlockAudio(); check(false); repeatPendingSounds(); });
     document.addEventListener('visibilitychange', function(){ if(!document.hidden) check(false); });
   }
+
+  // Approval/rejection pages dispatch this after the backend action succeeds so the
+  // notification state is reconciled immediately instead of waiting for the next interval.
+  document.addEventListener('bo:wallet-request-updated', function(){
+    stopAudio('wallet');
+    window.setTimeout(function(){ check(false); }, 25);
+  });
+
+  window.BO_OPERATION_NOTIFICATION_CONTROL = {
+    refresh: function(){ window.setTimeout(function(){ check(false); }, 0); },
+    stopWalletAudio: function(){ stopAudio('wallet'); }
+  };
 
   function unlockAudio(){
     if (unlocked) return;

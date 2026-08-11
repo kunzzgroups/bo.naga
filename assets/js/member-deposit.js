@@ -74,7 +74,7 @@
   async function action(id,type){
     const remark=await BO_DIALOG.prompt('Enter an admin remark for this deposit request.','',{title:'Admin Remark',inputLabel:'Admin remark',confirmText:'Continue'}); if(remark===null)return;
     if(!(await BO_DIALOG.confirm('Confirm '+type+' deposit request?',{title:'Confirm Deposit Action'})))return;
-    try{const key=type==='approve'?'MEMBER_DEPOSIT_APPROVE':'MEMBER_DEPOSIT_REJECT'; const json=await api(endpoint(key)+'/'+encodeURIComponent(id),{method:'POST',headers:{'Content-Type':'application/json','X-Admin-Username':String(BO_AUTH.user()?.username||'ADMIN'),...BO_AUTH.authHeader()},body:JSON.stringify({adminRemark:remark})}); BO_DIALOG.alert(json.message||'Done',{title:'Deposit Updated'}); load();}
+    try{const key=type==='approve'?'MEMBER_DEPOSIT_APPROVE':'MEMBER_DEPOSIT_REJECT'; const json=await api(endpoint(key)+'/'+encodeURIComponent(id),{method:'POST',headers:{'Content-Type':'application/json','X-Admin-Username':String(BO_AUTH.user()?.username||'ADMIN'),...BO_AUTH.authHeader()},body:JSON.stringify({adminRemark:remark})}); BO_DIALOG.alert(json.message||'Done',{title:'Deposit Updated'}); await load(); document.dispatchEvent(new CustomEvent('bo:wallet-request-updated',{detail:{type:'deposit',action:type,id:String(id)}}));}
     catch(e){BO_DIALOG.alert(e.message||'Action failed',{title:'Deposit Action Failed',type:'error'});}
   }
   document.addEventListener('click',e=>{const a=e.target.closest?.('[data-approve]'); const r=e.target.closest?.('[data-reject]'); if(a)action(a.dataset.approve,'approve'); if(r)action(r.dataset.reject,'reject');});
