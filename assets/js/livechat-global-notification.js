@@ -5,13 +5,18 @@
   window.__BO_LIVECHAT_GLOBAL_NOTIFICATION__ = true;
 
   var SOUND_URL = 'assets/audio/livechat_sound.mp3';
+  var REMINDER_INTERVAL_MS = 8000;
+  var REMINDER_LOCK_MS = 6500;
   var audio = null;
   var audioUnlocked = false;
   var queuedSound = false;
   var firstSnapshot = true;
   var lastUnreadTotal = Number(localStorage.getItem('bo_livechat_last_unread_total') || 0);
   var lastIncomingTime = Number(localStorage.getItem('bo_livechat_last_incoming_time') || 0);
+  var currentUnreadTotal = 0;
+  var latestUnreadConversation = null;
   var unsubscribe = null;
+  var reminderTimer = null;
   var originalTitle = document.title;
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
@@ -21,6 +26,7 @@
     installSoundUnlock();
     requestNotificationPermission();
     startListener();
+    startReminderLoop();
   }
 
   function startListener(){
@@ -58,15 +64,24 @@
       }
     });
 
+    currentUnreadTotal = total;
+    latestUnreadConversation = latestIncoming;
     updatePageIndicators(total);
+
+    if (!total){
+      queuedSound = false;
+      stopCurrentSound();
+      clearReminderClaim();
+    }
 
     if (firstSnapshot){
       firstSnapshot = false;
-      // On the first ever installation, establish a baseline and do not alert old chats.
-      // Across normal BO page navigation, localStorage preserves the baseline, so a message
-      // that arrived during navigation is still detected instead of being silently ignored.
+      // Establish the incoming-message baseline without treating old messages as
+      // newly arrived. The separate reminder loop will still keep sounding while
+      // any admin unread count remains above zero, exactly until all are read.
       if (!lastIncomingTime){
         lastIncomingTime = latestIncomingMs;
+        lastUnreadTotal = total;
         persistState(total, latestIncomingMs);
         return;
       }
@@ -81,6 +96,29 @@
     lastUnreadTotal = total;
     if (latestIncomingMs > lastIncomingTime) lastIncomingTime = latestIncomingMs;
     persistState(total, lastIncomingTime);
+  }
+
+  function startReminderLoop(){
+    if (reminderTimer) clearInterval(reminderTimer);
+    reminderTimer = setInterval(function(){
+      if (currentUnreadTotal <= 0) return;
+      if (!claimReminderSound()) return;
+      playSound();
+    }, REMINDER_INTERVAL_MS);
+  }
+
+  function claimReminderSound(){
+    var now = Date.now();
+    try{
+      var previous = Number(localStorage.getItem('bo_livechat_reminder_sound_at') || 0);
+      if (previous && now - previous < REMINDER_LOCK_MS) return false;
+      localStorage.setItem('bo_livechat_reminder_sound_at', String(now));
+    }catch(e){}
+    return true;
+  }
+
+  function clearReminderClaim(){
+    try{ localStorage.removeItem('bo_livechat_reminder_sound_at'); }catch(e){}
   }
 
   function persistState(total, incomingMs){
@@ -133,7 +171,10 @@
     document.addEventListener('pointerdown', unlock, true);
     document.addEventListener('keydown', unlock, true);
     document.addEventListener('touchstart', unlock, true);
-    window.addEventListener('focus', function(){ if (queuedSound) playSound(); });
+    window.addEventListener('focus', function(){
+      if (queuedSound && currentUnreadTotal > 0) playSound();
+      else if (currentUnreadTotal <= 0) queuedSound = false;
+    });
   }
 
   function unlockSound(){
@@ -149,13 +190,23 @@
           player.currentTime = 0;
           player.muted = false;
           audioUnlocked = true;
-          if (queuedSound){ queuedSound = false; playSound(); }
+          if (queuedSound && currentUnreadTotal > 0){ queuedSound = false; playSound(); }
+          else if (currentUnreadTotal <= 0) queuedSound = false;
         }).catch(function(){ player.muted = false; });
       }
     }catch(e){}
   }
 
+  function stopCurrentSound(){
+    try{
+      if (!audio) return;
+      audio.pause();
+      audio.currentTime = 0;
+    }catch(e){}
+  }
+
   function playSound(){
+    if (currentUnreadTotal <= 0) return;
     try{
       var player = getAudio();
       player.muted = false;
@@ -164,9 +215,9 @@
       var played = player.play();
       if (played && typeof played.then === 'function'){
         played.then(function(){ audioUnlocked = true; queuedSound = false; })
-          .catch(function(){ queuedSound = true; });
+          .catch(function(){ queuedSound = currentUnreadTotal > 0; });
       }
-    }catch(e){ queuedSound = true; }
+    }catch(e){ queuedSound = currentUnreadTotal > 0; }
   }
 
   function notifyIncoming(conversation){

@@ -19,6 +19,8 @@
   let selectedId = '';
   let unsubscribeConversations = null;
   let unsubscribeMessages = null;
+  let conversationSnapshotSeq = 0;
+  let messageListenerSeq = 0;
   let pendingFiles = [];
   let editingMessageId = '';
   let editingOriginalText = '';
@@ -114,15 +116,17 @@
     renderInboxMessage('Loading conversations...');
     unsubscribeConversations = db.collection('conversations').orderBy('updatedAt','desc').limit(100)
       .onSnapshot(async function(snapshot){
-        conversations = [];
+        const snapshotSeq = ++conversationSnapshotSeq;
+        const incomingConversations = [];
         snapshot.forEach(function(doc){
-          conversations.push(Object.assign({id: doc.id}, doc.data() || {}));
+          incomingConversations.push(Object.assign({id: doc.id}, doc.data() || {}));
         });
 
         // A blank/placeholder lastMessage does not always mean the chat is empty
         // (for example, older attachment conversations). Verify the messages
-        // subcollection before hiding those conversation rows.
-        await Promise.all(conversations.map(async function(conversation){
+        // subcollection before hiding those conversation rows. Work on a local
+        // snapshot so a slower older Firestore callback cannot overwrite a newer one.
+        await Promise.all(incomingConversations.map(async function(conversation){
           if(hasDisplayableLastMessage(conversation)){
             conversation._hasActualMessage = true;
             return;
@@ -138,9 +142,13 @@
           }
         }));
 
+        if(snapshotSeq !== conversationSnapshotSeq) return;
+        conversations = incomingConversations;
         renderInbox();
         handleUnreadNotification();
-        if(selectedId && !conversations.some(function(c){ return c.id === selectedId && hasActualConversationMessage(c); })) clearRoom();
+        // Do not clear the currently opened room merely because a conversation
+        // is temporarily absent from the top-100 inbox snapshot. Its message
+        // listener remains the source of truth for the selected room.
       }, function(error){
         renderInboxMessage('Unable to load conversations. ' + (error && error.message ? error.message : ''));
       });
@@ -192,7 +200,7 @@
     if(inboxList) inboxList.innerHTML = '<div class="livechat-empty">' + esc(text) + '</div>';
   }
 
-  async function loadMemberCasinoStats(username){
+  async function loadMemberCasinoStats(username, conversationId){
     let box=document.getElementById('livechatMemberCasinoStats');
     if(!box){box=document.createElement('div');box.id='livechatMemberCasinoStats';box.className='livechat-member-stats';roomHead.appendChild(box);}
     box.textContent='Loading VIP and wallet summary...';
@@ -207,35 +215,44 @@
       const j=await r.json().catch(function(){return {};});
       if(!r.ok) throw new Error(j.message||('Member API error '+r.status));
       const list=Array.isArray(j.data)?j.data:(j.data&&Array.isArray(j.data.content)?j.data.content:[]);const key=String(username||'').toLowerCase();const m=list.find(x=>String(x.username||'').toLowerCase()===key);
+      if(conversationId && selectedId !== conversationId) return;
       if(!m){box.textContent='Member summary unavailable';return;}
       const money=v=>Number(v||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
       box.innerHTML='<span>VIP <b>'+esc(m.vipLevel||0)+'</b></span><span>Total Deposit <b>'+money(m.totalDeposit)+'</b></span><span>Total Withdrawal <b>'+money(m.totalWithdraw)+'</b></span><span>Total Bonus <b>'+money(m.totalBonus)+'</b></span>';
-    }catch(e){box.textContent='Member summary unavailable';}
+    }catch(e){if(!conversationId || selectedId === conversationId) box.textContent='Member summary unavailable';}
   }
 
   function selectConversation(id){
     cancelEditing();
     selectedId = id;
+    const listenerSeq = ++messageListenerSeq;
     setComposerVisible(true);
     renderInbox();
     const conv = conversations.find(c => c.id === id) || {id:id};
     roomHead.innerHTML = '<div class="livechat-room-avatar">' + esc(initials(conv.memberName || 'M')) + '</div><div><h2>' + esc(conv.memberName || 'Member') + '</h2><p>' + esc(conv.memberUsername || conv.id) + '</p></div>';
-    loadMemberCasinoStats(conv.memberUsername || conv.id);
+    loadMemberCasinoStats(conv.memberUsername || conv.id, id);
     markConversationRead(id);
-    if(unsubscribeMessages) unsubscribeMessages();
+    if(unsubscribeMessages){ unsubscribeMessages(); unsubscribeMessages = null; }
     messagesEl.innerHTML = '<div class="livechat-empty big">Loading messages...</div>';
     unsubscribeMessages = db.collection('conversations').doc(id).collection('messages').orderBy('createdAt','asc')
       .onSnapshot(function(snapshot){
+        // Firestore can still deliver a queued callback from the previous room
+        // after unsubscribe(). Never let that stale callback replace/clear the
+        // room the admin has just selected.
+        if(selectedId !== id || listenerSeq !== messageListenerSeq) return;
         messagesEl.innerHTML = '';
         if(snapshot.empty){
-          clearRoom();
-          renderInbox();
+          // Keep the room selected. An initial cache snapshot may be empty even
+          // though the server snapshot that follows contains the real messages.
+          // Previously clearRoom() unsubscribed here, so the real data never had
+          // a chance to render and the UI jumped back to "Select a conversation".
+          messagesEl.innerHTML = '<div class="livechat-empty big">Loading conversation messages...</div>';
           return;
-        }else{
-          snapshot.forEach(function(doc){ renderMessage(doc.id, doc.data()); });
         }
+        snapshot.forEach(function(doc){ renderMessage(doc.id, doc.data()); });
         messagesEl.scrollTop = messagesEl.scrollHeight;
       }, function(error){
+        if(selectedId !== id || listenerSeq !== messageListenerSeq) return;
         messagesEl.innerHTML = '<div class="livechat-empty big">Unable to load messages. ' + esc(error.message || '') + '</div>';
       });
   }
@@ -243,7 +260,8 @@
   function clearRoom(){
     cancelEditing();
     selectedId = '';
-    if(unsubscribeMessages) unsubscribeMessages();
+    ++messageListenerSeq;
+    if(unsubscribeMessages){ unsubscribeMessages(); unsubscribeMessages = null; }
     roomHead.innerHTML = '<div class="livechat-room-avatar">?</div><div><h2>Select a conversation</h2><p>Choose member from left inbox to start reply.</p></div>';
     messagesEl.innerHTML = '<div class="livechat-empty big">No conversation selected.</div>';
     setComposerVisible(false);
@@ -591,7 +609,7 @@
       badge.textContent = total;
       badge.style.display = total ? 'inline-flex' : 'none';
     }
-    if(total > lastUnreadTotal){
+    if(total > lastUnreadTotal && !window.__BO_LIVECHAT_GLOBAL_NOTIFICATION__){
       const latest = conversations.find(function(c){ return Number(c.adminUnreadCount || 0) > 0 && c.lastSenderType === 'member'; });
       if(latest) notifyIncoming(latest);
     }
