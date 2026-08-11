@@ -10,12 +10,83 @@
     html+='<button type="button" class="smart-page last" data-page="'+total+'" '+(current>=total?'disabled':'')+' title="Last page"><i class="bi bi-chevron-bar-right"></i></button>';
     html+='</div><span class="smart-page-summary">Page '+current+' / '+total+'</span>'; return html;
   }
- function endpoint(k){return API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS[k];} function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));} function num(v){const n=Number(v||0);return Number.isFinite(n)?n:0;} function money(v){return num(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});} function dt(v){return window.BO_FORMAT?.dateTime?window.BO_FORMAT.dateTime(v):(v?String(v).replace('T',' ').slice(0,19):'-');}
+  function endpoint(k){return API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS[k];}
+  function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function num(v){const n=Number(v||0);return Number.isFinite(n)?n:0;}
+  function money(v){return num(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function dt(v){return window.BO_FORMAT?.dateTime?window.BO_FORMAT.dateTime(v):(v?String(v).replace('T',' ').slice(0,19):'-');}
   async function api(url,opt){const res=await fetch(url,opt||{headers:{...BO_AUTH.authHeader()}});const json=await res.json().catch(()=>({}));if(!res.ok||json.status==='error')throw new Error(json.message||'Request failed');return json;}
-  function q(){const params=new URLSearchParams(); const kw=document.getElementById('depositKeyword')?.value.trim(); const st=document.getElementById('depositStatus')?.value.trim(); const sz=document.getElementById('depositSize')?.value||'20'; if(kw)params.set('keyword',kw); if(st)params.set('status',st); params.set('page',page); params.set('size',sz); return params.toString();}
-  function render(rows,pagination){currentRows=rows; const body=document.getElementById('depositBody'); if(!body)return; if(!rows.length) body.innerHTML='<tr><td colspan="9">No deposit request found.</td></tr>'; else body.innerHTML=rows.map(r=>{const pending=String(r.status||'').toUpperCase()==='PENDING'; const img=r.proofImage?`<a target="_blank" href="${API_CONFIG.STATIC_UPLOAD_BASE_URL.replace('/api','')}/uploads/deposit-proof/${esc(r.proofImage)}">View Proof</a>`:'-'; return `<tr><td>${esc(dt(r.createdAt))}</td><td><b>${esc(r.username||'-')}</b><br><small>ID: ${esc(r.memberId)} ${r.mobile?'• '+esc(r.mobile):''}</small></td><td><b>${money(r.amount)}</b></td><td>${esc(r.paymentMethod||'-')}</td><td>${img}</td><td>${esc(r.referenceNo||'-')}</td><td><span class="status-pill ${r.status==='APPROVED'?'active':r.status==='REJECTED'?'off':''}">${esc(r.status||'-')}</span></td><td>${esc(dt(r.processedAt))}</td><td>${pending?`<div class="d-flex gap-2"><button class="clean-btn primary" data-approve="${esc(r.id)}">Approve</button><button class="clean-btn danger" data-reject="${esc(r.id)}">Reject</button></div>`:'-'}</td></tr>`}).join(''); totalPages=Number(pagination?.totalPages)||1; document.getElementById('depositPager').innerHTML=pageButtons(page,totalPages); document.getElementById('depositPageInfo').textContent=`${Number(pagination?.totalElements||rows.length).toLocaleString()} request(s)`; document.getElementById('depositPrevBtn').disabled=page<=1; document.getElementById('depositNextBtn').disabled=page>=totalPages;}
-  async function load(){const body=document.getElementById('depositBody'); if(body)body.innerHTML='<tr><td colspan="9">Loading...</td></tr>'; try{const json=await api(endpoint('MEMBER_DEPOSIT_LIST')+'?'+q()); const data=json.data||{}; render(data.content||[],data.pagination||{});}catch(e){if(body)body.innerHTML='<tr><td colspan="9" class="text-danger">'+esc(e.message)+'</td></tr>';}}
-  async function action(id,type){const remark=await BO_DIALOG.prompt('Enter an admin remark for this deposit request.','',{title:'Admin Remark',inputLabel:'Admin remark',confirmText:'Continue'}); if(remark===null)return; if(!(await BO_DIALOG.confirm('Confirm '+type+' deposit request?',{title:'Confirm Deposit Action'})))return; try{const key=type==='approve'?'MEMBER_DEPOSIT_APPROVE':'MEMBER_DEPOSIT_REJECT'; const json=await api(endpoint(key)+'/'+encodeURIComponent(id),{method:'POST',headers:{'Content-Type':'application/json','X-Admin-Username':String(BO_AUTH.user()?.username||'ADMIN'),...BO_AUTH.authHeader()},body:JSON.stringify({adminRemark:remark})}); BO_DIALOG.alert(json.message||'Done',{title:'Deposit Updated'}); load();}catch(e){BO_DIALOG.alert(e.message||'Action failed',{title:'Deposit Action Failed',type:'error'});}}
+  function q(){
+    const params=new URLSearchParams();
+    const kw=document.getElementById('depositKeyword')?.value.trim();
+    const st=document.getElementById('depositStatus')?.value.trim();
+    const from=document.getElementById('depositFrom')?.value;
+    const to=document.getElementById('depositTo')?.value;
+    const sz=document.getElementById('depositSize')?.value||'20';
+    if(kw)params.set('keyword',kw); if(st)params.set('status',st); if(from)params.set('dateFrom',from); if(to)params.set('dateTo',to);
+    params.set('page',page); params.set('size',sz); return params.toString();
+  }
+  function metric(id,value){const el=document.getElementById(id);if(el)el.textContent=value;}
+  function renderSummary(summary,pendingCount,pendingAmount){
+    metric('wdPendingCount',num(pendingCount).toLocaleString());
+    metric('wdPendingAmount',money(pendingAmount));
+    metric('depositTotalAmount',money(summary?.totalAmount));
+  }
+  function pendingQuery(){
+    const params=new URLSearchParams();
+    const kw=document.getElementById('depositKeyword')?.value.trim();
+    const from=document.getElementById('depositFrom')?.value;
+    const to=document.getElementById('depositTo')?.value;
+    if(kw)params.set('keyword',kw);
+    params.set('status','PENDING');
+    if(from)params.set('dateFrom',from);
+    if(to)params.set('dateTo',to);
+    params.set('page','1');
+    params.set('size','1');
+    return params.toString();
+  }
+  async function resolvePending(mainData){
+    const selected=String(document.getElementById('depositStatus')?.value||'').toUpperCase();
+    const source=selected==='PENDING'?mainData:(await api(endpoint('MEMBER_DEPOSIT_LIST')+'?'+pendingQuery())).data||{};
+    return {
+      count:num(source?.pagination?.totalElements),
+      amount:num(source?.summary?.totalAmount)
+    };
+  }
+  function render(rows,pagination){
+    currentRows=rows; const body=document.getElementById('depositBody'); if(!body)return;
+    if(!rows.length) body.innerHTML='<tr><td colspan="9">No deposit request found.</td></tr>';
+    else body.innerHTML=rows.map(r=>{
+      const pending=String(r.status||'').toUpperCase()==='PENDING';
+      const img=r.proofImage?`<a target="_blank" href="${API_CONFIG.STATIC_UPLOAD_BASE_URL.replace('/api','')}/uploads/deposit-proof/${esc(r.proofImage)}">View Proof</a>`:'-';
+      return `<tr><td>${esc(dt(r.createdAt))}</td><td><b>${esc(r.username||'-')}</b><br><small>ID: ${esc(r.memberId)} ${r.mobile?'• '+esc(r.mobile):''}</small></td><td><b>${money(r.amount)}</b></td><td>${esc(r.paymentMethod||'-')}</td><td>${img}</td><td>${esc(r.referenceNo||'-')}</td><td><span class="status-pill ${r.status==='APPROVED'?'active':r.status==='REJECTED'?'off':''}">${esc(r.status||'-')}</span></td><td>${esc(dt(r.processedAt))}</td><td>${pending?`<div class="d-flex gap-2 flex-wrap"><button class="btn btn-success btn-sm" data-approve="${esc(r.id)}">Approve</button><button class="btn btn-danger btn-sm" data-reject="${esc(r.id)}">Reject</button></div>`:'-'}</td></tr>`;
+    }).join('');
+    totalPages=Number(pagination?.totalPages)||1;
+    document.getElementById('depositPager').innerHTML=pageButtons(page,totalPages);
+    document.getElementById('depositPageInfo').textContent=`${Number(pagination?.totalElements||rows.length).toLocaleString()} request(s)`;
+    document.getElementById('depositPrevBtn').disabled=page<=1; document.getElementById('depositNextBtn').disabled=page>=totalPages;
+  }
+  async function load(){
+    const body=document.getElementById('depositBody'); if(body)body.innerHTML='<tr><td colspan="9">Loading...</td></tr>';
+    try{const json=await api(endpoint('MEMBER_DEPOSIT_LIST')+'?'+q()); const data=json.data||{}; render(data.content||[],data.pagination||{}); const pending=await resolvePending(data); renderSummary(data.summary||{},pending.count,pending.amount);}
+    catch(e){renderSummary({},0,0);if(body)body.innerHTML='<tr><td colspan="9" class="text-danger">'+esc(e.message)+'</td></tr>';}
+  }
+  async function action(id,type){
+    const remark=await BO_DIALOG.prompt('Enter an admin remark for this deposit request.','',{title:'Admin Remark',inputLabel:'Admin remark',confirmText:'Continue'}); if(remark===null)return;
+    if(!(await BO_DIALOG.confirm('Confirm '+type+' deposit request?',{title:'Confirm Deposit Action'})))return;
+    try{const key=type==='approve'?'MEMBER_DEPOSIT_APPROVE':'MEMBER_DEPOSIT_REJECT'; const json=await api(endpoint(key)+'/'+encodeURIComponent(id),{method:'POST',headers:{'Content-Type':'application/json','X-Admin-Username':String(BO_AUTH.user()?.username||'ADMIN'),...BO_AUTH.authHeader()},body:JSON.stringify({adminRemark:remark})}); BO_DIALOG.alert(json.message||'Done',{title:'Deposit Updated'}); load();}
+    catch(e){BO_DIALOG.alert(e.message||'Action failed',{title:'Deposit Action Failed',type:'error'});}
+  }
   document.addEventListener('click',e=>{const a=e.target.closest?.('[data-approve]'); const r=e.target.closest?.('[data-reject]'); if(a)action(a.dataset.approve,'approve'); if(r)action(r.dataset.reject,'reject');});
-  document.addEventListener('DOMContentLoaded',()=>{['SearchBtn','ResetBtn','PrevBtn','NextBtn'].forEach(()=>{}); document.getElementById('depositSearchBtn')?.addEventListener('click',()=>{page=1;load();}); document.getElementById('depositResetBtn')?.addEventListener('click',()=>{document.getElementById('depositKeyword').value='';document.getElementById('depositStatus').value='PENDING';page=1;load();}); document.getElementById('depositPrevBtn')?.addEventListener('click',()=>{if(page>1){page--;load();}}); document.getElementById('depositNextBtn')?.addEventListener('click',()=>{if(page<totalPages){page++;load();}}); document.getElementById('depositPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(!b)return;const n=Number(b.dataset.page);if(n>=1&&n<=totalPages&&n!==page){page=n;load();}}); load();});
+  document.addEventListener('DOMContentLoaded',()=>{
+    document.getElementById('depositSearchBtn')?.addEventListener('click',()=>{page=1;load();});
+    document.getElementById('depositKeyword')?.addEventListener('keydown',e=>{if(e.key==='Enter'){page=1;load();}});
+    document.getElementById('depositStatus')?.addEventListener('change',()=>{page=1;load();});
+    document.getElementById('depositSize')?.addEventListener('change',()=>{page=1;load();});
+    ['depositFrom','depositTo'].forEach(id=>document.getElementById(id)?.addEventListener('change',()=>{page=1;load();}));
+    document.getElementById('depositResetBtn')?.addEventListener('click',()=>{document.getElementById('depositKeyword').value='';document.getElementById('depositStatus').value='PENDING';const today=new Date();const iso=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');document.getElementById('depositFrom').value=iso;document.getElementById('depositTo').value=iso;document.getElementById('depositFrom').dispatchEvent(new Event('change',{bubbles:true}));page=1;load();});
+    document.getElementById('depositPrevBtn')?.addEventListener('click',()=>{if(page>1){page--;load();}}); document.getElementById('depositNextBtn')?.addEventListener('click',()=>{if(page<totalPages){page++;load();}});
+    document.getElementById('depositPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(!b)return;const n=Number(b.dataset.page);if(n>=1&&n<=totalPages&&n!==page){page=n;load();}});
+    setTimeout(load,0);
+  });
 })();

@@ -93,6 +93,7 @@
   // Normal sidebar is rendered from /auth/admin/me => user.menus.
   const FALLBACK_MENUS = [
     {menuKey:'user', title:'User Management', url:'index.html', icon:'bi-people', parentKey:'', sortOrder:10},
+    {menuKey:'online_users', title:'Online Users', url:'online-users.html', icon:'bi-wifi', parentKey:'', sortOrder:10.5},
     {menuKey:'duplicate_ip', title:'Duplicate IP Checker', url:'duplicate-ip.html', icon:'bi-diagram-3', parentKey:'', sortOrder:11},
     {menuKey:'highest_turnover_games', title:'Highest Turnover Games', url:'highest-turnover-games.html', icon:'bi-graph-up-arrow', parentKey:'', sortOrder:12},
     {menuKey:'frequently_played_games', title:'Frequently Played Games', url:'frequently-played-games.html', icon:'bi-controller', parentKey:'', sortOrder:13},
@@ -185,7 +186,7 @@
     },
     enforcePageAccess: function(user){
       const current = pageName();
-      const alwaysAllowed = ['profile.html','change-password.html','rebate-management.html','rebate-log.html','manual-rebate-approval.html', 'timezone-setting.html'];
+      const alwaysAllowed = ['profile.html','change-password.html','rebate-management.html','rebate-log.html','manual-rebate-approval.html', 'timezone-setting.html', 'win-lose-report.html', 'online-users.html'];
       if(alwaysAllowed.indexOf(current) !== -1) return true;
       const menus = this.allowedMenus(user);
       if(!menus.length){

@@ -315,7 +315,7 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
   .asset-upload-row .choose-btn,.asset-upload-row .upload-asset-btn{grid-column:auto;width:100%}
 }
 
-.clean-btn.success{background:#16a34a;border-color:#16a34a;color:#fff}
+.clean-btn.success{background:#16a34a;border-color:#16a34a;color:#000}
 
 .asset-path-hidden{min-height:40px;border:1px solid #ccd6e2;border-radius:10px;padding:0 12px;display:flex;align-items:center;background:#fff;color:#667085;font-weight:700;font-size:13px}
 .asset-path-hidden.selected{color:#166534;background:#f0fdf4;border-color:#bbf7d0}

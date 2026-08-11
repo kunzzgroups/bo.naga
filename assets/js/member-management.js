@@ -287,9 +287,10 @@
     bankStatus('', '');
     setWalletTab('main');
     modal.hidden = false;
+    document.body.classList.add('wallet-modal-open');
     loadMemberWallet(id).catch(err=>walletStatus(err.message || 'Load wallet failed', 'error'));
   }
-  function closeWalletModal(){ const modal=document.getElementById('memberWalletModal'); if(modal) modal.hidden = true; }
+  function closeWalletModal(){ const modal=document.getElementById('memberWalletModal'); if(modal) modal.hidden = true; document.body.classList.remove('wallet-modal-open'); }
   async function submitWalletAdjust(){
     if(!selectedWalletMember) return;
     const memberId = first(selectedWalletMember,['id','memberId','userId'], '');
@@ -315,10 +316,21 @@
     return 'ACTIVE';
   }
   function metric(id, value){ const el=document.getElementById(id); if(el) el.textContent = value; }
+  let onlinePresenceTimer = null;
+  async function loadOnlinePresence(){
+    try{
+      const json=await api(API_CONFIG.BASE_URL+(API_CONFIG.ENDPOINTS.MEMBER_ONLINE||'/admin/member/online'),{headers:BO_AUTH.authHeader(),cache:'no-store'});
+      const d=json.data||{}, rows=Array.isArray(d.content)?d.content:[], count=Number(d.count!=null?d.count:rows.length)||0;
+      metric('metricOnlineToday',count.toLocaleString());
+      const onlineIds=new Set(rows.map(r=>String(r.memberId))); allMembers.forEach(m=>m.online=onlineIds.has(String(first(m,['id','memberId','userId'],''))));
+    }catch(e){ /* keep the last visible count when presence endpoint is temporarily unavailable */ }
+  }
+  function startOnlinePresence(){ if(onlinePresenceTimer)clearInterval(onlinePresenceTimer); loadOnlinePresence(); onlinePresenceTimer=setInterval(loadOnlinePresence,5000); document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadOnlinePresence();}); window.addEventListener('focus',loadOnlinePresence); }
+
   function updateStats(rows){
     const total = rows.length;
     const active = rows.filter(m=>memberStatus(m)==='ACTIVE').length;
-    const onlineToday = rows.filter(m=>String(first(m,['lastLoginAt','lastLogin','last_login_at'], '')).slice(0,10) === todayStr()).length;
+    const onlineToday = rows.filter(m=>m && m.online === true).length;
     const totalDeposit = rows.reduce((s,m)=>s+num(first(m,MONEY_KEYS.deposit,0)),0);
     metric('metricTotalUsers', total.toLocaleString());
     metric('metricActiveUsers', active.toLocaleString());
@@ -813,6 +825,57 @@
     document.addEventListener('click',e=>{const rm=e.target.closest('[data-bulk-remove]');if(!rm)return;bulkSelectedMemberIds.delete(String(rm.dataset.bulkRemove));updateBulkSelectionUi();updateBulkPreview();});
   }
 
+  function createMemberStatus(message,type){
+    const el=document.getElementById('createMemberStatus');
+    if(!el) return;
+    el.textContent=message||'';
+    el.className='create-member-status'+(type?' '+type:'');
+  }
+  function openCreateMemberModal(){
+    const modal=document.getElementById('createMemberModal');
+    if(!modal) return;
+    document.getElementById('createMemberForm')?.reset();
+    createMemberStatus('','');
+    modal.hidden=false;
+    document.body.classList.add('wallet-modal-open');
+    setTimeout(()=>document.getElementById('createMemberUsername')?.focus(),0);
+  }
+  function closeCreateMemberModal(){
+    const modal=document.getElementById('createMemberModal');
+    if(modal) modal.hidden=true;
+    document.body.classList.remove('wallet-modal-open');
+  }
+  async function submitCreateMember(event){
+    event.preventDefault();
+    const username=String(document.getElementById('createMemberUsername')?.value||'').trim();
+    const mobile=String(document.getElementById('createMemberMobile')?.value||'').trim();
+    const fullName=String(document.getElementById('createMemberFullName')?.value||'').trim();
+    const referrerCode=String(document.getElementById('createMemberReferrer')?.value||'').trim();
+    const password=String(document.getElementById('createMemberPassword')?.value||'');
+    const confirm=String(document.getElementById('createMemberConfirmPassword')?.value||'');
+    if(!username){ createMemberStatus('Username is required.','error'); return; }
+    if(password.length<6){ createMemberStatus('Password minimum 6 characters.','error'); return; }
+    if(password!==confirm){ createMemberStatus('Confirm password does not match.','error'); return; }
+    const submit=document.getElementById('createMemberSubmit');
+    if(submit) submit.disabled=true;
+    createMemberStatus('Creating user...','');
+    try{
+      const payload={username,mobile:mobile||null,password,fullName,referrerCode,status:1,locked:0};
+      const json=await api(BO_AUTH.memberCreateUrl(),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(payload)});
+      createMemberStatus(json.message||'Member created successfully.','success');
+      await loadMembers();
+      setTimeout(closeCreateMemberModal,500);
+    }catch(err){ createMemberStatus(err.message||'Create member failed.','error'); }
+    finally{ if(submit) submit.disabled=false; }
+  }
+  function bindCreateMember(){
+    document.getElementById('memberCreateBtn')?.addEventListener('click',openCreateMemberModal);
+    document.getElementById('createMemberClose')?.addEventListener('click',closeCreateMemberModal);
+    document.getElementById('createMemberCancel')?.addEventListener('click',closeCreateMemberModal);
+    document.getElementById('createMemberForm')?.addEventListener('submit',submitCreateMember);
+    document.getElementById('createMemberModal')?.addEventListener('click',e=>{if(e.target.id==='createMemberModal') closeCreateMemberModal();});
+  }
+
   function bindSearch(){
     ['memberSearchName','memberSearchMobile','memberSearchAgent','memberSearchBank'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input', applySearch); });
     ['memberSearchStatus','memberSearchVisit','memberSearchLock'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('change', applySearch); });
@@ -846,7 +909,7 @@
     catch(err){ alert(err.message || 'Update failed'); }
   });
   document.addEventListener('DOMContentLoaded',()=>{
-    initRoundedMemberSelects(); bindSearch(); bindColumnTools(); bindExportTool(); bindMemberPagination(); bindBulkWalletTools(); loadMembers();
+    initRoundedMemberSelects(); bindSearch(); bindColumnTools(); bindExportTool(); bindMemberPagination(); bindBulkWalletTools(); bindCreateMember(); startOnlinePresence(); loadMembers();
     document.getElementById('walletModalClose')?.addEventListener('click', closeWalletModal);
     document.getElementById('memberWalletModal')?.addEventListener('click', e=>{ if(e.target.id==='memberWalletModal') closeWalletModal(); });
     document.getElementById('walletRefreshBtn')?.addEventListener('click', ()=>{ if(selectedWalletMember) loadMemberWallet(first(selectedWalletMember,['id','memberId','userId'], '')).catch(err=>walletStatus(err.message || 'Load wallet failed', 'error')); });

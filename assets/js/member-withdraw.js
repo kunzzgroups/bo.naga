@@ -1,121 +1,16 @@
 (function(){
-  let page = 1;
-  let totalPages = 1;
-  let currentRows = [];
-  function pageButtons(current,total){
-    total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
-    const pages=[]; const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};
-    add(1); for(let n=current-2;n<=current+2;n++) add(n); add(total); pages.sort((a,b)=>a-b);
-    let html='<div class="smart-pagination" role="navigation" aria-label="Table pagination">';
-    html+='<button type="button" class="smart-page first" data-page="1" '+(current<=1?'disabled':'')+' title="First page"><i class="bi bi-chevron-bar-left"></i></button>';
-    let prev=0; pages.forEach(n=>{if(prev&&n-prev>1)html+='<span class="smart-page-ellipsis">…</span>'; html+='<button type="button" class="smart-page '+(n===current?'active':'')+'" data-page="'+n+'" '+(n===current?'aria-current="page"':'')+'>'+n+'</button>'; prev=n;});
-    html+='<button type="button" class="smart-page last" data-page="'+total+'" '+(current>=total?'disabled':'')+' title="Last page"><i class="bi bi-chevron-bar-right"></i></button>';
-    html+='</div><span class="smart-page-summary">Page '+current+' / '+total+'</span>'; return html;
-  }
-  function endpoint(key){ return API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS[key]; }
-  function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  function num(v){ const n = Number(v || 0); return Number.isFinite(n) ? n : 0; }
-  function money(v){ return num(v).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}); }
-  function dt(v){ return window.BO_FORMAT && window.BO_FORMAT.dateTime ? window.BO_FORMAT.dateTime(v) : (v ? String(v).replace('T',' ').slice(0,19) : '-'); }
-  async function api(url, opt){
-    const res = await fetch(url, opt || {headers:{...BO_AUTH.authHeader()}});
-    const json = await res.json().catch(()=>({}));
-    if(!res.ok || json.status === 'error') throw new Error(json.message || 'Request failed');
-    return json;
-  }
-  function query(){
-    const params = new URLSearchParams();
-    const keyword = document.getElementById('withdrawKeyword')?.value.trim();
-    const status = document.getElementById('withdrawStatus')?.value.trim();
-    const size = document.getElementById('withdrawSize')?.value || '20';
-    if(keyword) params.set('keyword', keyword);
-    if(status) params.set('status', status);
-    params.set('page', page);
-    params.set('size', size);
-    return params.toString();
-  }
-  function metric(id, value){ const el=document.getElementById(id); if(el) el.textContent = value; }
-  function updateMetrics(rows){
-    const pending = rows.filter(r => String(r.status).toUpperCase() === 'PENDING');
-    const approved = rows.filter(r => String(r.status).toUpperCase() === 'APPROVED');
-    const rejected = rows.filter(r => String(r.status).toUpperCase() === 'REJECTED');
-    metric('wdPendingCount', pending.length.toLocaleString());
-    metric('wdPendingAmount', money(pending.reduce((s,r)=>s+num(r.amount),0)));
-    metric('wdApprovedAmount', money(approved.reduce((s,r)=>s+num(r.amount),0)));
-    metric('wdRejectedCount', rejected.length.toLocaleString());
-  }
-  function statusClass(status){
-    status = String(status || '').toUpperCase();
-    if(status === 'APPROVED') return 'active';
-    if(status === 'REJECTED') return 'off';
-    return '';
-  }
-  function render(rows, pagination){
-    currentRows = rows;
-    updateMetrics(rows);
-    const body = document.getElementById('withdrawBody');
-    if(!body) return;
-    if(!rows.length){ body.innerHTML = '<tr><td colspan="9">No withdraw request found.</td></tr>'; }
-    else body.innerHTML = rows.map(r => {
-      const pending = String(r.status || '').toUpperCase() === 'PENDING';
-      return `<tr>
-        <td>${esc(dt(r.createdAt || r.created_at))}</td>
-        <td><b>${esc(r.username || '-')}</b><br><small>ID: ${esc(r.memberId)} ${r.mobile ? '• '+esc(r.mobile) : ''}</small></td>
-        <td><b>${money(r.amount)}</b></td>
-        <td>${esc(r.bankName || '-')}<br><small>${esc(r.accountName || '')} ${r.bankAccount ? '• '+esc(r.bankAccount) : ''}</small></td>
-        <td>${esc(r.referenceNo || '-')}</td>
-        <td>${esc(r.remark || '-')} ${r.adminRemark ? '<br><small>Admin: '+esc(r.adminRemark)+'</small>' : ''}</td>
-        <td><span class="status-pill ${statusClass(r.status)}">${esc(r.status || '-')}</span></td>
-        <td>${esc(r.processedAt || '-')}</td>
-        <td>${pending ? `<div class="d-flex gap-2 flex-wrap"><button class="clean-btn primary" data-approve="${esc(r.id)}">Approve</button><button class="clean-btn danger" data-reject="${esc(r.id)}">Reject</button></div>` : `<a class="clean-btn" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}">Ledger</a>`}</td>
-      </tr>`;
-    }).join('');
-    totalPages = Number(pagination && pagination.totalPages) || 1;
-    const total = Number(pagination && pagination.totalElements) || rows.length;
-    document.getElementById('withdrawPager').innerHTML = pageButtons(page, totalPages);
-    document.getElementById('withdrawPageInfo').textContent = `${total.toLocaleString()} request(s)`;
-    document.getElementById('withdrawPrevBtn').disabled = page <= 1;
-    document.getElementById('withdrawNextBtn').disabled = page >= totalPages;
-  }
-  async function load(){
-    const body=document.getElementById('withdrawBody'); if(body) body.innerHTML='<tr><td colspan="9">Loading withdraw requests...</td></tr>';
-    try{
-      const json = await api(endpoint('MEMBER_WITHDRAW_LIST') + '?' + query());
-      const data = json.data || {};
-      render(Array.isArray(data.content) ? data.content : [], data.pagination || {});
-    }catch(e){
-      updateMetrics([]);
-      if(body) body.innerHTML='<tr><td colspan="9" class="text-danger">'+esc(e.message || 'Load failed')+'</td></tr>';
-    }
-  }
-  async function action(id, type){
-    const row = currentRows.find(x => String(x.id) === String(id));
-    const label = type === 'approve' ? 'approve and deduct main wallet' : 'reject';
-    const adminRemark = await BO_DIALOG.prompt(`Enter admin remark to ${label} this withdraw request${row ? ' #' + row.id + ' (' + money(row.amount) + ')' : ''}.`, '', {title:'Admin Remark',inputLabel:'Admin remark',confirmText:'Continue'});
-    if(adminRemark === null) return;
-    if(!(await BO_DIALOG.confirm(`Confirm to ${label} this withdraw request?`, {title:'Confirm Withdrawal Action'}))) return;
-    try{
-      const key = type === 'approve' ? 'MEMBER_WITHDRAW_APPROVE' : 'MEMBER_WITHDRAW_REJECT';
-      const json = await api(endpoint(key) + '/' + encodeURIComponent(id), {method:'POST', headers:{'Content-Type':'application/json','X-Admin-Username':String(BO_AUTH.user()?.username||'ADMIN'), ...BO_AUTH.authHeader()}, body: JSON.stringify({adminRemark})});
-      alert(json.message || 'Done');
-      load();
-    }catch(e){ alert(e.message || 'Action failed'); }
-  }
-  document.addEventListener('click', e => {
-    const approve = e.target.closest && e.target.closest('[data-approve]');
-    const reject = e.target.closest && e.target.closest('[data-reject]');
-    if(approve) action(approve.dataset.approve, 'approve');
-    if(reject) action(reject.dataset.reject, 'reject');
-  });
-  document.addEventListener('DOMContentLoaded', function(){
-    document.getElementById('withdrawSearchBtn')?.addEventListener('click', ()=>{ page=1; load(); });
-    document.getElementById('withdrawKeyword')?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ page=1; load(); } });
-    document.getElementById('withdrawStatus')?.addEventListener('change', ()=>{ page=1; load(); });
-    document.getElementById('withdrawSize')?.addEventListener('change', ()=>{ page=1; load(); });
-    document.getElementById('withdrawResetBtn')?.addEventListener('click', ()=>{ document.getElementById('withdrawKeyword').value=''; document.getElementById('withdrawStatus').value='PENDING'; page=1; load(); });
-    document.getElementById('withdrawPrevBtn')?.addEventListener('click', ()=>{ if(page>1){ page--; load(); } });
-    document.getElementById('withdrawNextBtn')?.addEventListener('click', ()=>{ if(page<totalPages){ page++; load(); } });
-    document.getElementById('withdrawPager')?.addEventListener('click', e=>{ const b=e.target.closest('[data-page]'); if(!b)return; const n=Number(b.dataset.page); if(n>=1&&n<=totalPages&&n!==page){page=n;load();} });
-    load();
-  });
+  let page=1,totalPages=1,currentRows=[];
+  function pageButtons(current,total){total=Math.max(1,Number(total)||1);current=Math.max(1,Math.min(Number(current)||1,total));const pages=[];const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};add(1);for(let n=current-2;n<=current+2;n++)add(n);add(total);pages.sort((a,b)=>a-b);let html='<div class="smart-pagination" role="navigation" aria-label="Table pagination">';html+='<button type="button" class="smart-page first" data-page="1" '+(current<=1?'disabled':'')+' title="First page"><i class="bi bi-chevron-bar-left"></i></button>';let prev=0;pages.forEach(n=>{if(prev&&n-prev>1)html+='<span class="smart-page-ellipsis">…</span>';html+='<button type="button" class="smart-page '+(n===current?'active':'')+'" data-page="'+n+'" '+(n===current?'aria-current="page"':'')+'>'+n+'</button>';prev=n;});html+='<button type="button" class="smart-page last" data-page="'+total+'" '+(current>=total?'disabled':'')+' title="Last page"><i class="bi bi-chevron-bar-right"></i></button>';html+='</div><span class="smart-page-summary">Page '+current+' / '+total+'</span>';return html;}
+  function endpoint(key){return API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS[key];} function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));} function num(v){const n=Number(v||0);return Number.isFinite(n)?n:0;} function money(v){return num(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});} function dt(v){return window.BO_FORMAT&&window.BO_FORMAT.dateTime?window.BO_FORMAT.dateTime(v):(v?String(v).replace('T',' ').slice(0,19):'-');}
+  async function api(url,opt){const res=await fetch(url,opt||{headers:{...BO_AUTH.authHeader()}});const json=await res.json().catch(()=>({}));if(!res.ok||json.status==='error')throw new Error(json.message||'Request failed');return json;}
+  function query(){const params=new URLSearchParams();const keyword=document.getElementById('withdrawKeyword')?.value.trim();const status=document.getElementById('withdrawStatus')?.value.trim();const from=document.getElementById('withdrawFrom')?.value;const to=document.getElementById('withdrawTo')?.value;const size=document.getElementById('withdrawSize')?.value||'20';if(keyword)params.set('keyword',keyword);if(status)params.set('status',status);if(from)params.set('dateFrom',from);if(to)params.set('dateTo',to);params.set('page',page);params.set('size',size);return params.toString();}
+  function metric(id,value){const el=document.getElementById(id);if(el)el.textContent=value;} function renderSummary(summary,pendingCount,pendingAmount){metric('wdPendingCount',num(pendingCount).toLocaleString());metric('wdPendingAmount',money(pendingAmount));metric('withdrawTotalAmount',money(summary?.totalAmount));}
+  function pendingQuery(){const params=new URLSearchParams();const keyword=document.getElementById('withdrawKeyword')?.value.trim();const from=document.getElementById('withdrawFrom')?.value;const to=document.getElementById('withdrawTo')?.value;if(keyword)params.set('keyword',keyword);params.set('status','PENDING');if(from)params.set('dateFrom',from);if(to)params.set('dateTo',to);params.set('page','1');params.set('size','1');return params.toString();}
+  async function resolvePending(mainData){const selected=String(document.getElementById('withdrawStatus')?.value||'').toUpperCase();const source=selected==='PENDING'?mainData:(await api(endpoint('MEMBER_WITHDRAW_LIST')+'?'+pendingQuery())).data||{};return {count:num(source?.pagination?.totalElements),amount:num(source?.summary?.totalAmount)};}
+  function statusClass(status){status=String(status||'').toUpperCase();if(status==='APPROVED')return'active';if(status==='REJECTED')return'off';return'';}
+  function render(rows,pagination){currentRows=rows;const body=document.getElementById('withdrawBody');if(!body)return;if(!rows.length)body.innerHTML='<tr><td colspan="9">No withdraw request found.</td></tr>';else body.innerHTML=rows.map(r=>{const pending=String(r.status||'').toUpperCase()==='PENDING';return `<tr><td>${esc(dt(r.createdAt||r.created_at))}</td><td><b>${esc(r.username||'-')}</b><br><small>ID: ${esc(r.memberId)} ${r.mobile?'• '+esc(r.mobile):''}</small></td><td><b>${money(r.amount)}</b></td><td>${esc(r.bankName||'-')}<br><small>${esc(r.accountName||'')} ${r.bankAccount?'• '+esc(r.bankAccount):''}</small></td><td>${esc(r.referenceNo||'-')}</td><td>${esc(r.remark||'-')} ${r.adminRemark?'<br><small>Admin: '+esc(r.adminRemark)+'</small>':''}</td><td><span class="status-pill ${statusClass(r.status)}">${esc(r.status||'-')}</span></td><td>${esc(dt(r.processedAt))}</td><td>${pending?`<div class="d-flex gap-2 flex-wrap"><button class="btn btn-success btn-sm" data-approve="${esc(r.id)}">Approve</button><button class="btn btn-danger btn-sm" data-reject="${esc(r.id)}">Reject</button></div>`:`<a class="clean-btn" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}">Ledger</a>`}</td></tr>`;}).join('');totalPages=Number(pagination?.totalPages)||1;const total=Number(pagination?.totalElements)||rows.length;document.getElementById('withdrawPager').innerHTML=pageButtons(page,totalPages);document.getElementById('withdrawPageInfo').textContent=`${total.toLocaleString()} request(s)`;document.getElementById('withdrawPrevBtn').disabled=page<=1;document.getElementById('withdrawNextBtn').disabled=page>=totalPages;}
+  async function load(){const body=document.getElementById('withdrawBody');if(body)body.innerHTML='<tr><td colspan="9">Loading withdraw requests...</td></tr>';try{const json=await api(endpoint('MEMBER_WITHDRAW_LIST')+'?'+query());const data=json.data||{};render(Array.isArray(data.content)?data.content:[],data.pagination||{});const pending=await resolvePending(data);renderSummary(data.summary||{},pending.count,pending.amount);}catch(e){renderSummary({},0,0);if(body)body.innerHTML='<tr><td colspan="9" class="text-danger">'+esc(e.message||'Load failed')+'</td></tr>';}}
+  async function action(id,type){const row=currentRows.find(x=>String(x.id)===String(id));const label=type==='approve'?'approve and deduct main wallet':'reject';const adminRemark=await BO_DIALOG.prompt(`Enter admin remark to ${label} this withdraw request${row?' #'+row.id+' ('+money(row.amount)+')':''}.`,'',{title:'Admin Remark',inputLabel:'Admin remark',confirmText:'Continue'});if(adminRemark===null)return;if(!(await BO_DIALOG.confirm(`Confirm to ${label} this withdraw request?`,{title:'Confirm Withdrawal Action'})))return;try{const key=type==='approve'?'MEMBER_WITHDRAW_APPROVE':'MEMBER_WITHDRAW_REJECT';const json=await api(endpoint(key)+'/'+encodeURIComponent(id),{method:'POST',headers:{'Content-Type':'application/json','X-Admin-Username':String(BO_AUTH.user()?.username||'ADMIN'),...BO_AUTH.authHeader()},body:JSON.stringify({adminRemark})});BO_DIALOG.alert(json.message||'Done',{title:'Withdraw Updated'});load();}catch(e){BO_DIALOG.alert(e.message||'Action failed',{title:'Withdraw Action Failed',type:'error'});}}
+  document.addEventListener('click',e=>{const approve=e.target.closest?.('[data-approve]');const reject=e.target.closest?.('[data-reject]');if(approve)action(approve.dataset.approve,'approve');if(reject)action(reject.dataset.reject,'reject');});
+  document.addEventListener('DOMContentLoaded',()=>{document.getElementById('withdrawSearchBtn')?.addEventListener('click',()=>{page=1;load();});document.getElementById('withdrawKeyword')?.addEventListener('keydown',e=>{if(e.key==='Enter'){page=1;load();}});document.getElementById('withdrawStatus')?.addEventListener('change',()=>{page=1;load();});document.getElementById('withdrawSize')?.addEventListener('change',()=>{page=1;load();});['withdrawFrom','withdrawTo'].forEach(id=>document.getElementById(id)?.addEventListener('change',()=>{page=1;load();}));document.getElementById('withdrawResetBtn')?.addEventListener('click',()=>{document.getElementById('withdrawKeyword').value='';document.getElementById('withdrawStatus').value='PENDING';const today=new Date();const iso=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');document.getElementById('withdrawFrom').value=iso;document.getElementById('withdrawTo').value=iso;document.getElementById('withdrawFrom').dispatchEvent(new Event('change',{bubbles:true}));page=1;load();});document.getElementById('withdrawPrevBtn')?.addEventListener('click',()=>{if(page>1){page--;load();}});document.getElementById('withdrawNextBtn')?.addEventListener('click',()=>{if(page<totalPages){page++;load();}});document.getElementById('withdrawPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(!b)return;const n=Number(b.dataset.page);if(n>=1&&n<=totalPages&&n!==page){page=n;load();}});setTimeout(load,0);});
 })();

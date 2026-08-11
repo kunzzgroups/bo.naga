@@ -7,7 +7,7 @@
   var NEW_MEMBER_SOUND_URL = 'assets/audio/new_member_sound.mp3';
   // Deposit and withdraw intentionally reuse the existing Live Chat MP3.
   var WALLET_REQUEST_SOUND_URL = 'assets/audio/livechat_sound.mp3';
-  var POLL_INTERVAL_MS = 15000;
+  var POLL_INTERVAL_MS = 2000;
   var REPEAT_INTERVAL_MS = 5000;
   var LOGIN_MARKER_KEY = 'bo_operation_login_marker';
   var STATE_KEY = 'bo_operation_notification_state_v2';
@@ -194,7 +194,8 @@
     document.addEventListener('pointerdown', unlock, true);
     document.addEventListener('keydown', unlock, true);
     document.addEventListener('touchstart', unlock, true);
-    window.addEventListener('focus', function(){ unlockAudio(); repeatPendingSounds(); });
+    window.addEventListener('focus', function(){ unlockAudio(); check(false); repeatPendingSounds(); });
+    document.addEventListener('visibilitychange', function(){ if(!document.hidden) check(false); });
   }
 
   function unlockAudio(){

@@ -29,6 +29,7 @@ const API_CONFIG = window.API_CONFIG || {
         MENU_SAVE: "/admin/access/menus/save",
         ROLE_MENU_GET: "/admin/access/role",
         MEMBER_LIST: "/admin/member/list",
+        MEMBER_ONLINE: "/admin/member/online",
         MEMBER_CREATE: "/admin/member/create",
         MEMBER_UPDATE: "/admin/member/update",
         MEMBER_GAME_INSIGHT: "/admin/member/game-insight",
