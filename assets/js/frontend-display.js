@@ -1,6 +1,8 @@
 (function(){
   const select=document.getElementById('homeBonusEnabled');
   const saveBtn=document.getElementById('saveFrontendDisplay');
+  const minDeposit=document.getElementById('minDepositAmount');
+  const minWithdrawal=document.getElementById('minWithdrawalAmount');
   const message=document.getElementById('frontendDisplayMessage');
   const note=document.getElementById('displaySettingNote');
   const endpoint=String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+API_CONFIG.ENDPOINTS.FRONTEND_DISPLAY_SETTING;
@@ -43,6 +45,8 @@
     if(!response.ok||json.status==='error') throw new Error(json.message||'Unable to load setting');
     const data=json.data||{};
     syncSelect(data.homeBonusEnabled);
+    minDeposit.value=Number(data.minDepositAmount||10).toFixed(2);
+    minWithdrawal.value=Number(data.minWithdrawalAmount||50).toFixed(2);
     renderNote();
     setMessage('');
   }
@@ -54,10 +58,14 @@
     setMessage('');
     try{
       const requestedValue=select.value==='0'?0:1;
+      const depositValue=Number(minDeposit.value);
+      const withdrawalValue=Number(minWithdrawal.value);
+      if(!Number.isFinite(depositValue)||depositValue<=0) throw new Error('Minimum deposit must be greater than 0');
+      if(!Number.isFinite(withdrawalValue)||withdrawalValue<=0) throw new Error('Minimum withdrawal must be greater than 0');
       const response=await fetch(endpoint,{
         method:'POST',
         headers:headers(true),
-        body:JSON.stringify({homeBonusEnabled:requestedValue})
+        body:JSON.stringify({homeBonusEnabled:requestedValue,minDepositAmount:depositValue,minWithdrawalAmount:withdrawalValue})
       });
       const json=await response.json().catch(()=>({}));
       if(!response.ok||json.status==='error') throw new Error(json.message||'Unable to save setting');
@@ -65,6 +73,7 @@
         ?json.data.homeBonusEnabled
         :requestedValue;
       syncSelect(savedValue);
+      if(json.data){ minDeposit.value=Number(json.data.minDepositAmount||depositValue).toFixed(2); minWithdrawal.value=Number(json.data.minWithdrawalAmount||withdrawalValue).toFixed(2); }
       renderNote();
       setMessage('Frontend display setting saved successfully.','success');
     }catch(error){
