@@ -46,7 +46,7 @@
     else body.innerHTML = rows.map(r => {
       const wl = num(r.winLoss);
       return `<tr>
-        <td><b>${esc(r.username || '-')}</b><br><small>ID: ${esc(r.memberId)} ${r.mobile ? '• '+esc(r.mobile) : ''}</small></td>
+        <td><b>${esc(r.username || '-')}</b><br><small>ID: ${esc(r.memberId || '-')} · ${esc(r.fullName || '-')}</small></td>
         <td><b>${money(r.mainWalletBalance)}</b></td>
         <td><button class="wallet-total-link provider-wallet-total-link" type="button" data-provider-wallet-detail="${esc(r.memberId)}" data-provider-wallet-user="${esc(r.username||'')}" title="View provider wallet detail">${money(r.providerWalletBalance)}</button></td>
         <td><b>${money(r.totalBalance)}</b></td>
