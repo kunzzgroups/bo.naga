@@ -1,20 +1,14 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>User Management</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-    <link href="assets/css/reports-dashboard-original.css?v=1.0.3" rel="stylesheet" />
+<!DOCTYPE html>
 
-    <style>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>User Management</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+<link href="assets/css/reports-dashboard-original.css?v=1.0.3" rel="stylesheet"/>
+<style>
       .wallet-modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);z-index:20000;display:flex;align-items:center;justify-content:center;padding:18px;overscroll-behavior:contain}
       .wallet-modal-overlay[hidden]{display:none}
       body.wallet-modal-open{overflow:hidden!important;width:100%;left:0;right:0} body.wallet-modal-open .report-topbar,body.wallet-modal-open .report-sidebar{pointer-events:none}
@@ -63,320 +57,308 @@
       @media(max-width:700px){.create-member-overlay{padding:0}.create-member-modal{width:100%;height:100%;max-height:none;border-radius:0}.create-member-grid{grid-template-columns:1fr}.create-member-grid .full{grid-column:auto}.create-member-head,.create-member-body,.create-member-foot{padding-left:16px;padding-right:16px}}
 
     </style>
-  <link rel="stylesheet" href="assets/css/table-pagination-horizontal.css?v=2.0.2">
-  <link href="assets/css/bo-ui-standard.css?v=1.0.1" rel="stylesheet" />
-</head>
-  <body class="report-body user-management-page">
-    <div class="report-shell">
-      <aside class="report-sidebar" id="reportSidebar">
-          <div class="report-brand">
-              <div>Backoffice<br /><small>Admin Panel</small></div><button class="close-side" data-close-sidebar><i
-                      class="bi bi-x-lg"></i></button>
-          </div>
-          <nav class="report-nav"></nav>
-      </aside>
-      <div class="sidebar-overlay" id="reportOverlay" data-close-sidebar></div>
-      <main class="report-main">
-        <header class="report-topbar admin-page-topbar">
-          <button class="hamb" data-open-sidebar>
-            <i class="bi bi-list"></i>
-          </button>
-                <div class="user-title-wrap">
-                    <div class="user-title-icon"><i class="bi bi-people"></i></div>
-                    <div>
-                        <h1>User Management</h1>
-                        <p>Manage and monitor all platform users.</p>
-                    </div>
-                </div>
-                <div class="report-actions" data-bo-profile></div>
-        </header>
-        <section class="report-content">
-          <div class="quick-stats user-stats">
-            <div class="metric user-metric purple">
-              <div class="metric-icon"><i class="bi bi-people"></i></div>
-              <div><span>Total Users</span><strong id="metricTotalUsers">0</strong><small>All registered users</small></div>
-            </div>
-            <div class="metric user-metric green">
-              <div class="metric-icon"><i class="bi bi-person-check-fill"></i></div>
-              <div><span>Active Users</span><strong id="metricActiveUsers">0</strong><small>Currently active</small></div>
-            </div>
-            <div class="metric user-metric blue">
-              <div class="metric-icon"><i class="bi bi-wallet2"></i></div>
-              <div><span>Total Deposit</span><strong id="metricTotalDeposit">0.00</strong><small>All time deposits</small></div>
-            </div>
-            <div class="metric user-metric orange" role="link" tabindex="0" aria-label="Open Online Users" style="cursor:pointer" onclick="window.location.href='online-users.html'" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.location.href='online-users.html';}">
-              <div class="metric-icon"><i class="bi bi-wifi"></i></div>
-              <div><span>Online Now</span><strong id="metricOnlineToday">0</strong><small>Active users</small></div>
-            </div>
-          </div>
-          <div class="filter-card">
-            <div class="user-search-grid bo-filter-row">
-              <div class="field">
-                <label>Name / Username</label><input id="memberSearchName" placeholder="Search name or username" />
-              </div>
-              <div class="field">
-                <label>Mobile No.</label><input id="memberSearchMobile" placeholder="Search mobile" />
-              </div>
-              <div class="field">
-                <label>Agent</label><input id="memberSearchAgent" placeholder="Agent / referrer" />
-              </div>
-              <div class="field">
-                <label>Bank</label><input id="memberSearchBank" placeholder="Bank" />
-              </div>
-              <div class="field">
-                <label>Status</label
-                ><select id="memberSearchStatus">
-                  <option value="">All</option>
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="locked">Locked</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Last Visit</label
-                ><select id="memberSearchVisit">
-                  <option value="">All</option>
-                  <option value="today">Today</option>
-                  <option value="this week">This Week</option>
-                  <option value="this month">This Month</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Lock</label
-                ><select id="memberSearchLock">
-                  <option value="">All</option>
-                  <option value="normal">Normal</option>
-                  <option value="locked">Locked</option>
-                </select>
-              </div>
-              <div class="field user-filter-actions">
-                <label>&nbsp;</label>
-                <div class="filter-action-row">
-                  <button class="clean-btn" type="button" id="memberFilterResetBtn"><i class="bi bi-arrow-clockwise"></i> Reset</button>
-                  <button class="btn-primary-clean" type="button" id="memberSearchBtn"><i class="bi bi-search"></i> Search</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="table-card">
-            <div class="user-toolbar mb-3">
-              <div class="user-title-row">
-                <div class="user-badge"><i class="bi bi-people"></i><span>Member List</span></div>
-                <span class="users-found-badge" id="usersFoundBadge">0 Users Found</span>
-              </div>
-              <div class="user-toolbar-actions">
-                <div class="column-menu-wrap desktop-only">
-                  <button class="clean-btn" type="button" id="memberColumnsBtn"><i class="bi bi-columns-gap"></i> Columns</button>
-                  <div class="column-menu" id="memberColumnsMenu" hidden></div>
-                </div>
-                
-                
-                <button class="clean-btn desktop-only" type="button" id="memberExportBtn"><i class="bi bi-download"></i> Export</button>
-                <button class="clean-btn success" type="button" id="memberCreateBtn"><i class="bi bi-person-plus"></i> Create User</button>
-                <button class="clean-btn" type="button" id="memberResetBtn"><i class="bi bi-arrow-clockwise"></i> Reset Search</button>
-              </div>
-            </div>
-            <div class="table-wrap">
-              <table class="report-table user-main-table">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Register Date</th>
-                    <th>Name / Username</th>
-                    <th>Mobile</th>
-                    <th>Bank</th>
-                    <th>Main Wallet</th>
-                    <th>Deposit</th>
-                    <th>Withdraw</th>
-                    <th>Win/Loss</th>
-                    <th>Bonus</th>
-                    <th>VIP Level</th><th>KYC Status</th><th>Last Login</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td colspan="16">Loading members...</td></tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="member-card-list mt-3"><div class="member-card"><h3>Loading members...</h3><div class="meta">Please wait.</div></div></div>
-            <div class="table-pagination-wrap" id="memberPaginationWrap">
-              <label class="table-page-size">Show
+<link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
+<link href="assets/css/bo-ui-standard.css?v=1.0.1" rel="stylesheet">
+</link></head>
+<body class="report-body user-management-page">
+<div class="report-shell">
+<aside class="report-sidebar" id="reportSidebar">
+<div class="report-brand">
+<div>Backoffice<br/><small>Admin Panel</small></div><button class="close-side" data-close-sidebar=""><i class="bi bi-x-lg"></i></button>
+</div>
+<nav class="report-nav"></nav>
+</aside>
+<div class="sidebar-overlay" data-close-sidebar="" id="reportOverlay"></div>
+<main class="report-main">
+<header class="report-topbar admin-page-topbar">
+<button class="hamb" data-open-sidebar="">
+<i class="bi bi-list"></i>
+</button>
+<div class="user-title-wrap">
+<div class="user-title-icon"><i class="bi bi-people"></i></div>
+<div>
+<h1>User Management</h1>
+<p>Manage and monitor all platform users.</p>
+</div>
+</div>
+<div class="report-actions" data-bo-profile=""></div>
+</header>
+<section class="report-content">
+<div class="quick-stats user-stats">
+<div class="metric user-metric purple">
+<div class="metric-icon"><i class="bi bi-people"></i></div>
+<div><span>Total Users</span><strong id="metricTotalUsers">0</strong><small>All registered users</small></div>
+</div>
+<div class="metric user-metric green">
+<div class="metric-icon"><i class="bi bi-person-check-fill"></i></div>
+<div><span>Active Users</span><strong id="metricActiveUsers">0</strong><small>Currently active</small></div>
+</div>
+<div class="metric user-metric blue">
+<div class="metric-icon"><i class="bi bi-wallet2"></i></div>
+<div><span>Total Deposit</span><strong id="metricTotalDeposit">0.00</strong><small>All time deposits</small></div>
+</div>
+<div aria-label="Open Online Users" class="metric user-metric orange" onclick="window.location.href='online-users.html'" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.location.href='online-users.html';}" role="link" style="cursor:pointer" tabindex="0">
+<div class="metric-icon"><i class="bi bi-wifi"></i></div>
+<div><span>Online Now</span><strong id="metricOnlineToday">0</strong><small>Active users</small></div>
+</div>
+</div>
+<div class="filter-card">
+<div class="user-search-grid bo-filter-row">
+<div class="field">
+<label>Name / Username</label><input id="memberSearchName" placeholder="Search name or username"/>
+</div>
+<div class="field">
+<label>Mobile No.</label><input id="memberSearchMobile" placeholder="Search mobile"/>
+</div>
+<div class="field">
+<label>Agent</label><input id="memberSearchAgent" placeholder="Agent / referrer"/>
+</div>
+<div class="field">
+<label>Bank</label><input id="memberSearchBank" placeholder="Bank"/>
+</div>
+<div class="field">
+<label>Status</label><select id="memberSearchStatus">
+<option value="">All</option>
+<option value="active">Active</option>
+<option value="inactive">Inactive</option>
+<option value="locked">Locked</option>
+</select>
+</div>
+<div class="field">
+<label>Last Visit</label><select id="memberSearchVisit">
+<option value="">All</option>
+<option value="today">Today</option>
+<option value="this week">This Week</option>
+<option value="this month">This Month</option>
+</select>
+</div>
+<div class="field">
+<label>Lock</label><select id="memberSearchLock">
+<option value="">All</option>
+<option value="normal">Normal</option>
+<option value="locked">Locked</option>
+</select>
+</div>
+<div class="field user-filter-actions">
+<label> </label>
+<div class="filter-action-row">
+<button class="clean-btn" id="memberFilterResetBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Reset</button>
+<button class="btn-primary-clean" id="memberSearchBtn" type="button"><i class="bi bi-search"></i> Search</button>
+</div>
+</div>
+</div>
+</div>
+<div class="table-card">
+<div class="user-toolbar mb-3">
+<div class="user-title-row">
+<div class="user-badge"><i class="bi bi-people"></i><span>Member List</span></div>
+<span class="users-found-badge" id="usersFoundBadge">0 Users Found</span>
+</div>
+<div class="user-toolbar-actions">
+<div class="column-menu-wrap desktop-only">
+<button class="clean-btn" id="memberColumnsBtn" type="button"><i class="bi bi-columns-gap"></i> Columns</button>
+<div class="column-menu" hidden="" id="memberColumnsMenu"></div>
+</div>
+<button class="clean-btn desktop-only" id="memberExportBtn" type="button"><i class="bi bi-download"></i> Export</button>
+<button class="clean-btn success" id="memberCreateBtn" type="button"><i class="bi bi-person-plus"></i> Create User</button>
+<button class="clean-btn" id="memberResetBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Reset Search</button>
+</div>
+</div>
+<div class="table-wrap">
+<table class="report-table user-main-table">
+<thead>
+<tr>
+<th>#</th>
+<th>Register Date</th>
+<th>Name / Username</th>
+<th>Mobile</th>
+<th>Bank</th>
+<th>Main Wallet</th>
+<th>Deposit</th>
+<th>Withdraw</th>
+<th>Win/Loss</th>
+<th>Bonus</th>
+<th>VIP Level</th><th>KYC Status</th><th>Last Login</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr><td colspan="16">Loading members...</td></tr>
+</tbody>
+</table>
+</div>
+<div class="member-card-list mt-3"><div class="member-card"><h3>Loading members...</h3><div class="meta">Please wait.</div></div></div>
+<div class="table-footer" id="memberPaginationWrap">
+<label class="entries-control">Show
                 <select id="memberPageSize"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select>
                 entries
               </label>
-              <div class="table-pagination-info" id="memberPageInfo">Showing 0 to 0 of 0 entries</div>
-              <div id="memberPager"></div>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
-
-
-    <div class="bulk-wallet-overlay" id="bulkWalletModal" hidden>
-      <div class="bulk-wallet-modal" role="dialog" aria-modal="true" aria-labelledby="bulkWalletTitle">
-        <div class="bulk-wallet-head">
-          <div><h2 id="bulkWalletTitle"><i class="bi bi-wallet2"></i> Bulk Wallet Adjustment</h2><p>Apply one main-wallet adjustment to all selected members.</p></div>
-          <button class="bulk-close" type="button" id="bulkWalletClose"><i class="bi bi-x-lg"></i></button>
-        </div>
-        <div class="bulk-wallet-body">
-          <div class="bulk-summary"><div><span>Selected members</span><b id="bulkMemberCount">0</b></div><div><span>Total adjustment</span><b id="bulkTotalAmount">0.00</b></div></div>
-          <div class="bulk-selected-list" id="bulkSelectedList"></div>
-          <div class="bulk-form-grid">
-            <div class="field"><label>Adjustment Type *</label><select id="bulkAdjustmentType"><option value="CREDIT">Credit — Add Balance</option><option value="DEBIT">Debit — Deduct Balance</option></select></div>
-            <div class="field"><label>Amount Per Member *</label><input id="bulkAdjustmentAmount" type="number" min="0.01" step="0.01" placeholder="0.00"></div>
-            <div class="field"><label>Reason *</label><select id="bulkAdjustmentReason"><option value="MANUAL_ADJUSTMENT">Manual Adjustment</option><option value="REBATE_ADJUSTMENT">Rebate Adjustment</option><option value="BONUS_COMPENSATION">Bonus Compensation</option><option value="GAME_ISSUE_COMPENSATION">Game Issue Compensation</option><option value="DEPOSIT_CORRECTION">Deposit Correction</option><option value="WITHDRAWAL_CORRECTION">Withdrawal Correction</option><option value="OTHER">Other</option></select></div>
-            <div class="field"><label>Insufficient Balance</label><select id="bulkInsufficientPolicy"><option value="SKIP">Skip insufficient members</option><option value="FAIL">Cancel entire batch</option></select></div>
-            <div class="field bulk-full"><label>Reference No.</label><input id="bulkReferenceNo" placeholder="Auto-generated when empty"></div>
-            <div class="field bulk-full"><label>Remark *</label><textarea id="bulkAdjustmentRemark" rows="3" placeholder="State the reason for audit records"></textarea></div>
-          </div>
-          <div class="bulk-warning"><i class="bi bi-shield-exclamation"></i><span>This action writes one wallet-ledger record per successful member and cannot be undone automatically.</span></div>
-          <div class="upload-status" id="bulkWalletStatus"></div>
-          <div class="bulk-result" id="bulkWalletResult" hidden></div>
-        </div>
-        <div class="bulk-wallet-foot"><button class="clean-btn" type="button" id="bulkWalletCancel">Cancel</button><button class="btn-primary-clean" type="button" id="bulkWalletSubmit"><i class="bi bi-check2-circle"></i> Confirm Adjustment</button></div>
-      </div>
-    </div>
-
-    <div class="wallet-modal-overlay" id="memberWalletModal" hidden>
-      <div class="wallet-modal-card">
-        <div class="wallet-modal-head">
-          <div>
-            <h3 class="m-0">Member Detail / Wallet</h3>
-          </div>
-          <button class="clean-btn" type="button" id="walletModalClose"><i class="bi bi-x-lg"></i> Close</button>
-        </div>
-        <div class="wallet-modal-body">
-          <aside class="wallet-member-panel">
-            <div class="wallet-member-line">
-              <div class="wallet-avatar" id="walletMemberAvatar">M</div>
-              <div>
-                <b id="walletMemberName">-</b><br />
-                <small id="walletMemberInfo">ID: -</small>
-              </div>
-            </div>
-            <div class="wallet-side-tabs" role="tablist">
-              <button class="wallet-side-tab active" type="button" data-wallet-tab="main"><i class="bi bi-wallet2"></i>Main Wallet</button>
-              <button class="wallet-side-tab" type="button" data-wallet-tab="provider"><i class="bi bi-hdd-network"></i>Provider Accounts</button>
-              <button class="wallet-side-tab" type="button" data-wallet-tab="ledger"><i class="bi bi-journal-text"></i>Wallet Ledger</button>
-              <button class="wallet-side-tab" type="button" data-wallet-tab="bet"><i class="bi bi-dice-5"></i>Bet Records</button>
-              <button class="wallet-side-tab" type="button" data-wallet-tab="insight"><i class="bi bi-graph-up-arrow"></i>Game Follow Up</button>
-              <button class="wallet-side-tab" type="button" data-wallet-tab="profile"><i class="bi bi-person-lines-fill"></i>Member Info</button>
-              <button class="wallet-side-tab" type="button" data-wallet-tab="password"><i class="bi bi-key"></i>Change Password</button>
-              <button class="wallet-side-tab" type="button" data-wallet-tab="transactionPassword"><i class="bi bi-shield-lock"></i>Transaction Password</button>
-              <button class="wallet-side-tab" type="button" data-wallet-tab="bank"><i class="bi bi-bank"></i>Bank Info</button>
-            </div>
-          </aside>
-          <section class="wallet-tab-content">
-            <div class="wallet-tab-pane active" data-wallet-pane="main">
-              <div class="wallet-balance-box">
-                <div class="mini-box"><span>Main Wallet Balance</span><b id="walletCurrentBalance">$0.00</b></div>
-                <div class="mini-box"><span>New Balance Preview</span><b id="walletNewBalance">$0.00</b></div>
-              </div>
-              <div class="wallet-adjust-grid">
-                <div class="field"><label>Operation Type</label><select id="walletAdjustType"><option value="DEPOSIT">Topup / Payment Deposit</option><option value="WITHDRAW">Approved Member Withdrawal</option><option value="ADJUSTMENT">Manual Adjustment</option></select></div>
-                <div class="field"><label>Amount</label><input id="walletAdjustAmount" type="number" step="0.01" placeholder="Example: 100 or -50 for adjustment" /></div>
-                <div class="field full" id="walletBankField"><label id="walletBankLabel">Casino Receiving Bank</label><select id="walletPaymentMethodId"><option value="">-- Select casino bank / payment method --</option></select><small class="text-secondary" id="walletBankHint">Required for real cash deposit/withdraw. Manual Adjustment does not affect bank usage.</small></div>
-                <div class="field full"><label>Reason / Remark</label><textarea id="walletAdjustRemark" rows="3" placeholder="Example: payment approved / withdrawal approved / correction"></textarea></div>
-              </div>
-              <div class="wallet-actions-row">
-                <button class="clean-btn" type="button" id="walletRefreshBtn"><i class="bi bi-arrow-clockwise"></i> Refresh Balance</button>
-                <button class="clean-btn primary" type="button" id="walletSubmitBtn"><i class="bi bi-check2-circle"></i> Process Main Wallet</button>
-              </div>
-              <div class="upload-status mt-3" id="walletModalStatus"></div>
-              <pre class="mt-3 p-3 bg-light rounded small" id="walletModalResult" style="white-space:pre-wrap;max-height:220px;overflow:auto"></pre>
-            </div>
-            <div class="wallet-tab-pane" data-wallet-pane="provider">
-              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><h5 class="m-0">Provider Accounts</h5><button class="clean-btn" type="button" id="walletProviderRefreshBtn"><i class="bi bi-arrow-clockwise"></i> Refresh</button></div>
-              <div class="table-wrap"><table class="wallet-mini-table"><thead><tr><th>Provider</th><th>Account</th><th>Balance</th><th>Total Bet</th><th>Total Win</th><th>Total Lose</th><th>Status</th></tr></thead><tbody id="walletProviderBody"><tr><td colspan="7">Select this tab to load provider accounts.</td></tr></tbody></table></div>
-            </div>
-            <div class="wallet-tab-pane" data-wallet-pane="ledger">
-              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><h5 class="m-0">Latest Wallet Ledger</h5><a class="clean-btn primary" id="walletOpenLedgerPage" href="wallet-ledger.html">Open Full Ledger</a></div>
-              <div class="table-wrap"><table class="wallet-mini-table"><thead><tr><th>Date</th><th>Type</th><th>Provider</th><th>Amount</th><th>Before</th><th>After</th><th>Reference</th></tr></thead><tbody id="walletLedgerPreviewBody"><tr><td colspan="7">Select this tab to load latest ledger.</td></tr></tbody></table></div>
-            </div>
-
-            <div class="wallet-tab-pane" data-wallet-pane="bet">
-              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><h5 class="m-0">Latest Bet Records</h5><a class="clean-btn primary" id="walletOpenBetPage" href="provider-bet-report.html">Open Full Bet Report</a></div>
-              <div class="table-wrap"><table class="wallet-mini-table"><thead><tr><th>Date</th><th>Provider</th><th>Game</th><th>Bet ID</th><th>Bet</th><th>Valid Bet</th><th>Win</th><th>Net</th></tr></thead><tbody id="walletBetPreviewBody"><tr><td colspan="8">Select this tab to load latest bet records.</td></tr></tbody></table></div>
-            </div>
-            <div class="wallet-tab-pane" data-wallet-pane="insight">
-              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><div><h5 class="m-0">Player Game Follow Up</h5><small class="text-secondary">Highest turnover and most frequently played games.</small></div><button class="clean-btn" type="button" id="walletInsightRefreshBtn"><i class="bi bi-arrow-clockwise"></i> Refresh</button></div>
-              <h6>Highest Turnover Games</h6><div class="table-wrap mb-4"><table class="wallet-mini-table"><thead><tr><th>#</th><th>Provider</th><th>Game</th><th>Total Turnover</th><th>Play Count</th><th>Last Played</th></tr></thead><tbody id="walletTopTurnoverBody"><tr><td colspan="6">Select this tab to load data.</td></tr></tbody></table></div>
-              <h6>Frequently Played Games</h6><div class="table-wrap"><table class="wallet-mini-table"><thead><tr><th>#</th><th>Provider</th><th>Game</th><th>Play Count</th><th>Total Turnover</th><th>Last Played</th></tr></thead><tbody id="walletFrequentGamesBody"><tr><td colspan="6">Select this tab to load data.</td></tr></tbody></table></div>
-            </div>
-            <div class="wallet-tab-pane" data-wallet-pane="profile"><h5>Member Info</h5><div id="walletProfileInfo" class="wallet-empty">-</div></div>
-            <div class="wallet-tab-pane" data-wallet-pane="password">
-              <h5>Change Member Password</h5>
-              <p class="text-secondary small mb-3">Reset the selected member's login password.</p>
-              <div class="wallet-adjust-grid">
-                <div class="field"><label>New Password</label><input id="memberNewPassword" type="password" minlength="8" maxlength="20" autocomplete="new-password" placeholder="8 - 20 characters" /></div>
-                <div class="field"><label>Confirm New Password</label><input id="memberConfirmPassword" type="password" minlength="8" maxlength="20" autocomplete="new-password" placeholder="Enter again" /></div>
-              </div>
-              <div class="wallet-actions-row"><button class="clean-btn primary" type="button" id="resetMemberPasswordBtn"><i class="bi bi-key"></i> Reset Login Password</button></div>
-              <div class="upload-status mt-2" id="memberPasswordStatus"></div>
-            </div>
-            <div class="wallet-tab-pane" data-wallet-pane="transactionPassword">
-              <h5>Reset Transaction Password</h5>
-              <p class="text-secondary small mb-3">Set a new transaction password for withdrawals and secured wallet actions.</p>
-              <div class="wallet-adjust-grid">
-                <div class="field"><label>New Transaction Password</label><input id="memberNewTransactionPassword" type="password" minlength="6" maxlength="20" autocomplete="new-password" placeholder="6 - 20 characters" /></div>
-                <div class="field"><label>Confirm Transaction Password</label><input id="memberConfirmTransactionPassword" type="password" minlength="6" maxlength="20" autocomplete="new-password" placeholder="Enter again" /></div>
-              </div>
-              <div class="wallet-actions-row"><button class="clean-btn primary" type="button" id="resetMemberTransactionPasswordBtn"><i class="bi bi-shield-lock"></i> Reset Transaction Password</button></div>
-              <div class="upload-status mt-2" id="memberTransactionPasswordStatus"></div>
-            </div>
-            <div class="wallet-tab-pane" data-wallet-pane="bank"><h5>Bank Info</h5>
-              <div id="walletBankInfo" class="wallet-empty mb-3">-</div>
-              <div class="wallet-adjust-grid">
-                <div class="field"><label>Bank Name</label><input id="editBankName" placeholder="Example: Maybank / PayID" /></div>
-                <div class="field"><label>Bank Account Name</label><input id="editBankAccountName" placeholder="Account holder name" /></div>
-                <div class="field"><label>Bank Account Number</label><input id="editBankAccountNumber" placeholder="Account number" /></div>
-                <div class="field"><label>Bank BSB</label><input id="editBankBsb" placeholder="Bank BSB" /></div>
-                <div class="field"><label>Show BSB In Frontend</label><select id="editShowBankBsb"><option value="1">Show</option><option value="0">Hide</option></select></div>
-                <div class="field"><label>Pay ID</label><input id="editPayId" placeholder="Pay ID / email / mobile" /></div>
-                <div class="field"><label>Show Pay ID In Frontend</label><select id="editShowPayId"><option value="1">Show</option><option value="0">Hide</option></select></div>
-              </div>
-              <div class="wallet-actions-row"><button class="clean-btn primary" type="button" id="saveBankProfileBtn"><i class="bi bi-save"></i> Save Bank/Profile</button></div>
-              <div class="upload-status mt-2" id="bankProfileStatus"></div>
-            </div>
-          </section>
-        </div>
-      </div>
-    </div>
-
-    <div class="create-member-overlay" id="createMemberModal" hidden>
-      <div class="create-member-modal" role="dialog" aria-modal="true" aria-labelledby="createMemberTitle">
-        <div class="create-member-head">
-          <div><h2 id="createMemberTitle">Create User</h2><p>Create a new member account for frontend.</p></div>
-          <button class="create-member-close" type="button" id="createMemberClose" aria-label="Close"><i class="bi bi-x-lg"></i></button>
-        </div>
-        <form id="createMemberForm">
-          <div class="create-member-body">
-            <div class="create-member-grid">
-              <div class="field"><label>Username *</label><input id="createMemberUsername" autocomplete="off" required maxlength="50" placeholder="Username" /></div>
-              <div class="field"><label>Mobile</label><input id="createMemberMobile" type="tel" autocomplete="off" maxlength="30" placeholder="Mobile number" /></div>
-              <div class="field"><label>Full Name</label><input id="createMemberFullName" autocomplete="off" maxlength="100" placeholder="Member name" /></div>
-              <div class="field"><label>Referrer Code</label><input id="createMemberReferrer" autocomplete="off" maxlength="60" placeholder="Optional referrer code" /></div>
-              <div class="field"><label>Password *</label><input id="createMemberPassword" type="password" autocomplete="new-password" minlength="6" maxlength="20" required placeholder="Minimum 6 characters" /></div>
-              <div class="field"><label>Confirm Password *</label><input id="createMemberConfirmPassword" type="password" autocomplete="new-password" minlength="6" maxlength="20" required placeholder="Enter password again" /></div>
-            </div>
-            <div class="create-member-help">Username and mobile are checked against existing member accounts. New users are created as active and unlocked by default. Password is stored through the existing Spring Boot password hashing flow.</div>
-            <div class="create-member-status" id="createMemberStatus"></div>
-          </div>
-          <div class="create-member-foot">
-            <button class="clean-btn" type="button" id="createMemberCancel">Cancel</button>
-            <button class="clean-btn success" type="submit" id="createMemberSubmit"><i class="bi bi-person-plus"></i> Create User</button>
-          </div>
-        </form>
-      </div>
-    </div>
-    <script src="assets/js/config.js?v=1.0.32"></script>
-    <script src="assets/js/reports.js?v=1.0.13"></script>
-    <script src="assets/js/auth.js?v=1.0.33"></script>
-    <script src="assets/js/member-management.js?v=1.0.14"></script>
-
+<div class="table-info" id="memberPageInfo">Showing 0 to 0 of 0 entries</div>
+<div class="pagination-clean" id="memberPager"></div>
+</div>
+</div>
+</section>
+</main>
+</div>
+<div class="bulk-wallet-overlay" hidden="" id="bulkWalletModal">
+<div aria-labelledby="bulkWalletTitle" aria-modal="true" class="bulk-wallet-modal" role="dialog">
+<div class="bulk-wallet-head">
+<div><h2 id="bulkWalletTitle"><i class="bi bi-wallet2"></i> Bulk Wallet Adjustment</h2><p>Apply one main-wallet adjustment to all selected members.</p></div>
+<button class="bulk-close" id="bulkWalletClose" type="button"><i class="bi bi-x-lg"></i></button>
+</div>
+<div class="bulk-wallet-body">
+<div class="bulk-summary"><div><span>Selected members</span><b id="bulkMemberCount">0</b></div><div><span>Total adjustment</span><b id="bulkTotalAmount">0.00</b></div></div>
+<div class="bulk-selected-list" id="bulkSelectedList"></div>
+<div class="bulk-form-grid">
+<div class="field"><label>Adjustment Type *</label><select id="bulkAdjustmentType"><option value="CREDIT">Credit — Add Balance</option><option value="DEBIT">Debit — Deduct Balance</option></select></div>
+<div class="field"><label>Amount Per Member *</label><input id="bulkAdjustmentAmount" min="0.01" placeholder="0.00" step="0.01" type="number"/></div>
+<div class="field"><label>Reason *</label><select id="bulkAdjustmentReason"><option value="MANUAL_ADJUSTMENT">Manual Adjustment</option><option value="REBATE_ADJUSTMENT">Rebate Adjustment</option><option value="BONUS_COMPENSATION">Bonus Compensation</option><option value="GAME_ISSUE_COMPENSATION">Game Issue Compensation</option><option value="DEPOSIT_CORRECTION">Deposit Correction</option><option value="WITHDRAWAL_CORRECTION">Withdrawal Correction</option><option value="OTHER">Other</option></select></div>
+<div class="field"><label>Insufficient Balance</label><select id="bulkInsufficientPolicy"><option value="SKIP">Skip insufficient members</option><option value="FAIL">Cancel entire batch</option></select></div>
+<div class="field bulk-full"><label>Reference No.</label><input id="bulkReferenceNo" placeholder="Auto-generated when empty"/></div>
+<div class="field bulk-full"><label>Remark *</label><textarea id="bulkAdjustmentRemark" placeholder="State the reason for audit records" rows="3"></textarea></div>
+</div>
+<div class="bulk-warning"><i class="bi bi-shield-exclamation"></i><span>This action writes one wallet-ledger record per successful member and cannot be undone automatically.</span></div>
+<div class="upload-status" id="bulkWalletStatus"></div>
+<div class="bulk-result" hidden="" id="bulkWalletResult"></div>
+</div>
+<div class="bulk-wallet-foot"><button class="clean-btn" id="bulkWalletCancel" type="button">Cancel</button><button class="btn-primary-clean" id="bulkWalletSubmit" type="button"><i class="bi bi-check2-circle"></i> Confirm Adjustment</button></div>
+</div>
+</div>
+<div class="wallet-modal-overlay" hidden="" id="memberWalletModal">
+<div class="wallet-modal-card">
+<div class="wallet-modal-head">
+<div>
+<h3 class="m-0">Member Detail / Wallet</h3>
+</div>
+<button class="clean-btn" id="walletModalClose" type="button"><i class="bi bi-x-lg"></i> Close</button>
+</div>
+<div class="wallet-modal-body">
+<aside class="wallet-member-panel">
+<div class="wallet-member-line">
+<div class="wallet-avatar" id="walletMemberAvatar">M</div>
+<div>
+<b id="walletMemberName">-</b><br/>
+<small id="walletMemberInfo">ID: -</small>
+</div>
+</div>
+<div class="wallet-side-tabs" role="tablist">
+<button class="wallet-side-tab active" data-wallet-tab="main" type="button"><i class="bi bi-wallet2"></i>Main Wallet</button>
+<button class="wallet-side-tab" data-wallet-tab="provider" type="button"><i class="bi bi-hdd-network"></i>Provider Accounts</button>
+<button class="wallet-side-tab" data-wallet-tab="ledger" type="button"><i class="bi bi-journal-text"></i>Wallet Ledger</button>
+<button class="wallet-side-tab" data-wallet-tab="bet" type="button"><i class="bi bi-dice-5"></i>Bet Records</button>
+<button class="wallet-side-tab" data-wallet-tab="insight" type="button"><i class="bi bi-graph-up-arrow"></i>Game Follow Up</button>
+<button class="wallet-side-tab" data-wallet-tab="profile" type="button"><i class="bi bi-person-lines-fill"></i>Member Info</button>
+<button class="wallet-side-tab" data-wallet-tab="password" type="button"><i class="bi bi-key"></i>Change Password</button>
+<button class="wallet-side-tab" data-wallet-tab="transactionPassword" type="button"><i class="bi bi-shield-lock"></i>Transaction Password</button>
+<button class="wallet-side-tab" data-wallet-tab="bank" type="button"><i class="bi bi-bank"></i>Bank Info</button>
+</div>
+</aside>
+<section class="wallet-tab-content">
+<div class="wallet-tab-pane active" data-wallet-pane="main">
+<div class="wallet-balance-box">
+<div class="mini-box"><span>Main Wallet Balance</span><b id="walletCurrentBalance">$0.00</b></div>
+<div class="mini-box"><span>New Balance Preview</span><b id="walletNewBalance">$0.00</b></div>
+</div>
+<div class="wallet-adjust-grid">
+<div class="field"><label>Operation Type</label><select id="walletAdjustType"><option value="DEPOSIT">Topup / Payment Deposit</option><option value="WITHDRAW">Approved Member Withdrawal</option><option value="ADJUSTMENT">Manual Adjustment</option></select></div>
+<div class="field"><label>Amount</label><input id="walletAdjustAmount" placeholder="Example: 100 or -50 for adjustment" step="0.01" type="number"/></div>
+<div class="field full" id="walletBankField"><label id="walletBankLabel">Casino Receiving Bank</label><select id="walletPaymentMethodId"><option value="">-- Select casino bank / payment method --</option></select><small class="text-secondary" id="walletBankHint">Required for real cash deposit/withdraw. Manual Adjustment does not affect bank usage.</small></div>
+<div class="field full"><label>Reason / Remark</label><textarea id="walletAdjustRemark" placeholder="Example: payment approved / withdrawal approved / correction" rows="3"></textarea></div>
+</div>
+<div class="wallet-actions-row">
+<button class="clean-btn" id="walletRefreshBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh Balance</button>
+<button class="clean-btn primary" id="walletSubmitBtn" type="button"><i class="bi bi-check2-circle"></i> Process Main Wallet</button>
+</div>
+<div class="upload-status mt-3" id="walletModalStatus"></div>
+<pre class="mt-3 p-3 bg-light rounded small" id="walletModalResult" style="white-space:pre-wrap;max-height:220px;overflow:auto"></pre>
+</div>
+<div class="wallet-tab-pane" data-wallet-pane="provider">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><h5 class="m-0">Provider Accounts</h5><button class="clean-btn" id="walletProviderRefreshBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button></div>
+<div class="table-wrap"><table class="wallet-mini-table"><thead><tr><th>Provider</th><th>Account</th><th>Balance</th><th>Total Bet</th><th>Total Win</th><th>Total Lose</th><th>Status</th></tr></thead><tbody id="walletProviderBody"><tr><td colspan="7">Select this tab to load provider accounts.</td></tr></tbody></table></div>
+</div>
+<div class="wallet-tab-pane" data-wallet-pane="ledger">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><h5 class="m-0">Latest Wallet Ledger</h5><a class="clean-btn primary" href="wallet-ledger.html" id="walletOpenLedgerPage">Open Full Ledger</a></div>
+<div class="table-wrap"><table class="wallet-mini-table"><thead><tr><th>Date</th><th>Type</th><th>Provider</th><th>Amount</th><th>Before</th><th>After</th><th>Reference</th></tr></thead><tbody id="walletLedgerPreviewBody"><tr><td colspan="7">Select this tab to load latest ledger.</td></tr></tbody></table></div>
+</div>
+<div class="wallet-tab-pane" data-wallet-pane="bet">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><h5 class="m-0">Latest Bet Records</h5><a class="clean-btn primary" href="provider-bet-report.html" id="walletOpenBetPage">Open Full Bet Report</a></div>
+<div class="table-wrap"><table class="wallet-mini-table"><thead><tr><th>Date</th><th>Provider</th><th>Game</th><th>Bet ID</th><th>Bet</th><th>Valid Bet</th><th>Win</th><th>Net</th></tr></thead><tbody id="walletBetPreviewBody"><tr><td colspan="8">Select this tab to load latest bet records.</td></tr></tbody></table></div>
+</div>
+<div class="wallet-tab-pane" data-wallet-pane="insight">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><div><h5 class="m-0">Player Game Follow Up</h5><small class="text-secondary">Highest turnover and most frequently played games.</small></div><button class="clean-btn" id="walletInsightRefreshBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button></div>
+<h6>Highest Turnover Games</h6><div class="table-wrap mb-4"><table class="wallet-mini-table"><thead><tr><th>#</th><th>Provider</th><th>Game</th><th>Total Turnover</th><th>Play Count</th><th>Last Played</th></tr></thead><tbody id="walletTopTurnoverBody"><tr><td colspan="6">Select this tab to load data.</td></tr></tbody></table></div>
+<h6>Frequently Played Games</h6><div class="table-wrap"><table class="wallet-mini-table"><thead><tr><th>#</th><th>Provider</th><th>Game</th><th>Play Count</th><th>Total Turnover</th><th>Last Played</th></tr></thead><tbody id="walletFrequentGamesBody"><tr><td colspan="6">Select this tab to load data.</td></tr></tbody></table></div>
+</div>
+<div class="wallet-tab-pane" data-wallet-pane="profile"><h5>Member Info</h5><div class="wallet-empty" id="walletProfileInfo">-</div></div>
+<div class="wallet-tab-pane" data-wallet-pane="password">
+<h5>Change Member Password</h5>
+<p class="text-secondary small mb-3">Reset the selected member's login password.</p>
+<div class="wallet-adjust-grid">
+<div class="field"><label>New Password</label><input autocomplete="new-password" id="memberNewPassword" maxlength="20" minlength="8" placeholder="8 - 20 characters" type="password"/></div>
+<div class="field"><label>Confirm New Password</label><input autocomplete="new-password" id="memberConfirmPassword" maxlength="20" minlength="8" placeholder="Enter again" type="password"/></div>
+</div>
+<div class="wallet-actions-row"><button class="clean-btn primary" id="resetMemberPasswordBtn" type="button"><i class="bi bi-key"></i> Reset Login Password</button></div>
+<div class="upload-status mt-2" id="memberPasswordStatus"></div>
+</div>
+<div class="wallet-tab-pane" data-wallet-pane="transactionPassword">
+<h5>Reset Transaction Password</h5>
+<p class="text-secondary small mb-3">Set a new transaction password for withdrawals and secured wallet actions.</p>
+<div class="wallet-adjust-grid">
+<div class="field"><label>New Transaction Password</label><input autocomplete="new-password" id="memberNewTransactionPassword" maxlength="20" minlength="6" placeholder="6 - 20 characters" type="password"/></div>
+<div class="field"><label>Confirm Transaction Password</label><input autocomplete="new-password" id="memberConfirmTransactionPassword" maxlength="20" minlength="6" placeholder="Enter again" type="password"/></div>
+</div>
+<div class="wallet-actions-row"><button class="clean-btn primary" id="resetMemberTransactionPasswordBtn" type="button"><i class="bi bi-shield-lock"></i> Reset Transaction Password</button></div>
+<div class="upload-status mt-2" id="memberTransactionPasswordStatus"></div>
+</div>
+<div class="wallet-tab-pane" data-wallet-pane="bank"><h5>Bank Info</h5>
+<div class="wallet-empty mb-3" id="walletBankInfo">-</div>
+<div class="wallet-adjust-grid">
+<div class="field"><label>Bank Name</label><input id="editBankName" placeholder="Example: Maybank / PayID"/></div>
+<div class="field"><label>Bank Account Name</label><input id="editBankAccountName" placeholder="Account holder name"/></div>
+<div class="field"><label>Bank Account Number</label><input id="editBankAccountNumber" placeholder="Account number"/></div>
+<div class="field"><label>Bank BSB</label><input id="editBankBsb" placeholder="Bank BSB"/></div>
+<div class="field"><label>Show BSB In Frontend</label><select id="editShowBankBsb"><option value="1">Show</option><option value="0">Hide</option></select></div>
+<div class="field"><label>Pay ID</label><input id="editPayId" placeholder="Pay ID / email / mobile"/></div>
+<div class="field"><label>Show Pay ID In Frontend</label><select id="editShowPayId"><option value="1">Show</option><option value="0">Hide</option></select></div>
+</div>
+<div class="wallet-actions-row"><button class="clean-btn primary" id="saveBankProfileBtn" type="button"><i class="bi bi-save"></i> Save Bank/Profile</button></div>
+<div class="upload-status mt-2" id="bankProfileStatus"></div>
+</div>
+</section>
+</div>
+</div>
+</div>
+<div class="create-member-overlay" hidden="" id="createMemberModal">
+<div aria-labelledby="createMemberTitle" aria-modal="true" class="create-member-modal" role="dialog">
+<div class="create-member-head">
+<div><h2 id="createMemberTitle">Create User</h2><p>Create a new member account for frontend.</p></div>
+<button aria-label="Close" class="create-member-close" id="createMemberClose" type="button"><i class="bi bi-x-lg"></i></button>
+</div>
+<form id="createMemberForm">
+<div class="create-member-body">
+<div class="create-member-grid">
+<div class="field"><label>Username *</label><input autocomplete="off" id="createMemberUsername" maxlength="50" placeholder="Username" required=""/></div>
+<div class="field"><label>Mobile</label><input autocomplete="off" id="createMemberMobile" maxlength="30" placeholder="Mobile number" type="tel"/></div>
+<div class="field"><label>Full Name</label><input autocomplete="off" id="createMemberFullName" maxlength="100" placeholder="Member name"/></div>
+<div class="field"><label>Referrer Code</label><input autocomplete="off" id="createMemberReferrer" maxlength="60" placeholder="Optional referrer code"/></div>
+<div class="field"><label>Password *</label><input autocomplete="new-password" id="createMemberPassword" maxlength="20" minlength="6" placeholder="Minimum 6 characters" required="" type="password"/></div>
+<div class="field"><label>Confirm Password *</label><input autocomplete="new-password" id="createMemberConfirmPassword" maxlength="20" minlength="6" placeholder="Enter password again" required="" type="password"/></div>
+</div>
+<div class="create-member-help">Username and mobile are checked against existing member accounts. New users are created as active and unlocked by default. Password is stored through the existing Spring Boot password hashing flow.</div>
+<div class="create-member-status" id="createMemberStatus"></div>
+</div>
+<div class="create-member-foot">
+<button class="clean-btn" id="createMemberCancel" type="button">Cancel</button>
+<button class="clean-btn success" id="createMemberSubmit" type="submit"><i class="bi bi-person-plus"></i> Create User</button>
+</div>
+</form>
+</div>
+</div>
+<script src="assets/js/config.js?v=1.0.32"></script>
+<script src="assets/js/reports.js?v=1.0.13"></script>
+<script src="assets/js/auth.js?v=1.0.33"></script>
+<script src="assets/js/member-management.js?v=1.0.14"></script>
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
@@ -384,6 +366,6 @@
 <script src="assets/js/livechat-global-notification.js?v=20260811-global-v3"></script>
 <script src="assets/js/pagination-standardizer.js?v=1.0.1"></script>
 <script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
-  <script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
+<script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
 </body>
 </html>

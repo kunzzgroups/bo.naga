@@ -3,7 +3,7 @@
   let totalPages = 1;
   const initialParams = new URLSearchParams(location.search);
   const allTimeScope = initialParams.get('scope') === 'all';
-  const LEDGER_TYPES = ['DEPOSIT','WITHDRAW','ADJUSTMENT','BONUS','ADMIN_DEPOSIT','ADMIN_WITHDRAW','ADMIN_ADJUSTMENT','BULK_ADJUSTMENT','REFERRAL_REWARD','BET','WIN','LOSE','SETTLE','ROLLBACK'];
+  const LEDGER_TYPES = ['DEPOSIT','WITHDRAW','ADJUSTMENT','BONUS','ADMIN_DEPOSIT','ADMIN_WITHDRAW','ADMIN_ADJUSTMENT','BULK_ADJUSTMENT','REFERRAL_REWARD','REBATE','REBATE_ADJUSTMENT','BET','WIN','LOSE','SETTLE','ROLLBACK'];
   const WALLET_TO_WALLET_TYPES = new Set(['TRANSFER_IN','TRANSFER_OUT']);
   const selectedTypes = new Set();
 

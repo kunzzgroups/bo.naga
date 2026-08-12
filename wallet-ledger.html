@@ -1,17 +1,17 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Wallet Ledger</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-  <link href="assets/css/reports.css?v=1.0.36" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/table-pagination-horizontal.css?v=2.0.2">
-<link href="assets/css/operations-upgrade.css?v=1.0.2" rel="stylesheet">
-  <link href="assets/css/bo-ui-standard.css?v=1.0.1" rel="stylesheet" />
-  <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet" />
-
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Wallet Ledger</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+<link href="assets/css/reports.css?v=1.0.37" rel="stylesheet"/>
+<link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
+<link href="assets/css/operations-upgrade.css?v=1.0.2" rel="stylesheet"/>
+<link href="assets/css/bo-ui-standard.css?v=1.0.1" rel="stylesheet">
+<link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet">
 <style>
 /* Wallet Ledger themed multi-type dropdown */
 .ledger-type-field{min-width:190px!important;width:100%!important;max-width:none!important}
@@ -257,81 +257,77 @@ body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .
 </style>
 <body class="report-body standardized-listing-page wallet-ledger-page">
 <div class="report-shell">
-  <aside class="report-sidebar" id="reportSidebar">
-            <div class="report-brand">
-                <div>Backoffice<br /><small>Admin Panel</small></div><button class="close-side" data-close-sidebar><i
-                        class="bi bi-x-lg"></i></button>
-            </div>
-            <nav class="report-nav"></nav>
-        </aside>
-  <div class="sidebar-overlay" id="reportOverlay" data-close-sidebar></div>
-  <main class="report-main">
-    <header class="report-topbar">
-      <button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button>
-                <div class="user-title-wrap">
-                    <div class="user-title-icon"><i class="bi bi-journal-check"></i></div>
-                    <div>
-                        <h1>Wallet Ledger</h1>
-                        <p>Review all wallet movements except wallet-to-wallet transfers.</p>
-                    </div>
-                </div>
-                <div class="report-actions" data-bo-profile></div>
-    </header>
-    <section class="report-content">
-      <div class="quick-stats">
-        <div class="metric"><span>Deposit</span><strong id="wlDeposit">0.00</strong></div>
-        <div class="metric"><span>Withdraw</span><strong id="wlWithdraw">0.00</strong></div>
-        <div class="metric"><span>Transfer</span><strong id="wlTransfer">0.00</strong></div>
-        <div class="metric"><span>Bet Win/Lose</span><strong id="wlBetWinLose">0.00</strong></div>
-      </div>
-
-      <div class="filter-card">
-        <div class="user-search-grid bo-filter-row">
-          <div class="field"><label>From</label><input type="date" id="ledgerFrom"></div>
-          <div class="field"><label>To</label><input type="date" id="ledgerTo"></div>
-          <div class="field"><label>Member ID</label><input id="ledgerMemberId" placeholder="Optional"></div>
-          <div class="field"><label>Provider</label><input id="ledgerProviderCode" placeholder="LIVE22"></div>
-          <div class="field ledger-type-field"><label>Type</label>
-            <div class="ledger-type-multi" id="ledgerTypeMulti">
-              <input type="hidden" id="ledgerType" value="">
-              <button type="button" class="ledger-type-trigger" id="ledgerTypeTrigger" aria-expanded="false">
-                <span id="ledgerTypeLabel">All</span><i class="bi bi-chevron-down"></i>
-              </button>
-              <div class="ledger-type-menu" id="ledgerTypeMenu" hidden>
-                <label class="ledger-type-option ledger-type-all"><input type="checkbox" id="ledgerTypeAll" checked><span>All</span></label>
-                <div class="ledger-type-divider"></div>
-                <div id="ledgerTypeOptions"></div>
-              </div>
-            </div>
-          </div>
-          <div class="field"><label>Page Size</label><select id="ledgerSize"><option>20</option><option>50</option><option>100</option></select></div>
-          <div class="field user-filter-actions wallet-filter-actions"><label>&nbsp;</label><div class="filter-action-row"><button class="clean-btn" id="ledgerResetBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Reset</button><button class="btn-primary-clean" id="ledgerSearchBtn" type="button"><i class="bi bi-search"></i> Search</button></div></div>
-        </div>
-      </div>
-
-      <div class="table-card">
-        <div class="user-toolbar mb-3"><div class="user-badge"><i class="bi bi-receipt"></i><span>Ledger List</span></div><small class="text-muted" id="ledgerPageInfo"></small></div>
-        <div class="table-wrap">
-          <table class="report-table">
-            <thead><tr><th>Created Time</th><th>Posted Time</th><th>Member</th><th>Provider</th><th>Type</th><th>Amount</th><th>Before</th><th>After</th><th>Game</th><th>Created By</th><th>Approved By</th><th>Reason Code</th><th>Related ID</th><th>Remark</th><th>Status</th></tr></thead>
-            <tbody id="walletLedgerBody"><tr><td colspan="15">Loading...</td></tr></tbody>
-          </table>
-        </div>
-        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
-          <button class="clean-btn" type="button" id="ledgerPrevBtn">Previous</button>
-          <span id="ledgerPager" class="text-muted small"></span>
-          <button class="clean-btn" type="button" id="ledgerNextBtn">Next</button>
-        </div>
-      </div>
-    </section>
-  </main>
+<aside class="report-sidebar" id="reportSidebar">
+<div class="report-brand">
+<div>Backoffice<br/><small>Admin Panel</small></div><button class="close-side" data-close-sidebar=""><i class="bi bi-x-lg"></i></button>
+</div>
+<nav class="report-nav"></nav>
+</aside>
+<div class="sidebar-overlay" data-close-sidebar="" id="reportOverlay"></div>
+<main class="report-main">
+<header class="report-topbar">
+<button class="hamb" data-open-sidebar=""><i class="bi bi-list"></i></button>
+<div class="user-title-wrap">
+<div class="user-title-icon"><i class="bi bi-journal-check"></i></div>
+<div>
+<h1>Wallet Ledger</h1>
+<p>Review all wallet movements except wallet-to-wallet transfers.</p>
+</div>
+</div>
+<div class="report-actions" data-bo-profile=""></div>
+</header>
+<section class="report-content">
+<div class="quick-stats">
+<div class="metric"><span>Deposit</span><strong id="wlDeposit">0.00</strong></div>
+<div class="metric"><span>Withdraw</span><strong id="wlWithdraw">0.00</strong></div>
+<div class="metric"><span>Transfer</span><strong id="wlTransfer">0.00</strong></div>
+<div class="metric"><span>Bet Win/Lose</span><strong id="wlBetWinLose">0.00</strong></div>
+</div>
+<div class="filter-card">
+<div class="user-search-grid bo-filter-row">
+<div class="field"><label>From</label><input id="ledgerFrom" type="date"/></div>
+<div class="field"><label>To</label><input id="ledgerTo" type="date"/></div>
+<div class="field"><label>Member ID</label><input id="ledgerMemberId" placeholder="Optional"/></div>
+<div class="field"><label>Provider</label><input id="ledgerProviderCode" placeholder="LIVE22"/></div>
+<div class="field ledger-type-field"><label>Type</label>
+<div class="ledger-type-multi" id="ledgerTypeMulti">
+<input id="ledgerType" type="hidden" value=""/>
+<button aria-expanded="false" class="ledger-type-trigger" id="ledgerTypeTrigger" type="button">
+<span id="ledgerTypeLabel">All</span><i class="bi bi-chevron-down"></i>
+</button>
+<div class="ledger-type-menu" hidden="" id="ledgerTypeMenu">
+<label class="ledger-type-option ledger-type-all"><input checked="" id="ledgerTypeAll" type="checkbox"/><span>All</span></label>
+<div class="ledger-type-divider"></div>
+<div id="ledgerTypeOptions"></div>
+</div>
+</div>
+</div>
+<div class="field"><label>Page Size</label><select id="ledgerSize"><option>20</option><option>50</option><option>100</option></select></div>
+<div class="field user-filter-actions wallet-filter-actions"><label> </label><div class="filter-action-row"><button class="clean-btn" id="ledgerResetBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Reset</button><button class="btn-primary-clean" id="ledgerSearchBtn" type="button"><i class="bi bi-search"></i> Search</button></div></div>
+</div>
+</div>
+<div class="table-card">
+<div class="user-toolbar mb-3"><div class="user-badge"><i class="bi bi-receipt"></i><span>Ledger List</span></div><small class="text-muted" id="ledgerPageInfo"></small></div>
+<div class="table-wrap">
+<table class="report-table">
+<thead><tr><th>Created Time</th><th>Posted Time</th><th>Member</th><th>Provider</th><th>Type</th><th>Amount</th><th>Before</th><th>After</th><th>Game</th><th>Created By</th><th>Approved By</th><th>Reason Code</th><th>Related ID</th><th>Remark</th><th>Status</th></tr></thead>
+<tbody id="walletLedgerBody"><tr><td colspan="15">Loading...</td></tr></tbody>
+</table>
+</div>
+<div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+<button class="clean-btn" id="ledgerPrevBtn" type="button">Previous</button>
+<span class="text-muted small" id="ledgerPager"></span>
+<button class="clean-btn" id="ledgerNextBtn" type="button">Next</button>
+</div>
+</div>
+</section>
+</main>
 </div>
 <script src="assets/js/config.js?v=1.0.32"></script>
 <script src="assets/js/auth.js?v=1.0.33"></script>
 <script src="assets/js/reports.js?v=1.0.13"></script>
-<script src="assets/js/wallet-ledger.js?v=1.0.9"></script>
-  <script src="assets/js/bo-date-range.js?v=1.0.10"></script>
-
+<script src="assets/js/wallet-ledger.js?v=1.0.10"></script>
+<script src="assets/js/bo-date-range.js?v=1.0.10"></script>
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
@@ -339,6 +335,6 @@ body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .
 <script src="assets/js/livechat-global-notification.js?v=20260811-global-v3"></script>
 <script src="assets/js/pagination-standardizer.js?v=1.0.1"></script>
 <script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
-  <script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
+<script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
 </body>
-</html>
+</link></link></head></html>
