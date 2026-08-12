@@ -511,7 +511,7 @@
       if(key==='lastDeposit') return dt(first(m,['lastDepositAt','lastDeposit','last_deposit_at'], ''));
       if(key==='lastLogin') return dt(first(m,['lastLoginAt','lastLogin','last_login_at'], ''));
       if(key==='lastLoginSource') return [first(m,['lastLoginDomain'],''),first(m,['lastLoginIp'],'')].filter(Boolean).join(' / ');
-      if(key==='vipLevel') return 'VIP '+first(m,['vipLevel'],0);
+      if(key==='vipLevel') return first(m,['vipLevelName'], 'VIP '+first(m,['vipLevel'],0));
       if(key==='kycStatus') return first(m,['kycStatus'],'UNVERIFIED');
       if(key==='status') return memberStatus(m);
       return '';
@@ -569,7 +569,7 @@
         ${cell('lastDeposit', esc(dt(first(m,['lastDepositAt','lastDeposit','last_deposit_at'], ''))))}
         ${cell('lastLogin', esc(dt(first(m,['lastLoginAt','lastLogin','last_login_at'], ''))))}
         ${cell('lastLoginSource', `<b>${esc(first(m,['lastLoginDomain'],'-'))}</b><br><small>${esc(first(m,['lastLoginIp'],'-'))}</small>`)}
-        ${cell('vipLevel', 'VIP '+esc(first(m,['vipLevel'],0)))}
+        ${cell('vipLevel', `<b>${esc(first(m,['vipLevelName'],'VIP '+first(m,['vipLevel'],0)))}</b><br><small>VIP ${esc(first(m,['vipLevel'],0))} · ${Number(first(m,['vipExperience'],0)||0).toLocaleString()} EXP</small>`)}
         ${cell('kycStatus', esc(first(m,['kycStatus'],'UNVERIFIED')))}
         ${cell('status', `<small class="status-pill ${locked?'off':''}">${esc(status)}</small>`)}
         ${cell('action', `<div class="user-row-actions"><button class="icon-action view" title="View" data-member-wallet="${esc(id)}"><i class="bi bi-eye"></i></button><button class="icon-action" title="${locked?'Unlock':'Lock'}" data-member-lock="${esc(id)}" data-lock="${locked?0:1}"><i class="bi ${locked?'bi-unlock':'bi-lock'}"></i></button></div>`)}
@@ -591,7 +591,7 @@
             <span>Withdraw</span><b>${money(first(m,MONEY_KEYS.withdraw,0))}</b>
             <span>Win/Loss</span><b>${money(first(m,MONEY_KEYS.winLoss,0))}</b>
             <span>Bonus</span><b>${money(first(m,MONEY_KEYS.bonus,0))}</b>
-            <span>Commission</span><b>${money(first(m,MONEY_KEYS.commission,0))}</b><span>VIP / KYC / Risk</span><b>VIP ${esc(first(m,['vipLevel'],0))} · ${esc(first(m,['kycStatus'],'UNVERIFIED'))} · ${esc(first(m,['riskStatus'],'NORMAL'))}</b>
+            <span>Commission</span><b>${money(first(m,MONEY_KEYS.commission,0))}</b><span>VIP / KYC / Risk</span><b>${esc(first(m,['vipLevelName'],'VIP '+first(m,['vipLevel'],0)))} · ${Number(first(m,['vipExperience'],0)||0).toLocaleString()} EXP · ${esc(first(m,['kycStatus'],'UNVERIFIED'))} · ${esc(first(m,['riskStatus'],'NORMAL'))}</b>
           </div>
           <div class="d-grid gap-2 mt-3">
             <button class="clean-btn primary w-100" data-member-wallet="${esc(id)}">View Details</button>
