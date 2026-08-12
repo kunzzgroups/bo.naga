@@ -106,7 +106,7 @@
     if(profile) profile.innerHTML = infoGrid([
       ['Username', first(member,['username'], '-')], ['Full Name', first(member,['fullName','name','displayName'], '-')],
       ['Mobile', first(member,['mobile','phone','mobileNo'], '-')], ['Status', memberStatus(member)],
-      ['Referrer', first(member,['referrerCode','referrer','agent'], '-')], ['Top Referrer', first(member,['topReferrer','topAgent','upline'], '-')],
+      ['Referrer', first(member,['referrerName','referrerFullName','referrerUsername','agentName','referrer'], '-')], ['Top Referrer', first(member,['topReferrer','topAgent','upline'], '-')],
       ['Register Date', dt(first(member,['createdAt','registerDate','created_at'], ''))], ['Last Login', dt(first(member,['lastLoginAt','lastLogin','last_login_at'], ''))],
       ['Last Deposit', dt(first(member,['lastDepositAt','lastDeposit','last_deposit_at'], ''))]
     ]);
@@ -389,7 +389,7 @@
     const visit = val('memberSearchVisit');
     const hayName = `${first(m,['username'], '')} ${first(m,['fullName','name','displayName'], '')}`.toLowerCase();
     const hayMobile = String(first(m,['mobile','phone','mobileNo'], '')).toLowerCase();
-    const hayAgent = String(first(m,['referrerCode','referrer','agent','agentName'], '')).toLowerCase();
+    const hayAgent = String(first(m,['referrerName','referrerFullName','referrerUsername','agentName','referrer'], '')).toLowerCase();
     const hayBank = String(first(m,['bank','bankName'], '')).toLowerCase();
     const rowStatus = memberStatus(m).toLowerCase();
     const rowLock = rowStatus === 'locked' ? 'locked' : 'normal';
@@ -499,7 +499,7 @@
       if(key==='mobile') return first(m,['mobile','phone','mobileNo'], '-');
       if(key==='bankAccount') return first(m,['bankAccount','bankAccountNumber','bankAccountNo','accountNo'], '-');
       if(key==='bank') return first(m,['bank','bankName'], '-');
-      if(key==='referrer') return first(m,['referrerUsername','referrerName','agentName','referrer','referrerCode'], '-');
+      if(key==='referrer') return first(m,['referrerName','referrerFullName','referrerUsername','agentName','referrer'], '-');
       if(key==='topReferrer') return first(m,['topReferrer','topAgent','upline'], '-');
       if(key==='mainWallet') return money(first(m,['mainWalletBalance','mainBalance','balance'],0));
       if(key==='deposit') return money(first(m,MONEY_KEYS.deposit,0));
@@ -557,7 +557,7 @@
         ${cell('mobile', esc(first(m,['mobile','phone','mobileNo'], '-')))}
         ${cell('bankAccount', esc(first(m,['bankAccount','bankAccountNumber','bankAccountNo','accountNo'], '-')))}
         ${cell('bank', esc(first(m,['bank','bankName'], '-')))}
-        ${cell('referrer', esc(first(m,['referrerCode','referrer','agent','agentName'], '-')))}
+        ${cell('referrer', esc(first(m,['referrerName','referrerFullName','referrerUsername','agentName','referrer'], '-')))}
         ${cell('topReferrer', esc(first(m,['topReferrer','topAgent','upline'], '-')))}
         ${cell('mainWallet', money(first(m,['mainWalletBalance','mainBalance','balance'],0)), 'money-strong')}
         ${cell('deposit', money(first(m,MONEY_KEYS.deposit,0)))}

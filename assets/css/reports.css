@@ -5677,3 +5677,21 @@ body.withdraw-approval-page .report-table .btn{min-width:82px;font-weight:700;bo
 .promo-provider-rules{margin-top:0}
 .promo-provider-rule .category-provider-game-info b{font-size:13px}.promo-provider-rule .category-provider-game-info small{font-size:11px}
 @media(max-width:700px){.promo-game-access-section-title{align-items:flex-start;flex-direction:column;gap:3px}.promo-provider-selector{grid-template-columns:1fr 1fr}.promo-provider-choice{min-width:0}}
+\n/* Referral table 2026-08-12: compact 7-column layout; keep View/Reward actions visible. */
+.referral-page .ref-table-wrap{overflow-x:auto!important;overflow-y:hidden!important}
+.referral-page .ref-members-table{min-width:650px!important;table-layout:fixed!important}
+.referral-page .ref-members-table th:nth-child(1),.referral-page .ref-members-table td:nth-child(1){width:38px!important;text-align:center!important}
+.referral-page .ref-members-table th:nth-child(2),.referral-page .ref-members-table td:nth-child(2){width:27%!important}
+.referral-page .ref-members-table th:nth-child(3),.referral-page .ref-members-table td:nth-child(3){width:20%!important}
+.referral-page .ref-members-table th:nth-child(4),.referral-page .ref-members-table td:nth-child(4){width:46px!important;text-align:center!important}
+.referral-page .ref-members-table th:nth-child(5),.referral-page .ref-members-table td:nth-child(5){width:19%!important}
+.referral-page .ref-members-table th:nth-child(6),.referral-page .ref-members-table td:nth-child(6){width:102px!important;text-align:center!important}
+.referral-page .ref-members-table th:nth-child(7),.referral-page .ref-members-table td:nth-child(7){width:82px!important;text-align:center!important;overflow:visible!important}
+.referral-page .ref-action-buttons{display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;white-space:nowrap!important}
+.referral-page .ref-view-btn.ref-view-icon,.referral-page .ref-config-btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 32px!important;width:32px!important;min-width:32px!important;height:32px!important;padding:0!important}
+.referral-page .ref-downline-table{min-width:520px!important;table-layout:fixed!important}
+.referral-page .ref-downline-table th:nth-child(1),.referral-page .ref-downline-table td:nth-child(1){width:38px!important;text-align:center!important}
+.referral-page .ref-downline-table th:nth-child(2),.referral-page .ref-downline-table td:nth-child(2){width:34%!important}
+.referral-page .ref-downline-table th:nth-child(3),.referral-page .ref-downline-table td:nth-child(3){width:28%!important}
+.referral-page .ref-downline-table th:nth-child(4),.referral-page .ref-downline-table td:nth-child(4){width:110px!important;text-align:center!important}
+.referral-page .ref-downline-table th:nth-child(5),.referral-page .ref-downline-table td:nth-child(5){width:92px!important;text-align:right!important}
