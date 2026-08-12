@@ -1,6 +1,7 @@
 (function(){
   let page = 1;
   let totalPages = 1;
+  let currentRows = [];
 
   function pageButtons(current,total){
     total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
@@ -41,15 +42,16 @@
   function render(rows, pagination){
     const body = document.getElementById('memberWalletBody');
     if(!body) return;
+    currentRows = rows;
     updateMetrics(rows);
     if(!rows.length){ body.innerHTML = '<tr><td colspan="16">No wallet records found.</td></tr>'; }
     else body.innerHTML = rows.map(r => {
       const wl = num(r.winLoss);
-      return `<tr>
+      return `<tr data-member-wallet-row="${esc(r.memberId)}">
         <td><b>${esc(r.username || '-')}</b><br><small>ID: ${esc(r.memberId || '-')} · ${esc(r.fullName || '-')}</small></td>
         <td><b>${money(r.mainWalletBalance)}</b></td>
-        <td><button class="wallet-total-link provider-wallet-total-link" type="button" data-provider-wallet-detail="${esc(r.memberId)}" data-provider-wallet-user="${esc(r.username||'')}" title="View provider wallet detail">${money(r.providerWalletBalance)}</button></td>
-        <td><b>${money(r.totalBalance)}</b></td>
+        <td><button class="wallet-total-link provider-wallet-total-link" type="button" data-provider-wallet-detail="${esc(r.memberId)}" data-provider-wallet-user="${esc(r.username||'')}" data-provider-total-cell="${esc(r.memberId)}" title="View provider wallet detail">${money(r.providerWalletBalance)}</button></td>
+        <td><b data-total-balance-cell="${esc(r.memberId)}">${money(r.totalBalance)}</b></td>
         <td>${money(r.totalDeposit)}</td>
         <td>${money(r.totalWithdraw)}</td>
         <td>${money(r.totalTransferIn)}</td>
@@ -70,7 +72,35 @@
     document.getElementById('walletPageInfo').textContent = `${total.toLocaleString()} record(s)`;
     document.getElementById('walletPrevBtn').disabled = page <= 1;
     document.getElementById('walletNextBtn').disabled = page >= totalPages;
+    refreshVisibleProviderBalances(rows);
   }
+
+  async function syncMemberProviderBalance(row){
+    if(!row || num(row.providerWalletBalance) <= 0) return;
+    try{
+      const json = await api(url('PROVIDER_WALLET_BALANCE')+'?memberId='+encodeURIComponent(row.memberId));
+      const data = json.data || {};
+      const providerTotal = num(data.providerWalletBalance);
+      row.providerWalletBalance = providerTotal;
+      row.totalBalance = num(row.mainWalletBalance) + providerTotal;
+      const providerCell=document.querySelector('[data-provider-total-cell="'+CSS.escape(String(row.memberId))+'"]');
+      const totalCell=document.querySelector('[data-total-balance-cell="'+CSS.escape(String(row.memberId))+'"]');
+      if(providerCell) providerCell.textContent=money(providerTotal);
+      if(totalCell) totalCell.textContent=money(row.totalBalance);
+      updateMetrics(currentRows);
+    }catch(e){
+      console.warn('Provider balance live sync failed for member', row.memberId, e);
+    }
+  }
+
+  async function refreshVisibleProviderBalances(rows){
+    // Only members with a locally tracked provider balance need an external refresh.
+    // Keep this sequential so opening the wallet page does not burst provider APIs.
+    for(const row of rows){
+      if(num(row.providerWalletBalance) > 0) await syncMemberProviderBalance(row);
+    }
+  }
+
   async function load(){
     const body=document.getElementById('memberWalletBody'); if(body) body.innerHTML='<tr><td colspan="16">Loading wallet list...</td></tr>';
     try{
@@ -93,12 +123,24 @@
     document.body.classList.add('modal-open');
     body.innerHTML='<tr><td colspan="6">Loading provider accounts...</td></tr>';
     try{
-      const json=await api(url('MEMBER_WALLET_PROVIDER_ACCOUNTS')+'?memberId='+encodeURIComponent(memberId));
-      const rows = Array.isArray(json.data)
-        ? json.data
-        : (Array.isArray(json.data?.accounts)
-            ? json.data.accounts
-            : (Array.isArray(json.data?.content) ? json.data.content : []));
+      const json=await api(url('PROVIDER_WALLET_BALANCE')+'?memberId='+encodeURIComponent(memberId));
+      const data=json.data||{};
+      const rows = Array.isArray(data.providers)
+        ? data.providers
+        : (Array.isArray(data.accounts)
+            ? data.accounts
+            : (Array.isArray(data.content) ? data.content : []));
+
+      const listedRow=currentRows.find(r=>String(r.memberId)===String(memberId));
+      if(listedRow){
+        listedRow.providerWalletBalance=num(data.providerWalletBalance);
+        listedRow.totalBalance=num(listedRow.mainWalletBalance)+listedRow.providerWalletBalance;
+        const providerCell=document.querySelector('[data-provider-total-cell="'+CSS.escape(String(memberId))+'"]');
+        const totalCell=document.querySelector('[data-total-balance-cell="'+CSS.escape(String(memberId))+'"]');
+        if(providerCell) providerCell.textContent=money(listedRow.providerWalletBalance);
+        if(totalCell) totalCell.textContent=money(listedRow.totalBalance);
+        updateMetrics(currentRows);
+      }
       const sorted=rows.slice().sort((a,b)=>num(b.balance??b.providerBalance??b.walletBalance)-num(a.balance??a.providerBalance??a.walletBalance));
       const totalLeft=sorted.reduce((sum,r)=>sum+num(r.balance??r.providerBalance??r.walletBalance),0);
       body.innerHTML=sorted.length?(sorted.map(r=>{
