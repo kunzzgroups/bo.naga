@@ -2,10 +2,12 @@
   let allMembers = [];
   let selectedWalletMember = null;
   let selectedWalletBalance = 0;
+  let walletBankOptions = [];
   const bulkSelectedMemberIds = new Set();
   const MEMBER_WALLET_API = {
     balance: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.MEMBER_WALLET_BALANCE,
     adjust: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.MEMBER_WALLET_ADJUST,
+    bankOptions: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.MEMBER_WALLET_BANK_OPTIONS,
     bulkAdjust: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.MEMBER_WALLET_BULK_ADJUST,
     providerAccounts: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.MEMBER_WALLET_PROVIDER_ACCOUNTS,
     ledgerList: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.WALLET_LEDGER_LIST,
@@ -254,6 +256,39 @@
     }).join('');
   }
 
+  function walletBankText(b){
+    const name=first(b,['bankName','displayName'],'Bank');
+    const display=first(b,['displayName'],'');
+    const acct=first(b,['accountNumber'],'');
+    return [name, display && display!==name ? display : '', acct].filter(Boolean).join(' · ');
+  }
+  function renderWalletBankOptions(){
+    const type=document.getElementById('walletAdjustType')?.value||'DEPOSIT';
+    const amount=Math.abs(Number(document.getElementById('walletAdjustAmount')?.value||0));
+    const field=document.getElementById('walletBankField'), select=document.getElementById('walletPaymentMethodId');
+    const label=document.getElementById('walletBankLabel'), hint=document.getElementById('walletBankHint');
+    if(!field||!select)return;
+    if(type==='ADJUSTMENT'){ field.hidden=true; select.value=''; return; }
+    field.hidden=false;
+    if(label)label.textContent=type==='DEPOSIT'?'Casino Receiving Bank':'Casino Funding Bank';
+    const current=select.value;
+    select.innerHTML='<option value="">-- Select casino bank / payment method --</option>'+walletBankOptions.map(b=>{
+      const usage=num(b.usage);
+      const insufficient=type==='WITHDRAW' && (usage<=0 || (amount>0 && usage<amount));
+      const status=type==='WITHDRAW'?' · Usage MYR '+money(usage)+(insufficient?' · INSUFFICIENT':''):'';
+      return '<option value="'+esc(b.id)+'" '+(insufficient?'disabled':'')+'>'+esc(walletBankText(b)+status)+'</option>';
+    }).join('');
+    if([...select.options].some(o=>o.value===current&&!o.disabled)) select.value=current;
+    if(hint) hint.textContent=type==='DEPOSIT'
+      ? 'This manual topup adds to the selected bank usage.'
+      : 'This manual withdrawal deducts from the selected bank usage. Banks with 0.00 or insufficient usage are disabled.';
+  }
+  async function loadWalletBankOptions(){
+    const json=await api(MEMBER_WALLET_API.bankOptions,{headers:{...BO_AUTH.authHeader()}});
+    walletBankOptions=Array.isArray(json.data)?json.data:[];
+    renderWalletBankOptions();
+  }
+
   function updateWalletPreview(){
     const type = document.getElementById('walletAdjustType')?.value || 'DEPOSIT';
     const amount = document.getElementById('walletAdjustAmount')?.value || 0;
@@ -281,6 +316,8 @@
     securityStatus('memberPasswordStatus','',''); securityStatus('memberTransactionPasswordStatus','','');
     document.getElementById('walletAdjustAmount').value = '';
     document.getElementById('walletAdjustRemark').value = '';
+    const bankSelect=document.getElementById('walletPaymentMethodId'); if(bankSelect) bankSelect.value='';
+    loadWalletBankOptions().catch(err=>walletStatus(err.message || 'Load casino banks failed','error'));
     walletStatus('', ''); walletResult(null);
     renderMemberInfo(member);
     fillBankEdit(member);
@@ -297,14 +334,17 @@
     const type = document.getElementById('walletAdjustType').value;
     const amount = document.getElementById('walletAdjustAmount').value;
     const remark = document.getElementById('walletAdjustRemark').value;
+    const paymentMethodId = document.getElementById('walletPaymentMethodId')?.value || '';
     const amountNumber = Number(amount);
     if(!amount || !Number.isFinite(amountNumber) || (type !== 'ADJUSTMENT' && amountNumber <= 0) || (type === 'ADJUSTMENT' && amountNumber === 0)){ walletStatus(type === 'ADJUSTMENT' ? 'Please enter positive or negative adjustment amount.' : 'Please enter amount greater than 0.', 'error'); return; }
+    if(type !== 'ADJUSTMENT' && !paymentMethodId){ walletStatus(type==='DEPOSIT'?'Please select the casino receiving bank.':'Please select a casino funding bank with enough Bank Usage.','error'); return; }
     try{
       walletStatus('Processing main wallet...', '');
-      const json = await api(MEMBER_WALLET_API.adjust, {method:'POST', headers:{'Content-Type':'application/json', ...BO_AUTH.authHeader()}, body: JSON.stringify({memberId:Number(memberId), type, amount:Number(amount), externalTxId:'BO-MEMBER-' + Date.now(), remark})});
+      const json = await api(MEMBER_WALLET_API.adjust, {method:'POST', headers:{'Content-Type':'application/json', ...BO_AUTH.authHeader()}, body: JSON.stringify({memberId:Number(memberId), type, amount:Number(amount), paymentMethodId:type==='ADJUSTMENT'?null:Number(paymentMethodId), externalTxId:'BO-MEMBER-' + Date.now(), remark})});
       walletStatus(json.message || 'Main wallet updated.', 'success');
       walletResult(json.data);
       await loadMemberWallet(memberId);
+      await loadWalletBankOptions();
       await loadMembers();
     }catch(err){ walletStatus(err.message || 'Wallet adjustment failed', 'error'); }
   }
@@ -932,10 +972,10 @@
     document.getElementById('memberWalletModal')?.addEventListener('click', e=>{ if(e.target.id==='memberWalletModal') closeWalletModal(); });
     document.getElementById('walletRefreshBtn')?.addEventListener('click', ()=>{ if(selectedWalletMember) loadMemberWallet(first(selectedWalletMember,['id','memberId','userId'], '')).catch(err=>walletStatus(err.message || 'Load wallet failed', 'error')); });
     document.getElementById('walletSubmitBtn')?.addEventListener('click', submitWalletAdjust);
-    document.getElementById('walletAdjustType')?.addEventListener('change', updateWalletPreview);
+    document.getElementById('walletAdjustType')?.addEventListener('change', ()=>{ updateWalletPreview(); renderWalletBankOptions(); });
     document.querySelectorAll('[data-wallet-tab]').forEach(btn=>btn.addEventListener('click', ()=>setWalletTab(btn.dataset.walletTab)));
     document.getElementById('walletProviderRefreshBtn')?.addEventListener('click', ()=>loadWalletProviderAccounts().catch(err=>renderProviderError(err.message)));
-    document.getElementById('walletAdjustAmount')?.addEventListener('input', updateWalletPreview);
+    document.getElementById('walletAdjustAmount')?.addEventListener('input', ()=>{ updateWalletPreview(); renderWalletBankOptions(); });
     document.getElementById('saveBankProfileBtn')?.addEventListener('click', saveBankProfile);
     document.getElementById('resetMemberPasswordBtn')?.addEventListener('click', resetMemberPassword);
     document.getElementById('resetMemberTransactionPasswordBtn')?.addEventListener('click', resetMemberTransactionPassword);
