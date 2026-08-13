@@ -52,3 +52,124 @@ body.vip-modal-open .report-shell{filter:none}
 .vip-worker-grid{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:14px}.vip-worker-grid label{display:flex;flex-direction:column;gap:6px;font-weight:700;color:#42506a}.vip-worker-grid input,.vip-worker-grid select{height:42px;border:1px solid #cfdaec;border-radius:10px;padding:0 12px;background:#fff}.vip-worker-status{margin-top:14px;padding:12px 14px;border-radius:10px;background:#f6f8fc;color:#59657a;font-size:13px}@media(max-width:900px){.vip-worker-grid{grid-template-columns:1fr 1fr}}@media(max-width:560px){.vip-worker-grid{grid-template-columns:1fr}}
 
 .vip-worker-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;margin-bottom:14px}.vip-worker-actions .clean-btn{min-width:150px;justify-content:center}.vip-worker-actions .spinner-border{margin-right:7px}@media(max-width:640px){.vip-worker-actions{display:grid;grid-template-columns:1fr}.vip-worker-actions .clean-btn{width:100%}}
+
+/* VIP nested progression builder */
+.vip-step-fieldset{background:#f7faff!important;border:1px solid #d7e1f0!important;padding:16px!important}
+.vip-step-help{grid-column:1/-1;color:#6d7890;font-size:12px;line-height:1.5;margin:-4px 0 2px}
+.vip-step-toolbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.vip-step-toolbar span{font-size:12px;font-weight:800;color:#5d6a83}
+.vip-step-list{grid-column:1/-1;display:grid;gap:10px}
+.vip-step-row{display:grid;grid-template-columns:70px minmax(120px,1fr) 115px 115px 100px 120px minmax(160px,1.4fr) 80px 42px;gap:8px;align-items:end;background:#fff;border:1px solid #dce4f0;border-radius:12px;padding:10px}
+.vip-step-row label{margin:0!important;font-size:11px!important}.vip-step-row input,.vip-step-row select{margin-top:5px!important;padding:8px 9px!important}
+.vip-step-no{align-self:center;text-align:center;font-size:13px;font-weight:900;color:#2459c4;background:#edf4ff;border-radius:10px;padding:10px 5px}
+.vip-step-remove{height:38px;border:1px solid #ffd7db;border-radius:10px;background:#fff5f6;color:#d93648}
+.vip-step-empty{padding:18px;text-align:center;color:#8490a6;border:1px dashed #ccd6e5;border-radius:12px;background:#fff}
+@media(max-width:1180px){.vip-step-row{grid-template-columns:60px repeat(3,minmax(120px,1fr));}.vip-step-remove{grid-column:auto}.vip-step-row label:nth-of-type(n+4){}}
+@media(max-width:720px){.vip-step-row{grid-template-columns:1fr 1fr}.vip-step-no{grid-column:1/-1}.vip-step-remove{width:100%}}
+
+/* VIP progression steps horizontal scroll fix v1.4.1 */
+.vip-step-fieldset{
+  min-width:0!important;
+  overflow:hidden!important;
+}
+.vip-step-list{
+  min-width:0!important;
+  width:100%!important;
+  overflow-x:auto!important;
+  overflow-y:visible!important;
+  padding-bottom:8px;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-gutter:stable;
+}
+.vip-step-row{
+  min-width:1050px!important;
+  grid-template-columns:70px 120px 115px 115px 100px 120px 160px 80px 42px!important;
+  width:max-content!important;
+}
+.vip-step-list::-webkit-scrollbar{height:10px}
+.vip-step-list::-webkit-scrollbar-track{background:#eef3f9;border-radius:999px}
+.vip-step-list::-webkit-scrollbar-thumb{background:#b8c6dc;border-radius:999px;border:2px solid #eef3f9}
+.vip-step-list::-webkit-scrollbar-thumb:hover{background:#8fa4c4}
+@media(max-width:1180px){
+  .vip-step-row{
+    min-width:1050px!important;
+    grid-template-columns:70px 120px 115px 115px 100px 120px 160px 80px 42px!important;
+  }
+}
+@media(max-width:720px){
+  .vip-step-row{
+    min-width:1050px!important;
+    grid-template-columns:70px 120px 115px 115px 100px 120px 160px 80px 42px!important;
+  }
+  .vip-step-no{grid-column:auto!important}
+  .vip-step-remove{width:42px!important}
+}
+
+/* VIP progression fieldset/button visibility + horizontal scroll fix v1.4.2 */
+.vip-step-fieldset{
+  min-width:0!important;
+  min-inline-size:0!important;
+  width:100%!important;
+  max-width:100%!important;
+  overflow:visible!important;
+  box-sizing:border-box!important;
+}
+.vip-step-help,
+.vip-step-toolbar,
+.vip-step-list{
+  min-width:0!important;
+  max-width:100%!important;
+}
+.vip-step-toolbar{
+  display:flex!important;
+  visibility:visible!important;
+  position:relative!important;
+  z-index:2!important;
+  min-height:42px!important;
+  margin-top:2px!important;
+  margin-bottom:2px!important;
+}
+#vipAddStep{
+  display:inline-flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  flex:0 0 auto!important;
+}
+.vip-step-list{
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  width:100%!important;
+  box-sizing:border-box!important;
+}
+
+/* VIP progression status dropdown alignment fix v1.4.3 */
+.vip-step-row{position:relative!important;overflow:visible!important}
+.vip-step-status-field{position:relative!important;z-index:8!important;min-width:0!important}
+.vip-step-status-select{position:relative!important;width:100%!important;margin-top:5px!important}
+.vip-step-status-select input[type="hidden"]{display:none!important}
+.vip-step-status-btn{
+  width:100%!important;height:38px!important;margin:0!important;padding:0 10px!important;
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:6px!important;
+  border:1px solid #cbd8ec!important;border-radius:10px!important;background:#fff!important;color:#17233c!important;
+  font-size:12px!important;font-weight:800!important;line-height:1!important;box-sizing:border-box!important;
+}
+.vip-step-status-btn:focus,.vip-step-status-select.open .vip-step-status-btn{border-color:#6b8cff!important;box-shadow:0 0 0 2px rgba(76,105,255,.13)!important;outline:none!important}
+.vip-step-status-btn i{font-size:10px!important;transition:transform .15s ease}
+.vip-step-status-select.open .vip-step-status-btn i{transform:rotate(180deg)}
+.vip-step-status-menu{
+  display:none;position:absolute!important;left:0!important;right:0!important;bottom:calc(100% + 6px)!important;
+  z-index:9999!important;padding:5px!important;border:1px solid #d7e1ef!important;border-radius:10px!important;
+  background:#fff!important;box-shadow:0 10px 26px rgba(25,45,80,.18)!important;box-sizing:border-box!important;
+}
+.vip-step-status-select.open .vip-step-status-menu{display:grid!important;gap:2px!important}
+.vip-step-status-menu button{
+  width:100%!important;height:34px!important;margin:0!important;padding:0 9px!important;border:0!important;border-radius:7px!important;
+  background:transparent!important;color:#34415a!important;display:flex!important;align-items:center!important;justify-content:space-between!important;
+  font-size:12px!important;font-weight:750!important;text-align:left!important;
+}
+.vip-step-status-menu button:hover{background:#f1f5ff!important;color:#315fe9!important}
+.vip-step-status-menu button i{visibility:hidden;color:#315fe9!important}
+.vip-step-status-menu button.selected{background:#eef3ff!important;color:#315fe9!important}
+.vip-step-status-menu button.selected i{visibility:visible!important}
+.vip-step-remove{align-self:end!important;margin:0!important}
+.vip-step-list{overflow-y:visible!important;padding-top:54px!important;margin-top:-54px!important}

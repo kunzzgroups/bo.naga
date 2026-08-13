@@ -15,6 +15,29 @@ function switchTab(name){document.querySelectorAll('[data-tab]').forEach(b=>b.cl
 
 document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
 
+
+function workerStatusText(status,run,detail){
+  const st=String(status||'').toUpperCase();
+  const when=run?date(run):'-';
+  return {title:(st?st.replaceAll('_',' ')+' · ':'')+when,detail:detail||'No run recorded'};
+}
+function renderWorkerSetting(s){
+  s=s||{};
+  input('rwAutomaticEnabled',s.automaticEnabled==null?1:s.automaticEnabled);
+  input('rwTimeZone',s.timeZone||'Asia/Kuala_Lumpur');
+  input('rwDailyEnabled',s.dailyEnabled==null?1:s.dailyEnabled);
+  input('rwDailyTime',s.dailyTime||'00:01');
+  input('rwWeeklyEnabled',s.weeklyEnabled==null?1:s.weeklyEnabled);
+  input('rwWeeklyDay',s.weeklyDay==null?1:s.weeklyDay);
+  input('rwWeeklyTime',s.weeklyTime||'00:15');
+  const d=workerStatusText(s.lastDailyStatus,s.lastDailyRun,s.lastDailyMessage),w=workerStatusText(s.lastWeeklyStatus,s.lastWeeklyRun,s.lastWeeklyMessage);
+  if($('rwLastDaily'))$('rwLastDaily').textContent=d.title;if($('rwLastDailyMessage'))$('rwLastDailyMessage').textContent=d.detail;
+  if($('rwLastWeekly'))$('rwLastWeekly').textContent=w.title;if($('rwLastWeeklyMessage'))$('rwLastWeeklyMessage').textContent=w.detail;
+}
+async function loadWorkerSetting(){try{renderWorkerSetting(await request(base+'/api/admin/rebate/worker-settings'));}catch(e){showError(e);}}
+function workerBody(){return{automaticEnabled:Number($('rwAutomaticEnabled').value),timeZone:$('rwTimeZone').value.trim(),dailyEnabled:Number($('rwDailyEnabled').value),dailyTime:$('rwDailyTime').value,weeklyEnabled:Number($('rwWeeklyEnabled').value),weeklyDay:Number($('rwWeeklyDay').value),weeklyTime:$('rwWeeklyTime').value};}
+const saveRebateWorker=$('saveRebateWorker');if(saveRebateWorker)saveRebateWorker.onclick=async()=>{try{const b=workerBody();if(!b.timeZone)throw Error('Timezone is required');if(!b.dailyTime)throw Error('Daily settlement time is required');if(!b.weeklyTime)throw Error('Weekly settlement time is required');const out=await request(base+'/api/admin/rebate/worker-settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});renderWorkerSetting(out);BO_DIALOG.alert('Rebate settlement schedule saved. The scheduler will use the new settings without server restart.',{title:'Schedule Saved'});}catch(e){showError(e);}};
+
 async function loadRules(){try{state.rules=await request(base+'/api/admin/rebate/rules')||[];state.rules.sort((a,b)=>(Number(b.priority||0)-Number(a.priority||0))||(Number(b.id)-Number(a.id)));$('ruleCount').textContent=state.rules.length.toLocaleString('en-US');$('activeRuleCount').textContent=state.rules.filter(x=>Number(x.status)===1).length.toLocaleString('en-US');renderRules();}catch(e){$('rebateRows').innerHTML='<tr><td colspan="9" class="table-empty">'+esc(e.message)+'</td></tr>';showError(e);}}
 function renderRules(){const size=Number($('rulePageSize').value||20),d=clientPage(state.rules,state.rulePage,size);state.rulePage=d.page;$('rebateRows').innerHTML=d.rows.length?d.rows.map((x,i)=>'<tr><td>'+(d.start+i+1)+'</td><td><div class="table-primary">'+esc(x.name)+'</div><small>#'+esc(x.id)+'</small></td><td><div class="table-primary">'+esc(x.providerCode||'All Providers')+'</div><small>'+esc(x.gameCategory||'All Categories')+(x.vipLevel?' · VIP '+esc(x.vipLevel):'')+'</small></td><td>'+money(x.minValidBet||0)+' – '+(x.maxValidBet==null||Number(x.maxValidBet)<=0?'No limit':money(x.maxValidBet))+'</td><td><b>'+Number(x.rebateRate||0).toFixed(6).replace(/0+$/,'').replace(/\.$/,'')+'%</b><small>Cap: '+(x.maxRebate==null||Number(x.maxRebate)<=0?'None':money(x.maxRebate))+'</small></td><td>'+esc((x.combinationMode||'HIGHER_RATE').replaceAll('_',' '))+'</td><td>'+esc((x.claimMode||'MANUAL').replaceAll('_',' '))+'<small>'+esc((x.settlementCycle||'DAILY').replaceAll('_',' '))+' settlement</small></td><td>'+statusBadge(x.status===1?'Active':'Inactive')+'</td><td><div class="standard-actions"><button class="icon-action-btn edit" data-edit="'+x.id+'" title="Edit"><i class="bi bi-pencil"></i></button><button class="icon-action-btn delete" data-delete="'+x.id+'" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>').join(''):'<tr><td colspan="9" class="table-empty">No rebate rules found.</td></tr>';const from=d.total?d.start+1:0,to=Math.min(d.start+size,d.total);$('rebateShowing').textContent='Showing '+from+' to '+to+' of '+d.total+' entries';pager('rebatePager',d.page,d.pages,p=>{state.rulePage=p;renderRules();});}
 function input(id,v){const e=$(id);if(e)e.value=v==null?'':v;}
@@ -80,5 +103,5 @@ $('closeAuditDetail').onclick=$('closeAuditDetailBottom').onclick=()=>setModal('
 async function loadRecon(){const size=Number($('reconPageSize').value||20),q=new URLSearchParams({page:state.reconPage,size});try{const d=await request(base+'/api/admin/rebate/reconciliations?'+q)||{},rows=d.content||[];state.reconLast=Math.max(0,(d.totalPages||0)-1);const issues=Number(d.totalElements||0)&&rows.filter(x=>String(x.status).toUpperCase()!=='MATCHED').length;$('reconIssueCount').textContent=Number(issues||0).toLocaleString('en-US');$('reconRows').innerHTML=rows.length?rows.map(x=>'<tr><td>'+date(x.createdAt)+'</td><td>#'+esc(x.sessionId||'-')+'</td><td>'+esc(x.memberId||'-')+'</td><td>'+esc(x.providerCode||'-')+'</td><td>'+money(x.expectedMain)+'</td><td>'+money(x.expectedBonus)+'</td><td>'+money(x.actualProviderBalance)+'</td><td class="'+(Math.abs(Number(x.differenceAmount||0))>.01?'negative':'')+'">'+money(x.differenceAmount)+'</td><td>'+statusBadge(x.status)+'</td><td class="detail-cell">'+esc(x.detail||'-')+'</td></tr>').join(''):'<tr><td colspan="10" class="table-empty">No reconciliation records found.</td></tr>';const from=d.numberOfElements?d.number*size+1:0,to=d.number*size+(d.numberOfElements||0);$('reconShowing').textContent='Showing '+from+' to '+to+' of '+(d.totalElements||0)+' entries';pager('reconPager',d.number||0,d.totalPages||0,p=>{state.reconPage=p;loadRecon();});}catch(e){$('reconRows').innerHTML='<tr><td colspan="10" class="table-empty">'+esc(e.message)+'</td></tr>';}}
 $('reconPageSize').onchange=()=>{state.reconPage=0;loadRecon();};$('refreshRecon').onclick=loadRecon;
 
-loadRules();loadBatches();
+loadWorkerSetting();loadRules();loadBatches();
 })();
