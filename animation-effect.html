@@ -15,15 +15,17 @@
   <aside class="report-sidebar" id="reportSidebar"><div class="report-brand"><div>Backoffice<br><small>Admin Panel</small></div><button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button></div><nav class="report-nav"></nav></aside>
   <div class="sidebar-overlay" id="reportOverlay" data-close-sidebar></div>
   <main class="report-main">
-    <header class="report-topbar"><button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button><div class="user-title-wrap"><div class="user-title-icon"><i class="bi bi-stars"></i></div><div><h1>Animation Effect</h1><p>Control category, provider, game and Site Customize asset animations without changing the frontend flow.</p></div></div><div class="report-actions" data-bo-profile></div></header>
+    <header class="report-topbar"><button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button><div class="user-title-wrap"><div class="user-title-icon"><i class="bi bi-stars"></i></div><div><h1>Animation Effect</h1><p>Control category, provider, game asset animations.</p></div></div><div class="report-actions" data-bo-profile></div></header>
     <section class="report-content">
       <div class="animation-layout">
         <section class="effect-card">
-          <div class="effect-title"><div><h3 id="effectFormTitle">Create Animation Rule</h3><p>More specific game rules override broader rules. Site Customize assets are targeted independently.</p></div></div>
+          <div class="effect-title"><div><h3 id="effectFormTitle">Create Animation Rule</h3><p>More specific game rules override broader rules.</p></div></div>
           <form id="effectForm">
             <input type="hidden" id="effectId">
             <div class="effect-grid two">
-              <label class="field"><span>Animate Element</span><select id="applyTo"><option value="CATEGORY">Category Button</option><option value="PROVIDER">Provider Card</option><option value="GAME" selected>Game Card</option><option value="SITE_ASSET">Site Customize Asset</option></select></label>
+              <label class="field"><span>Animate Element</span><select id="applyTo"><option value="CATEGORY">Category Button</option><option value="PROVIDER">Provider Card</option><option value="GAME" selected>Game Card</option>
+                <!-- <option value="SITE_ASSET">Site Customize Asset</option> -->
+              </select></label>
               <label class="field"><span>Scope</span><select id="scopeType"><option value="GLOBAL">All</option><option value="CATEGORY">One Category</option><option value="PROVIDER">One Provider</option><option value="GAME">One Game</option></select></label>
             </div>
             <label class="field" id="targetField" hidden><span id="targetLabel">Target</span><select id="targetValue"></select><small id="targetHelp"></small></label>
@@ -44,7 +46,7 @@
           </form>
         </section>
         <section class="effect-card">
-          <div class="effect-title list-title"><div><h3>Configured Rules</h3><p>Rules are additive and do not alter category/provider/game or Site Customize records.</p></div><button id="refreshEffect" class="clean-btn"><i class="bi bi-arrow-clockwise"></i> Refresh</button></div>
+          <div class="effect-title list-title"><div><h3>Configured Rules</h3><p>Rules are additive and do not alter category/provider/game records.</p></div><button id="refreshEffect" class="clean-btn"><i class="bi bi-arrow-clockwise"></i> Refresh</button></div>
           <div class="effect-table-wrap"><table class="effect-table"><thead><tr><th>Element</th><th>Scope / Target</th><th>Effect</th><th>Speed</th><th>Intensity</th><th>Status</th><th>Priority</th><th></th></tr></thead><tbody id="effectList"></tbody></table></div>
           <div id="effectEmpty" class="effect-empty" hidden>No animation rules configured. The frontend keeps its current built-in behaviour.</div>
         </section>
