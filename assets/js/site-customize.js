@@ -474,6 +474,26 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             css: data?.css || '',
             js: data?.js || ''
         };
+        if (sectionKey === 'animation-custom-effects' && !normalized.css.trim() && !normalized.js.trim()) {
+            normalized.css = `/* Example custom effect.
+   1) Rename ROBOT_HOVER here and in Animation Effect.
+   2) --naga-custom-animation lets the managed engine override existing category animations safely. */
+.naga-custom-effect-robot_hover {
+  --naga-custom-animation: titanRobotHover 2.2s ease-in-out infinite;
+}
+
+@keyframes titanRobotHover {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -7px, 0); }
+}`;
+            normalized.js = `/* Optional. CSS-only effects do not need JS.
+   Register only when your effect needs setup/cleanup or an explicit animation value. */
+// window.NAGA_ANIMATION_EFFECTS.register('ROBOT_HOVER', {
+//   className: 'naga-custom-effect-robot_hover',
+//   animation: 'titanRobotHover 2.2s ease-in-out infinite'
+// });`;
+            normalized.usingAnimationTemplate = true;
+        }
         if (DEFAULT_SECTION_HTML[sectionKey] && !normalized.html.trim()) {
             normalized.html = DEFAULT_SECTION_HTML[sectionKey];
             normalized.usingDefaultHtml = true;
@@ -495,16 +515,30 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 
     function updateEditorMode() {
         const isCssStyling = activeSection === 'home';
+        const isAnimationCustom = activeSection === 'animation-custom-effects';
 
-        if (htmlPane) htmlPane.style.display = isCssStyling ? 'none' : '';
+        // Custom animation effects are CSS/JS only. HTML stays untouched so this
+        // editor cannot accidentally replace any current Naga layout structure.
+        if (htmlPane) htmlPane.style.display = (isCssStyling || isAnimationCustom) ? 'none' : '';
         if (jsPane) jsPane.style.display = isCssStyling ? 'none' : '';
         if (cssPane) cssPane.style.display = '';
 
         if (codeGrid) {
             codeGrid.style.gridTemplateColumns = isCssStyling
                 ? 'minmax(0, 1fr)'
-                : 'repeat(3, minmax(0, 1fr))';
+                : isAnimationCustom
+                    ? 'repeat(2, minmax(0, 1fr))'
+                    : 'repeat(3, minmax(0, 1fr))';
         }
+
+        const cssLabel = cssPane?.querySelector('label');
+        const jsLabel = jsPane?.querySelector('label');
+        if (cssLabel) cssLabel.innerHTML = isAnimationCustom
+            ? 'Custom Animation CSS <small class="text-muted">(Use the same effect name configured in Animation Effect)</small>'
+            : 'CSS <small class="text-muted">(CSS Styling applies globally to TitanXgaming frontend)</small>';
+        if (jsLabel) jsLabel.innerHTML = isAnimationCustom
+            ? 'Custom Animation JS <small class="text-muted">(Optional. Avoid per-card timers; use NAGA_ANIMATION_EFFECTS.register)</small>'
+            : 'JS';
     }
 
     function updateHeader(button) {
@@ -628,11 +662,13 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             if (!res.ok) throw new Error(json.message || 'Load failed');
             const sectionData = withSectionDefaults(sectionKey, json.data || {});
             setEditors(sectionData);
-            setStatus(sectionData.usingDefaultHtml
-                ? 'Current Naga default HTML loaded. CSS and JS are blank so style.css and existing frontend scripts remain in use until you add overrides.'
-                : sectionData.upgradedAuthImages
-                    ? 'Existing text Login/Register buttons were converted to uploaded image HTML. Click Save Section to publish this updated layout.'
-                    : 'Latest active files loaded.', 'success');
+            setStatus(activeSection === 'animation-custom-effects'
+                ? (sectionData.usingAnimationTemplate ? 'Example template loaded. Rename the effect, edit it, then Save Section. After that select Custom CSS / JS in Animation Effect and enter the same effect name.' : 'Edit custom animation CSS and optional JS here. Save, then select Custom CSS / JS in Animation Effect and enter the matching effect name.')
+                : sectionData.usingDefaultHtml
+                    ? 'Current Naga default HTML loaded. CSS and JS are blank so style.css and existing frontend scripts remain in use until you add overrides.'
+                    : sectionData.upgradedAuthImages
+                        ? 'Existing text Login/Register buttons were converted to uploaded image HTML. Click Save Section to publish this updated layout.'
+                        : 'Latest active files loaded.', 'success');
         } catch (err) {
             setEditors({});
             setStatus(err.message || 'Load failed. Section files may not exist yet.', 'error');
@@ -666,7 +702,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             });
             const json = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(json.message || 'Save failed');
-            setStatus(activeSection === 'home' ? 'Saved. This CSS now overrides the TitanXgaming frontend after refresh.' : 'Saved. Section content now applies to the TitanXgaming frontend after refresh.', 'success');
+            setStatus(activeSection === 'home' ? 'Saved. This CSS now overrides the TitanXgaming frontend after refresh.' : activeSection === 'animation-custom-effects' ? 'Saved. Custom animation CSS/JS will be loaded by the managed animation engine after frontend refresh. No server file editing is needed.' : 'Saved. Section content now applies to the TitanXgaming frontend after refresh.', 'success');
         } catch (err) {
             setStatus(err.message || 'Save failed. Please check Spring Boot API.', 'error');
         } finally {

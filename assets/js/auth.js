@@ -125,6 +125,7 @@
     {menuKey:'game_category', title:'Game Category', url:'game-category.html', icon:'bi-grid-3x3-gap', parentKey:'game', sortOrder:70},
     {menuKey:'game_sub_category', title:'Game Sub Category', url:'game-sub-category.html', icon:'bi-diagram-3', parentKey:'game', sortOrder:71},
     {menuKey:'game', title:'Game', url:'game.html', icon:'bi-joystick', parentKey:'game', sortOrder:72},
+    {menuKey:'animation_effect', title:'Animation Effect', url:'animation-effect.html', icon:'bi-stars', parentKey:'game', sortOrder:73},
     {menuKey:'bonus_title', title:'Bonus Title', url:'bonus-category-title.html', icon:'bi-gift', parentKey:'bonus', sortOrder:80},
     {menuKey:'bonus_item', title:'Bonus Item', url:'bonus-category-item.html', icon:'bi-gift-fill', parentKey:'bonus', sortOrder:81},
     {menuKey:'promotion_bonus', title:'Promotion Bonus', url:'promotion.html', icon:'bi-gift', parentKey:'bonus', sortOrder:82},
@@ -188,7 +189,7 @@
     },
     enforcePageAccess: function(user){
       const current = pageName();
-      const alwaysAllowed = ['profile.html','change-password.html','rebate-management.html','rebate-log.html','manual-rebate-approval.html', 'timezone-setting.html', 'win-lose-report.html', 'bank-deposit-usage.html', 'daily-rebate-report.html', 'advertisement-popup.html'];
+      const alwaysAllowed = ['profile.html','change-password.html','rebate-management.html','animation-effect.html'];
       if(alwaysAllowed.indexOf(current) !== -1) return true;
       const menus = this.allowedMenus(user);
       if(!menus.length){

@@ -136,6 +136,9 @@ const API_CONFIG = window.API_CONFIG || {
         GAME_UPDATE: "/admin/game/update",
         GAME_DELETE: "/admin/game/delete",
         GAME_DOWNLOAD_IMAGES: "/admin/game/download-images",
+        ANIMATION_SETTING_LIST: "/admin/animation-setting/list",
+        ANIMATION_SETTING_SAVE: "/admin/animation-setting/save",
+        ANIMATION_SETTING_DELETE: "/admin/animation-setting/delete",
 
         FRONTEND_DISPLAY_SETTING: "/admin/frontend/display-setting",
         ADVERTISEMENT_POPUP: "/admin/frontend/ad-popup",
