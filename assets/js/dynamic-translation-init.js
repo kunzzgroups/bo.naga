@@ -1,6 +1,10 @@
 (function(){
   function init(){
     if(!window.DynamicTranslation) return;
+    // New declarative mode: no page-name registration is needed.
+    window.DynamicTranslation.autoAttach(document);
+
+    // Legacy pages below remain supported without changing their existing HTML.
     const page = (location.pathname.split('/').pop() || '').toLowerCase();
     const map = {
       'slider.html': {formId:'sliderForm', idSelector:'#sliderId', refType:'slider'},

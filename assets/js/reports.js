@@ -576,3 +576,22 @@ document.addEventListener('DOMContentLoaded', () => {
     prompt(message,defaultValue,options){return open(Object.assign({message:message,input:true,defaultValue:defaultValue||''},options||{}));}
   };
 })();
+
+
+/* Declarative dynamic-content translation loader.
+ * Future BO create/edit forms only need data-translation-ref-type + data-translation-id-selector.
+ * No per-page JavaScript registration is required. */
+(function(){
+  function boot(){
+    if(!document.querySelector('form[data-translation-ref-type]')) return;
+    if(window.DynamicTranslation){ window.DynamicTranslation.autoAttach(document); return; }
+    if(document.querySelector('script[data-dynamic-translation-loader]')) return;
+    const script=document.createElement('script');
+    script.src='assets/js/dynamic-translation.js?v=1.1.0';
+    script.async=false;
+    script.setAttribute('data-dynamic-translation-loader','1');
+    script.onload=function(){ if(window.DynamicTranslation) window.DynamicTranslation.autoAttach(document); };
+    document.head.appendChild(script);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
+})();

@@ -5698,3 +5698,7 @@ body.withdraw-approval-page .report-table .btn{min-width:82px;font-weight:700;bo
 .referral-page .ref-downline-table th:nth-child(3),.referral-page .ref-downline-table td:nth-child(3){width:28%!important}
 .referral-page .ref-downline-table th:nth-child(4),.referral-page .ref-downline-table td:nth-child(4){width:110px!important;text-align:center!important}
 .referral-page .ref-downline-table th:nth-child(5),.referral-page .ref-downline-table td:nth-child(5){width:92px!important;text-align:right!important}
+
+/* Generic dynamic translation module: multiline and rich HTML fields. */
+.dynamic-text-edit textarea{border:1px solid #dbe3ef;border-radius:12px;padding:10px 12px;background:#fff;width:100%;max-width:100%;box-sizing:border-box;resize:vertical;min-height:96px;font:inherit;line-height:1.5}
+.dynamic-field-hint{display:block;color:#64748b;font-size:12px;margin-top:-2px}

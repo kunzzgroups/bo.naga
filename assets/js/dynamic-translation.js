@@ -1,10 +1,13 @@
 (function(){
+  'use strict';
+
   function esc(v){return String(v ?? '').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));}
   function api(pathKey){return (window.API_CONFIG?.BASE_URL || '') + (window.API_CONFIG?.ENDPOINTS?.[pathKey] || '');}
   async function json(url,opt){const r=await fetch(url,opt); const j=await r.json().catch(()=>({})); if(!r.ok || j.status==='error') throw new Error(j.message||'Request failed'); return j;}
   function isImageField(field, input){return (input && input.type === 'file') || /image|icon|logo|favicon|banner|background|thumb|picture|photo/i.test(field);}
   function cleanFieldName(name){return String(name||'').replace(/Url$/,'').replace(/File$/,'');}
   function labelize(key){return String(key||'').replace(/([A-Z])/g,' $1').replace(/[_-]+/g,' ').replace(/^./,c=>c.toUpperCase());}
+  function truthy(v){return /^(1|true|yes|on)$/i.test(String(v||''));}
   const EXCLUDE = new Set(['id','sortOrder','status','categoryId','subCategoryId','providerCode','gameUrl','url','link','createdAt','updatedAt']);
 
   async function loadLanguages(){
@@ -21,23 +24,68 @@
     return data.data || {};
   }
 
-  function detectFields(form, extraFields){
-    const out = new Map();
-    (extraFields || []).forEach(f => out.set(f.key || f, {key:f.key || f, type:f.type || 'text', label:f.label || labelize(f.key || f)}));
-    form.querySelectorAll('input[name], textarea[name], select[name]').forEach(input => {
-      const raw = input.getAttribute('name');
-      if(!raw) return;
-      const key = cleanFieldName(raw);
-      if(EXCLUDE.has(key)) return;
-      if(/Zh$|Ms$|Th$|Vn$|Cn$|Jp$/i.test(raw)) return;
-      if(input.closest('[data-skip-translation]')) return;
-      const type = isImageField(key, input) ? 'image' : 'text';
-      if(type === 'text' && !['text','textarea','search'].includes(input.type || 'textarea') && input.tagName !== 'TEXTAREA') return;
-      out.set(key, {key, type, label: labelize(key)});
-    });
-    return [...out.values()];
+  function normalizeFieldDescriptor(raw){
+    if(typeof raw === 'string') raw={key:raw};
+    raw=raw||{};
+    const key=cleanFieldName(raw.key||'');
+    if(!key) return null;
+    let type=String(raw.type||'text').toLowerCase();
+    if(!['text','textarea','html','image'].includes(type)) type='text';
+    return {key, type, label:raw.label||labelize(key), rows:Number(raw.rows||0)||undefined};
   }
 
+  function descriptorFromElement(input, allowId){
+    if(!input || input.closest('[data-skip-translation]')) return null;
+    const explicitKey=input.getAttribute('data-translation-key');
+    const rawName=input.getAttribute('name');
+    const rawId=input.getAttribute('id');
+    const raw=explicitKey || rawName || (allowId ? rawId : '');
+    if(!raw) return null;
+    const key=cleanFieldName(raw);
+    if(EXCLUDE.has(key)) return null;
+    if(/Zh$|Ms$|Th$|Vn$|Cn$|Jp$/i.test(raw)) return null;
+
+    let type=String(input.getAttribute('data-translation-type')||'').toLowerCase();
+    if(!type){
+      if(isImageField(key,input)) type='image';
+      else if(input.tagName==='TEXTAREA') type='textarea';
+      else type='text';
+    }
+    if(!['text','textarea','html','image'].includes(type)) type='text';
+
+    if(type!=='image'){
+      const inputType=String(input.type||'').toLowerCase();
+      const allowedInput=['text','search','url','email','tel',''];
+      if(input.tagName!=='TEXTAREA' && !allowedInput.includes(inputType)) return null;
+    }
+
+    const label=input.getAttribute('data-translation-label') || input.closest('.field')?.querySelector('label')?.textContent?.trim() || labelize(key);
+    const rows=Number(input.getAttribute('data-translation-rows')||0)||undefined;
+    return {key,type,label,rows};
+  }
+
+  function detectFields(form, extraFields){
+    const out = new Map();
+    (extraFields || []).forEach(f=>{const d=normalizeFieldDescriptor(f); if(d) out.set(d.key,d);});
+
+    // Explicit data-translation-key always works, regardless of whether the element has name="" or id="".
+    form.querySelectorAll('[data-translation-key]').forEach(input=>{
+      const d=descriptorFromElement(input,true); if(d) out.set(d.key,d);
+    });
+
+    // Backward compatibility: existing pages use name="fieldKey" and require no extra markup.
+    form.querySelectorAll('input[name], textarea[name], select[name]').forEach(input=>{
+      const d=descriptorFromElement(input,false); if(d && !out.has(d.key)) out.set(d.key,d);
+    });
+
+    // Optional generic id-based mode for new pages. Enable once on the form with data-translation-use-id="true".
+    if(truthy(form.dataset.translationUseId)){
+      form.querySelectorAll('input[id], textarea[id], select[id]').forEach(input=>{
+        const d=descriptorFromElement(input,true); if(d && !out.has(d.key)) out.set(d.key,d);
+      });
+    }
+    return [...out.values()];
+  }
 
   function removeLegacyZh(form){
     form.querySelectorAll('[name$="Zh"], [id$="Zh"]').forEach(el => {
@@ -61,10 +109,20 @@
     panel = document.createElement('div');
     panel.className = 'dynamic-translation-panel';
     panel.setAttribute('data-dynamic-translation-panel','1');
-    panel.innerHTML = '<div class="dynamic-translation-head"><div><h3>Language Translation</h3></div><button class="clean-btn" type="button" data-refresh-translation><i class="bi bi-arrow-clockwise"></i> Refresh</button></div><div data-dynamic-translation-body class="dynamic-translation-body"><div class="slider-empty">Save or edit an item to manage translations.</div></div>';
+    panel.innerHTML = '<div class="dynamic-translation-head"><div><h3>Language Translation</h3><small>Translations are stored by content type + item ID + language + field key. Blank translation values automatically fall back to the default content.</small></div><button class="clean-btn" type="button" data-refresh-translation><i class="bi bi-arrow-clockwise"></i> Refresh</button></div><div data-dynamic-translation-body class="dynamic-translation-body"><div class="slider-empty">Save or edit an item to manage translations.</div></div>';
     const actions = form.querySelector('.slider-form-actions');
     if(actions) actions.before(panel); else form.appendChild(panel);
     return panel;
+  }
+
+  function textEditorHtml(f, value, langCode){
+    const common=`data-dt-text data-lang="${esc(langCode)}" data-field="${esc(f.key)}"`;
+    if(f.type==='textarea' || f.type==='html'){
+      const rows=f.rows || (f.type==='html'?9:5);
+      const hint=f.type==='html'?'<small class="dynamic-field-hint">HTML/rich-text markup is preserved.</small>':'';
+      return `<div class="dynamic-text-edit"><textarea rows="${rows}" ${common}>${esc(value)}</textarea>${hint}<button class="clean-btn primary" type="button" data-dt-save-text data-lang="${esc(langCode)}" data-field="${esc(f.key)}"><i class="bi bi-save"></i> Save Text</button></div>`;
+    }
+    return `<div class="dynamic-text-edit"><input type="text" value="${esc(value)}" ${common}><button class="clean-btn primary" type="button" data-dt-save-text data-lang="${esc(langCode)}" data-field="${esc(f.key)}"><i class="bi bi-save"></i> Save Text</button></div>`;
   }
 
   async function render(ctx){
@@ -74,6 +132,10 @@
     const fields = detectFields(ctx.form, ctx.fields);
     if(!refId){
       body.innerHTML = '<div class="slider-empty"><i class="bi bi-translate"></i><b>No item selected</b><small>Save default data first, then click Edit to add translations.</small></div>';
+      return;
+    }
+    if(!fields.length){
+      body.innerHTML = '<div class="slider-empty"><i class="bi bi-info-circle"></i><b>No translatable fields detected</b><small>Use name="fieldKey", data-translation-key="fieldKey", or enable id detection on the form.</small></div>';
       return;
     }
     body.innerHTML = '<div class="slider-empty"><i class="bi bi-hourglass-split"></i><b>Loading translations...</b></div>';
@@ -87,7 +149,7 @@
         const data = translations[lang.code] || {};
         return `<div class="dynamic-lang-card"><div class="dynamic-lang-title"><b>${esc(lang.name)}</b><small>${esc(lang.code)}</small></div>${fields.map(f=>{
           const value = f.type === 'image' ? (data[f.key+'Url'] || data[f.key] || '') : (data[f.key] || '');
-          return `<div class="dynamic-field-row"><label>${esc(f.label)}</label>${f.type === 'image' ? `<div class="dynamic-image-edit"><input type="file" accept="image/*" data-dt-file data-lang="${esc(lang.code)}" data-field="${esc(f.key)}"><div class="dynamic-image-preview">${value ? `<img src="${esc(value)}" alt="${esc(f.label)}">` : '<span>No image</span>'}</div><button class="clean-btn primary" type="button" data-dt-save-image data-lang="${esc(lang.code)}" data-field="${esc(f.key)}"><i class="bi bi-upload"></i> Save Image</button></div>` : `<div class="dynamic-text-edit"><input type="text" value="${esc(value)}" data-dt-text data-lang="${esc(lang.code)}" data-field="${esc(f.key)}"><button class="clean-btn primary" type="button" data-dt-save-text data-lang="${esc(lang.code)}" data-field="${esc(f.key)}"><i class="bi bi-save"></i> Save Text</button></div>`}</div>`;
+          return `<div class="dynamic-field-row"><label>${esc(f.label)}</label>${f.type === 'image' ? `<div class="dynamic-image-edit"><input type="file" accept="image/*" data-dt-file data-lang="${esc(lang.code)}" data-field="${esc(f.key)}"><div class="dynamic-image-preview">${value ? `<img src="${esc(value)}" alt="${esc(f.label)}">` : '<span>No image</span>'}</div><button class="clean-btn primary" type="button" data-dt-save-image data-lang="${esc(lang.code)}" data-field="${esc(f.key)}"><i class="bi bi-upload"></i> Save Image</button></div>` : textEditorHtml(f,value,lang.code)}</div>`;
         }).join('')}</div>`;
       }).join('');
     }catch(e){body.innerHTML = `<div class="slider-empty"><i class="bi bi-exclamation-triangle"></i><b>Unable to load translations</b><small>${esc(e.message)}</small></div>`;}
@@ -110,7 +172,6 @@
   }
 
   function previewSelectedImage(form, input){
-    const lang = input.dataset.lang;
     const field = input.dataset.field;
     const row = input.closest('.dynamic-image-edit');
     const preview = row ? row.querySelector('.dynamic-image-preview') : null;
@@ -129,9 +190,10 @@
   }
 
   function attach(options){
-    const form = document.getElementById(options.formId);
-    const idInput = document.querySelector(options.idSelector);
-    if(!form || !idInput || !options.refType) return;
+    const form = options.form || document.getElementById(options.formId);
+    const idInput = options.idInput || document.querySelector(options.idSelector);
+    if(!form || !idInput || !options.refType || form.dataset.dynamicTranslationAttached==='1') return;
+    form.dataset.dynamicTranslationAttached='1';
     removeLegacyZh(form);
     const ctx = {form, idInput, refType:options.refType, fields:options.fields || []};
     ensurePanel(form);
@@ -152,12 +214,21 @@
     render(ctx);
   }
 
-
+  function autoAttach(root){
+    const scope=root && root.querySelectorAll ? root : document;
+    scope.querySelectorAll('form[data-translation-ref-type]').forEach(form=>{
+      if(form.dataset.dynamicTranslationAttached==='1') return;
+      const refType=String(form.dataset.translationRefType||'').trim();
+      const selector=String(form.dataset.translationIdSelector||'').trim();
+      let idInput=selector ? document.querySelector(selector) : form.querySelector('[data-translation-id], input[type="hidden"][name="id"], input[type="hidden"][id$="Id"]');
+      if(refType && idInput) attach({form,idInput,refType});
+    });
+  }
 
   function attachAssetPanel(options){
     const container=document.querySelector(options.containerSelector || '.customize-card');
-    if(!container) return;
-    // Remove old hardcoded per-language asset rows such as logoUrlZh.
+    if(!container || container.dataset.dynamicTranslationAttached==='1') return;
+    container.dataset.dynamicTranslationAttached='1';
     container.querySelectorAll('.asset-upload-row[data-field$="Zh"]').forEach(x=>x.remove());
     const rows=[...container.querySelectorAll('.asset-upload-row[data-field]')].filter(r=>!/Zh$/i.test(r.dataset.field||''));
     if(!rows.length) return;
@@ -182,5 +253,7 @@
     render(ctx);
   }
 
-  window.DynamicTranslation = { attach, attachAssetPanel };
+  window.DynamicTranslation = { attach, attachAssetPanel, autoAttach, detectFields };
+  // Declarative mode: any future form can opt in with data-translation-ref-type and data-translation-id-selector.
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>autoAttach(document)); else autoAttach(document);
 })();
