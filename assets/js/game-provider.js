@@ -193,6 +193,63 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     if(text.length <= 4) return '••••';
     return text.slice(0, 2) + '••••••' + text.slice(-2);
   }
+  function providerActionConfigObject(item){
+    const raw = item?.apiActionConfigs ?? item?.api_action_configs ?? '';
+    if(!raw) return { config:{}, invalid:false };
+    if(typeof raw === 'object' && !Array.isArray(raw)) return { config:raw, invalid:false };
+    try{
+      const parsed = JSON.parse(String(raw));
+      return { config:(parsed && typeof parsed === 'object' && !Array.isArray(parsed)) ? parsed : {}, invalid:false };
+    }catch(_){
+      return { config:{}, invalid:true };
+    }
+  }
+  function actionConfigured(item, configs, name){
+    const cfg = configs && configs[name];
+    if(cfg && typeof cfg === 'object' && !Array.isArray(cfg)){
+      if(cfg.enabled === false || cfg.enabled === 0 || String(cfg.enabled ?? '').toLowerCase() === 'false') return false;
+      // An explicit action object counts as configured when it has an endpoint/template/mapping,
+      // or when enabled=true is intentionally used by a provider.
+      if(cfg.enabled === true || cfg.enabled === 1 || String(cfg.enabled ?? '').toLowerCase() === 'true') return true;
+      if(Object.keys(cfg).some(k => !['enabled'].includes(k))) return true;
+    }
+    if(cfg === false) return false;
+    const legacy = {
+      GAME_LIST: item?.gameListPath ?? item?.game_list_path,
+      CREATE_PLAYER: item?.createPlayerPath ?? item?.create_player_path,
+      BALANCE: item?.balancePath ?? item?.balance_path,
+      DEPOSIT: item?.depositPath ?? item?.deposit_path,
+      WITHDRAW: item?.withdrawPath ?? item?.withdraw_path,
+      LAUNCH: item?.launchPath ?? item?.launch_path
+    };
+    return !!String(legacy[name] ?? '').trim();
+  }
+  function providerCapabilityHtml(item){
+    const parsed = providerActionConfigObject(item);
+    const configs = parsed.config;
+    const standard = ['GAME_LIST','CREATE_PLAYER','LAUNCH','LOGOUT','BALANCE','DEPOSIT','WITHDRAW','PULL_LOG'];
+    const topLevelKeys = new Set([
+      'WALLETFLOW','WALLET_FLOW','AUTOSETTLESTALEENABLED','AUTOSETTLESTALESECONDS',
+      'FORCEPROVIDERBALANCEONEXIT','SETTLEMENTBALANCEREQUIRED','LOGOUTBEFOREEXITBALANCE'
+    ]);
+    const extras = Object.keys(configs || {})
+      .filter(key => {
+        const upper = String(key).toUpperCase();
+        return !standard.includes(upper) && !topLevelKeys.has(upper)
+          && configs[key] && typeof configs[key] === 'object' && !Array.isArray(configs[key]);
+      })
+      .map(key => String(key).toUpperCase())
+      .sort();
+    const names = [...standard, ...extras];
+    const badges = names.map(name => {
+      const on = actionConfigured(item, configs, name);
+      return `<span class="provider-api-capability ${on ? 'is-on' : 'is-off'}" title="${escapeHtml(name)} ${on ? 'configured/enabled' : 'missing or disabled'}"><i class="bi ${on ? 'bi-check-circle-fill' : 'bi-x-circle'}"></i>${escapeHtml(name)}</span>`;
+    }).join('');
+    const invalid = parsed.invalid
+      ? '<span class="provider-api-capability is-invalid" title="API Action Configs is not valid JSON"><i class="bi bi-exclamation-triangle-fill"></i>INVALID JSON</span>'
+      : '';
+    return `<div class="provider-api-capabilities"><div class="provider-api-capabilities-title"><i class="bi bi-diagram-3 me-1"></i>API Capabilities</div>${badges}${invalid}</div>`;
+  }
   function render(){
     list.innerHTML='';
     empty.hidden = rows.length > 0;
@@ -208,7 +265,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       const boPassword = item.boPassword || item.bo_password || '';
       const card=document.createElement('div');
       card.className='manage-card';
-      card.innerHTML=`<div class="manage-thumb game-thumb">${item.providerImageUrl ? `<img src="${escapeHtml(item.providerImageUrl)}" alt="${escapeHtml(item.name || item.code)}" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;">` : `<i class="bi bi-hdd-network fs-1 text-secondary"></i>`}</div><div class="manage-card-body"><div class="slider-card-title"><b>${escapeHtml(item.code)} - ${escapeHtml(item.name)}</b>${statusPill(item.status)}<span class="slider-pill ${env === 'LIVE' ? 'active' : 'inactive'}"><i class="bi ${env === 'LIVE' ? 'bi-broadcast' : 'bi-tools'}"></i>${env === 'LIVE' ? 'Live Key' : 'Staging Key'}</span></div><div class="slider-meta"><span><i class="bi bi-tag me-1"></i>${escapeHtml((item.categoryIds || item.category_ids || '').split(',').map(id => (categories.find(c => String(c.id) === String(id)) || {}).name).filter(Boolean).join(', ') || 'No category')}</span><span><i class="bi bi-wallet2 me-1"></i>${escapeHtml(item.walletMode || 'TRANSFER')}</span><span><i class="bi bi-plug me-1"></i>${escapeHtml(item.integrationType || 'GENERIC_API')}</span><span><i class="bi bi-cash me-1"></i>${escapeHtml(item.currency || 'MYR')}</span><span><i class="bi bi-controller me-1"></i>${linkedGameCount} games</span><span><i class="bi bi-link-45deg me-1"></i>${escapeHtml(item.apiBaseUrl || '-')}</span><span><i class="bi bi-sort-numeric-down me-1"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span></div><div class="provider-access-record mt-3 p-3 border rounded-3 bg-light"><div class="fw-bold mb-2"><i class="bi bi-shield-lock me-1"></i>Provider BO Login Record</div><div class="row g-2 small"><div class="col-12 col-xl-5"><span class="text-secondary">URL:</span> ${boUrl ? `<a href="${escapeHtml(boUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(boUrl)}</a>` : '-'}</div><div class="col-12 col-md-5 col-xl-3"><span class="text-secondary">Username:</span> <code>${escapeHtml(boUsername || '-')}</code></div><div class="col-12 col-md-7 col-xl-4"><span class="text-secondary">Password:</span> <code data-provider-password-id="${escapeHtml(item.id)}">${escapeHtml(maskCredential(boPassword))}</code>${boPassword ? ` <button class="clean-btn py-1 px-2 ms-1" type="button" data-reveal-password-id="${escapeHtml(item.id)}"><i class="bi bi-eye"></i> Reveal</button><button class="clean-btn py-1 px-2 ms-1" type="button" data-copy-password-id="${escapeHtml(item.id)}"><i class="bi bi-copy"></i> Copy</button>` : ''}</div></div></div><div class="d-flex gap-2 flex-wrap mt-2">${gameHtml}</div></div><div class="slider-card-actions"><button class="clean-btn primary" type="button" data-edit-id="${escapeHtml(item.id)}"><i class="bi bi-pencil-square"></i> Edit</button><button class="clean-btn danger" type="button" data-delete-id="${escapeHtml(item.id)}"><i class="bi bi-trash"></i> Delete</button></div>`;
+      card.innerHTML=`<div class="manage-thumb game-thumb">${item.providerImageUrl ? `<img src="${escapeHtml(item.providerImageUrl)}" alt="${escapeHtml(item.name || item.code)}" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;">` : `<i class="bi bi-hdd-network fs-1 text-secondary"></i>`}</div><div class="manage-card-body"><div class="slider-card-title"><b>${escapeHtml(item.code)} - ${escapeHtml(item.name)}</b>${statusPill(item.status)}<span class="slider-pill ${env === 'LIVE' ? 'active' : 'inactive'}"><i class="bi ${env === 'LIVE' ? 'bi-broadcast' : 'bi-tools'}"></i>${env === 'LIVE' ? 'Live Key' : 'Staging Key'}</span></div><div class="slider-meta"><span><i class="bi bi-tag me-1"></i>${escapeHtml((item.categoryIds || item.category_ids || '').split(',').map(id => (categories.find(c => String(c.id) === String(id)) || {}).name).filter(Boolean).join(', ') || 'No category')}</span><span><i class="bi bi-wallet2 me-1"></i>${escapeHtml(item.walletMode || 'TRANSFER')}</span><span><i class="bi bi-plug me-1"></i>${escapeHtml(item.integrationType || 'GENERIC_API')}</span><span><i class="bi bi-cash me-1"></i>${escapeHtml(item.currency || 'MYR')}</span><span><i class="bi bi-controller me-1"></i>${linkedGameCount} games</span><span><i class="bi bi-link-45deg me-1"></i>${escapeHtml(item.apiBaseUrl || '-')}</span><span><i class="bi bi-sort-numeric-down me-1"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span></div>${providerCapabilityHtml(item)}<div class="provider-access-record mt-3 p-3 border rounded-3 bg-light"><div class="fw-bold mb-2"><i class="bi bi-shield-lock me-1"></i>Provider BO Login Record</div><div class="row g-2 small"><div class="col-12 col-xl-5"><span class="text-secondary">URL:</span> ${boUrl ? `<a href="${escapeHtml(boUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(boUrl)}</a>` : '-'}</div><div class="col-12 col-md-5 col-xl-3"><span class="text-secondary">Username:</span> <code>${escapeHtml(boUsername || '-')}</code></div><div class="col-12 col-md-7 col-xl-4"><span class="text-secondary">Password:</span> <code data-provider-password-id="${escapeHtml(item.id)}">${escapeHtml(maskCredential(boPassword))}</code>${boPassword ? ` <button class="clean-btn py-1 px-2 ms-1" type="button" data-reveal-password-id="${escapeHtml(item.id)}"><i class="bi bi-eye"></i> Reveal</button><button class="clean-btn py-1 px-2 ms-1" type="button" data-copy-password-id="${escapeHtml(item.id)}"><i class="bi bi-copy"></i> Copy</button>` : ''}</div></div></div><div class="d-flex gap-2 flex-wrap mt-2">${gameHtml}</div></div><div class="slider-card-actions"><button class="clean-btn primary" type="button" data-edit-id="${escapeHtml(item.id)}"><i class="bi bi-pencil-square"></i> Edit</button><button class="clean-btn danger" type="button" data-delete-id="${escapeHtml(item.id)}"><i class="bi bi-trash"></i> Delete</button></div>`;
       list.appendChild(card);
     });
   }
@@ -400,156 +457,6 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
   async function callbackPreview(){ const code=document.getElementById('callbackProviderCode').value; const raw=document.getElementById('callbackSample').value || '{}'; const box=document.getElementById('callbackResult'); try{ const json=await fetchJson(CALLBACK_API.previewBase + '/' + encodeURIComponent(code), {method:'POST', headers:{'Content-Type':'application/json'}, body:raw}); box.textContent=JSON.stringify(json.data,null,2); }catch(err){ box.textContent=err.message || 'Callback preview failed'; } }
   async function ledgerSummary(){ const code=document.getElementById('callbackProviderCode').value; const from=document.getElementById('reportFrom').value; const to=document.getElementById('reportTo').value; const box=document.getElementById('callbackResult'); let url=CALLBACK_API.report + '?providerCode=' + encodeURIComponent(code); if(from) url += '&from=' + encodeURIComponent(from); if(to) url += '&to=' + encodeURIComponent(to); try{ const json=await fetchJson(url); box.textContent=JSON.stringify(json.data,null,2); }catch(err){ box.textContent=err.message || 'Report failed'; } }
 
-  function live22ActionPreset(){
-    return {
-      GAME_LIST: {
-        functionName: 'GetGameList',
-        path: '/GetGameList',
-        httpMethod: 'POST',
-        signatureTemplate: '${function_name}${request_datetime}${OperatorId}${SecretKey}',
-        requestTemplate: '{\n  "OperatorId": "${OperatorId}",\n  "RequestDateTime": "${request_datetime}",\n  "Signature": "${signature}",\n  "Lang": "${Lang}",\n  "Currency": "${Currency}"\n}'
-      },
-
-      PLAYER_PULL_LOG: {
-        functionName: 'GetGameRounds',
-        path: '/GetGameRounds/',
-        httpMethod: 'POST',
-        providerTimezone: 'Asia/Kuala_Lumpur',
-        signatureTemplate: '${secureLogin}${provider_player_id}${datePlayed}${timeZone}${game_code}${hour}${SecretKey}',
-        requestTemplate: '{\n  "secureLogin": "${secureLogin}",\n  "playerId": "${provider_player_id}",\n  "datePlayed": "${datePlayed}",\n  "timeZone": "${timeZone}",\n  "gameId": "${game_code}",\n  "hour": "${hour}",\n  "hash": "${signature}"\n}',
-        successPath: 'error',
-        successValue: '0',
-        errorMessagePath: 'description',
-        responseListPath: 'rounds',
-        providerTxIdPath: 'roundId',
-        betIdPath: 'roundId',
-        roundIdPath: 'roundId',
-        gameCodePath: 'gameId',
-        gameNamePath: 'gameName',
-        currencyPath: 'currency',
-        betAmountPath: 'betAmount',
-        validBetAmountPath: 'betAmount',
-        winAmountPath: 'winAmount',
-        settlementTimePath: 'dateTime'
-      },
-
-      PULL_LOG: {
-        functionName: 'PullLog',
-        path: '/PullLog',
-        httpMethod: 'POST',
-        signatureTemplate: '${function_name}${request_datetime}${OperatorId}${SecretKey}',
-        requestTemplate: '{\n  "OperatorId": "${OperatorId}",\n  "RequestDateTime": "${request_datetime}",\n  "Signature": "${signature}"\n}',
-        responseListPath: 'Logs',
-        playerIdPath: 'PlayerId',
-        providerTxIdPath: 'TransactionId',
-        betAmountPath: 'BetAmount',
-        validBetAmountPath: 'ValidBetAmount',
-        winAmountPath: 'WinAmount',
-        netAmountPath: 'WinLose',
-        gameCodePath: 'GameCode',
-        roundIdPath: 'RoundId',
-        eventTypePath: 'Status',
-        settlementTimePath: 'SettlementTime',
-        sequencePath: 'Sequence',
-        originalTxIdPath: 'OriginalTransactionId'
-      },
-      CREATE_PLAYER: {
-        enabled: true,
-        functionName: 'CreatePlayer',
-        path: '/CreatePlayer',
-        httpMethod: 'POST',
-        signatureTemplate: '${function_name}${request_datetime}${OperatorId}${SecretKey}${PlayerId}',
-        requestTemplate: '{\n  "OperatorId": "${OperatorId}",\n  "RequestDateTime": "${request_datetime}",\n  "Signature": "${signature}",\n  "PlayerId": "${PlayerId}"\n}'
-      },
-      BALANCE: {
-        functionName: 'CheckBalance',
-        path: '/CheckBalance',
-        httpMethod: 'POST',
-        signatureTemplate: '${function_name}${request_datetime}${OperatorId}${SecretKey}${PlayerId}',
-        requestTemplate: '{\n  "OperatorId": "${OperatorId}",\n  "RequestDateTime": "${request_datetime}",\n  "Signature": "${signature}",\n  "PlayerId": "${PlayerId}"\n}'
-      },
-      DEPOSIT: {
-        functionName: 'Deposit',
-        path: '/Deposit',
-        httpMethod: 'POST',
-        signatureTemplate: '${function_name}${request_datetime}${OperatorId}${SecretKey}${PlayerId}${TransactionId}',
-        requestTemplate: '{\n  "OperatorId": "${OperatorId}",\n  "RequestDateTime": "${request_datetime}",\n  "Signature": "${signature}",\n  "PlayerId": "${PlayerId}",\n  "Amount": "${amount}",\n  "TransactionId": "${TransactionId}"\n}'
-      },
-      WITHDRAW: {
-        functionName: 'Withdraw',
-        path: '/Withdraw',
-        httpMethod: 'POST',
-        signatureTemplate: '${function_name}${request_datetime}${OperatorId}${SecretKey}${PlayerId}${TransactionId}',
-        requestTemplate: '{\n  "OperatorId": "${OperatorId}",\n  "RequestDateTime": "${request_datetime}",\n  "Signature": "${signature}",\n  "PlayerId": "${PlayerId}",\n  "Amount": "${amount}",\n  "TransactionId": "${TransactionId}"\n}'
-      },
-      LAUNCH: {
-        functionName: 'GameLogin',
-        path: '/GameLogin',
-        httpMethod: 'POST',
-        signatureTemplate: '${function_name}${request_datetime}${OperatorId}${SecretKey}${PlayerId}',
-        requestTemplate: '{\n  "OperatorId": "${OperatorId}",\n  "RequestDateTime": "${request_datetime}",\n  "Signature": "${signature}",\n  "PlayerId": "${PlayerId}",\n  "Ip": "${ip}",\n  "GameCode": "${GameCode}",\n  "Currency": "${Currency}",\n  "Lang": "${Lang}",\n  "RedirectUrl": "${RedirectUrl}"\n}'
-      }
-    };
-  }
-  function fachaiActionPreset(){
-    return {
-      GAME_LIST: {
-        functionName: 'GetGameIconList',
-        path: '/GetGameIconList',
-        httpMethod: 'POST',
-        signatureTemplate: '${rawJson}',
-        requestTemplate: '{\n  "AgentCode": "${AgentCode}",\n  "Currency": "${Currency}",\n  "Params": "${aes128ecb_base64:${rawJson}:${AgentKey}}",\n  "Sign": "${signature}"\n}',
-        responseListPath: 'GetGameIconList',
-        gameCodePath: '@key',
-        gameNamePath: 'gameNameOfEnglish',
-        gameImagePath: 'enUrl',
-        gameCategoryPath: '@group',
-        successPath: 'Result',
-        successValue: '0'
-      }
-    };
-  }
-  function fillFachaiPreset(){
-    if(!el.apiActionConfigs) return;
-    el.providerCode.value = el.providerCode.value || 'FACHAI';
-    el.providerName.value = el.providerName.value || 'FaChai Gaming';
-    setProviderTypes('SLOT');
-    el.apiBaseUrl.value = el.apiBaseUrl.value || 'https://api.fcg666.net';
-    el.gameListPath.value = '/GetGameIconList';
-    el.signatureType.value = 'MD5';
-    el.signatureOutputCase.value = 'LOWER';
-    el.signatureTemplate.value = '${rawJson}';
-    el.apiActionConfigs.value = JSON.stringify(fachaiActionPreset(), null, 2);
-    if(!el.providerVariables.value.trim()){
-      el.providerVariables.value = JSON.stringify({AgentCode: 'TIT', Currency: el.currency.value || 'MYR', AgentKey: 'Ks7mUzBnRGoGn0Es', rawJson: '{}'}, null, 2);
-    }
-    el.gameListRequestTemplate.value = '{\n  "AgentCode": "${AgentCode}",\n  "Currency": "${Currency}",\n  "Params": "${aes128ecb_base64:${rawJson}:${AgentKey}}",\n  "Sign": "${signature}"\n}';
-    el.responseGameListPath.value = 'GetGameIconList';
-    el.responseGameCodePath.value = '@key';
-    el.responseGameNamePath.value = 'gameNameOfEnglish';
-    el.responseGameImagePath.value = 'enUrl';
-    el.responseGameCategoryPath.value = '@group';
-    el.responseSuccessPath.value = 'Result';
-    el.responseSuccessValue.value = '0';
-    setStatus('FaChai/JDB game list preset filled. Save provider, then use Debug Game List or Sync Selected Games.', 'success');
-  }
-
-  function fillLive22Preset(){
-    if(!el.apiActionConfigs) return;
-    el.apiActionConfigs.value = JSON.stringify(live22ActionPreset(), null, 2);
-    if(!el.providerVariables.value.trim()){
-      el.providerVariables.value = JSON.stringify({OperatorId: el.operatorId.value || 'YOUR_LIVE22_OPERATOR_ID', SecretKey: el.secretKey.value || 'YOUR_LIVE22_SECRET_KEY', Lang: 'en-us', Currency: el.currency.value || 'MYR', RedirectUrl: 'https://your-frontend-domain.com'}, null, 2);
-    }
-    el.responseGameListPath.value = el.responseGameListPath.value || 'Game';
-    el.responseGameCodePath.value = el.responseGameCodePath.value || 'GameCode';
-    el.responseGameNamePath.value = el.responseGameNamePath.value || 'GameName';
-    el.responseGameImagePath.value = el.responseGameImagePath.value || 'ImageUrl';
-    el.responseGameCategoryPath.value = el.responseGameCategoryPath.value || 'GameType';
-    el.responseSuccessPath.value = el.responseSuccessPath.value || 'Status';
-    el.responseSuccessValue.value = el.responseSuccessValue.value || '200';
-    el.responseErrorMessagePath.value = el.responseErrorMessagePath.value || 'Description';
-    setStatus('Live22 action preset filled. Save provider, then use API Payload Preview / Debug Game List.', 'success');
-  }
   function formatActionConfig(){
     if(!el.apiActionConfigs) return;
     try{ el.apiActionConfigs.value = JSON.stringify(JSON.parse(el.apiActionConfigs.value || '{}'), null, 2); syncWalletFlowFromJson(); syncWithdrawNegativeFromJson(); syncPullLogTimingFromJson(); setStatus('API Action Configs JSON formatted.', 'success'); }
@@ -558,7 +465,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
 
   form.addEventListener('submit', save);
   const toggleBoPasswordBtn=document.getElementById('toggleBoPasswordBtn'); if(toggleBoPasswordBtn && el.boPassword) toggleBoPasswordBtn.addEventListener('click', ()=>{ const show=el.boPassword.type==='password'; el.boPassword.type=show?'text':'password'; toggleBoPasswordBtn.innerHTML=show?'<i class="bi bi-eye-slash"></i>':'<i class="bi bi-eye"></i>'; });
-  if(el.apiActionConfigs) el.apiActionConfigs.addEventListener('input', () => { syncWalletFlowFromJson(); syncWithdrawNegativeFromJson(); syncPullLogTimingFromJson(); }); if(walletFlow) walletFlow.addEventListener('change', () => { try{ syncWalletFlowToJson(); }catch(err){ setStatus('API Action Configs JSON invalid: ' + err.message, 'error'); } }); if(pullLogTimingEnabled) pullLogTimingEnabled.addEventListener('change', syncPullLogTimingToJson); [pullLogWindowValue,pullLogWindowUnit,pullLogEndDelaySeconds,pullLogTimezone,pullLogDateTimeFormat].filter(Boolean).forEach(node => node.addEventListener('change', () => { if(pullLogTimingEnabled?.checked) syncPullLogTimingToJson(); })); const live22PresetBtn=document.getElementById('fillLive22ActionPresetBtn'); if(live22PresetBtn) live22PresetBtn.addEventListener('click', fillLive22Preset); const fachaiPresetBtn=document.getElementById('fillFachaiActionPresetBtn'); if(fachaiPresetBtn) fachaiPresetBtn.addEventListener('click', fillFachaiPreset); const formatActionBtn=document.getElementById('formatActionConfigBtn'); if(formatActionBtn) formatActionBtn.addEventListener('click', formatActionConfig); resetBtn.addEventListener('click', reset); refreshBtn.addEventListener('click', load); list.addEventListener('click', async e => { const eb=e.target.closest('[data-edit-id]'), db=e.target.closest('[data-delete-id]'), rb=e.target.closest('[data-reveal-password-id]'), cb=e.target.closest('[data-copy-password-id]'); if(eb){ editFresh(eb.dataset.editId, eb); } if(db) remove(db.dataset.deleteId); if(rb){ const item=rows.find(x=>String(x.id)===String(rb.dataset.revealPasswordId)); const target=list.querySelector('[data-provider-password-id="'+CSS.escape(String(rb.dataset.revealPasswordId))+'"]'); if(item && target){ const currentlyRevealed=rb.dataset.revealed==='1'; target.textContent=currentlyRevealed ? maskCredential(item.boPassword || item.bo_password || '') : (item.boPassword || item.bo_password || '-'); rb.dataset.revealed=currentlyRevealed?'0':'1'; rb.innerHTML=currentlyRevealed?'<i class="bi bi-eye"></i> Reveal':'<i class="bi bi-eye-slash"></i> Hide'; } } if(cb){ const item=rows.find(x=>String(x.id)===String(cb.dataset.copyPasswordId)); const password=item && (item.boPassword || item.bo_password || ''); if(password){ try{ await navigator.clipboard.writeText(password); setStatus('Provider BO password copied.', 'success'); }catch(_){ setStatus('Unable to copy password. Use Reveal and copy manually.', 'error'); } } } }); document.querySelectorAll('[data-wallet-action]').forEach(btn => btn.addEventListener('click', () => wallet(btn.dataset.walletAction))); const syncBtn=document.getElementById('syncSelectedProviderBtn'); if(syncBtn) syncBtn.addEventListener('click', syncGames); const debugBtn=document.getElementById('debugSelectedProviderBtn'); if(debugBtn) debugBtn.addEventListener('click', debugGames); const cbBtn=document.getElementById('callbackPreviewBtn'); if(cbBtn) cbBtn.addEventListener('click', callbackPreview); const reportBtn=document.getElementById('ledgerSummaryBtn'); if(reportBtn) reportBtn.addEventListener('click', ledgerSummary); reset(); load();
+  if(el.apiActionConfigs) el.apiActionConfigs.addEventListener('input', () => { syncWalletFlowFromJson(); syncWithdrawNegativeFromJson(); syncPullLogTimingFromJson(); }); if(walletFlow) walletFlow.addEventListener('change', () => { try{ syncWalletFlowToJson(); }catch(err){ setStatus('API Action Configs JSON invalid: ' + err.message, 'error'); } }); if(pullLogTimingEnabled) pullLogTimingEnabled.addEventListener('change', syncPullLogTimingToJson); [pullLogWindowValue,pullLogWindowUnit,pullLogEndDelaySeconds,pullLogTimezone,pullLogDateTimeFormat].filter(Boolean).forEach(node => node.addEventListener('change', () => { if(pullLogTimingEnabled?.checked) syncPullLogTimingToJson(); })); const formatActionBtn=document.getElementById('formatActionConfigBtn'); if(formatActionBtn) formatActionBtn.addEventListener('click', formatActionConfig); resetBtn.addEventListener('click', reset); refreshBtn.addEventListener('click', load); list.addEventListener('click', async e => { const eb=e.target.closest('[data-edit-id]'), db=e.target.closest('[data-delete-id]'), rb=e.target.closest('[data-reveal-password-id]'), cb=e.target.closest('[data-copy-password-id]'); if(eb){ editFresh(eb.dataset.editId, eb); } if(db) remove(db.dataset.deleteId); if(rb){ const item=rows.find(x=>String(x.id)===String(rb.dataset.revealPasswordId)); const target=list.querySelector('[data-provider-password-id="'+CSS.escape(String(rb.dataset.revealPasswordId))+'"]'); if(item && target){ const currentlyRevealed=rb.dataset.revealed==='1'; target.textContent=currentlyRevealed ? maskCredential(item.boPassword || item.bo_password || '') : (item.boPassword || item.bo_password || '-'); rb.dataset.revealed=currentlyRevealed?'0':'1'; rb.innerHTML=currentlyRevealed?'<i class="bi bi-eye"></i> Reveal':'<i class="bi bi-eye-slash"></i> Hide'; } } if(cb){ const item=rows.find(x=>String(x.id)===String(cb.dataset.copyPasswordId)); const password=item && (item.boPassword || item.bo_password || ''); if(password){ try{ await navigator.clipboard.writeText(password); setStatus('Provider BO password copied.', 'success'); }catch(_){ setStatus('Unable to copy password. Use Reveal and copy manually.', 'error'); } } } }); document.querySelectorAll('[data-wallet-action]').forEach(btn => btn.addEventListener('click', () => wallet(btn.dataset.walletAction))); const syncBtn=document.getElementById('syncSelectedProviderBtn'); if(syncBtn) syncBtn.addEventListener('click', syncGames); const debugBtn=document.getElementById('debugSelectedProviderBtn'); if(debugBtn) debugBtn.addEventListener('click', debugGames); const cbBtn=document.getElementById('callbackPreviewBtn'); if(cbBtn) cbBtn.addEventListener('click', callbackPreview); const reportBtn=document.getElementById('ledgerSummaryBtn'); if(reportBtn) reportBtn.addEventListener('click', ledgerSummary); reset(); load();
 })();
 
 (function(){

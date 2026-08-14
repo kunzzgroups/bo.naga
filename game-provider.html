@@ -9,6 +9,14 @@
     <link href="assets/css/reports.css?v=1.0.37" rel="stylesheet" />
   <link href="assets/css/bo-ui-standard.css?v=1.0.1" rel="stylesheet" />
   <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet" />
+  <style>
+    .provider-api-capabilities{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .provider-api-capability{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border:1px solid #dfe5ec;border-radius:999px;background:#fff;font-size:11px;font-weight:700;line-height:1.2;white-space:nowrap}
+    .provider-api-capability.is-on{border-color:#b7dfc9;background:#f0fbf5;color:#157347}
+    .provider-api-capability.is-off{border-color:#e2e6ea;background:#f8f9fa;color:#8a939d}
+    .provider-api-capability.is-invalid{border-color:#f1c0c7;background:#fff4f5;color:#b02a37}
+    .provider-api-capabilities-title{width:100%;font-size:12px;font-weight:700;color:#667085;margin-bottom:1px}
+  </style>
 </head>
   <body class="report-body standardized-listing-page page-game-provider">
     <div class="report-shell">
@@ -69,8 +77,6 @@
                 <div class="field action-config-box">
                   <label>API Action Configs <span class="text-secondary small">(one formula/path/template per provider API)</span></label>
                   <div class="d-flex gap-2 flex-wrap mb-2">
-                    <button class="clean-btn" type="button" id="fillLive22ActionPresetBtn"><i class="bi bi-magic"></i> Fill Live22 Preset</button>
-                    <button class="clean-btn" type="button" id="fillFachaiActionPresetBtn"><i class="bi bi-magic"></i> Fill FaChai/JDB Game List</button>
                     <button class="clean-btn" type="button" id="formatActionConfigBtn"><i class="bi bi-braces"></i> Format JSON</button>
                   </div>
                   <div class="field mb-2">
@@ -192,7 +198,7 @@
         </section>
       </main>
     </div>
-    <script src="assets/js/config.js?v=1.0.33"></script><script src="assets/js/auth.js?v=1.0.34"></script><script src="assets/js/reports.js?v=1.0.14"></script><script src="assets/js/game-provider.js?v=1.0.18"></script>
+    <script src="assets/js/config.js?v=1.0.33"></script><script src="assets/js/auth.js?v=1.0.34"></script><script src="assets/js/reports.js?v=1.0.14"></script><script src="assets/js/game-provider.js?v=1.0.19"></script>
       <script src="assets/js/crud-modal-pattern.js?v=1.0.1"></script>
 
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
