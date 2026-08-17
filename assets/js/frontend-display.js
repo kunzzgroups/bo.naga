@@ -5,6 +5,7 @@
   const minWithdrawal=document.getElementById('minWithdrawalAmount');
   const rebateThreshold=document.getElementById('rebateAutoCreditThreshold');
   const marqueeEnabled=document.getElementById('marqueeEnabled');
+  const leaderboardEnabled=document.getElementById('leaderboardEnabled');
   const marqueeEditor=document.getElementById('marqueeEditor');
   const marqueeContent=document.getElementById('marqueeContent');
   const marqueePreview=document.getElementById('marqueePreview');
@@ -123,6 +124,7 @@
     minWithdrawal.value=Number(data.minWithdrawalAmount||50).toFixed(2);
     if(rebateThreshold) rebateThreshold.value=Number(data.rebateAutoCreditThreshold||0).toFixed(2);
     if(marqueeEnabled){ syncSelectValue(marqueeEnabled,data.marqueeEnabled); }
+    if(leaderboardEnabled){ syncSelectValue(leaderboardEnabled,data.leaderboardEnabled); }
     if(marqueeEditor){ marqueeEditor.innerHTML=data.marqueeContent||''; syncMarquee(); }
     renderNote();
     await loadInstallSetting();
@@ -141,6 +143,7 @@
       const rebateThresholdValue=Number(rebateThreshold?.value||0);
       syncMarquee();
       const marqueeEnabledValue=marqueeEnabled?.value==='1'?1:0;
+      const leaderboardEnabledValue=leaderboardEnabled?.value==='1'?1:0;
       const marqueeHtml=marqueeContent?.value?.trim()||'';
       if(!String(installAppDisplayName?.value||'').trim()) throw new Error('Add to Home Screen display name is required');
       if(!Number.isFinite(depositValue)||depositValue<=0) throw new Error('Minimum deposit must be greater than 0');
@@ -150,7 +153,7 @@
       const response=await fetch(endpoint,{
         method:'POST',
         headers:headers(true),
-        body:JSON.stringify({homeBonusEnabled:requestedValue,minDepositAmount:depositValue,minWithdrawalAmount:withdrawalValue,rebateAutoCreditThreshold:rebateThresholdValue,marqueeEnabled:marqueeEnabledValue,marqueeContent:marqueeHtml})
+        body:JSON.stringify({homeBonusEnabled:requestedValue,minDepositAmount:depositValue,minWithdrawalAmount:withdrawalValue,rebateAutoCreditThreshold:rebateThresholdValue,marqueeEnabled:marqueeEnabledValue,leaderboardEnabled:leaderboardEnabledValue,marqueeContent:marqueeHtml})
       });
       const json=await response.json().catch(()=>({}));
       if(!response.ok||json.status==='error') throw new Error(json.message||'Unable to save setting');
@@ -158,7 +161,7 @@
         ?json.data.homeBonusEnabled
         :requestedValue;
       syncSelect(savedValue);
-      if(json.data){ minDeposit.value=Number(json.data.minDepositAmount||depositValue).toFixed(2); minWithdrawal.value=Number(json.data.minWithdrawalAmount||withdrawalValue).toFixed(2); if(rebateThreshold) rebateThreshold.value=Number(json.data.rebateAutoCreditThreshold??rebateThresholdValue).toFixed(2); if(marqueeEnabled) syncSelectValue(marqueeEnabled,json.data.marqueeEnabled); if(marqueeEditor){marqueeEditor.innerHTML=json.data.marqueeContent||marqueeHtml;syncMarquee();} }
+      if(json.data){ minDeposit.value=Number(json.data.minDepositAmount||depositValue).toFixed(2); minWithdrawal.value=Number(json.data.minWithdrawalAmount||withdrawalValue).toFixed(2); if(rebateThreshold) rebateThreshold.value=Number(json.data.rebateAutoCreditThreshold??rebateThresholdValue).toFixed(2); if(marqueeEnabled) syncSelectValue(marqueeEnabled,json.data.marqueeEnabled); if(leaderboardEnabled) syncSelectValue(leaderboardEnabled,json.data.leaderboardEnabled); if(marqueeEditor){marqueeEditor.innerHTML=json.data.marqueeContent||marqueeHtml;syncMarquee();} }
       await saveInstallSetting();
       renderNote();
       setMessage('Frontend display setting and Add to Home Screen settings saved successfully.','success');
