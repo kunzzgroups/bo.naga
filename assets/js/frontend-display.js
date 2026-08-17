@@ -9,6 +9,16 @@
   const marqueeContent=document.getElementById('marqueeContent');
   const marqueePreview=document.getElementById('marqueePreview');
   const marqueeColor=document.getElementById('marqueeColor');
+  const installAppDisplayName=document.getElementById('installAppDisplayName');
+  const installAppLogoFile=document.getElementById('installAppLogoFile');
+  const installAppLogoPreview=document.getElementById('installAppLogoPreview');
+  const chooseInstallAppLogo=document.getElementById('chooseInstallAppLogo');
+  const removeInstallAppLogo=document.getElementById('removeInstallAppLogo');
+  const installEndpoint=String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+(API_CONFIG.ENDPOINTS.INSTALL_APP_SETTING||'/admin/frontend/install-app');
+  let selectedInstallLogo=null;
+  let removeExistingInstallLogo=false;
+  let currentInstallLogoUrl='';
+  let previewObjectUrl='';
   const message=document.getElementById('frontendDisplayMessage');
   const note=document.getElementById('displaySettingNote');
   const endpoint=String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+API_CONFIG.ENDPOINTS.FRONTEND_DISPLAY_SETTING;
@@ -20,6 +30,52 @@
   function setMessage(text,type){
     message.textContent=text||'';
     message.className='upload-status mt-2 '+(type||'');
+  }
+
+  function renderInstallLogo(url,temporary){
+    if(previewObjectUrl && previewObjectUrl!==url){try{URL.revokeObjectURL(previewObjectUrl)}catch(_){}}
+    previewObjectUrl=temporary?String(url||''):'';
+    if(!temporary) currentInstallLogoUrl=String(url||'');
+    const shown=String(url||'');
+    if(!installAppLogoPreview) return;
+    installAppLogoPreview.innerHTML=shown
+      ?`<img src="${shown.replace(/"/g,'&quot;')}" alt="Install app logo">`
+      :'<span>No logo</span>';
+  }
+
+  function readImageSize(file){
+    return new Promise((resolve,reject)=>{
+      const url=URL.createObjectURL(file);
+      const img=new Image();
+      img.onload=()=>{const size={width:img.naturalWidth,height:img.naturalHeight};URL.revokeObjectURL(url);resolve(size)};
+      img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Unable to read logo image'))};
+      img.src=url;
+    });
+  }
+
+  async function loadInstallSetting(){
+    const response=await fetch(installEndpoint,{headers:headers(false)});
+    const json=await response.json().catch(()=>({}));
+    if(!response.ok||json.status==='error') throw new Error(json.message||'Unable to load Add to Home Screen setting');
+    const data=json.data||{};
+    if(installAppDisplayName) installAppDisplayName.value=data.displayName||'TitanX Gaming';
+    renderInstallLogo(data.logoUrl||'');
+  }
+
+  async function saveInstallSetting(){
+    const name=String(installAppDisplayName?.value||'').trim();
+    if(!name) throw new Error('Add to Home Screen display name is required');
+    const fd=new FormData();
+    fd.append('displayName',name);
+    fd.append('removeLogo',removeExistingInstallLogo?'1':'0');
+    if(selectedInstallLogo) fd.append('logo',selectedInstallLogo);
+    const response=await fetch(installEndpoint,{method:'POST',headers:headers(false),body:fd});
+    const json=await response.json().catch(()=>({}));
+    if(!response.ok||json.status==='error') throw new Error(json.message||'Unable to save Add to Home Screen setting');
+    selectedInstallLogo=null;removeExistingInstallLogo=false;
+    if(installAppLogoFile) installAppLogoFile.value='';
+    renderInstallLogo(json.data?.logoUrl||'');
+    return json.data||{};
   }
 
   function normalizeEnabled(value){
@@ -69,6 +125,7 @@
     if(marqueeEnabled){ syncSelectValue(marqueeEnabled,data.marqueeEnabled); }
     if(marqueeEditor){ marqueeEditor.innerHTML=data.marqueeContent||''; syncMarquee(); }
     renderNote();
+    await loadInstallSetting();
     setMessage('');
   }
 
@@ -85,6 +142,7 @@
       syncMarquee();
       const marqueeEnabledValue=marqueeEnabled?.value==='1'?1:0;
       const marqueeHtml=marqueeContent?.value?.trim()||'';
+      if(!String(installAppDisplayName?.value||'').trim()) throw new Error('Add to Home Screen display name is required');
       if(!Number.isFinite(depositValue)||depositValue<=0) throw new Error('Minimum deposit must be greater than 0');
       if(!Number.isFinite(withdrawalValue)||withdrawalValue<=0) throw new Error('Minimum withdrawal must be greater than 0');
       if(!Number.isFinite(rebateThresholdValue)||rebateThresholdValue<0) throw new Error('Rebate auto credit threshold cannot be negative');
@@ -101,8 +159,9 @@
         :requestedValue;
       syncSelect(savedValue);
       if(json.data){ minDeposit.value=Number(json.data.minDepositAmount||depositValue).toFixed(2); minWithdrawal.value=Number(json.data.minWithdrawalAmount||withdrawalValue).toFixed(2); if(rebateThreshold) rebateThreshold.value=Number(json.data.rebateAutoCreditThreshold??rebateThresholdValue).toFixed(2); if(marqueeEnabled) syncSelectValue(marqueeEnabled,json.data.marqueeEnabled); if(marqueeEditor){marqueeEditor.innerHTML=json.data.marqueeContent||marqueeHtml;syncMarquee();} }
+      await saveInstallSetting();
       renderNote();
-      setMessage('Frontend display setting saved successfully.','success');
+      setMessage('Frontend display setting and Add to Home Screen settings saved successfully.','success');
     }catch(error){
       setMessage(error.message,'error');
     }finally{
@@ -119,6 +178,21 @@
     }));
     marqueeColor?.addEventListener('input',()=>{marqueeEditor.focus();document.execCommand('foreColor',false,marqueeColor.value);syncMarquee();});
   }
+  chooseInstallAppLogo?.addEventListener('click',()=>installAppLogoFile?.click());
+  installAppLogoFile?.addEventListener('change',async e=>{
+    const file=e.target.files&&e.target.files[0];
+    if(!file) return;
+    try{
+      if(file.type!=='image/png') throw new Error('Install app logo must be a PNG image');
+      const size=await readImageSize(file);
+      if(size.width!==512||size.height!==512) throw new Error('Install app logo must be exactly 512×512 px');
+      selectedInstallLogo=file;removeExistingInstallLogo=false;
+      renderInstallLogo(URL.createObjectURL(file),true);
+      setMessage('Logo ready. Click Save Setting to publish it.','success');
+    }catch(err){e.target.value='';selectedInstallLogo=null;renderInstallLogo(currentInstallLogoUrl);setMessage(err.message,'error')}
+  });
+  removeInstallAppLogo?.addEventListener('click',()=>{selectedInstallLogo=null;removeExistingInstallLogo=true;if(installAppLogoFile)installAppLogoFile.value='';renderInstallLogo('');setMessage('Logo will be removed when you click Save Setting.','success')});
+
   saveBtn.addEventListener('click',save);
   load().catch(error=>setMessage(error.message,'error'));
 })();

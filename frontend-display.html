@@ -10,6 +10,7 @@
 <style>
 .display-setting-card{width:100%;max-width:980px;margin-left:auto;margin-right:auto}.display-setting-stack{display:grid;gap:14px}.display-setting-row{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:24px;align-items:center;padding:20px;border:1px solid #e4e7ec;border-radius:16px;background:#fff}.display-setting-copy h2{font-size:18px;font-weight:900;margin:0 0 6px;color:#182230}.display-setting-copy p{margin:0;color:#667085;font-weight:600}.display-setting-select{width:100%;min-height:46px;border:1px solid #d0d5dd;border-radius:12px;padding:0 14px;background:#fff;font-weight:800;color:#182230}.display-setting-actions{display:flex;justify-content:flex-end;margin-top:16px}.display-setting-actions .clean-btn{min-width:190px}.display-preview-note{margin-top:14px;border-radius:12px;padding:12px 14px;background:#eef2ff;color:#2563eb;font-weight:700}.display-preview-note.off{background:#fff7ed;color:#c2410c}@media(max-width:700px){.display-setting-row{grid-template-columns:1fr}.display-setting-actions{display:grid}.display-setting-actions .clean-btn{width:100%}}
 .marquee-editor-wrap{width:100%;display:grid;gap:8px}.marquee-toolbar{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:1px solid #d0d5dd;border-bottom:0;border-radius:12px 12px 0 0;background:#f8fafc}.marquee-tool{min-width:38px;height:34px;border:1px solid #d0d5dd;border-radius:8px;background:#fff;color:#344054;font-weight:800;display:inline-grid;place-items:center;cursor:pointer}.marquee-tool:hover{background:#eef4ff;color:#175cd3}.marquee-color{width:42px;height:34px;padding:4px;border:1px solid #d0d5dd;border-radius:8px;background:#fff;cursor:pointer}.marquee-editor{min-height:130px;max-height:260px;overflow:auto;border:1px solid #d0d5dd;border-radius:0 0 12px 12px;padding:12px 14px;background:#fff;color:#182230;font-weight:600;outline:none}.marquee-editor:focus{border-color:#84adff;box-shadow:0 0 0 3px #d1e0ff}.marquee-editor:empty:before{content:attr(data-placeholder);color:#98a2b3;pointer-events:none}.marquee-preview{overflow:hidden;white-space:nowrap;border:1px solid #e4e7ec;border-radius:10px;padding:9px 12px;background:#f8fafc;color:#182230}.marquee-preview-inner{display:inline-block;animation:boMarqueePreview 12s linear infinite}@keyframes boMarqueePreview{from{transform:translateX(40vw)}to{transform:translateX(-100%)}}
+.install-app-setting-control{display:grid;gap:10px}.install-app-logo-line{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.install-app-logo-preview{width:84px;height:84px;border:1px dashed #b9c3d3;border-radius:18px;background:#f8fafc;display:grid;place-items:center;overflow:hidden;color:#98a2b3;font-size:12px;font-weight:800;text-align:center}.install-app-logo-preview img{width:100%;height:100%;object-fit:cover}.install-app-logo-actions{display:flex;gap:8px;flex-wrap:wrap}.install-app-help{font-size:12px;color:#667085;font-weight:600}.install-app-file{display:none}
 </style>
   <link href="assets/css/bo-ui-standard.css?v=1.0.1" rel="stylesheet" />
   <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet" />
@@ -64,6 +65,34 @@
   </div>
   <div class="display-setting-row">
     <div class="display-setting-copy">
+      <h2>Add to Home Screen - Display Name</h2>
+      <p>Name shown by Android/iOS when the player adds TitanX to the device Home Screen.</p>
+    </div>
+    <div class="install-app-setting-control">
+      <input id="installAppDisplayName" class="display-setting-select" type="text" maxlength="100" value="TitanX Gaming" aria-label="Install app display name">
+      <div class="install-app-help">Recommended: keep the name short enough to display clearly below the app icon.</div>
+    </div>
+  </div>
+  <div class="display-setting-row">
+    <div class="display-setting-copy">
+      <h2>Add to Home Screen - Logo</h2>
+      <p>Logo used for the installed Home Screen icon. Upload a square 512×512 PNG for the most consistent Android/iOS result.</p>
+    </div>
+    <div class="install-app-setting-control">
+      <div class="install-app-logo-line">
+        <div class="install-app-logo-preview" id="installAppLogoPreview"><span>No logo</span></div>
+        <div class="install-app-logo-actions">
+          <input id="installAppLogoFile" class="install-app-file" type="file" accept="image/png">
+          <button type="button" class="clean-btn" id="chooseInstallAppLogo"><i class="bi bi-upload"></i> Upload Logo</button>
+          <button type="button" class="clean-btn danger" id="removeInstallAppLogo"><i class="bi bi-trash"></i> Remove</button>
+        </div>
+      </div>
+      <div class="install-app-help" id="installAppLogoHelp">PNG only, exactly 512×512 px. The selected image is uploaded when you click Save Setting.</div>
+    </div>
+  </div>
+
+  <div class="display-setting-row">
+    <div class="display-setting-copy">
       <h2>Minimum Deposit</h2>
       <p>Global minimum amount a player can submit for a normal deposit request.</p>
     </div>
@@ -93,7 +122,7 @@
 </section>
 </main>
 </div>
-<script src="assets/js/config.js?v=1.0.33"></script><script src="assets/js/reports.js?v=1.0.14"></script><script src="assets/js/auth.js?v=1.0.34"></script><script src="assets/js/frontend-display.js?v=1.0.4"></script>
+<script src="assets/js/config.js?v=1.0.33"></script><script src="assets/js/reports.js?v=1.0.14"></script><script src="assets/js/auth.js?v=1.0.34"></script><script src="assets/js/frontend-display.js?v=1.0.5"></script>
 
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>

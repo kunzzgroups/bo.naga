@@ -141,6 +141,7 @@ const API_CONFIG = window.API_CONFIG || {
         ANIMATION_SETTING_DELETE: "/admin/animation-setting/delete",
 
         FRONTEND_DISPLAY_SETTING: "/admin/frontend/display-setting",
+        INSTALL_APP_SETTING: "/admin/frontend/install-app",
         ADVERTISEMENT_POPUP: "/admin/frontend/ad-popup",
         COMPLIANCE_POLICY_LIST: "/admin/compliance-policies",
         COMPLIANCE_POLICY_SAVE: "/admin/compliance-policies/save",
