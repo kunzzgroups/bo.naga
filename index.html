@@ -56,7 +56,12 @@
       .create-member-body{padding:20px 22px;overflow:auto}.create-member-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.create-member-grid .field{display:grid;gap:6px}.create-member-grid .full{grid-column:1/-1}.create-member-grid label{font-size:13px;font-weight:800;color:#334155}.create-member-grid input,.create-member-grid select{height:42px;border:1px solid #cfd8e6;border-radius:10px;padding:0 12px;background:#fff}.create-member-help{font-size:12px;color:#64748b;margin-top:4px}.create-member-status{min-height:20px;margin-top:14px;font-size:13px;font-weight:700}.create-member-status.error{color:#dc2626}.create-member-status.success{color:#15803d}.create-member-foot{padding:14px 22px;border-top:1px solid #e5e7eb;display:flex;justify-content:flex-end;gap:10px;background:#fff}
       @media(max-width:700px){.create-member-overlay{padding:0}.create-member-modal{width:100%;height:100%;max-height:none;border-radius:0}.create-member-grid{grid-template-columns:1fr}.create-member-grid .full{grid-column:auto}.create-member-head,.create-member-body,.create-member-foot{padding-left:16px;padding-right:16px}}
 
-    </style>
+    
+      #bulkWalletAdjustBtn:disabled,#bulkBonusAdjustBtn:disabled{opacity:.52;cursor:not-allowed;pointer-events:none}
+      #bulkWalletAdjustBtn:not(:disabled),#bulkBonusAdjustBtn:not(:disabled){border-color:#cbd8ef;background:#f8fbff}
+      #bulkBonusAdjustBtn:not(:disabled){color:#7c3aed}
+      @media(max-width:900px){.user-toolbar-actions #bulkWalletAdjustBtn,.user-toolbar-actions #bulkBonusAdjustBtn{display:inline-flex}}
+</style>
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.1" rel="stylesheet">
 </link></head>
@@ -160,6 +165,8 @@
 <div class="column-menu" hidden="" id="memberColumnsMenu"></div>
 </div>
 <button class="clean-btn desktop-only" id="memberExportBtn" type="button"><i class="bi bi-download"></i> Export</button>
+<button class="clean-btn" id="bulkWalletAdjustBtn" type="button" disabled title="Select one or more members first"><i class="bi bi-wallet2"></i> Bulk Adjustment <span id="bulkSelectedBadge">0</span></button>
+<button class="clean-btn" id="bulkBonusAdjustBtn" type="button" disabled title="Select one or more members first"><i class="bi bi-gift"></i> Bulk Bonus</button>
 <button class="clean-btn success" id="memberCreateBtn" type="button"><i class="bi bi-person-plus"></i> Create User</button>
 <button class="clean-btn" id="memberResetBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Reset Search</button>
 </div>
