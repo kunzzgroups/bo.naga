@@ -110,8 +110,11 @@
     panel.className = 'dynamic-translation-panel';
     panel.setAttribute('data-dynamic-translation-panel','1');
     panel.innerHTML = '<div class="dynamic-translation-head"><div><h3>Language Translation</h3><small>Translations are stored by content type + item ID + language + field key. Blank translation values automatically fall back to the default content.</small></div><button class="clean-btn" type="button" data-refresh-translation><i class="bi bi-arrow-clockwise"></i> Refresh</button></div><div data-dynamic-translation-body class="dynamic-translation-body"><div class="slider-empty">Save or edit an item to manage translations.</div></div>';
+    const host = form.querySelector('[data-translation-panel-host]');
     const actions = form.querySelector('.slider-form-actions');
-    if(actions) actions.before(panel); else form.appendChild(panel);
+    if(host) host.appendChild(panel);
+    else if(actions) actions.before(panel);
+    else form.appendChild(panel);
     return panel;
   }
 
