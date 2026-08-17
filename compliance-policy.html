@@ -44,14 +44,14 @@
 <div><h3 id="editorTitle">Create Policy</h3><small>Configure the frontend policy tab and its displayed content.</small></div>
 <button class="modal-clean-close" data-policy-close="" type="button"><i class="bi bi-x-lg"></i></button>
 </div>
-<form class="modal-clean-body policy-modal-body" id="policyForm">
+<form class="modal-clean-body policy-modal-body" id="policyForm" data-translation-ref-type="compliance_policy" data-translation-id-selector="#policyId">
 <input id="policyId" type="hidden"/>
 <section class="policy-form-section">
 <h4><i class="bi bi-info-circle"></i> 1. Basic Information</h4>
 <div class="policy-form-grid policy-grid-3">
 <div class="field"><label>Policy Key <b>*</b></label><input id="policyKey" placeholder="e.g. aml" required=""/></div>
-<div class="field"><label>Tab Label <b>*</b></label><input id="tabLabel" placeholder="e.g. AML Policy" required=""/></div>
-<div class="field"><label>Page Title <b>*</b></label><input id="policyTitle" placeholder="e.g. AML Policy of Curaçao Co N.V" required=""/></div>
+<div class="field"><label>Tab Label <b>*</b></label><input id="tabLabel" placeholder="e.g. AML Policy" required="" data-translation-key="tabLabel" data-translation-label="Tab Label"/></div>
+<div class="field"><label>Page Title <b>*</b></label><input id="policyTitle" placeholder="e.g. AML Policy of Curaçao Co N.V" required="" data-translation-key="title" data-translation-label="Page Title"/></div>
 <div class="field"><label>Sort Order <b>*</b></label><input id="sortOrder" type="number" value="0"/></div>
 <div class="field"><label>Status <b>*</b></label><select id="policyStatus"><option value="1">Active</option><option value="0">Inactive</option></select></div>
 <div class="field"><label>Last Updated</label><input class="policy-last-updated" id="lastUpdatedDisplay" readonly="" type="text" value="-"/></div>
@@ -59,7 +59,7 @@
 </section>
 <section class="policy-form-section">
 <h4><i class="bi bi-code-slash"></i> 2. Policy Content</h4>
-<div class="field"><label>Policy Content (HTML) <b>*</b></label><textarea class="policy-html-editor" id="contentHtml" placeholder="&lt;h3&gt;Section title&lt;/h3&gt;&lt;p&gt;Policy content...&lt;/p&gt;" required="" rows="15"></textarea><small class="policy-help">Use &lt;h3&gt; for section headings and &lt;p&gt; for paragraphs.</small></div>
+<div class="field"><label>Policy Content (HTML) <b>*</b></label><textarea class="policy-html-editor" id="contentHtml" placeholder="&lt;h3&gt;Section title&lt;/h3&gt;&lt;p&gt;Policy content...&lt;/p&gt;" required="" rows="15" data-translation-key="contentHtml" data-translation-type="html" data-translation-label="Policy Content (HTML)" data-translation-rows="15"></textarea><small class="policy-help">Use &lt;h3&gt; for section headings and &lt;p&gt; for paragraphs.</small></div>
 </section>
 <div class="policy-modal-actions"><button class="clean-btn" data-policy-close="" type="button">Cancel</button><button class="clean-btn primary" id="policySubmitBtn" type="submit"><i class="bi bi-save"></i> Save Policy</button></div>
 </form>
