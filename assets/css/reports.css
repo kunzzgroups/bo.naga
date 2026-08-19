@@ -5702,3 +5702,117 @@ body.withdraw-approval-page .report-table .btn{min-width:82px;font-weight:700;bo
 /* Generic dynamic translation module: multiline and rich HTML fields. */
 .dynamic-text-edit textarea{border:1px solid #dbe3ef;border-radius:12px;padding:10px 12px;background:#fff;width:100%;max-width:100%;box-sizing:border-box;resize:vertical;min-height:96px;font:inherit;line-height:1.5}
 .dynamic-field-hint{display:block;color:#64748b;font-size:12px;margin-top:-2px}
+
+/* ===== Sidebar connected group stack =====
+   Keep top-level sidebar sections flush with each other: no vertical gaps,
+   with rounding only on the first and last grouped section. */
+.report-nav{
+  gap:0!important;
+}
+.report-nav > a{
+  margin-bottom:0!important;
+}
+.report-nav > .nav-group{
+  margin:0!important;
+  border-radius:0!important;
+  border-bottom-width:0!important;
+}
+.report-nav > .nav-group:first-of-type{
+  border-radius:12px 12px 0 0!important;
+}
+.report-nav > .nav-group:last-of-type{
+  border-radius:0 0 12px 12px!important;
+  border-bottom-width:1px!important;
+}
+.report-nav > .nav-group .nav-group-btn{
+  margin:0!important;
+  border-radius:0!important;
+}
+.report-nav > .nav-group:first-of-type > .nav-group-btn{
+  border-radius:12px 12px 0 0!important;
+}
+.report-nav > .nav-group:last-of-type:not(.open) > .nav-group-btn{
+  border-radius:0 0 12px 12px!important;
+}
+.report-nav > .nav-group:last-of-type.open > .nav-group-list{
+  border-radius:0 0 12px 12px!important;
+  overflow:hidden;
+}
+
+/* ===== Sidebar unified connected stack v2 =====
+   Top-level links without dropdowns (e.g. Dashboard / Livechat) use the
+   same blue treatment as dropdown groups. Every top-level item is flush;
+   only the first overall item gets top rounding and only the last overall
+   item gets bottom rounding. */
+.report-nav{
+  gap:0!important;
+}
+.report-nav > a,
+.report-nav > .nav-group{
+  margin:0!important;
+  border-radius:0!important;
+}
+.report-nav > a{
+  min-height:44px!important;
+  padding:11px 12px!important;
+  display:flex!important;
+  align-items:center!important;
+  background:linear-gradient(204deg,#2563eb,#103fac)!important;
+  color:#fff!important;
+  border:0!important;
+  border-bottom:1px solid rgba(255,255,255,.72)!important;
+  box-shadow:none!important;
+}
+.report-nav > a:hover,
+.report-nav > a:focus,
+.report-nav > a.active{
+  background:linear-gradient(204deg,#2563eb,#103fac)!important;
+  color:#fff!important;
+}
+.report-nav > a i,
+.report-nav > a.active i{
+  color:#fff!important;
+}
+.report-nav > .nav-group{
+  border:0!important;
+  border-bottom:1px solid rgba(255,255,255,.72)!important;
+  background:transparent!important;
+  overflow:hidden;
+}
+.report-nav > .nav-group .nav-group-btn{
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+
+/* Remove the old first/last-of-type rounding because direct links may come
+   before dropdown groups. Use actual first/last top-level child instead. */
+.report-nav > .nav-group:first-of-type,
+.report-nav > .nav-group:last-of-type,
+.report-nav > .nav-group:first-of-type > .nav-group-btn,
+.report-nav > .nav-group:last-of-type:not(.open) > .nav-group-btn,
+.report-nav > .nav-group:last-of-type.open > .nav-group-list{
+  border-radius:0!important;
+}
+.report-nav > :first-child{
+  border-radius:12px 12px 0 0!important;
+}
+.report-nav > a:first-child{
+  border-radius:12px 12px 0 0!important;
+}
+.report-nav > .nav-group:first-child > .nav-group-btn{
+  border-radius:12px 12px 0 0!important;
+}
+.report-nav > :last-child{
+  border-radius:0 0 12px 12px!important;
+  border-bottom:0!important;
+}
+.report-nav > a:last-child{
+  border-radius:0 0 12px 12px!important;
+}
+.report-nav > .nav-group:last-child:not(.open) > .nav-group-btn{
+  border-radius:0 0 12px 12px!important;
+}
+.report-nav > .nav-group:last-child.open > .nav-group-list{
+  border-radius:0 0 12px 12px!important;
+  overflow:hidden;
+}
