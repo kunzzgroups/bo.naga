@@ -191,3 +191,75 @@ body.vip-modal-open .report-shell{filter:none}
 @media(max-width:800px){
   .vip-translation-host{grid-column:auto!important;}
 }
+
+/* VIP milestone bonus artwork v2.1.0 */
+.vip-step-row{min-width:1240px!important;grid-template-columns:70px 120px 115px 115px 105px 120px 150px 170px 80px 42px!important}
+.vip-step-image-field{display:flex;flex-direction:column;gap:5px;min-width:0;font-size:11px;font-weight:700;color:#42506a}
+.vip-step-image-box{height:58px;border:1px dashed #c8d6ea;border-radius:10px;background:#f8fbff;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#8090aa;font-size:20px}
+.vip-step-image-box img{width:100%;height:100%;object-fit:contain;background:#fff}
+.vip-step-image-actions{display:flex;gap:5px}.vip-step-image-actions button{height:30px;border:1px solid #cbd8ec;border-radius:8px;background:#fff;padding:0 8px;font-size:11px;font-weight:800;color:#2d4d83}.vip-step-image-actions button.danger{color:#d93648;border-color:#ffd7db;padding:0 9px}
+.vip-step-row label small{display:block;margin-top:4px;color:#8a95a8;font-size:9px;line-height:1.25;font-weight:600}
+
+
+/* VIP per-step reward/deposit artwork editor v2.2.0 */
+.vip-step-list{overflow:visible!important;padding:0!important;margin:0!important;display:grid!important;gap:14px!important}
+.vip-step-row{display:block!important;width:100%!important;min-width:0!important;padding:14px!important;overflow:visible!important;background:#fff!important;border:1px solid #dce4f0!important;border-radius:14px!important}
+.vip-step-card-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #e7edf6}
+.vip-step-card-head>div:nth-child(2){display:flex;flex-direction:column;gap:2px;min-width:0}.vip-step-card-head>div:nth-child(2)b{font-size:13px;color:#17233c}.vip-step-card-head>div:nth-child(2)small{font-size:11px;color:#7e8ba1}.vip-step-card-head .vip-step-remove{margin-left:auto!important;width:38px!important;flex:0 0 38px!important}
+.vip-step-main-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:10px;align-items:end}.vip-step-main-grid label{font-size:11px!important;margin:0!important;min-width:0}.vip-step-main-grid input{width:100%!important;height:38px!important;margin-top:5px!important;box-sizing:border-box!important}.vip-step-note{grid-column:span 2}.vip-step-status-field{align-self:end!important}
+.vip-step-media-title{display:flex;align-items:flex-start;gap:9px;margin:14px 0 9px;padding-top:12px;border-top:1px solid #e7edf6;color:#263654}.vip-step-media-title>i{font-size:18px;color:#2d65e8}.vip-step-media-title>div{display:flex;flex-direction:column;gap:2px}.vip-step-media-title b{font-size:12px}.vip-step-media-title small{font-size:11px;color:#7e8ba1;font-weight:500}
+.vip-step-media-grid{display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:12px}.vip-step-artwork{display:grid;grid-template-columns:116px 1fr;grid-template-rows:auto 1fr;gap:7px 10px;padding:10px;border:1px solid #dce5f2;border-radius:12px;background:#f8fbff}.vip-step-artwork-title{grid-column:1/-1;font-size:11px;font-weight:800;color:#42506a}.vip-step-image-box{grid-column:1;width:116px;height:72px!important;background:#fff!important}.vip-step-image-box span{font-size:10px;color:#98a4b7;margin-left:5px}.vip-step-image-actions{grid-column:2;display:flex!important;align-items:center!important;align-content:center;flex-wrap:wrap;gap:6px!important}.vip-step-image-actions button{height:34px!important;padding:0 10px!important}.vip-step-status-menu{bottom:auto!important;top:calc(100% + 6px)!important}
+@media(max-width:1100px){.vip-step-main-grid{grid-template-columns:repeat(2,minmax(150px,1fr))}.vip-step-media-grid{grid-template-columns:1fr}.vip-step-note{grid-column:span 1}}
+@media(max-width:650px){.vip-step-main-grid{grid-template-columns:1fr}.vip-step-media-grid{grid-template-columns:1fr}.vip-step-artwork{grid-template-columns:92px 1fr}.vip-step-image-box{width:92px}.vip-step-note{grid-column:auto}}
+
+/* VIP progression field alignment v2.4.0
+   Keep every step editor on a strict 4-column x 2-row field grid:
+   row 1 = Step Name / EXP / Reward / Turnover
+   row 2 = Max Withdrawal / Deposit Bonus / Reward Note / Status */
+.vip-step-main-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  align-items:start!important;
+  column-gap:10px!important;
+  row-gap:12px!important;
+}
+.vip-step-main-grid>label{
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:flex-start!important;
+  align-self:start!important;
+  min-width:0!important;
+  margin:0!important;
+}
+.vip-step-main-grid>label>input,
+.vip-step-main-grid>label>.vip-step-status-select{
+  margin-top:5px!important;
+}
+.vip-step-main-grid>label>input{
+  height:38px!important;
+  min-height:38px!important;
+}
+.vip-step-main-grid>label>small{
+  min-height:24px!important;
+  margin-top:4px!important;
+}
+.vip-step-note{
+  grid-column:auto!important;
+}
+.vip-step-status-field{
+  align-self:start!important;
+}
+.vip-step-status-field .vip-step-status-select,
+.vip-step-status-field [data-step-status-toggle]{
+  width:100%!important;
+}
+.vip-step-status-field [data-step-status-toggle]{
+  height:38px!important;
+  min-height:38px!important;
+}
+@media(max-width:1100px){
+  .vip-step-main-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .vip-step-note{grid-column:auto!important}
+}
+@media(max-width:650px){
+  .vip-step-main-grid{grid-template-columns:1fr!important}
+}
