@@ -90,8 +90,14 @@ const GAME_SUB_CATEGORY_API = {
 };
 
 (function () {
+  const tenantPresentation = !!(window.BO_BRAND && Number(window.BO_BRAND.activeId()) !== 1);
+  if (tenantPresentation && document.body) document.body.dataset.crudNoAdd = '1';
   const form = document.getElementById('subCategoryForm');
   if (!form) return;
+  if (tenantPresentation) {
+    const formCard = form.closest('.slider-form-card,.manage-form-card,.card') || form.parentElement;
+    if (formCard) formCard.style.display = 'none';
+  }
 
   const formTitle = document.getElementById('subCategoryFormTitle');
   const id = document.getElementById('subCategoryId');
@@ -176,7 +182,7 @@ const GAME_SUB_CATEGORY_API = {
     name.value = '';
     sortOrder.value = '0';
     status.value = '1';
-    formTitle.textContent = 'Create Sub Category';
+    formTitle.textContent = tenantPresentation ? 'Brand Sub Category Presentation' : 'Create Sub Category';
     setStatus('', '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -292,8 +298,8 @@ const GAME_SUB_CATEGORY_API = {
         </div>
         <div class="subcategory-status-cell">${statusPill(item.status)}</div>
         <div class="subcategory-action-cell">
-          <button class="icon-action-btn edit edit-btn" type="button" data-edit-id="${escapeHtml(item.id)}" aria-label="Edit" title="Edit"><i class="bi bi-pencil-square"></i></button>
-          <button class="icon-action-btn delete" type="button" data-delete-id="${escapeHtml(item.id)}" aria-label="Delete" title="Delete"><i class="bi bi-trash"></i></button>
+          ${tenantPresentation ? '<span class="text-muted">Read only</span>' : `<button class="icon-action-btn edit edit-btn" type="button" data-edit-id="${escapeHtml(item.id)}" aria-label="Edit" title="Edit"><i class="bi bi-pencil-square"></i></button>
+          <button class="icon-action-btn delete" type="button" data-delete-id="${escapeHtml(item.id)}" aria-label="Delete" title="Delete"><i class="bi bi-trash"></i></button>`}
         </div>
       `;
       list.appendChild(row);
@@ -318,6 +324,7 @@ const GAME_SUB_CATEGORY_API = {
   async function saveSubCategory(e) {
     e.preventDefault();
     const isUpdate = !!id.value;
+    if (tenantPresentation && !isUpdate) { setStatus('Brand sub categories are inherited from TitanX. Edit an existing sub category.', 'error'); return; }
 
     if (!categoryId.value) {
       setStatus('Please select parent category.', 'error');
@@ -376,6 +383,10 @@ const GAME_SUB_CATEGORY_API = {
   }
 
   form.addEventListener('submit', saveSubCategory);
+  if (tenantPresentation) {
+    resetBtn.style.display = 'none';
+    const emptySmall = empty && empty.querySelector('small'); if (emptySmall) emptySmall.textContent = 'No sub category is available from the providers assigned to this branding.';
+  }
   resetBtn.addEventListener('click', resetForm);
   refreshBtn.addEventListener('click', loadSubCategories);
   filter.addEventListener('change', loadSubCategories);

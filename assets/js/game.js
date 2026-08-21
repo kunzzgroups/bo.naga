@@ -95,6 +95,8 @@ const GAME_API = {
 };
 
 (function () {
+  const tenantReadOnly = !!(window.BO_BRAND && Number(window.BO_BRAND.activeId()) !== 1);
+  if (tenantReadOnly && document.body) document.body.dataset.crudNoAdd = '1';
   const form = document.getElementById('gameForm');
   if (!form) return;
 
@@ -118,6 +120,11 @@ const GAME_API = {
   const refreshBtn = document.getElementById('refreshGameBtn');
   const downloadImagesBtn = document.getElementById('downloadGameImagesBtn');
   const statusBox = document.getElementById('gameStatusBox');
+  if (tenantReadOnly) {
+    const formCard = form.closest('.slider-form-card,.manage-form-card,.card') || form.parentElement;
+    if (formCard) formCard.style.display = 'none';
+    if (downloadImagesBtn) downloadImagesBtn.style.display = 'none';
+  }
   const categoryFilter = document.getElementById('gameCategoryFilter');
   const subCategoryFilter = document.getElementById('gameSubCategoryFilter');
   const providerFilter = document.getElementById('gameProviderFilter');
@@ -514,8 +521,8 @@ const GAME_API = {
         </div>
         <div class="game-status-cell">${statusPill(item.status)}</div>
         <div class="game-action-cell">
-          <button class="icon-action-btn edit edit-btn" type="button" data-edit-id="${escapeHtml(item.id)}" aria-label="Edit" title="Edit"><i class="bi bi-pencil-square"></i></button>
-          <button class="icon-action-btn delete" type="button" data-delete-id="${escapeHtml(item.id)}" aria-label="Delete" title="Delete"><i class="bi bi-trash"></i></button>
+          ${tenantReadOnly ? '<span class="text-muted">Read only</span>' : `<button class="icon-action-btn edit edit-btn" type="button" data-edit-id="${escapeHtml(item.id)}" aria-label="Edit" title="Edit"><i class="bi bi-pencil-square"></i></button>
+          <button class="icon-action-btn delete" type="button" data-delete-id="${escapeHtml(item.id)}" aria-label="Delete" title="Delete"><i class="bi bi-trash"></i></button>`}
         </div>`;
       list.appendChild(row);
     });

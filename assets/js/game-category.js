@@ -115,6 +115,8 @@ const GAME_CATEGORY_API = {
 };
 
 (function () {
+  const tenantPresentation = !!(window.BO_BRAND && Number(window.BO_BRAND.activeId()) !== 1);
+  if (tenantPresentation && document.body) document.body.dataset.crudNoAdd = '1';
   const form = document.getElementById('categoryForm');
   if (!form) return;
 
@@ -147,6 +149,13 @@ const GAME_CATEGORY_API = {
   const showingTextEl = document.getElementById('categoryShowingText');
   const providerSelector = document.getElementById('categoryProviderSelector');
   const providerRulesBox = document.getElementById('categoryProviderRules');
+  if (tenantPresentation) {
+    [name, displayMode, sortOrder, status].forEach(el => { if (el) el.disabled = true; });
+    const zhName = document.getElementById('categoryNameZh'); if (zhName) zhName.disabled = true;
+    const providerConfig = document.querySelector('.category-provider-config'); if (providerConfig) providerConfig.style.display = 'none';
+    if (resetBtn) resetBtn.style.display = 'none';
+    if (saveBtn) saveBtn.innerHTML = '<i class="bi bi-image"></i> Save Brand Image';
+  }
   let allProviders = [];
   let allGames = [];
   let providerConfigReady = Promise.resolve();
@@ -390,7 +399,7 @@ const GAME_CATEGORY_API = {
     selectedFile = null;
     picker && picker.clearPreview();
     currentImage.hidden = true;
-    formTitle.textContent = 'Create Category';
+    formTitle.textContent = tenantPresentation ? 'Brand Category Appearance' : 'Create Category';
     setStatus('', '');
     renderProviderRules([]);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -411,7 +420,7 @@ const GAME_CATEGORY_API = {
     else picker.clearPreview();
     currentImage.hidden = false;
     formTitle.textContent = 'Edit Category #' + item.id;
-    setStatus('Editing category. Choose new image only if you want to replace it.', 'success');
+    setStatus(tenantPresentation ? 'Branding mode: only the category image can be changed. TitanX controls name, status, order, mode and game grouping.' : 'Editing category. Choose new image only if you want to replace it.', 'success');
     if (window.CrudModalPattern) window.CrudModalPattern.open('Edit Category');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -458,7 +467,7 @@ const GAME_CATEGORY_API = {
         <div class="category-status-cell">${statusPill(item.status)}</div>
         <div class="category-action-cell">
           <button class="icon-action-btn edit edit-btn" type="button" data-edit-id="${escapeHtml(item.id)}" aria-label="Edit"><i class="bi bi-pencil-square"></i></button>
-          <button class="icon-action-btn delete" type="button" data-delete-id="${escapeHtml(item.id)}" aria-label="Delete"><i class="bi bi-trash"></i></button>
+          ${tenantPresentation ? '' : `<button class="icon-action-btn delete" type="button" data-delete-id="${escapeHtml(item.id)}" aria-label="Delete"><i class="bi bi-trash"></i></button>`}
         </div>`;
       list.appendChild(row);
     });
@@ -482,20 +491,24 @@ const GAME_CATEGORY_API = {
   async function saveCategory(e) {
     e.preventDefault();
     const isUpdate = !!id.value;
+    if (tenantPresentation && !isUpdate) { setStatus('Brand categories are inherited from TitanX. Edit an existing category appearance.', 'error'); return; }
 
-    if (!name.value.trim()) {
+    if (!tenantPresentation && !name.value.trim()) {
       setStatus('Please enter category name.', 'error');
       name.focus();
       return;
     }
+    if (tenantPresentation && !selectedFile) { setStatus('Choose a new category image first.', 'error'); return; }
 
     const fd = new FormData();
     if (isUpdate) fd.append('id', id.value);
-    fd.append('name', name.value.trim());
-    fd.append('sortOrder', sortOrder.value || '0');
-    fd.append('status', status.value || '1');
-    if (displayMode) fd.append('displayMode', normalizeCategoryDisplayMode(displayMode.value));
-    fd.append('providerRules', collectProviderRules());
+    if (!tenantPresentation) {
+      fd.append('name', name.value.trim());
+      fd.append('sortOrder', sortOrder.value || '0');
+      fd.append('status', status.value || '1');
+      if (displayMode) fd.append('displayMode', normalizeCategoryDisplayMode(displayMode.value));
+      fd.append('providerRules', collectProviderRules());
+    }
     if (selectedFile) fd.append('image', selectedFile);
 
     setBusy(true);

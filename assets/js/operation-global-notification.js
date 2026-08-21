@@ -8,14 +8,17 @@
   // Deposit and withdraw intentionally reuse the existing Live Chat MP3.
   var WALLET_REQUEST_SOUND_URL = 'assets/audio/livechat_sound.mp3';
   var POLL_INTERVAL_MS = 1000;
+  var BRAND_ID = Number(localStorage.getItem('bo_active_brand_id') || 1) || 1;
+  var LEADER_KEY = 'bo_operation_notification_leader_v1_b' + BRAND_ID;
+  var LEADER_TTL_MS = 3500;
   var TAB_ID = 'bo-' + Date.now() + '-' + Math.random().toString(36).slice(2);
   var wakeWorker = null;
   var REPEAT_INTERVAL_MS = 5000;
   var LOGIN_MARKER_KEY = 'bo_operation_login_marker';
-  var STATE_KEY = 'bo_operation_notification_state_v3';
-  var PENDING_KEY = 'bo_operation_notification_pending_v3';
-  var SESSION_KEY = 'bo_operation_notification_session_v3';
-  var PLAY_LOCK_KEY = 'bo_operation_notification_play_lock_v2';
+  var STATE_KEY = 'bo_operation_notification_state_v4_b' + BRAND_ID;
+  var PENDING_KEY = 'bo_operation_notification_pending_v4_b' + BRAND_ID;
+  var SESSION_KEY = 'bo_operation_notification_session_v4_b' + BRAND_ID;
+  var PLAY_LOCK_KEY = 'bo_operation_notification_play_lock_v3_b' + BRAND_ID;
 
   var audioMap = {};
   var unlocked = false;
@@ -37,8 +40,8 @@
     window.addEventListener('storage', handleSharedNotificationState);
     try {
       if ('BroadcastChannel' in window) {
-        window.__BO_NOTIFY_CHANNEL__ = new BroadcastChannel('bo-operation-notifications');
-        window.__BO_NOTIFY_CHANNEL__.onmessage = function(){ check(false); repeatPendingSounds(); };
+        window.__BO_NOTIFY_CHANNEL__ = new BroadcastChannel('bo-operation-notifications-b' + BRAND_ID);
+        window.__BO_NOTIFY_CHANNEL__.onmessage = function(ev){ var m=ev&&ev.data;if(m&&m.type==='counts'&&m.counts){writeJson(STATE_KEY,m.counts);updateHeader(m.counts);} repeatPendingSounds(); };
       }
     } catch(e){}
     window.addEventListener('beforeunload', function(){
@@ -46,23 +49,33 @@
       if (wakeWorker) { try { wakeWorker.terminate(); } catch(e){} wakeWorker = null; }
       if (repeatTimer) clearInterval(repeatTimer);
       try { if (window.__BO_NOTIFY_CHANNEL__) window.__BO_NOTIFY_CHANNEL__.close(); } catch(e){}
+      releaseLeader();
     });
   }
 
 
 
+  function readLeader(){try{return JSON.parse(localStorage.getItem(LEADER_KEY)||'null');}catch(e){return null;}}
+  function isLeader(){
+    var now=Date.now(),x=readLeader();
+    if(!x||x.owner===TAB_ID||now-Number(x.time||0)>LEADER_TTL_MS){
+      try{localStorage.setItem(LEADER_KEY,JSON.stringify({owner:TAB_ID,time:now}));x=readLeader();}catch(e){}
+    }
+    return !!(x&&x.owner===TAB_ID);
+  }
+  function touchLeader(){if(isLeader())try{localStorage.setItem(LEADER_KEY,JSON.stringify({owner:TAB_ID,time:Date.now()}));}catch(e){} }
+  function releaseLeader(){try{var x=readLeader();if(x&&x.owner===TAB_ID)localStorage.removeItem(LEADER_KEY);}catch(e){}}
+  function leaderTick(){if(!isLeader())return;touchLeader();check(false);}
   function startBackgroundPolling(){
-    // A dedicated worker timer is less affected by normal background-tab timer throttling.
-    // The normal interval remains as a fallback for browsers that disallow Blob workers.
+    // Only one BO tab polls the API. Other tabs receive counts through BroadcastChannel/localStorage.
+    // This prevents N open BO tabs from multiplying notification DB traffic N times.
     try{
       var code = "setInterval(function(){postMessage('tick')}," + POLL_INTERVAL_MS + ");";
       var blob = new Blob([code], {type:'application/javascript'});
       wakeWorker = new Worker(URL.createObjectURL(blob));
-      wakeWorker.onmessage = function(){ check(false); };
-    }catch(e){
-      wakeWorker = null;
-    }
-    if (!wakeWorker) pollTimer = window.setInterval(function(){ check(false); }, POLL_INTERVAL_MS);
+      wakeWorker.onmessage = leaderTick;
+    }catch(e){wakeWorker=null;}
+    if(!wakeWorker)pollTimer=window.setInterval(leaderTick,POLL_INTERVAL_MS);
   }
 
   function handleSharedNotificationState(e){
@@ -72,10 +85,8 @@
     repeatPendingSounds();
   }
 
-  function broadcastRefresh(){
-    try{
-      if (window.__BO_NOTIFY_CHANNEL__) window.__BO_NOTIFY_CHANNEL__.postMessage({type:'refresh', at:Date.now()});
-    }catch(e){}
+  function broadcastRefresh(counts){
+    try{if(window.__BO_NOTIFY_CHANNEL__)window.__BO_NOTIFY_CHANNEL__.postMessage({type:'counts',at:Date.now(),counts:counts});}catch(e){}
   }
 
   function todayKey(){
@@ -187,7 +198,7 @@
       }
 
       writeJson(STATE_KEY, next);
-      broadcastRefresh();
+      broadcastRefresh(next);
       updateHeader(next);
       repeatPendingSounds();
     }catch(e){
@@ -234,8 +245,8 @@
     document.addEventListener('pointerdown', unlock, true);
     document.addEventListener('keydown', unlock, true);
     document.addEventListener('touchstart', unlock, true);
-    window.addEventListener('focus', function(){ unlockAudio(); check(false); repeatPendingSounds(); });
-    document.addEventListener('visibilitychange', function(){ if(!document.hidden) check(false); });
+    window.addEventListener('focus', function(){ unlockAudio(); if(isLeader())check(false);else{var c=readJson(STATE_KEY,null);if(c)updateHeader(c);} repeatPendingSounds(); });
+    document.addEventListener('visibilitychange', function(){ if(!document.hidden){if(isLeader())check(false);else{var c=readJson(STATE_KEY,null);if(c)updateHeader(c);}} });
   }
 
   // Approval/rejection pages dispatch this after the backend action succeeds so the
@@ -246,7 +257,7 @@
   });
 
   window.BO_OPERATION_NOTIFICATION_CONTROL = {
-    refresh: function(){ window.setTimeout(function(){ check(false); }, 0); },
+    refresh: function(){ window.setTimeout(function(){ if(isLeader())check(false);else{var c=readJson(STATE_KEY,null);if(c)updateHeader(c);} }, 0); },
     stopWalletAudio: function(){ stopAudio('wallet'); }
   };
 

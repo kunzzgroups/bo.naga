@@ -18,15 +18,45 @@
   var unsubscribe = null;
   var reminderTimer = null;
   var originalTitle = document.title;
+  var activeBrandId = Number(localStorage.getItem('bo_active_brand_id') || 1) || 1;
+  var activeBrandDomains = [];
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 
-  function init(){
+  async function init(){
     installSoundUnlock();
     requestNotificationPermission();
+    await resolveActiveBrand();
     startListener();
     startReminderLoop();
+  }
+
+  async function resolveActiveBrand(){
+    activeBrandId = Number(localStorage.getItem('bo_active_brand_id') || 1) || 1;
+    activeBrandDomains = [];
+    try{
+      if(window.BO_BRAND && typeof window.BO_BRAND.context === 'function'){
+        var payload = await window.BO_BRAND.context(false);
+        var data = payload && payload.data ? payload.data : {};
+        var brands = Array.isArray(data.brands) ? data.brands : [];
+        var brand = brands.find(function(b){ return Number(b.id) === activeBrandId; });
+        if(brand){
+          activeBrandDomains = [brand.primaryDomain].concat(String(brand.domainAliases || '').split(/[\s,;]+/)).map(function(v){
+            return String(v || '').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/\/.*$/,'');
+          }).filter(Boolean);
+        }
+      }
+    }catch(e){}
+    if(activeBrandId === 1 && activeBrandDomains.indexOf('titanxgaming.com') === -1) activeBrandDomains.push('titanxgaming.com','www.titanxgaming.com');
+  }
+
+  function belongsToActiveBrand(item){
+    var id = Number(item && item.brandId || 0);
+    if(id > 0) return id === activeBrandId;
+    var domain = String(item && item.brandDomain || '').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/\/.*$/,'');
+    if(domain) return activeBrandDomains.indexOf(domain) !== -1;
+    return activeBrandId === 1;
   }
 
   function startListener(){
@@ -54,6 +84,7 @@
 
     snapshot.forEach(function(doc){
       var item = Object.assign({id: doc.id}, doc.data() || {});
+      if(!belongsToActiveBrand(item)) return;
       var unread = Number(item.adminUnreadCount || 0);
       var senderIsMember = String(item.lastSenderType || '').toLowerCase() === 'member';
       var itemMs = timestampValue(item.updatedAt);

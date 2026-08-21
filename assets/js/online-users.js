@@ -9,6 +9,8 @@
   function status(m){if(Number(first(m,['locked','isLocked'],0))===1)return'LOCKED';const x=first(m,['status','accountStatus'],1);return Number(x)===0||String(x).toLowerCase()==='inactive'?'INACTIVE':'ACTIVE';}
   function pagerButtons(cur,total){const btn=(p,t,dis=false,active=false)=>`<button type="button" data-online-page="${p}" ${dis?'disabled':''} class="${active?'active':''}">${t}</button>`;let h=btn(Math.max(1,cur-1),'‹',cur<=1);const from=Math.max(1,cur-2),to=Math.min(total,from+4);for(let p=from;p<=to;p++)h+=btn(p,p,false,p===cur);h+=btn(Math.min(total,cur+1),'›',cur>=total);return h;}
   let all=[],filtered=[],page=1,size=10,timer=null,loading=false;
+  let cachedMembersPayload=null,cachedWalletPayload=null,lastHeavyRefreshAt=0;
+  const HEAVY_REFRESH_MS=60000;
   function match(m){
     const q=id=>String($(id)?.value||'').trim().toLowerCase();
     const name=q('onlineSearchName'),mobile=q('onlineSearchMobile'),agent=q('onlineSearchAgent'),bank=q('onlineSearchBank'),st=q('onlineSearchStatus'),lock=q('onlineSearchLock');
@@ -29,23 +31,26 @@
     $('onlinePageInfo').textContent=total?`Showing ${start+1} to ${start+rows.length} of ${total} entries`:'Showing 0 to 0 of 0 entries'; $('onlinePager').innerHTML=pagerButtons(page,totalPages);
   }
   function mergeMembers(members,presence,wallets){const pm=new Map(presence.map(p=>[String(p.memberId),p])),wm=new Map(wallets.map(w=>[String(first(w,['memberId','id','userId'],'')),w]));return members.filter(m=>pm.has(String(first(m,['id','memberId','userId'],'')))).map(m=>{const id=String(first(m,['id','memberId','userId'],'')),p=pm.get(id)||{},w=wm.get(id)||{};return Object.assign({},m,w,{lastSeenAt:p.lastSeenAt||p.seenAt||p.updatedAt,online:true});});}
-  async function load(showLoading=false){if(loading)return;loading=true;if(showLoading)$('onlineUsersBody').innerHTML='<tr><td colspan="12">Loading online users...</td></tr>';try{
+  async function load(showLoading=false,forceHeavy=false){if(loading)return;loading=true;if(showLoading)$('onlineUsersBody').innerHTML='<tr><td colspan="12">Loading online users...</td></tr>';try{
     const headers={...BO_AUTH.authHeader()};
-    const [pj,mj,wj]=await Promise.all([
-      api(API_CONFIG.BASE_URL+(API_CONFIG.ENDPOINTS.MEMBER_ONLINE||'/admin/member/online'),{headers,cache:'no-store'}),
-      api(BO_AUTH.memberListUrl(),{headers,cache:'no-store'}),
-      API_CONFIG.ENDPOINTS.MEMBER_WALLET_LIST?api(API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS.MEMBER_WALLET_LIST+'?page=1&size=10000',{headers,cache:'no-store'}).catch(()=>({data:{content:[]}})):Promise.resolve({data:{content:[]}})
-    ]);
+    const needHeavy=forceHeavy||!cachedMembersPayload||(Date.now()-lastHeavyRefreshAt>=HEAVY_REFRESH_MS);
+    const presencePromise=api(API_CONFIG.BASE_URL+(API_CONFIG.ENDPOINTS.MEMBER_ONLINE||'/admin/member/online'),{headers,cache:'no-store'});
+    const memberPromise=needHeavy?api(BO_AUTH.memberListUrl(),{headers,cache:'no-store'}):Promise.resolve(cachedMembersPayload);
+    const walletPromise=needHeavy
+      ?(API_CONFIG.ENDPOINTS.MEMBER_WALLET_LIST?api(API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS.MEMBER_WALLET_LIST+'?page=1&size=10000',{headers,cache:'no-store'}).catch(()=>({data:{content:[]}})):Promise.resolve({data:{content:[]}}))
+      :Promise.resolve(cachedWalletPayload||{data:{content:[]}});
+    const [pj,mj,wj]=await Promise.all([presencePromise,memberPromise,walletPromise]);
+    if(needHeavy){cachedMembersPayload=mj;cachedWalletPayload=wj;lastHeavyRefreshAt=Date.now();}
     const pData=pj.data||{},presence=Array.isArray(pData.content)?pData.content:[],members=Array.isArray(mj.data)?mj.data:(Array.isArray(mj.data?.content)?mj.data.content:[]),wallets=Array.isArray(wj.data)?wj.data:(Array.isArray(wj.data?.content)?wj.data.content:[]);
-    all=mergeMembers(members,presence,wallets).sort((a,b)=>new Date(b.lastSeenAt||0)-new Date(a.lastSeenAt||0));render();$('onlineRefreshNote').textContent='Updated '+new Date().toLocaleTimeString()+' · refresh every 5 seconds';
+    all=mergeMembers(members,presence,wallets).sort((a,b)=>new Date(b.lastSeenAt||0)-new Date(a.lastSeenAt||0));render();$('onlineRefreshNote').textContent='Presence updated '+new Date().toLocaleTimeString()+' · details refresh every 60 seconds';
   }catch(e){$('onlineUsersBody').innerHTML='<tr><td colspan="12" class="text-danger">'+esc(e.message||'Unable to load online users')+'</td></tr>';}finally{loading=false;}}
   function reset(){['onlineSearchName','onlineSearchMobile','onlineSearchAgent','onlineSearchBank','onlineSearchStatus','onlineSearchLock'].forEach(id=>{if($(id))$(id).value=''});page=1;render();}
   function exportCsv(){const rows=filtered.map((m,i)=>[i+1,first(m,['username'],'-'),first(m,['fullName','name'],'-'),first(m,['mobile','phone'],'-'),first(m,['bank','bankName'],'-'),money(first(m,['mainWalletBalance','balance'],0)),'VIP '+first(m,['vipLevel'],0),status(m),dt(m.lastSeenAt)]);const csv=[['#','Username','Name','Mobile','Bank','Main Wallet','VIP Level','Status','Last Seen'],...rows].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='online-users-'+new Date().toISOString().slice(0,10)+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);}
   document.addEventListener('DOMContentLoaded',()=>{
-    size=Number($('onlinePageSize')?.value)||10; load(true); timer=setInterval(()=>load(false),5000);
+    size=Number($('onlinePageSize')?.value)||10; load(true,true); timer=setInterval(()=>load(false,false),5000);
     ['onlineSearchName','onlineSearchMobile','onlineSearchAgent','onlineSearchBank'].forEach(id=>$(id)?.addEventListener('input',()=>{page=1;render()}));
     ['onlineSearchStatus','onlineSearchLock'].forEach(id=>$(id)?.addEventListener('change',()=>{page=1;render()}));
-    $('onlineSearchBtn')?.addEventListener('click',()=>{page=1;render()}); $('onlineFilterResetBtn')?.addEventListener('click',reset); $('onlineManualRefreshBtn')?.addEventListener('click',()=>load(true)); $('onlineExportBtn')?.addEventListener('click',exportCsv);
+    $('onlineSearchBtn')?.addEventListener('click',()=>{page=1;render()}); $('onlineFilterResetBtn')?.addEventListener('click',reset); $('onlineManualRefreshBtn')?.addEventListener('click',()=>load(true,true)); $('onlineExportBtn')?.addEventListener('click',exportCsv);
     $('onlinePageSize')?.addEventListener('change',e=>{size=Number(e.target.value)||10;page=1;render()}); $('onlinePager')?.addEventListener('click',e=>{const b=e.target.closest('[data-online-page]');if(!b||b.disabled)return;page=Number(b.dataset.onlinePage)||1;render();document.querySelector('.user-main-table')?.scrollIntoView({behavior:'smooth',block:'start'});});
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)load(false)}); window.addEventListener('focus',()=>load(false));
   });

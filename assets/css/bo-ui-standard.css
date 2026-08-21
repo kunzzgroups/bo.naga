@@ -731,3 +731,19 @@ body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .
   body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>.bo-filter-actions-item:has(>button),
   body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>.bo-filter-actions-item>.filter-action-row{grid-template-columns:1fr!important}
 }
+
+
+/* 2026-08-21: keep injected sidebar visually identical on every BO page,
+   including User Management which uses the legacy dashboard base stylesheet. */
+.report-sidebar .report-nav{padding:10px!important}
+.report-sidebar .report-nav>a:not(.report-sub){
+  min-height:42px!important;margin:0!important;padding:11px 12px!important;border-radius:0!important;
+  background:linear-gradient(204deg,#2563eb,#103fac)!important;color:#fff!important;
+  border-bottom:1px solid rgba(255,255,255,.45)!important;font-weight:800!important;
+}
+.report-sidebar .report-nav>a:not(.report-sub) i{color:#fff!important}
+.report-sidebar .report-nav>a:not(.report-sub):first-child{border-radius:12px 12px 0 0!important}
+.report-sidebar .report-nav>a:not(.report-sub):last-child{border-radius:0 0 12px 12px!important}
+.report-sidebar .nav-group{margin:0!important;border-radius:0!important;border-left:0!important;border-right:0!important;border-top:0!important}
+.report-sidebar .nav-group .nav-group-btn{margin:0!important;border-radius:0!important;min-height:44px!important}
+.report-sidebar .nav-group-list{background:#f8fafc!important}

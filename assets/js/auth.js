@@ -111,6 +111,7 @@
     {menuKey:'wbet_bet_limit', title:'WBET Bet Limit', url:'wbet-bet-limit.html', icon:'bi-sliders', parentKey:'wallet', sortOrder:16},
     {menuKey:'provider_wallet_transaction', title:'Provider Transactions', url:'provider-wallet-transaction.html', icon:'bi-journal-text', parentKey:'wallet', sortOrder:16},
     {menuKey:'admin', title:'Admin Management', url:'admin-user.html', icon:'bi-shield-lock', parentKey:'', sortOrder:20},
+    {menuKey:'brand_management', title:'Branding Management', url:'brand-management.html', icon:'bi-buildings', parentKey:'', sortOrder:21},
     {menuKey:'role', title:'Role & Menu Permission', url:'role.html', icon:'bi-person-badge', parentKey:'access', sortOrder:30},
     {menuKey:'menu_management', title:'Menu Management', url:'menu-management.html', icon:'bi-list-check', parentKey:'access', sortOrder:31},
     {menuKey:'admin_login_log', title:'Admin Login Log', url:'admin-login-log.html', icon:'bi-clock-history', parentKey:'access', sortOrder:32},
@@ -172,9 +173,9 @@
     userKey: 'bo_admin_user',
     token: function(){ return localStorage.getItem(this.tokenKey) || ''; },
     user: function(){ try { return JSON.parse(localStorage.getItem(this.userKey) || '{}'); } catch(e){ return {}; } },
-    save: function(json){ localStorage.setItem(this.tokenKey, json.token || ''); localStorage.setItem(this.userKey, JSON.stringify(json.data || {})); },
+    save: function(json){ localStorage.setItem(this.tokenKey, json.token || ''); localStorage.setItem(this.userKey, JSON.stringify(json.data || {})); try{sessionStorage.setItem('bo_admin_me_refreshed_at',String(Date.now()));}catch(e){} },
     saveUser: function(user){ localStorage.setItem(this.userKey, JSON.stringify(user || {})); this.renderProfile(); this.renderSidebar(user); },
-    logout: function(){ localStorage.removeItem(this.tokenKey); localStorage.removeItem(this.userKey); try{ sessionStorage.removeItem('bo_operation_login_marker'); sessionStorage.removeItem('bo_operation_login_played'); }catch(e){} window.location.href = 'login.html'; },
+    logout: function(){ localStorage.removeItem(this.tokenKey); localStorage.removeItem(this.userKey); try{ sessionStorage.removeItem('bo_operation_login_marker'); sessionStorage.removeItem('bo_operation_login_played'); sessionStorage.removeItem('bo_admin_me_refreshed_at'); sessionStorage.removeItem('bo_brand_context_cache_v3'); }catch(e){} window.location.href = 'login.html'; },
     requireLogin: function(){ if(!this.token() && !location.pathname.endsWith('/login.html')) window.location.href = 'login.html'; },
     allowedMenus: function(user){
       user = user || this.user();
@@ -223,18 +224,24 @@
     memberListUrl: function(){ return api('MEMBER_LIST'); },
     memberCreateUrl: function(){ return api('MEMBER_CREATE'); },
     memberUpdateUrl: function(id){ return api('MEMBER_UPDATE') + '/' + id; },
-    refreshMe: async function(){
+    refreshMe: async function(force){
       if(!this.token()) return null;
+      const cached=this.user();
+      let last=0;try{last=Number(sessionStorage.getItem('bo_admin_me_refreshed_at')||0);}catch(e){}
+      // Menus/profile are already stored after login. Revalidate periodically instead of
+      // firing /auth/admin/me on every single BO page navigation.
+      if(!force && cached && cached.username && Array.isArray(cached.menus) && Date.now()-last<30000){
+        this.renderSidebar(cached);this.enforcePageAccess(cached);return cached;
+      }
       try{
         const res = await fetch(this.adminMeUrl(), {headers: {...this.authHeader()}});
         const json = await res.json().catch(() => ({}));
-        if(res.ok && json.status !== 'error' && json.data){ this.saveUser(json.data); this.enforcePageAccess(json.data); return json.data; }
+        if(res.ok && json.status !== 'error' && json.data){try{sessionStorage.setItem('bo_admin_me_refreshed_at',String(Date.now()));}catch(e){} this.saveUser(json.data); this.enforcePageAccess(json.data); return json.data; }
         if(json.message === 'Unauthorized') this.logout();
       }catch(e){}
-      const user = this.user();
-      this.renderSidebar(user);
-      this.enforcePageAccess(user);
-      return user;
+      this.renderSidebar(cached);
+      this.enforcePageAccess(cached);
+      return cached;
     },
     applyMenuPermission: function(user){
       // Backward compatible function name. Sidebar is now fully rendered from allowed menus.
@@ -248,10 +255,8 @@
       if(!menus.length && !this.token()) menus = FALLBACK_MENUS;
       if(!menus.length) return;
 
-      // Local companion page: anyone allowed to manage payment methods can also view bank deposit usage.
-      if(menus.some(m => String(m.menuKey||'') === 'payment_method') && !menus.some(m => String(m.menuKey||'') === 'bank_deposit_usage')){
-        menus = menus.concat([{menuKey:'bank_deposit_usage', title:'Bank Deposit Usage', url:'bank-deposit-usage.html', icon:'bi-bar-chart-line', parentKey:'wallet', sortOrder:15.1, status:1}]);
-      }
+      // Bank Deposit Usage is an independent permission controlled by Master.
+
 
       // Advertisement Popup is a companion frontend-configuration page. Keep it visible
       // immediately for admins that already have frontend/site customization access.
@@ -353,38 +358,24 @@
     },
     loadHeaderCounters: async function(){
       if(!this.token()) return;
-      const headers = {...this.authHeader()};
-      const today = new Date();
-      const y = today.getFullYear();
-      const m = String(today.getMonth()+1).padStart(2,'0');
-      const d = String(today.getDate()).padStart(2,'0');
-      const todayKey = y+'-'+m+'-'+d;
-      const set = function(selector, value){ document.querySelectorAll(selector).forEach(function(el){ el.textContent = Number(value || 0).toLocaleString(); }); };
-      const safeJson = async function(url){
-        const res = await fetch(url,{headers:headers});
-        const json = await res.json().catch(function(){ return {}; });
-        if(!res.ok || json.status === 'error') throw new Error(json.message || 'Request failed');
-        return json;
-      };
+      const brandId=Number(localStorage.getItem('bo_active_brand_id')||1)||1;
+      const stateKey='bo_operation_notification_state_v4_b'+brandId;
+      const set=function(selector,value){document.querySelectorAll(selector).forEach(function(el){el.textContent=Number(value||0).toLocaleString();});};
       try{
-        const json = await safeJson(this.memberListUrl());
-        const data = json && json.data;
-        const rows = Array.isArray(data) ? data : (data && Array.isArray(data.content) ? data.content : []);
-        const count = rows.filter(function(row){
-          const raw = row && (row.createdAt || row.registerDate || row.created_at);
-          if(!raw) return false;
-          return String(raw).replace('T',' ').slice(0,10) === todayKey;
-        }).length;
-        set('[data-header-new-members]', count);
-      }catch(e){ set('[data-header-new-members]', 0); }
+        const cached=JSON.parse(localStorage.getItem(stateKey)||'null');
+        if(cached){set('[data-header-new-members]',cached.members);set('[data-header-pending-deposit]',cached.deposit);set('[data-header-pending-withdraw]',cached.withdraw);}
+      }catch(e){}
+      // operation-global-notification.js owns the live counter refresh. Avoid three
+      // extra list requests (including a full member list) on every BO page load.
+      if(window.BO_OPERATION_NOTIFICATION_CONTROL&&typeof window.BO_OPERATION_NOTIFICATION_CONTROL.refresh==='function'){
+        window.BO_OPERATION_NOTIFICATION_CONTROL.refresh();return;
+      }
       try{
-        const json = await safeJson(api('MEMBER_DEPOSIT_LIST') + '?status=PENDING&page=1&size=1');
-        set('[data-header-pending-deposit]', this.countFromListResponse(json));
-      }catch(e){ set('[data-header-pending-deposit]', 0); }
-      try{
-        const json = await safeJson(api('MEMBER_WITHDRAW_LIST') + '?status=PENDING&page=1&size=1');
-        set('[data-header-pending-withdraw]', this.countFromListResponse(json));
-      }catch(e){ set('[data-header-pending-withdraw]', 0); }
+        const res=await fetch(api('OPERATION_NOTIFICATION_SUMMARY'),{headers:{...this.authHeader()},cache:'no-store'});
+        const json=await res.json().catch(function(){return {};});
+        if(!res.ok||json.status==='error')return;
+        const d=(json&&json.data)||{};set('[data-header-new-members]',d.members);set('[data-header-pending-deposit]',d.deposit);set('[data-header-pending-withdraw]',d.withdraw);
+      }catch(e){}
     },
     profileHtml: function(){
       const user = this.user();
@@ -404,6 +395,7 @@
       document.querySelectorAll('[data-bo-profile]').forEach(el => { el.innerHTML = this.profileHtml(); });
       this.renderProfile();
       this.loadHeaderCounters();
+      if(window.BO_BRAND&&typeof window.BO_BRAND.mount==='function') setTimeout(function(){ window.BO_BRAND.mount(); },0);
     }
   };
 

@@ -28,6 +28,8 @@
   let originalTitle = document.title;
   let templateMessages = [];
   let unsubscribeTemplates = null;
+  let activeBrandId = Number(localStorage.getItem('bo_active_brand_id') || 1) || 1;
+  let activeBrandDomains = [];
   const LIVECHAT_NOTIFICATION_SOUND_URL = 'assets/audio/livechat_sound.mp3';
   let notificationAudio = null;
   let notificationAudioUnlocked = false;
@@ -40,9 +42,10 @@
     {title:'Checking', message:'Thank you dear. We will check and reply shortly.'}
   ];
 
-  document.addEventListener('DOMContentLoaded', init);
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 
-  function init(){
+  async function init(){
     bindEvents();
     installNotificationSoundUnlock();
     setComposerVisible(false);
@@ -52,8 +55,36 @@
       renderInboxMessage('Firebase not configured. Update assets/js/firebase-config.js first.');
       return;
     }
+    await resolveActiveBrand();
     listenTemplates();
     listenConversations();
+  }
+
+  async function resolveActiveBrand(){
+    activeBrandId = Number(localStorage.getItem('bo_active_brand_id') || 1) || 1;
+    activeBrandDomains = [];
+    try{
+      if(window.BO_BRAND && typeof window.BO_BRAND.context === 'function'){
+        const payload = await window.BO_BRAND.context(false);
+        const data = payload && payload.data ? payload.data : {};
+        const brands = Array.isArray(data.brands) ? data.brands : [];
+        const brand = brands.find(function(b){ return Number(b.id) === activeBrandId; });
+        if(brand){
+          const domains = [brand.primaryDomain].concat(String(brand.domainAliases || '').split(/[\s,;]+/));
+          activeBrandDomains = domains.map(function(v){ return String(v || '').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/\/.*$/,''); }).filter(Boolean);
+        }
+      }
+    }catch(error){ console.warn('[BO livechat] brand context unavailable:', error && error.message ? error.message : error); }
+    if(activeBrandId === 1 && activeBrandDomains.indexOf('titanxgaming.com') === -1) activeBrandDomains.push('titanxgaming.com','www.titanxgaming.com');
+  }
+
+  function belongsToActiveBrand(conversation){
+    const id = Number(conversation && conversation.brandId || 0);
+    if(id > 0) return id === activeBrandId;
+    const domain = String(conversation && conversation.brandDomain || '').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/\/.*$/,'');
+    if(domain) return activeBrandDomains.indexOf(domain) !== -1;
+    // Conversations created before multi-branding belong to the original TitanX tenant only.
+    return activeBrandId === 1;
   }
 
   function initFirebase(){
@@ -119,7 +150,8 @@
         const snapshotSeq = ++conversationSnapshotSeq;
         const incomingConversations = [];
         snapshot.forEach(function(doc){
-          incomingConversations.push(Object.assign({id: doc.id}, doc.data() || {}));
+          const conversation = Object.assign({id: doc.id}, doc.data() || {});
+          if(belongsToActiveBrand(conversation)) incomingConversations.push(conversation);
         });
 
         // A blank/placeholder lastMessage does not always mean the chat is empty

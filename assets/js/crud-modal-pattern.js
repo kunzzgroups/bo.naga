@@ -119,6 +119,7 @@
     return actions;
   }
   function addToolbarButton(listCard, formCard){
+    if(document.body && document.body.dataset.crudNoAdd === '1') return;
     var existingPageAdd = listCard.querySelector('.crud-add-btn');
     if(existingPageAdd){
       existingPageAdd.addEventListener('click', function(e){

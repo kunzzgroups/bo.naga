@@ -4,7 +4,8 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     ((NAGA_API_CONFIG.ENDPOINTS && NAGA_API_CONFIG.ENDPOINTS.CUSTOMIZE_MAIN_LAYOUT) || '/customize/main-layout');
 
 (function () {
-    const STORAGE_KEY = 'naga_main_layout_customize_files';
+    const ACTIVE_BRAND_ID = (window.BO_BRAND && BO_BRAND.activeId ? BO_BRAND.activeId() : 1);
+    const STORAGE_KEY = 'naga_main_layout_customize_files:' + ACTIVE_BRAND_ID;
 
     function cleanCustomBaseUrl(value) {
         const fallback = 'https://corepayx.com/assets/custom/images';
@@ -16,6 +17,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     const CUSTOM_ASSET_BASE_URL = cleanCustomBaseUrl(NAGA_API_CONFIG.CUSTOM_ASSET_BASE_URL);
 
     function assetUrl(fileName) {
+        if (ACTIVE_BRAND_ID !== 1) return '';
         const cleanFileName = String(fileName || '').replace(/^\/+/, '');
         return CUSTOM_ASSET_BASE_URL + '/' + cleanFileName + '?v=1.0.0';
     }
@@ -139,6 +141,8 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         url = url.replace(/^\.\.\/naga\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
         url = url.replace(/^\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
         url = url.replace(/^assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
+        if (/^\/assets\/custom\/brands\//i.test(url)) url = 'https://titanxgaming.com' + url;
+        if (/^assets\/custom\/brands\//i.test(url)) url = 'https://titanxgaming.com/' + url;
 
         return url.replace(/([^:])\/\/+/g, '$1/');
     }
@@ -158,7 +162,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 
         assets.forEach((asset) => {
             const keys = asset.apiKeys || [asset.field, asset.fileKey];
-            const fallback = defaultSettings[asset.field].replace('1.0.0', version);
+            const fallback = String(defaultSettings[asset.field] || '').replace('1.0.0', version);
             next[asset.field] = normalizeUrl(getFirstValue(responseAssets, keys) || fallback);
         });
 
@@ -301,6 +305,13 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 
     saveBtn.addEventListener('click', saveMainLayout);
     loadSettings();
+    // Always revalidate from the current brand API. Local storage is only a fast
+    // first paint and is separated per brand, so TitanX assets cannot leak into
+    // a newly selected branding.
+    fetch(API_CUSTOMIZE_MAIN_LAYOUT_URL, {cache:'no-cache'})
+      .then(res => res.ok ? res.json() : Promise.reject(new Error('Load failed')))
+      .then(applyApiResponse)
+      .catch(() => {});
 })();
 
 
