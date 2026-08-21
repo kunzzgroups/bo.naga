@@ -512,7 +512,7 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 
 
 /* ===== Sidebar dynamic alignment cleanup ===== */
-.report-nav{display:flex;flex-direction:column;gap:4px}
+.report-nav{display:flex;flex-direction:column;}
 .report-nav a,.nav-group-btn{min-height:42px;text-align:left}
 .report-nav a span,.nav-group-btn span{display:flex;align-items:center;min-width:0;flex:1;gap:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
 .report-nav a span i,.nav-group-btn span i{flex:0 0 18px;width:18px;text-align:center}
