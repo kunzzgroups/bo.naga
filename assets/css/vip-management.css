@@ -263,3 +263,23 @@ body.vip-modal-open .report-shell{filter:none}
 @media(max-width:650px){
   .vip-step-main-grid{grid-template-columns:1fr!important}
 }
+
+/* VIP full milestone banner layout v2.4.2
+   Keep the original three artwork cards on the first row and place Full Banner Image on its own second row. */
+.vip-step-banner-help{margin-top:9px;padding:9px 11px;border-radius:10px;background:#eef6ff;color:#49627f;font-size:11px;font-weight:600;line-height:1.45}
+.vip-step-banner-help i{margin-right:5px}
+.vip-step-media-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important}
+.vip-step-media-banner-row{display:grid;grid-template-columns:1fr;margin-top:12px;min-width:0}
+.vip-step-media-banner-row .vip-step-artwork{width:100%;min-width:0;box-sizing:border-box;grid-template-columns:116px 1fr}
+.vip-step-media-banner-row .vip-step-image-box{width:116px;height:72px!important}
+@media(max-width:900px){
+  .vip-step-media-grid{grid-template-columns:1fr!important}
+}
+@media(max-width:650px){
+  .vip-step-media-grid{grid-template-columns:1fr!important}
+  .vip-step-media-banner-row .vip-step-artwork{grid-template-columns:92px 1fr}
+  .vip-step-media-banner-row .vip-step-image-box{width:92px;height:72px!important}
+}
+
+/* VIP full-banner click detail configuration */
+.vip-step-media-banner-row{align-items:stretch!important}.vip-banner-html-field{flex:1;min-width:280px;display:flex;flex-direction:column;gap:7px;padding:12px;border:1px solid #d6e1ef;border-radius:12px;background:#fff}.vip-banner-html-field>b{font-size:12px;color:#17233d}.vip-banner-html-field small{font-size:11px;line-height:1.4;color:#718096}.vip-banner-html-field textarea{width:100%;min-height:112px;resize:vertical;border:1px solid #cbd8e8;border-radius:10px;padding:10px 12px;font:inherit;font-size:12px;line-height:1.5;background:#fff;color:#17233d;box-sizing:border-box}.vip-banner-html-field textarea:focus{outline:0;border-color:#4779ff;box-shadow:0 0 0 3px rgba(71,121,255,.12)}@media(max-width:760px){.vip-step-media-banner-row{flex-direction:column}.vip-banner-html-field{min-width:0;width:100%}}

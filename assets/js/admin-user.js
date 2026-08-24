@@ -86,18 +86,24 @@
 
   async function loadRoles(brandId){
     try{
+      const current=BO_AUTH.user()||{};
       const headers={...BO_AUTH.authHeader()};
       if(brandId) headers['X-Brand-Id']=String(brandId);
       const json = await apiJson(BO_AUTH.roleListUrl(), {headers});
-      const rows = (Array.isArray(json.data) ? json.data : []).filter(r=>String(r.roleType||'CUSTOM').toUpperCase()!=='MASTER');
+      let rows = Array.isArray(json.data) ? json.data : [];
+      if(current.rootAdmin){
+        rows = brandId ? rows.filter(r=>Number(r.brandId)===Number(brandId) && !['MASTER','ROOT'].includes(String(r.roleType||'').toUpperCase())) : rows.filter(r=>r.brandId==null && String(r.roleType||'').toUpperCase()==='MASTER');
+      }else{
+        rows = rows.filter(r=>!['MASTER','ROOT'].includes(String(r.roleType||'CUSTOM').toUpperCase()));
+      }
       roleMap = Object.assign(roleMap, Object.fromEntries(rows.map(r=>[String(r.id),r.name||r.code])));
-      const html = rows.map(r => '<option value="'+esc(r.id)+'">'+esc(r.name || r.code)+(r.roleType==='BRAND_OWNER'?' (Owner)':'')+'</option>').join('') || '<option value="">No role available for this branding</option>';
+      const html = rows.map(r => '<option value="'+esc(r.id)+'">'+esc(r.name || r.code)+(r.roleType==='BRAND_OWNER'?' (Owner)':'')+'</option>').join('') || '<option value="">No role available for this selection</option>';
       ['newAdminRole','editAdminRole'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML = html; });
       if(roleFilter){ roleFilter.innerHTML = '<option value="">All Roles</option>' + html; }
       const pg = document.getElementById('newAdminPermissionGroup'); if(pg) pg.innerHTML = '<option value="">Select permission group (optional)</option>' + html;
       return rows;
     }catch(e){
-      ['newAdminRole','editAdminRole'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML = '<option value="">Unable to load branding roles</option>'; });
+      ['newAdminRole','editAdminRole'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML = '<option value="">Unable to load roles</option>'; });
       return [];
     }
   }
@@ -181,10 +187,10 @@
     }
     try{
       const r=await fetch(API_CONFIG.BASE_URL+(API_CONFIG.ENDPOINTS.BRAND_LIST||'/admin/brands'),{headers:{...BO_AUTH.authHeader()}});const j=await r.json();const rows=Array.isArray(j.data)?j.data:[];
-      const html='<option value="">Select Branding</option>'+rows.map(x=>'<option value="'+x.id+'">'+esc(x.name||x.code)+' (#'+x.id+')</option>').join('');
+      const html=(user.rootAdmin?'<option value="">Platform Master Account</option>':'<option value="">Select Branding</option>')+rows.map(x=>'<option value="'+x.id+'">'+esc(x.name||x.code)+' (#'+x.id+')</option>').join('');
       if(newSel)newSel.innerHTML=html;if(editSel)editSel.innerHTML=html;
-      const active=(window.BO_BRAND&&BO_BRAND.activeId?BO_BRAND.activeId():1); if(newSel&&rows.some(x=>Number(x.id)===Number(active)))newSel.value=String(active);
-      await loadRoles(newSel&&newSel.value?Number(newSel.value):active);
+      const active=(window.BO_BRAND&&BO_BRAND.activeId?BO_BRAND.activeId():1); if(newSel&&rows.some(x=>Number(x.id)===Number(active))&&!user.rootAdmin)newSel.value=String(active);
+      await loadRoles(newSel&&newSel.value?Number(newSel.value):(user.rootAdmin?null:active));
     }catch(e){}
   }
 
@@ -211,8 +217,8 @@
     setStatus(createStatus, 'Creating admin...', '');
     try{
       const currentUser=BO_AUTH.user()||{}; const brandEl=document.getElementById('newAdminBrand');
-      if(currentUser.masterAdmin && (!brandEl||!brandEl.value)) throw new Error('Please select the branding for this administrator.');
-      if(!document.getElementById('newAdminRole').value) throw new Error('Please select a branding role.');
+      if(currentUser.masterAdmin && !currentUser.rootAdmin && (!brandEl||!brandEl.value)) throw new Error('Please select the branding for this administrator.');
+      if(!document.getElementById('newAdminRole').value) throw new Error(currentUser.rootAdmin&&(!brandEl||!brandEl.value)?'Please select the Master role.':'Please select a branding role.');
       const json = await apiJson(BO_AUTH.createAdminUrl(), {
         method: 'POST', headers: {'Content-Type':'application/json', ...BO_AUTH.authHeader()},
         body: JSON.stringify({
@@ -251,7 +257,7 @@
     document.getElementById('editAdminDisplayName').value = row.displayName || '';
     document.getElementById('editAdminStatus').value = String(row.status == null ? 1 : row.status);
     if(document.getElementById('editAdminBrand')) document.getElementById('editAdminBrand').value = row.brandId == null ? '' : String(row.brandId);
-    if(row.brandId) await loadRoles(Number(row.brandId));
+    if(row.brandId) await loadRoles(Number(row.brandId)); else if((BO_AUTH.user()||{}).rootAdmin) await loadRoles(null);
     document.getElementById('editAdminRole').value = String(row.roleId || '');
     document.getElementById('editAdminStatus').dispatchEvent(new Event('change', {bubbles:true}));
     document.getElementById('editAdminRole').dispatchEvent(new Event('change', {bubbles:true}));
@@ -323,7 +329,7 @@
 
   const newBrandEl=document.getElementById('newAdminBrand');
   const editBrandEl=document.getElementById('editAdminBrand');
-  newBrandEl && newBrandEl.addEventListener('change',()=>{ if(newBrandEl.value) loadRoles(Number(newBrandEl.value)); });
-  editBrandEl && editBrandEl.addEventListener('change',()=>{ if(editBrandEl.value) loadRoles(Number(editBrandEl.value)); });
+  newBrandEl && newBrandEl.addEventListener('change',()=>{ loadRoles(newBrandEl.value?Number(newBrandEl.value):null); });
+  editBrandEl && editBrandEl.addEventListener('change',()=>{ loadRoles(editBrandEl.value?Number(editBrandEl.value):null); });
   (async function(){ await loadBrandOptions(); await loadAdmins(); })();
 })();

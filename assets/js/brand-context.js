@@ -8,6 +8,8 @@
   function token(){return localStorage.getItem('bo_admin_token')||localStorage.getItem('admin_token')||'';}
   function tokenKey(){const t=token();return t?t.slice(-24):'';}
   function activeId(){return Number(localStorage.getItem(KEY)||1)||1;}
+  function cachedAdmin(){try{return JSON.parse(localStorage.getItem('bo_admin_user')||'{}')||{};}catch(e){return {};}}
+  function isMaster(){const u=cachedAdmin();return !!(u.rootAdmin||u.masterAdmin||String(u.roleType||'').toUpperCase()==='ROOT'||String(u.roleType||'').toUpperCase()==='MASTER');}
   function readCache(){
     try{
       const x=JSON.parse(sessionStorage.getItem(CACHE_KEY)||'null');
@@ -70,6 +72,6 @@
     document.documentElement.dataset.boMaster=d.master?'1':'0';
     window.dispatchEvent(new CustomEvent('bo:brand-context',{detail:d}));
   }
-  window.BO_BRAND={key:KEY,activeId, set,context,mount,invalidate};
+  window.BO_BRAND={key:KEY,activeId,isMaster,set,context,mount,invalidate};
   document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>mount(false),30));
 })();

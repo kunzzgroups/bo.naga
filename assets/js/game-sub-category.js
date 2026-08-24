@@ -90,7 +90,7 @@ const GAME_SUB_CATEGORY_API = {
 };
 
 (function () {
-  const tenantPresentation = !!(window.BO_BRAND && Number(window.BO_BRAND.activeId()) !== 1);
+  const tenantPresentation = !!(window.BO_BRAND && !window.BO_BRAND.isMaster());
   if (tenantPresentation && document.body) document.body.dataset.crudNoAdd = '1';
   const form = document.getElementById('subCategoryForm');
   if (!form) return;

@@ -95,7 +95,7 @@ const GAME_API = {
 };
 
 (function () {
-  const tenantReadOnly = !!(window.BO_BRAND && Number(window.BO_BRAND.activeId()) !== 1);
+  const tenantReadOnly = !!(window.BO_BRAND && !window.BO_BRAND.isMaster());
   if (tenantReadOnly && document.body) document.body.dataset.crudNoAdd = '1';
   const form = document.getElementById('gameForm');
   if (!form) return;
@@ -104,6 +104,7 @@ const GAME_API = {
   const id = document.getElementById('gameId');
   const categoryId = document.getElementById('gameCategoryId');
   const subCategoryId = document.getElementById('gameSubCategoryId');
+  const subCategoryValue = document.getElementById('gameSubCategoryValue');
   const name = document.getElementById('gameName');
   const gameUrl = document.getElementById('gameUrl');
   const providerCode = document.getElementById('gameProviderCode');
@@ -242,8 +243,41 @@ const GAME_API = {
   }
 
 
+  // Sub category is OPTIONAL. The hidden field is the single value submitted to Spring Boot.
+  // 0 means "no sub category" and must be preserved instead of being converted to blank.
+  function getSelectedSubCategoryId() {
+    const hiddenValue = String(subCategoryValue?.value ?? '0').trim();
+    if (hiddenValue !== '' && Number(hiddenValue) >= 0) return hiddenValue;
+    const nativeValue = String(subCategoryId.value ?? '0').trim();
+    return nativeValue !== '' && Number(nativeValue) >= 0 ? nativeValue : '0';
+  }
+
+  function setSelectedSubCategoryId(value, syncNative = true) {
+    const clean = String(value ?? '0').trim();
+    const valid = clean !== '' && Number(clean) > 0 ? clean : '0';
+    if (subCategoryValue) subCategoryValue.value = valid;
+    if (syncNative) {
+      const exists = Array.from(subCategoryId.options).some(option => String(option.value) === valid);
+      subCategoryId.value = exists ? valid : '0';
+    }
+    if (window.BOSelectSync) window.BOSelectSync.one(subCategoryId);
+    return valid;
+  }
+
   function selectedSubCategory() {
-    return subCategories.find(item => String(item.id) === String(subCategoryId.value || '')) || null;
+    const selectedId = getSelectedSubCategoryId();
+    return subCategories.find(item => String(item.id) === String(selectedId)) || null;
+  }
+
+  function uniqueLegacySubCategory(categoryValue, providerValue) {
+    const category = String(categoryValue || '').trim();
+    const provider = String(providerValue || '').trim().toUpperCase();
+    if (!category || !provider) return null;
+    const matches = subCategories.filter(item =>
+      String(item.categoryId) === category &&
+      String(item.providerCode || '').trim().toUpperCase() === provider
+    );
+    return matches.length === 1 ? matches[0] : null;
   }
 
   function syncProviderFromSubCategory(options = {}) {
@@ -279,7 +313,7 @@ const GAME_API = {
       return categoryOk && providerOk;
     });
     const options = filtered.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}${item.providerCode ? ' - ' + escapeHtml(item.providerCode) : ''}</option>`).join('');
-    return (withAll ? '<option value="">All Sub Categories</option>' : '') + (options || '<option value="">No sub category found</option>');
+    return (withAll ? '<option value="">All Sub Categories</option>' : '<option value="0">Select Sub Category</option>') + (options || (withAll ? '' : '<option value="" disabled>No sub category found</option>'));
   }
 
   function providerCodeOf(item) {
@@ -301,14 +335,11 @@ const GAME_API = {
   }
 
   function refreshSubCategoryOptions(keepValue) {
-    const oldValue = keepValue || subCategoryId.value;
-    // Do not filter the form sub-category list by the current provider input.
-    // The selected sub-category is the source of truth and will auto-fill provider code.
+    // Explicit '' means clear. Omitting the argument keeps the confirmed ID.
+    const oldValue = arguments.length ? String(keepValue ?? '0') : getSelectedSubCategoryId();
     subCategoryId.innerHTML = subCategoryOptions(categoryId.value, false, '');
-    if (oldValue && Array.from(subCategoryId.options).some(o => o.value === String(oldValue))) {
-      subCategoryId.value = String(oldValue);
-    }
-    if (!isRestoringSelection) syncProviderFromSubCategory({ clearWhenMissing: true });
+    setSelectedSubCategoryId(oldValue, true);
+    if (!isRestoringSelection) syncProviderFromSubCategory({ clearWhenMissing: false });
   }
 
   function refreshFilterSubCategoryOptions() {
@@ -411,15 +442,21 @@ const GAME_API = {
       // belongs to the selected category/provider before selecting it.
       subCategoryId.innerHTML = subCategoryOptions(wantedCategoryId, false, '');
 
-      const subCategoryExists = Array.from(subCategoryId.options).some(option => String(option.value) === wantedSubCategoryId);
-      subCategoryId.value = subCategoryExists ? wantedSubCategoryId : '';
+      const subCategoryExists = wantedSubCategoryId && Number(wantedSubCategoryId) > 0 &&
+        Array.from(subCategoryId.options).some(option => String(option.value) === wantedSubCategoryId);
+      // Do NOT auto-pick a sub category from provider/category. Existing rows with
+      // null/0 must stay unassigned and display as "-" in the game list.
+      setSelectedSubCategoryId(subCategoryExists ? wantedSubCategoryId : '0', true);
     } finally {
       isRestoringSelection = false;
     }
 
     // Update the visible rounded dropdowns after both native selects are final.
-    categoryId.dispatchEvent(new Event('change', { bubbles: true }));
-    subCategoryId.dispatchEvent(new Event('change', { bubbles: true }));
+    // Do not fire category change while restoring; that handler clears Sub Category.
+    if (window.BOSelectSync) {
+      window.BOSelectSync.one(categoryId);
+      window.BOSelectSync.one(subCategoryId);
+    }
   }
 
   function editItem(item) {
@@ -569,6 +606,17 @@ const GAME_API = {
       categoryId.focus();
       return;
     }
+    // Sub category is optional. 0 is intentionally sent to Spring Boot when
+    // the admin leaves "Select Sub Category" selected.
+    const selectedSubCategoryId = getSelectedSubCategoryId() || '0';
+    if (Number(selectedSubCategoryId) > 0) {
+      const chosenSubCategory = selectedSubCategory();
+      if (!chosenSubCategory || String(chosenSubCategory.categoryId) !== String(categoryId.value)) {
+        setStatus('Selected sub category does not belong to the selected category.', 'error');
+        subCategoryId.focus();
+        return;
+      }
+    }
     if (!name.value.trim()) {
       setStatus('Please enter game name.', 'error');
       name.focus();
@@ -588,7 +636,7 @@ const GAME_API = {
     const fd = new FormData();
     if (isUpdate) fd.append('id', id.value);
     fd.append('categoryId', categoryId.value);
-    fd.append('subCategoryId', subCategoryId.value || '0');
+    fd.append('subCategoryId', selectedSubCategoryId);
     fd.append('name', name.value.trim());
     fd.append('gameUrl', gameUrl.value.trim());
     fd.append('providerCode', providerCode.value.trim());
@@ -660,6 +708,16 @@ const GAME_API = {
     setStatus('Image ready. Click Save to upload.', 'success');
   }, setStatus);
 
+  // Capture the rounded option click before reports.js redraws the control.
+  // The clicked option's real database ID is stored immediately.
+  document.addEventListener('click', (event) => {
+    const option = event.target?.closest?.('.rounded-select-option');
+    if (!option) return;
+    const wrap = option.closest('.rounded-select-wrap');
+    if (!wrap || !wrap.contains(subCategoryId)) return;
+    setSelectedSubCategoryId(option.dataset.value || '', true);
+  }, true);
+
   form.addEventListener('submit', saveGame);
   resetBtn.addEventListener('click', resetForm);
   if (downloadImagesBtn) downloadImagesBtn.addEventListener('click', downloadAllImages);
@@ -672,13 +730,15 @@ const GAME_API = {
   categoryId.addEventListener('change', () => {
     // During edit restore, both IDs are assigned together and must not be cleared.
     if (isRestoringSelection) return;
-    refreshSubCategoryOptions('');
-    syncProviderFromSubCategory({ clearWhenMissing: true });
+    setSelectedSubCategoryId('0', false);
+    refreshSubCategoryOptions('0');
+    syncProviderFromSubCategory({ clearWhenMissing: false });
   });
 
   subCategoryId.addEventListener('change', () => {
     if (isRestoringSelection) return;
-    syncProviderFromSubCategory({ clearWhenMissing: true });
+    setSelectedSubCategoryId(subCategoryId.value || '0', false);
+    syncProviderFromSubCategory({ clearWhenMissing: false });
   });
 
   categoryFilter.addEventListener('change', async () => {

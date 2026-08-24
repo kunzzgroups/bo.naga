@@ -92,6 +92,8 @@
   // Used only when backend has not returned menu data yet.
   // Normal sidebar is rendered from /auth/admin/me => user.menus.
   const FALLBACK_MENUS = [
+    {menuKey:'root_control', title:'Root Control', url:'root-control.html', icon:'bi-shield-fill-check', parentKey:'', sortOrder:5},
+    {menuKey:'brand_overview', title:'Brand Overview', url:'brand-overview.html', icon:'bi-bar-chart-line-fill', parentKey:'report', sortOrder:5.5},
     {menuKey:'user', title:'User Management', url:'index.html', icon:'bi-people', parentKey:'', sortOrder:10},
     {menuKey:'online_users', title:'Online Users', url:'online-users.html', icon:'bi-wifi', parentKey:'', sortOrder:10.5},
     {menuKey:'duplicate_ip', title:'Duplicate IP Checker', url:'duplicate-ip.html', icon:'bi-diagram-3', parentKey:'', sortOrder:11},
@@ -106,6 +108,7 @@
     {menuKey:'payment_method', title:'Payment Method Config', url:'payment-method.html', icon:'bi-credit-card', parentKey:'wallet', sortOrder:15},
     {menuKey:'bank_deposit_usage', title:'Bank Deposit Usage', url:'bank-deposit-usage.html', icon:'bi-bar-chart-line', parentKey:'wallet', sortOrder:15.1},
     {menuKey:'referral', title:'Referral Network', url:'referral.html', icon:'bi-diagram-3', parentKey:'wallet', sortOrder:16},
+    {menuKey:'agent_management', title:'Agent Management', url:'agent-management.html', icon:'bi-person-workspace', parentKey:'wallet', sortOrder:16.5},
     {menuKey:'provider_session', title:'Provider Sessions', url:'player-provider-session.html', icon:'bi-box-arrow-up-right', parentKey:'wallet', sortOrder:14},
     {menuKey:'provider_bet_report', title:'Provider Bet Report', url:'provider-bet-report.html', icon:'bi-graph-up-arrow', parentKey:'wallet', sortOrder:15},
     {menuKey:'wbet_bet_limit', title:'WBET Bet Limit', url:'wbet-bet-limit.html', icon:'bi-sliders', parentKey:'wallet', sortOrder:16},
