@@ -5824,3 +5824,33 @@ body.withdraw-approval-page .report-table .btn{min-width:82px;font-weight:700;bo
 .report-sidebar .report-nav > a:not(.report-sub) > span{
   font-weight:800!important;
 }
+
+/* 2026-08-25: Global modal layer standardization.
+   Bootstrap's defaults (1050/1055) sat below BO header/profile layers (up to 3000),
+   which left the header bright/clickable while a modal was open. Keep every normal
+   BO modal above the complete shell and use the same dimming strength as Member Detail. */
+body.modal-open > .modal-backdrop,
+.modal-backdrop {
+  z-index: 9990 !important;
+  background-color: #0f172a !important;
+}
+.modal-backdrop.show {
+  opacity: .55 !important;
+}
+body > .modal,
+.modal {
+  --bs-modal-zindex: 10000;
+  z-index: 10000 !important;
+}
+/* The custom BO CRUD overlay already uses 10000; force its full-screen backdrop above
+   sidebar/topbar/profile menus as well and keep the same opacity. */
+.modal-clean {
+  z-index: 10000 !important;
+  background: rgba(15,23,42,.55) !important;
+}
+/* Never leave profile/dropdown controls above an active modal backdrop. */
+body.modal-open .report-profile-menu,
+body.modal-open .dropdown-menu,
+body.modal-open .report-actions {
+  z-index: auto !important;
+}

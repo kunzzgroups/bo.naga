@@ -120,6 +120,7 @@
     {menuKey:'admin_login_log', title:'Admin Login Log', url:'admin-login-log.html', icon:'bi-clock-history', parentKey:'access', sortOrder:32},
     {menuKey:'admin_operation_log', title:'Admin Operation Log', url:'admin-operation-log.html', icon:'bi-journal-text', parentKey:'access', sortOrder:33},
     {menuKey:'account_lock', title:'Account Lock', url:'account-lock.html', icon:'bi-lock', parentKey:'access', sortOrder:34},
+    {menuKey:'ip_whitelist_security', title:'IP Whitelist Security', url:'ip-whitelist-security.html', icon:'bi-shield-lock-fill', parentKey:'access', sortOrder:35},
     {menuKey:'live_chat', title:'Live Chat', url:'livechat.html', icon:'bi-chat-dots', parentKey:'support', sortOrder:55},
     {menuKey:'livechat_template', title:'Template Messages', url:'livechat-template.html', icon:'bi-chat-square-text', parentKey:'support', sortOrder:56},
     {menuKey:'language', title:'Language & Translation', url:'language.html', icon:'bi-translate', parentKey:'', sortOrder:40},
@@ -192,7 +193,9 @@
       return menus.length ? menus[0].url : 'login.html';
     },
     enforcePageAccess: function(user){
-      const current = pageName();
+      let current = pageName();
+      // Detail routes inherit the permission of their parent listing page.
+      if(current === 'agent-detail.html') current = 'agent-management.html';
       const alwaysAllowed = ['profile.html','change-password.html','rebate-management.html','animation-effect.html'];
       if(alwaysAllowed.indexOf(current) !== -1) return true;
       const menus = this.allowedMenus(user);
@@ -266,6 +269,10 @@
       if(menus.some(m => ['site_customize','frontend_display'].includes(String(m.menuKey||'')))
           && !menus.some(m => String(m.menuKey||'') === 'advertisement_popup')){
         menus = menus.concat([{menuKey:'advertisement_popup', title:'Advertisement Popup', url:'advertisement-popup.html', icon:'bi-window-stack', parentKey:'setting', sortOrder:94, status:1}]);
+      }
+
+      if(String(user.roleType||'').toUpperCase()==='MAIN'){
+        menus = menus.map(function(m){ m=Object.assign({},m); if(m.menuKey==='agent_management')m.parentKey=''; if(m.menuKey==='brand_management')m.title='Brands'; if(m.menuKey==='main_dashboard')m.title='Dashboard'; return m; });
       }
 
       menus = menus.map(normalizeMenu).filter(m => m.status === 1 && m.url && m.url !== '#' && m.menuKey !== 'menu_permission')
@@ -383,7 +390,8 @@
     profileHtml: function(){
       const user = this.user();
       const name = displayName(user);
-      return this.headerCountersHtml() + '<div class="report-profile-wrap">' +
+      const counters = String(user.roleType||'').toUpperCase()==='MAIN' ? '' : this.headerCountersHtml();
+      return counters + '<div class="report-profile-wrap">' +
         '<button class="report-profile-btn" type="button" data-profile-toggle>' +
         '<span class="report-avatar" data-admin-avatar>' + initials(name) + '</span><span data-admin-name>' + esc(name) + '</span><i class="bi bi-chevron-down small"></i>' +
         '</button>' +

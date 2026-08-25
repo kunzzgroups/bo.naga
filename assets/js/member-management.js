@@ -29,6 +29,7 @@
     {key:'registerSource', label:'Register Domain + IP', extra:true},
     {key:'referCode', label:'Refer Code', extra:true},
     {key:'name', label:'Name / Username', always:true},
+    {key:'remark', label:'Remark', always:true},
     {key:'mobile', label:'Mobile'},
     {key:'bankAccount', label:'Bank Account', extra:true},
     {key:'bank', label:'Bank'},
@@ -50,7 +51,7 @@
     {key:'action', label:'Action', always:true}
   ];
   const MAX_VISIBLE_MEMBER_COLUMNS = 12;
-  const DEFAULT_MEMBER_COLUMNS = ['select','no','registerDate','name','mobile','bank','mainWallet','vipLevel','kycStatus','lastLogin','status','action'];
+  const DEFAULT_MEMBER_COLUMNS = ['select','no','registerDate','name','remark','mobile','mainWallet','vipLevel','kycStatus','lastLogin','status','action'];
   let visibleMemberColumns = new Set(DEFAULT_MEMBER_COLUMNS);
   let memberCurrentPage = 1;
   let memberPageSize = 10;
@@ -108,13 +109,23 @@
       ['Mobile', first(member,['mobile','phone','mobileNo'], '-')], ['Status', memberStatus(member)],
       ['Referrer', first(member,['referrerName','referrerFullName','referrerUsername','agentName','referrer'], '-')], ['Top Referrer', first(member,['topReferrer','topAgent','upline'], '-')],
       ['Register Date', dt(first(member,['createdAt','registerDate','created_at'], ''))], ['Last Login', dt(first(member,['lastLoginAt','lastLogin','last_login_at'], ''))],
-      ['Last Deposit', dt(first(member,['lastDepositAt','lastDeposit','last_deposit_at'], ''))]
+      ['Last Deposit', dt(first(member,['lastDepositAt','lastDeposit','last_deposit_at'], ''))], ['Admin Remark', first(member,['adminRemark'], '-') ]
     ]);
+    fillAdminRemark(member);
     if(bank) bank.innerHTML = infoGrid([
       ['Bank', first(member,['bank','bankName'], '-')], ['Bank Account', first(member,['bankAccount','bankAccountNumber','bankAccountNo','accountNo'], '-')],
       ['Account Name', first(member,['bankAccountName','accountName','fullName','name'], '-')], ['Bank BSB', first(member,['bankBsb'], '-')],
       ['Pay ID', first(member,['payId'], '-')], ['Show BSB', Number(first(member,['showBankBsb'],1))===1?'Yes':'No'], ['Show Pay ID', Number(first(member,['showPayId'],1))===1?'Yes':'No']
     ]);
+  }
+  function fillAdminRemark(member){
+    const input=document.getElementById('memberAdminRemark'); if(input) input.value=String(first(member,['adminRemark'],'')||'');
+    const meta=document.getElementById('memberAdminRemarkMeta'); if(meta){const by=String(first(member,['adminRemarkUpdatedBy'],'')||'');const at=String(first(member,['adminRemarkUpdatedAt'],'')||'');meta.textContent=(by||at)?('Last updated'+(by?' by '+by:'')+(at?' · '+dt(at):'')):'No remark yet.';}
+    securityStatus('memberAdminRemarkStatus','','');
+  }
+  async function saveMemberAdminRemark(){
+    const memberId=memberIdOfSelected(); if(!memberId)return; const remark=String(document.getElementById('memberAdminRemark')?.value||'').trim(); if(remark.length>500){securityStatus('memberAdminRemarkStatus','Remark maximum 500 characters.','error');return;}
+    try{securityStatus('memberAdminRemarkStatus','Saving...','');const json=await api(API_CONFIG.BASE_URL+'/admin/member/remark/'+encodeURIComponent(memberId),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify({remark})});const d=json.data||{};[selectedWalletMember,allMembers.find(m=>String(memberKey(m))===String(memberId))].filter(Boolean).forEach(x=>{x.adminRemark=d.adminRemark||'';x.adminRemarkUpdatedBy=d.adminRemarkUpdatedBy||'';x.adminRemarkUpdatedAt=d.adminRemarkUpdatedAt||'';});fillAdminRemark(selectedWalletMember||d);applySearch(false);securityStatus('memberAdminRemarkStatus',json.message||'Remark saved.','success');}catch(err){securityStatus('memberAdminRemarkStatus',err.message||'Save remark failed.','error');}
   }
   function fillBankEdit(member){
     const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.value = v == null ? '' : v; };
@@ -496,6 +507,7 @@
       if(key==='registerDate') return dt(first(m,['createdAt','registerDate','created_at'], ''));
       if(key==='registerSource') return [first(m,['registrationDomain','registerDomain'],''),first(m,['registrationIp','registerIp'],'')].filter(Boolean).join(' / ');
       if(key==='referCode') return first(m,['referralCode','referCode','referrerCode'],'-');
+      if(key==='remark') return first(m,['adminRemark'], '');
       if(key==='mobile') return first(m,['mobile','phone','mobileNo'], '-');
       if(key==='bankAccount') return first(m,['bankAccount','bankAccountNumber','bankAccountNo','accountNo'], '-');
       if(key==='bank') return first(m,['bank','bankName'], '-');
@@ -554,6 +566,7 @@
         ${cell('registerSource', `<b>${esc(first(m,['registrationDomain','registerDomain'],'-'))}</b><br><small>${esc(first(m,['registrationIp','registerIp'],'-'))}</small>`)}
         ${cell('referCode', esc(first(m,['referrerCode','referralCode'],'-')))}
         ${cell('name', `<b>${esc(first(m,['username'], '-'))}</b><br><small>${esc(first(m,['fullName','name','displayName'], ''))}</small>`, 'member-name-cell')}
+        ${cell('remark', first(m,['adminRemark'],'') ? `<span class="member-remark-pill" title="${esc(first(m,['adminRemark'],''))}"><i class="bi bi-chat-left-text-fill"></i><span>${esc(first(m,['adminRemark'],''))}</span></span>` : '<span class="member-remark-empty">—</span>', 'member-remark-cell')}
         ${cell('mobile', esc(first(m,['mobile','phone','mobileNo'], '-')))}
         ${cell('bankAccount', esc(first(m,['bankAccount','bankAccountNumber','bankAccountNo','accountNo'], '-')))}
         ${cell('bank', esc(first(m,['bank','bankName'], '-')))}
@@ -583,6 +596,7 @@
         return `<div class="member-card">
           <div class="member-card-head"><label><input class="member-row-select" type="checkbox" data-member-select="${esc(id)}" ${bulkSelectedMemberIds.has(String(id))?'checked':''}> <h3 style="display:inline">${esc(first(m,['username'], '-'))}</h3></label><span class="status-pill ${locked?'off':''}">${esc(status)}</span></div>
           <div class="meta">${esc(first(m,['fullName','name','displayName'], '-'))} • ${esc(first(m,['mobile','phone','mobileNo'], '-'))}</div>
+          ${first(m,['adminRemark'],'') ? `<div class="member-card-remark"><i class="bi bi-chat-left-text-fill me-1"></i>${esc(first(m,['adminRemark'],''))}</div>` : ''}
           <div class="meta">Registered: ${esc(dt(first(m,['createdAt','registerDate','created_at'], '')))}</div>
           <div class="member-grid">
             <span>Bank</span><b>${esc(first(m,['bank','bankName'], '-'))}</b>
@@ -977,6 +991,9 @@
     document.getElementById('walletProviderRefreshBtn')?.addEventListener('click', ()=>loadWalletProviderAccounts().catch(err=>renderProviderError(err.message)));
     document.getElementById('walletAdjustAmount')?.addEventListener('input', ()=>{ updateWalletPreview(); renderWalletBankOptions(); });
     document.getElementById('saveBankProfileBtn')?.addEventListener('click', saveBankProfile);
+    // Admin Remark is a separate wallet-detail tab. Bind its save button explicitly;
+    // otherwise the button renders correctly but never submits anything.
+    document.getElementById('saveMemberAdminRemarkBtn')?.addEventListener('click', saveMemberAdminRemark);
     document.getElementById('resetMemberPasswordBtn')?.addEventListener('click', resetMemberPassword);
     document.getElementById('resetMemberTransactionPasswordBtn')?.addEventListener('click', resetMemberTransactionPassword);
   });

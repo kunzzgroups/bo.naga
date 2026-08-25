@@ -68,6 +68,7 @@
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.2" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
+<link href="assets/css/member-admin-remark.css?v=1.0.0" rel="stylesheet"/>
 </link></head>
 <body class="report-body user-management-page">
 <div class="report-shell">
@@ -260,6 +261,7 @@
 <button class="wallet-side-tab" data-wallet-tab="bet" type="button"><i class="bi bi-dice-5"></i>Bet Records</button>
 <button class="wallet-side-tab" data-wallet-tab="insight" type="button"><i class="bi bi-graph-up-arrow"></i>Game Follow Up</button>
 <button class="wallet-side-tab" data-wallet-tab="profile" type="button"><i class="bi bi-person-lines-fill"></i>Member Info</button>
+<button class="wallet-side-tab" data-wallet-tab="remark" type="button"><i class="bi bi-chat-left-text-fill"></i>Admin Remark</button>
 <button class="wallet-side-tab" data-wallet-tab="password" type="button"><i class="bi bi-key"></i>Change Password</button>
 <button class="wallet-side-tab" data-wallet-tab="transactionPassword" type="button"><i class="bi bi-shield-lock"></i>Transaction Password</button>
 <button class="wallet-side-tab" data-wallet-tab="bank" type="button"><i class="bi bi-bank"></i>Bank Info</button>
@@ -302,6 +304,12 @@
 <h6>Frequently Played Games</h6><div class="table-wrap"><table class="wallet-mini-table"><thead><tr><th>#</th><th>Provider</th><th>Game</th><th>Play Count</th><th>Total Turnover</th><th>Last Played</th></tr></thead><tbody id="walletFrequentGamesBody"><tr><td colspan="6">Select this tab to load data.</td></tr></tbody></table></div>
 </div>
 <div class="wallet-tab-pane" data-wallet-pane="profile"><h5>Member Info</h5><div class="wallet-empty" id="walletProfileInfo">-</div></div>
+<div class="wallet-tab-pane" data-wallet-pane="remark">
+<h5><i class="bi bi-chat-left-text-fill me-2 text-warning"></i>Admin Remark</h5>
+<p class="text-secondary small mb-3">Internal BO note only. Use this for special players, shareholders, partners or follow-up notes. Players never see this remark.</p>
+<div class="admin-remark-editor"><label for="memberAdminRemark">Remark</label><textarea id="memberAdminRemark" maxlength="500" rows="6" placeholder="Example: Partner / shareholder / special player / follow up today..."></textarea><div class="admin-remark-meta" id="memberAdminRemarkMeta">No remark yet.</div></div>
+<div class="wallet-actions-row"><button class="clean-btn primary" id="saveMemberAdminRemarkBtn" type="button"><i class="bi bi-save"></i> Save Remark</button></div><div class="upload-status mt-2" id="memberAdminRemarkStatus"></div>
+</div>
 <div class="wallet-tab-pane" data-wallet-pane="password">
 <h5>Change Member Password</h5>
 <p class="text-secondary small mb-3">Reset the selected member's login password.</p>
@@ -369,8 +377,8 @@
 <script src="assets/js/config.js?v=1.0.34"></script>
 <script src="assets/js/brand-context.js?v=1.0.2"></script>
 <script src="assets/js/reports.js?v=1.0.14"></script>
-<script src="assets/js/auth.js?v=1.0.37"></script>
-<script src="assets/js/member-management.js?v=1.0.14"></script>
+<script src="assets/js/auth.js?v=1.0.38"></script>
+<script src="assets/js/member-management.js?v=1.0.15"></script>
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>

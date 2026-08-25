@@ -1,0 +1,293 @@
+/* Brand + Agent modules — align with approved BO User Management / Referral Network UI.
+   Scoped to .brand-agent-standard so existing BO pages and Naga frontend are untouched. */
+.brand-agent-standard .report-content{padding-top:16px!important;padding-bottom:28px!important}
+.brand-agent-standard .table-card,
+.brand-agent-standard .cardx{
+  background:#fff!important;
+  border:1px solid #e3e8f1!important;
+  border-radius:16px!important;
+  box-shadow:0 5px 18px rgba(15,23,42,.035)!important;
+  padding:18px!important;
+}
+.brand-agent-standard .cardx{margin-bottom:16px!important}
+.brand-agent-standard .bo-filter-row,
+.brand-agent-standard .filter-grid{
+  gap:12px!important;
+  align-items:end!important;
+}
+.brand-agent-standard .bo-filter-row .field label,
+.brand-agent-standard .field label,
+.brand-agent-standard .form-label{
+  font-size:12px!important;
+  font-weight:800!important;
+  color:#101828!important;
+  margin-bottom:7px!important;
+}
+.brand-agent-standard .form-control,
+.brand-agent-standard .form-select,
+.brand-agent-standard .bo-range-trigger{
+  min-height:42px!important;
+  border:1px solid #d5deea!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+.brand-agent-standard .form-control:focus,
+.brand-agent-standard .form-select:focus,
+.brand-agent-standard .bo-range-trigger:focus-within{
+  border-color:#2864ed!important;
+  box-shadow:0 0 0 3px rgba(40,100,237,.10)!important;
+}
+.brand-agent-standard .clean-btn,
+.brand-agent-standard .btn-primary-clean{
+  min-height:42px!important;
+  border-radius:10px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+  white-space:nowrap!important;
+}
+.brand-agent-standard .clean-btn.primary,
+.brand-agent-standard .btn-primary-clean{background:#2864ed!important;border-color:#2864ed!important;color:#fff!important}
+
+/* Approved BO listing/table treatment. */
+.brand-agent-standard .brand-table-wrap,
+.brand-agent-standard .brand-overview-table-wrap,
+.brand-agent-standard .table-wrap,
+.brand-agent-standard .root-table-wrap{
+  width:100%!important;
+  max-width:100%!important;
+  overflow-x:auto!important;
+  border:1px solid #e3e8f1!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  -webkit-overflow-scrolling:touch;
+}
+.brand-agent-standard .report-table,
+.brand-agent-standard table.table{
+  width:100%!important;
+  min-width:100%!important;
+  max-width:none!important;
+  table-layout:auto!important;
+  border-collapse:separate!important;
+  border-spacing:0!important;
+  margin:0!important;
+  background:#fff!important;
+}
+.brand-agent-standard .report-table thead th,
+.brand-agent-standard table.table thead th{
+  height:44px!important;
+  padding:0 14px!important;
+  background:#f8fafc!important;
+  color:#344054!important;
+  font-size:11px!important;
+  font-weight:800!important;
+  letter-spacing:.01em!important;
+  text-transform:none!important;
+  white-space:nowrap!important;
+  border-right:1px solid #e3e8f1!important;
+  border-bottom:1px solid #e3e8f1!important;
+  vertical-align:middle!important;
+}
+.brand-agent-standard .report-table tbody td,
+.brand-agent-standard table.table tbody td{
+  padding:13px 14px!important;
+  color:#344054!important;
+  font-size:12px!important;
+  vertical-align:middle!important;
+  white-space:nowrap!important;
+  border-right:1px solid #edf0f5!important;
+  border-bottom:1px solid #edf0f5!important;
+  background:#fff!important;
+}
+.brand-agent-standard .report-table tbody tr:nth-child(even) td,
+.brand-agent-standard table.table tbody tr:nth-child(even) td{background:#fcfdff!important}
+.brand-agent-standard .report-table tbody tr:hover td,
+.brand-agent-standard table.table tbody tr:hover td{background:#f8fbff!important}
+.brand-agent-standard .report-table th:last-child,
+.brand-agent-standard .report-table td:last-child,
+.brand-agent-standard table.table th:last-child,
+.brand-agent-standard table.table td:last-child{border-right:0!important}
+.brand-agent-standard .report-table tbody tr:last-child td,
+.brand-agent-standard table.table tbody tr:last-child td{border-bottom:0!important}
+
+/* Agent detail navigation should look like the same segmented BO action bar. */
+.brand-agent-standard .agent-detail-toolbar{padding:14px 16px!important}
+.brand-agent-standard .agent-detail-toolbar .clean-btn{background:#fff!important;color:#344054!important;border:1px solid #d5deea!important}
+.brand-agent-standard .agent-detail-toolbar .clean-btn.primary,
+.brand-agent-standard .agent-detail-toolbar .clean-btn.active{background:#2864ed!important;color:#fff!important;border-color:#2864ed!important}
+
+/* Date range is the same geometry used by Referral Network. */
+.brand-agent-standard [data-bo-date-range],
+.brand-agent-standard .bo-date-range-field,
+.brand-agent-standard .bo-range-field{width:390px!important;max-width:390px!important;min-width:390px!important}
+.brand-agent-standard .bo-range-trigger{width:100%!important}
+
+/* Brand modal: Bootstrap scrollable dialog was being neutralised by global BO overflow rules. */
+.brand-agent-standard .modal{overflow-y:auto!important}
+.brand-agent-standard .modal-dialog-scrollable{height:auto!important;min-height:calc(100% - 2rem)!important;align-items:center!important}
+.brand-agent-standard .modal-dialog-scrollable .modal-content{
+  max-height:calc(100vh - 32px)!important;
+  overflow:hidden!important;
+}
+.brand-agent-standard .modal-dialog-scrollable .modal-body{
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+.brand-agent-standard .modal-header,
+.brand-agent-standard .modal-footer{flex:0 0 auto!important}
+.brand-agent-standard .modal-content{border:0!important;border-radius:16px!important;box-shadow:0 24px 70px rgba(15,23,42,.28)!important}
+.brand-agent-standard .modal-header{padding:18px 20px!important;border-bottom:1px solid #e3e8f1!important}
+.brand-agent-standard .modal-body{padding:20px!important}
+.brand-agent-standard .modal-footer{padding:14px 20px!important;border-top:1px solid #e3e8f1!important}
+
+/* Provider allocation inside Brand Manage uses the same soft cards as BO lists. */
+.brand-agent-standard .provider-grid>label,
+.brand-agent-standard .provider-grid>div{
+  border:1px solid #e3e8f1!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  min-height:58px!important;
+}
+
+@media(max-width:991.98px){
+  .brand-agent-standard [data-bo-date-range],
+  .brand-agent-standard .bo-date-range-field,
+  .brand-agent-standard .bo-range-field{width:100%!important;max-width:100%!important;min-width:0!important}
+  .brand-agent-standard .modal-dialog-scrollable .modal-content{max-height:calc(100vh - 16px)!important}
+}
+@media(max-width:700px){
+  .brand-agent-standard .report-content{padding:10px!important}
+  .brand-agent-standard .table-card,.brand-agent-standard .cardx{padding:12px!important;border-radius:14px!important}
+  .brand-agent-standard .bo-filter-row{display:grid!important;grid-template-columns:1fr!important}
+  .brand-agent-standard .clean-btn,.brand-agent-standard .btn-primary-clean{width:100%!important}
+  .brand-agent-standard .modal-body{padding:14px!important}
+}
+
+/* 2026-08-25 Brand Manage scroll fix:
+   brandModal wraps header/body/footer inside <form>, so Bootstrap's
+   modal-dialog-scrollable direct-child flex rules do not reach .modal-body.
+   Make the form the scroll-layout container explicitly. */
+.brand-agent-standard #brandModal .modal-dialog.modal-dialog-scrollable{
+  height:calc(100vh - 2rem)!important;
+  min-height:0!important;
+  margin:1rem auto!important;
+  align-items:stretch!important;
+}
+.brand-agent-standard #brandModal .modal-content{
+  height:100%!important;
+  max-height:100%!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+.brand-agent-standard #brandModal .modal-content>form{
+  display:flex!important;
+  flex-direction:column!important;
+  height:100%!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+.brand-agent-standard #brandModal .modal-header,
+.brand-agent-standard #brandModal .modal-footer{
+  flex:0 0 auto!important;
+}
+.brand-agent-standard #brandModal .modal-body{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+@media(max-width:767.98px){
+  .brand-agent-standard #brandModal .modal-dialog.modal-dialog-scrollable{
+    height:calc(100vh - 1rem)!important;
+    margin:.5rem!important;
+  }
+}
+
+/* 2026-08-25 final Brand/Agent BO visual standardisation. */
+.brand-agent-standard .agent-section-head{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px;
+}
+.brand-agent-standard .agent-section-title{display:flex;align-items:center;gap:12px;min-width:0}
+.brand-agent-standard .agent-section-title h5{margin:0;color:#101828;font-size:18px;font-weight:800}
+.brand-agent-standard .agent-section-title small{display:block;margin-top:3px;color:#667085;font-size:12px}
+.brand-agent-standard .agent-section-icon{
+  width:42px;height:42px;flex:0 0 42px;border-radius:12px;display:grid;place-items:center;
+  color:#2563eb;background:#eef4ff;font-size:18px;
+}
+.brand-agent-standard .agent-balance-card{
+  display:flex;align-items:center;gap:14px;max-width:360px;min-height:96px;padding:16px 18px;
+  border:1px solid #e3e8f1;border-radius:14px;background:#fff;box-shadow:0 5px 18px rgba(15,23,42,.035);
+}
+.brand-agent-standard .agent-balance-icon{width:50px;height:50px;flex:0 0 50px;border-radius:50%;display:grid;place-items:center;background:#eef4ff;color:#2563eb;font-size:21px}
+.brand-agent-standard .agent-balance-card small,.brand-agent-standard .agent-balance-card span{display:block;color:#667085;font-size:12px}
+.brand-agent-standard .agent-balance-card strong{display:block;color:#101828;font-size:24px;line-height:1.15;margin:3px 0}
+.brand-agent-standard .agent-metric-card{
+  display:flex!important;align-items:center!important;gap:13px!important;min-height:88px!important;padding:15px 16px!important;
+  border:1px solid #e3e8f1!important;border-radius:14px!important;background:#fff!important;box-shadow:0 5px 18px rgba(15,23,42,.035)!important;
+}
+.brand-agent-standard .agent-metric-card .agent-metric-icon{
+  width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:grid;place-items:center;background:#eef4ff;color:#2563eb;font-size:18px;
+}
+.brand-agent-standard .agent-metric-card small{display:block!important;color:#667085!important;font-size:12px!important;margin:0!important}
+.brand-agent-standard .agent-metric-card strong{display:block!important;color:#101828!important;font-size:18px!important;line-height:1.2!important;margin-top:3px!important}
+.brand-agent-standard .input-group>.form-control{border-radius:10px 0 0 10px!important}
+.brand-agent-standard .input-group>.input-join-btn{border-radius:0 10px 10px 0!important;margin-left:-1px!important}
+.brand-agent-standard textarea.form-control{min-height:88px!important;padding-top:10px!important;resize:vertical}
+.brand-agent-standard .modal-title{font-weight:800!important;color:#101828!important}
+.brand-agent-standard .modal-header small{font-size:12px!important}
+.brand-agent-standard .modal-footer .clean-btn{min-width:92px!important}
+.brand-agent-standard .agent-detail-tabs .clean-btn i{font-size:14px}
+.brand-agent-standard #reportGrid>.col-12{padding-top:4px}
+
+/* Keep every newly added Brand/Agent listing visually identical to modern BO listings. */
+.brand-agent-standard .table-card>h5,
+.brand-agent-standard .cardx>h5{font-size:18px;font-weight:800;color:#101828}
+.brand-agent-standard .report-table tbody td>b{color:#101828}
+.brand-agent-standard .report-table .clean-btn{min-height:38px!important;padding:8px 12px!important}
+.brand-agent-standard .badge{border-radius:999px!important;padding:6px 10px!important;font-size:11px!important}
+.brand-agent-standard .provider-grid>label{padding:11px 12px!important;align-items:flex-start!important}
+.brand-agent-standard .provider-grid .form-check-input{margin-top:3px!important}
+.brand-agent-standard .brand-kpi>div{background:#f8fafc!important;border:1px solid #e3e8f1!important;border-radius:12px!important;padding:12px 14px!important}
+.brand-agent-standard .brand-kpi small{display:block;color:#667085;font-size:11px}
+.brand-agent-standard .brand-kpi b{display:block;margin-top:2px;color:#101828;font-size:18px}
+
+@media(max-width:767.98px){
+  .brand-agent-standard .agent-section-head{align-items:stretch}
+  .brand-agent-standard .agent-section-head>.clean-btn{width:100%!important}
+  .brand-agent-standard .agent-balance-card{max-width:none;width:100%}
+  .brand-agent-standard .agent-metric-card{min-height:78px!important;padding:12px!important}
+  .brand-agent-standard .agent-detail-tabs{display:grid!important;grid-template-columns:1fr 1fr!important;width:100%!important}
+  .brand-agent-standard .agent-detail-tabs .clean-btn{width:100%!important}
+}
+
+
+/* Full-width guard for all newly added Brand / Agent tables.
+   reports.css intentionally uses width:max-content for legacy report tables;
+   these modules must always occupy the whole card when their columns are fewer. */
+.brand-agent-standard .brand-table-wrap > table,
+.brand-agent-standard .brand-overview-table-wrap > table,
+.brand-agent-standard .table-wrap > table,
+.brand-agent-standard .root-table-wrap > table,
+.brand-agent-standard .exec-table-wrap > table,
+.brand-agent-standard .exec-modal-table > table{
+  width:100%!important;
+  min-width:100%!important;
+  max-width:none!important;
+  table-layout:auto!important;
+}
+.brand-agent-standard .brand-table-wrap,
+.brand-agent-standard .brand-overview-table-wrap,
+.brand-agent-standard .table-wrap,
+.brand-agent-standard .root-table-wrap,
+.brand-agent-standard .exec-table-wrap,
+.brand-agent-standard .exec-modal-table{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+}
