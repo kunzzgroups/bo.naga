@@ -1,5 +1,5 @@
 (function(){
-  const PAIRS=[['betFrom','betTo'],['txFrom','txTo'],['sessionFrom','sessionTo'],['ledgerFrom','ledgerTo'],['casinoFrom','casinoTo'],['reportFrom','reportTo'],['manualFrom','manualTo'],['wlFrom','wlTo'],['depositFrom','depositTo'],['withdrawFrom','withdrawTo'],['usageFrom','usageTo']];
+  const PAIRS=[['betFrom','betTo'],['txFrom','txTo'],['sessionFrom','sessionTo'],['ledgerFrom','ledgerTo'],['casinoFrom','casinoTo'],['reportFrom','reportTo'],['manualFrom','manualTo'],['wlFrom','wlTo'],['depositFrom','depositTo'],['withdrawFrom','withdrawTo'],['usageFrom','usageTo'],['agentDashFrom','agentDashTo'],['agentPlayerFrom','agentPlayerTo'],['agentBetFrom','agentBetTo'],['agentSettlementFrom','agentSettlementTo'],['agentWalletFrom','agentWalletTo'],['adminAgentBetFrom','adminAgentBetTo']];
   const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const pad=n=>String(n).padStart(2,'0');
   const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -19,9 +19,9 @@
     const trig=host.querySelector('.bo-range-trigger'),pop=host.querySelector('.bo-range-pop'),txt=host.querySelector('.bo-range-text'),days=host.querySelector('.bo-range-days'),monthBtn=host.querySelector('.bo-range-month-btn'),yearBtn=host.querySelector('.bo-range-year-btn'),monthGrid=host.querySelector('.bo-range-month-grid'),yearGrid=host.querySelector('.bo-range-year-grid'),dayView=host.querySelector('.bo-range-day-view');
     const todayValue=iso(new Date());
     const isLedgerAllTime = from.id === 'ledgerFrom' && new URLSearchParams(location.search).get('scope') === 'all';
+    const defaultPreset=from.dataset.rangeDefault||'';
     if(!isLedgerAllTime){
-      if(!from.value) from.value=todayValue;
-      if(!to.value) to.value=todayValue;
+      if(!from.value||!to.value){const r=defaultPreset?rangeFor(defaultPreset):null;if(r){from.value=iso(r[0]);to.value=iso(r[1]);}else{if(!from.value)from.value=todayValue;if(!to.value)to.value=todayValue;}}
     } else {
       from.value=''; to.value=''; host.classList.add('bo-range-all-time');
     }

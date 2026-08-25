@@ -1,0 +1,54 @@
+/* Agent Portal v2.2.0 — only Agent Portal-specific details. Core shell, topbar,
+   filters, cards, tables, date range, dialogs and buttons reuse the normal BO CSS. */
+.agent-report-body .report-content{padding-top:12px!important;padding-bottom:24px!important;overflow-x:hidden!important}
+.agent-report-body .report-topbar{margin-bottom:0!important}
+.agent-report-body .filter-card{margin-bottom:16px!important;padding:14px!important}
+.agent-report-body .bo-filter-row{max-width:100%!important;overflow:visible!important;align-items:end!important}
+.agent-report-body .bo-filter-row>.bo-filter-range-item,
+.agent-report-body .bo-filter-row>.bo-filter-range-item .bo-range-trigger{width:390px!important;min-width:390px!important;max-width:390px!important;flex:0 0 390px!important}
+.agent-report-body .bo-filter-row .bo-range-text{min-width:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.agent-report-body .filter-actions,.agent-report-body .ref-filter-actions,.agent-report-body .filter-action-row{display:flex!important;gap:10px!important;align-items:center!important;white-space:nowrap!important}
+.agent-report-body .filter-actions button,.agent-report-body .ref-filter-actions button,.agent-report-body .filter-action-row button{height:42px!important;min-height:42px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;white-space:nowrap!important}
+.agent-report-body .quick-stats{grid-template-columns:repeat(4,minmax(190px,1fr))!important;gap:14px!important;width:100%!important;margin:0 0 16px!important}
+.agent-report-body .quick-stats .metric{min-width:0!important;overflow:hidden!important}
+.agent-report-body .quick-stats .metric span,.agent-report-body .quick-stats .metric strong,.agent-report-body .quick-stats .metric small{word-break:normal!important;overflow-wrap:normal!important}
+.agent-report-body #agentWalletMetrics{grid-template-columns:minmax(300px,360px)!important;justify-content:start!important}
+.agent-section-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:16px}
+.agent-section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.agent-section-title h2{font-size:17px;font-weight:800;margin:0;color:#101828}.agent-section-title p{font-size:12px;color:#667085;margin:3px 0 0}
+.agent-referral-row{display:flex;gap:10px;align-items:stretch;min-width:0}.agent-referral-row .form-control{flex:1 1 auto;min-width:0;font-weight:700}.agent-referral-row .btn-primary-clean{flex:0 0 auto;white-space:nowrap}
+.agent-progress{height:10px;border-radius:999px;background:#eef2f6;overflow:hidden}.agent-progress>span{display:block;height:100%;border-radius:999px;background:#2864ed;transition:width .2s ease}.agent-kpi-line{display:flex;justify-content:space-between;gap:12px;font-size:12px;font-weight:800;margin:8px 0 6px}
+.agent-config-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.agent-config-item{border:1px solid #e4e7ec;border-radius:12px;background:#f9fafb;padding:12px}.agent-config-item span{display:block;font-size:11px;font-weight:700;color:#667085}.agent-config-item b{display:block;margin-top:4px;font-size:13px;color:#101828}
+.agent-settlement-limits{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:#667085;margin-top:8px}.agent-settlement-limits b{color:#101828}
+.agent-positive{color:#087a3f!important}.agent-negative{color:#d92d20!important}.agent-report-body .report-nav-item.active{background:#eef4ff;color:#1d4ed8}.agent-report-body .status-pill.pending{background:#fff7e6;color:#a15c00}.agent-report-body .status-pill.approved{background:#eaf8ef;color:#087a3f}.agent-report-body .status-pill.paid{background:#eaf2ff;color:#174fce}
+.agent-report-body .table-card{margin-bottom:16px!important}.agent-report-body .table-wrap{width:100%!important;max-width:100%!important;overflow-x:auto!important}.agent-report-body .table-footer{margin-top:12px!important}
+.agent-player-filter-grid{grid-template-columns:390px minmax(180px,1fr) minmax(150px,.85fr) minmax(150px,.85fr) auto auto auto!important}
+.agent-bet-filter-grid{grid-template-columns:390px minmax(180px,1fr) 150px 150px auto auto!important}
+.agent-report-body .admin-wide-section{padding-top:0!important}
+
+@media(max-width:1399.98px){.agent-report-body .quick-stats{grid-template-columns:repeat(3,minmax(180px,1fr))!important}.agent-player-filter-grid,.agent-bet-filter-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.agent-report-body .bo-filter-row>.bo-filter-range-item,.agent-report-body .bo-filter-row>.bo-filter-range-item .bo-range-trigger{width:350px!important;min-width:350px!important;max-width:350px!important;flex-basis:350px!important}}
+@media(max-width:991.98px){.agent-report-body .quick-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}.agent-section-grid{grid-template-columns:1fr}.agent-config-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.agent-player-filter-grid,.agent-bet-filter-grid{grid-template-columns:1fr 1fr!important}.agent-report-body .bo-filter-row>.bo-filter-range-item,.agent-report-body .bo-filter-row>.bo-filter-range-item .bo-range-trigger{width:100%!important;min-width:0!important;max-width:100%!important;flex:1 1 100%!important}}
+@media(max-width:640px){.agent-report-body .report-content{padding:10px 8px 24px!important}.agent-report-body .quick-stats{grid-template-columns:1fr!important}.agent-report-body #agentWalletMetrics{grid-template-columns:1fr!important}.agent-config-grid,.agent-player-filter-grid,.agent-bet-filter-grid{grid-template-columns:1fr!important}.agent-referral-row{flex-direction:column}.agent-report-body .filter-actions,.agent-report-body .ref-filter-actions,.agent-report-body .filter-action-row{width:100%!important}.agent-report-body .filter-actions button,.agent-report-body .ref-filter-actions button,.agent-report-body .filter-action-row button{flex:1 1 0!important}}
+
+/* Agent settlement amount input: keep currency prefix and amount field visually joined
+   as one BO input group. Global BO form-control radius rules are intentionally
+   overridden only for this Agent Portal control. */
+.agent-report-body #agentSettlementAmount.input-group,
+.agent-report-body #agentSettlementAmount{ }
+.agent-report-body .input-group:has(#agentSettlementAmount){
+  display:flex!important;
+  flex-wrap:nowrap!important;
+}
+.agent-report-body .input-group:has(#agentSettlementAmount)>.input-group-text{
+  border-top-right-radius:0!important;
+  border-bottom-right-radius:0!important;
+  margin-right:-1px!important;
+  position:relative!important;
+  z-index:1!important;
+}
+.agent-report-body .input-group:has(#agentSettlementAmount)>#agentSettlementAmount.form-control{
+  border-top-left-radius:0!important;
+  border-bottom-left-radius:0!important;
+  margin-left:0!important;
+  position:relative!important;
+  z-index:2!important;
+}
