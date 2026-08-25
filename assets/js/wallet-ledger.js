@@ -65,6 +65,15 @@
     document.addEventListener('keydown',e=>{if(e.key==='Escape'){menu.hidden=true;wrap.classList.remove('open');trigger.setAttribute('aria-expanded','false');}});
     syncTypeControl();
   }
+  function ensureDefaultDates(){
+    const sp=new URLSearchParams(location.search);
+    if(sp.get('scope')==='all') return; // explicit all-time drill-down remains supported
+    const from=document.getElementById('ledgerFrom'),to=document.getElementById('ledgerTo');
+    const now=new Date(),pad=n=>String(n).padStart(2,'0');
+    const today=window.BO_FORMAT?.today?BO_FORMAT.today():`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+    if(from&&!from.value) from.value=today;
+    if(to&&!to.value) to.value=today;
+  }
   function setFromUrl(){
     const sp = new URLSearchParams(location.search);
     if(sp.get('memberId')) document.getElementById('ledgerMemberId').value = sp.get('memberId');
@@ -150,6 +159,7 @@
   }
   document.addEventListener('DOMContentLoaded', function(){
     initTypeMulti();
+    ensureDefaultDates();
     setFromUrl();
     document.getElementById('ledgerSearchBtn')?.addEventListener('click', ()=>{ page=1; load(); });
     ['ledgerMemberId','ledgerProviderCode'].forEach(id=>document.getElementById(id)?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ page=1; load(); } }));

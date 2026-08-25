@@ -5816,3 +5816,11 @@ body.withdraw-approval-page .report-table .btn{min-width:82px;font-weight:700;bo
   border-radius:0 0 12px 12px!important;
   overflow:hidden;
 }
+
+/* 2026-08-25: keep non-dropdown/top-level sidebar labels as bold as dropdown headers.
+   This also covers pages such as Live Chat and Layout Section that do not load
+   bo-ui-standard.css. */
+.report-sidebar .report-nav > a:not(.report-sub),
+.report-sidebar .report-nav > a:not(.report-sub) > span{
+  font-weight:800!important;
+}

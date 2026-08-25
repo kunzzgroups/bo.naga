@@ -91,7 +91,7 @@
   function fmt(v,k){return /(Amount|Bet|Win|Loss|Bonus|Rebate|Adjustment)/.test(k)?Number(v||0).toFixed(2):Number(v||0).toLocaleString()}
   async function load(){
     const z=localStorage.getItem('bo_timezone')||'Asia/Kuala_Lumpur';const u=`${base}/api/admin/dashboard/summary?from=${f.value}&to=${t.value}&timezone=${encodeURIComponent(z)}`;
-    const r=await fetch(u,{headers:{Authorization:'Bearer '+(localStorage.getItem('admin_token')||localStorage.getItem('token')||'')}}),j=await r.json(),d=j.data||{};
+    const r=await fetch(u,{headers:{Authorization:'Bearer '+(localStorage.getItem('bo_admin_token')||localStorage.getItem('admin_token')||localStorage.getItem('token')||'')}}),j=await r.json(),d=j.data||{};
     // Clock is rendered independently every second from the selected BO timezone.
     renderDashboardClock();
     document.getElementById('dashboardCards').innerHTML=cards.map(c=>`<a class="ops-card" href="${c[3]}?from=${f.value}&to=${t.value}${c[3].includes('?')?'&':'&'}"><div class="top"><span>${c[0]}</span><i class="bi ${c[2]}"></i></div><div class="value">${fmt(d[c[1]],c[0])}</div><small>Click to view matching report</small></a>`).join('');

@@ -34,7 +34,7 @@
     if(isBoApiRequest(input)){
       const headers=new Headers(init.headers||(input&&input.headers)||{});
       const id=localStorage.getItem(KEY);if(id&&!headers.has('X-Brand-Id'))headers.set('X-Brand-Id',id);
-      if(String(url).indexOf('/api/auth/admin/login')===-1){const t=token();if(t&&!headers.has('Authorization'))headers.set('Authorization','Bearer '+t);}
+      if(String(url).indexOf('/api/auth/admin/login')===-1){const t=token();const currentAuth=String(headers.get('Authorization')||'').trim();if(t&&(!currentAuth||/^Bearer\s*$/i.test(currentAuth)))headers.set('Authorization','Bearer '+t);}
       init.headers=headers;
     }
     return originalFetch(input,init);
@@ -60,18 +60,16 @@
     const d=j.data,brands=Array.isArray(d.brands)?d.brands:[];
     if(!d.master && d.adminBrandId){localStorage.setItem(KEY,String(d.adminBrandId));}
     else if(!localStorage.getItem(KEY))localStorage.setItem(KEY,String(d.activeBrandId||1));
-    const host=document.querySelector('[data-bo-profile], .report-actions'); if(!host)return;
+    // Brand scope stays active for every API request, but brand switching is intentionally
+    // NOT rendered in the common top header. Root changes brand context from Root Control only;
+    // Master and brand admins never receive a header brand dropdown.
     const old=document.getElementById('boBrandSwitcher'); if(old)old.remove();
-    const wrap=document.createElement('div');wrap.id='boBrandSwitcher';wrap.style.cssText='display:flex;align-items:center;gap:7px;margin-right:10px;flex:0 0 auto';
-    const label=document.createElement('span');label.textContent='Brand';label.style.cssText='font-size:11px;font-weight:800;color:#64748b';wrap.appendChild(label);
-    const sel=document.createElement('select');sel.style.cssText='min-width:170px;height:36px;border:1px solid #d7deea;border-radius:9px;padding:0 9px;background:#fff;font-weight:700';
-    brands.forEach(b=>{const o=document.createElement('option');o.value=b.id;o.textContent=(b.name||b.code)+' (#'+b.id+')';sel.appendChild(o);});
     const active=d.master?(Number(localStorage.getItem(KEY)||d.activeBrandId||1)||1):(Number(d.adminBrandId||d.activeBrandId||1)||1);
-    sel.value=String(active);sel.disabled=!d.master;sel.title=d.master?'Switch the entire BO to another branding':'Brand Owner is locked to this branding';sel.onchange=()=>set(sel.value);wrap.appendChild(sel);host.prepend(wrap);
     document.documentElement.dataset.boBrandId=String(active);
     document.documentElement.dataset.boMaster=d.master?'1':'0';
     window.dispatchEvent(new CustomEvent('bo:brand-context',{detail:d}));
   }
-  window.BO_BRAND={key:KEY,activeId,isMaster,set,context,mount,invalidate};
+  function open(id,url){const next=String(Number(id)||1);localStorage.setItem(KEY,next);invalidate();try{sessionStorage.removeItem('bo_online_users_cache');}catch(e){} location.href=url||'dashboard.html';}
+  window.BO_BRAND={key:KEY,activeId,isMaster,set,open,context,mount,invalidate};
   document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>mount(false),30));
 })();

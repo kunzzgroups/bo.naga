@@ -242,7 +242,7 @@
       const memberListUrl=configBase + (memberListPath.startsWith('/') ? memberListPath : '/' + memberListPath);
       const headers=(window.BO_AUTH&&typeof window.BO_AUTH.authHeader==='function')
         ? window.BO_AUTH.authHeader()
-        : {Authorization:'Bearer '+(localStorage.getItem('admin_token')||localStorage.getItem('token')||'')};
+        : {Authorization:'Bearer '+(localStorage.getItem('bo_admin_token')||localStorage.getItem('admin_token')||localStorage.getItem('token')||'')};
       const r=await fetch(memberListUrl,{headers:headers});
       const j=await r.json().catch(function(){return {};});
       if(!r.ok) throw new Error(j.message||('Member API error '+r.status));

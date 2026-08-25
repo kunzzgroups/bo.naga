@@ -71,7 +71,7 @@
   }
   function initDatePicker(){
     const trigger=document.getElementById('refDateTrigger'),picker=document.getElementById('refRangePicker');if(!trigger||!picker)return;
-    const [monthFrom,monthTo]=presetRange('thisMonth');refDatePicker.view=new Date(monthFrom+'T00:00:00');setDateRange(monthFrom,monthTo,'thisMonth',false);
+    const [todayFrom,todayTo]=presetRange('today');refDatePicker.view=new Date(todayFrom+'T00:00:00');setDateRange(todayFrom,todayTo,'today',false);
     trigger.addEventListener('click',e=>{e.stopPropagation();picker.classList.toggle('show');refDatePicker.mode='days';renderCalendar();});
     document.addEventListener('click',e=>{if(!e.target.closest('.ref-range-wrap'))picker.classList.remove('show');});
     document.querySelectorAll('[data-range-preset]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();const key=btn.dataset.rangePreset,[a,b]=presetRange(key);refDatePicker.view=new Date(a+'T00:00:00');setDateRange(a,b,key,true);picker.classList.remove('show');}));
@@ -89,7 +89,7 @@
   }
 
   document.getElementById('loginLogSearchBtn').onclick=apply;
-  document.getElementById('loginLogReset').onclick=()=>{search.value='';status.value='';ip.value='';const [a,b]=presetRange('thisMonth');refDatePicker.view=new Date(a+'T00:00:00');setDateRange(a,b,'thisMonth',true);};
+  document.getElementById('loginLogReset').onclick=()=>{search.value='';status.value='';ip.value='';const [a,b]=presetRange('today');refDatePicker.view=new Date(a+'T00:00:00');setDateRange(a,b,'today',true);};
   document.getElementById('loginLogRefresh').onclick=load;
   size.onchange=()=>{page=1;render();};
   document.getElementById('loginLogPrev').onclick=()=>{page--;render();};

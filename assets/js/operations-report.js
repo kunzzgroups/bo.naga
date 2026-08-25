@@ -1,18 +1,20 @@
 (()=>{
   'use strict';
   const base=(window.API_BASE_URL||window.API_BASE||'').replace(/\/$/,'');
-  const today=new Date().toISOString().slice(0,10);
+  const localToday=()=>window.BO_FORMAT?.today?BO_FORMAT.today():(()=>{const d=new Date(),pad=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;})();
+  const today=localToday();
   const from=document.getElementById('reportFrom'),to=document.getElementById('reportTo');
   const bodyEl=document.getElementById('reportBody'),headEl=document.getElementById('reportHead');
   const pageSizeEl=document.getElementById('reportPageSize'),showingEl=document.getElementById('reportShowing'),pagerEl=document.getElementById('reportPager');
   let allRows=[],page=1;
-  from.value=new Date(Date.now()-30*864e5).toISOString().slice(0,10);to.value=today;
+  // Every BO report now opens on Today by default. Wider ranges are opt-in via the picker.
+  from.value=today;to.value=today;
   if(window.OP_REPORT_KIND==='promotion-report')document.getElementById('typeBox').style.display='none';
   const esc=v=>String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
   const cols=window.OP_REPORT_KIND==='promotion-report'
     ?[['name','Promotion'],['promotionCode','Code'],['claimCount','Claims'],['uniqueClaimers','Unique Claimers'],['repeatedClaimCount','Repeated Claims'],['payoutAmount','Payouts']]
     :[['id','ID'],['memberId','Member'],['ledgerType','Type'],['walletBucket','Wallet'],['amount','In / Out'],['beforeBalance','Before'],['afterBalance','After'],['createdBy','Created By'],['approvedBy','Approved By'],['reasonCode','Reason'],['referenceNo','Reference'],['remark','Remark'],['createdAt','Created'],['postedAt','Posted']];
-  function token(){return localStorage.getItem('admin_token')||localStorage.getItem('token')||'';}
+  function token(){return localStorage.getItem('bo_admin_token')||localStorage.getItem('admin_token')||localStorage.getItem('token')||'';}
   function render(){
     const size=Number(pageSizeEl?.value||10),total=allRows.length,pages=Math.max(1,Math.ceil(total/size));page=Math.min(Math.max(1,page),pages);
     const start=(page-1)*size,rows=allRows.slice(start,start+size);
