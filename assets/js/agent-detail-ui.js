@@ -28,7 +28,7 @@
     show('settings');
   } else {
     const requested=params.get('section')||'settings';
-    if(['settings','players','settlement','portal','wallet','bets','history'].includes(requested)) show(requested);
+    if(requested==='settlement') show('history'); else if(['settings','players','portal','wallet','bets','history'].includes(requested)) show(requested);
   }
   window.addEventListener('agent:detail-loaded',e=>{
     const a=e.detail||{};

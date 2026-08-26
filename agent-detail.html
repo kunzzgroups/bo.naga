@@ -65,7 +65,7 @@ body[data-agent-detail="1"] #agentDetail[hidden]{display:block!important;}
 body[data-agent-detail="1"] .agent-detail-tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
 body[data-agent-detail="1"] .agent-detail-toolbar{position:sticky;top:72px;z-index:20;}
 @media(max-width:900px){body[data-agent-detail="1"] .agent-detail-toolbar{position:static;}body[data-agent-detail="1"] .agent-detail-tabs{justify-content:flex-start;}}
-</style><link href="assets/css/brand-agent-standard.css?v=1.0.0" rel="stylesheet"/></head>
+</style><link href="assets/css/brand-agent-standard.css?v=1.0.1" rel="stylesheet"/></head>
 <body class="report-body brand-agent-standard" data-agent-detail="1">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
@@ -95,7 +95,6 @@ body[data-agent-detail="1"] .agent-detail-toolbar{position:sticky;top:72px;z-ind
 <div class="agent-detail-tabs" role="tablist">
 <button class="clean-btn primary" data-agent-section="settings"><i class="bi bi-sliders"></i> Settings</button>
 <button class="clean-btn" data-agent-section="players"><i class="bi bi-people"></i> Players</button>
-<button class="clean-btn" data-agent-section="settlement"><i class="bi bi-receipt"></i> Settlement</button>
 <button class="clean-btn" data-agent-section="portal"><i class="bi bi-share"></i> Referral / Portal</button>
 <button class="clean-btn" data-agent-section="wallet"><i class="bi bi-wallet2"></i> Wallet</button>
 <button class="clean-btn" data-agent-section="bets"><i class="bi bi-graph-up-arrow"></i> Bet Report</button>
@@ -185,7 +184,7 @@ body[data-agent-detail="1"] .agent-detail-toolbar{position:sticky;top:72px;z-ind
 <div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-people"></i></span><div><h5>Assigned Players</h5><small>Manage which players belong to this agent.</small></div></div></div><input class="form-control mb-2" id="memberSearch" placeholder="Search username / name / mobile"/>
 <div class="member-list" id="memberList"></div><button class="clean-btn primary mt-2" id="saveMembers"><i class="bi bi-save"></i> Save Player Assignment</button>
 </div>
-<div class="cardx agent-detail-panel" data-agent-panel="settlement">
+<div class="cardx agent-detail-panel" data-agent-panel="settlement" style="display:none!important" aria-hidden="true">
 <div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-receipt"></i></span><div><h5>Settlement</h5><small>Review commission, KPI and payout status for the selected KPI cycle.</small></div></div></div>
 <div class="d-flex gap-2 align-items-end flex-wrap">
 <div><label class="form-label">KPI Cycle Date</label><input class="form-control" id="reportMonth" type="date"/></div><button class="clean-btn" id="loadReport"><i class="bi bi-arrow-clockwise"></i> Load Report</button><button class="clean-btn primary" id="settleMonth"><i class="bi bi-receipt"></i> Settle Cycle</button>
@@ -297,7 +296,7 @@ body[data-agent-detail="1"] .agent-detail-toolbar{position:sticky;top:72px;z-ind
 <script src="assets/js/brand-context.js?v=1.0.2"></script>
 <script src="assets/js/reports.js?v=1.0.14"></script>
 <script src="assets/js/bo-date-range.js?v=1.0.13"></script>
-<script src="assets/js/agent-management.js?v=1.0.4"></script>
-<script src="assets/js/agent-detail-ui.js?v=1.0.0"></script><script defer="" src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
+<script src="assets/js/agent-management.js?v=1.0.5"></script>
+<script src="assets/js/agent-detail-ui.js?v=1.0.1"></script><script defer="" src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
 </body>
 </html>

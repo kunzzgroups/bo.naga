@@ -291,3 +291,71 @@
   max-width:100%!important;
   min-width:0!important;
 }
+
+
+/* 2026-08-26 Agent Management filter dropdown alignment fix.
+   Keep Agent filters on the same rounded custom-select component used by the BO,
+   but constrain the popup to the trigger width so it never overflows across the table. */
+.brand-agent-standard .bo-filter-row .rounded-select-wrap{
+  position:relative!important;
+  box-sizing:border-box!important;
+}
+.brand-agent-standard .bo-filter-row .rounded-select-btn{
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-width:100%!important;
+  max-width:100%!important;
+  padding:0 12px!important;
+  border-radius:11px!important;
+}
+.brand-agent-standard .bo-filter-row .rounded-select-btn>span{
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+.brand-agent-standard .bo-filter-row .rounded-select-btn>i{
+  flex:0 0 auto!important;
+  margin-left:10px!important;
+}
+.brand-agent-standard .bo-filter-row .rounded-select-menu{
+  left:0!important;
+  right:0!important;
+  width:100%!important;
+  min-width:100%!important;
+  max-width:100%!important;
+  padding:6px!important;
+  border-radius:11px!important;
+  overflow-x:hidden!important;
+}
+.brand-agent-standard .bo-filter-row .rounded-select-option{
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:8px 10px!important;
+  border-radius:8px!important;
+}
+
+/* 2026-08-26 Agent settlement status filter: keep the standard BO rounded dropdown,
+   but give this longer status set enough content width so the selected value is never ellipsized. */
+.brand-agent-standard .bo-filter-row .field:has(#settlementInboxStatus),
+.brand-agent-standard .bo-filter-row .bo-filter-select-item:has(#settlementInboxStatus){
+  --bo-select-width:120px!important;
+  width:120px!important;
+  min-width:120px!important;
+  max-width:120px!important;
+  flex:0 0 120px!important;
+}
+.brand-agent-standard .bo-filter-row .rounded-select-wrap:has(#settlementInboxStatus),
+.brand-agent-standard .bo-filter-row .rounded-select-wrap:has(#settlementInboxStatus) .rounded-select-btn,
+.brand-agent-standard .bo-filter-row .rounded-select-wrap:has(#settlementInboxStatus) .rounded-select-menu{
+  width:120px!important;
+  min-width:120px!important;
+  max-width:120px!important;
+}
+.brand-agent-standard .bo-filter-row .rounded-select-wrap:has(#settlementInboxStatus) .rounded-select-btn>span{
+  overflow:visible!important;
+  text-overflow:clip!important;
+  white-space:nowrap!important;
+}

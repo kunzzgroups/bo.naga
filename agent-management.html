@@ -64,7 +64,7 @@
             display: none !important;
         }
     </style>
-    <link href="assets/css/brand-agent-standard.css?v=1.0.0" rel="stylesheet" />
+    <link href="assets/css/brand-agent-standard.css?v=1.0.2" rel="stylesheet" />
 </head>
 
 <body class="report-body brand-agent-standard">
@@ -89,6 +89,39 @@
                 <div class="report-actions" data-bo-profile=""></div>
             </header>
             <section class="report-content">
+                <div class="table-card mb-3" id="agentSettlementInboxCard">
+                    <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-3">
+                        <div>
+                            <h5 class="mb-1"><i class="bi bi-inbox me-1"></i> Settlement Approval Inbox</h5>
+                            <small class="text-muted">All agent-submitted claims for the selected brand. Approve or reject pending requests here instead of opening agents one by one.</small>
+                        </div>
+                        <button class="clean-btn" id="settlementInboxRefresh"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+                    </div>
+                    <div class="row g-2 mb-3" id="settlementInboxSummary">
+                        <div class="col-6 col-lg-3"><div class="metric"><small>Pending Requests</small><strong id="settlementPendingCount">0</strong></div></div>
+                        <div class="col-6 col-lg-3"><div class="metric"><small>Pending Amount</small><strong id="settlementPendingAmount">0.00</strong></div></div>
+                        <div class="col-6 col-lg-3"><div class="metric"><small>Approved</small><strong id="settlementApprovedCount">0</strong></div></div>
+                        <div class="col-6 col-lg-3"><div class="metric"><small>Paid</small><strong id="settlementPaidCount">0</strong></div></div>
+                    </div>
+                    <div class="bo-filter-row">
+                        <div class="field wide"><label>Search</label><input class="form-control" id="settlementInboxSearch" placeholder="Agent name / code / settlement ID" /></div>
+                        <div class="field"><label>Status</label><select class="form-select" id="settlementInboxStatus"><option value="PENDING">Pending</option><option value="">All</option><option value="APPROVED">Approved</option><option value="PAID">Paid</option><option value="REJECTED">Rejected</option></select></div>
+                    </div>
+                    <div class="brand-overview-table-wrap mt-3">
+                        <table class="report-table table-clean">
+                            <thead><tr><th>ID / Submitted</th><th>Agent</th><th>KPI Cycle</th><th>Turnover</th><th>Customer Loss</th><th>Profit</th><th>Claim</th><th>KPI</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody id="settlementInboxRows"><tr><td colspan="10" class="text-muted">Loading settlements...</td></tr></tbody>
+                        </table>
+                    </div>
+                    <div class="small text-muted mt-2">Rejected requests release the pending claim back to the agent's available commission, so the agent can correct and resubmit the same KPI cycle.</div>
+                    <div class="settlement-detail-panel mt-3" id="settlementInboxDetail" hidden>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                            <div><h6 class="mb-1" id="settlementDetailTitle">Settlement Detail</h6><small class="text-muted" id="settlementDetailMeta">Select a settlement from the listing above.</small></div>
+                            <span id="settlementDetailStatus"></span>
+                        </div>
+                        <div class="row g-2" id="settlementDetailGrid"></div>
+                    </div>
+                </div>
                 <div class="table-card mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div>
@@ -364,7 +397,8 @@
     <script src="assets/js/brand-context.js?v=1.0.2"></script>
     <script src="assets/js/reports.js?v=1.0.14"></script>
     <script src="assets/js/bo-date-range.js?v=1.0.13"></script>
-    <script src="assets/js/agent-management.js?v=1.0.4"></script>
+    <script src="assets/js/agent-management.js?v=1.0.5"></script>
+    <script src="assets/js/agent-settlement-inbox.js?v=1.0.0"></script>
     <script defer="" src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
 </body>
 

@@ -8,7 +8,8 @@ let brands=[],selected=null;
 async function api(p){const r=await fetch(API_CONFIG.BASE_URL+p,{headers:BO_AUTH.authHeader()}),j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw Error(j.message||'Request failed');return j.data;}
 function today(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
 function bindRange(){const d=today();$('mainFrom').value=d;$('mainTo').value=d;}
-function q(){const to=new Date($('mainTo').value+'T00:00:00');to.setDate(to.getDate()+1);return '?from='+$('mainFrom').value+'&to='+to.toISOString().slice(0,10);}
+function addOneDay(v){const a=String(v||'').split('-').map(Number);if(a.length!==3||!a[0])return v;return new Date(Date.UTC(a[0],a[1]-1,a[2]+1)).toISOString().slice(0,10);}
+function q(){return '?from='+encodeURIComponent($('mainFrom').value)+'&to='+encodeURIComponent(addOneDay($('mainTo').value));}
 function stat(label,value,icon,note,tone='purple'){return `<div class="exec-stat"><div class="exec-stat-icon ${tone}"><i class="bi ${icon}"></i></div><div><small>${label}</small><b>${value}</b><span>${note||''}</span></div></div>`;}
 function tone(v){return Number(v||0)<0?'text-danger':'text-success';}
 function renderSummary(s){
