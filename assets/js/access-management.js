@@ -1,23 +1,37 @@
 (function(){
+  try{(JSON.parse(localStorage.getItem('bo_menu_group_meta_v1')||'[]')||[]).forEach(function(g){if(window.BO_MENU_GROUP_META&&g.groupKey)window.BO_MENU_GROUP_META[g.groupKey]={title:g.title,icon:g.icon,sortOrder:g.sortOrder};});}catch(e){}
   const page = document.body.dataset.accessPage;
   const roleStatusEl = document.getElementById('accessStatus');
   const GROUP_META = {
     root:{title:'Main Menu',icon:'bi-grid'}, access:{title:'Access Control',icon:'bi-shield-lock'},
-    wallet:{title:'Wallet Management',icon:'bi-wallet2'}, report:{title:'Report',icon:'bi-bar-chart-line'},
+    wallet:{title:'Wallet Management',icon:'bi-wallet2'}, agent_management_group:{title:'Agent Management',icon:'bi-person-workspace'}, report:{title:'Report',icon:'bi-bar-chart-line'},
     game:{title:'Game Management',icon:'bi-controller'}, bonus:{title:'Bonus Management',icon:'bi-gift'},
     design:{title:'Design',icon:'bi-palette'}, setting:{title:'Setting',icon:'bi-gear'}, support:{title:'Support',icon:'bi-headset'}
   };
-  const GROUP_ORDER=['root','access','wallet','report','game','bonus','design','setting','support'];
+  const GROUP_ORDER=['root','access','wallet','agent_management_group','report','game','bonus','design','setting','support'];
   let menuCache=[];
   let roleCache=[];
   const currentAdmin = (window.BO_AUTH && BO_AUTH.user) ? BO_AUTH.user() : {};
-  const masterAdmin = currentAdmin && (currentAdmin.masterAdmin === true || Number(currentAdmin.masterAdmin) === 1 || String(currentAdmin.roleType||'').toUpperCase()==='MASTER');
+  const rootAdmin = currentAdmin && (currentAdmin.rootAdmin === true || Number(currentAdmin.rootAdmin) === 1 || String(currentAdmin.roleType||'').toUpperCase()==='ROOT' || (Number(currentAdmin.id)===1 && currentAdmin.brandId==null));
+  const masterAdmin = currentAdmin && !rootAdmin && (currentAdmin.masterAdmin === true || Number(currentAdmin.masterAdmin) === 1 || String(currentAdmin.roleType||'').toUpperCase()==='MASTER');
+  const platformRoleAdmin = currentAdmin && (rootAdmin || masterAdmin || currentAdmin.brandId == null);
 
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function msg(el,text,cls){if(el){el.textContent=text||'';el.className='upload-status '+(cls||'');}}
   async function api(url,opt){const res=await fetch(url,opt||{});const j=await res.json().catch(()=>({}));if(!res.ok||j.status==='error')throw new Error(j.message||'Request failed');return j;}
   async function bootstrap(){try{await api(API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS.ACCESS_BOOTSTRAP,{headers:{...BO_AUTH.authHeader()}});}catch(e){}}
-  async function fetchRoles(){const j=await api(BO_AUTH.roleListUrl(),{headers:{...BO_AUTH.authHeader()}});return j.data||[];}
+  async function fetchRoles(){
+    // Root/platform Role Management must show the roles that already exist in DB,
+    // including legacy rows whose brand_id was populated before multi-brand normalization.
+    const primary = platformRoleAdmin && BO_AUTH.roleListAllUrl ? BO_AUTH.roleListAllUrl() : BO_AUTH.roleListUrl();
+    let j=await api(primary,{headers:{...BO_AUTH.authHeader()}});
+    let rows=Array.isArray(j.data)?j.data:[];
+    // Backward-compatible retry for deployments where /roles/all is not available yet.
+    if(!rows.length && primary!==BO_AUTH.roleListUrl()){
+      try{j=await api(BO_AUTH.roleListUrl(),{headers:{...BO_AUTH.authHeader()}});rows=Array.isArray(j.data)?j.data:[];}catch(e){}
+    }
+    return rows;
+  }
   async function fetchMenus(){const j=await api(BO_AUTH.menuListUrl(),{headers:{...BO_AUTH.authHeader()}});return (j.data||[]).filter(m=>Number(m.status==null?1:m.status)===1);}
   async function fetchRoleMenuIds(roleId){const j=await api(BO_AUTH.roleMenusUrl(roleId),{headers:{...BO_AUTH.authHeader()}});return j.data?.menuIds||[];}
 
@@ -48,10 +62,12 @@
   async function openCreate(){resetModal();openModal();}
   async function openEdit(roleId){
     const role=roleCache.find(r=>String(r.id)===String(roleId)); if(!role)return;
-    const editableBrandOwner = masterAdmin && Number(role.systemRole)===1 && String(role.roleType||'').toUpperCase()==='BRAND_OWNER';
-    if(Number(role.systemRole)===1 && !editableBrandOwner){msg(roleStatusEl,'This system role is protected.','error');return;}
+    const systemRole = Number(role.systemRole)===1;
+    const roleType = String(role.roleType||'').toUpperCase();
+    const editableSystemRole = systemRole && ((rootAdmin && roleType!=='ROOT') || (masterAdmin && roleType==='BRAND_OWNER'));
+    if(systemRole && !editableSystemRole){msg(roleStatusEl,'This system role is protected.','error');return;}
     resetModal();document.getElementById('roleEditId').value=role.id;document.getElementById('roleEditCode').value=role.code||'';document.getElementById('name').value=role.name||'';
-    document.getElementById('roleModalTitle').textContent=editableBrandOwner?'Brand Owner Access':'Edit Permission Group';document.getElementById('roleModalSubtitle').textContent=editableBrandOwner?'Master-controlled menus for this branding. Checked menus appear in the Brand Owner sidebar and are enforced by the API.':'Update the group name or its menu permissions.';
+    document.getElementById('roleModalTitle').textContent=editableSystemRole?'System Role Access':'Edit Permission Group';document.getElementById('roleModalSubtitle').textContent=editableSystemRole?'Update the menu access for this system role. The role code/type remains protected.':'Update the group name or its menu permissions.';
     openModal();msg(roleStatusEl,'Loading permissions...','');
     try{renderPermissionGroups(await fetchRoleMenuIds(role.id));msg(roleStatusEl,'','');}catch(e){msg(roleStatusEl,e.message,'error');}
   }
@@ -62,8 +78,8 @@
       roleCache=await fetchRoles();
       const details=await Promise.all(roleCache.map(async r=>{try{return {...r,permissionCount:(await fetchRoleMenuIds(r.id)).length};}catch(e){return {...r,permissionCount:0};}}));
       document.getElementById('roleCountBadge').textContent=`${details.length} Group${details.length===1?'':'s'}`;
-      body.innerHTML=details.map(r=>`<tr><td><b>${esc(r.name)}</b></td><td><span class="role-code-pill">${esc(r.code)}</span><small style="display:block;margin-top:4px;color:#667085">${esc(r.roleType||'CUSTOM')}</small></td><td><span class="role-permission-count"><i class="bi bi-shield-check"></i>${r.permissionCount} Menu${r.permissionCount===1?'':'s'}</span></td><td>${r.status==1?'<span class="status-pill active">Active</span>':'<span class="status-pill off">Inactive</span>'}</td><td>${Number(r.systemRole)===1?(masterAdmin&&String(r.roleType||'').toUpperCase()==='BRAND_OWNER'?'<button class="clean-btn role-edit-btn" type="button" data-edit-role="'+esc(r.id)+'"><i class="bi bi-sliders"></i> Edit Access</button>':'<span class="status-pill active">Protected</span>'):'<button class="clean-btn role-edit-btn" type="button" data-edit-role="'+esc(r.id)+'"><i class="bi bi-pencil-square"></i> Edit</button>'}</td></tr>`).join('')||'<tr><td colspan="5">No permission group found.</td></tr>';
-      if(cards)cards.innerHTML=details.map(r=>`<article class="member-mobile-card role-mobile-card"><div class="member-card-head"><div><strong>${esc(r.name)}</strong><small>${esc(r.code)}</small></div>${r.status==1?'<span class="status-pill active">Active</span>':'<span class="status-pill off">Inactive</span>'}</div><div class="member-card-grid"><div><span>Permissions</span><b>${r.permissionCount} Menus</b></div></div>${Number(r.systemRole)===1&&!masterAdmin?'<span class="status-pill active">Protected</span>':'<button class="clean-btn role-edit-btn w-100" type="button" data-edit-role="'+esc(r.id)+'"><i class="bi bi-pencil-square"></i> '+(Number(r.systemRole)===1?'Edit Access':'Edit Group')+'</button>'}</article>`).join('');
+      body.innerHTML=details.map(r=>{const rt=String(r.roleType||'').toUpperCase();const sys=Number(r.systemRole)===1;const canEditSystem=sys&&((rootAdmin&&rt!=='ROOT')||(masterAdmin&&rt==='BRAND_OWNER'));const action=sys?(canEditSystem?'<button class="clean-btn role-edit-btn" type="button" data-edit-role="'+esc(r.id)+'"><i class="bi bi-sliders"></i> Edit Access</button>':'<span class="status-pill active">Protected</span>'):'<button class="clean-btn role-edit-btn" type="button" data-edit-role="'+esc(r.id)+'"><i class="bi bi-pencil-square"></i> Edit</button>';return `<tr><td><b>${esc(r.name)}</b></td><td><span class="role-code-pill">${esc(r.code)}</span><small style="display:block;margin-top:4px;color:#667085">${esc(r.roleType||'CUSTOM')}</small></td><td><span class="role-permission-count"><i class="bi bi-shield-check"></i>${r.permissionCount} Menu${r.permissionCount===1?'':'s'}</span></td><td>${r.status==1?'<span class="status-pill active">Active</span>':'<span class="status-pill off">Inactive</span>'}</td><td>${action}</td></tr>`;}).join('')||'<tr><td colspan="5">No permission group found.</td></tr>';
+      if(cards)cards.innerHTML=details.map(r=>{const rt=String(r.roleType||'').toUpperCase();const sys=Number(r.systemRole)===1;const canEditSystem=sys&&((rootAdmin&&rt!=='ROOT')||(masterAdmin&&rt==='BRAND_OWNER'));const action=sys?(canEditSystem?'<button class="clean-btn role-edit-btn w-100" type="button" data-edit-role="'+esc(r.id)+'"><i class="bi bi-sliders"></i> Edit Access</button>':'<span class="status-pill active">Protected</span>'):'<button class="clean-btn role-edit-btn w-100" type="button" data-edit-role="'+esc(r.id)+'"><i class="bi bi-pencil-square"></i> Edit Group</button>';return `<article class="member-mobile-card role-mobile-card"><div class="member-card-head"><div><strong>${esc(r.name)}</strong><small>${esc(r.code)}</small></div>${r.status==1?'<span class="status-pill active">Active</span>':'<span class="status-pill off">Inactive</span>'}</div><div class="member-card-grid"><div><span>Permissions</span><b>${r.permissionCount} Menus</b></div></div>${action}</article>`;}).join('');
     }catch(e){body.innerHTML=`<tr><td colspan="5">${esc(e.message)}</td></tr>`;if(cards)cards.innerHTML='';}
   }
 

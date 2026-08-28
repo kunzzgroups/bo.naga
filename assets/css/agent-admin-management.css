@@ -1,0 +1,29 @@
+.agent-admin-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}.agent-admin-metric{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #dfe6f1;border-radius:14px;padding:16px 18px;min-height:92px}.agent-admin-metric .ico{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#edf4ff;color:#1268f3;font-size:21px;flex:0 0 48px}.agent-admin-metric:nth-child(2) .ico{background:#eaf9f0;color:#14a65a}.agent-admin-metric:nth-child(3) .ico{background:#fff5e8;color:#f59e0b}.agent-admin-metric:nth-child(4) .ico{background:#fff0f0;color:#ef4444}.agent-admin-metric small{display:block;color:#64748b}.agent-admin-metric strong{display:block;font-size:24px;line-height:1.15;margin-top:3px}.agent-admin-table .status-pill{display:inline-flex;padding:4px 10px;border-radius:999px;background:#eaf9f0;color:#159447;font-weight:700;font-size:12px}.agent-admin-table .status-pill.off{background:#f3f4f6;color:#64748b}.agent-admin-table .money-positive{color:#159447;font-weight:700}.agent-admin-table .money-negative{color:#ef4444;font-weight:700}.agent-admin-action{width:34px;height:34px;border:1px solid #cbd7e8;border-radius:9px;background:#fff;color:#0f67e8;display:inline-flex;align-items:center;justify-content:center}.agent-admin-tabs{display:flex;gap:28px;border-bottom:1px solid #e4eaf2;margin:0 0 14px}.agent-admin-tabs button{border:0;background:transparent;padding:12px 4px;color:#56657b;font-weight:600;border-bottom:2px solid transparent}.agent-admin-tabs button.active{color:#0f67e8;border-color:#0f67e8}.agent-detail-summary{display:grid;grid-template-columns:1.4fr repeat(5,minmax(0,1fr));gap:12px;align-items:stretch}.agent-detail-identity,.agent-detail-stat{border:1px solid #e0e7f0;border-radius:14px;background:#fff;padding:15px}.agent-detail-identity{display:flex;gap:12px;align-items:center}.agent-detail-avatar{width:58px;height:58px;border-radius:50%;background:#f1ebff;color:#6f42e8;display:flex;align-items:center;justify-content:center;font-size:26px}.agent-detail-stat span{display:block;color:#64748b;font-size:12px}.agent-detail-stat strong{display:block;font-size:18px;margin-top:4px}.agent-approval-card{background:#fff;border:1px solid #dfe6f1;border-radius:14px;padding:16px}.agent-proof-link{display:inline-flex;align-items:center;gap:6px;color:#0f67e8;font-weight:600;text-decoration:none}.agent-approval-actions{display:flex;gap:8px}.approve-btn,.reject-btn,.pay-btn{width:36px;height:36px;border-radius:9px;background:#fff;display:inline-flex;align-items:center;justify-content:center}.approve-btn{border:1px solid #b7e8cb;color:#159447}.reject-btn{border:1px solid #ffcaca;color:#ef4444}.pay-btn{border:1px solid #c8d9fb;color:#0f67e8}@media(max-width:1200px){.agent-admin-metrics{grid-template-columns:repeat(2,1fr)}.agent-detail-summary{grid-template-columns:repeat(2,1fr)}}
+
+/* 2026-08-28 final: Agent Management dropdowns follow the approved Agent Performance standard.
+   reports.js turns selects into .rounded-select-wrap, so reserve real space from the custom menu
+   (not only the hidden native select) and keep each dropdown wide enough for its label/options. */
+.filter-card{overflow:visible!important;}
+.filter-card .bo-filter-row>.field:has(select),
+.filter-card .bo-filter-row>.field:has(.rounded-select-wrap){
+  min-width:150px!important;
+}
+.filter-card .bo-filter-row>.field:has(.rounded-select-wrap) .rounded-select-wrap,
+.filter-card .bo-filter-row>.field:has(.rounded-select-wrap) .rounded-select-btn,
+.filter-card .bo-filter-row>.field:has(select) select{
+  width:100%!important;min-width:100%!important;max-width:100%!important;box-sizing:border-box!important;
+}
+.filter-card .rounded-select-menu{z-index:80!important;}
+@media (min-width:1101px){
+  .filter-card{position:relative!important;z-index:20!important;transition:margin-bottom .12s ease!important;}
+  .filter-card.agent-admin-select-open{
+    z-index:40!important;
+    margin-bottom:var(--agent-admin-menu-space,130px)!important;
+  }
+  .filter-card.agent-admin-select-open + *{position:relative!important;z-index:1!important;}
+}
+@media (max-width:1100px){
+  .filter-card .bo-filter-row>.field:has(select),
+  .filter-card .bo-filter-row>.field:has(.rounded-select-wrap){min-width:0!important;}
+  .filter-card.agent-admin-select-open{margin-bottom:0!important;}
+}

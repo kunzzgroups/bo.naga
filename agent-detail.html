@@ -65,7 +65,71 @@ body[data-agent-detail="1"] #agentDetail[hidden]{display:block!important;}
 body[data-agent-detail="1"] .agent-detail-tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
 body[data-agent-detail="1"] .agent-detail-toolbar{position:sticky;top:72px;z-index:20;}
 @media(max-width:900px){body[data-agent-detail="1"] .agent-detail-toolbar{position:static;}body[data-agent-detail="1"] .agent-detail-tabs{justify-content:flex-start;}}
-</style><link href="assets/css/brand-agent-standard.css?v=1.0.1" rel="stylesheet"/></head>
+</style><link href="assets/css/brand-agent-standard.css?v=1.0.2" rel="stylesheet"/>
+<style>
+body[data-agent-detail="1"] .agent-detail-toolbar{padding:0 14px 0;border-radius:12px}body[data-agent-detail="1"] .agent-detail-toolbar>.d-flex{align-items:flex-end!important}body[data-agent-detail="1"] .agent-detail-tabs{flex:1;justify-content:flex-start;overflow-x:auto;white-space:nowrap;margin:0 0 -1px 18px;border-bottom:1px solid #e7edf5}body[data-agent-detail="1"] .agent-detail-tabs .clean-btn{border:0!important;border-radius:0!important;background:transparent!important;color:#536176!important;padding:15px 14px!important;box-shadow:none!important}body[data-agent-detail="1"] .agent-detail-tabs .clean-btn.primary{color:#145edb!important;border-bottom:2px solid #276be8!important;font-weight:700}body[data-agent-detail="1"] .agent-detail-summary{grid-template-columns:minmax(260px,1.65fr) repeat(5,minmax(125px,1fr));gap:10px}body[data-agent-detail="1"] .agent-detail-identity,body[data-agent-detail="1"] .agent-detail-stat{background:#fff;border:1px solid #e0e7ef;border-radius:11px;min-height:94px;padding:14px}body[data-agent-detail="1"] .agent-detail-identity{display:flex;align-items:center;gap:14px}body[data-agent-detail="1"] .agent-detail-avatar{width:58px;height:58px;border-radius:50%;background:#f0eaff;color:#6f46e8;display:grid;place-items:center;font-size:28px}body[data-agent-detail="1"] .agent-detail-stat{display:flex;flex-direction:column;justify-content:center}body[data-agent-detail="1"] .agent-detail-stat span{font-size:11px;color:#64748b;margin-bottom:5px}body[data-agent-detail="1"] .agent-detail-stat strong{font-size:17px;color:#12213a}body[data-agent-detail="1"] .agent-grid{display:block!important}body[data-agent-detail="1"] .agent-detail-panel{display:none}body[data-agent-detail="1"] .agent-detail-panel.is-active{display:block!important}body[data-agent-detail="1"] .agent-admin-overview-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}body[data-agent-detail="1"] .agent-admin-metric-card{border:1px solid #e4eaf1;border-radius:10px;background:#fff;min-height:92px;padding:12px 14px;display:flex;align-items:center;gap:12px}body[data-agent-detail="1"] .agent-admin-metric-icon{width:42px;height:42px;border-radius:50%;background:#eef4ff;color:#1767e8;display:grid;place-items:center;font-size:18px;flex:0 0 42px}body[data-agent-detail="1"] .agent-admin-metric-card:nth-child(2) .agent-admin-metric-icon{background:#ebf9f0;color:#16a05b}body[data-agent-detail="1"] .agent-admin-metric-card:nth-child(3) .agent-admin-metric-icon{background:#f1eaff;color:#7b47e8}body[data-agent-detail="1"] .agent-admin-metric-card:nth-child(4) .agent-admin-metric-icon{background:#fff3e5;color:#ee9500}body[data-agent-detail="1"] .agent-admin-metric-card:nth-child(5) .agent-admin-metric-icon{background:#edf7f2;color:#1c9a68}body[data-agent-detail="1"] .agent-admin-metric-card small{display:block;color:#64748b;font-size:10px}body[data-agent-detail="1"] .agent-admin-metric-card strong{display:block;font-size:16px;margin:2px 0;color:#0f1f36}body[data-agent-detail="1"] .agent-admin-metric-card span:not(.agent-admin-metric-icon){font-size:9px;color:#7a8798}body[data-agent-detail="1"] .agent-admin-overview-lower{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}body[data-agent-detail="1"] .agent-admin-info-card{border:1px solid #e4eaf1;border-radius:10px;padding:14px;background:#fff}body[data-agent-detail="1"] .agent-admin-info-card h6{font-weight:800;margin-bottom:12px}body[data-agent-detail="1"] [data-agent-panel="details"] form{padding-top:4px}body[data-agent-detail="1"] .ops-filter.bo-filter-row{grid-template-columns:minmax(260px,430px) auto;justify-content:start}body[data-agent-detail="1"] #adminAgentBetSummary{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}body[data-agent-detail="1"] #adminAgentBetSummary>.col-6{width:auto;max-width:none}body[data-agent-detail="1"] #adminAgentBetSummary .metric{min-height:86px}body[data-agent-detail="1"] [data-agent-panel="bonus"] .agent-admin-overview-grid{grid-template-columns:repeat(3,minmax(0,1fr))}body[data-agent-detail="1"] .report-table th,body[data-agent-detail="1"] .report-table td{vertical-align:middle}
+@media(max-width:1350px){body[data-agent-detail="1"] .agent-detail-summary{grid-template-columns:repeat(3,1fr)}body[data-agent-detail="1"] .agent-detail-identity{grid-column:1/-1}body[data-agent-detail="1"] .agent-admin-overview-grid,body[data-agent-detail="1"] #adminAgentBetSummary{grid-template-columns:repeat(3,1fr)}}@media(max-width:800px){body[data-agent-detail="1"] .agent-detail-summary,body[data-agent-detail="1"] .agent-admin-overview-grid,body[data-agent-detail="1"] #adminAgentBetSummary,body[data-agent-detail="1"] .agent-admin-overview-lower,body[data-agent-detail="1"] [data-agent-panel="bonus"] .agent-admin-overview-grid{grid-template-columns:1fr 1fr}body[data-agent-detail="1"] .agent-detail-toolbar>.d-flex{align-items:flex-start!important}body[data-agent-detail="1"] .agent-detail-tabs{margin-left:0;width:100%}}
+</style>
+
+<style id="agent-detail-layout-final-fix">
+/* Agent Detail approved desktop layout: identity + all KPI cards stay in one row. */
+body[data-agent-detail="1"] #agentDetailSummaryTop.agent-detail-summary{
+  display:grid!important;
+  grid-template-columns:minmax(300px,1.75fr) repeat(5,minmax(145px,1fr))!important;
+  gap:10px!important;
+  align-items:stretch!important;
+  width:100%!important;
+}
+body[data-agent-detail="1"] #agentDetailSummaryTop>.agent-detail-identity,
+body[data-agent-detail="1"] #agentDetailSummaryTop>.agent-detail-stat{
+  width:auto!important;max-width:none!important;margin:0!important;min-width:0!important;
+}
+body[data-agent-detail="1"] #agentDetailSummaryTop>.agent-detail-identity{grid-column:auto!important}
+body[data-agent-detail="1"] #agentDetailSummaryTop>.agent-detail-stat{
+  display:flex!important;flex-direction:row!important;align-items:center!important;gap:10px!important;padding:12px!important;
+}
+body[data-agent-detail="1"] .agent-detail-stat-ico{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:0 0 38px;background:#eef4ff;color:#1767e8;font-size:16px}
+body[data-agent-detail="1"] #agentDetailSummaryTop>.agent-detail-stat:nth-child(3) .agent-detail-stat-ico{background:#ebf9f0;color:#16a05b}
+body[data-agent-detail="1"] #agentDetailSummaryTop>.agent-detail-stat:nth-child(4) .agent-detail-stat-ico{background:#f1eaff;color:#7b47e8}
+body[data-agent-detail="1"] #agentDetailSummaryTop>.agent-detail-stat:nth-child(5) .agent-detail-stat-ico{background:#fff3e5;color:#ee9500}
+body[data-agent-detail="1"] #agentDetailSummaryTop>.agent-detail-stat:nth-child(6) .agent-detail-stat-ico{background:#edf7f2;color:#1c9a68}
+body[data-agent-detail="1"] .agent-detail-stat-copy{min-width:0}
+body[data-agent-detail="1"] .agent-detail-stat-copy span{display:block!important;margin:0 0 3px!important;font-size:10px!important}
+body[data-agent-detail="1"] .agent-detail-stat-copy strong{display:block!important;margin:0!important;font-size:16px!important;white-space:nowrap}
+/* Tabs follow the established Agent Portal underline-tab standard. */
+body[data-agent-detail="1"] .agent-detail-toolbar{padding:0 14px!important}
+body[data-agent-detail="1"] .agent-detail-toolbar>.d-flex{display:flex!important;align-items:flex-end!important;flex-wrap:nowrap!important;gap:12px!important}
+body[data-agent-detail="1"] .agent-detail-tabs{display:flex!important;flex:1!important;justify-content:flex-end!important;align-items:stretch!important;gap:22px!important;margin:0!important;border-bottom:1px solid #e8edf4!important;overflow-x:auto!important}
+body[data-agent-detail="1"] .agent-detail-tabs .clean-btn{display:inline-flex!important;align-items:center!important;gap:6px!important;background:transparent!important;border:0!important;border-bottom:2px solid transparent!important;border-radius:0!important;box-shadow:none!important;color:#475569!important;padding:13px 4px 11px!important;min-height:42px!important;white-space:nowrap!important}
+body[data-agent-detail="1"] .agent-detail-tabs .clean-btn.primary,
+body[data-agent-detail="1"] .agent-detail-tabs .clean-btn[aria-selected="true"]{background:transparent!important;color:#1267df!important;border-bottom-color:#1267df!important;box-shadow:none!important}
+@media(max-width:1450px){body[data-agent-detail="1"] #agentDetailSummaryTop.agent-detail-summary{grid-template-columns:minmax(250px,1.55fr) repeat(5,minmax(120px,1fr))!important}}
+@media(max-width:1100px){body[data-agent-detail="1"] #agentDetailSummaryTop.agent-detail-summary{grid-template-columns:repeat(3,minmax(0,1fr))!important}body[data-agent-detail="1"] #agentDetailSummaryTop>.agent-detail-identity{grid-column:1/-1!important}body[data-agent-detail="1"] .agent-detail-toolbar>.d-flex{flex-wrap:wrap!important}body[data-agent-detail="1"] .agent-detail-tabs{justify-content:flex-start!important;width:100%!important}}
+@media(max-width:700px){body[data-agent-detail="1"] #agentDetailSummaryTop.agent-detail-summary{grid-template-columns:1fr!important}}
+
+/* Final Agent Detail visual polish */
+body[data-agent-detail="1"] #agentDetailSummaryTop.agent-detail-summary{grid-template-columns:minmax(330px,1.7fr) repeat(5,minmax(165px,1fr))!important;gap:12px!important}
+body[data-agent-detail="1"] #agentDetailSummaryTop>.agent-detail-identity,body[data-agent-detail="1"] #agentDetailSummaryTop>.agent-detail-stat{min-height:108px!important;padding:16px!important}
+body[data-agent-detail="1"] .agent-detail-avatar{width:64px!important;height:64px!important;font-size:30px!important}
+body[data-agent-detail="1"] .agent-detail-stat-ico{width:44px!important;height:44px!important;flex-basis:44px!important;font-size:18px!important}
+body[data-agent-detail="1"] .agent-detail-stat-copy span{font-size:11px!important}
+body[data-agent-detail="1"] .agent-detail-stat-copy strong{font-size:18px!important}
+body[data-agent-detail="1"] .agent-admin-info-card{padding:18px 20px!important}
+body[data-agent-detail="1"] .agent-admin-info-card h6{font-size:15px!important;margin-bottom:14px!important}
+body[data-agent-detail="1"] .agent-info-list{display:grid!important;gap:0!important;border-top:1px solid #edf1f6}
+body[data-agent-detail="1"] .agent-info-row{display:grid!important;grid-template-columns:minmax(130px,42%) 1fr!important;align-items:center!important;gap:18px!important;padding:10px 0!important;border-bottom:1px solid #edf1f6!important;font-size:12px!important}
+body[data-agent-detail="1"] .agent-info-row span{color:#64748b!important}
+body[data-agent-detail="1"] .agent-info-row b{text-align:left!important;color:#132238!important;font-weight:700!important;word-break:break-word}
+body[data-agent-detail="1"] [data-agent-panel="players"] .agent-section-head{align-items:center!important}
+body[data-agent-detail="1"] #assignPlayersModal .modal-content{border:0!important;border-radius:16px!important;box-shadow:0 24px 60px rgba(15,23,42,.22)!important}
+body[data-agent-detail="1"] #assignPlayersModal .modal-dialog{max-width:780px!important}
+body[data-agent-detail="1"] #assignPlayersModal .member-list{max-height:420px!important;border:1px solid #dfe7f2!important;border-radius:10px!important;padding:4px 10px!important}
+body[data-agent-detail="1"] #assignPlayersModal .agent-assign-search{height:42px;border:1px solid #ccd9ea;border-radius:9px;display:flex;align-items:center;gap:8px;padding:0 11px;background:#fff}
+body[data-agent-detail="1"] #assignPlayersModal .agent-assign-search input{border:0!important;box-shadow:none!important;padding:0!important;height:38px!important}
+body[data-agent-detail="1"] #assignPlayersModal .agent-assign-search i{color:#64748b}
+@media(max-width:1500px){body[data-agent-detail="1"] #agentDetailSummaryTop.agent-detail-summary{grid-template-columns:minmax(290px,1.5fr) repeat(5,minmax(145px,1fr))!important}}
+</style>
+</head>
 <body class="report-body brand-agent-standard" data-agent-detail="1">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
@@ -80,8 +144,8 @@ body[data-agent-detail="1"] .agent-detail-toolbar{position:sticky;top:72px;z-ind
 <div class="user-title-wrap">
 <div class="user-title-icon"><i class="bi bi-person-workspace"></i></div>
 <div>
-<h1>Agent Detail</h1>
-<p>Manage one agent clearly by section: settings, players, settlement, portal, wallet and reports.</p>
+<h1>Agent Details</h1>
+<p>Manage agent profile, assigned players, betting performance, commission and activity.</p>
 </div>
 </div>
 <div class="report-actions" data-bo-profile=""></div>
@@ -93,24 +157,33 @@ body[data-agent-detail="1"] .agent-detail-toolbar{position:sticky;top:72px;z-ind
 <span class="ms-2 fw-bold" id="agentDetailHeading">Agent</span>
 </div>
 <div class="agent-detail-tabs" role="tablist">
-<button class="clean-btn primary" data-agent-section="settings"><i class="bi bi-sliders"></i> Settings</button>
+<button class="clean-btn primary" data-agent-section="overview"><i class="bi bi-grid"></i> Overview</button>
+<button class="clean-btn" data-agent-section="details"><i class="bi bi-pencil-square"></i> Details</button>
 <button class="clean-btn" data-agent-section="players"><i class="bi bi-people"></i> Players</button>
-<button class="clean-btn" data-agent-section="portal"><i class="bi bi-share"></i> Referral / Portal</button>
-<button class="clean-btn" data-agent-section="wallet"><i class="bi bi-wallet2"></i> Wallet</button>
-<button class="clean-btn" data-agent-section="bets"><i class="bi bi-graph-up-arrow"></i> Bet Report</button>
-<button class="clean-btn" data-agent-section="history"><i class="bi bi-clock-history"></i> Settlement History</button>
+<button class="clean-btn" data-agent-section="bets"><i class="bi bi-graph-up-arrow"></i> Betting / Win-Loss</button>
+<button class="clean-btn" data-agent-section="bonus"><i class="bi bi-gift"></i> Bonus / Ad Expense</button>
+<button class="clean-btn" data-agent-section="adjustments"><i class="bi bi-sliders"></i> Adjustments</button>
+<button class="clean-btn" data-agent-section="history"><i class="bi bi-clock-history"></i> Activity Log</button>
 </div>
 </div>
-</div><div class="table-card mb-3" style="display:none!important"><div class="d-flex justify-content-between align-items-center mb-3"><div><h5 class="mb-1">Agents</h5><small class="text-muted">Select an agent to review players, reports, settlement and wallet.</small></div><button class="clean-btn primary" id="agentQuickAdd"><i class="bi bi-plus-lg"></i> Add Agent</button></div><div class="bo-filter-row"><div class="field wide"><label>Search</label><input class="form-control" id="agentQuickSearch" placeholder="Agent name / code / portal username"/></div><div class="field"><label>Status</label><select class="form-select" id="agentQuickStatus"><option value="">All</option><option value="1">Active</option><option value="0">Disabled</option></select></div></div><div class="brand-overview-table-wrap mt-3"><table class="report-table table-clean"><thead><tr><th>Agent</th><th>Players</th><th>Commission</th><th>Wallet</th><th>Red Share</th><th>KPI</th><th>Status</th><th>Actions</th></tr></thead><tbody id="agentQuickRows"></tbody></table></div></div><div id="agentLegacyWorkspace">
+</div><div id="agentDetailSummaryTop" class="agent-detail-summary mb-3"></div><div class="table-card mb-3" style="display:none!important"><div class="d-flex justify-content-between align-items-center mb-3"><div><h5 class="mb-1">Agents</h5><small class="text-muted">Select an agent to review players, reports, settlement and wallet.</small></div><button class="clean-btn primary" id="agentQuickAdd"><i class="bi bi-plus-lg"></i> Add Agent</button></div><div class="bo-filter-row"><div class="field wide"><label>Search</label><input class="form-control" id="agentQuickSearch" placeholder="Agent name / code / portal username"/></div><div class="field"><label>Status</label><select class="form-select" id="agentQuickStatus"><option value="">All</option><option value="1">Active</option><option value="0">Disabled</option></select></div></div><div class="brand-overview-table-wrap mt-3"><table class="report-table table-clean"><thead><tr><th>Agent</th><th>Players</th><th>Commission</th><th>Wallet</th><th>Red Share</th><th>KPI</th><th>Status</th><th>Actions</th></tr></thead><tbody id="agentQuickRows"></tbody></table></div></div><div id="agentLegacyWorkspace">
 <div class="agent-grid">
+<div class="cardx agent-detail-panel is-active agent-admin-overview" data-agent-panel="overview">
+  <div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-grid"></i></span><div><h5>Overview</h5><small>Current performance and commission summary for this agent.</small></div></div></div>
+  <div class="agent-admin-overview-grid" id="agentOverviewMetrics"></div>
+  <div class="agent-admin-overview-lower">
+    <div class="agent-admin-info-card"><h6>Agent Information</h6><div id="agentOverviewInfo" class="agent-info-list"></div></div>
+    <div class="agent-admin-info-card"><h6>Commission & KPI</h6><div id="agentOverviewCommission" class="agent-info-list"></div></div>
+  </div>
+</div>
 <div class="cardx" style="display:none!important">
 <div class="d-flex justify-content-between">
 <h5>Agents</h5><button class="clean-btn primary" id="newAgent">New Agent</button>
 </div>
 <div class="mt-3" id="agentList"></div>
 </div>
-<div class="cardx agent-detail-panel is-active" data-agent-panel="settings">
-<h5 id="formTitle">Create Agent</h5>
+<div class="cardx agent-detail-panel" data-agent-panel="details">
+<div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-pencil-square"></i></span><div><h5 id="formTitle">Agent Details</h5><small>Edit agent configuration and portal access.</small></div></div></div>
 <form class="row g-3" id="agentForm"><input id="agentId" type="hidden"/>
 <div class="col-md-4"><label class="form-label">Code</label><input class="form-control" id="agentCode" required=""/></div>
 <div class="col-md-8"><label class="form-label">Name</label><input class="form-control" id="agentName" required=""/></div>
@@ -181,8 +254,8 @@ body[data-agent-detail="1"] .agent-detail-toolbar{position:sticky;top:72px;z-ind
 <div class="mt-4" hidden="" id="agentDetail">
 <div class="agent-grid">
 <div class="cardx agent-detail-panel" data-agent-panel="players">
-<div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-people"></i></span><div><h5>Assigned Players</h5><small>Manage which players belong to this agent.</small></div></div></div><input class="form-control mb-2" id="memberSearch" placeholder="Search username / name / mobile"/>
-<div class="member-list" id="memberList"></div><button class="clean-btn primary mt-2" id="saveMembers"><i class="bi bi-save"></i> Save Player Assignment</button>
+<div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-people"></i></span><div><h5>Assigned Players</h5><small>Players currently assigned to this agent.</small></div></div><button class="clean-btn primary" id="openAssignPlayers" type="button"><i class="bi bi-person-plus"></i> Assign Players</button></div>
+<div class="brand-overview-table-wrap mt-3"><table class="report-table table-clean"><thead><tr><th>Player</th><th>Name</th><th>Mobile</th><th>Status</th></tr></thead><tbody id="assignedPlayerRows"></tbody></table></div>
 </div>
 <div class="cardx agent-detail-panel" data-agent-panel="settlement" style="display:none!important" aria-hidden="true">
 <div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-receipt"></i></span><div><h5>Settlement</h5><small>Review commission, KPI and payout status for the selected KPI cycle.</small></div></div></div>
@@ -195,7 +268,7 @@ body[data-agent-detail="1"] .agent-detail-toolbar{position:sticky;top:72px;z-ind
 </div>
 </div>
 <div class="agent-grid mt-3">
-<div class="cardx agent-detail-panel" data-agent-panel="portal">
+<div class="cardx agent-detail-panel" data-agent-panel="portal" style="display:none!important" aria-hidden="true">
 <div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-share"></i></span><div><h5>Agent Referral / Portal</h5><small>Player registration link and Agent Portal access.</small></div></div></div>
 <div class="small text-muted mb-1">Agent Code</div>
 <div class="fw-bold" id="agentReferralCode">-</div><label class="form-label mt-2">Registration Link</label>
@@ -208,7 +281,7 @@ body[data-agent-detail="1"] .agent-detail-toolbar{position:sticky;top:72px;z-ind
 <div class="small text-muted mt-1">The agent logs in here using Agent Portal Username /
                                 Password configured above.</div>
 </div>
-<div class="cardx agent-detail-panel" data-agent-panel="wallet">
+<div class="cardx agent-detail-panel" data-agent-panel="wallet" style="display:none!important" aria-hidden="true">
 <div class="agent-section-head">
 <div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-wallet2"></i></span><div><h5>Agent Wallet</h5><small>Commission credits, payouts and manual adjustments.</small></div></div>
 <button class="clean-btn primary" id="openWalletAdjust" type="button"><i class="bi bi-plus-circle"></i> Adjust Wallet</button>
@@ -232,7 +305,7 @@ body[data-agent-detail="1"] .agent-detail-toolbar{position:sticky;top:72px;z-ind
 </div>
 <div class="agent-grid mt-3">
 <div class="cardx agent-detail-panel" data-agent-panel="bets">
-<div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-graph-up-arrow"></i></span><div><h5>Selected Agent Bet Report</h5><small>Only bets from players assigned to this agent are shown.</small></div></div></div>
+<div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-graph-up-arrow"></i></span><div><h5>Betting & Win/Loss Report</h5><small>Betting activity, customer P/L and commission for players assigned to this agent.</small></div></div></div>
 <div class="ops-filter bo-filter-row">
 <div class="field"><label>From</label><input data-range-default="this-month" id="adminAgentBetFrom" type="date"/></div>
 <div class="field"><label>To</label><input id="adminAgentBetTo" type="date"/></div>
@@ -247,17 +320,28 @@ body[data-agent-detail="1"] .agent-detail-toolbar{position:sticky;top:72px;z-ind
 <th>Player</th>
 <th>Provider</th>
 <th>Game</th>
+<th>Total Bet</th>
 <th>Valid Bet</th>
-<th>Win</th>
-<th>Customer Loss</th>
+<th>Total Win</th>
+<th>Customer P/L</th>
 </tr>
 </thead>
 <tbody id="adminAgentBetRows"></tbody>
 </table>
 </div>
 </div>
+<div class="cardx agent-detail-panel" data-agent-panel="bonus">
+  <div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-gift"></i></span><div><h5>Bonus / Advertising Expenses</h5><small>Agent bonus and advertising reimbursement activity.</small></div></div></div>
+  <div class="agent-admin-overview-grid" id="agentBonusExpenseSummary"></div>
+  <div class="agent-admin-info-card mt-3"><div class="d-flex justify-content-between align-items-center gap-2"><div><h6 class="mb-1">Related Management</h6><small class="text-muted">Review this agent's bonus and advertising reimbursement from the dedicated Agent Management pages.</small></div><div class="d-flex gap-2 flex-wrap"><a class="clean-btn" href="agent-reimbursement-admin.html"><i class="bi bi-receipt"></i> Reimbursement / Ad Claim</a><a class="clean-btn" href="agent-promotion-admin.html"><i class="bi bi-megaphone"></i> Promotion</a></div></div></div>
+</div>
+<div class="cardx agent-detail-panel" data-agent-panel="adjustments">
+  <div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-sliders"></i></span><div><h5>Adjustments</h5><small>Manual balance adjustment and wallet ledger for this agent.</small></div></div><button class="clean-btn primary" id="openWalletAdjust2" type="button"><i class="bi bi-plus-circle"></i> Add Adjustment</button></div>
+  <div class="agent-balance-card"><span class="agent-balance-icon"><i class="bi bi-wallet2"></i></span><div><small>Available Balance</small><strong id="agentWalletBalance2">0.00</strong><span>Current agent wallet balance</span></div></div>
+  <div class="brand-overview-table-wrap mt-3"><table class="report-table table-clean"><thead><tr><th>Time</th><th>Type</th><th>Amount</th><th>Balance</th><th>Remark</th></tr></thead><tbody id="agentWalletRows2"></tbody></table></div>
+</div>
 <div class="cardx agent-detail-panel" data-agent-panel="history">
-<div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-clock-history"></i></span><div><h5>Settlement / Withdrawal History</h5><small>Review submitted, approved and paid settlements.</small></div></div></div>
+<div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-clock-history"></i></span><div><h5>Activity Log</h5><small>Settlement and payout activity for this agent.</small></div></div></div>
 <div class="brand-overview-table-wrap mt-3">
 <table class="report-table table-clean">
 <thead>
@@ -280,6 +364,12 @@ body[data-agent-detail="1"] .agent-detail-toolbar{position:sticky;top:72px;z-ind
 </div></section>
 </main>
 </div>
+<div class="modal fade" id="assignPlayersModal" tabindex="-1" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content">
+<div class="modal-header"><div><h5 class="modal-title">Assign Players</h5><small class="text-muted">Select the players that should belong to this agent.</small></div><button class="btn-close" data-bs-dismiss="modal" type="button"></button></div>
+<div class="modal-body"><div class="agent-assign-search"><i class="bi bi-search"></i><input class="form-control" id="memberSearch" placeholder="Search username / name / mobile"/></div><div class="member-list mt-3" id="memberList"></div></div>
+<div class="modal-footer"><button class="clean-btn" data-bs-dismiss="modal" type="button">Cancel</button><button class="clean-btn primary" id="saveMembers" type="button"><i class="bi bi-save"></i> Save Player Assignment</button></div>
+</div></div></div>
 <div class="modal fade" id="walletAdjustModal" tabindex="-1" aria-hidden="true">
 <div class="modal-dialog modal-dialog-centered">
 <div class="modal-content">
@@ -292,11 +382,11 @@ body[data-agent-detail="1"] .agent-detail-toolbar{position:sticky;top:72px;z-ind
 </div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/config.js?v=1.0.31"></script>
-<script src="assets/js/auth.js?v=1.0.39"></script>
+<script src="assets/js/auth.js?v=1.0.40"></script>
 <script src="assets/js/brand-context.js?v=1.0.2"></script>
 <script src="assets/js/reports.js?v=1.0.14"></script>
-<script src="assets/js/bo-date-range.js?v=1.0.14"></script>
-<script src="assets/js/agent-management.js?v=1.0.5"></script>
-<script src="assets/js/agent-detail-ui.js?v=1.0.1"></script><script defer="" src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
+<script src="assets/js/bo-date-range.js?v=1.0.15"></script>
+<script src="assets/js/agent-management.js?v=1.0.7"></script>
+<script src="assets/js/agent-detail-ui.js?v=1.0.2"></script><script defer="" src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
 </body>
 </html>

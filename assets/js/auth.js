@@ -79,14 +79,15 @@
     return (location.pathname || '').split('/').pop() || 'index.html';
   }
 
-  const GROUP_META = {
+  const GROUP_META = window.BO_MENU_GROUP_META = {
     access: { title: 'Access Control', icon: 'bi-shield-lock' },
     game: { title: 'Game Management', icon: 'bi-controller' },
     bonus: { title: 'Bonus Management', icon: 'bi-gift' },
     support: { title: 'Support', icon: 'bi-headset' },
     wallet: { title: 'Wallet Management', icon: 'bi-wallet2' },
     setting: { title: 'Setting', icon: 'bi-gear' },
-    report: { title: 'Report', icon: 'bi-wallet2' }
+    report: { title: 'Report', icon: 'bi-wallet2' },
+    agent_management_group: { title: 'Agent Management', icon: 'bi-person-workspace' }
   };
 
   // Used only when backend has not returned menu data yet.
@@ -151,6 +152,8 @@
     {menuKey:'timezone_setting', title:'Timezone Setting', url:'timezone-setting.html', icon:'bi-globe2', parentKey:'setting', sortOrder:94}
   ];
 
+  try{(JSON.parse(localStorage.getItem('bo_menu_group_meta_v1')||'[]')||[]).forEach(function(g){const key=String(g.groupKey||'').trim();if(key)GROUP_META[key]={title:String(g.title||key),icon:String(g.icon||'bi-folder'),sortOrder:Number(g.sortOrder||100)};});}catch(e){}
+
   function normalizeMenu(m){
     return {
       id: m && m.id,
@@ -183,9 +186,15 @@
     requireLogin: function(){ if(!this.token() && !location.pathname.endsWith('/login.html')) window.location.href = 'login.html'; },
     allowedMenus: function(user){
       user = user || this.user();
+      const isRoot = !!(user && (user.rootAdmin === true || String(user.roleType || '').toUpperCase() === 'ROOT'));
+      const rootOnlyMenus = new Set(['menu_management','root_control']);
       return (Array.isArray(user && user.menus) ? user.menus : [])
         .map(normalizeMenu)
-        .filter(function(m){ return m.status === 1 && m.url && m.url !== '#' && m.menuKey !== 'menu_permission'; })
+        .filter(function(m){
+          if(!(m.status === 1 && m.url && m.url !== '#' && m.menuKey !== 'menu_permission')) return false;
+          if(!isRoot && rootOnlyMenus.has(String(m.menuKey || '').toLowerCase())) return false;
+          return true;
+        })
         .sort(function(a,b){ return a.sortOrder - b.sortOrder || a.title.localeCompare(b.title); });
     },
     landingPage: function(user){
@@ -194,8 +203,19 @@
     },
     enforcePageAccess: function(user){
       let current = pageName();
-      // Detail routes inherit the permission of their parent listing page.
+      // Agent detail inherits Agents access. Agent Management sub-pages keep their
+      // own permission so a Master can be granted Commission/Settlement/etc.
+      // independently. Legacy agent_management permission remains a fallback below.
       if(current === 'agent-detail.html') current = 'agent-management.html';
+      // Agent Performance Detail is a drill-down page of Agent Performance Report.
+      // It has no separate sidebar/menu permission, so inherit the report permission
+      // instead of redirecting the user to their landing page.
+      if(current === 'agent-performance-detail.html') current = 'agent-performance-report.html';
+      const agentChildPages = new Set([
+        'agent-commission-admin.html','agent-settlement-admin.html','agent-reimbursement-admin.html',
+        'agent-payout-admin.html','agent-promotion-admin.html'
+      ]);
+      const requestedAgentChild = agentChildPages.has(pageName());
       if(current === 'main-stat-detail.html'){
         let source = '';
         try { source = String(new URLSearchParams(location.search || '').get('source') || 'overview').toLowerCase(); } catch(e) {}
@@ -208,7 +228,14 @@
         this.logout();
         return false;
       }
-      const allowed = menus.some(function(m){ return (m.url || '').split('/').pop() === current; });
+      let allowed = menus.some(function(m){ return (m.url || '').split('/').pop() === current; });
+      // Backward compatibility: older roles may only have the original
+      // agent_management menu. That parent permission is allowed to open the new
+      // Agent Management child pages, while newly configured roles can grant each
+      // child page separately.
+      if(!allowed && requestedAgentChild){
+        allowed = menus.some(function(m){ return String(m.menuKey || '').toLowerCase() === 'agent_management'; });
+      }
       if(!allowed){
         const landing = this.landingPage(user);
         if(landing && landing !== current) window.location.replace(landing);
@@ -227,14 +254,34 @@
     profileUpdateUrl: function(){ return api('AUTH_ADMIN_PROFILE_UPDATE'); },
     changePasswordUrl: function(){ return api('AUTH_ADMIN_CHANGE_PASSWORD'); },
     roleListUrl: function(){ return api('ROLE_LIST'); },
+    roleListAllUrl: function(){ return API_CONFIG.BASE_URL + (API_CONFIG.ENDPOINTS.ROLE_LIST_ALL || "/admin/access/roles/all"); },
     roleSaveUrl: function(){ return api('ROLE_SAVE'); },
     menuListUrl: function(){ return api('MENU_LIST'); },
     menuListAllUrl: function(){ return api('MENU_LIST_ALL'); },
     menuSaveUrl: function(){ return api('MENU_SAVE'); },
+    menuGroupListUrl: function(){ return api('MENU_GROUP_LIST'); },
+    menuGroupListAllUrl: function(){ return api('MENU_GROUP_LIST_ALL'); },
+    menuGroupSaveUrl: function(){ return api('MENU_GROUP_SAVE'); },
+    menuGroupDeleteUrl: function(id){ return api('MENU_GROUP_DELETE') + '/' + id + '/delete'; },
     roleMenusUrl: function(roleId){ return API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.ROLE_MENU_GET + '/' + roleId + '/menus'; },
     memberListUrl: function(){ return api('MEMBER_LIST'); },
     memberCreateUrl: function(){ return api('MEMBER_CREATE'); },
     memberUpdateUrl: function(id){ return api('MEMBER_UPDATE') + '/' + id; },
+    loadMenuGroups: async function(){
+      if(!this.token()) return [];
+      try{
+        const res=await fetch(this.menuGroupListUrl(),{headers:{...this.authHeader()},cache:'no-store'});
+        const json=await res.json().catch(function(){return {};});
+        if(!res.ok||json.status==='error')return [];
+        const list=Array.isArray(json.data)?json.data:[];
+        list.forEach(function(g){
+          const key=String(g.groupKey||'').trim(); if(!key)return;
+          GROUP_META[key]={title:String(g.title||key),icon:String(g.icon||'bi-folder'),sortOrder:Number(g.sortOrder||100)};
+        });
+        try{localStorage.setItem('bo_menu_group_meta_v1',JSON.stringify(list));}catch(e){}
+        return list;
+      }catch(e){return [];}
+    },
     refreshMe: async function(force){
       if(!this.token()) return null;
       const cached=this.user();
@@ -242,12 +289,12 @@
       // Menus/profile are already stored after login. Revalidate periodically instead of
       // firing /auth/admin/me on every single BO page navigation.
       if(!force && cached && cached.username && Array.isArray(cached.menus) && Date.now()-last<30000){
-        this.renderSidebar(cached);this.enforcePageAccess(cached);return cached;
+        await this.loadMenuGroups();this.renderSidebar(cached);this.enforcePageAccess(cached);return cached;
       }
       try{
         const res = await fetch(this.adminMeUrl(), {headers: {...this.authHeader()}});
         const json = await res.json().catch(() => ({}));
-        if(res.ok && json.status !== 'error' && json.data){try{sessionStorage.setItem('bo_admin_me_refreshed_at',String(Date.now()));}catch(e){} this.saveUser(json.data); this.enforcePageAccess(json.data); return json.data; }
+        if(res.ok && json.status !== 'error' && json.data){try{sessionStorage.setItem('bo_admin_me_refreshed_at',String(Date.now()));}catch(e){} await this.loadMenuGroups();this.saveUser(json.data); this.enforcePageAccess(json.data); return json.data; }
         if(json.message === 'Unauthorized') this.logout();
       }catch(e){}
       this.renderSidebar(cached);
@@ -282,7 +329,44 @@
         menus = menus.map(function(m){ m=Object.assign({},m); if(m.menuKey==='agent_management')m.parentKey=''; if(m.menuKey==='brand_management')m.title='Brands'; if(m.menuKey==='main_dashboard')m.title='Dashboard'; return m; });
       }
 
-      menus = menus.map(normalizeMenu).filter(m => m.status === 1 && m.url && m.url !== '#' && m.menuKey !== 'menu_permission')
+      // Backward compatibility for older databases that only have the single
+      // agent_management permission. Once Agent Management submenu records exist in
+      // Menu Management, the database is the source of truth and nothing is injected.
+      // This prevents the same submenu from being rendered twice after an admin adds
+      // Agents / Commission / Settlement / Reimbursement / Payout / Promotion manually.
+      const hasAgentManagementPermission = menus.some(m => String(m.menuKey||'').toLowerCase()==='agent_management');
+      const hasDbAgentManagementChildren = menus.some(m => String(m.parentKey||'').toLowerCase()==='agent_management_group');
+      if(hasAgentManagementPermission && !hasDbAgentManagementChildren){
+        menus = menus.filter(m => String(m.menuKey||'').toLowerCase()!=='agent_management').concat([
+          {menuKey:'agent_management',title:'Agents',url:'agent-management.html',icon:'bi-people',parentKey:'agent_management_group',sortOrder:22,status:1},
+          {menuKey:'agent_commission',title:'Commission',url:'agent-commission-admin.html',icon:'bi-percent',parentKey:'agent_management_group',sortOrder:22.1,status:1},
+          {menuKey:'agent_settlement',title:'Settlement',url:'agent-settlement-admin.html',icon:'bi-receipt',parentKey:'agent_management_group',sortOrder:22.2,status:1},
+          {menuKey:'agent_reimbursement',title:'Reimbursement / Ad Claim',url:'agent-reimbursement-admin.html',icon:'bi-file-earmark-arrow-up',parentKey:'agent_management_group',sortOrder:22.3,status:1},
+          {menuKey:'agent_payout',title:'Withdraw / Payout',url:'agent-payout-admin.html',icon:'bi-cash-stack',parentKey:'agent_management_group',sortOrder:22.4,status:1},
+          {menuKey:'agent_promotion',title:'Promotion',url:'agent-promotion-admin.html',icon:'bi-megaphone',parentKey:'agent_management_group',sortOrder:22.5,status:1}
+        ]);
+      }
+
+      // Defensive de-duplication: one logical menu is rendered once even if legacy
+      // seed data and a newly-created DB record overlap. Prefer the DB/user.menus
+      // entry encountered first and compare by menuKey, then URL as a fallback.
+      {
+        const seenMenuKeys = new Set();
+        const seenUrls = new Set();
+        menus = menus.filter(function(m){
+          const key = String(m && m.menuKey || '').trim().toLowerCase();
+          const url = String(m && m.url || '').trim().toLowerCase();
+          if(key && seenMenuKeys.has(key)) return false;
+          if(url && url !== '#' && seenUrls.has(url)) return false;
+          if(key) seenMenuKeys.add(key);
+          if(url && url !== '#') seenUrls.add(url);
+          return true;
+        });
+      }
+
+      const isRootSidebar = !!(user && (user.rootAdmin === true || String(user.roleType || '').toUpperCase() === 'ROOT'));
+      const rootOnlySidebarMenus = new Set(['menu_management','root_control']);
+      menus = menus.map(normalizeMenu).filter(m => m.status === 1 && m.url && m.url !== '#' && m.menuKey !== 'menu_permission' && (isRootSidebar || !rootOnlySidebarMenus.has(String(m.menuKey || '').toLowerCase())))
         .map(m => m.menuKey === 'role' ? Object.assign({}, m, {title:'Role & Menu Permission'}) : m)
         .sort((a,b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
 
@@ -301,6 +385,9 @@
       let html = '';
       top.forEach(m => { html += menuLinkHtml(m, false); });
       Object.keys(groups).sort((a,b) => {
+        const metaA=GROUP_META[a]||{}, metaB=GROUP_META[b]||{};
+        const groupA=Number(metaA.sortOrder); const groupB=Number(metaB.sortOrder);
+        if(Number.isFinite(groupA)&&Number.isFinite(groupB)&&groupA!==groupB)return groupA-groupB;
         const minA = Math.min.apply(null, groups[a].map(x => x.sortOrder));
         const minB = Math.min.apply(null, groups[b].map(x => x.sortOrder));
         return minA - minB;

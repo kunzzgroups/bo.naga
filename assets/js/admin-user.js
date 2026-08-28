@@ -158,6 +158,9 @@
     tbody.innerHTML = rows.map(row => {
       const active = Number(row.status) === 1;
       const current = Number(row.id) === currentId;
+      const viewer = BO_AUTH.user() || {};
+      const viewerRoot = viewer.rootAdmin === true || Number(viewer.rootAdmin) === 1 || String(viewer.roleType||'').toUpperCase() === 'ROOT' || (Number(viewer.id)===1 && viewer.brandId==null);
+      const protectedRoot = Number(row.id) === 1 && !viewerRoot;
       return '<tr>'+
         '<td class="admin-check-col"><input type="checkbox" class="admin-row-check" value="'+esc(row.id)+'"></td>'+
         '<td><div class="admin-cell-user"><span class="admin-avatar">'+esc(initials(row))+'</span><div><b>'+esc(row.username)+'</b> '+(current?'<span class="current-login-pill">Current Login</span>':'')+'<br><small>'+esc(row.username)+'</small></div></div></td>'+
@@ -167,11 +170,11 @@
         '<td>'+shortDt(row.lastLoginAt || row.lastLogin || row.loginAt)+'</td>'+
         '<td>'+shortDt(row.createdAt || row.created_at)+'</td>'+
         '<td><b>'+esc(row.createdByName || row.createdByUsername || row.createdBy || row.creator || '-')+'</b></td>'+
-        '<td><div class="user-row-actions admin-actions"><button class="icon-action admin-edit-btn" title="Edit" data-id="'+esc(row.id)+'" data-row=\''+JSON.stringify(row).replace(/'/g,'&#39;')+'\'><i class="bi bi-pencil"></i></button><button class="icon-action danger admin-delete-btn" title="Delete" type="button" data-id="'+esc(row.id)+'"><i class="bi bi-trash"></i></button></div></td>'+
+        '<td><div class="user-row-actions admin-actions">'+(protectedRoot?'<span class="status-pill active" title="Root account cannot be modified by non-root administrators">Protected</span>':'<button class="icon-action admin-edit-btn" title="Edit" data-id="'+esc(row.id)+'" data-row=\''+JSON.stringify(row).replace(/'/g,'&#39;')+'\'><i class="bi bi-pencil"></i></button><button class="icon-action danger admin-delete-btn" title="Delete" type="button" data-id="'+esc(row.id)+'"><i class="bi bi-trash"></i></button>')+'</div></td>'+
       '</tr>';
     }).join('');
     if(mobileCards){
-      mobileCards.innerHTML = rows.map(row => '<div class="member-card admin-mobile-card"><div class="member-card-head"><h3>'+esc(row.username)+'</h3><span class="admin-status-pill '+(Number(row.status)===1?'active':'disabled')+'"><i></i>'+(Number(row.status)===1?'Active':'Disabled')+'</span></div><div class="member-grid"><span>Display Name</span><b>'+esc(row.displayName || '-')+'</b><span>Role</span><b>'+esc(roleName(row))+'</b><span>Created</span><b>'+esc(dt(row.createdAt || row.created_at))+'</b><span>Created By</span><b>'+esc(row.createdByName || row.createdByUsername || row.createdBy || row.creator || '-')+'</b></div><div class="admin-mobile-actions"><button class="clean-btn primary admin-edit-btn" data-id="'+esc(row.id)+'" data-row=\''+JSON.stringify(row).replace(/'/g,'&#39;')+'\'>Edit</button><button class="clean-btn danger admin-delete-btn" data-id="'+esc(row.id)+'">Delete</button></div></div>').join('');
+      mobileCards.innerHTML = rows.map(row => { const viewer=BO_AUTH.user()||{}; const viewerRoot=viewer.rootAdmin===true||Number(viewer.rootAdmin)===1||String(viewer.roleType||'').toUpperCase()==='ROOT'||(Number(viewer.id)===1&&viewer.brandId==null); const protectedRoot=Number(row.id)===1&&!viewerRoot; return '<div class="member-card admin-mobile-card"><div class="member-card-head"><h3>'+esc(row.username)+'</h3><span class="admin-status-pill '+(Number(row.status)===1?'active':'disabled')+'"><i></i>'+(Number(row.status)===1?'Active':'Disabled')+'</span></div><div class="member-grid"><span>Display Name</span><b>'+esc(row.displayName || '-')+'</b><span>Role</span><b>'+esc(roleName(row))+'</b><span>Created</span><b>'+esc(dt(row.createdAt || row.created_at))+'</b><span>Created By</span><b>'+esc(row.createdByName || row.createdByUsername || row.createdBy || row.creator || '-')+'</b></div><div class="admin-mobile-actions">'+(protectedRoot?'<span class="status-pill active">Protected</span>':'<button class="clean-btn primary admin-edit-btn" data-id="'+esc(row.id)+'" data-row=\''+JSON.stringify(row).replace(/'/g,'&#39;')+'\'>Edit</button><button class="clean-btn danger admin-delete-btn" data-id="'+esc(row.id)+'">Delete</button>')+'</div></div>'; }).join('');
     }
   }
 
@@ -269,12 +272,14 @@
 
   document.addEventListener('click', function(e){
     const edit = e.target.closest && e.target.closest('.admin-edit-btn');
-    if(edit){ openEdit(edit); return; }
+    if(edit){ const viewer=BO_AUTH.user()||{}; const viewerRoot=viewer.rootAdmin===true||Number(viewer.rootAdmin)===1||String(viewer.roleType||'').toUpperCase()==='ROOT'||(Number(viewer.id)===1&&viewer.brandId==null); if(Number(edit.dataset.id)===1&&!viewerRoot){ BO_DIALOG.alert('Root admin account is protected.'); return; } openEdit(edit); return; }
     const del = e.target.closest && e.target.closest('.admin-delete-btn');
     if(del){
       const id=Number(del.dataset.id||0);
       const currentId=Number((BO_AUTH.user()||{}).id||0);
       if(!id){ BO_DIALOG.alert('Missing admin ID'); return; }
+      const viewer=BO_AUTH.user()||{}; const viewerRoot=viewer.rootAdmin===true||Number(viewer.rootAdmin)===1||String(viewer.roleType||'').toUpperCase()==='ROOT'||(Number(viewer.id)===1&&viewer.brandId==null);
+      if(id===1&&!viewerRoot){ BO_DIALOG.alert('Root admin account is protected.'); return; }
       if(id===currentId){ BO_DIALOG.alert('You cannot delete the admin account currently logged in.'); return; }
       (async()=>{
         if(!(await BO_DIALOG.confirm('Delete this administrator account?', {title:'Delete Administrator',confirmText:'Delete'}))) return;
