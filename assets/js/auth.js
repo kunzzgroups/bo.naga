@@ -196,6 +196,11 @@
       let current = pageName();
       // Detail routes inherit the permission of their parent listing page.
       if(current === 'agent-detail.html') current = 'agent-management.html';
+      if(current === 'main-stat-detail.html'){
+        let source = '';
+        try { source = String(new URLSearchParams(location.search || '').get('source') || 'overview').toLowerCase(); } catch(e) {}
+        current = (source && source !== 'overview') ? 'main-accounting-report.html' : 'main-dashboard.html';
+      }
       const alwaysAllowed = ['profile.html','change-password.html','rebate-management.html','animation-effect.html'];
       if(alwaysAllowed.indexOf(current) !== -1) return true;
       const menus = this.allowedMenus(user);
@@ -272,6 +277,8 @@
       }
 
       if(String(user.roleType||'').toUpperCase()==='MAIN'){
+        // MAIN/Boss menu access comes from the backend role mappings. Do not inject
+        // synthetic links here, otherwise the sidebar and page permission can disagree.
         menus = menus.map(function(m){ m=Object.assign({},m); if(m.menuKey==='agent_management')m.parentKey=''; if(m.menuKey==='brand_management')m.title='Brands'; if(m.menuKey==='main_dashboard')m.title='Dashboard'; return m; });
       }
 

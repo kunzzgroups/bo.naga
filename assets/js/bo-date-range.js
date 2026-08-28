@@ -1,5 +1,5 @@
 (function(){
-  const PAIRS=[['betFrom','betTo'],['txFrom','txTo'],['sessionFrom','sessionTo'],['ledgerFrom','ledgerTo'],['casinoFrom','casinoTo'],['reportFrom','reportTo'],['manualFrom','manualTo'],['wlFrom','wlTo'],['depositFrom','depositTo'],['withdrawFrom','withdrawTo'],['usageFrom','usageTo'],['agentDashFrom','agentDashTo'],['agentPlayerFrom','agentPlayerTo'],['agentBetFrom','agentBetTo'],['agentSettlementFrom','agentSettlementTo'],['agentWalletFrom','agentWalletTo'],['adminAgentBetFrom','adminAgentBetTo'],['mainFrom','mainTo']];
+  const PAIRS=[['betFrom','betTo'],['txFrom','txTo'],['sessionFrom','sessionTo'],['ledgerFrom','ledgerTo'],['casinoFrom','casinoTo'],['reportFrom','reportTo'],['manualFrom','manualTo'],['wlFrom','wlTo'],['depositFrom','depositTo'],['withdrawFrom','withdrawTo'],['usageFrom','usageTo'],['agentDashFrom','agentDashTo'],['agentPlayerFrom','agentPlayerTo'],['agentBetFrom','agentBetTo'],['agentSettlementFrom','agentSettlementTo'],['agentWalletFrom','agentWalletTo'],['agentProductFrom','agentProductTo'],['agentReportFrom','agentReportTo'],['agentBonusFrom','agentBonusTo'],['adminAgentBetFrom','adminAgentBetTo'],['mainFrom','mainTo'],['accFrom','accTo'],['detailFrom','detailTo']];
   const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const pad=n=>String(n).padStart(2,'0');
   const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -19,13 +19,16 @@
     const trig=host.querySelector('.bo-range-trigger'),pop=host.querySelector('.bo-range-pop'),txt=host.querySelector('.bo-range-text'),days=host.querySelector('.bo-range-days'),monthBtn=host.querySelector('.bo-range-month-btn'),yearBtn=host.querySelector('.bo-range-year-btn'),monthGrid=host.querySelector('.bo-range-month-grid'),yearGrid=host.querySelector('.bo-range-year-grid'),dayView=host.querySelector('.bo-range-day-view');
     const todayValue=iso(new Date());
     const isLedgerAllTime = from.id === 'ledgerFrom' && new URLSearchParams(location.search).get('scope') === 'all';
+    const allowEmpty = from.dataset.rangeAllowEmpty === '1';
     const defaultPreset=from.dataset.rangeDefault||'';
-    if(!isLedgerAllTime){
+    if(!isLedgerAllTime && !allowEmpty){
       if(!from.value||!to.value){const r=defaultPreset?rangeFor(defaultPreset):null;if(r){from.value=iso(r[0]);to.value=iso(r[1]);}else{if(!from.value)from.value=todayValue;if(!to.value)to.value=todayValue;}}
-    } else {
+    } else if(isLedgerAllTime){
       from.value=''; to.value=''; host.classList.add('bo-range-all-time');
+    } else if(allowEmpty && (!from.value || !to.value)){
+      from.value=''; to.value='';
     }
-    let view=new Date(),start=isLedgerAllTime?'':(from.value||todayValue),end=isLedgerAllTime?'':(to.value||todayValue),mode='days',yearPageStart=view.getFullYear()-5;
+    let view=new Date(),start=(isLedgerAllTime||allowEmpty)&&!from.value?'':(from.value||todayValue),end=(isLedgerAllTime||allowEmpty)&&!to.value?'':(to.value||todayValue),mode='days',yearPageStart=view.getFullYear()-5;
     function syncText(){txt.textContent=isLedgerAllTime && !start && !end ? 'All Time' : (start?(fmt(start)+(end?' - '+fmt(end):' - Select end date')):'Select date range')}
     function commit(a,b){start=iso(a);end=iso(b);from.value=start;to.value=end;from.dispatchEvent(new Event('change',{bubbles:true}));to.dispatchEvent(new Event('change',{bubbles:true}));syncText()}
     function setMode(next){mode=next;monthGrid.classList.toggle('show',mode==='months');yearGrid.classList.toggle('show',mode==='years');dayView.classList.toggle('hide',mode!=='days')}
@@ -59,6 +62,7 @@
     monthBtn.addEventListener('click',e=>{e.stopPropagation();mode=mode==='months'?'days':'months';render()});yearBtn.addEventListener('click',e=>{e.stopPropagation();yearPageStart=view.getFullYear()-5;mode=mode==='years'?'days':'years';render()});
     monthGrid.addEventListener('click',e=>{const b=e.target.closest('[data-month]');if(!b)return;const selectedMonth=Number(b.dataset.month),selectedYear=view.getFullYear();view=new Date(selectedYear,selectedMonth,1);commit(new Date(selectedYear,selectedMonth,1),new Date(selectedYear,selectedMonth+1,0));mode='days';render();pop.classList.remove('show')});
     yearGrid.addEventListener('click',e=>{const b=e.target.closest('[data-year]');if(!b)return;const selectedYear=Number(b.dataset.year);view=new Date(selectedYear,0,1);commit(new Date(selectedYear,0,1),new Date(selectedYear,11,31));mode='days';render();pop.classList.remove('show')});
+    const syncExternal=()=>{start=from.value||'';end=to.value||'';syncText();render()};from.addEventListener('change',syncExternal);to.addEventListener('change',syncExternal);
     document.addEventListener('click',e=>{const path=typeof e.composedPath==='function'?e.composedPath():[];if(!host.contains(e.target)&&!path.includes(host))pop.classList.remove('show')});syncText();render();
   }
   document.addEventListener('DOMContentLoaded',()=>PAIRS.forEach(p=>build(document.getElementById(p[0]),document.getElementById(p[1]))));

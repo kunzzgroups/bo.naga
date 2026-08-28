@@ -10,40 +10,51 @@ function today(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getF
 function bindRange(){const d=today();$('mainFrom').value=d;$('mainTo').value=d;}
 function addOneDay(v){const a=String(v||'').split('-').map(Number);if(a.length!==3||!a[0])return v;return new Date(Date.UTC(a[0],a[1]-1,a[2]+1)).toISOString().slice(0,10);}
 function q(){return '?from='+encodeURIComponent($('mainFrom').value)+'&to='+encodeURIComponent(addOneDay($('mainTo').value));}
-function stat(label,value,icon,note,tone='purple'){return `<div class="exec-stat"><div class="exec-stat-icon ${tone}"><i class="bi ${icon}"></i></div><div><small>${label}</small><b>${value}</b><span>${note||''}</span></div></div>`;}
+function stat(label,value,icon,note,tone='purple',metric=''){const attrs=metric?` data-main-detail=\"${esc(metric)}\" data-main-label=\"${esc(label)}\" role=\"button\" tabindex=\"0\"`:'';return `<div class=\"exec-stat${metric?' exec-stat-clickable':''}\"${attrs}><div class=\"exec-stat-icon ${tone}\"><i class=\"bi ${icon}\"></i></div><div><small>${label}</small><b>${value}</b><span>${note||''}${metric?' · Click for details':''}</span></div></div>`;}
 function tone(v){return Number(v||0)<0?'text-danger':'text-success';}
+function renderAccounting(a){
+ const s=(a&&a.summary)||{};
+ const el=$('mainAccountingStats'); if(!el)return;
+ el.innerHTML=[
+  stat('Bonus Given',money(s.bonusGiven),'bi-gift',`${num(s.bonusCount)} bonus credits`,'purple','accounting:bonusGiven'),
+  stat('Player Loss / House Win',money(s.houseWin),'bi-arrow-down-circle','Gross winning amount before house losses','green','accounting:houseWin'),
+  stat('Player Win / House Loss',money(s.houseLoss),'bi-arrow-up-circle','Gross losing amount for house','red','accounting:houseLoss'),
+  stat('Net Gaming Result',money(s.netGamingResult),'bi-activity','House win - house loss',Number(s.netGamingResult)<0?'red':'blue','accounting:netGamingResult'),
+  stat('Net After Bonus',money(s.netAfterBonus),'bi-calculator','Net gaming result - bonus given',Number(s.netAfterBonus)<0?'red':'green','accounting:netAfterBonus')
+ ].join('');
+}
 function renderSummary(s){
  $('mainPerformanceStats').innerHTML=[
-  stat('Turnover',money(s.turnover),'bi-graph-up-arrow','Valid betting turnover','purple'),
-  stat('Customer Loss',money(s.customerLoss),'bi-cash-stack','House result for selected range',Number(s.customerLoss)<0?'red':'green'),
-  stat('Hold %',money(s.holdPercent)+'%','bi-percent','Customer loss ÷ turnover','blue'),
-  stat('Bets',num(s.betCount),'bi-controller','Settled bet records','orange'),
-  stat('Active Bettors',num(s.activeBettors),'bi-person-check','Unique betting players','green')
+  stat('Turnover',money(s.turnover),'bi-graph-up-arrow','Valid betting turnover','purple','overview:turnover'),
+  stat('Customer Loss',money(s.customerLoss),'bi-cash-stack','House result for selected range',Number(s.customerLoss)<0?'red':'green','overview:customerLoss'),
+  stat('Hold %',money(s.holdPercent)+'%','bi-percent','Customer loss ÷ turnover','blue','overview:holdPercent'),
+  stat('Bets',num(s.betCount),'bi-controller','Settled bet records','orange','overview:betCount'),
+  stat('Active Bettors',num(s.activeBettors),'bi-person-check','Unique betting players','green','overview:activeBettors')
  ].join('');
  $('mainCashStats').innerHTML=[
-  stat('Deposits',money(s.depositAmount),'bi-box-arrow-in-down','Approved/processed in range','green'),
-  stat('Withdrawals',money(s.withdrawAmount),'bi-box-arrow-up','Approved/processed in range','orange'),
-  stat('Net Cash Flow',money(s.netCashFlow),'bi-arrow-left-right','Deposits - withdrawals',Number(s.netCashFlow)<0?'red':'blue'),
-  stat('Pending Deposits',`${num(s.pendingDepositCount)} · ${money(s.pendingDepositAmount)}`,'bi-hourglass-split','Needs operational attention','orange'),
-  stat('Pending Withdrawals',`${num(s.pendingWithdrawCount)} · ${money(s.pendingWithdrawAmount)}`,'bi-hourglass-bottom','Needs operational attention','red')
+  stat('Deposits',money(s.depositAmount),'bi-box-arrow-in-down','Approved/processed in range','green','overview:depositAmount'),
+  stat('Withdrawals',money(s.withdrawAmount),'bi-box-arrow-up','Approved/processed in range','orange','overview:withdrawAmount'),
+  stat('Net Cash Flow',money(s.netCashFlow),'bi-arrow-left-right','Deposits - withdrawals',Number(s.netCashFlow)<0?'red':'blue','overview:netCashFlow'),
+  stat('Pending Deposits',`${num(s.pendingDepositCount)} · ${money(s.pendingDepositAmount)}`,'bi-hourglass-split','Needs operational attention','orange','overview:pendingDeposits'),
+  stat('Pending Withdrawals',`${num(s.pendingWithdrawCount)} · ${money(s.pendingWithdrawAmount)}`,'bi-hourglass-bottom','Needs operational attention','red','overview:pendingWithdrawals')
  ].join('');
  $('mainWalletStats').innerHTML=[
-  stat('Player Wallet',money(s.playerWallet),'bi-wallet2','Current player cash liability','blue'),
-  stat('Bonus Wallet',money(s.bonusWallet),'bi-gift','Current player bonus liability','purple'),
-  stat('Agent Wallet',money(s.agentWallet),'bi-person-badge','Current agent payable balance','orange'),
-  stat('Total Wallet Exposure',money(s.walletExposure),'bi-safe2','Player + bonus + agent wallet','red'),
-  stat('Pending Agent Settlement',`${num(s.pendingSettlements)} · ${money(s.pendingSettlementAmount)}`,'bi-receipt','Submitted, not completed','orange')
+  stat('Player Wallet',money(s.playerWallet),'bi-wallet2','Current player cash liability','blue','overview:playerWallet'),
+  stat('Bonus Wallet',money(s.bonusWallet),'bi-gift','Current player bonus liability','purple','overview:bonusWallet'),
+  stat('Agent Wallet',money(s.agentWallet),'bi-person-badge','Current agent payable balance','orange','overview:agentWallet'),
+  stat('Total Wallet Exposure',money(s.walletExposure),'bi-safe2','Player + bonus + agent wallet','red','overview:walletExposure'),
+  stat('Pending Agent Settlement',`${num(s.pendingSettlements)} · ${money(s.pendingSettlementAmount)}`,'bi-receipt','Submitted, not completed','orange','overview:pendingSettlements')
  ].join('');
  $('mainNetworkStats').innerHTML=[
-  stat('Brands',num(s.brands),'bi-buildings','Brands under management','purple'),
-  stat('Players',num(s.players),'bi-people','All registered players','blue'),
-  stat('New Players',num(s.newPlayers),'bi-person-plus','Registered in selected range','green'),
-  stat('Active Accounts',num(s.activePlayers),'bi-person-check-fill','Current active-status accounts','green'),
-  stat('Agents',num(s.agents),'bi-person-workspace','All brand agents','orange')
+  stat('Brands',num(s.brands),'bi-buildings','Brands under management','purple','overview:brands'),
+  stat('Players',num(s.players),'bi-people','All registered players','blue','overview:players'),
+  stat('New Players',num(s.newPlayers),'bi-person-plus','Registered in selected range','green','overview:newPlayers'),
+  stat('Active Accounts',num(s.activePlayers),'bi-person-check-fill','Current active-status accounts','green','overview:activePlayers'),
+  stat('Agents',num(s.agents),'bi-person-workspace','All brand agents','orange','overview:agents')
  ].join('');
 }
 async function load(){
- const d=await api('/admin/main/overview'+q());brands=d.brands||[];const s=d.summary||{};renderSummary(s);
+ const [d,a]=await Promise.all([api('/admin/main/overview'+q()),api('/admin/main/reports/accounting'+q())]);brands=d.brands||[];const s=d.summary||{};renderSummary(s);renderAccounting(a);
  $('mainBrandRows').innerHTML=brands.map(b=>`<tr>
  <td><b>${esc(b.name)}</b><small class="d-block text-muted">${esc(b.code)} · ${esc(b.domain)}</small></td>
  <td><b>${num(b.playerCount)}</b><small class="d-block text-muted">+${num(b.newPlayers)} new · ${num(b.activeBettors)} bettors</small></td>
@@ -84,5 +95,7 @@ async function detail(id){
 function go(id,page){if(window.BO_BRAND){localStorage.setItem(BO_BRAND.key,String(id));BO_BRAND.invalidate?.();}location.href=page;}
 document.addEventListener('click',e=>{const v=e.target.closest('[data-view]'),a=e.target.closest('[data-agents]'),m=e.target.closest('[data-manage]');if(v)detail(v.dataset.view);if(a)go(a.dataset.agents,'agent-management.html');if(m)go(m.dataset.manage,'brand-management.html');});
 $('mainSearch').onclick=load;$('mainManageBrand').onclick=()=>selected&&go(selected.id,'brand-management.html');$('mainOpenAgents').onclick=()=>selected&&go(selected.id,'agent-management.html');
+function openMetricDetail(el){const raw=el.dataset.mainDetail||'',i=raw.indexOf(':'),source=i>0?raw.slice(0,i):'overview',metric=i>0?raw.slice(i+1):raw;const u=new URL('main-stat-detail.html',location.href);u.searchParams.set('source',source);u.searchParams.set('metric',metric);u.searchParams.set('label',el.dataset.mainLabel||metric);u.searchParams.set('from',$('mainFrom').value);u.searchParams.set('to',$('mainTo').value);location.href=u.toString();}
+document.addEventListener('click',e=>{const el=e.target.closest('[data-main-detail]');if(el)openMetricDetail(el);});document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-main-detail]')){e.preventDefault();openMetricDetail(e.target);}});
 BO_AUTH.requireLogin();bindRange();load().catch(e=>$('mainBrandRows').innerHTML='<tr><td colspan="8" class="text-danger">'+esc(e.message)+'</td></tr>');
 })();
