@@ -324,9 +324,11 @@
       }
 
       if(String(user.roleType||'').toUpperCase()==='MAIN'){
-        // MAIN/Boss menu access comes from the backend role mappings. Do not inject
-        // synthetic links here, otherwise the sidebar and page permission can disagree.
-        menus = menus.map(function(m){ m=Object.assign({},m); if(m.menuKey==='agent_management')m.parentKey=''; if(m.menuKey==='brand_management')m.title='Brands'; if(m.menuKey==='main_dashboard')m.title='Dashboard'; return m; });
+        // MAIN/Boss is executive-only: no Agent Management pages or Agent Performance Report.
+        // Filter defensively as well as on the API so legacy cached/menu mappings cannot reappear.
+        const mainForbiddenAgentMenus = new Set(['agent_management','agent_commission','agent_settlement','agent_reimbursement','agent_payout','agent_promotion','agent_performance_report']);
+        menus = menus.filter(function(m){ return !mainForbiddenAgentMenus.has(String(m.menuKey||'').toLowerCase()); })
+          .map(function(m){ m=Object.assign({},m); if(m.menuKey==='brand_management')m.title='Brands'; if(m.menuKey==='main_dashboard')m.title='Dashboard'; return m; });
       }
 
       // Backward compatibility for older databases that only have the single

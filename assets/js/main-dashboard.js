@@ -41,16 +41,13 @@ function renderSummary(s){
  $('mainWalletStats').innerHTML=[
   stat('Player Wallet',money(s.playerWallet),'bi-wallet2','Current player cash liability','blue','overview:playerWallet'),
   stat('Bonus Wallet',money(s.bonusWallet),'bi-gift','Current player bonus liability','purple','overview:bonusWallet'),
-  stat('Agent Wallet',money(s.agentWallet),'bi-person-badge','Current agent payable balance','orange','overview:agentWallet'),
-  stat('Total Wallet Exposure',money(s.walletExposure),'bi-safe2','Player + bonus + agent wallet','red','overview:walletExposure'),
-  stat('Pending Agent Settlement',`${num(s.pendingSettlements)} · ${money(s.pendingSettlementAmount)}`,'bi-receipt','Submitted, not completed','orange','overview:pendingSettlements')
+  stat('Total Wallet Exposure',money(Number(s.playerWallet||0)+Number(s.bonusWallet||0)),'bi-safe2','Player + bonus wallet','red')
  ].join('');
  $('mainNetworkStats').innerHTML=[
   stat('Brands',num(s.brands),'bi-buildings','Brands under management','purple','overview:brands'),
   stat('Players',num(s.players),'bi-people','All registered players','blue','overview:players'),
   stat('New Players',num(s.newPlayers),'bi-person-plus','Registered in selected range','green','overview:newPlayers'),
-  stat('Active Accounts',num(s.activePlayers),'bi-person-check-fill','Current active-status accounts','green','overview:activePlayers'),
-  stat('Agents',num(s.agents),'bi-person-workspace','All brand agents','orange','overview:agents')
+  stat('Active Accounts',num(s.activePlayers),'bi-person-check-fill','Current active-status accounts','green','overview:activePlayers')
  ].join('');
 }
 async function load(){
@@ -63,7 +60,7 @@ async function load(){
  <td><b>${money(b.playerWallet)}</b><small class="d-block text-muted">Bonus ${money(b.bonusWallet)}</small></td>
  <td><b>${money(b.agentWallet)}</b><small class="d-block text-muted">${num(b.agentCount)} agents</small></td>
  <td><b>${num((b.pendingDepositCount||0)+(b.pendingWithdrawCount||0)+(b.pendingAgentSettlements||0))}</b><small class="d-block text-muted">D ${num(b.pendingDepositCount)} · W ${num(b.pendingWithdrawCount)} · A ${num(b.pendingAgentSettlements)}</small></td>
- <td><div class="d-flex gap-1 flex-wrap"><button class="clean-btn" data-view="${b.id}"><i class="bi bi-eye"></i> Report</button><button class="clean-btn" data-agents="${b.id}">Agents</button><button class="clean-btn primary" data-manage="${b.id}">Manage</button></div></td></tr>`).join('')||'<tr><td colspan="8">No brands.</td></tr>';
+ <td><div class="d-flex gap-1 flex-wrap"><button class="clean-btn" data-view="${b.id}"><i class="bi bi-eye"></i> Report</button><button class="clean-btn primary" data-manage="${b.id}">Manage</button></div></td></tr>`).join('')||'<tr><td colspan="8">No brands.</td></tr>';
 }
 function brandOverviewCards(f){return [
  stat('Players',num(f.playerCount),'bi-people',`${num(f.newPlayers)} new · ${num(f.activeBettors)} bettors`,'blue'),
@@ -93,8 +90,8 @@ async function detail(id){
  bootstrap.Modal.getOrCreateInstance($('mainBrandModal')).show();
 }
 function go(id,page){if(window.BO_BRAND){localStorage.setItem(BO_BRAND.key,String(id));BO_BRAND.invalidate?.();}location.href=page;}
-document.addEventListener('click',e=>{const v=e.target.closest('[data-view]'),a=e.target.closest('[data-agents]'),m=e.target.closest('[data-manage]');if(v)detail(v.dataset.view);if(a)go(a.dataset.agents,'agent-management.html');if(m)go(m.dataset.manage,'brand-management.html');});
-$('mainSearch').onclick=load;$('mainManageBrand').onclick=()=>selected&&go(selected.id,'brand-management.html');$('mainOpenAgents').onclick=()=>selected&&go(selected.id,'agent-management.html');
+document.addEventListener('click',e=>{const v=e.target.closest('[data-view]'),m=e.target.closest('[data-manage]');if(v)detail(v.dataset.view);if(m)go(m.dataset.manage,'brand-management.html');});
+$('mainSearch').onclick=load;$('mainManageBrand').onclick=()=>selected&&go(selected.id,'brand-management.html');
 function openMetricDetail(el){const raw=el.dataset.mainDetail||'',i=raw.indexOf(':'),source=i>0?raw.slice(0,i):'overview',metric=i>0?raw.slice(i+1):raw;const u=new URL('main-stat-detail.html',location.href);u.searchParams.set('source',source);u.searchParams.set('metric',metric);u.searchParams.set('label',el.dataset.mainLabel||metric);u.searchParams.set('from',$('mainFrom').value);u.searchParams.set('to',$('mainTo').value);location.href=u.toString();}
 document.addEventListener('click',e=>{const el=e.target.closest('[data-main-detail]');if(el)openMetricDetail(el);});document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-main-detail]')){e.preventDefault();openMetricDetail(e.target);}});
 BO_AUTH.requireLogin();bindRange();load().catch(e=>$('mainBrandRows').innerHTML='<tr><td colspan="8" class="text-danger">'+esc(e.message)+'</td></tr>');

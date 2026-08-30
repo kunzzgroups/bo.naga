@@ -45,26 +45,12 @@
 <div class="table-card mb-3">
 <div class="report-tab-toolbar">
 <div class="user-badge"><i class="bi bi-cash-stack"></i><span>Deposit / Withdraw Report</span></div>
-<div aria-label="Deposit Withdraw Tabs" class="report-tabs" role="tablist">
-<button class="report-tab active" data-dw-tab="deposit" type="button"><i class="bi bi-arrow-down-circle"></i><span>Deposit</span></button>
-<button class="report-tab" data-dw-tab="withdraw" type="button"><i class="bi bi-arrow-up-circle"></i><span>Withdraw</span></button>
 </div>
-</div>
-<div class="dw-report-panel active" id="dwDepositPanel">
 <div class="table-wrap">
 <table class="report-table">
-<thead><tr><th>Date</th><th>Approved Members</th><th>Approved Count</th><th>Approved Amount</th><th>Pending Count</th><th>Pending Amount</th><th>Failed Count</th><th>Failed Amount</th></tr></thead>
-<tbody id="crDepositStatusBody"><tr><td colspan="8">Loading...</td></tr></tbody>
+<thead><tr><th>Date</th><th>Deposit Approved Members</th><th>Deposit Approved Count</th><th>Deposit Approved Amount</th><th>Deposit Pending Amount</th><th>Deposit Failed Count</th><th>Deposit Failed Amount</th><th>Withdraw Approved Members</th><th>Withdraw Approved Count</th><th>Withdraw Approved Amount</th><th>Withdraw Pending Amount</th><th>Withdraw Failed Count</th><th>Withdraw Failed Amount</th><th>Net Cash Flow</th></tr></thead>
+<tbody id="crStatusBody"><tr><td colspan="14">Loading...</td></tr></tbody>
 </table>
-</div>
-</div>
-<div class="dw-report-panel" id="dwWithdrawPanel">
-<div class="table-wrap">
-<table class="report-table">
-<thead><tr><th>Date</th><th>Approved Members</th><th>Approved Count</th><th>Approved Amount</th><th>Pending Count</th><th>Pending Amount</th><th>Failed Count</th><th>Failed Amount</th></tr></thead>
-<tbody id="crWithdrawStatusBody"><tr><td colspan="8">Loading...</td></tr></tbody>
-</table>
-</div>
 </div>
 </div>
 </section>
@@ -72,10 +58,10 @@
 </div>
 <script src="assets/js/config.js?v=1.0.35"></script>
 <script src="assets/js/brand-context.js?v=1.0.2"></script>
-<script src="assets/js/auth.js?v=1.0.40"></script>
+<script src="assets/js/auth.js?v=1.0.41"></script>
 <script src="assets/js/reports.js?v=1.0.14"></script>
 <script src="assets/js/bo-date-range.js?v=1.0.15"></script>
-<script src="assets/js/casino-report.js?v=1.0.14"></script>
+<script src="assets/js/casino-report.js?v=1.0.15"></script>
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>

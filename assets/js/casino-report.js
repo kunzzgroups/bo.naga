@@ -151,21 +151,19 @@
     }
 
     if(legacyBody){
-      const combinedRows = rows.filter(function(r){ return hasAnyData(r, ['depositApprovedMembers','depositApprovedCount','depositApprovedAmount','depositPendingCount','depositPendingAmount','depositFailedCount','depositFailedAmount','withdrawApprovedMembers','withdrawApprovedCount','withdrawApprovedAmount','withdrawPendingCount','withdrawPendingAmount','withdrawFailedCount','withdrawFailedAmount','netCashflow']); });
-      if(!combinedRows.length){ legacyBody.innerHTML='<tr><td colspan="16">No deposit / withdraw request data.</td></tr>'; return; }
+      const combinedRows = rows.filter(function(r){ return hasAnyData(r, ['depositApprovedMembers','depositApprovedCount','depositApprovedAmount','depositPendingAmount','depositFailedCount','depositFailedAmount','withdrawApprovedMembers','withdrawApprovedCount','withdrawApprovedAmount','withdrawPendingAmount','withdrawFailedCount','withdrawFailedAmount','netCashflow']); });
+      if(!combinedRows.length){ legacyBody.innerHTML='<tr><td colspan="14">No deposit / withdraw request data.</td></tr>'; return; }
       legacyBody.innerHTML = combinedRows.map(r=>`<tr>
         <td><b>${esc(r.date)}</b></td>
         <td>${whole(r.depositApprovedMembers)}</td>
         <td>${whole(r.depositApprovedCount)}</td>
         <td>${money(r.depositApprovedAmount)}</td>
-        <td>${whole(r.depositPendingCount)}</td>
         <td>${money(r.depositPendingAmount)}</td>
         <td>${whole(r.depositFailedCount)}</td>
         <td>${money(r.depositFailedAmount)}</td>
         <td>${whole(r.withdrawApprovedMembers)}</td>
         <td>${whole(r.withdrawApprovedCount)}</td>
         <td>${money(r.withdrawApprovedAmount)}</td>
-        <td>${whole(r.withdrawPendingCount)}</td>
         <td>${money(r.withdrawPendingAmount)}</td>
         <td>${whole(r.withdrawFailedCount)}</td>
         <td>${money(r.withdrawFailedAmount)}</td>
@@ -227,7 +225,6 @@
     load();
   }
   document.addEventListener('DOMContentLoaded', function(){
-    initDepositWithdrawTabs();
     document.getElementById('casinoSearchBtn')?.addEventListener('click', load);
     document.getElementById('casinoResetBtn')?.addEventListener('click', setTodayAndLoad);
 
