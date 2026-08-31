@@ -6,6 +6,9 @@
   const rebateThreshold=document.getElementById('rebateAutoCreditThreshold');
   const marqueeEnabled=document.getElementById('marqueeEnabled');
   const leaderboardEnabled=document.getElementById('leaderboardEnabled');
+  const liveTransactionEnabled=document.getElementById('liveTransactionEnabled');
+  const liveTransactionMode=document.getElementById('liveTransactionMode');
+  const liveTransactionIntervalSeconds=document.getElementById('liveTransactionIntervalSeconds');
   const marqueeEditor=document.getElementById('marqueeEditor');
   const marqueeContent=document.getElementById('marqueeContent');
   const marqueePreview=document.getElementById('marqueePreview');
@@ -125,6 +128,9 @@
     if(rebateThreshold) rebateThreshold.value=Number(data.rebateAutoCreditThreshold||0).toFixed(2);
     if(marqueeEnabled){ syncSelectValue(marqueeEnabled,data.marqueeEnabled); }
     if(leaderboardEnabled){ syncSelectValue(leaderboardEnabled,data.leaderboardEnabled); }
+    if(liveTransactionEnabled){ syncSelectValue(liveTransactionEnabled,data.liveTransactionEnabled); }
+    if(liveTransactionMode){ liveTransactionMode.value=String(data.liveTransactionMode||'REAL').toUpperCase()==='FAKE'?'FAKE':'REAL'; liveTransactionMode.dispatchEvent(new Event('change',{bubbles:true})); }
+    if(liveTransactionIntervalSeconds){ liveTransactionIntervalSeconds.value=String(Math.max(2,Math.min(60,Number(data.liveTransactionIntervalSeconds||5)))); }
     if(marqueeEditor){ marqueeEditor.innerHTML=data.marqueeContent||''; syncMarquee(); }
     renderNote();
     await loadInstallSetting();
@@ -144,16 +150,20 @@
       syncMarquee();
       const marqueeEnabledValue=marqueeEnabled?.value==='1'?1:0;
       const leaderboardEnabledValue=leaderboardEnabled?.value==='1'?1:0;
+      const liveTransactionEnabledValue=liveTransactionEnabled?.value==='1'?1:0;
+      const liveTransactionModeValue=liveTransactionMode?.value==='FAKE'?'FAKE':'REAL';
+      const liveTransactionIntervalValue=Number(liveTransactionIntervalSeconds?.value||5);
       const marqueeHtml=marqueeContent?.value?.trim()||'';
       if(!String(installAppDisplayName?.value||'').trim()) throw new Error('Add to Home Screen display name is required');
       if(!Number.isFinite(depositValue)||depositValue<=0) throw new Error('Minimum deposit must be greater than 0');
       if(!Number.isFinite(withdrawalValue)||withdrawalValue<=0) throw new Error('Minimum withdrawal must be greater than 0');
       if(!Number.isFinite(rebateThresholdValue)||rebateThresholdValue<0) throw new Error('Rebate auto credit threshold cannot be negative');
+      if(!Number.isFinite(liveTransactionIntervalValue)||liveTransactionIntervalValue<2||liveTransactionIntervalValue>60) throw new Error('Live Transaction refresh must be between 2 and 60 seconds');
       if(marqueeEnabledValue===1 && !marqueeEditor?.innerText?.trim()) throw new Error('Please enter marquee text before enabling it');
       const response=await fetch(endpoint,{
         method:'POST',
         headers:headers(true),
-        body:JSON.stringify({homeBonusEnabled:requestedValue,minDepositAmount:depositValue,minWithdrawalAmount:withdrawalValue,rebateAutoCreditThreshold:rebateThresholdValue,marqueeEnabled:marqueeEnabledValue,leaderboardEnabled:leaderboardEnabledValue,marqueeContent:marqueeHtml})
+        body:JSON.stringify({homeBonusEnabled:requestedValue,minDepositAmount:depositValue,minWithdrawalAmount:withdrawalValue,rebateAutoCreditThreshold:rebateThresholdValue,marqueeEnabled:marqueeEnabledValue,leaderboardEnabled:leaderboardEnabledValue,liveTransactionEnabled:liveTransactionEnabledValue,liveTransactionMode:liveTransactionModeValue,liveTransactionIntervalSeconds:liveTransactionIntervalValue,marqueeContent:marqueeHtml})
       });
       const json=await response.json().catch(()=>({}));
       if(!response.ok||json.status==='error') throw new Error(json.message||'Unable to save setting');
@@ -161,7 +171,7 @@
         ?json.data.homeBonusEnabled
         :requestedValue;
       syncSelect(savedValue);
-      if(json.data){ minDeposit.value=Number(json.data.minDepositAmount||depositValue).toFixed(2); minWithdrawal.value=Number(json.data.minWithdrawalAmount||withdrawalValue).toFixed(2); if(rebateThreshold) rebateThreshold.value=Number(json.data.rebateAutoCreditThreshold??rebateThresholdValue).toFixed(2); if(marqueeEnabled) syncSelectValue(marqueeEnabled,json.data.marqueeEnabled); if(leaderboardEnabled) syncSelectValue(leaderboardEnabled,json.data.leaderboardEnabled); if(marqueeEditor){marqueeEditor.innerHTML=json.data.marqueeContent||marqueeHtml;syncMarquee();} }
+      if(json.data){ minDeposit.value=Number(json.data.minDepositAmount||depositValue).toFixed(2); minWithdrawal.value=Number(json.data.minWithdrawalAmount||withdrawalValue).toFixed(2); if(rebateThreshold) rebateThreshold.value=Number(json.data.rebateAutoCreditThreshold??rebateThresholdValue).toFixed(2); if(marqueeEnabled) syncSelectValue(marqueeEnabled,json.data.marqueeEnabled); if(leaderboardEnabled) syncSelectValue(leaderboardEnabled,json.data.leaderboardEnabled); if(liveTransactionEnabled) syncSelectValue(liveTransactionEnabled,json.data.liveTransactionEnabled); if(liveTransactionMode){liveTransactionMode.value=String(json.data.liveTransactionMode||liveTransactionModeValue).toUpperCase()==='FAKE'?'FAKE':'REAL';liveTransactionMode.dispatchEvent(new Event('change',{bubbles:true}));} if(liveTransactionIntervalSeconds) liveTransactionIntervalSeconds.value=String(json.data.liveTransactionIntervalSeconds||liveTransactionIntervalValue); if(marqueeEditor){marqueeEditor.innerHTML=json.data.marqueeContent||marqueeHtml;syncMarquee();} }
       await saveInstallSetting();
       renderNote();
       setMessage('Frontend display setting and Add to Home Screen settings saved successfully.','success');

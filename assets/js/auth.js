@@ -198,7 +198,12 @@
         .sort(function(a,b){ return a.sortOrder - b.sortOrder || a.title.localeCompare(b.title); });
     },
     landingPage: function(user){
+      user = user || this.user();
       const menus = this.allowedMenus(user);
+      if(String(user && user.roleType || '').toUpperCase()==='MAIN'){
+        const order=['main-dashboard.html','main-accounting-report.html','main-report.html','brand-management.html'];
+        for(const url of order){ if(menus.some(m=>(m.url||'').split('/').pop()===url)) return url; }
+      }
       return menus.length ? menus[0].url : 'login.html';
     },
     enforcePageAccess: function(user){
@@ -324,11 +329,26 @@
       }
 
       if(String(user.roleType||'').toUpperCase()==='MAIN'){
-        // MAIN/Boss is executive-only: no Agent Management pages or Agent Performance Report.
-        // Filter defensively as well as on the API so legacy cached/menu mappings cannot reappear.
-        const mainForbiddenAgentMenus = new Set(['agent_management','agent_commission','agent_settlement','agent_reimbursement','agent_payout','agent_promotion','agent_performance_report']);
-        menus = menus.filter(function(m){ return !mainForbiddenAgentMenus.has(String(m.menuKey||'').toLowerCase()); })
-          .map(function(m){ m=Object.assign({},m); if(m.menuKey==='brand_management')m.title='Brands'; if(m.menuKey==='main_dashboard')m.title='Dashboard'; return m; });
+        // MAIN/Boss is an executive-only account. Whitelist the four protected
+        // MAIN modules instead of merely hiding a few agent menus. This prevents
+        // legacy/duplicate role mappings from leaking Master/Admin sidebar groups.
+        const mainAllowedKeys = new Set(['main_dashboard','main_accounting_report','main_report','brand_management']);
+        const mainAllowedUrls = new Set(['main-dashboard.html','main-accounting-report.html','main-report.html','brand-management.html']);
+        menus = menus.filter(function(m){
+          const key=String(m.menuKey||'').toLowerCase();
+          const url=String(m.url||'').split('/').pop().toLowerCase();
+          return mainAllowedKeys.has(key) || mainAllowedUrls.has(url);
+        }).map(function(m){
+          m=Object.assign({},m);
+          const key=String(m.menuKey||'').toLowerCase();
+          const url=String(m.url||'').split('/').pop().toLowerCase();
+          if(key==='brand_management'||url==='brand-management.html')m.title='Brands';
+          if(key==='main_dashboard'||url==='main-dashboard.html')m.title='Dashboard';
+          if(key==='main_accounting_report'||url==='main-accounting-report.html')m.title='Accounting & Provider Ops';
+          if(key==='main_report'||url==='main-report.html')m.title='Report';
+          m.parentKey='';
+          return m;
+        });
       }
 
       // Backward compatibility for older databases that only have the single

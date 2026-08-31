@@ -7,7 +7,8 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 let brands=[],selected=null;
 async function api(p){const r=await fetch(API_CONFIG.BASE_URL+p,{headers:BO_AUTH.authHeader()}),j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw Error(j.message||'Request failed');return j.data;}
 function today(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
-function bindRange(){const d=today();$('mainFrom').value=d;$('mainTo').value=d;}
+function lastMonthRange(){const d=new Date(),p=n=>String(n).padStart(2,'0'),a=new Date(d.getFullYear(),d.getMonth()-1,1),b=new Date(d.getFullYear(),d.getMonth(),0),fmt=x=>x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate());return [fmt(a),fmt(b)];}
+function bindRange(){const [a,b]=lastMonthRange();$('mainFrom').value=a;$('mainTo').value=b;}
 function addOneDay(v){const a=String(v||'').split('-').map(Number);if(a.length!==3||!a[0])return v;return new Date(Date.UTC(a[0],a[1]-1,a[2]+1)).toISOString().slice(0,10);}
 function q(){return '?from='+encodeURIComponent($('mainFrom').value)+'&to='+encodeURIComponent(addOneDay($('mainTo').value));}
 function stat(label,value,icon,note,tone='purple',metric=''){const attrs=metric?` data-main-detail=\"${esc(metric)}\" data-main-label=\"${esc(label)}\" role=\"button\" tabindex=\"0\"`:'';return `<div class=\"exec-stat${metric?' exec-stat-clickable':''}\"${attrs}><div class=\"exec-stat-icon ${tone}\"><i class=\"bi ${icon}\"></i></div><div><small>${label}</small><b>${value}</b><span>${note||''}${metric?' · Click for details':''}</span></div></div>`;}
