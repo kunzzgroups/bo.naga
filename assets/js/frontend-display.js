@@ -9,6 +9,9 @@
   const liveTransactionEnabled=document.getElementById('liveTransactionEnabled');
   const liveTransactionMode=document.getElementById('liveTransactionMode');
   const liveTransactionIntervalSeconds=document.getElementById('liveTransactionIntervalSeconds');
+  const brandTarget=document.getElementById('frontendDisplayBrandTarget');
+  const brandTargetRow=document.getElementById('frontendDisplayBrandRow');
+  let selectedTargetBrandId=Number(localStorage.getItem('bo_active_brand_id')||1)||1;
   const marqueeEditor=document.getElementById('marqueeEditor');
   const marqueeContent=document.getElementById('marqueeContent');
   const marqueePreview=document.getElementById('marqueePreview');
@@ -28,7 +31,36 @@
   const endpoint=String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+API_CONFIG.ENDPOINTS.FRONTEND_DISPLAY_SETTING;
 
   function headers(json){
-    return {...(json?{'Content-Type':'application/json'}:{}),...(window.BO_AUTH?BO_AUTH.authHeader():{})};
+    const h={...(json?{'Content-Type':'application/json'}:{}),...(window.BO_AUTH?BO_AUTH.authHeader():{})};
+    if(selectedTargetBrandId) h['X-Brand-Id']=String(selectedTargetBrandId);
+    h['Cache-Control']='no-cache, no-store';
+    h['Pragma']='no-cache';
+    return h;
+  }
+
+  async function loadBrandTarget(){
+    if(!window.BO_BRAND||typeof BO_BRAND.context!=='function') return;
+    try{
+      const j=await BO_BRAND.context(true);
+      const d=j&&j.data?j.data:{};
+      const brands=Array.isArray(d.brands)?d.brands:[];
+      selectedTargetBrandId=Number(localStorage.getItem('bo_active_brand_id')||d.activeBrandId||d.adminBrandId||1)||1;
+      if(d.master&&brandTarget&&brands.length){
+        brandTarget.innerHTML=brands.filter(b=>Number(b.status)!==0).map(b=>`<option value="${Number(b.id)}">${String(b.name||b.code||('Brand '+b.id)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}</option>`).join('');
+        if(!brands.some(b=>Number(b.id)===selectedTargetBrandId)) selectedTargetBrandId=Number(d.activeBrandId||brands[0].id||1)||1;
+        brandTarget.value=String(selectedTargetBrandId);
+        if(brandTargetRow) brandTargetRow.style.display='';
+      }else if(brandTargetRow){
+        brandTargetRow.style.display='none';
+      }
+    }catch(e){console.warn('Unable to resolve frontend display brand target:',e&&e.message);}
+  }
+
+  function assertTarget(json){
+    const id=Number(json&&json.data&&json.data.id);
+    if(selectedTargetBrandId&&id&&id!==selectedTargetBrandId){
+      throw new Error(`Brand context mismatch: requested brand ${selectedTargetBrandId}, API returned brand ${id}. Please refresh and try again.`);
+    }
   }
 
   function setMessage(text,type){
@@ -58,7 +90,7 @@
   }
 
   async function loadInstallSetting(){
-    const response=await fetch(installEndpoint,{headers:headers(false)});
+    const response=await fetch(installEndpoint+(installEndpoint.includes('?')?'&':'?')+'_cfg='+Date.now(),{headers:headers(false),cache:'no-store'});
     const json=await response.json().catch(()=>({}));
     if(!response.ok||json.status==='error') throw new Error(json.message||'Unable to load Add to Home Screen setting');
     const data=json.data||{};
@@ -118,9 +150,10 @@
 
   async function load(){
     setMessage('Loading...');
-    const response=await fetch(endpoint,{headers:headers(false)});
+    const response=await fetch(endpoint+(endpoint.includes('?')?'&':'?')+'_cfg='+Date.now(),{headers:headers(false),cache:'no-store'});
     const json=await response.json().catch(()=>({}));
     if(!response.ok||json.status==='error') throw new Error(json.message||'Unable to load setting');
+    assertTarget(json);
     const data=json.data||{};
     syncSelect(data.homeBonusEnabled);
     minDeposit.value=Number(data.minDepositAmount||10).toFixed(2);
@@ -163,10 +196,18 @@
       const response=await fetch(endpoint,{
         method:'POST',
         headers:headers(true),
+        cache:'no-store',
         body:JSON.stringify({homeBonusEnabled:requestedValue,minDepositAmount:depositValue,minWithdrawalAmount:withdrawalValue,rebateAutoCreditThreshold:rebateThresholdValue,marqueeEnabled:marqueeEnabledValue,leaderboardEnabled:leaderboardEnabledValue,liveTransactionEnabled:liveTransactionEnabledValue,liveTransactionMode:liveTransactionModeValue,liveTransactionIntervalSeconds:liveTransactionIntervalValue,marqueeContent:marqueeHtml})
       });
       const json=await response.json().catch(()=>({}));
       if(!response.ok||json.status==='error') throw new Error(json.message||'Unable to save setting');
+      assertTarget(json);
+      const verifyResponse=await fetch(endpoint+(endpoint.includes('?')?'&':'?')+'_verify='+Date.now(),{headers:headers(false),cache:'no-store'});
+      const verifyJson=await verifyResponse.json().catch(()=>({}));
+      if(!verifyResponse.ok||verifyJson.status==='error') throw new Error(verifyJson.message||'Unable to verify saved setting');
+      assertTarget(verifyJson);
+      const verifyEnabled=Number(verifyJson.data&&verifyJson.data.liveTransactionEnabled);
+      if(verifyEnabled!==liveTransactionEnabledValue) throw new Error('Live Transaction setting did not persist for the selected brand');
       const savedValue=json.data&&Object.prototype.hasOwnProperty.call(json.data,'homeBonusEnabled')
         ?json.data.homeBonusEnabled
         :requestedValue;
@@ -206,6 +247,7 @@
   });
   removeInstallAppLogo?.addEventListener('click',()=>{selectedInstallLogo=null;removeExistingInstallLogo=true;if(installAppLogoFile)installAppLogoFile.value='';renderInstallLogo('');setMessage('Logo will be removed when you click Save Setting.','success')});
 
+  if(brandTarget){brandTarget.addEventListener('change',()=>{selectedTargetBrandId=Number(brandTarget.value)||1;localStorage.setItem('bo_active_brand_id',String(selectedTargetBrandId));if(window.BO_BRAND&&BO_BRAND.invalidate)BO_BRAND.invalidate();load().catch(error=>setMessage(error.message,'error'));});}
   saveBtn.addEventListener('click',save);
-  load().catch(error=>setMessage(error.message,'error'));
+  (async()=>{await loadBrandTarget();await load();})().catch(error=>setMessage(error.message,'error'));
 })();
