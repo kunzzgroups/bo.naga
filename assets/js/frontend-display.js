@@ -9,6 +9,16 @@
   const liveTransactionEnabled=document.getElementById('liveTransactionEnabled');
   const liveTransactionMode=document.getElementById('liveTransactionMode');
   const liveTransactionIntervalSeconds=document.getElementById('liveTransactionIntervalSeconds');
+  const liveTransactionRefreshRow=document.getElementById('liveTransactionRefreshRow');
+  const liveTransactionRandomSecondsRow=document.getElementById('liveTransactionRandomSecondsRow');
+  const liveTransactionRandomRowsRow=document.getElementById('liveTransactionRandomRowsRow');
+  const liveTransactionRandomPriceRow=document.getElementById('liveTransactionRandomPriceRow');
+  const liveTransactionRandomMinSeconds=document.getElementById('liveTransactionRandomMinSeconds');
+  const liveTransactionRandomMaxSeconds=document.getElementById('liveTransactionRandomMaxSeconds');
+  const liveTransactionRandomMinRows=document.getElementById('liveTransactionRandomMinRows');
+  const liveTransactionRandomMaxRows=document.getElementById('liveTransactionRandomMaxRows');
+  const liveTransactionRandomMinPrice=document.getElementById('liveTransactionRandomMinPrice');
+  const liveTransactionRandomMaxPrice=document.getElementById('liveTransactionRandomMaxPrice');
   const brandTarget=document.getElementById('frontendDisplayBrandTarget');
   const brandTargetRow=document.getElementById('frontendDisplayBrandRow');
   let selectedTargetBrandId=Number(localStorage.getItem('bo_active_brand_id')||1)||1;
@@ -140,6 +150,16 @@
     el.dispatchEvent(new Event('change',{bubbles:true}));
   }
 
+
+  function renderLiveTransactionMode(){
+    const random=liveTransactionMode?.value==='FAKE';
+    liveTransactionRefreshRow?.classList.toggle('is-hidden',random);
+    liveTransactionRefreshRow?.style.setProperty('display',random?'none':'');
+    liveTransactionRandomSecondsRow?.classList.toggle('is-hidden',!random);
+    liveTransactionRandomRowsRow?.classList.toggle('is-hidden',!random);
+    liveTransactionRandomPriceRow?.classList.toggle('is-hidden',!random);
+  }
+
   function renderNote(){
     const on=select.value==='1';
     note.textContent=on
@@ -164,6 +184,13 @@
     if(liveTransactionEnabled){ syncSelectValue(liveTransactionEnabled,data.liveTransactionEnabled); }
     if(liveTransactionMode){ liveTransactionMode.value=String(data.liveTransactionMode||'REAL').toUpperCase()==='FAKE'?'FAKE':'REAL'; liveTransactionMode.dispatchEvent(new Event('change',{bubbles:true})); }
     if(liveTransactionIntervalSeconds){ liveTransactionIntervalSeconds.value=String(Math.max(2,Math.min(60,Number(data.liveTransactionIntervalSeconds||5)))); }
+    if(liveTransactionRandomMinSeconds) liveTransactionRandomMinSeconds.value=String(Math.max(2,Math.min(60,Number(data.liveTransactionRandomMinSeconds||3))));
+    if(liveTransactionRandomMaxSeconds) liveTransactionRandomMaxSeconds.value=String(Math.max(2,Math.min(60,Number(data.liveTransactionRandomMaxSeconds||8))));
+    if(liveTransactionRandomMinRows) liveTransactionRandomMinRows.value=String(Math.max(1,Math.min(20,Number(data.liveTransactionRandomMinRows||1))));
+    if(liveTransactionRandomMaxRows) liveTransactionRandomMaxRows.value=String(Math.max(1,Math.min(20,Number(data.liveTransactionRandomMaxRows||4))));
+    if(liveTransactionRandomMinPrice) liveTransactionRandomMinPrice.value=Number(data.liveTransactionRandomMinPrice??10).toFixed(2);
+    if(liveTransactionRandomMaxPrice) liveTransactionRandomMaxPrice.value=Number(data.liveTransactionRandomMaxPrice??5000).toFixed(2);
+    renderLiveTransactionMode();
     if(marqueeEditor){ marqueeEditor.innerHTML=data.marqueeContent||''; syncMarquee(); }
     renderNote();
     await loadInstallSetting();
@@ -186,18 +213,33 @@
       const liveTransactionEnabledValue=liveTransactionEnabled?.value==='1'?1:0;
       const liveTransactionModeValue=liveTransactionMode?.value==='FAKE'?'FAKE':'REAL';
       const liveTransactionIntervalValue=Number(liveTransactionIntervalSeconds?.value||5);
+      const liveTransactionRandomMinSecondsValue=Number(liveTransactionRandomMinSeconds?.value||3);
+      const liveTransactionRandomMaxSecondsValue=Number(liveTransactionRandomMaxSeconds?.value||8);
+      const liveTransactionRandomMinRowsValue=Number(liveTransactionRandomMinRows?.value||1);
+      const liveTransactionRandomMaxRowsValue=Number(liveTransactionRandomMaxRows?.value||4);
+      const liveTransactionRandomMinPriceValue=Number(liveTransactionRandomMinPrice?.value||10);
+      const liveTransactionRandomMaxPriceValue=Number(liveTransactionRandomMaxPrice?.value||5000);
       const marqueeHtml=marqueeContent?.value?.trim()||'';
       if(!String(installAppDisplayName?.value||'').trim()) throw new Error('Add to Home Screen display name is required');
       if(!Number.isFinite(depositValue)||depositValue<=0) throw new Error('Minimum deposit must be greater than 0');
       if(!Number.isFinite(withdrawalValue)||withdrawalValue<=0) throw new Error('Minimum withdrawal must be greater than 0');
       if(!Number.isFinite(rebateThresholdValue)||rebateThresholdValue<0) throw new Error('Rebate auto credit threshold cannot be negative');
       if(!Number.isFinite(liveTransactionIntervalValue)||liveTransactionIntervalValue<2||liveTransactionIntervalValue>60) throw new Error('Live Transaction refresh must be between 2 and 60 seconds');
+      if(!Number.isFinite(liveTransactionRandomMinSecondsValue)||liveTransactionRandomMinSecondsValue<2||liveTransactionRandomMinSecondsValue>60) throw new Error('Random Demo minimum interval must be between 2 and 60 seconds');
+      if(!Number.isFinite(liveTransactionRandomMaxSecondsValue)||liveTransactionRandomMaxSecondsValue<2||liveTransactionRandomMaxSecondsValue>60) throw new Error('Random Demo maximum interval must be between 2 and 60 seconds');
+      if(liveTransactionRandomMaxSecondsValue<liveTransactionRandomMinSecondsValue) throw new Error('Random Demo maximum interval cannot be lower than the minimum interval');
+      if(!Number.isFinite(liveTransactionRandomMinRowsValue)||liveTransactionRandomMinRowsValue<1||liveTransactionRandomMinRowsValue>20) throw new Error('Random Demo minimum transaction count must be between 1 and 20');
+      if(!Number.isFinite(liveTransactionRandomMaxRowsValue)||liveTransactionRandomMaxRowsValue<1||liveTransactionRandomMaxRowsValue>20) throw new Error('Random Demo maximum transaction count must be between 1 and 20');
+      if(liveTransactionRandomMaxRowsValue<liveTransactionRandomMinRowsValue) throw new Error('Random Demo maximum transaction count cannot be lower than the minimum count');
+      if(!Number.isFinite(liveTransactionRandomMinPriceValue)||liveTransactionRandomMinPriceValue<0.01||liveTransactionRandomMinPriceValue>1000000) throw new Error('Random Demo minimum price must be between 0.01 and 1,000,000');
+      if(!Number.isFinite(liveTransactionRandomMaxPriceValue)||liveTransactionRandomMaxPriceValue<0.01||liveTransactionRandomMaxPriceValue>1000000) throw new Error('Random Demo maximum price must be between 0.01 and 1,000,000');
+      if(liveTransactionRandomMaxPriceValue<liveTransactionRandomMinPriceValue) throw new Error('Random Demo maximum price cannot be lower than the minimum price');
       if(marqueeEnabledValue===1 && !marqueeEditor?.innerText?.trim()) throw new Error('Please enter marquee text before enabling it');
       const response=await fetch(endpoint,{
         method:'POST',
         headers:headers(true),
         cache:'no-store',
-        body:JSON.stringify({homeBonusEnabled:requestedValue,minDepositAmount:depositValue,minWithdrawalAmount:withdrawalValue,rebateAutoCreditThreshold:rebateThresholdValue,marqueeEnabled:marqueeEnabledValue,leaderboardEnabled:leaderboardEnabledValue,liveTransactionEnabled:liveTransactionEnabledValue,liveTransactionMode:liveTransactionModeValue,liveTransactionIntervalSeconds:liveTransactionIntervalValue,marqueeContent:marqueeHtml})
+        body:JSON.stringify({homeBonusEnabled:requestedValue,minDepositAmount:depositValue,minWithdrawalAmount:withdrawalValue,rebateAutoCreditThreshold:rebateThresholdValue,marqueeEnabled:marqueeEnabledValue,leaderboardEnabled:leaderboardEnabledValue,liveTransactionEnabled:liveTransactionEnabledValue,liveTransactionMode:liveTransactionModeValue,liveTransactionIntervalSeconds:liveTransactionIntervalValue,liveTransactionRandomMinSeconds:liveTransactionRandomMinSecondsValue,liveTransactionRandomMaxSeconds:liveTransactionRandomMaxSecondsValue,liveTransactionRandomMinRows:liveTransactionRandomMinRowsValue,liveTransactionRandomMaxRows:liveTransactionRandomMaxRowsValue,liveTransactionRandomMinPrice:liveTransactionRandomMinPriceValue,liveTransactionRandomMaxPrice:liveTransactionRandomMaxPriceValue,marqueeContent:marqueeHtml})
       });
       const json=await response.json().catch(()=>({}));
       if(!response.ok||json.status==='error') throw new Error(json.message||'Unable to save setting');
@@ -212,7 +254,7 @@
         ?json.data.homeBonusEnabled
         :requestedValue;
       syncSelect(savedValue);
-      if(json.data){ minDeposit.value=Number(json.data.minDepositAmount||depositValue).toFixed(2); minWithdrawal.value=Number(json.data.minWithdrawalAmount||withdrawalValue).toFixed(2); if(rebateThreshold) rebateThreshold.value=Number(json.data.rebateAutoCreditThreshold??rebateThresholdValue).toFixed(2); if(marqueeEnabled) syncSelectValue(marqueeEnabled,json.data.marqueeEnabled); if(leaderboardEnabled) syncSelectValue(leaderboardEnabled,json.data.leaderboardEnabled); if(liveTransactionEnabled) syncSelectValue(liveTransactionEnabled,json.data.liveTransactionEnabled); if(liveTransactionMode){liveTransactionMode.value=String(json.data.liveTransactionMode||liveTransactionModeValue).toUpperCase()==='FAKE'?'FAKE':'REAL';liveTransactionMode.dispatchEvent(new Event('change',{bubbles:true}));} if(liveTransactionIntervalSeconds) liveTransactionIntervalSeconds.value=String(json.data.liveTransactionIntervalSeconds||liveTransactionIntervalValue); if(marqueeEditor){marqueeEditor.innerHTML=json.data.marqueeContent||marqueeHtml;syncMarquee();} }
+      if(json.data){ minDeposit.value=Number(json.data.minDepositAmount||depositValue).toFixed(2); minWithdrawal.value=Number(json.data.minWithdrawalAmount||withdrawalValue).toFixed(2); if(rebateThreshold) rebateThreshold.value=Number(json.data.rebateAutoCreditThreshold??rebateThresholdValue).toFixed(2); if(marqueeEnabled) syncSelectValue(marqueeEnabled,json.data.marqueeEnabled); if(leaderboardEnabled) syncSelectValue(leaderboardEnabled,json.data.leaderboardEnabled); if(liveTransactionEnabled) syncSelectValue(liveTransactionEnabled,json.data.liveTransactionEnabled); if(liveTransactionMode){liveTransactionMode.value=String(json.data.liveTransactionMode||liveTransactionModeValue).toUpperCase()==='FAKE'?'FAKE':'REAL';liveTransactionMode.dispatchEvent(new Event('change',{bubbles:true}));} if(liveTransactionIntervalSeconds) liveTransactionIntervalSeconds.value=String(json.data.liveTransactionIntervalSeconds||liveTransactionIntervalValue); if(liveTransactionRandomMinSeconds) liveTransactionRandomMinSeconds.value=String(json.data.liveTransactionRandomMinSeconds||liveTransactionRandomMinSecondsValue); if(liveTransactionRandomMaxSeconds) liveTransactionRandomMaxSeconds.value=String(json.data.liveTransactionRandomMaxSeconds||liveTransactionRandomMaxSecondsValue); if(liveTransactionRandomMinRows) liveTransactionRandomMinRows.value=String(json.data.liveTransactionRandomMinRows||liveTransactionRandomMinRowsValue); if(liveTransactionRandomMaxRows) liveTransactionRandomMaxRows.value=String(json.data.liveTransactionRandomMaxRows||liveTransactionRandomMaxRowsValue); if(liveTransactionRandomMinPrice) liveTransactionRandomMinPrice.value=Number(json.data.liveTransactionRandomMinPrice??liveTransactionRandomMinPriceValue).toFixed(2); if(liveTransactionRandomMaxPrice) liveTransactionRandomMaxPrice.value=Number(json.data.liveTransactionRandomMaxPrice??liveTransactionRandomMaxPriceValue).toFixed(2); renderLiveTransactionMode(); if(marqueeEditor){marqueeEditor.innerHTML=json.data.marqueeContent||marqueeHtml;syncMarquee();} }
       await saveInstallSetting();
       renderNote();
       setMessage('Frontend display setting and Add to Home Screen settings saved successfully.','success');
@@ -225,6 +267,7 @@
   }
 
   select.addEventListener('change',renderNote);
+  liveTransactionMode?.addEventListener('change',renderLiveTransactionMode);
   if(marqueeEditor){
     marqueeEditor.addEventListener('input',syncMarquee);
     document.querySelectorAll('[data-marquee-cmd]').forEach(btn=>btn.addEventListener('click',()=>{
