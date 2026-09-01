@@ -60,6 +60,85 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  const positionSidebarFlyout = (group) => {
+    if (!group || window.innerWidth < 992) return;
+    const btn = group.querySelector('.nav-group-btn');
+    const sidebarEl = group.closest('.report-sidebar');
+    const list = group.querySelector('.nav-group-list');
+    if (!btn || !sidebarEl || !list) return;
+    const br = btn.getBoundingClientRect();
+    const sr = sidebarEl.getBoundingClientRect();
+    const left = Math.max(8, Math.round(sr.right + 2));
+    let top = Math.max(12, Math.round(br.top));
+    group.style.setProperty('--bo-sidebar-flyout-left', left + 'px');
+    group.style.setProperty('--bo-sidebar-flyout-top', top + 'px');
+    requestAnimationFrame(() => {
+      const h = Math.min(list.scrollHeight || 0, Math.max(120, window.innerHeight - 24));
+      if (top + h > window.innerHeight - 12) {
+        top = Math.max(12, window.innerHeight - h - 12);
+        group.style.setProperty('--bo-sidebar-flyout-top', Math.round(top) + 'px');
+      }
+    });
+  };
+
+  const sidebarFlyoutHoverTimers = new WeakMap();
+  const closeSidebarFlyoutImmediately = (group) => {
+    if (!group) return;
+    const timer = sidebarFlyoutHoverTimers.get(group);
+    if (timer) clearTimeout(timer);
+    sidebarFlyoutHoverTimers.delete(group);
+    // Hide synchronously while changing menu groups so the previous flyout can
+    // never remain visible for a transition frame under the new one.
+    group.classList.add('bo-flyout-instant-hide');
+    group.classList.remove('bo-flyout-hover', 'open');
+    group.querySelector('.nav-group-list')?.classList.remove('show');
+    group.querySelector('.nav-group-btn')?.setAttribute('aria-expanded', 'false');
+    void group.offsetWidth;
+    requestAnimationFrame(() => group.classList.remove('bo-flyout-instant-hide'));
+  };
+  const openSidebarFlyoutOnHover = (group) => {
+    if (!group || window.innerWidth < 992) return;
+
+    const previous = window.__boSidebarActiveFlyout;
+    if (previous && previous !== group) closeSidebarFlyoutImmediately(previous);
+    document.querySelectorAll('.report-sidebar .nav-group').forEach(other => {
+      if (other !== group && other !== previous && (other.classList.contains('bo-flyout-hover') || other.classList.contains('open'))) {
+        closeSidebarFlyoutImmediately(other);
+      }
+    });
+
+    const pending = sidebarFlyoutHoverTimers.get(group);
+    if (pending) clearTimeout(pending);
+    sidebarFlyoutHoverTimers.delete(group);
+    window.__boSidebarActiveFlyout = group;
+    positionSidebarFlyout(group);
+    group.classList.remove('bo-flyout-instant-hide');
+    group.classList.add('bo-flyout-hover');
+  };
+  const scheduleSidebarFlyoutHoverClose = (group) => {
+    if (!group || window.innerWidth < 992) return;
+    const pending = sidebarFlyoutHoverTimers.get(group);
+    if (pending) clearTimeout(pending);
+    const timer = setTimeout(() => {
+      sidebarFlyoutHoverTimers.delete(group);
+      const list = group.querySelector('.nav-group-list');
+      if (group.matches(':hover') || (list && list.matches(':hover'))) return;
+      group.classList.remove('bo-flyout-hover');
+      if (window.__boSidebarActiveFlyout === group) window.__boSidebarActiveFlyout = null;
+    }, 260);
+    sidebarFlyoutHoverTimers.set(group, timer);
+  };
+
+  document.querySelectorAll('.nav-group').forEach(group => {
+    group.addEventListener('mouseenter', () => openSidebarFlyoutOnHover(group));
+    group.addEventListener('mouseleave', () => scheduleSidebarFlyoutHoverClose(group));
+    const list = group.querySelector('.nav-group-list');
+    if (list) {
+      list.addEventListener('mouseenter', () => openSidebarFlyoutOnHover(group));
+      list.addEventListener('mouseleave', () => scheduleSidebarFlyoutHoverClose(group));
+    }
+  });
+
   document.querySelectorAll('.nav-group-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -67,6 +146,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const group = btn.closest('.nav-group');
       const list = group && group.querySelector('.nav-group-list');
       if (!group || !list) return;
+      if (window.innerWidth >= 992) {
+        positionSidebarFlyout(group);
+        document.querySelectorAll('.report-sidebar .nav-group.open').forEach(other => {
+          if (other !== group) {
+            other.classList.remove('open');
+            other.querySelector('.nav-group-list')?.classList.remove('show');
+            other.querySelector('.nav-group-btn')?.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
       const willOpen = !group.classList.contains('open');
       group.classList.toggle('open', willOpen);
       list.classList.toggle('show', willOpen);

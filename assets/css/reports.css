@@ -5854,3 +5854,90 @@ body.modal-open .dropdown-menu,
 body.modal-open .report-actions {
   z-index: auto !important;
 }
+
+/* 2026-09-01: Desktop sidebar dropdown flyout.
+   Dropdown groups open beside the sidebar instead of expanding the sidebar vertically.
+   Mobile keeps the existing accordion behaviour. */
+@media (min-width:992px){
+  .report-sidebar .report-nav > .nav-group{
+    overflow:visible!important;
+  }
+  .report-sidebar .report-nav > .nav-group > .nav-group-list{
+    display:none!important;
+    position:fixed!important;
+    left:var(--bo-sidebar-flyout-left, calc(var(--sidebar-w,280px) + 8px))!important;
+    top:var(--bo-sidebar-flyout-top, 84px)!important;
+    width:286px!important;
+    min-width:250px!important;
+    max-width:min(320px,calc(100vw - var(--bo-sidebar-flyout-left,288px) - 16px))!important;
+    max-height:calc(100vh - 24px)!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    padding:8px!important;
+    margin:0!important;
+    background:#fff!important;
+    border:1px solid #dbe3ef!important;
+    border-radius:12px!important;
+    box-shadow:0 16px 38px rgba(15,23,42,.18)!important;
+    z-index:12050!important;
+    opacity:0;
+    visibility:hidden;
+    transform:translateX(-6px);
+    pointer-events:none;
+    transition:opacity .16s ease,transform .16s ease,visibility .16s ease!important;
+  }
+  .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list,
+  .report-sidebar .report-nav > .nav-group.open > .nav-group-list{
+    display:block!important;
+    opacity:1!important;
+    visibility:visible!important;
+    transform:translateX(0)!important;
+    pointer-events:auto!important;
+  }
+  .report-sidebar .report-nav > .nav-group.open > .nav-group-btn .bi-chevron-down,
+  .report-sidebar .report-nav > .nav-group:hover > .nav-group-btn .bi-chevron-down{
+    transform:rotate(-90deg)!important;
+  }
+  .report-sidebar .report-nav > .nav-group > .nav-group-list a{
+    border-radius:9px!important;
+    margin:2px 0!important;
+  }
+  body.sidebar-mini .report-sidebar .report-nav > .nav-group > .nav-group-list,
+  body.sidebar-mini .report-sidebar:hover .report-nav > .nav-group > .nav-group-list{
+    left:var(--bo-sidebar-flyout-left,calc(var(--sidebar-w,280px) + 8px))!important;
+  }
+}
+
+/* 2026-09-01: Instant flyout switch guard.
+   When the pointer enters another main menu, hide the previous flyout in the
+   same frame (no fade/slide overlap), then allow the new one to render. */
+@media (min-width:992px){
+  .report-sidebar .report-nav > .nav-group.bo-flyout-instant-hide > .nav-group-list{
+    display:none!important;
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+    transition:none!important;
+    transform:none!important;
+  }
+}
+
+/* 2026-09-01: Hover bridge for desktop sidebar flyout.
+   Keeps the parent group hovered while the pointer travels from the main menu
+   to the right-side submenu, so no click is required before selecting a child. */
+@media (min-width:992px){
+  .report-sidebar .report-nav > .nav-group{
+    position:relative!important;
+  }
+  .report-sidebar .report-nav > .nav-group::after{
+    content:"";
+    position:absolute;
+    top:0;
+    right:-14px;
+    width:14px;
+    height:100%;
+    background:transparent;
+    pointer-events:auto;
+    z-index:12049;
+  }
+}
