@@ -5489,8 +5489,10 @@ body.modal-open{overflow:hidden!important}
     opacity:0;visibility:hidden;transform:translateX(-6px);pointer-events:none;
     transition:opacity .16s ease,transform .16s ease,visibility .16s ease!important
   }
-  .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list,
-  .report-sidebar .report-nav > .nav-group.open > .nav-group-list{
+  /* Desktop flyout visibility is hover-state only. The .open class is
+     reserved for the mobile accordion/current-page state and must not make a
+     desktop flyout appear automatically after navigation. */
+  .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list{
     display:block!important;opacity:1!important;visibility:visible!important;transform:translateX(0)!important;pointer-events:auto!important
   }
   .report-sidebar .report-nav > .nav-group.open > .nav-group-btn .bi-chevron-down,

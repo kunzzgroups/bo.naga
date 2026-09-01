@@ -519,15 +519,16 @@
           const list = group && group.querySelector('.nav-group-list');
           if(!group || !list) return;
           if(window.innerWidth >= 992){
+            // Desktop flyouts are hover-only. Clicking a main menu must never pin
+            // the flyout open or make the next page load with the flyout visible.
+            // Keep the current hover flyout in place and let submenu links navigate.
             positionSidebarFlyout(group);
-            document.querySelectorAll('.report-sidebar .nav-group.open').forEach(function(other){
-              if(other !== group){
-                other.classList.remove('open');
-                other.querySelector('.nav-group-list')?.classList.remove('show');
-                other.querySelector('.nav-group-btn')?.setAttribute('aria-expanded','false');
-              }
-            });
+            group.classList.remove('open');
+            list.classList.remove('show');
+            btn.setAttribute('aria-expanded','false');
+            return;
           }
+          // Mobile/tablet keeps the original accordion click behaviour.
           const willOpen = !group.classList.contains('open');
           group.classList.toggle('open', willOpen);
           list.classList.toggle('show', willOpen);

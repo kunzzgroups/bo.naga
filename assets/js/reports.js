@@ -147,15 +147,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const list = group && group.querySelector('.nav-group-list');
       if (!group || !list) return;
       if (window.innerWidth >= 992) {
+        // Desktop flyouts are hover-only. Clicking the parent should not pin
+        // the submenu or cause it to reappear at the top after navigation.
         positionSidebarFlyout(group);
-        document.querySelectorAll('.report-sidebar .nav-group.open').forEach(other => {
-          if (other !== group) {
-            other.classList.remove('open');
-            other.querySelector('.nav-group-list')?.classList.remove('show');
-            other.querySelector('.nav-group-btn')?.setAttribute('aria-expanded', 'false');
-          }
-        });
+        group.classList.remove('open');
+        list.classList.remove('show');
+        btn.setAttribute('aria-expanded', 'false');
+        return;
       }
+      // Mobile/tablet retains the accordion click interaction.
       const willOpen = !group.classList.contains('open');
       group.classList.toggle('open', willOpen);
       list.classList.toggle('show', willOpen);
