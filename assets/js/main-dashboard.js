@@ -20,7 +20,6 @@ function renderAccounting(a){
   stat('Bonus Given',money(s.bonusGiven),'bi-gift',`${num(s.bonusCount)} bonus credits`,'purple','accounting:bonusGiven'),
   stat('Player Loss / House Win',money(s.houseWin),'bi-arrow-down-circle','Gross winning amount before house losses','green','accounting:houseWin'),
   stat('Player Win / House Loss',money(s.houseLoss),'bi-arrow-up-circle','Gross losing amount for house','red','accounting:houseLoss'),
-  stat('Net Gaming Result',money(s.netGamingResult),'bi-activity','House win - house loss',Number(s.netGamingResult)<0?'red':'blue','accounting:netGamingResult'),
   stat('Net After Bonus',money(s.netAfterBonus),'bi-calculator','Net gaming result - bonus given',Number(s.netAfterBonus)<0?'red':'green','accounting:netAfterBonus')
  ].join('');
 }
@@ -28,16 +27,12 @@ function renderSummary(s){
  $('mainPerformanceStats').innerHTML=[
   stat('Turnover',money(s.turnover),'bi-graph-up-arrow','Valid betting turnover','purple','overview:turnover'),
   stat('Customer Loss',money(s.customerLoss),'bi-cash-stack','House result for selected range',Number(s.customerLoss)<0?'red':'green','overview:customerLoss'),
-  stat('Hold %',money(s.holdPercent)+'%','bi-percent','Customer loss ÷ turnover','blue','overview:holdPercent'),
-  stat('Bets',num(s.betCount),'bi-controller','Settled bet records','orange','overview:betCount'),
   stat('Active Bettors',num(s.activeBettors),'bi-person-check','Unique betting players','green','overview:activeBettors')
  ].join('');
  $('mainCashStats').innerHTML=[
   stat('Deposits',money(s.depositAmount),'bi-box-arrow-in-down','Approved/processed in range','green','overview:depositAmount'),
   stat('Withdrawals',money(s.withdrawAmount),'bi-box-arrow-up','Approved/processed in range','orange','overview:withdrawAmount'),
-  stat('Net Cash Flow',money(s.netCashFlow),'bi-arrow-left-right','Deposits - withdrawals',Number(s.netCashFlow)<0?'red':'blue','overview:netCashFlow'),
-  stat('Pending Deposits',`${num(s.pendingDepositCount)} · ${money(s.pendingDepositAmount)}`,'bi-hourglass-split','Needs operational attention','orange','overview:pendingDeposits'),
-  stat('Pending Withdrawals',`${num(s.pendingWithdrawCount)} · ${money(s.pendingWithdrawAmount)}`,'bi-hourglass-bottom','Needs operational attention','red','overview:pendingWithdrawals')
+  stat('Net Cash Flow',money(s.netCashFlow),'bi-arrow-left-right','Deposits - withdrawals',Number(s.netCashFlow)<0?'red':'blue','overview:netCashFlow')
  ].join('');
  $('mainWalletStats').innerHTML=[
   stat('Player Wallet',money(s.playerWallet),'bi-wallet2','Current player cash liability','blue','overview:playerWallet'),
