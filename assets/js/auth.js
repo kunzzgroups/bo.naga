@@ -78,6 +78,13 @@
   function pageName(){
     return (location.pathname || '').split('/').pop() || 'index.html';
   }
+  function sidebarActivePage(){
+    const p=pageName();
+    if(p==='main-balance-adjustment.html') return 'main-balance-overview.html';
+    if(p==='brand-detail.html') return 'brand-management.html';
+    if(p==='provider-detail.html') return 'main-accounting-report.html';
+    return p;
+  }
 
   const GROUP_META = window.BO_MENU_GROUP_META = {
     access: { title: 'Access Control', icon: 'bi-shield-lock' },
@@ -87,7 +94,10 @@
     wallet: { title: 'Wallet Management', icon: 'bi-wallet2' },
     setting: { title: 'Setting', icon: 'bi-gear' },
     report: { title: 'Report', icon: 'bi-wallet2' },
-    agent_management_group: { title: 'Agent Management', icon: 'bi-person-workspace' }
+    agent_management_group: { title: 'Agent Management', icon: 'bi-person-workspace' },
+    main_reports_group: { title: 'Reports', icon: 'bi-file-earmark-bar-graph', sortOrder: 30 },
+    main_accounting_group: { title: 'Accounting & Provider Ops', icon: 'bi-cash-stack', sortOrder: 40 },
+    main_brands_group: { title: 'Brands', icon: 'bi-buildings', sortOrder: 50 }
   };
 
   // Used only when backend has not returned menu data yet.
@@ -169,7 +179,7 @@
 
   function menuLinkHtml(m, isSub){
     const href = esc(m.url || '#');
-    const active = pageName() === (m.url || '').split('/').pop();
+    const active = sidebarActivePage() === (m.url || '').split('/').pop();
     const cls = (isSub ? 'report-sub ' : '') + (active ? 'active' : '');
     return '<a href="' + href + '" class="' + cls.trim() + '" data-menu-key="' + esc(m.menuKey) + '">' +
       '<span><i class="bi ' + esc(m.icon || 'bi-circle') + ' me-2"></i>' + esc(m.title) + '</span></a>';
@@ -201,7 +211,7 @@
       user = user || this.user();
       const menus = this.allowedMenus(user);
       if(String(user && user.roleType || '').toUpperCase()==='MAIN'){
-        const order=['main-dashboard.html','main-accounting-report.html','main-report.html','brand-management.html'];
+        const order=['main-dashboard.html','main-win-lose-report.html','main-settlement-report.html','main-accounting-report.html','main-accounting-settlement.html','main-transaction-history.html','brand-management.html','main-balance-overview.html','main-accounting-due.html'];
         for(const url of order){ if(menus.some(m=>(m.url||'').split('/').pop()===url)) return url; }
       }
       return menus.length ? menus[0].url : 'login.html';
@@ -212,6 +222,11 @@
       // own permission so a Master can be granted Commission/Settlement/etc.
       // independently. Legacy agent_management permission remains a fallback below.
       if(current === 'agent-detail.html') current = 'agent-management.html';
+      // Brand Detail is a drill-down of Brand Management and has no separate sidebar permission.
+      // Inherit Brand Management access so MAIN/Boss users with Brands permission are not redirected.
+      if(current === 'brand-detail.html') current = 'brand-management.html';
+      if(current === 'provider-detail.html') current = 'main-accounting-report.html';
+      if(current === 'main-balance-adjustment.html') current = 'main-balance-overview.html';
       // Agent Performance Detail is a drill-down page of Agent Performance Report.
       // It has no separate sidebar/menu permission, so inherit the report permission
       // instead of redirecting the user to their landing page.
@@ -329,26 +344,48 @@
       }
 
       if(String(user.roleType||'').toUpperCase()==='MAIN'){
-        // MAIN/Boss is an executive-only account. Whitelist the four protected
-        // MAIN modules instead of merely hiding a few agent menus. This prevents
-        // legacy/duplicate role mappings from leaking Master/Admin sidebar groups.
-        const mainAllowedKeys = new Set(['main_dashboard','main_accounting_report','main_report','brand_management']);
-        const mainAllowedUrls = new Set(['main-dashboard.html','main-accounting-report.html','main-report.html','brand-management.html']);
-        menus = menus.filter(function(m){
-          const key=String(m.menuKey||'').toLowerCase();
-          const url=String(m.url||'').split('/').pop().toLowerCase();
-          return mainAllowedKeys.has(key) || mainAllowedUrls.has(url);
-        }).map(function(m){
-          m=Object.assign({},m);
-          const key=String(m.menuKey||'').toLowerCase();
-          const url=String(m.url||'').split('/').pop().toLowerCase();
-          if(key==='brand_management'||url==='brand-management.html')m.title='Brands';
-          if(key==='main_dashboard'||url==='main-dashboard.html')m.title='Dashboard';
-          if(key==='main_accounting_report'||url==='main-accounting-report.html')m.title='Accounting & Provider Ops';
-          if(key==='main_report'||url==='main-report.html')m.title='Report';
-          m.parentKey='';
-          return m;
-        });
+        // MAIN/Boss executive menu: every parent and child permission is independently configurable.
+        // Legacy MAIN roles are still supported until the new executive permission rows are assigned.
+        const source = menus.slice();
+        const keySet = new Set(source.map(m=>String(m.menuKey||'').toLowerCase()));
+        const hasKey = key => keySet.has(String(key).toLowerCase());
+        const hasUrl = url => source.some(m=>String(m.url||'').split('/').pop().toLowerCase()===String(url).toLowerCase());
+        const hasNewExecutive = ['main_reports_access','main_win_lose_report','main_settlement_report','main_accounting_access','main_provider_settlement','main_accounting_settlement','main_transaction_history','main_brands_access','main_brands_list','main_balance_overview','main_accounting_due'].some(hasKey);
+        const out=[];
+        if(hasKey('main_dashboard') || hasUrl('main-dashboard.html')) out.push({menuKey:'main_dashboard',title:'Dashboard',url:'main-dashboard.html',icon:'bi-house-door',parentKey:'',sortOrder:10,status:1});
+        if(hasNewExecutive){
+          if(hasKey('main_reports_access')){
+            if(hasKey('main_win_lose_report')) out.push({menuKey:'main_win_lose_report',title:'Win/Lose Report',url:'main-win-lose-report.html',icon:'bi-file-earmark-bar-graph',parentKey:'main_reports_group',sortOrder:31,status:1});
+            if(hasKey('main_settlement_report')) out.push({menuKey:'main_settlement_report',title:'Settlement Report',url:'main-settlement-report.html',icon:'bi-receipt-cutoff',parentKey:'main_reports_group',sortOrder:32,status:1});
+          }
+          if(hasKey('main_accounting_access')){
+            if(hasKey('main_provider_settlement')) out.push({menuKey:'main_provider_settlement',title:'Provider Settlement',url:'main-accounting-report.html',icon:'bi-cash-stack',parentKey:'main_accounting_group',sortOrder:41,status:1});
+            if(hasKey('main_accounting_settlement')) out.push({menuKey:'main_accounting_settlement',title:'Accounting Settlement',url:'main-accounting-settlement.html',icon:'bi-journal-check',parentKey:'main_accounting_group',sortOrder:42,status:1});
+            if(hasKey('main_transaction_history')) out.push({menuKey:'main_transaction_history',title:'Transaction History',url:'main-transaction-history.html',icon:'bi-clock-history',parentKey:'main_accounting_group',sortOrder:43,status:1});
+          }
+          if(hasKey('main_brands_access')){
+            if(hasKey('main_brands_list')) out.push({menuKey:'main_brands_list',title:'Brands',url:'brand-management.html',icon:'bi-buildings',parentKey:'main_brands_group',sortOrder:51,status:1});
+            if(hasKey('main_balance_overview')) out.push({menuKey:'main_balance_overview',title:'Balance Overview',url:'main-balance-overview.html',icon:'bi-wallet2',parentKey:'main_brands_group',sortOrder:52,status:1});
+            if(hasKey('main_accounting_due')) out.push({menuKey:'main_accounting_due',title:'Accounting Due',url:'main-accounting-due.html',icon:'bi-calendar2-check',parentKey:'main_brands_group',sortOrder:53,status:1});
+          }
+        }else{
+          // Backward compatibility for existing MAIN Account roles created before the executive split.
+          if(hasKey('main_report') || hasUrl('main-report.html')){
+            out.push({menuKey:'main_win_lose_report',title:'Win/Lose Report',url:'main-win-lose-report.html',icon:'bi-file-earmark-bar-graph',parentKey:'main_reports_group',sortOrder:31,status:1});
+            out.push({menuKey:'main_settlement_report',title:'Settlement Report',url:'main-settlement-report.html',icon:'bi-receipt-cutoff',parentKey:'main_reports_group',sortOrder:32,status:1});
+          }
+          if(hasKey('main_accounting_report') || hasUrl('main-accounting-report.html')){
+            out.push({menuKey:'main_provider_settlement',title:'Provider Settlement',url:'main-accounting-report.html',icon:'bi-cash-stack',parentKey:'main_accounting_group',sortOrder:41,status:1});
+            out.push({menuKey:'main_accounting_settlement',title:'Accounting Settlement',url:'main-accounting-settlement.html',icon:'bi-journal-check',parentKey:'main_accounting_group',sortOrder:42,status:1});
+            out.push({menuKey:'main_transaction_history',title:'Transaction History',url:'main-transaction-history.html',icon:'bi-clock-history',parentKey:'main_accounting_group',sortOrder:43,status:1});
+          }
+          if(hasKey('brand_management') || hasUrl('brand-management.html')){
+            out.push({menuKey:'main_brands_list',title:'Brands',url:'brand-management.html',icon:'bi-buildings',parentKey:'main_brands_group',sortOrder:51,status:1});
+            out.push({menuKey:'main_balance_overview',title:'Balance Overview',url:'main-balance-overview.html',icon:'bi-wallet2',parentKey:'main_brands_group',sortOrder:52,status:1});
+            out.push({menuKey:'main_accounting_due',title:'Accounting Due',url:'main-accounting-due.html',icon:'bi-calendar2-check',parentKey:'main_brands_group',sortOrder:53,status:1});
+          }
+        }
+        menus=out;
       }
 
       // Backward compatibility for older databases that only have the single
@@ -403,7 +440,7 @@
         }
       });
 
-      const activePage = pageName();
+      const activePage = sidebarActivePage();
       let html = '';
       top.forEach(m => { html += menuLinkHtml(m, false); });
       Object.keys(groups).sort((a,b) => {

@@ -40,6 +40,20 @@
             BO_AUTH.saveUser(user);
           }
         }catch(ignore){}
+        // Make the just-authenticated tenant brand authoritative before the landing page
+        // starts loading. This prevents a previous BO session's active brand from being
+        // observed by early page scripts during the first paint/refresh.
+        try{
+          const role=String(user.roleType||'').toUpperCase();
+          const platform=!!(user.rootAdmin||user.masterAdmin||role==='ROOT'||role==='MASTER');
+          const brandId=Number(user.brandId||user.adminBrandId||0);
+          if(!platform&&Number.isFinite(brandId)&&brandId>0){
+            localStorage.setItem('bo_active_brand_id',String(brandId));
+          }
+          sessionStorage.removeItem('bo_brand_context_cache_v3');
+          sessionStorage.removeItem('bo_online_users_cache');
+          if(window.BO_BRAND&&BO_BRAND.invalidate)BO_BRAND.invalidate();
+        }catch(ignore){}
         window.location.replace(BO_AUTH.landingPage(user));
       }catch(err){
         setStatus(err.message || 'Login failed', 'error');

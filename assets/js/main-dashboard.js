@@ -1,94 +1,23 @@
-(function(){
-'use strict';
-const $=id=>document.getElementById(id);
-const money=v=>Number(v||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
-const num=v=>Number(v||0).toLocaleString();
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let brands=[],selected=null;
-async function api(p){const r=await fetch(API_CONFIG.BASE_URL+p,{headers:BO_AUTH.authHeader()}),j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw Error(j.message||'Request failed');return j.data;}
-function today(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
-function lastMonthRange(){const d=new Date(),p=n=>String(n).padStart(2,'0'),a=new Date(d.getFullYear(),d.getMonth()-1,1),b=new Date(d.getFullYear(),d.getMonth(),0),fmt=x=>x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate());return [fmt(a),fmt(b)];}
-function bindRange(){const [a,b]=lastMonthRange();$('mainFrom').value=a;$('mainTo').value=b;}
-function addOneDay(v){const a=String(v||'').split('-').map(Number);if(a.length!==3||!a[0])return v;return new Date(Date.UTC(a[0],a[1]-1,a[2]+1)).toISOString().slice(0,10);}
-function q(){return '?from='+encodeURIComponent($('mainFrom').value)+'&to='+encodeURIComponent(addOneDay($('mainTo').value));}
-function stat(label,value,icon,note,tone='purple',metric=''){const attrs=metric?` data-main-detail=\"${esc(metric)}\" data-main-label=\"${esc(label)}\" role=\"button\" tabindex=\"0\"`:'';return `<div class=\"exec-stat${metric?' exec-stat-clickable':''}\"${attrs}><div class=\"exec-stat-icon ${tone}\"><i class=\"bi ${icon}\"></i></div><div><small>${label}</small><b>${value}</b><span>${note||''}${metric?' · Click for details':''}</span></div></div>`;}
-function tone(v){return Number(v||0)<0?'text-danger':'text-success';}
-function renderAccounting(a){
- const s=(a&&a.summary)||{};
- const el=$('mainAccountingStats'); if(!el)return;
- el.innerHTML=[
-  stat('Bonus Given',money(s.bonusGiven),'bi-gift',`${num(s.bonusCount)} bonus credits`,'purple','accounting:bonusGiven'),
-  stat('Player Loss / House Win',money(s.houseWin),'bi-arrow-down-circle','Gross winning amount before house losses','green','accounting:houseWin'),
-  stat('Player Win / House Loss',money(s.houseLoss),'bi-arrow-up-circle','Gross losing amount for house','red','accounting:houseLoss'),
-  stat('Net After Bonus',money(s.netAfterBonus),'bi-calculator','Net gaming result - bonus given',Number(s.netAfterBonus)<0?'red':'green','accounting:netAfterBonus')
- ].join('');
-}
-function renderSummary(s){
- $('mainPerformanceStats').innerHTML=[
-  stat('Turnover',money(s.turnover),'bi-graph-up-arrow','Valid betting turnover','purple','overview:turnover'),
-  stat('Customer Loss',money(s.customerLoss),'bi-cash-stack','House result for selected range',Number(s.customerLoss)<0?'red':'green','overview:customerLoss'),
-  stat('Active Bettors',num(s.activeBettors),'bi-person-check','Unique betting players','green','overview:activeBettors')
- ].join('');
- $('mainCashStats').innerHTML=[
-  stat('Deposits',money(s.depositAmount),'bi-box-arrow-in-down','Approved/processed in range','green','overview:depositAmount'),
-  stat('Withdrawals',money(s.withdrawAmount),'bi-box-arrow-up','Approved/processed in range','orange','overview:withdrawAmount'),
-  stat('Net Cash Flow',money(s.netCashFlow),'bi-arrow-left-right','Deposits - withdrawals',Number(s.netCashFlow)<0?'red':'blue','overview:netCashFlow')
- ].join('');
- $('mainWalletStats').innerHTML=[
-  stat('Player Wallet',money(s.playerWallet),'bi-wallet2','Current player cash liability','blue','overview:playerWallet'),
-  stat('Bonus Wallet',money(s.bonusWallet),'bi-gift','Current player bonus liability','purple','overview:bonusWallet'),
-  stat('Total Wallet Exposure',money(Number(s.playerWallet||0)+Number(s.bonusWallet||0)),'bi-safe2','Player + bonus wallet','red')
- ].join('');
- $('mainNetworkStats').innerHTML=[
-  stat('Brands',num(s.brands),'bi-buildings','Brands under management','purple','overview:brands'),
-  stat('Players',num(s.players),'bi-people','All registered players','blue','overview:players'),
-  stat('New Players',num(s.newPlayers),'bi-person-plus','Registered in selected range','green','overview:newPlayers'),
-  stat('Active Accounts',num(s.activePlayers),'bi-person-check-fill','Current active-status accounts','green','overview:activePlayers')
- ].join('');
-}
-async function load(){
- const [d,a]=await Promise.all([api('/admin/main/overview'+q()),api('/admin/main/reports/accounting'+q())]);brands=d.brands||[];const s=d.summary||{};renderSummary(s);renderAccounting(a);
- $('mainBrandRows').innerHTML=brands.map(b=>`<tr>
- <td><b>${esc(b.name)}</b><small class="d-block text-muted">${esc(b.code)} · ${esc(b.domain)}</small></td>
- <td><b>${num(b.playerCount)}</b><small class="d-block text-muted">+${num(b.newPlayers)} new · ${num(b.activeBettors)} bettors</small></td>
- <td><b>${money(b.depositAmount)}</b><small class="d-block text-muted">W/D ${money(b.withdrawAmount)} · Net ${money(b.netCashFlow)}</small></td>
- <td><b>${money(b.turnover)}</b><small class="d-block ${tone(b.customerLoss)}">Loss ${money(b.customerLoss)} · Hold ${money(b.holdPercent)}%</small></td>
- <td><b>${money(b.playerWallet)}</b><small class="d-block text-muted">Bonus ${money(b.bonusWallet)}</small></td>
- <td><b>${money(b.agentWallet)}</b><small class="d-block text-muted">${num(b.agentCount)} agents</small></td>
- <td><b>${num((b.pendingDepositCount||0)+(b.pendingWithdrawCount||0)+(b.pendingAgentSettlements||0))}</b><small class="d-block text-muted">D ${num(b.pendingDepositCount)} · W ${num(b.pendingWithdrawCount)} · A ${num(b.pendingAgentSettlements)}</small></td>
- <td><div class="d-flex gap-1 flex-wrap"><button class="clean-btn" data-view="${b.id}"><i class="bi bi-eye"></i> Report</button><button class="clean-btn primary" data-manage="${b.id}">Manage</button></div></td></tr>`).join('')||'<tr><td colspan="8">No brands.</td></tr>';
-}
-function brandOverviewCards(f){return [
- stat('Players',num(f.playerCount),'bi-people',`${num(f.newPlayers)} new · ${num(f.activeBettors)} bettors`,'blue'),
- stat('Turnover',money(f.turnover),'bi-graph-up-arrow',`${num(f.betCount)} bets`,'purple'),
- stat('Customer Loss',money(f.customerLoss),'bi-cash-stack',`Hold ${money(f.holdPercent)}%`,Number(f.customerLoss)<0?'red':'green'),
- stat('Net Cash Flow',money(f.netCashFlow),'bi-arrow-left-right',`Deposit ${money(f.depositAmount)} · W/D ${money(f.withdrawAmount)}`,Number(f.netCashFlow)<0?'red':'blue'),
- stat('Player Wallet',money(f.playerWallet),'bi-wallet2',`Bonus ${money(f.bonusWallet)}`,'blue'),
- stat('Agent Wallet',money(f.agentWallet),'bi-person-badge',`${num(f.agentCount)} agents`,'orange'),
- stat('Wallet Exposure',money(f.walletExposure),'bi-safe2','Player + bonus + agent','red'),
- stat('Pending Operations',num((f.pendingDepositCount||0)+(f.pendingWithdrawCount||0)+(f.pendingSettlementCount||0)),'bi-exclamation-circle',`D ${num(f.pendingDepositCount)} · W ${num(f.pendingWithdrawCount)} · A ${num(f.pendingSettlementCount)}`,'orange')
-].join('');}
-async function detail(id){
- const d=await api('/admin/main/brand/'+id+q());selected=d.brand;const f=d.financial||{};
- $('mainBrandTitle').textContent=(selected.name||selected.code)+' Executive Report';$('mainBrandDomain').textContent=(selected.primaryDomain||'')+' · '+$('mainFrom').value+' to '+$('mainTo').value;
- $('mainBrandStats').innerHTML=brandOverviewCards(f);
- $('mainFinancialRows').innerHTML=[
-  ['Approved Deposits',money(f.depositAmount),`${num(f.depositCount)} transactions`],['Approved Withdrawals',money(f.withdrawAmount),`${num(f.withdrawCount)} transactions`],['Net Cash Flow',money(f.netCashFlow),'Deposit - withdrawal'],
-  ['Pending Deposits',money(f.pendingDepositAmount),`${num(f.pendingDepositCount)} requests`],['Pending Withdrawals',money(f.pendingWithdrawAmount),`${num(f.pendingWithdrawCount)} requests`],['Pending Agent Settlement',money(f.pendingSettlementAmount),`${num(f.pendingSettlementCount)} requests`],
-  ['Player Wallet',money(f.playerWallet),'Current cash wallet'],['Bonus Wallet',money(f.bonusWallet),'Current bonus wallet'],['Agent Wallet',money(f.agentWallet),'Current agent payable'],['Total Wallet Exposure',money(f.walletExposure),'Combined wallet exposure'],
-  ['Brand Player Credit',money(f.playerCredit),'Current allocation'],['Brand Provider Credit',money(f.providerCredit),'Current allocation'],['Credit In',money(f.creditIn),'Selected range'],['Credit Out',money(f.creditOut),'Selected range']
- ].map(x=>`<tr><td><b>${x[0]}</b></td><td>${x[1]}</td><td class="text-muted">${x[2]}</td></tr>`).join('');
- $('mainProviderRows').innerHTML=(d.providers||[]).map(x=>`<tr><td><b>${esc(x.providerCode)}</b></td><td>${num(x.playerCount)}</td><td>${money(x.turnover)}</td><td>${money(x.betAmount)}</td><td>${money(x.winAmount)}</td><td class="${tone(x.customerLoss)}"><b>${money(x.customerLoss)}</b></td><td>${money(x.holdPercent)}%</td><td>${num(x.betCount)}</td></tr>`).join('')||'<tr><td colspan="8">No provider betting data.</td></tr>';
- $('mainGameRows').innerHTML=(d.games||[]).map(x=>`<tr><td>${esc(x.providerCode)}</td><td><b>${esc(x.gameName)}</b><small class="d-block text-muted">${esc(x.gameCode)}</small></td><td>${money(x.turnover)}</td><td>${money(x.betAmount)}</td><td>${money(x.winAmount)}</td><td class="${tone(x.customerLoss)}">${money(x.customerLoss)}</td><td>${num(x.betCount)}</td></tr>`).join('')||'<tr><td colspan="7">No betting data.</td></tr>';
- $('mainAgentRows').innerHTML=(d.agents||[]).map(x=>`<tr><td><b>${esc(x.name)}</b><small class="d-block text-muted">${esc(x.code)}</small></td><td>${num(x.memberCount)}</td><td>${money(x.commissionPercent)}%</td><td>${money(x.walletBalance)}</td><td>${Number(x.redShareEnabled)===1?'Yes':'No'}</td><td>${Number(x.status)===1?'Active':'Disabled'}</td></tr>`).join('')||'<tr><td colspan="6">No agents.</td></tr>';
- $('mainCreditRows').innerHTML=(d.creditLedger||[]).map(x=>`<tr><td>${esc(String(x.createdAt||'').replace('T',' ').slice(0,19))}</td><td>${esc(x.ledgerType)}</td><td>${money(x.amount)}</td><td>${money(x.beforeBalance)}</td><td>${money(x.afterBalance)}</td><td>${esc(x.createdBy)}</td><td>${esc(x.remark)}</td></tr>`).join('')||'<tr><td colspan="7">No credit movement.</td></tr>';
- $('mainSettlementRows').innerHTML=(d.settlements||[]).map(x=>`<tr><td>${esc(x.settlementMonth)}</td><td>#${x.agentId}</td><td>${money(x.agentProfit)}</td><td>${money(x.requestedAmount)}</td><td>${esc(x.settlementStatus)}</td><td>${esc(String(x.paidAt||'').replace('T',' ').slice(0,19))}</td></tr>`).join('')||'<tr><td colspan="6">No settlements.</td></tr>';
- bootstrap.Modal.getOrCreateInstance($('mainBrandModal')).show();
-}
-function go(id,page){if(window.BO_BRAND){localStorage.setItem(BO_BRAND.key,String(id));BO_BRAND.invalidate?.();}location.href=page;}
-document.addEventListener('click',e=>{const v=e.target.closest('[data-view]'),m=e.target.closest('[data-manage]');if(v)detail(v.dataset.view);if(m)go(m.dataset.manage,'brand-management.html');});
-$('mainSearch').onclick=load;$('mainManageBrand').onclick=()=>selected&&go(selected.id,'brand-management.html');
-function openMetricDetail(el){const raw=el.dataset.mainDetail||'',i=raw.indexOf(':'),source=i>0?raw.slice(0,i):'overview',metric=i>0?raw.slice(i+1):raw;const u=new URL('main-stat-detail.html',location.href);u.searchParams.set('source',source);u.searchParams.set('metric',metric);u.searchParams.set('label',el.dataset.mainLabel||metric);u.searchParams.set('from',$('mainFrom').value);u.searchParams.set('to',$('mainTo').value);location.href=u.toString();}
-document.addEventListener('click',e=>{const el=e.target.closest('[data-main-detail]');if(el)openMetricDetail(el);});document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-main-detail]')){e.preventDefault();openMetricDetail(e.target);}});
-BO_AUTH.requireLogin();bindRange();load().catch(e=>$('mainBrandRows').innerHTML='<tr><td colspan="8" class="text-danger">'+esc(e.message)+'</td></tr>');
+(()=>{'use strict';
+const $=id=>document.getElementById(id),money=v=>Number(v||0).toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2}),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let lastData=null;
+async function api(path){const r=await fetch(API_CONFIG.BASE_URL+path,{headers:BO_AUTH.authHeader(),cache:'no-store'}),j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw Error(j.message||'Request failed');return j.data??j}
+function pad2(n){return String(n).padStart(2,'0')}function fmt(d){return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`}function dmy(v){if(!v)return '';const a=String(v).split('-');return a.length===3?`${a[2]}/${a[1]}/${a[0]}`:v}
+function addDay(v){const a=String(v||'').split('-').map(Number);return new Date(Date.UTC(a[0],a[1]-1,a[2]+1)).toISOString().slice(0,10)}
+function qs(a=$('mainFrom').value,b=$('mainTo').value){return `?from=${encodeURIComponent(a)}&to=${encodeURIComponent(addDay(b))}`}
+function detectCurrency(overview){const c=(overview.brands||[]).map(x=>x.currency).find(Boolean)||'MYR';const el=$('mainCurrency');if(el)el.textContent=c;document.querySelectorAll('.currency-unit').forEach(x=>x.textContent=c);return c}
+function rowsOrEmpty(rows,cols){return rows.length?rows.join(''):`<tr><td colspan="${cols}" class="exec-empty">No data for selected period.</td></tr>`}
+function render(data){const {overview,accounting,settlement,todayAccounting,todaySettlement}=data,currency=detectCurrency(overview),as=accounting.summary||{},ss=settlement.summary||{},tas=todayAccounting.summary||{},tss=todaySettlement.summary||{};const revenue=Number(as.netGamingResult||0),providerCost=Number(ss.upstreamProviderPayable||0),bonus=Number(as.bonusGiven||0),expense=providerCost+bonus,net=revenue-expense,pending=providerCost;$('totalRevenue').textContent=money(revenue);$('totalExpense').textContent=money(expense);$('totalNetProfit').textContent=money(net);$('pendingPayout').textContent=money(pending);const br=(accounting.brands||[]).map(x=>({name:x.brandName||x.brandCode||'-',revenue:Number(x.netGamingResult||0),net:Number(x.netAfterBonus||0)})).sort((a,b)=>b.net-a.net).slice(0,8);$('brandProfitRows').innerHTML=rowsOrEmpty(br.map(x=>`<tr><td>${esc(x.name)}</td><td class="num">${money(x.revenue)}</td><td class="num positive">${money(x.net)}</td></tr>`),3);const vendors=(settlement.providers||[]).map(x=>({name:x.providerName||x.providerCode||'-',expense:Number(x.upstreamProviderPayable||0)})).filter(x=>x.expense!==0).sort((a,b)=>b.expense-a.expense).slice(0,8);$('vendorCostRows').innerHTML=rowsOrEmpty(vendors.map(x=>`<tr><td>${esc(x.name)}</td><td class="num">${money(x.expense)}</td><td class="num pending">${money(x.expense)}</td></tr>`),3);$('pendingRows').innerHTML=rowsOrEmpty(vendors.slice(0,10).map(x=>`<tr><td>${esc(x.name)}</td><td class="num">${money(x.expense)}</td><td class="num">—</td><td class="num"><span class="status-pill">Pending</span></td></tr>`),4);lastData={currency,revenue,expense,net,pending,brands:br,vendors}}
+async function load(){const root=$('mainExec');root.classList.add('main-exec-loading');try{const t=fmt(new Date());const [overview,accounting,settlement,todayAccounting,todaySettlement]=await Promise.all([api('/admin/main/overview'+qs()),api('/admin/main/reports/accounting'+qs()),api('/admin/main/reports/provider-settlement'+qs()),api('/admin/main/reports/accounting'+qs(t,t)),api('/admin/main/reports/provider-settlement'+qs(t,t))]);render({overview,accounting,settlement,todayAccounting,todaySettlement})}catch(e){console.error(e);$('brandProfitRows').innerHTML=`<tr><td colspan="3" class="text-danger">${esc(e.message)}</td></tr>`}finally{root.classList.remove('main-exec-loading')}}
+function exportCsv(){if(!lastData)return;const q=s=>'"'+String(s??'').replace(/"/g,'""')+'"',r=[];r.push(['Financial Overview',$('mainFrom').value,$('mainTo').value]);r.push(['Currency',lastData.currency]);r.push(['Total Revenue (GGR)',lastData.revenue]);r.push(['Total Expense',lastData.expense]);r.push(['Net Profit (Total)',lastData.net]);r.push(['Pending Payout',lastData.pending]);r.push([]);r.push(['Brand','Revenue','Net Profit']);lastData.brands.forEach(x=>r.push([x.name,x.revenue,x.net]));r.push([]);r.push(['Vendor','Expense','Pending Payout']);lastData.vendors.forEach(x=>r.push([x.name,x.expense,x.expense]));const blob=new Blob([r.map(a=>a.map(q).join(',')).join('\n')],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`financial-overview-${$('mainFrom').value}-${$('mainTo').value}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+
+const pickerState={view:new Date(),mode:'days',yearPageStart:new Date().getFullYear()-5};
+function startOfWeek(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-x.getDay());return x}function endOfWeek(d){const x=startOfWeek(d);x.setDate(x.getDate()+6);return x}
+function presetRange(key){const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());let a=new Date(today),b=new Date(today);if(key==='yesterday'){a.setDate(a.getDate()-1);b=new Date(a)}if(key==='thisWeek'){a=startOfWeek(today);b=endOfWeek(today)}if(key==='lastWeek'){a=startOfWeek(today);a.setDate(a.getDate()-7);b=new Date(a);b.setDate(b.getDate()+6)}if(key==='thisMonth'){a=new Date(today.getFullYear(),today.getMonth(),1);b=new Date(today.getFullYear(),today.getMonth()+1,0)}if(key==='lastMonth'){a=new Date(today.getFullYear(),today.getMonth()-1,1);b=new Date(today.getFullYear(),today.getMonth(),0)}if(key==='thisYear'){a=new Date(today.getFullYear(),0,1);b=new Date(today.getFullYear(),11,31)}if(key==='lastYear'){a=new Date(today.getFullYear()-1,0,1);b=new Date(today.getFullYear()-1,11,31)}return[fmt(a),fmt(b)]}
+function markPreset(name){document.querySelectorAll('.main-exec-actions [data-range-preset]').forEach(b=>b.classList.remove('active'));if(name){const b=document.querySelector(`.main-exec-actions [data-range-preset="${name}"]`);if(b)b.classList.add('active')}}
+function updateDateLabel(){const f=$('mainFrom').value||'',t=$('mainTo').value||'';$('mainDateLabel').textContent=f&&t?`${dmy(f)} - ${dmy(t)}`:f?`${dmy(f)} - Select end date`:'Select date range'}
+function renderCalendar(){const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],monthBtn=$('mainCalMonth'),yearBtn=$('mainCalYear'),monthGrid=$('mainCalMonthGrid'),yearGrid=$('mainCalYearGrid'),dayView=$('mainCalDayView'),days=$('mainCalDays');if(!monthBtn||!yearBtn||!monthGrid||!yearGrid||!dayView||!days)return;monthBtn.innerHTML=months[pickerState.view.getMonth()]+' <i class="bi bi-chevron-down"></i>';yearBtn.innerHTML=pickerState.view.getFullYear()+' <i class="bi bi-chevron-down"></i>';monthGrid.innerHTML=months.map((m,i)=>`<button type="button" data-main-month="${i}" class="${i===pickerState.view.getMonth()?'active':''}">${m}</button>`).join('');yearGrid.innerHTML=Array.from({length:12},(_,i)=>pickerState.yearPageStart+i).map(y=>`<button type="button" data-main-year="${y}" class="${y===pickerState.view.getFullYear()?'active':''}">${y}</button>`).join('');monthGrid.classList.toggle('show',pickerState.mode==='months');yearGrid.classList.toggle('show',pickerState.mode==='years');dayView.classList.toggle('hide',pickerState.mode!=='days');const y=pickerState.view.getFullYear(),m=pickerState.view.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),start=first.getDay(),total=last.getDate(),from=$('mainFrom').value||'',to=$('mainTo').value||'';let html='',prevLast=new Date(y,m,0).getDate();for(let i=0;i<start;i++)html+=`<button type="button" class="muted" disabled>${prevLast-start+i+1}</button>`;for(let d=1;d<=total;d++){const val=fmt(new Date(y,m,d)),inRange=from&&to&&val>=from&&val<=to,isEdge=val===from||val===to;html+=`<button type="button" data-main-day="${val}" class="${inRange?'in-range':''} ${isEdge?'selected':''}">${d}</button>`}const cells=start+total;for(let i=1;i<=42-cells;i++)html+=`<button type="button" class="muted" disabled>${i}</button>`;days.innerHTML=html}
+function setRange(from,to,preset='',reload=true){$('mainFrom').value=from||'';$('mainTo').value=to||'';markPreset(preset);updateDateLabel();renderCalendar();if(reload&&from&&to)load()}
+function initDatePicker(){const trigger=$('mainDateTrigger'),picker=$('mainRangePicker');if(!trigger||!picker)return;const [a,b]=presetRange('lastMonth');pickerState.view=new Date(a+'T00:00:00');setRange(a,b,'lastMonth',false);trigger.addEventListener('click',e=>{e.stopPropagation();picker.classList.toggle('show');pickerState.mode='days';renderCalendar()});document.addEventListener('click',e=>{if(!e.target.closest('.main-exec-date-field'))picker.classList.remove('show')});document.querySelectorAll('.main-exec-actions [data-range-preset]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();const key=btn.dataset.rangePreset,[x,y]=presetRange(key);pickerState.view=new Date(x+'T00:00:00');setRange(x,y,key,true);picker.classList.remove('show')}));$('mainCalPrev').addEventListener('click',e=>{e.stopPropagation();if(pickerState.mode==='years')pickerState.yearPageStart-=12;else pickerState.view.setMonth(pickerState.view.getMonth()-1);renderCalendar()});$('mainCalNext').addEventListener('click',e=>{e.stopPropagation();if(pickerState.mode==='years')pickerState.yearPageStart+=12;else pickerState.view.setMonth(pickerState.view.getMonth()+1);renderCalendar()});$('mainCalMonth').addEventListener('click',e=>{e.stopPropagation();pickerState.mode=pickerState.mode==='months'?'days':'months';renderCalendar()});$('mainCalYear').addEventListener('click',e=>{e.stopPropagation();pickerState.yearPageStart=pickerState.view.getFullYear()-5;pickerState.mode=pickerState.mode==='years'?'days':'years';renderCalendar()});$('mainCalMonthGrid').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-main-month]');if(!b)return;pickerState.view.setMonth(Number(b.dataset.mainMonth));pickerState.mode='days';renderCalendar()});$('mainCalYearGrid').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-main-year]');if(!b)return;pickerState.view.setFullYear(Number(b.dataset.mainYear));pickerState.mode='months';renderCalendar()});$('mainCalDays').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-main-day]');if(!b)return;const val=b.dataset.mainDay,f=$('mainFrom'),t=$('mainTo');if(!f.value||(f.value&&t.value)||val<f.value){f.value=val;t.value='';markPreset('');updateDateLabel();renderCalendar();picker.classList.add('show');return}t.value=val;markPreset('');updateDateLabel();renderCalendar();picker.classList.remove('show');load()})}
+BO_AUTH.requireLogin();initDatePicker();$('mainExport').addEventListener('click',exportCsv);load();
 })();
