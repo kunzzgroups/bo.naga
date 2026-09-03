@@ -75,6 +75,13 @@
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
     });
   }
+  function displayMenuTitle(title){
+    const cleaned = String(title || '')
+      .replace(/^\s*\d+[\.\)]\s*/, '')
+      .replace(/\bBussiness\b/gi, 'Business')
+      .trim();
+    return cleaned || String(title || 'Menu');
+  }
   function pageName(){
     return (location.pathname || '').split('/').pop() || 'index.html';
   }
@@ -182,7 +189,7 @@
     const active = sidebarActivePage() === (m.url || '').split('/').pop();
     const cls = (isSub ? 'report-sub ' : '') + (active ? 'active' : '');
     return '<a href="' + href + '" class="' + cls.trim() + '" data-menu-key="' + esc(m.menuKey) + '">' +
-      '<span><i class="bi ' + esc(m.icon || 'bi-circle') + ' me-2"></i>' + esc(m.title) + '</span></a>';
+      '<span><i class="bi ' + esc(m.icon || 'bi-circle') + ' me-2"></i>' + esc(displayMenuTitle(m.title)) + '</span></a>';
   }
 
   window.BO_AUTH = {
@@ -426,7 +433,7 @@
         const isOpen = items.some(m => activePage === (m.url || '').split('/').pop());
         html += '<div class="nav-group ' + (isOpen ? 'open' : '') + '" data-menu-group="' + esc(key) + '">' +
           '<button type="button" class="nav-group-btn" aria-expanded="' + (isOpen ? 'true' : 'false') + '">' +
-          '<span><i class="bi ' + esc(meta.icon) + ' me-2"></i>' + esc(meta.title) + '</span><i class="bi bi-chevron-down"></i></button>' +
+          '<span><i class="bi ' + esc(meta.icon) + ' me-2"></i>' + esc(displayMenuTitle(meta.title)) + '</span><i class="bi bi-chevron-down"></i></button>' +
           '<div class="nav-group-list ' + (isOpen ? 'show' : '') + '">' + items.map(m => menuLinkHtml(m, true)).join('') + '</div></div>';
       });
       nav.innerHTML = html;

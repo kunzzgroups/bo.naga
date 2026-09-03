@@ -9,7 +9,7 @@ Locked theme for this product. Do not invent alternate palettes.
 **Theme name:** Deep Navy Cyan
 **Foundation:** Cool navy + cyan accent
 **Depth:** Light = soft card shadow + 1px border · Dark = borders / surface lift only (no heavy shadows)
-**Signature:** Always-navy sidebar (`#123B66`) + cyan active nav (`#21A6D7`), profit KPI row leading every executive view
+**Signature:** Light sidebar `#072647` · Dark sidebar `#08131F` (matches canvas) + cyan active nav (`#21A6D7`), Overview head + profit KPI row leading every executive view
 
 ## Intent
 
@@ -33,7 +33,7 @@ Locked theme for this product. Do not invent alternate palettes.
 
 | Token | Hex | Role |
 |-------|-----|------|
-| `--bo-navy` | `#123B66` | Sidebar, brand, primary text emphasis |
+| `--bo-navy` | `#123B66` | Brand, primary text emphasis |
 | `--bo-cyan` | `#21A6D7` | Active nav, links, primary CTA, focus ring |
 | `--bo-success` | `#12B76A` | Positive deltas (`+100% vs last period`) |
 | `--bo-danger` | `#EF3340` | Errors, logout emphasis, destructive |
@@ -48,7 +48,7 @@ Locked theme for this product. Do not invent alternate palettes.
 | `--bo-text` | `#11203A` | Primary text / KPI values |
 | `--bo-text-secondary` | `#1C2942` | Section titles, labels |
 | `--bo-muted` | `#657187` | Meta, currency suffix, captions |
-| `--bo-sidebar-bg` | `#123B66` | Sidebar (always navy) |
+| `--bo-sidebar-bg` | `#072647` | Sidebar |
 | `--bo-sidebar-text` | `#FFFFFF` | Sidebar labels |
 | `--bo-sidebar-active` | `#21A6D7` | Active menu highlight |
 
@@ -62,7 +62,7 @@ Locked theme for this product. Do not invent alternate palettes.
 | `--bo-text` | `#F5F8FB` | Primary text |
 | `--bo-text-secondary` | `#D0D7E2` | Titles / secondary |
 | `--bo-muted` | `#8A95A8` | Captions / meta |
-| `--bo-sidebar-bg` | `#123B66` | Sidebar (same brand navy) |
+| `--bo-sidebar-bg` | `#08131F` | Sidebar (matches canvas / dark mock) |
 | `--bo-sidebar-text` | `#FFFFFF` | Sidebar labels |
 | `--bo-sidebar-active` | `#21A6D7` | Active menu highlight |
 
@@ -70,32 +70,33 @@ Locked theme for this product. Do not invent alternate palettes.
 
 | Series | Hex | Notes |
 |--------|-----|-------|
-| Merchant Profit | `#1688F8` | Solid line |
+| Merchant Profit | `#1688F8` | Dashed line |
 | Game Profit | `#8248E9` | Solid line |
-| Net Profit | `#16B45D` | Dashed line preferred |
+| Net Profit | `#16B45D` | Solid line + soft area fill |
 
 ### Spacing
 
 Base: `4px`  
 Scale: `4, 8, 10, 12, 14, 16, 18, 20, 24, 32`  
-Page padding (exec): `16px 20px` desktop · tighten on short viewports
+Page padding (exec): `20px 24px` desktop · tighten on short viewports
 
 ### Radius
 
 | Use | Value |
 |-----|-------|
 | Inputs / date trigger | `10–11px` |
-| Cards (KPI / trend) | `14px` |
+| Cards (KPI / trend) | `16px` |
 | Nav active pill | `10–12px` |
-| Icon wells | `50%` (circle) or `10px` |
+| Icon wells | `12px` square (Overview KPI) |
 
 ### Typography
 
 - **UI / labels:** system stack OK for density; prefer weight + color for hierarchy over size jumps
-- **KPI value:** ~`29px` / `800` / tight tracking / `tabular-nums`
-- **KPI label:** ~`14px` / `800`
-- **Section title:** ~`15px` / `800`
-- **Meta / caption:** `11–12px` / `400–600` / muted
+- **Overview title:** ~`28px` / `800`
+- **KPI value:** ~`26px` / `800` / tight tracking / `tabular-nums`
+- **KPI label:** ~`11px` / `700` / uppercase / tracked
+- **Section title:** ~`16px` / `800`
+- **Meta / caption / delta:** `11–12px` / `500–650` / muted
 - Ratio: ~`1.25` from 14px body
 
 ### Depth
@@ -109,10 +110,12 @@ Page padding (exec): `16px 20px` desktop · tighten on short viewports
 
 ## Layout
 
-- **Shell:** Left sidebar + topbar (hamburger, date range, user) + main
+- **Shell:** Left sidebar + topbar (hamburger, theme, user) + main
+- **Overview head:** Title + subtitle left; date range trigger right on the same row (never inside a KPI card)
+- **No Mix bar:** Do not show Merchant/Game share mix under KPIs
 - **Sidebar width:** Content-serving rail (~240–280px); mini-rail supported
-- **Executive dashboard focal point:** Profit KPI row (3 equal cards), then Trend Chart full width
-- **First viewport:** Brand/sidebar + date range + KPIs + chart only — no promo clutter
+- **Executive dashboard focal point:** Overview → 3 KPI cards → Profit Trend
+- **First viewport:** Brand/sidebar + Overview head + KPIs + chart only — no promo clutter
 
 ---
 
@@ -120,27 +123,29 @@ Page padding (exec): `16px 20px` desktop · tighten on short viewports
 
 ### Sidebar nav
 
-- Background: always `--bo-navy` `#123B66`
+- Background: light `--bo-sidebar-bg` `#072647` · dark `#08131F`
 - Item: white/muted text; active = cyan `#21A6D7` fill or highlight
 - Logout: bottom of sidebar; danger-leaning (red), not cyan
 
 ### Topbar
 
 - Light: surface white / near-bg; Dark: surface `#102030` or transparent over bg
-- Date range trigger height: `44px`, radius `10px`
-- User chip right-aligned
+- User chip right-aligned; hamburger left
+- Single theme button left of the user chip: sun in light, click to moon (dark), click again to sun
+- Date range lives in the Overview head, not here
 
 ### KPI / profit card
 
-- Padding: `18px 20px` · radius `14px` · gap icon↔copy `16px`
-- Icon well: `48px` circle; tinted bg matching series (merchant blue / game purple / net green)
-- Value + currency suffix; optional green delta vs last period
+- Padding: `18px` · radius `16px` · grid: square icon | copy | sparkline
+- Icon well: `44px` / `12px` radius; tinted bg matching series (merchant blue / game purple / net green)
+- Uppercase label + value + MYR + delta (`+x.xx% vs last N days`) + sparkline
 - Grid: 3 columns desktop → 1 column mobile
 
 ### Trend card
 
 - Same card chrome as KPI
-- Header row: title left + legend centered/right (one row desktop)
+- Header: title + subtitle left; legend right (Merchant dashed / Game + Net solid)
+- Hover tooltip: dark navy popover with date, net, merchant/game breakdown, growth %
 - Chart height ~`360px` desktop; preserve responsive min-heights from `main-dashboard-executive.css`
 
 ### Buttons (align toward BO filters)
@@ -168,11 +173,13 @@ Page padding (exec): `16px 20px` desktop · tighten on short viewports
 | Decision | Rationale | Date |
 |----------|-----------|------|
 | Deep Navy Cyan locked | User-confirmed brand for light + dark | 2026-09-03 |
-| Sidebar always `#123B66` | High contrast in light; continuity in dark | 2026-09-03 |
+| Light sidebar `#072647` · Dark sidebar `#08131F` | Dark rail matches reference mock / canvas | 2026-09-03 |
 | Dark cards `#102030` on `#08131F` | Elevation without heavy shadows | 2026-09-03 |
 | Cyan `#21A6D7` for active/CTA | Distinct from navy chrome; readable on navy | 2026-09-03 |
 | interface-design as primary skill | Dashboard/admin craft + system memory | 2026-09-03 |
 | frontend-design as secondary | Anti-slop polish only; must not override tokens | 2026-09-03 |
+| Overview mock layout locked | Title+date head, square KPI icons, deltas, no Mix | 2026-09-03 |
+| Chart: Merchant dashed · Net solid+fill | Matches Overview reference | 2026-09-03 |
 
 ## Agent rules
 
