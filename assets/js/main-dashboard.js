@@ -55,6 +55,33 @@
     const a = String(v || '').split('-');
     return a.length === 3 ? `${a[2]}/${a[1]}` : v;
   }
+  function dayOfMonth(v) {
+    const a = String(v || '').split('-');
+    return a.length === 3 ? String(Number(a[2])) : v;
+  }
+  function dayMonthShort(v) {
+    const a = String(v || '').split('-');
+    return a.length === 3 ? `${Number(a[2])}/${Number(a[1])}` : v;
+  }
+  function monthYearLabel(v) {
+    const d = parseYmd(v);
+    if (!d) return v || '';
+    return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+  }
+  function isSameMonthRange(from, to) {
+    const a = parseYmd(from), b = parseYmd(to);
+    if (!a || !b) return false;
+    return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth();
+  }
+  function chartAxisMode(from, to) {
+    if (!from || !to) return 'month';
+    if (isSameMonthRange(from, to)) return 'day';
+    const days = inclusiveDays(from, to);
+    // 一个月以上、两个月以内：隔日 1/7 3/7 …
+    if (days > 31 && days <= 62) return 'odd-dm';
+    // 两个月以上：按月 Mar 2026 / Apr 2026
+    return 'month';
+  }
   function niceStep(span) {
     if (span <= 0) return 1;
     const raw = span / 5, p = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / p;
@@ -74,6 +101,14 @@
     if (Math.abs(pct) < 0.05) return { pct: 0, dir: 'flat' };
     return { pct, dir: pct > 0 ? 'up' : 'down' };
   }
+  function formatPct(pct) {
+    const n = Number(pct || 0);
+    const sign = n > 0 ? '+' : '';
+    const a = Math.abs(n);
+    if (a >= 999.95) return `${n < 0 ? '-' : '+'}999%+`;
+    if (a >= 100) return `${sign}${n.toFixed(0)}%`;
+    return `${sign}${n.toFixed(2)}%`;
+  }
 
   function accumulate(rows) {
     let cm = 0, cg = 0;
@@ -84,6 +119,20 @@
     });
   }
 
+  function aggregateByMonth(rows) {
+    const bucket = new Map();
+    (rows || []).forEach(r => {
+      const d = parseYmd(r.date);
+      if (!d) return;
+      const key = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}`;
+      const cur = bucket.get(key) || { date: `${key}-01`, merchantProfit: 0, gameProfit: 0 };
+      cur.merchantProfit += Number(r.merchantProfit || 0);
+      cur.gameProfit += Number(r.gameProfit || 0);
+      bucket.set(key, cur);
+    });
+    return Array.from(bucket.values());
+  }
+
   function seriesActive(rows, key) {
     return (rows || []).some(r => !nearZero(r[key]));
   }
@@ -91,13 +140,15 @@
   function sparkline(el, values, color) {
     if (!el) return;
     if (!values || values.length < 2) { el.innerHTML = ''; return; }
-    const w = 108, h = 48, p = 2;
+    const w = 112, h = 44, p = 2;
     let min = Math.min(0, ...values), max = Math.max(0, ...values);
     if (min === max) { min -= 1; max += 1; }
     const x = i => p + i * (w - p * 2) / (values.length - 1);
     const y = v => p + (max - v) / (max - min) * (h - p * 2);
-    const d = values.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
-    el.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><path d="${d}" stroke="${color}" /></svg>`;
+    const line = values.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+    const z = y(0);
+    const fill = `${line} L${x(values.length - 1).toFixed(1)},${z.toFixed(1)} L${x(0).toFixed(1)},${z.toFixed(1)} Z`;
+    el.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><path class="spark-fill" d="${fill}" fill="${color}"/><path class="spark-line" d="${line}" stroke="${color}"/></svg>`;
   }
 
   function setKpi(id, value, cardSel) {
@@ -114,23 +165,36 @@
     const el = $(id);
     if (!el) return;
     const { pct, dir } = pctChange(curr, prev);
-    const sign = pct > 0 ? '+' : '';
     const dayLabel = days === 1 ? '1 day' : `${days} days`;
     el.classList.remove('is-up', 'is-down', 'is-flat');
     el.classList.add(dir === 'up' ? 'is-up' : dir === 'down' ? 'is-down' : 'is-flat');
-    el.textContent = `${sign}${pct.toFixed(2)}% vs last ${dayLabel}`;
+    el.innerHTML = `<span class="profit-delta-dot" aria-hidden="true"></span><span class="profit-delta-pct">${formatPct(pct)}</span><span class="profit-delta-meta">vs last ${dayLabel}</span>`;
   }
 
-  function bindChartHover(root, rows, map, periodGrowth) {
+  function bindChartHover(root, rows, map, periodGrowth, active) {
     const tip = root.querySelector('.trend-tip');
     const hover = root.querySelector('.trend-hover-line');
     const svg = root.querySelector('.trend-svg');
+    const dots = {
+      merchant: root.querySelector('.trend-dot.merchant'),
+      game: root.querySelector('.trend-dot.game'),
+      net: root.querySelector('.trend-dot.net')
+    };
     if (!tip || !hover || !svg || !rows.length) return;
 
-    const hit = (clientX) => {
+    const hit = (clientX, clientY) => {
       const rect = svg.getBoundingClientRect();
-      if (!rect.width) return null;
-      const ratio = (clientX - rect.left) / rect.width;
+      if (!rect.width || !rect.height) return null;
+      const svgX = ((clientX - rect.left) / rect.width) * map.W;
+      const svgY = ((clientY - rect.top) / rect.height) * map.H;
+      const left = map.L;
+      const right = map.W - map.R;
+      const top = map.T;
+      const bottom = map.H - map.B;
+      if (svgX < left || svgX > right) return null;
+      if (svgY < top - 6 || svgY > bottom + 10) return null;
+      if (rows.length === 1) return 0;
+      const ratio = (svgX - left) / (right - left);
       return Math.max(0, Math.min(rows.length - 1, Math.round(ratio * (rows.length - 1))));
     };
 
@@ -139,33 +203,65 @@
       const m = Number(r.merchantProfit || 0);
       const g = Number(r.gameProfit || 0);
       const n = Number(r.netProfit || 0);
-      const { pct, dir } = periodGrowth || pctChange(n, i > 0 ? Number(rows[i - 1].netProfit || 0) : n);
-      const sign = pct > 0 ? '+' : '';
+      const growth = map.labelMode === 'month'
+        ? pctChange(n, i > 0 ? Number(rows[i - 1].netProfit || 0) : 0)
+        : (periodGrowth || pctChange(n, i > 0 ? Number(rows[i - 1].netProfit || 0) : n));
+      const { pct, dir } = growth;
       const growthColor = dir === 'down' ? '#FF8A8A' : '#5EE29A';
+      const tipDate = map.labelMode === 'month' ? monthYearLabel(r.date) : niceDate(r.date);
       tip.innerHTML = `
-        <div class="tip-date">${niceDate(r.date)}</div>
+        <div class="tip-date">${tipDate}</div>
         <div class="tip-net" style="color:${n < 0 ? '#FF8A8A' : '#5EE29A'}">${n >= 0 ? '+' : ''}${money(n)} MYR</div>
         <div class="tip-row"><span>Merchant</span><b>${money(m)} MYR</b></div>
         <div class="tip-row"><span>Game</span><b>${money(g)} MYR</b></div>
-        <div class="tip-row" style="margin-top:6px;color:${growthColor}"><span>Growth</span><b>${sign}${pct.toFixed(1)}%</b></div>`;
+        <div class="tip-growth" style="color:${growthColor}"><span>Growth</span><b>${formatPct(pct)}</b></div>`;
       tip.hidden = false;
+      tip.classList.remove('is-below');
       const wrapRect = root.getBoundingClientRect();
-      tip.style.left = `${Math.min(wrapRect.width - 20, Math.max(20, clientX - wrapRect.left))}px`;
-      tip.style.top = `${Math.max(24, clientY - wrapRect.top)}px`;
-      hover.setAttribute('x1', map.x(i));
-      hover.setAttribute('x2', map.x(i));
+      const pad = 10;
+      const localX = clientX - wrapRect.left;
+      const localY = clientY - wrapRect.top;
+      tip.style.left = `${Math.min(wrapRect.width - pad, Math.max(pad, localX))}px`;
+      tip.style.top = '0px';
+      const tipH = tip.offsetHeight || 120;
+      const tipW = tip.offsetWidth || 176;
+      const half = tipW / 2;
+      const clampedX = Math.min(wrapRect.width - half - 4, Math.max(half + 4, localX));
+      tip.style.left = `${clampedX}px`;
+      const aboveTop = localY - tipH - 14;
+      if (aboveTop >= pad) {
+        tip.style.top = `${aboveTop}px`;
+        tip.classList.remove('is-below');
+      } else {
+        tip.style.top = `${Math.min(wrapRect.height - tipH - pad, localY + 18)}px`;
+        tip.classList.add('is-below');
+      }
+      const xi = map.x(i);
+      hover.setAttribute('x1', xi);
+      hover.setAttribute('x2', xi);
       hover.setAttribute('y1', map.T);
       hover.setAttribute('y2', map.H - map.B);
       hover.style.opacity = '1';
+      const place = (dot, on, val) => {
+        if (!dot) return;
+        if (!on) { dot.style.opacity = '0'; return; }
+        dot.setAttribute('cx', xi);
+        dot.setAttribute('cy', map.y(val));
+        dot.style.opacity = '1';
+      };
+      place(dots.merchant, active.m, m);
+      place(dots.game, active.g, g);
+      place(dots.net, active.n, n);
     };
 
     const hide = () => {
       tip.hidden = true;
       hover.style.opacity = '0';
+      Object.values(dots).forEach(d => { if (d) d.style.opacity = '0'; });
     };
 
     root.onmousemove = e => {
-      const i = hit(e.clientX);
+      const i = hit(e.clientX, e.clientY);
       if (i == null) return hide();
       show(i, e.clientX, e.clientY);
     };
@@ -178,7 +274,15 @@
       root.innerHTML = '<div class="exec-empty">No data for selected period.</div>';
       return;
     }
+    const axisMode = chartAxisMode($('mainFrom')?.value, $('mainTo')?.value);
+    const rangeFrom = parseYmd($('mainFrom')?.value);
+    // 两个月以上：按月聚合，不再按天画点
+    if (axisMode === 'month') rows = aggregateByMonth(rows);
     rows = accumulate(rows);
+    if (!rows.length) {
+      root.innerHTML = '<div class="exec-empty">No data for selected period.</div>';
+      return;
+    }
     const showM = seriesActive(rows, 'merchantProfit');
     const showG = seriesActive(rows, 'gameProfit');
     const showN = seriesActive(rows, 'netProfit');
@@ -211,9 +315,34 @@
     };
 
     const every = Math.max(1, Math.ceil(rows.length / 8));
+    const minLabGap = axisMode === 'day' ? 22 : axisMode === 'month' ? 56 : 48;
     let labs = '';
+    let lastLabX = -Infinity;
     rows.forEach((r, i) => {
-      if (i % every === 0 || i === rows.length - 1) labs += `<text class="trend-axis-label" x="${x(i)}" y="${H - 15}" text-anchor="middle">${prettyDate(r.date)}</text>`;
+      const cur = parseYmd(r.date);
+      let showLab = false;
+      let label = '';
+      if (axisMode === 'day') {
+        showLab = true;
+        label = dayOfMonth(r.date);
+      } else if (axisMode === 'odd-dm') {
+        const diff = rangeFrom && cur ? Math.round((cur - rangeFrom) / 86400000) : i;
+        showLab = diff % 2 === 0;
+        label = dayMonthShort(r.date);
+      } else if (axisMode === 'month') {
+        showLab = true;
+        label = monthYearLabel(r.date);
+      } else {
+        showLab = i % every === 0 || i === rows.length - 1;
+        label = prettyDate(r.date);
+      }
+      if (!showLab) return;
+      const xi = x(i);
+      if (axisMode === 'day' && xi - lastLabX < minLabGap && i !== rows.length - 1) return;
+      if (axisMode === 'month' && xi - lastLabX < minLabGap && i !== 0 && i !== rows.length - 1) return;
+      lastLabX = xi;
+      const anchor = axisMode === 'month' && i === 0 ? 'start' : 'middle';
+      labs += `<text class="trend-axis-label${axisMode === 'day' || axisMode === 'odd-dm' ? ' is-day' : ''}${axisMode === 'month' ? ' is-month' : ''}" x="${xi}" y="${H - 15}" text-anchor="${anchor}">${label}</text>`;
     });
 
     const lines = [
@@ -228,8 +357,17 @@
       <svg class="trend-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Merchant profit, game profit and net profit trend">
         ${grid}${lines}${labs}
         <line class="trend-hover-line" x1="0" x2="0" y1="${T}" y2="${H - B}" style="opacity:0"></line>
+        <circle class="trend-dot merchant" r="4.5" cx="0" cy="0"></circle>
+        <circle class="trend-dot game" r="4.5" cx="0" cy="0"></circle>
+        <circle class="trend-dot net" r="5" cx="0" cy="0"></circle>
       </svg>`;
-    bindChartHover(root, rows, { x, T, B, H }, periodGrowth);
+    bindChartHover(
+      root,
+      rows,
+      { x, y, T, B, H, L, R, W, labelMode: axisMode === 'month' ? 'month' : 'day' },
+      periodGrowth,
+      { m: showM, g: showG, n: showN }
+    );
     sparkline($('merchantSpark'), rows.map(r => Number(r.merchantProfit || 0)), '#1688F8');
     sparkline($('gameSpark'), rows.map(r => Number(r.gameProfit || 0)), '#8248E9');
     sparkline($('netSpark'), rows.map(r => Number(r.netProfit || 0)), '#16B45D');
@@ -253,16 +391,36 @@
     const to = $('mainTo').value;
     if (!from || !to) return;
     const prev = previousPeriod(from, to);
+    const days = prev?.days || inclusiveDays(from, to);
     root.classList.add('main-exec-loading');
     try {
-      const [curr, prevData] = await Promise.all([
-        api('/admin/main/merchant-profit/dashboard' + qs(from, to)),
-        prev ? api('/admin/main/merchant-profit/dashboard' + qs(prev.from, prev.to)).catch(() => null) : Promise.resolve(null)
-      ]);
-      render(curr, prevData?.summary || {}, prev?.days || inclusiveDays(from, to));
+      // 先拉当前区间，保证 KPI / 图表能出来；环比单独请求，失败不影响主数据
+      const curr = await api('/admin/main/merchant-profit/dashboard' + qs(from, to));
+      let prevSummary = {};
+      if (prev) {
+        try {
+          const prevData = await api('/admin/main/merchant-profit/dashboard' + qs(prev.from, prev.to));
+          prevSummary = prevData?.summary || {};
+        } catch (_) { /* keep empty previous summary */ }
+      }
+      render(curr, prevSummary, days);
     } catch (e) {
       console.error(e);
-      $('profitTrend').innerHTML = `<div class="exec-empty text-danger">${String(e.message || 'Unable to load dashboard')}</div>`;
+      setKpi('merchantProfit', 0, '.merchant-card');
+      setKpi('gameProfit', 0, '.game-card');
+      setKpi('netProfit', 0, '.net-card');
+      setDelta('merchantDelta', 0, 0, days);
+      setDelta('gameDelta', 0, 0, days);
+      setDelta('netDelta', 0, 0, days);
+      ['merchantSpark', 'gameSpark', 'netSpark'].forEach(id => {
+        const el = $(id);
+        if (el) el.innerHTML = '';
+      });
+      const msg = String(e && e.message || '');
+      const friendly = /failed to fetch|networkerror|load failed/i.test(msg)
+        ? 'Unable to reach server. Check network and try again.'
+        : (msg || 'Unable to load dashboard');
+      $('profitTrend').innerHTML = `<div class="exec-empty text-danger">${friendly}</div>`;
     } finally {
       root.classList.remove('main-exec-loading');
     }

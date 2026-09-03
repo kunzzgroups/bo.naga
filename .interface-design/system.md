@@ -136,10 +136,12 @@ Page padding (exec): `20px 24px` desktop · tighten on short viewports
 
 ### KPI / profit card
 
-- Padding: `18px` · radius `16px` · grid: square icon | copy | sparkline
-- Icon well: `44px` / `12px` radius; tinted bg matching series (merchant blue / game purple / net green)
-- Uppercase label + value + MYR + delta (`+x.xx% vs last N days`) + sparkline
+- Padding: `20px 22px 16px` · radius `16px` · min-height ~`148px`
+- Layout: one row `[icon | label+value | sparkline]` · hairline rule · delta footer
+- Label stacked above value beside the icon; sparkline right-aligned in the same band
+- Series-colored icon wells and delta dots; up/down pct uses success/danger, flat uses secondary text
 - Grid: 3 columns desktop → 1 column mobile
+- Subtle rise animation on load; hover lifts card
 
 ### Trend card
 
@@ -180,6 +182,7 @@ Page padding (exec): `20px 24px` desktop · tighten on short viewports
 | frontend-design as secondary | Anti-slop polish only; must not override tokens | 2026-09-03 |
 | Overview mock layout locked | Title+date head, square KPI icons, deltas, no Mix | 2026-09-03 |
 | Chart: Merchant dashed · Net solid+fill | Matches Overview reference | 2026-09-03 |
+| KPI stacked layout + series hairline | frontend-design polish within tokens | 2026-09-03 |
 
 ## Agent rules
 

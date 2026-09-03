@@ -9,7 +9,7 @@
 <link href="assets/css/reports.css?v=1.0.43" rel="stylesheet">
 <link href="assets/css/bo-ui-standard.css?v=1.0.3" rel="stylesheet">
 <link href="assets/css/brand-agent-standard.css?v=1.0.2" rel="stylesheet">
-<link href="assets/css/main-dashboard-executive.css?v=2.3.1" rel="stylesheet">
+<link href="assets/css/main-dashboard-executive.css?v=2.5.4" rel="stylesheet">
 <script>
 (function(){
   try{
@@ -86,31 +86,40 @@
       </div>
       <div class="profit-kpis">
         <a class="profit-card merchant-card" href="merchant-profit.html">
-          <span class="profit-icon merchant"><i class="bi bi-shop-window"></i></span>
-          <div class="profit-copy">
-            <div class="profit-label">Merchant Profit</div>
-            <div class="profit-value"><span id="merchantProfit">0.00</span> <small class="currency-unit">MYR</small></div>
-            <div class="profit-delta" id="merchantDelta">—</div>
+          <div class="profit-main">
+            <span class="profit-icon merchant"><i class="bi bi-shop-window"></i></span>
+            <div class="profit-copy">
+              <div class="profit-label">Merchant Profit</div>
+              <div class="profit-value"><span id="merchantProfit">0.00</span> <small class="currency-unit">MYR</small></div>
+            </div>
+            <div class="profit-spark" id="merchantSpark" aria-hidden="true"></div>
           </div>
-          <div class="profit-spark" id="merchantSpark" aria-hidden="true"></div>
+          <div class="profit-rule" aria-hidden="true"></div>
+          <div class="profit-delta" id="merchantDelta">—</div>
         </a>
         <div class="profit-card game-card">
-          <span class="profit-icon game"><i class="bi bi-database"></i></span>
-          <div class="profit-copy">
-            <div class="profit-label">Game Profit</div>
-            <div class="profit-value"><span id="gameProfit">0.00</span> <small class="currency-unit">MYR</small></div>
-            <div class="profit-delta" id="gameDelta">—</div>
+          <div class="profit-main">
+            <span class="profit-icon game"><i class="bi bi-database"></i></span>
+            <div class="profit-copy">
+              <div class="profit-label">Game Profit</div>
+              <div class="profit-value"><span id="gameProfit">0.00</span> <small class="currency-unit">MYR</small></div>
+            </div>
+            <div class="profit-spark" id="gameSpark" aria-hidden="true"></div>
           </div>
-          <div class="profit-spark" id="gameSpark" aria-hidden="true"></div>
+          <div class="profit-rule" aria-hidden="true"></div>
+          <div class="profit-delta" id="gameDelta">—</div>
         </div>
         <div class="profit-card net-card">
-          <span class="profit-icon net"><i class="bi bi-graph-up-arrow"></i></span>
-          <div class="profit-copy">
-            <div class="profit-label">Net Profit</div>
-            <div class="profit-value"><span id="netProfit">0.00</span> <small class="currency-unit">MYR</small></div>
-            <div class="profit-delta" id="netDelta">—</div>
+          <div class="profit-main">
+            <span class="profit-icon net"><i class="bi bi-graph-up-arrow"></i></span>
+            <div class="profit-copy">
+              <div class="profit-label">Net Profit</div>
+              <div class="profit-value"><span id="netProfit">0.00</span> <small class="currency-unit">MYR</small></div>
+            </div>
+            <div class="profit-spark" id="netSpark" aria-hidden="true"></div>
           </div>
-          <div class="profit-spark" id="netSpark" aria-hidden="true"></div>
+          <div class="profit-rule" aria-hidden="true"></div>
+          <div class="profit-delta" id="netDelta">—</div>
         </div>
       </div>
       <div class="trend-card">
@@ -136,7 +145,7 @@
 <script src="assets/js/reports.js?v=1.0.17"></script>
 <script src="assets/js/auth.js?v=1.0.51"></script>
 <script src="assets/js/bo-date-range.js?v=1.0.15"></script>
-<script src="assets/js/main-dashboard.js?v=2.4.1"></script>
+<script src="assets/js/main-dashboard.js?v=2.6.3"></script>
 <script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
 </body>
 </html>
