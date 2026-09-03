@@ -196,14 +196,12 @@
     requireLogin: function(){ if(!this.token() && !location.pathname.endsWith('/login.html')) window.location.href = 'login.html'; },
     allowedMenus: function(user){
       user = user || this.user();
-      const isRoot = !!(user && (user.rootAdmin === true || String(user.roleType || '').toUpperCase() === 'ROOT'));
-      const rootOnlyMenus = new Set(['menu_management','root_control']);
+      // ROOT Menu Management + Role/Menu Permission are authoritative.
+      // Do not hide a menu here based on role type after ROOT explicitly assigned it.
       return (Array.isArray(user && user.menus) ? user.menus : [])
         .map(normalizeMenu)
         .filter(function(m){
-          if(!(m.status === 1 && m.url && m.url !== '#' && m.menuKey !== 'menu_permission')) return false;
-          if(!isRoot && rootOnlyMenus.has(String(m.menuKey || '').toLowerCase())) return false;
-          return true;
+          return m.status === 1 && m.url && m.url !== '#' && m.menuKey !== 'menu_permission';
         })
         .sort(function(a,b){ return a.sortOrder - b.sortOrder || a.title.localeCompare(b.title); });
     },
@@ -393,9 +391,9 @@
         });
       }
 
-      const isRootSidebar = !!(user && (user.rootAdmin === true || String(user.roleType || '').toUpperCase() === 'ROOT'));
-      const rootOnlySidebarMenus = new Set(['menu_management','root_control']);
-      menus = menus.map(normalizeMenu).filter(m => m.status === 1 && m.url && m.url !== '#' && m.menuKey !== 'menu_permission' && (isRootSidebar || !rootOnlySidebarMenus.has(String(m.menuKey || '').toLowerCase())))
+      // The assigned menu list returned by /auth/admin/me is the sidebar source of truth.
+      // Do not apply a second ROOT-only deny-list in the frontend.
+      menus = menus.map(normalizeMenu).filter(m => m.status === 1 && m.url && m.url !== '#' && m.menuKey !== 'menu_permission')
         .map(m => m.menuKey === 'role' ? Object.assign({}, m, {title:'Role & Menu Permission'}) : m)
         .sort((a,b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
 
