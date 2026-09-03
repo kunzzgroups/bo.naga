@@ -471,6 +471,23 @@
         });
       }
       const sidebarFlyoutHoverTimers = new WeakMap();
+      function dismissSidebarFlyout(group){
+        if(!group) return;
+        const timer = sidebarFlyoutHoverTimers.get(group);
+        if(timer) clearTimeout(timer);
+        sidebarFlyoutHoverTimers.delete(group);
+        group.classList.add('bo-flyout-instant-hide');
+        group.classList.remove('bo-flyout-hover');
+        void group.offsetWidth;
+        requestAnimationFrame(function(){ group.classList.remove('bo-flyout-instant-hide'); });
+        if(window.__boSidebarActiveFlyout === group) window.__boSidebarActiveFlyout = null;
+      }
+      function closeAllSidebarFlyouts(){
+        document.querySelectorAll('.report-sidebar .nav-group.bo-flyout-hover').forEach(dismissSidebarFlyout);
+        window.__boSidebarActiveFlyout = null;
+      }
+      window.BO_SIDEBAR = window.BO_SIDEBAR || {};
+      window.BO_SIDEBAR.closeAllFlyouts = closeAllSidebarFlyouts;
       function closeSidebarFlyoutImmediately(group){
         if(!group) return;
         const timer = sidebarFlyoutHoverTimers.get(group);
@@ -485,6 +502,7 @@
         // Force the hidden state now, then release the helper class next frame.
         void group.offsetWidth;
         requestAnimationFrame(function(){ group.classList.remove('bo-flyout-instant-hide'); });
+        if(window.__boSidebarActiveFlyout === group) window.__boSidebarActiveFlyout = null;
       }
       function openSidebarFlyoutOnHover(group){
         if(!group || window.innerWidth < 992 || !group.closest('.report-sidebar')) return;
@@ -513,9 +531,8 @@
           sidebarFlyoutHoverTimers.delete(group);
           const list = group.querySelector('.nav-group-list');
           if(group.matches(':hover') || (list && list.matches(':hover'))) return;
-          group.classList.remove('bo-flyout-hover');
-          if(window.__boSidebarActiveFlyout === group) window.__boSidebarActiveFlyout = null;
-        }, 260);
+          dismissSidebarFlyout(group);
+        }, 120);
         sidebarFlyoutHoverTimers.set(group, timer);
       }
       document.addEventListener('mouseover', function(e){
@@ -530,6 +547,14 @@
         const next = e.relatedTarget;
         if(next && group.contains(next)) return;
         scheduleSidebarFlyoutHoverClose(group);
+      });
+      document.addEventListener('pointerdown', function(e){
+        if(window.innerWidth < 992) return;
+        if(e.target.closest && e.target.closest('.report-sidebar')) return;
+        closeAllSidebarFlyouts();
+      });
+      document.addEventListener('keydown', function(e){
+        if(e.key === 'Escape') closeAllSidebarFlyouts();
       });
       document.addEventListener('click', function(e){
         const btn = e.target.closest && e.target.closest('.nav-group-btn');

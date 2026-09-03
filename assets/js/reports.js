@@ -123,9 +123,12 @@ document.addEventListener('DOMContentLoaded', () => {
       sidebarFlyoutHoverTimers.delete(group);
       const list = group.querySelector('.nav-group-list');
       if (group.matches(':hover') || (list && list.matches(':hover'))) return;
+      group.classList.add('bo-flyout-instant-hide');
       group.classList.remove('bo-flyout-hover');
+      void group.offsetWidth;
+      requestAnimationFrame(() => group.classList.remove('bo-flyout-instant-hide'));
       if (window.__boSidebarActiveFlyout === group) window.__boSidebarActiveFlyout = null;
-    }, 260);
+    }, 120);
     sidebarFlyoutHoverTimers.set(group, timer);
   };
 
@@ -273,6 +276,25 @@ document.addEventListener('DOMContentLoaded', () => {
 // Desktop mini sidebar: click hamburger to collapse/restore, hover rail to slide out.
 (function(){
   function isDesktop(){ return window.matchMedia('(min-width: 992px)').matches; }
+  function clearMiniHoverArtifacts(){
+    var sidebar = document.getElementById('reportSidebar');
+    if(window.BO_SIDEBAR && typeof window.BO_SIDEBAR.closeAllFlyouts === 'function'){
+      window.BO_SIDEBAR.closeAllFlyouts();
+    }
+    if(!sidebar) return;
+    // Force :hover to drop so mini width cannot stick after expand/collapse.
+    sidebar.style.pointerEvents = 'none';
+    sidebar.classList.remove('is-mini-hover');
+    document.querySelectorAll('.report-sidebar .nav-group').forEach(function(group){
+      group.classList.remove('bo-flyout-hover', 'bo-flyout-instant-hide');
+    });
+    if(window.__boSidebarActiveFlyout) window.__boSidebarActiveFlyout = null;
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        sidebar.style.pointerEvents = '';
+      });
+    });
+  }
   document.addEventListener('click', function(e){
     var btn = e.target.closest && e.target.closest('[data-open-sidebar], .hamb');
     if(!btn || !isDesktop()) return;
@@ -284,10 +306,31 @@ document.addEventListener('DOMContentLoaded', () => {
     if(sidebar) sidebar.classList.remove('show');
     if(overlay) overlay.classList.remove('show');
     document.body.classList.remove('sidebar-open');
+    clearMiniHoverArtifacts();
   }, true);
 
+  document.addEventListener('DOMContentLoaded', function(){
+    var sidebar = document.getElementById('reportSidebar');
+    if(!sidebar) return;
+    sidebar.addEventListener('mouseenter', function(){
+      if(!isDesktop() || !document.body.classList.contains('sidebar-mini')) return;
+      sidebar.classList.add('is-mini-hover');
+    });
+    sidebar.addEventListener('mouseleave', function(e){
+      sidebar.classList.remove('is-mini-hover');
+      var next = e.relatedTarget;
+      if(next && sidebar.contains(next)) return;
+      if(window.BO_SIDEBAR && typeof window.BO_SIDEBAR.closeAllFlyouts === 'function'){
+        window.BO_SIDEBAR.closeAllFlyouts();
+      }
+    });
+  });
+
   window.addEventListener('resize', function(){
-    if(!isDesktop()) document.body.classList.remove('sidebar-mini');
+    if(!isDesktop()){
+      document.body.classList.remove('sidebar-mini');
+      clearMiniHoverArtifacts();
+    }
   });
 })();
 

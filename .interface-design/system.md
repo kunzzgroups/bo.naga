@@ -182,7 +182,8 @@ Page padding (exec): `20px 24px` desktop · tighten on short viewports
 | frontend-design as secondary | Anti-slop polish only; must not override tokens | 2026-09-03 |
 | Overview mock layout locked | Title+date head, square KPI icons, deltas, no Mix | 2026-09-03 |
 | Chart: Merchant dashed · Net solid+fill | Matches Overview reference | 2026-09-03 |
-| KPI stacked layout + series hairline | frontend-design polish within tokens | 2026-09-03 |
+| Brands Business page color-aligned | Same Deep Navy Cyan tokens as Overview; legacy `#2563eb` / purple title icon retired on Brands | 2026-09-03 |
+| Brands light/dark via `bo_theme` | Same key + sun/moon toggle as Overview; dark surfaces `#102030` on `#08131F` | 2026-09-03 |
 
 ## Agent rules
 
