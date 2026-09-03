@@ -303,8 +303,6 @@ body.main-dashboard-page{
   font-weight:500;
   color:var(--bo-muted);
   line-height:1.45;
-  max-width:42ch;
-  text-wrap:pretty;
 }
 .main-exec-date-field{
   width:308px;
