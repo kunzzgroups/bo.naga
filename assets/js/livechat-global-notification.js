@@ -48,7 +48,7 @@
         }
       }
     }catch(e){}
-    if(activeBrandId === 1 && activeBrandDomains.indexOf('titanxgaming.com') === -1) activeBrandDomains.push('titanxgaming.com','www.titanxgaming.com');
+    if(activeBrandId === 1 && activeBrandDomains.indexOf('titanx7.com') === -1) activeBrandDomains.push('titanx7.com','www.titanx7.com');
   }
 
   function belongsToActiveBrand(item){

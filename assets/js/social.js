@@ -16,13 +16,13 @@
     var path = String(value).trim();
     if (/^https?:\/\//i.test(path)) return path;
     if (/^(?:\.\/|\.\.\/|\/)?assets\/custom\/images\//i.test(path)) {
-      var customBase = String(API_CONFIG.CUSTOM_ASSET_BASE_URL || 'https://titanxgaming.com/assets/custom/images').replace(/\/$/, '');
+      var customBase = String(API_CONFIG.CUSTOM_ASSET_BASE_URL || 'https://titanx7.com/assets/custom/images').replace(/\/$/, '');
       var filePart = path.replace(/^.*?assets\/custom\/images\//i, '');
       return customBase + '/' + filePart;
     }
     if (/^(?:\.\/|\.\.\/|\/)?assets\//i.test(path)) return path;
 
-    var base = String(API_CONFIG.STATIC_UPLOAD_BASE_URL || 'https://static.titanxgaming.com').replace(/\/$/, '');
+    var base = String(API_CONFIG.STATIC_UPLOAD_BASE_URL || 'https://static.titanx7.com').replace(/\/$/, '');
     if (path.indexOf('/uploads/') === 0) return base + path;
     if (path.indexOf('uploads/') === 0) return base + '/' + path;
     return base + '/uploads/social/' + path.replace(/^\/+/, '');

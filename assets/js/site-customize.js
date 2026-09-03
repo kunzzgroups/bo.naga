@@ -141,8 +141,8 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         url = url.replace(/^\.\.\/naga\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
         url = url.replace(/^\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
         url = url.replace(/^assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
-        if (/^\/assets\/custom\/brands\//i.test(url)) url = 'https://titanxgaming.com' + url;
-        if (/^assets\/custom\/brands\//i.test(url)) url = 'https://titanxgaming.com/' + url;
+        if (/^\/assets\/custom\/brands\//i.test(url)) url = 'https://titanx7.com' + url;
+        if (/^assets\/custom\/brands\//i.test(url)) url = 'https://titanx7.com/' + url;
 
         return url.replace(/([^:])\/\/+/g, '$1/');
     }

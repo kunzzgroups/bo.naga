@@ -6,7 +6,7 @@
     if (!name) return '';
     if (/^https?:\/\//i.test(name)) return name;
 
-    const base = (API_CONFIG.STATIC_UPLOAD_BASE_URL || 'https://static.titanxgaming.com').replace(/\/$/, '');
+    const base = (API_CONFIG.STATIC_UPLOAD_BASE_URL || 'https://static.titanx7.com').replace(/\/$/, '');
     const path = String(name).trim();
 
     // Backend may return full upload path like /uploads/payment/xxx.png or only filename.

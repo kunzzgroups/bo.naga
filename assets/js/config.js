@@ -1,14 +1,14 @@
 const API_CONFIG = window.API_CONFIG || {
     // BASE_URL: "http://localhost:8080/api",
-    BASE_URL: "https://bo.titanxgaming.com/api",
+    BASE_URL: "https://bo.titanx7.com/api",
 
-    CUSTOM_ASSET_BASE_URL: "https://titanxgaming.com/assets/custom/images",
+    CUSTOM_ASSET_BASE_URL: "https://titanx7.com/assets/custom/images",
 
     // Static upload domain for BO preview links/images (QR, payment proof, uploaded media)
-    STATIC_UPLOAD_BASE_URL: "https://static.titanxgaming.com",
+    STATIC_UPLOAD_BASE_URL: "https://static.titanx7.com",
 
     // Change this one value when the public game-image host changes.
-    GAME_IMAGE_PUBLIC_BASE_URL: "https://static.titanxgaming.com/uploads/game",
+    GAME_IMAGE_PUBLIC_BASE_URL: "https://static.titanx7.com/uploads/game",
 
     ENDPOINTS: {
         UPLOAD_IMAGE: "/uploads/image",
