@@ -9,7 +9,7 @@
   function tokenKey(){const t=token();return t?t.slice(-24):'';}
   function activeId(){return Number(localStorage.getItem(KEY)||1)||1;}
   function cachedAdmin(){try{return JSON.parse(localStorage.getItem('bo_admin_user')||'{}')||{};}catch(e){return {};}}
-  function platformAdmin(u){u=u||cachedAdmin();const role=String(u.roleType||'').toUpperCase();return !!(u.rootAdmin||u.masterAdmin||role==='ROOT'||role==='MASTER');}
+  function platformAdmin(u){u=u||cachedAdmin();const role=String(u.roleType||'').toUpperCase();return !!(u.rootAdmin||u.masterAdmin||role==='ROOT'||role==='MASTER'||role==='MAIN');}
   function isMaster(){return platformAdmin(cachedAdmin());}
   function tenantBrandId(u){
     u=u||cachedAdmin();

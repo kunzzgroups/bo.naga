@@ -45,10 +45,15 @@
         // observed by early page scripts during the first paint/refresh.
         try{
           const role=String(user.roleType||'').toUpperCase();
-          const platform=!!(user.rootAdmin||user.masterAdmin||role==='ROOT'||role==='MASTER');
+          const platform=!!(user.rootAdmin||user.masterAdmin||role==='ROOT'||role==='MASTER'||role==='MAIN');
           const brandId=Number(user.brandId||user.adminBrandId||0);
           if(!platform&&Number.isFinite(brandId)&&brandId>0){
             localStorage.setItem('bo_active_brand_id',String(brandId));
+          }else if(platform){
+            // A fresh platform-account login must never inherit another session's tenant.
+            // Root/Master/Main can switch brand later from the authorized control page,
+            // but the original TitanX account always starts on default brand 1.
+            localStorage.setItem('bo_active_brand_id','1');
           }
           sessionStorage.removeItem('bo_brand_context_cache_v3');
           sessionStorage.removeItem('bo_online_users_cache');

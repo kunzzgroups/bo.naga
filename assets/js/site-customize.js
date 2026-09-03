@@ -333,6 +333,13 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     if (!saveBtn || !htmlEditor || !cssEditor || !jsEditor) return;
 
     const API_CUSTOMIZE_SECTION_URL = (NAGA_API_CONFIG.BASE_URL || 'https://bo.corepayx.com/api') + ((NAGA_API_CONFIG.ENDPOINTS && NAGA_API_CONFIG.ENDPOINTS.CUSTOMIZE_SECTION) || '/customize/section');
+
+    function brandScopedHeaders(extra) {
+        const headers = Object.assign({}, (window.BO_AUTH && BO_AUTH.authHeader ? BO_AUTH.authHeader() : {}), extra || {});
+        const id = Number((window.BO_BRAND && BO_BRAND.activeId ? BO_BRAND.activeId() : localStorage.getItem('bo_active_brand_id')) || 1) || 1;
+        headers['X-Brand-Id'] = String(id);
+        return headers;
+    }
     let activeSection = document.querySelector('.layout-section-item.active')?.dataset.section || 'right-panel';
 
     // These are the current Naga site-shell defaults. They are shown in the BO editor
@@ -668,7 +675,10 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     async function loadSection(sectionKey) {
         setStatus('Loading section...', '');
         try {
-            const res = await fetch(API_CUSTOMIZE_SECTION_URL + '?key=' + encodeURIComponent(sectionKey) + '&v=' + Date.now());
+            const res = await fetch(API_CUSTOMIZE_SECTION_URL + '?key=' + encodeURIComponent(sectionKey) + '&v=' + Date.now(), {
+                cache: 'no-store',
+                headers: brandScopedHeaders({ 'Accept': 'application/json' })
+            });
             const json = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(json.message || 'Load failed');
             const sectionData = withSectionDefaults(sectionKey, json.data || {});
@@ -708,7 +718,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         try {
             const res = await fetch(API_CUSTOMIZE_SECTION_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+                headers: brandScopedHeaders({ 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }),
                 body: payload.toString()
             });
             const json = await res.json().catch(() => ({}));
