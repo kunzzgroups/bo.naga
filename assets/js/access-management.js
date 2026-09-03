@@ -14,9 +14,13 @@
   let roleCache=[];
   let editingRoleType='';
   const currentAdmin = (window.BO_AUTH && BO_AUTH.user) ? BO_AUTH.user() : {};
-  const rootAdmin = currentAdmin && (currentAdmin.rootAdmin === true || Number(currentAdmin.rootAdmin) === 1 || String(currentAdmin.roleType||'').toUpperCase()==='ROOT' || (Number(currentAdmin.id)===1 && currentAdmin.brandId==null));
-  const masterAdmin = currentAdmin && !rootAdmin && (currentAdmin.masterAdmin === true || Number(currentAdmin.masterAdmin) === 1 || String(currentAdmin.roleType||'').toUpperCase()==='MASTER');
-  const platformRoleAdmin = currentAdmin && (rootAdmin || masterAdmin || currentAdmin.brandId == null);
+  const currentRoleType = String(currentAdmin?.roleType||'').toUpperCase();
+  const mainAdmin = currentRoleType==='MAIN';
+  // Role type is authoritative here. Do not let legacy/stale boolean flags make a MAIN
+  // account behave like MASTER and expose protected platform roles.
+  const rootAdmin = currentAdmin && !mainAdmin && (currentRoleType==='ROOT' || (Number(currentAdmin.id)===1 && currentAdmin.brandId==null));
+  const masterAdmin = currentAdmin && !mainAdmin && !rootAdmin && currentRoleType==='MASTER';
+  const platformRoleAdmin = currentAdmin && (rootAdmin || masterAdmin || mainAdmin || currentAdmin.brandId == null);
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function msg(el,text,cls){if(el){el.textContent=text||'';el.className='upload-status '+(cls||'');}}
   async function api(url,opt){const res=await fetch(url,opt||{});const j=await res.json().catch(()=>({}));if(!res.ok||j.status==='error')throw new Error(j.message||'Request failed');return j;}
@@ -75,7 +79,7 @@
     editingRoleType=String(role.roleType||'').toUpperCase();
     const systemRole = Number(role.systemRole)===1;
     const roleType = String(role.roleType||'').toUpperCase();
-    const editableSystemRole = systemRole && ((rootAdmin && roleType!=='ROOT') || (masterAdmin && roleType==='BRAND_OWNER'));
+    const editableSystemRole = systemRole && ((rootAdmin && roleType!=='ROOT') || (masterAdmin && roleType==='BRAND_OWNER') || (mainAdmin && (roleType==='MASTER' || roleType==='MAIN')));
     if(systemRole && !editableSystemRole){msg(roleStatusEl,'This system role is protected.','error');return;}
     resetModal();document.getElementById('roleEditId').value=role.id;document.getElementById('roleEditCode').value=role.code||'';document.getElementById('name').value=role.name||'';
     document.getElementById('roleModalTitle').textContent=editableSystemRole?'System Role Access':'Edit Permission Group';document.getElementById('roleModalSubtitle').textContent=editableSystemRole?'Update the menu access for this system role. The role code/type remains protected.':'Update the group name or its menu permissions.';
@@ -89,8 +93,8 @@
       roleCache=await fetchRoles();
       const details=await Promise.all(roleCache.map(async r=>{try{return {...r,permissionCount:(await fetchRoleMenuIds(r.id)).length};}catch(e){return {...r,permissionCount:0};}}));
       document.getElementById('roleCountBadge').textContent=`${details.length} Group${details.length===1?'':'s'}`;
-      body.innerHTML=details.map(r=>{const rt=String(r.roleType||'').toUpperCase();const sys=Number(r.systemRole)===1;const canEditSystem=sys&&((rootAdmin&&rt!=='ROOT')||(masterAdmin&&rt==='BRAND_OWNER'));const action=sys?(canEditSystem?'<button class="clean-btn role-edit-btn" type="button" data-edit-role="'+esc(r.id)+'"><i class="bi bi-sliders"></i> Edit Access</button>':'<span class="status-pill active">Protected</span>'):'<button class="clean-btn role-edit-btn" type="button" data-edit-role="'+esc(r.id)+'"><i class="bi bi-pencil-square"></i> Edit</button>';return `<tr><td><b>${esc(r.name)}</b></td><td><span class="role-code-pill">${esc(r.code)}</span><small style="display:block;margin-top:4px;color:#667085">${esc(r.roleType||'CUSTOM')}</small></td><td><span class="role-permission-count"><i class="bi bi-shield-check"></i>${r.permissionCount} Menu${r.permissionCount===1?'':'s'}</span></td><td>${r.status==1?'<span class="status-pill active">Active</span>':'<span class="status-pill off">Inactive</span>'}</td><td>${action}</td></tr>`;}).join('')||'<tr><td colspan="5">No permission group found.</td></tr>';
-      if(cards)cards.innerHTML=details.map(r=>{const rt=String(r.roleType||'').toUpperCase();const sys=Number(r.systemRole)===1;const canEditSystem=sys&&((rootAdmin&&rt!=='ROOT')||(masterAdmin&&rt==='BRAND_OWNER'));const action=sys?(canEditSystem?'<button class="clean-btn role-edit-btn w-100" type="button" data-edit-role="'+esc(r.id)+'"><i class="bi bi-sliders"></i> Edit Access</button>':'<span class="status-pill active">Protected</span>'):'<button class="clean-btn role-edit-btn w-100" type="button" data-edit-role="'+esc(r.id)+'"><i class="bi bi-pencil-square"></i> Edit Group</button>';return `<article class="member-mobile-card role-mobile-card"><div class="member-card-head"><div><strong>${esc(r.name)}</strong><small>${esc(r.code)}</small></div>${r.status==1?'<span class="status-pill active">Active</span>':'<span class="status-pill off">Inactive</span>'}</div><div class="member-card-grid"><div><span>Permissions</span><b>${r.permissionCount} Menus</b></div></div>${action}</article>`;}).join('');
+      body.innerHTML=details.map(r=>{const rt=String(r.roleType||'').toUpperCase();const sys=Number(r.systemRole)===1;const canEditSystem=sys&&((rootAdmin&&rt!=='ROOT')||(masterAdmin&&rt==='BRAND_OWNER')||(mainAdmin&&(rt==='MASTER'||rt==='MAIN')));const action=sys?(canEditSystem?'<button class="clean-btn role-edit-btn" type="button" data-edit-role="'+esc(r.id)+'"><i class="bi bi-sliders"></i> Edit Access</button>':'<span class="status-pill active">Protected</span>'):'<button class="clean-btn role-edit-btn" type="button" data-edit-role="'+esc(r.id)+'"><i class="bi bi-pencil-square"></i> Edit</button>';return `<tr><td><b>${esc(r.name)}</b></td><td><span class="role-code-pill">${esc(r.code)}</span><small style="display:block;margin-top:4px;color:#667085">${esc(r.roleType||'CUSTOM')}</small></td><td><span class="role-permission-count"><i class="bi bi-shield-check"></i>${r.permissionCount} Menu${r.permissionCount===1?'':'s'}</span></td><td>${r.status==1?'<span class="status-pill active">Active</span>':'<span class="status-pill off">Inactive</span>'}</td><td>${action}</td></tr>`;}).join('')||'<tr><td colspan="5">No permission group found.</td></tr>';
+      if(cards)cards.innerHTML=details.map(r=>{const rt=String(r.roleType||'').toUpperCase();const sys=Number(r.systemRole)===1;const canEditSystem=sys&&((rootAdmin&&rt!=='ROOT')||(masterAdmin&&rt==='BRAND_OWNER')||(mainAdmin&&(rt==='MASTER'||rt==='MAIN')));const action=sys?(canEditSystem?'<button class="clean-btn role-edit-btn w-100" type="button" data-edit-role="'+esc(r.id)+'"><i class="bi bi-sliders"></i> Edit Access</button>':'<span class="status-pill active">Protected</span>'):'<button class="clean-btn role-edit-btn w-100" type="button" data-edit-role="'+esc(r.id)+'"><i class="bi bi-pencil-square"></i> Edit Group</button>';return `<article class="member-mobile-card role-mobile-card"><div class="member-card-head"><div><strong>${esc(r.name)}</strong><small>${esc(r.code)}</small></div>${r.status==1?'<span class="status-pill active">Active</span>':'<span class="status-pill off">Inactive</span>'}</div><div class="member-card-grid"><div><span>Permissions</span><b>${r.permissionCount} Menus</b></div></div>${action}</article>`;}).join('');
     }catch(e){body.innerHTML=`<tr><td colspan="5">${esc(e.message)}</td></tr>`;if(cards)cards.innerHTML='';}
   }
 
@@ -100,7 +104,13 @@
     if(!sys)return true;
     if(rootAdmin)return rt!=='ROOT';
     if(masterAdmin)return rt==='BRAND_OWNER';
-    // MAIN/Boss may manage non-system permission groups only. System roles remain protected.
+    // If ROOT granted Menu Permission to MAIN/Boss, MAIN may manage the MASTER
+    // menu access as well as its own MAIN role. ROOT and BRAND_OWNER stay protected.
+    const currentRoleId=Number(currentAdmin?.roleId||currentAdmin?.adminRoleId||0);
+    if(mainAdmin){
+      if(rt==='MASTER') return true;
+      return rt==='MAIN' && (!currentRoleId || Number(role?.id)===currentRoleId);
+    }
     return false;
   }
 
@@ -111,7 +121,12 @@
     if(!select||!list)return;
     try{
       roleCache=await fetchRoles();
-      const editable=roleCache.filter(canEditRoleMenus);
+      const editable=roleCache.filter(r=>{
+        const rt=String(r?.roleType||'').toUpperCase();
+        const sys=Number(r?.systemRole)===1;
+        if(mainAdmin && sys && rt!=='MAIN' && rt!=='MASTER') return false;
+        return canEditRoleMenus(r);
+      });
       select.innerHTML='<option value="">Select role...</option>'+editable.map(r=>`<option value="${esc(r.id)}">${esc(r.name)}${r.code?' ('+esc(r.code)+')':''}</option>`).join('');
       if(badge)badge.textContent=`${menuCache.length} Menu${menuCache.length===1?'':'s'}`;
       renderPermissionGroupsInto('menuPermissionCheckList',[]);
@@ -179,9 +194,16 @@
     btn.disabled=true;msg(roleStatusEl,'Saving group and permissions...','');
     try{
       const payload={name,code:editId?(oldCode||slugify(name)):slugify(name),remark:'',status:1};if(editId)payload.id=Number(editId);
-      const saved=await api(BO_AUTH.roleSaveUrl(),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(payload)});
-      let roleId=saved.data?.id||editId;
-      if(!roleId){const roles=await fetchRoles();roleId=roles.find(r=>r.code===payload.code)?.id;}
+      const editingRole=editId?roleCache.find(r=>String(r.id)===String(editId)):null;
+      const protectedSystemEdit=!!(editingRole&&Number(editingRole.systemRole)===1);
+      let roleId=editId;
+      // System Role Access changes menu mappings only. Never rewrite protected role metadata
+      // (name/code/type/status) just to update its permissions.
+      if(!protectedSystemEdit){
+        const saved=await api(BO_AUTH.roleSaveUrl(),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(payload)});
+        roleId=saved.data?.id||editId;
+        if(!roleId){const roles=await fetchRoles();roleId=roles.find(r=>r.code===payload.code)?.id;}
+      }
       if(!roleId)throw new Error('Role saved but role ID was not returned.');
       const menuSave=await api(BO_AUTH.roleMenusUrl(roleId),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify({menuIds:ids})});
       const persisted=(menuSave.data?.menuIds||[]).map(Number).filter(Number.isFinite);
