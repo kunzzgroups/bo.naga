@@ -747,3 +747,32 @@ body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .
 .report-sidebar .nav-group{margin:0!important;border-radius:0!important;border-left:0!important;border-right:0!important;border-top:0!important}
 .report-sidebar .nav-group .nav-group-btn{margin:0!important;border-radius:0!important;min-height:44px!important}
 .report-sidebar .nav-group-list{background:#f8fafc!important}
+
+/* 2026-09-03: direct account settings header + sidebar-bottom logout */
+.report-actions .bo-account-link{
+  height:44px; min-width:132px; padding:0 12px; border:1px solid var(--line,#e4e7ec);
+  border-radius:14px; background:#fff; color:#182230; text-decoration:none;
+  display:inline-flex; align-items:center; gap:9px; font-weight:800; line-height:1;
+  transition:border-color .15s ease, background .15s ease;
+}
+.report-actions .bo-account-link:hover{background:#f8fafc;border-color:#cbd5e1;color:#182230}
+.report-actions .bo-account-link .report-avatar{width:32px;height:32px;flex:0 0 32px}
+.report-actions .bo-account-setting-icon{font-size:17px;color:#667085;margin-left:2px}
+.report-sidebar{display:flex!important;flex-direction:column!important;overflow:hidden!important}
+.report-sidebar .report-brand{flex:0 0 auto}
+.report-sidebar .report-nav{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden}
+.bo-sidebar-account-footer{flex:0 0 auto;padding:10px;border-top:1px solid var(--line,#e4e7ec);background:#fff}
+.bo-sidebar-logout{min-height:44px;width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;text-decoration:none;color:#b42318!important;font-weight:800}
+.bo-sidebar-logout:hover{background:#fff1f0;color:#b42318!important}
+.bo-sidebar-logout i{font-size:17px;color:#d92d20!important}
+@media(min-width:992px){
+  body.sidebar-mini .bo-sidebar-account-footer{padding:10px 8px}
+  body.sidebar-mini .bo-sidebar-logout{justify-content:center;padding:10px 0}
+  body.sidebar-mini .bo-sidebar-logout span{display:none}
+  body.sidebar-mini .report-sidebar:hover .bo-sidebar-logout{justify-content:flex-start;padding:10px 12px}
+  body.sidebar-mini .report-sidebar:hover .bo-sidebar-logout span{display:inline}
+}
+@media(max-width:575.98px){
+  .report-actions .bo-account-link{min-width:44px;width:44px;padding:0;justify-content:center}
+  .report-actions .bo-account-link .bo-account-name,.report-actions .bo-account-link .bo-account-setting-icon{display:none}
+}

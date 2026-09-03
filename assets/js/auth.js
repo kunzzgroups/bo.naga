@@ -430,6 +430,19 @@
           '<div class="nav-group-list ' + (isOpen ? 'show' : '') + '">' + items.map(m => menuLinkHtml(m, true)).join('') + '</div></div>';
       });
       nav.innerHTML = html;
+
+      // Account actions live outside the menu permission tree. Logout is always
+      // available at the bottom of the BO sidebar and does not alter ROOT-managed menus.
+      const sidebar = nav.closest('.report-sidebar');
+      if(sidebar){
+        let footer = sidebar.querySelector('.bo-sidebar-account-footer');
+        if(!footer){
+          footer = document.createElement('div');
+          footer.className = 'bo-sidebar-account-footer';
+          sidebar.appendChild(footer);
+        }
+        footer.innerHTML = '<a class="bo-sidebar-logout" href="#logout" data-bo-logout title="Logout"><i class="bi bi-box-arrow-right"></i><span>Logout</span></a>';
+      }
     },
     bindDynamicSidebarEvents: function(){
       // Some legacy pages call this explicitly while auth.js also initializes it
@@ -606,16 +619,11 @@
       const user = this.user();
       const name = displayName(user);
       const counters = String(user.roleType||'').toUpperCase()==='MAIN' ? '' : this.headerCountersHtml();
-      return counters + '<div class="report-profile-wrap">' +
-        '<button class="report-profile-btn" type="button" data-profile-toggle>' +
-        '<span class="report-avatar" data-admin-avatar>' + initials(name) + '</span><span data-admin-name>' + esc(name) + '</span><i class="bi bi-chevron-down small"></i>' +
-        '</button>' +
-        '<div class="report-profile-menu">' +
-        '<div class="head"><b data-admin-name>' + esc(name) + '</b><small data-admin-username>' + esc(user.username || 'admin') + '</small></div>' +
-        '<a href="profile.html"><i class="bi bi-person"></i>Profile</a>' +
-        '<a href="change-password.html"><i class="bi bi-key"></i>Change Password</a>' +
-        '<a class="danger" href="#logout" data-bo-logout><i class="bi bi-box-arrow-right"></i>Logout</a>' +
-        '</div></div>';
+      return counters + '<a class="bo-account-link" href="profile.html" title="Account settings" aria-label="Open account settings">' +
+        '<span class="report-avatar" data-admin-avatar>' + initials(name) + '</span>' +
+        '<span class="bo-account-name" data-admin-name>' + esc(name) + '</span>' +
+        '<i class="bi bi-gear bo-account-setting-icon" aria-hidden="true"></i>' +
+        '</a>';
     },
     injectProfile: function(){
       document.querySelectorAll('[data-bo-profile]').forEach(el => { el.innerHTML = this.profileHtml(); });
