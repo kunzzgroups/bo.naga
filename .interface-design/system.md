@@ -92,7 +92,7 @@ Page padding (exec): `20px 24px` desktop · tighten on short viewports
 ### Typography
 
 - **UI / labels:** system stack OK for density; prefer weight + color for hierarchy over size jumps
-- **Overview title:** ~`28px` / `800`
+- **Page toolbar:** date range left-aligned (no Overview title / subtitle)
 - **KPI value:** ~`26px` / `800` / tight tracking / `tabular-nums`
 - **KPI label:** ~`11px` / `700` / uppercase / tracked
 - **Section title:** ~`16px` / `800`
@@ -111,7 +111,7 @@ Page padding (exec): `20px 24px` desktop · tighten on short viewports
 ## Layout
 
 - **Shell:** Left sidebar + topbar (hamburger, theme, user) + main
-- **Overview head:** Title + subtitle left; date range trigger right on the same row (never inside a KPI card)
+- **Overview head:** Date range trigger left-aligned where title used to sit (never inside a KPI card)
 - **No Mix bar:** Do not show Merchant/Game share mix under KPIs
 - **Sidebar width:** Content-serving rail (~240–280px); mini-rail supported
 - **Executive dashboard focal point:** Overview → 3 KPI cards → Profit Trend
