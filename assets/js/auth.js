@@ -210,10 +210,8 @@
     landingPage: function(user){
       user = user || this.user();
       const menus = this.allowedMenus(user);
-      if(String(user && user.roleType || '').toUpperCase()==='MAIN'){
-        const order=['main-dashboard.html','main-win-lose-report.html','main-settlement-report.html','main-accounting-report.html','main-accounting-settlement.html','main-transaction-history.html','brand-management.html','main-balance-overview.html','main-accounting-due.html'];
-        for(const url of order){ if(menus.some(m=>(m.url||'').split('/').pop()===url)) return url; }
-      }
+      // ROOT-configured menu sort order is authoritative for every role, including MAIN/Boss.
+      // Do not impose a frontend MAIN landing-page allowlist/order.
       return menus.length ? menus[0].url : 'login.html';
     },
     enforcePageAccess: function(user){
@@ -344,48 +342,20 @@
       }
 
       if(String(user.roleType||'').toUpperCase()==='MAIN'){
-        // MAIN/Boss executive menu: every parent and child permission is independently configurable.
-        // Legacy MAIN roles are still supported until the new executive permission rows are assigned.
-        const source = menus.slice();
-        const keySet = new Set(source.map(m=>String(m.menuKey||'').toLowerCase()));
-        const hasKey = key => keySet.has(String(key).toLowerCase());
-        const hasUrl = url => source.some(m=>String(m.url||'').split('/').pop().toLowerCase()===String(url).toLowerCase());
-        const hasNewExecutive = ['main_reports_access','main_win_lose_report','main_settlement_report','main_accounting_access','main_provider_settlement','main_accounting_settlement','main_transaction_history','main_brands_access','main_brands_list','main_balance_overview','main_accounting_due'].some(hasKey);
-        const out=[];
-        if(hasKey('main_dashboard') || hasUrl('main-dashboard.html')) out.push({menuKey:'main_dashboard',title:'Dashboard',url:'main-dashboard.html',icon:'bi-house-door',parentKey:'',sortOrder:10,status:1});
-        if(hasNewExecutive){
-          if(hasKey('main_reports_access')){
-            if(hasKey('main_win_lose_report')) out.push({menuKey:'main_win_lose_report',title:'Win/Lose Report',url:'main-win-lose-report.html',icon:'bi-file-earmark-bar-graph',parentKey:'main_reports_group',sortOrder:31,status:1});
-            if(hasKey('main_settlement_report')) out.push({menuKey:'main_settlement_report',title:'Settlement Report',url:'main-settlement-report.html',icon:'bi-receipt-cutoff',parentKey:'main_reports_group',sortOrder:32,status:1});
+        // ROOT Menu Management + Role/Menu Permission are the source of truth.
+        // Never synthesize, expand, or silently grant MAIN/Boss child menus here.
+        // A configured parent access row (url '#') controls its matching group and
+        // every actual child page must also be explicitly assigned to the role.
+        const assigned = menus.map(normalizeMenu);
+        const grantedKeys = new Set(assigned.map(m=>String(m.menuKey||'').trim().toLowerCase()));
+        menus = assigned.filter(function(m){
+          const parent = String(m.parentKey||'').trim().toLowerCase();
+          if(parent && /^main_.+_group$/.test(parent)){
+            const accessKey = parent.replace(/_group$/, '_access');
+            if(!grantedKeys.has(accessKey)) return false;
           }
-          if(hasKey('main_accounting_access')){
-            if(hasKey('main_provider_settlement')) out.push({menuKey:'main_provider_settlement',title:'Provider Settlement',url:'main-accounting-report.html',icon:'bi-cash-stack',parentKey:'main_accounting_group',sortOrder:41,status:1});
-            if(hasKey('main_accounting_settlement')) out.push({menuKey:'main_accounting_settlement',title:'Accounting Settlement',url:'main-accounting-settlement.html',icon:'bi-journal-check',parentKey:'main_accounting_group',sortOrder:42,status:1});
-            if(hasKey('main_transaction_history')) out.push({menuKey:'main_transaction_history',title:'Transaction History',url:'main-transaction-history.html',icon:'bi-clock-history',parentKey:'main_accounting_group',sortOrder:43,status:1});
-          }
-          if(hasKey('main_brands_access')){
-            if(hasKey('main_brands_list')) out.push({menuKey:'main_brands_list',title:'Brands',url:'brand-management.html',icon:'bi-buildings',parentKey:'main_brands_group',sortOrder:51,status:1});
-            if(hasKey('main_balance_overview')) out.push({menuKey:'main_balance_overview',title:'Balance Overview',url:'main-balance-overview.html',icon:'bi-wallet2',parentKey:'main_brands_group',sortOrder:52,status:1});
-            if(hasKey('main_accounting_due')) out.push({menuKey:'main_accounting_due',title:'Accounting Due',url:'main-accounting-due.html',icon:'bi-calendar2-check',parentKey:'main_brands_group',sortOrder:53,status:1});
-          }
-        }else{
-          // Backward compatibility for existing MAIN Account roles created before the executive split.
-          if(hasKey('main_report') || hasUrl('main-report.html')){
-            out.push({menuKey:'main_win_lose_report',title:'Win/Lose Report',url:'main-win-lose-report.html',icon:'bi-file-earmark-bar-graph',parentKey:'main_reports_group',sortOrder:31,status:1});
-            out.push({menuKey:'main_settlement_report',title:'Settlement Report',url:'main-settlement-report.html',icon:'bi-receipt-cutoff',parentKey:'main_reports_group',sortOrder:32,status:1});
-          }
-          if(hasKey('main_accounting_report') || hasUrl('main-accounting-report.html')){
-            out.push({menuKey:'main_provider_settlement',title:'Provider Settlement',url:'main-accounting-report.html',icon:'bi-cash-stack',parentKey:'main_accounting_group',sortOrder:41,status:1});
-            out.push({menuKey:'main_accounting_settlement',title:'Accounting Settlement',url:'main-accounting-settlement.html',icon:'bi-journal-check',parentKey:'main_accounting_group',sortOrder:42,status:1});
-            out.push({menuKey:'main_transaction_history',title:'Transaction History',url:'main-transaction-history.html',icon:'bi-clock-history',parentKey:'main_accounting_group',sortOrder:43,status:1});
-          }
-          if(hasKey('brand_management') || hasUrl('brand-management.html')){
-            out.push({menuKey:'main_brands_list',title:'Brands',url:'brand-management.html',icon:'bi-buildings',parentKey:'main_brands_group',sortOrder:51,status:1});
-            out.push({menuKey:'main_balance_overview',title:'Balance Overview',url:'main-balance-overview.html',icon:'bi-wallet2',parentKey:'main_brands_group',sortOrder:52,status:1});
-            out.push({menuKey:'main_accounting_due',title:'Accounting Due',url:'main-accounting-due.html',icon:'bi-calendar2-check',parentKey:'main_brands_group',sortOrder:53,status:1});
-          }
-        }
-        menus=out;
+          return true;
+        });
       }
 
       // Backward compatibility for older databases that only have the single

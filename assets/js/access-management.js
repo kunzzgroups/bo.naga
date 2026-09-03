@@ -17,31 +17,6 @@
   const rootAdmin = currentAdmin && (currentAdmin.rootAdmin === true || Number(currentAdmin.rootAdmin) === 1 || String(currentAdmin.roleType||'').toUpperCase()==='ROOT' || (Number(currentAdmin.id)===1 && currentAdmin.brandId==null));
   const masterAdmin = currentAdmin && !rootAdmin && (currentAdmin.masterAdmin === true || Number(currentAdmin.masterAdmin) === 1 || String(currentAdmin.roleType||'').toUpperCase()==='MASTER');
   const platformRoleAdmin = currentAdmin && (rootAdmin || masterAdmin || currentAdmin.brandId == null);
-  const MAIN_EXEC_MENU_KEYS = new Set([
-    'main_dashboard','main_reports_access','main_win_lose_report','main_settlement_report',
-    'main_accounting_access','main_provider_settlement','main_accounting_settlement','main_transaction_history',
-    'main_brands_access','main_brands_list','main_balance_overview','main_accounting_due'
-  ]);
-  const MAIN_EXEC_GROUP_DEFS = [
-    {groupKey:'main_reports_group',title:'Reports',icon:'bi-file-earmark-bar-graph',sortOrder:30,status:1},
-    {groupKey:'main_accounting_group',title:'Accounting & Provider Ops',icon:'bi-cash-stack',sortOrder:40,status:1},
-    {groupKey:'main_brands_group',title:'Brands',icon:'bi-buildings',sortOrder:50,status:1}
-  ];
-  const MAIN_EXEC_MENU_DEFS = [
-    {menuKey:'main_dashboard',title:'Dashboard',url:'main-dashboard.html',icon:'bi-house-door',parentKey:'',sortOrder:10,status:1},
-    {menuKey:'main_reports_access',title:'Reports',url:'#',icon:'bi-file-earmark-bar-graph',parentKey:'',sortOrder:30,status:1},
-    {menuKey:'main_win_lose_report',title:'Win/Lose Report',url:'main-win-lose-report.html',icon:'bi-graph-up-arrow',parentKey:'main_reports_group',sortOrder:31,status:1},
-    {menuKey:'main_settlement_report',title:'Settlement Report',url:'main-settlement-report.html',icon:'bi-receipt-cutoff',parentKey:'main_reports_group',sortOrder:32,status:1},
-    {menuKey:'main_accounting_access',title:'Accounting & Provider Ops',url:'#',icon:'bi-cash-stack',parentKey:'',sortOrder:40,status:1},
-    {menuKey:'main_provider_settlement',title:'Provider Settlement',url:'main-accounting-report.html',icon:'bi-cash-stack',parentKey:'main_accounting_group',sortOrder:41,status:1},
-    {menuKey:'main_accounting_settlement',title:'Accounting Settlement',url:'main-accounting-settlement.html',icon:'bi-journal-check',parentKey:'main_accounting_group',sortOrder:42,status:1},
-    {menuKey:'main_transaction_history',title:'Transaction History',url:'main-transaction-history.html',icon:'bi-clock-history',parentKey:'main_accounting_group',sortOrder:43,status:1},
-    {menuKey:'main_brands_access',title:'Brands',url:'#',icon:'bi-buildings',parentKey:'',sortOrder:50,status:1},
-    {menuKey:'main_brands_list',title:'Brands',url:'brand-management.html',icon:'bi-buildings',parentKey:'main_brands_group',sortOrder:51,status:1},
-    {menuKey:'main_balance_overview',title:'Balance Overview',url:'main-balance-overview.html',icon:'bi-wallet2',parentKey:'main_brands_group',sortOrder:52,status:1},
-    {menuKey:'main_accounting_due',title:'Accounting Due',url:'main-accounting-due.html',icon:'bi-calendar2-check',parentKey:'main_brands_group',sortOrder:53,status:1}
-  ];
-
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function msg(el,text,cls){if(el){el.textContent=text||'';el.className='upload-status '+(cls||'');}}
   async function api(url,opt){const res=await fetch(url,opt||{});const j=await res.json().catch(()=>({}));if(!res.ok||j.status==='error')throw new Error(j.message||'Request failed');return j;}
@@ -58,33 +33,7 @@
     }
     return rows;
   }
-  async function ensureMainExecutiveMenus(){
-    if(!rootAdmin) return;
-    // Create the MAIN-only menu groups first. Without these groups the API rejects
-    // child menu rows (parentKey not found), which left MAIN stuck on the legacy 4 menus.
-    try{
-      const gj=await api(BO_AUTH.menuGroupListAllUrl(),{headers:{...BO_AUTH.authHeader()}});
-      const groups=Array.isArray(gj.data)?gj.data:[];
-      const groupKeys=new Set(groups.map(g=>String(g.groupKey||'').toLowerCase()));
-      for(const def of MAIN_EXEC_GROUP_DEFS){
-        if(groupKeys.has(def.groupKey)) continue;
-        await api(BO_AUTH.menuGroupSaveUrl(),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(def)});
-        groupKeys.add(def.groupKey);
-      }
-    }catch(e){ console.warn('Unable to bootstrap MAIN executive menu groups',e); }
 
-    let j;
-    try{j=await api(BO_AUTH.menuListAllUrl(),{headers:{...BO_AUTH.authHeader()}});}catch(e){return;}
-    const rows=Array.isArray(j.data)?j.data:[];
-    const keys=new Set(rows.map(m=>String(m.menuKey||'').toLowerCase()));
-    for(const def of MAIN_EXEC_MENU_DEFS){
-      if(keys.has(def.menuKey)) continue;
-      try{
-        await api(BO_AUTH.menuSaveUrl(),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(def)});
-        keys.add(def.menuKey);
-      }catch(e){ console.warn('Unable to bootstrap MAIN executive menu',def.menuKey,e); }
-    }
-  }
   async function fetchMenus(){
     const url=platformRoleAdmin&&BO_AUTH.menuListAllUrl?BO_AUTH.menuListAllUrl():BO_AUTH.menuListUrl();
     const j=await api(url,{headers:{...BO_AUTH.authHeader()}});
@@ -101,7 +50,7 @@
   function renderPermissionGroups(selected){
     const box=document.getElementById('checkList'); if(!box)return;
     const set=new Set((selected||[]).map(String));
-    const visibleMenus=editingRoleType==='MAIN' ? menuCache.filter(m=>MAIN_EXEC_MENU_KEYS.has(String(m.menuKey||'').toLowerCase())) : menuCache;
+    const visibleMenus=editingRoleType==='MAIN' ? menuCache.filter(m=>{const k=String(m.menuKey||'').toLowerCase(),p=String(m.parentKey||'').toLowerCase();return k.startsWith('main_')||p.startsWith('main_');}) : menuCache;
     box.innerHTML=groupMenus(visibleMenus).map(g=>{
       const meta=GROUP_META[g.key]||{title:g.key.replace(/[_-]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase()),icon:'bi-folder2-open'};
       return `<section class="permission-group" data-permission-group="${esc(g.key)}">
@@ -128,7 +77,7 @@
     resetModal();document.getElementById('roleEditId').value=role.id;document.getElementById('roleEditCode').value=role.code||'';document.getElementById('name').value=role.name||'';
     document.getElementById('roleModalTitle').textContent=editableSystemRole?'System Role Access':'Edit Permission Group';document.getElementById('roleModalSubtitle').textContent=editableSystemRole?'Update the menu access for this system role. The role code/type remains protected.':'Update the group name or its menu permissions.';
     openModal();msg(roleStatusEl,'Loading permissions...','');
-    try{let selected=await fetchRoleMenuIds(role.id);if(editingRoleType==='MAIN'){const byId=new Map(menuCache.map(m=>[String(m.id),String(m.menuKey||'').toLowerCase()]));const byKey=new Map(menuCache.map(m=>[String(m.menuKey||'').toLowerCase(),m.id]));const selectedKeys=new Set(selected.map(id=>byId.get(String(id))).filter(Boolean));const add=k=>{const id=byKey.get(k);if(id!=null&&!selected.map(String).includes(String(id)))selected.push(id)};if(selectedKeys.has('main_report'))['main_reports_access','main_win_lose_report','main_settlement_report'].forEach(add);if(selectedKeys.has('main_accounting_report'))['main_accounting_access','main_provider_settlement','main_accounting_settlement','main_transaction_history'].forEach(add);if(selectedKeys.has('brand_management'))['main_brands_access','main_brands_list','main_balance_overview','main_accounting_due'].forEach(add)}renderPermissionGroups(selected);msg(roleStatusEl,'','');}catch(e){msg(roleStatusEl,e.message,'error');}
+    try{let selected=await fetchRoleMenuIds(role.id);renderPermissionGroups(selected);msg(roleStatusEl,'','');}catch(e){msg(roleStatusEl,e.message,'error');}
   }
 
   async function loadRoleList(){
@@ -187,7 +136,7 @@
   document.addEventListener('DOMContentLoaded',async()=>{
     await bootstrap();
     if(page==='role'){
-      try{await ensureMainExecutiveMenus();menuCache=await fetchMenus();renderPermissionGroups([]);await loadRoleList();}catch(e){msg(roleStatusEl,e.message,'error');}
+      try{menuCache=await fetchMenus();renderPermissionGroups([]);await loadRoleList();}catch(e){msg(roleStatusEl,e.message,'error');}
       document.getElementById('accessForm').onsubmit=saveRole;
       document.getElementById('selectAllPermission').onclick=()=>{document.querySelectorAll('#checkList .permission-item input').forEach(x=>x.checked=true);syncGroupToggles();};
       document.getElementById('clearAllPermission').onclick=()=>{document.querySelectorAll('#checkList .permission-item input').forEach(x=>x.checked=false);syncGroupToggles();};
