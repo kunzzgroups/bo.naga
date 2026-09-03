@@ -5997,3 +5997,45 @@ body.modal-open .report-actions {
     z-index:12049;
   }
 }
+
+/* 2026-09-04: BO modal interaction hardening.
+   Keep every Bootstrap modal above its own backdrop and above sidebar/topbar flyouts.
+   A previous page-specific Provider Transaction rule forced the modal to z-index 7000
+   while the global backdrop was 9990, which visually showed the modal but intercepted
+   all clicks with the backdrop. This global rule intentionally has higher specificity
+   and is shared by every BO page using Bootstrap modals. */
+body.modal-open > .modal.show,
+body.report-body.modal-open > .modal.show,
+body.pwt-page.modal-open > .pwt-modal.show {
+  --bs-modal-zindex: 20000 !important;
+  z-index: 20000 !important;
+  pointer-events: auto !important;
+}
+body.modal-open > .modal-backdrop,
+body.report-body.modal-open > .modal-backdrop,
+body.pwt-page.modal-open > .modal-backdrop {
+  z-index: 19990 !important;
+  pointer-events: auto !important;
+  background-color: #0f172a !important;
+}
+body.modal-open > .modal-backdrop.show,
+body.report-body.modal-open > .modal-backdrop.show,
+body.pwt-page.modal-open > .modal-backdrop.show {
+  opacity: .55 !important;
+}
+body.modal-open > .modal.show .modal-dialog,
+body.modal-open > .modal.show .modal-content,
+body.modal-open > .modal.show button,
+body.modal-open > .modal.show a,
+body.modal-open > .modal.show input,
+body.modal-open > .modal.show select,
+body.modal-open > .modal.show textarea {
+  pointer-events: auto !important;
+}
+/* While a Bootstrap modal is open, never let desktop sidebar flyouts/profile menus
+   create a click-capturing layer above it. */
+body.modal-open .report-sidebar .nav-group-list,
+body.modal-open .report-profile-menu,
+body.modal-open .dropdown-menu {
+  pointer-events: none !important;
+}

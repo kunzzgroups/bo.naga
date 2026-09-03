@@ -141,7 +141,7 @@
   window.showProviderTxPayload = async function(i){
     const summary = lastRows[i] || {};
     const modalEl = $('txPayloadModal');
-    const modal = new bootstrap.Modal(modalEl);
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
     if ($('txPayloadMeta')) $('txPayloadMeta').textContent = 'ID ' + (summary.id || '-') + ' · ' + (summary.providerCode || '-') + ' · ' + (summary.txType || '-');
     if ($('txApiUrl')) $('txApiUrl').textContent = pretty(summary.apiUrl || summary.url || '');
     if ($('txRequestPayload')) $('txRequestPayload').textContent = 'Loading payload...';
