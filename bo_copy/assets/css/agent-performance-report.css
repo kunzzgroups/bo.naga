@@ -1,0 +1,42 @@
+.perf-filter-card,.perf-table-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;margin-bottom:14px}.perf-filter-card .bo-filter-row{display:grid!important;grid-template-columns:minmax(260px,1.35fr) 180px 180px minmax(200px,.9fr) 120px!important;gap:12px!important;align-items:end!important}.perf-filter-card .field{min-width:0}.perf-filter-card .bo-range-field{width:100%!important;max-width:none!important}.perf-filter-card input,.perf-filter-card select{height:42px!important}.perf-main-brand.hidden{display:none!important}.perf-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:14px}.perf-kpi{min-height:108px;background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:17px;display:flex;align-items:center;gap:13px}.perf-kpi-icon{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex:0 0 46px;background:#eaf2ff;color:#1768e5;font-size:20px}.perf-kpi:nth-child(2) .perf-kpi-icon{background:#eaf9ef;color:#13a153}.perf-kpi:nth-child(3) .perf-kpi-icon{background:#f2eaff;color:#7c3aed}.perf-kpi:nth-child(4) .perf-kpi-icon{background:#eaf3ff;color:#2563eb}.perf-kpi:nth-child(5) .perf-kpi-icon{background:#fff3df;color:#e69a0b}.perf-kpi:nth-child(6) .perf-kpi-icon{background:#ffebee;color:#e83f50}.perf-kpi span{display:block;font-size:12px;color:#475569}.perf-kpi strong{display:block;margin-top:3px;font-size:20px;color:#0f172a;white-space:nowrap}.perf-kpi small{display:block;margin-top:4px;font-size:10px;color:#64748b}.perf-table-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.perf-table-head h2{font-size:16px;margin:0;font-weight:800}.perf-table-head small{color:#64748b}.perf-table{min-width:1500px}.perf-table td,.perf-table th{vertical-align:middle}.perf-agent-cell{display:flex;align-items:center;gap:9px}.perf-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#eaf2ff;color:#1768e5;font-weight:800}.perf-agent-cell b{display:block}.perf-agent-cell small{display:block;color:#64748b}.perf-status{display:inline-flex;padding:4px 9px;border-radius:999px;font-size:10px;font-weight:700;background:#eaf9ef;color:#16813e}.perf-status.off{background:#fff0f0;color:#d63f3f}.perf-eye{width:36px;height:34px;border:1px solid #cfd9ec;border-radius:9px;background:#fff;color:#1e63d7;display:inline-grid;place-items:center}.perf-eye:hover{background:#eef5ff}.perf-pos{color:#079447}.perf-neg{color:#e13737}.perf-footer{display:flex;justify-content:space-between;margin-top:12px;color:#64748b;font-size:12px}.perf-detail-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}.perf-detail-name{font-size:18px;font-weight:800}.perf-detail-kpis{grid-template-columns:repeat(6,minmax(0,1fr))}.perf-empty{text-align:center!important;padding:24px!important;color:#64748b!important}@media(max-width:1400px){.perf-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:1100px){.perf-filter-card .bo-filter-row{grid-template-columns:repeat(2,minmax(0,1fr))!important}.perf-filter-card .btn-primary-clean{width:100%}}@media(max-width:700px){.perf-kpis{grid-template-columns:1fr}.perf-filter-card .bo-filter-row{grid-template-columns:1fr!important}}
+
+.perf-ops{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}.perf-op{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px}.perf-op span{display:block;font-size:11px;color:#64748b}.perf-op strong{display:block;font-size:17px;margin-top:3px}.perf-op small{display:block;font-size:10px;color:#64748b;margin-top:3px}@media(max-width:1100px){.perf-ops{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.perf-ops{grid-template-columns:1fr}}
+
+/* 2026-08-28: keep Agent Performance icons centered regardless of generic span rules */
+.perf-kpi .perf-kpi-icon{display:grid!important;place-items:center!important;align-items:center!important;justify-items:center!important;line-height:1!important;padding:0!important}
+.perf-kpi .perf-kpi-icon i{display:block!important;line-height:1!important;margin:0!important}
+.perf-eye{display:inline-grid!important;place-items:center!important;align-items:center!important;justify-items:center!important;line-height:1!important;padding:0!important}
+.perf-eye i{display:block!important;line-height:1!important;margin:0!important}
+
+/* 2026-08-28: keep filter select dropdowns clear of the KPI row */
+@media (min-width:1101px){
+  .perf-filter-card{position:relative;z-index:20;overflow:visible!important;transition:margin-bottom .12s ease}
+  .perf-filter-card:has(#perfBrand:focus),
+  .perf-filter-card:has(#perfAgent:focus){margin-bottom:118px}
+  .perf-filter-card .bo-filter-row{grid-template-columns:minmax(320px,1.55fr) minmax(150px,.7fr) minmax(150px,.7fr) minmax(220px,.95fr) 120px!important}
+  .perf-filter-card select{width:100%!important;min-width:0!important}
+}
+
+
+/* 2026-08-28 final filter dropdown fix:
+   The global BO standard content-sizes native selects to 80px before async
+   brand/agent options are loaded. Keep these two controls readable and move
+   the KPI row out of the native dropdown's path while it is open. */
+.perf-filter-card #perfBrandField{
+  --bo-select-width:190px!important;
+  width:190px!important;min-width:190px!important;max-width:190px!important;flex:0 0 190px!important;
+}
+.perf-filter-card #perfAgentField{
+  --bo-select-width:180px!important;
+  width:180px!important;min-width:180px!important;max-width:180px!important;flex:0 0 180px!important;
+}
+.perf-filter-card #perfBrandField select,
+.perf-filter-card #perfAgentField select{width:100%!important;min-width:100%!important;max-width:100%!important;text-overflow:ellipsis!important;}
+.perf-filter-card.select-menu-open{margin-bottom:112px!important;position:relative!important;z-index:30!important;}
+.perf-filter-card.select-menu-open + .perf-kpis{position:relative!important;z-index:1!important;}
+@media(max-width:1100px){
+  .perf-filter-card #perfBrandField,.perf-filter-card #perfAgentField{
+    width:100%!important;min-width:0!important;max-width:100%!important;flex:1 1 180px!important;
+  }
+  .perf-filter-card.select-menu-open{margin-bottom:0!important;}
+}

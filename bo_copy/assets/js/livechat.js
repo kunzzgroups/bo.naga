@@ -1,0 +1,779 @@
+(function(){
+  const inboxList = document.getElementById('livechatInboxList');
+  const searchInput = document.getElementById('livechatSearch');
+  const refreshBtn = document.getElementById('livechatRefreshBtn');
+  const roomHead = document.getElementById('livechatRoomHead');
+  const messagesEl = document.getElementById('livechatMessages');
+  const form = document.getElementById('livechatForm');
+  const input = document.getElementById('livechatInput');
+  const attachBtn = document.getElementById('livechatAttachBtn');
+  const fileInput = document.getElementById('livechatFileInput');
+  const attachPreview = document.getElementById('livechatAttachPreview');
+  const templatePanel = document.getElementById('livechatTemplatePanel');
+  const editState = document.getElementById('livechatEditState');
+  const editCancel = document.getElementById('livechatEditCancel');
+
+  let db = null;
+  let storage = null;
+  let conversations = [];
+  let selectedId = '';
+  let unsubscribeConversations = null;
+  let unsubscribeMessages = null;
+  let conversationSnapshotSeq = 0;
+  let messageListenerSeq = 0;
+  let pendingFiles = [];
+  let editingMessageId = '';
+  let editingOriginalText = '';
+  let lastUnreadTotal = Number(localStorage.getItem('bo_livechat_last_unread_total') || '0');
+  let originalTitle = document.title;
+  let templateMessages = [];
+  let unsubscribeTemplates = null;
+  let activeBrandId = Number(localStorage.getItem('bo_active_brand_id') || 1) || 1;
+  let activeBrandDomains = [];
+  const LIVECHAT_NOTIFICATION_SOUND_URL = 'assets/audio/livechat_sound.mp3';
+  let notificationAudio = null;
+  let notificationAudioUnlocked = false;
+  let notificationSoundQueued = false;
+  const DEFAULT_TEMPLATES = [
+    {title:'Greeting', message:'Hi dear, how can I help you?'},
+    {title:'Need Screenshot', message:'Please provide your username and issue screenshot.'},
+    {title:'Deposit Delay', message:'Deposit usually takes a few minutes to update. Please wait a while and refresh.'},
+    {title:'Withdrawal Processing', message:'Withdrawal is processing. We will update you once completed.'},
+    {title:'Checking', message:'Thank you dear. We will check and reply shortly.'}
+  ];
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+
+  async function init(){
+    bindEvents();
+    installNotificationSoundUnlock();
+    setComposerVisible(false);
+    requestBrowserNotificationPermission();
+    if(!initFirebase()){
+      renderTemplates(getLocalTemplates());
+      renderInboxMessage('Firebase not configured. Update assets/js/firebase-config.js first.');
+      return;
+    }
+    await resolveActiveBrand();
+    listenTemplates();
+    listenConversations();
+  }
+
+  async function resolveActiveBrand(){
+    activeBrandId = Number(localStorage.getItem('bo_active_brand_id') || 1) || 1;
+    activeBrandDomains = [];
+    try{
+      if(window.BO_BRAND && typeof window.BO_BRAND.context === 'function'){
+        const payload = await window.BO_BRAND.context(false);
+        const data = payload && payload.data ? payload.data : {};
+        const brands = Array.isArray(data.brands) ? data.brands : [];
+        const brand = brands.find(function(b){ return Number(b.id) === activeBrandId; });
+        if(brand){
+          const domains = [brand.primaryDomain].concat(String(brand.domainAliases || '').split(/[\s,;]+/));
+          activeBrandDomains = domains.map(function(v){ return String(v || '').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/\/.*$/,''); }).filter(Boolean);
+        }
+      }
+    }catch(error){ console.warn('[BO livechat] brand context unavailable:', error && error.message ? error.message : error); }
+    if(activeBrandId === 1 && activeBrandDomains.indexOf('titanx7.com') === -1) activeBrandDomains.push('titanx7.com','www.titanx7.com');
+  }
+
+  function belongsToActiveBrand(conversation){
+    const id = Number(conversation && conversation.brandId || 0);
+    if(id > 0) return id === activeBrandId;
+    const domain = String(conversation && conversation.brandDomain || '').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/\/.*$/,'');
+    if(domain) return activeBrandDomains.indexOf(domain) !== -1;
+    // Conversations created before multi-branding belong to the original TitanX tenant only.
+    return activeBrandId === 1;
+  }
+
+  function initFirebase(){
+    if(!window.firebase || !window.NAGA_FIREBASE_CONFIG || window.NAGA_FIREBASE_CONFIG.apiKey === 'YOUR_FIREBASE_API_KEY') return false;
+    if(!firebase.apps.length) firebase.initializeApp(window.NAGA_FIREBASE_CONFIG);
+    db = firebase.firestore();
+    storage = firebase.storage();
+    return true;
+  }
+
+  function bindEvents(){
+    if(searchInput) searchInput.addEventListener('input', renderInbox);
+    if(refreshBtn) refreshBtn.addEventListener('click', listenConversations);
+
+    document.addEventListener('keydown', handleTemplateHotkey);
+    if(editCancel) editCancel.addEventListener('click', cancelEditing);
+    document.addEventListener('click', function(e){
+      if(!e.target.closest('.livechat-msg-actions')) document.querySelectorAll('.livechat-msg-menu.show').forEach(function(m){m.classList.remove('show');});
+    });
+
+    if(attachBtn && fileInput){
+      attachBtn.addEventListener('click', function(){ fileInput.click(); });
+      fileInput.addEventListener('change', function(){
+        pendingFiles = pendingFiles.concat(Array.from(fileInput.files || []));
+        fileInput.value = '';
+        renderAttachPreview();
+      });
+    }
+    if(input){
+      input.addEventListener('paste', handlePasteFiles);
+      input.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' && !e.shiftKey){
+          e.preventDefault();
+          sendReply();
+        }
+      });
+    }
+    if(form){
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        sendReply();
+      });
+    }
+  }
+
+
+  function setComposerVisible(show){
+    if(!form) return;
+    form.style.display = show ? '' : 'none';
+    if(!show){
+      if(input) input.value = '';
+      pendingFiles = [];
+      renderAttachPreview();
+    }
+  }
+
+  function listenConversations(){
+    if(!db) return;
+    if(unsubscribeConversations) unsubscribeConversations();
+    renderInboxMessage('Loading conversations...');
+    unsubscribeConversations = db.collection('conversations').orderBy('updatedAt','desc').limit(100)
+      .onSnapshot(async function(snapshot){
+        const snapshotSeq = ++conversationSnapshotSeq;
+        const incomingConversations = [];
+        snapshot.forEach(function(doc){
+          const conversation = Object.assign({id: doc.id}, doc.data() || {});
+          if(belongsToActiveBrand(conversation)) incomingConversations.push(conversation);
+        });
+
+        // A blank/placeholder lastMessage does not always mean the chat is empty
+        // (for example, older attachment conversations). Verify the messages
+        // subcollection before hiding those conversation rows. Work on a local
+        // snapshot so a slower older Firestore callback cannot overwrite a newer one.
+        await Promise.all(incomingConversations.map(async function(conversation){
+          if(hasDisplayableLastMessage(conversation)){
+            conversation._hasActualMessage = true;
+            return;
+          }
+          try{
+            const messageSnapshot = await db.collection('conversations').doc(conversation.id)
+              .collection('messages').limit(1).get();
+            conversation._hasActualMessage = !messageSnapshot.empty;
+          }catch(error){
+            // Keep the conversation visible when verification fails so an
+            // existing chat is never hidden because of a temporary read error.
+            conversation._hasActualMessage = true;
+          }
+        }));
+
+        if(snapshotSeq !== conversationSnapshotSeq) return;
+        conversations = incomingConversations;
+        renderInbox();
+        handleUnreadNotification();
+        // Do not clear the currently opened room merely because a conversation
+        // is temporarily absent from the top-100 inbox snapshot. Its message
+        // listener remains the source of truth for the selected room.
+      }, function(error){
+        renderInboxMessage('Unable to load conversations. ' + (error && error.message ? error.message : ''));
+      });
+  }
+
+
+  function hasDisplayableLastMessage(conversation){
+    const lastMessage = String(conversation && conversation.lastMessage || '').trim();
+    if(!lastMessage) return false;
+
+    const normalized = lastMessage.toLowerCase();
+    return normalized !== 'no message' &&
+      normalized !== 'no message yet' &&
+      normalized !== 'no message yet.' &&
+      normalized !== 'new chat opened';
+  }
+
+  function hasActualConversationMessage(conversation){
+    return hasDisplayableLastMessage(conversation) || conversation._hasActualMessage === true;
+  }
+
+  function renderInbox(){
+    if(!inboxList) return;
+    const q = (searchInput && searchInput.value || '').trim().toLowerCase();
+    const list = conversations.filter(function(c){
+      if(!hasActualConversationMessage(c)) return false;
+      const hay = [c.memberName, c.memberUsername, c.conversationId, c.lastMessage].join(' ').toLowerCase();
+      return !q || hay.indexOf(q) >= 0;
+    });
+    if(!list.length){
+      inboxList.innerHTML = '<div class="livechat-empty">No conversations found.</div>';
+      return;
+    }
+    inboxList.innerHTML = list.map(function(c){
+      const active = c.id === selectedId ? ' active' : '';
+      const unread = Number(c.adminUnreadCount || 0);
+      return '<button type="button" class="livechat-inbox-item' + active + (unread ? ' unread' : '') + '" data-id="' + esc(c.id) + '">' +
+        '<span class="avatar">' + esc(initials(c.memberName || c.memberUsername || 'M')) + '</span>' +
+        '<span class="copy"><b>' + esc(c.memberName || 'Member') + (unread ? ' <span class="unread-dot">NEW</span>' : '') + '</b><small>' + esc(c.memberUsername || c.id) + '</small><em>' + esc(c.lastMessage || 'No message') + '</em></span>' +
+        '<span class="time">' + (unread ? '<b class="unread-count">' + unread + '</b>' : '') + esc(formatTime(c.updatedAt)) + '</span>' +
+      '</button>';
+    }).join('');
+    inboxList.querySelectorAll('[data-id]').forEach(function(btn){
+      btn.addEventListener('click', function(){ selectConversation(btn.getAttribute('data-id')); });
+    });
+  }
+
+  function renderInboxMessage(text){
+    if(inboxList) inboxList.innerHTML = '<div class="livechat-empty">' + esc(text) + '</div>';
+  }
+
+  async function loadMemberCasinoStats(username, conversationId){
+    let box=document.getElementById('livechatMemberCasinoStats');
+    if(!box){box=document.createElement('div');box.id='livechatMemberCasinoStats';box.className='livechat-member-stats';roomHead.appendChild(box);}
+    box.textContent='Loading VIP and wallet summary...';
+    try{
+      const configBase=String((window.API_CONFIG&&window.API_CONFIG.BASE_URL)||window.API_BASE_URL||'').replace(/\/$/,'');
+      const memberListPath=String((window.API_CONFIG&&window.API_CONFIG.ENDPOINTS&&window.API_CONFIG.ENDPOINTS.MEMBER_LIST)||'/admin/member/list');
+      const memberListUrl=configBase + (memberListPath.startsWith('/') ? memberListPath : '/' + memberListPath);
+      const headers=(window.BO_AUTH&&typeof window.BO_AUTH.authHeader==='function')
+        ? window.BO_AUTH.authHeader()
+        : {Authorization:'Bearer '+(localStorage.getItem('bo_admin_token')||localStorage.getItem('admin_token')||localStorage.getItem('token')||'')};
+      const r=await fetch(memberListUrl,{headers:headers});
+      const j=await r.json().catch(function(){return {};});
+      if(!r.ok) throw new Error(j.message||('Member API error '+r.status));
+      const list=Array.isArray(j.data)?j.data:(j.data&&Array.isArray(j.data.content)?j.data.content:[]);const key=String(username||'').toLowerCase();const m=list.find(x=>String(x.username||'').toLowerCase()===key);
+      if(conversationId && selectedId !== conversationId) return;
+      if(!m){box.textContent='Member summary unavailable';return;}
+      const money=v=>Number(v||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+      box.innerHTML='<span>VIP <b>'+esc(m.vipLevel||0)+'</b></span><span>Total Deposit <b>'+money(m.totalDeposit)+'</b></span><span>Total Withdrawal <b>'+money(m.totalWithdraw)+'</b></span><span>Total Bonus <b>'+money(m.totalBonus)+'</b></span>';
+    }catch(e){if(!conversationId || selectedId === conversationId) box.textContent='Member summary unavailable';}
+  }
+
+  function selectConversation(id){
+    cancelEditing();
+    selectedId = id;
+    const listenerSeq = ++messageListenerSeq;
+    setComposerVisible(true);
+    renderInbox();
+    const conv = conversations.find(c => c.id === id) || {id:id};
+    roomHead.innerHTML = '<div class="livechat-room-avatar">' + esc(initials(conv.memberName || 'M')) + '</div><div><h2>' + esc(conv.memberName || 'Member') + '</h2><p>' + esc(conv.memberUsername || conv.id) + '</p></div>';
+    loadMemberCasinoStats(conv.memberUsername || conv.id, id);
+    markConversationRead(id);
+    if(unsubscribeMessages){ unsubscribeMessages(); unsubscribeMessages = null; }
+    messagesEl.innerHTML = '<div class="livechat-empty big">Loading messages...</div>';
+    unsubscribeMessages = db.collection('conversations').doc(id).collection('messages').orderBy('createdAt','asc')
+      .onSnapshot(function(snapshot){
+        // Firestore can still deliver a queued callback from the previous room
+        // after unsubscribe(). Never let that stale callback replace/clear the
+        // room the admin has just selected.
+        if(selectedId !== id || listenerSeq !== messageListenerSeq) return;
+        messagesEl.innerHTML = '';
+        if(snapshot.empty){
+          // Keep the room selected. An initial cache snapshot may be empty even
+          // though the server snapshot that follows contains the real messages.
+          // Previously clearRoom() unsubscribed here, so the real data never had
+          // a chance to render and the UI jumped back to "Select a conversation".
+          messagesEl.innerHTML = '<div class="livechat-empty big">Loading conversation messages...</div>';
+          return;
+        }
+        snapshot.forEach(function(doc){ renderMessage(doc.id, doc.data()); });
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }, function(error){
+        if(selectedId !== id || listenerSeq !== messageListenerSeq) return;
+        messagesEl.innerHTML = '<div class="livechat-empty big">Unable to load messages. ' + esc(error.message || '') + '</div>';
+      });
+  }
+
+  function clearRoom(){
+    cancelEditing();
+    selectedId = '';
+    ++messageListenerSeq;
+    if(unsubscribeMessages){ unsubscribeMessages(); unsubscribeMessages = null; }
+    roomHead.innerHTML = '<div class="livechat-room-avatar">?</div><div><h2>Select a conversation</h2><p>Choose member from left inbox to start reply.</p></div>';
+    messagesEl.innerHTML = '<div class="livechat-empty big">No conversation selected.</div>';
+    setComposerVisible(false);
+  }
+
+  function renderMessage(messageId, msg){
+    const isAdmin = msg.senderType === 'admin';
+    const wrap = document.createElement('div');
+    wrap.className = 'livechat-msg ' + (isAdmin ? 'admin' : 'member');
+    wrap.dataset.messageId = messageId;
+    let html = '<div class="bubble"><div class="name">' + esc(msg.senderName || (isAdmin ? 'Admin' : 'Member')) + '</div>';
+    if(isAdmin && !msg.recalled){
+      const hasFiles = Array.isArray(msg.attachments) && msg.attachments.length > 0;
+      const hasText = !!String(msg.text || '').trim();
+      let actionButtons = '';
+      if(hasFiles){
+        actionButtons += '<button type="button" data-msg-action="recall">Recall Message</button>'+
+          '<button type="button" data-msg-action="delete">Delete Message</button>';
+      }else if(hasText){
+        actionButtons += '<button type="button" data-msg-action="edit">Edit Message</button>'+          '<button type="button" data-msg-action="recall">Recall Message</button>'+          '<button type="button" data-msg-action="delete">Delete Message</button>';
+      }
+      if(actionButtons){
+        html += '<div class="livechat-msg-actions"><button type="button" class="livechat-msg-menu-btn" aria-label="Message actions"><i class="bi bi-three-dots-vertical"></i></button>'+
+          '<div class="livechat-msg-menu">'+actionButtons+'</div></div>';
+      }
+    }
+    if(msg.recalled){
+      html += '<div class="livechat-recalled"><i class="bi bi-arrow-counterclockwise"></i> Message recalled</div>';
+    }else if(msg.text){
+      html += '<div class="text">' + formatText(msg.text) + '</div>';
+    }
+    const files = msg.recalled ? [] : (Array.isArray(msg.attachments) ? msg.attachments : []);
+    if(files.length){
+      html += '<div class="files">';
+      files.forEach(function(file){
+        const name = esc(file.name || 'attachment'); const url = esc(file.url || '#'); const type = String(file.type || '');
+        if(type.indexOf('image/') === 0) html += '<a href="' + url + '" target="_blank" class="img-file"><img src="' + url + '" alt="' + name + '"><span>' + name + '</span></a>';
+        else html += '<a href="' + url + '" target="_blank" class="doc-file"><i class="bi bi-file-earmark"></i><span>' + name + '<small>' + formatFileSize(file.size || 0) + '</small></span></a>';
+      });
+      html += '</div>';
+    }
+    html += '<div class="msg-time">' + esc(formatTime(msg.createdAt)) + (msg.editedAt && !msg.recalled ? ' · Edited' : '') + '</div></div>';
+    wrap.innerHTML = html;
+    messagesEl.appendChild(wrap);
+    const menuBtn=wrap.querySelector('.livechat-msg-menu-btn');
+    if(menuBtn) menuBtn.addEventListener('click',function(e){e.stopPropagation(); const menu=wrap.querySelector('.livechat-msg-menu'); document.querySelectorAll('.livechat-msg-menu.show').forEach(function(m){if(m!==menu)m.classList.remove('show');}); menu.classList.toggle('show');});
+    wrap.querySelectorAll('[data-msg-action]').forEach(function(btn){btn.addEventListener('click',function(){handleMessageAction(btn.dataset.msgAction,messageId,msg);});});
+  }
+
+  function handleMessageAction(action, messageId, msg){
+    document.querySelectorAll('.livechat-msg-menu.show').forEach(function(m){m.classList.remove('show');});
+    if(action==='edit') startEditing(messageId,msg.text||'');
+    if(action==='recall') recallMessage(messageId,msg);
+    if(action==='delete') deleteMessage(messageId,msg);
+  }
+  function startEditing(messageId,text){
+    editingMessageId=messageId; editingOriginalText=text; input.value=text; pendingFiles=[]; renderAttachPreview();
+    if(editState) editState.classList.add('show'); input.focus(); input.setSelectionRange(input.value.length,input.value.length);
+  }
+  function cancelEditing(){editingMessageId='';editingOriginalText='';if(editState)editState.classList.remove('show');if(input)input.value='';}
+  async function recallMessage(messageId,msg){
+    if(!(await BO_DIALOG.confirm('Recall this message?', {title:'Recall Message'}))) return;
+    try{
+      await db.collection('conversations').doc(selectedId).collection('messages').doc(messageId).update({recalled:true,originalText:msg.text||'',text:'',attachments:[],recalledAt:firebase.firestore.FieldValue.serverTimestamp()});
+      if(editingMessageId===messageId) cancelEditing();
+    }catch(e){BO_DIALOG.alert(e.message||'Recall failed.',{title:'Recall Failed',type:'error'});}
+  }
+  async function deleteMessage(messageId){
+    if(!(await BO_DIALOG.confirm('Delete this message permanently?', {title:'Delete Message', confirmText:'Delete'}))) return;
+    try{await db.collection('conversations').doc(selectedId).collection('messages').doc(messageId).delete();if(editingMessageId===messageId)cancelEditing();}
+    catch(e){BO_DIALOG.alert(e.message||'Delete failed.',{title:'Delete Failed',type:'error'});}
+  }
+
+  async function sendReply(){
+    if(!selectedId){ BO_DIALOG.alert('Please select a conversation first.',{title:'Select Conversation'}); return; }
+    const text = (input.value || '').trim();
+    if(editingMessageId){
+      if(!text) return;
+      try{
+        await db.collection('conversations').doc(selectedId).collection('messages').doc(editingMessageId).update({text:text,editedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        cancelEditing();
+      }catch(e){BO_DIALOG.alert(e.message||'Edit failed.',{title:'Edit Failed',type:'error'});}
+      return;
+    }
+    if(!text && !pendingFiles.length) return;
+    const files = pendingFiles.slice();
+    input.value = '';
+    pendingFiles = [];
+    renderAttachPreview();
+    try{
+      const attachments = await uploadFiles(files);
+      const admin = (window.BO_AUTH && window.BO_AUTH.user && window.BO_AUTH.user()) || {};
+      const now = firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection('conversations').doc(selectedId).collection('messages').add({
+        senderType: 'admin',
+        senderName: admin.displayName || admin.username || 'Admin',
+        text: text,
+        attachments: attachments,
+        createdAt: now
+      });
+      await db.collection('conversations').doc(selectedId).set({
+        lastMessage: text || (attachments.length ? '[Attachment]' : ''),
+        lastSenderType: 'admin',
+        status: 'open',
+        updatedAt: now,
+        memberUnreadCount: firebase.firestore.FieldValue.increment(1)
+      }, {merge:true});
+    }catch(e){
+      BO_DIALOG.alert(e.message || 'Send failed.',{title:'Send Failed',type:'error'});
+    }
+  }
+
+  async function uploadFiles(files){
+    const result = [];
+    for(const file of files){
+      const safeName = safeFileName(file.name || 'attachment');
+      const path = 'livechat/' + selectedId + '/' + Date.now() + '-' + safeName;
+      const snap = await storage.ref(path).put(file);
+      const url = await snap.ref.getDownloadURL();
+      result.push({name:file.name || safeName, size:file.size || 0, type:file.type || 'application/octet-stream', url:url, path:path});
+    }
+    return result;
+  }
+
+  function handlePasteFiles(e){
+    const clipboard = e.clipboardData || window.clipboardData;
+    if(!clipboard) return;
+    const files = [];
+    if(clipboard.files && clipboard.files.length) files.push.apply(files, Array.from(clipboard.files));
+    if(files.length){
+      e.preventDefault();
+      pendingFiles = pendingFiles.concat(files);
+      renderAttachPreview();
+    }
+  }
+
+  function renderAttachPreview(){
+    if(!attachPreview) return;
+    if(!pendingFiles.length){ attachPreview.innerHTML = ''; attachPreview.classList.remove('show'); return; }
+    attachPreview.classList.add('show');
+    attachPreview.innerHTML = pendingFiles.map(function(file, idx){
+      return '<span class="attach-chip">' + esc(file.name || 'attachment') + '<button type="button" data-remove="' + idx + '">&times;</button></span>';
+    }).join('');
+    attachPreview.querySelectorAll('[data-remove]').forEach(function(btn){
+      btn.addEventListener('click', function(){ pendingFiles.splice(Number(btn.dataset.remove),1); renderAttachPreview(); });
+    });
+  }
+
+
+  function getLocalTemplates(){
+    try{
+      const saved = JSON.parse(localStorage.getItem('bo_livechat_templates') || 'null');
+      if(Array.isArray(saved) && saved.length){
+        return saved.map(function(item, idx){
+          if(typeof item === 'string') return {id:'local-' + idx, title:item.slice(0,40), message:item};
+          return {id:item.id || ('local-' + idx), title:item.title || ('Template ' + (idx+1)), message:item.message || item.text || ''};
+        }).filter(function(x){ return x.message; });
+      }
+    }catch(e){}
+    return DEFAULT_TEMPLATES.slice();
+  }
+
+  function listenTemplates(){
+    if(!templatePanel) return;
+
+    // If Firebase is not configured, use local/default templates only as a fallback.
+    // If Firebase is configured, always use livechat_templates collection as the source of truth.
+    if(!db){
+      renderTemplates(getLocalTemplates(), true);
+      return;
+    }
+
+    if(unsubscribeTemplates) unsubscribeTemplates();
+    templatePanel.innerHTML = '<span class="livechat-template-hint">Loading templates...</span>';
+
+    // Do not use where/orderBy here. Firestore composite indexes are not needed.
+    // We load templates then filter/sort in JavaScript, same as livechat-template.js.
+    unsubscribeTemplates = db.collection('livechat_templates')
+      .onSnapshot(function(snapshot){
+        templateMessages = [];
+
+        snapshot.forEach(function(doc){
+          const data = doc.data() || {};
+          const status = Number(data.status == null ? 1 : data.status);
+          const message = data.message || data.text || '';
+
+          if(status === 1 && message){
+            templateMessages.push({
+              id: doc.id,
+              title: data.title || 'Template',
+              message: message,
+              sortOrder: Number(data.sortOrder || 0),
+              createdAt: data.createdAt
+            });
+          }
+        });
+
+        templateMessages.sort(function(a,b){
+          const sortA = Number(a.sortOrder || 0);
+          const sortB = Number(b.sortOrder || 0);
+          if(sortA !== sortB) return sortA - sortB;
+
+          const timeA = a.createdAt && a.createdAt.seconds ? a.createdAt.seconds : 0;
+          const timeB = b.createdAt && b.createdAt.seconds ? b.createdAt.seconds : 0;
+          return timeB - timeA;
+        });
+
+        renderTemplates(templateMessages, false);
+      }, function(error){
+        templatePanel.innerHTML = '<span class="livechat-template-hint error">Unable to load templates: ' + esc(error && error.message ? error.message : '') + '</span>';
+      });
+  }
+
+  // function renderTemplates(list, allowFallback){
+  //   if(!templatePanel) return;
+
+  //   list = Array.isArray(list) ? list.filter(function(item){ return item && (item.message || item.text); }) : [];
+
+  //   if(!list.length && allowFallback){
+  //     list = getLocalTemplates();
+  //   }
+
+  //   if(!list.length){
+  //     templatePanel.innerHTML = '<span class="livechat-template-hint">No active template. Add one in Template Messages.</span>';
+  //     return;
+  //   }
+
+  //   templatePanel.innerHTML = list.map(function(item, idx){
+  //     const title = item.title || item.message || 'Template';
+  //     const msg = item.message || item.text || '';
+  //     return '<button type="button" class="template-chip" title="' + esc(msg) + '" data-template-index="' + idx + '">' + esc(title) + '</button>';
+  //   }).join('');
+
+  //   templatePanel.querySelectorAll('[data-template-index]').forEach(function(btn){
+  //     btn.addEventListener('click', function(){
+  //       const item = list[Number(btn.dataset.templateIndex)] || {};
+  //       const text = item.message || item.text || '';
+  //       if(!input) return;
+  //       input.value = text;
+  //       input.focus();
+  //     });
+  //   });
+  // }
+  function renderTemplates(list, allowFallback){
+    if(!templatePanel) return;
+
+    list = Array.isArray(list) ? list.filter(function(item){ return item && (item.message || item.text); }) : [];
+
+    if(!list.length && allowFallback){
+      list = getLocalTemplates();
+    }
+
+    if(!list.length){
+      templatePanel.innerHTML = '<span class="livechat-template-hint">No active template. Add one in Template Messages.</span>';
+      return;
+    }
+
+    templatePanel.innerHTML = list.map(function(item, idx){
+      const title = item.title || item.message || 'Template';
+      const msg = item.message || item.text || '';
+      const hotkey = idx < 9 ? (idx + 1) : '';
+      return '<button type="button" class="template-chip" title="' + esc(msg) + '" data-template-index="' + idx + '">' +
+        (hotkey ? '<span class="template-hotkey">' + hotkey + '</span>' : '') +
+        esc(title) +
+      '</button>';
+    }).join('');
+
+    templatePanel.querySelectorAll('[data-template-index]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        applyTemplateByIndex(Number(btn.dataset.templateIndex), list);
+      });
+    });
+  }
+
+  function handleTemplateHotkey(e){
+    if(!templatePanel || !input) return;
+    if(!selectedId) return;
+    if(e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return;
+
+    const key = e.key;
+    if(!/^[1-9]$/.test(key)) return;
+
+    const target = e.target;
+
+    // If user is typing in another field, don't trigger template
+    if (
+      target &&
+      target !== input &&
+      (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable
+      )
+    ) {
+      return;
+    }
+
+    // If cursor is in message box and already has content,
+    // treat 1/2/3 as normal typing
+    if (
+      document.activeElement === input &&
+      input.value.trim() !== ''
+    ) {
+      return;
+    }
+
+    const buttons = templatePanel.querySelectorAll('[data-template-index]');
+    const btn = buttons[Number(key) - 1];
+
+    if(!btn) return;
+
+    e.preventDefault();
+    btn.click();
+  }
+
+  function applyTemplateByIndex(index, list){
+    const item = list[Number(index)] || {};
+    const text = item.message || item.text || '';
+    if(!input || !text) return;
+
+    input.value = text;
+    input.focus();
+  }
+
+  async function markConversationRead(id){
+    if(!db || !id) return;
+    try{
+      await db.collection('conversations').doc(id).set({
+        adminUnreadCount: 0,
+        adminReadAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, {merge:true});
+    }catch(e){}
+  }
+
+  function getUnreadTotal(){
+    return conversations.reduce(function(sum, c){ return sum + Number(c.adminUnreadCount || 0); }, 0);
+  }
+
+  function handleUnreadNotification(){
+    const total = getUnreadTotal();
+    document.title = total ? '(' + total + ') ' + originalTitle : originalTitle;
+    const badge = document.querySelector('[data-livechat-unread-total]');
+    if(badge){
+      badge.textContent = total;
+      badge.style.display = total ? 'inline-flex' : 'none';
+    }
+    if(total > lastUnreadTotal && !window.__BO_LIVECHAT_GLOBAL_NOTIFICATION__){
+      const latest = conversations.find(function(c){ return Number(c.adminUnreadCount || 0) > 0 && c.lastSenderType === 'member'; });
+      if(latest) notifyIncoming(latest);
+    }
+    lastUnreadTotal = total;
+    localStorage.setItem('bo_livechat_last_unread_total', String(total));
+  }
+
+  function requestBrowserNotificationPermission(){
+    if('Notification' in window && Notification.permission === 'default'){
+      setTimeout(function(){ Notification.requestPermission().catch(function(){}); }, 1200);
+    }
+  }
+
+  function installNotificationSoundUnlock(){
+    const unlock = function(){
+      unlockNotificationSound();
+      document.removeEventListener('pointerdown', unlock, true);
+      document.removeEventListener('keydown', unlock, true);
+      document.removeEventListener('touchstart', unlock, true);
+    };
+    document.addEventListener('pointerdown', unlock, true);
+    document.addEventListener('keydown', unlock, true);
+    document.addEventListener('touchstart', unlock, true);
+  }
+
+  function getNotificationAudio(){
+    if(!notificationAudio){
+      notificationAudio = new Audio(LIVECHAT_NOTIFICATION_SOUND_URL);
+      notificationAudio.preload = 'auto';
+      notificationAudio.volume = 1;
+      notificationAudio.load();
+    }
+    return notificationAudio;
+  }
+
+  function unlockNotificationSound(){
+    try{
+      const audio = getNotificationAudio();
+      const previousMuted = audio.muted;
+      audio.muted = true;
+      const started = audio.play();
+      if(started && typeof started.then === 'function'){
+        started.then(function(){
+          audio.pause();
+          audio.currentTime = 0;
+          audio.muted = previousMuted;
+          notificationAudioUnlocked = true;
+          if(notificationSoundQueued){
+            notificationSoundQueued = false;
+            playIncomingMessageSound();
+          }
+        }).catch(function(){
+          audio.muted = previousMuted;
+        });
+      }
+    }catch(e){}
+  }
+
+  function playIncomingMessageSound(){
+    try{
+      const audio = getNotificationAudio();
+      audio.pause();
+      audio.currentTime = 0;
+      audio.muted = false;
+      const played = audio.play();
+      if(played && typeof played.catch === 'function'){
+        played.then(function(){
+          notificationAudioUnlocked = true;
+          notificationSoundQueued = false;
+        }).catch(function(){
+          notificationSoundQueued = true;
+        });
+      }
+    }catch(e){}
+  }
+
+  function notifyIncoming(c){
+    playIncomingMessageSound();
+    try{
+      if('Notification' in window && Notification.permission === 'granted'){
+        const notification = new Notification('New live chat message', {
+          body: (c.memberName || c.memberUsername || 'Member') + ': ' + (c.lastMessage || 'New message'),
+          tag: 'livechat-' + c.id,
+          renotify: true,
+          silent: true
+        });
+        notification.onclick = function(){
+          try{ window.focus(); }catch(e){}
+          if(c && c.id) selectConversation(c.id);
+          notification.close();
+        };
+      }
+    }catch(e){}
+  }
+
+  function safeFileName(name){ return String(name || 'attachment').replace(/[^a-zA-Z0-9._-]/g, '_'); }
+  function initials(name){ return (String(name || 'M').trim().charAt(0) || 'M').toUpperCase(); }
+  function formatText(str){ return esc(str).replace(/\r\n|\r|\n/g, '<br>'); }
+  function formatFileSize(bytes){ if(!bytes) return '0 KB'; if(bytes < 1024*1024) return Math.max(1, Math.round(bytes/1024)) + ' KB'; return (bytes/1024/1024).toFixed(1) + ' MB'; }
+  function formatTime(ts){
+    try{
+      const d = ts && ts.toDate ? ts.toDate() : null;
+      if(!d) return '';
+      return d.toLocaleString([], {month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit'});
+    }catch(e){ return ''; }
+  }
+  function esc(value){ return String(value == null ? '' : value).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]; }); }
+})();
+
+// Keep reply composer visible and provide a one-click jump to the newest message.
+(function(){
+  function initScrollHelper(){
+    const room=document.querySelector('.livechat-room-card');
+    const box=document.getElementById('livechatMessages');
+    if(!room||!box||room.querySelector('.livechat-scroll-bottom')) return;
+    const btn=document.createElement('button');
+    btn.type='button';btn.className='livechat-scroll-bottom';btn.title='Scroll to latest message';btn.setAttribute('aria-label','Scroll to latest message');
+    btn.innerHTML='<i class="bi bi-arrow-down"></i>';
+    room.appendChild(btn);
+    const nearBottom=()=>box.scrollHeight-box.scrollTop-box.clientHeight<90;
+    const update=()=>btn.classList.toggle('show',!nearBottom()&&box.scrollHeight>box.clientHeight+40);
+    btn.addEventListener('click',()=>box.scrollTo({top:box.scrollHeight,behavior:'smooth'}));
+    box.addEventListener('scroll',update,{passive:true});
+    new MutationObserver(function(){
+      const shouldFollow=box.dataset.followLatest!=='false';
+      if(shouldFollow||nearBottom()) requestAnimationFrame(()=>box.scrollTo({top:box.scrollHeight,behavior:'smooth'}));
+      requestAnimationFrame(update);
+    }).observe(box,{childList:true,subtree:true});
+    box.addEventListener('wheel',()=>{box.dataset.followLatest=nearBottom()?'true':'false'},{passive:true});
+    box.addEventListener('touchmove',()=>{box.dataset.followLatest=nearBottom()?'true':'false'},{passive:true});
+    btn.addEventListener('click',()=>{box.dataset.followLatest='true'});
+    update();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initScrollHelper);else initScrollHelper();
+})();

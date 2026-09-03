@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#f5f7fb">
+    <title>Agent Portal Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/reports.css?v=1.0.42" rel="stylesheet">
+    <link href="assets/css/login.css?v=1.0.3" rel="stylesheet">
+    <link href="assets/css/agent-portal.css?v=1.0.1-alignment" rel="stylesheet">
+</head>
+
+<body class="report-body bo-login-body">
+    <main class="auth-page">
+        <section class="auth-card">
+            <header class="auth-heading">
+                <div class="auth-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 21a8 8 0 0 1 16 0" />
+                    </svg></div>
+                <h1>Agent Portal</h1>
+                <p class="auth-subtitle">Sign in with the portal credentials configured in Agent Management.</p>
+            </header>
+            <form id="agentLoginForm">
+                <div class="auth-field"><label for="agentLoginUser">Username</label>
+                    <div class="auth-input-wrap"><svg class="auth-input-icon" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8">
+                            <circle cx="12" cy="7" r="4" />
+                            <path d="M4 21a8 8 0 0 1 16 0" />
+                        </svg><input class="form-control" id="agentLoginUser" type="text"
+                            placeholder="Enter agent username" autocomplete="username" required></div>
+                </div>
+                <div class="auth-field"><label for="agentLoginPass">Password</label>
+                    <div class="auth-input-wrap"><svg class="auth-input-icon" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8">
+                            <rect x="4" y="10" width="16" height="11" rx="3" />
+                            <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                        </svg><input class="form-control" id="agentLoginPass" type="password"
+                            placeholder="Enter password" autocomplete="current-password" required></div>
+                </div>
+                <div class="upload-status" id="agentLoginMsg"></div><button class="btn auth-submit w-100"
+                    type="submit"><span>Sign in to Agent Portal</span><svg viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14" />
+                        <path d="m13 6 6 6-6 6" />
+                    </svg></button>
+            </form>
+            <footer class="auth-footer">Authorized agent access only</footer>
+        </section>
+    </main>
+    <script src="assets/js/config.js?v=1.0.36"></script>
+    <script src="assets/js/agent-portal.js?v=1.0.6"></script>
+</body>
+
+</html>

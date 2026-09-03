@@ -1,0 +1,13 @@
+(function(){
+  let page=0,totalPages=0,loading=false;
+  const $=id=>document.getElementById(id), esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const money=v=>Number(v||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+  const dt=v=>window.BO_FORMAT?.dateTime?BO_FORMAT.dateTime(v):(v?String(v).replace('T',' ').slice(0,19):'-');
+  function endpoint(){return window.GAME_RANKING_MODE==='frequent'?API_CONFIG.ENDPOINTS.FREQUENT_GAME_PLAYERS:API_CONFIG.ENDPOINTS.HIGHEST_TURNOVER_PLAYERS;}
+  async function load(reset){if(loading)return;if(reset)page=0;loading=true;$('gameRankBody').innerHTML='<tr><td colspan="11">Loading...</td></tr>';
+    const qs=new URLSearchParams({page:String(page),size:$('gameRankSize').value||'20'});const q=$('gameRankSearch').value.trim(),p=$('gameRankProvider').value.trim();if(q)qs.set('search',q);if(p)qs.set('providerCode',p);
+    try{const r=await fetch(API_CONFIG.BASE_URL+endpoint()+'?'+qs,{headers:BO_AUTH.authHeader()});const j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw new Error(j.message||'Request failed');const d=j.data||{},rows=d.content||[];totalPages=Number(d.totalPages||0);$('gameRankCount').textContent=Number(d.totalElements||0)+' Members';$('gameRankPager').textContent=totalPages?'Page '+(page+1)+' of '+totalPages:'Page 0 of 0';$('gameRankPrev').disabled=page<=0;$('gameRankNext').disabled=page+1>=totalPages;
+      $('gameRankBody').innerHTML=rows.length?rows.map((r,i)=>`<tr><td>${page*Number(d.size||20)+i+1}</td><td>${esc(r.memberId)}</td><td>${esc(r.username||'-')}</td><td>${esc(r.fullName||'-')}</td><td>${esc(r.mobile||'-')}</td><td><span class="status-pill info">${esc(r.providerCode||'-')}</span></td><td>${esc(r.gameCode||'-')}</td><td><strong>${money(r.totalTurnover)}</strong></td><td>${Number(r.playCount||0)}</td><td>${dt(r.lastPlayedAt)}</td></tr>`).join(''):'<tr><td colspan="11">No settled game records found.</td></tr>';
+    }catch(e){$('gameRankBody').innerHTML='<tr><td colspan="11">'+esc(e.message)+'</td></tr>';}finally{loading=false;}}
+  $('gameRankSearchBtn').onclick=()=>load(true);$('gameRankRefresh').onclick=()=>load(false);$('gameRankReset').onclick=()=>{$('gameRankSearch').value='';$('gameRankProvider').value='';$('gameRankSize').value='20';load(true)};$('gameRankPrev').onclick=()=>{if(page>0){page--;load(false)}};$('gameRankNext').onclick=()=>{if(page+1<totalPages){page++;load(false)}};$('gameRankSize').onchange=()=>load(true);['gameRankSearch','gameRankProvider'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')load(true)}));load(true);
+})();

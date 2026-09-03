@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/reports.css?v=1.0.43" rel="stylesheet">
+    <link href="assets/css/operations-upgrade.css?v=1.0.2" rel="stylesheet">
+    <link href="assets/css/bo-ui-standard.css?v=1.0.3" rel="stylesheet">
+    <style>
+        /* Dashboard only: keep date range on the left and pin timezone to the far right. */
+        .report-main .report-content > .ops-filter {
+            position: relative !important;
+            display: block !important;
+            width: 100% !important;
+            min-height: 96px !important;
+            padding-right: 330px !important;
+        }
+        .report-main .report-content > .ops-filter .dash-date-field {
+            width: 390px !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+            margin: 0 !important;
+        }
+        .report-main .report-content > .ops-filter .dashboard-timezone-clock {
+            position: absolute !important;
+            right: 20px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            margin: 0 !important;
+            white-space: nowrap !important;
+            text-align: right !important;
+        }
+        @media (max-width: 900px) {
+            .report-main .report-content > .ops-filter {
+                padding-right: 16px !important;
+                padding-bottom: 16px !important;
+                min-height: 0 !important;
+            }
+            .report-main .report-content > .ops-filter .dash-date-field {
+                width: 100% !important;
+            }
+            .report-main .report-content > .ops-filter .dashboard-timezone-clock {
+                position: static !important;
+                display: block !important;
+                width: 100% !important;
+                margin: 14px 0 0 !important;
+                transform: none !important;
+                white-space: normal !important;
+                overflow-wrap: anywhere !important;
+                text-align: right !important;
+                line-height: 1.35 !important;
+                text-align: right !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="report-body">
+    <div class="report-shell">
+        <aside class="report-sidebar" id="reportSidebar">
+            <div class="report-brand">
+                <div>Backoffice<br><small>Admin Panel</small></div><button class="close-side" data-close-sidebar><i
+                        class="bi bi-x-lg"></i></button>
+            </div>
+            <nav class="report-nav"></nav>
+        </aside>
+        <div class="sidebar-overlay" data-close-sidebar></div>
+        <main class="report-main">
+            <header class="report-topbar"><button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button>
+                <div class="user-title-wrap">
+                    <div class="user-title-icon"><i class="bi bi-speedometer2"></i></div>
+                    <div>
+                        <h1>Dashboard</h1>
+                        <p>Operational, wallet and gaming performance overview.</p>
+                    </div>
+                </div>
+                <div class="report-actions" data-bo-profile></div>
+            </header>
+            <section class="report-content">
+                <div class="ops-filter">
+                    <div class="field ref-date-field dash-date-field"><label>Date Range</label>
+                        <div class="ref-range-wrap"><button type="button" class="ref-range-trigger"
+                                id="dashDateTrigger"><span class="ref-range-icon"><i
+                                        class="bi bi-calendar3"></i></span><span id="dashDateLabel">Select date
+                                    range</span><i class="bi bi-chevron-down ms-auto"></i></button><input id="dashFrom"
+                                type="hidden"><input id="dashTo" type="hidden">
+                            <div class="ref-range-picker" id="dashRangePicker">
+                                <div class="ref-range-presets"><button type="button"
+                                        data-dash-range-preset="today">Today</button><button type="button"
+                                        data-dash-range-preset="yesterday">Yesterday</button><button type="button"
+                                        data-dash-range-preset="thisWeek">This Week</button><button type="button"
+                                        data-dash-range-preset="lastWeek">Last Week</button><button type="button"
+                                        data-dash-range-preset="thisMonth">This Month</button><button type="button"
+                                        data-dash-range-preset="lastMonth">Last Month</button><button type="button"
+                                        data-dash-range-preset="thisYear">This Year</button><button type="button"
+                                        data-dash-range-preset="lastYear">Last Year</button></div>
+                                <div class="ref-range-calendar">
+                                    <div class="ref-cal-head"><button type="button" id="dashCalPrev"><i
+                                                class="bi bi-chevron-left"></i></button><button type="button"
+                                            class="ref-head-pick" id="dashCalMonth"></button><button type="button"
+                                            class="ref-head-pick" id="dashCalYear"></button><button type="button"
+                                            id="dashCalNext"><i class="bi bi-chevron-right"></i></button></div>
+                                    <div class="ref-cal-month-grid" id="dashCalMonthGrid"></div>
+                                    <div class="ref-cal-year-grid" id="dashCalYearGrid"></div>
+                                    <div class="ref-cal-day-view" id="dashCalDayView">
+                                        <div class="ref-cal-week">
+                                            <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                                        </div>
+                                        <div class="ref-cal-days" id="dashCalDays"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <span id="dashClock" class="timezone-chip dashboard-timezone-clock" aria-label="Dashboard timezone and current time"></span>
+                </div>
+                <br>
+                <div class="ops-grid" id="dashboardCards"></div>
+            </section>
+        </main>
+    </div>
+    <script src="assets/js/config.js?v=1.0.31"></script>
+<script src="assets/js/brand-context.js?v=1.0.4"></script>
+    <script src="assets/js/bo-date-range.js?v=1.0.15"></script>
+    <script src="assets/js/dashboard.js?v=1.0.6"></script>
+    <script src="assets/js/reports.js?v=1.0.17"></script>
+    <script src="assets/js/auth.js?v=1.0.50"></script>
+    <script defer src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
+<script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
+
+<!-- Global live-chat unread reminder: sounds across BO until admin unread count reaches 0. -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="assets/js/firebase-config.js?v=1.0.0"></script>
+<script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
+</body>
+
+</html>

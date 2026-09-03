@@ -1,0 +1,119 @@
+/* Promotion / Bonus Report only. Keep the rest of the BO untouched. */
+.promotion-report-page .ops-filter{
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:flex-start!important;
+  flex-wrap:wrap!important;
+  gap:10px!important;
+}
+
+/* Match the approved Referral Network date-range dimensions. */
+.promotion-report-page .ops-filter>.bo-range-field{
+  width:390px!important;
+  min-width:390px!important;
+  max-width:390px!important;
+  flex:0 0 390px!important;
+}
+.promotion-report-page .ops-filter>.bo-range-field .bo-range-trigger{
+  width:390px!important;
+  min-width:390px!important;
+  max-width:390px!important;
+  height:42px!important;
+}
+.promotion-report-page .ops-filter>.bo-range-field .bo-range-pop{
+  width:390px!important;
+}
+.promotion-report-page .ops-filter>.bo-filter-hidden-item{
+  display:none!important;
+  width:0!important;
+  min-width:0!important;
+  max-width:0!important;
+  flex:0 0 0!important;
+  margin:0!important;
+  padding:0!important;
+}
+.promotion-report-page #reportSearch{
+  height:42px!important;
+  min-width:120px!important;
+  width:120px!important;
+  margin:0!important;
+}
+
+/* Match the compact User Management entries control. */
+.promotion-report-page .ops-table-footer{
+  display:grid!important;
+  grid-template-columns:auto 1fr auto!important;
+  align-items:center!important;
+  gap:12px!important;
+}
+.promotion-report-page .ops-table-footer .entries-control{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  white-space:nowrap!important;
+}
+.promotion-report-page .ops-table-footer .entries-control select,
+.promotion-report-page #reportPageSize{
+  width:68px!important;
+  min-width:68px!important;
+  max-width:68px!important;
+  height:40px!important;
+  flex:0 0 68px!important;
+  padding:0 30px 0 12px!important;
+}
+.promotion-report-page .ops-table-footer .table-info{
+  justify-self:center!important;
+  text-align:center!important;
+}
+.promotion-report-page .ops-table-footer .pagination-clean{
+  justify-self:end!important;
+}
+
+@media(max-width:767.98px){
+  .promotion-report-page .ops-filter>.bo-range-field,
+  .promotion-report-page .ops-filter>.bo-range-field .bo-range-trigger{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    flex:1 1 100%!important;
+  }
+  .promotion-report-page .ops-filter>.bo-range-field .bo-range-pop{
+    width:min(390px,calc(100vw - 32px))!important;
+    max-width:calc(100vw - 32px)!important;
+  }
+  .promotion-report-page #reportSearch{
+    width:120px!important;
+    min-width:120px!important;
+  }
+  .promotion-report-page .ops-table-footer{
+    grid-template-columns:1fr auto!important;
+    row-gap:10px!important;
+  }
+  .promotion-report-page .ops-table-footer .entries-control{grid-column:1;grid-row:1}
+  .promotion-report-page .ops-table-footer .pagination-clean{grid-column:2;grid-row:1;max-width:100%;overflow-x:auto}
+  .promotion-report-page .ops-table-footer .table-info{grid-column:1/-1;grid-row:2;justify-self:center}
+}
+
+
+/* v1.0.1 — lock Promotion Report page-size control to the compact standard. */
+.promotion-report-page .table-footer.ops-table-footer > .entries-control{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-self:start!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:max-content!important;
+  flex:0 0 auto!important;
+  gap:8px!important;
+}
+.promotion-report-page .table-footer.ops-table-footer > .entries-control > #reportPageSize{
+  display:inline-block!important;
+  box-sizing:border-box!important;
+  width:68px!important;
+  min-width:68px!important;
+  max-width:68px!important;
+  flex:0 0 68px!important;
+  height:40px!important;
+  margin:0!important;
+  padding:0 28px 0 12px!important;
+}
