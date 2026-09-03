@@ -201,7 +201,7 @@
       return (Array.isArray(user && user.menus) ? user.menus : [])
         .map(normalizeMenu)
         .filter(function(m){
-          if(!(m.status === 1 && m.url && m.url !== '#' && m.menuKey !== 'menu_permission')) return false;
+          if(!(m.status === 1 && m.url && m.url !== '#')) return false;
           if(!isRoot && rootOnlyMenus.has(String(m.menuKey || '').toLowerCase())) return false;
           return true;
         })
@@ -341,22 +341,8 @@
         menus = menus.concat([{menuKey:'advertisement_popup', title:'Advertisement Popup', url:'advertisement-popup.html', icon:'bi-window-stack', parentKey:'setting', sortOrder:94, status:1}]);
       }
 
-      if(String(user.roleType||'').toUpperCase()==='MAIN'){
-        // ROOT Menu Management + Role/Menu Permission are the source of truth.
-        // Never synthesize, expand, or silently grant MAIN/Boss child menus here.
-        // A configured parent access row (url '#') controls its matching group and
-        // every actual child page must also be explicitly assigned to the role.
-        const assigned = menus.map(normalizeMenu);
-        const grantedKeys = new Set(assigned.map(m=>String(m.menuKey||'').trim().toLowerCase()));
-        menus = assigned.filter(function(m){
-          const parent = String(m.parentKey||'').trim().toLowerCase();
-          if(parent && /^main_.+_group$/.test(parent)){
-            const accessKey = parent.replace(/_group$/, '_access');
-            if(!grantedKeys.has(accessKey)) return false;
-          }
-          return true;
-        });
-      }
+      // No role-specific post-filtering here. The exact active menu rows returned by
+      // /auth/admin/me are the sidebar source of truth for MAIN, MASTER and tenant roles.
 
       // Backward compatibility for older databases that only have the single
       // agent_management permission. Once Agent Management submenu records exist in
@@ -395,7 +381,7 @@
 
       const isRootSidebar = !!(user && (user.rootAdmin === true || String(user.roleType || '').toUpperCase() === 'ROOT'));
       const rootOnlySidebarMenus = new Set(['menu_management','root_control']);
-      menus = menus.map(normalizeMenu).filter(m => m.status === 1 && m.url && m.url !== '#' && m.menuKey !== 'menu_permission' && (isRootSidebar || !rootOnlySidebarMenus.has(String(m.menuKey || '').toLowerCase())))
+      menus = menus.map(normalizeMenu).filter(m => m.status === 1 && m.url && m.url !== '#' && (isRootSidebar || !rootOnlySidebarMenus.has(String(m.menuKey || '').toLowerCase())))
         .map(m => m.menuKey === 'role' ? Object.assign({}, m, {title:'Role & Menu Permission'}) : m)
         .sort((a,b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
 
