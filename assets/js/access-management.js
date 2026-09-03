@@ -50,7 +50,10 @@
   function renderPermissionGroups(selected){
     const box=document.getElementById('checkList'); if(!box)return;
     const set=new Set((selected||[]).map(String));
-    const visibleMenus=editingRoleType==='MAIN' ? menuCache.filter(m=>{const k=String(m.menuKey||'').toLowerCase(),p=String(m.parentKey||'').toLowerCase();return k.startsWith('main_')||p.startsWith('main_');}) : menuCache;
+    // Always render the complete active Menu Management catalogue for every editable role.
+    // ROOT decides the permission assignment; role type must not silently hide menu choices.
+    // Backend authorization remains responsible for protecting genuinely ROOT-only operations.
+    const visibleMenus=menuCache;
     box.innerHTML=groupMenus(visibleMenus).map(g=>{
       const meta=GROUP_META[g.key]||{title:g.key.replace(/[_-]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase()),icon:'bi-folder2-open'};
       return `<section class="permission-group" data-permission-group="${esc(g.key)}">
