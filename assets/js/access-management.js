@@ -100,55 +100,72 @@
     if(!sys)return true;
     if(rootAdmin)return rt!=='ROOT';
     if(masterAdmin)return rt==='BRAND_OWNER';
+    // MAIN/Boss may manage non-system permission groups only. System roles remain protected.
     return false;
   }
 
-  function openMenuPermissionModal(){
-    document.getElementById('menuPermissionModal')?.classList.add('show');
-    document.body.classList.add('modal-open');
-  }
-  function closeMenuPermissionModal(){
-    document.getElementById('menuPermissionModal')?.classList.remove('show');
-    document.body.classList.remove('modal-open');
-    msg(document.getElementById('menuPermissionStatus'),'','');
-  }
-  async function openMenuPermissionEditor(roleId){
-    const role=roleCache.find(r=>String(r.id)===String(roleId)); if(!role)return;
-    if(!canEditRoleMenus(role)){msg(document.getElementById('menuPermissionStatus'),'This system role is protected.','error');return;}
-    document.getElementById('menuPermissionRoleId').value=role.id;
-    document.getElementById('menuPermissionRoleName').value=(role.name||'')+(role.code?' ('+role.code+')':'');
-    document.getElementById('menuPermissionModalTitle').textContent='Menu Permission - '+(role.name||role.code||'Role');
-    renderPermissionGroupsInto('menuPermissionCheckList',[]);
-    openMenuPermissionModal();
-    msg(document.getElementById('menuPermissionStatus'),'Loading permissions...','');
-    try{const selected=await fetchRoleMenuIds(role.id);renderPermissionGroupsInto('menuPermissionCheckList',selected);msg(document.getElementById('menuPermissionStatus'),'','');}
-    catch(e){msg(document.getElementById('menuPermissionStatus'),e.message,'error');}
-  }
-  async function loadMenuPermissionList(){
-    const body=document.getElementById('menuPermissionTableBody'),cards=document.getElementById('menuPermissionMobileCards'); if(!body)return;
+  async function loadMenuPermissionWorkspace(){
+    const select=document.getElementById('menuPermissionRoleSelect');
+    const badge=document.getElementById('menuPermissionCountBadge');
+    const list=document.getElementById('menuPermissionCheckList');
+    if(!select||!list)return;
     try{
       roleCache=await fetchRoles();
-      const details=await Promise.all(roleCache.map(async r=>{try{return {...r,permissionCount:(await fetchRoleMenuIds(r.id)).length};}catch(e){return {...r,permissionCount:0};}}));
-      const badge=document.getElementById('menuPermissionCountBadge');if(badge)badge.textContent=`${details.length} Role${details.length===1?'':'s'}`;
-      const actionHtml=r=>canEditRoleMenus(r)?`<button class="clean-btn role-edit-btn" type="button" data-edit-menu-permission="${esc(r.id)}"><i class="bi bi-sliders"></i> Manage Menus</button>`:'<span class="status-pill active">Protected</span>';
-      body.innerHTML=details.map(r=>`<tr><td><b>${esc(r.name)}</b></td><td><span class="role-code-pill">${esc(r.code)}</span><small style="display:block;margin-top:4px;color:#667085">${esc(r.roleType||'CUSTOM')}</small></td><td><span class="role-permission-count"><i class="bi bi-shield-check"></i>${r.permissionCount} Menu${r.permissionCount===1?'':'s'}</span></td><td>${r.status==1?'<span class="status-pill active">Active</span>':'<span class="status-pill off">Inactive</span>'}</td><td>${actionHtml(r)}</td></tr>`).join('')||'<tr><td colspan="5">No role found.</td></tr>';
-      if(cards)cards.innerHTML=details.map(r=>`<article class="member-mobile-card role-mobile-card"><div class="member-card-head"><div><strong>${esc(r.name)}</strong><small>${esc(r.code)}</small></div>${r.status==1?'<span class="status-pill active">Active</span>':'<span class="status-pill off">Inactive</span>'}</div><div class="member-card-grid"><div><span>Permissions</span><b>${r.permissionCount} Menus</b></div></div>${canEditRoleMenus(r)?`<button class="clean-btn role-edit-btn w-100" type="button" data-edit-menu-permission="${esc(r.id)}"><i class="bi bi-sliders"></i> Manage Menus</button>`:'<span class="status-pill active">Protected</span>'}</article>`).join('');
-    }catch(e){body.innerHTML=`<tr><td colspan="5">${esc(e.message)}</td></tr>`;if(cards)cards.innerHTML='';}
+      const editable=roleCache.filter(canEditRoleMenus);
+      select.innerHTML='<option value="">Select role...</option>'+editable.map(r=>`<option value="${esc(r.id)}">${esc(r.name)}${r.code?' ('+esc(r.code)+')':''}</option>`).join('');
+      if(badge)badge.textContent=`${menuCache.length} Menu${menuCache.length===1?'':'s'}`;
+      renderPermissionGroupsInto('menuPermissionCheckList',[]);
+      document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=true);
+      const save=document.getElementById('saveMenuPermissionBtn');if(save)save.disabled=true;
+      const hint=document.getElementById('menuPermissionRoleHint');if(hint)hint.textContent=editable.length?'Select a role to load its assigned menus.':'No editable permission group is available for this account.';
+    }catch(e){msg(document.getElementById('menuPermissionStatus'),e.message,'error');}
   }
+
+  async function loadSelectedMenuPermissionRole(roleId){
+    const status=document.getElementById('menuPermissionStatus');
+    const save=document.getElementById('saveMenuPermissionBtn');
+    const hidden=document.getElementById('menuPermissionRoleId');
+    const hint=document.getElementById('menuPermissionRoleHint');
+    if(hidden)hidden.value=roleId||'';
+    if(!roleId){
+      renderPermissionGroupsInto('menuPermissionCheckList',[]);
+      document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=true);
+      if(save)save.disabled=true;
+      if(hint)hint.textContent='Select a role to load its assigned menus.';
+      msg(status,'','');
+      return;
+    }
+    const role=roleCache.find(r=>String(r.id)===String(roleId));
+    if(!role||!canEditRoleMenus(role)){msg(status,'This role is protected.','error');return;}
+    if(save)save.disabled=true;
+    msg(status,'Loading menu permissions...','');
+    try{
+      const selected=await fetchRoleMenuIds(role.id);
+      renderPermissionGroupsInto('menuPermissionCheckList',selected);
+      if(save)save.disabled=false;
+      if(hint)hint.textContent=`Editing ${role.name||role.code||'role'} — ${selected.length} menu${selected.length===1?'':'s'} assigned.`;
+      msg(status,'','');
+    }catch(e){msg(status,e.message,'error');}
+  }
+
   async function saveMenuPermissions(e){
     e.preventDefault();
     const roleId=document.getElementById('menuPermissionRoleId').value;
     const status=document.getElementById('menuPermissionStatus');
     const btn=document.getElementById('saveMenuPermissionBtn');
     const ids=[...document.querySelectorAll('#menuPermissionCheckList .permission-item input:checked')].map(x=>Number(x.value));
-    if(!roleId){msg(status,'Role is required.','error');return;}
+    if(!roleId){msg(status,'Please select a role.','error');return;}
     btn.disabled=true;msg(status,'Saving menu permissions...','');
     try{
       const saved=await api(BO_AUTH.roleMenusUrl(roleId),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify({menuIds:ids})});
       const persisted=(saved.data?.menuIds||[]).map(Number).filter(Number.isFinite);
-      const missing=ids.filter(id=>!new Set(persisted).has(id));
+      const persistedSet=new Set(persisted);
+      const missing=ids.filter(id=>!persistedSet.has(id));
       if(missing.length)throw new Error('Some selected menu permissions were rejected by the API.');
-      msg(status,'Menu permissions saved successfully.','success');await loadMenuPermissionList();setTimeout(closeMenuPermissionModal,500);
+      renderPermissionGroupsInto('menuPermissionCheckList',persisted);
+      const role=roleCache.find(r=>String(r.id)===String(roleId));
+      const hint=document.getElementById('menuPermissionRoleHint');if(hint)hint.textContent=`Editing ${(role&&role.name)||'role'} — ${persisted.length} menu${persisted.length===1?'':'s'} assigned.`;
+      msg(status,'Menu permissions saved successfully.','success');
     }catch(err){msg(status,String(err?.message||'Unable to save menu permissions.'),'error');}
     finally{btn.disabled=false;}
   }
@@ -191,13 +208,10 @@
   document.addEventListener('click',e=>{
     if(e.target.closest('#openRoleModalBtn'))openCreate();
     const edit=e.target.closest('[data-edit-role]');if(edit)openEdit(edit.dataset.editRole);
-    const menuEdit=e.target.closest('[data-edit-menu-permission]');if(menuEdit)openMenuPermissionEditor(menuEdit.dataset.editMenuPermission);
     if(e.target.closest('[data-close-role-modal]'))closeModal();
-    if(e.target.closest('[data-close-menu-permission-modal]'))closeMenuPermissionModal();
     if(e.target.id==='roleCreateModal')closeModal();
-    if(e.target.id==='menuPermissionModal')closeMenuPermissionModal();
   });
-  document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(document.getElementById('roleCreateModal')?.classList.contains('show'))closeModal();if(document.getElementById('menuPermissionModal')?.classList.contains('show'))closeMenuPermissionModal();});
+  document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(document.getElementById('roleCreateModal')?.classList.contains('show'))closeModal();});
   document.addEventListener('DOMContentLoaded',async()=>{
     await bootstrap();
     if(page==='role'){
@@ -207,10 +221,11 @@
       document.getElementById('clearAllPermission').onclick=()=>{document.querySelectorAll('#checkList .permission-item input').forEach(x=>x.checked=false);syncGroupToggles();};
     }
     if(page==='menu-permission'){
-      try{menuCache=await fetchMenus();await loadMenuPermissionList();}catch(e){msg(document.getElementById('menuPermissionStatus'),e.message,'error');}
+      try{menuCache=await fetchMenus();await loadMenuPermissionWorkspace();}catch(e){msg(document.getElementById('menuPermissionStatus'),e.message,'error');}
       const form=document.getElementById('menuPermissionForm');if(form)form.onsubmit=saveMenuPermissions;
-      const all=document.getElementById('menuPermissionSelectAll');if(all)all.onclick=()=>{document.querySelectorAll('#menuPermissionCheckList .permission-item input').forEach(x=>x.checked=true);syncGroupToggles();};
-      const clear=document.getElementById('menuPermissionClearAll');if(clear)clear.onclick=()=>{document.querySelectorAll('#menuPermissionCheckList .permission-item input').forEach(x=>x.checked=false);syncGroupToggles();};
+      const select=document.getElementById('menuPermissionRoleSelect');if(select)select.onchange=()=>loadSelectedMenuPermissionRole(select.value);
+      const all=document.getElementById('menuPermissionSelectAll');if(all)all.onclick=()=>{document.querySelectorAll('#menuPermissionCheckList .permission-item input:not(:disabled)').forEach(x=>x.checked=true);syncGroupToggles();};
+      const clear=document.getElementById('menuPermissionClearAll');if(clear)clear.onclick=()=>{document.querySelectorAll('#menuPermissionCheckList .permission-item input:not(:disabled)').forEach(x=>x.checked=false);syncGroupToggles();};
     }
     if(page==='account-lock')loadAccountLock();
   });

@@ -25,45 +25,29 @@
 <div class="user-title-wrap"><div class="user-title-icon"><i class="bi bi-menu-button-wide"></i></div><div><h1>Menu Permission</h1><p>Assign menu access to administrator roles.</p></div></div>
 <div class="report-actions" data-bo-profile=""></div>
 </header>
-<section class="report-content role-listing-page">
+<section class="report-content role-listing-page menu-permission-page">
 <div class="table-card role-listing-card">
 <div class="user-toolbar mb-3">
-<div class="user-title-row"><div class="user-badge"><span>Role Menu Permission</span></div><span class="users-found-badge" id="menuPermissionCountBadge">0 Roles</span></div>
+<div class="user-title-row"><div class="user-badge"><span>Menu Permission</span></div><span class="users-found-badge" id="menuPermissionCountBadge">0 Menus</span></div>
 </div>
-<div class="table-wrap">
-<table class="report-table table-clean role-main-table">
-<thead><tr><th>Role Name</th><th>Role Code</th><th>Permissions</th><th>Status</th><th>Action</th></tr></thead>
-<tbody id="menuPermissionTableBody"><tr><td colspan="5">Loading roles...</td></tr></tbody>
-</table>
-</div>
-<div class="member-card-list" id="menuPermissionMobileCards"></div>
-</div>
-</section>
-<div aria-hidden="true" class="modal-clean role-create-modal" id="menuPermissionModal">
-<div aria-hidden="true" class="modal-clean-panel role-create-modal-panel">
-<div aria-hidden="true" class="modal-clean-head admin-edit-head">
-<div class="admin-edit-title"><span class="admin-edit-icon"><i class="bi bi-shield-check"></i></span><div><h3 id="menuPermissionModalTitle">Menu Permission</h3><small id="menuPermissionModalSubtitle">Select the menus this role can access.</small></div></div>
-<button class="modal-clean-close" data-close-menu-permission-modal="" type="button"><i class="bi bi-x-lg"></i></button>
-</div>
-<form class="role-create-form" id="menuPermissionForm">
+<div class="menu-info-banner mb-3"><i class="bi bi-info-circle"></i><span>Select a role, then tick exactly which active Menu Management records that role can access.</span></div>
+<div class="admin-field mb-3"><label>Role / Permission Group</label><select class="form-select" id="menuPermissionRoleSelect"><option value="">Select role...</option></select></div>
+<form id="menuPermissionForm">
 <input id="menuPermissionRoleId" type="hidden"/>
-<div class="role-create-body">
-<div class="admin-field role-name-field"><label>Role</label><input class="form-control" id="menuPermissionRoleName" readonly="readonly"/></div>
-<div class="role-permission-heading"><div><h4>Menu Permission</h4><p>Select the menus this role can access.</p></div><div class="role-permission-quick"><button class="clean-btn" id="menuPermissionSelectAll" type="button"><i class="bi bi-check2-square"></i> Select All</button><button class="clean-btn" id="menuPermissionClearAll" type="button"><i class="bi bi-square"></i> Clear</button></div></div>
-<div class="permission-groups role-modal-permissions" id="menuPermissionCheckList"></div>
+<div class="role-permission-heading"><div><h4>Menu Permission</h4><p id="menuPermissionRoleHint">Select a role to load its assigned menus.</p></div><div class="role-permission-quick"><button class="clean-btn" id="menuPermissionSelectAll" type="button"><i class="bi bi-check2-square"></i> Select All</button><button class="clean-btn" id="menuPermissionClearAll" type="button"><i class="bi bi-square"></i> Clear</button></div></div>
+<div class="permission-groups role-modal-permissions" id="menuPermissionCheckList"><div class="permission-empty">Select a role to view menu permissions.</div></div>
 <div class="upload-status mt-3" id="menuPermissionStatus"></div>
-</div>
-<div class="role-create-actions"><button class="clean-btn" data-close-menu-permission-modal="" type="button">Cancel</button><button class="clean-btn primary" id="saveMenuPermissionBtn" type="submit"><i class="bi bi-check2-circle"></i> Save Permissions</button></div>
+<div class="role-create-actions px-0 pb-0"><button class="clean-btn primary" id="saveMenuPermissionBtn" type="submit" disabled><i class="bi bi-check2-circle"></i> Save Permissions</button></div>
 </form>
 </div>
-</div>
+</section>
 </main>
 </div>
 <script src="assets/js/config.js?v=1.0.36"></script>
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/reports.js?v=1.0.17"></script>
 <script src="assets/js/auth.js?v=1.0.54"></script>
-<script src="assets/js/access-management.js?v=1.0.9"></script>
+<script src="assets/js/access-management.js?v=1.0.10"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
