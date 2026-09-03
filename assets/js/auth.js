@@ -164,12 +164,26 @@
 
   try{(JSON.parse(localStorage.getItem('bo_menu_group_meta_v1')||'[]')||[]).forEach(function(g){const key=String(g.groupKey||'').trim();if(key)GROUP_META[key]={title:String(g.title||key),icon:String(g.icon||'bi-folder'),sortOrder:Number(g.sortOrder||100)};});}catch(e){}
 
+  function canonicalMenuUrl(menuKey, rawUrl){
+    const key = String(menuKey || '').trim().toLowerCase();
+    const raw = String(rawUrl || '').trim();
+    // Legacy Menu Permission rows used role.html#menuPermissions. That points to
+    // Role Management and also causes a redirect loop when a user has only the
+    // menu_permission grant. Keep the database permission row/key authoritative,
+    // but canonicalize this one legacy route to the real standalone page.
+    if(key === 'menu_permission' || /^role\.html#menupermissions$/i.test(raw.replace(/^\.\//,''))){
+      return 'menu-permission.html';
+    }
+    return raw || '#';
+  }
+
   function normalizeMenu(m){
+    const menuKey = String((m && (m.menuKey || m.key)) || '');
     return {
       id: m && m.id,
-      menuKey: String((m && (m.menuKey || m.key)) || ''),
+      menuKey: menuKey,
       title: String((m && (m.title || m.name)) || 'Menu'),
-      url: String((m && (m.url || m.href)) || '#'),
+      url: canonicalMenuUrl(menuKey, (m && (m.url || m.href)) || '#'),
       icon: String((m && m.icon) || 'bi-circle'),
       parentKey: String((m && m.parentKey) || ''),
       sortOrder: Number((m && m.sortOrder) || 0),
