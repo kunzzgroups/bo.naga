@@ -4,7 +4,7 @@
   let nmMode='group'; // 'item' | 'group'
   let returnToItemAfterGroup=false;
   const PANEL_KEY='bo_menu_mgmt_panel';
-  const MAIN_GROUP_KEYS=new Set(['root','main_reports_group','main_accounting_group','main_brands_group']);
+  const MAIN_GROUP_KEYS=new Set(['root','main_reports_group','main_accounting_group','main_brands_group','main_admin_group']);
   const $=id=>document.getElementById(id);
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function slug(v){return String(v||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,100);}

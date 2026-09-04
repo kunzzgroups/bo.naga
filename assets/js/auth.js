@@ -97,7 +97,8 @@
     agent_management_group: { title: 'Agent Management', icon: 'bi-person-workspace' },
     main_reports_group: { title: 'Reports', icon: 'bi-file-earmark-bar-graph', sortOrder: 30 },
     main_accounting_group: { title: 'Accounting & Provider Ops', icon: 'bi-cash-stack', sortOrder: 40 },
-    main_brands_group: { title: 'Brands', icon: 'bi-buildings', sortOrder: 50 }
+    main_brands_group: { title: 'Brands', icon: 'bi-buildings', sortOrder: 50 },
+    main_admin_group: { title: 'Admin', icon: 'bi-shield-lock', sortOrder: 60 }
   };
 
   // Used only when backend has not returned menu data yet.
@@ -125,6 +126,7 @@
     {menuKey:'wbet_bet_limit', title:'WBET Bet Limit', url:'wbet-bet-limit.html', icon:'bi-sliders', parentKey:'wallet', sortOrder:16},
     {menuKey:'provider_wallet_transaction', title:'Provider Transactions', url:'provider-wallet-transaction.html', icon:'bi-journal-text', parentKey:'wallet', sortOrder:16},
     {menuKey:'admin', title:'Admin Management', url:'admin-user.html', icon:'bi-shield-lock', parentKey:'', sortOrder:20},
+    {menuKey:'main_admin_detail', title:'Details', url:'main-admin-detail.html', icon:'bi-person-badge', parentKey:'main_admin_group', sortOrder:60.1},
     {menuKey:'brand_management', title:'Branding Management', url:'brand-management.html', icon:'bi-buildings', parentKey:'', sortOrder:21},
     {menuKey:'role', title:'Role & Menu Permission', url:'role.html', icon:'bi-person-badge', parentKey:'access', sortOrder:30},
     {menuKey:'menu_management', title:'Menu Management', url:'menu-management.html', icon:'bi-list-check', parentKey:'access', sortOrder:31},
@@ -173,6 +175,11 @@
     // but canonicalize this one legacy route to the real standalone page.
     if(key === 'menu_permission' || /^role\.html#menupermissions$/i.test(raw.replace(/^\.\//,''))){
       return 'menu-permission.html';
+    }
+    // MAIN Admin → Details uses the executive Admin Detail page. Keep legacy
+    // BO Admin Management (admin / admin-user.html) unchanged.
+    if(key === 'main_admin_detail' || key === 'admin_detail' || /^main-admin-detail\.html$/i.test(raw.replace(/^\.\//,''))){
+      return 'main-admin-detail.html';
     }
     return raw || '#';
   }
@@ -246,6 +253,7 @@
         'agent-payout-admin.html','agent-promotion-admin.html'
       ]);
       const requestedAgentChild = agentChildPages.has(pageName());
+      const requestedMainAdminDetail = pageName() === 'main-admin-detail.html';
       if(current === 'main-stat-detail.html'){
         let source = '';
         try { source = String(new URLSearchParams(location.search || '').get('source') || 'overview').toLowerCase(); } catch(e) {}
@@ -265,6 +273,14 @@
       // child page separately.
       if(!allowed && requestedAgentChild){
         allowed = menus.some(function(m){ return String(m.menuKey || '').toLowerCase() === 'agent_management'; });
+      }
+      // MAIN Admin Detail inherits legacy Admin Management permission when the
+      // dedicated main_admin_detail menu row is not yet assigned.
+      if(!allowed && requestedMainAdminDetail){
+        allowed = menus.some(function(m){
+          const key = String(m.menuKey || '').toLowerCase();
+          return key === 'admin' || key === 'main_admin_detail' || key === 'admin_detail';
+        });
       }
       if(!allowed){
         const landing = this.landingPage(user);

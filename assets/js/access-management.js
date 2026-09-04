@@ -7,9 +7,10 @@
     wallet:{title:'Wallet Management',icon:'bi-wallet2'}, agent_management_group:{title:'Agent Management',icon:'bi-person-workspace'}, report:{title:'Report',icon:'bi-bar-chart-line'},
     game:{title:'Game Management',icon:'bi-controller'}, bonus:{title:'Bonus Management',icon:'bi-gift'},
     design:{title:'Design',icon:'bi-palette'}, setting:{title:'Setting',icon:'bi-gear'}, support:{title:'Support',icon:'bi-headset'},
-    main_reports_group:{title:'Reports',icon:'bi-file-earmark-bar-graph'}, main_accounting_group:{title:'Accounting & Provider Ops',icon:'bi-cash-stack'}, main_brands_group:{title:'Brands',icon:'bi-buildings'}
+    main_reports_group:{title:'Reports',icon:'bi-file-earmark-bar-graph'}, main_accounting_group:{title:'Accounting & Provider Ops',icon:'bi-cash-stack'}, main_brands_group:{title:'Brands',icon:'bi-buildings'},
+    main_admin_group:{title:'Admin',icon:'bi-shield-lock'}
   };
-  const GROUP_ORDER=['root','main_reports_group','main_accounting_group','main_brands_group','access','wallet','agent_management_group','report','game','bonus','design','setting','support'];
+  const GROUP_ORDER=['root','main_reports_group','main_accounting_group','main_brands_group','main_admin_group','access','wallet','agent_management_group','report','game','bonus','design','setting','support'];
   const GROUP_BLURB={
     root:'Top-level pages and entry points',
     access:'Roles, menus, logs, and security gates',
@@ -23,7 +24,8 @@
     support:'Live chat and support tools',
     main_reports_group:'MAIN executive reports',
     main_accounting_group:'Accounting and provider ops',
-    main_brands_group:'Brand portfolio controls'
+    main_brands_group:'Brand portfolio controls',
+    main_admin_group:'MAIN administrator accounts and access'
   };
   let menuCache=[];
   let roleCache=[];
