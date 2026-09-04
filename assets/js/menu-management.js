@@ -1,6 +1,6 @@
 (function(){
   let rows=[],groups=[];
-  let activePanel='ALL';
+  let activePanel='MAIN';
   const PANEL_KEY='bo_menu_mgmt_panel';
   const MAIN_GROUP_KEYS=new Set(['root','main_reports_group','main_accounting_group','main_brands_group']);
   const $=id=>document.getElementById(id);
@@ -30,12 +30,10 @@
   }
 
   function filteredMenus(){
-    if(activePanel==='ALL') return rows.slice();
     return rows.filter(m=>menuPanel(m)===activePanel);
   }
 
   function filteredGroups(){
-    if(activePanel==='ALL') return groups.slice();
     return groups.filter(g=>{
       const key=String(g.groupKey||'').trim().toLowerCase();
       const isMain=isMainGroupKey(key);
@@ -49,35 +47,20 @@
       btn.classList.toggle('active',on);
       btn.setAttribute('aria-selected',on?'true':'false');
     });
-    const hint=$('menuPanelHint');
     const sub=$('menuModalSub');
-    if(hint){
-      if(activePanel==='ALL'){
-        hint.innerHTML='ALL shows every menu record. Use <b>MAIN</b> / <b>BO</b> tabs to manage each sidebar separately.';
-      }else if(activePanel==='MAIN'){
-        hint.innerHTML='MAIN tab lists executive-panel sidebar menus (<b>main.titanx7</b>). Put them under a <b>main_*</b> group so they stay on this tab.';
-      }else{
-        hint.innerHTML='BO tab lists brand backoffice sidebar menus (<b>bo.titanx7</b>). Use Access / Wallet / Game / etc. groups — not <b>main_*</b>.';
-      }
-    }
     if(sub){
       sub.textContent=activePanel==='MAIN'
         ? 'Create a permission record for the MAIN sidebar.'
-        : activePanel==='BO'
-          ? 'Create a permission record for the BO sidebar.'
-          : 'Create a permission record for any sidebar panel.';
+        : 'Create a permission record for the BO sidebar.';
     }
     const mainN=rows.filter(m=>menuPanel(m)==='MAIN').length;
     const boN=rows.filter(m=>menuPanel(m)==='BO').length;
-    if($('menuTabAllCount')) $('menuTabAllCount').textContent=String(rows.length);
     if($('menuTabMainCount')) $('menuTabMainCount').textContent=String(mainN);
     if($('menuTabBoCount')) $('menuTabBoCount').textContent=String(boN);
   }
 
   function normalizePanel(panel){
-    const p=String(panel||'').toUpperCase();
-    if(p==='BO'||p==='MAIN'||p==='ALL') return p;
-    return 'ALL';
+    return String(panel||'').toUpperCase()==='BO' ? 'BO' : 'MAIN';
   }
 
   function setPanel(panel){
@@ -94,7 +77,7 @@
     const value=selected==null?sel.value:String(selected);
     const opts=filteredGroups().filter(g=>Number(g.status)===1)
       .sort((a,b)=>Number(a.sortOrder||100)-Number(b.sortOrder||100)||String(a.title).localeCompare(String(b.title)));
-    const emptyLabel=activePanel==='MAIN'?'MAIN top-level':activePanel==='BO'?'BO top-level':'Top-level';
+    const emptyLabel=activePanel==='MAIN'?'MAIN top-level':'BO top-level';
     sel.innerHTML='<option value="">'+esc(emptyLabel)+'</option>'+
       opts.map(g=>`<option value="${esc(g.groupKey)}">${esc(g.title)}</option>`).join('');
     if(value && [...sel.options].some(o=>o.value===value)) sel.value=value;
@@ -167,7 +150,7 @@
     const m=rows.find(x=>String(x.id)===String(id));
     if(!m) return;
     const panel=menuPanel(m);
-    if(activePanel!=='ALL' && panel!==activePanel) setPanel(panel);
+    if(panel!==activePanel) setPanel(panel);
     reset();
     $('menuId').value=m.id;
     $('menuTitle').value=m.title||'';
@@ -202,7 +185,7 @@
       return;
     }
     const classified=menuPanel(payload);
-    if(activePanel!=='ALL' && classified!==activePanel){
+    if(classified!==activePanel){
       status(
         'menuFormStatus',
         activePanel==='MAIN'
@@ -338,7 +321,7 @@
   document.addEventListener('DOMContentLoaded',function(){
     try{
       const saved=sessionStorage.getItem(PANEL_KEY);
-      if(saved==='BO'||saved==='MAIN'||saved==='ALL') activePanel=saved;
+      if(saved==='BO'||saved==='MAIN') activePanel=saved;
     }catch(e){}
 
     document.querySelectorAll('[data-menu-panel]').forEach(btn=>{
