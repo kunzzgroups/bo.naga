@@ -154,9 +154,22 @@
                 <div class="asset-upload-row" data-field="pageBackgroundUrl">
                   <div class="asset-preview bg-preview"><img alt="Background preview" data-preview="pageBackgroundUrl" /></div>
                   <div class="asset-field">
-                    <label>Page Background</label>
+                    <label>Desktop Page Background</label>
                     <input type="hidden" id="pageBackgroundUrl" readonly />
                     <div class="asset-path-hidden" data-asset-text="pageBackgroundUrl">Current image loaded</div>
+                  </div>
+                  <input type="file" class="asset-file" accept=".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif" hidden />
+                  <button class="clean-btn choose-btn" type="button">Choose</button>
+                  <button class="clean-btn primary upload-asset-btn" type="button">Clear</button>
+                </div>
+
+                <div class="asset-upload-row" data-field="mobileBackgroundUrl">
+                  <div class="asset-preview bg-preview"><img alt="Mobile background preview" data-preview="mobileBackgroundUrl" /></div>
+                  <div class="asset-field">
+                    <label>Mobile Page Background</label>
+                    <input type="hidden" id="mobileBackgroundUrl" readonly />
+                    <div class="asset-path-hidden" data-asset-text="mobileBackgroundUrl">No mobile background uploaded</div>
+                    <small class="text-secondary">Used on frontend screens up to 900px wide. If empty, the desktop background is used automatically.</small>
                   </div>
                   <input type="file" class="asset-file" accept=".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif" hidden />
                   <button class="clean-btn choose-btn" type="button">Choose</button>
@@ -517,12 +530,12 @@
         </section>
       </main>
     </div>
-    <script src="assets/js/config.js?v=1.0.36"></script>
+    <script src="assets/js/config.js?v=1.0.37"></script>
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
     <script src="assets/js/auth.js?v=1.0.54"></script>
     <script src="assets/js/reports.js?v=1.0.17"></script>
     <script src="assets/js/dynamic-translation.js?v=1.0.6"></script>
-    <script src="assets/js/site-customize.js?v=1.0.20"></script>
+    <script src="assets/js/site-customize.js?v=1.0.21"></script>
       <script src="assets/js/dynamic-translation-init.js?v=1.0.1"></script>
 
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->

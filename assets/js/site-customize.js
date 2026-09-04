@@ -28,6 +28,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         { field: 'faviconUrl2', fileKey: 'favicon2', label: 'favicon 32x32', fallback: assetUrl('favicon2.png') },
         { field: 'faviconUrl3', fileKey: 'favicon3', label: 'favicon 180x180', fallback: assetUrl('favicon3.png') },
         { field: 'pageBackgroundUrl', fileKey: 'background', label: 'background', fallback: assetUrl('background.png'), apiKeys: ['backgroundUrl', 'pageBackgroundUrl', 'background'] },
+        { field: 'mobileBackgroundUrl', fileKey: 'mobileBackground', label: 'mobile background', fallback: '', apiKeys: ['mobileBackgroundUrl', 'mobileBackground'] },
         { field: 'referralUrl', fileKey: 'referral', label: 'referral', fallback: assetUrl('referral.png') },
         { field: 'shareUrl', fileKey: 'share', label: 'share', fallback: assetUrl('share.png') },
         { field: 'downlineUrl', fileKey: 'downline', label: 'downline', fallback: assetUrl('downline.png') },

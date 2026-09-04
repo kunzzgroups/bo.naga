@@ -302,7 +302,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     if(tenantMode && el.providerId.value){
       setBusy(true);
       try{
-        const json=await fetchJson(API_CONFIG.BASE_URL + '/api/admin/game-provider/brand-presentation',{
+        const json=await fetchJson(adminApi('GAME_PROVIDER_BRAND_PRESENTATION'),{
           method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
             code:el.providerCode.value.trim().toUpperCase(),
             providerImageUrl:el.providerImageUrl.value.trim(),

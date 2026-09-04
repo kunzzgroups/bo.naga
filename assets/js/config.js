@@ -84,6 +84,7 @@ const API_CONFIG = window.API_CONFIG || {
         GAME_PROVIDER_CREATE: "/admin/game-provider/create",
         GAME_PROVIDER_UPDATE: "/admin/game-provider/update",
         GAME_PROVIDER_DELETE: "/admin/game-provider/delete",
+        GAME_PROVIDER_BRAND_PRESENTATION: "/admin/game-provider/brand-presentation",
 
         MEMBER_WALLET_LIST: "/admin/member-wallet/list",
         MEMBER_WALLET_PROVIDER_ACCOUNTS: "/admin/member-wallet/provider-accounts",
