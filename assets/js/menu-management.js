@@ -161,10 +161,55 @@
     return list.slice(start,end);
   }
 
+  // Mirror auth.js sidebar roots for the active MAIN/BO panel only
+  // (top-level menus + groups that actually have children in that panel).
+  function buildPanelRootEntries(){
+    const menus=filteredMenus().filter(m=>{
+      if(Number(m.status)!==1) return false;
+      const url=String(m.url||'').trim();
+      return url && url!=='#';
+    });
+    const top=[];
+    const byParent={};
+    menus.forEach(m=>{
+      const pk=String(m.parentKey||'').trim();
+      if(pk) (byParent[pk]=byParent[pk]||[]).push(m);
+      else top.push(m);
+    });
+    const metaMap=(typeof window!=='undefined'&&window.BO_MENU_GROUP_META)||{};
+    const entries=[];
+    top.forEach(m=>{
+      entries.push({
+        kind:'item',
+        title:m.title,
+        icon:m.icon||'bi-circle',
+        sortOrder:Number(m.sortOrder||0)
+      });
+    });
+    Object.keys(byParent).forEach(key=>{
+      const g=groups.find(x=>String(x.groupKey)===String(key));
+      const meta=metaMap[key]||{};
+      let sort=Number(g&&g.sortOrder);
+      if(!Number.isFinite(sort)) sort=Number(meta.sortOrder);
+      if(!Number.isFinite(sort)){
+        sort=Math.min.apply(null,byParent[key].map(x=>Number(x.sortOrder||0)));
+      }
+      entries.push({
+        kind:'group',
+        groupKey:key,
+        title:(g&&g.title)||meta.title||groupName(key),
+        icon:(g&&g.icon)||meta.icon||'bi-folder',
+        sortOrder:sort
+      });
+    });
+    return entries.sort((a,b)=>Number(a.sortOrder||0)-Number(b.sortOrder||0)||String(a.title||'').localeCompare(String(b.title||'')));
+  }
+
   function updateLivePreview(){
     const box=$('nmSidebarPreview');
     const meta=$('nmPreviewMeta');
     if(!box) return;
+    const panelLabel=activePanel==='BO'?'BO sidebar':'MAIN sidebar';
 
     if(nmMode==='group'){
       const title=$('groupTitle')?.value.trim()||'New Group';
@@ -172,18 +217,17 @@
       const key=$('groupKey')?.value.trim()||slug(title)||'new_group';
       const sort=Number($('groupSort')?.value);
       const draftSort=Number.isFinite(sort)?sort:100;
-      const draft={__new:true,title,icon,groupKey:key,sortOrder:draftSort};
-      const list=filteredGroups().filter(g=>Number(g.status)===1)
-        .concat([draft])
-        .sort((a,b)=>Number(a.sortOrder||100)-Number(b.sortOrder||100)||String(a.title||'').localeCompare(String(b.title||'')));
+      const draft={__new:true,kind:'group',title,icon,groupKey:key,sortOrder:draftSort};
+      const list=buildPanelRootEntries().concat([draft])
+        .sort((a,b)=>Number(a.sortOrder||0)-Number(b.sortOrder||0)||String(a.title||'').localeCompare(String(b.title||'')));
       const idx=list.findIndex(g=>g.__new);
-      const shown=windowAround(list,idx,5);
+      const shown=windowAround(list,Math.max(0,idx),5);
       box.innerHTML=shown.map(g=>g.__new
         ? mockRow({icon,title,isNew:true,badge:'NEW GROUP'})
         : mockRow({icon:g.icon||'bi-folder',title:g.title})
-      ).join('');
+      ).join('')||mockRow({icon,title,isNew:true,badge:'NEW GROUP'});
       if(meta){
-        meta.innerHTML=`<div><span>Belongs to</span><b>Root sidebar category</b></div>
+        meta.innerHTML=`<div><span>Panel</span><b>${esc(panelLabel)}</b></div>
           <div><span>Group key</span><code>${esc(key)}</code></div>
           <div><span>Level</span><b>Collapsible container (no page URL)</b></div>`;
       }
@@ -200,7 +244,7 @@
     const draft={__new:true,title,icon,menuKey:key,parentKey,sortOrder:draftSort};
 
     if(parent){
-      const siblings=rows.filter(m=>String(m.parentKey||'')===String(parentKey)&&Number(m.status)===1)
+      const siblings=filteredMenus().filter(m=>String(m.parentKey||'')===String(parentKey)&&Number(m.status)===1)
         .concat([draft])
         .sort((a,b)=>Number(a.sortOrder||0)-Number(b.sortOrder||0)||String(a.title||'').localeCompare(String(b.title||'')));
       const idx=siblings.findIndex(m=>m.__new);
@@ -212,18 +256,18 @@
       ).join('');
       box.innerHTML=html;
     }else{
-      const top=filteredMenus().filter(m=>!String(m.parentKey||'').trim()&&Number(m.status)===1)
-        .concat([draft])
+      const list=buildPanelRootEntries().concat([{__new:true,kind:'item',title,icon,sortOrder:draftSort}])
         .sort((a,b)=>Number(a.sortOrder||0)-Number(b.sortOrder||0)||String(a.title||'').localeCompare(String(b.title||'')));
-      const idx=top.findIndex(m=>m.__new);
-      const shown=windowAround(top,Math.max(0,idx),5);
+      const idx=list.findIndex(m=>m.__new);
+      const shown=windowAround(list,Math.max(0,idx),5);
       box.innerHTML=(shown.length?shown:[{__new:true}]).map(m=>m.__new
         ? mockRow({icon,title,isNew:true,badge:'NEW'})
         : mockRow({icon:m.icon||'bi-circle',title:m.title})
       ).join('');
     }
     if(meta){
-      meta.innerHTML=`<div><span>Parent</span><b>${esc(parent?parent.title:'Top-level')}</b></div>
+      meta.innerHTML=`<div><span>Panel</span><b>${esc(panelLabel)}</b></div>
+        <div><span>Parent</span><b>${esc(parent?parent.title:'Top-level')}</b></div>
         <div><span>Permission key</span><code>${esc(key)}</code></div>
         <div><span>URL</span><code>${esc($('menuUrl')?.value.trim()||'—')}</code></div>`;
     }
