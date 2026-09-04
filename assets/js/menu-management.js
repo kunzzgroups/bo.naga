@@ -1,6 +1,8 @@
 (function(){
   let rows=[],groups=[];
   let activePanel='MAIN';
+  let nmMode='group'; // 'item' | 'group'
+  let returnToItemAfterGroup=false;
   const PANEL_KEY='bo_menu_mgmt_panel';
   const MAIN_GROUP_KEYS=new Set(['root','main_reports_group','main_accounting_group','main_brands_group']);
   const $=id=>document.getElementById(id);
@@ -8,7 +10,7 @@
   function slug(v){return String(v||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,100);}
   async function api(url,opt){const r=await fetch(url,opt||{}),j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw new Error(j.message||'Request failed');return j;}
   function status(id,text,type){const e=$(id);if(!e)return;e.textContent=text||'';e.className='upload-status '+(type||'');}
-  function groupName(k){if(!k)return 'Main Menu';const g=groups.find(x=>String(x.groupKey)===String(k));return g?g.title:String(k).replace(/[_-]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
+  function groupName(k){if(!k)return 'Top-level';const g=groups.find(x=>String(x.groupKey)===String(k));return g?g.title:String(k).replace(/[_-]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
 
   function isMainGroupKey(key){
     const k=String(key||'').trim().toLowerCase();
@@ -16,7 +18,6 @@
     return MAIN_GROUP_KEYS.has(k) || k.startsWith('main_');
   }
 
-  /** MAIN = executive panel sidebar; BO = brand ops sidebar. */
   function menuPanel(m){
     const explicit=String((m&&(m.panel||m.side||m.scope))||'').trim().toUpperCase();
     if(explicit==='MAIN'||explicit==='BO') return explicit;
@@ -47,12 +48,6 @@
       btn.classList.toggle('active',on);
       btn.setAttribute('aria-selected',on?'true':'false');
     });
-    const sub=$('menuModalSub');
-    if(sub){
-      sub.textContent=activePanel==='MAIN'
-        ? 'Create a permission record for the MAIN sidebar.'
-        : 'Create a permission record for the BO sidebar.';
-    }
     const mainN=rows.filter(m=>menuPanel(m)==='MAIN').length;
     const boN=rows.filter(m=>menuPanel(m)==='BO').length;
     if($('menuTabMainCount')) $('menuTabMainCount').textContent=String(mainN);
@@ -69,6 +64,7 @@
     syncTabUi();
     render();
     renderGroupSelect();
+    updateLivePreview();
   }
 
   function renderGroupSelect(selected){
@@ -77,8 +73,7 @@
     const value=selected==null?sel.value:String(selected);
     const opts=filteredGroups().filter(g=>Number(g.status)===1)
       .sort((a,b)=>Number(a.sortOrder||100)-Number(b.sortOrder||100)||String(a.title).localeCompare(String(b.title)));
-    const emptyLabel=activePanel==='MAIN'?'MAIN top-level':'BO top-level';
-    sel.innerHTML='<option value="">'+esc(emptyLabel)+'</option>'+
+    sel.innerHTML='<option value="">Top-level</option>'+
       opts.map(g=>`<option value="${esc(g.groupKey)}">${esc(g.title)}</option>`).join('');
     if(value && [...sel.options].some(o=>o.value===value)) sel.value=value;
     else sel.value='';
@@ -92,18 +87,10 @@
     $('menuMobileCards').innerHTML=list.map(m=>`<article class="member-mobile-card menu-mobile-card"><div class="member-card-head"><div class="menu-name-cell"><i class="bi ${esc(m.icon||'bi-circle')}"></i><div><strong>${esc(m.title)}</strong><small>${esc(m.menuKey)}</small></div></div>${Number(m.status)===1?'<span class="status-pill active">Active</span>':'<span class="status-pill off">Inactive</span>'}</div><div class="member-card-grid"><div><span>Page URL</span><b>${esc(m.url)}</b></div><div><span>Group</span><b>${esc(groupName(m.parentKey))}</b></div><div><span>Sort</span><b>${Number(m.sortOrder||0)}</b></div></div><div class="d-flex gap-2"><button class="clean-btn flex-grow-1" data-edit-menu="${esc(m.id)}"><i class="bi bi-pencil-square"></i> Edit Menu</button><button class="clean-btn danger" data-delete-menu="${esc(m.id)}"><i class="bi bi-trash3"></i> Delete</button></div></article>`).join('');
   }
 
-  function renderGroups(){
-    const body=$('groupTableBody');
-    if(!body) return;
-    const list=filteredGroups().sort((a,b)=>Number(a.sortOrder||100)-Number(b.sortOrder||100)||String(a.title).localeCompare(String(b.title)));
-    body.innerHTML=list.map(g=>`<tr><td><div class="menu-name-cell"><i class="bi ${esc(g.icon||'bi-folder')}"></i><div><b>${esc(g.title)}</b><small>${Number(g.systemGroup)===1?'Preloaded':'Custom'}</small></div></div></td><td><span class="menu-url-code">${esc(g.groupKey)}</span></td><td>${Number(g.sortOrder||100)}</td><td>${Number(g.status)===1?'<span class="status-pill active">Active</span>':'<span class="status-pill off">Inactive</span>'}</td><td><button class="clean-btn" data-edit-group="${esc(g.id)}"><i class="bi bi-pencil-square"></i> Edit</button> <button class="clean-btn" data-delete-group="${esc(g.id)}"><i class="bi bi-trash"></i></button></td></tr>`).join('')||`<tr><td colspan="5">No ${esc(activePanel)} menu groups found.</td></tr>`;
-  }
-
   async function loadGroups(){
     const j=await api(BO_AUTH.menuGroupListAllUrl(),{headers:{...BO_AUTH.authHeader()}});
     groups=j.data||[];
     renderGroupSelect();
-    renderGroups();
     try{localStorage.setItem('bo_menu_group_meta_v1',JSON.stringify(groups.filter(g=>Number(g.status)===1)));}catch(e){}
   }
 
@@ -113,37 +100,190 @@
       const j=await api(BO_AUTH.menuListAllUrl(),{headers:{...BO_AUTH.authHeader()}});
       rows=(j.data||[]).sort((a,b)=>Number(a.sortOrder||0)-Number(b.sortOrder||0)||String(a.title||'').localeCompare(String(b.title||'')));
       render();
+      updateLivePreview();
     }catch(e){
       $('menuTableBody').innerHTML=`<tr><td colspan="6">${esc(e.message)}</td></tr>`;
     }
   }
 
-  function preview(){
-    $('menuPreviewTitle').textContent=$('menuTitle').value.trim()||'Menu Title';
-    $('menuPreviewIcon').className='bi '+($('menuIcon').value.trim()||'bi-circle');
+  function syncItemIconPreview(){
+    const preview=$('menuIconPreview');
+    if(preview) preview.className='bi '+($('menuIcon')?.value.trim()||'bi-circle');
+  }
+  function syncGroupIconPreview(){
+    const preview=$('groupIconPreview');
+    if(preview) preview.className='bi '+($('groupIcon')?.value.trim()||'bi-folder');
   }
 
-  function reset(){
-    $('menuForm').reset();
-    $('menuId').value='';
-    $('menuSort').value='100';
-    $('menuStatus').value='1';
-    $('menuModalTitle').textContent='Add Menu';
+  function setNmMode(mode, opts){
+    nmMode=mode==='group'?'group':'item';
+    document.querySelectorAll('[data-nm-mode]').forEach(btn=>{
+      const on=btn.getAttribute('data-nm-mode')===nmMode;
+      btn.classList.toggle('active',on);
+      btn.setAttribute('aria-selected',on?'true':'false');
+    });
+    const groupForm=$('nmGroupForm');
+    const itemForm=$('nmItemForm');
+    if(groupForm) groupForm.hidden=nmMode!=='group';
+    if(itemForm) itemForm.hidden=nmMode!=='item';
+    const hint=$('nmModeHint');
+    if(hint){
+      hint.textContent=nmMode==='group'
+        ? 'Add a collapsible first-level sidebar category (e.g. Finance, Merchants).'
+        : 'Add a page under a group with route URL and permission key.';
+    }
+    const title=$('nmModalTitle');
+    const sub=$('nmModalSub');
+    const saveLabel=$('nmSaveLabel');
+    const editingMenu=!!$('menuId')?.value;
+    if(title) title.textContent=editingMenu&&nmMode==='item'?'Edit Menu':'New Menu';
+    if(sub) sub.textContent='Add a sidebar category or page. Live preview shows hierarchy on the right.';
+    if(saveLabel){
+      if(nmMode==='group') saveLabel.textContent='Create Group';
+      else saveLabel.textContent=editingMenu?'Save Menu':'Create Menu';
+    }
+    if(!(opts&&opts.skipPreview)) updateLivePreview();
+  }
+
+  function mockRow(opts){
+    const {icon,title,isNew,badge,indent,chevron}=opts;
+    const cls=['nm-mock-item',indent?'nm-mock-sub':'',isNew?'is-new':''].filter(Boolean).join(' ');
+    const chev=chevron!==false?`<i class="bi bi-chevron-right nm-mock-chevron" aria-hidden="true"></i>`:'';
+    return `<div class="${cls}"><i class="bi ${esc(icon||'bi-folder')}"></i><span>${esc(title)}</span>${badge?`<em>${esc(badge)}</em>`:''}${chev}</div>`;
+  }
+
+  function windowAround(list,index,max){
+    const n=Math.max(3,max||5);
+    if(list.length<=n) return list;
+    let start=Math.max(0,index-Math.floor((n-1)/2));
+    let end=start+n;
+    if(end>list.length){end=list.length;start=Math.max(0,end-n);}
+    return list.slice(start,end);
+  }
+
+  function updateLivePreview(){
+    const box=$('nmSidebarPreview');
+    const meta=$('nmPreviewMeta');
+    if(!box) return;
+
+    if(nmMode==='group'){
+      const title=$('groupTitle')?.value.trim()||'New Group';
+      const icon=$('groupIcon')?.value.trim()||'bi-folder';
+      const key=$('groupKey')?.value.trim()||slug(title)||'new_group';
+      const sort=Number($('groupSort')?.value);
+      const draftSort=Number.isFinite(sort)?sort:100;
+      const draft={__new:true,title,icon,groupKey:key,sortOrder:draftSort};
+      const list=filteredGroups().filter(g=>Number(g.status)===1)
+        .concat([draft])
+        .sort((a,b)=>Number(a.sortOrder||100)-Number(b.sortOrder||100)||String(a.title||'').localeCompare(String(b.title||'')));
+      const idx=list.findIndex(g=>g.__new);
+      const shown=windowAround(list,idx,5);
+      box.innerHTML=shown.map(g=>g.__new
+        ? mockRow({icon,title,isNew:true,badge:'NEW GROUP'})
+        : mockRow({icon:g.icon||'bi-folder',title:g.title})
+      ).join('');
+      if(meta){
+        meta.innerHTML=`<div><span>Belongs to</span><b>Root sidebar category</b></div>
+          <div><span>Group key</span><code>${esc(key)}</code></div>
+          <div><span>Level</span><b>Collapsible container (no page URL)</b></div>`;
+      }
+      return;
+    }
+
+    const title=$('menuTitle')?.value.trim()||'New Menu';
+    const icon=$('menuIcon')?.value.trim()||'bi-circle';
+    const key=$('menuKey')?.value.trim()||slug(title)||'new_menu';
+    const parentKey=$('menuParent')?.value||'';
+    const parent=groups.find(g=>String(g.groupKey)===String(parentKey));
+    const sort=Number($('menuSort')?.value);
+    const draftSort=Number.isFinite(sort)?sort:100;
+    const draft={__new:true,title,icon,menuKey:key,parentKey,sortOrder:draftSort};
+
+    if(parent){
+      const siblings=rows.filter(m=>String(m.parentKey||'')===String(parentKey)&&Number(m.status)===1)
+        .concat([draft])
+        .sort((a,b)=>Number(a.sortOrder||0)-Number(b.sortOrder||0)||String(a.title||'').localeCompare(String(b.title||'')));
+      const idx=siblings.findIndex(m=>m.__new);
+      const shown=windowAround(siblings,idx,4);
+      let html=mockRow({icon:parent.icon||'bi-folder',title:parent.title});
+      html+=shown.map(m=>m.__new
+        ? mockRow({icon,title,isNew:true,badge:'NEW',indent:true,chevron:false})
+        : mockRow({icon:m.icon||'bi-circle',title:m.title,indent:true,chevron:false})
+      ).join('');
+      box.innerHTML=html;
+    }else{
+      const top=filteredMenus().filter(m=>!String(m.parentKey||'').trim()&&Number(m.status)===1)
+        .concat([draft])
+        .sort((a,b)=>Number(a.sortOrder||0)-Number(b.sortOrder||0)||String(a.title||'').localeCompare(String(b.title||'')));
+      const idx=top.findIndex(m=>m.__new);
+      const shown=windowAround(top,Math.max(0,idx),5);
+      box.innerHTML=(shown.length?shown:[{__new:true}]).map(m=>m.__new
+        ? mockRow({icon,title,isNew:true,badge:'NEW'})
+        : mockRow({icon:m.icon||'bi-circle',title:m.title})
+      ).join('');
+    }
+    if(meta){
+      meta.innerHTML=`<div><span>Parent</span><b>${esc(parent?parent.title:'Top-level')}</b></div>
+        <div><span>Permission key</span><code>${esc(key)}</code></div>
+        <div><span>URL</span><code>${esc($('menuUrl')?.value.trim()||'—')}</code></div>`;
+    }
+  }
+
+  function resetItemForm(){
+    $('nmItemForm')?.reset();
+    if($('menuId')) $('menuId').value='';
+    if($('menuSort')) $('menuSort').value='100';
+    if($('menuStatus')) $('menuStatus').value='1';
+    document.querySelectorAll('[data-menu-status]').forEach(btn=>{
+      btn.classList.toggle('active',btn.getAttribute('data-menu-status')==='1');
+    });
     renderGroupSelect('');
     status('menuFormStatus','','');
-    preview();
+    syncItemIconPreview();
   }
 
-  function open(){
-    $('menuModal').classList.add('show');
+  function resetGroupForm(){
+    $('nmGroupForm')?.reset();
+    if($('groupId')) $('groupId').value='';
+    if($('groupSort')) $('groupSort').value='100';
+    if($('groupStatus')) $('groupStatus').value='1';
+    document.querySelectorAll('[data-group-status]').forEach(btn=>{
+      btn.classList.toggle('active',btn.getAttribute('data-group-status')==='1');
+    });
+    status('groupFormStatus','','');
+    syncGroupIconPreview();
+  }
+
+  function clearCurrent(){
+    if(nmMode==='group') resetGroupForm();
+    else resetItemForm();
+    updateLivePreview();
+  }
+
+  function openModal(mode){
+    setNmMode(mode||'item');
+    $('newMenuModal')?.classList.add('show');
     document.body.classList.add('modal-open');
-    setTimeout(()=>$('menuTitle').focus(),60);
+    setTimeout(()=>{
+      if(nmMode==='group') $('groupTitle')?.focus();
+      else $('menuTitle')?.focus();
+    },60);
   }
 
-  function close(){
-    $('menuModal').classList.remove('show');
+  function closeModal(){
+    $('newMenuModal')?.classList.remove('show');
     document.body.classList.remove('modal-open');
     status('menuFormStatus','','');
+    status('groupFormStatus','','');
+    returnToItemAfterGroup=false;
+  }
+
+  function openNew(){
+    returnToItemAfterGroup=false;
+    resetItemForm();
+    resetGroupForm();
+    openModal('group');
+    updateLivePreview();
   }
 
   function edit(id){
@@ -151,7 +291,8 @@
     if(!m) return;
     const panel=menuPanel(m);
     if(panel!==activePanel) setPanel(panel);
-    reset();
+    resetItemForm();
+    resetGroupForm();
     $('menuId').value=m.id;
     $('menuTitle').value=m.title||'';
     $('menuKey').value=m.menuKey||'';
@@ -160,28 +301,28 @@
     renderGroupSelect(m.parentKey||'');
     $('menuSort').value=Number(m.sortOrder||0);
     $('menuStatus').value=String(Number(m.status)==1?1:0);
-    $('menuModalTitle').textContent='Edit Menu';
-    preview();
-    open();
+    document.querySelectorAll('[data-menu-status]').forEach(btn=>{
+      btn.classList.toggle('active',btn.getAttribute('data-menu-status')===String(Number(m.status)==1?1:0));
+    });
+    syncItemIconPreview();
+    openModal('item');
+    updateLivePreview();
   }
 
-  async function save(e){
-    e.preventDefault();
-    const btn=$('saveMenuBtn');
-    let parentKey=$('menuParent').value;
-    // Keep new MAIN top-level items classifiable: if MAIN tab + empty group + not already main_* url/key, nudge via menuKey prefix only when needed is too invasive — require main_* group OR main- url.
+  async function saveItem(){
+    const btn=$('nmSaveBtn');
     const payload={
       id:$('menuId').value||null,
       title:$('menuTitle').value.trim(),
       menuKey:slug($('menuKey').value||$('menuTitle').value),
       url:$('menuUrl').value.trim(),
       icon:$('menuIcon').value.trim()||'bi-circle',
-      parentKey:parentKey,
+      parentKey:$('menuParent').value,
       sortOrder:Number($('menuSort').value||0),
       status:Number($('menuStatus').value)
     };
     if(!payload.title||!payload.menuKey||!payload.url){
-      status('menuFormStatus','Please complete Menu Title, Menu Key and Page URL.','error');
+      status('menuFormStatus','Please complete Menu Title, Permission Key and Page URL.','error');
       return;
     }
     const classified=menuPanel(payload);
@@ -201,7 +342,7 @@
       const j=await api(BO_AUTH.menuSaveUrl(),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(payload)});
       status('menuFormStatus',j.message||'Menu saved successfully.','success');
       await load();
-      setTimeout(close,450);
+      setTimeout(closeModal,450);
     }catch(err){
       status('menuFormStatus',err.message,'error');
     }finally{
@@ -209,65 +350,8 @@
     }
   }
 
-  async function menuDelete(id){
-    const m=rows.find(x=>String(x.id)===String(id));
-    if(!m) return;
-    let yes=false;
-    if(window.BO_DIALOG&&typeof BO_DIALOG.confirm==='function'){
-      yes=await BO_DIALOG.confirm(`Delete menu "${m.title}"?\n\nThis permanently removes the menu record and its role/menu permission assignments.`,{title:'Delete Menu',confirmText:'Delete',type:'danger'});
-    }else{
-      yes=window.confirm(`Delete menu "${m.title}"?\n\nThis permanently removes the menu record and its role/menu permission assignments.`);
-    }
-    if(!yes) return;
-    try{
-      const url=String(BO_AUTH.menuSaveUrl()).replace(/\/save(?:\?.*)?$/,'')+'/'+encodeURIComponent(id)+'/delete';
-      await api(url,{method:'POST',headers:{...BO_AUTH.authHeader()}});
-      await load();
-    }catch(err){
-      window.BO_DIALOG&&BO_DIALOG.alert?BO_DIALOG.alert(err.message,{title:'Delete Menu Failed',type:'danger'}):alert(err.message);
-    }
-  }
-
-  function groupReset(){
-    $('groupForm').reset();
-    $('groupId').value='';
-    $('groupSort').value='100';
-    $('groupStatus').value='1';
-    if(activePanel==='MAIN'&&!$('groupKey').value){
-      // Suggest main_ prefix so new groups stay on MAIN tab
-    }
-    status('groupFormStatus','','');
-  }
-
-  function groupOpen(){
-    renderGroups();
-    groupReset();
-    $('groupModal').classList.add('show');
-    document.body.classList.add('modal-open');
-    setTimeout(()=>$('groupTitle').focus(),60);
-  }
-
-  function groupClose(){
-    $('groupModal').classList.remove('show');
-    document.body.classList.remove('modal-open');
-    status('groupFormStatus','','');
-  }
-
-  function groupEdit(id){
-    const g=groups.find(x=>String(x.id)===String(id));
-    if(!g) return;
-    groupReset();
-    $('groupId').value=g.id;
-    $('groupTitle').value=g.title||'';
-    $('groupKey').value=g.groupKey||'';
-    $('groupIcon').value=g.icon||'';
-    $('groupSort').value=Number(g.sortOrder||100);
-    $('groupStatus').value=String(Number(g.status)===1?1:0);
-  }
-
-  async function groupSave(e){
-    e.preventDefault();
-    const btn=$('saveGroupBtn');
+  async function saveGroup(){
+    const btn=$('nmSaveBtn');
     let groupKey=slug($('groupKey').value||$('groupTitle').value);
     if(activePanel==='MAIN'&&!isMainGroupKey(groupKey)){
       groupKey='main_'+groupKey.replace(/^main_/,'');
@@ -293,10 +377,18 @@
     status('groupFormStatus','Saving menu group...','');
     try{
       await api(BO_AUTH.menuGroupSaveUrl(),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(payload)});
+      status('groupFormStatus','Menu group saved successfully.','success');
       await loadGroups();
       await load();
-      groupReset();
-      status('groupFormStatus','Menu group saved successfully.','success');
+      if(returnToItemAfterGroup){
+        returnToItemAfterGroup=false;
+        resetGroupForm();
+        renderGroupSelect(payload.groupKey);
+        setNmMode('item');
+        status('menuFormStatus','Group created. Continue with the menu item.','success');
+      }else{
+        setTimeout(closeModal,450);
+      }
     }catch(err){
       status('groupFormStatus',err.message,'error');
     }finally{
@@ -304,17 +396,22 @@
     }
   }
 
-  async function groupDelete(id){
-    const g=groups.find(x=>String(x.id)===String(id));
-    if(!g) return;
-    if(!confirm(`Delete menu group "${g.title}"?\n\nThe group can only be deleted when no menu is assigned to it.`)) return;
+  async function menuDelete(id){
+    const m=rows.find(x=>String(x.id)===String(id));
+    if(!m) return;
+    let yes=false;
+    if(window.BO_DIALOG&&typeof BO_DIALOG.confirm==='function'){
+      yes=await BO_DIALOG.confirm(`Delete menu "${m.title}"?\n\nThis permanently removes the menu record and its role/menu permission assignments.`,{title:'Delete Menu',confirmText:'Delete',type:'danger'});
+    }else{
+      yes=window.confirm(`Delete menu "${m.title}"?\n\nThis permanently removes the menu record and its role/menu permission assignments.`);
+    }
+    if(!yes) return;
     try{
-      await api(BO_AUTH.menuGroupDeleteUrl(id),{method:'POST',headers:{...BO_AUTH.authHeader()}});
-      await loadGroups();
+      const url=String(BO_AUTH.menuSaveUrl()).replace(/\/save(?:\?.*)?$/,'')+'/'+encodeURIComponent(id)+'/delete';
+      await api(url,{method:'POST',headers:{...BO_AUTH.authHeader()}});
       await load();
-      status('groupFormStatus','Menu group deleted.','success');
     }catch(err){
-      status('groupFormStatus',err.message,'error');
+      window.BO_DIALOG&&BO_DIALOG.alert?BO_DIALOG.alert(err.message,{title:'Delete Menu Failed',type:'danger'}):alert(err.message);
     }
   }
 
@@ -328,31 +425,71 @@
       btn.addEventListener('click',()=>setPanel(btn.getAttribute('data-menu-panel')));
     });
 
-    $('openMenuModalBtn')?.addEventListener('click',()=>{reset();open();});
+    document.querySelectorAll('[data-nm-mode]').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        if(btn.getAttribute('data-nm-mode')==='group') returnToItemAfterGroup=false;
+        setNmMode(btn.getAttribute('data-nm-mode'));
+      });
+    });
+
+    $('openMenuModalBtn')?.addEventListener('click',openNew);
     $('refreshMenuBtn')?.addEventListener('click',load);
-    $('menuForm')?.addEventListener('submit',save);
-    document.querySelectorAll('[data-close-menu-modal]').forEach(x=>x.addEventListener('click',close));
-    $('menuModal')?.addEventListener('click',e=>{if(e.target===$('menuModal'))close();});
-    $('manageGroupsBtn')?.addEventListener('click',groupOpen);
-    $('groupForm')?.addEventListener('submit',groupSave);
-    $('resetGroupFormBtn')?.addEventListener('click',groupReset);
-    document.querySelectorAll('[data-close-group-modal]').forEach(x=>x.addEventListener('click',groupClose));
-    $('groupModal')?.addEventListener('click',e=>{if(e.target===$('groupModal'))groupClose();});
-    $('menuTitle')?.addEventListener('input',function(){if(!$('menuId').value)$('menuKey').value=slug(this.value);preview();});
-    $('menuIcon')?.addEventListener('input',preview);
+    document.querySelectorAll('[data-close-nm]').forEach(x=>x.addEventListener('click',closeModal));
+    $('newMenuModal')?.addEventListener('click',e=>{if(e.target===$('newMenuModal'))closeModal();});
+    $('nmSaveBtn')?.addEventListener('click',()=>{ if(nmMode==='group') saveGroup(); else saveItem(); });
+    $('nmSwitchToGroup')?.addEventListener('click',()=>{
+      returnToItemAfterGroup=true;
+      resetGroupForm();
+      setNmMode('group');
+      $('groupTitle')?.focus();
+    });
+
+    document.querySelectorAll('[data-group-status]').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const v=btn.getAttribute('data-group-status');
+        if($('groupStatus')) $('groupStatus').value=v;
+        document.querySelectorAll('[data-group-status]').forEach(b=>b.classList.toggle('active',b===btn));
+        updateLivePreview();
+      });
+    });
+    document.querySelectorAll('[data-menu-status]').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const v=btn.getAttribute('data-menu-status');
+        if($('menuStatus')) $('menuStatus').value=v;
+        document.querySelectorAll('[data-menu-status]').forEach(b=>b.classList.toggle('active',b===btn));
+        updateLivePreview();
+      });
+    });
+
+    $('menuTitle')?.addEventListener('input',function(){
+      if(!$('menuId').value) $('menuKey').value=slug(this.value);
+      updateLivePreview();
+    });
+    $('menuKey')?.addEventListener('input',updateLivePreview);
+    $('menuUrl')?.addEventListener('input',updateLivePreview);
+    $('menuParent')?.addEventListener('change',updateLivePreview);
+    $('menuIcon')?.addEventListener('input',()=>{syncItemIconPreview();updateLivePreview();});
+    $('menuSort')?.addEventListener('input',updateLivePreview);
+    $('menuSort')?.addEventListener('change',updateLivePreview);
     $('groupTitle')?.addEventListener('input',function(){
       if(!$('groupId').value){
         let k=slug(this.value);
         if(activePanel==='MAIN'&&k&&!isMainGroupKey(k)) k='main_'+k;
         $('groupKey').value=k;
       }
+      updateLivePreview();
     });
+    $('groupKey')?.addEventListener('input',updateLivePreview);
+    $('groupIcon')?.addEventListener('input',()=>{syncGroupIconPreview();updateLivePreview();});
+    $('groupSort')?.addEventListener('input',updateLivePreview);
+    $('groupSort')?.addEventListener('change',updateLivePreview);
+
     document.addEventListener('click',e=>{
       const me=e.target.closest('[data-edit-menu]');if(me)edit(me.dataset.editMenu);
       const md=e.target.closest('[data-delete-menu]');if(md)menuDelete(md.dataset.deleteMenu);
-      const ge=e.target.closest('[data-edit-group]');if(ge)groupEdit(ge.dataset.editGroup);
-      const gd=e.target.closest('[data-delete-group]');if(gd)groupDelete(gd.dataset.deleteGroup);
     });
+
+    setNmMode('group',{skipPreview:true});
     syncTabUi();
     load();
   });

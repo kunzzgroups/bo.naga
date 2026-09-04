@@ -14,7 +14,7 @@
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/menu-management-executive.css?v=1.3.2" rel="stylesheet"/>
+<link href="assets/css/menu-management-executive.css?v=2.0.8" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -53,7 +53,7 @@
   </button>
 </div>
 <span class="users-found-badge menu-count-inline" id="menuCountBadge">0 Menus</span>
-<div class="user-toolbar-actions"><button class="clean-btn" id="manageGroupsBtn" type="button"><i class="bi bi-folder-plus"></i> Menu Groups</button><button class="clean-btn" id="refreshMenuBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button><button class="clean-btn primary" id="openMenuModalBtn" type="button"><i class="bi bi-plus-lg"></i> Add Menu</button></div>
+<div class="user-toolbar-actions"><button class="clean-btn" id="refreshMenuBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button><button class="clean-btn primary" id="openMenuModalBtn" type="button"><i class="bi bi-plus-lg"></i> New Menu</button></div>
 </div>
 <div class="table-wrap"><table class="report-table table-clean menu-main-table">
 <colgroup>
@@ -70,58 +70,171 @@
 <div class="member-card-list" id="menuMobileCards"></div>
 </div>
 </section>
-<div aria-hidden="true" class="modal-clean" id="menuModal">
-<div aria-hidden="true" class="modal-clean-panel menu-modal-panel">
-<div aria-hidden="true" class="modal-clean-head admin-edit-head">
-<div class="admin-edit-title"><span class="admin-edit-icon"><i class="bi bi-list-check"></i></span><div><h3 id="menuModalTitle">Add Menu</h3><small id="menuModalSub">Create a permission record for the MAIN sidebar.</small></div></div>
-<button class="modal-clean-close" data-close-menu-modal="" type="button"><i class="bi bi-x-lg"></i></button>
-</div>
-<form id="menuForm">
-<input id="menuId" type="hidden"/>
-<div class="menu-modal-body">
-<div class="menu-form-grid">
-<div class="admin-field"><label>Menu Title <b>*</b></label><input class="form-control" id="menuTitle" maxlength="120" placeholder="Example: Adjustment Log" required=""/></div>
-<div class="admin-field"><label>Menu Key <b>*</b></label><input class="form-control" id="menuKey" maxlength="100" placeholder="adjustment_log" required=""/><small>Generated automatically from title. Must be unique.</small></div>
-<div class="admin-field"><label>Page URL <b>*</b></label><input class="form-control" id="menuUrl" maxlength="160" placeholder="adjustment-log.html" required=""/></div>
-<div class="admin-field"><label>Bootstrap Icon</label><input class="form-control" id="menuIcon" maxlength="80" placeholder="bi-journal-text"/><small>Use a Bootstrap Icons class, for example bi-receipt.</small></div>
-<div class="admin-field"><label>Menu Group</label><select class="form-select" id="menuParent"><option value="">Main Menu</option></select></div>
-<div class="admin-field"><label>Sort Order</label><input class="form-control" id="menuSort" max="9999" min="0" type="number" value="100"/></div>
-<div class="admin-field"><label>Status</label><select class="form-select" id="menuStatus"><option value="1">Active</option><option value="0">Inactive</option></select></div>
-<div class="menu-preview-card"><span>Sidebar Preview</span><div><i class="bi bi-circle" id="menuPreviewIcon"></i><b id="menuPreviewTitle">Menu Title</b></div></div>
-</div>
-<div class="upload-status mt-3" id="menuFormStatus"></div>
-</div>
-<div class="role-create-actions"><button class="clean-btn" data-close-menu-modal="" type="button">Cancel</button><button class="clean-btn primary" id="saveMenuBtn" type="submit"><i class="bi bi-check2-circle"></i> Submit</button></div>
-</form>
-</div>
-</div>
+<div aria-hidden="true" class="modal-clean" id="newMenuModal">
+<div class="modal-clean-panel menu-modal-panel nm-panel">
+  <div class="nm-head">
+    <div class="nm-head-main">
+      <span class="nm-head-icon"><i class="bi bi-plus-lg"></i></span>
+      <div>
+        <h3 id="nmModalTitle">New Menu</h3>
+        <p id="nmModalSub">Add a sidebar category or page. Live preview shows hierarchy on the right.</p>
+      </div>
+    </div>
+    <button class="modal-clean-close" data-close-nm type="button" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+  </div>
 
-<div aria-hidden="true" class="modal-clean" id="groupModal">
-<div aria-hidden="true" class="modal-clean-panel menu-modal-panel">
-<div class="modal-clean-head admin-edit-head"><div class="admin-edit-title"><span class="admin-edit-icon"><i class="bi bi-folder-plus"></i></span><div><h3>Menu Groups</h3><small>Create, rename and organize sidebar categories.</small></div></div><button class="modal-clean-close" data-close-group-modal type="button"><i class="bi bi-x-lg"></i></button></div>
-<div class="menu-modal-body">
-<div class="menu-info-banner mb-3"><i class="bi bi-info-circle"></i><span>Existing predefined groups are now stored in the database. Renaming a group automatically keeps its assigned menus linked.</span></div>
-<div class="table-wrap mb-3"><table class="report-table table-clean"><thead><tr><th>Group</th><th>Key</th><th>Sort</th><th>Status</th><th>Action</th></tr></thead><tbody id="groupTableBody"><tr><td colspan="5">Loading groups...</td></tr></tbody></table></div>
-<form id="groupForm"><input id="groupId" type="hidden"><div class="menu-form-grid">
-<div class="admin-field"><label>Group Title <b>*</b></label><input class="form-control" id="groupTitle" maxlength="120" placeholder="Example: Risk Management" required></div>
-<div class="admin-field"><label>Group Key <b>*</b></label><input class="form-control" id="groupKey" maxlength="100" placeholder="risk_management" required><small>Generated automatically from title. Must be unique.</small></div>
-<div class="admin-field"><label>Bootstrap Icon</label><input class="form-control" id="groupIcon" maxlength="80" placeholder="bi-folder"></div>
-<div class="admin-field"><label>Sort Order</label><input class="form-control" id="groupSort" type="number" min="0" max="9999" value="100"></div>
-<div class="admin-field"><label>Status</label><select class="form-select" id="groupStatus"><option value="1">Active</option><option value="0">Inactive</option></select></div>
-</div><div class="upload-status mt-3" id="groupFormStatus"></div><div class="role-create-actions px-0 pb-0"><button class="clean-btn" id="resetGroupFormBtn" type="button">Clear</button><button class="clean-btn primary" id="saveGroupBtn" type="submit"><i class="bi bi-check2-circle"></i> Save Group</button></div></form>
-</div></div></div>
+  <div class="nm-body">
+    <div class="nm-form-col">
+      <div class="nm-mode-wrap">
+        <div class="nm-mode-tabs" role="tablist" aria-label="Create mode">
+          <button type="button" class="nm-mode-tab active" role="tab" data-nm-mode="group" aria-selected="true">
+            <i class="bi bi-folder2"></i>
+            <span>1 · Group</span>
+            <span class="nm-mode-dot" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="nm-mode-tab" role="tab" data-nm-mode="item" aria-selected="false">
+            <i class="bi bi-file-earmark-text"></i>
+            <span>2 · Menu Item</span>
+            <span class="nm-mode-dot" aria-hidden="true"></span>
+          </button>
+        </div>
+        <p class="nm-mode-hint" id="nmModeHint">Add a collapsible first-level sidebar category (e.g. Finance, Merchants).</p>
+      </div>
+
+      <div class="nm-pane-stack">
+      <!-- Group mode -->
+      <form id="nmGroupForm" class="nm-pane">
+        <input type="hidden" id="groupId"/>
+        <div class="admin-field">
+          <label>Group Title <b>*</b></label>
+          <input class="form-control" id="groupTitle" maxlength="120" placeholder="Example: Risk &amp; Security" required/>
+        </div>
+        <div class="admin-field">
+          <div class="nm-label-row">
+            <label>Group Key <b>*</b></label>
+            <em class="nm-field-meta">Auto-generated unique key</em>
+          </div>
+          <input class="form-control" id="groupKey" maxlength="100" placeholder="risk_security" required/>
+        </div>
+        <div class="admin-field">
+          <label>Category Icon</label>
+          <div class="nm-icon-field">
+            <i class="bi bi-folder" id="groupIconPreview"></i>
+            <input class="form-control" id="groupIcon" maxlength="80" placeholder="bi-folder"/>
+          </div>
+        </div>
+        <div class="nm-row-2 nm-row-sort-status">
+          <div class="admin-field">
+            <label>Sort Order</label>
+            <input class="form-control" id="groupSort" type="number" min="0" max="9999" value="100"/>
+          </div>
+          <div class="admin-field">
+            <label>Status</label>
+            <div class="nm-status-seg" role="group" aria-label="Group status">
+              <button type="button" class="nm-status-btn active" data-group-status="1"><span class="nm-status-dot" aria-hidden="true"></span>Enabled</button>
+              <button type="button" class="nm-status-btn" data-group-status="0"><span class="nm-status-dot" aria-hidden="true"></span>Disabled</button>
+            </div>
+            <input type="hidden" id="groupStatus" value="1"/>
+          </div>
+        </div>
+        <div class="upload-status" id="groupFormStatus"></div>
+      </form>
+
+      <!-- Menu item mode -->
+      <form id="nmItemForm" class="nm-pane" hidden>
+        <input type="hidden" id="menuId"/>
+        <div class="admin-field">
+          <div class="nm-label-row">
+            <label>Parent Group</label>
+            <button type="button" class="nm-link-btn" id="nmSwitchToGroup">+ New Group</button>
+          </div>
+          <select class="form-select" id="menuParent"><option value="">Top-level</option></select>
+        </div>
+        <div class="nm-row-2">
+          <div class="admin-field">
+            <div class="nm-label-row">
+              <label>Menu Title <b>*</b></label>
+            </div>
+            <input class="form-control" id="menuTitle" maxlength="120" placeholder="Example: Balance Overview" required/>
+          </div>
+          <div class="admin-field">
+            <div class="nm-label-row">
+              <label>Permission Key <b>*</b></label>
+              <em class="nm-field-meta">Auto-synced</em>
+            </div>
+            <input class="form-control" id="menuKey" maxlength="100" placeholder="balance_overview" required/>
+          </div>
+        </div>
+        <div class="admin-field">
+          <label>Page URL <b>*</b></label>
+          <div class="nm-url-field">
+            <i class="bi bi-link-45deg"></i>
+            <input class="form-control" id="menuUrl" maxlength="160" placeholder="balance-overview.html" required/>
+          </div>
+          <small>Page path relative to the backoffice root, e.g. accounting-report.html</small>
+        </div>
+        <div class="nm-row-3">
+          <div class="admin-field">
+            <label>Icon</label>
+            <div class="nm-icon-field">
+              <i class="bi bi-circle" id="menuIconPreview"></i>
+              <input class="form-control" id="menuIcon" maxlength="80" placeholder="bi-graph-up"/>
+            </div>
+          </div>
+          <div class="admin-field">
+            <label>Sort</label>
+            <input class="form-control" id="menuSort" type="number" min="0" max="9999" value="100"/>
+          </div>
+          <div class="admin-field">
+            <label>Status</label>
+            <div class="nm-status-seg" role="group" aria-label="Menu status">
+              <button type="button" class="nm-status-btn active" data-menu-status="1"><span class="nm-status-dot" aria-hidden="true"></span>Active</button>
+              <button type="button" class="nm-status-btn" data-menu-status="0"><span class="nm-status-dot" aria-hidden="true"></span>Inactive</button>
+            </div>
+            <input type="hidden" id="menuStatus" value="1"/>
+          </div>
+        </div>
+        <div class="upload-status" id="menuFormStatus"></div>
+      </form>
+      </div>
+    </div>
+
+    <aside class="nm-preview-col">
+      <div class="nm-preview-head">
+        <div class="nm-preview-title-row">
+          <strong><i class="nm-dot"></i> Live Preview</strong>
+          <em class="nm-preview-badge">WYSIWYG</em>
+        </div>
+        <p>Simulated sidebar placement and active visual state.</p>
+      </div>
+      <div class="nm-sidebar-mock">
+        <div class="nm-mock-head"><span>Sidebar Mockup</span><span>Preview</span></div>
+        <div class="nm-mock-list" id="nmSidebarPreview" aria-live="polite"></div>
+      </div>
+      <div class="nm-preview-meta" id="nmPreviewMeta"></div>
+    </aside>
+  </div>
+
+  <div class="nm-foot">
+    <div class="nm-foot-actions">
+      <button class="clean-btn nm-btn-ghost" type="button" data-close-nm>Cancel</button>
+      <button class="clean-btn primary nm-btn-primary" type="button" id="nmSaveBtn"><i class="bi bi-check2"></i> <span id="nmSaveLabel">Create Group</span></button>
+    </div>
+  </div>
+</div>
+</div>
 </main>
 </div>
 <script src="assets/js/config.js?v=1.0.37"></script>
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/reports.js?v=1.0.17"></script>
 <script src="assets/js/auth.js?v=1.0.54"></script>
-<script src="assets/js/menu-management.js?v=1.1.4"></script>
+<script src="assets/js/menu-management.js?v=1.6.3"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
 <script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
-<script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
+<script src="assets/js/bo-ui-standard.js?v=1.0.1"></script>
 <script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
 </body></html>

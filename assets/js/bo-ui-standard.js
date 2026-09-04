@@ -155,6 +155,13 @@
       delete el.dataset.boUiButton;
       return;
     }
+    /* New Menu modal segmented controls (Status / mode tabs) — page CSS owns these.
+       "Disabled" must NOT match the global danger heuristic (/disable/). */
+    if(el.matches?.('.nm-status-btn,.nm-mode-tab') || el.closest?.('.nm-status-seg,.nm-mode-tabs,#newMenuModal .nm-status-seg,#newMenuModal .nm-mode-tabs')){
+      el.classList.remove('bo-ui-button','bo-ui-button-primary','bo-ui-button-secondary','bo-ui-button-danger','bo-ui-icon-button');
+      delete el.dataset.boUiButton;
+      return;
+    }
     if(el.dataset.boUiButton==='1') return;
     const text=visibleText(el);
     const hasGraphic=!!el.querySelector('i,svg,img');
