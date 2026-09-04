@@ -183,6 +183,9 @@ Page padding (exec): `20px 24px` desktop · tighten on short viewports
 | Overview mock layout locked | Title+date head, square KPI icons, deltas, no Mix | 2026-09-03 |
 | Chart: Merchant dashed · Net solid+fill | Matches Overview reference | 2026-09-03 |
 | Brands Business page color-aligned | Same Deep Navy Cyan tokens as Overview; legacy `#2563eb` / purple title icon retired on Brands | 2026-09-03 |
+| Menu Management color-aligned | Same Deep Navy Cyan shell + cyan CTA / badges; retire `#2563eb` / indigo gradients on this page | 2026-09-04 |
+| Menu Management light/dark via `bo_theme` | Same sun/moon toggle + shared key as Overview/Brands | 2026-09-04 |
+| Menu Management MAIN / BO tabs | Filter catalogue by sidebar panel (`main_*` groups → MAIN; rest → BO) | 2026-09-04 |
 | Brands light/dark via `bo_theme` | Same key + sun/moon toggle as Overview; dark surfaces `#102030` on `#08131F` | 2026-09-03 |
 
 ## Agent rules
