@@ -248,12 +248,14 @@
       // It has no separate sidebar/menu permission, so inherit the report permission
       // instead of redirecting the user to their landing page.
       if(current === 'agent-performance-detail.html') current = 'agent-performance-report.html';
+      // Create Admin Account is a drill-down of Main Admin Detail — same permission.
+      if(current === 'main-admin-create.html') current = 'main-admin-detail.html';
       const agentChildPages = new Set([
         'agent-commission-admin.html','agent-settlement-admin.html','agent-reimbursement-admin.html',
         'agent-payout-admin.html','agent-promotion-admin.html'
       ]);
       const requestedAgentChild = agentChildPages.has(pageName());
-      const requestedMainAdminDetail = pageName() === 'main-admin-detail.html';
+      const requestedMainAdminDetail = pageName() === 'main-admin-detail.html' || pageName() === 'main-admin-create.html';
       if(current === 'main-stat-detail.html'){
         let source = '';
         try { source = String(new URLSearchParams(location.search || '').get('source') || 'overview').toLowerCase(); } catch(e) {}

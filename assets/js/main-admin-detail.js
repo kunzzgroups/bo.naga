@@ -22,9 +22,6 @@
     return html;
   }
 
-  const createForm = document.getElementById('madCreateForm');
-  const createStatus = document.getElementById('madCreateStatus');
-  const createBtn = document.getElementById('madCreateSubmit');
   const tbody = document.getElementById('madTableBody');
   const editModal = document.getElementById('madEditModal');
   const editForm = document.getElementById('madEditForm');
@@ -37,7 +34,6 @@
   const pageNoEl = document.getElementById('madPager');
   const infoEl = document.getElementById('madTableInfo');
   const syncLabel = document.getElementById('madSyncLabel');
-  const createModal = document.getElementById('madCreateModal');
 
   let editingId = null;
   let roleMap = {};
@@ -47,9 +43,7 @@
   let statusPill = 'all';
   let lastSyncedAt = null;
 
-  [createModal, editModal].forEach(function(modal){
-    if(modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden', 'true'); }
-  });
+  if(editModal){ editModal.classList.remove('show'); editModal.setAttribute('aria-hidden', 'true'); }
   document.body.classList.remove('modal-open');
 
   function setStatus(el, message, type){
@@ -189,11 +183,11 @@
       roleMap = Object.assign(roleMap, Object.fromEntries(rows.map(r => [String(r.id), r.name || r.code])));
       const html = rows.map(r => '<option value="' + esc(r.id) + '">' + esc(r.name || r.code) + (r.roleType === 'BRAND_OWNER' ? ' (Owner)' : '') + '</option>').join('')
         || '<option value="">No role available for this selection</option>';
-      ['madNewRole', 'madEditRole'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = html; });
+      ['madEditRole'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = html; });
       if(roleFilter) roleFilter.innerHTML = '<option value="">All Roles</option>' + html;
       return rows;
     }catch(e){
-      ['madNewRole', 'madEditRole'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = '<option value="">Unable to load roles</option>'; });
+      ['madEditRole'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = '<option value="">Unable to load roles</option>'; });
       return [];
     }
   }
@@ -275,15 +269,12 @@
   }
 
   async function loadBrandOptions(){
-    const newSel = document.getElementById('madNewBrand');
     const editSel = document.getElementById('madEditBrand');
-    if(!newSel && !editSel) return;
     const user = BO_AUTH.user() || {};
     if(!user.masterAdmin){
       const bid = user.brandId || '';
       const label = 'Current Branding' + (bid ? ' (#' + bid + ')' : '');
       const html = '<option value="' + esc(bid) + '">' + esc(label) + '</option>';
-      if(newSel){ newSel.innerHTML = html; newSel.disabled = true; }
       if(editSel){ editSel.innerHTML = html; editSel.disabled = true; }
       await loadRoles(bid);
       return;
@@ -294,12 +285,12 @@
       const rows = Array.isArray(j.data) ? j.data : [];
       const html = (user.rootAdmin ? '<option value="">Master / Platform</option>' : '<option value="">Select Branding</option>') +
         rows.map(x => '<option value="' + x.id + '">' + esc(x.name || x.code) + ' (#' + x.id + ')</option>').join('');
-      if(newSel) newSel.innerHTML = html;
       if(editSel) editSel.innerHTML = html;
       const active = (window.BO_BRAND && BO_BRAND.activeId ? BO_BRAND.activeId() : 1);
-      if(newSel && rows.some(x => Number(x.id) === Number(active)) && !user.rootAdmin) newSel.value = String(active);
-      await loadRoles(newSel && newSel.value ? Number(newSel.value) : (user.rootAdmin ? null : active));
-    }catch(e){}
+      await loadRoles(user.rootAdmin ? null : active);
+    }catch(e){
+      await loadRoles(null);
+    }
   }
 
   async function loadAdmins(){
@@ -315,18 +306,6 @@
     }catch(err){
       tbody.innerHTML = '<tr><td colspan="9" class="mad-empty text-danger">' + esc(err.message || 'Load admin failed') + '</td></tr>';
     }
-  }
-
-  function openCreateAdmin(){
-    createForm && createForm.reset();
-    setStatus(createStatus, '', '');
-    if(editModal){ editModal.classList.remove('show'); editModal.setAttribute('aria-hidden', 'true'); }
-    if(createModal){ createModal.classList.add('show'); createModal.setAttribute('aria-hidden', 'false'); document.body.classList.add('modal-open'); }
-  }
-
-  function closeCreateAdmin(){
-    if(createModal){ createModal.classList.remove('show'); createModal.setAttribute('aria-hidden', 'true'); }
-    if(!document.querySelector('.modal-clean.show')) document.body.classList.remove('modal-open');
   }
 
   function closeEditAdmin(){
@@ -346,48 +325,14 @@
     else if((BO_AUTH.user() || {}).rootAdmin) await loadRoles(null);
     document.getElementById('madEditRole').value = String(row.roleId || '');
     document.getElementById('madEditPassword').value = '';
-    setStatus(document.getElementById('madEditStatus'), '', '');
-    if(createModal){ createModal.classList.remove('show'); createModal.setAttribute('aria-hidden', 'true'); }
+    setStatus(document.getElementById('madEditFormStatus'), '', '');
     if(editModal){ editModal.classList.add('show'); editModal.setAttribute('aria-hidden', 'false'); document.body.classList.add('modal-open'); }
   }
-
-  createForm && createForm.addEventListener('submit', async function(e){
-    e.preventDefault();
-    const pass = document.getElementById('madNewPassword').value;
-    const confirm = document.getElementById('madNewConfirmPassword').value;
-    if(pass !== confirm){ setStatus(createStatus, 'Confirm password does not match.', 'error'); return; }
-    createBtn.disabled = true;
-    setStatus(createStatus, 'Creating admin...', '');
-    try{
-      const currentUser = BO_AUTH.user() || {};
-      const brandEl = document.getElementById('madNewBrand');
-      if(currentUser.masterAdmin && !currentUser.rootAdmin && (!brandEl || !brandEl.value)) throw new Error('Please select the branding for this administrator.');
-      if(!document.getElementById('madNewRole').value) throw new Error(currentUser.rootAdmin && (!brandEl || !brandEl.value) ? 'Please select the Master role.' : 'Please select a branding role.');
-      const json = await apiJson(BO_AUTH.createAdminUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...BO_AUTH.authHeader() },
-        body: JSON.stringify({
-          username: document.getElementById('madNewUsername').value.trim(),
-          displayName: document.getElementById('madNewDisplayName').value.trim(),
-          password: pass,
-          status: Number(document.getElementById('madNewStatus').value || 1),
-          roleId: document.getElementById('madNewRole').value ? Number(document.getElementById('madNewRole').value) : null,
-          brandId: brandEl && brandEl.value ? Number(brandEl.value) : null,
-          remark: (document.getElementById('madNewRemark') || {}).value || ''
-        })
-      });
-      setStatus(createStatus, json.message || 'Admin created successfully', 'success');
-      createForm.reset();
-      await loadAdmins();
-      closeCreateAdmin();
-    }catch(err){ setStatus(createStatus, err.message || 'Create admin failed', 'error'); }
-    finally{ createBtn.disabled = false; }
-  });
 
   editForm && editForm.addEventListener('submit', async function(e){
     e.preventDefault();
     if(!editingId) return;
-    const statusEl = document.getElementById('madEditStatus');
+    const statusEl = document.getElementById('madEditFormStatus');
     setStatus(statusEl, 'Saving admin...', '');
     try{
       const json = await apiJson(BO_AUTH.adminUpdateUrl(editingId), {
@@ -408,10 +353,7 @@
     }catch(err){ setStatus(statusEl, err.message || 'Update admin failed', 'error'); }
   });
 
-  document.getElementById('madAddBtn') && document.getElementById('madAddBtn').addEventListener('click', openCreateAdmin);
-  document.querySelectorAll('[data-mad-close-create]').forEach(btn => btn.addEventListener('click', closeCreateAdmin));
   document.querySelectorAll('[data-mad-close-edit]').forEach(btn => btn.addEventListener('click', closeEditAdmin));
-  createModal && createModal.addEventListener('click', e => { if(e.target === createModal) closeCreateAdmin(); });
   editModal && editModal.addEventListener('click', e => { if(e.target === editModal) closeEditAdmin(); });
 
   document.querySelectorAll('[data-mad-status]').forEach(btn => {
@@ -537,9 +479,7 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 500);
   });
 
-  const newBrandEl = document.getElementById('madNewBrand');
   const editBrandEl = document.getElementById('madEditBrand');
-  newBrandEl && newBrandEl.addEventListener('change', () => { loadRoles(newBrandEl.value ? Number(newBrandEl.value) : null); });
   editBrandEl && editBrandEl.addEventListener('change', () => { loadRoles(editBrandEl.value ? Number(editBrandEl.value) : null); });
 
   setInterval(updateSyncLabel, 15000);

@@ -157,7 +157,7 @@
     }
     /* New Menu modal segmented controls (Status / mode tabs) — page CSS owns these.
        "Disabled" must NOT match the global danger heuristic (/disable/). */
-    if(el.matches?.('.nm-status-btn,.nm-mode-tab,.bo-theme-btn,#boThemeToggle,.mad-btn,.mad-tab,.mad-pill,.mad-icon-btn,.mad-eye') || el.closest?.('.nm-status-seg,.nm-mode-tabs,#newMenuModal .nm-status-seg,#newMenuModal .nm-mode-tabs,.mp-workspace,.mad-workspace,.mad-modal,.mad-pager')){
+    if(el.matches?.('.nm-status-btn,.nm-mode-tab,.bo-theme-btn,#boThemeToggle,.mad-btn,.mad-tab,.mad-pill,.mad-icon-btn,.mad-eye,.mac-link-btn,.mac-change-role') || el.closest?.('.nm-status-seg,.nm-mode-tabs,#newMenuModal .nm-status-seg,#newMenuModal .nm-mode-tabs,.mp-workspace,.mad-workspace,.mad-modal,.mad-pager,.mac-workspace')){
       el.classList.remove('bo-ui-button','bo-ui-button-primary','bo-ui-button-secondary','bo-ui-button-danger','bo-ui-icon-button');
       delete el.dataset.boUiButton;
       return;

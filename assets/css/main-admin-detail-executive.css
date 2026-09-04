@@ -37,9 +37,26 @@ body.main-admin-detail-page .report-content{background:var(--bo-bg)!important}
 body.main-admin-detail-page .report-main{min-height:100vh;display:flex;flex-direction:column}
 
 body.main-admin-detail-page .report-sidebar{
+  position:fixed!important;
+  top:0!important;right:auto!important;bottom:0!important;left:0!important;
+  height:100vh!important;height:100dvh!important;
+  min-height:100vh!important;min-height:100dvh!important;
   background:var(--bo-sidebar-bg)!important;
   border-right:1px solid rgba(255,255,255,.08)!important;
   color:var(--bo-sidebar-text);
+  display:flex!important;flex-direction:column!important;
+  overflow:hidden!important;
+  z-index:1040!important;
+}
+body.main-admin-detail-page .report-sidebar .report-nav{
+  flex:1 1 auto!important;min-height:0!important;
+  overflow-y:auto!important;overflow-x:hidden!important;
+}
+body.main-admin-detail-page.sidebar-mini .report-sidebar,
+body.main-admin-detail-page.sidebar-mini .report-sidebar:hover,
+body.main-admin-detail-page.sidebar-mini .report-sidebar.is-mini-hover{
+  overflow-x:hidden!important;
+  overflow-y:hidden!important;
 }
 body.main-admin-detail-page .report-brand{
   height:64px;
@@ -145,7 +162,9 @@ body.main-admin-detail-page .report-sidebar .report-nav a.report-sub.active{
   box-shadow:none!important;
 }
 body.main-admin-detail-page .bo-sidebar-account-footer{
-  background:transparent!important;
+  flex:0 0 auto!important;
+  margin-top:auto;
+  background:var(--bo-sidebar-bg)!important;
   border-top:1px solid rgba(255,255,255,.1)!important;
 }
 body.main-admin-detail-page .bo-sidebar-logout{
@@ -651,7 +670,396 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .report-n
   background:rgba(33,166,215,.14)!important;color:#fff!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .bo-sidebar-account-footer{
-  background:transparent!important;
+  background:var(--bo-sidebar-bg)!important;
   border-top-color:rgba(255,255,255,.1)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .report-avatar{background:var(--bo-cyan)!important;color:#fff!important}
+
+/* ========== Create Admin Account (full page) ========== */
+body.main-admin-create-page .mac-workspace{
+  flex:1;width:100%;max-width:none;padding:18px 24px 96px!important;
+  display:flex;flex-direction:column;gap:16px;box-sizing:border-box;
+}
+body.main-admin-create-page .mac-sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;
+}
+body.main-admin-create-page .mac-breadcrumb{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  font-size:12.5px;font-weight:600;color:var(--bo-muted);
+}
+body.main-admin-create-page .mac-breadcrumb a{
+  color:var(--bo-muted);text-decoration:none;
+}
+body.main-admin-create-page .mac-breadcrumb a:hover{color:var(--bo-cyan)}
+body.main-admin-create-page .mac-breadcrumb span[aria-current]{color:var(--bo-navy);font-weight:700}
+body.main-admin-create-page .mac-breadcrumb i{font-size:10px;opacity:.7}
+
+body.main-admin-create-page .mac-head{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:18px 20px;background:var(--bo-surface);border:1px solid var(--bo-border);
+  border-radius:16px;box-shadow:var(--bo-shadow);
+}
+body.main-admin-create-page .mac-head-main{display:flex;align-items:center;gap:14px;min-width:0}
+body.main-admin-create-page .mac-head-icon{
+  width:48px;height:48px;border-radius:50%;flex:0 0 48px;
+  display:grid;place-items:center;
+  background:rgba(33,166,215,.12);color:var(--bo-cyan);font-size:22px;
+}
+body.main-admin-create-page .mac-head h2{
+  margin:0;font-size:22px;font-weight:800;color:var(--bo-text);letter-spacing:-.02em;text-wrap:balance;
+}
+body.main-admin-create-page .mac-head p{
+  margin:4px 0 0;font-size:13px;font-weight:500;color:var(--bo-muted);text-wrap:pretty;
+}
+body.main-admin-create-page .mac-head-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+body.main-admin-create-page .mac-section-head .mac-back-section{
+  margin-left:auto;height:36px!important;min-height:36px!important;padding:0 14px!important;
+  white-space:nowrap;text-decoration:none;flex:0 0 auto;
+}
+body.main-admin-create-page .mac-sandbox-badge{
+  display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;
+  border-radius:999px;background:rgba(33,166,215,.1);color:var(--bo-cyan-deep);
+  font-size:12px;font-weight:700;white-space:nowrap;
+}
+body.main-admin-create-page .mac-sandbox-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--bo-cyan);box-shadow:0 0 0 3px rgba(33,166,215,.2);
+}
+
+body.main-admin-create-page .mac-form{display:flex;flex-direction:column;gap:14px}
+body.main-admin-create-page .mac-section{
+  background:var(--bo-surface);border:1px solid var(--bo-border);
+  border-radius:16px;padding:20px 22px 22px;box-shadow:var(--bo-shadow);
+}
+body.main-admin-create-page .mac-section-head{
+  display:flex;align-items:center;gap:10px;margin-bottom:18px;
+}
+body.main-admin-create-page .mac-section-icon{
+  width:28px;height:28px;border-radius:8px;display:grid;place-items:center;
+  background:rgba(18,59,102,.06);color:var(--bo-navy);font-size:14px;
+}
+body.main-admin-create-page .mac-section-head h3{
+  margin:0;flex:1;font-size:13px;font-weight:800;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--bo-text-secondary);
+}
+body.main-admin-create-page .mac-section-link{
+  display:inline-flex;align-items:center;gap:6px;
+  color:var(--bo-cyan);font-size:13px;font-weight:700;text-decoration:none;
+}
+body.main-admin-create-page .mac-section-link:hover{color:var(--bo-cyan-deep)}
+
+body.main-admin-create-page .mac-fields{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(260px, 340px));
+  gap:16px 18px;
+  align-items:start;
+  margin-bottom:0;
+}
+body.main-admin-create-page .mac-fields-row{
+  grid-template-columns:repeat(5, minmax(0, 1fr));
+  gap:14px 12px;
+}
+body.main-admin-create-page .mac-grid-2{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(260px, 340px));
+  gap:16px 18px;
+  margin-bottom:16px;
+}
+body.main-admin-create-page .mac-field{display:flex;flex-direction:column;gap:7px;margin-bottom:0;min-width:0;max-width:none}
+body.main-admin-create-page .mac-fields > .mac-field,
+body.main-admin-create-page .mac-grid-2 > .mac-field{margin-bottom:0;max-width:none}
+body.main-admin-create-page .mac-field-wide{max-width:700px;margin-top:16px}
+body.main-admin-create-page .mac-fields-row .mac-label-row{
+  flex-wrap:wrap;gap:4px 8px;
+}
+body.main-admin-create-page .mac-fields-row .mac-link-btn{font-size:11.5px}
+body.main-admin-create-page .mac-label{
+  font-size:13px;font-weight:700;color:var(--bo-text-secondary);
+}
+body.main-admin-create-page .mac-label b{color:var(--bo-danger);font-weight:800}
+body.main-admin-create-page .mac-label-row{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+body.main-admin-create-page .mac-link-btn{
+  border:0;background:transparent;padding:0;cursor:pointer;
+  color:var(--bo-cyan);font-size:12.5px;font-weight:700;
+}
+body.main-admin-create-page .mac-link-btn:hover{color:var(--bo-cyan-deep);text-decoration:underline}
+body.main-admin-create-page .mac-field small{
+  font-size:12px;font-weight:500;color:var(--bo-muted);line-height:1.4;
+}
+body.main-admin-create-page .mac-field .form-control,
+body.main-admin-create-page .report-content .mac-field .form-control,
+body.main-admin-create-page .report-content .mac-field input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+body.main-admin-create-page .report-content .mac-field select,
+body.main-admin-create-page .report-content .mac-field textarea{
+  height:44px!important;border:1px solid #D0D5DD!important;border-radius:10px!important;
+  background:#fff!important;color:var(--bo-text)!important;
+  padding:0 14px!important;font-size:13.5px!important;font-weight:500!important;
+  box-shadow:none!important;
+}
+body.main-admin-create-page .mac-field textarea.form-control,
+body.main-admin-create-page .report-content .mac-field textarea{
+  height:auto!important;min-height:72px!important;padding:12px 14px!important;resize:vertical;
+}
+body.main-admin-create-page .mac-field .form-control:focus,
+body.main-admin-create-page .report-content .mac-field .form-control:focus,
+body.main-admin-create-page .report-content .mac-field input:focus,
+body.main-admin-create-page .report-content .mac-field select:focus,
+body.main-admin-create-page .report-content .mac-field textarea:focus{
+  border-color:var(--bo-cyan)!important;
+  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;outline:0!important;
+}
+body.main-admin-create-page .mad-pass-wrap{position:relative;display:block}
+body.main-admin-create-page .mad-pass-wrap .form-control{padding-right:44px!important}
+body.main-admin-create-page .mad-eye{
+  position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  width:32px;height:32px;border:0;background:transparent;color:var(--bo-muted);cursor:pointer;
+  display:grid;place-items:center;border-radius:8px;
+}
+body.main-admin-create-page .mad-eye:hover{color:var(--bo-navy);background:rgba(18,59,102,.06)}
+
+/* Role dropdown + privileges */
+body.main-admin-create-page .mac-section-head h3 b{color:var(--bo-danger);font-weight:800}
+body.main-admin-create-page .mac-role-stack{
+  display:flex;flex-direction:column;gap:10px;margin-bottom:18px;position:relative;
+}
+body.main-admin-create-page .mac-role-dd{position:relative;width:100%;z-index:5}
+body.main-admin-create-page .mac-role-pick,
+body.main-admin-create-page .mac-role-priv{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  min-height:64px;padding:14px 16px;width:100%;text-align:left;
+  border:1px solid #D8DEE8;border-radius:12px;background:#fff;
+  box-sizing:border-box;
+}
+body.main-admin-create-page button.mac-role-pick{
+  cursor:pointer;font:inherit;color:inherit;
+  transition:border-color .16s var(--bo-ease),box-shadow .16s var(--bo-ease),border-radius .16s var(--bo-ease);
+}
+body.main-admin-create-page button.mac-role-pick:hover{border-color:rgba(33,166,215,.45)}
+body.main-admin-create-page button.mac-role-pick[aria-expanded="true"]{
+  border-color:var(--bo-cyan);
+  box-shadow:0 0 0 3px rgba(33,166,215,.12);
+  border-bottom-left-radius:0;border-bottom-right-radius:0;
+}
+body.main-admin-create-page .mac-role-chevron{
+  flex:0 0 auto;color:#667085;font-size:14px;
+  transition:transform .16s var(--bo-ease);
+}
+body.main-admin-create-page button.mac-role-pick[aria-expanded="true"] .mac-role-chevron{
+  transform:rotate(180deg);color:var(--bo-navy);
+}
+body.main-admin-create-page .mac-role-pick-main{
+  display:flex;align-items:center;gap:12px;min-width:0;flex:1;
+}
+body.main-admin-create-page .mac-role-icon{
+  width:42px;height:42px;border-radius:10px;flex:0 0 42px;
+  display:grid;place-items:center;
+  background:var(--bo-navy);color:#fff;font-size:18px;border:0;
+}
+body.main-admin-create-page .mac-role-title-row{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;
+}
+body.main-admin-create-page .mac-role-title-row strong{
+  font-size:15px;font-weight:800;color:var(--bo-text);letter-spacing:-.01em;
+}
+body.main-admin-create-page .mac-role-primary{
+  display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:6px;
+  background:rgba(33,166,215,.14);color:var(--bo-cyan-deep);
+  font-size:10px;font-weight:800;letter-spacing:.04em;
+}
+body.main-admin-create-page .mac-role-count{font-size:13px;font-weight:500;color:var(--bo-muted)}
+body.main-admin-create-page .mac-role-menu{
+  position:absolute;left:0;right:0;top:calc(100% - 1px);z-index:30;
+  display:flex;flex-direction:column;gap:2px;
+  max-height:280px;overflow:auto;padding:6px;margin:0;
+  border:1px solid var(--bo-cyan);border-top:1px solid #E2E7F0;
+  border-radius:0 0 12px 12px;background:#fff;
+  box-shadow:0 12px 28px rgba(18,59,102,.14);
+}
+body.main-admin-create-page .mac-role-menu[hidden]{display:none!important}
+body.main-admin-create-page .mac-role-option{
+  display:flex;align-items:center;width:100%;min-height:42px;padding:8px 12px;
+  border:0;border-radius:8px;background:transparent;
+  color:var(--bo-text-secondary);font-size:13.5px;font-weight:650;
+  cursor:pointer;text-align:left;
+  transition:background .14s var(--bo-ease),color .14s var(--bo-ease);
+}
+body.main-admin-create-page .mac-role-option:hover{background:rgba(33,166,215,.08);color:var(--bo-navy)}
+body.main-admin-create-page .mac-role-option.is-active{
+  background:rgba(33,166,215,.12);color:var(--bo-navy);font-weight:750;
+}
+body.main-admin-create-page .mac-hidden-control,
+body.main-admin-create-page select.mac-hidden-control,
+body.main-admin-create-page .report-content select.mac-hidden-control,
+body.main-admin-create-page .report-content .mac-role-stack select{
+  position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;
+  min-height:0!important;max-width:0!important;padding:0!important;margin:0!important;
+  overflow:hidden!important;clip:rect(0,0,0,0)!important;border:0!important;opacity:0!important;
+  pointer-events:none!important;appearance:none!important;-webkit-appearance:none!important;
+  background:transparent!important;box-shadow:none!important;visibility:hidden!important;
+}
+body.main-admin-create-page .mac-role-priv{flex-wrap:wrap}
+body.main-admin-create-page .mac-role-tags{
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-width:0;flex:1;
+}
+body.main-admin-create-page .mac-tag{
+  display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px 0 10px;
+  border-radius:8px;border:1px solid #D0D5DD;background:#fff;
+  color:var(--bo-text-secondary);font-size:12.5px;font-weight:600;white-space:nowrap;
+}
+body.main-admin-create-page .mac-tag::before{
+  content:"";width:7px;height:7px;border-radius:50%;flex:0 0 7px;background:var(--bo-cyan);
+}
+body.main-admin-create-page .mac-tag-more{
+  border-style:dashed;color:var(--bo-muted);background:#F8FAFC;
+}
+body.main-admin-create-page .mac-tag{
+  max-width:180px;overflow:hidden;text-overflow:ellipsis;
+}
+body.main-admin-create-page .mac-tier-badge{
+  flex:0 0 auto;margin-left:auto;
+  display:inline-flex;align-items:center;height:32px;padding:0 14px;border-radius:999px;
+  border:0;background:rgba(18,183,106,.12);color:#0E9F57;
+  font-size:12.5px;font-weight:700;white-space:nowrap;
+}
+body.main-admin-create-page .mac-role-meta{margin-top:4px}
+
+/* Policy row */
+body.main-admin-create-page .mac-policy-row{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:16px 18px;border:1px solid var(--bo-border);border-radius:14px;background:#F8FAFC;
+}
+body.main-admin-create-page .mac-policy-copy{display:flex;align-items:flex-start;gap:12px;min-width:0}
+body.main-admin-create-page .mac-policy-icon{
+  width:40px;height:40px;border-radius:10px;flex:0 0 40px;
+  display:grid;place-items:center;background:#fff;border:1px solid var(--bo-border);
+  color:var(--bo-navy);font-size:18px;
+}
+body.main-admin-create-page .mac-policy-copy strong{
+  display:block;font-size:14px;font-weight:800;color:var(--bo-text);margin-bottom:2px;
+}
+body.main-admin-create-page .mac-policy-copy p{
+  margin:0;font-size:12.5px;font-weight:500;color:var(--bo-muted);line-height:1.4;
+}
+body.main-admin-create-page .mac-switch{
+  position:relative;display:inline-flex;align-items:center;cursor:pointer;flex:0 0 auto;
+}
+body.main-admin-create-page .mac-switch input{position:absolute;opacity:0;width:0;height:0}
+body.main-admin-create-page .mac-switch-track{
+  width:44px;height:26px;border-radius:999px;background:#D0D5DD;
+  position:relative;transition:background .16s var(--bo-ease);
+}
+body.main-admin-create-page .mac-switch-thumb{
+  position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(16,24,40,.2);
+  transition:transform .16s var(--bo-ease);
+}
+body.main-admin-create-page .mac-switch input:checked + .mac-switch-track{background:var(--bo-cyan)}
+body.main-admin-create-page .mac-switch input:checked + .mac-switch-track .mac-switch-thumb{transform:translateX(18px)}
+body.main-admin-create-page .mac-switch input:focus-visible + .mac-switch-track{
+  outline:2px solid var(--bo-cyan);outline-offset:2px;
+}
+
+body.main-admin-create-page .mac-footer-actions{
+  position:fixed;z-index:900;
+  left:var(--sidebar-w,280px)!important;right:0!important;bottom:0!important;
+  width:auto!important;max-width:none!important;
+  display:flex;justify-content:flex-end;align-items:center;gap:10px;
+  margin:0;padding:14px 24px;
+  background:rgba(255,255,255,.96);
+  border-top:1px solid var(--bo-line, #E6EDF5);
+  box-shadow:0 -8px 24px rgba(15,23,42,.06);
+  backdrop-filter:blur(8px);
+  box-sizing:border-box;
+  pointer-events:auto;
+}
+body.sidebar-mini.main-admin-create-page .mac-footer-actions{
+  left:var(--rail-w,72px)!important;
+}
+@media(max-width:991.98px){
+  body.main-admin-create-page .mac-footer-actions,
+  body.sidebar-mini.main-admin-create-page .mac-footer-actions{
+    left:0!important;
+  }
+  /* Keep action bar under an open mobile sidebar so navy stays unbroken */
+  body.main-admin-create-page.sidebar-open .mac-footer-actions{
+    left:min(86vw,320px)!important;
+  }
+}
+body.main-admin-create-page .mac-footer-actions .mad-btn,
+body.main-admin-create-page .mac-footer-actions .mad-btn.mad-btn-ghost,
+body.main-admin-create-page .mac-footer-actions .mad-btn.mad-btn-navy,
+body.main-admin-create-page .mac-footer-actions .mad-btn.bo-ui-button,
+body.main-admin-create-page .mac-footer-actions a.mad-btn{
+  height:44px!important;min-height:44px!important;
+  min-width:160px!important;padding:0 22px!important;
+  border-radius:10px!important;font-size:13.5px!important;font-weight:700!important;
+  box-sizing:border-box!important;display:inline-flex!important;
+  align-items:center!important;justify-content:center!important;gap:6px!important;
+  line-height:1!important;text-decoration:none!important;
+}
+body.main-admin-create-page .mad-btn-navy,
+body.main-admin-create-page .mad-btn-navy.bo-ui-button,
+body.main-admin-create-page .mad-btn-navy.bo-ui-button-primary{
+  background:var(--bo-navy)!important;border-color:var(--bo-navy)!important;color:#fff!important;
+}
+body.main-admin-create-page .mad-btn-navy:hover{
+  background:#0E2F52!important;border-color:#0E2F52!important;color:#fff!important;
+}
+
+@media(max-width:1200px){
+  body.main-admin-create-page .mac-fields-row{grid-template-columns:repeat(3, minmax(0, 1fr))}
+}
+@media(max-width:800px){
+  body.main-admin-create-page .mac-fields,
+  body.main-admin-create-page .mac-fields-row,
+  body.main-admin-create-page .mac-grid-2{grid-template-columns:1fr}
+  body.main-admin-create-page .mac-field,
+  body.main-admin-create-page .mac-field-wide{max-width:none}
+  body.main-admin-create-page .mac-head{align-items:flex-start}
+  body.main-admin-create-page .mac-role-pick,
+  body.main-admin-create-page .mac-role-priv{flex-wrap:wrap}
+  body.main-admin-create-page .mac-tier-badge{margin-left:0}
+  body.main-admin-create-page .mac-footer-actions{flex-wrap:wrap}
+  body.main-admin-create-page .mac-footer-actions .mad-btn{flex:1 1 auto;justify-content:center}
+}
+
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-head,
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-section{
+  background:var(--bo-surface);border-color:var(--bo-border);
+}
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-pick,
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-priv,
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-policy-row{
+  background:rgba(255,255,255,.03);border-color:var(--bo-border);
+}
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-icon{
+  background:var(--bo-cyan);color:#fff;border:0;
+}
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-policy-icon,
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-tag{
+  background:var(--bo-bg);border-color:var(--bo-border);color:var(--bo-text-secondary);
+}
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-menu{
+  background:var(--bo-surface);border-color:var(--bo-cyan);
+}
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-option{
+  color:var(--bo-text-secondary);
+}
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-option:hover,
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-option.is-active{
+  background:rgba(33,166,215,.14);color:var(--bo-text);
+}
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-title-row strong,
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-policy-copy strong{color:var(--bo-text)}
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-field .form-control,
+html[data-bo-theme="dark"] body.main-admin-create-page .report-content .mac-field .form-control,
+html[data-bo-theme="dark"] body.main-admin-create-page .report-content .mac-field input,
+html[data-bo-theme="dark"] body.main-admin-create-page .report-content .mac-field select,
+html[data-bo-theme="dark"] body.main-admin-create-page .report-content .mac-field textarea{
+  background:var(--bo-bg)!important;border-color:var(--bo-border)!important;color:var(--bo-text)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-head h2,
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-title-row strong,
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-policy-copy strong{color:var(--bo-text)}
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-breadcrumb span[aria-current]{color:var(--bo-text)}

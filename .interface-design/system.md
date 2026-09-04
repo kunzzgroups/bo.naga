@@ -191,6 +191,7 @@ Page padding (exec): `20px 24px` desktop · tighten on short viewports
 | Main Admin Detail new page | Independent `main-admin-detail.html` (do not replace `admin-user.html`); tabs + pills + dense admin table; Deep Navy Cyan + `bo_theme` | 2026-09-04 |
 | Main Admin Detail tabs | Administrators live; Roles → `menu-permission.html`; Credit Control disabled; Security → `admin-login-log.html` | 2026-09-04 |
 | Main Admin Detail mock layout | Underline tabs · gray filter bar · dense table (UID/email · relative Last Active · HH:mm login · edit/key/suspend actions) · Previous/Next pager | 2026-09-04 |
+| Main Admin Create full page | `main-admin-create.html` from Add Account (not modal); breadcrumb · sectioned credentials/role card/IP policy · navy Create CTA; inherits `main_admin_detail` access | 2026-09-04 |
 | Brands light/dark via `bo_theme` | Same key + sun/moon toggle as Overview; dark surfaces `#102030` on `#08131F` | 2026-09-03 |
 
 ## Agent rules

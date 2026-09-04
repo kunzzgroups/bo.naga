@@ -12,7 +12,7 @@
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.2.1" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.4.6" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -58,7 +58,7 @@
     <div class="mad-chrome-actions">
       <span class="mad-sync" id="madSyncLabel"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> Synced just now</span>
       <button class="mad-btn mad-btn-ghost" type="button" id="madExportBtn"><i class="bi bi-upload"></i> Export</button>
-      <button class="mad-btn mad-btn-primary" type="button" id="madAddBtn"><i class="bi bi-person-plus"></i> Add Account</button>
+      <a class="mad-btn mad-btn-primary" href="main-admin-create.html" id="madAddBtn"><i class="bi bi-person-plus"></i> Add Account</a>
     </div>
   </div>
 
@@ -117,44 +117,6 @@
   </div>
 </section>
 
-<!-- Create modal -->
-<div aria-hidden="true" class="modal-clean mad-modal" id="madCreateModal">
-  <div class="modal-clean-panel mad-modal-panel">
-    <div class="modal-clean-head">
-      <div class="mad-modal-title">
-        <span class="mad-modal-icon"><i class="bi bi-person-plus"></i></span>
-        <div><h3>Add Account</h3><small>Create a new administrator account.</small></div>
-      </div>
-      <button class="modal-clean-close" data-mad-close-create type="button"><i class="bi bi-x-lg"></i></button>
-    </div>
-    <form class="modal-clean-body" id="madCreateForm">
-      <div class="mad-form-stack">
-        <label class="mad-field">Username <b>*</b><input class="form-control" id="madNewUsername" required placeholder="Enter username"/></label>
-        <label class="mad-field">Display Name <b>*</b><input class="form-control" id="madNewDisplayName" required placeholder="Enter display name"/></label>
-        <label class="mad-field">Password <b>*</b>
-          <span class="mad-pass-wrap"><input class="form-control" id="madNewPassword" type="password" required placeholder="Enter password"/><button type="button" class="mad-eye" data-toggle-password="madNewPassword"><i class="bi bi-eye"></i></button></span>
-        </label>
-        <label class="mad-field">Confirm Password <b>*</b>
-          <span class="mad-pass-wrap"><input class="form-control" id="madNewConfirmPassword" type="password" required placeholder="Confirm password"/><button type="button" class="mad-eye" data-toggle-password="madNewConfirmPassword"><i class="bi bi-eye"></i></button></span>
-        </label>
-        <div class="mad-form-row">
-          <label class="mad-field">Role <b>*</b><select class="form-control" id="madNewRole"></select></label>
-          <label class="mad-field">Status <b>*</b>
-            <select class="form-control" id="madNewStatus"><option value="1">Active</option><option value="0">Suspended</option></select>
-          </label>
-        </div>
-        <label class="mad-field">Branding Scope<select class="form-control" id="madNewBrand"><option value="">Master / Platform</option></select></label>
-        <label class="mad-field">Remark<textarea class="form-control" id="madNewRemark" maxlength="200" placeholder="Optional remark"></textarea></label>
-      </div>
-      <div class="upload-status mb-3" id="madCreateStatus"></div>
-      <div class="mad-modal-actions">
-        <button class="mad-btn mad-btn-ghost" type="button" data-mad-close-create>Cancel</button>
-        <button class="mad-btn mad-btn-primary" type="submit" id="madCreateSubmit"><i class="bi bi-shield-check"></i> Create Admin</button>
-      </div>
-    </form>
-  </div>
-</div>
-
 <!-- Edit modal -->
 <div aria-hidden="true" class="modal-clean mad-modal" id="madEditModal">
   <div class="modal-clean-panel mad-modal-panel">
@@ -178,7 +140,7 @@
         <label class="mad-field">Branding Scope<select class="form-control" id="madEditBrand"><option value="">Master / Platform</option></select></label>
         <label class="mad-field">New Password <small>Leave empty if no change</small><input class="form-control" id="madEditPassword" type="password" placeholder="Minimum 8 characters"/></label>
       </div>
-      <div class="upload-status mb-3" id="madEditStatus"></div>
+      <div class="upload-status mb-3" id="madEditFormStatus"></div>
       <div class="mad-modal-actions">
         <button class="mad-btn mad-btn-ghost" type="button" data-mad-close-edit>Close</button>
         <button class="mad-btn mad-btn-primary" type="submit"><i class="bi bi-save"></i> Save Changes</button>
@@ -192,8 +154,8 @@
 <script src="assets/js/config.js?v=1.0.37"></script>
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/reports.js?v=1.0.22"></script>
-<script src="assets/js/auth.js?v=1.0.61"></script>
-<script src="assets/js/main-admin-detail.js?v=1.1.0"></script>
+<script src="assets/js/auth.js?v=1.0.62"></script>
+<script src="assets/js/main-admin-detail.js?v=1.2.0"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
