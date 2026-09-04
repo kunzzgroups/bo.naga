@@ -5950,6 +5950,45 @@ body.modal-open .report-actions {
     transform:translateX(0)!important;
     pointer-events:auto!important;
   }
+  /* Mini-rail must not collapse an open flyout into an icon-only ghost panel. */
+  body.sidebar-mini .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list{
+    display:block!important;
+    width:286px!important;
+    min-width:250px!important;
+    max-width:min(320px,calc(100vw - var(--bo-sidebar-flyout-left,288px) - 16px))!important;
+    padding:8px!important;
+    overflow:auto!important;
+  }
+  body.sidebar-mini .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list a,
+  body.sidebar-mini .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list a.report-sub{
+    justify-content:flex-start!important;
+    padding:9px 10px!important;
+    min-height:38px!important;
+  }
+  body.sidebar-mini .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list a span,
+  body.sidebar-mini .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list a.report-sub span{
+    font-size:13px!important;
+    font-weight:700!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    opacity:1!important;
+    visibility:visible!important;
+    overflow:visible!important;
+    white-space:normal!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:8px!important;
+  }
+  body.sidebar-mini .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list a span i,
+  body.sidebar-mini .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list a.report-sub span i,
+  body.sidebar-mini .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list a > i{
+    font-size:14px!important;
+    width:auto!important;
+    min-width:0!important;
+    margin-right:.5rem!important;
+  }
   .report-sidebar .report-nav > .nav-group.open > .nav-group-btn .bi-chevron-down,
   .report-sidebar .report-nav > .nav-group:hover > .nav-group-btn .bi-chevron-down{
     transform:rotate(-90deg)!important;
@@ -5968,7 +6007,8 @@ body.modal-open .report-actions {
    When the pointer enters another main menu, hide the previous flyout in the
    same frame (no fade/slide overlap), then allow the new one to render. */
 @media (min-width:992px){
-  .report-sidebar .report-nav > .nav-group.bo-flyout-instant-hide > .nav-group-list{
+  .report-sidebar .report-nav > .nav-group.bo-flyout-instant-hide > .nav-group-list,
+  .report-sidebar .report-nav > .nav-group:not(.bo-flyout-hover) > .nav-group-list{
     display:none!important;
     opacity:0!important;
     visibility:hidden!important;
@@ -5989,12 +6029,23 @@ body.modal-open .report-actions {
     content:"";
     position:absolute;
     top:0;
-    right:-14px;
-    width:14px;
+    right:-28px;
+    width:28px;
     height:100%;
     background:transparent;
     pointer-events:auto;
     z-index:12049;
+  }
+  /* Bridge attached to the fixed flyout itself (not clipped by sidebar overflow). */
+  .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list::before{
+    content:"";
+    position:absolute;
+    left:-28px;
+    top:0;
+    width:28px;
+    height:100%;
+    background:transparent;
+    pointer-events:auto;
   }
 }
 

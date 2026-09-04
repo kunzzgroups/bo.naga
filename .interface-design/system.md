@@ -186,6 +186,8 @@ Page padding (exec): `20px 24px` desktop · tighten on short viewports
 | Menu Management color-aligned | Same Deep Navy Cyan shell + cyan CTA / badges; retire `#2563eb` / indigo gradients on this page | 2026-09-04 |
 | Menu Management light/dark via `bo_theme` | Same sun/moon toggle + shared key as Overview/Brands | 2026-09-04 |
 | Menu Management MAIN / BO tabs | Filter catalogue by sidebar panel (`main_*` groups → MAIN; rest → BO) | 2026-09-04 |
+| Menu Permission color-aligned | Same Deep Navy Cyan shell + cyan CTA / checkbox accent; retire `#2563eb` / red checkbox accent on this page | 2026-09-04 |
+| Menu Permission workspace layout | Guide + role/assigned + filter/tools + accordion groups + 3-col menu cards + sticky save footer | 2026-09-04 |
 | Brands light/dark via `bo_theme` | Same key + sun/moon toggle as Overview; dark surfaces `#102030` on `#08131F` | 2026-09-03 |
 
 ## Agent rules

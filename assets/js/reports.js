@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!btn || !sidebarEl || !list) return;
     const br = btn.getBoundingClientRect();
     const sr = sidebarEl.getBoundingClientRect();
-    const left = Math.max(8, Math.round(sr.right + 2));
+    const left = Math.max(8, Math.round(sr.right + 6));
     let top = Math.max(12, Math.round(br.top));
     group.style.setProperty('--bo-sidebar-flyout-left', left + 'px');
     group.style.setProperty('--bo-sidebar-flyout-top', top + 'px');
@@ -115,20 +115,26 @@ document.addEventListener('DOMContentLoaded', () => {
     group.classList.remove('bo-flyout-instant-hide');
     group.classList.add('bo-flyout-hover');
   };
+  const isPointerOverSidebarFlyout = (group) => {
+    if (!group) return false;
+    const list = group.querySelector('.nav-group-list');
+    if (group.matches(':hover')) return true;
+    if (list && list.matches(':hover')) return true;
+    return false;
+  };
   const scheduleSidebarFlyoutHoverClose = (group) => {
     if (!group || window.innerWidth < 992) return;
     const pending = sidebarFlyoutHoverTimers.get(group);
     if (pending) clearTimeout(pending);
     const timer = setTimeout(() => {
       sidebarFlyoutHoverTimers.delete(group);
-      const list = group.querySelector('.nav-group-list');
-      if (group.matches(':hover') || (list && list.matches(':hover'))) return;
+      if (isPointerOverSidebarFlyout(group)) return;
       group.classList.add('bo-flyout-instant-hide');
       group.classList.remove('bo-flyout-hover');
       void group.offsetWidth;
       requestAnimationFrame(() => group.classList.remove('bo-flyout-instant-hide'));
       if (window.__boSidebarActiveFlyout === group) window.__boSidebarActiveFlyout = null;
-    }, 120);
+    }, 90);
     sidebarFlyoutHoverTimers.set(group, timer);
   };
 
@@ -320,6 +326,38 @@ document.addEventListener('DOMContentLoaded', () => {
       sidebar.classList.remove('is-mini-hover');
       var next = e.relatedTarget;
       if(next && sidebar.contains(next)) return;
+
+      var active = window.__boSidebarActiveFlyout;
+      if(!active) return;
+      if(next && active.contains(next)) return;
+
+      var list = active.querySelector('.nav-group-list');
+      var towardFlyout = false;
+      if(list && typeof e.clientX === 'number'){
+        var r = list.getBoundingClientRect();
+        // Only grace-close when the pointer is crossing the sidebar→flyout bridge.
+        towardFlyout =
+          e.clientX >= (r.left - 36) &&
+          e.clientX <= (r.right + 8) &&
+          e.clientY >= (r.top - 12) &&
+          e.clientY <= (r.bottom + 12);
+      }
+
+      if(towardFlyout){
+        setTimeout(function(){
+          if(!window.__boSidebarActiveFlyout) return;
+          var group = window.__boSidebarActiveFlyout;
+          if(group.matches(':hover')) return;
+          var panel = group.querySelector('.nav-group-list');
+          if(panel && panel.matches(':hover')) return;
+          if(window.BO_SIDEBAR && typeof window.BO_SIDEBAR.closeAllFlyouts === 'function'){
+            window.BO_SIDEBAR.closeAllFlyouts();
+          }
+        }, 80);
+        return;
+      }
+
+      // Leaving to page content — close immediately so no icon-only ghost panel lingers.
       if(window.BO_SIDEBAR && typeof window.BO_SIDEBAR.closeAllFlyouts === 'function'){
         window.BO_SIDEBAR.closeAllFlyouts();
       }

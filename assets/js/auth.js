@@ -456,7 +456,7 @@
         if(!btn || !sidebar || !list) return;
         const br = btn.getBoundingClientRect();
         const sr = sidebar.getBoundingClientRect();
-        const left = Math.max(8, Math.round(sr.right + 2));
+        const left = Math.max(8, Math.round(sr.right + 6));
         let top = Math.max(12, Math.round(br.top));
         group.style.setProperty('--bo-sidebar-flyout-left', left + 'px');
         group.style.setProperty('--bo-sidebar-flyout-top', top + 'px');
@@ -475,7 +475,9 @@
         if(timer) clearTimeout(timer);
         sidebarFlyoutHoverTimers.delete(group);
         group.classList.add('bo-flyout-instant-hide');
-        group.classList.remove('bo-flyout-hover');
+        group.classList.remove('bo-flyout-hover', 'open');
+        group.querySelector('.nav-group-list')?.classList.remove('show');
+        group.querySelector('.nav-group-btn')?.setAttribute('aria-expanded','false');
         void group.offsetWidth;
         requestAnimationFrame(function(){ group.classList.remove('bo-flyout-instant-hide'); });
         if(window.__boSidebarActiveFlyout === group) window.__boSidebarActiveFlyout = null;
@@ -530,7 +532,7 @@
           const list = group.querySelector('.nav-group-list');
           if(group.matches(':hover') || (list && list.matches(':hover'))) return;
           dismissSidebarFlyout(group);
-        }, 120);
+        }, 90);
         sidebarFlyoutHoverTimers.set(group, timer);
       }
       document.addEventListener('mouseover', function(e){
@@ -544,6 +546,11 @@
         if(!group) return;
         const next = e.relatedTarget;
         if(next && group.contains(next)) return;
+        // Still moving toward the fixed flyout (outside the parent box) — keep open.
+        if(next && next.closest && next.closest('.report-sidebar .nav-group-list')){
+          const nextGroup = next.closest('.nav-group');
+          if(nextGroup === group) return;
+        }
         scheduleSidebarFlyoutHoverClose(group);
       });
       document.addEventListener('pointerdown', function(e){
