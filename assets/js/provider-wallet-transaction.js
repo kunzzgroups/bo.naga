@@ -2,6 +2,7 @@
   let page = 1;
   let totalPages = 1;
   let lastRows = [];
+  let activeListController = null;
   function pageButtons(current,total){
     total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
     const pages=[]; const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};
@@ -30,8 +31,8 @@
     return API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS[key];
   }
 
-  async function get(url){
-    const res = await fetch(url, { headers: { ...BO_AUTH.authHeader() } });
+  async function get(url, signal){
+    const res = await fetch(url, { headers: { ...BO_AUTH.authHeader() }, signal });
     const json = await res.json().catch(() => ({}));
     if (!res.ok || json.status === 'error') throw new Error(json.message || 'Request failed');
     return json.data || {};
@@ -40,6 +41,8 @@
   function readList(data){ return data.items || data.list || data.content || data.rows || []; }
   function readTotalPages(data){ return Number(data.totalPages || data.pages || 1) || 1; }
   function readTotalElements(data){ return Number(data.totalElements || data.total || data.count || readList(data).length) || 0; }
+  function readHasNext(data){ return data.hasNext === true || data.hasNext === 'true'; }
+  function readExactTotal(data){ return data.exactTotal !== false && data.exactTotal !== 'false'; }
 
   function setPager(){
     const el = $('txPager');
@@ -182,13 +185,19 @@
   };
 
   async function load(){
+    if (activeListController) activeListController.abort();
+    activeListController = new AbortController();
+    const controller = activeListController;
+    const timeout = setTimeout(() => controller.abort(), 15000);
     try{
       $('txBody').innerHTML = '<tr><td colspan="10" class="text-center py-4 text-muted">Loading...</td></tr>';
-      const data = await get(endpoint('PROVIDER_WALLET_TRANSACTION_LIST') + '?' + query());
+      const data = await get(endpoint('PROVIDER_WALLET_TRANSACTION_LIST') + '?' + query(), controller.signal);
       lastRows = readList(data);
       totalPages = readTotalPages(data);
       const total = readTotalElements(data);
-      if ($('txRecordCount')) $('txRecordCount').textContent = total + ' records';
+      const hasNext = readHasNext(data);
+      const exactTotal = readExactTotal(data);
+      if ($('txRecordCount')) $('txRecordCount').textContent = total + (hasNext && !exactTotal ? '+' : '') + ' records';
       $('txBody').innerHTML = lastRows.length ? lastRows.map((x,i) => `
         <tr>
           <td>${esc(x.id)}</td>
@@ -204,7 +213,11 @@
         </tr>`).join('') : '<tr><td colspan="10" class="text-center py-4 text-muted">No records</td></tr>';
       setPager();
     }catch(e){
+      if (e && e.name === 'AbortError') return;
       $('txBody').innerHTML = '<tr><td colspan="10" class="text-danger text-center py-4">' + esc(e.message) + '</td></tr>';
+    }finally{
+      clearTimeout(timeout);
+      if (activeListController === controller) activeListController = null;
     }
   }
 
