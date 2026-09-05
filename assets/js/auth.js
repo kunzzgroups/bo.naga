@@ -176,6 +176,9 @@
     if(key === 'menu_permission' || /^role\.html#menupermissions$/i.test(raw.replace(/^\.\//,''))){
       return 'menu-permission.html';
     }
+    if(/^main-admin-role-create\.html$/i.test(raw.replace(/^\.\//,''))){
+      return 'main-admin-role-create.html';
+    }
     // MAIN Admin → Details uses the executive Admin Detail page. Keep legacy
     // BO Admin Management (admin / admin-user.html) unchanged.
     if(key === 'main_admin_detail' || key === 'admin_detail' || /^main-admin-detail\.html$/i.test(raw.replace(/^\.\//,''))){
@@ -252,6 +255,7 @@
       if(current === 'main-admin-create.html') current = 'main-admin-detail.html';
       if(current === 'main-admin-credit.html') current = 'main-admin-detail.html';
       if(current === 'main-admin-security.html') current = 'main-admin-detail.html';
+      if(current === 'main-admin-role-create.html') current = 'menu-permission.html';
       const agentChildPages = new Set([
         'agent-commission-admin.html','agent-settlement-admin.html','agent-reimbursement-admin.html',
         'agent-payout-admin.html','agent-promotion-admin.html'

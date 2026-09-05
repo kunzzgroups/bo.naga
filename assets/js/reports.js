@@ -546,6 +546,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btn.addEventListener('click',function(e){
       e.stopPropagation();
+      const hasData=Array.from(select.options||[]).some(function(o){
+        return String(o.value||'')!=='';
+      });
+      if(!hasData) return;
       const open=!menu.classList.contains('show');
       document.querySelectorAll('.rounded-select-menu.show').forEach(m=>m.classList.remove('show'));
       document.querySelectorAll('.rounded-select-btn.open').forEach(b=>b.classList.remove('open'));

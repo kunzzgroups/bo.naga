@@ -17,7 +17,6 @@
   const adjustStatus = document.getElementById('macAdjustStatus');
   const adjustAccount = document.getElementById('macAdjustAccount');
   const adjustBalance = document.getElementById('macAdjustBalance');
-  const adjustLimit = document.getElementById('macAdjustLimit');
   const adjustRemark = document.getElementById('macAdjustRemark');
   const adjustId = document.getElementById('macAdjustId');
 
@@ -238,15 +237,6 @@
     renderTable();
   }
 
-  function healthBarHtml(h){
-    const pctLabel = h.key === 'suspended' ? 'Locked' : (h.pct.toFixed(1) + '% ' + h.label);
-    const tone = h.key === 'healthy' ? 'is-safe' : (h.label === 'Critical' ? 'is-critical' : (h.key === 'low' ? 'is-warn' : 'is-locked'));
-    return '<div class="mac-health ' + tone + '">' +
-      '<div class="mac-health-track"><span class="mac-health-fill" style="width:' + Math.max(h.key === 'suspended' ? 0 : 4, h.bar) + '%"></span></div>' +
-      '<span class="mac-health-label">' + esc(pctLabel) + '</span>' +
-      '</div>';
-  }
-
   function renderTable(){
     updateCounts(allRows);
     const total = filtered.length;
@@ -263,7 +253,7 @@
 
     if(!tbody) return;
     if(!rows.length){
-      tbody.innerHTML = '<tr><td colspan="8" class="mad-empty">No credit accounts match the current filters.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="mad-empty">No credit accounts match the current filters.</td></tr>';
       return;
     }
 
@@ -278,8 +268,6 @@
           '</div></div></td>' +
         '<td><span class="mac-role ' + tierClass(r.tier) + '">' + esc(r.roleLabel) + '</span></td>' +
         '<td class="mad-money">' + esc(money(r.balance)) + '</td>' +
-        '<td class="mad-money">' + esc(money(r.limit)) + '</td>' +
-        '<td>' + healthBarHtml(r.health) + '</td>' +
         '<td><span class="mac-status ' + r.health.statusClass + '"><i></i>' + esc(r.health.statusLabel) + '</span></td>' +
         '<td class="mac-time">' + esc(lastActiveText(r)) + '</td>' +
         '<td><div class="mac-actions">' +
@@ -301,10 +289,22 @@
 
   function fillAdjustAccounts(selectedId){
     if(!adjustAccount) return;
-    adjustAccount.innerHTML = allRows.map(r =>
-      '<option value="' + esc(r.id) + '">' + esc(r.displayName || r.username) + ' (#' + esc(r.uid) + ')</option>'
-    ).join('');
-    if(selectedId != null) adjustAccount.value = String(selectedId);
+    if(!allRows.length){
+      adjustAccount.innerHTML = '<option value="">No accounts available</option>';
+    }else{
+      adjustAccount.innerHTML = '<option value="">Select account...</option>' + allRows.map(r =>
+        '<option value="' + esc(r.id) + '">' + esc(r.displayName || r.username) + ' (#' + esc(r.uid) + ')</option>'
+      ).join('');
+      if(selectedId != null && selectedId !== '') adjustAccount.value = String(selectedId);
+    }
+    adjustAccount.dispatchEvent(new Event('bo:select-sync', { bubbles: true }));
+    const wrap = adjustAccount.closest('.rounded-select-wrap');
+    if(wrap){
+      const menu = wrap.querySelector('.rounded-select-menu');
+      const btn = wrap.querySelector('.rounded-select-btn');
+      if(menu) menu.classList.remove('show');
+      if(btn) btn.classList.remove('open');
+    }
     syncAdjustFields();
   }
 
@@ -313,13 +313,11 @@
     const row = allRows.find(r => String(r.id) === String(id));
     if(!row){
       if(adjustBalance) adjustBalance.value = '';
-      if(adjustLimit) adjustLimit.value = '';
       if(adjustId) adjustId.value = '';
       return;
     }
     if(adjustId) adjustId.value = String(row.id);
     if(adjustBalance) adjustBalance.value = String(Math.round(row.balance));
-    if(adjustLimit) adjustLimit.value = String(Math.round(row.limit));
   }
 
   function openAdjust(id){
@@ -352,7 +350,7 @@
   }
 
   async function load(){
-    if(tbody) tbody.innerHTML = '<tr><td colspan="8" class="mad-empty">Loading credit accounts...</td></tr>';
+    if(tbody) tbody.innerHTML = '<tr><td colspan="6" class="mad-empty">Loading credit accounts...</td></tr>';
     try{
       await loadRoles();
       const r = await fetch(BO_AUTH.adminListUrl(), { headers: { ...BO_AUTH.authHeader() }, cache: 'no-store' });
@@ -370,7 +368,7 @@
       updateCounts([]);
       if(pagerEl) pagerEl.innerHTML = pageButtons(1, 1);
       if(infoEl) infoEl.textContent = 'Showing 0 to 0 of 0 accounts';
-      if(tbody) tbody.innerHTML = '<tr><td colspan="8" class="mad-empty text-danger">' + esc(err.message || 'Load failed') + '</td></tr>';
+      if(tbody) tbody.innerHTML = '<tr><td colspan="6" class="mad-empty text-danger">' + esc(err.message || 'Load failed') + '</td></tr>';
     }
   }
 
@@ -412,10 +410,10 @@
   });
 
   exportBtn && exportBtn.addEventListener('click', () => {
-    const csv = [['Username', 'Display Name', 'UID', 'Role', 'Credit Balance', 'Credit Limit', 'Remaining %', 'Health', 'Status', 'Last Active']]
+    const csv = [['Username', 'Display Name', 'UID', 'Role', 'Credit Balance', 'Status', 'Last Active']]
       .concat(filtered.map(r => [
-        r.username, r.displayName, r.uid, r.roleLabel, r.balance, r.limit,
-        r.health.pct.toFixed(1), r.health.label, r.health.statusLabel, lastActiveText(r)
+        r.username, r.displayName, r.uid, r.roleLabel, r.balance,
+        r.health.statusLabel, lastActiveText(r)
       ]));
     const blob = new Blob([csv.map(row => row.map(v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"').join(',')).join('\n')], { type: 'text/csv;charset=utf-8' });
     const a = document.createElement('a');
@@ -467,14 +465,9 @@
     e.preventDefault();
     const id = adjustId && adjustId.value;
     const balance = Number(adjustBalance && adjustBalance.value);
-    const limit = Number(adjustLimit && adjustLimit.value);
     if(!id){ if(adjustStatus){ adjustStatus.textContent = 'Select an account.'; adjustStatus.className = 'upload-status mb-3 error'; } return; }
-    if(!Number.isFinite(balance) || balance < 0 || !Number.isFinite(limit) || limit < 0){
-      if(adjustStatus){ adjustStatus.textContent = 'Enter valid balance and limit.'; adjustStatus.className = 'upload-status mb-3 error'; }
-      return;
-    }
-    if(limit < balance){
-      if(adjustStatus){ adjustStatus.textContent = 'Credit limit must be greater than or equal to balance.'; adjustStatus.className = 'upload-status mb-3 error'; }
+    if(!Number.isFinite(balance) || balance < 0){
+      if(adjustStatus){ adjustStatus.textContent = 'Enter a valid credit balance.'; adjustStatus.className = 'upload-status mb-3 error'; }
       return;
     }
     const submit = document.getElementById('macAdjustSubmit');
@@ -485,7 +478,6 @@
       const body = {
         creditBalance: balance,
         credit: balance,
-        creditLimit: limit,
         remark: remark || undefined
       };
       const r = await fetch(BO_AUTH.adminUpdateUrl(id), {
@@ -495,12 +487,10 @@
       });
       const j = await r.json().catch(() => ({}));
       if(!r.ok || j.status === 'error') throw new Error(j.message || 'Adjustment failed');
-      // Keep optimistic local values if API ignores creditLimit.
       const idx = allRows.findIndex(x => String(x.id) === String(id));
       if(idx >= 0){
         allRows[idx].raw.creditBalance = balance;
         allRows[idx].raw.credit = balance;
-        allRows[idx].raw.creditLimit = limit;
         allRows[idx] = normalizeRow(allRows[idx].raw);
       }
       if(adjustStatus){ adjustStatus.textContent = j.message || 'Credit adjusted.'; adjustStatus.className = 'upload-status mb-3 success'; }

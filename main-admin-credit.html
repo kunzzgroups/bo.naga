@@ -11,7 +11,8 @@
 <link href="assets/css/reports.css?v=1.0.46" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.6.7" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.6.13" rel="stylesheet"/>
+<link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -154,15 +155,13 @@
             <th>Username</th>
             <th>Role</th>
             <th>Credit Balance</th>
-            <th>Credit Limit</th>
-            <th>Utilization / Health</th>
             <th>Status</th>
             <th>Last Active</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody id="macTableBody">
-          <tr><td colspan="8" class="mad-empty">Loading credit accounts...</td></tr>
+          <tr><td colspan="6" class="mad-empty">Loading credit accounts...</td></tr>
         </tbody>
       </table>
     </div>
@@ -184,7 +183,7 @@
         <span class="mad-modal-icon"><i class="bi bi-sliders"></i></span>
         <div>
           <h3 id="macAdjustTitle">Adjust Credit</h3>
-          <small id="macAdjustSub">Update operational credit balance or limit.</small>
+          <small id="macAdjustSub">Update operational credit balance.</small>
         </div>
       </div>
       <button class="modal-clean-close" data-mac-close type="button"><i class="bi bi-x-lg"></i></button>
@@ -195,16 +194,10 @@
         <span class="mac-label">Account</span>
         <select class="form-control mad-select" id="macAdjustAccount" required></select>
       </label>
-      <div class="mac-adjust-grid">
-        <label class="mac-field" for="macAdjustBalance">
-          <span class="mac-label">Credit Balance</span>
-          <input class="form-control" id="macAdjustBalance" type="number" min="0" step="1" required/>
-        </label>
-        <label class="mac-field" for="macAdjustLimit">
-          <span class="mac-label">Credit Limit</span>
-          <input class="form-control" id="macAdjustLimit" type="number" min="0" step="1" required/>
-        </label>
-      </div>
+      <label class="mac-field" for="macAdjustBalance">
+        <span class="mac-label">Credit Balance</span>
+        <input class="form-control" id="macAdjustBalance" type="number" min="0" step="1" required/>
+      </label>
       <label class="mac-field" for="macAdjustRemark">
         <span class="mac-label">Remark</span>
         <input class="form-control" id="macAdjustRemark" type="text" maxlength="200" placeholder="Reason for adjustment"/>
@@ -212,7 +205,7 @@
       <div class="upload-status mb-3" id="macAdjustStatus"></div>
       <div class="mad-modal-actions">
         <button class="mad-btn mad-btn-ghost" type="button" data-mac-close>Cancel</button>
-        <button class="mad-btn mad-btn-navy" type="submit" id="macAdjustSubmit"><i class="bi bi-check2"></i> Save Adjustment</button>
+        <button class="mad-btn mad-btn-navy" type="submit" id="macAdjustSubmit"><i class="bi bi-floppy"></i> Save Adjustment</button>
       </div>
     </form>
   </div>
@@ -222,9 +215,10 @@
 </div>
 <script src="assets/js/config.js?v=1.0.37"></script>
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
-<script src="assets/js/reports.js?v=1.0.22"></script>
+<script src="assets/js/reports.js?v=1.0.23"></script>
 <script src="assets/js/auth.js?v=1.0.65"></script>
-<script src="assets/js/main-admin-credit.js?v=1.0.3"></script>
+<script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
+<script src="assets/js/main-admin-credit.js?v=1.0.6"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>

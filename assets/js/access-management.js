@@ -31,8 +31,11 @@
   let roleCache=[];
   let editingRoleType='';
   let mpBaselineIds=[];
+  let mpWorkingIds=null; // Set<string> — full selection across Main/BO scopes
   let mpFilterQuery='';
+  let mpScope='main'; // 'main' | 'bo'
   let mpOpenGroups=null; // null = all open (first render)
+  const MAIN_GROUP_KEYS=new Set(['main_reports_group','main_accounting_group','main_brands_group','main_admin_group']);
   const GROUP_DESC=[
     [/dashboard|overview/i,'Core metrics, operational overviews & monitor charts'],
     [/admin/i,'Administrator accounts, roles & security gates'],
@@ -114,6 +117,51 @@
     return Object.keys(groups).sort((a,b)=>{const ai=GROUP_ORDER.indexOf(a),bi=GROUP_ORDER.indexOf(b);return (ai<0?999:ai)-(bi<0?999:bi)||a.localeCompare(b);}).map(key=>({key,rows:groups[key]}));
   }
 
+  function isMainMenu(m){
+    const parent=String((m&&m.parentKey)||'').trim().toLowerCase();
+    const key=String((m&&m.menuKey)||'').trim().toLowerCase();
+    const url=String((m&&m.url)||'').trim().toLowerCase().replace(/^\.\//,'');
+    if(MAIN_GROUP_KEYS.has(parent) || parent.startsWith('main_')) return true;
+    if(key.startsWith('main_') || key.startsWith('main-')) return true;
+    if(/^main[-_]/.test(url) || url.startsWith('main-')) return true;
+    return false;
+  }
+  function menusForScope(scope){
+    const wantMain=String(scope||mpScope)==='main';
+    return (menuCache||[]).filter(m=>isMainMenu(m)===wantMain);
+  }
+  function syncWorkingFromDom(){
+    const roleOn=!!document.getElementById('menuPermissionRoleId')?.value;
+    if(!roleOn){ mpWorkingIds=null; return; }
+    if(!(mpWorkingIds instanceof Set)) mpWorkingIds=new Set();
+    document.querySelectorAll('#menuPermissionCheckList .mp-menu-card input').forEach(input=>{
+      const id=String(input.value);
+      if(input.checked) mpWorkingIds.add(id);
+      else mpWorkingIds.delete(id);
+    });
+  }
+  function currentSelectionIds(){
+    syncWorkingFromDom();
+    return [...(mpWorkingIds instanceof Set ? mpWorkingIds : [])].map(Number).filter(Number.isFinite);
+  }
+  function setMpScope(scope){
+    const next=scope==='bo'?'bo':'main';
+    if(next===mpScope) return;
+    syncWorkingFromDom();
+    mpScope=next;
+    document.querySelectorAll('[data-mp-scope]').forEach(btn=>{
+      const on=btn.getAttribute('data-mp-scope')===mpScope;
+      btn.classList.toggle('is-active',on);
+      btn.setAttribute('aria-selected',on?'true':'false');
+    });
+    mpOpenGroups=null;
+    const roleOn=!!document.getElementById('menuPermissionRoleId')?.value;
+    const ids=roleOn ? currentSelectionIds() : (mpWorkingIds instanceof Set ? [...mpWorkingIds].map(Number) : []);
+    renderMenuPermissionMatrix(ids);
+    if(roleOn) document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=false);
+    else document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=true);
+  }
+
   function currentPageFile(){
     return String(location.pathname||'').split('/').pop().toLowerCase()||'';
   }
@@ -171,9 +219,12 @@
   function renderMenuPermissionMatrix(selected){
     const box=document.getElementById('menuPermissionCheckList'); if(!box)return;
     const set=new Set((selected||[]).map(String));
+    if(document.getElementById('menuPermissionRoleId')?.value){
+      mpWorkingIds=new Set(set);
+    }
     const q=String(mpFilterQuery||'').trim().toLowerCase();
-    const page=currentPageFile();
-    const groups=groupMenus(menuCache).map(g=>{
+    const scoped=menusForScope(mpScope);
+    const groups=groupMenus(scoped).map(g=>{
       const rows=q?g.rows.filter(m=>{
         const hay=`${m.title||''} ${m.url||''} ${m.menuKey||''} ${m.parentKey||''}`.toLowerCase();
         return hay.includes(q);
@@ -181,16 +232,16 @@
       return {...g,rows};
     }).filter(g=>g.rows.length);
     if(!groups.length){
-      box.innerHTML=`<div class="permission-empty">${q?'No menus match this filter.':'No active menu found.'}</div>`;
+      const emptyMsg=q
+        ? 'No menus match this filter.'
+        : (mpScope==='main' ? 'No Main menus found.' : 'No BO menus found.');
+      box.innerHTML=`<div class="permission-empty">${emptyMsg}</div>`;
       syncGroupToggles();
       updateMenuPermissionChrome();
       return;
     }
     if(mpOpenGroups===null){
       mpOpenGroups=new Set();
-      const currentGroup=groups.find(g=>g.rows.some(m=>menuFile(m)===page));
-      if(currentGroup) mpOpenGroups.add(currentGroup.key);
-      else if(groups[0]) mpOpenGroups.add(groups[0].key);
     }
     box.innerHTML=groups.map(g=>{
       const meta=groupMeta(g.key);
@@ -253,7 +304,7 @@
   }
 
   function selectedMenuPermissionIds(){
-    return [...document.querySelectorAll('#menuPermissionCheckList .mp-menu-card input:checked')].map(x=>Number(x.value)).filter(Number.isFinite);
+    return currentSelectionIds();
   }
   function idsEqual(a,b){
     const aa=[...a].map(Number).filter(Number.isFinite).sort((x,y)=>x-y);
@@ -261,7 +312,7 @@
     return aa.length===bb.length&&aa.every((v,i)=>v===bb[i]);
   }
   function dirtyCount(){
-    const now=new Set(selectedMenuPermissionIds().map(String));
+    const now=new Set(currentSelectionIds().map(String));
     const base=new Set(mpBaselineIds.map(String));
     let n=0;
     now.forEach(id=>{if(!base.has(id)) n++;});
@@ -271,6 +322,7 @@
   function setMenuPermissionControlsEnabled(on){
     ['menuPermissionFilter','menuPermissionToggleAll','menuPermissionSelectAll','menuPermissionClearAll']
       .forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!on;});
+    // Main / BO scope stays clickable so users can browse either catalogue before selecting a role.
   }
   function roleOptionLabel(role,selected){
     const name=String(role?.name||role?.code||'Role').trim();
@@ -286,11 +338,17 @@
       opt.textContent=roleOptionLabel(role,String(opt.value)===String(selectedId||''));
     });
   }
+  function updateScopeCounts(){
+    const mainEl=document.getElementById('menuPermissionScopeMainCount');
+    const boEl=document.getElementById('menuPermissionScopeBoCount');
+    if(mainEl) mainEl.textContent=String(menusForScope('main').length);
+    if(boEl) boEl.textContent=String(menusForScope('bo').length);
+  }
   function updateMenuPermissionChrome(){
     const roleId=document.getElementById('menuPermissionRoleId')?.value||'';
     const role=roleCache.find(r=>String(r.id)===String(roleId));
     const total=menuCache.length;
-    const assigned=selectedMenuPermissionIds().length;
+    const assigned=roleId ? currentSelectionIds().length : 0;
     const pill=document.getElementById('menuPermissionAssignedPill');
     const pillText=document.getElementById('menuPermissionAssignedText');
     const footer=document.getElementById('menuPermissionFooter');
@@ -299,10 +357,13 @@
     const reset=document.getElementById('menuPermissionResetBtn');
     const save=document.getElementById('saveMenuPermissionBtn');
     syncRoleSelectLabels(roleId);
+    updateScopeCounts();
     if(pill&&pillText){
       if(roleId){
         pill.hidden=false;
-        pillText.textContent=`Assigned: ${assigned} / ${total} Menus`;
+        const mainCount=menusForScope('main').filter(m=>mpWorkingIds&&mpWorkingIds.has(String(m.id))).length;
+        const boCount=menusForScope('bo').filter(m=>mpWorkingIds&&mpWorkingIds.has(String(m.id))).length;
+        pillText.textContent=`Assigned: ${assigned} / ${total} Menus · Main ${mainCount} · BO ${boCount}`;
       }else{
         pill.hidden=true;
       }
@@ -332,7 +393,19 @@
 
   function openModal(){const m=document.getElementById('roleCreateModal');m?.classList.add('show');document.body.classList.add('modal-open');setTimeout(()=>document.getElementById('name')?.focus(),50);}
   function closeModal(){const m=document.getElementById('roleCreateModal');m?.classList.remove('show');document.body.classList.remove('modal-open');msg(roleStatusEl,'','');}
-  function resetModal(){document.getElementById('accessForm')?.reset();document.getElementById('roleEditId').value='';document.getElementById('roleEditCode').value='';document.getElementById('roleModalTitle').textContent='Add Permission Group';document.getElementById('roleModalSubtitle').textContent='Enter a group name and select its menu permissions.';renderPermissionGroups([]);msg(roleStatusEl,'','');}
+  function resetModal(){
+    document.getElementById('accessForm')?.reset();
+    document.getElementById('roleEditId').value='';
+    document.getElementById('roleEditCode').value='';
+    const title=document.getElementById('roleModalTitle');
+    const sub=document.getElementById('roleModalSubtitle');
+    if(title) title.textContent=page==='menu-permission'?'Add Role':'Add Permission Group';
+    if(sub) sub.textContent=page==='menu-permission'
+      ?'Enter a role name and select its menu permissions.'
+      :'Enter a group name and select its menu permissions.';
+    renderPermissionGroups([]);
+    msg(roleStatusEl,'','');
+  }
   async function openCreate(){editingRoleType='';resetModal();openModal();}
   async function openEdit(roleId){
     const role=roleCache.find(r=>String(r.id)===String(roleId)); if(!role)return;
@@ -388,7 +461,14 @@
       });
       select.innerHTML='<option value="">Select role...</option>'+editable.map(r=>`<option value="${esc(r.id)}">${esc(roleOptionLabel(r,false))}</option>`).join('');
       mpBaselineIds=[];
+      mpWorkingIds=null;
       mpFilterQuery='';
+      mpScope='main';
+      document.querySelectorAll('[data-mp-scope]').forEach(btn=>{
+        const on=btn.getAttribute('data-mp-scope')==='main';
+        btn.classList.toggle('is-active',on);
+        btn.setAttribute('aria-selected',on?'true':'false');
+      });
       const filter=document.getElementById('menuPermissionFilter');if(filter)filter.value='';
       renderMenuPermissionMatrix([]);
       document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=true);
@@ -396,6 +476,13 @@
       updateMenuPermissionChrome();
       const hint=document.getElementById('menuPermissionRoleHint');
       if(hint)hint.textContent=editable.length?'Select a role to load its assigned menus.':'No editable permission group is available for this account.';
+      let preselect='';
+      try{ preselect=String(new URLSearchParams(location.search||'').get('roleId')||''); }catch(e){}
+      if(preselect && editable.some(r=>String(r.id)===preselect)){
+        select.value=preselect;
+        await loadSelectedMenuPermissionRole(preselect);
+        try{ history.replaceState({},'', 'menu-permission.html'); }catch(e){}
+      }
     }catch(e){msg(document.getElementById('menuPermissionStatus'),e.message,'error');}
   }
 
@@ -405,6 +492,7 @@
     if(hidden)hidden.value=roleId||'';
     if(!roleId){
       mpBaselineIds=[];
+      mpWorkingIds=null;
       mpFilterQuery='';
       const filter=document.getElementById('menuPermissionFilter');if(filter)filter.value='';
       renderMenuPermissionMatrix([]);
@@ -420,6 +508,7 @@
     try{
       const selected=await fetchRoleMenuIds(role.id);
       mpBaselineIds=selected.map(Number).filter(Number.isFinite);
+      mpWorkingIds=new Set(mpBaselineIds.map(String));
       mpOpenGroups=null;
       renderMenuPermissionMatrix(mpBaselineIds);
       document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=false);
@@ -430,6 +519,7 @@
   }
 
   function resetMenuPermissionChanges(){
+    mpWorkingIds=new Set(mpBaselineIds.map(String));
     renderMenuPermissionMatrix(mpBaselineIds);
     document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=false);
     updateMenuPermissionChrome();
@@ -441,7 +531,7 @@
     const roleId=document.getElementById('menuPermissionRoleId').value;
     const status=document.getElementById('menuPermissionStatus');
     const btn=document.getElementById('saveMenuPermissionBtn');
-    const ids=expandAdminMenuAliases(selectedMenuPermissionIds());
+    const ids=expandAdminMenuAliases(currentSelectionIds());
     if(!roleId){msg(status,'Please select a role.','error');return;}
     btn.disabled=true;msg(status,'Saving menu permissions...','');
     try{
@@ -451,6 +541,7 @@
       const missing=ids.filter(id=>!persistedSet.has(id));
       if(missing.length)throw new Error('Some selected menu permissions were rejected by the API.');
       mpBaselineIds=persisted;
+      mpWorkingIds=new Set(persisted.map(String));
       renderMenuPermissionMatrix(persisted);
       document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=false);
       updateMenuPermissionChrome();
@@ -487,7 +578,18 @@
       if(missing.length){
         throw new Error('Some selected MAIN menu permissions were rejected by the API. Please deploy the matching Spring Boot permission fix and save again.');
       }
-      msg(roleStatusEl,editId?'Group updated successfully.':'Group created successfully.','success');await loadRoleList();setTimeout(closeModal,500);
+      msg(roleStatusEl,editId?'Group updated successfully.':'Group created successfully.','success');
+      if(page==='menu-permission'){
+        await loadMenuPermissionWorkspace();
+        const select=document.getElementById('menuPermissionRoleSelect');
+        if(select && roleId){
+          select.value=String(roleId);
+          await loadSelectedMenuPermissionRole(String(roleId));
+        }
+      }else{
+        await loadRoleList();
+      }
+      setTimeout(closeModal,500);
     }catch(err){
       const raw=String(err?.message||'Unable to save the permission group.');
       const friendly=/duplicate entry|constraint|could not execute statement|sql \[/i.test(raw)
@@ -502,11 +604,17 @@
       const group=e.target.closest('[data-permission-group]');
       group.querySelectorAll('.permission-item input, .mp-menu-card input').forEach(x=>x.checked=e.target.checked);
       syncGroupToggles();
-      if(document.body.dataset.accessPage==='menu-permission') updateMenuPermissionChrome();
+      if(document.body.dataset.accessPage==='menu-permission'){
+        syncWorkingFromDom();
+        updateMenuPermissionChrome();
+      }
     }
     if(e.target.matches('.permission-item input, .mp-menu-card input')){
       syncGroupToggles();
-      if(document.body.dataset.accessPage==='menu-permission') updateMenuPermissionChrome();
+      if(document.body.dataset.accessPage==='menu-permission'){
+        syncWorkingFromDom();
+        updateMenuPermissionChrome();
+      }
     }
   });
   document.addEventListener('click',e=>{
@@ -536,13 +644,19 @@
       const filter=document.getElementById('menuPermissionFilter');
       if(filter){
         filter.addEventListener('input',()=>{
+          syncWorkingFromDom();
           mpFilterQuery=filter.value||'';
           const roleOn=!!document.getElementById('menuPermissionRoleId')?.value;
-          const ids=roleOn?selectedMenuPermissionIds():[];
-          renderMenuPermissionMatrix(ids);
+          renderMenuPermissionMatrix(roleOn ? currentSelectionIds() : []);
           if(roleOn) document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=false);
         });
       }
+      document.querySelectorAll('[data-mp-scope]').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          if(btn.disabled) return;
+          setMpScope(btn.getAttribute('data-mp-scope')||'main');
+        });
+      });
       document.getElementById('menuPermissionToggleAll')?.addEventListener('click',()=>{
         const groups=[...document.querySelectorAll('#menuPermissionCheckList .mp-group')];
         const openCount=groups.filter(g=>g.classList.contains('is-open')).length;
@@ -551,11 +665,11 @@
       });
       document.getElementById('menuPermissionSelectAll')?.addEventListener('click',()=>{
         document.querySelectorAll('#menuPermissionCheckList .mp-menu-card input:not(:disabled)').forEach(x=>x.checked=true);
-        syncGroupToggles();updateMenuPermissionChrome();
+        syncGroupToggles();syncWorkingFromDom();updateMenuPermissionChrome();
       });
       document.getElementById('menuPermissionClearAll')?.addEventListener('click',()=>{
         document.querySelectorAll('#menuPermissionCheckList .mp-menu-card input:not(:disabled)').forEach(x=>x.checked=false);
-        syncGroupToggles();updateMenuPermissionChrome();
+        syncGroupToggles();syncWorkingFromDom();updateMenuPermissionChrome();
       });
       document.getElementById('menuPermissionResetBtn')?.addEventListener('click',resetMenuPermissionChanges);
     }

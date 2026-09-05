@@ -265,17 +265,18 @@ body.main-admin-detail-page .mad-workspace{
   display:flex;flex-direction:column;gap:16px;
 }
 
-/* Tabs — underline style (mock); fixed chrome height so tab Y never jumps across pages */
+/* Tabs + right actions: locked chrome so switch never shifts X/Y */
 body.main-admin-detail-page .mad-chrome{
-  display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:nowrap;
-  min-height:54px;box-sizing:border-box;
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  align-items:end;column-gap:16px;
+  width:100%;height:54px;min-height:54px;max-height:54px;box-sizing:border-box;
   border-bottom:1px solid var(--bo-border);
-  padding-bottom:0;margin:0;flex:0 0 auto;
+  padding:0;margin:0;flex:0 0 54px;
 }
 body.main-admin-detail-page .mad-tabs{
-  display:inline-flex;align-items:stretch;gap:4px;flex-wrap:wrap;
-  padding:0;border-radius:0;background:transparent;
-  min-height:54px;align-self:flex-end;
+  display:inline-flex;align-items:stretch;gap:4px;flex-wrap:nowrap;
+  justify-self:start;align-self:end;
+  height:54px;min-height:54px;padding:0;border-radius:0;background:transparent;
 }
 body.main-admin-detail-page .mad-tab{
   display:inline-flex;align-items:center;height:auto;min-height:36px;
@@ -284,6 +285,7 @@ body.main-admin-detail-page .mad-tab{
   background:transparent!important;
   color:var(--bo-muted);font-size:13.5px;font-weight:650;
   text-decoration:none;cursor:pointer;line-height:1.2;
+  white-space:nowrap;
   transition:color .16s var(--bo-ease),border-color .16s var(--bo-ease);
 }
 body.main-admin-detail-page .mad-tab:hover:not(.is-disabled){
@@ -297,8 +299,13 @@ body.main-admin-detail-page .mad-tab.is-active{
 }
 body.main-admin-detail-page .mad-tab.is-disabled{opacity:.4;cursor:not-allowed}
 body.main-admin-detail-page .mad-chrome-actions{
-  display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;
-  margin-left:auto;min-height:42px;padding-bottom:10px;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:nowrap;
+  justify-self:end;align-self:end;
+  height:42px;min-height:42px;padding:0 0 10px;margin:0;box-sizing:content-box;
+  flex:0 0 auto;
+}
+body.main-admin-detail-page .mad-chrome-actions[aria-hidden="true"]:empty{
+  min-width:1px;visibility:hidden;pointer-events:none;
 }
 body.main-admin-detail-page .mad-sync{
   display:inline-flex;align-items:center;gap:6px;
@@ -315,7 +322,18 @@ body.main-admin-detail-page .mad-btn.bo-ui-button-primary{
   font-size:12.5px!important;font-weight:700!important;line-height:1!important;cursor:pointer!important;
   border:1px solid var(--bo-border)!important;background:var(--bo-surface)!important;color:var(--bo-text-secondary)!important;
   box-shadow:none!important;width:auto!important;min-width:0!important;max-width:none!important;
+  text-decoration:none!important;
   transition:border-color .16s var(--bo-ease),background .16s var(--bo-ease),color .16s var(--bo-ease)!important;
+}
+body.main-admin-detail-page a.mad-btn,
+body.main-admin-detail-page a.mad-btn:hover,
+body.main-admin-detail-page a.mad-btn:focus,
+body.main-admin-detail-page a.mad-btn:active,
+body.main-admin-detail-page a.mad-btn-primary,
+body.main-admin-detail-page a.mad-btn-primary:hover,
+body.main-admin-detail-page a.mad-btn-primary:focus,
+body.main-admin-detail-page a.mad-btn-primary:visited{
+  text-decoration:none!important;
 }
 body.main-admin-detail-page .mad-btn:hover,
 body.main-admin-detail-page .mad-btn.bo-ui-button:hover,
@@ -325,6 +343,9 @@ body.main-admin-detail-page .mad-btn.bo-ui-button-secondary:hover{
 body.main-admin-detail-page .mad-btn-primary,
 body.main-admin-detail-page .mad-btn-primary.bo-ui-button,
 body.main-admin-detail-page .mad-btn-primary.bo-ui-button-primary,
+body.main-admin-detail-page .mad-btn-navy,
+body.main-admin-detail-page .mad-btn-navy.bo-ui-button,
+body.main-admin-detail-page .mad-btn-navy.bo-ui-button-primary,
 body.main-admin-detail-page .bo-ui-button-primary,
 body.main-admin-detail-page .btn-primary,
 body.main-admin-detail-page button.btn-primary{
@@ -332,6 +353,8 @@ body.main-admin-detail-page button.btn-primary{
 }
 body.main-admin-detail-page .mad-btn-primary:hover,
 body.main-admin-detail-page .mad-btn-primary.bo-ui-button-primary:hover,
+body.main-admin-detail-page .mad-btn-navy:hover,
+body.main-admin-detail-page .mad-btn-navy.bo-ui-button:hover,
 body.main-admin-detail-page .bo-ui-button-primary:hover,
 body.main-admin-detail-page .btn-primary:hover{
   background:#0E2F52!important;border-color:#0E2F52!important;color:#fff!important;
@@ -356,6 +379,7 @@ body.main-admin-detail-page .mad-pills{
   display:inline-flex;align-items:center;gap:2px;flex:0 0 auto;
   padding:3px;border-radius:12px;
   background:var(--bo-control-well);
+  position:relative;
 }
 body.main-admin-detail-page .mad-pill{
   display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;
@@ -616,7 +640,7 @@ body.main-admin-detail-page .mad-pager .smart-page-ellipsis{
 }
 
 /* Kill leftover indigo / Bootstrap / global primary blues on this page */
-body.main-admin-detail-page a:not(.mad-tab):not(.bo-account-link):not(.report-nav a){
+body.main-admin-detail-page a:not(.mad-tab):not(.mad-btn):not(.bo-account-link):not(.report-nav a){
   color:var(--bo-cyan-deep);
 }
 body.main-admin-detail-page .mad-field .form-control:focus{
@@ -625,7 +649,8 @@ body.main-admin-detail-page .mad-field .form-control:focus{
   outline:0!important;
 }
 body.main-admin-detail-page .mad-modal .bo-ui-button-primary,
-body.main-admin-detail-page .mad-modal .mad-btn-primary{
+body.main-admin-detail-page .mad-modal .mad-btn-primary,
+body.main-admin-detail-page .mad-modal .mad-btn-navy{
   background:var(--bo-navy)!important;border-color:var(--bo-navy)!important;color:#fff!important;
 }
 
@@ -686,12 +711,16 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-btn.mad-btn-ghost{
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-btn-primary,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-btn-primary.bo-ui-button,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-btn-primary.bo-ui-button-primary,
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-btn-navy,
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-btn-navy.bo-ui-button,
 html[data-bo-theme="dark"] body.main-admin-detail-page .bo-ui-button-primary,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-modal .mad-btn-primary,
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-modal .mad-btn-navy,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-modal .bo-ui-button-primary{
   background:var(--bo-cyan)!important;border-color:var(--bo-cyan)!important;color:#fff!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-btn-primary:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-btn-navy:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page .bo-ui-button-primary:hover{
   background:var(--bo-cyan-deep)!important;border-color:var(--bo-cyan-deep)!important;color:#fff!important;
 }
@@ -1136,7 +1165,7 @@ html[data-bo-theme="dark"] body.main-admin-create-page .mac-breadcrumb span[aria
 
 /* ========== Security & Audit ========== */
 body.main-admin-security-page .mas-workspace{gap:16px;flex:1;min-height:0}
-body.main-admin-security-page .mad-chrome{border-bottom:1px solid var(--bo-border);flex:0 0 auto}
+body.main-admin-security-page .mad-chrome{border-bottom:1px solid var(--bo-border);flex:0 0 54px;height:54px;min-height:54px;max-height:54px}
 body.main-admin-security-page .mas-kpis{
   display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;flex:0 0 auto;
 }
@@ -1187,7 +1216,7 @@ body.main-admin-security-page .mas-toolbar{
 }
 body.main-admin-security-page .mas-cats{
   flex:0 0 auto;align-self:flex-start;max-width:100%;
-  overflow-x:auto;scrollbar-width:none;
+  overflow-x:auto;overflow-y:hidden;scrollbar-width:none;
 }
 body.main-admin-security-page .mas-cats::-webkit-scrollbar{display:none}
 body.main-admin-security-page .mas-filters{
@@ -1424,7 +1453,7 @@ body.main-admin-credit-page .mac-credit-workspace{
   display:flex;flex-direction:column;gap:14px;
   flex:1;min-height:0;
 }
-body.main-admin-credit-page .mad-chrome{flex:0 0 auto}
+body.main-admin-credit-page .mad-chrome{flex:0 0 54px;height:54px;min-height:54px;max-height:54px}
 body.main-admin-credit-page .mac-kpis{
   display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;
   flex:0 0 auto;
@@ -1601,6 +1630,37 @@ body.main-admin-credit-page .mac-icon-btn.is-danger:hover{
   border-color:var(--bo-danger);color:var(--bo-danger);background:rgba(239,51,64,.08);
 }
 body.main-admin-credit-page .mac-adjust-panel{width:min(520px,calc(100vw - 32px))}
+body.main-admin-credit-page .mac-adjust-panel .mad-modal-actions{
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:8px;
+}
+body.main-admin-credit-page .mac-adjust-panel .mad-modal-actions .mad-btn,
+body.main-admin-credit-page .mac-adjust-panel .mad-modal-actions .mad-btn.bo-ui-button{
+  height:40px!important;min-height:40px!important;padding:0 16px!important;
+  border-radius:10px!important;font-size:13px!important;font-weight:700!important;
+  gap:8px!important;
+}
+body.main-admin-credit-page .mac-adjust-panel .mad-modal-actions .mad-btn-ghost,
+body.main-admin-credit-page .mac-adjust-panel .mad-modal-actions .mad-btn-ghost.bo-ui-button{
+  background:#fff!important;border:1px solid var(--bo-border)!important;color:var(--bo-navy)!important;
+}
+body.main-admin-credit-page .mac-adjust-panel .mad-modal-actions .mad-btn-ghost:hover{
+  border-color:rgba(33,166,215,.45)!important;color:var(--bo-navy)!important;background:var(--bo-cyan-tint)!important;
+}
+body.main-admin-credit-page .mac-adjust-panel .mad-modal-actions .mad-btn-navy,
+body.main-admin-credit-page .mac-adjust-panel .mad-modal-actions .mad-btn-primary,
+body.main-admin-credit-page .mac-adjust-panel .mad-modal-actions .mad-btn-navy.bo-ui-button,
+body.main-admin-credit-page .mac-adjust-panel .mad-modal-actions .mad-btn-primary.bo-ui-button{
+  background:var(--bo-navy)!important;border-color:var(--bo-navy)!important;color:#fff!important;
+}
+body.main-admin-credit-page .mac-adjust-panel .mad-modal-actions .mad-btn-navy:hover,
+body.main-admin-credit-page .mac-adjust-panel .mad-modal-actions .mad-btn-primary:hover{
+  background:#0E2F52!important;border-color:#0E2F52!important;color:#fff!important;
+}
+body.main-admin-credit-page .mac-adjust-panel .rounded-select-menu:empty,
+body.main-admin-credit-page .mac-adjust-panel .rounded-select-menu:not(:has(.rounded-select-option[data-value]:not([data-value=""]))){
+  display:none!important;height:0!important;padding:0!important;margin:0!important;border:0!important;
+  box-shadow:none!important;overflow:hidden!important;
+}
 body.main-admin-credit-page .mac-adjust-grid{
   display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 12px;
 }
