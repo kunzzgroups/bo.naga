@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Credit Control</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+<link href="assets/css/reports.css?v=1.0.46" rel="stylesheet"/>
+<link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
+<link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.6.7" rel="stylesheet"/>
+<script>
+(function(){
+  try{
+    if(localStorage.getItem('bo_theme')==='dark') document.documentElement.setAttribute('data-bo-theme','dark');
+  }catch(e){}
+})();
+</script>
+</head>
+<body class="report-body standardized-listing-page main-admin-detail-page main-admin-credit-page" data-access-page="main_admin_detail">
+<div class="report-shell">
+<aside class="report-sidebar" id="reportSidebar">
+<div class="report-brand"><div>Backoffice<br/><small>Admin Panel</small></div><button class="close-side" data-close-sidebar=""><i class="bi bi-x-lg"></i></button></div>
+<nav class="report-nav"></nav>
+</aside>
+<div class="sidebar-overlay" data-close-sidebar="" id="reportOverlay"></div>
+<main class="report-main">
+<header class="report-topbar">
+  <button class="hamb" data-open-sidebar=""><i class="bi bi-list"></i></button>
+  <div class="user-title-wrap">
+    <div class="user-title-icon"><i class="bi bi-wallet2"></i></div>
+    <div>
+      <h1>Credit Control</h1>
+      <p>Manage operational credit limits, quota allocations, and account liquidity.</p>
+    </div>
+  </div>
+  <div class="report-actions">
+    <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
+      <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
+      <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
+    </button>
+    <div data-bo-profile=""></div>
+  </div>
+</header>
+
+<section class="report-content mad-workspace mac-credit-workspace">
+  <div class="mad-chrome">
+    <div class="mad-tabs" role="tablist" aria-label="Admin sections">
+      <a class="mad-tab" role="tab" aria-selected="false" href="main-admin-detail.html">Administrators</a>
+      <a class="mad-tab" role="tab" aria-selected="false" href="menu-permission.html">Roles &amp; Permissions</a>
+      <a class="mad-tab is-active" role="tab" aria-selected="true" href="main-admin-credit.html">Credit Control</a>
+      <a class="mad-tab" role="tab" aria-selected="false" href="main-admin-security.html">Security &amp; Audit</a>
+    </div>
+    <div class="mad-chrome-actions">
+      <span class="mad-sync" id="macSyncLabel"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> Synced just now</span>
+      <button class="mad-btn mad-btn-ghost" type="button" id="macExportBtn"><i class="bi bi-upload"></i> Export</button>
+      <button class="mad-btn mad-btn-primary" type="button" id="macAdjustBtn"><i class="bi bi-plus-lg"></i> Adjust Credit</button>
+    </div>
+  </div>
+
+  <div class="mac-kpis" aria-label="Credit pool summary">
+    <article class="mac-kpi">
+      <div class="mac-kpi-top">
+        <div class="mac-kpi-head">
+          <span class="mac-kpi-icon" aria-hidden="true"><i class="bi bi-bank"></i></span>
+          <div class="mac-kpi-copy">
+            <strong class="mac-kpi-title">Available Credit</strong>
+            <span class="mac-kpi-sub">Ready to allocate</span>
+          </div>
+        </div>
+        <span class="mac-kpi-badge is-avail" id="macKpiAvailBadge"><i></i> 0% Avail</span>
+      </div>
+      <div class="mac-kpi-bottom">
+        <div class="mac-kpi-mid">
+          <strong class="mac-kpi-value" id="macKpiAvailable">0</strong>
+          <span class="mac-kpi-hint">Available to assign</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="mac-kpi">
+      <div class="mac-kpi-top">
+        <div class="mac-kpi-head">
+          <span class="mac-kpi-icon" aria-hidden="true"><i class="bi bi-diagram-3"></i></span>
+          <div class="mac-kpi-copy">
+            <strong class="mac-kpi-title">Allocated Credit</strong>
+            <span class="mac-kpi-sub">Distributed to accounts</span>
+          </div>
+        </div>
+        <span class="mac-kpi-badge is-accounts" id="macKpiAccountsBadge">0 Accounts</span>
+      </div>
+      <div class="mac-kpi-bottom">
+        <div class="mac-kpi-mid">
+          <strong class="mac-kpi-value" id="macKpiAllocated">0</strong>
+          <span class="mac-kpi-hint">Allocated total</span>
+        </div>
+        <span class="mac-kpi-meta is-share" id="macKpiAllocatedShare">0% of pool</span>
+      </div>
+    </article>
+
+    <article class="mac-kpi">
+      <div class="mac-kpi-top">
+        <div class="mac-kpi-head">
+          <span class="mac-kpi-icon" aria-hidden="true"><i class="bi bi-layers"></i></span>
+          <div class="mac-kpi-copy">
+            <strong class="mac-kpi-title">Total Credit</strong>
+            <span class="mac-kpi-sub">Total authorized limit</span>
+          </div>
+        </div>
+        <span class="mac-kpi-node" id="macKpiNode"><i class="bi bi-check-circle-fill"></i> Node OK</span>
+      </div>
+      <div class="mac-kpi-bottom">
+        <div class="mac-kpi-mid">
+          <strong class="mac-kpi-value" id="macKpiTotal">0</strong>
+          <span class="mac-kpi-hint">Overall cap</span>
+        </div>
+        <span class="mac-kpi-meta" id="macKpiTier">Fixed / Tier-0</span>
+      </div>
+    </article>
+  </div>
+
+  <div class="mad-panel mac-panel">
+    <div class="mad-filter-bar">
+      <div class="mad-pills" role="group" aria-label="Credit health filter">
+        <button type="button" class="mad-pill is-active" data-mac-health="all">All <span class="mad-pill-count" id="macCountAll">0</span></button>
+        <button type="button" class="mad-pill" data-mac-health="healthy">Healthy <span class="mad-pill-count is-active-count" id="macCountHealthy">0</span></button>
+        <button type="button" class="mad-pill" data-mac-health="low">Low Buffer (&lt;15%) <span class="mad-pill-count is-warn-count" id="macCountLow">0</span></button>
+        <button type="button" class="mad-pill" data-mac-health="suspended">Suspended <span class="mad-pill-count is-danger-count" id="macCountSuspended">0</span></button>
+      </div>
+      <div class="mad-filters mac-filters">
+        <label class="mad-search mac-search" for="macSearch">
+          <i class="bi bi-search" aria-hidden="true"></i>
+          <input id="macSearch" type="search" placeholder="Search by username, UID, or merchant..." autocomplete="off"/>
+        </label>
+        <select class="mad-select" id="macRoleFilter" aria-label="Role"><option value="">All Roles</option></select>
+        <select class="mad-select" id="macTierFilter" aria-label="Quota tier">
+          <option value="">Quota Tier</option>
+          <option value="tier1">Tier-1</option>
+          <option value="regional">Regional</option>
+          <option value="sub">Sub-Merchant</option>
+          <option value="other">Other</option>
+        </select>
+        <button class="mad-btn mad-btn-ghost mad-reset-btn" type="button" id="macResetBtn"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
+      </div>
+    </div>
+
+    <div class="mad-table-wrap">
+      <table class="mad-table mac-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Credit Balance</th>
+            <th>Credit Limit</th>
+            <th>Utilization / Health</th>
+            <th>Status</th>
+            <th>Last Active</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="macTableBody">
+          <tr><td colspan="8" class="mad-empty">Loading credit accounts...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mad-footer">
+      <div class="mad-footer-info" id="macTableInfo">Showing 0 to 0 of 0 accounts</div>
+      <div class="mad-footer-right">
+        <nav class="mad-pager" id="macPager" aria-label="Table pagination"></nav>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Adjust Credit modal -->
+<div aria-hidden="true" class="modal-clean mad-modal" id="macAdjustModal">
+  <div class="modal-clean-panel mad-modal-panel mac-adjust-panel">
+    <div class="modal-clean-head">
+      <div class="mad-modal-title">
+        <span class="mad-modal-icon"><i class="bi bi-sliders"></i></span>
+        <div>
+          <h3 id="macAdjustTitle">Adjust Credit</h3>
+          <small id="macAdjustSub">Update operational credit balance or limit.</small>
+        </div>
+      </div>
+      <button class="modal-clean-close" data-mac-close type="button"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <form class="modal-clean-body" id="macAdjustForm" novalidate>
+      <input type="hidden" id="macAdjustId"/>
+      <label class="mac-field" for="macAdjustAccount">
+        <span class="mac-label">Account</span>
+        <select class="form-control mad-select" id="macAdjustAccount" required></select>
+      </label>
+      <div class="mac-adjust-grid">
+        <label class="mac-field" for="macAdjustBalance">
+          <span class="mac-label">Credit Balance</span>
+          <input class="form-control" id="macAdjustBalance" type="number" min="0" step="1" required/>
+        </label>
+        <label class="mac-field" for="macAdjustLimit">
+          <span class="mac-label">Credit Limit</span>
+          <input class="form-control" id="macAdjustLimit" type="number" min="0" step="1" required/>
+        </label>
+      </div>
+      <label class="mac-field" for="macAdjustRemark">
+        <span class="mac-label">Remark</span>
+        <input class="form-control" id="macAdjustRemark" type="text" maxlength="200" placeholder="Reason for adjustment"/>
+      </label>
+      <div class="upload-status mb-3" id="macAdjustStatus"></div>
+      <div class="mad-modal-actions">
+        <button class="mad-btn mad-btn-ghost" type="button" data-mac-close>Cancel</button>
+        <button class="mad-btn mad-btn-navy" type="submit" id="macAdjustSubmit"><i class="bi bi-check2"></i> Save Adjustment</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+</main>
+</div>
+<script src="assets/js/config.js?v=1.0.37"></script>
+<script src="assets/js/brand-context.js?v=1.0.4"></script>
+<script src="assets/js/reports.js?v=1.0.22"></script>
+<script src="assets/js/auth.js?v=1.0.65"></script>
+<script src="assets/js/main-admin-credit.js?v=1.0.3"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="assets/js/firebase-config.js?v=1.0.0"></script>
+<script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
+<script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
+<script src="assets/js/bo-ui-standard.js?v=1.0.4"></script>
+<script src="assets/js/bo-theme.js?v=1.0.0"></script>
+</body>
+</html>

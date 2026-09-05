@@ -248,14 +248,16 @@
       // It has no separate sidebar/menu permission, so inherit the report permission
       // instead of redirecting the user to their landing page.
       if(current === 'agent-performance-detail.html') current = 'agent-performance-report.html';
-      // Create Admin Account is a drill-down of Main Admin Detail — same permission.
+      // Create Admin / Credit Control / Security & Audit are drill-downs of Main Admin Detail.
       if(current === 'main-admin-create.html') current = 'main-admin-detail.html';
+      if(current === 'main-admin-credit.html') current = 'main-admin-detail.html';
+      if(current === 'main-admin-security.html') current = 'main-admin-detail.html';
       const agentChildPages = new Set([
         'agent-commission-admin.html','agent-settlement-admin.html','agent-reimbursement-admin.html',
         'agent-payout-admin.html','agent-promotion-admin.html'
       ]);
       const requestedAgentChild = agentChildPages.has(pageName());
-      const requestedMainAdminDetail = pageName() === 'main-admin-detail.html' || pageName() === 'main-admin-create.html';
+      const requestedMainAdminDetail = pageName() === 'main-admin-detail.html' || pageName() === 'main-admin-create.html' || pageName() === 'main-admin-credit.html' || pageName() === 'main-admin-security.html';
       if(current === 'main-stat-detail.html'){
         let source = '';
         try { source = String(new URLSearchParams(location.search || '').get('source') || 'overview').toLowerCase(); } catch(e) {}
@@ -390,6 +392,18 @@
           {menuKey:'agent_payout',title:'Withdraw / Payout',url:'agent-payout-admin.html',icon:'bi-cash-stack',parentKey:'agent_management_group',sortOrder:22.4,status:1},
           {menuKey:'agent_promotion',title:'Promotion',url:'agent-promotion-admin.html',icon:'bi-megaphone',parentKey:'agent_management_group',sortOrder:22.5,status:1}
         ]);
+      }
+
+      // Prefer MAIN Admin → Details over legacy Admin Management when both are granted.
+      // Legacy `admin` stays on the role for /auth/admin/* API checks.
+      {
+        const hasMainDetail = menus.some(function(m){
+          const k = String(m && m.menuKey || '').toLowerCase();
+          return k === 'main_admin_detail' || k === 'admin_detail';
+        });
+        if(hasMainDetail){
+          menus = menus.filter(function(m){ return String(m && m.menuKey || '').toLowerCase() !== 'admin'; });
+        }
       }
 
       // Defensive de-duplication: one logical menu is rendered once even if legacy

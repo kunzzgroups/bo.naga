@@ -89,6 +89,23 @@
     return (j.data||[]).filter(m=>Number(m.status==null?1:m.status)===1);
   }
   async function fetchRoleMenuIds(roleId){const j=await api(BO_AUTH.roleMenusUrl(roleId),{headers:{...BO_AUTH.authHeader()}});return j.data?.menuIds||[];}
+  function expandAdminMenuAliases(ids){
+    // /auth/admin/create still authorizes on legacy menuKey `admin`.
+    // MAIN Admin → Details (`main_admin_detail`) is the executive UI grant.
+    // Keep both ids in sync whenever either is selected so create/list APIs work.
+    const idSet=new Set((ids||[]).map(Number).filter(Number.isFinite));
+    const byKey={};
+    (menuCache||[]).forEach(function(m){
+      const key=String(m.menuKey||'').toLowerCase();
+      const id=Number(m.id);
+      if(key && Number.isFinite(id)) byKey[key]=id;
+    });
+    const mainId=byKey.main_admin_detail||byKey.admin_detail;
+    const adminId=byKey.admin;
+    if(mainId && idSet.has(mainId) && adminId) idSet.add(adminId);
+    if(adminId && idSet.has(adminId) && mainId) idSet.add(mainId);
+    return Array.from(idSet);
+  }
 
   function groupMenus(menus){
     const groups={};
@@ -424,7 +441,7 @@
     const roleId=document.getElementById('menuPermissionRoleId').value;
     const status=document.getElementById('menuPermissionStatus');
     const btn=document.getElementById('saveMenuPermissionBtn');
-    const ids=selectedMenuPermissionIds();
+    const ids=expandAdminMenuAliases(selectedMenuPermissionIds());
     if(!roleId){msg(status,'Please select a role.','error');return;}
     btn.disabled=true;msg(status,'Saving menu permissions...','');
     try{
@@ -445,7 +462,7 @@
   async function saveRole(e){
     e.preventDefault();
     const btn=document.getElementById('saveRoleBtn'), name=document.getElementById('name').value.trim(), editId=document.getElementById('roleEditId').value, oldCode=document.getElementById('roleEditCode').value;
-    const ids=[...document.querySelectorAll('#checkList .permission-item input:checked')].map(x=>Number(x.value));
+    const ids=expandAdminMenuAliases([...document.querySelectorAll('#checkList .permission-item input:checked')].map(x=>Number(x.value)));
     if(!name){msg(roleStatusEl,'Group name is required.','error');return;}
     if(!ids.length){msg(roleStatusEl,'Please select at least one menu permission.','error');return;}
     btn.disabled=true;msg(roleStatusEl,'Saving group and permissions...','');

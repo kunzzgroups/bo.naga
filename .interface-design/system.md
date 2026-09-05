@@ -189,7 +189,9 @@ Page padding (exec): `20px 24px` desktop · tighten on short viewports
 | Menu Permission color-aligned | Same Deep Navy Cyan shell + cyan CTA / checkbox accent; retire `#2563eb` / red checkbox accent on this page | 2026-09-04 |
 | Menu Permission workspace layout | Guide + role/assigned + filter/tools + accordion groups + 3-col menu cards + sticky save footer | 2026-09-04 |
 | Main Admin Detail new page | Independent `main-admin-detail.html` (do not replace `admin-user.html`); tabs + pills + dense admin table; Deep Navy Cyan + `bo_theme` | 2026-09-04 |
-| Main Admin Detail tabs | Administrators live; Roles → `menu-permission.html`; Credit Control disabled; Security → `admin-login-log.html` | 2026-09-04 |
+| Main Admin Detail tabs | Administrators live; Roles → `menu-permission.html`; Credit Control → `main-admin-credit.html`; Security → `main-admin-security.html` | 2026-09-05 |
+| Main Admin Security page | Independent `main-admin-security.html`; KPIs + category pills + merged login/operation audit table; Deep Navy Cyan + `bo_theme`; inherits `main_admin_detail` access | 2026-09-05 |
+| Main Admin Credit Control | Independent `main-admin-credit.html`; health pills + utilization bars (Safe/Warning/Critical/Locked) + Adjust Credit modal; inherits `main_admin_detail` access | 2026-09-05 |
 | Main Admin Detail mock layout | Underline tabs · gray filter bar · dense table (UID/email · relative Last Active · HH:mm login · edit/key/suspend actions) · Previous/Next pager | 2026-09-04 |
 | Main Admin Create full page | `main-admin-create.html` from Add Account (not modal); breadcrumb · sectioned credentials/role card/IP policy · navy Create CTA; inherits `main_admin_detail` access | 2026-09-04 |
 | Brands light/dark via `bo_theme` | Same key + sun/moon toggle as Overview; dark surfaces `#102030` on `#08131F` | 2026-09-03 |

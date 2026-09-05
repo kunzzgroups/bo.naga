@@ -43,9 +43,49 @@ body.menu-permission-page .report-main{
 body.menu-permission-page .mp-workspace{
   flex:1;
   padding:16px 20px 32px!important;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  min-height:0;
 }
 body.menu-permission-page.mp-footer-visible .mp-workspace{
   padding-bottom:96px!important;
+}
+
+/* Admin section tabs — match main-admin-detail chrome */
+body.menu-permission-page .mp-chrome,
+body.menu-permission-page .mad-chrome{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:nowrap;
+  min-height:54px;box-sizing:border-box;
+  border-bottom:1px solid var(--bo-border);
+  padding-bottom:0;margin:0;flex:0 0 auto;
+}
+body.menu-permission-page .mad-tabs{
+  display:inline-flex;align-items:stretch;gap:4px;flex-wrap:wrap;
+  padding:0;border-radius:0;background:transparent;
+  min-height:54px;align-self:flex-end;
+}
+body.menu-permission-page .mad-tab{
+  display:inline-flex;align-items:center;height:auto;min-height:36px;
+  padding:8px 12px 6px;margin:0;
+  border:0;border-bottom:2px solid transparent;border-radius:0;
+  background:transparent!important;
+  color:var(--bo-muted);font-size:13.5px;font-weight:650;
+  text-decoration:none;cursor:pointer;line-height:1.2;
+  transition:color .16s var(--bo-ease),border-color .16s var(--bo-ease);
+}
+body.menu-permission-page .mad-tab:hover{
+  color:var(--bo-navy);background:transparent!important;
+}
+body.menu-permission-page .mad-tab.is-active{
+  background:transparent!important;
+  color:var(--bo-navy)!important;
+  font-weight:800;
+  border-bottom-color:var(--bo-navy)!important;
+}
+body.menu-permission-page .mad-chrome-actions{
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;
+  margin-left:auto;min-height:42px;padding-bottom:10px;flex:0 0 auto;
 }
 
 /* ---- Shell: navy sidebar ---- */
@@ -249,6 +289,8 @@ body.menu-permission-page .mp-form{
   width:100%;
   max-width:none;
   margin:0;
+  flex:1;
+  min-height:0;
 }
 
 /* Role + toolbar card */
@@ -827,7 +869,15 @@ html[data-bo-theme="dark"] body.menu-permission-page{
   --bo-shadow:none;
   color-scheme:dark;
 }
-html[data-bo-theme="dark"]:has(body.menu-permission-page){background:#08131F}
+html[data-bo-theme="dark"] body.menu-permission-page .mad-tab{color:var(--bo-muted)}
+html[data-bo-theme="dark"] body.menu-permission-page .mad-tab:hover{color:var(--bo-text)}
+html[data-bo-theme="dark"] body.menu-permission-page .mad-tab.is-active{
+  color:#fff!important;border-bottom-color:var(--bo-cyan)!important;
+}
+html[data-bo-theme="dark"] body.menu-permission-page .mad-chrome,
+html[data-bo-theme="dark"] body.menu-permission-page .mp-chrome{
+  border-bottom-color:var(--bo-border);
+}
 html[data-bo-theme="dark"] body.menu-permission-page .report-shell,
 html[data-bo-theme="dark"] body.menu-permission-page .report-main,
 html[data-bo-theme="dark"] body.menu-permission-page .report-content{background:var(--bo-bg)!important}

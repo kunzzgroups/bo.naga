@@ -156,19 +156,58 @@
     setRoleMenuOpen(false);
   }
 
+  function actorFlags(user){
+    user = user || BO_AUTH.user() || {};
+    const role = String(user.roleType || '').toUpperCase();
+    const mainAdmin = role === 'MAIN';
+    const rootAdmin = !mainAdmin && (
+      user.rootAdmin === true || Number(user.rootAdmin) === 1 ||
+      role === 'ROOT' || (Number(user.id) === 1 && user.brandId == null)
+    );
+    const masterAdmin = !mainAdmin && !rootAdmin && (
+      user.masterAdmin === true || Number(user.masterAdmin) === 1 || role === 'MASTER'
+    );
+    // MAIN operates as platform admin for branding (same as Master), even when
+    // legacy masterAdmin boolean is missing/false on the cached user object.
+    const platformAdmin = rootAdmin || masterAdmin || mainAdmin || user.brandId == null;
+    return { user, role, mainAdmin, rootAdmin, masterAdmin, platformAdmin };
+  }
+
+  function activeBrandId(){
+    if(window.BO_BRAND && typeof BO_BRAND.activeId === 'function'){
+      const id = Number(BO_BRAND.activeId());
+      if(Number.isFinite(id) && id > 0) return id;
+    }
+    const stored = Number(localStorage.getItem('bo_active_brand_id') || 0);
+    return Number.isFinite(stored) && stored > 0 ? stored : 0;
+  }
+
+  function resolveCreateBrandId(roleRow){
+    if(brandSelect && brandSelect.value) return Number(brandSelect.value);
+    if(roleRow && roleRow.brandId != null && roleRow.brandId !== '') return Number(roleRow.brandId);
+    const active = activeBrandId();
+    if(active) return active;
+    const user = BO_AUTH.user() || {};
+    if(user.brandId != null && user.brandId !== '') return Number(user.brandId);
+    return null;
+  }
+
   async function loadRoles(brandId){
     try{
-      const current = BO_AUTH.user() || {};
+      const flags = actorFlags();
       const headers = { ...BO_AUTH.authHeader() };
       if(brandId) headers['X-Brand-Id'] = String(brandId);
       const json = await apiJson(BO_AUTH.roleListUrl(), { headers });
       let rows = Array.isArray(json.data) ? json.data : [];
-      if(current.rootAdmin){
+      if(flags.rootAdmin){
         rows = brandId
           ? rows.filter(r => Number(r.brandId) === Number(brandId) && !['MASTER', 'ROOT'].includes(String(r.roleType || '').toUpperCase()))
           : rows.filter(r => r.brandId == null && String(r.roleType || '').toUpperCase() === 'MASTER');
       }else{
         rows = rows.filter(r => !['MASTER', 'ROOT'].includes(String(r.roleType || 'CUSTOM').toUpperCase()));
+        if(brandId){
+          rows = rows.filter(r => r.brandId == null || Number(r.brandId) === Number(brandId));
+        }
       }
       roleRows = rows;
       if(roleSelect){
@@ -188,9 +227,10 @@
 
   async function loadBrandOptions(){
     if(!brandSelect) return;
-    const user = BO_AUTH.user() || {};
-    if(!user.masterAdmin){
-      const bid = user.brandId || '';
+    const flags = actorFlags();
+    // Tenant brand admins are pinned to their own brand.
+    if(!flags.platformAdmin){
+      const bid = flags.user.brandId || '';
       brandSelect.value = bid ? String(bid) : '';
       await loadRoles(bid || null);
       return;
@@ -201,17 +241,24 @@
       });
       const j = await r.json();
       const rows = Array.isArray(j.data) ? j.data : [];
-      const active = (window.BO_BRAND && BO_BRAND.activeId ? BO_BRAND.activeId() : 1);
-      if(user.rootAdmin){
+      const active = activeBrandId() || 1;
+      if(flags.rootAdmin){
         brandSelect.value = '';
         await loadRoles(null);
       }else{
+        // MAIN / Master: bind create to the active brand context.
         const pick = rows.some(x => Number(x.id) === Number(active)) ? active : (rows[0] && rows[0].id);
         brandSelect.value = pick != null ? String(pick) : '';
         await loadRoles(brandSelect.value ? Number(brandSelect.value) : null);
       }
     }catch(e){
-      await loadRoles(null);
+      const fallback = activeBrandId();
+      if(fallback && !flags.rootAdmin){
+        brandSelect.value = String(fallback);
+        await loadRoles(fallback);
+      }else{
+        await loadRoles(null);
+      }
     }
   }
 
@@ -283,16 +330,25 @@
     submitBtn.disabled = true;
     setStatus('Creating admin...', '');
     try{
-      const currentUser = BO_AUTH.user() || {};
-      const brandEl = document.getElementById('madNewBrand');
-      if(currentUser.masterAdmin && !currentUser.rootAdmin && (!brandEl || !brandEl.value)){
-        throw new Error('Please select the branding for this administrator.');
-      }
+      const flags = actorFlags();
+      const token = BO_AUTH.token();
+      if(!token) throw new Error('Session expired. Please log in again.');
+
       if(!roleSelect || !roleSelect.value){
-        throw new Error(currentUser.rootAdmin && (!brandEl || !brandEl.value)
+        throw new Error(flags.rootAdmin
           ? 'Please select the Master role.'
           : 'Please select a branding role.');
       }
+      const roleRow = roleRows.find(r => String(r.id) === String(roleSelect.value));
+      const roleType = String((roleRow && roleRow.roleType) || '').toUpperCase();
+      let brandId = resolveCreateBrandId(roleRow);
+      // Brand-scoped roles must carry a brandId (MAIN/Master included).
+      if(roleType !== 'MASTER' && roleType !== 'ROOT' && !brandId){
+        throw new Error('Please select the branding for this administrator.');
+      }
+      if(roleType === 'MASTER' || roleType === 'ROOT') brandId = null;
+      if(brandSelect && brandId != null) brandSelect.value = String(brandId);
+
       const email = (document.getElementById('madNewEmail') || {}).value || '';
       const remarkBase = (document.getElementById('madNewRemark') || {}).value || '';
       const ipOn = !!(document.getElementById('madIpWhitelist') || {}).checked;
@@ -301,23 +357,41 @@
       if(ipOn) remarkParts.push('IP whitelist: requested');
       const remark = remarkParts.filter(Boolean).join(' · ').slice(0, 200);
 
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      };
+      if(brandId) headers['X-Brand-Id'] = String(brandId);
+
       const json = await apiJson(BO_AUTH.createAdminUrl(), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...BO_AUTH.authHeader() },
+        headers,
         body: JSON.stringify({
           username: document.getElementById('madNewUsername').value.trim(),
           displayName: document.getElementById('madNewDisplayName').value.trim(),
           password: pass,
           status: Number(document.getElementById('madNewStatus').value || 1),
           roleId: Number(roleSelect.value),
-          brandId: brandEl && brandEl.value ? Number(brandEl.value) : null,
+          brandId: brandId,
           remark: remark
         })
       });
       setStatus(json.message || 'Admin created successfully', 'success');
       setTimeout(function(){ location.href = 'main-admin-detail.html'; }, 700);
     }catch(err){
-      setStatus(err.message || 'Create admin failed', 'error');
+      let msg = err.message || 'Create admin failed';
+      if(/Admin Management permission required/i.test(msg)){
+        const menus = Array.isArray((BO_AUTH.user() || {}).menus) ? BO_AUTH.user().menus : [];
+        const hasLegacyAdmin = menus.some(m => String(m.menuKey || '').toLowerCase() === 'admin');
+        const hasMainDetail = menus.some(m => {
+          const k = String(m.menuKey || '').toLowerCase();
+          return k === 'main_admin_detail' || k === 'admin_detail';
+        });
+        if(hasMainDetail && !hasLegacyAdmin){
+          msg = 'Create requires Admin Management API permission. Your role has Admin → Details only — ask ROOT to also grant Admin Management (admin), or update the create API to accept main_admin_detail.';
+        }
+      }
+      setStatus(msg, 'error');
       submitBtn.disabled = false;
     }
   });

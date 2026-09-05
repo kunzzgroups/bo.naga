@@ -30,7 +30,7 @@
   const statusFilter = document.getElementById('madStatusFilter');
   const resetBtn = document.getElementById('madResetBtn');
   const exportBtn = document.getElementById('madExportBtn');
-  const pageSizeEl = document.getElementById('madPageSize');
+  const PAGE_SIZE = 10;
   const pageNoEl = document.getElementById('madPager');
   const infoEl = document.getElementById('madTableInfo');
   const syncLabel = document.getElementById('madSyncLabel');
@@ -222,7 +222,7 @@
 
   function renderAdmins(){
     if(!tbody) return;
-    const pageSize = Number(pageSizeEl && pageSizeEl.value || 5);
+    const pageSize = PAGE_SIZE;
     const total = filteredAdmins.length;
     const totalPages = Math.max(1, Math.ceil(total / pageSize) || 1);
     currentPage = Math.max(1, Math.min(currentPage, totalPages));
@@ -304,6 +304,11 @@
       updatePillCounts();
       applyFilters();
     }catch(err){
+      allAdmins = [];
+      filteredAdmins = [];
+      currentPage = 1;
+      if(pageNoEl) pageNoEl.innerHTML = pageButtons(1, 1);
+      if(infoEl) infoEl.textContent = 'Showing 0 to 0 of 0 administrators';
       tbody.innerHTML = '<tr><td colspan="9" class="mad-empty text-danger">' + esc(err.message || 'Load admin failed') + '</td></tr>';
     }
   }
@@ -448,12 +453,10 @@
     });
     applyFilters();
   });
-  pageSizeEl && pageSizeEl.addEventListener('change', () => { currentPage = 1; renderAdmins(); });
   pageNoEl && pageNoEl.addEventListener('click', e => {
     const b = e.target.closest('[data-page]');
     if(!b || b.disabled) return;
-    const pageSize = Number(pageSizeEl && pageSizeEl.value || 5);
-    const totalPages = Math.max(1, Math.ceil(filteredAdmins.length / pageSize));
+    const totalPages = Math.max(1, Math.ceil(filteredAdmins.length / PAGE_SIZE));
     const n = Number(b.dataset.page);
     if(n >= 1 && n <= totalPages && n !== currentPage){ currentPage = n; renderAdmins(); }
   });
@@ -483,6 +486,8 @@
   editBrandEl && editBrandEl.addEventListener('change', () => { loadRoles(editBrandEl.value ? Number(editBrandEl.value) : null); });
 
   setInterval(updateSyncLabel, 15000);
+
+  if(pageNoEl) pageNoEl.innerHTML = pageButtons(1, 1);
 
   (async function(){
     await loadBrandOptions();
