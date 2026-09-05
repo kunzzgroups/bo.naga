@@ -1,6 +1,8 @@
 (function(){
   try{(JSON.parse(localStorage.getItem('bo_menu_group_meta_v1')||'[]')||[]).forEach(function(g){if(window.BO_MENU_GROUP_META&&g.groupKey)window.BO_MENU_GROUP_META[g.groupKey]={title:g.title,icon:g.icon,sortOrder:g.sortOrder};});}catch(e){}
   const page = document.body.dataset.accessPage;
+  const isMerchantRolesPage = document.body.classList.contains('main-merchant-roles-page');
+  const isMenuPermissionPage = page === 'menu-permission' || isMerchantRolesPage;
   const roleStatusEl = document.getElementById('accessStatus');
   const GROUP_META = {
     root:{title:'Main Menu',icon:'bi-grid'}, access:{title:'Access Control',icon:'bi-shield-lock'},
@@ -33,7 +35,7 @@
   let mpBaselineIds=[];
   let mpWorkingIds=null; // Set<string> — full selection across Main/BO scopes
   let mpFilterQuery='';
-  let mpScope='main'; // 'main' | 'bo'
+  let mpScope=isMerchantRolesPage?'bo':'main'; // 'main' | 'bo'
   let mpOpenGroups=null; // null = all open (first render)
   const MAIN_GROUP_KEYS=new Set(['main_reports_group','main_accounting_group','main_brands_group','main_admin_group']);
   const GROUP_DESC=[
@@ -145,6 +147,7 @@
     return [...(mpWorkingIds instanceof Set ? mpWorkingIds : [])].map(Number).filter(Number.isFinite);
   }
   function setMpScope(scope){
+    if(isMerchantRolesPage) scope='bo';
     const next=scope==='bo'?'bo':'main';
     if(next===mpScope) return;
     syncWorkingFromDom();
@@ -361,9 +364,14 @@
     if(pill&&pillText){
       if(roleId){
         pill.hidden=false;
-        const mainCount=menusForScope('main').filter(m=>mpWorkingIds&&mpWorkingIds.has(String(m.id))).length;
         const boCount=menusForScope('bo').filter(m=>mpWorkingIds&&mpWorkingIds.has(String(m.id))).length;
-        pillText.textContent=`Assigned: ${assigned} / ${total} Menus · Main ${mainCount} · BO ${boCount}`;
+        if(isMerchantRolesPage){
+          const boTotal=menusForScope('bo').length;
+          pillText.textContent=`Assigned: ${boCount} / ${boTotal} Menus`;
+        }else{
+          const mainCount=menusForScope('main').filter(m=>mpWorkingIds&&mpWorkingIds.has(String(m.id))).length;
+          pillText.textContent=`Assigned: ${assigned} / ${total} Menus · Main ${mainCount} · BO ${boCount}`;
+        }
       }else{
         pill.hidden=true;
       }
@@ -463,9 +471,9 @@
       mpBaselineIds=[];
       mpWorkingIds=null;
       mpFilterQuery='';
-      mpScope='main';
+      mpScope=isMerchantRolesPage?'bo':'main';
       document.querySelectorAll('[data-mp-scope]').forEach(btn=>{
-        const on=btn.getAttribute('data-mp-scope')==='main';
+        const on=btn.getAttribute('data-mp-scope')===mpScope;
         btn.classList.toggle('is-active',on);
         btn.setAttribute('aria-selected',on?'true':'false');
       });
@@ -481,7 +489,10 @@
       if(preselect && editable.some(r=>String(r.id)===preselect)){
         select.value=preselect;
         await loadSelectedMenuPermissionRole(preselect);
-        try{ history.replaceState({},'', 'menu-permission.html'); }catch(e){}
+        try{
+          const clean=isMerchantRolesPage?'main-merchant-roles.html':'menu-permission.html';
+          history.replaceState({},'', clean);
+        }catch(e){}
       }
     }catch(e){msg(document.getElementById('menuPermissionStatus'),e.message,'error');}
   }
@@ -604,14 +615,14 @@
       const group=e.target.closest('[data-permission-group]');
       group.querySelectorAll('.permission-item input, .mp-menu-card input').forEach(x=>x.checked=e.target.checked);
       syncGroupToggles();
-      if(document.body.dataset.accessPage==='menu-permission'){
+      if(document.body.dataset.accessPage==='menu-permission' || document.body.classList.contains('main-merchant-roles-page')){
         syncWorkingFromDom();
         updateMenuPermissionChrome();
       }
     }
     if(e.target.matches('.permission-item input, .mp-menu-card input')){
       syncGroupToggles();
-      if(document.body.dataset.accessPage==='menu-permission'){
+      if(document.body.dataset.accessPage==='menu-permission' || document.body.classList.contains('main-merchant-roles-page')){
         syncWorkingFromDom();
         updateMenuPermissionChrome();
       }
@@ -637,7 +648,7 @@
       document.getElementById('selectAllPermission').onclick=()=>{document.querySelectorAll('#checkList .permission-item input').forEach(x=>x.checked=true);syncGroupToggles();};
       document.getElementById('clearAllPermission').onclick=()=>{document.querySelectorAll('#checkList .permission-item input').forEach(x=>x.checked=false);syncGroupToggles();};
     }
-    if(page==='menu-permission'){
+    if(isMenuPermissionPage){
       try{menuCache=await fetchMenus();await loadMenuPermissionWorkspace();}catch(e){msg(document.getElementById('menuPermissionStatus'),e.message,'error');}
       const form=document.getElementById('menuPermissionForm');if(form)form.onsubmit=saveMenuPermissions;
       const select=document.getElementById('menuPermissionRoleSelect');if(select)select.onchange=()=>loadSelectedMenuPermissionRole(select.value);
@@ -651,12 +662,14 @@
           if(roleOn) document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=false);
         });
       }
-      document.querySelectorAll('[data-mp-scope]').forEach(btn=>{
-        btn.addEventListener('click',()=>{
-          if(btn.disabled) return;
-          setMpScope(btn.getAttribute('data-mp-scope')||'main');
+      if(!isMerchantRolesPage){
+        document.querySelectorAll('[data-mp-scope]').forEach(btn=>{
+          btn.addEventListener('click',()=>{
+            if(btn.disabled) return;
+            setMpScope(btn.getAttribute('data-mp-scope')||'main');
+          });
         });
-      });
+      }
       document.getElementById('menuPermissionToggleAll')?.addEventListener('click',()=>{
         const groups=[...document.querySelectorAll('#menuPermissionCheckList .mp-group')];
         const openCount=groups.filter(g=>g.classList.contains('is-open')).length;

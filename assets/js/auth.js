@@ -83,6 +83,14 @@
     if(p==='main-balance-adjustment.html') return 'main-balance-overview.html';
     if(p==='brand-detail.html') return 'brand-management.html';
     if(p==='provider-detail.html') return 'main-accounting-report.html';
+    // Merchant module drill-downs keep the Merchant sidebar item highlighted.
+    if(p==='main-merchant-create.html' || p==='main-merchant-credit.html' || p==='main-merchant-security.html' || p==='main-merchant-roles.html' || p==='main-merchant-role-create.html'){
+      return 'main-merchant-detail.html';
+    }
+    // Admin module drill-downs keep the Admin Details item highlighted.
+    if(p==='main-admin-create.html' || p==='main-admin-credit.html' || p==='main-admin-security.html'){
+      return 'main-admin-detail.html';
+    }
     return p;
   }
 
@@ -98,7 +106,8 @@
     main_reports_group: { title: 'Reports', icon: 'bi-file-earmark-bar-graph', sortOrder: 30 },
     main_accounting_group: { title: 'Accounting & Provider Ops', icon: 'bi-cash-stack', sortOrder: 40 },
     main_brands_group: { title: 'Brands', icon: 'bi-buildings', sortOrder: 50 },
-    main_admin_group: { title: 'Admin', icon: 'bi-shield-lock', sortOrder: 60 }
+    main_admin_group: { title: 'Admin', icon: 'bi-shield-lock', sortOrder: 60 },
+    main_merchant_group: { title: 'Merchant', icon: 'bi-shop', sortOrder: 65 }
   };
 
   // Used only when backend has not returned menu data yet.
@@ -127,6 +136,7 @@
     {menuKey:'provider_wallet_transaction', title:'Provider Transactions', url:'provider-wallet-transaction.html', icon:'bi-journal-text', parentKey:'wallet', sortOrder:16},
     {menuKey:'admin', title:'Admin Management', url:'admin-user.html', icon:'bi-shield-lock', parentKey:'', sortOrder:20},
     {menuKey:'main_admin_detail', title:'Details', url:'main-admin-detail.html', icon:'bi-person-badge', parentKey:'main_admin_group', sortOrder:60.1},
+    {menuKey:'main_merchant_detail', title:'Details', url:'main-merchant-detail.html', icon:'bi-shop', parentKey:'main_merchant_group', sortOrder:65.1},
     {menuKey:'brand_management', title:'Branding Management', url:'brand-management.html', icon:'bi-buildings', parentKey:'', sortOrder:21},
     {menuKey:'role', title:'Role & Menu Permission', url:'role.html', icon:'bi-person-badge', parentKey:'access', sortOrder:30},
     {menuKey:'menu_management', title:'Menu Management', url:'menu-management.html', icon:'bi-list-check', parentKey:'access', sortOrder:31},
@@ -183,6 +193,9 @@
     // BO Admin Management (admin / admin-user.html) unchanged.
     if(key === 'main_admin_detail' || key === 'admin_detail' || /^main-admin-detail\.html$/i.test(raw.replace(/^\.\//,''))){
       return 'main-admin-detail.html';
+    }
+    if(key === 'main_merchant_detail' || key === 'merchant_detail' || /^main-merchant-detail\.html$/i.test(raw.replace(/^\.\//,''))){
+      return 'main-merchant-detail.html';
     }
     return raw || '#';
   }
@@ -256,12 +269,19 @@
       if(current === 'main-admin-credit.html') current = 'main-admin-detail.html';
       if(current === 'main-admin-security.html') current = 'main-admin-detail.html';
       if(current === 'main-admin-role-create.html') current = 'menu-permission.html';
+      // Merchant create / credit / security / roles are drill-downs of Main Merchant Detail.
+      if(current === 'main-merchant-create.html') current = 'main-merchant-detail.html';
+      if(current === 'main-merchant-credit.html') current = 'main-merchant-detail.html';
+      if(current === 'main-merchant-security.html') current = 'main-merchant-detail.html';
+      if(current === 'main-merchant-roles.html') current = 'main-merchant-detail.html';
+      if(current === 'main-merchant-role-create.html') current = 'main-merchant-detail.html';
       const agentChildPages = new Set([
         'agent-commission-admin.html','agent-settlement-admin.html','agent-reimbursement-admin.html',
         'agent-payout-admin.html','agent-promotion-admin.html'
       ]);
       const requestedAgentChild = agentChildPages.has(pageName());
       const requestedMainAdminDetail = pageName() === 'main-admin-detail.html' || pageName() === 'main-admin-create.html' || pageName() === 'main-admin-credit.html' || pageName() === 'main-admin-security.html';
+      const requestedMainMerchantDetail = pageName() === 'main-merchant-detail.html' || pageName() === 'main-merchant-create.html' || pageName() === 'main-merchant-credit.html' || pageName() === 'main-merchant-security.html' || pageName() === 'main-merchant-roles.html' || pageName() === 'main-merchant-role-create.html';
       if(current === 'main-stat-detail.html'){
         let source = '';
         try { source = String(new URLSearchParams(location.search || '').get('source') || 'overview').toLowerCase(); } catch(e) {}
@@ -288,6 +308,12 @@
         allowed = menus.some(function(m){
           const key = String(m.menuKey || '').toLowerCase();
           return key === 'admin' || key === 'main_admin_detail' || key === 'admin_detail';
+        });
+      }
+      if(!allowed && requestedMainMerchantDetail){
+        allowed = menus.some(function(m){
+          const key = String(m.menuKey || '').toLowerCase();
+          return key === 'main_merchant_detail' || key === 'merchant_detail' || key === 'merchant';
         });
       }
       if(!allowed){

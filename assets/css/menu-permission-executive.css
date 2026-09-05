@@ -468,6 +468,10 @@ body.menu-permission-page .mp-scope-btn.is-active .mp-scope-count{
 }
 body.menu-permission-page .mp-scope-btn:disabled{opacity:.45;cursor:not-allowed}
 body.menu-permission-page .mp-scope-btn:focus-visible{outline:2px solid var(--bo-cyan);outline-offset:2px}
+body.main-merchant-roles-page .mp-scope-bo-only,
+body.main-merchant-role-create-page .mp-scope-bo-only{
+  pointer-events:none;
+}
 body.menu-permission-page .mp-search{
   flex:1 1 280px;
   width:auto;

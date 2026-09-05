@@ -1,0 +1,189 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Create Merchant Account</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+<link href="assets/css/reports.css?v=1.0.46" rel="stylesheet"/>
+<link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
+<link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.6.15" rel="stylesheet"/>
+<script>
+(function(){
+  try{
+    if(localStorage.getItem('bo_theme')==='dark') document.documentElement.setAttribute('data-bo-theme','dark');
+  }catch(e){}
+})();
+</script>
+</head>
+<body class="report-body standardized-listing-page main-admin-detail-page main-admin-create-page main-merchant-create-page" data-access-page="main_merchant_detail">
+<div class="report-shell">
+<aside class="report-sidebar" id="reportSidebar">
+<div class="report-brand"><div>Backoffice<br/><small>Admin Panel</small></div><button class="close-side" data-close-sidebar=""><i class="bi bi-x-lg"></i></button></div>
+<nav class="report-nav"></nav>
+</aside>
+<div class="sidebar-overlay" data-close-sidebar="" id="reportOverlay"></div>
+<main class="report-main">
+<header class="report-topbar">
+  <button class="hamb" data-open-sidebar=""><i class="bi bi-list"></i></button>
+  <div class="user-title-wrap">
+    <div class="user-title-icon"><i class="bi bi-person-plus"></i></div>
+    <div>
+      <h1>Create Merchant Account</h1>
+      <p>Provision merchant credentials, assign roles, and set access permissions.</p>
+    </div>
+  </div>
+  <div class="report-actions">
+    <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
+      <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
+      <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
+    </button>
+    <div data-bo-profile=""></div>
+  </div>
+</header>
+
+<section class="report-content mac-workspace">
+  <form id="madCreateForm" class="mac-form" novalidate>
+    <!-- 1. Account Credentials -->
+    <section class="mac-section">
+      <header class="mac-section-head">
+        <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-briefcase"></i></span>
+        <h3>1. Account Credentials</h3>
+        <a class="mad-btn mad-btn-ghost mac-back-section" href="main-merchant-detail.html"><i class="bi bi-arrow-left"></i> Back to List</a>
+      </header>
+      <div class="mac-fields-stack">
+        <div class="mac-fields mac-fields-row mac-fields-row-3">
+          <label class="mac-field" for="madNewUsername">
+            <span class="mac-label">Merchant Id <b>*</b></span>
+            <input class="form-control" id="madNewUsername" name="username" required autocomplete="username" placeholder="e.g. merchant.001"/>
+            <small>Unique merchant identifier used for login.</small>
+          </label>
+          <label class="mac-field" for="madNewDisplayName">
+            <span class="mac-label">Full Name <b>*</b></span>
+            <input class="form-control" id="madNewDisplayName" name="displayName" required autocomplete="name" placeholder="e.g. Elena Vance"/>
+            <small>Official display name used across audit logs.</small>
+          </label>
+          <label class="mac-field" for="madNewEmail">
+            <span class="mac-label">Email</span>
+            <input class="form-control" id="madNewEmail" name="email" type="email" autocomplete="email" placeholder="name@company.com"/>
+            <small>Contact email for this merchant account.</small>
+          </label>
+        </div>
+        <div class="mac-fields mac-fields-row mac-fields-row-4">
+          <label class="mac-field" for="madNewCompany">
+            <span class="mac-label">Company <b>*</b></span>
+            <input class="form-control" id="madNewCompany" name="company" required autocomplete="organization" placeholder="e.g. Naga Gaming"/>
+            <small>Registered company or brand name.</small>
+          </label>
+          <label class="mac-field" for="madNewCountry">
+            <span class="mac-label">Country <b>*</b></span>
+            <input class="form-control" id="madNewCountry" name="country" required autocomplete="country-name" placeholder="e.g. Malaysia"/>
+            <small>Primary operating country.</small>
+          </label>
+          <label class="mac-field" for="madNewPassword">
+            <span class="mac-label-row">
+              <span class="mac-label">Password <b>*</b></span>
+              <button type="button" class="mac-link-btn" id="madGeneratePassword">Generate Strong Password</button>
+            </span>
+            <span class="mad-pass-wrap">
+              <input class="form-control" id="madNewPassword" name="password" type="password" required minlength="8" autocomplete="new-password" placeholder="Minimum 8 characters"/>
+              <button type="button" class="mad-eye" data-toggle-password="madNewPassword" aria-label="Show password"><i class="bi bi-eye"></i></button>
+            </span>
+            <small>Must be changed on first successful login.</small>
+          </label>
+          <label class="mac-field" for="madNewConfirmPassword">
+            <span class="mac-label">Confirm Password <b>*</b></span>
+            <span class="mad-pass-wrap">
+              <input class="form-control" id="madNewConfirmPassword" name="confirmPassword" type="password" required minlength="8" autocomplete="new-password" placeholder="Re-enter password"/>
+              <button type="button" class="mad-eye" data-toggle-password="madNewConfirmPassword" aria-label="Show password"><i class="bi bi-eye"></i></button>
+            </span>
+            <small>Re-enter to confirm the password.</small>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Assign Role -->
+    <section class="mac-section">
+      <header class="mac-section-head">
+        <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-person-gear"></i></span>
+        <h3>2. Assign Merchant Role <b>*</b></h3>
+        <a class="mac-section-link" href="main-merchant-roles.html"><i class="bi bi-plus-circle"></i> Manage Roles</a>
+      </header>
+
+      <div class="mac-role-stack" id="madRoleCard">
+        <div class="mac-role-dd">
+          <button type="button" class="mac-role-pick" id="madRolePickBtn" aria-expanded="false" aria-haspopup="listbox" aria-controls="madRoleMenu">
+            <div class="mac-role-pick-main">
+              <span class="mac-role-icon" aria-hidden="true"><i class="bi bi-shield-fill"></i></span>
+              <div class="mac-role-title-row">
+                <strong id="madRoleName">Select a role</strong>
+                <span class="mac-role-primary" id="madRolePrimary" hidden>PRIMARY</span>
+                <span class="mac-role-count" id="madRoleCount"></span>
+              </div>
+            </div>
+            <i class="bi bi-chevron-down mac-role-chevron" aria-hidden="true"></i>
+          </button>
+          <div class="mac-role-menu" id="madRoleMenu" role="listbox" hidden></div>
+        </div>
+        <input type="hidden" id="madNewRole" name="roleId" value=""/>
+        <input type="hidden" id="madNewBrand" name="brandId" value=""/>
+        <input type="hidden" id="madNewStatus" name="status" value="1"/>
+        <input type="hidden" id="madNewRemark" name="remark" value=""/>
+        <div class="mac-role-priv">
+          <div class="mac-role-tags" id="madRoleTags"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Security -->
+    <section class="mac-section">
+      <header class="mac-section-head">
+        <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-shield-lock"></i></span>
+        <h3>3. Security Policies &amp; Access Control</h3>
+      </header>
+      <div class="mac-policy-row">
+        <div class="mac-policy-copy">
+          <span class="mac-policy-icon" aria-hidden="true"><i class="bi bi-globe2"></i></span>
+          <div>
+            <strong>IP Whitelist Binding</strong>
+            <p>Restrict this account to pre-approved network origins only.</p>
+          </div>
+        </div>
+        <label class="mac-switch" for="madIpWhitelist">
+          <input type="checkbox" id="madIpWhitelist" checked/>
+          <span class="mac-switch-track" aria-hidden="true"><span class="mac-switch-thumb"></span></span>
+          <span class="mac-sr-only">Toggle IP whitelist binding</span>
+        </label>
+      </div>
+    </section>
+
+    <div class="upload-status mb-3" id="madCreateStatus"></div>
+
+    <footer class="mac-footer-actions">
+      <a class="mad-btn mad-btn-ghost" href="main-merchant-detail.html">Cancel</a>
+      <button class="mad-btn mad-btn-navy" type="submit" id="madCreateSubmit"><i class="bi bi-check2"></i> Create Account</button>
+    </footer>
+  </form>
+</section>
+
+</main>
+</div>
+<script src="assets/js/config.js?v=1.0.37"></script>
+<script src="assets/js/brand-context.js?v=1.0.4"></script>
+<script src="assets/js/reports.js?v=1.0.22"></script>
+<script src="assets/js/auth.js?v=1.0.67"></script>
+<script src="assets/js/main-merchant-create.js?v=1.0.1"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="assets/js/firebase-config.js?v=1.0.0"></script>
+<script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
+<script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
+<script src="assets/js/bo-ui-standard.js?v=1.0.4"></script>
+<script src="assets/js/bo-theme.js?v=1.0.0"></script>
+</body>
+</html>
