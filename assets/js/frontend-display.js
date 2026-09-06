@@ -6,6 +6,7 @@
   const rebateThreshold=document.getElementById('rebateAutoCreditThreshold');
   const marqueeEnabled=document.getElementById('marqueeEnabled');
   const leaderboardEnabled=document.getElementById('leaderboardEnabled');
+  const vipSidebarEnabled=document.getElementById('vipSidebarEnabled');
   const liveTransactionEnabled=document.getElementById('liveTransactionEnabled');
   const liveTransactionMode=document.getElementById('liveTransactionMode');
   const liveTransactionIntervalSeconds=document.getElementById('liveTransactionIntervalSeconds');
@@ -181,6 +182,7 @@
     if(rebateThreshold) rebateThreshold.value=Number(data.rebateAutoCreditThreshold||0).toFixed(2);
     if(marqueeEnabled){ syncSelectValue(marqueeEnabled,data.marqueeEnabled); }
     if(leaderboardEnabled){ syncSelectValue(leaderboardEnabled,data.leaderboardEnabled); }
+    if(vipSidebarEnabled){ syncSelectValue(vipSidebarEnabled,data.vipSidebarEnabled); }
     if(liveTransactionEnabled){ syncSelectValue(liveTransactionEnabled,data.liveTransactionEnabled); }
     if(liveTransactionMode){ liveTransactionMode.value=String(data.liveTransactionMode||'REAL').toUpperCase()==='FAKE'?'FAKE':'REAL'; liveTransactionMode.dispatchEvent(new Event('change',{bubbles:true})); }
     if(liveTransactionIntervalSeconds){ liveTransactionIntervalSeconds.value=String(Math.max(2,Math.min(60,Number(data.liveTransactionIntervalSeconds||5)))); }
@@ -210,6 +212,7 @@
       syncMarquee();
       const marqueeEnabledValue=marqueeEnabled?.value==='1'?1:0;
       const leaderboardEnabledValue=leaderboardEnabled?.value==='1'?1:0;
+      const vipSidebarEnabledValue=vipSidebarEnabled?.value==='1'?1:0;
       const liveTransactionEnabledValue=liveTransactionEnabled?.value==='1'?1:0;
       const liveTransactionModeValue=liveTransactionMode?.value==='FAKE'?'FAKE':'REAL';
       const liveTransactionIntervalValue=Number(liveTransactionIntervalSeconds?.value||5);
@@ -239,7 +242,7 @@
         method:'POST',
         headers:headers(true),
         cache:'no-store',
-        body:JSON.stringify({homeBonusEnabled:requestedValue,minDepositAmount:depositValue,minWithdrawalAmount:withdrawalValue,rebateAutoCreditThreshold:rebateThresholdValue,marqueeEnabled:marqueeEnabledValue,leaderboardEnabled:leaderboardEnabledValue,liveTransactionEnabled:liveTransactionEnabledValue,liveTransactionMode:liveTransactionModeValue,liveTransactionIntervalSeconds:liveTransactionIntervalValue,liveTransactionRandomMinSeconds:liveTransactionRandomMinSecondsValue,liveTransactionRandomMaxSeconds:liveTransactionRandomMaxSecondsValue,liveTransactionRandomMinRows:liveTransactionRandomMinRowsValue,liveTransactionRandomMaxRows:liveTransactionRandomMaxRowsValue,liveTransactionRandomMinPrice:liveTransactionRandomMinPriceValue,liveTransactionRandomMaxPrice:liveTransactionRandomMaxPriceValue,marqueeContent:marqueeHtml})
+        body:JSON.stringify({homeBonusEnabled:requestedValue,minDepositAmount:depositValue,minWithdrawalAmount:withdrawalValue,rebateAutoCreditThreshold:rebateThresholdValue,marqueeEnabled:marqueeEnabledValue,leaderboardEnabled:leaderboardEnabledValue,vipSidebarEnabled:vipSidebarEnabledValue,liveTransactionEnabled:liveTransactionEnabledValue,liveTransactionMode:liveTransactionModeValue,liveTransactionIntervalSeconds:liveTransactionIntervalValue,liveTransactionRandomMinSeconds:liveTransactionRandomMinSecondsValue,liveTransactionRandomMaxSeconds:liveTransactionRandomMaxSecondsValue,liveTransactionRandomMinRows:liveTransactionRandomMinRowsValue,liveTransactionRandomMaxRows:liveTransactionRandomMaxRowsValue,liveTransactionRandomMinPrice:liveTransactionRandomMinPriceValue,liveTransactionRandomMaxPrice:liveTransactionRandomMaxPriceValue,marqueeContent:marqueeHtml})
       });
       const json=await response.json().catch(()=>({}));
       if(!response.ok||json.status==='error') throw new Error(json.message||'Unable to save setting');
@@ -254,7 +257,7 @@
         ?json.data.homeBonusEnabled
         :requestedValue;
       syncSelect(savedValue);
-      if(json.data){ minDeposit.value=Number(json.data.minDepositAmount||depositValue).toFixed(2); minWithdrawal.value=Number(json.data.minWithdrawalAmount||withdrawalValue).toFixed(2); if(rebateThreshold) rebateThreshold.value=Number(json.data.rebateAutoCreditThreshold??rebateThresholdValue).toFixed(2); if(marqueeEnabled) syncSelectValue(marqueeEnabled,json.data.marqueeEnabled); if(leaderboardEnabled) syncSelectValue(leaderboardEnabled,json.data.leaderboardEnabled); if(liveTransactionEnabled) syncSelectValue(liveTransactionEnabled,json.data.liveTransactionEnabled); if(liveTransactionMode){liveTransactionMode.value=String(json.data.liveTransactionMode||liveTransactionModeValue).toUpperCase()==='FAKE'?'FAKE':'REAL';liveTransactionMode.dispatchEvent(new Event('change',{bubbles:true}));} if(liveTransactionIntervalSeconds) liveTransactionIntervalSeconds.value=String(json.data.liveTransactionIntervalSeconds||liveTransactionIntervalValue); if(liveTransactionRandomMinSeconds) liveTransactionRandomMinSeconds.value=String(json.data.liveTransactionRandomMinSeconds||liveTransactionRandomMinSecondsValue); if(liveTransactionRandomMaxSeconds) liveTransactionRandomMaxSeconds.value=String(json.data.liveTransactionRandomMaxSeconds||liveTransactionRandomMaxSecondsValue); if(liveTransactionRandomMinRows) liveTransactionRandomMinRows.value=String(json.data.liveTransactionRandomMinRows||liveTransactionRandomMinRowsValue); if(liveTransactionRandomMaxRows) liveTransactionRandomMaxRows.value=String(json.data.liveTransactionRandomMaxRows||liveTransactionRandomMaxRowsValue); if(liveTransactionRandomMinPrice) liveTransactionRandomMinPrice.value=Number(json.data.liveTransactionRandomMinPrice??liveTransactionRandomMinPriceValue).toFixed(2); if(liveTransactionRandomMaxPrice) liveTransactionRandomMaxPrice.value=Number(json.data.liveTransactionRandomMaxPrice??liveTransactionRandomMaxPriceValue).toFixed(2); renderLiveTransactionMode(); if(marqueeEditor){marqueeEditor.innerHTML=json.data.marqueeContent||marqueeHtml;syncMarquee();} }
+      if(json.data){ minDeposit.value=Number(json.data.minDepositAmount||depositValue).toFixed(2); minWithdrawal.value=Number(json.data.minWithdrawalAmount||withdrawalValue).toFixed(2); if(rebateThreshold) rebateThreshold.value=Number(json.data.rebateAutoCreditThreshold??rebateThresholdValue).toFixed(2); if(marqueeEnabled) syncSelectValue(marqueeEnabled,json.data.marqueeEnabled); if(leaderboardEnabled) syncSelectValue(leaderboardEnabled,json.data.leaderboardEnabled); if(vipSidebarEnabled) syncSelectValue(vipSidebarEnabled,json.data.vipSidebarEnabled); if(liveTransactionEnabled) syncSelectValue(liveTransactionEnabled,json.data.liveTransactionEnabled); if(liveTransactionMode){liveTransactionMode.value=String(json.data.liveTransactionMode||liveTransactionModeValue).toUpperCase()==='FAKE'?'FAKE':'REAL';liveTransactionMode.dispatchEvent(new Event('change',{bubbles:true}));} if(liveTransactionIntervalSeconds) liveTransactionIntervalSeconds.value=String(json.data.liveTransactionIntervalSeconds||liveTransactionIntervalValue); if(liveTransactionRandomMinSeconds) liveTransactionRandomMinSeconds.value=String(json.data.liveTransactionRandomMinSeconds||liveTransactionRandomMinSecondsValue); if(liveTransactionRandomMaxSeconds) liveTransactionRandomMaxSeconds.value=String(json.data.liveTransactionRandomMaxSeconds||liveTransactionRandomMaxSecondsValue); if(liveTransactionRandomMinRows) liveTransactionRandomMinRows.value=String(json.data.liveTransactionRandomMinRows||liveTransactionRandomMinRowsValue); if(liveTransactionRandomMaxRows) liveTransactionRandomMaxRows.value=String(json.data.liveTransactionRandomMaxRows||liveTransactionRandomMaxRowsValue); if(liveTransactionRandomMinPrice) liveTransactionRandomMinPrice.value=Number(json.data.liveTransactionRandomMinPrice??liveTransactionRandomMinPriceValue).toFixed(2); if(liveTransactionRandomMaxPrice) liveTransactionRandomMaxPrice.value=Number(json.data.liveTransactionRandomMaxPrice??liveTransactionRandomMaxPriceValue).toFixed(2); renderLiveTransactionMode(); if(marqueeEditor){marqueeEditor.innerHTML=json.data.marqueeContent||marqueeHtml;syncMarquee();} }
       await saveInstallSetting();
       renderNote();
       setMessage('Frontend display setting and Add to Home Screen settings saved successfully.','success');
