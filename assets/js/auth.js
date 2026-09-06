@@ -87,10 +87,6 @@
     if(p==='main-merchant-create.html' || p==='main-merchant-credit.html' || p==='main-merchant-security.html' || p==='main-merchant-roles.html' || p==='main-merchant-role-create.html'){
       return 'main-merchant-detail.html';
     }
-    // Provider module drill-downs keep the Provider sidebar item highlighted.
-    if(p==='main-provider-endpoints.html' || p==='main-provider-credentials.html' || p==='main-provider-health.html' || p==='main-provider-create.html'){
-      return 'main-provider-detail.html';
-    }
     // Admin module drill-downs keep the Admin Details item highlighted.
     if(p==='main-admin-create.html' || p==='main-admin-credit.html' || p==='main-admin-security.html'){
       return 'main-admin-detail.html';
@@ -111,8 +107,7 @@
     main_accounting_group: { title: 'Accounting & Provider Ops', icon: 'bi-cash-stack', sortOrder: 40 },
     main_brands_group: { title: 'Brands', icon: 'bi-buildings', sortOrder: 50 },
     main_admin_group: { title: 'Admin', icon: 'bi-shield-lock', sortOrder: 60 },
-    main_merchant_group: { title: 'Merchant', icon: 'bi-shop', sortOrder: 65 },
-    main_provider_group: { title: 'Provider', icon: 'bi-hdd-network', sortOrder: 70 }
+    main_merchant_group: { title: 'Merchant', icon: 'bi-shop', sortOrder: 65 }
   };
 
   // Used only when backend has not returned menu data yet.
@@ -132,6 +127,7 @@
     {menuKey:'member_deposit', title:'Deposit Approval', url:'member-deposit.html', icon:'bi-bank', parentKey:'wallet', sortOrder:13},
     {menuKey:'member_withdraw', title:'Withdraw Approval', url:'member-withdraw.html', icon:'bi-cash-coin', parentKey:'wallet', sortOrder:14},
     {menuKey:'payment_method', title:'Payment Method Config', url:'payment-method.html', icon:'bi-credit-card', parentKey:'wallet', sortOrder:15},
+    {menuKey:'payment_gateway', title:'Payment Gateway', url:'payment-gateway.html', icon:'bi-lightning-charge', parentKey:'wallet', sortOrder:15.05},
     {menuKey:'bank_deposit_usage', title:'Bank Deposit Usage', url:'bank-deposit-usage.html', icon:'bi-bar-chart-line', parentKey:'wallet', sortOrder:15.1},
     {menuKey:'referral', title:'Referral Network', url:'referral.html', icon:'bi-diagram-3', parentKey:'wallet', sortOrder:16},
     {menuKey:'agent_management', title:'Agent Management', url:'agent-management.html', icon:'bi-person-workspace', parentKey:'wallet', sortOrder:16.5},
@@ -142,7 +138,6 @@
     {menuKey:'admin', title:'Admin Management', url:'admin-user.html', icon:'bi-shield-lock', parentKey:'', sortOrder:20},
     {menuKey:'main_admin_detail', title:'Details', url:'main-admin-detail.html', icon:'bi-person-badge', parentKey:'main_admin_group', sortOrder:60.1},
     {menuKey:'main_merchant_detail', title:'Details', url:'main-merchant-detail.html', icon:'bi-shop', parentKey:'main_merchant_group', sortOrder:65.1},
-    {menuKey:'main_provider_detail', title:'Details', url:'main-provider-detail.html', icon:'bi-hdd-network', parentKey:'main_provider_group', sortOrder:70.1},
     {menuKey:'brand_management', title:'Branding Management', url:'brand-management.html', icon:'bi-buildings', parentKey:'', sortOrder:21},
     {menuKey:'role', title:'Role & Menu Permission', url:'role.html', icon:'bi-person-badge', parentKey:'access', sortOrder:30},
     {menuKey:'menu_management', title:'Menu Management', url:'menu-management.html', icon:'bi-list-check', parentKey:'access', sortOrder:31},
@@ -173,6 +168,7 @@
     {menuKey:'vip_worker_settings', title:'VIP Worker Settings', url:'vip-worker-settings.html', icon:'bi-clock-history', parentKey:'bonus', sortOrder:87},
     {menuKey:'site_customize', title:'Site Customize', url:'site-customize.html', icon:'bi-palette', parentKey:'', sortOrder:90},
     {menuKey:'layout_section', title:'Layout Section', url:'layout-section.html', icon:'bi-code-square', parentKey:'', sortOrder:91},
+    {menuKey:'page_customize', title:'Page Customize', url:'page-customize.html', icon:'bi-file-earmark-code', parentKey:'', sortOrder:92},
     {menuKey:'frontend_display', title:'Frontend Display', url:'frontend-display.html', icon:'bi-display', parentKey:'setting', sortOrder:91},
     {menuKey:'advertisement_popup', title:'Advertisement Popup', url:'advertisement-popup.html', icon:'bi-window-stack', parentKey:'setting', sortOrder:94},
     {menuKey:'social', title:'Social', url:'social.html', icon:'bi-share', parentKey:'setting', sortOrder:92},
@@ -202,9 +198,6 @@
     }
     if(key === 'main_merchant_detail' || key === 'merchant_detail' || /^main-merchant-detail\.html$/i.test(raw.replace(/^\.\//,''))){
       return 'main-merchant-detail.html';
-    }
-    if(key === 'main_provider_detail' || key === 'provider_detail_main' || /^main-provider-detail\.html$/i.test(raw.replace(/^\.\//,''))){
-      return 'main-provider-detail.html';
     }
     return raw || '#';
   }
@@ -239,7 +232,20 @@
     save: function(json){ localStorage.setItem(this.tokenKey, json.token || ''); localStorage.setItem(this.userKey, JSON.stringify(json.data || {})); try{sessionStorage.setItem('bo_admin_me_refreshed_at',String(Date.now()));}catch(e){} },
     saveUser: function(user){ localStorage.setItem(this.userKey, JSON.stringify(user || {})); this.renderProfile(); this.renderSidebar(user); },
     logout: function(){ localStorage.removeItem(this.tokenKey); localStorage.removeItem(this.userKey); try{ sessionStorage.removeItem('bo_operation_login_marker'); sessionStorage.removeItem('bo_operation_login_played'); sessionStorage.removeItem('bo_admin_me_refreshed_at'); sessionStorage.removeItem('bo_brand_context_cache_v3'); }catch(e){} window.location.href = 'login.html'; },
-    requireLogin: function(){ if(!this.token() && !location.pathname.endsWith('/login.html')) window.location.href = 'login.html'; },
+    requireLogin: function(){
+      if(!this.token() && !location.pathname.endsWith('/login.html')){
+        // Preserve the BO page the admin explicitly requested. Previously a direct
+        // visit such as payment-gateway.html was lost when login.html opened, because
+        // admin-login.js always sent the user to the first sidebar menu after login.
+        // Keep only a local BO path (no origin) and let the destination page run the
+        // normal ROOT-managed menu permission check after authentication.
+        try{
+          const requested=(location.pathname||'').split('/').pop() + (location.search||'') + (location.hash||'');
+          if(requested && !/^login\.html(?:[?#]|$)/i.test(requested)) sessionStorage.setItem('bo_login_return_to',requested);
+        }catch(e){}
+        window.location.href = 'login.html';
+      }
+    },
     allowedMenus: function(user){
       user = user || this.user();
       // ROOT Menu Management + Role/Menu Permission are authoritative.
@@ -259,6 +265,13 @@
       return menus.length ? menus[0].url : 'login.html';
     },
     enforcePageAccess: function(user){
+      user = user || this.user();
+      // ROOT is the unrestricted platform owner. ROOT must never depend on
+      // admin_role_menu assignments to open BO pages; role/menu assignments are
+      // for accounts that ROOT manages (MASTER/MAIN/brand/custom roles). Backend
+      // authorization already treats ROOT as unrestricted as well.
+      const roleType = String((user && user.roleType) || '').toUpperCase();
+      if((user && user.rootAdmin === true) || roleType === 'ROOT') return true;
       let current = pageName();
       // Agent detail inherits Agents access. Agent Management sub-pages keep their
       // own permission so a Master can be granted Commission/Settlement/etc.
@@ -284,11 +297,6 @@
       if(current === 'main-merchant-security.html') current = 'main-merchant-detail.html';
       if(current === 'main-merchant-roles.html') current = 'main-merchant-detail.html';
       if(current === 'main-merchant-role-create.html') current = 'main-merchant-detail.html';
-      // Provider endpoints / credentials / health are drill-downs of Main Provider Detail.
-      if(current === 'main-provider-endpoints.html') current = 'main-provider-detail.html';
-      if(current === 'main-provider-credentials.html') current = 'main-provider-detail.html';
-      if(current === 'main-provider-health.html') current = 'main-provider-detail.html';
-      if(current === 'main-provider-create.html') current = 'main-provider-detail.html';
       const agentChildPages = new Set([
         'agent-commission-admin.html','agent-settlement-admin.html','agent-reimbursement-admin.html',
         'agent-payout-admin.html','agent-promotion-admin.html'
@@ -296,7 +304,6 @@
       const requestedAgentChild = agentChildPages.has(pageName());
       const requestedMainAdminDetail = pageName() === 'main-admin-detail.html' || pageName() === 'main-admin-create.html' || pageName() === 'main-admin-credit.html' || pageName() === 'main-admin-security.html';
       const requestedMainMerchantDetail = pageName() === 'main-merchant-detail.html' || pageName() === 'main-merchant-create.html' || pageName() === 'main-merchant-credit.html' || pageName() === 'main-merchant-security.html' || pageName() === 'main-merchant-roles.html' || pageName() === 'main-merchant-role-create.html';
-      const requestedMainProviderDetail = pageName() === 'main-provider-detail.html' || pageName() === 'main-provider-endpoints.html' || pageName() === 'main-provider-credentials.html' || pageName() === 'main-provider-health.html' || pageName() === 'main-provider-create.html';
       if(current === 'main-stat-detail.html'){
         let source = '';
         try { source = String(new URLSearchParams(location.search || '').get('source') || 'overview').toLowerCase(); } catch(e) {}
@@ -329,12 +336,6 @@
         allowed = menus.some(function(m){
           const key = String(m.menuKey || '').toLowerCase();
           return key === 'main_merchant_detail' || key === 'merchant_detail' || key === 'merchant';
-        });
-      }
-      if(!allowed && requestedMainProviderDetail){
-        allowed = menus.some(function(m){
-          const key = String(m.menuKey || '').toLowerCase();
-          return key === 'main_provider_detail' || key === 'provider_detail_main' || key === 'game_provider';
         });
       }
       if(!allowed){
@@ -389,7 +390,17 @@
       let last=0;try{last=Number(sessionStorage.getItem('bo_admin_me_refreshed_at')||0);}catch(e){}
       // Menus/profile are already stored after login. Revalidate periodically instead of
       // firing /auth/admin/me on every single BO page navigation.
-      if(!force && cached && cached.username && Array.isArray(cached.menus) && Date.now()-last<30000){
+      const currentPage = pageName();
+      // Newly deployed menu definitions/role assignments can make the cached /me
+      // payload stale for up to 30 seconds. Do not redirect a directly requested
+      // page to the old landing page before the server has had a chance to return
+      // the authoritative, current menu assignment. This is especially important
+      // for newly introduced modules such as Payment Gateway.
+      const cachedAllowsCurrent = cached && Array.isArray(cached.menus) && cached.menus.some(function(m){
+        return Number(m && m.status) === 1 && String((m && m.url) || '').split('/').pop() === currentPage;
+      });
+      const needsFreshPermissionCheck = currentPage === 'payment-gateway.html' && !cachedAllowsCurrent;
+      if(!force && !needsFreshPermissionCheck && cached && cached.username && Array.isArray(cached.menus) && Date.now()-last<30000){
         await this.loadMenuGroups();this.renderSidebar(cached);this.enforcePageAccess(cached);return cached;
       }
       try{
