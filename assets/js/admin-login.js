@@ -59,7 +59,18 @@
           sessionStorage.removeItem('bo_online_users_cache');
           if(window.BO_BRAND&&BO_BRAND.invalidate)BO_BRAND.invalidate();
         }catch(ignore){}
-        window.location.replace(BO_AUTH.landingPage(user));
+        // If the user arrived at login from a protected BO URL, return to that
+        // exact local page after successful authentication instead of always losing
+        // the destination and jumping to the role's first menu. The destination page
+        // still calls BO_AUTH.enforcePageAccess(), so ROOT-managed permissions remain
+        // authoritative and an unassigned page will still be redirected safely.
+        let destination='';
+        try{
+          destination=String(sessionStorage.getItem('bo_login_return_to')||'').trim();
+          sessionStorage.removeItem('bo_login_return_to');
+          if(!destination || /^(?:[a-z][a-z0-9+.-]*:|\/\/|\/)/i.test(destination) || /(?:^|\/)login\.html(?:[?#]|$)/i.test(destination)) destination='';
+        }catch(ignore){ destination=''; }
+        window.location.replace(destination || BO_AUTH.landingPage(user));
       }catch(err){
         setStatus(err.message || 'Login failed', 'error');
       }finally{
