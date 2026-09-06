@@ -11,8 +11,8 @@
 <link href="assets/css/reports.css?v=1.0.46" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.6.15" rel="stylesheet"/>
-<link href="assets/css/main-provider-executive.css?v=1.0.3" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.6.16" rel="stylesheet"/>
+<link href="assets/css/main-provider-executive.css?v=1.0.6" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -21,7 +21,7 @@
 })();
 </script>
 </head>
-<body class="report-body standardized-listing-page main-admin-detail-page main-provider-stub-page" data-access-page="main_provider_detail">
+<body class="report-body standardized-listing-page main-admin-detail-page main-admin-create-page main-provider-integration-page" data-access-page="main_provider_detail">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
 <div class="report-brand"><div>Backoffice<br/><small>Admin Panel</small></div><button class="close-side" data-close-sidebar=""><i class="bi bi-x-lg"></i></button></div>
@@ -57,13 +57,64 @@
     </div>
     <div class="mad-chrome-actions" aria-hidden="true"></div>
   </div>
-  <div class="mad-panel">
-    <div class="mpv-stub">
-      <i class="bi bi-diagram-3" aria-hidden="true"></i>
-      <h3>Integration</h3>
-      <p>Endpoint routing, failover paths, and aggregator mappings will land here next.</p>
-    </div>
-  </div>
+
+  <form id="mpvIntegForm" class="mac-form mpv-integ-form" novalidate>
+    <section class="mac-section mpv-integ-card">
+      <header class="mpv-integ-head">
+        <div>
+          <h2>Integration Settings</h2>
+          <p>Aggregator mode, API credentials, and production endpoint routing.</p>
+        </div>
+      </header>
+
+      <div class="mpv-integ-block">
+        <h3 class="mpv-integ-block-title">Aggregation Settings</h3>
+        <label class="mac-field mpv-integ-select-field" for="mpvAggregatorType">
+          <span class="mac-label">Aggregator Type</span>
+          <select class="form-control" id="mpvAggregatorType" name="aggregatorType">
+            <option value="seamless" selected>Seamless Integration</option>
+            <option value="transfer">Transfer Wallet Integration</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="mpv-integ-block">
+        <h3 class="mpv-integ-block-title">API Credentials</h3>
+        <div class="mac-fields mac-fields-row mpv-integ-creds">
+          <label class="mac-field" for="mpvApiKey">
+            <span class="mac-label">API Key</span>
+            <input class="form-control" id="mpvApiKey" name="apiKey" autocomplete="off" placeholder="pk_live_…" value="pk_live_8f3a2c91"/>
+          </label>
+          <label class="mac-field" for="mpvSecretKeyInteg">
+            <span class="mac-label">Secret Key</span>
+            <span class="mad-pass-wrap">
+              <input class="form-control" id="mpvSecretKeyInteg" name="secretKey" type="password" autocomplete="off" placeholder="sk_live_…" value="sk_live_hidden_demo"/>
+              <button type="button" class="mad-eye" data-toggle-password="mpvSecretKeyInteg" aria-label="Show secret"><i class="bi bi-eye"></i></button>
+            </span>
+          </label>
+          <label class="mac-field" for="mpvMerchantIdInteg">
+            <span class="mac-label">Merchant ID</span>
+            <input class="form-control" id="mpvMerchantIdInteg" name="merchantId" autocomplete="off" placeholder="MCH-001" value="MCH-001"/>
+          </label>
+        </div>
+      </div>
+
+      <div class="mpv-integ-block">
+        <h3 class="mpv-integ-block-title">Endpoints</h3>
+        <label class="mac-field mpv-integ-url-field" for="mpvProdUrl">
+          <span class="mac-label">Production URL</span>
+          <input class="form-control" id="mpvProdUrl" name="productionUrl" type="url" autocomplete="off" placeholder="https://api.provider.com/v1" value="https://api.provider.com/v1"/>
+        </label>
+      </div>
+
+      <div class="upload-status mb-0" id="mpvIntegStatus"></div>
+
+      <footer class="mpv-integ-footer">
+        <a class="mad-btn mad-btn-ghost" href="main-provider-detail.html">Cancel</a>
+        <button class="mad-btn mad-btn-navy" type="submit" id="mpvIntegSave"><i class="bi bi-check2"></i> Save Changes</button>
+      </footer>
+    </section>
+  </form>
 </section>
 </main>
 </div>
@@ -71,6 +122,7 @@
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/reports.js?v=1.0.22"></script>
 <script src="assets/js/auth.js?v=1.0.68"></script>
+<script src="assets/js/main-provider-endpoints.js?v=1.0.0"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
