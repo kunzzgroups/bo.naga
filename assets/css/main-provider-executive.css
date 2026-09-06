@@ -1,0 +1,235 @@
+/* Deep Navy Cyan — MAIN Provider executive list
+   Tokens from .interface-design/system.md */
+
+body.main-provider-detail-page,
+body.main-provider-stub-page{
+  --bo-navy:#123B66;
+  --bo-cyan:#21A6D7;
+  --bo-success:#12B76A;
+  --bo-warn:#F79009;
+  --bo-danger:#EF3340;
+}
+
+body.main-provider-detail-page .mpv-active-badge{
+  display:inline-flex;
+  align-items:center;
+  margin-left:8px;
+  padding:3px 10px;
+  border-radius:999px;
+  background:rgba(33,166,215,.14);
+  color:var(--bo-navy);
+  font-size:12px;
+  font-weight:700;
+  vertical-align:middle;
+}
+
+body.main-provider-detail-page .mad-pill-count.is-warn-count{
+  color:var(--bo-warn);
+}
+
+/* Segmented chrome tabs — match reference (navy active pill in bordered rail) */
+body.main-provider-detail-page .mad-chrome .mad-tabs,
+body.main-provider-stub-page .mad-chrome .mad-tabs{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:2px!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:4px!important;
+  border:1px solid var(--bo-border,#E2E7F0)!important;
+  border-radius:10px!important;
+  background:var(--bo-surface,#fff)!important;
+  align-self:center!important;
+}
+body.main-provider-detail-page .mad-chrome .mad-tab,
+body.main-provider-stub-page .mad-chrome .mad-tab{
+  display:inline-flex!important;
+  align-items:center!important;
+  height:34px!important;
+  min-height:34px!important;
+  padding:0 14px!important;
+  margin:0!important;
+  border:0!important;
+  border-bottom:0!important;
+  border-radius:8px!important;
+  background:transparent!important;
+  color:#475467!important;
+  font-size:13px!important;
+  font-weight:650!important;
+  line-height:1!important;
+  text-decoration:none!important;
+}
+body.main-provider-detail-page .mad-chrome .mad-tab:hover:not(.is-active),
+body.main-provider-stub-page .mad-chrome .mad-tab:hover:not(.is-active){
+  color:var(--bo-navy)!important;
+  background:rgba(18,59,102,.04)!important;
+}
+body.main-provider-detail-page .mad-chrome .mad-tab.is-active,
+body.main-provider-stub-page .mad-chrome .mad-tab.is-active{
+  background:var(--bo-navy,#123B66)!important;
+  color:#fff!important;
+  font-weight:750!important;
+  border-bottom:0!important;
+}
+body.main-provider-detail-page .mad-chrome,
+body.main-provider-stub-page .mad-chrome{
+  align-items:center!important;
+}
+body.main-provider-detail-page .mad-chrome-actions,
+body.main-provider-stub-page .mad-chrome-actions{
+  align-self:center!important;
+  padding-bottom:0!important;
+}
+
+html[data-bo-theme="dark"] body.main-provider-detail-page .mad-chrome .mad-tabs,
+html[data-bo-theme="dark"] body.main-provider-stub-page .mad-chrome .mad-tabs{
+  background:var(--bo-surface)!important;
+  border-color:var(--bo-border)!important;
+}
+html[data-bo-theme="dark"] body.main-provider-detail-page .mad-chrome .mad-tab,
+html[data-bo-theme="dark"] body.main-provider-stub-page .mad-chrome .mad-tab{
+  color:var(--bo-muted)!important;
+}
+html[data-bo-theme="dark"] body.main-provider-detail-page .mad-chrome .mad-tab.is-active,
+html[data-bo-theme="dark"] body.main-provider-stub-page .mad-chrome .mad-tab.is-active{
+  background:var(--bo-navy)!important;
+  color:#fff!important;
+}
+
+/* Provider name cell */
+body.main-provider-detail-page .mpv-name{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  min-width:220px;
+}
+body.main-provider-detail-page .mpv-mark{
+  flex:0 0 40px;
+  width:40px;height:40px;
+  display:inline-flex;align-items:center;justify-content:center;
+  border-radius:10px;
+  font-size:12px;font-weight:800;letter-spacing:.02em;
+  color:#fff;
+  background:var(--bo-navy);
+}
+body.main-provider-detail-page .mpv-mark.is-teal{background:#0E8F8A}
+body.main-provider-detail-page .mpv-mark.is-violet{background:#6B5CE7}
+body.main-provider-detail-page .mpv-mark.is-amber{background:#C47A12}
+body.main-provider-detail-page .mpv-mark.is-rose{background:#C44569}
+body.main-provider-detail-page .mpv-mark.is-slate{background:#4A5A70}
+body.main-provider-detail-page .mpv-name-copy b{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:13.5px;font-weight:750;color:var(--bo-text);
+}
+body.main-provider-detail-page .mpv-verified{
+  color:var(--bo-cyan);font-size:13px;line-height:1;
+}
+body.main-provider-detail-page .mpv-name-copy small{
+  display:block;margin-top:2px;
+  font-size:12px;font-weight:500;color:var(--bo-muted);
+}
+body.main-provider-detail-page .mpv-id{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:12.5px;font-weight:650;color:var(--bo-text-secondary);
+  letter-spacing:.02em;
+}
+
+/* Integration / env / status pills */
+body.main-provider-detail-page .mpv-type{
+  display:inline-flex;align-items:center;gap:6px;
+  height:26px;padding:0 10px;border-radius:999px;
+  font-size:11.5px;font-weight:700;white-space:nowrap;
+  background:rgba(33,166,215,.10);color:#147A9C;
+  border:1px solid rgba(33,166,215,.28);
+}
+body.main-provider-detail-page .mpv-type.is-aggregator{
+  background:rgba(107,92,231,.10);color:#5648C9;
+  border-color:rgba(107,92,231,.28);
+}
+body.main-provider-detail-page .mpv-type.is-transfer{
+  background:#F2F4F7;color:#475467;
+  border-color:#E4E7EC;
+}
+body.main-provider-detail-page .mpv-env{
+  display:inline-flex;align-items:center;
+  height:26px;padding:0 10px;border-radius:999px;
+  font-size:11.5px;font-weight:750;
+  background:var(--bo-navy);color:#fff;
+}
+body.main-provider-detail-page .mpv-env.is-sandbox{
+  background:rgba(107,92,231,.14);color:#5648C9;
+}
+body.main-provider-detail-page .mpv-status{
+  display:inline-flex;align-items:center;gap:7px;
+  height:26px;padding:0 10px;border-radius:999px;
+  font-size:12px;font-weight:700;
+  background:#F2F4F7;color:var(--bo-text-secondary);
+}
+body.main-provider-detail-page .mpv-status i{
+  width:7px;height:7px;border-radius:50%;background:currentColor;
+}
+body.main-provider-detail-page .mpv-status.is-active{
+  background:rgba(18,183,106,.12);color:#0E9F5C;
+}
+body.main-provider-detail-page .mpv-status.is-maintenance{
+  background:rgba(247,144,9,.14);color:#B54708;
+}
+body.main-provider-detail-page .mpv-status.is-suspended{
+  background:rgba(239,51,64,.12);color:#C01028;
+}
+
+body.main-provider-detail-page .mpv-sync-cell b{
+  display:block;font-size:13px;font-weight:700;color:var(--bo-text);
+}
+body.main-provider-detail-page .mpv-sync-cell small{
+  display:block;margin-top:2px;font-size:11.5px;font-weight:500;color:var(--bo-muted);
+}
+body.main-provider-detail-page .mpv-creator{
+  display:flex;align-items:center;gap:10px;
+}
+body.main-provider-detail-page .mpv-creator-ava{
+  flex:0 0 30px;width:30px;height:30px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:rgba(18,59,102,.10);color:var(--bo-navy);
+  font-size:11px;font-weight:800;
+}
+body.main-provider-detail-page .mpv-creator b{
+  display:block;font-size:13px;font-weight:700;color:var(--bo-text);
+}
+body.main-provider-detail-page .mpv-creator small{
+  display:block;font-size:11.5px;font-weight:500;color:var(--bo-muted);
+}
+
+body.main-provider-detail-page .mpv-actions{
+  display:inline-flex;align-items:center;gap:4px;
+}
+body.main-provider-detail-page .mpv-actions .mad-icon-btn.is-warn{
+  color:var(--bo-warn);
+}
+
+/* Stub empty */
+body.main-provider-stub-page .mpv-stub{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;min-height:280px;padding:40px 24px;
+  text-align:center;
+}
+body.main-provider-stub-page .mpv-stub i{
+  font-size:28px;color:var(--bo-cyan);
+}
+body.main-provider-stub-page .mpv-stub h3{
+  margin:0;font-size:16px;font-weight:800;color:var(--bo-text);
+}
+body.main-provider-stub-page .mpv-stub p{
+  margin:0;max-width:420px;font-size:13px;font-weight:500;color:var(--bo-muted);
+}
+
+html[data-bo-theme="dark"] body.main-provider-detail-page .mpv-active-badge{
+  background:rgba(33,166,215,.18);color:var(--bo-cyan);
+}
+html[data-bo-theme="dark"] body.main-provider-detail-page .mpv-type.is-transfer,
+html[data-bo-theme="dark"] body.main-provider-detail-page .mpv-status{
+  background:rgba(255,255,255,.06);border-color:var(--bo-border);color:var(--bo-text-secondary);
+}
+html[data-bo-theme="dark"] body.main-provider-detail-page .mpv-creator-ava{
+  background:rgba(33,166,215,.16);color:var(--bo-cyan);
+}

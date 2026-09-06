@@ -87,6 +87,10 @@
     if(p==='main-merchant-create.html' || p==='main-merchant-credit.html' || p==='main-merchant-security.html' || p==='main-merchant-roles.html' || p==='main-merchant-role-create.html'){
       return 'main-merchant-detail.html';
     }
+    // Provider module drill-downs keep the Provider sidebar item highlighted.
+    if(p==='main-provider-endpoints.html' || p==='main-provider-credentials.html' || p==='main-provider-health.html'){
+      return 'main-provider-detail.html';
+    }
     // Admin module drill-downs keep the Admin Details item highlighted.
     if(p==='main-admin-create.html' || p==='main-admin-credit.html' || p==='main-admin-security.html'){
       return 'main-admin-detail.html';
@@ -107,7 +111,8 @@
     main_accounting_group: { title: 'Accounting & Provider Ops', icon: 'bi-cash-stack', sortOrder: 40 },
     main_brands_group: { title: 'Brands', icon: 'bi-buildings', sortOrder: 50 },
     main_admin_group: { title: 'Admin', icon: 'bi-shield-lock', sortOrder: 60 },
-    main_merchant_group: { title: 'Merchant', icon: 'bi-shop', sortOrder: 65 }
+    main_merchant_group: { title: 'Merchant', icon: 'bi-shop', sortOrder: 65 },
+    main_provider_group: { title: 'Provider', icon: 'bi-hdd-network', sortOrder: 70 }
   };
 
   // Used only when backend has not returned menu data yet.
@@ -137,6 +142,7 @@
     {menuKey:'admin', title:'Admin Management', url:'admin-user.html', icon:'bi-shield-lock', parentKey:'', sortOrder:20},
     {menuKey:'main_admin_detail', title:'Details', url:'main-admin-detail.html', icon:'bi-person-badge', parentKey:'main_admin_group', sortOrder:60.1},
     {menuKey:'main_merchant_detail', title:'Details', url:'main-merchant-detail.html', icon:'bi-shop', parentKey:'main_merchant_group', sortOrder:65.1},
+    {menuKey:'main_provider_detail', title:'Details', url:'main-provider-detail.html', icon:'bi-hdd-network', parentKey:'main_provider_group', sortOrder:70.1},
     {menuKey:'brand_management', title:'Branding Management', url:'brand-management.html', icon:'bi-buildings', parentKey:'', sortOrder:21},
     {menuKey:'role', title:'Role & Menu Permission', url:'role.html', icon:'bi-person-badge', parentKey:'access', sortOrder:30},
     {menuKey:'menu_management', title:'Menu Management', url:'menu-management.html', icon:'bi-list-check', parentKey:'access', sortOrder:31},
@@ -196,6 +202,9 @@
     }
     if(key === 'main_merchant_detail' || key === 'merchant_detail' || /^main-merchant-detail\.html$/i.test(raw.replace(/^\.\//,''))){
       return 'main-merchant-detail.html';
+    }
+    if(key === 'main_provider_detail' || key === 'provider_detail_main' || /^main-provider-detail\.html$/i.test(raw.replace(/^\.\//,''))){
+      return 'main-provider-detail.html';
     }
     return raw || '#';
   }
@@ -275,6 +284,10 @@
       if(current === 'main-merchant-security.html') current = 'main-merchant-detail.html';
       if(current === 'main-merchant-roles.html') current = 'main-merchant-detail.html';
       if(current === 'main-merchant-role-create.html') current = 'main-merchant-detail.html';
+      // Provider endpoints / credentials / health are drill-downs of Main Provider Detail.
+      if(current === 'main-provider-endpoints.html') current = 'main-provider-detail.html';
+      if(current === 'main-provider-credentials.html') current = 'main-provider-detail.html';
+      if(current === 'main-provider-health.html') current = 'main-provider-detail.html';
       const agentChildPages = new Set([
         'agent-commission-admin.html','agent-settlement-admin.html','agent-reimbursement-admin.html',
         'agent-payout-admin.html','agent-promotion-admin.html'
@@ -282,6 +295,7 @@
       const requestedAgentChild = agentChildPages.has(pageName());
       const requestedMainAdminDetail = pageName() === 'main-admin-detail.html' || pageName() === 'main-admin-create.html' || pageName() === 'main-admin-credit.html' || pageName() === 'main-admin-security.html';
       const requestedMainMerchantDetail = pageName() === 'main-merchant-detail.html' || pageName() === 'main-merchant-create.html' || pageName() === 'main-merchant-credit.html' || pageName() === 'main-merchant-security.html' || pageName() === 'main-merchant-roles.html' || pageName() === 'main-merchant-role-create.html';
+      const requestedMainProviderDetail = pageName() === 'main-provider-detail.html' || pageName() === 'main-provider-endpoints.html' || pageName() === 'main-provider-credentials.html' || pageName() === 'main-provider-health.html';
       if(current === 'main-stat-detail.html'){
         let source = '';
         try { source = String(new URLSearchParams(location.search || '').get('source') || 'overview').toLowerCase(); } catch(e) {}
@@ -314,6 +328,12 @@
         allowed = menus.some(function(m){
           const key = String(m.menuKey || '').toLowerCase();
           return key === 'main_merchant_detail' || key === 'merchant_detail' || key === 'merchant';
+        });
+      }
+      if(!allowed && requestedMainProviderDetail){
+        allowed = menus.some(function(m){
+          const key = String(m.menuKey || '').toLowerCase();
+          return key === 'main_provider_detail' || key === 'provider_detail_main' || key === 'game_provider';
         });
       }
       if(!allowed){
