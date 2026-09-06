@@ -8,7 +8,6 @@
   const envFilter = document.getElementById('mpvEnvFilter');
   const resetBtn = document.getElementById('mpvResetBtn');
   const exportBtn = document.getElementById('mpvExportBtn');
-  const addBtn = document.getElementById('mpvAddBtn');
   const pageNoEl = document.getElementById('mpvPager');
   const infoEl = document.getElementById('mpvTableInfo');
   const syncLabel = document.getElementById('mpvSyncLabel');
@@ -48,17 +47,24 @@
     return 'Active';
   }
 
-  function pageButtons(page, totalPages){
-    const max = Math.max(1, totalPages);
-    let html = '<button type="button" class="mad-page-btn" data-page="' + (page - 1) + '"' + (page <= 1 ? ' disabled' : '') + '>Previous</button>';
-    for(let i = 1; i <= max; i++){
-      if(max > 7 && Math.abs(i - page) > 2 && i !== 1 && i !== max){
-        if(i === 2 || i === max - 1) html += '<span class="mad-page-ellipsis">…</span>';
-        continue;
-      }
-      html += '<button type="button" class="mad-page-btn' + (i === page ? ' is-active' : '') + '" data-page="' + i + '">' + i + '</button>';
-    }
-    html += '<button type="button" class="mad-page-btn" data-page="' + (page + 1) + '"' + (page >= max ? ' disabled' : '') + '>Next</button>';
+  function pageButtons(current, total){
+    total = Math.max(1, Number(total) || 1);
+    current = Math.max(1, Math.min(Number(current) || 1, total));
+    const pages = [];
+    const add = n => { if(n >= 1 && n <= total && !pages.includes(n)) pages.push(n); };
+    add(1);
+    for(let n = current - 2; n <= current + 2; n++) add(n);
+    add(total);
+    pages.sort((a, b) => a - b);
+    let html = '';
+    html += '<button type="button" class="smart-page nav-text" data-page="' + Math.max(1, current - 1) + '" ' + (current <= 1 ? 'disabled' : '') + '>Previous</button>';
+    let prev = 0;
+    pages.forEach(n => {
+      if(prev && n - prev > 1) html += '<span class="smart-page-ellipsis">…</span>';
+      html += '<button type="button" class="smart-page ' + (n === current ? 'active' : '') + '" data-page="' + n + '" ' + (n === current ? 'aria-current="page"' : '') + '>' + n + '</button>';
+      prev = n;
+    });
+    html += '<button type="button" class="smart-page nav-text" data-page="' + Math.min(total, current + 1) + '" ' + (current >= total ? 'disabled' : '') + '>Next</button>';
     return html;
   }
 
@@ -184,6 +190,7 @@
     }
   });
 
+  // export only — Add Provider is a link to create page
   exportBtn && exportBtn.addEventListener('click', () => {
     const csv = [['Provider Name', 'Provider ID', 'Integration Type', 'Status', 'Environment', 'Last Sync', 'Created By']]
       .concat(filtered.map(r => [r.name, r.id, r.typeLabel, statusLabel(r.status), r.env, r.syncRel + ' / ' + r.syncUtc, r.creator]));
@@ -195,13 +202,49 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 500);
   });
 
-  addBtn && addBtn.addEventListener('click', () => {
-    if(window.BO_DIALOG && BO_DIALOG.alert){
-      BO_DIALOG.alert('Add Provider form will connect to the provider API next. This screen is the executive list shell.', { title: 'Add Provider', type: 'info' });
-    } else {
-      alert('Add Provider — coming next.');
+  function measureLabelWidth(text, reference){
+    const canvas = measureLabelWidth._c || (measureLabelWidth._c = document.createElement('canvas'));
+    const ctx = canvas.getContext('2d');
+    if(!ctx) return String(text || '').length * 7;
+    const cs = getComputedStyle(reference || document.body);
+    ctx.font = [cs.fontStyle, cs.fontVariant, cs.fontWeight, cs.fontSize, cs.fontFamily].filter(Boolean).join(' ');
+    return Math.ceil(ctx.measureText(String(text || '').trim()).width);
+  }
+
+  function sizeFilterSelect(select){
+    if(!select || !select.options || !select.options.length) return;
+    const wrap = select.closest('.rounded-select-wrap');
+    const btn = wrap && wrap.querySelector('.rounded-select-btn');
+    const ref = btn || select;
+    const labels = Array.from(select.options).map(o => String(o.textContent || o.label || '').trim()).filter(Boolean);
+    if(!labels.length) return;
+    const widest = Math.max.apply(null, labels.map(label => measureLabelWidth(label, ref)));
+    /* left pad 14 + right pad/chevron ~38 + breathing room 8 */
+    const width = Math.max(120, widest + 60);
+    if(wrap){
+      wrap.style.setProperty('width', width + 'px', 'important');
+      wrap.style.setProperty('min-width', width + 'px', 'important');
+      wrap.style.setProperty('max-width', width + 'px', 'important');
+      wrap.style.setProperty('flex', '0 0 ' + width + 'px', 'important');
+      if(btn){
+        btn.style.setProperty('width', width + 'px', 'important');
+        btn.style.setProperty('min-width', width + 'px', 'important');
+      }
+      const menu = wrap.querySelector('.rounded-select-menu');
+      if(menu){
+        menu.style.setProperty('min-width', width + 'px', 'important');
+        menu.style.setProperty('width', 'max-content', 'important');
+      }
+    }else{
+      select.style.setProperty('width', width + 'px', 'important');
+      select.style.setProperty('min-width', width + 'px', 'important');
     }
-  });
+  }
+
+  function sizeProviderFilterSelects(){
+    sizeFilterSelect(typeFilter);
+    sizeFilterSelect(envFilter);
+  }
 
   if(window.BO_SEG_BOUNCE){
     window.BO_SEG_BOUNCE.mountAll();
@@ -211,5 +254,17 @@
   updateCounts();
   applyFilters();
   updateSyncLabel();
+  sizeProviderFilterSelects();
+  requestAnimationFrame(sizeProviderFilterSelects);
+  setTimeout(sizeProviderFilterSelects, 0);
+  setTimeout(sizeProviderFilterSelects, 50);
+  setTimeout(sizeProviderFilterSelects, 200);
+
+  const filtersRoot = document.querySelector('.mad-filters');
+  if(filtersRoot && typeof MutationObserver !== 'undefined'){
+    const mo = new MutationObserver(function(){ sizeProviderFilterSelects(); });
+    mo.observe(filtersRoot, { childList: true, subtree: true });
+  }
+
   setInterval(updateSyncLabel, 15000);
 })();

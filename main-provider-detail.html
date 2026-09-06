@@ -13,7 +13,7 @@
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
 <link href="assets/css/main-admin-detail-executive.css?v=1.6.15" rel="stylesheet"/>
-<link href="assets/css/main-provider-executive.css?v=1.0.2" rel="stylesheet"/>
+<link href="assets/css/main-provider-executive.css?v=1.0.5" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 <script>
 (function(){
@@ -52,15 +52,15 @@
 <section class="report-content mad-workspace">
   <div class="mad-chrome">
     <div class="mad-tabs" role="tablist" aria-label="Provider sections">
-      <a class="mad-tab is-active" role="tab" aria-selected="true" href="main-provider-detail.html">Game Providers</a>
-      <a class="mad-tab" role="tab" aria-selected="false" href="main-provider-endpoints.html">Aggregation Endpoints</a>
-      <a class="mad-tab" role="tab" aria-selected="false" href="main-provider-credentials.html">API Credentials</a>
-      <a class="mad-tab" role="tab" aria-selected="false" href="main-provider-health.html">Health &amp; Latency</a>
+      <a class="mad-tab is-active" role="tab" aria-selected="true" href="main-provider-detail.html">Providers</a>
+      <a class="mad-tab" role="tab" aria-selected="false" href="main-provider-endpoints.html">Integration</a>
+      <a class="mad-tab" role="tab" aria-selected="false" href="main-provider-credentials.html">Access &amp; Security</a>
+      <a class="mad-tab" role="tab" aria-selected="false" href="main-provider-health.html">Activity Logs</a>
     </div>
     <div class="mad-chrome-actions">
       <span class="mad-sync" id="mpvSyncLabel"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> Synced just now</span>
       <button class="mad-btn mad-btn-ghost" type="button" id="mpvExportBtn"><i class="bi bi-upload"></i> Export</button>
-      <button class="mad-btn mad-btn-primary" type="button" id="mpvAddBtn"><i class="bi bi-plus-lg"></i> Add Provider</button>
+      <a class="mad-btn mad-btn-primary" href="main-provider-create.html" id="mpvAddBtn"><i class="bi bi-plus-lg"></i> Add Provider</a>
     </div>
   </div>
 
@@ -127,7 +127,7 @@
 <script src="assets/js/reports.js?v=1.0.22"></script>
 <script src="assets/js/auth.js?v=1.0.68"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
-<script src="assets/js/main-provider-detail.js?v=1.0.1"></script>
+<script src="assets/js/main-provider-detail.js?v=1.0.5"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
