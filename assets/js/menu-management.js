@@ -62,17 +62,6 @@
     return 'bi '+s;
   }
   async function api(url,opt){const r=await fetch(url,opt||{}),j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw new Error(j.message||'Request failed');return j;}
-  async function syncCurrentAdminMenus(){
-    // Menu Management edits the authoritative AdminMenu records, but auth.js keeps
-    // /auth/admin/me in local/session cache for fast page navigation. Without an
-    // immediate refresh, a menu moved from Top-level into a group can still render
-    // at its old position until the cache expires. Force the current session to
-    // reload its assigned menus after every menu/group mutation.
-    try{ sessionStorage.removeItem('bo_admin_me_refreshed_at'); }catch(e){}
-    if(window.BO_AUTH && typeof BO_AUTH.refreshMe==='function'){
-      try{ await BO_AUTH.refreshMe(true); }catch(e){}
-    }
-  }
   function status(id,text,type){const e=$(id);if(!e)return;e.textContent=text||'';e.className='upload-status '+(type||'');}
   function groupName(k){if(!k)return 'Top-level';const g=groups.find(x=>String(x.groupKey)===String(k));return g?g.title:String(k).replace(/[_-]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
 
@@ -693,7 +682,6 @@
       const j=await api(BO_AUTH.menuSaveUrl(),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(payload)});
       status('menuFormStatus',j.message||'Menu saved successfully.','success');
       await load();
-      await syncCurrentAdminMenus();
       setTimeout(closeModal,450);
     }catch(err){
       status('menuFormStatus',err.message,'error');
@@ -739,7 +727,6 @@
       status('groupFormStatus','Menu group saved successfully.','success');
       await loadGroups();
       await load();
-      await syncCurrentAdminMenus();
       if(returnToItemAfterGroup){
         returnToItemAfterGroup=false;
         resetGroupForm();
@@ -770,7 +757,6 @@
       const url=String(BO_AUTH.menuSaveUrl()).replace(/\/save(?:\?.*)?$/,'')+'/'+encodeURIComponent(id)+'/delete';
       await api(url,{method:'POST',headers:{...BO_AUTH.authHeader()}});
       await load();
-      await syncCurrentAdminMenus();
     }catch(err){
       window.BO_DIALOG&&BO_DIALOG.alert?BO_DIALOG.alert(err.message,{title:'Delete Menu Failed',type:'danger'}):alert(err.message);
     }
@@ -793,7 +779,6 @@
     try{
       await api(BO_AUTH.menuGroupDeleteUrl(id),{method:'POST',headers:{...BO_AUTH.authHeader()}});
       await load();
-      await syncCurrentAdminMenus();
     }catch(err){
       window.BO_DIALOG&&BO_DIALOG.alert?BO_DIALOG.alert(err.message,{title:'Delete Group Failed',type:'danger'}):alert(err.message);
     }
@@ -817,7 +802,7 @@
     });
 
     $('openMenuModalBtn')?.addEventListener('click',openNew);
-    $('refreshMenuBtn')?.addEventListener('click',async()=>{ await load(); await syncCurrentAdminMenus(); });
+    $('refreshMenuBtn')?.addEventListener('click',load);
     document.querySelectorAll('[data-close-nm]').forEach(x=>x.addEventListener('click',closeModal));
     $('newMenuModal')?.addEventListener('click',e=>{if(e.target===$('newMenuModal'))closeModal();});
     $('nmSaveBtn')?.addEventListener('click',()=>{ if(nmMode==='group') saveGroup(); else saveItem(); });
