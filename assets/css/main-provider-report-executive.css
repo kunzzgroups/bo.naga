@@ -27,6 +27,7 @@ body.main-report-exec-page .mre-tab.mad-tab{
   border-radius:0!important;
   background:transparent!important;
   box-shadow:none!important;
+  text-decoration:none!important;
 }
 body.main-report-exec-page .mre-tab.mad-tab.is-active{
   background:transparent!important;

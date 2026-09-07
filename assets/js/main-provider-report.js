@@ -454,7 +454,7 @@ function exportCsv(){
 
 function setupTabs(){
   document.querySelectorAll('[data-report-tab]').forEach(b=>b.addEventListener('click',()=>{
-    document.querySelectorAll('[data-report-tab]').forEach(x=>{
+    document.querySelectorAll('.mre-tabs .mad-tab').forEach(x=>{
       const on=x===b;
       x.classList.toggle('is-active',on);
       x.classList.toggle('active',on);
