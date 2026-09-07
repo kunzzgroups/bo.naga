@@ -4,6 +4,7 @@
   const money = v => Number(v || 0).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const nearZero = v => Math.abs(Number(v || 0)) < 0.005;
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  let currency = 'MYR';
 
   async function api(path) {
     const r = await fetch(API_CONFIG.BASE_URL + path, { headers: BO_AUTH.authHeader(), cache: 'no-store' });
@@ -54,7 +55,15 @@
   function qs(from, to) {
     const f = from || $('mainFrom').value;
     const t = to || $('mainTo').value;
-    return `?from=${encodeURIComponent(f)}&to=${encodeURIComponent(addDay(t))}`;
+    return `?from=${encodeURIComponent(f)}&to=${encodeURIComponent(addDay(t))}&currency=${encodeURIComponent(currency || 'MYR')}`;
+  }
+  function currencyLabel() {
+    return currency || 'MYR';
+  }
+  function updateCurrencyLabels() {
+    document.querySelectorAll('.currency-unit').forEach(el => {
+      el.textContent = currencyLabel();
+    });
   }
   function prettyDate(v) {
     const a = String(v || '').split('-');
@@ -276,8 +285,8 @@
     const vals = (rows || []).map(r => Number(r.netProfit || 0));
     const peak = vals.length ? Math.max(...vals) : Number(summaryNet || 0);
     const avg = days > 0 ? Number(summaryNet || 0) / days : 0;
-    if ($('npAvg')) $('npAvg').textContent = `${money(avg)} MYR`;
-    if ($('npPeak')) $('npPeak').textContent = `${money(peak)} MYR`;
+    if ($('npAvg')) $('npAvg').textContent = `${money(avg)} ${currencyLabel()}`;
+    if ($('npPeak')) $('npPeak').textContent = `${money(peak)} ${currencyLabel()}`;
     if ($('npPeakNote')) $('npPeakNote').textContent = plateauNote(rows);
     const sync = $('npSyncLabel');
     if (sync) {
@@ -338,7 +347,7 @@
       tip.classList.toggle('is-neg', n < 0);
       tip.innerHTML =
         `<div class="tip-date">${tipDate}</div>` +
-        `<div class="tip-net${n < 0 ? ' is-neg' : ''}">${money(n)} <small>MYR</small></div>`;
+        `<div class="tip-net${n < 0 ? ' is-neg' : ''}">${money(n)} <small>${currencyLabel()}</small></div>`;
       const xi = map.x(i);
       const yi = map.y(n);
       const bandW = Math.max(18, map.W / Math.max(rows.length * 1.15, 12));
@@ -677,8 +686,28 @@
     });
   }
 
+  function initCurrencyPicker() {
+    const buttons = document.querySelectorAll('.np-currency-seg [data-currency], .mre-currency-seg [data-currency]');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const next = btn.getAttribute('data-currency') || 'MYR';
+        if (next === currency) return;
+        currency = next;
+        buttons.forEach(b => {
+          const on = b === btn;
+          b.classList.toggle('is-active', on);
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+        updateCurrencyLabels();
+        load();
+      });
+    });
+    updateCurrencyLabels();
+  }
+
   BO_AUTH.requireLogin();
   initThemeToggle();
   initDatePicker();
+  initCurrencyPicker();
   load();
 })();

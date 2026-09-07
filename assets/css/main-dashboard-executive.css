@@ -272,6 +272,14 @@ body.main-dashboard-page{
   flex-wrap:wrap;
   margin:0 0 6px;
 }
+.np-controls{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:12px;
+  min-width:0;
+  flex:0 1 auto;
+}
 .main-exec-date-field{
   width:min(308px, 100%);
   margin:0;
@@ -280,6 +288,80 @@ body.main-dashboard-page{
   position:relative;
   z-index:5;
 }
+.np-currency-group,
+body.main-dashboard-page .mre-currency-group{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+  flex-wrap:wrap;
+}
+.np-currency-label,
+body.main-dashboard-page .mre-scope-label{
+  flex:0 0 auto;
+  font-size:11px;
+  font-weight:750;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--bo-muted);
+  line-height:1;
+}
+.np-currency-seg,
+body.main-dashboard-page .mre-currency-seg{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:2px !important;
+  padding:4px !important;
+  border-radius:8px !important;
+  background:#E8EDF5 !important;
+  box-shadow:inset 0 0 0 1px rgba(18,59,102,.04) !important;
+  border:0 !important;
+}
+.np-cur-btn,
+body.main-dashboard-page .mre-cur-btn,
+body.main-dashboard-page .np-currency-seg > button,
+body.main-dashboard-page .mre-currency-seg > button{
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  border:0 !important;
+  outline:0 !important;
+  cursor:pointer;
+  height:32px !important;
+  min-height:32px !important;
+  padding:0 16px !important;
+  border-radius:8px !important;
+  background:transparent !important;
+  color:#5B6B7C !important;
+  font-size:13px !important;
+  font-weight:650 !important;
+  letter-spacing:.01em;
+  line-height:1 !important;
+  box-shadow:none !important;
+  transition:background .14s var(--bo-ease),color .14s var(--bo-ease),box-shadow .14s var(--bo-ease),font-weight .14s var(--bo-ease);
+}
+.np-cur-btn:hover:not(.is-active),
+body.main-dashboard-page .mre-cur-btn:hover:not(.is-active),
+body.main-dashboard-page .np-currency-seg > button:hover:not(.is-active),
+body.main-dashboard-page .mre-currency-seg > button:hover:not(.is-active){
+  color:var(--bo-navy) !important;
+  background:rgba(255,255,255,.45) !important;
+}
+.np-cur-btn.is-active,
+body.main-dashboard-page .mre-cur-btn.is-active,
+body.main-dashboard-page .np-currency-seg > button.is-active,
+body.main-dashboard-page .mre-currency-seg > button.is-active{
+  background:#123B66 !important;
+  color:#fff !important;
+  font-weight:750 !important;
+  box-shadow:0 1px 3px rgba(18,59,102,.22) !important;
+}
+.np-cur-btn:focus-visible,
+body.main-dashboard-page .mre-cur-btn:focus-visible{
+  outline:2px solid var(--bo-cyan) !important;
+  outline-offset:2px;
+}
+.np-cur-btn:active,
+body.main-dashboard-page .mre-cur-btn:active{transform:scale(.97)}
 .main-dashboard-page .main-exec-date-field .ref-range-wrap,
 .main-dashboard-page .main-exec-date-field .ref-range-trigger{width:100%!important}
 .main-dashboard-page .main-exec-date-field .ref-range-trigger{
@@ -658,7 +740,14 @@ body.main-dashboard-page{
   .main-exec{padding:14px 12px 20px}
   .main-dashboard-page .report-topbar{padding:10px 12px;gap:8px}
   .np-head{flex-direction:column;align-items:stretch;gap:14px}
+  .np-controls{width:100%}
   .main-exec-date-field{width:100%}
+  .np-currency-group,
+  .mre-currency-group{width:100%}
+  .np-currency-seg,
+  .mre-currency-seg{flex:1;justify-content:space-between;min-width:0}
+  .np-cur-btn,
+  .mre-cur-btn{padding:0 10px !important;flex:1 1 auto}
   .main-dashboard-page .main-exec-date-field .ref-range-picker{
     position:fixed;left:12px;right:12px;top:120px;max-width:none;
   }
@@ -697,6 +786,27 @@ html[data-bo-theme="dark"] body.main-dashboard-page .report-avatar{
 html[data-bo-theme="dark"] body.main-dashboard-page .report-actions .bo-account-link{
   background:var(--bo-surface);
   color:var(--bo-text-secondary);
+}
+html[data-bo-theme="dark"] body.main-dashboard-page .np-currency-seg,
+html[data-bo-theme="dark"] body.main-dashboard-page .mre-currency-seg{
+  background:rgba(255,255,255,.08) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06) !important;
+}
+html[data-bo-theme="dark"] body.main-dashboard-page .np-cur-btn,
+html[data-bo-theme="dark"] body.main-dashboard-page .mre-cur-btn{
+  background:transparent !important;
+  color:var(--bo-muted) !important;
+}
+html[data-bo-theme="dark"] body.main-dashboard-page .np-cur-btn:hover:not(.is-active),
+html[data-bo-theme="dark"] body.main-dashboard-page .mre-cur-btn:hover:not(.is-active){
+  background:rgba(255,255,255,.08) !important;
+  color:#fff !important;
+}
+html[data-bo-theme="dark"] body.main-dashboard-page .np-cur-btn.is-active,
+html[data-bo-theme="dark"] body.main-dashboard-page .mre-cur-btn.is-active{
+  background:#123B66 !important;
+  color:#fff !important;
+  box-shadow:0 1px 3px rgba(0,0,0,.35) !important;
 }
 html[data-bo-theme="dark"] body.main-dashboard-page .ref-range-picker{
   background:var(--bo-surface)!important;
