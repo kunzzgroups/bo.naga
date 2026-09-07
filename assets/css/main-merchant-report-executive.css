@@ -1,0 +1,204 @@
+/* Deep Navy Cyan — main_merchant_report.html
+   Extends main-provider-report-executive.css shell */
+
+body.main-merchant-report-page .mre-tab.mad-tab.is-active{
+  color:var(--bo-navy)!important;
+  border-bottom:2px solid var(--bo-cyan)!important;
+}
+
+body.main-merchant-report-page .mad-pill-count.is-danger-count{
+  color:var(--bo-danger);
+  background:rgba(239,51,64,.1);
+}
+body.main-merchant-report-page .mad-pill-count.is-success-count{
+  color:#12B76A;
+  background:transparent;
+  padding:0;min-width:0;height:auto;
+}
+body.main-merchant-report-page .mad-pill-count.is-warn-count{
+  color:#F79009;
+  background:transparent;
+  padding:0;min-width:0;height:auto;
+}
+
+body.main-merchant-report-page .mmr-merchant{
+  display:flex;align-items:center;gap:12px;min-width:0;
+}
+body.main-merchant-report-page .mmr-mark{
+  flex:0 0 40px;width:40px;height:40px;border-radius:50%;
+  display:grid;place-items:center;
+  font-size:12px;font-weight:800;letter-spacing:.02em;
+  color:#fff;background:var(--bo-navy);
+}
+body.main-merchant-report-page .mmr-mark.is-teal{background:#0E8F8B}
+body.main-merchant-report-page .mmr-mark.is-violet{background:#6D5AE6}
+body.main-merchant-report-page .mmr-mark.is-amber{background:#D97706}
+body.main-merchant-report-page .mmr-mark.is-rose{background:#E11D48}
+body.main-merchant-report-page .mmr-mark.is-slate{background:#475569}
+body.main-merchant-report-page .mmr-merchant-copy{
+  min-width:0;display:flex;flex-direction:column;gap:2px;
+}
+body.main-merchant-report-page .mmr-merchant-copy b{
+  font-size:13px;font-weight:750;color:var(--bo-navy);line-height:1.25;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+body.main-merchant-report-page .mmr-code{
+  font-weight:650;color:var(--bo-muted);margin-left:4px;
+}
+body.main-merchant-report-page .mmr-merchant-copy small{
+  font-size:11px;font-weight:600;color:var(--bo-muted);line-height:1.2;
+}
+
+body.main-merchant-report-page .mmr-table .mre-num{
+  font-variant-numeric:tabular-nums;
+  font-weight:700;color:var(--bo-text-secondary);
+  white-space:nowrap;
+}
+body.main-merchant-report-page .mmr-stack{
+  display:flex;flex-direction:column;align-items:flex-end;gap:2px;
+}
+body.main-merchant-report-page .mmr-stack small{
+  font-size:11px;font-weight:600;color:var(--bo-muted);
+}
+body.main-merchant-report-page .mmr-wl{
+  display:inline-flex;flex-direction:column;align-items:flex-end;gap:2px;
+}
+body.main-merchant-report-page .mmr-wl b{font-weight:800}
+body.main-merchant-report-page .mmr-wl em{
+  font-style:normal;font-size:11px;font-weight:700;
+}
+body.main-merchant-report-page .mmr-wl.is-pos b,
+body.main-merchant-report-page .mmr-wl.is-pos em{color:var(--bo-success)}
+body.main-merchant-report-page .mmr-wl.is-neg b,
+body.main-merchant-report-page .mmr-wl.is-neg em{color:var(--bo-danger)}
+body.main-merchant-report-page .mmr-wl.is-flat b,
+body.main-merchant-report-page .mmr-wl.is-flat em{color:var(--bo-muted)}
+
+body.main-merchant-report-page .mmr-actions{
+  display:inline-flex;align-items:center;gap:6px;
+}
+body.main-merchant-report-page .mre-total-row .mre-num.is-pos{color:var(--bo-success)!important}
+body.main-merchant-report-page .mre-total-row .mre-num.is-neg{color:var(--bo-danger)!important}
+
+/* ---- Settlement Report ---- */
+body.main-merchant-report-page .msr-table{min-width:1180px}
+body.main-merchant-report-page .msr-id-cell{
+  display:flex;flex-direction:column;gap:3px;min-width:0;
+}
+body.main-merchant-report-page .msr-id-cell b{
+  font-size:13px;font-weight:800;color:var(--bo-navy);letter-spacing:-.01em;
+}
+body.main-merchant-report-page .msr-id-cell small{
+  font-size:11.5px;font-weight:600;color:var(--bo-muted);
+}
+body.main-merchant-report-page .msr-entity{
+  display:flex;align-items:flex-start;gap:12px;min-width:0;
+}
+body.main-merchant-report-page .msr-mark{
+  flex:0 0 40px;width:40px;height:40px;border-radius:50%;
+  display:grid;place-items:center;margin-top:1px;
+  font-size:12px;font-weight:800;letter-spacing:.02em;
+  color:#fff;background:var(--bo-navy);
+}
+body.main-merchant-report-page .msr-mark.is-teal{background:#0E8F8B}
+body.main-merchant-report-page .msr-mark.is-violet{background:#6D5AE6}
+body.main-merchant-report-page .msr-mark.is-amber{background:#D97706}
+body.main-merchant-report-page .msr-mark.is-rose{background:#E11D48}
+body.main-merchant-report-page .msr-mark.is-slate{background:#475569}
+body.main-merchant-report-page .msr-mark.is-blue{background:#1688F8}
+body.main-merchant-report-page .msr-entity-copy{
+  min-width:0;display:flex;flex-direction:column;gap:3px;
+}
+body.main-merchant-report-page .msr-entity-top{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;
+}
+body.main-merchant-report-page .msr-entity-top b{
+  font-size:13px;font-weight:750;color:var(--bo-navy);line-height:1.25;
+}
+body.main-merchant-report-page .msr-entity-top .msr-code{
+  font-size:12px;font-weight:650;color:var(--bo-muted);
+}
+body.main-merchant-report-page .msr-type-tag{
+  display:inline-flex;align-items:center;height:18px;padding:0 7px;
+  border-radius:6px;font-size:10.5px;font-weight:750;letter-spacing:.02em;
+  background:rgba(33,166,215,.12);color:#0B7FA8;
+}
+body.main-merchant-report-page .msr-type-tag.is-merchant{
+  background:rgba(22,136,248,.12);color:#1570EF;
+}
+body.main-merchant-report-page .msr-due-line{
+  font-size:11.5px;font-weight:600;color:var(--bo-muted);
+}
+body.main-merchant-report-page .msr-table .mre-num{
+  font-variant-numeric:tabular-nums;font-weight:750;white-space:nowrap;
+  color:var(--bo-text-secondary);
+}
+body.main-merchant-report-page .msr-table .mre-num.is-paid{color:#12B76A!important}
+body.main-merchant-report-page .msr-table .mre-num.is-due{color:#F79009!important}
+body.main-merchant-report-page .msr-table .mre-num.is-risk{color:#EF3340!important}
+body.main-merchant-report-page .msr-remain-cell{
+  display:flex;flex-direction:column;align-items:flex-end;gap:2px;
+}
+body.main-merchant-report-page .msr-remain-cell b{font-weight:800}
+body.main-merchant-report-page .msr-remain-cell small{
+  font-size:11px;font-weight:700;color:#12B76A;
+}
+body.main-merchant-report-page .msr-remain-note{
+  display:block;margin-top:2px;font-size:11px;font-weight:650;color:var(--bo-muted);
+}
+body.main-merchant-report-page .msr-status{
+  display:inline-flex;align-items:center;gap:7px;
+  height:28px;padding:0 10px;border-radius:999px;
+  font-size:12px;font-weight:700;white-space:nowrap;
+}
+body.main-merchant-report-page .msr-status::before{
+  content:"";width:7px;height:7px;border-radius:50%;flex:0 0 auto;
+  background:currentColor;
+}
+body.main-merchant-report-page .msr-status.is-settled{
+  background:rgba(18,183,106,.1);color:#12B76A;
+}
+body.main-merchant-report-page .msr-status.is-pending{
+  background:rgba(247,144,9,.12);color:#F79009;
+}
+body.main-merchant-report-page .msr-status.is-disputed{
+  background:rgba(239,51,64,.1);color:#EF3340;
+}
+body.main-merchant-report-page .msr-actions{
+  display:inline-flex;align-items:center;gap:6px;
+}
+body.main-merchant-report-page .msr-actions .mad-icon-btn{
+  width:32px;height:32px;border-radius:8px;
+  border:1px solid var(--bo-border);
+  background:var(--bo-surface);
+  color:var(--bo-muted);
+  display:inline-grid;place-items:center;
+  font-size:14px;cursor:pointer;
+  transition:background .14s ease,color .14s ease,border-color .14s ease;
+}
+body.main-merchant-report-page .msr-actions .mad-icon-btn:hover{
+  background:#F5F8FB;color:var(--bo-navy);border-color:#D0D7E2;
+}
+body.main-merchant-report-page .msr-total-row td{
+  background:rgba(33,166,215,.06)!important;
+}
+body.main-merchant-report-page .msr-total-row .mre-num.is-paid{color:#12B76A!important}
+body.main-merchant-report-page .msr-next-batch{
+  text-align:right;font-size:12px;font-weight:650;color:var(--bo-muted);
+  white-space:nowrap;
+}
+
+html[data-bo-theme="dark"] body.main-merchant-report-page .mmr-merchant-copy b,
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-id-cell b,
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-entity-top b{color:var(--bo-text)}
+html[data-bo-theme="dark"] body.main-merchant-report-page .mmr-table .mre-num,
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-table .mre-num{color:var(--bo-text)}
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-actions .mad-icon-btn{
+  background:var(--bo-surface);border-color:var(--bo-border);color:var(--bo-muted);
+}
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-actions .mad-icon-btn:hover{
+  background:rgba(255,255,255,.06);color:#fff;
+}
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-total-row td{
+  background:rgba(33,166,215,.1)!important;
+}
