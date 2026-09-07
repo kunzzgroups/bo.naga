@@ -429,7 +429,17 @@
       deltaClass = 'mas-kpi-meta is-success';
     }
 
-    const alerts = events.filter(e => e.status === 'blocked' || e.status === 'failed').length;
+    // Security Alerts are security-relevant admin activity, not only failures.
+    // Count every audited admin operation (create/edit/delete/credit/role/permission/etc.)
+    // plus failed/blocked login attempts. Successful logins are tracked in Total Audit Events
+    // and Active Admin Sessions, but do not increase the Security Alerts counter.
+    const securityAlerts = events.filter(e =>
+      e.source === 'operation' ||
+      (e.source === 'login' && (e.status === 'blocked' || e.status === 'failed'))
+    );
+    const alerts = securityAlerts.length;
+    const failedLogins = securityAlerts.filter(e => e.source === 'login').length;
+    const adminActions = securityAlerts.filter(e => e.source === 'operation').length;
     const sessionUsers = new Set(
       events
         .filter(e => e.source === 'login' && e.status === 'success' && e.at && e.at.getTime() >= d1)
@@ -441,8 +451,14 @@
     if(deltaEl){ deltaEl.className = deltaClass; deltaEl.textContent = deltaText; }
     if(alertsEl) alertsEl.textContent = String(alerts);
     if(alertsMeta){
-      alertsMeta.className = 'mas-kpi-meta' + (alerts ? ' is-danger' : '');
-      alertsMeta.textContent = alerts ? (alerts + ' need review') : 'No active alerts';
+      alertsMeta.className = 'mas-kpi-meta' + (failedLogins ? ' is-danger' : (alerts ? ' is-success' : ''));
+      if(!alerts){
+        alertsMeta.textContent = 'No tracked security activity';
+      }else if(failedLogins){
+        alertsMeta.textContent = adminActions + ' admin action' + (adminActions === 1 ? '' : 's') + ' · ' + failedLogins + ' failed login' + (failedLogins === 1 ? '' : 's');
+      }else{
+        alertsMeta.textContent = adminActions + ' admin action' + (adminActions === 1 ? '' : 's') + ' tracked';
+      }
     }
     if(sessionsEl) sessionsEl.textContent = String(sessionUsers.size);
     if(sessionsMeta){
