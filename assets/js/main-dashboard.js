@@ -323,6 +323,7 @@
     const band = root.querySelector('.trend-hover-band');
     const svg = root.querySelector('.trend-svg');
     if (!tip || !band || !svg || !rows.length) return;
+    let pinned = null;
 
     const hit = (clientX, clientY) => {
       const rect = svg.getBoundingClientRect();
@@ -372,11 +373,28 @@
     };
 
     root.onmousemove = e => {
+      if (pinned != null) return;
       const i = hit(e.clientX, e.clientY);
       if (i == null) return hide();
       show(i, e.clientX, e.clientY);
     };
-    root.onmouseleave = hide;
+    root.onmouseleave = () => {
+      if (pinned != null) return;
+      hide();
+    };
+    root.onclick = e => {
+      const i = hit(e.clientX, e.clientY);
+      if (i == null) {
+        pinned = null;
+        return hide();
+      }
+      if (pinned === i) {
+        pinned = null;
+        return hide();
+      }
+      pinned = i;
+      show(i, e.clientX, e.clientY);
+    };
 
     requestAnimationFrame(() => {
       const last = rows.length - 1;
@@ -503,9 +521,14 @@
       setDelta(0, 0, days);
       updateFooter([], days, 0);
       const msg = String(e && e.message || '');
-      const friendly = /failed to fetch|networkerror|load failed|localhost:8080|cloudflare/i.test(msg)
-        ? (msg || 'Unable to reach server. Check network and try again.')
-        : (msg || 'Unable to load dashboard');
+      const localOrigin = /^(https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?)/i.test(location.origin);
+      const fetchFail = /failed to fetch|networkerror|load failed|cloudflare/i.test(msg);
+      let friendly = msg || 'Unable to load dashboard';
+      if (fetchFail && localOrigin) {
+        friendly = 'API blocked by CORS from Live Server (127.0.0.1). Open this page from the same site as the API, or point bo_api_base to a local backend.';
+      } else if (fetchFail) {
+        friendly = 'Unable to reach server. Check network and try again.';
+      }
       $('profitTrend').innerHTML = `<div class="exec-empty text-danger">${friendly}</div>`;
     } finally {
       root.classList.remove('main-exec-loading');
@@ -553,21 +576,27 @@
   }
   function renderCalendar() {
     const monthBtn = $('mainCalMonth'), yearBtn = $('mainCalYear'), monthGrid = $('mainCalMonthGrid'), yearGrid = $('mainCalYearGrid'), dayView = $('mainCalDayView'), days = $('mainCalDays');
-    monthBtn.innerHTML = MONTHS[pickerState.view.getMonth()] + ' <i class="bi bi-chevron-down"></i>';
-    yearBtn.innerHTML = pickerState.view.getFullYear() + ' <i class="bi bi-chevron-down"></i>';
-    monthGrid.innerHTML = MONTHS.map((m, i) => `<button type="button" data-main-month="${i}" class="${i === pickerState.view.getMonth() ? 'active' : ''}">${m}</button>`).join('');
-    yearGrid.innerHTML = Array.from({ length: 12 }, (_, i) => pickerState.yearPageStart + i).map(y => `<button type="button" data-main-year="${y}" class="${y === pickerState.view.getFullYear() ? 'active' : ''}">${y}</button>`).join('');
+    const monthName = MONTHS[pickerState.view.getMonth()];
+    const yearNum = pickerState.view.getFullYear();
+    monthBtn.innerHTML = monthName + ' <i class="bi bi-chevron-down" aria-hidden="true"></i>';
+    yearBtn.innerHTML = yearNum + ' <i class="bi bi-chevron-down" aria-hidden="true"></i>';
+    monthBtn.setAttribute('aria-label', `Month ${monthName}`);
+    yearBtn.setAttribute('aria-label', `Year ${yearNum}`);
+    $('mainCalPrev').setAttribute('aria-label', pickerState.mode === 'years' ? 'Previous years' : 'Previous month');
+    $('mainCalNext').setAttribute('aria-label', pickerState.mode === 'years' ? 'Next years' : 'Next month');
+    monthGrid.innerHTML = MONTHS.map((m, i) => `<button type="button" data-main-month="${i}" class="${i === pickerState.view.getMonth() ? 'active' : ''}" aria-label="${m}">${m}</button>`).join('');
+    yearGrid.innerHTML = Array.from({ length: 12 }, (_, i) => pickerState.yearPageStart + i).map(y => `<button type="button" data-main-year="${y}" class="${y === pickerState.view.getFullYear() ? 'active' : ''}" aria-label="${y}">${y}</button>`).join('');
     monthGrid.classList.toggle('show', pickerState.mode === 'months');
     yearGrid.classList.toggle('show', pickerState.mode === 'years');
     dayView.classList.toggle('hide', pickerState.mode !== 'days');
     const y0 = pickerState.view.getFullYear(), m = pickerState.view.getMonth(), first = new Date(y0, m, 1), last = new Date(y0, m + 1, 0), start = first.getDay(), total = last.getDate(), from = $('mainFrom').value || '', to = $('mainTo').value || '';
     let html = '', prevLast = new Date(y0, m, 0).getDate();
-    for (let i = 0; i < start; i++) html += `<button type="button" class="muted" disabled>${prevLast - start + i + 1}</button>`;
+    for (let i = 0; i < start; i++) html += `<button type="button" class="muted" disabled aria-hidden="true">${prevLast - start + i + 1}</button>`;
     for (let d = 1; d <= total; d++) {
       const val = fmt(new Date(y0, m, d)), inRange = from && to && val >= from && val <= to, isEdge = val === from || val === to;
-      html += `<button type="button" data-main-day="${val}" class="${inRange ? 'in-range' : ''} ${isEdge ? 'selected' : ''}">${d}</button>`;
+      html += `<button type="button" data-main-day="${val}" class="${inRange ? 'in-range' : ''} ${isEdge ? 'selected' : ''}" aria-label="${niceDate(val)}" aria-pressed="${isEdge ? 'true' : 'false'}">${d}</button>`;
     }
-    for (let i = 1; i <= 42 - start - total; i++) html += `<button type="button" class="muted" disabled>${i}</button>`;
+    for (let i = 1; i <= 42 - start - total; i++) html += `<button type="button" class="muted" disabled aria-hidden="true">${i}</button>`;
     days.innerHTML = html;
   }
   function setRange(from, to, preset = '', reload = true) {
@@ -580,24 +609,36 @@
   }
   function initDatePicker() {
     const trigger = $('mainDateTrigger'), picker = $('mainRangePicker');
+    const setPickerOpen = open => {
+      picker.classList.toggle('show', !!open);
+      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
     const [a, b] = presetRange('last7');
     pickerState.view = new Date(a + 'T00:00:00');
     setRange(a, b, 'last7', false);
+    setPickerOpen(false);
     trigger.addEventListener('click', e => {
       e.stopPropagation();
-      picker.classList.toggle('show');
+      const next = !picker.classList.contains('show');
+      setPickerOpen(next);
       pickerState.mode = 'days';
       renderCalendar();
     });
     document.addEventListener('click', e => {
-      if (!e.target.closest('.main-exec-date-field')) picker.classList.remove('show');
+      if (!e.target.closest('.main-exec-date-field')) setPickerOpen(false);
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && picker.classList.contains('show')) {
+        setPickerOpen(false);
+        trigger.focus();
+      }
     });
     document.querySelectorAll('[data-range-preset]').forEach(btn => btn.addEventListener('click', e => {
       e.stopPropagation();
       const [x, y] = presetRange(btn.dataset.rangePreset);
       pickerState.view = new Date(x + 'T00:00:00');
       setRange(x, y, btn.dataset.rangePreset, true);
-      picker.classList.remove('show');
+      setPickerOpen(false);
     }));
     $('mainCalPrev').onclick = e => {
       e.stopPropagation();
@@ -655,7 +696,7 @@
       markPreset('');
       updateDateLabel();
       renderCalendar();
-      picker.classList.remove('show');
+      setPickerOpen(false);
       load();
     };
   }
@@ -670,14 +711,28 @@
     document.documentElement.setAttribute('data-bo-theme', next);
     try{ localStorage.setItem(THEME_KEY, next); }catch(e){}
     const btn = document.getElementById('boThemeToggle');
-    if(!btn) return;
-    btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-    btn.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
-    btn.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
-    const sun = btn.querySelector('[data-theme-icon="sun"]');
-    const moon = btn.querySelector('[data-theme-icon="moon"]');
-    if(sun) sun.hidden = isDark;
-    if(moon) moon.hidden = !isDark;
+    if(btn){
+      btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+      btn.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+      btn.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+      /* Spec: sun in light mode, moon in dark mode */
+      const sun = btn.querySelector('[data-theme-icon="sun"]');
+      const moon = btn.querySelector('[data-theme-icon="moon"]');
+      if(sun){
+        sun.hidden = isDark;
+        sun.toggleAttribute('hidden', isDark);
+      }
+      if(moon){
+        moon.hidden = !isDark;
+        moon.toggleAttribute('hidden', !isDark);
+      }
+    }
+    /* Refresh chart fills/tips so theme swap is immediate */
+    const from = $('mainFrom')?.value;
+    const to = $('mainTo')?.value;
+    if(from && to && $('profitTrend')?.querySelector('.trend-svg')){
+      load();
+    }
   }
   function initThemeToggle(){
     applyTheme(currentTheme());

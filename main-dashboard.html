@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Dashboard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <link href="assets/css/reports.css?v=1.0.45" rel="stylesheet">
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/brand-agent-standard.css?v=1.0.2" rel="stylesheet">
-<link href="assets/css/main-dashboard-executive.css?v=3.0.16" rel="stylesheet">
+<link href="assets/css/main-dashboard-executive.css?v=3.0.24" rel="stylesheet">
 <script>
 (function(){
   try{
@@ -20,41 +20,46 @@
 </head>
 <body class="report-body brand-agent-standard main-dashboard-page" data-access-page="main_dashboard">
 <div class="report-shell">
-  <aside class="report-sidebar" id="reportSidebar">
+  <aside class="report-sidebar" id="reportSidebar" aria-label="Main navigation">
     <div class="report-brand">
       <div>Backoffice<br><small>Executive Panel</small></div>
-      <button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button>
+      <button class="close-side" data-close-sidebar type="button" aria-label="Close menu"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
     </div>
-    <nav class="report-nav"></nav>
+    <nav class="report-nav" aria-label="Backoffice sections"></nav>
   </aside>
   <div class="sidebar-overlay" data-close-sidebar></div>
   <main class="report-main">
     <header class="report-topbar">
-      <button class="hamb" data-open-sidebar type="button" aria-label="Open menu"><i class="bi bi-list"></i></button>
+      <button class="hamb" data-open-sidebar type="button" aria-label="Open menu"><i class="bi bi-list" aria-hidden="true"></i></button>
+      <h1 class="visually-hidden">Executive Dashboard</h1>
       <div></div>
       <div class="report-actions">
         <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
-          <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
-          <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
+          <i class="bi bi-sun-fill" data-theme-icon="sun" aria-hidden="true"></i>
+          <i class="bi bi-moon-fill" data-theme-icon="moon" hidden aria-hidden="true"></i>
         </button>
         <div data-bo-profile></div>
       </div>
     </header>
-    <section class="main-exec" id="mainExec">
+    <section class="main-exec" id="mainExec" aria-labelledby="npMetricHeading">
       <article class="np-card">
         <header class="np-head">
           <div class="np-controls">
             <div class="main-exec-date-field ref-date-field">
               <div class="ref-range-wrap">
-                <button class="ref-range-trigger" id="mainDateTrigger" type="button">
-                  <span class="ref-range-icon"><i class="bi bi-calendar3"></i></span>
+                <button class="ref-range-trigger" id="mainDateTrigger" type="button"
+                  aria-label="Date range"
+                  aria-haspopup="dialog"
+                  aria-expanded="false"
+                  aria-controls="mainRangePicker">
+                  <span class="ref-range-icon"><i class="bi bi-calendar3" aria-hidden="true"></i></span>
                   <span id="mainDateLabel">Select date range</span>
-                  <i class="bi bi-chevron-down ms-auto"></i>
+                  <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                 </button>
                 <input id="mainFrom" type="hidden">
                 <input id="mainTo" type="hidden">
-                <div class="ref-range-picker" id="mainRangePicker">
-                  <div class="ref-range-presets">
+                <div class="ref-range-picker" id="mainRangePicker" role="dialog" aria-label="Choose date range">
+                  <div class="ref-range-presets" role="group" aria-label="Date presets">
                     <button type="button" data-range-preset="today">Today</button>
                     <button type="button" data-range-preset="yesterday">Yesterday</button>
                     <button type="button" data-range-preset="last7">Last 7 Days</button>
@@ -67,24 +72,24 @@
                   </div>
                   <div class="ref-range-calendar">
                     <div class="ref-cal-head">
-                      <button type="button" id="mainCalPrev"><i class="bi bi-chevron-left"></i></button>
-                      <button type="button" class="ref-head-pick" id="mainCalMonth"></button>
-                      <button type="button" class="ref-head-pick" id="mainCalYear"></button>
-                      <button type="button" id="mainCalNext"><i class="bi bi-chevron-right"></i></button>
+                      <button type="button" id="mainCalPrev" aria-label="Previous month"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+                      <button type="button" class="ref-head-pick" id="mainCalMonth" aria-label="Select month"></button>
+                      <button type="button" class="ref-head-pick" id="mainCalYear" aria-label="Select year"></button>
+                      <button type="button" id="mainCalNext" aria-label="Next month"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
                     </div>
-                    <div class="ref-cal-month-grid" id="mainCalMonthGrid"></div>
-                    <div class="ref-cal-year-grid" id="mainCalYearGrid"></div>
+                    <div class="ref-cal-month-grid" id="mainCalMonthGrid" role="listbox" aria-label="Months"></div>
+                    <div class="ref-cal-year-grid" id="mainCalYearGrid" role="listbox" aria-label="Years"></div>
                     <div class="ref-cal-day-view" id="mainCalDayView">
-                      <div class="ref-cal-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
-                      <div class="ref-cal-days" id="mainCalDays"></div>
+                      <div class="ref-cal-week" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+                      <div class="ref-cal-days" id="mainCalDays" role="grid" aria-label="Calendar days"></div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
             <div class="mre-currency-group np-currency-group" aria-label="Currency">
-              <span class="mre-scope-label np-currency-label">Currency</span>
-              <div class="mre-currency-seg np-currency-seg" role="group" aria-label="Select currency">
+              <span class="mre-scope-label np-currency-label" id="npCurrencyLabel">Currency</span>
+              <div class="mre-currency-seg np-currency-seg" role="group" aria-labelledby="npCurrencyLabel">
                 <button type="button" class="mre-cur-btn np-cur-btn is-active" data-currency="MYR" aria-pressed="true">MYR</button>
                 <button type="button" class="mre-cur-btn np-cur-btn" data-currency="USD" aria-pressed="false">USD</button>
                 <button type="button" class="mre-cur-btn np-cur-btn" data-currency="USDT" aria-pressed="false">USDT</button>
@@ -95,7 +100,7 @@
           </div>
 
           <div class="np-metric">
-            <div class="np-metric-label"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i> Net Profit Metric &amp; Trend</div>
+            <h2 class="np-metric-label" id="npMetricHeading"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i> Net Profit Metric &amp; Trend</h2>
             <div class="np-metric-value"><small class="currency-unit">MYR</small> <span id="netProfit">0.00</span></div>
             <div class="np-delta is-flat" id="netDelta">—</div>
           </div>
@@ -122,7 +127,7 @@
 <script src="assets/js/reports.js?v=1.0.17"></script>
 <script src="assets/js/auth.js?v=1.0.57"></script>
 <script src="assets/js/bo-date-range.js?v=1.0.15"></script>
-<script src="assets/js/main-dashboard.js?v=3.0.13"></script>
+<script src="assets/js/main-dashboard.js?v=3.0.16"></script>
 <script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
 </body>
 </html>
