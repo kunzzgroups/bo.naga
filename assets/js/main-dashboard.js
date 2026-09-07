@@ -404,8 +404,8 @@
         if (el) el.innerHTML = '';
       });
       const msg = String(e && e.message || '');
-      const friendly = /failed to fetch|networkerror|load failed/i.test(msg)
-        ? 'Unable to reach server. Check network and try again.'
+      const friendly = /failed to fetch|networkerror|load failed|localhost:8080|cloudflare/i.test(msg)
+        ? (msg || 'Unable to reach server. Check network and try again.')
         : (msg || 'Unable to load dashboard');
       $('profitTrend').innerHTML = `<div class="exec-empty text-danger">${friendly}</div>`;
     } finally {

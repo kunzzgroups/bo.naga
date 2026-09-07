@@ -1,0 +1,636 @@
+(()=>{'use strict';
+const $=id=>document.getElementById(id), esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=v=>Number(v||0).toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2});
+const num=v=>Number(v||0).toLocaleString('en-MY');
+const add=(a,b)=>Number(a||0)+Number(b||0), pos=v=>Math.max(Number(v||0),0), neg=v=>Math.max(-Number(v||0),0);
+const PAGE_SIZE=7;
+const MARKS=['','teal','violet','amber','rose','slate'];
+
+let currentProviders=[], currentBrands=[];
+let filteredProviders=[];
+let providerPage=1;
+let statusPill='all';
+let syncedAt=Date.now();
+let currency='MYR';
+
+async function api(path,opt={}){
+  const base=String((window.API_CONFIG&&window.API_CONFIG.BASE_URL)||'').replace(/\/$/,'');
+  if(!base) throw new Error('API base URL is not configured');
+  const method=opt.method||'GET';
+  const headers={...BO_AUTH.authHeader(),'X-Brand-Id':'1'};
+  if(opt.body!==undefined) headers['Content-Type']='application/json';
+  const r=await fetch(base+path,{method,headers,body:opt.body===undefined?undefined:JSON.stringify(opt.body),cache:'no-store'});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok||j.status==='error') throw new Error(j.message||'Request failed');
+  return j.data??j;
+}
+
+function addDay(v){
+  const a=String(v||'').split('-').map(Number);
+  if(a.length!==3||!a[0]) return v;
+  return new Date(Date.UTC(a[0],a[1]-1,a[2]+1)).toISOString().slice(0,10);
+}
+function qs(){return '?from='+encodeURIComponent($('reportDateFrom').value)+'&to='+encodeURIComponent(addDay($('reportDateTo').value));}
+
+function currencyLabel(){
+  return ({MYR:'MYR',USD:'USD',SGD:'SGD'})[currency]||'MYR';
+}
+function updateCurrencyLabels(){
+  document.querySelectorAll('.mre-cur-label').forEach(el=>{el.textContent='('+currencyLabel()+')';});
+}
+
+function summaryCard(label,value,note){
+  return `<div class="report-summary-card"><small>${esc(label)}</small><strong>${esc(value)}</strong><span>${esc(note||'')}</span></div>`;
+}
+function renderSummary(s){
+  const brandCharge=Number(s.brandCharge||0), payable=Number(s.upstreamProviderPayable||0), margin=Number(s.providerMargin||0), house=Number(s.houseResult||0);
+  const box=$('reportSummary');
+  if(!box) return;
+  box.innerHTML=[
+    summaryCard('Turnover',money(s.turnover),'Selected date range'),
+    summaryCard('House Result',money(house),house>=0?'House win / customer loss':'House loss / player win'),
+    summaryCard('Collect from Brands',money(pos(brandCharge)),'Brand receivable'),
+    summaryCard('Pay to Providers',money(pos(payable)),'Upstream provider payable'),
+    summaryCard('Company Earn',money(margin),'Brand charge − provider payable')
+  ].join('');
+}
+
+function settleAction(type,key,name,direction,amount){
+  const a=Number(amount||0);
+  if(a<=0) return '<span class="text-muted">-</span>';
+  return `<button class="btn-mini-settle" type="button" data-settle-type="${esc(type)}" data-settle-key="${esc(key)}" data-settle-name="${esc(name)}" data-settle-direction="${esc(direction)}" data-settle-amount="${a}"><i class="bi bi-journal-plus"></i> Settle</button>`;
+}
+
+function initials(name,code){
+  const raw=String(name||code||'PR').trim();
+  const parts=raw.split(/\s+/).filter(Boolean);
+  if(parts.length>=2) return (parts[0].charAt(0)+parts[1].charAt(0)).toUpperCase();
+  const c=String(code||raw).replace(/[^A-Za-z0-9]/g,'');
+  return (c.substring(0,2)||'PR').toUpperCase();
+}
+
+function categoryKey(x){
+  const hint=String(x.category||x.gameCategory||x.providerType||x.desc||'').toLowerCase();
+  if(/live/.test(hint)&&/slot/.test(hint)) return 'mixed';
+  if(/live|casino/.test(hint)) return 'live';
+  if(/sport/.test(hint)) return 'sports';
+  if(/slot/.test(hint)) return 'slots';
+  const brands=Number(x.brandCount||0);
+  if(brands>=4) return 'mixed';
+  if(brands>=2) return 'live';
+  return 'slots';
+}
+function categoryLabel(key){
+  return ({slots:'Slots',live:'Live Casino',sports:'Sports',mixed:'Slots & Live Casino'})[key]||'Game Provider';
+}
+function providerStatus(x){
+  const s=String(x.status||x.providerStatus||'').toLowerCase();
+  if(s==='maintenance'||s==='maint'||s==='2') return 'maintenance';
+  if(s==='active'||s==='1'||s==='enabled') return 'active';
+  return Number(x.turnover||0)===0 ? 'maintenance' : 'active';
+}
+function markClass(i){const m=MARKS[i%MARKS.length];return m?(' is-'+m):'';}
+
+function normalizeProviders(rows){
+  return (rows||[]).map((x,i)=>{
+    const turnover=Number(x.turnover||0);
+    const ggr=Number(x.houseResult||0);
+    const totalOut=Number(x.totalOut!=null?x.totalOut:(turnover-ggr));
+    const totalIn=Number(x.totalIn!=null?x.totalIn:(totalOut+ggr));
+    const txns=Number(x.betCount||x.txnCount||x.transactionCount||0);
+    const cat=categoryKey(x);
+    const code=String(x.providerCode||'');
+    return {
+      raw:x,
+      code,
+      name:x.providerName||code||'-',
+      initials:initials(x.providerName,code),
+      mark:markClass(i),
+      category:cat,
+      categoryLabel:categoryLabel(cat),
+      status:providerStatus(x),
+      validBet:turnover,
+      totalIn,
+      totalOut:Math.max(totalOut,0),
+      ggr,
+      ggrPct:turnover? (ggr/turnover*100) : 0,
+      txns,
+      brandCount:Number(x.brandCount||0),
+      payable:Number(x.upstreamProviderPayable||0),
+      margin:Number(x.providerMargin||0)
+    };
+  });
+}
+
+function updateSyncLabel(){
+  const el=$('reportSyncLabel');
+  if(!el) return;
+  const mins=Math.max(0,Math.floor((Date.now()-syncedAt)/60000));
+  const text=mins<1?'Synced just now':('Synced '+mins+' min ago');
+  el.innerHTML='<i class="bi bi-arrow-repeat" aria-hidden="true"></i> '+text;
+}
+
+function updateCounts(){
+  const total=currentProviders.length;
+  const active=currentProviders.filter(r=>r.status==='active').length;
+  const maintenance=currentProviders.filter(r=>r.status==='maintenance').length;
+  const set=(id,v)=>{const el=$(id); if(el) el.textContent=v;};
+  set('mreCountAll',total);
+  set('mreCountActive',active);
+  set('mreCountMaintenance',maintenance);
+}
+
+function pageButtons(current,total){
+  total=Math.max(1,Number(total)||1);
+  current=Math.max(1,Math.min(Number(current)||1,total));
+  const pages=[];
+  const addPage=n=>{if(n>=1&&n<=total&&!pages.includes(n)) pages.push(n);};
+  addPage(1);
+  for(let n=current-2;n<=current+2;n++) addPage(n);
+  addPage(total);
+  pages.sort((a,b)=>a-b);
+  let html='<button type="button" class="smart-page nav-text" data-page="'+Math.max(1,current-1)+'" '+(current<=1?'disabled':'')+'>Previous</button>';
+  let prev=0;
+  pages.forEach(n=>{
+    if(prev&&n-prev>1) html+='<span class="smart-page-ellipsis">…</span>';
+    html+='<button type="button" class="smart-page '+(n===current?'active':'')+'" data-page="'+n+'" '+(n===current?'aria-current="page"':'')+'>'+n+'</button>';
+    prev=n;
+  });
+  html+='<button type="button" class="smart-page nav-text" data-page="'+Math.min(total,current+1)+'" '+(current>=total?'disabled':'')+'>Next</button>';
+  return html;
+}
+
+function ggrHtml(v,pct){
+  const n=Number(v||0);
+  const cls=n>0?'is-pos':n<0?'is-neg':'is-flat';
+  const sign=n>0?'+':'';
+  return `<span class="mre-ggr ${cls}"><b>${sign}${money(n)}</b><em>${money(Math.abs(pct))}%</em></span>`;
+}
+
+function applyProviderFilters(){
+  const q=($('mreSearchInput')?.value||'').trim().toLowerCase();
+  const cat=$('mreCategoryFilter')?.value||'';
+  const st=$('mreStatusFilter')?.value||'';
+  filteredProviders=currentProviders.filter(row=>{
+    if(statusPill!=='all'&&row.status!==statusPill) return false;
+    if(st&&row.status!==st) return false;
+    if(cat&&row.category!==cat) return false;
+    if(q){
+      const hay=[row.name,row.code,row.categoryLabel].join(' ').toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  providerPage=1;
+  renderProviders();
+}
+
+function renderProviders(){
+  const tbody=$('providerReportRows');
+  const foot=$('providerReportFoot');
+  const pager=$('mrePager');
+  const info=$('mreTableInfo');
+  if(!tbody) return;
+
+  const total=filteredProviders.length;
+  const totalPages=Math.max(1,Math.ceil(total/PAGE_SIZE)||1);
+  providerPage=Math.max(1,Math.min(providerPage,totalPages));
+  const start=(providerPage-1)*PAGE_SIZE;
+  const rows=filteredProviders.slice(start,start+PAGE_SIZE);
+
+  if(pager) pager.innerHTML=pageButtons(providerPage,totalPages);
+  if(info){
+    info.textContent=total
+      ? ('Showing '+(start+1)+' to '+(start+rows.length)+' of '+total+' providers')
+      : 'Showing 0 to 0 of 0 providers';
+  }
+
+  const sumValid=filteredProviders.reduce((s,r)=>s+r.validBet,0);
+  const sumIn=filteredProviders.reduce((s,r)=>s+r.totalIn,0);
+  const sumOut=filteredProviders.reduce((s,r)=>s+r.totalOut,0);
+  const sumGgr=filteredProviders.reduce((s,r)=>s+r.ggr,0);
+  if($('mreTotalValid')) $('mreTotalValid').textContent=money(sumValid);
+  if($('mreTotalIn')) $('mreTotalIn').textContent=money(sumIn);
+  if($('mreTotalOut')) $('mreTotalOut').textContent=money(sumOut);
+  if($('mreTotalGgr')){
+    const el=$('mreTotalGgr');
+    const sign=sumGgr>0?'+':'';
+    el.textContent=sign+money(sumGgr);
+    el.classList.toggle('is-pos',sumGgr>0);
+    el.classList.toggle('is-neg',sumGgr<0);
+  }
+  if(foot) foot.hidden=!total;
+
+  if(!rows.length){
+    tbody.innerHTML='<tr><td colspan="6" class="mad-empty">No provider report data for this date range.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML=rows.map(r=>{
+    const codeLabel=r.code?('#'+r.code):'';
+    const txnLabel=r.txns? (num(r.txns)+' txns') : (r.brandCount? (num(r.brandCount)+' brands') : '');
+    return `<tr>
+      <td><div class="mre-provider"><span class="mre-mark${r.mark}">${esc(r.initials)}</span>
+        <div class="mre-provider-copy"><b>${esc(r.name)}${codeLabel?` <span class="mre-code">${esc(codeLabel)}</span>`:''}</b>
+        <small>${esc(r.categoryLabel)}</small></div></div></td>
+      <td class="mre-num"><span class="mre-stack"><b>${money(r.validBet)}</b></span></td>
+      <td class="mre-num"><div class="mre-stack"><b>${money(r.totalIn)}</b>${txnLabel?`<small>${esc(txnLabel)}</small>`:''}</div></td>
+      <td class="mre-num"><span class="mre-stack"><b>${money(r.totalOut)}</b></span></td>
+      <td class="mre-num">${ggrHtml(r.ggr,r.ggrPct)}</td>
+      <td><div class="mre-actions mad-actions">
+        <button class="mad-icon-btn" type="button" title="View" data-mre-view="${esc(r.code)}"><i class="bi bi-eye"></i></button>
+        <button class="mad-icon-btn" type="button" title="Download" data-mre-dl="${esc(r.code)}"><i class="bi bi-download"></i></button>
+        <button class="mad-icon-btn" type="button" title="History" data-mre-hist="${esc(r.code)}"><i class="bi bi-file-earmark-text"></i></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function aggregateBrands(rows){
+  const map=new Map();
+  (rows||[]).forEach(x=>{
+    const key=String(x.brandId??x.brandName??'');
+    let r=map.get(key);
+    if(!r){
+      r={brandId:x.brandId,brandName:x.brandName||'-',brandCode:x.brandCode||'',providers:new Set(),turnover:0,houseResult:0,brandCharge:0,providerPayable:0,companyEarn:0,betCount:0};
+      map.set(key,r);
+    }
+    if(x.providerCode) r.providers.add(String(x.providerCode));
+    r.turnover=add(r.turnover,x.turnover);
+    r.houseResult=add(r.houseResult,x.houseResult);
+    r.brandCharge=add(r.brandCharge,x.brandCharge);
+    r.providerPayable=add(r.providerPayable,x.providerPayableShare);
+    r.companyEarn=add(r.companyEarn,x.platformMargin);
+    r.betCount=add(r.betCount,x.betCount);
+  });
+  return [...map.values()];
+}
+
+function renderBrands(rows){
+  currentBrands=aggregateBrands(rows);
+  const box=$('brandReportRows');
+  if(!box) return;
+  box.innerHTML=currentBrands.map(x=>{
+    const dir=x.brandCharge>=0?'COLLECT':'PAY';
+    return `<tr><td><b>${esc(x.brandName)}</b><small class="d-block text-muted">${esc(x.brandCode)}</small></td><td>${num(x.providers.size)}</td><td class="mre-num">${money(x.turnover)}</td><td class="mre-num value-positive">${money(pos(x.houseResult))}</td><td class="mre-num value-negative">${money(neg(x.houseResult))}</td><td class="mre-num value-positive">${money(pos(x.brandCharge))}</td><td class="mre-num value-negative">${money(neg(x.brandCharge))}</td><td class="mre-num value-negative">${money(pos(x.providerPayable))}</td><td class="mre-num ${x.companyEarn>=0?'value-positive':'value-negative'}">${money(x.companyEarn)}</td><td>${num(x.betCount)}</td><td>${settleAction('BRAND',x.brandId,x.brandName,dir,Math.abs(x.brandCharge))}</td></tr>`;
+  }).join('')||'<tr><td colspan="11" class="mad-empty">No brand report data for this date range.</td></tr>';
+  refreshSettlementParties();
+}
+
+function monthFromDate(v){return String(v||'').slice(0,7)}
+function todayYmd(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+
+function refreshSettlementParties(){
+  const type=$('settlementType')?.value||'BRAND', sel=$('settlementParty');
+  if(!sel) return;
+  const old=sel.value;
+  const rows=type==='BRAND'?currentBrands:currentProviders.map(p=>p.raw);
+  sel.innerHTML=rows.map(x=>{
+    const key=type==='BRAND'?x.brandId:(x.providerCode||x.code);
+    const name=type==='BRAND'?x.brandName:(x.providerName||x.providerCode||x.name);
+    return `<option value="${esc(key)}" data-name="${esc(name)}">${esc(name)}</option>`;
+  }).join('')||'<option value="">No data in selected report range</option>';
+  if([...sel.options].some(o=>o.value===old)) sel.value=old;
+}
+
+function settlementSummaryCard(label,value,note){
+  return `<div class="settlement-summary-card"><small>${esc(label)}</small><strong>${esc(value)}</strong><span>${esc(note)}</span></div>`;
+}
+function renderSettlementSummary(s){
+  if(!$('settlementSummary')) return;
+  $('settlementSummary').innerHTML=[
+    settlementSummaryCard('Outstanding to Collect',money(s.outstandingCollect),'Receivable from brands/providers'),
+    settlementSummaryCard('Outstanding to Pay',money(s.outstandingPay),'Payable to brands/providers'),
+    settlementSummaryCard('Paid This Ledger',money(s.paid),'Recorded partial/full payments'),
+    settlementSummaryCard('Carried Forward',money(s.carriedForward),'Moved into following month'),
+    settlementSummaryCard('Open Items',num(s.openCount),'Open or partially paid')
+  ].join('');
+}
+function statusBadge(v){
+  const x=String(v||'OPEN').toUpperCase(), c=x==='SETTLED'?'success':x==='PARTIAL'?'warning':x==='CARRIED'?'info':'primary';
+  return `<span class="settlement-status ${c}">${esc(x)}</span>`;
+}
+function renderSettlements(rows){
+  $('settlementRows').innerHTML=(rows||[]).map(x=>{
+    const closed=['SETTLED','CARRIED'].includes(String(x.status));
+    return `<tr><td>${esc(x.month)}</td><td><b>${esc(x.counterpartyName)}</b><small class="d-block text-muted">${esc(x.counterpartyType)}</small></td><td><span class="direction-chip ${x.direction==='COLLECT'?'collect':'pay'}">${x.direction==='COLLECT'?'Collect From':'Pay To'}</span></td><td>${money(x.sourceAmount)}</td><td>${money(x.carryInAmount)}</td><td class="value-neutral">${money(x.totalDue)}</td><td class="value-positive">${money(x.paidAmount)}</td><td class="${Number(x.balanceAmount)>0?'value-negative':'value-positive'}">${money(x.balanceAmount)}</td><td>${statusBadge(x.status)}</td><td><div class="settlement-actions"><button type="button" class="btn-mini-action" data-payment-id="${x.id}" data-payment-name="${esc(x.counterpartyName)}" data-payment-balance="${Number(x.balanceAmount||0)}" ${closed?'disabled':''}><i class="bi bi-cash-coin"></i> Payment</button><button type="button" class="btn-mini-action" data-history-id="${x.id}"><i class="bi bi-clock-history"></i> History</button><button type="button" class="btn-mini-action danger-soft" data-carry-id="${x.id}" ${closed||Number(x.balanceAmount)<=0?'disabled':''}><i class="bi bi-arrow-right-circle"></i> Carry Forward</button></div></td></tr>`;
+  }).join('')||'<tr><td colspan="10" class="mad-empty">No settlement records for this month.</td></tr>';
+}
+
+async function loadSettlements(){
+  if(!$('settlementMonth')) return;
+  const month=$('settlementMonth').value||monthFromDate($('reportDateFrom').value)||todayYmd().slice(0,7);
+  $('settlementMonth').value=month;
+  try{
+    const d=await api('/admin/main/settlements?month='+encodeURIComponent(month));
+    renderSettlementSummary(d.summary||{});
+    renderSettlements(d.rows||[]);
+  }catch(e){console.error(e);alert(e.message);}
+}
+
+function prefillSettlement(type,key,name,direction,amount){
+  document.querySelector('[data-report-tab="settlement"]')?.click();
+  $('settlementType').value=type;
+  refreshSettlementParties();
+  $('settlementParty').value=String(key);
+  $('settlementDirection').value=direction;
+  $('settlementAmount').value=Number(amount||0).toFixed(2);
+  $('settlementMonth').value=monthFromDate($('reportDateFrom').value)||todayYmd().slice(0,7);
+  $('settlementNote').focus();
+  loadSettlements();
+}
+
+async function submitSettlement(){
+  const party=$('settlementParty'), opt=party.options[party.selectedIndex];
+  if(!party.value){alert('Please select a brand or provider');return;}
+  const body={month:$('settlementMonth').value,counterpartyType:$('settlementType').value,counterpartyKey:party.value,counterpartyName:opt?.dataset.name||opt?.textContent||party.value,direction:$('settlementDirection').value,amount:$('settlementAmount').value,note:$('settlementNote').value};
+  const btn=$('settlementSubmit');
+  btn.disabled=true;
+  try{
+    await api('/admin/main/settlements',{method:'POST',body});
+    $('settlementAmount').value='';
+    $('settlementNote').value='';
+    await loadSettlements();
+  }catch(e){alert(e.message);}
+  finally{btn.disabled=false;}
+}
+
+function openPayment(btn){
+  $('settlementPaymentId').value=btn.dataset.paymentId;
+  $('settlementPaymentContext').innerHTML=`<b>${esc(btn.dataset.paymentName)}</b><span>Outstanding balance: RM ${money(btn.dataset.paymentBalance)}</span>`;
+  $('settlementPaymentAmount').value=Number(btn.dataset.paymentBalance||0).toFixed(2);
+  $('settlementPaymentAmount').max=btn.dataset.paymentBalance;
+  $('settlementPaymentDate').value=todayYmd();
+  $('settlementPaymentReference').value='';
+  $('settlementPaymentNote').value='';
+  bootstrap.Modal.getOrCreateInstance($('settlementPaymentModal')).show();
+}
+
+async function savePayment(){
+  const id=$('settlementPaymentId').value, btn=$('settlementPaymentSave');
+  btn.disabled=true;
+  try{
+    await api(`/admin/main/settlements/${id}/payment`,{method:'POST',body:{amount:$('settlementPaymentAmount').value,paymentDate:$('settlementPaymentDate').value,referenceNo:$('settlementPaymentReference').value,note:$('settlementPaymentNote').value}});
+    bootstrap.Modal.getOrCreateInstance($('settlementPaymentModal')).hide();
+    await loadSettlements();
+  }catch(e){alert(e.message);}
+  finally{btn.disabled=false;}
+}
+
+async function showHistory(id){
+  try{
+    const rows=await api(`/admin/main/settlements/${id}/payments`);
+    $('settlementHistoryRows').innerHTML=(rows||[]).map(x=>`<tr><td>${esc(x.paymentDate||'')}</td><td>${money(x.amount)}</td><td>${esc(x.referenceNo||'-')}</td><td>${esc(x.note||'-')}</td><td>${esc(x.createdBy||'-')}</td></tr>`).join('')||'<tr><td colspan="5">No payments recorded yet.</td></tr>';
+    bootstrap.Modal.getOrCreateInstance($('settlementHistoryModal')).show();
+  }catch(e){alert(e.message);}
+}
+
+async function carryForward(id){
+  if(!confirm('Carry only the unpaid balance into the next month? The current settlement will be closed as CARRIED.')) return;
+  try{await api(`/admin/main/settlements/${id}/carry-forward`,{method:'POST',body:{}});await loadSettlements();}
+  catch(e){alert(e.message);}
+}
+
+function setupSettlement(){
+  if(!$('settlementMonth')) return;
+  $('settlementMonth').value=monthFromDate($('reportDateFrom').value)||todayYmd().slice(0,7);
+  $('settlementType').onchange=refreshSettlementParties;
+  $('settlementMonth').onchange=loadSettlements;
+  $('settlementSubmit').onclick=submitSettlement;
+  $('settlementRefresh').onclick=loadSettlements;
+  $('settlementPaymentSave').onclick=savePayment;
+  document.addEventListener('click',e=>{
+    const s=e.target.closest('[data-settle-type]');
+    if(s) prefillSettlement(s.dataset.settleType,s.dataset.settleKey,s.dataset.settleName,s.dataset.settleDirection,s.dataset.settleAmount);
+    const p=e.target.closest('[data-payment-id]');
+    if(p&&!p.disabled) openPayment(p);
+    const h=e.target.closest('[data-history-id]');
+    if(h) showHistory(h.dataset.historyId);
+    const c=e.target.closest('[data-carry-id]');
+    if(c&&!c.disabled) carryForward(c.dataset.carryId);
+  });
+  refreshSettlementParties();
+}
+
+async function load(){
+  try{
+    const d=await api('/admin/main/reports/provider-settlement'+qs());
+    renderSummary(d.summary||{});
+    currentProviders=normalizeProviders(d.providers||[]);
+    updateCounts();
+    applyProviderFilters();
+    renderBrands(d.brands||[]);
+    syncedAt=Date.now();
+    updateSyncLabel();
+  }catch(e){
+    console.error(e);
+    const tbody=$('providerReportRows');
+    if(tbody) tbody.innerHTML=`<tr><td colspan="6" class="mad-empty text-danger">${esc((/failed to fetch|networkerror|load failed/i.test(String(e.message||''))?'Unable to reach server. Start local API on :8080 or open the BO on the same host as /api.':e.message)||'Unable to load provider report')}</td></tr>`;
+  }
+}
+
+function exportCsv(){
+  const head=['Provider','Code','Category','Status','Valid Bet','Total In','Total Out','GGR','GGR %'];
+  const lines=[head,...filteredProviders.map(r=>[r.name,r.code,r.categoryLabel,r.status,r.validBet,r.totalIn,r.totalOut,r.ggr,r.ggrPct.toFixed(2)])];
+  const blob=new Blob([lines.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`provider-winlose-${$('reportDateFrom').value}-${$('reportDateTo').value}.csv`;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),500);
+}
+
+function setupTabs(){
+  document.querySelectorAll('[data-report-tab]').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('[data-report-tab]').forEach(x=>{
+      const on=x===b;
+      x.classList.toggle('is-active',on);
+      x.classList.toggle('active',on);
+      x.setAttribute('aria-selected',on?'true':'false');
+    });
+    document.querySelectorAll('[data-report-panel]').forEach(x=>{
+      x.classList.toggle('d-none',x.dataset.reportPanel!==b.dataset.reportTab);
+    });
+    if(b.dataset.reportTab==='settlement') loadSettlements();
+  }));
+}
+
+function setupFilters(){
+  document.querySelectorAll('[data-mre-status]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      statusPill=btn.getAttribute('data-mre-status')||'all';
+      document.querySelectorAll('[data-mre-status]').forEach(b=>b.classList.toggle('is-active',b===btn));
+      applyProviderFilters();
+    });
+  });
+  let searchTimer=null;
+  $('mreSearchInput')?.addEventListener('input',()=>{
+    clearTimeout(searchTimer);
+    searchTimer=setTimeout(applyProviderFilters,180);
+  });
+  $('mreSearchInput')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();applyProviderFilters();}});
+  $('mreCategoryFilter')?.addEventListener('change',applyProviderFilters);
+  $('mreStatusFilter')?.addEventListener('change',applyProviderFilters);
+  $('mreResetBtn')?.addEventListener('click',()=>{
+    if($('mreSearchInput')) $('mreSearchInput').value='';
+    if($('mreCategoryFilter')) $('mreCategoryFilter').value='';
+    if($('mreStatusFilter')) $('mreStatusFilter').value='';
+    statusPill='all';
+    document.querySelectorAll('[data-mre-status]').forEach(b=>b.classList.toggle('is-active',b.getAttribute('data-mre-status')==='all'));
+    applyProviderFilters();
+  });
+  $('mrePager')?.addEventListener('click',e=>{
+    const b=e.target.closest('[data-page]');
+    if(!b||b.disabled) return;
+    const totalPages=Math.max(1,Math.ceil(filteredProviders.length/PAGE_SIZE));
+    const n=Number(b.dataset.page);
+    if(n>=1&&n<=totalPages&&n!==providerPage){providerPage=n;renderProviders();}
+  });
+  $('reportCurrency')?.addEventListener('change',()=>{
+    currency=$('reportCurrency').value||'MYR';
+    updateCurrencyLabels();
+  });
+  document.querySelectorAll('[data-currency]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      currency=btn.getAttribute('data-currency')||'MYR';
+      document.querySelectorAll('[data-currency]').forEach(b=>{
+        const on=b===btn;
+        b.classList.toggle('is-active',on);
+        b.setAttribute('aria-pressed',on?'true':'false');
+      });
+      updateCurrencyLabels();
+    });
+  });
+  $('reportExport')?.addEventListener('click',exportCsv);
+  $('reportSyncLabel')?.addEventListener('click',()=>{load();});
+  document.addEventListener('click',e=>{
+    const view=e.target.closest('[data-mre-view]');
+    if(view){
+      const code=view.getAttribute('data-mre-view');
+      const u=new URL('provider-detail.html',location.href);
+      u.searchParams.set('providerCode',code||'');
+      u.searchParams.set('from',$('reportDateFrom').value);
+      u.searchParams.set('to',$('reportDateTo').value);
+      location.href=u.toString();
+      return;
+    }
+    const dl=e.target.closest('[data-mre-dl]');
+    if(dl){
+      const code=dl.getAttribute('data-mre-dl');
+      const row=filteredProviders.find(r=>r.code===code);
+      if(!row) return;
+      const lines=[['Provider','Code','Valid Bet','Total In','Total Out','GGR'],[row.name,row.code,row.validBet,row.totalIn,row.totalOut,row.ggr]];
+      const blob=new Blob([lines.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv'});
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download=`provider-${code||'row'}.csv`;
+      a.click();
+      setTimeout(()=>URL.revokeObjectURL(a.href),500);
+      return;
+    }
+    const hist=e.target.closest('[data-mre-hist]');
+    if(hist){
+      document.querySelector('[data-report-tab="settlement"]')?.click();
+    }
+  });
+}
+
+/* Date range picker (preserved) */
+const pickerState={view:new Date(),selectingStart:true,mode:'days',yearPageStart:new Date().getFullYear()-5};
+function pad2(n){return String(n).padStart(2,'0')}
+function ymd(d){return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())}
+function dmy(v){if(!v)return '';const a=String(v).split('-');return a.length===3?`${a[2]} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][Number(a[1])-1]} ${a[0]}`:v}
+function startOfWeek(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-x.getDay());return x}
+function endOfWeek(d){const x=startOfWeek(d);x.setDate(x.getDate()+6);return x}
+function updateDateLabel(){
+  const f=$('reportDateFrom').value,t=$('reportDateTo').value;
+  $('reportDateLabel').textContent=f&&t?`${dmy(f)} - ${dmy(t)}`:f?`${dmy(f)} - Select end date`:'Select date range';
+}
+function markPreset(key){document.querySelectorAll('[data-report-preset]').forEach(b=>b.classList.toggle('active',b.dataset.reportPreset===key))}
+function presetRange(key){
+  const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  let a=new Date(today),b=new Date(today);
+  if(key==='yesterday'){a.setDate(a.getDate()-1);b=new Date(a)}
+  if(key==='thisWeek'){a=startOfWeek(today);b=endOfWeek(today)}
+  if(key==='lastWeek'){a=startOfWeek(today);a.setDate(a.getDate()-7);b=new Date(a);b.setDate(b.getDate()+6)}
+  if(key==='thisMonth'){a=new Date(today.getFullYear(),today.getMonth(),1);b=new Date(today)}
+  if(key==='lastMonth'){a=new Date(today.getFullYear(),today.getMonth()-1,1);b=new Date(today.getFullYear(),today.getMonth(),0)}
+  if(key==='thisYear'){a=new Date(today.getFullYear(),0,1);b=new Date(today.getFullYear(),11,31)}
+  if(key==='lastYear'){a=new Date(today.getFullYear()-1,0,1);b=new Date(today.getFullYear()-1,11,31)}
+  return [ymd(a),ymd(b)];
+}
+function renderCalendar(){
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const monthBtn=$('reportCalMonth'),yearBtn=$('reportCalYear'),monthGrid=$('reportCalMonthGrid'),yearGrid=$('reportCalYearGrid'),dayView=$('reportCalDayView'),days=$('reportCalDays');
+  monthBtn.innerHTML=months[pickerState.view.getMonth()]+' <i class="bi bi-chevron-down"></i>';
+  yearBtn.innerHTML=pickerState.view.getFullYear()+' <i class="bi bi-chevron-down"></i>';
+  monthGrid.innerHTML=months.map((m,i)=>`<button type="button" data-report-month="${i}" class="${i===pickerState.view.getMonth()?'active':''}">${m}</button>`).join('');
+  yearGrid.innerHTML=Array.from({length:12},(_,i)=>pickerState.yearPageStart+i).map(y=>`<button type="button" data-report-year="${y}" class="${y===pickerState.view.getFullYear()?'active':''}">${y}</button>`).join('');
+  monthGrid.classList.toggle('show',pickerState.mode==='months');
+  yearGrid.classList.toggle('show',pickerState.mode==='years');
+  dayView.classList.toggle('hide',pickerState.mode!=='days');
+  const y=pickerState.view.getFullYear(),m=pickerState.view.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),start=first.getDay(),total=last.getDate(),from=$('reportDateFrom').value,to=$('reportDateTo').value;
+  let html='',prevLast=new Date(y,m,0).getDate();
+  for(let i=0;i<start;i++) html+=`<button type="button" class="muted" disabled>${prevLast-start+i+1}</button>`;
+  for(let d=1;d<=total;d++){
+    const val=ymd(new Date(y,m,d)),inRange=from&&to&&val>=from&&val<=to,isEdge=val===from||val===to;
+    html+=`<button type="button" data-report-day="${val}" class="${inRange?'in-range':''} ${isEdge?'selected':''}">${d}</button>`;
+  }
+  for(let i=1;i<=42-(start+total);i++) html+=`<button type="button" class="muted" disabled>${i}</button>`;
+  days.innerHTML=html;
+}
+function setRange(a,b,preset){
+  $('reportDateFrom').value=a||'';
+  $('reportDateTo').value=b||'';
+  updateDateLabel();
+  markPreset(preset||'');
+  renderCalendar();
+}
+function setupDatePicker(){
+  const [a,b]=presetRange('thisMonth');
+  pickerState.view=new Date(a+'T00:00:00');
+  setRange(a,b,'thisMonth');
+  $('reportDateTrigger').addEventListener('click',e=>{e.stopPropagation();$('reportRangePicker').classList.toggle('show');pickerState.mode='days';renderCalendar();});
+  document.addEventListener('click',e=>{if(!e.target.closest('.ref-range-wrap')) $('reportRangePicker').classList.remove('show');});
+  document.querySelectorAll('[data-report-preset]').forEach(btn=>btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const key=btn.dataset.reportPreset,[aa,bb]=presetRange(key);
+    pickerState.view=new Date(aa+'T00:00:00');
+    setRange(aa,bb,key);
+    $('reportRangePicker').classList.remove('show');
+    load();
+  }));
+  $('reportCalPrev').onclick=()=>{if(pickerState.mode==='years') pickerState.yearPageStart-=12; else pickerState.view=new Date(pickerState.view.getFullYear(),pickerState.view.getMonth()-1,1);renderCalendar();};
+  $('reportCalNext').onclick=()=>{if(pickerState.mode==='years') pickerState.yearPageStart+=12; else pickerState.view=new Date(pickerState.view.getFullYear(),pickerState.view.getMonth()+1,1);renderCalendar();};
+  $('reportCalMonth').onclick=()=>{pickerState.mode=pickerState.mode==='months'?'days':'months';renderCalendar();};
+  $('reportCalYear').onclick=()=>{pickerState.mode=pickerState.mode==='years'?'days':'years';renderCalendar();};
+  $('reportCalMonthGrid').onclick=e=>{const b=e.target.closest('[data-report-month]');if(!b)return;pickerState.view=new Date(pickerState.view.getFullYear(),Number(b.dataset.reportMonth),1);pickerState.mode='days';renderCalendar();};
+  $('reportCalYearGrid').onclick=e=>{const b=e.target.closest('[data-report-year]');if(!b)return;pickerState.view=new Date(Number(b.dataset.reportYear),pickerState.view.getMonth(),1);pickerState.mode='days';renderCalendar();};
+  $('reportCalDays').onclick=e=>{
+    const b=e.target.closest('[data-report-day]');
+    if(!b) return;
+    const val=b.dataset.reportDay;
+    if(pickerState.selectingStart||!$('reportDateFrom').value||($('reportDateFrom').value&&$('reportDateTo').value)){
+      setRange(val,'','');
+      pickerState.selectingStart=false;
+    }else{
+      let aa=$('reportDateFrom').value,z=val;
+      if(z<aa){const t=aa;aa=z;z=t;}
+      setRange(aa,z,'');
+      pickerState.selectingStart=true;
+      $('reportRangePicker').classList.remove('show');
+      load();
+    }
+  };
+}
+
+BO_AUTH.requireLogin();
+setupTabs();
+setupFilters();
+setupDatePicker();
+setupSettlement();
+updateCurrencyLabels();
+updateSyncLabel();
+setInterval(updateSyncLabel,30000);
+load();
+})();

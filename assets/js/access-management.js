@@ -72,8 +72,30 @@
   const masterAdmin = currentAdmin && !mainAdmin && !rootAdmin && currentRoleType==='MASTER';
   const platformRoleAdmin = currentAdmin && (rootAdmin || masterAdmin || mainAdmin || currentAdmin.brandId == null);
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function networkErrorMessage(err, fallback){
+    const msg = String((err && err.message) || '');
+    if(/failed to fetch|networkerror|load failed|network request failed/i.test(msg)){
+      try{
+        const host = String(location.hostname || '');
+        if(host === 'localhost' || host === '127.0.0.1'){
+          return 'Cannot reach local API (http://localhost:8080). Start the backend, or set localStorage.bo_api_base.';
+        }
+      }catch(e){}
+      return 'Unable to reach server. Check network / Cloudflare protection and try again.';
+    }
+    return msg || fallback || 'Request failed';
+  }
   function msg(el,text,cls){if(el){el.textContent=text||'';el.className='upload-status '+(cls||'');}}
-  async function api(url,opt){const res=await fetch(url,opt||{});const j=await res.json().catch(()=>({}));if(!res.ok||j.status==='error')throw new Error(j.message||'Request failed');return j;}
+  async function api(url,opt){
+    try{
+      const res=await fetch(url,opt||{});
+      const j=await res.json().catch(()=>({}));
+      if(!res.ok||j.status==='error') throw new Error(j.message||'Request failed');
+      return j;
+    }catch(e){
+      throw new Error(networkErrorMessage(e, 'Request failed'));
+    }
+  }
   async function bootstrap(){try{await api(API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS.ACCESS_BOOTSTRAP,{headers:{...BO_AUTH.authHeader()}});}catch(e){}}
   async function fetchRoles(){
     // Root/platform Role Management must show the roles that already exist in DB,

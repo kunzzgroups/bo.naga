@@ -1,0 +1,450 @@
+/* Deep Navy Cyan — main_provider_report.html (Provider Win/Lose)
+   Tokens from .interface-design/system.md */
+
+body.main-report-exec-page{
+  --bo-navy:#123B66;
+  --bo-cyan:#21A6D7;
+  --bo-cyan-deep:#1B94C2;
+  --bo-success:#12B76A;
+  --bo-warn:#F79009;
+  --bo-danger:#EF3340;
+  --bo-bg:#F5F8FB;
+  --bo-surface:#FFFFFF;
+  --bo-border:#E2E7F0;
+  --bo-text:#11203A;
+  --bo-text-secondary:#1C2942;
+  --bo-muted:#657187;
+  --bo-ease:cubic-bezier(0.23,1,0.32,1);
+}
+
+/* Tabs: inherit Admin underline style (mad-tab) — no filled pills */
+body.main-report-exec-page .mre-chrome{
+  /* keep admin locked chrome; allow wrap only on narrow screens */
+  column-gap:16px;
+}
+body.main-report-exec-page .mre-tab.mad-tab{
+  /* reset any leftover pill overrides — match admin exactly */
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+body.main-report-exec-page .mre-tab.mad-tab.is-active{
+  background:transparent!important;
+  color:var(--bo-navy)!important;
+  border-bottom:2px solid var(--bo-navy)!important;
+  box-shadow:none!important;
+}
+body.main-report-exec-page .mre-chrome-actions{
+  gap:10px;flex-wrap:wrap;
+  max-width:100%;
+}
+
+/* Scope bar — CURRENCY seg + PERIOD date (mock fig.2) */
+body.main-report-exec-page .mre-scope-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:20px 28px;
+  flex-wrap:wrap;
+  padding:14px 16px;
+  border-bottom:1px solid var(--bo-border);
+  background:var(--bo-surface);
+}
+body.main-report-exec-page .mre-currency-group,
+body.main-report-exec-page .mre-period-group{
+  display:inline-flex;align-items:center;gap:12px;min-width:0;
+}
+body.main-report-exec-page .mre-scope-label{
+  flex:0 0 auto;
+  font-size:11px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--bo-muted);line-height:1;
+}
+body.main-report-exec-page .mre-currency-seg{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:0;background:transparent;
+}
+body.main-report-exec-page .mre-cur-btn{
+  appearance:none;border:0;cursor:pointer;
+  height:34px;padding:0 16px;border-radius:999px;
+  background:#EEF1F6;
+  color:#475467;
+  font-size:13px;font-weight:700;letter-spacing:.01em;line-height:1;
+  transition:background .14s var(--bo-ease),color .14s var(--bo-ease),box-shadow .14s var(--bo-ease);
+}
+body.main-report-exec-page .mre-cur-btn:hover:not(.is-active){
+  background:#E4E9F2;color:var(--bo-navy);
+}
+body.main-report-exec-page .mre-cur-btn.is-active{
+  background:var(--bo-navy);color:#fff;font-weight:750;
+  box-shadow:0 1px 2px rgba(18,59,102,.2);
+}
+body.main-report-exec-page .mre-cur-btn:focus-visible{
+  outline:2px solid var(--bo-cyan);outline-offset:2px;
+}
+body.main-report-exec-page .mre-cur-btn:active{transform:scale(.97)}
+
+/* Date range — match Dashboard (cyan icon well) */
+body.main-report-exec-page .mre-date-field{
+  margin:0;padding:0;min-width:0;
+  width:320px;max-width:100%;
+}
+body.main-report-exec-page .mre-date-field .ref-range-wrap{
+  width:100%!important;min-width:0!important;max-width:none!important;
+}
+body.main-report-exec-page .mre-date-field .ref-range-trigger,
+body.main-report-exec-page .mre-date-trigger{
+  width:100%!important;min-width:0!important;max-width:none!important;
+  height:44px!important;min-height:44px!important;
+  border:1px solid var(--bo-border)!important;
+  border-radius:10px!important;
+  background:var(--bo-surface)!important;
+  color:var(--bo-text-secondary)!important;
+  font-size:13px!important;font-weight:700!important;
+  box-shadow:var(--bo-shadow,0 0 0 1px rgba(18,59,102,.04),0 1px 2px -1px rgba(18,59,102,.06),0 2px 8px rgba(26,45,80,.018))!important;
+  gap:10px;padding:0 12px!important;
+}
+body.main-report-exec-page .mre-date-trigger:hover,
+body.main-report-exec-page .mre-date-trigger:focus,
+body.main-report-exec-page .ref-range-wrap:focus-within .mre-date-trigger{
+  border-color:var(--bo-cyan)!important;
+  box-shadow:0 0 0 3px rgba(33,166,215,.16)!important;
+  outline:0!important;
+}
+body.main-report-exec-page .mre-date-field .ref-range-icon{
+  height:44px!important;width:44px!important;
+  margin-left:-12px!important;
+  border-radius:9px 0 0 9px!important;
+  background:var(--bo-cyan)!important;
+  color:#fff!important;
+  display:grid!important;place-items:center!important;
+  flex:0 0 44px!important;
+}
+body.main-report-exec-page .mre-date-field .ref-range-picker{
+  width:390px!important;max-width:min(390px,calc(100vw - 32px))!important;
+  z-index:6200;right:0;left:auto;
+  border-color:var(--bo-border);
+  border-radius:12px;
+}
+body.main-report-exec-page .ref-range-presets button.active,
+body.main-report-exec-page .ref-cal-days button.selected,
+body.main-report-exec-page .ref-cal-month-grid button.active,
+body.main-report-exec-page .ref-cal-year-grid button.active{
+  background:var(--bo-cyan)!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+body.main-report-exec-page .ref-cal-days button.in-range{
+  background:rgba(33,166,215,.12)!important;
+}
+
+body.main-report-exec-page .mre-search{
+  flex:0 1 280px!important;width:280px!important;min-width:180px!important;
+}
+
+/* Status count warn (maintenance) */
+body.main-report-exec-page .mad-pill-count.is-warn-count{
+  background:transparent;color:#E04F16;padding:0;min-width:0;height:auto;
+}
+
+/* Table denser finance layout */
+body.main-report-exec-page .mre-table{min-width:980px}
+body.main-report-exec-page .mre-table thead th{
+  background:#F7F9FC;
+  font-size:11.5px;letter-spacing:.02em;
+  color:var(--bo-muted);
+}
+body.main-report-exec-page .mre-num{
+  text-align:right!important;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+body.main-report-exec-page .mre-cur-label{
+  font-weight:600;color:var(--bo-muted);text-transform:none;letter-spacing:0;
+}
+
+/* Provider identity cell */
+body.main-report-exec-page .mre-provider{
+  display:flex;align-items:flex-start;gap:12px;min-width:220px;
+}
+body.main-report-exec-page .mre-mark{
+  flex:0 0 40px;width:40px;height:40px;
+  display:inline-flex;align-items:center;justify-content:center;
+  border-radius:10px;
+  font-size:12px;font-weight:800;letter-spacing:.02em;color:#fff;
+  background:var(--bo-navy);
+}
+body.main-report-exec-page .mre-mark.is-teal{background:#0E8F8A}
+body.main-report-exec-page .mre-mark.is-violet{background:#6B5CE7}
+body.main-report-exec-page .mre-mark.is-amber{background:#C47A12}
+body.main-report-exec-page .mre-mark.is-rose{background:#C44569}
+body.main-report-exec-page .mre-mark.is-slate{background:#4A5A70}
+body.main-report-exec-page .mre-provider-copy{min-width:0}
+body.main-report-exec-page .mre-provider-copy b{
+  display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;
+  font-size:13.5px;font-weight:750;color:var(--bo-text);line-height:1.25;
+}
+body.main-report-exec-page .mre-code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:11.5px;font-weight:650;color:var(--bo-cyan-deep);
+}
+body.main-report-exec-page .mre-provider-copy small{
+  display:block;margin-top:3px;
+  font-size:12px;font-weight:500;color:var(--bo-muted);
+}
+
+body.main-report-exec-page .mre-stack{
+  display:flex;flex-direction:column;align-items:flex-end;gap:2px;
+}
+body.main-report-exec-page .mre-stack b{
+  font-size:13.5px;font-weight:750;color:var(--bo-text);
+  font-variant-numeric:tabular-nums;
+}
+body.main-report-exec-page .mre-stack small{
+  font-size:11.5px;font-weight:550;color:var(--bo-muted);
+  font-variant-numeric:tabular-nums;
+}
+
+body.main-report-exec-page .mre-ggr{
+  display:inline-flex;align-items:baseline;justify-content:flex-end;gap:8px;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+body.main-report-exec-page .mre-ggr b{
+  font-size:13.5px;font-weight:800;
+}
+body.main-report-exec-page .mre-ggr.is-pos b{color:var(--bo-success)}
+body.main-report-exec-page .mre-ggr.is-neg b{color:var(--bo-danger)}
+body.main-report-exec-page .mre-ggr.is-flat b{color:var(--bo-text)}
+body.main-report-exec-page .mre-ggr em{
+  font-style:normal;font-size:12px;font-weight:650;color:var(--bo-muted);
+}
+
+body.main-report-exec-page .mre-actions{
+  display:inline-flex;align-items:center;gap:2px;
+}
+
+/* Footer total row */
+body.main-report-exec-page .mre-total-row td{
+  background:#F0F6FB!important;
+  border-top:1px solid var(--bo-border)!important;
+  border-bottom:0!important;
+  padding:14px 16px!important;
+  font-weight:800;color:var(--bo-navy);
+  font-variant-numeric:tabular-nums;
+}
+body.main-report-exec-page .mre-total-label{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:13.5px;font-weight:800;color:var(--bo-navy);
+}
+body.main-report-exec-page .mre-total-label i{font-size:15px}
+body.main-report-exec-page #mreTotalGgr.is-pos{color:var(--bo-success)!important}
+body.main-report-exec-page #mreTotalGgr.is-neg{color:var(--bo-danger)!important}
+
+/* Nested panels */
+body.main-report-exec-page .mre-section-pad{
+  padding:18px 18px 8px;
+  display:flex;flex-direction:column;gap:14px;
+  overflow:auto;flex:1;min-height:0;
+}
+body.main-report-exec-page .mre-empty-panel{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;padding:64px 24px;text-align:center;flex:1;
+  color:var(--bo-muted);
+}
+body.main-report-exec-page .mre-empty-panel i{font-size:28px;color:var(--bo-cyan)}
+body.main-report-exec-page .mre-empty-panel h3{
+  margin:8px 0 0;font-size:16px;font-weight:800;color:var(--bo-navy);
+}
+body.main-report-exec-page .mre-empty-panel p{
+  margin:0;max-width:420px;font-size:13px;line-height:1.5;
+}
+
+/* Reuse settlement / summary cards inside exec shell */
+body.main-report-exec-page .report-summary-grid{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;
+}
+body.main-report-exec-page .report-summary-card{
+  background:var(--bo-surface);border:1px solid var(--bo-border);
+  border-radius:14px;padding:16px;min-width:0;
+}
+body.main-report-exec-page .report-summary-card small{
+  display:block;color:var(--bo-muted);font-weight:700;margin-bottom:5px;
+}
+body.main-report-exec-page .report-summary-card strong{
+  display:block;font-size:22px;color:var(--bo-text);font-variant-numeric:tabular-nums;
+}
+body.main-report-exec-page .report-summary-card span{
+  display:block;font-size:11px;color:var(--bo-muted);margin-top:4px;
+}
+body.main-report-exec-page .settlement-summary-grid{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;
+}
+body.main-report-exec-page .settlement-summary-card{
+  background:#F8FAFC;border:1px solid var(--bo-border);border-radius:12px;padding:14px;
+}
+body.main-report-exec-page .settlement-summary-card small{
+  display:block;color:var(--bo-muted);font-weight:700;margin-bottom:5px;
+}
+body.main-report-exec-page .settlement-summary-card strong{
+  display:block;font-size:20px;color:var(--bo-text);font-variant-numeric:tabular-nums;
+}
+body.main-report-exec-page .settlement-summary-card span{
+  display:block;font-size:11px;color:var(--bo-muted);margin-top:4px;
+}
+body.main-report-exec-page .settlement-form-card{
+  border:1px solid var(--bo-border);border-radius:14px;padding:16px;background:#FBFCFE;
+}
+body.main-report-exec-page .settlement-form-grid{
+  display:grid;grid-template-columns:1fr 1fr 1.5fr 1fr 1fr 2fr;gap:12px;align-items:end;
+}
+body.main-report-exec-page .settlement-form-grid .field label{
+  font-size:12px;font-weight:800;color:var(--bo-text-secondary);margin-bottom:6px;
+}
+body.main-report-exec-page .settlement-form-actions{display:flex;justify-content:flex-end;margin-top:12px}
+body.main-report-exec-page .settlement-ledger-head{
+  display:flex;justify-content:space-between;gap:12px;align-items:center;
+}
+body.main-report-exec-page .settlement-ledger-head h6{margin:0;font-weight:800;color:var(--bo-navy)}
+body.main-report-exec-page .settlement-ledger-head small{color:var(--bo-muted)}
+body.main-report-exec-page .settlement-table{min-width:1200px}
+body.main-report-exec-page .btn-mini-settle,
+body.main-report-exec-page .btn-mini-action{
+  border:1px solid var(--bo-border);background:var(--bo-surface);color:var(--bo-text-secondary);
+  border-radius:8px;min-height:32px;padding:5px 9px;font-size:11px;font-weight:800;white-space:nowrap;
+}
+body.main-report-exec-page .btn-mini-settle{
+  border-color:rgba(33,166,215,.45);color:var(--bo-navy);background:rgba(33,166,215,.08);
+}
+body.main-report-exec-page .btn-mini-action:disabled{opacity:.45;cursor:not-allowed}
+body.main-report-exec-page .danger-soft{color:#b45309;background:#fffaf0;border-color:#fed7aa}
+body.main-report-exec-page .settlement-actions{display:flex;gap:6px;flex-wrap:wrap}
+body.main-report-exec-page .settlement-status,
+body.main-report-exec-page .direction-chip{
+  display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;
+  font-size:10px;font-weight:900;white-space:nowrap;
+}
+body.main-report-exec-page .settlement-status.primary{background:#eff6ff;color:#1d4ed8}
+body.main-report-exec-page .settlement-status.warning{background:#fff7ed;color:#c2410c}
+body.main-report-exec-page .settlement-status.success{background:#ecfdf3;color:#15803d}
+body.main-report-exec-page .settlement-status.info{background:#f0f9ff;color:#0369a1}
+body.main-report-exec-page .direction-chip.collect{background:#ecfdf3;color:#15803d}
+body.main-report-exec-page .direction-chip.pay{background:#fef2f2;color:#b91c1c}
+body.main-report-exec-page .settlement-payment-context{
+  display:flex;justify-content:space-between;gap:12px;padding:10px 12px;
+  background:#f8fafc;border:1px solid var(--bo-border);border-radius:10px;margin-bottom:14px;
+}
+body.main-report-exec-page .value-positive{color:var(--bo-success);font-weight:800}
+body.main-report-exec-page .value-negative{color:var(--bo-danger);font-weight:800}
+body.main-report-exec-page .value-neutral{font-weight:800;color:var(--bo-text)}
+
+/* Dark mode */
+html[data-bo-theme="dark"] body.main-report-exec-page{
+  --bo-bg:#08131F;
+  --bo-surface:#102030;
+  --bo-border:rgba(255,255,255,.08);
+  --bo-text:#F5F8FB;
+  --bo-text-secondary:#D0D7E2;
+  --bo-muted:#8A95A8;
+}
+html[data-bo-theme="dark"] body.main-report-exec-page .mre-tab.mad-tab.is-active{
+  background:transparent!important;
+  color:#fff!important;
+  border-bottom-color:var(--bo-cyan)!important;
+}
+html[data-bo-theme="dark"] body.main-report-exec-page .mre-scope-bar{
+  background:var(--bo-surface);border-bottom-color:var(--bo-border);
+}
+html[data-bo-theme="dark"] body.main-report-exec-page .mre-cur-btn{
+  background:rgba(255,255,255,.08);color:var(--bo-muted);
+}
+html[data-bo-theme="dark"] body.main-report-exec-page .mre-cur-btn:hover:not(.is-active){
+  background:rgba(255,255,255,.12);color:#fff;
+}
+html[data-bo-theme="dark"] body.main-report-exec-page .mre-cur-btn.is-active{
+  background:var(--bo-navy);color:#fff;
+}
+html[data-bo-theme="dark"] body.main-report-exec-page .mre-date-trigger{
+  background:var(--bo-surface)!important;
+  border-color:var(--bo-border)!important;
+  color:var(--bo-text-secondary)!important;
+}
+html[data-bo-theme="dark"] body.main-report-exec-page .mre-date-field .ref-range-picker{
+  background:var(--bo-surface)!important;
+  border-color:var(--bo-border)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
+}
+html[data-bo-theme="dark"] body.main-report-exec-page .ref-range-presets{
+  background:#0c1a2a!important;
+  border-right-color:var(--bo-border)!important;
+}
+html[data-bo-theme="dark"] body.main-report-exec-page .ref-range-presets button{
+  color:var(--bo-text-secondary)!important;
+}
+html[data-bo-theme="dark"] body.main-report-exec-page .ref-range-presets button:hover{
+  background:rgba(33,166,215,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-report-exec-page .mre-table thead th{
+  background:rgba(255,255,255,.03);
+}
+html[data-bo-theme="dark"] body.main-report-exec-page .mre-total-row td{
+  background:rgba(33,166,215,.08)!important;color:#fff;
+}
+html[data-bo-theme="dark"] body.main-report-exec-page .mre-total-label{color:#fff}
+html[data-bo-theme="dark"] body.main-report-exec-page .settlement-form-card,
+html[data-bo-theme="dark"] body.main-report-exec-page .settlement-summary-card,
+html[data-bo-theme="dark"] body.main-report-exec-page .report-summary-card{
+  background:var(--bo-surface);border-color:var(--bo-border);
+}
+html[data-bo-theme="dark"] body.main-report-exec-page .mre-empty-panel h3{color:#fff}
+
+@media(max-width:1280px){
+  body.main-report-exec-page .mre-chrome{
+    grid-template-columns:1fr;
+    height:auto;min-height:54px;max-height:none;
+    align-items:stretch;
+    row-gap:10px;
+    padding-bottom:8px;
+  }
+  body.main-report-exec-page .mre-tabs{
+    height:auto;min-height:40px;
+  }
+  body.main-report-exec-page .mre-chrome-actions{
+    justify-content:flex-start;justify-self:start;
+    padding-bottom:0;
+  }
+  body.main-report-exec-page .report-summary-grid,
+  body.main-report-exec-page .settlement-summary-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  body.main-report-exec-page .settlement-form-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  body.main-report-exec-page .settlement-note-field{grid-column:span 2}
+}
+@media(max-width:800px){
+  body.main-report-exec-page .mre-scope-bar{
+    flex-direction:column;align-items:stretch;
+  }
+  body.main-report-exec-page .mre-currency-group,
+  body.main-report-exec-page .mre-period-group{
+    width:100%;justify-content:space-between;
+  }
+  body.main-report-exec-page .mre-currency-seg{flex:1;justify-content:space-between}
+  body.main-report-exec-page .mre-date-field{
+    width:100%;
+  }
+  body.main-report-exec-page .mre-date-field .ref-range-wrap,
+  body.main-report-exec-page .mre-date-trigger{
+    width:100%!important;min-width:0!important;max-width:none!important;
+  }
+  body.main-report-exec-page .mre-date-field .ref-range-picker{
+    left:0;right:auto;
+  }
+  body.main-report-exec-page .report-summary-grid,
+  body.main-report-exec-page .settlement-summary-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  body.main-report-exec-page .settlement-form-grid{grid-template-columns:1fr}
+  body.main-report-exec-page .settlement-note-field{grid-column:auto}
+  body.main-report-exec-page .mre-search{flex:1 1 100%!important;width:100%!important}
+}
+@media(max-width:520px){
+  body.main-report-exec-page .report-summary-grid,
+  body.main-report-exec-page .settlement-summary-grid{grid-template-columns:1fr}
+}
