@@ -463,16 +463,39 @@ body.menu-mgmt-page .menu-main-table td:nth-child(6){
   text-align:center;
 }
 body.menu-mgmt-page .menu-name-cell{
-  display:flex;
+  display:flex!important;
   align-items:center;
   gap:10px;
   min-width:0;
   max-width:100%;
 }
-body.menu-mgmt-page .menu-name-cell > div{
+body.menu-mgmt-page .menu-name-cell > div,
+body.menu-mgmt-page .menu-name-cell .menu-name-text{
   min-width:0;
   flex:1 1 auto;
   overflow:hidden;
+}
+body.menu-mgmt-page .menu-name-meta{
+  display:inline-flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:6px;
+  flex:0 0 auto;
+  min-width:0;
+  margin-left:8px;
+  pointer-events:none;
+}
+body.menu-mgmt-page .menu-tree-gutter{
+  box-sizing:border-box;
+  flex:0 0 28px;
+  width:28px;
+  min-width:28px;
+  max-width:28px;
+  height:28px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
 }
 body.menu-mgmt-page .menu-type-pill{
   flex:0 0 auto;
@@ -546,38 +569,81 @@ body.menu-mgmt-page #groupKey[readonly]{
 
 /* Tree structure */
 body.menu-mgmt-page .menu-tree-toggle{
-  flex:0 0 auto;
+  box-sizing:border-box;
+  flex:none;
   width:22px;
+  min-width:22px;
+  max-width:22px;
   height:22px;
+  margin:0;
   padding:0;
   display:inline-grid;
   place-items:center;
-  border:1px solid rgba(33,166,215,.22);
-  border-radius:6px;
-  background:rgba(33,166,215,.08);
-  color:var(--bo-navy);
-  cursor:pointer;
-  line-height:1;
-}
-body.menu-mgmt-page .menu-tree-toggle:hover{
-  background:rgba(33,166,215,.16);
-  border-color:rgba(33,166,215,.4);
-}
-body.menu-mgmt-page .menu-tree-toggle i{font-size:12px}
-body.menu-mgmt-page .menu-tree-toggle.is-spacer,
-body.menu-mgmt-page .menu-tree-toggle.is-empty{
-  border-color:transparent;
+  border:0;
+  border-radius:0;
   background:transparent;
   color:var(--bo-muted);
+  cursor:inherit;
+  line-height:1;
+  position:relative;
+  z-index:1;
+}
+body.menu-mgmt-page .menu-name-cell.is-toggleable:hover .menu-tree-toggle{
+  color:var(--bo-cyan);
+}
+body.menu-mgmt-page .menu-tree-toggle i{
+  font-size:14px;
+  width:auto!important;
+  height:auto!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  display:inline-block!important;
+  place-items:unset;
+  border-radius:0!important;
+  color:inherit!important;
+}
+body.menu-mgmt-page .menu-tree-toggle.is-spacer,
+body.menu-mgmt-page .menu-tree-toggle.is-empty{
+  border:0;
+  background:transparent;
+  color:transparent;
   cursor:default;
   pointer-events:none;
+  visibility:hidden;
 }
-body.menu-mgmt-page .menu-name-cell.menu-tree-depth-1{
-  padding-left:0;
-  position:relative;
+body.menu-mgmt-page .menu-name-cell.is-toggleable{
+  cursor:pointer;
+  border-radius:10px;
+  transition:background .15s ease;
 }
+body.menu-mgmt-page .menu-name-cell.is-toggleable:hover{
+  background:rgba(33,166,215,.06);
+}
+body.menu-mgmt-page .menu-name-cell.is-toggleable:focus-visible{
+  outline:2px solid rgba(33,166,215,.45);
+  outline-offset:2px;
+}
+body.menu-mgmt-page .menu-row-group.is-toggleable{
+  cursor:pointer;
+}
+body.menu-mgmt-page .menu-row-group.is-toggleable:hover td{
+  background:rgba(33,166,215,.08)!important;
+}
+body.menu-mgmt-page .menu-row-group.is-toggleable td:last-child{
+  cursor:default;
+}
+body.menu-mgmt-page .menu-mobile-group.is-toggleable{
+  cursor:pointer;
+}
+body.menu-mgmt-page .menu-mobile-group.is-toggleable:hover{
+  background:rgba(33,166,215,.08);
+}
+body.menu-mgmt-page .menu-name-cell.menu-tree-depth-1,
 body.menu-mgmt-page .menu-row-child .menu-name-cell{
-  padding-left:8px;
+  padding-left:28px;
 }
 body.menu-mgmt-page .menu-row-group td{
   background:rgba(33,166,215,.05);
@@ -626,9 +692,35 @@ body.menu-mgmt-page .menu-main-table td:nth-child(6) .d-flex{
 }
 
 body.menu-mgmt-page .menu-name-cell > i{
+  box-sizing:border-box;
+  flex:0 0 34px!important;
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  max-width:34px!important;
+  margin:0!important;
+  display:grid!important;
+  place-items:center;
   border-color:rgba(33,166,215,.22)!important;
   background:rgba(33,166,215,.1)!important;
   color:var(--bo-cyan)!important;
+  position:relative;
+  z-index:0;
+  pointer-events:none;
+}
+body.menu-mgmt-page .menu-name-cell .menu-tree-gutter,
+body.menu-mgmt-page .menu-name-cell .menu-tree-toggle{
+  pointer-events:none;
+}
+body.menu-mgmt-page .menu-row-group.is-toggleable td{
+  cursor:pointer;
+}
+body.menu-mgmt-page .menu-row-group.is-toggleable td:last-child,
+body.menu-mgmt-page .menu-row-group.is-toggleable td:last-child *{
+  cursor:default;
+}
+body.menu-mgmt-page .menu-main-table td:first-child{
+  overflow:visible;
 }
 body.menu-mgmt-page .menu-name-cell b,
 body.menu-mgmt-page .menu-name-cell strong{color:var(--bo-text)!important}
@@ -855,8 +947,11 @@ html[data-bo-theme="dark"] body.menu-mgmt-page .report-content .report-table tbo
 html[data-bo-theme="dark"] body.menu-mgmt-page .report-content .report-table tbody tr.menu-row-group:nth-child(odd) td{
   background:rgba(33,166,215,.08)!important;
 }
-html[data-bo-theme="dark"] body.menu-mgmt-page .report-content .report-table tbody tr.menu-row-group:hover td{
-  background:rgba(33,166,215,.14)!important;
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-row-group.is-toggleable:hover td{
+  background:rgba(33,166,215,.16)!important;
+}
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-mobile-group.is-toggleable:hover{
+  background:rgba(33,166,215,.14);
 }
 html[data-bo-theme="dark"] body.menu-mgmt-page .report-content .report-table tbody tr.menu-row-child td:first-child{
   box-shadow:inset 3px 0 0 rgba(33,166,215,.4);
@@ -998,22 +1093,36 @@ body.menu-mgmt-page .nm-form-col .nm-pane-stack{
   display:grid;
   grid-template-columns:1fr;
   grid-template-rows:auto;
+  position:relative;
+  isolation:isolate;
 }
 body.menu-mgmt-page .nm-form-col .nm-pane-stack > .nm-pane{
   grid-area:1 / 1;
   min-height:0;
   overflow:auto;
 }
+/* Hidden pane must not paint, capture clicks, or show DevTools "ghost" boxes over the page */
 body.menu-mgmt-page .nm-form-col .nm-pane-stack > .nm-pane[hidden]{
-  display:block!important;
-  visibility:hidden;
-  pointer-events:none;
+  display:none!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
   z-index:0;
 }
 body.menu-mgmt-page .nm-form-col .nm-pane-stack > .nm-pane:not([hidden]){
+  display:block;
   visibility:visible;
   pointer-events:auto;
   z-index:1;
+}
+/* Closed New Menu modal: hard kill any leftover hit-testing / paint */
+body.menu-mgmt-page #newMenuModal.modal-clean:not(.show){
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+body.menu-mgmt-page #newMenuModal.modal-clean:not(.show) *{
+  pointer-events:none!important;
 }
 body.menu-mgmt-page .nm-mode-wrap{
   padding:0 0 10px;

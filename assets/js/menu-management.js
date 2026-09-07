@@ -4,30 +4,33 @@
   let nmMode='group'; // 'item' | 'group'
   let returnToItemAfterGroup=false;
   const PANEL_KEY='bo_menu_mgmt_panel';
-  const TREE_COLLAPSE_KEY='bo_menu_tree_collapse_v1';
+  const TREE_EXPAND_KEY='bo_menu_tree_expand_v1';
   const MAIN_GROUP_KEYS=new Set(['root','main_reports_group','main_accounting_group','main_brands_group','main_admin_group']);
   const $=id=>document.getElementById(id);
-  let collapsedGroups=loadCollapsedGroups();
+  let expandedGroups=loadExpandedGroups();
 
-  function loadCollapsedGroups(){
+  function loadExpandedGroups(){
     try{
-      const raw=sessionStorage.getItem(TREE_COLLAPSE_KEY);
+      // Drop legacy collapse map so default stays closed.
+      sessionStorage.removeItem('bo_menu_tree_collapse_v1');
+      const raw=sessionStorage.getItem(TREE_EXPAND_KEY);
       const parsed=raw?JSON.parse(raw):{};
       return parsed&&typeof parsed==='object'?parsed:{};
     }catch(e){return {};}
   }
-  function saveCollapsedGroups(){
-    try{sessionStorage.setItem(TREE_COLLAPSE_KEY,JSON.stringify(collapsedGroups));}catch(e){}
+  function saveExpandedGroups(){
+    try{sessionStorage.setItem(TREE_EXPAND_KEY,JSON.stringify(expandedGroups));}catch(e){}
   }
   function isGroupCollapsed(key){
-    return !!collapsedGroups[String(key||'')];
+    // Default closed: only keys explicitly opened stay expanded.
+    return !expandedGroups[String(key||'')];
   }
   function toggleGroupCollapse(key){
     const k=String(key||'');
     if(!k) return;
-    if(collapsedGroups[k]) delete collapsedGroups[k];
-    else collapsedGroups[k]=1;
-    saveCollapsedGroups();
+    if(expandedGroups[k]) delete expandedGroups[k];
+    else expandedGroups[k]=1;
+    saveExpandedGroups();
     render();
   }
   function sortRank(v){
@@ -48,6 +51,16 @@
   }
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function slug(v){return String(v||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,100);}
+  /** Safe Bootstrap icon class only — blocks title= injection from icon field. */
+  function iconClass(v){
+    let s=String(v==null?'':v).trim();
+    if(!s) return 'bi bi-circle';
+    s=s.replace(/^bi\s+/i,'').split(/\s+/)[0];
+    if(!s.startsWith('bi-')) s='bi-'+s.replace(/^bi-?/i,'');
+    s=s.toLowerCase().replace(/[^a-z0-9-]/g,'');
+    if(!/^bi-[a-z0-9-]+$/.test(s)) s='bi-circle';
+    return 'bi '+s;
+  }
   async function api(url,opt){const r=await fetch(url,opt||{}),j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw new Error(j.message||'Request failed');return j;}
   function status(id,text,type){const e=$(id);if(!e)return;e.textContent=text||'';e.className='upload-status '+(type||'');}
   function groupName(k){if(!k)return 'Top-level';const g=groups.find(x=>String(x.groupKey)===String(k));return g?g.title:String(k).replace(/[_-]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
@@ -201,15 +214,17 @@
 
   function treeToggleBtn(groupKey, childCount, collapsed){
     if(!childCount){
-      return `<span class="menu-tree-toggle is-empty" aria-hidden="true"><i class="bi bi-dot"></i></span>`;
+      return `<span class="menu-tree-toggle is-empty" aria-hidden="true"></span>`;
     }
-    return `<button type="button" class="menu-tree-toggle${collapsed?' is-collapsed':''}" data-toggle-group="${esc(groupKey)}" aria-expanded="${collapsed?'false':'true'}" title="${collapsed?'Expand':'Collapse'}"><i class="bi bi-chevron-${collapsed?'right':'down'}"></i></button>`;
+    return `<span class="menu-tree-toggle${collapsed?' is-collapsed':''}" aria-hidden="true"><i class="${iconClass('bi-chevron-'+(collapsed?'right':'down'))}"></i></span>`;
   }
 
   function menuNameCell(opts){
     const {icon,title,sub,pill,depth,toggleHtml}=opts;
     const depthClass=depth?` menu-tree-depth-${depth}`:'';
-    return `<div class="menu-name-cell${depthClass}">${toggleHtml||'<span class="menu-tree-toggle is-spacer" aria-hidden="true"></span>'}<i class="bi ${esc(icon||'bi-circle')}"></i><div><b>${esc(title)}</b><small>${esc(sub||'')}</small></div>${pill||''}</div>`;
+    const gutter=toggleHtml||'<span class="menu-tree-toggle is-spacer" aria-hidden="true"></span>';
+    const meta=pill?`<div class="menu-name-meta">${pill}</div>`:'';
+    return `<div class="menu-name-cell${depthClass}"><span class="menu-tree-gutter">${gutter}</span><i class="${iconClass(icon)}" aria-hidden="true"></i><div class="menu-name-text"><b>${esc(title)}</b><small>${esc(sub||'')}</small></div>${meta}</div>`;
   }
 
   function renderMenuRow(m, depth, parentTitle){
@@ -250,7 +265,11 @@
       ? actionBtns({editAttr:'data-edit-group',editVal:node.id,delAttr:'data-delete-group',delVal:node.id,delTitle:'Delete group'})
       : `<span class="menu-url-muted">Register via New Menu → Group</span>`;
 
-    const groupTr=`<tr class="menu-row-group${collapsed?' is-collapsed':''}" data-group-key="${esc(key)}">
+    const canToggle=children.length>0;
+    const rowToggle=canToggle
+      ? ` data-toggle-group="${esc(key)}" aria-expanded="${collapsed?'false':'true'}" title="${collapsed?'Click to expand':'Click to collapse'}"`
+      : '';
+    const groupTr=`<tr class="menu-row-group${collapsed?' is-collapsed':''}${canToggle?' is-toggleable':''}" data-group-key="${esc(key)}"${rowToggle}>
       <td>${menuNameCell({
         icon:node.icon||'bi-folder',
         title:node.title,
@@ -301,7 +320,12 @@
       const headActions=editable
         ? `<div class="d-flex gap-2"><button class="clean-btn flex-grow-1" data-edit-group="${esc(node.id)}"><i class="bi bi-pencil-square"></i> Edit Group</button><button class="clean-btn danger" data-delete-group="${esc(node.id)}"><i class="bi bi-trash3"></i></button></div>`
         : '';
-      cards.push(`<article class="member-mobile-card menu-mobile-card menu-mobile-group${collapsed?' is-collapsed':''}"><div class="member-card-head"><div class="menu-name-cell">${treeToggleBtn(node.groupKey,(node.children||[]).length,collapsed)}<i class="bi ${esc(node.icon||'bi-folder')}"></i><div><strong>${esc(node.title)}</strong><small>${esc(node.groupKey)}</small></div>${pill}</div>${statusPill(node.status)}</div><div class="member-card-grid"><div><span>Type</span><b>Sidebar category</b></div><div><span>Children</span><b>${(node.children||[]).length}</b></div><div><span>Sort</span><b>${readSort(node.sortOrder,0)}</b></div></div>${headActions}</article>`);
+      const canToggle=(node.children||[]).length>0;
+      const cardToggle=canToggle
+        ? ` data-toggle-group="${esc(node.groupKey)}" aria-expanded="${collapsed?'false':'true'}"`
+        : '';
+      const nameCell=`<div class="menu-name-cell">${treeToggleBtn(node.groupKey,(node.children||[]).length,collapsed)}<i class="${iconClass(node.icon||'bi-folder')}" aria-hidden="true"></i><div class="menu-name-text"><strong>${esc(node.title)}</strong><small>${esc(node.groupKey)}</small></div>${pill}</div>`;
+      cards.push(`<article class="member-mobile-card menu-mobile-card menu-mobile-group${collapsed?' is-collapsed':''}${canToggle?' is-toggleable':''}"${cardToggle} title="${canToggle?(collapsed?'Click to expand':'Click to collapse'):''}"><div class="member-card-head">${nameCell}${statusPill(node.status)}</div><div class="member-card-grid"><div><span>Type</span><b>Sidebar category</b></div><div><span>Children</span><b>${(node.children||[]).length}</b></div><div><span>Sort</span><b>${readSort(node.sortOrder,0)}</b></div></div>${headActions}</article>`);
       if(!collapsed){
         (node.children||[]).forEach(m=>{
           cards.push(`<article class="member-mobile-card menu-mobile-card menu-mobile-child"><div class="member-card-head"><div class="menu-name-cell"><i class="bi ${esc(m.icon||'bi-circle')}"></i><div><strong>${esc(m.title)}</strong><small>${esc(m.menuKey)}</small></div></div>${statusPill(m.status)}</div><div class="member-card-grid"><div><span>Page URL</span><b>${esc(m.url)}</b></div><div><span>Parent</span><b>${esc(node.title)}</b></div><div><span>Sort</span><b>${readSort(m.sortOrder,0)}</b></div></div><div class="d-flex gap-2"><button class="clean-btn flex-grow-1" data-edit-menu="${esc(m.id)}"><i class="bi bi-pencil-square"></i> Edit</button><button class="clean-btn danger" data-delete-menu="${esc(m.id)}"><i class="bi bi-trash3"></i></button></div></article>`);
@@ -332,11 +356,11 @@
 
   function syncItemIconPreview(){
     const preview=$('menuIconPreview');
-    if(preview) preview.className='bi '+($('menuIcon')?.value.trim()||'bi-circle');
+    if(preview) preview.className=iconClass($('menuIcon')?.value);
   }
   function syncGroupIconPreview(){
     const preview=$('groupIconPreview');
-    if(preview) preview.className='bi '+($('groupIcon')?.value.trim()||'bi-folder');
+    if(preview) preview.className=iconClass($('groupIcon')?.value||'bi-folder');
   }
 
   function setNmMode(mode, opts){
@@ -830,12 +854,28 @@
     $('groupSort')?.addEventListener('change',updateLivePreview);
 
     document.addEventListener('click',e=>{
-      const tg=e.target.closest('[data-toggle-group]');
-      if(tg){e.preventDefault();toggleGroupCollapse(tg.getAttribute('data-toggle-group'));return;}
-      const me=e.target.closest('[data-edit-menu]');if(me)edit(me.dataset.editMenu);
-      const md=e.target.closest('[data-delete-menu]');if(md)menuDelete(md.dataset.deleteMenu);
-      const ge=e.target.closest('[data-edit-group]');if(ge)editGroup(ge.dataset.editGroup);
-      const gd=e.target.closest('[data-delete-group]');if(gd)groupDelete(gd.dataset.deleteGroup);
+      // Action buttons always win.
+      const me=e.target.closest('[data-edit-menu]');if(me){edit(me.dataset.editMenu);return;}
+      const md=e.target.closest('[data-delete-menu]');if(md){menuDelete(md.dataset.deleteMenu);return;}
+      const ge=e.target.closest('[data-edit-group]');if(ge){editGroup(ge.dataset.editGroup);return;}
+      const gd=e.target.closest('[data-delete-group]');if(gd){groupDelete(gd.dataset.deleteGroup);return;}
+
+      // Whole group row / card is the expand hit target.
+      const row=e.target.closest('tr.menu-row-group.is-toggleable, article.menu-mobile-group.is-toggleable, [data-toggle-group]');
+      if(row){
+        const key=row.getAttribute('data-toggle-group')||row.getAttribute('data-group-key');
+        if(key){
+          e.preventDefault();
+          toggleGroupCollapse(key);
+        }
+      }
+    });
+    document.addEventListener('keydown',e=>{
+      if(e.key!=='Enter'&&e.key!==' ') return;
+      const row=e.target.closest('tr.menu-row-group.is-toggleable');
+      if(!row||e.target!==row) return;
+      e.preventDefault();
+      toggleGroupCollapse(row.getAttribute('data-toggle-group')||row.getAttribute('data-group-key'));
     });
 
     setNmMode('group',{skipPreview:true});
