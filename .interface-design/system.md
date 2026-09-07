@@ -111,11 +111,11 @@ Page padding (exec): `20px 24px` desktop · tighten on short viewports
 ## Layout
 
 - **Shell:** Left sidebar + topbar (hamburger, theme, user) + main
-- **Overview head:** Date range trigger left-aligned where title used to sit (never inside a KPI card)
+- **Overview head:** Date range lives inside the Net Profit hero card (left); metric block on the right
 - **No Mix bar:** Do not show Merchant/Game share mix under KPIs
 - **Sidebar width:** Content-serving rail (~240–280px); mini-rail supported
-- **Executive dashboard focal point:** Overview → 3 KPI cards → Profit Trend
-- **First viewport:** Brand/sidebar + Overview head + KPIs + chart only — no promo clutter
+- **Executive dashboard focal point:** Single **Net Profit Metric & Trend** hero card (date + KPI + green area chart + footer stats)
+- **First viewport:** Brand/sidebar + topbar + one profit hero card only — no promo clutter
 
 ---
 
@@ -136,19 +136,15 @@ Page padding (exec): `20px 24px` desktop · tighten on short viewports
 
 ### KPI / profit card
 
-- Padding: `20px 22px 16px` · radius `16px` · min-height ~`148px`
-- Layout: one row `[icon | label+value | sparkline]` · hairline rule · delta footer
-- Label stacked above value beside the icon; sparkline right-aligned in the same band
-- Series-colored icon wells and delta dots; up/down pct uses success/danger, flat uses secondary text
-- Grid: 3 columns desktop → 1 column mobile
-- Subtle rise animation on load; hover lifts card
+- Replaced by hero Net Profit Metric & Trend card (see Trend card)
+- Delta: green/red pill `↑ +N% vs last N days`
 
 ### Trend card
 
-- Same card chrome as KPI
-- Header: title + subtitle left; legend right (Merchant dashed / Game + Net solid)
-- Hover tooltip: dark navy popover with date, net, merchant/game breakdown, growth %
+- One full-bleed white card: date left · net value + delta right · green spline + area fill · footer sync/avg/peak
 - Chart height ~`360px` desktop; preserve responsive min-heights from `main-dashboard-executive.css`
+- Series: Net Profit only (`#16B45D`); white-ringed points; final x-label + tip highlighted
+- Hover tooltip: navy popover with date `(Final)` and net MYR
 
 ### Buttons (align toward BO filters)
 
@@ -182,6 +178,7 @@ Page padding (exec): `20px 24px` desktop · tighten on short viewports
 | frontend-design as secondary | Anti-slop polish only; must not override tokens | 2026-09-03 |
 | Overview mock layout locked | Title+date head, square KPI icons, deltas, no Mix | 2026-09-03 |
 | Chart: Merchant dashed · Net solid+fill | Matches Overview reference | 2026-09-03 |
+| Overview hero = Net Profit Metric & Trend | Single card: date + net KPI + green area chart + footer; retire dual KPI row | 2026-09-07 |
 | Brands Business page color-aligned | Same Deep Navy Cyan tokens as Overview; legacy `#2563eb` / purple title icon retired on Brands | 2026-09-03 |
 | Menu Management color-aligned | Same Deep Navy Cyan shell + cyan CTA / badges; retire `#2563eb` / indigo gradients on this page | 2026-09-04 |
 | Menu Management light/dark via `bo_theme` | Same sun/moon toggle + shared key as Overview/Brands | 2026-09-04 |

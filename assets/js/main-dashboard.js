@@ -24,6 +24,11 @@
     if (!d) return v || '';
     return `${pad2(d.getDate())} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
   }
+  function axisDate(v) {
+    const d = parseYmd(v);
+    if (!d) return v || '';
+    return `${pad2(d.getDate())} ${MONTHS[d.getMonth()]}`;
+  }
   function addDay(v) {
     const a = String(v || '').split('-').map(Number);
     return new Date(Date.UTC(a[0], a[1] - 1, a[2] + 1)).toISOString().slice(0, 10);
@@ -75,16 +80,17 @@
   }
   function chartAxisMode(from, to) {
     if (!from || !to) return 'month';
-    if (isSameMonthRange(from, to)) return 'day';
     const days = inclusiveDays(from, to);
-    // 一个月以上、两个月以内：隔日 1/7 3/7 …
-    if (days > 31 && days <= 62) return 'odd-dm';
-    // 两个月以上：按月 Mar 2026 / Apr 2026
+    /* ≤1 calendar month (same month or ≤31 days): 1, 2, 3… */
+    if (isSameMonthRange(from, to) || days <= 31) return 'day';
+    /* >1 month and ≤2 months: odd days as 1/8, 3/8… */
+    if (days <= 62) return 'odd-dm';
+    /* >2 months: Sep 2026, Oct 2026… */
     return 'month';
   }
   function niceStep(span) {
     if (span <= 0) return 1;
-    const raw = span / 5, p = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / p;
+    const raw = span / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / p;
     return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * p;
   }
   function shortNum(v) {
@@ -107,16 +113,42 @@
     const a = Math.abs(n);
     if (a >= 999.95) return `${n < 0 ? '-' : '+'}999%+`;
     if (a >= 100) return `${sign}${n.toFixed(0)}%`;
-    return `${sign}${n.toFixed(2)}%`;
+    return `${sign}${n.toFixed(0)}%`;
   }
 
-  function accumulate(rows) {
-    let cm = 0, cg = 0;
-    return (rows || []).map(r => {
-      cm += Number(r.merchantProfit || 0);
-      cg += Number(r.gameProfit || 0);
-      return { ...r, merchantProfit: cm, gameProfit: cg, netProfit: cm + cg };
+  function dayNet(r) {
+    if (!r) return 0;
+    if (r.merchantProfit != null || r.gameProfit != null) {
+      return Number(r.merchantProfit || 0) + Number(r.gameProfit || 0);
+    }
+    return Number(r.netProfit || 0);
+  }
+
+  /* Daily series: each calendar day in range; missing days = 0 (no accumulate) */
+  function fillDailySeries(from, to, rows) {
+    const map = new Map();
+    (rows || []).forEach(r => {
+      const key = String(r.date || '').slice(0, 10);
+      if (!key) return;
+      map.set(key, (map.get(key) || 0) + dayNet(r));
     });
+    const start = parseYmd(from);
+    const end = parseYmd(to);
+    if (!start || !end || end < start) {
+      return (rows || []).map(r => ({
+        date: String(r.date || '').slice(0, 10),
+        netProfit: dayNet(r),
+        merchantProfit: Number(r.merchantProfit || 0),
+        gameProfit: Number(r.gameProfit || 0)
+      }));
+    }
+    const out = [];
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      const key = fmt(d);
+      const net = map.has(key) ? map.get(key) : 0;
+      out.push({ date: key, netProfit: net, merchantProfit: net, gameProfit: 0 });
+    }
+    return out;
   }
 
   function aggregateByMonth(rows) {
@@ -125,7 +157,9 @@
       const d = parseYmd(r.date);
       if (!d) return;
       const key = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}`;
-      const cur = bucket.get(key) || { date: `${key}-01`, merchantProfit: 0, gameProfit: 0 };
+      const cur = bucket.get(key) || { date: `${key}-01`, merchantProfit: 0, gameProfit: 0, netProfit: 0 };
+      const net = dayNet(r);
+      cur.netProfit += net;
       cur.merchantProfit += Number(r.merchantProfit || 0);
       cur.gameProfit += Number(r.gameProfit || 0);
       bucket.set(key, cur);
@@ -133,53 +167,153 @@
     return Array.from(bucket.values());
   }
 
-  function seriesActive(rows, key) {
-    return (rows || []).some(r => !nearZero(r[key]));
+  function smoothPath(pts) {
+    if (!pts.length) return '';
+    if (pts.length === 1) return `M${pts[0].x.toFixed(2)},${pts[0].y.toFixed(2)}`;
+    if (pts.length === 2) {
+      return `M${pts[0].x.toFixed(2)},${pts[0].y.toFixed(2)} L${pts[1].x.toFixed(2)},${pts[1].y.toFixed(2)}`;
+    }
+    /* Low-tension wave; clamp Y so curves don't overshoot past segment endpoints */
+    const tension = 0.18;
+    let d = `M${pts[0].x.toFixed(2)},${pts[0].y.toFixed(2)}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[i === 0 ? 0 : i - 1];
+      const p1 = pts[i];
+      const p2 = pts[i + 1];
+      const p3 = pts[i + 2] || p2;
+      const yMin = Math.min(p1.y, p2.y);
+      const yMax = Math.max(p1.y, p2.y);
+      let cp1x = p1.x + (p2.x - p0.x) * tension;
+      let cp1y = p1.y + (p2.y - p0.y) * tension;
+      let cp2x = p2.x - (p3.x - p1.x) * tension;
+      let cp2y = p2.y - (p3.y - p1.y) * tension;
+      cp1y = Math.min(yMax, Math.max(yMin, cp1y));
+      cp2y = Math.min(yMax, Math.max(yMin, cp2y));
+      d += ` C${cp1x.toFixed(2)},${cp1y.toFixed(2)} ${cp2x.toFixed(2)},${cp2y.toFixed(2)} ${p2.x.toFixed(2)},${p2.y.toFixed(2)}`;
+    }
+    return d;
   }
 
-  function sparkline(el, values, color) {
-    if (!el) return;
-    if (!values || values.length < 2) { el.innerHTML = ''; return; }
-    const w = 112, h = 44, p = 2;
-    let min = Math.min(0, ...values), max = Math.max(0, ...values);
-    if (min === max) { min -= 1; max += 1; }
-    const x = i => p + i * (w - p * 2) / (values.length - 1);
-    const y = v => p + (max - v) / (max - min) * (h - p * 2);
-    const line = values.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
-    const z = y(0);
-    const fill = `${line} L${x(values.length - 1).toFixed(1)},${z.toFixed(1)} L${x(0).toFixed(1)},${z.toFixed(1)} Z`;
-    el.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><path class="spark-fill" d="${fill}" fill="${color}"/><path class="spark-line" d="${line}" stroke="${color}"/></svg>`;
+  function dayAxisLabel(v) {
+    const d = parseYmd(v);
+    if (!d) return v || '';
+    return `${pad2(d.getDate())} ${MONTHS[d.getMonth()]}`;
   }
 
-  function setKpi(id, value, cardSel) {
-    const el = $(id);
+  function buildXAxis(rows, axisMode, xFn, W) {
+    const cells = rows.map((r, i) => {
+      const isFirst = i === 0;
+      const isLast = i === rows.length - 1;
+      const cur = parseYmd(r.date);
+      let show = false;
+      let label = '';
+      let modeCls = '';
+
+      if (axisMode === 'day') {
+        show = true;
+        label = dayOfMonth(r.date);
+        modeCls = 'is-day';
+      } else if (axisMode === 'odd-dm') {
+        const dayNum = cur ? cur.getDate() : (i + 1);
+        show = dayNum % 2 === 1 || isLast;
+        label = show ? dayMonthShort(r.date) : '';
+        modeCls = 'is-odd';
+      } else {
+        show = true;
+        label = monthYearLabel(r.date);
+        modeCls = 'is-month';
+      }
+
+      const left = ((xFn(i) / W) * 100).toFixed(3);
+      const edge = isFirst ? ' is-start' : (isLast ? ' is-end' : '');
+      return `<span class="${modeCls}${edge}${isLast ? ' is-active' : ''}${show ? '' : ' is-gap'}" style="left:${left}%" title="${niceDate(r.date)}">${label}</span>`;
+    }).join('');
+    return `<div class="np-x-axis np-x-axis--${axisMode}">${cells}</div>`;
+  }
+
+  function setNetValue(value) {
+    const el = $('netProfit');
     if (!el) return;
     el.textContent = money(value);
-    const wrap = el.closest('.profit-value');
+    const wrap = el.closest('.np-metric-value');
+    if (!wrap) return;
     wrap.classList.toggle('is-neg', Number(value) < 0);
-    const card = document.querySelector(cardSel);
-    if (card) card.classList.toggle('is-zero', nearZero(value));
+    wrap.classList.toggle('is-zero', nearZero(value));
   }
 
-  function setDelta(id, curr, prev, days) {
-    const el = $(id);
+  function setDelta(curr, prev, days) {
+    const el = $('netDelta');
     if (!el) return;
     const { pct, dir } = pctChange(curr, prev);
     const dayLabel = days === 1 ? '1 day' : `${days} days`;
+    const arrow = dir === 'up' ? '↑' : dir === 'down' ? '↓' : '→';
     el.classList.remove('is-up', 'is-down', 'is-flat');
     el.classList.add(dir === 'up' ? 'is-up' : dir === 'down' ? 'is-down' : 'is-flat');
-    el.innerHTML = `<span class="profit-delta-dot" aria-hidden="true"></span><span class="profit-delta-pct">${formatPct(pct)}</span><span class="profit-delta-meta">vs last ${dayLabel}</span>`;
+    el.textContent = `${arrow} ${formatPct(pct)} vs last ${dayLabel}`;
   }
 
-  function bindChartHover(root, rows, map, periodGrowth, active) {
+  function plateauNote(rows) {
+    if (!rows || rows.length < 2) return '';
+    const vals = rows.map(r => Number(r.netProfit || 0));
+    const peak = Math.max(...vals);
+    if (!Number.isFinite(peak)) return '';
+    let start = vals.length - 1;
+    while (start > 0 && Math.abs(vals[start - 1] - peak) < Math.max(0.01, Math.abs(peak) * 0.005)) start--;
+    if (start >= vals.length - 1) {
+      const d = parseYmd(rows[rows.length - 1].date);
+      return d ? `(${pad2(d.getDate())} ${MONTHS[d.getMonth()]})` : '';
+    }
+    const a = parseYmd(rows[start].date);
+    const b = parseYmd(rows[rows.length - 1].date);
+    if (!a || !b) return '';
+    if (a.getMonth() === b.getMonth()) {
+      return `(Day ${a.getDate()}–${b.getDate()} plateau)`;
+    }
+    return `(${pad2(a.getDate())} ${MONTHS[a.getMonth()]}–${pad2(b.getDate())} ${MONTHS[b.getMonth()]})`;
+  }
+
+  function updateFooter(rows, days, summaryNet) {
+    const vals = (rows || []).map(r => Number(r.netProfit || 0));
+    const peak = vals.length ? Math.max(...vals) : Number(summaryNet || 0);
+    const avg = days > 0 ? Number(summaryNet || 0) / days : 0;
+    if ($('npAvg')) $('npAvg').textContent = `${money(avg)} MYR`;
+    if ($('npPeak')) $('npPeak').textContent = `${money(peak)} MYR`;
+    if ($('npPeakNote')) $('npPeakNote').textContent = plateauNote(rows);
+    const sync = $('npSyncLabel');
+    if (sync) {
+      const now = new Date();
+      const hh = pad2(now.getHours());
+      const mm = pad2(now.getMinutes());
+      sync.innerHTML = `<span class="np-sync-dot" aria-hidden="true"></span> Automatic sync enabled • Last updated today at ${hh}:${mm} MYT`;
+    }
+  }
+
+  function placeTip(root, tip, clientX, clientY, preferAbove) {
+    tip.hidden = false;
+    tip.classList.remove('is-below');
+    const wrapRect = root.getBoundingClientRect();
+    const pad = 10;
+    const localX = clientX - wrapRect.left;
+    const localY = clientY - wrapRect.top;
+    const tipH = tip.offsetHeight || 72;
+    const tipW = tip.offsetWidth || 176;
+    const half = tipW / 2;
+    tip.style.left = `${Math.min(wrapRect.width - half - 4, Math.max(half + 4, localX))}px`;
+    const aboveTop = localY - tipH - 16;
+    if (preferAbove !== false && aboveTop >= pad) {
+      tip.style.top = `${aboveTop}px`;
+      tip.classList.remove('is-below');
+    } else {
+      tip.style.top = `${Math.min(wrapRect.height - tipH - pad, localY + 20)}px`;
+      tip.classList.add('is-below');
+    }
+  }
+
+  function bindChartHover(root, rows, map) {
     const tip = root.querySelector('.trend-tip');
-    const hover = root.querySelector('.trend-hover-line');
+    const band = root.querySelector('.trend-hover-band');
     const svg = root.querySelector('.trend-svg');
-    const dots = {
-      merchant: root.querySelector('.trend-dot.merchant'),
-      net: root.querySelector('.trend-dot.net')
-    };
-    if (!tip || !hover || !svg || !rows.length) return;
+    if (!tip || !band || !svg || !rows.length) return;
 
     const hit = (clientX, clientY) => {
       const rect = svg.getBoundingClientRect();
@@ -191,7 +325,7 @@
       const top = map.T;
       const bottom = map.H - map.B;
       if (svgX < left || svgX > right) return null;
-      if (svgY < top - 6 || svgY > bottom + 10) return null;
+      if (svgY < top - 8 || svgY > bottom + 12) return null;
       if (rows.length === 1) return 0;
       const ratio = (svgX - left) / (right - left);
       return Math.max(0, Math.min(rows.length - 1, Math.round(ratio * (rows.length - 1))));
@@ -199,61 +333,33 @@
 
     const show = (i, clientX, clientY) => {
       const r = rows[i];
-      const m = Number(r.merchantProfit || 0);
       const n = Number(r.netProfit || 0);
-      const growth = map.labelMode === 'month'
-        ? pctChange(n, i > 0 ? Number(rows[i - 1].netProfit || 0) : 0)
-        : (periodGrowth || pctChange(n, i > 0 ? Number(rows[i - 1].netProfit || 0) : n));
-      const { pct, dir } = growth;
-      const growthColor = dir === 'down' ? '#FF8A8A' : '#5EE29A';
       const tipDate = map.labelMode === 'month' ? monthYearLabel(r.date) : niceDate(r.date);
-      tip.innerHTML = `
-        <div class="tip-date">${tipDate}</div>
-        <div class="tip-net" style="color:${n < 0 ? '#FF8A8A' : '#5EE29A'}">${n >= 0 ? '+' : ''}${money(n)} MYR</div>
-        <div class="tip-row"><span>Merchant</span><b>${money(m)} MYR</b></div>
-        <div class="tip-growth" style="color:${growthColor}"><span>Growth</span><b>${formatPct(pct)}</b></div>`;
-      tip.hidden = false;
-      tip.classList.remove('is-below');
-      const wrapRect = root.getBoundingClientRect();
-      const pad = 10;
-      const localX = clientX - wrapRect.left;
-      const localY = clientY - wrapRect.top;
-      tip.style.left = `${Math.min(wrapRect.width - pad, Math.max(pad, localX))}px`;
-      tip.style.top = '0px';
-      const tipH = tip.offsetHeight || 120;
-      const tipW = tip.offsetWidth || 176;
-      const half = tipW / 2;
-      const clampedX = Math.min(wrapRect.width - half - 4, Math.max(half + 4, localX));
-      tip.style.left = `${clampedX}px`;
-      const aboveTop = localY - tipH - 14;
-      if (aboveTop >= pad) {
-        tip.style.top = `${aboveTop}px`;
-        tip.classList.remove('is-below');
-      } else {
-        tip.style.top = `${Math.min(wrapRect.height - tipH - pad, localY + 18)}px`;
-        tip.classList.add('is-below');
-      }
+      tip.classList.toggle('is-neg', n < 0);
+      tip.innerHTML =
+        `<div class="tip-date">${tipDate}</div>` +
+        `<div class="tip-net${n < 0 ? ' is-neg' : ''}">${money(n)} <small>MYR</small></div>`;
       const xi = map.x(i);
-      hover.setAttribute('x1', xi);
-      hover.setAttribute('x2', xi);
-      hover.setAttribute('y1', map.T);
-      hover.setAttribute('y2', map.H - map.B);
-      hover.style.opacity = '1';
-      const place = (dot, on, val) => {
-        if (!dot) return;
-        if (!on) { dot.style.opacity = '0'; return; }
-        dot.setAttribute('cx', xi);
-        dot.setAttribute('cy', map.y(val));
-        dot.style.opacity = '1';
-      };
-      place(dots.merchant, active.m, m);
-      place(dots.net, active.n, n);
+      const yi = map.y(n);
+      const bandW = Math.max(18, map.W / Math.max(rows.length * 1.15, 12));
+      band.setAttribute('x', xi - bandW / 2);
+      band.setAttribute('width', bandW);
+      band.setAttribute('y', map.T);
+      band.setAttribute('height', map.H - map.T - map.B);
+      band.setAttribute('fill', document.documentElement.getAttribute('data-bo-theme') === 'dark'
+        ? 'url(#npNightBand)'
+        : 'url(#npLightBand)');
+      band.style.opacity = '1';
+      const plot = root.querySelector('.np-chart-plot') || root;
+      const svgRect = svg.getBoundingClientRect();
+      const px = svgRect.left + (xi / map.W) * svgRect.width;
+      const py = svgRect.top + (yi / map.H) * svgRect.height;
+      placeTip(plot, tip, clientX != null ? clientX : px, clientY != null ? clientY : py, true);
     };
 
     const hide = () => {
       tip.hidden = true;
-      hover.style.opacity = '0';
-      Object.values(dots).forEach(d => { if (d) d.style.opacity = '0'; });
+      band.style.opacity = '0';
     };
 
     root.onmousemove = e => {
@@ -262,30 +368,33 @@
       show(i, e.clientX, e.clientY);
     };
     root.onmouseleave = hide;
+
+    requestAnimationFrame(() => {
+      const last = rows.length - 1;
+      const svgRect = svg.getBoundingClientRect();
+      if (!svgRect.width) return;
+      const px = svgRect.left + (map.x(last) / map.W) * svgRect.width;
+      const py = svgRect.top + (map.y(Number(rows[last].netProfit || 0)) / map.H) * svgRect.height;
+      show(last, px, py);
+    });
   }
 
-  function renderChart(rows, periodGrowth) {
+  function renderChart(rows) {
     const root = $('profitTrend');
-    if (!rows || !rows.length) {
-      root.innerHTML = '<div class="exec-empty">No data for selected period.</div>';
-      return;
-    }
-    const axisMode = chartAxisMode($('mainFrom')?.value, $('mainTo')?.value);
-    const rangeFrom = parseYmd($('mainFrom')?.value);
-    // 两个月以上：按月聚合，不再按天画点
+    const fromVal = $('mainFrom')?.value;
+    const toVal = $('mainTo')?.value;
+    const axisMode = chartAxisMode(fromVal, toVal);
+
+    rows = fillDailySeries(fromVal, toVal, rows || []);
     if (axisMode === 'month') rows = aggregateByMonth(rows);
-    rows = accumulate(rows);
+
     if (!rows.length) {
       root.innerHTML = '<div class="exec-empty">No data for selected period.</div>';
-      return;
+      return [];
     }
-    const showM = seriesActive(rows, 'merchantProfit');
-    const showN = seriesActive(rows, 'netProfit');
-    $('legendMerchant')?.classList.toggle('is-idle', !showM);
-    $('legendNet')?.classList.toggle('is-idle', !showN);
 
-    const W = 1200, H = 390, L = 74, R = 24, T = 30, B = 48, iw = W - L - R, ih = H - T - B;
-    const vals = rows.flatMap(x => [Number(x.merchantProfit || 0), Number(x.netProfit || 0)]);
+    const W = 1200, H = 360, L = 48, R = 16, T = 22, B = 12, iw = W - L - R, ih = H - T - B;
+    const vals = rows.map(x => Number(x.netProfit || 0));
     let min = Math.min(0, ...vals), max = Math.max(0, ...vals);
     if (min === max) { min -= 1; max += 1; }
     const step = niceStep(max - min);
@@ -298,80 +407,67 @@
     let grid = '';
     for (let v = min; v <= max + step * .1; v += step) {
       const yy = y(v);
-      grid += `<line class="${Math.abs(v) < step / 100 ? 'trend-zero' : 'trend-grid'}" x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}"/><text class="trend-axis-label" x="${L - 12}" y="${yy + 4}" text-anchor="end">${shortNum(v)}</text>`;
+      const zero = Math.abs(v) < step / 100;
+      grid += `<line class="${zero ? 'trend-zero' : 'trend-grid'}" x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}"/><text class="trend-axis-label" x="${L - 8}" y="${yy + 4}" text-anchor="end">${shortNum(v)}</text>`;
     }
 
-    const poly = (key, cls) => `<polyline class="trend-line ${cls}" points="${rows.map((r, i) => `${x(i).toFixed(1)},${y(Number(r[key] || 0)).toFixed(1)}`).join(' ')}"/>`;
-    const area = (key, cls) => {
-      const pts = rows.map((r, i) => `${x(i).toFixed(1)},${y(Number(r[key] || 0)).toFixed(1)}`);
-      const z0 = y(0);
-      return `<polygon class="trend-fill ${cls}" points="${pts.join(' ')} ${x(rows.length - 1).toFixed(1)},${z0} ${x(0).toFixed(1)},${z0}"/>`;
-    };
-
-    const every = Math.max(1, Math.ceil(rows.length / 8));
-    const minLabGap = axisMode === 'day' ? 22 : axisMode === 'month' ? 56 : 48;
-    let labs = '';
-    let lastLabX = -Infinity;
-    rows.forEach((r, i) => {
-      const cur = parseYmd(r.date);
-      let showLab = false;
-      let label = '';
-      if (axisMode === 'day') {
-        showLab = true;
-        label = dayOfMonth(r.date);
-      } else if (axisMode === 'odd-dm') {
-        const diff = rangeFrom && cur ? Math.round((cur - rangeFrom) / 86400000) : i;
-        showLab = diff % 2 === 0;
-        label = dayMonthShort(r.date);
-      } else if (axisMode === 'month') {
-        showLab = true;
-        label = monthYearLabel(r.date);
-      } else {
-        showLab = i % every === 0 || i === rows.length - 1;
-        label = prettyDate(r.date);
-      }
-      if (!showLab) return;
-      const xi = x(i);
-      if (axisMode === 'day' && xi - lastLabX < minLabGap && i !== rows.length - 1) return;
-      if (axisMode === 'month' && xi - lastLabX < minLabGap && i !== 0 && i !== rows.length - 1) return;
-      lastLabX = xi;
-      const anchor = axisMode === 'month' && i === 0 ? 'start' : 'middle';
-      labs += `<text class="trend-axis-label${axisMode === 'day' || axisMode === 'odd-dm' ? ' is-day' : ''}${axisMode === 'month' ? ' is-month' : ''}" x="${xi}" y="${H - 15}" text-anchor="${anchor}">${label}</text>`;
-    });
-
-    const lines = [
-      showN ? area('netProfit', 'net') : '',
-      showM ? poly('merchantProfit', 'merchant') : '',
-      showN ? poly('netProfit', 'net') : ''
-    ].join('');
+    const pts = rows.map((r, i) => ({ x: x(i), y: y(Number(r.netProfit || 0)) }));
+    const line = smoothPath(pts);
+    const z0 = y(0);
+    const area = `${line} L${pts[pts.length - 1].x.toFixed(2)},${z0.toFixed(2)} L${pts[0].x.toFixed(2)},${z0.toFixed(2)} Z`;
+    const xAxisHtml = buildXAxis(rows, axisMode, x, W);
 
     root.innerHTML = `
-      <div class="trend-tip" hidden></div>
-      <svg class="trend-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Merchant profit and net profit trend">
-        ${grid}${lines}${labs}
-        <line class="trend-hover-line" x1="0" x2="0" y1="${T}" y2="${H - B}" style="opacity:0"></line>
-        <circle class="trend-dot merchant" r="4.5" cx="0" cy="0"></circle>
-        <circle class="trend-dot net" r="5" cx="0" cy="0"></circle>
-      </svg>`;
-    bindChartHover(
-      root,
-      rows,
-      { x, y, T, B, H, L, R, W, labelMode: axisMode === 'month' ? 'month' : 'day' },
-      periodGrowth,
-      { m: showM, n: showN }
-    );
-    sparkline($('merchantSpark'), rows.map(r => Number(r.merchantProfit || 0)), '#1688F8');
-    sparkline($('netSpark'), rows.map(r => Number(r.netProfit || 0)), '#16B45D');
+      <div class="np-chart-plot np-chart-plot--instrument">
+        <div class="trend-tip trend-tip--instrument" hidden></div>
+        <svg class="trend-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Net profit trend">
+          <defs>
+            <linearGradient id="npLightArea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#21A6D7" stop-opacity="0.28"/>
+              <stop offset="50%" stop-color="#21A6D7" stop-opacity="0.10"/>
+              <stop offset="100%" stop-color="#21A6D7" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="npNightArea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#21A6D7" stop-opacity="0.38"/>
+              <stop offset="48%" stop-color="#21A6D7" stop-opacity="0.12"/>
+              <stop offset="100%" stop-color="#21A6D7" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="npLightBand" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#21A6D7" stop-opacity="0"/>
+              <stop offset="30%" stop-color="#21A6D7" stop-opacity="0.10"/>
+              <stop offset="100%" stop-color="#21A6D7" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="npNightBand" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#21A6D7" stop-opacity="0"/>
+              <stop offset="22%" stop-color="#21A6D7" stop-opacity="0.16"/>
+              <stop offset="50%" stop-color="#5EE7FF" stop-opacity="0.10"/>
+              <stop offset="78%" stop-color="#21A6D7" stop-opacity="0.12"/>
+              <stop offset="100%" stop-color="#21A6D7" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          ${grid}
+          <path class="trend-fill-light" d="${area}"></path>
+          <path class="trend-fill-night" d="${area}"></path>
+          <path class="trend-line-instrument" d="${line}"></path>
+          <rect class="trend-hover-band" x="0" y="${T}" width="24" height="${H - T - B}" fill="url(#npLightBand)" style="opacity:0"></rect>
+        </svg>
+      </div>
+      ${xAxisHtml}`;
+
+    bindChartHover(root, rows, {
+      x, y, T, B, H, L, R, W,
+      labelMode: axisMode === 'month' ? 'month' : 'day'
+    });
+    return rows;
   }
 
   function render(data, prevSummary, days) {
     const s = data.summary || {};
     const p = prevSummary || {};
-    setKpi('merchantProfit', s.merchantProfit, '.merchant-card');
-    setKpi('netProfit', s.netProfit, '.net-card');
-    setDelta('merchantDelta', s.merchantProfit, p.merchantProfit, days);
-    setDelta('netDelta', s.netProfit, p.netProfit, days);
-    renderChart(data.trend || [], pctChange(s.netProfit, p.netProfit));
+    setNetValue(s.netProfit);
+    setDelta(s.netProfit, p.netProfit, days);
+    const chartRows = renderChart(data.trend || []);
+    updateFooter(chartRows, days, s.netProfit);
   }
 
   async function load() {
@@ -383,7 +479,6 @@
     const days = prev?.days || inclusiveDays(from, to);
     root.classList.add('main-exec-loading');
     try {
-      // 先拉当前区间，保证 KPI / 图表能出来；环比单独请求，失败不影响主数据
       const curr = await api('/admin/main/merchant-profit/dashboard' + qs(from, to));
       let prevSummary = {};
       if (prev) {
@@ -395,14 +490,9 @@
       render(curr, prevSummary, days);
     } catch (e) {
       console.error(e);
-      setKpi('merchantProfit', 0, '.merchant-card');
-      setKpi('netProfit', 0, '.net-card');
-      setDelta('merchantDelta', 0, 0, days);
-      setDelta('netDelta', 0, 0, days);
-      ['merchantSpark', 'netSpark'].forEach(id => {
-        const el = $(id);
-        if (el) el.innerHTML = '';
-      });
+      setNetValue(0);
+      setDelta(0, 0, days);
+      updateFooter([], days, 0);
       const msg = String(e && e.message || '');
       const friendly = /failed to fetch|networkerror|load failed|localhost:8080|cloudflare/i.test(msg)
         ? (msg || 'Unable to reach server. Check network and try again.')
@@ -429,6 +519,7 @@
     const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     let a = new Date(today), b = new Date(today);
     if (key === 'yesterday') { a.setDate(a.getDate() - 1); b = new Date(a); }
+    if (key === 'last7') { a.setDate(a.getDate() - 6); b = new Date(today); }
     if (key === 'thisWeek') { a = startOfWeek(today); b = endOfWeek(today); }
     if (key === 'lastWeek') { a = startOfWeek(today); a.setDate(a.getDate() - 7); b = new Date(a); b.setDate(b.getDate() + 6); }
     if (key === 'thisMonth') { a = new Date(today.getFullYear(), today.getMonth(), 1); b = new Date(today); }
@@ -480,9 +571,9 @@
   }
   function initDatePicker() {
     const trigger = $('mainDateTrigger'), picker = $('mainRangePicker');
-    const [a, b] = presetRange('thisMonth');
+    const [a, b] = presetRange('last7');
     pickerState.view = new Date(a + 'T00:00:00');
-    setRange(a, b, 'thisMonth', false);
+    setRange(a, b, 'last7', false);
     trigger.addEventListener('click', e => {
       e.stopPropagation();
       picker.classList.toggle('show');
