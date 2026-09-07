@@ -475,8 +475,7 @@
     const status = statusEl && statusEl.value || '';
     const bounds = dayBounds(fromEl && fromEl.value, toEl && toEl.value);
 
-    filtered = allEvents.filter(e => {
-      if(category !== 'all' && e.category !== category) return false;
+    const baseFiltered = allEvents.filter(e => {
       if(bounds){
         if(!e.at) return false;
         const t = e.at.getTime();
@@ -488,6 +487,14 @@
         const hay = [e.adminName, e.username, e.title, e.subtitle, e.target, e.ip].join(' ').toLowerCase();
         if(!hay.includes(q)) return false;
       }
+      return true;
+    });
+
+    const catAll = document.getElementById('masCatAll');
+    if(catAll) catAll.textContent = String(baseFiltered.length);
+
+    filtered = baseFiltered.filter(e => {
+      if(category !== 'all' && e.category !== category) return false;
       return true;
     });
     currentPage = 1;

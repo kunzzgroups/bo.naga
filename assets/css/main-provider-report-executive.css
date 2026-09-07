@@ -462,10 +462,12 @@ html[data-bo-theme="dark"] body.main-report-exec-page .mre-empty-panel h3{color:
 
 /* v1.0.3 - render legacy Brand-detail records inside the new Provider Management workspace */
 body.main-report-exec-page .mre-history-filter{border-bottom:1px solid var(--bo-border,#dce4ee)}
-body.main-report-exec-page .mre-history-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:14px 16px 4px}
+body.main-report-exec-page .mre-history-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;padding:14px 16px 4px}
 body.main-report-exec-page .mre-history-type{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:12px;white-space:nowrap}
 body.main-report-exec-page .mre-history-type.transaction{color:#1859b7}
 body.main-report-exec-page .mre-history-type.settlement{color:#b66a00}
+body.main-report-exec-page .mre-history-type.collection{color:#14804a}
+body.main-report-exec-page .mre-history-type.payment{color:#c2410c}
 body.main-report-exec-page .mre-history-type.adjustment{color:#5e4bb7}
 body.main-report-exec-page .mre-history-table td{vertical-align:middle}
 body.main-report-exec-page .mre-actions .btn-mini-settle{margin-left:4px}

@@ -1,4 +1,4 @@
-﻿(function(){
+(function(){
   'use strict';
 
   const PAGE_SIZE = 10;
@@ -481,8 +481,7 @@
     const merchantId = merchantEl && merchantEl.value || '';
     const bounds = dayBounds(fromEl && fromEl.value, toEl && toEl.value);
 
-    filtered = allEvents.filter(e => {
-      if(category !== 'all' && e.category !== category) return false;
+    const baseFiltered = allEvents.filter(e => {
       if(merchantId && String(e.merchantId || '') !== String(merchantId)) return false;
       if(bounds){
         if(!e.at) return false;
@@ -495,6 +494,14 @@
         const hay = [e.adminName, e.username, e.title, e.subtitle, e.target, e.ip].join(' ').toLowerCase();
         if(!hay.includes(q)) return false;
       }
+      return true;
+    });
+
+    const catAll = document.getElementById('masCatAll');
+    if(catAll) catAll.textContent = String(baseFiltered.length);
+
+    filtered = baseFiltered.filter(e => {
+      if(category !== 'all' && e.category !== category) return false;
       return true;
     });
     currentPage = 1;
