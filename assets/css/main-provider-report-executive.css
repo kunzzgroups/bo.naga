@@ -84,7 +84,7 @@ body.main-report-exec-page .mre-cur-btn:focus-visible{
 }
 body.main-report-exec-page .mre-cur-btn:active{transform:scale(.97)}
 
-/* Date range — match Dashboard (cyan icon well) */
+/* Date range — global flat standard (fig.2) */
 body.main-report-exec-page .mre-date-field{
   margin:0;padding:0;min-width:0;
   width:320px;max-width:100%;
@@ -95,30 +95,32 @@ body.main-report-exec-page .mre-date-field .ref-range-wrap{
 body.main-report-exec-page .mre-date-field .ref-range-trigger,
 body.main-report-exec-page .mre-date-trigger{
   width:100%!important;min-width:0!important;max-width:none!important;
-  height:44px!important;min-height:44px!important;
+  height:42px!important;min-height:42px!important;
   border:1px solid var(--bo-border)!important;
   border-radius:10px!important;
   background:var(--bo-surface)!important;
-  color:var(--bo-text-secondary)!important;
+  color:var(--bo-navy)!important;
   font-size:13px!important;font-weight:700!important;
-  box-shadow:var(--bo-shadow,0 0 0 1px rgba(18,59,102,.04),0 1px 2px -1px rgba(18,59,102,.06),0 2px 8px rgba(26,45,80,.018))!important;
+  box-shadow:none!important;
   gap:10px;padding:0 12px!important;
 }
 body.main-report-exec-page .mre-date-trigger:hover,
 body.main-report-exec-page .mre-date-trigger:focus,
 body.main-report-exec-page .ref-range-wrap:focus-within .mre-date-trigger{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.16)!important;
+  box-shadow:0 0 0 3px rgba(33,166,215,.14)!important;
   outline:0!important;
 }
 body.main-report-exec-page .mre-date-field .ref-range-icon{
-  height:44px!important;width:44px!important;
-  margin-left:-12px!important;
-  border-radius:9px 0 0 9px!important;
-  background:var(--bo-cyan)!important;
-  color:#fff!important;
-  display:grid!important;place-items:center!important;
-  flex:0 0 44px!important;
+  height:auto!important;width:auto!important;
+  margin:0!important;padding:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:var(--bo-navy)!important;
+  display:inline-flex!important;align-items:center!important;
+  flex:0 0 auto!important;
+  font-size:15px!important;
+  box-shadow:none!important;
 }
 body.main-report-exec-page .mre-date-field .ref-range-picker{
   width:390px!important;max-width:min(390px,calc(100vw - 32px))!important;

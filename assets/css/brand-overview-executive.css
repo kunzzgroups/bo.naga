@@ -393,8 +393,12 @@ body.brand-management-page .ref-range-trigger:focus{
 }
 body.brand-exec-page .ref-range-icon,
 body.brand-management-page .ref-range-icon{
-  background:var(--bo-cyan)!important;
-  color:#fff!important;
+  background:transparent!important;
+  color:var(--bo-navy)!important;
+  height:auto!important;
+  width:auto!important;
+  margin:0!important;
+  border-radius:0!important;
 }
 body.brand-exec-page .ref-range-presets button:hover,
 body.brand-exec-page .ref-range-presets button.active,

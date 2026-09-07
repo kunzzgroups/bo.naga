@@ -156,6 +156,20 @@ Page padding (exec): `20px 24px` desktop · tighten on short viewports
 
 - Follow `bo-ui-standard.css` geometry; **retoken colors** to Deep Navy Cyan when restyling (replace legacy `--bo-ui-blue: #2864ed`)
 
+### Date range (canonical — all pages)
+
+**Source of truth:** fig.2 / Dashboard flat control. Defined globally in `bo-ui-standard.css` for both `.ref-range-*` and `.bo-range-*`.
+
+| Part | Spec |
+|------|------|
+| Trigger | `42px` height · `10px` radius · white/`--bo-surface` · `1px` `--bo-border` · no fill well |
+| Calendar icon | Flat glyph only · `--bo-navy` · transparent background · **never** cyan/blue filled square |
+| Label | Bold `700` · `--bo-navy` · `13px` · format `DD MMM YYYY – DD MMM YYYY` |
+| Chevron | Right-aligned · navy · subtle |
+| Hover / focus | Border `--bo-cyan` + `0 0 0 3px rgba(33,166,215,.14)` |
+
+Do **not** reintroduce filled icon wells on page CSS. Picker panel / day selection may still use cyan accents.
+
 ---
 
 ## Accessibility

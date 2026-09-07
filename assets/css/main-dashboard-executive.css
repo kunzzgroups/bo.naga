@@ -287,11 +287,14 @@ body.main-dashboard-page{
   border:1px solid var(--bo-border)!important;
   border-radius:10px;
   background:var(--bo-surface)!important;
-  color:var(--bo-text-secondary);
+  color:var(--bo-navy);
   font-size:13px;
-  font-weight:650;
+  font-weight:700;
+  letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;
   box-shadow:none;
   gap:10px;
+  padding:0 12px!important;
 }
 .main-dashboard-page .main-exec-date-field .ref-range-trigger:hover,
 .main-dashboard-page .main-exec-date-field .ref-range-trigger:focus{
@@ -304,11 +307,21 @@ body.main-dashboard-page{
   padding:0;
   margin:0;
   background:transparent!important;
-  color:var(--bo-muted)!important;
+  color:var(--bo-navy)!important;
   border-radius:0;
   display:inline-flex;
   align-items:center;
   font-size:15px;
+}
+.main-dashboard-page .main-exec-date-field .ref-range-trigger > #mainDateLabel{
+  color:var(--bo-navy);
+  font-weight:700;
+}
+.main-dashboard-page .main-exec-date-field .ref-range-trigger > .bi-chevron-down{
+  margin-left:auto;
+  color:var(--bo-navy);
+  font-size:12px;
+  opacity:.85;
 }
 .main-dashboard-page .main-exec-date-field .ref-range-picker{
   left:0;right:auto;z-index:6200;

@@ -1,7 +1,7 @@
 /*
- * BO shared UI standard v2.0.0
+ * BO shared UI standard v2.1.0
  * One authoritative file for filter inputs, dropdowns and filter actions.
- * Date-range component geometry is preserved from the approved Referral Network design.
+ * Date range: flat Dashboard style (fig.2) — navy icon + bold label, no filled icon well.
  */
 :root{
   --bo-ui-blue:#2864ed;
@@ -775,4 +775,100 @@ body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .
 @media(max-width:575.98px){
   .report-actions .bo-account-link{min-width:44px;width:44px;padding:0;justify-content:center}
   .report-actions .bo-account-link .bo-account-name,.report-actions .bo-account-link .bo-account-setting-icon{display:none}
+}
+
+/* ============================================================
+   Date range — global standard (fig.2 / Dashboard flat)
+   Applies to .ref-range-* and .bo-range-* everywhere.
+   No cyan/blue filled icon well. Icon + bold navy text + chevron.
+   ============================================================ */
+.ref-range-trigger,
+.bo-range-trigger{
+  height:42px!important;
+  min-height:42px!important;
+  border:1px solid var(--bo-border, #E2E7F0)!important;
+  border-radius:10px!important;
+  background:var(--bo-surface, #fff)!important;
+  color:var(--bo-navy, #123B66)!important;
+  font-size:13px!important;
+  font-weight:700!important;
+  letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;
+  box-shadow:none!important;
+  gap:10px!important;
+  padding:0 12px!important;
+  overflow:visible!important;
+  display:flex!important;
+  align-items:center!important;
+  text-align:left!important;
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+.ref-range-trigger:hover,
+.ref-range-trigger:focus,
+.bo-range-trigger:hover,
+.bo-range-trigger:focus,
+.bo-range-trigger:focus-within{
+  border-color:var(--bo-cyan, #21A6D7)!important;
+  box-shadow:0 0 0 3px rgba(33,166,215,.14)!important;
+  outline:0!important;
+}
+.ref-range-icon,
+.bo-range-icon{
+  height:auto!important;
+  width:auto!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:var(--bo-navy, #123B66)!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 auto!important;
+  font-size:15px!important;
+  box-shadow:none!important;
+}
+.ref-range-trigger > .bi-chevron-down,
+.bo-range-arrow,
+.bo-range-trigger > .bi-chevron-down{
+  margin-left:auto!important;
+  margin-right:0!important;
+  color:var(--bo-navy, #123B66)!important;
+  font-size:12px!important;
+  opacity:.85;
+  flex:0 0 auto!important;
+}
+.ref-range-trigger > span:not(.ref-range-icon),
+.bo-range-text{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  padding:0!important;
+  color:var(--bo-navy, #123B66)!important;
+  font-weight:700!important;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+html[data-bo-theme="dark"] .ref-range-trigger,
+html[data-bo-theme="dark"] .bo-range-trigger{
+  background:var(--bo-surface, #102030)!important;
+  border-color:var(--bo-border, #1E3348)!important;
+  color:var(--bo-text, #E8EEF5)!important;
+}
+html[data-bo-theme="dark"] .ref-range-icon,
+html[data-bo-theme="dark"] .bo-range-icon,
+html[data-bo-theme="dark"] .ref-range-trigger > .bi-chevron-down,
+html[data-bo-theme="dark"] .bo-range-arrow,
+html[data-bo-theme="dark"] .ref-range-trigger > span:not(.ref-range-icon),
+html[data-bo-theme="dark"] .bo-range-text{
+  color:var(--bo-text, #E8EEF5)!important;
+}
+html[data-bo-theme="dark"] .ref-range-trigger:hover,
+html[data-bo-theme="dark"] .ref-range-trigger:focus,
+html[data-bo-theme="dark"] .bo-range-trigger:hover,
+html[data-bo-theme="dark"] .bo-range-trigger:focus,
+html[data-bo-theme="dark"] .bo-range-trigger:focus-within{
+  border-color:var(--bo-cyan, #21A6D7)!important;
+  box-shadow:0 0 0 3px rgba(33,166,215,.18)!important;
 }
