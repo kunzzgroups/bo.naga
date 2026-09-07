@@ -43,6 +43,10 @@
   function msg(text,cls){if(statusEl){statusEl.textContent=text||'';statusEl.className='upload-status mt-3 '+(cls||'');}}
   async function api(url,opt){const res=await fetch(url,opt||{});const j=await res.json().catch(()=>({}));if(!res.ok||j.status==='error')throw new Error(j.message||'Request failed');return j;}
   function slugify(name){return String(name||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,60)||('role_'+Date.now());}
+  function merchantScopeId(){
+    try{const q=new URLSearchParams(location.search||'').get('merchantId');if(q&&Number(q)>0){localStorage.setItem('bo_active_brand_id',String(Number(q)));return String(Number(q));}}catch(e){}
+    const saved=localStorage.getItem('bo_active_brand_id');return saved&&Number(saved)>0?String(Number(saved)):'';
+  }
 
   function isMainMenu(m){
     const parent=String((m&&m.parentKey)||'').trim().toLowerCase();
@@ -273,10 +277,10 @@
     msg('Saving role and permissions...','');
     try{
       const payload={name,code:slugify(name),remark:'',status:1};
-      const saved=await api(BO_AUTH.roleSaveUrl(),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(payload)});
+      const brandId=merchantScopeId(); if(!brandId) throw new Error('Select a Merchant first.'); const scopedHeaders={'Content-Type':'application/json',...BO_AUTH.authHeader(),'X-Brand-Id':brandId}; const saved=await api(BO_AUTH.roleSaveUrl(),{method:'POST',headers:scopedHeaders,body:JSON.stringify(payload)});
       let roleId=saved.data?.id;
       if(!roleId){
-        const roles=await api(BO_AUTH.roleListUrl(),{headers:{...BO_AUTH.authHeader()}});
+        const roles=await api(BO_AUTH.roleListUrl(),{headers:{...BO_AUTH.authHeader(),'X-Brand-Id':brandId}});
         const rows=Array.isArray(roles.data)?roles.data:[];
         roleId=rows.find(r=>r.code===payload.code)?.id;
       }
@@ -286,7 +290,7 @@
       const missing=ids.filter(id=>!new Set(persisted).has(id));
       if(missing.length) throw new Error('Some selected menu permissions were rejected by the API.');
       msg('Role created successfully.','success');
-      setTimeout(function(){ location.href='main-merchant-roles.html?roleId='+encodeURIComponent(String(roleId)); },450);
+      setTimeout(function(){ location.href='main-merchant-roles.html?merchantId='+encodeURIComponent(brandId)+'&roleId='+encodeURIComponent(String(roleId)); },450);
     }catch(err){
       msg(String(err&&err.message||'Unable to save role.'),'error');
       [bottom].forEach(b=>{if(b)b.disabled=false;});

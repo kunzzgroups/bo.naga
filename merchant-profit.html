@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -121,6 +121,8 @@
         color: #8b96a8;
         padding: 28px !important;
       }
+      .mp-section-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:14px}.mp-section-head h3{font-size:16px;font-weight:800;color:#17243d;margin:0 0 4px}.mp-section-head p{font-size:12px;color:#6c788d;margin:0}.mp-rule{font-size:11px;font-weight:700;color:#47617f;background:#f3f7fc;border:1px solid #dce6f2;border-radius:999px;padding:7px 10px;white-space:nowrap}.mp-pricing-form{display:grid;grid-template-columns:220px 220px 170px 180px minmax(240px,1fr) auto;gap:12px;align-items:end}.mp-pricing-form label{font-size:12px;font-weight:700;color:#53617a;margin-bottom:6px}.mp-pricing-form .form-control,.mp-pricing-form .form-select{height:42px}.mp-hint{font-size:11px;color:#647187}.mp-summary-box{padding:4px 12px;border-left:1px solid #e5eaf1;font-size:11px;color:#708097}.mp-summary-box b{display:block;color:#17243d;font-size:16px}.mp-kind{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800}.mp-kind.monthly{background:#eef5ff;color:#2466bd}.mp-kind.oneoff{background:#eefaf3;color:#16834c}.mp-merchant{font-weight:800;color:#17243d}.mp-merchant small{display:block;color:#8290a3;font-weight:500;margin-top:2px}.mp-pencil{border:0;background:transparent;color:#54708f;padding:5px 7px}.mp-pencil:hover{color:#0d6efd}.mp-delete{border:0;background:transparent;color:#b34d4d;padding:5px 7px}.mp-delete:hover{color:#dc3545}
+      @media (max-width: 1200px) { .mp-pricing-form{grid-template-columns:1fr 1fr 1fr}.mp-pricing-form .desc{grid-column:1/-1} }
       @media (max-width: 1000px) {
         .mp-form {
           grid-template-columns: 1fr 1fr;
@@ -137,7 +139,7 @@
           align-items: flex-start;
           flex-direction: column;
         }
-        .mp-form {
+        .mp-form,.mp-pricing-form {
           grid-template-columns: 1fr;
         }
         .mp-form .desc {
@@ -176,95 +178,92 @@
           <div class="mp-head">
             <div>
               <h2>Merchant Profit</h2>
-              <p>
-                Manual non-game business income used together with Game Profit
-                to calculate Net Profit.
-              </p>
             </div>
             <a class="clean-btn" href="main-dashboard.html"
               ><i class="bi bi-arrow-left"></i> Back to Dashboard</a
             >
           </div>
           <div class="mp-card">
-            <form id="merchantProfitForm" class="mp-form">
+            <div class="mp-section-head">
               <div>
-                <label>Income Date</label
-                ><input class="form-control" type="date" id="mpDate" required />
+                <h3>Merchant Monthly Pricing</h3>
+                <p>Set recurring monthly fees per Merchant with the exact date they should be recognised. Add a new effective date whenever you want to increase, reduce or stop a fee; older records remain unchanged.</p>
+              </div>
+              <div class="mp-rule">Monthly fee is recognised on the selected charge date, then on the same day each following month.</div>
+            </div>
+            <form id="merchantPricingForm" class="mp-pricing-form">
+              <div>
+                <label>Merchant</label>
+                <select class="form-select" id="mpMerchant" required><option value="">Select Merchant</option></select>
               </div>
               <div>
-                <label>Income Source</label
-                ><input
-                  class="form-control"
-                  id="mpSource"
-                  maxlength="120"
-                  placeholder="e.g. Platform service fee"
-                  required
-                />
+                <label>Fee / Pricing Name</label>
+                <input class="form-control" id="mpFeeName" maxlength="120" placeholder="e.g. Platform Fee / Server Fee" required />
               </div>
               <div>
-                <label>Amount (MYR)</label
-                ><input
-                  class="form-control"
-                  id="mpAmount"
-                  type="number"
-                  min="0.0001"
-                  step="0.01"
-                  placeholder="0.00"
-                  required
-                />
+                <label>Charge / Effective Date</label>
+                <input class="form-control" type="date" id="mpEffectiveMonth" required />
+              </div>
+              <div>
+                <label>Monthly Amount (MYR)</label>
+                <input class="form-control" id="mpMonthlyAmount" type="number" min="0" step="0.01" placeholder="0.00" required />
               </div>
               <div class="desc">
-                <label>Description / What this income is for</label
-                ><input
-                  class="form-control"
-                  id="mpDescription"
-                  maxlength="1000"
-                  placeholder="Describe why this income was received"
-                />
+                <label>Remark</label>
+                <input class="form-control" id="mpPricingRemark" maxlength="1000" placeholder="Optional pricing remark" />
               </div>
-              <button class="clean-btn primary" type="submit">
-                <i class="bi bi-plus-lg"></i> Add Income
-              </button>
+              <button class="clean-btn primary" type="submit"><i class="bi bi-plus-lg"></i> Add / Adjust Pricing</button>
+            </form>
+            <div class="small mt-2" id="mpPricingMessage"></div>
+            <div class="mp-hint mt-2"><i class="bi bi-info-circle"></i> Example: TITANX MYR 2,000 with charge date 07 Sep 2026 posts MYR 2,000 on 07 Sep, 07 Oct, 07 Nov, etc. To change the price, add a new effective date and amount. Set amount to 0.00 from a selected date to stop future charges.</div>
+            <div class="mp-table-wrap mt-3">
+              <table class="mp-table">
+                <thead><tr><th>Merchant</th><th>Fee / Pricing</th><th>Charge / Effective Date</th><th class="num">Monthly Amount</th><th>Remark</th><th>Created By</th><th>Updated At</th><th class="num">Action</th></tr></thead>
+                <tbody id="mpPricingRows"><tr><td colspan="8" class="mp-empty">Loading pricing...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="mp-card">
+            <div class="mp-section-head">
+              <div>
+                <h3>One-off / Other Profit</h3>
+                <p>Record maintenance, setup fees, ad-hoc service fees or any other income that is not part of the monthly Merchant pricing.</p>
+              </div>
+            </div>
+            <form id="merchantProfitForm" class="mp-form">
+              <div>
+                <label>Income Date</label><input class="form-control" type="date" id="mpDate" required />
+              </div>
+              <div>
+                <label>Income Source</label><input class="form-control" id="mpSource" maxlength="120" placeholder="e.g. Maintenance fee" required />
+              </div>
+              <div>
+                <label>Amount (MYR)</label><input class="form-control" id="mpAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" required />
+              </div>
+              <div class="desc">
+                <label>Description / What this income is for</label><input class="form-control" id="mpDescription" maxlength="1000" placeholder="Describe why this income was received" />
+              </div>
+              <button class="clean-btn primary" type="submit"><i class="bi bi-plus-lg"></i> Add Income</button>
             </form>
             <div class="small mt-2" id="mpMessage"></div>
           </div>
+
           <div class="mp-card">
             <div class="mp-filter mb-3">
-              <div>
-                <label class="form-label mb-1">From</label
-                ><input class="form-control" type="date" id="mpFrom" />
-              </div>
-              <div>
-                <label class="form-label mb-1">To</label
-                ><input class="form-control" type="date" id="mpTo" />
-              </div>
-              <button class="clean-btn primary" id="mpSearch">
-                <i class="bi bi-search"></i> Search
-              </button>
-              <div class="mp-total">
-                Selected Period Merchant Profit<b
-                  ><span id="mpTotal">0.00</span> MYR</b
-                >
-              </div>
+              <div><label class="form-label mb-1">From</label><input class="form-control" type="date" id="mpFrom" /></div>
+              <div><label class="form-label mb-1">To</label><input class="form-control" type="date" id="mpTo" /></div>
+              <button class="clean-btn primary" id="mpSearch"><i class="bi bi-search"></i> Search</button>
+              <div class="mp-summary-box"><span>Monthly Pricing</span><b><span id="mpPricingTotal">0.00</span> MYR</b></div>
+              <div class="mp-summary-box"><span>Other Income</span><b><span id="mpManualTotal">0.00</span> MYR</b></div>
+              <div class="mp-total">Selected Period Merchant Profit<b><span id="mpTotal">0.00</span> MYR</b></div>
             </div>
             <div class="mp-table-wrap">
               <table class="mp-table">
                 <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Income Source</th>
-                    <th>Description</th>
-                    <th>Created By</th>
-                    <th>Created At</th>
-                    <th class="num">Amount (MYR)</th>
-                    <th class="num">Action</th>
-                  </tr>
+                  <tr><th>Date</th><th>Type</th><th>Merchant</th><th>Income Source</th><th>Description</th><th>Created By</th><th>Created At</th><th class="num">Amount (MYR)</th><th class="num">Action</th></tr>
                 </thead>
-                <tbody id="mpRows">
-                  <tr>
-                    <td colspan="7" class="mp-empty">Loading...</td>
-                  </tr>
-                </tbody>
+                <tbody id="mpRows"><tr><td colspan="9" class="mp-empty">Loading...</td></tr></tbody>
               </table>
             </div>
           </div>
@@ -275,9 +274,9 @@
     <script src="assets/js/config.js?v=1.0.40"></script>
     <script src="assets/js/brand-context.js?v=1.0.4"></script>
     <script src="assets/js/reports.js?v=1.0.17"></script>
-    <script src="assets/js/auth.js?v=1.0.57"></script>
+    <script src="assets/js/auth.js?v=1.0.58"></script>
     <script src="assets/js/bo-date-range.js?v=1.0.15"></script>
-    <script src="assets/js/merchant-profit.js?v=1.0.0"></script>
+    <script src="assets/js/merchant-profit.js?v=1.0.1"></script>
     <script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
   </body>
 </html>

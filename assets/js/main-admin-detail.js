@@ -159,6 +159,11 @@
     return viewer.rootAdmin === true || Number(viewer.rootAdmin) === 1 || String(viewer.roleType || '').toUpperCase() === 'ROOT' || (Number(viewer.id) === 1 && viewer.brandId == null);
   }
 
+  function isViewerMain(viewer){
+    viewer = viewer || BO_AUTH.user() || {};
+    return String(viewer.roleType || '').toUpperCase() === 'MAIN' || viewer.mainAdmin === true || Number(viewer.mainAdmin) === 1;
+  }
+
   async function apiJson(url, options){
     const res = await fetch(url, options || {});
     const json = await res.json().catch(() => ({}));
@@ -173,7 +178,10 @@
       if(brandId) headers['X-Brand-Id'] = String(brandId);
       const json = await apiJson(BO_AUTH.roleListUrl(), { headers });
       let rows = Array.isArray(json.data) ? json.data : [];
-      if(current.rootAdmin){
+      if(isViewerMain(current)){
+        // MAIN-created admins are platform delegated admins: never bind them to one Merchant/Brand.
+        rows = rows.filter(r => r.brandId == null && String(r.roleType || 'CUSTOM').toUpperCase() === 'CUSTOM');
+      }else if(current.rootAdmin){
         rows = brandId
           ? rows.filter(r => Number(r.brandId) === Number(brandId) && !['MASTER', 'ROOT'].includes(String(r.roleType || '').toUpperCase()))
           : rows.filter(r => r.brandId == null && String(r.roleType || '').toUpperCase() === 'MASTER');
@@ -269,28 +277,15 @@
   }
 
   async function loadBrandOptions(){
-    const editSel = document.getElementById('madEditBrand');
     const user = BO_AUTH.user() || {};
-    if(!user.masterAdmin){
-      const bid = user.brandId || '';
-      const label = 'Current Branding' + (bid ? ' (#' + bid + ')' : '');
-      const html = '<option value="' + esc(bid) + '">' + esc(label) + '</option>';
-      if(editSel){ editSel.innerHTML = html; editSel.disabled = true; }
-      await loadRoles(bid);
+    // Admin Management under MAIN is platform-scoped. A CS/Leader/etc created by MAIN
+    // can operate across Merchants according to its assigned menu/role permissions and
+    // delegated credit limit; it must never be pinned to the currently selected Brand.
+    if(isViewerMain(user)){
+      await loadRoles(null);
       return;
     }
-    try{
-      const r = await fetch(API_CONFIG.BASE_URL + (API_CONFIG.ENDPOINTS.BRAND_LIST || '/admin/brands'), { headers: { ...BO_AUTH.authHeader() } });
-      const j = await r.json();
-      const rows = Array.isArray(j.data) ? j.data : [];
-      const html = (user.rootAdmin ? '<option value="">Master / Platform</option>' : '<option value="">Select Branding</option>') +
-        rows.map(x => '<option value="' + x.id + '">' + esc(x.name || x.code) + ' (#' + x.id + ')</option>').join('');
-      if(editSel) editSel.innerHTML = html;
-      const active = (window.BO_BRAND && BO_BRAND.activeId ? BO_BRAND.activeId() : 1);
-      await loadRoles(user.rootAdmin ? null : active);
-    }catch(e){
-      await loadRoles(null);
-    }
+    await loadRoles(user.brandId ? Number(user.brandId) : null);
   }
 
   async function loadAdmins(){
@@ -325,9 +320,10 @@
     document.getElementById('madEditUsername').value = row.username || '';
     document.getElementById('madEditDisplayName').value = row.displayName || '';
     document.getElementById('madEditStatus').value = String(row.status == null ? 1 : row.status);
-    if(document.getElementById('madEditBrand')) document.getElementById('madEditBrand').value = row.brandId == null ? '' : String(row.brandId);
-    if(row.brandId) await loadRoles(Number(row.brandId));
-    else if((BO_AUTH.user() || {}).rootAdmin) await loadRoles(null);
+    const viewer = BO_AUTH.user() || {};
+    if(isViewerMain(viewer)) await loadRoles(null);
+    else if(row.brandId) await loadRoles(Number(row.brandId));
+    else await loadRoles(null);
     document.getElementById('madEditRole').value = String(row.roleId || '');
     document.getElementById('madEditPassword').value = '';
     setStatus(document.getElementById('madEditFormStatus'), '', '');
@@ -348,7 +344,8 @@
           displayName: document.getElementById('madEditDisplayName').value.trim(),
           status: Number(document.getElementById('madEditStatus').value || 1),
           roleId: document.getElementById('madEditRole').value ? Number(document.getElementById('madEditRole').value) : null,
-          brandId: document.getElementById('madEditBrand') && document.getElementById('madEditBrand').value ? Number(document.getElementById('madEditBrand').value) : null,
+          // MAIN-created delegated admins are platform-wide, never brand-scoped.
+          brandId: isViewerMain(BO_AUTH.user() || {}) ? null : ((allAdmins.find(r => Number(r.id) === Number(editingId)) || {}).brandId ?? null),
           password: document.getElementById('madEditPassword').value
         })
       });
@@ -418,7 +415,7 @@
               displayName: row.displayName || row.username,
               status: nextStatus,
               roleId: row.roleId != null ? Number(row.roleId) : null,
-              brandId: row.brandId != null ? Number(row.brandId) : null,
+              brandId: isViewerMain(BO_AUTH.user() || {}) ? null : (row.brandId != null ? Number(row.brandId) : null),
               password: ''
             })
           });
