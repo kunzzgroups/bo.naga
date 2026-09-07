@@ -95,18 +95,9 @@
   }
 
   function expandAdminAliases(ids){
-    const idSet=new Set((ids||[]).map(Number).filter(Number.isFinite));
-    const byKey={};
-    (menuCache||[]).forEach(function(m){
-      const key=String(m.menuKey||'').toLowerCase();
-      const id=Number(m.id);
-      if(key&&Number.isFinite(id)) byKey[key]=id;
-    });
-    const mainId=byKey.main_admin_detail||byKey.admin_detail;
-    const adminId=byKey.admin;
-    if(mainId&&idSet.has(mainId)&&adminId) idSet.add(adminId);
-    if(adminId&&idSet.has(adminId)&&mainId) idSet.add(mainId);
-    return Array.from(idSet);
+    // Save exactly what MAIN selected. Do not silently add legacy/admin aliases;
+    // database role->menu assignments are the permission source of truth.
+    return Array.from(new Set((ids||[]).map(Number).filter(Number.isFinite)));
   }
 
   function updateScopeCounts(){

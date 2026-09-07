@@ -83,6 +83,8 @@
     if(p==='main-balance-adjustment.html') return 'main-balance-overview.html';
     if(p==='brand-detail.html') return 'brand-management.html';
     if(p==='provider-detail.html') return 'main-accounting-report.html';
+    // Gateway Transactions is a drill-down of Payment Gateway and uses the same DB menu permission.
+    if(p==='payment-gateway-transactions.html') return 'payment-gateway.html';
     // Merchant module drill-downs keep the Merchant sidebar item highlighted.
     if(p==='main-merchant-create.html' || p==='main-merchant-credit.html' || p==='main-merchant-security.html' || p==='main-merchant-roles.html' || p==='main-merchant-role-create.html'){
       return 'main-merchant-detail.html';
@@ -182,6 +184,10 @@
       // Inherit Brand Management access so MAIN/Boss users with Brands permission are not redirected.
       if(current === 'brand-detail.html') current = 'brand-management.html';
       if(current === 'provider-detail.html') current = 'main-accounting-report.html';
+      // Transaction history is intentionally a separate page, but it inherits the
+      // Payment Gateway menu selected in ROOT Role/Menu Permission. No new hardcoded
+      // permission/menu row is required for this drill-down.
+      if(current === 'payment-gateway-transactions.html') current = 'payment-gateway.html';
       if(current === 'main-balance-adjustment.html') current = 'main-balance-overview.html';
       // Agent Performance Detail is a drill-down page of Agent Performance Report.
       // It has no separate sidebar/menu permission, so inherit the report permission

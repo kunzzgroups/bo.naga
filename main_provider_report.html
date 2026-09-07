@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>Merchant Management</title>
+<title>Provider Management</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
 <link href="assets/css/reports.css?v=1.0.46" rel="stylesheet"/>
@@ -12,7 +12,7 @@
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet"/>
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
 <link href="assets/css/main-admin-detail-executive.css?v=1.0.20" rel="stylesheet"/>
-<link href="assets/css/main-provider-report-executive.css?v=1.0.3" rel="stylesheet"/>
+<link href="assets/css/main-provider-report-executive.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 <script>
 (function(){
@@ -35,8 +35,8 @@
   <div class="user-title-wrap">
     <div class="user-title-icon"><i class="bi bi-bar-chart-line"></i></div>
     <div>
-      <h1>Merchant Management</h1>
-      <p>Analyze merchant turnover, valid bet performance, and net settlements.</p>
+      <h1>Provider Management</h1>
+      <p>Analyze provider turnover, valid bet performance, and net settlements.</p>
     </div>
   </div>
   <div class="report-actions">
@@ -51,7 +51,7 @@
 <section class="report-content mad-workspace mre-workspace">
   <div class="mad-chrome mre-chrome">
     <div class="mad-tabs mre-tabs" role="tablist" aria-label="Report sections">
-      <a class="mad-tab mre-tab is-active" role="tab" aria-selected="true" href="main_merchant_report.html">Merchant Report</a>
+      <button class="mad-tab mre-tab is-active" type="button" role="tab" aria-selected="true" data-report-tab="provider">Win/Lose Report</button>
       <button class="mad-tab mre-tab" type="button" role="tab" aria-selected="false" data-report-tab="settlement">Settlement Report</button>
       <button class="mad-tab mre-tab" type="button" role="tab" aria-selected="false" data-report-tab="brand">Balance Overview</button>
       <button class="mad-tab mre-tab" type="button" role="tab" aria-selected="false" data-report-tab="history">Transaction History</button>
@@ -148,22 +148,24 @@
         <thead>
           <tr>
             <th>Provider</th>
-            <th class="mre-num">100% Game Account</th>
-            <th class="mre-num">Provider Payable</th>
-            <th class="mre-num">Company Margin</th>
-            <th class="mre-num">Merchant Receivable</th>
+            <th class="mre-num">Valid Bet <span class="mre-cur-label">(MYR)</span></th>
+            <th class="mre-num">Total In</th>
+            <th class="mre-num">Total Out</th>
+            <th class="mre-num">Total Amount (GGR)</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody id="providerReportRows">
-          <tr><td colspan="5" class="mad-empty">No provider report data for this date range.</td></tr>
+          <tr><td colspan="6" class="mad-empty">No provider report data for this date range.</td></tr>
         </tbody>
         <tfoot id="providerReportFoot" hidden>
           <tr class="mre-total-row">
             <td><span class="mre-total-label"><i class="bi bi-sigma"></i> Total <span class="mre-cur-label">(MYR)</span></span></td>
-            <td class="mre-num" id="mreTotalGameAccount">0.00</td>
-            <td class="mre-num" id="mreTotalPayable">0.00</td>
-            <td class="mre-num" id="mreTotalMargin">0.00</td>
-            <td class="mre-num" id="mreTotalReceivable">0.00</td>
+            <td class="mre-num" id="mreTotalValid">0.00</td>
+            <td class="mre-num" id="mreTotalIn">0.00</td>
+            <td class="mre-num" id="mreTotalOut">0.00</td>
+            <td class="mre-num" id="mreTotalGgr">0.00</td>
+            <td></td>
           </tr>
         </tfoot>
       </table>
@@ -237,9 +239,9 @@
 <script src="assets/js/config.js?v=1.0.40"></script>
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/reports.js?v=1.0.22"></script>
-<script src="assets/js/auth.js?v=1.0.56"></script>
+<script src="assets/js/auth.js?v=1.0.57"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
-<script src="assets/js/main-provider-report.js?v=1.0.6"></script>
+<script src="assets/js/main-provider-report.js?v=1.0.7"></script>
 <script src="assets/js/bo-ui-standard.js?v=1.0.4"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 </body>

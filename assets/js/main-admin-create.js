@@ -201,12 +201,15 @@
       let rows = Array.isArray(json.data) ? json.data : [];
       if(flags.rootAdmin){
         rows = brandId
-          ? rows.filter(r => Number(r.brandId) === Number(brandId) && !['MASTER', 'ROOT'].includes(String(r.roleType || '').toUpperCase()))
-          : rows.filter(r => r.brandId == null && String(r.roleType || '').toUpperCase() === 'MASTER');
+          ? rows.filter(r => Number(r.brandId) === Number(brandId) && !['MASTER', 'ROOT', 'MAIN'].includes(String(r.roleType || '').toUpperCase()))
+          : rows.filter(r => r.brandId == null && ['MASTER','MAIN','CUSTOM'].includes(String(r.roleType || '').toUpperCase()));
+      }else if(flags.mainAdmin){
+        // MAIN creates its own platform-scoped delegated admins. No tenant brand is attached.
+        rows = rows.filter(r => r.brandId == null && String(r.roleType || 'CUSTOM').toUpperCase() === 'CUSTOM');
       }else{
-        rows = rows.filter(r => !['MASTER', 'ROOT'].includes(String(r.roleType || 'CUSTOM').toUpperCase()));
+        rows = rows.filter(r => !['MASTER', 'ROOT', 'MAIN'].includes(String(r.roleType || 'CUSTOM').toUpperCase()));
         if(brandId){
-          rows = rows.filter(r => r.brandId == null || Number(r.brandId) === Number(brandId));
+          rows = rows.filter(r => Number(r.brandId) === Number(brandId));
         }
       }
       roleRows = rows;
@@ -228,6 +231,13 @@
   async function loadBrandOptions(){
     if(!brandSelect) return;
     const flags = actorFlags();
+    // MAIN-created admins are platform-scoped and do not require Brand Management
+    // permission just to load the administrator-create screen.
+    if(flags.mainAdmin){
+      brandSelect.value = '';
+      await loadRoles(null);
+      return;
+    }
     // Tenant brand admins are pinned to their own brand.
     if(!flags.platformAdmin){
       const bid = flags.user.brandId || '';
@@ -242,11 +252,10 @@
       const j = await r.json();
       const rows = Array.isArray(j.data) ? j.data : [];
       const active = activeBrandId() || 1;
-      if(flags.rootAdmin){
+      if(flags.rootAdmin || flags.mainAdmin){
         brandSelect.value = '';
         await loadRoles(null);
       }else{
-        // MAIN / Master: bind create to the active brand context.
         const pick = rows.some(x => Number(x.id) === Number(active)) ? active : (rows[0] && rows[0].id);
         brandSelect.value = pick != null ? String(pick) : '';
         await loadRoles(brandSelect.value ? Number(brandSelect.value) : null);
@@ -336,17 +345,16 @@
 
       if(!roleSelect || !roleSelect.value){
         throw new Error(flags.rootAdmin
-          ? 'Please select the Master role.'
-          : 'Please select a branding role.');
+          ? 'Please select a role.'
+          : (flags.mainAdmin ? 'Please select an administrator role.' : 'Please select a branding role.'));
       }
       const roleRow = roleRows.find(r => String(r.id) === String(roleSelect.value));
       const roleType = String((roleRow && roleRow.roleType) || '').toUpperCase();
-      let brandId = resolveCreateBrandId(roleRow);
-      // Brand-scoped roles must carry a brandId (MAIN/Master included).
-      if(roleType !== 'MASTER' && roleType !== 'ROOT' && !brandId){
+      let brandId = flags.mainAdmin ? null : resolveCreateBrandId(roleRow);
+      if(!flags.mainAdmin && roleType !== 'MASTER' && roleType !== 'ROOT' && roleType !== 'MAIN' && !brandId){
         throw new Error('Please select the branding for this administrator.');
       }
-      if(roleType === 'MASTER' || roleType === 'ROOT') brandId = null;
+      if(flags.mainAdmin || roleType === 'MASTER' || roleType === 'ROOT' || roleType === 'MAIN') brandId = null;
       if(brandSelect && brandId != null) brandSelect.value = String(brandId);
 
       const email = (document.getElementById('madNewEmail') || {}).value || '';

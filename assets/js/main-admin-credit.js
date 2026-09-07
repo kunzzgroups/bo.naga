@@ -187,12 +187,7 @@
   }
 
   function updateKpis(rows){
-    const allocated = rows.reduce((s, r) => s + (Number(r.balance) || 0), 0);
-    const total = rows.reduce((s, r) => s + (Number(r.limit) || 0), 0);
-    const available = Math.max(0, total - allocated);
-    const availPct = total > 0 ? (available / total) * 100 : 0;
-    const allocPct = total > 0 ? (allocated / total) * 100 : 0;
-
+    const allocated = rows.reduce((sum, r) => sum + (Number(r.balance) || 0), 0);
     const availEl = document.getElementById('macKpiAvailable');
     const allocEl = document.getElementById('macKpiAllocated');
     const totalEl = document.getElementById('macKpiTotal');
@@ -200,20 +195,13 @@
     const acctBadge = document.getElementById('macKpiAccountsBadge');
     const shareEl = document.getElementById('macKpiAllocatedShare');
     const nodeEl = document.getElementById('macKpiNode');
-
-    if(availEl) availEl.textContent = money(available);
+    if(availEl) availEl.textContent = 'Unlimited';
     if(allocEl) allocEl.textContent = money(allocated);
-    if(totalEl) totalEl.textContent = money(total);
-    if(availBadge) availBadge.innerHTML = '<i></i> ' + availPct.toFixed(1) + '% Avail';
+    if(totalEl) totalEl.textContent = 'Unlimited';
+    if(availBadge) availBadge.innerHTML = '<i></i> Unlimited';
     if(acctBadge) acctBadge.textContent = rows.length + ' Account' + (rows.length === 1 ? '' : 's');
-    if(shareEl) shareEl.textContent = allocPct.toFixed(1) + '% of pool';
-    if(nodeEl){
-      const ok = rows.length === 0 || rows.some(r => r.health.key !== 'suspended');
-      nodeEl.className = 'mac-kpi-node' + (ok ? '' : ' is-warn');
-      nodeEl.innerHTML = ok
-        ? '<i class="bi bi-check-circle-fill"></i> Node OK'
-        : '<i class="bi bi-exclamation-circle-fill"></i> Needs review';
-    }
+    if(shareEl) shareEl.textContent = 'Assigned by MAIN';
+    if(nodeEl){ nodeEl.className = 'mac-kpi-node'; nodeEl.innerHTML = '<i class="bi bi-check-circle-fill"></i> Node OK'; }
   }
 
   function applyFilters(){
@@ -353,10 +341,10 @@
     if(tbody) tbody.innerHTML = '<tr><td colspan="6" class="mad-empty">Loading credit accounts...</td></tr>';
     try{
       await loadRoles();
-      const r = await fetch(BO_AUTH.adminListUrl(), { headers: { ...BO_AUTH.authHeader() }, cache: 'no-store' });
+      const r = await fetch(API_CONFIG.BASE_URL + '/admin/main/admin-credit/summary', { headers: { ...BO_AUTH.authHeader() }, cache: 'no-store' });
       const j = await r.json().catch(() => ({}));
       if(!r.ok || j.status === 'error') throw new Error(j.message || 'Load credit accounts failed');
-      const rows = Array.isArray(j.data) ? j.data : [];
+      const rows = Array.isArray(j.data && j.data.admins) ? j.data.admins : [];
       allRows = rows.map(normalizeRow);
       lastSyncedAt = new Date();
       updateSyncLabel();
@@ -449,7 +437,7 @@
         const r = await fetch(BO_AUTH.adminUpdateUrl(id), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', ...BO_AUTH.authHeader() },
-          body: JSON.stringify({ status: next })
+          body: JSON.stringify({ username: row.raw.username, displayName: row.raw.displayName || row.raw.username, status: next, roleId: row.raw.roleId, brandId: null })
         });
         const j = await r.json().catch(() => ({}));
         if(!r.ok || j.status === 'error') throw new Error(j.message || 'Update failed');
@@ -480,9 +468,10 @@
         credit: balance,
         remark: remark || undefined
       };
-      const r = await fetch(BO_AUTH.adminUpdateUrl(id), {
+      const audit = encodeURIComponent(JSON.stringify({page:'Main Admin > Credit Control',fields:{adminId:id,creditBalance:balance,remark:remark||''}}));
+      const r = await fetch(API_CONFIG.BASE_URL + '/admin/main/admin-credit/set/' + encodeURIComponent(id), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...BO_AUTH.authHeader() },
+        headers: { 'Content-Type': 'application/json', 'X-Admin-Audit-Context': audit, ...BO_AUTH.authHeader() },
         body: JSON.stringify(body)
       });
       const j = await r.json().catch(() => ({}));

@@ -177,9 +177,9 @@
 
   async function loadOperations(){
     const base = apiBase();
-    const q = new URLSearchParams({ entityType: 'ADMIN_OPERATION', page: '0', size: '200' });
+    const q = new URLSearchParams({ page: '0', size: '200' });
     try{
-      const data = await apiJson(base + '/api/admin/rebate/audit?' + q).then(j => j.data || j);
+      const data = await apiJson(base + '/api/admin/main/admin-audit?' + q).then(j => j.data || j);
       const rows = Array.isArray(data.content) ? data.content : (Array.isArray(data) ? data : []);
       return rows.map(mapOperation);
     }catch(e){
