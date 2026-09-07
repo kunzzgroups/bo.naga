@@ -455,9 +455,9 @@
     if(!sys)return true;
     if(rootAdmin)return rt!=='ROOT';
     if(masterAdmin)return rt==='BRAND_OWNER';
-    // MAIN manages only its own delegated CUSTOM permission groups. Protected
-    // platform/system-role permissions remain authoritative from ROOT.
-    if(mainAdmin) return false;
+    // MAIN/Boss can manage every permission group below ROOT. ROOT is the only
+    // super-admin role that must never be shown or editable from MAIN.
+    if(mainAdmin) return rt!=='ROOT';
     return false;
   }
 
@@ -469,8 +469,10 @@
       roleCache=await fetchRoles();
       const editable=roleCache.filter(r=>{
         const rt=String(r?.roleType||'').toUpperCase();
-        const sys=Number(r?.systemRole)===1;
-        if(mainAdmin && sys) return false;
+        // ROOT is intentionally absent for MAIN/Boss. All other existing roles,
+        // including Master Admin, Customer Support, Designer and tenant/custom
+        // permission groups, remain available in the permission dropdown.
+        if(mainAdmin && rt==='ROOT') return false;
         return canEditRoleMenus(r);
       });
       select.innerHTML='<option value="">Select role...</option>'+editable.map(r=>`<option value="${esc(r.id)}">${esc(roleOptionLabel(r,false))}</option>`).join('');
