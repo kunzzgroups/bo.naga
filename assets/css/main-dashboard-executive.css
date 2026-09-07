@@ -296,7 +296,7 @@ body.main-dashboard-page{
 }
 .profit-kpis{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-columns:repeat(2,minmax(0,1fr));
   gap:16px;
   margin:0 0 18px;
 }
@@ -629,7 +629,7 @@ body.main-dashboard-page{
 
 @media(max-width:991.98px){
   .main-exec{min-height:calc(100vh - 60px);padding:16px}
-  .profit-kpis{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .profit-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .profit-card{padding:14px 12px 10px;min-height:0}
   .profit-main{grid-template-columns:34px minmax(0,1fr);column-gap:10px}
   .profit-icon{width:34px;height:34px;font-size:15px;border-radius:9px}

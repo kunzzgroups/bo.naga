@@ -177,7 +177,6 @@
     const svg = root.querySelector('.trend-svg');
     const dots = {
       merchant: root.querySelector('.trend-dot.merchant'),
-      game: root.querySelector('.trend-dot.game'),
       net: root.querySelector('.trend-dot.net')
     };
     if (!tip || !hover || !svg || !rows.length) return;
@@ -201,7 +200,6 @@
     const show = (i, clientX, clientY) => {
       const r = rows[i];
       const m = Number(r.merchantProfit || 0);
-      const g = Number(r.gameProfit || 0);
       const n = Number(r.netProfit || 0);
       const growth = map.labelMode === 'month'
         ? pctChange(n, i > 0 ? Number(rows[i - 1].netProfit || 0) : 0)
@@ -213,7 +211,6 @@
         <div class="tip-date">${tipDate}</div>
         <div class="tip-net" style="color:${n < 0 ? '#FF8A8A' : '#5EE29A'}">${n >= 0 ? '+' : ''}${money(n)} MYR</div>
         <div class="tip-row"><span>Merchant</span><b>${money(m)} MYR</b></div>
-        <div class="tip-row"><span>Game</span><b>${money(g)} MYR</b></div>
         <div class="tip-growth" style="color:${growthColor}"><span>Growth</span><b>${formatPct(pct)}</b></div>`;
       tip.hidden = false;
       tip.classList.remove('is-below');
@@ -250,7 +247,6 @@
         dot.style.opacity = '1';
       };
       place(dots.merchant, active.m, m);
-      place(dots.game, active.g, g);
       place(dots.net, active.n, n);
     };
 
@@ -284,14 +280,12 @@
       return;
     }
     const showM = seriesActive(rows, 'merchantProfit');
-    const showG = seriesActive(rows, 'gameProfit');
     const showN = seriesActive(rows, 'netProfit');
     $('legendMerchant')?.classList.toggle('is-idle', !showM);
-    $('legendGame')?.classList.toggle('is-idle', !showG);
     $('legendNet')?.classList.toggle('is-idle', !showN);
 
     const W = 1200, H = 390, L = 74, R = 24, T = 30, B = 48, iw = W - L - R, ih = H - T - B;
-    const vals = rows.flatMap(x => [Number(x.merchantProfit || 0), Number(x.gameProfit || 0), Number(x.netProfit || 0)]);
+    const vals = rows.flatMap(x => [Number(x.merchantProfit || 0), Number(x.netProfit || 0)]);
     let min = Math.min(0, ...vals), max = Math.max(0, ...vals);
     if (min === max) { min -= 1; max += 1; }
     const step = niceStep(max - min);
@@ -348,17 +342,15 @@
     const lines = [
       showN ? area('netProfit', 'net') : '',
       showM ? poly('merchantProfit', 'merchant') : '',
-      showG ? poly('gameProfit', 'game') : '',
       showN ? poly('netProfit', 'net') : ''
     ].join('');
 
     root.innerHTML = `
       <div class="trend-tip" hidden></div>
-      <svg class="trend-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Merchant profit, game profit and net profit trend">
+      <svg class="trend-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Merchant profit and net profit trend">
         ${grid}${lines}${labs}
         <line class="trend-hover-line" x1="0" x2="0" y1="${T}" y2="${H - B}" style="opacity:0"></line>
         <circle class="trend-dot merchant" r="4.5" cx="0" cy="0"></circle>
-        <circle class="trend-dot game" r="4.5" cx="0" cy="0"></circle>
         <circle class="trend-dot net" r="5" cx="0" cy="0"></circle>
       </svg>`;
     bindChartHover(
@@ -366,10 +358,9 @@
       rows,
       { x, y, T, B, H, L, R, W, labelMode: axisMode === 'month' ? 'month' : 'day' },
       periodGrowth,
-      { m: showM, g: showG, n: showN }
+      { m: showM, n: showN }
     );
     sparkline($('merchantSpark'), rows.map(r => Number(r.merchantProfit || 0)), '#1688F8');
-    sparkline($('gameSpark'), rows.map(r => Number(r.gameProfit || 0)), '#8248E9');
     sparkline($('netSpark'), rows.map(r => Number(r.netProfit || 0)), '#16B45D');
   }
 
@@ -377,10 +368,8 @@
     const s = data.summary || {};
     const p = prevSummary || {};
     setKpi('merchantProfit', s.merchantProfit, '.merchant-card');
-    setKpi('gameProfit', s.gameProfit, '.game-card');
     setKpi('netProfit', s.netProfit, '.net-card');
     setDelta('merchantDelta', s.merchantProfit, p.merchantProfit, days);
-    setDelta('gameDelta', s.gameProfit, p.gameProfit, days);
     setDelta('netDelta', s.netProfit, p.netProfit, days);
     renderChart(data.trend || [], pctChange(s.netProfit, p.netProfit));
   }
@@ -407,12 +396,10 @@
     } catch (e) {
       console.error(e);
       setKpi('merchantProfit', 0, '.merchant-card');
-      setKpi('gameProfit', 0, '.game-card');
       setKpi('netProfit', 0, '.net-card');
       setDelta('merchantDelta', 0, 0, days);
-      setDelta('gameDelta', 0, 0, days);
       setDelta('netDelta', 0, 0, days);
-      ['merchantSpark', 'gameSpark', 'netSpark'].forEach(id => {
+      ['merchantSpark', 'netSpark'].forEach(id => {
         const el = $(id);
         if (el) el.innerHTML = '';
       });
@@ -444,7 +431,7 @@
     if (key === 'yesterday') { a.setDate(a.getDate() - 1); b = new Date(a); }
     if (key === 'thisWeek') { a = startOfWeek(today); b = endOfWeek(today); }
     if (key === 'lastWeek') { a = startOfWeek(today); a.setDate(a.getDate() - 7); b = new Date(a); b.setDate(b.getDate() + 6); }
-    if (key === 'thisMonth') { a = new Date(today.getFullYear(), today.getMonth(), 1); b = new Date(today.getFullYear(), today.getMonth() + 1, 0); }
+    if (key === 'thisMonth') { a = new Date(today.getFullYear(), today.getMonth(), 1); b = new Date(today); }
     if (key === 'lastMonth') { a = new Date(today.getFullYear(), today.getMonth() - 1, 1); b = new Date(today.getFullYear(), today.getMonth(), 0); }
     if (key === 'thisYear') { a = new Date(today.getFullYear(), 0, 1); b = new Date(today.getFullYear(), 11, 31); }
     if (key === 'lastYear') { a = new Date(today.getFullYear() - 1, 0, 1); b = new Date(today.getFullYear() - 1, 11, 31); }
@@ -493,9 +480,9 @@
   }
   function initDatePicker() {
     const trigger = $('mainDateTrigger'), picker = $('mainRangePicker');
-    const [a, b] = presetRange('lastMonth');
+    const [a, b] = presetRange('thisMonth');
     pickerState.view = new Date(a + 'T00:00:00');
-    setRange(a, b, 'lastMonth', false);
+    setRange(a, b, 'thisMonth', false);
     trigger.addEventListener('click', e => {
       e.stopPropagation();
       picker.classList.toggle('show');
