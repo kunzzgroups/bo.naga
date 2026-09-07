@@ -94,112 +94,13 @@
     return p;
   }
 
-  const GROUP_META = window.BO_MENU_GROUP_META = {
-    access: { title: 'Access Control', icon: 'bi-shield-lock' },
-    game: { title: 'Game Management', icon: 'bi-controller' },
-    bonus: { title: 'Bonus Management', icon: 'bi-gift' },
-    support: { title: 'Support', icon: 'bi-headset' },
-    wallet: { title: 'Wallet Management', icon: 'bi-wallet2' },
-    setting: { title: 'Setting', icon: 'bi-gear' },
-    report: { title: 'Report', icon: 'bi-wallet2' },
-    agent_management_group: { title: 'Agent Management', icon: 'bi-person-workspace' },
-    main_reports_group: { title: 'Reports', icon: 'bi-file-earmark-bar-graph', sortOrder: 30 },
-    main_accounting_group: { title: 'Accounting & Provider Ops', icon: 'bi-cash-stack', sortOrder: 40 },
-    main_brands_group: { title: 'Brands', icon: 'bi-buildings', sortOrder: 50 },
-    main_admin_group: { title: 'Admin', icon: 'bi-shield-lock', sortOrder: 60 },
-    main_merchant_group: { title: 'Merchant', icon: 'bi-shop', sortOrder: 65 }
-  };
-
-  // Used only when backend has not returned menu data yet.
-  // Normal sidebar is rendered from /auth/admin/me => user.menus.
-  const FALLBACK_MENUS = [
-    {menuKey:'root_control', title:'Root Control', url:'root-control.html', icon:'bi-shield-fill-check', parentKey:'', sortOrder:5},
-    {menuKey:'brand_overview', title:'Brand Overview', url:'brand-overview.html', icon:'bi-bar-chart-line-fill', parentKey:'report', sortOrder:5.5},
-    {menuKey:'user', title:'User Management', url:'index.html', icon:'bi-people', parentKey:'', sortOrder:10},
-    {menuKey:'online_users', title:'Online Users', url:'online-users.html', icon:'bi-wifi', parentKey:'', sortOrder:10.5},
-    {menuKey:'duplicate_ip', title:'Duplicate IP Checker', url:'duplicate-ip.html', icon:'bi-diagram-3', parentKey:'', sortOrder:11},
-    {menuKey:'highest_turnover_games', title:'Highest Turnover Games', url:'highest-turnover-games.html', icon:'bi-graph-up-arrow', parentKey:'', sortOrder:12},
-    {menuKey:'frequently_played_games', title:'Frequently Played Games', url:'frequently-played-games.html', icon:'bi-controller', parentKey:'', sortOrder:13},
-    {menuKey:'member_wallet', title:'Member Wallet Listing', url:'member-wallet.html', icon:'bi-wallet2', parentKey:'wallet', sortOrder:11},
-    {menuKey:'wallet_ledger', title:'Wallet Ledger', url:'wallet-ledger.html', icon:'bi-receipt', parentKey:'wallet', sortOrder:12},
-    {menuKey:'bulk_adjustment', title:'Bulk Adjustment', url:'bulk-adjustment.html', icon:'bi-wallet2', parentKey:'wallet', sortOrder:12.1},
-    {menuKey:'bulk_bonus_adjustment', title:'Bulk Bonus Adjustment', url:'bulk-bonus-adjustment.html', icon:'bi-gift', parentKey:'wallet', sortOrder:12.2},
-    {menuKey:'member_deposit', title:'Deposit Approval', url:'member-deposit.html', icon:'bi-bank', parentKey:'wallet', sortOrder:13},
-    {menuKey:'member_withdraw', title:'Withdraw Approval', url:'member-withdraw.html', icon:'bi-cash-coin', parentKey:'wallet', sortOrder:14},
-    {menuKey:'payment_method', title:'Payment Method Config', url:'payment-method.html', icon:'bi-credit-card', parentKey:'wallet', sortOrder:15},
-    {menuKey:'payment_gateway', title:'Payment Gateway', url:'payment-gateway.html', icon:'bi-lightning-charge', parentKey:'wallet', sortOrder:15.05},
-    {menuKey:'bank_deposit_usage', title:'Bank Deposit Usage', url:'bank-deposit-usage.html', icon:'bi-bar-chart-line', parentKey:'wallet', sortOrder:15.1},
-    {menuKey:'referral', title:'Referral Network', url:'referral.html', icon:'bi-diagram-3', parentKey:'wallet', sortOrder:16},
-    {menuKey:'agent_management', title:'Agent Management', url:'agent-management.html', icon:'bi-person-workspace', parentKey:'wallet', sortOrder:16.5},
-    {menuKey:'provider_session', title:'Provider Sessions', url:'player-provider-session.html', icon:'bi-box-arrow-up-right', parentKey:'wallet', sortOrder:14},
-    {menuKey:'provider_bet_report', title:'Provider Bet Report', url:'provider-bet-report.html', icon:'bi-graph-up-arrow', parentKey:'wallet', sortOrder:15},
-    {menuKey:'wbet_bet_limit', title:'WBET Bet Limit', url:'wbet-bet-limit.html', icon:'bi-sliders', parentKey:'wallet', sortOrder:16},
-    {menuKey:'provider_wallet_transaction', title:'Provider Transactions', url:'provider-wallet-transaction.html', icon:'bi-journal-text', parentKey:'wallet', sortOrder:16},
-    {menuKey:'admin', title:'Admin Management', url:'admin-user.html', icon:'bi-shield-lock', parentKey:'', sortOrder:20},
-    {menuKey:'main_admin_detail', title:'Details', url:'main-admin-detail.html', icon:'bi-person-badge', parentKey:'main_admin_group', sortOrder:60.1},
-    {menuKey:'main_merchant_detail', title:'Details', url:'main-merchant-detail.html', icon:'bi-shop', parentKey:'main_merchant_group', sortOrder:65.1},
-    {menuKey:'brand_management', title:'Branding Management', url:'brand-management.html', icon:'bi-buildings', parentKey:'', sortOrder:21},
-    {menuKey:'role', title:'Role & Menu Permission', url:'role.html', icon:'bi-person-badge', parentKey:'access', sortOrder:30},
-    {menuKey:'menu_management', title:'Menu Management', url:'menu-management.html', icon:'bi-list-check', parentKey:'access', sortOrder:31},
-    {menuKey:'admin_login_log', title:'Admin Login Log', url:'admin-login-log.html', icon:'bi-clock-history', parentKey:'access', sortOrder:32},
-    {menuKey:'admin_operation_log', title:'Admin Operation Log', url:'admin-operation-log.html', icon:'bi-journal-text', parentKey:'access', sortOrder:33},
-    {menuKey:'account_lock', title:'Account Lock', url:'account-lock.html', icon:'bi-lock', parentKey:'access', sortOrder:34},
-    {menuKey:'ip_whitelist_security', title:'IP Whitelist Security', url:'ip-whitelist-security.html', icon:'bi-shield-lock-fill', parentKey:'access', sortOrder:35},
-    {menuKey:'live_chat', title:'Live Chat', url:'livechat.html', icon:'bi-chat-dots', parentKey:'support', sortOrder:55},
-    {menuKey:'livechat_template', title:'Template Messages', url:'livechat-template.html', icon:'bi-chat-square-text', parentKey:'support', sortOrder:56},
-    {menuKey:'language', title:'Language & Translation', url:'language.html', icon:'bi-translate', parentKey:'', sortOrder:40},
-    {menuKey:'image', title:'Image To URL', url:'image-to-url.html', icon:'bi-image', parentKey:'', sortOrder:50},
-    {menuKey:'slider', title:'Slider Banner', url:'slider.html', icon:'bi-images', parentKey:'', sortOrder:60},
-    {menuKey:'game_provider', title:'Provider', url:'game-provider.html', icon:'bi-hdd-network', parentKey:'game', sortOrder:69},
-    {menuKey:'game_category', title:'Game Category', url:'game-category.html', icon:'bi-grid-3x3-gap', parentKey:'game', sortOrder:70},
-    {menuKey:'game_sub_category', title:'Game Sub Category', url:'game-sub-category.html', icon:'bi-diagram-3', parentKey:'game', sortOrder:71},
-    {menuKey:'game', title:'Game', url:'game.html', icon:'bi-joystick', parentKey:'game', sortOrder:72},
-    {menuKey:'animation_effect', title:'Animation Effect', url:'animation-effect.html', icon:'bi-stars', parentKey:'game', sortOrder:73},
-    {menuKey:'bonus_title', title:'Bonus Title', url:'bonus-category-title.html', icon:'bi-gift', parentKey:'bonus', sortOrder:80},
-    {menuKey:'bonus_item', title:'Bonus Item', url:'bonus-category-item.html', icon:'bi-gift-fill', parentKey:'bonus', sortOrder:81},
-    {menuKey:'promotion_bonus', title:'Promotion Bonus', url:'promotion.html', icon:'bi-gift', parentKey:'bonus', sortOrder:82},
-    {menuKey:'rebate_management', title:'Rebate Management', url:'rebate-management.html', icon:'bi-percent', parentKey:'bonus', sortOrder:83},
-    {menuKey:'manual_rebate_approval', title:'Manual Rebate Approval', url:'manual-rebate-approval.html', icon:'bi-check2-square', parentKey:'bonus', sortOrder:85},
-    {menuKey:'rebate_log', title:'Rebate Log', url:'rebate-log.html', icon:'bi-journal-check', parentKey:'bonus', sortOrder:84},
-    {menuKey:'promotion_debug', title:'Promotion Debug', url:'promotion-debug.html', icon:'bi-bug', parentKey:'bonus', sortOrder:83},
-    {menuKey:'vip_management', title:'VIP Management', url:'vip-management.html', icon:'bi-gem', parentKey:'bonus', sortOrder:84},
-    {menuKey:'vip_exp_log', title:'VIP EXP Log', url:'vip-exp-log.html', icon:'bi-clock-history', parentKey:'bonus', sortOrder:85},
-    {menuKey:'vip_reward_log', title:'VIP Reward Log', url:'vip-reward-log.html', icon:'bi-cash-stack', parentKey:'bonus', sortOrder:86},
-    {menuKey:'vip_worker_settings', title:'VIP Worker Settings', url:'vip-worker-settings.html', icon:'bi-clock-history', parentKey:'bonus', sortOrder:87},
-    {menuKey:'site_customize', title:'Site Customize', url:'site-customize.html', icon:'bi-palette', parentKey:'', sortOrder:90},
-    {menuKey:'layout_section', title:'Layout Section', url:'layout-section.html', icon:'bi-code-square', parentKey:'', sortOrder:91},
-    {menuKey:'page_customize', title:'Page Customize', url:'page-customize.html', icon:'bi-file-earmark-code', parentKey:'', sortOrder:92},
-    {menuKey:'frontend_display', title:'Frontend Display', url:'frontend-display.html', icon:'bi-display', parentKey:'setting', sortOrder:91},
-    {menuKey:'advertisement_popup', title:'Advertisement Popup', url:'advertisement-popup.html', icon:'bi-window-stack', parentKey:'setting', sortOrder:94},
-    {menuKey:'social', title:'Social', url:'social.html', icon:'bi-share', parentKey:'setting', sortOrder:92},
-    {menuKey:'compliance_policy', title:'Compliance Policy', url:'compliance-policy.html', icon:'bi-file-earmark-lock', parentKey:'setting', sortOrder:93},
-    {menuKey:'timezone_setting', title:'Timezone Setting', url:'timezone-setting.html', icon:'bi-globe2', parentKey:'setting', sortOrder:94}
-  ];
-
-  try{(JSON.parse(localStorage.getItem('bo_menu_group_meta_v1')||'[]')||[]).forEach(function(g){const key=String(g.groupKey||'').trim();if(key)GROUP_META[key]={title:String(g.title||key),icon:String(g.icon||'bi-folder'),sortOrder:Number(g.sortOrder||100)};});}catch(e){}
+  // Sidebar group metadata is loaded from the database only via /admin/access/menu-groups.
+  // Do not define, seed or repair sidebar groups in frontend code.
+  const GROUP_META = window.BO_MENU_GROUP_META = {};
 
   function canonicalMenuUrl(menuKey, rawUrl){
-    const key = String(menuKey || '').trim().toLowerCase();
-    const raw = String(rawUrl || '').trim();
-    // Legacy Menu Permission rows used role.html#menuPermissions. That points to
-    // Role Management and also causes a redirect loop when a user has only the
-    // menu_permission grant. Keep the database permission row/key authoritative,
-    // but canonicalize this one legacy route to the real standalone page.
-    if(key === 'menu_permission' || /^role\.html#menupermissions$/i.test(raw.replace(/^\.\//,''))){
-      return 'menu-permission.html';
-    }
-    if(/^main-admin-role-create\.html$/i.test(raw.replace(/^\.\//,''))){
-      return 'main-admin-role-create.html';
-    }
-    // MAIN Admin → Details uses the executive Admin Detail page. Keep legacy
-    // BO Admin Management (admin / admin-user.html) unchanged.
-    if(key === 'main_admin_detail' || key === 'admin_detail' || /^main-admin-detail\.html$/i.test(raw.replace(/^\.\//,''))){
-      return 'main-admin-detail.html';
-    }
-    if(key === 'main_merchant_detail' || key === 'merchant_detail' || /^main-merchant-detail\.html$/i.test(raw.replace(/^\.\//,''))){
-      return 'main-merchant-detail.html';
-    }
-    return raw || '#';
+    // Database Menu Management is authoritative. Never rewrite a configured menu URL in the sidebar.
+    return String(rawUrl || '').trim();
   }
 
   function normalizeMenu(m){
@@ -376,41 +277,35 @@
         const json=await res.json().catch(function(){return {};});
         if(!res.ok||json.status==='error')return [];
         const list=Array.isArray(json.data)?json.data:[];
+        Object.keys(GROUP_META).forEach(function(key){ delete GROUP_META[key]; });
         list.forEach(function(g){
           const key=String(g.groupKey||'').trim(); if(!key)return;
-          GROUP_META[key]={title:String(g.title||key),icon:String(g.icon||'bi-folder'),sortOrder:Number(g.sortOrder||100)};
+          GROUP_META[key]={title:String(g.title||key),icon:String(g.icon||'bi-folder'),sortOrder:Number(g.sortOrder||0),status:Number(g.status==null?1:g.status)};
         });
-        try{localStorage.setItem('bo_menu_group_meta_v1',JSON.stringify(list));}catch(e){}
         return list;
       }catch(e){return [];}
     },
     refreshMe: async function(force){
       if(!this.token()) return null;
       const cached=this.user();
-      let last=0;try{last=Number(sessionStorage.getItem('bo_admin_me_refreshed_at')||0);}catch(e){}
-      // Menus/profile are already stored after login. Revalidate periodically instead of
-      // firing /auth/admin/me on every single BO page navigation.
-      const currentPage = pageName();
-      // Newly deployed menu definitions/role assignments can make the cached /me
-      // payload stale for up to 30 seconds. Do not redirect a directly requested
-      // page to the old landing page before the server has had a chance to return
-      // the authoritative, current menu assignment. This is especially important
-      // for newly introduced modules such as Payment Gateway.
-      const cachedAllowsCurrent = cached && Array.isArray(cached.menus) && cached.menus.some(function(m){
-        return Number(m && m.status) === 1 && String((m && m.url) || '').split('/').pop() === currentPage;
-      });
-      const needsFreshPermissionCheck = currentPage === 'payment-gateway.html' && !cachedAllowsCurrent;
-      if(!force && !needsFreshPermissionCheck && cached && cached.username && Array.isArray(cached.menus) && Date.now()-last<30000){
-        await this.loadMenuGroups();this.renderSidebar(cached);this.enforcePageAccess(cached);return cached;
-      }
       try{
-        const res = await fetch(this.adminMeUrl(), {headers: {...this.authHeader()}});
+        // Always re-read the authoritative DB-backed menu assignment. Menu parent/order/permission
+        // changes made by ROOT must be reflected immediately after navigation/refresh.
+        const [res] = await Promise.all([
+          fetch(this.adminMeUrl(), {headers: {...this.authHeader()}, cache:'no-store'}),
+          this.loadMenuGroups()
+        ]);
         const json = await res.json().catch(() => ({}));
-        if(res.ok && json.status !== 'error' && json.data){try{sessionStorage.setItem('bo_admin_me_refreshed_at',String(Date.now()));}catch(e){} await this.loadMenuGroups();this.saveUser(json.data); this.enforcePageAccess(json.data); return json.data; }
+        if(res.ok && json.status !== 'error' && json.data){
+          this.saveUser(json.data);
+          this.enforcePageAccess(json.data);
+          return json.data;
+        }
         if(json.message === 'Unauthorized') this.logout();
       }catch(e){}
-      this.renderSidebar(cached);
-      this.enforcePageAccess(cached);
+      // Keep profile/session usable on a transient request failure, but never rebuild or
+      // inject sidebar definitions from frontend code.
+      if(cached && cached.username) this.enforcePageAccess(cached);
       return cached;
     },
     applyMenuPermission: function(user){
@@ -421,119 +316,71 @@
       const nav = document.querySelector('.report-nav');
       if(!nav) return;
       user = user || this.user();
-      let menus = Array.isArray(user.menus) ? user.menus : [];
-      if(!menus.length && !this.token()) menus = FALLBACK_MENUS;
-      if(!menus.length) return;
+      const sourceMenus = Array.isArray(user && user.menus) ? user.menus : [];
 
-      // Bank Deposit Usage is an independent permission controlled by Master.
+      // Database-only sidebar: no hardcoded fallback menus, injected pages, role filters,
+      // menu renaming, parent repair or frontend permission overrides.
+      const menus = sourceMenus.map(normalizeMenu)
+        .filter(function(m){ return m.status === 1 && m.url && m.url !== '#'; })
+        .sort(function(a,b){ return a.sortOrder - b.sortOrder || a.title.localeCompare(b.title); });
 
-
-      // Advertisement Popup is a companion frontend-configuration page. Keep it visible
-      // immediately for admins that already have frontend/site customization access.
-      if(menus.some(m => ['site_customize','frontend_display'].includes(String(m.menuKey||'')))
-          && !menus.some(m => String(m.menuKey||'') === 'advertisement_popup')){
-        menus = menus.concat([{menuKey:'advertisement_popup', title:'Advertisement Popup', url:'advertisement-popup.html', icon:'bi-window-stack', parentKey:'setting', sortOrder:94, status:1}]);
+      if(!menus.length){
+        nav.innerHTML='';
+        return;
       }
 
-      // No role-specific post-filtering here. The exact active menu rows returned by
-      // /auth/admin/me are the sidebar source of truth for MAIN, MASTER and tenant roles.
-
-      // Backward compatibility for older databases that only have the single
-      // agent_management permission. Once Agent Management submenu records exist in
-      // Menu Management, the database is the source of truth and nothing is injected.
-      // This prevents the same submenu from being rendered twice after an admin adds
-      // Agents / Commission / Settlement / Reimbursement / Payout / Promotion manually.
-      const hasAgentManagementPermission = menus.some(m => String(m.menuKey||'').toLowerCase()==='agent_management');
-      const hasDbAgentManagementChildren = menus.some(m => String(m.parentKey||'').toLowerCase()==='agent_management_group');
-      if(hasAgentManagementPermission && !hasDbAgentManagementChildren){
-        menus = menus.filter(m => String(m.menuKey||'').toLowerCase()!=='agent_management').concat([
-          {menuKey:'agent_management',title:'Agents',url:'agent-management.html',icon:'bi-people',parentKey:'agent_management_group',sortOrder:22,status:1},
-          {menuKey:'agent_commission',title:'Commission',url:'agent-commission-admin.html',icon:'bi-percent',parentKey:'agent_management_group',sortOrder:22.1,status:1},
-          {menuKey:'agent_settlement',title:'Settlement',url:'agent-settlement-admin.html',icon:'bi-receipt',parentKey:'agent_management_group',sortOrder:22.2,status:1},
-          {menuKey:'agent_reimbursement',title:'Reimbursement / Ad Claim',url:'agent-reimbursement-admin.html',icon:'bi-file-earmark-arrow-up',parentKey:'agent_management_group',sortOrder:22.3,status:1},
-          {menuKey:'agent_payout',title:'Withdraw / Payout',url:'agent-payout-admin.html',icon:'bi-cash-stack',parentKey:'agent_management_group',sortOrder:22.4,status:1},
-          {menuKey:'agent_promotion',title:'Promotion',url:'agent-promotion-admin.html',icon:'bi-megaphone',parentKey:'agent_management_group',sortOrder:22.5,status:1}
-        ]);
-      }
-
-      // Prefer MAIN Admin → Details over legacy Admin Management when both are granted.
-      // Legacy `admin` stays on the role for /auth/admin/* API checks.
-      {
-        const hasMainDetail = menus.some(function(m){
-          const k = String(m && m.menuKey || '').toLowerCase();
-          return k === 'main_admin_detail' || k === 'admin_detail';
-        });
-        if(hasMainDetail){
-          menus = menus.filter(function(m){ return String(m && m.menuKey || '').toLowerCase() !== 'admin'; });
-        }
-      }
-
-      // Defensive de-duplication: one logical menu is rendered once even if legacy
-      // seed data and a newly-created DB record overlap. Prefer the DB/user.menus
-      // entry encountered first and compare by menuKey, then URL as a fallback.
-      {
-        const seenMenuKeys = new Set();
-        const seenUrls = new Set();
-        menus = menus.filter(function(m){
-          const key = String(m && m.menuKey || '').trim().toLowerCase();
-          const url = String(m && m.url || '').trim().toLowerCase();
-          if(key && seenMenuKeys.has(key)) return false;
-          if(url && url !== '#' && seenUrls.has(url)) return false;
-          if(key) seenMenuKeys.add(key);
-          if(url && url !== '#') seenUrls.add(url);
-          return true;
-        });
-      }
-
-      // The assigned menu list returned by /auth/admin/me is the sidebar source of truth.
-      // Do not apply a second ROOT-only deny-list in the frontend.
-      menus = menus.map(normalizeMenu).filter(m => m.status === 1 && m.url && m.url !== '#')
-        .map(m => m.menuKey === 'role' ? Object.assign({}, m, {title:'Role & Menu Permission'}) : m)
-        .sort((a,b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
-
-      const top = [];
-      const groups = {};
-      menus.forEach(m => {
-        if(m.parentKey){
-          if(!groups[m.parentKey]) groups[m.parentKey] = [];
-          groups[m.parentKey].push(m);
+      const top=[];
+      const groups={};
+      menus.forEach(function(m){
+        const parent=String(m.parentKey||'').trim();
+        if(parent){
+          if(!groups[parent]) groups[parent]=[];
+          groups[parent].push(m);
         }else{
           top.push(m);
         }
       });
 
-      const activePage = sidebarActivePage();
-      let html = '';
-      top.forEach(m => { html += menuLinkHtml(m, false); });
-      Object.keys(groups).sort((a,b) => {
-        const metaA=GROUP_META[a]||{}, metaB=GROUP_META[b]||{};
-        const groupA=Number(metaA.sortOrder); const groupB=Number(metaB.sortOrder);
-        if(Number.isFinite(groupA)&&Number.isFinite(groupB)&&groupA!==groupB)return groupA-groupB;
-        const minA = Math.min.apply(null, groups[a].map(x => x.sortOrder));
-        const minB = Math.min.apply(null, groups[b].map(x => x.sortOrder));
-        return minA - minB;
-      }).forEach(key => {
-        const items = groups[key].sort((a,b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
-        const meta = GROUP_META[key] || {title: key.replace(/[_-]+/g,' ').replace(/\b\w/g, c => c.toUpperCase()), icon: 'bi-folder'};
-        const isOpen = items.some(m => activePage === (m.url || '').split('/').pop());
-        html += '<div class="nav-group ' + (isOpen ? 'open' : '') + '" data-menu-group="' + esc(key) + '">' +
-          '<button type="button" class="nav-group-btn" aria-expanded="' + (isOpen ? 'true' : 'false') + '">' +
-          '<span><i class="bi ' + esc(meta.icon) + ' me-2"></i>' + esc(meta.title) + '</span><i class="bi bi-chevron-down"></i></button>' +
-          '<div class="nav-group-list ' + (isOpen ? 'show' : '') + '">' + items.map(m => menuLinkHtml(m, true)).join('') + '</div></div>';
+      // Render top-level pages and DB menu groups in one shared sort sequence.
+      // Group order/title/icon come only from the menu_group table response.
+      const roots=[];
+      top.forEach(function(m){ roots.push({kind:'menu',sortOrder:m.sortOrder,title:m.title,menu:m}); });
+      Object.keys(groups).forEach(function(key){
+        const meta=GROUP_META[key]||{};
+        const items=groups[key].sort(function(a,b){return a.sortOrder-b.sortOrder||a.title.localeCompare(b.title);});
+        const configuredSort=Number(meta.sortOrder);
+        const minChild=items.length?Math.min.apply(null,items.map(function(x){return Number(x.sortOrder)||0;})):0;
+        roots.push({
+          kind:'group',
+          key:key,
+          sortOrder:Number.isFinite(configuredSort)?configuredSort:minChild,
+          title:String(meta.title||key),
+          icon:String(meta.icon||'bi-folder'),
+          items:items
+        });
       });
-      nav.innerHTML = html;
+      roots.sort(function(a,b){ return Number(a.sortOrder||0)-Number(b.sortOrder||0)||String(a.title||'').localeCompare(String(b.title||'')); });
 
-      // Account actions live outside the menu permission tree. Logout is always
-      // available at the bottom of the BO sidebar and does not alter ROOT-managed menus.
-      const sidebar = nav.closest('.report-sidebar');
-      if(sidebar){
-        let footer = sidebar.querySelector('.bo-sidebar-account-footer');
-        if(!footer){
-          footer = document.createElement('div');
-          footer.className = 'bo-sidebar-account-footer';
-          sidebar.appendChild(footer);
+      const activePage=sidebarActivePage();
+      let html='';
+      roots.forEach(function(root){
+        if(root.kind==='menu'){
+          html+=menuLinkHtml(root.menu,false);
+          return;
         }
-        footer.innerHTML = '<a class="bo-sidebar-logout" href="#logout" data-bo-logout title="Logout"><i class="bi bi-box-arrow-right"></i><span>Logout</span></a>';
+        const isOpen=root.items.some(function(m){return activePage===(m.url||'').split('/').pop();});
+        html+='<div class="nav-group '+(isOpen?'open':'')+'" data-menu-group="'+esc(root.key)+'">'+
+          '<button type="button" class="nav-group-btn" aria-expanded="'+(isOpen?'true':'false')+'">'+
+          '<span><i class="bi '+esc(root.icon)+' me-2"></i>'+esc(root.title)+'</span><i class="bi bi-chevron-down"></i></button>'+
+          '<div class="nav-group-list '+(isOpen?'show':'')+'">'+root.items.map(function(m){return menuLinkHtml(m,true);}).join('')+'</div></div>';
+      });
+      nav.innerHTML=html;
+
+      const sidebar=nav.closest('.report-sidebar');
+      if(sidebar){
+        let footer=sidebar.querySelector('.bo-sidebar-account-footer');
+        if(!footer){footer=document.createElement('div');footer.className='bo-sidebar-account-footer';sidebar.appendChild(footer);}
+        footer.innerHTML='<a class="bo-sidebar-logout" href="#logout" data-bo-logout title="Logout"><i class="bi bi-box-arrow-right"></i><span>Logout</span></a>';
       }
     },
     bindDynamicSidebarEvents: function(){
@@ -763,8 +610,8 @@
     if(location.pathname.endsWith('/login.html')) return;
     window.BO_AUTH.injectProfile();
     window.BO_AUTH.bindDynamicSidebarEvents();
-    window.BO_AUTH.renderSidebar(window.BO_AUTH.user());
-    window.BO_AUTH.refreshMe();
+    // Sidebar is intentionally rendered only after fresh DB-backed /me + menu-group data returns.
+    window.BO_AUTH.refreshMe(true);
     document.addEventListener('click', function(e){
       const logout = e.target.closest && e.target.closest('[data-bo-logout]');
       if(logout){ e.preventDefault(); window.BO_AUTH.logout(); }
