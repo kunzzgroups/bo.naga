@@ -107,10 +107,10 @@ function markClass(i){const m=MARKS[i%MARKS.length];return m?(' is-'+m):'';}
 function normalizeProviders(rows){
   return (rows||[]).map((x,i)=>{
     const turnover=Number(x.turnover||0);
-    const ggr=Number(x.houseResult||0);
-    const totalOut=Number(x.totalOut!=null?x.totalOut:(turnover-ggr));
-    const totalIn=Number(x.totalIn!=null?x.totalIn:(totalOut+ggr));
-    const txns=Number(x.betCount||x.txnCount||x.transactionCount||0);
+    const gameAccount=Number(x.gameAccount!=null?x.gameAccount:(x.houseResult!=null?x.houseResult:turnover));
+    const payable=Number(x.upstreamProviderPayable!=null?x.upstreamProviderPayable:(x.providerPayable||0));
+    const margin=Number(x.providerMargin!=null?x.providerMargin:(x.companyMargin||0));
+    const receivable=Number(x.brandCharge!=null?x.brandCharge:(x.merchantReceivable!=null?x.merchantReceivable:(payable+margin)));
     const cat=categoryKey(x);
     const code=String(x.providerCode||'');
     return {
@@ -122,15 +122,11 @@ function normalizeProviders(rows){
       category:cat,
       categoryLabel:categoryLabel(cat),
       status:providerStatus(x),
-      validBet:turnover,
-      totalIn,
-      totalOut:Math.max(totalOut,0),
-      ggr,
-      ggrPct:turnover? (ggr/turnover*100) : 0,
-      txns,
-      brandCount:Number(x.brandCount||0),
-      payable:Number(x.upstreamProviderPayable||0),
-      margin:Number(x.providerMargin||0)
+      gameAccount,
+      payable,
+      margin,
+      receivable,
+      brandCount:Number(x.brandCount||0)
     };
   });
 }
@@ -173,13 +169,6 @@ function pageButtons(current,total){
   return html;
 }
 
-function ggrHtml(v,pct){
-  const n=Number(v||0);
-  const cls=n>0?'is-pos':n<0?'is-neg':'is-flat';
-  const sign=n>0?'+':'';
-  return `<span class="mre-ggr ${cls}"><b>${sign}${money(n)}</b><em>${money(Math.abs(pct))}%</em></span>`;
-}
-
 function applyProviderFilters(){
   const q=($('mreSearchInput')?.value||'').trim().toLowerCase();
   const cat=$('mreCategoryFilter')?.value||'';
@@ -218,43 +207,31 @@ function renderProviders(){
       : 'Showing 0 to 0 of 0 providers';
   }
 
-  const sumValid=filteredProviders.reduce((s,r)=>s+r.validBet,0);
-  const sumIn=filteredProviders.reduce((s,r)=>s+r.totalIn,0);
-  const sumOut=filteredProviders.reduce((s,r)=>s+r.totalOut,0);
-  const sumGgr=filteredProviders.reduce((s,r)=>s+r.ggr,0);
-  if($('mreTotalValid')) $('mreTotalValid').textContent=money(sumValid);
-  if($('mreTotalIn')) $('mreTotalIn').textContent=money(sumIn);
-  if($('mreTotalOut')) $('mreTotalOut').textContent=money(sumOut);
-  if($('mreTotalGgr')){
-    const el=$('mreTotalGgr');
-    const sign=sumGgr>0?'+':'';
-    el.textContent=sign+money(sumGgr);
-    el.classList.toggle('is-pos',sumGgr>0);
-    el.classList.toggle('is-neg',sumGgr<0);
-  }
+  const sumGame=filteredProviders.reduce((s,r)=>s+r.gameAccount,0);
+  const sumPayable=filteredProviders.reduce((s,r)=>s+r.payable,0);
+  const sumMargin=filteredProviders.reduce((s,r)=>s+r.margin,0);
+  const sumRecv=filteredProviders.reduce((s,r)=>s+r.receivable,0);
+  if($('mreTotalGameAccount')) $('mreTotalGameAccount').textContent=money(sumGame);
+  if($('mreTotalPayable')) $('mreTotalPayable').textContent=money(sumPayable);
+  if($('mreTotalMargin')) $('mreTotalMargin').textContent=money(sumMargin);
+  if($('mreTotalReceivable')) $('mreTotalReceivable').textContent=money(sumRecv);
   if(foot) foot.hidden=!total;
 
   if(!rows.length){
-    tbody.innerHTML='<tr><td colspan="6" class="mad-empty">No provider report data for this date range.</td></tr>';
+    tbody.innerHTML='<tr><td colspan="5" class="mad-empty">No provider report data for this date range.</td></tr>';
     return;
   }
 
   tbody.innerHTML=rows.map(r=>{
     const codeLabel=r.code?('#'+r.code):'';
-    const txnLabel=r.txns? (num(r.txns)+' txns') : (r.brandCount? (num(r.brandCount)+' brands') : '');
     return `<tr>
       <td><div class="mre-provider"><span class="mre-mark${r.mark}">${esc(r.initials)}</span>
         <div class="mre-provider-copy"><b>${esc(r.name)}${codeLabel?` <span class="mre-code">${esc(codeLabel)}</span>`:''}</b>
         <small>${esc(r.categoryLabel)}</small></div></div></td>
-      <td class="mre-num"><span class="mre-stack"><b>${money(r.validBet)}</b></span></td>
-      <td class="mre-num"><div class="mre-stack"><b>${money(r.totalIn)}</b>${txnLabel?`<small>${esc(txnLabel)}</small>`:''}</div></td>
-      <td class="mre-num"><span class="mre-stack"><b>${money(r.totalOut)}</b></span></td>
-      <td class="mre-num">${ggrHtml(r.ggr,r.ggrPct)}</td>
-      <td><div class="mre-actions mad-actions">
-        <button class="mad-icon-btn" type="button" title="View" data-mre-view="${esc(r.code)}"><i class="bi bi-eye"></i></button>
-        <button class="mad-icon-btn" type="button" title="Download" data-mre-dl="${esc(r.code)}"><i class="bi bi-download"></i></button>
-        <button class="mad-icon-btn" type="button" title="History" data-mre-hist="${esc(r.code)}"><i class="bi bi-file-earmark-text"></i></button>
-      </div></td>
+      <td class="mre-num"><b>${money(r.gameAccount)}</b></td>
+      <td class="mre-num"><b>${money(r.payable)}</b></td>
+      <td class="mre-num"><b>${money(r.margin)}</b></td>
+      <td class="mre-num"><b>${money(r.receivable)}</b></td>
     </tr>`;
   }).join('');
 }
@@ -453,7 +430,7 @@ async function load(){
     currentBrands=[];
     updateCounts();
     const tbody=$('providerReportRows');
-    if(tbody) tbody.innerHTML=`<tr><td colspan="6" class="mad-empty text-danger">${esc((/failed to fetch|networkerror|load failed/i.test(String(e.message||''))?'Unable to reach server. Start local API on :8080 or open the BO on the same host as /api.':e.message)||'Unable to load provider report')}</td></tr>`;
+    if(tbody) tbody.innerHTML=`<tr><td colspan="5" class="mad-empty text-danger">${esc((/failed to fetch|networkerror|load failed/i.test(String(e.message||''))?'Unable to reach server. Start local API on :8080 or open the BO on the same host as /api.':e.message)||'Unable to load provider report')}</td></tr>`;
     const foot=$('providerReportFoot');
     if(foot) foot.hidden=true;
     const info=$('mreTableInfo');
@@ -465,8 +442,8 @@ async function load(){
 }
 
 function exportCsv(){
-  const head=['Provider','Code','Category','Status','Valid Bet','Total In','Total Out','GGR','GGR %'];
-  const lines=[head,...filteredProviders.map(r=>[r.name,r.code,r.categoryLabel,r.status,r.validBet,r.totalIn,r.totalOut,r.ggr,r.ggrPct.toFixed(2)])];
+  const head=['Provider','Code','100% Game Account','Provider Payable','Company Margin','Merchant Receivable'];
+  const lines=[head,...filteredProviders.map(r=>[r.name,r.code,r.gameAccount,r.payable,r.margin,r.receivable])];
   const blob=new Blob([lines.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
@@ -538,36 +515,6 @@ function setupFilters(){
   });
   $('reportExport')?.addEventListener('click',exportCsv);
   $('reportSyncLabel')?.addEventListener('click',()=>{load();});
-  document.addEventListener('click',e=>{
-    const view=e.target.closest('[data-mre-view]');
-    if(view){
-      const code=view.getAttribute('data-mre-view');
-      const u=new URL('provider-detail.html',location.href);
-      u.searchParams.set('providerCode',code||'');
-      u.searchParams.set('from',$('reportDateFrom').value);
-      u.searchParams.set('to',$('reportDateTo').value);
-      location.href=u.toString();
-      return;
-    }
-    const dl=e.target.closest('[data-mre-dl]');
-    if(dl){
-      const code=dl.getAttribute('data-mre-dl');
-      const row=filteredProviders.find(r=>r.code===code);
-      if(!row) return;
-      const lines=[['Provider','Code','Valid Bet','Total In','Total Out','GGR'],[row.name,row.code,row.validBet,row.totalIn,row.totalOut,row.ggr]];
-      const blob=new Blob([lines.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv'});
-      const a=document.createElement('a');
-      a.href=URL.createObjectURL(blob);
-      a.download=`provider-${code||'row'}.csv`;
-      a.click();
-      setTimeout(()=>URL.revokeObjectURL(a.href),500);
-      return;
-    }
-    const hist=e.target.closest('[data-mre-hist]');
-    if(hist){
-      document.querySelector('[data-report-tab="settlement"]')?.click();
-    }
-  });
 }
 
 /* Date range picker (preserved) */
