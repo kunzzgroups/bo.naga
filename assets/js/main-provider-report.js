@@ -5,6 +5,8 @@ const num=v=>Number(v||0).toLocaleString('en-MY');
 const add=(a,b)=>Number(a||0)+Number(b||0), pos=v=>Math.max(Number(v||0),0), neg=v=>Math.max(-Number(v||0),0);
 const PAGE_SIZE=7;
 const MARKS=['','teal','violet','amber','rose','slate'];
+/** Temporary: hide report rows until real data is ready. Set false to restore API display. */
+const FORCE_EMPTY_UI=true;
 
 let currentProviders=[], currentBrands=[];
 let filteredProviders=[];
@@ -12,6 +14,17 @@ let providerPage=1;
 let statusPill='all';
 let syncedAt=Date.now();
 let currency='MYR';
+
+function showEmptyProviders(){
+  currentProviders=[];
+  filteredProviders=[];
+  currentBrands=[];
+  updateCounts();
+  applyProviderFilters();
+  if($('reportSummary')) $('reportSummary').innerHTML='';
+  const brandRows=$('brandReportRows');
+  if(brandRows) brandRows.innerHTML='<tr><td colspan="11" class="mad-empty">No brand report data for this date range.</td></tr>';
+}
 
 async function api(path,opt={}){
   const base=String((window.API_CONFIG&&window.API_CONFIG.BASE_URL)||'').replace(/\/$/,'');
@@ -321,6 +334,11 @@ async function loadSettlements(){
   if(!$('settlementMonth')) return;
   const month=$('settlementMonth').value||monthFromDate($('reportDateFrom').value)||todayYmd().slice(0,7);
   $('settlementMonth').value=month;
+  if(FORCE_EMPTY_UI){
+    if($('settlementSummary')) $('settlementSummary').innerHTML='';
+    renderSettlements([]);
+    return;
+  }
   try{
     const d=await api('/admin/main/settlements?month='+encodeURIComponent(month));
     renderSettlementSummary(d.summary||{});
@@ -413,6 +431,12 @@ function setupSettlement(){
 }
 
 async function load(){
+  if(FORCE_EMPTY_UI){
+    showEmptyProviders();
+    syncedAt=Date.now();
+    updateSyncLabel();
+    return;
+  }
   try{
     const d=await api('/admin/main/reports/provider-settlement'+qs());
     renderSummary(d.summary||{});
@@ -424,8 +448,19 @@ async function load(){
     updateSyncLabel();
   }catch(e){
     console.error(e);
+    currentProviders=[];
+    filteredProviders=[];
+    currentBrands=[];
+    updateCounts();
     const tbody=$('providerReportRows');
     if(tbody) tbody.innerHTML=`<tr><td colspan="6" class="mad-empty text-danger">${esc((/failed to fetch|networkerror|load failed/i.test(String(e.message||''))?'Unable to reach server. Start local API on :8080 or open the BO on the same host as /api.':e.message)||'Unable to load provider report')}</td></tr>`;
+    const foot=$('providerReportFoot');
+    if(foot) foot.hidden=true;
+    const info=$('mreTableInfo');
+    if(info) info.textContent='Showing 0 to 0 of 0 providers';
+    const pager=$('mrePager');
+    if(pager) pager.innerHTML='';
+    if($('reportSummary')) $('reportSummary').innerHTML='';
   }
 }
 
