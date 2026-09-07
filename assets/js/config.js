@@ -1,16 +1,10 @@
 const API_CONFIG = window.API_CONFIG || {
-    // Prefer same-origin /api when the BO is hosted with the backend.
-    // On localhost → local Spring Boot. Override anytime via:
-    //   localStorage.setItem('bo_api_base', 'http://localhost:8080/api')
+    // BASE_URL: "http://localhost:8080/api",
+    // Local override (optional): localStorage.setItem('bo_api_base', 'http://localhost:8080/api')
     BASE_URL: (function resolveApiBase(){
       try{
         const override = localStorage.getItem('bo_api_base');
         if(override && String(override).trim()) return String(override).trim().replace(/\/$/,'');
-      }catch(e){}
-      try{
-        const host = String(location.hostname || '');
-        if(host === 'localhost' || host === '127.0.0.1') return 'http://localhost:8080/api';
-        if(host && /^https?:$/i.test(String(location.protocol || ''))) return String(location.origin || '').replace(/\/$/,'') + '/api';
       }catch(e){}
       return 'https://bo.titanx7.com/api';
     })(),
