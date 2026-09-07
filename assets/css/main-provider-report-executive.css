@@ -57,23 +57,27 @@ body.main-report-exec-page .mre-scope-label{
   color:var(--bo-muted);line-height:1;
 }
 body.main-report-exec-page .mre-currency-seg{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:0;background:transparent;
+  display:inline-flex;align-items:center;gap:2px;
+  padding:4px;
+  border-radius:8px;
+  background:#E8EDF5;
+  box-shadow:inset 0 0 0 1px rgba(18,59,102,.04);
 }
 body.main-report-exec-page .mre-cur-btn{
   appearance:none;border:0;cursor:pointer;
-  height:34px;padding:0 16px;border-radius:999px;
-  background:#EEF1F6;
-  color:#475467;
-  font-size:13px;font-weight:700;letter-spacing:.01em;line-height:1;
-  transition:background .14s var(--bo-ease),color .14s var(--bo-ease),box-shadow .14s var(--bo-ease);
+  height:32px;padding:0 16px;border-radius:8px;
+  background:transparent;
+  color:#5B6B7C;
+  font-size:13px;font-weight:650;letter-spacing:.01em;line-height:1;
+  transition:background .14s var(--bo-ease),color .14s var(--bo-ease),box-shadow .14s var(--bo-ease),font-weight .14s var(--bo-ease);
 }
 body.main-report-exec-page .mre-cur-btn:hover:not(.is-active){
-  background:#E4E9F2;color:var(--bo-navy);
+  color:var(--bo-navy);
+  background:rgba(255,255,255,.45);
 }
 body.main-report-exec-page .mre-cur-btn.is-active{
   background:var(--bo-navy);color:#fff;font-weight:750;
-  box-shadow:0 1px 2px rgba(18,59,102,.2);
+  box-shadow:0 1px 3px rgba(18,59,102,.22);
 }
 body.main-report-exec-page .mre-cur-btn:focus-visible{
   outline:2px solid var(--bo-cyan);outline-offset:2px;
@@ -350,14 +354,19 @@ html[data-bo-theme="dark"] body.main-report-exec-page .mre-tab.mad-tab.is-active
 html[data-bo-theme="dark"] body.main-report-exec-page .mre-scope-bar{
   background:var(--bo-surface);border-bottom-color:var(--bo-border);
 }
+html[data-bo-theme="dark"] body.main-report-exec-page .mre-currency-seg{
+  background:rgba(255,255,255,.08);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+}
 html[data-bo-theme="dark"] body.main-report-exec-page .mre-cur-btn{
-  background:rgba(255,255,255,.08);color:var(--bo-muted);
+  background:transparent;color:var(--bo-muted);
 }
 html[data-bo-theme="dark"] body.main-report-exec-page .mre-cur-btn:hover:not(.is-active){
-  background:rgba(255,255,255,.12);color:#fff;
+  background:rgba(255,255,255,.08);color:#fff;
 }
 html[data-bo-theme="dark"] body.main-report-exec-page .mre-cur-btn.is-active{
   background:var(--bo-navy);color:#fff;
+  box-shadow:0 1px 3px rgba(0,0,0,.35);
 }
 html[data-bo-theme="dark"] body.main-report-exec-page .mre-date-trigger{
   background:var(--bo-surface)!important;

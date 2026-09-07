@@ -12,7 +12,7 @@
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet"/>
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
 <link href="assets/css/main-admin-detail-executive.css?v=1.6.15" rel="stylesheet"/>
-<link href="assets/css/main-provider-report-executive.css?v=1.0.3" rel="stylesheet"/>
+<link href="assets/css/main-provider-report-executive.css?v=1.0.5" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 <script>
 (function(){
@@ -103,12 +103,11 @@
         </div>
       </div>
       <div class="mre-period-group">
-        <span class="mre-scope-label">Period</span>
         <div class="field ref-date-field mre-date-field main-exec-date-field">
           <input type="hidden" id="reportDateFrom"/>
           <input type="hidden" id="reportDateTo"/>
           <div class="ref-range-wrap">
-            <button class="ref-range-trigger mre-date-trigger" id="reportDateTrigger" type="button">
+            <button class="ref-range-trigger mre-date-trigger" id="reportDateTrigger" type="button" aria-label="Select date range">
               <span class="ref-range-icon"><i class="bi bi-calendar3"></i></span>
               <span id="reportDateLabel">Select date range</span>
               <i class="bi bi-chevron-down ms-auto"></i>
