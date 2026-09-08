@@ -23,8 +23,6 @@
   }
 
   const tbody = document.getElementById('madTableBody');
-  const editModal = document.getElementById('madEditModal');
-  const editForm = document.getElementById('madEditForm');
   const searchInput = document.getElementById('madSearchInput');
   const roleFilter = document.getElementById('madRoleFilter');
   const statusFilter = document.getElementById('madStatusFilter');
@@ -35,9 +33,9 @@
   const infoEl = document.getElementById('madTableInfo');
   const syncLabel = document.getElementById('madSyncLabel');
 
-  let editingId = null;
   let resetPasswordId = null;
   let resetPasswordRow = null;
+  let resetPassLastFocus = null;
   let roleMap = {};
   let allAdmins = [];
   let filteredAdmins = [];
@@ -46,9 +44,14 @@
   let lastSyncedAt = null;
 
   const resetPassModal = document.getElementById('madResetPasswordModal');
-  if(editModal){ editModal.classList.remove('show'); editModal.setAttribute('aria-hidden', 'true'); }
   if(resetPassModal){ resetPassModal.classList.remove('show'); resetPassModal.setAttribute('aria-hidden', 'true'); }
   document.body.classList.remove('modal-open');
+
+  function modalFocusables(root){
+    if(!root) return [];
+    return Array.from(root.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+      .filter(el => el.offsetParent !== null || el === document.activeElement);
+  }
 
   function setStatus(el, message, type){
     if(!el) return;
@@ -219,13 +222,12 @@
       roleMap = Object.assign(roleMap, Object.fromEntries(rows.map(r => [String(r.id), r.name || r.code])));
       const html = rows.map(r => '<option value="' + esc(r.id) + '">' + esc(r.name || r.code) + (r.roleType === 'BRAND_OWNER' ? ' (Owner)' : '') + '</option>').join('')
         || '<option value="">No role available for this selection</option>';
-      ['madEditRole'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = html; });
       if(roleFilter) roleFilter.innerHTML = '<option value="">All Roles</option>' + html;
       sizeAdminFilterSelects();
       requestAnimationFrame(sizeAdminFilterSelects);
       return rows;
     }catch(e){
-      ['madEditRole'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = '<option value="">Unable to load roles</option>'; });
+      if(roleFilter) roleFilter.innerHTML = '<option value="">Unable to load roles</option>';
       return [];
     }
   }
@@ -286,21 +288,23 @@
       const credit = creditBalance(row);
       const logout = lastLogout(row);
       const email = emailLabel(row);
+      const creditHtml = credit === '-' ? '<span class="mad-muted">-</span>' : ('<span class="mad-money">' + credit + '</span>');
+      const moreBtn = '<button type="button" class="mad-more-btn" aria-expanded="false" aria-label="Show details"><i class="bi bi-chevron-down" aria-hidden="true"></i></button>';
       const rowAttr = JSON.stringify(row).replace(/'/g, '&#39;');
-      return '<tr>' +
-        '<td><div class="mad-user"><span class="mad-avatar">' + esc(initials(row)) + '</span><div class="mad-user-copy"><b>' + esc(row.displayName || row.username || '-') + (current ? ' · You' : '') + '</b><div class="mad-user-meta"><span class="mad-uid">' + esc(uidLabel(row)) + '</span>' + (email ? '<span class="mad-email">' + esc(email) + '</span>' : '') + '</div></div></div></td>' +
-        '<td><span class="mad-role ' + roleTone(rn) + '">' + esc(rn) + '</span></td>' +
-        '<td class="mad-money">' + (credit === '-' ? '<span class="mad-muted">-</span>' : credit) + '</td>' +
-        '<td>' + esc(relativeTime(lastActive(row))) + '</td>' +
-        '<td><span class="mad-status ' + (active ? 'is-active' : 'is-suspended') + '"><i></i>' + (active ? 'Active' : 'Suspended') + '</span></td>' +
-        '<td>' + esc(row.createdByName || row.createdByUsername || row.createdBy || row.creator || '-') + '</td>' +
-        '<td class="mad-time">' + timeWithDateTip(row.lastLoginAt || row.lastLogin || row.loginAt) + '</td>' +
-        '<td class="mad-time">' + timeWithDateTip(logout) + '</td>' +
-        '<td><div class="mad-actions">' + (protectedRoot
+      return '<tr class="mad-row">' +
+        '<td data-label="Username"><div class="mad-user"><span class="mad-avatar">' + esc(initials(row)) + '</span><div class="mad-user-copy"><b>' + esc(row.displayName || row.username || '-') + (current ? ' · You' : '') + '</b><div class="mad-user-meta"><span class="mad-uid">' + esc(uidLabel(row)) + '</span>' + (email ? '<span class="mad-email">' + esc(email) + '</span>' : '') + '</div></div></div></td>' +
+        '<td data-label="Role"><span class="mad-role ' + roleTone(rn) + '">' + esc(rn) + '</span></td>' +
+        '<td data-label="Credit Balance">' + creditHtml + '</td>' +
+        '<td class="mad-detail" data-label="Last Active">' + esc(relativeTime(lastActive(row))) + '</td>' +
+        '<td data-label="Status"><span class="mad-status ' + (active ? 'is-active' : 'is-suspended') + '"><i></i>' + (active ? 'Active' : 'Suspended') + '</span></td>' +
+        '<td class="mad-detail" data-label="Created By">' + esc(row.createdByName || row.createdByUsername || row.createdBy || row.creator || '-') + '</td>' +
+        '<td class="mad-time mad-detail" data-label="Last Login">' + timeWithDateTip(row.lastLoginAt || row.lastLogin || row.loginAt) + '</td>' +
+        '<td class="mad-time mad-detail" data-label="Last Logout">' + timeWithDateTip(logout) + '</td>' +
+        '<td data-label="Actions"><div class="mad-actions">' + moreBtn + (protectedRoot
           ? '<span class="mad-status is-active" title="Root account cannot be modified by non-root administrators">Protected</span>'
-          : '<button class="mad-icon-btn mad-edit-btn" type="button" data-tip="Edit" data-id="' + esc(row.id) + '" data-row=\'' + rowAttr + '\'><i class="bi bi-pencil"></i></button>' +
-            '<button class="mad-icon-btn mad-key-btn" type="button" data-tip="Reset password" data-id="' + esc(row.id) + '" data-row=\'' + rowAttr + '\'><i class="bi bi-key"></i></button>' +
-            '<button class="mad-icon-btn mad-toggle-btn ' + (active ? 'is-danger' : 'is-success') + '" type="button" data-tip="' + (active ? 'Suspend' : 'Activate') + '" data-id="' + esc(row.id) + '" data-status="' + (active ? 0 : 1) + '"><i class="bi bi-' + (active ? 'slash-circle' : 'check-circle') + '"></i></button>') +
+          : '<button class="mad-icon-btn mad-edit-btn" type="button" data-tip="Edit" aria-label="Edit" data-id="' + esc(row.id) + '" data-row=\'' + rowAttr + '\'><i class="bi bi-pencil" aria-hidden="true"></i></button>' +
+            '<button class="mad-icon-btn mad-key-btn" type="button" data-tip="Reset password" aria-label="Reset password" data-id="' + esc(row.id) + '" data-row=\'' + rowAttr + '\'><i class="bi bi-key" aria-hidden="true"></i></button>' +
+            '<button class="mad-icon-btn mad-toggle-btn ' + (active ? 'is-danger' : 'is-success') + '" type="button" data-tip="' + (active ? 'Suspend' : 'Activate') + '" aria-label="' + (active ? 'Suspend' : 'Activate') + '" data-id="' + esc(row.id) + '" data-status="' + (active ? 0 : 1) + '"><i class="bi bi-' + (active ? 'slash-circle' : 'check-circle') + '" aria-hidden="true"></i></button>') +
         '</div></td>' +
       '</tr>';
     }).join('');
@@ -338,12 +342,7 @@
     }
   }
 
-  function closeEditAdmin(){
-    if(editModal){ editModal.classList.remove('show'); editModal.setAttribute('aria-hidden', 'true'); }
-    if(!document.querySelector('.modal-clean.show')) document.body.classList.remove('modal-open');
-  }
-
-  async function openEdit(btn){
+  function openEdit(btn){
     let row = {};
     try{ row = JSON.parse(btn.getAttribute('data-row') || '{}'); }catch(err){}
     const id = Number(row.id || btn.dataset.id || 0);
@@ -375,10 +374,17 @@
     if(!id){ BO_DIALOG.alert('Missing admin ID'); return; }
     resetPasswordId = id;
     resetPasswordRow = row.id ? row : (allAdmins.find(r => Number(r.id) === id) || {});
+    resetPassLastFocus = document.activeElement;
     const a = document.getElementById('madResetNewPassword');
     const b = document.getElementById('madResetConfirmPassword');
     if(a){ a.value = ''; a.type = 'password'; }
     if(b){ b.value = ''; b.type = 'password'; }
+    resetPassModal && resetPassModal.querySelectorAll('[data-toggle-password]').forEach(function(eye){
+      eye.setAttribute('aria-pressed', 'false');
+      eye.setAttribute('aria-label', 'Show password');
+      const icon = eye.querySelector('i');
+      if(icon) icon.className = 'bi bi-eye';
+    });
     setStatus(document.getElementById('madResetPassStatus'), '', '');
     const sub = document.getElementById('madResetPassSub');
     if(sub){
@@ -398,38 +404,15 @@
       resetPassModal.classList.remove('show');
       resetPassModal.setAttribute('aria-hidden', 'true');
     }
-    if(!document.querySelector('.modal-clean.show')) document.body.classList.remove('modal-open');
+    document.body.classList.remove('modal-open');
     resetPasswordId = null;
     resetPasswordRow = null;
+    const restore = resetPassLastFocus;
+    resetPassLastFocus = null;
+    if(restore && typeof restore.focus === 'function'){
+      setTimeout(function(){ try{ restore.focus(); }catch(e){} }, 0);
+    }
   }
-
-  editForm && editForm.addEventListener('submit', async function(e){
-    e.preventDefault();
-    if(!editingId) return;
-    const statusEl = document.getElementById('madEditFormStatus');
-    setStatus(statusEl, 'Saving admin...', '');
-    try{
-      const json = await apiJson(BO_AUTH.adminUpdateUrl(editingId), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...BO_AUTH.authHeader() },
-        body: JSON.stringify({
-          username: document.getElementById('madEditUsername').value.trim(),
-          displayName: document.getElementById('madEditDisplayName').value.trim(),
-          status: Number(document.getElementById('madEditStatus').value || 1),
-          roleId: document.getElementById('madEditRole').value ? Number(document.getElementById('madEditRole').value) : null,
-          // MAIN-created delegated admins are platform-wide, never brand-scoped.
-          brandId: isViewerMain(BO_AUTH.user() || {}) ? null : ((allAdmins.find(r => Number(r.id) === Number(editingId)) || {}).brandId ?? null),
-          password: document.getElementById('madEditPassword').value
-        })
-      });
-      setStatus(statusEl, json.message || 'Admin updated successfully', 'success');
-      if(Number(editingId) === Number((BO_AUTH.user() || {}).id) && json.data) BO_AUTH.saveUser(json.data);
-      await loadAdmins();
-    }catch(err){ setStatus(statusEl, err.message || 'Update admin failed', 'error'); }
-  });
-
-  document.querySelectorAll('[data-mad-close-edit]').forEach(btn => btn.addEventListener('click', closeEditAdmin));
-  editModal && editModal.addEventListener('click', e => { if(e.target === editModal) closeEditAdmin(); });
 
   document.querySelectorAll('[data-mad-close-pass]').forEach(btn => btn.addEventListener('click', closeResetPassword));
   resetPassModal && resetPassModal.addEventListener('click', e => { if(e.target === resetPassModal) closeResetPassword(); });
@@ -476,20 +459,50 @@
     }
   });
   document.addEventListener('keydown', function(e){
-    if(e.key === 'Escape' && resetPassModal && resetPassModal.classList.contains('show')) closeResetPassword();
+    if(!resetPassModal || !resetPassModal.classList.contains('show')) return;
+    if(e.key === 'Escape'){
+      e.preventDefault();
+      closeResetPassword();
+      return;
+    }
+    if(e.key !== 'Tab') return;
+    const nodes = modalFocusables(resetPassModal);
+    if(!nodes.length) return;
+    const first = nodes[0];
+    const last = nodes[nodes.length - 1];
+    if(e.shiftKey && document.activeElement === first){
+      e.preventDefault();
+      last.focus();
+    }else if(!e.shiftKey && document.activeElement === last){
+      e.preventDefault();
+      first.focus();
+    }
   });
 
   document.querySelectorAll('[data-mad-status]').forEach(btn => {
     btn.addEventListener('click', () => {
       statusPill = btn.getAttribute('data-mad-status') || 'all';
       document.querySelectorAll('[data-mad-status]').forEach(b => {
-        b.classList.toggle('is-active', b === btn);
+        const on = b === btn;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
       });
       applyFilters();
     });
   });
 
   document.addEventListener('click', function(e){
+    const more = e.target.closest && e.target.closest('.mad-more-btn');
+    if(more){
+      const tr = more.closest('tr.mad-row');
+      if(!tr) return;
+      const open = tr.classList.toggle('is-open');
+      more.setAttribute('aria-expanded', open ? 'true' : 'false');
+      more.setAttribute('aria-label', open ? 'Hide details' : 'Show details');
+      const icon = more.querySelector('i');
+      if(icon) icon.className = open ? 'bi bi-chevron-up' : 'bi bi-chevron-down';
+      return;
+    }
     const keyBtn = e.target.closest && e.target.closest('.mad-key-btn');
     if(keyBtn){
       if(Number(keyBtn.dataset.id) === 1 && !isViewerRoot()){ BO_DIALOG.alert('Root admin account is protected.'); return; }
@@ -553,6 +566,8 @@
       if(!input) return;
       const show = input.type === 'password';
       input.type = show ? 'text' : 'password';
+      eye.setAttribute('aria-pressed', show ? 'true' : 'false');
+      eye.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
       const icon = eye.querySelector('i');
       if(icon) icon.className = show ? 'bi bi-eye-slash' : 'bi bi-eye';
     }
@@ -572,7 +587,9 @@
     if(statusFilter) statusFilter.value = '';
     statusPill = 'all';
     document.querySelectorAll('[data-mad-status]').forEach(b => {
-      b.classList.toggle('is-active', b.getAttribute('data-mad-status') === 'all');
+      const on = b.getAttribute('data-mad-status') === 'all';
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     applyFilters();
   });
@@ -604,9 +621,6 @@
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 500);
   });
-
-  const editBrandEl = document.getElementById('madEditBrand');
-  editBrandEl && editBrandEl.addEventListener('change', () => { loadRoles(editBrandEl.value ? Number(editBrandEl.value) : null); });
 
   setInterval(updateSyncLabel, 15000);
 

@@ -21,6 +21,9 @@ body.main-admin-detail-page{
   --bo-cyan-tint-strong:rgba(33,166,215,.16);
   --bo-control-well:#EEF1F7;
   --bo-control-well-hover:#E4E9F2;
+  --bo-control-border:#D0D5DD;
+  --bo-placeholder:#98A2B3;
+  --bo-navy-hover:#0E2F52;
   --bo-ui-blue:#21A6D7;
   --bo-ui-blue-hover:#1B94C2;
   --bo-shadow:0 0 0 1px rgba(18,59,102,.04),0 1px 2px -1px rgba(18,59,102,.06),0 2px 8px rgba(26,45,80,.018);
@@ -303,7 +306,8 @@ body.main-admin-detail-page .mad-tab{
 body.main-admin-detail-page .mad-tab:hover:not(.is-disabled){
   color:var(--bo-navy);background:transparent!important;
 }
-body.main-admin-detail-page .mad-tab.is-active{
+body.main-admin-detail-page .mad-tab.is-active,
+body.main-admin-detail-page .mad-tab[aria-current="page"]{
   background:transparent!important;
   color:var(--bo-navy)!important;
   font-weight:800;
@@ -369,7 +373,7 @@ body.main-admin-detail-page .mad-btn-navy:hover,
 body.main-admin-detail-page .mad-btn-navy.bo-ui-button:hover,
 body.main-admin-detail-page .bo-ui-button-primary:hover,
 body.main-admin-detail-page .btn-primary:hover{
-  background:#0E2F52!important;border-color:#0E2F52!important;color:#fff!important;
+  background:var(--bo-navy-hover)!important;border-color:var(--bo-navy-hover)!important;color:#fff!important;
 }
 body.main-admin-detail-page .mad-btn:active{transform:scale(.97)}
 body.main-admin-detail-page .mad-btn:focus-visible,
@@ -413,7 +417,7 @@ body.main-admin-detail-page .mad-pill-count.is-danger-count{
   background:transparent;color:#E04F16;padding:0;min-width:0;height:auto;
 }
 body.main-admin-detail-page .mad-pill.is-active{
-  background:#fff!important;color:var(--bo-navy)!important;font-weight:700;
+  background:var(--bo-surface)!important;color:var(--bo-navy)!important;font-weight:700;
   box-shadow:0 0 0 1px rgba(18,59,102,.05),0 1px 2px rgba(18,59,102,.07);
 }
 body.main-admin-detail-page .mad-pill:hover:not(.is-active){background:rgba(255,255,255,.6);color:var(--bo-navy)}
@@ -422,26 +426,37 @@ body.main-admin-detail-page .mad-filters{
   display:flex;align-items:center;gap:8px;flex-wrap:nowrap;
   flex:0 1 auto;min-width:0;margin-left:auto;
 }
+body.main-admin-detail-page .mad-filter-field{display:contents}
+body.main-admin-detail-page .mad-sr-only{
+  position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
+  overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
+}
+body.main-admin-detail-page .mad-req{color:var(--bo-danger);font-weight:800}
 /* reports.js wraps selects → .rounded-select-wrap{width:100%} — keep filter row side-by-side */
 /* Filter selects: width locked to longest option via JS */
-body.main-admin-detail-page .mad-filters > .rounded-select-wrap{
+body.main-admin-detail-page .mad-filters > .rounded-select-wrap,
+body.main-admin-detail-page .mad-filters .rounded-select-wrap{
   position:relative!important;
   flex:0 0 auto!important;
   width:auto!important;min-width:0!important;max-width:none!important;
 }
-body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-btn{
+body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-btn,
+body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-btn{
   width:100%!important;min-width:0!important;max-width:none!important;height:42px!important;
-  border:1px solid #D0D5DD!important;border-radius:8px!important;
-  background:#fff!important;color:var(--bo-text-secondary)!important;
+  border:1px solid var(--bo-control-border)!important;border-radius:8px!important;
+  background:var(--bo-surface)!important;color:var(--bo-text-secondary)!important;
   font-size:13px!important;font-weight:600!important;
   padding:0 14px!important;box-shadow:none!important;
 }
 body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-btn.open,
-body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-btn:focus{
+body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-btn:focus,
+body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-btn.open,
+body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-btn:focus{
   border-color:var(--bo-cyan)!important;
   box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;outline:0!important;
 }
-body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu{
+body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu,
+body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-menu{
   width:max-content!important;
   min-width:100%!important;
   max-width:min(480px, calc(100vw - 48px))!important;
@@ -452,7 +467,8 @@ body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-
   box-shadow:var(--bo-shadow)!important;
   padding:6px!important;
 }
-body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option{
+body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option,
+body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-menu .rounded-select-option{
   white-space:nowrap!important;
   background:transparent!important;
   color:var(--bo-text)!important;
@@ -461,7 +477,10 @@ body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-
 }
 body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option:hover,
 body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option.active,
-body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option.is-active{
+body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option.is-active,
+body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-menu .rounded-select-option:hover,
+body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-menu .rounded-select-option.active,
+body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-menu .rounded-select-option.is-active{
   background:var(--bo-cyan-tint)!important;
   color:var(--bo-cyan-deep)!important;
 }
@@ -470,11 +489,11 @@ body.main-admin-detail-page .mad-search{
   display:flex;align-items:center;gap:10px;
   flex:0 1 220px;width:220px;max-width:100%;min-width:160px;
   height:42px;margin:0;padding:0 16px;box-sizing:border-box;
-  border:1px solid #D0D5DD!important;border-radius:8px!important;
-  background:#fff!important;box-shadow:none!important;
+  border:1px solid var(--bo-control-border)!important;border-radius:8px!important;
+  background:var(--bo-surface)!important;box-shadow:none!important;
 }
 body.main-admin-detail-page .mad-search i{
-  flex:0 0 auto;color:#98A2B3;font-size:15px;line-height:1;pointer-events:none;
+  flex:0 0 auto;color:var(--bo-placeholder);font-size:15px;line-height:1;pointer-events:none;
 }
 /* Kill global .report-content input box — keep only outer .mad-search frame */
 body.main-admin-detail-page .mad-search input,
@@ -493,7 +512,7 @@ body.main-admin-detail-page .mad-search input::-webkit-search-results-button,
 body.main-admin-detail-page .mad-search input::-webkit-search-results-decoration{
   display:none!important;-webkit-appearance:none!important;
 }
-body.main-admin-detail-page .mad-search input::placeholder{color:#98A2B3!important;opacity:1}
+body.main-admin-detail-page .mad-search input::placeholder{color:var(--bo-placeholder)!important;opacity:1}
 body.main-admin-detail-page .mad-search:focus-within{
   border-color:var(--bo-cyan)!important;
   box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;
@@ -507,8 +526,8 @@ body.main-admin-detail-page select.mad-select{
   height:42px;flex:0 0 auto;
   width:auto!important;min-width:0!important;max-width:none!important;
   padding:0 32px 0 14px!important;
-  border:1px solid #D0D5DD!important;border-radius:8px!important;
-  background-color:#fff!important;
+  border:1px solid var(--bo-control-border)!important;border-radius:8px!important;
+  background-color:var(--bo-surface)!important;
   color:var(--bo-text-secondary)!important;
   font-size:13px;font-weight:600;cursor:pointer;
   appearance:none;-webkit-appearance:none;
@@ -527,15 +546,15 @@ body.main-admin-detail-page .mad-reset-btn.bo-ui-button,
 body.main-admin-detail-page .mad-reset-btn.bo-ui-button-secondary{
   height:42px!important;min-height:42px!important;padding:0 14px!important;
   flex:0 0 auto!important;white-space:nowrap!important;
-  border:1px solid #D0D5DD!important;border-radius:8px!important;
-  background:#fff!important;color:var(--bo-text-secondary)!important;
+  border:1px solid var(--bo-control-border)!important;border-radius:8px!important;
+  background:var(--bo-surface)!important;color:var(--bo-text-secondary)!important;
   font-size:13px!important;font-weight:600!important;
   box-shadow:none!important;
 }
 body.main-admin-detail-page .mad-reset-btn i{font-size:13px}
 body.main-admin-detail-page .mad-reset-btn:hover,
 body.main-admin-detail-page .mad-reset-btn.mad-btn:hover{
-  background:#F8FAFC!important;color:var(--bo-navy)!important;border-color:#BFC7D4!important;
+  background:var(--bo-bg)!important;color:var(--bo-navy)!important;border-color:var(--bo-border)!important;
 }
 
 @media(max-width:1180px){
@@ -585,8 +604,9 @@ body.main-admin-detail-page .mad-table th:nth-child(8),
 body.main-admin-detail-page .mad-table td:nth-child(8){width:9%}
 body.main-admin-detail-page .mad-table th:nth-child(9),
 body.main-admin-detail-page .mad-table td:nth-child(9){
-  width:120px;text-align:center;padding-left:12px;padding-right:12px;
+  width:140px;text-align:center;padding-left:12px;padding-right:12px;
 }
+body.main-admin-detail-page .mad-more-btn{display:none}
 body.main-admin-detail-page .mad-table tbody tr:last-child td{border-bottom:0}
 body.main-admin-detail-page .mad-table tbody tr:hover td{background:rgba(33,166,215,.035)}
 body.main-admin-detail-page .mad-empty{text-align:center;padding:48px 16px!important;color:var(--bo-muted)!important}
@@ -647,8 +667,8 @@ body.main-admin-detail-page .mad-table td:has(.mad-actions){
 }
 body.main-admin-detail-page .mad-icon-btn{
   position:relative;
-  width:32px;height:32px;border:0;border-radius:8px;
-  background:transparent;color:#98A2B3;cursor:pointer;
+  width:40px;height:40px;border:0;border-radius:8px;
+  background:transparent;color:var(--bo-placeholder);cursor:pointer;
   display:inline-grid;place-items:center;font-size:15px;
   transition:background .16s var(--bo-ease),color .16s var(--bo-ease),transform .16s var(--bo-ease),box-shadow .16s var(--bo-ease);
 }
@@ -667,7 +687,7 @@ body.main-admin-detail-page .mad-icon-btn.is-success:hover{
   box-shadow:0 4px 10px rgba(18,183,106,.16);
 }
 body.main-admin-detail-page .mad-icon-btn.is-danger{
-  color:#98A2B3;
+  color:var(--bo-placeholder);
   background:transparent;
 }
 body.main-admin-detail-page .mad-icon-btn.is-danger:hover{
@@ -788,7 +808,7 @@ body.main-admin-detail-page .mad-pager button:disabled{
   background:#F3F5F8!important;color:#A8B0BD!important;
 }
 body.main-admin-detail-page .mad-pager .smart-page-ellipsis{
-  min-width:16px;color:#98A2B3;font-weight:700;padding:0 2px;
+  min-width:16px;color:var(--bo-placeholder);font-weight:700;padding:0 2px;
 }
 
 /* Kill leftover indigo / Bootstrap / global primary blues on this page */
@@ -816,6 +836,7 @@ body.main-admin-detail-page .mad-modal-icon{
   width:40px;height:40px;border-radius:8px;display:grid;place-items:center;
   background:var(--bo-cyan-tint);color:var(--bo-cyan);font-size:18px;
 }
+body.main-admin-detail-page .mad-modal-title h2,
 body.main-admin-detail-page .mad-modal-title h3{margin:0;font-size:17px;font-weight:800;color:var(--bo-navy)}
 body.main-admin-detail-page .mad-modal-title small{display:block;margin-top:2px;color:var(--bo-muted);font-size:12px}
 body.main-admin-detail-page .mad-form-stack{display:grid;gap:12px}
@@ -850,17 +871,410 @@ body.main-admin-detail-page .mad-pass-modal-fields .mad-pass-wrap .form-control{
 body.main-admin-detail-page .mad-pass-modal-fields .mad-field .form-control::placeholder,
 body.main-admin-detail-page .mad-pass-modal-fields .mad-pass-wrap .form-control::placeholder{
   font-size:13.5px!important;font-weight:500!important;line-height:1.2!important;
-  color:#98A2B3!important;opacity:1!important;
+  color:var(--bo-placeholder)!important;opacity:1!important;
 }
 body.main-admin-detail-page .mad-eye{
   position:absolute;right:8px;top:50%;transform:translateY(-50%);
-  width:28px;height:28px;border:0;background:transparent;color:var(--bo-muted);cursor:pointer;
+  width:40px;height:40px;border:0;background:transparent;color:var(--bo-muted);cursor:pointer;
 }
 body.main-admin-detail-page .mad-modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+
+@media(prefers-reduced-motion:reduce){
+  body.main-admin-detail-page *,
+  body.main-admin-detail-page *::before,
+  body.main-admin-detail-page *::after{
+    transition-duration:.01ms!important;
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    scroll-behavior:auto!important;
+  }
+  body.main-admin-detail-page .mad-btn:active,
+  body.main-admin-detail-page .mad-icon-btn:hover,
+  body.main-admin-detail-page .mad-icon-btn:active{
+    transform:none!important;
+  }
+}
 
 @media(max-width:900px){
   body.main-admin-detail-page .mad-form-row{grid-template-columns:1fr}
   body.main-admin-detail-page .mad-search{width:auto;flex:1 1 100%;min-width:0}
+}
+
+/* ========== Adapt: phone + tablet (desktop → mobile web) ========== */
+@media(max-width:1023.98px){
+  body.main-admin-detail-page .mad-workspace{
+    padding:14px 14px max(20px, env(safe-area-inset-bottom, 0px))!important;
+    gap:12px;
+  }
+  body.main-admin-detail-page .mad-chrome{
+    display:flex;flex-direction:column;align-items:stretch;gap:10px;
+    height:auto;min-height:0;max-height:none;flex:0 0 auto;
+    padding-bottom:10px;
+  }
+  body.main-admin-detail-page .mad-tabs{
+    width:100%;height:auto;min-height:0;
+    overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;overscroll-behavior-x:contain;
+  }
+  body.main-admin-detail-page .mad-tabs::-webkit-scrollbar{display:none}
+  body.main-admin-detail-page .mad-tab{
+    min-height:44px;padding:10px 14px 8px;flex:0 0 auto;
+  }
+  body.main-admin-detail-page .mad-chrome-actions{
+    width:100%;height:auto;min-height:44px;padding:0;
+    justify-content:flex-start;flex-wrap:wrap;gap:8px 10px;
+  }
+  body.main-admin-detail-page .mad-chrome-actions .mad-btn,
+  body.main-admin-detail-page .mad-chrome-actions .mad-btn.bo-ui-button{
+    height:44px!important;min-height:44px!important;padding:0 16px!important;
+  }
+  /* Left under Administrators: Add Account | Export | synced */
+  body.main-admin-detail-page .mad-chrome-actions .mad-btn-primary{
+    order:1;flex:0 0 auto;margin-left:0;
+  }
+  body.main-admin-detail-page .mad-chrome-actions .mad-btn-ghost{
+    order:2;flex:0 0 auto;
+  }
+  body.main-admin-detail-page .mad-sync{
+    order:3;flex:0 0 auto;align-self:center;
+  }
+  body.main-admin-detail-page .mad-filter-bar{
+    flex-direction:column;align-items:stretch;gap:12px;padding:12px;
+  }
+  body.main-admin-detail-page .mad-pills{
+    width:100%;display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  body.main-admin-detail-page .mad-pills::-webkit-scrollbar{display:none}
+  body.main-admin-detail-page .mad-pill{
+    height:44px;padding:0 14px;flex:1 1 0;justify-content:center;min-width:0;
+  }
+  body.main-admin-detail-page .mad-filters{
+    width:100%;margin-left:0;flex-wrap:nowrap;gap:8px;align-items:center;
+  }
+  body.main-admin-detail-page .mad-search{
+    flex:1 1 auto;width:auto;min-width:140px;max-width:none;height:44px;
+  }
+  body.main-admin-detail-page .mad-select,
+  body.main-admin-detail-page select.mad-select,
+  body.main-admin-detail-page .mad-filters > .rounded-select-wrap,
+  body.main-admin-detail-page .mad-filters .rounded-select-wrap,
+  body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-btn,
+  body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-btn,
+  body.main-admin-detail-page .mad-reset-btn,
+  body.main-admin-detail-page .mad-reset-btn.mad-btn{
+    height:44px!important;min-height:44px!important;
+  }
+  body.main-admin-detail-page .mad-filters > .rounded-select-wrap,
+  body.main-admin-detail-page .mad-filters .rounded-select-wrap{
+    flex:0 0 auto!important;min-width:0!important;width:auto!important;
+  }
+  body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-btn,
+  body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-btn{
+    width:100%!important;
+  }
+  body.main-admin-detail-page .mad-reset-btn{
+    flex:0 0 auto!important;
+  }
+  body.main-admin-detail-page .mad-footer{
+    padding:12px;
+    padding-bottom:max(12px, env(safe-area-inset-bottom, 0px));
+  }
+  body.main-admin-detail-page .mad-pager .smart-page,
+  body.main-admin-detail-page .mad-pager button{
+    min-width:44px;height:44px;
+  }
+  body.main-admin-detail-page .report-topbar .hamb,
+  body.main-admin-detail-page .bo-theme-btn{
+    width:44px!important;height:44px!important;min-width:44px!important;
+  }
+  body.main-admin-detail-page .report-topbar .user-title-wrap p{display:none}
+}
+
+/* Card rows once shell is drawer-width (covers 768 / iPad portrait / 824×768) */
+@media(max-width:991.98px){
+  /* Scroll the workspace — panel must not clip card list */
+  body.main-admin-detail-page .mad-workspace{
+    padding:12px 10px max(16px, env(safe-area-inset-bottom, 0px))!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+  }
+  body.main-admin-detail-page .mad-panel{
+    border-radius:10px;
+    flex:0 0 auto;
+    min-height:0;
+    height:auto;
+    overflow:visible;
+  }
+  body.main-admin-detail-page .mad-table-wrap{
+    overflow:visible;
+    flex:0 0 auto;
+  }
+  body.main-admin-detail-page .mad-table{
+    min-width:0!important;width:100%;table-layout:auto;border-collapse:separate;border-spacing:0 8px;
+  }
+  body.main-admin-detail-page .mad-table thead{display:none}
+  body.main-admin-detail-page .mad-table tbody{display:block}
+  body.main-admin-detail-page .mad-more-btn{
+    display:inline-grid;
+  }
+  body.main-admin-detail-page .mad-table tbody tr.mad-row{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:8px 10px;
+    width:100%;
+    margin:0;
+    padding:10px 12px;
+    box-sizing:border-box;
+    background:var(--bo-surface);
+    border:1px solid var(--bo-border);
+    border-radius:10px;
+    box-shadow:none;
+    overflow:hidden;
+  }
+  body.main-admin-detail-page .mad-table tbody tr.mad-row:hover td{
+    background:transparent;
+  }
+  body.main-admin-detail-page .mad-table th,
+  body.main-admin-detail-page .mad-table td{
+    display:flex;flex-direction:row;align-items:center;justify-content:flex-start;
+    gap:0;width:auto!important;max-width:none;min-width:0;padding:0!important;border:0!important;
+    text-align:left;white-space:normal;overflow:visible;
+  }
+  body.main-admin-detail-page .mad-table td::before{display:none}
+  body.main-admin-detail-page .mad-table td > *{
+    margin-left:0;text-align:left;min-width:0;max-width:100%;
+  }
+
+  /* Compact main line */
+  body.main-admin-detail-page .mad-table td[data-label="Username"]{
+    flex:1 1 150px;min-width:0;order:1;
+  }
+  body.main-admin-detail-page .mad-table td[data-label="Username"] .mad-avatar{
+    width:34px;height:34px;flex:0 0 34px;font-size:11px;
+  }
+  body.main-admin-detail-page .mad-table td[data-label="Username"] .mad-user{gap:10px}
+  body.main-admin-detail-page .mad-table td[data-label="Username"] .mad-user-copy b{
+    font-size:13.5px;line-height:1.2;
+  }
+  body.main-admin-detail-page .mad-table td[data-label="Username"] .mad-user-meta{
+    display:none;
+  }
+  body.main-admin-detail-page .mad-table td[data-label="Role"]{flex:0 1 auto;order:2;min-width:0;max-width:42%}
+  body.main-admin-detail-page .mad-table td[data-label="Status"]{flex:0 0 auto;order:3}
+  body.main-admin-detail-page .mad-table td[data-label="Credit Balance"]{flex:0 0 auto;order:4}
+  body.main-admin-detail-page .mad-table td[data-label="Actions"]{
+    flex:0 0 auto;order:5;margin-left:auto;
+  }
+  body.main-admin-detail-page .mad-table td[data-label="Role"] .mad-role{
+    max-width:160px;height:26px;padding:0 8px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    font-size:11.5px;
+  }
+  body.main-admin-detail-page .mad-table td[data-label="Status"] .mad-status{
+    display:inline-flex;align-items:center;gap:5px;
+    height:26px;padding:0 8px;border-radius:8px;
+    background:rgba(18,183,106,.12);color:#027A48;
+    font-size:11.5px;font-weight:750;white-space:nowrap;
+  }
+  body.main-admin-detail-page .mad-table td[data-label="Status"] .mad-status.is-active{
+    background:rgba(18,183,106,.12);color:#027A48;padding:0 8px;
+  }
+  body.main-admin-detail-page .mad-table td[data-label="Status"] .mad-status.is-suspended{
+    background:#FEF3F2;color:#B42318;
+  }
+  body.main-admin-detail-page .mad-table td[data-label="Status"] .mad-status i{width:6px;height:6px}
+  body.main-admin-detail-page .mad-table td[data-label="Credit Balance"] .mad-money,
+  body.main-admin-detail-page .mad-table td[data-label="Credit Balance"] .mad-muted{
+    display:inline-flex;align-items:center;height:26px;padding:0 8px;border-radius:8px;
+    background:var(--bo-cyan-tint);color:var(--bo-navy);
+    font-size:12px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;
+  }
+
+  /* Details collapsed by default */
+  body.main-admin-detail-page .mad-table td.mad-detail{
+    display:none!important;
+  }
+  body.main-admin-detail-page .mad-table tr.mad-row.is-open td.mad-detail{
+    display:flex!important;
+    flex:1 1 calc(50% - 8px);
+    order:20;
+    align-items:baseline;justify-content:space-between;gap:8px;
+    padding:8px 0 0!important;
+    border-top:1px solid var(--bo-border)!important;
+    font-size:12px;color:var(--bo-text-secondary);
+  }
+  body.main-admin-detail-page .mad-table tr.mad-row.is-open td.mad-detail::before{
+    display:inline;content:attr(data-label);
+    font-size:10px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    color:var(--bo-muted);
+  }
+  body.main-admin-detail-page .mad-table tr.mad-row.is-open td[data-label="Last Active"]::before{content:"Active"}
+  body.main-admin-detail-page .mad-table tr.mad-row.is-open td[data-label="Created By"]::before{content:"Created"}
+  body.main-admin-detail-page .mad-table tr.mad-row.is-open td[data-label="Last Login"]::before{content:"Login"}
+  body.main-admin-detail-page .mad-table tr.mad-row.is-open td[data-label="Last Logout"]::before{content:"Logout"}
+  body.main-admin-detail-page .mad-table tr.mad-row.is-open td.mad-detail > *{
+    margin-left:auto;font-weight:650;
+  }
+  body.main-admin-detail-page .mad-table tr.mad-row.is-open td[data-label="Username"] .mad-user-meta{
+    display:flex;
+  }
+
+  body.main-admin-detail-page .mad-more-btn{
+    width:36px;height:36px;border:1px solid var(--bo-border);border-radius:8px;
+    background:var(--bo-bg);color:var(--bo-muted);cursor:pointer;
+    display:inline-grid;place-items:center;font-size:14px;padding:0;
+    transition:border-color .16s var(--bo-ease),color .16s var(--bo-ease),background .16s var(--bo-ease);
+  }
+  body.main-admin-detail-page .mad-more-btn:hover,
+  body.main-admin-detail-page .mad-row.is-open .mad-more-btn{
+    border-color:rgba(33,166,215,.45);color:var(--bo-cyan);background:var(--bo-cyan-tint);
+  }
+  body.main-admin-detail-page .mad-table td[data-label="Actions"] .mad-actions{
+    gap:6px;
+  }
+  body.main-admin-detail-page .mad-table td[data-label="Actions"] .mad-icon-btn{
+    width:36px;height:36px;font-size:15px;
+    background:var(--bo-control-well);color:var(--bo-text-secondary);
+  }
+  /* Desktop keeps more-btn hidden */
+  body.main-admin-detail-page .mad-table td.mad-empty,
+  body.main-admin-detail-page .mad-table tr:not(.mad-row) td{
+    display:block;width:100%;flex:1 1 100%;
+    padding:36px 16px!important;text-align:center;border:0!important;
+  }
+  body.main-admin-detail-page .mad-table td.mad-empty::before{display:none}
+  body.main-admin-detail-page .mad-table tr:not(.mad-row){
+    display:block;border:1px solid var(--bo-border);border-radius:10px;background:var(--bo-surface);
+  }
+  body.main-admin-detail-page .mad-user{width:100%;min-width:0}
+  body.main-admin-detail-page .mad-footer{
+    flex-direction:column;align-items:stretch;gap:10px;
+  }
+  body.main-admin-detail-page .mad-footer-right,
+  body.main-admin-detail-page .mad-pager{
+    width:100%;justify-content:center;margin-left:0;
+  }
+  body.main-admin-detail-page .mad-modal{
+    padding:max(8px, env(safe-area-inset-top, 0px)) 10px max(10px, env(safe-area-inset-bottom, 0px));
+    align-items:flex-end;
+  }
+  body.main-admin-detail-page .mad-modal-panel,
+  body.main-admin-detail-page .mad-pass-modal-panel{
+    width:100%;max-width:none;border-radius:14px 14px 0 0!important;
+    max-height:min(92dvh, 920px);overflow:auto;
+  }
+  body.main-admin-detail-page .mad-modal-actions{
+    flex-wrap:wrap;
+  }
+  body.main-admin-detail-page .mad-modal-actions .mad-btn{
+    flex:1 1 auto;min-height:44px!important;height:44px!important;
+  }
+  body.main-admin-detail-page .mad-eye{
+    width:44px;height:44px;right:2px;
+  }
+}
+
+@media(max-width:767.98px){
+  body.main-admin-detail-page .mad-filters{
+    flex-wrap:wrap;
+  }
+  body.main-admin-detail-page .mad-search{
+    flex:1 1 100%;width:100%;min-width:0;
+  }
+  body.main-admin-detail-page .mad-filters > .rounded-select-wrap,
+  body.main-admin-detail-page .mad-filters .rounded-select-wrap{
+    flex:1 1 calc(50% - 8px)!important;min-width:0!important;
+  }
+  body.main-admin-detail-page .mad-reset-btn{
+    flex:1 1 calc(50% - 8px)!important;
+  }
+  body.main-admin-detail-page .mad-search input,
+  body.main-admin-detail-page #madSearchInput,
+  body.main-admin-detail-page .mad-select,
+  body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-btn,
+  body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-btn,
+  body.main-admin-detail-page .mad-field .form-control{
+    font-size:16px!important;
+  }
+  body.main-admin-detail-page .mad-chrome-actions{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:flex-start;
+    gap:8px 10px;
+  }
+  body.main-admin-detail-page .mad-chrome-actions .mad-btn-ghost,
+  body.main-admin-detail-page .mad-chrome-actions .mad-btn-primary{
+    margin-left:0;width:auto;justify-self:auto;
+  }
+  body.main-admin-detail-page .mad-sync{order:3}
+  body.main-admin-detail-page .mad-table td[data-label="Username"]{
+    flex:1 1 100%;
+  }
+  body.main-admin-detail-page .mad-table td[data-label="Role"],
+  body.main-admin-detail-page .mad-table td[data-label="Status"],
+  body.main-admin-detail-page .mad-table td[data-label="Credit Balance"]{
+    flex:0 1 auto;
+  }
+  body.main-admin-detail-page .mad-table td[data-label="Actions"]{
+    flex:1 1 auto;margin-left:0;width:100%;
+  }
+  body.main-admin-detail-page .mad-table td[data-label="Actions"] .mad-actions{
+    width:100%;justify-content:flex-end;
+  }
+  body.main-admin-detail-page .mad-table tr.mad-row.is-open td.mad-detail{
+    flex:1 1 100%;
+  }
+}
+
+@media(pointer:coarse){
+  body.main-admin-detail-page .mad-icon-btn,
+  body.main-admin-detail-page .mad-more-btn{
+    width:44px;height:44px;
+  }
+  body.main-admin-detail-page .mad-btn,
+  body.main-admin-detail-page .mad-btn.bo-ui-button{
+    min-height:44px!important;height:44px!important;
+  }
+  body.main-admin-detail-page .mad-pill{min-height:44px;height:44px}
+  body.main-admin-detail-page .mad-tab{min-height:44px}
+  body.main-admin-detail-page .report-topbar .hamb,
+  body.main-admin-detail-page .bo-theme-btn{
+    width:44px!important;height:44px!important;min-width:44px!important;
+  }
+}
+
+@media(hover:none){
+  body.main-admin-detail-page .mad-icon-btn[data-tip]:hover::after,
+  body.main-admin-detail-page .mad-icon-btn[data-tip]:hover::before,
+  body.main-admin-detail-page .mad-time-tip:hover::after,
+  body.main-admin-detail-page .mad-time-tip:hover::before{
+    opacity:0;visibility:hidden;
+  }
+  body.main-admin-detail-page .mad-icon-btn[data-tip]:focus-visible::after,
+  body.main-admin-detail-page .mad-icon-btn[data-tip]:focus-visible::before,
+  body.main-admin-detail-page .mad-icon-btn[data-tip]:active::after,
+  body.main-admin-detail-page .mad-icon-btn[data-tip]:active::before,
+  body.main-admin-detail-page .mad-time-tip:focus-visible::after,
+  body.main-admin-detail-page .mad-time-tip:focus-visible::before{
+    opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);
+  }
+  body.main-admin-detail-page .mad-table tbody tr:hover td{background:transparent}
+}
+
+/* Only reunite chrome on wide landscape tablets — not 824×768 */
+@media(min-width:1100px) and (max-width:1280px) and (orientation:landscape){
+  body.main-admin-detail-page .mad-chrome{
+    flex-direction:row;flex-wrap:wrap;align-items:flex-end;gap:12px;
+  }
+  body.main-admin-detail-page .mad-tabs{flex:1 1 auto;width:auto;min-width:0}
+  body.main-admin-detail-page .mad-chrome-actions{
+    width:auto;margin-left:auto;flex-wrap:nowrap;
+  }
+  body.main-admin-detail-page .mad-sync{order:0;flex:0 0 auto}
 }
 
 html[data-bo-theme="dark"] body.main-admin-detail-page{
@@ -870,9 +1284,13 @@ html[data-bo-theme="dark"] body.main-admin-detail-page{
   --bo-cyan-tint-strong:rgba(33,166,215,.24);
   --bo-control-well:rgba(255,255,255,.06);
   --bo-control-well-hover:rgba(255,255,255,.10);
+  --bo-control-border:rgba(255,255,255,.12);
+  --bo-placeholder:#8A95A8;
+  --bo-navy-hover:var(--bo-cyan-deep);
   color-scheme:dark;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .report-topbar .user-title-wrap h1,
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-modal-title h2,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-modal-title h3,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-user-copy b{color:var(--bo-text)!important}
 html[data-bo-theme="dark"] body.main-admin-detail-page .report-topbar .hamb,
@@ -996,8 +1414,15 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn{
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-status.is-active{
   background:transparent;color:#7cffc8;
 }
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-table td[data-label="Status"] .mad-status.is-active{
+  background:rgba(18,183,106,.16);color:#6CE9A6;padding:0 10px;
+}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-status.is-suspended{
   background:rgba(239,51,64,.16);color:#FF8A90;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-table td[data-label="Credit Balance"] .mad-money,
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-table td[data-label="Credit Balance"] .mad-muted{
+  background:rgba(33,166,215,.16);color:#7DD3FC;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn:hover{
   background:rgba(33,166,215,.16);color:#7DD3FC;

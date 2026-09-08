@@ -60,6 +60,25 @@
     return pad2(d.getHours()) + ':' + pad2(d.getMinutes());
   }
 
+  function lastActiveValue(row){
+    return row.lastActiveAt || row.lastLoginAt || row.updatedAt || row.createdAt || '';
+  }
+
+  function dateDdMmYyyy(value){
+    const d = parseDate(value);
+    if(!d) return '';
+    return pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + d.getFullYear();
+  }
+
+  function lastActiveCell(row){
+    const value = lastActiveValue(row);
+    const t = lastActiveText(row);
+    if(!value || t === '—') return '<span class="mad-muted">—</span>';
+    const date = dateDdMmYyyy(value);
+    if(!date) return '<span class="mac-time mad-time">' + esc(t) + '</span>';
+    return '<span class="mac-time mad-time mad-time-tip" data-date="' + esc(date) + '" tabindex="0">' + esc(t) + '</span>';
+  }
+
   function relativeSync(from){
     if(!from) return 'Synced just now';
     const sec = Math.max(0, Math.floor((Date.now() - from.getTime()) / 1000));
@@ -258,7 +277,7 @@
         '<td><span class="mac-role ' + tierClass(r.tier) + '">' + esc(r.roleLabel) + '</span></td>' +
         '<td class="mad-money">' + esc(money(r.balance)) + '</td>' +
         '<td><span class="mac-status ' + r.health.statusClass + '"><i></i>' + esc(r.health.statusLabel) + '</span></td>' +
-        '<td class="mac-time">' + esc(lastActiveText(r)) + '</td>' +
+        '<td>' + lastActiveCell(r) + '</td>' +
         '<td class="mac-actions-cell"><div class="mac-actions">' +
           '<button class="mac-icon-btn mac-add-credit-btn" type="button" title="Add credit" data-id="' + esc(r.id) + '"><i class="bi bi-plus-lg"></i></button>' +
         '</div></td>' +
