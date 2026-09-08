@@ -11,7 +11,7 @@
 <link href="assets/css/reports.css?v=1.0.47" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.57" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.65" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -49,33 +49,113 @@
 <section class="report-content mac-workspace">
   <form id="merchantBrandForm" class="mac-form" novalidate>
     <section class="mac-section">
-      <header class="mac-section-head"><span class="mac-section-icon"><i class="bi bi-shop"></i></span><h3>1. Merchant Profile</h3><a class="mad-btn mad-btn-ghost mac-back-section" href="main-merchant-detail.html"><i class="bi bi-arrow-left"></i> Back to List</a></header>
-      <div class="mac-fields mac-fields-row">
-        <label class="mac-field"><span class="mac-label">Merchant Code <b>*</b></span><input class="form-control" id="merchantCode" required placeholder="e.g. T2"/><small>Existing Brand code becomes the Merchant code.</small></label>
-        <label class="mac-field"><span class="mac-label">Merchant Name <b>*</b></span><input class="form-control" id="merchantName" required placeholder="e.g. Titan X2"/></label>
-        <label class="mac-field"><span class="mac-label">Primary Domain <b>*</b></span><input class="form-control" id="merchantDomain" required placeholder="e.g. t2.example.com"/></label>
-        <label class="mac-field"><span class="mac-label">Status</span><select class="form-control" id="merchantStatus"><option value="1">Active</option><option value="0">Suspended</option></select></label>
-        <label class="mac-field"><span class="mac-label">Domain Aliases</span><input class="form-control" id="merchantAliases" placeholder="alias1.com, alias2.com"/></label>
-        <label class="mac-field"><span class="mac-label">Frontend Root</span><input class="form-control" id="merchantRoot" placeholder="/var/www/site"/></label>
-        <label class="mac-field"><span class="mac-label">Currency</span><input class="form-control" id="merchantCurrency" value="MYR" maxlength="20"/></label>
+      <header class="mac-section-head mac-section-head-rich">
+        <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-building"></i></span>
+        <div class="mac-section-copy">
+          <h3>1. Merchant Profile</h3>
+          <p>Core brand identification, routing, and primary settlement.</p>
+        </div>
+        <a class="mad-btn mad-btn-ghost mac-back-section" href="main-merchant-detail.html"><i class="bi bi-arrow-left"></i> Back to List</a>
+      </header>
+      <div class="mac-fields-stack">
+        <div class="mac-fields mac-fields-row mac-fields-row-4">
+          <label class="mac-field" for="merchantCode">
+            <span class="mac-label">Merchant Code <b>*</b></span>
+            <input class="form-control" id="merchantCode" required placeholder="e.g. T2"/>
+          </label>
+          <label class="mac-field" for="merchantName">
+            <span class="mac-label">Merchant Name <b>*</b></span>
+            <input class="form-control" id="merchantName" required placeholder="e.g. Titan X2"/>
+          </label>
+          <label class="mac-field" for="merchantDomain">
+            <span class="mac-label">Primary Domain <b>*</b></span>
+            <input class="form-control" id="merchantDomain" required placeholder="e.g. t2.example.com"/>
+          </label>
+          <label class="mac-field" for="merchantRoot">
+            <span class="mac-label">Frontend Root <span class="mac-label-optional">(Optional)</span></span>
+            <input class="form-control" id="merchantRoot" placeholder="/var/www/site"/>
+          </label>
+        </div>
+        <label class="mac-field mac-field-aliases" for="merchantAliases">
+          <span class="mac-label">Domain Aliases <span class="mac-label-optional">(Optional)</span></span>
+          <input class="form-control" id="merchantAliases" placeholder="alias1.com, alias2.com"/>
+        </label>
       </div>
     </section>
+
     <section class="mac-section">
-      <header class="mac-section-head"><span class="mac-section-icon"><i class="bi bi-wallet2"></i></span><h3>2. Credit Configuration</h3></header>
-      <div class="mac-fields mac-fields-row">
-        <label class="mac-field"><span class="mac-label">Credit Mode</span><select class="form-control" id="merchantCreditMode"><option value="WHOLE">Whole Provider Pool</option><option value="PER_PROVIDER">Per Provider</option></select></label>
-        <label class="mac-field"><span class="mac-label">Low Credit Threshold</span><input class="form-control" id="merchantThreshold" type="number" min="0" step="0.0001" value="0"/></label>
-        <label class="mac-field"><span class="mac-label">Provider Markup (%)</span><input class="form-control" id="merchantMarkup" type="number" min="0" max="100" step="0.0001" value="0"/></label>
+      <header class="mac-section-head mac-section-head-rich">
+        <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-person-badge"></i></span>
+        <div class="mac-section-copy">
+          <h3>2. Master Account &amp; Credit Configuration</h3>
+          <p>Administrative root access credentials, liquidity threshold, and billing mode.</p>
+        </div>
+      </header>
+
+      <div class="mac-subblock" id="merchantMasterBlock">
+        <h4 class="mac-subblock-title"><span class="mac-subblock-dot" aria-hidden="true"></span> Admin Master Credentials</h4>
+        <div class="mac-fields mac-fields-row mac-fields-row-3">
+          <label class="mac-field" for="merchantMasterName">
+            <span class="mac-label">Master Display Name</span>
+            <input class="form-control" id="merchantMasterName" placeholder="Merchant Master"/>
+          </label>
+          <label class="mac-field" for="merchantMasterUsername">
+            <span class="mac-label">Login ID / Username</span>
+            <input class="form-control" id="merchantMasterUsername" autocomplete="username" placeholder="merchant.master"/>
+            <small>Optional. Leave blank if you will create the merchant master later.</small>
+          </label>
+          <label class="mac-field" for="merchantMasterPassword">
+            <span class="mac-label-row">
+              <span class="mac-label">Initial Password</span>
+              <button type="button" class="mac-link-btn" id="merchantGeneratePassword">Generate</button>
+            </span>
+            <span class="mad-pass-wrap">
+              <input class="form-control" id="merchantMasterPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Minimum 8 characters"/>
+              <button type="button" class="mad-eye" data-toggle-password="merchantMasterPassword" aria-label="Show password"><i class="bi bi-eye"></i></button>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="mac-subblock">
+        <h4 class="mac-subblock-title"><span class="mac-subblock-dot" aria-hidden="true"></span> Credit &amp; Fee Policy</h4>
+        <div class="mac-fields mac-fields-row mac-fields-row-4">
+          <label class="mac-field" for="merchantCreditMode">
+            <span class="mac-label">Credit Mode</span>
+            <select class="form-control" id="merchantCreditMode">
+              <option value="WHOLE">Whole Provider Pool</option>
+              <option value="PER_PROVIDER">Per Provider</option>
+            </select>
+          </label>
+          <label class="mac-field" for="merchantCurrency">
+            <span class="mac-label">Settlement Currency <b>*</b></span>
+            <select class="form-control" id="merchantCurrency">
+              <option value="MYR" selected>MYR — Malaysian Ringgit</option>
+              <option value="SGD">SGD — Singapore Dollar</option>
+              <option value="USD">USD — US Dollar</option>
+              <option value="THB">THB — Thai Baht</option>
+              <option value="IDR">IDR — Indonesian Rupiah</option>
+              <option value="VND">VND — Vietnamese Dong</option>
+            </select>
+          </label>
+          <label class="mac-field" for="merchantThreshold">
+            <span class="mac-label">Low Credit Alert <span class="mac-label-unit" id="merchantThresholdLabel">(MYR)</span></span>
+            <span class="mac-input-group is-prefix">
+              <span class="mac-input-addon" id="merchantThresholdUnit">MYR</span>
+              <input class="form-control" id="merchantThreshold" type="number" min="0" step="0.0001" value="0"/>
+            </span>
+          </label>
+          <label class="mac-field" for="merchantMarkup">
+            <span class="mac-label">Provider Markup (%)</span>
+            <span class="mac-input-group is-suffix">
+              <input class="form-control" id="merchantMarkup" type="number" min="0" max="100" step="0.0001" value="0"/>
+              <span class="mac-input-addon is-trailing">%</span>
+            </span>
+          </label>
+        </div>
       </div>
     </section>
-    <section class="mac-section">
-      <header class="mac-section-head"><span class="mac-section-icon"><i class="bi bi-person-badge"></i></span><h3>3. Merchant Master Account</h3></header>
-      <div class="mac-fields mac-fields-row">
-        <label class="mac-field"><span class="mac-label">Display Name</span><input class="form-control" id="merchantMasterName" placeholder="Merchant Master"/></label>
-        <label class="mac-field"><span class="mac-label">Username</span><input class="form-control" id="merchantMasterUsername" autocomplete="username" placeholder="merchant.master"/><small>Optional. Leave blank if you will create the merchant master later.</small></label>
-        <label class="mac-field"><span class="mac-label">Password</span><input class="form-control" id="merchantMasterPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Minimum 8 characters"/></label>
-      </div>
-    </section>
+
     <div class="upload-status mb-3" id="merchantCreateStatus"></div>
     <footer class="mac-footer-actions"><a class="mad-btn mad-btn-ghost" href="main-merchant-detail.html">Cancel</a><button class="mad-btn mad-btn-navy" type="submit"><i class="bi bi-check2"></i> Create Merchant</button></footer>
   </form>
@@ -88,7 +168,7 @@
 <script src="assets/js/reports.js?v=1.0.25"></script>
 <script src="assets/js/auth.js?v=1.0.58"></script>
 <script src="assets/js/main-merchant-visibility.js?v=1.0.0"></script>
-<script src="assets/js/main-merchant-create.js?v=1.0.2"></script>
+<script src="assets/js/main-merchant-create.js?v=1.0.6"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>

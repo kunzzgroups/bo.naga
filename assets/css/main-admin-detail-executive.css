@@ -1538,10 +1538,143 @@ body.main-admin-create-page .mac-fields-row{
   grid-template-columns:repeat(5, minmax(0, 1fr));
   gap:14px 12px;
 }
-/* Merchant create: one 4-col track across sections 1–3 so edges align */
+/* Merchant create — mock layout: rich heads, 3/4-col grids, affixes, subsections */
+body.main-merchant-create-page .mac-section-head-rich{
+  align-items:flex-start;
+  gap:12px 14px;
+  margin-bottom:20px;
+}
+body.main-merchant-create-page .mac-section-copy{
+  flex:1;
+  min-width:0;
+}
+body.main-merchant-create-page .mac-section-copy h3{
+  margin:0;
+  flex:none;
+  font-size:14px;
+  letter-spacing:.03em;
+}
+body.main-merchant-create-page .mac-section-copy p{
+  margin:4px 0 0;
+  font-size:12.5px;
+  font-weight:500;
+  line-height:1.45;
+  color:var(--bo-muted);
+  text-wrap:pretty;
+}
+body.main-merchant-create-page .mac-section-head-rich .mac-back-section{
+  margin-top:2px;
+}
 body.main-merchant-create-page .mac-fields-row{
-  grid-template-columns:repeat(4, minmax(0, 1fr));
   gap:16px 18px;
+}
+body.main-merchant-create-page .mac-fields-stack{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+body.main-merchant-create-page .mac-fields-row-3{
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+}
+body.main-merchant-create-page .mac-fields-row-4{
+  grid-template-columns:repeat(4, minmax(0, 1fr));
+}
+body.main-merchant-create-page .mac-fields-row-5{
+  grid-template-columns:repeat(5, minmax(0, 1fr));
+}
+body.main-merchant-create-page .mac-field-aliases{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  margin:0;
+  max-width:none;
+}
+body.main-merchant-create-page .mac-label-optional,
+body.main-merchant-create-page .mac-label-unit{
+  font-weight:600;
+  color:var(--bo-muted);
+  text-transform:none;
+  letter-spacing:0;
+}
+body.main-merchant-create-page .mac-subblock{
+  margin-top:4px;
+}
+body.main-merchant-create-page .mac-subblock + .mac-subblock{
+  margin-top:22px;
+  padding-top:18px;
+  border-top:1px solid var(--bo-border);
+}
+body.main-merchant-create-page .mac-subblock-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:0 0 14px;
+  font-size:11.5px;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--bo-text-secondary);
+}
+body.main-merchant-create-page .mac-subblock-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--bo-cyan);
+  box-shadow:0 0 0 3px rgba(33,166,215,.16);
+  flex:0 0 auto;
+}
+body.main-merchant-create-page .mac-input-group{
+  display:flex;
+  align-items:stretch;
+  width:100%;
+  min-width:0;
+  height:44px;
+}
+body.main-merchant-create-page .mac-input-addon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  z-index:1;
+  min-width:52px;
+  padding:0 12px;
+  border:1px solid #D0D5DD;
+  background:var(--bo-bg);
+  color:var(--bo-muted);
+  font-size:12px;
+  font-weight:700;
+  line-height:1;
+  white-space:nowrap;
+  box-sizing:border-box;
+}
+body.main-merchant-create-page .mac-input-group > .form-control,
+body.main-merchant-create-page .report-content .mac-input-group > .form-control,
+body.main-merchant-create-page .report-content .mac-input-group > input{
+  flex:1 1 auto;
+  min-width:0;
+  height:44px!important;
+  position:relative;
+  z-index:0;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+body.main-merchant-create-page .mac-input-group.is-prefix .mac-input-addon{
+  border-radius:8px 0 0 8px;
+  border-right:0;
+}
+body.main-merchant-create-page .mac-input-group.is-suffix .mac-input-addon.is-trailing{
+  min-width:40px;
+  border-radius:0 8px 8px 0;
+  border-left:0;
+}
+body.main-merchant-create-page .mac-input-group:focus-within .mac-input-addon{
+  border-color:var(--bo-cyan);
+}
+body.main-merchant-create-page .mac-input-group.is-prefix:focus-within .mac-input-addon{
+  border-right:0;
+}
+body.main-merchant-create-page .mac-input-group.is-suffix:focus-within .mac-input-addon.is-trailing{
+  border-left:0;
 }
 body.main-admin-create-page .mac-grid-2{
   display:grid;
@@ -1581,6 +1714,39 @@ body.main-admin-create-page .report-content .mac-field textarea{
   background:#fff!important;color:var(--bo-text)!important;
   padding:0 14px!important;font-size:13.5px!important;font-weight:500!important;
   box-shadow:none!important;
+}
+/* Beat the base !important radius/border on joined MYR / % inputs */
+body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-prefix > .form-control,
+body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-prefix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
+  border:1px solid #D0D5DD!important;
+  border-left:0!important;
+  border-top-left-radius:0!important;
+  border-bottom-left-radius:0!important;
+  border-top-right-radius:8px!important;
+  border-bottom-right-radius:8px!important;
+}
+body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-suffix > .form-control,
+body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-suffix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
+  border:1px solid #D0D5DD!important;
+  border-right:0!important;
+  border-top-right-radius:0!important;
+  border-bottom-right-radius:0!important;
+  border-top-left-radius:8px!important;
+  border-bottom-left-radius:8px!important;
+}
+body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group:focus-within > .form-control,
+body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group:focus-within > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
+  border-color:var(--bo-cyan)!important;
+  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;
+  z-index:1;
+}
+body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-prefix:focus-within > .form-control,
+body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-prefix:focus-within > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
+  border-left:0!important;
+}
+body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-suffix:focus-within > .form-control,
+body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-suffix:focus-within > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
+  border-right:0!important;
 }
 body.main-admin-create-page .mac-field textarea.form-control,
 body.main-admin-create-page .report-content .mac-field textarea{
@@ -1794,7 +1960,9 @@ body.main-admin-create-page .mad-btn-navy:hover{
 
 @media(max-width:1200px){
   body.main-admin-create-page .mac-fields-row{grid-template-columns:repeat(3, minmax(0, 1fr))}
-  body.main-merchant-create-page .mac-fields-row{grid-template-columns:repeat(2, minmax(0, 1fr))}
+  body.main-merchant-create-page .mac-fields-row-3,
+  body.main-merchant-create-page .mac-fields-row-4,
+  body.main-merchant-create-page .mac-fields-row-5{grid-template-columns:repeat(2, minmax(0, 1fr))}
 }
 @media(max-width:800px){
   body.main-admin-create-page .mac-fields,
@@ -1808,11 +1976,34 @@ body.main-admin-create-page .mad-btn-navy:hover{
   body.main-admin-create-page .mac-tier-badge{margin-left:0}
   body.main-admin-create-page .mac-footer-actions{flex-wrap:wrap}
   body.main-admin-create-page .mac-footer-actions .mad-btn{flex:1 1 auto;justify-content:center}
+  body.main-merchant-create-page .mac-section-head-rich{flex-wrap:wrap}
+  body.main-merchant-create-page .mac-section-head-rich .mac-back-section{
+    margin-left:0;
+    width:100%;
+    justify-content:center;
+  }
+  body.main-merchant-create-page .mac-fields-row-3,
+  body.main-merchant-create-page .mac-fields-row-4,
+  body.main-merchant-create-page .mac-fields-row-5{grid-template-columns:1fr}
 }
 
 html[data-bo-theme="dark"] body.main-admin-create-page .mac-head,
 html[data-bo-theme="dark"] body.main-admin-create-page .mac-section{
   background:var(--bo-surface);border-color:var(--bo-border);
+}
+html[data-bo-theme="dark"] body.main-merchant-create-page .mac-subblock + .mac-subblock{
+  border-top-color:var(--bo-border);
+}
+html[data-bo-theme="dark"] body.main-merchant-create-page .mac-input-addon{
+  background:rgba(255,255,255,.04);
+  border-color:var(--bo-border);
+  color:var(--bo-muted);
+}
+html[data-bo-theme="dark"] body.main-merchant-create-page .mac-input-group.is-prefix .mac-input-addon{
+  border-right:0;
+}
+html[data-bo-theme="dark"] body.main-merchant-create-page .mac-input-group.is-suffix .mac-input-addon.is-trailing{
+  border-left:0;
 }
 html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-pick,
 html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-priv,
@@ -2793,8 +2984,102 @@ body.main-merchant-detail-page .mad-merchant-icon-btn{
 body.main-merchant-detail-page .mad-merchant-icon-btn:hover{
   background:#f1f7fc;border-color:#9fc6e5;color:#0b5d96;
 }
+/* Status chip: one-click Active <-> Suspended */
+body.main-merchant-detail-page .mad-status-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  height:28px;
+  padding:0 10px;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:#027A48;
+  font-size:12px;
+  font-weight:700;
+  line-height:1;
+  cursor:pointer;
+  transition:background .15s ease,color .15s ease,opacity .15s ease;
+}
+body.main-merchant-detail-page .mad-status-chip.is-active{
+  color:#027A48;
+  background:transparent;
+}
+body.main-merchant-detail-page .mad-status-chip.is-suspended{
+  color:#B42318;
+  background:#FEF3F2;
+}
+body.main-merchant-detail-page .mad-status-chip:hover{
+  background:rgba(33,166,215,.08);
+}
+body.main-merchant-detail-page .mad-status-chip.is-suspended:hover{
+  background:#FEE4E2;
+}
+body.main-merchant-detail-page .mad-status-chip:focus-visible{
+  outline:2px solid var(--bo-cyan);
+  outline-offset:2px;
+}
+body.main-merchant-detail-page .mad-status-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:currentColor;
+  flex:0 0 auto;
+}
+body.main-merchant-detail-page .mad-status-chip.is-saving,
+body.main-merchant-detail-page .mad-status-chip:disabled{
+  opacity:.6;
+  cursor:wait;
+}
+/* Merchant list: even column rhythm (10 cols) */
+body.main-merchant-detail-page .mad-table{
+  min-width:1100px;
+}
+body.main-merchant-detail-page .mad-table th,
+body.main-merchant-detail-page .mad-table td{
+  text-align:left;
+  padding-left:14px;
+  padding-right:14px;
+}
+body.main-merchant-detail-page .mad-table th:nth-child(1),
+body.main-merchant-detail-page .mad-table td:nth-child(1),
+body.main-merchant-detail-page .mad-table th:nth-child(2),
+body.main-merchant-detail-page .mad-table td:nth-child(2){width:12%}
+body.main-merchant-detail-page .mad-table th:nth-child(3),
+body.main-merchant-detail-page .mad-table td:nth-child(3){width:7%}
+body.main-merchant-detail-page .mad-table th:nth-child(4),
+body.main-merchant-detail-page .mad-table td:nth-child(4){width:11%}
+body.main-merchant-detail-page .mad-table th:nth-child(5),
+body.main-merchant-detail-page .mad-table td:nth-child(5),
+body.main-merchant-detail-page .mad-table th:nth-child(6),
+body.main-merchant-detail-page .mad-table td:nth-child(6),
+body.main-merchant-detail-page .mad-table th:nth-child(8),
+body.main-merchant-detail-page .mad-table td:nth-child(8),
+body.main-merchant-detail-page .mad-table th:nth-child(9),
+body.main-merchant-detail-page .mad-table td:nth-child(9){width:9%}
+body.main-merchant-detail-page .mad-table th:nth-child(7),
+body.main-merchant-detail-page .mad-table td:nth-child(7){width:12%}
+body.main-merchant-detail-page .mad-table th:nth-child(10),
+body.main-merchant-detail-page .mad-table td:nth-child(10){
+  width:72px;text-align:center;padding-left:10px;padding-right:10px;
+}
+body.main-merchant-detail-page .mad-table td:nth-child(5),
+body.main-merchant-detail-page .mad-table td:nth-child(8),
+body.main-merchant-detail-page .mad-table td:nth-child(9){
+  white-space:nowrap;
+}
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-merchant-icon-btn{
   background:#142033;border-color:#334155;color:#dbeafe;
+}
+html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-status-chip.is-active{
+  color:#6CE9A6;
+}
+html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-status-chip.is-suspended{
+  color:#FF8A90;
+  background:rgba(239,51,64,.14);
+}
+html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-status-chip:hover{
+  background:rgba(33,166,215,.14);
 }
 
 /* ========== Dark mode polish: Credit Adjust modal + shared modal close ========== */
