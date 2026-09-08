@@ -446,9 +446,24 @@ body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-
   min-width:100%!important;
   max-width:min(480px, calc(100vw - 48px))!important;
   box-sizing:border-box!important;
+  background:var(--bo-surface)!important;
+  border:1px solid var(--bo-border)!important;
+  border-radius:8px!important;
+  box-shadow:var(--bo-shadow)!important;
+  padding:6px!important;
 }
 body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option{
   white-space:nowrap!important;
+  background:transparent!important;
+  color:var(--bo-text)!important;
+  border-radius:8px!important;
+  font-weight:700!important;
+}
+body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option:hover,
+body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option.active,
+body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option.is-active{
+  background:var(--bo-cyan-tint)!important;
+  color:var(--bo-cyan-deep)!important;
 }
 /* Search — match Menu Permission .mp-search */
 body.main-admin-detail-page .mad-search{
@@ -899,6 +914,27 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-s
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-reset-btn,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-reset-btn.mad-btn{
   background:var(--bo-bg)!important;border-color:var(--bo-border)!important;color:var(--bo-text-secondary)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-btn:focus{
+  border-color:var(--bo-cyan)!important;
+  box-shadow:0 0 0 3px rgba(33,166,215,.18)!important;
+  color:var(--bo-text)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu{
+  background:var(--bo-surface)!important;
+  border-color:var(--bo-border)!important;
+  box-shadow:0 16px 40px rgba(0,0,0,.45)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option{
+  background:transparent!important;
+  color:var(--bo-text-secondary)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option.is-active{
+  background:rgba(33,166,215,.14)!important;
+  color:var(--bo-text)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-search input,
 html[data-bo-theme="dark"] body.main-admin-detail-page #madSearchInput{
@@ -1723,6 +1759,26 @@ body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-selec
   border-color:var(--bo-cyan)!important;
   box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;outline:0!important;
 }
+body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-menu{
+  background:var(--bo-surface)!important;
+  border:1px solid var(--bo-border)!important;
+  border-radius:8px!important;
+  box-shadow:var(--bo-shadow)!important;
+  padding:6px!important;
+}
+body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-option{
+  background:transparent!important;
+  color:var(--bo-text)!important;
+  border-radius:8px!important;
+  font-weight:700!important;
+  white-space:nowrap!important;
+}
+body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-option:hover,
+body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-option.active,
+body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-option.is-active{
+  background:var(--bo-cyan-tint)!important;
+  color:var(--bo-cyan-deep)!important;
+}
 
 body.main-admin-security-page .mas-table{
   min-width:1100px;
@@ -1891,6 +1947,27 @@ html[data-bo-theme="dark"] body.main-admin-security-page .mas-status.is-failed{b
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-btn,
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-range-trigger{
   background:var(--bo-bg)!important;border-color:var(--bo-border)!important;color:var(--bo-text-secondary)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-btn:focus{
+  border-color:var(--bo-cyan)!important;
+  box-shadow:0 0 0 3px rgba(33,166,215,.18)!important;
+  color:var(--bo-text)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-menu{
+  background:var(--bo-surface)!important;
+  border-color:var(--bo-border)!important;
+  box-shadow:0 16px 40px rgba(0,0,0,.45)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-option{
+  background:transparent!important;
+  color:var(--bo-text-secondary)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-option.is-active{
+  background:rgba(33,166,215,.14)!important;
+  color:var(--bo-text)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-range-picker{
   background:var(--bo-surface)!important;border-color:var(--bo-border)!important;
