@@ -11,8 +11,8 @@
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet"/>
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.20" rel="stylesheet"/>
-<link href="assets/css/main-provider-report-executive.css?v=1.0.2" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.21" rel="stylesheet"/>
+<link href="assets/css/main-provider-report-executive.css?v=1.0.6" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 <script>
 (function(){
@@ -211,22 +211,39 @@
   <div class="mad-panel mre-panel d-none" data-report-panel="brand">
     <div class="mre-section-pad">
       <div class="report-summary-grid" id="reportSummary"></div>
-      <div class="report-table-scroll">
+      <div class="report-table-scroll mre-scroll-table mre-balance-scroll">
         <table class="mad-table">
-          <thead><tr><th>Brand</th><th>Providers</th><th class="mre-num">Turnover</th><th class="mre-num">House Win</th><th class="mre-num">Player Win</th><th class="mre-num">Collect from Brand</th><th class="mre-num">Pay to Brand</th><th class="mre-num">Pay to Providers</th><th class="mre-num">Company Earn</th><th>Bets</th><th>Action</th></tr></thead>
+          <thead><tr><th>Merchant</th><th>Providers</th><th class="mre-num">Turnover</th><th class="mre-num">House Win</th><th class="mre-num">Player Win</th><th class="mre-num">Collect from Merchant</th><th class="mre-num">Pay to Merchant</th><th class="mre-num">Pay to Providers</th><th class="mre-num">Company Earn</th><th class="mre-num">Bonus Given</th><th class="mre-num">Provider Cost</th><th class="mre-num">Net Profit</th><th>Active Players</th><th>Bets</th><th>Action</th></tr></thead>
           <tbody id="brandReportRows"></tbody>
         </table>
       </div>
+      <div class="mad-footer mre-table-footer"><div class="mad-footer-info" id="mreBrandInfo">Showing 0 to 0 of 0 merchants</div><div class="mad-footer-right"><label class="mre-page-size-label">Show <select class="mad-page-size-select" id="mreBrandPageSize"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option></select> / page</label><nav class="mad-pager" id="mreBrandPager" aria-label="Merchant balance pagination"></nav></div></div>
     </div>
   </div>
 
-  <!-- Transaction History stub -->
+  <!-- Transaction History · Merchant drill-down (rendered from the existing Brand detail data sources) -->
   <div class="mad-panel mre-panel d-none" data-report-panel="history">
-    <div class="mre-empty-panel">
-      <i class="bi bi-clock-history"></i>
-      <h3>Transaction History</h3>
-      <p>Detailed ledger drill-down will land here. Use Settlement Report for payment history in the meantime.</p>
+    <div class="mad-filter-bar mre-filter-bar mre-history-filter">
+      <div class="mad-pills" role="group" aria-label="Transaction record type" data-bo-seg-anim="bounce">
+        <button type="button" class="mad-pill is-active" data-history-type="all">All <span class="mad-pill-count" id="mreHistoryCountAll">0</span></button>
+        <button type="button" class="mad-pill" data-history-type="transaction">Transactions <span class="mad-pill-count" id="mreHistoryCountTxn">0</span></button>
+        <button type="button" class="mad-pill" data-history-type="settlement">Settlements <span class="mad-pill-count" id="mreHistoryCountSettlement">0</span></button>
+        <button type="button" class="mad-pill" data-history-type="adjustment">Adjustments <span class="mad-pill-count" id="mreHistoryCountAdjustment">0</span></button>
+      </div>
+      <div class="mad-filters">
+        <label class="mad-search mre-search" for="mreHistorySearch"><i class="bi bi-search"></i><input id="mreHistorySearch" type="search" placeholder="Search merchant, reference or remark..." autocomplete="off"/></label>
+        <select class="mad-select" id="mreHistoryMerchant"><option value="">All Merchants</option></select>
+        <button class="mad-btn mad-btn-ghost mad-reset-btn" id="mreHistoryReset" type="button"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
+      </div>
     </div>
+    <div class="mre-history-kpis" id="mreHistorySummary"></div>
+    <div class="report-table-scroll mre-scroll-table mre-history-scroll">
+      <table class="mad-table mre-history-table">
+        <thead><tr><th>Date</th><th>Merchant</th><th>Type</th><th>Description / Reference</th><th class="mre-num">Amount</th><th>Status</th></tr></thead>
+        <tbody id="mreHistoryRows"><tr><td colspan="6" class="mad-empty">Select Transaction History to load records.</td></tr></tbody>
+      </table>
+    </div>
+    <div class="mad-footer mre-table-footer"><div class="mad-footer-info" id="mreHistoryInfo">Showing 0 records</div><div class="mad-footer-right"><label class="mre-page-size-label">Show <select class="mad-page-size-select" id="mreHistoryPageSize"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option></select> / page</label><nav class="mad-pager" id="mreHistoryPager" aria-label="Transaction history pagination"></nav></div></div>
   </div>
 </section>
 </main>
@@ -239,9 +256,9 @@
 <script src="assets/js/config.js?v=1.0.40"></script>
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/reports.js?v=1.0.22"></script>
-<script src="assets/js/auth.js?v=1.0.57"></script>
+<script src="assets/js/auth.js?v=1.0.58"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
-<script src="assets/js/main-provider-report.js?v=1.0.7"></script>
+<script src="assets/js/main-provider-report.js?v=1.0.8"></script>
 <script src="assets/js/bo-ui-standard.js?v=1.0.4"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 </body>

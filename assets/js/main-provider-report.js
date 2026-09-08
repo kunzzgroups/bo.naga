@@ -4,13 +4,18 @@ const money=v=>Number(v||0).toLocaleString('en-MY',{minimumFractionDigits:2,maxi
 const num=v=>Number(v||0).toLocaleString('en-MY');
 const add=(a,b)=>Number(a||0)+Number(b||0), pos=v=>Math.max(Number(v||0),0), neg=v=>Math.max(-Number(v||0),0);
 const PAGE_SIZE=7;
+let brandPageSize=10;
+let historyPageSize=10;
 const MARKS=['','teal','violet','amber','rose','slate'];
 /** Temporary: hide report rows until real data is ready. Set false to restore API display. */
-const FORCE_EMPTY_UI=true;
+const FORCE_EMPTY_UI=false;
 
-let currentProviders=[], currentBrands=[];
+let currentProviders=[], currentBrands=[], merchantDirectory=[];
+let currentHistoryRows=[], filteredHistoryRows=[], historyType='all';
 let filteredProviders=[];
 let providerPage=1;
+let brandPage=1;
+let historyPage=1;
 let statusPill='all';
 let syncedAt=Date.now();
 let currency='MYR';
@@ -279,15 +284,107 @@ function aggregateBrands(rows){
   return [...map.values()];
 }
 
-function renderBrands(rows){
-  currentBrands=aggregateBrands(rows);
+function mergeBrandDetails(baseRows, accountingRows, overviewRows){
+  const acc=new Map((accountingRows||[]).map(x=>[String(x.brandId??x.id??''),x]));
+  const ov=new Map((overviewRows||[]).map(x=>[String(x.brandId??x.id??''),x]));
+  return aggregateBrands(baseRows).map(x=>{
+    const a=acc.get(String(x.brandId))||{};
+    const o=ov.get(String(x.brandId))||{};
+    const revenue=Number(a.netGamingResult??x.houseResult??0);
+    const bonus=Number(a.bonusGiven||0);
+    const vendorCost=Number(x.providerPayable||0);
+    return {...x,revenue,bonus,vendorCost,netProfit:revenue-bonus-vendorCost,activePlayers:Number(o.activePlayers??o.activeBettors??o.playerCount??0)};
+  });
+}
+
+function renderBrands(rows, accountingRows, overviewRows){
+  if(Array.isArray(rows)) currentBrands=mergeBrandDetails(rows,accountingRows,overviewRows);
   const box=$('brandReportRows');
   if(!box) return;
-  box.innerHTML=currentBrands.map(x=>{
+  const total=currentBrands.length;
+  const totalPages=Math.max(1,Math.ceil(total/brandPageSize)||1);
+  brandPage=Math.max(1,Math.min(brandPage,totalPages));
+  const start=(brandPage-1)*brandPageSize;
+  const shown=currentBrands.slice(start,start+brandPageSize);
+  box.innerHTML=shown.map(x=>{
     const dir=x.brandCharge>=0?'COLLECT':'PAY';
-    return `<tr><td><b>${esc(x.brandName)}</b><small class="d-block text-muted">${esc(x.brandCode)}</small></td><td>${num(x.providers.size)}</td><td class="mre-num">${money(x.turnover)}</td><td class="mre-num value-positive">${money(pos(x.houseResult))}</td><td class="mre-num value-negative">${money(neg(x.houseResult))}</td><td class="mre-num value-positive">${money(pos(x.brandCharge))}</td><td class="mre-num value-negative">${money(neg(x.brandCharge))}</td><td class="mre-num value-negative">${money(pos(x.providerPayable))}</td><td class="mre-num ${x.companyEarn>=0?'value-positive':'value-negative'}">${money(x.companyEarn)}</td><td>${num(x.betCount)}</td><td>${settleAction('BRAND',x.brandId,x.brandName,dir,Math.abs(x.brandCharge))}</td></tr>`;
-  }).join('')||'<tr><td colspan="11" class="mad-empty">No brand report data for this date range.</td></tr>';
+    return `<tr><td><b>${esc(x.brandName)}</b><small class="d-block text-muted">${esc(x.brandCode)}</small></td><td>${num(x.providers.size)}</td><td class="mre-num">${money(x.turnover)}</td><td class="mre-num value-positive">${money(pos(x.houseResult))}</td><td class="mre-num value-negative">${money(neg(x.houseResult))}</td><td class="mre-num value-positive">${money(pos(x.brandCharge))}</td><td class="mre-num value-negative">${money(neg(x.brandCharge))}</td><td class="mre-num value-negative">${money(pos(x.providerPayable))}</td><td class="mre-num ${x.companyEarn>=0?'value-positive':'value-negative'}">${money(x.companyEarn)}</td><td class="mre-num value-negative">${money(x.bonus)}</td><td class="mre-num value-negative">${money(x.vendorCost)}</td><td class="mre-num ${x.netProfit>=0?'value-positive':'value-negative'}">${money(x.netProfit)}</td><td>${num(x.activePlayers)}</td><td>${num(x.betCount)}</td><td><div class="mre-actions mad-actions"><button class="mad-icon-btn" type="button" title="View merchant records" data-mre-brand-view="${esc(x.brandId)}"><i class="bi bi-eye"></i></button>${settleAction('BRAND',x.brandId,x.brandName,dir,Math.abs(x.brandCharge))}</div></td></tr>`;
+  }).join('')||'<tr><td colspan="15" class="mad-empty">No merchant balance data for this date range.</td></tr>';
+  const brandInfoText=total?`Showing ${start+1} to ${start+shown.length} of ${total} merchants`:'Showing 0 to 0 of 0 merchants';
+  ['mreBrandInfo','mreBrandInfoTop'].forEach(id=>{const el=$(id);if(el)el.textContent=brandInfoText;});
+  const brandPagerHtml=total?pageButtons(brandPage,totalPages):'';
+  {const el=$('mreBrandPager');if(el)el.innerHTML=brandPagerHtml;}
   refreshSettlementParties();
+  refreshHistoryMerchantOptions();
+}
+
+function historyRecord(type,r){
+  const amount=Number(r.value??r.amount??r.houseResult??r.totalDeposit??r.totalWithdraw??r.before??0);
+  const rawDate=String(r.time??r.processedAt??r.updatedAt??r.createdAt??r.settlementAt??'').replace('T',' ');
+  const date=rawDate?rawDate.slice(0,19):'-';
+  const description=String(r.description??r.remark??r.reference??r.referenceNo??r.game??r.provider??r.member??r.type??`${type.charAt(0).toUpperCase()+type.slice(1)} record`);
+  const status=String(r.status??(type==='settlement'?'Pending':'Completed'));
+  return {type,amount,date,description,status,brandId:r.brandId??r.merchantId??'',brandName:r.brandName??r.merchantName??r.companyName??'',raw:r};
+}
+async function historyDetail(source,metric,type,brandId){
+  try{
+    const u=new URLSearchParams({source,metric,from:$('reportDateFrom').value,to:addDay($('reportDateTo').value),limit:'300'});
+    if(brandId) u.set('brandId',String(brandId));
+    const d=await api('/admin/main/reports/detail?'+u.toString());
+    return (d.rows||[]).map(r=>historyRecord(type,r));
+  }catch(e){console.warn('Transaction history source unavailable',source,metric,e);return [];}
+}
+function refreshHistoryMerchantOptions(){
+  const sel=$('mreHistoryMerchant'); if(!sel) return;
+  const old=sel.value;
+  const rows=merchantDirectory.length?merchantDirectory:currentBrands.map(x=>({id:x.brandId,name:x.brandName,code:x.brandCode}));
+  sel.innerHTML='<option value="">All Merchants</option>'+rows.map(x=>`<option value="${esc(x.id??x.brandId)}">${esc(x.name??x.brandName??x.code??'Merchant')} (${esc(x.code??x.brandCode??x.id??'')})</option>`).join('');
+  if([...sel.options].some(o=>o.value===old)) sel.value=old;
+}
+function historyTypeBadge(type){const icon=type==='transaction'?'arrow-left-right':type==='settlement'?'cash-stack':'sliders';return `<span class="mre-history-type ${esc(type)}"><i class="bi bi-${icon}"></i> ${esc(type.charAt(0).toUpperCase()+type.slice(1))}</span>`;}
+function applyHistoryFilters(){
+  const q=($('mreHistorySearch')?.value||'').trim().toLowerCase();
+  filteredHistoryRows=currentHistoryRows.filter(r=>{
+    if(historyType!=='all'&&r.type!==historyType) return false;
+    if(q&&![r.brandName,r.description,r.status].join(' ').toLowerCase().includes(q)) return false;
+    return true;
+  }).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  const count=t=>currentHistoryRows.filter(r=>r.type===t).length;
+  if($('mreHistoryCountAll')) $('mreHistoryCountAll').textContent=currentHistoryRows.length;
+  if($('mreHistoryCountTxn')) $('mreHistoryCountTxn').textContent=count('transaction');
+  if($('mreHistoryCountSettlement')) $('mreHistoryCountSettlement').textContent=count('settlement');
+  if($('mreHistoryCountAdjustment')) $('mreHistoryCountAdjustment').textContent=count('adjustment');
+  const total=filteredHistoryRows.length;
+  const totalPages=Math.max(1,Math.ceil(total/historyPageSize)||1);
+  historyPage=Math.max(1,Math.min(historyPage,totalPages));
+  const start=(historyPage-1)*historyPageSize;
+  const shown=filteredHistoryRows.slice(start,start+historyPageSize);
+  const box=$('mreHistoryRows');
+  if(box) box.innerHTML=shown.map(r=>`<tr><td>${esc(r.date)}</td><td><b>${esc(r.brandName||'All / Platform')}</b></td><td>${historyTypeBadge(r.type)}</td><td>${esc(r.description)}</td><td class="mre-num ${r.amount>0?'value-positive':r.amount<0?'value-negative':''}">${r.amount===0?'—':(r.amount>0?'+':'')+money(r.amount)}</td><td><span class="settlement-status ${/approved|completed|success|settled/i.test(r.status)?'success':/pending|submitted|open/i.test(r.status)?'warning':'primary'}">${esc(r.status)}</span></td></tr>`).join('')||'<tr><td colspan="6" class="mad-empty">No transaction history for the selected date range and filters.</td></tr>';
+  const historyInfoText=total?`Showing ${start+1} to ${start+shown.length} of ${total} filtered records (${currentHistoryRows.length} total)`:`Showing 0 of ${currentHistoryRows.length} records`;
+  {const el=$('mreHistoryInfo');if(el)el.textContent=historyInfoText;}
+  const historyPagerHtml=total?pageButtons(historyPage,totalPages):'';
+  {const el=$('mreHistoryPager');if(el)el.innerHTML=historyPagerHtml;}
+  if($('mreHistorySummary')){
+    const txn=currentHistoryRows.filter(r=>r.type==='transaction').reduce((a,r)=>a+r.amount,0);
+    const sett=currentHistoryRows.filter(r=>r.type==='settlement').reduce((a,r)=>a+r.amount,0);
+    const adj=currentHistoryRows.filter(r=>r.type==='adjustment').reduce((a,r)=>a+r.amount,0);
+    $('mreHistorySummary').innerHTML=[summaryCard('Transactions',money(txn),'Deposit / transaction records'),summaryCard('Settlements',money(sett),'Merchant settlement records'),summaryCard('Adjustments',money(adj),'Credit adjustment records')].join('');
+  }
+}
+async function loadHistory(){
+  const brandId=$('mreHistoryMerchant')?.value||'';
+  const box=$('mreHistoryRows'); if(box) box.innerHTML='<tr><td colspan="6" class="mad-empty">Loading transaction history...</td></tr>';
+  const [t,s,a]=await Promise.all([historyDetail('overview','depositAmount','transaction',brandId),historyDetail('settlement','upstreamProviderPayable','settlement',brandId),historyDetail('credit','creditIn','adjustment',brandId)]);
+  currentHistoryRows=[...t,...s,...a];
+  applyHistoryFilters();
+}
+
+function setupHistory(){
+  document.querySelectorAll('[data-history-type]').forEach(btn=>btn.addEventListener('click',()=>{historyType=btn.dataset.historyType||'all';historyPage=1;document.querySelectorAll('[data-history-type]').forEach(b=>b.classList.toggle('is-active',b===btn));applyHistoryFilters();}));
+  let timer; $('mreHistorySearch')?.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(()=>{historyPage=1;applyHistoryFilters();},150);});
+  $('mreHistoryMerchant')?.addEventListener('change',()=>{historyPage=1;loadHistory();});
+  $('mreHistoryReset')?.addEventListener('click',()=>{historyType='all';historyPage=1;if($('mreHistorySearch')) $('mreHistorySearch').value='';if($('mreHistoryMerchant')) $('mreHistoryMerchant').value='';document.querySelectorAll('[data-history-type]').forEach(b=>b.classList.toggle('is-active',b.dataset.historyType==='all'));loadHistory();});
 }
 
 function monthFromDate(v){return String(v||'').slice(0,7)}
@@ -438,12 +535,13 @@ async function load(){
     return;
   }
   try{
-    const d=await api('/admin/main/reports/provider-settlement'+qs());
+    const [d,acc,ov,merchants]=await Promise.all([api('/admin/main/reports/provider-settlement'+qs()),api('/admin/main/reports/accounting'+qs()).catch(()=>({brands:[]})),api('/admin/main/overview'+qs()).catch(()=>({brands:[]})),api('/admin/merchants').catch(()=>api('/admin/brands').catch(()=>[]))]);
+    merchantDirectory=Array.isArray(merchants)?merchants:(merchants?.rows||merchants?.items||[]);
     renderSummary(d.summary||{});
     currentProviders=normalizeProviders(d.providers||[]);
     updateCounts();
     applyProviderFilters();
-    renderBrands(d.brands||[]);
+    brandPage=1;renderBrands(d.brands||[],acc.brands||[],ov.brands||[]);
     syncedAt=Date.now();
     updateSyncLabel();
   }catch(e){
@@ -475,6 +573,19 @@ function exportCsv(){
   setTimeout(()=>URL.revokeObjectURL(a.href),500);
 }
 
+
+function setupExtraPagination(){
+  const bindPager=(id,kind)=>$(id)?.addEventListener('click',e=>{
+    const b=e.target.closest('[data-page]');if(!b||b.disabled)return;
+    if(kind==='brand'){brandPage=Number(b.dataset.page||1);renderBrands(null,null,null);}
+    else{historyPage=Number(b.dataset.page||1);applyHistoryFilters();}
+  });
+  bindPager('mreBrandPager','brand');
+  bindPager('mreHistoryPager','history');
+  $('mreBrandPageSize')?.addEventListener('change',e=>{brandPageSize=Math.max(1,Number(e.target.value)||10);brandPage=1;renderBrands(null,null,null);});
+  $('mreHistoryPageSize')?.addEventListener('change',e=>{historyPageSize=Math.max(1,Number(e.target.value)||10);historyPage=1;applyHistoryFilters();});
+}
+
 function setupTabs(){
   document.querySelectorAll('[data-report-tab]').forEach(b=>b.addEventListener('click',()=>{
     document.querySelectorAll('[data-report-tab]').forEach(x=>{
@@ -487,6 +598,7 @@ function setupTabs(){
       x.classList.toggle('d-none',x.dataset.reportPanel!==b.dataset.reportTab);
     });
     if(b.dataset.reportTab==='settlement') loadSettlements();
+    if(b.dataset.reportTab==='history') loadHistory();
   }));
 }
 
@@ -547,6 +659,13 @@ function setupFilters(){
       u.searchParams.set('from',$('reportDateFrom').value);
       u.searchParams.set('to',$('reportDateTo').value);
       location.href=u.toString();
+      return;
+    }
+    const brandView=e.target.closest('[data-mre-brand-view]');
+    if(brandView){
+      const id=String(brandView.getAttribute('data-mre-brand-view')||'');
+      document.querySelector('[data-report-tab="history"]')?.click();
+      setTimeout(()=>{if($('mreHistoryMerchant')){$('mreHistoryMerchant').value=id;loadHistory();}},0);
       return;
     }
     const dl=e.target.closest('[data-mre-dl]');
@@ -664,6 +783,8 @@ setupTabs();
 setupFilters();
 setupDatePicker();
 setupSettlement();
+setupHistory();
+setupExtraPagination();
 updateCurrencyLabels();
 updateSyncLabel();
 setInterval(updateSyncLabel,30000);

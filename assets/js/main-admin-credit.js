@@ -16,7 +16,9 @@
   const adjustForm = document.getElementById('macAdjustForm');
   const adjustStatus = document.getElementById('macAdjustStatus');
   const adjustAccount = document.getElementById('macAdjustAccount');
-  const adjustBalance = document.getElementById('macAdjustBalance');
+  const adjustCurrent = document.getElementById('macAdjustCurrent');
+  const adjustAction = document.getElementById('macAdjustAction');
+  const adjustAmount = document.getElementById('macAdjustAmount');
   const adjustRemark = document.getElementById('macAdjustRemark');
   const adjustId = document.getElementById('macAdjustId');
 
@@ -241,7 +243,7 @@
 
     if(!tbody) return;
     if(!rows.length){
-      tbody.innerHTML = '<tr><td colspan="6" class="mad-empty">No credit accounts match the current filters.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" class="mad-empty">No credit accounts match the current filters.</td></tr>';
       return;
     }
 
@@ -258,11 +260,6 @@
         '<td class="mad-money">' + esc(money(r.balance)) + '</td>' +
         '<td><span class="mac-status ' + r.health.statusClass + '"><i></i>' + esc(r.health.statusLabel) + '</span></td>' +
         '<td class="mac-time">' + esc(lastActiveText(r)) + '</td>' +
-        '<td><div class="mac-actions">' +
-          '<button type="button" class="mac-icon-btn" data-mac-edit="' + esc(r.id) + '" title="Edit account"><i class="bi bi-pencil"></i></button>' +
-          '<button type="button" class="mac-icon-btn" data-mac-adjust="' + esc(r.id) + '" title="Adjust credit"><i class="bi bi-sliders"></i></button>' +
-          '<button type="button" class="mac-icon-btn is-danger" data-mac-lock="' + esc(r.id) + '" title="' + (r.status === 1 ? 'Suspend' : 'Activate') + '"><i class="bi bi-' + (r.status === 1 ? 'slash-circle' : 'unlock') + '"></i></button>' +
-        '</div></td>' +
       '</tr>';
     }).join('');
   }
@@ -300,17 +297,19 @@
     const id = adjustAccount && adjustAccount.value;
     const row = allRows.find(r => String(r.id) === String(id));
     if(!row){
-      if(adjustBalance) adjustBalance.value = '';
+      if(adjustCurrent) adjustCurrent.value = '';
       if(adjustId) adjustId.value = '';
       return;
     }
     if(adjustId) adjustId.value = String(row.id);
-    if(adjustBalance) adjustBalance.value = String(Math.round(row.balance));
+    if(adjustCurrent) adjustCurrent.value = money(row.balance);
   }
 
   function openAdjust(id){
     if(adjustStatus){ adjustStatus.textContent = ''; adjustStatus.className = 'upload-status mb-3'; }
     fillAdjustAccounts(id);
+    if(adjustAction) adjustAction.value = 'ADD';
+    if(adjustAmount) adjustAmount.value = '';
     if(adjustRemark) adjustRemark.value = '';
     if(adjustModal){
       adjustModal.classList.add('show');
@@ -338,7 +337,7 @@
   }
 
   async function load(){
-    if(tbody) tbody.innerHTML = '<tr><td colspan="6" class="mad-empty">Loading credit accounts...</td></tr>';
+    if(tbody) tbody.innerHTML = '<tr><td colspan="5" class="mad-empty">Loading credit accounts...</td></tr>';
     try{
       await loadRoles();
       const r = await fetch(API_CONFIG.BASE_URL + '/admin/main/admin-credit/summary', { headers: { ...BO_AUTH.authHeader() }, cache: 'no-store' });
@@ -356,7 +355,7 @@
       updateCounts([]);
       if(pagerEl) pagerEl.innerHTML = pageButtons(1, 1);
       if(infoEl) infoEl.textContent = 'Showing 0 to 0 of 0 accounts';
-      if(tbody) tbody.innerHTML = '<tr><td colspan="6" class="mad-empty text-danger">' + esc(err.message || 'Load failed') + '</td></tr>';
+      if(tbody) tbody.innerHTML = '<tr><td colspan="5" class="mad-empty text-danger">' + esc(err.message || 'Load failed') + '</td></tr>';
     }
   }
 
@@ -416,73 +415,40 @@
   document.querySelectorAll('[data-mac-close]').forEach(btn => btn.addEventListener('click', closeAdjust));
   adjustModal && adjustModal.addEventListener('click', e => { if(e.target === adjustModal) closeAdjust(); });
 
-  tbody && tbody.addEventListener('click', async e => {
-    const edit = e.target.closest('[data-mac-edit]');
-    if(edit){
-      location.href = 'main-admin-detail.html';
-      return;
-    }
-    const adj = e.target.closest('[data-mac-adjust]');
-    if(adj){
-      openAdjust(adj.getAttribute('data-mac-adjust'));
-      return;
-    }
-    const lock = e.target.closest('[data-mac-lock]');
-    if(lock){
-      const id = lock.getAttribute('data-mac-lock');
-      const row = allRows.find(r => String(r.id) === String(id));
-      if(!row) return;
-      const next = row.status === 1 ? 0 : 1;
-      try{
-        const r = await fetch(BO_AUTH.adminUpdateUrl(id), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', ...BO_AUTH.authHeader() },
-          body: JSON.stringify({ username: row.raw.username, displayName: row.raw.displayName || row.raw.username, status: next, roleId: row.raw.roleId, brandId: null })
-        });
-        const j = await r.json().catch(() => ({}));
-        if(!r.ok || j.status === 'error') throw new Error(j.message || 'Update failed');
-        await load();
-      }catch(err){
-        if(window.BO_DIALOG) BO_DIALOG.alert(err.message || 'Update failed');
-        else alert(err.message || 'Update failed');
-      }
-    }
-  });
-
   adjustForm && adjustForm.addEventListener('submit', async e => {
     e.preventDefault();
     const id = adjustId && adjustId.value;
-    const balance = Number(adjustBalance && adjustBalance.value);
+    const action = String(adjustAction && adjustAction.value || 'ADD').toUpperCase();
+    const amount = Number(adjustAmount && adjustAmount.value);
     if(!id){ if(adjustStatus){ adjustStatus.textContent = 'Select an account.'; adjustStatus.className = 'upload-status mb-3 error'; } return; }
-    if(!Number.isFinite(balance) || balance < 0){
-      if(adjustStatus){ adjustStatus.textContent = 'Enter a valid credit balance.'; adjustStatus.className = 'upload-status mb-3 error'; }
+    if(!['ADD','DEDUCT'].includes(action)){
+      if(adjustStatus){ adjustStatus.textContent = 'Select Add Credit or Minus Credit.'; adjustStatus.className = 'upload-status mb-3 error'; }
+      return;
+    }
+    if(!Number.isFinite(amount) || amount <= 0){
+      if(adjustStatus){ adjustStatus.textContent = 'Enter an amount greater than 0.'; adjustStatus.className = 'upload-status mb-3 error'; }
+      return;
+    }
+    const row = allRows.find(x => String(x.id) === String(id));
+    if(action === 'DEDUCT' && row && amount > Number(row.balance || 0)){
+      if(adjustStatus){ adjustStatus.textContent = 'Minus amount cannot exceed the current credit balance.'; adjustStatus.className = 'upload-status mb-3 error'; }
       return;
     }
     const submit = document.getElementById('macAdjustSubmit');
     if(submit) submit.disabled = true;
-    if(adjustStatus){ adjustStatus.textContent = 'Saving adjustment...'; adjustStatus.className = 'upload-status mb-3'; }
+    if(adjustStatus){ adjustStatus.textContent = action === 'ADD' ? 'Adding credit...' : 'Subtracting credit...'; adjustStatus.className = 'upload-status mb-3'; }
     try{
       const remark = (adjustRemark && adjustRemark.value || '').trim();
-      const body = {
-        creditBalance: balance,
-        credit: balance,
-        remark: remark || undefined
-      };
-      const audit = encodeURIComponent(JSON.stringify({page:'Main Admin > Credit Control',fields:{adminId:id,creditBalance:balance,remark:remark||''}}));
-      const r = await fetch(API_CONFIG.BASE_URL + '/admin/main/admin-credit/set/' + encodeURIComponent(id), {
+      const body = { action, amount, remark: remark || undefined };
+      const audit = encodeURIComponent(JSON.stringify({page:'Main Admin > Credit Control',fields:{adminId:id,action,amount,remark:remark||''}}));
+      const r = await fetch(API_CONFIG.BASE_URL + '/admin/main/admin-credit/adjust/' + encodeURIComponent(id), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Admin-Audit-Context': audit, ...BO_AUTH.authHeader() },
         body: JSON.stringify(body)
       });
       const j = await r.json().catch(() => ({}));
       if(!r.ok || j.status === 'error') throw new Error(j.message || 'Adjustment failed');
-      const idx = allRows.findIndex(x => String(x.id) === String(id));
-      if(idx >= 0){
-        allRows[idx].raw.creditBalance = balance;
-        allRows[idx].raw.credit = balance;
-        allRows[idx] = normalizeRow(allRows[idx].raw);
-      }
-      if(adjustStatus){ adjustStatus.textContent = j.message || 'Credit adjusted.'; adjustStatus.className = 'upload-status mb-3 success'; }
+      if(adjustStatus){ adjustStatus.textContent = j.message || (action === 'ADD' ? 'Credit added.' : 'Credit deducted.'); adjustStatus.className = 'upload-status mb-3 success'; }
       await load();
       setTimeout(closeAdjust, 500);
     }catch(err){

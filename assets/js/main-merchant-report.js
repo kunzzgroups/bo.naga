@@ -2,12 +2,13 @@
 const $=id=>document.getElementById(id), esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=v=>Number(v||0).toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2});
 const num=v=>Number(v||0).toLocaleString('en-MY');
-const PAGE_SIZE=7;
+let merchantPageSize=10;
 const MARKS=['','teal','violet','amber','rose','slate'];
 /** Temporary: hide report rows until real data is ready. Set false to restore API display. */
-const FORCE_EMPTY_UI=true;
+const FORCE_EMPTY_UI=false;
 
 let currentMerchants=[];
+let merchantMeta=[];
 let filteredMerchants=[];
 let merchantPage=1;
 let statusPill='all';
@@ -49,7 +50,8 @@ function setupTabs(){
     });
     document.querySelectorAll('[data-report-panel]').forEach(x=>{
       x.classList.toggle('d-none',x.dataset.reportPanel!==b.dataset.reportTab);
-    });
+    });
+
   }));
 }
 
@@ -83,37 +85,35 @@ function merchantStatus(x){
 }
 
 function normalizeMerchants(rows){
-  return (rows||[]).map((x,i)=>{
-    const totalBet=Number(x.totalBet!=null?x.totalBet:(x.turnover||0));
-    const validBet=Number(x.validBet!=null?x.validBet:(x.totalValidBet!=null?x.totalValidBet:totalBet));
-    const winLose=Number(x.houseResult!=null?x.houseResult:(x.winLose!=null?x.winLose:(x.totalWinLose||0)));
-    const totalOut=Number(x.totalOut!=null?x.totalOut:Math.max(validBet-winLose,0));
-    const totalIn=Number(x.totalIn!=null?x.totalIn:(totalOut+winLose));
-    const txns=Number(x.betCount||x.txnCount||x.transactionCount||0);
-    const code=String(x.brandCode||x.merchantCode||x.code||'');
-    const name=x.brandName||x.merchantName||code||'-';
-    const tier=tierKey(x);
-    return {
-      raw:x,
-      id:x.brandId??x.merchantId??code,
-      code,
-      name,
-      initials:initials(name,code),
-      mark:markClass(i),
-      tier,
-      tierLabel:tierLabel(tier),
-      status:merchantStatus(x),
-      totalBet,
-      validBet,
-      totalIn,
-      totalOut:Math.max(totalOut,0),
-      winLose,
-      winLosePct:validBet? (winLose/validBet*100) : 0,
-      txns
-    };
+  const meta=new Map((merchantMeta||[]).map(x=>[String(x.id??x.brandId??''),x]));
+  const grouped=new Map();
+  (rows||[]).forEach(x=>{
+    const id=x.brandId??x.merchantId??x.id??x.brandCode??x.merchantCode??x.code??'';
+    const key=String(id);
+    let g=grouped.get(key);
+    if(!g){
+      g={...x,brandId:x.brandId??x.merchantId??x.id,brandCode:x.brandCode||x.merchantCode||x.code||'',brandName:x.brandName||x.merchantName||x.name||'',totalBet:0,validBet:0,totalIn:0,totalOut:0,houseResult:0,betCount:0};
+      grouped.set(key,g);
+    }
+    const bet=Number(x.totalBet!=null?x.totalBet:(x.turnover||0));
+    const valid=Number(x.validBet!=null?x.validBet:(x.totalValidBet!=null?x.totalValidBet:bet));
+    const wl=Number(x.houseResult!=null?x.houseResult:(x.winLose!=null?x.winLose:(x.totalWinLose||0)));
+    const out=Number(x.totalOut!=null?x.totalOut:Math.max(valid-wl,0));
+    const inn=Number(x.totalIn!=null?x.totalIn:(out+wl));
+    g.totalBet+=bet; g.validBet+=valid; g.totalIn+=inn; g.totalOut+=Math.max(out,0); g.houseResult+=wl; g.betCount+=Number(x.betCount||x.txnCount||x.transactionCount||0);
+  });
+  return [...grouped.values()].map((x,i)=>{
+    const id=x.brandId??x.merchantId??x.id??x.brandCode;
+    const m=meta.get(String(id))||{};
+    const code=String(m.code||m.brandCode||x.brandCode||x.merchantCode||x.code||'');
+    const name=m.name||m.brandName||x.brandName||x.merchantName||code||'-';
+    const statusRaw=m.status??m.brandStatus??x.status??x.brandStatus;
+    const status=(statusRaw===0||statusRaw==='0'||/suspend|disable/i.test(String(statusRaw||'')))?'suspended':'active';
+    const tier=tierKey({...x,...m});
+    const validBet=Number(x.validBet||0), winLose=Number(x.houseResult||0);
+    return {raw:x,id,code,name,initials:initials(name,code),mark:markClass(i),tier,tierLabel:tierLabel(tier),status,totalBet:Number(x.totalBet||0),validBet,totalIn:Number(x.totalIn||0),totalOut:Number(x.totalOut||0),winLose,winLosePct:validBet?(winLose/validBet*100):0,txns:Number(x.betCount||0)};
   });
 }
-
 function updateSyncLabel(){
   const el=$('reportSyncLabel');
   if(!el) return;
@@ -185,10 +185,10 @@ function renderTable(){
   if(!tbody) return;
 
   const total=filteredMerchants.length;
-  const totalPages=Math.max(1,Math.ceil(total/PAGE_SIZE)||1);
+  const totalPages=Math.max(1,Math.ceil(total/merchantPageSize)||1);
   merchantPage=Math.max(1,Math.min(merchantPage,totalPages));
-  const start=(merchantPage-1)*PAGE_SIZE;
-  const rows=filteredMerchants.slice(start,start+PAGE_SIZE);
+  const start=(merchantPage-1)*merchantPageSize;
+  const rows=filteredMerchants.slice(start,start+merchantPageSize);
 
   if(pager) pager.innerHTML=pageButtons(merchantPage,totalPages);
   if(info){
@@ -255,12 +255,14 @@ async function load(){
     return;
   }
   try{
-    const d=await api('/admin/main/reports/provider-settlement'+qs());
+    const [d,merchants]=await Promise.all([api('/admin/main/reports/provider-settlement'+qs()),api('/admin/merchants').catch(()=>api('/admin/brands').catch(()=>[]))]);
+    merchantMeta=Array.isArray(merchants)?merchants:(merchants?.rows||merchants?.items||[]);
     currentMerchants=normalizeMerchants(d.brands||[]);
     updateCounts();
     applyFilters();
     syncedAt=Date.now();
     updateSyncLabel();
+    document.dispatchEvent(new CustomEvent('merchant-report-range-changed'));
   }catch(e){
     console.error(e);
     currentMerchants=[];
@@ -315,10 +317,11 @@ function setupFilters(){
   $('mmrPager')?.addEventListener('click',e=>{
     const b=e.target.closest('[data-page]');
     if(!b||b.disabled) return;
-    const totalPages=Math.max(1,Math.ceil(filteredMerchants.length/PAGE_SIZE));
+    const totalPages=Math.max(1,Math.ceil(filteredMerchants.length/merchantPageSize));
     const n=Number(b.dataset.page);
     if(n>=1&&n<=totalPages&&n!==merchantPage){merchantPage=n;renderTable();}
   });
+  $('mmrPageSize')?.addEventListener('change',e=>{merchantPageSize=Math.max(1,Number(e.target.value)||10);merchantPage=1;renderTable();});
   document.querySelectorAll('[data-currency]').forEach(btn=>{
     btn.addEventListener('click',()=>{
       currency=btn.getAttribute('data-currency')||'MYR';
@@ -438,8 +441,10 @@ function setupDatePicker(){
 
 document.addEventListener('DOMContentLoaded',()=>{
   setupTabs();
-  setupFilters();
-  setupDatePicker();
+  setupFilters();
+
+  setupDatePicker();
+
   updateCurrencyLabels();
   load();
   setInterval(updateSyncLabel,30000);

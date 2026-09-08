@@ -97,13 +97,30 @@
     }
   }
   async function bootstrap(){try{await api(API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS.ACCESS_BOOTSTRAP,{headers:{...BO_AUTH.authHeader()}});}catch(e){}}
+  function merchantScopeId(){
+    if(!isMerchantRolesPage) return '';
+    try{
+      const q=new URLSearchParams(location.search||'').get('merchantId');
+      if(q && Number(q)>0) return String(Number(q));
+    }catch(e){}
+    const saved=localStorage.getItem('bo_active_brand_id');
+    return saved && Number(saved)>0 ? String(Number(saved)) : '';
+  }
   async function fetchRoles(){
-    // Root/platform Role Management must show the roles that already exist in DB,
-    // including legacy rows whose brand_id was populated before multi-brand normalization.
+    // Merchant Roles & Permissions is strictly scoped to the selected Merchant/Brand.
+    // This prevents the same per-brand system role (for example Brand Owner) from
+    // appearing multiple times in one dropdown.
+    if(isMerchantRolesPage){
+      const brandId=merchantScopeId();
+      if(!brandId) return [];
+      const headers={...BO_AUTH.authHeader(),'X-Brand-Id':brandId};
+      const j=await api(BO_AUTH.roleListUrl(),{headers});
+      return Array.isArray(j.data)?j.data:[];
+    }
+    // Platform Role Management shows the existing platform catalogue.
     const primary = platformRoleAdmin && BO_AUTH.roleListAllUrl ? BO_AUTH.roleListAllUrl() : BO_AUTH.roleListUrl();
     let j=await api(primary,{headers:{...BO_AUTH.authHeader()}});
     let rows=Array.isArray(j.data)?j.data:[];
-    // Backward-compatible retry for deployments where /roles/all is not available yet.
     if(!rows.length && primary!==BO_AUTH.roleListUrl()){
       try{j=await api(BO_AUTH.roleListUrl(),{headers:{...BO_AUTH.authHeader()}});rows=Array.isArray(j.data)?j.data:[];}catch(e){}
     }
@@ -455,9 +472,9 @@
     if(!sys)return true;
     if(rootAdmin)return rt!=='ROOT';
     if(masterAdmin)return rt==='BRAND_OWNER';
-    // MAIN manages only its own delegated CUSTOM permission groups. Protected
-    // platform/system-role permissions remain authoritative from ROOT.
-    if(mainAdmin) return false;
+    // MAIN/Boss can manage every permission group below ROOT. ROOT is the only
+    // super-admin role that must never be shown or editable from MAIN.
+    if(mainAdmin) return rt!=='ROOT';
     return false;
   }
 
@@ -469,8 +486,16 @@
       roleCache=await fetchRoles();
       const editable=roleCache.filter(r=>{
         const rt=String(r?.roleType||'').toUpperCase();
-        const sys=Number(r?.systemRole)===1;
-        if(mainAdmin && sys) return false;
+        // Admin > Roles & Permissions is PLATFORM scoped. Merchant/Brand scoped
+        // roles belong in Merchant > Roles & Permissions and must never leak into
+        // this dropdown. In particular, every Merchant has its own BRAND_OWNER
+        // system role, which was why MAIN saw multiple identical "Brand Owner" rows.
+        if(!isMerchantRolesPage){
+          const merchantScoped = r?.brandId != null || r?.brand_id != null || r?.merchantId != null || rt==='BRAND_OWNER';
+          if(merchantScoped) return false;
+        }
+        // ROOT is intentionally absent for MAIN/Boss.
+        if(mainAdmin && rt==='ROOT') return false;
         return canEditRoleMenus(r);
       });
       select.innerHTML='<option value="">Select role...</option>'+editable.map(r=>`<option value="${esc(r.id)}">${esc(roleOptionLabel(r,false))}</option>`).join('');

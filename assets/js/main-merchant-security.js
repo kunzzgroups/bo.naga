@@ -1,4 +1,4 @@
-﻿(function(){
+(function(){
   'use strict';
 
   const PAGE_SIZE = 10;
@@ -7,6 +7,7 @@
   const pagerEl = document.getElementById('masPager');
   const searchEl = document.getElementById('masSearch');
   const eventTypeEl = document.getElementById('masEventType');
+  const merchantEl = document.getElementById('masMerchantFilter');
   const statusEl = document.getElementById('masStatus');
   const fromEl = document.getElementById('masFrom');
   const toEl = document.getElementById('masTo');
@@ -133,6 +134,7 @@
         'User Agent': row.userAgent || '—',
         Reason: row.failureReason || '—'
       },
+      merchantId: row.brandId == null ? null : Number(row.brandId),
       raw: row
     };
   }
@@ -145,6 +147,14 @@
     const target = row.entityType
       ? (prettyAction(row.entityType) + (row.entityId != null ? ': #' + row.entityId : ''))
       : 'System';
+    let merchantId = row.brandId == null ? null : Number(row.brandId);
+    if(!merchantId){
+      try{
+        const j = JSON.parse(row.afterJson || '{}');
+        merchantId = Number(j.brandId || j.merchantId || 0) || null;
+        if(!merchantId && j.path){ const m=String(j.path).match(/\/(?:brands|merchants)\/(\d+)/); if(m) merchantId=Number(m[1]); }
+      }catch(e){}
+    }
     return {
       id: 'op-' + (row.id || (row.actor + '-' + row.createdAt + '-' + row.action)),
       source: 'operation',
@@ -171,6 +181,7 @@
         Detail: subtitle,
         Status: ok ? 'Success' : 'Failed'
       },
+      merchantId: merchantId,
       raw: row
     };
   }
@@ -185,6 +196,16 @@
     }catch(e){
       return [];
     }
+  }
+
+  async function loadMerchants(){
+    if(!merchantEl) return;
+    try{
+      const j=await apiJson(apiBase() + '/api/admin/merchants');
+      const rows=Array.isArray(j.data)?j.data:[];
+      merchantEl.innerHTML='<option value="">All Merchants</option>'+rows.map(b=>'<option value="'+b.id+'">'+esc(b.name||'')+' ('+esc(b.code||'')+')</option>').join('');
+      const qp=new URLSearchParams(location.search).get('merchantId'); if(qp) merchantEl.value=qp;
+    }catch(e){ merchantEl.innerHTML='<option value="">All Merchants</option>'; }
   }
 
   async function loadLogins(){
@@ -457,10 +478,11 @@
     const q = (searchEl && searchEl.value || '').trim().toLowerCase();
     const eventType = eventTypeEl && eventTypeEl.value || '';
     const status = statusEl && statusEl.value || '';
+    const merchantId = merchantEl && merchantEl.value || '';
     const bounds = dayBounds(fromEl && fromEl.value, toEl && toEl.value);
 
-    filtered = allEvents.filter(e => {
-      if(category !== 'all' && e.category !== category) return false;
+    const baseFiltered = allEvents.filter(e => {
+      if(merchantId && String(e.merchantId || '') !== String(merchantId)) return false;
       if(bounds){
         if(!e.at) return false;
         const t = e.at.getTime();
@@ -472,6 +494,14 @@
         const hay = [e.adminName, e.username, e.title, e.subtitle, e.target, e.ip].join(' ').toLowerCase();
         if(!hay.includes(q)) return false;
       }
+      return true;
+    });
+
+    const catAll = document.getElementById('masCatAll');
+    if(catAll) catAll.textContent = String(baseFiltered.length);
+
+    filtered = baseFiltered.filter(e => {
+      if(category !== 'all' && e.category !== category) return false;
       return true;
     });
     currentPage = 1;
@@ -578,6 +608,7 @@
   async function loadAll(){
     if(tbody) tbody.innerHTML = '<tr><td colspan="7" class="mad-empty">Loading audit events...</td></tr>';
     try{
+      await loadMerchants();
       let loginErr = null;
       const [logins, ops] = await Promise.all([
         loadLogins().catch(err => { loginErr = err; return []; }),

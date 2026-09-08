@@ -127,10 +127,10 @@
 
   function dayNet(r) {
     if (!r) return 0;
-    if (r.merchantProfit != null || r.gameProfit != null) {
-      return Number(r.merchantProfit || 0) + Number(r.gameProfit || 0);
-    }
-    return Number(r.netProfit || 0);
+    if (r.netProfit != null) return Number(r.netProfit || 0);
+    // MAIN Net Profit is Merchant Profit only; game profit is intentionally excluded.
+    if (r.merchantProfit != null) return Number(r.merchantProfit || 0);
+    return 0;
   }
 
   /* Daily series: each calendar day in range; missing days = 0 (no accumulate) */
