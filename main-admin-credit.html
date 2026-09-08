@@ -11,7 +11,7 @@
 <link href="assets/css/reports.css?v=1.0.46" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.21" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.42" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 <script>
 (function(){
@@ -157,10 +157,11 @@
             <th>Credit Balance</th>
             <th>Status</th>
             <th>Last Active</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody id="macTableBody">
-          <tr><td colspan="5" class="mad-empty">Loading credit accounts...</td></tr>
+          <tr><td colspan="6" class="mad-empty">Loading credit accounts...</td></tr>
         </tbody>
       </table>
     </div>
@@ -189,29 +190,47 @@
     </div>
     <form class="modal-clean-body" id="macAdjustForm" novalidate>
       <input type="hidden" id="macAdjustId"/>
-      <label class="mac-field" for="macAdjustAccount">
-        <span class="mac-label">Account</span>
-        <select class="form-control mad-select" id="macAdjustAccount" required></select>
-      </label>
-      <label class="mac-field" for="macAdjustCurrent">
-        <span class="mac-label">Current Credit</span>
-        <input class="form-control" id="macAdjustCurrent" type="text" readonly/>
-      </label>
-      <label class="mac-field" for="macAdjustAction">
-        <span class="mac-label">Adjustment</span>
-        <select class="form-control mad-select" id="macAdjustAction" required>
-          <option value="ADD">Add Credit</option>
-          <option value="DEDUCT">Minus Credit</option>
-        </select>
-      </label>
-      <label class="mac-field" for="macAdjustAmount">
-        <span class="mac-label">Amount</span>
-        <input class="form-control" id="macAdjustAmount" type="number" min="0.01" step="0.01" placeholder="0.00" required/>
-      </label>
+      <div class="mac-adjust-account-wrap" id="macAdjustAccountWrap">
+        <label class="mac-field" for="macAdjustAccount">
+          <span class="mac-label">Account</span>
+          <select class="form-control mad-select" id="macAdjustAccount" required></select>
+        </label>
+      </div>
+
+      <div class="mac-adjust-summary" id="macAdjustSummary" aria-live="polite">
+        <div class="mac-adjust-summary-main">
+          <span class="mac-adjust-avatar" id="macAdjustAvatar" aria-hidden="true">—</span>
+          <div class="mac-adjust-summary-copy">
+            <strong id="macAdjustName">Select an account</strong>
+            <small id="macAdjustUid">Current credit will appear here</small>
+          </div>
+        </div>
+        <div class="mac-adjust-balance">
+          <span>Current Credit</span>
+          <b id="macAdjustBalance">—</b>
+        </div>
+      </div>
+      <input type="hidden" id="macAdjustCurrent" value=""/>
+
+      <div class="mac-adjust-ops">
+        <label class="mac-field" for="macAdjustAction">
+          <span class="mac-label">Adjustment</span>
+          <select class="form-control mad-select" id="macAdjustAction" required>
+            <option value="ADD">Add Credit</option>
+            <option value="DEDUCT">Minus Credit</option>
+          </select>
+        </label>
+        <label class="mac-field" for="macAdjustAmount">
+          <span class="mac-label">Amount</span>
+          <input class="form-control" id="macAdjustAmount" type="number" min="0.01" step="0.01" placeholder="0.00" required/>
+        </label>
+      </div>
+
       <label class="mac-field" for="macAdjustRemark">
         <span class="mac-label">Remark</span>
         <input class="form-control" id="macAdjustRemark" type="text" maxlength="200" placeholder="Reason for adjustment"/>
       </label>
+
       <div class="upload-status mb-3" id="macAdjustStatus"></div>
       <div class="mad-modal-actions">
         <button class="mad-btn mad-btn-ghost" type="button" data-mac-close>Cancel</button>
@@ -228,7 +247,7 @@
 <script src="assets/js/reports.js?v=1.0.23"></script>
 <script src="assets/js/auth.js?v=1.0.58"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
-<script src="assets/js/main-admin-credit.js?v=1.0.8"></script>
+<script src="assets/js/main-admin-credit.js?v=1.1.0"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>

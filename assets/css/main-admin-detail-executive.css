@@ -527,7 +527,7 @@ body.main-admin-detail-page .mad-table th{
   background:transparent;white-space:nowrap;
 }
 body.main-admin-detail-page .mad-table td{
-  padding:16px;border-bottom:1px solid #EEF1F6;
+  padding:6px 16px;border-bottom:1px solid #EEF1F6;
   color:var(--bo-text-secondary);font-size:13px;vertical-align:middle;
 }
 body.main-admin-detail-page .mad-table th:nth-child(1),
@@ -1806,10 +1806,25 @@ body.main-admin-credit-page .mac-filters{display:flex;flex-wrap:nowrap;align-ite
 body.main-admin-credit-page .mac-search{
   flex:0 1 260px;width:260px;max-width:100%;min-width:180px;
 }
-body.main-admin-credit-page .mac-table{min-width:1100px}
+body.main-admin-credit-page .mac-table{min-width:960px;table-layout:fixed;width:100%}
 body.main-admin-credit-page .mac-table th{
-  font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;
+  font-size:12px;letter-spacing:.04em;text-transform:uppercase;
 }
+body.main-admin-credit-page .mac-table th:nth-child(1),
+body.main-admin-credit-page .mac-table td:nth-child(1){width:24%}
+body.main-admin-credit-page .mac-table th:nth-child(2),
+body.main-admin-credit-page .mac-table td:nth-child(2){width:18%}
+body.main-admin-credit-page .mac-table th:nth-child(3),
+body.main-admin-credit-page .mac-table td:nth-child(3){width:14%}
+body.main-admin-credit-page .mac-table th:nth-child(4),
+body.main-admin-credit-page .mac-table td:nth-child(4){width:14%}
+body.main-admin-credit-page .mac-table th:nth-child(5),
+body.main-admin-credit-page .mac-table td:nth-child(5){width:14%}
+body.main-admin-credit-page .mac-table th:nth-child(6),
+body.main-admin-credit-page .mac-table td:nth-child(6){
+  width:110px;text-align:center;
+}
+body.main-admin-credit-page .mac-actions-cell{text-align:center}
 body.main-admin-credit-page .mac-user{
   display:flex;align-items:center;gap:12px;min-width:0;
 }
@@ -1821,15 +1836,15 @@ body.main-admin-credit-page .mac-avatar{
 }
 body.main-admin-credit-page .mac-user-copy{min-width:0}
 body.main-admin-credit-page .mac-user-copy b{
-  display:block;color:var(--bo-text);font-size:13.5px;font-weight:800;line-height:1.2;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;
+  display:block;color:var(--bo-text);font-size:16px;font-weight:800;line-height:1.25;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
 }
 body.main-admin-credit-page .mac-user-copy small{
-  display:block;margin-top:2px;color:var(--bo-muted);font-size:11.5px;font-weight:650;
+  display:block;margin-top:3px;color:var(--bo-muted);font-size:10.5px;font-weight:600;line-height:1.2;
 }
 body.main-admin-credit-page .mac-email{
   display:block;margin-top:1px;color:var(--bo-muted);font-size:11.5px;font-weight:500;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
 }
 body.main-admin-credit-page .mac-role{
   display:inline-flex;align-items:center;height:26px;padding:0 10px;
@@ -1873,7 +1888,9 @@ body.main-admin-credit-page .mac-status.is-suspended{background:rgba(239,51,64,.
 body.main-admin-credit-page .mac-time{
   font-variant-numeric:tabular-nums;font-weight:650;color:var(--bo-text-secondary);
 }
-body.main-admin-credit-page .mac-actions{display:inline-flex;align-items:center;gap:6px}
+body.main-admin-credit-page .mac-actions{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;
+}
 body.main-admin-credit-page .mac-icon-btn{
   width:32px;height:32px;border:1px solid var(--bo-border);border-radius:8px;
   background:var(--bo-surface);color:var(--bo-muted);
@@ -1886,7 +1903,49 @@ body.main-admin-credit-page .mac-icon-btn:hover{
 body.main-admin-credit-page .mac-icon-btn.is-danger:hover{
   border-color:var(--bo-danger);color:var(--bo-danger);background:rgba(239,51,64,.08);
 }
-body.main-admin-credit-page .mac-adjust-panel{width:min(520px,calc(100vw - 32px))}
+body.main-admin-credit-page .mac-adjust-panel{width:min(560px,calc(100vw - 32px))}
+body.main-admin-credit-page .mac-adjust-panel .modal-clean-body{padding-top:18px}
+body.main-admin-credit-page .mac-adjust-account-wrap{margin-bottom:12px}
+body.main-admin-credit-page .mac-adjust-summary{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  margin:0 0 16px;padding:14px 16px;
+  border:1px solid var(--bo-border);border-radius:12px;
+  background:linear-gradient(180deg, #F7FBFE 0%, #F3F7FB 100%);
+}
+body.main-admin-credit-page .mac-adjust-summary-main{
+  display:flex;align-items:center;gap:12px;min-width:0;
+}
+body.main-admin-credit-page .mac-adjust-avatar{
+  width:44px;height:44px;border-radius:12px;flex:0 0 44px;
+  display:grid;place-items:center;
+  background:rgba(33,166,215,.14);color:var(--bo-navy);
+  font-size:13px;font-weight:800;
+}
+body.main-admin-credit-page .mac-adjust-summary-copy{min-width:0}
+body.main-admin-credit-page .mac-adjust-summary-copy strong{
+  display:block;font-size:15px;font-weight:800;color:var(--bo-navy);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+body.main-admin-credit-page .mac-adjust-summary-copy small{
+  display:block;margin-top:2px;font-size:12px;font-weight:600;color:var(--bo-muted);
+}
+body.main-admin-credit-page .mac-adjust-balance{
+  display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex:0 0 auto;
+}
+body.main-admin-credit-page .mac-adjust-balance span{
+  font-size:11px;font-weight:700;color:var(--bo-muted);text-transform:uppercase;letter-spacing:.04em;
+}
+body.main-admin-credit-page .mac-adjust-balance b{
+  font-size:22px;font-weight:800;color:var(--bo-navy);font-variant-numeric:tabular-nums;line-height:1.1;
+}
+body.main-admin-credit-page .mac-adjust-ops{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:2px;
+}
+@media(max-width:575.98px){
+  body.main-admin-credit-page .mac-adjust-ops{grid-template-columns:1fr}
+  body.main-admin-credit-page .mac-adjust-summary{flex-direction:column;align-items:flex-start}
+  body.main-admin-credit-page .mac-adjust-balance{align-items:flex-start}
+}
 body.main-admin-credit-page .mac-adjust-panel .mad-modal-actions{
   display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:8px;
 }
@@ -1938,6 +1997,14 @@ body.main-admin-credit-page .mac-field .form-control:focus{
   body.main-admin-credit-page .mac-search{flex:1 1 100%;width:100%}
   body.main-admin-credit-page .mac-adjust-grid{grid-template-columns:1fr}
 }
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-summary{
+  background:rgba(255,255,255,.04);border-color:var(--bo-border);
+}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-avatar{
+  background:rgba(33,166,215,.18);color:#7DD3FC;
+}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-summary-copy strong,
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-balance b{color:var(--bo-text)}
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-kpi-icon{
   background:rgba(33,166,215,.16);color:#7DD3FC;
 }

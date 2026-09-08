@@ -243,7 +243,7 @@
 
     if(!tbody) return;
     if(!rows.length){
-      tbody.innerHTML = '<tr><td colspan="5" class="mad-empty">No credit accounts match the current filters.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="mad-empty">No credit accounts match the current filters.</td></tr>';
       return;
     }
 
@@ -260,6 +260,9 @@
         '<td class="mad-money">' + esc(money(r.balance)) + '</td>' +
         '<td><span class="mac-status ' + r.health.statusClass + '"><i></i>' + esc(r.health.statusLabel) + '</span></td>' +
         '<td class="mac-time">' + esc(lastActiveText(r)) + '</td>' +
+        '<td class="mac-actions-cell"><div class="mac-actions">' +
+          '<button class="mac-icon-btn mac-add-credit-btn" type="button" title="Add credit" data-id="' + esc(r.id) + '"><i class="bi bi-plus-lg"></i></button>' +
+        '</div></td>' +
       '</tr>';
     }).join('');
   }
@@ -296,19 +299,45 @@
   function syncAdjustFields(){
     const id = adjustAccount && adjustAccount.value;
     const row = allRows.find(r => String(r.id) === String(id));
+    const avatar = document.getElementById('macAdjustAvatar');
+    const nameEl = document.getElementById('macAdjustName');
+    const uidEl = document.getElementById('macAdjustUid');
+    const balEl = document.getElementById('macAdjustBalance');
+    const summary = document.getElementById('macAdjustSummary');
     if(!row){
       if(adjustCurrent) adjustCurrent.value = '';
       if(adjustId) adjustId.value = '';
+      if(avatar) avatar.textContent = '—';
+      if(nameEl) nameEl.textContent = 'Select an account';
+      if(uidEl) uidEl.textContent = 'Current credit will appear here';
+      if(balEl) balEl.textContent = '—';
+      if(summary) summary.classList.remove('has-account');
       return;
     }
     if(adjustId) adjustId.value = String(row.id);
     if(adjustCurrent) adjustCurrent.value = money(row.balance);
+    if(avatar) avatar.textContent = initials(row.displayName || row.username);
+    if(nameEl) nameEl.textContent = row.displayName || row.username || '—';
+    if(uidEl) uidEl.textContent = '#' + (row.uid || ('UID-' + row.id));
+    if(balEl) balEl.textContent = money(row.balance);
+    if(summary) summary.classList.add('has-account');
   }
 
   function openAdjust(id){
     if(adjustStatus){ adjustStatus.textContent = ''; adjustStatus.className = 'upload-status mb-3'; }
-    fillAdjustAccounts(id);
-    if(adjustAction) adjustAction.value = 'ADD';
+    const locked = id != null && id !== '';
+    const wrap = document.getElementById('macAdjustAccountWrap');
+    if(wrap) wrap.hidden = !!locked;
+    if(adjustAccount){
+      adjustAccount.required = !locked;
+      if(locked) adjustAccount.removeAttribute('required');
+    }
+    if(adjustModal) adjustModal.classList.toggle('is-account-locked', !!locked);
+    fillAdjustAccounts(locked ? id : (allRows[0] ? allRows[0].id : null));
+    if(adjustAction){
+      adjustAction.value = 'ADD';
+      adjustAction.dispatchEvent(new Event('bo:select-sync', { bubbles: true }));
+    }
     if(adjustAmount) adjustAmount.value = '';
     if(adjustRemark) adjustRemark.value = '';
     if(adjustModal){
@@ -316,6 +345,7 @@
       adjustModal.setAttribute('aria-hidden', 'false');
       document.body.classList.add('modal-open');
     }
+    if(adjustAmount) setTimeout(function(){ adjustAmount.focus(); }, 40);
   }
 
   function closeAdjust(){
@@ -337,7 +367,7 @@
   }
 
   async function load(){
-    if(tbody) tbody.innerHTML = '<tr><td colspan="5" class="mad-empty">Loading credit accounts...</td></tr>';
+    if(tbody) tbody.innerHTML = '<tr><td colspan="6" class="mad-empty">Loading credit accounts...</td></tr>';
     try{
       await loadRoles();
       const r = await fetch(API_CONFIG.BASE_URL + '/admin/main/admin-credit/summary', { headers: { ...BO_AUTH.authHeader() }, cache: 'no-store' });
@@ -355,7 +385,7 @@
       updateCounts([]);
       if(pagerEl) pagerEl.innerHTML = pageButtons(1, 1);
       if(infoEl) infoEl.textContent = 'Showing 0 to 0 of 0 accounts';
-      if(tbody) tbody.innerHTML = '<tr><td colspan="5" class="mad-empty text-danger">' + esc(err.message || 'Load failed') + '</td></tr>';
+      if(tbody) tbody.innerHTML = '<tr><td colspan="6" class="mad-empty text-danger">' + esc(err.message || 'Load failed') + '</td></tr>';
     }
   }
 
@@ -410,10 +440,17 @@
     URL.revokeObjectURL(a.href);
   });
 
-  adjustBtn && adjustBtn.addEventListener('click', () => openAdjust(allRows[0] && allRows[0].id));
+  adjustBtn && adjustBtn.addEventListener('click', () => openAdjust());
   adjustAccount && adjustAccount.addEventListener('change', syncAdjustFields);
   document.querySelectorAll('[data-mac-close]').forEach(btn => btn.addEventListener('click', closeAdjust));
   adjustModal && adjustModal.addEventListener('click', e => { if(e.target === adjustModal) closeAdjust(); });
+  document.addEventListener('click', function(e){
+    const addBtn = e.target.closest && e.target.closest('.mac-add-credit-btn');
+    if(!addBtn) return;
+    const id = addBtn.getAttribute('data-id');
+    if(!id) return;
+    openAdjust(id);
+  });
 
   adjustForm && adjustForm.addEventListener('submit', async e => {
     e.preventDefault();
