@@ -197,15 +197,35 @@
       const flags = actorFlags();
       const headers = { ...BO_AUTH.authHeader() };
       if(brandId) headers['X-Brand-Id'] = String(brandId);
-      const json = await apiJson(BO_AUTH.roleListUrl(), { headers });
+      // Create Admin must use the same complete platform role catalogue as
+      // Roles & Permissions. ROLE_LIST (/roles) can be scope-filtered depending on
+      // the current session/brand header, which caused this page to show
+      // "No roles available" while menu-permission.html could still see the roles.
+      // Platform actors therefore load /roles/all first, with /roles as a safe
+      // fallback for tenant-scoped administrators.
+      const primaryRoleUrl = flags.platformAdmin && BO_AUTH.roleListAllUrl
+        ? BO_AUTH.roleListAllUrl()
+        : BO_AUTH.roleListUrl();
+      let json;
+      try{
+        json = await apiJson(primaryRoleUrl, { headers });
+      }catch(primaryError){
+        if(primaryRoleUrl === BO_AUTH.roleListUrl()) throw primaryError;
+        json = await apiJson(BO_AUTH.roleListUrl(), { headers });
+      }
       let rows = Array.isArray(json.data) ? json.data : [];
       if(flags.rootAdmin){
         rows = brandId
           ? rows.filter(r => Number(r.brandId) === Number(brandId) && !['MASTER', 'ROOT', 'MAIN'].includes(String(r.roleType || '').toUpperCase()))
-          : rows.filter(r => r.brandId == null && ['MASTER','MAIN','CUSTOM'].includes(String(r.roleType || '').toUpperCase()));
+          : rows.filter(r => r.brandId == null && String(r.roleType || '').toUpperCase() !== 'ROOT');
       }else if(flags.mainAdmin){
-        // MAIN creates its own platform-scoped delegated admins. No tenant brand is attached.
-        rows = rows.filter(r => r.brandId == null && String(r.roleType || 'CUSTOM').toUpperCase() === 'CUSTOM');
+        // MAIN/Boss may assign every active platform role below ROOT. Do not restrict
+        // this list to roleType=CUSTOM: existing roles such as Master Admin,
+        // Customer Support and Designer can use their own role types.
+        rows = rows.filter(r => {
+          const type = String(r.roleType || '').toUpperCase();
+          return r.brandId == null && !['ROOT', 'MAIN'].includes(type) && Number(r.status == null ? 1 : r.status) === 1;
+        });
       }else{
         rows = rows.filter(r => !['MASTER', 'ROOT', 'MAIN'].includes(String(r.roleType || 'CUSTOM').toUpperCase()));
         if(brandId){

@@ -179,8 +179,12 @@
       const json = await apiJson(BO_AUTH.roleListUrl(), { headers });
       let rows = Array.isArray(json.data) ? json.data : [];
       if(isViewerMain(current)){
-        // MAIN-created admins are platform delegated admins: never bind them to one Merchant/Brand.
-        rows = rows.filter(r => r.brandId == null && String(r.roleType || 'CUSTOM').toUpperCase() === 'CUSTOM');
+        // Keep Admin list/edit role options consistent with Create Admin and Roles & Permissions.
+        // MAIN/Boss sees every active platform role except ROOT/MAIN itself.
+        rows = rows.filter(r => {
+          const type = String(r.roleType || '').toUpperCase();
+          return r.brandId == null && !['ROOT', 'MAIN'].includes(type) && Number(r.status == null ? 1 : r.status) === 1;
+        });
       }else if(current.rootAdmin){
         rows = brandId
           ? rows.filter(r => Number(r.brandId) === Number(brandId) && !['MASTER', 'ROOT'].includes(String(r.roleType || '').toUpperCase()))
