@@ -219,14 +219,16 @@
       const flags = actorFlags();
       const headers = { ...BO_AUTH.authHeader() };
       if(brandId) headers['X-Brand-Id'] = String(brandId);
-      const json = await apiJson(BO_AUTH.roleListUrl(), { headers });
+      const roleUrl = flags.mainAdmin && BO_AUTH.roleListAllUrl ? BO_AUTH.roleListAllUrl() : BO_AUTH.roleListUrl();
+      const json = await apiJson(roleUrl, { headers });
       let rows = Array.isArray(json.data) ? json.data : [];
       if(flags.rootAdmin){
         rows = brandId
           ? rows.filter(r => Number(r.brandId) === Number(brandId) && !['MASTER', 'ROOT', 'MAIN'].includes(String(r.roleType || '').toUpperCase()))
           : rows.filter(r => r.brandId == null && ['MASTER','MAIN','CUSTOM'].includes(String(r.roleType || '').toUpperCase()));
       }else if(flags.mainAdmin){
-        rows = rows.filter(r => r.brandId == null && String(r.roleType || 'CUSTOM').toUpperCase() === 'CUSTOM');
+        // MAIN/Boss sees every active role maintained by ROOT except ROOT itself.
+        rows = rows.filter(r => String(r.roleType || '').toUpperCase() !== 'ROOT' && Number(r.status == null ? 1 : r.status) === 1);
       }else{
         rows = rows.filter(r => !['MASTER', 'ROOT', 'MAIN'].includes(String(r.roleType || 'CUSTOM').toUpperCase()));
         if(brandId) rows = rows.filter(r => Number(r.brandId) === Number(brandId));

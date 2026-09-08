@@ -199,14 +199,15 @@
       const current = BO_AUTH.user() || {};
       const headers = { ...BO_AUTH.authHeader() };
       if(brandId) headers['X-Brand-Id'] = String(brandId);
-      const json = await apiJson(BO_AUTH.roleListUrl(), { headers });
+      const roleUrl = isViewerMain(current) && BO_AUTH.roleListAllUrl ? BO_AUTH.roleListAllUrl() : BO_AUTH.roleListUrl();
+      const json = await apiJson(roleUrl, { headers });
       let rows = Array.isArray(json.data) ? json.data : [];
       if(isViewerMain(current)){
-        // Keep Admin list/edit role options consistent with Create Admin and Roles & Permissions.
-        // MAIN/Boss sees every active platform role except ROOT/MAIN itself.
+        // Keep Admin list/edit role options consistent with Create Admin and ROOT Role Management.
+        // MAIN/Boss sees every active role except ROOT; do not discard custom roles by brandId.
         rows = rows.filter(r => {
           const type = String(r.roleType || '').toUpperCase();
-          return r.brandId == null && !['ROOT', 'MAIN'].includes(type) && Number(r.status == null ? 1 : r.status) === 1;
+          return type !== 'ROOT' && Number(r.status == null ? 1 : r.status) === 1;
         });
       }else if(current.rootAdmin){
         rows = brandId
