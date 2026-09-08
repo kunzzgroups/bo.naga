@@ -3,6 +3,8 @@
   const page = document.body.dataset.accessPage;
   const isMerchantRolesPage = document.body.classList.contains('main-merchant-roles-page');
   const isMenuPermissionPage = page === 'menu-permission' || isMerchantRolesPage;
+  /* ADMIN sidebar -> menu-permission.html: MAIN menus only (no BO tab / BO matrix). */
+  const hideBoPermissionScope = page === 'menu-permission' && !isMerchantRolesPage;
   const roleStatusEl = document.getElementById('accessStatus');
   const GROUP_META = {
     root:{title:'Main Menu',icon:'bi-grid'}, access:{title:'Access Control',icon:'bi-shield-lock'},
@@ -175,6 +177,7 @@
   }
   function setMpScope(scope){
     if(isMerchantRolesPage) scope='bo';
+    if(hideBoPermissionScope) scope='main';
     const next=scope==='bo'?'bo':'main';
     if(next===mpScope) return;
     syncWorkingFromDom();
@@ -190,6 +193,29 @@
     renderMenuPermissionMatrix(ids);
     if(roleOn) document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=false);
     else document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=true);
+  }
+
+  function applyMainOnlyPermissionUi(){
+    if(!hideBoPermissionScope) return;
+    document.body.classList.add('mp-main-only');
+    mpScope='main';
+    const scopeWrap=document.querySelector('.mp-toolbar .mp-scope');
+    if(scopeWrap){
+      scopeWrap.hidden=true;
+      scopeWrap.setAttribute('aria-hidden','true');
+    }
+    const boBtn=document.getElementById('menuPermissionScopeBo');
+    if(boBtn){
+      boBtn.hidden=true;
+      boBtn.setAttribute('aria-hidden','true');
+      boBtn.disabled=true;
+    }
+    const mainBtn=document.getElementById('menuPermissionScopeMain');
+    if(mainBtn){
+      mainBtn.hidden=true;
+      mainBtn.setAttribute('aria-hidden','true');
+      mainBtn.disabled=true;
+    }
   }
 
   function currentPageFile(){
@@ -354,9 +380,8 @@
       .forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!on;});
     // Main / BO scope stays clickable so users can browse either catalogue before selecting a role.
   }
-  function roleOptionLabel(role,selected){
-    const name=String(role?.name||role?.code||'Role').trim();
-    return selected?`${name} (Selected)`:name;
+  function roleOptionLabel(role){
+    return String(role?.name||role?.code||'Role').trim();
   }
   function syncRoleSelectLabels(selectedId){
     const select=document.getElementById('menuPermissionRoleSelect');
@@ -365,8 +390,12 @@
       if(!opt.value){opt.textContent='Select role...';return;}
       const role=roleCache.find(r=>String(r.id)===String(opt.value));
       if(!role) return;
-      opt.textContent=roleOptionLabel(role,String(opt.value)===String(selectedId||''));
+      opt.textContent=roleOptionLabel(role);
     });
+    const wrap=select.closest('.rounded-select-wrap');
+    if(wrap) wrap.dataset.boAutoWidth='1';
+    if(window.BOSelectSync && typeof BOSelectSync.one==='function') BOSelectSync.one(select);
+    else select.dispatchEvent(new Event('bo:select-sync',{bubbles:true}));
   }
   function updateScopeCounts(){
     const mainEl=document.getElementById('menuPermissionScopeMainCount');
@@ -395,6 +424,10 @@
         if(isMerchantRolesPage){
           const boTotal=menusForScope('bo').length;
           pillText.textContent=`Assigned: ${boCount} / ${boTotal} Menus`;
+        }else if(hideBoPermissionScope){
+          const mainTotal=menusForScope('main').length;
+          const mainCount=menusForScope('main').filter(m=>mpWorkingIds&&mpWorkingIds.has(String(m.id))).length;
+          pillText.textContent=`Assigned: ${mainCount} / ${mainTotal} Menus`;
         }else{
           const mainCount=menusForScope('main').filter(m=>mpWorkingIds&&mpWorkingIds.has(String(m.id))).length;
           pillText.textContent=`Assigned: ${assigned} / ${total} Menus · Main ${mainCount} · BO ${boCount}`;
@@ -415,6 +448,7 @@
       if(reset) reset.disabled=!dirty;
       if(save) save.disabled=!roleId;
     }
+    syncDeleteRoleButton();
   }
   function setGroupOpen(group,open){
     if(!group) return;
@@ -478,6 +512,104 @@
     return false;
   }
 
+  function canDeleteRole(role){
+    if(!role) return false;
+    if(!canEditRoleMenus(role)) return false;
+    if(Number(role.systemRole)===1) return false;
+    const rt=String(role.roleType||'').toUpperCase();
+    if(['ROOT','MASTER','BRAND_OWNER'].includes(rt)) return false;
+    return true;
+  }
+
+  function syncDeleteRoleButton(){
+    const btn=document.getElementById('menuPermissionDeleteRoleBtn');
+    if(!btn) return;
+    const roleId=document.getElementById('menuPermissionRoleId')?.value||'';
+    const role=roleCache.find(r=>String(r.id)===String(roleId));
+    if(!roleId || !role){
+      btn.hidden=true;
+      btn.disabled=true;
+      btn.removeAttribute('data-role-id');
+      btn.title='Delete role';
+      return;
+    }
+    const allowed=canDeleteRole(role);
+    btn.hidden=false;
+    btn.disabled=!allowed;
+    btn.dataset.roleId=String(role.id);
+    btn.title=allowed
+      ? ('Delete role "' + (role.name || role.code || 'Role') + '"')
+      : 'System roles cannot be deleted';
+  }
+
+  async function deleteSelectedRole(){
+    const status=document.getElementById('menuPermissionStatus');
+    const roleId=document.getElementById('menuPermissionRoleId')?.value||'';
+    const role=roleCache.find(r=>String(r.id)===String(roleId));
+    if(!roleId || !role){
+      msg(status,'Please select a role first.','error');
+      return;
+    }
+    if(!canDeleteRole(role)){
+      msg(status,'This system role is protected and cannot be deleted.','error');
+      return;
+    }
+    const label=role.name || role.code || ('Role #' + role.id);
+    let yes=false;
+    if(window.BO_DIALOG && typeof BO_DIALOG.confirm==='function'){
+      yes=await BO_DIALOG.confirm(
+        'Delete role "' + label + '"?\n\nThis permanently removes the role and its menu permission assignments. Accounts still using this role may need to be reassigned first.',
+        {title:'Delete Role',confirmText:'Delete',type:'danger'}
+      );
+    }else{
+      yes=window.confirm('Delete role "' + label + '"?');
+    }
+    if(!yes) return;
+
+    const btn=document.getElementById('menuPermissionDeleteRoleBtn');
+    if(btn) btn.disabled=true;
+    msg(status,'Deleting role...','');
+    try{
+      await api(BO_AUTH.roleDeleteUrl(role.id),{method:'POST',headers:{...BO_AUTH.authHeader()}});
+      msg(status,'Role "' + label + '" deleted.','success');
+      const select=document.getElementById('menuPermissionRoleSelect');
+      if(select) select.value='';
+      await loadMenuPermissionWorkspace();
+    }catch(err){
+      const raw=String(err?.message||'Unable to delete role.');
+      // Fallback: soft-disable via ROLE_SAVE when hard-delete endpoint is unavailable.
+      if(/404|405|not\s*found|unsupported|no\s*static\s*resource|method\s*not\s*allowed/i.test(raw)){
+        try{
+          await api(BO_AUTH.roleSaveUrl(),{
+            method:'POST',
+            headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},
+            body:JSON.stringify({
+              id:Number(role.id),
+              name:role.name||label,
+              code:role.code||('role_'+role.id),
+              remark:role.remark||'',
+              status:0
+            })
+          });
+          msg(status,'Role "' + label + '" deleted.','success');
+          const select=document.getElementById('menuPermissionRoleSelect');
+          if(select) select.value='';
+          await loadMenuPermissionWorkspace();
+          return;
+        }catch(softErr){
+          const softMsg=String(softErr?.message||raw);
+          if(window.BO_DIALOG&&BO_DIALOG.alert) BO_DIALOG.alert(softMsg,{title:'Delete Role Failed',type:'danger'});
+          msg(status,softMsg,'error');
+          return;
+        }
+      }
+      if(window.BO_DIALOG&&BO_DIALOG.alert) BO_DIALOG.alert(raw,{title:'Delete Role Failed',type:'danger'});
+      msg(status,raw,'error');
+    }finally{
+      syncDeleteRoleButton();
+    }
+  }
+
   async function loadMenuPermissionWorkspace(){
     const select=document.getElementById('menuPermissionRoleSelect');
     const list=document.getElementById('menuPermissionCheckList');
@@ -506,12 +638,21 @@
           if(merchantScoped) return false;
         }
         return canEditRoleMenus(r);
+      }).sort((a,b)=>{
+        const an=String(a?.name||a?.code||'').trim();
+        const bn=String(b?.name||b?.code||'').trim();
+        return an.localeCompare(bn, undefined, {sensitivity:'base', numeric:true});
       });
-      select.innerHTML='<option value="">Select role...</option>'+editable.map(r=>`<option value="${esc(r.id)}">${esc(roleOptionLabel(r,false))}</option>`).join('');
+      select.innerHTML='<option value="">Select role...</option>'+editable.map(r=>`<option value="${esc(r.id)}">${esc(roleOptionLabel(r))}</option>`).join('');
+      const roleWrap=select.closest('.rounded-select-wrap');
+      if(roleWrap) roleWrap.dataset.boAutoWidth='1';
+      if(window.BOSelectSync && typeof BOSelectSync.one==='function') BOSelectSync.one(select);
       mpBaselineIds=[];
       mpWorkingIds=null;
       mpFilterQuery='';
       mpScope=isMerchantRolesPage?'bo':'main';
+      if(hideBoPermissionScope) mpScope='main';
+      applyMainOnlyPermissionUi();
       document.querySelectorAll('[data-mp-scope]').forEach(btn=>{
         const on=btn.getAttribute('data-mp-scope')===mpScope;
         btn.classList.toggle('is-active',on);
@@ -671,6 +812,11 @@
   document.addEventListener('click',e=>{
     if(e.target.closest('#openRoleModalBtn'))openCreate();
     const edit=e.target.closest('[data-edit-role]');if(edit)openEdit(edit.dataset.editRole);
+    if(e.target.closest('#menuPermissionDeleteRoleBtn')){
+      e.preventDefault();
+      deleteSelectedRole();
+      return;
+    }
     if(e.target.closest('[data-close-role-modal]'))closeModal();
     if(e.target.id==='roleCreateModal')closeModal();
     const accordion=e.target.closest('[data-mp-accordion]');
@@ -689,6 +835,7 @@
       document.getElementById('clearAllPermission').onclick=()=>{document.querySelectorAll('#checkList .permission-item input').forEach(x=>x.checked=false);syncGroupToggles();};
     }
     if(isMenuPermissionPage){
+      applyMainOnlyPermissionUi();
       try{menuCache=await fetchMenus();await loadMenuPermissionWorkspace();}catch(e){msg(document.getElementById('menuPermissionStatus'),e.message,'error');}
       const form=document.getElementById('menuPermissionForm');if(form)form.onsubmit=saveMenuPermissions;
       const select=document.getElementById('menuPermissionRoleSelect');if(select)select.onchange=()=>loadSelectedMenuPermissionRole(select.value);
@@ -702,7 +849,7 @@
           if(roleOn) document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=false);
         });
       }
-      if(!isMerchantRolesPage){
+      if(!isMerchantRolesPage && !hideBoPermissionScope){
         document.querySelectorAll('[data-mp-scope]').forEach(btn=>{
           btn.addEventListener('click',()=>{
             if(btn.disabled) return;

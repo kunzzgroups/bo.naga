@@ -462,6 +462,64 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  function measureLabelWidth(text, reference){
+    const canvas=measureLabelWidth._c||(measureLabelWidth._c=document.createElement('canvas'));
+    const ctx=canvas.getContext('2d');
+    if(!ctx) return String(text||'').length*7;
+    const cs=getComputedStyle(reference||document.body);
+    ctx.font=[cs.fontStyle,cs.fontVariant,cs.fontWeight,cs.fontSize,cs.fontFamily].filter(Boolean).join(' ');
+    return Math.ceil(ctx.measureText(String(text||'').trim()).width);
+  }
+
+  function isCompactAutoWidthWrap(wrap){
+    if(!wrap) return false;
+    if(wrap.dataset.boAutoWidth==='0') return false;
+    if(wrap.dataset.boAutoWidth==='1') return true;
+    return !!wrap.closest('.mad-filters,.mac-filters,.mp-role-row,.bo-filter-row,.mpv-filters,.entries-control,.mac-toolbar,.mad-chrome-actions');
+  }
+
+  function sizeRoundedSelectToContent(select){
+    const parts=findParts(select);
+    if(!parts.wrap || !parts.button || !parts.menu) return;
+    const labels=[];
+    Array.from(select.options||[]).forEach(function(o){
+      const text=String(o.textContent||o.label||'').trim();
+      if(!text) return;
+      labels.push(text);
+    });
+    if(!labels.length) return;
+    const widest=Math.max.apply(null, labels.map(function(label){
+      return measureLabelWidth(label, parts.button);
+    }));
+    /* left pad ~14 + chevron/right pad ~46 + breathing room */
+    const contentWidth=Math.max(160, widest+72);
+
+    if(isCompactAutoWidthWrap(parts.wrap)){
+      parts.wrap.style.setProperty('width', contentWidth+'px','important');
+      parts.wrap.style.setProperty('min-width', contentWidth+'px','important');
+      parts.wrap.style.setProperty('max-width', contentWidth+'px','important');
+      parts.wrap.style.setProperty('flex','0 0 '+contentWidth+'px','important');
+      parts.button.style.setProperty('width', '100%','important');
+      parts.button.style.setProperty('min-width', contentWidth+'px','important');
+      parts.menu.style.setProperty('width', contentWidth+'px','important');
+      parts.menu.style.setProperty('min-width', contentWidth+'px','important');
+      parts.menu.style.setProperty('max-width', contentWidth+'px','important');
+    }else{
+      const wrapWidth=Math.ceil(parts.wrap.getBoundingClientRect().width||0);
+      const menuWidth=Math.max(contentWidth, wrapWidth);
+      parts.menu.style.setProperty('width','max-content','important');
+      parts.menu.style.setProperty('min-width', menuWidth+'px','important');
+      parts.menu.style.setProperty('max-width','none','important');
+    }
+    parts.menu.style.setProperty('right','auto','important');
+    parts.menu.style.setProperty('left','0','important');
+    parts.menu.querySelectorAll('.rounded-select-option').forEach(function(item){
+      item.style.setProperty('white-space','nowrap','important');
+      item.style.setProperty('overflow','visible','important');
+      item.style.setProperty('text-overflow','clip','important');
+    });
+  }
+
   function renderExisting(select){
     if(!select) return;
     const parts=findParts(select);
@@ -502,6 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
       item.classList.toggle('active',!!opt && opt.selected);
       item.disabled=!!opt && opt.disabled;
     });
+    sizeRoundedSelectToContent(select);
   }
 
   function queueSync(select){
@@ -554,6 +613,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('.rounded-select-menu.show').forEach(m=>m.classList.remove('show'));
       document.querySelectorAll('.rounded-select-btn.open').forEach(b=>b.classList.remove('open'));
       if(open){
+        sizeRoundedSelectToContent(select);
         menu.classList.add('show');
         btn.classList.add('open');
       }

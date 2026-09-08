@@ -1,4 +1,4 @@
-/* Deep Navy Cyan — Menu Permission workspace
+﻿/* Deep Navy Cyan — Menu Permission workspace
    Layout from approved mockup · tokens from .interface-design/system.md */
 
 body.menu-permission-page{
@@ -98,7 +98,7 @@ body.menu-permission-page .mp-add-role-btn,
 body.menu-permission-page a.mp-add-role-btn.mad-btn{
   display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;
   height:36px!important;min-height:36px!important;padding:0 14px!important;margin:0!important;
-  border:1px solid var(--bo-navy)!important;border-radius:10px!important;
+  border:1px solid var(--bo-navy)!important;border-radius:8px!important;
   background:var(--bo-navy)!important;color:#fff!important;
   font-size:12.5px!important;font-weight:700!important;line-height:1!important;cursor:pointer!important;
   text-decoration:none!important;box-shadow:none!important;
@@ -151,7 +151,7 @@ body.menu-permission-page .report-sidebar .report-nav > a,
 body.menu-permission-page .report-sidebar .report-nav > .nav-group{
   margin:0!important;
   border:0!important;
-  border-radius:10px!important;
+  border-radius:8px;
   background:transparent!important;
   overflow:visible!important;
 }
@@ -162,7 +162,7 @@ body.menu-permission-page .report-sidebar .report-nav > a:not(.report-sub).activ
   min-height:42px!important;
   padding:10px 12px!important;
   border:0!important;
-  border-radius:10px!important;
+  border-radius:8px;
   background:transparent!important;
   color:rgba(255,255,255,.82)!important;
   font-weight:650!important;
@@ -184,7 +184,7 @@ body.menu-permission-page .report-sidebar .nav-group .nav-group-btn{
   margin:0!important;
   padding:10px 12px!important;
   border:0!important;
-  border-radius:10px!important;
+  border-radius:8px;
   background:transparent!important;
   color:rgba(255,255,255,.82)!important;
   font-weight:650!important;
@@ -213,7 +213,7 @@ body.menu-permission-page .bo-sidebar-account-footer{
   background:transparent!important;
   border-top:1px solid rgba(255,255,255,.1)!important;
 }
-body.menu-permission-page .bo-sidebar-logout{color:#FF8A90!important;border-radius:10px}
+body.menu-permission-page .bo-sidebar-logout{color:#FF8A90!important;border-radius:8px!important}
 body.menu-permission-page .bo-sidebar-logout i{color:var(--bo-danger)!important}
 body.menu-permission-page .bo-sidebar-logout:hover{
   background:rgba(239,51,64,.14)!important;
@@ -229,7 +229,7 @@ body.menu-permission-page .report-topbar{
 body.menu-permission-page .report-topbar .hamb{
   width:40px;height:40px;min-width:40px;
   border:1px solid var(--bo-border)!important;
-  border-radius:10px!important;
+  border-radius:8px;
   background:var(--bo-surface)!important;
   color:var(--bo-text)!important;
 }
@@ -239,7 +239,7 @@ body.menu-permission-page .report-topbar .hamb:hover{
 }
 body.menu-permission-page .user-title-icon{
   width:40px!important;height:40px!important;
-  border-radius:10px!important;
+  border-radius:8px;
   background:var(--bo-cyan-tint)!important;
   color:var(--bo-cyan)!important;
   font-size:18px!important;
@@ -264,7 +264,7 @@ body.menu-permission-page .bo-theme-btn{
   height:40px!important;
   min-width:40px!important;
   border:1px solid var(--bo-border)!important;
-  border-radius:10px!important;
+  border-radius:8px;
   background:var(--bo-bg)!important;
   color:var(--bo-text-secondary)!important;
   display:inline-grid!important;
@@ -301,7 +301,7 @@ body.menu-permission-page .bo-theme-btn.bo-ui-button-secondary{
   min-width:40px!important;
   padding:0!important;
   border:1px solid var(--bo-border)!important;
-  border-radius:10px!important;
+  border-radius:8px;
   background:var(--bo-bg)!important;
   color:var(--bo-text-secondary)!important;
 }
@@ -322,7 +322,7 @@ body.menu-permission-page .mp-form{
 body.menu-permission-page .mp-control-card{
   background:var(--bo-surface)!important;
   border:1px solid var(--bo-border)!important;
-  border-radius:14px!important;
+  border-radius:8px;
   box-shadow:var(--bo-shadow)!important;
   padding:0 18px!important;
   width:100%!important;
@@ -366,22 +366,57 @@ body.menu-permission-page select#menuPermissionRoleSelect.mp-role-select{
 }
 body.menu-permission-page .mp-role-row .rounded-select-wrap{
   position:relative!important;
-  flex:0 0 24%!important;
-  width:24%!important;
-  max-width:24%!important;
+  flex:0 0 auto!important;
+  width:auto!important;
   min-width:180px!important;
+  max-width:none!important;
+}
+body.menu-permission-page .mp-delete-role-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  height:42px;padding:0 14px;margin:0;border-radius:8px;
+  border:1px solid rgba(239,51,64,.28);
+  background:rgba(239,51,64,.06);
+  color:#B42318;
+  font-size:13px;font-weight:700;line-height:1;white-space:nowrap;
+  cursor:pointer;
+  transition:background .14s ease,border-color .14s ease,color .14s ease,opacity .14s ease,transform .14s ease;
+  flex:0 0 auto;
+}
+body.menu-permission-page .mp-delete-role-btn i{font-size:14px;line-height:1}
+body.menu-permission-page .mp-delete-role-btn:hover:not(:disabled){
+  background:rgba(239,51,64,.12);
+  border-color:rgba(239,51,64,.45);
+  color:#912018;
+}
+body.menu-permission-page .mp-delete-role-btn:active:not(:disabled){transform:scale(.98)}
+body.menu-permission-page .mp-delete-role-btn:disabled{
+  opacity:.45;cursor:not-allowed;
+}
+body.menu-permission-page .mp-delete-role-btn[hidden]{display:none!important}
+body.menu-permission-page .mp-delete-role-btn:focus-visible{
+  outline:2px solid rgba(239,51,64,.45);outline-offset:2px;
 }
 body.menu-permission-page .mp-role-row .rounded-select-btn{
   width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
   height:40px!important;
   border:1px solid #C9D4E8!important;
-  border-radius:10px!important;
+  border-radius:8px;
   background:#fff!important;
   color:var(--bo-text)!important;
   font-size:13.5px!important;
   font-weight:600!important;
   padding:0 14px!important;
   box-shadow:none!important;
+  overflow:visible!important;
+}
+body.menu-permission-page .mp-role-row .rounded-select-btn > span{
+  overflow:visible!important;
+  text-overflow:clip!important;
+  white-space:nowrap!important;
+  flex:1 1 auto;
+  min-width:0;
 }
 body.menu-permission-page .mp-role-row .rounded-select-btn.open,
 body.menu-permission-page .mp-role-row .rounded-select-btn:focus{
@@ -391,8 +426,19 @@ body.menu-permission-page .mp-role-row .rounded-select-btn:focus{
 }
 body.menu-permission-page .mp-role-row .rounded-select-menu{
   border:1px solid var(--bo-border)!important;
-  border-radius:12px!important;
+  border-radius:8px;
   box-shadow:var(--bo-shadow)!important;
+  width:100%!important;
+  min-width:100%!important;
+  max-width:none!important;
+  right:auto!important;
+  left:0!important;
+  box-sizing:border-box!important;
+}
+body.menu-permission-page .mp-role-row .rounded-select-option{
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
 }
 body.menu-permission-page .mp-assigned-pill{
   display:inline-flex!important;
@@ -402,7 +448,7 @@ body.menu-permission-page .mp-assigned-pill{
   margin:0!important;
   margin-left:0!important;
   padding:0 14px;
-  border-radius:999px;
+  border-radius:8px;
   border:1px solid rgba(18,183,106,.22);
   background:#E8F8EF;
   color:#127A4A;
@@ -426,7 +472,7 @@ body.menu-permission-page .mp-toolbar{
 body.menu-permission-page .mp-scope{
   position:relative;
   display:inline-flex;align-items:center;gap:4px;flex:0 0 auto;
-  padding:4px;border-radius:14px;
+  padding:4px;border-radius:8px;
   background:#EEF1F6;
   border:1px solid #E4E7EC;
   box-sizing:border-box;
@@ -435,7 +481,7 @@ body.menu-permission-page .mp-scope{
 body.menu-permission-page .mp-scope-btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
   height:36px;min-width:0;padding:0 14px;
-  border:0;border-radius:10px;background:transparent;
+  border:0;border-radius:8px;background:transparent;
   color:var(--bo-navy);font-size:12.5px;font-weight:800;line-height:1;
   letter-spacing:.04em;text-transform:uppercase;
   cursor:pointer;
@@ -462,12 +508,20 @@ body.menu-permission-page .mp-scope-btn.is-active{
 body.menu-permission-page .mp-scope-btn.is-active > i{color:var(--bo-cyan)}
 body.menu-permission-page .mp-scope-btn.is-active .mp-scope-count{
   min-width:28px;height:22px;padding:0 8px;
-  border-radius:999px;
+  border-radius:8px;
   background:rgba(33,166,215,.14);
   color:var(--bo-navy);
 }
 body.menu-permission-page .mp-scope-btn:disabled{opacity:.45;cursor:not-allowed}
 body.menu-permission-page .mp-scope-btn:focus-visible{outline:2px solid var(--bo-cyan);outline-offset:2px}
+/* ADMIN Roles & Permissions: MAIN-only — hide MAIN/BO scope switcher */
+body.menu-permission-page.mp-main-only .mp-toolbar .mp-scope,
+body.menu-permission-page.mp-main-only .mp-scope-btn[data-mp-scope="bo"],
+body.menu-permission-page.mp-main-only .mp-scope-btn[data-mp-scope="main"],
+body.menu-permission-page #menuPermissionScopeBo[hidden],
+body.menu-permission-page #menuPermissionScopeMain[hidden]{
+  display:none!important;
+}
 body.main-merchant-roles-page .mp-scope-bo-only,
 body.main-merchant-role-create-page .mp-scope-bo-only{
   pointer-events:none;
@@ -484,7 +538,7 @@ body.menu-permission-page .mp-search{
   margin:0;
   padding:0 16px;
   border:1px solid #D0D5DD;
-  border-radius:12px;
+  border-radius:8px;
   background:#fff;
   box-shadow:none;
   box-sizing:border-box;
@@ -588,7 +642,7 @@ body.menu-permission-page .permission-empty{
   padding:40px 20px;
   text-align:center;
   border:1px dashed var(--bo-border);
-  border-radius:14px;
+  border-radius:8px;
   background:var(--bo-surface);
   color:var(--bo-muted);
   font-size:13px;
@@ -597,7 +651,7 @@ body.menu-permission-page .permission-empty{
 
 body.menu-permission-page .mp-group{
   border:1px solid var(--bo-border);
-  border-radius:12px;
+  border-radius:8px;
   background:var(--bo-surface);
   box-shadow:var(--bo-shadow);
   overflow:hidden;
@@ -624,7 +678,7 @@ body.menu-permission-page .mp-group-toggle{
   cursor:pointer;
   color:inherit;
 }
-body.menu-permission-page .mp-group-toggle:focus-visible{outline:2px solid var(--bo-cyan);outline-offset:2px;border-radius:6px}
+body.menu-permission-page .mp-group-toggle:focus-visible{outline:2px solid var(--bo-cyan);outline-offset:2px;border-radius:8px}
 body.menu-permission-page .mp-chevron{
   width:16px;
   color:var(--bo-muted);
@@ -637,7 +691,7 @@ body.menu-permission-page .mp-group-icon{
   width:30px;height:30px;
   display:grid;
   place-items:center;
-  border-radius:7px;
+  border-radius:8px;
   background:var(--bo-cyan-tint);
   color:var(--bo-cyan);
   font-size:14px;
@@ -676,7 +730,7 @@ body.menu-permission-page .mp-group-count{
   align-items:center;
   height:24px;
   padding:0 10px;
-  border-radius:999px;
+  border-radius:8px;
   background:var(--bo-cyan-tint);
   color:var(--bo-cyan-deep);
   font-size:11px;
@@ -739,7 +793,7 @@ body.menu-permission-page .mp-menu-card{
   margin:0;
   padding:12px 12px 12px 13px;
   border:1px solid var(--bo-border);
-  border-radius:10px;
+  border-radius:8px;
   background:var(--bo-surface);
   cursor:pointer;
   transition:border-color .16s var(--bo-ease),background .16s var(--bo-ease),box-shadow .16s var(--bo-ease);
@@ -793,7 +847,7 @@ body.menu-permission-page .mp-menu-badge{
   align-items:center;
   height:17px;
   padding:0 6px;
-  border-radius:4px;
+  border-radius:8px;
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   font-size:9px;
   font-weight:700;
@@ -916,6 +970,7 @@ body.menu-permission-page .mp-btn-save:focus-visible{outline:2px solid var(--bo-
   body.menu-permission-page .mp-role-row{flex-wrap:wrap!important}
   body.menu-permission-page .mp-role-row .rounded-select-wrap{flex:1 1 100%!important;width:100%!important;max-width:100%!important;min-width:0!important}
   body.menu-permission-page .mp-role-row .rounded-select-btn{width:100%!important}
+  body.menu-permission-page .mp-delete-role-btn{width:100%}
   body.menu-permission-page .mp-toolbar{flex-direction:column;align-items:stretch}
   body.menu-permission-page .mp-scope{align-self:flex-start}
   body.menu-permission-page .mp-search{flex:1 1 auto;width:auto;min-width:0;max-width:none}
@@ -1029,6 +1084,16 @@ html[data-bo-theme="dark"] body.menu-permission-page .mp-assigned-pill{
   background:rgba(18,183,106,.14);
   border-color:rgba(18,183,106,.3);
   color:#6EE7A8;
+}
+html[data-bo-theme="dark"] body.menu-permission-page .mp-delete-role-btn{
+  background:rgba(239,51,64,.14);
+  border-color:rgba(239,51,64,.35);
+  color:#FF8A90;
+}
+html[data-bo-theme="dark"] body.menu-permission-page .mp-delete-role-btn:hover:not(:disabled){
+  background:rgba(239,51,64,.22);
+  border-color:rgba(239,51,64,.5);
+  color:#FFB4B8;
 }
 html[data-bo-theme="dark"] body.menu-permission-page .mp-group-count{color:var(--bo-cyan)}
 html[data-bo-theme="dark"] body.menu-permission-page .mp-tool-btn.is-accent{color:var(--bo-cyan)}

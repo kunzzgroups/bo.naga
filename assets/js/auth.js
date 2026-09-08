@@ -266,6 +266,7 @@
     roleListUrl: function(){ return api('ROLE_LIST'); },
     roleListAllUrl: function(){ return API_CONFIG.BASE_URL + (API_CONFIG.ENDPOINTS.ROLE_LIST_ALL || "/admin/access/roles/all"); },
     roleSaveUrl: function(){ return api('ROLE_SAVE'); },
+    roleDeleteUrl: function(id){ return api('ROLE_DELETE') + '/' + id + '/delete'; },
     menuListUrl: function(){ return api('MENU_LIST'); },
     menuListAllUrl: function(){ return api('MENU_LIST_ALL'); },
     menuSaveUrl: function(){ return api('MENU_SAVE'); },

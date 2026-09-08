@@ -1454,9 +1454,9 @@ body.pwt-page.modal-open .pwt-modal{pointer-events:auto}
 .rounded-select-wrap{position:relative;width:100%}
 .rounded-select-btn{height:42px;width:100%;border:1px solid #cfd8e6;background:#fff;border-radius:10px;padding:0 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;font-weight:800;color:#101828;text-align:left}
 .rounded-select-btn.open,.rounded-select-btn:focus{outline:0;border-color:#5b6cff;box-shadow:0 0 0 3px rgba(91,108,255,.14);border-radius:10px}
-.rounded-select-menu{position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;border:1px solid #cfd8e6;border-radius:12px;box-shadow:0 18px 35px rgba(16,24,40,.16);padding:6px;display:none;z-index:3000;overflow:hidden}
+.rounded-select-menu{position:absolute;left:0;right:auto;top:calc(100% + 6px);width:max-content;min-width:100%;background:#fff;border:1px solid #cfd8e6;border-radius:12px;box-shadow:0 18px 35px rgba(16,24,40,.16);padding:6px;display:none;z-index:3000;overflow:hidden;max-height:280px;overflow-y:auto;box-sizing:border-box}
 .rounded-select-menu.show{display:block}
-.rounded-select-option{width:100%;height:34px;border:0;background:#fff;border-radius:9px;text-align:left;padding:0 11px;font-size:13px;font-weight:800;color:#344054}
+.rounded-select-option{width:100%;height:34px;border:0;background:#fff;border-radius:9px;text-align:left;padding:0 11px;font-size:13px;font-weight:800;color:#344054;white-space:nowrap}
 .rounded-select-option:hover{background:#eef2ff;color:#4f46e5}
 @media(max-width:420px){.rounded-select-btn{height:42px!important}.rounded-select-menu{position:absolute}}
 
@@ -1638,9 +1638,9 @@ body.pwt-page.modal-open .pwt-modal{pointer-events:auto}
 .rounded-select-wrap>select{position:absolute!important;opacity:0!important;pointer-events:none!important;width:1px!important;height:1px!important}
 .rounded-select-btn{height:42px;width:100%;border:1px solid #cfd8e6;background:#fff;border-radius:12px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;font-weight:800;color:#101828;text-align:left;white-space:nowrap}
 .rounded-select-btn.open,.rounded-select-btn:focus{outline:0;border-color:#5b6cff;box-shadow:0 0 0 3px rgba(91,108,255,.14)}
-.rounded-select-menu{position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;border:1px solid #d8deea;border-radius:14px;box-shadow:0 18px 40px rgba(16,24,40,.16);padding:7px;display:none;z-index:5000;overflow:hidden;max-height:280px;overflow-y:auto}
+.rounded-select-menu{position:absolute;left:0;right:auto;top:calc(100% + 6px);width:max-content;min-width:100%;background:#fff;border:1px solid #d8deea;border-radius:14px;box-shadow:0 18px 40px rgba(16,24,40,.16);padding:7px;display:none;z-index:5000;overflow:hidden;max-height:280px;overflow-y:auto;box-sizing:border-box}
 .rounded-select-menu.show{display:block}
-.rounded-select-option{width:100%;min-height:36px;border:0;background:#fff;border-radius:10px;text-align:left;padding:8px 12px;font-size:13px;font-weight:800;color:#344054;display:block}
+.rounded-select-option{width:100%;min-height:36px;border:0;background:#fff;border-radius:10px;text-align:left;padding:8px 12px;font-size:13px;font-weight:800;color:#344054;display:block;white-space:nowrap}
 .rounded-select-option:hover,.rounded-select-option.active{background:#eef2ff;color:#4f46e5}
 
 /* v3: livechat message actions and inline editing */

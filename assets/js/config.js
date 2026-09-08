@@ -35,6 +35,7 @@ const API_CONFIG = window.API_CONFIG || {
         ROLE_LIST: "/admin/access/roles",
         ROLE_LIST_ALL: "/admin/access/roles/all",
         ROLE_SAVE: "/admin/access/roles/save",
+        ROLE_DELETE: "/admin/access/roles",
         MENU_LIST: "/admin/access/menus",
         MENU_LIST_ALL: "/admin/access/menus/all",
         MENU_SAVE: "/admin/access/menus/save",

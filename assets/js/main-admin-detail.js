@@ -221,6 +221,8 @@
         || '<option value="">No role available for this selection</option>';
       ['madEditRole'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = html; });
       if(roleFilter) roleFilter.innerHTML = '<option value="">All Roles</option>' + html;
+      sizeAdminFilterSelects();
+      requestAnimationFrame(sizeAdminFilterSelects);
       return rows;
     }catch(e){
       ['madEditRole'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = '<option value="">Unable to load roles</option>'; });
@@ -296,9 +298,9 @@
         '<td class="mad-time">' + timeWithDateTip(logout) + '</td>' +
         '<td><div class="mad-actions">' + (protectedRoot
           ? '<span class="mad-status is-active" title="Root account cannot be modified by non-root administrators">Protected</span>'
-          : '<button class="mad-icon-btn mad-edit-btn" type="button" title="Edit" data-id="' + esc(row.id) + '" data-row=\'' + rowAttr + '\'><i class="bi bi-pencil"></i></button>' +
-            '<button class="mad-icon-btn mad-key-btn" type="button" title="Reset password" data-id="' + esc(row.id) + '" data-row=\'' + rowAttr + '\'><i class="bi bi-key"></i></button>' +
-            '<button class="mad-icon-btn is-danger mad-toggle-btn" type="button" title="' + (active ? 'Suspend' : 'Activate') + '" data-id="' + esc(row.id) + '" data-status="' + (active ? 0 : 1) + '"><i class="bi bi-' + (active ? 'slash-circle' : 'check-circle') + '"></i></button>') +
+          : '<button class="mad-icon-btn mad-edit-btn" type="button" data-tip="Edit" data-id="' + esc(row.id) + '" data-row=\'' + rowAttr + '\'><i class="bi bi-pencil"></i></button>' +
+            '<button class="mad-icon-btn mad-key-btn" type="button" data-tip="Reset password" data-id="' + esc(row.id) + '" data-row=\'' + rowAttr + '\'><i class="bi bi-key"></i></button>' +
+            '<button class="mad-icon-btn mad-toggle-btn ' + (active ? 'is-danger' : 'is-success') + '" type="button" data-tip="' + (active ? 'Suspend' : 'Activate') + '" data-id="' + esc(row.id) + '" data-status="' + (active ? 0 : 1) + '"><i class="bi bi-' + (active ? 'slash-circle' : 'check-circle') + '"></i></button>') +
         '</div></td>' +
       '</tr>';
     }).join('');
@@ -607,6 +609,62 @@
   editBrandEl && editBrandEl.addEventListener('change', () => { loadRoles(editBrandEl.value ? Number(editBrandEl.value) : null); });
 
   setInterval(updateSyncLabel, 15000);
+
+  function measureLabelWidth(text, reference){
+    const canvas = measureLabelWidth._c || (measureLabelWidth._c = document.createElement('canvas'));
+    const ctx = canvas.getContext('2d');
+    if(!ctx) return String(text || '').length * 7;
+    const cs = getComputedStyle(reference || document.body);
+    ctx.font = [cs.fontStyle, cs.fontVariant, cs.fontWeight, cs.fontSize, cs.fontFamily].filter(Boolean).join(' ');
+    return Math.ceil(ctx.measureText(String(text || '').trim()).width);
+  }
+
+  function sizeFilterSelect(select){
+    if(!select || !select.options || !select.options.length) return;
+    const wrap = select.closest('.rounded-select-wrap');
+    const btn = wrap && wrap.querySelector('.rounded-select-btn');
+    const ref = btn || select;
+    const labels = Array.from(select.options).map(o => String(o.textContent || o.label || '').trim()).filter(Boolean);
+    if(!labels.length) return;
+    const widest = Math.max.apply(null, labels.map(label => measureLabelWidth(label, ref)));
+    /* left pad 14 + right pad/chevron ~38 + breathing room 8 */
+    const width = Math.max(120, widest + 60);
+    if(wrap){
+      wrap.style.setProperty('width', width + 'px', 'important');
+      wrap.style.setProperty('min-width', width + 'px', 'important');
+      wrap.style.setProperty('max-width', width + 'px', 'important');
+      wrap.style.setProperty('flex', '0 0 ' + width + 'px', 'important');
+      if(btn){
+        btn.style.setProperty('width', width + 'px', 'important');
+        btn.style.setProperty('min-width', width + 'px', 'important');
+      }
+      const menu = wrap.querySelector('.rounded-select-menu');
+      if(menu){
+        menu.style.setProperty('min-width', width + 'px', 'important');
+        menu.style.setProperty('width', 'max-content', 'important');
+      }
+    }else{
+      select.style.setProperty('width', width + 'px', 'important');
+      select.style.setProperty('min-width', width + 'px', 'important');
+    }
+  }
+
+  function sizeAdminFilterSelects(){
+    sizeFilterSelect(roleFilter);
+    sizeFilterSelect(statusFilter);
+  }
+
+  sizeAdminFilterSelects();
+  requestAnimationFrame(sizeAdminFilterSelects);
+  setTimeout(sizeAdminFilterSelects, 0);
+  setTimeout(sizeAdminFilterSelects, 50);
+  setTimeout(sizeAdminFilterSelects, 200);
+
+  const filtersRoot = document.querySelector('.mad-filters');
+  if(filtersRoot && typeof MutationObserver !== 'undefined'){
+    const mo = new MutationObserver(function(){ sizeAdminFilterSelects(); });
+    mo.observe(filtersRoot, { childList: true, subtree: true });
+  }
 
   if(pageNoEl) pageNoEl.innerHTML = pageButtons(1, 1);
 

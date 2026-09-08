@@ -10,7 +10,6 @@
   const tierFilter = document.getElementById('macTierFilter');
   const resetBtn = document.getElementById('macResetBtn');
   const exportBtn = document.getElementById('macExportBtn');
-  const adjustBtn = document.getElementById('macAdjustBtn');
   const syncLabel = document.getElementById('macSyncLabel');
   const adjustModal = document.getElementById('macAdjustModal');
   const adjustForm = document.getElementById('macAdjustForm');
@@ -440,7 +439,6 @@
     URL.revokeObjectURL(a.href);
   });
 
-  adjustBtn && adjustBtn.addEventListener('click', () => openAdjust());
   adjustAccount && adjustAccount.addEventListener('change', syncAdjustFields);
   document.querySelectorAll('[data-mac-close]').forEach(btn => btn.addEventListener('click', closeAdjust));
   adjustModal && adjustModal.addEventListener('click', e => { if(e.target === adjustModal) closeAdjust(); });
