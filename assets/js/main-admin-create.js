@@ -219,12 +219,11 @@
           ? rows.filter(r => Number(r.brandId) === Number(brandId) && !['MASTER', 'ROOT', 'MAIN'].includes(String(r.roleType || '').toUpperCase()))
           : rows.filter(r => r.brandId == null && String(r.roleType || '').toUpperCase() !== 'ROOT');
       }else if(flags.mainAdmin){
-        // MAIN/Boss must see the same role catalogue ROOT maintains, except ROOT itself.
-        // Custom roles may carry a brandId / legacy scope marker, so filtering on
-        // brandId == null incorrectly hid valid roles such as Designer/Admin/Main Admin.
+        // MAIN/Boss can assign every active platform/global role except ROOT.
+        // Merchant Brand Owner accounts are managed from the Merchant-specific flow.
         rows = rows.filter(r => {
           const type = String(r.roleType || '').toUpperCase();
-          return type !== 'ROOT' && Number(r.status == null ? 1 : r.status) === 1;
+          return type !== 'ROOT' && type !== 'BRAND_OWNER' && Number(r.status == null ? 1 : r.status) === 1;
         });
       }else{
         rows = rows.filter(r => !['MASTER', 'ROOT', 'MAIN'].includes(String(r.roleType || 'CUSTOM').toUpperCase()));

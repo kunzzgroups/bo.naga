@@ -81,6 +81,8 @@
   function sidebarActivePage(){
     const p=pageName();
     if(p==='main-balance-adjustment.html') return 'main-balance-overview.html';
+    if(p==='main-provider-settlement.html' || p==='main-provider-balance.html' || p==='main-provider-transactions.html') return 'main_provider_report.html';
+    if(p==='main-merchant-settlement.html' || p==='main-merchant-balance.html' || p==='main-merchant-transactions.html') return 'main_merchant_report.html';
     if(p==='brand-detail.html') return 'brand-management.html';
     if(p==='provider-detail.html') return 'main-accounting-report.html';
     // Gateway Transactions is a drill-down of Payment Gateway and uses the same DB menu permission.
@@ -90,7 +92,7 @@
       return 'main-merchant-detail.html';
     }
     // Admin module drill-downs keep the Admin Details item highlighted.
-    if(p==='main-admin-create.html' || p==='main-admin-edit.html' || p==='main-admin-credit.html' || p==='main-admin-security.html'){
+    if(p==='main-admin-create.html' || p==='main-admin-edit.html'){
       return 'main-admin-detail.html';
     }
     return p;
@@ -196,8 +198,6 @@
       // Create/Edit Admin / Credit Control / Security & Audit are drill-downs of Main Admin Detail.
       if(current === 'main-admin-create.html') current = 'main-admin-detail.html';
       if(current === 'main-admin-edit.html') current = 'main-admin-detail.html';
-      if(current === 'main-admin-credit.html') current = 'main-admin-detail.html';
-      if(current === 'main-admin-security.html') current = 'main-admin-detail.html';
       if(current === 'main-admin-role-create.html') current = 'menu-permission.html';
       // Merchant create / credit / security / roles are drill-downs of Main Merchant Detail.
       if(current === 'main-merchant-create.html') current = 'main-merchant-detail.html';
@@ -210,7 +210,7 @@
         'agent-payout-admin.html','agent-promotion-admin.html'
       ]);
       const requestedAgentChild = agentChildPages.has(pageName());
-      const requestedMainAdminDetail = pageName() === 'main-admin-detail.html' || pageName() === 'main-admin-create.html' || pageName() === 'main-admin-edit.html' || pageName() === 'main-admin-credit.html' || pageName() === 'main-admin-security.html';
+      const requestedMainAdminDetail = pageName() === 'main-admin-detail.html' || pageName() === 'main-admin-create.html' || pageName() === 'main-admin-edit.html';
       const requestedMainMerchantDetail = pageName() === 'main-merchant-detail.html' || pageName() === 'main-merchant-create.html' || pageName() === 'main-merchant-credit.html' || pageName() === 'main-merchant-security.html' || pageName() === 'main-merchant-roles.html' || pageName() === 'main-merchant-role-create.html';
       if(current === 'main-stat-detail.html'){
         let source = '';

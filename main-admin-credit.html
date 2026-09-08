@@ -21,7 +21,7 @@
 })();
 </script>
 </head>
-<body class="report-body standardized-listing-page main-admin-detail-page main-admin-credit-page" data-access-page="main_admin_detail">
+<body class="report-body standardized-listing-page main-admin-detail-page main-admin-credit-page" data-access-page="main_admin_credit">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
 <div class="report-brand"><div>Backoffice<br/><small>Admin Panel</small></div><button class="close-side" data-close-sidebar=""><i class="bi bi-x-lg"></i></button></div>
@@ -50,10 +50,10 @@
 <section class="report-content mad-workspace mac-credit-workspace">
   <div class="mad-chrome">
     <div class="mad-tabs" role="tablist" aria-label="Admin sections">
-      <a class="mad-tab" role="tab" aria-selected="false" href="main-admin-detail.html">Administrators</a>
-      <a class="mad-tab" role="tab" aria-selected="false" href="menu-permission.html">Roles &amp; Permissions</a>
-      <a class="mad-tab is-active" role="tab" aria-selected="true" href="main-admin-credit.html">Credit Control</a>
-      <a class="mad-tab" role="tab" aria-selected="false" href="main-admin-security.html">Security &amp; Audit</a>
+      <a class="mad-tab" role="tab" aria-selected="false" href="main-admin-detail.html" data-permission-url="main-admin-detail.html">Administrators</a>
+      <a class="mad-tab" role="tab" aria-selected="false" href="menu-permission.html" data-permission-url="menu-permission.html">Roles &amp; Permissions</a>
+      <a class="mad-tab is-active" role="tab" aria-selected="true" href="main-admin-credit.html" data-permission-url="main-admin-credit.html">Credit Control</a>
+      <a class="mad-tab" role="tab" aria-selected="false" href="main-admin-security.html" data-permission-url="main-admin-security.html">Security &amp; Audit</a>
     </div>
     <div class="mad-chrome-actions">
       <span class="mad-sync" id="macSyncLabel"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> Synced just now</span>
@@ -244,7 +244,8 @@
 <script src="assets/js/config.js?v=1.0.40"></script>
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/reports.js?v=1.0.25"></script>
-<script src="assets/js/auth.js?v=1.0.58"></script>
+<script src="assets/js/auth.js?v=1.0.59"></script>
+<script src="assets/js/permission-tabs.js?v=1.0.0"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
 <script src="assets/js/main-admin-credit.js?v=1.1.2"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>

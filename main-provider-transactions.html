@@ -22,7 +22,7 @@
 })();
 </script>
 </head>
-<body class="report-body standardized-listing-page main-admin-detail-page main-report-exec-page" data-access-page="main_provider_report" data-report-view="provider">
+<body class="report-body standardized-listing-page main-admin-detail-page main-report-exec-page" data-access-page="main_provider_transaction_report" data-report-view="history">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
 <div class="report-brand"><div>Backoffice<br/><small>Executive Panel</small></div><button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button></div>
@@ -51,10 +51,10 @@
 <section class="report-content mad-workspace mre-workspace">
   <div class="mad-chrome mre-chrome">
     <div class="mad-tabs mre-tabs" role="tablist" aria-label="Report sections">
-      <a class="mad-tab mre-tab is-active" role="tab" aria-selected="true" href="main_provider_report.html" data-report-tab="provider" data-permission-url="main_provider_report.html">Win/Lose Report</a>
+      <a class="mad-tab mre-tab" role="tab" aria-selected="false" href="main_provider_report.html" data-report-tab="provider" data-permission-url="main_provider_report.html">Win/Lose Report</a>
       <a class="mad-tab mre-tab" role="tab" aria-selected="false" href="main-provider-settlement.html" data-report-tab="settlement" data-permission-url="main-provider-settlement.html">Settlement Report</a>
       <a class="mad-tab mre-tab" role="tab" aria-selected="false" href="main-provider-balance.html" data-report-tab="brand" data-permission-url="main-provider-balance.html">Balance Overview</a>
-      <a class="mad-tab mre-tab" role="tab" aria-selected="false" href="main-provider-transactions.html" data-report-tab="history" data-permission-url="main-provider-transactions.html">Transaction History</a>
+      <a class="mad-tab mre-tab is-active" role="tab" aria-selected="true" href="main-provider-transactions.html" data-report-tab="history" data-permission-url="main-provider-transactions.html">Transaction History</a>
 </div>
     <div class="mad-chrome-actions mre-chrome-actions">
       <span class="mad-sync" id="reportSyncLabel"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> Synced just now</span>
@@ -63,7 +63,7 @@
   </div>
 
   <!-- Win/Lose · Provider -->
-  <div class="mad-panel mre-panel" data-report-panel="provider">
+  <div class="mad-panel mre-panel d-none" data-report-panel="provider">
     <div class="mad-filter-bar mre-filter-bar">
       <div class="mad-pills" role="group" aria-label="Provider status" data-bo-seg-anim="bounce">
         <button type="button" class="mad-pill is-active" data-mre-status="all">All <span class="mad-pill-count" id="mreCountAll">0</span></button>
@@ -222,7 +222,7 @@
   </div>
 
   <!-- Transaction History · Merchant drill-down (rendered from the existing Brand detail data sources) -->
-  <div class="mad-panel mre-panel d-none" data-report-panel="history">
+  <div class="mad-panel mre-panel" data-report-panel="history">
     <div class="mad-filter-bar mre-filter-bar mre-history-filter">
       <div class="mad-pills" role="group" aria-label="Transaction record type" data-bo-seg-anim="bounce">
         <button type="button" class="mad-pill is-active" data-history-type="all">All <span class="mad-pill-count" id="mreHistoryCountAll">0</span></button>

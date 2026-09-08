@@ -206,11 +206,11 @@
       const json = await apiJson(roleUrl, { headers });
       let rows = Array.isArray(json.data) ? json.data : [];
       if(isViewerMain(current)){
-        // Keep Admin list/edit role options consistent with Create Admin and ROOT Role Management.
-        // MAIN/Boss sees every active role except ROOT; do not discard custom roles by brandId.
+        // MAIN/Boss role filters match Create/Edit Admin: every active platform/global role
+        // except ROOT and Merchant Brand Owner roles.
         rows = rows.filter(r => {
           const type = String(r.roleType || '').toUpperCase();
-          return type !== 'ROOT' && Number(r.status == null ? 1 : r.status) === 1;
+          return type !== 'ROOT' && type !== 'BRAND_OWNER' && Number(r.status == null ? 1 : r.status) === 1;
         });
       }else if(current.rootAdmin){
         rows = brandId
