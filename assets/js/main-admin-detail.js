@@ -36,6 +36,8 @@
   const syncLabel = document.getElementById('madSyncLabel');
 
   let editingId = null;
+  let resetPasswordId = null;
+  let resetPasswordRow = null;
   let roleMap = {};
   let allAdmins = [];
   let filteredAdmins = [];
@@ -43,7 +45,9 @@
   let statusPill = 'all';
   let lastSyncedAt = null;
 
+  const resetPassModal = document.getElementById('madResetPasswordModal');
   if(editModal){ editModal.classList.remove('show'); editModal.setAttribute('aria-hidden', 'true'); }
+  if(resetPassModal){ resetPassModal.classList.remove('show'); resetPassModal.setAttribute('aria-hidden', 'true'); }
   document.body.classList.remove('modal-open');
 
   function setStatus(el, message, type){
@@ -97,6 +101,25 @@
       const pad = n => String(n).padStart(2, '0');
       return pad(d.getHours()) + ':' + pad(d.getMinutes());
     }catch(e){ return '-'; }
+  }
+
+  function dateDdMmYyyy(value){
+    if(!value) return '';
+    try{
+      const d = new Date(value);
+      if(isNaN(d.getTime())) return '';
+      const pad = n => String(n).padStart(2, '0');
+      return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear();
+    }catch(e){ return ''; }
+  }
+
+  function timeWithDateTip(value){
+    if(!value) return '<span class="mad-muted">-</span>';
+    const t = timeOnly(value);
+    if(t === '-') return '<span class="mad-muted">-</span>';
+    const date = dateDdMmYyyy(value);
+    if(!date) return '<span class="mad-time">' + esc(t) + '</span>';
+    return '<span class="mad-time mad-time-tip" data-date="' + esc(date) + '" tabindex="0">' + esc(t) + '</span>';
   }
 
   function esc(value){
@@ -256,8 +279,8 @@
         '<td>' + esc(relativeTime(lastActive(row))) + '</td>' +
         '<td><span class="mad-status ' + (active ? 'is-active' : 'is-suspended') + '"><i></i>' + (active ? 'Active' : 'Suspended') + '</span></td>' +
         '<td>' + esc(row.createdByName || row.createdByUsername || row.createdBy || row.creator || '-') + '</td>' +
-        '<td class="mad-time">' + esc(timeOnly(row.lastLoginAt || row.lastLogin || row.loginAt)) + '</td>' +
-        '<td class="mad-time">' + (logout ? esc(timeOnly(logout)) : '<span class="mad-muted">-</span>') + '</td>' +
+        '<td class="mad-time">' + timeWithDateTip(row.lastLoginAt || row.lastLogin || row.loginAt) + '</td>' +
+        '<td class="mad-time">' + timeWithDateTip(logout) + '</td>' +
         '<td><div class="mad-actions">' + (protectedRoot
           ? '<span class="mad-status is-active" title="Root account cannot be modified by non-root administrators">Protected</span>'
           : '<button class="mad-icon-btn mad-edit-btn" type="button" title="Edit" data-id="' + esc(row.id) + '" data-row=\'' + rowAttr + '\'><i class="bi bi-pencil"></i></button>' +
@@ -321,17 +344,61 @@
   async function openEdit(btn){
     let row = {};
     try{ row = JSON.parse(btn.getAttribute('data-row') || '{}'); }catch(err){}
-    editingId = row.id;
-    document.getElementById('madEditUsername').value = row.username || '';
-    document.getElementById('madEditDisplayName').value = row.displayName || '';
-    document.getElementById('madEditStatus').value = String(row.status == null ? 1 : row.status);
-    if(document.getElementById('madEditBrand')) document.getElementById('madEditBrand').value = row.brandId == null ? '' : String(row.brandId);
-    if(row.brandId) await loadRoles(Number(row.brandId));
-    else if((BO_AUTH.user() || {}).rootAdmin) await loadRoles(null);
-    document.getElementById('madEditRole').value = String(row.roleId || '');
-    document.getElementById('madEditPassword').value = '';
-    setStatus(document.getElementById('madEditFormStatus'), '', '');
-    if(editModal){ editModal.classList.add('show'); editModal.setAttribute('aria-hidden', 'false'); document.body.classList.add('modal-open'); }
+    const id = Number(row.id || btn.dataset.id || 0);
+    if(!id){ BO_DIALOG.alert('Missing admin ID'); return; }
+    location.href = 'main-admin-edit.html?id=' + encodeURIComponent(String(id));
+  }
+
+  function generatePassword(len){
+    len = Math.max(12, Number(len) || 14);
+    const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const lower = 'abcdefghijkmnopqrstuvwxyz';
+    const digits = '23456789';
+    const symbols = '!@#$%&*?';
+    const all = upper + lower + digits + symbols;
+    const pick = (set) => set[Math.floor(Math.random() * set.length)];
+    const chars = [pick(upper), pick(lower), pick(digits), pick(symbols)];
+    while(chars.length < len) chars.push(pick(all));
+    for(let i = chars.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = chars[i]; chars[i] = chars[j]; chars[j] = t;
+    }
+    return chars.join('');
+  }
+
+  function openResetPassword(btn){
+    let row = {};
+    try{ row = JSON.parse(btn.getAttribute('data-row') || '{}'); }catch(err){}
+    const id = Number(row.id || btn.dataset.id || 0);
+    if(!id){ BO_DIALOG.alert('Missing admin ID'); return; }
+    resetPasswordId = id;
+    resetPasswordRow = row.id ? row : (allAdmins.find(r => Number(r.id) === id) || {});
+    const a = document.getElementById('madResetNewPassword');
+    const b = document.getElementById('madResetConfirmPassword');
+    if(a){ a.value = ''; a.type = 'password'; }
+    if(b){ b.value = ''; b.type = 'password'; }
+    setStatus(document.getElementById('madResetPassStatus'), '', '');
+    const sub = document.getElementById('madResetPassSub');
+    if(sub){
+      const name = resetPasswordRow.displayName || resetPasswordRow.username || ('UID-' + id);
+      sub.textContent = 'Set a new password for ' + name + '.';
+    }
+    if(resetPassModal){
+      resetPassModal.classList.add('show');
+      resetPassModal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+    }
+    if(a) setTimeout(function(){ a.focus(); }, 30);
+  }
+
+  function closeResetPassword(){
+    if(resetPassModal){
+      resetPassModal.classList.remove('show');
+      resetPassModal.setAttribute('aria-hidden', 'true');
+    }
+    if(!document.querySelector('.modal-clean.show')) document.body.classList.remove('modal-open');
+    resetPasswordId = null;
+    resetPasswordRow = null;
   }
 
   editForm && editForm.addEventListener('submit', async function(e){
@@ -361,6 +428,54 @@
   document.querySelectorAll('[data-mad-close-edit]').forEach(btn => btn.addEventListener('click', closeEditAdmin));
   editModal && editModal.addEventListener('click', e => { if(e.target === editModal) closeEditAdmin(); });
 
+  document.querySelectorAll('[data-mad-close-pass]').forEach(btn => btn.addEventListener('click', closeResetPassword));
+  resetPassModal && resetPassModal.addEventListener('click', e => { if(e.target === resetPassModal) closeResetPassword(); });
+  document.getElementById('madResetGeneratePassword')?.addEventListener('click', function(){
+    const pwd = generatePassword(14);
+    const a = document.getElementById('madResetNewPassword');
+    const b = document.getElementById('madResetConfirmPassword');
+    if(a){ a.type = 'text'; a.value = pwd; }
+    if(b){ b.type = 'text'; b.value = pwd; }
+    setStatus(document.getElementById('madResetPassStatus'), 'Strong password generated. Copy it before applying.', 'success');
+  });
+  document.getElementById('madResetPassApply')?.addEventListener('click', async function(){
+    if(!resetPasswordId){ BO_DIALOG.alert('Missing admin ID'); return; }
+    const pass = (document.getElementById('madResetNewPassword') || {}).value || '';
+    const confirm = (document.getElementById('madResetConfirmPassword') || {}).value || '';
+    const statusEl = document.getElementById('madResetPassStatus');
+    if(!pass){ setStatus(statusEl, 'Please enter a new password.', 'error'); return; }
+    if(pass.length < 8){ setStatus(statusEl, 'Password must be at least 8 characters.', 'error'); return; }
+    if(pass !== confirm){ setStatus(statusEl, 'Confirm password does not match.', 'error'); return; }
+    const row = resetPasswordRow || allAdmins.find(r => Number(r.id) === Number(resetPasswordId)) || {};
+    const applyBtn = document.getElementById('madResetPassApply');
+    if(applyBtn) applyBtn.disabled = true;
+    setStatus(statusEl, 'Updating password...', '');
+    try{
+      const json = await apiJson(BO_AUTH.adminUpdateUrl(resetPasswordId), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...BO_AUTH.authHeader() },
+        body: JSON.stringify({
+          username: row.username || '',
+          displayName: row.displayName || row.username || '',
+          status: row.status == null ? 1 : Number(row.status),
+          roleId: row.roleId != null ? Number(row.roleId) : null,
+          brandId: row.brandId != null ? Number(row.brandId) : null,
+          password: pass
+        })
+      });
+      closeResetPassword();
+      await BO_DIALOG.alert(json.message || 'Password updated successfully');
+      await loadAdmins();
+    }catch(err){
+      setStatus(statusEl, err.message || 'Update password failed', 'error');
+    }finally{
+      if(applyBtn) applyBtn.disabled = false;
+    }
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && resetPassModal && resetPassModal.classList.contains('show')) closeResetPassword();
+  });
+
   document.querySelectorAll('[data-mad-status]').forEach(btn => {
     btn.addEventListener('click', () => {
       statusPill = btn.getAttribute('data-mad-status') || 'all';
@@ -372,15 +487,16 @@
   });
 
   document.addEventListener('click', function(e){
-    const edit = e.target.closest && e.target.closest('.mad-edit-btn, .mad-key-btn');
+    const keyBtn = e.target.closest && e.target.closest('.mad-key-btn');
+    if(keyBtn){
+      if(Number(keyBtn.dataset.id) === 1 && !isViewerRoot()){ BO_DIALOG.alert('Root admin account is protected.'); return; }
+      openResetPassword(keyBtn);
+      return;
+    }
+    const edit = e.target.closest && e.target.closest('.mad-edit-btn');
     if(edit){
       if(Number(edit.dataset.id) === 1 && !isViewerRoot()){ BO_DIALOG.alert('Root admin account is protected.'); return; }
-      openEdit(edit).then(function(){
-        if(edit.classList.contains('mad-key-btn')){
-          const pass = document.getElementById('madEditPassword');
-          if(pass){ pass.focus(); pass.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
-        }
-      });
+      openEdit(edit);
       return;
     }
     const del = e.target.closest && e.target.closest('.mad-delete-btn');
@@ -431,7 +547,11 @@
     if(eye){
       const id = eye.getAttribute('data-toggle-password');
       const input = document.getElementById(id);
-      if(input) input.type = input.type === 'password' ? 'text' : 'password';
+      if(!input) return;
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      const icon = eye.querySelector('i');
+      if(icon) icon.className = show ? 'bi bi-eye-slash' : 'bi bi-eye';
     }
   });
 

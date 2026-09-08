@@ -12,7 +12,7 @@
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.20" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.37" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 <script>
 (function(){
@@ -147,6 +147,48 @@
   </div>
 </div>
 
+<!-- Reset Password modal (list key icon) -->
+<div aria-hidden="true" class="modal-clean mad-modal" id="madResetPasswordModal">
+  <div class="modal-clean-panel mad-modal-panel mad-pass-modal-panel">
+    <div class="modal-clean-head">
+      <div class="mad-modal-title">
+        <span class="mad-modal-icon"><i class="bi bi-key"></i></span>
+        <div>
+          <h3>Reset Password</h3>
+          <small id="madResetPassSub">Set a new password for this administrator.</small>
+        </div>
+      </div>
+      <button class="modal-clean-close" type="button" data-mad-close-pass><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="modal-clean-body">
+      <div class="mad-pass-modal-fields">
+        <label class="mad-field" for="madResetNewPassword">
+          <span class="mad-label-row">
+            <span>New Password <b style="color:#EF3340">*</b></span>
+            <button type="button" class="mac-link-btn" id="madResetGeneratePassword">Generate</button>
+          </span>
+          <span class="mad-pass-wrap">
+            <input class="form-control" id="madResetNewPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Minimum 8 characters"/>
+            <button type="button" class="mad-eye" data-toggle-password="madResetNewPassword" aria-label="Show password"><i class="bi bi-eye"></i></button>
+          </span>
+        </label>
+        <label class="mad-field" for="madResetConfirmPassword">
+          <span>Confirm New Password <b style="color:#EF3340">*</b></span>
+          <span class="mad-pass-wrap">
+            <input class="form-control" id="madResetConfirmPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Re-enter new password"/>
+            <button type="button" class="mad-eye" data-toggle-password="madResetConfirmPassword" aria-label="Show password"><i class="bi bi-eye"></i></button>
+          </span>
+        </label>
+      </div>
+      <div class="upload-status mb-3" id="madResetPassStatus"></div>
+      <div class="mad-modal-actions">
+        <button class="mad-btn mad-btn-ghost" type="button" data-mad-close-pass>Cancel</button>
+        <button class="mad-btn mad-btn-navy" type="button" id="madResetPassApply"><i class="bi bi-check2"></i> Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </main>
 </div>
 <script src="assets/js/config.js?v=1.0.40"></script>
@@ -154,7 +196,7 @@
 <script src="assets/js/reports.js?v=1.0.22"></script>
 <script src="assets/js/auth.js?v=1.0.57"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
-<script src="assets/js/main-admin-detail.js?v=1.2.3"></script>
+<script src="assets/js/main-admin-detail.js?v=1.2.8"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>

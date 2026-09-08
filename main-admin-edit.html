@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Edit Admin Account</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+<link href="assets/css/reports.css?v=1.0.46" rel="stylesheet"/>
+<link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
+<link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.33" rel="stylesheet"/>
+<script>
+(function(){
+  try{
+    if(localStorage.getItem('bo_theme')==='dark') document.documentElement.setAttribute('data-bo-theme','dark');
+  }catch(e){}
+})();
+</script>
+</head>
+<body class="report-body standardized-listing-page main-admin-detail-page main-admin-create-page main-admin-edit-page" data-access-page="main_admin_detail">
+<div class="report-shell">
+<aside class="report-sidebar" id="reportSidebar">
+<div class="report-brand"><div>Backoffice<br/><small>Admin Panel</small></div><button class="close-side" data-close-sidebar=""><i class="bi bi-x-lg"></i></button></div>
+<nav class="report-nav"></nav>
+</aside>
+<div class="sidebar-overlay" data-close-sidebar="" id="reportOverlay"></div>
+<main class="report-main">
+<header class="report-topbar">
+  <button class="hamb" data-open-sidebar=""><i class="bi bi-list"></i></button>
+  <div class="user-title-wrap">
+    <div class="user-title-icon"><i class="bi bi-person-gear"></i></div>
+    <div>
+      <div class="mae-title-row">
+        <h1>Edit Admin Account</h1>
+        <span class="mae-uid" id="maeUidBadge">#UID-—</span>
+        <span class="mae-status-pill is-active" id="maeStatusPill">Active Account</span>
+      </div>
+      <p>Update credentials, reassign role permissions, and configure access security.</p>
+    </div>
+  </div>
+  <div class="report-actions">
+    <div class="mae-top-meta" aria-label="Account timestamps">
+      <div class="mae-meta-block">
+        <small>Created</small>
+        <strong id="maeCreatedMeta">—</strong>
+      </div>
+      <div class="mae-meta-block">
+        <small>Updated</small>
+        <strong id="maeUpdatedMeta">—</strong>
+      </div>
+    </div>
+    <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
+      <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
+      <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
+    </button>
+    <div data-bo-profile=""></div>
+  </div>
+</header>
+
+<section class="report-content mac-workspace">
+  <form id="madEditForm" class="mac-form" novalidate>
+    <input type="hidden" id="madEditId" value=""/>
+    <input type="hidden" id="madEditBrand" name="brandId" value=""/>
+    <input type="hidden" id="madEditRole" name="roleId" value=""/>
+    <input type="hidden" id="madEditStatus" name="status" value="1"/>
+
+    <section class="mac-section">
+      <header class="mac-section-head">
+        <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-briefcase"></i></span>
+        <h3>1. Account Credentials</h3>
+        <button type="button" class="mad-btn mad-btn-ghost mae-reset-pass-btn" id="maeOpenResetPassword"><i class="bi bi-key"></i> Reset Password</button>
+        <a class="mad-btn mad-btn-ghost mac-back-section" href="main-admin-detail.html"><i class="bi bi-arrow-left"></i> Back to List</a>
+      </header>
+      <div class="mac-fields mac-fields-row mae-cred-row">
+        <label class="mac-field" for="madEditUsername">
+          <span class="mac-label">Username</span>
+          <input class="form-control" id="madEditUsername" name="username" readonly autocomplete="username"/>
+          <small>Locked system handle — cannot be changed once provisioned.</small>
+        </label>
+        <label class="mac-field" for="madEditDisplayName">
+          <span class="mac-label">Full Name <b>*</b></span>
+          <input class="form-control" id="madEditDisplayName" name="displayName" required autocomplete="name" placeholder="Legal full name"/>
+          <small>Legal full name used for system audit logs.</small>
+        </label>
+        <label class="mac-field" for="madEditEmail">
+          <span class="mac-label">Work Email / Login ID</span>
+          <input class="form-control" id="madEditEmail" name="email" type="email" autocomplete="email" placeholder="name@company.com"/>
+          <small>Optional directory contact when the API supports it.</small>
+        </label>
+      </div>
+    </section>
+
+    <section class="mac-section">
+      <header class="mac-section-head">
+        <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-people"></i></span>
+        <h3>2. Assign Administrator Role <b>*</b></h3>
+        <a class="mac-section-link" href="menu-permission.html"><i class="bi bi-plus-circle"></i> Manage Roles</a>
+      </header>
+      <div class="mac-role-stack" id="madRoleCard">
+        <div class="mac-role-dd">
+          <button type="button" class="mac-role-pick" id="madRolePickBtn" aria-expanded="false" aria-haspopup="listbox" aria-controls="madRoleMenu">
+            <div class="mac-role-pick-main">
+              <span class="mac-role-icon" aria-hidden="true"><i class="bi bi-shield-fill"></i></span>
+              <div class="mac-role-title-row">
+                <span class="mac-role-primary" id="madRolePrimary" hidden>PRIMARY</span>
+                <strong id="madRoleName">Select a role</strong>
+                <span class="mac-role-count" id="madRoleCount"></span>
+              </div>
+            </div>
+            <span class="mae-role-change">Change Role <i class="bi bi-chevron-down" aria-hidden="true"></i></span>
+          </button>
+          <div class="mac-role-menu" id="madRoleMenu" role="listbox" hidden></div>
+        </div>
+        <div class="mac-role-priv">
+          <div class="mac-role-tags" id="madRoleTags"></div>
+          <span class="mae-tier-badge" id="maeTierBadge" hidden>Tier 1 Authority</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="mac-section">
+      <header class="mac-section-head">
+        <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-shield-lock"></i></span>
+        <h3>3. Account Status &amp; Security</h3>
+      </header>
+      <div class="mae-security-grid">
+        <div class="mae-security-card">
+          <div class="mae-security-copy">
+            <span class="mac-policy-icon" aria-hidden="true"><i class="bi bi-check2-circle"></i></span>
+            <div>
+              <strong>Account Status</strong>
+              <p>Permit admin portal authentication and session activation.</p>
+            </div>
+          </div>
+          <div class="mae-status-seg" role="group" aria-label="Account status">
+            <button type="button" class="mae-status-btn is-active" data-mae-status="1"><span class="mae-status-dot" aria-hidden="true"></span>Active</button>
+            <button type="button" class="mae-status-btn" data-mae-status="0"><span class="mae-status-dot" aria-hidden="true"></span>Suspend</button>
+          </div>
+        </div>
+        <div class="mae-security-card">
+          <div class="mae-security-copy">
+            <span class="mac-policy-icon" aria-hidden="true"><i class="bi bi-globe2"></i></span>
+            <div>
+              <strong>IP Whitelist Binding</strong>
+              <p>Restrict admin portal login exclusively to verified VPN nodes.</p>
+            </div>
+          </div>
+          <label class="mac-switch" for="madIpWhitelist">
+            <input type="checkbox" id="madIpWhitelist"/>
+            <span class="mac-switch-track" aria-hidden="true"><span class="mac-switch-thumb"></span></span>
+            <span class="mac-sr-only">Toggle IP whitelist binding</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <div class="upload-status mb-3" id="madEditStatus"></div>
+
+    <footer class="mac-footer-actions mae-footer">
+      <a class="mac-section-link" href="main-admin-security.html"><i class="bi bi-clock-history"></i> View Audit Logs</a>
+      <div class="mae-footer-btns">
+        <a class="mad-btn mad-btn-ghost" href="main-admin-detail.html">Cancel</a>
+        <button class="mad-btn mad-btn-navy" type="submit" id="madEditSubmit"><i class="bi bi-check2"></i> Save Changes</button>
+      </div>
+    </footer>
+  </form>
+</section>
+
+<!-- Reset Password modal -->
+<div aria-hidden="true" class="modal-clean mad-modal" id="maeResetPasswordModal">
+  <div class="modal-clean-panel mad-modal-panel mae-pass-modal-panel">
+    <div class="modal-clean-head">
+      <div class="mad-modal-title">
+        <span class="mad-modal-icon"><i class="bi bi-key"></i></span>
+        <div>
+          <h3>Reset Password</h3>
+          <small>Enter a new password, then save changes on the page.</small>
+        </div>
+      </div>
+      <button class="modal-clean-close" type="button" data-mae-close-pass><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="modal-clean-body">
+      <div class="mae-pass-modal-fields">
+        <label class="mac-field" for="madEditPassword">
+          <span class="mac-label-row">
+            <span class="mac-label">New Password <b>*</b></span>
+            <button type="button" class="mac-link-btn" id="madGeneratePassword">Generate</button>
+          </span>
+          <span class="mad-pass-wrap">
+            <input class="form-control" id="madEditPassword" name="password" type="password" minlength="8" autocomplete="new-password" placeholder="Minimum 8 characters"/>
+            <button type="button" class="mad-eye" data-toggle-password="madEditPassword" aria-label="Show password"><i class="bi bi-eye"></i></button>
+          </span>
+        </label>
+        <label class="mac-field" for="madEditConfirmPassword">
+          <span class="mac-label">Confirm New Password <b>*</b></span>
+          <span class="mad-pass-wrap">
+            <input class="form-control" id="madEditConfirmPassword" name="confirmPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Re-enter new password"/>
+            <button type="button" class="mad-eye" data-toggle-password="madEditConfirmPassword" aria-label="Show password"><i class="bi bi-eye"></i></button>
+          </span>
+        </label>
+      </div>
+      <div class="upload-status mb-3" id="maePassModalStatus"></div>
+      <div class="mad-modal-actions">
+        <button class="mad-btn mad-btn-ghost" type="button" data-mae-close-pass>Cancel</button>
+        <button class="mad-btn mad-btn-navy" type="button" id="maeApplyPassword"><i class="bi bi-check2"></i> Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+<script src="assets/js/config.js?v=1.0.40"></script>
+<script src="assets/js/brand-context.js?v=1.0.4"></script>
+<script src="assets/js/reports.js?v=1.0.22"></script>
+<script src="assets/js/auth.js?v=1.0.58"></script>
+<script src="assets/js/main-admin-edit.js?v=1.0.2"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="assets/js/firebase-config.js?v=1.0.0"></script>
+<script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
+<script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
+<script src="assets/js/bo-ui-standard.js?v=1.0.4"></script>
+<script src="assets/js/bo-theme.js?v=1.0.0"></script>
+</body>
+</html>

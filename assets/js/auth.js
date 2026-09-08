@@ -90,7 +90,7 @@
       return 'main-merchant-detail.html';
     }
     // Admin module drill-downs keep the Admin Details item highlighted.
-    if(p==='main-admin-create.html' || p==='main-admin-credit.html' || p==='main-admin-security.html'){
+    if(p==='main-admin-create.html' || p==='main-admin-edit.html' || p==='main-admin-credit.html' || p==='main-admin-security.html'){
       return 'main-admin-detail.html';
     }
     return p;
@@ -193,8 +193,9 @@
       // It has no separate sidebar/menu permission, so inherit the report permission
       // instead of redirecting the user to their landing page.
       if(current === 'agent-performance-detail.html') current = 'agent-performance-report.html';
-      // Create Admin / Credit Control / Security & Audit are drill-downs of Main Admin Detail.
+      // Create/Edit Admin / Credit Control / Security & Audit are drill-downs of Main Admin Detail.
       if(current === 'main-admin-create.html') current = 'main-admin-detail.html';
+      if(current === 'main-admin-edit.html') current = 'main-admin-detail.html';
       if(current === 'main-admin-credit.html') current = 'main-admin-detail.html';
       if(current === 'main-admin-security.html') current = 'main-admin-detail.html';
       if(current === 'main-admin-role-create.html') current = 'menu-permission.html';
@@ -209,7 +210,7 @@
         'agent-payout-admin.html','agent-promotion-admin.html'
       ]);
       const requestedAgentChild = agentChildPages.has(pageName());
-      const requestedMainAdminDetail = pageName() === 'main-admin-detail.html' || pageName() === 'main-admin-create.html' || pageName() === 'main-admin-credit.html' || pageName() === 'main-admin-security.html';
+      const requestedMainAdminDetail = pageName() === 'main-admin-detail.html' || pageName() === 'main-admin-create.html' || pageName() === 'main-admin-edit.html' || pageName() === 'main-admin-credit.html' || pageName() === 'main-admin-security.html';
       const requestedMainMerchantDetail = pageName() === 'main-merchant-detail.html' || pageName() === 'main-merchant-create.html' || pageName() === 'main-merchant-credit.html' || pageName() === 'main-merchant-security.html' || pageName() === 'main-merchant-roles.html' || pageName() === 'main-merchant-role-create.html';
       if(current === 'main-stat-detail.html'){
         let source = '';
