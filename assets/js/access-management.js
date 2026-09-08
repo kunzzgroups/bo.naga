@@ -486,16 +486,25 @@
       roleCache=await fetchRoles();
       const editable=roleCache.filter(r=>{
         const rt=String(r?.roleType||'').toUpperCase();
-        // Admin > Roles & Permissions is PLATFORM scoped. Merchant/Brand scoped
-        // roles belong in Merchant > Roles & Permissions and must never leak into
-        // this dropdown. In particular, every Merchant has its own BRAND_OWNER
-        // system role, which was why MAIN saw multiple identical "Brand Owner" rows.
+        const active=Number(r?.status==null?1:r.status)===1;
+        if(!active) return false;
+
+        // MAIN/Boss Role & Permissions must use the exact same assignable role
+        // catalogue as Create Admin: every active role below ROOT. Do not filter
+        // by brandId/merchant scope here because legacy/custom roles such as
+        // Designer, Admin and Main Admin may carry a scope marker even though
+        // ROOT created them for MAIN to assign/manage. This was why Create Admin
+        // could see Main Admin while this dropdown could not.
+        if(mainAdmin && !isMerchantRolesPage){
+          return rt!=='ROOT' && canEditRoleMenus(r);
+        }
+
+        // For non-MAIN platform actors keep merchant-specific roles in the
+        // merchant role workspace so the normal platform list stays clean.
         if(!isMerchantRolesPage){
           const merchantScoped = r?.brandId != null || r?.brand_id != null || r?.merchantId != null || rt==='BRAND_OWNER';
           if(merchantScoped) return false;
         }
-        // ROOT is intentionally absent for MAIN/Boss.
-        if(mainAdmin && rt==='ROOT') return false;
         return canEditRoleMenus(r);
       });
       select.innerHTML='<option value="">Select role...</option>'+editable.map(r=>`<option value="${esc(r.id)}">${esc(roleOptionLabel(r,false))}</option>`).join('');
