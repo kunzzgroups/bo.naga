@@ -237,7 +237,19 @@ body.main-admin-detail-page .report-topbar .user-title-wrap p{
 body.main-admin-detail-page .report-avatar{
   background:var(--bo-navy)!important;color:#fff!important;
 }
-body.main-admin-detail-page .bo-account-link{color:var(--bo-text-secondary)!important}
+body.main-admin-detail-page .report-actions .bo-account-link,
+body.main-admin-detail-page .bo-account-link{
+  background:var(--bo-surface)!important;
+  border:1px solid var(--bo-border)!important;
+  border-radius:8px!important;
+  color:var(--bo-text-secondary)!important;
+}
+body.main-admin-detail-page .report-actions .bo-account-link:hover,
+body.main-admin-detail-page .bo-account-link:hover{
+  background:var(--bo-bg)!important;
+  border-color:var(--bo-cyan)!important;
+  color:var(--bo-text)!important;
+}
 body.main-admin-detail-page .bo-account-setting-icon{color:var(--bo-muted)!important}
 body.main-admin-detail-page .report-topbar .hamb:hover{
   border-color:var(--bo-cyan)!important;color:var(--bo-cyan)!important;
@@ -925,11 +937,31 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .bo-sidebar-account-foote
   border-top-color:rgba(255,255,255,.1)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .report-avatar{background:var(--bo-cyan)!important;color:#fff!important}
+html[data-bo-theme="dark"] body.main-admin-detail-page .report-actions .bo-account-link,
+html[data-bo-theme="dark"] body.main-admin-detail-page .bo-account-link{
+  background:var(--bo-surface)!important;
+  border-color:var(--bo-border)!important;
+  color:var(--bo-text)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .report-actions .bo-account-link:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page .bo-account-link:hover{
+  background:var(--bo-bg)!important;
+  border-color:var(--bo-cyan)!important;
+  color:var(--bo-text)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .bo-account-name{color:var(--bo-text)!important}
+html[data-bo-theme="dark"] body.main-admin-detail-page .bo-account-setting-icon{color:var(--bo-muted)!important}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-avatar{
   background:rgba(33,166,215,.18)!important;color:#7DD3FC!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn{
   color:#8A95A8;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-status.is-active{
+  background:transparent;color:#7cffc8;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-status.is-suspended{
+  background:rgba(239,51,64,.16);color:#FF8A90;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn:hover{
   background:rgba(33,166,215,.16);color:#7DD3FC;
@@ -1355,13 +1387,41 @@ html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-option.is-activ
 }
 html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-title-row strong,
 html[data-bo-theme="dark"] body.main-admin-create-page .mac-policy-copy strong{color:var(--bo-text)}
+/* Match light :not() specificity so #fff!important cannot win in dark mode */
 html[data-bo-theme="dark"] body.main-admin-create-page .mac-field .form-control,
 html[data-bo-theme="dark"] body.main-admin-create-page .report-content .mac-field .form-control,
-html[data-bo-theme="dark"] body.main-admin-create-page .report-content .mac-field input,
+html[data-bo-theme="dark"] body.main-admin-create-page .report-content .mac-field input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html[data-bo-theme="dark"] body.main-admin-create-page .report-content .mac-field select,
-html[data-bo-theme="dark"] body.main-admin-create-page .report-content .mac-field textarea{
-  background:var(--bo-bg)!important;border-color:var(--bo-border)!important;color:var(--bo-text)!important;
+html[data-bo-theme="dark"] body.main-admin-create-page .report-content .mac-field textarea,
+html[data-bo-theme="dark"] body.main-admin-create-page .mad-pass-wrap .form-control{
+  background:#0B1626!important;
+  background-color:#0B1626!important;
+  border-color:var(--bo-border)!important;
+  color:var(--bo-text)!important;
+  color-scheme:dark;
+  caret-color:var(--bo-text);
+  -webkit-text-fill-color:var(--bo-text);
 }
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-field .form-control::placeholder,
+html[data-bo-theme="dark"] body.main-admin-create-page .report-content .mac-field .form-control::placeholder,
+html[data-bo-theme="dark"] body.main-admin-create-page .report-content .mac-field input::placeholder,
+html[data-bo-theme="dark"] body.main-admin-create-page .report-content .mac-field textarea::placeholder{
+  color:var(--bo-muted)!important;
+  opacity:1!important;
+  -webkit-text-fill-color:var(--bo-muted);
+}
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-field .form-control:-webkit-autofill,
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-field .form-control:-webkit-autofill:hover,
+html[data-bo-theme="dark"] body.main-admin-create-page .mac-field .form-control:-webkit-autofill:focus,
+html[data-bo-theme="dark"] body.main-admin-create-page .report-content .mac-field input:-webkit-autofill{
+  -webkit-box-shadow:0 0 0 1000px #0B1626 inset!important;
+  box-shadow:0 0 0 1000px #0B1626 inset!important;
+  -webkit-text-fill-color:var(--bo-text)!important;
+  caret-color:var(--bo-text);
+  transition:background-color 99999s ease-out;
+}
+html[data-bo-theme="dark"] body.main-admin-create-page .mad-eye{color:var(--bo-muted)}
+html[data-bo-theme="dark"] body.main-admin-create-page .mad-eye:hover{color:var(--bo-text)}
 html[data-bo-theme="dark"] body.main-admin-create-page .mac-head h2,
 html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-title-row strong,
 html[data-bo-theme="dark"] body.main-admin-create-page .mac-policy-copy strong{color:var(--bo-text)}
@@ -1833,16 +1893,72 @@ html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-ra
   background:var(--bo-bg)!important;border-color:var(--bo-border)!important;color:var(--bo-text-secondary)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-range-picker{
-  background:var(--bo-surface);border-color:var(--bo-border);
+  background:var(--bo-surface)!important;border-color:var(--bo-border)!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.45)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-range-presets{
-  background:var(--bo-bg);border-color:var(--bo-border);
+  background:var(--bo-bg)!important;border-color:var(--bo-border)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-range-presets button{
-  color:var(--bo-text-secondary);
+  color:var(--bo-text-secondary)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-range-presets button:hover{
+  background:rgba(255,255,255,.06)!important;color:var(--bo-text)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-range-presets button.active{
+  background:rgba(33,166,215,.18)!important;color:#7DD3FC!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-range-calendar,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-day-view{
+  background:var(--bo-surface)!important;color:var(--bo-text)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-head,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-weekdays,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-days{
+  color:var(--bo-text-secondary)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-head button,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-head .ref-head-pick{
+  background:var(--bo-bg)!important;border-color:var(--bo-border)!important;color:var(--bo-text)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-days button{
+  color:var(--bo-text)!important;background:transparent!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-days button.muted,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-days button.out{
+  color:var(--bo-muted)!important;opacity:.55;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-days button:hover{
+  background:rgba(255,255,255,.06)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-days button.in-range{
+  background:rgba(33,166,215,.14)!important;color:#7DD3FC!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-days button.selected,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-month-grid button.active,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-year-grid button.active{
+  background:var(--bo-cyan)!important;color:#fff!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-month-grid button,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-year-grid button{
+  background:var(--bo-bg)!important;color:var(--bo-text-secondary)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-month-grid button:hover,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-year-grid button:hover{
+  background:rgba(33,166,215,.14)!important;color:#7DD3FC!important;
 }
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-detail-raw{
   background:var(--bo-bg);color:var(--bo-text-secondary);
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .modal-clean-close,
+html[data-bo-theme="dark"] body.main-admin-security-page .mad-modal .modal-clean-close{
+  background:var(--bo-bg)!important;
+  border:1px solid var(--bo-border)!important;
+  color:var(--bo-text-secondary)!important;
+  filter:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .modal-clean-close:hover{
+  background:rgba(255,255,255,.08)!important;color:var(--bo-text)!important;
 }
 
 /* ========== Credit Control ========== */
@@ -2187,4 +2303,100 @@ body.main-merchant-detail-page .mad-merchant-icon-btn:hover{
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-merchant-icon-btn{
   background:#142033;border-color:#334155;color:#dbeafe;
+}
+
+/* ========== Dark mode polish: Credit Adjust modal + shared modal close ========== */
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-field .form-control,
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel .mac-field .form-control,
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel input.form-control,
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel select.form-control,
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel textarea.form-control{
+  background:#0B1626!important;
+  background-color:#0B1626!important;
+  border:1px solid var(--bo-border)!important;
+  color:var(--bo-text)!important;
+  color-scheme:dark;
+  caret-color:var(--bo-text);
+  -webkit-text-fill-color:var(--bo-text);
+}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-field .form-control::placeholder,
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel .form-control::placeholder{
+  color:var(--bo-muted)!important;opacity:1!important;-webkit-text-fill-color:var(--bo-muted);
+}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-field .form-control:focus,
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel .form-control:focus{
+  border-color:var(--bo-cyan)!important;
+  box-shadow:0 0 0 3px rgba(33,166,215,.18)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel input[type="number"]{
+  -moz-appearance:textfield;
+}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel input[type="number"]::-webkit-outer-spin-button,
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel input[type="number"]::-webkit-inner-spin-button{
+  filter:invert(.85) hue-rotate(180deg);
+  opacity:.85;
+}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel .rounded-select-btn,
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel .rounded-select-wrap .rounded-select-btn{
+  background:#0B1626!important;
+  border-color:var(--bo-border)!important;
+  color:var(--bo-text)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel .rounded-select-menu{
+  background:var(--bo-surface)!important;
+  border-color:var(--bo-border)!important;
+  box-shadow:0 16px 40px rgba(0,0,0,.45)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel .rounded-select-option{
+  color:var(--bo-text-secondary)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel .rounded-select-option.is-active{
+  background:rgba(33,166,215,.14)!important;color:var(--bo-text)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-summary{
+  background:rgba(255,255,255,.03)!important;border-color:var(--bo-border)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-summary-copy strong,
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-balance b{color:var(--bo-text)!important}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-summary-copy small,
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-balance span{color:var(--bo-muted)!important}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-avatar{
+  background:rgba(33,166,215,.16)!important;color:#7DD3FC!important;
+}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel .mad-modal-actions .mad-btn-ghost,
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel .mad-modal-actions .mad-btn-ghost.bo-ui-button{
+  background:var(--bo-bg)!important;border-color:var(--bo-border)!important;color:var(--bo-text)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .modal-clean-close,
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-modal .modal-clean-close,
+html[data-bo-theme="dark"] body.main-admin-credit-page .modal-clean-close,
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-adjust-panel .modal-clean-close{
+  width:36px;height:36px;border-radius:8px;
+  background:var(--bo-bg)!important;
+  border:1px solid var(--bo-border)!important;
+  color:var(--bo-text-secondary)!important;
+  display:grid;place-items:center;
+  filter:none!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .modal-clean-close:hover,
+html[data-bo-theme="dark"] body.main-admin-credit-page .modal-clean-close:hover{
+  background:rgba(255,255,255,.08)!important;
+  color:var(--bo-text)!important;
+  border-color:rgba(255,255,255,.16)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-field .form-control,
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-pass-wrap .form-control,
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-modal .form-control{
+  background:#0B1626!important;
+  border-color:var(--bo-border)!important;
+  color:var(--bo-text)!important;
+  color-scheme:dark;
+  -webkit-text-fill-color:var(--bo-text);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-field .form-control::placeholder,
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-modal .form-control::placeholder{
+  color:var(--bo-muted)!important;opacity:1!important;-webkit-text-fill-color:var(--bo-muted);
 }

@@ -97,14 +97,12 @@
   function expandAdminAliases(ids){
     // Save exactly what MAIN selected. Do not silently add legacy/admin aliases;
     // database role->menu assignments are the permission source of truth.
-    return Array.from(new Set((ids||[]).map(Number).filter(Number.isFinite)));
+    const mainIds=new Set(menusForScope('main').map(m=>Number(m.id)));
+    return Array.from(new Set((ids||[]).map(Number).filter(Number.isFinite).filter(id=>mainIds.has(id))));
   }
 
   function updateScopeCounts(){
-    const mainEl=document.getElementById('mrcScopeMainCount');
-    const boEl=document.getElementById('mrcScopeBoCount');
-    if(mainEl) mainEl.textContent=String(menusForScope('main').length);
-    if(boEl) boEl.textContent=String(menusForScope('bo').length);
+    /* MAIN-only Create Role — no MAIN/BO scope switcher */
   }
 
   function updateChrome(){
@@ -209,27 +207,11 @@
   }
 
   function setScope(next){
-    const s=next==='bo'?'bo':'main';
-    if(s===scope) return;
-    scope=s;
-    openGroups=new Set();
-    document.querySelectorAll('[data-mrc-scope]').forEach(btn=>{
-      const on=btn.getAttribute('data-mrc-scope')===scope;
-      btn.classList.toggle('is-active',on);
-      btn.setAttribute('aria-selected',on?'true':'false');
-    });
-    if(window.BO_SEG_BOUNCE) window.BO_SEG_BOUNCE.sync(document.getElementById('mrcScope'));
+    /* Create Role is MAIN-only; ignore BO switches */
+    scope='main';
+    if(next&&next!=='main') return;
     if(!listEl){renderMatrix();return;}
-    const reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if(reduceMotion){renderMatrix();return;}
-    listEl.classList.remove('is-entering');
-    listEl.classList.add('is-swapping');
-    window.setTimeout(function(){
-      renderMatrix();
-      listEl.classList.remove('is-swapping');
-      listEl.classList.add('is-entering');
-      window.setTimeout(function(){listEl.classList.remove('is-entering');},320);
-    },140);
+    renderMatrix();
   }
 
   function setGroupOpen(group,open){
@@ -307,7 +289,7 @@
       if(group) setGroupOpen(group,!group.classList.contains('is-open'));
     }
     const scopeBtn=e.target.closest('[data-mrc-scope]');
-    if(scopeBtn) setScope(scopeBtn.getAttribute('data-mrc-scope')||'main');
+    if(scopeBtn) return;
   });
 
   document.getElementById('mrcSelectAll')?.addEventListener('click',function(){
@@ -342,8 +324,8 @@
     }catch(e){}
     try{
       await loadMenus();
+      scope='main';
       renderMatrix();
-      if(window.BO_SEG_BOUNCE) window.BO_SEG_BOUNCE.sync(document.getElementById('mrcScope'));
     }catch(err){
       if(listEl) listEl.innerHTML='<div class="permission-empty text-danger">'+esc(err.message||'Load menus failed')+'</div>';
       msg(err.message||'Load menus failed','error');

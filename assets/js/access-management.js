@@ -191,8 +191,7 @@
     const roleOn=!!document.getElementById('menuPermissionRoleId')?.value;
     const ids=roleOn ? currentSelectionIds() : (mpWorkingIds instanceof Set ? [...mpWorkingIds].map(Number) : []);
     renderMenuPermissionMatrix(ids);
-    if(roleOn) document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=false);
-    else document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=true);
+    applyMatrixInteractiveState();
   }
 
   function applyMainOnlyPermissionUi(){
@@ -293,6 +292,7 @@
         : (mpScope==='main' ? 'No Main menus found.' : 'No BO menus found.');
       box.innerHTML=`<div class="permission-empty">${emptyMsg}</div>`;
       syncGroupToggles();
+      applyMatrixInteractiveState();
       updateMenuPermissionChrome();
       return;
     }
@@ -338,6 +338,7 @@
       </section>`;
     }).join('');
     syncGroupToggles();
+    applyMatrixInteractiveState();
     updateMenuPermissionChrome();
   }
 
@@ -378,7 +379,15 @@
   function setMenuPermissionControlsEnabled(on){
     ['menuPermissionFilter','menuPermissionToggleAll','menuPermissionSelectAll','menuPermissionClearAll']
       .forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!on;});
-    // Main / BO scope stays clickable so users can browse either catalogue before selecting a role.
+  }
+  function applyMatrixInteractiveState(){
+    const roleOn=!!document.getElementById('menuPermissionRoleId')?.value;
+    const matrix=document.getElementById('menuPermissionCheckList');
+    if(matrix){
+      matrix.classList.toggle('is-locked',!roleOn);
+      matrix.querySelectorAll('input').forEach(x=>{x.disabled=!roleOn;});
+    }
+    setMenuPermissionControlsEnabled(roleOn);
   }
   function roleOptionLabel(role){
     return String(role?.name||role?.code||'Role').trim();
@@ -386,12 +395,15 @@
   function syncRoleSelectLabels(selectedId){
     const select=document.getElementById('menuPermissionRoleSelect');
     if(!select) return;
+    const want=selectedId==null?'':String(selectedId);
     [...select.options].forEach(opt=>{
       if(!opt.value){opt.textContent='Select role...';return;}
       const role=roleCache.find(r=>String(r.id)===String(opt.value));
       if(!role) return;
       opt.textContent=roleOptionLabel(role);
     });
+    if(want && [...select.options].some(o=>String(o.value)===want)) select.value=want;
+    else if(!want) select.value='';
     const wrap=select.closest('.rounded-select-wrap');
     if(wrap) wrap.dataset.boAutoWidth='1';
     if(window.BOSelectSync && typeof BOSelectSync.one==='function') BOSelectSync.one(select);
@@ -660,8 +672,6 @@
       });
       const filter=document.getElementById('menuPermissionFilter');if(filter)filter.value='';
       renderMenuPermissionMatrix([]);
-      document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=true);
-      setMenuPermissionControlsEnabled(false);
       updateMenuPermissionChrome();
       const hint=document.getElementById('menuPermissionRoleHint');
       if(hint)hint.textContent=editable.length?'Select a role to load its assigned menus.':'No editable permission group is available for this account.';
@@ -681,39 +691,48 @@
   async function loadSelectedMenuPermissionRole(roleId){
     const status=document.getElementById('menuPermissionStatus');
     const hidden=document.getElementById('menuPermissionRoleId');
-    if(hidden)hidden.value=roleId||'';
-    if(!roleId){
+    const nextId=roleId?String(roleId):'';
+    if(hidden) hidden.value=nextId;
+    if(!nextId){
       mpBaselineIds=[];
       mpWorkingIds=null;
       mpFilterQuery='';
       const filter=document.getElementById('menuPermissionFilter');if(filter)filter.value='';
       renderMenuPermissionMatrix([]);
-      document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=true);
-      setMenuPermissionControlsEnabled(false);
       updateMenuPermissionChrome();
       msg(status,'','');
       return;
     }
-    const role=roleCache.find(r=>String(r.id)===String(roleId));
-    if(!role||!canEditRoleMenus(role)){msg(status,'This role is protected.','error');return;}
+    const role=roleCache.find(r=>String(r.id)===String(nextId));
+    if(!role||!canEditRoleMenus(role)){
+      if(hidden) hidden.value='';
+      renderMenuPermissionMatrix([]);
+      updateMenuPermissionChrome();
+      msg(status,'This role is protected.','error');
+      return;
+    }
     msg(status,'Loading menu permissions...','');
     try{
       const selected=await fetchRoleMenuIds(role.id);
+      // Guard against stale async responses after the user switched roles.
+      if(String(document.getElementById('menuPermissionRoleId')?.value||'')!==String(role.id)) return;
       mpBaselineIds=selected.map(Number).filter(Number.isFinite);
       mpWorkingIds=new Set(mpBaselineIds.map(String));
       mpOpenGroups=null;
       renderMenuPermissionMatrix(mpBaselineIds);
-      document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=false);
-      setMenuPermissionControlsEnabled(true);
       updateMenuPermissionChrome();
       msg(status,'','');
-    }catch(e){msg(status,e.message,'error');}
+    }catch(e){
+      if(hidden) hidden.value='';
+      renderMenuPermissionMatrix([]);
+      updateMenuPermissionChrome();
+      msg(status,e.message,'error');
+    }
   }
 
   function resetMenuPermissionChanges(){
     mpWorkingIds=new Set(mpBaselineIds.map(String));
     renderMenuPermissionMatrix(mpBaselineIds);
-    document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=false);
     updateMenuPermissionChrome();
     msg(document.getElementById('menuPermissionStatus'),'Changes discarded.','');
   }
@@ -735,7 +754,6 @@
       mpBaselineIds=persisted;
       mpWorkingIds=new Set(persisted.map(String));
       renderMenuPermissionMatrix(persisted);
-      document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=false);
       updateMenuPermissionChrome();
       msg(status,'Menu permissions saved successfully.','success');
     }catch(err){msg(status,String(err?.message||'Unable to save menu permissions.'),'error');}
@@ -838,7 +856,12 @@
       applyMainOnlyPermissionUi();
       try{menuCache=await fetchMenus();await loadMenuPermissionWorkspace();}catch(e){msg(document.getElementById('menuPermissionStatus'),e.message,'error');}
       const form=document.getElementById('menuPermissionForm');if(form)form.onsubmit=saveMenuPermissions;
-      const select=document.getElementById('menuPermissionRoleSelect');if(select)select.onchange=()=>loadSelectedMenuPermissionRole(select.value);
+      const select=document.getElementById('menuPermissionRoleSelect');
+      if(select){
+        const onRoleChange=()=>loadSelectedMenuPermissionRole(select.value);
+        select.addEventListener('change',onRoleChange);
+        select.addEventListener('input',onRoleChange);
+      }
       const filter=document.getElementById('menuPermissionFilter');
       if(filter){
         filter.addEventListener('input',()=>{
@@ -846,7 +869,6 @@
           mpFilterQuery=filter.value||'';
           const roleOn=!!document.getElementById('menuPermissionRoleId')?.value;
           renderMenuPermissionMatrix(roleOn ? currentSelectionIds() : []);
-          if(roleOn) document.querySelectorAll('#menuPermissionCheckList input').forEach(x=>x.disabled=false);
         });
       }
       if(!isMerchantRolesPage && !hideBoPermissionScope){
@@ -857,6 +879,20 @@
           });
         });
       }
+      document.getElementById('menuPermissionCheckList')?.addEventListener('click',function(e){
+        if(document.getElementById('menuPermissionRoleId')?.value) return;
+        const hit=e.target.closest('.mp-menu-card, .mp-group-select, input');
+        if(!hit) return;
+        e.preventDefault();
+        msg(document.getElementById('menuPermissionStatus'),'Select a role above before editing permissions.','error');
+        const btn=document.querySelector('.mp-role-row .rounded-select-btn');
+        if(btn){
+          btn.classList.add('is-attention');
+          btn.focus();
+          try{ btn.click(); }catch(err){}
+          window.setTimeout(function(){ btn.classList.remove('is-attention'); },1800);
+        }
+      },true);
       document.getElementById('menuPermissionToggleAll')?.addEventListener('click',()=>{
         const groups=[...document.querySelectorAll('#menuPermissionCheckList .mp-group')];
         const openCount=groups.filter(g=>g.classList.contains('is-open')).length;
