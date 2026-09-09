@@ -84,14 +84,201 @@
     return 'account';
   }
 
+  const SENSITIVE_KEY = /password|passwd|token|secret|signature|api.?key|authorization|auth|pin|credential/i;
+  const NOISE_KEY = /url|uri|endpoint|image|logo|icon|header|payload|body|raw|json|request|response|user.?agent|cookie|html|content/i;
+  const HIGHLIGHT_KEY = /^(id|name|code|type|status|mode|amount|balance|role|username|email|environment|env|category|wallet|currency|enabled|active|success|method|provider|merchant|brand|admin|action)$|(_|^)(name|code|type|status|mode|amount|balance|role|env|environment|wallet|currency|id)$/i;
+
+  function safeParseJson(v){
+    if(v == null || v === '') return null;
+    if(typeof v === 'object') return v;
+    try{ return JSON.parse(v); }catch(e){ return null; }
+  }
+
+  function prettyLabel(key){
+    return String(key || '')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/[_-]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function leafKey(path){
+    const parts = String(path || '').split(/[.\s/]+/).filter(Boolean);
+    return parts[parts.length - 1] || path;
+  }
+
+  function displayKey(key){
+    const s = String(key || '').trim();
+    if(!s) return 'Field';
+    if(s.length <= 28 && (s.match(/[\s._/-]/g) || []).length <= 3) return prettyLabel(s);
+    return prettyLabel(leafKey(s));
+  }
+
+  function shortVal(v, max){
+    const limit = max || 36;
+    if(v == null) return '—';
+    if(typeof v === 'boolean') return v ? 'true' : 'false';
+    if(typeof v === 'object'){
+      try{ v = JSON.stringify(v); }catch(e){ return '…'; }
+    }
+    const s = String(v).replace(/\s+/g, ' ').trim();
+    if(!s) return '—';
+    if(SENSITIVE_KEY.test(s) && s.length > 12) return '••••';
+    return s.length > limit ? s.slice(0, limit - 1) + '…' : s;
+  }
+
+  function flattenPairs(obj, prefix, out){
+    if(!obj || typeof obj !== 'object' || Array.isArray(obj)) return out || [];
+    out = out || [];
+    Object.keys(obj).forEach(k => {
+      const path = prefix ? prefix + '.' + k : k;
+      const v = obj[k];
+      if(v != null && typeof v === 'object' && !Array.isArray(v)) flattenPairs(v, path, out);
+      else out.push([path, v]);
+    });
+    return out;
+  }
+
+  function parseDetailPairs(text){
+    const raw = String(text || '').trim();
+    if(!raw) return [];
+    const asJson = safeParseJson(raw);
+    if(asJson && typeof asJson === 'object' && !Array.isArray(asJson)){
+      if(asJson.fields && typeof asJson.fields === 'object') return flattenPairs(asJson.fields);
+      return flattenPairs(asJson);
+    }
+    const pairs = [];
+    const re = /([A-Za-z][\w.\s/-]{0,40}?)\s*=\s*([^,;]+?)(?=(?:\s*,\s*|\s*;\s*|\s+[A-Za-z][\w.\s/-]{0,40}?=)|$)/g;
+    let m;
+    while((m = re.exec(raw))){
+      const k = m[1].replace(/\s+/g, ' ').trim();
+      const v = m[2].replace(/\s+/g, ' ').trim();
+      if(k) pairs.push([k, v]);
+    }
+    return pairs;
+  }
+
+  function isHighlightKey(key){
+    const leaf = leafKey(key);
+    if(SENSITIVE_KEY.test(key) || SENSITIVE_KEY.test(leaf)) return false;
+    if(NOISE_KEY.test(key) || NOISE_KEY.test(leaf)) return false;
+    return HIGHLIGHT_KEY.test(leaf) || HIGHLIGHT_KEY.test(key);
+  }
+
+  function valuesEqual(a, b){
+    if(a === b) return true;
+    if(a == null || b == null) return a == b;
+    if(typeof a === 'object' || typeof b === 'object'){
+      try{ return JSON.stringify(a) === JSON.stringify(b); }catch(e){ return false; }
+    }
+    return String(a) === String(b);
+  }
+
+  function businessObject(j){
+    if(!j || typeof j !== 'object') return null;
+    if(j.fields && typeof j.fields === 'object') return j.fields;
+    if(j.before && typeof j.before === 'object') return j.before;
+    if(j.after && typeof j.after === 'object') return j.after;
+    if(j.data && typeof j.data === 'object' && !Array.isArray(j.data)) return j.data;
+    const keys = Object.keys(j);
+    if(keys.length && keys.every(k => /^(method|path|success|status|message|timestamp|durationMs|requestId)$/i.test(k))) return null;
+    return j;
+  }
+
+  function diffPairs(before, after){
+    const a = flattenPairs(before || {});
+    const bMap = {};
+    flattenPairs(after || {}).forEach(([k, v]) => { bMap[k] = v; });
+    const aMap = {};
+    a.forEach(([k, v]) => { aMap[k] = v; });
+    const keys = Array.from(new Set(Object.keys(aMap).concat(Object.keys(bMap))));
+    const changes = [];
+    keys.forEach(k => {
+      if(SENSITIVE_KEY.test(k) || SENSITIVE_KEY.test(leafKey(k))) return;
+      if(NOISE_KEY.test(k) || NOISE_KEY.test(leafKey(k))) return;
+      if(!(k in aMap)) changes.push({ key: k, from: undefined, to: bMap[k], kind: 'add' });
+      else if(!(k in bMap)) changes.push({ key: k, from: aMap[k], to: undefined, kind: 'remove' });
+      else if(!valuesEqual(aMap[k], bMap[k])) changes.push({ key: k, from: aMap[k], to: bMap[k], kind: 'change' });
+    });
+    changes.sort((x, y) => Number(isHighlightKey(y.key)) - Number(isHighlightKey(x.key)));
+    return changes;
+  }
+
+  function formatChangeBits(changes, limit){
+    const max = limit || 3;
+    const bits = changes.slice(0, max).map(c => {
+      const label = displayKey(c.key);
+      if(c.kind === 'add') return label + ': ' + shortVal(c.to);
+      if(c.kind === 'remove') return label + ' removed';
+      return label + ': ' + shortVal(c.from, 20) + ' → ' + shortVal(c.to, 20);
+    });
+    if(changes.length > max) bits.push('+' + (changes.length - max) + ' more');
+    return bits.join(' · ');
+  }
+
+  function pickHighlightBits(pairs, limit){
+    const max = limit || 3;
+    const scored = pairs
+      .filter(([k, v]) => v != null && String(v).trim() !== '' && isHighlightKey(k))
+      .map(([k, v]) => ({ k, v, score: /name|code/i.test(leafKey(k)) ? 2 : 1 }));
+    scored.sort((a, b) => b.score - a.score);
+    return scored.slice(0, max).map(x => displayKey(x.k) + ' ' + shortVal(x.v, 28));
+  }
+
+  function actionVerb(action){
+    const a = String(action || '').toLowerCase();
+    if(/^create|add|insert/.test(a)) return 'Created';
+    if(/^update|edit|modify|patch|save/.test(a)) return 'Updated';
+    if(/^delete|remove|destroy/.test(a)) return 'Deleted';
+    if(/^suspend|disable|block/.test(a)) return 'Suspended';
+    if(/^activate|enable|unblock/.test(a)) return 'Activated';
+    if(/login/.test(a)) return 'Signed in';
+    if(/logout/.test(a)) return 'Signed out';
+    if(/credit|adjust|deposit|withdraw|payout/.test(a)) return 'Adjusted';
+    return prettyAction(action);
+  }
+
   function opDetailText(row){
-    try{
-      const j = JSON.parse(row.afterJson || '{}');
-      const rich = String(row.detail || '').trim();
-      if(rich) return rich;
-      if(j.path) return String(j.method || 'OP') + ' ' + j.path;
-    }catch(e){}
-    return row.detail || row.action || '—';
+    const before = businessObject(safeParseJson(row.beforeJson));
+    const afterFull = safeParseJson(row.afterJson);
+    const after = businessObject(afterFull);
+
+    if(before && after){
+      const changes = diffPairs(before, after);
+      if(changes.length) return formatChangeBits(changes, 3);
+      return 'No field changes';
+    }
+
+    const detailPairs = parseDetailPairs(row.detail);
+    if(before && detailPairs.length){
+      const afterFromDetail = {};
+      detailPairs.forEach(([k, v]) => { afterFromDetail[k] = v; });
+      const changes = diffPairs(before, afterFromDetail);
+      if(changes.length) return formatChangeBits(changes, 3);
+    }
+
+    if(detailPairs.length){
+      const bits = pickHighlightBits(detailPairs, 3);
+      if(bits.length){
+        const verb = actionVerb(row.action);
+        if(/^(Created|Deleted|Suspended|Activated)/.test(verb)) return verb + ' · ' + bits.join(' · ');
+        if(verb === 'Updated') return 'Set ' + bits.join(' · ');
+        return bits.join(' · ');
+      }
+    }
+
+    if(afterFull && afterFull.path){
+      const path = String(afterFull.path).replace(/^\/api\//, '/');
+      return String(afterFull.method || 'OP') + ' ' + shortVal(path, 48);
+    }
+
+    const rich = String(row.detail || '').trim();
+    if(rich){
+      const oneLine = rich.replace(/\s+/g, ' ');
+      return oneLine.length > 72 ? oneLine.slice(0, 71) + '…' : oneLine;
+    }
+    return actionVerb(row.action);
   }
 
   function opSuccess(row){
@@ -155,6 +342,20 @@
         if(!merchantId && j.path){ const m=String(j.path).match(/\/(?:brands|merchants)\/(\d+)/); if(m) merchantId=Number(m[1]); }
       }catch(e){}
     }
+    const fullDetail = String(row.detail || '').trim();
+    const detailMap = {
+      Time: row.createdAt || '—',
+      Actor: row.actor || 'SYSTEM',
+      Action: row.action || '—',
+      Entity: row.entityType || '—',
+      'Entity ID': row.entityId != null ? String(row.entityId) : '—',
+      IP: row.ipAddress || '—',
+      Summary: subtitle,
+      Status: ok ? 'Success' : 'Failed'
+    };
+    if(fullDetail && fullDetail !== subtitle && fullDetail.length <= 160){
+      detailMap.Detail = fullDetail;
+    }
     return {
       id: 'op-' + (row.id || (row.actor + '-' + row.createdAt + '-' + row.action)),
       source: 'operation',
@@ -171,16 +372,7 @@
       location: row.location || '—',
       status: ok ? 'success' : 'failed',
       tone: ok ? (cat === 'permission' ? 'success' : 'cyan') : 'danger',
-      detail: {
-        Time: row.createdAt || '—',
-        Actor: row.actor || 'SYSTEM',
-        Action: row.action || '—',
-        Entity: row.entityType || '—',
-        'Entity ID': row.entityId != null ? String(row.entityId) : '—',
-        IP: row.ipAddress || '—',
-        Detail: subtitle,
-        Status: ok ? 'Success' : 'Failed'
-      },
+      detail: detailMap,
       merchantId: merchantId,
       raw: row
     };

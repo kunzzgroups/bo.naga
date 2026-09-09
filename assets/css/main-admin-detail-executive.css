@@ -2299,7 +2299,7 @@ body.main-merchant-create-page .mac-provider-search input:focus{
 body.main-merchant-create-page .mac-provider-list{
   flex:1;min-height:0;overflow:auto;padding:10px 10px 12px;
   display:grid;
-  grid-template-columns:repeat(3, minmax(0, 1fr));
+  grid-template-columns:repeat(4, minmax(0, 1fr));
   gap:8px;
   align-content:start;
 }
@@ -3005,13 +3005,30 @@ html[data-bo-theme="dark"] body.main-admin-edit-page .mae-status-btn.is-active[d
 html[data-bo-theme="dark"] body.main-admin-edit-page .mae-status-btn.is-active[data-mae-status="0"]{color:#FF7A84}
 
 /* ========== Security & Audit ========== */
-body.main-admin-security-page .mas-workspace{gap:16px;flex:1;min-height:0}
+body.main-admin-security-page .mas-workspace{gap:16px;flex:1;min-height:0;overflow:hidden}
 body.main-admin-security-page .mad-chrome{border-bottom:1px solid var(--bo-border);flex:0 0 54px;height:54px;min-height:54px;max-height:54px}
 body.main-admin-security-page .mas-kpis{
   display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;flex:0 0 auto;
 }
 body.main-admin-security-page .mas-panel{
   flex:1;min-height:0;display:flex;flex-direction:column;overflow:visible;
+}
+body.main-admin-security-page .mas-panel > .mad-filter-bar,
+body.main-admin-security-page .mas-panel > .mad-footer{
+  flex:0 0 auto;
+}
+body.main-admin-security-page .mas-table-wrap{
+  flex:1 1 auto;min-height:180px;height:100%;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+body.main-admin-security-page .mas-table-wrap .mas-table{
+  height:100%;
+}
+body.main-admin-security-page .mas-table tbody tr[data-event-id]{
+  height:var(--mas-row-h, 56px);
+}
+body.main-admin-security-page .mas-table tbody tr[data-event-id] > td{
+  height:inherit;vertical-align:middle;
 }
 body.main-admin-security-page .mas-kpi{
   display:flex;align-items:flex-start;gap:14px;
@@ -3169,21 +3186,25 @@ body.main-admin-security-page .mas-table th{
 body.main-admin-security-page .mas-table td{padding:6px 16px;vertical-align:middle}
 /* Column balance: keep Date compact, Details pinned last */
 body.main-admin-security-page .mas-table th:nth-child(1),
-body.main-admin-security-page .mas-table td:nth-child(1){width:108px} /* Time & Date */
+body.main-admin-security-page .mas-table td:nth-child(1){width:108px;text-align:left} /* Time & Date */
 body.main-admin-security-page .mas-table th:nth-child(2),
-body.main-admin-security-page .mas-table td:nth-child(2){width:18%} /* Administrator */
-body.main-admin-security-page .mas-table th:nth-child(3),
-body.main-admin-security-page .mas-table td:nth-child(3){width:22%} /* Action / Event */
+body.main-admin-security-page .mas-table td:nth-child(2){width:18%;text-align:left} /* Administrator */
+body.main-admin-security-page .mas-table th:nth-child(3){
+  width:22%;text-align:center;padding-right:16px;
+} /* Action / Event header */
+body.main-admin-security-page .mas-table td:nth-child(3){
+  width:22%;text-align:left;padding-right:16px;
+} /* Action / Event data */
 body.main-admin-security-page .mas-table th:nth-child(4),
-body.main-admin-security-page .mas-table td:nth-child(4){width:14%} /* Target */
+body.main-admin-security-page .mas-table td:nth-child(4){width:14%;text-align:left;padding-left:16px} /* Target */
 body.main-admin-security-page .mas-table th:nth-child(5),
-body.main-admin-security-page .mas-table td:nth-child(5){width:18%} /* IP */
+body.main-admin-security-page .mas-table td:nth-child(5){width:18%;text-align:left} /* IP */
 body.main-admin-security-page .mas-table th:nth-child(6),
-body.main-admin-security-page .mas-table td:nth-child(6){width:110px} /* Status */
+body.main-admin-security-page .mas-table td:nth-child(6){width:110px;text-align:left} /* Status */
 body.main-admin-security-page .mas-table th:nth-child(7),
 body.main-admin-security-page .mas-table td:nth-child(7){
   width:88px;text-align:right;padding-right:16px;
-} /* Details �� last */
+} /* Details · last */
 body.main-admin-security-page .mas-table tbody tr.is-blocked td{
   background:rgba(239,51,64,.06);
 }
@@ -3214,18 +3235,19 @@ body.main-admin-security-page .mas-admin-copy small{
   display:block;font-size:10.5px;font-weight:600;color:var(--bo-muted);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px;
 }
-body.main-admin-security-page .mas-event{display:flex;align-items:flex-start;gap:8px;min-width:0}
+body.main-admin-security-page .mas-event{display:flex;align-items:flex-start;justify-content:flex-start;gap:8px;min-width:0;width:100%}
 body.main-admin-security-page .mas-dot{
   width:8px;height:8px;border-radius:50%;flex:0 0 8px;margin-top:5px;background:var(--bo-cyan);
 }
 body.main-admin-security-page .mas-dot.is-success{background:var(--bo-success)}
 body.main-admin-security-page .mas-dot.is-danger{background:var(--bo-danger)}
-body.main-admin-security-page .mas-event-copy{min-width:0}
+body.main-admin-security-page .mas-event-copy{min-width:0;flex:1;text-align:left}
 body.main-admin-security-page .mas-event-copy b{
   display:block;font-size:13px;font-weight:800;color:var(--bo-text);line-height:1.25;
 }
 body.main-admin-security-page .mas-event-copy small{
-  display:block;margin-top:2px;font-size:11.5px;font-weight:500;color:var(--bo-muted);line-height:1.35;
+  display:-webkit-box;margin-top:2px;font-size:11.5px;font-weight:500;color:var(--bo-muted);line-height:1.35;
+  -webkit-box-orient:vertical;-webkit-line-clamp:1;overflow:hidden;word-break:break-word;
 }
 body.main-admin-security-page .mas-table tr.is-blocked .mas-event-copy b,
 body.main-admin-security-page .mas-table tr.is-blocked .mas-time b{color:var(--bo-danger)}

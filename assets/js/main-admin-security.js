@@ -1,10 +1,15 @@
 (function(){
   'use strict';
 
-  const PAGE_SIZE = 10;
+  const PAGE_SIZE_MIN = 5;
+  const PAGE_SIZE_MAX = 40;
+  const PAGE_SIZE_FALLBACK = 10;
+  let pageSize = PAGE_SIZE_FALLBACK;
   const tbody = document.getElementById('masTableBody');
   const infoEl = document.getElementById('masTableInfo');
   const pagerEl = document.getElementById('masPager');
+  const tableWrap = document.querySelector('.mas-table-wrap');
+  const panelEl = document.querySelector('.mas-panel');
   const searchEl = document.getElementById('masSearch');
   const eventTypeEl = document.getElementById('masEventType');
   const statusEl = document.getElementById('masStatus');
@@ -21,6 +26,7 @@
   let filtered = [];
   let currentPage = 1;
   let category = 'all';
+  let resizeTimer = null;
 
   const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const pickerState = { view: new Date(), selectingStart: true, mode: 'days', yearPageStart: new Date().getFullYear() - 5 };
@@ -83,14 +89,207 @@
     return 'account';
   }
 
+  const SENSITIVE_KEY = /password|passwd|token|secret|signature|api.?key|authorization|auth|pin|credential/i;
+  const NOISE_KEY = /url|uri|endpoint|image|logo|icon|header|payload|body|raw|json|request|response|user.?agent|cookie|html|content/i;
+  const HIGHLIGHT_KEY = /^(id|name|code|type|status|mode|amount|balance|role|username|email|environment|env|category|wallet|currency|enabled|active|success|method|provider|merchant|brand|admin|action)$|(_|^)(name|code|type|status|mode|amount|balance|role|env|environment|wallet|currency|id)$/i;
+
+  function safeParseJson(v){
+    if(v == null || v === '') return null;
+    if(typeof v === 'object') return v;
+    try{ return JSON.parse(v); }catch(e){ return null; }
+  }
+
+  function prettyLabel(key){
+    return String(key || '')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/[_-]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function displayKey(key){
+    const s = String(key || '').trim();
+    if(!s) return 'Field';
+    if(s.length <= 28 && (s.match(/[\s._/-]/g) || []).length <= 3) return prettyLabel(s);
+    return prettyLabel(leafKey(s));
+  }
+
+  function shortVal(v, max){
+    const limit = max || 36;
+    if(v == null) return '—';
+    if(typeof v === 'boolean') return v ? 'true' : 'false';
+    if(typeof v === 'object'){
+      try{ v = JSON.stringify(v); }catch(e){ return '…'; }
+    }
+    const s = String(v).replace(/\s+/g, ' ').trim();
+    if(!s) return '—';
+    if(SENSITIVE_KEY.test(s) && s.length > 12) return '••••';
+    return s.length > limit ? s.slice(0, limit - 1) + '…' : s;
+  }
+
+  function flattenPairs(obj, prefix, out){
+    if(!obj || typeof obj !== 'object' || Array.isArray(obj)) return out || [];
+    out = out || [];
+    Object.keys(obj).forEach(k => {
+      const path = prefix ? prefix + '.' + k : k;
+      const v = obj[k];
+      if(v != null && typeof v === 'object' && !Array.isArray(v)) flattenPairs(v, path, out);
+      else out.push([path, v]);
+    });
+    return out;
+  }
+
+  function parseDetailPairs(text){
+    const raw = String(text || '').trim();
+    if(!raw) return [];
+    const asJson = safeParseJson(raw);
+    if(asJson && typeof asJson === 'object' && !Array.isArray(asJson)){
+      if(asJson.fields && typeof asJson.fields === 'object') return flattenPairs(asJson.fields);
+      return flattenPairs(asJson);
+    }
+    // "key=value, key=value" or "key=value key=value"
+    const pairs = [];
+    const re = /([A-Za-z][\w.\s/-]{0,40}?)\s*=\s*([^,;]+?)(?=(?:\s*,\s*|\s*;\s*|\s+[A-Za-z][\w.\s/-]{0,40}?=)|$)/g;
+    let m;
+    while((m = re.exec(raw))){
+      const k = m[1].replace(/\s+/g, ' ').trim();
+      const v = m[2].replace(/\s+/g, ' ').trim();
+      if(k) pairs.push([k, v]);
+    }
+    return pairs;
+  }
+
+  function leafKey(path){
+    const parts = String(path || '').split(/[.\s/]+/).filter(Boolean);
+    return parts[parts.length - 1] || path;
+  }
+
+  function isHighlightKey(key){
+    const leaf = leafKey(key);
+    if(SENSITIVE_KEY.test(key) || SENSITIVE_KEY.test(leaf)) return false;
+    if(NOISE_KEY.test(key) || NOISE_KEY.test(leaf)) return false;
+    return HIGHLIGHT_KEY.test(leaf) || HIGHLIGHT_KEY.test(key);
+  }
+
+  function valuesEqual(a, b){
+    if(a === b) return true;
+    if(a == null || b == null) return a == b;
+    if(typeof a === 'object' || typeof b === 'object'){
+      try{ return JSON.stringify(a) === JSON.stringify(b); }catch(e){ return false; }
+    }
+    return String(a) === String(b);
+  }
+
+  function businessObject(j){
+    if(!j || typeof j !== 'object') return null;
+    if(j.fields && typeof j.fields === 'object') return j.fields;
+    if(j.before && typeof j.before === 'object') return j.before;
+    if(j.after && typeof j.after === 'object') return j.after;
+    if(j.data && typeof j.data === 'object' && !Array.isArray(j.data)) return j.data;
+    // Skip pure HTTP envelope {method,path,success}
+    const keys = Object.keys(j);
+    if(keys.length && keys.every(k => /^(method|path|success|status|message|timestamp|durationMs|requestId)$/i.test(k))) return null;
+    return j;
+  }
+
+  function diffPairs(before, after){
+    const a = flattenPairs(before || {});
+    const bMap = {};
+    flattenPairs(after || {}).forEach(([k, v]) => { bMap[k] = v; });
+    const aMap = {};
+    a.forEach(([k, v]) => { aMap[k] = v; });
+    const keys = Array.from(new Set(Object.keys(aMap).concat(Object.keys(bMap))));
+    const changes = [];
+    keys.forEach(k => {
+      if(SENSITIVE_KEY.test(k) || SENSITIVE_KEY.test(leafKey(k))) return;
+      if(NOISE_KEY.test(k) || NOISE_KEY.test(leafKey(k))) return;
+      if(!(k in aMap)) changes.push({ key: k, from: undefined, to: bMap[k], kind: 'add' });
+      else if(!(k in bMap)) changes.push({ key: k, from: aMap[k], to: undefined, kind: 'remove' });
+      else if(!valuesEqual(aMap[k], bMap[k])) changes.push({ key: k, from: aMap[k], to: bMap[k], kind: 'change' });
+    });
+    // Prefer highlight keys first
+    changes.sort((x, y) => Number(isHighlightKey(y.key)) - Number(isHighlightKey(x.key)));
+    return changes;
+  }
+
+  function formatChangeBits(changes, limit){
+    const max = limit || 3;
+    const bits = changes.slice(0, max).map(c => {
+      const label = displayKey(c.key);
+      if(c.kind === 'add') return label + ': ' + shortVal(c.to);
+      if(c.kind === 'remove') return label + ' removed';
+      return label + ': ' + shortVal(c.from, 20) + ' → ' + shortVal(c.to, 20);
+    });
+    if(changes.length > max) bits.push('+' + (changes.length - max) + ' more');
+    return bits.join(' · ');
+  }
+
+  function pickHighlightBits(pairs, limit){
+    const max = limit || 3;
+    const scored = pairs
+      .filter(([k, v]) => v != null && String(v).trim() !== '' && isHighlightKey(k))
+      .map(([k, v]) => ({ k, v, score: /name|code/i.test(leafKey(k)) ? 2 : 1 }));
+    scored.sort((a, b) => b.score - a.score);
+    return scored.slice(0, max).map(x => displayKey(x.k) + ' ' + shortVal(x.v, 28));
+  }
+
+  function actionVerb(action){
+    const a = String(action || '').toLowerCase();
+    if(/^create|add|insert/.test(a)) return 'Created';
+    if(/^update|edit|modify|patch|save/.test(a)) return 'Updated';
+    if(/^delete|remove|destroy/.test(a)) return 'Deleted';
+    if(/^suspend|disable|block/.test(a)) return 'Suspended';
+    if(/^activate|enable|unblock/.test(a)) return 'Activated';
+    if(/login/.test(a)) return 'Signed in';
+    if(/logout/.test(a)) return 'Signed out';
+    if(/credit|adjust|deposit|withdraw|payout/.test(a)) return 'Adjusted';
+    return prettyAction(action);
+  }
+
   function opDetailText(row){
-    try{
-      const j = JSON.parse(row.afterJson || '{}');
-      const rich = String(row.detail || '').trim();
-      if(rich) return rich;
-      if(j.path) return String(j.method || 'OP') + ' ' + j.path;
-    }catch(e){}
-    return row.detail || row.action || '—';
+    const before = businessObject(safeParseJson(row.beforeJson));
+    const afterFull = safeParseJson(row.afterJson);
+    const after = businessObject(afterFull);
+
+    if(before && after){
+      const changes = diffPairs(before, after);
+      if(changes.length) return formatChangeBits(changes, 3);
+      return 'No field changes';
+    }
+
+    const detailPairs = parseDetailPairs(row.detail);
+    if(before && detailPairs.length){
+      const afterFromDetail = {};
+      detailPairs.forEach(([k, v]) => { afterFromDetail[k] = v; });
+      const changes = diffPairs(before, afterFromDetail);
+      if(changes.length) return formatChangeBits(changes, 3);
+    }
+
+    if(detailPairs.length){
+      const bits = pickHighlightBits(detailPairs, 3);
+      if(bits.length){
+        const verb = actionVerb(row.action);
+        // CREATE / DELETE: "Created · Name X · Type Y"
+        if(/^(Created|Deleted|Suspended|Activated)/.test(verb)) return verb + ' · ' + bits.join(' · ');
+        // UPDATE without before: show key facts of what was submitted
+        if(verb === 'Updated') return 'Set ' + bits.join(' · ');
+        return bits.join(' · ');
+      }
+    }
+
+    if(afterFull && afterFull.path){
+      const path = String(afterFull.path).replace(/^\/api\//, '/');
+      return String(afterFull.method || 'OP') + ' ' + shortVal(path, 48);
+    }
+
+    const rich = String(row.detail || '').trim();
+    if(rich){
+      // Last resort: never dump the whole payload into the table
+      const oneLine = rich.replace(/\s+/g, ' ');
+      return oneLine.length > 72 ? oneLine.slice(0, 71) + '…' : oneLine;
+    }
+    return actionVerb(row.action);
   }
 
   function opSuccess(row){
@@ -145,6 +344,21 @@
     const target = row.entityType
       ? (prettyAction(row.entityType) + (row.entityId != null ? ': #' + row.entityId : ''))
       : 'System';
+    const fullDetail = String(row.detail || '').trim();
+    const detailMap = {
+      Time: row.createdAt || '—',
+      Actor: row.actor || 'SYSTEM',
+      Action: row.action || '—',
+      Entity: row.entityType || '—',
+      'Entity ID': row.entityId != null ? String(row.entityId) : '—',
+      IP: row.ipAddress || '—',
+      Summary: subtitle,
+      Status: ok ? 'Success' : 'Failed'
+    };
+    // Keep long payloads out of the summary grid; full text stays in raw JSON.
+    if(fullDetail && fullDetail !== subtitle && fullDetail.length <= 160){
+      detailMap.Detail = fullDetail;
+    }
     return {
       id: 'op-' + (row.id || (row.actor + '-' + row.createdAt + '-' + row.action)),
       source: 'operation',
@@ -161,16 +375,7 @@
       location: row.location || '—',
       status: ok ? 'success' : 'failed',
       tone: ok ? (cat === 'permission' ? 'success' : 'cyan') : 'danger',
-      detail: {
-        Time: row.createdAt || '—',
-        Actor: row.actor || 'SYSTEM',
-        Action: row.action || '—',
-        Entity: row.entityType || '—',
-        'Entity ID': row.entityId != null ? String(row.entityId) : '—',
-        IP: row.ipAddress || '—',
-        Detail: subtitle,
-        Status: ok ? 'Success' : 'Failed'
-      },
+      detail: detailMap,
       raw: row
     };
   }
@@ -522,13 +727,72 @@
     return html;
   }
 
+  function measureRowHeight(){
+    const tr = tbody && tbody.querySelector('tr[data-event-id]');
+    if(tr){
+      const h = tr.getBoundingClientRect().height;
+      if(h >= 40) return h;
+    }
+    return 56;
+  }
+
+  function fitTableArea(){
+    if(!tableWrap || !panelEl) return 0;
+    const footer = panelEl.querySelector('.mad-footer');
+    const footerH = footer ? Math.max(footer.getBoundingClientRect().height, 52) : 56;
+    const top = tableWrap.getBoundingClientRect().top;
+    // Pull wrap down to the footer / viewport bottom so rows can stretch evenly.
+    const avail = Math.floor(window.innerHeight - top - footerH - 8);
+    const h = Math.max(180, avail);
+    tableWrap.style.height = h + 'px';
+    tableWrap.style.maxHeight = h + 'px';
+    return h;
+  }
+
+  function equalizeRowHeights(){
+    if(!tbody || !tableWrap) return;
+    const rows = tbody.querySelectorAll('tr[data-event-id]');
+    if(!rows.length){
+      tableWrap.style.removeProperty('--mas-row-h');
+      return;
+    }
+    const thead = document.querySelector('.mas-table thead');
+    const headH = thead ? Math.max(thead.getBoundingClientRect().height, 44) : 48;
+    const wrapH = tableWrap.clientHeight || fitTableArea();
+    const bodyH = Math.max(0, wrapH - headH);
+    const rowH = Math.max(48, Math.floor(bodyH / rows.length));
+    tableWrap.style.setProperty('--mas-row-h', rowH + 'px');
+  }
+
+  function calcPageSize(){
+    fitTableArea();
+    const thead = document.querySelector('.mas-table thead');
+    const headH = thead ? Math.max(thead.getBoundingClientRect().height, 44) : 48;
+    const wrapH = tableWrap ? tableWrap.clientHeight : 360;
+    const avail = Math.max(0, wrapH - headH);
+    // Target a comfortable base density, then equalizeRowHeights stretches them.
+    const baseRow = 56;
+    const n = Math.floor(avail / baseRow);
+    return Math.max(PAGE_SIZE_MIN, Math.min(PAGE_SIZE_MAX, n || PAGE_SIZE_FALLBACK));
+  }
+
+  function syncPageSize(){
+    const next = calcPageSize();
+    if(next === pageSize) return false;
+    const firstIndex = (currentPage - 1) * pageSize;
+    pageSize = next;
+    currentPage = Math.floor(firstIndex / Math.max(1, pageSize)) + 1;
+    return true;
+  }
+
   function renderTable(){
     if(!tbody) return;
+    syncPageSize();
     const total = filtered.length;
-    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE) || 1);
+    const totalPages = Math.max(1, Math.ceil(total / pageSize) || 1);
     currentPage = Math.max(1, Math.min(currentPage, totalPages));
-    const start = (currentPage - 1) * PAGE_SIZE;
-    const rows = filtered.slice(start, start + PAGE_SIZE);
+    const start = (currentPage - 1) * pageSize;
+    const rows = filtered.slice(start, start + pageSize);
 
     if(pagerEl) pagerEl.innerHTML = pageButtons(currentPage, totalPages);
     if(infoEl){
@@ -539,6 +803,8 @@
 
     if(!rows.length){
       tbody.innerHTML = '<tr><td colspan="7" class="mad-empty">No audit events found.</td></tr>';
+      fitTableArea();
+      if(tableWrap) tableWrap.style.removeProperty('--mas-row-h');
       return;
     }
 
@@ -554,13 +820,25 @@
         '<td><div class="mas-admin"><span class="mas-avatar' + avClass + '">' + esc(initials(e.adminName)) + '</span>' +
           '<div class="mas-admin-copy"><b>' + esc(e.adminName) + '</b><small>' + esc(e.roleLabel) + '</small></div></div></td>' +
         '<td><div class="mas-event"><span class="mas-dot ' + dotClass + '"></span>' +
-          '<div class="mas-event-copy"><b>' + esc(e.title) + '</b><small>' + esc(e.subtitle) + '</small></div></div></td>' +
+          '<div class="mas-event-copy"><b>' + esc(e.title) + '</b><small title="' + esc(e.subtitle) + '">' + esc(e.subtitle) + '</small></div></div></td>' +
         '<td><span class="mas-target" title="' + esc(e.target) + '">' + esc(e.target) + '</span></td>' +
         '<td><div class="mas-ip"><b>' + esc(e.ip) + '</b><small><i class="bi bi-geo-alt-fill"></i> ' + esc(e.location) + '</small></div></td>' +
         '<td><span class="mas-status ' + statusClass + '"><i></i>' + statusLabel + '</span></td>' +
         '<td><button type="button" class="mas-view" data-mas-view="' + esc(e.id) + '">View <i class="bi bi-chevron-right"></i></button></td>' +
       '</tr>';
     }).join('');
+
+    fitTableArea();
+    equalizeRowHeights();
+  }
+
+  function refinePageSizeAfterPaint(){
+    requestAnimationFrame(() => {
+      fitTableArea();
+      const changed = syncPageSize();
+      if(changed) renderTable();
+      else equalizeRowHeights();
+    });
   }
 
   function findEvent(id){
@@ -662,12 +940,21 @@
   pagerEl && pagerEl.addEventListener('click', e => {
     const b = e.target.closest('[data-page]');
     if(!b || b.disabled) return;
-    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
     const n = Number(b.dataset.page);
     if(n >= 1 && n <= totalPages && n !== currentPage){
       currentPage = n;
       renderTable();
     }
+  });
+
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      fitTableArea();
+      if(syncPageSize()) renderTable();
+      else equalizeRowHeights();
+    }, 120);
   });
 
   tbody && tbody.addEventListener('click', e => {
@@ -679,6 +966,7 @@
   document.querySelectorAll('[data-mas-close]').forEach(btn => btn.addEventListener('click', closeDetail));
   detailModal && detailModal.addEventListener('click', e => { if(e.target === detailModal) closeDetail(); });
 
+  pageSize = calcPageSize();
   if(pagerEl) pagerEl.innerHTML = pageButtons(1, 1);
-  loadAll();
+  loadAll().then(refinePageSizeAfterPaint);
 })();
