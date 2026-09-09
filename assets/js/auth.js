@@ -92,7 +92,7 @@
       return 'main-merchant-detail.html';
     }
     // Admin module drill-downs keep the Admin Details item highlighted.
-    if(p==='main-admin-create.html' || p==='main-admin-edit.html'){
+    if(p==='main-admin-create.html' || p==='main-admin-edit.html' || p==='main-admin-credit.html'){
       return 'main-admin-detail.html';
     }
     return p;
@@ -195,9 +195,12 @@
       // It has no separate sidebar/menu permission, so inherit the report permission
       // instead of redirecting the user to their landing page.
       if(current === 'agent-performance-detail.html') current = 'agent-performance-report.html';
-      // Create/Edit Admin / Credit Control / Security & Audit are drill-downs of Main Admin Detail.
+      // Create/Edit Admin / Security & Audit are drill-downs of Main Admin Detail.
+      // Admin Credit Control page is retired; old bookmarks redirect via main-admin-credit.html.
       if(current === 'main-admin-create.html') current = 'main-admin-detail.html';
       if(current === 'main-admin-edit.html') current = 'main-admin-detail.html';
+      if(current === 'main-admin-credit.html') current = 'main-admin-detail.html';
+      if(current === 'main-admin-security.html') current = 'main-admin-detail.html';
       if(current === 'main-admin-role-create.html') current = 'menu-permission.html';
       // Merchant create / credit / security / roles are drill-downs of Main Merchant Detail.
       if(current === 'main-merchant-create.html') current = 'main-merchant-detail.html';
@@ -329,7 +332,14 @@
       // Database-only sidebar: no hardcoded fallback menus, injected pages, role filters,
       // menu renaming, parent repair or frontend permission overrides.
       const menus = sourceMenus.map(normalizeMenu)
-        .filter(function(m){ return m.status === 1 && m.url && m.url !== '#'; })
+        .filter(function(m){
+          if(m.status !== 1 || !m.url || m.url === '#') return false;
+          // Admin Credit Control page is retired — keep Adjust Credit on Administrators.
+          const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
+          const key = String(m.menuKey || '').toLowerCase();
+          if(file === 'main-admin-credit.html' || key === 'main_admin_credit' || key === 'admin_credit') return false;
+          return true;
+        })
         .sort(function(a,b){ return a.sortOrder - b.sortOrder || a.title.localeCompare(b.title); });
 
       if(!menus.length){

@@ -40,8 +40,12 @@
   let allAdmins = [];
   let filteredAdmins = [];
   let currentPage = 1;
-  let statusPill = 'all';
+  let statusPill = 'active';
   let lastSyncedAt = null;
+  const selectedAdminIds = new Set();
+  const selectAllInput = document.getElementById('madSelectAll');
+  const selectAllWrap = document.getElementById('madSelectAllWrap');
+  const bulkDeleteBtn = document.getElementById('madBulkDeleteBtn');
 
   const resetPassModal = document.getElementById('madResetPasswordModal');
   if(resetPassModal){ resetPassModal.classList.remove('show'); resetPassModal.setAttribute('aria-hidden', 'true'); }
@@ -102,7 +106,7 @@
       const d = new Date(value);
       if(isNaN(d.getTime())) return '-';
       const pad = n => String(n).padStart(2, '0');
-      return pad(d.getHours()) + ':' + pad(d.getMinutes());
+      return pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
     }catch(e){ return '-'; }
   }
 
@@ -160,7 +164,7 @@
     if(v == null || v === '') return '-';
     const n = Number(v);
     if(isNaN(n)) return esc(String(v));
-    return n.toLocaleString('en-US');
+    return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   function creditBalanceNumber(row){
@@ -319,6 +323,42 @@
     renderAdmins();
   }
 
+  function selectableIdsOnPage(){
+    return [...tbody.querySelectorAll('[data-admin-select]')].map(el => String(el.getAttribute('data-admin-select')));
+  }
+
+  function syncSelectionUi(){
+    const showSelect = statusPill === 'suspended' || statusPill === 'all';
+    const isActiveView = statusPill === 'active';
+    document.body.classList.toggle('mad-view-active', isActiveView);
+    document.body.classList.toggle('mad-view-suspended', statusPill === 'suspended');
+    document.body.classList.toggle('mad-view-all', statusPill === 'all');
+    if(resetBtn) resetBtn.hidden = isActiveView;
+    if(selectAllWrap) selectAllWrap.hidden = !showSelect;
+    if(bulkDeleteBtn){
+      bulkDeleteBtn.hidden = !showSelect;
+      bulkDeleteBtn.disabled = !showSelect || selectedAdminIds.size === 0;
+    }
+    if(!showSelect){
+      if(selectAllInput){
+        selectAllInput.checked = false;
+        selectAllInput.indeterminate = false;
+      }
+      return;
+    }
+    const ids = selectableIdsOnPage();
+    const selectedOnPage = ids.filter(id => selectedAdminIds.has(id));
+    if(selectAllInput){
+      selectAllInput.checked = ids.length > 0 && selectedOnPage.length === ids.length;
+      selectAllInput.indeterminate = selectedOnPage.length > 0 && selectedOnPage.length < ids.length;
+    }
+  }
+
+  function clearAdminSelection(){
+    selectedAdminIds.clear();
+    syncSelectionUi();
+  }
+
   function renderAdmins(){
     if(!tbody) return;
     const pageSize = PAGE_SIZE;
@@ -335,6 +375,7 @@
     }
     if(!rows.length){
       tbody.innerHTML = '<tr><td colspan="9" class="mad-empty">No administrators found.</td></tr>';
+      syncSelectionUi();
       return;
     }
     const currentId = Number((BO_AUTH.user() || {}).id);
@@ -350,8 +391,20 @@
       const creditHtml = credit === '-' ? '<span class="mad-muted">-</span>' : ('<span class="mad-money">' + credit + '</span>');
       const moreBtn = '<button type="button" class="mad-more-btn" aria-expanded="false" aria-label="Show details"><i class="bi bi-chevron-down" aria-hidden="true"></i></button>';
       const rowAttr = JSON.stringify(row).replace(/'/g, '&#39;');
-      return '<tr class="mad-row">' +
-        '<td data-label="Username"><div class="mad-user"><span class="mad-avatar">' + esc(initials(row)) + '</span><div class="mad-user-copy"><b>' + esc(row.displayName || row.username || '-') + (current ? ' · You' : '') + '</b><div class="mad-user-meta"><span class="mad-uid">' + esc(uidLabel(row)) + '</span>' + (email ? '<span class="mad-email">' + esc(email) + '</span>' : '') + '</div></div></div></td>' +
+      const canDelete = !active && !protectedRoot && !current;
+      const idStr = String(row.id);
+      const showSelectCol = statusPill === 'suspended' || statusPill === 'all';
+      const checked = canDelete && selectedAdminIds.has(idStr) ? ' checked' : '';
+      const selectHtml = !showSelectCol
+        ? ''
+        : (canDelete
+          ? '<label class="mad-row-check"><input type="checkbox" class="mad-row-check-input" data-admin-select="' + esc(row.id) + '"' + checked + ' aria-label="Select ' + esc(row.displayName || row.username || 'administrator') + '"><span class="mad-row-check-box" aria-hidden="true"></span></label>'
+          : '<span class="mad-row-check mad-row-check-spacer" aria-hidden="true"></span>');
+      const deleteBtn = canDelete
+        ? '<button class="mad-icon-btn mad-delete-btn is-danger" type="button" data-tip="Delete" aria-label="Delete" data-id="' + esc(row.id) + '"><i class="bi bi-trash3" aria-hidden="true"></i></button>'
+        : '';
+      return '<tr class="mad-row' + (canDelete ? ' is-suspended-row' : '') + '">' +
+        '<td data-label="Username"><div class="mad-user">' + selectHtml + '<span class="mad-avatar">' + esc(initials(row)) + '</span><div class="mad-user-copy"><b>' + esc(row.displayName || row.username || '-') + (current ? ' · You' : '') + '</b><div class="mad-user-meta"><span class="mad-uid">' + esc(uidLabel(row)) + '</span>' + (email ? '<span class="mad-email">' + esc(email) + '</span>' : '') + '</div></div></div></td>' +
         '<td data-label="Role"><span class="mad-role ' + roleTone(rn) + '">' + esc(rn) + '</span></td>' +
         '<td data-label="Credit Balance">' + creditHtml + '</td>' +
         '<td class="mad-detail" data-label="Last Active">' + esc(relativeTime(lastActive(row))) + '</td>' +
@@ -363,12 +416,14 @@
         '<td class="mad-time mad-detail" data-label="Last Logout">' + timeWithDateTip(logout) + '</td>' +
         '<td data-label="Actions"><div class="mad-actions">' + moreBtn + (protectedRoot
           ? '<span class="mad-status is-active" title="Root account cannot be modified by non-root administrators">Protected</span>'
-          : '<button class="mad-icon-btn mad-edit-btn" type="button" data-tip="Edit" aria-label="Edit" data-id="' + esc(row.id) + '" data-row=\'' + rowAttr + '\'><i class="bi bi-pencil" aria-hidden="true"></i></button>' +
+          : '<button class="mad-icon-btn mad-credit-btn" type="button" data-tip="Add credit" aria-label="Add credit" data-id="' + esc(row.id) + '"><i class="bi bi-plus-lg" aria-hidden="true"></i></button>' +
             '<button class="mad-icon-btn mad-key-btn" type="button" data-tip="Reset password" aria-label="Reset password" data-id="' + esc(row.id) + '" data-row=\'' + rowAttr + '\'><i class="bi bi-key" aria-hidden="true"></i></button>' +
-            '<button class="mad-icon-btn mad-credit-btn" type="button" data-tip="Add credit" aria-label="Add credit" data-id="' + esc(row.id) + '"><i class="bi bi-plus-lg" aria-hidden="true"></i></button>') +
+            '<button class="mad-icon-btn mad-edit-btn" type="button" data-tip="Edit" aria-label="Edit" data-id="' + esc(row.id) + '" data-row=\'' + rowAttr + '\'><i class="bi bi-pencil" aria-hidden="true"></i></button>' +
+            deleteBtn) +
         '</div></td>' +
       '</tr>';
     }).join('');
+    syncSelectionUi();
   }
 
   async function loadBrandOptions(){
@@ -594,8 +649,61 @@
         b.classList.toggle('is-active', on);
         b.setAttribute('aria-pressed', on ? 'true' : 'false');
       });
+      if(statusPill !== 'suspended' && statusPill !== 'all') clearAdminSelection();
       applyFilters();
     });
+  });
+
+  tbody && tbody.addEventListener('change', function(e){
+    const input = e.target.closest && e.target.closest('[data-admin-select]');
+    if(!input) return;
+    const id = String(input.getAttribute('data-admin-select') || '');
+    if(!id) return;
+    if(input.checked) selectedAdminIds.add(id);
+    else selectedAdminIds.delete(id);
+    syncSelectionUi();
+  });
+
+  selectAllInput && selectAllInput.addEventListener('change', function(){
+    const ids = selectableIdsOnPage();
+    if(selectAllInput.checked) ids.forEach(id => selectedAdminIds.add(id));
+    else ids.forEach(id => selectedAdminIds.delete(id));
+    tbody.querySelectorAll('[data-admin-select]').forEach(el => {
+      el.checked = selectAllInput.checked;
+    });
+    syncSelectionUi();
+  });
+
+  async function deleteAdminsByIds(ids){
+    const list = [...new Set((ids || []).map(String).filter(Boolean))];
+    if(!list.length) return;
+    const currentId = Number((BO_AUTH.user() || {}).id || 0);
+    const blocked = list.filter(id => Number(id) === currentId || (Number(id) === 1 && !isViewerRoot()));
+    const targets = list.filter(id => !blocked.includes(id));
+    if(!targets.length){
+      await BO_DIALOG.alert(blocked.length ? 'Selected accounts cannot be deleted.' : 'No accounts selected.');
+      return;
+    }
+    const label = targets.length === 1
+      ? 'Delete this administrator account?'
+      : ('Delete ' + targets.length + ' administrator accounts?');
+    if(!(await BO_DIALOG.confirm(label, { title: 'Delete Administrator', confirmText: 'Delete' }))) return;
+    const errors = [];
+    for(const id of targets){
+      try{
+        await apiJson(BO_AUTH.adminDeleteUrl(id), { method: 'POST', headers: { ...BO_AUTH.authHeader() } });
+        selectedAdminIds.delete(String(id));
+      }catch(err){
+        errors.push((err && err.message) || ('Failed to delete #' + id));
+      }
+    }
+    await loadAdmins();
+    if(errors.length) await BO_DIALOG.alert(errors[0], { title: 'Delete incomplete', type: 'error' });
+    else await BO_DIALOG.alert(targets.length === 1 ? 'Admin deleted successfully' : (targets.length + ' administrators deleted successfully'));
+  }
+
+  bulkDeleteBtn && bulkDeleteBtn.addEventListener('click', function(){
+    deleteAdminsByIds([...selectedAdminIds]);
   });
 
   document.addEventListener('click', function(e){
@@ -625,18 +733,8 @@
     const del = e.target.closest && e.target.closest('.mad-delete-btn');
     if(del){
       const id = Number(del.dataset.id || 0);
-      const currentId = Number((BO_AUTH.user() || {}).id || 0);
       if(!id){ BO_DIALOG.alert('Missing admin ID'); return; }
-      if(id === 1 && !isViewerRoot()){ BO_DIALOG.alert('Root admin account is protected.'); return; }
-      if(id === currentId){ BO_DIALOG.alert('You cannot delete the admin account currently logged in.'); return; }
-      (async()=>{
-        if(!(await BO_DIALOG.confirm('Delete this administrator account?', { title: 'Delete Administrator', confirmText: 'Delete' }))) return;
-        try{
-          const json = await apiJson(BO_AUTH.adminDeleteUrl(id), { method: 'POST', headers: { ...BO_AUTH.authHeader() } });
-          await BO_DIALOG.alert(json.message || 'Admin deleted successfully');
-          await loadAdmins();
-        }catch(err){ await BO_DIALOG.alert(err.message || 'Delete admin failed'); }
-      })();
+      deleteAdminsByIds([id]);
       return;
     }
     const creditBtn = e.target.closest && e.target.closest('.mad-credit-btn');
@@ -700,12 +798,13 @@
     if(searchInput) searchInput.value = '';
     if(roleFilter) roleFilter.value = '';
     if(statusFilter) statusFilter.value = '';
-    statusPill = 'all';
+    statusPill = 'active';
     document.querySelectorAll('[data-mad-status]').forEach(b => {
-      const on = b.getAttribute('data-mad-status') === 'all';
+      const on = b.getAttribute('data-mad-status') === 'active';
       b.classList.toggle('is-active', on);
       b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
+    clearAdminSelection();
     applyFilters();
   });
   pageNoEl && pageNoEl.addEventListener('click', e => {

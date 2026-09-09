@@ -26,7 +26,7 @@
 
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
 
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.70" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.83" rel="stylesheet"/>
 
 <link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 
@@ -46,7 +46,7 @@
 
 </head>
 
-<body class="report-body standardized-listing-page main-admin-detail-page" data-access-page="main_admin_detail">
+<body class="report-body standardized-listing-page main-admin-detail-page mad-view-active" data-access-page="main_admin_detail">
 
 <div class="report-shell">
 
@@ -110,8 +110,6 @@
 
       <a class="mad-tab" href="menu-permission.html" data-permission-url="menu-permission.html">Roles &amp; Permissions</a>
 
-      <a class="mad-tab" href="main-admin-credit.html" data-permission-url="main-admin-credit.html">Credit Control</a>
-
       <a class="mad-tab" href="main-admin-security.html" data-permission-url="main-admin-security.html">Security &amp; Audit</a>
 
     </nav>
@@ -136,11 +134,11 @@
 
       <div class="mad-pills" role="group" aria-label="Status filter">
 
-        <button type="button" class="mad-pill is-active" data-mad-status="all" aria-pressed="true">All <span class="mad-pill-count" id="madCountAll">0</span></button>
+        <button type="button" class="mad-pill is-active" data-mad-status="active" aria-pressed="true">Active <span class="mad-pill-count is-active-count" id="madCountActive">0</span></button>
 
-        <button type="button" class="mad-pill" data-mad-status="active" aria-pressed="false">Active <span class="mad-pill-count is-active-count" id="madCountActive">0</span></button>
+        <button type="button" class="mad-pill" data-mad-status="suspended" aria-pressed="false">Suspend <span class="mad-pill-count is-danger-count" id="madCountSuspended">0</span></button>
 
-        <button type="button" class="mad-pill" data-mad-status="suspended" aria-pressed="false">Suspended <span class="mad-pill-count is-danger-count" id="madCountSuspended">0</span></button>
+        <button type="button" class="mad-pill" data-mad-status="all" aria-pressed="false">All <span class="mad-pill-count" id="madCountAll">0</span></button>
 
       </div>
 
@@ -180,7 +178,9 @@
 
         </label>
 
-        <button class="mad-btn mad-btn-ghost mad-reset-btn" type="button" id="madResetBtn"><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Reset</button>
+        <button class="mad-btn mad-btn-ghost mad-bulk-delete-btn" type="button" id="madBulkDeleteBtn" hidden disabled><i class="bi bi-trash3" aria-hidden="true"></i> Delete</button>
+
+        <button class="mad-btn mad-btn-ghost mad-reset-btn" type="button" id="madResetBtn" hidden><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Reset</button>
 
       </div>
 
@@ -198,7 +198,15 @@
 
           <tr>
 
-            <th scope="col">Username</th>
+            <th scope="col" class="mad-th-user">
+              <span class="mad-th-user-inner">
+                <label class="mad-row-check mad-select-all-check" id="madSelectAllWrap" hidden>
+                  <input type="checkbox" class="mad-row-check-input" id="madSelectAll" aria-label="Select all suspended administrators"/>
+                  <span class="mad-row-check-box" aria-hidden="true"></span>
+                </label>
+                <span>Username</span>
+              </span>
+            </th>
 
             <th scope="col">Role</th>
 
@@ -454,12 +462,12 @@
 
 <script src="assets/js/reports.js?v=1.0.25"></script>
 
-<script src="assets/js/auth.js?v=1.0.59"></script>
+<script src="assets/js/auth.js?v=1.0.60"></script>
 <script src="assets/js/permission-tabs.js?v=1.0.0"></script>
 
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
 
-<script src="assets/js/main-admin-detail.js?v=1.2.20"></script>
+<script src="assets/js/main-admin-detail.js?v=1.2.28"></script>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 
