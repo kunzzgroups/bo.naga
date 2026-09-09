@@ -227,8 +227,9 @@
           ? rows.filter(r => Number(r.brandId) === Number(brandId) && !['MASTER', 'ROOT', 'MAIN'].includes(String(r.roleType || '').toUpperCase()))
           : rows.filter(r => r.brandId == null && ['MASTER','MAIN','CUSTOM'].includes(String(r.roleType || '').toUpperCase()));
       }else if(flags.mainAdmin){
-        // MAIN/Boss sees every active role maintained by ROOT except ROOT itself.
-        rows = rows.filter(r => String(r.roleType || '').toUpperCase() !== 'ROOT' && Number(r.status == null ? 1 : r.status) === 1);
+        // Keep Edit Admin consistent with Create Admin: every active platform/global role
+        // except ROOT and Merchant Brand Owner roles.
+        rows = rows.filter(r => { const type=String(r.roleType||'').toUpperCase(); return type!=='ROOT'&&type!=='BRAND_OWNER'&&Number(r.status==null?1:r.status)===1; });
       }else{
         rows = rows.filter(r => !['MASTER', 'ROOT', 'MAIN'].includes(String(r.roleType || 'CUSTOM').toUpperCase()));
         if(brandId) rows = rows.filter(r => Number(r.brandId) === Number(brandId));

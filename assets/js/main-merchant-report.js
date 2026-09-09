@@ -43,6 +43,7 @@ function updateCurrencyLabels(){
 
 function setupTabs(){
   document.querySelectorAll('[data-report-tab]').forEach(b=>b.addEventListener('click',()=>{
+    if(b.tagName==='A' && b.getAttribute('href')) return;
     document.querySelectorAll('.mre-tabs .mad-tab').forEach(x=>{
       const on=x===b;
       x.classList.toggle('is-active',on);

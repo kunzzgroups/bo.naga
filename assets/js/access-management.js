@@ -633,14 +633,12 @@
         const active=Number(r?.status==null?1:r.status)===1;
         if(!active) return false;
 
-        // MAIN/Boss Role & Permissions must use the exact same assignable role
-        // catalogue as Create Admin: every active role below ROOT. Do not filter
-        // by brandId/merchant scope here because legacy/custom roles such as
-        // Designer, Admin and Main Admin may carry a scope marker even though
-        // ROOT created them for MAIN to assign/manage. This was why Create Admin
-        // could see Main Admin while this dropdown could not.
+        // MAIN/Boss sees all active platform/global roles maintained by ROOT, but
+        // merchant Brand Owner roles stay inside Merchant Roles & Permissions.
+        // ROOT/Super Admin is always hidden from MAIN.
         if(mainAdmin && !isMerchantRolesPage){
-          return rt!=='ROOT' && canEditRoleMenus(r);
+          const merchantOwner = rt==='BRAND_OWNER';
+          return rt!=='ROOT' && !merchantOwner && canEditRoleMenus(r);
         }
 
         // For non-MAIN platform actors keep merchant-specific roles in the

@@ -588,6 +588,7 @@ function setupExtraPagination(){
 
 function setupTabs(){
   document.querySelectorAll('[data-report-tab]').forEach(b=>b.addEventListener('click',()=>{
+    if(b.tagName==='A' && b.getAttribute('href')) return;
     document.querySelectorAll('[data-report-tab]').forEach(x=>{
       const on=x===b;
       x.classList.toggle('is-active',on);
@@ -788,5 +789,9 @@ setupExtraPagination();
 updateCurrencyLabels();
 updateSyncLabel();
 setInterval(updateSyncLabel,30000);
-load();
+load().then(()=>{
+  const view=String(document.body?.dataset?.reportView||'provider');
+  if(view==='settlement') loadSettlements();
+  if(view==='history') loadHistory();
+}).catch(()=>{});
 })();
