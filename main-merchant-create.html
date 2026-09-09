@@ -11,7 +11,7 @@
 <link href="assets/css/reports.css?v=1.0.47" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.87" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.105" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -155,33 +155,53 @@
         <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-percent"></i></span>
         <div class="mac-section-copy">
           <h3>3. Provider Pricing &amp; Markup</h3>
-          <p>Merchant-wide markup plus provider-specific percentage overrides. Effective rate = provider base/override + merchant markup.</p>
+          <p>Select providers, enter Markup in Selected pricing, then Apply — editing or clearing Markup afterward does not change applied Overrides.</p>
         </div>
-        <label class="mac-field mac-provider-markup-field" for="merchantMarkup">
-          <span class="mac-label">Merchant Markup (%)</span>
-          <span class="mac-input-group is-suffix">
-            <input class="form-control" id="merchantMarkup" type="number" min="0" max="100" step="0.0001" value="0"/>
-            <span class="mac-input-addon is-trailing">%</span>
-          </span>
-        </label>
       </header>
-      <div class="mac-provider-table-wrap table-responsive">
-        <table class="table table-sm align-middle mb-0 mac-provider-table">
-          <thead>
-            <tr>
-              <th>Use</th>
-              <th>Provider</th>
-              <th>Provider Base %</th>
-              <th>Merchant Override %</th>
-              <th>Markup %</th>
-              <th>Effective %</th>
-              <th>Basis</th>
-            </tr>
-          </thead>
-          <tbody id="merchantProviderPricingBody">
-            <tr><td colspan="7" class="text-center text-muted py-3">Loading providers...</td></tr>
-          </tbody>
-        </table>
+
+      <div class="mac-provider-split" id="merchantProviderSplit">
+        <aside class="mac-provider-pane mac-provider-pane-catalog" aria-label="Provider catalog">
+          <div class="mac-provider-pane-head">
+            <div class="mac-provider-pane-title">
+              <strong>Providers</strong>
+              <span class="mac-provider-count" id="merchantProviderCatalogCount">0</span>
+            </div>
+            <div class="mac-provider-pane-actions">
+              <button type="button" class="mac-link-btn" id="merchantProviderSelectAll">Select all</button>
+              <button type="button" class="mac-link-btn" id="merchantProviderClearAll">Clear</button>
+            </div>
+          </div>
+          <label class="mac-provider-search" for="merchantProviderSearch">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input id="merchantProviderSearch" type="search" placeholder="Search providers" autocomplete="off"/>
+          </label>
+          <div class="mac-provider-list" id="merchantProviderCatalogList" role="list">
+            <div class="mac-provider-empty">Loading providers...</div>
+          </div>
+        </aside>
+
+        <section class="mac-provider-pane mac-provider-pane-selected" aria-label="Selected provider pricing">
+          <div class="mac-provider-pane-head mac-provider-selected-head">
+            <div class="mac-provider-pane-title">
+              <strong>Selected pricing</strong>
+              <span class="mac-provider-count" id="merchantProviderSelectedCount">0</span>
+            </div>
+            <div class="mac-provider-pane-actions mac-provider-markup-toolbar">
+              <label class="mac-provider-markup-field" for="merchantMarkup">
+                <span class="mac-input-group is-suffix">
+                  <input class="form-control" id="merchantMarkup" type="number" min="0" max="100" step="0.0001" value="0" placeholder="Markup" aria-label="Markup percent"/>
+                  <span class="mac-input-addon is-trailing">%</span>
+                </span>
+              </label>
+              <button type="button" class="mad-btn mad-btn-ghost mac-provider-apply-btn" id="merchantProviderApplyMarkup" title="Copy Markup into every selected Override">Apply</button>
+            </div>
+          </div>
+          <div class="mac-provider-selected-wrap">
+            <div class="mac-provider-selected-grid" id="merchantProviderSelectedBody">
+              <div class="mac-provider-empty">Select providers on the left to configure pricing.</div>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
 
@@ -197,7 +217,7 @@
 <script src="assets/js/reports.js?v=1.0.26"></script>
 <script src="assets/js/auth.js?v=1.0.60"></script>
 <script src="assets/js/main-merchant-visibility.js?v=1.0.0"></script>
-<script src="assets/js/main-merchant-create.js?v=1.0.8"></script>
+<script src="assets/js/main-merchant-create.js?v=1.1.10"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>

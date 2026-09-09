@@ -6,6 +6,9 @@
  const hdr=()=>({'Content-Type':'application/json',...BO_AUTH.authHeader()});
 
  let platformProviders=[];
+ const selectedCodes=new Set();
+ const overrideByCode=new Map();
+ let providerSearch='';
 
  function setStatus(msg, kind){
   if(!status) return;
@@ -37,65 +40,149 @@
   return picks.join('');
  }
 
- function selectedProviderRows(){
-  return [...document.querySelectorAll('#merchantProviderPricingBody [data-provider-row]')]
-    .filter(r=>r.querySelector('[data-provider-use]')?.checked);
+ function providerCode(p){
+  return String(p.code||'').toUpperCase();
  }
 
- function bindProviderInputs(){
-  const markup=$('merchantMarkup');
-  const recalc=()=>{
-    const m=Number(markup?.value||0);
-    document.querySelectorAll('#merchantProviderPricingBody [data-provider-row]').forEach(r=>{
-      const use=r.querySelector('[data-provider-use]');
-      const inp=r.querySelector('[data-provider-override]');
-      const base=Number(r.dataset.base||0);
-      const ov=Number(inp?.value||0);
-      if(inp) inp.disabled=!use?.checked;
-      const mcell=r.querySelector('[data-provider-markup]');
-      const eff=r.querySelector('[data-provider-effective]');
-      if(mcell) mcell.textContent=m.toFixed(4)+'%';
-      if(eff) eff.textContent=((ov>0?ov:base)+m).toFixed(4)+'%';
-    });
-  };
-  if(markup && !markup.dataset.bound){
-    markup.dataset.bound='1';
-    markup.addEventListener('input', recalc);
-  }
-  document.querySelectorAll('#merchantProviderPricingBody [data-provider-use]').forEach(x=>{
-    x.addEventListener('change', recalc);
-  });
-  document.querySelectorAll('#merchantProviderPricingBody [data-provider-override]').forEach(x=>{
-    x.addEventListener('input', recalc);
-  });
-  recalc();
+ function markupRaw(){
+  return String($('merchantMarkup')?.value??'').trim();
  }
 
- function renderProviderRows(list){
-  const out=$('merchantProviderPricingBody');
+ function markupValue(){
+  return Number(markupRaw()||0);
+ }
+
+ function appliedMarkupValue(){
+  const raw=markupRaw();
+  return (raw===''||raw==='0')?'':raw;
+ }
+
+ function applyMarkupToSelected(){
+  const synced=appliedMarkupValue();
+  selectedCodes.forEach(code=>{
+    if(synced==='') overrideByCode.delete(code);
+    else overrideByCode.set(code, synced);
+  });
+ }
+
+ function filteredProviders(){
+  const q=providerSearch.trim().toLowerCase();
+  if(!q) return platformProviders.slice();
+  return platformProviders.filter(p=>{
+    const code=providerCode(p).toLowerCase();
+    const name=String(p.name||'').toLowerCase();
+    return code.includes(q) || name.includes(q);
+  });
+ }
+
+ function syncOverrideInputsFromDom(){
+  document.querySelectorAll('#merchantProviderSelectedBody [data-provider-override]').forEach(inp=>{
+    const code=String(inp.getAttribute('data-provider-override')||'').toUpperCase();
+    if(!code) return;
+    const raw=String(inp.value||'').trim();
+    if(raw==='') overrideByCode.delete(code);
+    else overrideByCode.set(code, raw);
+  });
+ }
+
+ function updateCounts(){
+  const catalogCount=$('merchantProviderCatalogCount');
+  const selectedCount=$('merchantProviderSelectedCount');
+  if(catalogCount) catalogCount.textContent=String(filteredProviders().length);
+  if(selectedCount) selectedCount.textContent=String(selectedCodes.size);
+ }
+
+ function renderCatalog(){
+  const out=$('merchantProviderCatalogList');
   if(!out) return;
-  const markup=Number($('merchantMarkup')?.value||0);
-  const rows=Array.isArray(list)?list:[];
-  out.innerHTML=rows.length?rows.map(p=>{
-    const code=String(p.code||'').toUpperCase();
+  if(out.querySelector('.mac-provider-empty.is-error') && !platformProviders.length) return;
+  const rows=filteredProviders();
+  if(!rows.length){
+    out.innerHTML='<div class="mac-provider-empty">'+(platformProviders.length?'No providers match your search.':'No platform providers configured.')+'</div>';
+    updateCounts();
+    return;
+  }
+  out.innerHTML=rows.map(p=>{
+    const code=providerCode(p);
+    const checked=selectedCodes.has(code);
+    const name=String(p.name||'').trim();
+    const showName=name && name.toUpperCase()!==code;
+    return `<button type="button" class="mac-provider-chip${checked?' is-selected':''}" data-provider-pick="${esc(code)}" role="listitem" aria-pressed="${checked?'true':'false'}">`+
+      `<b>${esc(code)}</b>${showName?`<small>${esc(name)}</small>`:''}`+
+      `</button>`;
+  }).join('');
+  updateCounts();
+ }
+
+ function renderSelected(){
+  const out=$('merchantProviderSelectedBody');
+  if(!out) return;
+  const selected=platformProviders.filter(p=>selectedCodes.has(providerCode(p)));
+  if(!selected.length){
+    out.innerHTML='<div class="mac-provider-empty">Select providers on the left to configure pricing.</div>';
+    updateCounts();
+    return;
+  }
+  out.innerHTML=selected.map(p=>{
+    const code=providerCode(p);
     const base=Number(p.settlementCostPercent||0);
     const basis=String(p.settlementCostBasis||'HOUSE_WIN').toUpperCase();
-    const eff=base+markup;
-    return `<tr data-provider-row="${esc(code)}" data-base="${base}" data-basis="${esc(basis)}">`+
-      `<td><input type="checkbox" class="form-check-input" data-provider-use aria-label="Use ${esc(code)}"></td>`+
-      `<td><b>${esc(code)}</b><small class="d-block text-muted">${esc(p.name||'')}</small></td>`+
-      `<td>${base.toFixed(4)}%</td>`+
-      `<td><input type="number" class="form-control form-control-sm" min="0" max="100" step="0.0001" data-provider-override disabled placeholder="—"></td>`+
-      `<td data-provider-markup>${markup.toFixed(4)}%</td>`+
-      `<td><b data-provider-effective>${eff.toFixed(4)}%</b></td>`+
-      `<td>${basis==='TURNOVER'?'Turnover':'House Win / GGR'}</td>`+
-      `</tr>`;
-  }).join(''):'<tr><td colspan="7" class="text-center text-muted py-3">No platform providers configured.</td></tr>';
-  bindProviderInputs();
+    const ov=overrideByCode.has(code)?overrideByCode.get(code):'';
+    const add=String(ov||'').trim()!==''?Number(ov):0;
+    const eff=base+Number(add||0);
+    const basisLabel=basis==='TURNOVER'?'TO':'GGR';
+    return `<article class="mac-provider-selected-card" data-provider-row="${esc(code)}" data-base="${base}" data-basis="${esc(basis)}">`+
+      `<div class="mac-provider-selected-title"><b>${esc(code)}</b><span class="mac-provider-base-tag" title="Provider base ${base.toFixed(4)}% · ${basis==='TURNOVER'?'Turnover':'House Win / GGR'}">Base ${base.toFixed(2)}% · ${esc(basisLabel)}</span></div>`+
+      `<div class="mac-provider-selected-fields">`+
+      `<label class="mac-provider-override-wrap"><span class="mac-provider-field-label">Override</span><span class="mac-provider-override-control"><input type="number" min="0" max="100" step="0.0001" data-provider-override="${esc(code)}" value="${esc(ov||'')}" placeholder="—"><span class="mac-provider-override-unit">%</span></span></label>`+
+      `<div class="mac-provider-eff-wrap"><span class="mac-provider-field-label">Effective</span><b class="mac-provider-eff" data-provider-effective="${esc(code)}">${eff.toFixed(4)}%</b></div>`+
+      `</div></article>`;
+  }).join('');
+  updateCounts();
+ }
+
+ function recalcSelectedEffective(){
+  document.querySelectorAll('#merchantProviderSelectedBody [data-provider-row]').forEach(r=>{
+    const code=r.dataset.providerRow;
+    const base=Number(r.dataset.base||0);
+    const inp=r.querySelector('[data-provider-override]');
+    const ovRaw=String(inp?.value||'').trim();
+    const add=ovRaw!==''?Number(ovRaw):0;
+    const eff=r.querySelector('[data-provider-effective]');
+    if(eff) eff.textContent=(base+Number(add||0)).toFixed(4)+'%';
+    if(code){
+      if(ovRaw==='') overrideByCode.delete(code);
+      else overrideByCode.set(code, ovRaw);
+    }
+  });
+ }
+
+ function setProviderSelected(code, on){
+  const key=String(code||'').toUpperCase();
+  if(!key) return;
+  if(on) selectedCodes.add(key);
+  else selectedCodes.delete(key);
+  renderCatalog();
+  renderSelected();
+ }
+
+ function selectedProviderPayload(){
+  syncOverrideInputsFromDom();
+  return platformProviders
+    .filter(p=>selectedCodes.has(providerCode(p)))
+    .map(p=>{
+      const code=providerCode(p);
+      const ov=overrideByCode.has(code)?overrideByCode.get(code):'';
+      return {
+        providerCode:code,
+        defaultChargePercent:Number(ov||0),
+        chargeBasis:String(p.settlementCostBasis||'HOUSE_WIN')
+      };
+    });
  }
 
  async function loadPlatformProviders(){
-  const out=$('merchantProviderPricingBody');
+  const out=$('merchantProviderCatalogList');
   try{
     const data=await api('/admin/merchants/provider-pricing-catalog',{headers:BO_AUTH.authHeader()});
     const list=Array.isArray(data)?data:(data?.content||data?.list||data?.rows||[]);
@@ -108,28 +195,19 @@
         settlementCostBasis:p.settlementCostBasis||p.settlement_cost_basis||'HOUSE_WIN'
       }))
       .sort((a,b)=>String(a.code||'').localeCompare(String(b.code||'')));
-    renderProviderRows(platformProviders);
+    renderCatalog();
+    renderSelected();
   }catch(e){
-    if(out) out.innerHTML=`<tr><td colspan="7" class="text-center text-danger py-3">${esc(e.message||'Unable to load providers')}</td></tr>`;
+    if(out) out.innerHTML=`<div class="mac-provider-empty is-error">${esc(e.message||'Unable to load providers')}</div>`;
   }
  }
 
  async function saveProviderPricing(id){
-  const selected=selectedProviderRows();
-  const markup=Number($('merchantMarkup')?.value||0);
   await api('/admin/merchants/'+id+'/provider-pricing',{
     method:'POST',headers:hdr(),
     body:JSON.stringify({
-      providerMarkupPercent:markup,
-      providers:selected.map(r=>{
-        const code=r.dataset.providerRow;
-        const p=platformProviders.find(x=>String(x.code||'').toUpperCase()===code)||{};
-        return {
-          providerCode:code,
-          defaultChargePercent:Number(r.querySelector('[data-provider-override]')?.value||0),
-          chargeBasis:String(r.dataset.basis||p.settlementCostBasis||'HOUSE_WIN')
-        };
-      })
+      providerMarkupPercent:markupValue(),
+      providers:selectedProviderPayload()
     })
   });
  }
@@ -157,6 +235,45 @@
   input.type=show?'text':'password';
   const icon=toggle.querySelector('i');
   if(icon) icon.className=show?'bi bi-eye-slash':'bi bi-eye';
+ });
+
+ $('merchantProviderSearch')?.addEventListener('input', e=>{
+  providerSearch=e.target.value||'';
+  renderCatalog();
+ });
+
+ $('merchantProviderSelectAll')?.addEventListener('click', ()=>{
+  filteredProviders().forEach(p=>selectedCodes.add(providerCode(p)));
+  renderCatalog();
+  renderSelected();
+ });
+
+ $('merchantProviderClearAll')?.addEventListener('click', ()=>{
+  if(providerSearch.trim()){
+    filteredProviders().forEach(p=>selectedCodes.delete(providerCode(p)));
+  }else{
+    selectedCodes.clear();
+  }
+  renderCatalog();
+  renderSelected();
+ });
+
+ $('merchantProviderCatalogList')?.addEventListener('click', e=>{
+  const btn=e.target.closest&&e.target.closest('[data-provider-pick]');
+  if(!btn) return;
+  const code=btn.getAttribute('data-provider-pick');
+  setProviderSelected(code, !selectedCodes.has(String(code||'').toUpperCase()));
+ });
+
+ $('merchantProviderSelectedBody')?.addEventListener('input', e=>{
+  const inp=e.target.closest&&e.target.closest('[data-provider-override]');
+  if(!inp) return;
+  recalcSelectedEffective();
+ });
+
+ $('merchantProviderApplyMarkup')?.addEventListener('click', ()=>{
+  applyMarkupToSelected();
+  renderSelected();
  });
 
  syncCurrencyUnits();
