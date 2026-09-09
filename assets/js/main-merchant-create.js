@@ -97,7 +97,7 @@
  async function loadPlatformProviders(){
   const out=$('merchantProviderPricingBody');
   try{
-    const data=await api('/admin/game-provider/list',{headers:BO_AUTH.authHeader()});
+    const data=await api('/admin/merchants/provider-pricing-catalog',{headers:BO_AUTH.authHeader()});
     const list=Array.isArray(data)?data:(data?.content||data?.list||data?.rows||[]);
     platformProviders=(list||[])
       .filter(p=>Number(p.status??1)===1)
@@ -117,30 +117,21 @@
  async function saveProviderPricing(id){
   const selected=selectedProviderRows();
   const markup=Number($('merchantMarkup')?.value||0);
-  await api('/admin/brands/'+id+'/provider-markup',{
+  await api('/admin/merchants/'+id+'/provider-pricing',{
     method:'POST',headers:hdr(),
-    body:JSON.stringify({providerMarkupPercent:markup})
-  });
-  await api('/admin/brands/'+id+'/providers/assign',{
-    method:'POST',headers:hdr(),
-    body:JSON.stringify({providerCodes:selected.map(r=>r.dataset.providerRow)})
-  });
-  for(const r of selected){
-    const code=r.dataset.providerRow;
-    const p=platformProviders.find(x=>String(x.code||'').toUpperCase()===code)||{};
-    await api('/admin/brands/'+id+'/provider',{
-      method:'POST',headers:hdr(),
-      body:JSON.stringify({
-        providerCode:code,
-        ownership:'PLATFORM',
-        enabled:1,
-        creditEnabled:1,
-        lowCreditThreshold:0,
-        defaultChargePercent:Number(r.querySelector('[data-provider-override]')?.value||0),
-        chargeBasis:String(r.dataset.basis||p.settlementCostBasis||'HOUSE_WIN')
+    body:JSON.stringify({
+      providerMarkupPercent:markup,
+      providers:selected.map(r=>{
+        const code=r.dataset.providerRow;
+        const p=platformProviders.find(x=>String(x.code||'').toUpperCase()===code)||{};
+        return {
+          providerCode:code,
+          defaultChargePercent:Number(r.querySelector('[data-provider-override]')?.value||0),
+          chargeBasis:String(r.dataset.basis||p.settlementCostBasis||'HOUSE_WIN')
+        };
       })
-    });
-  }
+    })
+  });
  }
 
  $('merchantCurrency')?.addEventListener('change', syncCurrencyUnits);
