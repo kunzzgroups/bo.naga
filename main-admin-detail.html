@@ -26,7 +26,7 @@
 
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
 
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.66" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.69" rel="stylesheet"/>
 
 <link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 
@@ -334,6 +334,116 @@
 
 
 
+<!-- Adjust Credit modal -->
+
+<div aria-hidden="true" class="modal-clean mad-modal is-account-locked" id="macAdjustModal" role="dialog" aria-modal="true" aria-labelledby="macAdjustTitle">
+
+  <div class="modal-clean-panel mad-modal-panel mac-adjust-panel">
+
+    <div class="modal-clean-head">
+
+      <div class="mad-modal-title">
+
+        <span class="mad-modal-icon" aria-hidden="true"><i class="bi bi-plus-lg"></i></span>
+
+        <div>
+
+          <h2 id="macAdjustTitle">Adjust Credit</h2>
+
+          <small id="macAdjustSub">Add or minus delegated admin credit.</small>
+
+        </div>
+
+      </div>
+
+      <button class="modal-clean-close" type="button" data-mac-close aria-label="Close"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+
+    </div>
+
+    <form class="modal-clean-body" id="macAdjustForm" novalidate>
+
+      <input type="hidden" id="macAdjustId"/>
+
+      <div class="mac-adjust-summary has-account" id="macAdjustSummary" aria-live="polite">
+
+        <div class="mac-adjust-summary-main">
+
+          <span class="mac-adjust-avatar" id="macAdjustAvatar" aria-hidden="true">—</span>
+
+          <div class="mac-adjust-summary-copy">
+
+            <strong id="macAdjustName">—</strong>
+
+            <small id="macAdjustUid">—</small>
+
+          </div>
+
+        </div>
+
+        <div class="mac-adjust-balance">
+
+          <span>Current Credit</span>
+
+          <b id="macAdjustBalance">—</b>
+
+        </div>
+
+      </div>
+
+      <input type="hidden" id="macAdjustCurrent" value=""/>
+
+      <div class="mac-adjust-ops">
+
+        <label class="mac-field" for="macAdjustAction">
+
+          <span class="mac-label">Adjustment</span>
+
+          <select class="form-control mad-select" id="macAdjustAction" required>
+
+            <option value="ADD">Add Credit</option>
+
+            <option value="DEDUCT">Minus Credit</option>
+
+          </select>
+
+        </label>
+
+        <label class="mac-field" for="macAdjustAmount">
+
+          <span class="mac-label">Amount</span>
+
+          <input class="form-control" id="macAdjustAmount" type="number" min="0.01" step="0.01" placeholder="0.00" required/>
+
+        </label>
+
+      </div>
+
+      <label class="mac-field" for="macAdjustRemark">
+
+        <span class="mac-label">Remark</span>
+
+        <input class="form-control" id="macAdjustRemark" type="text" maxlength="200" placeholder="Reason for adjustment"/>
+
+      </label>
+
+      <div class="upload-status mb-3" id="macAdjustStatus"></div>
+
+      <div class="mad-modal-actions">
+
+        <button class="mad-btn mad-btn-ghost" type="button" data-mac-close>Cancel</button>
+
+        <button class="mad-btn mad-btn-navy" type="submit" id="macAdjustSubmit"><i class="bi bi-floppy" aria-hidden="true"></i> Save Adjustment</button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+
 </main>
 
 </div>
@@ -348,7 +458,7 @@
 
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
 
-<script src="assets/js/main-admin-detail.js?v=1.2.16"></script>
+<script src="assets/js/main-admin-detail.js?v=1.2.19"></script>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 

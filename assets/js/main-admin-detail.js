@@ -163,6 +163,65 @@
     return n.toLocaleString('en-US');
   }
 
+  function creditBalanceNumber(row){
+    const v = row && (row.creditBalance != null ? row.creditBalance : row.credit);
+    const n = Number(v);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  const adjustModal = document.getElementById('macAdjustModal');
+  const adjustForm = document.getElementById('macAdjustForm');
+  const adjustStatus = document.getElementById('macAdjustStatus');
+  const adjustAction = document.getElementById('macAdjustAction');
+  const adjustAmount = document.getElementById('macAdjustAmount');
+  const adjustRemark = document.getElementById('macAdjustRemark');
+  const adjustId = document.getElementById('macAdjustId');
+  const adjustCurrent = document.getElementById('macAdjustCurrent');
+  let adjustLastFocus = null;
+
+  function openCreditAdjust(id){
+    const row = allAdmins.find(r => Number(r.id) === Number(id));
+    if(!row){ BO_DIALOG.alert('Administrator not found'); return; }
+    adjustLastFocus = document.activeElement;
+    if(adjustStatus){ adjustStatus.textContent = ''; adjustStatus.className = 'upload-status mb-3'; }
+    if(adjustId) adjustId.value = String(row.id);
+    if(adjustCurrent) adjustCurrent.value = String(creditBalanceNumber(row));
+    const avatar = document.getElementById('macAdjustAvatar');
+    const nameEl = document.getElementById('macAdjustName');
+    const uidEl = document.getElementById('macAdjustUid');
+    const balEl = document.getElementById('macAdjustBalance');
+    const summary = document.getElementById('macAdjustSummary');
+    if(avatar) avatar.textContent = initials(row);
+    if(nameEl) nameEl.textContent = row.displayName || row.username || '—';
+    if(uidEl) uidEl.textContent = uidLabel(row);
+    if(balEl) balEl.textContent = creditBalance(row);
+    if(summary) summary.classList.add('has-account');
+    if(adjustAction){
+      adjustAction.value = 'ADD';
+      adjustAction.dispatchEvent(new Event('bo:select-sync', { bubbles: true }));
+    }
+    if(adjustAmount) adjustAmount.value = '';
+    if(adjustRemark) adjustRemark.value = '';
+    if(adjustModal){
+      adjustModal.classList.add('show', 'is-account-locked');
+      adjustModal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+    }
+    if(adjustAmount) setTimeout(function(){ adjustAmount.focus(); }, 40);
+  }
+
+  function closeCreditAdjust(){
+    if(adjustModal){
+      adjustModal.classList.remove('show');
+      adjustModal.setAttribute('aria-hidden', 'true');
+    }
+    if(!document.querySelector('.modal-clean.show')) document.body.classList.remove('modal-open');
+    if(adjustLastFocus && typeof adjustLastFocus.focus === 'function'){
+      try{ adjustLastFocus.focus(); }catch(e){}
+    }
+    adjustLastFocus = null;
+  }
+
   function lastActive(row){
     return row.lastActiveAt || row.lastActive || row.lastLoginAt || row.lastLogin || row.loginAt || '';
   }
@@ -296,7 +355,9 @@
         '<td data-label="Role"><span class="mad-role ' + roleTone(rn) + '">' + esc(rn) + '</span></td>' +
         '<td data-label="Credit Balance">' + creditHtml + '</td>' +
         '<td class="mad-detail" data-label="Last Active">' + esc(relativeTime(lastActive(row))) + '</td>' +
-        '<td data-label="Status"><span class="mad-status ' + (active ? 'is-active' : 'is-suspended') + '"><i></i>' + (active ? 'Active' : 'Suspended') + '</span></td>' +
+        '<td data-label="Status">' + (protectedRoot
+          ? '<span class="mad-status ' + (active ? 'is-active' : 'is-suspended') + '" title="Root account cannot be modified by non-root administrators"><i></i>' + (active ? 'Active' : 'Suspended') + '</span>'
+          : '<button type="button" class="mad-status mad-toggle-btn ' + (active ? 'is-active' : 'is-suspended') + '" data-id="' + esc(row.id) + '" data-status="' + (active ? 0 : 1) + '" title="' + (active ? 'Click to Suspend' : 'Click to Activate') + '" aria-label="' + (active ? 'Active, click to Suspend' : 'Suspended, click to Activate') + '"><i></i>' + (active ? 'Active' : 'Suspended') + '</button>') + '</td>' +
         '<td class="mad-detail" data-label="Created By">' + esc(row.createdByName || row.createdByUsername || row.createdBy || row.creator || '-') + '</td>' +
         '<td class="mad-time mad-detail" data-label="Last Login">' + timeWithDateTip(row.lastLoginAt || row.lastLogin || row.loginAt) + '</td>' +
         '<td class="mad-time mad-detail" data-label="Last Logout">' + timeWithDateTip(logout) + '</td>' +
@@ -304,7 +365,7 @@
           ? '<span class="mad-status is-active" title="Root account cannot be modified by non-root administrators">Protected</span>'
           : '<button class="mad-icon-btn mad-edit-btn" type="button" data-tip="Edit" aria-label="Edit" data-id="' + esc(row.id) + '" data-row=\'' + rowAttr + '\'><i class="bi bi-pencil" aria-hidden="true"></i></button>' +
             '<button class="mad-icon-btn mad-key-btn" type="button" data-tip="Reset password" aria-label="Reset password" data-id="' + esc(row.id) + '" data-row=\'' + rowAttr + '\'><i class="bi bi-key" aria-hidden="true"></i></button>' +
-            '<button class="mad-icon-btn mad-toggle-btn ' + (active ? 'is-danger' : 'is-success') + '" type="button" data-tip="' + (active ? 'Suspend' : 'Activate') + '" aria-label="' + (active ? 'Suspend' : 'Activate') + '" data-id="' + esc(row.id) + '" data-status="' + (active ? 0 : 1) + '"><i class="bi bi-' + (active ? 'slash-circle' : 'check-circle') + '" aria-hidden="true"></i></button>') +
+            '<button class="mad-icon-btn mad-credit-btn" type="button" data-tip="Add credit" aria-label="Add credit" data-id="' + esc(row.id) + '"><i class="bi bi-plus-lg" aria-hidden="true"></i></button>') +
         '</div></td>' +
       '</tr>';
     }).join('');
@@ -416,6 +477,52 @@
 
   document.querySelectorAll('[data-mad-close-pass]').forEach(btn => btn.addEventListener('click', closeResetPassword));
   resetPassModal && resetPassModal.addEventListener('click', e => { if(e.target === resetPassModal) closeResetPassword(); });
+  document.querySelectorAll('[data-mac-close]').forEach(btn => btn.addEventListener('click', closeCreditAdjust));
+  adjustModal && adjustModal.addEventListener('click', e => { if(e.target === adjustModal) closeCreditAdjust(); });
+  adjustForm && adjustForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    const id = adjustId && adjustId.value;
+    const action = String(adjustAction && adjustAction.value || 'ADD').toUpperCase();
+    const amount = Number(adjustAmount && adjustAmount.value);
+    if(!id){ if(adjustStatus){ adjustStatus.textContent = 'Missing account.'; adjustStatus.className = 'upload-status mb-3 error'; } return; }
+    if(!['ADD','DEDUCT'].includes(action)){
+      if(adjustStatus){ adjustStatus.textContent = 'Select Add Credit or Minus Credit.'; adjustStatus.className = 'upload-status mb-3 error'; }
+      return;
+    }
+    if(!Number.isFinite(amount) || amount <= 0){
+      if(adjustStatus){ adjustStatus.textContent = 'Enter an amount greater than 0.'; adjustStatus.className = 'upload-status mb-3 error'; }
+      return;
+    }
+    const row = allAdmins.find(x => Number(x.id) === Number(id));
+    if(action === 'DEDUCT' && row && amount > creditBalanceNumber(row)){
+      if(adjustStatus){ adjustStatus.textContent = 'Minus amount cannot exceed the current credit balance.'; adjustStatus.className = 'upload-status mb-3 error'; }
+      return;
+    }
+    const submit = document.getElementById('macAdjustSubmit');
+    if(submit) submit.disabled = true;
+    if(adjustStatus){ adjustStatus.textContent = action === 'ADD' ? 'Adding credit...' : 'Subtracting credit...'; adjustStatus.className = 'upload-status mb-3'; }
+    try{
+      const remark = (adjustRemark && adjustRemark.value || '').trim();
+      const body = { action, amount, remark: remark || undefined };
+      const audit = encodeURIComponent(JSON.stringify({page:'Main Admin > Administrators',fields:{adminId:id,action,amount,remark:remark||''}}));
+      await apiJson(API_CONFIG.BASE_URL + '/admin/main/admin-credit/adjust/' + encodeURIComponent(id), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Admin-Audit-Context': audit, ...BO_AUTH.authHeader() },
+        body: JSON.stringify(body)
+      });
+      if(adjustStatus){ adjustStatus.textContent = action === 'ADD' ? 'Credit added.' : 'Credit deducted.'; adjustStatus.className = 'upload-status mb-3 success'; }
+      await loadAdmins();
+      setTimeout(closeCreditAdjust, 450);
+    }catch(err){
+      if(adjustStatus){ adjustStatus.textContent = err.message || 'Adjustment failed'; adjustStatus.className = 'upload-status mb-3 error'; }
+    }finally{
+      if(submit) submit.disabled = false;
+    }
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key !== 'Escape') return;
+    if(adjustModal && adjustModal.classList.contains('show')) closeCreditAdjust();
+  });
   document.getElementById('madResetGeneratePassword')?.addEventListener('click', function(){
     const pwd = generatePassword(14);
     const a = document.getElementById('madResetNewPassword');
@@ -530,6 +637,14 @@
           await loadAdmins();
         }catch(err){ await BO_DIALOG.alert(err.message || 'Delete admin failed'); }
       })();
+      return;
+    }
+    const creditBtn = e.target.closest && e.target.closest('.mad-credit-btn');
+    if(creditBtn){
+      const id = Number(creditBtn.dataset.id || 0);
+      if(!id) return;
+      if(id === 1 && !isViewerRoot()){ BO_DIALOG.alert('Root admin account is protected.'); return; }
+      openCreditAdjust(id);
       return;
     }
     const toggle = e.target.closest && e.target.closest('.mad-toggle-btn');

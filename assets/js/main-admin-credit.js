@@ -520,6 +520,17 @@
       else if(window.BO_AUTH && typeof BO_AUTH.ensureSession === 'function') await BO_AUTH.ensureSession();
     }catch(e){}
     await load();
+    try{
+      const adjustId = new URLSearchParams(location.search).get('adjust');
+      if(adjustId){
+        openAdjust(adjustId);
+        if(history.replaceState){
+          const clean = new URL(location.href);
+          clean.searchParams.delete('adjust');
+          history.replaceState({}, '', clean.pathname + clean.search + clean.hash);
+        }
+      }
+    }catch(e){}
   }
 
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
