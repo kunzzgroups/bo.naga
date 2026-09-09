@@ -531,7 +531,12 @@
     if (key === 'last7') { a.setDate(a.getDate() - 6); b = new Date(today); }
     if (key === 'thisWeek') { a = startOfWeek(today); b = endOfWeek(today); }
     if (key === 'lastWeek') { a = startOfWeek(today); a.setDate(a.getDate() - 7); b = new Date(a); b.setDate(b.getDate() + 6); }
-    if (key === 'thisMonth') { a = new Date(today.getFullYear(), today.getMonth(), 1); b = new Date(today); }
+    if (key === 'thisMonth') {
+      // Month-to-date only: first day of current month through TODAY, never month-end
+      // and never a rolling 7-day window.
+      a = new Date(today.getFullYear(), today.getMonth(), 1);
+      b = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    }
     if (key === 'lastMonth') { a = new Date(today.getFullYear(), today.getMonth() - 1, 1); b = new Date(today.getFullYear(), today.getMonth(), 0); }
     if (key === 'thisYear') { a = new Date(today.getFullYear(), 0, 1); b = new Date(today.getFullYear(), 11, 31); }
     if (key === 'lastYear') { a = new Date(today.getFullYear() - 1, 0, 1); b = new Date(today.getFullYear() - 1, 11, 31); }
@@ -580,9 +585,11 @@
   }
   function initDatePicker() {
     const trigger = $('mainDateTrigger'), picker = $('mainRangePicker');
-    const [a, b] = presetRange('last7');
+    // Dashboard defaults to month-to-date: first day of the current month through today.
+    // Example: Sep 9 => 01 Sep 2026 - 09 Sep 2026.
+    const [a, b] = presetRange('thisMonth');
     pickerState.view = new Date(a + 'T00:00:00');
-    setRange(a, b, 'last7', false);
+    setRange(a, b, 'thisMonth', false);
     trigger.addEventListener('click', e => {
       e.stopPropagation();
       picker.classList.toggle('show');

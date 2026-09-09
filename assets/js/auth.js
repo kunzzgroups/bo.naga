@@ -167,7 +167,7 @@
       const menus = this.allowedMenus(user);
       // ROOT-configured menu sort order is authoritative for every role, including MAIN/Boss.
       // Do not impose a frontend MAIN landing-page allowlist/order.
-      return menus.length ? menus[0].url : 'login.html';
+      return menus.length ? menus[0].url : 'profile.html';
     },
     enforcePageAccess: function(user){
       user = user || this.user();
@@ -224,8 +224,12 @@
       if(alwaysAllowed.indexOf(current) !== -1) return true;
       const menus = this.allowedMenus(user);
       if(!menus.length){
-        this.logout();
-        return false;
+        // A valid authenticated admin may temporarily have no assigned BO menu (for example
+        // a legacy delegated CS account while ROOT permissions are being adjusted). Do not
+        // destroy the valid session and bounce back to login; keep the account signed in on
+        // the always-available profile page until a menu is assigned.
+        if(current !== 'profile.html') window.location.replace('profile.html');
+        return current === 'profile.html';
       }
       let allowed = menus.some(function(m){ return (m.url || '').split('/').pop() === current; });
       // Backward compatibility: older roles may only have the original

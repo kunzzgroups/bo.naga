@@ -179,7 +179,7 @@
     const base = apiBase();
     const q = new URLSearchParams({ page: '0', size: '200' });
     try{
-      const data = await apiJson(base + '/api/admin/main/admin-audit?' + q).then(j => j.data || j);
+      const data = await apiJson(base.replace(/\/$/, '') + '/admin/main/admin-audit?' + q).then(j => j.data || j);
       const rows = Array.isArray(data.content) ? data.content : (Array.isArray(data) ? data : []);
       return rows.map(mapOperation);
     }catch(e){
@@ -222,7 +222,7 @@
     if(key === 'yesterday'){ a.setDate(a.getDate() - 1); b = new Date(a); }
     if(key === 'thisWeek'){ a = startOfWeek(day); b = endOfWeek(day); }
     if(key === 'lastWeek'){ a = startOfWeek(day); a.setDate(a.getDate() - 7); b = new Date(a); b.setDate(b.getDate() + 6); }
-    if(key === 'thisMonth'){ a = new Date(day.getFullYear(), day.getMonth(), 1); b = new Date(day.getFullYear(), day.getMonth() + 1, 0); }
+    if(key === 'thisMonth'){ a = new Date(day.getFullYear(), day.getMonth(), 1); b = new Date(day); }
     if(key === 'lastMonth'){ a = new Date(day.getFullYear(), day.getMonth() - 1, 1); b = new Date(day.getFullYear(), day.getMonth(), 0); }
     if(key === 'thisYear'){ a = new Date(day.getFullYear(), 0, 1); b = new Date(day.getFullYear(), 11, 31); }
     if(key === 'lastYear'){ a = new Date(day.getFullYear() - 1, 0, 1); b = new Date(day.getFullYear() - 1, 11, 31); }
@@ -299,9 +299,9 @@
     const picker = document.getElementById('masRangePicker');
     if(!trigger || !picker || !fromEl || !toEl) return;
 
-    const [a, b] = presetRange('today');
+    const [a, b] = presetRange('thisMonth');
     pickerState.view = new Date(a + 'T00:00:00');
-    setRange(a, b, 'today', false);
+    setRange(a, b, 'thisMonth', false);
 
     trigger.addEventListener('click', e => {
       e.stopPropagation();
@@ -646,10 +646,10 @@
     if(searchEl) searchEl.value = '';
     if(eventTypeEl) eventTypeEl.value = '';
     if(statusEl) statusEl.value = '';
-    const [a, b] = presetRange('today');
+    const [a, b] = presetRange('thisMonth');
     pickerState.view = new Date(a + 'T00:00:00');
     pickerState.selectingStart = true;
-    setRange(a, b, 'today', false);
+    setRange(a, b, 'thisMonth', false);
     category = 'all';
     document.querySelectorAll('[data-mas-cat]').forEach(b => {
       b.classList.toggle('is-active', b.getAttribute('data-mas-cat') === 'all');
