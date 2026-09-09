@@ -797,6 +797,63 @@
 
   if(pageNoEl) pageNoEl.innerHTML = pageButtons(1, 1);
 
+  (function bindActionTips(){
+    const root = document.documentElement;
+    root.classList.add('mad-float-tips');
+    let tip = document.getElementById('madFloatTip');
+    if(!tip){
+      tip = document.createElement('div');
+      tip.id = 'madFloatTip';
+      tip.className = 'mad-float-tip';
+      tip.setAttribute('role', 'tooltip');
+      document.body.appendChild(tip);
+    }
+    let activeBtn = null;
+    function hide(){
+      activeBtn = null;
+      tip.classList.remove('is-on', 'is-below');
+    }
+    function place(btn){
+      if(!btn) return;
+      activeBtn = btn;
+      tip.textContent = btn.getAttribute('data-tip') || '';
+      tip.classList.add('is-on');
+      const r = btn.getBoundingClientRect();
+      const tw = tip.offsetWidth;
+      const th = tip.offsetHeight;
+      let left = r.right - tw;
+      left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
+      let top = r.top - th - 10;
+      const below = top < 8;
+      if(below) top = r.bottom + 10;
+      tip.classList.toggle('is-below', below);
+      tip.style.left = left + 'px';
+      tip.style.top = top + 'px';
+      tip.style.setProperty('--mad-tip-arrow-x', Math.max(10, Math.min(tw - 10, r.left + r.width / 2 - left)) + 'px');
+    }
+    document.addEventListener('pointerover', function(e){
+      const btn = e.target && e.target.closest && e.target.closest('.mad-icon-btn[data-tip]');
+      if(btn) place(btn);
+    });
+    document.addEventListener('pointerout', function(e){
+      const btn = e.target && e.target.closest && e.target.closest('.mad-icon-btn[data-tip]');
+      if(!btn) return;
+      const next = e.relatedTarget;
+      if(next && (btn.contains(next) || (next.closest && next.closest('.mad-icon-btn[data-tip]')))) return;
+      hide();
+    });
+    document.addEventListener('focusin', function(e){
+      const btn = e.target && e.target.closest && e.target.closest('.mad-icon-btn[data-tip]');
+      if(btn) place(btn);
+    });
+    document.addEventListener('focusout', function(e){
+      const btn = e.target && e.target.closest && e.target.closest('.mad-icon-btn[data-tip]');
+      if(btn) hide();
+    });
+    window.addEventListener('scroll', function(){ if(activeBtn) hide(); }, true);
+    window.addEventListener('resize', hide);
+  })();
+
   (async function(){
     await loadBrandOptions();
     await loadAdmins();
