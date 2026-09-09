@@ -505,11 +505,12 @@ document.addEventListener('DOMContentLoaded', () => {
       parts.menu.style.setProperty('min-width', contentWidth+'px','important');
       parts.menu.style.setProperty('max-width', contentWidth+'px','important');
     }else{
-      const wrapWidth=Math.ceil(parts.wrap.getBoundingClientRect().width||0);
-      const menuWidth=Math.max(contentWidth, wrapWidth);
-      parts.menu.style.setProperty('width','max-content','important');
+      // Form fields: menu must match the visible trigger width (not max-content).
+      const boxWidth=Math.ceil((parts.button.getBoundingClientRect().width||parts.wrap.getBoundingClientRect().width||0));
+      const menuWidth=Math.max(boxWidth, contentWidth>0 && boxWidth<=0 ? contentWidth : boxWidth, 1);
+      parts.menu.style.setProperty('width', menuWidth+'px','important');
       parts.menu.style.setProperty('min-width', menuWidth+'px','important');
-      parts.menu.style.setProperty('max-width','none','important');
+      parts.menu.style.setProperty('max-width', menuWidth+'px','important');
     }
     parts.menu.style.setProperty('right','auto','important');
     parts.menu.style.setProperty('left','0','important');
