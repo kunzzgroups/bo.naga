@@ -217,11 +217,17 @@
  $('merchantGeneratePassword')?.addEventListener('click', ()=>{
   const pwd=generatePassword(14);
   const input=$('merchantMasterPassword');
+  const confirm=$('merchantMasterPasswordConfirm');
   if(!input) return;
   input.type='text';
   input.value=pwd;
-  const eye=document.querySelector('[data-toggle-password="merchantMasterPassword"] i');
-  if(eye) eye.className='bi bi-eye-slash';
+  if(confirm){
+    confirm.type='text';
+    confirm.value=pwd;
+  }
+  document.querySelectorAll('[data-toggle-password="merchantMasterPassword"] i, [data-toggle-password="merchantMasterPasswordConfirm"] i').forEach(eye=>{
+    eye.className='bi bi-eye-slash';
+  });
   setStatus('Strong password generated. Copy it before leaving this page.', 'success');
  });
 
@@ -278,6 +284,43 @@
 
  syncCurrencyUnits();
  loadPlatformProviders();
+ loadMasterRoles();
+
+ async function loadMasterRoles(){
+  const sel=$('merchantMasterRole');
+  if(!sel) return;
+  const fallback=()=>{
+    sel.innerHTML='<option value="" data-role-type="BRAND_OWNER" selected>Brand Owner</option>';
+  };
+  try{
+    const primary=BO_AUTH.roleListAllUrl?BO_AUTH.roleListAllUrl():BO_AUTH.roleListUrl();
+    let rows=[];
+    try{
+      const j=await fetch(primary,{headers:BO_AUTH.authHeader(),cache:'no-store'}).then(r=>r.json());
+      if(j&&j.status!=='error') rows=Array.isArray(j.data)?j.data:[];
+    }catch(_){
+      const j=await fetch(BO_AUTH.roleListUrl(),{headers:BO_AUTH.authHeader(),cache:'no-store'}).then(r=>r.json());
+      if(j&&j.status!=='error') rows=Array.isArray(j.data)?j.data:[];
+    }
+    const brandOwner=rows.filter(r=>{
+      const type=String(r.roleType||r.type||'').toUpperCase();
+      const code=String(r.code||'').toUpperCase();
+      const name=String(r.name||'').toLowerCase();
+      return type==='BRAND_OWNER'||code==='BRAND_OWNER'||name.includes('brand owner');
+    }).filter(r=>Number(r.status==null?1:r.status)===1);
+    const list=brandOwner.length?brandOwner:[{id:'',name:'Brand Owner',roleType:'BRAND_OWNER'}];
+    const globalOnly=list.filter(r=>r.brandId==null||r.brandId===''||r.id==='');
+    const use=globalOnly.length?globalOnly:list;
+    sel.innerHTML=use.map((r,i)=>{
+      const id=r.id!=null&&r.id!==''?String(r.id):'';
+      const label=esc(r.name||r.code||'Brand Owner');
+      const type=esc(String(r.roleType||r.type||'BRAND_OWNER').toUpperCase());
+      return `<option value="${esc(id)}" data-role-type="${type}"${i===0?' selected':''}>${label}</option>`;
+    }).join('');
+  }catch(e){
+    fallback();
+  }
+ }
 
  $('merchantBrandForm')?.addEventListener('submit',async e=>{
   e.preventDefault();
@@ -285,7 +328,15 @@
    setStatus('Creating merchant...');
    const username=($('merchantMasterUsername')?.value||'').trim();
    const password=$('merchantMasterPassword')?.value||'';
-   if(username&&password.length<8) throw new Error('Merchant Master password must be at least 8 characters');
+   const confirmPassword=$('merchantMasterPasswordConfirm')?.value||'';
+   const roleSel=$('merchantMasterRole');
+   const roleId=roleSel?.value||'';
+   const roleType=(roleSel?.selectedOptions?.[0]?.getAttribute('data-role-type')||'BRAND_OWNER').toUpperCase();
+   if(username||password||confirmPassword){
+    if(!username) throw new Error('Login ID / Username is required for the master account');
+    if(password.length<8) throw new Error('Merchant Master password must be at least 8 characters');
+    if(password!==confirmPassword) throw new Error('Confirm password does not match');
+   }
    const body={
     code:$('merchantCode').value.trim(),
     name:$('merchantName').value.trim(),
@@ -301,15 +352,18 @@
    const out=await api('/admin/merchants/save',{method:'POST',headers:hdr(),body:JSON.stringify(body)});
    const b=out.brand||out;
    if(username){
-    await api('/admin/merchants/'+b.id+'/master-account',{
-     method:'POST',
-     headers:hdr(),
-     body:JSON.stringify({
+    const payload={
       displayName:($('merchantMasterName').value.trim()||username),
       username,
       password,
-      status:1
-     })
+      status:1,
+      roleType
+    };
+    if(roleId) payload.roleId=Number(roleId);
+    await api('/admin/merchants/'+b.id+'/master-account',{
+     method:'POST',
+     headers:hdr(),
+     body:JSON.stringify(payload)
     });
    }
    setStatus('Saving provider pricing...');

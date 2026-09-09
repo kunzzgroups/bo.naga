@@ -11,7 +11,7 @@
 <link href="assets/css/reports.css?v=1.0.47" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.105" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.113" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -95,7 +95,7 @@
       <div class="mac-master-credit-grid">
         <div class="mac-subblock" id="merchantMasterBlock">
           <h4 class="mac-subblock-title"><span class="mac-subblock-dot" aria-hidden="true"></span> Admin Master Credentials</h4>
-          <div class="mac-fields mac-fields-row mac-fields-row-compact">
+          <div class="mac-fields mac-fields-row mac-fields-row-compact mac-fields-row-master">
             <label class="mac-field" for="merchantMasterName">
               <span class="mac-label">Master Display Name</span>
               <input class="form-control" id="merchantMasterName" placeholder="Merchant Master"/>
@@ -103,6 +103,12 @@
             <label class="mac-field" for="merchantMasterUsername">
               <span class="mac-label">Login ID / Username</span>
               <input class="form-control" id="merchantMasterUsername" autocomplete="username" placeholder="merchant.master"/>
+            </label>
+            <label class="mac-field mac-field-role" for="merchantMasterRole">
+              <span class="mac-label">Role</span>
+              <select class="form-control mad-select" id="merchantMasterRole">
+                <option value="" data-role-type="BRAND_OWNER">Brand Owner</option>
+              </select>
             </label>
             <label class="mac-field" for="merchantMasterPassword">
               <span class="mac-label-row">
@@ -112,6 +118,13 @@
               <span class="mad-pass-wrap">
                 <input class="form-control" id="merchantMasterPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Min. 8 characters"/>
                 <button type="button" class="mad-eye" data-toggle-password="merchantMasterPassword" aria-label="Show password"><i class="bi bi-eye"></i></button>
+              </span>
+            </label>
+            <label class="mac-field" for="merchantMasterPasswordConfirm">
+              <span class="mac-label">Confirm Password</span>
+              <span class="mad-pass-wrap">
+                <input class="form-control" id="merchantMasterPasswordConfirm" type="password" minlength="8" autocomplete="new-password" placeholder="Re-enter password"/>
+                <button type="button" class="mad-eye" data-toggle-password="merchantMasterPasswordConfirm" aria-label="Show confirm password"><i class="bi bi-eye"></i></button>
               </span>
             </label>
           </div>
@@ -217,7 +230,7 @@
 <script src="assets/js/reports.js?v=1.0.26"></script>
 <script src="assets/js/auth.js?v=1.0.60"></script>
 <script src="assets/js/main-merchant-visibility.js?v=1.0.0"></script>
-<script src="assets/js/main-merchant-create.js?v=1.1.10"></script>
+<script src="assets/js/main-merchant-create.js?v=1.1.11"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
