@@ -1,10 +1,11 @@
 (function(){
   'use strict';
 
-  const PAGE_SIZE = 10;
   const tbody = document.getElementById('masTableBody');
   const infoEl = document.getElementById('masTableInfo');
-  const pagerEl = document.getElementById('masPager');
+  const tableWrap = document.querySelector('.mas-table-wrap');
+  const tableScroll = document.getElementById('masTableScroll') || document.querySelector('.mas-table-body-scroll');
+  const panelEl = document.querySelector('.mas-panel');
   const searchEl = document.getElementById('masSearch');
   const eventTypeEl = document.getElementById('masEventType');
   const merchantEl = document.getElementById('masMerchantFilter');
@@ -20,8 +21,8 @@
 
   let allEvents = [];
   let filtered = [];
-  let currentPage = 1;
   let category = 'all';
+  let resizeTimer = null;
 
   const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const pickerState = { view: new Date(), selectingStart: true, mode: 'days', yearPageStart: new Date().getFullYear() - 5 };
@@ -696,48 +697,40 @@
       if(category !== 'all' && e.category !== category) return false;
       return true;
     });
-    currentPage = 1;
     renderTable();
   }
 
-  function pageButtons(current, total){
-    total = Math.max(1, Number(total) || 1);
-    current = Math.max(1, Math.min(Number(current) || 1, total));
-    const pages = [];
-    const add = n => { if(n >= 1 && n <= total && !pages.includes(n)) pages.push(n); };
-    add(1);
-    for(let n = current - 2; n <= current + 2; n++) add(n);
-    add(total);
-    pages.sort((a, b) => a - b);
-    let html = '';
-    html += '<button type="button" class="smart-page nav-text" data-page="' + Math.max(1, current - 1) + '" ' + (current <= 1 ? 'disabled' : '') + '>Previous</button>';
-    let prev = 0;
-    pages.forEach(n => {
-      if(prev && n - prev > 1) html += '<span class="smart-page-ellipsis">…</span>';
-      html += '<button type="button" class="smart-page ' + (n === current ? 'active' : '') + '" data-page="' + n + '" ' + (n === current ? 'aria-current="page"' : '') + '>' + n + '</button>';
-      prev = n;
-    });
-    html += '<button type="button" class="smart-page nav-text" data-page="' + Math.min(total, current + 1) + '" ' + (current >= total ? 'disabled' : '') + '>Next</button>';
-    return html;
+  function fitTableArea(){
+    const scrollEl = tableScroll || tableWrap;
+    if(!scrollEl || !panelEl) return 0;
+    const footer = panelEl.querySelector('.mad-footer');
+    const footerH = footer ? Math.max(footer.getBoundingClientRect().height, 52) : 56;
+    const top = (tableWrap || scrollEl).getBoundingClientRect().top;
+    const avail = Math.floor(window.innerHeight - top - footerH - 8);
+    const h = Math.max(180, avail);
+    if(tableWrap){
+      tableWrap.style.height = h + 'px';
+      tableWrap.style.maxHeight = h + 'px';
+    }
+    scrollEl.style.height = h + 'px';
+    scrollEl.style.maxHeight = h + 'px';
+    return h;
   }
 
   function renderTable(){
     if(!tbody) return;
     const total = filtered.length;
-    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE) || 1);
-    currentPage = Math.max(1, Math.min(currentPage, totalPages));
-    const start = (currentPage - 1) * PAGE_SIZE;
-    const rows = filtered.slice(start, start + PAGE_SIZE);
+    const rows = filtered;
 
-    if(pagerEl) pagerEl.innerHTML = pageButtons(currentPage, totalPages);
     if(infoEl){
       infoEl.textContent = total
-        ? ('Showing ' + (start + 1) + ' to ' + (start + rows.length) + ' of ' + total.toLocaleString() + ' records')
-        : 'Showing 0 to 0 of 0 records';
+        ? ('Showing ' + total.toLocaleString() + ' records')
+        : 'Showing 0 records';
     }
 
     if(!rows.length){
       tbody.innerHTML = '<tr><td colspan="7" class="mad-empty">No audit events found.</td></tr>';
+      fitTableArea();
       return;
     }
 
@@ -760,6 +753,8 @@
         '<td><button type="button" class="mas-view" data-mas-view="' + esc(e.id) + '">View <i class="bi bi-chevron-right"></i></button></td>' +
       '</tr>';
     }).join('');
+
+    fitTableArea();
   }
 
   function findEvent(id){
@@ -819,9 +814,9 @@
       allEvents = [];
       filtered = [];
       updateKpis([]);
-      if(pagerEl) pagerEl.innerHTML = pageButtons(1, 1);
-      if(infoEl) infoEl.textContent = 'Showing 0 to 0 of 0 records';
+      if(infoEl) infoEl.textContent = 'Showing 0 records';
       if(tbody) tbody.innerHTML = '<tr><td colspan="7" class="mad-empty text-danger">' + esc(err.message || 'Load audit failed') + '</td></tr>';
+      fitTableArea();
     }
   }
 
@@ -859,15 +854,9 @@
 
   initDatePicker();
 
-  pagerEl && pagerEl.addEventListener('click', e => {
-    const b = e.target.closest('[data-page]');
-    if(!b || b.disabled) return;
-    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-    const n = Number(b.dataset.page);
-    if(n >= 1 && n <= totalPages && n !== currentPage){
-      currentPage = n;
-      renderTable();
-    }
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(fitTableArea, 120);
   });
 
   tbody && tbody.addEventListener('click', e => {
@@ -879,6 +868,6 @@
   document.querySelectorAll('[data-mas-close]').forEach(btn => btn.addEventListener('click', closeDetail));
   detailModal && detailModal.addEventListener('click', e => { if(e.target === detailModal) closeDetail(); });
 
-  if(pagerEl) pagerEl.innerHTML = pageButtons(1, 1);
-  loadAll();
+  fitTableArea();
+  loadAll().then(() => requestAnimationFrame(fitTableArea));
 })();

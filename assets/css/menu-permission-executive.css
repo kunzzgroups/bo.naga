@@ -42,7 +42,7 @@ body.menu-permission-page .report-main{
 }
 body.menu-permission-page .mp-workspace{
   flex:1;
-  padding:18px 24px 32px!important;
+  padding:8px 24px 32px!important;
   display:flex;
   flex-direction:column;
   gap:16px;
@@ -52,23 +52,23 @@ body.menu-permission-page.mp-footer-visible .mp-workspace{
   padding-bottom:96px!important;
 }
 
-/* Admin section tabs — locked with main-admin chrome (same X/Y when switching) */
+/* Admin section tabs — match main-admin chrome (8px top, one baseline) */
 body.menu-permission-page .mp-chrome,
 body.menu-permission-page .mad-chrome{
   display:grid;grid-template-columns:minmax(0,1fr) auto;
-  align-items:end;column-gap:16px;
-  width:100%;height:54px;min-height:54px;max-height:54px;box-sizing:border-box;
+  align-items:center;column-gap:16px;
+  width:100%;height:48px;min-height:48px;max-height:48px;box-sizing:border-box;
   border-bottom:1px solid var(--bo-border);
-  padding:0;margin:0;flex:0 0 54px;
+  padding:0;margin:0;flex:0 0 48px;
 }
 body.menu-permission-page .mad-tabs{
   display:inline-flex;align-items:stretch;gap:4px;flex-wrap:nowrap;
-  justify-self:start;align-self:end;
-  height:54px;min-height:54px;padding:0;border-radius:0;background:transparent;
+  justify-self:start;align-self:stretch;
+  height:100%;min-height:0;padding:0;border-radius:0;background:transparent;
 }
 body.menu-permission-page .mad-tab{
-  display:inline-flex;align-items:center;height:auto;min-height:36px;
-  padding:8px 12px 6px;margin:0;
+  display:inline-flex;align-items:center;height:100%;min-height:0;
+  padding:0 12px;margin:0;
   border:0;border-bottom:2px solid transparent;border-radius:0;
   background:transparent!important;
   color:var(--bo-muted);font-size:13.5px;font-weight:650;
@@ -87,8 +87,8 @@ body.menu-permission-page .mad-tab.is-active{
 }
 body.menu-permission-page .mad-chrome-actions{
   display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:nowrap;
-  justify-self:end;align-self:end;
-  height:42px;min-height:42px;padding:0 0 10px;margin:0;box-sizing:content-box;
+  justify-self:end;align-self:center;
+  height:36px;min-height:36px;padding:0;margin:0;box-sizing:border-box;
   flex:0 0 auto;
 }
 body.menu-permission-page .mad-chrome-actions:empty{
@@ -995,7 +995,7 @@ body.menu-permission-page .mp-btn-save:focus-visible{outline:2px solid var(--bo-
   body.menu-permission-page .mp-menu-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:767.98px){
-  body.menu-permission-page .mp-workspace{padding:12px 12px 24px!important}
+  body.menu-permission-page .mp-workspace{padding:8px 12px 24px!important}
   body.menu-permission-page.mp-footer-visible .mp-workspace{padding-bottom:120px!important}
   body.menu-permission-page .mp-role-row{flex-wrap:wrap!important}
   body.menu-permission-page .mp-role-row .rounded-select-wrap{flex:1 1 100%!important;width:100%!important;max-width:100%!important;min-width:0!important}

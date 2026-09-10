@@ -404,7 +404,7 @@
         ? '<button class="mad-icon-btn mad-delete-btn is-danger" type="button" data-tip="Delete" aria-label="Delete" data-id="' + esc(row.id) + '"><i class="bi bi-trash3" aria-hidden="true"></i></button>'
         : '';
       return '<tr class="mad-row' + (canDelete ? ' is-suspended-row' : '') + '">' +
-        '<td data-label="Username"><div class="mad-user">' + selectHtml + '<span class="mad-avatar">' + esc(initials(row)) + '</span><div class="mad-user-copy"><b>' + esc(row.displayName || row.username || '-') + (current ? ' · You' : '') + '</b><div class="mad-user-meta"><span class="mad-uid">' + esc(uidLabel(row)) + '</span>' + (email ? '<span class="mad-email">' + esc(email) + '</span>' : '') + '</div></div></div></td>' +
+        '<td data-label="Username"><div class="mad-user">' + selectHtml + '<span class="mad-avatar">' + esc(initials(row)) + '</span><div class="mad-user-copy"><b>' + esc(row.displayName || row.username || '-') + (current ? ' · You' : '') + '</b>' + (email ? '<div class="mad-user-meta"><span class="mad-email">' + esc(email) + '</span></div>' : '') + '</div></div></td>' +
         '<td data-label="Role"><span class="mad-role ' + roleTone(rn) + '">' + esc(rn) + '</span></td>' +
         '<td data-label="Credit Balance">' + creditHtml + '</td>' +
         '<td class="mad-detail" data-label="Last Active">' + esc(relativeTime(lastActive(row))) + '</td>' +

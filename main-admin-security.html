@@ -11,7 +11,7 @@
 <link href="assets/css/reports.css?v=1.0.47" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.109" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.119" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 <script>
 (function(){
@@ -63,7 +63,7 @@
       <div class="mas-kpi-copy">
         <span class="mas-kpi-label">Total Audit Events</span>
         <strong class="mas-kpi-value" id="masStatTotal">0</strong>
-        <span class="mas-kpi-meta is-success" id="masStatTotalDelta">a??/span>
+        <span class="mas-kpi-meta is-success" id="masStatTotalDelta">—</span>
       </div>
     </article>
     <article class="mas-kpi">
@@ -155,29 +155,28 @@
     </div>
 
     <div class="mad-table-wrap mas-table-wrap">
-      <table class="mad-table mas-table">
-        <thead>
-          <tr>
-            <th>Time &amp; Date</th>
-            <th>Administrator</th>
-            <th>Action / Event</th>
-            <th>Target / Resource</th>
-            <th>IP Address &amp; Location</th>
-            <th>Status</th>
-            <th>Details</th>
-          </tr>
-        </thead>
-        <tbody id="masTableBody">
-          <tr><td colspan="7" class="mad-empty">Loading audit events...</td></tr>
-        </tbody>
-      </table>
+      <div class="mas-table-body-scroll" id="masTableScroll">
+        <table class="mad-table mas-table">
+          <thead>
+            <tr>
+              <th>Time &amp; Date</th>
+              <th>Administrator</th>
+              <th>Action / Event</th>
+              <th>Target / Resource</th>
+              <th>IP Address &amp; Location</th>
+              <th>Status</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="masTableBody">
+            <tr><td colspan="7" class="mad-empty">Loading audit events...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="mad-footer">
-      <div class="mad-footer-info" id="masTableInfo">Showing 0 to 0 of 0 records</div>
-      <div class="mad-footer-right">
-        <nav class="mad-pager" id="masPager" aria-label="Table pagination"></nav>
-      </div>
+      <div class="mad-footer-info" id="masTableInfo">Showing 0 records</div>
     </div>
   </div>
 </section>
@@ -209,7 +208,7 @@
 <script src="assets/js/auth.js?v=1.0.60"></script>
 <script src="assets/js/permission-tabs.js?v=1.0.0"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
-<script src="assets/js/main-admin-security.js?v=1.1.7"></script>
+<script src="assets/js/main-admin-security.js?v=1.1.9"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>

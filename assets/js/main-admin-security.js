@@ -1,14 +1,10 @@
 (function(){
   'use strict';
 
-  const PAGE_SIZE_MIN = 5;
-  const PAGE_SIZE_MAX = 40;
-  const PAGE_SIZE_FALLBACK = 10;
-  let pageSize = PAGE_SIZE_FALLBACK;
   const tbody = document.getElementById('masTableBody');
   const infoEl = document.getElementById('masTableInfo');
-  const pagerEl = document.getElementById('masPager');
   const tableWrap = document.querySelector('.mas-table-wrap');
+  const tableScroll = document.getElementById('masTableScroll') || document.querySelector('.mas-table-body-scroll');
   const panelEl = document.querySelector('.mas-panel');
   const searchEl = document.getElementById('masSearch');
   const eventTypeEl = document.getElementById('masEventType');
@@ -24,7 +20,6 @@
 
   let allEvents = [];
   let filtered = [];
-  let currentPage = 1;
   let category = 'all';
   let resizeTimer = null;
 
@@ -702,109 +697,40 @@
       if(category !== 'all' && e.category !== category) return false;
       return true;
     });
-    currentPage = 1;
     renderTable();
   }
 
-  function pageButtons(current, total){
-    total = Math.max(1, Number(total) || 1);
-    current = Math.max(1, Math.min(Number(current) || 1, total));
-    const pages = [];
-    const add = n => { if(n >= 1 && n <= total && !pages.includes(n)) pages.push(n); };
-    add(1);
-    for(let n = current - 2; n <= current + 2; n++) add(n);
-    add(total);
-    pages.sort((a, b) => a - b);
-    let html = '';
-    html += '<button type="button" class="smart-page nav-text" data-page="' + Math.max(1, current - 1) + '" ' + (current <= 1 ? 'disabled' : '') + '>Previous</button>';
-    let prev = 0;
-    pages.forEach(n => {
-      if(prev && n - prev > 1) html += '<span class="smart-page-ellipsis">…</span>';
-      html += '<button type="button" class="smart-page ' + (n === current ? 'active' : '') + '" data-page="' + n + '" ' + (n === current ? 'aria-current="page"' : '') + '>' + n + '</button>';
-      prev = n;
-    });
-    html += '<button type="button" class="smart-page nav-text" data-page="' + Math.min(total, current + 1) + '" ' + (current >= total ? 'disabled' : '') + '>Next</button>';
-    return html;
-  }
-
-  function measureRowHeight(){
-    const tr = tbody && tbody.querySelector('tr[data-event-id]');
-    if(tr){
-      const h = tr.getBoundingClientRect().height;
-      if(h >= 40) return h;
-    }
-    return 56;
-  }
-
   function fitTableArea(){
-    if(!tableWrap || !panelEl) return 0;
+    const scrollEl = tableScroll || tableWrap;
+    if(!scrollEl || !panelEl) return 0;
     const footer = panelEl.querySelector('.mad-footer');
     const footerH = footer ? Math.max(footer.getBoundingClientRect().height, 52) : 56;
-    const top = tableWrap.getBoundingClientRect().top;
-    // Pull wrap down to the footer / viewport bottom so rows can stretch evenly.
+    const top = (tableWrap || scrollEl).getBoundingClientRect().top;
     const avail = Math.floor(window.innerHeight - top - footerH - 8);
     const h = Math.max(180, avail);
-    tableWrap.style.height = h + 'px';
-    tableWrap.style.maxHeight = h + 'px';
-    return h;
-  }
-
-  function equalizeRowHeights(){
-    if(!tbody || !tableWrap) return;
-    const rows = tbody.querySelectorAll('tr[data-event-id]');
-    if(!rows.length){
-      tableWrap.style.removeProperty('--mas-row-h');
-      return;
+    if(tableWrap){
+      tableWrap.style.height = h + 'px';
+      tableWrap.style.maxHeight = h + 'px';
     }
-    const thead = document.querySelector('.mas-table thead');
-    const headH = thead ? Math.max(thead.getBoundingClientRect().height, 44) : 48;
-    const wrapH = tableWrap.clientHeight || fitTableArea();
-    const bodyH = Math.max(0, wrapH - headH);
-    const rowH = Math.max(48, Math.floor(bodyH / rows.length));
-    tableWrap.style.setProperty('--mas-row-h', rowH + 'px');
-  }
-
-  function calcPageSize(){
-    fitTableArea();
-    const thead = document.querySelector('.mas-table thead');
-    const headH = thead ? Math.max(thead.getBoundingClientRect().height, 44) : 48;
-    const wrapH = tableWrap ? tableWrap.clientHeight : 360;
-    const avail = Math.max(0, wrapH - headH);
-    // Target a comfortable base density, then equalizeRowHeights stretches them.
-    const baseRow = 56;
-    const n = Math.floor(avail / baseRow);
-    return Math.max(PAGE_SIZE_MIN, Math.min(PAGE_SIZE_MAX, n || PAGE_SIZE_FALLBACK));
-  }
-
-  function syncPageSize(){
-    const next = calcPageSize();
-    if(next === pageSize) return false;
-    const firstIndex = (currentPage - 1) * pageSize;
-    pageSize = next;
-    currentPage = Math.floor(firstIndex / Math.max(1, pageSize)) + 1;
-    return true;
+    scrollEl.style.height = h + 'px';
+    scrollEl.style.maxHeight = h + 'px';
+    return h;
   }
 
   function renderTable(){
     if(!tbody) return;
-    syncPageSize();
     const total = filtered.length;
-    const totalPages = Math.max(1, Math.ceil(total / pageSize) || 1);
-    currentPage = Math.max(1, Math.min(currentPage, totalPages));
-    const start = (currentPage - 1) * pageSize;
-    const rows = filtered.slice(start, start + pageSize);
+    const rows = filtered;
 
-    if(pagerEl) pagerEl.innerHTML = pageButtons(currentPage, totalPages);
     if(infoEl){
       infoEl.textContent = total
-        ? ('Showing ' + (start + 1) + ' to ' + (start + rows.length) + ' of ' + total.toLocaleString() + ' records')
-        : 'Showing 0 to 0 of 0 records';
+        ? ('Showing ' + total.toLocaleString() + ' records')
+        : 'Showing 0 records';
     }
 
     if(!rows.length){
       tbody.innerHTML = '<tr><td colspan="7" class="mad-empty">No audit events found.</td></tr>';
       fitTableArea();
-      if(tableWrap) tableWrap.style.removeProperty('--mas-row-h');
       return;
     }
 
@@ -829,16 +755,6 @@
     }).join('');
 
     fitTableArea();
-    equalizeRowHeights();
-  }
-
-  function refinePageSizeAfterPaint(){
-    requestAnimationFrame(() => {
-      fitTableArea();
-      const changed = syncPageSize();
-      if(changed) renderTable();
-      else equalizeRowHeights();
-    });
   }
 
   function findEvent(id){
@@ -897,9 +813,9 @@
       allEvents = [];
       filtered = [];
       updateKpis([]);
-      if(pagerEl) pagerEl.innerHTML = pageButtons(1, 1);
-      if(infoEl) infoEl.textContent = 'Showing 0 to 0 of 0 records';
+      if(infoEl) infoEl.textContent = 'Showing 0 records';
       if(tbody) tbody.innerHTML = '<tr><td colspan="7" class="mad-empty text-danger">' + esc(err.message || 'Load audit failed') + '</td></tr>';
+      fitTableArea();
     }
   }
 
@@ -937,24 +853,9 @@
 
   initDatePicker();
 
-  pagerEl && pagerEl.addEventListener('click', e => {
-    const b = e.target.closest('[data-page]');
-    if(!b || b.disabled) return;
-    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-    const n = Number(b.dataset.page);
-    if(n >= 1 && n <= totalPages && n !== currentPage){
-      currentPage = n;
-      renderTable();
-    }
-  });
-
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      fitTableArea();
-      if(syncPageSize()) renderTable();
-      else equalizeRowHeights();
-    }, 120);
+    resizeTimer = setTimeout(fitTableArea, 120);
   });
 
   tbody && tbody.addEventListener('click', e => {
@@ -966,7 +867,6 @@
   document.querySelectorAll('[data-mas-close]').forEach(btn => btn.addEventListener('click', closeDetail));
   detailModal && detailModal.addEventListener('click', e => { if(e.target === detailModal) closeDetail(); });
 
-  pageSize = calcPageSize();
-  if(pagerEl) pagerEl.innerHTML = pageButtons(1, 1);
-  loadAll().then(refinePageSizeAfterPaint);
+  fitTableArea();
+  loadAll().then(() => requestAnimationFrame(fitTableArea));
 })();
