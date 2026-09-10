@@ -11,7 +11,7 @@
 <link href="assets/css/reports.css?v=1.0.47" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.121" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.123" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 <script>
 (function(){
@@ -55,34 +55,34 @@
       <a class="mad-tab" role="tab" aria-selected="false" href="main-merchant-roles.html">Roles &amp; Permissions</a>
       <a class="mad-tab is-active" role="tab" aria-selected="true" href="main-merchant-security.html">Security &amp; Audit</a>
     </div>
-    <div class="mad-chrome-actions" aria-hidden="true"></div>
-  </div>
-
-  <div class="mas-kpis" aria-label="Security summary">
-    <article class="mas-kpi">
-      <span class="mas-kpi-icon is-cyan"><i class="bi bi-file-earmark-text"></i></span>
-      <div class="mas-kpi-copy">
-        <span class="mas-kpi-label">Total Audit Events</span>
-        <strong class="mas-kpi-value" id="masStatTotal">0</strong>
-        <span class="mas-kpi-meta is-success" id="masStatTotalDelta">—</span>
+    <div class="mad-chrome-actions mas-chrome-kpis">
+      <div class="mas-kpis" aria-label="Security summary">
+        <article class="mas-kpi" title="Total Audit Events">
+          <span class="mas-kpi-icon is-cyan"><i class="bi bi-file-earmark-text"></i></span>
+          <div class="mas-kpi-copy">
+            <strong class="mas-kpi-value" id="masStatTotal">0</strong>
+            <span class="mas-kpi-label">Events</span>
+            <span class="mas-kpi-meta is-success" id="masStatTotalDelta">—</span>
+          </div>
+        </article>
+        <article class="mas-kpi" title="Security Alerts">
+          <span class="mas-kpi-icon is-danger"><i class="bi bi-exclamation-triangle"></i></span>
+          <div class="mas-kpi-copy">
+            <strong class="mas-kpi-value" id="masStatAlerts">0</strong>
+            <span class="mas-kpi-label">Alerts</span>
+            <span class="mas-kpi-meta" id="masStatAlertsMeta">—</span>
+          </div>
+        </article>
+        <article class="mas-kpi" title="Active Merchant Sessions">
+          <span class="mas-kpi-icon is-navy"><i class="bi bi-people"></i></span>
+          <div class="mas-kpi-copy">
+            <strong class="mas-kpi-value" id="masStatSessions">0</strong>
+            <span class="mas-kpi-label">Sessions</span>
+            <span class="mas-kpi-meta is-live" id="masStatSessionsMeta"><i></i> 0 now</span>
+          </div>
+        </article>
       </div>
-    </article>
-    <article class="mas-kpi">
-      <span class="mas-kpi-icon is-danger"><i class="bi bi-exclamation-triangle"></i></span>
-      <div class="mas-kpi-copy">
-        <span class="mas-kpi-label">Security Alerts</span>
-        <strong class="mas-kpi-value" id="masStatAlerts">0</strong>
-        <span class="mas-kpi-meta" id="masStatAlertsMeta">No active alerts</span>
-      </div>
-    </article>
-    <article class="mas-kpi">
-      <span class="mas-kpi-icon is-navy"><i class="bi bi-people"></i></span>
-      <div class="mas-kpi-copy">
-        <span class="mas-kpi-label">Active Merchant Sessions</span>
-        <strong class="mas-kpi-value" id="masStatSessions">0</strong>
-        <span class="mas-kpi-meta is-live" id="masStatSessionsMeta"><i></i> 0 active now</span>
-      </div>
-    </article>
+    </div>
   </div>
 
   <div class="mad-panel mas-panel">
@@ -232,7 +232,7 @@
 <script src="assets/js/auth.js?v=1.0.60"></script>
 <script src="assets/js/main-merchant-visibility.js?v=1.0.0"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
-<script src="assets/js/main-merchant-security.js?v=1.0.6"></script>
+<script src="assets/js/main-merchant-security.js?v=1.0.7"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>

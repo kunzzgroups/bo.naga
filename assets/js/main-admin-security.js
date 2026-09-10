@@ -619,13 +619,16 @@
     const last7 = events.filter(e => e.at && e.at.getTime() >= d7).length;
     const prev7 = events.filter(e => e.at && e.at.getTime() >= d14 && e.at.getTime() < d7).length;
     let deltaText = '—';
+    let deltaTitle = 'No comparison window';
     let deltaClass = 'mas-kpi-meta';
     if(prev7 > 0){
       const pct = Math.round(((last7 - prev7) / prev7) * 100);
-      deltaText = (pct >= 0 ? '+' : '') + pct + '% vs last 7 days';
+      deltaText = (pct >= 0 ? '+' : '') + pct + '%';
+      deltaTitle = (pct >= 0 ? '+' : '') + pct + '% vs last 7 days';
       deltaClass = 'mas-kpi-meta ' + (pct >= 0 ? 'is-success' : 'is-danger');
     }else if(last7 > 0){
-      deltaText = '+' + last7 + ' in last 7 days';
+      deltaText = '+' + last7;
+      deltaTitle = '+' + last7 + ' in last 7 days';
       deltaClass = 'mas-kpi-meta is-success';
     }
 
@@ -648,21 +651,29 @@
     );
 
     if(totalEl) totalEl.textContent = total.toLocaleString();
-    if(deltaEl){ deltaEl.className = deltaClass; deltaEl.textContent = deltaText; }
+    if(deltaEl){
+      deltaEl.className = deltaClass;
+      deltaEl.textContent = deltaText;
+      deltaEl.title = deltaTitle;
+    }
     if(alertsEl) alertsEl.textContent = String(alerts);
     if(alertsMeta){
       alertsMeta.className = 'mas-kpi-meta' + (failedLogins ? ' is-danger' : (alerts ? ' is-success' : ''));
       if(!alerts){
-        alertsMeta.textContent = 'No tracked security activity';
+        alertsMeta.textContent = 'clear';
+        alertsMeta.title = 'No tracked security activity';
       }else if(failedLogins){
-        alertsMeta.textContent = adminActions + ' admin action' + (adminActions === 1 ? '' : 's') + ' · ' + failedLogins + ' failed login' + (failedLogins === 1 ? '' : 's');
+        alertsMeta.textContent = failedLogins + ' fail';
+        alertsMeta.title = adminActions + ' admin action' + (adminActions === 1 ? '' : 's') + ' · ' + failedLogins + ' failed login' + (failedLogins === 1 ? '' : 's');
       }else{
-        alertsMeta.textContent = adminActions + ' admin action' + (adminActions === 1 ? '' : 's') + ' tracked';
+        alertsMeta.textContent = adminActions + ' ops';
+        alertsMeta.title = adminActions + ' admin action' + (adminActions === 1 ? '' : 's') + ' tracked';
       }
     }
     if(sessionsEl) sessionsEl.textContent = String(sessionUsers.size);
     if(sessionsMeta){
-      sessionsMeta.innerHTML = '<i></i> ' + sessionUsers.size + ' active now';
+      sessionsMeta.innerHTML = '<i></i> now';
+      sessionsMeta.title = sessionUsers.size + ' active now';
     }
 
     const catAll = document.getElementById('masCatAll');

@@ -633,13 +633,16 @@
     const last7 = events.filter(e => e.at && e.at.getTime() >= d7).length;
     const prev7 = events.filter(e => e.at && e.at.getTime() >= d14 && e.at.getTime() < d7).length;
     let deltaText = '—';
+    let deltaTitle = 'No comparison window';
     let deltaClass = 'mas-kpi-meta';
     if(prev7 > 0){
       const pct = Math.round(((last7 - prev7) / prev7) * 100);
-      deltaText = (pct >= 0 ? '+' : '') + pct + '% vs last 7 days';
+      deltaText = (pct >= 0 ? '+' : '') + pct + '%';
+      deltaTitle = (pct >= 0 ? '+' : '') + pct + '% vs last 7 days';
       deltaClass = 'mas-kpi-meta ' + (pct >= 0 ? 'is-success' : 'is-danger');
     }else if(last7 > 0){
-      deltaText = '+' + last7 + ' in last 7 days';
+      deltaText = '+' + last7;
+      deltaTitle = '+' + last7 + ' in last 7 days';
       deltaClass = 'mas-kpi-meta is-success';
     }
 
@@ -652,15 +655,21 @@
     );
 
     if(totalEl) totalEl.textContent = total.toLocaleString();
-    if(deltaEl){ deltaEl.className = deltaClass; deltaEl.textContent = deltaText; }
+    if(deltaEl){
+      deltaEl.className = deltaClass;
+      deltaEl.textContent = deltaText;
+      deltaEl.title = deltaTitle;
+    }
     if(alertsEl) alertsEl.textContent = String(alerts);
     if(alertsMeta){
       alertsMeta.className = 'mas-kpi-meta' + (alerts ? ' is-danger' : '');
-      alertsMeta.textContent = alerts ? (alerts + ' need review') : 'No active alerts';
+      alertsMeta.textContent = alerts ? 'review' : 'clear';
+      alertsMeta.title = alerts ? (alerts + ' need review') : 'No active alerts';
     }
     if(sessionsEl) sessionsEl.textContent = String(sessionUsers.size);
     if(sessionsMeta){
-      sessionsMeta.innerHTML = '<i></i> ' + sessionUsers.size + ' active now';
+      sessionsMeta.innerHTML = '<i></i> now';
+      sessionsMeta.title = sessionUsers.size + ' active now';
     }
 
     const catAll = document.getElementById('masCatAll');
