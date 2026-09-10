@@ -248,6 +248,41 @@
   el.textContent=val||'';
   el.className='upload-status mb-3'+(type?' '+type:'');
  }
+ function setWalletOptions(wallet, extraHtml){
+  if(!wallet || wallet.tagName!=='SELECT') return;
+  const html='<option value="">Player Credit</option><option value="__WHOLE_PROVIDER__">Whole Platform-Provider Credit</option>'+(extraHtml||'');
+  wallet.innerHTML=html;
+  wallet.value='';
+  const wrap=wallet.closest('.rounded-select-wrap');
+  if(wrap) wrap.dataset.boAutoWidth='0';
+  wallet.dispatchEvent(new Event('bo:select-sync',{bubbles:true}));
+  if(window.BOSelectSync && typeof BOSelectSync.one==='function') BOSelectSync.one(wallet);
+ }
+ let creditOpenSeq=0;
+ let creditFocusTimer=0;
+ function showCreditModal(modal){
+  if(!modal) return;
+  modal.hidden=false;
+  modal.removeAttribute('hidden');
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+  document.body.classList.add('modal-open');
+ }
+ function closeCredit(){
+  creditOpenSeq++;
+  if(creditFocusTimer){ clearTimeout(creditFocusTimer); creditFocusTimer=0; }
+  const modal=$('madCreditModal');
+  if(!modal) return;
+  const active=document.activeElement;
+  if(active && modal.contains(active) && typeof active.blur==='function'){
+   try{ active.blur(); }catch(e){}
+  }
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden','true');
+  modal.hidden=true;
+  modal.setAttribute('hidden','');
+  if(!document.querySelector('.modal-clean.show')) document.body.classList.remove('modal-open');
+ }
  async function openCredit(id){
   const row=rows.find(x=>Number(x.id)===Number(id));
   if(!row){
@@ -256,43 +291,39 @@
   }
   const modal=$('madCreditModal');
   if(!modal) return;
-  $('madCreditId').value=String(row.id);
-  $('madCreditName').textContent=row.code||row.name||('#'+row.id);
-  $('madCreditSub').textContent=(row.name||'')+(row.currency?' · '+row.currency:'');
-  $('madCreditAvatar').textContent=String(row.code||'M').slice(0,2).toUpperCase();
-  $('madCreditBalance').textContent=money(row.creditBalance);
+  const seq=++creditOpenSeq;
+  if(creditFocusTimer){ clearTimeout(creditFocusTimer); creditFocusTimer=0; }
+  const idEl=$('madCreditId'), nameEl=$('madCreditName'), subEl=$('madCreditSub');
+  const avatarEl=$('madCreditAvatar'), balEl=$('madCreditBalance');
+  if(idEl) idEl.value=String(row.id);
+  if(nameEl) nameEl.textContent=row.code||row.name||('#'+row.id);
+  if(subEl) subEl.textContent=(row.name||row.code||'')+(row.currency?' · '+row.currency:'');
+  if(avatarEl) avatarEl.textContent=String(row.code||'M').slice(0,2).toUpperCase();
+  if(balEl) balEl.textContent=money(row.creditBalance);
   setText('madCreditBalanceInfo','Loading wallets...');
   if($('madCreditAmount')) $('madCreditAmount').value='';
   if($('madCreditRemark')) $('madCreditRemark').value='';
   setStatus('madCreditStatus','');
+  showCreditModal(modal);
   const wallet=$('madCreditWallet');
-  if(wallet) wallet.innerHTML='<option value="">Player Credit</option><option value="__WHOLE_PROVIDER__">Whole Platform-Provider Credit</option>';
-  modal.classList.add('show');
-  modal.setAttribute('aria-hidden','false');
-  document.body.classList.add('modal-open');
+  setWalletOptions(wallet,'');
   try{
    const d=await api('/admin/merchants/'+encodeURIComponent(id),{headers:BO_AUTH.authHeader()});
+   if(seq!==creditOpenSeq) return;
    const b=d?.brand||d||row;
    const ps=d?.providers||[];
-   if(wallet){
-    wallet.innerHTML='<option value="">Player Credit</option><option value="__WHOLE_PROVIDER__">Whole Platform-Provider Credit</option>'+
-     (String(b.creditMode||'').toUpperCase()==='PER_PROVIDER'
-       ?ps.filter(p=>Number(p.enabled??1)===1).map(p=>`<option value="${esc(p.providerCode)}">Provider: ${esc(p.providerCode)}</option>`).join('')
-       :'');
-   }
+   const extra=String(b.creditMode||'').toUpperCase()==='PER_PROVIDER'
+     ?ps.filter(p=>Number(p.enabled??1)===1).map(p=>`<option value="${esc(p.providerCode)}">Provider: ${esc(p.providerCode)}</option>`).join('')
+     :'';
+   setWalletOptions(wallet, extra);
    setText('madCreditBalanceInfo','Player Credit: '+money(b.creditBalance||0)+' · Provider Credit: '+money(b.providerCreditBalance||0));
-   $('madCreditBalance').textContent=money(b.creditBalance||0);
+   if(balEl) balEl.textContent=money(b.creditBalance||0);
   }catch(e){
+   if(seq!==creditOpenSeq) return;
    setText('madCreditBalanceInfo',e.message||'Unable to load wallet details.');
   }
-  setTimeout(()=>$('madCreditAmount')?.focus(),40);
- }
- function closeCredit(){
-  const modal=$('madCreditModal');
-  if(!modal) return;
-  modal.classList.remove('show');
-  modal.setAttribute('aria-hidden','true');
-  if(!document.querySelector('.modal-clean.show')) document.body.classList.remove('modal-open');
+  if(seq!==creditOpenSeq) return;
+  creditFocusTimer=setTimeout(()=>$('madCreditAmount')?.focus(),40);
  }
  function generatePassword(len){
   const upper='ABCDEFGHJKLMNPQRSTUVWXYZ', lower='abcdefghijkmnopqrstuvwxyz', digits='23456789', symbols='!@#$%^&*';

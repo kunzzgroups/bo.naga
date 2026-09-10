@@ -3890,7 +3890,7 @@ body.main-admin-credit-page .mac-icon-btn:hover{
 body.main-admin-credit-page .mac-icon-btn.is-danger:hover{
   border-color:var(--bo-danger);color:var(--bo-danger);background:rgba(239,51,64,.08);
 }
-body.main-admin-detail-page .mac-adjust-panel{width:min(560px,calc(100vw - 32px))}
+body.main-admin-detail-page .mac-adjust-panel{width:min(560px,calc(100vw - 32px));overflow:visible}
 body.main-admin-detail-page .mac-adjust-panel .modal-clean-body{padding-top:18px}
 body.main-admin-detail-page .mac-adjust-account-wrap{margin-bottom:12px}
 body.main-admin-detail-page .mac-adjust-summary{

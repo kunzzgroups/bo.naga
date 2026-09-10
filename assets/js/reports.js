@@ -455,10 +455,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function findParts(select){
     const wrap=select && select.closest ? select.closest('.rounded-select-wrap') : null;
     if(!wrap) return {};
+    /* Direct children only. Descendant querySelector can latch onto a nested
+       menu/button after a later innerHTML rebuild and wipe the wrong node. */
     return {
       wrap,
-      button: wrap.querySelector('.rounded-select-btn'),
-      menu: wrap.querySelector('.rounded-select-menu')
+      button: wrap.querySelector(':scope > .rounded-select-btn'),
+      menu: wrap.querySelector(':scope > .rounded-select-menu')
     };
   }
 
@@ -474,6 +476,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function isCompactAutoWidthWrap(wrap){
     if(!wrap) return false;
     if(wrap.dataset.boAutoWidth==='0') return false;
+    const nested=wrap.querySelector(':scope > select');
+    if(nested && nested.dataset.boAutoWidth==='0') return false;
     if(wrap.dataset.boAutoWidth==='1') return true;
     return !!wrap.closest('.mad-filters,.mac-filters,.mp-role-row,.bo-filter-row,.mpv-filters,.entries-control,.mac-toolbar,.mad-chrome-actions');
   }
@@ -507,7 +511,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }else{
       // Form fields: menu must match the visible trigger width (not max-content).
       const boxWidth=Math.ceil((parts.button.getBoundingClientRect().width||parts.wrap.getBoundingClientRect().width||0));
-      const menuWidth=Math.max(boxWidth, contentWidth>0 && boxWidth<=0 ? contentWidth : boxWidth, 1);
+      if(boxWidth<=0) return;
+      const menuWidth=Math.max(boxWidth, 1);
       parts.menu.style.setProperty('width', menuWidth+'px','important');
       parts.menu.style.setProperty('min-width', menuWidth+'px','important');
       parts.menu.style.setProperty('max-width', menuWidth+'px','important');
@@ -588,6 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
     select.dataset.roundedReady='1';
     const wrap=document.createElement('div');
     wrap.className='rounded-select-wrap';
+    if(select.dataset.boAutoWidth) wrap.dataset.boAutoWidth=select.dataset.boAutoWidth;
     select.parentNode.insertBefore(wrap,select);
     wrap.appendChild(select);
 

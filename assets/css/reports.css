@@ -5379,7 +5379,7 @@ body.modal-open{overflow:hidden!important}
   overflow:auto!important;
   isolation:isolate;
 }
-.modal-clean.show{display:flex!important}
+.modal-clean.show{display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
 .modal-clean-panel{
   position:relative;
   z-index:1;
