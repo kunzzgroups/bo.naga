@@ -75,77 +75,6 @@
     return j.data ?? j;
   }
 
-  function setMode(mode, { lock = false } = {}) {
-    state.mode = mode === 'monthly' ? 'monthly' : 'oneoff';
-    document.querySelectorAll('[data-mpr-mode]').forEach((b) => {
-      b.classList.toggle('is-active', b.dataset.mprMode === state.mode);
-      b.disabled = lock && b.dataset.mprMode !== state.mode;
-    });
-    const one = $('mprOneOffFields');
-    const mon = $('mprMonthlyFields');
-    if (one) one.hidden = state.mode !== 'oneoff';
-    if (mon) mon.hidden = state.mode !== 'monthly';
-    ['mpDate', 'mpAmount', 'mpSource'].forEach((id) => {
-      const el = $(id);
-      if (el) el.required = state.mode === 'oneoff';
-    });
-    ['mpMerchant', 'mpFeeName', 'mpEffectiveMonth', 'mpMonthlyAmount'].forEach((id) => {
-      const el = $(id);
-      if (el) el.required = state.mode === 'monthly';
-    });
-  }
-
-  function openModal({ mode = 'oneoff', edit = null } = {}) {
-    state.editingPricingId = edit ? edit.id : null;
-    setMode(mode, { lock: !!edit });
-    $('mprFormStatus').className = 'upload-status mb-3';
-    $('mprFormStatus').textContent = '';
-    if (mode === 'monthly' && edit) {
-      $('mprModalTitle').textContent = 'Adjust Monthly Pricing';
-      $('mprModalSub').textContent = 'Update this pricing version or set a new effective date.';
-      $('mpMerchant').value = String(edit.merchantId || '');
-      $('mpFeeName').value = edit.feeName || '';
-      $('mpEffectiveMonth').value = String(edit.effectiveDate || edit.effectiveMonth || '').slice(0, 10);
-      $('mpMonthlyAmount').value = Number(edit.amount || 0).toFixed(2);
-      $('mpPricingRemark').value = edit.remark || '';
-    } else {
-      $('mprModalTitle').textContent = 'Record Profit';
-      $('mprModalSub').textContent = 'Add one-off income or a recurring monthly pricing rule.';
-      if (mode === 'oneoff') {
-        $('mpDate').value = fmt(new Date());
-        $('mpAmount').value = '';
-        $('mpSource').value = '';
-        $('mpDescription').value = '';
-      } else {
-        $('mpMerchant').value = '';
-        $('mpFeeName').value = '';
-        $('mpEffectiveMonth').value = fmt(new Date());
-        $('mpMonthlyAmount').value = '';
-        $('mpPricingRemark').value = '';
-      }
-    }
-    const modal = $('mprModal');
-    modal.classList.add('show');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('modal-open');
-  }
-
-  function closeModal() {
-    const modal = $('mprModal');
-    modal.classList.remove('show');
-    modal.setAttribute('aria-hidden', 'true');
-    if (!document.querySelector('.modal-clean.show')) document.body.classList.remove('modal-open');
-    state.editingPricingId = null;
-    document.querySelectorAll('[data-mpr-mode]').forEach((b) => { b.disabled = false; });
-  }
-
-  function renderMerchantOptions() {
-    const cur = $('mpMerchant').value;
-    $('mpMerchant').innerHTML = '<option value="">Select Merchant</option>' +
-      state.merchants.map((m) => `<option value="${m.id}">${esc(m.name)} (${esc(m.code)})</option>`).join('');
-    if (cur) $('mpMerchant').value = cur;
-  }
-
   function isMonthly(row) {
     return row.kind === 'MONTHLY_PRICING';
   }
@@ -283,7 +212,6 @@
       const d = await api('/admin/main/merchant-profit/pricing');
       state.pricing = d.rows || [];
       state.merchants = d.merchants || [];
-      renderMerchantOptions();
     } catch (e) {
       state.pricing = [];
       state.merchants = [];
@@ -324,14 +252,14 @@
   }
 
   function editPricing(id) {
-    const x = state.pricing.find((r) => String(r.id) === String(id));
+    const x = state.pricing.find((r) => String(r.id) === String(id) || String(r.scheduleId || '') === String(id));
     if (!x) {
       window.BO_DIALOG?.alert
         ? BO_DIALOG.alert('Pricing rule not found. It may have been removed.', { title: 'Unable to Edit', type: 'error' })
         : alert('Pricing rule not found.');
       return;
     }
-    openModal({ mode: 'monthly', edit: x });
+    location.href = `main-merchant-profit-record.html?mode=monthly&edit=${encodeURIComponent(x.id)}`;
   }
 
   function exportCsv() {
@@ -542,17 +470,6 @@
   }
 
   // Events
-  $('mprRecordBtn')?.addEventListener('click', () => openModal({ mode: 'oneoff' }));
-  document.querySelectorAll('[data-mpr-close]').forEach((b) => b.addEventListener('click', closeModal));
-  $('mprModal')?.addEventListener('click', (e) => {
-    if (e.target === $('mprModal')) closeModal();
-  });
-  document.querySelectorAll('[data-mpr-mode]').forEach((b) => {
-    b.addEventListener('click', () => {
-      if (b.disabled) return;
-      setMode(b.dataset.mprMode);
-    });
-  });
   document.querySelectorAll('[data-mpr-kind]').forEach((b) => {
     b.addEventListener('click', () => {
       state.kind = b.dataset.mprKind;
@@ -576,51 +493,6 @@
     if (!b || b.disabled) return;
     state.page = +b.dataset.page;
     render();
-  });
-
-  $('mprForm')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const msg = $('mprFormStatus');
-    msg.className = 'upload-status mb-3 text-muted';
-    msg.textContent = 'Saving...';
-    try {
-      if (state.mode === 'oneoff') {
-        const amount = Number($('mpAmount').value);
-        if (!Number.isFinite(amount) || amount <= 0) {
-          msg.className = 'upload-status mb-3 text-danger';
-          msg.textContent = 'Amount must be greater than 0.';
-          return;
-        }
-        await api('/admin/main/merchant-profit', {
-          method: 'POST',
-          body: JSON.stringify({
-            incomeDate: $('mpDate').value,
-            source: $('mpSource').value,
-            amount: amount.toFixed(2),
-            description: $('mpDescription').value
-          })
-        });
-      } else {
-        await api('/admin/main/merchant-profit/pricing', {
-          method: 'POST',
-          body: JSON.stringify({
-            pricingId: state.editingPricingId,
-            merchantId: $('mpMerchant').value,
-            feeName: $('mpFeeName').value,
-            effectiveDate: $('mpEffectiveMonth').value,
-            effectiveMonth: $('mpEffectiveMonth').value,
-            amount: $('mpMonthlyAmount').value,
-            remark: $('mpPricingRemark').value
-          })
-        });
-      }
-      closeModal();
-      await loadPricing();
-      await load();
-    } catch (x) {
-      msg.className = 'upload-status mb-3 text-danger';
-      msg.textContent = x.message;
-    }
   });
 
   document.addEventListener('click', async (e) => {
@@ -670,14 +542,7 @@
     }
   });
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && $('mprModal')?.classList.contains('show')) closeModal();
-  });
-
   BO_AUTH.requireLogin();
   initDatePicker();
-  setMode('oneoff');
-  $('mpDate').value = fmt(new Date());
-  $('mpEffectiveMonth').value = fmt(new Date());
   Promise.all([loadPricing(), load()]);
 })();

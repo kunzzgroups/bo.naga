@@ -1,0 +1,503 @@
+/* Record Profit — full-page revenue ledger entry */
+body.main-merchant-profit-record-page{
+  --mprr-navy:#123B66;
+  --mprr-navy-deep:#0E2F52;
+  --mprr-cyan:#21A6D7;
+  --mprr-cyan-tint:rgba(33,166,215,.10);
+  --mprr-surface:#fff;
+  --mprr-bg:#F5F8FB;
+  --mprr-border:#E2E7F0;
+  --mprr-text:#11203A;
+  --mprr-muted:#657187;
+  --mprr-help:#8290A3;
+  --mprr-shadow:0 0 0 1px rgba(18,59,102,.04),0 1px 2px -1px rgba(18,59,102,.06),0 2px 10px rgba(26,45,80,.04);
+}
+
+body.main-merchant-profit-record-page .mprr-workspace{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  padding-bottom:96px;
+  width:100%;
+  max-width:none;
+}
+
+body.main-merchant-profit-record-page .user-title-wrap h1{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+body.main-merchant-profit-record-page .mprr-title-badge{
+  display:inline-flex;
+  align-items:center;
+  height:24px;
+  padding:0 10px;
+  border-radius:999px;
+  background:rgba(33,166,215,.12);
+  color:var(--mprr-cyan);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.02em;
+  text-transform:none;
+  vertical-align:middle;
+}
+
+/* Mode switch — full-width segmented control (mock) */
+body.main-merchant-profit-record-page .mprr-mode-switch{
+  display:flex;
+  align-items:stretch;
+  width:100%;
+  gap:4px;
+  padding:6px;
+  border-radius:16px;
+  background:#fff;
+  border:1px solid var(--mprr-border);
+  box-shadow:var(--mprr-shadow);
+}
+body.main-merchant-profit-record-page .mprr-mode-btn{
+  flex:1 1 0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  min-height:56px;
+  padding:14px 20px;
+  border:0;
+  border-radius:12px;
+  background:transparent;
+  color:#334155;
+  font-size:14.5px;
+  font-weight:750;
+  line-height:1.2;
+  cursor:pointer;
+  transition:background .16s ease,color .16s ease,box-shadow .16s ease;
+}
+body.main-merchant-profit-record-page .mprr-mode-btn i{
+  font-size:18px;
+  color:#64748B;
+  transition:color .16s ease;
+}
+body.main-merchant-profit-record-page .mprr-mode-btn:hover:not(.is-active):not(:disabled){
+  background:rgba(18,59,102,.04);
+  color:var(--mprr-navy);
+}
+body.main-merchant-profit-record-page .mprr-mode-btn:hover:not(.is-active):not(:disabled) i{
+  color:var(--mprr-navy);
+}
+body.main-merchant-profit-record-page .mprr-mode-btn.is-active{
+  background:var(--mprr-navy);
+  color:#fff;
+  box-shadow:0 6px 16px rgba(18,59,102,.2);
+}
+body.main-merchant-profit-record-page .mprr-mode-btn.is-active i{
+  color:#7DD3FC;
+}
+body.main-merchant-profit-record-page .mprr-mode-btn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+/* Card — full content width */
+body.main-merchant-profit-record-page .mprr-form{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  width:100%;
+}
+body.main-merchant-profit-record-page .mprr-card{
+  width:100%;
+  background:var(--mprr-surface);
+  border:1px solid var(--mprr-border);
+  border-radius:14px;
+  box-shadow:var(--mprr-shadow);
+  padding:22px 24px 20px;
+}
+body.main-merchant-profit-record-page .mprr-card-head{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  margin-bottom:22px;
+  padding-bottom:16px;
+  border-bottom:1px solid var(--mprr-border);
+}
+body.main-merchant-profit-record-page .mprr-card-icon{
+  flex:0 0 40px;
+  width:40px;height:40px;
+  display:grid;place-items:center;
+  border-radius:10px;
+  background:var(--mprr-cyan-tint);
+  color:var(--mprr-cyan);
+  font-size:18px;
+}
+body.main-merchant-profit-record-page .mprr-card-copy{flex:1;min-width:0}
+body.main-merchant-profit-record-page .mprr-card-copy h2{
+  margin:0;
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--mprr-text);
+}
+body.main-merchant-profit-record-page .mprr-card-copy p{
+  margin:4px 0 0;
+  font-size:12.5px;
+  color:var(--mprr-muted);
+  line-height:1.45;
+}
+body.main-merchant-profit-record-page .mprr-back{
+  flex:0 0 auto;
+  align-self:flex-start;
+  white-space:nowrap;
+}
+
+/* Fields grid */
+body.main-merchant-profit-record-page .mprr-grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:18px 20px;
+}
+body.main-merchant-profit-record-page .mprr-field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  min-width:0;
+}
+body.main-merchant-profit-record-page .mprr-field-full{grid-column:1 / -1}
+body.main-merchant-profit-record-page .mprr-label{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:11.5px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--mprr-muted);
+}
+body.main-merchant-profit-record-page .mprr-label b{color:#E04F16;font-weight:800}
+body.main-merchant-profit-record-page .mprr-optional{
+  margin-left:auto;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.06em;
+  color:#98A2B3;
+  text-transform:uppercase;
+}
+body.main-merchant-profit-record-page .mprr-help{
+  font-size:11.5px;
+  color:var(--mprr-help);
+  line-height:1.4;
+}
+body.main-merchant-profit-record-page .mprr-field .form-control,
+body.main-merchant-profit-record-page .mprr-field .form-select,
+body.main-merchant-profit-record-page .report-content .mprr-field .form-control,
+body.main-merchant-profit-record-page .report-content .mprr-field .form-select{
+  height:44px!important;
+  border-radius:8px!important;
+  border:1px solid #D0D5DD!important;
+  background:#fff!important;
+  color:var(--mprr-text)!important;
+  font-size:13.5px!important;
+  font-weight:600!important;
+  box-shadow:none!important;
+}
+body.main-merchant-profit-record-page .mprr-field textarea.form-control,
+body.main-merchant-profit-record-page .report-content .mprr-field textarea.form-control{
+  height:auto!important;
+  min-height:110px;
+  padding-top:12px!important;
+  padding-bottom:12px!important;
+  resize:vertical;
+  font-weight:500!important;
+}
+body.main-merchant-profit-record-page .mprr-field .form-control:focus,
+body.main-merchant-profit-record-page .mprr-field .form-select:focus{
+  border-color:var(--mprr-cyan)!important;
+  box-shadow:0 0 0 3px rgba(33,166,215,.16)!important;
+}
+
+body.main-merchant-profit-record-page .mprr-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+body.main-merchant-profit-record-page .mprr-chip{
+  display:inline-flex;
+  align-items:center;
+  height:26px;
+  padding:0 10px;
+  border:0;
+  border-radius:999px;
+  background:rgba(33,166,215,.10);
+  color:#1B7FA8;
+  font-size:11.5px;
+  font-weight:700;
+  cursor:pointer;
+  transition:background .14s ease,color .14s ease;
+}
+body.main-merchant-profit-record-page .mprr-chip:hover{
+  background:rgba(33,166,215,.18);
+  color:#0F6A8F;
+}
+
+body.main-merchant-profit-record-page .mprr-entry-box{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-height:44px;
+  padding:10px 14px;
+  border:1px solid #D0D5DD;
+  border-radius:8px;
+  background:#F8FBFE;
+}
+body.main-merchant-profit-record-page .mprr-entry-radio{
+  flex:0 0 16px;
+  width:16px;height:16px;
+  border-radius:50%;
+  border:5px solid var(--mprr-cyan);
+  background:#fff;
+  box-sizing:border-box;
+}
+body.main-merchant-profit-record-page .mprr-entry-copy{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  min-width:0;
+}
+body.main-merchant-profit-record-page .mprr-entry-copy strong{
+  font-size:13.5px;
+  font-weight:750;
+  color:var(--mprr-text);
+}
+body.main-merchant-profit-record-page .mprr-entry-badge{
+  display:inline-flex;
+  align-items:center;
+  height:22px;
+  padding:0 8px;
+  border-radius:6px;
+  background:rgba(33,166,215,.12);
+  color:#1B7FA8;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+body.main-merchant-profit-record-page .mprr-entry-badge.is-oneoff{
+  background:rgba(18,183,106,.12);
+  color:#127A48;
+}
+
+body.main-merchant-profit-record-page .mprr-date-wrap{
+  position:relative;
+  display:block;
+}
+body.main-merchant-profit-record-page .mprr-date-wrap .form-control{padding-right:40px!important}
+body.main-merchant-profit-record-page .mprr-date-wrap > i{
+  position:absolute;
+  right:12px;top:50%;
+  transform:translateY(-50%);
+  color:var(--mprr-muted);
+  pointer-events:none;
+  font-size:15px;
+}
+
+body.main-merchant-profit-record-page .mprr-amount-wrap{
+  position:relative;
+  display:flex;
+  align-items:stretch;
+}
+body.main-merchant-profit-record-page .mprr-amount-prefix{
+  display:inline-flex;
+  align-items:center;
+  padding:0 12px;
+  border:1px solid #D0D5DD;
+  border-right:0;
+  border-radius:8px 0 0 8px;
+  background:#F5F8FB;
+  color:var(--mprr-muted);
+  font-size:12px;
+  font-weight:800;
+}
+body.main-merchant-profit-record-page .mprr-amount-wrap .form-control{
+  border-radius:0 8px 8px 0!important;
+  padding-right:52px!important;
+}
+body.main-merchant-profit-record-page .mprr-amount-tag{
+  position:absolute;
+  right:12px;top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:#98A2B3;
+  pointer-events:none;
+}
+
+body.main-merchant-profit-record-page .mprr-info{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  margin-top:20px;
+  padding:12px 14px;
+  border-radius:10px;
+  background:#EEF7FC;
+  border:1px solid rgba(33,166,215,.18);
+  color:#1B5F7A;
+}
+body.main-merchant-profit-record-page .mprr-info i{flex:0 0 auto;margin-top:1px;font-size:15px}
+body.main-merchant-profit-record-page .mprr-info p{
+  margin:0;
+  font-size:12.5px;
+  line-height:1.45;
+  font-weight:550;
+}
+body.main-merchant-profit-record-page .mprr-status{
+  margin-top:14px;
+  margin-bottom:0;
+}
+
+/* Sticky footer */
+body.main-merchant-profit-record-page .mprr-footer{
+  position:fixed;
+  left:var(--sidebar-w, 250px);
+  right:0;
+  bottom:0;
+  z-index:40;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+  padding:14px 28px;
+  background:rgba(255,255,255,.92);
+  border-top:1px solid var(--mprr-border);
+  backdrop-filter:blur(10px);
+  box-shadow:0 -8px 24px rgba(15,23,42,.04);
+}
+body.sidebar-mini.main-merchant-profit-record-page .mprr-footer{
+  left:var(--rail-w, 72px);
+}
+body.main-merchant-profit-record-page .mprr-draft{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:12.5px;
+  font-weight:650;
+  color:var(--mprr-muted);
+}
+body.main-merchant-profit-record-page .mprr-draft-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:#12B76A;
+  box-shadow:0 0 0 3px rgba(18,183,106,.18);
+}
+body.main-merchant-profit-record-page .mprr-footer-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-left:auto;
+}
+
+@media(max-width:1100px){
+  body.main-merchant-profit-record-page .mprr-grid{grid-template-columns:repeat(2, minmax(0, 1fr))}
+  body.main-merchant-profit-record-page .mprr-field-full{grid-column:1 / -1}
+}
+@media(max-width:991.98px){
+  body.main-merchant-profit-record-page .mprr-footer{left:0}
+}
+@media(max-width:760px){
+  body.main-merchant-profit-record-page .mprr-mode-switch{flex-direction:column}
+  body.main-merchant-profit-record-page .mprr-grid{grid-template-columns:1fr}
+  body.main-merchant-profit-record-page .mprr-card-head{flex-wrap:wrap}
+  body.main-merchant-profit-record-page .mprr-back{width:100%}
+  body.main-merchant-profit-record-page .mprr-footer{
+    left:0;
+    padding:12px 16px;
+  }
+  body.main-merchant-profit-record-page .mprr-footer-actions{width:100%}
+  body.main-merchant-profit-record-page .mprr-footer-actions .mad-btn{flex:1}
+}
+
+/* Dark mode */
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page{
+  --mprr-surface:#0F1C2E;
+  --mprr-bg:#08131F;
+  --mprr-border:#24374F;
+  --mprr-text:#E8EEF7;
+  --mprr-muted:#8A95A8;
+  --mprr-help:#7B879C;
+  --mprr-shadow:none;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-title-badge{
+  background:rgba(33,166,215,.22);
+  color:#7DD3FC;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-mode-switch{
+  background:var(--mprr-surface);
+  border-color:var(--mprr-border);
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-mode-btn{
+  color:#D0D7E2;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-mode-btn i{
+  color:#8A95A8;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-mode-btn:hover:not(.is-active):not(:disabled){
+  background:rgba(255,255,255,.06);
+  color:#F5F8FB;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-mode-btn:hover:not(.is-active):not(:disabled) i{
+  color:#F5F8FB;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-mode-btn.is-active{
+  background:#123B66;
+  color:#fff;
+  box-shadow:0 8px 18px rgba(0,0,0,.35);
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-mode-btn.is-active i{
+  color:#7DD3FC;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-field .form-control,
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-field .form-select,
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .report-content .mprr-field .form-control,
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .report-content .mprr-field .form-select{
+  background:#0B1626!important;
+  border-color:#334155!important;
+  color:#E8EEF7!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-entry-box{
+  background:#132337;
+  border-color:#334155;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-entry-copy strong{color:#E8EEF7}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-entry-badge{
+  background:rgba(33,166,215,.22);
+  color:#7DD3FC;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-entry-badge.is-oneoff{
+  background:rgba(18,183,106,.2);
+  color:#6CE9A6;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-chip{
+  background:rgba(33,166,215,.18);
+  color:#7DD3FC;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-chip:hover{
+  background:rgba(33,166,215,.28);
+  color:#A5F3FC;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-amount-prefix{
+  background:#132337;
+  border-color:#334155;
+  color:#8A95A8;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-info{
+  background:rgba(33,166,215,.12);
+  border-color:rgba(33,166,215,.22);
+  color:#9ED8F0;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-record-page .mprr-footer{
+  background:rgba(8,19,31,.92);
+  border-top-color:#24374F;
+}

@@ -88,7 +88,7 @@
     // Gateway Transactions is a drill-down of Payment Gateway and uses the same DB menu permission.
     if(p==='payment-gateway-transactions.html') return 'payment-gateway.html';
     // Merchant module drill-downs keep the Merchant sidebar item highlighted.
-    if(p==='main-merchant-create.html' || p==='main-merchant-credit.html' || p==='main-merchant-security.html' || p==='main-merchant-roles.html' || p==='main-merchant-role-create.html' || p==='main-merchant-profit.html' || p==='merchant-profit.html'){
+    if(p==='main-merchant-create.html' || p==='main-merchant-credit.html' || p==='main-merchant-security.html' || p==='main-merchant-roles.html' || p==='main-merchant-role-create.html' || p==='main-merchant-profit.html' || p==='main-merchant-profit-record.html' || p==='merchant-profit.html'){
       return 'main-merchant-detail.html';
     }
     // Admin module drill-downs keep the Admin Details item highlighted.
@@ -210,6 +210,7 @@
       if(current === 'main-merchant-roles.html') current = 'main-merchant-detail.html';
       if(current === 'main-merchant-role-create.html') current = 'main-merchant-detail.html';
       if(current === 'main-merchant-profit.html') current = 'main-merchant-detail.html';
+      if(current === 'main-merchant-profit-record.html') current = 'main-merchant-detail.html';
       if(current === 'merchant-profit.html') current = 'main-merchant-detail.html';
       const agentChildPages = new Set([
         'agent-commission-admin.html','agent-settlement-admin.html','agent-reimbursement-admin.html',
@@ -217,7 +218,7 @@
       ]);
       const requestedAgentChild = agentChildPages.has(pageName());
       const requestedMainAdminDetail = pageName() === 'main-admin-detail.html' || pageName() === 'main-admin-create.html' || pageName() === 'main-admin-edit.html';
-      const requestedMainMerchantDetail = pageName() === 'main-merchant-detail.html' || pageName() === 'main-merchant-create.html' || pageName() === 'main-merchant-credit.html' || pageName() === 'main-merchant-security.html' || pageName() === 'main-merchant-roles.html' || pageName() === 'main-merchant-role-create.html' || pageName() === 'main-merchant-profit.html' || pageName() === 'merchant-profit.html';
+      const requestedMainMerchantDetail = pageName() === 'main-merchant-detail.html' || pageName() === 'main-merchant-create.html' || pageName() === 'main-merchant-credit.html' || pageName() === 'main-merchant-security.html' || pageName() === 'main-merchant-roles.html' || pageName() === 'main-merchant-role-create.html' || pageName() === 'main-merchant-profit.html' || pageName() === 'main-merchant-profit-record.html' || pageName() === 'merchant-profit.html';
       if(current === 'main-stat-detail.html'){
         let source = '';
         try { source = String(new URLSearchParams(location.search || '').get('source') || 'overview').toLowerCase(); } catch(e) {}
