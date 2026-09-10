@@ -157,7 +157,7 @@
     }
     /* New Menu modal segmented controls (Status / mode tabs) — page CSS owns these.
        "Disabled" must NOT match the global danger heuristic (/disable/). */
-    if(el.matches?.('.nm-status-btn,.nm-mode-tab,.bo-theme-btn,#boThemeToggle,.mad-btn,.mad-tab,.mad-pill,.mad-icon-btn,.mad-eye,.mac-link-btn,.mac-change-role,.mac-credit-mode-btn,.mp-scope-btn,.mrc-chip-btn,.mrc-btn') || el.closest?.('.nm-status-seg,.nm-mode-tabs,#newMenuModal .nm-status-seg,#newMenuModal .nm-mode-tabs,.mp-workspace,.mrc-workspace,.mad-workspace,.mad-modal,.mad-pager,.mac-workspace,.mp-scope')){
+    if(el.matches?.('.nm-status-btn,.nm-mode-tab,.bo-theme-btn,#boThemeToggle,.mad-btn,.mad-tab,.mad-pill,.mad-icon-btn,.mad-eye,.mac-link-btn,.mac-change-role,.mac-credit-mode-btn,.mprr-mode-btn,.mprr-entry-opt,.mp-scope-btn,.mrc-chip-btn,.mrc-btn') || el.closest?.('.nm-status-seg,.nm-mode-tabs,#newMenuModal .nm-status-seg,#newMenuModal .nm-mode-tabs,.mp-workspace,.mrc-workspace,.mad-workspace,.mad-modal,.mad-pager,.mac-workspace,.mp-scope,.mprr-entry-options')){
       el.classList.remove('bo-ui-button','bo-ui-button-primary','bo-ui-button-secondary','bo-ui-button-danger','bo-ui-icon-button');
       delete el.dataset.boUiButton;
       return;

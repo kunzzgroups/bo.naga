@@ -10,7 +10,8 @@
 <link href="assets/css/reports.css?v=1.0.47" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet"/>
 <link href="assets/css/main-admin-detail-executive.css?v=1.0.109" rel="stylesheet"/>
-<link href="assets/css/main-merchant-profit-record.css?v=1.0.1" rel="stylesheet"/>
+<link href="assets/css/main-merchant-profit-record.css?v=1.0.10" rel="stylesheet"/>
+<link href="assets/css/bo-seg-bounce.css?v=1.0.1" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -46,59 +47,41 @@
 </header>
 
 <section class="report-content mprr-workspace">
-  <div class="mprr-mode-switch" role="group" aria-label="Record type">
-    <button type="button" class="mprr-mode-btn is-active" data-mprr-mode="monthly" aria-pressed="true">
-      <i class="bi bi-calendar2-week" aria-hidden="true"></i>
-      <span>Monthly Recurring Pricing</span>
-    </button>
-    <button type="button" class="mprr-mode-btn" data-mprr-mode="oneoff" aria-pressed="false">
-      <i class="bi bi-receipt" aria-hidden="true"></i>
-      <span>One-off / Ad-hoc Income</span>
-    </button>
-  </div>
-
   <form id="mprrForm" class="mprr-form" novalidate>
     <section class="mprr-card">
       <header class="mprr-card-head">
-        <span class="mprr-card-icon" aria-hidden="true"><i class="bi bi-journal-text"></i></span>
-        <div class="mprr-card-copy">
-          <h2>Profit &amp; Pricing Record</h2>
-          <p id="mprrCardSub">Define the merchant, fee item, billing cadence, and amount for this ledger entry.</p>
+        <div class="mad-pills mprr-mode-switch" role="group" aria-label="Record type" data-bo-seg-anim="bounce">
+          <button type="button" class="mad-pill mprr-mode-btn is-active" data-mprr-mode="monthly" aria-pressed="true">
+            <i class="bi bi-calendar2-week" aria-hidden="true"></i>
+            <span>Monthly Recurring Pricing</span>
+          </button>
+          <button type="button" class="mad-pill mprr-mode-btn" data-mprr-mode="oneoff" aria-pressed="false">
+            <i class="bi bi-receipt" aria-hidden="true"></i>
+            <span>One-off / Ad-hoc Income</span>
+          </button>
         </div>
         <a class="mad-btn mad-btn-ghost mprr-back" href="main-merchant-profit.html"><i class="bi bi-arrow-left" aria-hidden="true"></i> Back to Merchant Profit</a>
       </header>
 
       <div class="mprr-grid">
-        <label class="mprr-field" for="mprrMerchant" data-mprr-show="monthly">
-          <span class="mprr-label">Target Merchant <b>*</b></span>
-          <select class="form-select" id="mprrMerchant" required>
+        <div class="mprr-field" data-mprr-show="monthly">
+          <span class="mprr-label" id="mprrMerchantLabel">Target Merchant <b>*</b></span>
+          <select class="form-select mad-select" id="mprrMerchant" data-bo-auto-width="0" required aria-labelledby="mprrMerchantLabel">
             <option value="">Select Merchant</option>
           </select>
-          <span class="mprr-help">Merchant that will receive this recurring pricing rule</span>
-        </label>
+        </div>
 
         <label class="mprr-field" for="mprrFeeName">
           <span class="mprr-label">Fee / Income Item <b>*</b></span>
           <input class="form-control" id="mprrFeeName" maxlength="120" placeholder="e.g. Server &amp; Infrastructure Fee" required/>
-          <div class="mprr-chips" data-mprr-show="monthly" role="group" aria-label="Quick fee presets">
-            <button type="button" class="mprr-chip" data-mprr-chip="Platform License">+ Platform License</button>
-            <button type="button" class="mprr-chip" data-mprr-chip="Server Host">+ Server Host</button>
-            <button type="button" class="mprr-chip" data-mprr-chip="Maintenance">+ Maintenance</button>
-          </div>
-          <span class="mprr-help" data-mprr-show="monthly">Quick-fill common fee names, or type a custom item</span>
-          <span class="mprr-help" data-mprr-show="oneoff" hidden>Income source shown on the profit ledger</span>
         </label>
 
-        <div class="mprr-field mprr-entry-type" aria-live="polite">
-          <span class="mprr-label">Entry Type <b>*</b></span>
-          <div class="mprr-entry-box" id="mprrEntryBox">
-            <span class="mprr-entry-radio" aria-hidden="true"></span>
-            <div class="mprr-entry-copy">
-              <strong id="mprrEntryTitle">Monthly Recurring Rule</strong>
-              <span class="mprr-entry-badge" id="mprrEntryBadge">Auto-cycle</span>
-            </div>
-          </div>
-          <span class="mprr-help" id="mprrEntryHelp">Automated monthly ledger posting</span>
+        <div class="mprr-field mprr-entry-type">
+          <span class="mprr-label" id="mprrEntryTypeLabel">Entry Type <b>*</b></span>
+          <select class="form-select mad-select" id="mprrEntryType" data-bo-auto-width="0" aria-labelledby="mprrEntryTypeLabel">
+            <option value="continue">Monthly Recurring Rule</option>
+            <option value="stop">Stop Recurring Billing</option>
+          </select>
         </div>
 
         <label class="mprr-field" for="mprrDate">
@@ -107,15 +90,12 @@
             <input class="form-control" type="date" id="mprrDate" required/>
             <i class="bi bi-calendar3" aria-hidden="true"></i>
           </span>
-          <span class="mprr-help" data-mprr-show="monthly">First charge date; same calendar day each following month</span>
-          <span class="mprr-help" data-mprr-show="oneoff" hidden>Income recognition date for this ledger row</span>
         </label>
 
-        <label class="mprr-field" for="mprrCycleDay" data-mprr-show="monthly">
-          <span class="mprr-label">Billing Cycle Day <b>*</b></span>
-          <select class="form-select" id="mprrCycleDay"></select>
-          <span class="mprr-help">Posts on this day of every month</span>
-        </label>
+        <div class="mprr-field" data-mprr-show="monthly">
+          <span class="mprr-label" id="mprrCycleDayLabel">Billing Cycle Day <b>*</b></span>
+          <select class="form-select mad-select" id="mprrCycleDay" data-bo-auto-width="0" aria-labelledby="mprrCycleDayLabel"></select>
+        </div>
 
         <label class="mprr-field" for="mprrAmount">
           <span class="mprr-label">Amount (MYR) <b>*</b></span>
@@ -124,20 +104,12 @@
             <input class="form-control" id="mprrAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" required/>
             <span class="mprr-amount-tag">gross</span>
           </span>
-          <span class="mprr-help" data-mprr-show="monthly">Set to 0.00 from a date to stop future charges</span>
-          <span class="mprr-help" data-mprr-show="oneoff" hidden>Gross amount posted to the profit ledger</span>
         </label>
 
         <label class="mprr-field mprr-field-full" for="mprrRemark">
           <span class="mprr-label">Remark / Internal Note <span class="mprr-optional">Optional</span></span>
           <textarea class="form-control" id="mprrRemark" rows="4" maxlength="1000" placeholder="Optional remark or internal note for this profit record..."></textarea>
-          <span class="mprr-help">Requires finance operator manual check before posting</span>
         </label>
-      </div>
-
-      <div class="mprr-info" id="mprrInfo" role="note">
-        <i class="bi bi-info-circle" aria-hidden="true"></i>
-        <p id="mprrInfoText">Recurring monthly fees are recognized on the designated billing day. Adjustments apply to the next billing cycle.</p>
       </div>
 
       <div class="upload-status mprr-status" id="mprrStatus" hidden></div>
@@ -166,8 +138,9 @@
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/reports.js?v=1.0.25"></script>
 <script src="assets/js/auth.js?v=1.0.61"></script>
-<script src="assets/js/main-merchant-profit-record.js?v=1.0.0"></script>
-<script src="assets/js/bo-ui-standard.js?v=1.0.4"></script>
+<script src="assets/js/main-merchant-profit-record.js?v=1.0.5"></script>
+<script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
+<script src="assets/js/bo-ui-standard.js?v=1.0.6"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 <script src="assets/js/main-merchant-visibility.js?v=1.0.1"></script>
 </body>

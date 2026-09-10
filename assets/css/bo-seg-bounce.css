@@ -27,13 +27,16 @@
 }
 
 .bo-seg > .mad-pill,
-.bo-seg > .mp-scope-btn{
+.bo-seg > .mp-scope-btn,
+.bo-seg > .mprr-mode-btn{
   position:relative;z-index:1;
 }
 .bo-seg > .mad-pill.is-active,
 .bo-seg > .mad-pill.is-active.bo-ui-button,
 .bo-seg > .mp-scope-btn.is-active,
-.bo-seg > .mp-scope-btn.is-active.bo-ui-button{
+.bo-seg > .mp-scope-btn.is-active.bo-ui-button,
+.bo-seg > .mprr-mode-btn.is-active,
+.bo-seg > .mprr-mode-btn.is-active.bo-ui-button{
   background:transparent!important;
   box-shadow:none!important;
 }

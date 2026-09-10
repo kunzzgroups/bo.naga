@@ -12,6 +12,7 @@
   const params = new URLSearchParams(location.search);
   const state = {
     mode: params.get('mode') === 'oneoff' ? 'oneoff' : 'monthly',
+    billing: 'continue',
     editingPricingId: params.get('edit') || null,
     merchants: [],
     pricing: [],
@@ -44,8 +45,28 @@
     el.className = 'upload-status mprr-status' + (kind ? ' ' + kind : '');
   }
 
+  function syncEntryTypeOptions() {
+    const sel = $('mprrEntryType');
+    if (!sel) return;
+    const monthly = state.mode === 'monthly';
+    const value = monthly
+      ? (state.billing === 'stop' ? 'stop' : 'continue')
+      : 'oneoff';
+    if (monthly) {
+      sel.innerHTML =
+        '<option value="continue">Monthly Recurring Rule</option>' +
+        '<option value="stop">Stop Recurring Billing</option>';
+    } else {
+      sel.innerHTML = '<option value="oneoff">One-off / Ad-hoc Income</option>';
+    }
+    sel.value = value;
+    sel.disabled = !monthly;
+    syncSelect(sel);
+  }
+
   function syncVisibility() {
     const monthly = state.mode === 'monthly';
+    const stop = monthly && state.billing === 'stop';
     document.querySelectorAll('[data-mprr-show]').forEach((el) => {
       const show = el.getAttribute('data-mprr-show') === state.mode;
       el.hidden = !show;
@@ -55,31 +76,35 @@
     if (merchant) merchant.required = monthly;
     if (cycle) cycle.required = monthly;
 
-    $('mprrEntryTitle').textContent = monthly ? 'Monthly Recurring Rule' : 'One-off / Ad-hoc Income';
-    const badge = $('mprrEntryBadge');
-    badge.textContent = monthly ? 'Auto-cycle' : 'Manual';
-    badge.classList.toggle('is-oneoff', !monthly);
-    $('mprrEntryHelp').textContent = monthly
-      ? 'Automated monthly ledger posting'
-      : 'Requires finance operator manual check before posting';
+    syncEntryTypeOptions();
+
     $('mprrDateLabel').innerHTML = monthly
       ? 'Effective Date <b>*</b>'
       : 'Income Date <b>*</b>';
-    $('mprrInfoText').textContent = monthly
-      ? 'Recurring monthly fees are recognized on the designated billing day. Adjustments apply to the next billing cycle.'
-      : 'One-off income is posted immediately to the profit ledger for the selected income date.';
-    $('mprrCardSub').textContent = monthly
-      ? 'Define the merchant, fee item, billing cadence, and amount for this ledger entry.'
-      : 'Capture ad-hoc income with source, amount, and an optional internal remark.';
     $('mprrSubmitLabel').textContent = state.editingPricingId
-      ? 'Save Pricing Adjustment'
-      : 'Save & Record Profit';
+      ? (stop ? 'Save Stop Billing' : 'Save Pricing Adjustment')
+      : (stop ? 'Stop Recurring Billing' : 'Save & Record Profit');
+  }
+
+  function setBilling(billing) {
+    if (state.mode !== 'monthly') return;
+    state.billing = billing === 'stop' ? 'stop' : 'continue';
+    const sel = $('mprrEntryType');
+    if (sel && sel.value !== state.billing) {
+      sel.value = state.billing;
+      syncSelect(sel);
+    }
+    $('mprrSubmitLabel').textContent = state.editingPricingId
+      ? (state.billing === 'stop' ? 'Save Stop Billing' : 'Save Pricing Adjustment')
+      : (state.billing === 'stop' ? 'Stop Recurring Billing' : 'Save & Record Profit');
+    scheduleDraft();
   }
 
   function setMode(mode, { lock = false } = {}) {
     if (lock && state.lockMode && mode !== state.mode) return;
     state.mode = mode === 'oneoff' ? 'oneoff' : 'monthly';
     state.lockMode = lock || state.lockMode;
+    if (state.mode === 'oneoff') state.billing = 'continue';
     document.querySelectorAll('[data-mprr-mode]').forEach((b) => {
       const on = b.dataset.mprrMode === state.mode;
       b.classList.toggle('is-active', on);
@@ -90,6 +115,14 @@
     scheduleDraft();
   }
 
+  function syncSelect(el) {
+    if (!el || el.tagName !== 'SELECT') return;
+    const wrap = el.closest('.rounded-select-wrap');
+    if (wrap) wrap.dataset.boAutoWidth = '0';
+    el.dispatchEvent(new Event('bo:select-sync', { bubbles: true }));
+    if (window.BOSelectSync && typeof BOSelectSync.one === 'function') BOSelectSync.one(el);
+  }
+
   function fillCycleDays() {
     const sel = $('mprrCycleDay');
     if (!sel || sel.options.length) return;
@@ -97,6 +130,7 @@
       const d = i + 1;
       return `<option value="${d}">Day ${d} of every month</option>`;
     }).join('');
+    syncSelect(sel);
   }
 
   function syncCycleFromDate() {
@@ -105,6 +139,7 @@
     if (!dateEl?.value || !cycleEl) return;
     const day = Math.min(28, Math.max(1, Number(dateEl.value.slice(8, 10)) || 1));
     cycleEl.value = String(day);
+    syncSelect(cycleEl);
   }
 
   function syncDateFromCycle() {
@@ -126,6 +161,7 @@
         return `<option value="${m.id}">${label}</option>`;
       }).join('');
     if (selected) sel.value = String(selected);
+    syncSelect(sel);
   }
 
   function readDraft() {
@@ -140,6 +176,7 @@
     if (state.editingPricingId) return;
     const payload = {
       mode: state.mode,
+      billing: state.billing,
       merchantId: $('mprrMerchant')?.value || '',
       feeName: $('mprrFeeName')?.value || '',
       date: $('mprrDate')?.value || '',
@@ -166,12 +203,20 @@
   function applyDraft(draft) {
     if (!draft || state.editingPricingId) return;
     if (draft.mode) setMode(draft.mode);
-    if (draft.merchantId) $('mprrMerchant').value = draft.merchantId;
+    if (draft.billing === 'stop' || draft.billing === 'continue') state.billing = draft.billing;
+    if (draft.merchantId) {
+      $('mprrMerchant').value = draft.merchantId;
+      syncSelect($('mprrMerchant'));
+    }
     if (draft.feeName) $('mprrFeeName').value = draft.feeName;
     if (draft.date) $('mprrDate').value = draft.date;
-    if (draft.cycleDay) $('mprrCycleDay').value = String(draft.cycleDay);
+    if (draft.cycleDay) {
+      $('mprrCycleDay').value = String(draft.cycleDay);
+      syncSelect($('mprrCycleDay'));
+    }
     if (draft.amount != null) $('mprrAmount').value = draft.amount;
     if (draft.remark != null) $('mprrRemark').value = draft.remark;
+    syncVisibility();
     const mins = Math.max(0, Math.round((Date.now() - (draft.savedAt || Date.now())) / 60000));
     $('mprrDraftText').textContent = mins <= 0
       ? 'Draft cached locally · Just now'
@@ -190,12 +235,15 @@
     state.lockMode = true;
     setMode('monthly', { lock: true });
     $('mprrMerchant').value = String(row.merchantId || '');
+    syncSelect($('mprrMerchant'));
     $('mprrFeeName').value = row.feeName || '';
     $('mprrDate').value = String(row.effectiveDate || row.effectiveMonth || '').slice(0, 10) || fmt(new Date());
     syncCycleFromDate();
-    $('mprrAmount').value = Number(row.amount || 0).toFixed(2);
+    const amt = Number(row.amount || 0);
+    $('mprrAmount').value = amt.toFixed(2);
     $('mprrRemark').value = row.remark || '';
-    document.title = 'Adjust Monthly Pricing';
+    state.billing = amt <= 0 ? 'stop' : 'continue';
+    document.title = amt <= 0 ? 'Stop Monthly Pricing' : 'Adjust Monthly Pricing';
     $('mprrDraftText').textContent = 'Editing existing pricing rule';
     syncVisibility();
   }
@@ -242,6 +290,11 @@
           setStatus('Please select a target merchant.', 'text-danger');
           return;
         }
+        const stop = state.billing === 'stop';
+        if (!stop && amount <= 0) {
+          setStatus('Enter an amount greater than 0, or choose Stop Recurring Billing.', 'text-danger');
+          return;
+        }
         await api('/admin/main/merchant-profit/pricing', {
           method: 'POST',
           body: JSON.stringify({
@@ -250,8 +303,8 @@
             feeName: $('mprrFeeName').value,
             effectiveDate: $('mprrDate').value,
             effectiveMonth: $('mprrDate').value,
-            amount: amount.toFixed(2),
-            remark: $('mprrRemark').value
+            amount: (stop ? 0 : amount).toFixed(2),
+            remark: $('mprrRemark').value || (stop ? 'Stop recurring billing' : '')
           })
         });
       }
@@ -271,12 +324,9 @@
         setMode(b.dataset.mprrMode);
       });
     });
-    document.querySelectorAll('[data-mprr-chip]').forEach((b) => {
-      b.addEventListener('click', () => {
-        $('mprrFeeName').value = b.getAttribute('data-mprr-chip') || '';
-        scheduleDraft();
-        $('mprrFeeName').focus();
-      });
+    $('mprrEntryType')?.addEventListener('change', () => {
+      const v = $('mprrEntryType')?.value;
+      if (v === 'stop' || v === 'continue') setBilling(v);
     });
     $('mprrDate')?.addEventListener('change', () => {
       syncCycleFromDate();
