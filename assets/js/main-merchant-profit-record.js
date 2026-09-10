@@ -72,9 +72,7 @@
       el.hidden = !show;
     });
     const merchant = $('mprrMerchant');
-    const cycle = $('mprrCycleDay');
     if (merchant) merchant.required = monthly;
-    if (cycle) cycle.required = monthly;
 
     syncEntryTypeOptions();
 
@@ -123,35 +121,6 @@
     if (window.BOSelectSync && typeof BOSelectSync.one === 'function') BOSelectSync.one(el);
   }
 
-  function fillCycleDays() {
-    const sel = $('mprrCycleDay');
-    if (!sel || sel.options.length) return;
-    sel.innerHTML = Array.from({ length: 28 }, (_, i) => {
-      const d = i + 1;
-      return `<option value="${d}">Day ${d} of every month</option>`;
-    }).join('');
-    syncSelect(sel);
-  }
-
-  function syncCycleFromDate() {
-    const dateEl = $('mprrDate');
-    const cycleEl = $('mprrCycleDay');
-    if (!dateEl?.value || !cycleEl) return;
-    const day = Math.min(28, Math.max(1, Number(dateEl.value.slice(8, 10)) || 1));
-    cycleEl.value = String(day);
-    syncSelect(cycleEl);
-  }
-
-  function syncDateFromCycle() {
-    const dateEl = $('mprrDate');
-    const cycleEl = $('mprrCycleDay');
-    if (!dateEl || !cycleEl) return;
-    const base = dateEl.value || fmt(new Date());
-    const [y, m] = base.split('-');
-    const day = pad2(Number(cycleEl.value) || 1);
-    dateEl.value = `${y}-${m}-${day}`;
-  }
-
   function renderMerchants(selected) {
     const sel = $('mprrMerchant');
     if (!sel) return;
@@ -180,7 +149,6 @@
       merchantId: $('mprrMerchant')?.value || '',
       feeName: $('mprrFeeName')?.value || '',
       date: $('mprrDate')?.value || '',
-      cycleDay: $('mprrCycleDay')?.value || '',
       amount: $('mprrAmount')?.value || '',
       remark: $('mprrRemark')?.value || '',
       savedAt: Date.now()
@@ -210,10 +178,6 @@
     }
     if (draft.feeName) $('mprrFeeName').value = draft.feeName;
     if (draft.date) $('mprrDate').value = draft.date;
-    if (draft.cycleDay) {
-      $('mprrCycleDay').value = String(draft.cycleDay);
-      syncSelect($('mprrCycleDay'));
-    }
     if (draft.amount != null) $('mprrAmount').value = draft.amount;
     if (draft.remark != null) $('mprrRemark').value = draft.remark;
     syncVisibility();
@@ -238,7 +202,6 @@
     syncSelect($('mprrMerchant'));
     $('mprrFeeName').value = row.feeName || '';
     $('mprrDate').value = String(row.effectiveDate || row.effectiveMonth || '').slice(0, 10) || fmt(new Date());
-    syncCycleFromDate();
     const amt = Number(row.amount || 0);
     $('mprrAmount').value = amt.toFixed(2);
     $('mprrRemark').value = row.remark || '';
@@ -328,14 +291,7 @@
       const v = $('mprrEntryType')?.value;
       if (v === 'stop' || v === 'continue') setBilling(v);
     });
-    $('mprrDate')?.addEventListener('change', () => {
-      syncCycleFromDate();
-      scheduleDraft();
-    });
-    $('mprrCycleDay')?.addEventListener('change', () => {
-      syncDateFromCycle();
-      scheduleDraft();
-    });
+    $('mprrDate')?.addEventListener('change', scheduleDraft);
     ['mprrMerchant', 'mprrFeeName', 'mprrAmount', 'mprrRemark'].forEach((id) => {
       $(id)?.addEventListener('input', scheduleDraft);
       $(id)?.addEventListener('change', scheduleDraft);
@@ -344,10 +300,8 @@
   }
 
   BO_AUTH.requireLogin();
-  fillCycleDays();
   bind();
   $('mprrDate').value = fmt(new Date());
-  syncCycleFromDate();
   setMode(state.mode, { lock: !!state.editingPricingId });
 
   loadPricing()
