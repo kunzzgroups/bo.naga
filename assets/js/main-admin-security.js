@@ -701,19 +701,18 @@
   }
 
   function fitTableArea(){
-    const scrollEl = tableScroll || tableWrap;
-    if(!scrollEl || !panelEl) return 0;
+    if(!tableWrap || !panelEl) return 0;
     const footer = panelEl.querySelector('.mad-footer');
     const footerH = footer ? Math.max(footer.getBoundingClientRect().height, 52) : 56;
-    const top = (tableWrap || scrollEl).getBoundingClientRect().top;
+    const top = tableWrap.getBoundingClientRect().top;
     const avail = Math.floor(window.innerHeight - top - footerH - 8);
     const h = Math.max(180, avail);
-    if(tableWrap){
-      tableWrap.style.height = h + 'px';
-      tableWrap.style.maxHeight = h + 'px';
+    tableWrap.style.height = h + 'px';
+    tableWrap.style.maxHeight = h + 'px';
+    if(tableScroll){
+      tableScroll.style.height = '';
+      tableScroll.style.maxHeight = '';
     }
-    scrollEl.style.height = h + 'px';
-    scrollEl.style.maxHeight = h + 'px';
     return h;
   }
 

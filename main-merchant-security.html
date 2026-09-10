@@ -11,7 +11,7 @@
 <link href="assets/css/reports.css?v=1.0.47" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.119" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.121" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 <script>
 (function(){
@@ -157,8 +157,17 @@
     </div>
 
     <div class="mad-table-wrap mas-table-wrap">
-      <div class="mas-table-body-scroll" id="masTableScroll">
-        <table class="mad-table mas-table">
+      <div class="mas-table-head">
+        <table class="mad-table mas-table mas-table-head-table" aria-hidden="true">
+          <colgroup>
+            <col class="mas-col-time"/>
+            <col class="mas-col-admin"/>
+            <col class="mas-col-event"/>
+            <col class="mas-col-target"/>
+            <col class="mas-col-ip"/>
+            <col class="mas-col-status"/>
+            <col class="mas-col-details"/>
+          </colgroup>
           <thead>
             <tr>
               <th>Time &amp; Date</th>
@@ -170,6 +179,19 @@
               <th>Details</th>
             </tr>
           </thead>
+        </table>
+      </div>
+      <div class="mas-table-body-scroll" id="masTableScroll">
+        <table class="mad-table mas-table mas-table-body-table">
+          <colgroup>
+            <col class="mas-col-time"/>
+            <col class="mas-col-admin"/>
+            <col class="mas-col-event"/>
+            <col class="mas-col-target"/>
+            <col class="mas-col-ip"/>
+            <col class="mas-col-status"/>
+            <col class="mas-col-details"/>
+          </colgroup>
           <tbody id="masTableBody">
             <tr><td colspan="7" class="mad-empty">Loading audit events...</td></tr>
           </tbody>
@@ -210,7 +232,7 @@
 <script src="assets/js/auth.js?v=1.0.60"></script>
 <script src="assets/js/main-merchant-visibility.js?v=1.0.0"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
-<script src="assets/js/main-merchant-security.js?v=1.0.5"></script>
+<script src="assets/js/main-merchant-security.js?v=1.0.6"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
