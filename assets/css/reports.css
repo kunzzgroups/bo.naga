@@ -6090,3 +6090,29 @@ body.modal-open .report-profile-menu,
 body.modal-open .dropdown-menu {
   pointer-events: none !important;
 }
+
+/* Dark mode: remove bright white sidebar/flyout borders */
+html[data-bo-theme="dark"] .report-nav > a:not(.report-sub),
+html[data-bo-theme="dark"] .report-nav > .nav-group{
+  border-bottom-color:rgba(255,255,255,.08)!important;
+}
+html[data-bo-theme="dark"] .report-sidebar .report-nav > .nav-group,
+html[data-bo-theme="dark"] .report-sidebar .report-nav > .nav-group.bo-flyout-hover,
+html[data-bo-theme="dark"] .report-sidebar .report-nav > .nav-group.open{
+  border-color:transparent!important;
+  outline:0!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] .report-sidebar .nav-group .nav-group-btn:focus,
+html[data-bo-theme="dark"] .report-sidebar .nav-group .nav-group-btn:focus-visible{
+  outline:0!important;
+  box-shadow:none!important;
+}
+@media (min-width:992px){
+  html[data-bo-theme="dark"] .report-sidebar .report-nav > .nav-group > .nav-group-list,
+  html[data-bo-theme="dark"] .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list{
+    background:var(--bo-surface,#102030)!important;
+    border:1px solid rgba(255,255,255,.10)!important;
+    box-shadow:0 16px 40px rgba(0,0,0,.5)!important;
+  }
+}

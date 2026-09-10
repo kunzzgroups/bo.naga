@@ -1723,9 +1723,36 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-role.is-regional{
 html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar{
   background:var(--bo-sidebar-bg)!important;
 }
+html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .report-nav > a:not(.report-sub),
+html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .report-nav > .nav-group,
+html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .report-nav > .nav-group.bo-flyout-hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .report-nav > .nav-group.open{
+  border:0!important;
+  border-bottom:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .nav-group .nav-group-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .nav-group .nav-group-btn:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .nav-group .nav-group-btn:focus,
+html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .nav-group .nav-group-btn:focus-visible,
+html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .nav-group.open > .nav-group-btn{
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .nav-group.open > .nav-group-btn{
+  background:rgba(33,166,215,.16)!important;
+  color:#fff!important;
+}
 html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .nav-group-list,
 html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .report-nav > .nav-group > .nav-group-list{
   background:var(--bo-surface)!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+  box-shadow:0 16px 40px rgba(0,0,0,.5)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .report-nav a.report-sub{
   color:var(--bo-text-secondary)!important;
@@ -1769,8 +1796,11 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-status.is-suspended{
   background:rgba(239,51,64,.16);color:#FF8A90;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-table td[data-label="Credit Balance"] .mad-money,
-html[data-bo-theme="dark"] body.main-admin-detail-page .mad-table td[data-label="Credit Balance"] .mad-muted{
-  background:rgba(33,166,215,.16);color:#7DD3FC;
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-table td[data-label="Credit Balance"] .mad-muted,
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-table td:nth-child(3) .mad-money,
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-table td:nth-child(3) .mad-muted{
+  background:transparent;color:var(--bo-text);
+  padding:0;border-radius:0;box-shadow:none;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn:hover{
   background:rgba(33,166,215,.16);color:#7DD3FC;
