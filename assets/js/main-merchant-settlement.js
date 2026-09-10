@@ -8,7 +8,7 @@ let currentSettlements=[];
 let filteredSettlements=[];
 let settlementPage=1;
 let msrStatusPill='all';
-let msrCurrency='MYR';
+let msrCurrency=(sessionStorage.getItem('bo_main_report_currency')||'MYR').toUpperCase();
 let syncedAt=Date.now();
 let msrPicker={view:new Date(),mode:'days',yearPageStart:new Date().getFullYear()-5};
 
@@ -332,7 +332,7 @@ function setupSettlementFilters(){
   });
   document.querySelectorAll('[data-msr-currency]').forEach(btn=>{
     btn.addEventListener('click',()=>{
-      msrCurrency=btn.getAttribute('data-msr-currency')||'MYR';
+      msrCurrency=btn.getAttribute('data-msr-currency')||window.BO_MAIN_CURRENCY?.code?.()||'MYR';
       document.querySelectorAll('[data-msr-currency]').forEach(b=>{
         const on=b===btn;
         b.classList.toggle('is-active',on);

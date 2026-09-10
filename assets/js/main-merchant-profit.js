@@ -192,7 +192,7 @@
           <td>${merchant}</td>
           <td><span class="mpr-kind ${monthly ? 'is-monthly' : 'is-oneoff'}">${monthly ? 'Monthly Pricing' : 'One-off'}</span></td>
           <td>${esc(x.source || '—')}</td>
-          <td class="num mpr-amount">MYR ${money(x.amount)}</td>
+          <td class="num mpr-amount">${esc(window.BO_MAIN_CURRENCY?.code?.()||'MYR')} ${money(x.amount)}</td>
           <td>${esc(x.description || '—')}</td>
           <td>${esc(x.createdBy || '—')}</td>
           <td>${createdCell}</td>

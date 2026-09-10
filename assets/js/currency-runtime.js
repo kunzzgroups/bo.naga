@@ -1,0 +1,10 @@
+(function(){
+ 'use strict';
+ const state={baseCurrency:'MYR',currency:'MYR',enabledCurrencies:['MYR'],rateFromBase:1,symbol:'RM',decimalPlaces:2};
+ function tenant(){try{const u=JSON.parse(localStorage.getItem('bo_admin_user')||'{}');const t=String(u.roleType||'').toUpperCase();return !['ROOT','MAIN','MASTER'].includes(t)&&Number(u.brandId||0)>0;}catch(e){return false;}}
+ function replaceLabels(root){if(!tenant()||!root||state.currency==='MYR')return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),a=[];while(w.nextNode())a.push(w.currentNode);a.forEach(n=>{if(n.parentElement&&/^(SCRIPT|STYLE|TEXTAREA|OPTION)$/i.test(n.parentElement.tagName))return;if(/\b(MYR|RM)\b/.test(n.nodeValue||''))n.nodeValue=n.nodeValue.replace(/\b(MYR|RM)\b/g,state.currency);});}
+ async function load(){if(!tenant()||!window.API_CONFIG)return;try{const r=await fetch(API_CONFIG.BASE_URL+'/public/currency/context',{headers:window.BO_AUTH&&BO_AUTH.authHeader?BO_AUTH.authHeader():{},cache:'no-store'}),j=await r.json();if(!r.ok||j.status==='error'||!j.data)return;Object.assign(state,j.data);state.currency=String(state.currency||'MYR').toUpperCase();document.documentElement.dataset.currency=state.currency;replaceLabels(document.body);window.dispatchEvent(new CustomEvent('bo:currency-ready',{detail:state}));}catch(e){}}
+ function format(v){const n=Number(v);if(!Number.isFinite(n))return '-';return state.currency+' '+n.toLocaleString('en-US',{minimumFractionDigits:Number(state.decimalPlaces||2),maximumFractionDigits:Number(state.decimalPlaces||2)});}
+ window.BO_CURRENCY={state,load,format,code:()=>state.currency};
+ document.addEventListener('DOMContentLoaded',()=>{setTimeout(load,60);const obs=new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)replaceLabels(n);})));if(document.body)obs.observe(document.body,{subtree:true,childList:true});});
+})();

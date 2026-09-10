@@ -6,6 +6,8 @@
  const hdr=()=>({'Content-Type':'application/json',...BO_AUTH.authHeader()});
 
  let platformProviders=[];
+ let currencyOptions=[];
+ const enabledCurrencies=new Set(['MYR']);
  const selectedCodes=new Set();
  const overrideByCode=new Map();
  let providerSearch='';
@@ -16,6 +18,21 @@
   status.className='upload-status mb-3'+(kind?(' '+kind):'');
  }
 
+ function renderCurrencyOptions(){
+  const sel=$('merchantCurrency'), box=$('merchantEnabledCurrencies');
+  if(!sel)return;
+  const current=String(sel.value||'MYR').toUpperCase();
+  const rows=currencyOptions.length?currencyOptions:[{currencyCode:'MYR',displayName:'Malaysian Ringgit',rateFromBase:1,status:1}];
+  sel.innerHTML=rows.filter(x=>Number(x.status??1)===1).map(x=>{const c=String(x.currencyCode||'').toUpperCase();return `<option value="${esc(c)}"${c===current?' selected':''}>${esc(c)}${x.displayName?' · '+esc(x.displayName):''}</option>`}).join('');
+  if(!sel.value&&rows.length)sel.value=String(rows[0].currencyCode||'MYR').toUpperCase();
+  enabledCurrencies.add(sel.value);
+  if(box)box.innerHTML=rows.filter(x=>Number(x.status??1)===1).map(x=>{const c=String(x.currencyCode||'').toUpperCase();const checked=enabledCurrencies.has(c)||c===sel.value;return `<label class="border rounded px-3 py-2 d-inline-flex align-items-center gap-2 bg-white"><input type="checkbox" data-merchant-currency="${esc(c)}" ${checked?'checked':''} ${c===sel.value?'disabled':''}><b>${esc(c)}</b><span class="text-muted">1 ${esc((window.__currencyBase||'MYR'))} = ${Number(x.rateFromBase||1).toLocaleString('en-US',{maximumFractionDigits:6})} ${esc(c)}</span></label>`}).join('');
+  syncCurrencyUnits();
+ }
+ async function loadCurrencies(){
+  try{const d=await api('/public/currency/options',{headers:BO_AUTH.authHeader()});window.__currencyBase=String(d.baseCurrency||'MYR').toUpperCase();currencyOptions=Array.isArray(d.rates)?d.rates:[];renderCurrencyOptions();}
+  catch(e){currencyOptions=[{currencyCode:'MYR',displayName:'Malaysian Ringgit',rateFromBase:1,status:1}];renderCurrencyOptions();}
+ }
  function syncCurrencyUnits(){
   const cur=($('merchantCurrency')?.value||'MYR').trim()||'MYR';
   const unit=$('merchantThresholdUnit'), label=$('merchantThresholdLabel');
@@ -212,7 +229,8 @@
   });
  }
 
- $('merchantCurrency')?.addEventListener('change', syncCurrencyUnits);
+ $('merchantCurrency')?.addEventListener('change', ()=>{enabledCurrencies.add(String($('merchantCurrency').value||'MYR').toUpperCase());renderCurrencyOptions();});
+ $('merchantEnabledCurrencies')?.addEventListener('change',e=>{const el=e.target.closest&&e.target.closest('[data-merchant-currency]');if(!el)return;const c=String(el.dataset.merchantCurrency||'').toUpperCase();if(el.checked)enabledCurrencies.add(c);else enabledCurrencies.delete(c);enabledCurrencies.add(String($('merchantCurrency').value||'MYR').toUpperCase());renderCurrencyOptions();});
 
  $('merchantGeneratePassword')?.addEventListener('click', ()=>{
   const pwd=generatePassword(14);
@@ -283,6 +301,7 @@
  });
 
  syncCurrencyUnits();
+ loadCurrencies();
  loadPlatformProviders();
  loadMasterRoles();
 
@@ -344,6 +363,7 @@
     domainAliases:$('merchantAliases').value.trim(),
     frontendRoot:$('merchantRoot').value.trim(),
     currency:$('merchantCurrency').value.trim()||'MYR',
+    enabledCurrencies:[...enabledCurrencies],
     creditMode:$('merchantCreditMode').value,
     lowCreditThreshold:$('merchantThreshold').value||0,
     providerMarkupPercent:$('merchantMarkup').value||0,

@@ -18,7 +18,7 @@ let brandPage=1;
 let historyPage=1;
 let statusPill='all';
 let syncedAt=Date.now();
-let currency='MYR';
+let currency=(sessionStorage.getItem('bo_main_report_currency')||'MYR').toUpperCase();
 
 function showEmptyProviders(){
   currentProviders=[];
@@ -51,7 +51,7 @@ function addDay(v){
 function qs(){return '?from='+encodeURIComponent($('reportDateFrom').value)+'&to='+encodeURIComponent(addDay($('reportDateTo').value));}
 
 function currencyLabel(){
-  return ({MYR:'MYR',USD:'USD',SGD:'SGD'})[currency]||'MYR';
+  return currency||window.BO_MAIN_CURRENCY?.code?.()||'MYR';
 }
 function updateCurrencyLabels(){
   document.querySelectorAll('.mre-cur-label').forEach(el=>{el.textContent='('+currencyLabel()+')';});
@@ -472,7 +472,7 @@ async function submitSettlement(){
 
 function openPayment(btn){
   $('settlementPaymentId').value=btn.dataset.paymentId;
-  $('settlementPaymentContext').innerHTML=`<b>${esc(btn.dataset.paymentName)}</b><span>Outstanding balance: RM ${money(btn.dataset.paymentBalance)}</span>`;
+  $('settlementPaymentContext').innerHTML=`<b>${esc(btn.dataset.paymentName)}</b><span>Outstanding balance: ${(window.BO_MAIN_CURRENCY?.code?.()||currency||'MYR')} ${money(btn.dataset.paymentBalance)}</span>`;
   $('settlementPaymentAmount').value=Number(btn.dataset.paymentBalance||0).toFixed(2);
   $('settlementPaymentAmount').max=btn.dataset.paymentBalance;
   $('settlementPaymentDate').value=todayYmd();
@@ -640,7 +640,7 @@ function setupFilters(){
   });
   document.querySelectorAll('[data-currency]').forEach(btn=>{
     btn.addEventListener('click',()=>{
-      currency=btn.getAttribute('data-currency')||'MYR';
+      currency=btn.getAttribute('data-currency')||window.BO_MAIN_CURRENCY?.code?.()||'MYR';
       document.querySelectorAll('[data-currency]').forEach(b=>{
         const on=b===btn;
         b.classList.toggle('is-active',on);

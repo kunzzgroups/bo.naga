@@ -377,10 +377,19 @@
 
   async function loadOperations(){
     const base = apiBase();
-    const q = new URLSearchParams({ page: '0', size: '200' });
+    const rows = [];
+    let page = 0, totalPages = 1;
     try{
-      const data = await apiJson(base.replace(/\/$/, '') + '/admin/main/admin-audit?' + q).then(j => j.data || j);
-      const rows = Array.isArray(data.content) ? data.content : (Array.isArray(data) ? data : []);
+      do{
+        const q = new URLSearchParams({ page: String(page), size: '500' });
+        if(fromEl && fromEl.value) q.set('from', fromEl.value);
+        if(toEl && toEl.value) q.set('to', toEl.value);
+        const data = await apiJson(base.replace(/\/$/, '') + '/admin/main/admin-audit?' + q).then(j => j.data || j);
+        const batch = Array.isArray(data.content) ? data.content : (Array.isArray(data) ? data : []);
+        rows.push(...batch);
+        totalPages = Number(data.totalPages || 1);
+        page += 1;
+      }while(page < totalPages);
       return rows.map(mapOperation);
     }catch(e){
       return [];
@@ -389,7 +398,10 @@
 
   async function loadLogins(){
     try{
-      const j = await apiJson(BO_AUTH.adminLoginLogsUrl());
+      const u = new URL(BO_AUTH.adminLoginLogsUrl(), location.href);
+      if(fromEl && fromEl.value) u.searchParams.set('from', fromEl.value);
+      if(toEl && toEl.value) u.searchParams.set('to', toEl.value);
+      const j = await apiJson(u.toString());
       const rows = Array.isArray(j.data) ? j.data : [];
       return rows.map(mapLogin);
     }catch(e){
@@ -492,7 +504,7 @@
     markPreset(preset || '');
     updateDateLabel();
     renderCalendar();
-    if(reload !== false) applyFilters();
+    if(reload !== false) loadAll();
   }
   function initDatePicker(){
     const trigger = document.getElementById('masDateTrigger');

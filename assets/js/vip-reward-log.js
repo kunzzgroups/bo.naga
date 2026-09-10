@@ -3,7 +3,7 @@
   let page=1,total=1,totalElements=0,pageSize=20;
   const url=k=>API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS[k];
   const headers=()=>Object.assign({'Content-Type':'application/json'},window.BO_AUTH?BO_AUTH.authHeader():{});
-  const money=v=>'MYR '+Number(v||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+  const money=v=>(window.BO_CURRENCY?.code?.()||'MYR')+' '+Number(v||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
   async function load(p=1){
     page=p; const q=new URLSearchParams({page,size:pageSize});
     const kw=$('#rewardKeyword').value.trim(),type=$('#rewardType').value,status=$('#rewardStatus').value;

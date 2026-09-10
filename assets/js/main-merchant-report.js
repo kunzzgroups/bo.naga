@@ -13,7 +13,7 @@ let filteredMerchants=[];
 let merchantPage=1;
 let statusPill='all';
 let syncedAt=Date.now();
-let currency='MYR';
+let currency=(sessionStorage.getItem('bo_main_report_currency')||'MYR').toUpperCase();
 
 async function api(path,opt={}){
   const base=String((window.API_CONFIG&&window.API_CONFIG.BASE_URL)||'').replace(/\/$/,'');
@@ -35,7 +35,7 @@ function addDay(v){
 function qs(){return '?from='+encodeURIComponent($('reportDateFrom').value)+'&to='+encodeURIComponent(addDay($('reportDateTo').value));}
 
 function currencyLabel(){
-  return ({MYR:'MYR',USD:'USD',SGD:'SGD',USDT:'USDT',THB:'THB'})[currency]||'MYR';
+  return currency||window.BO_MAIN_CURRENCY?.code?.()||'MYR';
 }
 function updateCurrencyLabels(){
   document.querySelectorAll('.mre-cur-label').forEach(el=>{el.textContent='('+currencyLabel()+')';});
@@ -325,7 +325,7 @@ function setupFilters(){
   $('mmrPageSize')?.addEventListener('change',e=>{merchantPageSize=Math.max(1,Number(e.target.value)||10);merchantPage=1;renderTable();});
   document.querySelectorAll('[data-currency]').forEach(btn=>{
     btn.addEventListener('click',()=>{
-      currency=btn.getAttribute('data-currency')||'MYR';
+      currency=btn.getAttribute('data-currency')||window.BO_MAIN_CURRENCY?.code?.()||'MYR';
       document.querySelectorAll('[data-currency]').forEach(b=>{
         const on=b===btn;
         b.classList.toggle('is-active',on);

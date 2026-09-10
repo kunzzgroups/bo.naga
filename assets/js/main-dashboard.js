@@ -4,7 +4,7 @@
   const money = v => Number(v || 0).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const nearZero = v => Math.abs(Number(v || 0)) < 0.005;
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  let currency = 'MYR';
+  let currency = (sessionStorage.getItem('bo_main_report_currency') || 'MYR').toUpperCase();
 
   async function api(path) {
     const r = await fetch(API_CONFIG.BASE_URL + path, { headers: BO_AUTH.authHeader(), cache: 'no-store' });
