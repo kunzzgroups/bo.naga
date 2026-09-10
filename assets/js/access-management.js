@@ -852,7 +852,13 @@
     }
     if(isMenuPermissionPage){
       applyMainOnlyPermissionUi();
-      try{menuCache=await fetchMenus();await loadMenuPermissionWorkspace();}catch(e){msg(document.getElementById('menuPermissionStatus'),e.message,'error');}
+      try{
+        if(isMerchantRolesPage && window.MERCHANT_ROLE_SCOPE_READY){
+          await window.MERCHANT_ROLE_SCOPE_READY;
+        }
+        menuCache=await fetchMenus();
+        await loadMenuPermissionWorkspace();
+      }catch(e){msg(document.getElementById('menuPermissionStatus'),e.message,'error');}
       const form=document.getElementById('menuPermissionForm');if(form)form.onsubmit=saveMenuPermissions;
       const select=document.getElementById('menuPermissionRoleSelect');
       if(select){

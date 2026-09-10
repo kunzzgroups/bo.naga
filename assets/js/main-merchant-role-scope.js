@@ -1,16 +1,40 @@
-(function(){'use strict';
- const p=new URLSearchParams(location.search),requested=p.get('merchantId');
- if(requested&&Number(requested)>0)localStorage.setItem('bo_active_brand_id',String(Number(requested)));
- const activeMerchant=()=>String(requested||localStorage.getItem('bo_active_brand_id')||'');
- function syncAddRoleLink(){const a=document.querySelector('.mp-add-role-btn');if(!a)return;const id=activeMerchant();a.href=id?'main-merchant-role-create.html?merchantId='+encodeURIComponent(id):'main-merchant-role-create.html';}
- document.addEventListener('DOMContentLoaded',async()=>{
-   const sel=document.getElementById('merchantScopeSelect');syncAddRoleLink();
-   if(sel){try{const r=await fetch(API_CONFIG.BASE_URL+'/admin/merchants',{headers:BO_AUTH.authHeader(),cache:'no-store'}),j=await r.json();if(!r.ok||j.status==='error')throw Error(j.message||'Unable to load merchants');const rows=j.data||[],active=activeMerchant();sel.innerHTML='<option value="">Select merchant...</option>'+rows.map(b=>'<option value="'+b.id+'" '+(String(b.id)===active?'selected':'')+'>'+String(b.name||'')+' ('+String(b.code||'')+')</option>').join('');sel.addEventListener('change',()=>{if(!sel.value)return;localStorage.setItem('bo_active_brand_id',sel.value);location.href='main-merchant-roles.html?merchantId='+encodeURIComponent(sel.value);});}catch(e){sel.innerHTML='<option value="">Unable to load merchants</option>';}}
-   const roleSel=document.getElementById('menuPermissionRoleSelect'),renameBtn=document.getElementById('merchantRoleRenameBtn'),modal=document.getElementById('merchantRoleRenameModal'),form=document.getElementById('merchantRoleRenameForm'),input=document.getElementById('merchantRoleRenameInput'),status=document.getElementById('merchantRoleRenameStatus');
-   function syncRename(){if(renameBtn)renameBtn.disabled=!(roleSel&&roleSel.value);} roleSel&&roleSel.addEventListener('change',syncRename);syncRename();
-   function openRename(){if(!roleSel||!roleSel.value||!modal)return;const opt=roleSel.options[roleSel.selectedIndex];if(input)input.value=String(opt&&opt.textContent||'').trim();if(status){status.textContent='';status.className='upload-status mb-3';}modal.classList.add('show');modal.setAttribute('aria-hidden','false');document.body.classList.add('modal-open');setTimeout(()=>input&&input.focus(),50);}
-   function closeRename(){if(!modal)return;modal.classList.remove('show');modal.setAttribute('aria-hidden','true');if(!document.querySelector('.modal-clean.show'))document.body.classList.remove('modal-open');}
-   renameBtn&&renameBtn.addEventListener('click',openRename);document.querySelectorAll('[data-role-rename-close]').forEach(b=>b.addEventListener('click',closeRename));modal&&modal.addEventListener('click',e=>{if(e.target===modal)closeRename();});
-   form&&form.addEventListener('submit',async e=>{e.preventDefault();const id=roleSel&&roleSel.value,name=String(input&&input.value||'').trim();if(!id||!name){if(status){status.textContent='Role name is required.';status.className='upload-status mb-3 error';}return;}const submit=form.querySelector('button[type="submit"]');if(submit)submit.disabled=true;try{const r=await fetch(API_CONFIG.BASE_URL+'/admin/access/roles/'+encodeURIComponent(id)+'/rename',{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify({name})});const j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw Error(j.message||'Unable to rename role');const opt=roleSel.options[roleSel.selectedIndex];if(opt)opt.textContent=name;const footer=document.getElementById('menuPermissionFooterRole');if(footer)footer.textContent=name;if(status){status.textContent='Role name updated.';status.className='upload-status mb-3 success';}setTimeout(closeRename,450);}catch(err){if(status){status.textContent=err.message||'Unable to rename role';status.className='upload-status mb-3 error';}}finally{if(submit)submit.disabled=false;}});
- });
+(function(){
+ 'use strict';
+ const p=new URLSearchParams(location.search);
+ const requested=p.get('merchantId');
+ if(requested && Number(requested)>0){
+  try{ localStorage.setItem('bo_active_brand_id', String(Number(requested))); }catch(e){}
+ }
+ function activeMerchant(){
+  return String(requested || localStorage.getItem('bo_active_brand_id') || '');
+ }
+ function syncAddRoleLink(){
+  const a=document.querySelector('.mp-add-role-btn');
+  if(!a) return;
+  const id=activeMerchant();
+  a.href=id
+   ?('main-merchant-role-create.html?merchantId='+encodeURIComponent(id))
+   :'main-merchant-role-create.html';
+ }
+ async function ensureMerchantScope(){
+  if(activeMerchant()){
+   syncAddRoleLink();
+   return activeMerchant();
+  }
+  try{
+   const r=await fetch(API_CONFIG.BASE_URL+'/admin/merchants',{
+    headers:BO_AUTH.authHeader(),
+    cache:'no-store'
+   });
+   const j=await r.json().catch(()=>({}));
+   if(!r.ok || j.status==='error') return '';
+   const rows=Array.isArray(j.data)?j.data:[];
+   const first=rows.find(b=>Number(b.id)>0);
+   if(!first) return '';
+   try{ localStorage.setItem('bo_active_brand_id', String(Number(first.id))); }catch(e){}
+  }catch(e){}
+  syncAddRoleLink();
+  return activeMerchant();
+ }
+ window.MERCHANT_ROLE_SCOPE_READY=ensureMerchantScope();
 })();
