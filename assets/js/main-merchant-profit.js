@@ -225,7 +225,8 @@
     const to = $('mprTo').value;
     if (!from || !to) return;
     try {
-      const data = await api(`/admin/main/merchant-profit?from=${encodeURIComponent(from)}&to=${encodeURIComponent(addDay(to))}`);
+      const cur = reportCurrency();
+      const data = await api(`/admin/main/merchant-profit?from=${encodeURIComponent(from)}&to=${encodeURIComponent(addDay(to))}&currency=${encodeURIComponent(cur)}`);
       state.rows = data.rows || [];
       state.total = Number(data.total || 0);
       state.pricingTotal = Number(data.pricingTotal || 0);
@@ -244,7 +245,8 @@
 
     try {
       const prev = shiftRange(from, to);
-      const prevData = await api(`/admin/main/merchant-profit?from=${encodeURIComponent(prev.from)}&to=${encodeURIComponent(addDay(prev.to))}`);
+      const cur = reportCurrency();
+      const prevData = await api(`/admin/main/merchant-profit?from=${encodeURIComponent(prev.from)}&to=${encodeURIComponent(addDay(prev.to))}&currency=${encodeURIComponent(cur)}`);
       state.prevTotal = Number(prevData.total || 0);
       updateTrend();
     } catch (_) {
@@ -546,7 +548,16 @@
     }
   });
 
-  BO_AUTH.requireLogin();
-  initDatePicker();
-  Promise.all([loadPricing(), load()]);
+  async function bootstrap() {
+    BO_AUTH.requireLogin();
+    initDatePicker();
+    // Wait until the enabled MAIN currency list is loaded before the first request.
+    // Otherwise the Profit Report can silently initialize as MYR and hide native USD/SGD rows.
+    try {
+      if (window.BO_MAIN_CURRENCY?.ready) await window.BO_MAIN_CURRENCY.ready();
+    } catch (_) {}
+    await Promise.all([loadPricing(), load()]);
+  }
+
+  bootstrap();
 })();

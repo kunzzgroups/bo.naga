@@ -529,3 +529,18 @@ html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-created-at[data-t
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-created-at[data-tip]::before{
   border-top-color:#243B55;
 }
+
+/* Merchant Profit native-currency selector. Populated from Currency Management
+   by main-currency-runtime.js and hidden automatically when only one currency is enabled. */
+.mpr-currency-group{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.mpr-currency-group .mre-currency-label{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#64748b}
+.mpr-currency-group .mre-currency-seg{display:inline-flex;align-items:center;gap:2px;padding:3px;border-radius:9px;background:#e8eef6}
+.mpr-currency-group .mre-cur-btn{min-width:48px;height:34px;padding:0 12px;border:0;border-radius:7px;background:transparent;color:#64748b;font-size:13px;font-weight:800;cursor:pointer}
+.mpr-currency-group .mre-cur-btn:hover:not(.is-active){background:rgba(255,255,255,.55);color:#173d65}
+.mpr-currency-group .mre-cur-btn.is-active{background:#143f69;color:#fff;box-shadow:0 1px 3px rgba(15,23,42,.18)}
+.mpr-currency-group .mre-cur-btn:focus-visible{outline:2px solid #38bdf8;outline-offset:2px}
+html[data-bo-theme="dark"] .mpr-currency-group .mre-currency-label{color:#94a3b8}
+html[data-bo-theme="dark"] .mpr-currency-group .mre-currency-seg{background:#1e293b}
+html[data-bo-theme="dark"] .mpr-currency-group .mre-cur-btn{color:#cbd5e1}
+html[data-bo-theme="dark"] .mpr-currency-group .mre-cur-btn.is-active{background:#0f4c81;color:#fff}
+@media(max-width:900px){.mpr-currency-group{width:100%}.mpr-currency-group .mre-currency-seg{flex-wrap:wrap}}
