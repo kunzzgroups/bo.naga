@@ -186,7 +186,7 @@
      ?`<button class="mad-merchant-icon-btn is-danger" data-delete="${esc(b.id)}" type="button" data-tip="Delete" aria-label="Delete merchant"><i class="bi bi-trash3" aria-hidden="true"></i></button>`
      :'';
    const rn=roleName(b);
-   const creditBtn=`<button class="mad-merchant-icon-btn mad-merchant-credit-btn" data-credit="${esc(b.id)}" type="button" data-tip="Add credit" aria-label="Add credit"><i class="bi bi-plus-lg" aria-hidden="true"></i></button>`;
+   const creditBtn=`<button class="mad-merchant-icon-btn mad-merchant-credit-btn" data-credit="${esc(b.id)}" type="button" data-tip="Add / reclaim credit" aria-label="Add or reclaim credit"><i class="bi bi-plus-lg" aria-hidden="true"></i></button>`;
    const resetPassBtn=`<button class="mad-merchant-icon-btn mad-merchant-key-btn" data-reset-pass="${esc(b.id)}" type="button" data-tip="Reset password" aria-label="Reset password"><i class="bi bi-key" aria-hidden="true"></i></button>`;
    return `<tr class="mad-row${canDelete?' is-suspended-row':''}">`+
      `<td data-label="Merchant"><div class="mad-user">${selectHtml}<span class="mad-avatar">${esc((b.code||'M').slice(0,2).toUpperCase())}</span><div class="mad-user-copy"><b>${esc(b.code||'-')}</b><div class="mad-user-meta">#${esc(b.id)}</div></div></div></td>`+
@@ -260,6 +260,40 @@
  }
  let creditOpenSeq=0;
  let creditFocusTimer=0;
+ let creditAction='ADD';
+ let creditBalances={player:0,provider:0,byProvider:{}};
+ function currentWalletBalance(){
+  const wallet=$('madCreditWallet')?.value||'';
+  if(!wallet) return Number(creditBalances.player)||0;
+  if(wallet==='__WHOLE_PROVIDER__') return Number(creditBalances.provider)||0;
+  const per=creditBalances.byProvider[String(wallet).toUpperCase()];
+  if(per!=null) return Number(per)||0;
+  return Number(creditBalances.provider)||0;
+ }
+ function syncCreditMode(){
+  const deduct=creditAction==='DEDUCT';
+  const modal=$('madCreditModal');
+  if(modal) modal.classList.toggle('is-reclaim', deduct);
+  document.querySelectorAll('[data-credit-action]').forEach(btn=>{
+   const on=btn.getAttribute('data-credit-action')===creditAction;
+   btn.classList.toggle('is-active', on);
+   btn.setAttribute('aria-checked', on?'true':'false');
+  });
+  const title=$('madCreditTitle');
+  if(title) title.textContent=deduct?'Reclaim Credit':'Add Credit';
+  const lead=$('madCreditLead');
+  if(lead) lead.textContent=deduct?'Take back merchant player or provider credit.':'Top up merchant player or provider credit.';
+  const icon=modal?.querySelector('.mad-modal-icon i');
+  if(icon) icon.className=deduct?'bi bi-dash-lg':'bi bi-plus-lg';
+  const remark=$('madCreditRemark');
+  if(remark) remark.placeholder=deduct?'Optional reclaim remark':'Optional top-up remark';
+  const submit=$('madCreditSubmit');
+  if(submit){
+   submit.innerHTML=deduct
+     ?'<i class="bi bi-dash-circle" aria-hidden="true"></i> Confirm Reclaim'
+     :'<i class="bi bi-plus-circle" aria-hidden="true"></i> Confirm Top Up';
+  }
+ }
  function showCreditModal(modal){
   if(!modal) return;
   modal.hidden=false;
@@ -304,6 +338,9 @@
   if($('madCreditAmount')) $('madCreditAmount').value='';
   if($('madCreditRemark')) $('madCreditRemark').value='';
   setStatus('madCreditStatus','');
+  creditAction='ADD';
+  creditBalances={player:Number(row.creditBalance||0),provider:Number(row.providerCreditBalance||0),byProvider:{}};
+  syncCreditMode();
   showCreditModal(modal);
   const wallet=$('madCreditWallet');
   setWalletOptions(wallet,'');
@@ -312,6 +349,12 @@
    if(seq!==creditOpenSeq) return;
    const b=d?.brand||d||row;
    const ps=d?.providers||[];
+   const byProvider={};
+   ps.forEach(p=>{
+    const code=String(p.providerCode||'').toUpperCase();
+    if(code) byProvider[code]=Number(p.creditBalance||0);
+   });
+   creditBalances={player:Number(b.creditBalance||0),provider:Number(b.providerCreditBalance||0),byProvider};
    const extra=String(b.creditMode||'').toUpperCase()==='PER_PROVIDER'
      ?ps.filter(p=>Number(p.enabled??1)===1).map(p=>`<option value="${esc(p.providerCode)}">Provider: ${esc(p.providerCode)}</option>`).join('')
      :'';
@@ -448,22 +491,39 @@
   const amount=Number($('madCreditAmount')?.value||0);
   const providerCode=$('madCreditWallet')?.value||null;
   const remark=($('madCreditRemark')?.value||'').trim();
+  const action=creditAction==='DEDUCT'?'DEDUCT':'ADD';
   if(!id){ setStatus('madCreditStatus','Merchant missing.','error'); return; }
   if(!(amount>0)){ setStatus('madCreditStatus','Amount must be greater than 0.','error'); return; }
+  if(action==='DEDUCT'){
+   const avail=currentWalletBalance();
+   if(amount>avail){
+    setStatus('madCreditStatus','Reclaim amount cannot exceed the selected wallet balance ('+money(avail)+').','error');
+    return;
+   }
+  }
   const btn=$('madCreditSubmit');
   try{
    if(btn) btn.disabled=true;
-   setStatus('madCreditStatus','Processing top up...');
-   await api('/admin/merchants/'+encodeURIComponent(id)+'/topup',{
-    method:'POST',
-    headers:hdr(),
-    body:JSON.stringify({amount,providerCode,remark:remark||'Merchant credit top up'})
-   });
-   setStatus('madCreditStatus','Top up completed successfully.','success');
+   setStatus('madCreditStatus',action==='DEDUCT'?'Processing reclaim...':'Processing top up...');
+   if(action==='DEDUCT'){
+    await api('/admin/brands/'+encodeURIComponent(id)+'/credit/adjust',{
+     method:'POST',
+     headers:hdr(),
+     body:JSON.stringify({amount,action:'DEDUCT',providerCode,remark:remark||'Merchant credit reclaim'})
+    });
+    setStatus('madCreditStatus','Credit reclaimed successfully.','success');
+   }else{
+    await api('/admin/merchants/'+encodeURIComponent(id)+'/topup',{
+     method:'POST',
+     headers:hdr(),
+     body:JSON.stringify({amount,providerCode,remark:remark||'Merchant credit top up'})
+    });
+    setStatus('madCreditStatus','Top up completed successfully.','success');
+   }
    await load();
    setTimeout(closeCredit,450);
   }catch(err){
-   setStatus('madCreditStatus',err.message||'Top up failed.','error');
+   setStatus('madCreditStatus',err.message||(action==='DEDUCT'?'Reclaim failed.':'Top up failed.'),'error');
   }finally{
    if(btn) btn.disabled=false;
   }
@@ -545,6 +605,16 @@
  document.querySelectorAll('[data-mad-close-pass]').forEach(b=>b.addEventListener('click',closeResetPassword));
  $('madCreditModal')?.addEventListener('click',e=>{ if(e.target===$('madCreditModal')) closeCredit(); });
  $('madResetPasswordModal')?.addEventListener('click',e=>{ if(e.target===$('madResetPasswordModal')) closeResetPassword(); });
+ $('madCreditForm')?.addEventListener('click',e=>{
+  const btn=e.target.closest('[data-credit-action]');
+  if(!btn) return;
+  const next=String(btn.getAttribute('data-credit-action')||'').toUpperCase();
+  if(next!=='ADD' && next!=='DEDUCT') return;
+  if(creditAction===next) return;
+  creditAction=next;
+  setStatus('madCreditStatus','');
+  syncCreditMode();
+ });
  $('madCreditForm')?.addEventListener('submit',submitCredit);
  $('madResetGeneratePassword')?.addEventListener('click',()=>{
   const pwd=generatePassword(14);

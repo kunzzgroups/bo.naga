@@ -3928,6 +3928,36 @@ body.main-admin-detail-page .mac-adjust-balance b{
 body.main-admin-detail-page .mac-adjust-ops{
   display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:2px;
 }
+body.main-admin-detail-page .mac-credit-mode{
+  display:grid;grid-template-columns:1fr 1fr;gap:4px;
+  margin:0 0 16px;padding:4px;border-radius:10px;
+  background:var(--bo-control-well,#EEF2F6);
+}
+body.main-admin-detail-page .mac-credit-mode-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  height:38px;padding:0 12px;border:0;border-radius:8px;
+  background:transparent;color:var(--bo-muted);
+  font-size:13px;font-weight:700;line-height:1;cursor:pointer;
+  transition:background .16s ease,color .16s ease,box-shadow .16s ease;
+}
+body.main-admin-detail-page .mac-credit-mode-btn i{font-size:14px;line-height:1}
+body.main-admin-detail-page .mac-credit-mode-btn:hover:not(.is-active){
+  background:rgba(255,255,255,.72);color:var(--bo-navy);
+}
+body.main-admin-detail-page .mac-credit-mode-btn.is-active{
+  background:var(--bo-surface);color:var(--bo-navy);
+  box-shadow:0 0 0 1px rgba(18,59,102,.05),0 1px 2px rgba(18,59,102,.07);
+}
+body.main-admin-detail-page .mac-credit-mode-btn[data-credit-action="DEDUCT"].is-active{
+  color:#B42318;
+  box-shadow:0 0 0 1px rgba(239,51,64,.14),0 1px 2px rgba(18,59,102,.07);
+}
+body.main-admin-detail-page .mac-credit-mode-btn:focus-visible{
+  outline:2px solid var(--bo-cyan);outline-offset:2px;
+}
+body.main-admin-detail-page #madCreditModal.is-reclaim .mad-modal-icon{
+  background:rgba(239,51,64,.12);color:var(--bo-danger,#EF3340);
+}
 @media(max-width:575.98px){
   body.main-admin-detail-page .mac-adjust-ops{grid-template-columns:1fr}
   body.main-admin-detail-page .mac-adjust-summary{flex-direction:column;align-items:flex-start}
@@ -4058,6 +4088,23 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-hint{
   body.main-admin-credit-page .mac-filters{flex-wrap:wrap}
   body.main-admin-credit-page .mac-search{flex:1 1 100%;width:100%}
   body.main-admin-detail-page .mac-adjust-grid{grid-template-columns:1fr}
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mac-credit-mode{
+  background:rgba(255,255,255,.06);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mac-credit-mode-btn{color:var(--bo-text-secondary)}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mac-credit-mode-btn:hover:not(.is-active){
+  background:rgba(255,255,255,.08);color:var(--bo-text);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mac-credit-mode-btn.is-active{
+  background:rgba(255,255,255,.13);color:var(--bo-text);
+  box-shadow:none;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mac-credit-mode-btn[data-credit-action="DEDUCT"].is-active{
+  color:#FF8A90;background:rgba(239,51,64,.16);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page #madCreditModal.is-reclaim .mad-modal-icon{
+  background:rgba(239,51,64,.18);color:#FF8A90;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-summary{
   background:rgba(255,255,255,.04);border-color:var(--bo-border);
