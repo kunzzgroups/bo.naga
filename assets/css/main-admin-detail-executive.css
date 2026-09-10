@@ -3972,7 +3972,7 @@ html[data-bo-theme="dark"] body.main-admin-credit-page .mad-pill-count.is-warn-c
 
 body.main-merchant-detail-page .mad-merchant-actions{
   display:inline-grid;
-  grid-template-columns:repeat(3, 40px);
+  grid-template-columns:repeat(4, 40px);
   column-gap:4px;
   align-items:center;
   justify-content:start;
@@ -3981,7 +3981,7 @@ body.main-merchant-detail-page .mad-merchant-actions{
   position:relative;z-index:1;overflow:visible;
 }
 body.main-merchant-detail-page.mad-view-active .mad-merchant-actions{
-  grid-template-columns:repeat(2, 40px);
+  grid-template-columns:repeat(3, 40px);
   margin-left:auto;
 }
 body.main-merchant-detail-page .mad-merchant-icon-btn{
@@ -4140,14 +4140,14 @@ body.main-admin-detail-page.main-merchant-detail-page .mad-table td:nth-child(10
 }
 body.main-admin-detail-page.main-merchant-detail-page .mad-table th:nth-child(11),
 body.main-admin-detail-page.main-merchant-detail-page .mad-table td:nth-child(11){
-  width:148px;min-width:148px;max-width:148px;
+  width:176px;min-width:176px;max-width:176px;
   text-align:left;padding-left:10px;padding-right:14px;
   box-sizing:border-box;
 }
 body.main-admin-detail-page.main-merchant-detail-page .mad-table th:nth-child(11){text-align:center}
 body.main-admin-detail-page.main-merchant-detail-page.mad-view-active .mad-table th:nth-child(11),
 body.main-admin-detail-page.main-merchant-detail-page.mad-view-active .mad-table td:nth-child(11){
-  width:104px;min-width:104px;max-width:104px;padding-right:14px;
+  width:148px;min-width:148px;max-width:148px;padding-right:14px;
 }
 body.main-admin-detail-page.main-merchant-detail-page.mad-view-active .mad-table td:nth-child(11){
   text-align:right;
@@ -4170,11 +4170,11 @@ body.main-admin-detail-page.main-merchant-detail-page.mad-view-active .mad-merch
   }
   body.main-admin-detail-page.main-merchant-detail-page .mad-table th:nth-child(11),
   body.main-admin-detail-page.main-merchant-detail-page .mad-table td:nth-child(11){
-    width:148px;min-width:148px;max-width:148px;
+    width:176px;min-width:176px;max-width:176px;
   }
   body.main-admin-detail-page.main-merchant-detail-page.mad-view-active .mad-table th:nth-child(11),
   body.main-admin-detail-page.main-merchant-detail-page.mad-view-active .mad-table td:nth-child(11){
-    width:104px;min-width:104px;max-width:104px;
+    width:148px;min-width:148px;max-width:148px;
   }
 }
 @media(max-width:1279.98px){
@@ -4190,7 +4190,7 @@ body.main-admin-detail-page.main-merchant-detail-page.mad-view-active .mad-merch
   }
   body.main-admin-detail-page.main-merchant-detail-page .mad-table th:nth-child(11),
   body.main-admin-detail-page.main-merchant-detail-page .mad-table td:nth-child(11){
-    width:148px;min-width:148px;max-width:148px;
+    width:176px;min-width:176px;max-width:176px;
   }
 }
 @media(max-width:1199.98px){
@@ -4228,7 +4228,7 @@ body.main-admin-detail-page.main-merchant-detail-page.mad-view-active .mad-merch
   body.main-admin-detail-page.main-merchant-detail-page .mad-table td:nth-child(7){width:12%}
   body.main-admin-detail-page.main-merchant-detail-page .mad-table th:nth-child(11),
   body.main-admin-detail-page.main-merchant-detail-page .mad-table td:nth-child(11){
-    width:148px;min-width:148px;max-width:148px;
+    width:176px;min-width:176px;max-width:176px;
   }
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-merchant-icon-btn{

@@ -1,10 +1,30 @@
 (function(){'use strict';
  const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),money=v=>Number(v||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
- const body=$('madTableBody'),search=$('madSearchInput'),filter=$('madRoleFilter'),modal=$('madEditModal'),form=$('madEditForm');
+ const body=$('madTableBody'),search=$('madSearchInput'),roleFilter=$('madRoleFilter'),currencyFilter=$('madCurrencyFilter'),modal=$('madEditModal'),form=$('madEditForm');
  const selectAllInput=$('madSelectAll'),selectAllWrap=$('madSelectAllWrap'),bulkDeleteBtn=$('madBulkDeleteBtn'),resetBtn=$('madResetBtn');
  let rows=[],filtered=[],page=1,status='active',editing=null,detail=null;
  const selectedMerchantIds=new Set();
  const PAGE=10;
+ function pageButtons(current, total){
+  total=Math.max(1, Number(total)||1);
+  current=Math.max(1, Math.min(Number(current)||1, total));
+  const pages=[];
+  const add=n=>{ if(n>=1 && n<=total && !pages.includes(n)) pages.push(n); };
+  add(1);
+  for(let n=current-2;n<=current+2;n++) add(n);
+  add(total);
+  pages.sort((a,b)=>a-b);
+  let html='';
+  html+='<button type="button" class="smart-page nav-text" data-page="'+Math.max(1,current-1)+'" '+(current<=1?'disabled':'')+'>Previous</button>';
+  let prev=0;
+  pages.forEach(n=>{
+   if(prev && n-prev>1) html+='<span class="smart-page-ellipsis">…</span>';
+   html+='<button type="button" class="smart-page '+(n===current?'active':'')+'" data-page="'+n+'" '+(n===current?'aria-current="page"':'')+'>'+n+'</button>';
+   prev=n;
+  });
+  html+='<button type="button" class="smart-page nav-text" data-page="'+Math.min(total,current+1)+'" '+(current>=total?'disabled':'')+'>Next</button>';
+  return html;
+ }
  async function api(path,opt={}){const r=await fetch(API_CONFIG.BASE_URL+path,opt),j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw Error(j.message||'Request failed');return j.data}
  const hdr=()=>({'Content-Type':'application/json',...BO_AUTH.authHeader()}),active=b=>Number(b.status)===1,dt=v=>v?new Date(v).toLocaleString():'-';
  function parseDate(value){
@@ -119,10 +139,32 @@
   syncSelectionUi();
  }
  function apply(){
-  const q=(search?.value||'').trim().toLowerCase(),cur=filter?.value||'';
-  filtered=rows.filter(b=>(status==='all'||(status==='active'&&active(b))||(status==='suspended'&&!active(b)))&&(!cur||b.currency===cur)&&(!q||[b.code,b.name,b.primaryDomain,b.createdByName,b.masterUsername,roleName(b)].join(' ').toLowerCase().includes(q)));
+  const q=(search?.value||'').trim().toLowerCase();
+  const role=(roleFilter?.value||'').trim();
+  const cur=(currencyFilter?.value||'').trim();
+  filtered=rows.filter(b=>{
+   if(!(status==='all'||(status==='active'&&active(b))||(status==='suspended'&&!active(b)))) return false;
+   if(cur && String(b.currency||'MYR')!==cur) return false;
+   if(role && roleName(b)!==role) return false;
+   if(q && ![b.code,b.name,b.primaryDomain,b.createdByName,b.masterUsername,roleName(b)].join(' ').toLowerCase().includes(q)) return false;
+   return true;
+  });
   page=1;
   render();
+ }
+ function syncFilterOptions(){
+  const roles=[...new Set(rows.map(roleName).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
+  const currencies=[...new Set(rows.map(x=>x.currency||'MYR'))].sort();
+  const keepRole=roleFilter?.value||'';
+  const keepCur=currencyFilter?.value||'';
+  if(roleFilter){
+   roleFilter.innerHTML='<option value="">All Roles</option>'+roles.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');
+   if(keepRole && roles.includes(keepRole)) roleFilter.value=keepRole;
+  }
+  if(currencyFilter){
+   currencyFilter.innerHTML='<option value="">All Currencies</option>'+currencies.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+   if(keepCur && currencies.includes(keepCur)) currencyFilter.value=keepCur;
+  }
  }
  function render(){
   const all=rows.length,act=rows.filter(active).length;
@@ -145,6 +187,7 @@
      :'';
    const rn=roleName(b);
    const creditBtn=`<button class="mad-merchant-icon-btn mad-merchant-credit-btn" data-credit="${esc(b.id)}" type="button" data-tip="Add credit" aria-label="Add credit"><i class="bi bi-plus-lg" aria-hidden="true"></i></button>`;
+   const resetPassBtn=`<button class="mad-merchant-icon-btn mad-merchant-key-btn" data-reset-pass="${esc(b.id)}" type="button" data-tip="Reset password" aria-label="Reset password"><i class="bi bi-key" aria-hidden="true"></i></button>`;
    return `<tr class="mad-row${canDelete?' is-suspended-row':''}">`+
      `<td data-label="Merchant"><div class="mad-user">${selectHtml}<span class="mad-avatar">${esc((b.code||'M').slice(0,2).toUpperCase())}</span><div class="mad-user-copy"><b>${esc(b.code||'-')}</b><div class="mad-user-meta">#${esc(b.id)}</div></div></div></td>`+
      `<td data-label="Company"><b>${esc(b.name||'-')}</b><small class="d-block text-muted">${esc(b.primaryDomain||'-')}</small></td>`+
@@ -156,11 +199,11 @@
      `<td data-label="Created By">${esc(b.createdByName||b.createdByUsername||'Legacy / Migration')}</td>`+
      `<td data-label="Last Login">${timeWithDateTip(b.masterLastLoginAt)}</td>`+
      `<td data-label="Last Logout">${timeWithDateTip(b.masterLastLogoutAt)}</td>`+
-     `<td data-label="Actions"><div class="mad-merchant-actions">${creditBtn}<button class="mad-merchant-icon-btn" data-view="${esc(b.id)}" type="button" data-tip="Edit" aria-label="View / Edit Merchant"><i class="bi bi-pencil" aria-hidden="true"></i></button>${deleteBtn}</div></td>`+
+     `<td data-label="Actions"><div class="mad-merchant-actions">${creditBtn}${resetPassBtn}<button class="mad-merchant-icon-btn" data-view="${esc(b.id)}" type="button" data-tip="Edit" aria-label="View / Edit Merchant"><i class="bi bi-pencil" aria-hidden="true"></i></button>${deleteBtn}</div></td>`+
    `</tr>`;
   }).join(''):'<tr><td colspan="11" class="mad-empty">No merchants found.</td></tr>';
   $('madTableInfo').textContent=filtered.length?`Showing ${st+1} to ${st+s.length} of ${filtered.length} merchants`:'Showing 0 to 0 of 0 merchants';
-  $('madPager').innerHTML=Array.from({length:pages},(_,i)=>`<button type="button" class="${page===i+1?'is-active':''}" data-page="${i+1}">${i+1}</button>`).join('');
+  $('madPager').innerHTML=pageButtons(page, pages);
   syncSelectionUi();
  }
  async function deleteMerchantsByIds(ids){
@@ -251,6 +294,122 @@
   modal.setAttribute('aria-hidden','true');
   if(!document.querySelector('.modal-clean.show')) document.body.classList.remove('modal-open');
  }
+ function generatePassword(len){
+  const upper='ABCDEFGHJKLMNPQRSTUVWXYZ', lower='abcdefghijkmnopqrstuvwxyz', digits='23456789', symbols='!@#$%^&*';
+  const all=upper+lower+digits+symbols;
+  const picks=[
+   upper[Math.floor(Math.random()*upper.length)],
+   lower[Math.floor(Math.random()*lower.length)],
+   digits[Math.floor(Math.random()*digits.length)],
+   symbols[Math.floor(Math.random()*symbols.length)]
+  ];
+  while(picks.length<len) picks.push(all[Math.floor(Math.random()*all.length)]);
+  for(let i=picks.length-1;i>0;i--){
+   const j=Math.floor(Math.random()*(i+1));
+   const t=picks[i]; picks[i]=picks[j]; picks[j]=t;
+  }
+  return picks.join('');
+ }
+ let resetPassMerchantId=null;
+ let resetPassMaster=null;
+ let resetPassLastFocus=null;
+ async function openResetPassword(id){
+  const row=rows.find(x=>Number(x.id)===Number(id));
+  if(!row){
+   if(window.BO_DIALOG?.alert) BO_DIALOG.alert('Merchant not found');
+   return;
+  }
+  const modal=$('madResetPasswordModal');
+  if(!modal) return;
+  resetPassLastFocus=document.activeElement;
+  resetPassMerchantId=String(id);
+  resetPassMaster=null;
+  const a=$('madResetNewPassword'), b=$('madResetConfirmPassword');
+  if(a){ a.value=''; a.type='password'; }
+  if(b){ b.value=''; b.type='password'; }
+  modal.querySelectorAll('[data-toggle-password]').forEach(eye=>{
+   eye.setAttribute('aria-pressed','false');
+   eye.setAttribute('aria-label','Show password');
+   const icon=eye.querySelector('i');
+   if(icon) icon.className='bi bi-eye';
+  });
+  setStatus('madResetPassStatus','');
+  const sub=$('madResetPassSub');
+  if(sub) sub.textContent='Loading merchant master account...';
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+  document.body.classList.add('modal-open');
+  try{
+   const d=await api('/admin/merchants/'+encodeURIComponent(id),{headers:BO_AUTH.authHeader()});
+   const m=d?.masterAccount||await api('/admin/merchants/'+encodeURIComponent(id)+'/master-account',{headers:BO_AUTH.authHeader()}).catch(()=>null);
+   const username=m?.username||d?.brand?.masterUsername||row.masterUsername||'';
+   if(!username){
+    setStatus('madResetPassStatus','This merchant has no master account yet.','error');
+    if(sub) sub.textContent='Set a new password for the merchant master login.';
+    return;
+   }
+   resetPassMaster={
+    username,
+    displayName:m?.displayName||m?.name||row.name||username,
+    status:m?.status==null?1:Number(m.status),
+    roleId:m?.roleId!=null?Number(m.roleId):null,
+    roleType:m?.roleType||m?.role||null
+   };
+   if(sub) sub.textContent='Set a new password for '+username+(row.code?' · '+row.code:'')+'.';
+   setTimeout(()=>a?.focus(),30);
+  }catch(e){
+   setStatus('madResetPassStatus',e.message||'Unable to load master account.','error');
+   if(sub) sub.textContent='Set a new password for the merchant master login.';
+  }
+ }
+ function closeResetPassword(){
+  const modal=$('madResetPasswordModal');
+  if(modal){
+   modal.classList.remove('show');
+   modal.setAttribute('aria-hidden','true');
+  }
+  resetPassMerchantId=null;
+  resetPassMaster=null;
+  if(!document.querySelector('.modal-clean.show')) document.body.classList.remove('modal-open');
+  const restore=resetPassLastFocus;
+  resetPassLastFocus=null;
+  if(restore&&typeof restore.focus==='function'){
+   setTimeout(()=>{ try{ restore.focus(); }catch(e){} },0);
+  }
+ }
+ async function applyResetPassword(){
+  if(!resetPassMerchantId){ setStatus('madResetPassStatus','Missing merchant.','error'); return; }
+  if(!resetPassMaster?.username){ setStatus('madResetPassStatus','This merchant has no master account yet.','error'); return; }
+  const pass=($('madResetNewPassword')?.value||'');
+  const confirm=($('madResetConfirmPassword')?.value||'');
+  if(!pass){ setStatus('madResetPassStatus','Please enter a new password.','error'); return; }
+  if(pass.length<8){ setStatus('madResetPassStatus','Password must be at least 8 characters.','error'); return; }
+  if(pass!==confirm){ setStatus('madResetPassStatus','Confirm password does not match.','error'); return; }
+  const applyBtn=$('madResetPassApply');
+  try{
+   if(applyBtn) applyBtn.disabled=true;
+   setStatus('madResetPassStatus','Updating password...');
+   const payload={
+    displayName:resetPassMaster.displayName||resetPassMaster.username,
+    username:resetPassMaster.username,
+    password:pass,
+    status:resetPassMaster.status==null?1:Number(resetPassMaster.status)
+   };
+   if(resetPassMaster.roleId!=null) payload.roleId=Number(resetPassMaster.roleId);
+   if(resetPassMaster.roleType) payload.roleType=resetPassMaster.roleType;
+   await api('/admin/merchants/'+encodeURIComponent(resetPassMerchantId)+'/master-account',{
+    method:'POST',
+    headers:hdr(),
+    body:JSON.stringify(payload)
+   });
+   closeResetPassword();
+   if(window.BO_DIALOG?.alert) await BO_DIALOG.alert('Password updated successfully');
+  }catch(err){
+   setStatus('madResetPassStatus',err.message||'Update password failed.','error');
+  }finally{
+   if(applyBtn) applyBtn.disabled=false;
+  }
+ }
  function setText(id,val){const el=$(id);if(el) el.textContent=val;}
  async function submitCredit(e){
   e.preventDefault();
@@ -278,7 +437,7 @@
    if(btn) btn.disabled=false;
   }
  }
- async function load(){try{rows=await api('/admin/merchants',{headers:BO_AUTH.authHeader()})||[];filter.innerHTML='<option value="">All Currencies</option>'+[...new Set(rows.map(x=>x.currency||'MYR'))].sort().map(x=>`<option>${esc(x)}</option>`).join('');apply();$('madSyncLabel').innerHTML='<i class="bi bi-arrow-repeat"></i> Synced just now'}catch(e){body.innerHTML=`<tr><td colspan="11" class="mad-empty text-danger">${esc(e.message)}</td></tr>`;syncSelectionUi();}}
+ async function load(){try{rows=await api('/admin/merchants',{headers:BO_AUTH.authHeader()})||[];syncFilterOptions();apply();$('madSyncLabel').innerHTML='<i class="bi bi-arrow-repeat"></i> Synced just now'}catch(e){body.innerHTML=`<tr><td colspan="11" class="mad-empty text-danger">${esc(e.message)}</td></tr>`;syncSelectionUi();}}
  function providerRows(d){const out=$('madProviderPricingBody');if(!out)return;const assigned=new Map((d.providers||[]).map(x=>[String(x.providerCode||'').toUpperCase(),x]));const markupRaw=String($('madProviderMarkup')?.value ?? d.brand?.providerMarkupPercent ?? '').trim();const markup=Number(markupRaw||0);const platform=d.platformProviders||[];out.innerHTML=platform.length?platform.map(p=>{const code=String(p.code||'').toUpperCase(),bp=assigned.get(code),checked=!!bp&&String(bp.ownership||'PLATFORM').toUpperCase()==='PLATFORM',base=Number(p.settlementCostPercent||0),savedOv=Number(bp?.defaultChargePercent||0),ovShow=savedOv>0?String(savedOv):(markupRaw!==''&&markup!==0?markupRaw:''),eff=base+Number(ovShow||markup||0),basis=String(bp?.chargeBasis||p.settlementCostBasis||'HOUSE_WIN').toUpperCase();return '<tr data-provider-row="'+esc(code)+'" data-base="'+base+'">'+'<td><input type="checkbox" class="form-check-input" data-provider-use '+(checked?'checked':'')+'></td>'+'<td><b>'+esc(code)+'</b><small class="d-block text-muted">'+esc(p.name||'')+'</small></td>'+'<td>'+base.toFixed(4)+'%</td>'+'<td><input type="number" class="form-control form-control-sm" min="0" max="100" step="0.0001" data-provider-override value="'+esc(ovShow)+'" '+(checked?'':'disabled')+' placeholder="—"></td>'+'<td><b data-provider-effective>'+eff.toFixed(4)+'%</b></td>'+'<td>'+(basis==='TURNOVER'?'Turnover':'House Win / GGR')+'</td></tr>';}).join(''):'<tr><td colspan="6" class="text-center text-muted py-3">No platform providers configured.</td></tr>';bindProviderInputs()}
  function bindProviderInputs(){const markup=$('madProviderMarkup');const syncOverridesFromMarkup=()=>{const raw=String(markup?.value??'').trim();document.querySelectorAll('#madProviderPricingBody [data-provider-row]').forEach(r=>{const use=r.querySelector('[data-provider-use]'),inp=r.querySelector('[data-provider-override]');if(!inp)return;inp.disabled=!use?.checked;if(inp.dataset.manual!=='1'){inp.value=(raw===''||raw==='0')?'':raw;}});};const recalc=()=>{const m=Number(markup?.value||0);document.querySelectorAll('#madProviderPricingBody [data-provider-row]').forEach(r=>{const use=r.querySelector('[data-provider-use]'),inp=r.querySelector('[data-provider-override]'),base=Number(r.dataset.base||0);if(inp)inp.disabled=!use?.checked;const ovRaw=String(inp?.value||'').trim();const add=ovRaw!==''?Number(ovRaw):m;const eff=r.querySelector('[data-provider-effective]');if(eff)eff.textContent=(base+Number(add||0)).toFixed(4)+'%';});};if(markup&&!markup.dataset.bound){markup.dataset.bound='1';markup.addEventListener('input',()=>{document.querySelectorAll('#madProviderPricingBody [data-provider-override]').forEach(inp=>{inp.dataset.manual='0';});syncOverridesFromMarkup();recalc();});}document.querySelectorAll('#madProviderPricingBody [data-provider-use]').forEach(x=>x.addEventListener('change',()=>{syncOverridesFromMarkup();recalc();}));document.querySelectorAll('#madProviderPricingBody [data-provider-override]').forEach(x=>x.addEventListener('input',()=>{x.dataset.manual='1';recalc();}));syncOverridesFromMarkup();recalc()}
  async function open(id){try{const d=await api('/admin/merchants/'+id,{headers:BO_AUTH.authHeader()}),b=d.brand||d;detail=d;editing=b;const m=d.masterAccount||await api('/admin/merchants/'+id+'/master-account',{headers:BO_AUTH.authHeader()}).catch(()=>null);$('madEditId').value=b.id;$('madEditCode').value=b.code||'';$('madEditName').value=b.name||'';$('madEditDomain').value=b.primaryDomain||'';$('madEditCurrency').value=b.currency||'MYR';$('madEditFrontendRoot').value=b.frontendRoot||'';$('madEditCreditMode').value=b.creditMode||'WHOLE';$('madEditStatus').value=String(b.status??1);$('madViewPlayerCredit').value=money(b.creditBalance);$('madViewProviderCredit').value=money(b.providerCreditBalance);$('madViewMaster').value=m?.username||b.masterUsername||'-';$('madViewCreatedBy').value=b.createdByName||b.createdByUsername||m?.createdByName||'Legacy / Migration';$('madViewLastLogin').value=dt(m?.lastLoginAt||b.masterLastLoginAt);$('madViewLastLogout').value=dt(m?.lastLogoutAt||b.masterLastLogoutAt);$('madProviderMarkup').value=Number(b.providerMarkupPercent||0);providerRows(d);$('madEditFormStatus').textContent='';modal.classList.add('show');modal.setAttribute('aria-hidden','false');document.body.classList.add('modal-open')}catch(e){if(window.BO_DIALOG?.alert)BO_DIALOG.alert(e.message,{title:'Unable to Load Merchant',type:'error'});else alert(e.message)}}
@@ -298,10 +457,12 @@
   });
  });
  search?.addEventListener('input',apply);
- filter?.addEventListener('change',apply);
+ roleFilter?.addEventListener('change',apply);
+ currencyFilter?.addEventListener('change',apply);
  resetBtn?.addEventListener('click',()=>{
   if(search) search.value='';
-  if(filter) filter.value='';
+  if(roleFilter) roleFilter.value='';
+  if(currencyFilter) currencyFilter.value='';
   status='active';
   document.querySelectorAll('[data-mad-status]').forEach(b=>{
    const on=b.getAttribute('data-mad-status')==='active';
@@ -311,7 +472,7 @@
   clearMerchantSelection();
   apply();
  });
- $('madPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(b){page=+b.dataset.page;render()}});
+ $('madPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(b && !b.disabled){page=+b.dataset.page;render()}});
  body?.addEventListener('change',e=>{
   const input=e.target.closest&&e.target.closest('[data-merchant-select]');
   if(!input) return;
@@ -336,6 +497,9 @@
   const creditBtn=e.target.closest('[data-credit]');
   if(creditBtn){ openCredit(creditBtn.dataset.credit); return; }
 
+  const resetBtnEl=e.target.closest('[data-reset-pass]');
+  if(resetBtnEl){ openResetPassword(resetBtnEl.dataset.resetPass); return; }
+
   const deleteBtn=e.target.closest('[data-delete]');
   if(deleteBtn){ deleteMerchantsByIds([deleteBtn.dataset.delete]); return; }
 
@@ -347,8 +511,35 @@
  });
  document.querySelectorAll('[data-mad-close-edit]').forEach(b=>b.onclick=close);
  document.querySelectorAll('[data-mad-close-credit]').forEach(b=>b.onclick=closeCredit);
+ document.querySelectorAll('[data-mad-close-pass]').forEach(b=>b.addEventListener('click',closeResetPassword));
  $('madCreditModal')?.addEventListener('click',e=>{ if(e.target===$('madCreditModal')) closeCredit(); });
+ $('madResetPasswordModal')?.addEventListener('click',e=>{ if(e.target===$('madResetPasswordModal')) closeResetPassword(); });
  $('madCreditForm')?.addEventListener('submit',submitCredit);
+ $('madResetGeneratePassword')?.addEventListener('click',()=>{
+  const pwd=generatePassword(14);
+  const a=$('madResetNewPassword'), b=$('madResetConfirmPassword');
+  if(a){ a.type='text'; a.value=pwd; }
+  if(b){ b.type='text'; b.value=pwd; }
+  setStatus('madResetPassStatus','Strong password generated. Copy it before applying.','success');
+ });
+ $('madResetPassApply')?.addEventListener('click',applyResetPassword);
+ document.addEventListener('click',e=>{
+  const toggle=e.target.closest&&e.target.closest('[data-toggle-password]');
+  if(!toggle) return;
+  const id=toggle.getAttribute('data-toggle-password');
+  const input=$(id);
+  if(!input) return;
+  const show=input.type==='password';
+  input.type=show?'text':'password';
+  toggle.setAttribute('aria-pressed',show?'true':'false');
+  toggle.setAttribute('aria-label',show?'Hide password':'Show password');
+  const icon=toggle.querySelector('i');
+  if(icon) icon.className=show?'bi bi-eye-slash':'bi bi-eye';
+ });
+ document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape') return;
+  if($('madResetPasswordModal')?.classList.contains('show')) closeResetPassword();
+ });
  form?.addEventListener('submit',async e=>{e.preventDefault();const st=$('madEditFormStatus');try{st.textContent='Saving merchant and provider pricing...';const id=+$('madEditId').value;await api('/admin/merchants/save',{method:'POST',headers:hdr(),body:JSON.stringify({id,code:$('madEditCode').value,name:$('madEditName').value.trim(),primaryDomain:$('madEditDomain').value.trim(),currency:$('madEditCurrency').value.trim(),frontendRoot:$('madEditFrontendRoot').value.trim(),creditMode:$('madEditCreditMode').value,status:+$('madEditStatus').value,domainAliases:editing?.domainAliases||'',lowCreditThreshold:editing?.lowCreditThreshold||0,providerMarkupPercent:Number($('madProviderMarkup').value||0)})});await saveProviderPricing(id);st.textContent='Merchant updated successfully.';await load();setTimeout(close,450)}catch(x){st.textContent=x.message}});
  $('madExportBtn')?.addEventListener('click',()=>{const csv=[['Merchant','Company','Domain','Role','Currency','Credit Balance','Status','Created By','Last Login','Last Logout'],...filtered.map(b=>[b.code,b.name,b.primaryDomain,roleName(b),b.currency,b.creditBalance,active(b)?'Active':'Suspended',b.createdByName||b.createdByUsername||'Legacy / Migration',b.masterLastLoginAt,b.masterLastLogoutAt])].map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='merchants.csv';a.click();URL.revokeObjectURL(a.href)});
  document.body.classList.add('mad-view-active');
