@@ -424,7 +424,8 @@ body.menu-permission-page .mp-role-row .rounded-select-btn:focus{
   box-shadow:0 0 0 3px rgba(33,166,215,.14)!important;
   outline:0!important;
 }
-body.menu-permission-page .mp-role-row .rounded-select-menu{
+body.menu-permission-page .mp-role-row .rounded-select-menu,
+body.menu-permission-page .rounded-select-wrap .rounded-select-menu{
   border:1px solid var(--bo-border)!important;
   border-radius:8px;
   box-shadow:var(--bo-shadow)!important;
@@ -435,7 +436,65 @@ body.menu-permission-page .mp-role-row .rounded-select-menu{
   left:0!important;
   box-sizing:border-box!important;
   background:var(--bo-surface)!important;
-  padding:6px!important;
+  padding:6px 6px 6px 6px!important;
+  /* Do NOT set scrollbar-width/color here — Chromium then uses OS scrollbars
+     (arrows + system blue) and ignores ::-webkit-scrollbar. */
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+}
+/* Chromium / Edge / Safari — thin brand pill, no arrow buttons */
+body.menu-permission-page .mp-role-row .rounded-select-menu::-webkit-scrollbar,
+body.menu-permission-page .rounded-select-wrap .rounded-select-menu::-webkit-scrollbar{
+  width:4px!important;
+  height:4px!important;
+  background:transparent!important;
+}
+body.menu-permission-page .mp-role-row .rounded-select-menu::-webkit-scrollbar-button,
+body.menu-permission-page .rounded-select-wrap .rounded-select-menu::-webkit-scrollbar-button,
+body.menu-permission-page .mp-role-row .rounded-select-menu::-webkit-scrollbar-button:start:decrement,
+body.menu-permission-page .rounded-select-wrap .rounded-select-menu::-webkit-scrollbar-button:start:decrement,
+body.menu-permission-page .mp-role-row .rounded-select-menu::-webkit-scrollbar-button:end:increment,
+body.menu-permission-page .rounded-select-wrap .rounded-select-menu::-webkit-scrollbar-button:end:increment{
+  display:none!important;
+  width:0!important;
+  height:0!important;
+  background:transparent!important;
+}
+body.menu-permission-page .mp-role-row .rounded-select-menu::-webkit-scrollbar-track,
+body.menu-permission-page .rounded-select-wrap .rounded-select-menu::-webkit-scrollbar-track{
+  background:transparent!important;
+  margin:4px 0!important;
+}
+body.menu-permission-page .mp-role-row .rounded-select-menu::-webkit-scrollbar-thumb,
+body.menu-permission-page .rounded-select-wrap .rounded-select-menu::-webkit-scrollbar-thumb{
+  /* Light: muted slate pill (cyan reads as a blue border on white) */
+  background:#98A2B3!important;
+  background-color:#98A2B3!important;
+  border-radius:999px!important;
+  border:0!important;
+  min-height:28px!important;
+  box-shadow:none!important;
+}
+body.menu-permission-page .mp-role-row .rounded-select-menu::-webkit-scrollbar-thumb:hover,
+body.menu-permission-page .rounded-select-wrap .rounded-select-menu::-webkit-scrollbar-thumb:hover{
+  background:#667085!important;
+  background-color:#667085!important;
+}
+body.menu-permission-page .mp-role-row .rounded-select-menu::-webkit-scrollbar-corner,
+body.menu-permission-page .rounded-select-wrap .rounded-select-menu::-webkit-scrollbar-corner{
+  background:transparent!important;
+}
+/* Firefox only — standard scrollbar properties */
+@supports not selector(::-webkit-scrollbar){
+  body.menu-permission-page .mp-role-row .rounded-select-menu,
+  body.menu-permission-page .rounded-select-wrap .rounded-select-menu{
+    scrollbar-width:thin;
+    scrollbar-color:#98A2B3 transparent;
+  }
+  html[data-bo-theme="dark"] body.menu-permission-page .mp-role-row .rounded-select-menu,
+  html[data-bo-theme="dark"] body.menu-permission-page .rounded-select-wrap .rounded-select-menu{
+    scrollbar-color:var(--bo-cyan,#21A6D7) transparent;
+  }
 }
 body.menu-permission-page .mp-role-row .rounded-select-option{
   white-space:nowrap!important;
@@ -1046,11 +1105,21 @@ html[data-bo-theme="dark"] body.menu-permission-page .mp-scope-count{color:var(-
 html[data-bo-theme="dark"] body.menu-permission-page .mp-scope-btn.is-active .mp-scope-count{
   background:rgba(33,166,215,.18);color:#7DD3FC;
 }
-html[data-bo-theme="dark"] body.menu-permission-page .mp-add-role-btn{
-  background:var(--bo-cyan);color:#fff;
+html[data-bo-theme="dark"] body.menu-permission-page .mp-add-role-btn,
+html[data-bo-theme="dark"] body.menu-permission-page a.mp-add-role-btn.mad-btn,
+html[data-bo-theme="dark"] body.menu-permission-page a.mp-add-role-btn.mad-btn-primary{
+  background:var(--bo-cyan)!important;
+  border-color:var(--bo-cyan)!important;
+  color:#fff!important;
 }
-html[data-bo-theme="dark"] body.menu-permission-page .mp-add-role-btn:hover{
-  background:var(--bo-cyan-deep);color:#fff;
+html[data-bo-theme="dark"] body.menu-permission-page .mp-add-role-btn:hover,
+html[data-bo-theme="dark"] body.menu-permission-page .mp-add-role-btn:focus,
+html[data-bo-theme="dark"] body.menu-permission-page .mp-add-role-btn:visited,
+html[data-bo-theme="dark"] body.menu-permission-page a.mp-add-role-btn.mad-btn:hover,
+html[data-bo-theme="dark"] body.menu-permission-page a.mp-add-role-btn.mad-btn-primary:hover{
+  background:var(--bo-cyan-deep)!important;
+  border-color:var(--bo-cyan-deep)!important;
+  color:#fff!important;
 }
 html[data-bo-theme="dark"] body.menu-permission-page .mad-tab:hover{color:var(--bo-text)}
 html[data-bo-theme="dark"] body.menu-permission-page .mad-tab.is-active{
@@ -1088,20 +1157,34 @@ html[data-bo-theme="dark"] body.menu-permission-page .mp-role-row .rounded-selec
   box-shadow:0 0 0 3px rgba(33,166,215,.18)!important;
   color:var(--bo-text)!important;
 }
-html[data-bo-theme="dark"] body.menu-permission-page .mp-role-row .rounded-select-menu{
+html[data-bo-theme="dark"] body.menu-permission-page .mp-role-row .rounded-select-menu,
+html[data-bo-theme="dark"] body.menu-permission-page .rounded-select-wrap .rounded-select-menu{
   background:var(--bo-surface)!important;
   border-color:var(--bo-border)!important;
   box-shadow:0 16px 40px rgba(0,0,0,.45)!important;
+}
+html[data-bo-theme="dark"] body.menu-permission-page .mp-role-row .rounded-select-menu::-webkit-scrollbar-thumb,
+html[data-bo-theme="dark"] body.menu-permission-page .rounded-select-wrap .rounded-select-menu::-webkit-scrollbar-thumb{
+  background:#21A6D7!important;
+  background-color:var(--bo-cyan,#21A6D7)!important;
+}
+html[data-bo-theme="dark"] body.menu-permission-page .mp-role-row .rounded-select-menu::-webkit-scrollbar-thumb:hover,
+html[data-bo-theme="dark"] body.menu-permission-page .rounded-select-wrap .rounded-select-menu::-webkit-scrollbar-thumb:hover{
+  background:#1B94C2!important;
+  background-color:var(--bo-cyan-deep,#1B94C2)!important;
 }
 html[data-bo-theme="dark"] body.menu-permission-page .mp-role-row .rounded-select-option{
   background:transparent!important;
   color:var(--bo-text-secondary)!important;
 }
-html[data-bo-theme="dark"] body.menu-permission-page .mp-role-row .rounded-select-option:hover,
-html[data-bo-theme="dark"] body.menu-permission-page .mp-role-row .rounded-select-option.active,
-html[data-bo-theme="dark"] body.menu-permission-page .mp-role-row .rounded-select-option.is-active{
+html[data-bo-theme="dark"] body.menu-permission-page .mp-role-row .rounded-select-option:hover{
   background:rgba(33,166,215,.14)!important;
   color:var(--bo-text)!important;
+}
+html[data-bo-theme="dark"] body.menu-permission-page .mp-role-row .rounded-select-option.active,
+html[data-bo-theme="dark"] body.menu-permission-page .mp-role-row .rounded-select-option.is-active{
+  background:var(--bo-cyan)!important;
+  color:#fff!important;
 }
 html[data-bo-theme="dark"] body.menu-permission-page .bo-theme-btn:hover{
   border-color:var(--bo-cyan)!important;

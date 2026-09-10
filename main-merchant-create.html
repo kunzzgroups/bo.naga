@@ -11,7 +11,7 @@
 <link href="assets/css/reports.css?v=1.0.47" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.113" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.126" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -92,51 +92,55 @@
         </div>
       </header>
 
-      <div class="mac-master-credit-grid">
+      <div class="mac-master-credit-stack">
         <div class="mac-subblock" id="merchantMasterBlock">
           <h4 class="mac-subblock-title"><span class="mac-subblock-dot" aria-hidden="true"></span> Admin Master Credentials</h4>
-          <div class="mac-fields mac-fields-row mac-fields-row-compact mac-fields-row-master">
-            <label class="mac-field" for="merchantMasterName">
-              <span class="mac-label">Master Display Name</span>
-              <input class="form-control" id="merchantMasterName" placeholder="Merchant Master"/>
-            </label>
-            <label class="mac-field" for="merchantMasterUsername">
-              <span class="mac-label">Login ID / Username</span>
-              <input class="form-control" id="merchantMasterUsername" autocomplete="username" placeholder="merchant.master"/>
-            </label>
-            <label class="mac-field mac-field-role" for="merchantMasterRole">
-              <span class="mac-label">Role</span>
-              <select class="form-control mad-select" id="merchantMasterRole">
-                <option value="" data-role-type="BRAND_OWNER">Brand Owner</option>
-              </select>
-            </label>
-            <label class="mac-field" for="merchantMasterPassword">
-              <span class="mac-label-row">
-                <span class="mac-label">Password</span>
-                <button type="button" class="mac-link-btn" id="merchantGeneratePassword">Generate</button>
-              </span>
-              <span class="mad-pass-wrap">
-                <input class="form-control" id="merchantMasterPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Min. 8 characters"/>
-                <button type="button" class="mad-eye" data-toggle-password="merchantMasterPassword" aria-label="Show password"><i class="bi bi-eye"></i></button>
-              </span>
-            </label>
-            <label class="mac-field" for="merchantMasterPasswordConfirm">
-              <span class="mac-label">Confirm Password</span>
-              <span class="mad-pass-wrap">
-                <input class="form-control" id="merchantMasterPasswordConfirm" type="password" minlength="8" autocomplete="new-password" placeholder="Re-enter password"/>
-                <button type="button" class="mad-eye" data-toggle-password="merchantMasterPasswordConfirm" aria-label="Show confirm password"><i class="bi bi-eye"></i></button>
-              </span>
-            </label>
+          <div class="mac-fields-stack mac-master-fields">
+            <div class="mac-fields mac-fields-row mac-fields-row-3 mac-fields-row-master-top">
+              <label class="mac-field" for="merchantMasterName">
+                <span class="mac-label">Master Display Name</span>
+                <input class="form-control" id="merchantMasterName" placeholder="Merchant Master"/>
+              </label>
+              <label class="mac-field" for="merchantMasterUsername">
+                <span class="mac-label">Login ID / Username</span>
+                <input class="form-control" id="merchantMasterUsername" autocomplete="username" placeholder="merchant.master"/>
+              </label>
+              <label class="mac-field mac-field-role" for="merchantMasterRole">
+                <span class="mac-label">Role</span>
+                <select class="form-control mad-select" id="merchantMasterRole">
+                  <option value="" data-role-type="BRAND_OWNER">Brand Owner</option>
+                </select>
+              </label>
+            </div>
+            <div class="mac-fields mac-fields-row mac-fields-row-2 mac-fields-row-master-pass">
+              <label class="mac-field" for="merchantMasterPassword">
+                <span class="mac-label-row">
+                  <span class="mac-label">Password</span>
+                  <button type="button" class="mac-link-btn" id="merchantGeneratePassword">Generate</button>
+                </span>
+                <span class="mad-pass-wrap">
+                  <input class="form-control" id="merchantMasterPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Min. 8 characters"/>
+                  <button type="button" class="mad-eye" data-toggle-password="merchantMasterPassword" aria-label="Show password"><i class="bi bi-eye"></i></button>
+                </span>
+              </label>
+              <label class="mac-field" for="merchantMasterPasswordConfirm">
+                <span class="mac-label">Confirm Password</span>
+                <span class="mad-pass-wrap">
+                  <input class="form-control" id="merchantMasterPasswordConfirm" type="password" minlength="8" autocomplete="new-password" placeholder="Re-enter"/>
+                  <button type="button" class="mad-eye" data-toggle-password="merchantMasterPasswordConfirm" aria-label="Show confirm password"><i class="bi bi-eye"></i></button>
+                </span>
+              </label>
+            </div>
           </div>
         </div>
 
         <div class="mac-subblock">
           <h4 class="mac-subblock-title"><span class="mac-subblock-dot" aria-hidden="true"></span> Credit &amp; Fee Policy</h4>
-          <div class="mac-fields mac-fields-row mac-fields-row-compact mac-fields-row-credit">
+          <div class="mac-fields mac-fields-row mac-fields-row-3 mac-fields-row-credit">
             <label class="mac-field" for="merchantCreditMode">
               <span class="mac-label">Credit Mode</span>
               <select class="form-control" id="merchantCreditMode">
-                <option value="WHOLE">Whole Provider Pool</option>
+                <option value="WHOLE">Whole Provider</option>
                 <option value="PER_PROVIDER">Per Provider</option>
               </select>
             </label>
@@ -152,11 +156,12 @@
               </select>
             </label>
             <label class="mac-field" for="merchantThreshold">
-              <span class="mac-label">Low Credit Alert <span class="mac-label-unit" id="merchantThresholdLabel">(MYR)</span></span>
+              <span class="mac-label">Low Credit Alert</span>
               <span class="mac-input-group is-prefix">
                 <span class="mac-input-addon" id="merchantThresholdUnit">MYR</span>
                 <input class="form-control" id="merchantThreshold" type="number" min="0" step="0.0001" value="0"/>
               </span>
+              <span class="visually-hidden" id="merchantThresholdLabel">(MYR)</span>
             </label>
           </div>
         </div>

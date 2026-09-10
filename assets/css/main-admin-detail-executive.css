@@ -1959,6 +1959,9 @@ body.main-merchant-create-page .mac-fields-stack{
   flex-direction:column;
   gap:16px;
 }
+body.main-merchant-create-page .mac-fields-row-2{
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+}
 body.main-merchant-create-page .mac-fields-row-3{
   grid-template-columns:repeat(3, minmax(0, 1fr));
 }
@@ -1982,82 +1985,62 @@ body.main-merchant-create-page .mac-label-unit{
   text-transform:none;
   letter-spacing:0;
 }
+body.main-merchant-create-page .mac-master-credit-stack{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
 body.main-merchant-create-page .mac-subblock{
-  margin-top:4px;
-}
-body.main-merchant-create-page .mac-master-credit-grid{
-  display:grid;
-  grid-template-columns:minmax(0, 1.75fr) minmax(260px, 0.95fr);
-  gap:20px 28px;
-  align-items:start;
-}
-body.main-merchant-create-page .mac-master-credit-grid > .mac-subblock{
   margin-top:0;
   min-width:0;
+  padding:16px 18px 18px;
+  border:1px solid var(--bo-border);
+  border-radius:12px;
+  background:var(--bo-surface,#fff);
+  box-shadow:var(--bo-shadow,0 0 0 1px rgba(18,59,102,.04),0 1px 2px -1px rgba(18,59,102,.06),0 2px 8px rgba(26,45,80,.018));
 }
-body.main-merchant-create-page .mac-master-credit-grid > .mac-subblock + .mac-subblock{
-  margin-top:0;
-  padding-top:0;
-  border-top:0;
-  padding-left:28px;
-  border-left:1px solid var(--bo-border);
+body.main-merchant-create-page .mac-master-fields{
+  gap:14px;
 }
-body.main-merchant-create-page .mac-fields-row-compact{
-  grid-template-columns:repeat(3, minmax(0, 1fr));
-  gap:12px 14px;
-}
-body.main-merchant-create-page .mac-fields-row-master{
-  display:grid;
-  grid-template-columns:minmax(0, 1fr) minmax(0, 1fr) 104px minmax(0, 1fr) minmax(0, 1fr);
-  gap:12px 10px;
-  max-width:none;
-  width:100%;
+body.main-merchant-create-page .mac-fields-row-master-top,
+body.main-merchant-create-page .mac-fields-row-master-pass,
+body.main-merchant-create-page .mac-fields-row-credit{
   align-items:end;
-  justify-content:start;
+  width:100%;
+  max-width:none;
 }
-body.main-merchant-create-page .mac-fields-row-master > .mac-field{
+body.main-merchant-create-page .mac-fields-row-master-top > .mac-field,
+body.main-merchant-create-page .mac-fields-row-master-pass > .mac-field,
+body.main-merchant-create-page .mac-fields-row-credit > .mac-field{
   max-width:none;
   width:100%;
   margin:0;
   min-width:0;
 }
-body.main-merchant-create-page .mac-fields-row-master > .mac-field-role{
-  max-width:104px;
-  width:100%;
-  justify-self:stretch;
-}
-body.main-merchant-create-page .mac-fields-row-master > .mac-field-role .rounded-select-wrap,
-body.main-merchant-create-page .mac-fields-row-master > .mac-field-role .rounded-select-btn,
-body.main-merchant-create-page .mac-fields-row-master > .mac-field-role select{
+body.main-merchant-create-page .mac-fields-row-master-top > .mac-field-role .rounded-select-wrap,
+body.main-merchant-create-page .mac-fields-row-master-top > .mac-field-role .rounded-select-btn,
+body.main-merchant-create-page .mac-fields-row-master-top > .mac-field-role select,
+body.main-merchant-create-page .mac-fields-row-credit .mac-field select{
   width:100%!important;
   max-width:100%!important;
   min-width:0!important;
 }
-body.main-merchant-create-page .mac-fields-row-master .mac-field .mac-label-row{
+body.main-merchant-create-page .mac-master-fields .mac-field .mac-label-row{
   display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:18px;
 }
-body.main-merchant-create-page .mac-fields-row-master .mac-link-btn{
+body.main-merchant-create-page .mac-master-fields .mac-link-btn{
   font-size:11.5px;font-weight:700;padding:0;border:0;background:transparent;
   color:var(--bo-cyan);cursor:pointer;
 }
-body.main-merchant-create-page .mac-fields-row-master .mac-link-btn:hover{color:var(--bo-cyan-deep);text-decoration:underline}
-body.main-merchant-create-page .mac-fields-row-master .mad-pass-wrap{position:relative;display:block}
-body.main-merchant-create-page .mac-fields-row-master .mad-pass-wrap .form-control{padding-right:42px}
-body.main-merchant-create-page .mac-fields-row-master .mad-eye{
+body.main-merchant-create-page .mac-master-fields .mac-link-btn:hover{color:var(--bo-cyan-deep);text-decoration:underline}
+body.main-merchant-create-page .mac-master-fields .mad-pass-wrap{position:relative;display:block}
+body.main-merchant-create-page .mac-master-fields .mad-pass-wrap .form-control{padding-right:42px}
+body.main-merchant-create-page .mac-master-fields .mad-eye{
   position:absolute;right:8px;top:50%;transform:translateY(-50%);
   width:28px;height:28px;border:0;border-radius:6px;background:transparent;
   color:var(--bo-muted);display:grid;place-items:center;cursor:pointer;
 }
-body.main-merchant-create-page .mac-fields-row-master .mad-eye:hover{color:var(--bo-cyan);background:var(--bo-cyan-tint)}
-body.main-merchant-create-page .mac-fields-row-credit{
-  grid-template-columns:minmax(0, 1.15fr) minmax(0, 0.7fr) minmax(0, 1fr);
-  align-items:end;
-}
-body.main-merchant-create-page .mac-fields-row-credit .mac-field select{
-  width:100%;
-  max-width:100%;
-  min-width:0;
-}
+body.main-merchant-create-page .mac-master-fields .mad-eye:hover{color:var(--bo-cyan);background:var(--bo-cyan-tint)}
 body.main-merchant-create-page .mac-field .rounded-select-wrap{
   width:100%;
   max-width:100%;
@@ -2148,44 +2131,6 @@ html[data-bo-theme="dark"] body.main-merchant-create-page .mac-field .rounded-se
 body.main-merchant-create-page .mac-fields-row-compact .mac-field small{
   font-size:11px;
   line-height:1.35;
-}
-body.main-merchant-create-page .mac-subblock + .mac-subblock{
-  margin-top:22px;
-  padding-top:18px;
-  border-top:1px solid var(--bo-border);
-}
-@media(max-width:1280px){
-  body.main-merchant-create-page .mac-master-credit-grid{
-    grid-template-columns:1fr;
-    gap:18px;
-  }
-  body.main-merchant-create-page .mac-master-credit-grid > .mac-subblock + .mac-subblock{
-    padding-left:0;
-    border-left:0;
-    padding-top:18px;
-    border-top:1px solid var(--bo-border);
-  }
-  body.main-merchant-create-page .mac-fields-row-master{
-    grid-template-columns:minmax(0, 1fr) minmax(0, 1fr) 104px minmax(0, 1fr) minmax(0, 1fr);
-    max-width:none;
-  }
-  body.main-merchant-create-page .mac-fields-row-master > .mac-field{
-    max-width:none;
-  }
-  body.main-merchant-create-page .mac-fields-row-master > .mac-field-role{
-    max-width:104px;
-  }
-}
-@media(max-width:720px){
-  body.main-merchant-create-page .mac-fields-row-compact,
-  body.main-merchant-create-page .mac-fields-row-master,
-  body.main-merchant-create-page .mac-fields-row-credit{
-    grid-template-columns:1fr;
-  }
-  body.main-merchant-create-page .mac-fields-row-master > .mac-field,
-  body.main-merchant-create-page .mac-fields-row-master > .mac-field-role{
-    max-width:100%;
-  }
 }
 body.main-merchant-create-page .mac-subblock-title{
   display:flex;
@@ -2869,7 +2814,6 @@ body.main-admin-create-page .mad-btn-navy:hover{
 
 @media(max-width:1200px){
   body.main-admin-create-page .mac-fields-row{grid-template-columns:repeat(3, minmax(0, 1fr))}
-  body.main-merchant-create-page .mac-fields-row-3,
   body.main-merchant-create-page .mac-fields-row-4,
   body.main-merchant-create-page .mac-fields-row-5{grid-template-columns:repeat(2, minmax(0, 1fr))}
 }
@@ -2891,6 +2835,7 @@ body.main-admin-create-page .mad-btn-navy:hover{
     width:100%;
     justify-content:center;
   }
+  body.main-merchant-create-page .mac-fields-row-2,
   body.main-merchant-create-page .mac-fields-row-3,
   body.main-merchant-create-page .mac-fields-row-4,
   body.main-merchant-create-page .mac-fields-row-5{grid-template-columns:1fr}
@@ -2900,8 +2845,10 @@ html[data-bo-theme="dark"] body.main-admin-create-page .mac-head,
 html[data-bo-theme="dark"] body.main-admin-create-page .mac-section{
   background:var(--bo-surface);border-color:var(--bo-border);
 }
-html[data-bo-theme="dark"] body.main-merchant-create-page .mac-subblock + .mac-subblock{
-  border-top-color:var(--bo-border);
+html[data-bo-theme="dark"] body.main-merchant-create-page .mac-subblock{
+  background:var(--bo-surface);
+  border-color:var(--bo-border);
+  box-shadow:none;
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-input-addon{
   background:rgba(255,255,255,.04);
