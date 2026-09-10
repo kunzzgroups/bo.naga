@@ -40,6 +40,7 @@
     return { from: start.toISOString().slice(0, 10), to: end.toISOString().slice(0, 10) };
   };
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const reportCurrency = () => String(window.BO_MAIN_CURRENCY?.code?.() || sessionStorage.getItem('bo_main_report_currency') || 'MYR').toUpperCase();
 
   const state = {
     pricing: [],
@@ -173,7 +174,7 @@
     } else {
       $('mprRows').innerHTML = slice.map((x) => {
         const monthly = isMonthly(x);
-        const merchant = monthly
+        const merchant = x.merchantName || x.merchantCode
           ? `<div class="mpr-merchant">${esc(x.merchantName || 'Merchant')}<small>${esc(x.merchantCode || '—')}</small></div>`
           : '—';
         const actions = monthly
@@ -192,7 +193,7 @@
           <td>${merchant}</td>
           <td><span class="mpr-kind ${monthly ? 'is-monthly' : 'is-oneoff'}">${monthly ? 'Monthly Pricing' : 'One-off'}</span></td>
           <td>${esc(x.source || '—')}</td>
-          <td class="num mpr-amount">${esc(window.BO_MAIN_CURRENCY?.code?.()||'MYR')} ${money(x.amount)}</td>
+          <td class="num mpr-amount ${String(x.direction||'COLLECT').toUpperCase()==='PAY'?'text-danger':''}">${esc(x.currency || reportCurrency())} ${money(x.signedAmount != null ? x.signedAmount : x.amount)}</td>
           <td>${esc(x.description || '—')}</td>
           <td>${esc(x.createdBy || '—')}</td>
           <td>${createdCell}</td>
@@ -210,7 +211,8 @@
   async function loadPricing() {
     try {
       const d = await api('/admin/main/merchant-profit/pricing');
-      state.pricing = d.rows || [];
+      const c = reportCurrency();
+      state.pricing = (d.rows || []).filter((x) => String(x.currency || c).toUpperCase() === c);
       state.merchants = d.merchants || [];
     } catch (e) {
       state.pricing = [];
@@ -265,14 +267,16 @@
   function exportCsv() {
     const rows = filteredRows();
     const csv = [
-      ['Date', 'Merchant', 'Code', 'Type', 'Income Source', 'Amount', 'Description', 'Created By', 'Created At'],
+      ['Date', 'Merchant', 'Code', 'Type', 'Direction', 'Currency', 'Income Source', 'Amount', 'Description', 'Created By', 'Created At'],
       ...rows.map((x) => [
         x.incomeDate,
         x.merchantName || '',
         x.merchantCode || '',
         isMonthly(x) ? 'Monthly Pricing' : 'One-off',
+        String(x.direction || 'COLLECT').toUpperCase(),
+        x.currency || reportCurrency(),
         x.source || '',
-        Number(x.amount || 0).toFixed(2),
+        Number(x.signedAmount != null ? x.signedAmount : x.amount || 0).toFixed(2),
         x.description || '',
         x.createdBy || '',
         String(x.createdAt || '').replace('T', ' ').slice(0, 19)

@@ -125,7 +125,9 @@
           try{
             const b=JSON.parse(nextInit.body);
             if(b&&typeof b==='object'&&!Array.isArray(b)){
-              b.currency=active();
+              // Preserve an explicitly selected native transaction currency (e.g. Merchant Profit).
+              // Only inject the MAIN report currency when the request body did not define one.
+              if(!b.currency)b.currency=active();
               nextInit.body=JSON.stringify(b);
             }
           }catch(e){}

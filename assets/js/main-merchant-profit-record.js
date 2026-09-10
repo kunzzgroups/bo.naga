@@ -73,7 +73,7 @@
     });
     const merchant = $('mprrMerchant');
     const cycle = $('mprrCycleDay');
-    if (merchant) merchant.required = monthly;
+    if (merchant) merchant.required = true;
     if (cycle) cycle.required = monthly;
 
     syncEntryTypeOptions();
@@ -164,6 +164,35 @@
     syncSelect(sel);
   }
 
+  function selectedMerchant() {
+    const id = String($('mprrMerchant')?.value || '');
+    return state.merchants.find((m) => String(m.id) === id) || null;
+  }
+
+  function renderCurrencies(preferred) {
+    const sel = $('mprrCurrency');
+    if (!sel) return;
+    const merchant = selectedMerchant();
+    const list = merchant
+      ? (Array.isArray(merchant.enabledCurrencies) && merchant.enabledCurrencies.length
+          ? merchant.enabledCurrencies
+          : [merchant.primaryCurrency || merchant.currency || 'MYR'])
+      : [];
+    const codes = [...new Set(list.map((x) => String(x || '').trim().toUpperCase()).filter(Boolean))];
+    const wanted = String(preferred || sel.value || merchant?.primaryCurrency || merchant?.currency || '').toUpperCase();
+    sel.innerHTML = '<option value="">Select Currency</option>' + codes.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    sel.value = codes.includes(wanted) ? wanted : (codes[0] || '');
+    sel.disabled = !merchant || !codes.length;
+    syncSelect(sel);
+    updateAmountCurrency();
+  }
+
+  function updateAmountCurrency() {
+    const c = String($('mprrCurrency')?.value || '—').toUpperCase();
+    if ($('mprrAmountCurrency')) $('mprrAmountCurrency').textContent = c;
+    if ($('mprrAmountPrefix')) $('mprrAmountPrefix').textContent = c;
+  }
+
   function readDraft() {
     try {
       return JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
@@ -178,6 +207,8 @@
       mode: state.mode,
       billing: state.billing,
       merchantId: $('mprrMerchant')?.value || '',
+      currency: $('mprrCurrency')?.value || '',
+      direction: $('mprrDirection')?.value || 'COLLECT',
       feeName: $('mprrFeeName')?.value || '',
       date: $('mprrDate')?.value || '',
       cycleDay: $('mprrCycleDay')?.value || '',
@@ -207,6 +238,11 @@
     if (draft.merchantId) {
       $('mprrMerchant').value = draft.merchantId;
       syncSelect($('mprrMerchant'));
+      renderCurrencies(draft.currency);
+    }
+    if (draft.direction && $('mprrDirection')) {
+      $('mprrDirection').value = String(draft.direction).toUpperCase() === 'PAY' ? 'PAY' : 'COLLECT';
+      syncSelect($('mprrDirection'));
     }
     if (draft.feeName) $('mprrFeeName').value = draft.feeName;
     if (draft.date) $('mprrDate').value = draft.date;
@@ -228,6 +264,7 @@
     state.pricing = d.rows || [];
     state.merchants = d.merchants || [];
     renderMerchants();
+    renderCurrencies();
   }
 
   function applyEdit(row) {
@@ -236,6 +273,11 @@
     setMode('monthly', { lock: true });
     $('mprrMerchant').value = String(row.merchantId || '');
     syncSelect($('mprrMerchant'));
+    renderCurrencies(row.currency);
+    if ($('mprrDirection')) {
+      $('mprrDirection').value = String(row.direction || 'COLLECT').toUpperCase() === 'PAY' ? 'PAY' : 'COLLECT';
+      syncSelect($('mprrDirection'));
+    }
     $('mprrFeeName').value = row.feeName || '';
     $('mprrDate').value = String(row.effectiveDate || row.effectiveMonth || '').slice(0, 10) || fmt(new Date());
     syncCycleFromDate();
@@ -271,6 +313,16 @@
         setStatus('Amount must be a valid number.', 'text-danger');
         return;
       }
+      if (!$('mprrMerchant').value) {
+        setStatus('Please select a target merchant.', 'text-danger');
+        return;
+      }
+      if (!$('mprrCurrency').value) {
+        setStatus('Please select the transaction currency.', 'text-danger');
+        return;
+      }
+      const currency = String($('mprrCurrency').value).toUpperCase();
+      const direction = String($('mprrDirection')?.value || 'COLLECT').toUpperCase() === 'PAY' ? 'PAY' : 'COLLECT';
       if (state.mode === 'oneoff') {
         if (amount <= 0) {
           setStatus('Amount must be greater than 0.', 'text-danger');
@@ -279,6 +331,9 @@
         await api('/admin/main/merchant-profit', {
           method: 'POST',
           body: JSON.stringify({
+            merchantId: $('mprrMerchant').value,
+            currency,
+            direction,
             incomeDate: $('mprrDate').value,
             source: $('mprrFeeName').value,
             amount: amount.toFixed(2),
@@ -286,10 +341,6 @@
           })
         });
       } else {
-        if (!$('mprrMerchant').value) {
-          setStatus('Please select a target merchant.', 'text-danger');
-          return;
-        }
         const stop = state.billing === 'stop';
         if (!stop && amount <= 0) {
           setStatus('Enter an amount greater than 0, or choose Stop Recurring Billing.', 'text-danger');
@@ -300,6 +351,8 @@
           body: JSON.stringify({
             pricingId: state.editingPricingId,
             merchantId: $('mprrMerchant').value,
+            currency,
+            direction,
             feeName: $('mprrFeeName').value,
             effectiveDate: $('mprrDate').value,
             effectiveMonth: $('mprrDate').value,
@@ -336,7 +389,16 @@
       syncDateFromCycle();
       scheduleDraft();
     });
-    ['mprrMerchant', 'mprrFeeName', 'mprrAmount', 'mprrRemark'].forEach((id) => {
+    $('mprrMerchant')?.addEventListener('change', () => {
+      renderCurrencies();
+      scheduleDraft();
+    });
+    $('mprrCurrency')?.addEventListener('change', () => {
+      updateAmountCurrency();
+      scheduleDraft();
+    });
+    $('mprrDirection')?.addEventListener('change', scheduleDraft);
+    ['mprrFeeName', 'mprrAmount', 'mprrRemark'].forEach((id) => {
       $(id)?.addEventListener('input', scheduleDraft);
       $(id)?.addEventListener('change', scheduleDraft);
     });
