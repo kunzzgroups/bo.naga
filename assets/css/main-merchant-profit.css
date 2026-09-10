@@ -1,0 +1,531 @@
+/* Merchant Profit Report ?Deep Navy Cyan (Color Token 05) */
+
+body.main-merchant-profit-page{
+  --mpr-navy:#123B66;
+  --mpr-navy-deep:#0E2F52;
+  --mpr-cyan:#21A6D7;
+  --mpr-cyan-tint:rgba(33,166,215,.10);
+  --mpr-success:#12B76A;
+  --mpr-success-tint:rgba(18,183,106,.12);
+  --mpr-bg:#F5F8FB;
+  --mpr-surface:#FFFFFF;
+  --mpr-border:#E2E7F0;
+  --mpr-text:#11203A;
+  --mpr-muted:#657187;
+  --mpr-shadow:0 0 0 1px rgba(18,59,102,.04),0 1px 2px -1px rgba(18,59,102,.06),0 2px 8px rgba(26,45,80,.018);
+}
+
+body.main-merchant-profit-page .mpr-workspace{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  padding-bottom:28px;
+}
+
+body.main-merchant-profit-page .mad-chrome-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+/* —?KPI cards —?*/
+body.main-merchant-profit-page .mpr-kpis{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+}
+body.main-merchant-profit-page .mpr-kpi{
+  position:relative;
+  background:var(--mpr-surface);
+  border:1px solid var(--mpr-border);
+  border-radius:16px;
+  padding:18px 20px 16px;
+  box-shadow:var(--mpr-shadow);
+  min-height:148px;
+  display:flex;
+  flex-direction:column;
+}
+body.main-merchant-profit-page .mpr-kpi.is-hero{
+  background:linear-gradient(145deg,#123B66 0%,#0E2F52 100%);
+  border-color:transparent;
+  color:#fff;
+}
+body.main-merchant-profit-page .mpr-kpi-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+body.main-merchant-profit-page .mpr-kpi-label{
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--mpr-muted);
+}
+body.main-merchant-profit-page .mpr-kpi.is-hero .mpr-kpi-label{color:rgba(255,255,255,.72)}
+body.main-merchant-profit-page .mpr-kpi-trend{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  height:22px;
+  padding:0 8px;
+  border-radius:999px;
+  background:rgba(18,183,106,.18);
+  color:#7DFFB5;
+  font-size:11px;
+  font-weight:800;
+  white-space:nowrap;
+}
+body.main-merchant-profit-page .mpr-kpi-trend.is-down{
+  background:rgba(239,51,64,.18);
+  color:#FFB4B8;
+}
+body.main-merchant-profit-page .mpr-kpi-trend.is-flat{
+  background:rgba(255,255,255,.12);
+  color:rgba(255,255,255,.75);
+}
+body.main-merchant-profit-page .mpr-kpi-icon{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+  flex:0 0 auto;
+}
+body.main-merchant-profit-page .mpr-kpi-icon.is-cyan{
+  background:var(--mpr-cyan-tint);
+  color:var(--mpr-cyan);
+}
+body.main-merchant-profit-page .mpr-kpi-icon.is-green{
+  background:var(--mpr-success-tint);
+  color:var(--mpr-success);
+}
+body.main-merchant-profit-page .mpr-kpi-value{
+  margin:0;
+  font-size:28px;
+  font-weight:800;
+  letter-spacing:-.02em;
+  color:var(--mpr-text);
+  line-height:1.15;
+}
+body.main-merchant-profit-page .mpr-kpi.is-hero .mpr-kpi-value{color:#fff}
+body.main-merchant-profit-page .mpr-kpi-meta{
+  margin:6px 0 0;
+  font-size:12.5px;
+  color:var(--mpr-muted);
+}
+body.main-merchant-profit-page .mpr-kpi.is-hero .mpr-kpi-meta{color:rgba(255,255,255,.68)}
+body.main-merchant-profit-page .mpr-kpi-foot{
+  margin-top:auto;
+  padding-top:14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  font-size:12px;
+  color:var(--mpr-muted);
+}
+body.main-merchant-profit-page .mpr-kpi.is-hero .mpr-kpi-foot{color:rgba(255,255,255,.7)}
+body.main-merchant-profit-page .mpr-kpi-foot-left{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+}
+body.main-merchant-profit-page .mpr-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--mpr-cyan);
+  flex:0 0 auto;
+}
+body.main-merchant-profit-page .mpr-dot.is-green{background:var(--mpr-success)}
+body.main-merchant-profit-page .mpr-dot.is-light{background:rgba(255,255,255,.85)}
+body.main-merchant-profit-page .mpr-kpi-foot-right{font-weight:700;color:inherit}
+
+/* —?Ledger panel (mad-panel / mad-table) —?*/
+body.main-merchant-profit-page .mpr-date-field{
+  min-width:260px;
+  flex:0 1 280px;
+}
+body.main-merchant-profit-page .mpr-date-field .ref-range-wrap,
+body.main-merchant-profit-page .mpr-date-field .ref-range-trigger{
+  width:100%;
+}
+body.main-merchant-profit-page .mpr-date-field .ref-range-trigger{
+  height:36px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:600;
+}
+body.main-merchant-profit-page .mpr-date-field .ref-range-picker{
+  z-index:40;
+}
+body.main-merchant-profit-page .mpr-kind{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  height:26px;
+  padding:0 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:800;
+  white-space:nowrap;
+}
+body.main-merchant-profit-page .mpr-kind::before{
+  content:"";
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:currentColor;
+}
+body.main-merchant-profit-page .mpr-kind.is-monthly{
+  background:#EAF3FF;
+  color:#2466BD;
+}
+body.main-merchant-profit-page .mpr-kind.is-oneoff{
+  background:#EAF9F0;
+  color:#16834C;
+}
+body.main-merchant-profit-page .mpr-merchant{
+  font-weight:800;
+  color:var(--mpr-text);
+  line-height:1.25;
+}
+body.main-merchant-profit-page .mpr-merchant small{
+  display:block;
+  margin-top:2px;
+  font-weight:500;
+  font-size:11.5px;
+  color:#8290A3;
+}
+body.main-merchant-profit-page .mpr-amount{
+  font-weight:800;
+  color:var(--mpr-text);
+  white-space:nowrap;
+}
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table{
+  table-layout:fixed;
+  width:100%;
+}
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th,
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td{
+  vertical-align:middle;
+  display:table-cell!important; /* don't inherit Merchant list column-hiding */
+}
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table thead th{
+  text-align:left!important;
+}
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(1),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(1),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(2),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(2),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(3),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(3),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(4),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(4),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(6),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(6){
+  text-align:left!important;
+}
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(5),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(5){
+  text-align:right!important; /* Amount */
+}
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(7),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(7),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(8),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(8),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(9),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(9){
+  text-align:center!important;
+}
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td.mpr-actions-cell .mpr-actions{
+  margin-inline:auto;
+}
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(1),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(1){width:8%!important} /* Date */
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(2),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(2){width:12%!important} /* Merchant */
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(3),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(3){width:13%!important} /* Type */
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(4),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(4){width:14%!important} /* Income Source */
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(5),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(5){width:11%!important} /* Amount */
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(6),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(6){width:15%!important} /* Description */
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(7),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(7){width:11%!important} /* Created By */
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(8),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(8){width:10%!important} /* Created At */
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(1),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(1){
+  padding-left:8px;
+}
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(9),
+body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(9){
+  width:6%!important;
+  min-width:88px!important;
+  max-width:none!important;
+  padding-left:10px;
+  padding-right:8px;
+} /* Action */
+body.main-merchant-profit-page .mpr-created-at{
+  position:relative;
+  display:inline-block;
+  cursor:default;
+}
+body.main-merchant-profit-page .mpr-created-at[data-tip]::after{
+  content:attr(data-tip);
+  position:absolute;
+  left:50%;
+  bottom:calc(100% + 8px);
+  transform:translateX(-50%) translateY(4px);
+  padding:6px 10px;
+  border-radius:8px;
+  background:#0F1F33;
+  color:#fff;
+  font-size:11.5px;
+  font-weight:650;
+  letter-spacing:.01em;
+  line-height:1.2;
+  white-space:nowrap;
+  box-shadow:0 10px 22px rgba(15,23,42,.22);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .16s ease, transform .16s ease;
+  z-index:5;
+}
+body.main-merchant-profit-page .mpr-created-at[data-tip]::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:calc(100% + 2px);
+  transform:translateX(-50%);
+  border:5px solid transparent;
+  border-top-color:#0F1F33;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .16s ease;
+  z-index:5;
+}
+body.main-merchant-profit-page .mpr-created-at[data-tip]:hover::after,
+body.main-merchant-profit-page .mpr-created-at[data-tip]:focus-visible::after{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+body.main-merchant-profit-page .mpr-created-at[data-tip]:hover::before,
+body.main-merchant-profit-page .mpr-created-at[data-tip]:focus-visible::before{
+  opacity:1;
+}
+body.main-merchant-profit-page .mpr-actions-cell{
+  width:88px;
+  min-width:88px;
+}
+body.main-merchant-profit-page .mpr-actions{
+  display:grid;
+  grid-template-columns:32px 32px;
+  gap:4px;
+  justify-content:start;
+  align-items:center;
+  width:max-content;
+}
+body.main-merchant-profit-page .mpr-actions .mad-icon-btn.is-placeholder{
+  visibility:hidden;
+  pointer-events:none;
+}
+
+/* —?Modal —?*/
+body.main-merchant-profit-page .mpr-modal .modal-clean-panel{
+  max-width:560px;
+  width:min(560px, calc(100vw - 32px));
+}
+body.main-merchant-profit-page .mpr-modal-segs{
+  display:flex;
+  gap:6px;
+  padding:4px;
+  border-radius:12px;
+  background:#EEF1F6;
+  margin-bottom:16px;
+}
+body.main-merchant-profit-page .mpr-modal-seg{
+  flex:1;
+  height:36px;
+  border:0;
+  border-radius:9px;
+  background:transparent;
+  color:var(--mpr-muted);
+  font-size:12.5px;
+  font-weight:700;
+  cursor:pointer;
+}
+body.main-merchant-profit-page .mpr-modal-seg.is-active{
+  background:#fff;
+  color:var(--mpr-navy);
+  box-shadow:0 1px 2px rgba(18,59,102,.08);
+}
+body.main-merchant-profit-page .mpr-fields{
+  display:grid;
+  gap:12px;
+}
+body.main-merchant-profit-page .mpr-fields-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+body.main-merchant-profit-page .mpr-field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin:0;
+}
+body.main-merchant-profit-page .mpr-field > span{
+  font-size:12px;
+  font-weight:700;
+  color:var(--mpr-muted);
+}
+body.main-merchant-profit-page .mpr-field .form-control,
+body.main-merchant-profit-page .mpr-field .form-select{
+  height:40px;
+  border-radius:10px;
+  border-color:var(--mpr-border);
+  font-size:13px;
+}
+body.main-merchant-profit-page .mpr-field .form-control:focus,
+body.main-merchant-profit-page .mpr-field .form-select:focus{
+  border-color:var(--mpr-cyan);
+  box-shadow:0 0 0 3px var(--mpr-cyan-tint);
+}
+body.main-merchant-profit-page .mpr-hint{
+  margin:10px 0 0;
+  font-size:11.5px;
+  color:var(--mpr-muted);
+  line-height:1.4;
+}
+
+@media (max-width:1100px){
+  body.main-merchant-profit-page .mpr-kpis{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  body.main-merchant-profit-page .mpr-fields-2{grid-template-columns:1fr}
+  body.main-merchant-profit-page .mpr-date-field{min-width:0;flex:1 1 100%}
+}
+
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-kpi-value,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-merchant,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-amount{
+  color:#E8EEF7;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-kpi:not(.is-hero),
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-panel,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-ledger-panel.mad-panel{
+  background:#0F1C2E;
+  border-color:#24374F;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-modal-segs{
+  background:#172637;
+  border-color:#24374F;
+}
+
+/* Type pills */
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-kind.is-monthly{
+  background:rgba(36,102,189,.22);
+  color:#8CBCFF;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-kind.is-oneoff{
+  background:rgba(22,131,76,.22);
+  color:#6CE9A6;
+}
+
+/* Date range trigger + picker */
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-trigger{
+  background:var(--bo-bg,#0B1624)!important;
+  border-color:var(--bo-border,#24374F)!important;
+  color:var(--bo-text-secondary,#C9D4E3)!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-trigger:hover,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-trigger:focus{
+  border-color:var(--bo-cyan,#21A6D7)!important;
+  color:var(--bo-text,#E8EEF7)!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-icon{
+  color:#8FA0B5!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-picker{
+  background:var(--bo-surface,#0F1C2E)!important;
+  border-color:var(--bo-border,#24374F)!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.45)!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-presets{
+  background:var(--bo-bg,#0B1624)!important;
+  border-color:var(--bo-border,#24374F)!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-presets button{
+  color:var(--bo-text-secondary,#C9D4E3)!important;
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-presets button:hover{
+  background:rgba(255,255,255,.06)!important;
+  color:var(--bo-text,#E8EEF7)!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-presets button.active{
+  background:rgba(33,166,215,.18)!important;
+  color:#7DD3FC!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-calendar,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-day-view{
+  background:var(--bo-surface,#0F1C2E)!important;
+  color:var(--bo-text,#E8EEF7)!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-head,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-week,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-week span{
+  color:var(--bo-text-secondary,#8FA0B5)!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-head button,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-head .ref-head-pick{
+  background:var(--bo-bg,#0B1624)!important;
+  border-color:var(--bo-border,#24374F)!important;
+  color:var(--bo-text,#E8EEF7)!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-days button,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-month-grid button,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-year-grid button{
+  color:var(--bo-text,#E8EEF7)!important;
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-days button.muted{
+  color:#5B6B80!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-days button:hover,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-month-grid button:hover,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-year-grid button:hover{
+  background:rgba(255,255,255,.06)!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-days button.in-range{
+  background:rgba(33,166,215,.14)!important;
+  color:#9FD4F0!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-days button.selected,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-days button.start,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-days button.end,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-month-grid button.active,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-year-grid button.active{
+  background:rgba(33,166,215,.28)!important;
+  color:#7DD3FC!important;
+}
+/* Created At tip — same dark tip token as mad-float-tip / action tips */
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-created-at[data-tip]::after{
+  background:#243B55;
+  color:#F5F8FB;
+  border:1px solid rgba(125,211,252,.22);
+  box-shadow:0 12px 28px rgba(0,0,0,.5);
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-created-at[data-tip]::before{
+  border-top-color:#243B55;
+}

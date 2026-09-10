@@ -731,6 +731,15 @@ body.main-admin-detail-page .mad-table td{
   padding:6px 12px;border-bottom:1px solid var(--bo-border);
   color:var(--bo-text-secondary);font-size:13px;vertical-align:middle;
 }
+/* Edge gutters: reserve 8px from panel left/right on every mad-table */
+body.main-admin-detail-page .mad-table th:first-child,
+body.main-admin-detail-page .mad-table td:first-child{
+  padding-left:8px;
+}
+body.main-admin-detail-page .mad-table th:last-child,
+body.main-admin-detail-page .mad-table td:last-child{
+  padding-right:8px;
+}
 body.main-admin-detail-page .mad-table th:nth-child(1),
 body.main-admin-detail-page .mad-table td:nth-child(1){width:15%}
 body.main-admin-detail-page .mad-table th:nth-child(2),
@@ -769,7 +778,7 @@ body.main-admin-detail-page .mad-table td:nth-child(8){width:11%}
 body.main-admin-detail-page .mad-table th:nth-child(9),
 body.main-admin-detail-page .mad-table td:nth-child(9){
   width:204px;min-width:204px;max-width:204px;
-  padding-left:10px;padding-right:18px;
+  padding-left:10px;padding-right:8px;
   box-sizing:border-box;
 }
 body.main-admin-detail-page .mad-table th:nth-child(9){text-align:center}
@@ -896,7 +905,7 @@ body.main-admin-detail-page.mad-view-active .mad-actions{
 body.main-admin-detail-page.mad-view-active .mad-table th:nth-child(9),
 body.main-admin-detail-page.mad-view-active .mad-table td:nth-child(9){
   width:156px;min-width:156px;max-width:156px;
-  padding-right:14px;
+  padding-right:8px;
 }
 body.main-admin-detail-page.mad-view-active .mad-table td:nth-child(9){
   text-align:right;
@@ -1010,10 +1019,12 @@ html.mad-float-tips body.main-admin-detail-page .mad-icon-btn[data-tip]::before{
   border-top-color:transparent;border-bottom-color:#0F1F33;
 }
 html[data-bo-theme="dark"] .mad-float-tip{
-  background:#1A2B40;box-shadow:0 10px 22px rgba(0,0,0,.4);
+  background:#243B55;color:#F5F8FB;
+  border:1px solid rgba(125,211,252,.22);
+  box-shadow:0 12px 28px rgba(0,0,0,.5);
 }
-html[data-bo-theme="dark"] .mad-float-tip::after{border-top-color:#1A2B40}
-html[data-bo-theme="dark"] .mad-float-tip.is-below::after{border-top-color:transparent;border-bottom-color:#1A2B40}
+html[data-bo-theme="dark"] .mad-float-tip::after{border-top-color:#243B55}
+html[data-bo-theme="dark"] .mad-float-tip.is-below::after{border-top-color:transparent;border-bottom-color:#243B55}
 body.main-admin-detail-page .mad-money{font-variant-numeric:tabular-nums;font-weight:700;color:var(--bo-text)}
 body.main-admin-detail-page .mad-muted{color:var(--bo-muted)}
 body.main-admin-detail-page .mad-time{font-variant-numeric:tabular-nums;color:var(--bo-text-secondary);font-weight:600}
@@ -1637,7 +1648,29 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-pill{color:var(--bo-
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-pill.is-active{
   background:rgba(255,255,255,.13)!important;color:var(--bo-text)!important;box-shadow:none;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page .mad-pill:hover:not(.is-active){background:rgba(255,255,255,.06)}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-pill:hover:not(.is-active){
+  background:rgba(255,255,255,.10);
+  color:var(--bo-text);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-pill:hover:not(.is-active) .mad-pill-count{
+  background:rgba(33,166,215,.32);
+  color:#A5F3FC;
+}
+/* Pill counts: light cyan on tinted chip (light-theme cyan-deep is too dim on dark) */
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-pill-count{
+  background:rgba(33,166,215,.24);
+  color:#7DD3FC;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-pill.is-active .mad-pill-count{
+  background:rgba(33,166,215,.32);
+  color:#A5F3FC;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-pill-count.is-active-count{
+  background:transparent;color:#6CE9A6;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-pill-count.is-danger-count{
+  background:transparent;color:#FF8A90;
+}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-search,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-select,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-btn,
@@ -1674,6 +1707,9 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-select{
   background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%238A95A8' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round' d='M3 4.75L6 7.75L9 4.75'/%3E%3C/svg%3E")!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-tabs{background:transparent}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-tab:hover:not(.is-disabled){
+  color:var(--bo-text);background:transparent!important;
+}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-tab.is-active{color:#fff!important;border-bottom-color:var(--bo-cyan)!important}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-role,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-role.is-super,
@@ -1755,9 +1791,17 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-danger:h
   box-shadow:0 4px 12px rgba(239,51,64,.16);
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn[data-tip]::after{
-  background:#1A2B40;box-shadow:0 10px 22px rgba(0,0,0,.4);
+  background:#243B55;color:#F5F8FB;
+  border:1px solid rgba(125,211,252,.22);
+  box-shadow:0 12px 28px rgba(0,0,0,.5);
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn[data-tip]::before{border-top-color:#1A2B40;border-bottom-color:transparent}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn[data-tip]::before{border-top-color:#243B55;border-bottom-color:transparent}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-time-tip::after{
+  background:#243B55;color:#F5F8FB;
+  border:1px solid rgba(125,211,252,.22);
+  box-shadow:0 12px 28px rgba(0,0,0,.5);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-time-tip::before{border-top-color:#243B55}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-danger[data-tip]::after{background:#5C1A22}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-danger[data-tip]::before{border-bottom-color:#5C1A22;border-top-color:transparent}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-success[data-tip]::after{background:#0A4A32}
@@ -3310,9 +3354,13 @@ body.main-admin-security-page .mas-table th{
   padding:14px 16px;
 }
 body.main-admin-security-page .mas-table td{padding:6px 16px;vertical-align:middle}
+body.main-admin-security-page .mas-table th:first-child,
+body.main-admin-security-page .mas-table td:first-child{padding-left:8px}
+body.main-admin-security-page .mas-table th:last-child,
+body.main-admin-security-page .mas-table td:last-child{padding-right:8px}
 /* Column balance: keep Date compact, Details pinned last */
 body.main-admin-security-page .mas-table th:nth-child(1),
-body.main-admin-security-page .mas-table td:nth-child(1){width:108px;text-align:left} /* Time & Date */
+body.main-admin-security-page .mas-table td:nth-child(1){width:108px;text-align:left;padding-left:8px} /* Time & Date */
 body.main-admin-security-page .mas-table th:nth-child(2),
 body.main-admin-security-page .mas-table td:nth-child(2){width:18%;text-align:left} /* Administrator */
 body.main-admin-security-page .mas-table th:nth-child(3){
@@ -3329,7 +3377,7 @@ body.main-admin-security-page .mas-table th:nth-child(6),
 body.main-admin-security-page .mas-table td:nth-child(6){width:110px;text-align:left} /* Status */
 body.main-admin-security-page .mas-table th:nth-child(7),
 body.main-admin-security-page .mas-table td:nth-child(7){
-  width:88px;text-align:right;padding-right:16px;
+  width:88px;text-align:right;padding-right:8px;
 } /* Details · last */
 body.main-admin-security-page .mas-table tbody tr.is-blocked td{
   background:rgba(239,51,64,.06);
@@ -4079,6 +4127,14 @@ body.main-admin-detail-page.main-merchant-detail-page .mad-table td{
   padding-right:12px;
   box-sizing:border-box;
 }
+body.main-admin-detail-page.main-merchant-detail-page .mad-table th:first-child,
+body.main-admin-detail-page.main-merchant-detail-page .mad-table td:first-child{
+  padding-left:8px;
+}
+body.main-admin-detail-page.main-merchant-detail-page .mad-table th:last-child,
+body.main-admin-detail-page.main-merchant-detail-page .mad-table td:last-child{
+  padding-right:8px;
+}
 body.main-admin-detail-page.main-merchant-detail-page .mad-row.is-suspended-row td[data-label="Merchant"] .mad-user{
   gap:10px;
 }
@@ -4141,13 +4197,13 @@ body.main-admin-detail-page.main-merchant-detail-page .mad-table td:nth-child(10
 body.main-admin-detail-page.main-merchant-detail-page .mad-table th:nth-child(11),
 body.main-admin-detail-page.main-merchant-detail-page .mad-table td:nth-child(11){
   width:176px;min-width:176px;max-width:176px;
-  text-align:left;padding-left:10px;padding-right:14px;
+  text-align:left;padding-left:10px;padding-right:8px;
   box-sizing:border-box;
 }
 body.main-admin-detail-page.main-merchant-detail-page .mad-table th:nth-child(11){text-align:center}
 body.main-admin-detail-page.main-merchant-detail-page.mad-view-active .mad-table th:nth-child(11),
 body.main-admin-detail-page.main-merchant-detail-page.mad-view-active .mad-table td:nth-child(11){
-  width:148px;min-width:148px;max-width:148px;padding-right:14px;
+  width:148px;min-width:148px;max-width:148px;padding-right:8px;
 }
 body.main-admin-detail-page.main-merchant-detail-page.mad-view-active .mad-table td:nth-child(11){
   text-align:right;
@@ -4243,6 +4299,11 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-merchant-icon-btn
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-merchant-icon-btn.is-danger:hover{
   background:rgba(239,51,64,.16);color:#FF8A90;
+}
+html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-merchant-icon-btn[data-tip]::after{
+  background:#243B55;color:#F5F8FB;
+  border:1px solid rgba(125,211,252,.22);
+  box-shadow:0 12px 28px rgba(0,0,0,.5);
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-status-chip.is-active{
   color:#6CE9A6;

@@ -88,7 +88,7 @@
     // Gateway Transactions is a drill-down of Payment Gateway and uses the same DB menu permission.
     if(p==='payment-gateway-transactions.html') return 'payment-gateway.html';
     // Merchant module drill-downs keep the Merchant sidebar item highlighted.
-    if(p==='main-merchant-create.html' || p==='main-merchant-credit.html' || p==='main-merchant-security.html' || p==='main-merchant-roles.html' || p==='main-merchant-role-create.html'){
+    if(p==='main-merchant-create.html' || p==='main-merchant-credit.html' || p==='main-merchant-security.html' || p==='main-merchant-roles.html' || p==='main-merchant-role-create.html' || p==='main-merchant-profit.html' || p==='merchant-profit.html'){
       return 'main-merchant-detail.html';
     }
     // Admin module drill-downs keep the Admin Details item highlighted.
@@ -202,19 +202,22 @@
       if(current === 'main-admin-credit.html') current = 'main-admin-detail.html';
       if(current === 'main-admin-security.html') current = 'main-admin-detail.html';
       if(current === 'main-admin-role-create.html') current = 'menu-permission.html';
-      // Merchant create / credit / security / roles are drill-downs of Main Merchant Detail.
+      // Merchant create / security / roles are drill-downs of Main Merchant Detail.
+      // Merchant Credit Control page is retired; old bookmarks redirect via main-merchant-credit.html.
       if(current === 'main-merchant-create.html') current = 'main-merchant-detail.html';
       if(current === 'main-merchant-credit.html') current = 'main-merchant-detail.html';
       if(current === 'main-merchant-security.html') current = 'main-merchant-detail.html';
       if(current === 'main-merchant-roles.html') current = 'main-merchant-detail.html';
       if(current === 'main-merchant-role-create.html') current = 'main-merchant-detail.html';
+      if(current === 'main-merchant-profit.html') current = 'main-merchant-detail.html';
+      if(current === 'merchant-profit.html') current = 'main-merchant-detail.html';
       const agentChildPages = new Set([
         'agent-commission-admin.html','agent-settlement-admin.html','agent-reimbursement-admin.html',
         'agent-payout-admin.html','agent-promotion-admin.html'
       ]);
       const requestedAgentChild = agentChildPages.has(pageName());
       const requestedMainAdminDetail = pageName() === 'main-admin-detail.html' || pageName() === 'main-admin-create.html' || pageName() === 'main-admin-edit.html';
-      const requestedMainMerchantDetail = pageName() === 'main-merchant-detail.html' || pageName() === 'main-merchant-create.html' || pageName() === 'main-merchant-credit.html' || pageName() === 'main-merchant-security.html' || pageName() === 'main-merchant-roles.html' || pageName() === 'main-merchant-role-create.html';
+      const requestedMainMerchantDetail = pageName() === 'main-merchant-detail.html' || pageName() === 'main-merchant-create.html' || pageName() === 'main-merchant-credit.html' || pageName() === 'main-merchant-security.html' || pageName() === 'main-merchant-roles.html' || pageName() === 'main-merchant-role-create.html' || pageName() === 'main-merchant-profit.html' || pageName() === 'merchant-profit.html';
       if(current === 'main-stat-detail.html'){
         let source = '';
         try { source = String(new URLSearchParams(location.search || '').get('source') || 'overview').toLowerCase(); } catch(e) {}
@@ -338,10 +341,11 @@
       const menus = sourceMenus.map(normalizeMenu)
         .filter(function(m){
           if(m.status !== 1 || !m.url || m.url === '#') return false;
-          // Admin Credit Control page is retired — keep Adjust Credit on Administrators.
+          // Admin / Merchant Credit Control pages are retired — keep Adjust/Add Credit on list pages.
           const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
           const key = String(m.menuKey || '').toLowerCase();
           if(file === 'main-admin-credit.html' || key === 'main_admin_credit' || key === 'admin_credit') return false;
+          if(file === 'main-merchant-credit.html' || key === 'main_merchant_credit' || key === 'merchant_credit') return false;
           return true;
         })
         .sort(function(a,b){ return a.sortOrder - b.sortOrder || a.title.localeCompare(b.title); });

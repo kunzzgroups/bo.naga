@@ -1,0 +1,683 @@
+(() => {
+  'use strict';
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (v) => String(v ?? '').replace(/[&<>'"]/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  }[c]));
+  const money = (v) => Number(v || 0).toLocaleString('en-MY', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const fmt = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  const fmtSlash = (iso) => {
+    const s = String(iso || '').slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return '—';
+    const [y, m, d] = s.split('-');
+    return `${y}/${m}/${d}`;
+  };
+  const niceDate = (v) => {
+    if (!v) return '';
+    const a = String(v).split('-');
+    return a.length === 3 ? `${a[2]}/${a[1]}/${a[0]}` : v;
+  };
+  const addDay = (v) => {
+    const a = String(v || '').split('-').map(Number);
+    return new Date(Date.UTC(a[0], a[1] - 1, a[2] + 1)).toISOString().slice(0, 10);
+  };
+  const daysBetween = (from, to) => {
+    const a = new Date(from + 'T00:00:00Z');
+    const b = new Date(to + 'T00:00:00Z');
+    return Math.max(0, Math.round((b - a) / 86400000));
+  };
+  const shiftRange = (from, to) => {
+    const span = daysBetween(from, to);
+    const end = new Date(from + 'T00:00:00Z');
+    end.setUTCDate(end.getUTCDate() - 1);
+    const start = new Date(end);
+    start.setUTCDate(start.getUTCDate() - span);
+    return { from: start.toISOString().slice(0, 10), to: end.toISOString().slice(0, 10) };
+  };
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  const state = {
+    pricing: [],
+    merchants: [],
+    rows: [],
+    total: 0,
+    pricingTotal: 0,
+    manualTotal: 0,
+    prevTotal: null,
+    kind: 'all',
+    q: '',
+    page: 1,
+    pageSize: 10,
+    mode: 'oneoff',
+    editingPricingId: null
+  };
+
+  const pickerState = {
+    view: new Date(),
+    mode: 'days',
+    yearPageStart: new Date().getFullYear() - 5,
+    selectingStart: true
+  };
+
+  async function api(path, opt = {}) {
+    const headers = {
+      ...BO_AUTH.authHeader(),
+      ...(opt.body ? { 'Content-Type': 'application/json' } : {})
+    };
+    const r = await fetch(API_CONFIG.BASE_URL + path, { ...opt, headers, cache: 'no-store' });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || j.status === 'error') throw Error(j.message || 'Request failed');
+    return j.data ?? j;
+  }
+
+  function setMode(mode, { lock = false } = {}) {
+    state.mode = mode === 'monthly' ? 'monthly' : 'oneoff';
+    document.querySelectorAll('[data-mpr-mode]').forEach((b) => {
+      b.classList.toggle('is-active', b.dataset.mprMode === state.mode);
+      b.disabled = lock && b.dataset.mprMode !== state.mode;
+    });
+    const one = $('mprOneOffFields');
+    const mon = $('mprMonthlyFields');
+    if (one) one.hidden = state.mode !== 'oneoff';
+    if (mon) mon.hidden = state.mode !== 'monthly';
+    ['mpDate', 'mpAmount', 'mpSource'].forEach((id) => {
+      const el = $(id);
+      if (el) el.required = state.mode === 'oneoff';
+    });
+    ['mpMerchant', 'mpFeeName', 'mpEffectiveMonth', 'mpMonthlyAmount'].forEach((id) => {
+      const el = $(id);
+      if (el) el.required = state.mode === 'monthly';
+    });
+  }
+
+  function openModal({ mode = 'oneoff', edit = null } = {}) {
+    state.editingPricingId = edit ? edit.id : null;
+    setMode(mode, { lock: !!edit });
+    $('mprFormStatus').className = 'upload-status mb-3';
+    $('mprFormStatus').textContent = '';
+    if (mode === 'monthly' && edit) {
+      $('mprModalTitle').textContent = 'Adjust Monthly Pricing';
+      $('mprModalSub').textContent = 'Update this pricing version or set a new effective date.';
+      $('mpMerchant').value = String(edit.merchantId || '');
+      $('mpFeeName').value = edit.feeName || '';
+      $('mpEffectiveMonth').value = String(edit.effectiveDate || edit.effectiveMonth || '').slice(0, 10);
+      $('mpMonthlyAmount').value = Number(edit.amount || 0).toFixed(2);
+      $('mpPricingRemark').value = edit.remark || '';
+    } else {
+      $('mprModalTitle').textContent = 'Record Profit';
+      $('mprModalSub').textContent = 'Add one-off income or a recurring monthly pricing rule.';
+      if (mode === 'oneoff') {
+        $('mpDate').value = fmt(new Date());
+        $('mpAmount').value = '';
+        $('mpSource').value = '';
+        $('mpDescription').value = '';
+      } else {
+        $('mpMerchant').value = '';
+        $('mpFeeName').value = '';
+        $('mpEffectiveMonth').value = fmt(new Date());
+        $('mpMonthlyAmount').value = '';
+        $('mpPricingRemark').value = '';
+      }
+    }
+    const modal = $('mprModal');
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+  }
+
+  function closeModal() {
+    const modal = $('mprModal');
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
+    if (!document.querySelector('.modal-clean.show')) document.body.classList.remove('modal-open');
+    state.editingPricingId = null;
+    document.querySelectorAll('[data-mpr-mode]').forEach((b) => { b.disabled = false; });
+  }
+
+  function renderMerchantOptions() {
+    const cur = $('mpMerchant').value;
+    $('mpMerchant').innerHTML = '<option value="">Select Merchant</option>' +
+      state.merchants.map((m) => `<option value="${m.id}">${esc(m.name)} (${esc(m.code)})</option>`).join('');
+    if (cur) $('mpMerchant').value = cur;
+  }
+
+  function isMonthly(row) {
+    return row.kind === 'MONTHLY_PRICING';
+  }
+
+  function filteredRows() {
+    const q = state.q.trim().toLowerCase();
+    return state.rows.filter((x) => {
+      const monthly = isMonthly(x);
+      if (state.kind === 'monthly' && !monthly) return false;
+      if (state.kind === 'oneoff' && monthly) return false;
+      if (!q) return true;
+      const hay = [
+        x.incomeDate, x.source, x.description, x.createdBy,
+        x.merchantName, x.merchantCode
+      ].map((v) => String(v || '').toLowerCase()).join(' ');
+      return hay.includes(q);
+    });
+  }
+
+  function pageButtons(current, total) {
+    total = Math.max(1, Number(total) || 1);
+    current = Math.max(1, Math.min(Number(current) || 1, total));
+    const pages = [];
+    const add = (n) => { if (n >= 1 && n <= total && !pages.includes(n)) pages.push(n); };
+    add(1);
+    for (let n = current - 2; n <= current + 2; n++) add(n);
+    add(total);
+    pages.sort((a, b) => a - b);
+    let html = '';
+    html += `<button type="button" class="smart-page nav-text" data-page="${Math.max(1, current - 1)}" ${current <= 1 ? 'disabled' : ''}>Previous</button>`;
+    let prev = 0;
+    pages.forEach((n) => {
+      if (prev && n - prev > 1) html += '<span class="smart-page-ellipsis">…</span>';
+      html += `<button type="button" class="smart-page ${n === current ? 'active' : ''}" data-page="${n}" ${n === current ? 'aria-current="page"' : ''}>${n}</button>`;
+      prev = n;
+    });
+    html += `<button type="button" class="smart-page nav-text" data-page="${Math.min(total, current + 1)}" ${current >= total ? 'disabled' : ''}>Next</button>`;
+    return html;
+  }
+
+  function updateTrend() {
+    const el = $('mprTrend');
+    if (state.prevTotal == null || !Number.isFinite(state.prevTotal)) {
+      el.className = 'mpr-kpi-trend is-flat';
+      el.innerHTML = '<i class="bi bi-dash" aria-hidden="true"></i> —';
+      return;
+    }
+    const prev = Number(state.prevTotal) || 0;
+    const curr = Number(state.total) || 0;
+    if (prev === 0) {
+      el.className = 'mpr-kpi-trend' + (curr > 0 ? '' : ' is-flat');
+      el.innerHTML = curr > 0
+        ? '<i class="bi bi-arrow-up-right" aria-hidden="true"></i> New'
+        : '<i class="bi bi-dash" aria-hidden="true"></i> —';
+      return;
+    }
+    const pct = ((curr - prev) / Math.abs(prev)) * 100;
+    const up = pct >= 0;
+    el.className = 'mpr-kpi-trend' + (up ? '' : ' is-down');
+    el.innerHTML = `<i class="bi bi-arrow-${up ? 'up' : 'down'}-right" aria-hidden="true"></i> ${up ? '+' : ''}${pct.toFixed(1)}% vs prev`;
+  }
+
+  function updateKpis() {
+    const rows = state.rows;
+    const monthlyRows = rows.filter(isMonthly);
+    const oneOffRows = rows.filter((x) => !isMonthly(x));
+    const merchants = new Set(
+      monthlyRows.map((x) => String(x.merchantId || x.merchantCode || x.merchantName || '')).filter(Boolean)
+    );
+    const pricingMerchants = new Set(state.pricing.map((x) => String(x.merchantId || '')).filter(Boolean));
+
+    $('mprTotal').textContent = money(state.total);
+    $('mprPricingTotal').textContent = money(state.pricingTotal);
+    $('mprManualTotal').textContent = money(state.manualTotal);
+    $('mprTxnCount').textContent = `${rows.length} Transaction${rows.length === 1 ? '' : 's'}`;
+    $('mprOneOffCount').textContent = `${oneOffRows.length} Entr${oneOffRows.length === 1 ? 'y' : 'ies'}`;
+    const mCount = pricingMerchants.size || merchants.size;
+    $('mprMerchantCount').textContent = `${mCount} Merchant${mCount === 1 ? '' : 's'}`;
+    $('mprRangeLabel').textContent = `${fmtSlash($('mprFrom').value)} - ${fmtSlash($('mprTo').value)} reconciled`;
+    $('mprSegAll').textContent = String(rows.length);
+    $('mprSegMonthly').textContent = String(monthlyRows.length);
+    $('mprSegOneOff').textContent = String(oneOffRows.length);
+    updateTrend();
+  }
+
+  function render() {
+    const all = filteredRows();
+    const pages = Math.max(1, Math.ceil(all.length / state.pageSize));
+    state.page = Math.min(Math.max(1, state.page), pages);
+    const start = (state.page - 1) * state.pageSize;
+    const slice = all.slice(start, start + state.pageSize);
+    const end = start + slice.length;
+
+    if (!slice.length) {
+      $('mprRows').innerHTML = `<tr><td colspan="9" class="mad-empty">${state.rows.length ? 'No records match the current filters.' : 'No Merchant profit records for selected period.'}</td></tr>`;
+    } else {
+      $('mprRows').innerHTML = slice.map((x) => {
+        const monthly = isMonthly(x);
+        const merchant = monthly
+          ? `<div class="mpr-merchant">${esc(x.merchantName || 'Merchant')}<small>${esc(x.merchantCode || '—')}</small></div>`
+          : '—';
+        const actions = monthly
+          ? `<button class="mad-icon-btn" type="button" data-edit-schedule="${esc(x.scheduleId)}" data-tip="Edit" aria-label="Edit"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+             <button class="mad-icon-btn is-danger" type="button" data-delete-price="${esc(x.scheduleId)}" data-tip="Delete" aria-label="Delete"><i class="bi bi-trash" aria-hidden="true"></i></button>`
+          : `<span class="mad-icon-btn is-placeholder" aria-hidden="true"></span>
+             <button class="mad-icon-btn is-danger" type="button" data-delete-id="${esc(x.id)}" data-tip="Delete" aria-label="Delete"><i class="bi bi-trash" aria-hidden="true"></i></button>`;
+        const createdRaw = String(x.createdAt || '').replace('T', ' ').slice(0, 19);
+        const createdDate = createdRaw.slice(0, 10) || '—';
+        const createdTime = createdRaw.length >= 19 ? createdRaw.slice(11, 19) : '';
+        const createdCell = createdTime
+          ? `<span class="mpr-created-at" tabindex="0" data-tip="${esc(createdTime)}">${esc(createdDate)}</span>`
+          : esc(createdDate);
+        return `<tr>
+          <td>${esc(x.incomeDate)}</td>
+          <td>${merchant}</td>
+          <td><span class="mpr-kind ${monthly ? 'is-monthly' : 'is-oneoff'}">${monthly ? 'Monthly Pricing' : 'One-off'}</span></td>
+          <td>${esc(x.source || '—')}</td>
+          <td class="num mpr-amount">MYR ${money(x.amount)}</td>
+          <td>${esc(x.description || '—')}</td>
+          <td>${esc(x.createdBy || '—')}</td>
+          <td>${createdCell}</td>
+          <td class="mpr-actions-cell"><div class="mad-actions mpr-actions">${actions}</div></td>
+        </tr>`;
+      }).join('');
+    }
+
+    $('mprShowing').textContent = all.length
+      ? `Showing ${start + 1} to ${end} of ${all.length} records`
+      : 'Showing 0 to 0 of 0 records';
+    $('mprPager').innerHTML = pageButtons(state.page, pages);
+  }
+
+  async function loadPricing() {
+    try {
+      const d = await api('/admin/main/merchant-profit/pricing');
+      state.pricing = d.rows || [];
+      state.merchants = d.merchants || [];
+      renderMerchantOptions();
+    } catch (e) {
+      state.pricing = [];
+      state.merchants = [];
+    }
+  }
+
+  async function load() {
+    const from = $('mprFrom').value;
+    const to = $('mprTo').value;
+    if (!from || !to) return;
+    try {
+      const data = await api(`/admin/main/merchant-profit?from=${encodeURIComponent(from)}&to=${encodeURIComponent(addDay(to))}`);
+      state.rows = data.rows || [];
+      state.total = Number(data.total || 0);
+      state.pricingTotal = Number(data.pricingTotal || 0);
+      state.manualTotal = Number(data.manualTotal || 0);
+      state.page = 1;
+      updateKpis();
+      render();
+    } catch (e) {
+      state.rows = [];
+      state.total = state.pricingTotal = state.manualTotal = 0;
+      updateKpis();
+      $('mprRows').innerHTML = `<tr><td colspan="9" class="mad-empty text-danger">${esc(e.message)}</td></tr>`;
+      $('mprShowing').textContent = 'Showing 0 to 0 of 0 records';
+      $('mprPager').innerHTML = '';
+    }
+
+    try {
+      const prev = shiftRange(from, to);
+      const prevData = await api(`/admin/main/merchant-profit?from=${encodeURIComponent(prev.from)}&to=${encodeURIComponent(addDay(prev.to))}`);
+      state.prevTotal = Number(prevData.total || 0);
+      updateTrend();
+    } catch (_) {
+      state.prevTotal = null;
+      updateTrend();
+    }
+  }
+
+  function editPricing(id) {
+    const x = state.pricing.find((r) => String(r.id) === String(id));
+    if (!x) {
+      window.BO_DIALOG?.alert
+        ? BO_DIALOG.alert('Pricing rule not found. It may have been removed.', { title: 'Unable to Edit', type: 'error' })
+        : alert('Pricing rule not found.');
+      return;
+    }
+    openModal({ mode: 'monthly', edit: x });
+  }
+
+  function exportCsv() {
+    const rows = filteredRows();
+    const csv = [
+      ['Date', 'Merchant', 'Code', 'Type', 'Income Source', 'Amount', 'Description', 'Created By', 'Created At'],
+      ...rows.map((x) => [
+        x.incomeDate,
+        x.merchantName || '',
+        x.merchantCode || '',
+        isMonthly(x) ? 'Monthly Pricing' : 'One-off',
+        x.source || '',
+        Number(x.amount || 0).toFixed(2),
+        x.description || '',
+        x.createdBy || '',
+        String(x.createdAt || '').replace('T', ' ').slice(0, 19)
+      ])
+    ].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `merchant-profit-${$('mprFrom').value}_${$('mprTo').value}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function startOfWeek(d) {
+    const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    x.setDate(x.getDate() - x.getDay());
+    return x;
+  }
+  function endOfWeek(d) {
+    const x = startOfWeek(d);
+    x.setDate(x.getDate() + 6);
+    return x;
+  }
+  function presetRange(key) {
+    const now = new Date();
+    const day = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    let a = new Date(day);
+    let b = new Date(day);
+    if (key === 'yesterday') { a.setDate(a.getDate() - 1); b = new Date(a); }
+    if (key === 'thisWeek') { a = startOfWeek(day); b = endOfWeek(day); }
+    if (key === 'lastWeek') { a = startOfWeek(day); a.setDate(a.getDate() - 7); b = new Date(a); b.setDate(b.getDate() + 6); }
+    if (key === 'thisMonth') { a = new Date(day.getFullYear(), day.getMonth(), 1); b = new Date(day.getFullYear(), day.getMonth() + 1, 0); }
+    if (key === 'lastMonth') { a = new Date(day.getFullYear(), day.getMonth() - 1, 1); b = new Date(day.getFullYear(), day.getMonth(), 0); }
+    if (key === 'thisYear') { a = new Date(day.getFullYear(), 0, 1); b = new Date(day.getFullYear(), 11, 31); }
+    if (key === 'lastYear') { a = new Date(day.getFullYear() - 1, 0, 1); b = new Date(day.getFullYear() - 1, 11, 31); }
+    return [fmt(a), fmt(b)];
+  }
+  function markPreset(name) {
+    document.querySelectorAll('[data-mpr-range-preset]').forEach((b) => b.classList.remove('active'));
+    if (name) {
+      const el = document.querySelector(`[data-mpr-range-preset="${name}"]`);
+      if (el) el.classList.add('active');
+    }
+  }
+  function updateDateLabel() {
+    const label = $('mprDateLabel');
+    const fromEl = $('mprFrom');
+    const toEl = $('mprTo');
+    if (!label || !fromEl || !toEl) return;
+    const f = fromEl.value || '';
+    const t = toEl.value || '';
+    label.textContent = f && t
+      ? `${niceDate(f)} – ${niceDate(t)}`
+      : f ? `${niceDate(f)} – Select end date`
+      : 'Select date range';
+  }
+  function renderCalendar() {
+    const monthBtn = $('mprCalMonth');
+    const yearBtn = $('mprCalYear');
+    const monthGrid = $('mprCalMonthGrid');
+    const yearGrid = $('mprCalYearGrid');
+    const dayView = $('mprCalDayView');
+    const days = $('mprCalDays');
+    const fromEl = $('mprFrom');
+    const toEl = $('mprTo');
+    if (!monthBtn || !yearBtn || !monthGrid || !yearGrid || !dayView || !days) return;
+
+    monthBtn.innerHTML = `${MONTHS[pickerState.view.getMonth()]} <i class="bi bi-chevron-down"></i>`;
+    yearBtn.innerHTML = `${pickerState.view.getFullYear()} <i class="bi bi-chevron-down"></i>`;
+    monthGrid.innerHTML = MONTHS.map((m, i) =>
+      `<button type="button" data-mpr-month="${i}" class="${i === pickerState.view.getMonth() ? 'active' : ''}">${m}</button>`
+    ).join('');
+    yearGrid.innerHTML = Array.from({ length: 12 }, (_, i) => pickerState.yearPageStart + i).map((y) =>
+      `<button type="button" data-mpr-year="${y}" class="${y === pickerState.view.getFullYear() ? 'active' : ''}">${y}</button>`
+    ).join('');
+    monthGrid.classList.toggle('show', pickerState.mode === 'months');
+    yearGrid.classList.toggle('show', pickerState.mode === 'years');
+    dayView.classList.toggle('hide', pickerState.mode !== 'days');
+
+    const start = fromEl.value || '';
+    const end = toEl.value || '';
+    const first = new Date(pickerState.view.getFullYear(), pickerState.view.getMonth(), 1);
+    const offset = first.getDay();
+    let html = '';
+    for (let i = 0; i < 42; i++) {
+      const d = new Date(pickerState.view.getFullYear(), pickerState.view.getMonth(), i - offset + 1);
+      const v = fmt(d);
+      const muted = d.getMonth() !== pickerState.view.getMonth() ? ' muted' : '';
+      const selected = (v === start || v === end) ? ' selected' : '';
+      const inRange = start && end && v > start && v < end ? ' in-range' : '';
+      html += `<button type="button" data-mpr-day="${v}" class="${muted}${selected}${inRange}">${d.getDate()}</button>`;
+    }
+    days.innerHTML = html;
+  }
+  function setRange(from, to, preset, reload) {
+    $('mprFrom').value = from || '';
+    $('mprTo').value = to || '';
+    markPreset(preset || '');
+    updateDateLabel();
+    renderCalendar();
+    if (reload !== false) load();
+  }
+  function initDatePicker() {
+    const trigger = $('mprDateTrigger');
+    const picker = $('mprRangePicker');
+    const fromEl = $('mprFrom');
+    const toEl = $('mprTo');
+    if (!trigger || !picker || !fromEl || !toEl) return;
+
+    const [a, b] = presetRange('thisMonth');
+    pickerState.view = new Date(a + 'T00:00:00');
+    setRange(a, b, 'thisMonth', false);
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      picker.classList.toggle('show');
+      pickerState.mode = 'days';
+      renderCalendar();
+    });
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.mpr-date-field')) picker.classList.remove('show');
+    });
+    document.querySelectorAll('[data-mpr-range-preset]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const key = btn.getAttribute('data-mpr-range-preset');
+        const [x, y] = presetRange(key);
+        pickerState.view = new Date(x + 'T00:00:00');
+        pickerState.selectingStart = true;
+        setRange(x, y, key, true);
+        picker.classList.remove('show');
+      });
+    });
+    $('mprCalPrev') && ($('mprCalPrev').onclick = (e) => {
+      e.stopPropagation();
+      if (pickerState.mode === 'years') pickerState.yearPageStart -= 12;
+      else pickerState.view.setMonth(pickerState.view.getMonth() - 1);
+      renderCalendar();
+    });
+    $('mprCalNext') && ($('mprCalNext').onclick = (e) => {
+      e.stopPropagation();
+      if (pickerState.mode === 'years') pickerState.yearPageStart += 12;
+      else pickerState.view.setMonth(pickerState.view.getMonth() + 1);
+      renderCalendar();
+    });
+    $('mprCalMonth') && ($('mprCalMonth').onclick = (e) => {
+      e.stopPropagation();
+      pickerState.mode = pickerState.mode === 'months' ? 'days' : 'months';
+      renderCalendar();
+    });
+    $('mprCalYear') && ($('mprCalYear').onclick = (e) => {
+      e.stopPropagation();
+      pickerState.yearPageStart = pickerState.view.getFullYear() - 5;
+      pickerState.mode = pickerState.mode === 'years' ? 'days' : 'years';
+      renderCalendar();
+    });
+    $('mprCalMonthGrid') && ($('mprCalMonthGrid').onclick = (e) => {
+      e.stopPropagation();
+      const b = e.target.closest('[data-mpr-month]');
+      if (!b) return;
+      pickerState.view.setMonth(Number(b.getAttribute('data-mpr-month')));
+      pickerState.mode = 'days';
+      renderCalendar();
+    });
+    $('mprCalYearGrid') && ($('mprCalYearGrid').onclick = (e) => {
+      e.stopPropagation();
+      const b = e.target.closest('[data-mpr-year]');
+      if (!b) return;
+      pickerState.view.setFullYear(Number(b.getAttribute('data-mpr-year')));
+      pickerState.mode = 'months';
+      renderCalendar();
+    });
+    $('mprCalDays') && ($('mprCalDays').onclick = (e) => {
+      e.stopPropagation();
+      const b = e.target.closest('[data-mpr-day]');
+      if (!b) return;
+      const val = b.getAttribute('data-mpr-day');
+      if (!fromEl.value || (fromEl.value && toEl.value) || val < fromEl.value) {
+        fromEl.value = val;
+        toEl.value = '';
+        pickerState.selectingStart = false;
+        markPreset('');
+        updateDateLabel();
+        renderCalendar();
+        return;
+      }
+      toEl.value = val;
+      pickerState.selectingStart = true;
+      markPreset('');
+      updateDateLabel();
+      renderCalendar();
+      picker.classList.remove('show');
+      load();
+    });
+  }
+
+  // Events
+  $('mprRecordBtn')?.addEventListener('click', () => openModal({ mode: 'oneoff' }));
+  document.querySelectorAll('[data-mpr-close]').forEach((b) => b.addEventListener('click', closeModal));
+  $('mprModal')?.addEventListener('click', (e) => {
+    if (e.target === $('mprModal')) closeModal();
+  });
+  document.querySelectorAll('[data-mpr-mode]').forEach((b) => {
+    b.addEventListener('click', () => {
+      if (b.disabled) return;
+      setMode(b.dataset.mprMode);
+    });
+  });
+  document.querySelectorAll('[data-mpr-kind]').forEach((b) => {
+    b.addEventListener('click', () => {
+      state.kind = b.dataset.mprKind;
+      state.page = 1;
+      document.querySelectorAll('[data-mpr-kind]').forEach((x) => {
+        const on = x === b;
+        x.classList.toggle('is-active', on);
+        x.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      render();
+    });
+  });
+  $('mprSearch')?.addEventListener('input', () => {
+    state.q = $('mprSearch').value || '';
+    state.page = 1;
+    render();
+  });
+  $('mprExportBtn')?.addEventListener('click', exportCsv);
+  $('mprPager')?.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-page]');
+    if (!b || b.disabled) return;
+    state.page = +b.dataset.page;
+    render();
+  });
+
+  $('mprForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = $('mprFormStatus');
+    msg.className = 'upload-status mb-3 text-muted';
+    msg.textContent = 'Saving...';
+    try {
+      if (state.mode === 'oneoff') {
+        const amount = Number($('mpAmount').value);
+        if (!Number.isFinite(amount) || amount <= 0) {
+          msg.className = 'upload-status mb-3 text-danger';
+          msg.textContent = 'Amount must be greater than 0.';
+          return;
+        }
+        await api('/admin/main/merchant-profit', {
+          method: 'POST',
+          body: JSON.stringify({
+            incomeDate: $('mpDate').value,
+            source: $('mpSource').value,
+            amount: amount.toFixed(2),
+            description: $('mpDescription').value
+          })
+        });
+      } else {
+        await api('/admin/main/merchant-profit/pricing', {
+          method: 'POST',
+          body: JSON.stringify({
+            pricingId: state.editingPricingId,
+            merchantId: $('mpMerchant').value,
+            feeName: $('mpFeeName').value,
+            effectiveDate: $('mpEffectiveMonth').value,
+            effectiveMonth: $('mpEffectiveMonth').value,
+            amount: $('mpMonthlyAmount').value,
+            remark: $('mpPricingRemark').value
+          })
+        });
+      }
+      closeModal();
+      await loadPricing();
+      await load();
+    } catch (x) {
+      msg.className = 'upload-status mb-3 text-danger';
+      msg.textContent = x.message;
+    }
+  });
+
+  document.addEventListener('click', async (e) => {
+    let b = e.target.closest('[data-edit-schedule]');
+    if (b) {
+      editPricing(b.dataset.editSchedule);
+      return;
+    }
+    b = e.target.closest('[data-delete-price]');
+    if (b) {
+      const ok = window.BO_DIALOG?.confirm
+        ? await BO_DIALOG.confirm('Delete this pricing version? If a later version is removed, the previous Merchant price may become effective again.', {
+          title: 'Delete Pricing Version',
+          confirmText: 'Delete',
+          type: 'danger'
+        })
+        : false;
+      if (!ok) return;
+      try {
+        await api('/admin/main/merchant-profit/pricing/' + b.dataset.deletePrice, { method: 'DELETE' });
+        await loadPricing();
+        await load();
+      } catch (x) {
+        window.BO_DIALOG?.alert
+          ? BO_DIALOG.alert(x.message, { title: 'Unable to Delete', type: 'error' })
+          : alert(x.message);
+      }
+      return;
+    }
+    b = e.target.closest('[data-delete-id]');
+    if (!b) return;
+    const ok = window.BO_DIALOG?.confirm
+      ? await BO_DIALOG.confirm('Delete this one-off Merchant income record? This will immediately update dashboard Net Profit.', {
+        title: 'Delete Merchant Income',
+        confirmText: 'Delete',
+        type: 'danger'
+      })
+      : false;
+    if (!ok) return;
+    try {
+      await api('/admin/main/merchant-profit/' + b.dataset.deleteId, { method: 'DELETE' });
+      await load();
+    } catch (x) {
+      window.BO_DIALOG?.alert
+        ? BO_DIALOG.alert(x.message, { title: 'Unable to Delete', type: 'error' })
+        : alert(x.message);
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && $('mprModal')?.classList.contains('show')) closeModal();
+  });
+
+  BO_AUTH.requireLogin();
+  initDatePicker();
+  setMode('oneoff');
+  $('mpDate').value = fmt(new Date());
+  $('mpEffectiveMonth').value = fmt(new Date());
+  Promise.all([loadPricing(), load()]);
+})();

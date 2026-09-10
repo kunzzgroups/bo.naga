@@ -22,7 +22,7 @@
     if (isMainPortalOwner(user)) return; // MAIN/ROOT keep the full Merchant portal.
 
     // Delegated admins created by MAIN (Customer Support/Leader/custom roles)
-    // can manage Merchants and use Merchant Credit Control when permitted, but
+    // can manage Merchants (incl. list Add Credit) when permitted, but
     // Merchant role administration and merchant-wide security/audit stay MAIN/ROOT only.
     document.querySelectorAll('a[href="main-merchant-roles.html"], a[href^="main-merchant-roles.html?"], a[href="main-merchant-security.html"], a[href^="main-merchant-security.html?"], a[href="main-merchant-role-create.html"], a[href^="main-merchant-role-create.html?"]').forEach(function(el){
       el.remove();
