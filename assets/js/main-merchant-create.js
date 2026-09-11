@@ -10,6 +10,8 @@
  const selectedCodes=new Set();
  const overrideByCode=new Map();
  const enabledCurrencies=new Set(['MYR']);
+ const currencyModalDraft=new Set(['MYR']);
+ const currencyModalSelected=new Set();
  let providerSearch='';
 
  function setStatus(msg, kind){
@@ -19,7 +21,7 @@
  }
 
  function primaryCurrency(){
-  return String($('merchantCurrency')?.value||'MYR').trim().toUpperCase()||'MYR';
+  return String($('merchantCurrency')?.value||'').trim().toUpperCase();
  }
  function normalizeCurrencyCode(raw){
   return String(raw||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
@@ -52,17 +54,12 @@
   return key;
  }
  function syncEnabledWithPrimary(){
-  enabledCurrencies.add(primaryCurrency());
+  const primary=primaryCurrency();
+  if(primary) enabledCurrencies.add(primary);
  }
  function enabledCurrencyPayload(){
   syncEnabledWithPrimary();
   return [...enabledCurrencies].filter(Boolean);
- }
- function availableCurrenciesToAdd(){
-  return activeCurrencyRows().filter(x=>{
-   const code=String(x.currencyCode||'').toUpperCase();
-   return code && !enabledCurrencies.has(code);
-  });
  }
  function setCurrencyModalStatus(msg, kind){
   const el=$('merchantCurrencyModalStatus');
@@ -70,29 +67,123 @@
   el.textContent=msg||'';
   el.className='upload-status mb-0'+(kind?(' '+kind):'');
  }
- function renderCurrencyModalList(){
-  const list=$('merchantCurrencyModalList');
-  if(!list) return;
-  const rows=availableCurrenciesToAdd();
-  if(!rows.length){
-   list.innerHTML='<div class="mac-currency-modal-empty">No catalog currencies left to pick. Enter a code above to add one.</div>';
+ function currencyModalItemHtml(code, side){
+  const selected=currencyModalSelected.has(code+'|'+side);
+  return `<button type="button" class="mac-currency-pane-item${selected?' is-selected':''}" role="listitem" data-mac-currency-side="${side}" data-mac-currency-code="${esc(code)}" aria-pressed="${selected?'true':'false'}">
+    <span class="mac-currency-pane-item-code">${esc(code)}</span>
+  </button>`;
+ }
+ function renderCurrencyDualLists(){
+  const addedList=$('merchantCurrencyAddedList');
+  const availableList=$('merchantCurrencyAvailableList');
+  const addedCount=$('merchantCurrencyAddedCount');
+  const availableCount=$('merchantCurrencyAvailableCount');
+  if(!addedList || !availableList) return;
+  const catalog=activeCurrencyRows().map(x=>String(x.currencyCode||'').toUpperCase()).filter(Boolean);
+  const added=[...currencyModalDraft].filter(Boolean).sort((a,b)=>a.localeCompare(b));
+  // Available = catalog not in Added, plus any previously-added custom codes removed from Added.
+  const availablePool=new Set(catalog);
+  activeCurrencyRows().forEach(x=>{
+   const code=String(x.currencyCode||'').toUpperCase();
+   if(code) availablePool.add(code);
+  });
+  const available=[...availablePool].filter(code=>!currencyModalDraft.has(code)).sort((a,b)=>a.localeCompare(b));
+  addedList.innerHTML=added.length
+    ? added.map(code=>currencyModalItemHtml(code,'added')).join('')
+    : '<div class="mac-currency-modal-empty">No currencies added yet.</div>';
+  availableList.innerHTML=available.length
+    ? available.map(code=>currencyModalItemHtml(code,'available')).join('')
+    : '<div class="mac-currency-modal-empty">No more currencies available.</div>';
+  if(addedCount) addedCount.textContent=String(added.length);
+  if(availableCount) availableCount.textContent=String(available.length);
+  const canAdd=[...currencyModalSelected].some(key=>key.endsWith('|available'));
+  const canRemove=[...currencyModalSelected].some(key=>key.endsWith('|added'));
+  const moveLeft=$('merchantCurrencyMoveLeft');
+  const moveRight=$('merchantCurrencyMoveRight');
+  if(moveLeft) moveLeft.disabled=!canAdd;
+  if(moveRight) moveRight.disabled=!canRemove;
+ }
+ function toggleCurrencyModalSelection(code, side){
+  const key=code+'|'+side;
+  if(currencyModalSelected.has(key)) currencyModalSelected.delete(key);
+  else{
+   // Keep selection within one side for clearer transfer actions.
+   [...currencyModalSelected].forEach(k=>{ if(!k.endsWith('|'+side)) currencyModalSelected.delete(k); });
+   currencyModalSelected.add(key);
+  }
+  renderCurrencyDualLists();
+ }
+ function moveSelectedToAdded(){
+  const codes=[...currencyModalSelected]
+    .filter(key=>key.endsWith('|available'))
+    .map(key=>key.split('|')[0])
+    .filter(Boolean);
+  if(!codes.length){
+   setCurrencyModalStatus('Select a currency on the right to add.', 'error');
    return;
   }
-  list.innerHTML=rows.map(x=>{
-   const code=String(x.currencyCode||'').toUpperCase();
-   return `<label class="mac-currency-modal-item">
-     <input type="checkbox" value="${esc(code)}" data-mac-currency-pick="${esc(code)}"/>
-     <span class="mac-currency-modal-item-copy"><b>${esc(code)}</b></span>
-   </label>`;
-  }).join('');
+  codes.forEach(code=>{
+   ensureCurrencyOption(code, currencyRowByCode(code)?.displayName || code);
+   currencyModalDraft.add(code);
+  });
+  currencyModalSelected.clear();
+  setCurrencyModalStatus('');
+  renderCurrencyDualLists();
+ }
+ function moveSelectedToAvailable(){
+  const codes=[...currencyModalSelected]
+    .filter(key=>key.endsWith('|added'))
+    .map(key=>key.split('|')[0])
+    .filter(Boolean);
+  if(!codes.length){
+   setCurrencyModalStatus('Select a currency on the left to move to Available.', 'error');
+   return;
+  }
+  codes.forEach(code=>{
+   ensureCurrencyOption(code, currencyRowByCode(code)?.displayName || code);
+   currencyModalDraft.delete(code);
+  });
+  currencyModalSelected.clear();
+  setCurrencyModalStatus('');
+  renderCurrencyDualLists();
+ }
+ function addTypedCurrencyToDraft(){
+  const input=$('merchantCurrencyModalCode');
+  const typedCode=normalizeCurrencyCode(input?.value);
+  if(!typedCode){
+   setCurrencyModalStatus('Enter a currency to add.', 'error');
+   input?.focus();
+   return;
+  }
+  if(typedCode.length<3){
+   setCurrencyModalStatus('Currency must be at least 3 characters (e.g. THB).', 'error');
+   input?.focus();
+   return;
+  }
+  if(currencyModalDraft.has(typedCode)){
+   setCurrencyModalStatus(typedCode+' is already in Added.', 'error');
+   input?.focus();
+   return;
+  }
+  ensureCurrencyOption(typedCode, currencyRowByCode(typedCode)?.displayName || typedCode);
+  currencyModalDraft.add(typedCode);
+  currencyModalSelected.clear();
+  if(input) input.value='';
+  setCurrencyModalStatus(typedCode+' added.', 'success');
+  renderCurrencyDualLists();
+  input?.focus();
  }
  function openCurrencyModal(){
   const modal=$('merchantCurrencyModal');
   if(!modal) return;
+  syncEnabledWithPrimary();
+  currencyModalDraft.clear();
+  enabledCurrencies.forEach(code=>currencyModalDraft.add(code));
+  currencyModalSelected.clear();
   const codeInput=$('merchantCurrencyModalCode');
   if(codeInput) codeInput.value='';
   setCurrencyModalStatus('');
-  renderCurrencyModalList();
+  renderCurrencyDualLists();
   modal.hidden=false;
   modal.classList.add('show');
   modal.setAttribute('aria-hidden','false');
@@ -106,30 +197,12 @@
   modal.setAttribute('aria-hidden','true');
   modal.hidden=true;
   document.body.classList.remove('modal-open');
+  currencyModalSelected.clear();
   setCurrencyModalStatus('');
  }
  function confirmCurrencyModal(){
-  const typedCode=normalizeCurrencyCode($('merchantCurrencyModalCode')?.value);
-  const picks=[...document.querySelectorAll('#merchantCurrencyModalList [data-mac-currency-pick]:checked')]
-    .map(el=>normalizeCurrencyCode(el.value||el.getAttribute('data-mac-currency-pick')||''))
-    .filter(Boolean);
-  if(!typedCode && !picks.length){
-   setCurrencyModalStatus('Enter a currency or select at least one from the catalog.', 'error');
-   return;
-  }
-  if(typedCode){
-   if(typedCode.length<3){
-    setCurrencyModalStatus('Currency must be at least 3 characters (e.g. THB).', 'error');
-    return;
-   }
-   if(enabledCurrencies.has(typedCode)){
-    setCurrencyModalStatus(typedCode+' is already in the dropdown.', 'error');
-    return;
-   }
-   ensureCurrencyOption(typedCode, currencyRowByCode(typedCode)?.displayName || typedCode);
-   enabledCurrencies.add(typedCode);
-  }
-  picks.forEach(code=>{
+  enabledCurrencies.clear();
+  currencyModalDraft.forEach(code=>{
    ensureCurrencyOption(code, currencyRowByCode(code)?.displayName || code);
    enabledCurrencies.add(code);
   });
@@ -140,21 +213,21 @@
  function renderCurrencyOptions(){
   const sel=$('merchantCurrency');
   if(!sel)return;
-  const rows=activeCurrencyRows();
-  const byCode=new Map(rows.map(x=>[String(x.currencyCode||'').toUpperCase(),x]));
-  // Keep manually added codes even if catalog reload lags; only drop empty keys.
+  const byCode=new Map(activeCurrencyRows().map(x=>[String(x.currencyCode||'').toUpperCase(),x]));
   [...enabledCurrencies].forEach(code=>{ if(!code) enabledCurrencies.delete(code); });
-  if(!enabledCurrencies.size){
-   const fallback=String(rows[0]?.currencyCode||'MYR').toUpperCase();
-   enabledCurrencies.add(fallback);
-   ensureCurrencyOption(fallback, byCode.get(fallback)?.displayName || fallback);
-  }
   [...enabledCurrencies].forEach(code=>{
    if(!byCode.has(code)) ensureCurrencyOption(code, code);
   });
   const current=primaryCurrency();
-  const preferred=enabledCurrencies.has(current)?current:[...enabledCurrencies][0];
-  const ordered=[...enabledCurrencies].sort((a,b)=>a.localeCompare(b));
+  const ordered=[...enabledCurrencies].filter(Boolean).sort((a,b)=>a.localeCompare(b));
+  if(!ordered.length){
+   sel.innerHTML='<option value="">Select currency</option>';
+   sel.value='';
+   syncCurrencyUnits();
+   if(window.BOSelectSync?.one) window.BOSelectSync.one(sel);
+   return;
+  }
+  const preferred=ordered.includes(current)?current:ordered[0];
   sel.innerHTML=ordered.map(code=>`<option value="${esc(code)}"${code===preferred?' selected':''}>${esc(code)}</option>`).join('');
   if(preferred) sel.value=preferred;
   syncCurrencyUnits();
@@ -179,7 +252,7 @@
   catch(e){currencyOptions=[{currencyCode:'MYR',displayName:'Malaysian Ringgit',rateFromBase:1,status:1}];enabledCurrencies.clear();enabledCurrencies.add('MYR');renderCurrencyOptions();}
  }
  function syncCurrencyUnits(){
-  const cur=primaryCurrency();
+  const cur=primaryCurrency()||'—';
   const unit=$('merchantThresholdUnit'), label=$('merchantThresholdLabel');
   if(unit) unit.textContent=cur;
   if(label) label.textContent='('+cur+')';
@@ -386,6 +459,9 @@
   openCurrencyModal();
  });
 
+ $('merchantCurrencyModalConfirm')?.addEventListener('click', ()=>confirmCurrencyModal());
+ $('merchantCurrencyModalAddBtn')?.addEventListener('click', ()=>addTypedCurrencyToDraft());
+
  $('merchantCurrencyModalCode')?.addEventListener('input', e=>{
   setCurrencyModalStatus('');
   const code=normalizeCurrencyCode(e.target.value);
@@ -395,11 +471,29 @@
  $('merchantCurrencyModalCode')?.addEventListener('keydown', e=>{
   if(e.key==='Enter'){
    e.preventDefault();
-   confirmCurrencyModal();
+   addTypedCurrencyToDraft();
   }
  });
 
- $('merchantCurrencyModalConfirm')?.addEventListener('click', ()=>confirmCurrencyModal());
+ $('merchantCurrencyMoveLeft')?.addEventListener('click', ()=>moveSelectedToAdded());
+ $('merchantCurrencyMoveRight')?.addEventListener('click', ()=>moveSelectedToAvailable());
+
+ $('merchantCurrencyDual')?.addEventListener('click', e=>{
+  const item=e.target.closest&&e.target.closest('[data-mac-currency-code]');
+  if(!item) return;
+  const code=normalizeCurrencyCode(item.getAttribute('data-mac-currency-code'));
+  const side=String(item.getAttribute('data-mac-currency-side')||'');
+  if(!code || (side!=='added' && side!=='available')) return;
+  // Double-click / second click with modifier moves immediately; single click selects.
+  if(e.detail>=2){
+   currencyModalSelected.clear();
+   currencyModalSelected.add(code+'|'+side);
+   if(side==='available') moveSelectedToAdded();
+   else moveSelectedToAvailable();
+   return;
+  }
+  toggleCurrencyModalSelection(code, side);
+ });
 
  document.querySelectorAll('[data-mac-currency-close]').forEach(btn=>{
   btn.addEventListener('click', ()=>closeCurrencyModal());

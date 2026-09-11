@@ -11,7 +11,7 @@
 <link href="assets/css/reports.css?v=1.0.47" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.130" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.133" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -238,22 +238,49 @@
         <span class="mad-modal-icon" aria-hidden="true"><i class="bi bi-currency-exchange"></i></span>
         <div>
           <h2 id="merchantCurrencyModalTitle">Add Currency</h2>
-          <small>Enter a currency code, or pick from the catalog, to add it to the dropdown.</small>
+          <small>Type a currency to add, or move between Added and Available.</small>
         </div>
       </div>
       <button class="modal-clean-close" type="button" data-mac-currency-close aria-label="Close"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
     </div>
     <div class="modal-clean-body mac-currency-modal-body">
-      <label class="mac-field mac-currency-modal-code-field" for="merchantCurrencyModalCode">
-        <span class="mac-label">Currency <b>*</b></span>
-        <input class="form-control" id="merchantCurrencyModalCode" type="text" maxlength="8" placeholder="e.g. THB" autocomplete="off" spellcheck="false"/>
-      </label>
-      <div class="mac-currency-modal-divider"><span>Or select from catalog</span></div>
-      <div class="mac-currency-modal-list" id="merchantCurrencyModalList" role="group" aria-label="Available currencies"></div>
+      <div class="mac-currency-add-row">
+        <label class="mac-field mac-currency-modal-code-field" for="merchantCurrencyModalCode">
+          <span class="mac-label">Currency <b>*</b></span>
+          <input class="form-control" id="merchantCurrencyModalCode" type="text" maxlength="8" placeholder="e.g. THB" autocomplete="off" spellcheck="false"/>
+        </label>
+        <button type="button" class="mad-btn mad-btn-navy mac-currency-add-inline" id="merchantCurrencyModalAddBtn" title="Add currency">
+          <i class="bi bi-plus-lg" aria-hidden="true"></i> Add
+        </button>
+      </div>
+      <div class="mac-currency-dual" id="merchantCurrencyDual">
+        <section class="mac-currency-pane" aria-label="Added currencies">
+          <header class="mac-currency-pane-head">
+            <strong>Added</strong>
+            <span class="mac-currency-pane-count" id="merchantCurrencyAddedCount">0</span>
+          </header>
+          <div class="mac-currency-pane-list" id="merchantCurrencyAddedList" role="list"></div>
+        </section>
+        <div class="mac-currency-dual-actions" aria-hidden="true">
+          <button type="button" class="mac-currency-move-btn" id="merchantCurrencyMoveLeft" title="Add selected" aria-label="Add selected to Added">
+            <i class="bi bi-chevron-left" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="mac-currency-move-btn" id="merchantCurrencyMoveRight" title="Remove selected" aria-label="Remove selected from Added">
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+          </button>
+        </div>
+        <section class="mac-currency-pane" aria-label="Available currencies">
+          <header class="mac-currency-pane-head">
+            <strong>Available</strong>
+            <span class="mac-currency-pane-count" id="merchantCurrencyAvailableCount">0</span>
+          </header>
+          <div class="mac-currency-pane-list" id="merchantCurrencyAvailableList" role="list"></div>
+        </section>
+      </div>
       <div class="upload-status mb-0" id="merchantCurrencyModalStatus"></div>
       <div class="mad-modal-actions">
         <button class="mad-btn mad-btn-ghost" type="button" data-mac-currency-close>Cancel</button>
-        <button class="mad-btn mad-btn-navy" type="button" id="merchantCurrencyModalConfirm"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add to dropdown</button>
+        <button class="mad-btn mad-btn-navy" type="button" id="merchantCurrencyModalConfirm"><i class="bi bi-check-lg" aria-hidden="true"></i> Apply</button>
       </div>
     </div>
   </div>
@@ -266,13 +293,13 @@
 <script src="assets/js/reports.js?v=1.0.26"></script>
 <script src="assets/js/auth.js?v=1.0.60"></script>
 <script src="assets/js/main-merchant-visibility.js?v=1.0.0"></script>
-<script src="assets/js/main-merchant-create.js?v=1.1.17"></script>
+<script src="assets/js/main-merchant-create.js?v=1.1.21"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
 <script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
 <script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
-<script src="assets/js/bo-ui-standard.js?v=1.0.5"></script>
+<script src="assets/js/bo-ui-standard.js?v=1.0.6"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 </body>
 </html>
