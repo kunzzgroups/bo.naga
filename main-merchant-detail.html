@@ -12,7 +12,7 @@
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.163" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.166" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 <script>
 (function(){
@@ -84,6 +84,9 @@
           <span class="mad-sr-only">Filter by currency</span>
           <select class="mad-select" id="madCurrencyFilter" aria-label="Filter by currency"><option value="">All Currencies</option></select>
         </label>
+        <button class="mad-btn mad-btn-ghost mad-add-currency-btn" type="button" id="madAddCurrencyBtn" title="Add currency" aria-haspopup="dialog" aria-controls="madCurrencyModal">
+          <i class="bi bi-plus-lg" aria-hidden="true"></i> Currency
+        </button>
         <button class="mad-btn mad-btn-ghost mad-bulk-delete-btn" type="button" id="madBulkDeleteBtn" hidden disabled><i class="bi bi-trash3" aria-hidden="true"></i> Delete</button>
         <button class="mad-btn mad-btn-ghost mad-reset-btn" type="button" id="madResetBtn" hidden><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Reset</button>
       </div>
@@ -478,7 +481,7 @@
         <span class="mad-modal-icon" aria-hidden="true"><i class="bi bi-currency-exchange"></i></span>
         <div>
           <h2 id="madCurrencyModalTitle">Add Currency</h2>
-          <small>Type Add → Added. Move to Available for the Primary Currency dropdown. Apply writes Available into the dropdown.</small>
+          <small id="madCurrencyModalLead">Type Add → Added. Move to Available for the Primary Currency dropdown. Apply writes Available into the dropdown.</small>
         </div>
       </div>
       <button class="modal-clean-close" type="button" data-mad-currency-close aria-label="Close"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
@@ -536,7 +539,7 @@
 <script src="assets/js/auth.js?v=1.0.60"></script>
 <script src="assets/js/main-merchant-visibility.js?v=1.0.0"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
-<script src="assets/js/main-merchant-detail.js?v=1.1.22"></script>
+<script src="assets/js/main-merchant-detail.js?v=1.1.24"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>

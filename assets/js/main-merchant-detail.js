@@ -18,6 +18,8 @@
  const selectedCodes=new Set();
  const overrideByCode=new Map();
  const enabledCurrencies=new Set(['MYR']);
+ const listFilterCurrencies=new Set();
+ let currencyModalContext='edit';
  const currencyModalDraft=new Set(['MYR']);
  const currencyModalSelected=new Set();
  let providerSearch='';
@@ -237,7 +239,11 @@
  }
  function syncFilterOptions(){
   const roles=[...new Set(rows.map(roleName).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
-  const currencies=[...new Set(rows.map(x=>x.currency||'MYR'))].sort();
+  ensureListCurrencyPool();
+  const currencies=[...new Set([
+   ...[...listFilterCurrencies],
+   ...rows.map(x=>normalizeCurrencyCode(x.currency||'MYR')).filter(Boolean)
+  ])].sort((a,b)=>a.localeCompare(b));
   const keepRole=roleFilter?.value||'';
   const keepCur=currencyFilter?.value||'';
   if(roleFilter){
@@ -247,7 +253,17 @@
   if(currencyFilter){
    currencyFilter.innerHTML='<option value="">All Currencies</option>'+currencies.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
    if(keepCur && currencies.includes(keepCur)) currencyFilter.value=keepCur;
+   else if(keepCur && !currencies.includes(keepCur)) currencyFilter.value='';
+   if(window.BOSelectSync?.one) window.BOSelectSync.one(currencyFilter);
   }
+ }
+ function ensureListCurrencyPool(){
+  if(listFilterCurrencies.size) return;
+  rows.forEach(x=>{
+   const code=normalizeCurrencyCode(x.currency||'MYR');
+   if(code) listFilterCurrencies.add(code);
+  });
+  if(!listFilterCurrencies.size) listFilterCurrencies.add('MYR');
  }
  function render(){
   const all=rows.length,act=rows.filter(active).length;
@@ -710,12 +726,22 @@
   renderCurrencyDualLists();
   input?.focus();
  }
- function openCurrencyModal(){
+ function openCurrencyModal(context){
   const modal=$('madCurrencyModal');
   if(!modal) return;
-  syncEnabledWithPrimary();
+  currencyModalContext=context==='list'?'list':'edit';
+  const lead=$('madCurrencyModalLead');
+  if(lead){
+   lead.textContent='Type Add → Added. Move to Available for the Primary Currency dropdown. Apply writes Available into the dropdown.';
+  }
   currencyModalDraft.clear();
-  enabledCurrencies.forEach(code=>currencyModalDraft.add(code));
+  if(currencyModalContext==='list'){
+   ensureListCurrencyPool();
+   listFilterCurrencies.forEach(code=>currencyModalDraft.add(code));
+  }else{
+   syncEnabledWithPrimary();
+   enabledCurrencies.forEach(code=>currencyModalDraft.add(code));
+  }
   currencyModalSelected.clear();
   const codeInput=$('madCurrencyModalCode');
   if(codeInput) codeInput.value='';
@@ -736,8 +762,23 @@
   document.body.classList.remove('modal-open');
   currencyModalSelected.clear();
   setCurrencyModalStatus('');
+  currencyModalContext='edit';
  }
  function confirmCurrencyModal(){
+  if(currencyModalContext==='list'){
+   listFilterCurrencies.clear();
+   currencyModalDraft.forEach(code=>{
+    const key=normalizeCurrencyCode(code);
+    if(!key) return;
+    ensureCurrencyOption(key, currencyRowByCode(key)?.displayName || key);
+    listFilterCurrencies.add(key);
+   });
+   if(!listFilterCurrencies.size) listFilterCurrencies.add('MYR');
+   syncFilterOptions();
+   apply();
+   closeCurrencyModal();
+   return;
+  }
   // Primary Currency dropdown = Available list only.
   enabledCurrencies.clear();
   currencyModalDraft.forEach(code=>{
@@ -1092,7 +1133,8 @@
   syncCurrencyUnits();
   if(window.BOSelectSync?.one) window.BOSelectSync.one($('madEditCurrency'));
  });
- $('madEditCurrencyAdd')?.addEventListener('click', e=>{ e.preventDefault(); e.stopPropagation(); openCurrencyModal(); });
+ $('madEditCurrencyAdd')?.addEventListener('click', e=>{ e.preventDefault(); e.stopPropagation(); openCurrencyModal('edit'); });
+ $('madAddCurrencyBtn')?.addEventListener('click', e=>{ e.preventDefault(); e.stopPropagation(); openCurrencyModal('list'); });
  $('madCurrencyModalConfirm')?.addEventListener('click', ()=>confirmCurrencyModal());
  // Delegated handlers so Add still works if the button node is restyled/replaced.
  $('madCurrencyModal')?.addEventListener('click', e=>{

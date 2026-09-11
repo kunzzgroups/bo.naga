@@ -556,6 +556,23 @@ body.main-admin-detail-page .mad-reset-btn:hover,
 body.main-admin-detail-page .mad-reset-btn.mad-btn:hover{
   background:var(--bo-bg)!important;color:var(--bo-navy)!important;border-color:var(--bo-border)!important;
 }
+body.main-admin-detail-page .mad-add-currency-btn,
+body.main-admin-detail-page .mad-add-currency-btn.mad-btn,
+body.main-admin-detail-page button.mad-add-currency-btn{
+  height:42px!important;min-height:42px!important;padding:0 14px!important;
+  flex:0 0 auto!important;white-space:nowrap!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;
+  border:1px solid var(--bo-control-border)!important;border-radius:8px!important;
+  background:var(--bo-surface)!important;color:var(--bo-navy)!important;
+  font-size:13px!important;font-weight:700!important;
+  box-shadow:none!important;text-decoration:none!important;
+}
+body.main-admin-detail-page .mad-add-currency-btn i{font-size:13px;line-height:1}
+body.main-admin-detail-page .mad-add-currency-btn:hover,
+body.main-admin-detail-page .mad-add-currency-btn.mad-btn:hover,
+body.main-admin-detail-page button.mad-add-currency-btn:hover{
+  background:rgba(33,166,215,.08)!important;color:var(--bo-navy)!important;border-color:var(--bo-cyan)!important;
+}
 body.main-admin-detail-page .mad-bulk-delete-btn,
 body.main-admin-detail-page .mad-bulk-delete-btn.mad-btn{
   height:42px!important;min-height:42px!important;padding:0 14px!important;
@@ -1259,6 +1276,8 @@ body.main-admin-detail-page .mad-modal-actions{display:flex;justify-content:flex
   body.main-admin-detail-page .mad-filters .rounded-select-wrap,
   body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-btn,
   body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-btn,
+  body.main-admin-detail-page .mad-add-currency-btn,
+  body.main-admin-detail-page .mad-add-currency-btn.mad-btn,
   body.main-admin-detail-page .mad-reset-btn,
   body.main-admin-detail-page .mad-reset-btn.mad-btn{
     height:44px!important;min-height:44px!important;
@@ -1677,6 +1696,15 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-s
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-reset-btn,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-reset-btn.mad-btn{
   background:var(--bo-bg)!important;border-color:var(--bo-border)!important;color:var(--bo-text-secondary)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-add-currency-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-add-currency-btn.mad-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page button.mad-add-currency-btn{
+  background:var(--bo-bg)!important;border-color:var(--bo-border)!important;color:var(--bo-text)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-add-currency-btn:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page button.mad-add-currency-btn:hover{
+  background:rgba(33,166,215,.12)!important;border-color:var(--bo-cyan)!important;color:var(--bo-cyan)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-btn.open,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-btn:focus{
@@ -5637,12 +5665,39 @@ body.main-merchant-detail-page #madCurrencyModal .mac-currency-dual-actions{
 body.main-merchant-detail-page #madCurrencyModal .mac-currency-add-row{
   align-items:end!important;
 }
+body.main-merchant-detail-page #madCurrencyModal .mac-currency-modal-code-field .mac-label{
+  display:block;
+  margin:0 0 7px;
+  font-size:13px;
+  font-weight:700;
+  color:var(--bo-text-secondary,#344054);
+  letter-spacing:0;
+  text-transform:none;
+}
+body.main-merchant-detail-page #madCurrencyModal .mac-currency-modal-code-field .mac-label b{
+  color:var(--bo-danger,#EF3340);
+  font-weight:800;
+}
 body.main-merchant-detail-page #madCurrencyModal .mac-currency-modal-code-field .form-control,
 body.main-merchant-detail-page #madCurrencyModal #madCurrencyModalCode{
   height:44px!important;
   min-height:44px!important;
   max-height:44px!important;
+  padding:0 14px!important;
+  border:1px solid #D0D5DD!important;
+  border-radius:8px!important;
+  background:#fff!important;
+  color:var(--bo-text,#12263A)!important;
+  font-size:13.5px!important;
+  font-weight:500!important;
+  text-transform:uppercase;
   box-sizing:border-box!important;
+  box-shadow:none!important;
+}
+body.main-merchant-detail-page #madCurrencyModal .mac-currency-modal-code-field .form-control::placeholder,
+body.main-merchant-detail-page #madCurrencyModal #madCurrencyModalCode::placeholder{
+  color:var(--bo-placeholder,#98A2B3)!important;
+  opacity:1!important;
 }
 body.main-merchant-detail-page #madCurrencyModal .mac-currency-add-inline,
 body.main-merchant-detail-page #madCurrencyModal .mac-currency-add-inline.mad-btn,
