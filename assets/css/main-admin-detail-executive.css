@@ -218,6 +218,25 @@ body.main-admin-detail-page .report-topbar{
   border-bottom:1px solid var(--bo-border)!important;
   min-height:64px;
 }
+/* Edit Merchant: top chrome scrolls with the page (not sticky/fixed) */
+body.main-merchant-detail-page.mad-editing .report-main{
+  height:auto!important;
+  min-height:100vh;
+  min-height:100dvh;
+  overflow:visible!important;
+}
+body.main-merchant-detail-page.mad-editing .report-topbar{
+  position:static!important;
+  top:auto!important;
+}
+body.main-merchant-detail-page.mad-editing #madEditWorkspace,
+body.main-merchant-detail-page.mad-editing #madEditWorkspace:not([hidden]),
+body.main-merchant-detail-page.mad-editing .mad-edit-workspace{
+  overflow:visible!important;
+  flex:0 0 auto!important;
+  min-height:0!important;
+  height:auto!important;
+}
 body.main-admin-detail-page .report-topbar .hamb{
   width:40px;height:40px;min-width:40px;
   border:1px solid var(--bo-border)!important;border-radius:8px!important;
