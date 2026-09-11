@@ -7,9 +7,9 @@
 
  let platformProviders=[];
  let currencyOptions=[];
- const enabledCurrencies=new Set(['MYR']);
  const selectedCodes=new Set();
  const overrideByCode=new Map();
+ const enabledCurrencies=new Set(['MYR']);
  let providerSearch='';
 
  function setStatus(msg, kind){
@@ -18,23 +18,168 @@
   status.className='upload-status mb-3'+(kind?(' '+kind):'');
  }
 
- function renderCurrencyOptions(){
-  const sel=$('merchantCurrency'), box=$('merchantEnabledCurrencies');
-  if(!sel)return;
-  const current=String(sel.value||'MYR').toUpperCase();
+ function primaryCurrency(){
+  return String($('merchantCurrency')?.value||'MYR').trim().toUpperCase()||'MYR';
+ }
+ function normalizeCurrencyCode(raw){
+  return String(raw||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+ }
+ function activeCurrencyRows(){
   const rows=currencyOptions.length?currencyOptions:[{currencyCode:'MYR',displayName:'Malaysian Ringgit',rateFromBase:1,status:1}];
-  sel.innerHTML=rows.filter(x=>Number(x.status??1)===1).map(x=>{const c=String(x.currencyCode||'').toUpperCase();return `<option value="${esc(c)}"${c===current?' selected':''}>${esc(c)}${x.displayName?' · '+esc(x.displayName):''}</option>`}).join('');
-  if(!sel.value&&rows.length)sel.value=String(rows[0].currencyCode||'MYR').toUpperCase();
-  enabledCurrencies.add(sel.value);
-  if(box)box.innerHTML=rows.filter(x=>Number(x.status??1)===1).map(x=>{const c=String(x.currencyCode||'').toUpperCase();const checked=enabledCurrencies.has(c)||c===sel.value;return `<label class="border rounded px-3 py-2 d-inline-flex align-items-center gap-2 bg-white"><input type="checkbox" data-merchant-currency="${esc(c)}" ${checked?'checked':''} ${c===sel.value?'disabled':''}><b>${esc(c)}</b><span class="text-muted">1 ${esc((window.__currencyBase||'MYR'))} = ${Number(x.rateFromBase||1).toLocaleString('en-US',{maximumFractionDigits:6})} ${esc(c)}</span></label>`}).join('');
+  return rows.filter(x=>Number(x.status??1)===1);
+ }
+ function currencyRowByCode(code){
+  const key=normalizeCurrencyCode(code);
+  return activeCurrencyRows().find(x=>String(x.currencyCode||'').toUpperCase()===key)||null;
+ }
+ function ensureCurrencyOption(code, displayName){
+  const key=normalizeCurrencyCode(code);
+  if(!key) return '';
+  const name=String(displayName||'').trim();
+  const existing=currencyOptions.find(x=>String(x.currencyCode||'').toUpperCase()===key);
+  if(existing){
+   if(name && !String(existing.displayName||'').trim()) existing.displayName=name;
+   return key;
+  }
+  currencyOptions.push({
+   currencyCode:key,
+   displayName:name||key,
+   rateFromBase:1,
+   decimalPlaces:2,
+   status:1,
+   _local:true
+  });
+  return key;
+ }
+ function syncEnabledWithPrimary(){
+  enabledCurrencies.add(primaryCurrency());
+ }
+ function enabledCurrencyPayload(){
+  syncEnabledWithPrimary();
+  return [...enabledCurrencies].filter(Boolean);
+ }
+ function availableCurrenciesToAdd(){
+  return activeCurrencyRows().filter(x=>{
+   const code=String(x.currencyCode||'').toUpperCase();
+   return code && !enabledCurrencies.has(code);
+  });
+ }
+ function setCurrencyModalStatus(msg, kind){
+  const el=$('merchantCurrencyModalStatus');
+  if(!el) return;
+  el.textContent=msg||'';
+  el.className='upload-status mb-0'+(kind?(' '+kind):'');
+ }
+ function renderCurrencyModalList(){
+  const list=$('merchantCurrencyModalList');
+  if(!list) return;
+  const rows=availableCurrenciesToAdd();
+  if(!rows.length){
+   list.innerHTML='<div class="mac-currency-modal-empty">No catalog currencies left to pick. Enter a code above to add one.</div>';
+   return;
+  }
+  list.innerHTML=rows.map(x=>{
+   const code=String(x.currencyCode||'').toUpperCase();
+   return `<label class="mac-currency-modal-item">
+     <input type="checkbox" value="${esc(code)}" data-mac-currency-pick="${esc(code)}"/>
+     <span class="mac-currency-modal-item-copy"><b>${esc(code)}</b></span>
+   </label>`;
+  }).join('');
+ }
+ function openCurrencyModal(){
+  const modal=$('merchantCurrencyModal');
+  if(!modal) return;
+  const codeInput=$('merchantCurrencyModalCode');
+  if(codeInput) codeInput.value='';
+  setCurrencyModalStatus('');
+  renderCurrencyModalList();
+  modal.hidden=false;
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+  document.body.classList.add('modal-open');
+  codeInput?.focus();
+ }
+ function closeCurrencyModal(){
+  const modal=$('merchantCurrencyModal');
+  if(!modal) return;
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden','true');
+  modal.hidden=true;
+  document.body.classList.remove('modal-open');
+  setCurrencyModalStatus('');
+ }
+ function confirmCurrencyModal(){
+  const typedCode=normalizeCurrencyCode($('merchantCurrencyModalCode')?.value);
+  const picks=[...document.querySelectorAll('#merchantCurrencyModalList [data-mac-currency-pick]:checked')]
+    .map(el=>normalizeCurrencyCode(el.value||el.getAttribute('data-mac-currency-pick')||''))
+    .filter(Boolean);
+  if(!typedCode && !picks.length){
+   setCurrencyModalStatus('Enter a currency or select at least one from the catalog.', 'error');
+   return;
+  }
+  if(typedCode){
+   if(typedCode.length<3){
+    setCurrencyModalStatus('Currency must be at least 3 characters (e.g. THB).', 'error');
+    return;
+   }
+   if(enabledCurrencies.has(typedCode)){
+    setCurrencyModalStatus(typedCode+' is already in the dropdown.', 'error');
+    return;
+   }
+   ensureCurrencyOption(typedCode, currencyRowByCode(typedCode)?.displayName || typedCode);
+   enabledCurrencies.add(typedCode);
+  }
+  picks.forEach(code=>{
+   ensureCurrencyOption(code, currencyRowByCode(code)?.displayName || code);
+   enabledCurrencies.add(code);
+  });
+  renderCurrencyOptions();
+  closeCurrencyModal();
+ }
+
+ function renderCurrencyOptions(){
+  const sel=$('merchantCurrency');
+  if(!sel)return;
+  const rows=activeCurrencyRows();
+  const byCode=new Map(rows.map(x=>[String(x.currencyCode||'').toUpperCase(),x]));
+  // Keep manually added codes even if catalog reload lags; only drop empty keys.
+  [...enabledCurrencies].forEach(code=>{ if(!code) enabledCurrencies.delete(code); });
+  if(!enabledCurrencies.size){
+   const fallback=String(rows[0]?.currencyCode||'MYR').toUpperCase();
+   enabledCurrencies.add(fallback);
+   ensureCurrencyOption(fallback, byCode.get(fallback)?.displayName || fallback);
+  }
+  [...enabledCurrencies].forEach(code=>{
+   if(!byCode.has(code)) ensureCurrencyOption(code, code);
+  });
+  const current=primaryCurrency();
+  const preferred=enabledCurrencies.has(current)?current:[...enabledCurrencies][0];
+  const ordered=[...enabledCurrencies].sort((a,b)=>a.localeCompare(b));
+  sel.innerHTML=ordered.map(code=>`<option value="${esc(code)}"${code===preferred?' selected':''}>${esc(code)}</option>`).join('');
+  if(preferred) sel.value=preferred;
   syncCurrencyUnits();
+  if(window.BOSelectSync?.one) window.BOSelectSync.one(sel);
  }
  async function loadCurrencies(){
-  try{const d=await api('/public/currency/options',{headers:BO_AUTH.authHeader()});window.__currencyBase=String(d.baseCurrency||'MYR').toUpperCase();currencyOptions=Array.isArray(d.rates)?d.rates:[];renderCurrencyOptions();}
-  catch(e){currencyOptions=[{currencyCode:'MYR',displayName:'Malaysian Ringgit',rateFromBase:1,status:1}];renderCurrencyOptions();}
+  try{const d=await api('/public/currency/options',{headers:BO_AUTH.authHeader()});window.__currencyBase=String(d.baseCurrency||'MYR').toUpperCase();
+    const localOnly=currencyOptions.filter(x=>x&&x._local);
+    currencyOptions=Array.isArray(d.rates)?d.rates.slice():[];
+    localOnly.forEach(row=>{
+     const code=String(row.currencyCode||'').toUpperCase();
+     if(code && !currencyOptions.some(x=>String(x.currencyCode||'').toUpperCase()===code)) currencyOptions.push(row);
+    });
+    const base=String(d.baseCurrency||'MYR').toUpperCase();
+    if(!enabledCurrencies.size) enabledCurrencies.add(base);
+    if([...enabledCurrencies].every(c=>!activeCurrencyRows().some(r=>String(r.currencyCode||'').toUpperCase()===c))){
+      enabledCurrencies.clear();
+      enabledCurrencies.add(base);
+    }
+    renderCurrencyOptions();
+  }
+  catch(e){currencyOptions=[{currencyCode:'MYR',displayName:'Malaysian Ringgit',rateFromBase:1,status:1}];enabledCurrencies.clear();enabledCurrencies.add('MYR');renderCurrencyOptions();}
  }
  function syncCurrencyUnits(){
-  const cur=($('merchantCurrency')?.value||'MYR').trim()||'MYR';
+  const cur=primaryCurrency();
   const unit=$('merchantThresholdUnit'), label=$('merchantThresholdLabel');
   if(unit) unit.textContent=cur;
   if(label) label.textContent='('+cur+')';
@@ -229,8 +374,46 @@
   });
  }
 
- $('merchantCurrency')?.addEventListener('change', ()=>{enabledCurrencies.add(String($('merchantCurrency').value||'MYR').toUpperCase());renderCurrencyOptions();});
- $('merchantEnabledCurrencies')?.addEventListener('change',e=>{const el=e.target.closest&&e.target.closest('[data-merchant-currency]');if(!el)return;const c=String(el.dataset.merchantCurrency||'').toUpperCase();if(el.checked)enabledCurrencies.add(c);else enabledCurrencies.delete(c);enabledCurrencies.add(String($('merchantCurrency').value||'MYR').toUpperCase());renderCurrencyOptions();});
+ $('merchantCurrency')?.addEventListener('change', ()=>{
+  syncEnabledWithPrimary();
+  syncCurrencyUnits();
+  if(window.BOSelectSync?.one) window.BOSelectSync.one($('merchantCurrency'));
+ });
+
+ $('merchantCurrencyAdd')?.addEventListener('click', e=>{
+  e.preventDefault();
+  e.stopPropagation();
+  openCurrencyModal();
+ });
+
+ $('merchantCurrencyModalCode')?.addEventListener('input', e=>{
+  setCurrencyModalStatus('');
+  const code=normalizeCurrencyCode(e.target.value);
+  if(e.target.value!==code) e.target.value=code;
+ });
+
+ $('merchantCurrencyModalCode')?.addEventListener('keydown', e=>{
+  if(e.key==='Enter'){
+   e.preventDefault();
+   confirmCurrencyModal();
+  }
+ });
+
+ $('merchantCurrencyModalConfirm')?.addEventListener('click', ()=>confirmCurrencyModal());
+
+ document.querySelectorAll('[data-mac-currency-close]').forEach(btn=>{
+  btn.addEventListener('click', ()=>closeCurrencyModal());
+ });
+
+ $('merchantCurrencyModal')?.addEventListener('click', e=>{
+  if(e.target===$('merchantCurrencyModal')) closeCurrencyModal();
+ });
+
+ document.addEventListener('keydown', e=>{
+  if(e.key!=='Escape') return;
+  const modal=$('merchantCurrencyModal');
+  if(modal?.classList.contains('show')) closeCurrencyModal();
+ });
 
  $('merchantGeneratePassword')?.addEventListener('click', ()=>{
   const pwd=generatePassword(14);
@@ -363,7 +546,7 @@
     domainAliases:$('merchantAliases').value.trim(),
     frontendRoot:$('merchantRoot').value.trim(),
     currency:$('merchantCurrency').value.trim()||'MYR',
-    enabledCurrencies:[...enabledCurrencies],
+    enabledCurrencies:enabledCurrencyPayload(),
     creditMode:$('merchantCreditMode').value,
     lowCreditThreshold:$('merchantThreshold').value||0,
     providerMarkupPercent:$('merchantMarkup').value||0,
