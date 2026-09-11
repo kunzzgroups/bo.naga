@@ -4799,3 +4799,313 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-field .form-control:
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-modal .form-control::placeholder{
   color:var(--bo-muted)!important;opacity:1!important;-webkit-text-fill-color:var(--bo-muted);
 }
+
+/* ========== Merchant Details edit workspace — full page beside sidebar ========== */
+body.main-merchant-detail-page #madEditWorkspace,
+body.main-merchant-detail-page .mad-edit-workspace{
+  display:none;
+  flex:1;
+  width:100%;
+  max-width:none;
+  min-width:0;
+  padding:18px 24px 96px!important;
+  box-sizing:border-box;
+  overflow:auto;
+  min-height:0;
+  background:var(--bo-bg,#F5F7FA);
+}
+body.main-merchant-detail-page #madEditWorkspace:not([hidden]){
+  display:flex!important;
+  flex-direction:column;
+}
+body.main-merchant-detail-page #madListWorkspace[hidden]{
+  display:none!important;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-edit-form{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  width:100%;
+  max-width:none;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-section{
+  background:var(--bo-surface,#fff);
+  border:1px solid var(--bo-border,#E4E7EC);
+  border-radius:8px;
+  padding:20px 22px 22px;
+  box-shadow:var(--bo-shadow,0 1px 2px rgba(18,59,102,.04));
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-section-head{
+  display:flex;
+  align-items:flex-start;
+  gap:12px 14px;
+  margin-bottom:20px;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-section-icon{
+  width:28px;
+  height:28px;
+  border-radius:8px;
+  display:grid;
+  place-items:center;
+  flex:0 0 auto;
+  background:rgba(18,59,102,.06);
+  color:var(--bo-navy,#123B66);
+  font-size:14px;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-section-copy{
+  flex:1;
+  min-width:0;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-section-copy h3{
+  margin:0;
+  font-size:14px;
+  font-weight:800;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+  color:var(--bo-text-secondary,#344054);
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-section-copy p{
+  margin:4px 0 0;
+  font-size:12.5px;
+  font-weight:500;
+  line-height:1.45;
+  color:var(--bo-muted,#667085);
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-back-section{
+  margin-top:2px;
+  margin-left:auto;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-fields-stack{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-fields{
+  display:grid;
+  gap:16px 18px;
+  align-items:start;
+  margin:0;
+  width:100%;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-fields-row-2{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-fields-row-3{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-fields-row-4{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-field-aliases{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  margin:0;
+  max-width:none;
+  width:100%;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-label-optional{
+  font-weight:600;
+  color:var(--bo-muted,#667085);
+  text-transform:none;
+  letter-spacing:0;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  margin:0;
+  min-width:0;
+  max-width:none;
+  width:100%;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-label{
+  font-size:11.5px;
+  font-weight:700;
+  letter-spacing:.02em;
+  color:var(--bo-text-secondary,#344054);
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-label b{
+  color:var(--bo-danger,#EF3340);
+  font-weight:800;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-field .form-control,
+body.main-merchant-detail-page #madEditWorkspace .mac-field select.form-control{
+  height:44px!important;
+  border:1px solid #D0D5DD!important;
+  border-radius:8px!important;
+  background:#fff!important;
+  color:var(--bo-text,#12263A)!important;
+  padding:0 14px!important;
+  font-size:13.5px!important;
+  font-weight:500!important;
+  box-shadow:none!important;
+  width:100%!important;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-field .form-control:focus,
+body.main-merchant-detail-page #madEditWorkspace .mac-field select.form-control:focus{
+  border-color:var(--bo-cyan,#21A6D7)!important;
+  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;
+  outline:0!important;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-field .form-control[readonly]{
+  background:var(--bo-bg,#F8FAFC)!important;
+  color:var(--bo-text-secondary,#475467)!important;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-master-credit-stack{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-subblock{
+  margin:0;
+  min-width:0;
+  padding:16px 18px 18px;
+  border:1px solid var(--bo-border,#E4E7EC);
+  border-radius:12px;
+  background:var(--bo-surface,#fff);
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-subblock-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:0 0 14px;
+  font-size:12.5px;
+  font-weight:800;
+  color:var(--bo-ink,#12263A);
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-subblock-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--bo-cyan,#21A6D7);
+  box-shadow:0 0 0 3px rgba(33,166,215,.16);
+  flex:0 0 auto;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-edit-pricing-block{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-edit-pricing-toolbar{
+  display:flex;
+  justify-content:flex-end;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-edit-markup-field{
+  width:min(240px,100%);
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-edit-pricing-table{
+  border:1px solid var(--bo-border,#E4E7EC);
+  border-radius:10px;
+  overflow:auto;
+  background:#fff;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-edit-pricing-table .table{margin:0}
+body.main-merchant-detail-page #madEditWorkspace .mac-edit-pricing-table thead th{
+  font-size:11.5px;
+  font-weight:800;
+  color:var(--bo-muted,#667085);
+  background:var(--bo-bg,#F8FAFC);
+  border-bottom:1px solid var(--bo-border,#E4E7EC);
+  white-space:nowrap;
+  padding:10px 12px;
+}
+body.main-merchant-detail-page #madEditWorkspace .mac-edit-pricing-table tbody td{
+  padding:10px 12px;
+  vertical-align:middle;
+  font-size:13px;
+}
+body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions,
+body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-edit-actions{
+  position:fixed;z-index:900;
+  left:var(--sidebar-w,280px)!important;right:0!important;bottom:0!important;
+  width:auto!important;max-width:none!important;
+  display:flex;justify-content:flex-end;align-items:center;gap:10px;
+  margin:0;padding:14px 24px;
+  background:rgba(255,255,255,.96);
+  border-top:1px solid var(--bo-line, #E6EDF5);
+  box-shadow:0 -8px 24px rgba(15,23,42,.06);
+  backdrop-filter:blur(8px);
+  box-sizing:border-box;
+  pointer-events:auto;
+}
+body.sidebar-mini.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions{
+  left:var(--rail-w,72px)!important;
+}
+@media(max-width:991.98px){
+  body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions,
+  body.sidebar-mini.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions{
+    left:0!important;
+  }
+  body.main-merchant-detail-page.mad-editing.sidebar-open #madEditWorkspace .mac-footer-actions{
+    left:min(86vw,320px)!important;
+  }
+}
+body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions .mad-btn,
+body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions .mad-btn.mad-btn-ghost,
+body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions .mad-btn.mad-btn-navy,
+body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions .mad-btn.bo-ui-button{
+  height:44px!important;min-height:44px!important;
+  min-width:160px!important;padding:0 22px!important;
+  border-radius:8px!important;font-size:13.5px!important;font-weight:700!important;
+  box-sizing:border-box!important;display:inline-flex!important;
+  align-items:center!important;justify-content:center!important;gap:6px!important;
+  line-height:1!important;text-decoration:none!important;
+}
+@media (max-width:1100px){
+  body.main-merchant-detail-page #madEditWorkspace .mac-fields-row-4{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:720px){
+  body.main-merchant-detail-page #madEditWorkspace .mac-fields-row-2,
+  body.main-merchant-detail-page #madEditWorkspace .mac-fields-row-3,
+  body.main-merchant-detail-page #madEditWorkspace .mac-fields-row-4{grid-template-columns:1fr}
+  body.main-merchant-detail-page #madEditWorkspace .mac-section-head{flex-wrap:wrap}
+  body.main-merchant-detail-page #madEditWorkspace .mac-back-section{margin-left:0}
+  body.main-merchant-detail-page #madEditWorkspace .mac-edit-pricing-toolbar{justify-content:stretch}
+  body.main-merchant-detail-page #madEditWorkspace .mac-edit-markup-field{width:100%}
+  body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions{flex-wrap:wrap}
+  body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions .mad-btn{flex:1 1 auto;justify-content:center}
+}
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace{
+  background:rgba(2,6,23,.35);
+}
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-section,
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-subblock,
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-edit-pricing-table{
+  background:rgba(15,23,42,.72);
+  border-color:rgba(148,163,184,.22);
+}
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-section-icon{
+  background:rgba(33,166,215,.14);
+  color:#7DD3FC;
+}
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-section-copy h3,
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-subblock-title,
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-label{
+  color:#E2E8F0;
+}
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .form-control,
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field select.form-control{
+  background:#0B1626!important;
+  border-color:rgba(148,163,184,.28)!important;
+  color:#E2E8F0!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .form-control[readonly]{
+  background:rgba(2,6,23,.55)!important;
+  color:#94A3B8!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-edit-pricing-table thead th{
+  background:rgba(2,6,23,.45);
+  color:#94A3B8;
+  border-color:rgba(148,163,184,.22);
+}
+html[data-bo-theme="dark"] body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions{
+  background:rgba(11,22,40,.96)!important;
+  border-top-color:var(--bo-border)!important;
+  box-shadow:0 -8px 24px rgba(0,0,0,.35)!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions .mad-btn.mad-btn-ghost{
+  background:var(--bo-surface)!important;
+  border-color:var(--bo-border)!important;
+  color:var(--bo-text)!important;
+}

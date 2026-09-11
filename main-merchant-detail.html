@@ -12,7 +12,7 @@
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.126" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.139" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 <script>
 (function(){
@@ -48,7 +48,7 @@
   </div>
 </header>
 
-<section class="report-content mad-workspace">
+<section class="report-content mad-workspace" id="madListWorkspace">
   <div class="mad-chrome">
     <div class="mad-tabs" role="tablist" aria-label="Merchant sections">
       <button type="button" class="mad-tab is-active" role="tab" aria-selected="true" data-mad-tab="merchants">Merchants</button>
@@ -128,25 +128,162 @@
   </div>
 </section>
 
-<!-- Merchant detail modal -->
-<div aria-hidden="true" class="modal-clean mad-modal" id="madEditModal">
- <div class="modal-clean-panel mad-modal-panel" style="max-width:1040px;width:min(1040px,calc(100vw - 32px));max-height:92vh;overflow:auto"><div class="modal-clean-head"><div class="mad-modal-title"><span class="mad-modal-icon"><i class="bi bi-shop"></i></span><div><h3>Merchant Details</h3><small>Brand tenant details and merchant master account.</small></div></div><button class="modal-clean-close" data-mad-close-edit type="button"><i class="bi bi-x-lg"></i></button></div>
- <form class="modal-clean-body" id="madEditForm"><input type="hidden" id="madEditId"/>
-  <div class="mad-form-stack"><div class="mad-form-row"><label class="mad-field">Merchant<input class="form-control" id="madEditCode" readonly/></label><label class="mad-field">Company<input class="form-control" id="madEditName" required/></label></div>
-  <div class="mad-form-row"><label class="mad-field">Primary Domain<input class="form-control" id="madEditDomain" required/></label><label class="mad-field">Currency<input class="form-control" id="madEditCurrency" required/></label></div>
-  <label class="mad-field">Frontend Root<input class="form-control" id="madEditFrontendRoot"/></label>
-  <div class="mad-form-row"><label class="mad-field">Credit Mode<select class="form-control" id="madEditCreditMode"><option value="WHOLE">Whole Provider Pool</option><option value="PER_PROVIDER">Per Provider</option></select></label><label class="mad-field">Status<select class="form-control" id="madEditStatus"><option value="1">Active</option><option value="0">Suspended</option></select></label></div>
-  <div class="mad-form-row"><label class="mad-field">Player Credit<input class="form-control" id="madViewPlayerCredit" readonly/></label><label class="mad-field">Provider Credit<input class="form-control" id="madViewProviderCredit" readonly/></label></div>
-  <div class="mad-form-row"><label class="mad-field">Master Username<input class="form-control" id="madViewMaster" readonly/></label><label class="mad-field">Created By<input class="form-control" id="madViewCreatedBy" readonly/></label></div>
-  <div class="mad-form-row"><label class="mad-field">Last Login<input class="form-control" id="madViewLastLogin" readonly/></label><label class="mad-field">Last Logout<input class="form-control" id="madViewLastLogout" readonly/></label></div>
-  <hr class="my-2"/>
-  <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap"><div><h5 class="mb-1">Provider Pricing &amp; Markup</h5><small class="text-muted">Merchant-wide markup plus provider-specific percentage overrides. Effective rate = provider base + merchant override/markup.</small></div><label class="mad-field" style="min-width:210px">Merchant Markup (%)<input class="form-control" id="madProviderMarkup" type="number" min="0" max="100" step="0.0001"/></label></div>
-  <div class="table-responsive border rounded-3 mt-2"><table class="table table-sm align-middle mb-0"><thead><tr><th>Use</th><th>Provider</th><th>Provider Base %</th><th>Merchant Override %</th><th>Effective %</th><th>Basis</th></tr></thead><tbody id="madProviderPricingBody"><tr><td colspan="6" class="text-center text-muted py-3">Loading providers...</td></tr></tbody></table></div>
-  </div>
-  <div class="upload-status mb-3" id="madEditFormStatus"></div><div class="mad-modal-actions"><button class="mad-btn mad-btn-ghost" type="button" data-mad-close-edit>Close</button><button class="mad-btn mad-btn-primary" type="submit"><i class="bi bi-save"></i> Save Merchant</button></div>
- </form></div>
-</div>
+<!-- Merchant detail full-page edit (within report-main, sidebar excluded) -->
+<section class="report-content mac-workspace mad-edit-workspace" id="madEditWorkspace" hidden aria-hidden="true">
+  <form class="mac-form mac-edit-form" id="madEditForm" novalidate>
+    <input type="hidden" id="madEditId"/>
 
+    <section class="mac-section">
+      <header class="mac-section-head mac-section-head-rich">
+        <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-building"></i></span>
+        <div class="mac-section-copy">
+          <h3>1. Merchant Profile</h3>
+          <p>Core brand identification, routing, and primary settlement.</p>
+        </div>
+        <button class="mad-btn mad-btn-ghost mac-back-section" type="button" data-mad-close-edit>
+          <i class="bi bi-arrow-left" aria-hidden="true"></i> Back to List
+        </button>
+      </header>
+      <div class="mac-fields-stack">
+        <div class="mac-fields mac-fields-row mac-fields-row-4">
+          <label class="mac-field" for="madEditCode">
+            <span class="mac-label">Merchant</span>
+            <input class="form-control" id="madEditCode" readonly/>
+          </label>
+          <label class="mac-field" for="madEditName">
+            <span class="mac-label">Company <b>*</b></span>
+            <input class="form-control" id="madEditName" required/>
+          </label>
+          <label class="mac-field" for="madEditDomain">
+            <span class="mac-label">Primary Domain <b>*</b></span>
+            <input class="form-control" id="madEditDomain" required/>
+          </label>
+          <label class="mac-field" for="madEditFrontendRoot">
+            <span class="mac-label">Frontend Root</span>
+            <input class="form-control" id="madEditFrontendRoot"/>
+          </label>
+        </div>
+        <label class="mac-field mac-field-aliases" for="madEditAliases">
+          <span class="mac-label">Domain Aliases <span class="mac-label-optional">(Optional)</span></span>
+          <input class="form-control" id="madEditAliases" placeholder="alias1.com, alias2.com"/>
+        </label>
+      </div>
+    </section>
+
+    <section class="mac-section">
+      <header class="mac-section-head mac-section-head-rich">
+        <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-person-badge"></i></span>
+        <div class="mac-section-copy">
+          <h3>2. Master Account &amp; Credit Configuration</h3>
+          <p>Credit policy, balances, and merchant master account snapshot.</p>
+        </div>
+      </header>
+      <div class="mac-master-credit-stack">
+        <div class="mac-subblock">
+          <h4 class="mac-subblock-title"><span class="mac-subblock-dot" aria-hidden="true"></span> Credit &amp; Status</h4>
+          <div class="mac-fields-stack">
+            <div class="mac-fields mac-fields-row mac-fields-row-3">
+              <label class="mac-field" for="madEditCreditMode">
+                <span class="mac-label">Credit Mode</span>
+                <select class="form-control" id="madEditCreditMode">
+                  <option value="WHOLE">Whole Provider Pool</option>
+                  <option value="PER_PROVIDER">Per Provider</option>
+                </select>
+              </label>
+              <label class="mac-field" for="madEditCurrency">
+                <span class="mac-label">Currency <b>*</b></span>
+                <input class="form-control" id="madEditCurrency" required/>
+              </label>
+              <label class="mac-field" for="madEditStatus">
+                <span class="mac-label">Status</span>
+                <select class="form-control" id="madEditStatus">
+                  <option value="1">Active</option>
+                  <option value="0">Suspended</option>
+                </select>
+              </label>
+            </div>
+            <div class="mac-fields mac-fields-row mac-fields-row-2">
+              <label class="mac-field" for="madViewPlayerCredit">
+                <span class="mac-label">Player Credit</span>
+                <input class="form-control" id="madViewPlayerCredit" readonly/>
+              </label>
+              <label class="mac-field" for="madViewProviderCredit">
+                <span class="mac-label">Provider Credit</span>
+                <input class="form-control" id="madViewProviderCredit" readonly/>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="mac-subblock">
+          <h4 class="mac-subblock-title"><span class="mac-subblock-dot" aria-hidden="true"></span> Master Account Snapshot</h4>
+          <div class="mac-fields-stack">
+            <div class="mac-fields mac-fields-row mac-fields-row-2">
+              <label class="mac-field" for="madViewMaster">
+                <span class="mac-label">Master Username</span>
+                <input class="form-control" id="madViewMaster" readonly/>
+              </label>
+              <label class="mac-field" for="madViewCreatedBy">
+                <span class="mac-label">Created By</span>
+                <input class="form-control" id="madViewCreatedBy" readonly/>
+              </label>
+            </div>
+            <div class="mac-fields mac-fields-row mac-fields-row-2">
+              <label class="mac-field" for="madViewLastLogin">
+                <span class="mac-label">Last Login</span>
+                <input class="form-control" id="madViewLastLogin" readonly/>
+              </label>
+              <label class="mac-field" for="madViewLastLogout">
+                <span class="mac-label">Last Logout</span>
+                <input class="form-control" id="madViewLastLogout" readonly/>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mac-section">
+      <header class="mac-section-head mac-section-head-rich">
+        <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-percent"></i></span>
+        <div class="mac-section-copy">
+          <h3>3. Provider Pricing &amp; Markup</h3>
+          <p>Merchant-wide markup plus provider-specific overrides. Effective rate = provider base + merchant override/markup.</p>
+        </div>
+      </header>
+      <div class="mac-subblock mac-edit-pricing-block">
+        <div class="mac-edit-pricing-toolbar">
+          <label class="mac-field mac-edit-markup-field" for="madProviderMarkup">
+            <span class="mac-label">Merchant Markup (%)</span>
+            <input class="form-control" id="madProviderMarkup" type="number" min="0" max="100" step="0.0001"/>
+          </label>
+        </div>
+        <div class="table-responsive mac-edit-pricing-table">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Use</th>
+                <th>Provider</th>
+                <th>Provider Base %</th>
+                <th>Merchant Override %</th>
+                <th>Effective %</th>
+                <th>Basis</th>
+              </tr>
+            </thead>
+            <tbody id="madProviderPricingBody">
+              <tr><td colspan="6" class="text-center text-muted py-3">Loading providers...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <div class="upload-status mb-3" id="madEditFormStatus"></div>
+    <footer class="mac-footer-actions mac-edit-actions">
+      <button class="mad-btn mad-btn-ghost" type="button" data-mad-close-edit>Close</button>
+      <button class="mad-btn mad-btn-navy" type="submit"><i class="bi bi-save" aria-hidden="true"></i> Save Merchant</button>
+    </footer>
+  </form>
+</section>
 <!-- Add / reclaim credit modal -->
 <div hidden aria-hidden="true" class="modal-clean mad-modal" id="madCreditModal" role="dialog" aria-modal="true" aria-labelledby="madCreditTitle">
   <div class="modal-clean-panel mad-modal-panel mac-adjust-panel">
@@ -262,7 +399,7 @@
 <script src="assets/js/auth.js?v=1.0.60"></script>
 <script src="assets/js/main-merchant-visibility.js?v=1.0.0"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
-<script src="assets/js/main-merchant-detail.js?v=1.1.10"></script>
+<script src="assets/js/main-merchant-detail.js?v=1.1.13"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
