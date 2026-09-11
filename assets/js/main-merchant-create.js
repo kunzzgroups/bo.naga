@@ -226,9 +226,12 @@
  }
  function syncCurrencyUnits(){
   const cur=primaryCurrency()||'—';
-  const unit=$('merchantThresholdUnit'), label=$('merchantThresholdLabel');
-  if(unit) unit.textContent=cur;
-  if(label) label.textContent='('+cur+')';
+  const thrUnit=$('merchantThresholdUnit'), thrLabel=$('merchantThresholdLabel');
+  if(thrUnit) thrUnit.textContent=cur;
+  if(thrLabel) thrLabel.textContent='('+cur+')';
+  const creditUnit=$('merchantCreditUnit'), creditLabel=$('merchantCreditLabel');
+  if(creditUnit) creditUnit.textContent=cur;
+  if(creditLabel) creditLabel.textContent='('+cur+')';
  }
 
  function generatePassword(len){
@@ -616,6 +619,8 @@
     if(password.length<8) throw new Error('Merchant Master password must be at least 8 characters');
     if(password!==confirmPassword) throw new Error('Confirm password does not match');
    }
+   const initialCredit=Number($('merchantCredit')?.value||0);
+   if(Number.isFinite(initialCredit) && initialCredit<0) throw new Error('Credit cannot be negative');
    const body={
     code:$('merchantCode').value.trim(),
     name:$('merchantName').value.trim(),
@@ -631,6 +636,18 @@
    };
    const out=await api('/admin/merchants/save',{method:'POST',headers:hdr(),body:JSON.stringify(body)});
    const b=out.brand||out;
+   if(b?.id && Number.isFinite(initialCredit) && initialCredit>0){
+    setStatus('Applying initial credit...');
+    await api('/admin/merchants/'+encodeURIComponent(b.id)+'/topup',{
+     method:'POST',
+     headers:hdr(),
+     body:JSON.stringify({
+      amount:initialCredit,
+      providerCode:'__WHOLE_PROVIDER__',
+      remark:'Initial provider credit on create'
+     })
+    });
+   }
    if(username){
     const payload={
       displayName:($('merchantMasterName').value.trim()||username),
