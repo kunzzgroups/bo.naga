@@ -36,6 +36,22 @@
       else el.textContent=active();
     });
   }
+  function renderCurrencySelects(){
+    const codes=activeCodes();
+    const keep=active();
+    document.querySelectorAll('select.mre-currency-select').forEach(sel=>{
+      const wrap=sel.closest('.mpr-currency-filter,.mre-currency-filter,.mad-filter-field');
+      if(wrap){
+        wrap.hidden=codes.length<=1;
+        wrap.style.display=codes.length<=1?'none':'';
+      }
+      sel.innerHTML=codes.map(code=>'<option value="'+code+'"'+(code===keep?' selected':'')+'>'+code+'</option>').join('');
+      if(codes.includes(keep)) sel.value=keep;
+      else if(codes[0]) sel.value=codes[0];
+      if(window.BOSelectSync && typeof BOSelectSync.one==='function') BOSelectSync.one(sel);
+      else sel.dispatchEvent(new Event('bo:select-sync',{bubbles:true}));
+    });
+  }
   function renderCurrencyGroups(){
     const codes=activeCodes();
     document.querySelectorAll('.mre-currency-seg,.np-currency-seg').forEach(group=>{
@@ -57,6 +73,7 @@
         group.appendChild(b);
       });
     });
+    renderCurrencySelects();
   }
   function applyConfig(data){
     state.baseCurrency=String((data&&data.baseCurrency)||'MYR').toUpperCase();
@@ -144,6 +161,11 @@
     if(!b)return;
     e.preventDefault();
     setCurrency(b.dataset.currency,true);
+  });
+  document.addEventListener('change',e=>{
+    const sel=e.target.closest&&e.target.closest('select.mre-currency-select');
+    if(!sel)return;
+    setCurrency(sel.value,true);
   });
 
   // MAIN pages initialize immediately. Other pages initialize only for MAIN/ROOT account context.

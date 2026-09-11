@@ -1,4 +1,4 @@
-/* Merchant Profit Report ?Deep Navy Cyan (Color Token 05) */
+/* Merchant Profit Report ??Deep Navy Cyan (Color Token 05) */
 
 body.main-merchant-profit-page{
   --mpr-navy:#123B66;
@@ -29,135 +29,212 @@ body.main-merchant-profit-page .mad-chrome-actions{
   flex-wrap:wrap;
 }
 
-/* —?KPI cards —?*/
-body.main-merchant-profit-page .mpr-kpis{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:14px;
+/* ???Mini KPIs in chrome ? Security-style chips ???*/
+body.main-merchant-profit-page .mad-chrome{
+  height:48px;
+  min-height:48px;
+  max-height:48px;
+  flex:0 0 48px;
+  padding:0;
+  align-items:center;
 }
-body.main-merchant-profit-page .mpr-kpi{
-  position:relative;
-  background:var(--mpr-surface);
-  border:1px solid var(--mpr-border);
-  border-radius:16px;
-  padding:18px 20px 16px;
-  box-shadow:var(--mpr-shadow);
-  min-height:148px;
+body.main-merchant-profit-page .mad-chrome-actions{
   display:flex;
-  flex-direction:column;
-}
-body.main-merchant-profit-page .mpr-kpi.is-hero{
-  background:linear-gradient(145deg,#123B66 0%,#0E2F52 100%);
-  border-color:transparent;
-  color:#fff;
-}
-body.main-merchant-profit-page .mpr-kpi-top{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
+  align-items:center;
   gap:10px;
-  margin-bottom:10px;
+  flex-wrap:nowrap;
+  justify-content:flex-end;
+  max-width:none;
+  height:36px;
+  min-height:36px;
 }
-body.main-merchant-profit-page .mpr-kpi-label{
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  color:var(--mpr-muted);
+body.main-merchant-profit-page .mpr-mini-kpis{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex:0 1 auto;
+  min-width:0;
+  flex-wrap:nowrap;
 }
-body.main-merchant-profit-page .mpr-kpi.is-hero .mpr-kpi-label{color:rgba(255,255,255,.72)}
-body.main-merchant-profit-page .mpr-kpi-trend{
+body.main-merchant-profit-page .mpr-mini{
   display:inline-flex;
   align-items:center;
-  gap:4px;
-  height:22px;
-  padding:0 8px;
-  border-radius:999px;
-  background:rgba(18,183,106,.18);
-  color:#7DFFB5;
-  font-size:11px;
-  font-weight:800;
-  white-space:nowrap;
-}
-body.main-merchant-profit-page .mpr-kpi-trend.is-down{
-  background:rgba(239,51,64,.18);
-  color:#FFB4B8;
-}
-body.main-merchant-profit-page .mpr-kpi-trend.is-flat{
-  background:rgba(255,255,255,.12);
-  color:rgba(255,255,255,.75);
-}
-body.main-merchant-profit-page .mpr-kpi-icon{
-  width:34px;
-  height:34px;
-  border-radius:10px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  font-size:16px;
+  gap:8px;
+  height:36px;
+  min-height:36px;
+  min-width:168px;
+  padding:0 14px 0 10px;
+  border:1px solid var(--mpr-border);
+  border-radius:8px;
+  background:var(--mpr-surface);
+  box-shadow:none;
   flex:0 0 auto;
 }
-body.main-merchant-profit-page .mpr-kpi-icon.is-cyan{
+body.main-merchant-profit-page .mpr-mini.is-hero{
+  background:var(--mpr-surface);
+  border-color:var(--mpr-border);
+  color:inherit;
+  min-width:200px;
+}
+body.main-merchant-profit-page .mpr-mini-icon{
+  width:24px;
+  height:24px;
+  border-radius:6px;
+  flex:0 0 24px;
+  display:grid;
+  place-items:center;
+  font-size:12px;
+}
+body.main-merchant-profit-page .mpr-mini-icon.is-navy{
+  background:rgba(18,59,102,.1);
+  color:var(--mpr-navy);
+}
+body.main-merchant-profit-page .mpr-mini-icon.is-cyan{
   background:var(--mpr-cyan-tint);
   color:var(--mpr-cyan);
 }
-body.main-merchant-profit-page .mpr-kpi-icon.is-green{
+body.main-merchant-profit-page .mpr-mini-icon.is-green{
   background:var(--mpr-success-tint);
   color:var(--mpr-success);
 }
-body.main-merchant-profit-page .mpr-kpi-value{
-  margin:0;
-  font-size:28px;
-  font-weight:800;
-  letter-spacing:-.02em;
-  color:var(--mpr-text);
-  line-height:1.15;
+body.main-merchant-profit-page .mpr-mini-copy{
+  display:inline-flex;
+  align-items:baseline;
+  gap:8px;
+  min-width:0;
+  flex:1 1 auto;
+  white-space:nowrap;
 }
-body.main-merchant-profit-page .mpr-kpi.is-hero .mpr-kpi-value{color:#fff}
-body.main-merchant-profit-page .mpr-kpi-meta{
-  margin:6px 0 0;
-  font-size:12.5px;
+body.main-merchant-profit-page .mpr-mini-label{
+  font-size:12px;
+  font-weight:650;
+  letter-spacing:0;
+  text-transform:none;
+  color:var(--mpr-muted);
+  white-space:nowrap;
+}
+body.main-merchant-profit-page .mpr-mini-value{
+  margin:0;
+  font-size:15px;
+  font-weight:800;
+  letter-spacing:-.3px;
+  line-height:1;
+  color:var(--mpr-text);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+body.main-merchant-profit-page .mpr-mini-meta{
+  margin:0 0 0 auto;
+  font-size:11px;
+  font-weight:700;
+  color:var(--mpr-muted);
+  line-height:1;
+  white-space:nowrap;
+}
+body.main-merchant-profit-page .mpr-kpi-trend{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  height:18px;
+  padding:0 6px;
+  border-radius:999px;
+  background:var(--mpr-success-tint);
+  color:var(--mpr-success);
+  font-size:10px;
+  font-weight:800;
+  white-space:nowrap;
+  flex:0 0 auto;
+  max-width:64px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+body.main-merchant-profit-page .mpr-kpi-trend.is-down{
+  background:rgba(239,51,64,.12);
+  color:#EF3340;
+}
+body.main-merchant-profit-page .mpr-kpi-trend.is-flat{
+  background:rgba(18,59,102,.08);
   color:var(--mpr-muted);
 }
-body.main-merchant-profit-page .mpr-kpi.is-hero .mpr-kpi-meta{color:rgba(255,255,255,.68)}
-body.main-merchant-profit-page .mpr-kpi-foot{
-  margin-top:auto;
-  padding-top:14px;
+
+@media (max-width:1200px){
+  body.main-merchant-profit-page .mpr-mini{
+    min-width:0;
+    padding:0 10px 0 8px;
+  }
+  body.main-merchant-profit-page .mpr-mini.is-hero{min-width:0}
+  body.main-merchant-profit-page .mpr-mini-label{display:none}
+}
+@media (max-width:1100px){
+  body.main-merchant-profit-page .mad-chrome{
+    height:auto;
+    min-height:48px;
+    max-height:none;
+    flex:0 0 auto;
+    padding:8px 0;
+  }
+  body.main-merchant-profit-page .mad-chrome-actions{
+    width:100%;
+    height:auto;
+    min-height:36px;
+    flex-wrap:wrap;
+  }
+  body.main-merchant-profit-page .mpr-mini-kpis{
+    width:100%;
+    order:-1;
+    justify-content:flex-end;
+    flex-wrap:wrap;
+  }
+  body.main-merchant-profit-page .mpr-mini-label{display:inline}
+}
+
+/* ???Ledger panel (mad-panel / mad-table) ???*/
+body.main-merchant-profit-page .mpr-filter-bar.mad-filter-bar,
+body.main-admin-detail-page.main-merchant-profit-page .mpr-filter-bar.mad-filter-bar{
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:nowrap;
+}
+body.main-merchant-profit-page .mpr-filter-row,
+body.main-merchant-profit-page .mpr-filter-row-main{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:10px;
-  font-size:12px;
-  color:var(--mpr-muted);
+  gap:12px;
+  width:100%;
+  min-width:0;
+  flex-wrap:nowrap;
 }
-body.main-merchant-profit-page .mpr-kpi.is-hero .mpr-kpi-foot{color:rgba(255,255,255,.7)}
-body.main-merchant-profit-page .mpr-kpi-foot-left{
-  display:inline-flex;
+body.main-merchant-profit-page .mpr-filter-row-main .mad-pills{
+  flex:0 1 auto;
+  margin:0;
+  min-width:0;
+}
+body.main-merchant-profit-page .mpr-filters-tools.mad-filters{
+  display:flex;
   align-items:center;
-  gap:7px;
+  gap:8px;
+  flex:0 1 auto;
+  margin-left:auto;
+  min-width:0;
+  flex-wrap:nowrap;
 }
-body.main-merchant-profit-page .mpr-dot{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:var(--mpr-cyan);
-  flex:0 0 auto;
-}
-body.main-merchant-profit-page .mpr-dot.is-green{background:var(--mpr-success)}
-body.main-merchant-profit-page .mpr-dot.is-light{background:rgba(255,255,255,.85)}
-body.main-merchant-profit-page .mpr-kpi-foot-right{font-weight:700;color:inherit}
-
-/* —?Ledger panel (mad-panel / mad-table) —?*/
 body.main-merchant-profit-page .mpr-date-field{
-  min-width:260px;
-  flex:0 1 280px;
+  width:230px;
+  min-width:200px;
+  max-width:260px;
+  flex:0 0 auto;
+  margin:0;
 }
 body.main-merchant-profit-page .mpr-date-field .ref-range-wrap,
 body.main-merchant-profit-page .mpr-date-field .ref-range-trigger{
   width:100%;
 }
 body.main-merchant-profit-page .mpr-date-field .ref-range-trigger{
-  height:36px;
+  height:42px;
   border-radius:8px;
   font-size:13px;
   font-weight:600;
@@ -340,7 +417,7 @@ body.main-merchant-profit-page .mpr-actions .mad-icon-btn.is-placeholder{
   pointer-events:none;
 }
 
-/* —?Modal —?*/
+/* ???Modal ???*/
 body.main-merchant-profit-page .mpr-modal .modal-clean-panel{
   max-width:560px;
   width:min(560px, calc(100vw - 32px));
@@ -409,23 +486,53 @@ body.main-merchant-profit-page .mpr-hint{
 }
 
 @media (max-width:1100px){
-  body.main-merchant-profit-page .mpr-kpis{grid-template-columns:1fr}
+  body.main-merchant-profit-page .mpr-filter-row-main{
+    flex-wrap:wrap;
+  }
+  body.main-merchant-profit-page .mpr-filter-row-main .mad-pills{
+    width:100%;
+  }
+  body.main-merchant-profit-page .mpr-filters-tools.mad-filters{
+    width:100%;
+    margin-left:0;
+    justify-content:flex-end;
+    flex-wrap:wrap;
+  }
+}
+@media (max-width:900px){
+  body.main-merchant-profit-page .mpr-mini.is-hero{
+    min-width:0;
+  }
 }
 @media (max-width:720px){
   body.main-merchant-profit-page .mpr-fields-2{grid-template-columns:1fr}
-  body.main-merchant-profit-page .mpr-date-field{min-width:0;flex:1 1 100%}
+  body.main-merchant-profit-page .mpr-date-field{
+    width:100%;
+    min-width:0;
+    max-width:none;
+    flex:1 1 100%;
+  }
+  body.main-merchant-profit-page .mpr-filters-tools.mad-filters > .rounded-select-wrap,
+  body.main-merchant-profit-page .mpr-filters-tools.mad-filters > .mad-search,
+  body.main-merchant-profit-page .mpr-filters-tools.mad-filters > .mad-btn{
+    flex:1 1 auto;
+  }
 }
 
-html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-kpi-value,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-mini-value,
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-merchant,
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-amount{
   color:#E8EEF7;
 }
-html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-kpi:not(.is-hero),
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-mini,
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-panel,
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-ledger-panel.mad-panel{
   background:#0F1C2E;
   border-color:#24374F;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-mini-icon.is-navy{
+  background:rgba(33,166,215,.14);
+  color:var(--mpr-cyan);
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-modal-segs{
   background:#172637;
@@ -519,7 +626,7 @@ html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-c
   background:rgba(33,166,215,.28)!important;
   color:#7DD3FC!important;
 }
-/* Created At tip — same dark tip token as mad-float-tip / action tips */
+/* Created At tip ? same dark tip token as mad-float-tip / action tips */
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-created-at[data-tip]::after{
   background:#243B55;
   color:#F5F8FB;
@@ -532,15 +639,16 @@ html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-created-at[data-t
 
 /* Merchant Profit native-currency selector. Populated from Currency Management
    by main-currency-runtime.js and hidden automatically when only one currency is enabled. */
-.mpr-currency-group{display:flex;align-items:center;gap:8px;flex:0 0 auto}
-.mpr-currency-group .mre-currency-label{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#64748b}
-.mpr-currency-group .mre-currency-seg{display:inline-flex;align-items:center;gap:2px;padding:3px;border-radius:9px;background:#e8eef6}
-.mpr-currency-group .mre-cur-btn{min-width:48px;height:34px;padding:0 12px;border:0;border-radius:7px;background:transparent;color:#64748b;font-size:13px;font-weight:800;cursor:pointer}
-.mpr-currency-group .mre-cur-btn:hover:not(.is-active){background:rgba(255,255,255,.55);color:#173d65}
-.mpr-currency-group .mre-cur-btn.is-active{background:#143f69;color:#fff;box-shadow:0 1px 3px rgba(15,23,42,.18)}
-.mpr-currency-group .mre-cur-btn:focus-visible{outline:2px solid #38bdf8;outline-offset:2px}
-html[data-bo-theme="dark"] .mpr-currency-group .mre-currency-label{color:#94a3b8}
-html[data-bo-theme="dark"] .mpr-currency-group .mre-currency-seg{background:#1e293b}
-html[data-bo-theme="dark"] .mpr-currency-group .mre-cur-btn{color:#cbd5e1}
-html[data-bo-theme="dark"] .mpr-currency-group .mre-cur-btn.is-active{background:#0f4c81;color:#fff}
-@media(max-width:900px){.mpr-currency-group{width:100%}.mpr-currency-group .mre-currency-seg{flex-wrap:wrap}}
+body.main-merchant-profit-page .mpr-currency-filter.mad-filter-field{
+  display:contents;
+}
+body.main-merchant-profit-page .mpr-filters-tools.mad-filters > .rounded-select-wrap{
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+}
+body.main-merchant-profit-page .mpr-filters-tools.mad-filters > .rounded-select-wrap .rounded-select-btn{
+  height:42px!important;
+  min-height:42px!important;
+}

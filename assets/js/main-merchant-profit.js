@@ -150,11 +150,9 @@
     $('mprTotal').textContent = money(state.total);
     $('mprPricingTotal').textContent = money(state.pricingTotal);
     $('mprManualTotal').textContent = money(state.manualTotal);
-    $('mprTxnCount').textContent = `${rows.length} Transaction${rows.length === 1 ? '' : 's'}`;
     $('mprOneOffCount').textContent = `${oneOffRows.length} Entr${oneOffRows.length === 1 ? 'y' : 'ies'}`;
     const mCount = pricingMerchants.size || merchants.size;
     $('mprMerchantCount').textContent = `${mCount} Merchant${mCount === 1 ? '' : 's'}`;
-    $('mprRangeLabel').textContent = `${fmtSlash($('mprFrom').value)} - ${fmtSlash($('mprTo').value)} reconciled`;
     $('mprSegAll').textContent = String(rows.length);
     $('mprSegMonthly').textContent = String(monthlyRows.length);
     $('mprSegOneOff').textContent = String(oneOffRows.length);

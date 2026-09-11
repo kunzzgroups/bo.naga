@@ -596,12 +596,12 @@
     });
     setStatus('madCreditStatus','Credit reclaimed successfully.','success');
    }else{
-    await api('/admin/merchants/'+encodeURIComponent(id)+'/topup',{
-     method:'POST',
-     headers:hdr(),
-     body:JSON.stringify({amount,providerCode,remark:remark||'Merchant credit top up'})
-    });
-    setStatus('madCreditStatus','Top up completed successfully.','success');
+   await api('/admin/merchants/'+encodeURIComponent(id)+'/topup',{
+    method:'POST',
+    headers:hdr(),
+    body:JSON.stringify({amount,providerCode,remark:remark||'Merchant credit top up'})
+   });
+   setStatus('madCreditStatus','Top up completed successfully.','success');
    }
    await load();
    setTimeout(closeCredit,450);
