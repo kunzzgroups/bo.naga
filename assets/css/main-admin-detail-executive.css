@@ -4256,6 +4256,9 @@ body.main-admin-detail-page .mac-adjust-balance b{
 body.main-admin-detail-page .mac-adjust-ops{
   display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:2px;
 }
+body.main-admin-detail-page .mac-adjust-ops.mac-adjust-ops-amount-only{
+  grid-template-columns:1fr;
+}
 body.main-admin-detail-page .mac-credit-mode{
   display:grid;grid-template-columns:1fr 1fr;gap:4px;
   margin:0 0 16px;padding:4px;border-radius:10px;

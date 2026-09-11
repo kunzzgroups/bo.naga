@@ -331,22 +331,12 @@
   el.textContent=val||'';
   el.className='upload-status mb-3'+(type?' '+type:'');
  }
- function setWalletOptions(wallet, extraHtml){
-  if(!wallet || wallet.tagName!=='SELECT') return;
-  const html='<option value="">Player Credit</option><option value="__WHOLE_PROVIDER__">Whole Platform-Provider Credit</option>'+(extraHtml||'');
-  wallet.innerHTML=html;
-  wallet.value='';
-  const wrap=wallet.closest('.rounded-select-wrap');
-  if(wrap) wrap.dataset.boAutoWidth='0';
-  wallet.dispatchEvent(new Event('bo:select-sync',{bubbles:true}));
-  if(window.BOSelectSync && typeof BOSelectSync.one==='function') BOSelectSync.one(wallet);
- }
  let creditOpenSeq=0;
  let creditFocusTimer=0;
  let creditAction='ADD';
  let creditBalances={player:0,provider:0,byProvider:{}};
  function currentWalletBalance(){
-  const wallet=$('madCreditWallet')?.value||'';
+  const wallet=$('madCreditWallet')?.value||'__WHOLE_PROVIDER__';
   if(!wallet) return Number(creditBalances.player)||0;
   if(wallet==='__WHOLE_PROVIDER__') return Number(creditBalances.provider)||0;
   const per=creditBalances.byProvider[String(wallet).toUpperCase()];
@@ -365,7 +355,7 @@
   const title=$('madCreditTitle');
   if(title) title.textContent=deduct?'Reclaim Credit':'Add Credit';
   const lead=$('madCreditLead');
-  if(lead) lead.textContent=deduct?'Take back merchant player or provider credit.':'Top up merchant player or provider credit.';
+  if(lead) lead.textContent=deduct?'Take back merchant provider credit.':'Top up merchant provider credit.';
   const icon=modal?.querySelector('.mad-modal-icon i');
   if(icon) icon.className=deduct?'bi bi-dash-lg':'bi bi-plus-lg';
   const remark=$('madCreditRemark');
@@ -416,17 +406,16 @@
   if(nameEl) nameEl.textContent=row.code||row.name||('#'+row.id);
   if(subEl) subEl.textContent=(row.name||row.code||'')+(row.currency?' · '+row.currency:'');
   if(avatarEl) avatarEl.textContent=String(row.code||'M').slice(0,2).toUpperCase();
-  if(balEl) balEl.textContent=money(row.creditBalance);
-  setText('madCreditBalanceInfo','Loading wallets...');
+  if(balEl) balEl.textContent=money(row.providerCreditBalance??row.creditBalance);
   if($('madCreditAmount')) $('madCreditAmount').value='';
   if($('madCreditRemark')) $('madCreditRemark').value='';
   setStatus('madCreditStatus','');
   creditAction='ADD';
   creditBalances={player:Number(row.creditBalance||0),provider:Number(row.providerCreditBalance||0),byProvider:{}};
   syncCreditMode();
-  showCreditModal(modal);
   const wallet=$('madCreditWallet');
-  setWalletOptions(wallet,'');
+  if(wallet) wallet.value='__WHOLE_PROVIDER__';
+  showCreditModal(modal);
   try{
    const d=await api('/admin/merchants/'+encodeURIComponent(id),{headers:BO_AUTH.authHeader()});
    if(seq!==creditOpenSeq) return;
@@ -438,15 +427,10 @@
     if(code) byProvider[code]=Number(p.creditBalance||0);
    });
    creditBalances={player:Number(b.creditBalance||0),provider:Number(b.providerCreditBalance||0),byProvider};
-   const extra=String(b.creditMode||'').toUpperCase()==='PER_PROVIDER'
-     ?ps.filter(p=>Number(p.enabled??1)===1).map(p=>`<option value="${esc(p.providerCode)}">Provider: ${esc(p.providerCode)}</option>`).join('')
-     :'';
-   setWalletOptions(wallet, extra);
-   setText('madCreditBalanceInfo','Player Credit: '+money(b.creditBalance||0)+' · Provider Credit: '+money(b.providerCreditBalance||0));
-   if(balEl) balEl.textContent=money(b.creditBalance||0);
+   if(balEl) balEl.textContent=money(b.providerCreditBalance||0);
   }catch(e){
    if(seq!==creditOpenSeq) return;
-   setText('madCreditBalanceInfo',e.message||'Unable to load wallet details.');
+   setStatus('madCreditStatus',e.message||'Unable to load credit details.','error');
   }
   if(seq!==creditOpenSeq) return;
   creditFocusTimer=setTimeout(()=>$('madCreditAmount')?.focus(),40);
@@ -572,7 +556,7 @@
   e.preventDefault();
   const id=$('madCreditId')?.value;
   const amount=Number($('madCreditAmount')?.value||0);
-  const providerCode=$('madCreditWallet')?.value||null;
+  const providerCode=$('madCreditWallet')?.value||'__WHOLE_PROVIDER__';
   const remark=($('madCreditRemark')?.value||'').trim();
   const action=creditAction==='DEDUCT'?'DEDUCT':'ADD';
   if(!id){ setStatus('madCreditStatus','Merchant missing.','error'); return; }
@@ -580,7 +564,7 @@
   if(action==='DEDUCT'){
    const avail=currentWalletBalance();
    if(amount>avail){
-    setStatus('madCreditStatus','Reclaim amount cannot exceed the selected wallet balance ('+money(avail)+').','error');
+    setStatus('madCreditStatus','Reclaim amount cannot exceed Provider Credit ('+money(avail)+').','error');
     return;
    }
   }
