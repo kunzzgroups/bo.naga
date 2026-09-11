@@ -11,7 +11,7 @@
 <link href="assets/css/reports.css?v=1.0.47" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.133" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.158" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -120,14 +120,14 @@
                 </span>
                 <span class="mad-pass-wrap">
                   <input class="form-control" id="merchantMasterPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Min. 8 characters"/>
-                  <button type="button" class="mad-eye" data-toggle-password="merchantMasterPassword" aria-label="Show password"><i class="bi bi-eye"></i></button>
+                  <button type="button" class="mad-eye" data-toggle-password="merchantMasterPassword" aria-label="Show password" aria-pressed="false"><i class="bi bi-eye-slash"></i></button>
                 </span>
               </label>
               <label class="mac-field" for="merchantMasterPasswordConfirm">
                 <span class="mac-label">Confirm Password</span>
                 <span class="mad-pass-wrap">
                   <input class="form-control" id="merchantMasterPasswordConfirm" type="password" minlength="8" autocomplete="new-password" placeholder="Re-enter"/>
-                  <button type="button" class="mad-eye" data-toggle-password="merchantMasterPasswordConfirm" aria-label="Show confirm password"><i class="bi bi-eye"></i></button>
+                  <button type="button" class="mad-eye" data-toggle-password="merchantMasterPasswordConfirm" aria-label="Show confirm password" aria-pressed="false"><i class="bi bi-eye-slash"></i></button>
                 </span>
               </label>
             </div>
@@ -238,7 +238,7 @@
         <span class="mad-modal-icon" aria-hidden="true"><i class="bi bi-currency-exchange"></i></span>
         <div>
           <h2 id="merchantCurrencyModalTitle">Add Currency</h2>
-          <small>Type a currency to add, or move between Added and Available.</small>
+          <small>Type Add → Added. Move to Available for the Primary Currency dropdown. Apply writes Available into the dropdown.</small>
         </div>
       </div>
       <button class="modal-clean-close" type="button" data-mac-currency-close aria-label="Close"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
@@ -262,10 +262,10 @@
           <div class="mac-currency-pane-list" id="merchantCurrencyAddedList" role="list"></div>
         </section>
         <div class="mac-currency-dual-actions" aria-hidden="true">
-          <button type="button" class="mac-currency-move-btn" id="merchantCurrencyMoveLeft" title="Add selected" aria-label="Add selected to Added">
+          <button type="button" class="mac-currency-move-btn" id="merchantCurrencyMoveLeft" title="Move to Added" aria-label="Move selected to Added">
             <i class="bi bi-chevron-left" aria-hidden="true"></i>
           </button>
-          <button type="button" class="mac-currency-move-btn" id="merchantCurrencyMoveRight" title="Remove selected" aria-label="Remove selected from Added">
+          <button type="button" class="mac-currency-move-btn" id="merchantCurrencyMoveRight" title="Move to Available" aria-label="Move selected to Available">
             <i class="bi bi-chevron-right" aria-hidden="true"></i>
           </button>
         </div>
@@ -293,7 +293,7 @@
 <script src="assets/js/reports.js?v=1.0.26"></script>
 <script src="assets/js/auth.js?v=1.0.60"></script>
 <script src="assets/js/main-merchant-visibility.js?v=1.0.0"></script>
-<script src="assets/js/main-merchant-create.js?v=1.1.21"></script>
+<script src="assets/js/main-merchant-create.js?v=1.1.23"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>

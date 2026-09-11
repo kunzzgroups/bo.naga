@@ -3,7 +3,7 @@
  const body=$('madTableBody'),search=$('madSearchInput'),roleFilter=$('madRoleFilter'),currencyFilter=$('madCurrencyFilter'),editWorkspace=$('madEditWorkspace'),listWorkspace=$('madListWorkspace'),form=$('madEditForm');
  const pageTitle=document.querySelector('.report-topbar h1');
  const pageLead=document.querySelector('.report-topbar .user-title-wrap p');
- const PAGE_TITLE_LIST='Merchant Management';
+ const PAGE_TITLE_LIST='Merchants';
  const PAGE_LEAD_LIST='Manage merchants (existing Brand records), domains, credit, access, and account status.';
  const PAGE_TITLE_EDIT='Edit Merchant';
  const PAGE_LEAD_EDIT='Update brand tenant details, credit policy, and provider pricing.';
@@ -12,7 +12,15 @@
   if(pageLead) pageLead.textContent=editing?PAGE_LEAD_EDIT:PAGE_LEAD_LIST;
  }
  const selectAllInput=$('madSelectAll'),selectAllWrap=$('madSelectAllWrap'),bulkDeleteBtn=$('madBulkDeleteBtn'),resetBtn=$('madResetBtn');
- let rows=[],filtered=[],page=1,status='active',editing=null,detail=null;
+ let rows=[],filtered=[],page=1,status='active',editing=null,editingMaster=null,detail=null;
+ let platformProviders=[];
+ let currencyOptions=[];
+ const selectedCodes=new Set();
+ const overrideByCode=new Map();
+ const enabledCurrencies=new Set(['MYR']);
+ const currencyModalDraft=new Set(['MYR']);
+ const currencyModalSelected=new Set();
+ let providerSearch='';
  const selectedMerchantIds=new Set();
  const PAGE=10;
  function pageButtons(current, total){
@@ -58,6 +66,71 @@
   const date=dateMmDdYyyy(value);
   if(!date) return '<span class="mad-time">'+esc(t)+'</span>';
   return '<span class="mad-time mad-time-tip" data-date="'+esc(date)+'" tabindex="0">'+esc(t)+'</span>';
+ }
+ function firstNonEmpty(){
+  for(let i=0;i<arguments.length;i++){
+   const v=arguments[i];
+   if(v==null) continue;
+   const s=String(v).trim();
+   if(s) return s;
+  }
+  return '';
+ }
+ function auditDateParts(value){
+  const d=parseDate(value);
+  if(!d) return {date:'—', time:'—', empty:true};
+  const pad=n=>String(n).padStart(2,'0');
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return {
+   date: pad(d.getDate())+' '+months[d.getMonth()]+' '+d.getFullYear(),
+   time: pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds()),
+   empty:false
+  };
+ }
+ function setAuditText(id, text, empty){
+  const el=$(id);
+  if(!el) return;
+  el.textContent=text||'—';
+  el.classList.toggle('is-empty', !!empty || !text || text==='—');
+ }
+ function setAuditDateTime(dateId, timeId, value){
+  const parts=auditDateParts(value);
+  setAuditText(dateId, parts.date, parts.empty);
+  setAuditText(timeId, parts.time, parts.empty);
+ }
+ function hydrateAuditMeta(b, m){
+  const brand=b||{};
+  const master=m||{};
+  setAuditDateTime(
+   'madAuditCreatedDate',
+   'madAuditCreatedTime',
+   firstNonEmpty(brand.createdAt, brand.createTime, brand.created_at, master.createdAt)
+  );
+  setAuditText(
+   'madAuditCreatedBy',
+   firstNonEmpty(brand.createdByName, brand.createdByUsername, brand.createdBy, master.createdByName, master.createdByUsername, 'Legacy / Migration'),
+   false
+  );
+  setAuditDateTime(
+   'madAuditUpdatedDate',
+   'madAuditUpdatedTime',
+   firstNonEmpty(brand.updatedAt, brand.updateTime, brand.updated_at, brand.lastUpdatedAt, master.updatedAt)
+  );
+  setAuditText(
+   'madAuditUpdatedBy',
+   firstNonEmpty(brand.updatedByName, brand.updatedByUsername, brand.updatedBy, brand.lastUpdatedByName, brand.lastUpdatedBy, master.updatedByName, master.updatedByUsername, '—'),
+   !firstNonEmpty(brand.updatedByName, brand.updatedByUsername, brand.updatedBy, brand.lastUpdatedByName, brand.lastUpdatedBy, master.updatedByName, master.updatedByUsername)
+  );
+  setAuditDateTime(
+   'madAuditLoginDate',
+   'madAuditLoginTime',
+   firstNonEmpty(brand.masterLastLoginAt, brand.lastLoginAt, master.lastLoginAt, master.lastLogin)
+  );
+  setAuditDateTime(
+   'madAuditLogoutDate',
+   'madAuditLogoutTime',
+   firstNonEmpty(brand.masterLastLogoutAt, brand.lastLogoutAt, master.lastLogoutAt, master.lastLogout)
+  );
  }
  function statusSelect(b){
   const on=active(b);
@@ -539,10 +612,363 @@
   }
  }
  async function load(){try{rows=await api('/admin/merchants',{headers:BO_AUTH.authHeader()})||[];syncFilterOptions();apply();$('madSyncLabel').innerHTML='<i class="bi bi-arrow-repeat"></i> Synced just now'}catch(e){body.innerHTML=`<tr><td colspan="11" class="mad-empty text-danger">${esc(e.message)}</td></tr>`;syncSelectionUi();}}
- function providerRows(d){const out=$('madProviderPricingBody');if(!out)return;const assigned=new Map((d.providers||[]).map(x=>[String(x.providerCode||'').toUpperCase(),x]));const markupRaw=String($('madProviderMarkup')?.value ?? d.brand?.providerMarkupPercent ?? '').trim();const markup=Number(markupRaw||0);const platform=d.platformProviders||[];out.innerHTML=platform.length?platform.map(p=>{const code=String(p.code||'').toUpperCase(),bp=assigned.get(code),checked=!!bp&&String(bp.ownership||'PLATFORM').toUpperCase()==='PLATFORM',base=Number(p.settlementCostPercent||0),savedOv=Number(bp?.defaultChargePercent||0),ovShow=savedOv>0?String(savedOv):(markupRaw!==''&&markup!==0?markupRaw:''),eff=base+Number(ovShow||markup||0),basis=String(bp?.chargeBasis||p.settlementCostBasis||'HOUSE_WIN').toUpperCase();return '<tr data-provider-row="'+esc(code)+'" data-base="'+base+'">'+'<td><input type="checkbox" class="form-check-input" data-provider-use '+(checked?'checked':'')+'></td>'+'<td><b>'+esc(code)+'</b><small class="d-block text-muted">'+esc(p.name||'')+'</small></td>'+'<td>'+base.toFixed(4)+'%</td>'+'<td><input type="number" class="form-control form-control-sm" min="0" max="100" step="0.0001" data-provider-override value="'+esc(ovShow)+'" '+(checked?'':'disabled')+' placeholder="—"></td>'+'<td><b data-provider-effective>'+eff.toFixed(4)+'%</b></td>'+'<td>'+(basis==='TURNOVER'?'Turnover':'House Win / GGR')+'</td></tr>';}).join(''):'<tr><td colspan="6" class="text-center text-muted py-3">No platform providers configured.</td></tr>';bindProviderInputs()}
- function bindProviderInputs(){const markup=$('madProviderMarkup');const syncOverridesFromMarkup=()=>{const raw=String(markup?.value??'').trim();document.querySelectorAll('#madProviderPricingBody [data-provider-row]').forEach(r=>{const use=r.querySelector('[data-provider-use]'),inp=r.querySelector('[data-provider-override]');if(!inp)return;inp.disabled=!use?.checked;if(inp.dataset.manual!=='1'){inp.value=(raw===''||raw==='0')?'':raw;}});};const recalc=()=>{const m=Number(markup?.value||0);document.querySelectorAll('#madProviderPricingBody [data-provider-row]').forEach(r=>{const use=r.querySelector('[data-provider-use]'),inp=r.querySelector('[data-provider-override]'),base=Number(r.dataset.base||0);if(inp)inp.disabled=!use?.checked;const ovRaw=String(inp?.value||'').trim();const add=ovRaw!==''?Number(ovRaw):m;const eff=r.querySelector('[data-provider-effective]');if(eff)eff.textContent=(base+Number(add||0)).toFixed(4)+'%';});};if(markup&&!markup.dataset.bound){markup.dataset.bound='1';markup.addEventListener('input',()=>{document.querySelectorAll('#madProviderPricingBody [data-provider-override]').forEach(inp=>{inp.dataset.manual='0';});syncOverridesFromMarkup();recalc();});}document.querySelectorAll('#madProviderPricingBody [data-provider-use]').forEach(x=>x.addEventListener('change',()=>{syncOverridesFromMarkup();recalc();}));document.querySelectorAll('#madProviderPricingBody [data-provider-override]').forEach(x=>x.addEventListener('input',()=>{x.dataset.manual='1';recalc();}));syncOverridesFromMarkup();recalc()}
- async function open(id){try{const d=await api('/admin/merchants/'+id,{headers:BO_AUTH.authHeader()}),b=d.brand||d;detail=d;editing=b;const m=d.masterAccount||await api('/admin/merchants/'+id+'/master-account',{headers:BO_AUTH.authHeader()}).catch(()=>null);$('madEditId').value=b.id;$('madEditCode').value=b.code||'';$('madEditName').value=b.name||'';$('madEditDomain').value=b.primaryDomain||'';$('madEditAliases').value=b.domainAliases||'';$('madEditCurrency').value=b.currency||'MYR';$('madEditFrontendRoot').value=b.frontendRoot||'';$('madEditCreditMode').value=b.creditMode||'WHOLE';$('madEditStatus').value=String(b.status??1);$('madViewPlayerCredit').value=money(b.creditBalance);$('madViewProviderCredit').value=money(b.providerCreditBalance);$('madViewMaster').value=m?.username||b.masterUsername||'-';$('madViewCreatedBy').value=b.createdByName||b.createdByUsername||m?.createdByName||'Legacy / Migration';$('madViewLastLogin').value=dt(m?.lastLoginAt||b.masterLastLoginAt);$('madViewLastLogout').value=dt(m?.lastLogoutAt||b.masterLastLogoutAt);$('madProviderMarkup').value=Number(b.providerMarkupPercent||0);providerRows(d);$('madEditFormStatus').textContent='';if(listWorkspace){listWorkspace.hidden=true;listWorkspace.setAttribute('aria-hidden','true');}if(editWorkspace){editWorkspace.hidden=false;editWorkspace.setAttribute('aria-hidden','false');}document.body.classList.add('mad-editing');setPageChrome(true);window.scrollTo({top:0,behavior:'smooth'});}catch(e){if(window.BO_DIALOG?.alert)BO_DIALOG.alert(e.message,{title:'Unable to Load Merchant',type:'error'});else alert(e.message)}}
- function close(){if(editWorkspace){editWorkspace.hidden=true;editWorkspace.setAttribute('aria-hidden','true');}if(listWorkspace){listWorkspace.hidden=false;listWorkspace.setAttribute('aria-hidden','false');}document.body.classList.remove('mad-editing');setPageChrome(false);}
+
+ function primaryCurrency(){
+  return String($('madEditCurrency')?.value||'').trim().toUpperCase();
+ }
+ function normalizeCurrencyCode(raw){
+  return String(raw||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+ }
+ function activeCurrencyRows(){
+  const rows=currencyOptions.length?currencyOptions:[{currencyCode:'MYR',displayName:'Malaysian Ringgit',rateFromBase:1,status:1}];
+  return rows.filter(x=>Number(x.status??1)===1);
+ }
+ function currencyRowByCode(code){
+  const key=normalizeCurrencyCode(code);
+  return activeCurrencyRows().find(x=>String(x.currencyCode||'').toUpperCase()===key)||null;
+ }
+ function ensureCurrencyOption(code, displayName){
+  const key=normalizeCurrencyCode(code);
+  if(!key) return '';
+  const name=String(displayName||'').trim();
+  const existing=currencyOptions.find(x=>String(x.currencyCode||'').toUpperCase()===key);
+  if(existing){
+   if(name && !String(existing.displayName||'').trim()) existing.displayName=name;
+   return key;
+  }
+  currencyOptions.push({currencyCode:key,displayName:name||key,rateFromBase:1,decimalPlaces:2,status:1,_local:true});
+  return key;
+ }
+ function syncEnabledWithPrimary(){
+  const primary=primaryCurrency();
+  if(primary) enabledCurrencies.add(primary);
+ }
+ function enabledCurrencyPayload(){
+  syncEnabledWithPrimary();
+  return [...enabledCurrencies].filter(Boolean);
+ }
+ function setCurrencyModalStatus(msg, kind){
+  const el=$('madCurrencyModalStatus');
+  if(!el) return;
+  el.textContent=msg||'';
+  el.className='upload-status mb-0'+(kind?(' '+kind):'');
+ }
+ function currencyModalItemHtml(code, side){
+  const selected=currencyModalSelected.has(code+'|'+side);
+  return '<button type="button" class="mac-currency-pane-item'+(selected?' is-selected':'')+'" role="listitem" data-mad-currency-side="'+side+'" data-mad-currency-code="'+esc(code)+'" aria-pressed="'+(selected?'true':'false')+'"><span class="mac-currency-pane-item-code">'+esc(code)+'</span></button>';
+ }
+ function renderCurrencyDualLists(){
+  const addedList=$('madCurrencyAddedList');
+  const availableList=$('madCurrencyAvailableList');
+  const addedCount=$('madCurrencyAddedCount');
+  const availableCount=$('madCurrencyAvailableCount');
+  if(!addedList || !availableList) return;
+  // currencyModalDraft = Available (dropdown source). Added = catalog leftovers / typed staging.
+  const available=[...currencyModalDraft].filter(Boolean).sort((a,b)=>a.localeCompare(b));
+  const availablePool=new Set();
+  activeCurrencyRows().forEach(x=>{
+   const code=String(x.currencyCode||'').toUpperCase();
+   if(code) availablePool.add(code);
+  });
+  const added=[...availablePool].filter(code=>!currencyModalDraft.has(code)).sort((a,b)=>a.localeCompare(b));
+  addedList.innerHTML=added.length?added.map(code=>currencyModalItemHtml(code,'added')).join(''):'<div class="mac-currency-modal-empty">No currencies added yet.</div>';
+  availableList.innerHTML=available.length?available.map(code=>currencyModalItemHtml(code,'available')).join(''):'<div class="mac-currency-modal-empty">No currencies in Available.</div>';
+  if(addedCount) addedCount.textContent=String(added.length);
+  if(availableCount) availableCount.textContent=String(available.length);
+  const canToAdded=[...currencyModalSelected].some(key=>key.endsWith('|available'));
+  const canToAvailable=[...currencyModalSelected].some(key=>key.endsWith('|added'));
+  const moveLeftBtn=$('madCurrencyMoveLeft');
+  const moveRightBtn=$('madCurrencyMoveRight');
+  if(moveLeftBtn) moveLeftBtn.disabled=!canToAdded;
+  if(moveRightBtn) moveRightBtn.disabled=!canToAvailable;
+ }
+ function toggleCurrencyModalSelection(code, side){
+  const key=code+'|'+side;
+  if(currencyModalSelected.has(key)) currencyModalSelected.delete(key);
+  else{
+   [...currencyModalSelected].forEach(k=>{ if(!k.endsWith('|'+side)) currencyModalSelected.delete(k); });
+   currencyModalSelected.add(key);
+  }
+  renderCurrencyDualLists();
+ }
+ function moveSelectedToAdded(){
+  const codes=[...currencyModalSelected].filter(key=>key.endsWith('|available')).map(key=>key.split('|')[0]).filter(Boolean);
+  if(!codes.length){ setCurrencyModalStatus('Select a currency on the right (Available) to move to Added.', 'error'); return; }
+  codes.forEach(code=>{ ensureCurrencyOption(code, currencyRowByCode(code)?.displayName || code); currencyModalDraft.delete(code); });
+  currencyModalSelected.clear(); setCurrencyModalStatus(''); renderCurrencyDualLists();
+ }
+ function moveSelectedToAvailable(){
+  const codes=[...currencyModalSelected].filter(key=>key.endsWith('|added')).map(key=>key.split('|')[0]).filter(Boolean);
+  if(!codes.length){ setCurrencyModalStatus('Select a currency on the left (Added) to move to Available.', 'error'); return; }
+  codes.forEach(code=>{ ensureCurrencyOption(code, currencyRowByCode(code)?.displayName || code); currencyModalDraft.add(code); });
+  currencyModalSelected.clear(); setCurrencyModalStatus(''); renderCurrencyDualLists();
+ }
+ function addTypedCurrencyToDraft(){
+  const input=$('madCurrencyModalCode');
+  const typedCode=normalizeCurrencyCode(input?.value);
+  if(!typedCode){ setCurrencyModalStatus('Enter a currency to add.', 'error'); input?.focus(); return; }
+  if(typedCode.length<3){ setCurrencyModalStatus('Currency must be at least 3 characters (e.g. THB).', 'error'); input?.focus(); return; }
+  const alreadyAvailable=currencyModalDraft.has(typedCode);
+  const alreadyAdded=!alreadyAvailable && activeCurrencyRows().some(x=>String(x.currencyCode||'').toUpperCase()===typedCode);
+  if(alreadyAdded){ setCurrencyModalStatus(typedCode+' is already in Added. Move it to Available for the dropdown.', 'error'); input?.focus(); return; }
+  ensureCurrencyOption(typedCode, currencyRowByCode(typedCode)?.displayName || typedCode);
+  // Typed Add always lands in Added (left). Move right to Available to include in dropdown.
+  currencyModalDraft.delete(typedCode);
+  currencyModalSelected.clear();
+  currencyModalSelected.add(typedCode+'|added');
+  if(input) input.value='';
+  setCurrencyModalStatus(
+    alreadyAvailable
+      ? typedCode+' moved to Added. Move to Available, then Apply for the dropdown.'
+      : typedCode+' added to Added. Move to Available, then Apply for the dropdown.',
+    'success'
+  );
+  renderCurrencyDualLists();
+  input?.focus();
+ }
+ function openCurrencyModal(){
+  const modal=$('madCurrencyModal');
+  if(!modal) return;
+  syncEnabledWithPrimary();
+  currencyModalDraft.clear();
+  enabledCurrencies.forEach(code=>currencyModalDraft.add(code));
+  currencyModalSelected.clear();
+  const codeInput=$('madCurrencyModalCode');
+  if(codeInput) codeInput.value='';
+  setCurrencyModalStatus('');
+  renderCurrencyDualLists();
+  modal.hidden=false;
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+  document.body.classList.add('modal-open');
+  codeInput?.focus();
+ }
+ function closeCurrencyModal(){
+  const modal=$('madCurrencyModal');
+  if(!modal) return;
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden','true');
+  modal.hidden=true;
+  document.body.classList.remove('modal-open');
+  currencyModalSelected.clear();
+  setCurrencyModalStatus('');
+ }
+ function confirmCurrencyModal(){
+  // Primary Currency dropdown = Available list only.
+  enabledCurrencies.clear();
+  currencyModalDraft.forEach(code=>{
+   const key=normalizeCurrencyCode(code);
+   if(!key) return;
+   ensureCurrencyOption(key, currencyRowByCode(key)?.displayName || key);
+   enabledCurrencies.add(key);
+  });
+  renderCurrencyOptions(primaryCurrency());
+  closeCurrencyModal();
+ }
+ function renderCurrencyOptions(preferredCode){
+  const sel=$('madEditCurrency');
+  if(!sel) return;
+  // Dropdown options come only from enabledCurrencies (Available after Apply).
+  [...enabledCurrencies].forEach(code=>{ if(!code) enabledCurrencies.delete(code); });
+  [...enabledCurrencies].forEach(code=>{ ensureCurrencyOption(code, currencyRowByCode(code)?.displayName || code); });
+  const current=normalizeCurrencyCode(preferredCode||primaryCurrency());
+  const ordered=[...enabledCurrencies].filter(Boolean).sort((a,b)=>a.localeCompare(b));
+  if(!ordered.length){
+   sel.innerHTML='<option value="">Select currency</option>';
+   sel.value='';
+   syncCurrencyUnits();
+   if(window.BOSelectSync?.one) window.BOSelectSync.one(sel);
+   return;
+  }
+  const preferred=ordered.includes(current)?current:ordered[0];
+  sel.innerHTML=ordered.map(code=>'<option value="'+esc(code)+'"'+(code===preferred?' selected':'')+'>'+esc(code)+'</option>').join('');
+  if(preferred) sel.value=preferred;
+  syncCurrencyUnits();
+  if(window.BOSelectSync?.one) window.BOSelectSync.one(sel);
+ }
+ async function loadCurrencies(){
+  try{
+   const d=await api('/public/currency/options',{headers:BO_AUTH.authHeader()});
+   window.__currencyBase=String(d.baseCurrency||'MYR').toUpperCase();
+   const localOnly=currencyOptions.filter(x=>x&&x._local);
+   currencyOptions=Array.isArray(d.rates)?d.rates.slice():[];
+   localOnly.forEach(row=>{
+    const code=String(row.currencyCode||'').toUpperCase();
+    if(code && !currencyOptions.some(x=>String(x.currencyCode||'').toUpperCase()===code)) currencyOptions.push(row);
+   });
+   if(!enabledCurrencies.size) enabledCurrencies.add(String(d.baseCurrency||'MYR').toUpperCase());
+   renderCurrencyOptions();
+  }catch(e){
+   currencyOptions=[{currencyCode:'MYR',displayName:'Malaysian Ringgit',rateFromBase:1,status:1}];
+   if(!enabledCurrencies.size){ enabledCurrencies.clear(); enabledCurrencies.add('MYR'); }
+   renderCurrencyOptions();
+  }
+ }
+ function syncCurrencyUnits(){
+  const cur=primaryCurrency()||'—';
+  if($('madEditThresholdUnit')) $('madEditThresholdUnit').textContent=cur;
+  if($('madEditThresholdLabel')) $('madEditThresholdLabel').textContent='('+cur+')';
+ }
+ function hydrateEnabledCurrencies(b){
+  enabledCurrencies.clear();
+  const list=Array.isArray(b?.enabledCurrencies)?b.enabledCurrencies:(Array.isArray(b?.currencies)?b.currencies:[]);
+  list.forEach(item=>{
+   const code=normalizeCurrencyCode(typeof item==='string'?item:(item?.currencyCode||item?.code||item?.currency));
+   if(code){ ensureCurrencyOption(code, currencyRowByCode(code)?.displayName||code); enabledCurrencies.add(code); }
+  });
+  const primary=normalizeCurrencyCode(b?.currency||'MYR')||'MYR';
+  ensureCurrencyOption(primary, currencyRowByCode(primary)?.displayName||primary);
+  enabledCurrencies.add(primary);
+  renderCurrencyOptions(primary);
+ }
+ function providerCode(p){ return String(p.code||'').toUpperCase(); }
+ function markupRaw(){ return String($('madProviderMarkup')?.value??'').trim(); }
+ function markupValue(){ return Number(markupRaw()||0); }
+ function appliedMarkupValue(){ const raw=markupRaw(); return (raw===''||raw==='0')?'':raw; }
+ function applyMarkupToSelected(){
+  const synced=appliedMarkupValue();
+  selectedCodes.forEach(code=>{
+   if(synced==='') overrideByCode.delete(code);
+   else overrideByCode.set(code, synced);
+  });
+ }
+ function filteredProviders(){
+  const q=providerSearch.trim().toLowerCase();
+  if(!q) return platformProviders.slice();
+  return platformProviders.filter(p=>{
+   const code=providerCode(p).toLowerCase();
+   const name=String(p.name||'').toLowerCase();
+   return code.includes(q) || name.includes(q);
+  });
+ }
+ function syncOverrideInputsFromDom(){
+  document.querySelectorAll('#madProviderSelectedBody [data-provider-override]').forEach(inp=>{
+   const code=String(inp.getAttribute('data-provider-override')||'').toUpperCase();
+   if(!code) return;
+   const raw=String(inp.value||'').trim();
+   if(raw==='') overrideByCode.delete(code);
+   else overrideByCode.set(code, raw);
+  });
+ }
+ function updateProviderCounts(){
+  const catalogCount=$('madProviderCatalogCount');
+  const selectedCount=$('madProviderSelectedCount');
+  if(catalogCount) catalogCount.textContent=String(filteredProviders().length);
+  if(selectedCount) selectedCount.textContent=String(selectedCodes.size);
+ }
+ function renderCatalog(){
+  const out=$('madProviderCatalogList');
+  if(!out) return;
+  if(out.querySelector('.mac-provider-empty.is-error') && !platformProviders.length) return;
+  const rows=filteredProviders();
+  if(!rows.length){
+   out.innerHTML='<div class="mac-provider-empty">'+(platformProviders.length?'No providers match your search.':'No platform providers configured.')+'</div>';
+   updateProviderCounts();
+   return;
+  }
+  out.innerHTML=rows.map(p=>{
+   const code=providerCode(p);
+   const checked=selectedCodes.has(code);
+   const name=String(p.name||'').trim();
+   const showName=name && name.toUpperCase()!==code;
+   return '<button type="button" class="mac-provider-chip'+(checked?' is-selected':'')+'" data-provider-pick="'+esc(code)+'" role="listitem" aria-pressed="'+(checked?'true':'false')+'"><b>'+esc(code)+'</b>'+(showName?'<small>'+esc(name)+'</small>':'')+'</button>';
+  }).join('');
+  updateProviderCounts();
+ }
+ function renderSelected(){
+  const out=$('madProviderSelectedBody');
+  if(!out) return;
+  const selected=platformProviders.filter(p=>selectedCodes.has(providerCode(p)));
+  if(!selected.length){
+   out.innerHTML='<div class="mac-provider-empty">Select providers on the left to configure pricing.</div>';
+   updateProviderCounts();
+   return;
+  }
+  out.innerHTML=selected.map(p=>{
+   const code=providerCode(p);
+   const base=Number(p.settlementCostPercent||0);
+   const basis=String(p.settlementCostBasis||'HOUSE_WIN').toUpperCase();
+   const ov=overrideByCode.has(code)?overrideByCode.get(code):'';
+   const add=String(ov||'').trim()!==''?Number(ov):0;
+   const eff=base+Number(add||0);
+   const basisLabel=basis==='TURNOVER'?'TO':'GGR';
+   return '<article class="mac-provider-selected-card" data-provider-row="'+esc(code)+'" data-base="'+base+'" data-basis="'+esc(basis)+'">'+
+    '<div class="mac-provider-selected-title"><b>'+esc(code)+'</b><span class="mac-provider-base-tag" title="Provider base '+base.toFixed(4)+'% · '+(basis==='TURNOVER'?'Turnover':'House Win / GGR')+'">Base '+base.toFixed(2)+'% · '+esc(basisLabel)+'</span></div>'+
+    '<div class="mac-provider-selected-fields">'+
+    '<label class="mac-provider-override-wrap"><span class="mac-provider-field-label">Override</span><span class="mac-provider-override-control"><input type="number" min="0" max="100" step="0.0001" data-provider-override="'+esc(code)+'" value="'+esc(ov||'')+'" placeholder="—"><span class="mac-provider-override-unit">%</span></span></label>'+
+    '<div class="mac-provider-eff-wrap"><span class="mac-provider-field-label">Effective</span><b class="mac-provider-eff" data-provider-effective="'+esc(code)+'">'+eff.toFixed(4)+'%</b></div>'+
+    '</div></article>';
+  }).join('');
+  updateProviderCounts();
+ }
+ function recalcSelectedEffective(){
+  document.querySelectorAll('#madProviderSelectedBody [data-provider-row]').forEach(r=>{
+   const code=r.dataset.providerRow;
+   const base=Number(r.dataset.base||0);
+   const inp=r.querySelector('[data-provider-override]');
+   const ovRaw=String(inp?.value||'').trim();
+   const add=ovRaw!==''?Number(ovRaw):0;
+   const eff=r.querySelector('[data-provider-effective]');
+   if(eff) eff.textContent=(base+Number(add||0)).toFixed(4)+'%';
+   if(code){
+    if(ovRaw==='') overrideByCode.delete(code);
+    else overrideByCode.set(code, ovRaw);
+   }
+  });
+ }
+ function setProviderSelected(code, on){
+  const key=String(code||'').toUpperCase();
+  if(!key) return;
+  if(on) selectedCodes.add(key);
+  else selectedCodes.delete(key);
+  renderCatalog();
+  renderSelected();
+ }
+ function selectedProviderPayload(){
+  syncOverrideInputsFromDom();
+  return platformProviders
+   .filter(p=>selectedCodes.has(providerCode(p)))
+   .map(p=>{
+    const code=providerCode(p);
+    const ov=overrideByCode.has(code)?overrideByCode.get(code):'';
+    return {providerCode:code,defaultChargePercent:Number(ov||0),chargeBasis:String(p.settlementCostBasis||'HOUSE_WIN')};
+   });
+ }
+ function hydrateProviders(d){
+  const list=d?.platformProviders||[];
+  platformProviders=(list||[])
+   .filter(p=>Number(p.status??1)===1)
+   .map(p=>({
+    code:p.code,
+    name:p.name,
+    settlementCostPercent:p.settlementCostPercent??p.settlement_cost_percent??0,
+    settlementCostBasis:p.settlementCostBasis||p.settlement_cost_basis||'HOUSE_WIN'
+   }))
+   .sort((a,b)=>String(a.code||'').localeCompare(String(b.code||'')));
+  selectedCodes.clear();
+  overrideByCode.clear();
+  const assigned=new Map((d.providers||[]).map(x=>[String(x.providerCode||'').toUpperCase(),x]));
+  const markupRawVal=String($('madProviderMarkup')?.value ?? d.brand?.providerMarkupPercent ?? '').trim();
+  const markup=Number(markupRawVal||0);
+  platformProviders.forEach(p=>{
+   const code=providerCode(p);
+   const bp=assigned.get(code);
+   const checked=!!bp && String(bp.ownership||'PLATFORM').toUpperCase()==='PLATFORM';
+   if(!checked) return;
+   selectedCodes.add(code);
+   const savedOv=Number(bp?.defaultChargePercent||0);
+   const ovShow=savedOv>0?String(savedOv):(markupRawVal!==''&&markup!==0?markupRawVal:'');
+   if(ovShow!=='') overrideByCode.set(code, ovShow);
+  });
+  if($('madProviderSearch')) $('madProviderSearch').value='';
+  providerSearch='';
+  renderCatalog();
+  renderSelected();
+ }
+
+ async function saveProviderPricing(id){await api('/admin/merchants/'+id+'/provider-pricing',{method:'POST',headers:hdr(),body:JSON.stringify({providerMarkupPercent:markupValue(),providers:selectedProviderPayload()})});}
+ async function open(id){try{const d=await api('/admin/merchants/'+id,{headers:BO_AUTH.authHeader()}),b=d.brand||d;detail=d;editing=b;const m=d.masterAccount||await api('/admin/merchants/'+id+'/master-account',{headers:BO_AUTH.authHeader()}).catch(()=>null);$('madEditId').value=b.id;$('madEditCode').value=b.code||'';$('madEditName').value=b.name||'';$('madEditDomain').value=b.primaryDomain||'';$('madEditAliases').value=b.domainAliases||'';hydrateEnabledCurrencies(b);$('madEditFrontendRoot').value=b.frontendRoot||'';$('madEditCreditMode').value=b.creditMode||'WHOLE';$('madEditStatus').value=String(b.status??1);const thr=Number(b.lowCreditThreshold||0);if($('madEditThreshold'))$('madEditThreshold').value=Number.isFinite(thr)?thr:0;editingMaster=m||null;$('madViewMaster').value=m?.username||b.masterUsername||'-';$('madViewCreatedBy').value=b.createdByName||b.createdByUsername||m?.createdByName||'Legacy / Migration';hydrateAuditMeta(b,m);if($('madViewCreditBalance'))$('madViewCreditBalance').value=money(b.creditBalance);const passA=$('madEditMasterPassword'),passB=$('madEditMasterPasswordConfirm');if(passA){passA.type='password';passA.value='';}if(passB){passB.type='password';passB.value='';}document.querySelectorAll('#madEditWorkspace [data-toggle-password]').forEach(btn=>{const icon=btn.querySelector('i');if(icon)icon.className='bi bi-eye-slash';btn.setAttribute('aria-pressed','false');btn.setAttribute('aria-label',btn.getAttribute('data-toggle-password')==='madEditMasterPasswordConfirm'?'Show confirm password':'Show password');});$('madProviderMarkup').value=Number(b.providerMarkupPercent||0);hydrateProviders(d);$('madEditFormStatus').textContent='';if(listWorkspace){listWorkspace.hidden=true;listWorkspace.setAttribute('aria-hidden','true');}if(editWorkspace){editWorkspace.hidden=false;editWorkspace.setAttribute('aria-hidden','false');}document.body.classList.add('mad-editing');setPageChrome(true);window.scrollTo({top:0,behavior:'smooth'});}catch(e){if(window.BO_DIALOG?.alert)BO_DIALOG.alert(e.message,{title:'Unable to Load Merchant',type:'error'});else alert(e.message)}}
+ function close(){if(editWorkspace){editWorkspace.hidden=true;editWorkspace.setAttribute('aria-hidden','true');}if(listWorkspace){listWorkspace.hidden=false;listWorkspace.setAttribute('aria-hidden','false');}document.body.classList.remove('mad-editing');editingMaster=null;setPageChrome(false);}
  async function saveProviderPricing(id){const selected=[...document.querySelectorAll('[data-provider-row]')].filter(r=>r.querySelector('[data-provider-use]')?.checked);const old=new Map((detail?.providers||[]).map(x=>[String(x.providerCode||'').toUpperCase(),x]));await api('/admin/merchants/'+id+'/provider-pricing',{method:'POST',headers:hdr(),body:JSON.stringify({providerMarkupPercent:Number($('madProviderMarkup').value||0),providers:selected.map(r=>{const code=r.dataset.providerRow,o=old.get(code)||{},p=(detail?.platformProviders||[]).find(x=>String(x.code||'').toUpperCase()===code)||{};return {providerCode:code,defaultChargePercent:Number(r.querySelector('[data-provider-override]')?.value||0),chargeBasis:String(o.chargeBasis||p.settlementCostBasis||'HOUSE_WIN')};})})});}
 
  document.querySelectorAll('[data-mad-status]').forEach(btn=>{
@@ -626,11 +1052,30 @@
   syncCreditMode();
  });
  $('madCreditForm')?.addEventListener('submit',submitCredit);
+ $('madEditGeneratePassword')?.addEventListener('click',()=>{
+  const pwd=generatePassword(14);
+  const a=$('madEditMasterPassword'), b=$('madEditMasterPasswordConfirm');
+  if(a){ a.type='text'; a.value=pwd; }
+  if(b){ b.type='text'; b.value=pwd; }
+  document.querySelectorAll('[data-toggle-password="madEditMasterPassword"], [data-toggle-password="madEditMasterPasswordConfirm"]').forEach(btn=>{
+   const eye=btn.querySelector('i');
+   if(eye) eye.className='bi bi-eye';
+   btn.setAttribute('aria-pressed','true');
+   btn.setAttribute('aria-label', btn.getAttribute('data-toggle-password')==='madEditMasterPasswordConfirm'?'Hide confirm password':'Hide password');
+  });
+  if($('madEditFormStatus')) $('madEditFormStatus').textContent='Strong password generated. Copy it before saving.';
+ });
  $('madResetGeneratePassword')?.addEventListener('click',()=>{
   const pwd=generatePassword(14);
   const a=$('madResetNewPassword'), b=$('madResetConfirmPassword');
   if(a){ a.type='text'; a.value=pwd; }
   if(b){ b.type='text'; b.value=pwd; }
+  document.querySelectorAll('[data-toggle-password="madResetNewPassword"], [data-toggle-password="madResetConfirmPassword"]').forEach(btn=>{
+   const eye=btn.querySelector('i');
+   if(eye) eye.className='bi bi-eye';
+   btn.setAttribute('aria-pressed','true');
+   btn.setAttribute('aria-label','Hide password');
+  });
   setStatus('madResetPassStatus','Strong password generated. Copy it before applying.','success');
  });
  $('madResetPassApply')?.addEventListener('click',applyResetPassword);
@@ -640,19 +1085,87 @@
   const id=toggle.getAttribute('data-toggle-password');
   const input=$(id);
   if(!input) return;
-  const show=input.type==='password';
-  input.type=show?'text':'password';
-  toggle.setAttribute('aria-pressed',show?'true':'false');
-  toggle.setAttribute('aria-label',show?'Hide password':'Show password');
+  const revealing=input.type==='password';
+  input.type=revealing?'text':'password';
+  const visible=input.type==='text';
+  toggle.setAttribute('aria-pressed',visible?'true':'false');
+  const isConfirm=/confirm/i.test(id||'');
+  toggle.setAttribute('aria-label', visible
+   ? (isConfirm?'Hide confirm password':'Hide password')
+   : (isConfirm?'Show confirm password':'Show password'));
   const icon=toggle.querySelector('i');
-  if(icon) icon.className=show?'bi bi-eye-slash':'bi bi-eye';
+  // Open eye = password visible; closed eye = password hidden.
+  if(icon) icon.className=visible?'bi bi-eye':'bi bi-eye-slash';
  });
  document.addEventListener('keydown',e=>{
   if(e.key!=='Escape') return;
+  if($('madCurrencyModal')?.classList.contains('show')){ closeCurrencyModal(); return; }
   if($('madResetPasswordModal')?.classList.contains('show')) closeResetPassword();
  });
- form?.addEventListener('submit',async e=>{e.preventDefault();const st=$('madEditFormStatus');try{st.textContent='Saving merchant and provider pricing...';const id=+$('madEditId').value;await api('/admin/merchants/save',{method:'POST',headers:hdr(),body:JSON.stringify({id,code:$('madEditCode').value,name:$('madEditName').value.trim(),primaryDomain:$('madEditDomain').value.trim(),currency:$('madEditCurrency').value.trim(),frontendRoot:$('madEditFrontendRoot').value.trim(),creditMode:$('madEditCreditMode').value,status:+$('madEditStatus').value,domainAliases:($('madEditAliases')?.value||'').trim(),lowCreditThreshold:editing?.lowCreditThreshold||0,providerMarkupPercent:Number($('madProviderMarkup').value||0)})});await saveProviderPricing(id);st.textContent='Merchant updated successfully.';await load();setTimeout(close,450)}catch(x){st.textContent=x.message}});
+  form?.addEventListener('submit',async e=>{e.preventDefault();const st=$('madEditFormStatus');try{const pass=($('madEditMasterPassword')?.value||'');const confirm=($('madEditMasterPasswordConfirm')?.value||'');const masterUser=(editingMaster?.username||'').trim();if(pass||confirm){if(pass.length<8) throw new Error('Merchant Master password must be at least 8 characters');if(pass!==confirm) throw new Error('Confirm password does not match');if(pass&&!masterUser) throw new Error('This merchant has no master account yet.');}st.textContent='Saving merchant and provider pricing...';const id=+$('madEditId').value;await api('/admin/merchants/save',{method:'POST',headers:hdr(),body:JSON.stringify({id,code:$('madEditCode').value,name:$('madEditName').value.trim(),primaryDomain:$('madEditDomain').value.trim(),currency:($('madEditCurrency').value||'').trim()||'MYR',enabledCurrencies:enabledCurrencyPayload(),frontendRoot:$('madEditFrontendRoot').value.trim(),creditMode:$('madEditCreditMode').value,status:+$('madEditStatus').value,domainAliases:($('madEditAliases')?.value||'').trim(),lowCreditThreshold:Number($('madEditThreshold')?.value||0),providerMarkupPercent:Number($('madProviderMarkup').value||0)})});await saveProviderPricing(id);if(pass){const username=masterUser;const payload={displayName:editingMaster?.displayName||editingMaster?.name||username,username,password:pass,status:editingMaster?.status==null?1:Number(editingMaster.status)};if(editingMaster?.roleId!=null) payload.roleId=Number(editingMaster.roleId);if(editingMaster?.roleType) payload.roleType=editingMaster.roleType;await api('/admin/merchants/'+encodeURIComponent(id)+'/master-account',{method:'POST',headers:hdr(),body:JSON.stringify(payload)});}st.textContent='Merchant updated successfully.';await load();setTimeout(close,450)}catch(x){st.textContent=x.message}});
+ $('madEditCurrency')?.addEventListener('change',()=>{
+  syncEnabledWithPrimary();
+  syncCurrencyUnits();
+  if(window.BOSelectSync?.one) window.BOSelectSync.one($('madEditCurrency'));
+ });
+ $('madEditCurrencyAdd')?.addEventListener('click', e=>{ e.preventDefault(); e.stopPropagation(); openCurrencyModal(); });
+ $('madCurrencyModalConfirm')?.addEventListener('click', ()=>confirmCurrencyModal());
+ // Delegated handlers so Add still works if the button node is restyled/replaced.
+ $('madCurrencyModal')?.addEventListener('click', e=>{
+  if(e.target===$('madCurrencyModal')){ closeCurrencyModal(); return; }
+  const addBtn=e.target.closest&&e.target.closest('#madCurrencyModalAddBtn');
+  if(addBtn){ e.preventDefault(); e.stopPropagation(); addTypedCurrencyToDraft(); }
+ });
+ $('madCurrencyModalCode')?.addEventListener('input', e=>{
+  setCurrencyModalStatus('');
+  const code=normalizeCurrencyCode(e.target.value);
+  if(e.target.value!==code) e.target.value=code;
+ });
+ $('madCurrencyModalCode')?.addEventListener('keydown', e=>{
+  if(e.key==='Enter'){ e.preventDefault(); addTypedCurrencyToDraft(); }
+ });
+ $('madCurrencyMoveLeft')?.addEventListener('click', ()=>moveSelectedToAdded());
+ $('madCurrencyMoveRight')?.addEventListener('click', ()=>moveSelectedToAvailable());
+ $('madCurrencyDual')?.addEventListener('click', e=>{
+  const item=e.target.closest&&e.target.closest('[data-mad-currency-code]');
+  if(!item) return;
+  const code=normalizeCurrencyCode(item.getAttribute('data-mad-currency-code'));
+  const side=String(item.getAttribute('data-mad-currency-side')||'');
+  if(!code || (side!=='added' && side!=='available')) return;
+  if(e.detail>=2){
+   currencyModalSelected.clear();
+   currencyModalSelected.add(code+'|'+side);
+   if(side==='available') moveSelectedToAdded();
+   else moveSelectedToAvailable();
+   return;
+  }
+  toggleCurrencyModalSelection(code, side);
+ });
+ document.querySelectorAll('[data-mad-currency-close]').forEach(btn=>btn.addEventListener('click', ()=>closeCurrencyModal()));
+ $('madProviderSearch')?.addEventListener('input', e=>{ providerSearch=e.target.value||''; renderCatalog(); });
+ $('madProviderSelectAll')?.addEventListener('click', ()=>{ filteredProviders().forEach(p=>selectedCodes.add(providerCode(p))); renderCatalog(); renderSelected(); });
+ $('madProviderClearAll')?.addEventListener('click', ()=>{
+  if(providerSearch.trim()) filteredProviders().forEach(p=>selectedCodes.delete(providerCode(p)));
+  else selectedCodes.clear();
+  renderCatalog();
+  renderSelected();
+ });
+ $('madProviderCatalogList')?.addEventListener('click', e=>{
+  const chip=e.target.closest&&e.target.closest('[data-provider-pick]');
+  if(!chip) return;
+  const code=String(chip.getAttribute('data-provider-pick')||'').toUpperCase();
+  setProviderSelected(code, !selectedCodes.has(code));
+ });
+ $('madProviderSelectedBody')?.addEventListener('input', e=>{
+  if(!e.target.closest||!e.target.closest('[data-provider-override]')) return;
+  recalcSelectedEffective();
+ });
+ $('madProviderApplyMarkup')?.addEventListener('click', ()=>{
+  applyMarkupToSelected();
+  renderSelected();
+ });
  $('madExportBtn')?.addEventListener('click',()=>{const csv=[['Merchant','Company','Domain','Role','Currency','Credit Balance','Status','Created By','Last Login','Last Logout'],...filtered.map(b=>[b.code,b.name,b.primaryDomain,roleName(b),b.currency,b.creditBalance,active(b)?'Active':'Suspended',b.createdByName||b.createdByUsername||'Legacy / Migration',b.masterLastLoginAt,b.masterLastLogoutAt])].map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='merchants.csv';a.click();URL.revokeObjectURL(a.href)});
  document.body.classList.add('mad-view-active');
+ loadCurrencies();
  load();
 })();

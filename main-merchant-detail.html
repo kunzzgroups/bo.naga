@@ -5,14 +5,14 @@
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>Merchant Management</title>
+<title>Merchants</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
 <link href="assets/css/reports.css?v=1.0.48" rel="stylesheet"/>
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.139" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.158" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 <script>
 (function(){
@@ -35,7 +35,7 @@
   <div class="user-title-wrap">
     <div class="user-title-icon"><i class="bi bi-shop"></i></div>
     <div>
-      <h1>Merchant Management</h1>
+      <h1>Merchants</h1>
       <p>Manage merchants (existing Brand records), domains, credit, access, and account status.</p>
     </div>
   </div>
@@ -175,24 +175,21 @@
         <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-person-badge"></i></span>
         <div class="mac-section-copy">
           <h3>2. Master Account &amp; Credit Configuration</h3>
-          <p>Credit policy, balances, and merchant master account snapshot.</p>
+          <p>Administrative root access credentials, liquidity threshold, and billing mode.</p>
         </div>
       </header>
       <div class="mac-master-credit-stack">
         <div class="mac-subblock">
-          <h4 class="mac-subblock-title"><span class="mac-subblock-dot" aria-hidden="true"></span> Credit &amp; Status</h4>
-          <div class="mac-fields-stack">
+          <h4 class="mac-subblock-title"><span class="mac-subblock-dot" aria-hidden="true"></span> Admin Master Credentials</h4>
+          <div class="mac-fields-stack mac-master-fields">
             <div class="mac-fields mac-fields-row mac-fields-row-3">
-              <label class="mac-field" for="madEditCreditMode">
-                <span class="mac-label">Credit Mode</span>
-                <select class="form-control" id="madEditCreditMode">
-                  <option value="WHOLE">Whole Provider Pool</option>
-                  <option value="PER_PROVIDER">Per Provider</option>
-                </select>
+              <label class="mac-field" for="madViewMaster">
+                <span class="mac-label">Login ID / Username</span>
+                <input class="form-control" id="madViewMaster" readonly/>
               </label>
-              <label class="mac-field" for="madEditCurrency">
-                <span class="mac-label">Currency <b>*</b></span>
-                <input class="form-control" id="madEditCurrency" required/>
+              <label class="mac-field" for="madViewCreatedBy">
+                <span class="mac-label">Created By</span>
+                <input class="form-control" id="madViewCreatedBy" readonly/>
               </label>
               <label class="mac-field" for="madEditStatus">
                 <span class="mac-label">Status</span>
@@ -202,78 +199,170 @@
                 </select>
               </label>
             </div>
-            <div class="mac-fields mac-fields-row mac-fields-row-2">
-              <label class="mac-field" for="madViewPlayerCredit">
-                <span class="mac-label">Player Credit</span>
-                <input class="form-control" id="madViewPlayerCredit" readonly/>
+            <div class="mac-fields mac-fields-row mac-fields-row-2 mac-fields-row-master-pass">
+              <label class="mac-field" for="madEditMasterPassword">
+                <span class="mac-label-row">
+                  <span class="mac-label">Password</span>
+                  <button type="button" class="mac-link-btn" id="madEditGeneratePassword">Generate</button>
+                </span>
+                <span class="mad-pass-wrap">
+                  <input class="form-control" id="madEditMasterPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Leave blank to keep current"/>
+                  <button type="button" class="mad-eye" data-toggle-password="madEditMasterPassword" aria-label="Show password" aria-pressed="false"><i class="bi bi-eye-slash"></i></button>
+                </span>
               </label>
-              <label class="mac-field" for="madViewProviderCredit">
-                <span class="mac-label">Provider Credit</span>
-                <input class="form-control" id="madViewProviderCredit" readonly/>
+              <label class="mac-field" for="madEditMasterPasswordConfirm">
+                <span class="mac-label">Confirm Password</span>
+                <span class="mad-pass-wrap">
+                  <input class="form-control" id="madEditMasterPasswordConfirm" type="password" minlength="8" autocomplete="new-password" placeholder="Re-enter"/>
+                  <button type="button" class="mad-eye" data-toggle-password="madEditMasterPasswordConfirm" aria-label="Show confirm password" aria-pressed="false"><i class="bi bi-eye-slash"></i></button>
+                </span>
               </label>
             </div>
           </div>
         </div>
         <div class="mac-subblock">
-          <h4 class="mac-subblock-title"><span class="mac-subblock-dot" aria-hidden="true"></span> Master Account Snapshot</h4>
-          <div class="mac-fields-stack">
-            <div class="mac-fields mac-fields-row mac-fields-row-2">
-              <label class="mac-field" for="madViewMaster">
-                <span class="mac-label">Master Username</span>
-                <input class="form-control" id="madViewMaster" readonly/>
-              </label>
-              <label class="mac-field" for="madViewCreatedBy">
-                <span class="mac-label">Created By</span>
-                <input class="form-control" id="madViewCreatedBy" readonly/>
-              </label>
+          <h4 class="mac-subblock-title"><span class="mac-subblock-dot" aria-hidden="true"></span> Credit &amp; Fee Policy</h4>
+          <div class="mac-fields mac-fields-row mac-fields-row-4 mac-fields-row-credit">
+            <label class="mac-field" for="madEditCreditMode">
+              <span class="mac-label">Credit Mode</span>
+              <select class="form-control" id="madEditCreditMode">
+                <option value="WHOLE">Whole Provider</option>
+                <option value="PER_PROVIDER">Per Provider</option>
+              </select>
+            </label>
+            <div class="mac-field mac-field-currency">
+              <span class="mac-label">Primary Currency <b>*</b></span>
+              <div class="mac-currency-control">
+                <select class="form-control" id="madEditCurrency" aria-required="true">
+                  <option value="MYR" selected>MYR</option>
+                </select>
+                <button type="button" class="mac-currency-add-btn" id="madEditCurrencyAdd" title="Add currency" aria-label="Add currency" aria-haspopup="dialog" aria-controls="madCurrencyModal">
+                  <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
-            <div class="mac-fields mac-fields-row mac-fields-row-2">
-              <label class="mac-field" for="madViewLastLogin">
-                <span class="mac-label">Last Login</span>
-                <input class="form-control" id="madViewLastLogin" readonly/>
-              </label>
-              <label class="mac-field" for="madViewLastLogout">
-                <span class="mac-label">Last Logout</span>
-                <input class="form-control" id="madViewLastLogout" readonly/>
-              </label>
-            </div>
+            <label class="mac-field" for="madViewCreditBalance">
+              <span class="mac-label">Credit Balance</span>
+              <input class="form-control" id="madViewCreditBalance" readonly/>
+            </label>
+            <label class="mac-field" for="madEditThreshold">
+              <span class="mac-label">Low Credit Alert</span>
+              <span class="mac-input-group is-prefix">
+                <span class="mac-input-addon" id="madEditThresholdUnit">MYR</span>
+                <input class="form-control" id="madEditThreshold" type="number" min="0" step="0.0001" value="0"/>
+              </span>
+              <span class="visually-hidden" id="madEditThresholdLabel">(MYR)</span>
+            </label>
+          </div>
+        </div>
+        <div class="mac-subblock mac-audit-block">
+          <h4 class="mac-subblock-title"><span class="mac-subblock-dot" aria-hidden="true"></span> Activity Timeline</h4>
+          <div class="mac-audit-grid" role="list" aria-label="Merchant activity timestamps">
+            <article class="mac-audit-item" role="listitem">
+              <span class="mac-audit-icon" aria-hidden="true"><i class="bi bi-calendar-plus"></i></span>
+              <div class="mac-audit-body">
+                <span class="mac-audit-label">Created Date</span>
+                <strong class="mac-audit-primary" id="madAuditCreatedDate">—</strong>
+                <span class="mac-audit-secondary" id="madAuditCreatedTime">—</span>
+              </div>
+            </article>
+            <article class="mac-audit-item" role="listitem">
+              <span class="mac-audit-icon is-person" aria-hidden="true"><i class="bi bi-person-plus"></i></span>
+              <div class="mac-audit-body">
+                <span class="mac-audit-label">Created By</span>
+                <strong class="mac-audit-primary" id="madAuditCreatedBy">—</strong>
+                <span class="mac-audit-secondary">Account creator</span>
+              </div>
+            </article>
+            <article class="mac-audit-item" role="listitem">
+              <span class="mac-audit-icon" aria-hidden="true"><i class="bi bi-arrow-repeat"></i></span>
+              <div class="mac-audit-body">
+                <span class="mac-audit-label">Last Update</span>
+                <strong class="mac-audit-primary" id="madAuditUpdatedDate">—</strong>
+                <span class="mac-audit-secondary" id="madAuditUpdatedTime">—</span>
+              </div>
+            </article>
+            <article class="mac-audit-item" role="listitem">
+              <span class="mac-audit-icon is-person" aria-hidden="true"><i class="bi bi-person-check"></i></span>
+              <div class="mac-audit-body">
+                <span class="mac-audit-label">Last Update By</span>
+                <strong class="mac-audit-primary" id="madAuditUpdatedBy">—</strong>
+                <span class="mac-audit-secondary">Last editor</span>
+              </div>
+            </article>
+            <article class="mac-audit-item" role="listitem">
+              <span class="mac-audit-icon is-login" aria-hidden="true"><i class="bi bi-box-arrow-in-right"></i></span>
+              <div class="mac-audit-body">
+                <span class="mac-audit-label">Last Login</span>
+                <strong class="mac-audit-primary" id="madAuditLoginDate">—</strong>
+                <span class="mac-audit-secondary" id="madAuditLoginTime">—</span>
+              </div>
+            </article>
+            <article class="mac-audit-item" role="listitem">
+              <span class="mac-audit-icon is-logout" aria-hidden="true"><i class="bi bi-box-arrow-right"></i></span>
+              <div class="mac-audit-body">
+                <span class="mac-audit-label">Last Logout</span>
+                <strong class="mac-audit-primary" id="madAuditLogoutDate">—</strong>
+                <span class="mac-audit-secondary" id="madAuditLogoutTime">—</span>
+              </div>
+            </article>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="mac-section">
-      <header class="mac-section-head mac-section-head-rich">
+    <section class="mac-section" id="madProviderPricingSection">
+      <header class="mac-section-head mac-section-head-rich mac-provider-pricing-head">
         <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-percent"></i></span>
         <div class="mac-section-copy">
           <h3>3. Provider Pricing &amp; Markup</h3>
-          <p>Merchant-wide markup plus provider-specific overrides. Effective rate = provider base + merchant override/markup.</p>
+          <p>Select providers, enter Markup in Selected pricing, then Apply — editing or clearing Markup afterward does not change applied Overrides.</p>
         </div>
       </header>
-      <div class="mac-subblock mac-edit-pricing-block">
-        <div class="mac-edit-pricing-toolbar">
-          <label class="mac-field mac-edit-markup-field" for="madProviderMarkup">
-            <span class="mac-label">Merchant Markup (%)</span>
-            <input class="form-control" id="madProviderMarkup" type="number" min="0" max="100" step="0.0001"/>
+
+      <div class="mac-provider-split" id="madProviderSplit">
+        <aside class="mac-provider-pane mac-provider-pane-catalog" aria-label="Provider catalog">
+          <div class="mac-provider-pane-head">
+            <div class="mac-provider-pane-title">
+              <strong>Providers</strong>
+              <span class="mac-provider-count" id="madProviderCatalogCount">0</span>
+            </div>
+            <div class="mac-provider-pane-actions">
+              <button type="button" class="mac-link-btn" id="madProviderSelectAll">Select all</button>
+              <button type="button" class="mac-link-btn" id="madProviderClearAll">Clear</button>
+            </div>
+          </div>
+          <label class="mac-provider-search" for="madProviderSearch">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input id="madProviderSearch" type="search" placeholder="Search providers" autocomplete="off"/>
           </label>
-        </div>
-        <div class="table-responsive mac-edit-pricing-table">
-          <table class="table table-sm align-middle mb-0">
-            <thead>
-              <tr>
-                <th>Use</th>
-                <th>Provider</th>
-                <th>Provider Base %</th>
-                <th>Merchant Override %</th>
-                <th>Effective %</th>
-                <th>Basis</th>
-              </tr>
-            </thead>
-            <tbody id="madProviderPricingBody">
-              <tr><td colspan="6" class="text-center text-muted py-3">Loading providers...</td></tr>
-            </tbody>
-          </table>
-        </div>
+          <div class="mac-provider-list" id="madProviderCatalogList" role="list">
+            <div class="mac-provider-empty">Loading providers...</div>
+          </div>
+        </aside>
+
+        <section class="mac-provider-pane mac-provider-pane-selected" aria-label="Selected provider pricing">
+          <div class="mac-provider-pane-head mac-provider-selected-head">
+            <div class="mac-provider-pane-title">
+              <strong>Selected pricing</strong>
+              <span class="mac-provider-count" id="madProviderSelectedCount">0</span>
+            </div>
+            <div class="mac-provider-pane-actions mac-provider-markup-toolbar">
+              <label class="mac-provider-markup-field" for="madProviderMarkup">
+                <span class="mac-input-group is-suffix">
+                  <input class="form-control" id="madProviderMarkup" type="number" min="0" max="100" step="0.0001" value="0" placeholder="Markup" aria-label="Markup percent"/>
+                  <span class="mac-input-addon is-trailing">%</span>
+                </span>
+              </label>
+              <button type="button" class="mad-btn mad-btn-ghost mac-provider-apply-btn" id="madProviderApplyMarkup" title="Copy Markup into every selected Override">Apply</button>
+            </div>
+          </div>
+          <div class="mac-provider-selected-wrap">
+            <div class="mac-provider-selected-grid" id="madProviderSelectedBody">
+              <div class="mac-provider-empty">Select providers on the left to configure pricing.</div>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
 
@@ -369,14 +458,14 @@
           </span>
           <span class="mad-pass-wrap">
             <input class="form-control" id="madResetNewPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Minimum 8 characters" required/>
-            <button type="button" class="mad-eye" data-toggle-password="madResetNewPassword" aria-label="Show password" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button>
+            <button type="button" class="mad-eye" data-toggle-password="madResetNewPassword" aria-label="Show password" aria-pressed="false"><i class="bi bi-eye-slash" aria-hidden="true"></i></button>
           </span>
         </label>
         <label class="mad-field" for="madResetConfirmPassword">
           <span>Confirm New Password <b class="mad-req" aria-hidden="true">*</b></span>
           <span class="mad-pass-wrap">
             <input class="form-control" id="madResetConfirmPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Re-enter new password" required/>
-            <button type="button" class="mad-eye" data-toggle-password="madResetConfirmPassword" aria-label="Show password" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button>
+            <button type="button" class="mad-eye" data-toggle-password="madResetConfirmPassword" aria-label="Show password" aria-pressed="false"><i class="bi bi-eye-slash" aria-hidden="true"></i></button>
           </span>
         </label>
       </div>
@@ -384,6 +473,61 @@
       <div class="mad-modal-actions">
         <button class="mad-btn mad-btn-ghost" type="button" data-mad-close-pass>Cancel</button>
         <button class="mad-btn mad-btn-navy" type="button" id="madResetPassApply"><i class="bi bi-check2" aria-hidden="true"></i> Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div hidden aria-hidden="true" class="modal-clean mad-modal" id="madCurrencyModal" role="dialog" aria-modal="true" aria-labelledby="madCurrencyModalTitle">
+  <div class="modal-clean-panel mad-modal-panel mac-currency-modal-panel">
+    <div class="modal-clean-head">
+      <div class="mad-modal-title">
+        <span class="mad-modal-icon" aria-hidden="true"><i class="bi bi-currency-exchange"></i></span>
+        <div>
+          <h2 id="madCurrencyModalTitle">Add Currency</h2>
+          <small>Type Add → Added. Move to Available for the Primary Currency dropdown. Apply writes Available into the dropdown.</small>
+        </div>
+      </div>
+      <button class="modal-clean-close" type="button" data-mad-currency-close aria-label="Close"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+    </div>
+    <div class="modal-clean-body mac-currency-modal-body">
+      <div class="mac-currency-add-row">
+        <label class="mac-field mac-currency-modal-code-field" for="madCurrencyModalCode">
+          <span class="mac-label">Currency <b>*</b></span>
+          <input class="form-control" id="madCurrencyModalCode" type="text" maxlength="8" placeholder="e.g. THB" autocomplete="off" spellcheck="false"/>
+        </label>
+        <button type="button" class="mad-btn mad-btn-navy mac-currency-add-inline" id="madCurrencyModalAddBtn" title="Add currency">
+          <i class="bi bi-plus-lg" aria-hidden="true"></i> Add
+        </button>
+      </div>
+      <div class="mac-currency-dual" id="madCurrencyDual">
+        <section class="mac-currency-pane" aria-label="Added currencies">
+          <header class="mac-currency-pane-head">
+            <strong>Added</strong>
+            <span class="mac-currency-pane-count" id="madCurrencyAddedCount">0</span>
+          </header>
+          <div class="mac-currency-pane-list" id="madCurrencyAddedList" role="list"></div>
+        </section>
+        <div class="mac-currency-dual-actions" aria-hidden="true">
+          <button type="button" class="mac-currency-move-btn" id="madCurrencyMoveLeft" title="Move to Added" aria-label="Move selected to Added">
+            <i class="bi bi-chevron-left" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="mac-currency-move-btn" id="madCurrencyMoveRight" title="Move to Available" aria-label="Move selected to Available">
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+          </button>
+        </div>
+        <section class="mac-currency-pane" aria-label="Available currencies">
+          <header class="mac-currency-pane-head">
+            <strong>Available</strong>
+            <span class="mac-currency-pane-count" id="madCurrencyAvailableCount">0</span>
+          </header>
+          <div class="mac-currency-pane-list" id="madCurrencyAvailableList" role="list"></div>
+        </section>
+      </div>
+      <div class="upload-status mb-0" id="madCurrencyModalStatus"></div>
+      <div class="mad-modal-actions">
+        <button class="mad-btn mad-btn-ghost" type="button" data-mad-currency-close>Cancel</button>
+        <button class="mad-btn mad-btn-navy" type="button" id="madCurrencyModalConfirm"><i class="bi bi-check-lg" aria-hidden="true"></i> Apply</button>
       </div>
     </div>
   </div>
@@ -399,14 +543,14 @@
 <script src="assets/js/auth.js?v=1.0.60"></script>
 <script src="assets/js/main-merchant-visibility.js?v=1.0.0"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
-<script src="assets/js/main-merchant-detail.js?v=1.1.13"></script>
+<script src="assets/js/main-merchant-detail.js?v=1.1.21"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
 <script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
 <script src="assets/js/pagination-standardizer.js?v=1.0.1"></script>
 <script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
-<script src="assets/js/bo-ui-standard.js?v=1.0.5"></script>
+<script src="assets/js/bo-ui-standard.js?v=1.0.6"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 </body>
 </html>

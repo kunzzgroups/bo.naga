@@ -79,29 +79,24 @@
   const addedCount=$('merchantCurrencyAddedCount');
   const availableCount=$('merchantCurrencyAvailableCount');
   if(!addedList || !availableList) return;
-  const catalog=activeCurrencyRows().map(x=>String(x.currencyCode||'').toUpperCase()).filter(Boolean);
-  const added=[...currencyModalDraft].filter(Boolean).sort((a,b)=>a.localeCompare(b));
-  // Available = catalog not in Added, plus any previously-added custom codes removed from Added.
-  const availablePool=new Set(catalog);
+  // currencyModalDraft = Available (dropdown source). Added = catalog leftovers / typed staging.
+  const available=[...currencyModalDraft].filter(Boolean).sort((a,b)=>a.localeCompare(b));
+  const availablePool=new Set();
   activeCurrencyRows().forEach(x=>{
    const code=String(x.currencyCode||'').toUpperCase();
    if(code) availablePool.add(code);
   });
-  const available=[...availablePool].filter(code=>!currencyModalDraft.has(code)).sort((a,b)=>a.localeCompare(b));
-  addedList.innerHTML=added.length
-    ? added.map(code=>currencyModalItemHtml(code,'added')).join('')
-    : '<div class="mac-currency-modal-empty">No currencies added yet.</div>';
-  availableList.innerHTML=available.length
-    ? available.map(code=>currencyModalItemHtml(code,'available')).join('')
-    : '<div class="mac-currency-modal-empty">No more currencies available.</div>';
+  const added=[...availablePool].filter(code=>!currencyModalDraft.has(code)).sort((a,b)=>a.localeCompare(b));
+  addedList.innerHTML=added.length?added.map(code=>currencyModalItemHtml(code,'added')).join(''):'<div class="mac-currency-modal-empty">No currencies added yet.</div>';
+  availableList.innerHTML=available.length?available.map(code=>currencyModalItemHtml(code,'available')).join(''):'<div class="mac-currency-modal-empty">No currencies in Available.</div>';
   if(addedCount) addedCount.textContent=String(added.length);
   if(availableCount) availableCount.textContent=String(available.length);
-  const canAdd=[...currencyModalSelected].some(key=>key.endsWith('|available'));
-  const canRemove=[...currencyModalSelected].some(key=>key.endsWith('|added'));
-  const moveLeft=$('merchantCurrencyMoveLeft');
-  const moveRight=$('merchantCurrencyMoveRight');
-  if(moveLeft) moveLeft.disabled=!canAdd;
-  if(moveRight) moveRight.disabled=!canRemove;
+  const canToAdded=[...currencyModalSelected].some(key=>key.endsWith('|available'));
+  const canToAvailable=[...currencyModalSelected].some(key=>key.endsWith('|added'));
+  const moveLeftBtn=$('merchantCurrencyMoveLeft');
+  const moveRightBtn=$('merchantCurrencyMoveRight');
+  if(moveLeftBtn) moveLeftBtn.disabled=!canToAdded;
+  if(moveRightBtn) moveRightBtn.disabled=!canToAvailable;
  }
  function toggleCurrencyModalSelection(code, side){
   const key=code+'|'+side;
@@ -114,62 +109,37 @@
   renderCurrencyDualLists();
  }
  function moveSelectedToAdded(){
-  const codes=[...currencyModalSelected]
-    .filter(key=>key.endsWith('|available'))
-    .map(key=>key.split('|')[0])
-    .filter(Boolean);
-  if(!codes.length){
-   setCurrencyModalStatus('Select a currency on the right to add.', 'error');
-   return;
-  }
-  codes.forEach(code=>{
-   ensureCurrencyOption(code, currencyRowByCode(code)?.displayName || code);
-   currencyModalDraft.add(code);
-  });
-  currencyModalSelected.clear();
-  setCurrencyModalStatus('');
-  renderCurrencyDualLists();
+  const codes=[...currencyModalSelected].filter(key=>key.endsWith('|available')).map(key=>key.split('|')[0]).filter(Boolean);
+  if(!codes.length){ setCurrencyModalStatus('Select a currency on the right (Available) to move to Added.', 'error'); return; }
+  codes.forEach(code=>{ ensureCurrencyOption(code, currencyRowByCode(code)?.displayName || code); currencyModalDraft.delete(code); });
+  currencyModalSelected.clear(); setCurrencyModalStatus(''); renderCurrencyDualLists();
  }
  function moveSelectedToAvailable(){
-  const codes=[...currencyModalSelected]
-    .filter(key=>key.endsWith('|added'))
-    .map(key=>key.split('|')[0])
-    .filter(Boolean);
-  if(!codes.length){
-   setCurrencyModalStatus('Select a currency on the left to move to Available.', 'error');
-   return;
-  }
-  codes.forEach(code=>{
-   ensureCurrencyOption(code, currencyRowByCode(code)?.displayName || code);
-   currencyModalDraft.delete(code);
-  });
-  currencyModalSelected.clear();
-  setCurrencyModalStatus('');
-  renderCurrencyDualLists();
+  const codes=[...currencyModalSelected].filter(key=>key.endsWith('|added')).map(key=>key.split('|')[0]).filter(Boolean);
+  if(!codes.length){ setCurrencyModalStatus('Select a currency on the left (Added) to move to Available.', 'error'); return; }
+  codes.forEach(code=>{ ensureCurrencyOption(code, currencyRowByCode(code)?.displayName || code); currencyModalDraft.add(code); });
+  currencyModalSelected.clear(); setCurrencyModalStatus(''); renderCurrencyDualLists();
  }
  function addTypedCurrencyToDraft(){
   const input=$('merchantCurrencyModalCode');
   const typedCode=normalizeCurrencyCode(input?.value);
-  if(!typedCode){
-   setCurrencyModalStatus('Enter a currency to add.', 'error');
-   input?.focus();
-   return;
-  }
-  if(typedCode.length<3){
-   setCurrencyModalStatus('Currency must be at least 3 characters (e.g. THB).', 'error');
-   input?.focus();
-   return;
-  }
-  if(currencyModalDraft.has(typedCode)){
-   setCurrencyModalStatus(typedCode+' is already in Added.', 'error');
-   input?.focus();
-   return;
-  }
+  if(!typedCode){ setCurrencyModalStatus('Enter a currency to add.', 'error'); input?.focus(); return; }
+  if(typedCode.length<3){ setCurrencyModalStatus('Currency must be at least 3 characters (e.g. THB).', 'error'); input?.focus(); return; }
+  const alreadyAvailable=currencyModalDraft.has(typedCode);
+  const alreadyAdded=!alreadyAvailable && activeCurrencyRows().some(x=>String(x.currencyCode||'').toUpperCase()===typedCode);
+  if(alreadyAdded){ setCurrencyModalStatus(typedCode+' is already in Added. Move it to Available for the dropdown.', 'error'); input?.focus(); return; }
   ensureCurrencyOption(typedCode, currencyRowByCode(typedCode)?.displayName || typedCode);
-  currencyModalDraft.add(typedCode);
+  // Typed Add always lands in Added (left). Move right to Available to include in dropdown.
+  currencyModalDraft.delete(typedCode);
   currencyModalSelected.clear();
+  currencyModalSelected.add(typedCode+'|added');
   if(input) input.value='';
-  setCurrencyModalStatus(typedCode+' added.', 'success');
+  setCurrencyModalStatus(
+    alreadyAvailable
+      ? typedCode+' moved to Added. Move to Available, then Apply for the dropdown.'
+      : typedCode+' added to Added. Move to Available, then Apply for the dropdown.',
+    'success'
+  );
   renderCurrencyDualLists();
   input?.focus();
  }
@@ -201,10 +171,13 @@
   setCurrencyModalStatus('');
  }
  function confirmCurrencyModal(){
+  // Primary Currency dropdown = Available list only.
   enabledCurrencies.clear();
   currencyModalDraft.forEach(code=>{
-   ensureCurrencyOption(code, currencyRowByCode(code)?.displayName || code);
-   enabledCurrencies.add(code);
+   const key=normalizeCurrencyCode(code);
+   if(!key) return;
+   ensureCurrencyOption(key, currencyRowByCode(key)?.displayName || key);
+   enabledCurrencies.add(key);
   });
   renderCurrencyOptions();
   closeCurrencyModal();
@@ -520,8 +493,11 @@
     confirm.type='text';
     confirm.value=pwd;
   }
-  document.querySelectorAll('[data-toggle-password="merchantMasterPassword"] i, [data-toggle-password="merchantMasterPasswordConfirm"] i').forEach(eye=>{
-    eye.className='bi bi-eye-slash';
+  document.querySelectorAll('[data-toggle-password="merchantMasterPassword"], [data-toggle-password="merchantMasterPasswordConfirm"]').forEach(btn=>{
+    const eye=btn.querySelector('i');
+    if(eye) eye.className='bi bi-eye';
+    btn.setAttribute('aria-pressed','true');
+    btn.setAttribute('aria-label', btn.getAttribute('data-toggle-password')==='merchantMasterPasswordConfirm'?'Hide confirm password':'Hide password');
   });
   setStatus('Strong password generated. Copy it before leaving this page.', 'success');
  });
@@ -532,10 +508,17 @@
   const id=toggle.getAttribute('data-toggle-password');
   const input=$(id);
   if(!input) return;
-  const show=input.type==='password';
-  input.type=show?'text':'password';
+  const revealing=input.type==='password';
+  input.type=revealing?'text':'password';
+  const visible=input.type==='text';
+  toggle.setAttribute('aria-pressed', visible?'true':'false');
+  const isConfirm=/confirm/i.test(id||'');
+  toggle.setAttribute('aria-label', visible
+    ? (isConfirm?'Hide confirm password':'Hide password')
+    : (isConfirm?'Show confirm password':'Show password'));
   const icon=toggle.querySelector('i');
-  if(icon) icon.className=show?'bi bi-eye-slash':'bi bi-eye';
+  // Open eye = password visible; closed eye = password hidden.
+  if(icon) icon.className=visible?'bi bi-eye':'bi bi-eye-slash';
  });
 
  $('merchantProviderSearch')?.addEventListener('input', e=>{
