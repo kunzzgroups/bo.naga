@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>Merchant Management</title>
+<title>Merchant Settlement Ledger</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
 <link href="assets/css/reports.css?v=1.0.47" rel="stylesheet"/>
@@ -13,7 +13,7 @@
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
 <link href="assets/css/main-admin-detail-executive.css?v=1.0.21" rel="stylesheet"/>
 <link href="assets/css/main-provider-report-executive.css?v=1.0.6" rel="stylesheet"/>
-<link href="assets/css/main-merchant-report-executive.css?v=1.0.2" rel="stylesheet"/>
+<link href="assets/css/main-merchant-report-executive.css?v=1.0.16" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 <script>
 (function(){
@@ -23,10 +23,10 @@
 })();
 </script>
 </head>
-<body class="report-body standardized-listing-page main-admin-detail-page main-report-exec-page main-merchant-report-page" data-access-page="main_merchant_settlement_report" data-report-view="settlement">
+<body class="report-body standardized-listing-page main-admin-detail-page main-report-exec-page main-merchant-report-page" data-access-page="main_merchant_detail" data-report-view="settlement">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
-<div class="report-brand"><div>Backoffice<br/><small>Executive Panel</small></div><button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button></div>
+<div class="report-brand"><div>Backoffice<br/><small>Admin Panel</small></div><button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button></div>
 <nav class="report-nav"></nav>
 </aside>
 <div class="sidebar-overlay" data-close-sidebar></div>
@@ -34,10 +34,10 @@
 <header class="report-topbar">
   <button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button>
   <div class="user-title-wrap">
-    <div class="user-title-icon"><i class="bi bi-bar-chart-line"></i></div>
+    <div class="user-title-icon"><i class="bi bi-cash-stack"></i></div>
     <div>
-      <h1>Merchant Management</h1>
-      <p>Analyze merchant turnover, valid bet performance, and net settlements.</p>
+      <h1>Merchant Settlement Ledger</h1>
+      <p>Each period shows what merchants still need to repay, or what we still need to pay them.</p>
     </div>
   </div>
   <div class="report-actions">
@@ -51,12 +51,13 @@
 
 <section class="report-content mad-workspace mre-workspace">
   <div class="mad-chrome mre-chrome">
-    <div class="mad-tabs mre-tabs" role="tablist" aria-label="Report sections">
-      <a class="mad-tab mre-tab" role="tab" aria-selected="false" href="main_merchant_report.html" data-report-tab="merchant" data-permission-url="main_merchant_report.html">Merchant Report</a>
-      <a class="mad-tab mre-tab is-active" role="tab" aria-selected="true" href="main-merchant-settlement.html" data-report-tab="settlement" data-permission-url="main-merchant-settlement.html">Settlement Report</a>
-      <a class="mad-tab mre-tab" role="tab" aria-selected="false" href="main-merchant-balance.html" data-report-tab="balance" data-permission-url="main-merchant-balance.html">Balance Overview</a>
-      <a class="mad-tab mre-tab" role="tab" aria-selected="false" href="main-merchant-transactions.html" data-report-tab="history" data-permission-url="main-merchant-transactions.html">Transaction History</a>
-</div>
+    <div class="mad-tabs" role="tablist" aria-label="Merchant sections">
+      <a class="mad-tab" role="tab" aria-selected="false" href="main-merchant-detail.html">Merchants</a>
+      <a class="mad-tab is-active" role="tab" aria-selected="true" href="main-merchant-settlement.html" aria-current="page">Settlement</a>
+      <a class="mad-tab" role="tab" aria-selected="false" href="main-merchant-profit.html">Profit Report</a>
+      <a class="mad-tab" role="tab" aria-selected="false" href="main-merchant-roles.html">Roles &amp; Permissions</a>
+      <a class="mad-tab" role="tab" aria-selected="false" href="main-merchant-security.html">Security &amp; Audit</a>
+    </div>
     <div class="mad-chrome-actions mre-chrome-actions">
       <span class="mad-sync" id="reportSyncLabel"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> Synced just now</span>
       <button class="mad-btn mad-btn-ghost" type="button" id="reportExport"><i class="bi bi-upload"></i> Export</button>
@@ -96,46 +97,6 @@
         <div class="mre-currency-seg" role="group" aria-label="Currency">
               <span class="mre-cur-loading" aria-hidden="true">…</span>
             </div>
-      </div>
-      <div class="mre-period-group">
-        <span class="mre-scope-label">Period</span>
-        <div class="field ref-date-field mre-date-field">
-          <input type="hidden" id="reportDateFrom"/>
-          <input type="hidden" id="reportDateTo"/>
-          <div class="ref-range-wrap">
-            <button class="ref-range-trigger mre-date-trigger" id="reportDateTrigger" type="button" aria-label="Select date range">
-              <span class="ref-range-icon"><i class="bi bi-calendar3"></i></span>
-              <span id="reportDateLabel">Select date range</span>
-              <i class="bi bi-chevron-down ms-auto"></i>
-            </button>
-            <div class="ref-range-picker" id="reportRangePicker">
-              <div class="ref-range-presets">
-                <button data-report-preset="today" type="button">Today</button>
-                <button data-report-preset="yesterday" type="button">Yesterday</button>
-                <button data-report-preset="thisWeek" type="button">This Week</button>
-                <button data-report-preset="lastWeek" type="button">Last Week</button>
-                <button data-report-preset="thisMonth" type="button">This Month</button>
-                <button data-report-preset="lastMonth" type="button">Last Month</button>
-                <button data-report-preset="thisYear" type="button">This Year</button>
-                <button data-report-preset="lastYear" type="button">Last Year</button>
-              </div>
-              <div class="ref-range-calendar">
-                <div class="ref-cal-head">
-                  <button id="reportCalPrev" type="button"><i class="bi bi-chevron-left"></i></button>
-                  <button class="ref-head-pick" id="reportCalMonth" type="button"></button>
-                  <button class="ref-head-pick" id="reportCalYear" type="button"></button>
-                  <button id="reportCalNext" type="button"><i class="bi bi-chevron-right"></i></button>
-                </div>
-                <div class="ref-cal-month-grid" id="reportCalMonthGrid"></div>
-                <div class="ref-cal-year-grid" id="reportCalYearGrid"></div>
-                <div class="ref-cal-day-view" id="reportCalDayView">
-                  <div class="ref-cal-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
-                  <div class="ref-cal-days" id="reportCalDays"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -180,30 +141,72 @@
 
   <!-- Settlement Report: reuses existing MAIN settlement APIs, scoped to Merchants only -->
   <div class="mad-panel mre-panel" data-report-panel="settlement">
-    <div class="mre-section-pad">
-      <div class="settlement-summary-grid" id="settlementSummary"></div>
-      <div class="settlement-form-card">
-        <div class="settlement-form-grid">
-          <div class="field"><label>Settlement Month</label><input class="form-control" id="settlementMonth" type="month"/></div>
-          <div class="field"><label>Counterparty Type</label><select class="form-select" id="settlementType" disabled><option value="BRAND">Merchant</option></select></div>
-          <div class="field settlement-party-field"><label>Merchant</label><select class="form-select" id="settlementParty"></select></div>
-          <div class="field"><label>Direction</label><select class="form-select" id="settlementDirection"><option value="COLLECT">Collect From</option><option value="PAY">Pay To</option></select></div>
-          <div class="field"><label>Amount Due</label><input class="form-control" id="settlementAmount" min="0.01" step="0.01" type="number" placeholder="0.00"/></div>
-          <div class="field settlement-note-field"><label>Remark</label><input class="form-control" id="settlementNote" type="text" maxlength="1000" placeholder="Optional settlement remark"/></div>
+    <div class="settlement-ledger-head">
+      <div class="settlement-ledger-tools">
+        <input type="hidden" id="settlementMonth"/>
+        <div class="field ref-date-field mre-date-field settlement-date-field">
+          <input type="hidden" id="reportDateFrom"/>
+          <input type="hidden" id="reportDateTo"/>
+          <div class="ref-range-wrap">
+            <button class="ref-range-trigger mre-date-trigger" id="reportDateTrigger" type="button" aria-label="Select date range">
+              <span class="ref-range-icon"><i class="bi bi-calendar3"></i></span>
+              <span id="reportDateLabel">Select date range</span>
+              <i class="bi bi-chevron-down ms-auto"></i>
+            </button>
+            <div class="ref-range-picker" id="reportRangePicker">
+              <div class="ref-range-presets">
+                <button data-report-preset="today" type="button">Today</button>
+                <button data-report-preset="yesterday" type="button">Yesterday</button>
+                <button data-report-preset="thisWeek" type="button">This Week</button>
+                <button data-report-preset="lastWeek" type="button">Last Week</button>
+                <button data-report-preset="thisMonth" type="button">This Month</button>
+                <button data-report-preset="lastMonth" type="button">Last Month</button>
+                <button data-report-preset="thisYear" type="button">This Year</button>
+                <button data-report-preset="lastYear" type="button">Last Year</button>
+              </div>
+              <div class="ref-range-calendar">
+                <div class="ref-cal-head">
+                  <button id="reportCalPrev" type="button"><i class="bi bi-chevron-left"></i></button>
+                  <button class="ref-head-pick" id="reportCalMonth" type="button"></button>
+                  <button class="ref-head-pick" id="reportCalYear" type="button"></button>
+                  <button id="reportCalNext" type="button"><i class="bi bi-chevron-right"></i></button>
+                </div>
+                <div class="ref-cal-month-grid" id="reportCalMonthGrid"></div>
+                <div class="ref-cal-year-grid" id="reportCalYearGrid"></div>
+                <div class="ref-cal-day-view" id="reportCalDayView">
+                  <div class="ref-cal-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+                  <div class="ref-cal-days" id="reportCalDays"></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="settlement-form-actions"><button class="mad-btn mad-btn-primary" id="settlementSubmit" type="button"><i class="bi bi-plus-circle"></i> Submit Settlement</button></div>
-      </div>
-      <div class="settlement-ledger-head">
-        <div><h6>Merchant Settlement Ledger</h6><small>One row per month, Merchant and direction. Partial payments reduce the balance; Carry Forward moves only the unpaid balance.</small></div>
         <button class="mad-btn mad-btn-ghost" id="settlementRefresh" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
       </div>
-      <div class="report-table-scroll mre-scroll-table mre-settlement-scroll">
-        <table class="mad-table settlement-table">
-          <thead><tr><th>Month</th><th>Merchant</th><th>Direction</th><th>Current Charge</th><th>Carry In</th><th>Total Due</th><th>Paid</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody id="settlementRows"><tr><td colspan="10" class="mad-empty">Select Settlement Report to load records.</td></tr></tbody>
-        </table>
+    </div>
+    <div class="mad-table-wrap report-table-scroll mre-scroll-table mre-settlement-scroll">
+      <table class="mad-table settlement-table msr-settle-table">
+        <thead>
+          <tr>
+            <th scope="col">Period</th>
+            <th scope="col">Merchant</th>
+            <th scope="col">Type</th>
+            <th scope="col" class="mre-num">Amount Due</th>
+            <th scope="col" class="mre-num">Paid</th>
+            <th scope="col" class="mre-num">Outstanding</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="settlementRows"><tr><td colspan="8" class="mad-empty">Loading settlement records...</td></tr></tbody>
+      </table>
+    </div>
+    <div class="mad-footer mre-table-footer">
+      <div class="mad-footer-info" id="settlementInfo">Showing 0 settlement records</div>
+      <div class="mad-footer-right">
+        <label class="mre-page-size-label">Show <select class="mad-page-size-select" id="settlementPageSize"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option></select> / page</label>
+        <nav class="mad-pager" id="settlementPager" aria-label="Merchant settlement pagination"></nav>
       </div>
-      <div class="mad-footer mre-table-footer"><div class="mad-footer-info" id="settlementInfo">Showing 0 settlement records</div><div class="mad-footer-right"><label class="mre-page-size-label">Show <select class="mad-page-size-select" id="settlementPageSize"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option></select> / page</label><nav class="mad-pager" id="settlementPager" aria-label="Merchant settlement pagination"></nav></div></div>
     </div>
   </div>
 
@@ -251,8 +254,108 @@
 </main>
 </div>
 
-<div class="modal fade" id="settlementPaymentModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Record Merchant Settlement Payment</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input id="settlementPaymentId" type="hidden"/><div class="settlement-payment-context" id="settlementPaymentContext"></div><div class="mb-3"><label class="form-label">Payment Amount</label><input class="form-control" id="settlementPaymentAmount" type="number" min="0.01" step="0.01"/></div><div class="mb-3"><label class="form-label">Payment Date</label><input class="form-control" id="settlementPaymentDate" type="date"/></div><div class="mb-3"><label class="form-label">Reference</label><input class="form-control" id="settlementPaymentReference" maxlength="180"/></div><div><label class="form-label">Remark</label><textarea class="form-control" id="settlementPaymentNote" rows="3" maxlength="1000"></textarea></div></div><div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button">Cancel</button><button class="btn btn-primary" id="settlementPaymentSave" type="button">Save Payment</button></div></div></div></div>
-<div class="modal fade" id="settlementHistoryModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Payment History</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Date</th><th>Amount</th><th>Reference</th><th>Remark</th><th>Recorded By</th></tr></thead><tbody id="settlementHistoryRows"></tbody></table></div></div></div></div></div>
+<div hidden aria-hidden="true" class="modal-clean mad-modal" id="settlementPaymentModal" role="dialog" aria-modal="true" aria-labelledby="settlementPaymentTitle">
+  <div class="modal-clean-panel mad-modal-panel msr-payment-modal-panel">
+    <div class="modal-clean-head">
+      <div class="mad-modal-title">
+        <span class="mad-modal-icon" aria-hidden="true"><i class="bi bi-cash-coin"></i></span>
+        <div>
+          <h2 id="settlementPaymentTitle">Record Amount</h2>
+          <small>Record a collection or payment against this settlement row.</small>
+        </div>
+      </div>
+      <button class="modal-clean-close" type="button" data-msr-payment-close aria-label="Close"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+    </div>
+    <form class="modal-clean-body msr-payment-form" id="settlementPaymentForm" novalidate>
+      <input type="hidden" id="settlementPaymentId"/>
+      <div class="settlement-payment-context" id="settlementPaymentContext" aria-live="polite"></div>
+      <div class="mad-form-stack msr-payment-fields">
+        <div class="mad-form-row msr-payment-row">
+          <div class="mad-field msr-pay-date-field-wrap">
+            <span>Payment Date <b>*</b></span>
+            <div class="ref-date-field msr-pay-date-field">
+              <input type="hidden" id="settlementPaymentDate"/>
+              <div class="ref-range-wrap">
+                <button class="ref-range-trigger msr-pay-date-trigger" id="settlementPaymentDateTrigger" type="button" aria-label="Select payment date" aria-haspopup="dialog" aria-expanded="false">
+                  <span class="ref-range-icon"><i class="bi bi-calendar3" aria-hidden="true"></i></span>
+                  <span class="msr-pay-date-label" id="settlementPaymentDateLabel">Select date</span>
+                </button>
+                <div class="ref-range-picker msr-pay-date-picker" id="settlementPaymentDatePicker" role="dialog" aria-label="Payment date calendar">
+                  <div class="ref-range-calendar">
+                    <div class="ref-cal-head">
+                      <button type="button" id="msrPayCalPrev" aria-label="Previous month"><i class="bi bi-chevron-left"></i></button>
+                      <button type="button" class="ref-head-pick" id="msrPayCalMonth"></button>
+                      <button type="button" class="ref-head-pick" id="msrPayCalYear"></button>
+                      <button type="button" id="msrPayCalNext" aria-label="Next month"><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                    <div class="ref-cal-month-grid" id="msrPayCalMonthGrid"></div>
+                    <div class="ref-cal-year-grid" id="msrPayCalYearGrid"></div>
+                    <div class="ref-cal-day-view" id="msrPayCalDayView">
+                      <div class="ref-cal-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+                      <div class="ref-cal-days" id="msrPayCalDays"></div>
+                    </div>
+                  </div>
+                  <div class="msr-pay-date-foot">
+                    <button type="button" data-msr-pay-today>Today</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <label class="mad-field" for="settlementPaymentAmount">
+            <span>Payment Amount <b>*</b></span>
+            <span class="mac-input-group is-prefix msr-amount-group">
+              <span class="mac-input-addon currency-unit" id="settlementPaymentUnit">MYR</span>
+              <input class="form-control" id="settlementPaymentAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" required/>
+            </span>
+          </label>
+        </div>
+        <label class="mad-field" for="settlementPaymentNote">
+          <span>Remark</span>
+          <textarea class="form-control" id="settlementPaymentNote" rows="3" maxlength="1000" placeholder="Optional remark"></textarea>
+        </label>
+      </div>
+      <div class="mad-modal-actions">
+        <button class="mad-btn mad-btn-ghost" type="button" data-msr-payment-close>Cancel</button>
+        <button class="mad-btn mad-btn-navy" type="submit" id="settlementPaymentSave"><i class="bi bi-check2-circle" aria-hidden="true"></i> Save Payment</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div hidden aria-hidden="true" class="modal-clean mad-modal" id="settlementHistoryModal" role="dialog" aria-modal="true" aria-labelledby="settlementHistoryTitle">
+  <div class="modal-clean-panel mad-modal-panel msr-history-modal-panel">
+    <div class="modal-clean-head">
+      <div class="mad-modal-title">
+        <span class="mad-modal-icon" aria-hidden="true"><i class="bi bi-clock-history"></i></span>
+        <div>
+          <h2 id="settlementHistoryTitle">Payment History</h2>
+          <small>Recorded payments for this settlement row.</small>
+        </div>
+      </div>
+      <button class="modal-clean-close" type="button" data-msr-history-close aria-label="Close"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+    </div>
+    <div class="modal-clean-body">
+      <div class="mad-table-wrap msr-history-table-wrap">
+        <table class="mad-table msr-history-table">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col" class="mre-num">Amount</th>
+              <th scope="col">Reference</th>
+              <th scope="col">Remark</th>
+              <th scope="col">Recorded By</th>
+            </tr>
+          </thead>
+          <tbody id="settlementHistoryRows"></tbody>
+        </table>
+      </div>
+      <div class="mad-modal-actions">
+        <button class="mad-btn mad-btn-ghost" type="button" data-msr-history-close>Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/config.js?v=1.0.40"></script>
@@ -260,11 +363,11 @@
 <script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
 <script src="assets/js/reports.js?v=1.0.25"></script>
-<script src="assets/js/auth.js?v=1.0.60"></script>
+<script src="assets/js/auth.js?v=1.0.63"></script>
 <script src="assets/js/permission-tabs.js?v=1.0.0"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
 <script src="assets/js/main-merchant-report.js?v=1.1.2"></script>
-<script src="assets/js/main-merchant-report-extra.js?v=1.1.2"></script>
+<script src="assets/js/main-merchant-report-extra.js?v=1.1.12"></script>
 <script src="assets/js/bo-ui-standard.js?v=1.0.4"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 </body>

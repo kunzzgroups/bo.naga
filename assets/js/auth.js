@@ -82,18 +82,22 @@
     const p=pageName();
     if(p==='main-balance-adjustment.html') return 'main-balance-overview.html';
     if(p==='main-provider-settlement.html' || p==='main-provider-balance.html' || p==='main-provider-transactions.html') return 'main_provider_report.html';
-    if(p==='main-merchant-settlement.html' || p==='main-merchant-balance.html' || p==='main-merchant-transactions.html') return 'main_merchant_report.html';
+    if(p==='main-merchant-balance.html' || p==='main-merchant-transactions.html') return 'main_merchant_report.html';
     if(p==='brand-detail.html') return 'brand-management.html';
     if(p==='provider-detail.html') return 'main-accounting-report.html';
     // Gateway Transactions is a drill-down of Payment Gateway and uses the same DB menu permission.
     if(p==='payment-gateway-transactions.html') return 'payment-gateway.html';
     // Merchant module drill-downs keep the Merchant sidebar item highlighted.
-    if(p==='main-merchant-create.html' || p==='main-merchant-credit.html' || p==='main-merchant-security.html' || p==='main-merchant-roles.html' || p==='main-merchant-role-create.html' || p==='main-merchant-profit.html' || p==='main-merchant-profit-record.html' || p==='merchant-profit.html'){
+    if(p==='main-merchant-create.html' || p==='main-merchant-credit.html' || p==='main-merchant-security.html' || p==='main-merchant-roles.html' || p==='main-merchant-role-create.html' || p==='main-merchant-profit.html' || p==='main-merchant-profit-record.html' || p==='main-merchant-repayments.html' || p==='main-merchant-settlement.html' || p==='merchant-profit.html'){
       return 'main-merchant-detail.html';
     }
     // Admin module drill-downs keep the Admin Details item highlighted.
     if(p==='main-admin-create.html' || p==='main-admin-edit.html' || p==='main-admin-credit.html'){
       return 'main-admin-detail.html';
+    }
+    // Provider module drill-downs keep the Providers item highlighted.
+    if(p==='main-provider-create.html' || p==='main-provider-endpoints.html' || p==='main-provider-credentials.html' || p==='main-provider-health.html'){
+      return 'main-provider-detail.html';
     }
     return p;
   }
@@ -107,13 +111,34 @@
     return String(rawUrl || '').trim();
   }
 
+  // Report group keeps only Win/Lose Report + Provider Report in the sidebar.
+  const REPORT_SIDEBAR_REMOVED = {
+    'main-provider-settlement.html':1,
+    'main-provider-balance.html':1,
+    'main-provider-transactions.html':1,
+    'main_merchant_report.html':1,
+    'main-merchant-settlement.html':1,
+    'main-merchant-balance.html':1,
+    'main-merchant-transactions.html':1,
+    'main-settlement-report.html':1,
+    'main-balance-overview.html':1
+  };
+  const REPORT_SIDEBAR_TITLES = {
+    'main-win-lose-report.html':'Win/Lose Report',
+    'win-lose-report.html':'Win/Lose Report',
+    'main_provider_report.html':'Provider Report'
+  };
+
   function normalizeMenu(m){
     const menuKey = String((m && (m.menuKey || m.key)) || '');
+    const url = canonicalMenuUrl(menuKey, (m && (m.url || m.href)) || '#');
+    const file = String(url || '').split('/').pop().split('?')[0].toLowerCase();
+    const forcedTitle = REPORT_SIDEBAR_TITLES[file];
     return {
       id: m && m.id,
       menuKey: menuKey,
-      title: String((m && (m.title || m.name)) || 'Menu'),
-      url: canonicalMenuUrl(menuKey, (m && (m.url || m.href)) || '#'),
+      title: forcedTitle || String((m && (m.title || m.name)) || 'Menu'),
+      url: url,
       icon: String((m && m.icon) || 'bi-circle'),
       parentKey: String((m && m.parentKey) || ''),
       sortOrder: Number((m && m.sortOrder) || 0),
@@ -211,14 +236,22 @@
       if(current === 'main-merchant-role-create.html') current = 'main-merchant-detail.html';
       if(current === 'main-merchant-profit.html') current = 'main-merchant-detail.html';
       if(current === 'main-merchant-profit-record.html') current = 'main-merchant-detail.html';
+      if(current === 'main-merchant-repayments.html') current = 'main-merchant-detail.html';
+      if(current === 'main-merchant-settlement.html') current = 'main-merchant-detail.html';
       if(current === 'merchant-profit.html') current = 'main-merchant-detail.html';
+      // Provider create / rate rules / settlement / activity logs are drill-downs of Providers.
+      if(current === 'main-provider-create.html') current = 'main-provider-detail.html';
+      if(current === 'main-provider-endpoints.html') current = 'main-provider-detail.html';
+      if(current === 'main-provider-credentials.html') current = 'main-provider-detail.html';
+      if(current === 'main-provider-health.html') current = 'main-provider-detail.html';
       const agentChildPages = new Set([
         'agent-commission-admin.html','agent-settlement-admin.html','agent-reimbursement-admin.html',
         'agent-payout-admin.html','agent-promotion-admin.html'
       ]);
       const requestedAgentChild = agentChildPages.has(pageName());
       const requestedMainAdminDetail = pageName() === 'main-admin-detail.html' || pageName() === 'main-admin-create.html' || pageName() === 'main-admin-edit.html';
-      const requestedMainMerchantDetail = pageName() === 'main-merchant-detail.html' || pageName() === 'main-merchant-create.html' || pageName() === 'main-merchant-credit.html' || pageName() === 'main-merchant-security.html' || pageName() === 'main-merchant-roles.html' || pageName() === 'main-merchant-role-create.html' || pageName() === 'main-merchant-profit.html' || pageName() === 'main-merchant-profit-record.html' || pageName() === 'merchant-profit.html';
+      const requestedMainMerchantDetail = pageName() === 'main-merchant-detail.html' || pageName() === 'main-merchant-create.html' || pageName() === 'main-merchant-credit.html' || pageName() === 'main-merchant-security.html' || pageName() === 'main-merchant-roles.html' || pageName() === 'main-merchant-role-create.html' || pageName() === 'main-merchant-profit.html' || pageName() === 'main-merchant-profit-record.html' || pageName() === 'main-merchant-repayments.html' || pageName() === 'main-merchant-settlement.html' || pageName() === 'merchant-profit.html';
+      const requestedMainProviderDetail = pageName() === 'main-provider-detail.html' || pageName() === 'main-provider-create.html' || pageName() === 'main-provider-endpoints.html' || pageName() === 'main-provider-credentials.html' || pageName() === 'main-provider-health.html';
       if(current === 'main-stat-detail.html'){
         let source = '';
         try { source = String(new URLSearchParams(location.search || '').get('source') || 'overview').toLowerCase(); } catch(e) {}
@@ -255,6 +288,21 @@
         allowed = menus.some(function(m){
           const key = String(m.menuKey || '').toLowerCase();
           return key === 'main_merchant_detail' || key === 'merchant_detail' || key === 'merchant';
+        });
+      }
+      if(!allowed && requestedMainProviderDetail){
+        allowed = menus.some(function(m){
+          const key = String(m.menuKey || '').toLowerCase();
+          const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
+          return key === 'main_provider_detail' || key === 'provider_detail' || file === 'main-provider-detail.html';
+        });
+      }
+      // Win/Lose Report can open when the role already has Provider Report under Report.
+      if(!allowed && (pageName() === 'main-win-lose-report.html' || pageName() === 'win-lose-report.html')){
+        allowed = menus.some(function(m){
+          const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
+          const key = String(m.menuKey || '').toLowerCase();
+          return file === 'main_provider_report.html' || key === 'main_provider_report' || key === 'main_win_lose_report';
         });
       }
       if(!allowed){
@@ -347,6 +395,8 @@
           const key = String(m.menuKey || '').toLowerCase();
           if(file === 'main-admin-credit.html' || key === 'main_admin_credit' || key === 'admin_credit') return false;
           if(file === 'main-merchant-credit.html' || key === 'main_merchant_credit' || key === 'merchant_credit') return false;
+          // Report: only Win/Lose Report + Provider Report remain in the sidebar.
+          if(REPORT_SIDEBAR_REMOVED[file]) return false;
           return true;
         })
         .sort(function(a,b){ return a.sortOrder - b.sortOrder || a.title.localeCompare(b.title); });
@@ -374,7 +424,26 @@
       top.forEach(function(m){ roots.push({kind:'menu',sortOrder:m.sortOrder,title:m.title,menu:m}); });
       Object.keys(groups).forEach(function(key){
         const meta=GROUP_META[key]||{};
-        const items=groups[key].sort(function(a,b){return a.sortOrder-b.sortOrder||a.title.localeCompare(b.title);});
+        let items=groups[key].sort(function(a,b){return a.sortOrder-b.sortOrder||a.title.localeCompare(b.title);});
+        // Report group: ensure both Win/Lose Report and Provider Report are present.
+        const keyLower=String(key||'').toLowerCase();
+        if(keyLower==='main_reports_group' || keyLower==='report' || /report/i.test(String(meta.title||''))){
+          const files=items.map(function(m){return String(m.url||'').split('/').pop().split('?')[0].toLowerCase();});
+          const hasProvider=files.indexOf('main_provider_report.html')!==-1;
+          const hasWinLose=files.indexOf('main-win-lose-report.html')!==-1 || files.indexOf('win-lose-report.html')!==-1;
+          if(hasProvider && !hasWinLose){
+            items=[{
+              id:null,
+              menuKey:'main_win_lose_report',
+              title:'Win/Lose Report',
+              url:'main-win-lose-report.html',
+              icon:'bi-graph-up-arrow',
+              parentKey:key,
+              sortOrder:0,
+              status:1
+            }].concat(items);
+          }
+        }
         const configuredSort=Number(meta.sortOrder);
         const minChild=items.length?Math.min.apply(null,items.map(function(x){return Number(x.sortOrder)||0;})):0;
         roots.push({

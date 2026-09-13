@@ -3,7 +3,11 @@ const $=id=>document.getElementById(id), esc=v=>String(v??'').replace(/[&<>"']/g
 const money=v=>Number(v||0).toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2});
 const num=v=>Number(v||0).toLocaleString('en-MY');
 const add=(a,b)=>Number(a||0)+Number(b||0), pos=v=>Math.max(Number(v||0),0), neg=v=>Math.max(-Number(v||0),0);
-const PAGE_SIZE=7;
+/** Rows per page — fills available table height; overflow goes to page 2+ */
+let pageSize=10;
+const MIN_PAGE_SIZE=7;
+const MAX_PAGE_SIZE=40;
+const ROW_HEIGHT_EST=52;
 let brandPageSize=10;
 let historyPageSize=10;
 const MARKS=['','teal','violet','amber','rose','slate'];
@@ -134,8 +138,10 @@ function normalizeProviders(rows){
       ggrPct:turnover? (ggr/turnover*100) : 0,
       txns,
       brandCount:Number(x.brandCount||0),
+      gross:ggr,
       payable:Number(x.upstreamProviderPayable||0),
-      margin:Number(x.providerMargin||0)
+      margin:Number(x.providerMargin||0),
+      receivable:Number(x.brandCharge||0)
     };
   });
 }
@@ -178,11 +184,11 @@ function pageButtons(current,total){
   return html;
 }
 
-function ggrHtml(v,pct){
+function amountHtml(v){
   const n=Number(v||0);
   const cls=n>0?'is-pos':n<0?'is-neg':'is-flat';
   const sign=n>0?'+':'';
-  return `<span class="mre-ggr ${cls}"><b>${sign}${money(n)}</b><em>${money(Math.abs(pct))}%</em></span>`;
+  return `<span class="mre-ggr ${cls}"><b>${sign}${money(n)}</b></span>`;
 }
 
 function applyProviderFilters(){
@@ -203,18 +209,74 @@ function applyProviderFilters(){
   renderProviders();
 }
 
+function measureProviderPageSize(){
+  const wrap=document.querySelector('.mre-panel[data-report-panel="provider"] .mad-table-wrap');
+  if(!wrap) return pageSize;
+  const thead=wrap.querySelector('thead');
+  const headH=thead?Math.ceil(thead.getBoundingClientRect().height):48;
+  // Use natural row estimate (not stretched height) so leftover gap can be shared evenly
+  const avail=Math.max(0,wrap.clientHeight-headH-2);
+  const n=Math.floor(avail/ROW_HEIGHT_EST);
+  return Math.max(MIN_PAGE_SIZE,Math.min(MAX_PAGE_SIZE,n||MIN_PAGE_SIZE));
+}
+
+function syncProviderPageSize(){
+  const next=measureProviderPageSize();
+  if(next===pageSize) return false;
+  pageSize=next;
+  return true;
+}
+
+function clearProviderRowStretch(){
+  const wrap=document.querySelector('.mre-panel[data-report-panel="provider"] .mad-table-wrap');
+  const table=wrap?.querySelector('.mre-table');
+  const tbody=$('providerReportRows');
+  wrap?.classList.remove('is-row-fill');
+  table?.classList.remove('is-row-fill');
+  if(table) table.style.height='';
+  tbody?.querySelectorAll('tr').forEach(tr=>{tr.style.height='';});
+}
+
+/** Stretch body rows only when leftover space is a little (not enough for another full row). */
+function distributeProviderRows(){
+  const wrap=document.querySelector('.mre-panel[data-report-panel="provider"] .mad-table-wrap');
+  const table=wrap?.querySelector('.mre-table');
+  const thead=table?.querySelector('thead');
+  const tbody=$('providerReportRows');
+  if(!wrap||!table||!tbody) return;
+
+  const trs=[...tbody.querySelectorAll('tr')].filter(tr=>tr.querySelector('.mre-provider'));
+  clearProviderRowStretch();
+  if(!trs.length) return;
+
+  const headH=thead?thead.getBoundingClientRect().height:0;
+  const avail=Math.max(0,wrap.clientHeight-headH);
+  const naturalHeights=trs.map(tr=>tr.getBoundingClientRect().height);
+  const naturalTotal=naturalHeights.reduce((sum,h)=>sum+h,0);
+  const leftover=avail-naturalTotal;
+  const rowH=Math.max(ROW_HEIGHT_EST, Math.min(...naturalHeights));
+  // Only absorb a small remainder — never stretch into a large empty page gap
+  if(leftover<=1||leftover>=rowH) return;
+
+  const each=avail/trs.length;
+  wrap.classList.add('is-row-fill');
+  table.classList.add('is-row-fill');
+  table.style.height=wrap.clientHeight+'px';
+  trs.forEach(tr=>{tr.style.height=each+'px';});
+}
+
 function renderProviders(){
   const tbody=$('providerReportRows');
-  const foot=$('providerReportFoot');
   const pager=$('mrePager');
   const info=$('mreTableInfo');
   if(!tbody) return;
 
+  syncProviderPageSize();
   const total=filteredProviders.length;
-  const totalPages=Math.max(1,Math.ceil(total/PAGE_SIZE)||1);
+  const totalPages=Math.max(1,Math.ceil(total/pageSize)||1);
   providerPage=Math.max(1,Math.min(providerPage,totalPages));
-  const start=(providerPage-1)*PAGE_SIZE;
-  const rows=filteredProviders.slice(start,start+PAGE_SIZE);
+  const start=(providerPage-1)*pageSize;
+  const rows=filteredProviders.slice(start,start+pageSize);
 
   if(pager) pager.innerHTML=pageButtons(providerPage,totalPages);
   if(info){
@@ -223,45 +285,48 @@ function renderProviders(){
       : 'Showing 0 to 0 of 0 providers';
   }
 
-  const sumValid=filteredProviders.reduce((s,r)=>s+r.validBet,0);
-  const sumIn=filteredProviders.reduce((s,r)=>s+r.totalIn,0);
-  const sumOut=filteredProviders.reduce((s,r)=>s+r.totalOut,0);
-  const sumGgr=filteredProviders.reduce((s,r)=>s+r.ggr,0);
-  if($('mreTotalValid')) $('mreTotalValid').textContent=money(sumValid);
-  if($('mreTotalIn')) $('mreTotalIn').textContent=money(sumIn);
-  if($('mreTotalOut')) $('mreTotalOut').textContent=money(sumOut);
-  if($('mreTotalGgr')){
-    const el=$('mreTotalGgr');
-    const sign=sumGgr>0?'+':'';
-    el.textContent=sign+money(sumGgr);
-    el.classList.toggle('is-pos',sumGgr>0);
-    el.classList.toggle('is-neg',sumGgr<0);
-  }
-  if(foot) foot.hidden=!total;
-
   if(!rows.length){
+    clearProviderRowStretch();
     tbody.innerHTML='<tr><td colspan="6" class="mad-empty">No provider report data for this date range.</td></tr>';
     return;
   }
 
   tbody.innerHTML=rows.map(r=>{
     const codeLabel=r.code?('#'+r.code):'';
-    const txnLabel=r.txns? (num(r.txns)+' txns') : (r.brandCount? (num(r.brandCount)+' brands') : '');
     return `<tr>
       <td><div class="mre-provider"><span class="mre-mark${r.mark}">${esc(r.initials)}</span>
-        <div class="mre-provider-copy"><b>${esc(r.name)}${codeLabel?` <span class="mre-code">${esc(codeLabel)}</span>`:''}</b>
-        <small>${esc(r.categoryLabel)}</small></div></div></td>
-      <td class="mre-num"><span class="mre-stack"><b>${money(r.validBet)}</b></span></td>
-      <td class="mre-num"><div class="mre-stack"><b>${money(r.totalIn)}</b>${txnLabel?`<small>${esc(txnLabel)}</small>`:''}</div></td>
-      <td class="mre-num"><span class="mre-stack"><b>${money(r.totalOut)}</b></span></td>
-      <td class="mre-num">${ggrHtml(r.ggr,r.ggrPct)}</td>
-      <td><div class="mre-actions mad-actions">
-        <button class="mad-icon-btn" type="button" title="View" data-mre-view="${esc(r.code)}"><i class="bi bi-eye"></i></button>
-        <button class="mad-icon-btn" type="button" title="Download" data-mre-dl="${esc(r.code)}"><i class="bi bi-download"></i></button>
-        <button class="mad-icon-btn" type="button" title="History" data-mre-hist="${esc(r.code)}"><i class="bi bi-file-earmark-text"></i></button>
-      </div></td>
+        <div class="mre-provider-copy"><b>${esc(r.name)}</b>${codeLabel?`<span class="mre-code">${esc(codeLabel)}</span>`:''}</div></div></td>
+      <td class="mre-category">${esc(r.categoryLabel||'—')}</td>
+      <td class="mre-num">${amountHtml(r.gross)}</td>
+      <td class="mre-num">${money(r.payable)}</td>
+      <td class="mre-num">${amountHtml(r.margin)}</td>
+      <td class="mre-num">${money(r.receivable)}</td>
     </tr>`;
   }).join('');
+
+  // Refine page size once, then evenly stretch rows to fill leftover space
+  if(!renderProviders._refining){
+    requestAnimationFrame(()=>{
+      clearProviderRowStretch();
+      const wrap=document.querySelector('.mre-panel[data-report-panel="provider"] .mad-table-wrap');
+      if(wrap&&wrap.scrollHeight>wrap.clientHeight+2){
+        pageSize=Math.max(MIN_PAGE_SIZE,pageSize-1);
+        renderProviders._refining=true;
+        renderProviders();
+        renderProviders._refining=false;
+        return;
+      }
+      if(syncProviderPageSize()){
+        renderProviders._refining=true;
+        renderProviders();
+        renderProviders._refining=false;
+        return;
+      }
+      distributeProviderRows();
+    });
+  }else{
+    requestAnimationFrame(()=>distributeProviderRows());
+  }
 }
 
 function aggregateBrands(rows){
@@ -552,8 +617,6 @@ async function load(){
     updateCounts();
     const tbody=$('providerReportRows');
     if(tbody) tbody.innerHTML=`<tr><td colspan="6" class="mad-empty text-danger">${esc((/failed to fetch|networkerror|load failed/i.test(String(e.message||''))?'Unable to reach server. Start local API on :8080 or open the BO on the same host as /api.':e.message)||'Unable to load provider report')}</td></tr>`;
-    const foot=$('providerReportFoot');
-    if(foot) foot.hidden=true;
     const info=$('mreTableInfo');
     if(info) info.textContent='Showing 0 to 0 of 0 providers';
     const pager=$('mrePager');
@@ -563,12 +626,12 @@ async function load(){
 }
 
 function exportCsv(){
-  const head=['Provider','Code','Category','Status','Valid Bet','Total In','Total Out','GGR','GGR %'];
-  const lines=[head,...filteredProviders.map(r=>[r.name,r.code,r.categoryLabel,r.status,r.validBet,r.totalIn,r.totalOut,r.ggr,r.ggrPct.toFixed(2)])];
+  const head=['Provider','Code','Game Category','Gross Amount','Provider Payable','Company Margin','Merchant Receivable'];
+  const lines=[head,...filteredProviders.map(r=>[r.name,r.code,r.categoryLabel,r.gross,r.payable,r.margin,r.receivable])];
   const blob=new Blob([lines.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download=`provider-winlose-${$('reportDateFrom').value}-${$('reportDateTo').value}.csv`;
+  a.download=`provider-report-${$('reportDateFrom').value}-${$('reportDateTo').value}.csv`;
   a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href),500);
 }
@@ -630,10 +693,22 @@ function setupFilters(){
   $('mrePager')?.addEventListener('click',e=>{
     const b=e.target.closest('[data-page]');
     if(!b||b.disabled) return;
-    const totalPages=Math.max(1,Math.ceil(filteredProviders.length/PAGE_SIZE));
+    const totalPages=Math.max(1,Math.ceil(filteredProviders.length/pageSize));
     const n=Number(b.dataset.page);
     if(n>=1&&n<=totalPages&&n!==providerPage){providerPage=n;renderProviders();}
   });
+  const tableWrap=document.querySelector('.mre-panel[data-report-panel="provider"] .mad-table-wrap');
+  if(tableWrap&&typeof ResizeObserver!=='undefined'){
+    let resizeTimer=0;
+    const ro=new ResizeObserver(()=>{
+      clearTimeout(resizeTimer);
+      resizeTimer=setTimeout(()=>{
+        if(syncProviderPageSize()) renderProviders();
+        else distributeProviderRows();
+      },80);
+    });
+    ro.observe(tableWrap);
+  }
   $('reportCurrency')?.addEventListener('change',()=>{
     currency=$('reportCurrency').value||'MYR';
     updateCurrencyLabels();
@@ -674,7 +749,7 @@ function setupFilters(){
       const code=dl.getAttribute('data-mre-dl');
       const row=filteredProviders.find(r=>r.code===code);
       if(!row) return;
-      const lines=[['Provider','Code','Valid Bet','Total In','Total Out','GGR'],[row.name,row.code,row.validBet,row.totalIn,row.totalOut,row.ggr]];
+      const lines=[['Provider','Code','Game Category','Gross Amount','Provider Payable','Company Margin','Merchant Receivable'],[row.name,row.code,row.categoryLabel,row.gross,row.payable,row.margin,row.receivable]];
       const blob=new Blob([lines.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv'});
       const a=document.createElement('a');
       a.href=URL.createObjectURL(blob);

@@ -120,29 +120,26 @@
         : 'Showing 0 to 0 of 0 providers';
     }
     if(!rows.length){
-      tbody.innerHTML = '<tr><td colspan="8" class="mad-empty">No providers found.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" class="mad-empty">No providers found.</td></tr>';
       return;
     }
     tbody.innerHTML = rows.map(row => {
       const markCls = row.mark ? (' is-' + row.mark) : '';
+      const rate = row.providerRate != null && row.providerRate !== ''
+        ? (String(row.providerRate).endsWith('%') ? row.providerRate : (row.providerRate + '%'))
+        : '—';
       return '<tr>' +
-        '<td><div class="mpv-name"><span class="mpv-mark' + markCls + '">' + esc(row.initials) + '</span>' +
+        '<td><div class="mpv-name"><span class="mpv-mark' + markCls + '">' + esc(row.initials || creatorInitials(row.name)) + '</span>' +
           '<div class="mpv-name-copy"><b>' + esc(row.name) +
           (row.verified ? ' <i class="bi bi-patch-check-fill mpv-verified" title="Verified"></i>' : '') +
-          '</b><small>' + esc(row.desc) + '</small></div></div></td>' +
-        '<td><span class="mpv-id">' + esc(row.id) + '</span></td>' +
-        '<td><span class="mpv-type ' + typeClass(row.type) + '"><i class="bi ' + typeIcon(row.type) + '" aria-hidden="true"></i>' + esc(row.typeLabel) + '</span></td>' +
+          '</b>' + (row.desc ? '<small>' + esc(row.desc) + '</small>' : '') + '</div></div></td>' +
+        '<td>' + esc(row.currency || '—') + '</td>' +
+        '<td>' + esc(rate) + '</td>' +
+        '<td>' + esc(row.settlement || '—') + '</td>' +
         '<td><span class="mpv-status is-' + esc(row.status) + '"><i></i>' + esc(statusLabel(row.status)) + '</span></td>' +
-        '<td><span class="mpv-env' + (row.env === 'sandbox' ? ' is-sandbox' : '') + '">' +
-          (row.env === 'sandbox' ? 'Sandbox' : 'Production') + '</span></td>' +
-        '<td><div class="mpv-sync-cell"><b>' + esc(row.syncRel) + '</b><small>' + esc(row.syncUtc) + '</small></div></td>' +
-        '<td><div class="mpv-creator"><span class="mpv-creator-ava">' + esc(creatorInitials(row.creator)) + '</span>' +
-          '<div><b>' + esc(row.creator) + '</b><small>' + esc(row.role) + '</small></div></div></td>' +
+        '<td>' + esc(row.outstanding || '—') + '</td>' +
         '<td><div class="mpv-actions">' +
-          '<button class="mad-icon-btn" type="button" title="View"><i class="bi bi-eye"></i></button>' +
-          '<button class="mad-icon-btn" type="button" title="Edit"><i class="bi bi-pencil"></i></button>' +
-          '<button class="mad-icon-btn" type="button" title="Settings"><i class="bi bi-sliders"></i></button>' +
-          '<button class="mad-icon-btn is-danger" type="button" title="Disable"><i class="bi bi-slash-circle"></i></button>' +
+          '<button class="mad-icon-btn" type="button" title="More"><i class="bi bi-three-dots"></i></button>' +
         '</div></td>' +
       '</tr>';
     }).join('');
@@ -190,10 +187,15 @@
     }
   });
 
-  // export only — Add Provider is a link to create page
+  // export only
   exportBtn && exportBtn.addEventListener('click', () => {
-    const csv = [['Provider Name', 'Provider ID', 'Integration Type', 'Status', 'Environment', 'Last Sync', 'Created By']]
-      .concat(filtered.map(r => [r.name, r.id, r.typeLabel, statusLabel(r.status), r.env, r.syncRel + ' / ' + r.syncUtc, r.creator]));
+    const csv = [['Provider', 'Currency', 'Provider Rate', 'Settlement', 'Status', 'Outstanding']]
+      .concat(filtered.map(r => {
+        const rate = r.providerRate != null && r.providerRate !== ''
+          ? (String(r.providerRate).endsWith('%') ? r.providerRate : (r.providerRate + '%'))
+          : '';
+        return [r.name, r.currency || '', rate, r.settlement || '', statusLabel(r.status), r.outstanding || ''];
+      }));
     const blob = new Blob([csv.map(row => row.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n')], { type: 'text/csv;charset=utf-8;' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -201,6 +203,51 @@
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 500);
   });
+
+  const CATEGORY_LABELS = {
+    SLOT: 'Slot', LIVE: 'Live', SPORTS: 'Sports',
+    FISH: 'Fishing', LOTTERY: 'Lottery', ESPORTS: 'E-Sports'
+  };
+
+  function markColor(code){
+    const colors = ['teal', 'violet', 'amber', 'rose', 'slate'];
+    let h = 0;
+    const s = String(code || '');
+    for(let i = 0; i < s.length; i++) h = (h + s.charCodeAt(i) * (i + 1)) % colors.length;
+    return colors[h];
+  }
+
+  function consumeCreatedProvider(){
+    let raw;
+    try{ raw = sessionStorage.getItem('mpv_last_created'); }catch(e){ return; }
+    if(!raw) return;
+    try{ sessionStorage.removeItem('mpv_last_created'); }catch(e){}
+    let data;
+    try{ data = JSON.parse(raw); }catch(e){ return; }
+    const code = String(data.code || '').toUpperCase();
+    const name = String(data.name || '').trim();
+    if(!code || !name || allRows.some(r => String(r.id || '').toUpperCase() === code)) return;
+    const category = String(data.category || '');
+    const percent = Number(data.percent);
+    const currency = String(data.currency || 'MYR');
+    const remark = String(data.remark || '');
+    const rateLabel = Number.isInteger(percent) ? String(percent) : String(percent).replace(/\.?0+$/, '');
+    allRows.unshift({
+      id: code,
+      name,
+      initials: creatorInitials(name),
+      mark: markColor(code),
+      desc: remark || (CATEGORY_LABELS[category] || category),
+      currency,
+      providerRate: rateLabel,
+      settlement: 'Monthly',
+      status: 'active',
+      outstanding: currency + '0',
+      category,
+      remark
+    });
+    syncedAt = Date.now();
+  }
 
   function measureLabelWidth(text, reference){
     const canvas = measureLabelWidth._c || (measureLabelWidth._c = document.createElement('canvas'));
@@ -251,6 +298,7 @@
   }
 
   allRows = [];
+  consumeCreatedProvider();
   updateCounts();
   applyFilters();
   updateSyncLabel();

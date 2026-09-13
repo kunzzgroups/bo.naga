@@ -4,168 +4,141 @@
   const form = document.getElementById('mpvCreateForm');
   const statusEl = document.getElementById('mpvCreateStatus');
   const submitBtn = document.getElementById('mpvCreateSubmit');
-  const testBtn = document.getElementById('mpvTestBtn');
-  const genBtn = document.getElementById('mpvGenerateKey');
-  const ipToggle = document.getElementById('mpvIpWhitelist');
-  const ipBlock = document.getElementById('mpvIpBlock');
-  const rolePickBtn = document.getElementById('mpvRolePickBtn');
-  const roleMenu = document.getElementById('mpvRoleMenu');
-  const roleIdEl = document.getElementById('mpvRoleId');
-  const roleNameEl = document.getElementById('mpvRoleName');
-  const rolePrimaryEl = document.getElementById('mpvRolePrimary');
-  const roleDescEl = document.getElementById('mpvRoleDesc');
+  const codeEl = document.getElementById('mpvProviderCode');
+  const nameEl = document.getElementById('mpvProviderName');
+  const categoryEl = document.getElementById('mpvGameCategory');
+  const percentEl = document.getElementById('mpvPercent');
+  const currencyEl = document.getElementById('mpvCurrency');
+  const remarkEl = document.getElementById('mpvRemark');
+  const remarkCount = document.getElementById('mpvRemarkCount');
+  const previewValue = document.getElementById('mpvRatePreviewValue');
+  const previewName = document.getElementById('mpvPreviewName');
+  const previewCode = document.getElementById('mpvPreviewCode');
+  const previewCategory = document.getElementById('mpvPreviewCategory');
+  const previewCurrency = document.getElementById('mpvPreviewCurrency');
+  const previewRate = document.getElementById('mpvPreviewRate');
 
-  const ROLES = [
-    {
-      id: 'direct',
-      name: 'Direct Game Provider',
-      primary: true,
-      badge: 'Primary Channel',
-      desc: 'Standard live game dispatch, round bet settlement, and balance verification webhook permissions assigned.'
-    },
-    {
-      id: 'aggregator',
-      name: 'Aggregation Hub',
-      primary: false,
-      badge: 'Multi-product',
-      desc: 'Routes traffic across nested providers with shared wallet bridge and consolidated settlement callbacks.'
-    },
-    {
-      id: 'transfer',
-      name: 'Transfer Wallet Provider',
-      primary: false,
-      badge: 'Transfer',
-      desc: 'Fund-in / fund-out transfer wallet mode with explicit launch and balance sync endpoints.'
-    }
-  ];
+  const CATEGORY_LABELS = {
+    SLOT: 'Slot',
+    LIVE: 'Live',
+    SPORTS: 'Sports',
+    FISH: 'Fishing',
+    LOTTERY: 'Lottery',
+    ESPORTS: 'E-Sports'
+  };
 
   function setStatus(text, cls){
     if(!statusEl) return;
     statusEl.textContent = text || '';
-    statusEl.className = 'upload-status mb-3' + (cls ? ' ' + cls : '');
+    statusEl.className = 'upload-status mb-0' + (cls ? ' ' + cls : '');
   }
 
-  function randomKey(len){
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
-    const arr = new Uint8Array(len || 32);
-    (window.crypto || window.msCrypto).getRandomValues(arr);
-    let out = '';
-    for(let i = 0; i < arr.length; i++) out += chars[arr[i] % chars.length];
-    return out;
+  function val(el){
+    return String((el && el.value) || '').trim();
   }
 
-  function syncIpBlock(){
-    if(!ipBlock || !ipToggle) return;
-    ipBlock.hidden = !ipToggle.checked;
+  function formatPercent(raw){
+    if(raw === '') return '—';
+    const n = Number(raw);
+    if(!Number.isFinite(n)) return '—';
+    return (Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/\.?0+$/, '')) + '%';
   }
 
-  function applyRole(role){
-    if(!role) return;
-    if(roleIdEl) roleIdEl.value = role.id;
-    if(roleNameEl) roleNameEl.textContent = role.name;
-    if(rolePrimaryEl){
-      rolePrimaryEl.textContent = role.badge || '';
-      rolePrimaryEl.hidden = !role.badge;
+  function updateRemarkCount(){
+    if(!remarkCount || !remarkEl) return;
+    remarkCount.textContent = String(remarkEl.value.length);
+  }
+
+  function updatePreview(){
+    /* Preview panel removed; keep hook for future summary UI. */
+  }
+
+  function normalizeCode(){
+    if(!codeEl) return;
+    const start = codeEl.selectionStart;
+    const end = codeEl.selectionEnd;
+    const next = codeEl.value.toUpperCase().replace(/[^A-Z0-9_]/g, '');
+    if(next !== codeEl.value){
+      codeEl.value = next;
+      if(typeof start === 'number'){
+        const pos = Math.min(next.length, start);
+        try{ codeEl.setSelectionRange(pos, Math.min(next.length, end)); }catch(e){}
+      }
     }
-    if(roleDescEl) roleDescEl.textContent = role.desc || '';
   }
 
-  function renderRoleMenu(){
-    if(!roleMenu) return;
-    roleMenu.innerHTML = ROLES.map(r => {
-      const on = roleIdEl && roleIdEl.value === r.id;
-      return '<button type="button" class="mac-role-option' + (on ? ' is-active' : '') + '" role="option" data-role-id="' + r.id + '" aria-selected="' + (on ? 'true' : 'false') + '">' +
-        '<span class="mac-role-icon" aria-hidden="true"><i class="bi bi-shield-fill"></i></span>' +
-        '<span><b>' + r.name + '</b><small>' + r.desc + '</small></span>' +
-      '</button>';
-    }).join('');
+  function populateCurrencies(){
+    if(!currencyEl || !window.BO_MAIN_CURRENCY) return;
+    const run = () => {
+      const rates = (window.BO_MAIN_CURRENCY.state && window.BO_MAIN_CURRENCY.state.rates) || [];
+      const codes = rates
+        .filter(r => Number(r.status ?? 1) === 1)
+        .map(r => String(r.currencyCode || '').toUpperCase())
+        .filter(Boolean);
+      const uniq = [...new Set(codes.length ? codes : ['MYR'])];
+      const current = val(currencyEl) || 'MYR';
+      currencyEl.innerHTML = uniq.map(c =>
+        '<option value="' + c + '"' + (c === current ? ' selected' : '') + '>' + c + '</option>'
+      ).join('');
+      if(!uniq.includes(current)) currencyEl.value = uniq[0];
+      updatePreview();
+    };
+    Promise.resolve(window.BO_MAIN_CURRENCY.load && window.BO_MAIN_CURRENCY.load()).then(run).catch(run);
   }
 
-  function closeRoleMenu(){
-    if(!roleMenu || !rolePickBtn) return;
-    roleMenu.hidden = true;
-    rolePickBtn.setAttribute('aria-expanded', 'false');
-  }
-
-  function openRoleMenu(){
-    if(!roleMenu || !rolePickBtn) return;
-    renderRoleMenu();
-    roleMenu.hidden = false;
-    rolePickBtn.setAttribute('aria-expanded', 'true');
-  }
-
-  document.addEventListener('click', e => {
-    const toggle = e.target.closest && e.target.closest('[data-toggle-password]');
-    if(toggle){
-      const id = toggle.getAttribute('data-toggle-password');
-      const input = document.getElementById(id);
-      if(!input) return;
-      const show = input.type === 'password';
-      input.type = show ? 'text' : 'password';
-      const icon = toggle.querySelector('i');
-      if(icon) icon.className = show ? 'bi bi-eye-slash' : 'bi bi-eye';
-      return;
-    }
-
-    const opt = e.target.closest && e.target.closest('[data-role-id]');
-    if(opt && roleMenu && roleMenu.contains(opt)){
-      const role = ROLES.find(r => r.id === opt.getAttribute('data-role-id'));
-      applyRole(role);
-      closeRoleMenu();
-      return;
-    }
-
-    if(rolePickBtn && (e.target === rolePickBtn || rolePickBtn.contains(e.target))){
-      if(roleMenu && roleMenu.hidden) openRoleMenu();
-      else closeRoleMenu();
-      return;
-    }
-    if(roleMenu && !roleMenu.hidden && !roleMenu.contains(e.target)) closeRoleMenu();
+  [codeEl, nameEl, categoryEl, percentEl, currencyEl].forEach(el => {
+    if(!el) return;
+    el.addEventListener('input', updatePreview);
+    el.addEventListener('change', updatePreview);
   });
+  codeEl && codeEl.addEventListener('input', normalizeCode);
+  remarkEl && remarkEl.addEventListener('input', updateRemarkCount);
 
-  genBtn && genBtn.addEventListener('click', () => {
-    const key = randomKey(32);
-    const a = document.getElementById('mpvSecretKey');
-    const b = document.getElementById('mpvConfirmSecret');
-    if(a){ a.type = 'text'; a.value = key; }
-    if(b){ b.type = 'text'; b.value = key; }
-    setStatus('API secret generated. Copy it before leaving this page.', 'text-success');
-  });
-
-  ipToggle && ipToggle.addEventListener('change', syncIpBlock);
-  syncIpBlock();
-  applyRole(ROLES[0]);
-
-  testBtn && testBtn.addEventListener('click', () => {
-    setStatus('Testing connection…', '');
-    window.setTimeout(() => {
-      setStatus('Connection test is a UI stub until the provider API is wired.', 'text-success');
-    }, 450);
-  });
+  updateRemarkCount();
+  updatePreview();
+  populateCurrencies();
 
   form && form.addEventListener('submit', e => {
     e.preventDefault();
-    const id = (document.getElementById('mpvProviderId') || {}).value || '';
-    const name = (document.getElementById('mpvProviderName') || {}).value || '';
-    const secret = (document.getElementById('mpvSecretKey') || {}).value || '';
-    const confirm = (document.getElementById('mpvConfirmSecret') || {}).value || '';
-    if(!id.trim() || !name.trim()){
-      setStatus('Provider ID and Provider Name are required.', 'text-danger');
+    const code = val(codeEl);
+    const name = val(nameEl);
+    const category = val(categoryEl);
+    const percentRaw = val(percentEl);
+    const currency = val(currencyEl);
+    const remark = val(remarkEl);
+    const percent = Number(percentRaw);
+
+    if(!code || !name){
+      setStatus('Provider Code and Provider Name are required.', 'text-danger');
       return;
     }
-    if(secret !== confirm){
-      setStatus('Confirm secret does not match.', 'text-danger');
+    if(!/^[A-Z0-9_]{2,32}$/.test(code)){
+      setStatus('Provider Code must be 2–32 characters (A–Z, 0–9, underscore).', 'text-danger');
       return;
     }
-    if(secret.length < 16){
-      setStatus('API secret must be at least 16 characters.', 'text-danger');
+    if(!category){
+      setStatus('Please select a Game Category.', 'text-danger');
       return;
     }
+    if(percentRaw === '' || !Number.isFinite(percent) || percent < 0 || percent > 100){
+      setStatus('Percent must be a number between 0 and 100.', 'text-danger');
+      return;
+    }
+    if(!currency){
+      setStatus('Currency is required.', 'text-danger');
+      return;
+    }
+
     if(submitBtn) submitBtn.disabled = true;
-    setStatus('Create Provider form is ready — API wiring comes next.', 'text-success');
+    setStatus('Provider ready — API wiring comes next.', 'text-success');
     window.setTimeout(() => {
       if(submitBtn) submitBtn.disabled = false;
+      try{
+        sessionStorage.setItem('mpv_last_created', JSON.stringify({
+          code, name, category, percent, currency, remark, at: Date.now()
+        }));
+      }catch(err){}
       location.href = 'main-provider-detail.html';
-    }, 700);
+    }, 500);
   });
 })();

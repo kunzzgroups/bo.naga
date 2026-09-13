@@ -473,6 +473,63 @@
     });
   }
 
+  function monthKeys(count = 3) {
+    const out = [];
+    const d = new Date();
+    for (let i = 0; i < count; i++) {
+      const x = new Date(d.getFullYear(), d.getMonth() - i, 1);
+      out.push(`${x.getFullYear()}-${pad2(x.getMonth() + 1)}`);
+    }
+    return out;
+  }
+
+  function isMerchantParty(row) {
+    return /brand|merchant/i.test(String(row.counterpartyType || row.entityType || 'BRAND'));
+  }
+
+  function isCollectDue(row) {
+    const dir = String(row.direction || '').toUpperCase();
+    const bal = Number(row.balanceAmount || 0);
+    const closed = /paid|settled|carried/i.test(String(row.status || ''));
+    return dir === 'COLLECT' && bal > 0.004 && !closed;
+  }
+
+  function updateRepayBadge(count) {
+    const badge = $('mprRepayBadge');
+    if (!badge) return;
+    if (count > 0) {
+      badge.hidden = false;
+      badge.textContent = count > 99 ? '99+' : String(count);
+    } else {
+      badge.hidden = true;
+      badge.textContent = '0';
+    }
+  }
+
+  async function loadRepayBadge() {
+    try {
+      const months = monthKeys(3);
+      const packs = await Promise.all(
+        months.map((m) => api('/admin/main/settlements?month=' + encodeURIComponent(m)).catch(() => ({ rows: [] })))
+      );
+      const seen = new Set();
+      let count = 0;
+      packs.forEach((d) => {
+        const list = Array.isArray(d) ? d : (d?.rows || []);
+        list.forEach((x) => {
+          if (!isMerchantParty(x) || !isCollectDue(x)) return;
+          const key = String(x.id ?? `${x.month}|${x.counterpartyKey}|${x.direction}`);
+          if (seen.has(key)) return;
+          seen.add(key);
+          count += 1;
+        });
+      });
+      updateRepayBadge(count);
+    } catch (_) {
+      updateRepayBadge(0);
+    }
+  }
+
   // Events
   document.querySelectorAll('[data-mpr-kind]').forEach((b) => {
     b.addEventListener('click', () => {
@@ -554,7 +611,7 @@
     try {
       if (window.BO_MAIN_CURRENCY?.ready) await window.BO_MAIN_CURRENCY.ready();
     } catch (_) {}
-    await Promise.all([loadPricing(), load()]);
+    await Promise.all([loadPricing(), load(), loadRepayBadge()]);
   }
 
   bootstrap();

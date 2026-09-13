@@ -652,3 +652,310 @@ body.main-merchant-profit-page .mpr-filters-tools.mad-filters > .rounded-select-
   height:42px!important;
   min-height:42px!important;
 }
+
+/* Header: repayments-due icon (left of theme toggle) */
+body.main-merchant-profit-page .mpr-repay-btn{
+  position:relative;
+  text-decoration:none;
+  color:inherit;
+}
+body.main-merchant-profit-page .mpr-repay-badge{
+  position:absolute;
+  top:-5px;
+  right:-5px;
+  min-width:18px;
+  height:18px;
+  padding:0 5px;
+  border-radius:999px;
+  background:#EF3340;
+  color:#fff;
+  border:2px solid var(--bo-surface,#fff);
+  font-size:10px;
+  font-weight:800;
+  line-height:14px;
+  display:inline-grid;
+  place-items:center;
+  pointer-events:none;
+}
+body.main-merchant-profit-page .mpr-repay-btn[aria-expanded="true"]{
+  border-color:var(--mpr-cyan)!important;
+  color:var(--mpr-cyan)!important;
+  background:var(--mpr-cyan-tint)!important;
+}
+
+body.main-merchant-profit-page .mpr-repay-modal .mpr-repay-panel{
+  width:min(1180px, calc(100vw - 40px));
+  max-height:min(900px, calc(100vh - 32px));
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+body.main-merchant-profit-page .mpr-repay-body{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  min-height:0;
+  overflow:auto;
+}
+body.main-merchant-profit-page .mpr-repay-summary{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:10px;
+}
+body.main-merchant-profit-page .mpr-repay-form{
+  margin:0;
+}
+body.main-merchant-profit-page .mpr-repay-form-hint{
+  font-size:12px;
+  color:var(--mpr-muted);
+  margin:0;
+}
+body.main-merchant-profit-page .mpr-repay-form-actions{
+  display:flex;
+  gap:8px;
+  flex:0 0 auto;
+  margin-left:auto;
+}
+body.main-merchant-profit-page .mpr-repay-form-actions .mad-btn.is-danger{
+  color:#B42318;
+  border-color:#FECDCA;
+  background:#FEF3F2;
+}
+body.main-merchant-profit-page .mpr-repay-form-actions .mad-btn.is-danger:hover:not(:disabled){
+  background:#FEE4E2;
+  border-color:#FDA29B;
+  color:#912018;
+}
+body.main-merchant-profit-page .mpr-repay-form-actions .mad-btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+body.main-merchant-profit-page .mpr-repay-status-msg{
+  margin:0;
+  font-size:12px;
+  font-weight:700;
+}
+body.main-merchant-profit-page .mpr-repay-status-msg.success{color:#027A48}
+body.main-merchant-profit-page .mpr-repay-status-msg.error{color:#B42318}
+body.main-merchant-profit-page .mpr-repay-check-col{
+  width:48px;
+  min-width:48px;
+  text-align:center;
+  vertical-align:middle;
+}
+body.main-merchant-profit-page .mpr-repay-table .mad-row-check{
+  display:inline-grid;
+  place-items:center;
+  margin:0 auto;
+  cursor:pointer;
+}
+body.main-merchant-profit-page .mpr-repay-pay-col{
+  width:168px;
+  min-width:168px;
+  vertical-align:middle;
+}
+body.main-merchant-profit-page .mpr-repay-row-amount{
+  display:flex;
+  align-items:center;
+  width:100%;
+  max-width:156px;
+  margin-left:auto;
+  height:36px;
+  border:1px solid var(--mpr-border);
+  border-radius:8px;
+  background:var(--mpr-surface);
+  overflow:hidden;
+}
+body.main-merchant-profit-page .mpr-repay-row-unit{
+  flex:0 0 auto;
+  padding:0 8px;
+  font-size:11px;
+  font-weight:800;
+  color:var(--mpr-muted);
+  border-right:1px solid var(--mpr-border);
+  background:var(--mpr-bg);
+  align-self:stretch;
+  display:inline-flex;
+  align-items:center;
+}
+body.main-merchant-profit-page .mpr-repay-amount-input{
+  flex:1 1 auto;
+  width:100%!important;
+  min-width:0!important;
+  height:36px!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  text-align:right;
+  font-weight:700;
+  font-size:12px;
+  padding:0 8px!important;
+}
+body.main-merchant-profit-page .mpr-repay-row-del{
+  border:0;
+  background:transparent;
+  color:#b34d4d;
+  padding:5px 7px;
+}
+body.main-merchant-profit-page .mpr-repay-row-del:hover{color:#dc3545}
+body.main-merchant-profit-page .mpr-repay-stat{
+  border:1px solid var(--mpr-border);
+  border-radius:10px;
+  background:var(--mpr-bg);
+  padding:12px 14px;
+}
+body.main-merchant-profit-page .mpr-repay-stat span{
+  display:block;
+  font-size:11px;
+  font-weight:700;
+  color:var(--mpr-muted);
+  margin-bottom:4px;
+}
+body.main-merchant-profit-page .mpr-repay-stat b{
+  font-size:18px;
+  font-weight:800;
+  color:var(--mpr-text);
+}
+body.main-merchant-profit-page .mpr-repay-table-wrap{
+  border:1px solid var(--mpr-border);
+  border-radius:10px;
+  overflow:auto;
+  max-height:min(420px, 48vh);
+}
+body.main-merchant-profit-page .mpr-repay-table{
+  width:100%;
+  min-width:0;
+  margin:0;
+  table-layout:fixed;
+  border-collapse:separate;
+  border-spacing:0;
+}
+body.main-merchant-profit-page .mpr-repay-table th,
+body.main-merchant-profit-page .mpr-repay-table td{
+  padding:12px 14px;
+  vertical-align:middle;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+body.main-merchant-profit-page .mpr-repay-table th{
+  font-size:11px;
+  font-weight:700;
+  color:var(--mpr-muted);
+  letter-spacing:.01em;
+}
+body.main-merchant-profit-page .mpr-repay-table th.num,
+body.main-merchant-profit-page .mpr-repay-table td.num{
+  text-align:right;
+}
+body.main-merchant-profit-page .mpr-repay-table th:nth-child(1),
+body.main-merchant-profit-page .mpr-repay-table td:nth-child(1){width:48px;text-align:center;padding-left:12px;padding-right:8px}
+body.main-merchant-profit-page .mpr-repay-table th:nth-child(2),
+body.main-merchant-profit-page .mpr-repay-table td:nth-child(2){width:96px}
+body.main-merchant-profit-page .mpr-repay-table th:nth-child(3),
+body.main-merchant-profit-page .mpr-repay-table td:nth-child(3){width:auto;min-width:0}
+body.main-merchant-profit-page .mpr-repay-table th:nth-child(4),
+body.main-merchant-profit-page .mpr-repay-table td:nth-child(4){width:92px}
+body.main-merchant-profit-page .mpr-repay-table th:nth-child(5),
+body.main-merchant-profit-page .mpr-repay-table td:nth-child(5){width:100px}
+body.main-merchant-profit-page .mpr-repay-table th:nth-child(6),
+body.main-merchant-profit-page .mpr-repay-table td:nth-child(6){width:100px}
+body.main-merchant-profit-page .mpr-repay-table th:nth-child(7),
+body.main-merchant-profit-page .mpr-repay-table td:nth-child(7){width:108px}
+body.main-merchant-profit-page .mpr-repay-table th:nth-child(8),
+body.main-merchant-profit-page .mpr-repay-table td:nth-child(8){width:168px}
+body.main-merchant-profit-page .mpr-repay-table th:nth-child(9),
+body.main-merchant-profit-page .mpr-repay-table td:nth-child(9),
+body.main-merchant-profit-page .mpr-repay-action-col{
+  width:64px;
+  text-align:center;
+  padding-left:8px;
+  padding-right:12px;
+}
+body.main-merchant-profit-page .mpr-repay-table th:nth-child(8),
+body.main-merchant-profit-page .mpr-repay-table td:nth-child(8){
+  text-align:right;
+}
+body.main-merchant-profit-page .mpr-repay-merchant{
+  font-weight:800;
+  color:var(--mpr-text);
+  white-space:normal;
+  line-height:1.25;
+  overflow:hidden;
+}
+body.main-merchant-profit-page .mpr-repay-merchant small{
+  display:block;
+  margin-top:2px;
+  font-weight:500;
+  color:var(--mpr-muted);
+}
+body.main-merchant-profit-page .mpr-repay-status{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:10px;
+  font-weight:800;
+  background:#FFF4E5;
+  color:#B54708;
+}
+body.main-merchant-profit-page .mpr-repay-status.is-open{
+  background:#FEF3F2;
+  color:#B42318;
+}
+body.main-merchant-profit-page .mpr-repay-balance{
+  font-weight:800;
+  color:#B42318;
+}
+body.main-merchant-profit-page .mpr-repay-actions{
+  margin-top:0;
+  padding:0 22px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-badge{
+  border-color:var(--bo-surface,#152536);
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-stat{
+  background:rgba(255,255,255,.03);
+  border-color:var(--bo-border,#24374F);
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-row-amount{
+  background:var(--bo-surface,#152536);
+  border-color:var(--bo-border,#24374F);
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-row-unit{
+  background:rgba(255,255,255,.04);
+  border-right-color:var(--bo-border,#24374F);
+  color:var(--bo-muted,#9AA8BC);
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-form-actions .mad-btn.is-danger{
+  background:rgba(239,51,64,.14);
+  border-color:rgba(239,51,64,.28);
+  color:#FCA5A5;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-status-msg.success{color:#6CE9A6}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-status-msg.error{color:#FCA5A5}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-stat b,
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-merchant{
+  color:var(--bo-text,#E8EEF7);
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-table-wrap{
+  border-color:var(--bo-border,#24374F);
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-status{
+  background:rgba(245,158,11,.16);
+  color:#FDBA74;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-status.is-open{
+  background:rgba(239,51,64,.16);
+  color:#FCA5A5;
+}
+html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-balance{
+  color:#FCA5A5;
+}

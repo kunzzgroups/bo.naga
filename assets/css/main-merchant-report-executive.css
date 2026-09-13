@@ -202,3 +202,605 @@ html[data-bo-theme="dark"] body.main-merchant-report-page .msr-actions .mad-icon
 html[data-bo-theme="dark"] body.main-merchant-report-page .msr-total-row td{
   background:rgba(33,166,215,.1)!important;
 }
+
+/* Settlement ledger — same panel shell as Merchants (head / table / footer) */
+body.main-merchant-report-page[data-report-view="settlement"] .mad-workspace.mre-workspace{
+  padding-bottom:16px!important;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .mre-panel[data-report-panel="settlement"]{
+  display:flex;
+  flex-direction:column;
+  flex:1 1 auto;
+  min-height:0;
+  overflow:hidden;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-ledger-head{
+  display:flex;
+  justify-content:flex-start;
+  align-items:center;
+  gap:12px;
+  margin:0;
+  padding:12px 16px;
+  flex:0 0 auto;
+  border-bottom:1px solid var(--bo-border,#E2E7F0);
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-ledger-tools,
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-ledger-tools-end{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  flex:0 1 auto;
+  margin-left:0;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-date-field{
+  margin:0;
+  min-width:280px;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-date-field .ref-range-wrap{
+  width:100%;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-date-field .ref-range-trigger,
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-date-field .mre-date-trigger{
+  width:100%;
+  min-width:280px;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .mre-settlement-scroll,
+body.main-merchant-report-page[data-report-view="settlement"] .mad-table-wrap.mre-settlement-scroll{
+  flex:1 1 auto;
+  min-height:0;
+  width:100%;
+  max-width:100%;
+  overflow-x:auto;
+  overflow-y:auto;
+  border:0;
+  border-radius:0;
+  background:transparent;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .mre-panel[data-report-panel="settlement"] > .mad-footer.mre-table-footer{
+  flex:0 0 auto;
+  margin-top:auto;
+  padding:12px 16px!important;
+  min-height:auto;
+  border-top:1px solid var(--bo-border,#E2E7F0)!important;
+  background:var(--bo-surface,#fff);
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table,
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table{
+  width:100%;
+  min-width:0;
+  table-layout:fixed;
+  border-collapse:separate;
+  border-spacing:0;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table thead th{
+  position:sticky;
+  top:0;
+  z-index:2;
+  background:var(--bo-surface,#fff);
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table th,
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table td{
+  padding:12px 10px;
+  vertical-align:middle;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table th.mre-num,
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table td.mre-num{
+  text-align:right;
+  font-variant-numeric:tabular-nums;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table th:nth-child(1),
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table td:nth-child(1){width:10%}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table th:nth-child(2),
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table td:nth-child(2){width:22%}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table td:nth-child(2){
+  white-space:normal;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table th:nth-child(3),
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table td:nth-child(3){width:12%}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table th:nth-child(4),
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table td:nth-child(4),
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table th:nth-child(5),
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table td:nth-child(5),
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table th:nth-child(6),
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table td:nth-child(6){width:12%}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table th:nth-child(7),
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table td:nth-child(7){width:10%}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table th:nth-child(8),
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table td:nth-child(8){
+  width:120px;
+  text-align:center;
+  overflow:visible;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table td.msr-action-cell{
+  overflow:visible;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-actions,
+body.main-merchant-report-page[data-report-view="settlement"] .msr-actions{
+  display:inline-flex;
+  flex-wrap:nowrap;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-actions .mad-icon-btn{
+  position:relative;
+  width:32px;
+  height:32px;
+  border-radius:8px;
+  border:1px solid var(--bo-border,#E2E7F0);
+  background:var(--bo-surface,#fff);
+  color:var(--bo-muted,#657187);
+  display:inline-grid;
+  place-items:center;
+  font-size:14px;
+  cursor:pointer;
+  padding:0;
+  transition:background .14s ease,color .14s ease,border-color .14s ease;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-actions .mad-icon-btn:hover:not(:disabled){
+  background:#F5F8FB;
+  color:var(--bo-navy,#123B66);
+  border-color:#D0D7E2;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-actions .mad-icon-btn:disabled{
+  opacity:.38;
+  cursor:not-allowed;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-actions .mad-icon-btn[data-tip]::after{
+  content:attr(data-tip);
+  position:absolute;
+  left:50%;
+  right:auto;
+  top:calc(100% + 8px);
+  bottom:auto;
+  transform:translate(-50%,-4px);
+  padding:5px 8px;
+  border-radius:6px;
+  background:#0F1F33;
+  color:#fff;
+  font-size:11px;
+  font-weight:700;
+  line-height:1.2;
+  white-space:nowrap;
+  pointer-events:none;
+  opacity:0;
+  visibility:hidden;
+  z-index:40;
+  box-shadow:0 6px 16px rgba(15,31,51,.18);
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-actions .mad-icon-btn[data-tip]::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:calc(100% + 2px);
+  bottom:auto;
+  transform:translateX(-50%);
+  border:6px solid transparent;
+  border-bottom-color:#0F1F33;
+  border-top-color:transparent;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  z-index:40;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-actions .mad-icon-btn[data-tip]:hover::after,
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-actions .mad-icon-btn[data-tip]:focus-visible::after,
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-actions .mad-icon-btn[data-tip]:hover::before,
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-actions .mad-icon-btn[data-tip]:focus-visible::before{
+  opacity:1;
+  visibility:visible;
+}
+html[data-bo-theme="dark"] body.main-merchant-report-page[data-report-view="settlement"] .settlement-actions .mad-icon-btn{
+  background:var(--bo-surface,#152536);
+  border-color:var(--bo-border,#24374F);
+  color:var(--bo-muted,#9AA8BC);
+}
+html[data-bo-theme="dark"] body.main-merchant-report-page[data-report-view="settlement"] .settlement-actions .mad-icon-btn:hover:not(:disabled){
+  background:rgba(255,255,255,.06);
+  color:#fff;
+}
+
+@media (max-width:1100px){
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table,
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table{
+    min-width:960px;
+    table-layout:auto;
+  }
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-ledger-head{
+    flex-wrap:wrap;
+  }
+}
+
+/* Record Amount + History modals — match mad-modal / create-merchant shell */
+body.main-merchant-report-page .msr-payment-modal-panel{
+  width:min(480px,calc(100vw - 32px));
+  overflow:visible;
+}
+body.main-merchant-report-page .msr-payment-modal-panel .modal-clean-body{
+  overflow:visible;
+}
+body.main-merchant-report-page .msr-history-modal-panel{
+  width:min(720px,calc(100vw - 32px));
+}
+body.main-merchant-report-page .msr-payment-form{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+body.main-merchant-report-page .settlement-payment-context{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border:1px solid var(--bo-border,#E2E7F0);
+  border-radius:10px;
+  background:var(--bo-bg,#F5F8FB);
+  margin:0;
+}
+body.main-merchant-report-page .msr-pay-context-main{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+body.main-merchant-report-page .msr-pay-context-main strong{
+  font-size:14px;
+  font-weight:800;
+  color:var(--bo-text,#11203A);
+}
+body.main-merchant-report-page .msr-pay-context-main small{
+  font-size:11px;
+  font-weight:700;
+  color:var(--bo-muted,#657187);
+}
+body.main-merchant-report-page .msr-pay-context-bal{
+  text-align:right;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+body.main-merchant-report-page .msr-pay-context-bal span{
+  font-size:11px;
+  font-weight:700;
+  color:var(--bo-muted,#657187);
+}
+body.main-merchant-report-page .msr-pay-context-bal b{
+  font-size:15px;
+  font-weight:800;
+  color:var(--bo-navy,#123B66);
+  font-variant-numeric:tabular-nums;
+}
+body.main-merchant-report-page .msr-payment-fields{
+  gap:14px;
+}
+body.main-merchant-report-page .msr-payment-row{
+  display:grid;
+  grid-template-columns:232px minmax(0,1fr);
+  gap:12px;
+  align-items:start;
+}
+@media (max-width:560px){
+  body.main-merchant-report-page .msr-payment-row{grid-template-columns:1fr}
+  body.main-merchant-report-page .msr-pay-date-field-wrap{max-width:232px}
+}
+body.main-merchant-report-page .msr-payment-fields .mad-field{
+  display:grid;
+  gap:6px;
+  margin:0;
+  font-size:12px;
+  font-weight:700;
+  color:var(--bo-text-secondary,#475467);
+}
+body.main-merchant-report-page .msr-payment-fields .mad-field b{color:var(--bo-danger,#EF3340)}
+body.main-merchant-report-page .msr-payment-fields .mad-field > .form-control{
+  height:42px!important;
+  border:1px solid #D0D5DD!important;
+  border-radius:8px!important;
+  background:#fff!important;
+  color:var(--bo-text,#11203A)!important;
+  font-size:13.5px!important;
+  font-weight:500!important;
+  box-shadow:none!important;
+}
+body.main-merchant-report-page .msr-payment-fields .mad-field > .form-control:focus{
+  border-color:var(--bo-cyan,#21A6D7)!important;
+  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;
+}
+body.main-merchant-report-page .msr-payment-fields .mad-field textarea.form-control{
+  height:88px!important;
+  padding:10px 12px!important;
+  resize:vertical;
+}
+/* Single-shell currency input — one border, one radius */
+body.main-merchant-report-page .msr-amount-group,
+body.main-merchant-report-page .msr-payment-fields .msr-amount-group.mac-input-group{
+  display:flex;
+  align-items:stretch;
+  width:100%;
+  height:42px;
+  min-width:0;
+  border:1px solid #D0D5DD;
+  border-radius:8px;
+  background:#fff;
+  overflow:hidden;
+  box-sizing:border-box;
+}
+body.main-merchant-report-page .msr-amount-group .mac-input-addon,
+body.main-merchant-report-page .msr-payment-fields .msr-amount-group .mac-input-addon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  z-index:1;
+  min-width:52px;
+  height:100%;
+  padding:0 12px;
+  margin:0;
+  border:0;
+  border-right:1px solid #D0D5DD;
+  border-radius:0;
+  background:var(--bo-bg,#F5F8FB);
+  color:var(--bo-muted,#657187);
+  font-size:12px;
+  font-weight:700;
+  line-height:1;
+  white-space:nowrap;
+  box-sizing:border-box;
+}
+body.main-merchant-report-page .msr-amount-group > .form-control,
+body.main-merchant-report-page .msr-payment-fields .msr-amount-group > .form-control,
+body.main-merchant-report-page .msr-payment-fields .msr-amount-group > input.form-control{
+  flex:1 1 auto;
+  width:100%!important;
+  min-width:0!important;
+  height:100%!important;
+  margin:0!important;
+  padding:0 12px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  text-align:right;
+  font-size:13.5px!important;
+  font-weight:700!important;
+  color:var(--bo-text,#11203A)!important;
+}
+body.main-merchant-report-page .msr-amount-group > .form-control:focus,
+body.main-merchant-report-page .msr-payment-fields .msr-amount-group > .form-control:focus{
+  border:0!important;
+  box-shadow:none!important;
+  outline:0!important;
+}
+body.main-merchant-report-page .msr-amount-group:focus-within,
+body.main-merchant-report-page .msr-payment-fields .msr-amount-group.mac-input-group:focus-within{
+  border-color:var(--bo-cyan,#21A6D7);
+  box-shadow:0 0 0 3px rgba(33,166,215,.12);
+}
+body.main-merchant-report-page .msr-amount-group:focus-within .mac-input-addon{
+  border-right-color:var(--bo-cyan,#21A6D7);
+}
+/* Payment date — trigger + calendar share the same width and edges */
+body.main-merchant-report-page .msr-pay-date-field-wrap{
+  width:232px;
+  max-width:232px;
+  min-width:0;
+}
+body.main-merchant-report-page .msr-pay-date-field,
+body.main-merchant-report-page .msr-pay-date-field .ref-range-wrap{
+  width:232px!important;
+  max-width:232px!important;
+  min-width:0!important;
+}
+body.main-merchant-report-page .msr-pay-date-field .ref-range-trigger,
+body.main-merchant-report-page .msr-pay-date-trigger{
+  width:232px!important;
+  max-width:232px!important;
+  min-width:0!important;
+  height:42px!important;
+  min-height:42px;
+  border:1px solid #D0D5DD!important;
+  border-radius:8px!important;
+  background:#fff!important;
+  color:var(--bo-text,#11203A)!important;
+  font-size:13px!important;
+  font-weight:600!important;
+  gap:8px;
+  padding:0 12px!important;
+  box-shadow:none!important;
+}
+body.main-merchant-report-page .msr-pay-date-field .ref-range-trigger:hover,
+body.main-merchant-report-page .msr-pay-date-field .ref-range-trigger:focus,
+body.main-merchant-report-page .msr-pay-date-trigger[aria-expanded="true"]{
+  border-color:var(--bo-cyan,#21A6D7)!important;
+  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;
+  outline:0;
+}
+body.main-merchant-report-page .msr-pay-date-field .ref-range-icon{
+  color:var(--bo-navy,#123B66);
+  font-size:14px;
+  flex:0 0 auto;
+}
+body.main-merchant-report-page .msr-pay-date-label{
+  flex:1 1 auto;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+body.main-merchant-report-page .msr-pay-date-picker.ref-range-picker{
+  left:0!important;
+  right:0!important;
+  top:calc(100% + 4px)!important;
+  z-index:120!important;
+  width:232px!important;
+  min-width:232px!important;
+  max-width:232px!important;
+  display:none;
+  flex-direction:column;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 12px 28px rgba(16,24,40,.14);
+  box-sizing:border-box;
+}
+body.main-merchant-report-page .msr-pay-date-picker.ref-range-picker.show{
+  display:flex!important;
+}
+body.main-merchant-report-page .msr-pay-date-picker .ref-range-calendar{
+  width:100%!important;
+  padding:8px 8px 4px!important;
+  box-sizing:border-box;
+}
+body.main-merchant-report-page .msr-pay-date-picker .ref-cal-head{
+  gap:2px;
+  margin-bottom:4px;
+}
+body.main-merchant-report-page .msr-pay-date-picker .ref-cal-head > button{
+  height:28px;
+  min-width:28px;
+  padding:0 4px;
+  font-size:12px;
+}
+body.main-merchant-report-page .msr-pay-date-picker .ref-head-pick{
+  font-size:12px!important;
+  font-weight:800;
+  padding:0 6px!important;
+}
+body.main-merchant-report-page .msr-pay-date-picker .ref-cal-week{
+  gap:2px;
+  margin-bottom:2px;
+}
+body.main-merchant-report-page .msr-pay-date-picker .ref-cal-week span{
+  font-size:10px;
+  padding-bottom:2px;
+}
+body.main-merchant-report-page .msr-pay-date-picker .ref-cal-days{
+  gap:2px;
+}
+body.main-merchant-report-page .msr-pay-date-picker .ref-cal-days button{
+  height:28px!important;
+  border-radius:7px;
+  font-size:11px!important;
+}
+body.main-merchant-report-page .msr-pay-date-picker .ref-cal-month-grid,
+body.main-merchant-report-page .msr-pay-date-picker .ref-cal-year-grid{
+  gap:6px;
+  padding:8px 2px 4px;
+}
+body.main-merchant-report-page .msr-pay-date-picker .ref-cal-month-grid button,
+body.main-merchant-report-page .msr-pay-date-picker .ref-cal-year-grid button{
+  height:30px;
+  font-size:11px;
+  border-radius:8px;
+}
+body.main-merchant-report-page .msr-pay-date-foot{
+  display:flex;
+  justify-content:flex-end;
+  gap:6px;
+  padding:6px 8px 8px;
+  border-top:1px solid #E7EBF3;
+  background:#F8FAFC;
+}
+body.main-merchant-report-page .msr-pay-date-foot button{
+  height:26px;
+  padding:0 10px;
+  border:1px solid #D0D5DD;
+  border-radius:6px;
+  background:#fff;
+  color:var(--bo-navy,#123B66);
+  font-size:11px;
+  font-weight:700;
+}
+body.main-merchant-report-page .msr-pay-date-foot button:hover{
+  border-color:var(--bo-cyan,#21A6D7);
+  color:var(--bo-cyan,#21A6D7);
+}
+@media (max-width:767.98px){
+  body.main-merchant-report-page .msr-pay-date-picker.ref-range-picker{
+    position:absolute!important;
+    left:0!important;
+    right:0!important;
+    top:calc(100% + 4px)!important;
+    width:232px!important;
+    min-width:232px!important;
+    max-width:232px!important;
+  }
+  body.main-merchant-report-page .msr-pay-date-picker.ref-range-picker.show{
+    display:flex!important;
+  }
+}
+body.main-merchant-report-page .msr-history-table-wrap{
+  border:1px solid var(--bo-border,#E2E7F0);
+  border-radius:8px;
+  overflow:auto;
+  max-height:min(420px,52vh);
+  margin-bottom:4px;
+}
+body.main-merchant-report-page .msr-history-table{
+  width:100%;
+  margin:0;
+}
+body.main-merchant-report-page .msr-history-table th,
+body.main-merchant-report-page .msr-history-table td{
+  padding:10px 12px;
+  white-space:nowrap;
+}
+body.main-merchant-report-page .msr-history-table th.mre-num,
+body.main-merchant-report-page .msr-history-table td.mre-num{text-align:right}
+
+html[data-bo-theme="dark"] body.main-merchant-report-page .settlement-payment-context{
+  background:rgba(255,255,255,.04);
+  border-color:var(--bo-border,#24374F);
+}
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-context-main strong,
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-context-bal b{
+  color:var(--bo-text,#E8EEF7);
+}
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-amount-group,
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-payment-fields .msr-amount-group.mac-input-group{
+  background:var(--bo-surface,#152536);
+  border-color:var(--bo-border,#24374F);
+}
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-amount-group .mac-input-addon{
+  background:rgba(255,255,255,.04);
+  border-right-color:var(--bo-border,#24374F);
+  color:var(--bo-muted,#9AA8BC);
+}
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-payment-fields .mad-field > .form-control,
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-amount-group > .form-control{
+  background:var(--bo-surface,#152536)!important;
+  border-color:var(--bo-border,#24374F)!important;
+  color:var(--bo-text,#E8EEF7)!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-amount-group > .form-control{
+  background:transparent!important;
+  border:0!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-date-field .ref-range-trigger,
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-date-trigger{
+  background:var(--bo-surface,#152536)!important;
+  border-color:var(--bo-border,#24374F)!important;
+  color:var(--bo-text,#E8EEF7)!important;
+}
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-date-field .ref-range-icon{
+  color:var(--bo-text,#E8EEF7);
+}
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-date-picker.ref-range-picker{
+  background:var(--bo-surface,#152536);
+  border-color:var(--bo-border,#24374F);
+}
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-date-foot{
+  background:rgba(255,255,255,.03);
+  border-top-color:var(--bo-border,#24374F);
+}
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-date-foot button{
+  background:var(--bo-surface,#152536);
+  border-color:var(--bo-border,#24374F);
+  color:var(--bo-text,#E8EEF7);
+}
+html[data-bo-theme="dark"] body.main-merchant-report-page .msr-history-table-wrap{
+  border-color:var(--bo-border,#24374F);
+}

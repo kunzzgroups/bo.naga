@@ -13,7 +13,7 @@
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
 <link href="assets/css/main-admin-detail-executive.css?v=1.0.21" rel="stylesheet"/>
-<link href="assets/css/main-provider-executive.css?v=1.0.6" rel="stylesheet"/>
+<link href="assets/css/main-provider-executive.css?v=1.0.9" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
 <script>
 (function(){
@@ -53,8 +53,7 @@
   <div class="mad-chrome">
     <div class="mad-tabs" role="tablist" aria-label="Provider sections">
       <a class="mad-tab is-active" role="tab" aria-selected="true" href="main-provider-detail.html">Providers</a>
-      <a class="mad-tab" role="tab" aria-selected="false" href="main-provider-endpoints.html">Integration</a>
-      <a class="mad-tab" role="tab" aria-selected="false" href="main-provider-credentials.html">Access &amp; Security</a>
+      <a class="mad-tab" role="tab" aria-selected="false" href="main-provider-credentials.html">Settlement</a>
       <a class="mad-tab" role="tab" aria-selected="false" href="main-provider-health.html">Activity Logs</a>
     </div>
     <div class="mad-chrome-actions">
@@ -96,18 +95,17 @@
       <table class="mad-table mpv-table">
         <thead>
           <tr>
-            <th>Provider Name</th>
-            <th>Provider ID</th>
-            <th>Integration Type</th>
+            <th>Provider</th>
+            <th>Currency</th>
+            <th>Provider Rate</th>
+            <th>Settlement</th>
             <th>Status</th>
-            <th>Environment</th>
-            <th>Last Sync</th>
-            <th>Created By</th>
+            <th>Outstanding</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody id="mpvTableBody">
-          <tr><td colspan="8" class="mad-empty">No providers found.</td></tr>
+          <tr><td colspan="7" class="mad-empty">No providers found.</td></tr>
         </tbody>
       </table>
     </div>
@@ -127,9 +125,9 @@
 <script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
 <script src="assets/js/reports.js?v=1.0.25"></script>
-<script src="assets/js/auth.js?v=1.0.60"></script>
+<script src="assets/js/auth.js?v=1.0.61"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
-<script src="assets/js/main-provider-detail.js?v=1.0.5"></script>
+<script src="assets/js/main-provider-detail.js?v=1.0.8"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
