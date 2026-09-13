@@ -546,18 +546,10 @@
   try{
    if(applyBtn) applyBtn.disabled=true;
    setStatus('madResetPassStatus','Updating password...');
-   const payload={
-    displayName:resetPassMaster.displayName||resetPassMaster.username,
-    username:resetPassMaster.username,
-    password:pass,
-    status:resetPassMaster.status==null?1:Number(resetPassMaster.status)
-   };
-   if(resetPassMaster.roleId!=null) payload.roleId=Number(resetPassMaster.roleId);
-   if(resetPassMaster.roleType) payload.roleType=resetPassMaster.roleType;
-   await api('/admin/merchants/'+encodeURIComponent(resetPassMerchantId)+'/master-account',{
+   await api('/admin/merchants/'+encodeURIComponent(resetPassMerchantId)+'/master-account/reset-password',{
     method:'POST',
     headers:hdr(),
-    body:JSON.stringify(payload)
+    body:JSON.stringify({password:pass,confirmPassword:confirm})
    });
    closeResetPassword();
    if(window.BO_DIALOG?.alert) await BO_DIALOG.alert('Password updated successfully');
