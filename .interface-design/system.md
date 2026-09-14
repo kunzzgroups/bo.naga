@@ -1,121 +1,138 @@
-# Design System — Backoffice Executive Panel
+# Design System — Backoffice Admin Panel
 
 Locked theme for this product. Do not invent alternate palettes.
 
 ## Direction
 
-**Product:** Backoffice Executive Panel (admin / SaaS dashboard)
-**Personality:** Modern, Strong, SaaS — Precision & Density with enterprise trust
-**Theme name:** Deep Navy Cyan
-**Foundation:** Cool navy + cyan accent
-**Depth:** Light = soft card shadow + 1px border · Dark = borders / surface lift only (no heavy shadows)
-**Signature:** Light sidebar `#072647` · Dark sidebar `#08131F` (matches canvas) + cyan active nav (`#21A6D7`), Overview head + profit KPI row leading every executive view
+**Product:** Backoffice Admin Panel (admin / SaaS dashboard)  
+**Personality:** Modern ops terminal — precision, density, enterprise trust  
+**Theme name:** Charcoal + Amber  
+**Foundation:** Soft charcoal structure + amber interaction  
+**Depth:** Light = 1px border + soft warm shadow · Dark = borders / soft surface lift (no dead black)  
+**Signature:**  
+- Light: orange→white canvas continuum · opaque sidebar `#FFE8CC` · amber active  
+- Dark: warm charcoal→cool charcoal continuum · opaque sidebar `#3A3226` · amber neon active  
+
+**Reference implementation:** Admin Detail pages (`data-access-page="main_admin_detail"`).
 
 ## Intent
 
-- **Who:** Brand / ops executives scanning profit and trends, not designers browsing demos
-- **Task:** Date-scoped KPIs → drill into Business / Accounting / Report
-- **Feel:** Calm control room — dense, trustworthy, high contrast on navy, never playful purple-gradient SaaS defaults
+- **Who:** Brand / ops executives scanning accounts, roles, credits — not designers browsing demos  
+- **Task:** Manage admins → adjust credit → audit security  
+- **Feel:** Calm charcoal room with amber signals — never navy/cyan identity, never playful purple SaaS defaults  
 
-## Rejected defaults
+## Rejected defaults (retired)
 
+- **Deep Navy Cyan** (fully retired): `#123B66`, `#21A6D7`, `#1B94C2`, `#072647`, `#08131F`, `#102030`, `#0B1626`, `#0F1F33`, `#243B55`
 - Purple-on-white / indigo gradients
-- Warm cream (`#F4F1EA`) + terracotta editorial look
+- Warm cream (`#F4F1EA`) + terracotta editorial look as a *marketing* default (warm continuum is intentional brand here — use documented amber tokens only)
 - Inter / Roboto / Arial as display identity
-- Generic `#2864ed` BO blue (legacy `bo-ui-standard`) — superseded by Deep Navy Cyan
-- Marketing-card collage layouts in the first viewport
+- Generic `#2864ed` BO blue
+- Dead black canvas (`#000` / `#0A0A0B`)
 
 ---
 
 ## Tokens
 
-### Brand (shared light + dark)
+### Brand (shared roles)
 
-| Token | Hex | Role |
-|-------|-----|------|
-| `--bo-navy` | `#123B66` | Brand, primary text emphasis |
-| `--bo-cyan` | `#21A6D7` | Active nav, links, primary CTA, focus ring |
-| `--bo-success` | `#12B76A` | Positive deltas (`+100% vs last period`) |
-| `--bo-danger` | `#EF3340` | Errors, logout emphasis, destructive |
+| Role | Light | Dark |
+|------|-------|------|
+| Primary CTA / active / focus | `#D97706` | `#F59E0B` |
+| Primary deep / hover | `#B45309` | `#D97706` |
+| Bright amber | `#F59E0B` | `#FBBF24` |
+| Secondary (rare info) | `#2563EB` | `#D97706` |
+| Success | `#12B76A` | `#10B981` |
+| Danger | `#991B1B` | `#F87171` |
+| Accent-on (on primary fill) | `#FFFFFF` | `#2A2C36` |
 
-### Light mode
+### Surfaces & text
 
-| Token | Hex | Role |
-|-------|-----|------|
-| `--bo-bg` | `#F5F8FB` | Main content background |
-| `--bo-surface` | `#FFFFFF` | Cards, panels, topbar surfaces |
-| `--bo-border` | `#E2E7F0` | Card / input borders |
-| `--bo-text` | `#11203A` | Primary text / KPI values |
-| `--bo-text-secondary` | `#1C2942` | Section titles, labels |
-| `--bo-muted` | `#657187` | Meta, currency suffix, captions |
-| `--bo-sidebar-bg` | `#072647` | Sidebar |
-| `--bo-sidebar-text` | `#FFFFFF` | Sidebar labels |
-| `--bo-sidebar-active` | `#21A6D7` | Active menu highlight |
+| Token | Light | Dark | Role |
+|-------|-------|------|------|
+| `--bo-bg` | `#F7F6F3` | `#2C2E38` | Page canvas base |
+| `--bo-surface` | `#FFFFFF` | `#383A46` | Cards, panels, topbar |
+| `--bo-border` | `#E4E4E7` | `rgba(255,255,255,.10)` | Separators / inputs |
+| `--bo-text` | `#18191C` | `#F5F5F4` | Primary text |
+| `--bo-text-secondary` | `#27272A` | `#E7E5E4` | Secondary text |
+| `--bo-muted` | `#71717A` | `#A1A1AA` | Meta, time, captions |
+| `--bo-control-well` | `#F0EFEA` | `rgba(255,255,255,.06)` | Input wells |
+| `--bo-placeholder` | `#A1A1AA` | `#71717A` | Placeholders |
 
-### Dark mode
+### Compatibility aliases (names kept, hues changed)
 
-| Token | Hex | Role |
-|-------|-----|------|
-| `--bo-bg` | `#08131F` | Main content background |
-| `--bo-surface` | `#102030` | Cards / elevated panels |
-| `--bo-border` | `rgba(255,255,255,0.08)` | Subtle separators |
-| `--bo-text` | `#F5F8FB` | Primary text |
-| `--bo-text-secondary` | `#D0D7E2` | Titles / secondary |
-| `--bo-muted` | `#8A95A8` | Captions / meta |
-| `--bo-sidebar-bg` | `#08131F` | Sidebar (matches canvas / dark mock) |
-| `--bo-sidebar-text` | `#FFFFFF` | Sidebar labels |
-| `--bo-sidebar-active` | `#21A6D7` | Active menu highlight |
+| Token | Light | Dark | Meaning now |
+|-------|-------|------|-------------|
+| `--bo-navy` | `#18191C` | `#F5F5F4` | Primary text / emphasis (not navy) |
+| `--bo-cyan` | `#D97706` | `#F59E0B` | Amber accent (not cyan) |
+| `--bo-cyan-deep` | `#B45309` | `#D97706` | Amber deep |
+| `--bo-ui-blue` | `#D97706` | `#F59E0B` | Same as primary amber |
+| `--bo-sidebar-active` | `#D97706` | `#F59E0B` | Active nav |
+| `--bo-sidebar-active-bg` | `#FFE8CC` | `rgba(245,158,11,.14)` | Active nav fill |
+| `--bo-cyan-tint` | `rgba(217,119,6,.12)` | `rgba(245,158,11,.16)` | Soft amber wash |
 
-### Chart series (Trend Chart)
+### Sidebar & canvas continuum
 
-| Series | Hex | Notes |
-|--------|-----|-------|
-| Merchant Profit | `#1688F8` | Dashed line |
-| Game Profit | `#8248E9` | Solid line |
-| Net Profit | `#16B45D` | Solid line + soft area fill |
+| Mode | Opaque sidebar | Canvas L→R (~96px past sidebar edge) |
+|------|----------------|--------------------------------------|
+| Light | `#FFE8CC` | `#FFE8CC` → `#FFF1DC` → `#FFF8EB` → `#FFFCF7` → `#FFFFFF` |
+| Dark | `#3A3226` | `#3A3226` → `#342E28` → `#2F2E32` → `#2D2E36` → `#2C2E38` |
+
+Rules:
+
+1. Continuum lives on **html/canvas** only (`background-attachment: fixed`).
+2. Sidebar is **opaque** (never transparent when expanded over content).
+3. Panels / tables stay **solid** `--bo-surface` (never tinted by continuum wash).
+4. Amber 2px edge rail on sidebar right edge.
+5. L1 nav labels: `font-weight: 800`. Light L1 color: `#6b360c`.
+
+### Tips / money / chrome
+
+| Element | Light | Dark |
+|---------|-------|------|
+| Hover tip bg | `#FFF8EB` | `#40424E` |
+| Hover tip text | `#6b360c` | `#F5F5F4` |
+| Hover tip border | `rgba(217,119,6,.28)` | `rgba(245,158,11,.35)` |
+| Tip radius | `999px` | `8–999px` (prefer pill on light) |
+| Money positive | `#B45309` | `#F59E0B` |
+| Ghost / Export gradient | soft gray | `#4A4C58` → `#383A46` → `#2C2E38` |
+| Modal z-index | `30000` (above sidebar / flyout) | same |
 
 ### Spacing
 
 Base: `4px`  
-Scale: `4, 8, 10, 12, 14, 16, 18, 20, 24, 32`  
-Page padding (exec): `20px 24px` desktop · tighten on short viewports
+Scale: `4, 8, 10, 12, 14, 16, 18, 20, 24, 32`
 
 ### Radius
 
 | Use | Value |
 |-----|-------|
-| Inputs / date trigger | `10–11px` |
-| Cards (KPI / trend) | `16px` |
-| Nav active pill | `10–12px` |
-| Icon wells | `12px` square (Overview KPI) |
+| Inputs / buttons | `10px` |
+| Cards / panels | `16px` |
+| Nav items | `10px` |
+| Pills / switches / light tips | `999px` |
 
 ### Typography
 
-- **UI / labels:** system stack OK for density; prefer weight + color for hierarchy over size jumps
-- **Page toolbar:** date range left-aligned (no Overview title / subtitle)
-- **KPI value:** ~`26px` / `800` / tight tracking / `tabular-nums`
-- **KPI label:** ~`11px` / `700` / uppercase / tracked
-- **Section title:** ~`16px` / `800`
-- **Meta / caption / delta:** `11–12px` / `500–650` / muted
-- Ratio: ~`1.25` from 14px body
+- UI: system stack; hierarchy via weight + color
+- Sidebar L1: `800`
+- Money / time: tabular nums; mono OK for dense cells
 
 ### Depth
 
 | Mode | Strategy |
 |------|----------|
-| Light | `1px` border `#E2E7F0` + soft shadow `0 2px 8px rgba(26,45,80,.018)`; hover may lift slightly |
-| Dark | Surface `#102030` on bg `#08131F`; prefer border over shadow |
+| Light | 1px `#E4E4E7` + soft warm shadow |
+| Dark | Surface `#383A46` on canvas `#2C2E38`; prefer border over heavy shadow |
 
 ---
 
 ## Layout
 
-- **Shell:** Left sidebar + topbar (hamburger, theme, user) + main
-- **Overview head:** Date range lives inside the Net Profit hero card (left); metric block on the right
-- **No Mix bar:** Do not show Merchant/Game share mix under KPIs
-- **Sidebar width:** Content-serving rail (~240–280px); mini-rail supported
-- **Executive dashboard focal point:** Single **Net Profit Metric & Trend** hero card (date + KPI + green area chart + footer stats)
-- **First viewport:** Brand/sidebar + topbar + one profit hero card only — no promo clutter
+- Shell: left sidebar + topbar + main
+- Sidebar width: `--sidebar-w` (~280px); mini-rail `--rail-w` (~72px)
+- Modals: append under `body` (outside `report-shell` / `main`) so backdrop covers sidebar
+- First viewport: no marketing collage; one job per section
 
 ---
 
@@ -123,60 +140,38 @@ Page padding (exec): `20px 24px` desktop · tighten on short viewports
 
 ### Sidebar nav
 
-- Background: light `--bo-sidebar-bg` `#072647` · dark `#08131F`
-- Item: white/muted text; active = cyan `#21A6D7` fill or highlight
-- Logout: bottom of sidebar; danger-leaning (red), not cyan
+- Opaque fill matching continuum left stop
+- Active: amber text/fill + left amber bar
+- Logout: danger red, not amber
 
 ### Topbar
 
-- Light: surface white / near-bg; Dark: surface `#102030` or transparent over bg
-- User chip right-aligned; hamburger left
-- Single theme button left of the user chip: sun in light, click to moon (dark), click again to sun
-- Date range lives in the Overview head, not here
+- Light: solid `#FFFFFF`
+- Dark: solid `#383A46`
+- Theme toggle left of profile
 
-### KPI / profit card
+### Buttons
 
-- Replaced by hero Net Profit Metric & Trend card (see Trend card)
-- Delta: green/red pill `↑ +N% vs last N days`
+- Primary: amber gradient CTA
+- Ghost: soft charcoal/gray gradient (dark) or light gray (light)
+- Height ~42px filters · radius ~10px
 
-### Trend card
+### Forms
 
-- One full-bleed white card: date left · net value + delta right · green spline + area fill · footer sync/avg/peak
-- Chart height ~`360px` desktop; preserve responsive min-heights from `main-dashboard-executive.css`
-- Series: Net Profit only (`#16B45D`); white-ringed points; final x-label + tip highlighted
-- Hover tooltip: navy popover with date `(Final)` and net MYR
+- Inputs: dark soft charcoal `#2A2C36` on dark; light well `#F0EFEA` / surface white on light
+- Focus: amber ring (never cyan)
 
-### Buttons (align toward BO filters)
+### Date / time tips
 
-- Primary: fill `--bo-cyan` or `--bo-navy` (prefer cyan for interactive CTA, navy for brand chrome)
-- Height: `42px` filter actions · radius `11px`
-- Secondary: surface + `--bo-border`
-
-### Forms / filters
-
-- Follow `bo-ui-standard.css` geometry; **retoken colors** to Deep Navy Cyan when restyling (replace legacy `--bo-ui-blue: #2864ed`)
-
-### Date range (canonical — all pages)
-
-**Source of truth:** fig.2 / Dashboard flat control. Defined globally in `bo-ui-standard.css` for both `.ref-range-*` and `.bo-range-*`.
-
-| Part | Spec |
-|------|------|
-| Trigger | `42px` height · `10px` radius · white/`--bo-surface` · `1px` `--bo-border` · no fill well |
-| Calendar icon | Flat glyph only · `--bo-navy` · transparent background · **never** cyan/blue filled square |
-| Label | Bold `700` · `--bo-navy` · `13px` · format `DD MMM YYYY – DD MMM YYYY` |
-| Chevron | Right-aligned · navy · subtle |
-| Hover / focus | Border `--bo-cyan` + `0 0 0 3px rgba(33,166,215,.14)` |
-
-Do **not** reintroduce filled icon wells on page CSS. Picker panel / day selection may still use cyan accents.
+- Light cream tip or dark charcoal tip per mode above — never navy `#0F1F33`
 
 ---
 
 ## Accessibility
 
-- Maintain WCAG AA contrast: cyan on navy for active nav; light text on dark surfaces
-- Focus ring: cyan `#21A6D7` (or 2px outline with offset)
-- Respect `prefers-reduced-motion`; keep motion to subtle hover/load only
+- Maintain WCAG AA: amber on charcoal / dark text on cream
+- Focus ring: amber outline with soft glow
+- Respect `prefers-reduced-motion`
 
 ---
 
@@ -184,33 +179,18 @@ Do **not** reintroduce filled icon wells on page CSS. Picker panel / day selecti
 
 | Decision | Rationale | Date |
 |----------|-----------|------|
-| Deep Navy Cyan locked | User-confirmed brand for light + dark | 2026-09-03 |
-| Light sidebar `#072647` · Dark sidebar `#08131F` | Dark rail matches reference mock / canvas | 2026-09-03 |
-| Dark cards `#102030` on `#08131F` | Elevation without heavy shadows | 2026-09-03 |
-| Cyan `#21A6D7` for active/CTA | Distinct from navy chrome; readable on navy | 2026-09-03 |
-| interface-design as primary skill | Dashboard/admin craft + system memory | 2026-09-03 |
-| frontend-design as secondary | Anti-slop polish only; must not override tokens | 2026-09-03 |
-| Overview mock layout locked | Title+date head, square KPI icons, deltas, no Mix | 2026-09-03 |
-| Chart: Merchant dashed · Net solid+fill | Matches Overview reference | 2026-09-03 |
-| Overview hero = Net Profit Metric & Trend | Single card: date + net KPI + green area chart + footer; retire dual KPI row | 2026-09-07 |
-| Brands Business page color-aligned | Same Deep Navy Cyan tokens as Overview; legacy `#2563eb` / purple title icon retired on Brands | 2026-09-03 |
-| Menu Management color-aligned | Same Deep Navy Cyan shell + cyan CTA / badges; retire `#2563eb` / indigo gradients on this page | 2026-09-04 |
-| Menu Management light/dark via `bo_theme` | Same sun/moon toggle + shared key as Overview/Brands | 2026-09-04 |
-| Menu Management MAIN / BO tabs | Filter catalogue by sidebar panel (`main_*` groups → MAIN; rest → BO) | 2026-09-04 |
-| Menu Permission color-aligned | Same Deep Navy Cyan shell + cyan CTA / checkbox accent; retire `#2563eb` / red checkbox accent on this page | 2026-09-04 |
-| Menu Permission workspace layout | Guide + role/assigned + filter/tools + accordion groups + 3-col menu cards + sticky save footer | 2026-09-04 |
-| Main Admin Detail new page | Independent `main-admin-detail.html` (do not replace `admin-user.html`); tabs + pills + dense admin table; Deep Navy Cyan + `bo_theme` | 2026-09-04 |
-| Main Admin Detail tabs | Administrators live; Roles → `menu-permission.html`; Credit Control → `main-admin-credit.html`; Security → `main-admin-security.html` | 2026-09-05 |
-| Main Admin Security page | Independent `main-admin-security.html`; KPIs + category pills + merged login/operation audit table; Deep Navy Cyan + `bo_theme`; inherits `main_admin_detail` access | 2026-09-05 |
-| Main Admin Credit Control | Independent `main-admin-credit.html`; health pills + utilization bars (Safe/Warning/Critical/Locked) + Adjust Credit modal; inherits `main_admin_detail` access | 2026-09-05 |
-| Main Admin Detail mock layout | Underline tabs · gray filter bar · dense table (UID/email · relative Last Active · HH:mm login · edit/key/suspend actions) · Previous/Next pager | 2026-09-04 |
-| Main Admin Create full page | `main-admin-create.html` from Add Account (not modal); breadcrumb · sectioned credentials/role card/IP policy · navy Create CTA; inherits `main_admin_detail` access | 2026-09-04 |
-| Brands light/dark via `bo_theme` | Same key + sun/moon toggle as Overview; dark surfaces `#102030` on `#08131F` | 2026-09-03 |
+| Charcoal + Amber locked as product system | User confirmed Admin trial as final light+dark identity | 2026-09-14 |
+| Deep Navy Cyan fully retired | Replaced by Admin continuum system | 2026-09-14 |
+| Canvas-only continuum | Avoid muddy wash under panels; sidebar stays opaque | 2026-09-14 |
+| Light tip cream / dark tip charcoal | Replace navy tooltips | 2026-09-14 |
+| Keep `--bo-cyan*` token names | Compatibility; values are amber | 2026-09-14 |
+| Admin Detail = reference implementation | Roll out to remaining pages using this file | 2026-09-14 |
 
 ## Agent rules
 
-1. Always read this file before UI work on this repo.
-2. Never substitute another palette “for taste.”
+1. Always read `DESIGN.md` and this file before UI work on this repo.
+2. Never substitute another palette “for taste.” Never restore Deep Navy Cyan.
 3. `frontend-design` may refine typography, hierarchy, and micro-detail — **not** brand hex values.
-4. When adding tokens in CSS, prefer names like `--bo-navy`, `--bo-cyan`, `--bo-bg`, `--bo-surface`.
+4. When adding CSS tokens, prefer `--bo-*` names; map accents through amber (`--bo-cyan` = amber).
 5. Offer to update this file when a pattern is reused 2+ times with stable measurements.
+6. New pages must follow Charcoal + Amber; migrate legacy navy/cyan pages toward these tokens when touched.

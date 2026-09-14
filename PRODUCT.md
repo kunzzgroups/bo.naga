@@ -38,7 +38,7 @@ An operations control surface for brand and platform ops — not a marketing sit
 ## Brand Commitments
 
 - Product naming in UI: **Backoffice** (Admin Panel / Executive Panel).
-- Existing theme direction documented under `.interface-design/` (Deep Navy Cyan) is incumbent identity for refinement work unless the user explicitly requests a redesign.
+- Existing theme direction documented under `.interface-design/` and `DESIGN.md` (**Charcoal + Amber**) is incumbent identity for refinement work unless the user explicitly requests a redesign.
 
 ## Evidence on Hand
 
