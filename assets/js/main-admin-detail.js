@@ -146,8 +146,9 @@
 
   function roleTone(name){
     const n = String(name || '').toLowerCase();
+    if(n.includes('support') || n.includes('cs ')) return 'is-support';
     if(n.includes('regional')) return 'is-regional';
-    if(n.includes('super') || n.includes('root') || n.includes('master')) return 'is-super';
+    if(n.includes('super') || n.includes('root') || n.includes('master') || n.includes('main')) return 'is-super';
     if(n.includes('partner')) return 'is-partner';
     if(n.includes('risk')) return 'is-risk';
     if(n.includes('tech')) return 'is-tech';
@@ -388,7 +389,10 @@
       const credit = creditBalance(row);
       const logout = lastLogout(row);
       const email = emailLabel(row);
-      const creditHtml = credit === '-' ? '<span class="mad-muted">-</span>' : ('<span class="mad-money">' + credit + '</span>');
+      const creditNum = creditBalanceNumber(row);
+      const creditHtml = credit === '-'
+        ? '<span class="mad-muted">-</span>'
+        : ('<span class="mad-money' + (creditNum > 0 ? ' is-positive' : ' is-zero') + '">' + credit + '</span>');
       const moreBtn = '<button type="button" class="mad-more-btn" aria-expanded="false" aria-label="Show details"><i class="bi bi-chevron-down" aria-hidden="true"></i></button>';
       const rowAttr = JSON.stringify(row).replace(/'/g, '&#39;');
       const canDelete = !active && !protectedRoot && !current;
@@ -403,8 +407,9 @@
       const deleteBtn = canDelete
         ? '<button class="mad-icon-btn mad-delete-btn is-danger" type="button" data-tip="Delete" aria-label="Delete" data-id="' + esc(row.id) + '"><i class="bi bi-trash3" aria-hidden="true"></i></button>'
         : '';
-      return '<tr class="mad-row' + (canDelete ? ' is-suspended-row' : '') + '">' +
-        '<td data-label="Username"><div class="mad-user">' + selectHtml + '<span class="mad-avatar">' + esc(initials(row)) + '</span><div class="mad-user-copy"><b>' + esc(row.displayName || row.username || '-') + (current ? ' · You' : '') + '</b>' + (email ? '<div class="mad-user-meta"><span class="mad-email">' + esc(email) + '</span></div>' : '') + '</div></div></td>' +
+      const youBadge = current ? '<span class="mad-you">You</span>' : '';
+      return '<tr class="mad-row' + (canDelete ? ' is-suspended-row' : '') + (current ? ' is-self' : '') + '">' +
+        '<td data-label="Username"><div class="mad-user">' + selectHtml + '<span class="mad-avatar' + (current ? ' is-self' : '') + '">' + esc(initials(row)) + '</span><div class="mad-user-copy"><b>' + esc(row.displayName || row.username || '-') + '</b>' + youBadge + (email ? '<div class="mad-user-meta"><span class="mad-email">' + esc(email) + '</span></div>' : '') + '</div></div></td>' +
         '<td data-label="Role"><span class="mad-role ' + roleTone(rn) + '">' + esc(rn) + '</span></td>' +
         '<td data-label="Credit Balance">' + creditHtml + '</td>' +
         '<td class="mad-detail" data-label="Last Active">' + esc(relativeTime(lastActive(row))) + '</td>' +
@@ -952,6 +957,114 @@
     window.addEventListener('scroll', function(){ if(activeBtn) hide(); }, true);
     window.addEventListener('resize', hide);
   })();
+
+  function viewerRoleLabel(user){
+    user = user || (window.BO_AUTH && typeof window.BO_AUTH.user === 'function' ? window.BO_AUTH.user() : {}) || {};
+    if(user.roleName) return String(user.roleName);
+    const type = String(user.roleType || '').toUpperCase();
+    if(user.rootAdmin === true || Number(user.rootAdmin) === 1 || type === 'ROOT') return 'Root';
+    if(type === 'MAIN' || user.mainAdmin === true || Number(user.mainAdmin) === 1) return 'Superadmin';
+    if(type === 'MASTER') return 'Master';
+    if(type === 'BRAND_OWNER') return 'Brand Owner';
+    if(user.role) return String(user.role);
+    return 'Admin';
+  }
+
+  function enhanceAmberTopbarProfile(){
+    const page = document.body;
+    if(!page || !page.classList.contains('main-admin-detail-page') || page.getAttribute('data-access-page') !== 'main_admin_detail') return;
+    const host = page.querySelector('.report-actions [data-bo-profile]');
+    if(!host) return;
+    const link = host.querySelector('a.bo-account-link');
+    if(!link) return;
+
+    // Keep account settings / change-password navigation working
+    const href = String(link.getAttribute('href') || '');
+    if(!href || href === '#' || href === 'profile.html'){
+      link.setAttribute('href', 'profile.html#password');
+    }
+    link.style.pointerEvents = 'auto';
+    link.style.cursor = 'pointer';
+    link.setAttribute('title', 'Account settings / Change password');
+    link.setAttribute('aria-label', 'Open account settings and change password');
+
+    const already = link.classList.contains('is-mad-amber-profile')
+      && link.querySelector('.bo-account-meta')
+      && link.querySelector('.report-avatar i.bi-person');
+    if(already){
+      const roleEl = link.querySelector('[data-admin-role]');
+      const nextRole = viewerRoleLabel();
+      if(roleEl && roleEl.textContent !== nextRole) roleEl.textContent = nextRole;
+      return;
+    }
+
+    const avatar = link.querySelector('.report-avatar');
+    let name = link.querySelector('.bo-account-name');
+    const gear = link.querySelector('.bo-account-setting-icon');
+    if(gear) gear.setAttribute('hidden', '');
+
+    let meta = link.querySelector('.bo-account-meta');
+    if(!meta && name){
+      meta = document.createElement('span');
+      meta.className = 'bo-account-meta';
+      name.replaceWith(meta);
+      meta.appendChild(name);
+    }
+    name = link.querySelector('.bo-account-name');
+
+    let role = link.querySelector('[data-admin-role]');
+    if(!role && meta){
+      role = document.createElement('span');
+      role.className = 'bo-account-role';
+      role.setAttribute('data-admin-role', '');
+      meta.appendChild(role);
+    }
+    if(role) role.textContent = viewerRoleLabel();
+
+    if(avatar){
+      avatar.removeAttribute('data-admin-avatar');
+      if(!avatar.querySelector('i.bi-person')){
+        avatar.textContent = '';
+        const icon = document.createElement('i');
+        icon.className = 'bi bi-person';
+        icon.setAttribute('aria-hidden', 'true');
+        avatar.appendChild(icon);
+      }
+      if(meta && (meta.parentNode !== link || avatar.previousElementSibling !== meta)){
+        link.appendChild(meta);
+        link.appendChild(avatar);
+      }
+    }
+
+    link.classList.add('is-mad-amber-profile');
+  }
+
+  function bindAmberTopbarProfile(){
+    enhanceAmberTopbarProfile();
+    const host = document.querySelector('.report-actions [data-bo-profile]');
+    if(!host || host.dataset.madAmberObserved === '1') return;
+    host.dataset.madAmberObserved = '1';
+    let scheduled = false;
+    const run = function(){
+      if(scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(function(){
+        scheduled = false;
+        enhanceAmberTopbarProfile();
+      });
+    };
+    // Only watch structural reinjects from auth — not text tweaks (avoids killing clicks)
+    new MutationObserver(run).observe(host, { childList: true });
+    document.addEventListener('bo:profile-updated', run);
+    setTimeout(enhanceAmberTopbarProfile, 80);
+    setTimeout(enhanceAmberTopbarProfile, 400);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', bindAmberTopbarProfile);
+  }else{
+    bindAmberTopbarProfile();
+  }
 
   (async function(){
     await loadBrandOptions();
