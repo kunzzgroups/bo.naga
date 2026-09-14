@@ -3085,7 +3085,7 @@ body.main-admin-create-page .mac-switch{
 }
 body.main-admin-create-page .mac-switch input{position:absolute;opacity:0;width:0;height:0}
 body.main-admin-create-page .mac-switch-track{
-  width:44px;height:26px;border-radius:8px;background:#D0D5DD;
+  width:44px;height:26px;border-radius:999px;background:#D0D5DD;
   position:relative;transition:background .16s var(--bo-ease);
 }
 body.main-admin-create-page .mac-switch-thumb{
@@ -6882,6 +6882,43 @@ html:has(body.main-admin-detail-page[data-access-page="main_admin_detail"]){
   background:#F7F6F3;
 }
 
+/* Light canvas — Orange → White Continuum (sidebar → page)
+   Soft amber wash into white; short seam (~96px).
+   Panels stay solid white surface. */
+html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_detail"]){
+  background-color:#FFFFFF;
+  background-image:linear-gradient(90deg,
+    #FFE8CC 0,
+    #FFF1DC calc(var(--sidebar-w,280px) * .72),
+    #FFF8EB var(--sidebar-w,280px),
+    #FFFCF7 calc(var(--sidebar-w,280px) + 48px),
+    #FFFFFF calc(var(--sidebar-w,280px) + 96px),
+    #FFFFFF 100%
+  );
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+  background-size:100% 100%;
+  min-height:100%;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"]{
+  background:transparent!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-shell{
+  background:transparent!important;
+  position:relative;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-main,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-content{
+  background:transparent!important;
+  position:relative;
+  z-index:1;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-topbar{
+  background:#FFFFFF!important;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"]{
   /* Dark mode: soft charcoal (not dead black) · Primary #F59E0B */
   --bo-navy:#F5F5F4;
@@ -6915,8 +6952,60 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   --bo-accent-on:#2A2C36;
   color-scheme:dark;
 }
+/* Dark canvas — Warm Charcoal Continuum (sidebar → page)
+   Low-chroma warm charcoal into cool charcoal; short seam (~96px).
+   Panels stay solid surface so data never sits in the wash. */
 html[data-bo-theme="dark"]:has(body.main-admin-detail-page[data-access-page="main_admin_detail"]){
-  background:#2C2E38;
+  background-color:#2C2E38;
+  background-image:linear-gradient(90deg,
+    #3A3226 0,
+    #342E28 calc(var(--sidebar-w,280px) * .72),
+    #2F2E32 var(--sidebar-w,280px),
+    #2D2E36 calc(var(--sidebar-w,280px) + 48px),
+    #2C2E38 calc(var(--sidebar-w,280px) + 96px),
+    #2C2E38 100%
+  );
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+  background-size:100% 100%;
+  min-height:100%;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"]{
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-shell{
+  background:transparent!important;
+  position:relative;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-shell::before{
+  content:none!important;
+  display:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-main,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-content{
+  background:transparent!important;
+  position:relative;
+  z-index:1;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-topbar{
+  background:#383A46!important;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  border-bottom-color:rgba(255,255,255,.08)!important;
+}
+
+/* Modals above sidebar / flyouts (sidebar 1040–9100, flyout 12050) */
+body.main-admin-detail-page .modal-clean,
+body.main-admin-detail-page .mad-modal,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .modal-clean,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal{
+  z-index:30000!important;
+}
+body.main-admin-detail-page:has(.modal-clean.show) .report-sidebar,
+body.main-admin-detail-page:has(.mad-modal.show) .report-sidebar,
+body.main-admin-detail-page[data-access-page="main_admin_detail"]:has(.modal-clean.show) .report-sidebar,
+body.main-admin-detail-page[data-access-page="main_admin_detail"]:has(.mad-modal.show) .report-sidebar{
+  z-index:1000!important;
 }
 
 /* Top tabs — orange underline only; text stays neutral */
@@ -7172,53 +7261,48 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
 
 /* ------------------------------------------------------------------
    Sidebar — crypto terminal (Admin Detail amber trial only)
-   Light: full frosted glass + amber signal · Dark: near-black neon
-   ------------------------------------------------------------------ */
-/* LIGHT MODE — full-sidebar frosted glass (warm, not pure white)
+   Light/Dark: canvas continuum (sidebar → page); panels stay solid.
    NOTE: do NOT put backdrop-filter / isolation on .report-sidebar itself —
-   that creates a containing block and clips the desktop L2 flyout (position:fixed). */
+   that creates a containing block and clips the desktop L2 flyout (position:fixed).
+   ------------------------------------------------------------------ */
+/* LIGHT MODE — opaque orange cream (matches continuum left; covers content when expanded) */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar{
-  background:
-    radial-gradient(120% 48% at 0% 0%, rgba(245,158,11,.10) 0%, transparent 52%),
-    radial-gradient(90% 40% at 100% 88%, rgba(180,83,9,.05) 0%, transparent 55%),
-    linear-gradient(180deg, rgba(255,248,235,.72) 0%, rgba(236,228,214,.62) 48%, rgba(228,220,206,.68) 100%)!important;
+  background:#FFE8CC!important;
   border-right:1px solid rgba(92,74,48,.14)!important;
-  box-shadow:
-    inset -1px 0 0 rgba(255,252,245,.55),
-    inset 0 1px 0 rgba(255,255,255,.35),
-    10px 0 36px rgba(60,48,32,.07)!important;
+  box-shadow:none!important;
   color:#6b360c!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  isolation:auto;
 }
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-sidebar:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-sidebar.is-mini-hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar.show{
+  background:#FFE8CC!important;
+  box-shadow:18px 0 40px rgba(60,48,32,.14)!important;
+}
+/* Amber edge rail — defines the continuum join */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar::before{
   content:"";
   position:absolute;
-  top:10%;bottom:10%;right:0;
+  top:12%;bottom:12%;right:0;
   width:2px;
   border-radius:999px 0 0 999px;
   pointer-events:none;z-index:0;
   background:linear-gradient(180deg, transparent 0%, #F59E0B 26%, #D97706 58%, transparent 100%);
-  opacity:.7;
-  box-shadow:0 0 18px rgba(217,119,6,.32);
+  opacity:.75;
+  box-shadow:none;
 }
-/* Frost veil on pseudo only — keeps L2 flyout free of containing-block traps */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;z-index:0;
-  background:
-    linear-gradient(180deg, rgba(255,252,245,.42) 0%, rgba(255,252,245,.10) 28%, transparent 55%),
-    radial-gradient(80% 50% at 50% 100%, rgba(217,119,6,.05) 0%, transparent 70%);
-  backdrop-filter:blur(18px) saturate(1.2);
-  -webkit-backdrop-filter:blur(18px) saturate(1.2);
-  opacity:1;
+  content:none!important;
+  display:none!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar > *{
   position:relative;z-index:1;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-brand{
   border-bottom:1px solid rgba(92,74,48,.1)!important;
-  background:rgba(255,248,235,.28)!important;
+  background:transparent!important;
   color:#6b360c!important;
   letter-spacing:-.03em!important;
 }
@@ -7231,7 +7315,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
   opacity:.78;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .close-side{
-  background:rgba(255,248,235,.45)!important;
+  background:rgba(255,255,255,.55)!important;
   border:1px solid rgba(92,74,48,.12)!important;
   color:#6b360c!important;
 }
@@ -7254,7 +7338,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
   display:none!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-account-footer{
-  background:rgba(255,248,235,.22)!important;
+  background:transparent!important;
   border-top:1px solid rgba(92,74,48,.1)!important;
   box-shadow:none!important;
   margin:0!important;
@@ -7263,7 +7347,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-logout{
   border-radius:10px!important;
   color:#B42318!important;
-  background:rgba(255,248,235,.35)!important;
+  background:rgba(255,255,255,.45)!important;
   border:1px solid rgba(180,35,24,.12)!important;
   transition:background .16s ease,box-shadow .16s ease,color .16s ease!important;
 }
@@ -7385,15 +7469,21 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
   display:none!important;
 }
 
-/* DARK MODE — soft charcoal crypto (comfortable, not dead black) */
+/* DARK MODE — opaque warm charcoal (matches continuum left; covers content when expanded) */
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar{
-  background:#2A2C36!important;
-  border-right:1px solid rgba(255,255,255,.08)!important;
+  background:#3A3226!important;
+  border-right:1px solid rgba(245,158,11,.22)!important;
   box-shadow:none!important;
   color:#FFFFFF!important;
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
   isolation:auto;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-sidebar:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-sidebar.is-mini-hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar.show{
+  background:#3A3226!important;
+  box-shadow:18px 0 40px rgba(0,0,0,.35)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar::before{
   content:"";
@@ -7405,27 +7495,35 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   pointer-events:none;z-index:0;
   background-color:transparent;
   background-image:
-    linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
   background-size:24px 24px;
   background-repeat:repeat;
-  opacity:.55;
+  opacity:.35;
   box-shadow:none;
-  mask-image:linear-gradient(180deg,#000 0%, #000 55%, transparent 100%);
-  -webkit-mask-image:linear-gradient(180deg,#000 0%, #000 55%, transparent 100%);
+  mask-image:linear-gradient(180deg,#000 0%, #000 40%, transparent 100%);
+  -webkit-mask-image:linear-gradient(180deg,#000 0%, #000 40%, transparent 100%);
 }
+/* Amber edge rail — defines the continuum join without glow wash */
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar::after{
   content:"";
   display:block!important;
   position:absolute;
   inset:auto;
-  left:0;right:0;top:0;bottom:auto;
-  width:auto;height:42%;
-  border-radius:0;
+  top:12%;bottom:12%;
+  left:auto;right:0;
+  width:2px;height:auto;
+  border-radius:999px 0 0 999px;
   pointer-events:none;z-index:0;
-  opacity:1;
+  opacity:.85;
   box-shadow:none;
-  background:radial-gradient(90% 70% at 50% -10%, rgba(245,158,11,.22) 0%, rgba(245,158,11,.06) 38%, transparent 72%);
+  background:linear-gradient(180deg,
+    transparent 0%,
+    rgba(251,191,36,.55) 22%,
+    rgba(245,158,11,.85) 50%,
+    rgba(217,119,6,.45) 78%,
+    transparent 100%
+  );
   mask-image:none;
   -webkit-mask-image:none;
 }
@@ -7776,12 +7874,18 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .ma
   font-weight:700!important;
   background:transparent!important;
   padding:0!important;
+  color:#27272A!important;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money.is-zero{
-  color:#9CA3AF!important;
+  color:#A1A1AA!important;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money.is-positive{
-  color:#1E3A5F!important;
+  color:#B45309!important;
+}
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time-tip{
+  color:#71717A!important;
+  font-weight:600!important;
 }
 
 /* Light status */
@@ -8288,6 +8392,37 @@ html[data-bo-theme="dark"]:has(body.main-admin-detail-page[data-access-page="mai
 html[data-bo-theme="dark"]:has(body.main-admin-detail-page[data-access-page="main_admin_detail"]) .mad-float-tip.is-below::after{
   border-top-color:transparent!important;
   border-bottom-color:#40424E!important;
+}
+
+/* Light hover tips — warm cream + amber (replace navy) */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-time-tip::after,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn[data-tip]::after{
+  background:#FFF8EB!important;
+  color:#6b360c!important;
+  border:1px solid rgba(217,119,6,.28)!important;
+  border-radius:999px!important;
+  box-shadow:0 8px 22px rgba(60,48,32,.12)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-time-tip::before{
+  border-top-color:#FFF8EB!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn[data-tip]::before{
+  border-top-color:#FFF8EB!important;
+  border-bottom-color:transparent!important;
+}
+html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_detail"]) .mad-float-tip{
+  background:#FFF8EB!important;
+  color:#6b360c!important;
+  border:1px solid rgba(217,119,6,.28)!important;
+  border-radius:999px!important;
+  box-shadow:0 8px 22px rgba(60,48,32,.12)!important;
+}
+html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_detail"]) .mad-float-tip::after{
+  border-top-color:#FFF8EB!important;
+}
+html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_detail"]) .mad-float-tip.is-below::after{
+  border-top-color:transparent!important;
+  border-bottom-color:#FFF8EB!important;
 }
 
 /* Dark modals — Adjust Credit + Reset Password inputs match soft charcoal */
