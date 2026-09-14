@@ -2527,8 +2527,8 @@ body.main-admin-create-page .report-content .mac-field .form-control,
 body.main-admin-create-page .report-content .mac-field input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 body.main-admin-create-page .report-content .mac-field select,
 body.main-admin-create-page .report-content .mac-field textarea{
-  height:44px!important;border:1px solid #D0D5DD!important;border-radius:8px!important;
-  background:#fff!important;color:var(--bo-text)!important;
+  height:44px!important;border:1px solid var(--bo-control-border,#EADCC8)!important;border-radius:8px!important;
+  background:var(--bo-control-well,#F5EBDC)!important;color:var(--bo-text)!important;
   padding:0 14px!important;font-size:13.5px!important;font-weight:500!important;
   box-shadow:none!important;
 }
@@ -2946,7 +2946,7 @@ body.main-admin-create-page .report-content .mac-field input:focus,
 body.main-admin-create-page .report-content .mac-field select:focus,
 body.main-admin-create-page .report-content .mac-field textarea:focus{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;outline:0!important;
+  box-shadow:0 0 0 3px var(--bo-cyan-tint,rgba(217,119,6,.12))!important;outline:0!important;
 }
 body.main-admin-create-page .mad-pass-wrap{position:relative;display:block}
 body.main-admin-create-page .mad-pass-wrap .form-control{padding-right:44px!important}
@@ -2967,17 +2967,17 @@ body.main-admin-create-page .mac-role-pick,
 body.main-admin-create-page .mac-role-priv{
   display:flex;align-items:center;justify-content:space-between;gap:16px;
   min-height:64px;padding:14px 16px;width:100%;text-align:left;
-  border:1px solid #D8DEE8;border-radius:8px;background:#fff;
+  border:1px solid var(--bo-border,#EADCC8);border-radius:8px;background:var(--bo-surface,#FFF8EB);
   box-sizing:border-box;
 }
 body.main-admin-create-page button.mac-role-pick{
   cursor:pointer;font:inherit;color:inherit;
   transition:border-color .16s var(--bo-ease),box-shadow .16s var(--bo-ease),border-radius .16s var(--bo-ease);
 }
-body.main-admin-create-page button.mac-role-pick:hover{border-color:rgba(33,166,215,.45)}
+body.main-admin-create-page button.mac-role-pick:hover{border-color:rgba(217,119,6,.45)}
 body.main-admin-create-page button.mac-role-pick[aria-expanded="true"]{
   border-color:var(--bo-cyan);
-  box-shadow:0 0 0 3px rgba(33,166,215,.12);
+  box-shadow:0 0 0 3px var(--bo-cyan-tint,rgba(217,119,6,.12));
   border-bottom-left-radius:0;border-bottom-right-radius:0;
 }
 body.main-admin-create-page .mac-role-chevron{
@@ -3003,7 +3003,7 @@ body.main-admin-create-page .mac-role-title-row strong{
 }
 body.main-admin-create-page .mac-role-primary{
   display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:8px;
-  background:rgba(33,166,215,.14);color:var(--bo-cyan-deep);
+  background:var(--bo-cyan-tint,rgba(217,119,6,.12));color:var(--bo-cyan-deep);
   font-size:10px;font-weight:800;letter-spacing:.04em;
 }
 body.main-admin-create-page .mac-role-count{font-size:13px;font-weight:500;color:var(--bo-muted)}
@@ -3011,9 +3011,9 @@ body.main-admin-create-page .mac-role-menu{
   position:absolute;left:0;right:0;top:calc(100% - 1px);z-index:30;
   display:flex;flex-direction:column;gap:2px;
   max-height:280px;overflow:auto;padding:6px;margin:0;
-  border:1px solid var(--bo-cyan);border-top:1px solid #E2E7F0;
-  border-radius:0 0 12px 12px;background:#fff;
-  box-shadow:0 12px 28px rgba(18,59,102,.14);
+  border:1px solid var(--bo-cyan);border-top:1px solid var(--bo-border,#EADCC8);
+  border-radius:0 0 12px 12px;background:var(--bo-surface,#FFF8EB);
+  box-shadow:0 12px 28px rgba(24,25,28,.12);
 }
 body.main-admin-create-page .mac-role-menu[hidden]{display:none!important}
 body.main-admin-create-page .mac-role-option{
@@ -3023,9 +3023,9 @@ body.main-admin-create-page .mac-role-option{
   cursor:pointer;text-align:left;
   transition:background .14s var(--bo-ease),color .14s var(--bo-ease);
 }
-body.main-admin-create-page .mac-role-option:hover{background:rgba(33,166,215,.08);color:var(--bo-navy)}
+body.main-admin-create-page .mac-role-option:hover{background:var(--bo-cyan-tint,rgba(217,119,6,.12));color:var(--bo-navy)}
 body.main-admin-create-page .mac-role-option.is-active{
-  background:rgba(33,166,215,.12);color:var(--bo-navy);font-weight:750;
+  background:var(--bo-cyan-tint-strong,rgba(217,119,6,.20));color:var(--bo-navy);font-weight:750;
 }
 body.main-admin-create-page .mac-hidden-control,
 body.main-admin-create-page select.mac-hidden-control,
@@ -3043,14 +3043,14 @@ body.main-admin-create-page .mac-role-tags{
 }
 body.main-admin-create-page .mac-tag{
   display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px 0 10px;
-  border-radius:8px;border:1px solid #D0D5DD;background:#fff;
+  border-radius:8px;border:1px solid var(--bo-border,#EADCC8);background:var(--bo-surface,#FFF8EB);
   color:var(--bo-text-secondary);font-size:12.5px;font-weight:600;white-space:nowrap;
 }
 body.main-admin-create-page .mac-tag::before{
   content:"";width:7px;height:7px;border-radius:50%;flex:0 0 7px;background:var(--bo-cyan);
 }
 body.main-admin-create-page .mac-tag-more{
-  border-style:dashed;color:var(--bo-muted);background:#F8FAFC;
+  border-style:dashed;color:var(--bo-muted);background:var(--bo-control-well,#F5EBDC);
 }
 body.main-admin-create-page .mac-tag{
   max-width:180px;overflow:hidden;text-overflow:ellipsis;
@@ -3066,12 +3066,12 @@ body.main-admin-create-page .mac-role-meta{margin-top:4px}
 /* Policy row */
 body.main-admin-create-page .mac-policy-row{
   display:flex;align-items:center;justify-content:space-between;gap:16px;
-  padding:16px 18px;border:1px solid var(--bo-border);border-radius:8px;background:#F8FAFC;
+  padding:16px 18px;border:1px solid var(--bo-border);border-radius:8px;background:var(--bo-control-well,#F5EBDC);
 }
 body.main-admin-create-page .mac-policy-copy{display:flex;align-items:flex-start;gap:12px;min-width:0}
 body.main-admin-create-page .mac-policy-icon{
   width:40px;height:40px;border-radius:8px;flex:0 0 40px;
-  display:grid;place-items:center;background:#fff;border:1px solid var(--bo-border);
+  display:grid;place-items:center;background:var(--bo-surface,#FFF8EB);border:1px solid var(--bo-border);
   color:var(--bo-navy);font-size:18px;
 }
 body.main-admin-create-page .mac-policy-copy strong{
@@ -3105,9 +3105,9 @@ body.main-admin-create-page .mac-footer-actions{
   width:auto!important;max-width:none!important;
   display:flex;justify-content:flex-end;align-items:center;gap:10px;
   margin:0;padding:14px 24px;
-  background:rgba(255,255,255,.96);
-  border-top:1px solid var(--bo-line, #E6EDF5);
-  box-shadow:0 -8px 24px rgba(15,23,42,.06);
+  background:var(--bo-surface,#FFF8EB);
+  border-top:1px solid var(--bo-border,#EADCC8);
+  box-shadow:0 -8px 24px rgba(24,25,28,.06);
   backdrop-filter:blur(8px);
   box-sizing:border-box;
   pointer-events:auto;
@@ -3397,7 +3397,7 @@ body.main-admin-edit-page .mae-title-row{
 body.main-admin-edit-page .mae-title-row h1{margin:0}
 body.main-admin-edit-page .mae-uid{
   display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:8px;
-  background:rgba(33,166,215,.12);color:var(--bo-cyan-deep);
+  background:rgba(217,119,6,.14);color:#B45309;
   font-size:12px;font-weight:750;letter-spacing:.02em;
 }
 body.main-admin-edit-page .mae-status-pill{
@@ -3405,7 +3405,7 @@ body.main-admin-edit-page .mae-status-pill{
   font-size:12px;font-weight:750;
 }
 body.main-admin-edit-page .mae-status-pill.is-active{
-  background:rgba(18,183,106,.12);color:#12B76A;
+  background:#D1FAE5;color:#047857;
 }
 body.main-admin-edit-page .mae-status-pill.is-suspended{
   background:rgba(239,51,64,.1);color:#EF3340;
@@ -3426,19 +3426,20 @@ body.main-admin-edit-page .mae-meta-block small{
 body.main-admin-edit-page .mae-meta-block strong{
   font-size:12.5px;font-weight:700;color:var(--bo-text-secondary);text-align:right;white-space:nowrap;
 }
-<body.main-admin-edit-page .mac-section-head .mac-back-section{margin-left:0}
+body.main-admin-edit-page .mac-section-head .mac-back-section{margin-left:0}
 body.main-admin-edit-page .mae-reset-pass-btn{
   margin-left:auto;height:36px!important;min-height:36px!important;padding:0 14px!important;
   white-space:nowrap;flex:0 0 auto;
 }
 body.main-admin-edit-page .mae-reset-pass-btn.is-pending{
-  border-color:rgba(33,166,215,.35)!important;color:var(--bo-cyan-deep)!important;background:rgba(33,166,215,.08)!important;
+  border-color:rgba(217,119,6,.4)!important;color:var(--bo-cyan-deep)!important;background:rgba(217,119,6,.1)!important;
 }
 body.main-admin-edit-page .mae-cred-row{
   grid-template-columns:repeat(3, minmax(0, 1fr));
 }
 body.main-admin-edit-page #madEditUsername{
-  background:#F5F7FB!important;color:var(--bo-muted)!important;cursor:not-allowed;
+  background:#EDE4D4!important;color:#57534E!important;cursor:not-allowed;
+  border-color:#DCC9A8!important;
 }
 body.main-admin-edit-page .mae-pass-modal-panel{max-width:440px;width:min(440px, calc(100vw - 32px))}
 body.main-admin-edit-page .mae-pass-modal-fields{
@@ -3449,7 +3450,7 @@ body.main-admin-edit-page .mae-pass-modal-fields .form-control::placeholder{
   font-size:13.5px!important;font-weight:500!important;line-height:1.2!important;
 }
 body.main-admin-edit-page .mae-pass-modal-fields .form-control::placeholder{
-  color:#98A2B3!important;opacity:1!important;
+  color:#78716C!important;opacity:1!important;
 }
 body.main-admin-edit-page .mae-role-change{
   display:inline-flex;align-items:center;gap:6px;margin-left:auto;
@@ -3461,14 +3462,14 @@ body.main-admin-edit-page .mac-role-priv{
 }
 body.main-admin-edit-page .mae-tier-badge{
   display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:8px;
-  background:rgba(18,183,106,.12);color:#12B76A;font-size:12px;font-weight:750;white-space:nowrap;
+  background:rgba(18,183,106,.12);color:#027A48;font-size:12px;font-weight:750;white-space:nowrap;
 }
 body.main-admin-edit-page .mae-security-grid{
   display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:14px;
 }
 body.main-admin-edit-page .mae-security-card{
   display:flex;align-items:center;justify-content:space-between;gap:14px;
-  padding:16px;border:1px solid var(--bo-border);border-radius:8px;background:#FBFCFE;
+  padding:16px;border:1px solid var(--bo-border,#EADCC8);border-radius:8px;background:var(--bo-control-well,#F5EBDC);
 }
 body.main-admin-edit-page .mae-security-copy{
   display:flex;align-items:flex-start;gap:12px;min-width:0;
@@ -3477,23 +3478,23 @@ body.main-admin-edit-page .mae-security-copy strong{
   display:block;font-size:14px;font-weight:750;color:var(--bo-navy);
 }
 body.main-admin-edit-page .mae-security-copy p{
-  margin:4px 0 0;font-size:12.5px;font-weight:550;color:var(--bo-muted);line-height:1.4;
+  margin:4px 0 0;font-size:12.5px;font-weight:550;color:#57534E;line-height:1.4;
 }
 body.main-admin-edit-page .mae-status-seg{
   display:inline-flex;align-items:center;gap:0;padding:4px;
-  border-radius:8px;background:#F1F5F9;border:1px solid #E3E9F0;flex:0 0 auto;
+  border-radius:8px;background:#EDE4D4;border:1px solid #DCC9A8;flex:0 0 auto;
 }
 body.main-admin-edit-page .mae-status-btn{
   appearance:none;border:0;cursor:pointer;height:34px;padding:0 16px;border-radius:8px;
-  background:transparent;color:#8A98A8;font-size:13px;font-weight:700;line-height:1;
+  background:transparent;color:#78716C;font-size:13px;font-weight:700;line-height:1;
   display:inline-flex;align-items:center;justify-content:center;gap:7px;
   box-shadow:none;transition:background .15s ease,color .15s ease,box-shadow .15s ease;
 }
 body.main-admin-edit-page .mae-status-dot{
-  width:7px;height:7px;border-radius:50%;background:#B4BFCB;flex:0 0 auto;
+  width:7px;height:7px;border-radius:50%;background:#A8A29E;flex:0 0 auto;
 }
 body.main-admin-edit-page .mae-status-btn.is-active{
-  background:#fff;box-shadow:0 1px 3px rgba(18,59,102,.12);
+  background:#FFFCF7;box-shadow:0 1px 3px rgba(120,80,20,.14);
 }
 body.main-admin-edit-page .mae-status-btn.is-active[data-mae-status="1"]{
   color:#0F8A5F;
@@ -6917,7 +6918,7 @@ body.main-admin-detail-page[data-access-page="main_admin_security"]{
   --bo-control-well:#F5EBDC;
   --bo-control-well-hover:#F0E4D0;
   --bo-control-border:#EADCC8;
-  --bo-placeholder:#A1A1AA;
+  --bo-placeholder:#78716C;
   --bo-navy-hover:#27272A;
   --bo-ui-blue:#D97706;
   --bo-ui-blue-hover:#B45309;
@@ -7947,9 +7948,13 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   display:none!important;
 }
 
-/* Light flyout panel: cream surface (locked), L2 keeps amber chip structure */
+/* Light flyout panel: cream surface (locked) — beat reports.css `#fff!important` */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > .nav-group > .nav-group-list,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > .nav-group > .nav-group-list,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list{
   background:#FFF8EB!important;
   border:1px solid rgba(92,74,48,.12)!important;
   box-shadow:0 12px 32px rgba(60,48,32,.14)!important;
@@ -8005,10 +8010,12 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > .nav-group > .nav-group-list,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > .nav-group > .nav-group-list{
-  background:linear-gradient(180deg,#40424E 0%,#343648 100%)!important;
-  border:1px solid rgba(245,158,11,.16)!important;
-  box-shadow:0 16px 40px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.04)!important;
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > .nav-group > .nav-group-list,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list{
+  background:#383A46!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:0 16px 40px rgba(0,0,0,.35)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub,
@@ -8147,7 +8154,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-muted,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-email,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-email{
-  color:#9CA3AF!important;
+  color:#57534E!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-time{
@@ -8224,7 +8231,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money.is-zero,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-money.is-zero{
-  color:#A1A1AA!important;
+  color:#71717A!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money.is-positive,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-money.is-positive{
@@ -8234,8 +8241,70 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-time,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time-tip,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-time-tip{
-  color:#71717A!important;
+  color:#57534E!important;
   font-weight:600!important;
+}
+
+/* Light action icons + search — readable charcoal (never faint placeholder gray) */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-icon-btn,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn.is-danger,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-icon-btn.is-danger{
+  color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-icon-btn:hover{
+  background:rgba(217,119,6,.12)!important;
+  color:#B45309!important;
+  box-shadow:0 4px 10px rgba(180,83,9,.12)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-search i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-search i{
+  color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-search input::placeholder,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-search input::placeholder,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-field .form-control::placeholder,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-field .form-control::placeholder,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal .form-control::placeholder,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-modal .form-control::placeholder,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pass-modal-fields .form-control::placeholder,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pass-modal-fields .form-control::placeholder,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pass-wrap .form-control::placeholder,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pass-wrap .form-control::placeholder{
+  color:#78716C!important;
+  opacity:1!important;
+  -webkit-text-fill-color:#78716C;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-eye,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-eye{
+  color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal-title small,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-modal-title small{
+  color:#57534E!important;
+}
+
+/* Light modal close — cream well (never cool blue-white) */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .modal-clean-close,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .modal-clean-close,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal .modal-clean-close,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-modal .modal-clean-close{
+  width:36px!important;height:36px!important;border-radius:8px!important;
+  background:#F5EBDC!important;
+  border:1px solid #EADCC8!important;
+  color:#57534E!important;
+  display:grid!important;place-items:center!important;
+  filter:none!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .modal-clean-close:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .modal-clean-close:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal .modal-clean-close:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-modal .modal-clean-close:hover{
+  background:#F0E4D0!important;
+  border-color:#D97706!important;
+  color:#18191C!important;
 }
 
 /* Light status */
@@ -8289,7 +8358,7 @@ body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager b
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-footer-info,
 body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-footer-info{
-  color:#9CA3AF!important;
+  color:#57534E!important;
 }
 
 /* Status filter pills — Active/Suspend/All match Export ghost (8px cream lift) */
@@ -9051,6 +9120,129 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pass-modal-fields .mac-link-btn:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pass-modal-fields .mac-link-btn:hover{
   color:#FBBF24!important;
+}
+
+/* Create / Edit Admin — light form hierarchy (layer ladder; not flat cream wash)
+   Canvas continuum → lifted section → control well → nested well.
+   Amber rail + Save CTA carry focus; secondary chrome stays quieter. */
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-section{
+  position:relative;
+  background:#FFFCF7!important;
+  border:1px solid #DCC9A8!important;
+  box-shadow:0 0 0 1px rgba(120,80,20,.04),0 10px 28px rgba(120,80,20,.10)!important;
+  overflow:hidden;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-section::before{
+  content:"";
+  position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;
+  background:linear-gradient(180deg,#F59E0B 0%,#D97706 100%);
+  pointer-events:none;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-section-head{
+  margin:0 0 16px;padding:0 0 14px;
+  border-bottom:1px solid #EADCC8;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-section-head h3{
+  color:#18191C!important;
+  letter-spacing:.06em;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-section-icon{
+  background:rgba(217,119,6,.16)!important;
+  color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-field .form-control,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .report-content .mac-field .form-control,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .report-content .mac-field input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .report-content .mac-field select,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .report-content .mac-field textarea,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mad-pass-wrap .form-control{
+  background:#F5EBDC!important;
+  background-color:#F5EBDC!important;
+  border-color:#DCC9A8!important;
+  color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-field .form-control::placeholder,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .report-content .mac-field .form-control::placeholder,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .report-content .mac-field input::placeholder{
+  color:#78716C!important;
+  opacity:1!important;
+  -webkit-text-fill-color:#78716C;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-field small{
+  color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-label{
+  color:#27272A!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-role-pick{
+  background:#FFF8EB!important;
+  border-color:#DCC9A8!important;
+  box-shadow:inset 0 0 0 1px rgba(120,80,20,.03);
+}
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-role-priv,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-policy-row{
+  background:#F0E4D0!important;
+  border-color:#DCC9A8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-role-menu,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-tag,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-policy-icon{
+  background:#FFFCF7!important;
+  border-color:#DCC9A8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-tag-more{
+  background:#F5EBDC!important;
+  border-color:#DCC9A8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-footer-actions{
+  background:#FFFCF7!important;
+  border-top:1px solid #DCC9A8!important;
+  box-shadow:0 -12px 32px rgba(120,80,20,.12)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-field .form-control:focus,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .report-content .mac-field .form-control:focus,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .report-content .mac-field input:focus,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .report-content .mac-field select:focus,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .report-content .mac-field textarea:focus,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] button.mac-role-pick[aria-expanded="true"]{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.16)!important;
+}
+/* Ghost / secondary actions — lifted cream (readable against section lift) */
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mad-btn-ghost,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mad-btn.mad-btn-ghost,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] a.mad-btn-ghost{
+  background-color:#F5EBDC!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%)!important;
+  border:1px solid #DCC9A8!important;
+  color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mad-btn-ghost:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] a.mad-btn-ghost:hover{
+  border-color:#D97706!important;
+  background-image:linear-gradient(180deg,#FFFBEB 0%,#FEF3C7 100%)!important;
+  color:#18191C!important;
+}
+/* Edit-only: locked username + security nested cards */
+html:not([data-bo-theme="dark"]) body.main-admin-edit-page[data-access-page="main_admin_detail"] #madEditUsername{
+  background:#EDE4D4!important;
+  color:#57534E!important;
+  border-color:#DCC9A8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-edit-page[data-access-page="main_admin_detail"] .mae-security-card{
+  background:#F0E4D0!important;
+  border-color:#DCC9A8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-edit-page[data-access-page="main_admin_detail"] .mae-status-seg{
+  background:#EDE4D4!important;
+  border-color:#DCC9A8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-edit-page[data-access-page="main_admin_detail"] .mae-status-btn.is-active{
+  background:#FFFCF7!important;
+  box-shadow:0 1px 3px rgba(120,80,20,.14)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-edit-page[data-access-page="main_admin_detail"] .mae-pass-modal-fields .form-control::placeholder{
+  color:#78716C!important;
 }
 
 @media (max-width:575.98px){

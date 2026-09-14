@@ -11,6 +11,7 @@ colors:
   text-light: "#18191C"
   text-secondary-light: "#27272A"
   muted-light: "#71717A"
+  placeholder-light: "#78716C"
   bg-light: "#FFF1DC"
   surface-light: "#FFF8EB"
   border-light: "#EADCC8"
@@ -70,7 +71,7 @@ Former **Deep Navy Cyan** (`#123B66` / `#21A6D7` / `#072647` / `#08131F`) is **r
 
 Backoffice is a desktop-first ops panel. Visual world: **Charcoal structure + Amber interaction**.
 
-- Light: orange→cream canvas continuum; warm cream sidebar; cream panels (`#FFF8EB`, not ivory/white). **Locked 2026-09-14.**
+- Light: orange→cream canvas continuum; warm cream sidebar; listing panels `#FFF8EB`. **Form pages use a layer ladder** (lift `#FFFCF7` → well `#F5EBDC` → nested `#F0E4D0`) — never one flat cream. **Locked 2026-09-14.**
 - Dark: warm charcoal→cool charcoal continuum; soft surfaces (not dead black); amber neon accents.
 
 ### Light mode surfaces (locked — copy exactly)
@@ -82,9 +83,13 @@ User-confirmed on Dashboard main pane (topbar + canvas + cards). Do not regress 
 | Sidebar (opaque) | `#FFE8CC` | Warmest peach; covers content when expanded |
 | Canvas / `--bo-bg` | `#FFF1DC` | Cream under panels |
 | Continuum L→R | `#FFE8CC` → `#FFF1DC` → `#FFF3E0` → `#FFF6E8` → `#FFF8EB` | Canvas only; `background-attachment: fixed` |
-| Surface / topbar / cards | `#FFF8EB` | Same cream as tip bg |
-| Border | `#EADCC8` | Warm separator |
-| Control well (currency seg etc.) | `#F5EBDC` | Slightly deeper cream inset |
+| Surface / topbar / listing cards | `#FFF8EB` | Same cream as tip bg |
+| Form section lift (Create/Edit) | `#FFFCF7` | Brighter than canvas; never flatten to one cream |
+| Form border (Create/Edit) | `#DCC9A8` | Stronger than listing `#EADCC8` |
+| Border (listing / default) | `#EADCC8` | Warm separator |
+| Control well (inputs / currency) | `#F5EBDC` | Deeper cream inset |
+| Nested well (privileges / security) | `#F0E4D0` | One step deeper than control well |
+| Locked / readonly well | `#EDE4D4` | Non-editable fields |
 | Accent-on (text on amber fill) | `#FFFFFF` | Only place pure white is allowed |
 
 Reference CSS: `main-dashboard-executive.css` light tokens.
@@ -117,8 +122,8 @@ Theme toggle: `data-bo-theme` / `localStorage.bo_theme`. Prefer `--bo-*` tokens 
 | Text | `#18191C` | `#F5F5F4` |
 | Text secondary | `#27272A` | `#E7E5E4` |
 | Muted / time | `#71717A` | `#A1A1AA` |
-| Control well | `#F0EFEA` | `rgba(255,255,255,.06)` |
-| Placeholder | `#A1A1AA` | `#71717A` |
+| Control well | `#F5EBDC` | `rgba(255,255,255,.06)` |
+| Placeholder | `#78716C` (on cream wells) | `#A1A1AA` |
 
 ### Sidebar & canvas continuum
 
@@ -131,6 +136,12 @@ Theme toggle: `data-bo-theme` / `localStorage.bo_theme`. Prefer `--bo-*` tokens 
 
 Sidebar edge rail: 2px amber gradient (`#F59E0B` → `#D97706`).  
 Nav L1 weight: `font-weight: 800`. Light nav text/icons: `#6b360c`.
+
+**Desktop flyout (`.nav-group-list`)** — light `#FFF8EB` (never `#fff`; beat `reports.css`). Dark `#383A46` + `rgba(255,255,255,.14)` border.
+
+**L2 active (`.report-sub.active`) — locked**  
+Cream chip `#FFFBEB`→`#FEF3C7` + amber frame `#D97706` + soft amber shadow. Dark: amber/charcoal chip + `rgba(245,158,11,.55)` border · text `#FBBF24`.  
+Hover = soft wash only (no frame). Do not use flat active wash. Full tables: `.interface-design/system.md` → Patterns → Sidebar nav.
 
 ### CSS token map (compatibility)
 
@@ -150,17 +161,29 @@ Nav L1 weight: `font-weight: 800`. Light nav text/icons: `#6b360c`.
 |---------|-------|------|
 | Primary CTA | amber gradient `#FBBF24`→`#F59E0B`→`#EA8608`, text white, border `#E8901A` | `#FBBF24`→`#F59E0B`→`#D97706`, text `#2A2C36`, border `#F59E0B` |
 | Primary hover | reverse lift `#FCD34D`→`#FBBF24`→`#F59E0B`→`#EA8608` | reverse `#FDE68A`→`#FBBF24`→`#F59E0B` |
-| Ghost / Export | `#FFF8EB`→`#F3E8D6`, border `#EADCC8`, text `#18191C` | `#4A4C58`→`#383A46`→`#2C2E38`, text `#F5F5F4` |
+| Ghost / Export | `#FFFCF7`→`#F5EBDC`→`#EDE4D4`, border `#DCC9A8`, text `#18191C` (form pages) · listing may use `#FFF8EB`→`#F3E8D6` / `#EADCC8` | `#4A4C58`→`#383A46`→`#2C2E38`, text `#F5F5F4` |
 | Hover tip | `#FFF8EB` + amber border, text `#6b360c`, radius `8px` | `#40424E` + amber border, text `#F5F5F4`, radius `8px` |
 | Money positive | `#B45309` | `#F59E0B` |
-| Money zero | `#A1A1AA` | `#A1A1AA` |
+| Money zero | `#71717A` | `#A1A1AA` |
 | Modal z-index | above sidebar (`30000`); modals live under `body`, not inside `main` | same |
 | Permission group (open) | cream `#FFFCF7` · head `#FFF8EB`→`#FFF1DC` · amber border | cool `#383A46` · open head `#40424E` · body `#2C2E38` · amber border only |
 | Permission card | surface `#FFF8EB` · hover `#FFFCF7` · checked `#FFF8EB` · current `#FFF1DC` | `#2A2C36` · hover `#32343E` · checked/current amber tint only |
 | Data table panel border | `#EADCC8` | `rgba(255,255,255,.14)` |
 | Data table header text | `#3F3F46` / `700` | `#E7E5E4` / `700` |
-| Data table cell / muted | `#374151` · muted `#9CA3AF` | `#F5F5F4` · muted/time `#D4D4D8` |
+| Data table cell / muted | `#374151` · muted/time `#57534E` | `#F5F5F4` · muted/time `#D4D4D8` |
 | Data table row divider | `#F0E6D8` | `rgba(255,255,255,.12)` |
+| Action icons | `#57534E` · hover amber | `#D4D4D8` · hover amber |
+| Modal close | well `#F5EBDC` · border `#EADCC8` · icon `#57534E` | charcoal well · light icon |
+| Sidebar flyout panel | `#FFF8EB` · warm border | `#383A46` · `rgba(255,255,255,.14)` |
+| Sidebar L2 active | `#FFFBEB`→`#FEF3C7` + border `#D97706` | amber/charcoal chip + border `rgba(245,158,11,.55)` · text `#FBBF24` |
+| Create / Edit section card | lift `#FFFCF7` · border `#DCC9A8` · warm shadow · **3px amber left rail** | `--bo-surface` |
+| Create / Edit inputs | `#F5EBDC` · border `#DCC9A8` · placeholder `#78716C` | `#2A2C36` · `rgba(255,255,255,.12)` |
+| Create / Edit nested well | `#F0E4D0` (privileges / policy / security) | faint wash |
+| Create / Edit locked field | `#EDE4D4` · text `#57534E` | charcoal wash |
+| Create / Edit status seg | track `#EDE4D4` · active `#FFFCF7` | charcoal |
+| Create / Edit sticky footer | `#FFFCF7` · border `#DCC9A8` · stronger warm shadow | translucent charcoal |
+| Create Role name input | control well `#F5EBDC` · border `#EADCC8` | `#2A2C36` · border `rgba(255,255,255,.12)` |
+| Create Role chips / search / ghost | well `#F5EBDC` · Toggle All amber wash `rgba(217,119,6,.12)` | charcoal well · amber wash |
 
 ### Topbar chrome (locked — all pages)
 
@@ -195,7 +218,32 @@ Reference CSS: `menu-permission-executive.css`. Full tables in `.interface-desig
 
 Dark panel border `rgba(255,255,255,.14)`; row line `.12`; header `#E7E5E4`; cell `#F5F5F4`; muted/time `#D4D4D8`.  
 Never leave light cream borders unscoped, or use dark header `#71717A` / ultra-faint `.06` dividers.  
+**Light muted on cream:** use `#57534E` (not `#9CA3AF` / `#A1A1AA` — too faint). Placeholders `#78716C`. Modal close cream well.  
 Full table: `.interface-design/system.md` → Patterns → Data tables.
+
+### Create / Edit Admin — form hierarchy (locked)
+
+Do **not** paint every surface the same cream. Use a **layer ladder** so the eye finds sections and the Save CTA:
+
+| Layer | Light | Role |
+|-------|-------|------|
+| Canvas continuum | `#FFE8CC`→`#FFF8EB` | Atmosphere only |
+| Section card (`.mac-section`) | lift `#FFFCF7` · border `#DCC9A8` · warm shadow · **3px amber left rail** | Primary content frame |
+| Control well (inputs) | `#F5EBDC` · border `#DCC9A8` | Editable fields inset into card |
+| Nested well (privileges / policy / security) | `#F0E4D0` | Subordinate grouping |
+| Chip / tag / status active | `#FFFCF7` | Lifted controls |
+| Locked / readonly | `#EDE4D4` · text `#57534E` | Non-editable |
+| Ghost buttons | cream Export gradient `#FFFCF7`→`#F5EBDC`→`#EDE4D4` · border `#DCC9A8` | Secondary actions |
+| Primary CTA | amber gradient | **Focal action** (Save / Create) |
+
+Section head: bottom hairline `#EADCC8` + amber icon tile. Help `#57534E` · placeholder `#78716C`.  
+Pages: `main-admin-create.html`, `main-admin-edit.html` (+ shared `.mac-*` CSS).  
+Never cool `#fff` / `#FBFCFE` / `#F1F5F9` chrome. Full table: `.interface-design/system.md` → Patterns → Forms.
+
+### Create Role (Role Name input — locked)
+
+Light: `.mrc-field .form-control` + `.mp-search` / chips / Back = `#F5EBDC` · `#EADCC8`. **Toggle All** (`.mrc-chip-btn.is-accent`) = amber wash `rgba(217,119,6,.12)` — never cool cyan. Override `reports.css` `#fff!important`.  
+Dark: inputs `#2A2C36`; accent amber wash. CSS: `main-admin-role-create.css`.
 
 ## Typography
 
@@ -207,7 +255,7 @@ Shell: sidebar + sticky topbar + main. One job per section. Touch targets ≥44p
 
 ## Elevation & Depth
 
-Light: 1px border + soft warm shadow. Dark: surface lift via border; soft charcoal shadows only. Focus rings: amber (`rgba(217,119,6,.18)` / `rgba(245,158,11,.18)`).
+Light: form pages use the **layer ladder** (lifted cards + warm shadow + amber rail). Listing tables: 1px border + soft warm shadow. Dark: surface lift via border; soft charcoal shadows only. Focus rings: amber (`rgba(217,119,6,.18)` / `rgba(245,158,11,.18)`).
 
 ## Shapes
 
@@ -227,5 +275,7 @@ Action controls / theme toggle `8px`, cards `16px`, topbar avatar `12px`, chart 
 - Purple-on-white / indigo marketing gradients as product identity.
 - Dead pure black (`#000` / `#0A0A0B`) for dark canvas.
 - Muddy full-page orange wash under table panels.
+- Flatten Create/Edit forms to one cream (skip the layer ladder / amber rail).
+- Cool `#fff` / `#FBFCFE` / `#F1F5F9` chrome on cream form pages.
 - Invent a different User Name pill, theme-toggle size, or primary gradient per page.
 - Assume writing tokens in MD alone paints the page — CSS must implement and win specificity wars.
