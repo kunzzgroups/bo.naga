@@ -261,6 +261,29 @@ Storage / attribute: `localStorage.bo_theme` + `html[data-bo-theme="light|dark"]
 - Inputs: dark soft charcoal `#2A2C36` on dark; light well `#F5EBDC` / surface `#FFF8EB` on light
 - Focus: amber ring (never cyan) — e.g. `0 0 0 3px rgba(217,119,6,.12)`
 
+### Data tables (Admin Management — locked contrast)
+
+Reference: `main-admin-detail.html` / `main-admin-security.html` + Charcoal block in `main-admin-detail-executive.css` (`.mad-panel` / `.mad-table` / `.mad-table-wrap`).
+
+**Rule:** Scope light cream borders under `html:not([data-bo-theme="dark"])` so they never leak into dark. Dark must set full `border` / `border-bottom` (not only `border-*-color`), or cream edges “跑掉.”
+
+| Spec | Light | Dark |
+|------|-------|------|
+| Panel / wrap bg | `#FFF8EB` | `#383A46` |
+| Panel outer border | `#EADCC8` | `1px solid rgba(255,255,255,.14)` |
+| Header text (`.mad-table th`) | `#3F3F46` / weight `700` | `#E7E5E4` / weight `700` |
+| Header bottom border | `#EADCC8` | `1px solid rgba(255,255,255,.14)` |
+| Body cell text (`.mad-table td`) | `#374151` | `#F5F5F4` |
+| Row divider | `#F0E6D8` | `1px solid rgba(255,255,255,.12)` |
+| Row hover | `#FFF1DC` | `rgba(255,255,255,.05)` |
+| Muted / time / email / detail | `#9CA3AF` · time tip `#71717A` | `#D4D4D8` (never `#71717A` / `#A1A1AA` on charcoal — too close to bg) |
+| Username emphasis | `#18191C` | `#F5F5F4` |
+| Action icons | muted charcoal | `#D4D4D8` · hover amber |
+| Filter bar / footer edge | cream border | `rgba(255,255,255,.14)` |
+| Footer info text | muted | `#D4D4D8` |
+
+Do **not** use dark header `#71717A` or row borders `rgba(255,255,255,.06–.08)` — fails contrast on `#383A46`.
+
 ### Date / time tips
 
 - Light cream tip or dark charcoal tip per mode above — never navy `#0F1F33`
@@ -333,6 +356,7 @@ Collapsed group (dark): same cool `#383A46` surface, white/10 border — not cre
 | Action control radius `8px` (not 10px) | Match shipped Admin chrome | 2026-09-14 |
 | Permission matrix: light cream wash / dark cool charcoal | User locked Roles & Permissions open-group look; dark avoids muddy amber panel | 2026-09-14 |
 | Light surfaces = cream `#FFF8EB` locked (no ivory / no pure white) | User confirmed Dashboard light main pane (topbar + canvas + cards) 2026-09-14 | 2026-09-14 |
+| Dark table: stronger borders + lighter text | User: dark Admin table borders “跑掉”; headers/cells too close to charcoal bg | 2026-09-14 |
 
 ## Agent rules
 
@@ -346,3 +370,4 @@ Collapsed group (dark): same cool `#383A46` surface, white/10 border — not cre
 8. **Dark mode must beat legacy CSS:** `reports.css` still has `.report-body{background:#f5f7fb!important}`. Page CSS must override body/html/canvas with equal-or-higher specificity + `!important`, or white frames will leak around dark cards. Never assume MD tokens alone paint the canvas.
 9. **Permission matrix dual wash:** light = cream/amber group wash; dark = cool charcoal surfaces only (amber accents, never muddy amber panel fill). Copy from Patterns → Permission matrix.
 10. **No pure white in light chrome:** canvas end, topbar, and panels use cream `#FFF8EB` (continuum → `#FFF6E8` → `#FFF8EB`). Keep `#FFFFFF` only for text-on-amber (`--bo-accent-on`). Do not settle for near-white ivory (`#FFFCF8`) on Dashboard main pane.
+11. **Dark data tables:** outer/row borders ≥ `rgba(255,255,255,.12–.14)`; header `#E7E5E4`; cells `#F5F5F4`; muted/time `#D4D4D8`. Scope light cream table CSS with `html:not([data-bo-theme="dark"])`. Copy from Patterns → Data tables.

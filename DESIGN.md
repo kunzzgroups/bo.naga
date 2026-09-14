@@ -157,6 +157,10 @@ Nav L1 weight: `font-weight: 800`. Light nav text/icons: `#6b360c`.
 | Modal z-index | above sidebar (`30000`); modals live under `body`, not inside `main` | same |
 | Permission group (open) | cream `#FFFCF7` · head `#FFF8EB`→`#FFF1DC` · amber border | cool `#383A46` · open head `#40424E` · body `#2C2E38` · amber border only |
 | Permission card | surface `#FFF8EB` · hover `#FFFCF7` · checked `#FFF8EB` · current `#FFF1DC` | `#2A2C36` · hover `#32343E` · checked/current amber tint only |
+| Data table panel border | `#EADCC8` | `rgba(255,255,255,.14)` |
+| Data table header text | `#3F3F46` / `700` | `#E7E5E4` / `700` |
+| Data table cell / muted | `#374151` · muted `#9CA3AF` | `#F5F5F4` · muted/time `#D4D4D8` |
+| Data table row divider | `#F0E6D8` | `rgba(255,255,255,.12)` |
 
 ### Topbar chrome (locked — all pages)
 
@@ -186,6 +190,12 @@ Do not freestyle topbar account chips or primary fills (no navy/cyan primary). F
 Light: open groups use cream/amber wash; cards `#FFF8EB` → deeper cream on hover/checked/current.  
 Dark: cool charcoal only (`#383A46` / `#40424E` / `#2C2E38` / `#2A2C36`) — **no** full-panel amber wash; amber only on borders, icons, counts, checked/current tint.  
 Reference CSS: `menu-permission-executive.css`. Full tables in `.interface-design/system.md` → Patterns → Permission matrix.
+
+### Data tables (Admin — locked dark contrast)
+
+Dark panel border `rgba(255,255,255,.14)`; row line `.12`; header `#E7E5E4`; cell `#F5F5F4`; muted/time `#D4D4D8`.  
+Never leave light cream borders unscoped, or use dark header `#71717A` / ultra-faint `.06` dividers.  
+Full table: `.interface-design/system.md` → Patterns → Data tables.
 
 ## Typography
 

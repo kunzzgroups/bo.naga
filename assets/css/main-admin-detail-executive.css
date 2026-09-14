@@ -6893,7 +6893,7 @@ body.main-merchant-detail-page .mac-provider-markup-field input[type="number"]::
    ========================================================================== */
 body.main-admin-detail-page[data-access-page="main_admin_detail"],
 body.main-admin-detail-page[data-access-page="main_admin_security"]{
-  /* Light mode system board: Primary #D97706 · Secondary #2563EB · Tertiary #F59E0B · Neutral #18191C */
+  /* Light cream locked: surface #FFF8EB · no pure white chrome */
   --bo-navy:#18191C;
   --bo-cyan:#D97706;
   --bo-cyan-deep:#B45309;
@@ -6901,22 +6901,22 @@ body.main-admin-detail-page[data-access-page="main_admin_security"]{
   --bo-tertiary:#F59E0B;
   --bo-success:#12B76A;
   --bo-danger:#991B1B;
-  --bo-bg:#F7F6F3;
-  --bo-surface:#FFFFFF;
-  --bo-border:#E4E4E7;
+  --bo-bg:#FFF1DC;
+  --bo-surface:#FFF8EB;
+  --bo-border:#EADCC8;
   --bo-text:#18191C;
   --bo-text-secondary:#27272A;
   --bo-muted:#71717A;
-  --bo-sidebar-bg:#EDEAE3;
-  --bo-sidebar-text:#18191C;
+  --bo-sidebar-bg:#FFE8CC;
+  --bo-sidebar-text:#6b360c;
   --bo-sidebar-active:#D97706;
   --bo-sidebar-active-bg:#FFE8CC;
   --bo-sidebar-active-bg-strong:rgba(217,119,6,.16);
   --bo-cyan-tint:rgba(217,119,6,.12);
   --bo-cyan-tint-strong:rgba(217,119,6,.20);
-  --bo-control-well:#F0EFEA;
-  --bo-control-well-hover:#E8E7E1;
-  --bo-control-border:#D4D4D8;
+  --bo-control-well:#F5EBDC;
+  --bo-control-well-hover:#F0E4D0;
+  --bo-control-border:#EADCC8;
   --bo-placeholder:#A1A1AA;
   --bo-navy-hover:#27272A;
   --bo-ui-blue:#D97706;
@@ -6926,22 +6926,20 @@ body.main-admin-detail-page[data-access-page="main_admin_security"]{
 }
 html:has(body.main-admin-detail-page[data-access-page="main_admin_detail"]),
 html:has(body.main-admin-detail-page[data-access-page="main_admin_security"]){
-  background:#F7F6F3;
+  background:#FFF1DC;
 }
 
-/* Light canvas — Orange → White Continuum (sidebar → page)
-   Soft amber wash into white; short seam (~96px).
-   Panels stay solid white surface. */
+/* Light canvas — orange → cream (locked; no near-white fade) */
 html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_detail"]),
 html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_security"]){
-  background-color:#FFFFFF;
+  background-color:#FFF6E8;
   background-image:linear-gradient(90deg,
     #FFE8CC 0,
     #FFF1DC calc(var(--sidebar-w,280px) * .72),
-    #FFF8EB var(--sidebar-w,280px),
-    #FFFCF7 calc(var(--sidebar-w,280px) + 48px),
-    #FFFFFF calc(var(--sidebar-w,280px) + 96px),
-    #FFFFFF 100%
+    #FFF3E0 var(--sidebar-w,280px),
+    #FFF6E8 calc(var(--sidebar-w,280px) + 64px),
+    #FFF8EB calc(var(--sidebar-w,280px) + 140px),
+    #FFF8EB 100%
   );
   background-attachment:fixed;
   background-repeat:no-repeat;
@@ -6967,7 +6965,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-topbar,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-topbar{
-  background:#FFFFFF!important;
+  background:#FFF8EB!important;
   backdrop-filter:none;
   -webkit-backdrop-filter:none;
 }
@@ -7347,7 +7345,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   background:#111111;border-color:#3F3F46;
 }
 
-/* Export / ghost — light: white lift; dark: gray→black gradient */
+/* Export / ghost — light: cream lift; dark: gray→black gradient */
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-ghost,
 body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-ghost,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] #madExportBtn,
@@ -7355,9 +7353,9 @@ body.main-admin-detail-page[data-access-page="main_admin_security"] #madExportBt
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-chrome-actions .mad-btn-ghost,
 body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-chrome-actions .mad-btn-ghost{
   border-radius:8px!important;
-  background-color:#F3F4F6!important;
-  background-image:linear-gradient(180deg,#FFFFFF 0%,#F3F4F6 100%)!important;
-  border:1px solid #E6E2DA!important;
+  background-color:#F3E8D6!important;
+  background-image:linear-gradient(180deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border:1px solid #EADCC8!important;
   color:#18191C!important;
   box-shadow:0 1px 2px rgba(24,25,28,.06),0 2px 6px rgba(24,25,28,.05)!important;
   transition:transform .14s ease,box-shadow .14s ease,background-image .14s ease,border-color .14s ease!important;
@@ -7368,9 +7366,9 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] #madExportBtn:
 body.main-admin-detail-page[data-access-page="main_admin_security"] #madExportBtn:hover,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-chrome-actions .mad-btn-ghost:hover,
 body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-chrome-actions .mad-btn-ghost:hover{
-  background-color:#F3F4F6!important;
-  background-image:linear-gradient(0deg,#FFFFFF 0%,#F3F4F6 100%)!important;
-  border-color:#D6D1C7!important;
+  background-color:#F3E8D6!important;
+  background-image:linear-gradient(0deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border-color:#E0D0B8!important;
   color:#18191C!important;
   box-shadow:0 2px 4px rgba(24,25,28,.08),0 4px 10px rgba(24,25,28,.07)!important;
   transform:translateY(-1px)!important;
@@ -7380,7 +7378,7 @@ body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-gho
 body.main-admin-detail-page[data-access-page="main_admin_detail"] #madExportBtn:active,
 body.main-admin-detail-page[data-access-page="main_admin_security"] #madExportBtn:active{
   transform:translateY(1px)!important;
-  background-image:linear-gradient(180deg,#F9FAFB 0%,#E5E7EB 100%)!important;
+  background-image:linear-gradient(180deg,#FFF1DC 0%,#EADCC8 100%)!important;
   box-shadow:0 1px 2px rgba(24,25,28,.06)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-ghost,
@@ -7949,12 +7947,12 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   display:none!important;
 }
 
-/* Light flyout panel: white canvas, L2 keeps amber chip structure */
+/* Light flyout panel: cream surface (locked), L2 keeps amber chip structure */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list{
-  background:#fff!important;
-  border:1px solid rgba(24,25,28,.08)!important;
-  box-shadow:0 12px 32px rgba(0,0,0,.18)!important;
+  background:#FFF8EB!important;
+  border:1px solid rgba(92,74,48,.12)!important;
+  box-shadow:0 12px 32px rgba(60,48,32,.14)!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub{
@@ -8116,46 +8114,48 @@ body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-you{
   font-size:10px;font-weight:700;letter-spacing:.02em;line-height:1;
 }
 
-/* Light table */
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-panel,
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-panel,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table-wrap,
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table-wrap{
-  background:#FFFFFF!important;
+/* Light table (scoped — do not leak cream borders into dark) */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-panel,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-panel,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table-wrap,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table-wrap{
+  background:#FFF8EB!important;
+  border-color:#EADCC8!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table th,
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table th{
-  color:#9CA3AF!important;
-  border-bottom:1px solid #F3F4F6!important;
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table th,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table th{
+  color:#3F3F46!important;
+  border-bottom:1px solid #EADCC8!important;
   background:transparent!important;
+  font-weight:700!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td,
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td{
   color:#374151!important;
-  border-bottom:1px solid #F3F4F6!important;
+  border-bottom:1px solid #F0E6D8!important;
   background:transparent!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table tbody tr:hover td,
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table tbody tr:hover td{
-  background:#FAFAF9!important;
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table tbody tr:hover td,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table tbody tr:hover td{
+  background:#FFF1DC!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td.mad-detail,
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td.mad-detail,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td.mad-time,
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td.mad-time,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-muted,
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-muted,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-email,
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-email{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td.mad-detail,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td.mad-detail,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td.mad-time,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td.mad-time,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-muted,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-muted,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-email,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-email{
   color:#9CA3AF!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time,
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-time{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-time{
   font-variant-numeric:tabular-nums;
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-user-copy b,
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-user-copy b{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-user-copy b,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-user-copy b{
   color:#18191C!important;
 }
 
@@ -8213,8 +8213,8 @@ body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role.is
 }
 
 /* Light credit */
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money,
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-money{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-money{
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important;
   font-variant-numeric:tabular-nums!important;
   font-weight:700!important;
@@ -8222,18 +8222,18 @@ body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .
   padding:0!important;
   color:#27272A!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money.is-zero,
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-money.is-zero{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money.is-zero,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-money.is-zero{
   color:#A1A1AA!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money.is-positive,
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-money.is-positive{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money.is-positive,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-money.is-positive{
   color:#B45309!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time,
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-time,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time-tip,
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-time-tip{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-time,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time-tip,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-time-tip{
   color:#71717A!important;
   font-weight:600!important;
 }
@@ -8292,12 +8292,12 @@ body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-footer-
   color:#9CA3AF!important;
 }
 
-/* Status filter pills — Active/Suspend/All (light + dark comps) */
+/* Status filter pills — Active/Suspend/All match Export ghost (8px cream lift) */
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pills,
 body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pills{
   display:inline-flex!important;
   align-items:center!important;
-  gap:4px!important;
+  gap:6px!important;
   padding:0!important;
   border-radius:0!important;
   background:transparent!important;
@@ -8308,14 +8308,14 @@ body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill{
   display:inline-flex!important;
   align-items:center!important;
   position:relative!important;
-  height:32px!important;
+  height:36px!important;
   padding:0 14px!important;
   border-radius:999px!important;
   border:1px solid transparent!important;
   background:transparent!important;
-  color:#9CA3AF!important;
-  font-size:13px!important;
-  font-weight:600!important;
+  color:#71717A!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
   box-shadow:none!important;
   gap:8px!important;
 }
@@ -8337,21 +8337,22 @@ body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill[da
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill.is-active,
 body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill.is-active{
-  /* Thumb draws the single frame; keep pill itself clear */
+  /* Thumb draws Export-style frame; keep pill fill clear */
   background:transparent!important;
   color:#18191C!important;
   font-weight:700!important;
   border-color:transparent!important;
   box-shadow:none!important;
+  z-index:1;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pills.bo-seg > .bo-seg-thumb,
 body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pills.bo-seg > .bo-seg-thumb{
   top:0!important;
   height:100%!important;
   border-radius:999px!important;
-  background-color:#F3F4F6!important;
-  background-image:linear-gradient(180deg,#FFFFFF 0%,#F3F4F6 100%)!important;
-  border:1px solid #E6E2DA!important;
+  background-color:#F3E8D6!important;
+  background-image:linear-gradient(180deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border:1px solid #EADCC8!important;
   box-shadow:0 1px 2px rgba(24,25,28,.06),0 2px 6px rgba(24,25,28,.05)!important;
   box-sizing:border-box!important;
   opacity:1;
@@ -8418,6 +8419,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pills.bo-seg > .bo-seg-thumb,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pills.bo-seg > .bo-seg-thumb{
+  border-radius:999px!important;
   background-color:#383A46!important;
   background-image:linear-gradient(180deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%)!important;
   border:1px solid rgba(255,255,255,.12)!important;
@@ -8449,22 +8451,25 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table-wrap,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table-wrap{
   background:#383A46!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:none!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table th,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table th{
-  color:#71717A!important;
-  border-bottom-color:rgba(255,255,255,.08)!important;
+  color:#E7E5E4!important;
+  border-bottom:1px solid rgba(255,255,255,.14)!important;
   background:transparent!important;
+  font-weight:700!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td{
-  color:#E7E5E4!important;
-  border-bottom-color:rgba(255,255,255,.06)!important;
+  color:#F5F5F4!important;
+  border-bottom:1px solid rgba(255,255,255,.12)!important;
   background:transparent!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table tbody tr:hover td,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table tbody tr:hover td{
-  background:rgba(255,255,255,.03)!important;
+  background:rgba(255,255,255,.05)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td.mad-detail,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td.mad-detail,
@@ -8473,8 +8478,12 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-muted,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-muted,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-email,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-email{
-  color:#A1A1AA!important;
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-email,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-time,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time-tip,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-time-tip{
+  color:#D4D4D8!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-time{
@@ -8596,13 +8605,23 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
 /* Action icons */
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-icon-btn{
-  color:#A1A1AA!important;
+  color:#D4D4D8!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-icon-btn:hover{
   background:rgba(245,158,11,.14)!important;
   color:#F59E0B!important;
   box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-footer,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-footer,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-filter-bar,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-filter-bar{
+  border-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-footer-info,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-footer-info{
+  color:#D4D4D8!important;
 }
 
 /* Top-right chrome — theme toggle + identity + amber avatar (light/dark comps) */
