@@ -23,6 +23,7 @@ An operations control surface for brand and platform ops — not a marketing sit
 ## Operating Context
 
 - Desktop-first web admin with light/dark theme (`bo_theme` / `data-bo-theme`).
+- Light mode chrome is **warm cream** (surface `#FFF8EB`, sidebar `#FFE8CC`) — not pure white; see `DESIGN.md`.
 - Shared shell: sidebar navigation, top bar, report/dashboard layouts across many static HTML pages.
 - Roles span Main / Root admin, merchant admin, and agent surfaces.
 - Typical jobs: scan KPIs by date range, manage members/funds, configure games and promos, review reports and settlements.

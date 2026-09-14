@@ -75,6 +75,19 @@
     });
     renderCurrencySelects();
   }
+  /** Toggle active state only — do not wipe buttons (preserves listeners, avoids chrome flash). */
+  function syncCurrencyButtons(){
+    const cur=active();
+    document.querySelectorAll('.mre-currency-seg [data-currency],.np-currency-seg [data-currency]').forEach(b=>{
+      const on=String(b.dataset.currency||'').toUpperCase()===cur;
+      b.classList.toggle('is-active',on);
+      b.setAttribute('aria-pressed',on?'true':'false');
+    });
+    renderCurrencySelects();
+  }
+  function softCurrencyPage(){
+    return !!(document.body&&document.body.classList.contains('main-dashboard-page'));
+  }
   function applyConfig(data){
     state.baseCurrency=String((data&&data.baseCurrency)||'MYR').toUpperCase();
     state.rates=Array.isArray(data&&data.rates)?data.rates:[];
@@ -113,10 +126,13 @@
     const changed=next!==active();
     state.currency=next;
     sessionStorage.setItem(STORAGE_KEY,next);
-    renderCurrencyGroups();
+    const hasBtns=!!document.querySelector('.mre-currency-seg [data-currency],.np-currency-seg [data-currency]');
+    if(hasBtns)syncCurrencyButtons();
+    else renderCurrencyGroups();
     updateLabels();
     window.dispatchEvent(new CustomEvent('bo:main-currency-change',{detail:{...state,currency:next}}));
-    if(reload&&changed)location.reload();
+    // Dashboard soft-updates chart data only — never full reload (sidebar/chrome stay put).
+    if(reload&&changed&&!softCurrencyPage())location.reload();
   }
 
   window.fetch=function(input,init){

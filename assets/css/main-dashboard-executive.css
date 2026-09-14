@@ -2,15 +2,15 @@
    Tokens from DESIGN.md / .interface-design/system.md. Do not reintroduce Deep Navy Cyan. */
 
 body.main-dashboard-page{
-  /* Light: Primary #D97706 · Neutral #18191C · Orange→White continuum */
+  /* Light: Primary #D97706 · Neutral #18191C · Orange→cream continuum (warmer main chrome) */
   --bo-navy:#18191C;
   --bo-cyan:#D97706;
   --bo-cyan-deep:#B45309;
   --bo-success:#12B76A;
   --bo-danger:#991B1B;
-  --bo-bg:#F7F6F3;
-  --bo-surface:#FFFFFF;
-  --bo-border:#E4E4E7;
+  --bo-bg:#FFF1DC;
+  --bo-surface:#FFF8EB;
+  --bo-border:#EADCC8;
   --bo-text:#18191C;
   --bo-text-secondary:#27272A;
   --bo-muted:#71717A;
@@ -31,16 +31,16 @@ body.main-dashboard-page{
   -webkit-font-smoothing:antialiased;
 }
 
-/* Light canvas — Orange → White Continuum */
+/* Light canvas — keep cream through the main pane (no near-white fade) */
 html:not([data-bo-theme="dark"]):has(body.main-dashboard-page){
-  background-color:#FFFFFF;
+  background-color:#FFF6E8;
   background-image:linear-gradient(90deg,
     #FFE8CC 0,
     #FFF1DC calc(var(--sidebar-w,280px) * .72),
-    #FFF8EB var(--sidebar-w,280px),
-    #FFFCF7 calc(var(--sidebar-w,280px) + 48px),
-    #FFFFFF calc(var(--sidebar-w,280px) + 96px),
-    #FFFFFF 100%
+    #FFF3E0 var(--sidebar-w,280px),
+    #FFF6E8 calc(var(--sidebar-w,280px) + 64px),
+    #FFF8EB calc(var(--sidebar-w,280px) + 140px),
+    #FFF8EB 100%
   );
   background-attachment:fixed;
   background-repeat:no-repeat;
@@ -188,7 +188,7 @@ html:not([data-bo-theme="dark"]) .main-dashboard-page .report-sidebar .report-na
   opacity:1;
 }
 .main-dashboard-page .report-sidebar .nav-group-list{
-  background:#FFFFFF!important;
+  background:#FFF8EB!important;
 }
 .main-dashboard-page .report-sidebar .report-nav a.report-sub{
   color:#6b360c!important;
@@ -276,6 +276,10 @@ html:not([data-bo-theme="dark"]) .main-dashboard-page .report-sidebar .report-na
 }
 
 /* ---- Topbar (locked chrome — match Admin Detail) ---- */
+html:not([data-bo-theme="dark"]) body.main-dashboard-page .report-topbar{
+  background:#FFF8EB!important;
+  border-bottom-color:#EADCC8!important;
+}
 .main-dashboard-page .report-topbar{
   background:var(--bo-surface)!important;
   border-bottom:1px solid var(--bo-border)!important;
@@ -464,6 +468,10 @@ html:not([data-bo-theme="dark"]) .main-dashboard-page .report-sidebar .report-na
   min-height:0;
   animation:bo-exec-rise .52s var(--bo-ease) both;
 }
+html:not([data-bo-theme="dark"]) body.main-dashboard-page .np-card{
+  background:#FFF8EB!important;
+  border-color:#EADCC8!important;
+}
 .np-head{
   display:flex;
   align-items:flex-start;
@@ -513,7 +521,7 @@ body.main-dashboard-page .mre-currency-seg{
   gap:2px !important;
   padding:4px !important;
   border-radius:8px !important;
-  background:#F0EFEA !important;
+  background:#F5EBDC !important;
   box-shadow:inset 0 0 0 1px rgba(24,25,28,.04) !important;
   border:0 !important;
 }
@@ -825,7 +833,7 @@ body.main-dashboard-page .mre-cur-btn:active{transform:scale(.97)}
   min-width:132px;
   max-width:min(220px, calc(100% - 16px));
   padding:10px 14px 11px;
-  border-radius:999px;
+  border-radius:8px;
   background:#FFF8EB;
   color:#6b360c;
   box-shadow:0 8px 22px rgba(60,48,32,.12);

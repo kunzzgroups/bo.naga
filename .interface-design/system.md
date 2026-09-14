@@ -10,10 +10,24 @@ Locked theme for this product. Do not invent alternate palettes.
 **Foundation:** Soft charcoal structure + amber interaction  
 **Depth:** Light = 1px border + soft warm shadow · Dark = borders / soft surface lift (no dead black)  
 **Signature:**  
-- Light: orange→white canvas continuum · opaque sidebar `#FFE8CC` · amber active  
+- Light: orange→cream canvas continuum · opaque sidebar `#FFE8CC` · surface/topbar `#FFF8EB` · amber active (**locked**)  
 - Dark: warm charcoal→cool charcoal continuum · opaque sidebar `#3A3226` · amber neon active  
 
-**Reference implementation:** Admin Detail pages (`data-access-page="main_admin_detail"`).
+**Reference implementation:** Admin Detail pages (`data-access-page="main_admin_detail"`); light cream chrome confirmed on Dashboard (`main-dashboard.html`).
+
+### Light mode (locked 2026-09-14)
+
+Do not use pure white `#FFFFFF` or ivory `#FFFCF8` for canvas / topbar / panels.
+
+| Role | Hex |
+|------|-----|
+| Sidebar | `#FFE8CC` |
+| `--bo-bg` | `#FFF1DC` |
+| Continuum | `#FFE8CC` → `#FFF1DC` → `#FFF3E0` → `#FFF6E8` → `#FFF8EB` |
+| `--bo-surface` (topbar, cards) | `#FFF8EB` |
+| `--bo-border` | `#EADCC8` |
+| Control well | `#F5EBDC` |
+| Accent-on only | `#FFFFFF` |
 
 ## Intent
 
@@ -50,9 +64,9 @@ Locked theme for this product. Do not invent alternate palettes.
 
 | Token | Light | Dark | Role |
 |-------|-------|------|------|
-| `--bo-bg` | `#F7F6F3` | `#2C2E38` | Page canvas base |
-| `--bo-surface` | `#FFFFFF` | `#383A46` | Cards, panels, topbar |
-| `--bo-border` | `#E4E4E7` | `rgba(255,255,255,.10)` | Separators / inputs |
+| `--bo-bg` | `#FFF1DC` | `#2C2E38` | Page canvas base (warm cream) |
+| `--bo-surface` | `#FFF8EB` | `#383A46` | Cards, panels, topbar (cream — not ivory/white) |
+| `--bo-border` | `#EADCC8` | `rgba(255,255,255,.10)` | Separators / inputs |
 | `--bo-text` | `#18191C` | `#F5F5F4` | Primary text |
 | `--bo-text-secondary` | `#27272A` | `#E7E5E4` | Secondary text |
 | `--bo-muted` | `#71717A` | `#A1A1AA` | Meta, time, captions |
@@ -75,7 +89,7 @@ Locked theme for this product. Do not invent alternate palettes.
 
 | Mode | Opaque sidebar | Canvas L→R (~96px past sidebar edge) |
 |------|----------------|--------------------------------------|
-| Light | `#FFE8CC` | `#FFE8CC` → `#FFF1DC` → `#FFF8EB` → `#FFFCF7` → `#FFFFFF` |
+| Light | `#FFE8CC` | `#FFE8CC` → `#FFF1DC` → `#FFF3E0` → `#FFF6E8` → `#FFF8EB` |
 | Dark | `#3A3226` | `#3A3226` → `#342E28` → `#2F2E32` → `#2D2E36` → `#2C2E38` |
 
 Rules:
@@ -93,7 +107,7 @@ Rules:
 | Hover tip bg | `#FFF8EB` | `#40424E` |
 | Hover tip text | `#6b360c` | `#F5F5F4` |
 | Hover tip border | `rgba(217,119,6,.28)` | `rgba(245,158,11,.35)` |
-| Tip radius | `999px` | `8–999px` (prefer pill on light) |
+| Tip radius | `8px` | `8px` |
 | Money positive | `#B45309` | `#F59E0B` |
 | Ghost / Export gradient | soft gray | `#4A4C58` → `#383A46` → `#2C2E38` |
 | Modal z-index | `30000` (above sidebar / flyout) | same |
@@ -111,7 +125,8 @@ Scale: `4, 8, 10, 12, 14, 16, 18, 20, 24, 32`
 | Cards / panels | `16px` |
 | Nav items | `10px` |
 | Avatar (topbar) | `12px` |
-| Pills / switches / light tips | `999px` |
+| Pills / switches | `999px` |
+| Chart hover tip (`.trend-tip`) | `8px` |
 
 ### Typography
 
@@ -151,7 +166,7 @@ Scale: `4, 8, 10, 12, 14, 16, 18, 20, 24, 32`
 
 | Mode | Topbar bg |
 |------|-----------|
-| Light | solid `#FFFFFF` |
+| Light | solid `#FFF8EB` |
 | Dark | solid `#383A46` |
 
 **Layout (right cluster, L→R):** Theme toggle (`.bo-theme-btn`) → 1px divider → User Name / profile (`.bo-account-link`)
@@ -220,8 +235,8 @@ Storage / attribute: `localStorage.bo_theme` + `html[data-bo-theme="light|dark"]
 
 | State | Light | Dark |
 |-------|-------|------|
-| Default fill | `linear-gradient(180deg, #FFFFFF → #F3F4F6)` | `linear-gradient(180deg, #4A4C58 → #383A46 → #2C2E38)` |
-| Border | `#E6E2DA` | `rgba(255,255,255,.12)` |
+| Default fill | `linear-gradient(180deg, #FFF8EB → #F3E8D6)` | `linear-gradient(180deg, #4A4C58 → #383A46 → #2C2E38)` |
+| Border | `#EADCC8` | `rgba(255,255,255,.12)` |
 | Label | `#18191C` | `#F5F5F4` |
 | Hover | reverse gradient · border `#D6D1C7` | reverse gradient · border `rgba(255,255,255,.18)` · label `#FFFFFF` |
 | Active | `#F9FAFB → #E5E7EB` | `#383A46 → #2C2E38` |
@@ -243,7 +258,7 @@ Storage / attribute: `localStorage.bo_theme` + `html[data-bo-theme="light|dark"]
 
 ### Forms
 
-- Inputs: dark soft charcoal `#2A2C36` on dark; light well `#F0EFEA` / surface white on light
+- Inputs: dark soft charcoal `#2A2C36` on dark; light well `#F5EBDC` / surface `#FFF8EB` on light
 - Focus: amber ring (never cyan) — e.g. `0 0 0 3px rgba(217,119,6,.12)`
 
 ### Date / time tips
@@ -280,7 +295,7 @@ Collapsed group (dark): same cool `#383A46` surface, white/10 border — not cre
 
 | State | Light | Dark |
 |-------|-------|------|
-| Default | `#FFFFFF` (surface) · border `#E4E4E7` / `--bo-border` | `#2A2C36` · `rgba(255,255,255,.10)` |
+| Default | `#FFF8EB` (surface) · border `#EADCC8` / `--bo-border` | `#2A2C36` · `rgba(255,255,255,.10)` |
 | Hover | bg `#FFFCF7` · border `rgba(217,119,6,.5)` | bg `#32343E` · border `rgba(245,158,11,.35)` |
 | Checked | bg `#FFF8EB` · border `rgba(217,119,6,.4)` | bg `rgba(245,158,11,.10)` · border `rgba(245,158,11,.40)` |
 | Current | bg `#FFF1DC` · border `#D97706` + soft ring | bg `rgba(245,158,11,.14)` · border `#F59E0B` |
@@ -317,6 +332,7 @@ Collapsed group (dark): same cool `#383A46` surface, white/10 border — not cre
 | Topbar theme btn + User Name + Primary/Ghost buttons locked | Prevent page-to-page drift; specs from Admin Detail CSS | 2026-09-14 |
 | Action control radius `8px` (not 10px) | Match shipped Admin chrome | 2026-09-14 |
 | Permission matrix: light cream wash / dark cool charcoal | User locked Roles & Permissions open-group look; dark avoids muddy amber panel | 2026-09-14 |
+| Light surfaces = cream `#FFF8EB` locked (no ivory / no pure white) | User confirmed Dashboard light main pane (topbar + canvas + cards) 2026-09-14 | 2026-09-14 |
 
 ## Agent rules
 
@@ -329,3 +345,4 @@ Collapsed group (dark): same cool `#383A46` surface, white/10 border — not cre
 7. **Unify chrome:** every page’s Theme toggle, User Name block, Primary CTA, and Ghost/Export must match the Topbar + Buttons specs above — do not freestyle.
 8. **Dark mode must beat legacy CSS:** `reports.css` still has `.report-body{background:#f5f7fb!important}`. Page CSS must override body/html/canvas with equal-or-higher specificity + `!important`, or white frames will leak around dark cards. Never assume MD tokens alone paint the canvas.
 9. **Permission matrix dual wash:** light = cream/amber group wash; dark = cool charcoal surfaces only (amber accents, never muddy amber panel fill). Copy from Patterns → Permission matrix.
+10. **No pure white in light chrome:** canvas end, topbar, and panels use cream `#FFF8EB` (continuum → `#FFF6E8` → `#FFF8EB`). Keep `#FFFFFF` only for text-on-amber (`--bo-accent-on`). Do not settle for near-white ivory (`#FFFCF8`) on Dashboard main pane.

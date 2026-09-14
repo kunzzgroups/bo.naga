@@ -794,22 +794,49 @@
   }
 
   function initCurrencyPicker() {
-    const buttons = document.querySelectorAll('.np-currency-seg [data-currency], .mre-currency-seg [data-currency]');
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const next = btn.getAttribute('data-currency') || 'MYR';
-        if (next === currency) return;
-        currency = next;
-        buttons.forEach(b => {
-          const on = b === btn;
-          b.classList.toggle('is-active', on);
-          b.setAttribute('aria-pressed', on ? 'true' : 'false');
-        });
+    const syncFromRuntime = () => {
+      try {
+        const next = (window.BO_MAIN_CURRENCY && typeof BO_MAIN_CURRENCY.code === 'function'
+          ? BO_MAIN_CURRENCY.code()
+          : sessionStorage.getItem('bo_main_report_currency') || currency || 'MYR'
+        ).toUpperCase();
+        if (next) currency = next;
+      } catch (_) { /* keep local */ }
+      updateCurrencyLabels();
+    };
+
+    // Soft path: currency runtime updates chrome + dispatches event; we only refetch metrics.
+    window.addEventListener('bo:main-currency-change', (e) => {
+      const next = String((e.detail && e.detail.currency) || '').toUpperCase();
+      if (!next || next === currency) {
         updateCurrencyLabels();
-        load();
-      });
+        return;
+      }
+      currency = next;
+      updateCurrencyLabels();
+      load();
     });
-    updateCurrencyLabels();
+    window.addEventListener('bo:main-currency-ready', syncFromRuntime);
+
+    // Fallback if runtime is absent: toggle + load without page refresh.
+    document.addEventListener('click', (e) => {
+      if (window.BO_MAIN_CURRENCY) return;
+      const btn = e.target.closest && e.target.closest('.np-currency-seg [data-currency], .mre-currency-seg [data-currency]');
+      if (!btn) return;
+      const next = (btn.getAttribute('data-currency') || 'MYR').toUpperCase();
+      if (next === currency) return;
+      currency = next;
+      sessionStorage.setItem('bo_main_report_currency', currency);
+      document.querySelectorAll('.np-currency-seg [data-currency], .mre-currency-seg [data-currency]').forEach(b => {
+        const on = b === btn;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      updateCurrencyLabels();
+      load();
+    });
+
+    syncFromRuntime();
   }
 
   BO_AUTH.requireLogin();

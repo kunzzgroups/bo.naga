@@ -1,6 +1,6 @@
 ---
 name: Backoffice Admin Panel
-description: Charcoal + Amber control terminal for brand operators — light orange→white continuum, dark warm-charcoal continuum, amber accents.
+description: Charcoal + Amber control terminal for brand operators — light cream continuum (locked), dark warm-charcoal continuum, amber accents.
 colors:
   primary-light: "#D97706"
   primary-deep-light: "#B45309"
@@ -11,12 +11,12 @@ colors:
   text-light: "#18191C"
   text-secondary-light: "#27272A"
   muted-light: "#71717A"
-  bg-light: "#F7F6F3"
-  surface-light: "#FFFFFF"
-  border-light: "#E4E4E7"
+  bg-light: "#FFF1DC"
+  surface-light: "#FFF8EB"
+  border-light: "#EADCC8"
   sidebar-light: "#FFE8CC"
   canvas-left-light: "#FFE8CC"
-  canvas-right-light: "#FFFFFF"
+  canvas-right-light: "#FFF8EB"
   tip-bg-light: "#FFF8EB"
   tip-text-light: "#6b360c"
   money-positive-light: "#B45309"
@@ -70,8 +70,24 @@ Former **Deep Navy Cyan** (`#123B66` / `#21A6D7` / `#072647` / `#08131F`) is **r
 
 Backoffice is a desktop-first ops panel. Visual world: **Charcoal structure + Amber interaction**.
 
-- Light: orange→white canvas continuum; warm cream sidebar; white panels.
+- Light: orange→cream canvas continuum; warm cream sidebar; cream panels (`#FFF8EB`, not ivory/white). **Locked 2026-09-14.**
 - Dark: warm charcoal→cool charcoal continuum; soft surfaces (not dead black); amber neon accents.
+
+### Light mode surfaces (locked — copy exactly)
+
+User-confirmed on Dashboard main pane (topbar + canvas + cards). Do not regress to `#FFFFFF` or near-white ivory `#FFFCF8`.
+
+| Role | Hex | Notes |
+|------|-----|-------|
+| Sidebar (opaque) | `#FFE8CC` | Warmest peach; covers content when expanded |
+| Canvas / `--bo-bg` | `#FFF1DC` | Cream under panels |
+| Continuum L→R | `#FFE8CC` → `#FFF1DC` → `#FFF3E0` → `#FFF6E8` → `#FFF8EB` | Canvas only; `background-attachment: fixed` |
+| Surface / topbar / cards | `#FFF8EB` | Same cream as tip bg |
+| Border | `#EADCC8` | Warm separator |
+| Control well (currency seg etc.) | `#F5EBDC` | Slightly deeper cream inset |
+| Accent-on (text on amber fill) | `#FFFFFF` | Only place pure white is allowed |
+
+Reference CSS: `main-dashboard-executive.css` light tokens.
 
 Theme toggle: `data-bo-theme` / `localStorage.bo_theme`. Prefer `--bo-*` tokens over hard-coded hex in new work.
 
@@ -95,9 +111,9 @@ Theme toggle: `data-bo-theme` / `localStorage.bo_theme`. Prefer `--bo-*` tokens 
 
 | Role | Light | Dark |
 |------|-------|------|
-| Canvas / `--bo-bg` | `#F7F6F3` (panels sit on continuum white) | `#2C2E38` |
-| Surface / cards / topbar | `#FFFFFF` | `#383A46` |
-| Border | `#E4E4E7` | `rgba(255,255,255,.10)` |
+| Canvas / `--bo-bg` | `#FFF1DC` (warm cream under panels) | `#2C2E38` |
+| Surface / cards / topbar | `#FFF8EB` cream (no ivory / no `#FFFFFF`) | `#383A46` |
+| Border | `#EADCC8` | `rgba(255,255,255,.10)` |
 | Text | `#18191C` | `#F5F5F4` |
 | Text secondary | `#27272A` | `#E7E5E4` |
 | Muted / time | `#71717A` | `#A1A1AA` |
@@ -110,7 +126,7 @@ Theme toggle: `data-bo-theme` / `localStorage.bo_theme`. Prefer `--bo-*` tokens 
 
 | Mode | Sidebar fill | Continuum (L→R, ~96px past sidebar) |
 |------|--------------|-------------------------------------|
-| Light | `#FFE8CC` | `#FFE8CC` → `#FFF1DC` → `#FFF8EB` → `#FFFCF7` → `#FFFFFF` |
+| Light | `#FFE8CC` | `#FFE8CC` → `#FFF1DC` → `#FFF3E0` → `#FFF6E8` → `#FFF8EB` |
 | Dark | `#3A3226` | `#3A3226` → `#342E28` → `#2F2E32` → `#2D2E36` → `#2C2E38` |
 
 Sidebar edge rail: 2px amber gradient (`#F59E0B` → `#D97706`).  
@@ -134,13 +150,13 @@ Nav L1 weight: `font-weight: 800`. Light nav text/icons: `#6b360c`.
 |---------|-------|------|
 | Primary CTA | amber gradient `#FBBF24`→`#F59E0B`→`#EA8608`, text white, border `#E8901A` | `#FBBF24`→`#F59E0B`→`#D97706`, text `#2A2C36`, border `#F59E0B` |
 | Primary hover | reverse lift `#FCD34D`→`#FBBF24`→`#F59E0B`→`#EA8608` | reverse `#FDE68A`→`#FBBF24`→`#F59E0B` |
-| Ghost / Export | `#FFFFFF`→`#F3F4F6`, border `#E6E2DA`, text `#18191C` | `#4A4C58`→`#383A46`→`#2C2E38`, text `#F5F5F4` |
-| Hover tip | `#FFF8EB` + amber border, text `#6b360c`, radius `999px` | `#40424E` + amber border, text `#F5F5F4` |
+| Ghost / Export | `#FFF8EB`→`#F3E8D6`, border `#EADCC8`, text `#18191C` | `#4A4C58`→`#383A46`→`#2C2E38`, text `#F5F5F4` |
+| Hover tip | `#FFF8EB` + amber border, text `#6b360c`, radius `8px` | `#40424E` + amber border, text `#F5F5F4`, radius `8px` |
 | Money positive | `#B45309` | `#F59E0B` |
 | Money zero | `#A1A1AA` | `#A1A1AA` |
 | Modal z-index | above sidebar (`30000`); modals live under `body`, not inside `main` | same |
 | Permission group (open) | cream `#FFFCF7` · head `#FFF8EB`→`#FFF1DC` · amber border | cool `#383A46` · open head `#40424E` · body `#2C2E38` · amber border only |
-| Permission card | white · hover `#FFFCF7` · checked `#FFF8EB` · current `#FFF1DC` | `#2A2C36` · hover `#32343E` · checked/current amber tint only |
+| Permission card | surface `#FFF8EB` · hover `#FFFCF7` · checked `#FFF8EB` · current `#FFF1DC` | `#2A2C36` · hover `#32343E` · checked/current amber tint only |
 
 ### Topbar chrome (locked — all pages)
 
@@ -167,7 +183,7 @@ Do not freestyle topbar account chips or primary fills (no navy/cyan primary). F
 
 ### Permission matrix (Roles & Permissions)
 
-Light: open groups use cream/amber wash; cards white → cream on hover/checked/current.  
+Light: open groups use cream/amber wash; cards `#FFF8EB` → deeper cream on hover/checked/current.  
 Dark: cool charcoal only (`#383A46` / `#40424E` / `#2C2E38` / `#2A2C36`) — **no** full-panel amber wash; amber only on borders, icons, counts, checked/current tint.  
 Reference CSS: `menu-permission-executive.css`. Full tables in `.interface-design/system.md` → Patterns → Permission matrix.
 
@@ -185,7 +201,7 @@ Light: 1px border + soft warm shadow. Dark: surface lift via border; soft charco
 
 ## Shapes
 
-Action controls / theme toggle `8px`, cards `16px`, topbar avatar `12px`, pills/switches/tips `999px`, nav ~`10px`.
+Action controls / theme toggle `8px`, cards `16px`, topbar avatar `12px`, chart hover tip `.trend-tip` `8px`, pills/switches `999px`, nav ~`10px`.
 
 ## Do's and Don'ts
 
