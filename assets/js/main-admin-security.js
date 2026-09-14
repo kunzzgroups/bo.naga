@@ -891,4 +891,110 @@
 
   fitTableArea();
   loadAll().then(() => requestAnimationFrame(fitTableArea));
+
+  function viewerRoleLabel(user){
+    user = user || (window.BO_AUTH && typeof window.BO_AUTH.user === 'function' ? window.BO_AUTH.user() : {}) || {};
+    if(user.roleName) return String(user.roleName);
+    const type = String(user.roleType || '').toUpperCase();
+    if(user.rootAdmin === true || Number(user.rootAdmin) === 1 || type === 'ROOT') return 'Root';
+    if(type === 'MAIN' || user.mainAdmin === true || Number(user.mainAdmin) === 1) return 'Superadmin';
+    if(type === 'MASTER') return 'Master';
+    if(type === 'BRAND_OWNER') return 'Brand Owner';
+    if(user.role) return String(user.role);
+    return 'Admin';
+  }
+
+  function enhanceAmberTopbarProfile(){
+    const page = document.body;
+    if(!page || !page.classList.contains('main-admin-security-page') || page.getAttribute('data-access-page') !== 'main_admin_security') return;
+    const host = page.querySelector('.report-actions [data-bo-profile]');
+    if(!host) return;
+    const link = host.querySelector('a.bo-account-link');
+    if(!link) return;
+
+    const href = String(link.getAttribute('href') || '');
+    if(!href || href === '#' || href === 'profile.html'){
+      link.setAttribute('href', 'profile.html#password');
+    }
+    link.style.pointerEvents = 'auto';
+    link.style.cursor = 'pointer';
+    link.setAttribute('title', 'Account settings / Change password');
+    link.setAttribute('aria-label', 'Open account settings and change password');
+
+    const already = link.classList.contains('is-mad-amber-profile')
+      && link.querySelector('.bo-account-meta')
+      && link.querySelector('.report-avatar i.bi-person');
+    if(already){
+      const roleEl = link.querySelector('[data-admin-role]');
+      const nextRole = viewerRoleLabel();
+      if(roleEl && roleEl.textContent !== nextRole) roleEl.textContent = nextRole;
+      return;
+    }
+
+    const avatar = link.querySelector('.report-avatar');
+    let name = link.querySelector('.bo-account-name');
+    const gear = link.querySelector('.bo-account-setting-icon');
+    if(gear) gear.setAttribute('hidden', '');
+
+    let meta = link.querySelector('.bo-account-meta');
+    if(!meta && name){
+      meta = document.createElement('span');
+      meta.className = 'bo-account-meta';
+      name.replaceWith(meta);
+      meta.appendChild(name);
+    }
+    name = link.querySelector('.bo-account-name');
+
+    let role = link.querySelector('[data-admin-role]');
+    if(!role && meta){
+      role = document.createElement('span');
+      role.className = 'bo-account-role';
+      role.setAttribute('data-admin-role', '');
+      meta.appendChild(role);
+    }
+    if(role) role.textContent = viewerRoleLabel();
+
+    if(avatar){
+      avatar.removeAttribute('data-admin-avatar');
+      if(!avatar.querySelector('i.bi-person')){
+        avatar.textContent = '';
+        const icon = document.createElement('i');
+        icon.className = 'bi bi-person';
+        icon.setAttribute('aria-hidden', 'true');
+        avatar.appendChild(icon);
+      }
+      if(meta && (meta.parentNode !== link || avatar.previousElementSibling !== meta)){
+        link.appendChild(meta);
+        link.appendChild(avatar);
+      }
+    }
+
+    link.classList.add('is-mad-amber-profile');
+  }
+
+  function bindAmberTopbarProfile(){
+    enhanceAmberTopbarProfile();
+    const host = document.querySelector('.report-actions [data-bo-profile]');
+    if(!host || host.dataset.masAmberObserved === '1') return;
+    host.dataset.masAmberObserved = '1';
+    let scheduled = false;
+    const run = function(){
+      if(scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(function(){
+        scheduled = false;
+        enhanceAmberTopbarProfile();
+      });
+    };
+    new MutationObserver(run).observe(host, { childList: true });
+    document.addEventListener('bo:profile-updated', run);
+    setTimeout(enhanceAmberTopbarProfile, 80);
+    setTimeout(enhanceAmberTopbarProfile, 400);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', bindAmberTopbarProfile);
+  }else{
+    bindAmberTopbarProfile();
+  }
 })();

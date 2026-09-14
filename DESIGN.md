@@ -139,6 +139,8 @@ Nav L1 weight: `font-weight: 800`. Light nav text/icons: `#6b360c`.
 | Money positive | `#B45309` | `#F59E0B` |
 | Money zero | `#A1A1AA` | `#A1A1AA` |
 | Modal z-index | above sidebar (`30000`); modals live under `body`, not inside `main` | same |
+| Permission group (open) | cream `#FFFCF7` · head `#FFF8EB`→`#FFF1DC` · amber border | cool `#383A46` · open head `#40424E` · body `#2C2E38` · amber border only |
+| Permission card | white · hover `#FFFCF7` · checked `#FFF8EB` · current `#FFF1DC` | `#2A2C36` · hover `#32343E` · checked/current amber tint only |
 
 ### Topbar chrome (locked — all pages)
 
@@ -162,6 +164,12 @@ No bordered pill / no gear. Name `14px/700` (`#18191C` light · `#FFFFFF` dark).
 | Focus | amber 2px outline |
 
 Do not freestyle topbar account chips or primary fills (no navy/cyan primary). Full tables live in `.interface-design/system.md` → Patterns.
+
+### Permission matrix (Roles & Permissions)
+
+Light: open groups use cream/amber wash; cards white → cream on hover/checked/current.  
+Dark: cool charcoal only (`#383A46` / `#40424E` / `#2C2E38` / `#2A2C36`) — **no** full-panel amber wash; amber only on borders, icons, counts, checked/current tint.  
+Reference CSS: `menu-permission-executive.css`. Full tables in `.interface-design/system.md` → Patterns → Permission matrix.
 
 ## Typography
 

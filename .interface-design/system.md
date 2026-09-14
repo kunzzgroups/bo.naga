@@ -250,6 +250,50 @@ Storage / attribute: `localStorage.bo_theme` + `html[data-bo-theme="light|dark"]
 
 - Light cream tip or dark charcoal tip per mode above — never navy `#0F1F33`
 
+### Permission matrix (Roles & Permissions — locked)
+
+Reference: `menu-permission.html` + `assets/css/menu-permission-executive.css` (also `main-merchant-roles`, `main-*-role-create`). Classes: `.mp-group` / `.mp-group-head` / `.mp-group-body` / `.mp-menu-card`.
+
+**Principle**
+
+| Mode | Panel surfaces | Amber role |
+|------|----------------|------------|
+| Light | Cream / amber **wash** on open group + selected cards | Borders, icons, accents, CTA |
+| Dark | Cool **charcoal** only — no full-panel amber/brown wash | Borders, icons, counts, checked/current tint only |
+
+Never paint dark matrix groups with cream gradients or muddy amber fills; that reads brown and muddy.
+
+#### Open group — `.mp-group.is-open`
+
+| Spec | Light | Dark |
+|------|-------|------|
+| Group bg | `#FFFCF7` | `#383A46` |
+| Border | `rgba(217,119,6,.45)` + soft amber ring | Default `rgba(255,255,255,.10)` · open `rgba(245,158,11,.28)` |
+| Shadow | soft lift | none |
+| Head | gradient `#FFF8EB` → `#FFF1DC` · bottom border `rgba(217,119,6,.22)` | `#40424E` · bottom `rgba(245,158,11,.22)` |
+| Body | `#FFFCF7` | `#2C2E38` |
+| Icon chip | surface + border `rgba(217,119,6,.35)` · icon `#D97706` | `#2A2C36` + border `rgba(245,158,11,.35)` · icon `#F59E0B` |
+
+Collapsed group (dark): same cool `#383A46` surface, white/10 border — not cream.
+
+#### Menu cards — `.mp-menu-card`
+
+| State | Light | Dark |
+|-------|-------|------|
+| Default | `#FFFFFF` (surface) · border `#E4E4E7` / `--bo-border` | `#2A2C36` · `rgba(255,255,255,.10)` |
+| Hover | bg `#FFFCF7` · border `rgba(217,119,6,.5)` | bg `#32343E` · border `rgba(245,158,11,.35)` |
+| Checked | bg `#FFF8EB` · border `rgba(217,119,6,.4)` | bg `rgba(245,158,11,.10)` · border `rgba(245,158,11,.40)` |
+| Current | bg `#FFF1DC` · border `#D97706` + soft ring | bg `rgba(245,158,11,.14)` · border `#F59E0B` |
+| Title | `--bo-navy` / charcoal | `#F5F5F4` |
+| Meta (checked/current) | `#B45309` | `#A1A1AA` (muted; amber stays on border) |
+| Accent checkbox | `accent-color: --bo-cyan` (amber) | same |
+
+#### Related chrome on same pages
+
+- Tabs `.mad-tab.is-active`: amber underline / `#FBBF24` label (dark)
+- Add Role: Primary CTA amber 3D gradient (locked Buttons spec)
+- Group count pill (dark): `rgba(245,158,11,.16)` / `#FBBF24`
+
 ---
 
 ## Accessibility
@@ -272,6 +316,7 @@ Storage / attribute: `localStorage.bo_theme` + `html[data-bo-theme="light|dark"]
 | Admin Detail = reference implementation | Roll out to remaining pages using this file | 2026-09-14 |
 | Topbar theme btn + User Name + Primary/Ghost buttons locked | Prevent page-to-page drift; specs from Admin Detail CSS | 2026-09-14 |
 | Action control radius `8px` (not 10px) | Match shipped Admin chrome | 2026-09-14 |
+| Permission matrix: light cream wash / dark cool charcoal | User locked Roles & Permissions open-group look; dark avoids muddy amber panel | 2026-09-14 |
 
 ## Agent rules
 
@@ -283,3 +328,4 @@ Storage / attribute: `localStorage.bo_theme` + `html[data-bo-theme="light|dark"]
 6. New pages must follow Charcoal + Amber; migrate legacy navy/cyan pages toward these tokens when touched.
 7. **Unify chrome:** every page’s Theme toggle, User Name block, Primary CTA, and Ghost/Export must match the Topbar + Buttons specs above — do not freestyle.
 8. **Dark mode must beat legacy CSS:** `reports.css` still has `.report-body{background:#f5f7fb!important}`. Page CSS must override body/html/canvas with equal-or-higher specificity + `!important`, or white frames will leak around dark cards. Never assume MD tokens alone paint the canvas.
+9. **Permission matrix dual wash:** light = cream/amber group wash; dark = cool charcoal surfaces only (amber accents, never muddy amber panel fill). Copy from Patterns → Permission matrix.

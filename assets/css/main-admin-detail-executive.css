@@ -3653,7 +3653,7 @@ body.main-admin-security-page .mas-kpi-icon{
 }
 body.main-admin-security-page .mas-kpi-icon.is-cyan{background:var(--bo-cyan-tint);color:var(--bo-cyan)}
 body.main-admin-security-page .mas-kpi-icon.is-danger{background:#FEF3F2;color:var(--bo-danger)}
-body.main-admin-security-page .mas-kpi-icon.is-navy{background:rgba(18,59,102,.1);color:var(--bo-navy)}
+body.main-admin-security-page .mas-kpi-icon.is-navy{background:rgba(217,119,6,.12);color:var(--bo-navy)}
 body.main-admin-security-page .mas-kpi-copy{
   display:inline-flex;align-items:baseline;gap:6px;
   min-width:0;flex:0 0 auto;white-space:nowrap;
@@ -3723,7 +3723,7 @@ body.main-admin-security-page .mas-date-field .ref-range-trigger{
 body.main-admin-security-page .mas-date-field .ref-range-trigger:hover,
 body.main-admin-security-page .mas-date-field .ref-range-trigger:focus{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.14)!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.16)!important;
   outline:0!important;
 }
 body.main-admin-security-page .mas-date-field .ref-range-icon{
@@ -3749,7 +3749,7 @@ body.main-admin-security-page .mas-date-field .ref-cal-year-grid button.active{
   box-shadow:none!important;
 }
 body.main-admin-security-page .mas-date-field .ref-cal-days button.in-range{
-  background:rgba(33,166,215,.12)!important;
+  background:rgba(245,158,11,.14)!important;
 }
 body.main-admin-security-page .mas-filters .mad-select{min-width:140px}
 /* Same as Administrators: keep enhanced selects in one horizontal row */
@@ -3760,8 +3760,8 @@ body.main-admin-security-page .mas-filters > .rounded-select-wrap{
 }
 body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-btn{
   width:auto!important;min-width:160px!important;height:42px!important;
-  border:1px solid #D0D5DD!important;border-radius:8px!important;
-  background:#fff!important;color:var(--bo-text-secondary)!important;
+  border:1px solid var(--bo-control-border,#D4D4D8)!important;border-radius:8px!important;
+  background:var(--bo-surface,#fff)!important;color:var(--bo-text-secondary)!important;
   font-size:13px!important;font-weight:600!important;
   padding:0 14px!important;box-shadow:none!important;
   white-space:nowrap!important;
@@ -3769,7 +3769,7 @@ body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-selec
 body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-btn.open,
 body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-btn:focus{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;outline:0!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.14)!important;outline:0!important;
 }
 body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-menu{
   background:var(--bo-surface)!important;
@@ -3854,7 +3854,7 @@ body.main-admin-security-page .mas-avatar{
   display:grid;place-items:center;font-size:12px;font-weight:800;
   background:var(--bo-cyan-tint);color:var(--bo-navy);
 }
-body.main-admin-security-page .mas-avatar.is-alt{background:rgba(18,59,102,.12);color:var(--bo-navy)}
+body.main-admin-security-page .mas-avatar.is-alt{background:rgba(217,119,6,.14);color:var(--bo-navy)}
 body.main-admin-security-page .mas-admin-copy{min-width:0}
 body.main-admin-security-page .mas-admin-copy b{
   display:block;font-size:16px;font-weight:800;color:var(--bo-text);line-height:1.25;
@@ -3918,7 +3918,7 @@ body.main-admin-security-page .mas-view{
   color:var(--bo-cyan);font-size:12.5px;font-weight:700;cursor:pointer;
   display:inline-flex;align-items:center;gap:4px;
 }
-body.main-admin-security-page .mas-view:hover{color:var(--bo-cyan-deep,#1B94C2);text-decoration:underline}
+body.main-admin-security-page .mas-view:hover{color:var(--bo-cyan-deep,#B45309);text-decoration:underline}
 
 body.main-admin-security-page .mas-detail-panel{width:min(560px,calc(100vw - 32px))}
 body.main-admin-security-page .mas-detail-grid{
@@ -3939,7 +3939,9 @@ body.main-admin-security-page .mas-detail-raw{
 
 body.main-admin-security-page .mad-pager .smart-page.active,
 body.main-admin-security-page .mad-pager button.active{
-  background:var(--bo-navy)!important;border-color:var(--bo-navy)!important;color:#fff!important;
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 48%,#D97706 100%)!important;
+  border:1px solid #D97706!important;color:#fff!important;
 }
 
 @media(max-width:1100px){
@@ -3974,12 +3976,12 @@ body.main-admin-security-page .mad-pager button.active{
 }
 
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-kpi-icon.is-danger{background:rgba(239,51,64,.16);color:#FF8A90}
-html[data-bo-theme="dark"] body.main-admin-security-page .mas-kpi-icon.is-navy{background:rgba(33,166,215,.14);color:var(--bo-cyan)}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-kpi-icon.is-navy{background:rgba(245,158,11,.16);color:var(--bo-cyan)}
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-avatar{
-  background:rgba(33,166,215,.18);color:#7DD3FC;
+  background:rgba(245,158,11,.20);color:#FBBF24;
 }
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-target{
-  background:rgba(33,166,215,.14);color:#7DD3FC;
+  background:rgba(245,158,11,.16);color:#FBBF24;
 }
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-table tbody tr.is-blocked td{
   background:rgba(239,51,64,.12);
@@ -3994,7 +3996,7 @@ html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-ra
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-btn.open,
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-btn:focus{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.18)!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.20)!important;
   color:var(--bo-text)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-menu{
@@ -4009,7 +4011,7 @@ html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-option:hover,
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-option.active,
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-option.is-active{
-  background:rgba(33,166,215,.14)!important;
+  background:rgba(245,158,11,.16)!important;
   color:var(--bo-text)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-range-picker{
@@ -4026,7 +4028,7 @@ html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-ra
   background:rgba(255,255,255,.06)!important;color:var(--bo-text)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-range-presets button.active{
-  background:rgba(33,166,215,.18)!important;color:#7DD3FC!important;
+  background:rgba(245,158,11,.20)!important;color:#FBBF24!important;
 }
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-range-calendar,
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-day-view{
@@ -4052,7 +4054,7 @@ html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-ca
   background:rgba(255,255,255,.06)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-days button.in-range{
-  background:rgba(33,166,215,.14)!important;color:#7DD3FC!important;
+  background:rgba(245,158,11,.16)!important;color:#FBBF24!important;
 }
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-days button.selected,
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-month-grid button.active,
@@ -4065,7 +4067,7 @@ html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-ca
 }
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-month-grid button:hover,
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-year-grid button:hover{
-  background:rgba(33,166,215,.14)!important;color:#7DD3FC!important;
+  background:rgba(245,158,11,.16)!important;color:#FBBF24!important;
 }
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-detail-raw{
   background:var(--bo-bg);color:var(--bo-text-secondary);
@@ -4079,6 +4081,49 @@ html[data-bo-theme="dark"] body.main-admin-security-page .mad-modal .modal-clean
 }
 html[data-bo-theme="dark"] body.main-admin-security-page .modal-clean-close:hover{
   background:rgba(255,255,255,.08)!important;color:var(--bo-text)!important;
+}
+
+/* Security amber gap-fixes (page-scoped; do not affect Admin Detail navy pages) */
+body.main-admin-security-page.report-body,
+html[data-bo-theme="dark"] body.main-admin-security-page.report-body,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"].report-body{
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-range-presets button.active,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-days button.selected,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-month-grid button.active,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-date-field .ref-cal-year-grid button.active{
+  background:var(--bo-cyan,#F59E0B)!important;
+  color:var(--bo-accent-on,#2A2C36)!important;
+}
+body.main-admin-security-page .mas-kpi-icon.is-navy{
+  background:var(--bo-cyan-tint)!important;
+  color:var(--bo-cyan)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-kpi-icon.is-navy{
+  background:rgba(245,158,11,.16)!important;
+  color:#FBBF24!important;
+}
+body.main-admin-security-page .mas-avatar,
+body.main-admin-security-page .mas-avatar.is-alt{
+  background:var(--bo-cyan-tint)!important;
+  color:var(--bo-cyan-deep)!important;
+  border-radius:12px;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-avatar,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-avatar.is-alt{
+  background:rgba(245,158,11,.16)!important;
+  color:#FBBF24!important;
+}
+body.main-admin-security-page .mas-panel,
+body.main-admin-security-page .mas-table-wrap,
+body.main-admin-security-page .mas-table-head{
+  background:var(--bo-surface)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-panel,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-table-wrap,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-table-head{
+  background:#383A46!important;
 }
 
 /* ========== Credit Control ========== */
@@ -6843,10 +6888,11 @@ body.main-merchant-detail-page .mac-provider-markup-field input[type="number"]::
 }
 
 /* ==========================================================================
-   Amber theme trial — Admin Detail only (data-access-page=main_admin_detail)
-   Charcoal + Amber Control Terminal. Other mad pages keep Deep Navy Cyan.
+   Charcoal + Amber — Admin Detail + Security & Audit
+   (data-access-page=main_admin_detail | main_admin_security). Other mad pages keep Deep Navy Cyan until migrated.
    ========================================================================== */
-body.main-admin-detail-page[data-access-page="main_admin_detail"]{
+body.main-admin-detail-page[data-access-page="main_admin_detail"],
+body.main-admin-detail-page[data-access-page="main_admin_security"]{
   /* Light mode system board: Primary #D97706 · Secondary #2563EB · Tertiary #F59E0B · Neutral #18191C */
   --bo-navy:#18191C;
   --bo-cyan:#D97706;
@@ -6878,14 +6924,16 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"]{
   --bo-shadow:0 0 0 1px rgba(24,25,28,.04),0 1px 2px -1px rgba(24,25,28,.06),0 2px 8px rgba(24,25,28,.04);
   --bo-accent-on:#FFFFFF;
 }
-html:has(body.main-admin-detail-page[data-access-page="main_admin_detail"]){
+html:has(body.main-admin-detail-page[data-access-page="main_admin_detail"]),
+html:has(body.main-admin-detail-page[data-access-page="main_admin_security"]){
   background:#F7F6F3;
 }
 
 /* Light canvas — Orange → White Continuum (sidebar → page)
    Soft amber wash into white; short seam (~96px).
    Panels stay solid white surface. */
-html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_detail"]){
+html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_detail"]),
+html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_security"]){
   background-color:#FFFFFF;
   background-image:linear-gradient(90deg,
     #FFE8CC 0,
@@ -6900,26 +6948,32 @@ html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-pag
   background-size:100% 100%;
   min-height:100%;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"]{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"],
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"]{
   background:transparent!important;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-shell{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-shell,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-shell{
   background:transparent!important;
   position:relative;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-main,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-content{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-main,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-content,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-content{
   background:transparent!important;
   position:relative;
   z-index:1;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-topbar{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-topbar,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-topbar{
   background:#FFFFFF!important;
   backdrop-filter:none;
   -webkit-backdrop-filter:none;
 }
 
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"]{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"],
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"]{
   /* Dark mode: soft charcoal (not dead black) · Primary #F59E0B */
   --bo-navy:#F5F5F4;
   --bo-cyan:#F59E0B;
@@ -6955,7 +7009,8 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
 /* Dark canvas — Warm Charcoal Continuum (sidebar → page)
    Low-chroma warm charcoal into cool charcoal; short seam (~96px).
    Panels stay solid surface so data never sits in the wash. */
-html[data-bo-theme="dark"]:has(body.main-admin-detail-page[data-access-page="main_admin_detail"]){
+html[data-bo-theme="dark"]:has(body.main-admin-detail-page[data-access-page="main_admin_detail"]),
+html[data-bo-theme="dark"]:has(body.main-admin-detail-page[data-access-page="main_admin_security"]){
   background-color:#2C2E38;
   background-image:linear-gradient(90deg,
     #3A3226 0,
@@ -6970,24 +7025,30 @@ html[data-bo-theme="dark"]:has(body.main-admin-detail-page[data-access-page="mai
   background-size:100% 100%;
   min-height:100%;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"]{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"],
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"]{
   background:transparent!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-shell{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-shell,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-shell{
   background:transparent!important;
   position:relative;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-shell::before{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-shell::before,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-shell::before{
   content:none!important;
   display:none!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-main,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-content{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-main,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-content,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-content{
   background:transparent!important;
   position:relative;
   z-index:1;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-topbar{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-topbar,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-topbar{
   background:#383A46!important;
   backdrop-filter:none;
   -webkit-backdrop-filter:none;
@@ -6998,51 +7059,74 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
 body.main-admin-detail-page .modal-clean,
 body.main-admin-detail-page .mad-modal,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .modal-clean,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .modal-clean,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-modal{
   z-index:30000!important;
 }
 body.main-admin-detail-page:has(.modal-clean.show) .report-sidebar,
 body.main-admin-detail-page:has(.mad-modal.show) .report-sidebar,
 body.main-admin-detail-page[data-access-page="main_admin_detail"]:has(.modal-clean.show) .report-sidebar,
-body.main-admin-detail-page[data-access-page="main_admin_detail"]:has(.mad-modal.show) .report-sidebar{
+body.main-admin-detail-page[data-access-page="main_admin_security"]:has(.modal-clean.show) .report-sidebar,
+body.main-admin-detail-page[data-access-page="main_admin_detail"]:has(.mad-modal.show) .report-sidebar,
+body.main-admin-detail-page[data-access-page="main_admin_security"]:has(.mad-modal.show) .report-sidebar{
   z-index:1000!important;
 }
 
 /* Top tabs — orange underline only; text stays neutral */
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-tab:hover:not(.is-disabled){
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-tab:hover:not(.is-disabled),
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-tab:hover:not(.is-disabled){
   color:var(--bo-text,#18191C)!important;
   background:transparent!important;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-tab.is-active,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-tab[aria-current="page"]{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-tab.is-active,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-tab[aria-current="page"],
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-tab[aria-current="page"]{
   background:transparent!important;
   color:var(--bo-text,#18191C)!important;
   font-weight:800;
   border-bottom:2px solid var(--bo-sidebar-active,#F59E0B)!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-tab:hover:not(.is-disabled){
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-tab:hover:not(.is-disabled),
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-tab:hover:not(.is-disabled){
   color:var(--bo-text,#F4F4F5)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-tab.is-active,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-tab[aria-current="page"]{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-tab.is-active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-tab[aria-current="page"],
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-tab[aria-current="page"]{
   color:var(--bo-text,#F4F4F5)!important;
   border-bottom-color:var(--bo-sidebar-active,#F59E0B)!important;
 }
 
 /* Primary CTA — bright orange gradient + soft lift shadow */
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-primary,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-primary,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-primary.bo-ui-button,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-primary.bo-ui-button,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-primary.bo-ui-button-primary,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-primary.bo-ui-button-primary,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-navy,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-navy,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-navy.bo-ui-button,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-navy.bo-ui-button,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-navy.bo-ui-button-primary,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-navy.bo-ui-button-primary,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-ui-button-primary,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-ui-button-primary,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .btn-primary,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .btn-primary,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] button.btn-primary,
+body.main-admin-detail-page[data-access-page="main_admin_security"] button.btn-primary,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal .mad-btn-primary,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-modal .mad-btn-primary,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal .mad-btn-navy,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-modal .mad-btn-navy,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal .bo-ui-button-primary,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] a#madAddBtn{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-modal .bo-ui-button-primary,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] a#madAddBtn,
+body.main-admin-detail-page[data-access-page="main_admin_security"] a#madAddBtn{
   background-color:#F59E0B!important;
   background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
   border:1px solid #E8901A!important;
@@ -7053,12 +7137,19 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] a#madAddBtn{
   filter:none;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-primary:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-primary:hover,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-primary.bo-ui-button-primary:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-primary.bo-ui-button-primary:hover,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-navy:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-navy:hover,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-ui-button-primary:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-ui-button-primary:hover,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .btn-primary:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .btn-primary:hover,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] button.btn-primary:hover,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] a#madAddBtn:hover{
+body.main-admin-detail-page[data-access-page="main_admin_security"] button.btn-primary:hover,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] a#madAddBtn:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] a#madAddBtn:hover{
   background-color:#F59E0B!important;
   background-image:linear-gradient(0deg,#FCD34D 0%,#FBBF24 38%,#F59E0B 72%,#EA8608 100%)!important;
   border-color:#F59E0B!important;
@@ -7068,11 +7159,17 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] a#madAddBtn:ho
   transform:translateY(-1px);
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-primary:active,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-primary:active,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-primary.bo-ui-button-primary:active,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-primary.bo-ui-button-primary:active,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-navy:active,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-navy:active,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-ui-button-primary:active,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-ui-button-primary:active,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .btn-primary:active,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] button.btn-primary:active{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .btn-primary:active,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] button.btn-primary:active,
+body.main-admin-detail-page[data-access-page="main_admin_security"] button.btn-primary:active{
   transform:translateY(1px)!important;
   background:linear-gradient(180deg,#F59E0B 0%,#EA8608 100%)!important;
   box-shadow:0 1px 2px rgba(217,119,6,.16),inset 0 1px 0 rgba(255,255,255,.2)!important;
@@ -7080,15 +7177,25 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] button.btn-pri
 }
 
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-primary,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-primary,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-primary.bo-ui-button,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-primary.bo-ui-button,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-primary.bo-ui-button-primary,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-primary.bo-ui-button-primary,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-navy,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-navy,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-navy.bo-ui-button,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-navy.bo-ui-button,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-ui-button-primary,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-ui-button-primary,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal .mad-btn-primary,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-modal .mad-btn-primary,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal .mad-btn-navy,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-modal .mad-btn-navy,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal .bo-ui-button-primary,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] a#madAddBtn{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-modal .bo-ui-button-primary,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] a#madAddBtn,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] a#madAddBtn{
   background-color:#F59E0B!important;
   background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
   border:1px solid #F59E0B!important;
@@ -7096,9 +7203,13 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   box-shadow:0 1px 2px rgba(0,0,0,.4),0 4px 12px rgba(245,158,11,.28),inset 0 1px 0 rgba(255,255,255,.28)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-primary:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-primary:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-navy:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-navy:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-ui-button-primary:hover,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] a#madAddBtn:hover{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-ui-button-primary:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] a#madAddBtn:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] a#madAddBtn:hover{
   background-color:#F59E0B!important;
   background-image:linear-gradient(0deg,#FDE68A 0%,#FBBF24 40%,#F59E0B 100%)!important;
   border-color:#FBBF24!important;
@@ -7107,9 +7218,13 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   transform:translateY(-1px)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-primary:active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-primary:active,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-navy:active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-navy:active,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-ui-button-primary:active,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] a#madAddBtn:active{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-ui-button-primary:active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] a#madAddBtn:active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] a#madAddBtn:active{
   transform:translateY(1px)!important;
   background-image:linear-gradient(180deg,#F59E0B 0%,#D97706 100%)!important;
   color:#2A2C36!important;
@@ -7118,7 +7233,9 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
 
 /* Active pager — light: orange gradient lift; dark: bright orange glow */
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager .smart-page.active,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager button.active{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager .smart-page.active,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager button.active,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager button.active{
   background-color:#F59E0B!important;
   background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 48%,#D97706 100%)!important;
   border:1px solid #D97706!important;
@@ -7126,28 +7243,38 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager but
   box-shadow:0 1px 2px rgba(217,119,6,.25),0 3px 8px rgba(217,119,6,.22),inset 0 1px 0 rgba(255,255,255,.35)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager .smart-page,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager button{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager .smart-page,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager button,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager button{
   background:#383A46!important;
   border:1px solid rgba(255,255,255,.12)!important;
   color:#A1A1AA!important;
   box-shadow:none!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager .smart-page:hover:not(:disabled):not(.active),
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager button:hover:not(:disabled):not(.active){
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager .smart-page:hover:not(:disabled):not(.active),
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager button:hover:not(:disabled):not(.active),
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager button:hover:not(:disabled):not(.active){
   background:#444654!important;
   border-color:rgba(255,255,255,.18)!important;
   color:#E7E5E4!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager .smart-page:disabled,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager button:disabled{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager .smart-page:disabled,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager button:disabled,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager button:disabled{
   background:#2A2C36!important;
   border-color:rgba(255,255,255,.06)!important;
   color:#52525B!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager .smart-page.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager .smart-page.active,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager button.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager button.active,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager .smart-page.active.bo-ui-button,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager .smart-page.active.bo-ui-button-primary{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager .smart-page.active.bo-ui-button,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager .smart-page.active.bo-ui-button-primary,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager .smart-page.active.bo-ui-button-primary{
   background-color:#F59E0B!important;
   background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 48%,#D97706 100%)!important;
   border:1px solid #F59E0B!important;
@@ -7155,8 +7282,11 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   box-shadow:0 0 0 1px rgba(245,158,11,.25),0 2px 8px rgba(245,158,11,.45),0 6px 18px rgba(245,158,11,.28),inset 0 1px 0 rgba(255,255,255,.35)!important;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn:hover:not(.mad-btn-primary):not(.mad-btn-navy):not(.mad-btn-ghost):not(.bo-ui-button-primary):not(.btn-primary):not(#madExportBtn),
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn:hover:not(.mad-btn-primary):not(.mad-btn-navy):not(.mad-btn-ghost):not(.bo-ui-button-primary):not(.btn-primary):not(#madExportBtn),
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn.bo-ui-button:hover:not(.mad-btn-primary):not(.mad-btn-ghost):not(.bo-ui-button-primary),
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn.bo-ui-button-secondary:hover:not(.mad-btn-ghost){
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn.bo-ui-button:hover:not(.mad-btn-primary):not(.mad-btn-ghost):not(.bo-ui-button-primary),
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn.bo-ui-button-secondary:hover:not(.mad-btn-ghost),
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn.bo-ui-button-secondary:hover:not(.mad-btn-ghost){
   border-color:rgba(217,119,6,.45)!important;
   color:var(--bo-text)!important;
   background:var(--bo-cyan-tint)!important;
@@ -7167,13 +7297,21 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn.bo-ui
 
 /* Primary CTA hover must win over generic .mad-btn:hover — reverse gradient to 0deg */
 body.main-admin-detail-page[data-access-page="main_admin_detail"] a.mad-btn-primary:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] a.mad-btn-primary:hover,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] a#madAddBtn:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] a#madAddBtn:hover,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-primary:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-primary:hover,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-primary.bo-ui-button-primary:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-primary.bo-ui-button-primary:hover,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-navy:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-navy:hover,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-ui-button-primary:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-ui-button-primary:hover,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .btn-primary:hover,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] button.btn-primary:hover{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .btn-primary:hover,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] button.btn-primary:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] button.btn-primary:hover{
   background-color:#F59E0B!important;
   background-image:linear-gradient(0deg,#FCD34D 0%,#FBBF24 38%,#F59E0B 72%,#EA8608 100%)!important;
   border-color:#F59E0B!important;
@@ -7183,10 +7321,15 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] button.btn-pri
   transform:translateY(-1px)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] a.mad-btn-primary:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] a.mad-btn-primary:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] a#madAddBtn:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] a#madAddBtn:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-primary:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-primary:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-navy:hover,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-ui-button-primary:hover{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-navy:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-ui-button-primary:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-ui-button-primary:hover{
   background-color:#F59E0B!important;
   background-image:linear-gradient(0deg,#FDE68A 0%,#FBBF24 40%,#F59E0B 100%)!important;
   border-color:#FBBF24!important;
@@ -7194,18 +7337,23 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   box-shadow:0 2px 4px rgba(0,0,0,.3),0 8px 18px rgba(245,158,11,.34),inset 0 1px 0 rgba(255,255,255,.45)!important;
   transform:translateY(-1px)!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill:hover:not(.is-active) .mad-pill-count{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill:hover:not(.is-active) .mad-pill-count,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill:hover:not(.is-active) .mad-pill-count{
   background:transparent!important;
   color:inherit!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-row-check-box{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-row-check-box,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-row-check-box{
   background:#111111;border-color:#3F3F46;
 }
 
 /* Export / ghost — light: white lift; dark: gray→black gradient */
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-ghost,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-ghost,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] #madExportBtn,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-chrome-actions .mad-btn-ghost{
+body.main-admin-detail-page[data-access-page="main_admin_security"] #madExportBtn,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-chrome-actions .mad-btn-ghost,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-chrome-actions .mad-btn-ghost{
   border-radius:8px!important;
   background-color:#F3F4F6!important;
   background-image:linear-gradient(180deg,#FFFFFF 0%,#F3F4F6 100%)!important;
@@ -7215,8 +7363,11 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-chrome-ac
   transition:transform .14s ease,box-shadow .14s ease,background-image .14s ease,border-color .14s ease!important;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-ghost:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-ghost:hover,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] #madExportBtn:hover,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-chrome-actions .mad-btn-ghost:hover{
+body.main-admin-detail-page[data-access-page="main_admin_security"] #madExportBtn:hover,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-chrome-actions .mad-btn-ghost:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-chrome-actions .mad-btn-ghost:hover{
   background-color:#F3F4F6!important;
   background-image:linear-gradient(0deg,#FFFFFF 0%,#F3F4F6 100%)!important;
   border-color:#D6D1C7!important;
@@ -7225,15 +7376,21 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-chrome-ac
   transform:translateY(-1px)!important;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-ghost:active,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] #madExportBtn:active{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-ghost:active,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] #madExportBtn:active,
+body.main-admin-detail-page[data-access-page="main_admin_security"] #madExportBtn:active{
   transform:translateY(1px)!important;
   background-image:linear-gradient(180deg,#F9FAFB 0%,#E5E7EB 100%)!important;
   box-shadow:0 1px 2px rgba(24,25,28,.06)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-ghost,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-ghost,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] #madExportBtn,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] #madExportBtn,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-chrome-actions .mad-btn-ghost,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn.mad-btn-ghost{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-chrome-actions .mad-btn-ghost,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn.mad-btn-ghost,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn.mad-btn-ghost{
   background-color:#383A46!important;
   background-image:linear-gradient(180deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%)!important;
   border:1px solid rgba(255,255,255,.12)!important;
@@ -7241,9 +7398,13 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   box-shadow:0 1px 2px rgba(0,0,0,.22),0 4px 10px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(0,0,0,.18)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-ghost:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-ghost:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] #madExportBtn:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] #madExportBtn:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-chrome-actions .mad-btn-ghost:hover,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn.mad-btn-ghost:hover{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-chrome-actions .mad-btn-ghost:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn.mad-btn-ghost:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn.mad-btn-ghost:hover{
   background-color:#383A46!important;
   background-image:linear-gradient(0deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%)!important;
   border-color:rgba(255,255,255,.18)!important;
@@ -7252,8 +7413,11 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   transform:translateY(-1px)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn-ghost:active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn-ghost:active,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] #madExportBtn:active,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn.mad-btn-ghost:active{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] #madExportBtn:active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-btn.mad-btn-ghost:active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-btn.mad-btn-ghost:active{
   transform:translateY(1px)!important;
   background-image:linear-gradient(180deg,#383A46 0%,#2C2E38 100%)!important;
   box-shadow:0 1px 2px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.08),inset 0 2px 4px rgba(0,0,0,.18)!important;
@@ -7266,7 +7430,8 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
    that creates a containing block and clips the desktop L2 flyout (position:fixed).
    ------------------------------------------------------------------ */
 /* LIGHT MODE — opaque orange cream (matches continuum left; covers content when expanded) */
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar{
   background:#FFE8CC!important;
   border-right:1px solid rgba(92,74,48,.14)!important;
   box-shadow:none!important;
@@ -7276,13 +7441,17 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
   isolation:auto;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-sidebar:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"].sidebar-mini .report-sidebar:hover,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-sidebar.is-mini-hover,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar.show{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"].sidebar-mini .report-sidebar.is-mini-hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar.show,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar.show{
   background:#FFE8CC!important;
   box-shadow:18px 0 40px rgba(60,48,32,.14)!important;
 }
 /* Amber edge rail — defines the continuum join */
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar::before{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar::before,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar::before{
   content:"";
   position:absolute;
   top:12%;bottom:12%;right:0;
@@ -7293,20 +7462,24 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
   opacity:.75;
   box-shadow:none;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar::after{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar::after,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar::after{
   content:none!important;
   display:none!important;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar > *{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar > *,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar > *{
   position:relative;z-index:1;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-brand{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-brand,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-brand{
   border-bottom:1px solid rgba(92,74,48,.1)!important;
   background:transparent!important;
   color:#6b360c!important;
   letter-spacing:-.03em!important;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-brand small{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-brand small,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-brand small{
   color:#6b360c!important;
   letter-spacing:.14em!important;
   font-weight:700!important;
@@ -7314,13 +7487,15 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
   text-shadow:none;
   opacity:.78;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .close-side{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .close-side,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .close-side{
   background:rgba(255,255,255,.55)!important;
   border:1px solid rgba(92,74,48,.12)!important;
   color:#6b360c!important;
 }
 /* Nav sits on the same frosted slab — no nested glass chip */
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav{
   position:relative!important;
   padding:12px 10px 10px!important;
   gap:3px!important;
@@ -7333,28 +7508,34 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
   overflow-y:auto!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav::before,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav::after{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav::before,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav::after,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav::after{
   content:none!important;
   display:none!important;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-account-footer{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-account-footer,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-sidebar-account-footer{
   background:transparent!important;
   border-top:1px solid rgba(92,74,48,.1)!important;
   box-shadow:none!important;
   margin:0!important;
   padding:10px 10px 12px!important;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-logout{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-logout,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-sidebar-logout{
   border-radius:10px!important;
   color:#B42318!important;
   background:rgba(255,255,255,.45)!important;
   border:1px solid rgba(180,35,24,.12)!important;
   transition:background .16s ease,box-shadow .16s ease,color .16s ease!important;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-logout i{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-logout i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-sidebar-logout i{
   color:#D92D20!important;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-logout:hover{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-logout:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-sidebar-logout:hover{
   background:rgba(254,243,242,.95)!important;
   color:#912018!important;
   box-shadow:0 4px 12px rgba(180,35,24,.08)!important;
@@ -7362,14 +7543,23 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
 
 /* Light nav items */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub),
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub),
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub):hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub):hover,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub):focus,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub):focus,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group .nav-group-btn,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group .nav-group-btn:hover,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn:focus,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group .nav-group-btn:focus,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn:focus-visible,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group .nav-group-btn:focus-visible,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.open > .nav-group-btn{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.open > .nav-group-btn,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.open > .nav-group-btn{
   border-radius:10px!important;
   color:#6b360c!important;
   background:transparent!important;
@@ -7377,32 +7567,45 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
   font-weight:800!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub) i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub) i,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn i,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn .bi-chevron-down{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group .nav-group-btn i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn .bi-chevron-down,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group .nav-group-btn .bi-chevron-down{
   color:#6b360c!important;
   opacity:.72;
   filter:none;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub):hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub):hover,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub):focus-visible,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub):focus-visible,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn:hover,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group .nav-group-btn:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn{
   background:rgba(255,243,224,.78)!important;
   color:#6b360c!important;
   box-shadow:0 1px 2px rgba(60,48,32,.05)!important;
   border-radius:10px!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn:hover i,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn i{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group .nav-group-btn:hover i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn i{
   color:#6b360c!important;
   opacity:1;
 }
 
 /* Light L1 active — amber signal chip with soft lift */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub).active,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub).active,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.open > .nav-group-btn,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.open > .nav-group-btn,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn{
   position:relative!important;
   background:
     linear-gradient(135deg, #FFF8EF 0%, #FFE8CC 48%, #FFF3E0 100%)!important;
@@ -7417,9 +7620,13 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
   text-shadow:none;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub).active::before,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub).active::before,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.open > .nav-group-btn::before,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.open > .nav-group-btn::before,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn::before,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn::before{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn::before,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn::before,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn::before{
   content:"";
   position:absolute;
   left:0;top:7px;bottom:7px;width:3px;border-radius:999px;
@@ -7428,30 +7635,39 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
   pointer-events:none;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub).active i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub).active i,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.open > .nav-group-btn i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.open > .nav-group-btn i,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn i,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.open > .nav-group-btn .bi-chevron-down,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn .bi-chevron-down{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.open > .nav-group-btn .bi-chevron-down,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn .bi-chevron-down,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn .bi-chevron-down{
   color:#6b360c!important;
   opacity:1;
   filter:none;
 }
 
 /* Light L2 */
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub{
   position:relative!important;
   border:1px solid transparent!important;
   border-radius:9px!important;
   color:#6b360c!important;
   background:transparent!important;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub:hover{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub:hover{
   background:rgba(255,243,224,.72)!important;
   color:#6b360c!important;
   border-color:transparent!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub.active,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub.active,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub.active{
   background:linear-gradient(135deg, #FFF8EF 0%, #FFE8CC 100%)!important;
   border:1px solid rgba(217,119,6,.28)!important;
   border-radius:9px!important;
@@ -7459,18 +7675,24 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
   box-shadow:0 4px 12px rgba(217,119,6,.1)!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub.active i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub.active i,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active i,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.active i{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub.active i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.active i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.active i{
   color:#6b360c!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub.active::after,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active::after{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub.active::after,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active::after,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub.active::after{
   content:none!important;
   display:none!important;
 }
 
 /* DARK MODE — opaque warm charcoal (matches continuum left; covers content when expanded) */
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar{
   background:#3A3226!important;
   border-right:1px solid rgba(245,158,11,.22)!important;
   box-shadow:none!important;
@@ -7480,12 +7702,16 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   isolation:auto;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-sidebar:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"].sidebar-mini .report-sidebar:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-sidebar.is-mini-hover,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar.show{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"].sidebar-mini .report-sidebar.is-mini-hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar.show,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar.show{
   background:#3A3226!important;
   box-shadow:18px 0 40px rgba(0,0,0,.35)!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar::before{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar::before,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar::before{
   content:"";
   display:block!important;
   position:absolute;inset:0;
@@ -7505,7 +7731,8 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   -webkit-mask-image:linear-gradient(180deg,#000 0%, #000 40%, transparent 100%);
 }
 /* Amber edge rail — defines the continuum join without glow wash */
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar::after{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar::after,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar::after{
   content:"";
   display:block!important;
   position:absolute;
@@ -7527,7 +7754,8 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   mask-image:none;
   -webkit-mask-image:none;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav{
   margin:0!important;
   padding:12px 10px 10px!important;
   border:0!important;
@@ -7537,7 +7765,8 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-account-footer{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-account-footer,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-sidebar-account-footer{
   margin:0!important;
   padding:10px!important;
   border-top-color:rgba(255,255,255,.08)!important;
@@ -7545,75 +7774,106 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-logout{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-logout,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-sidebar-logout{
   background:transparent!important;
   border-color:transparent!important;
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-brand{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-brand,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-brand{
   border-bottom-color:rgba(245,158,11,.18)!important;
   background:transparent!important;
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
   color:#FFFFFF!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-brand small{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-brand small,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-brand small{
   color:rgba(245,158,11,.78)!important;
   text-shadow:0 0 12px rgba(245,158,11,.35);
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .close-side{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .close-side,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .close-side{
   background:rgba(255,255,255,.1)!important;
   color:#fff!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-account-footer{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-account-footer,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-sidebar-account-footer{
   border-top-color:rgba(255,255,255,.08)!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-logout{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-logout,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-sidebar-logout{
   color:#FF8A90!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-logout i{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-logout i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-sidebar-logout i{
   color:#F87171!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-logout:hover{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-sidebar-logout:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-sidebar-logout:hover{
   background:rgba(248,113,113,.1)!important;
   color:#fff!important;
   box-shadow:0 0 0 1px rgba(248,113,113,.22),0 0 18px rgba(248,113,113,.12)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub),
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub),
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub):hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub):hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub):focus,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub):focus,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group .nav-group-btn,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group .nav-group-btn:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn:focus,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group .nav-group-btn:focus,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn:focus-visible,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group .nav-group-btn:focus-visible,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.open > .nav-group-btn{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.open > .nav-group-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.open > .nav-group-btn{
   color:rgba(255,255,255,.86)!important;
   background:transparent!important;
   font-weight:800!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub) i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub) i,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn i,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn .bi-chevron-down{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group .nav-group-btn i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn .bi-chevron-down,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group .nav-group-btn .bi-chevron-down{
   color:rgba(255,255,255,.7)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub):hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub):hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub):focus-visible,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub):focus-visible,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn:hover,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group .nav-group-btn:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn{
   background:rgba(255,255,255,.04)!important;
   color:rgba(255,255,255,.95)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group .nav-group-btn:hover i,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn i{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group .nav-group-btn:hover i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn i{
   color:rgba(251,191,36,.9)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub).active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub).active,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.open > .nav-group-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.open > .nav-group-btn,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn{
   position:relative!important;
   background:linear-gradient(90deg, rgba(245,158,11,.16) 0%, rgba(245,158,11,.05) 45%, transparent 100%)!important;
   color:#FBBF24!important;
@@ -7627,9 +7887,13 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   text-shadow:0 0 18px rgba(245,158,11,.45);
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub).active::before,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub).active::before,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.open > .nav-group-btn::before,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.open > .nav-group-btn::before,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn::before,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn::before{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn::before,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn::before,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn::before{
   content:"";
   position:absolute;
   left:0;top:8px;bottom:8px;width:2px;border-radius:999px;
@@ -7638,115 +7902,166 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   pointer-events:none;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > a:not(.report-sub).active i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > a:not(.report-sub).active i,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.open > .nav-group-btn i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.open > .nav-group-btn i,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn i,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group.open > .nav-group-btn .bi-chevron-down,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn .bi-chevron-down{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group.open > .nav-group-btn .bi-chevron-down,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn .bi-chevron-down,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn .bi-chevron-down{
   color:#FBBF24!important;
   filter:drop-shadow(0 0 8px rgba(245,158,11,.65));
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub{
   color:rgba(255,255,255,.62)!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub:hover{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub:hover{
   background:rgba(255,255,255,.05)!important;
   color:rgba(255,255,255,.92)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub.active,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub.active{
   background:linear-gradient(180deg, rgba(245,158,11,.18) 0%, rgba(43,37,33,.92) 100%)!important;
   border:1px solid rgba(245,158,11,.55)!important;
   color:#FBBF24!important;
   box-shadow:0 0 0 1px rgba(245,158,11,.12),0 0 18px rgba(245,158,11,.18),inset 0 1px 0 rgba(255,255,255,.06)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub.active i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub.active i,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active i,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.active i{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub.active i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.active i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.active i{
   color:#FBBF24!important;
   filter:drop-shadow(0 0 6px rgba(245,158,11,.45));
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub.active::after,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active::after{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub.active::after,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active::after,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub.active::after{
   content:none!important;
   display:none!important;
 }
 
 /* Light flyout panel: white canvas, L2 keeps amber chip structure */
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list{
   background:#fff!important;
   border:1px solid rgba(24,25,28,.08)!important;
   box-shadow:0 12px 32px rgba(0,0,0,.18)!important;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub{
   color:#6b360c!important;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub:hover{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub:hover{
   background:rgba(217,119,6,.08)!important;
   color:#6b360c!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub i,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub i,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a i,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub:hover i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub:hover i,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub:hover i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub:hover i,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a:hover i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a:hover i,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub.active i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub.active i,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub.active:hover i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub.active:hover i,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub.active i,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active:hover i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub.active:hover i,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.active i,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.active:hover i{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.active i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.active:hover i,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.active:hover i{
   color:#6b360c!important;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub.active{
   background:linear-gradient(180deg,#FFFBEB 0%,#FEF3C7 100%)!important;
   border:1px solid var(--bo-sidebar-active)!important;
   color:#6b360c!important;
   box-shadow:0 0 0 1px rgba(245,158,11,.12),0 4px 14px rgba(217,119,6,.12)!important;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active::after{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active::after,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub.active::after{
   content:none!important;
   display:none!important;
 }
 
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > .nav-group > .nav-group-list{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav > .nav-group > .nav-group-list,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav > .nav-group > .nav-group-list{
   background:linear-gradient(180deg,#40424E 0%,#343648 100%)!important;
   border:1px solid rgba(245,158,11,.16)!important;
   box-shadow:0 16px 40px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.04)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub{
   color:rgba(255,255,255,.68)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub:hover,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub:hover{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub:hover{
   background:rgba(255,255,255,.05)!important;
   color:rgba(255,255,255,.92)!important;
 }
 /* L2 icons — amber series (override reports.css blue hover/active) */
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub i,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub i,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a i{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a i{
   color:rgba(255,255,255,.55)!important;
   filter:none;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub:hover i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub:hover i,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub:hover i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub:hover i,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a:hover i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a:hover i,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub.active i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub.active i,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .report-nav a.report-sub.active:hover i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .report-nav a.report-sub.active:hover i,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub.active i,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.report-sub.active:hover i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.report-sub.active:hover i,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.active i,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.active:hover i{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.active i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-sidebar .nav-group-list a.active:hover i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-sidebar .nav-group-list a.active:hover i{
   color:#FBBF24!important;
   filter:drop-shadow(0 0 6px rgba(245,158,11,.45));
 }
 
 @media(min-width:992px){
   body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-nav > a:not(.report-sub).active,
-  body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active{
+body.main-admin-detail-page[data-access-page="main_admin_security"].sidebar-mini .report-nav > a:not(.report-sub).active,
+body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active,
+body.main-admin-detail-page[data-access-page="main_admin_security"].sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active{
     background:linear-gradient(135deg, #FFF8EF 0%, #FFE8CC 48%, #FFF3E0 100%)!important;
     color:#9A3412!important;
     box-shadow:
@@ -7756,7 +8071,9 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
     border-radius:10px!important;
   }
   html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-nav > a:not(.report-sub).active,
-  html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"].sidebar-mini .report-nav > a:not(.report-sub).active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"].sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active{
     background:linear-gradient(90deg, rgba(245,158,11,.16) 0%, rgba(245,158,11,.05) 45%, transparent 100%)!important;
     color:#FBBF24!important;
     box-shadow:
@@ -7765,7 +8082,9 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
       0 0 28px rgba(245,158,11,.12)!important;
   }
   body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-nav > a:not(.report-sub).active::before,
-  body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active::before{
+body.main-admin-detail-page[data-access-page="main_admin_security"].sidebar-mini .report-nav > a:not(.report-sub).active::before,
+body.main-admin-detail-page[data-access-page="main_admin_detail"].sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active::before,
+body.main-admin-detail-page[data-access-page="main_admin_security"].sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active::before{
     content:"";
     position:absolute;
     left:0;top:7px;bottom:7px;width:3px;border-radius:999px;
@@ -7777,16 +8096,20 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
 /* ------------------------------------------------------------------
    Light + Dark table — amber control-terminal comps
    ------------------------------------------------------------------ */
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-user-copy{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-user-copy,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-user-copy{
   display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-user-copy b{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-user-copy b,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-user-copy b{
   display:inline;margin:0;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-user-meta{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-user-meta,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-user-meta{
   flex:1 1 100%;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-you{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-you,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-you{
   display:inline-flex;align-items:center;height:18px;padding:0 6px;
   border-radius:4px;border:0;
   color:#B45309;background:#FEF3C7;
@@ -7795,80 +8118,103 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-you{
 
 /* Light table */
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-panel,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table-wrap{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-panel,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table-wrap,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table-wrap{
   background:#FFFFFF!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table th{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table th,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table th{
   color:#9CA3AF!important;
   border-bottom:1px solid #F3F4F6!important;
   background:transparent!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td{
   color:#374151!important;
   border-bottom:1px solid #F3F4F6!important;
   background:transparent!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table tbody tr:hover td{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table tbody tr:hover td,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table tbody tr:hover td{
   background:#FAFAF9!important;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td.mad-detail,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td.mad-detail,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td.mad-time,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td.mad-time,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-muted,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-email{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-muted,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-email,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-email{
   color:#9CA3AF!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-time{
   font-variant-numeric:tabular-nums;
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-user-copy b{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-user-copy b,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-user-copy b{
   color:#18191C!important;
 }
 
 /* Light avatars */
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-avatar{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-avatar,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-avatar{
   border-radius:8px!important;
   background:#EEF2FF!important;
   color:#3730A3!important;
   border:0!important;
   box-shadow:none!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-avatar.is-self{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-avatar.is-self,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-avatar.is-self{
   background:#FEF3C7!important;
   color:#B45309!important;
   border:0!important;
   box-shadow:none!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table tbody tr:nth-child(3n) .mad-avatar:not(.is-self){
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table tbody tr:nth-child(3n) .mad-avatar:not(.is-self),
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table tbody tr:nth-child(3n) .mad-avatar:not(.is-self){
   background:#E0F2FE!important;
   color:#0369A1!important;
 }
 
 /* Light role pills */
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role{
   background:#F3F4F6!important;
   color:#4B5563!important;
   border-radius:999px!important;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-super,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role.is-super,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-partner,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-merchant{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role.is-partner,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-merchant,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role.is-merchant{
   background:#EDE9FE!important;
   color:#5B21B6!important;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-support,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role.is-support,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-tech,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-regional{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role.is-tech,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-regional,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role.is-regional{
   background:#DBEAFE!important;
   color:#1D4ED8!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-risk{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-risk,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role.is-risk{
   background:#FEE2E2!important;
   color:#B91C1C!important;
 }
 
 /* Light credit */
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-money{
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important;
   font-variant-numeric:tabular-nums!important;
   font-weight:700!important;
@@ -7876,62 +8222,79 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .ma
   padding:0!important;
   color:#27272A!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money.is-zero{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money.is-zero,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-money.is-zero{
   color:#A1A1AA!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money.is-positive{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money.is-positive,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-money.is-positive{
   color:#B45309!important;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time-tip{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-time,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time-tip,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-time-tip{
   color:#71717A!important;
   font-weight:600!important;
 }
 
 /* Light status */
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-status.is-active,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td[data-label="Status"] .mad-status.is-active{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-status.is-active,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td[data-label="Status"] .mad-status.is-active,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td[data-label="Status"] .mad-status.is-active{
   background:#D1FAE5!important;
   color:#047857!important;
   padding:0 10px!important;
   border-radius:999px!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-status.is-active i{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-status.is-active i,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-status.is-active i{
   background:#10B981!important;
   box-shadow:none!important;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-status.is-suspended,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td[data-label="Status"] .mad-status.is-suspended{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-status.is-suspended,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td[data-label="Status"] .mad-status.is-suspended,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td[data-label="Status"] .mad-status.is-suspended{
   background:#FEE2E2!important;
   color:#B91C1C!important;
   padding:0 10px!important;
   border-radius:999px!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] button.mad-status.is-active:hover{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] button.mad-status.is-active:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] button.mad-status.is-active:hover{
   background:#A7F3D0!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] button.mad-status.is-suspended:hover{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] button.mad-status.is-suspended:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] button.mad-status.is-suspended:hover{
   background:#FECACA!important;
 }
 
 /* Light pager inactive */
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager .smart-page,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager button{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager .smart-page,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager button,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager button{
   background:#F3F4F6!important;
   color:#9CA3AF!important;
   border:0!important;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager .smart-page:hover:not(:disabled):not(.active),
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager button:hover:not(:disabled):not(.active){
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager .smart-page:hover:not(:disabled):not(.active),
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pager button:hover:not(:disabled):not(.active),
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pager button:hover:not(:disabled):not(.active){
   background:#E5E7EB!important;
   color:#374151!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-footer-info{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-footer-info,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-footer-info{
   color:#9CA3AF!important;
 }
 
 /* Status filter pills — Active/Suspend/All (light + dark comps) */
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pills{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pills,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pills{
   display:inline-flex!important;
   align-items:center!important;
   gap:4px!important;
@@ -7940,7 +8303,8 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pills{
   background:transparent!important;
   overflow:visible!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill{
   display:inline-flex!important;
   align-items:center!important;
   position:relative!important;
@@ -7956,18 +8320,23 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill{
   gap:8px!important;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill[data-mad-status="active"]::before,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill[data-mad-status="suspended"]::before{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill[data-mad-status="active"]::before,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill[data-mad-status="suspended"]::before,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill[data-mad-status="suspended"]::before{
   content:"";
   width:6px;height:6px;border-radius:50%;flex:0 0 auto;
   box-shadow:none;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill[data-mad-status="active"]::before{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill[data-mad-status="active"]::before,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill[data-mad-status="active"]::before{
   background:#B8C0CC;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill[data-mad-status="suspended"]::before{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill[data-mad-status="suspended"]::before,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill[data-mad-status="suspended"]::before{
   background:#C4C0D0;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill.is-active{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill.is-active,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill.is-active{
   /* Thumb draws the single frame; keep pill itself clear */
   background:transparent!important;
   color:#18191C!important;
@@ -7975,7 +8344,8 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill.is-a
   border-color:transparent!important;
   box-shadow:none!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pills.bo-seg > .bo-seg-thumb{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pills.bo-seg > .bo-seg-thumb,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pills.bo-seg > .bo-seg-thumb{
   top:0!important;
   height:100%!important;
   border-radius:999px!important;
@@ -7986,220 +8356,277 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pills.bo-
   box-sizing:border-box!important;
   opacity:1;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill.is-active[data-mad-status="active"]::before{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill.is-active[data-mad-status="active"]::before,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill.is-active[data-mad-status="active"]::before{
   background:#059669;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill.is-active[data-mad-status="suspended"]::before{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill.is-active[data-mad-status="suspended"]::before,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill.is-active[data-mad-status="suspended"]::before{
   background:#DC2626;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill:hover:not(.is-active){
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill:hover:not(.is-active),
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill:hover:not(.is-active){
   background:rgba(24,25,28,.04)!important;
   color:#4B5563!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill-count{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill-count,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill-count{
   background:transparent!important;
   color:inherit!important;
   min-width:0!important;height:auto!important;padding:0!important;
   font-size:13px!important;font-weight:inherit!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill-count::before{content:"("}
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill-count::after{content:")"}
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill-count::before,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill-count::before{content:"("}
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill-count::after,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill-count::after{content:")"}
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill-count.is-active-count,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill-count.is-danger-count{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill-count.is-active-count,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill-count.is-danger-count,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill-count.is-danger-count{
   color:inherit!important;
 }
 
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pills{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pills,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pills{
   background:transparent!important;
   padding:0!important;
   gap:4px!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill{
   color:#8A8F98!important;
   background:transparent!important;
   border-color:transparent!important;
   box-shadow:none!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill[data-mad-status="active"]::before{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill[data-mad-status="active"]::before,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill[data-mad-status="active"]::before{
   background:#3F3F46;
   box-shadow:none;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill[data-mad-status="suspended"]::before{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill[data-mad-status="suspended"]::before,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill[data-mad-status="suspended"]::before{
   background:#3F3F46;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill.is-active{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill.is-active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill.is-active{
   background:transparent!important;
   color:#FFFFFF!important;
   border-color:transparent!important;
   box-shadow:none!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pills.bo-seg > .bo-seg-thumb{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pills.bo-seg > .bo-seg-thumb,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pills.bo-seg > .bo-seg-thumb{
   background-color:#383A46!important;
   background-image:linear-gradient(180deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%)!important;
   border:1px solid rgba(255,255,255,.12)!important;
   box-shadow:0 1px 2px rgba(0,0,0,.22),0 4px 10px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(0,0,0,.18)!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill.is-active[data-mad-status="active"]::before{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill.is-active[data-mad-status="active"]::before,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill.is-active[data-mad-status="active"]::before{
   background:#34D399;
   box-shadow:0 0 0 2px rgba(52,211,153,.18),0 0 10px rgba(52,211,153,.55);
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill.is-active[data-mad-status="suspended"]::before{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill.is-active[data-mad-status="suspended"]::before,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill.is-active[data-mad-status="suspended"]::before{
   background:#F87171;
   box-shadow:0 0 0 2px rgba(248,113,113,.15),0 0 8px rgba(248,113,113,.4);
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill:hover:not(.is-active){
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill:hover:not(.is-active),
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill:hover:not(.is-active){
   background:rgba(255,255,255,.04)!important;
   color:#D4D4D8!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill-count{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pill-count,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pill-count{
   color:inherit!important;
   background:transparent!important;
 }
 
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-panel,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table-wrap{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-panel,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table-wrap,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table-wrap{
   background:#383A46!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table th{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table th,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table th{
   color:#71717A!important;
   border-bottom-color:rgba(255,255,255,.08)!important;
   background:transparent!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td{
   color:#E7E5E4!important;
   border-bottom-color:rgba(255,255,255,.06)!important;
   background:transparent!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table tbody tr:hover td{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table tbody tr:hover td,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table tbody tr:hover td{
   background:rgba(255,255,255,.03)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td.mad-detail,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td.mad-detail,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td.mad-time,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td.mad-time,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-muted,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-email{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-muted,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-email,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-email{
   color:#A1A1AA!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-time,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-time{
   font-variant-numeric:tabular-nums;
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
 
 /* Avatar */
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-avatar{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-avatar,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-avatar{
   border-radius:8px!important;
   background:#383A46!important;
   color:#A1A1AA!important;
   border:1px solid rgba(255,255,255,.14)!important;
   box-shadow:none!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-avatar.is-self{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-avatar.is-self,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-avatar.is-self{
   color:#F59E0B!important;
   border-color:rgba(245,158,11,.65)!important;
   background:rgba(245,158,11,.10)!important;
   box-shadow:0 0 0 1px rgba(245,158,11,.2),0 0 14px rgba(245,158,11,.28)!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-user-copy b{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-user-copy b,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-user-copy b{
   color:#F5F5F4!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-you{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-you,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-you{
   border-color:rgba(245,158,11,.55)!important;
   color:#F59E0B!important;
   background:rgba(245,158,11,.08)!important;
 }
 
 /* Role pills */
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role{
   background:rgba(255,255,255,.08)!important;
   color:#D4D4D8!important;
   border-radius:999px!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-super,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role.is-super,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-partner,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-merchant{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role.is-partner,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-merchant,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role.is-merchant{
   background:rgba(124,58,237,.22)!important;
   color:#C4B5FD!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-support,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role.is-support,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-tech,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-regional{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role.is-tech,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-regional,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role.is-regional{
   background:rgba(37,99,235,.22)!important;
   color:#93C5FD!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-risk{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role.is-risk,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-role.is-risk{
   background:rgba(239,68,68,.18)!important;
   color:#FCA5A5!important;
 }
 
 /* Credit */
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td[data-label="Credit Balance"] .mad-money{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-money,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td[data-label="Credit Balance"] .mad-money,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td[data-label="Credit Balance"] .mad-money{
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important;
   font-variant-numeric:tabular-nums!important;
   font-weight:700!important;
   background:transparent!important;
   padding:0!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money.is-zero{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money.is-zero,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-money.is-zero{
   color:#A1A1AA!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money.is-positive{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-money.is-positive,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-money.is-positive{
   color:#F59E0B!important;
 }
 
 /* Status Active / Suspended */
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-status.is-active,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td[data-label="Status"] .mad-status.is-active{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-status.is-active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td[data-label="Status"] .mad-status.is-active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td[data-label="Status"] .mad-status.is-active{
   background:rgba(16,185,129,.14)!important;
   color:#6EE7B7!important;
   padding:0 10px!important;
   border-radius:999px!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-status.is-active i{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-status.is-active i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-status.is-active i{
   background:#34D399!important;
   box-shadow:0 0 0 2px rgba(52,211,153,.18),0 0 10px rgba(52,211,153,.55)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-status.is-suspended,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td[data-label="Status"] .mad-status.is-suspended{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-status.is-suspended,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table td[data-label="Status"] .mad-status.is-suspended,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table td[data-label="Status"] .mad-status.is-suspended{
   background:rgba(239,68,68,.14)!important;
   color:#FCA5A5!important;
   padding:0 10px!important;
   border-radius:999px!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] button.mad-status.is-active:hover{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] button.mad-status.is-active:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] button.mad-status.is-active:hover{
   background:rgba(16,185,129,.22)!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] button.mad-status.is-suspended:hover{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] button.mad-status.is-suspended:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] button.mad-status.is-suspended:hover{
   background:rgba(239,68,68,.22)!important;
 }
 
 /* Action icons */
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-icon-btn{
   color:#A1A1AA!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn:hover{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-icon-btn:hover{
   background:rgba(245,158,11,.14)!important;
   color:#F59E0B!important;
   box-shadow:none!important;
 }
 
 /* Top-right chrome — theme toggle + identity + amber avatar (light/dark comps) */
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .report-actions{
   gap:12px!important;
   align-items:center!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions > [data-bo-profile]{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions > [data-bo-profile],
+body.main-admin-detail-page[data-access-page="main_admin_security"] .report-actions > [data-bo-profile]{
   display:inline-flex!important;
   align-items:center!important;
   gap:12px!important;
 }
 /* Divider slot always reserved — only tint changes by theme (prevents cluster shift) */
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions > [data-bo-profile]::before{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions > [data-bo-profile]::before,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .report-actions > [data-bo-profile]::before{
   content:"";
   width:1px;height:28px;flex:0 0 1px;
   background:rgba(24,25,28,.12);
   margin:0;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-theme-btn{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-theme-btn,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-theme-btn{
   position:relative!important;
   box-sizing:border-box!important;
   flex:0 0 36px!important;
@@ -8213,7 +8640,8 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-theme-btn{
   padding:0!important;
   overflow:hidden!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-theme-btn i[data-theme-icon]{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-theme-btn i[data-theme-icon],
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-theme-btn i[data-theme-icon]{
   position:absolute!important;
   left:0!important;top:0!important;right:0!important;bottom:0!important;
   display:grid!important;
@@ -8226,21 +8654,26 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-theme-btn 
   transform:none!important;
 }
 /* Keep both icons in the same slot; hidden only fades, does not reflow */
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-theme-btn i[data-theme-icon][hidden]{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-theme-btn i[data-theme-icon][hidden],
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-theme-btn i[data-theme-icon][hidden]{
   display:grid!important;
   opacity:0!important;
   visibility:hidden!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-theme-btn:hover{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-theme-btn:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-theme-btn:hover{
   background:rgba(24,25,28,.05)!important;
   border-color:rgba(24,25,28,.28)!important;
   color:#18191C!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-theme-btn:focus-visible{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-theme-btn:focus-visible,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-theme-btn:focus-visible{
   outline:2px solid #D97706!important;outline-offset:2px!important;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions .bo-account-link,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .report-actions .bo-account-link,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-link{
   height:auto!important;min-width:0!important;padding:0!important;
   border:0!important;border-radius:0!important;
   background:transparent!important;
@@ -8255,47 +8688,69 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-li
   z-index:2!important;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions .bo-account-link:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .report-actions .bo-account-link:hover,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link:hover,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-link:hover,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions .bo-account-link:focus,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .report-actions .bo-account-link:focus,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link:focus,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-link:focus,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions .bo-account-link:focus-visible,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .report-actions .bo-account-link:focus-visible,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link:focus-visible,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-link:focus-visible,
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions .bo-account-link:active,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link:active{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .report-actions .bo-account-link:active,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link:active,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-link:active{
   background:transparent!important;
   border-color:transparent!important;
   box-shadow:none!important;
   color:inherit!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions .bo-account-link,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-actions .bo-account-link,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-link,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions .bo-account-link:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-actions .bo-account-link:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-link:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions .bo-account-link:focus,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-actions .bo-account-link:focus,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link:focus,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-link:focus,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions .bo-account-link:focus-visible,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-actions .bo-account-link:focus-visible,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link:focus-visible,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-link:focus-visible,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions .bo-account-link:active,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link:active{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-actions .bo-account-link:active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link:active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-link:active{
   background:transparent!important;
   border-color:transparent!important;
   box-shadow:none!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-setting-icon{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-setting-icon,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-setting-icon{
   display:none!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-meta{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-meta,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-meta{
   display:flex;flex-direction:column;align-items:flex-end;justify-content:center;
   gap:2px;min-width:0;order:1;
   text-align:right;line-height:1.15;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-name{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-name,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-name{
   display:block!important;
   font-size:14px!important;font-weight:700!important;
   color:#18191C!important;letter-spacing:-.01em;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-role{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-role,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-role{
   display:block;
   font-size:11px;font-weight:500;
   color:#71717A;
@@ -8303,7 +8758,9 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-ro
   letter-spacing:.02em;white-space:nowrap;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link .report-avatar,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-avatar{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-link .report-avatar,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-avatar,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .report-avatar{
   order:2;
   width:40px!important;height:40px!important;min-width:40px!important;flex:0 0 40px!important;
   border-radius:12px!important;
@@ -8314,140 +8771,184 @@ body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-avatar
   display:grid!important;place-items:center!important;
 }
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-avatar i,
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-avatar::before{
+body.main-admin-detail-page[data-access-page="main_admin_security"] .report-avatar i,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-avatar::before,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .report-avatar::before{
   font-size:18px!important;line-height:1!important;color:#FFFFFF!important;
 }
 /* Restore person icon when auth only injected initials (create/edit pages) */
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-avatar:not(:has(> i))::before{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-avatar:not(:has(> i))::before,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .report-avatar:not(:has(> i))::before{
   content:"\F4DA";
   font-family:"bootstrap-icons"!important;
   font-style:normal;font-weight:400!important;
   speak:never;
   display:block;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link:hover .report-avatar{
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link:hover .report-avatar,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-link:hover .report-avatar{
   background:#B45309!important;
 }
 
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-theme-btn{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-theme-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-theme-btn{
   border-color:rgba(245,158,11,.4)!important;
   background:transparent!important;
   color:#F59E0B!important;
   box-shadow:none!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-theme-btn:hover{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-theme-btn:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-theme-btn:hover{
   background:rgba(245,158,11,.1)!important;
   border-color:#F59E0B!important;
   color:#FBBF24!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions > [data-bo-profile]::before{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-actions > [data-bo-profile]::before,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-actions > [data-bo-profile]::before{
   background:rgba(255,255,255,.12);
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-name{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-name,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-name{
   color:#FFFFFF!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-role{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-role,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-role{
   color:#F59E0B!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link .report-avatar,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-avatar{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-link .report-avatar,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-avatar,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-avatar{
   background:#F59E0B!important;
   color:#2A2C36!important;
   box-shadow:0 0 0 1px rgba(245,158,11,.25),0 4px 16px rgba(245,158,11,.35)!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-avatar i{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-avatar i,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-avatar i{
   color:#2A2C36!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-avatar:not(:has(> i))::before{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .report-avatar:not(:has(> i))::before,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .report-avatar:not(:has(> i))::before{
   color:#2A2C36!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link:hover .report-avatar{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-link:hover .report-avatar,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-link:hover .report-avatar{
   background:#FBBF24!important;
 }
 
 /* Dark hover tips — soft charcoal + amber (replace navy/cyan) */
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-time-tip::after,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn[data-tip]::after{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-time-tip::after,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn[data-tip]::after,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-icon-btn[data-tip]::after{
   background:#40424E!important;
   color:#F5F5F4!important;
   border:1px solid rgba(245,158,11,.35)!important;
   box-shadow:0 12px 28px rgba(0,0,0,.35)!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-time-tip::before{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-time-tip::before,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-time-tip::before{
   border-top-color:#40424E!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn[data-tip]::before{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn[data-tip]::before,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-icon-btn[data-tip]::before{
   border-top-color:#40424E!important;
   border-bottom-color:transparent!important;
 }
-html[data-bo-theme="dark"]:has(body.main-admin-detail-page[data-access-page="main_admin_detail"]) .mad-float-tip{
+html[data-bo-theme="dark"]:has(body.main-admin-detail-page[data-access-page="main_admin_detail"]) .mad-float-tip,
+html[data-bo-theme="dark"]:has(body.main-admin-detail-page[data-access-page="main_admin_security"]) .mad-float-tip{
   background:#40424E!important;
   color:#F5F5F4!important;
   border:1px solid rgba(245,158,11,.35)!important;
   box-shadow:0 12px 28px rgba(0,0,0,.35)!important;
 }
-html[data-bo-theme="dark"]:has(body.main-admin-detail-page[data-access-page="main_admin_detail"]) .mad-float-tip::after{
+html[data-bo-theme="dark"]:has(body.main-admin-detail-page[data-access-page="main_admin_detail"]) .mad-float-tip::after,
+html[data-bo-theme="dark"]:has(body.main-admin-detail-page[data-access-page="main_admin_security"]) .mad-float-tip::after{
   border-top-color:#40424E!important;
 }
-html[data-bo-theme="dark"]:has(body.main-admin-detail-page[data-access-page="main_admin_detail"]) .mad-float-tip.is-below::after{
+html[data-bo-theme="dark"]:has(body.main-admin-detail-page[data-access-page="main_admin_detail"]) .mad-float-tip.is-below::after,
+html[data-bo-theme="dark"]:has(body.main-admin-detail-page[data-access-page="main_admin_security"]) .mad-float-tip.is-below::after{
   border-top-color:transparent!important;
   border-bottom-color:#40424E!important;
 }
 
 /* Light hover tips — warm cream + amber (replace navy) */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-time-tip::after,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn[data-tip]::after{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-time-tip::after,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn[data-tip]::after,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-icon-btn[data-tip]::after{
   background:#FFF8EB!important;
   color:#6b360c!important;
   border:1px solid rgba(217,119,6,.28)!important;
   border-radius:999px!important;
   box-shadow:0 8px 22px rgba(60,48,32,.12)!important;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-time-tip::before{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-time-tip::before,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-time-tip::before{
   border-top-color:#FFF8EB!important;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn[data-tip]::before{
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-icon-btn[data-tip]::before,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-icon-btn[data-tip]::before{
   border-top-color:#FFF8EB!important;
   border-bottom-color:transparent!important;
 }
-html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_detail"]) .mad-float-tip{
+html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_detail"]) .mad-float-tip,
+html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_security"]) .mad-float-tip{
   background:#FFF8EB!important;
   color:#6b360c!important;
   border:1px solid rgba(217,119,6,.28)!important;
   border-radius:999px!important;
   box-shadow:0 8px 22px rgba(60,48,32,.12)!important;
 }
-html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_detail"]) .mad-float-tip::after{
+html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_detail"]) .mad-float-tip::after,
+html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_security"]) .mad-float-tip::after{
   border-top-color:#FFF8EB!important;
 }
-html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_detail"]) .mad-float-tip.is-below::after{
+html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_detail"]) .mad-float-tip.is-below::after,
+html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page[data-access-page="main_admin_security"]) .mad-float-tip.is-below::after{
   border-top-color:transparent!important;
   border-bottom-color:#FFF8EB!important;
 }
 
 /* Dark modals — Adjust Credit + Reset Password inputs match soft charcoal */
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal-panel,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-modal-panel,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pass-modal-panel,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .modal-clean-panel{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pass-modal-panel,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .modal-clean-panel,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .modal-clean-panel{
   background:#383A46!important;
   border-color:rgba(255,255,255,.10)!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-summary{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-summary,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-summary{
   background:#2A2C36!important;
   border-color:rgba(255,255,255,.10)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .mac-field .form-control,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel .mac-field .form-control,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel input.form-control,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel input.form-control,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel select.form-control,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel select.form-control,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel textarea.form-control,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel textarea.form-control,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .rounded-select-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel .rounded-select-btn,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .rounded-select-wrap .rounded-select-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel .rounded-select-wrap .rounded-select-btn,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-field .form-control,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-field .form-control,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pass-wrap .form-control,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pass-wrap .form-control,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal .form-control,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-modal .form-control,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pass-modal-fields .mad-field .form-control,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pass-modal-fields .mad-pass-wrap .form-control{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pass-modal-fields .mad-field .form-control,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pass-modal-fields .mad-pass-wrap .form-control,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pass-modal-fields .mad-pass-wrap .form-control{
   background:#2A2C36!important;
   background-color:#2A2C36!important;
   border:1px solid rgba(255,255,255,.12)!important;
@@ -8457,59 +8958,85 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   -webkit-text-fill-color:#F5F5F4;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .form-control::placeholder,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel .form-control::placeholder,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-field .form-control::placeholder,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-field .form-control::placeholder,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal .form-control::placeholder,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pass-modal-fields .form-control::placeholder{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-modal .form-control::placeholder,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pass-modal-fields .form-control::placeholder,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pass-modal-fields .form-control::placeholder{
   color:#A1A1AA!important;
   opacity:1!important;
   -webkit-text-fill-color:#A1A1AA;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .form-control:focus,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel .form-control:focus,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel .rounded-select-btn.open,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .rounded-select-btn:focus,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel .rounded-select-btn:focus,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-field .form-control:focus,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-field .form-control:focus,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pass-wrap .form-control:focus,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal .form-control:focus{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pass-wrap .form-control:focus,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal .form-control:focus,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-modal .form-control:focus{
   border-color:#F59E0B!important;
   box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .rounded-select-menu{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .rounded-select-menu,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel .rounded-select-menu{
   background:#383A46!important;
   border-color:rgba(255,255,255,.10)!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .rounded-select-option:hover{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel .rounded-select-option:hover{
   background:rgba(245,158,11,.12)!important;
   color:#FBBF24!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel .rounded-select-option.active,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .rounded-select-option.is-active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel .rounded-select-option.is-active,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .rounded-select-option.active:hover,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .rounded-select-option.is-active:hover{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel .rounded-select-option.active:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .rounded-select-option.is-active:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel .rounded-select-option.is-active:hover{
   background:rgba(245,158,11,.20)!important;
   color:#FBBF24!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal-actions .mad-btn-ghost,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-modal-actions .mad-btn-ghost,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .mad-btn-ghost,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel .mad-btn-ghost,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .mad-modal-actions .mad-btn-ghost,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel .mad-modal-actions .mad-btn-ghost,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .mad-modal-actions .mad-btn-ghost.bo-ui-button,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-panel .mad-modal-actions .mad-btn-ghost.bo-ui-button,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .modal-clean-foot .mad-btn-ghost,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .modal-clean-actions .mad-btn-ghost{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .modal-clean-foot .mad-btn-ghost,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .modal-clean-actions .mad-btn-ghost,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .modal-clean-actions .mad-btn-ghost{
   background-color:#383A46!important;
   background-image:linear-gradient(180deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%)!important;
   border:1px solid rgba(255,255,255,.12)!important;
   color:#F5F5F4!important;
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-avatar{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-avatar,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-avatar{
   background:rgba(245,158,11,.16)!important;
   color:#FBBF24!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pass-modal-fields .mac-link-btn,
-html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pass-modal-fields .mac-link-btn:hover{
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pass-modal-fields .mac-link-btn,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-pass-modal-fields .mac-link-btn:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-pass-modal-fields .mac-link-btn:hover{
   color:#FBBF24!important;
 }
 
 @media (max-width:575.98px){
-  body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-meta{
+  body.main-admin-detail-page[data-access-page="main_admin_detail"] .bo-account-meta,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-meta{
     display:none!important;
   }
 }

@@ -842,7 +842,108 @@
     }
   });
   document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(document.getElementById('roleCreateModal')?.classList.contains('show'))closeModal();});
+
+  function viewerRoleLabel(){
+    const user = (window.BO_AUTH && typeof BO_AUTH.user === 'function') ? (BO_AUTH.user() || {}) : {};
+    const type = String(user.roleType || user.role || '').toUpperCase();
+    if(user.rootAdmin === true || Number(user.rootAdmin) === 1 || type === 'ROOT') return 'Root';
+    if(type === 'MAIN' || user.mainAdmin === true || Number(user.mainAdmin) === 1) return 'Superadmin';
+    if(type === 'MASTER') return 'Master';
+    if(type === 'BRAND_OWNER') return 'Brand Owner';
+    if(user.role) return String(user.role);
+    return 'Admin';
+  }
+
+  function enhanceAmberTopbarProfile(){
+    const pageEl = document.body;
+    if(!pageEl || !pageEl.classList.contains('menu-permission-page')) return;
+    const host = pageEl.querySelector('.report-actions [data-bo-profile]');
+    if(!host) return;
+    const link = host.querySelector('a.bo-account-link');
+    if(!link) return;
+
+    const href = String(link.getAttribute('href') || '');
+    if(!href || href === '#' || href === 'profile.html'){
+      link.setAttribute('href', 'profile.html#password');
+    }
+    link.style.pointerEvents = 'auto';
+    link.style.cursor = 'pointer';
+    link.setAttribute('title', 'Account settings / Change password');
+    link.setAttribute('aria-label', 'Open account settings and change password');
+
+    const already = link.classList.contains('is-mp-amber-profile')
+      && link.querySelector('.bo-account-meta')
+      && link.querySelector('.report-avatar i.bi-person');
+    if(already){
+      const roleEl = link.querySelector('[data-admin-role]');
+      const nextRole = viewerRoleLabel();
+      if(roleEl && roleEl.textContent !== nextRole) roleEl.textContent = nextRole;
+      return;
+    }
+
+    const avatar = link.querySelector('.report-avatar');
+    let name = link.querySelector('.bo-account-name');
+    const gear = link.querySelector('.bo-account-setting-icon');
+    if(gear) gear.setAttribute('hidden', '');
+
+    let meta = link.querySelector('.bo-account-meta');
+    if(!meta && name){
+      meta = document.createElement('span');
+      meta.className = 'bo-account-meta';
+      name.replaceWith(meta);
+      meta.appendChild(name);
+    }
+    name = link.querySelector('.bo-account-name');
+
+    let role = link.querySelector('[data-admin-role]');
+    if(!role && meta){
+      role = document.createElement('span');
+      role.className = 'bo-account-role';
+      role.setAttribute('data-admin-role', '');
+      meta.appendChild(role);
+    }
+    if(role) role.textContent = viewerRoleLabel();
+
+    if(avatar){
+      avatar.removeAttribute('data-admin-avatar');
+      if(!avatar.querySelector('i.bi-person')){
+        avatar.textContent = '';
+        const icon = document.createElement('i');
+        icon.className = 'bi bi-person';
+        icon.setAttribute('aria-hidden', 'true');
+        avatar.appendChild(icon);
+      }
+      if(meta && (meta.parentNode !== link || avatar.previousElementSibling !== meta)){
+        link.appendChild(meta);
+        link.appendChild(avatar);
+      }
+    }
+
+    link.classList.add('is-mp-amber-profile');
+  }
+
+  function bindAmberTopbarProfile(){
+    enhanceAmberTopbarProfile();
+    const host = document.querySelector('.report-actions [data-bo-profile]');
+    if(!host || host.dataset.mpAmberObserved === '1') return;
+    host.dataset.mpAmberObserved = '1';
+    let scheduled = false;
+    const run = function(){
+      if(scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(function(){
+        scheduled = false;
+        enhanceAmberTopbarProfile();
+      });
+    };
+    new MutationObserver(run).observe(host, { childList: true });
+    document.addEventListener('bo:profile-updated', run);
+    setTimeout(enhanceAmberTopbarProfile, 80);
+    setTimeout(enhanceAmberTopbarProfile, 400);
+  }
+
   document.addEventListener('DOMContentLoaded',async()=>{
+    bindAmberTopbarProfile();
     await bootstrap();
     if(page==='role'){
       try{menuCache=await fetchMenus();renderPermissionGroups([]);await loadRoleList();}catch(e){msg(roleStatusEl,e.message,'error');}
