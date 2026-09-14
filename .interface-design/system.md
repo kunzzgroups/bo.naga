@@ -107,9 +107,10 @@ Scale: `4, 8, 10, 12, 14, 16, 18, 20, 24, 32`
 
 | Use | Value |
 |-----|-------|
-| Inputs / buttons | `10px` |
+| Action buttons / theme toggle / filter controls | `8px` (locked Admin chrome) |
 | Cards / panels | `16px` |
 | Nav items | `10px` |
+| Avatar (topbar) | `12px` |
 | Pills / switches / light tips | `999px` |
 
 ### Typography
@@ -144,22 +145,106 @@ Scale: `4, 8, 10, 12, 14, 16, 18, 20, 24, 32`
 - Active: amber text/fill + left amber bar
 - Logout: danger red, not amber
 
-### Topbar
+### Topbar (locked chrome — copy exactly)
 
-- Light: solid `#FFFFFF`
-- Dark: solid `#383A46`
-- Theme toggle left of profile
+**Surface**
 
-### Buttons
+| Mode | Topbar bg |
+|------|-----------|
+| Light | solid `#FFFFFF` |
+| Dark | solid `#383A46` |
 
-- Primary: amber gradient CTA
-- Ghost: soft charcoal/gray gradient (dark) or light gray (light)
-- Height ~42px filters · radius ~10px
+**Layout (right cluster, L→R):** Theme toggle (`.bo-theme-btn`) → 1px divider → User Name / profile (`.bo-account-link`)
+
+Do not invent alternate topbar account pills, bordered username chips, or navy theme icons.
+
+#### Theme toggle — `.bo-theme-btn`
+
+| Spec | Light | Dark |
+|------|-------|------|
+| Size | `36×36` (`flex: 0 0 36px`) | same |
+| Radius | `8px` | same |
+| Border | `1px solid rgba(24,25,28,.18)` | `1px solid rgba(245,158,11,.4)` |
+| Background | `transparent` | `transparent` |
+| Icon color | `#3F3F46` | `#F59E0B` |
+| Icon size | `18px` (both sun/moon in same slot; `[hidden]` only fades) | same |
+| Hover | bg `rgba(24,25,28,.05)` · border `rgba(24,25,28,.28)` · color `#18191C` | bg `rgba(245,158,11,.10)` · border `#F59E0B` · color `#FBBF24` |
+| Focus | `outline: 2px solid #D97706; outline-offset: 2px` | same amber |
+
+Storage / attribute: `localStorage.bo_theme` + `html[data-bo-theme="light|dark"]`.
+
+#### User Name / profile — `.bo-account-link`
+
+**Structure:** text meta (`.bo-account-meta`) left of avatar (`.report-avatar`). No gear icon (`.bo-account-setting-icon` hidden). No bordered pill around the whole control.
+
+| Spec | Light | Dark |
+|------|-------|------|
+| Wrapper | transparent · no border · no radius · no shadow · gap `12px` | same |
+| Name `.bo-account-name` | `14px` / `700` / `#18191C` · max-width `160px` ellipsis | `#FFFFFF` |
+| Role `.bo-account-role` | `11px` / `500` / `#71717A` · mono stack | `#F59E0B` |
+| Avatar size | `40×40` · radius `12px` | same |
+| Avatar fill | `#D97706` · icon `#FFFFFF` | `#F59E0B` · icon `#2A2C36` + amber glow shadow |
+| Avatar hover | `#B45309` | `#FBBF24` |
+| Divider before profile | `1px × 28px` `rgba(24,25,28,.12)` | `rgba(255,255,255,.12)` |
+
+### Buttons (locked — Admin Detail reference)
+
+**Shared metrics (page actions / chrome / modal footers)**
+
+| Spec | Value |
+|------|-------|
+| Base height | `36px` (filter Reset / Add Currency / Bulk Delete may be `42px`) |
+| Modal action height | `40px` |
+| Padding | `0 14px` (modal `0 16px`) |
+| Radius | `8px` |
+| Font | `12.5–13px` / weight `700` |
+| Gap (icon+label) | `6–8px` |
+| Motion | hover `translateY(-1px)` · active `translateY(1px)` · ease ~`0.14s` |
+| Focus | `outline: 2px solid` amber (`--bo-cyan` / `#D97706`) · offset `2px` |
+
+**Classes:** Primary = `.mad-btn-primary` / `.mad-btn-navy` / `.bo-ui-button-primary` (alias; all amber). Ghost / Export = `.mad-btn-ghost` / `#madExportBtn`. Never restore navy fill as primary.
+
+#### Primary CTA
+
+| State | Light | Dark |
+|-------|-------|------|
+| Default fill | `linear-gradient(180deg, #FBBF24 0%, #F59E0B 42%, #EA8608 100%)` | `linear-gradient(180deg, #FBBF24 0%, #F59E0B 45%, #D97706 100%)` |
+| Border | `#E8901A` | `#F59E0B` |
+| Label | `#FFFFFF` | `#2A2C36` |
+| Shadow | soft amber lift + inset top highlight | charcoal lift + amber glow + inset |
+| Hover fill | `linear-gradient(0deg, #FCD34D → #FBBF24 → #F59E0B → #EA8608)` | `linear-gradient(0deg, #FDE68A → #FBBF24 → #F59E0B)` |
+| Hover border | `#F59E0B` | `#FBBF24` |
+| Active fill | `linear-gradient(180deg, #F59E0B → #EA8608)` | `linear-gradient(180deg, #F59E0B → #D97706)` |
+
+#### Ghost / Export
+
+| State | Light | Dark |
+|-------|-------|------|
+| Default fill | `linear-gradient(180deg, #FFFFFF → #F3F4F6)` | `linear-gradient(180deg, #4A4C58 → #383A46 → #2C2E38)` |
+| Border | `#E6E2DA` | `rgba(255,255,255,.12)` |
+| Label | `#18191C` | `#F5F5F4` |
+| Hover | reverse gradient · border `#D6D1C7` | reverse gradient · border `rgba(255,255,255,.18)` · label `#FFFFFF` |
+| Active | `#F9FAFB → #E5E7EB` | `#383A46 → #2C2E38` |
+
+#### Secondary / default `.mad-btn` (non-primary, non-ghost)
+
+| Spec | Light / Dark |
+|------|----------------|
+| Fill | `--bo-surface` |
+| Border | `--bo-border` |
+| Label | `--bo-text-secondary` |
+| Hover | amber tint `--bo-cyan-tint` · border `rgba(217,119,6,.45)` · text `--bo-text` |
+
+#### Danger (bulk delete)
+
+| Spec | Light | Dark |
+|------|-------|------|
+| Fill / border / text | `#FEF3F2` / `rgba(239,51,64,.35)` / `#B42318` | danger wash / `rgba(239,51,64,.4)` / `#FF8A90` |
 
 ### Forms
 
 - Inputs: dark soft charcoal `#2A2C36` on dark; light well `#F0EFEA` / surface white on light
-- Focus: amber ring (never cyan)
+- Focus: amber ring (never cyan) — e.g. `0 0 0 3px rgba(217,119,6,.12)`
 
 ### Date / time tips
 
@@ -185,12 +270,16 @@ Scale: `4, 8, 10, 12, 14, 16, 18, 20, 24, 32`
 | Light tip cream / dark tip charcoal | Replace navy tooltips | 2026-09-14 |
 | Keep `--bo-cyan*` token names | Compatibility; values are amber | 2026-09-14 |
 | Admin Detail = reference implementation | Roll out to remaining pages using this file | 2026-09-14 |
+| Topbar theme btn + User Name + Primary/Ghost buttons locked | Prevent page-to-page drift; specs from Admin Detail CSS | 2026-09-14 |
+| Action control radius `8px` (not 10px) | Match shipped Admin chrome | 2026-09-14 |
 
 ## Agent rules
 
 1. Always read `DESIGN.md` and this file before UI work on this repo.
 2. Never substitute another palette “for taste.” Never restore Deep Navy Cyan.
-3. `frontend-design` may refine typography, hierarchy, and micro-detail — **not** brand hex values.
+3. `frontend-design` may refine typography, hierarchy, and micro-detail — **not** brand hex values, topbar chrome, or locked button gradients.
 4. When adding CSS tokens, prefer `--bo-*` names; map accents through amber (`--bo-cyan` = amber).
 5. Offer to update this file when a pattern is reused 2+ times with stable measurements.
 6. New pages must follow Charcoal + Amber; migrate legacy navy/cyan pages toward these tokens when touched.
+7. **Unify chrome:** every page’s Theme toggle, User Name block, Primary CTA, and Ghost/Export must match the Topbar + Buttons specs above — do not freestyle.
+8. **Dark mode must beat legacy CSS:** `reports.css` still has `.report-body{background:#f5f7fb!important}`. Page CSS must override body/html/canvas with equal-or-higher specificity + `!important`, or white frames will leak around dark cards. Never assume MD tokens alone paint the canvas.

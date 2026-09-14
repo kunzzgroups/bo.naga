@@ -47,10 +47,11 @@ typography:
   mono:
     fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
 rounded:
-  control: "10px"
+  control: "8px"
   card: "16px"
   pill: "999px"
   nav: "10px"
+  avatar-topbar: "12px"
 spacing:
   xs: "4px"
   sm: "8px"
@@ -127,20 +128,44 @@ Nav L1 weight: `font-weight: 800`. Light nav text/icons: `#6b360c`.
 | `--bo-sidebar-active-bg` | `#FFE8CC` | `rgba(245,158,11,.14)` |
 | `--bo-cyan-tint` | `rgba(217,119,6,.12)` | `rgba(245,158,11,.16)` |
 
-### Components (color)
+### Components (color + locked chrome)
 
 | Element | Light | Dark |
 |---------|-------|------|
-| Primary CTA | amber gradient `#FBBF24`→`#F59E0B`→`#EA8608`, text white | same family; text near `#2A2C36` when needed |
-| Ghost / Export | soft gray gradient | `#4A4C58`→`#383A46`→`#2C2E38` |
+| Primary CTA | amber gradient `#FBBF24`→`#F59E0B`→`#EA8608`, text white, border `#E8901A` | `#FBBF24`→`#F59E0B`→`#D97706`, text `#2A2C36`, border `#F59E0B` |
+| Primary hover | reverse lift `#FCD34D`→`#FBBF24`→`#F59E0B`→`#EA8608` | reverse `#FDE68A`→`#FBBF24`→`#F59E0B` |
+| Ghost / Export | `#FFFFFF`→`#F3F4F6`, border `#E6E2DA`, text `#18191C` | `#4A4C58`→`#383A46`→`#2C2E38`, text `#F5F5F4` |
 | Hover tip | `#FFF8EB` + amber border, text `#6b360c`, radius `999px` | `#40424E` + amber border, text `#F5F5F4` |
 | Money positive | `#B45309` | `#F59E0B` |
 | Money zero | `#A1A1AA` | `#A1A1AA` |
 | Modal z-index | above sidebar (`30000`); modals live under `body`, not inside `main` | same |
 
+### Topbar chrome (locked — all pages)
+
+Order: **Theme toggle** → divider → **User Name + avatar**.
+
+**Theme toggle (`.bo-theme-btn`)**  
+`36×36`, radius `8px`, transparent fill. Light: border `rgba(24,25,28,.18)`, icon `#3F3F46`. Dark: border `rgba(245,158,11,.4)`, icon `#F59E0B`. Hover dark → `#FBBF24`. Focus outline `#D97706`.
+
+**User Name (`.bo-account-link`)**  
+No bordered pill / no gear. Name `14px/700` (`#18191C` light · `#FFFFFF` dark). Role `11px` mono (`#71717A` light · `#F59E0B` dark). Avatar `40×40` radius `12px`: light `#D97706` / white icon; dark `#F59E0B` / `#2A2C36` icon + amber glow. Hover avatar: `#B45309` / `#FBBF24`.
+
+### Buttons (locked metrics)
+
+| Spec | Value |
+|------|-------|
+| Radius | `8px` |
+| Height | `36px` default · `40px` modal · `42px` filter Reset/Add |
+| Weight | `700` |
+| Classes | Primary: `.mad-btn-primary` / `.mad-btn-navy` / `.bo-ui-button-primary` (all amber). Ghost: `.mad-btn-ghost` / Export |
+| Motion | hover `-1px` · active `+1px` |
+| Focus | amber 2px outline |
+
+Do not freestyle topbar account chips or primary fills (no navy/cyan primary). Full tables live in `.interface-design/system.md` → Patterns.
+
 ## Typography
 
-System UI stack. Hierarchy via weight + color. Sidebar L1 = `800`. Tabular nums for money/time; mono for credit/time cells.
+System UI stack. Hierarchy via weight + color. Sidebar L1 = `800`. Tabular nums for money/time; mono for credit/time cells and topbar role.
 
 ## Layout
 
@@ -152,7 +177,7 @@ Light: 1px border + soft warm shadow. Dark: surface lift via border; soft charco
 
 ## Shapes
 
-Controls ~10px, cards 16px, pills/switches/tips `999px`, nav ~10px.
+Action controls / theme toggle `8px`, cards `16px`, topbar avatar `12px`, pills/switches/tips `999px`, nav ~`10px`.
 
 ## Do's and Don'ts
 
@@ -160,9 +185,13 @@ Controls ~10px, cards 16px, pills/switches/tips `999px`, nav ~10px.
 - Keep light/dark parity when changing colors.
 - Use continuum on canvas only; keep sidebar opaque; keep panels solid.
 - Prefer `--bo-*` tokens; treat `--bo-cyan*` as amber.
+- Copy Admin Detail topbar (theme + User Name) and Primary/Ghost button recipes on every migrated page.
+- Override legacy light canvas (`reports.css` `.report-body{background:#f5f7fb!important}`) on every dark page, or white frames will leak.
 
 **Don't**
 - Reintroduce Deep Navy Cyan (`#123B66`, `#21A6D7`, `#072647`, `#08131F`, `#0B1626`, `#0F1F33`).
 - Purple-on-white / indigo marketing gradients as product identity.
 - Dead pure black (`#000` / `#0A0A0B`) for dark canvas.
 - Muddy full-page orange wash under table panels.
+- Invent a different User Name pill, theme-toggle size, or primary gradient per page.
+- Assume writing tokens in MD alone paints the page — CSS must implement and win specificity wars.

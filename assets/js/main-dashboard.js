@@ -432,26 +432,26 @@
         <svg class="trend-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Net profit trend">
           <defs>
             <linearGradient id="npLightArea" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#21A6D7" stop-opacity="0.28"/>
-              <stop offset="50%" stop-color="#21A6D7" stop-opacity="0.10"/>
-              <stop offset="100%" stop-color="#21A6D7" stop-opacity="0"/>
+              <stop offset="0%" stop-color="#D97706" stop-opacity="0.28"/>
+              <stop offset="50%" stop-color="#D97706" stop-opacity="0.10"/>
+              <stop offset="100%" stop-color="#D97706" stop-opacity="0"/>
             </linearGradient>
             <linearGradient id="npNightArea" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#21A6D7" stop-opacity="0.38"/>
-              <stop offset="48%" stop-color="#21A6D7" stop-opacity="0.12"/>
-              <stop offset="100%" stop-color="#21A6D7" stop-opacity="0"/>
+              <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.38"/>
+              <stop offset="48%" stop-color="#F59E0B" stop-opacity="0.12"/>
+              <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
             </linearGradient>
             <linearGradient id="npLightBand" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#21A6D7" stop-opacity="0"/>
-              <stop offset="30%" stop-color="#21A6D7" stop-opacity="0.10"/>
-              <stop offset="100%" stop-color="#21A6D7" stop-opacity="0"/>
+              <stop offset="0%" stop-color="#D97706" stop-opacity="0"/>
+              <stop offset="30%" stop-color="#D97706" stop-opacity="0.10"/>
+              <stop offset="100%" stop-color="#D97706" stop-opacity="0"/>
             </linearGradient>
             <linearGradient id="npNightBand" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#21A6D7" stop-opacity="0"/>
-              <stop offset="22%" stop-color="#21A6D7" stop-opacity="0.16"/>
-              <stop offset="50%" stop-color="#5EE7FF" stop-opacity="0.10"/>
-              <stop offset="78%" stop-color="#21A6D7" stop-opacity="0.12"/>
-              <stop offset="100%" stop-color="#21A6D7" stop-opacity="0"/>
+              <stop offset="0%" stop-color="#F59E0B" stop-opacity="0"/>
+              <stop offset="22%" stop-color="#F59E0B" stop-opacity="0.16"/>
+              <stop offset="50%" stop-color="#FBBF24" stop-opacity="0.10"/>
+              <stop offset="78%" stop-color="#F59E0B" stop-opacity="0.12"/>
+              <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
             </linearGradient>
           </defs>
           ${grid}
@@ -693,6 +693,106 @@
     });
   }
 
+  function viewerRoleLabel(user){
+    user = user || (window.BO_AUTH && typeof window.BO_AUTH.user === 'function' ? window.BO_AUTH.user() : {}) || {};
+    if(user.roleName) return String(user.roleName);
+    const type = String(user.roleType || '').toUpperCase();
+    if(user.rootAdmin === true || Number(user.rootAdmin) === 1 || type === 'ROOT') return 'Root';
+    if(type === 'MAIN' || user.mainAdmin === true || Number(user.mainAdmin) === 1) return 'Superadmin';
+    if(type === 'MASTER') return 'Master';
+    if(type === 'BRAND_OWNER') return 'Brand Owner';
+    if(user.role) return String(user.role);
+    return 'Admin';
+  }
+
+  function enhanceAmberTopbarProfile(){
+    const page = document.body;
+    if(!page || !page.classList.contains('main-dashboard-page')) return;
+    const host = page.querySelector('.report-actions [data-bo-profile]');
+    if(!host) return;
+    const link = host.querySelector('a.bo-account-link');
+    if(!link) return;
+
+    const href = String(link.getAttribute('href') || '');
+    if(!href || href === '#' || href === 'profile.html'){
+      link.setAttribute('href', 'profile.html#password');
+    }
+    link.style.pointerEvents = 'auto';
+    link.style.cursor = 'pointer';
+    link.setAttribute('title', 'Account settings / Change password');
+    link.setAttribute('aria-label', 'Open account settings and change password');
+
+    const already = link.classList.contains('is-dash-amber-profile')
+      && link.querySelector('.bo-account-meta')
+      && link.querySelector('.report-avatar i.bi-person');
+    if(already){
+      const roleEl = link.querySelector('[data-admin-role]');
+      const nextRole = viewerRoleLabel();
+      if(roleEl && roleEl.textContent !== nextRole) roleEl.textContent = nextRole;
+      return;
+    }
+
+    const avatar = link.querySelector('.report-avatar');
+    let name = link.querySelector('.bo-account-name');
+    const gear = link.querySelector('.bo-account-setting-icon');
+    if(gear) gear.setAttribute('hidden', '');
+
+    let meta = link.querySelector('.bo-account-meta');
+    if(!meta && name){
+      meta = document.createElement('span');
+      meta.className = 'bo-account-meta';
+      name.replaceWith(meta);
+      meta.appendChild(name);
+    }
+    name = link.querySelector('.bo-account-name');
+
+    let role = link.querySelector('[data-admin-role]');
+    if(!role && meta){
+      role = document.createElement('span');
+      role.className = 'bo-account-role';
+      role.setAttribute('data-admin-role', '');
+      meta.appendChild(role);
+    }
+    if(role) role.textContent = viewerRoleLabel();
+
+    if(avatar){
+      avatar.removeAttribute('data-admin-avatar');
+      if(!avatar.querySelector('i.bi-person')){
+        avatar.textContent = '';
+        const icon = document.createElement('i');
+        icon.className = 'bi bi-person';
+        icon.setAttribute('aria-hidden', 'true');
+        avatar.appendChild(icon);
+      }
+      if(meta && (meta.parentNode !== link || avatar.previousElementSibling !== meta)){
+        link.appendChild(meta);
+        link.appendChild(avatar);
+      }
+    }
+
+    link.classList.add('is-dash-amber-profile');
+  }
+
+  function bindAmberTopbarProfile(){
+    enhanceAmberTopbarProfile();
+    const host = document.querySelector('.report-actions [data-bo-profile]');
+    if(!host || host.dataset.dashAmberObserved === '1') return;
+    host.dataset.dashAmberObserved = '1';
+    let scheduled = false;
+    const run = function(){
+      if(scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(function(){
+        scheduled = false;
+        enhanceAmberTopbarProfile();
+      });
+    };
+    new MutationObserver(run).observe(host, { childList: true });
+    document.addEventListener('bo:profile-updated', run);
+    setTimeout(enhanceAmberTopbarProfile, 80);
+    setTimeout(enhanceAmberTopbarProfile, 400);
+  }
+
   function initCurrencyPicker() {
     const buttons = document.querySelectorAll('.np-currency-seg [data-currency], .mre-currency-seg [data-currency]');
     buttons.forEach(btn => {
@@ -714,6 +814,7 @@
 
   BO_AUTH.requireLogin();
   initThemeToggle();
+  bindAmberTopbarProfile();
   initDatePicker();
   initCurrencyPicker();
   load();

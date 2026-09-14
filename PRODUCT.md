@@ -39,6 +39,7 @@ An operations control surface for brand and platform ops — not a marketing sit
 
 - Product naming in UI: **Backoffice** (Admin Panel / Executive Panel).
 - Existing theme direction documented under `.interface-design/` and `DESIGN.md` (**Charcoal + Amber**) is incumbent identity for refinement work unless the user explicitly requests a redesign.
+- Shell chrome is locked: topbar Theme toggle, User Name/avatar, Primary CTA, and Ghost/Export buttons must match Admin Detail specs in those docs (no per-page freestyle).
 
 ## Evidence on Hand
 
