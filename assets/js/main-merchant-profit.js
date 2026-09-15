@@ -62,7 +62,8 @@
     view: new Date(),
     mode: 'days',
     yearPageStart: new Date().getFullYear() - 5,
-    selectingStart: true
+    selectingStart: true,
+    hover: ''
   };
 
   async function api(path, opt = {}) {
@@ -358,6 +359,12 @@
 
     const start = fromEl.value || '';
     const end = toEl.value || '';
+    // While only the start is picked, the hovered day previews the far end so the range reads
+    // as one continuous strip before anything is committed. Hovering before the start is
+    // deliberately ignored: a click there restarts the range, so the preview must not promise
+    // something the click will not do.
+    const hover = (!end && start && pickerState.hover && pickerState.hover >= start) ? pickerState.hover : '';
+    const bandEnd = end || hover || '', hasBand = !!(start && bandEnd);
     const first = new Date(pickerState.view.getFullYear(), pickerState.view.getMonth(), 1);
     const offset = first.getDay();
     let html = '';
@@ -365,9 +372,12 @@
       const d = new Date(pickerState.view.getFullYear(), pickerState.view.getMonth(), i - offset + 1);
       const v = fmt(d);
       const muted = d.getMonth() !== pickerState.view.getMonth() ? ' muted' : '';
-      const selected = (v === start || v === end) ? ' selected' : '';
-      const inRange = start && end && v > start && v < end ? ' in-range' : '';
-      html += `<button type="button" data-mpr-day="${v}" class="${muted}${selected}${inRange}">${d.getDate()}</button>`;
+      const inBand = !!(hasBand && v >= start && v <= bandEnd);
+      // The anchor is marked as soon as it is picked, band or no band — otherwise the first
+      // click looks like it did nothing.
+      const isStart = !!(start && v === start), isEnd = !!(bandEnd && v === bandEnd);
+      const isPreview = !!(hover && v === hover);
+      html += `<button type="button" data-mpr-day="${v}" class="${muted}${inBand ? ' in-range' : ''}${isStart || isEnd ? ' selected' : ''}${isStart ? ' is-start' : ''}${isEnd ? ' is-end' : ''}${isPreview ? ' is-preview' : ''}">${d.getDate()}</button>`;
     }
     days.innerHTML = html;
   }
@@ -394,6 +404,7 @@
       e.stopPropagation();
       picker.classList.toggle('show');
       pickerState.mode = 'days';
+      pickerState.hover = '';
       renderCalendar();
     });
     document.addEventListener('click', (e) => {
@@ -458,6 +469,7 @@
         fromEl.value = val;
         toEl.value = '';
         pickerState.selectingStart = false;
+        pickerState.hover = '';
         markPreset('');
         updateDateLabel();
         renderCalendar();
@@ -465,11 +477,24 @@
       }
       toEl.value = val;
       pickerState.selectingStart = true;
+      pickerState.hover = '';
       markPreset('');
       updateDateLabel();
       renderCalendar();
       picker.classList.remove('show');
       load();
+    });
+    $('mprCalDays').addEventListener('mouseover', (e) => {
+      const b = e.target.closest('[data-mpr-day]');
+      const v = b ? b.getAttribute('data-mpr-day') : '';
+      if (pickerState.hover === v) return;
+      pickerState.hover = v;
+      if (fromEl.value && !toEl.value) renderCalendar();
+    });
+    $('mprCalDays').addEventListener('mouseleave', () => {
+      if (!pickerState.hover) return;
+      pickerState.hover = '';
+      if (fromEl.value && !toEl.value) renderCalendar();
     });
   }
 

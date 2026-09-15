@@ -3881,40 +3881,112 @@ html[data-bo-theme="dark"] body.report-body.standardized-listing-page.main-admin
 }
 
 /* ==========================================================================
-   Merchant Profit — the KPI strip belongs in the content area, not the tab row
-   It used to sit inside .mad-chrome beside the tabs, competing with navigation for a
-   48px row. Nothing could fit: the strip wanted ~960px, the tabs ~593px, and the row
-   could neither grow nor shrink anything, so the chips covered the tab labels. Allowing
-   the row to wrap only moved the problem — flex-wrap's container height did not include
-   the wrapped line (scrollHeight 106px in a 63px box), so the chips and the primary
-   button were buried under the ledger panel, and it looked cramped either way.
-
-   The strip is now a row of its own in the content column, and the chrome row is back
-   to its original single 48px line, so the tab design is untouched. Every previous
-   override of .mad-chrome here is removed.
+   Merchant Profit — the KPI chips sit in the page header, not in a band of their own
+   As a content row the strip cost 36px of chips plus an 18px gap on each side, so the
+   ledger panel started at y=197. It now starts at y=142 — 55px returned to the table,
+   about one row per screen — with the 18px gap before the panel kept.
+   Moving the strip back into the tab row is not available: measured on the live page, the
+   slack between the tabs (593px) and Record Profit is 873px at 1920 — which is exactly
+   what made it look viable — but only 489px at 1536 and 429px at 1440, against 736px of
+   chips. Below ~1900px they overflow and paint over the tab labels: the defect fixed in
+   02bf5a8 / 6fe83e9. The page header is the only row with real slack. It is 68px tall and
+   its title block ends roughly 1000px before the action cluster at 1920, while the chips
+   are 36px tall — so they fit inside the existing row and cost no vertical space at all.
+   `.bo-header-counters` already establishes counters in this header for non-MAIN roles.
+   The ladder below drops the meta first, then the icon squares; the amount and the
+   label that names it never go. Under 1300px the header wraps and the chips take a
+   line of their own rather than squeezing the title to nothing.
    ========================================================================== */
 
-body.main-merchant-profit-page .mpr-mini-kpis{
+/* The `[data-access-page]` prefix is not decoration: reports.css pins every direct child
+   of .report-topbar with `.report-topbar > div:not(.dropdown):not(.report-actions)
+   :not(.topbar-spacer){flex:1 1 auto!important}` — four class-levels from the :not()
+   arguments. A plain `body.main-merchant-profit-page .report-topbar > .mpr-mini-kpis`
+   is (0,3,1) and loses to it, which let the chip row be squeezed to 0 width and paint
+   its chips over the action buttons. This prefix is (0,5,1), and it also keeps every rule
+   in this block off the sibling merchant pages, which share the data-access-page value. */
+body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar > .mpr-mini-kpis{
   display:flex;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
   align-items:center;
-  justify-content:flex-start;
-  gap:12px;
+  justify-content:flex-end;
+  gap:8px;
   min-width:0;
   width:auto;
   padding:0;
   margin:0;
-  /* the page's own @media(max-width:1100px) rule sets order:-1 to move the strip ahead
-     of the button inside the old flex parent; in this position that would lift it above
-     the tab row. Same specificity, later source, so this wins at every width. */
+  flex:0 0 auto!important;
   order:0;
 }
-body.main-merchant-profit-page .mpr-mini{
-  min-width:200px;
-  padding:0 16px 0 12px;
+body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar > .report-actions{
+  /* .report-actions carries margin-left:auto; the chips are the right-hand group's left
+     edge now, and the title block is what grows, so no auto margin is needed here. */
+  margin-left:0;
+  flex:0 0 auto;
 }
-body.main-merchant-profit-page .mpr-mini.is-hero{
-  min-width:220px;
+body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar .mpr-mini{
+  min-width:0;
+  height:36px;
+  padding:0 12px 0 10px;
+  gap:8px;
+}
+body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar .mpr-mini.is-hero{min-width:0}
+
+/* The chips take width the subtitle used to have. reports.css leaves `p` free to wrap,
+   which grew the header from 68px to 86px at 1536 and 1440 — spending back a third of
+   the 54px the page just gained. nowrap + ellipsis keeps the header at one line — and the
+   text column needs its own min-width:0 for that to bite, otherwise the column's
+   min-content width is the whole nowrap sentence (425px) and it overflows the title block
+   into the chips at every width below 1700. */
+body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar .user-title-wrap > div:not(.user-title-icon){min-width:0}
+body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar .user-title-wrap h1,
+body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar .user-title-wrap p{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  min-width:0;
+}
+
+/* less load-bearing part goes first: the pills above the table carry the counts */
+@media (max-width:1700px){
+  body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar .mpr-mini-meta{display:none}
+}
+@media (max-width:1500px){
+  body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar .mpr-mini-icon{display:none}
+  body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar .mpr-mini{padding:0 10px}
+}
+@media (max-width:1300px){
+  /* reports.css pins `.report-topbar{...flex-wrap:nowrap!important}`; a plain wrap here
+     would lose to it and the chip row (basis 100%) would sit on the first line anyway. */
+  body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar{flex-wrap:wrap!important}
+  body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar > .mpr-mini-kpis{
+    flex:1 0 100%!important;
+    order:2;
+  }
+}
+/* the page's own @media(max-width:1200px) hides .mpr-mini-label — written when the chips
+   were a full-width content row, where a bare amount still read against the row above.
+   In the header the label is the only thing naming the amount, so restate it. */
+@media (max-width:1200px){
+  body.main-merchant-profit-page .report-topbar .mpr-mini-label{display:inline}
+}
+@media (max-width:820px){
+  /* same prefix as the base rule: a bare body.main-merchant-profit-page selector here
+     would lose to it and the chips would never wrap on a phone. */
+  body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar > .mpr-mini-kpis{flex-wrap:wrap}
+}
+@media (max-width:700px){
+  /* reports.css pins `.standardized-listing-page .report-topbar{height:62px!important}` for
+     phones. This page's header carries three chips more than a plain listing page, so the
+     wrapped chip line was painted outside the 62px box, over the tab row. */
+  body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar{height:auto!important;min-height:62px}
+  /* A phone header is the most expensive space on the page, so the chips claim exactly one
+     36px line: tighter padding, a 13px amount, and no repeated unit — every figure on the
+     page is MYR (there is one currency in the filter, and the amount column says so). */
+  body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar > .mpr-mini-kpis{gap:6px;flex-wrap:nowrap}
+  body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar .mpr-mini{padding:0 8px;gap:6px}
+  body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar .mpr-mini-value{font-size:13px}
+  body.main-merchant-profit-page.report-body[data-access-page="main_merchant_detail"] .report-topbar .mpr-mini .currency-unit{display:none}
 }
 
 /* ==========================================================================
@@ -3965,4 +4037,82 @@ html body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-d
   min-width:0!important;
   max-width:100%!important;
   box-sizing:border-box;
+}
+
+/* ==========================================================================
+   Date range picker — make the range read as ONE strip, not separate chips
+   The shared rules draw a 3px gap between day cells and give in-range days a plain wash,
+   so "05 to 20" looked like a row of unrelated light squares with no connection, and there
+   was no feedback at all between picking the first date and the second.
+   Now: cells touch, the band is continuous, its ends are solid amber with only the outer
+   corners rounded so the band flows out of them, and hovering after the first pick previews
+   the whole span before anything is committed.
+   NOTE ON SPECIFICITY: the `html:not([data-bo-theme="dark"])` prefix is required here — the
+   earlier "date picker cells" block in this file sets `background:transparent!important` on
+   every day cell with that prefix, so a shorter selector loses and the ends render empty.
+   Scoped to the merchant family; the shared picker on the provider/main reports is untouched.
+   ========================================================================== */
+
+/* cells must touch, or the band breaks up into chips */
+html body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days{
+  gap:0;
+}
+
+/* ---- Light ---- */
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.selected{
+  /* the solid amber fill had been dead: an earlier override in this file set
+     background:transparent!important on every day cell at (0,4,3), which outranked the
+     rule that supplied var(--bo-cyan). Restated here at (0,6,3). */
+  background:#D97706!important;
+  color:#FFFFFF!important;
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.selected.is-start.in-range:not(.is-end){
+  border-radius:8px 0 0 8px!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.selected.is-end.in-range:not(.is-start){
+  border-radius:0 8px 8px 0!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.in-range:not(.selected){
+  border-radius:0!important;
+  background:rgba(217,119,6,.14)!important;
+  color:#B45309!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.is-preview:not(.selected){
+  background:rgba(217,119,6,.28)!important;
+  color:#7C2D12!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.is-preview.is-end:not(.selected){
+  border-radius:0 8px 8px 0!important;
+}
+
+/* ---- Dark ---- */
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.selected{
+  background:#F59E0B!important;
+  color:#2A2C36!important;
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.selected.is-start.in-range:not(.is-end){
+  border-radius:8px 0 0 8px!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.selected.is-end.in-range:not(.is-start){
+  border-radius:0 8px 8px 0!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.in-range:not(.selected){
+  border-radius:0!important;
+  background:rgba(245,158,11,.18)!important;
+  color:#FBBF24!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.is-preview:not(.selected){
+  background:rgba(245,158,11,.32)!important;
+  color:#FDE68A!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.is-preview.is-end:not(.selected){
+  border-radius:0 8px 8px 0!important;
 }
