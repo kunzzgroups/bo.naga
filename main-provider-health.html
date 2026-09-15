@@ -13,8 +13,8 @@
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
 <link href="assets/css/main-admin-detail-executive.css?v=1.0.21" rel="stylesheet"/>
 <link href="assets/css/main-provider-executive.css?v=1.0.3" rel="stylesheet"/>
-<link href="assets/css/main-provider-family-executive.css?v=1.0.0" rel="stylesheet"/>
-<link href="assets/css/main-provider-health-executive.css?v=1.0.0" rel="stylesheet"/>
+<link href="assets/css/main-provider-family-executive.css?v=1.0.1" rel="stylesheet"/>
+<link href="assets/css/main-provider-health-executive.css?v=1.0.1" rel="stylesheet"/>
 <link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet"/>
 <script>
 (function(){
@@ -63,8 +63,43 @@
     <div class="settlement-ledger-head">
       <div class="d-flex gap-2 align-items-center flex-wrap">
         <input class="form-control" id="mpaActor" placeholder="Search performed by" style="width:220px">
-        <input class="form-control" id="mpaFrom" type="date" style="width:170px">
-        <input class="form-control" id="mpaTo" type="date" style="width:170px">
+        <div class="field ref-date-field mpa-date-field">
+          <input type="hidden" id="reportDateFrom"/>
+          <input type="hidden" id="reportDateTo"/>
+          <div class="ref-range-wrap">
+            <button class="ref-range-trigger" id="reportDateTrigger" type="button" aria-label="Date range">
+              <span class="ref-range-icon"><i class="bi bi-calendar3"></i></span>
+              <span id="reportDateLabel">Select date range</span>
+              <i class="bi bi-chevron-down ms-auto"></i>
+            </button>
+            <div class="ref-range-picker" id="reportRangePicker">
+              <div class="ref-range-presets">
+                <button type="button" data-report-preset="today">Today</button>
+                <button type="button" data-report-preset="yesterday">Yesterday</button>
+                <button type="button" data-report-preset="thisWeek">This Week</button>
+                <button type="button" data-report-preset="lastWeek">Last Week</button>
+                <button type="button" data-report-preset="thisMonth">This Month</button>
+                <button type="button" data-report-preset="lastMonth">Last Month</button>
+                <button type="button" data-report-preset="thisYear">This Year</button>
+                <button type="button" data-report-preset="lastYear">Last Year</button>
+              </div>
+              <div class="ref-range-calendar">
+                <div class="ref-cal-head">
+                  <button type="button" id="reportCalPrev" aria-label="Previous month"><i class="bi bi-chevron-left"></i></button>
+                  <button type="button" class="ref-head-pick" id="reportCalMonth" aria-label="Choose month"></button>
+                  <button type="button" class="ref-head-pick" id="reportCalYear" aria-label="Choose year"></button>
+                  <button type="button" id="reportCalNext" aria-label="Next month"><i class="bi bi-chevron-right"></i></button>
+                </div>
+                <div class="ref-cal-month-grid" id="reportCalMonthGrid"></div>
+                <div class="ref-cal-year-grid" id="reportCalYearGrid"></div>
+                <div class="ref-cal-day-view" id="reportCalDayView">
+                  <div class="ref-cal-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+                  <div class="ref-cal-days" id="reportCalDays"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <button class="mad-btn mad-btn-ghost" id="mpaRefresh" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
     </div>
@@ -90,7 +125,7 @@
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
 <script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
 <script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
-<script src="assets/js/main-provider-activity.js?v=1.0.3"></script>
+<script src="assets/js/main-provider-activity.js?v=1.0.4"></script>
 <script src="assets/js/bo-ui-standard.js?v=1.0.4"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 </body>
