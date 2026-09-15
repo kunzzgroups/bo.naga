@@ -264,10 +264,13 @@ Recipe used (reuse it for the remaining `main-merchant-*` pages):
 - Components with no Admin Detail counterpart were hand-written: `.mad-status-chip` / `.mad-status-dot` (given the `.mad-status` pill treatment so both lists read alike), `.mad-merchant-icon-btn` + its tooltip, and the `.mac-currency-*` / `.mac-provider-*` chrome.
 - The edit workspace (`#madEditWorkspace`) and `#madCurrencyModal` need their own block: their legacy rules are **ID-scoped**, so the class-scoped block cannot reach them, and the prefix carries `body.standardized-listing-page` to outbid the `button.mac-currency-add-btn` variants.
 
-Traps found while migrating (both still live on other pages):
+**Row avatar (2026-09-15 — this page only).** The tile is a neutral index marker, not a colour-coded one: light `#F5EBDC` / `#6b360c`, dark `#2A2C36` / `#E7E5E4`. The every-third-row tint is **deleted** — it encoded row position, not data, and a colour that means nothing teaches the eye to ignore the ones that do (the Status pill, the money columns). Colour survives on exactly one avatar variant: a **suspended** row (`#FEE2E2` / `#B91C1C` light, `rgba(239,68,68,.14)` / `#FCA5A5` dark), which agrees with the Status pill instead of contradicting it. Initials come from the company **name** (`avatarInitials()` in `main-merchant-detail.js`), not the code — the code is already printed beside the tile, so repeating it made a 40×40 saturated block carry no information.
+Admin Detail keeps the old indigo / amber / teal avatar vocabulary. Unify it with this page if the system should have one answer.
+
+Traps found while migrating:
 
 - `reports.css` `.report-content input{background-color:#fff!important}` paints any workspace field the page CSS does not explicitly cover pure white. Light chrome is cream only — cover inputs with the control well `#F5EBDC`, locked `#EDE4D4`.
-- The shared light rule `.mad-table tbody tr:nth-child(3n) .mad-avatar` is *not* light-scoped, so it outbids the charcoal dark `.mad-avatar` rule and drops a near-white `#E0F2FE` chip onto the dark canvas on every third row. **Admin Detail has the same defect**; this page fixes it locally.
+- The shared light rule `.mad-table tbody tr:nth-child(3n) .mad-avatar` is *not* light-scoped, so it outbids the charcoal dark `.mad-avatar` rule and drops a near-white `#E0F2FE` chip onto the dark canvas on every third row. **Admin Detail still has this defect.**
 - Topbar counters (`.bo-header-counter`, `reports-dashboard-original.css`) are hard-coded `#fff` and stay white in dark. They only render for non-`MAIN` roles, so they are invisible on a Main Account login.
 
 ## Typography

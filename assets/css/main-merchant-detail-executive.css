@@ -868,10 +868,8 @@ body.main-admin-detail-page.main-merchant-detail-page .mad-avatar{
   color:#B45309!important;
   border:0!important;
   box-shadow:none!important;
-}body.main-admin-detail-page.main-merchant-detail-page .mad-table tbody tr:nth-child(3n) .mad-avatar:not(.is-self){
-  background:#E0F2FE!important;
-  color:#0369A1!important;
-}/* Light role pills */
+}
+/* Light role pills */
 body.main-admin-detail-page.main-merchant-detail-page .mad-role{
   background:#F3F4F6!important;
   color:#4B5563!important;
@@ -1575,15 +1573,6 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-merchant-detail-page
   color:#F87171!important;
 }
 
-/* Every third row re-tints its avatar. The shared light rule for that variant is not scoped
-   to light mode, so it outbids the charcoal dark .mad-avatar rule and drops a near-white chip
-   onto the dark canvas. Same defect exists on Admin Detail via the shared file. */
-html[data-bo-theme="dark"] body.main-admin-detail-page.main-merchant-detail-page .mad-table tbody tr:nth-child(3n) .mad-avatar:not(.is-self){
-  background:rgba(56,189,248,.14)!important;
-  color:#7DD3FC!important;
-  border:1px solid rgba(125,211,252,.30)!important;
-  box-shadow:none!important;
-}
 
 /* ==========================================================================
    Merchant edit workspace + currency / provider chrome
@@ -1833,4 +1822,39 @@ html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page
 }
 html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-merchant-detail-page #madEditWorkspace .mac-provider-chip.is-selected b{
   color:#FBBF24!important;
+}
+
+/* ==========================================================================
+   Merchant row avatar — neutral tile, colour reserved for state
+   The rescoped block paints this tile indigo and re-tints every third row for
+   position alone. Neither variant carries data, and indigo/violet are the last
+   cool hues left on the warm canvas. The tile is now a quiet index marker and the
+   only tinted variant is a suspended row — which agrees with the Status pill
+   instead of contradicting it. Light and dark finally describe the same thing.
+   ========================================================================== */
+
+/* Light */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-merchant-detail-page .mad-table .mad-avatar:not(.is-self){
+  background:#F5EBDC!important;
+  color:#6b360c!important;
+  border:1px solid #EADCC8!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-merchant-detail-page .mad-table tbody tr:has(.mad-status-chip.is-suspended) .mad-avatar{
+  background:#FEE2E2!important;
+  color:#B91C1C!important;
+  border-color:rgba(239,51,64,.30)!important;
+}
+
+/* Dark */
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-merchant-detail-page .mad-table .mad-avatar:not(.is-self){
+  background:#2A2C36!important;
+  color:#E7E5E4!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-merchant-detail-page .mad-table tbody tr:has(.mad-status-chip.is-suspended) .mad-avatar{
+  background:rgba(239,68,68,.14)!important;
+  color:#FCA5A5!important;
+  border-color:rgba(248,113,113,.30)!important;
 }
