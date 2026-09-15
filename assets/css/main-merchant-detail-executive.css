@@ -3881,63 +3881,38 @@ html[data-bo-theme="dark"] body.report-body.standardized-listing-page.main-admin
 }
 
 /* ==========================================================================
-   Merchant Profit — the chrome row could not hold its own KPI strip
-   .mad-chrome is a 48px grid (`height/min-height/max-height:48px`, `flex:0 0 48px`)
-   with columns `minmax(0,1fr) auto`. The KPI chips are `flex:0 0 auto` with
-   `min-width:168px` (200px for the hero), so the actions column demanded ~1000px,
-   the tabs column was squeezed to ~350px, and `.mad-tabs` is `nowrap` — so the tab
-   labels overflowed their column and painted UNDER the opaque chips. Measured at
-   1680px with realistic values: 188px of overlap covering "Roles & Permissions".
-   Nothing could give: the row could not grow and nothing could shrink.
-   Degradation order below: the tabs keep their size, the KPI block moves to its own
-   line when it must, and the row grows to fit it. Numbers are never truncated and
-   navigation is never covered.
+   Merchant Profit — the KPI strip belongs in the content area, not the tab row
+   It used to sit inside .mad-chrome beside the tabs, competing with navigation for a
+   48px row. Nothing could fit: the strip wanted ~960px, the tabs ~593px, and the row
+   could neither grow nor shrink anything, so the chips covered the tab labels. Allowing
+   the row to wrap only moved the problem — flex-wrap's container height did not include
+   the wrapped line (scrollHeight 106px in a 63px box), so the chips and the primary
+   button were buried under the ledger panel, and it looked cramped either way.
+
+   The strip is now a row of its own in the content column, and the chrome row is back
+   to its original single 48px line, so the tab design is untouched. Every previous
+   override of .mad-chrome here is removed.
    ========================================================================== */
 
-body.main-merchant-profit-page .mad-chrome{
-  /* Grid, not flex: with flex-wrap the container's height did not include the wrapped
-     second line (measured: scrollHeight 106px inside a 63px box), so the KPI row
-     overflowed onto the panel below. Grid rows are auto, so the container height is
-     always the sum of its rows. */
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr) auto;
-  grid-auto-rows:auto;
-  align-items:center;
-  height:auto!important;
-  max-height:none!important;
-  min-height:48px;
-  flex:0 0 auto!important;
-  row-gap:8px;
-  column-gap:16px;
-}
-body.main-merchant-profit-page .mad-chrome > .mad-tabs{
-  grid-column:1;
-  min-width:0;
-}
-body.main-merchant-profit-page .mad-chrome > .mad-chrome-actions{
-  grid-column:2;
-  justify-self:end;
-  min-width:0;
-  height:auto;
-  min-height:36px;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-  row-gap:6px;
-}
-/* Once the tabs plus the KPI strip no longer fit side by side, the actions get their own
-   row spanning the full width. Breakpoint is where 593px of tabs + ~960px of actions +
-   gap stops fitting in the workspace, which is what measurement showed. */
-@media (max-width:1750px){
-  body.main-merchant-profit-page .mad-chrome{
-    grid-template-columns:minmax(0,1fr);
-  }
-  body.main-merchant-profit-page .mad-chrome > .mad-chrome-actions{
-    grid-column:1 / -1;
-    justify-self:stretch;
-  }
-}
 body.main-merchant-profit-page .mpr-mini-kpis{
+  display:flex;
   flex-wrap:wrap;
-  justify-content:flex-end;
-  row-gap:6px;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  min-width:0;
+  width:auto;
+  padding:0;
+  margin:0;
+  /* the page's own @media(max-width:1100px) rule sets order:-1 to move the strip ahead
+     of the button inside the old flex parent; in this position that would lift it above
+     the tab row. Same specificity, later source, so this wins at every width. */
+  order:0;
+}
+body.main-merchant-profit-page .mpr-mini{
+  min-width:200px;
+  padding:0 16px 0 12px;
+}
+body.main-merchant-profit-page .mpr-mini.is-hero{
+  min-width:220px;
 }
