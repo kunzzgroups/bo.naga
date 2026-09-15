@@ -3916,3 +3916,31 @@ body.main-merchant-profit-page .mpr-mini{
 body.main-merchant-profit-page .mpr-mini.is-hero{
   min-width:220px;
 }
+
+/* ==========================================================================
+   Merchant Profit — filter bar balance
+   reports.css pins EVERY `.ref-date-field` to 292px in a media query with four
+   !important size declarations, so the date range was wider than its content while
+   the search box stayed at 220px and truncated its own placeholder — and because the
+   row is `space-between` with a non-growing tools group, ~190px of dead space sat in
+   the middle. Now: the date range is sized to its content, the search is the one
+   control that absorbs slack, and the tools group fills the row so nothing is left
+   over. Scoped to this page; no other page's date field changes.
+   ========================================================================== */
+
+html body.main-merchant-profit-page .mpr-filter-row-main > .mad-filters.mpr-filters-tools{
+  flex:1 1 auto;
+  min-width:0;
+  justify-content:flex-end;
+}
+html body.main-merchant-profit-page .mpr-date-field{
+  width:260px!important;
+  min-width:230px!important;
+  max-width:280px!important;
+  flex:0 0 260px!important;
+}
+html body.main-merchant-profit-page .mpr-filter-row-main .mad-search{
+  flex:1 1 240px!important;
+  min-width:200px;
+  max-width:360px;
+}
