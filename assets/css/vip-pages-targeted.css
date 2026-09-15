@@ -84,7 +84,7 @@
 .vip-log-page .vip-page-info{text-align:center;color:#57534E;font-size:13px;font-weight:600;}
 .vip-log-page .vip-log-pagination{display:flex !important;justify-content:flex-end !important;gap:8px !important;padding:0 !important;}
 .vip-log-page .vip-log-pagination button{min-width:38px;height:38px;border:1px solid #EADCC8;border-radius:10px;background:#FFF8EB;}
-.vip-log-page .vip-log-pagination button.active{background:#57534E;color:#fff;border-color:#57534E;}
+.vip-log-page .vip-log-pagination button.active{background:#D97706;color:#fff;border-color:#E8901A;}
 @media (max-width:760px){
   .vip-log-page .vip-section-title{padding:14px 14px 0 !important;}
   .vip-log-page .vip-log-filters{padding:14px !important;display:grid !important;grid-template-columns:1fr !important;}

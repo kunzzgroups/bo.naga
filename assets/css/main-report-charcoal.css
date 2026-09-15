@@ -5097,3 +5097,25 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .ref-range-presets button:not(.active){
   color:#374151!important;
 }
+
+/* ==========================================================================
+   The active preset rail item must be a SOLID fill, not a wash.
+   The rail buttons also carry `.rounded-select-option`, and the enhanced-select rule for that
+   class paints `active` as a wash. That rule is prefixed with `html:not([data-bo-theme="dark"])`,
+   i.e. one class-level ABOVE an unprefixed family selector — matching its shape was the point:
+   an unprefixed restatement placed later in the file still lost, which is why this looks
+   redundant and is not. Same story in dark, where the prefix is `html[data-bo-theme="dark"]`.
+   DESIGN.md's reference (main-merchant-profit.html) measures solid in both themes.
+   ========================================================================== */
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .ref-range-presets .rounded-select-option.active,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .ref-range-presets button.active{
+  background:#D97706!important;
+  background-color:#D97706!important;
+  color:#FFFFFF!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .ref-range-presets .rounded-select-option.active,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .ref-range-presets button.active{
+  background:#F59E0B!important;
+  background-color:#F59E0B!important;
+  color:#2A2C36!important;
+}
