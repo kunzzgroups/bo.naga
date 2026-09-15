@@ -132,10 +132,15 @@ body.bo-wallet-tx .report-content > .user-title-row,
 body.bo-wallet-tx .report-content > .bo-page-head{
   flex:0 0 auto!important;
 }
-body.bo-wallet-tx .report-content > .table-card{
+body.bo-wallet-tx .report-content > .table-card,
+body.bo-wallet-tx .report-content .table-card{
   flex:1 1 auto!important;
+  flex-grow:1!important;
   min-height:0!important;
   margin-bottom:0!important;
+  height:auto!important;
+  max-height:none!important;
+  align-self:stretch!important;
 }
 
 /* ---- Sidebar (beat reports.css blue) ---- */

@@ -315,7 +315,7 @@
         </article>`;
       }).join('');
     }catch(e){
-      host.innerHTML=`<article class="deposit-bank-card is-empty"><div class="deposit-bank-total"><span>Banks</span><strong>—</strong></div><div class="bo-summary-note">${esc(e.message||'Failed to load')}</div></article>`;
+      host.innerHTML=`<article class="deposit-bank-card is-empty"><div class="deposit-bank-total"><span>Banks</span><strong>-</strong></div><div class="bo-summary-note">${esc(e.message||'Failed to load')}</div></article>`;
     }
   }
   function formatMethodLabel(row,methods){
