@@ -1,0 +1,823 @@
+/* ==========================================================================
+   Charcoal + Amber — main-provider-health.html (Providers → Activity Logs)
+
+   SCOPE PREFIX: body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page
+   `main-provider-stub-page` is unique to this page. The third marker class puts these
+   rules above the family sheet wherever both cover the same element, and above every
+   single-page legacy file that only knows `.main-admin-detail-page`.
+
+   This file COMPLEMENTS assets/css/main-provider-family-executive.css — the shared
+   Charcoal + Amber shell for this family (tokens, canvas continuum, sidebar, topbar,
+   tabs, panel, table chrome, footer, ghost/primary buttons, modals, empty states).
+   None of that is redeclared here. This file carries only what is unique to the stub:
+   the hand-rolled filter row, the activity chips, the page-size control, and the two
+   structural defects this page inherits from main-admin-detail-executive.css (shared
+   with 34 pages — read, never edited).
+
+   Load order (last stylesheets on the page): reports.css → bo-ui-standard.css →
+   bo-targeted-fixes.css → main-admin-detail-executive.css → main-provider-executive.css
+   → main-provider-family-executive.css → THIS FILE → bo-account-chip.css.
+
+   DEFECT 1 — page-size select hidden
+     main-admin-detail-executive.css:1108-1112
+       body.main-admin-detail-page .mad-footer .mad-page-size-select,
+       body.main-admin-detail-page .mad-footer #madPageSize,
+       body.main-admin-detail-page .mad-footer .rounded-select-wrap{display:none!important}
+     reports.js:585-606 wraps #mpaPageSize in .rounded-select-wrap, so the whole
+     "Show N entries" control was invisible and unusable. Re-enabled and themed in §6.
+
+   DEFECT 2 — table header/body misalignment + unlabelled card mode
+     main-admin-detail-executive.css:671-676 (≤1279.98px) hides th:nth-child(7),(8) only
+     main-admin-detail-executive.css:707-716 (≤1199.98px) hides th:nth-child(4),(6),(7),(8) only
+       → the matching tds stayed visible, so every row slid one (or three) columns left of
+         its header and the table read as misaligned data.
+     main-admin-detail-executive.css:1331-1360 + :1377-1382 (≤991.98px) switch the table to
+     a card layout keyed to tr.mad-row and td[data-label]. Neither is emitted by
+     assets/js/main-provider-activity.js (plain <tr>/<td> rows), so the header was already
+     gone and every cell lost its label, padding and divider.
+     Fixed in §7 by keeping the horizontal table — same idiom as
+     main-admin-detail-executive.css:4783-4840 (Merchant Detail) and main-merchant-profit.css:295.
+
+   HAZARD — assets/css/reports.css:1571-1580, quoted because the control rules override it:
+     .report-content select,
+     .report-content .form-select,
+     .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+     .report-content textarea
+       {border:1px solid #cfd8e6!important;border-radius:10px!important;
+        background-color:#fff!important;box-shadow:none!important;color:#101828}
+     .report-content select:focus,
+     .report-content .form-select:focus,
+     .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+     .report-content textarea:focus
+       {border-color:[retired indigo — removed, do not reintroduce]!important;
+        box-shadow:0 0 0 3px rgba(91,108,255,.12)!important;outline:0!important}
+   That block pins #mpaActor / #mpaFrom / #mpaTo / #mpaPageSize to pure white with an
+   indigo focus ring: (0,4,1) idle, (0,4,2) focus. The rules below mirror its :not() chain
+   on the three-class prefix, which lands at (0,8,1) / (0,8,2), so both sides' !important
+   declarations resolve in our favour without touching the legacy file.
+
+   NOT A FIGHT — assets/css/table-pagination-horizontal.css:41-57 pins .smart-page* with
+   !important, but this page does not link that file and the pager here emits
+   .mad-btn.mad-btn-ghost buttons (main-provider-activity.js pager()); nothing there matches.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Filter row — hand-rolled .settlement-ledger-head
+   The class has no rule in ANY stylesheet this page loads (its only definition lives in
+   main-report.css, which is not linked here), so the row was not even a flex container:
+   it is built here as the same strip .mad-filter-bar paints on the sibling pages —
+   flex bar, 14px/16px padding, single cream bottom edge.
+   ========================================================================== */
+body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  flex-wrap:wrap!important;
+  padding:14px 16px!important;
+  min-height:0;
+}
+body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head > div{
+  flex:1 1 auto;
+  min-width:0;
+}
+/* ---- Light ---- */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head{
+  background:transparent!important;
+  border-bottom:1px solid #EADCC8!important;
+}
+/* ---- Dark ---- */
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head{
+  background:transparent!important;
+  border-bottom:1px solid rgba(255,255,255,.14)!important;
+}
+
+/* --------------------------------------------------------------------------
+   1b. The four controls — #mpaActor, #mpaFrom, #mpaTo (filter row) + #mpaPageSize
+   (footer). Control well, never pure white. Overrides reports.css:1571-1580 (quoted
+   in the header) for both the idle field and the focus ring.
+   -------------------------------------------------------------------------- */
+/* ---- Light ---- */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content select,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content .form-select{
+  background-color:#F5EBDC!important;
+  border:1px solid #DCC9A8!important;
+  border-radius:8px!important;
+  color:#18191C!important;
+  box-shadow:none!important;
+  height:36px!important;
+  padding:0 12px!important;
+  font-size:13px!important;
+  font-weight:600!important;
+  letter-spacing:0;
+  max-width:100%;
+  box-sizing:border-box;
+  color-scheme:light;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"])::placeholder{
+  color:#78716C!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content select:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content .form-select:hover{
+  background-color:#F0E4D0!important;
+  border-color:#DCC9A8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content select:focus,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content .form-select:focus{
+  background-color:#FFFCF7!important;
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;
+  outline:0!important;
+}
+
+/* ---- Dark ---- */
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content select,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content .form-select{
+  background-color:#2A2C36!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  border-radius:8px!important;
+  color:#F5F5F4!important;
+  box-shadow:none!important;
+  height:36px!important;
+  padding:0 12px!important;
+  font-size:13px!important;
+  font-weight:600!important;
+  letter-spacing:0;
+  max-width:100%;
+  box-sizing:border-box;
+  color-scheme:dark;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"])::placeholder{
+  color:#71717A!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content select:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content .form-select:hover{
+  background-color:#32343E!important;
+  border-color:rgba(255,255,255,.18)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content select:focus,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content .form-select:focus{
+  background-color:#2A2C36!important;
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.16)!important;
+  outline:0!important;
+}
+
+/* --------------------------------------------------------------------------
+   1c. Native date inputs — #mpaFrom / #mpaTo
+   This page has no .mad-filters and no design-system picker, so the two inputs stay
+   native (behaviour untouched) and only their calibration is themed here. They are
+   addressed by id on purpose: the control-well rule in 1b carries a three-:not()
+   chain that outranks a class-scoped date rule, so the id is what lets the date
+   field own its own padding, tabular figures and colour-scheme.
+   color-scheme is the load-bearing part: it keeps the native calendar panel and the
+   picker glyph legible on the cream well in light mode and on the charcoal well in
+   dark mode, so no filter() hacks are needed on the indicator.
+   -------------------------------------------------------------------------- */
+/* ---- Light ---- */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaFrom,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaTo{
+  color-scheme:light;
+  padding-right:8px!important;
+  font-variant-numeric:tabular-nums;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaFrom::-webkit-datetime-edit,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaTo::-webkit-datetime-edit{
+  color:#18191C;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaFrom::-webkit-calendar-picker-indicator,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaTo::-webkit-calendar-picker-indicator{
+  opacity:.62;
+  filter:none;
+  cursor:pointer;
+  margin-left:4px;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaFrom::-webkit-calendar-picker-indicator:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaTo::-webkit-calendar-picker-indicator:hover{
+  opacity:1;
+}
+/* ---- Dark ---- */
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaFrom,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaTo{
+  color-scheme:dark;
+  padding-right:8px!important;
+  font-variant-numeric:tabular-nums;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaFrom::-webkit-datetime-edit,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaTo::-webkit-datetime-edit{
+  color:#F5F5F4;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaFrom::-webkit-calendar-picker-indicator,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaTo::-webkit-calendar-picker-indicator{
+  opacity:.72;
+  filter:none;
+  cursor:pointer;
+  margin-left:4px;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaFrom::-webkit-calendar-picker-indicator:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaTo::-webkit-calendar-picker-indicator:hover{
+  opacity:1;
+}
+
+/* Narrow phones: the row stacks and Refresh takes the full width. */
+@media(max-width:575.98px){
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head{
+    align-items:stretch!important;
+  }
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head > div{
+    flex:1 1 100%;
+  }
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mad-btn-ghost{
+    width:100%;
+  }
+}
+
+/* ==========================================================================
+   2. Refresh button — #mpaRefresh.mad-btn.mad-btn-ghost
+   Metrics + states restated from the locked Ghost spec (values identical to the
+   family's .mad-btn-ghost block, so the two never fight), plus the icon colour
+   pair that only this row needs: the arrow carries the muted/amber signal.
+   ========================================================================== */
+body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mad-btn-ghost{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  flex:0 0 auto!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:0 14px!important;
+  border-radius:8px!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  cursor:pointer!important;
+  white-space:nowrap;
+}
+/* ---- Light ---- */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mad-btn-ghost{
+  background-color:#F3E8D6!important;
+  background-image:linear-gradient(180deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border:1px solid #EADCC8!important;
+  color:#18191C!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06),0 2px 6px rgba(24,25,28,.05)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mad-btn-ghost i{
+  color:#57534E!important;
+  font-size:13px;
+  line-height:1;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mad-btn-ghost:hover{
+  background-color:#F3E8D6!important;
+  background-image:linear-gradient(0deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border-color:#E0D0B8!important;
+  color:#18191C!important;
+  box-shadow:0 2px 4px rgba(24,25,28,.08),0 4px 10px rgba(24,25,28,.07)!important;
+  transform:translateY(-1px)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mad-btn-ghost:hover i{
+  color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mad-btn-ghost:active{
+  transform:translateY(1px)!important;
+  background-image:linear-gradient(180deg,#FFF1DC 0%,#EADCC8 100%)!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mad-btn-ghost:focus-visible{
+  outline:2px solid #D97706!important;
+  outline-offset:2px!important;
+}
+/* ---- Dark ---- */
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mad-btn-ghost{
+  background-color:#383A46!important;
+  background-image:linear-gradient(180deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%)!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.22),0 4px 10px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(0,0,0,.18)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mad-btn-ghost i{
+  color:#D4D4D8!important;
+  font-size:13px;
+  line-height:1;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mad-btn-ghost:hover{
+  background-color:#383A46!important;
+  background-image:linear-gradient(0deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%)!important;
+  border-color:rgba(255,255,255,.18)!important;
+  color:#FFFFFF!important;
+  box-shadow:0 2px 4px rgba(0,0,0,.22),0 6px 14px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.16)!important;
+  transform:translateY(-1px)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mad-btn-ghost:hover i{
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mad-btn-ghost:active{
+  transform:translateY(1px)!important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2C2E38 100%)!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.08),inset 0 2px 4px rgba(0,0,0,.18)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mad-btn-ghost:focus-visible{
+  outline:2px solid #F59E0B!important;
+  outline-offset:2px!important;
+}
+
+/* ==========================================================================
+   3. Table cells — #mpaRows rows written by main-provider-activity.js
+   :not(.mad-empty) keeps the two JS-rendered message rows (colspan=7) out of the
+   body-cell skin; without it the loading/empty/error text would be repainted as
+   ordinary data and Bootstrap's .text-danger on .mad-empty.text-danger would lose.
+   ========================================================================== */
+/* ---- Light ---- */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaRows td:not(.mad-empty){
+  color:#374151!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaRows td:not(.mad-empty) b{
+  color:#18191C!important;
+  font-weight:800;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaRows td:first-child:not(.mad-empty){
+  color:#57534E!important;
+  font-size:12.5px!important;
+  font-variant-numeric:tabular-nums;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:nowrap!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaRows td.mad-empty{
+  color:#71717A!important;
+  font-size:13px;
+  font-weight:600;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaRows td.mad-empty.text-danger{
+  color:#991B1B!important;
+}
+/* ---- Dark ---- */
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaRows td:not(.mad-empty){
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaRows td:not(.mad-empty) b{
+  color:#FFFFFF!important;
+  font-weight:800;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaRows td:first-child:not(.mad-empty){
+  color:#D4D4D8!important;
+  font-size:12.5px!important;
+  font-variant-numeric:tabular-nums;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:nowrap!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaRows td.mad-empty{
+  color:#D4D4D8!important;
+  font-size:13px;
+  font-weight:600;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaRows td.mad-empty.text-danger{
+  color:#F87171!important;
+}
+
+/* ==========================================================================
+   4. Status chips — .settlement-status.success | .settlement-status.danger
+   The class is defined only in stylesheets this page does not load
+   (main-report.css, main-accounting-settlement.css), so both geometry and colour
+   land here. Wash + text are the same pairs the family uses for
+   .mad-status.is-active / .is-suspended in main-provider-family-executive.css, so
+   an Activity Logs chip reads as the same object as a Status pill on the sibling
+   Providers / Settlement tabs (tokens --bo-success #12B76A, --bo-danger #991B1B).
+   ========================================================================== */
+body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-status{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:5px;
+  height:24px;
+  padding:0 10px!important;
+  border:0;
+  border-radius:999px!important;
+  font-size:11.5px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  letter-spacing:0;
+  text-transform:none;
+  white-space:nowrap!important;
+  vertical-align:middle!important;
+  box-shadow:none!important;
+}
+/* ---- Light ---- */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-status.success{
+  background:#D1FAE5!important;
+  color:#047857!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-status.danger{
+  background:#FEE2E2!important;
+  color:#991B1B!important;
+}
+/* ---- Dark ---- */
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-status.success{
+  background:rgba(16,185,129,.14)!important;
+  color:#6EE7B7!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-status.danger{
+  background:rgba(239,68,68,.14)!important;
+  color:#FCA5A5!important;
+}
+
+/* ==========================================================================
+   5. Pager — #mpaPager buttons (main-provider-activity.js: class="mad-btn mad-btn-ghost",
+   plus ` active` on the current page). The family paints .mad-pager .smart-page, which
+   never matches this container, and the ghost fill is wrong for a page number, so the
+   locked pager ladder from the design system is applied here: 40×36, radius 8, 13/700,
+   cool slate idle in light so the single amber active page is the only warm signal.
+   ========================================================================== */
+body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaPager{
+  gap:6px!important;
+  flex-wrap:wrap!important;
+}
+body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaPager .mad-btn{
+  min-width:40px!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:0 12px!important;
+  border-radius:8px!important;
+  font-size:13px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  background-image:none!important;
+  transition:background .14s ease,color .14s ease,border-color .14s ease,transform .14s ease!important;
+}
+/* ---- Light ---- */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaPager .mad-btn{
+  background:#F3F4F6!important;
+  border:0!important;
+  color:#9CA3AF!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaPager .mad-btn:hover:not(:disabled):not(.active){
+  background:#E5E7EB!important;
+  color:#374151!important;
+  transform:translateY(-1px)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaPager .mad-btn:disabled{
+  background:#F3F4F6!important;
+  border:0!important;
+  color:#C4C7CE!important;
+  box-shadow:none!important;
+  transform:none!important;
+  cursor:not-allowed!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaPager .mad-btn.active{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 48%,#D97706 100%)!important;
+  border:1px solid #D97706!important;
+  color:#FFFFFF!important;
+  box-shadow:0 1px 2px rgba(217,119,6,.25),0 3px 8px rgba(217,119,6,.22),inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaPager .mad-btn:focus-visible{
+  outline:2px solid #D97706!important;
+  outline-offset:2px!important;
+}
+/* ---- Dark ---- */
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaPager .mad-btn{
+  background:#383A46!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#A1A1AA!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaPager .mad-btn:hover:not(:disabled):not(.active){
+  background:#444654!important;
+  border-color:rgba(255,255,255,.18)!important;
+  color:#E7E5E4!important;
+  transform:translateY(-1px)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaPager .mad-btn:disabled{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.06)!important;
+  color:#52525B!important;
+  box-shadow:none!important;
+  transform:none!important;
+  cursor:not-allowed!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaPager .mad-btn.active{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 48%,#D97706 100%)!important;
+  border:1px solid #F59E0B!important;
+  color:#2A2C36!important;
+  box-shadow:0 0 0 1px rgba(245,158,11,.25),0 2px 8px rgba(245,158,11,.45),0 6px 18px rgba(245,158,11,.28),inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page #mpaPager .mad-btn:focus-visible{
+  outline:2px solid #F59E0B!important;
+  outline-offset:2px!important;
+}
+
+/* ==========================================================================
+   6. Footer + page-size select — DEFECT 1
+   main-admin-detail-executive.css:1108-1112 hides
+   `.mad-footer .rounded-select-wrap` outright (reports.js wraps #mpaPageSize in it),
+   so "Show N entries" could not be used. Re-enabled, then the whole trio
+   (wrapper / trigger / menu) is painted on the control-well ladder.
+   #mpaInfo keeps the family's .mad-footer-info colour (#57534E / #D4D4D8).
+   ========================================================================== */
+/* ---- Light ---- */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer{
+  background:#FFF8EB!important;
+  border-top:1px solid #EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer > div > span{
+  color:#57534E!important;
+  font-size:12.5px!important;
+  font-weight:600!important;
+}
+/* ---- Dark ---- */
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer{
+  background:#383A46!important;
+  border-top:1px solid rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer > div > span{
+  color:#D4D4D8!important;
+  font-size:12.5px!important;
+  font-weight:600!important;
+}
+/* Footer must not clip its own popover; the trigger opens upward into the panel. */
+body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer{
+  position:relative;
+  z-index:12;
+  overflow:visible!important;
+}
+/* Re-enable the wrapper the legacy footer rule hides (main-admin-detail-executive.css:1108-1112) */
+body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-wrap,
+body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-wrap:has(#mpaPageSize){
+  display:inline-block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  position:relative!important;
+  flex:0 0 auto!important;
+  width:84px!important;
+  min-width:84px!important;
+  max-width:84px!important;
+  z-index:20!important;
+}
+/* Trigger — same control well as the three filter controls */
+body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-wrap .rounded-select-btn{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:6px!important;
+  width:100%!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:0 10px!important;
+  border-radius:8px!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  text-align:left!important;
+  white-space:nowrap!important;
+  cursor:pointer!important;
+}
+/* Menu / options — reports.css:1641-1644 leaves .rounded-select-menu / -option on the old
+   white + cool indigo hover fill; both are repainted on the amber ladder below. */
+body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-menu{
+  top:auto!important;
+  bottom:calc(100% + 6px)!important;
+  left:0!important;
+  right:auto!important;
+  min-width:100%!important;
+  border-radius:10px!important;
+  padding:5px!important;
+  z-index:40!important;
+}
+body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-option{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  width:100%!important;
+  min-height:32px!important;
+  height:32px!important;
+  padding:0 9px!important;
+  border:0!important;
+  border-radius:6px!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  text-align:left!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  cursor:pointer!important;
+}
+/* ---- Light ---- */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-wrap .rounded-select-btn{
+  background-color:#F5EBDC!important;
+  border:1px solid #DCC9A8!important;
+  color:#18191C!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-wrap .rounded-select-btn i{
+  font-size:11px;
+  color:#71717A;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-wrap .rounded-select-btn:hover{
+  background-color:#F0E4D0!important;
+  border-color:#DCC9A8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-wrap .rounded-select-btn.open,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-wrap .rounded-select-btn:focus{
+  background-color:#FFFCF7!important;
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;
+  outline:0!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-menu{
+  background-color:#FFFCF7!important;
+  border:1px solid #EADCC8!important;
+  box-shadow:0 14px 30px rgba(24,25,28,.14)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-option{
+  color:#3F3F46!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-option:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-option.active{
+  background:rgba(217,119,6,.12)!important;
+  color:#B45309!important;
+}
+/* ---- Dark ---- */
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-wrap .rounded-select-btn{
+  background-color:#2A2C36!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-wrap .rounded-select-btn i{
+  font-size:11px;
+  color:#D4D4D8;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-wrap .rounded-select-btn:hover{
+  background-color:#32343E!important;
+  border-color:rgba(255,255,255,.18)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-wrap .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-wrap .rounded-select-btn:focus{
+  background-color:#2A2C36!important;
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.16)!important;
+  outline:0!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-menu{
+  background-color:#40424E!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:0 14px 30px rgba(0,0,0,.42)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-option{
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-option.active{
+  background:rgba(245,158,11,.16)!important;
+  color:#FBBF24!important;
+}
+
+/* ==========================================================================
+   7. Responsive table — DEFECT 2
+   Two overrides restore ONE contract at every width: all seven columns, header
+   cell and body cell always shown together, in a real table.
+   7a (@media ≤1279.98px) neutralises main-admin-detail-executive.css:671-676
+      ("Drop Last Login + Last Logout") — it hides th:nth-child(7) (and an 8th
+      column this page does not have) while every row keeps its 7th cell, so Status
+      lost its header and the row shifted. Restored with display:table-cell, the
+      same fix main-admin-detail-executive.css:4783-4840 already ships for Merchant
+      Detail; the page keeps 7 labelled columns instead of dropping the Status chip.
+   7b (@media ≤1199.98px) does the same for main-admin-detail-executive.css:707-716,
+      which hides th 4/6/7/8 only (Performed By, IP Address, Status).
+   7c (@media ≤991.98px) neutralises the card mode at :1331-1360 + :1377-1382:
+      thead back to a header row, tbody back to a row group, cells back to
+      table-cell with real padding and dividers, and the panel's own scroll back.
+      The card mode keyed off tr.mad-row / td[data-label], neither of which
+      main-provider-activity.js emits, so it produced unlabelled, borderless rows.
+   ========================================================================== */
+/* 7a — ≤1279.98px: restore the Status header (main-admin-detail-executive.css:671-676) */
+@media(max-width:1279.98px){
+  html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table th:nth-child(7),
+  html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table th:nth-child(7){
+    display:table-cell!important;
+  }
+}
+/* 7b — ≤1199.98px: restore Performed By / IP Address / Status headers (…:707-716) */
+@media(max-width:1199.98px){
+  html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table th:nth-child(4),
+  html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table th:nth-child(6),
+  html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table th:nth-child(7),
+  html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table th:nth-child(4),
+  html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table th:nth-child(6),
+  html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table th:nth-child(7){
+    display:table-cell!important;
+  }
+}
+/* 7c — ≤991.98px: keep the horizontal table instead of the unlabelled card mode
+   (main-admin-detail-executive.css:1331-1360 for the shell, :1377-1382 for the cells) */
+@media(max-width:991.98px){
+  /* The shell reverts .mad-panel to overflow:visible; keep the rounded panel doing its job */
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-panel{
+    overflow:hidden!important;
+  }
+  /* …but never clip the page-size popover while it is open */
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-panel:has(.rounded-select-menu.show){
+    overflow:visible!important;
+  }
+  /* The card mode set the wrap to overflow:visible — the table scrolls sideways here */
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table-wrap{
+    overflow-x:auto!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch;
+    max-width:100%;
+  }
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table{
+    table-layout:auto!important;
+    border-collapse:collapse!important;
+    border-spacing:0!important;
+    width:100%!important;
+    min-width:840px!important;
+    max-width:none!important;
+  }
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table thead{
+    display:table-header-group!important;
+  }
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table tbody{
+    display:table-row-group!important;
+  }
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table th,
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table td{
+    display:table-cell!important;
+    width:auto!important;
+    min-width:0;
+    max-width:none;
+    padding:12px!important;
+    vertical-align:middle!important;
+    text-align:left!important;
+    white-space:normal!important;
+    box-sizing:border-box;
+    overflow:visible;
+  }
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table th{
+    font-size:12px!important;
+    font-weight:700!important;
+    letter-spacing:.03em!important;
+    white-space:nowrap!important;
+  }
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table th:first-child,
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table td:first-child{
+    padding-left:8px!important;
+  }
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table th:last-child,
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table td:last-child{
+    padding-right:8px!important;
+  }
+}
+/* ---- Light: the dividers the card mode deleted ---- */
+@media(max-width:991.98px){
+  html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table th{
+    border-bottom:1px solid #EADCC8!important;
+  }
+  html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table td{
+    border-bottom:1px solid #F0E6D8!important;
+  }
+}
+/* ---- Dark: the dividers the card mode deleted ---- */
+@media(max-width:991.98px){
+  html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table th{
+    border-bottom:1px solid rgba(255,255,255,.14)!important;
+  }
+  html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table td{
+    border-bottom:1px solid rgba(255,255,255,.12)!important;
+  }
+}
+
+/* ==========================================================================
+   7d (@media ≤991.98px) — the missing layer of DEFECT 2
+   The legacy card mode at main-admin-detail-executive.css:1354-1380 blockifies the ROW level
+   (`tbody{display:block}`, `th,td{display:flex}`) and restores it only for `tr.mad-row` —
+   a class assets/js/main-provider-activity.js never emits. §7c restored thead/tbody/th/td but
+   not the `tr` in between, so each row was laid out in its own anonymous table and stopped
+   lining up with the header: measured 379px cell/header offset at a 980px viewport.
+   Rows go back to real table rows so the seven columns stay aligned and scroll sideways.
+   ========================================================================== */
+@media(max-width:991.98px){
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table thead tr,
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table tbody tr,
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table tr{
+    display:table-row!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    padding:0!important;
+    margin:0!important;
+    background:transparent!important;
+    border:0!important;
+    border-radius:0!important;
+  }
+}

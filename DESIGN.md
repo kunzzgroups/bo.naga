@@ -333,6 +333,27 @@ Traps found while migrating:
 
 System UI stack. Hierarchy via weight + color. Sidebar L1 = `800`. Tabular nums for money/time; mono for credit/time cells and topbar role.
 
+### Provider family — migrated 2026-09-15
+
+`main-provider-detail.html`, `main-provider-credentials.html`, `main-provider-health.html` now run Charcoal + Amber.
+
+- Files: `assets/css/main-provider-family-executive.css` (shared shell — the Admin Detail block rescued and rescoped) plus one page file each: `main-provider-{detail,credentials,health}-executive.css`.
+- **Scope is a marker class.** All three bodies carry `main-provider-family-page`, so the family prefix is `body.main-admin-detail-page.main-provider-family-page` — (0,2,1), which beats the legacy navy token blocks at (0,1,1) and, on source order, the credentials page's merchant-report rules at (0,2,1). The marker is deliberate: `main-provider-detail-page` sits on two of the three pages and all five provider pages share `data-access-page="main_provider_detail"`, so neither can isolate one page. Page files narrow it further: `:not(.main-report-exec-page)` for detail, `.main-report-exec-page[data-report-view="settlement"]` for credentials, `.main-provider-stub-page` for health.
+- `main-provider-create.html` (`main-provider-create-page`) and `main-provider-endpoints.html` (`main-provider-integration-page`) are **not** migrated and still share `main-provider-executive.css` — so that file is left untouched by this migration.
+- Credentials is painted by two other families at once: `main-merchant-report-executive.css` (79 matching rules — it carries `main-merchant-report-page` + `data-report-view="settlement"`) and `main-provider-report-executive.css` (55). Anything that must win regardless of load order carries its three body classes plus the data attribute.
+- Credentials' two pickers come from `assets/js/main-provider-settlement-ledger.js` — a fourth calendar implementation, now defaulting to **This Month** and emitting the locked strip contract (`in-range` / `selected` / `is-start` / `is-end` / `is-preview`) with hover preview and first-click-stays-open, like the other three.
+
+Three inherited defects fixed with page-scoped overrides (the shared files were read, never edited):
+
+- **Page-size select hidden** on credentials and health: `main-admin-detail-executive.css:1108-1112` declares `.mad-footer .rounded-select-wrap{display:none!important}`, which hits the wrapper `reports.js` injects around `#settlementPageSize` / `#mpaPageSize` — the control was unusable while its "Show … / page" label stayed on screen.
+- **Responsive table** on health (two independent breaks): `…:671-676` and `…:707-716` hide only `th` for some columns, so the header slid off the body; and `…:1331-1360` switches to a card layout keyed to `tr.mad-row` / `td[data-label]`, neither of which `main-provider-activity.js` emits. Fixed by keeping a real table at every width. **Restoring `thead`/`tbody`/`th`/`td` is not enough — the row level is blockified too, so `tr` must be forced back to `display:table-row`**; without it each row lands in its own anonymous table (measured 379px header/cell offset at a 980px viewport).
+- **Modal head/foot dividers**: `reports.css` paints `.modal-clean-head` / `.modal-clean-foot` with the cool `--line` token, and neither the Admin Detail block nor the merchant block migrated that layer (they style `.mad-modal-*` and `.modal-clean-close/-panel`). On charcoal the divider read as a light seam in **both** themes; now warm `#EADCC8` / `rgba(255,255,255,.14)`.
+
+Inherited-but-inert, do not "fix" without checking: `--bo-secondary:#2563EB` is declared by all three family files and consumed by none; the `.mad-role.is-support|is-tech|is-regional` chips keep the reference's `#DBEAFE`/`#1D4ED8` palette and no `.mad-role` element exists on these pages.
+
+Verification: per-element colour sweep (canvas, sidebar, topbar, content, modals, both pickers) in light and dark — 0 retired or saturated-blue hits on all three pages. Credentials pickers checked for default range, first-click-stays-open, hover strip and refetch (`month=2026-09`); health table checked aligned (`maxLeftDelta 0`) at 1440/1270/1190/980/420px with its page-size popover opening in-viewport.
+
+
 ## Layout
 
 Shell: sidebar + sticky topbar + main. One job per section. Touch targets ≥44px on coarse pointers.
