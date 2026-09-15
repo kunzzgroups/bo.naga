@@ -22,7 +22,7 @@
 })();
 </script>
 <link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet"/>
-<link href="assets/css/main-report-charcoal.css?v=1.0.0" rel="stylesheet"/>
+<link href="assets/css/main-report-charcoal.css?v=1.0.1" rel="stylesheet"/>
 <link href="assets/css/main-report-charcoal-content.css?v=1.0.0" rel="stylesheet"/>
 </head>
 <body class="report-body standardized-listing-page main-admin-detail-page main-report-exec-page bo-account-chip" data-access-page="main_provider_report" data-report-view="provider">
@@ -53,10 +53,6 @@
 
 <section class="report-content mad-workspace mre-workspace">
   <div class="mad-chrome mre-chrome">
-    <div class="mad-tabs mre-tabs" role="tablist" aria-label="Report sections">
-      <a class="mad-tab mre-tab" role="tab" aria-selected="false" href="main-win-lose-report.html" data-report-tab="winlose" data-permission-url="main-win-lose-report.html">Win/Lose Report</a>
-      <a class="mad-tab mre-tab is-active" role="tab" aria-selected="true" aria-current="page" href="main_provider_report.html" data-report-tab="provider" data-permission-url="main_provider_report.html">Provider Report</a>
-    </div>
     <div class="mad-chrome-actions mre-chrome-actions">
       <span class="mad-sync" id="reportSyncLabel"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> Synced just now</span>
       <button class="mad-btn mad-btn-ghost" type="button" id="reportExport"><i class="bi bi-upload"></i> Export</button>
@@ -71,6 +67,45 @@
         <button type="button" class="mad-pill" data-mre-status="maintenance">Maintenance <span class="mad-pill-count is-warn-count" id="mreCountMaintenance">0</span></button>
       </div>
       <div class="mad-filters">
+        <div class="mre-period-group">
+          <div class="field ref-date-field mre-date-field main-exec-date-field">
+            <input type="hidden" id="reportDateFrom"/>
+            <input type="hidden" id="reportDateTo"/>
+            <div class="ref-range-wrap">
+              <button class="ref-range-trigger mre-date-trigger" id="reportDateTrigger" type="button" aria-label="Select date range">
+                <span class="ref-range-icon"><i class="bi bi-calendar3"></i></span>
+                <span id="reportDateLabel">Select date range</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+              </button>
+              <div class="ref-range-picker" id="reportRangePicker">
+                <div class="ref-range-presets">
+                  <button data-report-preset="today" type="button">Today</button>
+                  <button data-report-preset="yesterday" type="button">Yesterday</button>
+                  <button data-report-preset="thisWeek" type="button">This Week</button>
+                  <button data-report-preset="lastWeek" type="button">Last Week</button>
+                  <button data-report-preset="thisMonth" type="button">This Month</button>
+                  <button data-report-preset="lastMonth" type="button">Last Month</button>
+                  <button data-report-preset="thisYear" type="button">This Year</button>
+                  <button data-report-preset="lastYear" type="button">Last Year</button>
+                </div>
+                <div class="ref-range-calendar">
+                  <div class="ref-cal-head">
+                    <button id="reportCalPrev" type="button"><i class="bi bi-chevron-left"></i></button>
+                    <button class="ref-head-pick" id="reportCalMonth" type="button"></button>
+                    <button class="ref-head-pick" id="reportCalYear" type="button"></button>
+                    <button id="reportCalNext" type="button"><i class="bi bi-chevron-right"></i></button>
+                  </div>
+                  <div class="ref-cal-month-grid" id="reportCalMonthGrid"></div>
+                  <div class="ref-cal-year-grid" id="reportCalYearGrid"></div>
+                  <div class="ref-cal-day-view" id="reportCalDayView">
+                    <div class="ref-cal-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+                    <div class="ref-cal-days" id="reportCalDays"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <label class="mad-search mre-search" for="mreSearchInput">
           <i class="bi bi-search" aria-hidden="true"></i>
           <input id="mreSearchInput" type="search" placeholder="Search by provider name, code..." autocomplete="off"/>
@@ -91,52 +126,14 @@
       </div>
     </div>
 
-    <div class="mre-scope-bar" aria-label="Currency and period">
+    <div class="mre-scope-bar" aria-label="Currency">
       <div class="mre-currency-group">
         <span class="mre-scope-label">Currency</span>
         <div class="mre-currency-seg" role="group" aria-label="Currency">
               <span class="mre-cur-loading" aria-hidden="true">…</span>
             </div>
       </div>
-      <div class="mre-period-group">
-        <div class="field ref-date-field mre-date-field main-exec-date-field">
-          <input type="hidden" id="reportDateFrom"/>
-          <input type="hidden" id="reportDateTo"/>
-          <div class="ref-range-wrap">
-            <button class="ref-range-trigger mre-date-trigger" id="reportDateTrigger" type="button" aria-label="Select date range">
-              <span class="ref-range-icon"><i class="bi bi-calendar3"></i></span>
-              <span id="reportDateLabel">Select date range</span>
-              <i class="bi bi-chevron-down ms-auto"></i>
-            </button>
-            <div class="ref-range-picker" id="reportRangePicker">
-              <div class="ref-range-presets">
-                <button data-report-preset="today" type="button">Today</button>
-                <button data-report-preset="yesterday" type="button">Yesterday</button>
-                <button data-report-preset="thisWeek" type="button">This Week</button>
-                <button data-report-preset="lastWeek" type="button">Last Week</button>
-                <button data-report-preset="thisMonth" type="button">This Month</button>
-                <button data-report-preset="lastMonth" type="button">Last Month</button>
-                <button data-report-preset="thisYear" type="button">This Year</button>
-                <button data-report-preset="lastYear" type="button">Last Year</button>
-              </div>
-              <div class="ref-range-calendar">
-                <div class="ref-cal-head">
-                  <button id="reportCalPrev" type="button"><i class="bi bi-chevron-left"></i></button>
-                  <button class="ref-head-pick" id="reportCalMonth" type="button"></button>
-                  <button class="ref-head-pick" id="reportCalYear" type="button"></button>
-                  <button id="reportCalNext" type="button"><i class="bi bi-chevron-right"></i></button>
-                </div>
-                <div class="ref-cal-month-grid" id="reportCalMonthGrid"></div>
-                <div class="ref-cal-year-grid" id="reportCalYearGrid"></div>
-                <div class="ref-cal-day-view" id="reportCalDayView">
-                  <div class="ref-cal-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
-                  <div class="ref-cal-days" id="reportCalDays"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
     </div>
 
     <div class="mad-table-wrap">
