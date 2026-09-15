@@ -57,9 +57,20 @@
     <div class="mad-chrome-actions" aria-hidden="true"></div>
   </div>
   <div class="mad-panel">
-    <div class="settlement-ledger-head"><div><h3 class="mb-1">Provider Activity Logs</h3><p class="text-muted mb-0">Latest API and wallet activity across all providers.</p></div><button class="mad-btn mad-btn-ghost" id="mpaRefresh" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button></div>
-    <div class="mad-table-wrap"><table class="mad-table"><thead><tr><th>Date</th><th>Provider</th><th>Activity</th><th>Member</th><th>Amount</th><th>Status</th><th>HTTP</th></tr></thead><tbody id="mpaRows"><tr><td colspan="7" class="mad-empty">Loading activity...</td></tr></tbody></table></div>
-    <div class="mad-footer-info" id="mpaInfo">Loading provider activity...</div>
+    <div class="settlement-ledger-head">
+      <div class="d-flex gap-2 align-items-center flex-wrap">
+        <input class="form-control" id="mpaActor" placeholder="Search performed by" style="width:220px">
+        <input class="form-control" id="mpaFrom" type="date" style="width:170px">
+        <input class="form-control" id="mpaTo" type="date" style="width:170px">
+      </div>
+      <button class="mad-btn mad-btn-ghost" id="mpaRefresh" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+    </div>
+    <div class="mad-table-wrap"><table class="mad-table"><thead><tr><th>Date</th><th>Provider / Target</th><th>Action</th><th>Performed By</th><th>Details</th><th>IP Address</th><th>Status</th></tr></thead><tbody id="mpaRows"><tr><td colspan="7" class="mad-empty">Loading activity...</td></tr></tbody></table></div>
+    <div class="mad-footer d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div class="d-flex align-items-center gap-2"><span>Show</span><select class="form-select" id="mpaPageSize" style="width:85px"><option>10</option><option selected>20</option><option>50</option><option>100</option></select><span>entries</span></div>
+      <div id="mpaPager" class="d-flex gap-1"></div>
+      <div class="mad-footer-info" id="mpaInfo">Showing 0 records</div>
+    </div>
   </div>
 </section>
 </main>
@@ -75,7 +86,7 @@
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
 <script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
 <script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
-<script src="assets/js/main-provider-activity.js?v=1.0.0"></script>
+<script src="assets/js/main-provider-activity.js?v=1.0.3"></script>
 <script src="assets/js/bo-ui-standard.js?v=1.0.4"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 </body>

@@ -137,29 +137,11 @@ Theme toggle: `data-bo-theme` / `localStorage.bo_theme`. Prefer `--bo-*` tokens 
 Sidebar edge rail: 2px amber gradient (`#F59E0B` → `#D97706`).  
 Nav L1 weight: `font-weight: 800`. Light nav text/icons: `#6b360c`.
 
-**L1 active (`.nav-group.open` / `:has(.report-sub.active)` / top-level `.active`) — locked**  
-Cream chip `#FFF8EF`→`#FFE8CC`→`#FFF3E0` + left amber pill via `::before` (`#FBBF24`→`#D97706`).  
-Do **not** rely on `a.active` alone — open categories use `.nav-group-btn`. Full selectors: `.interface-design/system.md` → Patterns → Sidebar nav → L1 active.
-
-**L1 dark hover (locked)** — same amber chip as dark L1 active: gradient wash · label/icons/chevron `#FBBF24` · soft amber glow · radius `8px`. Never grey wash + white text. Never BO blue icons (`reports.css` `#1d4ed8`).
-
 **Desktop flyout (`.nav-group-list`)** — light `#FFF8EB` (never `#fff`; beat `reports.css`). Dark `#383A46` + `rgba(255,255,255,.14)` border.
 
 **L2 active (`.report-sub.active`) — locked**  
 Cream chip `#FFFBEB`→`#FEF3C7` + amber frame `#D97706` + soft amber shadow. Dark: amber/charcoal chip + `rgba(245,158,11,.55)` border · text `#FBBF24`.  
-Hover = soft wash only (no frame). **Icons:** light always `#6b360c`; dark hover/active `#FBBF24` (explicitly beat `reports.css` `a:hover i` blue). Full tables: `.interface-design/system.md` → Patterns → Sidebar nav.
-
-**Logout footer** — beat `bo-ui-standard.css` `.bo-sidebar-account-footer{background:#fff}` with `transparent` so the cream/charcoal sidebar shows through. Logout control stays **danger red** (never amber).
-
-### Transaction family (sidebar category 3)
-
-Classic BO listing pages (not MAIN executive). Scope: `body.bo-wallet-tx` + `assets/css/bo-wallet-transaction-amber.css`.
-
-Pages: `member-deposit.html`, `member-withdraw.html`, `member-wallet.html`, `wallet-ledger.html`, `bulk-adjustment.html`, `bank-deposit-usage.html`, `bulk-bonus-adjustment.html`.
-
-Wiring: FOUC + `#boThemeToggle` as sibling of `[data-bo-profile]` (auth overwrites profile host) + `assets/js/bo-theme.js`. Sidebar L1/L2/Logout/flyout rules above apply here.
-
-**Known leaks to beat on these pages:** Logout `#fff` footer · flyout `#fff` · L1/L2 hover icon `#1d4ed8` · dark L1 hover grey/white (must be amber chip) · dark L2 hover icon white (must be `#FBBF24`).
+Hover = soft wash only (no frame). Do not use flat active wash. Full tables: `.interface-design/system.md` → Patterns → Sidebar nav.
 
 ### CSS token map (compatibility)
 
@@ -175,51 +157,44 @@ Wiring: FOUC + `#boThemeToggle` as sibling of `[data-bo-profile]` (auth overwrit
 
 ### Components (color + locked chrome)
 
+Every row is **Light | Dark**. Full measurements + hover/active live in `.interface-design/system.md` → Patterns (Coverage checklist).
+
 | Element | Light | Dark |
 |---------|-------|------|
 | Primary CTA | amber gradient `#FBBF24`→`#F59E0B`→`#EA8608`, text white, border `#E8901A` | `#FBBF24`→`#F59E0B`→`#D97706`, text `#2A2C36`, border `#F59E0B` |
 | Primary hover | reverse lift `#FCD34D`→`#FBBF24`→`#F59E0B`→`#EA8608` | reverse `#FDE68A`→`#FBBF24`→`#F59E0B` |
-| Ghost / Export | `#FFFCF7`→`#F5EBDC`→`#EDE4D4`, border `#DCC9A8`, text `#18191C` (form pages) · listing may use `#FFF8EB`→`#F3E8D6` / `#EADCC8` | `#4A4C58`→`#383A46`→`#2C2E38`, text `#F5F5F4` |
-| Hover tip | `#FFF8EB` + amber border, text `#6b360c`, radius `8px` | `#40424E` + amber border, text `#F5F5F4`, radius `8px` |
-| Money positive | `#B45309` | `#F59E0B` |
-| Money zero | `#71717A` | `#A1A1AA` |
-| Modal z-index | above sidebar (`30000`); modals live under `body`, not inside `main` | same |
+| Ghost / Export | `#FFFCF7`→`#F5EBDC`→`#EDE4D4`, border `#DCC9A8`, text `#18191C` (form) · listing `#FFF8EB`→`#F3E8D6` | `#4A4C58`→`#383A46`→`#2C2E38`, text `#F5F5F4` |
+| Ghost hover (Create Role Back/Cancel) | reverse cream · border `#E0D0B8` · lift (no amber fill) | reverse charcoal · lift |
+| Hover tip | `#FFF8EB` + amber border, text `#6b360c`, radius `8px` (icon tips may be pill) | `#40424E` + amber border, text `#F5F5F4` |
+| Money positive / zero | `#B45309` / `#71717A` | `#F59E0B` / `#A1A1AA` |
+| Modal panel / close / scrim | cream panel · close well `#F5EBDC` · scrim `rgba(15,23,42,.55)` | `#383A46` · charcoal close · same scrim |
+| Tabs active | text `#18191C` · underline `#D97706` | text `#F4F4F5` · underline `#F59E0B` |
+| Filter bar / search | surface · `#EADCC8` · icon `#57534E` | charcoal · white/14 · muted icon |
+| Status pills (Active/Suspend) | cream 3D thumb · green/red dots | charcoal 3D · neon dots |
 | Permission group (open) | cream `#FFFCF7` · head `#FFF8EB`→`#FFF1DC` · amber border | cool `#383A46` · open head `#40424E` · body `#2C2E38` · amber border only |
 | Permission card | surface `#FFF8EB` · hover `#FFFCF7` · checked `#FFF8EB` · current `#FFF1DC` | `#2A2C36` · hover `#32343E` · checked/current amber tint only |
+| Roles sticky footer Save/Cancel | Primary + Ghost 3D · h `38px` | amber Primary (dark text) + charcoal Ghost |
 | Data table panel border | `#EADCC8` | `rgba(255,255,255,.14)` |
 | Data table header text | `#3F3F46` / `700` | `#E7E5E4` / `700` |
 | Data table cell / muted | `#374151` · muted/time `#57534E` | `#F5F5F4` · muted/time `#D4D4D8` |
 | Data table row divider | `#F0E6D8` | `rgba(255,255,255,.12)` |
+| Table footer bar | surface · cream top border · info `#57534E` | charcoal · white/14 edge · info `#D4D4D8` |
+| Table pager inactive | `#F3F4F6` / `#9CA3AF` | `#383A46` / `#A1A1AA` + white/12 border |
+| Table pager active | amber 3D gradient · white label · soft lift | amber 3D · text `#2A2C36` · amber glow |
 | Action icons | `#57534E` · hover amber | `#D4D4D8` · hover amber |
 | Modal close | well `#F5EBDC` · border `#EADCC8` · icon `#57534E` | charcoal well · light icon |
 | Sidebar flyout panel | `#FFF8EB` · warm border | `#383A46` · `rgba(255,255,255,.14)` |
-| Sidebar L1 active | cream chip + left amber `::before` pill | amber wash + neon pill · text `#FBBF24` |
-| Sidebar L1 hover | soft cream wash · charcoal icons | **same amber chip as dark active** · `#FBBF24` icons/chevron |
+| Sidebar L1 active | cream gradient + left amber bar | amber glow chip + left amber bar |
 | Sidebar L2 active | `#FFFBEB`→`#FEF3C7` + border `#D97706` | amber/charcoal chip + border `rgba(245,158,11,.55)` · text `#FBBF24` |
-| Sidebar L2 hover icons | `#6b360c` (never `#1d4ed8`) | `#FBBF24` + amber glow (never blue / plain white) |
-| Sidebar Logout footer | transparent (not `#fff`) · danger red control | transparent · danger red / soft glow |
 | Create / Edit section card | lift `#FFFCF7` · border `#DCC9A8` · warm shadow · **3px amber left rail** | `--bo-surface` |
 | Create / Edit inputs | `#F5EBDC` · border `#DCC9A8` · placeholder `#78716C` | `#2A2C36` · `rgba(255,255,255,.12)` |
 | Create / Edit nested well | `#F0E4D0` (privileges / policy / security) | faint wash |
 | Create / Edit locked field | `#EDE4D4` · text `#57534E` | charcoal wash |
 | Create / Edit status seg | track `#EDE4D4` · active `#FFFCF7` | charcoal |
 | Create / Edit sticky footer | `#FFFCF7` · border `#DCC9A8` · stronger warm shadow | translucent charcoal |
-| Create Role name input | control well `#F5EBDC` · border `#EADCC8` | `#2A2C36` · border `rgba(255,255,255,.12)` |
-| Create Role chips / search / ghost | well `#F5EBDC` · Toggle All amber wash `rgba(217,119,6,.12)` | charcoal well · amber wash |
-| Select menu (`.rounded-select-menu`) | surface `#FFF8EB` · border `#EADCC8` · warm shadow | `#383A46` · `rgba(255,255,255,.14)` |
-| Select option idle | `transparent` · text `#18191C` | `transparent` · text `#F5F5F4` |
-| Select option hover / active | wash `rgba(217,119,6,.12)` · text `#B45309` (never `#eef2ff` / `#4f46e5`) | wash `rgba(245,158,11,.18)` · text `#FBBF24` |
-| Date-range selected day / preset | fill `#D97706` · label white · in-range amber tint | fill `#F59E0B` · label `#2A2C36` |
-
-### Select / dropdown options (locked)
-
-`.rounded-select-btn` / `.rounded-select-menu` / `.rounded-select-option` — Admin Detail recipe; Transaction listing pages use the same tokens.
-
-- Idle options: **transparent** on cream/charcoal menu (no white row slabs).
-- Hover = active: `--bo-cyan-tint` / `--bo-cyan-deep` (light) · amber wash / `#FBBF24` (dark).
-- Never indigo (`#eef2ff` / `#4f46e5`) from `bo-ui-standard` / `reports.css`.
-
-Full tables: `.interface-design/system.md` → Forms → Select / dropdown options (and Date-range popover).
+| Roles / Create Role text inputs + Role select | surface `#FFF8EB` · border `#EADCC8` · placeholder `#78716C` (not muddy well `#F5EBDC`) | `#2A2C36` |
+| Create Role chips (Select All / Clear) | surface `#FFF8EB` · border `#EADCC8` · Toggle All amber wash | charcoal · amber wash |
+| Create Role Ghost (Back / Cancel) | 3D `#FFFCF7`→`#F5EBDC`→`#EDE4D4` · hover reverse cream (no amber fill) | charcoal 3D gradient |
 
 ### Topbar chrome (locked — all pages)
 
@@ -255,7 +230,7 @@ Reference CSS: `menu-permission-executive.css`. Full tables in `.interface-desig
 Dark panel border `rgba(255,255,255,.14)`; row line `.12`; header `#E7E5E4`; cell `#F5F5F4`; muted/time `#D4D4D8`.  
 Never leave light cream borders unscoped, or use dark header `#71717A` / ultra-faint `.06` dividers.  
 **Light muted on cream:** use `#57534E` (not `#9CA3AF` / `#A1A1AA` — too faint). Placeholders `#78716C`. Modal close cream well.  
-Full table: `.interface-design/system.md` → Patterns → Data tables.
+**Footer pager:** light inactive slate `#F3F4F6`/`#9CA3AF`; dark inactive charcoal; **active** = amber 3D in both modes (dark label `#2A2C36`). Full table: `.interface-design/system.md` → Patterns → Data tables / Table footer pager.
 
 ### Create / Edit Admin — form hierarchy (locked)
 
@@ -284,9 +259,38 @@ Dark: Ghost charcoal gradient; Primary amber with dark text `#2A2C36`. CSS: `mai
 
 ### Roles & Permissions filter (`.mp-search` / `#menuPermissionFilter` — locked)
 
-**List page** (`menu-permission.html`): filter matches Role select — surface `#FFF8EB` · border `#EADCC8` · icon `#57534E` · placeholder `#78716C` (frame + input, incl. disabled).  
-**Create Role** (`main-admin-role-create.html`): Role Name + filter both surface `#FFF8EB` (same family as list controls).  
+**List page** (`menu-permission.html`): filter matches Role select — surface `#FFF8EB` · border `#EADCC8` · icon `#57534E` · placeholder `#78716C` (frame + input, incl. disabled). Height `42px` · input text `13.5px/500`.  
+**Create Role** (`main-admin-role-create.html`): Role Name + filter both surface `#FFF8EB` (same family as list controls). Role Name `14px/600` · label `11.5px/800` uppercase.  
 Always beat `reports.css` `#fff!important`. Dark: charcoal well `#2A2C36`. CSS: `menu-permission-executive.css` + `main-admin-role-create.css`.
+
+### Role select dropdown (`.rounded-select-*` — locked)
+
+Native `<select>` is hidden; `reports.js` builds `.rounded-select-wrap` / `-btn` / `-menu` / `-option`. Spec from Roles page CSS:
+
+| Part | Light | Dark |
+|------|-------|------|
+| Trigger `.rounded-select-btn` | bg `#FFF8EB` · border `#EADCC8` · `40px` · `13.5px/600` · radius `8px` | bg `#2A2C36` · `--bo-border` |
+| Open / focus | border `#D97706` · ring `0 0 0 3px rgba(217,119,6,.14)` | border amber · ring `rgba(245,158,11,.18)` |
+| Menu panel | surface `#FFF8EB` · border `--bo-border` · radius `8px` · soft shadow · pad `6px` | surface `#383A46` · deep shadow |
+| Option default | transparent · text `--bo-text` · weight `700` · radius `8px` | text secondary |
+| Option hover | wash `--bo-cyan-tint` · text `--bo-cyan-deep` | `rgba(245,158,11,.14)` · text primary |
+| Option active / selected | same as hover (light) | fill `#F59E0B` · text `#2A2C36` |
+| Scrollbar (WebKit) | thumb `#98A2B3` → hover `#667085` · `4px` pill · **no** arrow buttons | thumb `#F59E0B` → `#D97706` |
+| Label `.mp-role-label` | `11px/800` · tracking `.08em` · uppercase · `--bo-navy` | same weight · light text |
+
+Do not paint options with cool blue/cyan. Attention shake (`.is-attention`) is motion-only when validation fails.
+
+### Roles typography (quick scale)
+
+| Element | Size / weight |
+|---------|----------------|
+| Create Role page title | `28px/800` · tracking `-0.03em` |
+| Page subtitle / help | `13.5px/500` muted · help `12.5px` |
+| Card title (`.mrc-card-head h3`) | `16px/800` |
+| Field label (Role Name / ROLE…) | `11–11.5px/800` uppercase |
+| Filter / Role select text | `13.5px` |
+| Toolbar chips / Ghost / Primary | `12.5–13px/700–800` |
+| Sticky footer status pill | `10.5px/800` uppercase |
 
 ### Merchant Detail — migrated 2026-09-15
 

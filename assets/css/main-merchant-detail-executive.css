@@ -3881,48 +3881,88 @@ html[data-bo-theme="dark"] body.report-body.standardized-listing-page.main-admin
 }
 
 /* ==========================================================================
-   Merchant Profit — the chrome row could not hold its own KPI strip
-   .mad-chrome is a 48px grid (`height/min-height/max-height:48px`, `flex:0 0 48px`)
-   with columns `minmax(0,1fr) auto`. The KPI chips are `flex:0 0 auto` with
-   `min-width:168px` (200px for the hero), so the actions column demanded ~1000px,
-   the tabs column was squeezed to ~350px, and `.mad-tabs` is `nowrap` — so the tab
-   labels overflowed their column and painted UNDER the opaque chips. Measured at
-   1680px with realistic values: 188px of overlap covering "Roles & Permissions".
-   Nothing could give: the row could not grow and nothing could shrink.
-   Degradation order below: the tabs keep their size, the KPI block moves to its own
-   line when it must, and the row grows to fit it. Numbers are never truncated and
-   navigation is never covered.
+   Merchant Profit — the KPI strip belongs in the content area, not the tab row
+   It used to sit inside .mad-chrome beside the tabs, competing with navigation for a
+   48px row. Nothing could fit: the strip wanted ~960px, the tabs ~593px, and the row
+   could neither grow nor shrink anything, so the chips covered the tab labels. Allowing
+   the row to wrap only moved the problem — flex-wrap's container height did not include
+   the wrapped line (scrollHeight 106px in a 63px box), so the chips and the primary
+   button were buried under the ledger panel, and it looked cramped either way.
+
+   The strip is now a row of its own in the content column, and the chrome row is back
+   to its original single 48px line, so the tab design is untouched. Every previous
+   override of .mad-chrome here is removed.
    ========================================================================== */
 
-body.main-merchant-profit-page .mad-chrome{
-  display:flex!important;
-  flex-wrap:wrap!important;
-  align-items:center!important;
-  justify-content:space-between!important;
-  height:auto!important;
-  max-height:none!important;
-  min-height:48px;
-  flex:0 0 auto!important;
-  row-gap:8px;
-  column-gap:16px;
-}
-/* Tabs never shrink: they are navigation, and squeezing them is what caused the overlap. */
-body.main-merchant-profit-page .mad-chrome > .mad-tabs{
-  flex:0 0 auto;
+body.main-merchant-profit-page .mpr-mini-kpis{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
   min-width:0;
+  width:auto;
+  padding:0;
+  margin:0;
+  /* the page's own @media(max-width:1100px) rule sets order:-1 to move the strip ahead
+     of the button inside the old flex parent; in this position that would lift it above
+     the tab row. Same specificity, later source, so this wins at every width. */
+  order:0;
 }
-/* The actions block takes the remaining line and wraps its own contents inside it. */
-body.main-merchant-profit-page .mad-chrome > .mad-chrome-actions{
+body.main-merchant-profit-page .mpr-mini{
+  min-width:200px;
+  padding:0 16px 0 12px;
+}
+body.main-merchant-profit-page .mpr-mini.is-hero{
+  min-width:220px;
+}
+
+/* ==========================================================================
+   Merchant Profit — filter bar balance
+   reports.css pins EVERY `.ref-date-field` to 292px in a media query with four
+   !important size declarations, so the date range was wider than its content while
+   the search box stayed at 220px and truncated its own placeholder — and because the
+   row is `space-between` with a non-growing tools group, ~190px of dead space sat in
+   the middle. Now: the date range is sized to its content, the search is the one
+   control that absorbs slack, and the tools group fills the row so nothing is left
+   over. Scoped to this page; no other page's date field changes.
+   ========================================================================== */
+
+html body.main-merchant-profit-page .mpr-filter-row-main > .mad-filters.mpr-filters-tools{
   flex:1 1 auto;
   min-width:0;
-  height:auto;
-  min-height:36px;
-  flex-wrap:wrap;
   justify-content:flex-end;
-  row-gap:6px;
 }
-body.main-merchant-profit-page .mpr-mini-kpis{
-  flex-wrap:wrap;
-  justify-content:flex-end;
-  row-gap:6px;
+html body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-date-field{
+  /* reports.css pins EVERY .ref-date-field to 292px with !important, over the 230-260px
+     these pages ask for. 260px fits the date text plus icon and chevron with room. */
+  width:260px!important;
+  min-width:240px!important;
+  max-width:260px!important;
+  flex:0 0 260px!important;
+}
+html body.main-merchant-profit-page .mpr-filter-row-main .mad-search{
+  flex:1 1 240px!important;
+  min-width:200px;
+  max-width:360px;
+}
+
+/* ==========================================================================
+   Merchant Profit — the date control was pinned twice from the outside
+   Two global reports.css rules size the shared date control and are NOT scoped to
+   any page: one pins `.ref-range-wrap` (it is in that selector list) to 292px, another
+   pins `.ref-range-trigger` to 390px, both with min-width and max-width as well.
+   So the visible trigger was 390px inside a 292px wrapper inside a 260px field — it
+   overflowed its own column by 130px and drew over the currency select and the search
+   box, which is what looked like two controls overlapping.
+   Both layers are pinned back to their container here, so the trigger is exactly as
+   wide as the field. Higher specificity than the global rules, and !important like them.
+   ========================================================================== */
+
+html body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-date-field .ref-range-wrap,
+html body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-date-field .ref-range-trigger{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box;
 }
