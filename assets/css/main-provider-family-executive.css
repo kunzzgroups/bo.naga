@@ -1986,3 +1986,251 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
 html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-modal .modal-clean-foot{
   border-color:rgba(255,255,255,.14)!important;
 }
+
+/* ==========================================================================
+   Date-range picker — shared chrome
+   Rescoped from the locked picker treatment in
+   assets/css/main-merchant-detail-executive.css (its "Date-range picker — rescoped from the
+   amber Dashboard" + "Report chrome: date picker cells" + "make the range read as ONE strip"
+   sections). The Admin Detail block that this file otherwise mirrors never carried the
+   calendar rules — they live in main-dashboard-executive.css for the Dashboard and were
+   ported per family, which is why the picker needed its own layer here.
+   Covers: trigger, wrap, icon, panel, preset rail, calendar head/week/month/year grids,
+   day cells (base + hover + muted), the selected/preset fills, and the strip contract
+   (`is-start` / `is-end` / `is-preview`) with `gap:0` so a range reads as one band.
+   main-provider-credentials-executive.css carries a more specific copy of the same treatment
+   for its settlement ledger and payment-date pickers; both agree on values.
+   ========================================================================== */
+body.main-admin-detail-page.main-provider-family-page .ref-range-presets button.active,
+body.main-admin-detail-page.main-provider-family-page .ref-cal-days button.selected,
+body.main-admin-detail-page.main-provider-family-page .ref-cal-month-grid button.active,
+body.main-admin-detail-page.main-provider-family-page .ref-cal-year-grid button.active{
+background:var(--bo-cyan)!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+body.main-admin-detail-page.main-provider-family-page .ref-cal-days button.in-range{
+background:rgba(217,119,6,.12)!important
+}
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-wrap,
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-trigger{
+width:100%!important
+}
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-trigger{
+height:42px;
+  border:1px solid var(--bo-border)!important;
+  border-radius:8px;
+  background:var(--bo-surface)!important;
+  color:var(--bo-navy);
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;
+  box-shadow:none;
+  gap:10px;
+  padding:0 12px!important;
+}
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-trigger:hover,
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-trigger:focus{
+border-color:var(--bo-cyan)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+  outline:0;
+}
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-icon{
+height:auto;width:auto;
+  padding:0;
+  margin:0;
+  background:transparent!important;
+  color:var(--bo-navy)!important;
+  border-radius:0;
+  display:inline-flex;
+  align-items:center;
+  font-size:15px;
+}
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-trigger > #mainDateLabel{
+color:var(--bo-navy);
+  font-weight:700;
+}
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-trigger > .bi-chevron-down{
+margin-left:auto;
+  color:var(--bo-navy);
+  font-size:12px;
+  opacity:.85;
+}
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-picker{
+left:0;right:auto;z-index:6200;
+  border-color:var(--bo-border);
+  border-radius:12px;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-range-picker{
+background:var(--bo-surface)!important;
+  border-color:var(--bo-border)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-range-presets{
+background:#2A2C36!important;
+  border-right-color:var(--bo-border)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-range-presets button{
+color:var(--bo-text-secondary)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-range-presets button:hover{
+background:rgba(245,158,11,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-range-presets button.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-days button.selected,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-month-grid button.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-year-grid button.active{
+background:#F59E0B!important;
+  color:#2A2C36!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-head button,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-head-pick{
+color:var(--bo-text-secondary)!important;
+  background:var(--bo-bg)!important;
+  border-color:var(--bo-border)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-week span{
+color:var(--bo-muted)!important
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-days button{
+background:transparent!important;
+  color:var(--bo-text)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-days button.muted{
+color:var(--bo-muted)!important
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-month-grid button,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-year-grid button{
+background:var(--bo-bg)!important;
+  color:var(--bo-text-secondary)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-range-picker,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-range-presets{
+  background:#FFF8EB!important;
+  border-color:#EADCC8!important;
+  box-shadow:0 12px 30px rgba(60,48,32,.14)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-month-grid button,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-year-grid button,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-days button,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-head-pick,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-head button{
+  background:transparent!important;
+  border-color:transparent!important;
+  color:#374151!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-month-grid button:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-year-grid button:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-days button:hover{
+  background:rgba(217,119,6,.10)!important;
+  color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-days button.muted,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-days .muted{
+  color:#57534E!important;
+  background:transparent!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-week span{
+  color:#71717A!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-range-picker,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-range-presets{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-month-grid button,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-year-grid button,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-days button,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-head-pick,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-head button{
+  background:transparent!important;
+  border-color:transparent!important;
+  color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-month-grid button:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-year-grid button:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-days button:hover{
+  background:rgba(245,158,11,.14)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-days .muted{
+  color:#A1A1AA!important;
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-week span{
+  color:#A1A1AA!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page #reportRangePicker .rounded-select-option.active,
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-range-picker .rounded-select-option.active,
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .modal-clean .rounded-select-option.active,
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .modal-clean .rounded-select-option:hover{
+  background:rgba(217,119,6,.16)!important;
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page #reportRangePicker .rounded-select-option.active,
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-range-picker .rounded-select-option.active,
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .modal-clean .rounded-select-option.active,
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .modal-clean .rounded-select-option:hover{
+  background:rgba(245,158,11,.20)!important;
+  color:#FBBF24!important;
+}
+html body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days{
+  gap:0;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.selected{
+  /* the solid amber fill had been dead: an earlier override in this file set
+     background:transparent!important on every day cell at (0,4,3), which outranked the
+     rule that supplied var(--bo-cyan). Restated here at (0,6,3). */
+  background:#D97706!important;
+  color:#FFFFFF!important;
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.selected.is-start.in-range:not(.is-end){
+  border-radius:8px 0 0 8px!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.selected.is-end.in-range:not(.is-start){
+  border-radius:0 8px 8px 0!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.in-range:not(.selected){
+  border-radius:0!important;
+  background:rgba(217,119,6,.14)!important;
+  color:#B45309!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.is-preview:not(.selected){
+  background:rgba(217,119,6,.28)!important;
+  color:#7C2D12!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.is-preview.is-end:not(.selected){
+  border-radius:0 8px 8px 0!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.selected{
+  background:#F59E0B!important;
+  color:#2A2C36!important;
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.selected.is-start.in-range:not(.is-end){
+  border-radius:8px 0 0 8px!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.selected.is-end.in-range:not(.is-start){
+  border-radius:0 8px 8px 0!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.in-range:not(.selected){
+  border-radius:0!important;
+  background:rgba(245,158,11,.18)!important;
+  color:#FBBF24!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.is-preview:not(.selected){
+  background:rgba(245,158,11,.32)!important;
+  color:#FDE68A!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.is-preview.is-end:not(.selected){
+  border-radius:0 8px 8px 0!important;
+}

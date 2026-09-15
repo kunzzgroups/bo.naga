@@ -374,6 +374,13 @@ Inherited-but-inert, do not "fix" without checking: `--bo-secondary:#2563EB` is 
 Verification: per-element colour sweep (canvas, sidebar, topbar, content, modals, both pickers) in light and dark — 0 retired or saturated-blue hits on all three pages. Credentials pickers checked for default range, first-click-stays-open, hover strip and refetch (`month=2026-09`); health table checked aligned (`maxLeftDelta 0`) at 1440/1270/1190/980/420px with its page-size popover opening in-viewport.
 
 
+
+Follow-up (same day) — the two picker defects found in review:
+
+- **The health page now uses the family date-range picker.** It carried two native `input[type=date]` fields; it now has the same `.ref-*` markup as its siblings (`#reportDateTrigger` / `#reportRangePicker` / `#reportCal*`, 8 presets), driven by new code in `main-provider-activity.js`. The request window is unchanged (`from` / `to` on `/admin/main/provider-activity`) and it defaults to **This Month** with the strip contract, so all four provider pages read alike. That makes **five** copies of the calendar in the repo — a shared driver is the eventual cleanup.
+- **The credentials ledger panel was clipped.** `main-provider-report-executive.css:125` anchors it `right:0;left:auto` while `reports.css:3595` pins the field to 292px, so the 390px panel hung 98px to the LEFT of its trigger (measured panel.x 223 vs field.x 321) and the nearest clipping ancestor (`.mad-panel`, `overflow:hidden`, x=304) cut the entire preset rail off. The merchant reference and every other page anchor left (panel.x == field.x), so the credentials file now anchors left — inside `@media(min-width:768px)`, because below that `reports.css` turns the picker into a fixed sheet (`position:fixed; top:96px`) and a page-level `left:0` would flatten it to the viewport edge. Flush-left at mobile is what the merchant pages already do, so it was left alone rather than diverging.
+- **The picker treatment lives in the family file now.** The Admin Detail block never carried the calendar rules — they sit in `main-dashboard-executive.css` and were ported per family — which is why the shared file gained a rescoped copy of the merchant file's verified picker + strip sections (trigger, rail, panel, head/week/month/year grids, day cells, hover, `is-start` / `is-end` / `is-preview`).
+
 ## Layout
 
 Shell: sidebar + sticky topbar + main. One job per section. Touch targets ≥44px on coarse pointers.
