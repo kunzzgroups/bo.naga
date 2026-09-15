@@ -1,0 +1,9 @@
+(()=>{'use strict';
+const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function api(path){const base=String(API_CONFIG.BASE_URL||'').replace(/\/$/,'');const r=await fetch(base+path,{headers:{...BO_AUTH.authHeader(),'X-Brand-Id':'1'},cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw Error(j.message||'Request failed');return j.data??j}
+function rows(d){return d.items||d.list||d.content||d.rows||(Array.isArray(d)?d:[])}
+function dt(v){return window.BO_FORMAT?.dateTime?BO_FORMAT.dateTime(v):(v?String(v).replace('T',' ').slice(0,19):'-')}
+function badge(v){const s=String(v||'-'),c=/success|completed|ok/i.test(s)?'success':/fail|error/i.test(s)?'danger':'warning';return `<span class="settlement-status ${c}">${esc(s)}</span>`}
+async function load(){const body=$('mpaRows');if(body)body.innerHTML='<tr><td colspan="7" class="mad-empty">Loading activity...</td></tr>';try{const d=await api('/admin/provider-wallet-transaction/list?page=1&size=50');const a=rows(d);body.innerHTML=a.map(x=>`<tr><td>${esc(dt(x.createdAt||x.created_at))}</td><td><b>${esc(x.providerCode||x.provider_code||'-')}</b></td><td>${esc(x.txType||x.tx_type||'-')}</td><td>${esc(x.memberId||x.member_id||'-')}</td><td>${Number(x.amount||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td>${badge(x.status)}</td><td>${esc(x.httpStatus||x.http_status||'-')}</td></tr>`).join('')||'<tr><td colspan="7" class="mad-empty">No provider activity found.</td></tr>';$('mpaInfo').textContent=a.length?`Showing latest ${a.length} provider activities`:'No provider activity';}catch(e){body.innerHTML=`<tr><td colspan="7" class="mad-empty text-danger">${esc(e.message)}</td></tr>`}}
+BO_AUTH.requireLogin();load();$('mpaRefresh')?.addEventListener('click',load);
+})();

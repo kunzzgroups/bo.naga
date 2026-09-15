@@ -297,10 +297,48 @@
     window.BO_SEG_BOUNCE.mountAll();
   }
 
-  allRows = [];
-  consumeCreatedProvider();
-  updateCounts();
-  applyFilters();
+  async function api(path){
+    const base=String((window.API_CONFIG&&window.API_CONFIG.BASE_URL)||'').replace(/\/$/,'');
+    if(!base) throw Error('API base URL is not configured');
+    const r=await fetch(base+path,{headers:{...BO_AUTH.authHeader(),'X-Brand-Id':'1'},cache:'no-store'});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||j.status==='error') throw Error(j.message||'Request failed');
+    return j.data??j;
+  }
+  function listOf(d){ return Array.isArray(d)?d:(d.rows||d.items||d.content||d.list||d.providers||[]); }
+  function providerKey(x){ return String(x.code??x.providerCode??x.id??x.providerId??'').toUpperCase(); }
+  function settlementKey(x){ return String(x.counterpartyKey??x.providerCode??x.providerId??'').toUpperCase(); }
+  function currencyOf(x){ return String(x.currency??x.defaultCurrency??x.settlementCurrency??'MYR').toUpperCase(); }
+  function providerStatus(x){
+    const raw=String(x.status??(x.enabled===false?0:x.enabled)??1).toLowerCase();
+    if(raw==='maintenance'||raw==='2') return 'maintenance';
+    if(raw==='suspended'||raw==='disabled'||raw==='0'||raw==='false') return 'suspended';
+    return 'active';
+  }
+  async function loadProviders(){
+    if(tbody) tbody.innerHTML='<tr><td colspan="7" class="mad-empty">Loading providers...</td></tr>';
+    try{
+      const providersData=await api('/admin/providers').catch(()=>api('/admin/main/providers')).catch(()=>api('/admin/game-provider/list'));
+      const now=new Date(), month=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+      const settlements=await api('/admin/main/settlements?month='+encodeURIComponent(month)).catch(()=>({rows:[]}));
+      const sr=listOf(settlements).filter(x=>/provider/i.test(String(x.counterpartyType||x.entityType||'')));
+      const byProvider=new Map();
+      sr.forEach(x=>{ const k=settlementKey(x); if(!k)return; const a=byProvider.get(k)||[]; a.push(x); byProvider.set(k,a); });
+      allRows=listOf(providersData).map(x=>{
+        const key=providerKey(x), related=byProvider.get(key)||[];
+        const cur=currencyOf(x);
+        const outstanding=related.reduce((n,r)=>n+Number(r.balanceAmount||0),0);
+        const due=related.reduce((n,r)=>n+Number(r.totalDue||0),0);
+        const paid=related.reduce((n,r)=>n+Number(r.paidAmount||0),0);
+        const rate=x.providerRate??x.rate??x.settlementRate??x.costPercent??x.defaultChargePercent??'';
+        return {id:key||x.id,name:x.name||x.providerName||key||'Provider',initials:(key||x.name||'PR').slice(0,2),desc:x.description||x.category||x.providerType||'',currency:cur,providerRate:rate,settlement:related.length?(paid.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+' / '+due.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})):'—',status:providerStatus(x),outstanding:cur+' '+outstanding.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}),type:String(x.type||x.providerType||'direct').toLowerCase(),typeLabel:x.type||x.providerType||'Direct',env:String(x.environment||x.env||'production').toLowerCase(),verified:true};
+      });
+      consumeCreatedProvider(); syncedAt=Date.now(); updateCounts(); applyFilters(); updateSyncLabel();
+    }catch(e){ allRows=[]; filtered=[]; updateCounts(); if(tbody)tbody.innerHTML='<tr><td colspan="7" class="mad-empty text-danger">'+esc(e.message)+'</td></tr>'; if(infoEl)infoEl.textContent='Unable to load providers'; }
+  }
+
+  BO_AUTH.requireLogin();
+  loadProviders();
   updateSyncLabel();
   sizeProviderFilterSelects();
   requestAnimationFrame(sizeProviderFilterSelects);
