@@ -369,6 +369,31 @@ Traps found while migrating:
 
 System UI stack. Hierarchy via weight + color. Sidebar L1 = `800`. Tabular nums for money/time; mono for credit/time cells and topbar role.
 
+### Date-range picker (every family — unified 2026-09-15)
+
+The `.ref-range-*` / `.ref-cal-*` picker is one component with one look, wherever it is opened. Values below are the contract; `main-report-charcoal.css` and `main-dashboard-executive.css` both carry them **rule for rule** — change one, change the other.
+
+| Part | Light | Dark |
+|------|-------|------|
+| Panel `.ref-range-picker` | `--bo-surface` `#FFF8EB` · border `--bo-border` `#EADCC8` · radius `12px` · warm shadow `0 12px 30px rgba(60,48,32,.14)` | `#383A46` · border `rgba(255,255,255,.14)` · shadow `0 16px 38px rgba(0,0,0,.4)` |
+| Preset rail `.ref-range-presets` | `--bo-surface` · right border `#EADCC8` | `#383A46` · right border `rgba(255,255,255,.14)` |
+| Preset active | `#D97706` fill · label white | `#F59E0B` · label `#2A2C36` |
+| Head / month / year buttons | transparent · text `#374151` | transparent · text `#E7E5E4` |
+| Week header | `#71717A` | `#A1A1AA` |
+| Day cell | transparent · `#374151` | transparent · `#E7E5E4` |
+| Muted (other month) | `#57534E` | `#A1A1AA` |
+| Hover | wash `rgba(217,119,6,.16)` · text `#B45309` | wash `rgba(245,158,11,.16)` · text white |
+| In-range wash | `rgba(217,119,6,.14)` · text `#B45309` | `rgba(245,158,11,.18)` · text `#FBBF24` |
+| Range edge (`.selected`) | `#D97706` · label white · radius `8px` | `#F59E0B` · label `#2A2C36` · radius `8px` |
+| Date trigger | surface `#FFF8EB` · border `#EADCC8` | `#2A2C36` · border `rgba(255,255,255,.12)` · text `#E7E5E4` |
+
+**The band must read as ONE strip, and that depends on which classes the calendar script emits.**
+
+- Emits `is-start` / `is-end` / `is-preview` — `main-merchant-report.js`, `main-merchant-profit.js`, `main-merchant-security.js`, `main-provider-settlement-ledger.js`. Strip rules keyed on those classes apply directly.
+- Emits only `in-range` / `selected` — `main-exec-date-range.js` (Win/Lose report, transaction history, accounting due, settlement report) and `main-dashboard.js` (Dashboard). The same strip is built without the edge classes: `.selected.in-range:not(.is-start):not(.is-end)` with `:is(:first-child,:not(.in-range)+*)` for the left outer corner and `:is(:last-child,:has(+ button:not(.in-range)))` for the right, plus the both-cases rule for a single-day range. **Without those three rules a range renders as two rounded pills joined by a flat connector.** Do not "simplify" them away, and do not port the picker to a page without checking which contract that page's script emits.
+
+Both scopes carry the rules once per family (`[data-bo-theme="dark"]` / `:not([data-bo-theme="dark"])` for the mode split) and everything that must survive `reports.css` carries `!important`, because the base file pins the day cells, the rail and the panel backgrounds with literals (`#fff`, `#f8fafc`, `#eef3ff` hover, `#cbd5e1` muted).
+
 ### Provider family — migrated 2026-09-15
 
 `main-provider-detail.html`, `main-provider-credentials.html`, `main-provider-health.html` now run Charcoal + Amber.
