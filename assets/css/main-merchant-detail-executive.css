@@ -3933,10 +3933,12 @@ html body.main-merchant-profit-page .mpr-filter-row-main > .mad-filters.mpr-filt
   min-width:0;
   justify-content:flex-end;
 }
-html body.main-merchant-profit-page .mpr-date-field{
+html body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-date-field{
+  /* reports.css pins EVERY .ref-date-field to 292px with !important, over the 230-260px
+     these pages ask for. 260px fits the date text plus icon and chevron with room. */
   width:260px!important;
-  min-width:230px!important;
-  max-width:280px!important;
+  min-width:240px!important;
+  max-width:260px!important;
   flex:0 0 260px!important;
 }
 html body.main-merchant-profit-page .mpr-filter-row-main .mad-search{
@@ -3957,8 +3959,8 @@ html body.main-merchant-profit-page .mpr-filter-row-main .mad-search{
    wide as the field. Higher specificity than the global rules, and !important like them.
    ========================================================================== */
 
-html body.main-merchant-profit-page .mpr-date-field .ref-range-wrap,
-html body.main-merchant-profit-page .mpr-date-field .ref-range-trigger{
+html body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-date-field .ref-range-wrap,
+html body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-date-field .ref-range-trigger{
   width:100%!important;
   min-width:0!important;
   max-width:100%!important;
