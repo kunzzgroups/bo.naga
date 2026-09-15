@@ -528,7 +528,6 @@
     const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     let a = new Date(today), b = new Date(today);
     if (key === 'yesterday') { a.setDate(a.getDate() - 1); b = new Date(a); }
-    if (key === 'last7') { a.setDate(a.getDate() - 6); b = new Date(today); }
     if (key === 'thisWeek') { a = startOfWeek(today); b = endOfWeek(today); }
     if (key === 'lastWeek') { a = startOfWeek(today); a.setDate(a.getDate() - 7); b = new Date(a); b.setDate(b.getDate() + 6); }
     if (key === 'thisMonth') {

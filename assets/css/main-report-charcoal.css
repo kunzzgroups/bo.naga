@@ -4525,7 +4525,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
 /* ---- Dark ---- */
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-date-field .ref-range-trigger,
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-date-trigger{
-  background:#2A2C36!important;
+  background:#2C2E38!important;
   border:1px solid rgba(255,255,255,.12)!important;
   color:var(--bo-text-secondary)!important;
   box-shadow:none!important;
@@ -5065,4 +5065,17 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
     flex:0 1 236px;
     min-width:220px;
   }
+}
+
+/* ---- Active preset is a wash, not a fill ----
+   Same value the Merchant Settlement ledger renders (measured), so the picker reads the same
+   wherever it is opened. The rescoped merchant block turned this into a solid fill; this
+   restores the wash. The range EDGES stay solid amber. ---- */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .ref-range-presets button.active{
+  background:rgba(217,119,6,.16)!important;
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .ref-range-presets button.active{
+  background:rgba(245,158,11,.2)!important;
+  color:#FBBF24!important;
 }
