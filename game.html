@@ -14,8 +14,13 @@
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
+<link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-shell.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-legacy.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-cms.css?v=1.0.0" rel="stylesheet" />
 </link></head>
-<body class="report-body standardized-game-management">
+<body class="report-body standardized-game-management bo-charcoal bo-account-chip">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
 <div class="report-brand">
@@ -33,7 +38,13 @@
 <h1>Game Management</h1>
 </div>
 </div>
-<div class="report-actions" data-bo-profile=""></div>
+<div class="report-actions">
+      <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
+        <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
+        <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
+      </button>
+      <div data-bo-profile></div>
+    </div>
 </header>
 <section class="report-content">
 <div class="manage-page-grid">
@@ -176,5 +187,7 @@
 <script src="assets/js/pagination-standardizer.js?v=1.0.1"></script>
 <script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
 <script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
+<script src="assets/js/bo-theme.js?v=1.0.0"></script>
+<script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
 </body>
 </html>

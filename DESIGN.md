@@ -461,6 +461,88 @@ Light: form pages use the **layer ladder** (lifted cards + warm shadow + amber r
 
 Action controls / theme toggle `8px`, cards `16px`, topbar avatar `12px`, chart hover tip `.trend-tip` `8px`, pills/switches `999px`, nav ~`10px`.
 
+### Opt-in `bo-charcoal` layers — the mechanism for every remaining page (2026-09-15)
+
+The twenty-odd pages documented above migrate family by family, each with its own rescoped copy
+of the charcoal block. The remaining pages do not share those families and mostly do not speak
+the `.mad-*` vocabulary at all, so they migrate through **three shared layers plus a marker
+class** instead:
+
+| File | Covers |
+|------|--------|
+| `assets/css/bo-charcoal-shell.css` | Mechanical rescope of `main-merchant-detail-executive.css` (875 prefixes, weight-preserving) — shell chrome (canvas, sidebar, topbar, tabs, filter bar, table, footer, pager, buttons, modals, tips) and the `.mad-*` content vocabulary |
+| `assets/css/bo-charcoal-legacy.css` | The `reports.css` and "standard" vocabularies the unmigrated pages actually use: `.filter-card .table-card .summary-card .report-table .metric .quick-stats .field .seg .notice .table-wrap .clean-btn .standard-list-card .standard-data-table .table-footer .entries-control .pagination-clean .page-btn .user-toolbar .user-metric .permission-* .main-mod-* .settlement-*`, plus the filter-row controls, panel surfaces, icon buttons, the date-range trigger, empty states, and the Bootstrap table variables |
+| `assets/css/bo-charcoal-primitives.css` | Components that had no owner or several contradictory ones: `.bo-ui-button*`, `.mad-btn*` (no base rule existed), Bootstrap and `.modal-clean*` / `.mad-modal*` / page modal families, `.rounded-select-*` (three to four competing definitions), `.bo-seg-thumb`, tips, the whole date-range picker, a toast primitive, switches, checkboxes, uploads |
+
+**Scope and safety.** Every rule is keyed to a `bo-charcoal` marker class that is added to a
+page's `<body>` only when that page is migrated. Nothing repaints until a page opts in, so the
+blast radius of a shared layer is exactly the set of pages that carry the marker. The layers load
+after every legacy stylesheet on the page; the rescope keeps its source's specificity exactly
+(one class-level replaces one attribute-level), which is what lets the verified amber rules
+transfer unchanged.
+
+**Per-page recipe.** Add `bo-charcoal bo-account-chip` to `<body>`; append `bo-account-chip.css`,
+`bo-charcoal-shell.css`, `bo-charcoal-legacy.css`, `bo-charcoal-primitives.css` after the last
+`assets/css` link; put the locked theme toggle in `.report-actions` with `[data-bo-profile]` as a
+direct sibling (both `auth.js` and `agent-portal.js` overwrite that element's `innerHTML`, and
+`bo-account-chip.css` keys on the direct-child step); add `bo-theme.js` + `bo-account-chip.js`.
+**Most of the remaining pages had no theme toggle at all**, so dark mode was simply unreachable
+on them — `data-bo-theme` was never written.
+
+### Traps this migration found (each cost a pass)
+
+1. **A malformed `:is()` list can make a whole family inert.** `main-report-charcoal.css` had four
+   `data-access-page` values concatenated without commas, so they formed one impossible compound
+   selector — 1307 rules never matched. `main-merchant-transactions.html` was documented as
+   migrated and still rendered the retired navy. If a migrated page shows legacy chrome, check the
+   scope selector before anything else.
+2. **`bootstrap.min.css` is cross-origin.** Its rules never appear in a same-origin style audit,
+   and no page selector out-ranks `.table > :not(caption) > * > *` cleanly. That is why white
+   `<th>`/`<td>` survived every attempt to name table classes. Bootstrap drives every table colour
+   from custom properties, so the fix is `--bs-table-bg` / `--bs-table-color` /
+   `--bs-table-border-color` / `--bs-table-striped-*` / `--bs-table-hover-*` (and `--bs-body-bg`,
+   `--bs-border-color`, the `.btn` set) on `.table` — one rule, every Bootstrap table.
+3. **`!important` parity is not enough; ID level is.** `bo-ui-standard.css` guards its filter row
+   with `body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy)` — two ID-level `:not()`
+   steps whose stated purpose is to out-rank "every legacy page-level filter rule". A class-level
+   `!important` ties on importance and loses on specificity, so the locked layer mirrors the shape
+   with two ID steps and more class weight. `bo-charcoal-off` on `<body>` is the opt-in escape.
+4. **A mechanical retint must be value-driven, not list-driven.** The locked palette contains no
+   cool-hued value in either theme — light's only blue is the documented "Secondary (info / rare)"
+   that nothing should paint with, and dark's secondary is amber — so *every* cool-hued literal is
+   wrong. A hand-written value list kept missing 3-digit `#fff`, `#65728B`, `#DFE6F0` and the
+   `#FBFCFE` header tints. Classify each value by measured HSL instead: near-white → surface,
+   light tint → border, grey text → muted, dark → ink, saturated → accent; keep a wash's alpha;
+   migrate a neutral only where it is a surface, since a plain white label on an amber fill is the
+   locked accent-on.
+5. **The first declaration in a rule is easy to skip.** Splitting a block on `;` yields a first
+   fragment that begins with `{`, so a `^property:` regex misses it — and first position is where
+   `background:#fff` usually sits. Grep the *file* for surviving cool values after a retint; do not
+   trust the transform's own report.
+6. **A page that rewrites its own document defeats an inline probe.** `provider-detail.html`
+   dropped the injected harness from the DOM. Such a page has to be checked by screenshot.
+7. **Verification must wait on a condition, not a delay.** Under load a probe that sweeps a fixed
+   time after `load` can measure a half-styled page and report the retired palette as a defect (or
+   hide a real one) — the same page flipped between 0 and 157 hits across runs. Wait until every
+   declared stylesheet is present and `readyState` is `complete`, and emit the stylesheet counts, a
+   canvas canary and `readyState` so a partial render is visible rather than believed.
+
+### Adopted so far (2026-09-15)
+
+`main-report`, `main-settlement-report`, the `main-provider-{balance,settlement,transactions,
+create,endpoints}` pages, the `main-accounting-{report,settlement,due}` pages,
+`main-transaction-history`, `main-balance-{adjustment,overview}`, `main-stat-detail`, `brand-*`,
+`menu-management`, `index`, `online-users`, `admin-user`, `account-lock`, `admin-login-log`,
+`admin-operation-log`, `role`, `root-control`, `profile`, `ip-whitelist-security`,
+`compliance-policy`, the member wallet / deposit / withdrawal and `wallet-ledger` pages,
+`bulk-adjustment`, `bulk-bonus-adjustment`, `duplicate-ip`, the rebate family, the VIP family,
+the payment pages, the legacy provider pages, `player-provider-session`, `bank-deposit-usage`,
+the game-ranking reports, `spin2-management`, `wbet-bet-limit`, `rebate-management`,
+`vip-management`, `casino-overview-report`.
+
+Verified by sweeping every rendered element's computed colour on the page in both themes —
+0 retired values, 0 cool-hue hits, 0 cool-white surfaces.
+
 ## Do's and Don'ts
 
 **Do**

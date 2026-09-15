@@ -637,6 +637,33 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Merchant family runs the Charcoal block: scope widened to `body.main-admin-detail-page[data-access-page="main_merchant_detail"]`; `main-merchant-create.html` migrated | One block serves the whole family (detail/create/security/profit/profit-record/repayments/settlement); roles pages share the attribute but load a different stylesheet, so they stay untouched | 2026-09-15 |
 | Merchant row avatar = neutral tile `#F5EBDC` / `#2A2C36`; every-third-row tint deleted; colour only on suspended rows; initials from the company name | User approved. The tint encoded row position, not data, and the indigo tile repeated the code printed beside it. Admin Detail keeps the old vocabulary | 2026-09-15 |
 
+### Opt-in layers for pages outside the migrated families
+
+Family-by-family migration (each family with its own rescoped copy of the charcoal block) covers
+the pages documented in `DESIGN.md`. Every other page migrates through a `bo-charcoal` marker
+class on `<body>` plus three shared layers loaded last:
+
+| Layer | Owns |
+|-------|------|
+| `bo-charcoal-shell.css` | Shell chrome + the `.mad-*` vocabulary (mechanical rescope of the merchant family block) |
+| `bo-charcoal-legacy.css` | The `reports.css` / "standard" vocabularies: listing cards, `.report-table`, `.metric`, `.clean-btn`, `.standard-*`, pagers, `.user-toolbar`, the permission matrix, the `.main-mod-*` / `.settlement-*` deltas, plus the **Bootstrap table variables** and the two-ID guard that out-ranks `bo-ui-standard.css`'s filter-row authority layer |
+| `bo-charcoal-primitives.css` | Components with no owner: `.bo-ui-button*`, `.mad-btn*`, Bootstrap and custom modal families, `.rounded-select-*`, `.bo-seg-thumb`, tips, the date-range picker, a toast primitive, switches, checkboxes, uploads |
+
+Nothing repaints until a page carries the marker, so a shared layer's blast radius is exactly the
+pages that opted in. A page that opts in must also ship the locked topbar chrome — most of them had
+no theme toggle at all, so dark mode was unreachable there.
+
+Two consequences worth keeping in mind when reviewing a page:
+
+- **Scope selectors are load-bearing.** A migrated page showing legacy chrome usually means its
+  scope selector is wrong or malformed, not that a rule is missing — a single missing comma in a
+  family `:is()` list made 1307 rules inert.
+- **A cool-hued value is always a defect**, in both modes: the locked palette has no cool hue. That
+  makes an audit mechanical — sweep every rendered element's computed colour — and it also makes a
+  *mechanical* retint correct, which is how the page-scoped sheets were migrated. Compare rendered
+  colours, never selector text: Bootstrap's table cells, ID-scoped legacy rules and anything the
+  family blocks never re-declared are all invisible to a grep.
+
 ## Agent rules
 
 1. Always read `DESIGN.md` and this file before UI work on this repo.
