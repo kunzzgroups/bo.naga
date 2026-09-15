@@ -521,7 +521,22 @@ on them — `data-bo-theme` was never written.
    trust the transform's own report.
 6. **A page that rewrites its own document defeats an inline probe.** `provider-detail.html`
    dropped the injected harness from the DOM. Such a page has to be checked by screenshot.
-7. **Verification must wait on a condition, not a delay.** Under load a probe that sweeps a fixed
+7. **A page that redirects on API failure cannot be measured in place, and unmeasurable is not clean.**
+   `agent-portal.js` wraps its whole shell build in one try/catch: any error removes the token and
+   assigns `location.href = 'agent-login.html'`. Two consequences. First, the failure is silent —
+   nothing is logged, so a broken stub looks identical to a working one. Second, the probe leaves
+   with the old document, so the sweep reports "no report" and the whole family reads as having
+   nothing to fix. `Location.prototype.href` is not configurable in Chrome, so navigation cannot be
+   blocked from an injected script. The workable method is to drop that one script from the sweep
+   copy (`VERIFY_STRIP`) so the page stays put and its CSS can be measured, and to **report the
+   stripped list with the result**, because whatever that script builds — the sidebar nav, the
+   account chip — is then unverified. Counting such a page as clean would be a lie; counting it as
+   broken is also wrong. It is a third state and must be reported as one. Note also that the stub
+   has to answer each endpoint with a shape the page can actually consume: `portalMenuKeys` holds
+   permission keys rather than page keys (`reports`/`products`/`provider_detail`/
+   `player_game_report` → `bet_report`, `finance` → `wallet`, `withdraw` → `settlement`), and a
+   response used both as a profile object and as a list has to satisfy both.
+8. **Verification must wait on a condition, not a delay.** Under load a probe that sweeps a fixed
    time after `load` can measure a half-styled page and report the retired palette as a defect (or
    hide a real one) — the same page flipped between 0 and 157 hits across runs. Wait until every
    declared stylesheet is present and `readyState` is `complete`, and emit the stylesheet counts, a

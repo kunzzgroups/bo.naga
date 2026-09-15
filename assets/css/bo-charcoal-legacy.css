@@ -1273,6 +1273,48 @@ html[data-bo-theme="dark"]:has(body.report-body.bo-charcoal){
   background:#2C2E38!important;
 }
 
+/* ------------------------------------------- pager: active page must win its own base rule
+   A cascade collision INSIDE this file, found by measuring rather than by any colour counter.
+   The themed base rule for the pager is written with a mode prefix, so it carries one
+   class-level more than the `.active` rule beside it:
+
+     html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .pagination-clean .page-btn   (0,5,2)
+     body.report-body.bo-charcoal .pagination-clean .page-btn.active                             (0,5,1)
+
+   Both are !important, so the base rule won and the current page rendered as an UNAVAILABLE
+   page — inactive grey in light, plain surface in dark — i.e. the locked amber 3D was missing
+   on every adopted page. No retired value and no cool hue was involved, so the sweep stayed
+   silent. The fix is to give the active rule its own mode prefix so it out-ranks the base:
+   two rules of equal weight then resolve by source order, and this block is last. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .pagination-clean .page-btn.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .pagination-clean button.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .table-page-btn.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .smart-page.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .pwt-pager button.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .vip-log-pagination button.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .page-btn.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .main-mod-pager button.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .settlement-pager button.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .provider-page-btn.active{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border:1px solid #D97706!important;color:#FFFFFF!important;
+  box-shadow:0 1px 2px rgba(180,83,9,.3),inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .pagination-clean .page-btn.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .pagination-clean button.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .table-page-btn.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .smart-page.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .pwt-pager button.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .vip-log-pagination button.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .page-btn.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .main-mod-pager button.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .settlement-pager button.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .provider-page-btn.active{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border:1px solid #F59E0B!important;color:#2A2C36!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.35),0 0 0 1px rgba(245,158,11,.35),0 2px 10px rgba(245,158,11,.28)!important;
+}
+
 /* ------------------------------------------- shell chrome the rescope does not carry
    The rescope carries only the merchant-profit variant of the page-title chrome, and
    `reports.css:141` declares `.report-topbar .hamb` UNCONDITIONALLY — not inside the
