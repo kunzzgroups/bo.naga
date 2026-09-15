@@ -4116,3 +4116,37 @@ html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page
 html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.is-preview.is-end:not(.selected){
   border-radius:0 8px 8px 0!important;
 }
+
+/* ==========================================================================
+   Security & Audit (merchant) — the filter row wraps instead of overflowing
+   Same defect the admin page had: the row is `flex-wrap:nowrap` and it carries six
+   controls (search, date range, merchant, event type, status, Reset), so once the panel
+   is narrower than their sum the tail is cut off by `.mad-panel`. Measured before this
+   rule, on a mocked page: 1280 -> scrollWidth exceeds the row by 176px and the Reset is
+   159px past the panel edge; 1150 -> 305px / 289px past it.
+
+   The wrap is the fix (nothing is ever clipped); the search's flex-basis is the control
+   minimum so the row stays on one line while it can and only then stacks. Scoped to this
+   page through its own class — main-admin-security.html carries
+   .main-admin-security-page, and it is fixed in main-admin-detail-executive.css.
+   ========================================================================== */
+body.main-admin-security-page.main-merchant-security-page .mas-filters{
+  flex-wrap:wrap!important;
+}
+body.main-admin-security-page.main-merchant-security-page .mas-search{
+  flex:1 1 200px!important;
+}
+@media (min-width:801px){
+  body.main-admin-security-page.main-merchant-security-page .mas-date-field{
+    flex:0 0 260px!important;
+    width:260px!important;
+    min-width:260px!important;
+    max-width:260px!important;
+  }
+  body.main-admin-security-page.main-merchant-security-page .mas-date-field .ref-range-wrap,
+  body.main-admin-security-page.main-merchant-security-page .mas-date-field .ref-range-trigger{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+}

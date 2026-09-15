@@ -9288,3 +9288,151 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   color:#FCA5A5!important;
   border-color:rgba(248,113,113,.30)!important;
 }
+
+/* ==========================================================================
+   Security & Audit (admin) — filter row: the date control keeps this page's own
+   260px, and the row wraps instead of overflowing.
+
+   reports.css sizes the shared date field with a responsive ladder, every step
+   `!important` but only (0,1,0): 390px at >=1367, 292px at 1200-1366, 195px at
+   768-1199.98 (reports.css:3730-3760, :4288-4310; the popup itself stays 390 so the
+   "trigger width matches the calendar" contract holds on the report pages). Those win
+   over the `body.main-admin-security-page .mas-date-field{flex:0 0 260px;width:260px}`
+   declared earlier in this file, so the page silently rendered 390/292/195 — and the
+   inner `.ref-range-wrap` / `.ref-range-trigger` were pinned to the same steps, which is
+   why the trigger never matched its own field.
+
+   Measured on a mocked page (row = panel width minus its paddings):
+     1150 -> search 200 + date 195 + 169 + 160 + Reset 80 + 4x8 gaps = 836 > row 789
+     1280 ->                                                          933 > row 918
+   So between roughly 992 and 1366 the five controls cannot fit, and the last one (Reset)
+   was cut off by the panel edge — `.mad-panel` clips. The row now wraps when it runs out
+   (nothing is ever clipped) and the date control keeps 260px on desktop, which is what the
+   page's own rule always intended: at 1280 the row needs 901 and has 918, so it stays on
+   one line from ~1225px up and stacks below that.
+
+   Scoped with the data attribute on purpose: main-merchant-security.html also carries
+   .main-admin-security-page, and its row belongs to the merchant family's file.
+   ========================================================================== */
+body.main-admin-security-page[data-access-page="main_admin_security"] .mas-filters{
+  flex-wrap:wrap!important;
+}
+/* The search is the shock absorber: its flex-basis decides when the row breaks, so the
+   basis is the control minimum (200px) rather than the page's 260px — that keeps the five
+   controls on one line down to ~1225px (200+260+169+160+80+4x8 = 901 <= row 918 at 1280)
+   and only then lets them stack. */
+body.main-admin-security-page[data-access-page="main_admin_security"] .mas-search{
+  flex:1 1 200px!important;
+}
+@media (min-width:801px){
+  body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field{
+    flex:0 0 260px!important;
+    width:260px!important;
+    min-width:260px!important;
+    max-width:260px!important;
+  }
+  body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-wrap,
+  body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-trigger{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+}
+
+/* ==========================================================================
+   Security & Audit (admin) — the date-range picker joins the family design
+
+   Measured before this block (light: panel #FFFFFF, preset rail #F8FAFC, trigger border
+   rgba(255,255,255,.10)), i.e. the shared cool shell, and the selected days rendered as a
+   14% amber wash with WHITE ink — invisible. The endpoint cells carry both .selected and
+   .in-range, and the .in-range rule sits later at equal specificity, so it won the fill; the
+   same interaction that bit the provider report pages. The strip radii, the hover preview and
+   the gap:0 cells now match main-merchant-security.html / the settlement picker.
+   ========================================================================== */
+body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days{
+  gap:0;
+}
+body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.selected{
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.selected.is-start.in-range:not(.is-end){
+  border-radius:8px 0 0 8px!important;
+}
+body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.selected.is-end.in-range:not(.is-start){
+  border-radius:0 8px 8px 0!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-trigger{
+  border-color:#EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-picker{
+  background:#FFF8EB!important;
+  border-color:#EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-presets{
+  background:#FFF8EB!important;
+  border-right-color:#EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-presets button{
+  color:#374151!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-presets button:hover:not(.active){
+  background:rgba(217,119,6,.10)!important;
+  color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button,
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-head-pick,
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-head button{
+  background:transparent!important;
+  border-color:transparent!important;
+  color:#374151!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button:hover:not(.selected){
+  background:rgba(217,119,6,.10)!important;
+  color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.muted{
+  color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-week span{
+  color:#71717A!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.selected{
+  background:#D97706!important;
+  color:#FFFFFF!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.in-range:not(.selected){
+  background:rgba(217,119,6,.14)!important;
+  color:#B45309!important;
+  border-radius:0!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.is-preview:not(.selected){
+  background:rgba(217,119,6,.28)!important;
+  color:#7C2D12!important;
+}
+/* Dark trigger border: the light rule above is scoped, but the legacy token that paints this
+   border in dark resolves to the light cream (#EADCC8) — measured. Pin it to the family dark edge. */
+html[data-bo-theme="dark"] body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-trigger{
+  border-color:rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-picker{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-presets{
+  background:#2A2C36!important;
+  border-right-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.selected{
+  background:#F59E0B!important;
+  color:#2A2C36!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.in-range:not(.selected){
+  background:rgba(245,158,11,.18)!important;
+  color:#FBBF24!important;
+  border-radius:0!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.is-preview:not(.selected){
+  background:rgba(245,158,11,.32)!important;
+  color:#FDE68A!important;
+}

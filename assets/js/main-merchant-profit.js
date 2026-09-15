@@ -17,10 +17,11 @@
     const [y, m, d] = s.split('-');
     return `${y}/${m}/${d}`;
   };
+  // Family wording: "01 Sep 2026 - 15 Sep 2026" (was dd/mm/yyyy).
   const niceDate = (v) => {
     if (!v) return '';
     const a = String(v).split('-');
-    return a.length === 3 ? `${a[2]}/${a[1]}/${a[0]}` : v;
+    return a.length === 3 ? `${a[2]} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][Number(a[1]) - 1]} ${a[0]}` : v;
   };
   const addDay = (v) => {
     const a = String(v || '').split('-').map(Number);
@@ -330,8 +331,8 @@
     const f = fromEl.value || '';
     const t = toEl.value || '';
     label.textContent = f && t
-      ? `${niceDate(f)} – ${niceDate(t)}`
-      : f ? `${niceDate(f)} – Select end date`
+      ? `${niceDate(f)} - ${niceDate(t)}`
+      : f ? `${niceDate(f)} - Select end date`
       : 'Select date range';
   }
   function renderCalendar() {
