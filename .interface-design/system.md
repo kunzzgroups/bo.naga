@@ -278,6 +278,13 @@ Sidebar category **3. Transaction** uses classic listing shells (`reports.css`),
 6. **L2 light icon hover blue:** `reports.css` `.report-nav a:hover i{color:#1d4ed8}` — override L2 `i` / `span i` for idle, `:hover`, `.active`, `.active:hover` to `#6b360c`.
 7. **L2 dark icon hover:** must be `#FBBF24` + amber glow (Merchant recipe), **not** white `rgba(255,255,255,.92)` and not BO blue. Same for `.active:hover i`.
 8. **L1 dark hover chip:** user locked full amber chip (same as dark active) — text/icons/chevron `#FBBF24`, amber gradient wash. Do **not** use grey wash + white label. Override `i`, `span i`, `.bi-chevron-down` on `:hover` / `.bo-flyout-hover`.
+9. **Search stays `#2864ed`:** `bo-ui-standard.css` locks `.bo-filter-search-button` with `body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) …` — `:not(#id)` counts as an **ID** in specificity. Beat it with the same `:not(#…)` pair **plus** `body.bo-wallet-tx`, not only `body.bo-wallet-tx .bo-filter-search-button`.
+10. **Metric icon rainbow:** `reports.css` paints `.bo-summary-icon` nth-child blue / green / purple. On Transaction pages force amber washes (`rgba(217,119,6,.12)` / `#D97706`) for all summary icons.
+11. **Dark white selects:** same `:not(#id)` lock forces `.rounded-select-btn` / filter inputs to `#fff`. Override with matching specificity + dark `#2A2C36` wells. Also redefine `--bo-tx-well` / `--bo-tx-well-border` under `html[data-bo-theme="dark"] body.bo-wallet-tx` — otherwise the shared cream-well rule keeps `#F5EBDC` with light `--bo-text` (unreadable Status / Page Size). Theme `.rounded-select-menu` / `.rounded-select-option` and table `tbody` so empty tables are not a white slab.
+12. **Select option indigo:** `bo-ui-standard.css` locks `.report-main .bo-filter-row .rounded-select-option:hover/.active` to `#eef2ff` / `#4f46e5!important`. Beat with `body.bo-wallet-tx` + `.report-main .bo-filter-row` (and optional `:not(#…)` pair). Spec: **Forms → Select / dropdown options**.
+13. **Date-range cool blue:** `reports.css` paints `.bo-range-presets` `#f8fafc`, day hover `#eef2ff`, selected `#5061f5`, month/year active blue gradient. Retheme per **Forms → Date-range popover**.
+14. **Filter field titles:** Transaction listing filters hide Date Range / Search / Status / Page Size labels (placeholder + value carry meaning). Keep `align-items:center` on the row after labels are removed.
+15. **Filter control radius:** Radius table locks filter controls at `8px` — beat `bo-ui-standard` / `reports.css` `10–11px` on `.rounded-select-btn` / `.bo-range-trigger` / filter inputs.
 
 ### Topbar (locked chrome — copy exactly)
 
@@ -380,6 +387,49 @@ Storage / attribute: `localStorage.bo_theme` + `html[data-bo-theme="light|dark"]
 - Inputs: dark soft charcoal `#2A2C36` on dark; light well `#F5EBDC` on light — **never** `#FFFFFF` chrome
 - Focus: amber ring (never cyan) — e.g. `0 0 0 3px rgba(217,119,6,.12)`
 - **Create/Edit hierarchy:** never one flat cream — use the layer ladder below so Save CTA and sections read clearly
+
+#### Select / dropdown options (`.rounded-select-*` — locked)
+
+Shared recipe for filter selects, pagination “Show / Page Size”, Status, and any enhanced `.rounded-select-wrap` menu.  
+**Reference:** Admin Detail filters in `main-admin-detail-executive.css`; Transaction listing copies the same tokens via `bo-wallet-transaction-amber.css`.
+
+**Never** use indigo/lavender defaults (`#eef2ff` / `#4f46e5`), cool gray menu panels (`#f8fafc`), or pure white option slabs.
+
+| Part | Spec |
+|------|------|
+| Classes | Trigger `.rounded-select-btn` · panel `.rounded-select-menu` · row `.rounded-select-option` (+ `.active` / `.is-active`) |
+| Option radius | `8px` |
+| Option weight | `700` |
+| Menu padding | `6px` |
+| Trigger open / focus | border `--bo-cyan` · ring `0 0 0 3px rgba(217,119,6,.14)` |
+
+| Element / state | Light | Dark |
+|-----------------|-------|------|
+| Trigger (closed) | well `#F5EBDC` (or listing `#FFF8EB`) · border `#EADCC8` · text `--bo-text` | `#2A2C36` · `rgba(255,255,255,.14)` · `#F5F5F4` |
+| Menu panel | surface `#FFF8EB` · border `#EADCC8` · warm shadow | `#383A46` · `rgba(255,255,255,.14)` · deep charcoal shadow |
+| Option idle | `transparent` · text `--bo-text` (`#18191C`) | `transparent` · text `#F5F5F4` / `--bo-text-secondary` |
+| Option hover | wash `--bo-cyan-tint` `rgba(217,119,6,.12)` · text `--bo-cyan-deep` `#B45309` | wash `rgba(245,158,11,.12–.16)` · text `#FBBF24` |
+| Option active / selected | same as hover: `--bo-cyan-tint` · `--bo-cyan-deep` | wash `rgba(245,158,11,.18)` · text `#FBBF24` |
+
+**Scope notes**
+
+- Idle options stay **transparent** on the cream/charcoal menu — do not force `#fff` per-row fills.
+- Hover and active share the amber tint (Admin Detail); do not invent a second selected color.
+- Listing pages that load `bo-ui-standard.css` must beat `.report-main .bo-filter-row .rounded-select-option:hover/.active` indigo locks (see Transaction pitfall 12).
+
+#### Date-range popover (`.bo-range-*` — locked companion)
+
+Same Charcoal + Amber family when a page uses the shared date-range control.
+
+| Element / state | Light | Dark |
+|-----------------|-------|------|
+| Popover | `#FFF8EB` · border `#EADCC8` | `#383A46` · `rgba(255,255,255,.14)` |
+| Preset rail | `#FFF1DC` · border `#EADCC8` | `#2A2C36` |
+| Preset hover | `--bo-cyan-tint` · `--bo-cyan-deep` | amber wash · `#FBBF24` |
+| Preset / day / month-year active | fill `--bo-cyan` (`#D97706`) · label `#FFFFFF` | fill `#F59E0B` · label `#2A2C36` |
+| Day in-range | `rgba(245,158,11,.14)` · text `--bo-cyan-deep` | `rgba(245,158,11,.18)` · `#FBBF24` |
+
+Never `#5061f5` / `#eef2ff` / blue month-year gradients from `reports.css`.
 
 #### Create / Edit Admin Account — light form hierarchy
 

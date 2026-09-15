@@ -495,19 +495,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const widest=Math.max.apply(null, labels.map(function(label){
       return measureLabelWidth(label, parts.button);
     }));
-    /* left pad ~14 + chevron/right pad ~46 + breathing room */
-    const contentWidth=Math.max(160, widest+72);
+    const inFilterRow=!!parts.wrap.closest('.bo-filter-row');
+    const inEntriesControl=!!parts.wrap.closest('.entries-control,.bo-pagination-standard');
+    /* Filter rows / pagination entries: size the FIELD, keep wrap at 100% so
+       Status/Page Size and "Show N entries" never overflow neighbors
+       (was Math.max(160) wrap inside an 80–112px cell). */
+    const contentWidth=(inFilterRow || inEntriesControl)
+      ? Math.max(inEntriesControl ? 72 : 80, widest+(inEntriesControl ? 44 : 54))
+      : Math.max(160, widest+72);
 
     if(isCompactAutoWidthWrap(parts.wrap)){
-      parts.wrap.style.setProperty('width', contentWidth+'px','important');
-      parts.wrap.style.setProperty('min-width', contentWidth+'px','important');
-      parts.wrap.style.setProperty('max-width', contentWidth+'px','important');
-      parts.wrap.style.setProperty('flex','0 0 '+contentWidth+'px','important');
-      parts.button.style.setProperty('width', '100%','important');
-      parts.button.style.setProperty('min-width', contentWidth+'px','important');
-      parts.menu.style.setProperty('width', contentWidth+'px','important');
-      parts.menu.style.setProperty('min-width', contentWidth+'px','important');
-      parts.menu.style.setProperty('max-width', contentWidth+'px','important');
+      if(inFilterRow || inEntriesControl){
+        const item=parts.wrap.closest('.bo-filter-select-item,.field,.entries-control') || parts.wrap.parentElement;
+        if(item && (inFilterRow || item.classList.contains('bo-filter-select-item') || item.classList.contains('field'))){
+          item.style.setProperty('--bo-select-width', contentWidth+'px');
+          item.style.setProperty('width', contentWidth+'px', 'important');
+          item.style.setProperty('min-width', contentWidth+'px', 'important');
+          item.style.setProperty('max-width', contentWidth+'px', 'important');
+          item.style.setProperty('flex', '0 0 '+contentWidth+'px', 'important');
+        }
+        parts.wrap.style.setProperty('width', inEntriesControl ? contentWidth+'px' : '100%', 'important');
+        parts.wrap.style.setProperty('min-width', inEntriesControl ? contentWidth+'px' : '0', 'important');
+        parts.wrap.style.setProperty('max-width', inEntriesControl ? contentWidth+'px' : '100%', 'important');
+        if(inEntriesControl){
+          parts.wrap.style.setProperty('flex', '0 0 '+contentWidth+'px', 'important');
+        }else{
+          parts.wrap.style.removeProperty('flex');
+        }
+        parts.button.style.setProperty('width', '100%', 'important');
+        parts.button.style.setProperty('min-width', '0', 'important');
+        parts.menu.style.setProperty('width', '100%', 'important');
+        parts.menu.style.setProperty('min-width', contentWidth+'px', 'important');
+        parts.menu.style.setProperty('max-width', 'none', 'important');
+      }else{
+        parts.wrap.style.setProperty('width', contentWidth+'px','important');
+        parts.wrap.style.setProperty('min-width', contentWidth+'px','important');
+        parts.wrap.style.setProperty('max-width', contentWidth+'px','important');
+        parts.wrap.style.setProperty('flex','0 0 '+contentWidth+'px','important');
+        parts.button.style.setProperty('width', '100%','important');
+        parts.button.style.setProperty('min-width', contentWidth+'px','important');
+        parts.menu.style.setProperty('width', contentWidth+'px','important');
+        parts.menu.style.setProperty('min-width', contentWidth+'px','important');
+        parts.menu.style.setProperty('max-width', contentWidth+'px','important');
+      }
     }else{
       // Form fields: menu must match the visible trigger width (not max-content).
       const boxWidth=Math.ceil((parts.button.getBoundingClientRect().width||parts.wrap.getBoundingClientRect().width||0));

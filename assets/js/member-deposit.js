@@ -125,7 +125,6 @@
     }).join('');
     totalPages=Number(pagination?.totalPages)||1;
     document.getElementById('depositPager').innerHTML=pageButtons(page,totalPages);
-    document.getElementById('depositPageInfo').textContent=`${Number(pagination?.totalElements||rows.length).toLocaleString()} request(s)`;
     document.getElementById('depositPrevBtn').disabled=page<=1; document.getElementById('depositNextBtn').disabled=page>=totalPages;
   }
   async function load(){

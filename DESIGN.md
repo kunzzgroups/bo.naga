@@ -206,6 +206,20 @@ Wiring: FOUC + `#boThemeToggle` as sibling of `[data-bo-profile]` (auth overwrit
 | Create / Edit sticky footer | `#FFFCF7` · border `#DCC9A8` · stronger warm shadow | translucent charcoal |
 | Create Role name input | control well `#F5EBDC` · border `#EADCC8` | `#2A2C36` · border `rgba(255,255,255,.12)` |
 | Create Role chips / search / ghost | well `#F5EBDC` · Toggle All amber wash `rgba(217,119,6,.12)` | charcoal well · amber wash |
+| Select menu (`.rounded-select-menu`) | surface `#FFF8EB` · border `#EADCC8` · warm shadow | `#383A46` · `rgba(255,255,255,.14)` |
+| Select option idle | `transparent` · text `#18191C` | `transparent` · text `#F5F5F4` |
+| Select option hover / active | wash `rgba(217,119,6,.12)` · text `#B45309` (never `#eef2ff` / `#4f46e5`) | wash `rgba(245,158,11,.18)` · text `#FBBF24` |
+| Date-range selected day / preset | fill `#D97706` · label white · in-range amber tint | fill `#F59E0B` · label `#2A2C36` |
+
+### Select / dropdown options (locked)
+
+`.rounded-select-btn` / `.rounded-select-menu` / `.rounded-select-option` — Admin Detail recipe; Transaction listing pages use the same tokens.
+
+- Idle options: **transparent** on cream/charcoal menu (no white row slabs).
+- Hover = active: `--bo-cyan-tint` / `--bo-cyan-deep` (light) · amber wash / `#FBBF24` (dark).
+- Never indigo (`#eef2ff` / `#4f46e5`) from `bo-ui-standard` / `reports.css`.
+
+Full tables: `.interface-design/system.md` → Forms → Select / dropdown options (and Date-range popover).
 
 ### Topbar chrome (locked — all pages)
 

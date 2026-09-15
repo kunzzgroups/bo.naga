@@ -384,9 +384,12 @@
         }
         if(json.message === 'Unauthorized') this.logout();
       }catch(e){}
-      // Keep profile/session usable on a transient request failure, but never rebuild or
-      // inject sidebar definitions from frontend code.
-      if(cached && cached.username) this.enforcePageAccess(cached);
+      // Keep profile/session usable on a transient request failure. Still paint the last
+      // DB-backed menus from localStorage — do not invent menus, but do not leave .report-nav blank.
+      if(cached && cached.username){
+        this.renderSidebar(cached);
+        this.enforcePageAccess(cached);
+      }
       return cached;
     },
     applyMenuPermission: function(user){
