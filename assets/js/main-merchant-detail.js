@@ -156,6 +156,17 @@
   if(n.includes('merchant')||n.includes('brand')||n.includes('sub')) return 'is-merchant';
   return '';
  }
+ // Avatar initials come from the company name, not the code: the code is already printed
+ // right next to the tile, so repeating it made the avatar carry no information.
+ function avatarInitials(b){
+  const name=String(b.name||'').trim();
+  if(name){
+   const parts=name.split(/[\s\-_]+/).filter(Boolean);
+   if(parts.length>=2) return (parts[0][0]+parts[1][0]).toUpperCase();
+   return name.slice(0,2).toUpperCase();
+  }
+  return String(b.code||'M').slice(0,2).toUpperCase();
+ }
  async function updateMerchantStatus(id, nextStatus, chipEl){
   const row=rows.find(x=>Number(x.id)===Number(id));
   if(!row) return;
@@ -288,7 +299,7 @@
    const creditBtn=`<button class="mad-merchant-icon-btn mad-merchant-credit-btn" data-credit="${esc(b.id)}" type="button" data-tip="Add / reclaim credit" aria-label="Add or reclaim credit"><i class="bi bi-plus-lg" aria-hidden="true"></i></button>`;
    const resetPassBtn=`<button class="mad-merchant-icon-btn mad-merchant-key-btn" data-reset-pass="${esc(b.id)}" type="button" data-tip="Reset password" aria-label="Reset password"><i class="bi bi-key" aria-hidden="true"></i></button>`;
    return `<tr class="mad-row${canDelete?' is-suspended-row':''}">`+
-     `<td data-label="Merchant"><div class="mad-user">${selectHtml}<span class="mad-avatar">${esc((b.code||'M').slice(0,2).toUpperCase())}</span><div class="mad-user-copy"><b>${esc(b.code||'-')}</b><div class="mad-user-meta">#${esc(b.id)}</div></div></div></td>`+
+     `<td data-label="Merchant"><div class="mad-user">${selectHtml}<span class="mad-avatar">${esc(avatarInitials(b))}</span><div class="mad-user-copy"><b>${esc(b.code||'-')}</b><div class="mad-user-meta">#${esc(b.id)}</div></div></div></td>`+
      `<td data-label="Company"><b>${esc(b.name||'-')}</b><small class="d-block text-muted">${esc(b.primaryDomain||'-')}</small></td>`+
      `<td data-label="Role"><span class="mad-role ${roleTone(rn)}">${esc(rn)}</span></td>`+
      `<td data-label="Currency">${esc(b.currency||'MYR')}</td>`+
@@ -1183,7 +1194,101 @@
   renderSelected();
  });
  $('madExportBtn')?.addEventListener('click',()=>{const csv=[['Merchant','Company','Domain','Role','Currency','Credit Balance','Status','Created By','Last Login','Last Logout'],...filtered.map(b=>[b.code,b.name,b.primaryDomain,roleName(b),b.currency,b.creditBalance,active(b)?'Active':'Suspended',b.createdByName||b.createdByUsername||'Legacy / Migration',b.masterLastLoginAt,b.masterLastLogoutAt])].map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='merchants.csv';a.click();URL.revokeObjectURL(a.href)});
+ function viewerRoleLabel(user){
+  user=user||(window.BO_AUTH&&typeof window.BO_AUTH.user==='function'?window.BO_AUTH.user():{})||{};
+  if(user.roleName) return String(user.roleName);
+  const type=String(user.roleType||'').toUpperCase();
+  if(user.rootAdmin===true||Number(user.rootAdmin)===1||type==='ROOT') return 'Root';
+  if(type==='MAIN'||user.mainAdmin===true||Number(user.mainAdmin)===1) return 'Superadmin';
+  if(type==='MASTER') return 'Master';
+  if(type==='BRAND_OWNER') return 'Brand Owner';
+  if(user.role) return String(user.role);
+  return 'Admin';
+ }
+ // Locked topbar chrome (Admin Detail reference): text meta left of the avatar, role in
+ // mono amber, gear hidden and replaced by the person icon.
+ function enhanceAmberTopbarProfile(){
+  const page=document.body;
+  if(!page||!page.classList.contains('main-merchant-detail-page')||page.getAttribute('data-access-page')!=='main_merchant_detail') return;
+  const host=page.querySelector('.report-actions [data-bo-profile]');
+  if(!host) return;
+  const link=host.querySelector('a.bo-account-link');
+  if(!link) return;
+  const href=String(link.getAttribute('href')||'');
+  if(!href||href==='#'||href==='profile.html'){
+   link.setAttribute('href','profile.html#password');
+  }
+  link.style.pointerEvents='auto';
+  link.style.cursor='pointer';
+  link.setAttribute('title','Account settings / Change password');
+  link.setAttribute('aria-label','Open account settings and change password');
+  const already=link.classList.contains('is-mad-amber-profile')
+   &&link.querySelector('.bo-account-meta')
+   &&link.querySelector('.report-avatar i.bi-person');
+  if(already){
+   const roleEl=link.querySelector('[data-admin-role]');
+   const nextRole=viewerRoleLabel();
+   if(roleEl&&roleEl.textContent!==nextRole) roleEl.textContent=nextRole;
+   return;
+  }
+  const avatar=link.querySelector('.report-avatar');
+  let name=link.querySelector('.bo-account-name');
+  const gear=link.querySelector('.bo-account-setting-icon');
+  if(gear) gear.setAttribute('hidden','');
+  let meta=link.querySelector('.bo-account-meta');
+  if(!meta&&name){
+   meta=document.createElement('span');
+   meta.className='bo-account-meta';
+   name.replaceWith(meta);
+   meta.appendChild(name);
+  }
+  name=link.querySelector('.bo-account-name');
+  let role=link.querySelector('[data-admin-role]');
+  if(!role&&meta){
+   role=document.createElement('span');
+   role.className='bo-account-role';
+   role.setAttribute('data-admin-role','');
+   meta.appendChild(role);
+  }
+  if(role) role.textContent=viewerRoleLabel();
+  if(avatar){
+   avatar.removeAttribute('data-admin-avatar');
+   if(!avatar.querySelector('i.bi-person')){
+    avatar.textContent='';
+    const icon=document.createElement('i');
+    icon.className='bi bi-person';
+    icon.setAttribute('aria-hidden','true');
+    avatar.appendChild(icon);
+   }
+   if(meta&&(meta.parentNode!==link||avatar.previousElementSibling!==meta)){
+    link.appendChild(meta);
+    link.appendChild(avatar);
+   }
+  }
+  link.classList.add('is-mad-amber-profile');
+ }
+ function bindAmberTopbarProfile(){
+  enhanceAmberTopbarProfile();
+  const host=document.querySelector('.report-actions [data-bo-profile]');
+  if(!host||host.dataset.madAmberObserved==='1') return;
+  host.dataset.madAmberObserved='1';
+  let scheduled=false;
+  const run=function(){
+   if(scheduled) return;
+   scheduled=true;
+   requestAnimationFrame(function(){
+    scheduled=false;
+    enhanceAmberTopbarProfile();
+   });
+  };
+  // Watch only structural reinjects from auth — not text tweaks (avoids killing clicks)
+  new MutationObserver(run).observe(host,{childList:true});
+  document.addEventListener('bo:profile-updated',run);
+  setTimeout(enhanceAmberTopbarProfile,80);
+  setTimeout(enhanceAmberTopbarProfile,400);
+ }
  document.body.classList.add('mad-view-active');
+ bindAmberTopbarProfile();
  loadCurrencies();
  load();
 })();
