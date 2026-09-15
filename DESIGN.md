@@ -245,6 +245,12 @@ Never cool `#fff` / `#FBFCFE` / `#F1F5F9` chrome. Full table: `.interface-design
 Light: `.mrc-field .form-control` + `.mp-search` / chips / Back = `#F5EBDC` · `#EADCC8`. **Toggle All** (`.mrc-chip-btn.is-accent`) = amber wash `rgba(217,119,6,.12)` — never cool cyan. Override `reports.css` `#fff!important`.  
 Dark: inputs `#2A2C36`; accent amber wash. CSS: `main-admin-role-create.css`.
 
+### Roles & Permissions filter (`.mp-search` / `#menuPermissionFilter` — locked)
+
+**List page** (`menu-permission.html`): filter matches Role select — surface `#FFF8EB` · border `#EADCC8` · icon `#57534E` · placeholder `#78716C` (frame + input, incl. disabled). Do **not** use deeper well `#F5EBDC` here — it reads muddy next to the select on the same control card.  
+**Create Role** (`main-admin-role-create.html` / `#mrcFilter`): filter matches Role Name — control well `#F5EBDC`.  
+Always beat `reports.css` `#fff!important`. Dark: charcoal well `#2A2C36`. CSS: `menu-permission-executive.css` + `main-admin-role-create.css`.
+
 ## Typography
 
 System UI stack. Hierarchy via weight + color. Sidebar L1 = `800`. Tabular nums for money/time; mono for credit/time cells and topbar role.

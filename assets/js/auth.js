@@ -75,8 +75,17 @@
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
     });
   }
+  function pageFile(name){
+    // Normalize cleanUrls (/main-dashboard) and .html paths to the same file id.
+    // Without this, `serve` cleanUrls + menu urls like main-dashboard.html loop forever.
+    let file = String(name == null ? '' : name).split('/').pop().split('?')[0].split('#')[0].trim();
+    if(!file || file === '.' || file === '..') file = 'index.html';
+    if(file === '#') return '#';
+    if(!/\.[a-z0-9]+$/i.test(file)) file += '.html';
+    return file;
+  }
   function pageName(){
-    return (location.pathname || '').split('/').pop() || 'index.html';
+    return pageFile(location.pathname || '');
   }
   function sidebarActivePage(){
     const p=pageName();
@@ -148,7 +157,7 @@
 
   function menuLinkHtml(m, isSub){
     const href = esc(m.url || '#');
-    const active = sidebarActivePage() === (m.url || '').split('/').pop();
+    const active = pageFile(sidebarActivePage()) === pageFile(m.url || '');
     const cls = (isSub ? 'report-sub ' : '') + (active ? 'active' : '');
     return '<a href="' + href + '" class="' + cls.trim() + '" data-menu-key="' + esc(m.menuKey) + '">' +
       '<span><i class="bi ' + esc(m.icon || 'bi-circle') + ' me-2"></i>' + esc(m.title) + '</span></a>';
@@ -163,7 +172,7 @@
     saveUser: function(user){ localStorage.setItem(this.userKey, JSON.stringify(user || {})); this.renderProfile(); this.renderSidebar(user); },
     logout: function(){ try{ const t=localStorage.getItem(this.tokenKey); if(t) fetch(API_CONFIG.BASE_URL + '/auth/admin/logout',{method:'POST',headers:{'Authorization':'Bearer '+t},keepalive:true}).catch(()=>{}); }catch(e){} localStorage.removeItem(this.tokenKey); localStorage.removeItem(this.userKey); try{ sessionStorage.removeItem('bo_operation_login_marker'); sessionStorage.removeItem('bo_operation_login_played'); sessionStorage.removeItem('bo_admin_me_refreshed_at'); sessionStorage.removeItem('bo_brand_context_cache_v3'); }catch(e){} window.location.href = 'login.html'; },
     requireLogin: function(){
-      if(!this.token() && !location.pathname.endsWith('/login.html')){
+      if(!this.token() && pageName() !== 'login.html'){
         // Preserve the BO page the admin explicitly requested. Previously a direct
         // visit such as payment-gateway.html was lost when login.html opened, because
         // admin-login.js always sent the user to the first sidebar menu after login.
@@ -268,7 +277,7 @@
         if(current !== 'profile.html') window.location.replace('profile.html');
         return current === 'profile.html';
       }
-      let allowed = menus.some(function(m){ return (m.url || '').split('/').pop() === current; });
+      let allowed = menus.some(function(m){ return pageFile(m.url || '') === current; });
       // Backward compatibility: older roles may only have the original
       // agent_management menu. That parent permission is allowed to open the new
       // Agent Management child pages, while newly configured roles can grant each
@@ -307,7 +316,12 @@
       }
       if(!allowed){
         const landing = this.landingPage(user);
-        if(landing && landing !== current) window.location.replace(landing);
+        const landingFile = pageFile(landing);
+        // Always navigate to the .html file so static hosts without cleanUrls work,
+        // and so cleanUrls hosts do not bounce between /page and /page.html forever.
+        if(landingFile && landingFile !== '#' && landingFile !== current){
+          window.location.replace(landingFile);
+        }
         return false;
       }
       return true;
@@ -464,7 +478,7 @@
           html+=menuLinkHtml(root.menu,false);
           return;
         }
-        const isOpen=root.items.some(function(m){return activePage===(m.url||'').split('/').pop();});
+        const isOpen=root.items.some(function(m){return pageFile(activePage)===pageFile(m.url||'');});
         html+='<div class="nav-group '+(isOpen?'open':'')+'" data-menu-group="'+esc(root.key)+'">'+
           '<button type="button" class="nav-group-btn" aria-expanded="'+(isOpen?'true':'false')+'">'+
           '<span><i class="bi '+esc(root.icon)+' me-2"></i>'+esc(root.title)+'</span><i class="bi bi-chevron-down"></i></button>'+

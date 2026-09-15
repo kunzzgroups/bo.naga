@@ -175,14 +175,42 @@ body.main-admin-role-create-page .mrc-chip-btn.is-accent:hover{
   border-color:rgba(217,119,6,.55)!important;
   color:var(--bo-cyan-deep,#B45309)!important;
 }
-/* Search / filter — control well (beat surface-looking #fff chrome) */
+/* Search / filter — match Role Name control well (Create Role card hierarchy) */
 body.main-admin-role-create-page .mrc-search,
 body.main-admin-role-create-page .mp-search,
 body.main-admin-role-create-page .report-content .mrc-search,
 body.main-admin-role-create-page .report-content .mp-search{
   background:var(--bo-control-well,#F5EBDC)!important;
+  background-color:var(--bo-control-well,#F5EBDC)!important;
   border:1px solid var(--bo-border,#EADCC8)!important;
   box-shadow:none!important;
+}
+body.main-admin-role-create-page .mrc-search i,
+body.main-admin-role-create-page .mp-search i{
+  color:#57534E!important;
+}
+body.main-admin-role-create-page .mrc-search input,
+body.main-admin-role-create-page .mp-search input,
+body.main-admin-role-create-page .report-content .mrc-search input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+body.main-admin-role-create-page .report-content .mp-search input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+body.main-admin-role-create-page #mrcFilter,
+body.main-admin-role-create-page #menuPermissionFilter,
+body.main-admin-role-create-page .mrc-search input:disabled,
+body.main-admin-role-create-page #mrcFilter:disabled{
+  background:var(--bo-control-well,#F5EBDC)!important;
+  background-color:var(--bo-control-well,#F5EBDC)!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  color:var(--bo-text)!important;
+  -webkit-text-fill-color:var(--bo-text)!important;
+  opacity:1!important;
+}
+body.main-admin-role-create-page .mrc-search input::placeholder,
+body.main-admin-role-create-page #mrcFilter::placeholder{
+  color:#78716C!important;
+  -webkit-text-fill-color:#78716C!important;
+  opacity:1!important;
 }
 body.main-admin-role-create-page .mrc-search:focus-within,
 body.main-admin-role-create-page .mp-search:focus-within{
@@ -378,11 +406,18 @@ html[data-bo-theme="dark"] body.main-admin-role-create-page .mrc-field .form-con
 }
 html[data-bo-theme="dark"] body.main-admin-role-create-page .mrc-search,
 html[data-bo-theme="dark"] body.main-admin-role-create-page .mp-search{
-  background:var(--bo-bg)!important;border-color:var(--bo-border)!important;
+  background:var(--bo-control-well,#2A2C36)!important;
+  background-color:var(--bo-control-well,#2A2C36)!important;
+  border-color:var(--bo-border)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-role-create-page .mrc-search input,
-html[data-bo-theme="dark"] body.main-admin-role-create-page .mp-search input{
-  color:var(--bo-text)!important;background:transparent!important;
+html[data-bo-theme="dark"] body.main-admin-role-create-page .mp-search input,
+html[data-bo-theme="dark"] body.main-admin-role-create-page #mrcFilter{
+  color:var(--bo-text)!important;
+  background:var(--bo-control-well,#2A2C36)!important;
+  background-color:var(--bo-control-well,#2A2C36)!important;
+  -webkit-text-fill-color:var(--bo-text)!important;
+  opacity:1!important;
 }
 html[data-bo-theme="dark"] body.main-admin-role-create-page .mrc-chip-btn,
 html[data-bo-theme="dark"] body.main-admin-role-create-page .mrc-chip-btn.bo-ui-button{

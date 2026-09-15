@@ -811,7 +811,8 @@ body.main-merchant-roles-page .mp-scope-bo-only,
 body.main-merchant-role-create-page .mp-scope-bo-only{
   pointer-events:none;
 }
-/* Search / filter — control well (never surface-white / never cool gray) */
+/* Search / filter — same surface as Role select on the control card (#FFF8EB).
+   Do NOT use deeper control-well #F5EBDC here: it reads muddy next to the select. */
 body.menu-permission-page .mp-search{
   flex:1 1 280px;
   width:auto;
@@ -823,24 +824,31 @@ body.menu-permission-page .mp-search{
   height:42px;
   margin:0;
   padding:0 16px;
-  border:1px solid #EADCC8;
+  border:1px solid var(--bo-border,#EADCC8);
   border-radius:8px;
-  background:#F5EBDC;
+  background:var(--bo-surface,#FFF8EB);
+  background-color:var(--bo-surface,#FFF8EB);
   box-shadow:none;
   box-sizing:border-box;
 }
 body.menu-permission-page .mp-search i{
   flex:0 0 auto;
-  color:#98A2B3;
+  color:#57534E;
   font-size:15px;
   line-height:1;
   pointer-events:none;
 }
-/* Kill global .report-content input box — keep only outer .mp-search frame */
+/* Beat reports.css `.report-content input { background-color:#fff!important }` —
+   paint surface on the input itself (incl. :disabled) so it matches Role select. */
 body.menu-permission-page .mp-search input,
 body.menu-permission-page .mp-search input[type="search"],
 body.menu-permission-page .report-content .mp-search input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
-body.menu-permission-page #menuPermissionFilter{
+body.menu-permission-page #menuPermissionFilter,
+body.menu-permission-page .mp-search input:disabled,
+body.menu-permission-page .mp-search input[disabled],
+body.menu-permission-page .report-content .mp-search input:disabled:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+body.menu-permission-page #menuPermissionFilter:disabled,
+body.menu-permission-page #menuPermissionFilter[disabled]{
   flex:1 1 auto!important;
   width:100%!important;
   min-width:0!important;
@@ -851,8 +859,11 @@ body.menu-permission-page #menuPermissionFilter{
   border-radius:0!important;
   outline:0!important;
   box-shadow:none!important;
-  background:transparent!important;
+  background:var(--bo-surface,#FFF8EB)!important;
+  background-color:var(--bo-surface,#FFF8EB)!important;
   color:var(--bo-text)!important;
+  -webkit-text-fill-color:var(--bo-text)!important;
+  opacity:1!important;
   font-size:13.5px!important;
   font-weight:500!important;
   line-height:1.2!important;
@@ -866,7 +877,12 @@ body.menu-permission-page .mp-search input::-webkit-search-results-decoration{
   display:none!important;
   -webkit-appearance:none!important;
 }
-body.menu-permission-page .mp-search input::placeholder{color:#98A2B3!important}
+body.menu-permission-page .mp-search input::placeholder,
+body.menu-permission-page #menuPermissionFilter::placeholder{
+  color:#78716C!important;
+  -webkit-text-fill-color:#78716C!important;
+  opacity:1!important;
+}
 body.menu-permission-page .mp-search:focus-within{
   border-color:#D97706;
   box-shadow:0 0 0 3px rgba(217,119,6,.14);
@@ -876,7 +892,8 @@ body.menu-permission-page #menuPermissionFilter:focus{
   border:0!important;
   outline:0!important;
   box-shadow:none!important;
-  background:transparent!important;
+  background:var(--bo-surface,#FFF8EB)!important;
+  background-color:var(--bo-surface,#FFF8EB)!important;
 }
 body.menu-permission-page .mp-toolbar-actions{
   display:flex;
@@ -1671,15 +1688,27 @@ html[data-bo-theme="dark"] body.menu-permission-page .mp-role-row .rounded-selec
   color:#2A2C36!important;
 }
 html[data-bo-theme="dark"] body.menu-permission-page .mp-search{
-  background:var(--bo-bg)!important;
+  background:var(--bo-control-well,#2A2C36)!important;
+  background-color:var(--bo-control-well,#2A2C36)!important;
   border-color:var(--bo-border)!important;
 }
+html[data-bo-theme="dark"] body.menu-permission-page .mp-search i{color:#A1A1AA}
 html[data-bo-theme="dark"] body.menu-permission-page .mp-search input,
-html[data-bo-theme="dark"] body.menu-permission-page #menuPermissionFilter{
-  background:transparent!important;
+html[data-bo-theme="dark"] body.menu-permission-page #menuPermissionFilter,
+html[data-bo-theme="dark"] body.menu-permission-page .mp-search input:disabled,
+html[data-bo-theme="dark"] body.menu-permission-page #menuPermissionFilter:disabled{
+  background:var(--bo-control-well,#2A2C36)!important;
+  background-color:var(--bo-control-well,#2A2C36)!important;
   border:0!important;
   box-shadow:none!important;
   color:var(--bo-text)!important;
+  -webkit-text-fill-color:var(--bo-text)!important;
+  opacity:1!important;
+}
+html[data-bo-theme="dark"] body.menu-permission-page .mp-search input::placeholder,
+html[data-bo-theme="dark"] body.menu-permission-page #menuPermissionFilter::placeholder{
+  color:#A1A1AA!important;
+  -webkit-text-fill-color:#A1A1AA!important;
 }
 html[data-bo-theme="dark"] body.menu-permission-page .report-topbar .user-title-wrap h1,
 html[data-bo-theme="dark"] body.menu-permission-page .mp-role-label,
