@@ -8182,11 +8182,6 @@ body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-avatar.
   border:0!important;
   box-shadow:none!important;
 }
-body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table tbody tr:nth-child(3n) .mad-avatar:not(.is-self),
-body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table tbody tr:nth-child(3n) .mad-avatar:not(.is-self){
-  background:#E0F2FE!important;
-  color:#0369A1!important;
-}
 
 /* Light role pills */
 body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-role,
@@ -9250,4 +9245,46 @@ html:not([data-bo-theme="dark"]) body.main-admin-edit-page[data-access-page="mai
 body.main-admin-detail-page[data-access-page="main_admin_security"] .bo-account-meta{
     display:none!important;
   }
+}
+
+/* ==========================================================================
+   Row avatar — neutral tile, colour reserved for state
+   Unified with the merchant family (assets/css/main-merchant-detail-executive.css).
+   Decision 2026-09-15: the tile is an index marker, not a colour code.
+     base            neutral cream / charcoal
+     .is-self        KEEP amber — on this page it means "your own account"
+     suspended row   danger wash, agreeing with the Status pill
+   The former every-third-row sky tint is deleted: it encoded row position, and it was
+   never scoped to light mode, so it outbid the dark rule and put a near-white chip on
+   the dark canvas (the defect recorded in DESIGN.md).
+   ========================================================================== */
+
+/* Light */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-avatar:not(.is-self),
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-avatar:not(.is-self){
+  background:#F5EBDC!important;
+  color:#6b360c!important;
+  border:1px solid #EADCC8!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table tbody tr:has(.mad-status.is-suspended) .mad-avatar,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table tbody tr:has(.mad-status.is-suspended) .mad-avatar{
+  background:#FEE2E2!important;
+  color:#B91C1C!important;
+  border-color:rgba(239,51,64,.30)!important;
+}
+
+/* Dark */
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table .mad-avatar:not(.is-self),
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table .mad-avatar:not(.is-self){
+  background:#2A2C36!important;
+  color:#E7E5E4!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table tbody tr:has(.mad-status.is-suspended) .mad-avatar,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-table tbody tr:has(.mad-status.is-suspended) .mad-avatar{
+  background:rgba(239,68,68,.14)!important;
+  color:#FCA5A5!important;
+  border-color:rgba(248,113,113,.30)!important;
 }
