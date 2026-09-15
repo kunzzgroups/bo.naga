@@ -1,0 +1,606 @@
+/* BO sidebar category: 3. Transaction — Charcoal + Amber
+   Aligns Deposit / Withdraw / Wallet / Bulk pages to Admin Detail.
+   Scope: body.bo-wallet-tx
+   Light + dark via html[data-bo-theme] / localStorage.bo_theme
+   ========================================================================== */
+
+body.bo-wallet-tx{
+  --bo-navy:#18191C;
+  --bo-cyan:#D97706;
+  --bo-cyan-deep:#B45309;
+  --bo-success:#12B76A;
+  --bo-danger:#991B1B;
+  --bo-bg:#FFF1DC;
+  --bo-surface:#FFF8EB;
+  --bo-border:#EADCC8;
+  --bo-text:#18191C;
+  --bo-text-secondary:#27272A;
+  --bo-muted:#71717A;
+  --bo-sidebar-bg:#FFE8CC;
+  --bo-sidebar-text:#6b360c;
+  --bo-sidebar-active:#D97706;
+  --bo-cyan-tint:rgba(217,119,6,.12);
+  --bo-control-well:#F5EBDC;
+  --bo-placeholder:#78716C;
+  --bo-ui-blue:#D97706;
+  --bo-ui-blue-hover:#B45309;
+  --bo-accent-on:#FFFFFF;
+  --bo-shadow:0 0 0 1px rgba(24,25,28,.04),0 1px 2px -1px rgba(24,25,28,.06),0 2px 8px rgba(24,25,28,.04);
+  color:var(--bo-text);
+  background:transparent!important;
+  font-family:ui-sans-serif,"Segoe UI",system-ui,sans-serif;
+}
+
+html:not([data-bo-theme="dark"]):has(body.bo-wallet-tx){
+  background-color:#FFF6E8;
+  background-image:linear-gradient(90deg,
+    #FFE8CC 0,
+    #FFF1DC calc(var(--sidebar-w,280px) * .72),
+    #FFF3E0 var(--sidebar-w,280px),
+    #FFF6E8 calc(var(--sidebar-w,280px) + 64px),
+    #FFF8EB calc(var(--sidebar-w,280px) + 140px),
+    #FFF8EB 100%
+  );
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+  background-size:100% 100%;
+  min-height:100%;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx{
+  --bo-navy:#F5F5F4;
+  --bo-cyan:#F59E0B;
+  --bo-cyan-deep:#D97706;
+  --bo-success:#10B981;
+  --bo-danger:#F87171;
+  --bo-bg:#2C2E38;
+  --bo-surface:#383A46;
+  --bo-border:rgba(255,255,255,.10);
+  --bo-text:#F5F5F4;
+  --bo-text-secondary:#E7E5E4;
+  --bo-muted:#A1A1AA;
+  --bo-sidebar-bg:#3A3226;
+  --bo-sidebar-text:#FFFFFF;
+  --bo-sidebar-active:#F59E0B;
+  --bo-cyan-tint:rgba(245,158,11,.16);
+  --bo-control-well:rgba(255,255,255,.06);
+  --bo-placeholder:#A1A1AA;
+  --bo-ui-blue:#F59E0B;
+  --bo-ui-blue-hover:#D97706;
+  --bo-accent-on:#2A2C36;
+  --bo-shadow:none;
+  color-scheme:dark;
+}
+html[data-bo-theme="dark"]:has(body.bo-wallet-tx){
+  background-color:#2C2E38;
+  background-image:linear-gradient(90deg,
+    #3A3226 0,
+    #342E28 calc(var(--sidebar-w,280px) * .72),
+    #2F2E32 var(--sidebar-w,280px),
+    #2D2E36 calc(var(--sidebar-w,280px) + 64px),
+    #2C2E38 calc(var(--sidebar-w,280px) + 140px),
+    #2C2E38 100%
+  );
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+  background-size:100% 100%;
+  min-height:100%;
+}
+
+body.bo-wallet-tx .report-shell,
+body.bo-wallet-tx .report-main,
+body.bo-wallet-tx .report-content{
+  background:transparent!important;
+}
+
+/* ---- Sidebar (beat reports.css blue) ---- */
+body.bo-wallet-tx .report-sidebar{
+  background:var(--bo-sidebar-bg)!important;
+  border-right:1px solid rgba(92,74,48,.14)!important;
+  color:var(--bo-sidebar-text)!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar{
+  border-right-color:rgba(245,158,11,.22)!important;
+}
+body.bo-wallet-tx .report-sidebar::before{
+  content:"";
+  position:absolute;
+  top:12%;bottom:12%;right:0;
+  width:2px;
+  border-radius:999px 0 0 999px;
+  pointer-events:none;z-index:2;
+  background:linear-gradient(180deg, transparent 0%, #F59E0B 26%, #D97706 58%, transparent 100%);
+  opacity:.75;
+}
+body.bo-wallet-tx .report-sidebar > *{position:relative;z-index:1}
+body.bo-wallet-tx .report-brand{
+  color:var(--bo-sidebar-text)!important;
+  border-bottom:1px solid rgba(92,74,48,.12)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-brand{
+  border-bottom-color:rgba(255,255,255,.10)!important;
+  color:#fff!important;
+}
+body.bo-wallet-tx .report-brand small{opacity:.72}
+body.bo-wallet-tx .close-side{
+  color:var(--bo-sidebar-text)!important;
+  border-color:rgba(92,74,48,.18)!important;
+  background:transparent!important;
+}
+
+/* Kill legacy blue nav-group gradient (reports.css) */
+body.bo-wallet-tx .report-sidebar .nav-group{
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+body.bo-wallet-tx .report-sidebar .nav-group-btn{
+  background:transparent!important;
+  color:inherit!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+/* ---- L1 idle / hover (light) ---- */
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub),
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn{
+  border-radius:10px!important;
+  color:#6b360c!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-weight:800!important;
+  border:0!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub) i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn .bi-chevron-down{
+  color:#6b360c!important;
+  opacity:.72;
+  filter:none;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):hover,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):focus-visible,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn:hover,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn{
+  background:rgba(255,243,224,.78)!important;
+  color:#6b360c!important;
+  box-shadow:0 1px 2px rgba(60,48,32,.05)!important;
+  border-radius:10px!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn:hover i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn i{
+  color:#6b360c!important;
+  opacity:1;
+}
+
+/* L1 active — cream chip + left amber pill bar (locked reference) */
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub).active,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn{
+  position:relative!important;
+  background:linear-gradient(135deg,#FFF8EF 0%,#FFE8CC 48%,#FFF3E0 100%)!important;
+  color:#6b360c!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.85),
+    0 0 0 1px rgba(217,119,6,.18),
+    0 6px 16px rgba(217,119,6,.12)!important;
+  border:0!important;
+  border-radius:10px!important;
+  overflow:hidden;
+  text-shadow:none;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub).active::before,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn::before,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn::before,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn::before{
+  content:"";
+  position:absolute;
+  left:0;top:7px;bottom:7px;width:3px;border-radius:999px;
+  background:linear-gradient(180deg,#FBBF24 0%,#D97706 100%);
+  box-shadow:0 0 10px rgba(217,119,6,.35);
+  pointer-events:none;
+  z-index:1;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub).active i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn .bi-chevron-down,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn .bi-chevron-down{
+  color:#6b360c!important;
+  opacity:1;
+  filter:none;
+}
+
+/* ---- L1 idle / hover / active (dark) ---- */
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub),
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn{
+  color:rgba(255,255,255,.86)!important;
+  background:transparent!important;
+  font-weight:800!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub) i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn .bi-chevron-down{
+  color:rgba(255,255,255,.7)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):focus-visible,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn{
+  position:relative!important;
+  background:linear-gradient(90deg,rgba(245,158,11,.16) 0%,rgba(245,158,11,.05) 45%,transparent 100%)!important;
+  color:#FBBF24!important;
+  box-shadow:
+    inset 0 1px 0 rgba(245,158,11,.18),
+    inset 0 -1px 0 rgba(245,158,11,.10),
+    0 0 28px rgba(245,158,11,.12)!important;
+  border:0!important;
+  border-radius:8px!important;
+  overflow:hidden;
+  text-shadow:0 0 18px rgba(245,158,11,.45);
+}
+/* L1 dark hover — amber chip (same signal as active; beat reports.css blue) */
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):hover i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):focus-visible i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):hover span i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn:hover i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn:hover span i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn:hover .bi-chevron-down,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn span i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn .bi-chevron-down{
+  color:#FBBF24!important;
+  filter:drop-shadow(0 0 8px rgba(245,158,11,.65));
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub).active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn{
+  position:relative!important;
+  background:linear-gradient(90deg,rgba(245,158,11,.16) 0%,rgba(245,158,11,.05) 45%,transparent 100%)!important;
+  color:#FBBF24!important;
+  box-shadow:
+    inset 0 1px 0 rgba(245,158,11,.18),
+    inset 0 -1px 0 rgba(245,158,11,.10),
+    0 0 28px rgba(245,158,11,.12)!important;
+  border:0!important;
+  border-radius:8px!important;
+  overflow:hidden;
+  text-shadow:0 0 18px rgba(245,158,11,.45);
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub).active::before,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn::before,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn::before,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn::before{
+  content:"";
+  position:absolute;
+  left:0;top:8px;bottom:8px;width:2px;border-radius:999px;
+  background:linear-gradient(180deg,#FDE68A 0%,#F59E0B 55%,#D97706 100%);
+  box-shadow:0 0 10px rgba(245,158,11,.9),0 0 18px rgba(245,158,11,.5);
+  pointer-events:none;
+  z-index:1;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub).active i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn .bi-chevron-down,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn .bi-chevron-down{
+  color:#FBBF24!important;
+  filter:drop-shadow(0 0 8px rgba(245,158,11,.65));
+}
+
+/* ---- L2 flyout panel ---- */
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > .nav-group > .nav-group-list,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list{
+  background:#FFF8EB!important;
+  border:1px solid rgba(92,74,48,.12)!important;
+  box-shadow:0 12px 32px rgba(60,48,32,.14)!important;
+  border-radius:12px!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > .nav-group > .nav-group-list,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list{
+  background:#383A46!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:0 16px 40px rgba(0,0,0,.35)!important;
+}
+
+/* L2 idle / hover / active — amber frame chip (locked reference) */
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub{
+  position:relative!important;
+  border:1px solid transparent!important;
+  border-radius:9px!important;
+  color:#6b360c!important;
+  background:transparent!important;
+  font-weight:650!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub:hover,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub:hover{
+  background:rgba(255,243,224,.72)!important;
+  color:#6b360c!important;
+  border-color:transparent!important;
+}
+/* Beat reports.css `.report-nav a:hover i{color:#1d4ed8}` — L2 icons stay charcoal, never BO blue */
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub:hover i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub:hover i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a:hover i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active:hover i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active:hover i{
+  color:#6b360c!important;
+  opacity:1;
+  filter:none;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active{
+  background:linear-gradient(180deg,#FFFBEB 0%,#FEF3C7 100%)!important;
+  border:1px solid #D97706!important;
+  border-radius:9px!important;
+  color:#6b360c!important;
+  font-weight:800!important;
+  box-shadow:0 0 0 1px rgba(245,158,11,.12),0 4px 14px rgba(217,119,6,.12)!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active::after,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active::after{
+  content:none!important;
+  display:none!important;
+}
+
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub{
+  color:rgba(255,255,255,.62)!important;
+  background:transparent!important;
+  border:1px solid transparent!important;
+  border-radius:9px!important;
+  font-weight:650!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub:hover{
+  background:rgba(255,255,255,.05)!important;
+  color:rgba(255,255,255,.92)!important;
+}
+/* L2 icons — amber series (beat reports.css #1d4ed8 hover/active) */
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub span i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub span i{
+  color:rgba(255,255,255,.55)!important;
+  filter:none;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub:hover i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub:hover i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a:hover i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub:hover span i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub:hover span i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active:hover i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active:hover i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.active i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.active:hover i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active span i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active span i{
+  color:#FBBF24!important;
+  filter:drop-shadow(0 0 6px rgba(245,158,11,.45));
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active{
+  background:linear-gradient(180deg,rgba(245,158,11,.18) 0%,rgba(43,37,33,.92) 100%)!important;
+  border:1px solid rgba(245,158,11,.55)!important;
+  color:#FBBF24!important;
+  font-weight:800!important;
+  box-shadow:0 0 0 1px rgba(245,158,11,.12),0 0 18px rgba(245,158,11,.18),inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active::after,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* ---- Topbar ---- */
+body.bo-wallet-tx .report-topbar{
+  background:var(--bo-surface)!important;
+  border-bottom:1px solid var(--bo-border)!important;
+  color:var(--bo-text)!important;
+}
+body.bo-wallet-tx .user-title-wrap h1{color:var(--bo-text)!important}
+body.bo-wallet-tx .user-title-wrap p{color:var(--bo-muted)!important}
+body.bo-wallet-tx .user-title-icon{
+  background:var(--bo-cyan-tint)!important;
+  color:var(--bo-cyan)!important;
+  border:1px solid rgba(217,119,6,.22);
+}
+body.bo-wallet-tx .hamb{
+  background:var(--bo-surface)!important;
+  border:1px solid var(--bo-border)!important;
+  color:var(--bo-text)!important;
+}
+
+/* Theme toggle */
+body.bo-wallet-tx .bo-theme-btn{
+  width:36px;height:36px;min-width:36px;
+  border-radius:8px!important;
+  background:transparent!important;
+  border:1px solid rgba(24,25,28,.18)!important;
+  color:#3F3F46!important;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-theme-btn{
+  border-color:rgba(245,158,11,.4)!important;
+  color:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-theme-btn:hover{color:#FBBF24!important}
+
+/* ---- Content surfaces ---- */
+body.bo-wallet-tx .filter-card,
+body.bo-wallet-tx .table-card,
+body.bo-wallet-tx .metric,
+body.bo-wallet-tx .quick-stats .metric,
+body.bo-wallet-tx .form-panel,
+body.bo-wallet-tx .settings-card{
+  background:var(--bo-surface)!important;
+  border:1px solid var(--bo-border)!important;
+  box-shadow:var(--bo-shadow)!important;
+  color:var(--bo-text)!important;
+}
+body.bo-wallet-tx .metric span,
+body.bo-wallet-tx .text-muted,
+body.bo-wallet-tx .user-badge{color:var(--bo-muted)!important}
+body.bo-wallet-tx .metric strong{color:var(--bo-text)!important}
+body.bo-wallet-tx .user-badge{
+  background:var(--bo-cyan-tint)!important;
+  border-color:rgba(217,119,6,.22)!important;
+  color:var(--bo-text-secondary)!important;
+}
+
+/* Inputs */
+body.bo-wallet-tx .field input,
+body.bo-wallet-tx .field select,
+body.bo-wallet-tx .field textarea,
+body.bo-wallet-tx .bo-filter-row input,
+body.bo-wallet-tx .bo-filter-row select{
+  background:var(--bo-control-well)!important;
+  border:1px solid var(--bo-border)!important;
+  color:var(--bo-text)!important;
+  border-radius:10px!important;
+}
+body.bo-wallet-tx .field input:focus,
+body.bo-wallet-tx .field select:focus,
+body.bo-wallet-tx .bo-filter-row input:focus,
+body.bo-wallet-tx .bo-filter-row select:focus{
+  border-color:var(--bo-cyan)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+  outline:0!important;
+}
+body.bo-wallet-tx .field label{color:var(--bo-text-secondary)!important;font-weight:700}
+
+/* Primary / ghost buttons (Search etc.) */
+body.bo-wallet-tx .btn-primary-clean,
+body.bo-wallet-tx .clean-btn.primary,
+body.bo-wallet-tx .bo-ui-button-primary,
+body.bo-wallet-tx button.btn-primary{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
+  border:1px solid #E8901A!important;
+  color:#fff!important;
+  box-shadow:0 1px 2px rgba(217,119,6,.18),0 4px 10px rgba(217,119,6,.22),inset 0 1px 0 rgba(255,255,255,.35)!important;
+  border-radius:8px!important;
+  font-weight:700!important;
+}
+body.bo-wallet-tx .btn-primary-clean:hover,
+body.bo-wallet-tx .clean-btn.primary:hover{
+  background-image:linear-gradient(0deg,#FCD34D 0%,#FBBF24 38%,#F59E0B 72%,#EA8608 100%)!important;
+  color:#fff!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .btn-primary-clean,
+html[data-bo-theme="dark"] body.bo-wallet-tx .clean-btn.primary{
+  color:#2A2C36!important;
+  border-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+}
+body.bo-wallet-tx .clean-btn,
+body.bo-wallet-tx .bo-ui-button-secondary{
+  background:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%)!important;
+  border:1px solid #DCC9A8!important;
+  color:#18191C!important;
+  border-radius:8px!important;
+  font-weight:700!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .clean-btn{
+  background:linear-gradient(180deg,#4A4C58 0%,#383A46 55%,#2C2E38 100%)!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+}
+
+/* Tables */
+body.bo-wallet-tx .table-wrap{
+  background:var(--bo-surface)!important;
+  border-color:var(--bo-border)!important;
+}
+body.bo-wallet-tx .report-table thead th{
+  background:var(--bo-surface)!important;
+  color:#3F3F46!important;
+  border-bottom:1px solid var(--bo-border)!important;
+  font-weight:700!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table thead th{
+  color:#E7E5E4!important;
+  border-bottom-color:rgba(255,255,255,.14)!important;
+}
+body.bo-wallet-tx .report-table td{
+  color:var(--bo-text)!important;
+  border-bottom:1px solid #F0E6D8!important;
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table td{
+  border-bottom-color:rgba(255,255,255,.12)!important;
+}
+body.bo-wallet-tx .report-table tbody tr:hover td{
+  background:rgba(217,119,6,.06)!important;
+}
+
+/* Seg / active pills leftover from legacy blue */
+body.bo-wallet-tx .seg button.active,
+body.bo-wallet-tx .setting-tabs a.active,
+body.bo-wallet-tx .media-tabs a.active{
+  background:var(--bo-cyan)!important;
+  border-color:var(--bo-cyan)!important;
+  color:var(--bo-accent-on)!important;
+}
+
+/* ---- Logout footer — beat bo-ui-standard.css white strip ---- */
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-sidebar-account-footer{
+  background:transparent!important;
+  border-top:1px solid rgba(92,74,48,.1)!important;
+  box-shadow:none!important;
+  margin:0!important;
+  padding:10px 10px 12px!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-sidebar-logout{
+  border-radius:10px!important;
+  color:#B42318!important;
+  background:rgba(255,255,255,.45)!important;
+  border:1px solid rgba(180,35,24,.12)!important;
+  transition:background .16s ease,box-shadow .16s ease,color .16s ease!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-sidebar-logout i{
+  color:#D92D20!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-sidebar-logout:hover{
+  background:rgba(254,243,242,.95)!important;
+  color:#912018!important;
+  box-shadow:0 4px 12px rgba(180,35,24,.08)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-sidebar-account-footer{
+  margin:0!important;
+  padding:10px!important;
+  border-top:1px solid rgba(255,255,255,.08)!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-sidebar-logout{
+  color:#FF8A90!important;
+  background:transparent!important;
+  border:1px solid transparent!important;
+  border-radius:10px!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-sidebar-logout i{
+  color:#F87171!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-sidebar-logout:hover{
+  background:rgba(248,113,113,.1)!important;
+  color:#fff!important;
+  box-shadow:0 0 0 1px rgba(248,113,113,.22),0 0 18px rgba(248,113,113,.12)!important;
+}

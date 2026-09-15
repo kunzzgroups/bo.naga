@@ -163,7 +163,45 @@ Scale: `4, 8, 10, 12, 14, 16, 18, 20, 24, 32`
 - Opaque fill matching continuum left stop (`#FFE8CC` light · `#3A3226` dark)
 - L1 text/icons light: `#6b360c` · weight `800`
 - L1 active: cream chip + **left amber bar** (not the L2 frame)
-- Logout: danger red, not amber
+- Logout: danger red, not amber — footer must **not** stay white (see Logout below)
+
+#### L1 active — cream chip + left amber pill (locked)
+
+Do **not** use only `box-shadow: inset 3px 0 0 …` on top-level `a.active`. Category pages (Transaction, Admin, Merchant…) mark the open group via `.nav-group.open` / `:has(.report-sub.active)`, not a top-level `.active` link.
+
+**Must match all of these selectors (light + dark):**
+- `.report-nav > a:not(.report-sub).active`
+- `.nav-group.open > .nav-group-btn`
+- `.nav-group:has(.report-sub.active) > .nav-group-btn`
+- `.nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn`
+
+| Spec | Light | Dark |
+|------|-------|------|
+| Fill | `linear-gradient(135deg, #FFF8EF 0%, #FFE8CC 48%, #FFF3E0 100%)` | `linear-gradient(90deg, rgba(245,158,11,.16) → transparent)` |
+| Soft ring / lift | inset top highlight + `0 0 0 1px rgba(217,119,6,.18)` + soft amber shadow | inset amber lines + soft glow |
+| Radius | `10px` | `8px` |
+| Text / icons | `#6b360c` · opacity `1` | `#FBBF24` · amber drop-shadow on icons |
+| Left bar `::before` | `left:0; top/bottom:7px; width:3px; border-radius:999px` · `linear-gradient(180deg,#FBBF24→#D97706)` · soft amber glow | `top/bottom:8px; width:2px` · `#FDE68A→#F59E0B→#D97706` · stronger glow |
+
+#### L1 idle / hover
+
+| State | Light | Dark |
+|-------|-------|------|
+| Idle | transparent · text/icons `#6b360c` | transparent · text `rgba(255,255,255,.86)` · icons `rgba(255,255,255,.7)` |
+| Hover | soft cream wash `rgba(255,243,224,.78)` · text/icons stay `#6b360c` · **no** left bar | **same amber chip as L1 active** (below) · **no** left bar required on hover |
+
+**Dark L1 hover (locked — user reference 2026-09-15)**  
+Same signal as dark active, applied on `:hover` / `:focus-visible` / `.bo-flyout-hover > .nav-group-btn`:
+
+| Spec | Value |
+|------|-------|
+| Fill | `linear-gradient(90deg, rgba(245,158,11,.16) 0%, rgba(245,158,11,.05) 45%, transparent 100%)` |
+| Text / icons / chevron | `#FBBF24` · icons `filter: drop-shadow(0 0 8px rgba(245,158,11,.65))` |
+| Shadow | inset amber lines + `0 0 28px rgba(245,158,11,.12)` |
+| Radius | `8px` |
+| Text shadow | `0 0 18px rgba(245,158,11,.45)` |
+
+**Reject:** grey wash `rgba(255,255,255,.04)` + white/near-white label; BO blue `#1d4ed8` on icons (from `reports.css` `.report-nav a:hover i`). Always override `i`, `span i`, and `.bi-chevron-down` on L1 hover.
 
 #### Desktop flyout panel — `.nav-group-list`
 
@@ -179,22 +217,67 @@ Scale: `4, 8, 10, 12, 14, 16, 18, 20, 24, 32`
 
 | State | Light | Dark |
 |-------|-------|------|
-| Default | text/icon `#6b360c` · transparent | text `rgba(255,255,255,.72)` |
-| Hover | soft wash `rgba(217,119,6,.10)` · **no** amber frame | `rgba(255,255,255,.05)` · no frame |
+| Default | text/icon `#6b360c` · transparent | text `rgba(255,255,255,.62–.72)` · icons `rgba(255,255,255,.55)` |
+| Hover | soft wash `rgba(255,243,224,.72)` · **no** amber frame · icons `#6b360c` | soft wash `rgba(255,255,255,.05)` · **no** frame · icons `#FBBF24` + amber glow |
 | **Active (locked)** | cream chip + amber frame (below) | amber/charcoal chip + amber frame (below) |
 
+**Icon color is not inherited from the link alone.** `reports.css` sets `.report-nav a:hover i,.report-nav a.active i{color:#1d4ed8}` — higher specificity on the `i` wins unless page CSS targets `a.report-sub:hover i`, `a.report-sub.active i`, `a.report-sub.active:hover i`, and `span i` explicitly.
+
+| Mode | Idle icon | Hover icon | Active / active:hover icon |
+|------|-----------|------------|----------------------------|
+| Light | `#6b360c` | `#6b360c` | `#6b360c` |
+| Dark | `rgba(255,255,255,.55)` | `#FBBF24` + amber drop-shadow | `#FBBF24` + amber drop-shadow |
+
+Never leave hover icons as BO blue `#1d4ed8`, cyan, or (in dark) plain white without amber.
+
 **Active chip (copy exactly — Admin Detail reference)**  
-Do **not** use flat `rgba(217,119,6,.12)` wash alone for active (that was the wrong Roles/Dashboard look).
+Do **not** use flat `rgba(217,119,6,.12)` wash alone for active (that was the wrong Roles/Dashboard look). Also kill legacy `::after` left rails (`content:none; display:none`).
 
 | Spec | Light | Dark |
 |------|-------|------|
 | Background | `linear-gradient(180deg, #FFFBEB 0%, #FEF3C7 100%)` | `linear-gradient(180deg, rgba(245,158,11,.18), rgba(43,37,33,.92))` |
 | Border | `1px solid #D97706` (`--bo-sidebar-active`) | `1px solid rgba(245,158,11,.55)` |
-| Text / icon | `#6b360c` | `#FBBF24` |
+| Text / icon | `#6b360c` · weight `800` | `#FBBF24` · weight `800` |
 | Shadow | `0 0 0 1px rgba(245,158,11,.12), 0 4px 14px rgba(217,119,6,.12)` | amber glow + inset highlight |
 | `::after` rail | none (`display:none`) | none |
 
-Shared on: Dashboard, Roles & Permissions, Administrators, Security & Audit.
+#### Logout footer — `.bo-sidebar-account-footer` / `.bo-sidebar-logout`
+
+`bo-ui-standard.css` sets `.bo-sidebar-account-footer{background:#fff}` — on cream/charcoal sidebars this reads as a **white strip** at the bottom. Always override on Charcoal + Amber pages:
+
+| Spec | Light | Dark |
+|------|-------|------|
+| Footer bg | `transparent` (show sidebar cream) | `transparent` |
+| Footer border-top | `1px solid rgba(92,74,48,.1)` | `1px solid rgba(255,255,255,.08)` |
+| Logout label | `#B42318` | `#FF8A90` |
+| Logout icon | `#D92D20` | `#F87171` |
+| Logout fill | `rgba(255,255,255,.45)` + soft danger border | transparent |
+| Logout hover | `#FEF3F2` wash · `#912018` | danger wash + soft red glow |
+
+Never restyle Logout as amber — danger red is the locked signal.
+
+Shared on: Dashboard, Roles & Permissions, Administrators, Security & Audit, **Merchant family**, **Transaction (wallet) family**.
+
+#### Transaction family (BO listing — not MAIN executive)
+
+Sidebar category **3. Transaction** uses classic listing shells (`reports.css`), not `main-*-executive` pages.
+
+| Item | Value |
+|------|-------|
+| Scope class | `body.bo-wallet-tx` |
+| CSS | `assets/css/bo-wallet-transaction-amber.css` (load after `bo-ui-standard` / `bo-targeted-fixes`) |
+| Pages | `member-deposit.html`, `member-withdraw.html`, `member-wallet.html`, `wallet-ledger.html`, `bulk-adjustment.html`, `bank-deposit-usage.html`, `bulk-bonus-adjustment.html` |
+| Theme | FOUC (`bo_theme` → `data-bo-theme`) + `#boThemeToggle` + `assets/js/bo-theme.js` |
+
+**Wiring pitfalls (hit during Transaction port):**
+1. **Theme toggle vs profile:** `auth.js` does `el.innerHTML = profileHtml()` on `[data-bo-profile]`. Put `#boThemeToggle` as a **sibling** inside `.report-actions`, never as a child of `[data-bo-profile]`.
+2. **L1 active selectors:** open Transaction with a child page selected — if only `a.active` is styled, **3. Transaction** stays idle. Include `.nav-group.open` / `:has(.report-sub.active)`.
+3. **Logout white strip:** beat `.bo-sidebar-account-footer{background:#fff}` from `bo-ui-standard.css`.
+4. **Flyout white panel:** beat `reports.css` flyout `#fff!important` with `.report-nav > .nav-group > .nav-group-list`.
+5. **Do not** theme MAIN Merchant/Provider/Report pages under this class — wrong scope.
+6. **L2 light icon hover blue:** `reports.css` `.report-nav a:hover i{color:#1d4ed8}` — override L2 `i` / `span i` for idle, `:hover`, `.active`, `.active:hover` to `#6b360c`.
+7. **L2 dark icon hover:** must be `#FBBF24` + amber glow (Merchant recipe), **not** white `rgba(255,255,255,.92)` and not BO blue. Same for `.active:hover i`.
+8. **L1 dark hover chip:** user locked full amber chip (same as dark active) — text/icons/chevron `#FBBF24`, amber gradient wash. Do **not** use grey wash + white label. Override `i`, `span i`, `.bi-chevron-down` on `:hover` / `.bo-flyout-hover`.
 
 ### Topbar (locked chrome — copy exactly)
 
@@ -448,6 +531,13 @@ Collapsed group (dark): same cool `#383A46` surface, white/10 border — not cre
 | Merchant Detail migrated to Charcoal + Amber (new `assets/css/main-merchant-detail-executive.css`, scoped to `.main-admin-detail-page.main-merchant-detail-page`, loads after the shared file) | Page still ran retired navy; matches Admin Detail reference. Scope by page class, not `data-access-page` — 8 pages share `main_merchant_detail` | 2026-09-15 |
 | Merchant family runs the Charcoal block: scope widened to `body.main-admin-detail-page[data-access-page="main_merchant_detail"]`; `main-merchant-create.html` migrated | One block serves the whole family (detail/create/security/profit/profit-record/repayments/settlement); roles pages share the attribute but load a different stylesheet, so they stay untouched | 2026-09-15 |
 | Merchant row avatar = neutral tile `#F5EBDC` / `#2A2C36`; every-third-row tint deleted; colour only on suspended rows; initials from the company name | User approved. The tint encoded row position, not data, and the indigo tile repeated the code printed beside it. Admin Detail keeps the old vocabulary | 2026-09-15 |
+| Transaction (wallet) family → `body.bo-wallet-tx` + `bo-wallet-transaction-amber.css` | User: sidebar category 3. Transaction only (Deposit/Withdraw/Wallet/Ledger/Bulk…), not MAIN Merchant/Provider. Same Charcoal + Amber chrome as Admin Detail | 2026-09-15 |
+| L1 active = cream chip + `::before` amber pill; must cover `.nav-group.open` / `:has(.report-sub.active)` | User reference: Admin-style L1. Styling only `a.active` left Transaction category idle while a child page was open | 2026-09-15 |
+| Logout footer bg `transparent` (beat `bo-ui-standard` `#fff`) | User screenshot: white Logout strip on cream sidebar | 2026-09-15 |
+| Theme toggle sibling of `[data-bo-profile]`, never inside it | `auth.js` replaces profile host `innerHTML` and would wipe `#boThemeToggle` | 2026-09-15 |
+| L2 light hover icons = `#6b360c` (beat `reports.css` `#1d4ed8`) | User: 3.2 New Withdraw icon turned blue on hover | 2026-09-15 |
+| L2 dark hover/active icons = `#FBBF24` + amber glow | User: dark L2 hover icon color wrong; white/blue leak vs Merchant amber series | 2026-09-15 |
+| L1 dark hover = full amber chip (same as dark active) | User reference screenshot: gold label/icons + amber wash, not grey wash + white | 2026-09-15 |
 
 ## Agent rules
 
@@ -456,10 +546,15 @@ Collapsed group (dark): same cool `#383A46` surface, white/10 border — not cre
 3. `frontend-design` may refine typography, hierarchy, and micro-detail — **not** brand hex values, topbar chrome, or locked button gradients.
 4. When adding CSS tokens, prefer `--bo-*` names; map accents through amber (`--bo-cyan` = amber).
 5. Offer to update this file when a pattern is reused 2+ times with stable measurements.
-6. New pages must follow Charcoal + Amber; migrate legacy navy/cyan pages toward these tokens when touched.
+6. New pages must follow Charcoal + Amber; migrate legacy navy/cyan pages when touched.
 7. **Unify chrome:** every page’s Theme toggle, User Name block, Primary CTA, and Ghost/Export must match the Topbar + Buttons specs above — do not freestyle.
 8. **Dark mode must beat legacy CSS:** `reports.css` still has `.report-body{background:#f5f7fb!important}`. Page CSS must override body/html/canvas with equal-or-higher specificity + `!important`, or white frames will leak around dark cards. Never assume MD tokens alone paint the canvas.
 9. **Permission matrix dual wash:** light = cream/amber group wash; dark = cool charcoal surfaces only (amber accents, never muddy amber panel fill). Copy from Patterns → Permission matrix.
-10. **No pure white in light chrome:** canvas end, topbar, and panels use cream `#FFF8EB` (continuum → `#FFF6E8` → `#FFF8EB`). Keep `#FFFFFF` only for text-on-amber (`--bo-accent-on`). Do not settle for near-white ivory (`#FFFCF8`) on Dashboard main pane.
+10. **No pure white in light chrome:** canvas end, topbar, and panels use cream `#FFF8EB` (continuum → `#FFF6E8` → `#FFF8EB`). Keep `#FFFFFF` only for text-on-amber (`--bo-accent-on`). Do not settle for near-white ivory (`#FFFCF8`) on Dashboard main pane. Also beat sidebar Logout footer `#fff` from `bo-ui-standard.css`.
 11. **Dark data tables:** outer/row borders ≥ `rgba(255,255,255,.12–.14)`; header `#E7E5E4`; cells `#F5F5F4`; muted/time `#D4D4D8`. Scope light cream table CSS with `html:not([data-bo-theme="dark"])`. Copy from Patterns → Data tables.
 12. **Sidebar L2 active:** cream gradient `#FFFBEB`→`#FEF3C7` + `1px` amber border `#D97706` (dark: amber-tinted chip + `rgba(245,158,11,.55)` border). Never flat amber wash only. Beat `reports.css` flyout `#fff`. Copy from Patterns → Sidebar nav.
+13. **Sidebar L1 active:** cream chip + left amber `::before` pill. Always include `.nav-group.open` / `:has(.report-sub.active)` — not only top-level `a.active`.
+14. **Transaction listing pages:** use `body.bo-wallet-tx` + `bo-wallet-transaction-amber.css`. Do not hang MAIN Merchant/Provider/Report executive classes on these pages.
+15. **Theme toggle placement:** `#boThemeToggle` must be a sibling of `[data-bo-profile]` inside `.report-actions` (auth overwrites profile host HTML).
+16. **Beat `reports.css` nav icon blue:** always set L1/L2 `a:hover i` / `a.active i` / `span i` / chevron explicitly. Light L2 = `#6b360c`; dark L1/L2 hover+active = `#FBBF24`.
+17. **Dark L1 hover:** full amber chip (gradient + `#FBBF24` label/icons/chevron), same family as dark L1 active — never grey wash + white text.

@@ -137,11 +137,29 @@ Theme toggle: `data-bo-theme` / `localStorage.bo_theme`. Prefer `--bo-*` tokens 
 Sidebar edge rail: 2px amber gradient (`#F59E0B` → `#D97706`).  
 Nav L1 weight: `font-weight: 800`. Light nav text/icons: `#6b360c`.
 
+**L1 active (`.nav-group.open` / `:has(.report-sub.active)` / top-level `.active`) — locked**  
+Cream chip `#FFF8EF`→`#FFE8CC`→`#FFF3E0` + left amber pill via `::before` (`#FBBF24`→`#D97706`).  
+Do **not** rely on `a.active` alone — open categories use `.nav-group-btn`. Full selectors: `.interface-design/system.md` → Patterns → Sidebar nav → L1 active.
+
+**L1 dark hover (locked)** — same amber chip as dark L1 active: gradient wash · label/icons/chevron `#FBBF24` · soft amber glow · radius `8px`. Never grey wash + white text. Never BO blue icons (`reports.css` `#1d4ed8`).
+
 **Desktop flyout (`.nav-group-list`)** — light `#FFF8EB` (never `#fff`; beat `reports.css`). Dark `#383A46` + `rgba(255,255,255,.14)` border.
 
 **L2 active (`.report-sub.active`) — locked**  
 Cream chip `#FFFBEB`→`#FEF3C7` + amber frame `#D97706` + soft amber shadow. Dark: amber/charcoal chip + `rgba(245,158,11,.55)` border · text `#FBBF24`.  
-Hover = soft wash only (no frame). Do not use flat active wash. Full tables: `.interface-design/system.md` → Patterns → Sidebar nav.
+Hover = soft wash only (no frame). **Icons:** light always `#6b360c`; dark hover/active `#FBBF24` (explicitly beat `reports.css` `a:hover i` blue). Full tables: `.interface-design/system.md` → Patterns → Sidebar nav.
+
+**Logout footer** — beat `bo-ui-standard.css` `.bo-sidebar-account-footer{background:#fff}` with `transparent` so the cream/charcoal sidebar shows through. Logout control stays **danger red** (never amber).
+
+### Transaction family (sidebar category 3)
+
+Classic BO listing pages (not MAIN executive). Scope: `body.bo-wallet-tx` + `assets/css/bo-wallet-transaction-amber.css`.
+
+Pages: `member-deposit.html`, `member-withdraw.html`, `member-wallet.html`, `wallet-ledger.html`, `bulk-adjustment.html`, `bank-deposit-usage.html`, `bulk-bonus-adjustment.html`.
+
+Wiring: FOUC + `#boThemeToggle` as sibling of `[data-bo-profile]` (auth overwrites profile host) + `assets/js/bo-theme.js`. Sidebar L1/L2/Logout/flyout rules above apply here.
+
+**Known leaks to beat on these pages:** Logout `#fff` footer · flyout `#fff` · L1/L2 hover icon `#1d4ed8` · dark L1 hover grey/white (must be amber chip) · dark L2 hover icon white (must be `#FBBF24`).
 
 ### CSS token map (compatibility)
 
@@ -175,7 +193,11 @@ Hover = soft wash only (no frame). Do not use flat active wash. Full tables: `.i
 | Action icons | `#57534E` · hover amber | `#D4D4D8` · hover amber |
 | Modal close | well `#F5EBDC` · border `#EADCC8` · icon `#57534E` | charcoal well · light icon |
 | Sidebar flyout panel | `#FFF8EB` · warm border | `#383A46` · `rgba(255,255,255,.14)` |
+| Sidebar L1 active | cream chip + left amber `::before` pill | amber wash + neon pill · text `#FBBF24` |
+| Sidebar L1 hover | soft cream wash · charcoal icons | **same amber chip as dark active** · `#FBBF24` icons/chevron |
 | Sidebar L2 active | `#FFFBEB`→`#FEF3C7` + border `#D97706` | amber/charcoal chip + border `rgba(245,158,11,.55)` · text `#FBBF24` |
+| Sidebar L2 hover icons | `#6b360c` (never `#1d4ed8`) | `#FBBF24` + amber glow (never blue / plain white) |
+| Sidebar Logout footer | transparent (not `#fff`) · danger red control | transparent · danger red / soft glow |
 | Create / Edit section card | lift `#FFFCF7` · border `#DCC9A8` · warm shadow · **3px amber left rail** | `--bo-surface` |
 | Create / Edit inputs | `#F5EBDC` · border `#DCC9A8` · placeholder `#78716C` | `#2A2C36` · `rgba(255,255,255,.12)` |
 | Create / Edit nested well | `#F0E4D0` (privileges / policy / security) | faint wash |
