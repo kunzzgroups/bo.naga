@@ -1,0 +1,120 @@
+/* ==========================================================================
+   Topbar account chip — one presentation for the whole merchant family
+   DESIGN.md locks this chrome: theme toggle → divider → name + avatar.
+   Name 14px/700, role 11px mono, avatar 40×40 radius 12px amber with a white
+   person glyph; no bordered pill, no gear.
+
+   WHY THIS FILE EXISTS: these rules used to live only inside the family blocks
+   (main-merchant-detail-executive.css, and a second copy in
+   menu-permission-executive.css), keyed to body[data-access-page="main_merchant_detail"].
+   Pages whose access-page id differed never matched and were left with the plain
+   auth.js chip, so the same account rendered three different ways across the family.
+   Here it is keyed to `body.bo-account-chip` — an explicit per-page opt-in — so the
+   chip no longer depends on which family stylesheet a page happens to load.
+
+   The avatar markup (<i class="bi bi-person">, the .bo-account-meta stack) is built by
+   assets/js/bo-account-chip.js. The ::before rule below only covers the instant before
+   that script runs, so the avatar is never an empty amber square.
+
+   SPECIFICITY: the older family blocks use !important at (0,3,1) light / (0,4,2) dark and
+   still apply on most of these pages. The selectors below carry an extra
+   `[data-bo-profile]` step, which outranks them regardless of stylesheet order.
+   ========================================================================== */
+
+body.bo-account-chip .report-actions > [data-bo-profile] .bo-account-link,
+body.bo-account-chip .report-actions > [data-bo-profile] .bo-account-link:hover,
+body.bo-account-chip .report-actions > [data-bo-profile] .bo-account-link:focus,
+body.bo-account-chip .report-actions > [data-bo-profile] .bo-account-link:focus-visible,
+body.bo-account-chip .report-actions > [data-bo-profile] .bo-account-link:active{
+  height:auto!important;min-width:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;color:inherit!important;
+  gap:12px!important;align-items:center!important;
+  pointer-events:auto!important;cursor:pointer!important;
+  text-decoration:none!important;position:relative!important;z-index:2!important;
+}
+
+body.bo-account-chip .report-actions > [data-bo-profile] .bo-account-setting-icon{
+  display:none!important;
+}
+
+body.bo-account-chip .report-actions > [data-bo-profile] .bo-account-meta{
+  display:flex;flex-direction:column;align-items:flex-end;justify-content:center;
+  gap:2px;min-width:0;order:1;
+  text-align:right;line-height:1.15;
+}
+
+body.bo-account-chip .report-actions > [data-bo-profile] .bo-account-name{
+  display:block!important;
+  font-size:14px!important;font-weight:700!important;
+  color:#18191C!important;letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;
+}
+
+body.bo-account-chip .report-actions > [data-bo-profile] .bo-account-role{
+  display:block;
+  font-size:11px;font-weight:500;
+  color:#71717A;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  letter-spacing:.02em;white-space:nowrap;
+}
+
+body.bo-account-chip .report-actions > [data-bo-profile] .report-avatar{
+  order:2;
+  width:40px!important;height:40px!important;min-width:40px!important;flex:0 0 40px!important;
+  border-radius:12px!important;
+  background:#D97706!important;
+  color:#FFFFFF!important;
+  font-size:0!important;font-weight:400!important;
+  box-shadow:none!important;
+  display:grid!important;place-items:center!important;
+}
+
+body.bo-account-chip .report-actions > [data-bo-profile] .report-avatar i,
+body.bo-account-chip .report-actions > [data-bo-profile] .report-avatar::before{
+  font-size:18px!important;line-height:1!important;color:#FFFFFF!important;
+}
+
+/* Fallback glyph until bo-account-chip.js injects <i class="bi bi-person"> */
+body.bo-account-chip .report-actions > [data-bo-profile] .report-avatar:not(:has(> i))::before{
+  content:"\F4DA";
+  font-family:"bootstrap-icons"!important;
+  font-style:normal;font-weight:400!important;
+  speak:never;
+  display:block;
+}
+
+body.bo-account-chip .report-actions > [data-bo-profile] .bo-account-link:hover .report-avatar{
+  background:#B45309!important;
+}
+
+/* ---- Dark ---- */
+html[data-bo-theme="dark"] body.bo-account-chip .report-actions > [data-bo-profile] .bo-account-name{
+  color:#FFFFFF!important;
+}
+
+html[data-bo-theme="dark"] body.bo-account-chip .report-actions > [data-bo-profile] .bo-account-role{
+  color:#F59E0B!important;
+}
+
+html[data-bo-theme="dark"] body.bo-account-chip .report-actions > [data-bo-profile] .report-avatar{
+  background:#F59E0B!important;
+  color:#2A2C36!important;
+  box-shadow:0 0 0 1px rgba(245,158,11,.25),0 4px 16px rgba(245,158,11,.35)!important;
+}
+
+html[data-bo-theme="dark"] body.bo-account-chip .report-actions > [data-bo-profile] .report-avatar i,
+html[data-bo-theme="dark"] body.bo-account-chip .report-actions > [data-bo-profile] .report-avatar::before{
+  color:#2A2C36!important;
+}
+
+html[data-bo-theme="dark"] body.bo-account-chip .report-actions > [data-bo-profile] .bo-account-link:hover .report-avatar{
+  background:#FBBF24!important;
+}
+
+/* ---- Small screens: keep the avatar, drop the text block (as the family blocks do) ---- */
+@media (max-width:575.98px){
+  body.bo-account-chip .report-actions > [data-bo-profile] .bo-account-meta{
+    display:none!important;
+  }
+}

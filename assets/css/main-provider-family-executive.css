@@ -1,0 +1,2236 @@
+/* Provider family — Charcoal + Amber
+   Reference implementation: Admin Detail (main-admin-detail.html).
+
+   Rescoped from the locked block in main-admin-detail-executive.css ("Charcoal + Amber —
+   Admin Detail + Security & Audit"). That block is scoped to
+   data-access-page="main_admin_detail" | "main_admin_security", so it never reached these
+   pages: they kept running the retired Deep Navy Cyan layer painted by
+   main-admin-detail-executive.css (tokens) + main-provider-executive.css (tokens, later).
+
+   Scope: body.main-admin-detail-page.main-provider-family-page
+   The marker class is on exactly three pages — main-provider-detail.html,
+   main-provider-credentials.html, main-provider-health.html. main-provider-create.html
+   (main-provider-create-page) and main-provider-endpoints.html
+   (main-provider-integration-page) are NOT migrated, which is why the shared
+   main-provider-executive.css is left untouched: all three pages load it.
+
+   Load order: LAST stylesheet on the page — after reports.css, bo-ui-standard.css,
+   main-admin-detail-executive.css, main-provider-executive.css and
+   main-provider-report-executive.css. Those files declare the navy tokens at (0,1,1);
+   this file's family prefix is (0,2,1), so both specificity and source order are ours.
+   Caveat: main-provider-credentials.html also carries main-merchant-report-page +
+   data-report-view="settlement", so main-merchant-report-executive.css paints parts of its
+   settlement ledger at (0,2,1) — a TIE broken by load order (this file loads last). The
+   page-specific file main-provider-credentials-executive.css uses a three-class prefix for
+   anything that must win regardless of order.
+
+   Contents: tokens (light + dark), canvas continuum, sidebar, topbar, tabs, panels, filter
+   bar, table, footer, pager, buttons, modals, icon buttons + tooltips, empty states, tips,
+   row avatar. Admin create/edit-only rules were dropped — they cannot match these pages.
+
+   Page-specific classes (.mpv-*, .settlement-*, .msr-*, the health stub filter row) live in
+   main-provider-<page>-executive.css, one file per page.
+   ========================================================================== *//* ==========================================================================
+   Charcoal + Amber — Admin Detail + Security & Audit
+   (data-access-page=main_admin_detail | main_admin_security). Other mad pages keep Deep Navy Cyan until migrated.
+   ========================================================================== */body.main-admin-detail-page.main-provider-family-page{
+  /* Light cream locked: surface #FFF8EB · no pure white chrome */
+  --bo-navy:#18191C;
+  --bo-cyan:#D97706;
+  --bo-cyan-deep:#B45309;
+  --bo-secondary:#2563EB;
+  --bo-tertiary:#F59E0B;
+  --bo-success:#12B76A;
+  --bo-danger:#991B1B;
+  --bo-bg:#FFF1DC;
+  --bo-surface:#FFF8EB;
+  --bo-border:#EADCC8;
+  --bo-text:#18191C;
+  --bo-text-secondary:#27272A;
+  --bo-muted:#71717A;
+  --bo-sidebar-bg:#FFE8CC;
+  --bo-sidebar-text:#6b360c;
+  --bo-sidebar-active:#D97706;
+  --bo-sidebar-active-bg:#FFE8CC;
+  --bo-sidebar-active-bg-strong:rgba(217,119,6,.16);
+  --bo-cyan-tint:rgba(217,119,6,.12);
+  --bo-cyan-tint-strong:rgba(217,119,6,.20);
+  --bo-control-well:#F5EBDC;
+  --bo-control-well-hover:#F0E4D0;
+  --bo-control-border:#EADCC8;
+  --bo-placeholder:#78716C;
+  --bo-navy-hover:#27272A;
+  --bo-ui-blue:#D97706;
+  --bo-ui-blue-hover:#B45309;
+  --bo-shadow:0 0 0 1px rgba(24,25,28,.04),0 1px 2px -1px rgba(24,25,28,.06),0 2px 8px rgba(24,25,28,.04);
+  --bo-accent-on:#FFFFFF;
+}
+html:has(body.main-admin-detail-page.main-provider-family-page){
+  background:#FFF1DC;
+}
+/* Light canvas — orange → cream (locked; no near-white fade) */html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page.main-provider-family-page){
+  background-color:#FFF6E8;
+  background-image:linear-gradient(90deg,
+    #FFE8CC 0,
+    #FFF1DC calc(var(--sidebar-w,280px) * .72),
+    #FFF3E0 var(--sidebar-w,280px),
+    #FFF6E8 calc(var(--sidebar-w,280px) + 64px),
+    #FFF8EB calc(var(--sidebar-w,280px) + 140px),
+    #FFF8EB 100%
+  );
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+  background-size:100% 100%;
+  min-height:100%;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page{
+  background:transparent!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-shell{
+  background:transparent!important;
+  position:relative;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-main,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-content{
+  background:transparent!important;
+  position:relative;
+  z-index:1;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-topbar{
+  background:#FFF8EB!important;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page{
+  /* Dark mode: soft charcoal (not dead black) · Primary #F59E0B */
+  --bo-navy:#F5F5F4;
+  --bo-cyan:#F59E0B;
+  --bo-cyan-deep:#D97706;
+  --bo-secondary:#D97706;
+  --bo-tertiary:#10B981;
+  --bo-success:#10B981;
+  --bo-danger:#F87171;
+  --bo-bg:#2C2E38;
+  --bo-surface:#383A46;
+  --bo-border:rgba(255,255,255,.10);
+  --bo-text:#F5F5F4;
+  --bo-text-secondary:#E7E5E4;
+  --bo-muted:#A1A1AA;
+  --bo-sidebar-bg:#2A2C36;
+  --bo-sidebar-text:#FFFFFF;
+  --bo-sidebar-active:#F59E0B;
+  --bo-sidebar-active-bg:rgba(245,158,11,.14);
+  --bo-sidebar-active-bg-strong:rgba(245,158,11,.22);
+  --bo-cyan-tint:rgba(245,158,11,.16);
+  --bo-cyan-tint-strong:rgba(245,158,11,.26);
+  --bo-control-well:rgba(255,255,255,.06);
+  --bo-control-well-hover:rgba(255,255,255,.10);
+  --bo-control-border:rgba(255,255,255,.12);
+  --bo-placeholder:#71717A;
+  --bo-navy-hover:var(--bo-cyan-deep);
+  --bo-ui-blue:#F59E0B;
+  --bo-ui-blue-hover:#D97706;
+  --bo-shadow:0 0 0 1px rgba(255,255,255,.04);
+  --bo-accent-on:#2A2C36;
+  color-scheme:dark;
+}
+/* Dark canvas — Warm Charcoal Continuum (sidebar → page)
+   Low-chroma warm charcoal into cool charcoal; short seam (~96px).
+   Panels stay solid surface so data never sits in the wash. */html[data-bo-theme="dark"]:has(body.main-admin-detail-page.main-provider-family-page){
+  background-color:#2C2E38;
+  background-image:linear-gradient(90deg,
+    #3A3226 0,
+    #342E28 calc(var(--sidebar-w,280px) * .72),
+    #2F2E32 var(--sidebar-w,280px),
+    #2D2E36 calc(var(--sidebar-w,280px) + 48px),
+    #2C2E38 calc(var(--sidebar-w,280px) + 96px),
+    #2C2E38 100%
+  );
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+  background-size:100% 100%;
+  min-height:100%;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page{
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-shell{
+  background:transparent!important;
+  position:relative;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-shell::before{
+  content:none!important;
+  display:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-main,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-content{
+  background:transparent!important;
+  position:relative;
+  z-index:1;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-topbar{
+  background:#383A46!important;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  border-bottom-color:rgba(255,255,255,.08)!important;
+}
+/* Modals above sidebar / flyouts (sidebar 1040–9100, flyout 12050) */body.main-admin-detail-page.main-provider-family-page .modal-clean,
+
+body.main-admin-detail-page.main-provider-family-page .mad-modal{
+  z-index:30000!important;
+}
+body.main-admin-detail-page.main-provider-family-page:has(.modal-clean.show) .report-sidebar,
+
+body.main-admin-detail-page.main-provider-family-page:has(.mad-modal.show) .report-sidebar{
+  z-index:1000!important;
+}
+/* Top tabs — orange underline only; text stays neutral */body.main-admin-detail-page.main-provider-family-page .mad-tab:hover:not(.is-disabled){
+  color:var(--bo-text,#18191C)!important;
+  background:transparent!important;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-tab.is-active,
+
+body.main-admin-detail-page.main-provider-family-page .mad-tab[aria-current="page"]{
+  background:transparent!important;
+  color:var(--bo-text,#18191C)!important;
+  font-weight:800;
+  border-bottom:2px solid var(--bo-sidebar-active,#F59E0B)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-tab:hover:not(.is-disabled){
+  color:var(--bo-text,#F4F4F5)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-tab.is-active,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-tab[aria-current="page"]{
+  color:var(--bo-text,#F4F4F5)!important;
+  border-bottom-color:var(--bo-sidebar-active,#F59E0B)!important;
+}
+/* Primary CTA — bright orange gradient + soft lift shadow */body.main-admin-detail-page.main-provider-family-page .mad-btn-primary,
+
+body.main-admin-detail-page.main-provider-family-page .mad-btn-primary.bo-ui-button,
+
+body.main-admin-detail-page.main-provider-family-page .mad-btn-primary.bo-ui-button-primary,
+
+body.main-admin-detail-page.main-provider-family-page .mad-btn-navy,
+
+body.main-admin-detail-page.main-provider-family-page .mad-btn-navy.bo-ui-button,
+
+body.main-admin-detail-page.main-provider-family-page .mad-btn-navy.bo-ui-button-primary,
+
+body.main-admin-detail-page.main-provider-family-page .bo-ui-button-primary,
+
+body.main-admin-detail-page.main-provider-family-page .btn-primary,
+
+body.main-admin-detail-page.main-provider-family-page button.btn-primary,
+
+body.main-admin-detail-page.main-provider-family-page .mad-modal .mad-btn-primary,
+
+body.main-admin-detail-page.main-provider-family-page .mad-modal .mad-btn-navy,
+
+body.main-admin-detail-page.main-provider-family-page .mad-modal .bo-ui-button-primary,
+
+body.main-admin-detail-page.main-provider-family-page a#madAddBtn{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
+  border:1px solid #E8901A!important;
+  color:#fff!important;
+  box-shadow:0 1px 2px rgba(217,119,6,.18),0 4px 10px rgba(217,119,6,.22),inset 0 1px 0 rgba(255,255,255,.35)!important;
+  transform:translateY(0);
+  transition:transform .14s ease,box-shadow .14s ease,background-image .14s ease,filter .14s ease!important;
+  filter:none;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-btn-primary:hover,
+
+body.main-admin-detail-page.main-provider-family-page .mad-btn-primary.bo-ui-button-primary:hover,
+
+body.main-admin-detail-page.main-provider-family-page .mad-btn-navy:hover,
+
+body.main-admin-detail-page.main-provider-family-page .bo-ui-button-primary:hover,
+
+body.main-admin-detail-page.main-provider-family-page .btn-primary:hover,
+
+body.main-admin-detail-page.main-provider-family-page button.btn-primary:hover,
+
+body.main-admin-detail-page.main-provider-family-page a#madAddBtn:hover{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(0deg,#FCD34D 0%,#FBBF24 38%,#F59E0B 72%,#EA8608 100%)!important;
+  border-color:#F59E0B!important;
+  color:#fff!important;
+  box-shadow:0 2px 4px rgba(217,119,6,.20),0 6px 14px rgba(217,119,6,.26),inset 0 1px 0 rgba(255,255,255,.4)!important;
+  filter:none;
+  transform:translateY(-1px);
+}
+body.main-admin-detail-page.main-provider-family-page .mad-btn-primary:active,
+
+body.main-admin-detail-page.main-provider-family-page .mad-btn-primary.bo-ui-button-primary:active,
+
+body.main-admin-detail-page.main-provider-family-page .mad-btn-navy:active,
+
+body.main-admin-detail-page.main-provider-family-page .bo-ui-button-primary:active,
+
+body.main-admin-detail-page.main-provider-family-page .btn-primary:active,
+
+body.main-admin-detail-page.main-provider-family-page button.btn-primary:active{
+  transform:translateY(1px)!important;
+  background:linear-gradient(180deg,#F59E0B 0%,#EA8608 100%)!important;
+  box-shadow:0 1px 2px rgba(217,119,6,.16),inset 0 1px 0 rgba(255,255,255,.2)!important;
+  filter:none;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn-primary,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn-primary.bo-ui-button,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn-primary.bo-ui-button-primary,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn-navy,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn-navy.bo-ui-button,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-ui-button-primary,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-modal .mad-btn-primary,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-modal .mad-btn-navy,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-modal .bo-ui-button-primary,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page a#madAddBtn{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border:1px solid #F59E0B!important;
+  color:#2A2C36!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.4),0 4px 12px rgba(245,158,11,.28),inset 0 1px 0 rgba(255,255,255,.28)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn-primary:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn-navy:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-ui-button-primary:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page a#madAddBtn:hover{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(0deg,#FDE68A 0%,#FBBF24 40%,#F59E0B 100%)!important;
+  border-color:#FBBF24!important;
+  color:#2A2C36!important;
+  box-shadow:0 2px 4px rgba(0,0,0,.35),0 8px 18px rgba(245,158,11,.34),inset 0 1px 0 rgba(255,255,255,.4)!important;
+  transform:translateY(-1px)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn-primary:active,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn-navy:active,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-ui-button-primary:active,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page a#madAddBtn:active{
+  transform:translateY(1px)!important;
+  background-image:linear-gradient(180deg,#F59E0B 0%,#D97706 100%)!important;
+  color:#2A2C36!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.18)!important;
+}
+/* Active pager — light: orange gradient lift; dark: bright orange glow */body.main-admin-detail-page.main-provider-family-page .mad-pager .smart-page.active,
+
+body.main-admin-detail-page.main-provider-family-page .mad-pager button.active{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 48%,#D97706 100%)!important;
+  border:1px solid #D97706!important;
+  color:#fff!important;
+  box-shadow:0 1px 2px rgba(217,119,6,.25),0 3px 8px rgba(217,119,6,.22),inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pager .smart-page,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pager button{
+  background:#383A46!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#A1A1AA!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pager .smart-page:hover:not(:disabled):not(.active),
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pager button:hover:not(:disabled):not(.active){
+  background:#444654!important;
+  border-color:rgba(255,255,255,.18)!important;
+  color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pager .smart-page:disabled,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pager button:disabled{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.06)!important;
+  color:#52525B!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pager .smart-page.active,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pager button.active,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pager .smart-page.active.bo-ui-button,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pager .smart-page.active.bo-ui-button-primary{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 48%,#D97706 100%)!important;
+  border:1px solid #F59E0B!important;
+  color:#2A2C36!important;
+  box-shadow:0 0 0 1px rgba(245,158,11,.25),0 2px 8px rgba(245,158,11,.45),0 6px 18px rgba(245,158,11,.28),inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-btn:hover:not(.mad-btn-primary):not(.mad-btn-navy):not(.mad-btn-ghost):not(.bo-ui-button-primary):not(.btn-primary):not(#madExportBtn),
+
+body.main-admin-detail-page.main-provider-family-page .mad-btn.bo-ui-button:hover:not(.mad-btn-primary):not(.mad-btn-ghost):not(.bo-ui-button-primary),
+
+body.main-admin-detail-page.main-provider-family-page .mad-btn.bo-ui-button-secondary:hover:not(.mad-btn-ghost){
+  border-color:rgba(217,119,6,.45)!important;
+  color:var(--bo-text)!important;
+  background:var(--bo-cyan-tint)!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  transform:none;
+}
+/* Primary CTA hover must win over generic .mad-btn:hover — reverse gradient to 0deg */body.main-admin-detail-page.main-provider-family-page a.mad-btn-primary:hover,
+
+body.main-admin-detail-page.main-provider-family-page a#madAddBtn:hover,
+
+body.main-admin-detail-page.main-provider-family-page .mad-btn-primary:hover,
+
+body.main-admin-detail-page.main-provider-family-page .mad-btn-primary.bo-ui-button-primary:hover,
+
+body.main-admin-detail-page.main-provider-family-page .mad-btn-navy:hover,
+
+body.main-admin-detail-page.main-provider-family-page .bo-ui-button-primary:hover,
+
+body.main-admin-detail-page.main-provider-family-page .btn-primary:hover,
+
+body.main-admin-detail-page.main-provider-family-page button.btn-primary:hover{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(0deg,#FCD34D 0%,#FBBF24 38%,#F59E0B 72%,#EA8608 100%)!important;
+  border-color:#F59E0B!important;
+  color:#fff!important;
+  box-shadow:0 2px 4px rgba(217,119,6,.22),0 8px 18px rgba(217,119,6,.28),inset 0 1px 0 rgba(255,255,255,.45)!important;
+  filter:none!important;
+  transform:translateY(-1px)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page a.mad-btn-primary:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page a#madAddBtn:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn-primary:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn-navy:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-ui-button-primary:hover{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(0deg,#FDE68A 0%,#FBBF24 40%,#F59E0B 100%)!important;
+  border-color:#FBBF24!important;
+  color:#2A2C36!important;
+  box-shadow:0 2px 4px rgba(0,0,0,.3),0 8px 18px rgba(245,158,11,.34),inset 0 1px 0 rgba(255,255,255,.45)!important;
+  transform:translateY(-1px)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pill:hover:not(.is-active) .mad-pill-count{
+  background:transparent!important;
+  color:inherit!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-row-check-box{
+  background:#111111;border-color:#3F3F46;
+}
+/* Export / ghost — light: cream lift; dark: gray→black gradient */body.main-admin-detail-page.main-provider-family-page .mad-btn-ghost,
+
+body.main-admin-detail-page.main-provider-family-page #madExportBtn,
+
+body.main-admin-detail-page.main-provider-family-page .mad-chrome-actions .mad-btn-ghost{
+  border-radius:8px!important;
+  background-color:#F3E8D6!important;
+  background-image:linear-gradient(180deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border:1px solid #EADCC8!important;
+  color:#18191C!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06),0 2px 6px rgba(24,25,28,.05)!important;
+  transition:transform .14s ease,box-shadow .14s ease,background-image .14s ease,border-color .14s ease!important;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-btn-ghost:hover,
+
+body.main-admin-detail-page.main-provider-family-page #madExportBtn:hover,
+
+body.main-admin-detail-page.main-provider-family-page .mad-chrome-actions .mad-btn-ghost:hover{
+  background-color:#F3E8D6!important;
+  background-image:linear-gradient(0deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border-color:#E0D0B8!important;
+  color:#18191C!important;
+  box-shadow:0 2px 4px rgba(24,25,28,.08),0 4px 10px rgba(24,25,28,.07)!important;
+  transform:translateY(-1px)!important;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-btn-ghost:active,
+
+body.main-admin-detail-page.main-provider-family-page #madExportBtn:active{
+  transform:translateY(1px)!important;
+  background-image:linear-gradient(180deg,#FFF1DC 0%,#EADCC8 100%)!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn-ghost,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page #madExportBtn,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-chrome-actions .mad-btn-ghost,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn.mad-btn-ghost{
+  background-color:#383A46!important;
+  background-image:linear-gradient(180deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%)!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.22),0 4px 10px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(0,0,0,.18)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn-ghost:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page #madExportBtn:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-chrome-actions .mad-btn-ghost:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn.mad-btn-ghost:hover{
+  background-color:#383A46!important;
+  background-image:linear-gradient(0deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%)!important;
+  border-color:rgba(255,255,255,.18)!important;
+  color:#FFFFFF!important;
+  box-shadow:0 2px 4px rgba(0,0,0,.22),0 6px 14px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.16)!important;
+  transform:translateY(-1px)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn-ghost:active,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page #madExportBtn:active,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-btn.mad-btn-ghost:active{
+  transform:translateY(1px)!important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2C2E38 100%)!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.08),inset 0 2px 4px rgba(0,0,0,.18)!important;
+}
+/* ------------------------------------------------------------------
+   Sidebar — crypto terminal (Admin Detail amber trial only)
+   Light/Dark: canvas continuum (sidebar → page); panels stay solid.
+   NOTE: do NOT put backdrop-filter / isolation on .report-sidebar itself —
+   that creates a containing block and clips the desktop L2 flyout (position:fixed).
+   ------------------------------------------------------------------ *//* LIGHT MODE — opaque orange cream (matches continuum left; covers content when expanded) */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar{
+  background:#FFE8CC!important;
+  border-right:1px solid rgba(92,74,48,.14)!important;
+  box-shadow:none!important;
+  color:#6b360c!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  isolation:auto;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.sidebar-mini .report-sidebar:hover,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.sidebar-mini .report-sidebar.is-mini-hover,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar.show{
+  background:#FFE8CC!important;
+  box-shadow:18px 0 40px rgba(60,48,32,.14)!important;
+}
+/* Amber edge rail — defines the continuum join */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar::before{
+  content:"";
+  position:absolute;
+  top:12%;bottom:12%;right:0;
+  width:2px;
+  border-radius:999px 0 0 999px;
+  pointer-events:none;z-index:0;
+  background:linear-gradient(180deg, transparent 0%, #F59E0B 26%, #D97706 58%, transparent 100%);
+  opacity:.75;
+  box-shadow:none;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar::after{
+  content:none!important;
+  display:none!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar > *{
+  position:relative;z-index:1;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-brand{
+  border-bottom:1px solid rgba(92,74,48,.1)!important;
+  background:transparent!important;
+  color:#6b360c!important;
+  letter-spacing:-.03em!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-brand small{
+  color:#6b360c!important;
+  letter-spacing:.14em!important;
+  font-weight:700!important;
+  font-size:10px!important;
+  text-shadow:none;
+  opacity:.78;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .close-side{
+  background:rgba(255,255,255,.55)!important;
+  border:1px solid rgba(92,74,48,.12)!important;
+  color:#6b360c!important;
+}
+/* Nav sits on the same frosted slab — no nested glass chip */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav{
+  position:relative!important;
+  padding:12px 10px 10px!important;
+  gap:3px!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav::before,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav::after{
+  content:none!important;
+  display:none!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .bo-sidebar-account-footer{
+  background:transparent!important;
+  border-top:1px solid rgba(92,74,48,.1)!important;
+  box-shadow:none!important;
+  margin:0!important;
+  padding:10px 10px 12px!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .bo-sidebar-logout{
+  border-radius:10px!important;
+  color:#B42318!important;
+  background:rgba(255,255,255,.45)!important;
+  border:1px solid rgba(180,35,24,.12)!important;
+  transition:background .16s ease,box-shadow .16s ease,color .16s ease!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .bo-sidebar-logout i{
+  color:#D92D20!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .bo-sidebar-logout:hover{
+  background:rgba(254,243,242,.95)!important;
+  color:#912018!important;
+  box-shadow:0 4px 12px rgba(180,35,24,.08)!important;
+}
+/* Light nav items */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub),
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub):hover,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub):focus,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group .nav-group-btn,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group .nav-group-btn:hover,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group .nav-group-btn:focus,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group .nav-group-btn:focus-visible,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.open > .nav-group-btn{
+  border-radius:10px!important;
+  color:#6b360c!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-weight:800!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub) i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group .nav-group-btn i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group .nav-group-btn .bi-chevron-down{
+  color:#6b360c!important;
+  opacity:.72;
+  filter:none;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub):hover,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub):focus-visible,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group .nav-group-btn:hover,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn{
+  background:rgba(255,243,224,.78)!important;
+  color:#6b360c!important;
+  box-shadow:0 1px 2px rgba(60,48,32,.05)!important;
+  border-radius:10px!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group .nav-group-btn:hover i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn i{
+  color:#6b360c!important;
+  opacity:1;
+}
+/* Light L1 active — amber signal chip with soft lift */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub).active,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.open > .nav-group-btn,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn{
+  position:relative!important;
+  background:
+    linear-gradient(135deg, #FFF8EF 0%, #FFE8CC 48%, #FFF3E0 100%)!important;
+  color:#6b360c!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.85),
+    0 0 0 1px rgba(217,119,6,.18),
+    0 6px 16px rgba(217,119,6,.12)!important;
+  border:0!important;
+  border-radius:10px!important;
+  overflow:hidden;
+  text-shadow:none;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub).active::before,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.open > .nav-group-btn::before,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn::before,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn::before{
+  content:"";
+  position:absolute;
+  left:0;top:7px;bottom:7px;width:3px;border-radius:999px;
+  background:linear-gradient(180deg,#FBBF24 0%,#D97706 100%);
+  box-shadow:0 0 10px rgba(217,119,6,.35);
+  pointer-events:none;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub).active i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.open > .nav-group-btn i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.open > .nav-group-btn .bi-chevron-down,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn .bi-chevron-down{
+  color:#6b360c!important;
+  opacity:1;
+  filter:none;
+}
+/* Light L2 */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub{
+  position:relative!important;
+  border:1px solid transparent!important;
+  border-radius:9px!important;
+  color:#6b360c!important;
+  background:transparent!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub:hover{
+  background:rgba(255,243,224,.72)!important;
+  color:#6b360c!important;
+  border-color:transparent!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub.active,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub.active{
+  background:linear-gradient(135deg, #FFF8EF 0%, #FFE8CC 100%)!important;
+  border:1px solid rgba(217,119,6,.28)!important;
+  border-radius:9px!important;
+  color:#6b360c!important;
+  box-shadow:0 4px 12px rgba(217,119,6,.1)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub.active i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub.active i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.active i{
+  color:#6b360c!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub.active::after,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub.active::after{
+  content:none!important;
+  display:none!important;
+}
+/* DARK MODE — opaque warm charcoal (matches continuum left; covers content when expanded) */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar{
+  background:#3A3226!important;
+  border-right:1px solid rgba(245,158,11,.22)!important;
+  box-shadow:none!important;
+  color:#FFFFFF!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  isolation:auto;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.sidebar-mini .report-sidebar:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.sidebar-mini .report-sidebar.is-mini-hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar.show{
+  background:#3A3226!important;
+  box-shadow:18px 0 40px rgba(0,0,0,.35)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar::before{
+  content:"";
+  display:block!important;
+  position:absolute;inset:0;
+  top:0;right:auto;bottom:0;left:0;
+  width:auto;height:auto;
+  border-radius:0;
+  pointer-events:none;z-index:0;
+  background-color:transparent;
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size:24px 24px;
+  background-repeat:repeat;
+  opacity:.35;
+  box-shadow:none;
+  mask-image:linear-gradient(180deg,#000 0%, #000 40%, transparent 100%);
+  -webkit-mask-image:linear-gradient(180deg,#000 0%, #000 40%, transparent 100%);
+}
+/* Amber edge rail — defines the continuum join without glow wash */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar::after{
+  content:"";
+  display:block!important;
+  position:absolute;
+  inset:auto;
+  top:12%;bottom:12%;
+  left:auto;right:0;
+  width:2px;height:auto;
+  border-radius:999px 0 0 999px;
+  pointer-events:none;z-index:0;
+  opacity:.85;
+  box-shadow:none;
+  background:linear-gradient(180deg,
+    transparent 0%,
+    rgba(251,191,36,.55) 22%,
+    rgba(245,158,11,.85) 50%,
+    rgba(217,119,6,.45) 78%,
+    transparent 100%
+  );
+  mask-image:none;
+  -webkit-mask-image:none;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav{
+  margin:0!important;
+  padding:12px 10px 10px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-sidebar-account-footer{
+  margin:0!important;
+  padding:10px!important;
+  border-top-color:rgba(255,255,255,.08)!important;
+  background:transparent!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-sidebar-logout{
+  background:transparent!important;
+  border-color:transparent!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-brand{
+  border-bottom-color:rgba(245,158,11,.18)!important;
+  background:transparent!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  color:#FFFFFF!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-brand small{
+  color:rgba(245,158,11,.78)!important;
+  text-shadow:0 0 12px rgba(245,158,11,.35);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .close-side{
+  background:rgba(255,255,255,.1)!important;
+  color:#fff!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-sidebar-account-footer{
+  border-top-color:rgba(255,255,255,.08)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-sidebar-logout{
+  color:#FF8A90!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-sidebar-logout i{
+  color:#F87171!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-sidebar-logout:hover{
+  background:rgba(248,113,113,.1)!important;
+  color:#fff!important;
+  box-shadow:0 0 0 1px rgba(248,113,113,.22),0 0 18px rgba(248,113,113,.12)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub),
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub):hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub):focus,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group .nav-group-btn,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group .nav-group-btn:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group .nav-group-btn:focus,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group .nav-group-btn:focus-visible,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.open > .nav-group-btn{
+  color:rgba(255,255,255,.86)!important;
+  background:transparent!important;
+  font-weight:800!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub) i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group .nav-group-btn i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group .nav-group-btn .bi-chevron-down{
+  color:rgba(255,255,255,.7)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub):hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub):focus-visible,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group .nav-group-btn:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn{
+  background:rgba(255,255,255,.04)!important;
+  color:rgba(255,255,255,.95)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group .nav-group-btn:hover i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn i{
+  color:rgba(251,191,36,.9)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub).active,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.open > .nav-group-btn,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn{
+  position:relative!important;
+  background:linear-gradient(90deg, rgba(245,158,11,.16) 0%, rgba(245,158,11,.05) 45%, transparent 100%)!important;
+  color:#FBBF24!important;
+  box-shadow:
+    inset 0 1px 0 rgba(245,158,11,.18),
+    inset 0 -1px 0 rgba(245,158,11,.10),
+    0 0 28px rgba(245,158,11,.12)!important;
+  border:0!important;
+  border-radius:8px!important;
+  overflow:hidden;
+  text-shadow:0 0 18px rgba(245,158,11,.45);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub).active::before,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.open > .nav-group-btn::before,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn::before,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn::before{
+  content:"";
+  position:absolute;
+  left:0;top:8px;bottom:8px;width:2px;border-radius:999px;
+  background:linear-gradient(180deg,#FDE68A 0%,#F59E0B 55%,#D97706 100%);
+  box-shadow:0 0 10px rgba(245,158,11,.9),0 0 18px rgba(245,158,11,.5);
+  pointer-events:none;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub).active i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.open > .nav-group-btn i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.open > .nav-group-btn .bi-chevron-down,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn .bi-chevron-down{
+  color:#FBBF24!important;
+  filter:drop-shadow(0 0 8px rgba(245,158,11,.65));
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub{
+  color:rgba(255,255,255,.62)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub:hover{
+  background:rgba(255,255,255,.05)!important;
+  color:rgba(255,255,255,.92)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub.active,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub.active{
+  background:linear-gradient(180deg, rgba(245,158,11,.18) 0%, rgba(43,37,33,.92) 100%)!important;
+  border:1px solid rgba(245,158,11,.55)!important;
+  color:#FBBF24!important;
+  box-shadow:0 0 0 1px rgba(245,158,11,.12),0 0 18px rgba(245,158,11,.18),inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub.active i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub.active i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.active i{
+  color:#FBBF24!important;
+  filter:drop-shadow(0 0 6px rgba(245,158,11,.45));
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub.active::after,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub.active::after{
+  content:none!important;
+  display:none!important;
+}
+/* Light flyout panel: cream surface (locked) — beat reports.css `#fff!important` */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > .nav-group > .nav-group-list,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list{
+  background:#FFF8EB!important;
+  border:1px solid rgba(92,74,48,.12)!important;
+  box-shadow:0 12px 32px rgba(60,48,32,.14)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub{
+  color:#6b360c!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub:hover{
+  background:rgba(217,119,6,.08)!important;
+  color:#6b360c!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub:hover i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub:hover i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a:hover i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub.active i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub.active:hover i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub.active i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub.active:hover i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.active i,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.active:hover i{
+  color:#6b360c!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub.active{
+  background:linear-gradient(180deg,#FFFBEB 0%,#FEF3C7 100%)!important;
+  border:1px solid var(--bo-sidebar-active)!important;
+  color:#6b360c!important;
+  box-shadow:0 0 0 1px rgba(245,158,11,.12),0 4px 14px rgba(217,119,6,.12)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub.active::after{
+  content:none!important;
+  display:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > .nav-group > .nav-group-list,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list{
+  background:#383A46!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:0 16px 40px rgba(0,0,0,.35)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub{
+  color:rgba(255,255,255,.68)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub:hover{
+  background:rgba(255,255,255,.05)!important;
+  color:rgba(255,255,255,.92)!important;
+}
+/* L2 icons — amber series (override reports.css blue hover/active) */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a i{
+  color:rgba(255,255,255,.55)!important;
+  filter:none;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub:hover i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub:hover i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a:hover i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub.active i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub.active:hover i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub.active i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub.active:hover i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.active i,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.active:hover i{
+  color:#FBBF24!important;
+  filter:drop-shadow(0 0 6px rgba(245,158,11,.45));
+}
+@media(min-width:992px){
+  body.main-admin-detail-page.main-provider-family-page.sidebar-mini .report-nav > a:not(.report-sub).active,
+body.main-admin-detail-page.main-provider-family-page.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active{
+    background:linear-gradient(135deg, #FFF8EF 0%, #FFE8CC 48%, #FFF3E0 100%)!important;
+    color:#9A3412!important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.85),
+      0 0 0 1px rgba(217,119,6,.18),
+      0 6px 16px rgba(217,119,6,.12)!important;
+    border-radius:10px!important;
+  }
+  html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.sidebar-mini .report-nav > a:not(.report-sub).active,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.sidebar-mini .report-nav > a:not(.report-sub).active,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active{
+    background:linear-gradient(90deg, rgba(245,158,11,.16) 0%, rgba(245,158,11,.05) 45%, transparent 100%)!important;
+    color:#FBBF24!important;
+    box-shadow:
+      inset 0 1px 0 rgba(245,158,11,.18),
+      inset 0 -1px 0 rgba(245,158,11,.10),
+      0 0 28px rgba(245,158,11,.12)!important;
+  }
+  body.main-admin-detail-page.main-provider-family-page.sidebar-mini .report-nav > a:not(.report-sub).active::before,
+body.main-admin-detail-page.main-provider-family-page.sidebar-mini .report-nav > a:not(.report-sub).active::before,
+body.main-admin-detail-page.main-provider-family-page.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active::before,
+body.main-admin-detail-page.main-provider-family-page.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active::before{
+    content:"";
+    position:absolute;
+    left:0;top:7px;bottom:7px;width:3px;border-radius:999px;
+    background:linear-gradient(180deg,#FBBF24 0%,#D97706 100%);
+    box-shadow:0 0 10px rgba(217,119,6,.35);
+  }
+}
+/* ------------------------------------------------------------------
+   Light + Dark table — amber control-terminal comps
+   ------------------------------------------------------------------ */body.main-admin-detail-page.main-provider-family-page .mad-user-copy{
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-user-copy b{
+  display:inline;margin:0;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-user-meta{
+  flex:1 1 100%;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-you{
+  display:inline-flex;align-items:center;height:18px;padding:0 6px;
+  border-radius:4px;border:0;
+  color:#B45309;background:#FEF3C7;
+  font-size:10px;font-weight:700;letter-spacing:.02em;line-height:1;
+}
+/* Light table (scoped — do not leak cream borders into dark) */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-panel,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table-wrap{
+  background:#FFF8EB!important;
+  border-color:#EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table th{
+  color:#3F3F46!important;
+  border-bottom:1px solid #EADCC8!important;
+  background:transparent!important;
+  font-weight:700!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table td{
+  color:#374151!important;
+  border-bottom:1px solid #F0E6D8!important;
+  background:transparent!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table tbody tr:hover td{
+  background:#FFF1DC!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table td.mad-detail,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table td.mad-time,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table .mad-muted,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table .mad-email{
+  color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table .mad-time{
+  font-variant-numeric:tabular-nums;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-user-copy b{
+  color:#18191C!important;
+}
+/* Light avatars */body.main-admin-detail-page.main-provider-family-page .mad-avatar{
+  border-radius:8px!important;
+  background:#EEF2FF!important;
+  color:#3730A3!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-avatar.is-self{
+  background:#FEF3C7!important;
+  color:#B45309!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+/* Light role pills */body.main-admin-detail-page.main-provider-family-page .mad-role{
+  background:#F3F4F6!important;
+  color:#4B5563!important;
+  border-radius:999px!important;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-role.is-super,
+
+body.main-admin-detail-page.main-provider-family-page .mad-role.is-partner,
+
+body.main-admin-detail-page.main-provider-family-page .mad-role.is-merchant{
+  background:#EDE9FE!important;
+  color:#5B21B6!important;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-role.is-support,
+
+body.main-admin-detail-page.main-provider-family-page .mad-role.is-tech,
+
+body.main-admin-detail-page.main-provider-family-page .mad-role.is-regional{
+  background:#DBEAFE!important;
+  color:#1D4ED8!important;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-role.is-risk{
+  background:#FEE2E2!important;
+  color:#B91C1C!important;
+}
+/* Light credit */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table .mad-money{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important;
+  font-variant-numeric:tabular-nums!important;
+  font-weight:700!important;
+  background:transparent!important;
+  padding:0!important;
+  color:#27272A!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table .mad-money.is-zero{
+  color:#71717A!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table .mad-money.is-positive{
+  color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table .mad-time,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table .mad-time-tip{
+  color:#57534E!important;
+  font-weight:600!important;
+}
+/* Light action icons + search — readable charcoal (never faint placeholder gray) */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-icon-btn,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-icon-btn.is-danger{
+  color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-icon-btn:hover{
+  background:rgba(217,119,6,.12)!important;
+  color:#B45309!important;
+  box-shadow:0 4px 10px rgba(180,83,9,.12)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-search i{
+  color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-search input::placeholder,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-field .form-control::placeholder,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-modal .form-control::placeholder,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-pass-modal-fields .form-control::placeholder,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-pass-wrap .form-control::placeholder{
+  color:#78716C!important;
+  opacity:1!important;
+  -webkit-text-fill-color:#78716C;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-eye{
+  color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-modal-title small{
+  color:#57534E!important;
+}
+/* Light modal close — cream well (never cool blue-white) */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .modal-clean-close,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-modal .modal-clean-close{
+  width:36px!important;height:36px!important;border-radius:8px!important;
+  background:#F5EBDC!important;
+  border:1px solid #EADCC8!important;
+  color:#57534E!important;
+  display:grid!important;place-items:center!important;
+  filter:none!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .modal-clean-close:hover,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-modal .modal-clean-close:hover{
+  background:#F0E4D0!important;
+  border-color:#D97706!important;
+  color:#18191C!important;
+}
+/* Light status */body.main-admin-detail-page.main-provider-family-page .mad-status.is-active,
+
+body.main-admin-detail-page.main-provider-family-page .mad-table td[data-label="Status"] .mad-status.is-active{
+  background:#D1FAE5!important;
+  color:#047857!important;
+  padding:0 10px!important;
+  border-radius:999px!important;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-status.is-active i{
+  background:#10B981!important;
+  box-shadow:none!important;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-status.is-suspended,
+
+body.main-admin-detail-page.main-provider-family-page .mad-table td[data-label="Status"] .mad-status.is-suspended{
+  background:#FEE2E2!important;
+  color:#B91C1C!important;
+  padding:0 10px!important;
+  border-radius:999px!important;
+}
+body.main-admin-detail-page.main-provider-family-page button.mad-status.is-active:hover{
+  background:#A7F3D0!important;
+}
+body.main-admin-detail-page.main-provider-family-page button.mad-status.is-suspended:hover{
+  background:#FECACA!important;
+}
+/* Light pager inactive */body.main-admin-detail-page.main-provider-family-page .mad-pager .smart-page,
+
+body.main-admin-detail-page.main-provider-family-page .mad-pager button{
+  background:#F3F4F6!important;
+  color:#9CA3AF!important;
+  border:0!important;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-pager .smart-page:hover:not(:disabled):not(.active),
+
+body.main-admin-detail-page.main-provider-family-page .mad-pager button:hover:not(:disabled):not(.active){
+  background:#E5E7EB!important;
+  color:#374151!important;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-footer-info{
+  color:#57534E!important;
+}
+/* Status filter pills — Active/Suspend/All match Export ghost (8px cream lift) */body.main-admin-detail-page.main-provider-family-page .mad-pills{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  padding:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  overflow:visible!important;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-pill{
+  display:inline-flex!important;
+  align-items:center!important;
+  position:relative!important;
+  height:36px!important;
+  padding:0 14px!important;
+  border-radius:999px!important;
+  border:1px solid transparent!important;
+  background:transparent!important;
+  color:#71717A!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+  box-shadow:none!important;
+  gap:8px!important;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-pill[data-mad-status="active"]::before,
+
+body.main-admin-detail-page.main-provider-family-page .mad-pill[data-mad-status="suspended"]::before{
+  content:"";
+  width:6px;height:6px;border-radius:50%;flex:0 0 auto;
+  box-shadow:none;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-pill[data-mad-status="active"]::before{
+  background:#B8C0CC;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-pill[data-mad-status="suspended"]::before{
+  background:#C4C0D0;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-pill.is-active{
+  /* Thumb draws Export-style frame; keep pill fill clear */
+  background:transparent!important;
+  color:#18191C!important;
+  font-weight:700!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  z-index:1;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-pills.bo-seg > .bo-seg-thumb{
+  top:0!important;
+  height:100%!important;
+  border-radius:999px!important;
+  background-color:#F3E8D6!important;
+  background-image:linear-gradient(180deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border:1px solid #EADCC8!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06),0 2px 6px rgba(24,25,28,.05)!important;
+  box-sizing:border-box!important;
+  opacity:1;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-pill.is-active[data-mad-status="active"]::before{
+  background:#059669;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-pill.is-active[data-mad-status="suspended"]::before{
+  background:#DC2626;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-pill:hover:not(.is-active){
+  background:rgba(24,25,28,.04)!important;
+  color:#4B5563!important;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-pill-count{
+  background:transparent!important;
+  color:inherit!important;
+  min-width:0!important;height:auto!important;padding:0!important;
+  font-size:13px!important;font-weight:inherit!important;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-pill-count::before{content:"("}
+body.main-admin-detail-page.main-provider-family-page .mad-pill-count::after{content:")"}
+body.main-admin-detail-page.main-provider-family-page .mad-pill-count.is-active-count,
+
+body.main-admin-detail-page.main-provider-family-page .mad-pill-count.is-danger-count{
+  color:inherit!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pills{
+  background:transparent!important;
+  padding:0!important;
+  gap:4px!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pill{
+  color:#8A8F98!important;
+  background:transparent!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pill[data-mad-status="active"]::before{
+  background:#3F3F46;
+  box-shadow:none;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pill[data-mad-status="suspended"]::before{
+  background:#3F3F46;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pill.is-active{
+  background:transparent!important;
+  color:#FFFFFF!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pills.bo-seg > .bo-seg-thumb{
+  border-radius:999px!important;
+  background-color:#383A46!important;
+  background-image:linear-gradient(180deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%)!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.22),0 4px 10px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(0,0,0,.18)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pill.is-active[data-mad-status="active"]::before{
+  background:#34D399;
+  box-shadow:0 0 0 2px rgba(52,211,153,.18),0 0 10px rgba(52,211,153,.55);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pill.is-active[data-mad-status="suspended"]::before{
+  background:#F87171;
+  box-shadow:0 0 0 2px rgba(248,113,113,.15),0 0 8px rgba(248,113,113,.4);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pill:hover:not(.is-active){
+  background:rgba(255,255,255,.04)!important;
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pill-count{
+  color:inherit!important;
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-panel,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table-wrap{
+  background:#383A46!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table th{
+  color:#E7E5E4!important;
+  border-bottom:1px solid rgba(255,255,255,.14)!important;
+  background:transparent!important;
+  font-weight:700!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table td{
+  color:#F5F5F4!important;
+  border-bottom:1px solid rgba(255,255,255,.12)!important;
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table tbody tr:hover td{
+  background:rgba(255,255,255,.05)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table td.mad-detail,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table td.mad-time,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table .mad-muted,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table .mad-email,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table .mad-time,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table .mad-time-tip{
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table .mad-time{
+  font-variant-numeric:tabular-nums;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+/* Avatar */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-avatar{
+  border-radius:8px!important;
+  background:#383A46!important;
+  color:#A1A1AA!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-avatar.is-self{
+  color:#F59E0B!important;
+  border-color:rgba(245,158,11,.65)!important;
+  background:rgba(245,158,11,.10)!important;
+  box-shadow:0 0 0 1px rgba(245,158,11,.2),0 0 14px rgba(245,158,11,.28)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-user-copy b{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-you{
+  border-color:rgba(245,158,11,.55)!important;
+  color:#F59E0B!important;
+  background:rgba(245,158,11,.08)!important;
+}
+/* Role pills */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-role{
+  background:rgba(255,255,255,.08)!important;
+  color:#D4D4D8!important;
+  border-radius:999px!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-role.is-super,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-role.is-partner,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-role.is-merchant{
+  background:rgba(124,58,237,.22)!important;
+  color:#C4B5FD!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-role.is-support,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-role.is-tech,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-role.is-regional{
+  background:rgba(37,99,235,.22)!important;
+  color:#93C5FD!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-role.is-risk{
+  background:rgba(239,68,68,.18)!important;
+  color:#FCA5A5!important;
+}
+/* Credit */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table .mad-money,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table td[data-label="Credit Balance"] .mad-money{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important;
+  font-variant-numeric:tabular-nums!important;
+  font-weight:700!important;
+  background:transparent!important;
+  padding:0!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table .mad-money.is-zero{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table .mad-money.is-positive{
+  color:#F59E0B!important;
+}
+/* Status Active / Suspended */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-status.is-active,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table td[data-label="Status"] .mad-status.is-active{
+  background:rgba(16,185,129,.14)!important;
+  color:#6EE7B7!important;
+  padding:0 10px!important;
+  border-radius:999px!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-status.is-active i{
+  background:#34D399!important;
+  box-shadow:0 0 0 2px rgba(52,211,153,.18),0 0 10px rgba(52,211,153,.55)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-status.is-suspended,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table td[data-label="Status"] .mad-status.is-suspended{
+  background:rgba(239,68,68,.14)!important;
+  color:#FCA5A5!important;
+  padding:0 10px!important;
+  border-radius:999px!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page button.mad-status.is-active:hover{
+  background:rgba(16,185,129,.22)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page button.mad-status.is-suspended:hover{
+  background:rgba(239,68,68,.22)!important;
+}
+/* Action icons */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-icon-btn{
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-icon-btn:hover{
+  background:rgba(245,158,11,.14)!important;
+  color:#F59E0B!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-footer,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-filter-bar{
+  border-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-footer-info{
+  color:#D4D4D8!important;
+}
+/* Top-right chrome — theme toggle + identity + amber avatar (light/dark comps) */body.main-admin-detail-page.main-provider-family-page .report-actions{
+  gap:12px!important;
+  align-items:center!important;
+}
+body.main-admin-detail-page.main-provider-family-page .report-actions > [data-bo-profile]{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:12px!important;
+}
+/* Divider slot always reserved — only tint changes by theme (prevents cluster shift) */body.main-admin-detail-page.main-provider-family-page .report-actions > [data-bo-profile]::before{
+  content:"";
+  width:1px;height:28px;flex:0 0 1px;
+  background:rgba(24,25,28,.12);
+  margin:0;
+}
+body.main-admin-detail-page.main-provider-family-page .bo-theme-btn{
+  position:relative!important;
+  box-sizing:border-box!important;
+  flex:0 0 36px!important;
+  width:36px!important;height:36px!important;min-width:36px!important;max-width:36px!important;
+  /* Same bordered slot in light + dark — only color changes */
+  border:1px solid rgba(24,25,28,.18)!important;border-radius:8px!important;
+  background:transparent!important;
+  color:#3F3F46!important;
+  box-shadow:none!important;
+  font-size:18px!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+body.main-admin-detail-page.main-provider-family-page .bo-theme-btn i[data-theme-icon]{
+  position:absolute!important;
+  left:0!important;top:0!important;right:0!important;bottom:0!important;
+  display:grid!important;
+  place-items:center!important;
+  margin:0!important;padding:0!important;
+  width:100%!important;height:100%!important;
+  font-size:18px!important;line-height:1!important;
+  color:inherit!important;
+  pointer-events:none!important;
+  transform:none!important;
+}
+/* Keep both icons in the same slot; hidden only fades, does not reflow */body.main-admin-detail-page.main-provider-family-page .bo-theme-btn i[data-theme-icon][hidden]{
+  display:grid!important;
+  opacity:0!important;
+  visibility:hidden!important;
+}
+body.main-admin-detail-page.main-provider-family-page .bo-theme-btn:hover{
+  background:rgba(24,25,28,.05)!important;
+  border-color:rgba(24,25,28,.28)!important;
+  color:#18191C!important;
+}
+body.main-admin-detail-page.main-provider-family-page .bo-theme-btn:focus-visible{
+  outline:2px solid #D97706!important;outline-offset:2px!important;
+}
+body.main-admin-detail-page.main-provider-family-page .report-actions .bo-account-link,
+
+body.main-admin-detail-page.main-provider-family-page .bo-account-link{
+  height:auto!important;min-width:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  gap:12px!important;
+  align-items:center!important;
+  pointer-events:auto!important;
+  cursor:pointer!important;
+  text-decoration:none!important;
+  position:relative!important;
+  z-index:2!important;
+}
+body.main-admin-detail-page.main-provider-family-page .report-actions .bo-account-link:hover,
+
+body.main-admin-detail-page.main-provider-family-page .bo-account-link:hover,
+
+body.main-admin-detail-page.main-provider-family-page .report-actions .bo-account-link:focus,
+
+body.main-admin-detail-page.main-provider-family-page .bo-account-link:focus,
+
+body.main-admin-detail-page.main-provider-family-page .report-actions .bo-account-link:focus-visible,
+
+body.main-admin-detail-page.main-provider-family-page .bo-account-link:focus-visible,
+
+body.main-admin-detail-page.main-provider-family-page .report-actions .bo-account-link:active,
+
+body.main-admin-detail-page.main-provider-family-page .bo-account-link:active{
+  background:transparent!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  color:inherit!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-actions .bo-account-link,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-account-link,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-actions .bo-account-link:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-account-link:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-actions .bo-account-link:focus,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-account-link:focus,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-actions .bo-account-link:focus-visible,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-account-link:focus-visible,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-actions .bo-account-link:active,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-account-link:active{
+  background:transparent!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+body.main-admin-detail-page.main-provider-family-page .bo-account-setting-icon{
+  display:none!important;
+}
+body.main-admin-detail-page.main-provider-family-page .bo-account-meta{
+  display:flex;flex-direction:column;align-items:flex-end;justify-content:center;
+  gap:2px;min-width:0;order:1;
+  text-align:right;line-height:1.15;
+}
+body.main-admin-detail-page.main-provider-family-page .bo-account-name{
+  display:block!important;
+  font-size:14px!important;font-weight:700!important;
+  color:#18191C!important;letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;
+}
+body.main-admin-detail-page.main-provider-family-page .bo-account-role{
+  display:block;
+  font-size:11px;font-weight:500;
+  color:#71717A;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  letter-spacing:.02em;white-space:nowrap;
+}
+body.main-admin-detail-page.main-provider-family-page .bo-account-link .report-avatar,
+
+body.main-admin-detail-page.main-provider-family-page .report-avatar{
+  order:2;
+  width:40px!important;height:40px!important;min-width:40px!important;flex:0 0 40px!important;
+  border-radius:12px!important;
+  background:#D97706!important;
+  color:#FFFFFF!important;
+  font-size:0!important;font-weight:400!important;
+  box-shadow:none!important;
+  display:grid!important;place-items:center!important;
+}
+body.main-admin-detail-page.main-provider-family-page .report-avatar i,
+
+body.main-admin-detail-page.main-provider-family-page .report-avatar::before{
+  font-size:18px!important;line-height:1!important;color:#FFFFFF!important;
+}
+/* Restore person icon when auth only injected initials (create/edit pages) */body.main-admin-detail-page.main-provider-family-page .report-avatar:not(:has(> i))::before{
+  content:"\F4DA";
+  font-family:"bootstrap-icons"!important;
+  font-style:normal;font-weight:400!important;
+  speak:never;
+  display:block;
+}
+body.main-admin-detail-page.main-provider-family-page .bo-account-link:hover .report-avatar{
+  background:#B45309!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-theme-btn{
+  border-color:rgba(245,158,11,.4)!important;
+  background:transparent!important;
+  color:#F59E0B!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-theme-btn:hover{
+  background:rgba(245,158,11,.1)!important;
+  border-color:#F59E0B!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-actions > [data-bo-profile]::before{
+  background:rgba(255,255,255,.12);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-account-name{
+  color:#FFFFFF!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-account-role{
+  color:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-account-link .report-avatar,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-avatar{
+  background:#F59E0B!important;
+  color:#2A2C36!important;
+  box-shadow:0 0 0 1px rgba(245,158,11,.25),0 4px 16px rgba(245,158,11,.35)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-avatar i{
+  color:#2A2C36!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-avatar:not(:has(> i))::before{
+  color:#2A2C36!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-account-link:hover .report-avatar{
+  background:#FBBF24!important;
+}
+/* Dark hover tips — soft charcoal + amber (replace navy/cyan) */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-time-tip::after,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-icon-btn[data-tip]::after{
+  background:#40424E!important;
+  color:#F5F5F4!important;
+  border:1px solid rgba(245,158,11,.35)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.35)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-time-tip::before{
+  border-top-color:#40424E!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-icon-btn[data-tip]::before{
+  border-top-color:#40424E!important;
+  border-bottom-color:transparent!important;
+}
+html[data-bo-theme="dark"]:has(body.main-admin-detail-page.main-provider-family-page) .mad-float-tip{
+  background:#40424E!important;
+  color:#F5F5F4!important;
+  border:1px solid rgba(245,158,11,.35)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.35)!important;
+}
+html[data-bo-theme="dark"]:has(body.main-admin-detail-page.main-provider-family-page) .mad-float-tip::after{
+  border-top-color:#40424E!important;
+}
+html[data-bo-theme="dark"]:has(body.main-admin-detail-page.main-provider-family-page) .mad-float-tip.is-below::after{
+  border-top-color:transparent!important;
+  border-bottom-color:#40424E!important;
+}
+/* Light hover tips — warm cream + amber (replace navy) */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-time-tip::after,
+
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-icon-btn[data-tip]::after{
+  background:#FFF8EB!important;
+  color:#6b360c!important;
+  border:1px solid rgba(217,119,6,.28)!important;
+  border-radius:999px!important;
+  box-shadow:0 8px 22px rgba(60,48,32,.12)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-time-tip::before{
+  border-top-color:#FFF8EB!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-icon-btn[data-tip]::before{
+  border-top-color:#FFF8EB!important;
+  border-bottom-color:transparent!important;
+}
+html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page.main-provider-family-page) .mad-float-tip{
+  background:#FFF8EB!important;
+  color:#6b360c!important;
+  border:1px solid rgba(217,119,6,.28)!important;
+  border-radius:999px!important;
+  box-shadow:0 8px 22px rgba(60,48,32,.12)!important;
+}
+html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page.main-provider-family-page) .mad-float-tip::after{
+  border-top-color:#FFF8EB!important;
+}
+html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page.main-provider-family-page) .mad-float-tip.is-below::after{
+  border-top-color:transparent!important;
+  border-bottom-color:#FFF8EB!important;
+}
+/* Dark modals — Adjust Credit + Reset Password inputs match soft charcoal */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-modal-panel,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pass-modal-panel,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .modal-clean-panel{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.10)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-summary{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.10)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel .mac-field .form-control,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel input.form-control,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel select.form-control,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel textarea.form-control,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel .rounded-select-btn,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel .rounded-select-wrap .rounded-select-btn,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-field .form-control,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pass-wrap .form-control,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-modal .form-control,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pass-modal-fields .mad-field .form-control,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pass-modal-fields .mad-pass-wrap .form-control{
+  background:#2A2C36!important;
+  background-color:#2A2C36!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+  color-scheme:dark;
+  caret-color:#F5F5F4;
+  -webkit-text-fill-color:#F5F5F4;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel .form-control::placeholder,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-field .form-control::placeholder,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-modal .form-control::placeholder,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pass-modal-fields .form-control::placeholder{
+  color:#A1A1AA!important;
+  opacity:1!important;
+  -webkit-text-fill-color:#A1A1AA;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel .form-control:focus,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel .rounded-select-btn.open,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel .rounded-select-btn:focus,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-field .form-control:focus,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pass-wrap .form-control:focus,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-modal .form-control:focus{
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel .rounded-select-menu{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.10)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel .rounded-select-option:hover{
+  background:rgba(245,158,11,.12)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel .rounded-select-option.active,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel .rounded-select-option.is-active,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel .rounded-select-option.active:hover,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel .rounded-select-option.is-active:hover{
+  background:rgba(245,158,11,.20)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-modal-actions .mad-btn-ghost,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel .mad-btn-ghost,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel .mad-modal-actions .mad-btn-ghost,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel .mad-modal-actions .mad-btn-ghost.bo-ui-button,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .modal-clean-foot .mad-btn-ghost,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .modal-clean-actions .mad-btn-ghost{
+  background-color:#383A46!important;
+  background-image:linear-gradient(180deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%)!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-avatar{
+  background:rgba(245,158,11,.16)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pass-modal-fields .mac-link-btn,
+
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-pass-modal-fields .mac-link-btn:hover{
+  color:#FBBF24!important;
+}
+@media (max-width:575.98px){
+  body.main-admin-detail-page.main-provider-family-page .bo-account-meta{
+    display:none!important;
+  }
+}
+/* ==========================================================================
+   Row avatar — neutral tile, colour reserved for state
+   Unified with the merchant family (assets/css/main-merchant-detail-executive.css).
+   Decision 2026-09-15: the tile is an index marker, not a colour code.
+     base            neutral cream / charcoal
+     .is-self        KEEP amber — on this page it means "your own account"
+     suspended row   danger wash, agreeing with the Status pill
+   The former every-third-row sky tint is deleted: it encoded row position, and it was
+   never scoped to light mode, so it outbid the dark rule and put a near-white chip on
+   the dark canvas (the defect recorded in DESIGN.md).
+   ========================================================================== *//* Light */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table .mad-avatar:not(.is-self){
+  background:#F5EBDC!important;
+  color:#6b360c!important;
+  border:1px solid #EADCC8!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table tbody tr:has(.mad-status.is-suspended) .mad-avatar{
+  background:#FEE2E2!important;
+  color:#B91C1C!important;
+  border-color:rgba(239,51,64,.30)!important;
+}
+/* Dark */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table .mad-avatar:not(.is-self){
+  background:#2A2C36!important;
+  color:#E7E5E4!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table tbody tr:has(.mad-status.is-suspended) .mad-avatar{
+  background:rgba(239,68,68,.14)!important;
+  color:#FCA5A5!important;
+  border-color:rgba(248,113,113,.30)!important;
+}
+/* ==========================================================================
+   Modal shell — head/foot dividers
+   reports.css:69 paints `.modal-clean-head{border-bottom:1px solid var(--line)}` (and the same
+   for .modal-clean-foot), where --line resolves to a cool gray (the retired reports.css line token). Neither the Admin Detail
+   reference block nor the merchant family block migrated that layer — they style .mad-modal-*
+   and .modal-clean-close/-panel, not the head/foot container — so on charcoal the divider read
+   as a light seam: measured as cool gray rgb(228,231,236) in BOTH themes on all three credentials modals.
+   Warm divider in light, white/14 in dark (DESIGN.md: never leave an unscoped cool border).
+   ========================================================================== */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .modal-clean-head,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .modal-clean-foot,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-modal .modal-clean-head,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-modal .modal-clean-foot{
+  border-color:#EADCC8!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .modal-clean-head,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .modal-clean-foot,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-modal .modal-clean-head,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-modal .modal-clean-foot{
+  border-color:rgba(255,255,255,.14)!important;
+}
+
+/* ==========================================================================
+   Date-range picker — shared chrome
+   Rescoped from the locked picker treatment in
+   assets/css/main-merchant-detail-executive.css (its "Date-range picker — rescoped from the
+   amber Dashboard" + "Report chrome: date picker cells" + "make the range read as ONE strip"
+   sections). The Admin Detail block that this file otherwise mirrors never carried the
+   calendar rules — they live in main-dashboard-executive.css for the Dashboard and were
+   ported per family, which is why the picker needed its own layer here.
+   Covers: trigger, wrap, icon, panel, preset rail, calendar head/week/month/year grids,
+   day cells (base + hover + muted), the selected/preset fills, and the strip contract
+   (`is-start` / `is-end` / `is-preview`) with `gap:0` so a range reads as one band.
+   main-provider-credentials-executive.css carries a more specific copy of the same treatment
+   for its settlement ledger and payment-date pickers; both agree on values.
+   ========================================================================== */
+body.main-admin-detail-page.main-provider-family-page .ref-range-presets button.active,
+body.main-admin-detail-page.main-provider-family-page .ref-cal-days button.selected,
+body.main-admin-detail-page.main-provider-family-page .ref-cal-month-grid button.active,
+body.main-admin-detail-page.main-provider-family-page .ref-cal-year-grid button.active{
+background:var(--bo-cyan)!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+body.main-admin-detail-page.main-provider-family-page .ref-cal-days button.in-range{
+background:rgba(217,119,6,.12)!important
+}
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-wrap,
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-trigger{
+width:100%!important
+}
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-trigger{
+height:42px;
+  border:1px solid var(--bo-border)!important;
+  border-radius:8px;
+  background:var(--bo-surface)!important;
+  color:var(--bo-navy);
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;
+  box-shadow:none;
+  gap:10px;
+  padding:0 12px!important;
+}
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-trigger:hover,
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-trigger:focus{
+border-color:var(--bo-cyan)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+  outline:0;
+}
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-icon{
+height:auto;width:auto;
+  padding:0;
+  margin:0;
+  background:transparent!important;
+  color:var(--bo-navy)!important;
+  border-radius:0;
+  display:inline-flex;
+  align-items:center;
+  font-size:15px;
+}
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-trigger > #mainDateLabel{
+color:var(--bo-navy);
+  font-weight:700;
+}
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-trigger > .bi-chevron-down{
+margin-left:auto;
+  color:var(--bo-navy);
+  font-size:12px;
+  opacity:.85;
+}
+body.main-admin-detail-page.main-provider-family-page .ref-date-field .ref-range-picker{
+left:0;right:auto;z-index:6200;
+  border-color:var(--bo-border);
+  border-radius:12px;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-range-picker{
+background:var(--bo-surface)!important;
+  border-color:var(--bo-border)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-range-presets{
+background:#2A2C36!important;
+  border-right-color:var(--bo-border)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-range-presets button{
+color:var(--bo-text-secondary)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-range-presets button:hover{
+background:rgba(245,158,11,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-range-presets button.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-days button.selected,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-month-grid button.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-year-grid button.active{
+background:#F59E0B!important;
+  color:#2A2C36!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-head button,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-head-pick{
+color:var(--bo-text-secondary)!important;
+  background:var(--bo-bg)!important;
+  border-color:var(--bo-border)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-week span{
+color:var(--bo-muted)!important
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-days button{
+background:transparent!important;
+  color:var(--bo-text)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-days button.muted{
+color:var(--bo-muted)!important
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-month-grid button,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-year-grid button{
+background:var(--bo-bg)!important;
+  color:var(--bo-text-secondary)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-range-picker,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-range-presets{
+  background:#FFF8EB!important;
+  border-color:#EADCC8!important;
+  box-shadow:0 12px 30px rgba(60,48,32,.14)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-month-grid button,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-year-grid button,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-days button,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-head-pick,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-head button{
+  background:transparent!important;
+  border-color:transparent!important;
+  color:#374151!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-month-grid button:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-year-grid button:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-days button:hover{
+  background:rgba(217,119,6,.10)!important;
+  color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-days button.muted,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-days .muted{
+  color:#57534E!important;
+  background:transparent!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .ref-cal-week span{
+  color:#71717A!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-range-picker,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-range-presets{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-month-grid button,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-year-grid button,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-days button,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-head-pick,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-head button{
+  background:transparent!important;
+  border-color:transparent!important;
+  color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-month-grid button:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-year-grid button:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-days button:hover{
+  background:rgba(245,158,11,.14)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-days .muted{
+  color:#A1A1AA!important;
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .ref-cal-week span{
+  color:#A1A1AA!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page #reportRangePicker .rounded-select-option.active,
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-range-picker .rounded-select-option.active,
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .modal-clean .rounded-select-option.active,
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .modal-clean .rounded-select-option:hover{
+  background:rgba(217,119,6,.16)!important;
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page #reportRangePicker .rounded-select-option.active,
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-range-picker .rounded-select-option.active,
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .modal-clean .rounded-select-option.active,
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .modal-clean .rounded-select-option:hover{
+  background:rgba(245,158,11,.20)!important;
+  color:#FBBF24!important;
+}
+html body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days{
+  gap:0;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.selected{
+  /* the solid amber fill had been dead: an earlier override in this file set
+     background:transparent!important on every day cell at (0,4,3), which outranked the
+     rule that supplied var(--bo-cyan). Restated here at (0,6,3). */
+  background:#D97706!important;
+  color:#FFFFFF!important;
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.selected.is-start.in-range:not(.is-end){
+  border-radius:8px 0 0 8px!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.selected.is-end.in-range:not(.is-start){
+  border-radius:0 8px 8px 0!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.in-range:not(.selected){
+  border-radius:0!important;
+  background:rgba(217,119,6,.14)!important;
+  color:#B45309!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.is-preview:not(.selected){
+  background:rgba(217,119,6,.28)!important;
+  color:#7C2D12!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.is-preview.is-end:not(.selected){
+  border-radius:0 8px 8px 0!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.selected{
+  background:#F59E0B!important;
+  color:#2A2C36!important;
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.selected.is-start.in-range:not(.is-end){
+  border-radius:8px 0 0 8px!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.selected.is-end.in-range:not(.is-start){
+  border-radius:0 8px 8px 0!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.in-range:not(.selected){
+  border-radius:0!important;
+  background:rgba(245,158,11,.18)!important;
+  color:#FBBF24!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.is-preview:not(.selected){
+  background:rgba(245,158,11,.32)!important;
+  color:#FDE68A!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.is-preview.is-end:not(.selected){
+  border-radius:0 8px 8px 0!important;
+}

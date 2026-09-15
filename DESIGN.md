@@ -200,6 +200,10 @@ Every row is **Light | Dark**. Full measurements + hover/active live in `.interf
 
 Order: **Theme toggle** → divider → **User Name + avatar**.
 
+**Padding and title (2026-09-15).** `.report-topbar` is `padding:10px 20px` on every page — the Dashboard's value, which `reports.css` now carries as the base (`12px 20px` before) so no page needs its own rule. The mobile variants (`padding:10px 12px`, and the `max-width:700px` `8px 10px` for `.standardized-listing-page`) are unchanged, as is the mini-sidebar `padding-left:20px`.
+
+**No page carries a subtitle.** The `.user-title-wrap` block is the icon tile plus a single `<h1>`: the lead `<p>` ("Manage administrator credentials, …") was removed from 118 pages in the same pass. `main-merchant-detail.js` still queries that `<p>` (its `setPageChrome()` swaps the lead between list and edit wording) — the lookup is null-guarded, so it is simply inert now; wire it back if the lead ever returns.
+
 **Theme toggle (`.bo-theme-btn`)**  
 `36×36`, radius `8px`, transparent fill. Light: border `rgba(24,25,28,.18)`, icon `#3F3F46`. Dark: border `rgba(245,158,11,.4)`, icon `#F59E0B`. Hover dark → `#FBBF24`. Focus outline `#D97706`.
 
@@ -311,7 +315,14 @@ Recipe used (reuse it for the remaining `main-merchant-*` pages):
 - The edit workspace (`#madEditWorkspace`) and the modals need their own block: their legacy rules are **ID-scoped**, so the class-scoped block cannot reach them, and the prefix carries `body.standardized-listing-page` to outbid the `button.mac-currency-add-btn` variants.
 - `main-merchant-create.html` renders the same form vocabulary but **outside** `#madEditWorkspace`, so the ID-scoped block misses it entirely — that is why a separate `.mac-section`-scoped layer exists. It also needs the create/edit **layer ladder**, which the initial rescope dropped (those rules are scoped to `.main-admin-create-page` and could not match Merchant Detail). `main-merchant-repayments.html` carries the same class and shares it.
 - **Expect a specificity fight.** The legacy file pins several merchant controls with long selectors — `... .report-content .mac-field .mac-input-group.is-prefix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"])` is ten class-levels. Plain `.mac-section .form-control` loses to it. Where a control is a unique ID, two IDs in the selector settle it outright (see the `#madProviderMarkup` / `#madCurrencyModalCode` rules). Do not "simplify" those selectors without re-measuring.
+- **Date-range selection UX (`main-merchant-report.js` + this family's stylesheet).** A range must read as ONE strip: without `gap:0` on `.ref-cal-days` a range is a row of unrelated chips. Edges are solid amber with only the outer corners rounded, so the band flows out of them; the middle is a flat wash. After the first click the anchor is marked immediately and hovering previews the whole span (`is-start` / `is-end` / `is-preview`).
+  Two traps found while building it:
+  - An earlier block in this file sets `background:transparent!important` on every day cell at (0,4,3). It silently killed the amber fill of the selected edges. Restating a fill needs a prefix at (0,6,3) or higher — see the stacked body classes in the "make the range read as ONE strip" block.
+  - `renderCalendar()` replaces the day grid's innerHTML, so a click on a day reaches `document` with a **detached** target. The outside-click handler then read that as a click outside the picker and closed it — the second click of a range was impossible. Calendar clicks now call `stopPropagation()`.
 - The shared **date-range picker** is already styled for amber in `main-dashboard-executive.css` (19 rules). Rescope them instead of re-deriving: `.main-dashboard-page` → the merchant family and `.main-exec-date-field` → `.ref-date-field` (both pages carry the latter), so one set serves the Dashboard and the merchant reports. Base (unselected) calendar cells come from `reports.css` as `#F7F9FC` / white and need their own rules — the Dashboard only restyled the selected states.
+- **There are THREE picker implementations, not one.** `main-merchant-report.js` (`data-report-day` — settlement/balance/transactions/main_merchant_report), `main-merchant-security.js` (`data-mas-day`) and `main-merchant-profit.js` (`data-mpr-day`) each carry their own `renderCalendar`, hover wiring and click branches. The strip/after-first-click UX landed in the report picker first; the other two were ported on 2026-09-15 so all three now emit the same class contract (`in-range` / `selected` / `is-start` / `is-end` / `is-preview`). Keep that contract identical — one stylesheet styles all three, and a picker that emits only `in-range selected` renders as two rounded pills with a flat connector instead of one strip.
+- **Editing a shared `.js`/`.css` without bumping its `?v=` makes the fix look broken.** The browser keys the HTTP cache on the full URL, so a page (or preview harness) pinning the old version keeps executing the previous file — a verification run then reports "no requests / no change" while the server is serving the new code. Bump `?v=` in every referencing page in the same pass; the merchant stylesheet references were unified to `1.4.2` across 14 pages for this reason.
+- `main-merchant-balance.html`, `main-merchant-transactions.html` and `main_merchant_report.html` are **migrated as of 2026-09-15** through the Report family block below, not through this file — they load `main-merchant-report-executive.css` for their `.mmr-*` / `.settlement-*` deltas, and their picker shares the report family's scope.
 - Page-scoped legacy files (`main-merchant-profit.css`, `main-merchant-profit-record.css`, `main-merchant-repayments.css`) carry their own navy token blocks (`--mpr-*`, `--mprr-*`, `--mprd-*`, `#FFFFFF` surfaces, `#F5F8FB` canvases). Those pages are in the family by `data-access-page`, so the shared block covers their shell and the token layer flips most of their content; only hard-coded leftovers inside the page-scoped classes needed extra rules.
 - Beware a mechanical rescope: swapping only `.main-dashboard-page` in a selector like `body.main-dashboard-page …` leaves a stray `body` and produces the invalid `bodybody…`, which silently makes every rule in that group inert. Grep for `bodybody` after any scripted rescope.
 - `main-merchant-settlement.html` is in the family by `data-access-page` even though its sidebar key is a report key, so it inherits the whole block by linking the file. Its `.mre-*` report chrome lives in `main-merchant-report-executive.css`.
@@ -322,6 +333,38 @@ Recipe used (reuse it for the remaining `main-merchant-*` pages):
 
 A different component, and already consistent: **`.mas-avatar`** on the Security & Audit pages reads `--bo-cyan-tint` / `--bo-cyan-deep` in light and `rgba(245,158,11,.16)` / `#FBBF24` in dark, so it sits on the amber palette. The `.is-alt` class its JS still applies on every other row is **already neutralised** — a later override block gives `.mas-avatar` and `.mas-avatar.is-alt` the same wash, so it does not encode row position. Its shape is `12px`, not the legacy `50%` circle; a later block sets the radius. The only difference left from the list tile is that it carries a wash at all, which is one quiet tint rather than an encoding, so it is defensible as-is. Decide separately if it should go fully neutral.
 
+### Report family — migrated 2026-09-15
+
+The five Report pages now run Charcoal + Amber: `main-win-lose-report.html`, `main_provider_report.html`, `main_merchant_report.html`, `main-merchant-balance.html`, `main-merchant-transactions.html`.
+
+Page CSS, both loaded **last** (after `bo-account-chip.css`):
+
+| File | Covers |
+|------|--------|
+| `assets/css/main-report-charcoal.css` | Tokens, canvas continuum, sidebar/topbar, tabs, filter bar, scope bar, currency segment, table, footer, pager, buttons, modals, tips, date-range picker, and the `.mre-*` shell |
+| `assets/css/main-report-charcoal-content.css` | In-panel content: `.mmr-*` merchant cell, `.wl-*` win-lose rows, `.settlement-*` ledger + form, KPI strips, panel wrappers, the two provider-report modals |
+
+**No report tab strip on the two pages — 2026-09-15.** `main-win-lose-report.html` and `main_provider_report.html` no longer carry `.mad-tabs.mre-tabs`: the strip's only job was cross-linking the two, and `permission-tabs.js` (`el.hidden = !ok` from the role's menus) already reduced it to a single tab for a role that has one of the two pages but not the other — a lone label for the page you are already on. `main_merchant_report.html` keeps its two links, so the pair is still reachable from the Report family's own chrome and from the sidebar. Where a strip does remain, it now collapses when every tab is hidden (`:has()` guard in the shell file), instead of holding a 47px row.
+
+**The date control sits in the filter row — 2026-09-15.** Moved out of `.mre-scope-bar` and into `.mad-filters` as its **first** child, before the search frame, on both pages (a pure move: every `#…From` / `#…Trigger` / `#…CalDays` id stays unique, so `getElementById` and both pickers' wiring are untouched). The scope bar is left carrying `CURRENCY` only. Two consequences worth keeping:
+
+- The shared control is pinned to a fixed `260px` (`reports.css` sizes `.ref-range-wrap` **and** `.ref-range-trigger`, and the legacy shell sizes them again) while the wrapper around it may shrink — so the trigger used to overhang its own column and paint **over** the search frame once the row ran out of width. Measured `overlapSearch: true` at 1440 and 1280 CSS px, which is what a ~1900px window shows at Windows 125% scaling.
+- **The five controls and the status pills share one line, by policy** (a folded control row was read as a broken layout, and so was a pills-only line). The bar is `flex-wrap:nowrap`, so the row *tightens* instead of folding — measured one line at every width from **1400 to 1932**, with no overlap, no overflow and no clipped date label. Wrap returns below 1400 (`@media (max-width:1399.98px)`), where the five controls can no longer fit: they then keep their own row together, pills above. Do not "fix" a wrap threshold by tuning numbers — folding is decided on the items' *hypothetical* (basis) sizes, so a threshold tuned against one window is a guess about that window only; nowrap plus shrinkable items is what makes the behaviour width-independent.
+  Where the width comes from: the **search box is the shock absorber** (basis `100px`, floor `96px`, capped `168px` — it ellipsises its own placeholder), the **date control keeps `236px`** so its fixed-format label never clips, the **pills give up breathing room but not content** (track gap `4px`, pill padding `0 10px`), and the two filter selects sit at their natural `160px`.
+  Two pins in the old stack have to be beaten deliberately, both found the hard way:
+  - `.mre-search` is pinned by `main-provider-report-executive.css` at `flex:0 1 280px!important; min-width:180px!important` — a stylesheet `!important` with **no** `!important` on our side leaves the search on a 280px basis, which folds the row ~180px earlier than it needs to.
+  - `.rounded-select-wrap` **cannot be narrowed from CSS at all**: `reports.js` writes `width / min-width / max-width / flex:0 0 160px !important` **inline** on the wrapper it builds, and inline important outranks any stylesheet important. Any further tightening has to come from the search, the date control, the pills, or `reports.js` itself.
+- Anything that styles the date field by its old position (`.mre-scope-bar .ref-date-field`) no longer applies; the rules that matter are keyed on `.mre-period-group` and `.mre-date-field`, which travel with the markup.
+
+- **Scope: one `:is()` list, not five selector copies.** `body.main-admin-detail-page:is([data-access-page="main_report"], …)` — the five `data-access-page` values. It carries one class-level more than either legacy scope (`body.main-report-exec-page`, `body.main-admin-detail-page`), so it wins on specificity; load order is belt and braces. The shell file was produced by **mechanically rescoping `main-merchant-detail-executive.css`** (`[data-access-page="main_merchant_detail"]` → that `:is()` list), which is why it is a 4 973-line file whose foreign-page sections are inert but present: a rescope that can be diffed 1:1 against its source is worth more than a pruned one.
+- **Neither legacy shell file is edited.** `main-provider-report-executive.css` and `main-merchant-report-executive.css` are also loaded by `main-merchant-settlement.html` and `main-provider-credentials.html`, which carry `main-merchant-report-page`; retinting either in place would repaint pages outside this migration.
+- **Three defects of long standing, fixed by the retint** (all five pages): `.mre-table tfoot` was pinned `display:none!important`, so the total row both loaders un-hide never rendered; every `.mad-page-size-select` inside a `.mad-footer` was hidden, so "Show N / page" had an invisible control the JS still bound; and `.value-positive` / `.value-negative` sit on the `<td>`, so the rescoped `.mad-table td{color:…!important}` out-ranked them and the pos/neg money columns rendered as plain text in **both** themes.
+- **Dark mode needs `!important` parity, not just specificity.** `main-provider-report-executive.css` pins the date trigger's hover/focus ring to a literal `rgba(33,166,215,.18)` shadow at (0,4,2) `!important`; the cyan survives a token remap because it is not a `var()`. The counterpart in this family's file matches at (0,6,2) `!important`. Same shape for the calendar's `.in-range` / `:hover` washes and the preset rail. `bo-ui-standard.css` carries the same literal for `.ref-range-trigger:hover/:focus` at (0,1,1) `!important`.
+- **`.value-positive` / `.value-negative` stay green/red.** That pair is this family's own semantic convention (the provider/brand tables' GGR and margin columns), and the token layer repaints it to the locked `--bo-success` / `--bo-danger`. The amber "money positive" row in the components table governs `.mad-money` and the Win/Lose column (`.mmr-wl.is-pos`), which is where a win/lose figure is read as money rather than as a signed result.
+- **The Win/Lose picker differs by design.** `main-win-lose-report.html` runs the shared `main-exec-date-range.js`, which emits only `in-range` / `selected` (no `is-start` / `is-end` / `is-preview`), so it gets the flat amber band with rounded selected edges — not the one-strip treatment. That module is shared with four pages outside this family, so porting the class contract belongs to its own decision.
+- **Known leftovers, deliberately not touched.** `main-win-lose-report.html` still links `main-merchant-report-executive.css`, whose scope (`body.main-merchant-report-page`) can never match it — a dead `<link>`, left in place rather than silently deleted. The provider report's settlement / brand / history panels have **no `[data-report-tab]` element in the markup**, so `setupTabs()` never runs and those three panels are unreachable through the UI (pre-existing; the panels and their CSS are correct, they simply have no switcher). The pill thumb ships `border-radius:999px` — inherited from the migrated merchant family, and it disagrees with the `8px` recorded in the components table; the family's value was kept for consistency between the two.
+
+
 Traps found while migrating:
 
 - `reports.css` `.report-content input{background-color:#fff!important}` paints any workspace field the page CSS does not explicitly cover pure white. Light chrome is cream only — cover inputs with the control well `#F5EBDC`, locked `#EDE4D4`.
@@ -331,6 +374,86 @@ Traps found while migrating:
 ## Typography
 
 System UI stack. Hierarchy via weight + color. Sidebar L1 = `800`. Tabular nums for money/time; mono for credit/time cells and topbar role.
+
+### Date-range picker (one component — reference: `main-merchant-profit.html`)
+
+**Reference page: `main-merchant-profit.html`.** Open its picker and measure it; the tables below are what it computes, element by element, in both themes. Report pages and the Dashboard are already on these values — `main-report-charcoal.css` (report family) and `main-dashboard-executive.css` (Dashboard) carry them for their scopes. **Change one, change the other**, then re-measure all three pages: `main-merchant-profit.html`, `main-dashboard.html`, a report page (`main-win-lose-report.html` is the quickest).
+
+Markup: `.ref-date-field > .ref-range-wrap > .ref-range-trigger` + `.ref-range-picker` (rail, calendar head, `.ref-cal-week`, `.ref-cal-days`, month/year grids). Any page that already uses these classes only needs the CSS below and the pin bump.
+
+| Part | Light | Dark |
+|------|-------|------|
+| Field (`.ref-date-field`) | width is **per page** (see below) | — |
+| Trigger `.ref-range-trigger` | bg `--bo-surface` `#FFF8EB` · border 1px `--bo-border` `#EADCC8` · radius `10px` · text `--bo-text` `#18191C` · `13px/700` · h `42px` | bg `#2A2C36` · border `rgba(255,255,255,.12)` · text `--bo-text` `#F5F5F4` |
+| Panel `.ref-range-picker` | bg `--bo-surface` `#FFF8EB` · border `--bo-border` `#EADCC8` · radius `12px` · **`box-shadow: 0 12px 30px rgba(60,48,32,.14)`** | bg `#383A46` · border `rgba(255,255,255,.14)` · radius `12px` · **`box-shadow: 0 16px 38px rgba(0,0,0,.4)`** |
+| Calendar well `.ref-range-calendar` | transparent (the panel shows through) | bg `--bo-surface` `#383A46` (opaque) |
+| Rail `.ref-range-presets` | bg `--bo-surface` · border `--bo-border` · width `112px` · pad `8px 0` · **same `box-shadow` as the panel** | bg `#383A46` · border `rgba(255,255,255,.14)` · same shadow as the panel |
+| Rail item | transparent · text `#374151` · `12px/900` · pad `9px 12px` | text `#E7E5E4` |
+| Rail item **active** | **solid** `#D97706` · label white | **solid** `#F59E0B` · label **white** |
+| Head buttons (`.ref-cal-head button`, `.ref-head-pick`) | transparent · text `#374151` · the reference box carries a 1px transparent border | transparent · text `#E7E5E4` |
+| Month / year grid item **active** | **plain** — transparent · text `#374151` | `#F59E0B` · label white |
+| Week row `.ref-cal-week span` | `#71717A` · `11px/900` | `#A1A1AA` |
+| Day cell | transparent · `#374151` · `12px/800` | transparent · `#E7E5E4` |
+| Day cell, other month (`.muted`) | transparent · `#57534E` | `#A1A1AA` |
+| Day cell hover | wash `rgba(217,119,6,.16)` · text `#B45309` | wash `rgba(245,158,11,.16)` · text white |
+| In-range day (`.in-range`) | wash `rgba(217,119,6,.14)` · text `#B45309` | wash `rgba(245,158,11,.18)` · text `#FBBF24` |
+| Range edge (`.selected`) | `#D97706` · label white · radius `8px` | `#F59E0B` · label `#2A2C36` · radius `8px` |
+| Day grid `.ref-cal-days` | **`gap:0`** — cells touch, so the band is continuous | same |
+
+**Per page, NOT part of the design** — do not "unify" these: the **control width** (settlement `260px`, report pages `236px` in a five-control filter row, Dashboard its own), the **preset list** (the Dashboard also offers `Last 7 Days`, and the rail is simply taller for it), and therefore the panel/rail **height**.
+
+#### The band must read as ONE strip — which rules apply depends on the script
+
+- Emits `is-start` / `is-end` / `is-preview`: `main-merchant-report.js`, `main-merchant-profit.js`, `main-merchant-security.js`, `main-provider-settlement-ledger.js`. Strip rules keyed on those classes apply directly.
+- Emits only `in-range` / `selected`: `main-exec-date-range.js` (Win/Lose report, transaction history, accounting due, settlement report) and `main-dashboard.js` (Dashboard). The same strip is built without the edge classes: `.selected.in-range:not(.is-start):not(.is-end)` with `:is(:first-child,:not(.in-range)+*)` for the left outer corner and `:is(:last-child,:has(+ button:not(.in-range)))` for the right, plus the both-cases rule for a single-day range. **Without those three rules a range renders as two rounded pills joined by a flat connector.**
+
+#### Traps that cost a pass each
+
+1. **Some values are inherited, not the family rule's.** In dark the active preset label is **white** on the reference, but the family rule says `#2A2C36` — a page-level rule with *higher specificity* wins there. Reading the family stylesheet alone gives the wrong answer; always read `getComputedStyle` on the reference page.
+2. **`!important` parity is not enough — check the weight too.** `main-dashboard-executive.css` pins `.ref-cal-head button{border:0!important}` at (0,2,2); matching the reference's transparent border needs `border:1px solid transparent!important` **and** a selector that out-ranks it (`.ref-cal-head button.ref-head-pick`).
+3. **`reports.css` pins the bases**: the panel is `#fff`, the rail `#f8fafc`, the day cells `#fff` / `#F7F9FC`, hover `#eef3ff`, muted `#cbd5e1`, and the field/trigger widths at `390 / 292 / 195px` across media queries. Everything that must survive it carries `!important`, and light-only rules use the `html:not([data-bo-theme="dark"])` prefix (a shorter selector loses to those pins).
+4. **The day grid needs `gap:0`**; the base sets `3px` and the band then breaks up into chips. The cell width follows from it, which is why the grid is a reliable tell in a screenshot.
+5. **Audits: compare a border colour only where the border has width.** Cells with `border:0` still report a colour (the text colour), and a reference box may carry a transparent border — both produce phantom differences. Same for the panel/rail height, which depends on the preset count.
+6. **A shared `.js`/`.css` edit needs its `?v=` bumped in every referencing page in the same pass** — several passes here were verified against a cached stylesheet and reported "no change".
+
+#### Recipe for a page you have not touched
+
+1. Look at the picker's driver (see the two contracts above) and note the field/`.ref-range-wrap` width policy for that page's row.
+2. Link `main-report-charcoal.css` (or add the values to that page's own family file, like the Dashboard does) **after** every legacy sheet, then the panel/rail/day/hover/in-range/edge/shadow rules listed above, mode-split with `html:not([data-bo-theme="dark"])` / `html[data-bo-theme="dark"]`, `!important` on anything `reports.css` or a legacy block also sets.
+3. Add the range-edge rules for the class contract that page's script emits, including `gap:0` on `.ref-cal-days`.
+4. Bump the pin in that page.
+5. Verify by measuring the reference and the new page side by side, both themes, on: trigger, panel, calendar well, rail, rail item + active, head buttons, week row, muted day, in-range day, edge day, month active, day-grid `gap`, panel/rail `box-shadow`. Ignore the per-page quantities from the list above. Light and dark should both come back empty.
+
+**Known deviation:** `main-merchant-settlement.html` paints the active rail item as a **wash** (`rgba(217,119,6,.16)` / `rgba(245,158,11,.2)`) instead of the solid fill — a page-scoped rule in `main-merchant-detail-executive.css`, not this contract. One rule to remove if the family should be fully uniform.
+### Provider family — migrated 2026-09-15
+
+`main-provider-detail.html`, `main-provider-credentials.html`, `main-provider-health.html` now run Charcoal + Amber.
+
+- Files: `assets/css/main-provider-family-executive.css` (shared shell — the Admin Detail block rescued and rescoped) plus one page file each: `main-provider-{detail,credentials,health}-executive.css`.
+- **Scope is a marker class.** All three bodies carry `main-provider-family-page`, so the family prefix is `body.main-admin-detail-page.main-provider-family-page` — (0,2,1), which beats the legacy navy token blocks at (0,1,1) and, on source order, the credentials page's merchant-report rules at (0,2,1). The marker is deliberate: `main-provider-detail-page` sits on two of the three pages and all five provider pages share `data-access-page="main_provider_detail"`, so neither can isolate one page. Page files narrow it further: `:not(.main-report-exec-page)` for detail, `.main-report-exec-page[data-report-view="settlement"]` for credentials, `.main-provider-stub-page` for health.
+- `main-provider-create.html` (`main-provider-create-page`) and `main-provider-endpoints.html` (`main-provider-integration-page`) are **not** migrated and still share `main-provider-executive.css` — so that file is left untouched by this migration.
+- Credentials is painted by two other families at once: `main-merchant-report-executive.css` (79 matching rules — it carries `main-merchant-report-page` + `data-report-view="settlement"`) and `main-provider-report-executive.css` (55). Anything that must win regardless of load order carries its three body classes plus the data attribute.
+- Credentials' two pickers come from `assets/js/main-provider-settlement-ledger.js` — a fourth calendar implementation, now defaulting to **This Month** and emitting the locked strip contract (`in-range` / `selected` / `is-start` / `is-end` / `is-preview`) with hover preview and first-click-stays-open, like the other three.
+
+Three inherited defects fixed with page-scoped overrides (the shared files were read, never edited):
+
+- **Page-size select hidden** on credentials and health: `main-admin-detail-executive.css:1108-1112` declares `.mad-footer .rounded-select-wrap{display:none!important}`, which hits the wrapper `reports.js` injects around `#settlementPageSize` / `#mpaPageSize` — the control was unusable while its "Show … / page" label stayed on screen.
+- **Responsive table** on health (two independent breaks): `…:671-676` and `…:707-716` hide only `th` for some columns, so the header slid off the body; and `…:1331-1360` switches to a card layout keyed to `tr.mad-row` / `td[data-label]`, neither of which `main-provider-activity.js` emits. Fixed by keeping a real table at every width. **Restoring `thead`/`tbody`/`th`/`td` is not enough — the row level is blockified too, so `tr` must be forced back to `display:table-row`**; without it each row lands in its own anonymous table (measured 379px header/cell offset at a 980px viewport).
+- **Modal head/foot dividers**: `reports.css` paints `.modal-clean-head` / `.modal-clean-foot` with the cool `--line` token, and neither the Admin Detail block nor the merchant block migrated that layer (they style `.mad-modal-*` and `.modal-clean-close/-panel`). On charcoal the divider read as a light seam in **both** themes; now warm `#EADCC8` / `rgba(255,255,255,.14)`.
+
+Inherited-but-inert, do not "fix" without checking: `--bo-secondary:#2563EB` is declared by all three family files and consumed by none; the `.mad-role.is-support|is-tech|is-regional` chips keep the reference's `#DBEAFE`/`#1D4ED8` palette and no `.mad-role` element exists on these pages.
+
+Verification: per-element colour sweep (canvas, sidebar, topbar, content, modals, both pickers) in light and dark — 0 retired or saturated-blue hits on all three pages. Credentials pickers checked for default range, first-click-stays-open, hover strip and refetch (`month=2026-09`); health table checked aligned (`maxLeftDelta 0`) at 1440/1270/1190/980/420px with its page-size popover opening in-viewport.
+
+
+
+Follow-up (same day) — the two picker defects found in review:
+
+- **The health page now uses the family date-range picker.** It carried two native `input[type=date]` fields; it now has the same `.ref-*` markup as its siblings (`#reportDateTrigger` / `#reportRangePicker` / `#reportCal*`, 8 presets), driven by new code in `main-provider-activity.js`. The request window is unchanged (`from` / `to` on `/admin/main/provider-activity`) and it defaults to **This Month** with the strip contract, so all four provider pages read alike. That makes **five** copies of the calendar in the repo — a shared driver is the eventual cleanup.
+- **The credentials ledger panel was clipped.** `main-provider-report-executive.css:125` anchors it `right:0;left:auto` while `reports.css:3595` pins the field to 292px, so the 390px panel hung 98px to the LEFT of its trigger (measured panel.x 223 vs field.x 321) and the nearest clipping ancestor (`.mad-panel`, `overflow:hidden`, x=304) cut the entire preset rail off. The merchant reference and every other page anchor left (panel.x == field.x), so the credentials file now anchors left — inside `@media(min-width:768px)`, because below that `reports.css` turns the picker into a fixed sheet (`position:fixed; top:96px`) and a page-level `left:0` would flatten it to the viewport edge. Flush-left at mobile is what the merchant pages already do, so it was left alone rather than diverging.
+- **The picker treatment lives in the family file now.** The Admin Detail block never carried the calendar rules — they sit in `main-dashboard-executive.css` and were ported per family — which is why the shared file gained a rescoped copy of the merchant file's verified picker + strip sections (trigger, rail, panel, head/week/month/year grids, day cells, hover, `is-start` / `is-end` / `is-preview`).
+
+- **A pill set without `bo-seg-bounce` renders with no frame at all.** The family's active-pill fill is drawn by the shared `.bo-seg-thumb`, not by the pill: `main-merchant-detail-executive.css` sets `.mad-pill.is-active{background:transparent}` and puts the cream/charcoal raised chip in `.mad-pills.bo-seg > .bo-seg-thumb`. `main-merchant-profit.html` carried `.mad-pills` but never loaded `bo-seg-bounce.css`/`.js`, so its filter pills fell back to an unstyled grey chip while every other pill-bearing merchant page looked right. Both files are wired there now; the thumb is created by the script (`ensureThumb`) and positioned by `sync()`, which runs on mount, on resize and on any mutation of the track (class/text), so counts and clicks keep it aligned.
 
 ## Layout
 

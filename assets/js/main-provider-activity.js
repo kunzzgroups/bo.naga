@@ -11,6 +11,125 @@ function action(x){return String(x.action||'UPDATE').replaceAll('_',' ')}
 function status(x){const a=parseAfter(x),ok=a.success!==false&&Number(a.httpStatus||200)<400;return `<span class="settlement-status ${ok?'success':'danger'}">${ok?'Success':'Failed'}</span>`}
 function detail(x){const a=parseAfter(x),parts=[];if(a.settlementCostPercent!=null)parts.push('Provider rate: '+a.settlementCostPercent+'%');if(a.settlementCostBasis)parts.push('Basis: '+a.settlementCostBasis);if(a.currency)parts.push('Currency: '+a.currency);if(a.status)parts.push('Status: '+a.status);const e=a.extra||{};if(e.direction)parts.push(e.direction==='PAY'?'Pay to provider':'Collect from provider');if(e.amount!=null)parts.push('Amount: '+e.amount);if(e.month)parts.push('Month: '+e.month);if(e.paymentDate)parts.push('Payment: '+e.paymentDate);if(e.toMonth)parts.push('Carried to: '+e.toMonth);if(a.balance!=null)parts.push('Balance: '+a.balance);return parts.length?parts.join(' · '):(x.detail||'-')}
 function pager(){const box=$('mpaPager');if(!box)return;box.innerHTML='';if(totalPages<=1)return;const add=(label,p,disabled,active)=>{const b=document.createElement('button');b.type='button';b.className='mad-btn mad-btn-ghost'+(active?' active':'');b.textContent=label;b.disabled=disabled;b.onclick=()=>{page=p;load()};box.appendChild(b)};add('Previous',Math.max(0,page-1),page===0,false);let a=Math.max(0,page-2),z=Math.min(totalPages-1,a+4);a=Math.max(0,z-4);for(let i=a;i<=z;i++)add(String(i+1),i,false,i===page);add('Next',Math.min(totalPages-1,page+1),page>=totalPages-1,false)}
-async function load(){const body=$('mpaRows'),size=Number($('mpaPageSize')?.value||20);body.innerHTML='<tr><td colspan="7" class="mad-empty">Loading activity...</td></tr>';try{const q=new URLSearchParams({page:String(page),size:String(size)});if($('mpaActor')?.value.trim())q.set('actor',$('mpaActor').value.trim());if($('mpaFrom')?.value)q.set('from',$('mpaFrom').value);if($('mpaTo')?.value)q.set('to',$('mpaTo').value);const d=await api('/admin/main/provider-activity?'+q),a=d.content||[];totalPages=Number(d.totalPages||0);body.innerHTML=a.map(x=>`<tr><td>${esc(dt(x.createdAt))}</td><td><b>${esc(providerTarget(x))}</b></td><td>${esc(action(x))}</td><td><b>${esc(x.actor||'SYSTEM')}</b></td><td>${esc(detail(x))}</td><td>${esc(x.ipAddress||'-')}</td><td>${status(x)}</td></tr>`).join('')||'<tr><td colspan="7" class="mad-empty">No provider business activity found.</td></tr>';const total=Number(d.totalElements||0),from=total?page*size+1:0,to=Math.min(total,(page+1)*size);$('mpaInfo').textContent=`Showing ${from} to ${to} of ${total} entries`;pager()}catch(e){body.innerHTML=`<tr><td colspan="7" class="mad-empty text-danger">${esc(e.message)}</td></tr>`;$('mpaInfo').textContent='Showing 0 records';$('mpaPager').innerHTML=''}}
-BO_AUTH.requireLogin();load();$('mpaRefresh')?.addEventListener('click',()=>{page=0;load()});$('mpaPageSize')?.addEventListener('change',()=>{page=0;load()});['mpaActor','mpaFrom','mpaTo'].forEach(id=>$(id)?.addEventListener('change',()=>{page=0;load()}));
+async function load(){const body=$('mpaRows'),size=Number($('mpaPageSize')?.value||20);body.innerHTML='<tr><td colspan="7" class="mad-empty">Loading activity...</td></tr>';try{const q=new URLSearchParams({page:String(page),size:String(size)});if($('mpaActor')?.value.trim())q.set('actor',$('mpaActor').value.trim());if($('reportDateFrom')?.value)q.set('from',$('reportDateFrom').value);if($('reportDateTo')?.value)q.set('to',$('reportDateTo').value);const d=await api('/admin/main/provider-activity?'+q),a=d.content||[];totalPages=Number(d.totalPages||0);body.innerHTML=a.map(x=>`<tr><td>${esc(dt(x.createdAt))}</td><td><b>${esc(providerTarget(x))}</b></td><td>${esc(action(x))}</td><td><b>${esc(x.actor||'SYSTEM')}</b></td><td>${esc(detail(x))}</td><td>${esc(x.ipAddress||'-')}</td><td>${status(x)}</td></tr>`).join('')||'<tr><td colspan="7" class="mad-empty">No provider business activity found.</td></tr>';const total=Number(d.totalElements||0),from=total?page*size+1:0,to=Math.min(total,(page+1)*size);$('mpaInfo').textContent=`Showing ${from} to ${to} of ${total} entries`;pager()}catch(e){body.innerHTML=`<tr><td colspan="7" class="mad-empty text-danger">${esc(e.message)}</td></tr>`;$('mpaInfo').textContent='Showing 0 records';$('mpaPager').innerHTML=''}}
+/* ---------------------------------------------------------------------------
+   Date-range picker — the fifth copy of the family calendar (the settlement ledger,
+   security, profit and the merchant report each carry one; a shared driver is the
+   eventual cleanup). The class contract is identical to its siblings so one stylesheet
+   serves them all: This Month by default, `in-range` / `selected` / `is-start` /
+   `is-end` / `is-preview`, and the panel stays open after the first click so a range
+   can be completed. Replaces this page's two native input[type=date] fields.
+   --------------------------------------------------------------------------- */
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const pickerState={view:new Date(),mode:'days',yearPageStart:new Date().getFullYear()-5,hover:''};
+function p2(n){return String(n).padStart(2,'0')}
+function ymd(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
+function dmy(v){if(!v)return '';const a=String(v).split('-');return a.length===3?`${a[2]} ${MONTHS[Number(a[1])-1]} ${a[0]}`:v}
+function startOfWeek(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-x.getDay());return x}
+function endOfWeek(d){const x=startOfWeek(d);x.setDate(x.getDate()+6);return x}
+function updateDateLabel(){
+  const f=$('reportDateFrom').value,t=$('reportDateTo').value;
+  if($('reportDateLabel')) $('reportDateLabel').textContent=f&&t?`${dmy(f)} - ${dmy(t)}`:f?`${dmy(f)} - Select end date`:'Select date range';
+}
+function markPreset(key){document.querySelectorAll('[data-report-preset]').forEach(b=>b.classList.toggle('active',b.dataset.reportPreset===key))}
+function presetRange(key){
+  const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  let a=new Date(today),b=new Date(today);
+  if(key==='yesterday'){a.setDate(a.getDate()-1);b=new Date(a)}
+  if(key==='thisWeek'){a=startOfWeek(today);b=endOfWeek(today)}
+  if(key==='lastWeek'){a=startOfWeek(today);a.setDate(a.getDate()-7);b=new Date(a);b.setDate(b.getDate()+6)}
+  if(key==='thisMonth'){a=new Date(today.getFullYear(),today.getMonth(),1);b=new Date(today)}
+  if(key==='lastMonth'){a=new Date(today.getFullYear(),today.getMonth()-1,1);b=new Date(today.getFullYear(),today.getMonth(),0)}
+  if(key==='thisYear'){a=new Date(today.getFullYear(),0,1);b=new Date(today.getFullYear(),11,31)}
+  if(key==='lastYear'){a=new Date(today.getFullYear()-1,0,1);b=new Date(today.getFullYear()-1,11,31)}
+  return [ymd(a),ymd(b)];
+}
+function renderCalendar(){
+  const monthBtn=$('reportCalMonth'),yearBtn=$('reportCalYear'),monthGrid=$('reportCalMonthGrid'),yearGrid=$('reportCalYearGrid'),dayView=$('reportCalDayView'),days=$('reportCalDays');
+  if(!monthBtn||!yearBtn||!monthGrid||!yearGrid||!dayView||!days) return;
+  monthBtn.innerHTML=MONTHS[pickerState.view.getMonth()]+' <i class="bi bi-chevron-down"></i>';
+  yearBtn.innerHTML=pickerState.view.getFullYear()+' <i class="bi bi-chevron-down"></i>';
+  monthGrid.innerHTML=MONTHS.map((m,i)=>`<button type="button" data-report-month="${i}" class="${i===pickerState.view.getMonth()?'active':''}">${m}</button>`).join('');
+  yearGrid.innerHTML=Array.from({length:12},(_,i)=>pickerState.yearPageStart+i).map(y=>`<button type="button" data-report-year="${y}" class="${y===pickerState.view.getFullYear()?'active':''}">${y}</button>`).join('');
+  monthGrid.classList.toggle('show',pickerState.mode==='months');
+  yearGrid.classList.toggle('show',pickerState.mode==='years');
+  dayView.classList.toggle('hide',pickerState.mode!=='days');
+  const y=pickerState.view.getFullYear(),m=pickerState.view.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),start=first.getDay(),total=last.getDate(),from=$('reportDateFrom').value,to=$('reportDateTo').value;
+  let html='',prevLast=new Date(y,m,0).getDate();
+  for(let i=0;i<start;i++) html+=`<button type="button" class="muted" disabled>${prevLast-start+i+1}</button>`;
+  // While only the start is picked, the hovered day previews the far end so the range reads
+  // as one continuous strip before anything is committed. Hovering before the start is
+  // deliberately ignored: a click there restarts the range, so the preview must not promise
+  // something the click will not do.
+  const hover=(!to&&from&&pickerState.hover&&pickerState.hover>=from)?pickerState.hover:'';
+  const bandEnd=to||hover||'',hasBand=!!(from&&bandEnd);
+  for(let d=1;d<=total;d++){
+    const val=ymd(new Date(y,m,d));
+    const inBand=!!(hasBand&&val>=from&&val<=bandEnd);
+    // The anchor is marked as soon as it is picked, band or no band - otherwise the first
+    // click looks like it did nothing.
+    const isStart=!!(from&&val===from),isEnd=!!(bandEnd&&val===bandEnd);
+    const isPreview=!!(hover&&val===hover);
+    html+=`<button type="button" data-report-day="${val}" class="${inBand?'in-range':''} ${isStart||isEnd?'selected':''} ${isStart?'is-start':''} ${isEnd?'is-end':''} ${isPreview?'is-preview':''}">${d}</button>`;
+  }
+  for(let i=1;i<=42-(start+total);i++) html+=`<button type="button" class="muted" disabled>${i}</button>`;
+  days.innerHTML=html;
+}
+function setRange(a,b,preset){
+  $('reportDateFrom').value=a||'';
+  $('reportDateTo').value=b||'';
+  updateDateLabel();
+  markPreset(preset||'');
+  renderCalendar();
+}
+function onRangeApplied(){page=0;load()}
+function setupDatePicker(){
+  if(!$('reportDateTrigger')) return;
+  const [a,b]=presetRange('thisMonth');
+  pickerState.view=new Date(a+'T00:00:00');
+  setRange(a,b,'thisMonth');
+  $('reportDateTrigger').addEventListener('click',e=>{e.stopPropagation();$('reportRangePicker').classList.toggle('show');pickerState.mode='days';pickerState.hover='';renderCalendar();});
+  document.addEventListener('click',e=>{if(!e.target.closest('.ref-range-wrap')) $('reportRangePicker')?.classList.remove('show');});
+  document.querySelectorAll('[data-report-preset]').forEach(btn=>btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const key=btn.dataset.reportPreset,[aa,bb]=presetRange(key);
+    pickerState.view=new Date(aa+'T00:00:00');
+    setRange(aa,bb,key);
+    $('reportRangePicker').classList.remove('show');
+    onRangeApplied();
+  }));
+  $('reportCalPrev').onclick=()=>{if(pickerState.mode==='years') pickerState.yearPageStart-=12; else pickerState.view=new Date(pickerState.view.getFullYear(),pickerState.view.getMonth()-1,1);renderCalendar();};
+  $('reportCalNext').onclick=()=>{if(pickerState.mode==='years') pickerState.yearPageStart+=12; else pickerState.view=new Date(pickerState.view.getFullYear(),pickerState.view.getMonth()+1,1);renderCalendar();};
+  $('reportCalMonth').onclick=()=>{pickerState.mode=pickerState.mode==='months'?'days':'months';renderCalendar();};
+  $('reportCalYear').onclick=()=>{pickerState.mode=pickerState.mode==='years'?'days':'years';renderCalendar();};
+  $('reportCalMonthGrid').onclick=e=>{const b=e.target.closest('[data-report-month]');if(!b)return;pickerState.view=new Date(pickerState.view.getFullYear(),Number(b.dataset.reportMonth),1);pickerState.mode='days';renderCalendar();};
+  $('reportCalYearGrid').onclick=e=>{const b=e.target.closest('[data-report-year]');if(!b)return;pickerState.view=new Date(Number(b.dataset.reportYear),pickerState.view.getMonth(),1);pickerState.mode='days';renderCalendar();};
+  $('reportCalDays').addEventListener('mouseover',e=>{
+    const b=e.target.closest('[data-report-day]');
+    const v=b?b.dataset.reportDay:'';
+    if(pickerState.hover===v) return;
+    pickerState.hover=v;
+    if($('reportDateFrom').value&&!$('reportDateTo').value) renderCalendar();
+  });
+  $('reportCalDays').addEventListener('mouseleave',()=>{
+    if(!pickerState.hover) return;
+    pickerState.hover='';
+    if($('reportDateFrom').value&&!$('reportDateTo').value) renderCalendar();
+  });
+  $('reportCalDays').addEventListener('click',e=>{
+    e.stopPropagation();
+    const b=e.target.closest('[data-report-day]');
+    if(!b) return;
+    const val=b.dataset.reportDay,f=$('reportDateFrom'),t=$('reportDateTo');
+    if(!f.value||(f.value&&t.value)||val<f.value){
+      f.value=val;t.value='';pickerState.hover='';markPreset('');updateDateLabel();renderCalendar();
+      return; // stays open for the second click
+    }
+    t.value=val;pickerState.hover='';markPreset('');updateDateLabel();renderCalendar();
+    $('reportRangePicker').classList.remove('show');
+    onRangeApplied();
+  });
+}
+
+BO_AUTH.requireLogin();setupDatePicker();load();$('mpaRefresh')?.addEventListener('click',()=>{page=0;load()});$('mpaPageSize')?.addEventListener('change',()=>{page=0;load()});$('mpaActor')?.addEventListener('change',()=>{page=0;load()});
 })();

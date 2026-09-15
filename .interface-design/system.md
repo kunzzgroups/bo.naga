@@ -692,8 +692,23 @@ Use this when reviewing a page. Each row must exist as a Light|Dark table (or to
 | Table | panel, header, cells, dividers, hover, money, status, avatar, footer, pager |
 | Transaction table (locked L|D) | `--bo-table-*` zebra · deep dark head `#1F2128` · square thead · bold cells · PENDING orange · action wells · no Filtered Total |
 | Modals | scrim, panel, close, fields, footer actions |
+| KPI strip | tile, label, value, note, grid (Report family — see below) |
 | Roles | control card, select, scope, toolbar, matrix group/card, badges, sticky footer |
 | Create Role | title, cards, inputs, chips, ghost/primary, sticky footer status |
+
+### Report family KPI strip (`.report-summary-grid`, `.mre-history-kpis`)
+
+One recipe serves both strips — the brand / balance summary grid and the provider report's transaction-history KPIs. Tiles are `.report-summary-card` / `.settlement-summary-card`.
+
+| Part | Light | Dark |
+|------|-------|------|
+| Tile | `#FFF8EB` · `1px solid #EADCC8` · radius `14px` · pad `16px` · `--bo-shadow` | `#383A46` · `1px solid rgba(255,255,255,.14)` |
+| Label (`small`) | `11.5px/800` uppercase `.06em` · `#57534E` | `#D4D4D8` |
+| Value (`strong`) | `22px/800` · `-.02em` · tabular-nums · `#18191C` | `#F5F5F4` |
+| Note (`span`) | `11px/600` · `#57534E` | `#D4D4D8` |
+
+Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no icon chip** — a read-out strip keeps amber on interaction, matching the merchant KPI chips (`.mpr-mini`, `.mas-kpi`). CSS: `main-report-charcoal-content.css`; the rest of the Report family is documented in `DESIGN.md` → Report family — migrated 2026-09-15.
+
 
 ---
 

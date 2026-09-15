@@ -195,6 +195,52 @@
       });
     });
 
+    // Currency is a merchant-level dimension. The report APIs can return rows for all
+    // merchants even when a MAIN report currency is selected, so use the merchant
+    // directory as the source of truth for which merchants belong to that currency.
+    // Also seed matching merchants with zero values so (for example) a USD merchant
+    // with no bets in the period still appears instead of showing MYR merchants.
+    const selectedCurrency = String(currency || 'MYR').toUpperCase();
+    const directoryById = new Map();
+    (merchantMeta || []).forEach((m) => {
+      const id = m.id ?? m.brandId ?? m.merchantId ?? '';
+      if (id === '' || id == null) return;
+      directoryById.set(String(id), m);
+    });
+
+    for (const [key] of [...grouped.entries()]) {
+      const m = directoryById.get(String(key));
+      if (!m) continue;
+      const merchantCurrency = String(
+        m.currency ?? m.currencyCode ?? m.primaryCurrency ?? m.baseCurrency ?? 'MYR'
+      ).toUpperCase();
+      if (merchantCurrency !== selectedCurrency) grouped.delete(key);
+    }
+
+    (merchantMeta || []).forEach((m) => {
+      const id = m.id ?? m.brandId ?? m.merchantId ?? '';
+      if (id === '' || id == null) return;
+      const merchantCurrency = String(
+        m.currency ?? m.currencyCode ?? m.primaryCurrency ?? m.baseCurrency ?? 'MYR'
+      ).toUpperCase();
+      if (merchantCurrency !== selectedCurrency) return;
+      const key = String(id);
+      if (grouped.has(key)) return;
+      grouped.set(key, {
+        id,
+        brandCode: m.code || m.brandCode || m.merchantCode || '',
+        brandName: m.name || m.brandName || m.merchantName || '',
+        totalBet: 0,
+        validBet: 0,
+        totalIn: 0,
+        totalOut: 0,
+        winLose: 0,
+        txns: 0,
+        providers: new Map(),
+        seed: m
+      });
+    });
+
     return [...grouped.values()].map((g, i) => {
       const m = meta.get(String(g.id)) || {};
       const a = acc.get(String(g.id)) || {};
