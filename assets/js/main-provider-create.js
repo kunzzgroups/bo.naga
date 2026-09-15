@@ -18,6 +18,30 @@
   const previewCurrency = document.getElementById('mpvPreviewCurrency');
   const previewRate = document.getElementById('mpvPreviewRate');
 
+  const params = new URLSearchParams(location.search);
+  const editMode = params.get('mode') === 'edit';
+  const editCode = String(params.get('providerCode') || '').toUpperCase();
+  async function api(path, options){
+    const base=String((window.API_CONFIG&&window.API_CONFIG.BASE_URL)||'').replace(/\/$/,'');
+    const r=await fetch(base+path,{...(options||{}),headers:{'Content-Type':'application/json',...BO_AUTH.authHeader(),...((options&&options.headers)||{})},cache:'no-store'});
+    const j=await r.json().catch(()=>({})); if(!r.ok||j.status==='error') throw Error(j.message||'Request failed'); return j.data??j;
+  }
+  async function loadEdit(){
+    if(!editMode||!editCode) return;
+    try{
+      const d=await api('/admin/main/provider-directory');
+      const rows=Array.isArray(d)?d:(d.rows||d.items||d.providers||[]);
+      const x=rows.find(r=>String(r.code||r.providerCode||'').toUpperCase()===editCode);
+      if(!x) throw Error('Provider not found');
+      codeEl.value=x.code||x.providerCode||editCode; codeEl.readOnly=true; nameEl.value=x.name||x.providerName||'';
+      if(categoryEl){ const wanted=String(x.providerType||'').toUpperCase(); if([...categoryEl.options].some(o=>o.value===wanted)) categoryEl.value=wanted; }
+      if(percentEl) percentEl.value=x.settlementCostPercent??0;
+      if(currencyEl && x.currency) currencyEl.value=String(x.currency).toUpperCase();
+      updatePreview(); setStatus('Editing '+(x.name||editCode)+'.','');
+      if(submitBtn) submitBtn.textContent='Save Changes';
+    }catch(e){ setStatus(e.message,'text-danger'); }
+  }
+
   const CATEGORY_LABELS = {
     SLOT: 'Slot',
     LIVE: 'Live',
@@ -97,6 +121,7 @@
   updateRemarkCount();
   updatePreview();
   populateCurrencies();
+  loadEdit();
 
   form && form.addEventListener('submit', e => {
     e.preventDefault();
@@ -130,15 +155,9 @@
     }
 
     if(submitBtn) submitBtn.disabled = true;
-    setStatus('Provider ready — API wiring comes next.', 'text-success');
-    window.setTimeout(() => {
-      if(submitBtn) submitBtn.disabled = false;
-      try{
-        sessionStorage.setItem('mpv_last_created', JSON.stringify({
-          code, name, category, percent, currency, remark, at: Date.now()
-        }));
-      }catch(err){}
-      location.href = 'main-provider-detail.html';
-    }, 500);
+    setStatus(editMode ? 'Saving provider...' : 'Creating provider...', '');
+    api('/admin/main/provider-directory',{method:'POST',body:JSON.stringify({code,name,providerType:category,settlementCostPercent:percent,settlementCostBasis:'HOUSE_WIN',currency,status:1,remark})})
+      .then(()=>{ setStatus(editMode?'Provider updated successfully.':'Provider created successfully.','text-success'); setTimeout(()=>location.href='main-provider-detail.html',350); })
+      .catch(err=>{ setStatus(err.message,'text-danger'); if(submitBtn) submitBtn.disabled=false; });
   });
 })();
