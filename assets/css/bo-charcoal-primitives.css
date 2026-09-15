@@ -828,7 +828,9 @@ body:not(#bo-charcoal-off).report-body.bo-charcoal .settlement-modal,
 body:not(#bo-charcoal-off).report-body.bo-charcoal .wallet-modal-overlay,
 body:not(#bo-charcoal-off).report-body.bo-charcoal .agent-modal-backdrop,
 body:not(#bo-charcoal-off).report-body.bo-charcoal .vip-modal,
-body:not(#bo-charcoal-off).report-body.bo-charcoal .sidebar-overlay{
+body:not(#bo-charcoal-off).report-body.bo-charcoal .bo-alert-backdrop,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .bo-alert-modal,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .sidebar-overlay,
   background:rgba(15,23,42,.55)!important;
   background-color:rgba(15,23,42,.55)!important;
 }
