@@ -152,14 +152,22 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-table th{
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-table td{
   color:#374151!important;border-right:0!important;border-bottom:1px solid #F0E6D8!important;
 }
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-table tbody tr:nth-child(even):not(.total) td{
-  background:transparent!important;
+/* Cell surface. `background:transparent` would let the panel show through, which is the same
+   cream — but only where nothing else paints the cell. A third-party stylesheet does paint
+   some of them (menu-management's rows measured pure white), and a transparent declaration
+   cannot win that. Naming the surface colour closes it for every listing at once. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-table tbody td,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .table-clean tbody td,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .menu-main-table tbody td,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .standard-data-table tbody td{
+  background:#FFF8EB!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-table tbody tr:nth-child(even):not(.total) td,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-table tr.total td{
+  background:#FFF3E0!important;color:#18191C!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-table tbody tr:hover td{
   background:#FFF1DC!important;
-}
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-table tr.total td{
-  background:#FFF3E0!important;color:#18191C!important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .table-wrap{
   background:#383A46!important;border:1px solid rgba(255,255,255,.14)!important;
@@ -172,14 +180,18 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-table th{
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-table td{
   color:#F5F5F4!important;border-right:0!important;border-bottom:1px solid rgba(255,255,255,.12)!important;
 }
-html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-table tbody tr:nth-child(even):not(.total) td{
-  background:transparent!important;
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-table tbody td,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .table-clean tbody td,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .menu-main-table tbody td,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .standard-data-table tbody td{
+  background:#383A46!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-table tbody tr:nth-child(even):not(.total) td,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-table tr.total td{
+  background:#2A2C36!important;color:#F5F5F4!important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-table tbody tr:hover td{
   background:rgba(255,255,255,.05)!important;
-}
-html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-table tr.total td{
-  background:#2A2C36!important;color:#F5F5F4!important;
 }
 body.report-body.bo-charcoal .report-table td.positive{color:#12B76A!important}
 body.report-body.bo-charcoal .report-table td.negative{color:#991B1B!important}
@@ -652,6 +664,108 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-table tbody td[c
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .table-clean tbody td[colspan],
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .standard-data-table tbody td[colspan]{
   background:#383A46!important;color:#D4D4D8!important;
+}
+
+/* ------------------------------------------- panel and control surfaces
+   Each page's own stylesheet names its panel differently — .main-mod-card, .settlement-panel,
+   .brand-detail-card, .detail-card, .provider-settlement-card — and every one of them is
+   `background:#fff`. Listing them once here is cheaper and more reviewable than a retint per
+   file, and it also catches the pages that ship no page CSS at all. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .main-mod-card,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .main-mod-kpi,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .settlement-panel,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .settlement-summary-card,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .settlement-summary-combined,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .brand-detail-card,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .detail-card,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .provider-settlement-card,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .provider-exec-menu,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .settlement-form-card,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .standard-filter-card,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .manage-card{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .main-mod-card,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .main-mod-kpi,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .settlement-panel,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .settlement-summary-card,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .settlement-summary-combined,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .brand-detail-card,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .detail-card,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .provider-settlement-card,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .provider-exec-menu,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .settlement-form-card,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .standard-filter-card,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .manage-card{
+  background:#383A46!important;border:1px solid rgba(255,255,255,.14)!important;
+}
+
+/* Icon-only controls and pagers: white squares on cream, in every page's own naming. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-ui-icon-button,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .main-mod-pager button,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .settlement-pager button,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .provider-page-btn,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .provider-menu-btn{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-ui-icon-button:hover,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .main-mod-pager button:hover,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .settlement-pager button:hover,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .provider-page-btn:hover,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .provider-menu-btn:hover{
+  background:#FFFCF7!important;border-color:#D97706!important;color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-ui-icon-button,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .main-mod-pager button,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .settlement-pager button,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .provider-page-btn,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .provider-menu-btn{
+  background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-ui-icon-button:hover,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .main-mod-pager button:hover,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .settlement-pager button:hover,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .provider-page-btn:hover,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .provider-menu-btn:hover{
+  border-color:rgba(245,158,11,.5)!important;color:#F59E0B!important;
+}
+/* The pager's active page keeps the locked amber 3D. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .main-mod-pager button.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .settlement-pager button.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .provider-page-btn.active{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border-color:#D97706!important;color:#FFFFFF!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .main-mod-pager button.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .settlement-pager button.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .provider-page-btn.active{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border-color:#F59E0B!important;color:#2A2C36!important;
+}
+
+/* The date-range trigger itself. bo-ui-standard.css reads var(--bo-surface, #fff) so the token
+   normally covers it, but a page-scoped sheet can still win on a page with no family CSS. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-trigger,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-trigger{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-trigger,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-trigger{
+  background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;color:#F5F5F4!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-icon,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-trigger > span:not(.ref-range-icon),
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-trigger > .bi-chevron-down,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-icon,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-text{
+  color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-icon,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-trigger > span:not(.ref-range-icon),
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-trigger > .bi-chevron-down,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-icon,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-text{
+  color:#F5F5F4!important;
 }
 
 /* ------------------------------------------- shell chrome the rescope does not carry

@@ -570,9 +570,24 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-cal-days button.is-
   background:rgba(245,158,11,.16)!important;color:#FFFFFF!important;
 }
 
-/* The .bo-range-* twin carries the same literals (#123B66, #21A6D7, #5061f5, #2080f0). */
+/* The .bo-range-* twin carries the same literals (#123B66, #21A6D7, #5061f5, #2080f0).
+   Its internals were missed on the first pass and are covered by name here: the head pickers
+   render white with a #d2dbea border and a #25324A glyph, the preset rail is #f8fafc, and an
+   out-of-month day is #cbd5e1 — all cool, all visible the moment the picker opens. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-presets{
+  background:#FFF8EB!important;border-right:1px solid #EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-cal-head button,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-cal-head select{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;color:#374151!important;
+  border-radius:8px!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-day.muted{
+  background:transparent!important;color:#57534E!important;
+}
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-pop{
-  background:#FFF8EB!important;border:1px solid #EADCC8!important;box-shadow:0 12px 30px rgba(60,48,32,.14)!important;
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;
+  box-shadow:0 12px 30px rgba(60,48,32,.14)!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-day.start,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-day.end{
@@ -581,7 +596,20 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-day.end{
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-day.in-range{
   background:rgba(217,119,6,.14)!important;color:#B45309!important;
 }
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-presets button:hover{color:#B45309!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-presets button:hover{
+  background:#F5EBDC!important;color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-presets{
+  background:#383A46!important;border-right:1px solid rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-cal-head button,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-cal-head select{
+  background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;color:#E7E5E4!important;
+  border-radius:8px!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-day.muted{
+  background:transparent!important;color:#A1A1AA!important;
+}
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-pop{
   background:#383A46!important;border:1px solid rgba(255,255,255,.14)!important;box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
 }
@@ -592,7 +620,9 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-day.end{
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-day.in-range{
   background:rgba(245,158,11,.18)!important;color:#FBBF24!important;
 }
-html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-presets button:hover{color:#FBBF24!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-presets button:hover{
+  background:rgba(255,255,255,.06)!important;color:#FBBF24!important;
+}
 
 /* ================================================================= 7. toasts
    New. Nine drivers each built their own; nothing was shared. This is the primitive they
