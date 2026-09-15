@@ -93,9 +93,9 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
 }
 
 /* --------------------------------------------------------------------------
-   1b. The four controls — #mpaActor, #mpaFrom, #mpaTo (filter row) + #mpaPageSize
-   (footer). Control well, never pure white. Overrides reports.css:1571-1580 (quoted
-   in the header) for both the idle field and the focus ring.
+   1b. The controls — #mpaActor (filter row), the .ref-* range picker trigger (1c) and
+   #mpaPageSize (footer). Control well, never pure white. Overrides reports.css:1571-1580
+   (quoted in the header) for both the idle field and the focus ring.
    -------------------------------------------------------------------------- */
 /* ---- Light ---- */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
@@ -170,60 +170,45 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
 }
 
 /* --------------------------------------------------------------------------
-   1c. Native date inputs — #mpaFrom / #mpaTo
-   This page has no .mad-filters and no design-system picker, so the two inputs stay
-   native (behaviour untouched) and only their calibration is themed here. They are
-   addressed by id on purpose: the control-well rule in 1b carries a three-:not()
-   chain that outranks a class-scoped date rule, so the id is what lets the date
-   field own its own padding, tabular figures and colour-scheme.
-   color-scheme is the load-bearing part: it keeps the native calendar panel and the
-   picker glyph legible on the cream well in light mode and on the charcoal well in
-   dark mode, so no filter() hacks are needed on the indicator.
+   1c. Date-range picker field — the family control (replaces the two native date inputs)
+   This page used to carry native `input[type=date]` fields. It now uses the same `.ref-*`
+   range picker as the other provider pages: the request window is still `from` / `to` on
+   /admin/main/provider-activity, but the control, its presets and the one-strip range
+   contract now match the family. The picker chrome lives in
+   main-provider-family-executive.css; only the field geometry belongs here.
    -------------------------------------------------------------------------- */
-/* ---- Light ---- */
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaFrom,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaTo{
-  color-scheme:light;
-  padding-right:8px!important;
-  font-variant-numeric:tabular-nums;
+body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mpa-date-field{
+  position:relative;
+  flex:0 0 auto;
+  width:260px!important;
+  min-width:260px!important;
+  max-width:260px!important;
+  margin:0!important;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaFrom::-webkit-datetime-edit,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaTo::-webkit-datetime-edit{
-  color:#18191C;
+body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mpa-date-field .ref-range-wrap,
+body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mpa-date-field .ref-range-trigger{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box;
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaFrom::-webkit-calendar-picker-indicator,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaTo::-webkit-calendar-picker-indicator{
-  opacity:.62;
-  filter:none;
-  cursor:pointer;
-  margin-left:4px;
+/* Desktop only: below 768px reports.css turns the picker into a fixed mobile sheet
+   with 12px side insets, and a page-level `left:0` would flatten that sheet to the
+   viewport edge. The anchor fix is only needed while the panel is absolutely
+   positioned next to its field. */
+@media (min-width:768px){
+  body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head .mpa-date-field .ref-range-picker{
+    left:0!important;
+    right:auto!important;
+  }
 }
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaFrom::-webkit-calendar-picker-indicator:hover,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaTo::-webkit-calendar-picker-indicator:hover{
-  opacity:1;
+/* The popover must escape the shell that clips the table — the same escape hatch the
+   page-size menu uses for .rounded-select-menu.show. */
+body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-panel:has(.mpa-date-field .ref-range-picker.show){
+  overflow:visible!important;
 }
-/* ---- Dark ---- */
-html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaFrom,
-html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaTo{
-  color-scheme:dark;
-  padding-right:8px!important;
-  font-variant-numeric:tabular-nums;
-}
-html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaFrom::-webkit-datetime-edit,
-html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaTo::-webkit-datetime-edit{
-  color:#F5F5F4;
-}
-html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaFrom::-webkit-calendar-picker-indicator,
-html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaTo::-webkit-calendar-picker-indicator{
-  opacity:.72;
-  filter:none;
-  cursor:pointer;
-  margin-left:4px;
-}
-html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaFrom::-webkit-calendar-picker-indicator:hover,
-html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head input[type="date"]#mpaTo::-webkit-calendar-picker-indicator:hover{
-  opacity:1;
-}
+
+
 
 /* Narrow phones: the row stacks and Refresh takes the full width. */
 @media(max-width:575.98px){
