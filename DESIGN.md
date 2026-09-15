@@ -387,7 +387,7 @@ Markup: `.ref-date-field > .ref-range-wrap > .ref-range-trigger` + `.ref-range-p
 | Head buttons (`.ref-cal-head button`, `.ref-head-pick`) | transparent · text `#374151` · the reference box carries a 1px transparent border | transparent · text `#E7E5E4` |
 | Month / year grid item **active** | **plain** — transparent · text `#374151` | `#F59E0B` · label white |
 | Week row `.ref-cal-week span` | `#71717A` · `11px/900` | `#A1A1AA` |
-| Day cell | transparent · `#57534E` · `12px/800` | transparent · `#A1A1AA` |
+| Day cell | transparent · `#374151` · `12px/800` | transparent · `#E7E5E4` |
 | Day cell, other month (`.muted`) | transparent · `#57534E` | `#A1A1AA` |
 | Day cell hover | wash `rgba(217,119,6,.16)` · text `#B45309` | wash `rgba(245,158,11,.16)` · text white |
 | In-range day (`.in-range`) | wash `rgba(217,119,6,.14)` · text `#B45309` | wash `rgba(245,158,11,.18)` · text `#FBBF24` |
