@@ -547,6 +547,11 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-report-body 
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-report-body .agent-expanded-game small{
   color:#57534E !important;
 }
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-report-body #agentReportMetrics.quick-stats .metric{
+  border:1px solid #EADCC8 !important;
+  background:#FFF8EB !important;
+  box-shadow:0 8px 22px rgba(217,119,6,.045) !important;
+}
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-report-body #agentReportMetrics.quick-stats .metric span{
   color:#57534E !important;
 }
@@ -1312,6 +1317,11 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-report-body .agent
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-report-body .agent-expanded-game small{
   color:#D4D4D8 !important;
 }
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-report-body #agentReportMetrics.quick-stats .metric{
+  border:1px solid rgba(255,255,255,.14) !important;
+  background:#383A46 !important;
+  box-shadow:0 8px 22px rgba(245,158,11,.045) !important;
+}
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-report-body #agentReportMetrics.quick-stats .metric span{
   color:#D4D4D8 !important;
 }
@@ -1853,6 +1863,9 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal[data-agent-detail=
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal[data-agent-detail="1"] .agent-info-row b{
   color:#18191C !important;
 }
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal[data-agent-detail="1"] #assignPlayersModal .modal-content{
+  box-shadow:0 24px 60px rgba(217,119,6,.22) !important;
+}
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal[data-agent-detail="1"] #assignPlayersModal .member-list{
   border:1px solid #EADCC8 !important;
 }
@@ -1934,6 +1947,9 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal[data-agent-detail="1"] .
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal[data-agent-detail="1"] .agent-info-row b{
   color:#E7E5E4 !important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal[data-agent-detail="1"] #assignPlayersModal .modal-content{
+  box-shadow:0 24px 60px rgba(245,158,11,.22) !important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal[data-agent-detail="1"] #assignPlayersModal .member-list{
   border:1px solid rgba(255,255,255,.14) !important;

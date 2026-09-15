@@ -45,7 +45,14 @@
                     <div class="field agent-header-date-source"><label>To</label><input id="agentDashTo" type="date">
                     </div><button class="agent-refresh-btn" id="agentPortalRefresh"><i
                             class="bi bi-arrow-clockwise"></i> Refresh</button><small id="agentLastUpdated"></small>
-                </div>
+                <div class="report-actions">
+    <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
+      <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
+      <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
+    </button>
+    <div id="agentTopProfile"></div>
+  </div>
+  </div>
             </header>
             <section class="report-content agent-dashboard-content">
                 <div class="agent-kpi-cards" id="agentHeroMetrics"></div>
