@@ -1,0 +1,1382 @@
+/* Report family — Charcoal + Amber (in-panel CONTENT)
+   Second half of the Report family's Charcoal + Amber layer. Its sibling
+   assets/css/main-report-charcoal.css carries the tokens and the shared shell chrome and
+   MUST load before this file: it flips the --bo-* pair on `body`, and most rules below
+   resolve through those tokens. This file only covers the in-panel content components the
+   shell file deliberately leaves alone.
+
+   Scope — every selector carries this exact prefix, one class-level above the legacy
+   scopes (body.main-report-exec-page, body.main-merchant-report-page,
+   body.main-win-lose-page) so these rules win on specificity, not on load order:
+     body.main-admin-detail-page:is([data-access-page="main_report"],
+       [data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],
+       [data-access-page="main_merchant_balance_report"],
+       [data-access-page="main_merchant_transaction_report"])
+   Covering: main-win-lose-report.html · main_provider_report.html · main_merchant_report.html
+             main-merchant-balance.html · main-merchant-transactions.html
+
+   Legacy sources overridden here (all of them Deep Navy Cyan or cool near-white):
+     main-win-lose-report.css          body.main-win-lose-page              685 lines
+     main-merchant-report-executive.css body.main-merchant-report-page        806 lines
+     main-provider-report-executive.css body.main-report-exec-page            809 lines
+   Every rule below states which legacy rule it replaces, its line and whether the legacy
+   declaration carried !important.
+
+   Contents:
+     1. Neutral merchant identity tile (.mmr-mark) + .mmr-* copy/figures
+     2. .wl-* — win-lose rows, expansion rows, nested provider sub-table, footer/pager
+     3. .settlement-* — summary tiles, form card, ledger, status/direction pills
+     4. .report-summary-grid / .mre-history-kpis — the two KPI strips and their tiles
+     5. .mre-section-pad / .mre-balance-scroll / .mre-history-scroll — panel wrappers
+     6. #settlementPaymentModal / #settlementHistoryModal — the two Bootstrap modals
+     7. Coverage notes — group members that carry no legacy colour
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. Merchant identity cell — .mmr-*
+   Legacy: main-win-lose-report.css:3-67 (body.main-win-lose-page; the tile colours and the
+   win/lose figures are pinned with !important) and main-merchant-report-executive.css:24-75
+   (body.main-merchant-report-page; no !important). Both files carried the retired palette:
+   the retired navy token fallback, a cyan tile fill, and the old green / red figure pair.
+   figures, `#657187` muted.
+   DESIGN.md → "Row avatar (2026-09-15 — merchant AND admin, unified)": the tile is a
+   neutral index marker, so the six per-index fills (.is-teal / .is-violet / .is-amber /
+   .is-rose / .is-slate + base) are DELETED. The base rule below carries one class-level more
+   than the legacy .is-* modifiers and the same !important, so no modifier tints anymore.
+   ========================================================================== */
+
+/* Tile fill — light #F5EBDC / #6b360c, dark #2A2C36 / #E7E5E4 (locked). Geometry
+   (40x40 round, 12px/800 initials) is left to the legacy rule; only the colours change. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-mark{
+  color:#6b360c!important;
+  background:#F5EBDC!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-mark{
+  color:#E7E5E4!important;
+  background:#2A2C36!important;
+}
+
+/* Name / code / tier — .mmr-merchant-copy b is plain text (13px/750), the code and the
+   tier line are muted. Light muted on cream is #57534E and dark is #D4D4D8 per DESIGN.md
+   ("Data tables" → muted/time), not the legacy #657187 pair. */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-merchant-copy b{
+  font-size:13px;
+  font-weight:750;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-merchant-copy b{
+  color:#18191C;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-merchant-copy b{
+  color:#F5F5F4;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-code,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-merchant-copy small{
+  color:#57534E;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-code,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-merchant-copy small{
+  color:#D4D4D8;
+}
+
+/* Numbers stacked in the numeric columns — muted sub-line, tabular numerals. */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-stack{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:2px;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-stack b{
+  font-variant-numeric:tabular-nums;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-stack small{
+  font-variant-numeric:tabular-nums;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-stack b{
+  color:#18191C;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-stack b{
+  color:#F5F5F4;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-stack small{
+  color:#57534E;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-stack small{
+  color:#D4D4D8;
+}
+
+/* Win/lose figures — the ONLY place the identity cell keeps colour, because the figure
+   encodes data. Money positive #B45309 (dark #F59E0B), danger #991B1B (dark #F87171),
+   flat muted. em is the percentage suffix in the merchant report; it carries the same
+   figure, so it follows the same state.
+   Replaces main-win-lose-report.css:43-45 (+600-606 for the total row) and
+   main-merchant-report-executive.css:70-75. */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-wl b{
+  font-weight:800;
+  font-variant-numeric:tabular-nums;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-wl.is-pos b,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-wl.is-pos em{
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-wl.is-pos b,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-wl.is-pos em{
+  color:#F59E0B!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-wl.is-neg b,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-wl.is-neg em{
+  color:#991B1B!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-wl.is-neg b,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-wl.is-neg em{
+  color:#F87171!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-wl.is-flat b,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-wl.is-flat em{
+  color:#71717A!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-wl.is-flat b,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mmr-wl.is-flat em{
+  color:#A1A1AA!important;
+}
+
+/* Win/lose total (tfoot) — the two legacy rules that were meant to colour it
+   (main-win-lose-report.css:600-606) target `.mre-total-row .mmr-wl b`, an element the
+   tfoot does not contain, so the figure kept the neutral total colour. The JS toggles
+   .is-pos / .is-neg on #wlTotalWinLose (main-win-lose-report.js:573-577); restoring the
+   semantic colour here keeps the total consistent with the rows above it. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #wlTotalWinLose.is-pos{
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #wlTotalWinLose.is-pos{
+  color:#F59E0B!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #wlTotalWinLose.is-neg{
+  color:#991B1B!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #wlTotalWinLose.is-neg{
+  color:#F87171!important;
+}
+
+
+/* ==========================================================================
+   2. Win/lose expansion rows — .wl-* (main-win-lose-report.html only)
+   Legacy: main-win-lose-report.css (body.main-win-lose-page), including its own
+   html[data-bo-theme="dark"] block that painted near-black navy surfaces and
+   rgba(33,166,215,...) / #7DD3F0 accents. Also main-provider-report-executive.css:781-802.
+   ========================================================================== */
+
+/* Sticky header — the legacy rule (L88-100) paints `var(--bo-surface,#fff)` and draws the
+   header line with an inset shadow; both tokens are re-pointed by the sibling, but the
+   dark line tokenises to .10 while the locked data-table spec is .14, so both modes are
+   pinned here explicitly. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-table thead th{
+  background:#FFF8EB!important;
+  box-shadow:inset 0 -1px 0 #EADCC8!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-table thead th{
+  background:#383A46!important;
+  box-shadow:inset 0 -1px 0 rgba(255,255,255,.14)!important;
+}
+
+/* Expand chevron — action icons: #57534E with an amber hover (dark #D4D4D8 / amber).
+   Replaces main-win-lose-report.css:238-260 (rgba(18,59,102,.06) hover wash) and 666-670. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-expand{
+  color:#57534E;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-expand:hover{
+  background:rgba(217,119,6,.10);
+  color:#B45309;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-row.is-open .wl-expand{
+  background:rgba(217,119,6,.14);
+  color:#B45309;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-expand:focus-visible{
+  outline:2px solid #D97706;
+  outline-offset:2px;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-expand{
+  color:#D4D4D8;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-expand:hover{
+  background:rgba(245,158,11,.14);
+  color:#F59E0B;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-row.is-open .wl-expand{
+  background:rgba(245,158,11,.18);
+  color:#FBBF24;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-expand:focus-visible{
+  outline:2px solid #F59E0B;
+  outline-offset:2px;
+}
+
+/* Open parent row + the detail row that follows it.
+   Replaces main-win-lose-report.css:262-280 (rgba(33,166,215,.05) wash and the
+   rgba(245,248,251,.55) cool near-white in the detail gradient) and 608-614. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-row.is-open{
+  background:rgba(217,119,6,.06);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-row.is-open{
+  background:rgba(245,158,11,.10);
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-detail-row > td{
+  background:linear-gradient(180deg,rgba(217,119,6,.05) 0%,rgba(255,241,220,.6) 28px,transparent 28px);
+  border-bottom:1px solid #EADCC8!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-detail-row > td{
+  background:linear-gradient(180deg,rgba(245,158,11,.10) 0%,rgba(44,46,56,.4) 28px,transparent 28px);
+  border-bottom:1px solid rgba(255,255,255,.12)!important;
+}
+
+/* Nested provider breakdown card. Replaces main-win-lose-report.css:282-301 (cool
+   #F7FBFE→#FFFFFF gradient, rgba(18,59,102,.1) border, navy-tinted shadow), 295-301
+   (the ::before rail, whose token gradient resolved to amber→charcoal) and 616-620 dark. */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-breakdown{
+  border-radius:14px;
+  overflow:hidden;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-breakdown{
+  background:#FFF8EB;
+  border:1px solid #EADCC8;
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 8px 24px -16px rgba(24,25,28,.22);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-breakdown{
+  background:#383A46;
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 10px 28px -18px rgba(0,0,0,.55);
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-breakdown::before{
+  background:linear-gradient(180deg,#F59E0B,#D97706);
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-breakdown-head{
+  background:#FFFCF7;
+  border-bottom:1px solid #EADCC8;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-breakdown-head{
+  background:#40424E;
+  border-bottom:1px solid rgba(255,255,255,.14);
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-breakdown-title h6{
+  color:#18191C;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-breakdown-title h6{
+  color:#F5F5F4;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-breakdown-title small,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-breakdown-empty{
+  color:#57534E;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-breakdown-title small,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-breakdown-empty{
+  color:#D4D4D8;
+}
+
+/* Icon tile in the breakdown head — amber wash + deep amber icon (dark: brighter amber).
+   Replaces main-win-lose-report.css:363-371 and its dark block 635-638
+   (a cyan wash with a navy label, and a cyan wash with a cyan label). */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-breakdown-icon{
+  background:rgba(217,119,6,.12);
+  color:#B45309;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-breakdown-icon{
+  background:rgba(245,158,11,.16);
+  color:#F59E0B;
+}
+
+/* "Total Consumed" pill. Replaces main-win-lose-report.css:391-421 (rgba(18,59,102,.06)
+   fill / rgba(18,59,102,.08) border) and the dark rule at 627-633. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-consumed{
+  background:#F5EBDC;
+  border:1px solid #EADCC8;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-consumed{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-consumed b{
+  color:#18191C;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-consumed b{
+  color:#F5F5F4;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-consumed em,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-consumed span{
+  color:#57534E;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-consumed em,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-consumed span{
+  color:#D4D4D8;
+}
+
+/* Copy-for-Excel / CSV micro buttons.
+   Legacy base (main-win-lose-report.css:322-340) was a solid navy fill
+   with a #FFFFFF label — in dark that token resolves to #F5F5F4, i.e. a near-white button
+   with white text. Both are secondary actions, so: filled Ghost 3D for the copy button,
+   a quiet outline for .is-ghost. Locked Ghost recipe (DESIGN.md → Buttons). */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-excel-btn{
+  height:32px;
+  border-radius:8px;
+  font-weight:700;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-excel-btn{
+  background:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%);
+  border:1px solid #DCC9A8;
+  color:#18191C;
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 1px 2px rgba(24,25,28,.06);
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-excel-btn:hover{
+  background:linear-gradient(180deg,#FFF8EB 0%,#F3E8D6 100%);
+  border-color:#E0D0B8;
+  color:#18191C;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-excel-btn.is-ghost{
+  background:transparent;
+  border:1px solid #EADCC8;
+  color:#57534E;
+  box-shadow:none;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-excel-btn.is-ghost:hover{
+  background:rgba(217,119,6,.10);
+  border-color:rgba(217,119,6,.45);
+  color:#B45309;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-excel-btn{
+  background:linear-gradient(180deg,#4A4C58 0%,#383A46 55%,#2C2E38 100%);
+  border:1px solid rgba(255,255,255,.12);
+  color:#F5F5F4;
+  box-shadow:none;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-excel-btn:hover{
+  background:linear-gradient(0deg,#4A4C58 0%,#383A46 100%);
+  border-color:rgba(255,255,255,.18);
+  color:#FFFFFF;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-excel-btn.is-ghost{
+  background:transparent;
+  border:1px solid rgba(255,255,255,.12);
+  color:#D4D4D8;
+  box-shadow:none;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-excel-btn.is-ghost:hover{
+  background:rgba(245,158,11,.14);
+  border-color:rgba(245,158,11,.45);
+  color:#F59E0B;
+}
+/* Copied confirmation — success fill, label on --bo-accent-on (white light / #2A2C36 dark). */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-excel-btn.is-copied{
+  background:#12B76A;
+  border-color:#12B76A;
+  color:#FFFFFF;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-excel-btn.is-copied{
+  background:#10B981;
+  border-color:#10B981;
+  color:#2A2C36;
+}
+
+/* Nested provider sub-table — header muted, cell #374151 / #F5F5F4, row divider
+   #F0E6D8 / rgba(255,255,255,.12). Replaces main-win-lose-report.css:436-492
+   (rgba(33,166,215,.05) hover, rgba(245,248,251,.55) zebra, rgba(226,231,240,.7) divider)
+   and its dark block 649-656. */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-subtable{
+  border-collapse:separate;
+  border-spacing:0;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-subtable thead th{
+  color:#57534E;
+  background:transparent;
+  border-bottom:1px solid #EADCC8;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-subtable thead th{
+  color:#D4D4D8;
+  background:transparent;
+  border-bottom:1px solid rgba(255,255,255,.14);
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-subtable tbody td{
+  color:#374151;
+  background:transparent;
+  border-bottom:1px solid #F0E6D8!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-subtable tbody td{
+  color:#F5F5F4;
+  background:transparent;
+  border-bottom:1px solid rgba(255,255,255,.12)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-subtable tbody td b{
+  color:#18191C;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-subtable tbody td b{
+  color:#F5F5F4;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-subtable tbody tr:hover td{
+  background:rgba(217,119,6,.06)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-subtable tbody tr:nth-child(even) td{
+  background:rgba(217,119,6,.045);
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-subtable tbody tr:nth-child(even):hover td{
+  background:rgba(217,119,6,.09)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-subtable tbody tr:hover td{
+  background:rgba(245,158,11,.12)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-subtable tbody tr:nth-child(even) td{
+  background:rgba(255,255,255,.03);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-subtable tbody tr:nth-child(even):hover td{
+  background:rgba(245,158,11,.12)!important;
+}
+
+/* Provider marker in the sub-table. Same neutral rule as .mmr-mark: the per-index fills
+   encoded row position, not data, so they are deleted. What stays is the status dot —
+   .is-on keeps semantic green, .is-off is muted (amber is the interaction colour here, so
+   it must not double as an "inactive" state). The dot ring takes the surface it sits on.
+   Replaces main-win-lose-report.css:501-533, 522-530 and the dark block 53-67, 662-664. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-prov-mark{
+  color:#6b360c!important;
+  background:#F5EBDC!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-prov-mark{
+  color:#E7E5E4!important;
+  background:#2A2C36!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-prov-mark::after{
+  border:1.5px solid #FFF8EB;
+  background:#A1A1AA;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-prov-mark::after{
+  border:1.5px solid #383A46;
+  background:#A1A1AA;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-prov-mark.is-on::after{
+  background:#12B76A;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-prov-mark.is-on::after{
+  background:#10B981;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-prov-mark.is-off::after{
+  background:#71717A;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-prov-mark.is-off::after{
+  background:#A1A1AA;
+}
+
+/* Provider name / code — name is emphasis, code is muted.
+   Replaces main-win-lose-report.css:542-557 (+628) and the legacy muted pair #657187. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-provider-copy b{
+  color:#18191C;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-provider-copy b{
+  color:#F5F5F4;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-pcode{
+  color:#57534E;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-pcode{
+  color:#D4D4D8;
+}
+
+/* Share cell + share bar. Track is the nested well (#F0E4D0 light / white .10 dark), the
+   fill is the amber gradient — the legacy fill ran amber→navy once the tokens were
+   re-pointed. Replaces main-win-lose-report.css:559-588 and the dark block 658-660. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-share-cell b{
+  color:#18191C;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-share-cell b{
+  color:#F5F5F4;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-share-track{
+  background:#F0E4D0;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-share-track{
+  background:rgba(255,255,255,.10);
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-share-track i{
+  background:linear-gradient(90deg,#F59E0B,#D97706);
+}
+
+/* Table footer bar — surface + cream top border (locked table-footer recipe). Hooked on
+   .wl-footer only (the shared footer class is the sibling's), so the win-lose pager row
+   cannot inherit a cool edge. Replaces main-win-lose-report.css:196-200 (no colours). */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-footer{
+  background:#FFF8EB;
+  border-top:1px solid #EADCC8;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-footer{
+  background:#383A46;
+  border-top:1px solid rgba(255,255,255,.14);
+}
+
+/* Rows-per-page control in that footer. The markup renders the native select
+   (`#wlPageSize.mad-select.wl-page-size-select`); when reports.js rewrites it into the
+   rounded-select shell the .rounded-select-* branch applies. Replaces
+   main-win-lose-report.css:132-161 and 180-218 — of which the dark option hover/active
+   (rgba(33,166,215,.18) / #7DD3F0) was the last cyan left in the control. */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .wl-page-size-select{
+  height:36px!important;
+  border-radius:8px!important;
+  font-size:13px!important;
+  font-weight:600!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .wl-page-size-select{
+  background-color:#FFF8EB!important;
+  border:1px solid #EADCC8!important;
+  color:#27272A!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .wl-page-size-select{
+  background-color:#2A2C36!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-btn{
+  background:#FFF8EB!important;
+  border:1px solid #EADCC8!important;
+  color:#27272A!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-btn.open,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-btn:focus{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;
+  outline:0!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-menu{
+  background:#FFF8EB!important;
+  border:1px solid #EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-option{
+  color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-option:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-option.active,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-option.is-active{
+  background:rgba(217,119,6,.12)!important;
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-btn{
+  background:#2A2C36!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-btn:focus{
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+  outline:0!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-menu{
+  background:#383A46!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-option{
+  color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-option.is-active{
+  background:rgba(245,158,11,.16)!important;
+  color:#F59E0B!important;
+}
+/* The select arrow of the native control follows the well. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-btn i{
+  color:#57534E;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-page-size .rounded-select-btn i{
+  color:#D4D4D8;
+}
+
+
+/* ==========================================================================
+   3. Settlement ledger + form card — .settlement-*
+   Used by the settlement panel of main_provider_report.html, main_merchant_report.html,
+   main-merchant-balance.html and main-merchant-transactions.html.
+   Legacy: main-provider-report-executive.css:362-437 (body.main-report-exec-page) and
+   main-merchant-report-executive.css:417-437 + 754-761. The merchant file's ledger block
+   is scoped [data-report-view="settlement"], an attribute none of these four pages carries,
+   so only its .settlement-payment-context rule reaches them.
+   ========================================================================== */
+
+/* Summary tiles — same KPI recipe as section 4 (one tile vocabulary for all strips).
+   Replaces main-provider-report-executive.css:378-392 (#F8FAFC cool fill) + dark 635-639. */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-summary-grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:12px;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-summary-card{
+  background:#FFF8EB;
+  border:1px solid #EADCC8;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-summary-card{
+  background:#383A46;
+  border:1px solid rgba(255,255,255,.14);
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-summary-card small,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-summary-card span{
+  color:#57534E;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-summary-card small,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-summary-card span{
+  color:#D4D4D8;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-summary-card strong{
+  color:#18191C;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-summary-card strong{
+  color:#F5F5F4;
+}
+
+/* Form card — light form-step of the layer ladder (#FFFCF7 lift + #DCC9A8 form border),
+   not the cool #FBFCFE the legacy rule shipped. Replaces
+   main-provider-report-executive.css:393-395 + dark 635-639. */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-card{
+  border-radius:14px;
+  padding:16px;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-card{
+  background:#FFFCF7;
+  border:1px solid #DCC9A8;
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 8px 24px -18px rgba(24,25,28,.28);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-card{
+  background:#383A46;
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:none;
+}
+
+/* The form itself. Nothing in the legacy files painted these controls, so Bootstrap's
+   .form-control default (pure white) showed through — light chrome is cream only.
+   Fields follow DESIGN.md → Create / Edit Admin: well #F5EBDC · border #DCC9A8 ·
+   placeholder #78716C · amber focus (dark well #2A2C36 · border white .12). */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1.5fr 1fr 1fr 2fr;
+  gap:12px;
+  align-items:end;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid label,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-party-field label,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-note-field label{
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid label,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-party-field label,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-note-field label{
+  color:#27272A;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid label,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-party-field label,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-note-field label{
+  color:#E7E5E4;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid .form-control,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid .form-select{
+  height:42px!important;
+  border-radius:8px!important;
+  font-size:13.5px!important;
+  font-weight:500!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid .form-control,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid .form-select{
+  background-color:#F5EBDC!important;
+  border:1px solid #DCC9A8!important;
+  color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid .form-control,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid .form-select{
+  background-color:#2A2C36!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid .form-control::placeholder,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid .form-select::placeholder{
+  color:#78716C!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid .form-control::placeholder,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid .form-select::placeholder{
+  color:#A1A1AA!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid .form-control:focus,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid .form-select:focus{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;
+  outline:0!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid .form-control:focus,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid .form-select:focus{
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+  outline:0!important;
+}
+/* A locked select (the merchant report pins Counterparty Type to Merchant). */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid .form-select:disabled{
+  background-color:#EDE4D4!important;
+  border:1px solid #DCC9A8!important;
+  color:#57534E!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-form-grid .form-select:disabled{
+  background-color:rgba(255,255,255,.06)!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#A1A1AA!important;
+}
+
+/* Ledger tools / date field — present on main-provider-credentials.html, which is outside
+   this family (no data-access-page in the scope list). Kept for the geometry only: the
+   date trigger's colours belong to the shared date-range picker layer of the sibling file.
+   Replaces main-merchant-report-executive.css:217-246 (that block is scoped
+   [data-report-view="settlement"] and cannot match these pages). */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-ledger-tools,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-ledger-tools-end{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  flex:0 1 auto;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-date-field{
+  margin:0;
+  min-width:280px;
+}
+
+/* Ledger head — section head: title + help on the left, Refresh ghost on the right,
+   hairline between head and table (DESIGN.md → section head bottom hairline #EADCC8).
+   Replaces main-provider-report-executive.css:403-407 (--bo-muted → #57534E / #D4D4D8). */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-ledger-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding-bottom:10px;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-ledger-head h6{
+  margin:0;
+  font-weight:800;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-ledger-head{
+  border-bottom:1px solid #EADCC8;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-ledger-head h6{
+  color:#18191C;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-ledger-head small{
+  color:#57534E;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-ledger-head{
+  border-bottom:1px solid rgba(255,255,255,.14);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-ledger-head h6{
+  color:#F5F5F4;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-ledger-head small{
+  color:#D4D4D8;
+}
+
+/* Ledger table — house data-table treatment (DESIGN.md → Data tables). Replaces the
+   token-resolution these cells inherited from `.mad-table` so the ledger reads identical to
+   the merchant/admin tables: header #3F3F46/700, cells #374151, dividers #F0E6D8. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-table thead th{
+  color:#3F3F46!important;
+  font-weight:700!important;
+  border-bottom:1px solid #EADCC8!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-table thead th{
+  color:#E7E5E4!important;
+  font-weight:700!important;
+  border-bottom:1px solid rgba(255,255,255,.14)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-table tbody td{
+  color:#374151;
+  border-bottom:1px solid #F0E6D8;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-table tbody td{
+  color:#F5F5F4;
+  border-bottom:1px solid rgba(255,255,255,.12);
+}
+/* Counterparty type line (`<small class="d-block text-muted">`) — Bootstrap's .text-muted
+   is !important, so this needs !important to keep the cream-safe #57534E. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-table tbody td small{
+  color:#57534E!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-table tbody td small{
+  color:#D4D4D8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-table tbody td b{
+  color:#18191C;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-table tbody td b{
+  color:#F5F5F4;
+}
+
+/* Ledger row actions. Legacy .btn-mini-settle (main-provider-report-executive.css:409-416)
+   was the cyan chip rgba(33,166,215,.45)/rgba(33,166,215,.08); .danger-soft (:418) was the
+   old amber pastel #fffaf0/#fed7aa. Now: Ghost micro for the plain actions, amber wash for
+   the caution one — amber is the interaction colour, red is reserved for danger. */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-actions{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  flex-wrap:nowrap;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-actions .btn-mini-action,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-actions .btn-mini-settle{
+  border-radius:8px;
+  font-weight:700;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-actions .btn-mini-action,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-actions .btn-mini-settle{
+  background:linear-gradient(180deg,#FFF8EB 0%,#F3E8D6 100%);
+  border:1px solid #EADCC8;
+  color:#27272A;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-actions .btn-mini-action:hover:not(:disabled),
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-actions .btn-mini-settle:hover:not(:disabled){
+  background:linear-gradient(0deg,#FFF8EB 0%,#F3E8D6 100%);
+  border-color:#E0D0B8;
+  color:#18191C;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-actions .btn-mini-action.danger-soft{
+  background:rgba(217,119,6,.12);
+  border:1px solid rgba(217,119,6,.35);
+  color:#B45309;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-actions .btn-mini-action.danger-soft:hover:not(:disabled){
+  background:rgba(217,119,6,.20);
+  border-color:rgba(217,119,6,.50);
+  color:#B45309;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-actions .btn-mini-action,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-actions .btn-mini-settle{
+  background:linear-gradient(180deg,#4A4C58 0%,#383A46 55%,#2C2E38 100%);
+  border:1px solid rgba(255,255,255,.12);
+  color:#F5F5F4;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-actions .btn-mini-action:hover:not(:disabled),
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-actions .btn-mini-settle:hover:not(:disabled){
+  background:linear-gradient(0deg,#4A4C58 0%,#383A46 100%);
+  border-color:rgba(255,255,255,.18);
+  color:#FFFFFF;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-actions .btn-mini-action.danger-soft{
+  background:rgba(245,158,11,.16);
+  border:1px solid rgba(245,158,11,.45);
+  color:#F59E0B;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-actions .btn-mini-action.danger-soft:hover:not(:disabled){
+  background:rgba(245,158,11,.24);
+  border-color:rgba(245,158,11,.60);
+  color:#FBBF24;
+}
+
+/* Ledger status pills — OPEN / PARTIAL / SETTLED / CARRIED (+ danger from
+   main-provider-activity.js). Legacy (main-provider-report-executive.css:420-430) used the
+   cool blues #eff6ff/#1d4ed8 and #f0f9ff/#0369a1. Now the house pill treatment:
+   green wash for settled, amber wash for the "needs attention" state, neutral well for the
+   neutral states, red wash for failure. Metrics (999px, 10px/900) are kept. */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-status,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .direction-chip{
+  border-radius:999px;
+  padding:4px 8px;
+  font-weight:900;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-status.success,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .direction-chip.collect{
+  background:#D1FAE5;
+  color:#047857;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-status.success,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .direction-chip.collect{
+  background:rgba(16,185,129,.14);
+  color:#6EE7B7;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-status.warning{
+  background:rgba(217,119,6,.12);
+  color:#B45309;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-status.warning{
+  background:rgba(245,158,11,.16);
+  color:#F59E0B;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-status.primary,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-status.info{
+  background:#F5EBDC;
+  color:#57534E;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-status.primary,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-status.info{
+  background:rgba(255,255,255,.08);
+  color:#D4D4D8;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-status.danger,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .direction-chip.pay{
+  background:#FEE2E2;
+  color:#B91C1C;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-status.danger,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .direction-chip.pay{
+  background:rgba(239,68,68,.14);
+  color:#FCA5A5;
+}
+
+/* Payment context well in the Record Payment modal — nested well, not the legacy cool
+   #f8fafc (main-provider-report-executive.css:431-434) nor the canvas tint the merchant
+   file used (main-merchant-report-executive.css:433-442 + dark 754-757). */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-payment-context{
+  border-radius:10px;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-payment-context{
+  background:#F5EBDC;
+  border:1px solid #EADCC8;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-payment-context{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+}
+
+
+/* ==========================================================================
+   4. KPI strips — .report-summary-grid (brand panel + balance page) and
+      .mre-history-kpis (transaction-history panel)
+   Not documented in .interface-design/system.md before this file; the treatment below is
+   the KPI-tile convention of the migrated merchant pages (main-merchant-detail-executive.css
+   → .mpr-mini / .mas-kpi: surface cream + locked border + warm lift, no per-tile accent),
+   re-stated as one recipe for both tile classes.
+   Legacy: main-provider-report-executive.css:362-377 (.report-summary-grid /
+   .report-summary-card), 719 + 773 (.mre-history-kpis) and their dark rule 635-639.
+   ========================================================================== */
+
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .report-summary-grid,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-history-kpis{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:12px;
+}
+/* One tile recipe for .report-summary-card and .settlement-summary-card (section 3):
+   radius 14 (one step inside the 16px panel), padding 16. */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .report-summary-grid > .report-summary-card,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-history-kpis > .report-summary-card,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .settlement-summary-card{
+  border-radius:14px;
+  padding:16px;
+  min-width:0;
+  box-shadow:var(--bo-shadow);
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .report-summary-grid > .report-summary-card small,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-history-kpis > .report-summary-card small{
+  display:block;
+  font-size:11.5px;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .report-summary-grid > .report-summary-card strong,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-history-kpis > .report-summary-card strong{
+  display:block;
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-.02em;
+  line-height:1.15;
+  font-variant-numeric:tabular-nums;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .report-summary-grid > .report-summary-card span,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-history-kpis > .report-summary-card span{
+  display:block;
+  font-size:11px;
+  font-weight:600;
+  margin-top:5px;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .report-summary-grid > .report-summary-card,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-history-kpis > .report-summary-card{
+  background:#FFF8EB;
+  border:1px solid #EADCC8;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .report-summary-grid > .report-summary-card,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-history-kpis > .report-summary-card{
+  background:#383A46;
+  border:1px solid rgba(255,255,255,.14);
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .report-summary-grid > .report-summary-card small,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .report-summary-grid > .report-summary-card span,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-history-kpis > .report-summary-card small,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-history-kpis > .report-summary-card span{
+  color:#57534E;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .report-summary-grid > .report-summary-card small,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .report-summary-grid > .report-summary-card span,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-history-kpis > .report-summary-card small,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-history-kpis > .report-summary-card span{
+  color:#D4D4D8;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .report-summary-grid > .report-summary-card strong,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-history-kpis > .report-summary-card strong{
+  color:#18191C;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .report-summary-grid > .report-summary-card strong,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-history-kpis > .report-summary-card strong{
+  color:#F5F5F4;
+}
+
+
+/* ==========================================================================
+   5. Panel wrappers — .mre-section-pad / .mre-balance-scroll / .mre-history-scroll
+   Geometry only in the legacy files (main-provider-report-executive.css:343-347, 753-763);
+   the point of these rules is that the wrappers must never paint a second layer over the
+   panel surface and must never hand the sticky table head a cool background in dark.
+   ========================================================================== */
+
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-section-pad{
+  background:transparent;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-balance-scroll,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-history-scroll,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-scroll-table{
+  background:#FFF8EB;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-balance-scroll,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mre-history-scroll,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .wl-scroll-table{
+  background:#383A46;
+}
+
+
+/* ==========================================================================
+   6. The two Bootstrap modals — #settlementPaymentModal / #settlementHistoryModal
+   Both are rendered under <body>, so they sit inside the scope prefix but outside the
+   report shell. Every rule is scoped to one of the two IDs: Bootstrap's own modal chrome,
+   .btn-primary, .btn-light and .table are never touched globally.
+   Legacy: no Deep Navy Cyan rule painted these (the merchant file styles its own
+   .msr-*-modal-panel shell, main-merchant-report-executive.css:417-432); they rendered in
+   Bootstrap's white/blue defaults.
+   ========================================================================== */
+
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-content,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-content{
+  border-radius:16px;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-content,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-content{
+  background:#FFF8EB;
+  border:1px solid #EADCC8;
+  color:#18191C;
+  box-shadow:0 24px 60px -24px rgba(24,25,28,.45);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-content,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-content{
+  background:#383A46;
+  border:1px solid rgba(255,255,255,.10);
+  color:#F5F5F4;
+  box-shadow:0 24px 60px rgba(0,0,0,.5);
+}
+
+/* Header / title */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-title,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-title{
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:-.01em;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-header,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-header{
+  background:#FFF8EB;
+  border-bottom:1px solid #EADCC8;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-title,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-title{
+  color:#18191C;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-header,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-header{
+  background:#383A46;
+  border-bottom:1px solid rgba(255,255,255,.12);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-title,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-title{
+  color:#F5F5F4;
+}
+
+/* Close button — house well (#F5EBDC · border #EADCC8 · #57534E icon; dark charcoal well,
+   light icon). Bootstrap hard-codes the glyph colour inside --bs-btn-close-bg, so the dark
+   variant swaps that custom property for a light-stroke copy; the light one keeps the
+   default black stroke on the cream well. */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .btn-close,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .btn-close{
+  width:32px;
+  height:32px;
+  padding:0;
+  box-sizing:border-box;
+  border-radius:8px;
+  background-size:12px 12px;
+  opacity:1;
+  --bs-btn-close-opacity:1;
+  --bs-btn-close-hover-opacity:1;
+  --bs-btn-close-focus-opacity:1;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .btn-close,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .btn-close{
+  background-color:#F5EBDC;
+  border:1px solid #EADCC8;
+  --bs-btn-close-focus-shadow:0 0 0 3px rgba(217,119,6,.18);
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .btn-close:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .btn-close:hover{
+  background-color:#F0E4D0;
+  border-color:#D97706;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .btn-close,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .btn-close{
+  background-color:#2A2C36;
+  border:1px solid rgba(255,255,255,.12);
+  --bs-btn-close-bg:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23F5F5F4'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e");
+  --bs-btn-close-focus-shadow:0 0 0 3px rgba(245,158,11,.18);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .btn-close:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .btn-close:hover{
+  background-color:#32343E;
+  border-color:#F59E0B;
+}
+
+/* Body fields (payment amount / date / reference / remark) — cream control wells, never
+   Bootstrap's white, with the amber focus ring. Locked field spec. */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-body .form-control{
+  height:42px!important;
+  border-radius:8px!important;
+  font-size:13.5px!important;
+  font-weight:500!important;
+  box-shadow:none!important;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-body textarea.form-control{
+  height:auto!important;
+  min-height:88px!important;
+  resize:vertical;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-body .form-label{
+  font-size:11.5px!important;
+  font-weight:800!important;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-body .form-control{
+  background-color:#F5EBDC!important;
+  border:1px solid #DCC9A8!important;
+  color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-body .form-label{
+  color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-body .form-control::placeholder{
+  color:#78716C!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-body .form-control:focus{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-body .form-control{
+  background-color:#2A2C36!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-body .form-label{
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-body .form-control::placeholder{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-body .form-control:focus{
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+
+/* Footer — locked modal buttons: 40px, radius 8, weight 700. Primary = amber 3D
+   (white label light / #2A2C36 dark), secondary .btn-light = Ghost recipe. Bootstrap's
+   blue .btn-primary and grey .btn-light are replaced outright, hover/active included. */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer{
+  gap:8px;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn{
+  height:40px;
+  min-height:40px;
+  padding:0 16px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  transition:transform .14s ease,background .14s ease,border-color .14s ease,color .14s ease,box-shadow .14s ease;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-primary,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-primary{
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%);
+  box-shadow:0 1px 0 rgba(255,255,255,.35) inset,0 4px 12px -6px rgba(217,119,6,.55);
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-primary:hover,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-primary:hover{
+  background-image:linear-gradient(0deg,#FCD34D 0%,#FBBF24 45%,#F59E0B 78%,#EA8608 100%);
+  transform:translateY(-1px);
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-primary:active,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-primary:active{
+  background-image:linear-gradient(180deg,#F59E0B 0%,#EA8608 100%);
+  transform:translateY(1px);
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-primary,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-primary{
+  background-color:#F59E0B;
+  border:1px solid #E8901A;
+  color:#FFFFFF;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-primary:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-primary:hover{
+  border-color:#F59E0B;
+  color:#FFFFFF;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-primary,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-primary{
+  background-color:#F59E0B;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%);
+  border:1px solid #F59E0B;
+  color:#2A2C36;
+  box-shadow:0 1px 0 rgba(255,255,255,.28) inset,0 4px 14px -6px rgba(245,158,11,.55);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-primary:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-primary:hover{
+  background-image:linear-gradient(0deg,#FDE68A 0%,#FBBF24 45%,#F59E0B 100%);
+  border-color:#FBBF24;
+  color:#2A2C36;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-primary:active,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-primary:active{
+  background-image:linear-gradient(180deg,#F59E0B 0%,#D97706 100%);
+}
+/* Ghost (Cancel). */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-light,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-light{
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%);
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 1px 2px rgba(24,25,28,.06);
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-light:hover,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-light:hover{
+  background-image:linear-gradient(0deg,#FFF8EB 0%,#F3E8D6 100%);
+  transform:translateY(-1px);
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-light:active,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-light:active{
+  background-image:linear-gradient(180deg,#FFF1DC 0%,#EADCC8 100%);
+  transform:translateY(1px);
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-light,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-light{
+  background-color:#F5EBDC;
+  border:1px solid #DCC9A8;
+  color:#18191C;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-light:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-light:hover{
+  border-color:#E0D0B8;
+  color:#18191C;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-light,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-light{
+  background-color:#383A46;
+  background-image:linear-gradient(180deg,#4A4C58 0%,#383A46 55%,#2C2E38 100%);
+  border:1px solid rgba(255,255,255,.12);
+  color:#F5F5F4;
+  box-shadow:none;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-light:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-light:hover{
+  background-image:linear-gradient(0deg,#4A4C58 0%,#383A46 100%);
+  border-color:rgba(255,255,255,.18);
+  color:#FFFFFF;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-primary:focus-visible,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-light:focus-visible,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-primary:focus-visible,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-light:focus-visible{
+  outline:2px solid #D97706;
+  outline-offset:2px;
+  box-shadow:none;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-primary:focus-visible,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementPaymentModal .modal-footer .btn-light:focus-visible,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-primary:focus-visible,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .modal-footer .btn-light:focus-visible{
+  outline:2px solid #F59E0B;
+  outline-offset:2px;
+  box-shadow:none;
+}
+
+/* Payment-history table inside the modal — house data-table treatment (header #3F3F46/700,
+   cells #374151, dividers #F0E6D8; dark #E7E5E4 / #F5F5F4 / white .12). */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .table{
+  --bs-table-bg:#FFF8EB;
+  --bs-table-color:#374151;
+  --bs-table-border-color:#F0E6D8;
+  --bs-table-hover-bg:#FFF1DC;
+  --bs-table-hover-color:#18191C;
+  background-color:#FFF8EB;
+  color:#374151;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .table thead th{
+  color:#3F3F46!important;
+  font-weight:700!important;
+  background-color:#FFF8EB;
+  border-bottom:1px solid #EADCC8;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .table tbody td{
+  color:#374151;
+  background-color:#FFF8EB;
+  border-bottom:1px solid #F0E6D8;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .table{
+  --bs-table-bg:#383A46;
+  --bs-table-color:#F5F5F4;
+  --bs-table-border-color:rgba(255,255,255,.12);
+  --bs-table-hover-bg:#40424E;
+  --bs-table-hover-color:#F5F5F4;
+  background-color:#383A46;
+  color:#F5F5F4;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .table thead th{
+  color:#E7E5E4!important;
+  font-weight:700!important;
+  background-color:#383A46;
+  border-bottom:1px solid rgba(255,255,255,.14);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) #settlementHistoryModal .table tbody td{
+  color:#F5F5F4;
+  background-color:#383A46;
+  border-bottom:1px solid rgba(255,255,255,.12);
+}
+
+
+/* ==========================================================================
+   7. Coverage notes — group members reviewed and left alone
+   These classes belong to the groups above but ship no hardcoded colour in any legacy
+   file, so no rule was written for them; their geometry is unchanged:
+
+     .mmr-merchant, .wl-merchant, .wl-provider   flex rows (gaps / min-width)
+     .wl-breakdown-scroll, .wl-breakdown-actions, .wl-col-prov, .wl-col-share
+     .settlement-form-actions                    right-aligned action row; the CTA inside it
+                                                 is .mad-btn-primary, which is the sibling's
+     .settlement-party-field, .settlement-note-field
+                                                 grid placement only — their labels are
+                                                 covered by the label rule in section 3
+     .mre-section-pad                            padding / flex / overflow (rule added here
+                                                 only for the transparent background)
+
+   Left to the sibling file on purpose (classes it owns):
+     .mre-scroll-table, .mre-table-footer, .mre-page-size-label, .mre-table, .mre-num,
+     .mad-pill-count (.is-danger-count / .is-success-count / .is-warn-count),
+     .mad-btn-primary (settlement Submit), .mad-pager, .mad-footer-info, .mad-icon-btn,
+     .mad-table header/cell defaults, .msr-* (payment-context copy), and the modal backdrop
+     (.modal-backdrop cannot be ID-scoped — it is a sibling of .modal, not a descendant).
+   ========================================================================== */
