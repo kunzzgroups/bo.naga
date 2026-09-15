@@ -33,8 +33,28 @@ function providerNameById(id,fallback=''){const m=providerDirectory.find(x=>Stri
 
 async function ensureDirectory(){
   if(providerDirectory.length) return;
-  const d=await api('/admin/providers').catch(()=>api('/admin/main/providers').catch(()=>[]));
+  const d=await api('/admin/main/provider-directory');
   providerDirectory=Array.isArray(d)?d:(d.rows||d.items||[]);
+}
+
+function directoryRows(raw){return Array.isArray(raw)?raw:(raw?.rows||raw?.items||raw?.providers||[])}
+function providerCode(x){return String(x?.code??x?.providerCode??x?.id??'')}
+function providerDisplay(x){return String(x?.name??x?.providerName??x?.code??x?.providerCode??'Provider')}
+function providerCurrency(x){return String(x?.currency||'MYR').toUpperCase()}
+function fillProviderSettlementProviders(){
+  const sel=$('providerSettlementProvider');if(!sel)return;
+  const rows=directoryRows(providerDirectory);
+  sel.innerHTML='<option value="">Select Provider</option>'+rows.map(x=>`<option value="${esc(providerCode(x))}" data-name="${esc(providerDisplay(x))}" data-currency="${esc(providerCurrency(x))}">${esc(providerDisplay(x))} (${esc(providerCode(x))})</option>`).join('');
+}
+function syncProviderSettlementCurrency(){const o=$('providerSettlementProvider')?.selectedOptions?.[0],u=$('providerSettlementCreateUnit');if(u)u.textContent=o?.dataset?.currency||'MYR'}
+async function openProviderSettlementCreate(){
+  try{await ensureDirectory();fillProviderSettlementProviders();if($('providerSettlementCreateMonth'))$('providerSettlementCreateMonth').value=$('settlementMonth')?.value||today().slice(0,7);if($('providerSettlementCreateAmount'))$('providerSettlementCreateAmount').value='';if($('providerSettlementCreateNote'))$('providerSettlementCreateNote').value='';syncProviderSettlementCurrency();openMsrModal('providerSettlementCreateModal')}catch(e){alert(e.message)}
+}
+async function createProviderSettlement(e){
+  e.preventDefault();const sel=$('providerSettlementProvider'),o=sel?.selectedOptions?.[0],amount=Number($('providerSettlementCreateAmount')?.value||0),month=$('providerSettlementCreateMonth')?.value,btn=$('providerSettlementCreateSave');
+  if(!o?.value){alert('Please select a provider');return}if(!month){alert('Please select a settlement month');return}if(!(amount>0)){alert('Amount due must be greater than 0');return}
+  if(btn)btn.disabled=true;
+  try{await api('/admin/main/settlements',{method:'POST',body:{month,counterpartyType:'PROVIDER',counterpartyKey:o.value,counterpartyName:o.dataset.name||o.textContent,direction:$('providerSettlementDirection')?.value||'COLLECT',amount,note:$('providerSettlementCreateNote')?.value||'',currency:o.dataset.currency||'MYR'}});closeMsrModal('providerSettlementCreateModal');if($('settlementMonth'))$('settlementMonth').value=month;await loadSettlements()}catch(err){alert(err.message)}finally{if(btn)btn.disabled=false}
 }
 
 function updateSyncLabel(){
@@ -274,6 +294,11 @@ function bind(){
   $('reportExport')?.addEventListener('click',exportCsv);
   $('reportSyncLabel')?.addEventListener('click',loadSettlements);
   $('settlementPaymentForm')?.addEventListener('submit',savePayment);
+  $('providerSettlementAdd')?.addEventListener('click',openProviderSettlementCreate);
+  $('providerSettlementCreateForm')?.addEventListener('submit',createProviderSettlement);
+  $('providerSettlementProvider')?.addEventListener('change',syncProviderSettlementCurrency);
+  document.querySelectorAll('[data-provider-settlement-create-close]').forEach(b=>b.addEventListener('click',()=>closeMsrModal('providerSettlementCreateModal')));
+  $('providerSettlementCreateModal')?.addEventListener('click',e=>{if(e.target===$('providerSettlementCreateModal'))closeMsrModal('providerSettlementCreateModal')});
   document.querySelectorAll('[data-msr-payment-close]').forEach(b=>b.addEventListener('click',()=>closeMsrModal('settlementPaymentModal')));
   document.querySelectorAll('[data-msr-history-close]').forEach(b=>b.addEventListener('click',()=>closeMsrModal('settlementHistoryModal')));
   $('settlementPaymentModal')?.addEventListener('click',e=>{if(e.target===$('settlementPaymentModal'))closeMsrModal('settlementPaymentModal')});
