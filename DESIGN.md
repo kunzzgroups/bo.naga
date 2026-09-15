@@ -371,13 +371,15 @@ System UI stack. Hierarchy via weight + color. Sidebar L1 = `800`. Tabular nums 
 
 ### Date-range picker (every family — unified 2026-09-15)
 
-The `.ref-range-*` / `.ref-cal-*` picker is one component with one look, wherever it is opened. **Reference: `main-merchant-settlement.html`** — that is the rendering the rest was measured against, and the values below are what it computes. `main-dashboard-executive.css` and `main-report-charcoal.css` carry the same rules for their scopes — change one, change the other.
+The `.ref-range-*` / `.ref-cal-*` picker is one component with one look, wherever it is opened. **Reference: `main-merchant-profit.html`** — that is the rendering the rest was measured against, and the values below are what it computes. `main-dashboard-executive.css` and `main-report-charcoal.css` carry the same rules for their scopes — change one, change the other.
+
+Two known deviations on other pages, both from page-scoped rules rather than this contract: `main-merchant-settlement.html` paints the **active preset as a wash** (`rgba(217,119,6,.16)` / `rgba(245,158,11,.2)`) instead of the solid fill below, and the profit page's **dark** active preset labels itself white where the locked `accent-on` token is `#2A2C36`. Both are one-rule changes if the family should be brought fully into line — the Dashboard and the report pages follow the table.
 
 | Part | Light | Dark |
 |------|-------|------|
 | Panel `.ref-range-picker` | `--bo-surface` `#FFF8EB` · border `--bo-border` `#EADCC8` · radius `12px` · warm shadow `0 12px 30px rgba(60,48,32,.14)` | `#383A46` · border `rgba(255,255,255,.14)` · shadow `0 16px 38px rgba(0,0,0,.4)` |
 | Preset rail `.ref-range-presets` | `--bo-surface` · right border `#EADCC8` | `#383A46` · right border `rgba(255,255,255,.14)` |
-| Preset active | **wash** `rgba(217,119,6,.16)` · label `#B45309` | wash `rgba(245,158,11,.2)` · label `#FBBF24` |
+| Preset active | **solid** `#D97706` · label white | solid `#F59E0B` · label `#2A2C36` |
 | Head / month / year buttons | transparent · text `#374151` | transparent · text `#E7E5E4` |
 | Week header | `#71717A` | `#A1A1AA` |
 | Day cell | transparent · `#374151` | transparent · `#E7E5E4` |

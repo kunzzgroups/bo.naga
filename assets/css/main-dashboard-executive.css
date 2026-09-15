@@ -1481,6 +1481,7 @@ body.main-dashboard-page .ref-cal-days button.selected{
   border-radius:8px!important;
 }
 body.main-dashboard-page .ref-cal-week span{color:#71717A!important;}
+html:not([data-bo-theme="dark"]) body.main-dashboard-page .ref-range-presets button:not(.active){color:#374151!important;}
 html:not([data-bo-theme="dark"]) body.main-dashboard-page .ref-cal-days button.selected.in-range:not(.is-start):not(.is-end):is(:first-child,:not(.in-range)+*){border-radius:8px 0 0 8px!important;}
 html:not([data-bo-theme="dark"]) body.main-dashboard-page .ref-cal-days button.selected.in-range:not(.is-start):not(.is-end):is(:last-child,:has(+ button:not(.in-range))){border-radius:0 8px 8px 0!important;}
 html:not([data-bo-theme="dark"]) body.main-dashboard-page .ref-cal-days button.selected.in-range:not(.is-start):not(.is-end):is(:first-child,:not(.in-range)+*):is(:last-child,:has(+ button:not(.in-range))){border-radius:8px!important;}
@@ -1494,7 +1495,7 @@ html[data-bo-theme="dark"] body.main-dashboard-page .ref-range-presets{
   border-right-color:rgba(255,255,255,.14)!important;
 }
 html[data-bo-theme="dark"] body.main-dashboard-page .main-exec-date-field .ref-range-trigger{
-  background:#2C2E38!important;
+  background:#2A2C36!important;
   border-color:rgba(255,255,255,.12)!important;
   color:var(--bo-text-secondary,#E7E5E4)!important;
 }
@@ -1524,22 +1525,6 @@ html[data-bo-theme="dark"] body.main-dashboard-page .ref-cal-days button.selecte
 html[data-bo-theme="dark"] body.main-dashboard-page .ref-cal-days button.selected.in-range:not(.is-start):not(.is-end):is(:last-child,:has(+ button:not(.in-range))){border-radius:0 8px 8px 0!important;}
 html[data-bo-theme="dark"] body.main-dashboard-page .ref-cal-days button.selected.in-range:not(.is-start):not(.is-end):is(:first-child,:not(.in-range)+*):is(:last-child,:has(+ button:not(.in-range))){border-radius:8px!important;}
 
-/* ---- Active preset is a wash, not a fill (matches the Merchant Settlement ledger) ---- */
-html:not([data-bo-theme="dark"]) body.main-dashboard-page .ref-range-presets button.active{
-  background:rgba(217,119,6,.16)!important;
-  color:#B45309!important;
-}
-html[data-bo-theme="dark"] body.main-dashboard-page .ref-range-presets button.active{
-  background:rgba(245,158,11,.2)!important;
-  color:#FBBF24!important;
-}
 
-/* ---- Day cells touch, so the band reads as one strip instead of chips ---- */
+/* ---- Day cells touch, so the in-range band is continuous (the base sets gap:3px) ---- */
 body.main-dashboard-page .ref-cal-days{gap:0;}
-
-body.main-dashboard-page .main-exec-date-field .ref-range-wrap,
-body.main-dashboard-page .main-exec-date-field .ref-range-trigger{
-  width:100%!important;
-  min-width:0!important;
-  max-width:100%!important;
-}
