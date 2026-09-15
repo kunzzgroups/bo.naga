@@ -11,7 +11,7 @@
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet"/>
 <link href="assets/css/main-admin-detail-executive.css?v=1.0.109" rel="stylesheet"/>
 <link href="assets/css/main-merchant-profit.css?v=1.0.31" rel="stylesheet"/>
-<link href="assets/css/main-merchant-detail-executive.css?v=1.3.4" rel="stylesheet"/>
+<link href="assets/css/main-merchant-detail-executive.css?v=1.3.5" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -60,127 +60,127 @@
       <a class="mad-tab" role="tab" aria-selected="false" href="main-merchant-security.html">Security &amp; Audit</a>
     </div>
     <div class="mad-chrome-actions">
-      <div class="mpr-mini-kpis" aria-label="Profit summary">
-        <article class="mpr-mini is-hero" title="Selected period profit">
-          <span class="mpr-mini-icon is-navy" aria-hidden="true"><i class="bi bi-graph-up-arrow"></i></span>
-          <div class="mpr-mini-copy">
-            <strong class="mpr-mini-value"><span class="currency-unit">MYR</span> <span id="mprTotal">0.00</span></strong>
-            <span class="mpr-mini-label">Period</span>
-          </div>
-          <span class="mpr-kpi-trend is-flat" id="mprTrend"><i class="bi bi-dash" aria-hidden="true"></i> —</span>
-        </article>
-        <article class="mpr-mini" title="Monthly pricing">
-          <span class="mpr-mini-icon is-cyan" aria-hidden="true"><i class="bi bi-arrow-repeat"></i></span>
-          <div class="mpr-mini-copy">
-            <strong class="mpr-mini-value"><span class="currency-unit">MYR</span> <span id="mprPricingTotal">0.00</span></strong>
-            <span class="mpr-mini-label">Monthly</span>
-            <span class="mpr-mini-meta" id="mprMerchantCount">0 Merchants</span>
-          </div>
-        </article>
-        <article class="mpr-mini" title="One-off income">
-          <span class="mpr-mini-icon is-green" aria-hidden="true"><i class="bi bi-cash-stack"></i></span>
-          <div class="mpr-mini-copy">
-            <strong class="mpr-mini-value"><span class="currency-unit">MYR</span> <span id="mprManualTotal">0.00</span></strong>
-            <span class="mpr-mini-label">One-off</span>
-            <span class="mpr-mini-meta" id="mprOneOffCount">0 Entries</span>
-          </div>
-        </article>
-      </div>
       <a class="mad-btn mad-btn-primary" id="mprRecordBtn" href="main-merchant-profit-record.html?mode=monthly"><i class="bi bi-plus-lg" aria-hidden="true"></i> Record Profit</a>
     </div>
   </div>
+  <div class="mpr-mini-kpis" aria-label="Profit summary">
+    <article class="mpr-mini is-hero" title="Selected period profit">
+      <span class="mpr-mini-icon is-navy" aria-hidden="true"><i class="bi bi-graph-up-arrow"></i></span>
+      <div class="mpr-mini-copy">
+        <strong class="mpr-mini-value"><span class="currency-unit">MYR</span> <span id="mprTotal">0.00</span></strong>
+        <span class="mpr-mini-label">Period</span>
+      </div>
+      <span class="mpr-kpi-trend is-flat" id="mprTrend"><i class="bi bi-dash" aria-hidden="true"></i> —</span>
+    </article>
+    <article class="mpr-mini" title="Monthly pricing">
+      <span class="mpr-mini-icon is-cyan" aria-hidden="true"><i class="bi bi-arrow-repeat"></i></span>
+      <div class="mpr-mini-copy">
+        <strong class="mpr-mini-value"><span class="currency-unit">MYR</span> <span id="mprPricingTotal">0.00</span></strong>
+        <span class="mpr-mini-label">Monthly</span>
+        <span class="mpr-mini-meta" id="mprMerchantCount">0 Merchants</span>
+      </div>
+    </article>
+    <article class="mpr-mini" title="One-off income">
+      <span class="mpr-mini-icon is-green" aria-hidden="true"><i class="bi bi-cash-stack"></i></span>
+      <div class="mpr-mini-copy">
+        <strong class="mpr-mini-value"><span class="currency-unit">MYR</span> <span id="mprManualTotal">0.00</span></strong>
+        <span class="mpr-mini-label">One-off</span>
+        <span class="mpr-mini-meta" id="mprOneOffCount">0 Entries</span>
+      </div>
+    </article>
+  </div>
 
-  <div class="mad-panel mpr-ledger-panel" aria-label="Consolidated Profit Ledger">
-    <div class="mad-filter-bar mpr-filter-bar">
-      <div class="mpr-filter-row mpr-filter-row-main">
-        <div class="mad-pills" role="group" aria-label="Ledger type filter">
-          <button type="button" class="mad-pill is-active" data-mpr-kind="all" aria-pressed="true">All <span class="mad-pill-count" id="mprSegAll">0</span></button>
-          <button type="button" class="mad-pill" data-mpr-kind="monthly" aria-pressed="false">Monthly Pricing <span class="mad-pill-count" id="mprSegMonthly">0</span></button>
-          <button type="button" class="mad-pill" data-mpr-kind="oneoff" aria-pressed="false">One-off <span class="mad-pill-count" id="mprSegOneOff">0</span></button>
-        </div>
-        <div class="mad-filters mpr-filters-tools">
-          <div class="mas-date-field ref-date-field mpr-date-field">
-            <div class="ref-range-wrap">
-              <button class="ref-range-trigger" id="mprDateTrigger" type="button" aria-label="Date range">
-                <span class="ref-range-icon"><i class="bi bi-calendar3"></i></span>
-                <span id="mprDateLabel">Select date range</span>
-                <i class="bi bi-chevron-down ms-auto"></i>
-              </button>
-              <input id="mprFrom" type="hidden"/>
-              <input id="mprTo" type="hidden"/>
-              <div class="ref-range-picker" id="mprRangePicker">
-                <div class="ref-range-presets">
-                  <button type="button" data-mpr-range-preset="today">Today</button>
-                  <button type="button" data-mpr-range-preset="yesterday">Yesterday</button>
-                  <button type="button" data-mpr-range-preset="thisWeek">This Week</button>
-                  <button type="button" data-mpr-range-preset="lastWeek">Last Week</button>
-                  <button type="button" data-mpr-range-preset="thisMonth">This Month</button>
-                  <button type="button" data-mpr-range-preset="lastMonth">Last Month</button>
-                  <button type="button" data-mpr-range-preset="thisYear">This Year</button>
-                  <button type="button" data-mpr-range-preset="lastYear">Last Year</button>
+<div class="mad-panel mpr-ledger-panel" aria-label="Consolidated Profit Ledger">
+  <div class="mad-filter-bar mpr-filter-bar">
+    <div class="mpr-filter-row mpr-filter-row-main">
+      <div class="mad-pills" role="group" aria-label="Ledger type filter">
+        <button type="button" class="mad-pill is-active" data-mpr-kind="all" aria-pressed="true">All <span class="mad-pill-count" id="mprSegAll">0</span></button>
+        <button type="button" class="mad-pill" data-mpr-kind="monthly" aria-pressed="false">Monthly Pricing <span class="mad-pill-count" id="mprSegMonthly">0</span></button>
+        <button type="button" class="mad-pill" data-mpr-kind="oneoff" aria-pressed="false">One-off <span class="mad-pill-count" id="mprSegOneOff">0</span></button>
+      </div>
+      <div class="mad-filters mpr-filters-tools">
+        <div class="mas-date-field ref-date-field mpr-date-field">
+          <div class="ref-range-wrap">
+            <button class="ref-range-trigger" id="mprDateTrigger" type="button" aria-label="Date range">
+              <span class="ref-range-icon"><i class="bi bi-calendar3"></i></span>
+              <span id="mprDateLabel">Select date range</span>
+              <i class="bi bi-chevron-down ms-auto"></i>
+            </button>
+            <input id="mprFrom" type="hidden"/>
+            <input id="mprTo" type="hidden"/>
+            <div class="ref-range-picker" id="mprRangePicker">
+              <div class="ref-range-presets">
+                <button type="button" data-mpr-range-preset="today">Today</button>
+                <button type="button" data-mpr-range-preset="yesterday">Yesterday</button>
+                <button type="button" data-mpr-range-preset="thisWeek">This Week</button>
+                <button type="button" data-mpr-range-preset="lastWeek">Last Week</button>
+                <button type="button" data-mpr-range-preset="thisMonth">This Month</button>
+                <button type="button" data-mpr-range-preset="lastMonth">Last Month</button>
+                <button type="button" data-mpr-range-preset="thisYear">This Year</button>
+                <button type="button" data-mpr-range-preset="lastYear">Last Year</button>
+              </div>
+              <div class="ref-range-calendar">
+                <div class="ref-cal-head">
+                  <button type="button" id="mprCalPrev"><i class="bi bi-chevron-left"></i></button>
+                  <button type="button" class="ref-head-pick" id="mprCalMonth"></button>
+                  <button type="button" class="ref-head-pick" id="mprCalYear"></button>
+                  <button type="button" id="mprCalNext"><i class="bi bi-chevron-right"></i></button>
                 </div>
-                <div class="ref-range-calendar">
-                  <div class="ref-cal-head">
-                    <button type="button" id="mprCalPrev"><i class="bi bi-chevron-left"></i></button>
-                    <button type="button" class="ref-head-pick" id="mprCalMonth"></button>
-                    <button type="button" class="ref-head-pick" id="mprCalYear"></button>
-                    <button type="button" id="mprCalNext"><i class="bi bi-chevron-right"></i></button>
-                  </div>
-                  <div class="ref-cal-month-grid" id="mprCalMonthGrid"></div>
-                  <div class="ref-cal-year-grid" id="mprCalYearGrid"></div>
-                  <div class="ref-cal-day-view" id="mprCalDayView">
-                    <div class="ref-cal-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
-                    <div class="ref-cal-days" id="mprCalDays"></div>
-                  </div>
+                <div class="ref-cal-month-grid" id="mprCalMonthGrid"></div>
+                <div class="ref-cal-year-grid" id="mprCalYearGrid"></div>
+                <div class="ref-cal-day-view" id="mprCalDayView">
+                  <div class="ref-cal-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+                  <div class="ref-cal-days" id="mprCalDays"></div>
                 </div>
               </div>
             </div>
           </div>
-          <label class="mad-filter-field mpr-currency-filter" for="mprCurrencyFilter">
-            <span class="mad-sr-only">Filter by currency</span>
-            <select class="mad-select mre-currency-select" id="mprCurrencyFilter" aria-label="Filter by currency">
-              <option value="MYR">MYR</option>
-            </select>
-          </label>
-          <label class="mad-search" for="mprSearch">
-            <span class="mad-sr-only">Search merchant or item</span>
-            <i class="bi bi-search" aria-hidden="true"></i>
-            <input id="mprSearch" type="search" placeholder="Search merchant/item..." autocomplete="off" aria-label="Search merchant or item"/>
-          </label>
-          <button type="button" class="mad-btn mad-btn-ghost" id="mprExportBtn"><i class="bi bi-upload" aria-hidden="true"></i> Export CSV</button>
         </div>
-      </div>
-    </div>
-
-    <div class="mad-table-wrap">
-      <table class="mad-table">
-        <caption class="mad-sr-only">Consolidated profit ledger</caption>
-        <thead>
-          <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Merchant</th>
-            <th scope="col">Type</th>
-            <th scope="col">Income Source / Item</th>
-            <th scope="col" class="num">Amount (<span class="currency-unit">MYR</span>)</th>
-            <th scope="col">Description / Remark</th>
-            <th scope="col">Created By</th>
-            <th scope="col">Created At</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody id="mprRows">
-          <tr><td colspan="9" class="mad-empty">Loading...</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="mad-footer">
-      <div class="mad-footer-info" id="mprShowing">Showing 0 to 0 of 0 records</div>
-      <div class="mad-footer-right">
-        <nav class="mad-pager" id="mprPager" aria-label="Ledger pagination"></nav>
+        <label class="mad-filter-field mpr-currency-filter" for="mprCurrencyFilter">
+          <span class="mad-sr-only">Filter by currency</span>
+          <select class="mad-select mre-currency-select" id="mprCurrencyFilter" aria-label="Filter by currency">
+            <option value="MYR">MYR</option>
+          </select>
+        </label>
+        <label class="mad-search" for="mprSearch">
+          <span class="mad-sr-only">Search merchant or item</span>
+          <i class="bi bi-search" aria-hidden="true"></i>
+          <input id="mprSearch" type="search" placeholder="Search merchant/item..." autocomplete="off" aria-label="Search merchant or item"/>
+        </label>
+        <button type="button" class="mad-btn mad-btn-ghost" id="mprExportBtn"><i class="bi bi-upload" aria-hidden="true"></i> Export CSV</button>
       </div>
     </div>
   </div>
+
+  <div class="mad-table-wrap">
+    <table class="mad-table">
+      <caption class="mad-sr-only">Consolidated profit ledger</caption>
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Merchant</th>
+          <th scope="col">Type</th>
+          <th scope="col">Income Source / Item</th>
+          <th scope="col" class="num">Amount (<span class="currency-unit">MYR</span>)</th>
+          <th scope="col">Description / Remark</th>
+          <th scope="col">Created By</th>
+          <th scope="col">Created At</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody id="mprRows">
+        <tr><td colspan="9" class="mad-empty">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mad-footer">
+    <div class="mad-footer-info" id="mprShowing">Showing 0 to 0 of 0 records</div>
+    <div class="mad-footer-right">
+      <nav class="mad-pager" id="mprPager" aria-label="Ledger pagination"></nav>
+    </div>
+  </div>
+</div>
 
 </section>
 </main>
