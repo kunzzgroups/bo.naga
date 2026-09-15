@@ -387,9 +387,9 @@ The `.ref-range-*` / `.ref-cal-*` picker is one component with one look, whereve
 | Range edge (`.selected`) | `#D97706` · label white · radius `8px` | `#F59E0B` · label `#2A2C36` · radius `8px` |
 | Date trigger | surface `#FFF8EB` · border `#EADCC8` | `#2C2E38` · border `rgba(255,255,255,.12)` · text `#E7E5E4` |
 | Day grid | `.ref-cal-days{gap:0}` — cells touch so the band is continuous; the base file sets `3px` and the band then breaks into chips | same |
-| Field / control width | `260px` (min `240`, `flex:0 0 260px`) — the settlement ledger's control. The report pages use `236px` because their filter row must hold five controls on one line (see Report family) | same |
+| Field / control width | **not part of the design** — each page owns its control width (settlement `260px`, report pages `236px` in a five-control filter row, Dashboard `390px`) | — |
 
-The preset list is the same eight everywhere (`Today · Yesterday · This Week · Last Week · This Month · Last Month · This Year · Last Year`) — the Dashboard used to carry a ninth, `Last 7 Days`, and it was dropped so the rails match.
+The preset list is per page: the Dashboard also offers `Last 7 Days`. Styling only — the rail renders from whatever `data-range-preset` buttons the page provides.
 
 **The band must read as ONE strip, and that depends on which classes the calendar script emits.**
 

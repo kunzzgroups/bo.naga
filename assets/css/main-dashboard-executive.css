@@ -1537,13 +1537,6 @@ html[data-bo-theme="dark"] body.main-dashboard-page .ref-range-presets button.ac
 /* ---- Day cells touch, so the band reads as one strip instead of chips ---- */
 body.main-dashboard-page .ref-cal-days{gap:0;}
 
-/* ---- Field width: 260px, the same control width the settlement ledger uses ---- */
-body.main-dashboard-page .main-exec-date-field{
-  width:260px!important;
-  min-width:240px!important;
-  max-width:260px!important;
-  flex:0 0 260px!important;
-}
 body.main-dashboard-page .main-exec-date-field .ref-range-wrap,
 body.main-dashboard-page .main-exec-date-field .ref-range-trigger{
   width:100%!important;
