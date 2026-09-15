@@ -4981,17 +4981,34 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
   display:none!important;
 }
 
-/* ---- Filter row: the date control yields instead of overlapping ----
-   The shared date control is pinned to a fixed 260px (`.ref-range-wrap` and `.mre-date-trigger`
-   are both sized, and reports.css pins the same pair again), while the wrapper around it is
-   allowed to shrink. So the trigger overhung its own column and painted over the search frame
-   once the row ran out of width: measured overlapSearch:true at 1440 and 1280 CSS px, which is
-   what a ~1900px window shows at Windows 125% scaling. Two changes, both scoped to this family:
-   the control shrinks as one unit, and the row is allowed to wrap — which is already what
-   main-admin-detail-executive.css does for .mad-filters below 1279px. ---- */
-body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mre-period-group{
-  flex:0 1 260px;
+/* ---- Filter row: the five controls are ONE row ----
+   Policy, measured at 1932 / 1546 / 1440 / 1366 / 1280 / 1150:
+     * the five controls never wrap among themselves — a folded control row reads as a broken
+       layout;
+     * the search box is the shock absorber (it is a text field with a placeholder, and it
+       ellipsises cleanly), while the date control keeps its 260px so its fixed-format label
+       ("01 Sep 2026 - 15 Sep 2026") is never clipped at >=1440;
+     * the status pills are never compressed, so when the row genuinely runs out the two GROUPS
+       stack — pills on one line, all five controls together on the next — which is also what
+       main-admin-detail-executive.css does below 1279px.
+   This keeps the overlap fix: the date trigger is pinned to a fixed 260px by reports.css while
+   its wrapper could shrink, so it used to paint over the search frame (measured
+   overlapSearch:true at 1440 and 1280).
+   Layout only, no colour. ---- */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar{
+  flex-wrap:wrap;
+  row-gap:8px;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-pills{
+  flex:0 0 auto;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-filters{
+  flex-wrap:nowrap;
+  flex:0 1 auto;
   min-width:0;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mre-period-group{
+  flex:0 0 248px;
 }
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mre-period-group .ref-date-field,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mre-period-group .ref-range-wrap,
@@ -5001,7 +5018,28 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
   max-width:100%!important;
   box-sizing:border-box;
 }
-body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-filters{
-  flex-wrap:wrap;
-  row-gap:8px;
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-filters > .mad-search{
+  flex:1 1 132px;
+  min-width:110px;
+  max-width:180px;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-filters > .rounded-select-wrap,
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-filters > select.mad-select{
+  /* reports.js writes width / min-width / max-width / flex:0 0 160px !important INLINE on this
+     wrapper, and an inline important beats any stylesheet important — so these selects cannot be
+     narrowed from CSS at all. Left at their natural 160px; the slack is taken from the search
+     and the date field instead. */
+  flex:0 0 auto!important;
+  min-width:0!important;
+}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-filters{gap:6px;}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-filters > .mad-btn{
+  flex:0 0 auto;
+}
+
+@media (max-width:1419.98px){
+  body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mre-period-group{
+    flex:0 1 260px;
+    min-width:232px;
+  }
 }
