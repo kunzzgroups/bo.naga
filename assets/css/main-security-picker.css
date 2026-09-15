@@ -1,0 +1,121 @@
+/* Security & Audit picker — locked spec, ID-scoped
+   ==========================================================================
+   Reference: main-merchant-profit.html. The value table is DESIGN.md → "Date-range picker".
+
+   Why this file exists instead of rules inside main-admin-detail-executive.css: that file pins the
+   same elements with long, deeply-scoped class selectors — the strongest of them resolve to
+   (0,16,8) — so a class-based override there wins some properties and loses others, which reads as
+   "half changed". Both Security pages carry the same picker ids (#masRangePicker, #masDateTrigger),
+   and an ID out-ranks any number of classes, so every rule here is scoped by id and settles the
+   cascade outright.
+
+   Scope: main-admin-security.html and main-merchant-security.html (both use the mas* picker ids).
+   The light rail had neither its edge colour nor its shadow set anywhere, which is the gap that was
+   visible on screen; the rest of the block closes the values the audit listed.
+   ========================================================================== */
+
+/* ---- Light ---- */
+html:not([data-bo-theme="dark"]) #masDateTrigger{
+  background:var(--bo-surface,#FFF8EB)!important;
+  border:1px solid var(--bo-border,#EADCC8)!important;
+  border-radius:10px!important;
+  color:var(--bo-text,#18191C)!important;
+}
+html:not([data-bo-theme="dark"]) #masRangePicker{
+  background:var(--bo-surface,#FFF8EB)!important;
+  border-color:var(--bo-border,#EADCC8)!important;
+  box-shadow:0 12px 30px rgba(60,48,32,.14)!important;
+}
+html:not([data-bo-theme="dark"]) #masRangePicker .ref-range-presets{
+  background:var(--bo-surface,#FFF8EB)!important;
+  border-color:var(--bo-border,#EADCC8)!important;
+  box-shadow:0 12px 30px rgba(60,48,32,.14)!important;
+}
+html:not([data-bo-theme="dark"]) #masRangePicker .ref-range-presets button:not(.active){color:#374151!important;}
+html:not([data-bo-theme="dark"]) #masRangePicker .ref-range-presets button.active{
+  background:#D97706!important;
+  color:#FFFFFF!important;
+}
+html:not([data-bo-theme="dark"]) #masRangePicker .ref-cal-head button,
+html:not([data-bo-theme="dark"]) #masRangePicker .ref-head-pick{
+  background:transparent!important;
+  border-color:transparent!important;
+  color:#374151!important;
+}
+html:not([data-bo-theme="dark"]) #masRangePicker .ref-cal-month-grid button.active,
+html:not([data-bo-theme="dark"]) #masRangePicker .ref-cal-year-grid button.active{
+  background:transparent!important;
+  color:#374151!important;
+}
+html:not([data-bo-theme="dark"]) #masRangePicker .ref-cal-week span{color:#71717A!important;}
+html:not([data-bo-theme="dark"]) #masRangePicker .ref-cal-days{gap:0!important;}
+html:not([data-bo-theme="dark"]) #masRangePicker .ref-cal-days button{
+  background:transparent!important;
+  color:#374151!important;
+}
+html:not([data-bo-theme="dark"]) #masRangePicker .ref-cal-days button.muted{color:#57534E!important;}
+html:not([data-bo-theme="dark"]) #masRangePicker .ref-cal-days button:hover:not(:disabled){
+  background:rgba(217,119,6,.16)!important;
+  color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) #masRangePicker .ref-cal-days button.in-range{
+  background:rgba(217,119,6,.14)!important;
+  color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) #masRangePicker .ref-cal-days button.selected{
+  background:#D97706!important;
+  color:#FFFFFF!important;
+  border-radius:8px!important;
+}
+
+/* ---- Dark ---- */
+html[data-bo-theme="dark"] #masDateTrigger{
+  background:#2A2C36!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  border-radius:10px!important;
+  color:var(--bo-text,#F5F5F4)!important;
+}
+html[data-bo-theme="dark"] #masRangePicker{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
+}
+html[data-bo-theme="dark"] #masRangePicker .ref-range-calendar{background:#383A46!important;}
+html[data-bo-theme="dark"] #masRangePicker .ref-range-presets{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
+}
+html[data-bo-theme="dark"] #masRangePicker .ref-range-presets button:not(.active){color:#E7E5E4!important;}
+html[data-bo-theme="dark"] #masRangePicker .ref-range-presets button.active,
+html[data-bo-theme="dark"] #masRangePicker .ref-cal-month-grid button.active,
+html[data-bo-theme="dark"] #masRangePicker .ref-cal-year-grid button.active{
+  background:#F59E0B!important;
+  color:#FFFFFF!important;
+}
+html[data-bo-theme="dark"] #masRangePicker .ref-cal-head button,
+html[data-bo-theme="dark"] #masRangePicker .ref-head-pick{
+  background:transparent!important;
+  border-color:transparent!important;
+  color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"] #masRangePicker .ref-cal-week span{color:#A1A1AA!important;}
+html[data-bo-theme="dark"] #masRangePicker .ref-cal-days{gap:0!important;}
+html[data-bo-theme="dark"] #masRangePicker .ref-cal-days button{
+  background:transparent!important;
+  color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"] #masRangePicker .ref-cal-days button.muted{color:#A1A1AA!important;}
+html[data-bo-theme="dark"] #masRangePicker .ref-cal-days button:hover:not(:disabled){
+  background:rgba(245,158,11,.16)!important;
+  color:#FFFFFF!important;
+}
+html[data-bo-theme="dark"] #masRangePicker .ref-cal-days button.in-range{
+  background:rgba(245,158,11,.18)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] #masRangePicker .ref-cal-days button.selected{
+  background:#F59E0B!important;
+  color:#2A2C36!important;
+  border-radius:8px!important;
+}
