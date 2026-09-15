@@ -3879,3 +3879,50 @@ html[data-bo-theme="dark"] body.report-body.standardized-listing-page.main-admin
   border-color:rgba(255,255,255,.12)!important;
   color:#F5F5F4!important;
 }
+
+/* ==========================================================================
+   Merchant Profit — the chrome row could not hold its own KPI strip
+   .mad-chrome is a 48px grid (`height/min-height/max-height:48px`, `flex:0 0 48px`)
+   with columns `minmax(0,1fr) auto`. The KPI chips are `flex:0 0 auto` with
+   `min-width:168px` (200px for the hero), so the actions column demanded ~1000px,
+   the tabs column was squeezed to ~350px, and `.mad-tabs` is `nowrap` — so the tab
+   labels overflowed their column and painted UNDER the opaque chips. Measured at
+   1680px with realistic values: 188px of overlap covering "Roles & Permissions".
+   Nothing could give: the row could not grow and nothing could shrink.
+   Degradation order below: the tabs keep their size, the KPI block moves to its own
+   line when it must, and the row grows to fit it. Numbers are never truncated and
+   navigation is never covered.
+   ========================================================================== */
+
+body.main-merchant-profit-page .mad-chrome{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  height:auto!important;
+  max-height:none!important;
+  min-height:48px;
+  flex:0 0 auto!important;
+  row-gap:8px;
+  column-gap:16px;
+}
+/* Tabs never shrink: they are navigation, and squeezing them is what caused the overlap. */
+body.main-merchant-profit-page .mad-chrome > .mad-tabs{
+  flex:0 0 auto;
+  min-width:0;
+}
+/* The actions block takes the remaining line and wraps its own contents inside it. */
+body.main-merchant-profit-page .mad-chrome > .mad-chrome-actions{
+  flex:1 1 auto;
+  min-width:0;
+  height:auto;
+  min-height:36px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  row-gap:6px;
+}
+body.main-merchant-profit-page .mpr-mini-kpis{
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  row-gap:6px;
+}
