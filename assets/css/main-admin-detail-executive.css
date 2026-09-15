@@ -9511,3 +9511,32 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   background:rgba(245,158,11,.20)!important;
   color:#FBBF24!important;
 }
+
+/* ==========================================================================
+   Security & Audit picker: the active preset in dark.
+   Measured, not guessed: every other picker in the product (reference
+   main-merchant-profit.html, and the report family) renders the active rail item as a SOLID
+   amber fill with #2A2C36 ink in dark. main-admin-security.html and
+   main-merchant-security.html rendered it with a WHITE label instead — the same component,
+   same theme, two different values. A colour counter cannot see this (both are amber) and
+   neither can a review by eye, so it only showed up by comparing computed styles across pages.
+   The family rule for this scope wanted a wash; the reference is the contract, and DESIGN.md's
+   own guidance is to read getComputedStyle off the reference page, so this states the solid
+   fill with the mode prefix plus one ID level to settle a class chain of unknown length.
+   ========================================================================== */
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).main-admin-security-page .mas-date-field .ref-range-presets button.active,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).main-merchant-security-page .mas-date-field .ref-range-presets button.active,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).main-admin-security-page .mas-date-field .ref-range-presets .rounded-select-option.active,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).main-merchant-security-page .mas-date-field .ref-range-presets .rounded-select-option.active{
+  background:#F59E0B!important;
+  background-color:#F59E0B!important;
+  color:#2A2C36!important;
+}
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).main-admin-security-page .mas-date-field .ref-range-presets button.active,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).main-merchant-security-page .mas-date-field .ref-range-presets button.active,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).main-admin-security-page .mas-date-field .ref-range-presets .rounded-select-option.active,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).main-merchant-security-page .mas-date-field .ref-range-presets .rounded-select-option.active{
+  background:#D97706!important;
+  background-color:#D97706!important;
+  color:#FFFFFF!important;
+}

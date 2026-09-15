@@ -418,7 +418,23 @@ Markup: `.ref-date-field > .ref-range-wrap > .ref-range-trigger` + `.ref-range-p
 4. Bump the pin in that page.
 5. Verify by measuring the reference and the new page side by side, both themes, on: trigger, panel, calendar well, rail, rail item + active, head buttons, week row, muted day, in-range day, edge day, month active, day-grid `gap`, panel/rail `box-shadow`. Ignore the per-page quantities from the list above. Light and dark should both come back empty.
 
-**Known deviation:** `main-merchant-settlement.html` paints the active rail item as a **wash** (`rgba(217,119,6,.16)` / `rgba(245,158,11,.2)`) instead of the solid fill — a page-scoped rule in `main-merchant-detail-executive.css`, not this contract. One rule to remove if the family should be fully uniform.
+**Resolved 2026-09-16 — the picker is uniform across all ten pages that carry it.** Two
+inconsistencies were closed, both found by comparing `getComputedStyle` ACROSS pages rather than
+by any colour audit:
+
+- The active rail item was a **wash** on `main-merchant-balance.html` (the picker's rail buttons
+  also carry `.rounded-select-option`, and the enhanced-select rule for that class paints `active`
+  as a wash — with a `html:not([data-bo-theme="dark"])` prefix, one class-level above an
+  unprefixed family selector, so a later unprefixed restatement lost).
+- The dark label was **white** on `main-admin-security.html` and `main-merchant-security.html`
+  where every other page (including the reference) measures `#2A2C36`.
+
+Both are invisible to a colour sweep — the values are amber in every case — and invisible to a
+review by eye at screenshot scale. They were only visible as a *disagreement across pages*.
+**When a component appears on many pages, diff its computed style between them; that comparison
+finds a class of defect nothing else does.**
+
+Superseded note (kept for history): `main-merchant-settlement.html` painted the active rail item as a **wash** (`rgba(217,119,6,.16)` / `rgba(245,158,11,.2)`) instead of the solid fill — a page-scoped rule in `main-merchant-detail-executive.css`, not this contract. One rule to remove if the family should be fully uniform.
 ### Provider family — migrated 2026-09-15
 
 `main-provider-detail.html`, `main-provider-credentials.html`, `main-provider-health.html` now run Charcoal + Amber.
