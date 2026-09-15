@@ -3,7 +3,7 @@
     gap: 12px;
     align-items: end;
     flex-wrap: wrap;
-    background: #fff;
+    background: #FFF8EB;
     border: 1px solid #EADCC8;
     border-radius: 16px;
     padding: 16px;
@@ -47,7 +47,7 @@
     display: block;
     text-decoration: none;
     color: inherit;
-    background: #fff;
+    background: #FFF8EB;
     border: 1px solid #EADCC8;
     border-radius: 16px;
     padding: 17px;
@@ -78,7 +78,7 @@
 }
 
 .ops-card small {
-    color: #7b879c
+    color: #57534E
 }
 
 .ops-card i {

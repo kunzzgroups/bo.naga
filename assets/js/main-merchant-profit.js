@@ -545,7 +545,7 @@
         list.forEach((x) => {
           if (!isMerchantParty(x) || !isCollectDue(x)) return;
           if (String(x.sourceType || '').toUpperCase() !== 'MERCHANT_RECURRING') return;
-          if (String(x.currency || 'MYR').toUpperCase() !== state.currency) return;
+          if (String(x.currency || 'MYR').toUpperCase() !== reportCurrency()) return;
           const key = String(x.id ?? `${x.month}|${x.counterpartyKey}|${x.direction}`);
           if (seen.has(key)) return;
           seen.add(key);

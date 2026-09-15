@@ -7,16 +7,16 @@ body.brand-management-page{
   --bo-cyan:#D97706;
   --bo-success:#12B76A;
   --bo-danger:#EF3340;
-  --bo-bg:#F5F8FB;
+  --bo-bg:#F5EBDC;
   --bo-surface:#FFF8EB;
   --bo-border:#EADCC8;
   --bo-text:#18191C;
-  --bo-text-secondary:#27272A;
-  --bo-muted:#71717A;
-  --bo-sidebar-bg:#072647;
+  --bo-text-secondary:#18191C;
+  --bo-muted:#57534E;
+  --bo-sidebar-bg:#D97706;
   --bo-sidebar-text:#FFF8EB;
   --bo-sidebar-active:#D97706;
-  --bo-shadow:0 0 0 1px rgba(24,25,28,.04),0 1px 2px -1px rgba(24,25,28,.06),0 2px 8px rgba(26,45,80,.018);
+  --bo-shadow:0 0 0 1px rgba(217,119,6,.04),0 1px 2px -1px rgba(217,119,6,.06),0 2px 8px rgba(217,119,6,.018);
   --bo-ease:cubic-bezier(0.23,1,0.32,1);
   color:var(--bo-text);
   background:var(--bo-bg)!important;
@@ -67,7 +67,7 @@ body.brand-management-page .report-sidebar{
     min-width:var(--sidebar-w)!important;
     overflow-x:hidden!important;
     z-index:6000!important;
-    box-shadow:18px 0 38px rgba(7,38,71,.28);
+    box-shadow:18px 0 38px rgba(217,119,6,.28);
   }
   body.brand-exec-page.sidebar-mini .report-sidebar:not(:hover):not(.is-mini-hover) .report-brand > div,
   body.brand-management-page.sidebar-mini .report-sidebar:not(:hover):not(.is-mini-hover) .report-brand > div{
@@ -262,7 +262,7 @@ body.brand-management-page .report-sidebar .nav-group .nav-group-btn i{
 }
 body.brand-exec-page .report-sidebar .nav-group-list,
 body.brand-management-page .report-sidebar .nav-group-list{
-  background:#fff!important;
+  background:#FFF8EB!important;
 }
 body.brand-exec-page .report-sidebar .report-nav a.report-sub,
 body.brand-management-page .report-sidebar .report-nav a.report-sub{
@@ -512,7 +512,7 @@ body.brand-management-page .ref-cal-days button.range-end{
   padding:5px 10px;border-radius:5px;font-size:11px;font-weight:800;
 }
 .brand-exec-status.active{background:rgba(18,183,106,.14);color:#0E8F52}
-.brand-exec-status.disabled{background:rgba(101,113,135,.12);color:var(--bo-muted)}
+.brand-exec-status.disabled{background:rgba(217,119,6,.12);color:var(--bo-muted)}
 .brand-exec-detail{
   height:34px;padding:0 12px;
   border:1px solid var(--bo-border);border-radius:6px;
@@ -657,20 +657,20 @@ body.brand-management-page .bo-theme-btn:active{transform:scale(.97)}
 /* ---- Dark mode ---- */
 html[data-bo-theme="dark"] body.brand-exec-page,
 html[data-bo-theme="dark"] body.brand-management-page{
-  --bo-bg:#08131F;
-  --bo-surface:#102030;
+  --bo-bg:#F59E0B;
+  --bo-surface:#F59E0B;
   --bo-border:rgba(255,255,255,.08);
   --bo-text:#F5F5F4;
   --bo-text-secondary:rgba(255,255,255,.12);
-  --bo-muted:#8A95A8;
-  --bo-sidebar-bg:#08131F;
+  --bo-muted:#D4D4D8;
+  --bo-sidebar-bg:#F59E0B;
   --bo-shadow:none;
   color-scheme:dark;
   background:var(--bo-bg)!important;
 }
 html[data-bo-theme="dark"]:has(body.brand-exec-page),
 html[data-bo-theme="dark"]:has(body.brand-management-page){
-  background:#08131F;
+  background:#F59E0B;
 }
 html[data-bo-theme="dark"] body.brand-exec-page .report-shell,
 html[data-bo-theme="dark"] body.brand-management-page .report-shell,
@@ -761,7 +761,7 @@ html[data-bo-theme="dark"] body.brand-management-page .ref-range-picker{
 }
 html[data-bo-theme="dark"] body.brand-exec-page .ref-range-presets,
 html[data-bo-theme="dark"] body.brand-management-page .ref-range-presets{
-  background:#0c1a2a!important;
+  background:#F59E0B!important;
   border-right-color:var(--bo-border)!important;
 }
 html[data-bo-theme="dark"] body.brand-exec-page .ref-range-presets button,
@@ -832,7 +832,7 @@ html[data-bo-theme="dark"] body.brand-management-page .form-select{
 }
 html[data-bo-theme="dark"] body.brand-management-page .report-table thead th,
 html[data-bo-theme="dark"] body.brand-management-page table.table thead th{
-  background:#0c1a2a!important;
+  background:#F59E0B!important;
   color:var(--bo-muted)!important;
   border-color:var(--bo-border)!important;
 }

@@ -1138,6 +1138,141 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .slider-empty stro
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .slider-empty b,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .slider-empty strong{color:#E7E5E4!important}
 
+/* VIP log tables, the payment gateway / method panels and the spin2 admin cards. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .vip-admin-table th,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .vip-admin-table td{
+  background:#FFF8EB!important;border-color:#F0E6D8!important;color:#374151!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .vip-admin-table th{
+  background:transparent!important;color:#3F3F46!important;border-bottom:1px solid #EADCC8!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .vip-admin-table th,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .vip-admin-table td{
+  background:#383A46!important;border-color:rgba(255,255,255,.12)!important;color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .vip-admin-table th{
+  background:transparent!important;color:#E7E5E4!important;border-bottom:1px solid rgba(255,255,255,.14)!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .pg-modal-panel,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .pg-modal-panel .modal-clean-body,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .usage-summary-grid > *,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .usage-summary-card,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .usage-card,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .spin2-admin-card,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .spin2-panel,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .spin2-card,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .pm-form-section,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .pm-card{
+  background:#FFF8EB!important;border-color:#EADCC8!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .pg-modal-panel,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .pg-modal-panel .modal-clean-body,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .usage-summary-grid > *,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .usage-summary-card,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .usage-card,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .spin2-admin-card,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .spin2-panel,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .spin2-card,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .pm-form-section,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .pm-card{
+  background:#2A2C36!important;border-color:rgba(255,255,255,.12)!important;
+}
+/* The spin2 controls sit inside those cards, so the well has to be named too. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .spin2-admin-card input,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .spin2-admin-card select,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .spin2-admin-card textarea,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ratio-grid input,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ratio-grid select{
+  background:#F5EBDC!important;border:1px solid #DCC9A8!important;color:#18191C!important;border-radius:8px!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .spin2-admin-card input,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .spin2-admin-card select,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .spin2-admin-card textarea,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ratio-grid input,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ratio-grid select{
+  background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;color:#F5F5F4!important;border-radius:8px!important;
+}
+/* The upload zone's label accent. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .pm-upload-zone,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .pm-upload-zone b,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .pm-upload-zone i{color:#B45309!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .pm-upload-zone,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .pm-upload-zone b,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .pm-upload-zone i{color:#FBBF24!important}
+
+/* =============================================================== Bootstrap tables
+   THIS is why naming tables one by one kept failing. A `<table class="table">` is painted by
+   bootstrap.min.css, which is cross-origin — its rules never appear in a same-origin audit and
+   no page-level selector can out-rank them cleanly. Bootstrap drives every table colour from
+   custom properties on `.table` itself, so pointing those at the locked palette fixes EVERY
+   Bootstrap table on EVERY adopted page at once, with no specificity fight and nothing to
+   name: --bs-table-bg defaults to --bs-body-bg, which is pure white.
+   It is also invisible to a selector-level grep — the white only appears in the computed style
+   of the rendered cell. */
+body.report-body.bo-charcoal .table{
+  --bs-table-bg:#FFF8EB;
+  --bs-table-color:#374151;
+  --bs-table-border-color:#F0E6D8;
+  --bs-table-striped-bg:#FFF3E0;
+  --bs-table-striped-color:#374151;
+  --bs-table-active-bg:#FFF1DC;
+  --bs-table-active-color:#18191C;
+  --bs-table-hover-bg:#FFF1DC;
+  --bs-table-hover-color:#18191C;
+  --bs-border-color:#EADCC8;
+  --bs-body-bg:#FFF8EB;
+  --bs-body-color:#374151;
+  --bs-emphasis-color:#18191C;
+  --bs-secondary-color:#57534E;
+  --bs-tertiary-color:#71717A;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .table{
+  --bs-table-bg:#383A46;
+  --bs-table-color:#F5F5F4;
+  --bs-table-border-color:rgba(255,255,255,.12);
+  --bs-table-striped-bg:#2A2C36;
+  --bs-table-striped-color:#F5F5F4;
+  --bs-table-active-bg:#2A2C36;
+  --bs-table-active-color:#F5F5F4;
+  --bs-table-hover-bg:rgba(255,255,255,.05);
+  --bs-table-hover-color:#F5F5F4;
+  --bs-border-color:rgba(255,255,255,.12);
+  --bs-body-bg:#383A46;
+  --bs-body-color:#F5F5F4;
+  --bs-emphasis-color:#F5F5F4;
+  --bs-secondary-color:#D4D4D8;
+  --bs-tertiary-color:#A1A1AA;
+}
+/* Bootstrap also drives `.btn-primary` / `.text-primary` / `.bg-primary` from variables on
+   `.btn` / `:root`, and a stray one renders #0D6EFD. Point them at amber too. */
+body.report-body.bo-charcoal .btn{
+  --bs-btn-bg:#D97706;
+  --bs-btn-border-color:#E8901A;
+  --bs-btn-color:#FFFFFF;
+  --bs-btn-hover-bg:#B45309;
+  --bs-btn-hover-border-color:#F59E0B;
+  --bs-btn-active-bg:#B45309;
+  --bs-btn-disabled-bg:#EADCC8;
+  --bs-btn-disabled-border-color:#EADCC8;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .btn{
+  --bs-btn-bg:#F59E0B;
+  --bs-btn-border-color:#F59E0B;
+  --bs-btn-color:#2A2C36;
+  --bs-btn-hover-bg:#FBBF24;
+  --bs-btn-hover-border-color:#FBBF24;
+  --bs-btn-active-bg:#D97706;
+}
+/* Canvas — some page sheets set a white html/body and out-rank the shell's declaration. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal,
+html:not([data-bo-theme="dark"]):has(body.report-body.bo-charcoal){
+  background:#FFF1DC!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal,
+html[data-bo-theme="dark"]:has(body.report-body.bo-charcoal){
+  background:#2C2E38!important;
+}
+
 /* ------------------------------------------- shell chrome the rescope does not carry
    The rescope carries only the merchant-profit variant of the page-title chrome, and
    `reports.css:141` declares `.report-topbar .hamb` UNCONDITIONALLY — not inside the

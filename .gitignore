@@ -1,1 +1,4 @@
 node_modules/
+
+# Scratch files created by the migration tooling (never commit these)
+.tmp-*
