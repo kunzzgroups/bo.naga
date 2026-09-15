@@ -9368,6 +9368,8 @@ html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page=
 html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-picker{
   background:#FFF8EB!important;
   border-color:#EADCC8!important;
+  border-radius:12px!important;
+  box-shadow:0 12px 30px rgba(60,48,32,.14)!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-presets{
   background:#FFF8EB!important;
@@ -9376,8 +9378,12 @@ html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page=
 html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-presets button{
   color:#374151!important;
 }
+/* …but the ACTIVE preset keeps white ink on the amber fill (legacy rule: #fff on --bo-cyan) */
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-presets button.active{
+  color:#FFFFFF!important;
+}
 html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-presets button:hover:not(.active){
-  background:rgba(217,119,6,.10)!important;
+  background:rgba(217,119,6,.16)!important;
   color:#B45309!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button,
@@ -9388,7 +9394,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page=
   color:#374151!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button:hover:not(.selected){
-  background:rgba(217,119,6,.10)!important;
+  background:rgba(217,119,6,.16)!important;
   color:#B45309!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.muted{
@@ -9414,10 +9420,13 @@ html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page=
    border in dark resolves to the light cream (#EADCC8) — measured. Pin it to the family dark edge. */
 html[data-bo-theme="dark"] body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-trigger{
   border-color:rgba(255,255,255,.12)!important;
+  color:#E7E5E4!important;
 }
 html[data-bo-theme="dark"] body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-picker{
   background:#383A46!important;
   border-color:rgba(255,255,255,.14)!important;
+  border-radius:12px!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-presets{
   background:#2A2C36!important;
