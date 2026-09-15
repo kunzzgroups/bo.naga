@@ -21,8 +21,11 @@
   }catch(e){}
 })();
 </script>
+<link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet"/>
+<link href="assets/css/main-report-charcoal.css?v=1.0.0" rel="stylesheet"/>
+<link href="assets/css/main-report-charcoal-content.css?v=1.0.0" rel="stylesheet"/>
 </head>
-<body class="report-body standardized-listing-page main-admin-detail-page main-report-exec-page" data-access-page="main_provider_report" data-report-view="provider">
+<body class="report-body standardized-listing-page main-admin-detail-page main-report-exec-page bo-account-chip" data-access-page="main_provider_report" data-report-view="provider">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
 <div class="report-brand"><div>Backoffice<br/><small>Executive Panel</small></div><button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button></div>
@@ -49,6 +52,16 @@
 </header>
 
 <section class="report-content mad-workspace mre-workspace">
+  <div class="mad-chrome mre-chrome">
+    <div class="mad-tabs mre-tabs" role="tablist" aria-label="Report sections">
+      <a class="mad-tab mre-tab" role="tab" aria-selected="false" href="main-win-lose-report.html" data-report-tab="winlose" data-permission-url="main-win-lose-report.html">Win/Lose Report</a>
+      <a class="mad-tab mre-tab is-active" role="tab" aria-selected="true" aria-current="page" href="main_provider_report.html" data-report-tab="provider" data-permission-url="main_provider_report.html">Provider Report</a>
+    </div>
+    <div class="mad-chrome-actions mre-chrome-actions">
+      <span class="mad-sync" id="reportSyncLabel"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> Synced just now</span>
+      <button class="mad-btn mad-btn-ghost" type="button" id="reportExport"><i class="bi bi-upload"></i> Export</button>
+    </div>
+  </div>
   <!-- Win/Lose · Provider -->
   <div class="mad-panel mre-panel" data-report-panel="provider">
     <div class="mad-filter-bar mre-filter-bar">
@@ -75,7 +88,6 @@
           <option value="maintenance">Maintenance</option>
         </select>
         <button class="mad-btn mad-btn-ghost mad-reset-btn" type="button" id="mreResetBtn"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
-        <button class="mad-btn mad-btn-ghost" type="button" id="reportExport"><i class="bi bi-upload"></i> Export</button>
       </div>
     </div>
 
@@ -238,5 +250,6 @@
 <script src="assets/js/main-provider-report.js?v=1.0.17"></script>
 <script src="assets/js/bo-ui-standard.js?v=1.0.4"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
+<script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
 </body>
 </html>
