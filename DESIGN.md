@@ -242,13 +242,14 @@ Never cool `#fff` / `#FBFCFE` / `#F1F5F9` chrome. Full table: `.interface-design
 
 ### Create Role (Role Name input — locked)
 
-Light: `.mrc-field .form-control` + `.mp-search` / chips / Back = `#F5EBDC` · `#EADCC8`. **Toggle All** (`.mrc-chip-btn.is-accent`) = amber wash `rgba(217,119,6,.12)` — never cool cyan. Override `reports.css` `#fff!important`.  
-Dark: inputs `#2A2C36`; accent amber wash. CSS: `main-admin-role-create.css`.
+Light: Role Name + `.mp-search` / `#mrcFilter` + chips = surface `#FFF8EB` · border `#EADCC8` (not muddy well `#F5EBDC`). **Toggle All** = amber wash `rgba(217,119,6,.12)`.  
+**Buttons (立体):** Back / Cancel = Ghost cream gradient `#FFFCF7`→`#F5EBDC`→`#EDE4D4` + lift shadow; **shared hover** = reverse cream `#FFF8EB`→`#F3E8D6` · border `#E0D0B8` · lift (no amber fill wash). Save Role = Primary amber 3D. Hover lift / active press.  
+Dark: Ghost charcoal gradient; Primary amber with dark text `#2A2C36`. CSS: `main-admin-role-create.css`.
 
 ### Roles & Permissions filter (`.mp-search` / `#menuPermissionFilter` — locked)
 
-**List page** (`menu-permission.html`): filter matches Role select — surface `#FFF8EB` · border `#EADCC8` · icon `#57534E` · placeholder `#78716C` (frame + input, incl. disabled). Do **not** use deeper well `#F5EBDC` here — it reads muddy next to the select on the same control card.  
-**Create Role** (`main-admin-role-create.html` / `#mrcFilter`): filter matches Role Name — control well `#F5EBDC`.  
+**List page** (`menu-permission.html`): filter matches Role select — surface `#FFF8EB` · border `#EADCC8` · icon `#57534E` · placeholder `#78716C` (frame + input, incl. disabled).  
+**Create Role** (`main-admin-role-create.html`): Role Name + filter both surface `#FFF8EB` (same family as list controls).  
 Always beat `reports.css` `#fff!important`. Dark: charcoal well `#2A2C36`. CSS: `menu-permission-executive.css` + `main-admin-role-create.css`.
 
 ## Typography

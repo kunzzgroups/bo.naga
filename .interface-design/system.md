@@ -334,10 +334,12 @@ Reference: `main-admin-role-create.css` (must beat `reports.css` `.report-conten
 
 | Element | Light | Dark |
 |---------|-------|------|
-| Role Name input (`.mrc-field .form-control`) | `#F5EBDC` · border `#EADCC8` · amber focus | `#2A2C36` · `rgba(255,255,255,.12)` · amber focus |
+| Role Name input (`.mrc-field .form-control`) | surface `#FFF8EB` · border `#EADCC8` · amber focus | `#2A2C36` · `rgba(255,255,255,.12)` · amber focus |
 | Search (`.mp-search` list) | surface `#FFF8EB` (= Role select) · border `#EADCC8` · icon `#57534E` · placeholder `#78716C` | charcoal well |
-| Search (`.mrc-search` Create Role) | well `#F5EBDC` (= Role Name) · border `#EADCC8` | charcoal well `#2A2C36` |
-| Ghost / Select All / Clear / Back | `#F5EBDC` · border `#EADCC8` | charcoal well |
+| Search (`.mrc-search` Create Role) | surface `#FFF8EB` (= Role Name) · border `#EADCC8` | charcoal well `#2A2C36` |
+| Ghost / Select All / Clear / Back | surface `#FFF8EB` · border `#EADCC8` | charcoal well |
+| Create Role Back / Cancel (`.mrc-btn-ghost`) | 3D Ghost `#FFFCF7`→`#F5EBDC`→`#EDE4D4` · border `#DCC9A8` · lift shadow | charcoal gradient + lift |
+| Create Role Save (`.mrc-btn-primary`) | 3D Primary `#FBBF24`→`#F59E0B`→`#EA8608` · border `#E8901A` · amber shadow | amber gradient · text `#2A2C36` |
 | Toggle All (`.mrc-chip-btn.is-accent`) | amber wash `rgba(217,119,6,.12)` · never cool cyan | amber wash `rgba(245,158,11,.16)` |
 | Role Information card (`.mrc-card`) | surface `#FFF8EB` | `--bo-surface` |
 
@@ -414,7 +416,7 @@ Collapsed group (dark): same cool `#383A46` surface, white/10 border — not cre
 - Tabs `.mad-tab.is-active`: amber underline / `#FBBF24` label (dark)
 - Add Role: Primary CTA amber 3D gradient (locked Buttons spec)
 - Group count pill (dark): `rgba(245,158,11,.16)` / `#FBBF24`
-- Filter search `.mp-search` / `#menuPermissionFilter`: **list page** = surface `#FFF8EB` (same as Role select) · border `#EADCC8` · icon `#57534E` · placeholder `#78716C`; **Create Role** `#mrcFilter` = well `#F5EBDC` (same as Role Name). Never cool `#fff` inset; dark well `#2A2C36`
+- Filter search `.mp-search` / `#menuPermissionFilter`: **list + Create Role** = surface `#FFF8EB` · border `#EADCC8` · icon `#57534E` · placeholder `#78716C` (Create Role Role Name same). Never muddy well `#F5EBDC` on these fields; dark well `#2A2C36`
 
 ---
 
@@ -439,7 +441,7 @@ Collapsed group (dark): same cool `#383A46` surface, white/10 border — not cre
 | Topbar theme btn + User Name + Primary/Ghost buttons locked | Prevent page-to-page drift; specs from Admin Detail CSS | 2026-09-14 |
 | Action control radius `8px` (not 10px) | Match shipped Admin chrome | 2026-09-14 |
 | Permission matrix: light cream wash / dark cool charcoal | User locked Roles & Permissions open-group look; dark avoids muddy amber panel | 2026-09-14 |
-| Menu Permission filter = surface `#FFF8EB` (match Role select); Create Role filter = well `#F5EBDC` (match Role Name) | User: filter still looked wrong vs sibling control; deeper well read muddy on list card | 2026-09-15 |
+| Create Role Role Name + filter = surface `#FFF8EB` (not well `#F5EBDC`) | User: Create Role inputs still looked muddy vs card | 2026-09-15 |
 | Light surfaces = cream `#FFF8EB` locked (no ivory / no pure white) | User confirmed Dashboard light main pane (topbar + canvas + cards) 2026-09-14 | 2026-09-14 |
 | Dark table: stronger borders + lighter text | User: dark Admin table borders “跑掉”; headers/cells too close to charcoal bg | 2026-09-14 |
 | L2 flyout active = cream chip + amber frame | User: Roles flat wash wrong; Admin Detail bordered chip correct — unify all pages | 2026-09-14 |
