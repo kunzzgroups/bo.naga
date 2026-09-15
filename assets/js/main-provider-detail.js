@@ -326,7 +326,7 @@
       // Provider directory is the source of truth for the Provider tab. The settlement
       // report only contains providers that have report activity, so using it as the
       // directory incorrectly reduced the list (for example 15 instead of all 31).
-      const directoryRaw=await api('/admin/providers').catch(()=>api('/admin/main/providers'));
+      const directoryRaw=await api('/admin/main/provider-directory');
       const providersData=listOf(directoryRaw);
       const providerReport=await api('/admin/main/reports/provider-settlement?from='+encodeURIComponent(from)+'&to='+encodeURIComponent(to)).catch(()=>({providers:[]}));
       const reportByProvider=new Map(listOf(providerReport&&providerReport.providers||[]).map(x=>[providerKey(x),x]));
