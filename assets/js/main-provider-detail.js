@@ -330,18 +330,30 @@
       const providersData=listOf(directoryRaw);
       const providerReport=await api('/admin/main/reports/provider-settlement?from='+encodeURIComponent(from)+'&to='+encodeURIComponent(to)).catch(()=>({providers:[]}));
       const reportByProvider=new Map(listOf(providerReport&&providerReport.providers||[]).map(x=>[providerKey(x),x]));
-      const settlements=await api('/admin/main/settlements?month='+encodeURIComponent(month)).catch(()=>({rows:[]}));
-      const sr=listOf(settlements).filter(x=>/provider/i.test(String(x.counterpartyType||x.entityType||'')));
-      const byProvider=new Map();
-      sr.forEach(x=>{ const k=settlementKey(x); if(!k)return; const a=byProvider.get(k)||[]; a.push(x); byProvider.set(k,a); });
+      // Provider overview is a summary of the real settlement ledger, not a second
+      // independent balance. Include open balances from every settlement month so an
+      // August balance still appears in September until it is paid/waived/carried.
+      const settlementSummary=await api('/admin/main/settlements/provider-summary').catch(()=>({providers:[]}));
+      const settlementByProvider=new Map();
+      listOf(settlementSummary&&settlementSummary.providers||[]).forEach(x=>{
+        const k=providerKey(x); if(!k)return;
+        const a=settlementByProvider.get(k)||[]; a.push(x); settlementByProvider.set(k,a);
+      });
       allRows=listOf(providersData).map(x=>{
-        const key=providerKey(x), report=reportByProvider.get(key)||{}, related=byProvider.get(key)||[];
+        const key=providerKey(x), report=reportByProvider.get(key)||{}, related=settlementByProvider.get(key)||[];
         const cur=currencyOf(x)||currencyOf(report);
-        const outstanding=related.reduce((n,r)=>n+Number(r.balanceAmount||0),0);
-        const due=related.reduce((n,r)=>n+Number(r.totalDue||0),0);
-        const paid=related.reduce((n,r)=>n+Number(r.paidAmount||0),0);
+        const sameCurrency=related.filter(r=>currencyOf(r)===cur);
+        const collect=sameCurrency.reduce((n,r)=>n+Number(r.collectOutstanding||0),0);
+        const pay=sameCurrency.reduce((n,r)=>n+Number(r.payOutstanding||0),0);
+        const net=collect-pay, outstanding=Math.abs(net);
+        let settlement='—';
+        if(collect>0||pay>0){
+          if(net>0) settlement='To Collect '+cur+' '+outstanding.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+          else if(net<0) settlement='To Pay '+cur+' '+outstanding.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+          else settlement='Settled';
+        }
         const rate=x.providerRate??x.rate??x.settlementRate??x.settlementCostPercent??x.costPercent??x.defaultChargePercent??report.upstreamCostPercent??'';
-        return {id:key||x.id,name:x.name||x.providerName||report.providerName||key||'Provider',initials:(key||x.name||'PR').slice(0,2),desc:x.description||x.category||x.providerType||'',currency:cur,providerRate:rate,settlement:related.length?(paid.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+' / '+due.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})):'—',status:providerStatus(x),outstanding:cur+' '+outstanding.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}),type:String(x.type||x.providerType||'direct').toLowerCase(),typeLabel:x.type||x.providerType||'Direct',env:String(x.environment||x.env||'production').toLowerCase(),verified:true};
+        return {id:key||x.id,name:x.name||x.providerName||report.providerName||key||'Provider',initials:(key||x.name||'PR').slice(0,2),desc:x.description||x.category||x.providerType||'',currency:cur,providerRate:rate,settlement,status:providerStatus(x),outstanding:cur+' '+outstanding.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}),type:String(x.type||x.providerType||'direct').toLowerCase(),typeLabel:x.type||x.providerType||'Direct',env:String(x.environment||x.env||'production').toLowerCase(),verified:true};
       });
       consumeCreatedProvider(); syncedAt=Date.now(); updateCounts(); applyFilters(); updateSyncLabel();
     }catch(e){ allRows=[]; filtered=[]; updateCounts(); if(tbody)tbody.innerHTML='<tr><td colspan="7" class="mad-empty text-danger">'+esc(e.message)+'</td></tr>'; if(infoEl)infoEl.textContent='Unable to load providers'; }
