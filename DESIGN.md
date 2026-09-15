@@ -536,7 +536,25 @@ on them — `data-bo-theme` was never written.
    permission keys rather than page keys (`reports`/`products`/`provider_detail`/
    `player_game_report` → `bet_report`, `finance` → `wallet`, `withdraw` → `settlement`), and a
    response used both as a profile object and as a list has to satisfy both.
-8. **Verification must wait on a condition, not a delay.** Under load a probe that sweeps a fixed
+8. **An audit only answers the question it asks, and both of these lived in the channel it did not ask about.**
+   Two defects survived a clean sweep and were found by eye, in the same family of mistake:
+
+   - **A painted `background-image` is invisible to a computed-colour check.** The login page wrote
+     `background:#F5EBDC url(login-background-v2.png)`: `background-color` measured warm and passed,
+     while the 1.9 MB artwork painted a cold grey geometric field over the whole viewport. The rule
+     now: report every element whose `background-image` is painted and is not a gradient (a data-URI
+     SVG chevron on a native `<select>` is the one legitimate case), and look at the artwork itself.
+   - **"Is anything cool left?" cannot see amber replaced by grey.** A classifier bug in the retint
+     mapped every mid-lightness saturated cool colour to warm grey `#57534E`, producing grey primary
+     CTAs, grey active tabs, grey selected calendar days. A warm grey is not a cool value, so the
+     answer stayed "nothing cool" while the amber was simply gone. The rule now: grey is never a
+     **fill** on an accent slot in the locked system, so an accent-named control with a `#57534E`
+     fill or border is a defect **regardless of the colour counters** — and in the transform, test
+     saturation before lightness, because a saturated cool colour is an accent whatever its value.
+
+   Both were green on every gate the harness had. That is the useful part: a passing check is
+   evidence about one property, not about the page. Sweep, then look at the screenshots.
+9. **Verification must wait on a condition, not a delay.** Under load a probe that sweeps a fixed
    time after `load` can measure a half-styled page and report the retired palette as a defect (or
    hide a real one) — the same page flipped between 0 and 157 hits across runs. Wait until every
    declared stylesheet is present and `readyState` is `complete`, and emit the stylesheet counts, a
