@@ -3895,10 +3895,14 @@ html[data-bo-theme="dark"] body.report-body.standardized-listing-page.main-admin
    ========================================================================== */
 
 body.main-merchant-profit-page .mad-chrome{
-  display:flex!important;
-  flex-wrap:wrap!important;
-  align-items:center!important;
-  justify-content:space-between!important;
+  /* Grid, not flex: with flex-wrap the container's height did not include the wrapped
+     second line (measured: scrollHeight 106px inside a 63px box), so the KPI row
+     overflowed onto the panel below. Grid rows are auto, so the container height is
+     always the sum of its rows. */
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto;
+  grid-auto-rows:auto;
+  align-items:center;
   height:auto!important;
   max-height:none!important;
   min-height:48px;
@@ -3906,20 +3910,31 @@ body.main-merchant-profit-page .mad-chrome{
   row-gap:8px;
   column-gap:16px;
 }
-/* Tabs never shrink: they are navigation, and squeezing them is what caused the overlap. */
 body.main-merchant-profit-page .mad-chrome > .mad-tabs{
-  flex:0 0 auto;
+  grid-column:1;
   min-width:0;
 }
-/* The actions block takes the remaining line and wraps its own contents inside it. */
 body.main-merchant-profit-page .mad-chrome > .mad-chrome-actions{
-  flex:1 1 auto;
+  grid-column:2;
+  justify-self:end;
   min-width:0;
   height:auto;
   min-height:36px;
   flex-wrap:wrap;
   justify-content:flex-end;
   row-gap:6px;
+}
+/* Once the tabs plus the KPI strip no longer fit side by side, the actions get their own
+   row spanning the full width. Breakpoint is where 593px of tabs + ~960px of actions +
+   gap stops fitting in the workspace, which is what measurement showed. */
+@media (max-width:1750px){
+  body.main-merchant-profit-page .mad-chrome{
+    grid-template-columns:minmax(0,1fr);
+  }
+  body.main-merchant-profit-page .mad-chrome > .mad-chrome-actions{
+    grid-column:1 / -1;
+    justify-self:stretch;
+  }
 }
 body.main-merchant-profit-page .mpr-mini-kpis{
   flex-wrap:wrap;
