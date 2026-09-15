@@ -74,7 +74,7 @@ Do not use pure white `#FFFFFF` or ivory `#FFFCF8` for canvas / topbar / panels.
 | `--bo-text` | `#18191C` | `#F5F5F4` | Primary text |
 | `--bo-text-secondary` | `#27272A` | `#E7E5E4` | Secondary text |
 | `--bo-muted` | `#71717A` | `#A1A1AA` | Meta, time, captions |
-| `--bo-control-well` | `#F0EFEA` | `rgba(255,255,255,.06)` | Input wells |
+| `--bo-control-well` | `#F5EBDC` | `rgba(255,255,255,.06)` / dark inputs `#2A2C36` | Input wells (cream — never `#F0EFEA` / `#fff`) |
 | `--bo-placeholder` | `#78716C` | `#A1A1AA` | Placeholders on cream / charcoal wells |
 
 ### Compatibility aliases (names kept, hues changed)
@@ -137,6 +137,7 @@ Scale: `4, 8, 10, 12, 14, 16, 18, 20, 24, 32`
 - UI: system stack; hierarchy via weight + color
 - Sidebar L1: `800`
 - Money / time: tabular nums; mono OK for dense cells
+- **Roles / Create Role scale:** page title `28px/800` · card title `16px/800` · field label `11–11.5px/800` uppercase · body/filter `13.5px` · chips/buttons `12.5–13px/700–800` · status pill `10.5px/800` uppercase · topbar name `14px/700` · topbar role `11px` mono
 
 ### Depth
 
@@ -164,6 +165,18 @@ Scale: `4, 8, 10, 12, 14, 16, 18, 20, 24, 32`
 - L1 text/icons light: `#6b360c` · weight `800`
 - L1 active: cream chip + **left amber bar** (not the L2 frame)
 - Logout: danger red, not amber
+
+#### L1 group button — `.nav-group-btn` (locked light/dark)
+
+| State | Light | Dark |
+|-------|-------|------|
+| Default text/icon | `#6b360c` · weight `800` | light text on warm charcoal sidebar |
+| Hover | soft wash `rgba(255,243,224,.78)` | soft `rgba(255,255,255,.05)` |
+| **Active** | cream gradient `#FFF8EF`→`#FFE8CC`→`#FFF3E0` + **3px left amber bar** `#FBBF24`→`#D97706` | amber/charcoal glow chip + **2px left amber bar** + soft amber inset |
+| Logout `.bo-sidebar-logout` | text `#B42318` · danger wash hover | danger red (not amber) |
+| Close / collapse `.close-side` | light chip on sidebar | charcoal chip |
+
+L1 active uses a **left bar**, not the L2 bordered frame. Opaque sidebar fill: light `#FFE8CC` · dark `#3A3226` (continuum left stop). Token `--bo-sidebar-bg` may read `#2A2C36` in some blocks — prefer continuum left stop for paint.
 
 #### Desktop flyout panel — `.nav-group-list`
 
@@ -271,11 +284,12 @@ Storage / attribute: `localStorage.bo_theme` + `html[data-bo-theme="light|dark"]
 
 | State | Light | Dark |
 |-------|-------|------|
-| Default fill | `linear-gradient(180deg, #FFF8EB → #F3E8D6)` | `linear-gradient(180deg, #4A4C58 → #383A46 → #2C2E38)` |
-| Border | `#EADCC8` | `rgba(255,255,255,.12)` |
+| Default fill | Form Ghost: `#FFFCF7`→`#F5EBDC`→`#EDE4D4` · Listing may use `#FFF8EB`→`#F3E8D6` | `#4A4C58`→`#383A46`→`#2C2E38` |
+| Border | `#DCC9A8` (form) / `#EADCC8` (listing) | `rgba(255,255,255,.12–.14)` |
 | Label | `#18191C` | `#F5F5F4` |
-| Hover | reverse gradient · border `#D6D1C7` | reverse gradient · border `rgba(255,255,255,.18)` · label `#FFFFFF` |
-| Active | `#F9FAFB → #E5E7EB` | `#383A46 → #2C2E38` |
+| Hover (Create Role Back/Cancel — locked) | reverse cream `#FFF8EB`→`#F3E8D6` · border `#E0D0B8` · lift `-1px` · **no** amber fill wash | reverse charcoal · lift · **no** amber border wash |
+| Hover (listing Export) | reverse gradient · slightly stronger border | reverse · border `rgba(255,255,255,.18)` |
+| Active | press `+1px` · deeper cream `#FFF1DC`→`#EADCC8` | press into `#383A46`→`#2C2E38` |
 
 #### Secondary / default `.mad-btn` (non-primary, non-ghost)
 
@@ -334,14 +348,40 @@ Reference: `main-admin-role-create.css` (must beat `reports.css` `.report-conten
 
 | Element | Light | Dark |
 |---------|-------|------|
-| Role Name input (`.mrc-field .form-control`) | surface `#FFF8EB` · border `#EADCC8` · amber focus | `#2A2C36` · `rgba(255,255,255,.12)` · amber focus |
-| Search (`.mp-search` list) | surface `#FFF8EB` (= Role select) · border `#EADCC8` · icon `#57534E` · placeholder `#78716C` | charcoal well |
-| Search (`.mrc-search` Create Role) | surface `#FFF8EB` (= Role Name) · border `#EADCC8` | charcoal well `#2A2C36` |
-| Ghost / Select All / Clear / Back | surface `#FFF8EB` · border `#EADCC8` | charcoal well |
-| Create Role Back / Cancel (`.mrc-btn-ghost`) | 3D Ghost `#FFFCF7`→`#F5EBDC`→`#EDE4D4` · border `#DCC9A8` · lift shadow | charcoal gradient + lift |
-| Create Role Save (`.mrc-btn-primary`) | 3D Primary `#FBBF24`→`#F59E0B`→`#EA8608` · border `#E8901A` · amber shadow | amber gradient · text `#2A2C36` |
-| Toggle All (`.mrc-chip-btn.is-accent`) | amber wash `rgba(217,119,6,.12)` · never cool cyan | amber wash `rgba(245,158,11,.16)` |
-| Role Information card (`.mrc-card`) | surface `#FFF8EB` | `--bo-surface` |
+| Role Name input (`.mrc-field .form-control`) | surface `#FFF8EB` · border `#EADCC8` · `14px/600` · amber focus ring | `#2A2C36` · amber focus |
+| Search (`.mrc-search` / `#mrcFilter`) | surface `#FFF8EB` (= Role Name) · icon `#57534E` · placeholder `#78716C` | charcoal `#2A2C36` |
+| Chips Select All / Clear | surface `#FFF8EB` · border `#EADCC8` · `13px/700` · height `34px` | charcoal well |
+| Toggle All (`.mrc-chip-btn.is-accent`) | amber wash `rgba(217,119,6,.12)` · never cool cyan | `rgba(245,158,11,.16)` |
+| Back / Cancel (`.mrc-btn-ghost`) | 3D Ghost `#FFFCF7`→`#F5EBDC`→`#EDE4D4` · height `40px` · `13px/700` · shared hover reverse cream | charcoal 3D + reverse hover |
+| Save Role (`.mrc-btn-primary`) | 3D Primary amber · height `40px` · `13px/800` · white label (dark: text `#2A2C36`) | amber 3D |
+| Role Information card (`.mrc-card`) | surface `#FFF8EB` · radius `8px` | `--bo-surface` |
+| Page title | `28px/800` | same weight |
+| Field label | `11.5px/800` uppercase · muted | muted |
+
+#### Role select dropdown (Roles list — `.rounded-select-*`)
+
+Native select hidden; enhancer builds custom control. Reference: `menu-permission-executive.css`.
+
+| Part | Light | Dark |
+|------|-------|------|
+| Trigger | `#FFF8EB` · border `#EADCC8` · `40px` · `13.5px/600` · `8px` radius | `#2A2C36` |
+| Open / focus | border `#D97706` · `0 0 0 3px rgba(217,119,6,.14)` | amber border + `rgba(245,158,11,.18)` ring |
+| Menu | surface · border · `8px` · soft shadow · pad `6px` | surface · deep shadow |
+| Option hover | `--bo-cyan-tint` · text `--bo-cyan-deep` | `rgba(245,158,11,.14)` |
+| Option selected (dark) | — | fill `#F59E0B` · text `#2A2C36` |
+| Scrollbar thumb | `#98A2B3` / hover `#667085` · `4px` pill · no arrows | `#F59E0B` / `#D97706` |
+| Field label | `11px/800` uppercase · tracking `.08em` | same |
+
+#### Roles toolbar / footer extras
+
+| Element | Spec |
+|---------|------|
+| Filter `.mp-search` | height `42px` · surface `#FFF8EB` · icon `#57534E` · placeholder `#78716C` |
+| Tool chips `.mp-tool-btn` | `12px/700` · height `32px` · surface; `.is-accent` = amber wash |
+| Add Role | Primary CTA 3D (Buttons spec) · `12.5px/700` |
+| Delete Role | danger wash · border `rgba(239,51,64,.28)` · text `#B42318` · height `42px` |
+| Save / Cancel footer | Primary + Ghost 3D · `12.5px` · height `38–40px` |
+| Assigned pill | success wash · green dot |
 
 ### Data tables (Admin Management — locked contrast)
 
@@ -362,16 +402,93 @@ Reference: `main-admin-detail.html` / `main-admin-security.html` + Charcoal bloc
 | Money zero | `#71717A` | `#A1A1AA` |
 | Username emphasis | `#18191C` | `#F5F5F4` |
 | Action icons | `#57534E` · hover amber | `#D4D4D8` · hover amber |
-| Filter bar / footer edge | cream border | `rgba(255,255,255,.14)` |
-| Footer info text | `#57534E` | `#D4D4D8` |
+| Filter bar / footer edge | cream border `#EADCC8` | `rgba(255,255,255,.14)` |
+| Footer bar (`.mad-footer`) | bg surface `#FFF8EB` · top border cream | bg `#383A46` · top border white/14 |
+| Footer info text | `#57534E` · `12.5px/600` | `#D4D4D8` / muted |
 | Search / form placeholder | `#78716C` on cream wells | `#A1A1AA` |
 | Modal close (`.modal-clean-close`) | `#F5EBDC` · border `#EADCC8` · icon `#57534E` | charcoal well · light icon |
+
+#### Table footer pager (`.mad-pager` — locked light/dark)
+
+Reference: Charcoal block in `main-admin-detail-executive.css` (+ merchant twin). Classes: `.mad-pager .smart-page` / `button`. Metrics: min-width `40px` · height `36px` · radius `8px` · `13px/700`.
+
+| State | Light | Dark |
+|-------|-------|------|
+| Default (inactive page) | bg `#F3F4F6` · text `#9CA3AF` · no border | bg `#383A46` · border `rgba(255,255,255,.12)` · text `#A1A1AA` |
+| Hover (not active) | bg `#E5E7EB` · text `#374151` | bg `#444654` · border white/18 · text `#E7E5E4` |
+| Active (current page) | amber 3D `#FBBF24`→`#F59E0B`→`#D97706` · border `#D97706` · text `#fff` · soft amber lift + inset | same amber 3D · border `#F59E0B` · text `#2A2C36` · stronger amber glow |
+| Disabled | muted grey (opacity kept readable) | bg `#2A2C36` · border white/06 · text `#52525B` |
+| Ellipsis | muted / placeholder | muted |
+
+Light inactive stays cool slate (not cream) so the amber active page reads as the only warm signal in the pager row. Dark inactive is charcoal surface — never cream. Do not use navy/cyan for active.
 
 Do **not** use dark header `#71717A` or row borders `rgba(255,255,255,.06–.08)` — fails contrast on `#383A46`.
 
 ### Date / time tips
 
-- Light cream tip or dark charcoal tip per mode above — never navy `#0F1F33`
+| Spec | Light | Dark |
+|------|-------|------|
+| Chart tip `.trend-tip` | bg `#FFF8EB` · text `#6b360c` · border amber/28 · radius **`8px`** | bg `#40424E` · text `#F5F5F4` · border amber/35 · **`8px`** |
+| Icon / float tip `[data-tip]` / `.mad-float-tip` | same cream / charcoal colors · may use **pill** radius `999px` | same |
+| Never | navy `#0F1F33` tip | navy tip |
+
+### Admin listing chrome (filters / tabs / row chrome — locked light/dark)
+
+Reference: Charcoal block `main-admin-detail-executive.css` (`data-access-page="main_admin_detail|main_admin_security"`). Merchant twin: `main-merchant-detail-executive.css`.
+
+#### Tabs — `.mad-tab`
+
+| State | Light | Dark |
+|-------|-------|------|
+| Default | muted text | muted / secondary |
+| Active / current | text `#18191C` · **amber underline** `#D97706` | text `#F4F4F5` · underline `#F59E0B` (amber bar only — label stays neutral, not `#FBBF24`) |
+| Hover | slightly stronger text | slightly stronger text |
+
+#### Filter bar — `.mad-filter-bar` / `.mad-search` / filter selects
+
+| Part | Light | Dark |
+|------|-------|------|
+| Bar | surface `#FFF8EB` · bottom border `#EADCC8` | surface `#383A46` · bottom `rgba(255,255,255,.14)` |
+| Search frame `.mad-search` | surface · border `#EADCC8` · icon `#57534E` · input transparent/cream · placeholder `#78716C` | charcoal well · muted icon · placeholder `#A1A1AA` |
+| Filter select / rounded trigger | cream surface · amber focus ring | `#2A2C36` · amber focus |
+| Reset / secondary action | height `42px` · Ghost/surface | charcoal Ghost |
+| Bulk delete | `#FEF3F2` / border danger/35 / text `#B42318` | danger wash / `#FF8A90` |
+
+#### Status filter pills — `.mad-pill` / `.bo-seg-thumb`
+
+| State | Light | Dark |
+|-------|-------|------|
+| Track | transparent · gap `6px` | same |
+| Thumb / active pill | cream 3D `#FFF8EB`→`#F3E8D6` · radius `8px` · height `36px` | charcoal 3D thumb |
+| Active dots (Active/Suspend) | green `#059669` / red `#DC2626` | neon green / red on dark |
+| Inactive | muted text | muted `#A1A1AA` |
+
+#### Row chrome — avatar / status / role / money
+
+| Part | Light | Dark |
+|------|-------|------|
+| Admin `.mad-avatar` | cool indigo tile `#EEF2FF`/`#3730A3` · **self** amber `#FEF3C7`/`#B45309` | charcoal `#383A46`/`#A1A1AA` · self amber tint |
+| Merchant `.mad-avatar` | **neutral** `#F5EBDC`/`#6b360c` · suspended red only | `#2A2C36`/`#E7E5E4` · suspended red wash |
+| Status active | `#D1FAE5` / `#047857` | green wash / bright green |
+| Status suspended | `#FEE2E2` / `#B91C1C` | red wash / `#FCA5A5` |
+| Role pills (Admin) | semantic pastels (super purple, risk red, …) | semantic dark washes |
+| Money + | `#B45309` | `#F59E0B` |
+| Money 0 | `#71717A` | `#A1A1AA` |
+| `.mad-you` self badge | `#FEF3C7` / `#B45309` | amber wash / `#F59E0B` |
+
+### Modals (locked light/dark)
+
+| Part | Light | Dark |
+|------|-------|------|
+| Scrim | `rgba(15,23,42,.55)` (neutral backdrop — both modes) | same |
+| Panel `.mad-modal-panel` / `.modal-clean-panel` | cream / surface · warm border | `#383A46` · `rgba(255,255,255,.10)` |
+| z-index | `30000` (above sidebar) | same |
+| Close `.modal-clean-close` | well `#F5EBDC` · border `#EADCC8` · icon `#57534E` | charcoal well · light icon |
+| Fields | control well `#F5EBDC` · placeholder `#78716C` · amber focus | `#2A2C36` · `#A1A1AA` · amber focus |
+| Footer actions | Ghost + Primary 3D (Buttons spec) · height `40px` | charcoal Ghost + amber Primary (dark text `#2A2C36`) |
+| Adjust-credit summary well | nested cream | `#2A2C36` |
+
+Mount modals under `body`, not inside `main`.
 
 ### Permission matrix (Roles & Permissions — locked)
 
@@ -386,6 +503,21 @@ Reference: `menu-permission.html` + `assets/css/menu-permission-executive.css` (
 
 Never paint dark matrix groups with cream gradients or muddy amber fills; that reads brown and muddy.
 
+#### Control card / toolbar — `.mp-control-card` / `.mp-toolbar`
+
+| Part | Light | Dark |
+|------|-------|------|
+| Control card | surface `#FFF8EB` · border `#EADCC8` · radius `8px` · pad `18px` | `--bo-surface` · white/10 border |
+| Role label | `11px/800` uppercase · `#18191C` | light text |
+| Role select | see Role select dropdown | see Role select |
+| Delete Role | danger wash · border `rgba(239,51,64,.28)` · text `#B42318` · h `42px` | danger wash · `#FF8A90` |
+| Scope track `.mp-scope` | cream well · border `#EADCC8` | `rgba(255,255,255,.06)` |
+| Scope btn active | amber wash + amber icon | amber tint + `#F59E0B` icon |
+| Tool chips `.mp-tool-btn` | surface · h `32px` · `12px/700` | charcoal · muted |
+| Tool `.is-accent` | amber wash | amber wash |
+| Add Role | Primary CTA 3D · `12.5px/700` | Primary dark (text `#2A2C36`) |
+| Filter `.mp-search` | surface `#FFF8EB` · h `42px` · icon `#57534E` · placeholder `#78716C` | `#2A2C36` · `#A1A1AA` |
+
 #### Open group — `.mp-group.is-open`
 
 | Spec | Light | Dark |
@@ -396,6 +528,7 @@ Never paint dark matrix groups with cream gradients or muddy amber fills; that r
 | Head | gradient `#FFF8EB` → `#FFF1DC` · bottom border `rgba(217,119,6,.22)` | `#40424E` · bottom `rgba(245,158,11,.22)` |
 | Body | `#FFFCF7` | `#2C2E38` |
 | Icon chip | surface + border `rgba(217,119,6,.35)` · icon `#D97706` | `#2A2C36` + border `rgba(245,158,11,.35)` · icon `#F59E0B` |
+| Count pill | meta / amber | `rgba(245,158,11,.16)` / `#FBBF24` |
 
 Collapsed group (dark): same cool `#383A46` surface, white/10 border — not cream.
 
@@ -410,13 +543,48 @@ Collapsed group (dark): same cool `#383A46` surface, white/10 border — not cre
 | Title | `--bo-navy` / charcoal | `#F5F5F4` |
 | Meta (checked/current) | `#B45309` | `#A1A1AA` (muted; amber stays on border) |
 | Accent checkbox | `accent-color: --bo-cyan` (amber) | same |
+| Badges `.mp-menu-badge` | current amber fill/white · super cream/`#B45309` · neutral `#F4F4F5`/`#52525B` | prefer amber/charcoal variants — no cool blue |
 
-#### Related chrome on same pages
+#### Sticky footer — `.mp-footer` (list Save/Cancel)
 
-- Tabs `.mad-tab.is-active`: amber underline / `#FBBF24` label (dark)
-- Add Role: Primary CTA amber 3D gradient (locked Buttons spec)
-- Group count pill (dark): `rgba(245,158,11,.16)` / `#FBBF24`
-- Filter search `.mp-search` / `#menuPermissionFilter`: **list + Create Role** = surface `#FFF8EB` · border `#EADCC8` · icon `#57534E` · placeholder `#78716C` (Create Role Role Name same). Never muddy well `#F5EBDC` on these fields; dark well `#2A2C36`
+| Part | Light | Dark |
+|------|-------|------|
+| Bar | surface · top border · soft up-shadow | charcoal surface · white/10 |
+| Meta / role name | muted · strong `#18191C` | muted · strong `#F5F5F4` |
+| Dirty hint | `--bo-cyan-deep` amber | amber bright |
+| Cancel `.mp-btn-ghost` | cream 3D Ghost · h `38px` · reverse-cream hover | charcoal 3D Ghost |
+| Save `.mp-btn-save` | amber 3D Primary · h `38px` · white label | amber 3D · text `#2A2C36` |
+
+#### Create Role sticky footer / page chrome — `.mrc-*`
+
+| Part | Light | Dark |
+|------|-------|------|
+| Page title | `28px/800` | same |
+| Card `.mrc-card` | surface `#FFF8EB` · radius **`8px`** (tighter than listing `16px`) | `--bo-surface` |
+| Card icon tile | amber tint / charcoal | amber tint |
+| Sticky footer `.mrc-sticky-footer` | surface · top border · warm up-shadow | charcoal · white/10 |
+| Footer icon | amber tint `40px` tile | amber wash |
+| Status `.mrc-ready` | well `#F5EBDC` · `10.5px/800` uppercase | charcoal well |
+| Status `.is-ready` | green `#ECFDF3` / `#027A48` | green wash |
+| Back / Cancel / Save | Ghost + Primary 3D · h `40px` (Buttons + Create Role specs) | charcoal Ghost + amber Primary |
+
+### Coverage checklist (every slot · Light | Dark)
+
+Use this when reviewing a page. Each row must exist as a Light|Dark table (or token) above — if CSS ships it and this list has no home, update MD before shipping.
+
+| Zone | Must document |
+|------|----------------|
+| Shell | continuum, sidebar fill, L1/L2, logout, flyout |
+| Topbar | surface, theme btn, user name/avatar, hamb, page title icon |
+| Tabs | default / active underline |
+| Filters | bar, search, selects, reset, bulk delete, status pills |
+| Cards / frames | listing panel, form section lift, Roles control card, Create Role card |
+| Fields | listing surface inputs vs form wells, placeholders, focus rings, locked |
+| Buttons | Primary, Ghost (+ shared hover), secondary, danger, pager, chips |
+| Table | panel, header, cells, dividers, hover, money, status, avatar, footer, pager |
+| Modals | scrim, panel, close, fields, footer actions |
+| Roles | control card, select, scope, toolbar, matrix group/card, badges, sticky footer |
+| Create Role | title, cards, inputs, chips, ghost/primary, sticky footer status |
 
 ---
 
@@ -442,6 +610,11 @@ Collapsed group (dark): same cool `#383A46` surface, white/10 border — not cre
 | Action control radius `8px` (not 10px) | Match shipped Admin chrome | 2026-09-14 |
 | Permission matrix: light cream wash / dark cool charcoal | User locked Roles & Permissions open-group look; dark avoids muddy amber panel | 2026-09-14 |
 | Create Role Role Name + filter = surface `#FFF8EB` (not well `#F5EBDC`) | User: Create Role inputs still looked muddy vs card | 2026-09-15 |
+| Create Role Ghost hover = reverse cream (shared Back/Cancel); no amber fill wash | User: Back vs Cancel hover must match; yellow wash felt wrong | 2026-09-15 |
+| Role select dropdown (rounded-select) documented | Options/scrollbar/focus were shipped in CSS but missing from MD | 2026-09-15 |
+| `--bo-control-well` light = `#F5EBDC` (not `#F0EFEA`) | Align token table with locked cream well | 2026-09-15 |
+| Table footer pager light/dark states documented | CSS already split; MD only had footer edge/info before | 2026-09-15 |
+| Full chrome inventory: tabs, filters, pills, row chrome, modals, Roles toolbar/footer, Create Role footer — all Light\|Dark | User: every slot/frame/button must be classified light vs dark in MD | 2026-09-15 |
 | Light surfaces = cream `#FFF8EB` locked (no ivory / no pure white) | User confirmed Dashboard light main pane (topbar + canvas + cards) 2026-09-14 | 2026-09-14 |
 | Dark table: stronger borders + lighter text | User: dark Admin table borders “跑掉”; headers/cells too close to charcoal bg | 2026-09-14 |
 | L2 flyout active = cream chip + amber frame | User: Roles flat wash wrong; Admin Detail bordered chip correct — unify all pages | 2026-09-14 |
@@ -463,3 +636,4 @@ Collapsed group (dark): same cool `#383A46` surface, white/10 border — not cre
 10. **No pure white in light chrome:** canvas end, topbar, and panels use cream `#FFF8EB` (continuum → `#FFF6E8` → `#FFF8EB`). Keep `#FFFFFF` only for text-on-amber (`--bo-accent-on`). Do not settle for near-white ivory (`#FFFCF8`) on Dashboard main pane.
 11. **Dark data tables:** outer/row borders ≥ `rgba(255,255,255,.12–.14)`; header `#E7E5E4`; cells `#F5F5F4`; muted/time `#D4D4D8`. Scope light cream table CSS with `html:not([data-bo-theme="dark"])`. Copy from Patterns → Data tables.
 12. **Sidebar L2 active:** cream gradient `#FFFBEB`→`#FEF3C7` + `1px` amber border `#D97706` (dark: amber-tinted chip + `rgba(245,158,11,.55)` border). Never flat amber wash only. Beat `reports.css` flyout `#fff`. Copy from Patterns → Sidebar nav.
+13. **Every new chrome needs Light|Dark:** before shipping a frame/button/slot, add or update a two-column table in this file (see Coverage checklist). Do not leave “dark inherits” undocumented.
