@@ -155,6 +155,30 @@ Scale: `4, 8, 10, 12, 14, 16, 18, 20, 24, 32`
 - Modals: append under `body` (outside `report-shell` / `main`) so backdrop covers sidebar
 - First viewport: no marketing collage; one job per section
 
+### Transaction family (sidebar category 3 — listing)
+
+Classic BO listing shells (`reports.css` + `bo-ui-standard.css`), **not** MAIN executive pages.
+
+| Item | Value |
+|------|-------|
+| Scope | `body.bo-wallet-tx` |
+| CSS | `assets/css/bo-wallet-transaction-amber.css` (load after `bo-ui-standard`) |
+| Pages | `member-deposit`, `member-withdraw`, `member-wallet`, `wallet-ledger`, `bulk-adjustment`, `bank-deposit-usage`, `bulk-bonus-adjustment` |
+| Filter / select recipe | **Admin listing chrome** + **Role select dropdown** — surface `#FFF8EB` · border `#EADCC8` · radius `8px` · never form well `#F5EBDC` |
+| Dark select selected | solid `#F59E0B` · text `#2A2C36` (same as Role select) |
+| Pager | **Table footer pager** (`.mad-pager`) — light inactive slate `#F3F4F6`/`#9CA3AF`; dark charcoal inactive; amber 3D active |
+| Date range | **Date range picker** pattern (preset wash, ghost head, cream panel) — see Patterns |
+| Filter titles | Hidden on listing filters (placeholder + value carry meaning) |
+| Hover / focus / open | Same as Merchant Profit + Role select: border `#D97706` + `0 0 0 3px rgba(217,119,6,.14)` (dark: `#F59E0B` + `rgba(245,158,11,.18)`). Inputs, selects, date triggers — one recipe. Idle chrome must not kill the ring. |
+| Table frame | **Same as Admin Detail `.mad-panel`** — viewport-locked panel · inner scroll · `table-layout:fixed` · radius `8px` · no nested `.table-wrap` border · footer pins to panel bottom |
+| Table light paint | **Transaction listing table** (peach-cream zebra — no pure white) — see Patterns → Data tables |
+| Table dark paint | Same zebra rhythm: odd `#3A3C48` · even `#252730` · head `#1F2128` (deeper than body) — never flat slab |
+| Row Approve / Reject | `.bo-tx-action-btn` **26×26** · icon `15px` · radius `6px` · light: control-well chip `#F5EBDC`/`#EADCC8` · dark: charcoal well `#2A2C36`/`white/14` · semantic icon (`#067647`/`#B42318` · dark `#6EE7B7`/`#F87171`) · hover success/danger wash |
+| Status pills | **PENDING** orange · **APPROVED** green · **REJECTED** red — see Patterns → Data tables → Status pills |
+| Filtered total bar | **Removed** on Deposit / Withdraw — do not restore `.approval-total-bar` |
+
+Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
+
 ---
 
 ## Patterns
@@ -250,6 +274,18 @@ Storage / attribute: `localStorage.bo_theme` + `html[data-bo-theme="light|dark"]
 | Avatar fill | `#D97706` · icon `#FFFFFF` | `#F59E0B` · icon `#2A2C36` + amber glow shadow |
 | Avatar hover | `#B45309` | `#FBBF24` |
 | Divider before profile | `1px × 28px` `rgba(24,25,28,.12)` | `rgba(255,255,255,.12)` |
+
+#### Header counters — `.bo-header-counter` (Transaction / ops chrome)
+
+Neat amber chips (Members / Deposit / Withdraw). One icon language — no purple / green / orange rainbow.
+
+| Spec | Light | Dark |
+|------|-------|------|
+| Chip | `#FFFCF7` · border `#EADCC8` · height `40px` · radius `8px` · pad `4px 12px 4px 4px` | well `#2A2C36` · border `white/16` (separates from topbar `#383A46`) |
+| Icon tile | `32×32` · radius `6px` · amber wash · icon `#D97706` | amber wash · icon `#FBBF24` |
+| Label | `10px/700` uppercase · `#57534E` | `#D4D4D8` |
+| Value | `15px/800` tabular · `#18191C` | `#F5F5F4` |
+| Hover / focus | border `#D97706` + amber ring | border `#F59E0B` + amber ring |
 
 ### Buttons (locked — Admin Detail reference)
 
@@ -372,6 +408,29 @@ Native select hidden; enhancer builds custom control. Reference: `menu-permissio
 | Scrollbar thumb | `#98A2B3` / hover `#667085` · `4px` pill · no arrows | `#F59E0B` / `#D97706` |
 | Field label | `11px/800` uppercase · tracking `.08em` | same |
 
+#### Date range picker (`.bo-range-*` / `.ref-range-*` — locked)
+
+Two-pane popover: left presets · right calendar. Reference: Transaction / Merchant Profit listing. Kill `reports.css` cool gray/blue (`#f8fafc` / `#eef2ff` / `#5061f5`).
+
+| Part | Light | Dark |
+|------|-------|------|
+| Panel | bg `#FFF8EB` · border `#EADCC8` · radius **`12px`** · warm shadow `0 18px 40px rgba(92,74,48,.16)` | bg `#383A46` · border white/14 · deep shadow |
+| Preset rail | **same** cream as panel (not darker sand) · hairline `#EADCC8` | same surface · hairline white/10 |
+| Preset idle | text `#18191C` · `13px/700` · transparent | `#F5F5F4` |
+| Preset hover | wash `rgba(217,119,6,.10)` · text `#B45309` | wash `rgba(245,158,11,.14)` · `#FBBF24` |
+| **Preset active** | wash `#FFF1DC` · text `#B45309` · **never** solid amber + white | wash `rgba(245,158,11,.16)` · `#FBBF24` · never solid fill |
+| Head (month/year/arrows) | **ghost** — transparent · no border · charcoal `#18191C` / `700` | transparent · `#F5F5F4` |
+| Head hover | wash `rgba(217,119,6,.10)` · `#B45309` · no focus ring | wash · `#FBBF24` |
+| Week labels | `#78716C` · `11px/700` | `#A8A29E` |
+| Day idle | `#18191C` · `700` · radius `8px` | `#F5F5F4` |
+| Day muted (other month) | `#C4B5A0` | `#78716C` |
+| Day hover | same as preset hover | same as preset hover |
+| Day start / end | solid `#D97706` · text `#fff` (calendar selection) | solid `#F59E0B` · text `#2A2C36` |
+| Day in-range | `rgba(217,119,6,.12)` · text `#B45309` | `rgba(245,158,11,.18)` · `#FBBF24` |
+| Month / year grid active | same as **preset active** (wash, not solid) | same |
+
+**Do not** paint preset `.active` like Primary CTA. Solid amber is reserved for calendar day endpoints (and Role select dark selected option).
+
 #### Roles toolbar / footer extras
 
 | Element | Spec |
@@ -388,6 +447,17 @@ Native select hidden; enhancer builds custom control. Reference: `menu-permissio
 Reference: `main-admin-detail.html` / `main-admin-security.html` + Charcoal block in `main-admin-detail-executive.css` (`.mad-panel` / `.mad-table` / `.mad-table-wrap`).
 
 **Rule:** Scope light cream borders under `html:not([data-bo-theme="dark"])` so they never leak into dark. Dark must set full `border` / `border-bottom` (not only `border-*-color`), or cream edges “跑掉.”
+
+**Fixed frame (locked — Admin Detail):** Listing tables use a viewport-locked panel, not a page that grows with rows.
+
+| Spec | Value |
+|------|-------|
+| Shell | `.report-main` = `100dvh` flex column · `overflow:hidden` |
+| Panel | `.mad-panel` / Transaction `.table-card` = `flex:1` · `min-height:0` · `overflow:hidden` · radius **`8px`** · single outer border |
+| Scroll | `.mad-table-wrap` / `.table-wrap` = `flex:1` · `overflow-y:auto` · **no** nested border/radius |
+| Table | `table-layout:fixed` · `width:100%` · `border-collapse:collapse` |
+| Header | sticky top inside wrap · surface bg · bottom hairline |
+| Footer | pager / total bar `flex:0` · top hairline · pins to panel bottom (`margin-top:auto`) |
 
 | Spec | Light | Dark |
 |------|-------|------|
@@ -423,6 +493,41 @@ Reference: Charcoal block in `main-admin-detail-executive.css` (+ merchant twin)
 Light inactive stays cool slate (not cream) so the amber active page reads as the only warm signal in the pager row. Dark inactive is charcoal surface — never cream. Do not use navy/cyan for active.
 
 Do **not** use dark header `#71717A` or row borders `rgba(255,255,255,.06–.08)` — fails contrast on `#383A46`.
+
+#### Transaction listing table — light + dark zebra (locked)
+
+Reference: Deposit / Withdraw (`body.bo-wallet-tx`) + `bo-wallet-transaction-amber.css` tokens `--bo-table-*`. Same rhythm in both themes: **odd shallow · even deep** (never flat slab). Light: peach-cream family — **never pure white**. Dark: charcoal zebra — never all `#383A46`.
+
+| Token | Light | Dark | Role |
+|-------|-------|------|------|
+| `--bo-table-paper` | `#FFF8EB` | `#383A46` | Panel / wrap / table canvas |
+| `--bo-table-head` | `#FFE8CC` | `#1F2128` | Sticky thead ledge (dark: deeper than body) |
+| `--bo-table-row` | `#FFF8EB` | `#3A3C48` | Odd rows (shallow) |
+| `--bo-table-row-alt` | `#FFF1DC` | `#252730` | Even rows (deep) |
+| `--bo-table-hover` | `#FFE8CC` | `#444654` | Row hover |
+| `--bo-table-line` | `#EADCC8` | `rgba(255,255,255,.12)` | Hairlines · cell borders |
+| `--bo-table-chip` | `#F5EBDC` | `#2A2C36` | Action button wells |
+
+| Spec | Light | Dark |
+|------|-------|------|
+| Thead | bg `#FFE8CC` · text `#6b360c` · `11px` / **`bold` (700)** · uppercase · tracking `.04em` · sticky | bg `#1F2128` · text `#E7E5E4` · same metrics |
+| Thead corners | **`border-radius: 0`** on first/last `th` (kill `reports.css` `11px` top radii) | same |
+| Body cell | text `#18191C` · `13px` / **`bold` (700)** — pin `font-weight: bold` (never UA `bolder`) | text `#F5F5F4` · same weight |
+| Cell padding | `10px 12px` · first/last column `16px` inset | same |
+| Vertical rules | soft `rgba(107,54,12,.06–.08)` · last column no right border | `rgba(255,255,255,.06)` |
+| Filter strip inside `.table-card` | bg row cream · bottom hairline `#EADCC8` | bg row charcoal · white/12 hairline |
+| Footer pager strip | bg `#FFF8EB` · top hairline `#EADCC8` | bg `#383A46` · white/12 |
+| Do **not** | muddy yellow parchment · pure white zebra · Filtered Total Amount bar | flat single `#383A46` rows (no zebra) · cool gray/blue zebra |
+
+#### Status pills (Transaction listing)
+
+Bare `.status-pill` = PENDING · `.active` = APPROVED · `.off` = REJECTED.
+
+| State | Light | Dark |
+|-------|-------|------|
+| PENDING | bg `#FFEDD5` · text `#EA580C` · border orange/35 | bg amber/20 · text `#FBBF24` · border amber/35 |
+| APPROVED `.active` | bg `#DCFCE7` · text `#166534` | bg success/18 · text `#6EE7B7` |
+| REJECTED `.off` | bg `#FEE2E2` · text `#B91C1C` | bg danger/18 · text `#F87171` |
 
 ### Date / time tips
 
@@ -580,8 +685,10 @@ Use this when reviewing a page. Each row must exist as a Light|Dark table (or to
 | Filters | bar, search, selects, reset, bulk delete, status pills |
 | Cards / frames | listing panel, form section lift, Roles control card, Create Role card |
 | Fields | listing surface inputs vs form wells, placeholders, focus rings, locked |
+| Date range picker | cream panel, preset wash active, ghost head, day endpoints solid |
 | Buttons | Primary, Ghost (+ shared hover), secondary, danger, pager, chips |
 | Table | panel, header, cells, dividers, hover, money, status, avatar, footer, pager |
+| Transaction table (light/dark) | `--bo-table-*` zebra · square thead · bold cells · PENDING orange · no Filtered Total |
 | Modals | scrim, panel, close, fields, footer actions |
 | Roles | control card, select, scope, toolbar, matrix group/card, badges, sticky footer |
 | Create Role | title, cards, inputs, chips, ghost/primary, sticky footer status |
@@ -615,12 +722,18 @@ Use this when reviewing a page. Each row must exist as a Light|Dark table (or to
 | `--bo-control-well` light = `#F5EBDC` (not `#F0EFEA`) | Align token table with locked cream well | 2026-09-15 |
 | Table footer pager light/dark states documented | CSS already split; MD only had footer edge/info before | 2026-09-15 |
 | Full chrome inventory: tabs, filters, pills, row chrome, modals, Roles toolbar/footer, Create Role footer — all Light\|Dark | User: every slot/frame/button must be classified light vs dark in MD | 2026-09-15 |
+| Transaction listing filters = surface `#FFF8EB` (not form well `#F5EBDC`); dark selected option = solid amber | Align `bo-wallet-tx` to renewed listing / Role select MD | 2026-09-15 |
 | Light surfaces = cream `#FFF8EB` locked (no ivory / no pure white) | User confirmed Dashboard light main pane (topbar + canvas + cards) 2026-09-14 | 2026-09-14 |
 | Dark table: stronger borders + lighter text | User: dark Admin table borders “跑掉”; headers/cells too close to charcoal bg | 2026-09-14 |
 | L2 flyout active = cream chip + amber frame | User: Roles flat wash wrong; Admin Detail bordered chip correct — unify all pages | 2026-09-14 |
 | Merchant Detail migrated to Charcoal + Amber (new `assets/css/main-merchant-detail-executive.css`, scoped to `.main-admin-detail-page.main-merchant-detail-page`, loads after the shared file) | Page still ran retired navy; matches Admin Detail reference. Scope by page class, not `data-access-page` — 8 pages share `main_merchant_detail` | 2026-09-15 |
 | Merchant family runs the Charcoal block: scope widened to `body.main-admin-detail-page[data-access-page="main_merchant_detail"]`; `main-merchant-create.html` migrated | One block serves the whole family (detail/create/security/profit/profit-record/repayments/settlement); roles pages share the attribute but load a different stylesheet, so they stay untouched | 2026-09-15 |
 | Merchant row avatar = neutral tile `#F5EBDC` / `#2A2C36`; every-third-row tint deleted; colour only on suspended rows; initials from the company name | User approved. The tint encoded row position, not data, and the indigo tile repeated the code printed beside it. Admin Detail keeps the old vocabulary | 2026-09-15 |
+| Date range picker: preset active = amber wash + amber text; ghost head; cream panel `12px` | User locked to listing reference (not solid amber preset / not filled well head) | 2026-09-15 |
+| Transaction table frame = Admin Detail mad-panel (viewport-locked, inner scroll, table-layout fixed) | User: Deposit table 框 must match main-admin-detail fixed frame | 2026-09-15 |
+| Transaction table light paint = peach-cream zebra (`#FFF8EB`/`#FFF1DC`/`#FFE8CC` head) · no pure white · thead corners square · cell weight `bold` · PENDING orange | User: white rows刺眼; muddy parchment 违和; then locked cream family | 2026-09-15 |
+| Transaction table dark zebra = odd `#3A3C48` · even `#252730` · head `#1F2128` (head deeper than body) | User: dark mode 一行深一行浅; 表头要深色 | 2026-09-15 |
+| Deposit/Withdraw Filtered Total Amount bar removed | User: 这个部分我不要 | 2026-09-15 |
 
 ## Agent rules
 

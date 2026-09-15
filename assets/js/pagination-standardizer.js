@@ -74,6 +74,7 @@
     right.appendChild(prev);
     if(pager){
       pager.classList.add('pagination-clean-inner');
+      pager.classList.remove('text-muted','small');
       right.appendChild(pager);
     }
     right.appendChild(next);

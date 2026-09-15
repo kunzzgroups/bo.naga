@@ -1,14 +1,22 @@
 (function(){
   let page=1,totalPages=1,currentRows=[];
+  /* Only page numbers — pagination-standardizer already wraps ‹ #depositPager ›. */
   function pageButtons(current,total){
-    total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
-    const pages=[]; const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};
-    add(1); for(let n=current-2;n<=current+2;n++) add(n); add(total); pages.sort((a,b)=>a-b);
-    let html='<div class="smart-pagination" role="navigation" aria-label="Table pagination">';
-    html+='<button type="button" class="smart-page first" data-page="1" '+(current<=1?'disabled':'')+' title="First page"><i class="bi bi-chevron-bar-left"></i></button>';
-    let prev=0; pages.forEach(n=>{if(prev&&n-prev>1)html+='<span class="smart-page-ellipsis">…</span>'; html+='<button type="button" class="smart-page '+(n===current?'active':'')+'" data-page="'+n+'" '+(n===current?'aria-current="page"':'')+'>'+n+'</button>'; prev=n;});
-    html+='<button type="button" class="smart-page last" data-page="'+total+'" '+(current>=total?'disabled':'')+' title="Last page"><i class="bi bi-chevron-bar-right"></i></button>';
-    html+='</div><span class="smart-page-summary">Page '+current+' / '+total+'</span>'; return html;
+    total=Math.max(1,Number(total)||1);
+    current=Math.max(1,Math.min(Number(current)||1,total));
+    const pages=[];
+    const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};
+    add(1);
+    for(let n=current-2;n<=current+2;n++) add(n);
+    add(total);
+    pages.sort((a,b)=>a-b);
+    let html='',prev=0;
+    pages.forEach(n=>{
+      if(prev&&n-prev>1) html+='<span class="smart-page-ellipsis">…</span>';
+      html+='<button type="button" class="smart-page'+(n===current?' active':'')+'" data-page="'+n+'"'+(n===current?' aria-current="page"':'')+'>'+n+'</button>';
+      prev=n;
+    });
+    return html;
   }
   function endpoint(k){return API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS[k];}
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -93,7 +101,6 @@
   function renderSummary(summary,pendingCount,pendingAmount){
     metric('wdPendingCount',num(pendingCount).toLocaleString());
     metric('wdPendingAmount',money(pendingAmount));
-    metric('depositTotalAmount',money(summary?.totalAmount));
   }
   function pendingQuery(){
     const params=new URLSearchParams();
@@ -121,7 +128,7 @@
     if(!rows.length) body.innerHTML='<tr><td colspan="8">No deposit request found.</td></tr>';
     else body.innerHTML=rows.map(r=>{
       const pending=String(r.status||'').toUpperCase()==='PENDING';
-      return `<tr><td>${esc(dt(r.createdAt))}</td><td><b>${esc(r.username||'-')}</b><br><small>ID: ${esc(r.memberId)} ${r.mobile?'• '+esc(r.mobile):''}</small></td><td><b>${money(r.amount)}</b></td><td><b>${esc(r.paymentMethod||'-')}</b>${r.approvedPaymentMethod?`<br><small>Confirmed: ${esc(r.approvedPaymentMethod)}</small>`:''}</td><td>${esc(r.referenceNo||'-')}</td><td><span class="status-pill ${r.status==='APPROVED'?'active':r.status==='REJECTED'?'off':''}">${esc(r.status||'-')}</span></td><td>${esc(dt(r.processedAt))}</td><td>${pending?`<div class="d-flex gap-2 flex-wrap"><button class="btn btn-success btn-sm" data-approve="${esc(r.id)}">Approve</button><button class="btn btn-danger btn-sm" data-reject="${esc(r.id)}">Reject</button></div>`:'-'}</td></tr>`;
+      return `<tr><td>${esc(dt(r.createdAt))}</td><td>${esc(r.username||'-')}</td><td>${money(r.amount)}</td><td>${esc(r.paymentMethod||'-')}${r.approvedPaymentMethod?`<br><small>Confirmed: ${esc(r.approvedPaymentMethod)}</small>`:''}</td><td>${esc(r.referenceNo||'-')}</td><td><span class="status-pill ${r.status==='APPROVED'?'active':r.status==='REJECTED'?'off':''}">${esc(r.status||'-')}</span></td><td>${esc(dt(r.processedAt))}</td><td>${pending?`<div class="bo-tx-actions"><button type="button" class="bo-tx-action-btn is-approve" data-approve="${esc(r.id)}" title="Approve" aria-label="Approve"><i class="bi bi-check-lg" aria-hidden="true"></i></button><button type="button" class="bo-tx-action-btn is-reject" data-reject="${esc(r.id)}" title="Reject" aria-label="Reject"><i class="bi bi-x-lg" aria-hidden="true"></i></button></div>`:'-'}</td></tr>`;
     }).join('');
     totalPages=Number(pagination?.totalPages)||1;
     document.getElementById('depositPager').innerHTML=pageButtons(page,totalPages);
@@ -152,12 +159,13 @@
   }
   document.addEventListener('click',e=>{const proof=e.target.closest?.('[data-proof-preview]');if(proof){e.preventDefault();e.stopPropagation();openProofPreview(proof.dataset.proofPreview);return;}const a=e.target.closest?.('[data-approve]'); const r=e.target.closest?.('[data-reject]'); if(a)action(a.dataset.approve,'approve'); if(r)action(r.dataset.reject,'reject');});
   document.addEventListener('DOMContentLoaded',()=>{
-    document.getElementById('depositSearchBtn')?.addEventListener('click',()=>{page=1;load();});
-    document.getElementById('depositKeyword')?.addEventListener('keydown',e=>{if(e.key==='Enter'){page=1;load();}});
-    document.getElementById('depositStatus')?.addEventListener('change',()=>{page=1;load();});
-    document.getElementById('depositSize')?.addEventListener('change',()=>{page=1;load();});
-    ['depositFrom','depositTo'].forEach(id=>document.getElementById(id)?.addEventListener('change',()=>{page=1;load();}));
-    document.getElementById('depositResetBtn')?.addEventListener('click',()=>{document.getElementById('depositKeyword').value='';document.getElementById('depositStatus').value='PENDING';const today=new Date();const iso=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');document.getElementById('depositFrom').value=iso;document.getElementById('depositTo').value=iso;document.getElementById('depositFrom').dispatchEvent(new Event('change',{bubbles:true}));page=1;load();});
+    let keywordTimer=0;
+    const runSearch=()=>{page=1;load();};
+    document.getElementById('depositKeyword')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();clearTimeout(keywordTimer);runSearch();}});
+    document.getElementById('depositKeyword')?.addEventListener('input',()=>{clearTimeout(keywordTimer);keywordTimer=setTimeout(runSearch,350);});
+    document.getElementById('depositStatus')?.addEventListener('change',runSearch);
+    document.getElementById('depositSize')?.addEventListener('change',runSearch);
+    ['depositFrom','depositTo'].forEach(id=>document.getElementById(id)?.addEventListener('change',runSearch));
     document.getElementById('depositPrevBtn')?.addEventListener('click',()=>{if(page>1){page--;load();}}); document.getElementById('depositNextBtn')?.addEventListener('click',()=>{if(page<totalPages){page++;load();}});
     document.getElementById('depositPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(!b)return;const n=Number(b.dataset.page);if(n>=1&&n<=totalPages&&n!==page){page=n;load();}});
     setTimeout(load,0);

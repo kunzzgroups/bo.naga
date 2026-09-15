@@ -227,6 +227,8 @@ Reference CSS: `menu-permission-executive.css`. Full tables in `.interface-desig
 
 ### Data tables (Admin — locked dark contrast)
 
+**Transaction listing table** (`body.bo-wallet-tx`): peach-cream zebra light `#FFF8EB` / `#FFF1DC` · thead `#FFE8CC`; dark zebra `#3A3C48` / `#252730` · thead `#1F2128` (deeper than body) — **same deep/shallow rhythm** · **no pure white** · square thead corners · cell `bold` · PENDING orange. Tokens `--bo-table-*` in `bo-wallet-transaction-amber.css`. Full table: `.interface-design/system.md` → Patterns → Data tables → Transaction listing table.
+
 Dark panel border `rgba(255,255,255,.14)`; row line `.12`; header `#E7E5E4`; cell `#F5F5F4`; muted/time `#D4D4D8`.  
 Never leave light cream borders unscoped, or use dark header `#71717A` / ultra-faint `.06` dividers.  
 **Light muted on cream:** use `#57534E` (not `#9CA3AF` / `#A1A1AA` — too faint). Placeholders `#78716C`. Modal close cream well.  
@@ -279,6 +281,10 @@ Native `<select>` is hidden; `reports.js` builds `.rounded-select-wrap` / `-btn`
 | Label `.mp-role-label` | `11px/800` · tracking `.08em` · uppercase · `--bo-navy` | same weight · light text |
 
 Do not paint options with cool blue/cyan. Attention shake (`.is-attention`) is motion-only when validation fails.
+
+### Transaction listing family (`body.bo-wallet-tx`)
+
+Sidebar **3. Transaction** pages use listing chrome: filter/select = surface `#FFF8EB` (not form well `#F5EBDC`); dark selected option = `#F59E0B` / `#2A2C36`; pager = mad-pager slate inactive + amber active; **date range popover** = cream panel `12px` · preset active wash `#FFF1DC`/`#B45309` (never solid CTA) · ghost month/year head · divider shadow into calendar; **table frame** = Admin Detail `.mad-panel` (viewport-locked · inner scroll · `table-layout:fixed` · radius `8px`); **table zebra** = light `#FFF8EB`/`#FFF1DC` · dark `#3A3C48`/`#252730` · head light `#FFE8CC` / dark `#1F2128` · **no pure white** · thead corners square · cell `bold` · PENDING orange / APPROVED green / REJECTED red. CSS: `bo-wallet-transaction-amber.css`. Full notes: `.interface-design/system.md` → Layout → Transaction family + Patterns → Date range picker / Data tables (Transaction listing table).
 
 ### Roles typography (quick scale)
 

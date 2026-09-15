@@ -611,6 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function enhanceSelect(select){
     if(!select || select.dataset.noRounded==='1' || select.multiple || select.size>1) return;
+    if(select.hidden || select.getAttribute('aria-hidden')==='true' || select.type==='hidden') return;
 
     if(select.closest('.rounded-select-wrap')){
       select.dataset.roundedReady='1';
