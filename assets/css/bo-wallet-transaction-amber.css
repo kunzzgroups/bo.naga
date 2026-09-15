@@ -1,0 +1,3335 @@
+/* BO sidebar category: 3. Transaction — Charcoal + Amber
+   Aligns Deposit / Withdraw / Wallet / Bulk pages to Admin Detail.
+   Scope: body.bo-wallet-tx
+   Light + dark via html[data-bo-theme] / localStorage.bo_theme
+   ========================================================================== */
+
+body.bo-wallet-tx{
+  --bo-navy:#18191C;
+  --bo-cyan:#D97706;
+  --bo-cyan-deep:#B45309;
+  --bo-success:#12B76A;
+  --bo-danger:#991B1B;
+  --bo-bg:#FFF1DC;
+  --bo-surface:#FFF8EB;
+  --bo-border:#EADCC8;
+  --bo-text:#18191C;
+  --bo-text-secondary:#27272A;
+  --bo-muted:#71717A;
+  --bo-sidebar-bg:#FFE8CC;
+  --bo-sidebar-text:#6b360c;
+  --bo-sidebar-active:#D97706;
+  --bo-cyan-tint:rgba(217,119,6,.12);
+  --bo-control-well:#F5EBDC;
+  --bo-placeholder:#78716C;
+  --bo-ui-blue:#D97706;
+  --bo-ui-blue-hover:#B45309;
+  --bo-accent-on:#FFFFFF;
+  --bo-shadow:0 0 0 1px rgba(24,25,28,.04),0 1px 2px -1px rgba(24,25,28,.06),0 2px 8px rgba(24,25,28,.04);
+  --bo-header-h:64px;
+  color:var(--bo-text);
+  background:transparent!important;
+  font-family:ui-sans-serif,"Segoe UI",system-ui,sans-serif;
+}
+
+html:not([data-bo-theme="dark"]):has(body.bo-wallet-tx){
+  background-color:#FFF6E8;
+  background-image:linear-gradient(90deg,
+    #FFE8CC 0,
+    #FFF1DC calc(var(--sidebar-w,280px) * .72),
+    #FFF3E0 var(--sidebar-w,280px),
+    #FFF6E8 calc(var(--sidebar-w,280px) + 64px),
+    #FFF8EB calc(var(--sidebar-w,280px) + 140px),
+    #FFF8EB 100%
+  );
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+  background-size:100% 100%;
+  min-height:100%;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx{
+  --bo-navy:#F5F5F4;
+  --bo-cyan:#F59E0B;
+  --bo-cyan-deep:#D97706;
+  --bo-success:#10B981;
+  --bo-danger:#F87171;
+  --bo-bg:#2C2E38;
+  --bo-surface:#383A46;
+  --bo-border:rgba(255,255,255,.10);
+  --bo-text:#F5F5F4;
+  --bo-text-secondary:#E7E5E4;
+  --bo-muted:#A1A1AA;
+  --bo-sidebar-bg:#3A3226;
+  --bo-sidebar-text:#FFFFFF;
+  --bo-sidebar-active:#F59E0B;
+  --bo-cyan-tint:rgba(245,158,11,.16);
+  --bo-control-well:rgba(255,255,255,.06);
+  --bo-placeholder:#A1A1AA;
+  --bo-ui-blue:#F59E0B;
+  --bo-ui-blue-hover:#D97706;
+  --bo-accent-on:#2A2C36;
+  --bo-shadow:none;
+  --bo-tx-well:#2A2C36;
+  --bo-tx-well-border:rgba(255,255,255,.14);
+  /* Dark table zebra — odd #3A3C48 · even #434653; head deeper than body */
+  --bo-table-paper:#383A46;
+  --bo-table-head:#1F2128;
+  --bo-table-row:#3A3C48;
+  --bo-table-row-alt:#434653;
+  --bo-table-hover:#444654;
+  --bo-table-line:rgba(255,255,255,.12);
+  --bo-table-chip:#2A2C36;
+  color-scheme:dark;
+}
+html[data-bo-theme="dark"]:has(body.bo-wallet-tx){
+  background-color:#2C2E38;
+  background-image:linear-gradient(90deg,
+    #3A3226 0,
+    #342E28 calc(var(--sidebar-w,280px) * .72),
+    #2F2E32 var(--sidebar-w,280px),
+    #2D2E36 calc(var(--sidebar-w,280px) + 64px),
+    #2C2E38 calc(var(--sidebar-w,280px) + 140px),
+    #2C2E38 100%
+  );
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+  background-size:100% 100%;
+  min-height:100%;
+}
+
+body.bo-wallet-tx .report-shell,
+body.bo-wallet-tx .report-main,
+body.bo-wallet-tx .report-content{
+  background:transparent!important;
+}
+
+/* ---- Fixed listing frame (mirror Admin Detail `.mad-panel`) ----
+   Viewport-locked shell: table panel fills remaining height; rows scroll inside. */
+body.bo-wallet-tx .report-main{
+  min-height:100vh!important;
+  min-height:100dvh!important;
+  height:100vh!important;
+  height:100dvh!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+}
+body.bo-wallet-tx .report-topbar{
+  flex:0 0 auto!important;
+}
+body.bo-wallet-tx .report-content{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:12px!important;
+  overflow:hidden!important;
+  padding-bottom:16px!important;
+}
+body.bo-wallet-tx .report-content > .quick-stats,
+body.bo-wallet-tx .report-content > .filter-card,
+body.bo-wallet-tx .report-content > .user-title-row,
+body.bo-wallet-tx .report-content > .bo-page-head{
+  flex:0 0 auto!important;
+}
+body.bo-wallet-tx .report-content > .table-card{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  margin-bottom:0!important;
+}
+
+/* ---- Sidebar (beat reports.css blue) ---- */
+body.bo-wallet-tx .report-sidebar{
+  background:var(--bo-sidebar-bg)!important;
+  border-right:1px solid rgba(92,74,48,.14)!important;
+  color:var(--bo-sidebar-text)!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar{
+  border-right-color:rgba(245,158,11,.22)!important;
+}
+body.bo-wallet-tx .report-sidebar::before{
+  content:"";
+  position:absolute;
+  top:12%;bottom:12%;right:0;
+  width:2px;
+  border-radius:999px 0 0 999px;
+  pointer-events:none;z-index:2;
+  background:linear-gradient(180deg, transparent 0%, #F59E0B 26%, #D97706 58%, transparent 100%);
+  opacity:.75;
+}
+body.bo-wallet-tx .report-sidebar > *{position:relative;z-index:1}
+body.bo-wallet-tx .report-brand{
+  height:var(--bo-header-h)!important;
+  min-height:var(--bo-header-h)!important;
+  max-height:var(--bo-header-h)!important;
+  box-sizing:border-box!important;
+  color:var(--bo-sidebar-text)!important;
+  border-bottom:1px solid var(--bo-border)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-brand{
+  border-bottom-color:rgba(255,255,255,.12)!important;
+  color:#fff!important;
+}
+body.bo-wallet-tx .report-brand small{
+  color:var(--bo-sidebar-text)!important;
+  font-weight:bold!important;
+  font-size:10px!important;
+  letter-spacing:.14em!important;
+  opacity:.78;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-brand small{
+  color:rgba(245,158,11,.78)!important;
+  opacity:1;
+}
+body.bo-wallet-tx .close-side{
+  color:var(--bo-sidebar-text)!important;
+  border-color:rgba(92,74,48,.18)!important;
+  background:transparent!important;
+}
+
+/* Kill legacy blue nav-group gradient (reports.css) */
+body.bo-wallet-tx .report-sidebar .nav-group{
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+body.bo-wallet-tx .report-sidebar .nav-group-btn{
+  background:transparent!important;
+  color:inherit!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+/* ---- L1 idle / hover (light) ---- */
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub),
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn{
+  border-radius:10px!important;
+  color:#6b360c!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-weight:800!important;
+  border:0!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub) i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn .bi-chevron-down{
+  color:#6b360c!important;
+  opacity:.72;
+  filter:none;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):hover,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):focus-visible,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn:hover,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn{
+  background:rgba(255,243,224,.78)!important;
+  color:#6b360c!important;
+  box-shadow:0 1px 2px rgba(60,48,32,.05)!important;
+  border-radius:10px!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn:hover i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn i{
+  color:#6b360c!important;
+  opacity:1;
+}
+
+/* L1 active — cream chip + left amber pill bar (locked reference) */
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub).active,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn{
+  position:relative!important;
+  background:linear-gradient(135deg,#FFF8EF 0%,#FFE8CC 48%,#FFF3E0 100%)!important;
+  color:#6b360c!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.85),
+    0 0 0 1px rgba(217,119,6,.18),
+    0 6px 16px rgba(217,119,6,.12)!important;
+  border:0!important;
+  border-radius:10px!important;
+  overflow:hidden;
+  text-shadow:none;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub).active::before,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn::before,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn::before,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn::before{
+  content:"";
+  position:absolute;
+  left:0;top:7px;bottom:7px;width:3px;border-radius:999px;
+  background:linear-gradient(180deg,#FBBF24 0%,#D97706 100%);
+  box-shadow:0 0 10px rgba(217,119,6,.35);
+  pointer-events:none;
+  z-index:1;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub).active i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn .bi-chevron-down,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn .bi-chevron-down{
+  color:#6b360c!important;
+  opacity:1;
+  filter:none;
+}
+
+/* ---- L1 idle / hover / active (dark) ---- */
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub),
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn{
+  color:rgba(255,255,255,.86)!important;
+  background:transparent!important;
+  font-weight:800!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub) i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn .bi-chevron-down{
+  color:rgba(255,255,255,.7)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):focus-visible,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn{
+  position:relative!important;
+  background:linear-gradient(90deg,rgba(245,158,11,.16) 0%,rgba(245,158,11,.05) 45%,transparent 100%)!important;
+  color:#FBBF24!important;
+  box-shadow:
+    inset 0 1px 0 rgba(245,158,11,.18),
+    inset 0 -1px 0 rgba(245,158,11,.10),
+    0 0 28px rgba(245,158,11,.12)!important;
+  border:0!important;
+  border-radius:8px!important;
+  overflow:hidden;
+  text-shadow:0 0 18px rgba(245,158,11,.45);
+}
+/* L1 dark hover — amber chip (same signal as active; beat reports.css blue) */
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):hover i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):focus-visible i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):hover span i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn:hover i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn:hover span i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group .nav-group-btn:hover .bi-chevron-down,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn span i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn .bi-chevron-down{
+  color:#FBBF24!important;
+  filter:drop-shadow(0 0 8px rgba(245,158,11,.65));
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub).active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn{
+  position:relative!important;
+  background:linear-gradient(90deg,rgba(245,158,11,.16) 0%,rgba(245,158,11,.05) 45%,transparent 100%)!important;
+  color:#FBBF24!important;
+  box-shadow:
+    inset 0 1px 0 rgba(245,158,11,.18),
+    inset 0 -1px 0 rgba(245,158,11,.10),
+    0 0 28px rgba(245,158,11,.12)!important;
+  border:0!important;
+  border-radius:8px!important;
+  overflow:hidden;
+  text-shadow:0 0 18px rgba(245,158,11,.45);
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub).active::before,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn::before,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn::before,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn::before{
+  content:"";
+  position:absolute;
+  left:0;top:8px;bottom:8px;width:2px;border-radius:999px;
+  background:linear-gradient(180deg,#FDE68A 0%,#F59E0B 55%,#D97706 100%);
+  box-shadow:0 0 10px rgba(245,158,11,.9),0 0 18px rgba(245,158,11,.5);
+  pointer-events:none;
+  z-index:1;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub).active i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn .bi-chevron-down,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn .bi-chevron-down{
+  color:#FBBF24!important;
+  filter:drop-shadow(0 0 8px rgba(245,158,11,.65));
+}
+
+/* ---- L2 flyout panel ---- */
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > .nav-group > .nav-group-list,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list{
+  background:#FFF8EB!important;
+  border:1px solid rgba(92,74,48,.12)!important;
+  box-shadow:0 12px 32px rgba(60,48,32,.14)!important;
+  border-radius:12px!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > .nav-group > .nav-group-list,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list{
+  background:#383A46!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:0 16px 40px rgba(0,0,0,.35)!important;
+}
+
+/* L2 idle / hover / active — amber frame chip (locked reference) */
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub{
+  position:relative!important;
+  border:1px solid transparent!important;
+  border-radius:9px!important;
+  color:#6b360c!important;
+  background:transparent!important;
+  font-weight:650!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub:hover,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub:hover{
+  background:rgba(255,243,224,.72)!important;
+  color:#6b360c!important;
+  border-color:transparent!important;
+}
+/* Beat reports.css `.report-nav a:hover i{color:#1d4ed8}` — L2 icons stay charcoal, never BO blue */
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub:hover i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub:hover i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a:hover i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active:hover i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active i,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active:hover i{
+  color:#6b360c!important;
+  opacity:1;
+  filter:none;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active{
+  background:linear-gradient(180deg,#FFFBEB 0%,#FEF3C7 100%)!important;
+  border:1px solid #D97706!important;
+  border-radius:9px!important;
+  color:#6b360c!important;
+  font-weight:800!important;
+  box-shadow:0 0 0 1px rgba(245,158,11,.12),0 4px 14px rgba(217,119,6,.12)!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active::after,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active::after{
+  content:none!important;
+  display:none!important;
+}
+
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub{
+  color:rgba(255,255,255,.62)!important;
+  background:transparent!important;
+  border:1px solid transparent!important;
+  border-radius:9px!important;
+  font-weight:650!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub:hover{
+  background:rgba(255,255,255,.05)!important;
+  color:rgba(255,255,255,.92)!important;
+}
+/* L2 icons — amber series (beat reports.css #1d4ed8 hover/active) */
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub span i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub span i{
+  color:rgba(255,255,255,.55)!important;
+  filter:none;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub:hover i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub:hover i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a:hover i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub:hover span i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub:hover span i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active:hover i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active:hover i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.active i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.active:hover i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active span i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active span i{
+  color:#FBBF24!important;
+  filter:drop-shadow(0 0 6px rgba(245,158,11,.45));
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active{
+  background:linear-gradient(180deg,rgba(245,158,11,.18) 0%,rgba(43,37,33,.92) 100%)!important;
+  border:1px solid rgba(245,158,11,.55)!important;
+  color:#FBBF24!important;
+  font-weight:800!important;
+  box-shadow:0 0 0 1px rgba(245,158,11,.12),0 0 18px rgba(245,158,11,.18),inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub.active::after,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub.active::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* ---- Topbar ---- */
+body.bo-wallet-tx .report-topbar{
+  height:var(--bo-header-h)!important;
+  min-height:var(--bo-header-h)!important;
+  max-height:var(--bo-header-h)!important;
+  box-sizing:border-box!important;
+  padding-top:0!important;
+  padding-bottom:0!important;
+  align-items:center!important;
+  background:var(--bo-surface)!important;
+  border-bottom:1px solid var(--bo-border)!important;
+  color:var(--bo-text)!important;
+}
+body.bo-wallet-tx .user-title-wrap h1{color:var(--bo-text)!important}
+body.bo-wallet-tx .user-title-wrap p{color:var(--bo-muted)!important}
+body.bo-wallet-tx .user-title-icon{
+  background:var(--bo-cyan-tint)!important;
+  color:var(--bo-cyan)!important;
+  border:1px solid rgba(217,119,6,.22);
+}
+body.bo-wallet-tx .hamb{
+  background:var(--bo-surface)!important;
+  border:1px solid var(--bo-border)!important;
+  color:var(--bo-text)!important;
+}
+
+/* ---- Topbar actions — theme + counters + account in one row ---- */
+body.bo-wallet-tx .report-actions{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  gap:12px!important;
+  min-width:0!important;
+}
+body.bo-wallet-tx .report-actions > [data-bo-profile]{
+  display:inline-flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  gap:12px!important;
+  min-width:0!important;
+}
+/* Divider between theme toggle and profile cluster */
+body.bo-wallet-tx .report-actions > [data-bo-profile]::before{
+  content:"";
+  width:1px;height:28px;flex:0 0 1px;
+  background:rgba(24,25,28,.12);
+  margin:0;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions > [data-bo-profile]::before{
+  background:rgba(255,255,255,.14);
+}
+body.bo-wallet-tx .report-actions .bo-header-counters{
+  display:inline-flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  gap:10px!important;
+  flex:0 1 auto!important;
+  min-width:0!important;
+}
+/* Header counters — larger click targets; charcoal+amber family with per-chip identity */
+body.bo-wallet-tx .report-actions .bo-header-counter{
+  box-sizing:border-box!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  flex:0 0 auto!important;
+  height:48px!important;
+  min-height:48px!important;
+  min-width:118px!important;
+  padding:5px 14px 5px 5px!important;
+  border-radius:10px!important;
+  border:1px solid #EADCC8!important;
+  background:#FFFCF7!important;
+  box-shadow:none!important;
+  color:var(--bo-text)!important;
+  text-decoration:none!important;
+  cursor:pointer!important;
+  transform:none!important;
+  transition:border-color .14s ease,background .14s ease,box-shadow .14s ease!important;
+}
+body.bo-wallet-tx .report-actions .bo-header-counter:hover,
+body.bo-wallet-tx .report-actions .bo-header-counter:focus-visible{
+  border-color:#D97706!important;
+  background:#FFF8EB!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+  outline:none!important;
+  transform:none!important;
+}
+body.bo-wallet-tx .report-actions .bo-header-counter-icon{
+  width:38px!important;
+  height:38px!important;
+  border-radius:8px!important;
+  display:grid!important;
+  place-items:center!important;
+  flex:0 0 38px!important;
+  font-size:18px!important;
+  line-height:1!important;
+  border:1px solid transparent!important;
+}
+/* Members = charcoal identity; Deposit = bright amber; Withdraw = deep amber */
+body.bo-wallet-tx .report-actions .bo-header-counter-icon.members{
+  background:rgba(24,25,28,.08)!important;
+  color:#18191C!important;
+  border-color:rgba(24,25,28,.12)!important;
+}
+body.bo-wallet-tx .report-actions .bo-header-counter-icon.deposit{
+  background:rgba(217,119,6,.18)!important;
+  color:#D97706!important;
+  border-color:rgba(217,119,6,.28)!important;
+}
+body.bo-wallet-tx .report-actions .bo-header-counter-icon.withdraw{
+  background:rgba(180,83,9,.14)!important;
+  color:#B45309!important;
+  border-color:rgba(180,83,9,.28)!important;
+}
+body.bo-wallet-tx .report-actions .bo-header-counter-icon i{
+  font-size:18px!important;
+  line-height:1!important;
+  color:inherit!important;
+}
+body.bo-wallet-tx .report-actions .bo-header-counter-text{
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  gap:3px!important;
+  line-height:1.05!important;
+  min-width:0!important;
+  padding-right:2px!important;
+}
+body.bo-wallet-tx .report-actions .bo-header-counter-text small{
+  font-size:11px!important;
+  font-weight:800!important;
+  letter-spacing:.06em!important;
+  text-transform:uppercase!important;
+  white-space:nowrap!important;
+}
+body.bo-wallet-tx .report-actions .bo-header-counter:has(.members) .bo-header-counter-text small{
+  color:#44403C!important;
+}
+body.bo-wallet-tx .report-actions .bo-header-counter:has(.deposit) .bo-header-counter-text small{
+  color:#B45309!important;
+}
+body.bo-wallet-tx .report-actions .bo-header-counter:has(.withdraw) .bo-header-counter-text small{
+  color:#92400E!important;
+}
+body.bo-wallet-tx .report-actions .bo-header-counter-text b{
+  font-size:18px!important;
+  font-weight:800!important;
+  color:#18191C!important;
+  margin:0!important;
+  font-variant-numeric:tabular-nums!important;
+  line-height:1!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions .bo-header-counter{
+  background:#2A2C36!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions .bo-header-counter:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions .bo-header-counter:focus-visible{
+  border-color:#F59E0B!important;
+  background:#32343F!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions .bo-header-counter-icon.members{
+  background:rgba(245,245,244,.10)!important;
+  color:#F5F5F4!important;
+  border-color:rgba(245,245,244,.18)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions .bo-header-counter-icon.deposit{
+  background:rgba(245,158,11,.20)!important;
+  color:#FBBF24!important;
+  border-color:rgba(245,158,11,.34)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions .bo-header-counter-icon.withdraw{
+  background:rgba(217,119,6,.18)!important;
+  color:#F59E0B!important;
+  border-color:rgba(217,119,6,.32)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions .bo-header-counter:has(.members) .bo-header-counter-text small{
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions .bo-header-counter:has(.deposit) .bo-header-counter-text small{
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions .bo-header-counter:has(.withdraw) .bo-header-counter-text small{
+  color:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions .bo-header-counter-text b{
+  color:#F5F5F4!important;
+}
+@media(max-width:1199.98px){
+  body.bo-wallet-tx .report-actions .bo-header-counter{
+    min-width:46px!important;
+    width:46px!important;
+    height:46px!important;
+    min-height:46px!important;
+    padding:4px!important;
+    justify-content:center!important;
+    position:relative!important;
+  }
+  body.bo-wallet-tx .report-actions .bo-header-counter-icon{
+    width:36px!important;
+    height:36px!important;
+    flex:0 0 36px!important;
+  }
+  body.bo-wallet-tx .report-actions .bo-header-counter-icon i{
+    font-size:17px!important;
+  }
+  body.bo-wallet-tx .report-actions .bo-header-counter-text{
+    position:absolute!important;
+    right:-4px!important;
+    top:-5px!important;
+    display:block!important;
+    width:auto!important;
+    height:auto!important;
+    padding:0!important;
+    gap:0!important;
+  }
+  body.bo-wallet-tx .report-actions .bo-header-counter-text small{display:none!important}
+  body.bo-wallet-tx .report-actions .bo-header-counter-text b{
+    display:grid!important;
+    place-items:center!important;
+    min-width:18px!important;
+    height:18px!important;
+    padding:0 4px!important;
+    border-radius:999px!important;
+    background:#D97706!important;
+    color:#fff!important;
+    font-size:10px!important;
+    font-weight:800!important;
+    border:2px solid var(--bo-surface,#FFF8EB)!important;
+    margin:0!important;
+  }
+  html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions .bo-header-counter-text b{
+    background:#F59E0B!important;
+    color:#2A2C36!important;
+    border-color:#383A46!important;
+  }
+}
+body.bo-wallet-tx .report-actions .bo-account-link{
+  display:inline-flex!important;
+  flex:0 0 auto!important;
+  align-items:center!important;
+  gap:12px!important;
+  white-space:nowrap!important;
+  text-decoration:none!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  padding:0!important;
+  margin-left:4px!important;
+  color:inherit!important;
+  cursor:pointer!important;
+}
+body.bo-wallet-tx .report-actions .bo-account-link:hover,
+body.bo-wallet-tx .report-actions .bo-account-link:focus-visible{
+  background:transparent!important;
+  box-shadow:none!important;
+  outline:none!important;
+}
+body.bo-wallet-tx .report-actions .bo-account-meta{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  gap:2px!important;
+  min-width:0!important;
+  text-align:right!important;
+  line-height:1.15!important;
+}
+body.bo-wallet-tx .report-actions .bo-account-name{
+  display:block!important;
+  font-size:14px!important;
+  font-weight:700!important;
+  color:#18191C!important;
+  letter-spacing:-.01em!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  max-width:160px!important;
+}
+body.bo-wallet-tx .report-actions .bo-account-role{
+  display:block!important;
+  font-size:11px!important;
+  font-weight:500!important;
+  color:#71717A!important;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important;
+  letter-spacing:.02em!important;
+  white-space:nowrap!important;
+}
+body.bo-wallet-tx .report-actions .bo-account-setting-icon{
+  display:none!important; /* locked Admin chrome: no gear */
+}
+body.bo-wallet-tx .report-actions .bo-account-link .report-avatar{
+  width:40px!important;
+  height:40px!important;
+  min-width:40px!important;
+  flex:0 0 40px!important;
+  border-radius:12px!important;
+  background:#D97706!important;
+  color:#FFFFFF!important;
+  font-size:0!important;
+  display:grid!important;
+  place-items:center!important;
+  box-shadow:none!important;
+}
+body.bo-wallet-tx .report-actions .bo-account-link .report-avatar i{
+  font-size:18px!important;
+  line-height:1!important;
+  color:#FFFFFF!important;
+}
+body.bo-wallet-tx .report-actions .bo-account-link:hover .report-avatar{
+  background:#B45309!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions .bo-account-name{
+  color:#FFFFFF!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions .bo-account-role{
+  color:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions .bo-account-link .report-avatar{
+  background:#F59E0B!important;
+  color:#2A2C36!important;
+  box-shadow:0 0 12px rgba(245,158,11,.35)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions .bo-account-link .report-avatar i{
+  color:#2A2C36!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-actions .bo-account-link:hover .report-avatar{
+  background:#FBBF24!important;
+}
+
+/* Theme toggle */
+body.bo-wallet-tx .bo-theme-btn{
+  position:relative!important;
+  box-sizing:border-box!important;
+  flex:0 0 36px!important;
+  width:36px!important;height:36px!important;min-width:36px!important;max-width:36px!important;
+  border-radius:8px!important;
+  background:transparent!important;
+  border:1px solid rgba(24,25,28,.18)!important;
+  color:#3F3F46!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+body.bo-wallet-tx .bo-theme-btn i[data-theme-icon]{
+  position:absolute!important;
+  inset:0!important;
+  display:grid!important;
+  place-items:center!important;
+  margin:0!important;
+  font-size:18px!important;
+  line-height:1!important;
+  color:inherit!important;
+  pointer-events:none!important;
+}
+body.bo-wallet-tx .bo-theme-btn i[data-theme-icon][hidden]{
+  display:grid!important;
+  opacity:0!important;
+  visibility:hidden!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-theme-btn{
+  border-color:rgba(245,158,11,.4)!important;
+  color:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-theme-btn:hover{color:#FBBF24!important}
+
+/* ---- Content surfaces ---- */
+body.bo-wallet-tx .filter-card,
+body.bo-wallet-tx .table-card,
+body.bo-wallet-tx .metric,
+body.bo-wallet-tx .quick-stats .metric,
+body.bo-wallet-tx .form-panel,
+body.bo-wallet-tx .settings-card{
+  background:var(--bo-surface)!important;
+  border:1px solid var(--bo-border)!important;
+  box-shadow:var(--bo-shadow)!important;
+  color:var(--bo-text)!important;
+}
+body.bo-wallet-tx .metric span,
+body.bo-wallet-tx .text-muted,
+body.bo-wallet-tx .user-badge{color:var(--bo-muted)!important}
+body.bo-wallet-tx .metric strong{color:var(--bo-text)!important}
+/* Beat reports.css .report-content .quick-stats … color:#101828 / #52627a */
+body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric span,
+body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric strong,
+body.bo-wallet-tx .approval-pending-stats .metric span,
+body.bo-wallet-tx .approval-pending-stats .metric strong,
+body.bo-wallet-tx .report-content .quick-stats .bo-summary-note,
+body.bo-wallet-tx .approval-pending-stats .bo-summary-note,
+body.bo-wallet-tx .bo-summary-note{
+  color:inherit!important;
+}
+body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric span,
+body.bo-wallet-tx .approval-pending-stats .metric span{
+  color:var(--bo-muted)!important;
+  font-weight:700!important;
+}
+body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric strong,
+body.bo-wallet-tx .approval-pending-stats .metric strong{
+  color:var(--bo-text)!important;
+  font-weight:800!important;
+}
+body.bo-wallet-tx .report-content .quick-stats .bo-summary-note,
+body.bo-wallet-tx .approval-pending-stats .bo-summary-note,
+body.bo-wallet-tx .bo-summary-note{
+  color:var(--bo-muted)!important;
+  font-weight:600!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric span,
+html[data-bo-theme="dark"] body.bo-wallet-tx .approval-pending-stats .metric span{
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric strong,
+html[data-bo-theme="dark"] body.bo-wallet-tx .approval-pending-stats .metric strong{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .quick-stats .bo-summary-note,
+html[data-bo-theme="dark"] body.bo-wallet-tx .approval-pending-stats .bo-summary-note,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-summary-note{
+  color:#A1A1AA!important;
+}
+body.bo-wallet-tx .user-badge{
+  background:var(--bo-cyan-tint)!important;
+  border-color:rgba(217,119,6,.22)!important;
+  color:var(--bo-text-secondary)!important;
+}
+
+/* ---- Control chrome sync (listing filters — surface, not form well) ----
+   MD Admin listing / Role select: trigger `#FFF8EB` · border `#EADCC8`.
+   Form wells `#F5EBDC` stay for Create/Edit only — not Transaction listings. */
+body.bo-wallet-tx{
+  --bo-tx-well:#FFF8EB;
+  --bo-tx-well-border:#EADCC8;
+  --bo-tx-amber-top:#FBBF24;
+  --bo-tx-amber-mid:#F59E0B;
+  --bo-tx-amber-deep:#EA8608;
+  --bo-tx-amber-solid:#D97706;
+  /* Light table — same peach-cream family as page (no muddy yellow parchment) */
+  --bo-table-paper:var(--bo-surface);   /* #FFF8EB */
+  --bo-table-head:#FFE8CC;              /* sidebar peach ledge */
+  --bo-table-row:var(--bo-surface);     /* #FFF8EB */
+  --bo-table-row-alt:var(--bo-bg);      /* #FFF1DC soft stripe */
+  --bo-table-hover:#FFE8CC;
+  --bo-table-line:var(--bo-border);     /* #EADCC8 */
+  --bo-table-chip:var(--bo-control-well); /* #F5EBDC */
+}
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row select,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .field input,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .field select,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-input-item input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item select,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-btn,
+body.bo-wallet-tx .field input,
+body.bo-wallet-tx .field select,
+body.bo-wallet-tx .field textarea,
+body.bo-wallet-tx .bo-filter-row input,
+body.bo-wallet-tx .bo-filter-row select,
+body.bo-wallet-tx .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="hidden"]),
+body.bo-wallet-tx .report-content select,
+body.bo-wallet-tx .report-content .form-select,
+body.bo-wallet-tx .report-main .bo-pagination select,
+body.bo-wallet-tx .table-pagination select,
+body.bo-wallet-tx .pagination-clean select,
+body.bo-wallet-tx .rounded-select-btn,
+body.bo-wallet-tx .report-main .rounded-select-btn,
+body.bo-wallet-tx .bo-pagination .rounded-select-btn,
+body.bo-wallet-tx .table-pagination .rounded-select-btn,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-btn,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control select,
+html body.bo-wallet-tx .report-main .filter-card .bo-range-trigger,
+html body.bo-wallet-tx .report-main .filter-card .ref-range-trigger,
+body.bo-wallet-tx .bo-range-trigger{
+  background:var(--bo-tx-well)!important;
+  background-color:var(--bo-tx-well)!important;
+  background-image:none!important;
+  border:1px solid var(--bo-tx-well-border)!important;
+  color:var(--bo-text)!important;
+  box-shadow:none!important;
+}
+/* Do not set -webkit-text-fill-color on text inputs — it paints placeholders with value color. */
+body.bo-wallet-tx .rounded-select-btn,
+body.bo-wallet-tx .report-main .rounded-select-btn,
+body.bo-wallet-tx .bo-pagination .rounded-select-btn,
+body.bo-wallet-tx .table-pagination .rounded-select-btn,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-btn,
+body.bo-wallet-tx .bo-range-trigger{
+  -webkit-text-fill-color:var(--bo-text);
+}
+body.bo-wallet-tx .field input::placeholder,
+body.bo-wallet-tx .bo-filter-row input::placeholder,
+body.bo-wallet-tx #depositKeyword::placeholder,
+body.bo-wallet-tx #withdrawKeyword::placeholder{
+  color:var(--bo-placeholder,#78716C)!important;
+  -webkit-text-fill-color:var(--bo-placeholder,#78716C)!important;
+  opacity:1!important;
+}
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-input-item input::placeholder,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > input.bo-filter-input-item::placeholder,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .field input::placeholder,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row input::placeholder{
+  color:var(--bo-placeholder,#78716C)!important;
+  -webkit-text-fill-color:var(--bo-placeholder,#78716C)!important;
+  opacity:1!important;
+  font-weight:600!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .field input::placeholder,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-filter-row input::placeholder,
+html[data-bo-theme="dark"] body.bo-wallet-tx #depositKeyword::placeholder,
+html[data-bo-theme="dark"] body.bo-wallet-tx #withdrawKeyword::placeholder,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-input-item input::placeholder,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > input.bo-filter-input-item::placeholder,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .field input::placeholder,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row input::placeholder{
+  color:#A1A1AA!important;
+  -webkit-text-fill-color:#A1A1AA!important;
+  opacity:1!important;
+}
+body.bo-wallet-tx .field input:-webkit-autofill,
+body.bo-wallet-tx .bo-filter-row input:-webkit-autofill{
+  -webkit-box-shadow:0 0 0 1000px var(--bo-tx-well) inset!important;
+  -webkit-text-fill-color:var(--bo-text)!important;
+  caret-color:var(--bo-text)!important;
+  transition:background-color 99999s ease-out;
+}
+body.bo-wallet-tx .rounded-select-menu,
+body.bo-wallet-tx .report-main .rounded-select-menu,
+body.bo-wallet-tx .bo-pagination-standard .rounded-select-menu,
+body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-menu,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-menu{
+  background:#FFF8EB!important;
+  border:1px solid #EADCC8!important;
+  box-shadow:0 12px 28px rgba(92,74,48,.12)!important;
+  padding:6px!important;
+  border-radius:8px!important;
+}
+/* Beat bo-ui-standard indigo lock:
+   .report-main .bo-filter-row .rounded-select-option.active { #eef2ff / #4f46e5 }
+   Mirror Admin Detail: transparent idle + amber tint active. */
+body.bo-wallet-tx .rounded-select-option,
+body.bo-wallet-tx .report-main .rounded-select-option,
+body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-option,
+body.bo-wallet-tx .report-main .bo-pagination-standard .rounded-select-option,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .rounded-select-option{
+  background:transparent!important;
+  color:var(--bo-text)!important;
+  border-radius:8px!important;
+  font-weight:700!important;
+}
+body.bo-wallet-tx .rounded-select-option:hover,
+body.bo-wallet-tx .report-main .rounded-select-option:hover,
+body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-option:hover,
+body.bo-wallet-tx .report-main .bo-pagination-standard .rounded-select-option:hover,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option:hover,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .rounded-select-option:hover,
+body.bo-wallet-tx .rounded-select-option.active,
+body.bo-wallet-tx .rounded-select-option.is-active,
+body.bo-wallet-tx .report-main .rounded-select-option.active,
+body.bo-wallet-tx .report-main .rounded-select-option.is-active,
+body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-option.active,
+body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-option.is-active,
+body.bo-wallet-tx .report-main .bo-pagination-standard .rounded-select-option.active,
+body.bo-wallet-tx .report-main .bo-pagination-standard .rounded-select-option.is-active,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option.active,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option.is-active,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .rounded-select-option:hover,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .rounded-select-option.active,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .rounded-select-option.is-active{
+  background:var(--bo-cyan-tint)!important;
+  color:var(--bo-cyan-deep)!important;
+}
+
+/* Primary amber — Search CTA + active page share the same fill */
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .bo-filter-search-button,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .btn-primary-clean,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row button[id*="search" i],
+body.bo-wallet-tx .btn-primary-clean,
+body.bo-wallet-tx .pagination-clean .page-btn.active,
+body.bo-wallet-tx .pagination-clean button.active,
+body.bo-wallet-tx .smart-page.active,
+body.bo-wallet-tx .bo-pagination-buttons button.active,
+body.bo-wallet-tx .report-main .bo-pagination-buttons button.active{
+  background-color:var(--bo-tx-amber-mid)!important;
+  background-image:linear-gradient(180deg,var(--bo-tx-amber-top) 0%,var(--bo-tx-amber-mid) 42%,var(--bo-tx-amber-deep) 100%)!important;
+  border:1px solid #E8901A!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff;
+  box-shadow:0 1px 2px rgba(217,119,6,.18),0 4px 10px rgba(217,119,6,.18),inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+body.bo-wallet-tx .pagination-clean .page-btn,
+body.bo-wallet-tx .pagination-clean button,
+body.bo-wallet-tx .smart-page,
+body.bo-wallet-tx .report-main .bo-pagination-buttons button{
+  background:#F3F4F6!important;
+  border:0!important;
+  color:#9CA3AF!important;
+  -webkit-text-fill-color:#9CA3AF;
+  box-shadow:none!important;
+}
+body.bo-wallet-tx .pagination-clean .page-btn:hover:not(.active):not(:disabled),
+body.bo-wallet-tx .pagination-clean button:hover:not(.active):not(:disabled),
+body.bo-wallet-tx .smart-page:hover:not(.active):not(:disabled),
+body.bo-wallet-tx .report-main .bo-pagination-buttons button:hover:not(.active):not(:disabled){
+  background:#E5E7EB!important;
+  color:#374151!important;
+  -webkit-text-fill-color:#374151;
+}
+
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row select,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .field input,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .field select,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-input-item input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item select,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-wrap .rounded-select-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .field input,
+html[data-bo-theme="dark"] body.bo-wallet-tx .field select,
+html[data-bo-theme="dark"] body.bo-wallet-tx .field textarea,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-filter-row input,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-filter-row select,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="hidden"]),
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-content select,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination select,
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-pagination select,
+html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .rounded-select-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control select,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-trigger{
+  background:#2A2C36!important;
+  background-color:#2A2C36!important;
+  background-image:none!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+  color-scheme:dark;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .rounded-select-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-trigger{
+  -webkit-text-fill-color:#F5F5F4;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-menu,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .rounded-select-menu,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-menu,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-menu{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-option,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .rounded-select-option,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-option,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .rounded-select-option{
+  background:transparent!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .rounded-select-option:hover{
+  background:rgba(245,158,11,.14)!important;
+  color:#F5F5F4!important;
+}
+/* MD Role select: dark selected = solid amber + charcoal label */
+html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-option.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-option.is-active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .rounded-select-option.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .rounded-select-option.is-active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-option.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-option.is-active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard .rounded-select-option.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard .rounded-select-option.is-active,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .rounded-select-option.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .rounded-select-option.is-active{
+  background:#F59E0B!important;
+  color:#2A2C36!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .pagination-clean .page-btn.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .smart-page.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-pagination-buttons button.active{
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border-color:#F59E0B!important;
+  color:#2A2C36!important;
+  -webkit-text-fill-color:#2A2C36;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-pagination .rounded-select-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-pagination .rounded-select-btn{
+  background:#2A2C36!important;
+  background-color:#2A2C36!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-menu{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 16px 40px rgba(0,0,0,.45)!important;
+}
+
+/* Interactive amber ring — see file-end lock (must beat idle box-shadow:none). */
+body.bo-wallet-tx .field label{color:var(--bo-text-secondary)!important;font-weight:700}
+
+/* Filter bar: no field titles — controls + placeholder/value carry the meaning */
+body.bo-wallet-tx .report-main .bo-filter-row > .field > label,
+body.bo-wallet-tx .report-main .bo-filter-row > .bo-filter-item > label,
+body.bo-wallet-tx .report-main .bo-filter-row > .bo-filter-range-item > label,
+body.bo-wallet-tx .report-main .bo-filter-row > .bo-filter-input-item > label,
+body.bo-wallet-tx .report-main .bo-filter-row > .bo-filter-select-item > label,
+body.bo-wallet-tx .report-main .bo-filter-row > .bo-range-field > label,
+body.bo-wallet-tx .report-main .bo-filter-row .bo-range-field > label,
+body.bo-wallet-tx .report-main .bo-filter-row label.bo-filter-item > span:first-child,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-item > label,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-item > span:first-child,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > label.bo-filter-item > span:first-child{
+  display:none!important;
+  margin:0!important;
+  height:0!important;
+  overflow:hidden!important;
+  padding:0!important;
+  border:0!important;
+  position:absolute!important;
+  width:1px!important;
+  clip:rect(0,0,0,0)!important;
+}
+
+/* Primary / ghost buttons (Search etc.) */
+body.bo-wallet-tx .btn-primary-clean,
+body.bo-wallet-tx .clean-btn.primary,
+body.bo-wallet-tx .bo-ui-button-primary,
+body.bo-wallet-tx button.btn-primary{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
+  border:1px solid #E8901A!important;
+  color:#fff!important;
+  box-shadow:0 1px 2px rgba(217,119,6,.18),0 4px 10px rgba(217,119,6,.22),inset 0 1px 0 rgba(255,255,255,.35)!important;
+  border-radius:8px!important;
+  font-weight:700!important;
+}
+body.bo-wallet-tx .btn-primary-clean:hover,
+body.bo-wallet-tx .clean-btn.primary:hover{
+  background-image:linear-gradient(0deg,#FCD34D 0%,#FBBF24 38%,#F59E0B 72%,#EA8608 100%)!important;
+  color:#fff!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .btn-primary-clean,
+html[data-bo-theme="dark"] body.bo-wallet-tx .clean-btn.primary{
+  color:#2A2C36!important;
+  border-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+}
+body.bo-wallet-tx .clean-btn,
+body.bo-wallet-tx .bo-ui-button-secondary{
+  background:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%)!important;
+  border:1px solid #DCC9A8!important;
+  color:#18191C!important;
+  border-radius:8px!important;
+  font-weight:700!important;
+  transition:transform .14s ease,box-shadow .14s ease,background-image .14s ease,border-color .14s ease!important;
+}
+body.bo-wallet-tx .clean-btn:hover,
+body.bo-wallet-tx .bo-ui-button-secondary:hover,
+body.bo-wallet-tx .report-main .bo-filter-row .clean-btn:hover,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .clean-btn:hover,
+body.bo-wallet-tx #depositResetBtn:hover,
+body.bo-wallet-tx #withdrawResetBtn:hover{
+  background-color:#F3E8D6!important;
+  background-image:linear-gradient(0deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border-color:#E0D0B8!important;
+  color:#18191C!important;
+  box-shadow:0 2px 4px rgba(24,25,28,.08),0 4px 10px rgba(24,25,28,.07)!important;
+  transform:translateY(-1px)!important;
+}
+body.bo-wallet-tx .clean-btn:active,
+body.bo-wallet-tx .bo-ui-button-secondary:active,
+body.bo-wallet-tx #depositResetBtn:active,
+body.bo-wallet-tx #withdrawResetBtn:active{
+  transform:translateY(1px)!important;
+  background-image:linear-gradient(180deg,#FFF1DC 0%,#EADCC8 100%)!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .clean-btn{
+  background:linear-gradient(180deg,#4A4C58 0%,#383A46 55%,#2C2E38 100%)!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .clean-btn:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-ui-button-secondary:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx #depositResetBtn:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx #withdrawResetBtn:hover{
+  background-image:linear-gradient(0deg,#4A4C58 0%,#383A46 100%)!important;
+  border-color:rgba(255,255,255,.18)!important;
+  color:#F5F5F4!important;
+  box-shadow:0 2px 8px rgba(0,0,0,.28)!important;
+  transform:translateY(-1px)!important;
+}
+
+/* Tables — parchment ledger (light: no #fff; dark: charcoal slab) */
+body.bo-wallet-tx .table-card{
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  border-radius:8px!important;
+  padding:0!important;
+  background:var(--bo-table-paper)!important;
+}
+body.bo-wallet-tx .table-card > .filter-card,
+body.bo-wallet-tx .table-card > .deposit-inline-filter,
+body.bo-wallet-tx .table-card > .bo-filter-row,
+body.bo-wallet-tx .table-card > .user-search-grid{
+  flex:0 0 auto!important;
+  margin:0!important;
+  padding:14px 16px!important;
+  border:0!important;
+  border-bottom:1px solid var(--bo-table-line)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background:var(--bo-table-row)!important;
+}
+body.bo-wallet-tx.deposit-approval-page .table-card > .deposit-inline-filter.filter-card{
+  margin:0!important;
+  padding:10px 16px!important;
+  border:0!important;
+  border-bottom:1px solid var(--bo-table-line)!important;
+  box-shadow:none!important;
+  background:var(--bo-table-row)!important;
+}
+/* Deposit / Withdraw toolbar — tabs left, filters right */
+body.bo-wallet-tx .bo-tx-toolbar{
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px 16px!important;
+  width:100%!important;
+  min-width:0!important;
+}
+body.bo-wallet-tx .bo-tx-tabs{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  flex:0 0 auto!important;
+  position:relative!important;
+  min-height:36px!important;
+  padding:0!important;
+  margin:0!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  overflow:visible!important;
+}
+body.bo-wallet-tx .bo-tx-tabs.bo-seg > .bo-seg-thumb{
+  top:0!important;
+  height:100%!important;
+  border-radius:999px!important;
+  background-color:#F3E8D6!important;
+  background-image:linear-gradient(180deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border:1px solid #EADCC8!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06),0 2px 6px rgba(24,25,28,.05)!important;
+  box-sizing:border-box!important;
+  opacity:1;
+}
+body.bo-wallet-tx .bo-tx-tab{
+  display:inline-flex!important;
+  align-items:center!important;
+  position:relative!important;
+  z-index:1!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:0 14px!important;
+  margin:0!important;
+  gap:8px!important;
+  border:1px solid transparent!important;
+  border-bottom:1px solid transparent!important;
+  border-radius:999px!important;
+  background:transparent!important;
+  color:#71717A!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  text-decoration:none!important;
+  white-space:nowrap!important;
+  cursor:pointer!important;
+  box-shadow:none!important;
+  transition:color .16s ease,background .16s ease!important;
+}
+body.bo-wallet-tx .bo-tx-tab[data-bo-tx-type="deposit"]::before,
+body.bo-wallet-tx .bo-tx-tab[data-bo-tx-type="withdraw"]::before{
+  content:""!important;
+  width:6px!important;
+  height:6px!important;
+  border-radius:50%!important;
+  flex:0 0 auto!important;
+  background:#B8C0CC!important;
+  box-shadow:none!important;
+}
+body.bo-wallet-tx .bo-tx-tab[data-bo-tx-type="withdraw"]::before{
+  background:#C4C0D0!important;
+}
+body.bo-wallet-tx .bo-tx-tab:hover:not(.is-active){
+  color:#18191C!important;
+  background:rgba(24,25,28,.04)!important;
+}
+body.bo-wallet-tx .bo-tx-tab.is-active,
+body.bo-wallet-tx .bo-tx-tab[aria-current="page"]{
+  color:#18191C!important;
+  font-weight:700!important;
+  background:transparent!important;
+  border-color:transparent!important;
+  border-bottom-color:transparent!important;
+  box-shadow:none!important;
+}
+/* Fallback when bo-seg thumb is absent */
+body.bo-wallet-tx .bo-tx-tabs:not(.bo-seg) .bo-tx-tab.is-active,
+body.bo-wallet-tx .bo-tx-tabs:not(.bo-seg) .bo-tx-tab[aria-current="page"]{
+  background-color:#F3E8D6!important;
+  background-image:linear-gradient(180deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border-color:#EADCC8!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06),0 2px 6px rgba(24,25,28,.05)!important;
+}
+body.bo-wallet-tx .bo-tx-tab.is-active[data-bo-tx-type="deposit"]::before,
+body.bo-wallet-tx .bo-tx-tab[aria-current="page"][data-bo-tx-type="deposit"]::before{
+  background:#059669!important;
+}
+body.bo-wallet-tx .bo-tx-tab.is-active[data-bo-tx-type="withdraw"]::before,
+body.bo-wallet-tx .bo-tx-tab[aria-current="page"][data-bo-tx-type="withdraw"]::before{
+  background:#DC2626!important;
+}
+body.bo-wallet-tx .bo-tx-tab-count{
+  display:inline!important;
+  font-weight:700!important;
+  font-variant-numeric:tabular-nums!important;
+  color:inherit!important;
+}
+body.bo-wallet-tx .bo-tx-tab-count::before{content:"("!important;}
+body.bo-wallet-tx .bo-tx-tab-count::after{content:")"!important;}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-tabs.bo-seg > .bo-seg-thumb{
+  background-color:#2A2C36!important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%)!important;
+  border-color:rgba(255,255,255,.12)!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.35)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-tab{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-tab:hover:not(.is-active){
+  color:#F4F4F5!important;
+  background:rgba(255,255,255,.06)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-tab.is-active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-tab[aria-current="page"]{
+  color:#F4F4F5!important;
+  background:transparent!important;
+  border-bottom-color:transparent!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-tabs:not(.bo-seg) .bo-tx-tab.is-active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-tabs:not(.bo-seg) .bo-tx-tab[aria-current="page"]{
+  background-color:#2A2C36!important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%)!important;
+  border-color:rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-tab[data-bo-tx-type="deposit"]::before{
+  background:#6B7280!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-tab[data-bo-tx-type="withdraw"]::before{
+  background:#7C778A!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-tab.is-active[data-bo-tx-type="deposit"]::before,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-tab[aria-current="page"][data-bo-tx-type="deposit"]::before{
+  background:#34D399!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-tab.is-active[data-bo-tx-type="withdraw"]::before,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-tab[aria-current="page"][data-bo-tx-type="withdraw"]::before{
+  background:#F87171!important;
+}
+body.bo-wallet-tx .bo-tx-filter-controls,
+body.bo-wallet-tx .bo-tx-toolbar > .bo-tx-filter-controls.bo-filter-row{
+  display:flex!important;
+  flex-flow:row wrap!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:12px!important;
+  flex:1 1 auto!important;
+  margin:0 0 0 auto!important;
+  min-width:0!important;
+  width:auto!important;
+  max-width:100%!important;
+}
+@media(max-width:767.98px){
+  body.bo-wallet-tx .bo-tx-toolbar{
+    flex-direction:column!important;
+    align-items:stretch!important;
+  }
+  body.bo-wallet-tx .bo-tx-tabs{
+    width:100%!important;
+  }
+  body.bo-wallet-tx .bo-tx-filter-controls,
+  body.bo-wallet-tx .bo-tx-toolbar > .bo-tx-filter-controls.bo-filter-row{
+    margin-left:0!important;
+    justify-content:flex-start!important;
+    width:100%!important;
+  }
+}
+body.bo-wallet-tx .table-wrap,
+body.bo-wallet-tx .table-card .table-wrap{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  width:100%!important;
+  max-width:100%!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background:var(--bo-table-paper)!important;
+}
+/* Fixed header — scrollbar never crosses thead */
+body.bo-wallet-tx .bo-tx-table-head{
+  flex:0 0 auto!important;
+  overflow:hidden!important;
+  background:var(--bo-table-head)!important;
+  border-bottom:1px solid var(--bo-table-line)!important;
+  scrollbar-gutter:stable;
+}
+/* Body-only scroll — slate pill thumb lives here */
+body.bo-wallet-tx .bo-tx-table-body{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow-x:auto!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch;
+  background:var(--bo-table-paper)!important;
+  scrollbar-gutter:stable;
+  /* Reset global * { scrollbar-width: thin } so ::-webkit-scrollbar can apply */
+  scrollbar-width:auto!important;
+  scrollbar-color:auto!important;
+}
+body.bo-wallet-tx .bo-tx-table-head .report-table,
+body.bo-wallet-tx .bo-tx-table-body .report-table{
+  margin:0!important;
+}
+body.bo-wallet-tx .bo-tx-col-date{width:12%;}
+body.bo-wallet-tx .bo-tx-col-member{width:12%;}
+body.bo-wallet-tx .bo-tx-col-amount{width:9%;}
+body.bo-wallet-tx .bo-tx-col-method,
+body.bo-wallet-tx .bo-tx-col-bank{width:16%;}
+body.bo-wallet-tx .bo-tx-col-ref{width:14%;}
+body.bo-wallet-tx .bo-tx-col-remark{width:12%;}
+body.bo-wallet-tx .bo-tx-col-status{width:10%;}
+body.bo-wallet-tx .bo-tx-col-processed{width:12%;}
+body.bo-wallet-tx .bo-tx-col-action{width:9%;}
+/* Table body scrollbar — slate pill thumb + end arrows (reference) */
+body.bo-wallet-tx .bo-tx-table-body::-webkit-scrollbar{
+  width:14px!important;
+  height:14px!important;
+  background:transparent!important;
+}
+body.bo-wallet-tx .bo-tx-table-body::-webkit-scrollbar-track{
+  background:transparent!important;
+}
+body.bo-wallet-tx .bo-tx-table-body::-webkit-scrollbar-thumb{
+  background:#98A2B3!important;
+  background-color:#98A2B3!important;
+  border-radius:999px!important;
+  border:3px solid transparent!important;
+  background-clip:padding-box!important;
+  min-height:40px!important;
+  box-shadow:none!important;
+}
+body.bo-wallet-tx .bo-tx-table-body::-webkit-scrollbar-thumb:hover{
+  background:#667085!important;
+  background-color:#667085!important;
+}
+body.bo-wallet-tx .bo-tx-table-body::-webkit-scrollbar-corner{
+  background:transparent!important;
+}
+body.bo-wallet-tx .bo-tx-table-body::-webkit-scrollbar-button:single-button{
+  display:block!important;
+  background-color:transparent!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+}
+body.bo-wallet-tx .bo-tx-table-body::-webkit-scrollbar-button:single-button:vertical:decrement{
+  height:14px!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%2398A2B3' d='M5 0l5 6H0z'/%3E%3C/svg%3E")!important;
+}
+body.bo-wallet-tx .bo-tx-table-body::-webkit-scrollbar-button:single-button:vertical:increment{
+  height:14px!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%2398A2B3' d='M0 0h10L5 6z'/%3E%3C/svg%3E")!important;
+}
+body.bo-wallet-tx .bo-tx-table-body::-webkit-scrollbar-button:single-button:horizontal:decrement{
+  width:14px!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='10' viewBox='0 0 6 10'%3E%3Cpath fill='%2398A2B3' d='M6 0v10L0 5z'/%3E%3C/svg%3E")!important;
+}
+body.bo-wallet-tx .bo-tx-table-body::-webkit-scrollbar-button:single-button:horizontal:increment{
+  width:14px!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='10' viewBox='0 0 6 10'%3E%3Cpath fill='%2398A2B3' d='M0 0l6 5-6 5z'/%3E%3C/svg%3E")!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-table-body::-webkit-scrollbar-thumb{
+  background:#A1A1AA!important;
+  background-color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-table-body::-webkit-scrollbar-thumb:hover{
+  background:#D4D4D8!important;
+  background-color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-table-body::-webkit-scrollbar-button:single-button:vertical:decrement{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23A1A1AA' d='M5 0l5 6H0z'/%3E%3C/svg%3E")!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-table-body::-webkit-scrollbar-button:single-button:vertical:increment{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23A1A1AA' d='M0 0h10L5 6z'/%3E%3C/svg%3E")!important;
+}
+@supports not selector(::-webkit-scrollbar){
+  body.bo-wallet-tx .bo-tx-table-body{
+    scrollbar-width:auto;
+    scrollbar-color:#98A2B3 transparent;
+  }
+  html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-table-body{
+    scrollbar-color:#A1A1AA transparent;
+  }
+}
+body.bo-wallet-tx .table-wrap,
+body.bo-wallet-tx .table-card .table-wrap,
+body.bo-wallet-tx .report-table,
+body.bo-wallet-tx .report-table tbody{
+  background:var(--bo-table-paper)!important;
+}
+body.bo-wallet-tx .report-table{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  border-collapse:collapse!important;
+  table-layout:fixed!important;
+  box-sizing:border-box!important;
+}
+body.bo-wallet-tx .report-table.bo-tx-evenfill{
+  height:100%!important;
+}
+body.bo-wallet-tx .report-table.bo-tx-evenfill tbody tr td{
+  box-sizing:border-box!important;
+}
+body.bo-wallet-tx .report-table th,
+body.bo-wallet-tx .report-table td{
+  box-sizing:border-box!important;
+}
+body.bo-wallet-tx .report-table thead th,
+body.bo-wallet-tx .report-content .report-table thead th{
+  background:var(--bo-table-head)!important;
+  color:var(--bo-sidebar-text,#6b360c)!important;
+  border-bottom:1px solid var(--bo-table-line)!important;
+  border-right:1px solid rgba(107,54,12,.08)!important;
+  border-radius:0!important;
+  font-weight:bold!important;
+  font-size:11px!important;
+  letter-spacing:.04em!important;
+  text-transform:uppercase!important;
+  padding:12px 12px!important;
+  text-align:left!important;
+  white-space:nowrap!important;
+  position:static!important;
+  top:auto!important;
+  z-index:1!important;
+}
+body.bo-wallet-tx .report-table thead th:first-child,
+body.bo-wallet-tx .report-content .report-table thead th:first-child,
+body.bo-wallet-tx .report-table thead th:last-child,
+body.bo-wallet-tx .report-content .report-table thead th:last-child{
+  border-radius:0!important;
+  border-top-left-radius:0!important;
+  border-top-right-radius:0!important;
+}
+body.bo-wallet-tx .report-table thead th:last-child,
+body.bo-wallet-tx .report-content .report-table thead th:last-child{
+  border-right:0!important;
+}
+body.bo-wallet-tx .report-table th:first-child,
+body.bo-wallet-tx .report-table td:first-child{
+  padding-left:16px!important;
+}
+body.bo-wallet-tx .report-table th:last-child,
+body.bo-wallet-tx .report-table td:last-child{
+  padding-right:16px!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table thead th{
+  color:#E7E5E4!important;
+  border-bottom:1px solid rgba(255,255,255,.14)!important;
+  border-right-color:rgba(255,255,255,.08)!important;
+  background:var(--bo-table-head,#1F2128)!important;
+}
+/* Row canvas — beat reports.css #fff / #fcfdff zebra */
+body.bo-wallet-tx .report-table tbody tr td,
+body.bo-wallet-tx .report-content .report-table tbody tr td,
+body.bo-wallet-tx .report-content .report-table tbody tr:nth-child(odd) td,
+body.bo-wallet-tx .report-content .report-table tbody tr:nth-child(odd):not(.total) td{
+  background:var(--bo-table-row)!important;
+  color:var(--bo-text,#18191C)!important;
+  border-bottom:1px solid var(--bo-table-line)!important;
+  border-right:1px solid rgba(107,54,12,.06)!important;
+  padding:10px 12px!important;
+  vertical-align:middle!important;
+  font-size:13px!important;
+  font-weight:bold!important;
+  line-height:1.35!important;
+}
+body.bo-wallet-tx .report-table tbody tr:nth-child(even) td,
+body.bo-wallet-tx .report-content .report-table tbody tr:nth-child(even) td,
+body.bo-wallet-tx .report-content .report-table tbody tr:nth-child(even):not(.total) td{
+  background:var(--bo-table-row-alt)!important;
+}
+body.bo-wallet-tx .report-table tbody td:last-child,
+body.bo-wallet-tx .report-content .report-table tbody td:last-child{
+  border-right:0!important;
+}
+/* <b>/<strong> UA default is bolder; force bold so cells don't jump to 800+ */
+body.bo-wallet-tx .report-table td b,
+body.bo-wallet-tx .report-table td strong,
+body.bo-wallet-tx .report-content .report-table tbody td b,
+body.bo-wallet-tx .report-content .report-table tbody td strong{
+  font-weight:bold!important;
+  color:inherit!important;
+}
+body.bo-wallet-tx .report-table td small{
+  font-weight:600!important;
+  color:var(--bo-muted,#71717A)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-wrap,
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-card .table-wrap,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table tbody{
+  background:var(--bo-table-paper,#383A46)!important;
+}
+/* Dark zebra — odd surface · even deeper canvas (mirrors light) */
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table tbody tr td,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .report-table tbody tr td,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .report-table tbody tr:nth-child(odd) td,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .report-table tbody tr:nth-child(odd):not(.total) td{
+  background:var(--bo-table-row,#3A3C48)!important;
+  border-bottom-color:rgba(255,255,255,.12)!important;
+  border-right-color:rgba(255,255,255,.06)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table tbody tr:nth-child(even) td,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .report-table tbody tr:nth-child(even) td,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .report-table tbody tr:nth-child(even):not(.total) td{
+  background:var(--bo-table-row-alt,#434653)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table td{
+  border-bottom:1px solid rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table td b,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table td strong{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table td small{
+  color:#A1A1AA!important;
+}
+/* Status pills — PENDING orange · APPROVED green · REJECTED red */
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .status-pill{
+  background:#FFEDD5!important;
+  color:#EA580C!important;
+  border:1px solid rgba(234,88,12,.35)!important;
+  font-weight:bold!important;
+  margin-top:0!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .status-pill.active{
+  background:#DCFCE7!important;
+  color:#166534!important;
+  border:1px solid rgba(22,101,52,.22)!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .status-pill.off{
+  background:#FEE2E2!important;
+  color:#B91C1C!important;
+  border:1px solid rgba(185,28,28,.28)!important;
+}
+/* Dark — PENDING amber · APPROVED green · REJECTED red */
+html[data-bo-theme="dark"] body.bo-wallet-tx .status-pill{
+  background:rgba(245,158,11,.20)!important;
+  color:#FBBF24!important;
+  border:1px solid rgba(245,158,11,.35)!important;
+  font-weight:bold!important;
+  margin-top:0!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .status-pill.active{
+  background:rgba(18,183,106,.18)!important;
+  color:#6EE7B7!important;
+  border:1px solid rgba(110,231,183,.22)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .status-pill.off{
+  background:rgba(248,113,113,.18)!important;
+  color:#F87171!important;
+  border-color:rgba(248,113,113,.28)!important;
+}
+body.bo-wallet-tx .report-table tbody tr:hover td,
+body.bo-wallet-tx .report-content .report-table tbody tr:hover td,
+body.bo-wallet-tx .report-content .report-table tbody tr:nth-child(even):hover td{
+  background:var(--bo-table-hover)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table tbody tr:hover td,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .report-table tbody tr:hover td,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .report-table tbody tr:nth-child(even):hover td{
+  background:var(--bo-table-hover,#444654)!important;
+}
+body.bo-wallet-tx .report-table .text-muted,
+body.bo-wallet-tx .table-card .text-muted,
+body.bo-wallet-tx .bo-pagination-standard .table-info,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .table-info{
+  color:var(--bo-muted,#71717A)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table .text-muted,
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-card .text-muted,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-pagination-standard .table-info,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .table-info{
+  color:#D4D4D8!important;
+}
+/* Panel footers — total bar + pager pin to bottom of fixed frame */
+body.bo-wallet-tx .table-card > .approval-total-bar{
+  flex:0 0 auto!important;
+  margin:0!important;
+  border-radius:0!important;
+  border:0!important;
+  border-top:1px solid var(--bo-table-line)!important;
+  background:var(--bo-table-head)!important;
+}
+body.bo-wallet-tx .table-card > .bo-deposit-pager-host,
+body.bo-wallet-tx .table-card > .bo-pagination-standard,
+body.bo-wallet-tx .table-card > .table-footer,
+body.bo-wallet-tx .table-card > .table-footer.standard-pagination,
+body.bo-wallet-tx .table-card > .d-flex.justify-content-between{
+  flex:0 0 auto!important;
+  margin:0!important;
+  margin-top:auto!important;
+  padding:14px 16px!important;
+  border-top:1px solid var(--bo-table-line)!important;
+  background:var(--bo-table-row)!important;
+  gap:12px!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .approval-total-bar{
+  border-top-color:rgba(255,255,255,.14)!important;
+  background:#2A2C36!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-deposit-pager-host,
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standard,
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .table-footer,
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .d-flex.justify-content-between{
+  border-top-color:rgba(255,255,255,.14)!important;
+  background:#383A46!important;
+}
+
+/* Row Approve / Reject — cream Ghost tiles; semantic icon (beat .btn min-width:82px) */
+body.bo-wallet-tx .bo-tx-actions,
+body.bo-wallet-tx .report-table .bo-tx-actions,
+body.bo-wallet-tx.deposit-approval-page #depositBody td:last-child > .bo-tx-actions,
+body.bo-wallet-tx.withdraw-approval-page #withdrawBody td:last-child > .bo-tx-actions{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:6px!important;
+  flex-wrap:nowrap!important;
+  width:auto!important;
+}
+body.bo-wallet-tx .bo-tx-action-btn,
+body.bo-wallet-tx .report-table .bo-tx-action-btn,
+body.bo-wallet-tx.deposit-approval-page .report-table .bo-tx-action-btn,
+body.bo-wallet-tx.withdraw-approval-page .report-table .bo-tx-action-btn{
+  box-sizing:border-box!important;
+  width:26px!important;
+  height:26px!important;
+  min-width:26px!important;
+  max-width:26px!important;
+  min-height:26px!important;
+  padding:0!important;
+  margin:0!important;
+  border-radius:6px!important;
+  display:inline-grid!important;
+  place-items:center!important;
+  font-size:15px!important;
+  line-height:1!important;
+  cursor:pointer!important;
+  box-shadow:none!important;
+  flex:0 0 26px!important;
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  transition:background .14s ease,border-color .14s ease,color .14s ease!important;
+}
+body.bo-wallet-tx .bo-tx-action-btn i{
+  font-size:15px!important;
+  line-height:1!important;
+  margin:0!important;
+  pointer-events:none!important;
+}
+/* Light: cream chip matching page wells; green/red only on glyph */
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-tx-action-btn.is-approve,
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-tx-action-btn.is-reject{
+  background:var(--bo-table-chip,var(--bo-control-well))!important;
+  border:1px solid var(--bo-table-line,var(--bo-border))!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-tx-action-btn.is-approve{
+  color:#067647!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-tx-action-btn.is-reject{
+  color:#B42318!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-tx-action-btn.is-approve:hover{
+  background:rgba(18,183,106,.12)!important;
+  border-color:rgba(18,183,106,.28)!important;
+  color:#05603A!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-tx-action-btn.is-reject:hover{
+  background:rgba(185,60,60,.10)!important;
+  border-color:rgba(185,60,60,.28)!important;
+  color:#912018!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-tx-action-btn:focus-visible{
+  outline:none!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.22)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-action-btn.is-approve,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-action-btn.is-reject{
+  background:#2A2C36!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-action-btn.is-approve{
+  color:#6EE7B7!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-action-btn.is-reject{
+  color:#F87171!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-action-btn.is-approve:hover{
+  background:rgba(18,183,106,.18)!important;
+  border-color:rgba(110,231,183,.35)!important;
+  color:#A7F3D0!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-action-btn.is-reject:hover{
+  background:rgba(248,113,113,.18)!important;
+  border-color:rgba(248,113,113,.35)!important;
+  color:#FCA5A5!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-tx-action-btn:focus-visible{
+  outline:none!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.28)!important;
+}
+
+/* Seg / active pills leftover from legacy blue */
+body.bo-wallet-tx .seg button.active,
+body.bo-wallet-tx .setting-tabs a.active,
+body.bo-wallet-tx .media-tabs a.active{
+  background:var(--bo-cyan)!important;
+  border-color:var(--bo-cyan)!important;
+  color:var(--bo-accent-on)!important;
+}
+
+/* ---- Logout footer — beat bo-ui-standard.css white strip ---- */
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-sidebar-account-footer{
+  background:transparent!important;
+  border-top:1px solid rgba(92,74,48,.1)!important;
+  box-shadow:none!important;
+  margin:0!important;
+  padding:10px 10px 12px!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-sidebar-logout{
+  border-radius:10px!important;
+  color:#B42318!important;
+  background:rgba(255,255,255,.45)!important;
+  border:1px solid rgba(180,35,24,.12)!important;
+  transition:background .16s ease,box-shadow .16s ease,color .16s ease!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-sidebar-logout i{
+  color:#D92D20!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-sidebar-logout:hover{
+  background:rgba(254,243,242,.95)!important;
+  color:#912018!important;
+  box-shadow:0 4px 12px rgba(180,35,24,.08)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-sidebar-account-footer{
+  margin:0!important;
+  padding:10px!important;
+  border-top:1px solid rgba(255,255,255,.08)!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-sidebar-logout{
+  color:#FF8A90!important;
+  background:transparent!important;
+  border:1px solid transparent!important;
+  border-radius:10px!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-sidebar-logout i{
+  color:#F87171!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-sidebar-logout:hover{
+  background:rgba(248,113,113,.1)!important;
+  color:#fff!important;
+  box-shadow:0 0 0 1px rgba(248,113,113,.22),0 0 18px rgba(248,113,113,.12)!important;
+}
+
+/* ==========================================================================
+   Content workspace — filter row, CTA, pagination, metrics
+   Beat reports.css 5-col deposit grid (crushes Reset → "set") and
+   bo-ui-standard Search blue (#2864ed).
+   ========================================================================== */
+
+/* Token aliases used by shared filter / pagination sheets */
+body.bo-wallet-tx{
+  --bo-ui-blue:#D97706;
+  --bo-ui-blue-hover:#B45309;
+  --bo-ui-border:var(--bo-border);
+  --bo-ui-text:var(--bo-text);
+  --bo-ui-muted:var(--bo-muted);
+  --bo-page-blue:#D97706;
+  --bo-page-border:var(--bo-border);
+  --bo-page-text:var(--bo-text);
+}
+
+/* Force flex filter row — Date | Search | Status in one horizontal strip */
+body.bo-wallet-tx .report-main .user-search-grid.bo-filter-row,
+body.bo-wallet-tx.deposit-approval-page .user-search-grid,
+body.bo-wallet-tx.withdraw-approval-page .user-search-grid,
+body.bo-wallet-tx.member-wallet-page .user-search-grid,
+body.bo-wallet-tx.wallet-ledger-page .user-search-grid,
+body.bo-wallet-tx.bank-deposit-usage-page .user-search-grid{
+  display:flex!important;
+  flex-flow:row wrap!important;
+  align-items:center!important;
+  align-content:flex-start!important;
+  gap:12px!important;
+  grid-template-columns:none!important;
+  grid-auto-columns:unset!important;
+  width:100%!important;
+  min-width:0!important;
+}
+/* Toolbar filters sit RIGHT of Deposit/Withdraw tabs — must not claim full width */
+body.bo-wallet-tx.deposit-approval-page .bo-tx-toolbar > .user-search-grid.bo-tx-filter-controls,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-toolbar > .user-search-grid.bo-tx-filter-controls,
+body.bo-wallet-tx .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls{
+  display:flex!important;
+  flex:0 1 auto!important;
+  flex-flow:row wrap!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:12px!important;
+  width:auto!important;
+  max-width:calc(100% - 200px)!important;
+  min-width:0!important;
+  margin:0 0 0 auto!important;
+}
+body.bo-wallet-tx .bo-tx-toolbar{
+  flex-wrap:nowrap!important;
+}
+@media(max-width:991.98px){
+  body.bo-wallet-tx .bo-tx-toolbar{
+    flex-wrap:wrap!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-toolbar > .user-search-grid.bo-tx-filter-controls,
+  body.bo-wallet-tx.withdraw-approval-page .bo-tx-toolbar > .user-search-grid.bo-tx-filter-controls,
+  body.bo-wallet-tx .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls{
+    max-width:100%!important;
+    margin-left:0!important;
+    justify-content:flex-start!important;
+  }
+}
+/* Beat reports.css width:100% on .bo-range-field that forced a full-row stack */
+body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .bo-range-field,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .bo-range-field,
+body.bo-wallet-tx.deposit-approval-page .filter-card .bo-range-field,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .bo-range-field,
+body.bo-wallet-tx .report-main .filter-card .user-search-grid > .bo-range-field,
+body.bo-wallet-tx .report-main .filter-card .user-search-grid > .bo-filter-range-item{
+  flex:0 1 280px!important;
+  width:280px!important;
+  min-width:220px!important;
+  max-width:320px!important;
+  grid-column:auto!important;
+}
+body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .field:has(#depositKeyword),
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .field:has(#withdrawKeyword){
+  flex:1 1 220px!important;
+  width:auto!important;
+  min-width:180px!important;
+  max-width:360px!important;
+  grid-column:auto!important;
+}
+body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .field:has(#depositStatus),
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .field:has(#withdrawStatus){
+  flex:0 0 auto!important;
+  width:var(--bo-select-width,140px)!important;
+  min-width:120px!important;
+  max-width:none!important;
+  grid-column:auto!important;
+}
+/* Page size lives in footer only — never show a leaked control in the filter strip */
+body.bo-wallet-tx .user-search-grid #depositSize,
+body.bo-wallet-tx .user-search-grid #withdrawSize,
+body.bo-wallet-tx .user-search-grid .rounded-select-wrap:has(#depositSize),
+body.bo-wallet-tx .user-search-grid .rounded-select-wrap:has(#withdrawSize),
+body.bo-wallet-tx .filter-card > #depositSize,
+body.bo-wallet-tx .filter-card > #withdrawSize,
+body.bo-wallet-tx .filter-card > .rounded-select-wrap:has(#depositSize),
+body.bo-wallet-tx .filter-card > .rounded-select-wrap:has(#withdrawSize),
+body.bo-wallet-tx select#depositSize[hidden],
+body.bo-wallet-tx select#withdrawSize[hidden]{
+  display:none!important;
+  width:0!important;
+  height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  position:absolute!important;
+  pointer-events:none!important;
+}
+body.bo-wallet-tx .user-search-grid > .bo-filter-hidden-item,
+body.bo-wallet-tx .user-search-grid > .field.bo-filter-hidden-item{
+  display:none!important;
+}
+@media (min-width:1100px){
+  body.bo-wallet-tx.deposit-approval-page .user-search-grid,
+  body.bo-wallet-tx.withdraw-approval-page .user-search-grid{
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    grid-template-columns:none!important;
+  }
+}
+body.bo-wallet-tx .report-main .bo-filter-row > .field,
+body.bo-wallet-tx .report-main .bo-filter-row > .bo-range-field,
+body.bo-wallet-tx .report-main .bo-filter-row > .bo-filter-range-item{
+  min-width:0!important;
+  overflow:visible!important;
+}
+/* Date range — field + trigger must share width (reports.css locks trigger to 390px) */
+html body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-filter-range-item,
+html body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-range-field,
+html body.bo-wallet-tx .report-main .filter-card .user-search-grid > .bo-filter-range-item,
+html body.bo-wallet-tx .report-main .filter-card .user-search-grid > .bo-range-field,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-range-item,
+body.bo-wallet-tx .report-main .bo-filter-row > .bo-filter-range-item,
+body.bo-wallet-tx .report-main .bo-filter-row > .bo-range-field{
+  flex:1 1 220px!important;
+  width:auto!important;
+  min-width:200px!important;
+  max-width:300px!important;
+  overflow:visible!important;
+}
+html body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-filter-range-item .bo-range-trigger,
+html body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-range-field .bo-range-trigger,
+html body.bo-wallet-tx .report-main .filter-card .bo-range-field > .bo-range-trigger,
+html body.bo-wallet-tx .report-main .filter-card .bo-range-trigger,
+html body.bo-wallet-tx .report-main .filter-card .ref-range-trigger,
+body.bo-wallet-tx .bo-range-trigger{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  flex:none!important;
+  box-sizing:border-box!important;
+  height:42px!important;
+  background:var(--bo-tx-well,#FFF8EB)!important;
+  border:1px solid var(--bo-tx-well-border,#EADCC8)!important;
+  border-radius:8px!important;
+  color:var(--bo-text)!important;
+  /* Idle shadow cleared in chrome block; hover/focus ring lives in Interactive ring lock below */
+}
+body.bo-wallet-tx .bo-range-trigger .bo-range-icon,
+body.bo-wallet-tx .bo-range-trigger .bo-range-arrow{color:var(--bo-cyan)!important}
+body.bo-wallet-tx .bo-range-text{color:var(--bo-text)!important;font-weight:700!important}
+
+/* Date-range popover — cream dual-pane; divider casts soft shadow into calendar (reference).
+   Kill reports.css cool gray/blue (#f8fafc / #eef2ff / #5061f5). */
+body.bo-wallet-tx .bo-range-pop,
+body.bo-wallet-tx .report-main .bo-range-pop{
+  background:#FFF8EB!important;
+  border:1px solid #EADCC8!important;
+  border-radius:12px!important;
+  box-shadow:0 12px 30px rgba(60,48,32,.14)!important;
+  overflow:hidden!important;
+  width:390px!important;
+  max-width:calc(100vw - 24px)!important;
+}
+body.bo-wallet-tx .bo-range-pop.show,
+body.bo-wallet-tx .report-main .bo-range-pop.show{
+  display:grid!important;
+  grid-template-columns:118px 1fr!important;
+}
+body.bo-wallet-tx .bo-range-presets{
+  position:relative!important;
+  z-index:2!important;
+  background:#FFF8EB!important;
+  border-right:1px solid #EADCC8!important;
+  padding:8px 0!important;
+  /* Soft shadow cast onto the calendar side of the divider */
+  box-shadow:4px 0 14px rgba(60,48,32,.12)!important;
+}
+body.bo-wallet-tx .bo-range-presets button{
+  width:100%!important;
+  background:transparent!important;
+  color:#374151!important;
+  font-weight:bold!important;
+  font-size:13px!important;
+  border-radius:0!important; /* flush to divider — no inner round against the rail */
+  border:0!important;
+  box-shadow:none!important;
+  text-align:left!important;
+  padding:9px 12px!important;
+}
+body.bo-wallet-tx .bo-range-presets button:hover{
+  background:rgba(217,119,6,.10)!important;
+  color:#B45309!important;
+}
+/* Preset active — soft peach wash + amber ink; square against the divider */
+body.bo-wallet-tx .bo-range-presets button.active{
+  background:#FFF1DC!important;
+  color:#B45309!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+}
+body.bo-wallet-tx .bo-range-calendar{
+  position:relative!important;
+  z-index:1!important;
+  background:#FFF8EB!important;
+  padding:10px 12px 12px!important;
+  /* Reinforce the divider shadow from the calendar side */
+  box-shadow:inset 10px 0 14px -10px rgba(60,48,32,.16)!important;
+}
+body.bo-wallet-tx .bo-range-cal-head{
+  display:grid!important;
+  grid-template-columns:32px 1fr 1fr 32px!important;
+  gap:7px!important;
+  align-items:center!important;
+}
+/* Month / year / arrows — ghost */
+body.bo-wallet-tx .bo-range-cal-head button,
+body.bo-wallet-tx .bo-range-cal-head select,
+body.bo-wallet-tx .bo-range-cal-head .bo-range-head-pick{
+  background:transparent!important;
+  border:0!important;
+  border-color:transparent!important;
+  color:#374151!important;
+  font-weight:bold!important;
+  border-radius:8px!important;
+  box-shadow:none!important;
+  padding:4px 8px!important;
+  height:36px!important;
+}
+body.bo-wallet-tx .bo-range-cal-head .bo-range-head-pick:hover,
+body.bo-wallet-tx .bo-range-cal-head .bo-range-head-pick:focus,
+body.bo-wallet-tx .bo-range-cal-head button:hover,
+body.bo-wallet-tx .bo-range-cal-head button:focus{
+  background:rgba(217,119,6,.10)!important;
+  color:#B45309!important;
+  border:0!important;
+  box-shadow:none!important;
+  outline:0!important;
+}
+body.bo-wallet-tx .bo-range-week,
+body.bo-wallet-tx .bo-range-days{
+  display:grid!important;
+  grid-template-columns:repeat(7,1fr)!important;
+  gap:0!important; /* continuous range strip */
+}
+body.bo-wallet-tx .bo-range-week{margin-top:10px!important}
+body.bo-wallet-tx .bo-range-week span{
+  color:#71717A!important;
+  font-weight:bold!important;
+  font-size:11px!important;
+  text-align:center!important;
+  padding:4px 0!important;
+}
+body.bo-wallet-tx .bo-range-day{
+  height:34px!important;
+  border:0!important;
+  background:transparent!important;
+  color:#374151!important;
+  font-weight:bold!important;
+  font-size:12px!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+body.bo-wallet-tx .bo-range-day:hover{
+  background:rgba(217,119,6,.10)!important;
+  color:#B45309!important;
+}
+body.bo-wallet-tx .bo-range-day.muted{
+  color:#A8A29E!important;
+  background:transparent!important;
+}
+/* In-range — continuous peach bar, square corners */
+body.bo-wallet-tx .bo-range-day.in-range,
+body.bo-wallet-tx .bo-range-day.in-range:hover{
+  background:#FFF1DC!important;
+  color:#B45309!important;
+  border-radius:0!important;
+}
+/* Endpoints — solid amber; round only the outer edge */
+body.bo-wallet-tx .bo-range-day.start,
+body.bo-wallet-tx .bo-range-day.start:hover{
+  background:#D97706!important;
+  color:#fff!important;
+  border-radius:8px 0 0 8px!important;
+  box-shadow:none!important;
+}
+body.bo-wallet-tx .bo-range-day.end,
+body.bo-wallet-tx .bo-range-day.end:hover{
+  background:#D97706!important;
+  color:#fff!important;
+  border-radius:0 8px 8px 0!important;
+  box-shadow:none!important;
+}
+body.bo-wallet-tx .bo-range-day.start.end,
+body.bo-wallet-tx .bo-range-day.start.end:hover{
+  border-radius:8px!important;
+}
+body.bo-wallet-tx .bo-range-month-grid button,
+body.bo-wallet-tx .bo-range-year-grid button{
+  background:transparent!important;
+  color:#374151!important;
+  font-weight:bold!important;
+  border-radius:8px!important;
+  border:0!important;
+}
+body.bo-wallet-tx .bo-range-month-grid button:hover,
+body.bo-wallet-tx .bo-range-year-grid button:hover{
+  background:rgba(217,119,6,.10)!important;
+  color:#B45309!important;
+}
+body.bo-wallet-tx .bo-range-month-grid button.active,
+body.bo-wallet-tx .bo-range-year-grid button.active{
+  background:#FFF1DC!important;
+  color:#B45309!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-pop{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-presets{
+  background:#2A2C36!important;
+  border-right-color:rgba(255,255,255,.14)!important;
+  box-shadow:4px 0 14px rgba(0,0,0,.35)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-calendar{
+  background:#383A46!important;
+  box-shadow:inset 10px 0 14px -10px rgba(0,0,0,.45)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-presets button{color:#E7E5E4!important}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-presets button:hover{
+  background:rgba(245,158,11,.14)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-presets button.active{
+  background:rgba(245,158,11,.16)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-cal-head button,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-cal-head select,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-cal-head .bo-range-head-pick{
+  background:transparent!important;
+  border:0!important;
+  color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-cal-head .bo-range-head-pick:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-cal-head .bo-range-head-pick:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-cal-head button:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-cal-head button:focus{
+  background:rgba(245,158,11,.14)!important;
+  color:#FBBF24!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-week span{color:#A1A1AA!important}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-day{color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-day:hover{
+  background:rgba(245,158,11,.14)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-day.muted{color:#A1A1AA!important}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-day.in-range,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-day.in-range:hover{
+  background:rgba(245,158,11,.16)!important;
+  color:#FBBF24!important;
+  border-radius:0!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-day.start,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-day.start:hover{
+  background:#F59E0B!important;
+  color:#2A2C36!important;
+  border-radius:8px 0 0 8px!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-day.end,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-day.end:hover{
+  background:#F59E0B!important;
+  color:#2A2C36!important;
+  border-radius:0 8px 8px 0!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-day.start.end,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-day.start.end:hover{
+  border-radius:8px!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-month-grid button,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-year-grid button{
+  background:transparent!important;
+  color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-month-grid button:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-year-grid button:hover{
+  background:rgba(245,158,11,.14)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-month-grid button.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-year-grid button.active{
+  background:rgba(245,158,11,.16)!important;
+  color:#FBBF24!important;
+}
+
+/* Keyword search grows; selects sized by content (JS) — never overflow neighbors */
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .field:has(select),
+body.bo-wallet-tx .report-main .bo-filter-row > .field:has(select),
+body.bo-wallet-tx .report-main .bo-filter-row > .bo-filter-select-item{
+  flex:0 0 auto!important;
+  width:var(--bo-select-width,128px)!important;
+  min-width:var(--bo-select-width,112px)!important;
+  max-width:none!important;
+  overflow:visible!important;
+}
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-wrap,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-btn,
+body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-wrap,
+body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-btn{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  flex:none!important;
+  box-sizing:border-box!important;
+}
+body.bo-wallet-tx .report-main .bo-filter-row > .field:has(input[type="text"]),
+body.bo-wallet-tx .report-main .bo-filter-row > .field:has(input[id*="Keyword" i]),
+body.bo-wallet-tx .report-main .bo-filter-row > .field:has(#depositKeyword),
+body.bo-wallet-tx .report-main .bo-filter-row > .field:has(#withdrawKeyword),
+body.bo-wallet-tx .report-main .bo-filter-row > .field:has(#usageKeyword),
+body.bo-wallet-tx .report-main .bo-filter-row > .bo-filter-input-item{
+  flex:1 1 180px!important;
+  width:auto!important;
+  min-width:160px!important;
+  max-width:280px!important;
+}
+body.bo-wallet-tx .report-main .bo-filter-row > .deposit-reset-field,
+body.bo-wallet-tx .report-main .bo-filter-row > .deposit-search-field,
+body.bo-wallet-tx .report-main .bo-filter-row > .withdraw-reset-field,
+body.bo-wallet-tx .report-main .bo-filter-row > .withdraw-search-field,
+body.bo-wallet-tx .report-main .bo-filter-row > .field:has(>button),
+body.bo-wallet-tx .report-main .bo-filter-row > .bo-filter-actions-item,
+body.bo-wallet-tx .report-main .bo-filter-row > .user-filter-actions,
+body.bo-wallet-tx .report-main .bo-filter-row > .wallet-filter-actions{
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:120px!important;
+  max-width:none!important;
+  overflow:visible!important;
+}
+body.bo-wallet-tx .report-main .bo-filter-row .deposit-reset-field .clean-btn,
+body.bo-wallet-tx .report-main .bo-filter-row .deposit-search-field .btn-primary-clean,
+body.bo-wallet-tx .report-main .bo-filter-row .withdraw-reset-field .clean-btn,
+body.bo-wallet-tx .report-main .bo-filter-row .withdraw-search-field .btn-primary-clean,
+body.bo-wallet-tx .report-main .bo-filter-row button[id*="reset" i],
+body.bo-wallet-tx .report-main .bo-filter-row button[id*="search" i],
+body.bo-wallet-tx .report-main .bo-filter-row .btn-primary-clean,
+body.bo-wallet-tx .report-main .bo-filter-row .clean-btn{
+  width:120px!important;
+  min-width:120px!important;
+  max-width:140px!important;
+  height:42px!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  flex:0 0 120px!important;
+}
+
+/* Deposit: inline filter is the panel head (mad-filter-bar role) — styles in Tables block */
+
+/*
+ * Search / Reset — beat bo-ui-standard's higher-specificity lock:
+ *   body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy)
+ *     .report-main .bo-filter-row .bo-filter-search-button { #2864ed }
+ * :not(#id) counts as an ID in specificity — mirror it + add .bo-wallet-tx.
+ */
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row button[id*="search" i],
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row button[id*="apply" i],
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .btn-primary-clean,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .bo-filter-search-button,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-search-button,
+body.bo-wallet-tx .report-main .bo-filter-row button[id*="search" i],
+body.bo-wallet-tx .report-main .bo-filter-row button[id*="apply" i],
+body.bo-wallet-tx .report-main .bo-filter-row .btn-primary-clean,
+body.bo-wallet-tx .report-main .bo-filter-row .bo-filter-search-button,
+body.bo-wallet-tx .report-main .bo-filter-search-button{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
+  border:1px solid #E8901A!important;
+  color:#fff!important;
+  box-shadow:0 1px 2px rgba(217,119,6,.18),0 4px 10px rgba(217,119,6,.22),inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row button[id*="search" i]:hover,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .btn-primary-clean:hover,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .bo-filter-search-button:hover,
+body.bo-wallet-tx .report-main .bo-filter-row button[id*="search" i]:hover,
+body.bo-wallet-tx .report-main .bo-filter-row .btn-primary-clean:hover,
+body.bo-wallet-tx .report-main .bo-filter-search-button:hover{
+  background-image:linear-gradient(0deg,#FCD34D 0%,#FBBF24 38%,#F59E0B 72%,#EA8608 100%)!important;
+  border-color:#F59E0B!important;
+  color:#fff!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row button[id*="search" i],
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .btn-primary-clean,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .bo-filter-search-button,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row button[id*="search" i],
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .btn-primary-clean,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-search-button{
+  color:#2A2C36!important;
+  border-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+}
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row button[id*="reset" i],
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row button[id*="clear" i],
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .bo-filter-reset-button,
+body.bo-wallet-tx .report-main .bo-filter-row button[id*="reset" i],
+body.bo-wallet-tx .report-main .bo-filter-row button[id*="clear" i],
+body.bo-wallet-tx .report-main .bo-filter-row .bo-filter-reset-button{
+  background:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%)!important;
+  border:1px solid #DCC9A8!important;
+  color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row button[id*="reset" i],
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .bo-filter-reset-button,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row button[id*="reset" i],
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .bo-filter-reset-button{
+  background:linear-gradient(180deg,#4A4C58 0%,#383A46 55%,#2C2E38 100%)!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+}
+
+/* Metrics / total bar */
+body.bo-wallet-tx .approval-pending-stats,
+body.bo-wallet-tx .quick-stats{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:14px!important;
+  margin-bottom:16px!important;
+}
+/* Deposit bank capacity strip — Charcoal+Amber ops cards */
+body.bo-wallet-tx.deposit-approval-page .approval-pending-stats.deposit-bank-card-stats,
+body.deposit-approval-page .approval-pending-stats.deposit-bank-card-stats{
+  display:grid!important;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr))!important;
+  gap:12px!important;
+  margin-bottom:14px!important;
+}
+body.bo-wallet-tx .deposit-bank-card{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:12px!important;
+  min-height:0!important;
+  padding:14px 14px 12px!important;
+  border-radius:8px!important;
+  background:var(--bo-surface,#FFF8EB)!important;
+  border:1px solid var(--bo-border,#EADCC8)!important;
+  box-shadow:none!important;
+  color:var(--bo-text,#18191C)!important;
+}
+body.bo-wallet-tx .deposit-bank-card-head{
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  min-width:0!important;
+}
+body.bo-wallet-tx .deposit-bank-mark{
+  flex:0 0 36px!important;
+  width:36px!important;
+  height:36px!important;
+  border-radius:8px!important;
+  display:inline-grid!important;
+  place-items:center!important;
+  font-size:14px!important;
+  font-weight:800!important;
+  letter-spacing:-0.02em!important;
+  color:#B45309!important;
+  background:rgba(217,119,6,.12)!important;
+  border:1px solid rgba(217,119,6,.22)!important;
+}
+body.bo-wallet-tx .deposit-bank-id{
+  min-width:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:2px!important;
+}
+body.bo-wallet-tx .deposit-bank-id b{
+  font-size:13px!important;
+  font-weight:800!important;
+  line-height:1.2!important;
+  color:var(--bo-text,#18191C)!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+body.bo-wallet-tx .deposit-bank-id small{
+  font-size:11px!important;
+  font-weight:600!important;
+  line-height:1.25!important;
+  color:var(--bo-muted,#78716C)!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+body.bo-wallet-tx .deposit-bank-total{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:0!important;
+  padding-top:2px!important;
+}
+body.bo-wallet-tx .deposit-bank-total > strong{
+  display:block!important;
+  margin:0!important;
+  font-size:24px!important;
+  font-weight:800!important;
+  line-height:1.05!important;
+  letter-spacing:-0.03em!important;
+  color:var(--bo-text,#18191C)!important;
+  font-variant-numeric:tabular-nums!important;
+}
+body.bo-wallet-tx .deposit-bank-meter{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:6px!important;
+  margin-top:auto!important;
+  padding-top:2px!important;
+}
+body.bo-wallet-tx .deposit-bank-meter-line{
+  display:flex!important;
+  justify-content:space-between!important;
+  align-items:center!important;
+  gap:8px!important;
+  font-size:11px!important;
+  font-weight:700!important;
+  color:var(--bo-muted,#78716C)!important;
+}
+body.bo-wallet-tx .deposit-bank-track{
+  order:-1!important;
+  height:8px!important;
+  border-radius:999px!important;
+  overflow:hidden!important;
+  background:#EDE4D4!important;
+  border:1px solid #DCC9A8!important;
+  box-shadow:inset 0 1px 2px rgba(107,54,12,.06)!important;
+}
+body.bo-wallet-tx .deposit-bank-fill{
+  height:100%!important;
+  border-radius:999px!important;
+  max-width:100%!important;
+  min-width:0!important;
+  background:linear-gradient(90deg,#FBBF24,#D97706)!important;
+  transition:width .22s ease!important;
+}
+body.bo-wallet-tx .deposit-bank-fill.is-warn{
+  background:linear-gradient(90deg,#F59E0B,#B45309)!important;
+}
+body.bo-wallet-tx .deposit-bank-fill.is-over{
+  background:linear-gradient(90deg,#F87171,#B91C1C)!important;
+}
+body.bo-wallet-tx .deposit-bank-meter.is-empty .deposit-bank-track{
+  background:repeating-linear-gradient(-45deg,#EDE4D4 0 6px,#E8D9C4 6px 12px)!important;
+}
+body.bo-wallet-tx .deposit-bank-meter.is-empty .deposit-bank-fill{
+  width:0!important;
+  background:transparent!important;
+}
+body.bo-wallet-tx .deposit-bank-card.is-empty .bo-summary-note{
+  font-size:12px!important;
+  color:var(--bo-muted,#78716C)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .deposit-bank-card{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .deposit-bank-mark{
+  color:#FBBF24!important;
+  background:rgba(245,158,11,.16)!important;
+  border-color:rgba(245,158,11,.28)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .deposit-bank-id b,
+html[data-bo-theme="dark"] body.bo-wallet-tx .deposit-bank-total > strong{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .deposit-bank-id small,
+html[data-bo-theme="dark"] body.bo-wallet-tx .deposit-bank-meter-line,
+html[data-bo-theme="dark"] body.bo-wallet-tx .deposit-bank-card.is-empty .bo-summary-note{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .deposit-bank-track{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .deposit-bank-fill{
+  background:linear-gradient(90deg,#FBBF24,#F59E0B)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .deposit-bank-fill.is-warn{
+  background:linear-gradient(90deg,#F59E0B,#D97706)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .deposit-bank-fill.is-over{
+  background:linear-gradient(90deg,#F87171,#DC2626)!important;
+}
+@media (prefers-reduced-motion:reduce){
+  body.bo-wallet-tx .deposit-bank-fill{transition:none!important}
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .deposit-bank-meter.is-empty .deposit-bank-fill{
+  background:#52525B!important;
+}
+/* Summary icons — kill reports.css blue/green/purple rainbow → amber only */
+body.bo-wallet-tx .bo-summary-icon,
+body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric .bo-summary-icon,
+body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric:nth-child(2) .bo-summary-icon,
+body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric:nth-child(3) .bo-summary-icon,
+body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric:nth-child(4) .bo-summary-icon,
+body.bo-wallet-tx .approval-pending-stats .metric .bo-summary-icon{
+  background:rgba(217,119,6,.12)!important;
+  color:#D97706!important;
+  border:1px solid rgba(217,119,6,.18)!important;
+}
+body.bo-wallet-tx .bo-summary-icon i,
+body.bo-wallet-tx .approval-pending-stats .metric .bo-summary-icon i,
+body.bo-wallet-tx .report-content .quick-stats .metric .bo-summary-icon i{
+  color:#D97706!important;
+}
+body.bo-wallet-tx .approval-pending-stats .metric:nth-child(2) .bo-summary-icon,
+body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric:nth-child(2) .bo-summary-icon{
+  background:rgba(180,83,9,.12)!important;
+  color:#B45309!important;
+  border-color:rgba(180,83,9,.2)!important;
+}
+body.bo-wallet-tx .approval-pending-stats .metric:nth-child(2) .bo-summary-icon i,
+body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric:nth-child(2) .bo-summary-icon i{
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-summary-icon,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric .bo-summary-icon,
+html[data-bo-theme="dark"] body.bo-wallet-tx .approval-pending-stats .metric .bo-summary-icon,
+html[data-bo-theme="dark"] body.bo-wallet-tx .approval-pending-stats .metric:nth-child(2) .bo-summary-icon,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric:nth-child(2) .bo-summary-icon{
+  background:rgba(245,158,11,.16)!important;
+  color:#FBBF24!important;
+  border-color:rgba(245,158,11,.28)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-summary-icon i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .approval-pending-stats .metric .bo-summary-icon i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .approval-pending-stats .metric:nth-child(2) .bo-summary-icon i,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric:nth-child(2) .bo-summary-icon i{
+  color:#FBBF24!important;
+}
+body.bo-wallet-tx .approval-total-bar{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  margin-top:0!important;
+  padding:10px 16px!important;
+  background:var(--bo-control-well)!important;
+  border:0!important;
+  border-top:1px solid var(--bo-border)!important;
+  border-radius:0!important;
+  color:var(--bo-text-secondary)!important;
+  font-weight:700!important;
+}
+body.bo-wallet-tx .approval-total-bar strong{
+  color:var(--bo-text)!important;
+  font-variant-numeric:tabular-nums;
+}
+
+/* Pagination — Show N (bottom-left) · Showing (center) · pager (right) */
+body.bo-wallet-tx .report-main .bo-pagination-standard,
+body.bo-wallet-tx .report-main .table-footer.standard-pagination,
+body.bo-wallet-tx .table-card > .bo-pagination-standard,
+body.bo-wallet-tx .table-card > .bo-deposit-pager-host.bo-pagination-standard{
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:12px!important;
+  margin-top:0!important;
+  padding:14px 16px!important;
+  border-top:1px solid var(--bo-table-line,var(--bo-border))!important;
+  background:var(--bo-table-row,var(--bo-surface))!important;
+  overflow:visible!important;
+  position:relative!important;
+  z-index:6!important;
+}
+/* DOM order: entries · info · pager — keep natural L/C/R */
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control,
+body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control{
+  grid-column:1!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  justify-self:start!important;
+  gap:8px!important;
+  color:var(--bo-muted)!important;
+  font-size:13px!important;
+  font-weight:600!important;
+  line-height:1!important;
+  position:relative!important;
+  z-index:8!important;
+  overflow:visible!important;
+}
+body.bo-wallet-tx .report-main .bo-pagination-standard > .table-info,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .bo-pagination-info,
+body.bo-wallet-tx .table-card > .bo-pagination-standard > .table-info,
+body.bo-wallet-tx .report-main .bo-pagination-standard .smart-page-summary{
+  grid-column:2!important;
+  justify-self:center!important;
+  color:var(--bo-muted)!important;
+  font-size:13px!important;
+  font-weight:600!important;
+  text-align:center!important;
+}
+body.bo-wallet-tx .report-main .bo-pagination-standard > .pagination-clean,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .bo-pagination-buttons,
+body.bo-wallet-tx .table-card > .bo-pagination-standard > .pagination-clean{
+  grid-column:3!important;
+  justify-self:end!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  overflow:visible!important;
+}
+/* Page numbers live in #depositPager / #withdrawPager between ‹ › — keep visible. */
+body.bo-wallet-tx .pagination-clean > .pagination-clean-inner,
+body.bo-wallet-tx .pagination-clean > #depositPager,
+body.bo-wallet-tx .pagination-clean > #withdrawPager{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  margin:0!important;
+  padding:0!important;
+  width:auto!important;
+  min-width:0!important;
+  height:auto!important;
+  min-height:36px!important;
+  flex:0 0 auto!important;
+  overflow:visible!important;
+  visibility:visible!important;
+  opacity:1!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  font-size:13px!important;
+  line-height:1!important;
+}
+body.bo-wallet-tx .pagination-clean-inner > .smart-pagination,
+body.bo-wallet-tx #depositPager > .smart-pagination,
+body.bo-wallet-tx #withdrawPager > .smart-pagination{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  margin:0!important;
+  padding:0!important;
+  width:auto!important;
+  height:auto!important;
+  flex:0 0 auto!important;
+  overflow:visible!important;
+}
+/* Outer ‹ › already navigate — hide duplicate first/last from legacy pageButtons HTML. */
+body.bo-wallet-tx .pagination-clean-inner .smart-page.first,
+body.bo-wallet-tx .pagination-clean-inner .smart-page.last,
+body.bo-wallet-tx #depositPager .smart-page.first,
+body.bo-wallet-tx #depositPager .smart-page.last,
+body.bo-wallet-tx #withdrawPager .smart-page.first,
+body.bo-wallet-tx #withdrawPager .smart-page.last{
+  display:none!important;
+}
+body.bo-wallet-tx .pagination-clean-inner .smart-page:not(.first):not(.last),
+body.bo-wallet-tx #depositPager .smart-page:not(.first):not(.last),
+body.bo-wallet-tx #withdrawPager .smart-page:not(.first):not(.last),
+body.bo-wallet-tx .pagination-clean-inner > .smart-page,
+body.bo-wallet-tx #depositPager > .smart-page,
+body.bo-wallet-tx #withdrawPager > .smart-page{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  visibility:visible!important;
+  opacity:1!important;
+  flex:0 0 auto!important;
+}
+/* Kill reports.css `.entries-control .rounded-select-wrap { margin-top:-35px }`
+   which lifts the page-size dropdown above the "Show … entries" baseline. */
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-wrap,
+body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-wrap{
+  display:inline-flex!important;
+  align-items:center!important;
+  vertical-align:middle!important;
+  position:relative!important;
+  overflow:visible!important;
+  z-index:9!important;
+  margin:0!important;
+  margin-top:0!important;
+  width:72px!important;
+  min-width:72px!important;
+  max-width:88px!important;
+  height:auto!important;
+  min-height:0!important;
+  flex:0 0 72px!important;
+  box-sizing:border-box!important;
+}
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-btn,
+body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-btn,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control select:not([hidden]),
+body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control select:not([hidden]){
+  width:72px!important;
+  min-width:72px!important;
+  max-width:88px!important;
+  height:36px!important;
+  min-height:36px!important;
+  flex:0 0 72px!important;
+  box-sizing:border-box!important;
+  background:var(--bo-control-well)!important;
+  border:1px solid var(--bo-border)!important;
+  border-radius:8px!important;
+  color:var(--bo-text)!important;
+  font-size:13px!important;
+  font-weight:700!important;
+  box-shadow:none!important;
+}
+/* Keep the native select visually hidden — do not inherit the 72×36 trigger size. */
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-wrap > select,
+body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-wrap > select{
+  position:absolute!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  width:1px!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:1px!important;
+  min-height:0!important;
+  flex:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  overflow:hidden!important;
+}
+/* Fig.1 page-size menu — open upward, centered bold options, quiet selected chip */
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-menu,
+body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-menu{
+  top:auto!important;
+  bottom:calc(100% + 6px)!important;
+  left:0!important;
+  right:auto!important;
+  width:100%!important;
+  min-width:100%!important;
+  max-width:none!important;
+  padding:6px!important;
+  border-radius:10px!important;
+  z-index:80!important;
+  max-height:min(260px,50vh)!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  box-sizing:border-box!important;
+}
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option,
+body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:34px!important;
+  padding:6px 8px!important;
+  margin:0!important;
+  border-radius:8px!important;
+  text-align:center!important;
+  font-size:13px!important;
+  font-weight:700!important;
+  line-height:1.2!important;
+  background:transparent!important;
+  color:var(--bo-text)!important;
+}
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option:hover,
+body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option:hover{
+  background:rgba(24,25,28,.05)!important;
+  color:#18191C!important;
+}
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option.active,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option.is-active,
+body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option.active,
+body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option.is-active{
+  background:rgba(217,119,6,.12)!important;
+  color:#B45309!important;
+  -webkit-text-fill-color:#B45309;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-menu,
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-menu{
+  background:#2A2C36!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  box-shadow:0 14px 32px rgba(0,0,0,.45)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option,
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option{
+  color:#F5F5F4!important;
+  -webkit-text-fill-color:#F5F5F4;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option:hover{
+  background:rgba(255,255,255,.08)!important;
+  color:#FFFFFF!important;
+  -webkit-text-fill-color:#FFFFFF;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option.is-active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option.is-active{
+  background:rgba(255,255,255,.12)!important;
+  color:#E7E5E4!important;
+  -webkit-text-fill-color:#E7E5E4;
+}
+body.bo-wallet-tx .table-card:has(.bo-pagination-standard .rounded-select-menu.show),
+body.bo-wallet-tx .table-card:has(.entries-control .rounded-select-menu.show){
+  overflow:visible!important;
+}
+body.bo-wallet-tx .table-card:has(.bo-pagination-standard .rounded-select-menu.show) > .table-wrap,
+body.bo-wallet-tx .table-card:has(.entries-control .rounded-select-menu.show) > .table-wrap{
+  overflow:auto!important;
+}
+body.bo-wallet-tx .pagination-clean .page-btn,
+body.bo-wallet-tx .pagination-clean button,
+body.bo-wallet-tx .smart-page,
+body.bo-wallet-tx .report-main .bo-pagination-buttons button{
+  width:36px!important;
+  min-width:36px!important;
+  height:36px!important;
+  padding:0!important;
+  border-radius:8px!important;
+  background:#F3F4F6!important;
+  border:0!important;
+  color:#9CA3AF!important;
+  font-weight:700!important;
+  font-size:13px!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .pagination-clean .page-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .pagination-clean button,
+html[data-bo-theme="dark"] body.bo-wallet-tx .smart-page,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-buttons button{
+  background:#383A46!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#A1A1AA!important;
+  -webkit-text-fill-color:#A1A1AA;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .pagination-clean .page-btn:hover:not(.active):not(:disabled),
+html[data-bo-theme="dark"] body.bo-wallet-tx .smart-page:hover:not(.active):not(:disabled),
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-buttons button:hover:not(.active):not(:disabled){
+  background:#444654!important;
+  border-color:rgba(255,255,255,.18)!important;
+  color:#E7E5E4!important;
+  -webkit-text-fill-color:#E7E5E4;
+}
+/* Pagination active — MD mad-pager amber 3D */
+body.bo-wallet-tx .pagination-clean .page-btn.active,
+body.bo-wallet-tx .pagination-clean button.active,
+body.bo-wallet-tx .table-page-btn.active,
+body.bo-wallet-tx .smart-page.active,
+body.bo-wallet-tx .ref-pager b,
+body.bo-wallet-tx .bo-pagination-buttons button.active,
+body.bo-wallet-tx .report-main .bo-pagination-buttons button.active{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#D97706 100%)!important;
+  border:1px solid #D97706!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff;
+  box-shadow:0 1px 2px rgba(217,119,6,.18),0 4px 10px rgba(217,119,6,.18),inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .pagination-clean .page-btn.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .smart-page.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-pagination-buttons button.active{
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border-color:#F59E0B!important;
+  color:#2A2C36!important;
+  -webkit-text-fill-color:#2A2C36;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control select{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+}
+
+/* ===== MD lock — Select / filter chrome (system.md Forms + Radius) =====
+   Filter controls / selects / date trigger = 8px. Beat bo-ui-standard 11px. */
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row select,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-btn,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item select,
+body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-btn,
+body.bo-wallet-tx .report-main .bo-filter-row input,
+body.bo-wallet-tx .report-main .bo-filter-row select,
+body.bo-wallet-tx .rounded-select-btn,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-btn,
+body.bo-wallet-tx .bo-range-trigger,
+html body.bo-wallet-tx .report-main .filter-card .bo-range-trigger{
+  border-radius:8px!important;
+}
+body.bo-wallet-tx .bo-range-pop,
+body.bo-wallet-tx .report-main .bo-range-pop{
+  border-radius:12px!important;
+}
+body.bo-wallet-tx .rounded-select-menu,
+body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-menu{
+  border-radius:8px!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-pop,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-range-pop{
+  border:1px solid rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-menu,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-menu,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-menu{
+  background:#383A46!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+}
+/* Dark option — MD Role select: hover wash · selected solid amber + charcoal text */
+html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .rounded-select-option:hover{
+  background:rgba(245,158,11,.14)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-option.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-option.is-active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-option.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-option.is-active,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .rounded-select-option.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .rounded-select-option.is-active{
+  background:#F59E0B!important;
+  color:#2A2C36!important;
+  -webkit-text-fill-color:#2A2C36;
+}
+
+/* Listing select trigger type — MD Role select: 13.5px / 600 */
+body.bo-wallet-tx .rounded-select-btn,
+body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-btn,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-btn{
+  font-size:13.5px!important;
+  font-weight:600!important;
+}
+
+/* ===== Interactive ring lock — Merchant Profit / Role select =====
+   Hover · focus · open: amber border + soft outer glow.
+   Light: `#D97706` + `0 0 0 3px rgba(217,119,6,.14)`
+   Dark:  `#F59E0B` + `0 0 0 3px rgba(245,158,11,.18)`
+   Must sit after idle chrome (`box-shadow:none`) with ≥ equal specificity. */
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):hover,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus-visible,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row select:hover,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row select:focus,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .field input:hover,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .field input:focus,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .field select:hover,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .field select:focus,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-input-item input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):hover,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-input-item input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item select:hover,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item select:focus,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-btn:hover,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-btn:focus,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-btn:focus-visible,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-btn.open,
+body.bo-wallet-tx .field input:hover,
+body.bo-wallet-tx .field input:focus,
+body.bo-wallet-tx .field select:hover,
+body.bo-wallet-tx .field select:focus,
+body.bo-wallet-tx .bo-filter-row input:hover,
+body.bo-wallet-tx .bo-filter-row input:focus,
+body.bo-wallet-tx .bo-filter-row select:hover,
+body.bo-wallet-tx .bo-filter-row select:focus,
+body.bo-wallet-tx .rounded-select-btn:hover,
+body.bo-wallet-tx .rounded-select-btn:focus,
+body.bo-wallet-tx .rounded-select-btn:focus-visible,
+body.bo-wallet-tx .rounded-select-btn.open,
+body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-btn:hover,
+body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-btn:focus,
+body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-btn.open,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-btn:hover,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-btn:focus,
+body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-btn.open,
+body.bo-wallet-tx .bo-range-trigger:hover,
+body.bo-wallet-tx .bo-range-trigger:focus,
+body.bo-wallet-tx .bo-range-trigger:focus-visible,
+body.bo-wallet-tx .bo-range-trigger:focus-within,
+body.bo-wallet-tx .ref-range-trigger:hover,
+body.bo-wallet-tx .ref-range-trigger:focus,
+body.bo-wallet-tx .ref-range-trigger:focus-visible,
+body.bo-wallet-tx .ref-range-trigger:focus-within,
+html body.bo-wallet-tx .report-main .filter-card .bo-range-trigger:hover,
+html body.bo-wallet-tx .report-main .filter-card .bo-range-trigger:focus,
+html body.bo-wallet-tx .report-main .filter-card .bo-range-trigger:focus-visible,
+html body.bo-wallet-tx .report-main .filter-card .bo-range-trigger:focus-within,
+html body.bo-wallet-tx .report-main .filter-card .ref-range-trigger:hover,
+html body.bo-wallet-tx .report-main .filter-card .ref-range-trigger:focus,
+html body.bo-wallet-tx .report-main .filter-card .ref-range-trigger:focus-visible,
+html body.bo-wallet-tx .report-main .filter-card .ref-range-trigger:focus-within,
+html body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-filter-range-item .bo-range-trigger:hover,
+html body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-filter-range-item .bo-range-trigger:focus,
+html body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-filter-range-item .bo-range-trigger:focus-visible,
+html body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-filter-range-item .bo-range-trigger:focus-within,
+html body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-range-field .bo-range-trigger:hover,
+html body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-range-field .bo-range-trigger:focus,
+html body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-range-field .bo-range-trigger:focus-visible,
+html body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-range-field .bo-range-trigger:focus-within,
+html body.bo-wallet-tx .report-main .filter-card .bo-range-field > .bo-range-trigger:hover,
+html body.bo-wallet-tx .report-main .filter-card .bo-range-field > .bo-range-trigger:focus,
+html body.bo-wallet-tx .report-main .filter-card .bo-range-field > .bo-range-trigger:focus-within,
+html body.bo-wallet-tx .report-main .filter-card .bo-range-field:has(.bo-range-pop.show) > .bo-range-trigger,
+html body.bo-wallet-tx .report-main .filter-card .bo-filter-range-item:has(.bo-range-pop.show) .bo-range-trigger{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+  outline:0!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus-visible,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row select:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row select:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-input-item input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-input-item input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-btn:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-btn:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-btn:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-btn:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-btn:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-btn:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-btn:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-btn:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-trigger:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-trigger:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-trigger:focus-visible,
+html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-trigger:focus-within,
+html[data-bo-theme="dark"] body.bo-wallet-tx .ref-range-trigger:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .ref-range-trigger:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx .ref-range-trigger:focus-within,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .filter-card .bo-range-trigger:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .filter-card .bo-range-trigger:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .filter-card .bo-range-trigger:focus-within,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .filter-card .ref-range-trigger:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .filter-card .ref-range-trigger:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .filter-card .ref-range-trigger:focus-within,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-filter-range-item .bo-range-trigger:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-filter-range-item .bo-range-trigger:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-filter-range-item .bo-range-trigger:focus-within,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-range-field .bo-range-trigger:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-range-field .bo-range-trigger:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-range-field .bo-range-trigger:focus-within,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .filter-card .bo-range-field:has(.bo-range-pop.show) > .bo-range-trigger,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .filter-card .bo-filter-range-item:has(.bo-range-pop.show) .bo-range-trigger{
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+  outline:0!important;
+}
+
+/* Page-size menu lock (Fig.1) — beat MD solid-amber option; quiet slate selected chip */
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-menu,
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-menu{
+  background:#2A2C36!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  box-shadow:0 14px 32px rgba(0,0,0,.45)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option.is-active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option.active,
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option.is-active{
+  background:rgba(255,255,255,.12)!important;
+  color:#E7E5E4!important;
+  -webkit-text-fill-color:#E7E5E4;
+}
+
+/* Table body scrollbar — final authority (beat reports.css + injected global ::-webkit-scrollbar) */
+body.bo-wallet-tx.standardized-listing-page .table-card > .table-wrap > .bo-tx-table-body{
+  scrollbar-width:auto!important;
+  scrollbar-color:auto!important;
+}
+body.bo-wallet-tx.standardized-listing-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar{
+  width:14px!important;
+  height:14px!important;
+  background:transparent!important;
+}
+body.bo-wallet-tx.standardized-listing-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-track{
+  background:transparent!important;
+}
+body.bo-wallet-tx.standardized-listing-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-thumb{
+  background:#98A2B3!important;
+  background-color:#98A2B3!important;
+  border-radius:999px!important;
+  border:3px solid transparent!important;
+  background-clip:padding-box!important;
+  min-height:40px!important;
+  box-shadow:none!important;
+}
+body.bo-wallet-tx.standardized-listing-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-thumb:hover{
+  background:#667085!important;
+  background-color:#667085!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.standardized-listing-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-thumb{
+  background:#A1A1AA!important;
+  background-color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.standardized-listing-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-thumb:hover{
+  background:#D4D4D8!important;
+  background-color:#D4D4D8!important;
+}
+
+/* Deposit/Withdraw toolbar — beat bo-ui-standard :not(#id) specificity */
+html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar,
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar{
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px 16px!important;
+  width:100%!important;
+  min-width:0!important;
+}
+html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls,
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls{
+  display:flex!important;
+  flex:0 0 auto!important;
+  flex-flow:row nowrap!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:12px!important;
+  width:auto!important;
+  max-width:none!important;
+  min-width:0!important;
+  margin:0 0 0 auto!important;
+  margin-left:auto!important;
+}
+@media(max-width:767.98px){
+  html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar,
+  html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar{
+    flex-flow:column nowrap!important;
+    align-items:stretch!important;
+  }
+  html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls,
+  html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls{
+    margin-left:0!important;
+    justify-content:flex-start!important;
+    width:100%!important;
+    flex-wrap:wrap!important;
+  }
+}
+
