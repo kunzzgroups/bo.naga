@@ -995,7 +995,7 @@ html[data-bo-theme="dark"] body.menu-mgmt-page .modal-clean-close{filter:invert(
 body.menu-mgmt-page #newMenuModal.modal-clean{
   padding:18px;
   align-items:center;
-  background:rgba(217,119,6,.55);
+  background:rgba(15,23,42,.55);
 }
 body.menu-mgmt-page .nm-panel{
   width:min(960px,calc(100vw - 28px))!important;

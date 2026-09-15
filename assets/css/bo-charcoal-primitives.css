@@ -809,3 +809,26 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .asset-file{color:#D4D4D
   body.report-body.bo-charcoal .bo-ui-button:hover,
   body.report-body.bo-charcoal .clean-btn:hover{transform:none!important}
 }
+
+/* ------------------------------------------------------------------ scrims stay neutral
+   A translucent cool colour is a WASH, and the value-driven retint maps a wash to amber keeping
+   its alpha — correct for a hover tint, wrong for a backdrop. `rgba(15,23,42,.55)` is a scrim,
+   not chrome: DESIGN.md says it stays the same in both themes, and an amber veil over the whole
+   viewport is the "muddy full-page orange wash" the Don'ts list forbids. Enforcement, so no
+   later pass can quietly reintroduce it. */
+body:not(#bo-charcoal-off).report-body.bo-charcoal .modal-clean,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .modal-backdrop,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .user-detail-modal,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .crud-pattern-backdrop,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .ref-reward-modal-backdrop,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .bo-dialog-backdrop,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .rebate-modal,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .audit-detail-modal,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .settlement-modal,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .wallet-modal-overlay,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .agent-modal-backdrop,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .vip-modal,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .sidebar-overlay{
+  background:rgba(15,23,42,.55)!important;
+  background-color:rgba(15,23,42,.55)!important;
+}
