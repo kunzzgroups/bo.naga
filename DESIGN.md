@@ -369,37 +369,56 @@ Traps found while migrating:
 
 System UI stack. Hierarchy via weight + color. Sidebar L1 = `800`. Tabular nums for money/time; mono for credit/time cells and topbar role.
 
-### Date-range picker (every family — unified 2026-09-15)
+### Date-range picker (one component — reference: `main-merchant-profit.html`)
 
-The `.ref-range-*` / `.ref-cal-*` picker is one component with one look, wherever it is opened. **Reference: `main-merchant-profit.html`** — that is the rendering the rest was measured against, and the values below are what it computes. `main-dashboard-executive.css` and `main-report-charcoal.css` carry the same rules for their scopes — change one, change the other.
+**Reference page: `main-merchant-profit.html`.** Open its picker and measure it; the tables below are what it computes, element by element, in both themes. Report pages and the Dashboard are already on these values — `main-report-charcoal.css` (report family) and `main-dashboard-executive.css` (Dashboard) carry them for their scopes. **Change one, change the other**, then re-measure all three pages: `main-merchant-profit.html`, `main-dashboard.html`, a report page (`main-win-lose-report.html` is the quickest).
 
-Two known deviations on other pages, both from page-scoped rules rather than this contract: `main-merchant-settlement.html` paints the **active preset as a wash** (`rgba(217,119,6,.16)` / `rgba(245,158,11,.2)`) instead of the solid fill below, and the profit page's **dark** active preset labels itself white where the locked `accent-on` token is `#2A2C36`. Both are one-rule changes if the family should be brought fully into line — the Dashboard and the report pages follow the table.
+Markup: `.ref-date-field > .ref-range-wrap > .ref-range-trigger` + `.ref-range-picker` (rail, calendar head, `.ref-cal-week`, `.ref-cal-days`, month/year grids). Any page that already uses these classes only needs the CSS below and the pin bump.
 
 | Part | Light | Dark |
 |------|-------|------|
-| Panel `.ref-range-picker` | `--bo-surface` `#FFF8EB` · border `--bo-border` `#EADCC8` · radius `12px` · warm shadow `0 12px 30px rgba(60,48,32,.14)` | `#383A46` · border `rgba(255,255,255,.14)` · shadow `0 16px 38px rgba(0,0,0,.4)` |
-| Preset rail `.ref-range-presets` | `--bo-surface` · right border `#EADCC8` | `#383A46` · right border `rgba(255,255,255,.14)` |
-| Preset active | **solid** `#D97706` · label white | solid `#F59E0B` · label `#2A2C36` |
-| Head / month / year buttons | transparent · text `#374151` | transparent · text `#E7E5E4` |
-| Week header | `#71717A` | `#A1A1AA` |
-| Day cell | transparent · `#374151` | transparent · `#E7E5E4` |
-| Muted (other month) | `#57534E` | `#A1A1AA` |
-| Hover | wash `rgba(217,119,6,.16)` · text `#B45309` | wash `rgba(245,158,11,.16)` · text white |
-| In-range wash | `rgba(217,119,6,.14)` · text `#B45309` | `rgba(245,158,11,.18)` · text `#FBBF24` |
+| Field (`.ref-date-field`) | width is **per page** (see below) | — |
+| Trigger `.ref-range-trigger` | bg `--bo-surface` `#FFF8EB` · border 1px `--bo-border` `#EADCC8` · radius `10px` · text `--bo-text` `#18191C` · `13px/700` · h `42px` | bg `#2A2C36` · border `rgba(255,255,255,.12)` · text `--bo-text` `#F5F5F4` |
+| Panel `.ref-range-picker` | bg `--bo-surface` `#FFF8EB` · border `--bo-border` `#EADCC8` · radius `12px` · **`box-shadow: 0 12px 30px rgba(60,48,32,.14)`** | bg `#383A46` · border `rgba(255,255,255,.14)` · radius `12px` · **`box-shadow: 0 16px 38px rgba(0,0,0,.4)`** |
+| Calendar well `.ref-range-calendar` | transparent (the panel shows through) | bg `--bo-surface` `#383A46` (opaque) |
+| Rail `.ref-range-presets` | bg `--bo-surface` · border `--bo-border` · width `112px` · pad `8px 0` · **same `box-shadow` as the panel** | bg `#383A46` · border `rgba(255,255,255,.14)` · same shadow as the panel |
+| Rail item | transparent · text `#374151` · `12px/900` · pad `9px 12px` | text `#E7E5E4` |
+| Rail item **active** | **solid** `#D97706` · label white | **solid** `#F59E0B` · label **white** |
+| Head buttons (`.ref-cal-head button`, `.ref-head-pick`) | transparent · text `#374151` · the reference box carries a 1px transparent border | transparent · text `#E7E5E4` |
+| Month / year grid item **active** | **plain** — transparent · text `#374151` | `#F59E0B` · label white |
+| Week row `.ref-cal-week span` | `#71717A` · `11px/900` | `#A1A1AA` |
+| Day cell | transparent · `#57534E` · `12px/800` | transparent · `#A1A1AA` |
+| Day cell, other month (`.muted`) | transparent · `#57534E` | `#A1A1AA` |
+| Day cell hover | wash `rgba(217,119,6,.16)` · text `#B45309` | wash `rgba(245,158,11,.16)` · text white |
+| In-range day (`.in-range`) | wash `rgba(217,119,6,.14)` · text `#B45309` | wash `rgba(245,158,11,.18)` · text `#FBBF24` |
 | Range edge (`.selected`) | `#D97706` · label white · radius `8px` | `#F59E0B` · label `#2A2C36` · radius `8px` |
-| Date trigger | surface `#FFF8EB` · border `#EADCC8` | `#2C2E38` · border `rgba(255,255,255,.12)` · text `#E7E5E4` |
-| Day grid | `.ref-cal-days{gap:0}` — cells touch so the band is continuous; the base file sets `3px` and the band then breaks into chips | same |
-| Field / control width | **not part of the design** — each page owns its control width (settlement `260px`, report pages `236px` in a five-control filter row, Dashboard `390px`) | — |
+| Day grid `.ref-cal-days` | **`gap:0`** — cells touch, so the band is continuous | same |
 
-The preset list is per page: the Dashboard also offers `Last 7 Days`. Styling only — the rail renders from whatever `data-range-preset` buttons the page provides.
+**Per page, NOT part of the design** — do not "unify" these: the **control width** (settlement `260px`, report pages `236px` in a five-control filter row, Dashboard its own), the **preset list** (the Dashboard also offers `Last 7 Days`, and the rail is simply taller for it), and therefore the panel/rail **height**.
 
-**The band must read as ONE strip, and that depends on which classes the calendar script emits.**
+#### The band must read as ONE strip — which rules apply depends on the script
 
-- Emits `is-start` / `is-end` / `is-preview` — `main-merchant-report.js`, `main-merchant-profit.js`, `main-merchant-security.js`, `main-provider-settlement-ledger.js`. Strip rules keyed on those classes apply directly.
-- Emits only `in-range` / `selected` — `main-exec-date-range.js` (Win/Lose report, transaction history, accounting due, settlement report) and `main-dashboard.js` (Dashboard). The same strip is built without the edge classes: `.selected.in-range:not(.is-start):not(.is-end)` with `:is(:first-child,:not(.in-range)+*)` for the left outer corner and `:is(:last-child,:has(+ button:not(.in-range)))` for the right, plus the both-cases rule for a single-day range. **Without those three rules a range renders as two rounded pills joined by a flat connector.** Do not "simplify" them away, and do not port the picker to a page without checking which contract that page's script emits.
+- Emits `is-start` / `is-end` / `is-preview`: `main-merchant-report.js`, `main-merchant-profit.js`, `main-merchant-security.js`, `main-provider-settlement-ledger.js`. Strip rules keyed on those classes apply directly.
+- Emits only `in-range` / `selected`: `main-exec-date-range.js` (Win/Lose report, transaction history, accounting due, settlement report) and `main-dashboard.js` (Dashboard). The same strip is built without the edge classes: `.selected.in-range:not(.is-start):not(.is-end)` with `:is(:first-child,:not(.in-range)+*)` for the left outer corner and `:is(:last-child,:has(+ button:not(.in-range)))` for the right, plus the both-cases rule for a single-day range. **Without those three rules a range renders as two rounded pills joined by a flat connector.**
 
-Both scopes carry the rules once per family (`[data-bo-theme="dark"]` / `:not([data-bo-theme="dark"])` for the mode split) and everything that must survive `reports.css` carries `!important`, because the base file pins the day cells, the rail and the panel backgrounds with literals (`#fff`, `#f8fafc`, `#eef3ff` hover, `#cbd5e1` muted).
+#### Traps that cost a pass each
 
+1. **Some values are inherited, not the family rule's.** In dark the active preset label is **white** on the reference, but the family rule says `#2A2C36` — a page-level rule with *higher specificity* wins there. Reading the family stylesheet alone gives the wrong answer; always read `getComputedStyle` on the reference page.
+2. **`!important` parity is not enough — check the weight too.** `main-dashboard-executive.css` pins `.ref-cal-head button{border:0!important}` at (0,2,2); matching the reference's transparent border needs `border:1px solid transparent!important` **and** a selector that out-ranks it (`.ref-cal-head button.ref-head-pick`).
+3. **`reports.css` pins the bases**: the panel is `#fff`, the rail `#f8fafc`, the day cells `#fff` / `#F7F9FC`, hover `#eef3ff`, muted `#cbd5e1`, and the field/trigger widths at `390 / 292 / 195px` across media queries. Everything that must survive it carries `!important`, and light-only rules use the `html:not([data-bo-theme="dark"])` prefix (a shorter selector loses to those pins).
+4. **The day grid needs `gap:0`**; the base sets `3px` and the band then breaks up into chips. The cell width follows from it, which is why the grid is a reliable tell in a screenshot.
+5. **Audits: compare a border colour only where the border has width.** Cells with `border:0` still report a colour (the text colour), and a reference box may carry a transparent border — both produce phantom differences. Same for the panel/rail height, which depends on the preset count.
+6. **A shared `.js`/`.css` edit needs its `?v=` bumped in every referencing page in the same pass** — several passes here were verified against a cached stylesheet and reported "no change".
+
+#### Recipe for a page you have not touched
+
+1. Look at the picker's driver (see the two contracts above) and note the field/`.ref-range-wrap` width policy for that page's row.
+2. Link `main-report-charcoal.css` (or add the values to that page's own family file, like the Dashboard does) **after** every legacy sheet, then the panel/rail/day/hover/in-range/edge/shadow rules listed above, mode-split with `html:not([data-bo-theme="dark"])` / `html[data-bo-theme="dark"]`, `!important` on anything `reports.css` or a legacy block also sets.
+3. Add the range-edge rules for the class contract that page's script emits, including `gap:0` on `.ref-cal-days`.
+4. Bump the pin in that page.
+5. Verify by measuring the reference and the new page side by side, both themes, on: trigger, panel, calendar well, rail, rail item + active, head buttons, week row, muted day, in-range day, edge day, month active, day-grid `gap`, panel/rail `box-shadow`. Ignore the per-page quantities from the list above. Light and dark should both come back empty.
+
+**Known deviation:** `main-merchant-settlement.html` paints the active rail item as a **wash** (`rgba(217,119,6,.16)` / `rgba(245,158,11,.2)`) instead of the solid fill — a page-scoped rule in `main-merchant-detail-executive.css`, not this contract. One rule to remove if the family should be fully uniform.
 ### Provider family — migrated 2026-09-15
 
 `main-provider-detail.html`, `main-provider-credentials.html`, `main-provider-health.html` now run Charcoal + Amber.
