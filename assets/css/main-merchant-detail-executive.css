@@ -3944,3 +3944,23 @@ html body.main-merchant-profit-page .mpr-filter-row-main .mad-search{
   min-width:200px;
   max-width:360px;
 }
+
+/* ==========================================================================
+   Merchant Profit — the date control was pinned twice from the outside
+   Two global reports.css rules size the shared date control and are NOT scoped to
+   any page: one pins `.ref-range-wrap` (it is in that selector list) to 292px, another
+   pins `.ref-range-trigger` to 390px, both with min-width and max-width as well.
+   So the visible trigger was 390px inside a 292px wrapper inside a 260px field — it
+   overflowed its own column by 130px and drew over the currency select and the search
+   box, which is what looked like two controls overlapping.
+   Both layers are pinned back to their container here, so the trigger is exactly as
+   wide as the field. Higher specificity than the global rules, and !important like them.
+   ========================================================================== */
+
+html body.main-merchant-profit-page .mpr-date-field .ref-range-wrap,
+html body.main-merchant-profit-page .mpr-date-field .ref-range-trigger{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box;
+}
