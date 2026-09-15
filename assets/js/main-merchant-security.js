@@ -25,7 +25,7 @@
   let resizeTimer = null;
 
   const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const pickerState = { view: new Date(), selectingStart: true, mode: 'days', yearPageStart: new Date().getFullYear() - 5 };
+  const pickerState = { view: new Date(), selectingStart: true, mode: 'days', yearPageStart: new Date().getFullYear() - 5, hover: '' };
 
   const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -503,11 +503,20 @@
     let html = '';
     const prevLast = new Date(y0, m, 0).getDate();
     for(let i = 0; i < start; i++) html += '<button type="button" class="muted" disabled>' + (prevLast - start + i + 1) + '</button>';
+    // While only the start is picked, the hovered day previews the far end so the range reads
+    // as one continuous strip before anything is committed. Hovering before the start is
+    // deliberately ignored: a click there restarts the range, so the preview must not promise
+    // something the click will not do.
+    const hover = (!to && from && pickerState.hover && pickerState.hover >= from) ? pickerState.hover : '';
+    const bandEnd = to || hover || '', hasBand = !!(from && bandEnd);
     for(let d = 1; d <= total; d++){
       const val = ymd(new Date(y0, m, d));
-      const inRange = from && to && val >= from && val <= to;
-      const isEdge = val === from || val === to;
-      html += '<button type="button" data-mas-day="' + val + '" class="' + (inRange ? 'in-range ' : '') + (isEdge ? 'selected' : '') + '">' + d + '</button>';
+      const inBand = !!(hasBand && val >= from && val <= bandEnd);
+      // The anchor is marked as soon as it is picked, band or no band — otherwise the first
+      // click looks like it did nothing.
+      const isStart = !!(from && val === from), isEnd = !!(bandEnd && val === bandEnd);
+      const isPreview = !!(hover && val === hover);
+      html += '<button type="button" data-mas-day="' + val + '" class="' + (inBand ? 'in-range ' : '') + (isStart || isEnd ? 'selected ' : '') + (isStart ? 'is-start ' : '') + (isEnd ? 'is-end ' : '') + (isPreview ? 'is-preview' : '') + '">' + d + '</button>';
     }
     for(let i = 1; i <= 42 - start - total; i++) html += '<button type="button" class="muted" disabled>' + i + '</button>';
     days.innerHTML = html;
@@ -533,6 +542,7 @@
       e.stopPropagation();
       picker.classList.toggle('show');
       pickerState.mode = 'days';
+      pickerState.hover = '';
       renderCalendar();
     });
     document.addEventListener('click', e => {
@@ -605,6 +615,7 @@
         fromEl.value = val;
         toEl.value = '';
         pickerState.selectingStart = false;
+        pickerState.hover = '';
         markPreset('');
         updateDateLabel();
         renderCalendar();
@@ -612,11 +623,26 @@
       }
       toEl.value = val;
       pickerState.selectingStart = true;
+      pickerState.hover = '';
       markPreset('');
       updateDateLabel();
       renderCalendar();
       picker.classList.remove('show');
-      applyFilters();
+      // Refetch, not just re-filter: a range outside the window fetched at load would
+      // otherwise render "No audit events found." instead of loading that period.
+      loadAll();
+    });
+    days.addEventListener('mouseover', e => {
+      const b = e.target.closest('[data-mas-day]');
+      const v = b ? b.getAttribute('data-mas-day') : '';
+      if(pickerState.hover === v) return;
+      pickerState.hover = v;
+      if(fromEl.value && !toEl.value) renderCalendar();
+    });
+    days.addEventListener('mouseleave', () => {
+      if(!pickerState.hover) return;
+      pickerState.hover = '';
+      if(fromEl.value && !toEl.value) renderCalendar();
     });
   }
 
@@ -869,7 +895,7 @@
     document.querySelectorAll('[data-mas-cat]').forEach(b => {
       b.classList.toggle('is-active', b.getAttribute('data-mas-cat') === 'all');
     });
-    applyFilters();
+    loadAll();
   });
 
   initDatePicker();
