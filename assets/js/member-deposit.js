@@ -87,64 +87,283 @@
       const finish=v=>{wrap.remove();resolve(v);};wrap.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>finish(null));wrap.querySelector('[data-confirm]').onclick=()=>{const bankId=wrap.querySelector('[data-bank]').value;if(!bankId){BO_DIALOG.alert('Please select a bank/payment method.',{title:'Bank Required',type:'error'});return;}finish({paymentMethodId:Number(bankId),adminRemark:wrap.querySelector('[data-remark]').value.trim()});};
     });
   }
+  function tableBodyScroll(root){
+    return root?.querySelector?.('.bo-tx-table-body')
+      || document.getElementById('depositTableScroll')
+      || document.querySelector('.table-card .bo-tx-table-body')
+      || document.querySelector('.table-card .table-wrap')
+      || document.querySelector('.table-wrap');
+  }
+  let lockedAutoSize=null;
+  function naturalRowHeight(scroll){
+    const sample=scroll?.querySelector('tbody tr:not(.bo-table-fill) td');
+    return sample?Math.max(38, Math.round(sample.getBoundingClientRect().height)):44;
+  }
+  function measureAutoPageSize(){
+    const scroll=tableBodyScroll();
+    if(!scroll) return 12;
+    const avail=Math.max(0, Math.floor(scroll.clientHeight));
+    const rowH=naturalRowHeight(scroll);
+    /* Floor only — never add a row that would overflow and create a scrollbar. */
+    return Math.max(5, Math.min(200, Math.floor(avail/rowH)||12));
+  }
+  function autoFitPageSize(){
+    if(lockedAutoSize!=null) return lockedAutoSize;
+    lockedAutoSize=measureAutoPageSize();
+    return lockedAutoSize;
+  }
+  function clearLockedAutoSize(){ lockedAutoSize=null; }
+  function isAutoPageSize(raw){
+    const v=String(raw??'-').trim();
+    return v===''||v==='-'||/^auto$/i.test(v);
+  }
+  function resolvePageSize(raw){
+    const v=String(raw??'-').trim();
+    if(isAutoPageSize(v)) return autoFitPageSize();
+    if(/^all$/i.test(v)) return 10000;
+    const n=Number(v);
+    return Number.isFinite(n)&&n>0?n:autoFitPageSize();
+  }
+  function isPlaceholderRow(tr){
+    const cells=tr.querySelectorAll('td');
+    if(cells.length<=1) return true;
+    const text=(tr.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+    return !text||text==='loading...'||text.startsWith('no deposit');
+  }
+  function resetEvenFill(body,table){
+    table.classList.remove('bo-tx-evenfill');
+    table.style.height='';
+    body.querySelectorAll('tr.bo-table-fill').forEach(r=>r.remove());
+    [...body.querySelectorAll('tr')].forEach(tr=>{
+      tr.style.height='';
+      tr.querySelectorAll('td').forEach(td=>{td.style.height='';td.style.minHeight='';});
+    });
+  }
+  function evenFillRowHeights(){
+    const body=document.getElementById('depositBody');
+    const scroll=tableBodyScroll(body?.closest('.table-wrap'));
+    const table=body?.closest('table');
+    if(!body||!scroll||!table) return;
+    resetEvenFill(body,table);
+    if(!isAutoPageSize(document.getElementById('depositSize')?.value)) return;
+    const rows=[...body.querySelectorAll('tr')].filter(tr=>!isPlaceholderRow(tr));
+    if(!rows.length) return;
+    void table.offsetHeight;
+    const avail=Math.max(0, Math.floor(scroll.clientHeight));
+    const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
+    const rowH=Math.max(38, Math.round(natural/rows.length)||44);
+    const gap=avail-natural;
+    /* Never reload / reset page here — that broke Show "-" pagination.
+       Stretch only when leftover is a seam (not enough for one more full row). */
+    if(gap<2||gap>=rowH) return;
+    const base=Math.floor(avail/rows.length);
+    let rem=avail-(base*rows.length);
+    if(base<=0) return;
+    rows.forEach(tr=>{
+      const h=base+(rem>0?1:0);
+      if(rem>0) rem-=1;
+      tr.style.height=h+'px';
+      tr.querySelectorAll('td').forEach(td=>{td.style.height=h+'px';});
+    });
+    table.classList.add('bo-tx-evenfill');
+    table.style.height=avail+'px';
+    if(scroll.scrollHeight>scroll.clientHeight){
+      const over=scroll.scrollHeight-scroll.clientHeight;
+      const shrink=Math.ceil(over/rows.length)||1;
+      rows.forEach(tr=>{
+        const h=Math.max(rowH, (parseFloat(tr.style.height)||base)-shrink);
+        tr.style.height=h+'px';
+        tr.querySelectorAll('td').forEach(td=>{td.style.height=h+'px';});
+      });
+      table.style.height=Math.max(0, avail-over)+'px';
+    }
+  }
+  function scheduleEvenFill(){
+    requestAnimationFrame(()=>requestAnimationFrame(evenFillRowHeights));
+  }
+  function bindEvenFillObserver(){
+    const scroll=tableBodyScroll();
+    if(!scroll||scroll._boEvenFillObs) return;
+    scroll._boEvenFillObs=new ResizeObserver(()=>{
+      clearTimeout(scroll._boEvenFillTimer);
+      scroll._boEvenFillTimer=setTimeout(evenFillRowHeights,32);
+    });
+    scroll._boEvenFillObs.observe(scroll);
+  }
+  function publishPagerMeta(pagination,pageSize){
+    const card=document.querySelector('.table-card');
+    if(!card) return;
+    const total=Number(pagination?.totalElements);
+    if(Number.isFinite(total)&&total>=0) card.dataset.boTotal=String(total);
+    else delete card.dataset.boTotal;
+    const size=Number(pageSize);
+    if(Number.isFinite(size)&&size>0) card.dataset.boPageSize=String(size);
+    else delete card.dataset.boPageSize;
+    card.dataset.boPage=String(page);
+  }
   function q(){
     const params=new URLSearchParams();
     const kw=document.getElementById('depositKeyword')?.value.trim();
     const st=document.getElementById('depositStatus')?.value.trim();
     const from=document.getElementById('depositFrom')?.value;
     const to=document.getElementById('depositTo')?.value;
-    const sz=document.getElementById('depositSize')?.value||'20';
+    const sz=resolvePageSize(document.getElementById('depositSize')?.value);
     if(kw)params.set('keyword',kw); if(st)params.set('status',st); if(from)params.set('dateFrom',from); if(to)params.set('dateTo',to);
-    params.set('page',page); params.set('size',sz); return params.toString();
+    params.set('page',page); params.set('size',String(sz)); return params.toString();
   }
-  function metric(id,value){const el=document.getElementById(id);if(el)el.textContent=value;}
-  function renderSummary(summary,pendingCount,pendingAmount){
-    metric('wdPendingCount',num(pendingCount).toLocaleString());
-    metric('wdPendingAmount',money(pendingAmount));
+  function paymentKeys(m){return [m.id,m.displayName,m.bankName,m.accountName,m.accountNumber,m.payId].map(norm).filter(Boolean);}
+  function matchDepositBank(row,methods){
+    const finalId=String(row?.approvedPaymentMethodId??row?.paymentMethodId??'').trim();
+    if(finalId){const exact=methods.find(m=>String(m.id)===finalId);if(exact)return exact;}
+    const candidates=[row?.approvedPaymentMethod,row?.paymentMethod,row?.paymentMethodName,row?.methodName,row?.bankName].map(norm).filter(Boolean);
+    for(const c of candidates){const exact=methods.find(m=>paymentKeys(m).includes(c));if(exact)return exact;}
+    for(const c of candidates){const byType=methods.filter(m=>norm(m.methodType)===c);if(byType.length===1)return byType[0];}
+    return null;
   }
-  function pendingQuery(){
-    const params=new URLSearchParams();
-    const kw=document.getElementById('depositKeyword')?.value.trim();
-    const from=document.getElementById('depositFrom')?.value;
-    const to=document.getElementById('depositTo')?.value;
-    if(kw)params.set('keyword',kw);
-    params.set('status','PENDING');
-    if(from)params.set('dateFrom',from);
-    if(to)params.set('dateTo',to);
-    params.set('page','1');
-    params.set('size','1');
-    return params.toString();
+  async function loadApprovedDeposits(){
+    let all=[],p=1,guard=0;
+    const from=document.getElementById('depositFrom')?.value||'';
+    const to=document.getElementById('depositTo')?.value||'';
+    while(guard++<500){
+      const params=new URLSearchParams({status:'APPROVED',page:String(p),size:'100'});
+      if(from)params.set('dateFrom',from);
+      if(to)params.set('dateTo',to);
+      const json=await api(endpoint('MEMBER_DEPOSIT_LIST')+'?'+params);
+      const d=json.data||{};
+      const rows=d.content||d.items||d.list||[];
+      all.push(...rows);
+      const pg=d.pagination||d;
+      const totalPages=Number(pg.totalPages||1)||1;
+      if(p>=totalPages||!rows.length)break;
+      p++;
+    }
+    return all;
   }
-  async function resolvePending(mainData){
-    const selected=String(document.getElementById('depositStatus')?.value||'').toUpperCase();
-    const source=selected==='PENDING'?mainData:(await api(endpoint('MEMBER_DEPOSIT_LIST')+'?'+pendingQuery())).data||{};
-    return {
-      count:num(source?.pagination?.totalElements),
-      amount:num(source?.summary?.totalAmount)
-    };
+  async function loadManualBankDeposits(){
+    let all=[],p=1,guard=0;
+    const from=document.getElementById('depositFrom')?.value||'';
+    const to=document.getElementById('depositTo')?.value||'';
+    while(guard++<500){
+      const params=new URLSearchParams({types:'ADMIN_DEPOSIT',page:String(p),size:'100'});
+      if(from)params.set('from',from);
+      if(to)params.set('to',to);
+      const json=await api(endpoint('WALLET_LEDGER_LIST')+'?'+params);
+      const d=json.data||{};
+      const rows=(d.content||d.items||d.list||[]).filter(r=>r.paymentMethodId!=null&&String(r.paymentMethodId).trim()!=='');
+      all.push(...rows);
+      const pg=d.pagination||d;
+      const totalPages=Number(pg.totalPages||1)||1;
+      if(p>=totalPages||!(d.content||d.items||d.list||[]).length)break;
+      p++;
+    }
+    return all;
   }
-  function render(rows,pagination){
+  async function renderBankCards(){
+    const host=document.getElementById('depositBankCards');
+    if(!host)return;
+    try{
+      const [methods,deposits,manual]=await Promise.all([paymentMethods(),loadApprovedDeposits(),loadManualBankDeposits()]);
+      if(!methods.length){
+        host.innerHTML='<article class="deposit-bank-card is-empty"><div class="deposit-bank-total"><span>Banks</span><strong>0</strong></div><div class="bo-summary-note">No payment methods</div></article>';
+        return;
+      }
+      const totals=new Map(methods.map(m=>[String(m.id),0]));
+      deposits.forEach(r=>{
+        const m=matchDepositBank(r,methods);
+        if(!m)return;
+        totals.set(String(m.id),num(totals.get(String(m.id)))+num(r.amount));
+      });
+      manual.forEach(r=>{
+        const id=String(r.paymentMethodId);
+        if(!totals.has(id))return;
+        totals.set(id,num(totals.get(id))+Math.abs(num(r.amount)));
+      });
+      host.innerHTML=methods.map(m=>{
+        const name=String(m.bankName||m.displayName||('Bank #'+m.id)).trim();
+        const total=num(totals.get(String(m.id)));
+        const max=num(m.maxAmount);
+        const pctRaw=max>0?(Math.max(0,total)/max)*100:0;
+        const pct=Math.min(100,pctRaw);
+        const fillClass=max>0?(pctRaw>=100?'is-over':pctRaw>=80?'is-warn':''):'';
+        const mark=(name.replace(/[^A-Za-z0-9]/g,'')||'B').charAt(0).toUpperCase();
+        const account=m.accountNumber?String(m.accountNumber).trim():'';
+        const method=m.displayName&&String(m.displayName).trim()!==name?String(m.displayName).trim():(m.methodType||'');
+        const meta=[method,account].filter(Boolean).join(' · ')||'Payment method';
+        const meter=max>0
+          ?`<div class="deposit-bank-meter" title="${esc(money(total)+' / '+money(max))}">
+              <div class="deposit-bank-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct.toFixed(0)}" aria-label="Max amount usage for ${esc(name)}">
+                <div class="deposit-bank-fill ${fillClass}" style="width:${pct.toFixed(2)}%"></div>
+              </div>
+              <div class="deposit-bank-meter-line"><span>Max ${money(max)}</span><span>${pctRaw.toFixed(0)}%</span></div>
+            </div>`
+          :`<div class="deposit-bank-meter is-empty">
+              <div class="deposit-bank-track" aria-hidden="true"><div class="deposit-bank-fill" style="width:0%"></div></div>
+              <div class="deposit-bank-meter-line"><span>Max amount</span><span>No max</span></div>
+            </div>`;
+        return `<article class="deposit-bank-card" data-bank-id="${esc(m.id)}">
+          <div class="deposit-bank-card-head">
+            <div class="deposit-bank-mark" aria-hidden="true">${esc(mark)}</div>
+            <div class="deposit-bank-id">
+              <b>${esc(name)}</b>
+              <small>${esc(meta)}</small>
+            </div>
+          </div>
+          <div class="deposit-bank-total">
+            <strong>${money(total)}</strong>
+          </div>
+          ${meter}
+        </article>`;
+      }).join('');
+    }catch(e){
+      host.innerHTML=`<article class="deposit-bank-card is-empty"><div class="deposit-bank-total"><span>Banks</span><strong>—</strong></div><div class="bo-summary-note">${esc(e.message||'Failed to load')}</div></article>`;
+    }
+  }
+  function formatMethodLabel(row,methods){
+    const bank=(Array.isArray(methods)?(matchDepositBank(row,methods)||resolvePlayerBank(row,methods)):null);
+    const name=String(
+      bank?.bankName||bank?.displayName||
+      row?.approvedPaymentMethod||row?.paymentMethodBankName||row?.paymentMethodDisplayName||row?.paymentMethod||
+      '-'
+    ).trim()||'-';
+    const account=String(
+      bank?.accountNumber||
+      row?.approvedPaymentMethodAccountNumber||
+      row?.paymentMethodAccountNumber||
+      ''
+    ).trim();
+    if(name==='-') return '-';
+    return account?`${name} (${account})`:name;
+  }
+  function render(rows,pagination,methods){
     currentRows=rows; const body=document.getElementById('depositBody'); if(!body)return;
     if(!rows.length) body.innerHTML='<tr><td colspan="8">No deposit request found.</td></tr>';
     else body.innerHTML=rows.map(r=>{
       const pending=String(r.status||'').toUpperCase()==='PENDING';
-      return `<tr><td>${esc(dt(r.createdAt))}</td><td>${esc(r.username||'-')}</td><td>${money(r.amount)}</td><td>${esc(r.paymentMethod||'-')}${r.approvedPaymentMethod?`<br><small>Confirmed: ${esc(r.approvedPaymentMethod)}</small>`:''}</td><td>${esc(r.referenceNo||'-')}</td><td><span class="status-pill ${r.status==='APPROVED'?'active':r.status==='REJECTED'?'off':''}">${esc(r.status||'-')}</span></td><td>${esc(dt(r.processedAt))}</td><td>${pending?`<div class="bo-tx-actions"><button type="button" class="bo-tx-action-btn is-approve" data-approve="${esc(r.id)}" title="Approve" aria-label="Approve"><i class="bi bi-check-lg" aria-hidden="true"></i></button><button type="button" class="bo-tx-action-btn is-reject" data-reject="${esc(r.id)}" title="Reject" aria-label="Reject"><i class="bi bi-x-lg" aria-hidden="true"></i></button></div>`:'-'}</td></tr>`;
+      const methodLabel=formatMethodLabel(r,methods);
+      return `<tr><td>${esc(dt(r.createdAt))}</td><td>${esc(r.username||'-')}</td><td>${money(r.amount)}</td><td><b>${esc(methodLabel)}</b></td><td>${esc(r.referenceNo||'-')}</td><td><span class="status-pill ${r.status==='APPROVED'?'active':r.status==='REJECTED'?'off':''}">${esc(r.status||'-')}</span></td><td>${esc(dt(r.processedAt))}</td><td>${pending?`<div class="bo-tx-actions"><button type="button" class="bo-tx-action-btn is-approve" data-approve="${esc(r.id)}" title="Approve" aria-label="Approve"><i class="bi bi-check-lg" aria-hidden="true"></i></button><button type="button" class="bo-tx-action-btn is-reject" data-reject="${esc(r.id)}" title="Reject" aria-label="Reject"><i class="bi bi-x-lg" aria-hidden="true"></i></button></div>`:'-'}</td></tr>`;
     }).join('');
     totalPages=Number(pagination?.totalPages)||1;
+    const pageSize=resolvePageSize(document.getElementById('depositSize')?.value);
+    publishPagerMeta(pagination,pageSize);
     document.getElementById('depositPager').innerHTML=pageButtons(page,totalPages);
     document.getElementById('depositPrevBtn').disabled=page<=1; document.getElementById('depositNextBtn').disabled=page>=totalPages;
+    scheduleEvenFill();
   }
   async function load(){
     const body=document.getElementById('depositBody'); if(body)body.innerHTML='<tr><td colspan="8">Loading...</td></tr>';
-    try{const json=await api(endpoint('MEMBER_DEPOSIT_LIST')+'?'+q()); const data=json.data||{}; render(data.content||[],data.pagination||{}); const pending=await resolvePending(data); renderSummary(data.summary||{},pending.count,pending.amount);}
-    catch(e){renderSummary({},0,0);if(body)body.innerHTML='<tr><td colspan="8" class="text-danger">'+esc(e.message)+'</td></tr>';}
+    try{
+      const [json,methods]=await Promise.all([api(endpoint('MEMBER_DEPOSIT_LIST')+'?'+q()),paymentMethods().catch(()=>[])]);
+      const data=json.data||{};
+      render(data.content||[],data.pagination||{},methods);
+    }
+    catch(e){if(body)body.innerHTML='<tr><td colspan="8" class="text-danger">'+esc(e.message)+'</td></tr>';}
   }
   async function action(id,type){
     const row=currentRows.find(x=>String(x.id)===String(id));
     if(type==='reject'){
       const remark=await BO_DIALOG.prompt('Enter an admin remark for this deposit request.','',{title:'Admin Remark',inputLabel:'Admin remark',confirmText:'Continue'});if(remark===null)return;
       if(!(await BO_DIALOG.confirm('Confirm reject deposit request?',{title:'Confirm Deposit Rejection'})))return;
-      try{const json=await api(endpoint('MEMBER_DEPOSIT_REJECT')+'/'+encodeURIComponent(id),{method:'POST',headers:{'Content-Type':'application/json','X-Admin-Username':String(BO_AUTH.user()?.username||'ADMIN'),...BO_AUTH.authHeader()},body:JSON.stringify({adminRemark:remark})});BO_DIALOG.alert(json.message||'Done',{title:'Deposit Updated'});await load();document.dispatchEvent(new CustomEvent('bo:wallet-request-updated',{detail:{type:'deposit',action:type,id:String(id)}}));}catch(e){BO_DIALOG.alert(e.message||'Action failed',{title:'Deposit Action Failed',type:'error'});}return;
+      try{const json=await api(endpoint('MEMBER_DEPOSIT_REJECT')+'/'+encodeURIComponent(id),{method:'POST',headers:{'Content-Type':'application/json','X-Admin-Username':String(BO_AUTH.user()?.username||'ADMIN'),...BO_AUTH.authHeader()},body:JSON.stringify({adminRemark:remark})});BO_DIALOG.alert(json.message||'Done',{title:'Deposit Updated'});await load();await renderBankCards();document.dispatchEvent(new CustomEvent('bo:wallet-request-updated',{detail:{type:'deposit',action:type,id:String(id)}}));}catch(e){BO_DIALOG.alert(e.message||'Action failed',{title:'Deposit Action Failed',type:'error'});}return;
     }
     try{
       const methods=await paymentMethods();
@@ -154,20 +373,69 @@
       const picked=await approvalPopup({title:'Final Deposit Confirmation',subtitle:'Confirm the bank that actually received this money.',methods,defaultBankId:playerBank?.id,bankLabel:'Actual Receiving Bank',confirmText:'Approve Deposit',warning:playerBank?'Player-selected bank is preselected automatically. Change it only when the money was actually received by another bank.':'This older/ambiguous request does not contain a unique bank ID. Please select the actual receiving bank before approval.',summaryHtml:`<div class="bank-approval-summary"><b>Member:</b> ${esc(row?.username||'-')} (#${esc(row?.memberId||'-')})<br><b>Amount:</b> ${money(row?.amount)}<br><b>Player Selected:</b> ${esc(playerSelectedText)}${bankDetailHtml(detailSource)}${proofPreviewHtml(row)}</div>`});
       if(!picked)return;
       if(!(await BO_DIALOG.confirm(`Approve ${money(row?.amount)} and assign it to the selected receiving bank?`,{title:'Confirm Deposit Approval'})))return;
-      const json=await api(endpoint('MEMBER_DEPOSIT_APPROVE')+'/'+encodeURIComponent(id),{method:'POST',headers:{'Content-Type':'application/json','X-Admin-Username':String(BO_AUTH.user()?.username||'ADMIN'),...BO_AUTH.authHeader()},body:JSON.stringify({adminRemark:picked.adminRemark,paymentMethodId:picked.paymentMethodId})});BO_DIALOG.alert(json.message||'Done',{title:'Deposit Updated'});await load();document.dispatchEvent(new CustomEvent('bo:wallet-request-updated',{detail:{type:'deposit',action:type,id:String(id)}}));
+      const json=await api(endpoint('MEMBER_DEPOSIT_APPROVE')+'/'+encodeURIComponent(id),{method:'POST',headers:{'Content-Type':'application/json','X-Admin-Username':String(BO_AUTH.user()?.username||'ADMIN'),...BO_AUTH.authHeader()},body:JSON.stringify({adminRemark:picked.adminRemark,paymentMethodId:picked.paymentMethodId})});BO_DIALOG.alert(json.message||'Done',{title:'Deposit Updated'});await load();await renderBankCards();document.dispatchEvent(new CustomEvent('bo:wallet-request-updated',{detail:{type:'deposit',action:type,id:String(id)}}));
     }catch(e){BO_DIALOG.alert(e.message||'Action failed',{title:'Deposit Action Failed',type:'error'});}
   }
   document.addEventListener('click',e=>{const proof=e.target.closest?.('[data-proof-preview]');if(proof){e.preventDefault();e.stopPropagation();openProofPreview(proof.dataset.proofPreview);return;}const a=e.target.closest?.('[data-approve]'); const r=e.target.closest?.('[data-reject]'); if(a)action(a.dataset.approve,'approve'); if(r)action(r.dataset.reject,'reject');});
+  function syncTxTypeTabs(defaultType){
+    const params=new URLSearchParams(location.search);
+    const type=params.get('tab')==='all'?'all':defaultType;
+    document.querySelectorAll('.bo-tx-tab[data-bo-tx-type]').forEach(a=>{
+      const on=a.getAttribute('data-bo-tx-type')===type;
+      a.classList.toggle('is-active',on);
+      if(on) a.setAttribute('aria-current','page');
+      else a.removeAttribute('aria-current');
+    });
+    const read=sel=>{
+      const el=document.querySelector(sel);
+      const n=Number(String(el?.textContent||'').replace(/[^\d.-]/g,''));
+      return Number.isFinite(n)?Math.max(0,Math.round(n)):0;
+    };
+    const paint=()=>{
+      const d=read('[data-header-pending-deposit]');
+      const w=read('[data-header-pending-withdraw]');
+      const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=String(v);};
+      set('boTxCountDeposit',d);
+      set('boTxCountWithdraw',w);
+      set('boTxCountAll',d+w);
+      const track=document.querySelector('.bo-tx-tabs');
+      if(track&&window.BO_SEG_BOUNCE) window.BO_SEG_BOUNCE.mount(track,{button:':scope > .bo-tx-tab',anim:'bounce'});
+    };
+    paint();
+    const obs=new MutationObserver(paint);
+    document.querySelectorAll('[data-header-pending-deposit],[data-header-pending-withdraw]').forEach(el=>{
+      obs.observe(el,{childList:true,characterData:true,subtree:true});
+    });
+  }
+
   document.addEventListener('DOMContentLoaded',()=>{
+    syncTxTypeTabs('deposit');
     let keywordTimer=0;
-    const runSearch=()=>{page=1;load();};
+    const runSearch=()=>{page=1;clearLockedAutoSize();load();renderBankCards();};
     document.getElementById('depositKeyword')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();clearTimeout(keywordTimer);runSearch();}});
     document.getElementById('depositKeyword')?.addEventListener('input',()=>{clearTimeout(keywordTimer);keywordTimer=setTimeout(runSearch,350);});
     document.getElementById('depositStatus')?.addEventListener('change',runSearch);
-    document.getElementById('depositSize')?.addEventListener('change',runSearch);
+    document.getElementById('depositSize')?.addEventListener('change',()=>{clearLockedAutoSize();runSearch();});
     ['depositFrom','depositTo'].forEach(id=>document.getElementById(id)?.addEventListener('change',runSearch));
     document.getElementById('depositPrevBtn')?.addEventListener('click',()=>{if(page>1){page--;load();}}); document.getElementById('depositNextBtn')?.addEventListener('click',()=>{if(page<totalPages){page++;load();}});
     document.getElementById('depositPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(!b)return;const n=Number(b.dataset.page);if(n>=1&&n<=totalPages&&n!==page){page=n;load();}});
-    setTimeout(load,0);
+    bindEvenFillObserver();
+    requestAnimationFrame(()=>requestAnimationFrame(async ()=>{
+      try{await renderBankCards();}catch(e){}
+      clearLockedAutoSize();
+      load();
+    }));
+    let resizeTimer=0;
+    window.addEventListener('resize',()=>{
+      if(!isAutoPageSize(document.getElementById('depositSize')?.value)) return;
+      clearTimeout(resizeTimer);
+      resizeTimer=setTimeout(()=>{
+        const prev=lockedAutoSize;
+        clearLockedAutoSize();
+        const next=autoFitPageSize();
+        if(next!==prev){page=1;load();}
+        else evenFillRowHeights();
+      },180);
+    });
   });
 })();
