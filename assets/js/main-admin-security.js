@@ -24,7 +24,7 @@
   let resizeTimer = null;
 
   const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const pickerState = { view: new Date(), selectingStart: true, mode: 'days', yearPageStart: new Date().getFullYear() - 5 };
+  const pickerState = { view: new Date(), selectingStart: true, mode: 'days', yearPageStart: new Date().getFullYear() - 5, hover: '' };
 
   const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -412,10 +412,12 @@
   function ymd(d){
     return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
   }
+  // Family wording, shared with the settlement / report / provider pickers:
+  // "01 Sep 2026 - 15 Sep 2026". The old dd/mm/yyyy form was used by the security pages only.
   function niceDate(v){
     if(!v) return '';
     const a = String(v).split('-');
-    return a.length === 3 ? a[2] + '/' + a[1] + '/' + a[0] : v;
+    return a.length === 3 ? a[2] + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][Number(a[1]) - 1] + ' ' + a[0] : v;
   }
   function startOfWeek(d){
     const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -453,8 +455,8 @@
     const f = fromEl.value || '';
     const t = toEl.value || '';
     label.textContent = f && t
-      ? niceDate(f) + ' – ' + niceDate(t)
-      : f ? niceDate(f) + ' – Select end date'
+      ? niceDate(f) + ' - ' + niceDate(t)
+      : f ? niceDate(f) + ' - Select end date'
       : 'Select date range';
   }
   function renderCalendar(){
@@ -489,11 +491,16 @@
     let html = '';
     const prevLast = new Date(y0, m, 0).getDate();
     for(let i = 0; i < start; i++) html += '<button type="button" class="muted" disabled>' + (prevLast - start + i + 1) + '</button>';
+    // Same class contract as every other calendar in the family: while only the start is
+    // picked, the hovered day previews the far end so the range reads as one strip.
+    const hover = (!to && from && pickerState.hover && pickerState.hover >= from) ? pickerState.hover : '';
+    const bandEnd = to || hover || '', hasBand = !!(from && bandEnd);
     for(let d = 1; d <= total; d++){
       const val = ymd(new Date(y0, m, d));
-      const inRange = from && to && val >= from && val <= to;
-      const isEdge = val === from || val === to;
-      html += '<button type="button" data-mas-day="' + val + '" class="' + (inRange ? 'in-range ' : '') + (isEdge ? 'selected' : '') + '">' + d + '</button>';
+      const inBand = !!(hasBand && val >= from && val <= bandEnd);
+      const isStart = !!(from && val === from), isEnd = !!(bandEnd && val === bandEnd);
+      const isPreview = !!(hover && val === hover);
+      html += '<button type="button" data-mas-day="' + val + '" class="' + (inBand ? 'in-range ' : '') + (isStart || isEnd ? 'selected ' : '') + (isStart ? 'is-start ' : '') + (isEnd ? 'is-end ' : '') + (isPreview ? 'is-preview' : '') + '">' + d + '</button>';
     }
     for(let i = 1; i <= 42 - start - total; i++) html += '<button type="button" class="muted" disabled>' + i + '</button>';
     days.innerHTML = html;
@@ -591,6 +598,7 @@
         fromEl.value = val;
         toEl.value = '';
         pickerState.selectingStart = false;
+        pickerState.hover = '';
         markPreset('');
         updateDateLabel();
         renderCalendar();
@@ -598,11 +606,26 @@
       }
       toEl.value = val;
       pickerState.selectingStart = true;
+      pickerState.hover = '';
       markPreset('');
       updateDateLabel();
       renderCalendar();
       picker.classList.remove('show');
-      applyFilters();
+      // Refetch, not just re-filter: both loaders send from/to, so a range outside the
+      // window fetched at load would otherwise render "No audit events found.".
+      loadAll();
+    });
+    days.addEventListener('mouseover', e => {
+      const b = e.target.closest('[data-mas-day]');
+      const v = b ? b.getAttribute('data-mas-day') : '';
+      if(pickerState.hover === v) return;
+      pickerState.hover = v;
+      if(fromEl.value && !toEl.value) renderCalendar();
+    });
+    days.addEventListener('mouseleave', () => {
+      if(!pickerState.hover) return;
+      pickerState.hover = '';
+      if(fromEl.value && !toEl.value) renderCalendar();
     });
   }
 

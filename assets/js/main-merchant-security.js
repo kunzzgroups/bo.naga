@@ -426,10 +426,11 @@
   function ymd(d){
     return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
   }
+  // Family wording: "01 Sep 2026 - 15 Sep 2026" (was dd/mm/yyyy, used by the security pages only).
   function niceDate(v){
     if(!v) return '';
     const a = String(v).split('-');
-    return a.length === 3 ? a[2] + '/' + a[1] + '/' + a[0] : v;
+    return a.length === 3 ? a[2] + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][Number(a[1]) - 1] + ' ' + a[0] : v;
   }
   function startOfWeek(d){
     const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -467,8 +468,8 @@
     const f = fromEl.value || '';
     const t = toEl.value || '';
     label.textContent = f && t
-      ? niceDate(f) + ' – ' + niceDate(t)
-      : f ? niceDate(f) + ' – Select end date'
+      ? niceDate(f) + ' - ' + niceDate(t)
+      : f ? niceDate(f) + ' - Select end date'
       : 'Select date range';
   }
   function renderCalendar(){
