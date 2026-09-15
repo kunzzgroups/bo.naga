@@ -318,8 +318,13 @@
   async function loadProviders(){
     if(tbody) tbody.innerHTML='<tr><td colspan="7" class="mad-empty">Loading providers...</td></tr>';
     try{
-      const providersData=await api('/admin/providers').catch(()=>api('/admin/main/providers')).catch(()=>api('/admin/game-provider/list'));
       const now=new Date(), month=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+      const from=month+'-01', to=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().slice(0,10);
+      // MAIN/Boss provider overview must use MAIN reporting data. Do not fall back to
+      // /admin/game-provider/list because that endpoint is protected by the separate
+      // game_provider permission used by provider configuration screens.
+      const providerReport=await api('/admin/main/reports/provider-settlement?from='+encodeURIComponent(from)+'&to='+encodeURIComponent(to));
+      const providersData=(providerReport&&Array.isArray(providerReport.providers))?providerReport.providers:[];
       const settlements=await api('/admin/main/settlements?month='+encodeURIComponent(month)).catch(()=>({rows:[]}));
       const sr=listOf(settlements).filter(x=>/provider/i.test(String(x.counterpartyType||x.entityType||'')));
       const byProvider=new Map();
