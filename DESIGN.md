@@ -252,6 +252,24 @@ Dark: Ghost charcoal gradient; Primary amber with dark text `#2A2C36`. CSS: `mai
 **Create Role** (`main-admin-role-create.html`): Role Name + filter both surface `#FFF8EB` (same family as list controls).  
 Always beat `reports.css` `#fff!important`. Dark: charcoal well `#2A2C36`. CSS: `menu-permission-executive.css` + `main-admin-role-create.css`.
 
+### Merchant Detail — migrated 2026-09-15
+
+`main-merchant-detail.html` (`data-access-page="main_merchant_detail"`) now runs Charcoal + Amber.
+Page CSS: `assets/css/main-merchant-detail-executive.css` — **must load after `main-admin-detail-executive.css`**, because the legacy Deep Navy Cyan block in that file also matches this page and these rules win on equal specificity by source order.
+
+Recipe used (reuse it for the remaining `main-merchant-*` pages):
+
+- Scope every rule to `body.main-admin-detail-page.main-merchant-detail-page`, not to `data-access-page` — 8 pages share `main_merchant_detail`, so widening by data attribute would repaint them all.
+- The rescoped Charcoal block covers shared chrome (canvas, sidebar, topbar, tabs, filters, table, footer, pager, buttons, modals, tips). Admin create/edit-only rules are dropped; they cannot match this page.
+- Components with no Admin Detail counterpart were hand-written: `.mad-status-chip` / `.mad-status-dot` (given the `.mad-status` pill treatment so both lists read alike), `.mad-merchant-icon-btn` + its tooltip, and the `.mac-currency-*` / `.mac-provider-*` chrome.
+- The edit workspace (`#madEditWorkspace`) and `#madCurrencyModal` need their own block: their legacy rules are **ID-scoped**, so the class-scoped block cannot reach them, and the prefix carries `body.standardized-listing-page` to outbid the `button.mac-currency-add-btn` variants.
+
+Traps found while migrating (both still live on other pages):
+
+- `reports.css` `.report-content input{background-color:#fff!important}` paints any workspace field the page CSS does not explicitly cover pure white. Light chrome is cream only — cover inputs with the control well `#F5EBDC`, locked `#EDE4D4`.
+- The shared light rule `.mad-table tbody tr:nth-child(3n) .mad-avatar` is *not* light-scoped, so it outbids the charcoal dark `.mad-avatar` rule and drops a near-white `#E0F2FE` chip onto the dark canvas on every third row. **Admin Detail has the same defect**; this page fixes it locally.
+- Topbar counters (`.bo-header-counter`, `reports-dashboard-original.css`) are hard-coded `#fff` and stay white in dark. They only render for non-`MAIN` roles, so they are invisible on a Main Account login.
+
 ## Typography
 
 System UI stack. Hierarchy via weight + color. Sidebar L1 = `800`. Tabular nums for money/time; mono for credit/time cells and topbar role.
