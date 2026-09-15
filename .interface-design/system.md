@@ -494,14 +494,14 @@ Light inactive stays cool slate (not cream) so the amber active page reads as th
 
 Do **not** use dark header `#71717A` or row borders `rgba(255,255,255,.06–.08)` — fails contrast on `#383A46`.
 
-#### Transaction listing table — light + dark zebra (locked)
+#### Transaction listing table — light + dark (locked)
 
-Reference: Deposit / Withdraw (`body.bo-wallet-tx`) + `bo-wallet-transaction-amber.css` tokens `--bo-table-*`. Same rhythm in both themes: **odd shallow · even deep** (never flat slab). Light: peach-cream family — **never pure white**. Dark: charcoal zebra — never all `#383A46`.
+Reference: Deposit / Withdraw (`body.bo-wallet-tx`) + `bo-wallet-transaction-amber.css` tokens `--bo-table-*`. **Both themes locked.** Same rhythm: **odd shallow · even deep** (never flat slab). Light: peach-cream family — **never pure white**. Dark: charcoal zebra + **deep thead** — never all `#383A46`, never lifted head `#40424E`.
 
 | Token | Light | Dark | Role |
 |-------|-------|------|------|
 | `--bo-table-paper` | `#FFF8EB` | `#383A46` | Panel / wrap / table canvas |
-| `--bo-table-head` | `#FFE8CC` | `#1F2128` | Sticky thead ledge (dark: deeper than body) |
+| `--bo-table-head` | `#FFE8CC` | `#1F2128` | Sticky thead — dark is **deeper** than body (not a lift) |
 | `--bo-table-row` | `#FFF8EB` | `#3A3C48` | Odd rows (shallow) |
 | `--bo-table-row-alt` | `#FFF1DC` | `#252730` | Even rows (deep) |
 | `--bo-table-hover` | `#FFE8CC` | `#444654` | Row hover |
@@ -515,9 +515,10 @@ Reference: Deposit / Withdraw (`body.bo-wallet-tx`) + `bo-wallet-transaction-amb
 | Body cell | text `#18191C` · `13px` / **`bold` (700)** — pin `font-weight: bold` (never UA `bolder`) | text `#F5F5F4` · same weight |
 | Cell padding | `10px 12px` · first/last column `16px` inset | same |
 | Vertical rules | soft `rgba(107,54,12,.06–.08)` · last column no right border | `rgba(255,255,255,.06)` |
+| Action `.bo-tx-action-btn` | well `#F5EBDC` · border `#EADCC8` · approve `#067647` · reject `#B42318` | well `#2A2C36` · border white/14 · approve `#6EE7B7` · reject `#F87171` |
 | Filter strip inside `.table-card` | bg row cream · bottom hairline `#EADCC8` | bg row charcoal · white/12 hairline |
 | Footer pager strip | bg `#FFF8EB` · top hairline `#EADCC8` | bg `#383A46` · white/12 |
-| Do **not** | muddy yellow parchment · pure white zebra · Filtered Total Amount bar | flat single `#383A46` rows (no zebra) · cool gray/blue zebra |
+| Do **not** | muddy yellow parchment · pure white zebra · Filtered Total Amount bar | flat single-tone rows · lifted thead `#40424E` · cool gray/blue zebra |
 
 #### Status pills (Transaction listing)
 
@@ -688,7 +689,7 @@ Use this when reviewing a page. Each row must exist as a Light|Dark table (or to
 | Date range picker | cream panel, preset wash active, ghost head, day endpoints solid |
 | Buttons | Primary, Ghost (+ shared hover), secondary, danger, pager, chips |
 | Table | panel, header, cells, dividers, hover, money, status, avatar, footer, pager |
-| Transaction table (light/dark) | `--bo-table-*` zebra · square thead · bold cells · PENDING orange · no Filtered Total |
+| Transaction table (locked L|D) | `--bo-table-*` zebra · deep dark head `#1F2128` · square thead · bold cells · PENDING orange · action wells · no Filtered Total |
 | Modals | scrim, panel, close, fields, footer actions |
 | Roles | control card, select, scope, toolbar, matrix group/card, badges, sticky footer |
 | Create Role | title, cards, inputs, chips, ghost/primary, sticky footer status |
@@ -732,7 +733,7 @@ Use this when reviewing a page. Each row must exist as a Light|Dark table (or to
 | Date range picker: preset active = amber wash + amber text; ghost head; cream panel `12px` | User locked to listing reference (not solid amber preset / not filled well head) | 2026-09-15 |
 | Transaction table frame = Admin Detail mad-panel (viewport-locked, inner scroll, table-layout fixed) | User: Deposit table 框 must match main-admin-detail fixed frame | 2026-09-15 |
 | Transaction table light paint = peach-cream zebra (`#FFF8EB`/`#FFF1DC`/`#FFE8CC` head) · no pure white · thead corners square · cell weight `bold` · PENDING orange | User: white rows刺眼; muddy parchment 违和; then locked cream family | 2026-09-15 |
-| Transaction table dark zebra = odd `#3A3C48` · even `#252730` · head `#1F2128` (head deeper than body) | User: dark mode 一行深一行浅; 表头要深色 | 2026-09-15 |
+| Transaction table dark = zebra `#3A3C48`/`#252730` · deep head `#1F2128` · status pills · action wells locked to MD | User: dark 一行深一行浅; 表头要深色; 可以写进 MD | 2026-09-15 |
 | Deposit/Withdraw Filtered Total Amount bar removed | User: 这个部分我不要 | 2026-09-15 |
 
 ## Agent rules
@@ -747,6 +748,6 @@ Use this when reviewing a page. Each row must exist as a Light|Dark table (or to
 8. **Dark mode must beat legacy CSS:** `reports.css` still has `.report-body{background:#f5f7fb!important}`. Page CSS must override body/html/canvas with equal-or-higher specificity + `!important`, or white frames will leak around dark cards. Never assume MD tokens alone paint the canvas.
 9. **Permission matrix dual wash:** light = cream/amber group wash; dark = cool charcoal surfaces only (amber accents, never muddy amber panel fill). Copy from Patterns → Permission matrix.
 10. **No pure white in light chrome:** canvas end, topbar, and panels use cream `#FFF8EB` (continuum → `#FFF6E8` → `#FFF8EB`). Keep `#FFFFFF` only for text-on-amber (`--bo-accent-on`). Do not settle for near-white ivory (`#FFFCF8`) on Dashboard main pane.
-11. **Dark data tables:** outer/row borders ≥ `rgba(255,255,255,.12–.14)`; header `#E7E5E4`; cells `#F5F5F4`; muted/time `#D4D4D8`. Scope light cream table CSS with `html:not([data-bo-theme="dark"])`. Copy from Patterns → Data tables.
+11. **Dark data tables:** outer/row borders ≥ `rgba(255,255,255,.12–.14)`; header text `#E7E5E4`; cells `#F5F5F4`; muted/time `#D4D4D8`. **Transaction listing** (`body.bo-wallet-tx`): zebra odd `#3A3C48` / even `#252730` · thead `#1F2128` (deeper than body — never lifted `#40424E`). Scope light cream table CSS with `html:not([data-bo-theme="dark"])`. Copy from Patterns → Data tables → Transaction listing table.
 12. **Sidebar L2 active:** cream gradient `#FFFBEB`→`#FEF3C7` + `1px` amber border `#D97706` (dark: amber-tinted chip + `rgba(245,158,11,.55)` border). Never flat amber wash only. Beat `reports.css` flyout `#fff`. Copy from Patterns → Sidebar nav.
 13. **Every new chrome needs Light|Dark:** before shipping a frame/button/slot, add or update a two-column table in this file (see Coverage checklist). Do not leave “dark inherits” undocumented.
