@@ -4996,11 +4996,18 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
    overlapSearch:true at 1440 and 1280).
    Layout only, no colour. ---- */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar{
-  flex-wrap:wrap;
+  /* nowrap, so the row shrinks instead of folding: folding is decided on the items            */
+  /* hypothetical sizes, so any wrap threshold is a guess about the window. With nowrap the    */
+  /* browser distributes the deficit across the shrinkable items (pills floor 258, search       */
+  /* floor 96, date floor 220 under 1420) and the row simply gets tighter. Wrap comes back      */
+  /* below 1400 only, where the five controls can no longer fit at their floors (~1014px of     */
+  /* bar content = ~1375px viewport).                                                          */
+  flex-wrap:nowrap;
   row-gap:8px;
 }
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-pills{
-  flex:0 0 auto;
+  flex:0 1 auto;
+  min-width:258px;
 }
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-filters{
   flex-wrap:nowrap;
@@ -5008,7 +5015,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
   min-width:0;
 }
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mre-period-group{
-  flex:0 0 248px;
+  flex:0 0 236px;
 }
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mre-period-group .ref-date-field,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mre-period-group .ref-range-wrap,
@@ -5019,9 +5026,12 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
   box-sizing:border-box;
 }
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-filters > .mad-search{
-  flex:1 1 132px;
-  min-width:110px;
-  max-width:180px;
+  /* main-provider-report-executive.css pins the same element at
+     `flex:0 1 280px!important; min-width:180px!important`, so this needs !important parity —
+     without it the search keeps a 280px basis and the row wraps 180px earlier than it must. */
+  flex:1 1 100px!important;
+  min-width:96px!important;
+  max-width:168px!important;
 }
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-filters > .rounded-select-wrap,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-filters > select.mad-select{
@@ -5032,14 +5042,27 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
   flex:0 0 auto!important;
   min-width:0!important;
 }
-body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-filters{gap:6px;}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-filters{gap:5px;}
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-filters > .mad-btn{
-  flex:0 0 auto;
+  flex:0 1 auto;
+  min-width:68px;
+}
+
+
+/* The pills give up breathing room, not content: 8px less padding per pill and a 4px track gap
+   buys the ~28px that lets the whole bar sit on one line at ~1450px. The labels and counts stay
+   fully visible — the pill recipe fixes the track, thumb and height, not this padding. ---- */
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-pills{gap:4px!important;}
+body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mad-pills > .mad-pill{padding:0 10px!important;}
+@media (max-width:1399.98px){
+  body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar{
+    flex-wrap:wrap;
+  }
 }
 
 @media (max-width:1419.98px){
   body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"]) .mad-filter-bar .mre-period-group{
-    flex:0 1 260px;
-    min-width:232px;
+    flex:0 1 236px;
+    min-width:220px;
   }
 }
