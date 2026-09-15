@@ -200,6 +200,10 @@ Every row is **Light | Dark**. Full measurements + hover/active live in `.interf
 
 Order: **Theme toggle** → divider → **User Name + avatar**.
 
+**Padding and title (2026-09-15).** `.report-topbar` is `padding:10px 20px` on every page — the Dashboard's value, which `reports.css` now carries as the base (`12px 20px` before) so no page needs its own rule. The mobile variants (`padding:10px 12px`, and the `max-width:700px` `8px 10px` for `.standardized-listing-page`) are unchanged, as is the mini-sidebar `padding-left:20px`.
+
+**No page carries a subtitle.** The `.user-title-wrap` block is the icon tile plus a single `<h1>`: the lead `<p>` ("Manage administrator credentials, …") was removed from 118 pages in the same pass. `main-merchant-detail.js` still queries that `<p>` (its `setPageChrome()` swaps the lead between list and edit wording) — the lookup is null-guarded, so it is simply inert now; wire it back if the lead ever returns.
+
 **Theme toggle (`.bo-theme-btn`)**  
 `36×36`, radius `8px`, transparent fill. Light: border `rgba(24,25,28,.18)`, icon `#3F3F46`. Dark: border `rgba(245,158,11,.4)`, icon `#F59E0B`. Hover dark → `#FBBF24`. Focus outline `#D97706`.
 
