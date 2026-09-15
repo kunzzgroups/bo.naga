@@ -2520,3 +2520,290 @@ html[data-bo-theme="dark"] body #madCreditModal #madCreditForm .mad-btn-ghost{
   border-color:rgba(255,255,255,.12)!important;
   color:#F5F5F4!important;
 }
+
+/* ==========================================================================
+   Date-range picker — rescoped from the amber Dashboard
+   main-dashboard-executive.css already carries the locked amber treatment for the
+   shared `.ref-range-*` / `.ref-cal-*` calendar (20 rules). Rather than re-derive it,
+   those rules are rescoped here: `.main-dashboard-page` becomes the merchant family and
+   `.main-exec-date-field` becomes `.ref-date-field`, which both pages carry, so one set
+   serves the Dashboard and the merchant reports alike.
+   ========================================================================== */
+
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-range-presets button.active,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.selected,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-month-grid button.active,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-year-grid button.active{
+background:var(--bo-cyan)!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.in-range{
+background:rgba(217,119,6,.12)!important
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-date-field .ref-range-wrap,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-date-field .ref-range-trigger{
+width:100%!important
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-date-field .ref-range-trigger{
+height:42px;
+  border:1px solid var(--bo-border)!important;
+  border-radius:8px;
+  background:var(--bo-surface)!important;
+  color:var(--bo-navy);
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;
+  box-shadow:none;
+  gap:10px;
+  padding:0 12px!important;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-date-field .ref-range-trigger:hover,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-date-field .ref-range-trigger:focus{
+border-color:var(--bo-cyan)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+  outline:0;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-date-field .ref-range-icon{
+height:auto;width:auto;
+  padding:0;
+  margin:0;
+  background:transparent!important;
+  color:var(--bo-navy)!important;
+  border-radius:0;
+  display:inline-flex;
+  align-items:center;
+  font-size:15px;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-date-field .ref-range-trigger > #mainDateLabel{
+color:var(--bo-navy);
+  font-weight:700;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-date-field .ref-range-trigger > .bi-chevron-down{
+margin-left:auto;
+  color:var(--bo-navy);
+  font-size:12px;
+  opacity:.85;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-date-field .ref-range-picker{
+left:0;right:auto;z-index:6200;
+  border-color:var(--bo-border);
+  border-radius:12px;
+}
+html[data-bo-theme="dark"] bodybody.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-range-picker{
+background:var(--bo-surface)!important;
+  border-color:var(--bo-border)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
+}
+html[data-bo-theme="dark"] bodybody.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-range-presets{
+background:#2A2C36!important;
+  border-right-color:var(--bo-border)!important;
+}
+html[data-bo-theme="dark"] bodybody.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-range-presets button{
+color:var(--bo-text-secondary)!important;
+}
+html[data-bo-theme="dark"] bodybody.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-range-presets button:hover{
+background:rgba(245,158,11,.14)!important;
+}
+html[data-bo-theme="dark"] bodybody.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-range-presets button.active,
+html[data-bo-theme="dark"] bodybody.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.selected,
+html[data-bo-theme="dark"] bodybody.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-month-grid button.active,
+html[data-bo-theme="dark"] bodybody.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-year-grid button.active{
+background:#F59E0B!important;
+  color:#2A2C36!important;
+}
+html[data-bo-theme="dark"] bodybody.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-head button,
+html[data-bo-theme="dark"] bodybody.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-head-pick{
+color:var(--bo-text-secondary)!important;
+  background:var(--bo-bg)!important;
+  border-color:var(--bo-border)!important;
+}
+html[data-bo-theme="dark"] bodybody.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-week span{
+color:var(--bo-muted)!important
+}
+html[data-bo-theme="dark"] bodybody.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button{
+background:transparent!important;
+  color:var(--bo-text)!important;
+}
+html[data-bo-theme="dark"] bodybody.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.muted{
+color:var(--bo-muted)!important
+}
+html[data-bo-theme="dark"] bodybody.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-month-grid button,
+html[data-bo-theme="dark"] bodybody.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-year-grid button{
+background:var(--bo-bg)!important;
+  color:var(--bo-text-secondary)!important;
+}
+
+/* ==========================================================================
+   Report chrome: date picker cells, page-size selects, modal inputs
+   The Dashboard rules rescoped above only restyled the SELECTED states of the calendar
+   grids; their base cells come from reports.css as #F7F9FC / white. Same for the
+   page-size selects and the calendar popover panel in light mode. Covered here so the
+   whole picker reads cream/charcoal rather than cool grey, on every merchant report.
+   ========================================================================== */
+
+/* ---- Light ---- */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-range-picker,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-range-presets{
+  background:#FFF8EB!important;
+  border-color:#EADCC8!important;
+  box-shadow:0 12px 30px rgba(60,48,32,.14)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-month-grid button,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-year-grid button,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-head-pick,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-head button{
+  background:transparent!important;
+  border-color:transparent!important;
+  color:#374151!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-month-grid button:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-year-grid button:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button:hover{
+  background:rgba(217,119,6,.10)!important;
+  color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button.muted,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days .muted{
+  color:#57534E!important;
+  background:transparent!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-week span{
+  color:#71717A!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-page-size-select,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .rounded-select-btn{
+  background:#F5EBDC!important;
+  border-color:#EADCC8!important;
+  color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .rounded-select-menu{
+  background:#FFF8EB!important;
+  border-color:#EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .rounded-select-option{
+  background:transparent!important;
+  color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .rounded-select-option:hover,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .rounded-select-option.active{
+  background:rgba(217,119,6,.12)!important;
+  color:#B45309!important;
+}
+
+/* ---- Dark ---- */
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-range-picker,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-range-presets{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-month-grid button,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-year-grid button,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-head-pick,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-head button{
+  background:transparent!important;
+  border-color:transparent!important;
+  color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-month-grid button:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-year-grid button:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days button:hover{
+  background:rgba(245,158,11,.14)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-days .muted{
+  color:#A1A1AA!important;
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-cal-week span{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-page-size-select,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .rounded-select-btn{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .rounded-select-menu{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .rounded-select-option{
+  background:transparent!important;
+  color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .rounded-select-option.active{
+  background:rgba(245,158,11,.16)!important;
+  color:#FBBF24!important;
+}
+
+/* Settlement payment modal + picker active states — last handful. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] #settlementPaymentDatePicker button,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] #settlementPaymentForm .mac-input-group > input,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] #settlementPaymentForm .mac-input-group > .form-control,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] #settlementPaymentNote{
+  background-color:#F5EBDC!important;
+  background:#F5EBDC!important;
+  border-color:#DCC9A8!important;
+  color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] #settlementPaymentDatePicker button,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] #settlementPaymentForm .mac-input-group > input,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] #settlementPaymentForm .mac-input-group > .form-control,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] #settlementPaymentNote{
+  background-color:#2A2C36!important;
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+}
+
+/* picker / option selected states still carried the retired cyan in dark */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] #reportRangePicker .active,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] #settlementPaymentDatePicker .active,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .rounded-select-option.active{
+  background:rgba(217,119,6,.16)!important;
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] #reportRangePicker .active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] #settlementPaymentDatePicker .active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .rounded-select-option.active{
+  background:rgba(245,158,11,.20)!important;
+  color:#FBBF24!important;
+}
+
+/* Final: modal-scoped inputs and select options (stronger prefix; these live in popovers/modals). */
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean .mac-input-group > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean .mac-input-group.is-prefix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean textarea.form-control{
+  background-color:#F5EBDC!important;
+  background:#F5EBDC!important;
+  border-color:#DCC9A8!important;
+  color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean .mac-input-group > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean .mac-input-group.is-prefix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean textarea.form-control{
+  background-color:#2A2C36!important;
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+}
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] #reportRangePicker .rounded-select-option.active,
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-range-picker .rounded-select-option.active,
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean .rounded-select-option.active,
+html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean .rounded-select-option:hover{
+  background:rgba(217,119,6,.16)!important;
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] #reportRangePicker .rounded-select-option.active,
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .ref-range-picker .rounded-select-option.active,
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean .rounded-select-option.active,
+html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean .rounded-select-option:hover{
+  background:rgba(245,158,11,.20)!important;
+  color:#FBBF24!important;
+}
