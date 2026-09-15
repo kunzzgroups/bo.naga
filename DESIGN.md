@@ -371,13 +371,15 @@ System UI stack. Hierarchy via weight + color. Sidebar L1 = `800`. Tabular nums 
 
 ### Date-range picker (every family — unified 2026-09-15)
 
-The `.ref-range-*` / `.ref-cal-*` picker is one component with one look, wherever it is opened. **Reference: `main-merchant-settlement.html`** — that is the rendering the rest was measured against, and the values below are what it computes. `main-dashboard-executive.css` and `main-report-charcoal.css` carry the same rules for their scopes — change one, change the other.
+The `.ref-range-*` / `.ref-cal-*` picker is one component with one look, wherever it is opened. **Reference: `main-merchant-profit.html`** — that is the rendering the rest was measured against, and the values below are what it computes. `main-dashboard-executive.css` and `main-report-charcoal.css` carry the same rules for their scopes — change one, change the other.
+
+Two known deviations on other pages, both from page-scoped rules rather than this contract: `main-merchant-settlement.html` paints the **active preset as a wash** (`rgba(217,119,6,.16)` / `rgba(245,158,11,.2)`) instead of the solid fill below, and the profit page's **dark** active preset labels itself white where the locked `accent-on` token is `#2A2C36`. Both are one-rule changes if the family should be brought fully into line — the Dashboard and the report pages follow the table.
 
 | Part | Light | Dark |
 |------|-------|------|
 | Panel `.ref-range-picker` | `--bo-surface` `#FFF8EB` · border `--bo-border` `#EADCC8` · radius `12px` · warm shadow `0 12px 30px rgba(60,48,32,.14)` | `#383A46` · border `rgba(255,255,255,.14)` · shadow `0 16px 38px rgba(0,0,0,.4)` |
 | Preset rail `.ref-range-presets` | `--bo-surface` · right border `#EADCC8` | `#383A46` · right border `rgba(255,255,255,.14)` |
-| Preset active | **wash** `rgba(217,119,6,.16)` · label `#B45309` | wash `rgba(245,158,11,.2)` · label `#FBBF24` |
+| Preset active | **solid** `#D97706` · label white | solid `#F59E0B` · label `#2A2C36` |
 | Head / month / year buttons | transparent · text `#374151` | transparent · text `#E7E5E4` |
 | Week header | `#71717A` | `#A1A1AA` |
 | Day cell | transparent · `#374151` | transparent · `#E7E5E4` |
@@ -387,9 +389,9 @@ The `.ref-range-*` / `.ref-cal-*` picker is one component with one look, whereve
 | Range edge (`.selected`) | `#D97706` · label white · radius `8px` | `#F59E0B` · label `#2A2C36` · radius `8px` |
 | Date trigger | surface `#FFF8EB` · border `#EADCC8` | `#2C2E38` · border `rgba(255,255,255,.12)` · text `#E7E5E4` |
 | Day grid | `.ref-cal-days{gap:0}` — cells touch so the band is continuous; the base file sets `3px` and the band then breaks into chips | same |
-| Field / control width | `260px` (min `240`, `flex:0 0 260px`) — the settlement ledger's control. The report pages use `236px` because their filter row must hold five controls on one line (see Report family) | same |
+| Field / control width | **not part of the design** — each page owns its control width (settlement `260px`, report pages `236px` in a five-control filter row, Dashboard `390px`) | — |
 
-The preset list is the same eight everywhere (`Today · Yesterday · This Week · Last Week · This Month · Last Month · This Year · Last Year`) — the Dashboard used to carry a ninth, `Last 7 Days`, and it was dropped so the rails match.
+The preset list is per page: the Dashboard also offers `Last 7 Days`. Styling only — the rail renders from whatever `data-range-preset` buttons the page provides.
 
 **The band must read as ONE strip, and that depends on which classes the calendar script emits.**
 
