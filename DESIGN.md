@@ -252,32 +252,6 @@ Dark: Ghost charcoal gradient; Primary amber with dark text `#2A2C36`. CSS: `mai
 **Create Role** (`main-admin-role-create.html`): Role Name + filter both surface `#FFF8EB` (same family as list controls).  
 Always beat `reports.css` `#fff!important`. Dark: charcoal well `#2A2C36`. CSS: `menu-permission-executive.css` + `main-admin-role-create.css`.
 
-### Merchant Detail — migrated 2026-09-15
-
-`main-merchant-detail.html` and `main-merchant-create.html` (both `data-access-page="main_merchant_detail"`) now run Charcoal + Amber.
-Page CSS: `assets/css/main-merchant-detail-executive.css` — **must load after `main-admin-detail-executive.css`**, because the legacy Deep Navy Cyan block in that file also matches this page and these rules win on equal specificity by source order.
-
-Recipe used (reuse it for the remaining `main-merchant-*` pages):
-
-- Scope: `body.main-admin-detail-page[data-access-page="main_merchant_detail"]` — mirrors how the Admin block scopes itself. It reaches the whole merchant family (detail, create, security, profit, profit-record, repayments, settlement) while leaving `main-merchant-roles.html` / `main-merchant-role-create.html` alone: they share the data attribute but load the Roles & Permissions stylesheets, not this file. Specificity is unchanged from the page-class form.
-- The rescoped Charcoal block covers shared chrome (canvas, sidebar, topbar, tabs, filters, table, footer, pager, buttons, modals, tips). Admin create/edit-only rules are dropped; they cannot match this page.
-- Components with no Admin Detail counterpart were hand-written: `.mad-status-chip` / `.mad-status-dot` (given the `.mad-status` pill treatment so both lists read alike), `.mad-merchant-icon-btn` + its tooltip, and the `.mac-currency-*` / `.mac-provider-*` chrome.
-- The edit workspace (`#madEditWorkspace`) and the modals need their own block: their legacy rules are **ID-scoped**, so the class-scoped block cannot reach them, and the prefix carries `body.standardized-listing-page` to outbid the `button.mac-currency-add-btn` variants.
-- `main-merchant-create.html` renders the same form vocabulary but **outside** `#madEditWorkspace`, so the ID-scoped block misses it entirely — that is why a separate `.mac-section`-scoped layer exists. It also needs the create/edit **layer ladder**, which the initial rescope dropped (those rules are scoped to `.main-admin-create-page` and could not match Merchant Detail). `main-merchant-repayments.html` carries the same class and shares it.
-- **Expect a specificity fight.** The legacy file pins several merchant controls with long selectors — `... .report-content .mac-field .mac-input-group.is-prefix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"])` is ten class-levels. Plain `.mac-section .form-control` loses to it. Where a control is a unique ID, two IDs in the selector settle it outright (see the `#madProviderMarkup` / `#madCurrencyModalCode` rules). Do not "simplify" those selectors without re-measuring.
-- The shared **date-range picker** is already styled for amber in `main-dashboard-executive.css` (19 rules). Rescope them instead of re-deriving: `.main-dashboard-page` → the merchant family and `.main-exec-date-field` → `.ref-date-field` (both pages carry the latter), so one set serves the Dashboard and the merchant reports. Base (unselected) calendar cells come from `reports.css` as `#F7F9FC` / white and need their own rules — the Dashboard only restyled the selected states.
-- `main-merchant-settlement.html` is in the family by `data-access-page` even though its sidebar key is a report key, so it inherits the whole block by linking the file. Its `.mre-*` report chrome lives in `main-merchant-report-executive.css`.
-- The modal scrims (`.modal-clean.mad-modal`, `.sidebar-overlay`) keep a dark translucent `rgba(15,23,42,.55)` in both themes. That is a backdrop, not chrome, and reads as neutral — leave it.
-
-**Row avatar (2026-09-15 — this page only).** The tile is a neutral index marker, not a colour-coded one: light `#F5EBDC` / `#6b360c`, dark `#2A2C36` / `#E7E5E4`. The every-third-row tint is **deleted** — it encoded row position, not data, and a colour that means nothing teaches the eye to ignore the ones that do (the Status pill, the money columns). Colour survives on exactly one avatar variant: a **suspended** row (`#FEE2E2` / `#B91C1C` light, `rgba(239,68,68,.14)` / `#FCA5A5` dark), which agrees with the Status pill instead of contradicting it. Initials come from the company **name** (`avatarInitials()` in `main-merchant-detail.js`), not the code — the code is already printed beside the tile, so repeating it made a 40×40 saturated block carry no information.
-Admin Detail keeps the old indigo / amber / teal avatar vocabulary. Unify it with this page if the system should have one answer.
-
-Traps found while migrating:
-
-- `reports.css` `.report-content input{background-color:#fff!important}` paints any workspace field the page CSS does not explicitly cover pure white. Light chrome is cream only — cover inputs with the control well `#F5EBDC`, locked `#EDE4D4`.
-- The shared light rule `.mad-table tbody tr:nth-child(3n) .mad-avatar` is *not* light-scoped, so it outbids the charcoal dark `.mad-avatar` rule and drops a near-white `#E0F2FE` chip onto the dark canvas on every third row. **Admin Detail still has this defect.**
-- Topbar counters (`.bo-header-counter`, `reports-dashboard-original.css`) are hard-coded `#fff` and stay white in dark. They only render for non-`MAIN` roles, so they are invisible on a Main Account login.
-
 ## Typography
 
 System UI stack. Hierarchy via weight + color. Sidebar L1 = `800`. Tabular nums for money/time; mono for credit/time cells and topbar role.

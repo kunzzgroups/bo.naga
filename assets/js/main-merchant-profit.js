@@ -508,7 +508,7 @@
 
   async function loadRepayBadge() {
     try {
-      const months = monthKeys(3);
+      const months = monthKeys(1);
       const packs = await Promise.all(
         months.map((m) => api('/admin/main/settlements?month=' + encodeURIComponent(m)).catch(() => ({ rows: [] })))
       );
@@ -518,6 +518,8 @@
         const list = Array.isArray(d) ? d : (d?.rows || []);
         list.forEach((x) => {
           if (!isMerchantParty(x) || !isCollectDue(x)) return;
+          if (String(x.sourceType || '').toUpperCase() !== 'MERCHANT_RECURRING') return;
+          if (String(x.currency || 'MYR').toUpperCase() !== state.currency) return;
           const key = String(x.id ?? `${x.month}|${x.counterpartyKey}|${x.direction}`);
           if (seen.has(key)) return;
           seen.add(key);

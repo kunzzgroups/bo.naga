@@ -54,7 +54,7 @@
   function isCollectDue(row) {
     const dir = String(row.direction || '').toUpperCase();
     const bal = Number(row.balanceAmount || 0);
-    const closed = /paid|settled|carried/i.test(String(row.status || ''));
+    const closed = /paid|settled|carried|waived|void/i.test(String(row.status || ''));
     return dir === 'COLLECT' && bal > 0.004 && !closed;
   }
 
@@ -188,7 +188,7 @@
         <td class="num mprd-balance">${money(bal)}</td>
         <td class="num mprd-pay-col">
           <span class="mac-input-group is-prefix mprd-row-amount">
-            <span class="mac-input-addon mprd-row-unit currency-unit">${esc(reportCurrency())}</span>
+            <span class="mac-input-addon mprd-row-unit currency-unit">${esc(String(x.currency || reportCurrency()).toUpperCase())}</span>
             <input class="form-control mprd-amount-input" type="number" min="0" step="0.01" inputmode="decimal"
               data-repay-amount="${esc(id)}" data-repay-balance="${bal}"
               value="${esc(amountVal)}" placeholder="0.00" max="${bal}"
@@ -196,8 +196,8 @@
           </span>
         </td>
         <td class="mprd-action-col">
-          <button type="button" class="mprd-row-del" data-repay-delete="${esc(id)}" title="Delete settlement" aria-label="Delete settlement">
-            <i class="bi bi-trash" aria-hidden="true"></i>
+          <button type="button" class="mprd-row-del" data-repay-delete="${esc(id)}" title="Void outstanding balance" aria-label="Void outstanding balance">
+            <i class="bi bi-slash-circle" aria-hidden="true"></i>
           </button>
         </td>
       </tr>`;
@@ -214,7 +214,9 @@
     if (body) body.innerHTML = '<tr><td colspan="9" class="mad-empty">Loading...</td></tr>';
     setRepayStatus('');
     try {
-      const months = monthKeys(3);
+      // Repayments Due is intentionally current-month recurring Merchant Profit only.
+      // Loading the current settlement month also lets the API materialize this month's recurring rules idempotently.
+      const months = monthKeys(1);
       const packs = await Promise.all(
         months.map((m) => api('/admin/main/settlements?month=' + encodeURIComponent(m)).catch(() => ({ rows: [] })))
       );
@@ -224,6 +226,8 @@
         const list = Array.isArray(d) ? d : (d?.rows || []);
         list.forEach((x) => {
           if (!isMerchantParty(x) || !isCollectDue(x)) return;
+          if (String(x.sourceType || '').toUpperCase() !== 'MERCHANT_RECURRING') return;
+          if (String(x.currency || 'MYR').toUpperCase() !== reportCurrency()) return;
           const key = repayRowId(x);
           if (seen.has(key)) return;
           seen.add(key);
@@ -278,7 +282,8 @@
             amount: item.amount.toFixed(2),
             paymentDate: todayYmd(),
             referenceNo: '',
-            note: 'Merchant repayment recorded from Repayments Due'
+            currency: String(item.row.currency || reportCurrency()).toUpperCase(),
+            note: 'Merchant recurring repayment recorded from Repayments Due'
           })
         });
         delete state.repayAmounts[repayRowId(item.row)];
@@ -294,23 +299,23 @@
     }
   }
 
-  async function deleteRepayments(ids) {
+  async function voidRepayments(ids) {
     const targets = state.repayRows.filter((x) => ids.includes(repayRowId(x)));
     if (!targets.length) return;
     const label = targets.length === 1
-      ? `Delete settlement for ${targets[0].counterpartyName || 'this merchant'} (${targets[0].month || ''})?`
-      : `Delete ${targets.length} selected settlement records?`;
+      ? `Void the remaining balance for ${targets[0].counterpartyName || 'this merchant'} (${targets[0].month || ''})? This writes the balance off as free/waived.`
+      : `Void the remaining balance on ${targets.length} selected repayment records?`;
     const ok = window.BO_DIALOG?.confirm
-      ? await BO_DIALOG.confirm(label, { title: 'Delete Settlement', confirmText: 'Delete', type: 'danger' })
+      ? await BO_DIALOG.confirm(label, { title: 'Void Outstanding Balance', confirmText: 'Void Balance', type: 'danger' })
       : false;
     if (!ok) return;
 
-    setRepayStatus(`Deleting ${targets.length} item${targets.length > 1 ? 's' : ''}...`);
+    setRepayStatus(`Voiding ${targets.length} balance${targets.length > 1 ? 's' : ''}...`);
     const errors = [];
     for (const row of targets) {
       try {
         if (!row.id) throw new Error('Missing settlement id');
-        await api('/admin/main/settlements/' + encodeURIComponent(row.id), { method: 'DELETE' });
+        await api('/admin/main/settlements/' + encodeURIComponent(row.id) + '/void-balance', { method: 'POST', body: JSON.stringify({ note: 'Outstanding recurring balance waived from Repayments Due' }) });
         state.repaySelected.delete(repayRowId(row));
         delete state.repayAmounts[repayRowId(row)];
       } catch (err) {
@@ -321,17 +326,17 @@
     if (errors.length) {
       setRepayStatus(errors[0], 'error');
       window.BO_DIALOG?.alert
-        ? BO_DIALOG.alert(errors.join('\n'), { title: 'Delete incomplete', type: 'error' })
+        ? BO_DIALOG.alert(errors.join('\n'), { title: 'Void incomplete', type: 'error' })
         : null;
     } else {
-      setRepayStatus(targets.length === 1 ? 'Settlement deleted.' : `${targets.length} settlements deleted.`, 'success');
+      setRepayStatus(targets.length === 1 ? 'Outstanding balance voided.' : `${targets.length} outstanding balances voided.`, 'success');
     }
   }
 
   $('mprRepayForm')?.addEventListener('submit', submitRepayment);
   $('mprRepayDeleteBtn')?.addEventListener('click', () => {
     const ids = [...state.repaySelected];
-    if (ids.length) deleteRepayments(ids);
+    if (ids.length) voidRepayments(ids);
   });
   $('mprRepaySelectAll')?.addEventListener('change', (e) => {
     const on = !!e.target.checked;
@@ -402,7 +407,7 @@
     const del = e.target.closest('[data-repay-delete]');
     if (!del) return;
     const id = del.getAttribute('data-repay-delete');
-    if (id) deleteRepayments([id]);
+    if (id) voidRepayments([id]);
   });
 
   async function bootstrap() {

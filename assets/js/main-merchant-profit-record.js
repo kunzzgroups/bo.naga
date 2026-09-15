@@ -177,12 +177,14 @@
       ? (Array.isArray(merchant.enabledCurrencies) && merchant.enabledCurrencies.length
           ? merchant.enabledCurrencies
           : [merchant.primaryCurrency || merchant.currency || 'MYR'])
-      : [];
+      : state.merchants.flatMap((m) => Array.isArray(m.enabledCurrencies) && m.enabledCurrencies.length
+          ? m.enabledCurrencies
+          : [m.primaryCurrency || m.currency || 'MYR']);
     const codes = [...new Set(list.map((x) => String(x || '').trim().toUpperCase()).filter(Boolean))];
     const wanted = String(preferred || sel.value || merchant?.primaryCurrency || merchant?.currency || '').toUpperCase();
     sel.innerHTML = '<option value="">Select Currency</option>' + codes.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
     sel.value = codes.includes(wanted) ? wanted : (codes[0] || '');
-    sel.disabled = !merchant || !codes.length;
+    sel.disabled = !codes.length;
     syncSelect(sel);
     updateAmountCurrency();
   }
@@ -211,7 +213,6 @@
       direction: $('mprrDirection')?.value || 'COLLECT',
       feeName: $('mprrFeeName')?.value || '',
       date: $('mprrDate')?.value || '',
-      cycleDay: $('mprrCycleDay')?.value || '',
       amount: $('mprrAmount')?.value || '',
       remark: $('mprrRemark')?.value || '',
       savedAt: Date.now()
@@ -246,10 +247,6 @@
     }
     if (draft.feeName) $('mprrFeeName').value = draft.feeName;
     if (draft.date) $('mprrDate').value = draft.date;
-    if (draft.cycleDay) {
-      $('mprrCycleDay').value = String(draft.cycleDay);
-      syncSelect($('mprrCycleDay'));
-    }
     if (draft.amount != null) $('mprrAmount').value = draft.amount;
     if (draft.remark != null) $('mprrRemark').value = draft.remark;
     syncVisibility();
@@ -280,7 +277,6 @@
     }
     $('mprrFeeName').value = row.feeName || '';
     $('mprrDate').value = String(row.effectiveDate || row.effectiveMonth || '').slice(0, 10) || fmt(new Date());
-    syncCycleFromDate();
     const amt = Number(row.amount || 0);
     $('mprrAmount').value = amt.toFixed(2);
     $('mprrRemark').value = row.remark || '';
@@ -382,12 +378,7 @@
       if (v === 'stop' || v === 'continue') setBilling(v);
     });
     $('mprrDate')?.addEventListener('change', () => {
-      syncCycleFromDate();
-      scheduleDraft();
-    });
-    $('mprrCycleDay')?.addEventListener('change', () => {
-      syncDateFromCycle();
-      scheduleDraft();
+        scheduleDraft();
     });
     $('mprrMerchant')?.addEventListener('change', () => {
       renderCurrencies();
