@@ -1,0 +1,20 @@
+---
+alwaysApply: true
+---
+
+# Git workflow (see also `AGENTS.md` at the repo root)
+
+**Always pull before you push.** A single push from a stale working copy once deleted a
+large amount of merged work in this repo (commit `f76f208`).
+
+- Before pushing: `git fetch origin` and integrate it (`git rebase origin/main` on your own
+  branch). Never push a branch that is behind or diverged from its remote.
+- Before committing: run `git diff --stat origin/main..HEAD`. If files you did not
+  deliberately change appear as **deleted**, stop — your working copy is stale. Never run
+  `git add -A` on a copy you have not just fetched.
+- Never delete, rename, or force-push another person's branch or commits.
+- `main` is protected by a repository ruleset and requires a pull request. Do not attempt to
+  bypass it. Commit to a personal branch (e.g. `kunzzit01/dev`) and land through a PR.
+- The server is a deploy target, not a workstation: do not edit or commit there. Deploy with
+  `git fetch origin && git merge --ff-only origin/main` so a diverged copy fails loudly
+  instead of merging silently.
