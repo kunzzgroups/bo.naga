@@ -4,7 +4,7 @@
     align-items: end;
     flex-wrap: wrap;
     background: #fff;
-    border: 1px solid #dde6f2;
+    border: 1px solid #EADCC8;
     border-radius: 16px;
     padding: 16px;
     margin-bottom: 16px
@@ -23,7 +23,7 @@
 
 .ops-filter input, .ops-filter select {
     width: 100%;
-    border: 1px solid #ccd8e8;
+    border: 1px solid #EADCC8;
     border-radius: 10px;
     padding: 10px 12px
 }
@@ -33,7 +33,7 @@
     /* border: 1px solid #d9e4f4; */
     border-radius: 999px;
     padding: 9px 13px;
-    background: #f7faff;
+    background: #F5EBDC;
     font-weight: 700
 }
 
@@ -48,24 +48,24 @@
     text-decoration: none;
     color: inherit;
     background: #fff;
-    border: 1px solid #dfe7f2;
+    border: 1px solid #EADCC8;
     border-radius: 16px;
     padding: 17px;
-    box-shadow: 0 8px 24px rgba(26, 48, 82, .05);
+    box-shadow: 0 8px 24px rgba(217,119,6,.05);
     transition: .18s
 }
 
 .ops-card:hover {
     transform: translateY(-2px);
-    border-color: #8db1ff;
-    box-shadow: 0 12px 30px rgba(47, 99, 243, .12)
+    border-color: #78716C;
+    box-shadow: 0 12px 30px rgba(217,119,6,.12)
 }
 
 .ops-card .top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    color: #64748b;
+    color: #57534E;
     font-weight: 800;
     font-size: 12px
 }
@@ -73,7 +73,7 @@
 .ops-card .value {
     font-size: 26px;
     font-weight: 900;
-    color: #12244a;
+    color: #D97706;
     margin: 9px 0 3px
 }
 
@@ -83,7 +83,7 @@
 
 .ops-card i {
     font-size: 20px;
-    color: #2f63f3
+    color: #57534E
 }
 
 .action-approve {

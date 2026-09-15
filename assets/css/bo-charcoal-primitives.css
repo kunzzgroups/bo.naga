@@ -345,6 +345,27 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean .form
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mad-modal .form-control:focus{
   border-color:#D97706!important;box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
 }
+/* A modal is mounted under <body>, not inside .report-content, so the workspace field rule
+   cannot reach it — the code editors (a bare <textarea> with a page class, no .form-control)
+   stayed white. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean textarea,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean-body textarea,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-html-editor,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-form-section textarea,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-form-section input,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-form-section select,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-form-section .form-control{
+  background:#F5EBDC!important;border:1px solid #DCC9A8!important;color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean textarea,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean-body textarea,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .policy-html-editor,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .policy-form-section textarea,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .policy-form-section input,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .policy-form-section select,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .policy-form-section .form-control{
+  background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;color:#F5F5F4!important;
+}
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean .form-control,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean select.form-control,

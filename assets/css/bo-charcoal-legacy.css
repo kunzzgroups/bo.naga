@@ -768,6 +768,376 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-text{
   color:#F5F5F4!important;
 }
 
+/* The filter-row standard (bo-ui-standard.css) is deliberately the "final authority layer":
+   its own comment says the two :not() IDs in `body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy)`
+   exist to out-rank "every legacy page-level filter rule". They out-rank this layer's class
+   weight too, so the controls keep `#cfd8e8` borders, white fills, an 11px radius and #101828
+   text however much the surrounding chrome warms up. Same two-step guard, more class weight
+   inside the row, and the shapes mirrored so each rule lands on the same elements. */
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>input.bo-filter-input-item:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-select-item select,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>select.bo-filter-select-item,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-select-item .rounded-select-btn{
+  background:#F5EBDC!important;border:1px solid #DCC9A8!important;color:#18191C!important;border-radius:8px!important;
+}
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-input-item input::placeholder,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>input.bo-filter-input-item::placeholder{
+  color:#78716C!important;
+}
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-select-item .rounded-select-btn span,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-select-item .rounded-select-btn i{
+  color:#18191C!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>input.bo-filter-input-item:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-select-item select,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>select.bo-filter-select-item,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-select-item .rounded-select-btn{
+  background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;color:#F5F5F4!important;border-radius:8px!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-input-item input::placeholder,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>input.bo-filter-input-item::placeholder{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-select-item .rounded-select-btn span,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-select-item .rounded-select-btn i{
+  color:#F5F5F4!important;
+}
+/* And the focus ring these controls carry, which is the same literal indigo family. */
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-input-item input:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-select-item select:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-select-item .rounded-select-btn:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-select-item .rounded-select-btn.open{
+  border-color:#D97706!important;box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-input-item input:focus,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-select-item select:focus,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-select-item .rounded-select-btn:focus,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-select-item .rounded-select-btn.open{
+  border-color:#F59E0B!important;box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+
+/* The user-management KPI tile (`.user-metric`) is the same read-out as `.metric` under a
+   different name, and reports.css keeps a separate rule set for it. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .user-metric{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;border-radius:14px!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .user-metric strong{color:#18191C!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .user-metric span,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .user-metric small{color:#57534E!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .user-metric{
+  background:#383A46!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:14px!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .user-metric strong{color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .user-metric span,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .user-metric small{color:#D4D4D8!important}
+
+/* ------------------------------------------- permission matrix
+   `role.html` ships no page CSS at all — its permission matrix is styled by the shell
+   (reports.css, 149 pages) with a cool-white palette: #f8fafc trays, #fff cards, #172033
+   titles, and a red accent on the checkboxes. DESIGN.md already locks this component
+   ("Permission matrix — Roles & Permissions"): light = cream/amber wash with deeper cream on
+   hover and checked; dark = cool charcoal only, amber on borders, icons and counts. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .permission-groups,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .role-create-body{
+  background:#FFF1DC!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .permission-group-head{
+  background:linear-gradient(180deg,#FFF8EB 0%,#FFF1DC 100%)!important;
+  border-bottom:1px solid rgba(217,119,6,.22)!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .permission-group-title,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .role-permission-heading h4{color:#18191C!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .role-permission-heading p{color:#57534E!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .permission-group-title i{
+  background:#FFF8EB!important;border:1px solid rgba(217,119,6,.35)!important;color:#D97706!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .permission-item{
+  background:#FFF8EB!important;
+  border-right:1px solid #F0E6D8!important;border-bottom:1px solid #F0E6D8!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .permission-item:hover{background:#FFFCF7!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .permission-item:has(input:checked){
+  background:#FFF1DC!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .permission-item input{accent-color:#D97706!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .permission-item b{color:#18191C!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .permission-item small{color:#57534E!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .permission-groups,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .role-create-body{
+  background:#2C2E38!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .permission-group-head{
+  background:#40424E!important;border-bottom:1px solid rgba(245,158,11,.22)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .permission-group-title,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .role-permission-heading h4{color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .role-permission-heading p{color:#D4D4D8!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .permission-group-title i{
+  background:#2A2C36!important;border:1px solid rgba(245,158,11,.35)!important;color:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .permission-item{
+  background:#2A2C36!important;
+  border-right:1px solid rgba(255,255,255,.10)!important;border-bottom:1px solid rgba(255,255,255,.10)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .permission-item:hover{background:#32343E!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .permission-item:has(input:checked){
+  background:rgba(245,158,11,.10)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .permission-item input{accent-color:#F59E0B!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .permission-item b{color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .permission-item small{color:#D4D4D8!important}
+
+/* ------------------------------------------- listing toolbars and modal bodies
+   The last of the cool palette lives in the shell's listing chrome rather than in a page
+   sheet: the toolbar title row, the approval total bar, the admin create stack, the
+   translation panel, the ledger multi-select, and modal bodies. Named once here. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .user-title-row,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .approval-total-bar,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .admin-create-stack,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-modal-body,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-modal-body > section,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .dynamic-translation-panel,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .dynamic-translation-body{
+  background:#FFF8EB!important;border-color:#EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .dynamic-translation-head,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .user-toolbar,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .approval-total-bar{
+  background:#F5EBDC!important;border-color:#EADCC8!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .user-title-row,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .approval-total-bar,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .admin-create-stack,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .policy-modal-body,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .policy-modal-body > section,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .dynamic-translation-panel,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .dynamic-translation-body{
+  background:#383A46!important;border-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .dynamic-translation-head,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .user-toolbar,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .approval-total-bar{
+  background:#2A2C36!important;border-color:rgba(255,255,255,.12)!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .user-title-row h2,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .user-title-row h3,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .user-title-row i,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .dynamic-translation-head h5,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .admin-create-stack .admin-field label,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .admin-side-title h2,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .admin-edit-head h2,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .approval-total-bar strong{
+  color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .user-title-row small,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .admin-side-title p,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .approval-total-bar span,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .dynamic-translation-head small{
+  color:#57534E!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .user-title-row h2,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .user-title-row h3,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .user-title-row i,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .dynamic-translation-head h5,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .admin-create-stack .admin-field label,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .admin-side-title h2,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .admin-edit-head h2,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .approval-total-bar strong{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .user-title-row small,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .admin-side-title p,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .approval-total-bar span,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .dynamic-translation-head small{
+  color:#D4D4D8!important;
+}
+/* Multi-select / chip pickers inside a filter row are controls, not text. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ledger-multi,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal [id$="TypeMulti"],
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .multi-select,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .multi-select-trigger{
+  background:#F5EBDC!important;border:1px solid #DCC9A8!important;color:#18191C!important;border-radius:8px!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ledger-multi,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal [id$="TypeMulti"],
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .multi-select,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .multi-select-trigger{
+  background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;color:#F5F5F4!important;border-radius:8px!important;
+}
+
+/* Count badge, ledger multi-select trigger, empty-state glyph, admin edit modal. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .users-found-badge,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .user-toolbar .users-found-badge{
+  background:rgba(217,119,6,.12)!important;border:1px solid rgba(217,119,6,.30)!important;color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .users-found-badge,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .user-toolbar .users-found-badge{
+  background:rgba(245,158,11,.16)!important;border:1px solid rgba(245,158,11,.35)!important;color:#FBBF24!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ledger-type-trigger,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ledger-type-trigger span,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ledger-type-trigger i{
+  background:#F5EBDC!important;border-color:#DCC9A8!important;color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ledger-type-trigger,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ledger-type-trigger span,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ledger-type-trigger i{
+  background:#2A2C36!important;border-color:rgba(255,255,255,.12)!important;color:#F5F5F4!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .slider-empty,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .slider-empty i,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .table-empty i{color:#57534E!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .slider-empty,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .slider-empty i,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .table-empty i{color:#D4D4D8!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .dynamic-translation-head h3{color:#18191C!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .dynamic-translation-head h3{color:#F5F5F4!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .admin-edit-body,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .admin-edit-field label,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #adminEditModal h2,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #adminEditModal h3{color:#3F3F46!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .admin-edit-body,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .admin-edit-field label,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal #adminEditModal h2,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal #adminEditModal h3{color:#E7E5E4!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .admin-edit-icon{
+  background:rgba(217,119,6,.12)!important;color:#D97706!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .admin-edit-icon{
+  background:rgba(245,158,11,.16)!important;color:#F59E0B!important;
+}
+
+/* ------------------------------------------- last of the tail
+   The remainder is page-scoped names in the shell and in a handful of page sheets. Where the
+   legacy rule carries an ID (`#checkList .permission-item`, `#rootMainMenus …`,
+   `#adminEditModal …`) a class-level selector cannot reach it, so these use the
+   `body:not(#bo-charcoal-off)` step to pick up the one ID level needed. */
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #checkList .permission-item,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #checkList .permission-item:hover,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .role-modal-permissions .permission-item,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #rootMainMenus .permission-item,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #rootMainMenus > div,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #rootMainMenus > label,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .policy-modal-body > section,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .admin-form-card,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .admin-profile-card,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .bulk-panel,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .bulk-card,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .bulk-result-card,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .import-panel{
+  background:#FFF8EB!important;border-color:#EADCC8!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #checkList .permission-item,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #checkList .permission-item:hover,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .role-modal-permissions .permission-item,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #rootMainMenus .permission-item,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #rootMainMenus > div,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #rootMainMenus > label,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .policy-modal-body > section,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .admin-form-card,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .admin-profile-card,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .bulk-panel,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .bulk-card,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .bulk-result-card,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .import-panel{
+  background:#2A2C36!important;border-color:rgba(255,255,255,.12)!important;
+}
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .modal-clean-panel,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .modal-clean-body{
+  background:#FFF8EB!important;border-color:#EADCC8!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .modal-clean-panel,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .modal-clean-body{
+  background:#383A46!important;border-color:rgba(255,255,255,.14)!important;
+}
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .admin-edit-head,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .admin-edit-title,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .admin-edit-sub,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal label,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .admin-profile-form label,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .admin-form-label,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .dynamic-translation-body,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .dynamic-translation-body p,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .dynamic-translation-body span{
+  color:#3F3F46!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .admin-edit-head,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .admin-edit-title,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .admin-edit-sub,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal label,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .admin-profile-form label,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .admin-form-label,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .dynamic-translation-body,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .dynamic-translation-body p,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .dynamic-translation-body span{
+  color:#E7E5E4!important;
+}
+/* The IP-whitelist KPI chips tint their icons violet; the locked set is amber-only. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .user-metric i,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .user-metric .user-metric-icon{
+  background:rgba(217,119,6,.12)!important;color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .user-metric i,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .user-metric .user-metric-icon{
+  background:rgba(245,158,11,.16)!important;color:#FBBF24!important;
+}
+
+/* Access cards, the root menu grid, the bulk-operation panels and the policy form. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .access-card,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bulk-panel,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bulk-panel-title,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .operation-summary,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .summary-item,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .summary-chip,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bulk-count-chip,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #selectedCount,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-form-section,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-form-section .field,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-form-section .form-group,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #rootMasterMenus > *,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #rootMasterMenus label,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #rootMainMenus > *,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #rootMainMenus label{
+  background:#FFF8EB!important;border-color:#EADCC8!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .access-card,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bulk-panel,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bulk-panel-title,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .operation-summary,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .summary-item,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .summary-chip,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bulk-count-chip,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal #selectedCount,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .policy-form-section,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .policy-form-section .field,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .policy-form-section .form-group,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal #rootMasterMenus > *,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal #rootMasterMenus label,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal #rootMainMenus > *,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal #rootMainMenus label{
+  background:#2A2C36!important;border-color:rgba(255,255,255,.12)!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .selected-table th,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .selected-table td{
+  background:#FFF8EB!important;border-color:#F0E6D8!important;color:#374151!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .selected-table th{
+  background:transparent!important;color:#3F3F46!important;border-bottom:1px solid #EADCC8!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .selected-table th,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .selected-table td{
+  background:#383A46!important;border-color:rgba(255,255,255,.12)!important;color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .selected-table th{
+  background:transparent!important;color:#E7E5E4!important;border-bottom:1px solid rgba(255,255,255,.14)!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .slider-empty b,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .slider-empty strong{color:#3F3F46!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .slider-empty b,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .slider-empty strong{color:#E7E5E4!important}
+
 /* ------------------------------------------- shell chrome the rescope does not carry
    The rescope carries only the merchant-profit variant of the page-title chrome, and
    `reports.css:141` declares `.report-topbar .hamb` UNCONDITIONALLY — not inside the

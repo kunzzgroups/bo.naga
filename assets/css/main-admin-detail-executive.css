@@ -9445,3 +9445,69 @@ html[data-bo-theme="dark"] body.main-admin-security-page[data-access-page="main_
   background:rgba(245,158,11,.32)!important;
   color:#FDE68A!important;
 }
+
+/* ==========================================================================
+   Charcoal + Amber — leftovers the amber block above did not reach
+   (data-access-page=main_admin_detail | main_admin_security | main_admin_create).
+   Three declarations kept the retired palette because the amber block never re-declared
+   them: the credit-adjust avatar, the enhanced select's selected option, and the create
+   form's section icon in dark. Found by sweeping every rendered element's computed colour
+   in both themes; all three are invisible to a selector-level grep.
+   ========================================================================== */
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-avatar,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-avatar,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-summary .mac-adjust-avatar{
+  background:rgba(217,119,6,.14)!important;
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-avatar,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-avatar{
+  background:rgba(245,158,11,.16)!important;
+  color:#FBBF24!important;
+}
+/* The enhanced select's selected option keeps the wash pair the merchant family uses
+   (DESIGN.md → Role select dropdown: option hover is a wash, not a fill). */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .rounded-select-option.active,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .rounded-select-option.active{
+  background:rgba(217,119,6,.16)!important;
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .rounded-select-option.active{
+  background:rgba(245,158,11,.20)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-section-icon,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-section-icon{
+  background:rgba(245,158,11,.12)!important;
+  color:#F59E0B!important;
+}
+
+/* Credit Adjust modal fields (light) and the Security filter's selected option (dark).
+   Both keep their legacy fill because the amber block re-declares neither, and the
+   security rule below out-ranks a plain page-scoped selector, so these mirror its shape. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .form-control,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel input.form-control,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel select.form-control,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel textarea.form-control,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-ops .form-control,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-ops .rounded-select-btn{
+  background:#F5EBDC!important;
+  background-color:#F5EBDC!important;
+  border:1px solid #DCC9A8!important;
+  color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal-actions .mad-btn-ghost,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .mad-btn-ghost{
+  background:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 100%)!important;
+  background-color:transparent!important;
+  border-color:#DCC9A8!important;
+  color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-filters .rounded-select-wrap .rounded-select-menu .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters .rounded-select-wrap .rounded-select-menu .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mas-filters > .rounded-select-wrap .rounded-select-option.active{
+  background:rgba(245,158,11,.20)!important;
+  color:#FBBF24!important;
+}
