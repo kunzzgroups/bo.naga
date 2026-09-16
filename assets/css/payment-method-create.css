@@ -1,0 +1,317 @@
+/* Payment Method Create / Edit — full-page form
+   Color recipe locked to Create Admin Account (`.mac-*` layer ladder):
+   Canvas continuum → section lift `#FFFCF7` → input surface `#FFF8EB` → nested `#F0E4D0`.
+   Sticky footer = Create Admin `.mac-footer-actions`. */
+
+body.bo-wallet-tx.payment-method-create-page .report-content.pmc-workspace{
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:12px 16px 96px!important;
+  box-sizing:border-box!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-form{
+  display:grid!important;
+  gap:16px!important;
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-form-head{
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:space-between!important;
+  gap:16px!important;
+  width:100%!important;
+  margin-bottom:2px!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-eyebrow{
+  margin:0 0 4px!important;
+  font-size:12px!important;
+  font-weight:800!important;
+  letter-spacing:.06em!important;
+  text-transform:uppercase!important;
+  color:#B45309!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-sub{
+  margin:0!important;
+  color:#57534E!important;
+  font-weight:600!important;
+  font-size:13px!important;
+}
+
+/* Section cards — Create Admin `.mac-section` lift */
+body.bo-wallet-tx.payment-method-create-page .pmc-card{
+  width:100%!important;
+  max-width:none!important;
+  box-sizing:border-box!important;
+  background:#FFFCF7!important;
+  border:1px solid #DCC9A8!important;
+  border-radius:12px!important;
+  padding:18px 20px!important;
+  box-shadow:0 0 0 1px rgba(120,80,20,.04),0 10px 28px rgba(120,80,20,.10)!important;
+  border-top:0!important;
+  position:relative!important;
+  overflow:hidden!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-card::before{
+  content:""!important;
+  position:absolute!important;
+  left:0!important;
+  top:12px!important;
+  bottom:12px!important;
+  width:3px!important;
+  border-radius:0 3px 3px 0!important;
+  background:linear-gradient(180deg,#F59E0B 0%,#D97706 100%)!important;
+  pointer-events:none!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-card h4{
+  margin:0 0 14px!important;
+  padding:0 0 14px!important;
+  border-bottom:1px solid #EADCC8!important;
+  color:#18191C!important;
+  font-size:13px!important;
+  font-weight:900!important;
+  letter-spacing:.04em!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-card h4 i{
+  color:#B45309!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pm-form-grid{
+  display:grid!important;
+  gap:14px!important;
+  width:100%!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-4{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-card .field{
+  min-width:0!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-card .field label{
+  color:#27272A!important;
+  font-weight:800!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-card .field label b{
+  color:#B42318!important;
+}
+
+/* Inputs — Create Admin surface `#FFF8EB` (not muddy well `#F5EBDC`) */
+body.bo-wallet-tx.payment-method-create-page .pmc-card .field input,
+body.bo-wallet-tx.payment-method-create-page .pmc-card .field select,
+body.bo-wallet-tx.payment-method-create-page .pmc-card .field textarea,
+body.bo-wallet-tx.payment-method-create-page .report-content .pmc-card .field input,
+body.bo-wallet-tx.payment-method-create-page .report-content .pmc-card .field select,
+body.bo-wallet-tx.payment-method-create-page .report-content .pmc-card .field textarea{
+  width:100%!important;
+  max-width:none!important;
+  box-sizing:border-box!important;
+  background:#FFF8EB!important;
+  background-color:#FFF8EB!important;
+  border:1px solid #DCC9A8!important;
+  border-radius:8px!important;
+  color:#18191C!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-card .field input::placeholder,
+body.bo-wallet-tx.payment-method-create-page .pmc-card .field textarea::placeholder{
+  color:#78716C!important;
+  opacity:1!important;
+  -webkit-text-fill-color:#78716C;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-card .field input:focus,
+body.bo-wallet-tx.payment-method-create-page .pmc-card .field select:focus,
+body.bo-wallet-tx.payment-method-create-page .pmc-card .field textarea:focus{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.16)!important;
+  outline:none!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pm-upload-zone{
+  width:100%!important;
+  box-sizing:border-box!important;
+  min-height:112px!important;
+  border:1.5px dashed #DCC9A8!important;
+  border-radius:10px!important;
+  background:#FFF8EB!important;
+  color:#57534E!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pm-upload-zone:hover{
+  border-color:#D97706!important;
+  background:#FFFCF7!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pm-upload-zone>i{
+  color:#B45309!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pm-upload-zone b{
+  color:#B45309!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pm-upload-zone small{
+  color:#78716C!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-card .field textarea{
+  min-height:120px!important;
+  resize:vertical!important;
+}
+
+/* Viewport-fixed action bar — Create Admin `.mac-footer-actions` */
+body.bo-wallet-tx.payment-method-create-page .pmc-sticky-footer{
+  position:fixed!important;
+  left:var(--sidebar-w,260px)!important;
+  right:0!important;
+  bottom:0!important;
+  z-index:40!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:12px!important;
+  padding:14px 24px!important;
+  background:#FFFCF7!important;
+  border-top:1px solid #DCC9A8!important;
+  box-shadow:0 -12px 32px rgba(120,80,20,.12)!important;
+  box-sizing:border-box!important;
+}
+body.sidebar-mini.bo-wallet-tx.payment-method-create-page .pmc-sticky-footer{
+  left:var(--rail-w,72px)!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-footer-actions{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:10px!important;
+  flex-wrap:wrap!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-sticky-footer .clean-btn{
+  height:40px!important;
+  min-width:110px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  padding:0 16px!important;
+  font-weight:800!important;
+  border-radius:8px!important;
+}
+/* Ghost Cancel — Create Admin mad-btn-ghost */
+body.bo-wallet-tx.payment-method-create-page .pmc-sticky-footer .clean-btn:not(.primary){
+  background-color:#F5EBDC!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%)!important;
+  border:1px solid #DCC9A8!important;
+  color:#18191C!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06),0 2px 6px rgba(120,80,20,.08),inset 0 1px 0 rgba(255,255,255,.55)!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-sticky-footer .clean-btn:not(.primary):hover,
+body.bo-wallet-tx.payment-method-create-page .pmc-sticky-footer .clean-btn:not(.primary):focus-visible{
+  border-color:#D97706!important;
+  background-image:linear-gradient(180deg,#FFFBEB 0%,#FEF3C7 100%)!important;
+  color:#18191C!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-sticky-footer .clean-btn.primary{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
+  border:1px solid #E8901A!important;
+  color:#fff!important;
+  box-shadow:0 8px 18px rgba(217,119,6,.22), inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-sticky-footer .clean-btn.primary i{
+  font-size:16px!important;
+  line-height:1!important;
+}
+
+/* Back ghost in form head */
+body.bo-wallet-tx.payment-method-create-page .pmc-form-head .clean-btn{
+  background-color:#F5EBDC!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%)!important;
+  border:1px solid #DCC9A8!important;
+  color:#18191C!important;
+  height:40px!important;
+  padding:0 16px!important;
+  font-weight:800!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06),0 2px 6px rgba(120,80,20,.08),inset 0 1px 0 rgba(255,255,255,.55)!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pmc-form-head .clean-btn:hover,
+body.bo-wallet-tx.payment-method-create-page .pmc-form-head .clean-btn:focus-visible{
+  border-color:#D97706!important;
+  background-image:linear-gradient(180deg,#FFFBEB 0%,#FEF3C7 100%)!important;
+  color:#18191C!important;
+}
+
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-create-page .pmc-card{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.12)!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.28)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-create-page .pmc-card h4{
+  color:#F5F5F4!important;
+  border-bottom-color:rgba(255,255,255,.10)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-create-page .pmc-card h4 i{
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-create-page .pmc-card .field label{
+  color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-create-page .pmc-card .field input,
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-create-page .pmc-card .field select,
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-create-page .pmc-card .field textarea,
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-create-page .pm-upload-zone{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-create-page .pmc-sticky-footer{
+  background:rgba(56,58,70,.96)!important;
+  border-top-color:rgba(255,255,255,.12)!important;
+  box-shadow:0 -12px 32px rgba(0,0,0,.35)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-create-page .pmc-sticky-footer .clean-btn:not(.primary),
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-create-page .pmc-form-head .clean-btn{
+  background-color:#4A4C58!important;
+  background-image:linear-gradient(180deg,#4A4C58 0%,#383A46 55%,#2C2E38 100%)!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-create-page .pmc-sub{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-create-page .pmc-eyebrow{
+  color:#FBBF24!important;
+}
+
+@media (max-width:1280px){
+  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-4{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+}
+@media (max-width:1024px){
+  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-4{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
+@media (max-width:991.98px){
+  body.bo-wallet-tx.payment-method-create-page .pmc-sticky-footer{
+    left:0!important;
+  }
+}
+@media (max-width:767.98px){
+  body.bo-wallet-tx.payment-method-create-page .report-content.pmc-workspace{
+    padding:10px 10px 104px!important;
+  }
+  body.bo-wallet-tx.payment-method-create-page .pmc-form-head{
+    flex-direction:column!important;
+    align-items:stretch!important;
+  }
+  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-4{
+    grid-template-columns:1fr!important;
+  }
+  body.bo-wallet-tx.payment-method-create-page .pmc-sticky-footer{
+    padding:12px 14px!important;
+  }
+  body.bo-wallet-tx.payment-method-create-page .pmc-footer-actions{
+    width:100%!important;
+  }
+  body.bo-wallet-tx.payment-method-create-page .pmc-sticky-footer .clean-btn{
+    flex:1 1 auto!important;
+    min-width:0!important;
+  }
+}

@@ -223,7 +223,7 @@ Reference: `payment-method.html` · `body.bo-wallet-tx.payment-method-page`. Sam
 | QR | Amber `.bo-tx-link` **View** (never default blue) · `-` when empty |
 | Status | `.status-pill.active` ACTIVE · `.status-pill.off` INACTIVE |
 | Action | `.bo-tx-action-btn` **26×26** · Edit `is-edit` (amber well) · Delete `is-reject` (danger) |
-| Modal | Form wells `#F5EBDC` · focus amber ring · full-bleed ≤768 |
+| Create | Opens **full page** `payment-method-create.html?from=config` (not modal) |
 
 #### Bank Deposit Usage (locked)
 
@@ -238,6 +238,53 @@ Reference: `bank-deposit-usage.html` · `body.bo-wallet-tx.bank-deposit-usage-pa
 | Table | Peach-cream zebra · square thead · `table-layout:fixed` · inner scroll · never page overflow |
 | Status | `.status-pill.active` / `.off` (same as Payment Method) |
 | Meter | Track `#F5EBDC` · fill `#B45309` · warn `#F59E0B` · over `#EF4444` |
+
+#### Create / Edit Payment Method (locked)
+
+Reference: `payment-method-create.html` · `body.bo-wallet-tx.payment-method-create-page`. Full-page form (not modal). **Colors match Create Admin Account** layer ladder. Inherits menu permission from Bank Deposit Usage or Payment Method Config via `?from=usage|config`.
+
+**Layer ladder (required — same as Create Admin):**
+
+| Layer | Hex | Notes |
+|-------|-----|-------|
+| Canvas | continuum `#FFE8CC`→`#FFF8EB` | Atmosphere only |
+| Section card `.pmc-card` | `#FFFCF7` · border `#DCC9A8` · warm shadow · **3px amber gradient rail** | Primary frame — never flat `#FFF8EB` |
+| Input / select / textarea / dropzone | `#FFF8EB` · border `#DCC9A8` · placeholder `#78716C` | Surface rung (not muddy `#F5EBDC`) |
+| Section head | hairline `#EADCC8` · title `#18191C` · icon `#B45309` | |
+| Labels | `#27272A` · required `*` `#B42318` | |
+| Sticky footer `.pmc-sticky-footer` | `#FFFCF7` · border `#DCC9A8` · `0 -12px 32px rgba(120,80,20,.12)` | Viewport-fixed · main column only |
+| Ghost Cancel / Back | `#FFFCF7`→`#F5EBDC`→`#EDE4D4` · border `#DCC9A8` | |
+| Primary Create / Save | amber 3D · check icon · white label | |
+
+| Part | Spec |
+|------|------|
+| Shell | `bo-wallet-tx` + amber CSS + `payment-method-create.css` (not charcoal shell) |
+| Width | **Full main column** · no centered `max-width` column · cards span content width |
+| Sections | 5 cards · Create Admin lift recipe · focus amber ring `rgba(217,119,6,.16)` |
+| Grid | `.pm-grid-4` → 4 / 3 / 2 / 1 cols at 1280 / 1024 / 768 |
+| Sticky footer | **Viewport-fixed** · `left: var(--sidebar-w)` · `right:0` · `bottom:0` · does **not** cover sidebar · mini → `left: var(--rail-w)` · ≤991 → `left:0` |
+| Footer actions | Right-aligned Ghost `Cancel` + amber Primary · h `40px` |
+| Content pad | Bottom pad ≥`96px` so last card clears the fixed bar |
+| Dark | Card `#383A46` · input `#2A2C36` · footer translucent charcoal · Ghost charcoal 3D |
+
+Do **not** flatten cards + inputs to one cream, or use recessed `#F5EBDC` wells on this page.
+
+#### Bulk Adjustment / Bulk Bonus Adjustment (locked)
+
+Reference: `bulk-adjustment.html` · `bulk-bonus-adjustment.html` · `body.bo-wallet-tx.bulk-adjustment-page` / `.bulk-bonus-adjustment-page`. Operation shell (not a single listing `table-card`).
+
+| Part | Spec |
+|------|------|
+| Shell | `bo-wallet-tx` + amber CSS + `bulk-member-operation.css` + `bulk-adjustment-import.css` + charcoal layers + FOUC |
+| Content scroll | `.report-content` **overflow:auto** (override listing `overflow:hidden`) — panels stack vertically |
+| Mode tabs | `.bulk-mode-switch` / `.bulk-mode-btn` — **Status filter pills** recipe · cream 3D active · **never** cool blue `#1f5fe7` / `#f3f6fb` |
+| Panels | `.bulk-panel` / `.bulk-import-card` — surface `#FFF8EB` · border `#EADCC8` · radius `8px` · soft warm shadow |
+| Inputs | listing surface `#FFF8EB` · border `#EADCC8` · height `40px` · amber focus ring · labels `11.5px/800` uppercase |
+| Summary chips | surface tile + uppercase label + tabular value (KPI strip density) |
+| Tables | peach-cream zebra · thead `#FFE8CC` / dark `#1F2128` · square corners · money `#B45309` / `#F59E0B` |
+| Primary CTA | Search / Validate / Submit / Execute = amber Primary · Clear / Download / Export = Ghost |
+| Dropzone | dashed `#EADCC8` · amber hover/drag · icon amber (not cool gray) |
+| Status pills | valid/success green · warning/skipped orange · error/failed red · duplicate muted (Transaction status family) |
 
 Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
 
@@ -746,7 +793,8 @@ Use this when reviewing a page. Each row must exist as a Light|Dark table (or to
 | Topbar | surface, theme btn, user name/avatar, hamb, page title icon |
 | Tabs | default / active underline |
 | Filters | bar, search, selects, reset, bulk delete, status pills |
-| Cards / frames | listing panel, form section lift, Roles control card, Create Role card |
+| Cards / frames | listing panel, form section lift, Roles control card, Create Role card, Create Payment Method cards |
+| Sticky footers | Roles / Create Role / Create Payment Method (`.pmc-sticky-footer`) |
 | Fields | listing surface inputs vs form wells, placeholders, focus rings, locked |
 | Date range picker | cream panel, preset wash active, ghost head, day endpoints solid |
 | Buttons | Primary, Ghost (+ shared hover), secondary, danger, pager, chips |
@@ -756,6 +804,7 @@ Use this when reviewing a page. Each row must exist as a Light|Dark table (or to
 | KPI strip | tile, label, value, note, grid (Report family — see below) |
 | Roles | control card, select, scope, toolbar, matrix group/card, badges, sticky footer |
 | Create Role | title, cards, inputs, chips, ghost/primary, sticky footer status |
+| Create Payment Method | full-page form, wells, sticky footer Cancel + Create/Save |
 
 ### Report family KPI strip (`.report-summary-grid`, `.mre-history-kpis`)
 
@@ -815,6 +864,7 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Deposit/Withdraw page chrome locked: bank cards strip · tabs left + inline filters right · Bank `Name (account)` · no Reset/Search in filter · action 26×26 · no Pending metrics | User aligned Withdraw to Deposit shell | 2026-09-16 |
 | Deposit/Withdraw responsive 1920→375: bank strip · stacked toolbar · scrollable table · ≤1456 DATE day-only + hover time · hide secondary columns on tablet/phone | User: mid widths messy / table too short / DATE ellipsis | 2026-09-16 |
 | Withdraw Remark cell = player text only (no `Admin:` sub-line) | User: 这个也帮我移除 | 2026-09-16 |
+| Bulk Adjustment / Bulk Bonus migrated to `bo-wallet-tx` · mode tabs = Status filter pills (no cool blue) · peach-cream zebra · listing inputs · Full Light\|Dark in page CSS | User: 根据 MD 调整 Bulk Adjustment | 2026-09-16 |
 
 ### Opt-in layers for pages outside the migrated families
 

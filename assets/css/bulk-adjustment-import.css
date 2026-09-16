@@ -1,1 +1,461 @@
-.bulk-import-card{background:#FFF8EB;border:1px solid #EADCC8;border-radius:18px;padding:20px;box-shadow:0 8px 24px rgba(217,119,6,.05);margin-bottom:18px}.bulk-import-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}.bulk-import-heading h2{font-size:17px;color:#18191C;margin:0 0 5px}.bulk-import-heading p{margin:0;color:#57534E;font-size:12px}.bulk-count-badge{background:#F5EBDC;color:#57534E;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;white-space:nowrap}.template-columns{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}.template-columns span{background:#F5EBDC;border:1px solid #EADCC8;border-radius:999px;padding:7px 10px;font-size:11px;color:#57534E}.xlsx-drop{display:flex;min-height:190px;border:2px dashed #EADCC8;border-radius:16px;background:#FFF8EB;align-items:center;justify-content:center;flex-direction:column;text-align:center;cursor:pointer;padding:24px;transition:.15s}.xlsx-drop.dragover{border-color:#57534E;background:#F5EBDC}.xlsx-drop i{font-size:44px;color:#57534E;margin-bottom:8px}.xlsx-drop b{color:#18191C;font-size:15px}.xlsx-drop small{color:#57534E;margin-top:5px}.import-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}.import-summary{grid-template-columns:repeat(6,1fr)!important}.import-table-wrap{border:1px solid #EADCC8;border-radius:14px;overflow:auto;max-height:560px}.import-table{width:100%;border-collapse:collapse;min-width:1050px}.import-table th,.import-table td{padding:10px 11px;border-bottom:1px solid #F5EBDC;text-align:left;font-size:12px;vertical-align:top}.import-table th{position:sticky;top:0;background:#F5EBDC;color:#18191C;font-size:10px;text-transform:uppercase;z-index:2}.import-table .status{font-size:10px;font-weight:800;border-radius:999px;padding:4px 7px;display:inline-block}.status.valid,.status.success{background:#eaf8ef;color:#11863c}.status.warning,.status.skipped{background:#fff6e4;color:#ae6900}.status.error,.status.failed{background:#fff0f1;color:#c92d42}.status.duplicate{background:#F5EBDC;color:#57534E}.execute-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.execute-grid .field label{display:block;font-size:12px;font-weight:700;color:#18191C;margin-bottom:6px}.execute-note{margin-top:12px;padding:11px 12px;border-radius:12px;background:#F5EBDC;color:#57534E;font-size:12px}.execute-note i{margin-right:6px}.result-summary{grid-template-columns:repeat(6,1fr)!important}.row-error{background:#FFF8EB}.row-warning{background:#FFF8EB}@media(max-width:1100px){.import-summary,.result-summary{grid-template-columns:repeat(3,1fr)!important}}@media(max-width:700px){.bulk-import-heading{flex-direction:column}.bulk-import-heading .clean-btn{width:100%}.import-summary,.result-summary{grid-template-columns:1fr 1fr!important}.execute-grid{grid-template-columns:1fr}.import-actions{flex-direction:column}.import-actions button{width:100%}.bulk-import-card{padding:14px}}
+/* Bulk Adjustment / Bonus Excel import — Transaction family
+   Scope: body.bo-wallet-tx.bulk-adjustment-page | .bulk-bonus-adjustment-page
+*/
+
+body.bo-wallet-tx.bulk-adjustment-page .bulk-import-card,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-import-card{
+  background:#FFF8EB;
+  border:1px solid #EADCC8;
+  border-radius:8px;
+  padding:18px;
+  margin-bottom:16px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.04),0 1px 2px -1px rgba(0,0,0,.06),0 2px 4px rgba(0,0,0,.04);
+}
+body.bo-wallet-tx.bulk-adjustment-page .bulk-import-heading,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-import-heading{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:14px;
+}
+body.bo-wallet-tx.bulk-adjustment-page .bulk-import-heading h2,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-import-heading h2{
+  font-size:16px;
+  font-weight:800;
+  color:#18191C;
+  margin:0 0 5px;
+  text-wrap:balance;
+}
+body.bo-wallet-tx.bulk-adjustment-page .bulk-import-heading p,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-import-heading p{
+  margin:0;
+  color:#57534E;
+  font-size:12px;
+  line-height:1.45;
+}
+body.bo-wallet-tx.bulk-adjustment-page .bulk-import-heading .clean-btn,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-import-heading .clean-btn{
+  height:40px;
+  min-height:40px;
+  border-radius:8px;
+  font-size:12.5px;
+  font-weight:700;
+  white-space:nowrap;
+}
+body.bo-wallet-tx.bulk-adjustment-page .template-columns,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .template-columns{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:14px;
+}
+body.bo-wallet-tx.bulk-adjustment-page .template-columns span,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .template-columns span{
+  background:#F5EBDC;
+  border:1px solid #EADCC8;
+  border-radius:8px;
+  padding:7px 10px;
+  font-size:11px;
+  color:#57534E;
+}
+body.bo-wallet-tx.bulk-adjustment-page .xlsx-drop,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .xlsx-drop{
+  display:flex;
+  min-height:180px;
+  border:2px dashed #EADCC8;
+  border-radius:8px;
+  background:#FFF8EB;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  text-align:center;
+  cursor:pointer;
+  padding:24px;
+  transition:border-color .16s ease, background .16s ease;
+}
+body.bo-wallet-tx.bulk-adjustment-page .xlsx-drop:hover,
+body.bo-wallet-tx.bulk-adjustment-page .xlsx-drop.dragover,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .xlsx-drop:hover,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .xlsx-drop.dragover{
+  border-color:#D97706;
+  background:#FFF1DC;
+}
+body.bo-wallet-tx.bulk-adjustment-page .xlsx-drop:focus-visible,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .xlsx-drop:focus-visible{
+  outline:2px solid #D97706;
+  outline-offset:2px;
+}
+body.bo-wallet-tx.bulk-adjustment-page .xlsx-drop i,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .xlsx-drop i{
+  font-size:40px;
+  color:#D97706;
+  margin-bottom:8px;
+}
+body.bo-wallet-tx.bulk-adjustment-page .xlsx-drop b,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .xlsx-drop b{
+  color:#18191C;
+  font-size:15px;
+  font-weight:700;
+}
+body.bo-wallet-tx.bulk-adjustment-page .xlsx-drop small,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .xlsx-drop small{
+  color:#57534E;
+  margin-top:5px;
+}
+body.bo-wallet-tx.bulk-adjustment-page .import-actions,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .import-actions{
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+  margin-top:14px;
+}
+body.bo-wallet-tx.bulk-adjustment-page .import-actions .clean-btn,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .import-actions .clean-btn{
+  height:40px;
+  min-height:40px;
+  border-radius:8px;
+  font-size:12.5px;
+  font-weight:700;
+}
+body.bo-wallet-tx.bulk-adjustment-page .import-summary,
+body.bo-wallet-tx.bulk-adjustment-page .result-summary,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .import-summary,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .result-summary{
+  grid-template-columns:repeat(6,minmax(0,1fr))!important;
+}
+body.bo-wallet-tx.bulk-adjustment-page .import-table-wrap,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .import-table-wrap{
+  border:1px solid #EADCC8;
+  border-radius:8px;
+  overflow:auto;
+  max-height:min(560px,50vh);
+  background:#FFF8EB;
+}
+body.bo-wallet-tx.bulk-adjustment-page .import-table,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .import-table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:1050px;
+}
+body.bo-wallet-tx.bulk-adjustment-page .import-table th,
+body.bo-wallet-tx.bulk-adjustment-page .import-table td,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .import-table th,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .import-table td{
+  padding:10px 12px;
+  border-bottom:1px solid #EADCC8;
+  text-align:left;
+  font-size:12px;
+  vertical-align:top;
+  color:#18191C;
+  font-weight:700;
+}
+body.bo-wallet-tx.bulk-adjustment-page .import-table th,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .import-table th{
+  position:sticky;
+  top:0;
+  background:#FFE8CC;
+  color:#6b360c;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  z-index:2;
+  border-radius:0;
+}
+body.bo-wallet-tx.bulk-adjustment-page .import-table tbody tr:nth-child(even),
+body.bo-wallet-tx.bulk-bonus-adjustment-page .import-table tbody tr:nth-child(even){
+  background:#FFF1DC;
+}
+body.bo-wallet-tx.bulk-adjustment-page .import-table tbody tr:hover,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .import-table tbody tr:hover{
+  background:#FFE8CC;
+}
+body.bo-wallet-tx.bulk-adjustment-page .import-table .status,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .import-table .status{
+  font-size:10px;
+  font-weight:800;
+  border-radius:999px;
+  padding:4px 7px;
+  display:inline-block;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+body.bo-wallet-tx.bulk-adjustment-page .status.valid,
+body.bo-wallet-tx.bulk-adjustment-page .status.success,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .status.valid,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .status.success{
+  background:#DCFCE7;
+  color:#166534;
+}
+body.bo-wallet-tx.bulk-adjustment-page .status.warning,
+body.bo-wallet-tx.bulk-adjustment-page .status.skipped,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .status.warning,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .status.skipped{
+  background:#FFEDD5;
+  color:#EA580C;
+}
+body.bo-wallet-tx.bulk-adjustment-page .status.error,
+body.bo-wallet-tx.bulk-adjustment-page .status.failed,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .status.error,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .status.failed{
+  background:#FEE2E2;
+  color:#B91C1C;
+}
+body.bo-wallet-tx.bulk-adjustment-page .status.duplicate,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .status.duplicate{
+  background:#F5EBDC;
+  color:#57534E;
+}
+body.bo-wallet-tx.bulk-adjustment-page .execute-grid,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+body.bo-wallet-tx.bulk-adjustment-page .execute-grid .field label,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid .field label{
+  display:block;
+  font-size:11.5px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:#57534E;
+  margin-bottom:6px;
+}
+body.bo-wallet-tx.bulk-adjustment-page .execute-grid .field input,
+body.bo-wallet-tx.bulk-adjustment-page .execute-grid .field select,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid .field input,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid .field select{
+  box-sizing:border-box;
+  width:100%;
+  height:40px;
+  min-height:40px;
+  padding:0 12px;
+  border:1px solid #EADCC8;
+  border-radius:8px;
+  background:#FFF8EB;
+  color:#18191C;
+  font-size:13.5px;
+  font-weight:600;
+}
+body.bo-wallet-tx.bulk-adjustment-page .execute-grid .field input:hover,
+body.bo-wallet-tx.bulk-adjustment-page .execute-grid .field input:focus,
+body.bo-wallet-tx.bulk-adjustment-page .execute-grid .field select:hover,
+body.bo-wallet-tx.bulk-adjustment-page .execute-grid .field select:focus,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid .field input:hover,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid .field input:focus,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid .field select:hover,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid .field select:focus{
+  border-color:#D97706;
+  outline:none;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14);
+}
+body.bo-wallet-tx.bulk-adjustment-page .execute-note,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-note{
+  margin-top:12px;
+  padding:11px 12px;
+  border-radius:8px;
+  background:#F5EBDC;
+  border:1px solid #EADCC8;
+  color:#57534E;
+  font-size:12px;
+  line-height:1.45;
+}
+body.bo-wallet-tx.bulk-adjustment-page .execute-note i,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-note i{
+  margin-right:6px;
+  color:#D97706;
+}
+body.bo-wallet-tx.bulk-adjustment-page .row-error,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .row-error{
+  background:#FEF3F2;
+}
+body.bo-wallet-tx.bulk-adjustment-page .row-warning,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .row-warning{
+  background:#FFF7ED;
+}
+
+/* ---- Dark ---- */
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .bulk-import-card,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-import-card{
+  background:#383A46;
+  border-color:rgba(255,255,255,.14);
+  box-shadow:none;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .bulk-import-heading h2,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-import-heading h2,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .xlsx-drop b,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .xlsx-drop b{
+  color:#F5F5F4;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .bulk-import-heading p,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-import-heading p,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .xlsx-drop small,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .xlsx-drop small,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .execute-grid .field label,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid .field label{
+  color:#D4D4D8;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .template-columns span,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .template-columns span{
+  background:#2A2C36;
+  border-color:rgba(255,255,255,.14);
+  color:#D4D4D8;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .xlsx-drop,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .xlsx-drop{
+  background:#2A2C36;
+  border-color:rgba(255,255,255,.14);
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .xlsx-drop:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .xlsx-drop.dragover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .xlsx-drop:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .xlsx-drop.dragover{
+  border-color:#F59E0B;
+  background:rgba(245,158,11,.10);
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .xlsx-drop i,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .xlsx-drop i{
+  color:#FBBF24;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .import-table-wrap,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .import-table-wrap{
+  background:#383A46;
+  border-color:rgba(255,255,255,.14);
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .import-table th,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .import-table th{
+  background:#1F2128;
+  color:#E7E5E4;
+  border-bottom-color:rgba(255,255,255,.14);
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .import-table td,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .import-table td{
+  color:#F5F5F4;
+  border-bottom-color:rgba(255,255,255,.12);
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .import-table tbody tr:nth-child(odd),
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .import-table tbody tr:nth-child(odd){
+  background:#3A3C48;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .import-table tbody tr:nth-child(even),
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .import-table tbody tr:nth-child(even){
+  background:#434653;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .import-table tbody tr:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .import-table tbody tr:hover{
+  background:#444654;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .status.valid,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .status.success,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .status.valid,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .status.success{
+  background:rgba(16,185,129,.18);
+  color:#6EE7B7;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .status.warning,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .status.skipped,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .status.warning,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .status.skipped{
+  background:rgba(245,158,11,.20);
+  color:#FBBF24;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .status.error,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .status.failed,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .status.error,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .status.failed{
+  background:rgba(248,113,113,.18);
+  color:#F87171;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .status.duplicate,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .status.duplicate{
+  background:#2A2C36;
+  color:#A1A1AA;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .execute-grid .field input,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .execute-grid .field select,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid .field input,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid .field select{
+  background:#2A2C36;
+  border-color:rgba(255,255,255,.14);
+  color:#F5F5F4;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .execute-grid .field input:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .execute-grid .field input:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .execute-grid .field select:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .execute-grid .field select:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid .field input:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid .field input:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid .field select:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid .field select:focus{
+  border-color:#F59E0B;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18);
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .execute-note,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-note{
+  background:#2A2C36;
+  border-color:rgba(255,255,255,.14);
+  color:#D4D4D8;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .execute-note i,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-note i{
+  color:#FBBF24;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .row-error,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .row-error{
+  background:rgba(248,113,113,.10);
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .row-warning,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .row-warning{
+  background:rgba(245,158,11,.10);
+}
+
+@media(max-width:1100px){
+  body.bo-wallet-tx.bulk-adjustment-page .import-summary,
+  body.bo-wallet-tx.bulk-adjustment-page .result-summary,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .import-summary,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .result-summary{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+}
+@media(max-width:768px){
+  body.bo-wallet-tx.bulk-adjustment-page .bulk-import-heading,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-import-heading{
+    flex-direction:column;
+  }
+  body.bo-wallet-tx.bulk-adjustment-page .bulk-import-heading .clean-btn,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-import-heading .clean-btn{
+    width:100%;
+  }
+  body.bo-wallet-tx.bulk-adjustment-page .import-summary,
+  body.bo-wallet-tx.bulk-adjustment-page .result-summary,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .import-summary,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .result-summary{
+    grid-template-columns:1fr 1fr!important;
+  }
+  body.bo-wallet-tx.bulk-adjustment-page .execute-grid,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid{
+    grid-template-columns:1fr;
+  }
+  body.bo-wallet-tx.bulk-adjustment-page .import-actions,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .import-actions{
+    flex-direction:column;
+  }
+  body.bo-wallet-tx.bulk-adjustment-page .import-actions .clean-btn,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .import-actions .clean-btn{
+    width:100%;
+    min-height:44px;
+    height:44px;
+  }
+  body.bo-wallet-tx.bulk-adjustment-page .bulk-import-card,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-import-card{
+    padding:14px;
+  }
+  body.bo-wallet-tx.bulk-adjustment-page .execute-grid .field input,
+  body.bo-wallet-tx.bulk-adjustment-page .execute-grid .field select,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid .field input,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .execute-grid .field select{
+    min-height:44px;
+    height:44px;
+  }
+}

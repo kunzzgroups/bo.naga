@@ -14,8 +14,8 @@
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.3" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.5" rel="stylesheet"/>
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/bo-wallet-transaction-amber.css?v=1.0.90" rel="stylesheet"/>
-<link href="assets/css/bank-deposit-usage.css?v=1.0.8" rel="stylesheet"/>
+<link href="assets/css/bo-wallet-transaction-amber.css?v=1.0.92" rel="stylesheet"/>
+<link href="assets/css/bank-deposit-usage.css?v=1.0.18" rel="stylesheet"/>
 <link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-shell.css?v=1.0.0" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-legacy.css?v=1.0.1" rel="stylesheet" />
@@ -57,14 +57,15 @@
 <div class="field bank-usage-keyword-field"><label>Bank / Display Name</label><input class="form-control" id="usageKeyword" placeholder="Search bank or account"/></div>
 </div>
 <div class="user-toolbar-actions">
+<a class="clean-btn primary" href="payment-method-create.html?from=usage"><i class="bi bi-plus-lg"></i> Create Payment Method</a>
 <a class="clean-btn" href="payment-method.html"><i class="bi bi-gear"></i> Payment Method Config</a>
 <button class="clean-btn" id="usageRefresh" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
 </div>
 </div>
 <div class="table-wrap">
 <table class="report-table bank-usage-table">
-<thead><tr><th>Bank / Method</th><th>Account</th><th>Transaction Range</th><th>Deposits</th><th>Withdrawals</th><th>Net Used / Max</th><th>Daily Threshold</th><th>Usage</th><th>Status</th></tr></thead>
-<tbody id="usageBody"><tr><td colspan="9">Loading...</td></tr></tbody>
+<thead><tr><th>Bank</th><th>Account</th><th>Transaction Range</th><th>Deposits</th><th>Withdrawals</th><th>Net Used / Max</th><th>Daily Threshold</th><th>Usage</th><th>Status</th><th>Show</th><th>Action</th></tr></thead>
+<tbody id="usageBody"><tr><td colspan="11">Loading...</td></tr></tbody>
 </table>
 </div>
 <div class="table-footer"><div class="table-info" id="usageInfo">Loading bank usage...</div></div>
@@ -76,10 +77,10 @@
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
-<script src="assets/js/auth.js?v=1.0.65"></script>
+<script src="assets/js/auth.js?v=1.0.66"></script>
 <script src="assets/js/reports.js?v=1.0.29"></script>
 <script src="assets/js/bo-date-range-bank-usage.js?v=20260812-060640-v2"></script>
-<script src="assets/js/bank-deposit-usage.js?v=1.0.5"></script>
+<script src="assets/js/bank-deposit-usage.js?v=1.0.12"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>

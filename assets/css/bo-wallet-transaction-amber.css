@@ -4023,68 +4023,88 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .bo-tx-link:hov
 }
 
 /* Edit = control-well chip (same family as ledger); Delete reuses is-reject */
-html body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit{
+html body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit,
+html body.bo-wallet-tx.bank-deposit-usage-page .report-table .bo-tx-action-btn.is-edit{
   background:var(--bo-control-well,#F5EBDC)!important;
   border:1px solid var(--bo-border,#EADCC8)!important;
   color:#B45309!important;
   box-shadow:none!important;
 }
-html body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit:hover{
+html body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit:hover,
+html body.bo-wallet-tx.bank-deposit-usage-page .report-table .bo-tx-action-btn.is-edit:hover{
   background:rgba(217,119,6,.12)!important;
   border-color:#D97706!important;
   color:#92400E!important;
 }
-html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit{
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .report-table .bo-tx-action-btn.is-edit{
   background:#2A2C36!important;
   border-color:rgba(255,255,255,.14)!important;
   color:#FBBF24!important;
 }
-html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit:hover{
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .report-table .bo-tx-action-btn.is-edit:hover{
   background:rgba(245,158,11,.16)!important;
   border-color:#F59E0B!important;
   color:#FDE68A!important;
 }
 
 /* Modal — form well ladder + radius 8px (Transaction / Roles recipe) */
-body.bo-wallet-tx.payment-method-page .pm-modal-panel{
+body.bo-wallet-tx.payment-method-page .pm-modal-panel,
+body.bo-wallet-tx.bank-deposit-usage-page .pm-modal-panel{
   border-radius:12px!important;
   background:var(--bo-surface,#FFF8EB)!important;
   border:1px solid var(--bo-border,#EADCC8)!important;
 }
-body.bo-wallet-tx.payment-method-page .pm-modal-head{
+body.bo-wallet-tx.payment-method-page .pm-modal-head,
+body.bo-wallet-tx.bank-deposit-usage-page .pm-modal-head{
   background:var(--bo-surface,#FFF8EB)!important;
   border-bottom:1px solid var(--bo-border,#EADCC8)!important;
 }
 body.bo-wallet-tx.payment-method-page .pm-modal .field input,
 body.bo-wallet-tx.payment-method-page .pm-modal .field select,
-body.bo-wallet-tx.payment-method-page .pm-modal .field textarea{
-  background:#F5EBDC!important;
-  border:1px solid #EADCC8!important;
+body.bo-wallet-tx.payment-method-page .pm-modal .field textarea,
+body.bo-wallet-tx.bank-deposit-usage-page .pm-modal .field input,
+body.bo-wallet-tx.bank-deposit-usage-page .pm-modal .field select,
+body.bo-wallet-tx.bank-deposit-usage-page .pm-modal .field textarea{
+  background:#FFF8EB!important;
+  border:1px solid #DCC9A8!important;
   border-radius:8px!important;
   color:var(--bo-text,#18191C)!important;
 }
 body.bo-wallet-tx.payment-method-page .pm-modal .field input:focus,
 body.bo-wallet-tx.payment-method-page .pm-modal .field select:focus,
-body.bo-wallet-tx.payment-method-page .pm-modal .field textarea:focus{
+body.bo-wallet-tx.payment-method-page .pm-modal .field textarea:focus,
+body.bo-wallet-tx.bank-deposit-usage-page .pm-modal .field input:focus,
+body.bo-wallet-tx.bank-deposit-usage-page .pm-modal .field select:focus,
+body.bo-wallet-tx.bank-deposit-usage-page .pm-modal .field textarea:focus{
   border-color:#D97706!important;
-  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;
   outline:none!important;
 }
 html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal-panel,
-html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal-head{
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal-head,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .pm-modal-panel,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .pm-modal-head{
   background:#383A46!important;
   border-color:rgba(255,255,255,.12)!important;
 }
 html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .field input,
 html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .field select,
-html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .field textarea{
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .field textarea,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .pm-modal .field input,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .pm-modal .field select,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .pm-modal .field textarea{
   background:#2A2C36!important;
   border-color:rgba(255,255,255,.14)!important;
   color:#F5F5F4!important;
 }
 html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .field input:focus,
 html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .field select:focus,
-html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .field textarea:focus{
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .field textarea:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .pm-modal .field input:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .pm-modal .field select:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .pm-modal .field textarea:focus{
   border-color:#F59E0B!important;
   box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
 }
@@ -4104,11 +4124,13 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .fiel
   body.bo-wallet-tx.payment-method-page .pm-main-table th:nth-child(5),
   body.bo-wallet-tx.payment-method-page .pm-main-table td:nth-child(5){display:none!important}
   body.bo-wallet-tx.payment-method-page .pm-main-table{min-width:760px!important}
-  body.bo-wallet-tx.payment-method-page .pm-modal{
+  body.bo-wallet-tx.payment-method-page .pm-modal,
+  body.bo-wallet-tx.bank-deposit-usage-page .pm-modal{
     padding:0!important;
     align-items:stretch!important;
   }
-  body.bo-wallet-tx.payment-method-page .pm-modal-panel{
+  body.bo-wallet-tx.payment-method-page .pm-modal-panel,
+  body.bo-wallet-tx.bank-deposit-usage-page .pm-modal-panel{
     width:100%!important;
     max-width:100%!important;
     max-height:100%!important;
