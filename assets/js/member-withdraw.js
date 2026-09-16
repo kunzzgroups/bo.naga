@@ -61,25 +61,77 @@
   function bindEvenFillObserver(){const scroll=tableBodyScroll();if(!scroll||scroll._boEvenFillObs)return;scroll._boEvenFillObs=new ResizeObserver(()=>{clearTimeout(scroll._boEvenFillTimer);scroll._boEvenFillTimer=setTimeout(evenFillRowHeights,32);});scroll._boEvenFillObs.observe(scroll);}
   function publishPagerMeta(pagination,pageSize){const card=document.querySelector('.table-card');if(!card)return;const total=Number(pagination?.totalElements);if(Number.isFinite(total)&&total>=0)card.dataset.boTotal=String(total);else delete card.dataset.boTotal;const size=Number(pageSize);if(Number.isFinite(size)&&size>0)card.dataset.boPageSize=String(size);else delete card.dataset.boPageSize;card.dataset.boPage=String(page);}
   function query(){const params=new URLSearchParams();const keyword=document.getElementById('withdrawKeyword')?.value.trim();const status=document.getElementById('withdrawStatus')?.value.trim();const from=document.getElementById('withdrawFrom')?.value;const to=document.getElementById('withdrawTo')?.value;const size=resolvePageSize(document.getElementById('withdrawSize')?.value);if(keyword)params.set('keyword',keyword);if(status)params.set('status',status);if(from)params.set('dateFrom',from);if(to)params.set('dateTo',to);params.set('page',page);params.set('size',String(size));return params.toString();}
-  function metric(id,value){const el=document.getElementById(id);if(el)el.textContent=value;} function renderSummary(summary,pendingCount,pendingAmount){metric('wdPendingCount',num(pendingCount).toLocaleString());metric('wdPendingAmount',money(pendingAmount));}
-  function pendingQuery(){const params=new URLSearchParams();const keyword=document.getElementById('withdrawKeyword')?.value.trim();const from=document.getElementById('withdrawFrom')?.value;const to=document.getElementById('withdrawTo')?.value;if(keyword)params.set('keyword',keyword);params.set('status','PENDING');if(from)params.set('dateFrom',from);if(to)params.set('dateTo',to);params.set('page','1');params.set('size','1');return params.toString();}
-  async function resolvePending(mainData){const selected=String(document.getElementById('withdrawStatus')?.value||'').toUpperCase();const source=selected==='PENDING'?mainData:(await api(endpoint('MEMBER_WITHDRAW_LIST')+'?'+pendingQuery())).data||{};return {count:num(source?.pagination?.totalElements),amount:num(source?.summary?.totalAmount)};}
+  async function renderBankCards(){
+    const host=document.getElementById('withdrawBankCards');
+    if(!host)return;
+    try{
+      const methods=await paymentMethods();
+      if(!methods.length){
+        host.innerHTML='<article class="deposit-bank-card is-empty"><div class="deposit-bank-total"><span>Banks</span><strong>0</strong></div><div class="bo-summary-note">No payment methods</div></article>';
+        return;
+      }
+      host.innerHTML=methods.map(m=>{
+        const name=String(m.bankName||m.displayName||('Bank #'+m.id)).trim();
+        const total=num(m.bankUsage);
+        const max=num(m.maxAmount);
+        const pctRaw=max>0?(Math.max(0,total)/max)*100:0;
+        const pct=Math.min(100,pctRaw);
+        const fillClass=max>0?(pctRaw>=100?'is-over':pctRaw>=80?'is-warn':''):'';
+        const mark=(name.replace(/[^A-Za-z0-9]/g,'')||'B').charAt(0).toUpperCase();
+        const account=m.accountNumber?String(m.accountNumber).trim():'';
+        const method=m.displayName&&String(m.displayName).trim()!==name?String(m.displayName).trim():(m.methodType||'');
+        const meta=[method,account].filter(Boolean).join(' · ')||'Payment method';
+        const meter=max>0
+          ?`<div class="deposit-bank-meter" title="${esc(money(total)+' / '+money(max))}">
+              <div class="deposit-bank-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct.toFixed(0)}" aria-label="Max amount usage for ${esc(name)}">
+                <div class="deposit-bank-fill ${fillClass}" style="width:${pct.toFixed(2)}%"></div>
+              </div>
+              <div class="deposit-bank-meter-line"><span>Max ${money(max)}</span><span>${pctRaw.toFixed(0)}%</span></div>
+            </div>`
+          :`<div class="deposit-bank-meter is-empty">
+              <div class="deposit-bank-track" aria-hidden="true"><div class="deposit-bank-fill" style="width:0%"></div></div>
+              <div class="deposit-bank-meter-line"><span>Max amount</span><span>No max</span></div>
+            </div>`;
+        return `<article class="deposit-bank-card" data-bank-id="${esc(m.id)}">
+          <div class="deposit-bank-card-head">
+            <div class="deposit-bank-mark" aria-hidden="true">${esc(mark)}</div>
+            <div class="deposit-bank-id">
+              <b>${esc(name)}</b>
+              <small>${esc(meta)}</small>
+            </div>
+          </div>
+          <div class="deposit-bank-total">
+            <strong>${money(total)}</strong>
+          </div>
+          ${meter}
+        </article>`;
+      }).join('');
+    }catch(e){
+      host.innerHTML=`<article class="deposit-bank-card is-empty"><div class="deposit-bank-total"><span>Banks</span><strong>-</strong></div><div class="bo-summary-note">${esc(e.message||'Failed to load')}</div></article>`;
+    }
+  }
+  function formatBankLabel(row){
+    const name=String(row?.bankName||'-').trim()||'-';
+    const account=String(row?.bankAccount||'').trim();
+    if(name==='-') return '-';
+    return account?`${name} (${account})`:name;
+  }
   function statusClass(status){status=String(status||'').toUpperCase();if(status==='APPROVED')return'active';if(status==='REJECTED')return'off';return'';}
-  function render(rows,pagination){currentRows=rows;const body=document.getElementById('withdrawBody');if(!body)return;if(!rows.length)body.innerHTML='<tr><td colspan="9">No withdraw request found.</td></tr>';else body.innerHTML=rows.map(r=>{const pending=String(r.status||'').toUpperCase()==='PENDING';return `<tr><td>${esc(dt(r.createdAt||r.created_at))}</td><td>${esc(r.username||'-')}<br><small>ID: ${esc(r.memberId)} ${r.mobile?'• '+esc(r.mobile):''}</small></td><td>${money(r.amount)}</td><td>${esc(r.bankName||'-')}<br><small>${esc(r.accountName||'')} ${r.bankAccount?'• '+esc(r.bankAccount):''}</small>${r.fundingPaymentMethod?`<br><small><b>Funding:</b> ${esc(r.fundingPaymentMethod)}</small>`:''}${r.gatewayChannelId?`<br><small><b>Payout Gateway:</b> Channel #${esc(r.gatewayChannelId)}</small>`:''}</td><td>${esc(r.referenceNo||'-')}</td><td>${esc(r.remark||'-')} ${r.adminRemark?'<br><small>Admin: '+esc(r.adminRemark)+'</small>':''}</td><td><span class="status-pill ${statusClass(r.status)}">${esc(r.status||'-')}</span></td><td>${esc(dt(r.processedAt))}</td><td>${pending?`<div class="bo-tx-actions"><button type="button" class="bo-tx-action-btn is-approve" data-approve="${esc(r.id)}" title="Approve" aria-label="Approve"><i class="bi bi-check-lg" aria-hidden="true"></i></button><button type="button" class="bo-tx-action-btn is-reject" data-reject="${esc(r.id)}" title="Reject" aria-label="Reject"><i class="bi bi-x-lg" aria-hidden="true"></i></button></div>`:`<a class="clean-btn" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}">Ledger</a>`}</td></tr>`;}).join('');totalPages=Number(pagination?.totalPages)||1;const total=Number(pagination?.totalElements)||rows.length;const pageSize=resolvePageSize(document.getElementById('withdrawSize')?.value);publishPagerMeta(pagination,pageSize);document.getElementById('withdrawPager').innerHTML=pageButtons(page,totalPages);document.getElementById('withdrawPageInfo').textContent=`${total.toLocaleString()} request(s)`;document.getElementById('withdrawPrevBtn').disabled=page<=1;document.getElementById('withdrawNextBtn').disabled=page>=totalPages;requestAnimationFrame(()=>scheduleEvenFill());}
-  async function load(){const body=document.getElementById('withdrawBody');if(body)body.innerHTML='<tr><td colspan="9">Loading withdraw requests...</td></tr>';try{const json=await api(endpoint('MEMBER_WITHDRAW_LIST')+'?'+query());const data=json.data||{};render(Array.isArray(data.content)?data.content:[],data.pagination||{});const pending=await resolvePending(data);renderSummary(data.summary||{},pending.count,pending.amount);}catch(e){renderSummary({},0,0);if(body)body.innerHTML='<tr><td colspan="9" class="text-danger">'+esc(e.message||'Load failed')+'</td></tr>';}}
+  function render(rows,pagination){currentRows=rows;const body=document.getElementById('withdrawBody');if(!body)return;if(!rows.length)body.innerHTML='<tr><td colspan="9">No withdraw request found.</td></tr>';else body.innerHTML=rows.map(r=>{const pending=String(r.status||'').toUpperCase()==='PENDING';const bankLabel=formatBankLabel(r);return `<tr><td>${esc(dt(r.createdAt||r.created_at))}</td><td>${esc(r.username||'-')}</td><td>${money(r.amount)}</td><td><b>${esc(bankLabel)}</b></td><td>${esc(r.referenceNo||'-')}</td><td>${esc(r.remark||'-')}</td><td><span class="status-pill ${statusClass(r.status)}">${esc(r.status||'-')}</span></td><td>${esc(dt(r.processedAt))}</td><td>${pending?`<div class="bo-tx-actions"><button type="button" class="bo-tx-action-btn is-approve" data-approve="${esc(r.id)}" title="Approve" aria-label="Approve"><i class="bi bi-check-lg" aria-hidden="true"></i></button><button type="button" class="bo-tx-action-btn is-reject" data-reject="${esc(r.id)}" title="Reject" aria-label="Reject"><i class="bi bi-x-lg" aria-hidden="true"></i></button></div>`:`<div class="bo-tx-actions"><a class="bo-tx-action-btn is-ledger" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}" title="Ledger" aria-label="Ledger"><i class="bi bi-journal-text" aria-hidden="true"></i></a></div>`}</td></tr>`;}).join('');totalPages=Number(pagination?.totalPages)||1;const pageSize=resolvePageSize(document.getElementById('withdrawSize')?.value);publishPagerMeta(pagination,pageSize);document.getElementById('withdrawPager').innerHTML=pageButtons(page,totalPages);document.getElementById('withdrawPrevBtn').disabled=page<=1;document.getElementById('withdrawNextBtn').disabled=page>=totalPages;requestAnimationFrame(()=>scheduleEvenFill());}
+  async function load(){const body=document.getElementById('withdrawBody');if(body)body.innerHTML='<tr><td colspan="9">Loading withdraw requests...</td></tr>';try{const json=await api(endpoint('MEMBER_WITHDRAW_LIST')+'?'+query());const data=json.data||{};render(Array.isArray(data.content)?data.content:[],data.pagination||{});}catch(e){if(body)body.innerHTML='<tr><td colspan="9" class="text-danger">'+esc(e.message||'Load failed')+'</td></tr>';}}
   async function action(id,type){
     const row=currentRows.find(x=>String(x.id)===String(id));
     if(type==='reject'){
       const adminRemark=await BO_DIALOG.prompt(`Enter admin remark to reject this withdraw request${row?' #'+row.id+' ('+money(row.amount)+')':''}.`,'',{title:'Admin Remark',inputLabel:'Admin remark',confirmText:'Continue'});if(adminRemark===null)return;
       if(!(await BO_DIALOG.confirm('Confirm reject this withdraw request?',{title:'Confirm Withdrawal Rejection'})))return;
-      try{const json=await api(endpoint('MEMBER_WITHDRAW_REJECT')+'/'+encodeURIComponent(id),{method:'POST',headers:{'Content-Type':'application/json','X-Admin-Username':String(BO_AUTH.user()?.username||'ADMIN'),...BO_AUTH.authHeader()},body:JSON.stringify({adminRemark})});BO_DIALOG.alert(json.message||'Done',{title:'Withdraw Updated'});await load();document.dispatchEvent(new CustomEvent('bo:wallet-request-updated',{detail:{type:'withdraw',action:type,id:String(id)}}));}catch(e){BO_DIALOG.alert(e.message||'Action failed',{title:'Withdraw Action Failed',type:'error'});}return;
+      try{const json=await api(endpoint('MEMBER_WITHDRAW_REJECT')+'/'+encodeURIComponent(id),{method:'POST',headers:{'Content-Type':'application/json','X-Admin-Username':String(BO_AUTH.user()?.username||'ADMIN'),...BO_AUTH.authHeader()},body:JSON.stringify({adminRemark})});BO_DIALOG.alert(json.message||'Done',{title:'Withdraw Updated'});await load();await renderBankCards();document.dispatchEvent(new CustomEvent('bo:wallet-request-updated',{detail:{type:'withdraw',action:type,id:String(id)}}));}catch(e){BO_DIALOG.alert(e.message||'Action failed',{title:'Withdraw Action Failed',type:'error'});}return;
     }
     try{
       const methods=await paymentMethods();
       const picked=await approvalPopup({title:'Final Withdrawal Confirmation',subtitle:'Double-confirm the member payout destination and the casino bank funding this withdrawal.',methods,defaultBankId:'',amount:row?.amount,bankLabel:'Casino Funding Bank (Bank Usage Deduction)',confirmText:'Approve Withdrawal',warning:'Only the selected casino funding bank affects Bank Deposit Usage. Approved deposit = + usage; approved withdrawal = - usage. The member bank above is the payout destination only.',summaryHtml:`<div class="bank-approval-summary"><b>Member:</b> ${esc(row?.username||'-')} (#${esc(row?.memberId||'-')})<br><b>Withdraw Amount:</b> ${money(row?.amount)}<div class="withdraw-destination-detail"><div><span>Member Destination Bank</span><b>${esc(row?.bankName||'-')}</b></div><div><span>Account Name</span><b>${esc(row?.accountName||'-')}</b></div><div><span>Account Number</span><b>${esc(row?.bankAccount||'-')}</b></div><div><span>Reference</span><b>${esc(row?.referenceNo||'-')}</b></div></div></div>`});
       if(!picked)return;
       if(!(await BO_DIALOG.confirm(`Final check: approve ${money(row?.amount)} withdrawal and deduct -${money(row?.amount)} from ${picked.paymentMethodLabel||'the selected funding bank'}? Bank Usage will change from ${money(picked.bankUsage)} to ${money(picked.remainingUsage)}.`,{title:'Confirm Withdrawal Approval'})))return;
-      const json=await api(endpoint('MEMBER_WITHDRAW_APPROVE')+'/'+encodeURIComponent(id),{method:'POST',headers:{'Content-Type':'application/json','X-Admin-Username':String(BO_AUTH.user()?.username||'ADMIN'),...BO_AUTH.authHeader()},body:JSON.stringify({adminRemark:picked.adminRemark,fundingPaymentMethodId:picked.paymentMethodId})});BO_DIALOG.alert(json.message||'Done',{title:'Withdraw Updated'});await load();document.dispatchEvent(new CustomEvent('bo:wallet-request-updated',{detail:{type:'withdraw',action:type,id:String(id)}}));
+      const json=await api(endpoint('MEMBER_WITHDRAW_APPROVE')+'/'+encodeURIComponent(id),{method:'POST',headers:{'Content-Type':'application/json','X-Admin-Username':String(BO_AUTH.user()?.username||'ADMIN'),...BO_AUTH.authHeader()},body:JSON.stringify({adminRemark:picked.adminRemark,fundingPaymentMethodId:picked.paymentMethodId})});BO_DIALOG.alert(json.message||'Done',{title:'Withdraw Updated'});await load();await renderBankCards();document.dispatchEvent(new CustomEvent('bo:wallet-request-updated',{detail:{type:'withdraw',action:type,id:String(id)}}));
     }catch(e){BO_DIALOG.alert(e.message||'Action failed',{title:'Withdraw Action Failed',type:'error'});}
   }
   // Action buttons are rendered dynamically, so use delegated clicks.
@@ -142,7 +194,11 @@
     document.getElementById('withdrawNextBtn')?.addEventListener('click',()=>{if(page<totalPages){page++;load();}});
     document.getElementById('withdrawPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(!b)return;const n=Number(b.dataset.page);if(n>=1&&n<=totalPages&&n!==page){page=n;load();}});
     bindEvenFillObserver();
-    requestAnimationFrame(()=>requestAnimationFrame(load));
+    requestAnimationFrame(()=>requestAnimationFrame(async ()=>{
+      try{await renderBankCards();}catch(e){}
+      clearLockedAutoSize();
+      load();
+    }));
     let resizeTimer=0;
     window.addEventListener('resize',()=>{
       if(!isAutoPageSize(document.getElementById('withdrawSize')?.value)) return;
