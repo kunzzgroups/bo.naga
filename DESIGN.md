@@ -328,6 +328,172 @@ Recipe used (reuse it for the remaining `main-merchant-*` pages):
 - `main-merchant-settlement.html` is in the family by `data-access-page` even though its sidebar key is a report key, so it inherits the whole block by linking the file. Its `.mre-*` report chrome lives in `main-merchant-report-executive.css`.
 - The modal scrims (`.modal-clean.mad-modal`, `.sidebar-overlay`) keep a dark translucent `rgba(15,23,42,.55)` in both themes. That is a backdrop, not chrome, and reads as neutral — leave it.
 
+**Modal mount point and action-row states (2026-09-16, user-reported on Merchant Detail).** Two
+defects, both invisible to a colour sweep and to a static read of the stylesheet.
+
+- **A modal must be a child of `<body>`, not of `main`.** `main.report-main` carries
+  `position:relative; z-index:1`, so it is a **stacking context at z-index 1**. A modal nested
+  inside it can raise its own `z-index` to `30000` and still paint *below* the sidebar
+  (`z-index:1040`, or `1000` once the `:has(.mad-modal.show)` rule lowers it) — the sidebar sat
+  fully lit over the scrim while the topbar and content were correctly dimmed. Measured on the
+  user's screenshot: the sidebar sampled exactly `#FFE8CC` (undimmed) while the topbar sampled
+  `#FFF8EB` under `rgba(15,23,42,.55)`. Fixed by moving the three modals in
+  `main-merchant-detail.html` out of `</main>`/`.report-shell` to body level — which is where
+  the reference page `main-admin-detail.html` already puts them. No CSS or JS depended on the
+  old nesting (every reference is `getElementById`).
+  **Still unfixed on two pages:** `main-admin-security.html` and `main-merchant-security.html`
+  mount their `masDetailModal` inside `main` and have the same symptom.
+- **An ID-level default rule silences every class-level `:hover`.** The credit modal's Cancel
+  carried a resting-state rule at two IDs
+  (`html:not([data-bo-theme="dark"]) body #madCreditModal #madCreditForm .mad-btn-ghost`), which
+  out-ranks *any* `:hover` at class level — so Cancel had no hover feedback at all in light and
+  only a text-colour change in dark. The hover/active steps now carry the same two IDs. This is
+  DESIGN.md's own "ID level" trap (see trap 3 in the opt-in layers) surfacing inside a family
+  file: when a control is pinned by an ID, its state changes belong at the same level.
+- **The credit/reclaim action row is contested across two files.** `main-admin-detail-executive.css`
+  still holds a navy-era block for `.mac-adjust-panel .mad-modal-actions .mad-btn-*` at (0,5,1)
+  `!important` — including `background:#0E2F52` on the primary's **hover** and a literal cyan
+  `rgba(33,166,215,.45)` on the ghost's. The family's amber rules for the same buttons sit at
+  (0,4,1), so they won every state *except* hover: Confirm Top Up rendered correct amber at rest
+  and turned navy `#0E2F52` on hover (the user's screenshot was the hover state). The locked
+  states are now stated in `main-merchant-detail-executive.css` at (0,5,1) / (0,6,1) so they win
+  on specificity rather than load order. Verified by hovering with a real mouse move and reading
+  `getComputedStyle`, both themes — `getComputedStyle` without a hover cannot see this class of
+  defect, and neither can a search for cool hues (the resting state is correct).
+  **Outstanding on the admin page:** `main-admin-detail.html`'s own Adjust Credit modal
+  (`macAdjustModal`) still measures hover `#0E2F52` — the same legacy block, same cause.
+
+**Record Amount currency group — settlement (2026-09-16, user-reported).** The `.msr-amount-group`
+control in `main-merchant-settlement.html` was the last navy-era `.msr-*` component on a migrated
+page. Measured resting state on the live site: shell `#FFFFFF` (pure white) on a cool-grey
+`#D0D5DD` border, the MYR segment on the **canvas** cream `#FFF1DC`, the inner input on the control
+well — three unrelated surfaces in one 42px control, with a white hairline visible between them
+because the inner halves render 40px inside a 42px shell. Its focus ring was a **literal cyan**
+(`box-shadow:0 0 0 3px rgba(33,166,215,.12)`, `border-color:var(--bo-cyan,#21A6D7)`).
+
+- **This one is a copy-paste miss, not a new derivation.** `main-provider-credentials-executive.css:607-682`
+  already carried the correct retint for the *same* Record Amount dialog (Provider Credentials has
+  the same control), values and all. Settlement was simply never given its copy. The fix in
+  `main-merchant-detail-executive.css` copies those values rather than re-deriving them — when a
+  component exists on two pages, read the one that is already right.
+- **Where the fix goes matters.** The `.msr-*` rules live in `main-merchant-report-executive.css`,
+  which is shared with `main_merchant_report` / `main-merchant-balance` /
+  `main-merchant-transactions` / `main-provider-credentials` — retinting it in place would repaint
+  four pages outside this page. The override therefore sits in the merchant family file, scoped
+  `body.main-admin-detail-page[data-access-page="main_merchant_detail"]`, which is the only
+  `.msr-amount-group` page carrying that attribute value. The selectors carry `.msr-payment-fields`
+  as well, because the rule being beaten
+  (`.msr-payment-fields .msr-amount-group.mac-input-group`) sits at (0,4,1) and the plain
+  `.msr-amount-group` form only reaches (0,3,1).
+- **A pinned control width and a narrower column.** `reports.css` pins the shared date trigger to
+  `260px`; `.msr-payment-row` gave the date column `232px`, so the trigger overhung its own column
+  by 28px **into the amount field** — which is what made the two fields read as colliding. 260px is
+  this page's documented control width, so the column was widened to the trigger, not the reverse.
+- **Native number steppers** sat under the right-aligned value. The family already hides them on
+  merchant amount inputs (`main-admin-detail-executive.css:6881`), so the same rule was extended
+  here rather than inventing a spacing fix.
+
+Verified: computed colour of shell / addon / input / divider / placeholder in both themes, plus the
+focus state (amber `#D97706` + `rgba(217,119,6,.12)`, divider following to amber) and a cool-hue
+sweep over the whole dialog — **0 hits in both themes**, and the two controls measure the same
+height with the date trigger flush inside its column.
+Note the **date field stays on its own locked recipe** (`#FFF8EB` / `#EADCC8`) while the amount sits
+on the control well (`#F5EBDC` / `#F0E4D0`): that difference is the documented date-picker trigger
+recipe, not a miss — the same page's Remark textarea is on the well, so the amount group now agrees
+with the field it belongs to.
+
+**Repayments-due counter clipped by the button it sits on (2026-09-16, user-reported on Merchant
+Profit).** `#mprRepayBadge` — the red count on the topbar repay link — rendered as a red **wedge**
+at the button's corner with a half-cut digit. The badge's own box was correct the whole time
+(17px pill, `place-items:center`, digit centred to 0.05px); what was wrong was that
+`main-merchant-detail-executive.css` puts `overflow:hidden!important` on every `.bo-theme-btn`
+(locked toggle chrome, there to keep the toggle's icon inside the rounded square), and the repay
+link reuses that class for its geometry. A corner badge overhangs by design, so it was clipped to
+the part inside the button.
+
+- **The tell is that the visible red is not the badge box.** Measured on the user's screenshot the
+  "1" sat ~2px up-and-right of the red shape's centre — which reads as a centring bug and is not
+  one. Before "fixing" an off-centre badge digit, compare the digit against the badge's *box*, not
+  against the painted region: a clipped badge and an off-centre digit look identical in a
+  screenshot.
+- Fixed with an exception beside the clipper
+  (`… .bo-theme-btn:not`-style scoping is not enough here — the badge button needs the geometry and
+  only the clip removed, so it is a follow-up rule at `.bo-theme-btn.mpr-repay-btn`, (0,4,1)
+  against the base's (0,3,1), so load order cannot decide it). The theme toggle keeps
+  `overflow:hidden` — verified after the change.
+- The badge's own sizing was also made font-independent: `line-height:14px` inside an 18px box let
+  the digit's vertical position follow the font's ascent/descent (it drifted up to 2px at some
+  zoom levels). `line-height:1` + the grid centring pins it — measured `dy` 0.05px for `1`, `12`
+  and `99+`. Size is now `17px` at `top/right:-7px` (so it sits on the corner rather than over the
+  glyph), digit `10.5px/800` — the locked scale's smallest size, matching the status pill.
+- Verified both themes: badge renders whole, ring is `#FFF8EB` light / `#383A46` dark, overhang
+  6.2px, 5.8px of clear space to the theme toggle, still inside the topbar.
+- **Not changed, and worth a decision later:** the repay link is visually a twin of the theme
+  toggle (same 36×36 cream rounded square, same 18px icon) and it sits in a topbar that already
+  reads as a row of similar rounded squares, so the red counter is the only thing marking it as an
+  alert. Giving the button itself an alert tone when a count exists (the documented danger recipe,
+  `#FEF3F2` / `rgba(239,51,64,.35)` / `#B42318`) would make it read without the badge, but that
+  touches the locked topbar cluster and was left for the owner to call.
+
+**The Action column clips on a laptop — `min-width` is inert under `table-layout:fixed` (2026-09-16,
+user-reported on Merchant Profit).** On a 1551px window (the user's laptop: a 1939px screenshot is
+1.25× DPR, so the CSS viewport is 1939/1.25) the ledger's last column cut the edit/delete buttons
+off at the panel edge.
+
+- **The cause is a declaration that never applied.** `main-merchant-profit.css` protected the column
+  with `width:6%; min-width:88px` — but every listing table in this system is
+  `table-layout:fixed` (locked: DESIGN.md → Data tables), and in fixed layout a cell's `min-width`
+  is **ignored entirely**: the column takes `6%` of the table and shrinks with everything else.
+  Measured content box for the action cell: 55px at 1551, 39px at 1280, 31px at 1152 — against a
+  68px requirement (two 40px icon buttons), clipped by the panel's `overflow:hidden`. The panel's
+  vertical-scroll frame is untouched, so there was nothing to scroll: it simply cut.
+- **The fix is a px `width`, not a percentage and not `min-width`.** In fixed layout a px width IS
+  honoured, and the percentage columns absorb the difference. `width:88px` (the value the old
+  `min-width` always meant) holds the column at exactly 88px from 1551 down to 1152 — content box
+  70px against 68px needed, 9px right gap, no clipping, no horizontal scrollbar. A percentage
+  cannot do this job: the column needs ~7.1% at a 1551 window but ~10.1% at 1152, so any single
+  percentage either wastes space or clips at the narrow end.
+  **Rule: a column that carries fixed-width controls needs a px width and `table-layout:fixed` is
+  what makes that safe. Do not "protect" such a column with `min-width` — under fixed layout it is
+  silently inert, which is worse than no protection because it reads as handled.**
+- Verified 1918 / 1551 / 1440 / 1366 / 1280 / 1152: column 88px (95 at 1918), content fits with a
+  9px gap, the `Action` header is not clipped, and the wrap gains no horizontal scroll.
+
+**Modal mount point — the rest of the pages (2026-09-16, third report of the same defect).** The
+user hit this class three times (`main-merchant-detail`, then `menu-management`), so the whole repo
+was swept instead of waiting for the next report. **Nine pages still mounted modals inside
+`main.report-main`** and were moved to body level:
+
+`admin-user`, `compliance-policy`, `menu-management`, `payment-gateway`, `payment-method`, `role`,
+`social`, `main-admin-security`, `main-merchant-security`
+
+(sweep: any page whose first `.modal-clean` container sits before `</main>`). The move is the same
+one recorded above — cut the modal block out of `</main>`/`.report-shell` and paste it after the
+shell's closing `</div>` — and every page was then checked in the browser: modal's parent is `BODY`
+and `document.elementFromPoint()` at the sidebar's centre returns the scrim, not `report-nav`.
+
+**Two traps in doing it mechanically — both cost a pass:**
+
+- **A modal container's opening tag can share a line with its own panel**, e.g.
+  `admin-user.html` had `<div class="modal-clean admin-create-modal" id="adminCreateModal"><div class="modal-clean-panel …">`.
+  A line filter that excludes lines containing `panel` (to skip `-panel`/`-close`/`-body`
+  sub-elements) therefore **skips that container entirely** — the sweep reported one modal on
+  `admin-user` and missed the other. The browser check caught it (`adminCreateModal` still
+  `parent: MAIN`). **Do not identify modal containers by a text filter on one line; count
+  `.modal-clean` elements in the DOM** (and filter sub-elements by class, not by substring).
+- **A slice that re-includes the line you already emitted duplicates the closing tags.** The first
+  attempt at `admin-user` produced two `</main>` and 79/80 divs. Always assert **equal `<div` and
+  `</div` counts inside the moved block *and* across the whole file** after the write — the
+  in-block balance alone was true both times, and only the file-level count revealed the
+  double-emit. `git checkout -- <page>` restored it and the second attempt passed.
+
+Method that worked, per page: locate the first container and the last non-blank line before
+`</main>`; assert in-block div balance; assert the shell's closing `</div>` follows `</main>`;
+rewrite as `head + [</main>, </div>] + note + block + tail`; then re-assert whole-file tag balance.
+Two pages needed their closing tags handled by hand because `</main>` and the shell `</div>` sat on
+**one line** (`payment-gateway.html`: `</main></div>`), which also defeats a `line == '</main>'`
+test — match with `in`, not `==`.
+
 **Row avatar (2026-09-15 — merchant AND admin, unified).** The tile is a neutral index marker, not a colour-coded one: light `#F5EBDC` / `#6b360c`, dark `#2A2C36` / `#E7E5E4`. The every-third-row tint is **deleted** — it encoded row position, not data, and a colour that means nothing teaches the eye to ignore the ones that do (the Status pill, the money columns). Colour survives on exactly one avatar variant: a **suspended** row (`#FEE2E2` / `#B91C1C` light, `rgba(239,68,68,.14)` / `#FCA5A5` dark), which agrees with the Status pill instead of contradicting it. Initials come from the company **name** (`avatarInitials()` in `main-merchant-detail.js`), not the code — the code is already printed beside the tile, so repeating it made a 40×40 saturated block carry no information.
 **Unified across both families.** The same treatment is applied to the Admin list (`main-admin-detail.html`) in `main-admin-detail-executive.css`, where one thing differs: `.is-self` is **kept amber** because on that page it means "this is your own account" — that is real information, so the neutral rule is written `:not(.is-self)` and the amber tile survives. Its previous every-third-row sky tint is deleted there too, which also removes the light-only-rule leak into dark mode recorded above.
 
@@ -669,3 +835,135 @@ Verified by sweeping every rendered element's computed colour on the page in bot
 - Cool `#fff` / `#FBFCFE` / `#F1F5F9` chrome on cream form pages.
 - Invent a different User Name pill, theme-toggle size, or primary gradient per page.
 - Assume writing tokens in MD alone paints the page — CSS must implement and win specificity wars.
+
+**Menu Management panel tabs — the selected panel was invisible (2026-09-16, user-reported).** The
+MAIN / BO segmented control at the top of `menu-management.html` rendered as two identical cream
+cards: measured fill `#FFF8EB`, border `1px #EADCC8`, colour `#18191C` on **the active and the
+inactive tab alike**. Only the icon colour and the small count pill hinted at which panel was
+selected — the raised chip that is supposed to mark it was on both.
+
+- **Cause: `bo-ui-standard.js` classifies buttons by their label.** It added
+  `.bo-ui-button`/`.bo-ui-button-secondary` to both tabs, and `bo-charcoal-primitives.css` then
+  paints every `.bo-ui-button-secondary` as a cream surface button. That rule carries the same
+  class count as the tab rules in `menu-management-executive.css` and the charcoal layer loads
+  later, so it won every state and flattened the selection. Same family as the documented ghost
+  out-ranking a primary (trap 10 in the opt-in layers).
+- **Naming one bo-ui class is not enough.** `.menu-panel-tab.bo-ui-button` only *ties* with the
+  primitives layer and loses on source order — which produced a half-fixed state where the fill
+  went transparent but the 1px border stayed. The tabs always carry **both** classes, so the
+  selectors name both (`.bo-ui-button.bo-ui-button-secondary`), which wins outright.
+- **`:not(.active)` on the unselected block is load-bearing.** Without it the base also matches the
+  selected tab, and being stated after the selected block it wins their shared declarations —
+  measured: the selected tab's amber label came back muted in dark mode. That is DESIGN.md's
+  trap-10 rule again, and it is why the base blocks are state-qualified rather than colour-only.
+- **A `background-color` win is not a background win.** The state rules above still lost the fill to
+  a later `.bo-ui-button-secondary` declaration that **no readable stylesheet accounts for** —
+  `bootstrap.min.css` is cross-origin, so a `cssRules` sweep cannot see it and "which rule wins"
+  cannot always be enumerated. Clearing `background-image` explicitly in both branches settled it.
+  When a computed-colour fix does not take, clear the shorthand and the image too before assuming
+  the selector lost.
+- **Verification needed a real click.** A Playwright locator click on the tab timed out (the control
+  was not actionable under the stub) and a coordinate click did not register, so the state was
+  checked by calling the page's **own** handler — `document.getElementById('menuTabBo').click()` —
+  and re-reading computed styles in a separate evaluate. Reading only the initial paint is not
+  enough here: the first read races the page's own async render and reports the fill on the wrong
+  tab. After a click the states track correctly in both directions, both themes.
+- Result: selected = raised cream (`#FFF8EB` light / `#2A2C36` dark — the same segmented recipe as
+  `.nm-status-btn` in the New/Edit Menu modal) + amber label + amber icon + amber count wash;
+  unselected = transparent on the track + muted, no border. The Refresh / New Menu buttons are
+  untouched. `menu-management-executive.css` 2.1.6 → 2.2.1.
+- **Left alone for the owner to call:** the `2 Groups · 9 Menus` badge still wears the full amber
+  accent (wash + `rgba(217,119,6,.30)` border + `#B45309` text), i.e. the same accent as the primary
+  CTA, for a static read-out — it is the loudest thing in the row. That treatment comes from the
+  **shared** `bo-charcoal-legacy.css` rule for `.users-found-badge` ("Count badge, ledger
+  multi-select trigger…"), so demoting it on this page alone would diverge from every other page
+  that shows one; it should be a repo-wide decision.
+
+**Sidebar "lock" did not survive a page change (2026-09-16, user-reported on merchant Roles).** The
+user reported that after clicking through to Roles & Permissions the sidebar would not stay locked.
+The button was not broken: clicking the hamburger does toggle `body.sidebar-mini` and the rail
+measures 280px → **72px** (verified). The class was simply **never persisted** — so collapsing the
+sidebar and then clicking a submenu link landed you on a page with a full-width sidebar again, which
+reads exactly as "the lock doesn't work".
+
+- Fixed in `assets/js/reports.js` with `localStorage.bo_sidebar_mini`: read and applied at script
+  execution (the script is at the end of the body, so the class lands before first paint and there is
+  no expanded flash), written on every toggle, and re-applied when the viewport returns to desktop —
+  the resize handler only ever *stripped* the class, so the state was lost for good once you dipped
+  below the 992px desktop threshold.
+- Verified end to end in the browser: fresh load 280 / lock 72 + pref `1` / **navigate to another
+  page → still 72** / navigate back → 72 / unlock → pref `0` and 280 after the next load.
+- The state is one global preference, not per-page: a user who locks the sidebar keeps it locked
+  everywhere until they unlock. That is the intent (it is a personal layout preference), but it is
+  worth knowing that a support report of "the sidebar is stuck as icons" is now this key, and the
+  recovery is one more click on the hamburger.
+- **Pin hygiene, same trap as the stylesheets:** `reports.js` was referenced by **147 pages at two
+  different versions** (`1.0.25` ×141, `1.0.26` ×6). Unifying them matters more than usual here,
+  because a page left on the old pin silently keeps the *unpersisted* behaviour and the bug looks
+  like it only happens on some pages. All references moved to `1.0.27` in the same pass.
+
+**Sidebar highlighted the wrong item on Merchant Roles / Security (2026-09-16, user-reported).** On
+`main-merchant-roles.html` as a MAIN account, the sidebar marked **3.1 Merchants** as current while
+the page was Roles & Permissions, and the Merchant flyout showed the same wrong chip.
+
+- **Cause: an over-broad drill-down alias in `sidebarActivePage()` (`auth.js:111`).** The active L2
+  item is matched by **filename** (`pageFile(sidebarActivePage()) === pageFile(m.url)`), and that
+  function aliases Merchant drill-downs to `main-merchant-detail.html` so a child page keeps the
+  Merchant item lit. The list included `main-merchant-roles.html`, `main-merchant-role-create.html`
+  and `main-merchant-security.html` — but Roles & Permissions (3.2) and Security & Audit (3.4) have
+  **their own Merchant submenu entries**, so the alias pointed the highlight at a *different* page
+  than the one you were on. **The admin side already had this right** — `main-admin-security.html`
+  was never aliased to `main-admin-detail.html`, and `main-admin-role-create.html` maps to
+  `menu-permission.html` (its own family) rather than to the detail page. The merchant list simply
+  over-included; it now matches the admin shape: the two pages keep their own entries, and
+  `main-merchant-role-create.html` follows its parent (`main-merchant-roles.html`).
+- **Do not "fix" this in the second alias site.** `auth.js:~254` maps the same filenames to
+  `main-merchant-detail.html` for **permission** inheritance, not for highlighting — that one is
+  deliberate and was left alone. Two lists, same filenames, opposite intent.
+- **`main-merchant-visibility.js` is the reason these three pages exist for MAIN only.** It deletes
+  the roles/security/role-create links and redirects those pages to the merchant list for
+  **non-MAIN/ROOT** users, so for a delegated admin the "Merchants" highlight was correct all along —
+  which is why the alias looked right when it was written. It only misfires for MAIN/ROOT, the one
+  case where those pages are actually reachable.
+- Verified by swapping a stubbed copy in **at the real filename** (the verify harness serves every
+  page as `.tmp-v-<name>`, so no page can ever match a menu URL and the highlight is untestable
+  that way) and reading the rendered nav: the active item is now `main-merchant-roles.html`. The
+  original file was restored immediately after; its only diff is the version pins.
+- Pins: `auth.js` was at **three** different versions (`1.0.61` ×126, `1.0.62` ×2, `1.0.63` ×8, plus
+  a date-style `20260907` ×2) — unified to `1.0.64` across all 138 pages.
+
+### Table zebra on the MAIN panel pages (2026-09-16, owner request)
+
+"All tables on the main pages must have zebra." They did not: measured on
+`main-admin-detail` / `main-merchant-detail` / `main-merchant-profit`, every body row was
+`background: transparent` on one panel colour, separated only by hairlines — a wide row was hard
+to follow across. Only the report family (a faint amber wash) and the transaction family
+(`bo-wallet-transaction-amber.css`) had any rhythm.
+
+- **New shared layer: `assets/css/bo-table-zebra.css`**, linked as the **last** stylesheet on the
+  27 `main-*` / `main_*.html` pages that actually contain a `<table>` (12 more have none and were
+  left alone). The scope is the link, not the selector — that is what keeps the blast radius at
+  exactly those pages.
+- **Values are the locked ones**, so every listing in the panel now stripes alike:
+  light odd `#FFF8EB` / even `#FFF1DC` / hover `#FFE8CC`; dark odd `#3A3C48` / even `#434653` /
+  hover `#444654`. These are the `--bo-table-*` values from
+  `.interface-design/system.md` → Patterns → Data tables → Transaction listing table, re-declared
+  as `--bo-zebra-*` in this layer. The report family's own faint amber wash (`rgba(217,119,6,.045)`)
+  loses to this by specificity, so the family no longer has a second, different rhythm.
+- **The stripe is painted on the cells, not on the `<tr>`.** A row background is covered by any
+  cell that sets its own — the hover rules, `.value-positive`/`.value-negative`, the avatar tints —
+  whereas painting the cells makes the stripe the base layer those sit on. It also keeps the
+  `border-collapse` hairlines crisp.
+- **Hover is restated inside this layer, after the stripes.** The pages' own `tr:hover td` rules sit
+  at a lower specificity than the striping here, and a stripe that out-ranks the hover is how a
+  table stops feeling interactive. Verified with a real mouse move: light row `#FFF1DC` → `#FFE8CC`,
+  dark `#3A3C48`/`#434653` → `#444654`, both matching the locked hover token.
+- **Semantic rows keep their meaning.** `.is-suspended-row` is excluded from the stripes *and* its
+  cells are cleared, because its red tint is painted on the `<tr>` — clearing the cells lets it
+  through (verified: cells measure transparent, the row tint still shows). `.total` is excluded but
+  deliberately **not** cleared: its fill lives on the `td` (`tr.total td`), so a transparent
+  override would have erased the total row. The single colspan empty-state row (`:has(> td.mad-empty)`)
+  is not striped.
+- Verified both themes on four pages across three families: `main-admin-detail`,
+  `main-merchant-detail`, `main-merchant-profit`, `main_merchant_report` — odd/even alternate to the
+  exact token values, hover intact, suspended row intact.

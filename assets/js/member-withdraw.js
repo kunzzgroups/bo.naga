@@ -79,14 +79,14 @@
     const from=document.getElementById('withdrawFrom')?.value||'';
     const to=document.getElementById('withdrawTo')?.value||'';
     while(guard++<500){
-      const params=new URLSearchParams({status:'APPROVED',page:String(p),size:'100'});
+      const params=new URLSearchParams({page:String(p),size:'100'});
       if(from)params.set('dateFrom',from);
       if(to)params.set('dateTo',to);
       const json=await api(endpoint('MEMBER_WITHDRAW_LIST')+'?'+params);
       const d=json.data||{};
       const rows=d.content||d.items||d.list||[];
-      all.push(...rows);
-      const pg=d.pagination||d;
+      all.push(...rows.filter(r=>String(r?.status||'').toUpperCase()!=='REJECTED'));
+      const pg=json.pagination||d.pagination||d;
       const totalPages=Number(pg.totalPages||1)||1;
       if(p>=totalPages||!rows.length)break;
       p++;
@@ -104,7 +104,7 @@
       }
       host.innerHTML=methods.map(m=>{
         const name=String(m.bankName||m.displayName||('Bank #'+m.id)).trim();
-        const total=withdrawals.reduce((sum,r)=>String(r?.fundingPaymentMethodId??'')===String(m.id)?sum+Math.abs(num(r.amount)):sum,0);
+        const total=withdrawals.reduce((sum,r)=>{const rid=String(r?.fundingPaymentMethodId??r?.paymentMethodId??'').trim();const names=[r?.fundingPaymentMethod,r?.paymentMethod,r?.paymentMethodDisplayName,r?.paymentMethodBankName,r?.bankName].map(v=>String(v??'').trim().toLowerCase()).filter(Boolean);const keys=[m.id,m.displayName,m.bankName,m.accountName,m.accountNumber,m.payId].map(v=>String(v??'').trim().toLowerCase()).filter(Boolean);return (rid&&rid===String(m.id))||names.some(v=>keys.includes(v))?sum+Math.abs(num(r.amount)):sum;},0);
         const max=num(m.maxAmount);
         const pctRaw=max>0?(Math.max(0,total)/max)*100:0;
         const pct=Math.min(100,pctRaw);
@@ -182,6 +182,13 @@
     }
   });
 
+  async function refreshTxTabCounts(){
+    const from=document.getElementById('withdrawFrom')?.value||'';
+    const to=document.getElementById('withdrawTo')?.value||'';
+    const status=document.getElementById('withdrawStatus')?.value||'';
+    async function count(key){const params=new URLSearchParams({page:'1',size:'1'});if(from)params.set('dateFrom',from);if(to)params.set('dateTo',to);if(status)params.set('status',status);const json=await api(endpoint(key)+'?'+params);const d=json.data||{};const pg=json.pagination||d.pagination||d;const n=Number(pg.totalElements);if(Number.isFinite(n))return Math.max(0,n);const rows=d.content||d.items||d.list||[];return rows.length;}
+    try{const [d,w]=await Promise.all([count('MEMBER_DEPOSIT_LIST'),count('MEMBER_WITHDRAW_LIST')]);const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=String(v);};set('boTxCountDeposit',d);set('boTxCountWithdraw',w);set('boTxCountAll',d+w);}catch(_e){}
+  }
   function syncTxTypeTabs(defaultType){
     const params=new URLSearchParams(location.search);
     const type=params.get('tab')==='all'?'all':defaultType;
@@ -196,21 +203,9 @@
       const n=Number(String(el?.textContent||'').replace(/[^\d.-]/g,''));
       return Number.isFinite(n)?Math.max(0,Math.round(n)):0;
     };
-    const paint=()=>{
-      const d=read('[data-header-pending-deposit]');
-      const w=read('[data-header-pending-withdraw]');
-      const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=String(v);};
-      set('boTxCountDeposit',d);
-      set('boTxCountWithdraw',w);
-      set('boTxCountAll',d+w);
-      const track=document.querySelector('.bo-tx-tabs');
-      if(track&&window.BO_SEG_BOUNCE) window.BO_SEG_BOUNCE.mount(track,{button:':scope > .bo-tx-tab',anim:'bounce'});
-    };
-    paint();
-    const obs=new MutationObserver(paint);
-    document.querySelectorAll('[data-header-pending-deposit],[data-header-pending-withdraw]').forEach(el=>{
-      obs.observe(el,{childList:true,characterData:true,subtree:true});
-    });
+    refreshTxTabCounts();
+    const track=document.querySelector('.bo-tx-tabs');
+    if(track&&window.BO_SEG_BOUNCE) window.BO_SEG_BOUNCE.mount(track,{button:':scope > .bo-tx-tab',anim:'bounce'});
   }
 
   document.addEventListener('DOMContentLoaded',()=>{

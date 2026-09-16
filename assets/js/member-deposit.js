@@ -228,7 +228,7 @@
   function matchDepositBank(row,methods){
     const finalId=String(row?.approvedPaymentMethodId??row?.paymentMethodId??'').trim();
     if(finalId){const exact=methods.find(m=>String(m.id)===finalId);if(exact)return exact;}
-    const candidates=[row?.approvedPaymentMethod,row?.paymentMethod,row?.paymentMethodName,row?.methodName,row?.bankName].map(norm).filter(Boolean);
+    const candidates=[row?.approvedPaymentMethod,row?.paymentMethod,row?.paymentMethodDisplayName,row?.paymentMethodBankName,row?.paymentMethodAccountName,row?.paymentMethodAccountNumber,row?.paymentMethodPayId,row?.paymentMethodName,row?.methodName,row?.bankName].map(norm).filter(Boolean);
     for(const c of candidates){const exact=methods.find(m=>paymentKeys(m).includes(c));if(exact)return exact;}
     for(const c of candidates){const byType=methods.filter(m=>norm(m.methodType)===c);if(byType.length===1)return byType[0];}
     return null;
@@ -238,14 +238,14 @@
     const from=document.getElementById('depositFrom')?.value||'';
     const to=document.getElementById('depositTo')?.value||'';
     while(guard++<500){
-      const params=new URLSearchParams({status:'APPROVED',page:String(p),size:'100'});
+      const params=new URLSearchParams({page:String(p),size:'100'});
       if(from)params.set('dateFrom',from);
       if(to)params.set('dateTo',to);
       const json=await api(endpoint('MEMBER_DEPOSIT_LIST')+'?'+params);
       const d=json.data||{};
       const rows=d.content||d.items||d.list||[];
-      all.push(...rows);
-      const pg=d.pagination||d;
+      all.push(...rows.filter(r=>String(r?.status||'').toUpperCase()!=='REJECTED'));
+      const pg=json.pagination||d.pagination||d;
       const totalPages=Number(pg.totalPages||1)||1;
       if(p>=totalPages||!rows.length)break;
       p++;
@@ -257,14 +257,14 @@
     const from=document.getElementById('depositFrom')?.value||'';
     const to=document.getElementById('depositTo')?.value||'';
     while(guard++<500){
-      const params=new URLSearchParams({status:'APPROVED',page:String(p),size:'100'});
+      const params=new URLSearchParams({page:String(p),size:'100'});
       if(from)params.set('dateFrom',from);
       if(to)params.set('dateTo',to);
       const json=await api(endpoint('MEMBER_WITHDRAW_LIST')+'?'+params);
       const d=json.data||{};
       const rows=d.content||d.items||d.list||[];
-      all.push(...rows);
-      const pg=d.pagination||d;
+      all.push(...rows.filter(r=>String(r?.status||'').toUpperCase()!=='REJECTED'));
+      const pg=json.pagination||d.pagination||d;
       const totalPages=Number(pg.totalPages||1)||1;
       if(p>=totalPages||!rows.length)break;
       p++;
@@ -288,7 +288,7 @@
       const d=json.data||{};
       const rows=(d.content||d.items||d.list||[]).filter(r=>r.paymentMethodId!=null&&String(r.paymentMethodId).trim()!=='');
       all.push(...rows);
-      const pg=d.pagination||d;
+      const pg=json.pagination||d.pagination||d;
       const totalPages=Number(pg.totalPages||1)||1;
       if(p>=totalPages||!(d.content||d.items||d.list||[]).length)break;
       p++;
@@ -420,6 +420,25 @@
     }catch(e){BO_DIALOG.alert(e.message||'Action failed',{title:'Deposit Action Failed',type:'error'});}
   }
   document.addEventListener('click',e=>{const proof=e.target.closest?.('[data-proof-preview]');if(proof){e.preventDefault();e.stopPropagation();openProofPreview(proof.dataset.proofPreview);return;}const a=e.target.closest?.('[data-approve]'); const r=e.target.closest?.('[data-reject]'); if(a)action(a.dataset.approve,'approve'); if(r)action(r.dataset.reject,'reject');});
+  async function refreshTxTabCounts(){
+    const from=document.getElementById('depositFrom')?.value||'';
+    const to=document.getElementById('depositTo')?.value||'';
+    const status=document.getElementById('depositStatus')?.value||'';
+    async function count(key){
+      const params=new URLSearchParams({page:'1',size:'1'});
+      if(from)params.set('dateFrom',from); if(to)params.set('dateTo',to); if(status)params.set('status',status);
+      const json=await api(endpoint(key)+'?'+params);
+      const d=json.data||{}; const pg=json.pagination||d.pagination||d;
+      const n=Number(pg.totalElements);
+      if(Number.isFinite(n))return Math.max(0,n);
+      const rows=d.content||d.items||d.list||[]; return rows.length;
+    }
+    try{
+      const [d,w]=await Promise.all([count('MEMBER_DEPOSIT_LIST'),count('MEMBER_WITHDRAW_LIST')]);
+      const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=String(v);};
+      set('boTxCountDeposit',d);set('boTxCountWithdraw',w);set('boTxCountAll',d+w);
+    }catch(_e){}
+  }
   function syncTxTypeTabs(defaultType){
     const params=new URLSearchParams(location.search);
     const type=params.get('tab')==='all'?'all':defaultType;
@@ -434,27 +453,15 @@
       const n=Number(String(el?.textContent||'').replace(/[^\d.-]/g,''));
       return Number.isFinite(n)?Math.max(0,Math.round(n)):0;
     };
-    const paint=()=>{
-      const d=read('[data-header-pending-deposit]');
-      const w=read('[data-header-pending-withdraw]');
-      const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=String(v);};
-      set('boTxCountDeposit',d);
-      set('boTxCountWithdraw',w);
-      set('boTxCountAll',d+w);
-      const track=document.querySelector('.bo-tx-tabs');
-      if(track&&window.BO_SEG_BOUNCE) window.BO_SEG_BOUNCE.mount(track,{button:':scope > .bo-tx-tab',anim:'bounce'});
-    };
-    paint();
-    const obs=new MutationObserver(paint);
-    document.querySelectorAll('[data-header-pending-deposit],[data-header-pending-withdraw]').forEach(el=>{
-      obs.observe(el,{childList:true,characterData:true,subtree:true});
-    });
+    refreshTxTabCounts();
+    const track=document.querySelector('.bo-tx-tabs');
+    if(track&&window.BO_SEG_BOUNCE) window.BO_SEG_BOUNCE.mount(track,{button:':scope > .bo-tx-tab',anim:'bounce'});
   }
 
   document.addEventListener('DOMContentLoaded',()=>{
     syncTxTypeTabs('deposit');
     let keywordTimer=0;
-    const runSearch=()=>{page=1;clearLockedAutoSize();load();renderBankCards();};
+    const runSearch=()=>{page=1;clearLockedAutoSize();load();renderBankCards();refreshTxTabCounts();};
     document.getElementById('depositKeyword')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();clearTimeout(keywordTimer);runSearch();}});
     document.getElementById('depositKeyword')?.addEventListener('input',()=>{clearTimeout(keywordTimer);keywordTimer=setTimeout(runSearch,350);});
     document.getElementById('depositStatus')?.addEventListener('change',runSearch);
