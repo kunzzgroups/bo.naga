@@ -1134,3 +1134,42 @@ now `linear-gradient(0deg,#FCD34D…)` at specificity 5001, and the navy and cya
   the cream gradient, sidebar `#FFE8CC`, and a sweep of every element inside the dialog, the content
   column and the sidebar reports **0 elements painting a retired colour**. Two neighbouring pages
   that load the same sheet (`main-merchant-create`, `main-admin-edit`) keep their own values.
+
+**Site-wide: zero retired-colour literals left in any stylesheet (2026-09-16, owner-directed —
+"那就全站统一这个设计吧").** The earlier fixes all found the same thing one file at a time: this
+repo's *tokens* had been remapped to charcoal+amber, but **literals** never were, so navy/cyan and
+off-system cool greys survived on states nobody looked at (hovers, focus rings, shadows, dark fills).
+A full inventory found **379 such literals across 16 stylesheets**; the mapping table
+(`.tmp-retired-map.md` at the time) recorded which literal becomes which ladder value, split by
+light/dark scope with alpha mapped 1:1, and four agents swept disjoint file sets — each proving its
+edit was value-only (equal +/- per file, identical line/EOL/BOM counts, and a re-run of the inventory
+showing 0 for its files).
+
+| family | literals | → light | → dark |
+|---|---|---|---|
+| cyan washes / rings | `rgba(33,166,215,α)` ×~74 | `rgba(217,119,6,α)` | `rgba(245,158,11,α)` |
+| navy shadows | `rgba(18,59,102,α)`, `rgba(14,47,82,α)` | `rgba(120,80,20,α)` | `rgba(0,0,0,α)` |
+| accent | `#21A6D7` ×27, `#1B94C2` | `#D97706` | `#F59E0B` |
+| navy text | `#123B66` ×28, `#0E2F52` | `#18191C` (fill `#E8901A`) | `#F5F5F4` |
+| navy-era dark fills | `#08131F`, `#0B1624`, `#0B1626`, `#132337`, `#102030`, `#152536`, `#243B55` | — | `#2C2E38` / `#1F2128` / `#2A2C36` / `#383A46` / tip `#40424E` |
+| "white chrome" on cream | `#F8FAFC`, `#F5F8FB`, `#F0F7FB`, `#EFF6FF`, `#F7FBFF`, `#EEF2F6`, `#EEF1F7` | `#FFF8EB` / `#F5EBDC` | `#2A2C36` / `#383A46` |
+| slate text | `#64748B`, `#475569`, `#94A3B8`, `#334155` | `#71717A` / `#57534E` / `#78716C` | `#A1A1AA` / `#E7E5E4` |
+| cool borders | `#D0D5DD`, `#CFD8E6` | `#DCC9A8` / `#EADCC8` | `rgba(255,255,255,.12)` |
+
+- Three of the agents' judgment calls disagreed with each other, and the review corrected them:
+  a dark page canvas (`--bo-bg`) belongs on `#2C2E38` (the value `.interface-design/system.md` and
+  four already-migrated sheets use), not the thead rung `#1F2128`; the dark **hover tip** fill is
+  `#40424E` per the system's tip table, not `#2A2C36`; and `#1B94C2` is the retired `--bo-cyan-deep`
+  (my own inventory pattern had missed it) — now `#B45309` light / `#D97706` dark.
+- Verified by rendering, not by grep: every element on nine page/theme combinations
+  (`main-admin-detail`, `main-merchant-profit`, `main-win-lose-report`, `main_merchant_report`,
+  `agent-players`, `dashboard` in light, plus the middle three in dark — 264 to 564 elements each)
+  was scanned for a retired hue in its computed background, colour, four borders, shadow and outline:
+  **0 elements**. Pins bumped on the 15 sheets that carry one (378 page references; `image-to-url.css`
+  is loaded without a `?v=` anywhere).
+- **What is still outside this sweep, deliberately:** the cool-slate *neighbourhoods* that the map did
+  not name — `#0f172a`/`#111827`/`#101828`/`#667085`/`#344054`/`#344054` in `agent-portal.css`,
+  `#11203A`/`#1C2942`/`#657187`/`#E2E7F0` fallbacks and the navy pager accents in the
+  provider-report sheet, the Bootstrap-grey layer in `brand-agent-standard.css`, and the legacy
+  navy tip fills `#0F1F33`/`#0F1C2E`. They are inert where a `bo-charcoal-*` sheet already overrides
+  the same selector with `!important`, and they are the next scoped pass rather than a guess.

@@ -5,10 +5,10 @@ body.main-admin-detail-page{
   /* Deep Navy Cyan — lock page + neutralize global BO blues/indigos */
   --bo-navy:#18191C;
   --bo-cyan:#D97706;
-  --bo-cyan-deep:#1B94C2;
+  --bo-cyan-deep:#B45309;
   --bo-success:#12B76A;
   --bo-danger:#EF3340;
-  --bo-bg:#F5F8FB;
+  --bo-bg:#FFF1DC;
   --bo-surface:#FFFFFF;
   --bo-border:#E2E7F0;
   --bo-text:#11203A;
@@ -19,13 +19,13 @@ body.main-admin-detail-page{
   --bo-sidebar-active:#D97706;
   --bo-cyan-tint:rgba(217,119,6,.10);
   --bo-cyan-tint-strong:rgba(217,119,6,.16);
-  --bo-control-well:#EEF1F7;
+  --bo-control-well:#F5EBDC;
   --bo-control-well-hover:#E4E9F2;
-  --bo-control-border:#D0D5DD;
+  --bo-control-border:#EADCC8;
   --bo-placeholder:#98A2B3;
   --bo-navy-hover:#E8901A;
   --bo-ui-blue:#D97706;
-  --bo-ui-blue-hover:#1B94C2;
+  --bo-ui-blue-hover:#D97706;
   --bo-shadow:0 0 0 1px rgba(120,80,20,.04),0 1px 2px -1px rgba(120,80,20,.06),0 2px 8px rgba(26,45,80,.018);
   --bo-ease:cubic-bezier(0.23,1,0.32,1);
   color:var(--bo-text);
@@ -1055,12 +1055,12 @@ html.mad-float-tips body.main-admin-detail-page .mad-icon-btn[data-tip]::before{
   border-top-color:transparent;border-bottom-color:#0F1F33;
 }
 html[data-bo-theme="dark"] .mad-float-tip{
-  background:#243B55;color:#F5F8FB;
+  background:#40424E;color:#F5F5F4;
   border:1px solid rgba(125,211,252,.22);
   box-shadow:0 12px 28px rgba(0,0,0,.5);
 }
-html[data-bo-theme="dark"] .mad-float-tip::after{border-top-color:#243B55}
-html[data-bo-theme="dark"] .mad-float-tip.is-below::after{border-top-color:transparent;border-bottom-color:#243B55}
+html[data-bo-theme="dark"] .mad-float-tip::after{border-top-color:#40424E}
+html[data-bo-theme="dark"] .mad-float-tip.is-below::after{border-top-color:transparent;border-bottom-color:#40424E}
 body.main-admin-detail-page .mad-money{font-variant-numeric:tabular-nums;font-weight:700;color:var(--bo-text)}
 body.main-admin-detail-page .mad-muted{color:var(--bo-muted)}
 body.main-admin-detail-page .mad-time{font-variant-numeric:tabular-nums;color:var(--bo-text-secondary);font-weight:600}
@@ -1620,14 +1620,14 @@ body.main-admin-detail-page .mad-modal-actions{display:flex;justify-content:flex
 }
 
 html[data-bo-theme="dark"] body.main-admin-detail-page{
-  --bo-bg:#08131F;--bo-surface:#102030;--bo-border:rgba(255,255,255,.08);
-  --bo-text:#F5F8FB;--bo-text-secondary:#D0D7E2;--bo-muted:#8A95A8;
-  --bo-sidebar-bg:#08131F;--bo-shadow:none;--bo-cyan-tint:rgba(217,119,6,.16);
+  --bo-bg:#2C2E38;--bo-surface:#383A46;--bo-border:rgba(255,255,255,.08);
+  --bo-text:#F5F5F4;--bo-text-secondary:#D0D7E2;--bo-muted:#A1A1AA;
+  --bo-sidebar-bg:#3A3226;--bo-shadow:none;--bo-cyan-tint:rgba(217,119,6,.16);
   --bo-cyan-tint-strong:rgba(217,119,6,.24);
   --bo-control-well:rgba(255,255,255,.06);
   --bo-control-well-hover:rgba(255,255,255,.10);
   --bo-control-border:rgba(255,255,255,.12);
-  --bo-placeholder:#8A95A8;
+  --bo-placeholder:#A1A1AA;
   --bo-navy-hover:var(--bo-cyan-deep);
   color-scheme:dark;
 }
@@ -1636,7 +1636,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-modal-title h2,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-modal-title h3,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-user-copy b{color:var(--bo-text)!important}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-row-check-box{
-  background:#2A2C36;border-color:#334155;
+  background:#2A2C36;border-color:rgba(255,255,255,.12);
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-row-check-input:hover + .mad-row-check-box{
   border-color:var(--bo-cyan);
@@ -1831,7 +1831,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-avatar{
   background:rgba(217,119,6,.18)!important;color:#FBBF24!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn{
-  color:#8A95A8;
+  color:#A1A1AA;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-status.is-active{
   background:transparent;color:#7cffc8;
@@ -1861,24 +1861,24 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-success:
   box-shadow:0 4px 12px rgba(18,183,106,.18);
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-danger{
-  color:#8A95A8;background:transparent;
+  color:#A1A1AA;background:transparent;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-danger:hover{
   color:#FF8A90;background:rgba(239,51,64,.18);
   box-shadow:0 4px 12px rgba(239,51,64,.16);
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn[data-tip]::after{
-  background:#243B55;color:#F5F8FB;
+  background:#40424E;color:#F5F5F4;
   border:1px solid rgba(125,211,252,.22);
   box-shadow:0 12px 28px rgba(0,0,0,.5);
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn[data-tip]::before{border-top-color:#243B55;border-bottom-color:transparent}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn[data-tip]::before{border-top-color:#40424E;border-bottom-color:transparent}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-time-tip::after{
-  background:#243B55;color:#F5F8FB;
+  background:#40424E;color:#F5F5F4;
   border:1px solid rgba(125,211,252,.22);
   box-shadow:0 12px 28px rgba(0,0,0,.5);
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page .mad-time-tip::before{border-top-color:#243B55}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-time-tip::before{border-top-color:#40424E}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-danger[data-tip]::after{background:#5C1A22}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-danger[data-tip]::before{border-bottom-color:#5C1A22;border-top-color:transparent}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-success[data-tip]::after{background:#0A4A32}
@@ -2105,10 +2105,10 @@ body.main-merchant-create-page .mac-currency-add-btn{
   justify-content:center;
   margin:0;
   padding:0;
-  border:1px solid #D0D5DD;
+  border:1px solid #EADCC8;
   border-left:0;
   border-radius:0 8px 8px 0;
-  background:var(--bo-bg,#F8FAFC);
+  background:var(--bo-bg,#FFF8EB);
   color:var(--bo-cyan,#D97706);
   font-size:18px;
   line-height:1;
@@ -2172,7 +2172,7 @@ body.main-merchant-create-page .mac-currency-pane{
   min-width:0;
   border:1px solid #E4E7EC;
   border-radius:10px;
-  background:var(--bo-bg,#F8FAFC);
+  background:var(--bo-bg,#FFF8EB);
   overflow:hidden;
 }
 body.main-merchant-create-page .mac-currency-pane-head{
@@ -2268,7 +2268,7 @@ body.main-merchant-create-page .mac-currency-move-btn{
   justify-content:center;
   margin:0;
   padding:0;
-  border:1px solid #D0D5DD;
+  border:1px solid #EADCC8;
   border-radius:8px;
   background:#fff;
   color:var(--bo-cyan-deep,#0E7AA8);
@@ -2340,7 +2340,7 @@ body.main-merchant-create-page .mac-field .rounded-select-btn{
   border-radius:8px;
   font-size:13.5px;
   font-weight:500;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   background:#FFF8EB!important;
   color:var(--bo-text)!important;
   box-shadow:none!important;
@@ -2410,12 +2410,12 @@ html[data-bo-theme="dark"] body.main-merchant-create-page .mac-field .rounded-se
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-field .rounded-select-option.active,
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-field .rounded-select-option.is-active{
   background:rgba(217,119,6,.22)!important;
-  color:#E8F7FC!important;
+  color:#F5F5F4!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-field .rounded-select-option.active:hover,
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-field .rounded-select-option.is-active:hover{
   background:rgba(217,119,6,.28)!important;
-  color:#E8F7FC!important;
+  color:#F5F5F4!important;
 }
 body.main-merchant-create-page .mac-fields-row-compact .mac-field small{
   font-size:11px;
@@ -2455,7 +2455,7 @@ body.main-merchant-create-page .mac-input-addon{
   z-index:1;
   min-width:52px;
   padding:0 12px;
-  border:1px solid #D0D5DD;
+  border:1px solid #DCC9A8;
   background:var(--bo-bg);
   color:var(--bo-muted);
   font-size:12px;
@@ -2535,7 +2535,7 @@ body.main-admin-create-page .report-content .mac-field textarea{
 /* Beat the base !important radius/border on joined MYR / % inputs */
 body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-prefix > .form-control,
 body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-prefix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-left:0!important;
   border-top-left-radius:0!important;
   border-bottom-left-radius:0!important;
@@ -2544,7 +2544,7 @@ body.main-merchant-create-page.main-admin-create-page .report-content .mac-field
 }
 body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-suffix > .form-control,
 body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-suffix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-right:0!important;
   border-top-right-radius:0!important;
   border-bottom-right-radius:0!important;
@@ -2616,7 +2616,7 @@ body.main-merchant-create-page .report-content .mac-provider-markup-field .mac-i
   height:34px!important;
   margin:0!important;
   padding:0 8px!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-right:0!important;
   border-radius:8px 0 0 8px!important;
   background:#FFF8EB!important;
@@ -3085,7 +3085,7 @@ body.main-admin-create-page .mac-switch{
 }
 body.main-admin-create-page .mac-switch input{position:absolute;opacity:0;width:0;height:0}
 body.main-admin-create-page .mac-switch-track{
-  width:44px;height:26px;border-radius:999px;background:#D0D5DD;
+  width:44px;height:26px;border-radius:999px;background:#F5EBDC;
   position:relative;transition:background .16s var(--bo-ease);
 }
 body.main-admin-create-page .mac-switch-thumb{
@@ -3943,7 +3943,7 @@ body.main-admin-security-page .mas-detail-grid dd{
 }
 body.main-admin-security-page .mas-detail-raw{
   margin:0 0 14px;padding:12px;border-radius:8px;
-  background:var(--bo-control-well,#EEF1F7);border:1px solid var(--bo-border);
+  background:var(--bo-control-well,#F5EBDC);border:1px solid var(--bo-border);
   font-size:12px;line-height:1.45;color:var(--bo-text-secondary);
   max-height:220px;overflow:auto;white-space:pre-wrap;word-break:break-word;
 }
@@ -4379,7 +4379,7 @@ body.main-admin-detail-page .mac-adjust-ops.mac-adjust-ops-amount-only{
 body.main-admin-detail-page .mac-credit-mode{
   display:grid;grid-template-columns:1fr 1fr;gap:4px;
   margin:0 0 16px;padding:4px;border-radius:10px;
-  background:var(--bo-control-well,#EEF2F6);
+  background:var(--bo-control-well,#F5EBDC);
 }
 body.main-admin-detail-page .mac-credit-mode-btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
@@ -4497,7 +4497,7 @@ body.main-admin-detail-page .mac-adjust-panel .rounded-select-wrap{
 body.main-admin-detail-page .mac-adjust-panel .rounded-select-btn,
 body.main-admin-detail-page .mac-adjust-panel .rounded-select-wrap .rounded-select-btn{
   height:42px!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-radius:8px!important;
   background:#FFF8EB!important;
   color:var(--bo-text)!important;
@@ -4549,7 +4549,7 @@ body.main-admin-credit-page .mac-label{
   display:block;margin:0 0 6px;font-size:12px;font-weight:700;color:var(--bo-muted);
 }
 body.main-admin-credit-page .mac-field .form-control{
-  height:42px;border:1px solid #D0D5DD;border-radius:8px;
+  height:42px;border:1px solid #DCC9A8;border-radius:8px;
   box-shadow:none;font-size:13.5px;font-weight:600;color:var(--bo-text);
 }
 body.main-admin-credit-page .mac-field .form-control:focus{
@@ -4560,7 +4560,7 @@ body.main-admin-detail-page .mac-adjust-panel .mac-label{
   display:block;margin:0 0 6px;font-size:12px;font-weight:700;color:var(--bo-muted);
 }
 body.main-admin-detail-page .mac-adjust-panel .mac-field .form-control{
-  height:42px;border:1px solid #D0D5DD;border-radius:8px;
+  height:42px;border:1px solid #DCC9A8;border-radius:8px;
   box-shadow:none;font-size:13.5px;font-weight:600;color:var(--bo-text);
 }
 body.main-admin-detail-page .mac-adjust-panel .mac-field .form-control:focus{
@@ -4570,7 +4570,7 @@ body.main-admin-detail-page .mac-adjust-hint{
   margin:0 0 12px;padding:10px 12px;
   border:1px solid rgba(217,119,6,.22);
   border-radius:8px;
-  background:linear-gradient(180deg,#F7FBFE 0%,#F0F7FB 100%);
+  background:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 100%);
   color:var(--bo-navy);
   font-size:12.5px;font-weight:600;line-height:1.45;
 }
@@ -4623,7 +4623,7 @@ html[data-bo-theme="dark"] body.main-admin-credit-page .mac-kpi-node{color:#6CE9
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-kpi-node i{color:#12B76A}
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-kpi-meta.is-share{color:#FDB022}
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-kpi-btn{background:var(--bo-cyan);color:#fff}
-html[data-bo-theme="dark"] body.main-admin-credit-page .mac-kpi-btn:hover{background:var(--bo-cyan-deep,#1B94C2)}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-kpi-btn:hover{background:var(--bo-cyan-deep,#D97706)}
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-avatar{
   background:rgba(217,119,6,.18);color:#FBBF24;
 }
@@ -4912,20 +4912,20 @@ body.main-admin-detail-page.main-merchant-detail-page.mad-view-active .mad-merch
   }
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-merchant-icon-btn{
-  background:transparent;border:0;color:#94A3B8;
+  background:transparent;border:0;color:#A1A1AA;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-merchant-icon-btn:hover{
   background:rgba(217,119,6,.16);color:#FBBF24;
   box-shadow:none;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-merchant-icon-btn.is-danger{
-  background:transparent;border:0;color:#94A3B8;
+  background:transparent;border:0;color:#A1A1AA;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-merchant-icon-btn.is-danger:hover{
   background:rgba(239,51,64,.16);color:#FF8A90;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-merchant-icon-btn[data-tip]::after{
-  background:#243B55;color:#F5F8FB;
+  background:#40424E;color:#F5F5F4;
   border:1px solid rgba(125,211,252,.22);
   box-shadow:0 12px 28px rgba(0,0,0,.5);
 }
@@ -5001,12 +5001,12 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounde
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounded-select-option.active,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounded-select-option.is-active{
   background:rgba(217,119,6,.22)!important;
-  color:#E8F7FC!important;
+  color:#F5F5F4!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounded-select-option.active:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounded-select-option.is-active:hover{
   background:rgba(217,119,6,.28)!important;
-  color:#E8F7FC!important;
+  color:#F5F5F4!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-summary{
   background:rgba(255,255,255,.03)!important;border-color:var(--bo-border)!important;
@@ -5186,7 +5186,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-label b{
 body.main-merchant-detail-page #madEditWorkspace .mac-field .form-control,
 body.main-merchant-detail-page #madEditWorkspace .mac-field select.form-control{
   height:44px!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-radius:8px!important;
   background:#FFF8EB!important;
   color:var(--bo-text,#12263A)!important;
@@ -5203,7 +5203,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-field select.form-control:
   outline:0!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-field .form-control[readonly]{
-  background:var(--bo-bg,#F8FAFC)!important;
+  background:var(--bo-bg,#EDE4D4)!important;
   color:var(--bo-text-secondary,#475467)!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-master-credit-stack{
@@ -5252,8 +5252,8 @@ body.main-merchant-detail-page #madEditWorkspace .mac-input-addon{
   z-index:1;
   min-width:52px;
   padding:0 12px;
-  border:1px solid #D0D5DD;
-  background:var(--bo-bg,#F8FAFC);
+  border:1px solid #DCC9A8;
+  background:var(--bo-bg,#F5EBDC);
   color:var(--bo-muted,#667085);
   font-size:12px;
   font-weight:700;
@@ -5335,7 +5335,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-edit-pricing-table thead t
   font-size:11.5px;
   font-weight:800;
   color:var(--bo-muted,#667085);
-  background:var(--bo-bg,#F8FAFC);
+  background:var(--bo-bg,#FFF8EB);
   border-bottom:1px solid var(--bo-border,#E4E7EC);
   white-space:nowrap;
   padding:10px 12px;
@@ -5422,11 +5422,11 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .form-control[readonly]{
   background:rgba(2,6,23,.55)!important;
-  color:#94A3B8!important;
+  color:#A1A1AA!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-edit-pricing-table thead th{
   background:rgba(2,6,23,.45);
-  color:#94A3B8;
+  color:#A1A1AA;
   border-color:rgba(148,163,184,.22);
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions{
@@ -5442,7 +5442,7 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page.mad-editing #madEditWo
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-input-addon{
   background:#2A2C36!important;
   border-color:var(--bo-border)!important;
-  color:#94A3B8!important;
+  color:#A1A1AA!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-input-group.is-prefix .mac-input-addon{
   border-right:0!important;
@@ -5473,7 +5473,7 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-markup-f
   background:#2A2C36!important;
   border-color:var(--bo-border)!important;
   border-left:0!important;
-  color:#94A3B8!important;
+  color:#A1A1AA!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .form-control,
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field select.form-control,
@@ -5529,10 +5529,10 @@ body.main-merchant-detail-page .mac-currency-add-btn{
   justify-content:center;
   margin:0;
   padding:0;
-  border:1px solid #D0D5DD;
+  border:1px solid #EADCC8;
   border-left:0;
   border-radius:0 8px 8px 0;
-  background:var(--bo-bg,#F8FAFC);
+  background:var(--bo-bg,#FFF8EB);
   color:var(--bo-cyan,#D97706);
   font-size:18px;
   line-height:1;
@@ -5607,7 +5607,7 @@ body.main-merchant-detail-page .mac-currency-pane{
   min-width:0;
   border:1px solid #E4E7EC;
   border-radius:10px;
-  background:var(--bo-bg,#F8FAFC);
+  background:var(--bo-bg,#FFF8EB);
   overflow:hidden;
 }
 
@@ -5715,7 +5715,7 @@ body.main-merchant-detail-page .mac-currency-move-btn{
   justify-content:center;
   margin:0;
   padding:0;
-  border:1px solid #D0D5DD;
+  border:1px solid #EADCC8;
   border-radius:8px;
   background:#fff;
   color:var(--bo-cyan-deep,#0E7AA8);
@@ -5807,7 +5807,7 @@ body.main-merchant-detail-page #madCurrencyModal #madCurrencyModalCode{
   min-height:44px!important;
   max-height:44px!important;
   padding:0 14px!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-radius:8px!important;
   background:#FFF8EB!important;
   color:var(--bo-text,#12263A)!important;
@@ -5913,7 +5913,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-provider-markup-field .mac
   max-height:34px!important;
   margin:0!important;
   padding:0 8px!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-right:0!important;
   border-radius:8px 0 0 8px!important;
   background:#FFF8EB!important;
@@ -5944,11 +5944,11 @@ body.main-merchant-detail-page #madEditWorkspace .mac-provider-markup-field .mac
   font-size:12px!important;
   font-weight:700!important;
   line-height:1!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-left:0!important;
   border-radius:0 8px 8px 0!important;
   box-sizing:border-box!important;
-  background:var(--bo-bg,#F8FAFC)!important;
+  background:var(--bo-bg,#F5EBDC)!important;
   color:var(--bo-muted,#667085)!important;
 }
 
@@ -6531,7 +6531,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > select.
   max-height:44px!important;
   margin:0!important;
   box-sizing:border-box!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-right:0!important;
   border-radius:8px 0 0 8px!important;
   background:#FFF8EB!important;
@@ -6569,10 +6569,10 @@ body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > button.
   margin:0!important;
   box-sizing:border-box!important;
   line-height:1!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #EADCC8!important;
   border-left:0!important;
   border-radius:0 8px 8px 0!important;
-  background:var(--bo-bg,#F8FAFC)!important;
+  background:var(--bo-bg,#FFF8EB)!important;
   color:var(--bo-cyan,#D97706)!important;
   box-shadow:none!important;
   align-self:flex-start!important;
@@ -6620,7 +6620,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-btn{
   border-radius:8px!important;
   font-size:13.5px!important;
   font-weight:500!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   background:#FFF8EB!important;
   color:var(--bo-text,#12263A)!important;
   box-shadow:none!important;
@@ -6696,12 +6696,12 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-option.active,
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-option.is-active{
   background:rgba(217,119,6,.22)!important;
-  color:#E8F7FC!important;
+  color:#F5F5F4!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-option.active:hover,
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-option.is-active:hover{
   background:rgba(217,119,6,.28)!important;
-  color:#E8F7FC!important;
+  color:#F5F5F4!important;
 }
 
 /* Provider pane actions: text links like Add Merchant (not outlined buttons) */
@@ -6920,7 +6920,7 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-markup-f
   background:#2A2C36!important;
   border-color:var(--bo-border)!important;
   border-left:0!important;
-  color:#94A3B8!important;
+  color:#A1A1AA!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-currency-add-btn,
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > button.mac-currency-add-btn{

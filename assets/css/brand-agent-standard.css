@@ -79,7 +79,7 @@
 .brand-agent-standard table.table thead th{
   height:44px!important;
   padding:0 14px!important;
-  background:#f8fafc!important;
+  background:#F5EBDC!important;
   color:#344054!important;
   font-size:11px!important;
   font-weight:800!important;
@@ -253,7 +253,7 @@
 .brand-agent-standard .badge{border-radius:999px!important;padding:6px 10px!important;font-size:11px!important}
 .brand-agent-standard .provider-grid>label{padding:11px 12px!important;align-items:flex-start!important}
 .brand-agent-standard .provider-grid .form-check-input{margin-top:3px!important}
-.brand-agent-standard .brand-kpi>div{background:#f8fafc!important;border:1px solid #e3e8f1!important;border-radius:12px!important;padding:12px 14px!important}
+.brand-agent-standard .brand-kpi>div{background:#F5EBDC!important;border:1px solid #e3e8f1!important;border-radius:12px!important;padding:12px 14px!important}
 .brand-agent-standard .brand-kpi small{display:block;color:#667085;font-size:11px}
 .brand-agent-standard .brand-kpi b{display:block;margin-top:2px;color:#101828;font-size:18px}
 

@@ -34,7 +34,7 @@ body.main-merchant-report-page .mmr-mark.is-teal{background:#0E8F8B}
 body.main-merchant-report-page .mmr-mark.is-violet{background:#6D5AE6}
 body.main-merchant-report-page .mmr-mark.is-amber{background:#D97706}
 body.main-merchant-report-page .mmr-mark.is-rose{background:#E11D48}
-body.main-merchant-report-page .mmr-mark.is-slate{background:#475569}
+body.main-merchant-report-page .mmr-mark.is-slate{background:#57534E}
 body.main-merchant-report-page .mmr-merchant-copy{
   min-width:0;display:flex;flex-direction:column;gap:2px;
 }
@@ -104,7 +104,7 @@ body.main-merchant-report-page .msr-mark.is-teal{background:#0E8F8B}
 body.main-merchant-report-page .msr-mark.is-violet{background:#6D5AE6}
 body.main-merchant-report-page .msr-mark.is-amber{background:#D97706}
 body.main-merchant-report-page .msr-mark.is-rose{background:#E11D48}
-body.main-merchant-report-page .msr-mark.is-slate{background:#475569}
+body.main-merchant-report-page .msr-mark.is-slate{background:#57534E}
 body.main-merchant-report-page .msr-mark.is-blue{background:#1688F8}
 body.main-merchant-report-page .msr-entity-copy{
   min-width:0;display:flex;flex-direction:column;gap:3px;
@@ -121,7 +121,7 @@ body.main-merchant-report-page .msr-entity-top .msr-code{
 body.main-merchant-report-page .msr-type-tag{
   display:inline-flex;align-items:center;height:18px;padding:0 7px;
   border-radius:6px;font-size:10.5px;font-weight:750;letter-spacing:.02em;
-  background:rgba(33,166,215,.12);color:#0B7FA8;
+  background:rgba(217,119,6,.12);color:#0B7FA8;
 }
 body.main-merchant-report-page .msr-type-tag.is-merchant{
   background:rgba(22,136,248,.12);color:#1570EF;
@@ -177,10 +177,10 @@ body.main-merchant-report-page .msr-actions .mad-icon-btn{
   transition:background .14s ease,color .14s ease,border-color .14s ease;
 }
 body.main-merchant-report-page .msr-actions .mad-icon-btn:hover{
-  background:#F5F8FB;color:var(--bo-navy);border-color:#D0D7E2;
+  background:#F5EBDC;color:var(--bo-navy);border-color:#D0D7E2;
 }
 body.main-merchant-report-page .msr-total-row td{
-  background:rgba(33,166,215,.06)!important;
+  background:rgba(217,119,6,.06)!important;
 }
 body.main-merchant-report-page .msr-total-row .mre-num.is-paid{color:#12B76A!important}
 body.main-merchant-report-page .msr-next-batch{
@@ -200,7 +200,7 @@ html[data-bo-theme="dark"] body.main-merchant-report-page .msr-actions .mad-icon
   background:rgba(255,255,255,.06);color:#fff;
 }
 html[data-bo-theme="dark"] body.main-merchant-report-page .msr-total-row td{
-  background:rgba(33,166,215,.1)!important;
+  background:rgba(245,158,11,.1)!important;
 }
 
 /* Settlement ledger — same panel shell as Merchants (head / table / footer) */
@@ -341,8 +341,8 @@ body.main-merchant-report-page[data-report-view="settlement"] .settlement-action
   transition:background .14s ease,color .14s ease,border-color .14s ease;
 }
 body.main-merchant-report-page[data-report-view="settlement"] .settlement-actions .mad-icon-btn:hover:not(:disabled){
-  background:#F5F8FB;
-  color:var(--bo-navy,#123B66);
+  background:#F5EBDC;
+  color:var(--bo-navy,#18191C);
   border-color:#D0D7E2;
 }
 body.main-merchant-report-page[data-report-view="settlement"] .settlement-actions .mad-icon-btn:disabled{
@@ -394,7 +394,7 @@ body.main-merchant-report-page[data-report-view="settlement"] .settlement-action
   visibility:visible;
 }
 html[data-bo-theme="dark"] body.main-merchant-report-page[data-report-view="settlement"] .settlement-actions .mad-icon-btn{
-  background:var(--bo-surface,#152536);
+  background:var(--bo-surface,#383A46);
   border-color:var(--bo-border,#24374F);
   color:var(--bo-muted,#9AA8BC);
 }
@@ -438,7 +438,7 @@ body.main-merchant-report-page .settlement-payment-context{
   padding:12px 14px;
   border:1px solid var(--bo-border,#E2E7F0);
   border-radius:10px;
-  background:var(--bo-bg,#F5F8FB);
+  background:var(--bo-bg,#F5EBDC);
   margin:0;
 }
 body.main-merchant-report-page .msr-pay-context-main{
@@ -471,7 +471,7 @@ body.main-merchant-report-page .msr-pay-context-bal span{
 body.main-merchant-report-page .msr-pay-context-bal b{
   font-size:15px;
   font-weight:800;
-  color:var(--bo-navy,#123B66);
+  color:var(--bo-navy,#18191C);
   font-variant-numeric:tabular-nums;
 }
 body.main-merchant-report-page .msr-payment-fields{
@@ -498,7 +498,7 @@ body.main-merchant-report-page .msr-payment-fields .mad-field{
 body.main-merchant-report-page .msr-payment-fields .mad-field b{color:var(--bo-danger,#EF3340)}
 body.main-merchant-report-page .msr-payment-fields .mad-field > .form-control{
   height:42px!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-radius:8px!important;
   background:#FFF8EB!important;
   color:var(--bo-text,#11203A)!important;
@@ -507,8 +507,8 @@ body.main-merchant-report-page .msr-payment-fields .mad-field > .form-control{
   box-shadow:none!important;
 }
 body.main-merchant-report-page .msr-payment-fields .mad-field > .form-control:focus{
-  border-color:var(--bo-cyan,#21A6D7)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;
+  border-color:var(--bo-cyan,#D97706)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;
 }
 body.main-merchant-report-page .msr-payment-fields .mad-field textarea.form-control{
   height:88px!important;
@@ -523,7 +523,7 @@ body.main-merchant-report-page .msr-payment-fields .msr-amount-group.mac-input-g
   width:100%;
   height:42px;
   min-width:0;
-  border:1px solid #D0D5DD;
+  border:1px solid #DCC9A8;
   border-radius:8px;
   background:#FFF8EB;
   overflow:hidden;
@@ -541,9 +541,9 @@ body.main-merchant-report-page .msr-payment-fields .msr-amount-group .mac-input-
   padding:0 12px;
   margin:0;
   border:0;
-  border-right:1px solid #D0D5DD;
+  border-right:1px solid #DCC9A8;
   border-radius:0;
-  background:var(--bo-bg,#F5F8FB);
+  background:var(--bo-bg,#FFF8EB);
   color:var(--bo-muted,#657187);
   font-size:12px;
   font-weight:700;
@@ -577,11 +577,11 @@ body.main-merchant-report-page .msr-payment-fields .msr-amount-group > .form-con
 }
 body.main-merchant-report-page .msr-amount-group:focus-within,
 body.main-merchant-report-page .msr-payment-fields .msr-amount-group.mac-input-group:focus-within{
-  border-color:var(--bo-cyan,#21A6D7);
-  box-shadow:0 0 0 3px rgba(33,166,215,.12);
+  border-color:var(--bo-cyan,#D97706);
+  box-shadow:0 0 0 3px rgba(217,119,6,.12);
 }
 body.main-merchant-report-page .msr-amount-group:focus-within .mac-input-addon{
-  border-right-color:var(--bo-cyan,#21A6D7);
+  border-right-color:var(--bo-cyan,#D97706);
 }
 /* Payment date — trigger + calendar share the same width and edges */
 body.main-merchant-report-page .msr-pay-date-field-wrap{
@@ -602,7 +602,7 @@ body.main-merchant-report-page .msr-pay-date-trigger{
   min-width:0!important;
   height:42px!important;
   min-height:42px;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-radius:8px!important;
   background:#FFF8EB!important;
   color:var(--bo-text,#11203A)!important;
@@ -615,12 +615,12 @@ body.main-merchant-report-page .msr-pay-date-trigger{
 body.main-merchant-report-page .msr-pay-date-field .ref-range-trigger:hover,
 body.main-merchant-report-page .msr-pay-date-field .ref-range-trigger:focus,
 body.main-merchant-report-page .msr-pay-date-trigger[aria-expanded="true"]{
-  border-color:var(--bo-cyan,#21A6D7)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;
+  border-color:var(--bo-cyan,#D97706)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;
   outline:0;
 }
 body.main-merchant-report-page .msr-pay-date-field .ref-range-icon{
-  color:var(--bo-navy,#123B66);
+  color:var(--bo-navy,#18191C);
   font-size:14px;
   flex:0 0 auto;
 }
@@ -702,21 +702,21 @@ body.main-merchant-report-page .msr-pay-date-foot{
   gap:6px;
   padding:6px 8px 8px;
   border-top:1px solid #E7EBF3;
-  background:#F8FAFC;
+  background:#FFFCF7;
 }
 body.main-merchant-report-page .msr-pay-date-foot button{
   height:26px;
   padding:0 10px;
-  border:1px solid #D0D5DD;
+  border:1px solid #EADCC8;
   border-radius:6px;
   background:#fff;
-  color:var(--bo-navy,#123B66);
+  color:var(--bo-navy,#18191C);
   font-size:11px;
   font-weight:700;
 }
 body.main-merchant-report-page .msr-pay-date-foot button:hover{
-  border-color:var(--bo-cyan,#21A6D7);
-  color:var(--bo-cyan,#21A6D7);
+  border-color:var(--bo-cyan,#D97706);
+  color:var(--bo-cyan,#D97706);
 }
 @media (max-width:767.98px){
   body.main-merchant-report-page .msr-pay-date-picker.ref-range-picker{
@@ -761,7 +761,7 @@ html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-context-bal b
 }
 html[data-bo-theme="dark"] body.main-merchant-report-page .msr-amount-group,
 html[data-bo-theme="dark"] body.main-merchant-report-page .msr-payment-fields .msr-amount-group.mac-input-group{
-  background:var(--bo-surface,#152536);
+  background:var(--bo-surface,#383A46);
   border-color:var(--bo-border,#24374F);
 }
 html[data-bo-theme="dark"] body.main-merchant-report-page .msr-amount-group .mac-input-addon{
@@ -771,7 +771,7 @@ html[data-bo-theme="dark"] body.main-merchant-report-page .msr-amount-group .mac
 }
 html[data-bo-theme="dark"] body.main-merchant-report-page .msr-payment-fields .mad-field > .form-control,
 html[data-bo-theme="dark"] body.main-merchant-report-page .msr-amount-group > .form-control{
-  background:var(--bo-surface,#152536)!important;
+  background:var(--bo-surface,#383A46)!important;
   border-color:var(--bo-border,#24374F)!important;
   color:var(--bo-text,#E8EEF7)!important;
 }
@@ -781,7 +781,7 @@ html[data-bo-theme="dark"] body.main-merchant-report-page .msr-amount-group > .f
 }
 html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-date-field .ref-range-trigger,
 html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-date-trigger{
-  background:var(--bo-surface,#152536)!important;
+  background:var(--bo-surface,#383A46)!important;
   border-color:var(--bo-border,#24374F)!important;
   color:var(--bo-text,#E8EEF7)!important;
 }
@@ -789,7 +789,7 @@ html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-date-field .r
   color:var(--bo-text,#E8EEF7);
 }
 html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-date-picker.ref-range-picker{
-  background:var(--bo-surface,#152536);
+  background:var(--bo-surface,#383A46);
   border-color:var(--bo-border,#24374F);
 }
 html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-date-foot{
@@ -797,7 +797,7 @@ html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-date-foot{
   border-top-color:var(--bo-border,#24374F);
 }
 html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-date-foot button{
-  background:var(--bo-surface,#152536);
+  background:var(--bo-surface,#383A46);
   border-color:var(--bo-border,#24374F);
   color:var(--bo-text,#E8EEF7);
 }

@@ -808,8 +808,8 @@ body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .
 .bo-range-trigger:hover,
 .bo-range-trigger:focus,
 .bo-range-trigger:focus-within{
-  border-color:var(--bo-cyan, #21A6D7)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.14)!important;
+  border-color:var(--bo-cyan, #D97706)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
   outline:0!important;
 }
 .ref-range-icon,
@@ -869,6 +869,6 @@ html[data-bo-theme="dark"] .ref-range-trigger:focus,
 html[data-bo-theme="dark"] .bo-range-trigger:hover,
 html[data-bo-theme="dark"] .bo-range-trigger:focus,
 html[data-bo-theme="dark"] .bo-range-trigger:focus-within{
-  border-color:var(--bo-cyan, #21A6D7)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.18)!important;
+  border-color:var(--bo-cyan, #F59E0B)!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
 }
