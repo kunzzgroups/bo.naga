@@ -174,9 +174,41 @@ Classic BO listing shells (`reports.css` + `bo-ui-standard.css`), **not** MAIN e
 | Table frame | **Same as Admin Detail `.mad-panel`** — viewport-locked panel · inner scroll · `table-layout:fixed` · radius `8px` · no nested `.table-wrap` border · footer pins to panel bottom |
 | Table light paint | **Transaction listing table** (peach-cream zebra — no pure white) — see Patterns → Data tables |
 | Table dark paint | Same zebra rhythm: odd `#3A3C48` · even `#434653` · head `#1F2128` (deeper than body) — never flat slab |
-| Row Approve / Reject | `.bo-tx-action-btn` **26×26** · icon `15px` · radius `6px` · light: control-well chip `#F5EBDC`/`#EADCC8` · dark: charcoal well `#2A2C36`/`white/14` · semantic icon (`#067647`/`#B42318` · dark `#6EE7B7`/`#F87171`) · hover success/danger wash |
+| Row Approve / Reject / Ledger | `.bo-tx-action-btn` **26×26** · icon `15px` · padding `0` · radius `6px` · light: control-well chip `#F5EBDC`/`#EADCC8` · dark: charcoal well `#2A2C36`/`white/14` · semantic icon (approve `#067647` · reject `#B42318` · ledger muted) · hover success/danger wash. Ledger uses `a.bo-tx-action-btn.is-ledger` — **not** reports `.bo-icon-action` |
 | Status pills | **PENDING** orange · **APPROVED** green · **REJECTED** red — see Patterns → Data tables → Status pills |
 | Filtered total bar | **Removed** on Deposit / Withdraw — do not restore `.approval-total-bar` |
+| Pending metrics strip | **Removed** on Deposit / Withdraw — do not restore Pending Count / Pending Amount metrics above the table |
+
+#### Deposit / Withdraw page chrome (locked)
+
+Reference pages: `member-deposit.html` · `member-withdraw.html`. Same shell; Withdraw adds Remark + Ledger.
+
+| Part | Spec |
+|------|------|
+| Body | `body.bo-wallet-tx.deposit-approval-page` / `.withdraw-approval-page` — keep this class; charcoal shells must **not** replace it |
+| Bank capacity strip | `#depositBankCards` / `#withdrawBankCards` · `.deposit-bank-card-stats` · grid `auto-fit` / `minmax(220px,1fr)` on wide · cream card · letter mark · amount · max-amount meter |
+| Toolbar | Inside `.table-card` → `.deposit-inline-filter` → `.bo-tx-toolbar`: **left** `.bo-tx-tabs.bo-seg` · **right** `.bo-tx-filter-controls` (date range + keyword + status) |
+| Filter strip | **No** Reset / Search / Page Size in the filter row — page size lives in footer only (`#depositSize` / `#withdrawSize` stay hidden) |
+| Columns (Deposit) | Date · Member · Amount · **Bank** (header label, not Method) · Reference · Status · Processed · Action |
+| Columns (Withdraw) | Date · Member · Amount · Bank · Reference · Remark · Status · Processed · Action |
+| Member cell | Username only (no nested bank line) |
+| Bank cell | Bold `BankName (account)` via `formatMethodLabel` / `formatBankLabel` |
+| Remark (Withdraw) | Player remark only — **no** `Admin: …` sub-line under the cell |
+| DATE cell | `.bo-tx-datetime` · day + time spans · `title` = full datetime — see Responsive |
+
+#### Deposit / Withdraw responsive (1920 → 375)
+
+Preserve colors / hierarchy / business logic; change width, stack, and density only. CSS lives in `bo-wallet-transaction-amber.css` (Deposit + Withdraw shared). Target audit: **1920 · 1440 · 1280 · 1024 · 768 · 390 · 375**. Never page-level horizontal overflow — table scrolls inside `.bo-tx-table-body`.
+
+| Breakpoint | Behavior |
+|------------|----------|
+| ≤1456 | **DATE** shows calendar day only (`.bo-tx-datetime-time{display:none}`) · hover/`title` still shows full `YYYY-MM-DD HH:mm:ss` |
+| ≤1280 | Bank cards → **one-row horizontal snap strip** (do not wrap into 2–3 tall rows) · toolbar **column**: tabs row then filters row (`flex-flow: row nowrap` on filters) · table `min-width` ~980–1080 · cells `overflow:hidden` + ellipsis · `.bo-tx-table-body` scrolls x/y · table-card keeps `min-height` so ledger rows stay reachable |
+| ≤1024 | Filters may wrap · hide topbar subtitle + account meta text · bank cards stay strip |
+| ≤768 | Compact bank strip · hide **Processed** (Deposit col 7 / Withdraw col 8) · Withdraw also hide **Remark** (col 6) · stronger table-card / body `min-height` · approval modal `#bankApprovalPopup` full-bleed |
+| ≤575 / 390 / 375 | Hide header **Members/Deposit/Withdraw** counters · hide title icon · filters stack full-width · hide **Reference** (+ Remark/Processed as above) · action hit area ≥36px · touch fields `min-height:44px` |
+
+Head/body column sync: body `scroll` sets `.bo-tx-table-head` `scrollLeft` (Deposit + Withdraw JS).
 
 Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
 
@@ -751,6 +783,9 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Transaction table light paint = peach-cream zebra (`#FFF8EB`/`#FFF1DC`/`#FFE8CC` head) · no pure white · thead corners square · cell weight `bold` · PENDING orange | User: white rows刺眼; muddy parchment 违和; then locked cream family | 2026-09-15 |
 | Transaction table dark = zebra `#3A3C48`/`#434653` · deep head `#1F2128` · status pills · action wells locked to MD | User: dark even row → `#434653`; was `#252730` | 2026-09-15 |
 | Deposit/Withdraw Filtered Total Amount bar removed | User: 这个部分我不要 | 2026-09-15 |
+| Deposit/Withdraw page chrome locked: bank cards strip · tabs left + inline filters right · Bank `Name (account)` · no Reset/Search in filter · action 26×26 · no Pending metrics | User aligned Withdraw to Deposit shell | 2026-09-16 |
+| Deposit/Withdraw responsive 1920→375: bank strip · stacked toolbar · scrollable table · ≤1456 DATE day-only + hover time · hide secondary columns on tablet/phone | User: mid widths messy / table too short / DATE ellipsis | 2026-09-16 |
+| Withdraw Remark cell = player text only (no `Admin:` sub-line) | User: 这个也帮我移除 | 2026-09-16 |
 
 ### Opt-in layers for pages outside the migrated families
 
