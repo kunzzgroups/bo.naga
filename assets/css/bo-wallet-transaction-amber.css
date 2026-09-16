@@ -1239,6 +1239,7 @@ body.bo-wallet-tx .bo-ui-button-secondary{
   color:#18191C!important;
   border-radius:8px!important;
   font-weight:700!important;
+  text-decoration:none!important;
   transition:transform .14s ease,box-shadow .14s ease,background-image .14s ease,border-color .14s ease!important;
 }
 body.bo-wallet-tx .clean-btn:hover,
@@ -3932,6 +3933,201 @@ body.bo-wallet-tx.withdraw-approval-page .table-card > .bo-deposit-pager-host bu
   #bankApprovalPopup .bank-approval-foot{
     padding-left:14px!important;
     padding-right:14px!important;
+  }
+}
+
+/* ==========================================================================
+   Payment Method Config (`body.payment-method-page`) — Transaction listing
+   ========================================================================== */
+body.bo-wallet-tx.payment-method-page .pm-list-card{
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  border-radius:8px!important;
+}
+body.bo-wallet-tx.payment-method-page .pm-list-card > .user-toolbar{
+  flex:0 0 auto!important;
+  margin:0!important;
+  padding:12px 16px!important;
+  border-bottom:1px solid var(--bo-table-line,#EADCC8)!important;
+  background:var(--bo-table-paper,#FFF8EB)!important;
+  gap:12px!important;
+  flex-wrap:wrap!important;
+  justify-content:flex-end!important;
+}
+body.bo-wallet-tx.payment-method-page .pm-list-card .user-toolbar-actions a.clean-btn,
+body.bo-wallet-tx.payment-method-page .pm-list-card .user-toolbar-actions a.clean-btn:hover,
+body.bo-wallet-tx.payment-method-page .pm-list-card .user-toolbar-actions a.clean-btn:focus,
+body.bo-wallet-tx.payment-method-page .pm-list-card .user-toolbar-actions a.clean-btn:visited{
+  text-decoration:none!important;
+}
+body.bo-wallet-tx.payment-method-page .pm-list-card > .table-wrap{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow:auto!important;
+  border:0!important;
+  border-radius:0!important;
+  background:var(--bo-table-paper,#FFF8EB)!important;
+}
+body.bo-wallet-tx.payment-method-page .pm-main-table{
+  width:100%!important;
+  min-width:920px!important;
+  table-layout:fixed!important;
+  margin:0!important;
+}
+body.bo-wallet-tx.payment-method-page .pm-main-table thead th{
+  border-radius:0!important;
+}
+body.bo-wallet-tx.payment-method-page .pm-main-table th:nth-child(1),
+body.bo-wallet-tx.payment-method-page .pm-main-table td:nth-child(1){width:64px}
+body.bo-wallet-tx.payment-method-page .pm-main-table th:nth-child(2),
+body.bo-wallet-tx.payment-method-page .pm-main-table td:nth-child(2){width:140px}
+body.bo-wallet-tx.payment-method-page .pm-main-table th:nth-child(5),
+body.bo-wallet-tx.payment-method-page .pm-main-table td:nth-child(5){width:72px}
+body.bo-wallet-tx.payment-method-page .pm-main-table th:nth-child(6),
+body.bo-wallet-tx.payment-method-page .pm-main-table td:nth-child(6){width:100px}
+body.bo-wallet-tx.payment-method-page .pm-main-table th:nth-child(7),
+body.bo-wallet-tx.payment-method-page .pm-main-table td:nth-child(7){width:88px}
+body.bo-wallet-tx.payment-method-page .pm-list-card > .table-footer,
+body.bo-wallet-tx.payment-method-page .pm-table-footer{
+  flex:0 0 auto!important;
+  margin:0!important;
+  padding:10px 16px!important;
+  border-top:1px solid var(--bo-table-line,#EADCC8)!important;
+  background:var(--bo-table-paper,#FFF8EB)!important;
+}
+body.bo-wallet-tx.payment-method-page .bo-tx-sub{
+  color:var(--bo-muted,#78716C)!important;
+  font-weight:500!important;
+  font-size:12px!important;
+}
+body.bo-wallet-tx.payment-method-page .bo-tx-link{
+  color:#B45309!important;
+  font-weight:700!important;
+  text-decoration:none!important;
+  border-bottom:1px solid rgba(180,83,9,.35);
+}
+body.bo-wallet-tx.payment-method-page .bo-tx-link:hover,
+body.bo-wallet-tx.payment-method-page .bo-tx-link:focus-visible{
+  color:#D97706!important;
+  border-bottom-color:#D97706;
+  outline:none;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .bo-tx-link{
+  color:#FBBF24!important;
+  border-bottom-color:rgba(251,191,36,.4);
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .bo-tx-link:hover{
+  color:#F59E0B!important;
+}
+
+/* Edit = control-well chip (same family as ledger); Delete reuses is-reject */
+html body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit{
+  background:var(--bo-control-well,#F5EBDC)!important;
+  border:1px solid var(--bo-border,#EADCC8)!important;
+  color:#B45309!important;
+  box-shadow:none!important;
+}
+html body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit:hover{
+  background:rgba(217,119,6,.12)!important;
+  border-color:#D97706!important;
+  color:#92400E!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit:hover{
+  background:rgba(245,158,11,.16)!important;
+  border-color:#F59E0B!important;
+  color:#FDE68A!important;
+}
+
+/* Modal — form well ladder + radius 8px (Transaction / Roles recipe) */
+body.bo-wallet-tx.payment-method-page .pm-modal-panel{
+  border-radius:12px!important;
+  background:var(--bo-surface,#FFF8EB)!important;
+  border:1px solid var(--bo-border,#EADCC8)!important;
+}
+body.bo-wallet-tx.payment-method-page .pm-modal-head{
+  background:var(--bo-surface,#FFF8EB)!important;
+  border-bottom:1px solid var(--bo-border,#EADCC8)!important;
+}
+body.bo-wallet-tx.payment-method-page .pm-modal .field input,
+body.bo-wallet-tx.payment-method-page .pm-modal .field select,
+body.bo-wallet-tx.payment-method-page .pm-modal .field textarea{
+  background:#F5EBDC!important;
+  border:1px solid #EADCC8!important;
+  border-radius:8px!important;
+  color:var(--bo-text,#18191C)!important;
+}
+body.bo-wallet-tx.payment-method-page .pm-modal .field input:focus,
+body.bo-wallet-tx.payment-method-page .pm-modal .field select:focus,
+body.bo-wallet-tx.payment-method-page .pm-modal .field textarea:focus{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+  outline:none!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal-panel,
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal-head{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .field input,
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .field select,
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .field textarea{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .field input:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .field select:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .field textarea:focus{
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+
+@media (max-width:1024px){
+  body.bo-wallet-tx.payment-method-page .pm-list-card > .user-toolbar{
+    flex-direction:column!important;
+    align-items:stretch!important;
+  }
+  body.bo-wallet-tx.payment-method-page .pm-list-card .user-toolbar-actions{
+    width:100%!important;
+    justify-content:flex-start!important;
+    flex-wrap:wrap!important;
+  }
+}
+@media (max-width:768px){
+  body.bo-wallet-tx.payment-method-page .pm-main-table th:nth-child(5),
+  body.bo-wallet-tx.payment-method-page .pm-main-table td:nth-child(5){display:none!important}
+  body.bo-wallet-tx.payment-method-page .pm-main-table{min-width:760px!important}
+  body.bo-wallet-tx.payment-method-page .pm-modal{
+    padding:0!important;
+    align-items:stretch!important;
+  }
+  body.bo-wallet-tx.payment-method-page .pm-modal-panel{
+    width:100%!important;
+    max-width:100%!important;
+    max-height:100%!important;
+    min-height:100%!important;
+    border-radius:0!important;
+  }
+}
+@media (max-width:575.98px){
+  body.bo-wallet-tx.payment-method-page .pm-main-table th:nth-child(2),
+  body.bo-wallet-tx.payment-method-page .pm-main-table td:nth-child(2),
+  body.bo-wallet-tx.payment-method-page .pm-main-table th:nth-child(4),
+  body.bo-wallet-tx.payment-method-page .pm-main-table td:nth-child(4){display:none!important}
+  body.bo-wallet-tx.payment-method-page .pm-main-table{min-width:520px!important}
+  body.bo-wallet-tx.payment-method-page .bo-tx-action-btn{
+    width:36px!important;
+    height:36px!important;
+    min-width:36px!important;
+    min-height:36px!important;
+    flex-basis:36px!important;
   }
 }
 
