@@ -19,6 +19,19 @@
     return html;
   }
   function endpoint(key){return API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS[key];} function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));} function num(v){const n=Number(v||0);return Number.isFinite(n)?n:0;} function money(v){return num(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});} function dt(v){return window.BO_FORMAT&&window.BO_FORMAT.dateTime?window.BO_FORMAT.dateTime(v):(v?String(v).replace('T',' ').slice(0,19):'-');}
+  function dtParts(v){
+    const full=dt(v);
+    if(!full||full==='-') return {full:'-',day:'-',time:''};
+    const m=String(full).match(/^(\d{4}[-/]\d{1,2}[-/]\d{1,2})\s+(.+)$/);
+    if(m) return {full,day:m[1],time:m[2]};
+    return {full,day:full,time:''};
+  }
+  function dtCell(v){
+    const p=dtParts(v);
+    if(p.full==='-') return '-';
+    if(!p.time) return `<span class="bo-tx-datetime" title="${esc(p.full)}">${esc(p.day)}</span>`;
+    return `<span class="bo-tx-datetime" title="${esc(p.full)}"><span class="bo-tx-datetime-day">${esc(p.day)}</span><span class="bo-tx-datetime-time"> ${esc(p.time)}</span></span>`;
+  }
   async function api(url,opt){const res=await fetch(url,opt||{headers:{...BO_AUTH.authHeader()}});const json=await res.json().catch(()=>({}));if(!res.ok||json.status==='error')throw new Error(json.message||'Request failed');return json;}
 
   async function paymentMethods(){
@@ -136,7 +149,7 @@
     return account?`${name} (${account})`:name;
   }
   function statusClass(status){status=String(status||'').toUpperCase();if(status==='APPROVED')return'active';if(status==='REJECTED')return'off';return'';}
-  function render(rows,pagination){currentRows=rows;const body=document.getElementById('withdrawBody');if(!body)return;if(!rows.length)body.innerHTML='<tr><td colspan="9">No withdraw request found.</td></tr>';else body.innerHTML=rows.map(r=>{const pending=String(r.status||'').toUpperCase()==='PENDING';const bankLabel=formatBankLabel(r);return `<tr><td>${esc(dt(r.createdAt||r.created_at))}</td><td>${esc(r.username||'-')}</td><td>${money(r.amount)}</td><td><b>${esc(bankLabel)}</b></td><td>${esc(r.referenceNo||'-')}</td><td>${esc(r.remark||'-')}</td><td><span class="status-pill ${statusClass(r.status)}">${esc(r.status||'-')}</span></td><td>${esc(dt(r.processedAt))}</td><td>${pending?`<div class="bo-tx-actions"><button type="button" class="bo-tx-action-btn is-approve" data-approve="${esc(r.id)}" title="Approve" aria-label="Approve"><i class="bi bi-check-lg" aria-hidden="true"></i></button><button type="button" class="bo-tx-action-btn is-reject" data-reject="${esc(r.id)}" title="Reject" aria-label="Reject"><i class="bi bi-x-lg" aria-hidden="true"></i></button></div>`:`<div class="bo-tx-actions"><a class="bo-tx-action-btn is-ledger" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}" title="Ledger" aria-label="Ledger"><i class="bi bi-journal-text" aria-hidden="true"></i></a></div>`}</td></tr>`;}).join('');totalPages=Number(pagination?.totalPages)||1;const pageSize=resolvePageSize(document.getElementById('withdrawSize')?.value);publishPagerMeta(pagination,pageSize);document.getElementById('withdrawPager').innerHTML=pageButtons(page,totalPages);document.getElementById('withdrawPrevBtn').disabled=page<=1;document.getElementById('withdrawNextBtn').disabled=page>=totalPages;requestAnimationFrame(()=>scheduleEvenFill());}
+  function render(rows,pagination){currentRows=rows;const body=document.getElementById('withdrawBody');if(!body)return;if(!rows.length)body.innerHTML='<tr><td colspan="9">No withdraw request found.</td></tr>';else body.innerHTML=rows.map(r=>{const pending=String(r.status||'').toUpperCase()==='PENDING';const bankLabel=formatBankLabel(r);return `<tr><td>${dtCell(r.createdAt||r.created_at)}</td><td>${esc(r.username||'-')}</td><td>${money(r.amount)}</td><td><b>${esc(bankLabel)}</b></td><td>${esc(r.referenceNo||'-')}</td><td>${esc(r.remark||'-')}</td><td><span class="status-pill ${statusClass(r.status)}">${esc(r.status||'-')}</span></td><td>${esc(dt(r.processedAt))}</td><td>${pending?`<div class="bo-tx-actions"><button type="button" class="bo-tx-action-btn is-approve" data-approve="${esc(r.id)}" title="Approve" aria-label="Approve"><i class="bi bi-check-lg" aria-hidden="true"></i></button><button type="button" class="bo-tx-action-btn is-reject" data-reject="${esc(r.id)}" title="Reject" aria-label="Reject"><i class="bi bi-x-lg" aria-hidden="true"></i></button></div>`:`<div class="bo-tx-actions"><a class="bo-tx-action-btn is-ledger" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}" title="Ledger" aria-label="Ledger"><i class="bi bi-journal-text" aria-hidden="true"></i></a></div>`}</td></tr>`;}).join('');totalPages=Number(pagination?.totalPages)||1;const pageSize=resolvePageSize(document.getElementById('withdrawSize')?.value);publishPagerMeta(pagination,pageSize);document.getElementById('withdrawPager').innerHTML=pageButtons(page,totalPages);document.getElementById('withdrawPrevBtn').disabled=page<=1;document.getElementById('withdrawNextBtn').disabled=page>=totalPages;requestAnimationFrame(()=>scheduleEvenFill());}
   async function load(){const body=document.getElementById('withdrawBody');if(body)body.innerHTML='<tr><td colspan="9">Loading withdraw requests...</td></tr>';try{const json=await api(endpoint('MEMBER_WITHDRAW_LIST')+'?'+query());const data=json.data||{};render(Array.isArray(data.content)?data.content:[],data.pagination||{});}catch(e){if(body)body.innerHTML='<tr><td colspan="9" class="text-danger">'+esc(e.message||'Load failed')+'</td></tr>';}}
   async function action(id,type){
     const row=currentRows.find(x=>String(x.id)===String(id));
@@ -208,6 +221,11 @@
     document.getElementById('withdrawNextBtn')?.addEventListener('click',()=>{if(page<totalPages){page++;load();}});
     document.getElementById('withdrawPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(!b)return;const n=Number(b.dataset.page);if(n>=1&&n<=totalPages&&n!==page){page=n;load();}});
     bindEvenFillObserver();
+    const tableBodyScrollEl=document.getElementById('withdrawTableScroll');
+    const tableHead=tableBodyScrollEl?.closest('.table-wrap')?.querySelector('.bo-tx-table-head');
+    if(tableBodyScrollEl&&tableHead){
+      tableBodyScrollEl.addEventListener('scroll',()=>{tableHead.scrollLeft=tableBodyScrollEl.scrollLeft;},{passive:true});
+    }
     requestAnimationFrame(()=>requestAnimationFrame(async ()=>{
       try{await renderBankCards();}catch(e){}
       clearLockedAutoSize();

@@ -38,8 +38,21 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
   const walletProviderCode = document.getElementById('walletProviderCode'), walletStatusBox = document.getElementById('walletStatusBox'), walletResult = document.getElementById('walletResult');
   let rows = [];
   let categories = [];
+  const walletRequestsInFlight = new Set();
+  function setWalletActionBusy(action, busy){
+    const btn = document.querySelector('[data-wallet-action="' + CSS.escape(String(action || '')) + '"]');
+    if(btn) btn.disabled = !!busy;
+  }
   function setStatus(message, type){ statusBox.textContent = message || ''; statusBox.className = 'upload-status' + (type ? ' ' + type : ''); const top=document.getElementById('providerStatusBoxTop'); if(top){ top.textContent=message||''; top.className=statusBox.className; } }
   function setBusy(busy){ saveBtn.disabled = busy; refreshBtn.disabled = busy; saveBtn.innerHTML = busy ? '<i class="bi bi-hourglass-split"></i> Saving...' : '<i class="bi bi-save"></i> Save Provider'; }
+  function prettyJsonText(value){
+    if(value === undefined || value === null || value === '') return '';
+    try{
+      const parsed = typeof value === 'string' ? JSON.parse(value) : value;
+      if(parsed && typeof parsed === 'object') return JSON.stringify(parsed, null, 2);
+    } catch(_){}
+    return String(value);
+  }
   function parseActionConfigs(){
     const raw = (el.apiActionConfigs && el.apiActionConfigs.value || '').trim();
     if(!raw) return {};
@@ -167,7 +180,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       select.dispatchEvent(new Event('change', { bubbles: true }));
     });
   }
-  function edit(item){ el.providerId.value=item.id||''; el.providerCode.value=item.code||''; el.providerName.value=item.name||''; renderCategoryOptions(item.categoryIds || item.category_ids || ''); el.providerImageUrl.value=item.providerImageUrl||''; el.providerBrandImageUrl.value=item.providerBrandImageUrl||item.provider_brand_image_url||''; setSelectValue(el.walletMode, providerField(item,'walletMode','wallet_mode','TRANSFER'), 'TRANSFER'); if(el.settlementCostPercent) el.settlementCostPercent.value=providerField(item,'settlementCostPercent','settlement_cost_percent','0'); setSelectValue(el.settlementCostBasis, providerField(item,'settlementCostBasis','settlement_cost_basis','HOUSE_WIN'), 'HOUSE_WIN'); el.currency.value=providerField(item,'currency','currency','MYR'); setSelectValue(el.integrationType, providerField(item,'integrationType','integration_type','GENERIC_API'), 'GENERIC_API'); setSelectValue(el.httpMethod, providerField(item,'httpMethod','http_method','POST'), 'POST'); el.apiBaseUrl.value=item.apiBaseUrl||''; el.operatorId.value=item.operatorId||''; el.secretKey.value=item.secretKey||''; if(el.keyEnvironment) el.keyEnvironment.value=providerField(item,'keyEnvironment','key_environment','STAGING'); if(el.boLoginUrl) el.boLoginUrl.value=providerField(item,'boLoginUrl','bo_login_url',''); if(el.boUsername) el.boUsername.value=providerField(item,'boUsername','bo_username',''); if(el.boPassword){ el.boPassword.value=providerField(item,'boPassword','bo_password',''); el.boPassword.type='password'; } if(el.providerVariables) el.providerVariables.value=item.providerVariables||''; if(el.apiActionConfigs) el.apiActionConfigs.value=item.apiActionConfigs||''; syncWalletFlowFromJson(); syncWithdrawNegativeFromJson(); syncPullLogTimingFromJson(); el.signatureType.value=item.signatureType||'MD5'; el.signatureOutputCase.value=item.signatureOutputCase||'LOWER'; el.signatureTemplate.value=item.signatureTemplate||''; el.ukeyLength.value=item.ukeyLength||8; el.ukeyPrefix.value=item.ukeyPrefix||''; el.ukeyStaticValue.value=item.ukeyStaticValue||''; el.createPlayerPath.value=item.createPlayerPath||''; el.balancePath.value=item.balancePath||''; el.depositPath.value=item.depositPath||''; el.withdrawPath.value=item.withdrawPath||''; el.launchPath.value=item.launchPath||''; el.gameListPath.value=item.gameListPath||''; el.createPlayerRequestTemplate.value=item.createPlayerRequestTemplate||''; el.balanceRequestTemplate.value=item.balanceRequestTemplate||''; el.depositRequestTemplate.value=item.depositRequestTemplate||''; el.withdrawRequestTemplate.value=item.withdrawRequestTemplate||''; el.launchRequestTemplate.value=item.launchRequestTemplate||''; el.gameListRequestTemplate.value=item.gameListRequestTemplate||''; el.responseBalancePath.value=item.responseBalancePath||''; el.responseLaunchUrlPath.value=item.responseLaunchUrlPath||''; el.responseGameListPath.value=item.responseGameListPath||''; el.responseGameCodePath.value=item.responseGameCodePath||''; el.responseGameNamePath.value=item.responseGameNamePath||''; ['responseGameImagePath','gameImageApiUrlTemplate','gameImageRemoteApiUrlTemplate','gameImageRemoteApiHttpMethod','gameImageRemoteApiRequestTemplate','gameImageRemoteApiResponsePath','gameImageFallbackUrlTemplate','frontendGameFallbackImageUrl','responseGameCategoryPath','responseSuccessPath','responseSuccessValue','responseErrorMessagePath','callbackMemberPath','callbackGameCodePath','callbackBetIdPath','callbackTxIdPath','callbackBetAmountPath','callbackWinAmountPath','callbackValidBetAmountPath','callbackRoundIdPath','callbackStatusPath','callbackEventTypePath','callbackSignaturePath','callbackSuccessResponse','callbackDuplicateResponse'].forEach(k=>{ if(el[k]) el[k].value=item[k]||''; }); if(el.gameImageRemoteApiHttpMethod && !el.gameImageRemoteApiHttpMethod.value) el.gameImageRemoteApiHttpMethod.value='GET'; el.sortOrder.value=item.sortOrder??0; el.providerStatus.value=String(item.status??1); el.providerCode.disabled=true; title.textContent='Edit Provider #' + item.id;
+  function edit(item){ el.providerId.value=item.id||''; el.providerCode.value=item.code||''; el.providerName.value=item.name||''; renderCategoryOptions(item.categoryIds || item.category_ids || ''); el.providerImageUrl.value=item.providerImageUrl||''; el.providerBrandImageUrl.value=item.providerBrandImageUrl||item.provider_brand_image_url||''; setSelectValue(el.walletMode, providerField(item,'walletMode','wallet_mode','TRANSFER'), 'TRANSFER'); if(el.settlementCostPercent) el.settlementCostPercent.value=providerField(item,'settlementCostPercent','settlement_cost_percent','0'); setSelectValue(el.settlementCostBasis, providerField(item,'settlementCostBasis','settlement_cost_basis','HOUSE_WIN'), 'HOUSE_WIN'); el.currency.value=providerField(item,'currency','currency','MYR'); setSelectValue(el.integrationType, providerField(item,'integrationType','integration_type','GENERIC_API'), 'GENERIC_API'); setSelectValue(el.httpMethod, providerField(item,'httpMethod','http_method','POST'), 'POST'); el.apiBaseUrl.value=item.apiBaseUrl||''; el.operatorId.value=item.operatorId||''; el.secretKey.value=item.secretKey||''; if(el.keyEnvironment) el.keyEnvironment.value=providerField(item,'keyEnvironment','key_environment','STAGING'); if(el.boLoginUrl) el.boLoginUrl.value=providerField(item,'boLoginUrl','bo_login_url',''); if(el.boUsername) el.boUsername.value=providerField(item,'boUsername','bo_username',''); if(el.boPassword){ el.boPassword.value=providerField(item,'boPassword','bo_password',''); el.boPassword.type='password'; } if(el.providerVariables) el.providerVariables.value=prettyJsonText(item.providerVariables ?? item.provider_variables ?? ''); if(el.apiActionConfigs) el.apiActionConfigs.value=prettyJsonText(item.apiActionConfigs ?? item.api_action_configs ?? ''); syncWalletFlowFromJson(); syncWithdrawNegativeFromJson(); syncPullLogTimingFromJson(); el.signatureType.value=item.signatureType||'MD5'; el.signatureOutputCase.value=item.signatureOutputCase||'LOWER'; el.signatureTemplate.value=item.signatureTemplate||''; el.ukeyLength.value=item.ukeyLength||8; el.ukeyPrefix.value=item.ukeyPrefix||''; el.ukeyStaticValue.value=item.ukeyStaticValue||''; el.createPlayerPath.value=item.createPlayerPath||''; el.balancePath.value=item.balancePath||''; el.depositPath.value=item.depositPath||''; el.withdrawPath.value=item.withdrawPath||''; el.launchPath.value=item.launchPath||''; el.gameListPath.value=item.gameListPath||''; el.createPlayerRequestTemplate.value=item.createPlayerRequestTemplate||''; el.balanceRequestTemplate.value=item.balanceRequestTemplate||''; el.depositRequestTemplate.value=item.depositRequestTemplate||''; el.withdrawRequestTemplate.value=item.withdrawRequestTemplate||''; el.launchRequestTemplate.value=item.launchRequestTemplate||''; el.gameListRequestTemplate.value=item.gameListRequestTemplate||''; el.responseBalancePath.value=item.responseBalancePath||''; el.responseLaunchUrlPath.value=item.responseLaunchUrlPath||''; el.responseGameListPath.value=item.responseGameListPath||''; el.responseGameCodePath.value=item.responseGameCodePath||''; el.responseGameNamePath.value=item.responseGameNamePath||''; ['responseGameImagePath','gameImageApiUrlTemplate','gameImageRemoteApiUrlTemplate','gameImageRemoteApiHttpMethod','gameImageRemoteApiRequestTemplate','gameImageRemoteApiResponsePath','gameImageFallbackUrlTemplate','frontendGameFallbackImageUrl','responseGameCategoryPath','responseSuccessPath','responseSuccessValue','responseErrorMessagePath','callbackMemberPath','callbackGameCodePath','callbackBetIdPath','callbackTxIdPath','callbackBetAmountPath','callbackWinAmountPath','callbackValidBetAmountPath','callbackRoundIdPath','callbackStatusPath','callbackEventTypePath','callbackSignaturePath','callbackSuccessResponse','callbackDuplicateResponse'].forEach(k=>{ if(el[k]) el[k].value=item[k]||''; }); if(el.gameImageRemoteApiHttpMethod && !el.gameImageRemoteApiHttpMethod.value) el.gameImageRemoteApiHttpMethod.value='GET'; el.sortOrder.value=item.sortOrder??0; el.providerStatus.value=String(item.status??1); el.providerCode.disabled=true; title.textContent='Edit Provider #' + item.id;
     if(tenantMode){
       const editable=new Set(['providerImageUrl','providerBrandImageUrl','frontendGameFallbackImageUrl']);
       form.querySelectorAll('input,select,textarea').forEach(node=>{ if(node.id && node.id!=='providerId') node.disabled=!editable.has(node.id); });
@@ -426,6 +439,10 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       'api-preview':'Generating API payload preview...',
       'pull-log-debug':'Running pull log / bet log debug...'
     };
+    if(walletRequestsInFlight.has(action)) return;
+    walletRequestsInFlight.add(action);
+    setWalletActionBusy(action, true);
+    const startedAt = performance.now();
     walletStatus(labels[action] || 'Processing...', '');
     if(walletResult) walletResult.textContent = '';
 
@@ -468,9 +485,12 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         options = {method:'POST', headers: authHeaders, body:data};
       }
 
+      // Send the debug request immediately. Do not add a BO-side AbortController/timer
+      // around provider diagnostics; the backend/provider client owns its network timeout.
       const json = await fetchJson(url, options);
       const data = Object.prototype.hasOwnProperty.call(json, 'data') ? json.data : json;
-      walletStatus(json.message || 'Request completed successfully.', 'success');
+      const elapsedSeconds = ((performance.now() - startedAt) / 1000).toFixed(1);
+      walletStatus((json.message || 'Request completed successfully.') + ' (' + elapsedSeconds + 's)', 'success');
       if(walletResult) walletResult.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
 
       if(action === 'launch-sport'){
@@ -478,8 +498,13 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         if(launchUrl && /^https?:\/\//i.test(launchUrl)) window.open(launchUrl, '_blank', 'noopener');
       }
     }catch(err){
-      walletStatus(err.message || 'Request failed.', 'error');
-      if(walletResult) walletResult.textContent = 'Error:\n' + (err.message || 'Request failed.');
+      const elapsedSeconds = ((performance.now() - startedAt) / 1000).toFixed(1);
+      const message = err.message || 'Request failed.';
+      walletStatus(message + ' (' + elapsedSeconds + 's)', 'error');
+      if(walletResult) walletResult.textContent = 'Error:\n' + message;
+    } finally {
+      walletRequestsInFlight.delete(action);
+      setWalletActionBusy(action, false);
     }
   }
 
