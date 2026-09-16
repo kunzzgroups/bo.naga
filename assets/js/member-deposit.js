@@ -23,6 +23,19 @@
   function num(v){const n=Number(v||0);return Number.isFinite(n)?n:0;}
   function money(v){return num(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
   function dt(v){return window.BO_FORMAT?.dateTime?window.BO_FORMAT.dateTime(v):(v?String(v).replace('T',' ').slice(0,19):'-');}
+  function dtParts(v){
+    const full=dt(v);
+    if(!full||full==='-') return {full:'-',day:'-',time:''};
+    const m=String(full).match(/^(\d{4}[-/]\d{1,2}[-/]\d{1,2})\s+(.+)$/);
+    if(m) return {full,day:m[1],time:m[2]};
+    return {full,day:full,time:''};
+  }
+  function dtCell(v){
+    const p=dtParts(v);
+    if(p.full==='-') return '-';
+    if(!p.time) return `<span class="bo-tx-datetime" title="${esc(p.full)}">${esc(p.day)}</span>`;
+    return `<span class="bo-tx-datetime" title="${esc(p.full)}"><span class="bo-tx-datetime-day">${esc(p.day)}</span><span class="bo-tx-datetime-time"> ${esc(p.time)}</span></span>`;
+  }
   async function api(url,opt){const res=await fetch(url,opt||{headers:{...BO_AUTH.authHeader()}});const json=await res.json().catch(()=>({}));if(!res.ok||json.status==='error')throw new Error(json.message||'Request failed');return json;}
 
   let paymentMethodsCache=null;
@@ -370,7 +383,7 @@
     else body.innerHTML=rows.map(r=>{
       const pending=String(r.status||'').toUpperCase()==='PENDING';
       const methodLabel=formatMethodLabel(r,methods);
-      return `<tr><td>${esc(dt(r.createdAt))}</td><td>${esc(r.username||'-')}</td><td>${money(r.amount)}</td><td><b>${esc(methodLabel)}</b></td><td>${esc(r.referenceNo||'-')}</td><td><span class="status-pill ${r.status==='APPROVED'?'active':r.status==='REJECTED'?'off':''}">${esc(r.status||'-')}</span></td><td>${esc(dt(r.processedAt))}</td><td>${pending?`<div class="bo-tx-actions"><button type="button" class="bo-tx-action-btn is-approve" data-approve="${esc(r.id)}" title="Approve" aria-label="Approve"><i class="bi bi-check-lg" aria-hidden="true"></i></button><button type="button" class="bo-tx-action-btn is-reject" data-reject="${esc(r.id)}" title="Reject" aria-label="Reject"><i class="bi bi-x-lg" aria-hidden="true"></i></button></div>`:'-'}</td></tr>`;
+      return `<tr><td>${dtCell(r.createdAt)}</td><td>${esc(r.username||'-')}</td><td>${money(r.amount)}</td><td><b>${esc(methodLabel)}</b></td><td>${esc(r.referenceNo||'-')}</td><td><span class="status-pill ${r.status==='APPROVED'?'active':r.status==='REJECTED'?'off':''}">${esc(r.status||'-')}</span></td><td>${esc(dt(r.processedAt))}</td><td>${pending?`<div class="bo-tx-actions"><button type="button" class="bo-tx-action-btn is-approve" data-approve="${esc(r.id)}" title="Approve" aria-label="Approve"><i class="bi bi-check-lg" aria-hidden="true"></i></button><button type="button" class="bo-tx-action-btn is-reject" data-reject="${esc(r.id)}" title="Reject" aria-label="Reject"><i class="bi bi-x-lg" aria-hidden="true"></i></button></div>`:'-'}</td></tr>`;
     }).join('');
     totalPages=Number(pagination?.totalPages)||1;
     const pageSize=resolvePageSize(document.getElementById('depositSize')?.value);
@@ -450,6 +463,11 @@
     document.getElementById('depositPrevBtn')?.addEventListener('click',()=>{if(page>1){page--;load();}}); document.getElementById('depositNextBtn')?.addEventListener('click',()=>{if(page<totalPages){page++;load();}});
     document.getElementById('depositPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(!b)return;const n=Number(b.dataset.page);if(n>=1&&n<=totalPages&&n!==page){page=n;load();}});
     bindEvenFillObserver();
+    const tableBodyScroll=document.getElementById('depositTableScroll');
+    const tableHead=tableBodyScroll?.closest('.table-wrap')?.querySelector('.bo-tx-table-head');
+    if(tableBodyScroll&&tableHead){
+      tableBodyScroll.addEventListener('scroll',()=>{tableHead.scrollLeft=tableBodyScroll.scrollLeft;},{passive:true});
+    }
     requestAnimationFrame(()=>requestAnimationFrame(async ()=>{
       try{await renderBankCards();}catch(e){}
       clearLockedAutoSize();
