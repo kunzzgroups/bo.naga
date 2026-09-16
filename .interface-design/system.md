@@ -225,6 +225,20 @@ Reference: `payment-method.html` · `body.bo-wallet-tx.payment-method-page`. Sam
 | Action | `.bo-tx-action-btn` **26×26** · Edit `is-edit` (amber well) · Delete `is-reject` (danger) |
 | Modal | Form wells `#F5EBDC` · focus amber ring · full-bleed ≤768 |
 
+#### Bank Deposit Usage (locked)
+
+Reference: `bank-deposit-usage.html` · `body.bo-wallet-tx.bank-deposit-usage-page`. Companion to Payment Method.
+
+| Part | Spec |
+|------|------|
+| Shell | `bo-wallet-tx` + amber CSS + `bank-deposit-usage.css` (not charcoal) |
+| Filters | Inline inside `.bank-usage-list-card` toolbar **left** · date range + keyword only · **no Reset / Search** (change date or type to refresh · Refresh button reloads) · **filter titles hidden** |
+| Summary | **Removed** — do not restore `.usage-summary-grid` metric cards |
+| Panel | Viewport-locked · toolbar filters left + Ghost `Payment Method Config` / `Refresh` right · no title badge · no link underline |
+| Table | Peach-cream zebra · square thead · `table-layout:fixed` · inner scroll · never page overflow |
+| Status | `.status-pill.active` / `.off` (same as Payment Method) |
+| Meter | Track `#F5EBDC` · fill `#B45309` · warn `#F59E0B` · over `#EF4444` |
+
 Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
 
 ---
