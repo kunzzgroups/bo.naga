@@ -38,6 +38,15 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
   const walletProviderCode = document.getElementById('walletProviderCode'), walletStatusBox = document.getElementById('walletStatusBox'), walletResult = document.getElementById('walletResult');
   let rows = [];
   let categories = [];
+  const walletRequestsInFlight = new Set();
+  function setWalletButtonsBusy(busy){
+    document.querySelectorAll('[data-wallet-action]').forEach(btn => { btn.disabled = !!busy; });
+  }
+  function walletFetchOptions(options, timeoutMs = 20000){
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    return { options: {...(options || {}), signal: controller.signal}, clear: () => clearTimeout(timer) };
+  }
   function setStatus(message, type){ statusBox.textContent = message || ''; statusBox.className = 'upload-status' + (type ? ' ' + type : ''); const top=document.getElementById('providerStatusBoxTop'); if(top){ top.textContent=message||''; top.className=statusBox.className; } }
   function setBusy(busy){ saveBtn.disabled = busy; refreshBtn.disabled = busy; saveBtn.innerHTML = busy ? '<i class="bi bi-hourglass-split"></i> Saving...' : '<i class="bi bi-save"></i> Save Provider'; }
   function prettyJsonText(value){
@@ -434,6 +443,10 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       'api-preview':'Generating API payload preview...',
       'pull-log-debug':'Running pull log / bet log debug...'
     };
+    if(walletRequestsInFlight.has(action)) return;
+    walletRequestsInFlight.add(action);
+    setWalletButtonsBusy(true);
+    const startedAt = performance.now();
     walletStatus(labels[action] || 'Processing...', '');
     if(walletResult) walletResult.textContent = '';
 
@@ -476,9 +489,15 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         options = {method:'POST', headers: authHeaders, body:data};
       }
 
-      const json = await fetchJson(url, options);
+      // Provider debug actions can involve chained remote calls. Put a hard ceiling on
+      // the BO request so a slow/unreachable provider cannot leave the UI spinning forever.
+      const timed = walletFetchOptions(options, 20000);
+      let json;
+      try { json = await fetchJson(url, timed.options); }
+      finally { timed.clear(); }
       const data = Object.prototype.hasOwnProperty.call(json, 'data') ? json.data : json;
-      walletStatus(json.message || 'Request completed successfully.', 'success');
+      const elapsedSeconds = ((performance.now() - startedAt) / 1000).toFixed(1);
+      walletStatus((json.message || 'Request completed successfully.') + ' (' + elapsedSeconds + 's)', 'success');
       if(walletResult) walletResult.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
 
       if(action === 'launch-sport'){
@@ -486,8 +505,14 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         if(launchUrl && /^https?:\/\//i.test(launchUrl)) window.open(launchUrl, '_blank', 'noopener');
       }
     }catch(err){
-      walletStatus(err.message || 'Request failed.', 'error');
-      if(walletResult) walletResult.textContent = 'Error:\n' + (err.message || 'Request failed.');
+      const elapsedSeconds = ((performance.now() - startedAt) / 1000).toFixed(1);
+      const timedOut = err && err.name === 'AbortError';
+      const message = timedOut ? 'Provider debug request timed out after 20 seconds.' : (err.message || 'Request failed.');
+      walletStatus(message + ' (' + elapsedSeconds + 's)', 'error');
+      if(walletResult) walletResult.textContent = 'Error:\n' + message;
+    } finally {
+      walletRequestsInFlight.delete(action);
+      setWalletButtonsBusy(walletRequestsInFlight.size > 0);
     }
   }
 
