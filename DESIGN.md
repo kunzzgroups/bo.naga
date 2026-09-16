@@ -1104,3 +1104,33 @@ that two locked recipes had already chosen.
   date-range triggers, custom select buttons, amount groups, search frames, textareas, the rich-text
   editors and the code editor; the locked username field still reads `#EDE4D4`, dark still `#2A2C36`,
   and no dark rule gained `#FFF8EB`.
+
+**The Adjust Credit action row hovered navy, and the dialog's rings were cyan (2026-09-16,
+owner-reported: "这里的hover").** Owner's screenshot showed Save Adjustment dark blue under the
+pointer. Measured: the default state was already amber, but five `:hover` declarations competed for
+that button and the strongest was `.mac-adjust-panel .mad-modal-actions .mad-btn-navy:hover`
+`background:#0E2F52!important` — a **literal**, not a token, so no token remap could ever reach it,
+and `#0E2F52` is the darkest value in the whole palette. The same block's ghost hover was
+`border-color:rgba(33,166,215,.45)` + `var(--bo-cyan-tint)` — cyan. Values replaced with the locked
+recipe copied verbatim from the already-fixed sibling for the same dialog
+(`main-merchant-detail-executive.css`, `[data-access-page="main_merchant_detail"] .mad-modal
+.mad-modal-actions`): primary = amber gradient, hover lifts `translateY(-1px)`; ghost = cream
+gradient, hover deepens to `#F3E8D6`. Verified by cascade: the winner for the button's `:hover` is
+now `linear-gradient(0deg,#FCD34D…)` at specificity 5001, and the navy and cyan rules are out-ranked.
+
+- **Trap: a retired hue survives as a `!important` literal on an interactive state.** The tokens in
+  this file had all been remapped (`--bo-cyan` → `#D97706`, `--bo-cyan-tint` → `rgba(217,119,6,.12)`),
+  which is why the *default* states looked right and every earlier sweep passed — but 245 literals
+  (`rgba(33,166,215,…)`, `#21A6D7`, `#123B66`, `#0E2F52`, `#0B1626`, `#7DD3FC`, `rgba(18,59,102,…)`)
+  were never remapped by anything. They are now all on the amber ladder (alpha mapped 1:1, so a wash
+  stays as light as it was), and the file has zero retired literals left.
+- The focus rings in the same dialog were cyan for the same reason: `.mac-field .form-control:focus`
+  and `.rounded-select-btn:focus` carried `box-shadow: 0 0 0 3px rgba(33,166,215,.12)` — a cyan glow,
+  which is what the owner circled around the Amount field. Both now use the locked amber ring
+  `border-color:#D97706; box-shadow:0 0 0 3px rgba(217,119,6,.14)` (dark: `#F59E0B` /
+  `rgba(245,158,11,.18)`).
+- Verified: computed values on `main-admin-detail` in both themes — panel `#FFF8EB`, summary
+  `#F0E4D0`, fields `#FFF8EB` with the `#DCC9A8` border, Save amber `#F59E0B`/`#E8901A`, Cancel on
+  the cream gradient, sidebar `#FFE8CC`, and a sweep of every element inside the dialog, the content
+  column and the sidebar reports **0 elements painting a retired colour**. Two neighbouring pages
+  that load the same sheet (`main-merchant-create`, `main-admin-edit`) keep their own values.
