@@ -239,6 +239,30 @@
     }
     return all;
   }
+  async function loadApprovedWithdrawals(){
+    let all=[],p=1,guard=0;
+    const from=document.getElementById('depositFrom')?.value||'';
+    const to=document.getElementById('depositTo')?.value||'';
+    while(guard++<500){
+      const params=new URLSearchParams({status:'APPROVED',page:String(p),size:'100'});
+      if(from)params.set('dateFrom',from);
+      if(to)params.set('dateTo',to);
+      const json=await api(endpoint('MEMBER_WITHDRAW_LIST')+'?'+params);
+      const d=json.data||{};
+      const rows=d.content||d.items||d.list||[];
+      all.push(...rows);
+      const pg=d.pagination||d;
+      const totalPages=Number(pg.totalPages||1)||1;
+      if(p>=totalPages||!rows.length)break;
+      p++;
+    }
+    return all;
+  }
+  function matchWithdrawBank(row,methods){
+    const id=String(row?.fundingPaymentMethodId??'').trim();
+    if(id){const exact=methods.find(m=>String(m.id)===id);if(exact)return exact;}
+    return null;
+  }
   async function loadManualBankDeposits(){
     let all=[],p=1,guard=0;
     const from=document.getElementById('depositFrom')?.value||'';
@@ -262,7 +286,8 @@
     const host=document.getElementById('depositBankCards');
     if(!host)return;
     try{
-      const [methods,deposits,manual]=await Promise.all([paymentMethods(),loadApprovedDeposits(),loadManualBankDeposits()]);
+      const allMode=new URLSearchParams(location.search).get('tab')==='all';
+      const [methods,deposits,manual,withdrawals]=await Promise.all([paymentMethods(),loadApprovedDeposits(),loadManualBankDeposits(),allMode?loadApprovedWithdrawals():Promise.resolve([])]);
       if(!methods.length){
         host.innerHTML='<article class="deposit-bank-card is-empty"><div class="deposit-bank-total"><span>Banks</span><strong>0</strong></div><div class="bo-summary-note">No payment methods</div></article>';
         return;
@@ -277,6 +302,11 @@
         const id=String(r.paymentMethodId);
         if(!totals.has(id))return;
         totals.set(id,num(totals.get(id))+Math.abs(num(r.amount)));
+      });
+      withdrawals.forEach(r=>{
+        const m=matchWithdrawBank(r,methods);
+        if(!m)return;
+        totals.set(String(m.id),num(totals.get(String(m.id)))+Math.abs(num(r.amount)));
       });
       host.innerHTML=methods.map(m=>{
         const name=String(m.bankName||m.displayName||('Bank #'+m.id)).trim();
