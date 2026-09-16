@@ -61,6 +61,23 @@
     };
   }
 
+  /* Date for the hover tip — the same dd/mm/yyyy the list pages' Last Login / Last Logout
+     tooltips use, so the two presentations match. */
+  function dateDdMmYyyy(d){
+    if(!(d instanceof Date) || isNaN(d.getTime())) return '';
+    return pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + d.getFullYear();
+  }
+
+  /* Time visible, date on hover — mirrors timeWithDateTip() in main-admin-detail.js /
+     main-merchant-detail.js. The Time & Date column used to stack both on two lines, which
+     made every row twice as tall and repeated the same date 50 times down the column. */
+  function timeWithDateTip(d){
+    if(!(d instanceof Date) || isNaN(d.getTime())) return '<span class="mad-muted">-</span>';
+    const t = formatTime(d);
+    const date = dateDdMmYyyy(d);
+    if(!date) return '<span class="mad-time">' + esc(t.time) + '</span>';
+    return '<span class="mad-time mad-time-tip" data-date="' + esc(date) + '" tabindex="0">' + esc(t.time) + '</span>';
+  }
   function initials(name){
     const s = String(name || '').trim();
     if(!s) return '?';
@@ -789,7 +806,7 @@
       const dotClass = e.tone === 'danger' ? 'is-danger' : (e.tone === 'success' ? 'is-success' : '');
       const avClass = idx % 2 ? ' is-alt' : '';
       return '<tr class="' + (blocked ? 'is-blocked' : '') + '" data-event-id="' + esc(e.id) + '">' +
-        '<td><div class="mas-time"><b>' + esc(td.time) + '</b><small>' + esc(td.date) + '</small></div></td>' +
+        '<td class="mad-time mad-detail">' + timeWithDateTip(e.at) + '</td>' +
         '<td><div class="mas-admin"><span class="mas-avatar' + avClass + '">' + esc(initials(e.adminName)) + '</span>' +
           '<div class="mas-admin-copy"><b>' + esc(e.adminName) + '</b><small>' + esc(e.roleLabel) + '</small></div></div></td>' +
         '<td><div class="mas-event"><span class="mas-dot ' + dotClass + '"></span>' +

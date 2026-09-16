@@ -9540,3 +9540,23 @@ html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).main-merchant-securi
   background-color:#D97706!important;
   color:#FFFFFF!important;
 }
+
+/* --------------------------------------------------------------------------
+   Security & Audit — Time & Date cell now shows the time with the date in a hover
+   tip, matching the list pages' Last Login / Last Logout (same markup, so the tip
+   rules above apply unchanged). Both security pages carry `main-admin-security-page`
+   — the admin one and the merchant one — so this one scope covers both.
+   Locked "muted / time" values: #57534E light / #D4D4D8 dark, weight 600.
+   -------------------------------------------------------------------------- */
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table td.mad-time,
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table .mad-time-tip{
+  color:#57534E!important;
+  font-weight:600!important;
+  font-variant-numeric:tabular-nums;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-table td.mad-time,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-table .mad-time-tip{
+  color:#D4D4D8!important;
+  font-weight:600!important;
+  font-variant-numeric:tabular-nums;
+}
