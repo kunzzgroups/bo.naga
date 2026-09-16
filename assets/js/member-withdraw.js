@@ -61,18 +61,37 @@
   function bindEvenFillObserver(){const scroll=tableBodyScroll();if(!scroll||scroll._boEvenFillObs)return;scroll._boEvenFillObs=new ResizeObserver(()=>{clearTimeout(scroll._boEvenFillTimer);scroll._boEvenFillTimer=setTimeout(evenFillRowHeights,32);});scroll._boEvenFillObs.observe(scroll);}
   function publishPagerMeta(pagination,pageSize){const card=document.querySelector('.table-card');if(!card)return;const total=Number(pagination?.totalElements);if(Number.isFinite(total)&&total>=0)card.dataset.boTotal=String(total);else delete card.dataset.boTotal;const size=Number(pageSize);if(Number.isFinite(size)&&size>0)card.dataset.boPageSize=String(size);else delete card.dataset.boPageSize;card.dataset.boPage=String(page);}
   function query(){const params=new URLSearchParams();const keyword=document.getElementById('withdrawKeyword')?.value.trim();const status=document.getElementById('withdrawStatus')?.value.trim();const from=document.getElementById('withdrawFrom')?.value;const to=document.getElementById('withdrawTo')?.value;const size=resolvePageSize(document.getElementById('withdrawSize')?.value);if(keyword)params.set('keyword',keyword);if(status)params.set('status',status);if(from)params.set('dateFrom',from);if(to)params.set('dateTo',to);params.set('page',page);params.set('size',String(size));return params.toString();}
+  async function loadApprovedWithdrawals(){
+    let all=[],p=1,guard=0;
+    const from=document.getElementById('withdrawFrom')?.value||'';
+    const to=document.getElementById('withdrawTo')?.value||'';
+    while(guard++<500){
+      const params=new URLSearchParams({status:'APPROVED',page:String(p),size:'100'});
+      if(from)params.set('dateFrom',from);
+      if(to)params.set('dateTo',to);
+      const json=await api(endpoint('MEMBER_WITHDRAW_LIST')+'?'+params);
+      const d=json.data||{};
+      const rows=d.content||d.items||d.list||[];
+      all.push(...rows);
+      const pg=d.pagination||d;
+      const totalPages=Number(pg.totalPages||1)||1;
+      if(p>=totalPages||!rows.length)break;
+      p++;
+    }
+    return all;
+  }
   async function renderBankCards(){
     const host=document.getElementById('withdrawBankCards');
     if(!host)return;
     try{
-      const methods=await paymentMethods();
+      const [methods,withdrawals]=await Promise.all([paymentMethods(),loadApprovedWithdrawals()]);
       if(!methods.length){
         host.innerHTML='<article class="deposit-bank-card is-empty"><div class="deposit-bank-total"><span>Banks</span><strong>0</strong></div><div class="bo-summary-note">No payment methods</div></article>';
         return;
       }
       host.innerHTML=methods.map(m=>{
         const name=String(m.bankName||m.displayName||('Bank #'+m.id)).trim();
-        const total=num(m.bankUsage);
+        const total=withdrawals.reduce((sum,r)=>String(r?.fundingPaymentMethodId??'')===String(m.id)?sum+Math.abs(num(r.amount)):sum,0);
         const max=num(m.maxAmount);
         const pctRaw=max>0?(Math.max(0,total)/max)*100:0;
         const pct=Math.min(100,pctRaw);
