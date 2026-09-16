@@ -9542,11 +9542,12 @@ html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).main-merchant-securi
 }
 
 /* --------------------------------------------------------------------------
-   Security & Audit — Time & Date cell now shows the time with the date in a hover
-   tip, matching the list pages' Last Login / Last Logout (same markup, so the tip
-   rules above apply unchanged). Both security pages carry `main-admin-security-page`
-   — the admin one and the merchant one — so this one scope covers both.
-   Locked "muted / time" values: #57534E light / #D4D4D8 dark, weight 600.
+   Security & Audit — Time & Date cell.
+   The cell keeps the list pages' own markup (time visible, date in the tip), but the
+   portal list's tinting rule for it is scoped to [data-access-page="main_admin_detail"],
+   which these two pages do not match, so the locked "muted / time" values are stated
+   explicitly here. Both security pages carry `main-admin-security-page`, so one scope
+   covers the admin page and the merchant page.
    -------------------------------------------------------------------------- */
 html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table td.mad-time,
 html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table .mad-time-tip{
@@ -9559,48 +9560,4 @@ html[data-bo-theme="dark"] body.main-admin-security-page .mas-table .mad-time-ti
   color:#D4D4D8!important;
   font-weight:600!important;
   font-variant-numeric:tabular-nums;
-}
-
-/* --------------------------------------------------------------------------
-   Same tip, anchored to the SIDE — this page's table header sits OUTSIDE the
-   scrolling body (`.mas-table-body-scroll`, overflow:hidden auto), so the first
-   row is flush with the container's top edge: measured roomAbove = 0px and a tip
-   drawn above the cell is cut to a white sliver. The portal list gets away with
-   the identical markup only because its first row sits 47px below its own
-   clipping edge — copying the recipe without measuring the room is what broke it.
-   A tip drawn above is also clipped for whichever row is at the top of the scroll
-   box after scrolling, so padding cannot fix this; anchoring to the side can.
-   The Time & Date column is the first one and has ~1146px of clear space to its
-   right, so the tip stays inside every clipping ancestor at any scroll position.
-   Specificity: (0,4,2) with !important, above the family's own (0,3,2) tip rules,
-   so the reposition and the arrow colour both settle without load order.
-   -------------------------------------------------------------------------- */
-html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table .mad-time-tip::after,
-html[data-bo-theme="dark"] body.main-admin-security-page .mas-table .mad-time-tip::after{
-  left:calc(100% + 12px);
-  bottom:auto;
-  top:50%;
-  transform:translateY(-50%) translateX(-4px);
-}
-html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table .mad-time-tip:hover::after,
-html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table .mad-time-tip:focus-visible::after,
-html[data-bo-theme="dark"] body.main-admin-security-page .mas-table .mad-time-tip:hover::after,
-html[data-bo-theme="dark"] body.main-admin-security-page .mas-table .mad-time-tip:focus-visible::after{
-  transform:translateY(-50%) translateX(0);
-}
-html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table .mad-time-tip::before{
-  left:calc(100% + 2px);
-  bottom:auto;
-  top:50%;
-  transform:translateY(-50%);
-  border-color:transparent!important;
-  border-right-color:#FFF8EB!important;
-}
-html[data-bo-theme="dark"] body.main-admin-security-page .mas-table .mad-time-tip::before{
-  left:calc(100% + 2px);
-  bottom:auto;
-  top:50%;
-  transform:translateY(-50%);
-  border-color:transparent!important;
-  border-right-color:#40424E!important;
 }
