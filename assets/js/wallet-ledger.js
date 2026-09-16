@@ -44,7 +44,19 @@
     if(hidden) hidden.value=list.join(',');
     if(all) all.checked=list.length===0;
     document.querySelectorAll('[data-ledger-type]').forEach(cb=>{cb.checked=selectedTypes.has(cb.dataset.ledgerType);});
-    if(label) label.textContent=list.length===0?'All':(list.length===1?list[0]:`${list.length} selected`);
+    if(label) label.textContent=list.length===0?'All types':(list.length===1?list[0]:`${list.length} selected`);
+  }
+  function statusPillClass(status){
+    const s=String(status||'').toUpperCase();
+    if(s==='SUCCESS'||s==='APPROVED'||s==='COMPLETED'||s==='DONE') return 'active';
+    if(s==='FAILED'||s==='REJECTED'||s==='CANCELLED'||s==='CANCELED'||s==='ERROR') return 'off';
+    return '';
+  }
+  function amtClass(v){
+    const n=num(v);
+    if(n<0) return 'is-neg';
+    if(n===0) return 'is-zero';
+    return 'is-pos';
   }
   function setSelectedTypes(values){
     selectedTypes.clear();
@@ -118,22 +130,24 @@
     if(!rows.length){ body.innerHTML='<tr><td colspan="15">No ledger records found.</td></tr>'; }
     else body.innerHTML = rows.map(r => {
       const amt = num(r.amount);
+      const status = r.status || '-';
+      const statusCls = statusPillClass(status);
       return `<tr>
         <td>${esc(dt(r.createdAt || r.created_at))}</td>
         <td>${esc(dt(r.postedAt || r.posted_at || r.completedAt || r.approvedAt))}</td>
         <td><b>${esc(r.username || '-')}</b><br><small>ID: ${esc(r.memberId || '')}</small></td>
         <td>${esc(r.providerCode || '-')}</td>
-        <td><span class="status-pill">${esc(r.ledgerType || '-')}</span></td>
-        <td><b class="${amt < 0 ? 'text-danger' : 'text-success'}">${money(amt)}</b></td>
-        <td>${money(r.beforeBalance)}</td>
-        <td>${money(r.afterBalance)}</td>
+        <td><span class="status-pill ledger-type-chip">${esc(r.ledgerType || '-')}</span></td>
+        <td><b class="ledger-amt ${amtClass(amt)}">${money(amt)}</b></td>
+        <td class="ledger-amt">${money(r.beforeBalance)}</td>
+        <td class="ledger-amt">${money(r.afterBalance)}</td>
         <td>${esc(r.gameCode || '-')}</td>
         <td><b>${esc(r.createdBy || r.adjustedBy || '-')}</b></td>
         <td><b>${esc(r.approvedBy || r.reviewedBy || '-')}</b></td>
         <td>${esc(r.reasonCode || r.reason || '-')}</td>
         <td><small>${esc(r.relatedId || r.referenceNo || r.depositId || r.withdrawalId || r.bonusId || r.rebateId || '-')}</small></td>
         <td><small>${esc(r.remark || '-')}</small></td>
-        <td>${esc(r.status || '-')}</td>
+        <td><span class="status-pill ${statusCls}">${esc(status)}</span></td>
       </tr>`;
     }).join('');
     totalPages = Number(pagination && pagination.totalPages) || 1;

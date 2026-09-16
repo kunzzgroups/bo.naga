@@ -273,6 +273,23 @@ Reference: `payment-method-create.html` · `body.bo-wallet-tx.payment-method-cre
 
 Do **not** flatten cards + inputs to one cream, or use recessed `#F5EBDC` wells on this page.
 
+#### Wallet Ledger (locked)
+
+Reference: `wallet-ledger.html` · `body.bo-wallet-tx.wallet-ledger-page`. Transaction listing family — audit ledger, not Deposit/Withdraw approval.
+
+| Part | Spec |
+|------|------|
+| Shell | `bo-wallet-tx` + `bo-wallet-transaction-amber.css` (not `bo-charcoal`) |
+| KPI strip | Keep 4 `.metric` tiles (Deposit / Withdraw / Transfer / Bet Win/Lose) · 4-col desktop · 2-col ≤991 · amber icon language via `reports.js` decorate |
+| Panel | `.ledger-list-card` = viewport-locked `.table-card` · inline filters · inner `.table-wrap` scroll · footer scope + pager |
+| Filters | Date range + Member ID + Provider + Type multi · Ghost Reset + amber Search · **no** Page Size in filter row (footer only) · **filter titles hidden** |
+| Type multi | `.ledger-type-trigger` / `.ledger-type-menu` — listing surface `#FFF8EB` · border `#EADCC8` · radius `8px` · amber focus ring · never cool blue / pure white |
+| Table | Peach-cream zebra · square thead · `table-layout:fixed` · min-width ~1550 · scroll inside wrap |
+| Type cell | `.status-pill.ledger-type-chip` (PENDING-orange family) |
+| Status cell | `.status-pill` · SUCCESS/APPROVED → `.active` · FAILED/REJECTED → `.off` |
+| Money | `.ledger-amt` · pos `#B45309` · neg danger · zero muted · tabular-nums |
+| Pager | **Table footer pager** (`.mad-pager` / smart-page) — amber 3D active |
+
 #### Bulk Adjustment / Bulk Bonus Adjustment (locked)
 
 Reference: `bulk-adjustment.html` · `bulk-bonus-adjustment.html` · `body.bo-wallet-tx.bulk-adjustment-page` / `.bulk-bonus-adjustment-page`. Operation shell (not a single listing `table-card`).
@@ -280,15 +297,64 @@ Reference: `bulk-adjustment.html` · `bulk-bonus-adjustment.html` · `body.bo-wa
 | Part | Spec |
 |------|------|
 | Shell | `bo-wallet-tx` + amber CSS + `bulk-member-operation.css` + `bulk-adjustment-import.css` + charcoal layers + FOUC |
-| Content scroll | `.report-content` **overflow:auto** (override listing `overflow:hidden`) — panels stack vertically |
-| Mode tabs | `.bulk-mode-switch` / `.bulk-mode-btn` — **Status filter pills** recipe · cream 3D active · **never** cool blue `#1f5fe7` / `#f3f6fb` |
+| Content scroll | `.report-content` **overflow:hidden** when Manual shell fills viewport · Excel mode may scroll |
+| Family tabs | Above shell · `.bulk-family-tabs` / `.bulk-family-tab` · **In/Out Adjustment** → `bulk-adjustment.html` · **Bonus Adjustment** → `bulk-bonus-adjustment.html` · **mad-tabs underline** recipe (full-width hairline `#EADCC8` · active bold + `2px` amber `#D97706` underline · inactive muted · no pill fill) |
+| Mode tabs | `.bulk-mode-switch` / `.bulk-mode-btn` — **only active is a cream 3D button**; idle = muted text (no fill / border / shadow) · dark active = charcoal 3D + amber ring · never cool blue |
 | Panels | Outer `.bulk-operation-shell` wraps both · inner `.bulk-panel` side-by-side grid · shell `#FFF8EB` / nested `#FFFCF7` · border `#EADCC8`/`#DCC9A8` · radius `8px` |
+| Right ops panel | `.bulk-panel-ops` top→bottom: **Configure** form → **Selected** table (flex) → **footer** (members + batch total + Submit) — form first so staff always see inputs |
+| Member picker | `.member-picker-list` = container query · `.member-picker-grid` `repeat(auto-fit, minmax(200px, 1fr))` — columns follow box width |
+| Member card | `button.member-pick-card` — avatar (name monogram) + account/meta/VIP + balance pill · click toggle · **no checkboxes** |
+| Selected table | 6 cols: `#` · `Account` · `Name` · `VIP` · `Bal` · remove · quiet ledger (cream lift `#FFFCF7` · fixed thead · tbody-only scroll · soft zebra · ghost ×) |
+| Selected scrollbar | **thin pill · no arrows** — see recipe below |
 | Inputs | listing surface `#FFF8EB` · border `#EADCC8` · height `40px` · amber focus ring · labels `11.5px/800` uppercase |
-| Summary chips | surface tile + uppercase label + tabular value (KPI strip density) |
-| Tables | peach-cream zebra · thead `#FFE8CC` / dark `#1F2128` · square corners · money `#B45309` / `#F59E0B` |
-| Primary CTA | Search / Validate / Submit / Execute = amber Primary · Clear / Download / Export = Ghost |
+| Summary chips | Import / batch-result KPI strip only · Manual ops uses slim **footer meta** (members + batch total) beside Submit |
+| Tables | selected = soft ledger (not peach thead) · money `#B45309` / `#FBBF24` · VIP wash chip · remove ghost until hover |
+| Primary CTA | Search / Validate / Submit / Execute = amber Primary · Clear / Download / Export = Ghost · dark label `#2A2C36` (wallet-tx locked) |
 | Dropzone | dashed `#EADCC8` · amber hover/drag · icon amber (not cool gray) |
 | Status pills | valid/success green · warning/skipped orange · error/failed red · duplicate muted (Transaction status family) |
+
+##### Selected table scrollbar — `.selected-table tbody` (locked)
+
+Body-only scroll: `thead` fixed · `tbody` `overflow-y:auto` · wrap `overflow:hidden`. Chromium custom scrollbar (not OS classic).
+
+| Part | Light | Dark |
+|------|-------|------|
+| Width | **`6px`** | same |
+| Track | transparent | transparent |
+| Thumb | `#C4B5A0` · `border-radius:999px` · no border pad | `#71717A` · hover `#A1A1AA` |
+| Buttons / arrows | **none** — `::-webkit-scrollbar-button` `display:none` · `width/height:0` | same |
+| Corner | transparent | transparent |
+| Firefox / Chromium gate | `scrollbar-width:auto` · `scrollbar-color:auto` — **never** set `scrollbar-width:thin` / `scrollbar-color` on this scroller (Chromium then uses OS scrollbars with arrows and ignores `::-webkit-*`) | same |
+| Gutter | `scrollbar-gutter:stable` | same |
+
+Do **not** use the wallet-tx listing scrollbar (`14px` slate + end arrows on `.bo-tx-table-body`) on Bulk Selected. Do **not** put scroll on `.selected-table-wrap` (header must stay fixed).
+
+##### Member pick card — `.member-pick-card` active (locked)
+
+Selectable member button. Idle uses form surface; **active = listing amber wash + primary amber border + focus-ring halo** (same recipe family as listing hover/focus — not solid CTA amber fill, not off-token ivory).
+
+| State | Light | Dark |
+|-------|-------|------|
+| Idle | bg `#FFFCF7` · border `#EADCC8` · radius `10px` | bg `#32343E` · border `rgba(255,255,255,.12)` |
+| Hover | border `#D97706` · bg `#FFF8EB` · ring `0 0 0 3px rgba(217,119,6,.10)` | border `#F59E0B` · bg `#3A3C48` · ring `rgba(245,158,11,.14)` |
+| **Active `.is-selected`** | bg `linear-gradient(180deg, #FFFBEB 0%, #FFE8CC 100%)` · border `1px solid #D97706` · ring `0 0 0 3px rgba(217,119,6,.14)` | bg `linear-gradient(180deg, rgba(245,158,11,.20), rgba(245,158,11,.08))` · border `#F59E0B` · ring `0 0 0 3px rgba(245,158,11,.18)` |
+| Avatar idle | `#F5EBDC` / `#EADCC8` · text `#6b360c` | `#2A2C36` · text `#FBBF24` |
+| Avatar active | `#FFE8CC` · border `#D97706` · text `#B45309` | `rgba(245,158,11,.18)` · border `#F59E0B` · text `#FBBF24` |
+| VIP chip active | bg `#FFF8EB` · border `#D97706` · text `#B45309` | amber wash + `#FBBF24` |
+| Balance pill | money `#B45309` · wash `rgba(217,119,6,.08–.12)` | money `#FBBF24` · wash `rgba(245,158,11,.12–.20)` |
+| Monogram | Prefer `fullName` initials (CJK first 1–2 chars · Latin word initials) · fallback username |
+
+##### Mode tab — `.bulk-mode-btn` (locked)
+
+Only the **active** tab looks like a button. Idle tabs are plain text links in the same row.
+
+| State | Light | Dark |
+|-------|-------|------|
+| Idle | transparent · no border · no shadow · text `#71717A` · weight `700` | transparent · text `#A1A1AA` |
+| Idle hover | text `#18191C` · still no chrome | text `#F4F4F5` · still no chrome |
+| **Active** | cream 3D `#FFF8EB→#F3E8D6` · border `#EADCC8` · soft lift shadow · text `#18191C` · weight `800` · h `36px` · radius `8px` | charcoal 3D `#40424E→#2A2C36` · border `rgba(245,158,11,.45)` · ring `0 0 0 3px rgba(245,158,11,.14)` · text `#F5F5F4` |
+
+Do **not** style idle tabs as Ghost / cream pills. Do **not** use cool blue thumbs or pure-white dark thumbs.
 
 Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
 
@@ -906,9 +972,16 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Deposit/Withdraw responsive 1920→375: bank strip · stacked toolbar · scrollable table · ≤1456 DATE day-only + hover time · hide secondary columns on tablet/phone | User: mid widths messy / table too short / DATE ellipsis | 2026-09-16 |
 | Withdraw Remark cell = player text only (no `Admin:` sub-line) | User: 这个也帮我移除 | 2026-09-16 |
 | Bulk Adjustment / Bulk Bonus migrated to `bo-wallet-tx` · mode tabs = Status filter pills (no cool blue) · peach-cream zebra · listing inputs · Full Light\|Dark in page CSS | User: 根据 MD 调整 Bulk Adjustment | 2026-09-16 |
+| Bulk member pick card active locked: cream wash `#FFFBEB→#FFE8CC` · border `#D97706` · ring `rgba(217,119,6,.14)` · avatar/VIP amber wash (not solid CTA) · dark neon amber wash | User: 按钮 active 样式帮我更新在 md | 2026-09-16 |
+| Bulk family tabs above shell: In/Out ↔ Bonus · mad-tabs underline (amber bottom rail, not pills) | User: 上方 tabs 要 Administrators 那种格式 | 2026-09-16 |
+| Selected Members table = quiet ledger: 6 cols · sticky muted thead · soft zebra · ghost × (not peach thead / red remove) | User: Selected 排版要高级简单 | 2026-09-16 |
+| Right ops panel = Configure form → Selected list → footer total+Submit (remove redundant KPI chips) | User: 排版方便员工操作 | 2026-09-16 |
+| Selected tbody scrollbar locked: `6px` warm pill `#C4B5A0` / dark `#71717A` · no arrows · `scrollbar-width/color:auto` gate · thead fixed | User: scrollbar 样式先写进 MD | 2026-09-16 |
+| Mode tabs: only `.active` is cream/charcoal 3D button · idle = muted text (no pill chrome) | User: 只有 active 才显示按钮 | 2026-09-16 |
 | Bank Deposit Usage Status = compact `.usage-status-chip` (Merchant `.mad-status-chip` recipe) · Active/Suspend + 6px dot · click toggle | User: Status 太大 → 要图里小胶囊；再要求写进 MD | 2026-09-16 |
 | Status (`status`) ⊥ Show (`visible`) on Bank Deposit Usage — not synced | User: Status=账号活跃；Show=银行显示/不显示 | 2026-09-16 |
 | Show switch must flip on click (optimistic + session fallback when API omits `visible`) | User: show 点一下不会变成 hide | 2026-09-16 |
+| Wallet Ledger migrated to `bo-wallet-tx` · Type multi amber listing chrome · KPI 4-col · viewport-locked panel · peach-cream table · status SUCCESS=active | User: 根据 MD 调整 Wallet Ledger | 2026-09-16 |
 
 ### Opt-in layers for pages outside the migrated families
 
