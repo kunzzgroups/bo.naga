@@ -1029,3 +1029,35 @@ characters — while an IPv6 needs far more. Measured with the cell's own font (
 - Verified: computed fill `#F0E4D0` / `#2A2C36`, `background-image` none, border `#DCC9A8` /
   `rgba(255,255,255,.10)`; DOM asserts exactly one of each id, `.mac-adjust-summary` with exactly two
   children (`-main`, `-balance`), balance text `Current Credit 0.00`; rendered and read both themes.
+
+**The Target / Resource chip overran its column and painted over the IP address (2026-09-16,
+owner-reported: "左边的已经撑过来了").** The chip was `max-width:220px` — a fixed cap that cannot
+know the column it sits in. At a 1551px viewport the Target content box is 119px and
+`ADMIN OPERATION: #1` is a 154px chip, so it painted **19px** past the cell edge (60px for
+`#1234567`, 85px for a long target). Measured before/after in both themes:
+
+| target | chip | overlapped the IP column by | after |
+|---|---|---|---|
+| `ADMIN OPERATION: #1` | 154px | 19px | 2 lines, 16px gap to the IP |
+| `ADMIN OPERATION: #1234567` | 195px | 60px | 3 lines, 16px gap |
+| a long settlement label | 220px (capped) | 85px | 4 lines, row grows 52→83px |
+
+- The fix is `max-width:100%` (resolves against the cell's content box, so the chip cannot leave its
+  column at any viewport) plus wrapping, the same choice the IP column already made: a long target
+  stays readable instead of becoming `ADMIN OPERATION…`, and the row grows instead. The common value
+  wraps to two lines without growing the row at all — the Administrator column's avatar already sets
+  the 52px row height.
+- **Trap: `text-overflow:ellipsis` needs a block container.** The chip carried
+  `white-space:nowrap; overflow:hidden; text-overflow:ellipsis` on a `display:inline-flex` box, where
+  the declaration is inert — the text becomes an anonymous flex item with `overflow:visible`, so the
+  chip silently **hard-clipped** past 220px and never drew an ellipsis. Measured proof: at 154px the
+  chip's `scrollWidth` equalled its `clientWidth`, i.e. nothing was being clipped at all. Changing to
+  `inline-block` is what makes an ellipsis (or a wrap) actually behave.
+- The column moved 12.5% → 14% and Action/Event 19% → 17.5%, so the three percentage columns still sum
+  to 46.5% and the leftover distributed across the four fixed columns — including the IP column the
+  IPv6 fix depends on — is unchanged (measured: IP still 314px, address still unclipped). Measured
+  columns at 1551px: 117 / 181 / 211 / 169 / 314 / 119 / 95.
+- Verified: all four target shapes inside the cell in both axes in both themes, zebra on the Target
+  cells intact (`#3A3C48` / `#434653`), no cell in the table newly clipped after Action/Event lost
+  1.5%, chip colors still the amber pair (`rgba(217,119,6,.12)` / `#18191C` light,
+  `rgba(245,158,11,.16)` / `#FBBF24` dark).

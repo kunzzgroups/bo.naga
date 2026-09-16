@@ -3881,12 +3881,22 @@ body.main-admin-security-page .mas-event-copy small{
 }
 body.main-admin-security-page .mas-table tr.is-blocked .mas-event-copy b,
 body.main-admin-security-page .mas-table tr.is-blocked .mas-time b{color:var(--bo-danger)}
+/* The chip is sized by its own text, and the old `max-width:220px` was a fixed cap that
+   could not know the column: at a 1551px viewport the column's content box is 119px, and
+   "ADMIN OPERATION: #1" is a 154px chip — measured 19px past the cell edge, painting over
+   the IP column (60px for "#1234567", 85px for a long target). `max-width:100%` resolves
+   against the cell's content box, so the chip can never leave its column at any width.
+   `white-space:nowrap` + `text-overflow:ellipsis` never worked here anyway: the ellipsis
+   needs a block container, and on this `inline-flex` box the text was hard-clipped instead
+   (measured scrollWidth == clientWidth, so nothing was even being clipped at 154px). It
+   wraps now, like the IP column, so a long target stays readable rather than becoming
+   "ADMIN OPERATION…" — the row grows instead. */
 body.main-admin-security-page .mas-target{
-  display:inline-flex;align-items:center;max-width:220px;
+  display:inline-block;max-width:100%;
   padding:4px 10px;border-radius:8px;
   background:var(--bo-cyan-tint);color:var(--bo-navy);
   font-size:12px;font-weight:700;line-height:1.3;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  overflow-wrap:anywhere;
 }
 body.main-admin-security-page .mas-table tr.is-blocked .mas-target{
   background:#FEF3F2;color:var(--bo-danger);
@@ -9665,16 +9675,20 @@ html[data-bo-theme="dark"] body.main-admin-security-page .mas-table .mad-time-ti
    and in a fixed-layout table a <col> width beats the th/td width. Setting the th/td
    width alone — which is what the first attempt did — changes nothing. */
 body.main-admin-security-page .mas-table .mas-col-admin{ width:15%; }
-body.main-admin-security-page .mas-table .mas-col-event{ width:19%; }
-body.main-admin-security-page .mas-table .mas-col-target{ width:12.5%; }
+body.main-admin-security-page .mas-table .mas-col-event{ width:17.5%; }
+body.main-admin-security-page .mas-table .mas-col-target{ width:14%; }
 body.main-admin-security-page .mas-table .mas-col-ip{ width:290px; }
+/* The 1.5% moved from Action/Event to Target keeps the three percentage columns summing to
+   the same 46.5%, so the leftover distributed over the four fixed columns (and therefore the
+   IP column that the IPv6 fix depends on) is unchanged. Measured need: the common target
+   "ADMIN OPERATION: #1" is a 154px chip, and the old 12.5% left only a 119px content box. */
 /* and the same widths on the cells, so the two stay in step if the colgroup ever goes */
 body.main-admin-security-page .mas-table th:nth-child(2),
 body.main-admin-security-page .mas-table td:nth-child(2){ width:15%; }
 body.main-admin-security-page .mas-table th:nth-child(3),
-body.main-admin-security-page .mas-table td:nth-child(3){ width:19%; }
+body.main-admin-security-page .mas-table td:nth-child(3){ width:17.5%; }
 body.main-admin-security-page .mas-table th:nth-child(4),
-body.main-admin-security-page .mas-table td:nth-child(4){ width:12.5%; }
+body.main-admin-security-page .mas-table td:nth-child(4){ width:14%; }
 body.main-admin-security-page .mas-table th:nth-child(5),
 body.main-admin-security-page .mas-table td:nth-child(5){ width:290px; }
 /* the guarantee, not the mechanism: an IPv4-mapped address is longer than any sane
