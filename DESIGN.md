@@ -574,7 +574,36 @@ on them — `data-bo-theme` was never written.
    time after `load` can measure a half-styled page and report the retired palette as a defect (or
    hide a real one) — the same page flipped between 0 and 157 hits across runs. Wait until every
    declared stylesheet is present and `readyState` is `complete`, and emit the stylesheet counts, a
-   canvas canary and `readyState` so a partial render is visible rather than believed.
+    canvas canary and `readyState` so a partial render is visible rather than believed.
+10. **Two of my own rules can fight each other, and the loser is silent.** `bo-charcoal-legacy.css`
+   painted a generic `.clean-btn` ghost at (0,4,2) `!important`, while `.bo-ui-button-primary` — the
+   class `bo-ui-standard.js` adds by label to every "Create / Save / Search" button — carried the
+   amber CTA at (0,3,1) `!important`. The ghost therefore out-ranked the primary **by one
+   class-level**, and on User Management the "Create User" CTA rendered as a ghost: transparent
+   fill, ink label, warm border, no amber anywhere. Nothing flagged it, because "amber" and "ghost"
+   are both legitimate locked appearances, and the six counters only look for *foreign* colours.
+   Two rules: a base rule in this layer must `:not()` the modifier classes it knows about
+   (`:not(.primary):not(.bo-ui-button-primary):not(.mad-btn-primary):not(.mad-btn-navy)`) rather than
+   rely on load order; and a primary restatement should carry the `body:not(#bo-charcoal-off)` ID so
+   the outcome cannot depend on which file happens to sit later. **Looking for a ghost is the only
+   check that finds this** — measure `background-image`, because a gradient never appears in
+   `background-color`.
+11. **The standard filter row has its own shape, and it is not a defect to "unify" it.** The
+   `.bo-filter-row` vocabulary used by ~100 pages takes its `42px` height, `11px` radius and
+   `12px/700` text from `bo-ui-standard.css`'s own tokens (`--bo-filter-radius:11px`, and
+   `font-size:12px!important;font-weight:700!important` on the select), applied to the input frame,
+   the select and the Reset button alike. DESIGN.md's components table records `8px` radius and
+   `13.5px` text for the *other* filter row (`.mad-filters`, merchant/admin families) — the two are
+   different components, and trap-free cross-page comparison will keep flagging the difference.
+   Per the precedent recorded for the pill thumb (`999px` vs the table's `8px`: **the family value
+   was kept for internal consistency**), the standard row keeps its own values. This has now been
+   re-derived three times; it is written down so it does not happen a fourth.
+12. **A regex in injected code is eaten before Chrome sees it.** The probe is delivered through a
+   template literal, so `\w`, `\s`, `\d` and `\(` lose their backslash on the way in. A
+   specificity scorer built on `/#[\w-]+/g` silently counted nothing and reported `sp=0` for every
+   rule — a *plausible-looking* dump that would have justified any conclusion. Seventh occurrence of
+   this mistake; the durable fix is to write no regexes in injected code at all (`indexOf`, `split`,
+   `charAt`), and to sanity-check a new probe field against a case whose answer is already known.
 
 ### Adopted so far (2026-09-15)
 

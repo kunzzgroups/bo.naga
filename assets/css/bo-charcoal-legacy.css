@@ -305,12 +305,12 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .standard-status.active{
 /* -------------------------------------------------------- .clean-btn (ghost)
    Redefined in 13 stylesheets; the locked recipe is one value. Hover is the shared
    reverse-cream lift (no amber fill wash) — same as Create Role Back / Cancel. */
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .clean-btn{
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .clean-btn:not(.primary):not(.bo-ui-button-primary):not(.mad-btn-primary):not(.mad-btn-navy){
   background:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 100%)!important;
   border:1px solid #DCC9A8!important;color:#18191C!important;border-radius:8px!important;
   box-shadow:0 1px 2px rgba(60,48,32,.06),inset 0 1px 0 rgba(255,255,255,.7)!important;
 }
-html[data-bo-theme="dark"] body.report-body.bo-charcoal .clean-btn{
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .clean-btn:not(.primary):not(.bo-ui-button-primary):not(.mad-btn-primary):not(.mad-btn-navy){
   background:linear-gradient(180deg,#4A4C58 0%,#383A46 100%)!important;
   border:1px solid rgba(255,255,255,.12)!important;color:#F5F5F4!important;border-radius:8px!important;
   box-shadow:0 1px 2px rgba(0,0,0,.28)!important;
@@ -1592,3 +1592,73 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .vip-settings-card
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .vip-settings-card label,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .vip-settings-card h3{color:#F5F5F4!important}
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .vip-settings-card small{color:#D4D4D8!important}
+
+/* ==========================================================================
+   Primary wins over the ghost base — this file was fighting itself.
+   The generic `.clean-btn` rule above is a (0,4,2) !important ghost, and `.bo-ui-button-primary`
+   was a (0,3,1) !important amber. The ghost therefore out-ranked the primary by one class-level,
+   so every button that bo-ui-standard.js tags as primary — it adds ONLY that class, no
+   `.primary`, to any button whose label matches /save|create|search|add|…/ — rendered as a ghost.
+   User Management was the clearest case: its "Create User" CTA had no amber at all.
+   The ghost rule now excludes the primary variants, and these restatements carry one ID level so
+   the outcome cannot depend on which rule happens to sit later.
+   ========================================================================== */
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .bo-ui-button-primary,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .clean-btn.primary,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .mad-btn-primary,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .mad-btn-navy{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
+  border:1px solid #E8901A!important;
+  color:#FFFFFF!important;
+  box-shadow:0 1px 2px rgba(180,83,9,.28),inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .bo-ui-button-primary,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .clean-btn.primary,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .mad-btn-primary,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .mad-btn-navy{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border:1px solid #F59E0B!important;
+  color:#2A2C36!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.35),0 0 0 1px rgba(245,158,11,.2)!important;
+}
+
+/* ---------------------------------------------------------------------------
+   `#memberResetBtn` (index.html / User Management) — a reset that got tagged primary.
+   bo-ui-standard.js classifies by LABEL: styleButton() adds `.bo-ui-button-primary` when the
+   text matches /search|save|…/, and only its filter-row path (styleFilterButton) knows that a
+   reset is never the focal action. This button reads "Reset Search" and sits in the toolbar
+   ABOVE the table, not in `.bo-filter-row`, so the filter path never saw it and it came out
+   amber beside "Create User". The file's own intent — a reset is secondary — is what applies,
+   so it takes the ghost look its toolbar neighbours (Columns, Export, Bulk Adjustment) have.
+   Factored out of the general restatement above rather than changed in the shared JS: this is
+   the only "Reset Search" in the repo (the other Reset labels are real password-form actions),
+   and editing bo-ui-standard.js would mean re-bumping ?v= on all 148 pages that load it.
+   The `:not()` IDs put this at ID level, which the general restatement cannot reach.
+   --------------------------------------------------------------------------- */
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #memberResetBtn,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #memberResetBtn.bo-ui-button-primary{
+  background:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 100%)!important;
+  border:1px solid #DCC9A8!important;
+  color:#18191C!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #memberResetBtn:hover,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #memberResetBtn.bo-ui-button-primary:hover{
+  background:linear-gradient(180deg,#FFFFFF 0%,#FBF3E4 100%)!important;
+  border-color:#D0BB98!important;
+  color:#18191C!important;
+  box-shadow:0 2px 6px rgba(60,48,32,.10)!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #memberResetBtn,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #memberResetBtn.bo-ui-button-primary{
+  background:linear-gradient(180deg,#43444F 0%,#3A3B46 100%)!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #memberResetBtn:hover,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #memberResetBtn.bo-ui-button-primary:hover{
+  background:linear-gradient(180deg,#4A4B57 0%,#3E3F4A 100%)!important;
+  border-color:rgba(255,255,255,.2)!important;
+  color:#FFFFFF!important;
+}
