@@ -1300,7 +1300,8 @@ body.bo-wallet-tx .table-card > .user-search-grid{
   box-shadow:none!important;
   background:var(--bo-table-row)!important;
 }
-body.bo-wallet-tx.deposit-approval-page .table-card > .deposit-inline-filter.filter-card{
+body.bo-wallet-tx.deposit-approval-page .table-card > .deposit-inline-filter.filter-card,
+body.bo-wallet-tx.withdraw-approval-page .table-card > .deposit-inline-filter.filter-card{
   margin:0!important;
   padding:10px 16px!important;
   border:0!important;
@@ -1872,6 +1873,53 @@ body.bo-wallet-tx .bo-tx-action-btn i{
   line-height:1!important;
   margin:0!important;
   pointer-events:none!important;
+}
+/* Ledger chip — same 26×26 well as Approve/Reject (beat reports.css .bo-icon-action) */
+html body.bo-wallet-tx .report-table .bo-tx-action-btn.is-ledger,
+html body.bo-wallet-tx.withdraw-approval-page .report-table a.bo-tx-action-btn.is-ledger,
+html body.bo-wallet-tx .report-table a.bo-tx-action-btn.is-ledger.bo-icon-action,
+html body.bo-wallet-tx .report-table a.bo-tx-action-btn.is-ledger.bo-ui-icon-button{
+  box-sizing:border-box!important;
+  width:26px!important;
+  height:26px!important;
+  min-width:26px!important;
+  max-width:26px!important;
+  min-height:26px!important;
+  padding:0!important;
+  margin:0!important;
+  border-radius:6px!important;
+  display:inline-grid!important;
+  place-items:center!important;
+  font-size:15px!important;
+  line-height:1!important;
+  text-decoration:none!important;
+  flex:0 0 26px!important;
+  background:var(--bo-control-well,#F5EBDC)!important;
+  border:1px solid var(--bo-border,#EADCC8)!important;
+  color:var(--bo-muted,#78716C)!important;
+  box-shadow:none!important;
+}
+html body.bo-wallet-tx .report-table .bo-tx-action-btn.is-ledger i,
+html body.bo-wallet-tx .report-table a.bo-tx-action-btn.is-ledger i{
+  font-size:15px!important;
+  line-height:1!important;
+  color:inherit!important;
+}
+html body.bo-wallet-tx .report-table .bo-tx-action-btn.is-ledger:hover{
+  background:rgba(217,119,6,.1)!important;
+  border-color:#D97706!important;
+  color:var(--bo-text,#18191C)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table .bo-tx-action-btn.is-ledger,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table a.bo-tx-action-btn.is-ledger{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table .bo-tx-action-btn.is-ledger:hover{
+  background:rgba(245,158,11,.16)!important;
+  border-color:#F59E0B!important;
+  color:#F4F4F5!important;
 }
 /* Light: cream chip matching page wells; green/red only on glyph */
 html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-tx-action-btn.is-approve,
@@ -2530,7 +2578,9 @@ body.bo-wallet-tx .quick-stats{
 }
 /* Deposit bank capacity strip — Charcoal+Amber ops cards */
 body.bo-wallet-tx.deposit-approval-page .approval-pending-stats.deposit-bank-card-stats,
-body.deposit-approval-page .approval-pending-stats.deposit-bank-card-stats{
+body.deposit-approval-page .approval-pending-stats.deposit-bank-card-stats,
+body.bo-wallet-tx.withdraw-approval-page .approval-pending-stats.deposit-bank-card-stats,
+body.withdraw-approval-page .approval-pending-stats.deposit-bank-card-stats{
   display:grid!important;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr))!important;
   gap:12px!important;
