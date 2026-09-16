@@ -90,10 +90,25 @@ body.bo-wallet-tx.payment-method-create-page .pm-form-grid{
 body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-4{
   grid-template-columns:repeat(4,minmax(0,1fr))!important;
 }
-/* Basic Information — one row; Status / Show Bank compact */
-body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic{
-  grid-template-columns:minmax(140px,1.25fr) minmax(104px,.55fr) minmax(104px,.55fr) minmax(140px,1.15fr) minmax(140px,1.15fr)!important;
+/* Method & Account — two rows, same 4-column tracks */
+body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic-top,
+body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic-bottom{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
   align-items:end!important;
+  gap:10px 12px!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic-bottom{
+  margin-top:12px!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pm-status-show-pair{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:10px 12px!important;
+  min-width:0!important;
+  align-items:end!important;
+}
+body.bo-wallet-tx.payment-method-create-page .pm-status-show-pair .field{
+  min-width:0!important;
 }
 body.bo-wallet-tx.payment-method-create-page .pmc-card .field{
   min-width:0!important;
@@ -280,23 +295,20 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-create-page .pmc-for
 }
 
 @media (max-width:1280px){
-  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-4{
+  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-4,
+  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic-top,
+  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic-bottom{
     grid-template-columns:repeat(3,minmax(0,1fr))!important;
   }
-  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic{
-    grid-template-columns:minmax(130px,1.2fr) minmax(100px,.55fr) minmax(100px,.55fr) minmax(130px,1.1fr) minmax(130px,1.1fr)!important;
+  body.bo-wallet-tx.payment-method-create-page .pm-status-show-pair{
+    grid-column:1 / -1!important;
   }
 }
 @media (max-width:1024px){
-  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-4{
+  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-4,
+  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic-top,
+  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic-bottom{
     grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  }
-  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic{
-    grid-template-columns:minmax(0,1.2fr) minmax(110px,.7fr) minmax(110px,.7fr)!important;
-  }
-  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic .is-name,
-  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic .is-subtitle{
-    grid-column:1 / -1!important;
   }
 }
 @media (max-width:991.98px){
@@ -313,11 +325,11 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-create-page .pmc-for
     align-items:stretch!important;
   }
   body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-4,
-  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic{
+  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic-top,
+  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic-bottom{
     grid-template-columns:1fr!important;
   }
-  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic .is-name,
-  body.bo-wallet-tx.payment-method-create-page .pm-form-grid.pm-grid-basic .is-subtitle{
+  body.bo-wallet-tx.payment-method-create-page .pm-status-show-pair{
     grid-column:auto!important;
   }
   body.bo-wallet-tx.payment-method-create-page .pmc-sticky-footer{

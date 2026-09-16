@@ -236,7 +236,7 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .clean-btn{
   white-space:nowrap;
 }
 
-/* ---- Member picker list (dense single-line scan rows) ---- */
+/* ---- Member picker: clickable 3-up cards (no checkboxes) ---- */
 body.bo-wallet-tx.bulk-adjustment-page .member-picker-list,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list{
   flex:1 1 auto;
@@ -244,101 +244,136 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list{
   max-height:none;
   border:1px solid #EADCC8;
   border-radius:8px;
-  overflow:hidden;
+  overflow-x:hidden;
   overflow-y:auto;
   background:#FFF8EB;
+  padding:10px;
+  box-sizing:border-box;
 }
-body.bo-wallet-tx.bulk-adjustment-page .member-picker-row,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-row{
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-grid,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-grid{
   display:grid;
-  grid-template-columns:28px minmax(0,1fr) auto auto;
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:8px;
-  align-items:center;
-  min-height:34px;
-  padding:5px 10px;
-  border-bottom:1px solid #EADCC8;
-  background:#FFF8EB;
+  align-content:start;
+  width:100%;
+  min-width:0;
+}
+body.bo-wallet-tx.bulk-adjustment-page button.member-pick-card,
+body.bo-wallet-tx.bulk-bonus-adjustment-page button.member-pick-card{
+  --pick-pad-y:7px;
+  --pick-pad-x:10px;
+  position:relative!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  justify-content:center!important;
+  gap:4px!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  min-height:52px!important;
+  height:auto!important;
+  margin:0!important;
+  padding:var(--pick-pad-y) var(--pick-pad-x)!important;
+  border:1px solid #EADCC8!important;
+  border-radius:8px!important;
+  background:#FFFCF7!important;
+  color:#18191C!important;
+  text-align:left!important;
+  white-space:normal!important;
+  line-height:1.2!important;
   cursor:pointer;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+  box-shadow:none!important;
+  appearance:none;
+  -webkit-appearance:none;
+  transition:border-color .14s ease, background .14s ease, box-shadow .14s ease, transform .12s ease;
 }
-body.bo-wallet-tx.bulk-adjustment-page .member-picker-row:nth-child(even):not(.header),
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-row:nth-child(even):not(.header){
-  background:#FFF1DC;
+body.bo-wallet-tx.bulk-adjustment-page button.member-pick-card:hover,
+body.bo-wallet-tx.bulk-bonus-adjustment-page button.member-pick-card:hover{
+  border-color:#D97706!important;
+  background:#FFF8EB!important;
+  box-shadow:0 1px 0 rgba(217,119,6,.08),0 4px 12px rgba(180,83,9,.08)!important;
 }
-body.bo-wallet-tx.bulk-adjustment-page .member-picker-row:last-child,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-row:last-child{
-  border-bottom:0;
+body.bo-wallet-tx.bulk-adjustment-page button.member-pick-card:focus-visible,
+body.bo-wallet-tx.bulk-bonus-adjustment-page button.member-pick-card:focus-visible{
+  outline:2px solid #D97706;
+  outline-offset:2px;
 }
-body.bo-wallet-tx.bulk-adjustment-page .member-picker-row:hover:not(.header),
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-row:hover:not(.header){
-  background:#FFE8CC;
+body.bo-wallet-tx.bulk-adjustment-page button.member-pick-card:active,
+body.bo-wallet-tx.bulk-bonus-adjustment-page button.member-pick-card:active{
+  transform:scale(0.985);
 }
-body.bo-wallet-tx.bulk-adjustment-page .member-picker-row.header,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-row.header{
-  position:sticky;
-  top:0;
-  z-index:2;
-  min-height:30px;
-  padding:4px 10px;
-  background:#FFE8CC;
-  color:#6b360c;
-  font-size:10.5px;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:.04em;
-  border-bottom:1px solid #EADCC8;
-  cursor:default;
+body.bo-wallet-tx.bulk-adjustment-page button.member-pick-card.is-selected,
+body.bo-wallet-tx.bulk-bonus-adjustment-page button.member-pick-card.is-selected{
+  border-color:#D97706!important;
+  background:linear-gradient(180deg,#FFFBEB 0%,#FEF3C7 100%)!important;
+  box-shadow:0 1px 0 rgba(217,119,6,.1),0 4px 14px rgba(217,119,6,.12)!important;
+  padding-right:calc(var(--pick-pad-x) + 14px)!important;
 }
-body.bo-wallet-tx.bulk-adjustment-page .member-picker-row.selected,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-row.selected{
-  background:#FFE8CC;
-  box-shadow:inset 3px 0 0 #D97706;
+body.bo-wallet-tx.bulk-adjustment-page button.member-pick-card.is-selected::after,
+body.bo-wallet-tx.bulk-bonus-adjustment-page button.member-pick-card.is-selected::after{
+  content:"";
+  position:absolute;
+  top:8px;
+  right:8px;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#D97706;
+  box-shadow:0 0 0 2px rgba(217,119,6,.2);
+  pointer-events:none;
 }
-body.bo-wallet-tx.bulk-adjustment-page .member-picker-row input[type="checkbox"],
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-row input[type="checkbox"]{
-  width:15px;
-  height:15px;
-  margin:0;
-  accent-color:#D97706;
+body.bo-wallet-tx.bulk-adjustment-page button.member-pick-card .member-pick-head,
+body.bo-wallet-tx.bulk-bonus-adjustment-page button.member-pick-card .member-pick-head,
+body.bo-wallet-tx.bulk-adjustment-page button.member-pick-card .member-pick-foot,
+body.bo-wallet-tx.bulk-bonus-adjustment-page button.member-pick-card .member-pick-foot{
+  position:static!important;
+  float:none!important;
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:8px!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  flex:0 0 auto!important;
 }
-body.bo-wallet-tx.bulk-adjustment-page .member-main,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-main{
-  display:flex;
-  align-items:baseline;
-  gap:6px;
-  min-width:0;
-  overflow:hidden;
+body.bo-wallet-tx.bulk-adjustment-page button.member-pick-card .member-pick-name,
+body.bo-wallet-tx.bulk-bonus-adjustment-page button.member-pick-card .member-pick-name{
+  display:block!important;
+  flex:1 1 auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+  color:#18191C!important;
+  font-size:12.5px!important;
+  font-weight:800!important;
+  letter-spacing:-0.01em;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
 }
-body.bo-wallet-tx.bulk-adjustment-page .member-main b,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-main b{
-  display:inline;
-  flex:0 1 auto;
-  min-width:0;
-  color:#18191C;
-  font-size:12.5px;
-  font-weight:700;
-  line-height:1.2;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+body.bo-wallet-tx.bulk-adjustment-page button.member-pick-card .member-meta,
+body.bo-wallet-tx.bulk-bonus-adjustment-page button.member-pick-card .member-meta{
+  display:block!important;
+  flex:1 1 auto!important;
+  min-width:0!important;
+  color:#78716C!important;
+  font-size:11px!important;
+  font-weight:500!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
 }
-body.bo-wallet-tx.bulk-adjustment-page .member-meta,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-meta,
-body.bo-wallet-tx.bulk-adjustment-page .member-main small,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-main small,
-body.bo-wallet-tx.bulk-adjustment-page .member-secondary,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-secondary{
-  color:#57534E;
-  font-size:11px;
-  font-weight:500;
-  line-height:1.2;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-body.bo-wallet-tx.bulk-adjustment-page .member-main .member-meta,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-main .member-meta{
-  flex:1 1 auto;
-  min-width:0;
+body.bo-wallet-tx.bulk-adjustment-page .member-meta.is-empty,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-meta.is-empty{
+  opacity:.38;
 }
 body.bo-wallet-tx.bulk-adjustment-page .member-balance,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .member-balance{
@@ -346,29 +381,51 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .member-balance{
   font-weight:700;
   font-variant-numeric:tabular-nums;
   color:#B45309;
-  text-align:right;
   white-space:nowrap;
 }
-body.bo-wallet-tx.bulk-adjustment-page .vip-cell,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .vip-cell{
-  text-align:right;
+body.bo-wallet-tx.bulk-adjustment-page button.member-pick-card .member-balance,
+body.bo-wallet-tx.bulk-bonus-adjustment-page button.member-pick-card .member-balance{
+  display:block!important;
+  flex:0 0 auto!important;
+  margin:0!important;
+  max-width:48%!important;
+  font-size:12.5px!important;
+  font-weight:800!important;
+  font-variant-numeric:tabular-nums!important;
+  line-height:1.2!important;
+  text-align:right!important;
+  color:#B45309!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
 }
-body.bo-wallet-tx.bulk-adjustment-page .vip-chip,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .vip-chip{
-  display:inline-flex;
+body.bo-wallet-tx.bulk-adjustment-page button.member-pick-card .vip-chip,
+body.bo-wallet-tx.bulk-bonus-adjustment-page button.member-pick-card .vip-chip{
+  display:inline-flex!important;
   align-items:center;
   justify-content:center;
-  min-width:28px;
-  height:20px;
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:26px;
+  max-width:none!important;
+  height:18px;
   padding:0 6px;
-  border-radius:6px;
+  border-radius:999px;
   background:#F5EBDC;
   border:1px solid #EADCC8;
   color:#6b360c;
-  font-size:10.5px;
+  font-size:10px;
   font-weight:800;
   font-variant-numeric:tabular-nums;
+  letter-spacing:0.02em;
   line-height:1;
+  white-space:nowrap;
+}
+body.bo-wallet-tx.bulk-adjustment-page button.member-pick-card.is-selected .vip-chip,
+body.bo-wallet-tx.bulk-bonus-adjustment-page button.member-pick-card.is-selected .vip-chip{
+  background:#FFF8EB;
+  border-color:#D97706;
+  color:#B45309;
 }
 body.bo-wallet-tx.bulk-adjustment-page .picker-empty,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .picker-empty{
@@ -376,6 +433,17 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .picker-empty{
   text-align:center;
   color:#57534E;
   font-size:13px;
+}
+/* Keep selected-table meta/balance readable (not card-scoped) */
+body.bo-wallet-tx.bulk-adjustment-page .selected-table .member-meta,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table .member-meta,
+body.bo-wallet-tx.bulk-adjustment-page .member-main small,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-main small,
+body.bo-wallet-tx.bulk-adjustment-page .member-secondary,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-secondary{
+  color:#57534E;
+  font-size:11px;
+  font-weight:500;
 }
 
 /* ---- Selected table (dense · fills remaining column height) ---- */
@@ -701,32 +769,31 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .selecte
   background:#383A46;
   border-color:rgba(255,255,255,.14);
 }
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-row,
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-row{
-  background:#3A3C48;
-  border-bottom-color:rgba(255,255,255,.12);
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-pick-card,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-pick-card{
+  background:#2A2C36;
+  border-color:rgba(255,255,255,.14);
+  color:#F5F5F4;
 }
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-row:nth-child(even):not(.header),
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-row:nth-child(even):not(.header){
-  background:#434653;
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-pick-card:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-pick-card:hover{
+  border-color:#F59E0B;
+  background:#32343E;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18);
 }
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-row:hover:not(.header),
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-row:hover:not(.header){
-  background:#444654;
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-pick-card.is-selected,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-pick-card.is-selected{
+  background:linear-gradient(180deg,rgba(245,158,11,.18),rgba(43,37,33,.92));
+  border-color:rgba(245,158,11,.55);
+  box-shadow:0 0 0 1px rgba(245,158,11,.12),0 4px 14px rgba(0,0,0,.35);
 }
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-row.header,
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-row.header{
-  background:#1F2128;
-  color:#E7E5E4;
-  border-bottom-color:rgba(255,255,255,.14);
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page button.member-pick-card.is-selected::after,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page button.member-pick-card.is-selected::after{
+  background:#F59E0B;
+  box-shadow:0 0 0 2px rgba(245,158,11,.28);
 }
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-row.selected,
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-row.selected{
-  background:rgba(245,158,11,.14);
-  box-shadow:inset 3px 0 0 #F59E0B;
-}
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-main b,
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-main b,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-pick-name,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-pick-name,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .selected-table th,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .selected-table td,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table th,
@@ -753,6 +820,12 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .vip-chip,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .vip-chip{
   background:#2A2C36;
   border-color:rgba(255,255,255,.14);
+  color:#FBBF24;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-pick-card.is-selected .vip-chip,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-pick-card.is-selected .vip-chip{
+  background:rgba(245,158,11,.16);
+  border-color:rgba(245,158,11,.45);
   color:#FBBF24;
 }
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-balance,
@@ -847,6 +920,10 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .result-
     flex:none;
     max-height:min(420px,45vh);
   }
+  body.bo-wallet-tx.bulk-adjustment-page .member-picker-grid,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
   body.bo-wallet-tx.bulk-adjustment-page .selected-table-wrap,
   body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table-wrap{
     flex:none;
@@ -873,13 +950,9 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .result-
   body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar input{
     grid-column:1/-1;
   }
-  body.bo-wallet-tx.bulk-adjustment-page .member-picker-row,
-  body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-row{
-    grid-template-columns:28px minmax(0,1fr) auto auto;
-  }
-  body.bo-wallet-tx.bulk-adjustment-page .member-main .member-meta,
-  body.bo-wallet-tx.bulk-bonus-adjustment-page .member-main .member-meta{
-    display:none;
+  body.bo-wallet-tx.bulk-adjustment-page .member-picker-grid,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-grid{
+    grid-template-columns:1fr;
   }
   body.bo-wallet-tx.bulk-adjustment-page .operation-form-grid,
   body.bo-wallet-tx.bulk-bonus-adjustment-page .operation-form-grid{

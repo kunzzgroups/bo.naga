@@ -18,7 +18,7 @@
   function syncMethodTypeUi() {
     const type = String($('pmType')?.value || 'ONLINE_BANKING').toUpperCase();
     const cash = type === 'CASH';
-    const title = $('pmAccountSectionTitle');
+    const title = $('pmBasicSectionTitle');
     const bankLabel = $('pmBankNameLabel');
     const accountLabel = $('pmAccountNameLabel');
     const noLabel = $('pmAccountNoLabel');
@@ -27,7 +27,7 @@
     const no = $('pmAccountNo');
     const bsb = $('pmBsb');
     const payId = $('pmPayId');
-    if (title) title.textContent = cash ? '2. Cash Details' : '2. Account Details';
+    if (title) title.textContent = cash ? '1. Method & Cash' : '1. Method & Account';
     if (bankLabel) bankLabel.innerHTML = cash ? 'Cash Location / Counter' : 'Bank Name <b>*</b>';
     if (accountLabel) accountLabel.innerHTML = cash ? 'Cash Account / Drawer Name' : 'Account Name <b>*</b>';
     if (noLabel) noLabel.innerHTML = cash ? 'Reference / Drawer No.' : 'Account Number <b>*</b>';

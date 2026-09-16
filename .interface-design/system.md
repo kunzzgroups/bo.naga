@@ -264,8 +264,8 @@ Reference: `payment-method-create.html` · `body.bo-wallet-tx.payment-method-cre
 |------|------|
 | Shell | `bo-wallet-tx` + amber CSS + `payment-method-create.css` (not charcoal shell) |
 | Width | **Full main column** · no centered `max-width` column · cards span content width |
-| Sections | 5 cards · Create Admin lift recipe · focus amber ring `rgba(217,119,6,.16)` |
-| Grid | `.pm-grid-4` → 4 / 3 / 2 / 1 cols · Basic Information `.pm-grid-basic` one row (Status / Show Bank compact) |
+| Sections | 4 cards · 1 Method & Account (merged) · 2 Limits · 3 QR · 4 Instructions · Create Admin lift |
+| Grid | Method & Account: 4-col aligned rows · Status+Show Bank share Account Number column |
 | Sticky footer | **Viewport-fixed** · `left: var(--sidebar-w)` · `right:0` · `bottom:0` · does **not** cover sidebar · mini → `left: var(--rail-w)` · ≤991 → `left:0` |
 | Footer actions | Right-aligned Ghost `Cancel` + amber Primary · h `40px` |
 | Content pad | Bottom pad ≥`96px` so last card clears the fixed bar |

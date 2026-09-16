@@ -13,9 +13,31 @@
   if(mobile&&mobile!==u&&mobile!==name)bits.push(mobile);
   return bits.join(' · ');
  }
- function renderMembers(){const box=$('memberPickerList');if(!box)return;const rows=state.filtered;box.innerHTML=`<div class="member-picker-row header"><div><input id="selectAllVisible" type="checkbox" title="Select all visible" aria-label="Select all visible members"></div><div>Member</div><div class="member-balance">Bal</div><div class="vip-cell">VIP</div></div>`+(rows.length?rows.map(m=>{const id=memberId(m),sel=state.selected.has(id),meta=memberMeta(m),tip=`ID ${id}${meta?' · '+meta:''}`;return `<label class="member-picker-row ${sel?'selected':''}" title="${esc(tip)}"><div><input class="member-check" type="checkbox" value="${id}" ${sel?'checked':''} aria-label="Select ${esc(m.username||id)}"></div><div class="member-main"><b>${esc(m.username||'-')}</b>${meta?`<span class="member-meta">${esc(meta)}</span>`:''}</div><div class="member-balance">${money(m.mainWalletBalance)}</div><div class="vip-cell"><span class="vip-chip">V${esc(m.vipLevel??0)}</span></div></label>`}).join(''):'<div class="picker-empty">No matching members found.</div>');
- $('selectAllVisible')?.addEventListener('change',e=>{rows.forEach(m=>{const id=memberId(m);if(e.target.checked)state.selected.set(id,m);else state.selected.delete(id)});renderMembers();renderSelected()});
- box.querySelectorAll('.member-check').forEach(c=>c.addEventListener('change',()=>{const id=Number(c.value),m=state.members.find(x=>memberId(x)===id);if(c.checked&&m)state.selected.set(id,m);else state.selected.delete(id);renderMembers();renderSelected()}));
+ function toggleMember(id){
+  id=Number(id);
+  if(state.selected.has(id))state.selected.delete(id);
+  else{
+    const m=state.members.find(x=>memberId(x)===id);
+    if(m)state.selected.set(id,m);
+  }
+  renderMembers();
+  renderSelected();
+ }
+ function renderMembers(){
+  const box=$('memberPickerList');
+  if(!box)return;
+  const rows=state.filtered;
+  if(!rows.length){
+    box.innerHTML='<div class="picker-empty">No matching members found.</div>';
+    return;
+  }
+  box.innerHTML='<div class="member-picker-grid">'+rows.map(m=>{
+    const id=memberId(m),sel=state.selected.has(id),meta=memberMeta(m),tip=`ID ${id}${meta?' · '+meta:''}`;
+    return `<button type="button" class="member-pick-card${sel?' is-selected':''}" data-member-id="${id}" aria-pressed="${sel?'true':'false'}" title="${esc(tip)}"><span class="member-pick-head"><span class="member-pick-name">${esc(m.username||'-')}</span><span class="vip-chip">V${esc(m.vipLevel??0)}</span></span><span class="member-pick-foot"><span class="member-meta${meta?'':' is-empty'}">${esc(meta||'—')}</span><span class="member-balance">${money(m.mainWalletBalance)}</span></span></button>`;
+  }).join('')+'</div>';
+  box.querySelectorAll('.member-pick-card').forEach(btn=>{
+    btn.addEventListener('click',()=>toggleMember(btn.getAttribute('data-member-id')));
+  });
  }
  function renderSelected(){const rows=[...state.selected.values()];$('selectedCount').textContent=`${rows.length} selected`;$('selectedMembersBody').innerHTML=rows.length?rows.map((m,i)=>{const id=memberId(m),meta=memberMeta(m);return `<tr title="ID ${id}"><td>${i+1}</td><td><b>${esc(m.username||'-')}</b>${meta?` <small class="member-meta">${esc(meta)}</small>`:''}</td><td class="member-balance">${money(m.mainWalletBalance)}</td><td><button type="button" class="remove-member" data-remove="${id}" aria-label="Remove ${esc(m.username||id)}"><i class="bi bi-x-lg"></i></button></td></tr>`}).join(''):'<tr><td colspan="4" class="picker-empty-cell">Select members from the list on the left.</td></tr>';
  $('selectedMembersBody').querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{state.selected.delete(Number(b.dataset.remove));renderMembers();renderSelected()});updateSummary();

@@ -12,7 +12,7 @@
 <link href="assets/css/bo-ui-standard.css?v=1.0.5" rel="stylesheet"/>
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
 <link href="assets/css/bo-wallet-transaction-amber.css?v=1.0.93" rel="stylesheet"/>
-<link href="assets/css/payment-method-create.css?v=1.0.7" rel="stylesheet"/>
+<link href="assets/css/payment-method-create.css?v=1.0.11" rel="stylesheet"/>
 <link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet"/>
 <link href="assets/css/bo-charcoal-shell.css?v=1.0.0" rel="stylesheet"/>
 <link href="assets/css/bo-charcoal-legacy.css?v=1.0.1" rel="stylesheet"/>
@@ -55,29 +55,27 @@
 <a class="clean-btn" id="pmBackLink" href="bank-deposit-usage.html"><i class="bi bi-arrow-left"></i> Back</a>
 </header>
 
-<section class="pm-form-section pmc-card">
-<h4><i class="bi bi-wallet2"></i> 1. Basic Information</h4>
-<div class="pm-form-grid pm-grid-basic">
+<section class="pm-form-section pmc-card" id="pmAccountSection">
+<h4><i class="bi bi-wallet2"></i> <span id="pmBasicSectionTitle">1. Method &amp; Account</span></h4>
+<div class="pm-form-grid pm-grid-basic-top">
 <div class="field is-type"><label>Method Type <b>*</b></label><select id="pmType"><option value="ONLINE_BANKING">Online Banking</option><option value="EWALLET">E-Wallet</option><option value="CARD">Card</option><option value="CASH">Cash</option></select></div>
-<div class="field is-compact"><label>Status <b>*</b></label><select id="pmStatus"><option value="1">Active</option><option value="0">Suspend</option></select></div>
-<div class="field is-compact"><label>Show Bank <b>*</b></label><select id="pmVisible"><option value="1">Show</option><option value="0">Hide</option></select></div>
+<div class="field is-account"><label id="pmAccountNameLabel">Account Name <b>*</b></label><input id="pmAccountName" placeholder="e.g. Main Account"/></div>
+<div class="field is-bank"><label id="pmBankNameLabel">Bank Name <b>*</b></label><input id="pmBankName" placeholder="e.g. Test Bank"/></div>
+<div class="field is-account-no"><label id="pmAccountNoLabel">Account Number <b>*</b></label><input id="pmAccountNo" placeholder="e.g. 001234567"/></div>
+</div>
+<div class="pm-form-grid pm-grid-basic-bottom">
+<div class="field is-bsb"><label>Bank BSB</label><input id="pmBsb" placeholder="e.g. 123-456"/></div>
 <div class="field is-name"><label>Display Name <b>*</b></label><input id="pmName" placeholder="e.g. Test Bank"/></div>
 <div class="field is-subtitle"><label>Subtitle</label><input id="pmSubtitle" placeholder="e.g. Fast deposit"/></div>
+<div class="pm-status-show-pair">
+<div class="field is-compact is-status"><label>Status <b>*</b></label><select id="pmStatus"><option value="1">Active</option><option value="0">Suspend</option></select></div>
+<div class="field is-compact is-show"><label>Show Bank <b>*</b></label><select id="pmVisible"><option value="1">Show</option><option value="0">Hide</option></select></div>
 </div>
-</section>
-
-<section class="pm-form-section pmc-card" id="pmAccountSection">
-<h4><i class="bi bi-clipboard2"></i> <span id="pmAccountSectionTitle">2. Account Details</span></h4>
-<div class="pm-form-grid pm-grid-4">
-<div class="field"><label id="pmBankNameLabel">Bank Name <b>*</b></label><input id="pmBankName" placeholder="e.g. Test Bank"/></div>
-<div class="field"><label id="pmAccountNameLabel">Account Name <b>*</b></label><input id="pmAccountName" placeholder="e.g. Main Account"/></div>
-<div class="field"><label id="pmAccountNoLabel">Account Number <b>*</b></label><input id="pmAccountNo" placeholder="e.g. 001234567"/></div>
-<div class="field"><label>Bank BSB</label><input id="pmBsb" placeholder="e.g. 123-456"/></div>
 </div>
 </section>
 
 <section class="pm-form-section pmc-card">
-<h4><i class="bi bi-sliders"></i> 3. Limits &amp; Order</h4>
+<h4><i class="bi bi-sliders"></i> 2. Limits &amp; Order</h4>
 <div class="pm-form-grid pm-grid-4">
 <div class="field"><label>Pay ID</label><input id="pmPayId" placeholder="e.g. PAY123"/></div>
 <div class="field"><label>Sort Order <b>*</b></label><input id="pmSort" placeholder="e.g. 0" type="number" value="0"/></div>
@@ -90,12 +88,12 @@
 </section>
 
 <section class="pm-form-section pmc-card">
-<h4><i class="bi bi-qr-code"></i> 4. QR / E-wallet Image</h4>
+<h4><i class="bi bi-qr-code"></i> 3. QR / E-wallet Image</h4>
 <label class="pm-upload-zone" for="pmQr"><i class="bi bi-cloud-arrow-up"></i><span>Drag and drop an image here, or <b>click to browse</b></span><small>PNG, JPG or WEBP · Max size 2MB · Recommended 512×512px</small><input accept="image/*" id="pmQr" type="file"/></label>
 </section>
 
 <section class="pm-form-section pmc-card">
-<h4><i class="bi bi-card-text"></i> 5. Instructions</h4>
+<h4><i class="bi bi-card-text"></i> 4. Instructions</h4>
 <div class="field"><textarea id="pmInstructions" maxlength="500" placeholder="Payment instructions shown on Naga deposit page..." rows="4"></textarea></div>
 </section>
 </form>
@@ -115,7 +113,7 @@
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
 <script src="assets/js/auth.js?v=1.0.66"></script>
 <script src="assets/js/reports.js?v=1.0.29"></script>
-<script src="assets/js/payment-method-create.js?v=1.0.4"></script>
+<script src="assets/js/payment-method-create.js?v=1.0.5"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
