@@ -611,6 +611,30 @@ on them — `data-bo-theme` was never written.
    this mistake; the durable fix is to write no regexes in injected code at all (`indexOf`, `split`,
    `charAt`), and to sanity-check a new probe field against a case whose answer is already known.
 
+13. **A page that redirects to another page is not the page you measured.** The twelve
+   `agent-*.html` portal pages redirect an unauthenticated visitor to `agent-login.html`, and the
+   stub does not change that: `--dump-dom` returns *agent-login's* document — title "Agent Portal
+   Login", `login.css` in the head, no `report-shell`, and no probe report at all, because the
+   probe refuses to emit on a half-built page (trap 9). So the batch-4 "clean" readings for those
+   twelve are **not reproducible and should be treated as unverified**, and the screenshots for
+   them show the login gate rather than the page. Anything added to their markup — including the
+   theme toggle this migration adds to every adopted page — does not survive the portal's own
+   render. Verify those pages in a browser with a session, not with this harness.
+14. **A pixel audit has three built-in false positives; check them before believing it.** Sweeping
+   the screenshots for cool-hued pixels flagged (a) the dark-theme canvas, whose locked
+   `#2C2E36`/`#2A2C36` really does sit at hue ~232°, (b) **subpixel antialiasing fringes** — 368
+   saturated blue pixels against 413 saturated orange ones in one title band, a signature that is
+   rendering, not styling, and (c) genuine images (`site-customize`'s uploaded favicon, casino and
+   currency artwork). Confirm a cluster is chrome before calling it a defect: sample the pixels
+   around it, and read the *darkest* pixel of a text run, which is the declared colour.
+15. **Batch D's off-scale radii.** `login.css` had drifted to 11/18/20/22px against a locked set of
+   8 / 10 / 12 / 16 / 999. Normalised: both icon tiles (34px `.auth-brand-mark` on login, 62/56px
+   `.auth-icon` on agent-login) take the avatar value 12px because they are one role on sibling
+   pages; `.upload-status` takes 8px like the other small surfaces; the small-screen `.auth-card`
+   keeps the locked 16px instead of growing to 22px. `.auth-subtitle` also gained
+   `text-wrap:balance`, which removed a single-word second line. **`login.css` is referenced by two
+   pages at two different versions** (`login.html` 1.0.4 and `agent-login.html` 1.0.3) — bump both.
+
 ### Adopted so far (2026-09-15)
 
 `main-report`, `main-settlement-report`, the `main-provider-{balance,settlement,transactions,
