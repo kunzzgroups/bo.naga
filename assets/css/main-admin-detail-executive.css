@@ -1,8 +1,8 @@
-﻿/* Deep Navy Cyan �� Main Admin Detail
+﻿/* Deep Navy Cyan — Main Admin Detail
    Tokens from .interface-design/system.md */
 
 body.main-admin-detail-page{
-  /* Deep Navy Cyan �� lock page + neutralize global BO blues/indigos */
+  /* Deep Navy Cyan — lock page + neutralize global BO blues/indigos */
   --bo-navy:#123B66;
   --bo-cyan:#21A6D7;
   --bo-cyan-deep:#1B94C2;
@@ -402,7 +402,7 @@ body.main-admin-detail-page .mad-icon-btn:focus-visible{
   outline:2px solid var(--bo-cyan)!important;outline-offset:2px!important;
 }
 
-/* Filter bar �� single row, control-well surface (mock) */
+/* Filter bar — single row, control-well surface (mock) */
 body.main-admin-detail-page .mad-filter-bar{
   display:flex;align-items:center;justify-content:space-between;gap:16px;
   flex-wrap:nowrap;
@@ -451,7 +451,7 @@ body.main-admin-detail-page .mad-sr-only{
   overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
 }
 body.main-admin-detail-page .mad-req{color:var(--bo-danger);font-weight:800}
-/* reports.js wraps selects �� .rounded-select-wrap{width:100%} �� keep filter row side-by-side */
+/* reports.js wraps selects — .rounded-select-wrap{width:100%} — keep filter row side-by-side */
 /* Filter selects: width locked to longest option via JS */
 body.main-admin-detail-page .mad-filters > .rounded-select-wrap,
 body.main-admin-detail-page .mad-filters .rounded-select-wrap{
@@ -503,7 +503,7 @@ body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-me
   background:var(--bo-cyan-tint)!important;
   color:var(--bo-cyan-deep)!important;
 }
-/* Search �� match Menu Permission .mp-search */
+/* Search — match Menu Permission .mp-search */
 body.main-admin-detail-page .mad-search{
   display:flex;align-items:center;gap:10px;
   flex:0 1 220px;width:220px;max-width:100%;min-width:160px;
@@ -514,7 +514,7 @@ body.main-admin-detail-page .mad-search{
 body.main-admin-detail-page .mad-search i{
   flex:0 0 auto;color:var(--bo-placeholder);font-size:15px;line-height:1;pointer-events:none;
 }
-/* Kill global .report-content input box �� keep only outer .mad-search frame */
+/* Kill global .report-content input box — keep only outer .mad-search frame */
 body.main-admin-detail-page .mad-search input,
 body.main-admin-detail-page .mad-search input[type="search"],
 body.main-admin-detail-page .report-content .mad-search input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
@@ -1234,7 +1234,7 @@ body.main-admin-detail-page .mad-modal-actions{display:flex;justify-content:flex
   body.main-admin-detail-page .mad-search{width:auto;flex:1 1 100%;min-width:0}
 }
 
-/* ========== Adapt: phone + tablet (desktop �� mobile web) ========== */
+/* ========== Adapt: phone + tablet (desktop — mobile web) ========== */
 @media(max-width:1023.98px){
   body.main-admin-detail-page .mad-workspace{
     padding:8px 14px max(20px, env(safe-area-inset-bottom, 0px))!important;
@@ -1327,9 +1327,9 @@ body.main-admin-detail-page .mad-modal-actions{display:flex;justify-content:flex
   body.main-admin-detail-page .report-topbar .user-title-wrap p{display:none}
 }
 
-/* Card rows once shell is drawer-width (covers 768 / iPad portrait / 824��768) */
+/* Card rows once shell is drawer-width (covers 768 / iPad portrait / 824—768) */
 @media(max-width:991.98px){
-  /* Scroll the workspace �� panel must not clip card list */
+  /* Scroll the workspace — panel must not clip card list */
   body.main-admin-detail-page .mad-workspace{
     padding:12px 10px max(16px, env(safe-area-inset-bottom, 0px))!important;
     overflow-x:hidden!important;
@@ -1607,7 +1607,7 @@ body.main-admin-detail-page .mad-modal-actions{display:flex;justify-content:flex
   body.main-admin-detail-page .mad-table tbody tr:hover td{background:transparent}
 }
 
-/* Only reunite chrome on wide landscape tablets �� not 824��768 */
+/* Only reunite chrome on wide landscape tablets — not 824—768 */
 @media(min-width:1100px) and (max-width:1280px) and (orientation:landscape){
   body.main-admin-detail-page .mad-chrome{
     flex-direction:row;flex-wrap:wrap;align-items:center;gap:12px;
@@ -1971,7 +1971,7 @@ body.main-admin-create-page .mac-fields-row{
   grid-template-columns:repeat(5, minmax(0, 1fr));
   gap:14px 12px;
 }
-/* Merchant create �� mock layout: rich heads, 3/4-col grids, affixes, subsections */
+/* Merchant create — mock layout: rich heads, 3/4-col grids, affixes, subsections */
 body.main-merchant-create-page .mac-section-head-rich{
   align-items:flex-start;
   gap:12px 14px;
