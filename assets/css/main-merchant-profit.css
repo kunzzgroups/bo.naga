@@ -346,7 +346,14 @@ body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-tab
 }
 body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(9),
 body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(9){
-  width:6%!important;
+  /* Must be a px width, not a percentage. The ledger is `table-layout:fixed`, where a cell's
+     `min-width` is IGNORED — so the old `width:6%` shrank with everything else and the two
+     40px action buttons (68px of content in a 55px box at a 1551px window, and less below that)
+     were cut off by the panel's `overflow:hidden`. A px width IS honoured in fixed layout: the
+     percentage columns absorb the difference, so this stays 88px at every window width — which
+     is what the `min-width` here always meant. Verified 1551/1280/1152: column holds 88px, no
+     clipping, no horizontal scrollbar. */
+  width:88px!important;
   min-width:88px!important;
   max-width:none!important;
   padding-left:10px;
@@ -659,20 +666,29 @@ body.main-merchant-profit-page .mpr-repay-btn{
   text-decoration:none;
   color:inherit;
 }
+/* Repayments-due counter on the topbar repay button.
+   The box is sized so the digit is centred by geometry, not by font metrics:
+   `line-height:14px` inside an 18px box made the digit's vertical position depend on
+   the font's ascent/descent, and it drifted ~2px off centre at some zoom levels.
+   `line-height:1` + the grid centring pins it. The overhang moved -5px -> -7px because
+   at -5px the 18px badge covered the glyph's top-right corner rather than sitting on the
+   button's corner; 17px at -7px clears the icon while leaving the neighbouring theme
+   toggle 5px of the 12px gap. */
 body.main-merchant-profit-page .mpr-repay-badge{
   position:absolute;
-  top:-5px;
-  right:-5px;
-  min-width:18px;
-  height:18px;
-  padding:0 5px;
+  top:-7px;
+  right:-7px;
+  min-width:17px;
+  height:17px;
+  padding:0 3px;
   border-radius:999px;
   background:#EF3340;
   color:#fff;
   border:2px solid var(--bo-surface,#fff);
-  font-size:10px;
+  font-size:10.5px;
   font-weight:800;
-  line-height:14px;
+  line-height:1;
+  font-variant-numeric:tabular-nums;
   display:inline-grid;
   place-items:center;
   pointer-events:none;

@@ -14,7 +14,7 @@
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/menu-management-executive.css?v=2.1.6" rel="stylesheet"/>
+<link href="assets/css/menu-management-executive.css?v=2.2.3" rel="stylesheet"/>
 <link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-shell.css?v=1.0.0" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-legacy.css?v=1.0.0" rel="stylesheet" />
@@ -74,6 +74,10 @@
 <div class="member-card-list" id="menuMobileCards"></div>
 </div>
 </section>
+</main>
+</div>
+<!-- Modals stay at body level, outside .report-shell: main.report-main is a z-index:1 stacking
+     context, so a modal nested inside it can never paint above the sidebar's z-index:1040. -->
 <div aria-hidden="true" class="modal-clean" id="newMenuModal">
 <div class="modal-clean-panel menu-modal-panel nm-panel">
   <div class="nm-head">
@@ -227,14 +231,12 @@
   </div>
 </div>
 </div>
-</main>
-</div>
 <script src="assets/js/config.js?v=1.0.40"></script>
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
-<script src="assets/js/reports.js?v=1.0.25"></script>
-<script src="assets/js/auth.js?v=1.0.61"></script>
+<script src="assets/js/reports.js?v=1.0.29"></script>
+<script src="assets/js/auth.js?v=1.0.65"></script>
 <script src="assets/js/menu-management.js?v=1.7.7"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>

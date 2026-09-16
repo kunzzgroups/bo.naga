@@ -281,6 +281,13 @@ body.menu-mgmt-page .menu-mgmt-toolbar{
 body.menu-mgmt-page .menu-mgmt-toolbar.user-toolbar{
   margin-bottom:10px!important;
 }
+/* `padding:0` above left the row 1px from the toolbar's own border, so the primary CTA's
+   rounded corner almost collided with the frame's corner (measured gapCtaToToolbarRight: 1px).
+   Page-scoped: `.user-toolbar` itself is a shared component. */
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .user-toolbar.menu-mgmt-toolbar,
+html[data-bo-theme="dark"] body.menu-mgmt-page .user-toolbar.menu-mgmt-toolbar{
+  padding:6px 10px!important;
+}
 body.menu-mgmt-page .menu-mgmt-toolbar .menu-panel-tabs{margin:0}
 body.menu-mgmt-page .menu-mgmt-toolbar .menu-count-inline{
   margin:0;
@@ -1688,3 +1695,165 @@ html[data-bo-theme="dark"] body.menu-mgmt-page .nm-btn-ghost{
   color:var(--bo-text-secondary)!important;
 }
 html[data-bo-theme="dark"] body.menu-mgmt-page .nm-foot{border-color:var(--bo-border)!important}
+
+/* ==========================================================================
+   Panel tabs (MAIN / BO) — the selected state has to survive bo-ui-standard.js
+   --------------------------------------------------------------------------
+   `bo-ui-standard.js` classifies buttons by their label and adds
+   `.bo-ui-button`/`.bo-ui-button-secondary` to both of these tabs. The shared
+   charcoal layer then paints EVERY `.bo-ui-button-secondary` as a cream surface
+   button (bo-charcoal-primitives.css, `!important`) and it loads later, so both
+   tabs rendered as identical cream cards — measured fill #FFF8EB, border
+   #EADCC8, colour #18191C on the ACTIVE and the INACTIVE tab alike — and the
+   selected panel was invisible. Only the icon colour and the count pill hinted
+   at it. These selectors name both bo-ui classes so they win on specificity
+   instead of load order (naming one only ties with the primitives layer and
+   loses on order, which left the fill transparent but kept the 1px border).
+   `:not(.active)` on the unselected block is load-bearing, not tidiness: without
+   it the base also matches the selected tab, and being stated after the selected
+   block it then wins their shared declarations (measured: the selected tab's
+   amber label came back muted in dark mode).
+   Same segmented recipe as `.nm-status-btn` in the New/Edit Menu modal, on
+   purpose — one segmented control on this page: selected = raised surface +
+   amber label + soft amber lift; unselected = transparent on the track + muted.
+   ========================================================================== */
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button:not(.active),
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button-secondary:not(.active),
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button.bo-ui-button-secondary:not(.active){
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  color:var(--bo-muted)!important;
+}
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button:not(.active) i,
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button.bo-ui-button-secondary:not(.active) i{
+  color:var(--bo-muted)!important;
+}
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button:not(.active) em,
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button.bo-ui-button-secondary:not(.active) em{
+  background:transparent!important;
+  color:var(--bo-muted)!important;
+}
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button,
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button-secondary,
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button.bo-ui-button-secondary{
+  background:var(--bo-surface)!important;
+  border:0!important;
+  color:var(--bo-cyan)!important;
+  box-shadow:0 0 0 1px rgba(217,119,6,.06),0 1px 3px rgba(217,119,6,.12)!important;
+}
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button i,
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button-secondary i,
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button.bo-ui-button-secondary i{
+  color:var(--bo-cyan)!important;
+}
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button em,
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button-secondary em,
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button.bo-ui-button-secondary em{
+  background:rgba(217,119,6,.12)!important;
+  color:var(--bo-navy)!important;
+}
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button:not(.active),
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button-secondary:not(.active),
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button.bo-ui-button-secondary:not(.active){
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  color:var(--bo-muted)!important;
+}
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button:not(.active) i,
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button.bo-ui-button-secondary:not(.active) i{
+  color:var(--bo-muted)!important;
+}
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button:not(.active) em,
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button.bo-ui-button-secondary:not(.active) em{
+  background:transparent!important;
+  color:var(--bo-muted)!important;
+}
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button,
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button-secondary,
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button.bo-ui-button-secondary{
+  background:#2A2C36!important;
+  border:0!important;
+  color:var(--bo-cyan)!important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.08)!important;
+}
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button i,
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button-secondary i,
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button.bo-ui-button-secondary i{
+  color:var(--bo-cyan)!important;
+}
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button em,
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button-secondary em,
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button.bo-ui-button-secondary em{
+  background:rgba(245,158,11,.18)!important;
+  color:var(--bo-text)!important;
+}
+
+/* The state rules above still lost the raised fill to a later `.bo-ui-button-secondary`
+   declaration that no readable stylesheet accounts for (bootstrap.min.css is cross-origin and
+   invisible to a cssRules sweep). `background-image` is therefore cleared explicitly in both
+   branches — a gradient painted by an unknown layer would survive a background-color win. */
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button.bo-ui-button-secondary:not(.active),
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button-secondary:not(.active),
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button.bo-ui-button-secondary:not(.active),
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.bo-ui-button-secondary:not(.active){
+  background:none!important;
+  background-color:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button.bo-ui-button-secondary,
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button-secondary,
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button{
+  background:#FFF8EB!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:0 0 0 1px rgba(217,119,6,.06),0 1px 3px rgba(217,119,6,.12)!important;
+}
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button.bo-ui-button-secondary,
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button-secondary,
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button{
+  background:#2A2C36!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.08)!important;
+}
+
+/* --------------------------------------------------------------------------
+   Fewer borders in the toolbar (owner request).
+   The row had four closed outlines — tab track, count badge, Refresh, primary CTA —
+   plus the card's own. The track and the badge did not need one:
+   · track: `#FFF1DC` on a `#FFF8EB` card is already a visible step; the 1px line was
+     the second frame around a control that is itself framed. Deepened to the locked
+     control well `#F5EBDC` (dark `#2A2C36`) so the step carries the shape on its own.
+   · selected pill: dropped the redundant `0 0 0 1px` ring, keeping only the soft lift,
+     and in dark the pill is now the lighter value (`#40424E`) since the track became
+     the deeper well.
+   · count badge: `border:0` — the amber wash and `#B45309` text already say "summary".
+     This one is page-scoped on purpose: `.users-found-badge` is a shared component and
+     other pages still show it bordered. Six classes so it beats the shared
+     (0,5,2) rule rather than relying on load order.
+   Refresh and the primary CTA keep their borders — those are the locked button recipes.
+   -------------------------------------------------------------------------- */
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .user-toolbar.menu-mgmt-toolbar .menu-panel-tabs{
+  border:0!important;
+  background:#F0E4D0!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.menu-mgmt-page .user-toolbar.menu-mgmt-toolbar .menu-panel-tabs{
+  border:0!important;
+  background:#1F2128!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button.bo-ui-button-secondary{
+  box-shadow:0 1px 3px rgba(217,119,6,.14)!important;
+}
+html[data-bo-theme="dark"] body.menu-mgmt-page .menu-panel-tabs .menu-panel-tab.active.bo-ui-button.bo-ui-button-secondary{
+  background:#40424E!important;
+  box-shadow:0 1px 3px rgba(0,0,0,.30)!important;
+}
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .user-toolbar.menu-mgmt-toolbar .menu-count-inline.users-found-badge,
+html[data-bo-theme="dark"] body.menu-mgmt-page .user-toolbar.menu-mgmt-toolbar .menu-count-inline.users-found-badge{
+  border:0!important;
+}
