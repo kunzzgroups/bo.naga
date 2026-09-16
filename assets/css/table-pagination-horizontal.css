@@ -40,7 +40,7 @@
 .entries-control select,.table-page-size select,.ref-pagination-row select,.bo-pagination-standard select{
   box-sizing:border-box!important;display:inline-block!important;flex:0 0 68px!important;width:68px!important;min-width:68px!important;
   max-width:68px!important;height:40px!important;margin:0!important;padding:0 28px 0 12px!important;border:1px solid var(--bo-page-border)!important;
-  border-radius:10px!important;background-color:#fff!important;color:#1d2939!important;font-size:13px!important;font-weight:800!important;
+  border-radius:10px!important;background-color:#FFF8EB!important;color:#1d2939!important;font-size:13px!important;font-weight:800!important;
   line-height:40px!important;box-shadow:none!important;
 }
 
@@ -143,7 +143,7 @@
   width:68px!important;min-width:68px!important;max-width:68px!important;height:40px!important;
   margin:0!important;padding:0 8px!important;
   border:1px solid #d5ddea!important;border-radius:10px!important;
-  background:#fff!important;color:#1d2939!important;font-size:13px!important;font-weight:800!important;
+  background:#FFF8EB!important;color:#1d2939!important;font-size:13px!important;font-weight:800!important;
   line-height:normal!important;box-shadow:none!important;position:relative!important;z-index:20!important;
   cursor:pointer!important;overflow:visible!important;
 }

@@ -1807,7 +1807,7 @@ body.standardized-listing-page.main-admin-detail-page[data-access-page="main_mer
 body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] #madEditWorkspace .mac-field textarea,
 body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] #madEditWorkspace .mac-pass-wrap .form-control,
 body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] #madCurrencyModal .mac-field .form-control{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -1822,7 +1822,7 @@ body.standardized-listing-page.main-admin-detail-page[data-access-page="main_mer
   color:#57534E!important;
 }
 body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] #madEditWorkspace .mac-field .rounded-select-btn{
-  background:#F5EBDC!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2035,8 +2035,8 @@ html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="m
 html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_merchant_detail"] .report-content .mac-field select,
 html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_merchant_detail"] .report-content .mac-field textarea,
 html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_merchant_detail"] .mad-pass-wrap .form-control{
-background:#F5EBDC!important;
-  background-color:#F5EBDC!important;
+background:#FFF8EB!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2134,7 +2134,7 @@ color:#78716C!important;
 
 /* ---- Light ---- */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mac-section .rounded-select-btn{
-  background:#F5EBDC!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2161,7 +2161,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
   border-color:#EADCC8!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mac-provider-search{
-  background:#F5EBDC!important;
+  background:#FFF8EB!important;
   border-color:#EADCC8!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mac-provider-count{
@@ -2170,7 +2170,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mac-provider-markup-field .form-control,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mac-section .mac-input-group > .form-control{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2231,7 +2231,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_me
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mac-section .mac-field .form-control,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mac-section .mac-field select,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mac-section .mac-field textarea{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2318,8 +2318,8 @@ html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detai
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .mac-section .mac-field .mac-input-group .mac-input-addon,
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .mac-section .mac-provider-markup-field .mac-input-group > .form-control,
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .mac-section .mac-provider-markup-field .mac-input-group .mac-input-addon{
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2357,8 +2357,8 @@ html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detai
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .mac-section .mac-field .mac-input-group.is-prefix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .mac-section .mac-field .mac-input-group.is-suffix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .mac-section .mac-provider-markup-field .mac-input-group.is-suffix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2397,7 +2397,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] #madEditWorkspace input.form-control,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] #madEditWorkspace .form-control,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] #madCurrencyModal .form-control{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2442,8 +2442,8 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_me
 
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] #madEditWorkspace .mac-provider-markup-field .mac-input-group > input.form-control,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] #madEditWorkspace .mac-provider-markup-field .mac-input-group .mac-input-addon{
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2488,13 +2488,13 @@ html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detai
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] #madCurrencyModal input.form-control,
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] #madCreditModal input.form-control,
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] #madCreditModal select.form-control{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] #madProviderMarkup{
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2567,15 +2567,15 @@ html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detai
 }
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean-body input.form-control,
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean-body select.form-control{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] #madProviderMarkup,
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] #madCurrencyModalCode,
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] #merchantCurrencyModalCode{
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2627,8 +2627,8 @@ html:not([data-bo-theme="dark"]) body #madEditWorkspace #madProviderMarkup,
 html:not([data-bo-theme="dark"]) body #madCurrencyModal #madCurrencyModalCode,
 html:not([data-bo-theme="dark"]) body #merchantCurrencyModal #merchantCurrencyModalCode,
 html:not([data-bo-theme="dark"]) body #madCurrencyModal #merchantCurrencyModalCode{
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2845,7 +2845,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-page-size-select,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] .rounded-select-btn{
-  background:#F5EBDC!important;
+  background:#FFF8EB!important;
   border-color:#EADCC8!important;
   color:#18191C!important;
 }
@@ -2917,8 +2917,8 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] #settlementPaymentForm .mac-input-group > input,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] #settlementPaymentForm .mac-input-group > .form-control,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"] #settlementPaymentNote{
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2959,8 +2959,8 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_me
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean .mac-input-group > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean .mac-input-group.is-prefix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean textarea.form-control{
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -3620,7 +3620,7 @@ body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mprr-field
 body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mprr-field .form-select,
 body.main-admin-detail-page[data-access-page="main_merchant_detail"] .report-content .mprr-field .form-control,
 body.main-admin-detail-page[data-access-page="main_merchant_detail"] .report-content .mprr-field .form-select{
-  background:#F5EBDC!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
   box-shadow:none!important;
@@ -3686,7 +3686,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_me
    ----------------------------------------------------------------------------- */
 body.main-admin-detail-page[data-access-page="main_merchant_detail"].main-merchant-profit-record-page .mprr-field .rounded-select-btn,
 body.main-admin-detail-page[data-access-page="main_merchant_detail"].main-merchant-profit-record-page .mprr-field .rounded-select-wrap .rounded-select-btn{
-  background:#F5EBDC!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
   box-shadow:none!important;
@@ -4045,8 +4045,8 @@ html[data-bo-theme="dark"] body.report-body.standardized-listing-page.main-admin
    stacked body prefix that settled the select options above. */
 html:not([data-bo-theme="dark"]) body.report-body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean .mac-input-group.is-prefix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html:not([data-bo-theme="dark"]) body.report-body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] .modal-clean .mac-input-group > .form-control{
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -4352,7 +4352,7 @@ body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-paymen
   height:42px;
   border:1px solid #DCC9A8;
   border-radius:8px;
-  background:#F5EBDC;
+  background:#FFF8EB;
   overflow:hidden;
 }
 body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group .mac-input-addon,
@@ -4361,7 +4361,7 @@ body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-paymen
   border:0;
   border-right:1px solid #DCC9A8;
   border-radius:0;
-  background:#F0E4D0;
+  background:#FFF8EB;
   color:#57534E;
 }
 body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group > .form-control,

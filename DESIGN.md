@@ -1061,3 +1061,46 @@ know the column it sits in. At a 1551px viewport the Target content box is 119px
   cells intact (`#3A3C48` / `#434653`), no cell in the table newly clipped after Action/Event lost
   1.5%, chip colors still the amber pair (`rgba(217,119,6,.12)` / `#18191C` light,
   `rgba(245,158,11,.16)` / `#FBBF24` dark).
+
+**Every input box in the panel fills `#FFF8EB` (2026-09-16, owner-directed).** "全站 main 的输入框
+背景颜色" — given first as `#FFFCF7`, corrected to `#FFF8EB`. That is the surface rung of the cream
+ladder, so fields now read by their `#DCC9A8` border instead of as a recessed `#F5EBDC` well. The
+Admin Role Create recipe already documented its own inputs as `surface #FFF8EB` and the filter/select
+recipe already said "never form well `#F5EBDC`", so the change moves the rest of the panel onto a value
+that two locked recipes had already chosen.
+
+- **A value swap, not an override sheet.** Input fills were declared in 46 stylesheets with a spread of
+  values (`#F5EBDC`, `#FFF8EB`, `#fff`, `#F0E4D0`, …), and the pages carry ID-level `!important` rules
+  (`#pcTitle`, `#madProviderMarkup`, `#settlementType`, `#menuPermissionFilter`) that out-rank any class
+  or attribute selector, so an appended override could not reach them. Result: **177 declarations in 19
+  stylesheets** had their value swapped, keeping each rule's own specificity and importance. The diff is
+  auditable — 174 added / 174 removed lines, and every line differs from its original by exactly one
+  colour token (verified by an independent script).
+- **`assets/css/bo-input-fill.css` is the guarantee, linked last on 136 pages.** It covers controls with
+  no rule of their own plus the field-shaped boxes that carry their fill through a `var(--token)` that
+  resolves per theme (those cannot be flattened to a literal without breaking dark). Its selectors are
+  scoped `body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2)` — two ids nothing carries — the
+  specificity escalation this repo already uses (`body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy)`
+  in bo-wallet-transaction-amber.css). The step count is measured: against
+  `main-report-charcoal-content.css` `…#settlementPaymentModal .modal-body .form-control{…!important}`
+  one step still lost (the textarea computed to the old value) and two won.
+- **Trap: a light guard written as `:not([data-bo-theme="dark"])` reads as "dark" to a substring test.**
+  The first sweep skipped every rule using this repo's standard light guard — 59 declarations that
+  nothing else could reach — because the scanner tested `/data-bo-theme="dark"/` against the whole
+  selector. Strip `:not(...)` bodies before asking whether a rule is dark-scoped. The misses were only
+  found by an independent coverage audit that graded every remaining non-`#FFF8EB` field fill.
+- **Trap: a comment above a rule becomes part of its selector if comments are not masked first.** The
+  first pass repainted `.mprr-amount-prefix` — a currency addon chip — because the comment above it
+  ("…so the join with the input reads as one field") contains the word *input* and the unmasked parser
+  glued the comment onto the selector. Mask `/* … */` to equal-length blanks before parsing (offsets
+  stay valid), and never let prose decide what a rule targets.
+- **What deliberately did not change:** the addon segments (`.mac-input-addon`, `.mprr-amount-prefix`,
+  `.input-group-text`) stay one rung deeper so a joined field still reads as two parts; the locked
+  `#EDE4D4` disabled/readonly state; checkboxes, radios, file and range inputs; table action wells and
+  segmented tracks; dark theme entirely (`#2A2C36` on `#383A46`); and the code editors on
+  layout-section.html, where the textarea is a transparent overlay on a highlighted `<pre>` — an opaque
+  fill would cover the code.
+- Verified: measured computed fills across 8 page families in both themes — body fields, filter selects,
+  date-range triggers, custom select buttons, amount groups, search frames, textareas, the rich-text
+  editors and the code editor; the locked username field still reads `#EDE4D4`, dark still `#2A2C36`,
+  and no dark rule gained `#FFF8EB`.

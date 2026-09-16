@@ -500,7 +500,7 @@ body.main-merchant-report-page .msr-payment-fields .mad-field > .form-control{
   height:42px!important;
   border:1px solid #D0D5DD!important;
   border-radius:8px!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   color:var(--bo-text,#11203A)!important;
   font-size:13.5px!important;
   font-weight:500!important;
@@ -525,7 +525,7 @@ body.main-merchant-report-page .msr-payment-fields .msr-amount-group.mac-input-g
   min-width:0;
   border:1px solid #D0D5DD;
   border-radius:8px;
-  background:#fff;
+  background:#FFF8EB;
   overflow:hidden;
   box-sizing:border-box;
 }
@@ -604,7 +604,7 @@ body.main-merchant-report-page .msr-pay-date-trigger{
   min-height:42px;
   border:1px solid #D0D5DD!important;
   border-radius:8px!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   color:var(--bo-text,#11203A)!important;
   font-size:13px!important;
   font-weight:600!important;

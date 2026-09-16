@@ -682,7 +682,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"][data-access-page="main_provider_balance_report"][data-access-page="main_provider_transaction_report"][data-access-page="main_provider_settlement_report"]) .settlement-form-grid .form-control,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"][data-access-page="main_provider_balance_report"][data-access-page="main_provider_transaction_report"][data-access-page="main_provider_settlement_report"]) .settlement-form-grid .form-select{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border:1px solid #DCC9A8!important;
   color:#18191C!important;
 }
@@ -1161,7 +1161,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
   margin-bottom:6px;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"][data-access-page="main_provider_balance_report"][data-access-page="main_provider_transaction_report"][data-access-page="main_provider_settlement_report"]) #settlementPaymentModal .modal-body .form-control{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border:1px solid #DCC9A8!important;
   color:#18191C!important;
 }

@@ -61,7 +61,7 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .form-control,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .form-select,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal textarea.form-control,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .input-group-text{
-  background-color:#F5EBDC!important;border:1px solid #DCC9A8!important;color:#18191C!important;
+  background-color:#FFF8EB!important;border:1px solid #DCC9A8!important;color:#18191C!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .form-control::placeholder{
   color:#78716C!important;

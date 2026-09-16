@@ -1564,16 +1564,21 @@ body.pwt-page.modal-open .pwt-modal{pointer-events:auto}
 .bo-summary-note{grid-column:2;color:#57534E;font-size:11px;font-weight:600;line-height:1.2}
 
 /* Every regular input/select follows the approved rounded field theme. */
+/* The .layout-code-pane exception: those textareas are a transparent overlay on a colourised
+   <pre> (layout-section.html), so this rule's fill, border, radius and colour together hid the
+   syntax highlighting and drew a field frame around the editor. They matched from the day the
+   rule was written (at HEAD the fill was #fff), so the exception also fixes a pre-existing
+   defect rather than only protecting the #FFF8EB input fill. */
 .report-content select,
 .report-content .form-select,
 .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
-.report-content textarea{
+.report-content textarea:not(.layout-code-pane textarea){
   border:1px solid #EADCC8!important;border-radius:10px!important;background-color:#FFF8EB!important;
   box-shadow:none!important;color:#18191C;
 }
 .report-content select:focus,.report-content .form-select:focus,
 .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
-.report-content textarea:focus{border-color:#78716C!important;box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;outline:0!important}
+.report-content textarea:focus:not(.layout-code-pane textarea){border-color:#78716C!important;box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;outline:0!important}
 
 /* Live chat keeps the composer available while only the message history scrolls. */
 .livechat-bo-page{overflow:hidden!important}
@@ -1989,7 +1994,7 @@ body.pwt-page.modal-open .pwt-modal{pointer-events:auto}
 
 /* v11 banner search simplification */
 .banner-filterbar{border-left:0!important;border-right:0!important}
-.banner-search{border:0!important;background:#F5EBDC!important;box-shadow:none!important}
+.banner-search{border:0!important;background:#FFF8EB!important;box-shadow:none!important}
 .banner-search:focus-within{background:#FFF8EB!important;box-shadow:0 0 0 2px rgba(217,119,6,.13)!important}
 
 /* v11 game category management */
@@ -5234,7 +5239,7 @@ body[data-report-page] .filter-card .field:has(#casinoResetBtn){
 
 
 /* Referral reward configuration moved into modal beside Search. */
-.referral-page .ref-filter-actions{grid-template-columns:.72fr 1fr 1.08fr!important}.ref-config-dialog{width:min(620px,100%)}.ref-config-fields{display:grid;grid-template-columns:1fr;gap:15px}.ref-config-fields .field label{display:block;font-size:12px;font-weight:800;color:#18191C;margin-bottom:7px}.ref-config-fields .field input,.ref-config-fields .field select{width:100%;height:44px;border:1px solid #EADCC8;border-radius:10px;padding:0 12px;color:#18191C;background:#FFF8EB}.ref-config-fields .field input[readonly]{background:#F5EBDC;color:#57534E}.referral-page .referral-filter-card:not(.referral-reward-config) .referral-filter-grid{grid-template-columns:1.25fr 1.15fr .8fr 1.45fr!important}@media(max-width:991px){.referral-page .ref-filter-actions{grid-template-columns:repeat(3,1fr)!important}}@media(max-width:767px){.referral-page .ref-filter-actions{grid-template-columns:1fr!important}}
+.referral-page .ref-filter-actions{grid-template-columns:.72fr 1fr 1.08fr!important}.ref-config-dialog{width:min(620px,100%)}.ref-config-fields{display:grid;grid-template-columns:1fr;gap:15px}.ref-config-fields .field label{display:block;font-size:12px;font-weight:800;color:#18191C;margin-bottom:7px}.ref-config-fields .field input,.ref-config-fields .field select{width:100%;height:44px;border:1px solid #EADCC8;border-radius:10px;padding:0 12px;color:#18191C;background:#FFF8EB}.ref-config-fields .field input[readonly]{background:#FFF8EB;color:#57534E}.referral-page .referral-filter-card:not(.referral-reward-config) .referral-filter-grid{grid-template-columns:1.25fr 1.15fr .8fr 1.45fr!important}@media(max-width:991px){.referral-page .ref-filter-actions{grid-template-columns:repeat(3,1fr)!important}}@media(max-width:767px){.referral-page .ref-filter-actions{grid-template-columns:1fr!important}}
 
 /* Shared BO confirmation / input modal */
 .bo-dialog-modal{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;padding:20px}.bo-dialog-modal.show{display:flex}.bo-dialog-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(5px)}.bo-dialog-box{position:relative;width:min(480px,100%);background:#FFF8EB;border:1px solid #EADCC8;border-radius:22px;box-shadow:0 24px 70px rgba(217,119,6,.28);padding:26px;display:grid;grid-template-columns:48px 1fr;gap:0 16px}.bo-dialog-close{position:absolute;right:18px;top:18px;width:40px;height:40px;border:1px solid #EADCC8;border-radius:12px;background:#FFF8EB;color:#18191C;display:grid;place-items:center;cursor:pointer}.bo-dialog-icon{width:48px;height:48px;border-radius:14px;background:#F5EBDC;color:#57534E;display:grid;place-items:center;font-size:22px}.bo-dialog-copy{padding-right:42px}.bo-dialog-copy h3{margin:0 0 6px;color:#D97706;font-size:20px;font-weight:900}.bo-dialog-message{color:#57534E;font-size:13px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.bo-dialog-input-wrap{display:none;grid-column:1/-1;margin-top:20px}.bo-dialog-input-wrap.show{display:block}.bo-dialog-input-label{display:block;margin-bottom:7px;color:#18191C;font-size:12px;font-weight:800}.bo-dialog-input{width:100%;height:44px;border:1px solid #EADCC8;border-radius:12px;background:#FFF8EB;padding:0 13px;color:#18191C;font:inherit;outline:none;box-sizing:border-box}.bo-dialog-input:focus{border-color:#78716C;box-shadow:0 0 0 3px rgba(217,119,6,.14)}.bo-dialog-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:10px;margin-top:24px;padding-top:18px;border-top:1px solid #EADCC8}.bo-dialog-actions button{min-width:104px;height:42px;border-radius:11px;font-weight:800;cursor:pointer}.bo-dialog-cancel{border:1px solid #EADCC8;background:#FFF8EB;color:#18191C}.bo-dialog-ok{border:1px solid #57534E;background:#D97706;color:#fff;box-shadow:0 7px 16px rgba(217,119,6,.22)}

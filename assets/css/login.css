@@ -175,7 +175,7 @@ body.bo-login-body{
   font-weight:600;
   border:1px solid #DCC9A8;
   border-radius:8px;
-  background:#F5EBDC;
+  background:#FFF8EB;
   box-shadow:none;
   transition:border-color .15s ease,box-shadow .15s ease,background .15s ease;
 }

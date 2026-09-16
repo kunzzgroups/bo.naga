@@ -74,7 +74,7 @@ Do not use pure white `#FFFFFF` or ivory `#FFFCF8` for canvas / topbar / panels.
 | `--bo-text` | `#18191C` | `#F5F5F4` | Primary text |
 | `--bo-text-secondary` | `#27272A` | `#E7E5E4` | Secondary text |
 | `--bo-muted` | `#71717A` | `#A1A1AA` | Meta, time, captions |
-| `--bo-control-well` | `#F5EBDC` | `rgba(255,255,255,.06)` / dark inputs `#2A2C36` | Input wells (cream — never `#F0EFEA` / `#fff`) |
+| `--bo-control-well` | `#F5EBDC` | `rgba(255,255,255,.06)` / dark inputs `#2A2C36` | Control wells, tracks, chips — **no longer the input fill** (2026-09-16: inputs are `#FFF8EB`, see Forms) |
 | `--bo-placeholder` | `#78716C` | `#A1A1AA` | Placeholders on cream / charcoal wells |
 
 ### Compatibility aliases (names kept, hues changed)
@@ -345,7 +345,7 @@ Neat amber chips (Members / Deposit / Withdraw). One icon language — no purple
 
 ### Forms
 
-- Inputs: dark soft charcoal `#2A2C36` on dark; light well `#F5EBDC` on light — **never** `#FFFFFF` chrome
+- Inputs: dark soft charcoal `#2A2C36` on dark; light `#FFF8EB` on light — the panel surface, read by its `#DCC9A8` border rather than by a darker fill. **Never** `#FFFFFF` chrome, and no longer the recessed `#F5EBDC` well (owner-directed 2026-09-16: "全站 main 的输入框背景 = #FFF8EB")
 - Focus: amber ring (never cyan) — e.g. `0 0 0 3px rgba(217,119,6,.12)`
 - **Create/Edit hierarchy:** never one flat cream — use the layer ladder below so Save CTA and sections read clearly
 
@@ -359,7 +359,7 @@ Reference: Charcoal block + `.mac-*` / `.mae-*` in `main-admin-detail-executive.
 |-------|-----|-------|
 | Canvas | continuum `#FFE8CC`→`#FFF8EB` | Atmosphere only |
 | Section card | `#FFFCF7` · border `#DCC9A8` · warm shadow · **3px amber left rail** | Primary frame |
-| Input well | `#F5EBDC` · border `#DCC9A8` · placeholder `#78716C` | Editable inset |
+| Input | `#FFF8EB` · border `#DCC9A8` · placeholder `#78716C` | Editable; the border separates it from the card, not a darker fill |
 | Nested well | `#F0E4D0` | Privileges / policy / security |
 | Chip / status active | `#FFFCF7` | Lifted controls |
 | Locked field | `#EDE4D4` · text `#57534E` | Readonly username |
@@ -369,7 +369,7 @@ Reference: Charcoal block + `.mac-*` / `.mae-*` in `main-admin-detail-executive.
 | Element | Light | Dark |
 |---------|-------|------|
 | Section (`.mac-section`) | `#FFFCF7` · border `#DCC9A8` · warm shadow · amber rail | `--bo-surface` |
-| Inputs | `#F5EBDC` · border `#DCC9A8` · placeholder `#78716C` | `#2A2C36` |
+| Inputs | `#FFF8EB` · border `#DCC9A8` · placeholder `#78716C` | `#2A2C36` |
 | Privilege / policy / security nested | `#F0E4D0` | faint wash |
 | Locked username | `#EDE4D4` · text `#57534E` | charcoal wash |
 | Status seg track | `#EDE4D4` · active pill `#FFFCF7` | charcoal |

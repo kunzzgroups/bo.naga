@@ -2341,7 +2341,7 @@ body.main-merchant-create-page .mac-field .rounded-select-btn{
   font-size:13.5px;
   font-weight:500;
   border:1px solid #D0D5DD!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   color:var(--bo-text)!important;
   box-shadow:none!important;
 }
@@ -2472,7 +2472,7 @@ body.main-merchant-create-page .report-content .mac-input-group > input{
   height:44px!important;
   position:relative;
   z-index:0;
-  background:#fff!important;
+  background:#FFF8EB!important;
   box-shadow:none!important;
 }
 body.main-merchant-create-page .mac-input-group.is-prefix .mac-input-addon{
@@ -2619,7 +2619,7 @@ body.main-merchant-create-page .report-content .mac-provider-markup-field .mac-i
   border:1px solid #D0D5DD!important;
   border-right:0!important;
   border-radius:8px 0 0 8px!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   color:var(--bo-text)!important;
   font-family:inherit!important;
   font-size:13.5px!important;
@@ -2742,7 +2742,7 @@ body.main-merchant-create-page .mac-provider-search{
   height:40px;
   border:1px solid var(--bo-border);
   border-radius:8px;
-  background:#fff;
+  background:#FFF8EB;
   box-sizing:border-box;
 }
 body.main-merchant-create-page .mac-provider-search:focus-within{
@@ -2875,7 +2875,7 @@ body.main-merchant-create-page .mac-provider-override-wrap{
 }
 body.main-merchant-create-page .mac-provider-override-control{
   display:flex;align-items:stretch;height:32px;min-width:0;
-  border:1px solid var(--bo-border);border-radius:8px;background:#fff;overflow:hidden;
+  border:1px solid var(--bo-border);border-radius:8px;background:#FFF8EB;overflow:hidden;
   box-sizing:border-box;
 }
 body.main-merchant-create-page .mac-provider-override-control:focus-within{
@@ -4451,7 +4451,7 @@ body.main-admin-detail-page .mac-adjust-panel .rounded-select-wrap .rounded-sele
   height:42px!important;
   border:1px solid #D0D5DD!important;
   border-radius:8px!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   color:var(--bo-text)!important;
   font-size:13.5px!important;
   font-weight:600!important;
@@ -5140,7 +5140,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-field select.form-control{
   height:44px!important;
   border:1px solid #D0D5DD!important;
   border-radius:8px!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   color:var(--bo-text,#12263A)!important;
   padding:0 14px!important;
   font-size:13.5px!important;
@@ -5219,7 +5219,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-input-group > .form-contro
   height:44px!important;
   position:relative;
   z-index:0;
-  background:#fff!important;
+  background:#FFF8EB!important;
   box-shadow:none!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-input-group.is-prefix .mac-input-addon{
@@ -5761,7 +5761,7 @@ body.main-merchant-detail-page #madCurrencyModal #madCurrencyModalCode{
   padding:0 14px!important;
   border:1px solid #D0D5DD!important;
   border-radius:8px!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   color:var(--bo-text,#12263A)!important;
   font-size:13.5px!important;
   font-weight:500!important;
@@ -5868,7 +5868,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-provider-markup-field .mac
   border:1px solid #D0D5DD!important;
   border-right:0!important;
   border-radius:8px 0 0 8px!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   color:var(--bo-text)!important;
   font-family:inherit!important;
   font-size:13.5px!important;
@@ -6019,7 +6019,7 @@ body.main-merchant-detail-page .mac-provider-search{
   height:40px;
   border:1px solid var(--bo-border);
   border-radius:8px;
-  background:#fff;
+  background:#FFF8EB;
   box-sizing:border-box;
 }
 
@@ -6181,7 +6181,7 @@ body.main-merchant-detail-page .mac-provider-override-wrap{
 body.main-merchant-detail-page .mac-provider-override-control,
 body.main-merchant-detail-page #madEditWorkspace .mac-provider-override-control{
   display:flex;align-items:stretch;height:32px;min-height:32px;max-height:32px;min-width:0;
-  border:1px solid var(--bo-border);border-radius:8px;background:#fff;overflow:hidden;
+  border:1px solid var(--bo-border);border-radius:8px;background:#FFF8EB;overflow:hidden;
   box-sizing:border-box;
 }
 
@@ -6486,7 +6486,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > select.
   border:1px solid #D0D5DD!important;
   border-right:0!important;
   border-radius:8px 0 0 8px!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   box-shadow:none!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > .rounded-select-wrap .rounded-select-menu{
@@ -6573,7 +6573,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-btn{
   font-size:13.5px!important;
   font-weight:500!important;
   border:1px solid #D0D5DD!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   color:var(--bo-text,#12263A)!important;
   box-shadow:none!important;
 }
@@ -9161,8 +9161,8 @@ html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="m
 html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .report-content .mac-field select,
 html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .report-content .mac-field textarea,
 html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mad-pass-wrap .form-control{
-  background:#F5EBDC!important;
-  background-color:#F5EBDC!important;
+  background:#FFF8EB!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -9502,8 +9502,8 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="m
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel textarea.form-control,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-ops .form-control,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-ops .rounded-select-btn{
-  background:#F5EBDC!important;
-  background-color:#F5EBDC!important;
+  background:#FFF8EB!important;
+  background-color:#FFF8EB!important;
   border:1px solid #DCC9A8!important;
   color:#18191C!important;
 }
@@ -9708,7 +9708,7 @@ body.main-admin-security-page .mas-ip b{ overflow-wrap:anywhere; }
    selector so the value settles rather than the rule order.
    -------------------------------------------------------------------------- */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page .mad-modal .mad-field .form-control{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
 }
 /* The focus ring is declared twice in this file at the SAME specificity (0,4,1): an early

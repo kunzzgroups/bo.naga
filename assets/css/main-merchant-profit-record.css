@@ -145,7 +145,7 @@ body.main-merchant-profit-record-page .report-content .mprr-field .form-select{
   height:44px!important;
   border-radius:8px!important;
   border:1px solid #D0D5DD!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   color:var(--mprr-text)!important;
   font-size:13.5px!important;
   font-weight:600!important;
@@ -176,7 +176,7 @@ body.main-merchant-profit-record-page .mprr-field .rounded-select-wrap .rounded-
   height:44px!important;
   border:1px solid #D0D5DD!important;
   border-radius:8px!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   color:var(--mprr-text, var(--bo-text))!important;
   font-size:13.5px!important;
   font-weight:600!important;
