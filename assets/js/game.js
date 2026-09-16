@@ -304,7 +304,7 @@ const GAME_API = {
 
   function categoryOptions(withAll) {
     const options = categories.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join('');
-    return (withAll ? '<option value="">All Categories</option>' : '') + (options || '<option value="">No category found</option>');
+    return (withAll ? '<option value="">All Categories</option>' : '<option value="">No Category (Optional)</option>') + options;
   }
 
   function subCategoryOptions(catId, withAll, providerVal) {
@@ -417,7 +417,7 @@ const GAME_API = {
     providerCode.value = '';
     providerCode.removeAttribute('title');
     delete providerCode.dataset.autoFilledFromSubCategory;
-    if (categories[0]) categoryId.value = String(categories[0].id);
+    categoryId.value = '';
     refreshSubCategoryOptions();
     syncProviderFromSubCategory({ clearWhenMissing: true });
     name.value = '';
@@ -642,11 +642,6 @@ const GAME_API = {
     e.preventDefault();
     const isUpdate = !!id.value;
 
-    if (!categoryId.value) {
-      setStatus('Please select category.', 'error');
-      categoryId.focus();
-      return;
-    }
     // Sub category is optional. 0 is intentionally sent to Spring Boot when
     // the admin leaves "Select Sub Category" selected.
     const selectedSubCategoryId = getSelectedSubCategoryId() || '0';
@@ -676,7 +671,7 @@ const GAME_API = {
 
     const fd = new FormData();
     if (isUpdate) fd.append('id', id.value);
-    fd.append('categoryId', categoryId.value);
+    fd.append('categoryId', categoryId.value || '0');
     fd.append('subCategoryId', selectedSubCategoryId);
     fd.append('name', name.value.trim());
     fd.append('gameUrl', gameUrl.value.trim());
