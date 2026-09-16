@@ -1,0 +1,836 @@
+/* BO shared Charcoal + Amber — component primitives — v1.0.0
+   Reference implementation: Admin Detail (main-admin-detail.html).
+
+   Scope: body.report-body.bo-charcoal — the same marker class as the shell and legacy files.
+   Load order: bo-charcoal-shell.css, bo-charcoal-legacy.css, then this file, all AFTER every
+   legacy stylesheet.
+
+   What this file owns
+   -------------------
+   Components that had NO shared owner, or that had several contradictory ones. Each entry
+   names the legacy file it settles:
+
+     1. Buttons        .bo-ui-button* (bo-ui-standard.css, blue + a BLACK label, 34px/9px)
+                       .mad-btn* — no global definition existed; only 11 page scopes
+                       .btn-primary-clean (3 competing owners, two of them !important)
+     2. Modals         .modal-clean* (reports.css, cool white) · Bootstrap .modal* (40 pages,
+                       stock white/blue, only 3 pages overrode it) · .mad-modal* · .rebate-modal ·
+                       .audit-detail-modal · .pm-modal* · .agent-modal-backdrop ·
+                       .wallet-modal-overlay (NO css owner at all) · .social-modal* ·
+                       .settlement-modal-*
+     3. Selects        .rounded-select-* — 3-4 contradictory owners (radius 10 vs 12, focus
+                       #5b6cff, option hover indigo). Width is written inline with !important by
+                       reports.js and cannot be changed from CSS — only the look is set here.
+     4. Segments       .bo-seg-thumb (bo-seg-bounce.css: retired-navy rgb ring, cold-slate dark)
+     5. Tips           [data-tip] / .mad-float-tip / .mad-time-tip / .trend-tip (#0F1F33 literals)
+     6. Date range     .ref-range-* / .bo-range-* — the focus ring literal rgba(33,166,215,…)
+                       and the popup's literal-blue accents (#2563eb, #5061f5), which are NOT
+                       tokens and so survived the token remap on every page
+     7. Toasts         .bo-toast — new; there was no shared toast CSS at all
+     8. Small controls switches · checkboxes/radios · file inputs · upload rows
+
+   Locked metrics (DESIGN.md → Buttons): radius 8px · height 36px (40px in a modal) ·
+   weight 700 · hover -1px · active +1px · amber 2px focus outline.
+   Scrims stay the neutral rgba(15,23,42,.55) in both themes — that is a backdrop, not chrome.
+   ========================================================================== */
+
+/* ================================================================== 1. buttons */
+
+/* .bo-ui-button* is the highest-blast-radius primary in the repo: bo-ui-standard.js:174 tags
+   any button whose text matches /search|save|submit|approve|add|create|sync|launch|process|confirm/
+   with .bo-ui-button-primary, on 148 pages. Legacy: flat var(--bo-ui-blue) with color:#000000. */
+body.report-body.bo-charcoal .bo-ui-button{
+  height:36px!important;
+  min-height:36px!important;
+  padding:0 14px!important;
+  border-radius:8px!important;
+  font-size:13px!important;
+  font-weight:700!important;
+  gap:7px!important;
+  border:1px solid transparent!important;
+  transition:background .14s ease,border-color .14s ease,transform .14s ease,box-shadow .14s ease!important;
+}
+body.report-body.bo-charcoal .bo-ui-button-primary{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
+  border-color:#E8901A!important;
+  color:#FFFFFF!important;
+  box-shadow:0 1px 2px rgba(180,83,9,.28),inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+body.report-body.bo-charcoal .bo-ui-button-primary:hover{
+  background:linear-gradient(0deg,#FCD34D 0%,#FBBF24 45%,#F59E0B 100%)!important;
+  border-color:#F59E0B!important;
+  color:#FFFFFF!important;
+  transform:translateY(-1px);
+}
+body.report-body.bo-charcoal .bo-ui-button-primary:active{
+  background:linear-gradient(180deg,#F59E0B 0%,#EA8608 100%)!important;
+  transform:translateY(1px);
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-ui-button-primary{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border-color:#F59E0B!important;
+  color:#2A2C36!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.35),0 0 0 1px rgba(245,158,11,.2)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-ui-button-primary:hover{
+  background:linear-gradient(0deg,#FDE68A 0%,#FBBF24 45%,#F59E0B 100%)!important;
+  border-color:#FBBF24!important;
+  color:#2A2C36!important;
+}
+body.report-body.bo-charcoal .bo-ui-button-secondary{
+  background:#FFF8EB!important;
+  border-color:#EADCC8!important;
+  color:#18191C!important;
+}
+body.report-body.bo-charcoal .bo-ui-button-secondary:hover{
+  background:#FFFCF7!important;
+  border-color:#E0D0B8!important;
+  transform:translateY(-1px);
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-ui-button-secondary{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+}
+body.report-body.bo-charcoal .bo-ui-button-danger{
+  background:#FEF3F2!important;
+  border-color:rgba(239,51,64,.35)!important;
+  color:#B42318!important;
+}
+body.report-body.bo-charcoal .bo-ui-button-danger:hover{
+  background:#FEE4E2!important;
+  border-color:rgba(239,51,64,.5)!important;
+  transform:translateY(-1px);
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-ui-button-danger{
+  background:rgba(239,68,68,.14)!important;
+  border-color:rgba(239,68,68,.4)!important;
+  color:#FF8A90!important;
+}
+body.report-body.bo-charcoal .bo-ui-icon-button{
+  width:36px!important;min-width:36px!important;max-width:36px!important;
+  height:36px!important;min-height:36px!important;
+  border-radius:8px!important;
+}
+
+/* .mad-btn — the vocabulary 41 pages use, previously defined only inside 11 page scopes.
+   The base is structural; the variants carry the locked fills. */
+body.report-body.bo-charcoal .mad-btn{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:0 14px!important;
+  border:1px solid transparent!important;
+  border-radius:8px!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+  cursor:pointer;
+  transition:background .14s ease,border-color .14s ease,transform .14s ease,box-shadow .14s ease;
+}
+body.report-body.bo-charcoal .mad-btn-primary,
+body.report-body.bo-charcoal .mad-btn-navy{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
+  border-color:#E8901A!important;
+  color:#FFFFFF!important;
+  box-shadow:0 1px 2px rgba(180,83,9,.28),inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+body.report-body.bo-charcoal .mad-btn-primary:hover,
+body.report-body.bo-charcoal .mad-btn-navy:hover{
+  background:linear-gradient(0deg,#FCD34D 0%,#FBBF24 45%,#F59E0B 100%)!important;
+  border-color:#F59E0B!important;
+  transform:translateY(-1px);
+}
+body.report-body.bo-charcoal .mad-btn-primary:active,
+body.report-body.bo-charcoal .mad-btn-navy:active{
+  background:linear-gradient(180deg,#F59E0B 0%,#EA8608 100%)!important;
+  transform:translateY(1px);
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn-primary,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn-navy{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border-color:#F59E0B!important;
+  color:#2A2C36!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.35),0 0 0 1px rgba(245,158,11,.2)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn-primary:hover,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn-navy:hover{
+  background:linear-gradient(0deg,#FDE68A 0%,#FBBF24 45%,#F59E0B 100%)!important;
+  border-color:#FBBF24!important;
+  color:#2A2C36!important;
+}
+body.report-body.bo-charcoal .mad-btn-ghost{
+  background:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 100%)!important;
+  border-color:#DCC9A8!important;
+  color:#18191C!important;
+  box-shadow:0 1px 2px rgba(60,48,32,.06),inset 0 1px 0 rgba(255,255,255,.7)!important;
+}
+body.report-body.bo-charcoal .mad-btn-ghost:hover{
+  background:linear-gradient(0deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border-color:#E0D0B8!important;
+  transform:translateY(-1px);
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn-ghost{
+  background:linear-gradient(180deg,#4A4C58 0%,#383A46 100%)!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.28)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn-ghost:hover{
+  background:linear-gradient(0deg,#383A46 0%,#2C2E38 100%)!important;
+  border-color:rgba(255,255,255,.18)!important;
+  transform:translateY(-1px);
+}
+/* A plain .mad-btn (no variant) is a secondary control, never the CTA. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mad-btn:not(.mad-btn-primary):not(.mad-btn-navy):not(.mad-btn-ghost):not(.bo-ui-button-primary){
+  background:#FFF8EB!important;border-color:#EADCC8!important;color:#27272A!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn:not(.mad-btn-primary):not(.mad-btn-navy):not(.mad-btn-ghost):not(.bo-ui-button-primary){
+  background:#383A46!important;border-color:rgba(255,255,255,.12)!important;color:#E7E5E4!important;
+}
+/* Focus is amber everywhere — the 2px outline is part of the locked button spec. */
+body.report-body.bo-charcoal .mad-btn:focus-visible,
+body.report-body.bo-charcoal .bo-ui-button:focus-visible,
+body.report-body.bo-charcoal .clean-btn:focus-visible{
+  outline:2px solid #D97706!important;outline-offset:2px!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn:focus-visible,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-ui-button:focus-visible,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .clean-btn:focus-visible{
+  outline:2px solid #F59E0B!important;outline-offset:2px!important;
+}
+
+/* =================================================================== 2. modals
+   The scrim keeps the neutral backdrop in both themes (it is not chrome). What moves is
+   every panel, head, close and footer. Panel radius is the locked card radius — the
+   page-scoped modal families ship 18px / 20px, which read as a different shape next to the
+   16px panels the migrated pages use. */
+body.report-body.bo-charcoal .modal-clean-panel,
+body.report-body.bo-charcoal .mad-modal-panel{
+  border-radius:16px!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean-panel,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean-body{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean-head{border-bottom:1px solid #EADCC8!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean-foot{border-top:1px solid #EADCC8!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean-head h3,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean-head h2{color:#18191C!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean-head p{color:#57534E!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean-close{
+  background:#F5EBDC!important;border:1px solid #EADCC8!important;color:#57534E!important;border-radius:8px!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean-close:hover{
+  background:#F0E4D0!important;color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean-panel,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean-body{
+  background:#383A46!important;border:1px solid rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean-head{border-bottom:1px solid rgba(255,255,255,.14)!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean-foot{border-top:1px solid rgba(255,255,255,.14)!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean-head h3,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean-head h2{color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean-head p{color:#D4D4D8!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean-close{
+  background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;color:#D4D4D8!important;border-radius:8px!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean-close:hover{
+  border-color:rgba(245,158,11,.5)!important;color:#F59E0B!important;
+}
+
+/* The dated .rebate-modal / .audit-detail-modal scrim + panel (rebate-pages.css). The scrim
+   here is a blur veil over the table, so it keeps its own weight; only the panel moves. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .rebate-modal .modal-clean-panel,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .audit-detail-modal .modal-clean-panel{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;
+  box-shadow:0 24px 70px rgba(60,48,32,.28)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .rebate-modal .modal-clean-panel,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .audit-detail-modal .modal-clean-panel{
+  background:#383A46!important;border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.5)!important;
+}
+
+/* Bootstrap modals — 40 pages, stock white/blue, only three had any override.
+   Settled here once so a new page never has to think about it. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-content{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;border-radius:16px!important;
+  box-shadow:0 24px 70px rgba(60,48,32,.24)!important;color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-header,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-footer{
+  border-color:#EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-title{color:#18191C!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-body{color:#27272A!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-header .btn-close{
+  border-radius:8px;opacity:.7;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-content{
+  background:#383A46!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:16px!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.5)!important;color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-header,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-footer{
+  border-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-title{color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-body{color:#E7E5E4!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-header .btn-close{filter:invert(1) grayscale(1) brightness(1.6)}
+
+/* .mad-modal* — token-driven, so it was amber on the six admin pages and cyan on the other
+   nine. Restating it under the marker makes the family the same everywhere. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mad-modal-panel{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mad-modal-title{color:#18191C!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mad-modal-icon{
+  background:rgba(217,119,6,.12)!important;color:#D97706!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-modal-panel{
+  background:#383A46!important;border:1px solid rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-modal-title{color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-modal-icon{
+  background:rgba(245,158,11,.16)!important;color:#F59E0B!important;
+}
+
+/* Page-local modal families that no shared file ever covered. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .pm-modal-panel,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-reward-modal-panel,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-reward-dialog,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .social-modal-panel,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .settlement-modal-card,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .wallet-modal-card,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .agent-modal{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .pm-modal-panel,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-reward-modal-panel,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-reward-dialog,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .social-modal-panel,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .settlement-modal-card,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .wallet-modal-card,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .agent-modal{
+  background:#383A46!important;border:1px solid rgba(255,255,255,.14)!important;color:#F5F5F4!important;
+}
+/* .wallet-modal-overlay had no CSS owner at all — member-management.js writes the class and
+   nothing painted it. This is its first owner. */
+body.report-body.bo-charcoal .wallet-modal-overlay,
+body.report-body.bo-charcoal .agent-modal-backdrop,
+body.report-body.bo-charcoal .settlement-modal-backdrop{
+  position:fixed;inset:0;z-index:30000;display:flex;align-items:center;justify-content:center;
+  padding:22px;background:rgba(15,23,42,.55);
+}
+/* Fields inside any modal use the control well, not the white reports.css forces. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean .form-control,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean select.form-control,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean textarea.form-control,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mad-modal .form-control,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-content .form-control{
+  background:#F5EBDC!important;border:1px solid #DCC9A8!important;color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean .form-control::placeholder,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mad-modal .form-control::placeholder{
+  color:#78716C!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean .form-control:focus,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mad-modal .form-control:focus{
+  border-color:#D97706!important;box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+/* A modal is mounted under <body>, not inside .report-content, so the workspace field rule
+   cannot reach it — the code editors (a bare <textarea> with a page class, no .form-control)
+   stayed white. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean textarea,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean-body textarea,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-html-editor,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-form-section textarea,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-form-section input,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-form-section select,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-form-section .form-control{
+  background:#F5EBDC!important;border:1px solid #DCC9A8!important;color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean textarea,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean-body textarea,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .policy-html-editor,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .policy-form-section textarea,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .policy-form-section input,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .policy-form-section select,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .policy-form-section .form-control{
+  background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean .form-control,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean select.form-control,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean textarea.form-control,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-modal .form-control,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-content .form-control{
+  background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean .form-control::placeholder,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-modal .form-control::placeholder{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean .form-control:focus,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-modal .form-control:focus{
+  border-color:#F59E0B!important;box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+/* The modal footer action pair, wherever it lives. */
+body.report-body.bo-charcoal .modal-clean-foot .mad-btn,
+body.report-body.bo-charcoal .modal-clean-foot .clean-btn,
+body.report-body.bo-charcoal .modal-clean-foot .bo-ui-button,
+body.report-body.bo-charcoal .mad-modal-actions .mad-btn,
+body.report-body.bo-charcoal .mad-modal-actions .bo-ui-button{
+  height:40px!important;min-height:40px!important;
+}
+
+/* ================================================================= 3. select
+   reports.js rewrites every <select> into .rounded-select-wrap > .rounded-select-btn +
+   .rounded-select-menu > .rounded-select-option. Three to four stylesheets then disagree
+   about it (radius 10 vs 12, focus #5b6cff, indigo option hover). One definition now.
+   NOTE: the wrapper's width/min-width/max-width/flex are written INLINE with !important by
+   reports.js, so no stylesheet can narrow it — that is deliberate and left alone. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .rounded-select-btn{
+  height:40px!important;background:#FFF8EB!important;border:1px solid #EADCC8!important;
+  border-radius:8px!important;color:#18191C!important;font-size:13.5px!important;font-weight:600!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .rounded-select-btn.open,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .rounded-select-btn:focus{
+  border-color:#D97706!important;box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;outline:0!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .rounded-select-menu{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;border-radius:8px!important;
+  box-shadow:0 12px 30px rgba(60,48,32,.16)!important;padding:6px!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .rounded-select-option{
+  background:transparent!important;border-radius:8px!important;color:#18191C!important;font-weight:700!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .rounded-select-option:hover{
+  background:rgba(217,119,6,.12)!important;color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .rounded-select-option.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .rounded-select-option.selected{
+  background:rgba(217,119,6,.12)!important;color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .rounded-select-btn{
+  height:40px!important;background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;
+  border-radius:8px!important;color:#F5F5F4!important;font-size:13.5px!important;font-weight:600!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .rounded-select-btn:focus{
+  border-color:#F59E0B!important;box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;outline:0!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .rounded-select-menu{
+  background:#383A46!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:8px!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4)!important;padding:6px!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .rounded-select-option{
+  background:transparent!important;border-radius:8px!important;color:#E7E5E4!important;font-weight:700!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .rounded-select-option:hover{
+  background:rgba(245,158,11,.14)!important;color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .rounded-select-option.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .rounded-select-option.selected{
+  background:#F59E0B!important;color:#2A2C36!important;
+}
+/* Scrollbar: a 4px pill with no arrow buttons. */
+body.report-body.bo-charcoal .rounded-select-menu::-webkit-scrollbar{width:4px}
+body.report-body.bo-charcoal .rounded-select-menu::-webkit-scrollbar-button{display:none;height:0}
+body.report-body.bo-charcoal .rounded-select-menu::-webkit-scrollbar-thumb{background:#98A2B3;border-radius:999px}
+body.report-body.bo-charcoal .rounded-select-menu::-webkit-scrollbar-thumb:hover{background:#667085}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .rounded-select-menu::-webkit-scrollbar-thumb{background:#F59E0B}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .rounded-select-menu::-webkit-scrollbar-thumb:hover{background:#D97706}
+
+/* =============================================================== 4. segments
+   bo-seg-bounce.css draws the raised chip and rings it with a retired-navy rgb triple
+   (rgba(18,59,102,.05)) — a value the token remap cannot reach. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-seg > .bo-seg-thumb{
+  background:linear-gradient(180deg,#FFFCF7 0%,#F3E8D6 100%)!important;
+  box-shadow:0 0 0 1px rgba(24,25,28,.05),0 1px 3px rgba(60,48,32,.10)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-seg > .bo-seg-thumb{
+  background:linear-gradient(180deg,#4A4C58 0%,#383A46 100%)!important;
+  box-shadow:0 1px 3px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.08)!important;
+}
+
+/* =================================================================== 5. tips */
+body.report-body.bo-charcoal [data-tip]::after,
+body.report-body.bo-charcoal .mad-icon-btn[data-tip]::after,
+body.report-body.bo-charcoal .mad-merchant-icon-btn[data-tip]::after,
+body.report-body.bo-charcoal .mad-float-tip,
+body.report-body.bo-charcoal .mad-time-tip,
+body.report-body.bo-charcoal .trend-tip{
+  background:#FFF8EB!important;color:#6b360c!important;border:1px solid rgba(217,119,6,.28)!important;
+  border-radius:8px!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal [data-tip]::after,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-icon-btn[data-tip]::after,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-merchant-icon-btn[data-tip]::after,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-float-tip,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-time-tip,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .trend-tip{
+  background:#40424E!important;color:#F5F5F4!important;border:1px solid rgba(245,158,11,.35)!important;
+}
+
+/* ============================================================= 6. date range
+   The trigger's colours are already token-driven (var(--bo-navy|--bo-cyan|--bo-surface)), so
+   the marker's token block flips them. What is NOT token-driven: the focus ring literal, and
+   every accent inside the popup — #2563eb on the active preset and the selected day, #5061f5
+   on the .bo-range edges, #eef3ff / #eaf0ff / #f8fafc washes. Those survived the token remap
+   on every page, migrated ones included. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-trigger:focus,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-trigger:hover,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-trigger:focus,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-trigger:hover,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-trigger:focus-within{
+  border-color:#D97706!important;box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-trigger:focus,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-trigger:hover,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-trigger:focus,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-trigger:hover,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-trigger:focus-within{
+  border-color:#F59E0B!important;box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-picker{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;border-radius:12px!important;
+  box-shadow:0 12px 30px rgba(60,48,32,.14)!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-presets{
+  background:#FFF8EB!important;border-right:1px solid #EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-presets button{color:#374151!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-presets button:hover{background:#F5EBDC!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-presets button.active{
+  background:#D97706!important;color:#FFFFFF!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-calendar{background:transparent!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-cal-head button{
+  border:1px solid transparent!important;background:transparent!important;color:#374151!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-cal-head button:hover{background:#F5EBDC!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-cal-head select{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;color:#374151!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-cal-week span{color:#71717A!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-cal-days{gap:0!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-cal-days button{
+  background:transparent!important;color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-cal-days button.muted{background:transparent!important;color:#57534E!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-cal-days button:hover{
+  background:rgba(217,119,6,.16)!important;color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-cal-days button.in-range{
+  background:rgba(217,119,6,.14)!important;color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-cal-days button.selected{
+  background:#D97706!important;color:#FFFFFF!important;border-radius:8px!important;box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-cal-days button.is-preview:not(.selected){
+  background:rgba(217,119,6,.16)!important;color:#B45309!important;
+}
+
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-picker{
+  background:#383A46!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:12px!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-presets{
+  background:#383A46!important;border-right:1px solid rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-presets button{color:#E7E5E4!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-presets button:hover{background:rgba(255,255,255,.06)!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-presets button.active{
+  background:#F59E0B!important;color:#2A2C36!important;
+}
+/* Month / year grid item active. Light is deliberately PLAIN (transparent, #374151) — the
+   reference only fills this control in dark. Measured on main-merchant-profit.html, both
+   themes; DESIGN.md's one-line table still says "label white" for the dark preset, but the
+   reference reads #2A2C36, and the docs are explicit that the rendered reference wins. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-cal-month-grid button.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-cal-year-grid button.active{
+  background:transparent!important;color:#374151!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-cal-month-grid button.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-cal-year-grid button.active{
+  background:#F59E0B!important;color:#2A2C36!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-calendar{background:#383A46!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-cal-head button{
+  border:1px solid transparent!important;background:transparent!important;color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-cal-head button:hover{background:rgba(255,255,255,.06)!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-cal-head select{
+  background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-cal-week span{color:#A1A1AA!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-cal-days{gap:0!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-cal-days button{
+  background:transparent!important;color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-cal-days button.muted{background:transparent!important;color:#A1A1AA!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-cal-days button:hover{
+  background:rgba(245,158,11,.16)!important;color:#FFFFFF!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-cal-days button.in-range{
+  background:rgba(245,158,11,.18)!important;color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-cal-days button.selected{
+  background:#F59E0B!important;color:#2A2C36!important;border-radius:8px!important;box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-cal-days button.is-preview:not(.selected){
+  background:rgba(245,158,11,.16)!important;color:#FFFFFF!important;
+}
+
+/* The .bo-range-* twin carries the same literals (#123B66, #21A6D7, #5061f5, #2080f0).
+   Its internals were missed on the first pass and are covered by name here: the head pickers
+   render white with a #d2dbea border and a #25324A glyph, the preset rail is #f8fafc, and an
+   out-of-month day is #cbd5e1 — all cool, all visible the moment the picker opens. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-presets{
+  background:#FFF8EB!important;border-right:1px solid #EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-cal-head button,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-cal-head select{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;color:#374151!important;
+  border-radius:8px!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-day.muted{
+  background:transparent!important;color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-pop{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;
+  box-shadow:0 12px 30px rgba(60,48,32,.14)!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-day.start,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-day.end{
+  background:#D97706!important;color:#FFFFFF!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-day.in-range{
+  background:rgba(217,119,6,.14)!important;color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-range-presets button:hover{
+  background:#F5EBDC!important;color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-presets{
+  background:#383A46!important;border-right:1px solid rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-cal-head button,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-cal-head select{
+  background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;color:#E7E5E4!important;
+  border-radius:8px!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-day.muted{
+  background:transparent!important;color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-pop{
+  background:#383A46!important;border:1px solid rgba(255,255,255,.14)!important;box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-day.start,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-day.end{
+  background:#F59E0B!important;color:#2A2C36!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-day.in-range{
+  background:rgba(245,158,11,.18)!important;color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-range-presets button:hover{
+  background:rgba(255,255,255,.06)!important;color:#FBBF24!important;
+}
+
+/* ================================================================= 7. toasts
+   New. Nine drivers each built their own; nothing was shared. This is the primitive they
+   can be pointed at one at a time — the JS side is a separate pass. */
+body.report-body.bo-charcoal .bo-toast-host{
+  position:fixed;right:20px;bottom:20px;z-index:40000;
+  display:flex;flex-direction:column;gap:10px;max-width:min(380px,calc(100vw - 32px));
+  pointer-events:none;
+}
+body.report-body.bo-charcoal .bo-toast{
+  pointer-events:auto;
+  display:flex;align-items:flex-start;gap:10px;
+  padding:12px 14px;border-radius:8px;
+  font-size:13px;font-weight:600;line-height:1.4;
+  box-shadow:0 12px 30px rgba(60,48,32,.18);
+  animation:bo-toast-in .18s cubic-bezier(.23,1,.32,1);
+}
+@keyframes bo-toast-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+body.report-body.bo-charcoal .bo-toast .bo-toast-icon{flex:0 0 auto;font-size:15px;line-height:1.4}
+body.report-body.bo-charcoal .bo-toast .bo-toast-close{
+  margin-left:auto;border:0;background:transparent;color:inherit;opacity:.6;cursor:pointer;padding:0 2px;
+}
+body.report-body.bo-charcoal .bo-toast .bo-toast-close:hover{opacity:1}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-toast{
+  background:#FFF8EB;border:1px solid #EADCC8;color:#18191C;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-toast{
+  background:#383A46;border:1px solid rgba(255,255,255,.14);color:#F5F5F4;
+  box-shadow:0 16px 38px rgba(0,0,0,.45);
+}
+body.report-body.bo-charcoal .bo-toast.is-success{border-color:rgba(18,183,106,.45)}
+body.report-body.bo-charcoal .bo-toast.is-success .bo-toast-icon{color:#059669}
+body.report-body.bo-charcoal .bo-toast.is-error{border-color:rgba(239,51,64,.4)}
+body.report-body.bo-charcoal .bo-toast.is-error .bo-toast-icon{color:#B42318}
+body.report-body.bo-charcoal .bo-toast.is-warning{border-color:rgba(217,119,6,.45)}
+body.report-body.bo-charcoal .bo-toast.is-warning .bo-toast-icon{color:#B45309}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-toast.is-success .bo-toast-icon{color:#34D399}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-toast.is-error .bo-toast-icon{color:#FCA5A5}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-toast.is-warning .bo-toast-icon{color:#F59E0B}
+/* Bootstrap alert — the only other thing pages use for the same job. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .alert{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;color:#18191C!important;border-radius:8px!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .alert-info,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .alert-warning{
+  background:#F5EBDC!important;border-color:rgba(217,119,6,.35)!important;color:#6b360c!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .alert-danger{
+  background:#FEF3F2!important;border-color:rgba(239,51,64,.35)!important;color:#B42318!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .alert-success{
+  background:#ECFDF3!important;border-color:rgba(18,183,106,.35)!important;color:#027A48!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .alert{
+  background:#383A46!important;border:1px solid rgba(255,255,255,.14)!important;color:#F5F5F4!important;border-radius:8px!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .alert-info,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .alert-warning{
+  background:#2A2C36!important;border-color:rgba(245,158,11,.35)!important;color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .alert-danger{
+  background:rgba(239,68,68,.14)!important;border-color:rgba(239,68,68,.4)!important;color:#FCA5A5!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .alert-success{
+  background:rgba(16,185,129,.14)!important;border-color:rgba(16,185,129,.4)!important;color:#34D399!important;
+}
+
+/* ======================================================== 8. small controls */
+/* Switches — eight differently-named idioms, none of them shared. */
+body.report-body.bo-charcoal .mac-switch-track,
+body.report-body.bo-charcoal .mprr-mode-switch,
+body.report-body.bo-charcoal .ipw-switch,
+body.report-body.bo-charcoal .pc-switch,
+body.report-body.bo-charcoal .bulk-mode-switch,
+body.report-body.bo-charcoal .ref-default-toggle{
+  border-radius:999px;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mac-switch-track,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ipw-switch,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .pc-switch{
+  background:#EDE4D4!important;border:1px solid #EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mac-switch-track.is-on,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ipw-switch.is-on,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .pc-switch.is-on{
+  background:#D97706!important;border-color:#D97706!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mac-switch-track,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ipw-switch,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .pc-switch{
+  background:rgba(255,255,255,.10)!important;border:1px solid rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mac-switch-track.is-on,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ipw-switch.is-on,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .pc-switch.is-on{
+  background:#F59E0B!important;border-color:#F59E0B!important;
+}
+body.report-body.bo-charcoal .mac-switch-thumb{background:#FFFFFF;border-radius:50%;box-shadow:0 1px 2px rgba(60,48,32,.25)}
+
+/* Checkboxes / radios were stock Bootstrap blue on 151 pages. */
+body.report-body.bo-charcoal .form-check-input,
+body.report-body.bo-charcoal .mad-row-check-input,
+body.report-body.bo-charcoal input[type="checkbox"],
+body.report-body.bo-charcoal input[type="radio"]{
+  accent-color:#D97706;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .form-check-input,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-row-check-input,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal input[type="checkbox"],
+html[data-bo-theme="dark"] body.report-body.bo-charcoal input[type="radio"]{
+  accent-color:#F59E0B;
+}
+body.report-body.bo-charcoal .form-check-input:focus{
+  border-color:#D97706;box-shadow:0 0 0 3px rgba(217,119,6,.18);
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .form-check-input:focus{
+  border-color:#F59E0B;box-shadow:0 0 0 3px rgba(245,158,11,.22);
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mad-row-check-box{
+  background:#F5EBDC!important;border:1px solid #DCC9A8!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mad-row-check-input:checked + .mad-row-check-box{
+  background:#D97706!important;border-color:#D97706!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-row-check-box{
+  background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-row-check-input:checked + .mad-row-check-box{
+  background:#F59E0B!important;border-color:#F59E0B!important;
+}
+
+/* File inputs and upload rows — three idioms, no shared owner. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .upload-box,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .slider-upload-box,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .asset-upload-row{
+  background:#F5EBDC!important;border:1px dashed #DCC9A8!important;color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .upload-box:hover,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .slider-upload-box:hover{
+  border-color:#D97706!important;background:#FFFCF7!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .upload-box,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .slider-upload-box,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .asset-upload-row{
+  background:#2A2C36!important;border:1px dashed rgba(255,255,255,.16)!important;color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .upload-box:hover,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .slider-upload-box:hover{
+  border-color:rgba(245,158,11,.5)!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .upload-status,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .asset-file{color:#57534E!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .upload-status,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .asset-file{color:#D4D4D8!important}
+
+/* ================================================== reduced-motion courtesy */
+@media (prefers-reduced-motion:reduce){
+  body.report-body.bo-charcoal .mad-btn,
+  body.report-body.bo-charcoal .bo-ui-button,
+  body.report-body.bo-charcoal .clean-btn,
+  body.report-body.bo-charcoal .bo-toast{transition:none!important;animation:none!important}
+  body.report-body.bo-charcoal .mad-btn:hover,
+  body.report-body.bo-charcoal .bo-ui-button:hover,
+  body.report-body.bo-charcoal .clean-btn:hover{transform:none!important}
+}
+
+/* ------------------------------------------------------------------ scrims stay neutral
+   A translucent cool colour is a WASH, and the value-driven retint maps a wash to amber keeping
+   its alpha — correct for a hover tint, wrong for a backdrop. `rgba(15,23,42,.55)` is a scrim,
+   not chrome: DESIGN.md says it stays the same in both themes, and an amber veil over the whole
+   viewport is the "muddy full-page orange wash" the Don'ts list forbids. Enforcement, so no
+   later pass can quietly reintroduce it. */
+body:not(#bo-charcoal-off).report-body.bo-charcoal .modal-clean,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .modal-backdrop,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .user-detail-modal,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .crud-pattern-backdrop,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .ref-reward-modal-backdrop,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .bo-dialog-backdrop,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .rebate-modal,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .audit-detail-modal,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .settlement-modal,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .wallet-modal-overlay,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .agent-modal-backdrop,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .vip-modal,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .bo-alert-backdrop,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .bo-alert-modal,
+body:not(#bo-charcoal-off).report-body.bo-charcoal .sidebar-overlay,
+  background:rgba(15,23,42,.55)!important;
+  background-color:rgba(15,23,42,.55)!important;
+}

@@ -14,7 +14,12 @@
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<body class="report-body referral-page">
+<link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-shell.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-legacy.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-cms.css?v=1.0.0" rel="stylesheet" />
+<body class="report-body referral-page bo-charcoal bo-account-chip">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
 <div class="report-brand"><div>Backoffice<br/><small>Admin Panel</small></div><button class="close-side" data-close-sidebar=""><i class="bi bi-x-lg"></i></button></div>
@@ -28,7 +33,13 @@
 <div class="user-title-icon"><i class="bi bi-diagram-2"></i></div>
 <div><h1>Referral Network</h1></div>
 </div>
-<div class="report-actions" data-bo-profile=""></div>
+<div class="report-actions">
+      <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
+        <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
+        <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
+      </button>
+      <div data-bo-profile></div>
+    </div>
 </header>
 <section class="report-content referral-content">
 <div class="referral-stats-grid">
@@ -86,7 +97,7 @@
 </table>
 </div>
 <div class="ref-mobile-list" id="refMemberCards"></div>
-<div class="ref-pagination-row"><div>Show <select><option>10</option></select> entries</div><div id="refMemberShowing">Showing 0 to 0 of 0 entries</div><div class="ref-pager"><button>â€?/button><b>1</b><button>â€?/button></div></div>
+<div class="ref-pagination-row"><div>Show <select><option>10</option></select> entries</div><div id="refMemberShowing">Showing 0 to 0 of 0 entries</div><div class="ref-pager"><button>â€¹</button><b>1</b><button>â€º</button></div></div>
 </div>
 <div class="referral-panel-card">
 <div class="ref-panel-head"><div class="ref-panel-title"><span id="refDownlineTitle">Downline</span><small id="refSelectedMeta">Select member</small></div><button class="clean-btn ref-export" data-export="downline"><i class="bi bi-download"></i> Export</button></div>
@@ -98,7 +109,7 @@
 </table>
 </div>
 <div class="ref-mobile-list" id="refDownlineCards"></div>
-<div class="ref-pagination-row"><div>Show <select><option>10</option></select> entries</div><div id="refDownlineShowing">Showing 0 to 0 of 0 entries</div><div class="ref-pager"><button>â€?/button><b>1</b><button>â€?/button></div></div>
+<div class="ref-pagination-row"><div>Show <select><option>10</option></select> entries</div><div id="refDownlineShowing">Showing 0 to 0 of 0 entries</div><div class="ref-pager"><button>â€¹</button><b>1</b><button>â€º</button></div></div>
 <div class="ref-info-note"><i class="bi bi-info-circle-fill"></i> Select a member from the list to view their downline members.</div>
 </div>
 </div>
@@ -163,5 +174,7 @@
 <script src="assets/js/pagination-standardizer.js?v=1.0.1"></script>
 <script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
 <script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
+<script src="assets/js/bo-theme.js?v=1.0.0"></script>
+<script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
 </body>
 </link></head></html>

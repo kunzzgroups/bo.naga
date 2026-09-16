@@ -5,18 +5,45 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#f5f7fb" />
+  <meta name="theme-color" content="#FFF1DC" />
   <title>Backoffice Login</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/css/reports.css?v=1.0.49" rel="stylesheet" />
-  <link href="assets/css/login.css?v=1.0.3" rel="stylesheet" />  <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet" />
+  <link href="assets/css/login.css?v=1.0.5" rel="stylesheet" />  <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet" />
+<link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-shell.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-legacy.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-cms.css?v=1.0.0" rel="stylesheet" />
 </head>
-<body class="report-body bo-login-body">
+<body class="report-body bo-login-body bo-charcoal bo-account-chip">
+  <div class="auth-theme-slot">
+    <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
+      <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
+      <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
+    </button>
+  </div>
+
   <main class="auth-page">
     <section class="auth-card" aria-labelledby="loginTitle">
+      <div class="auth-brand">
+        <span class="auth-brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19V7.5A2.5 2.5 0 0 1 6.5 5H19v14"/>
+            <path d="M4 19h15"/>
+            <path d="M9 9h6"/><path d="M9 12.5h6"/>
+          </svg>
+        </span>
+        <span class="auth-brand-copy">
+          <b>Backoffice</b>
+          <small>Admin Panel</small>
+        </span>
+      </div>
+
       <header class="auth-heading">
-        <h1 id="loginTitle">Backoffice Access</h1>
-        <p class="auth-subtitle">Securely manage your backoffice operations</p>
+        <h1 id="loginTitle">Sign in</h1>
+        <p class="auth-subtitle">Admin &amp; operator access to the control panel</p>
       </header>
 
       <form id="adminLoginForm">
@@ -101,5 +128,7 @@
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
   <script src="assets/js/auth.js?v=1.0.61"></script>
   <script src="assets/js/admin-login.js?v=1.0.5"></script>
+<script src="assets/js/bo-theme.js?v=1.0.0"></script>
+<script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
 </body>
 </html>

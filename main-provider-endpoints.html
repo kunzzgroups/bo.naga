@@ -13,6 +13,10 @@
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
 <link href="assets/css/main-admin-detail-executive.css?v=1.0.21" rel="stylesheet"/>
 <link href="assets/css/main-provider-executive.css?v=1.0.6" rel="stylesheet"/>
+<link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-shell.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-legacy.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
 <script>
 (function(){
   try{
@@ -21,7 +25,7 @@
 })();
 </script>
 </head>
-<body class="report-body standardized-listing-page main-admin-detail-page main-admin-create-page main-provider-integration-page" data-access-page="main_provider_detail">
+<body class="report-body standardized-listing-page main-admin-detail-page main-admin-create-page main-provider-integration-page bo-charcoal bo-account-chip" data-access-page="main_provider_detail">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
 <div class="report-brand"><div>Backoffice<br/><small>Admin Panel</small></div><button class="close-side" data-close-sidebar=""><i class="bi bi-x-lg"></i></button></div>
@@ -81,12 +85,12 @@
         <div class="mac-fields mac-fields-row mpv-integ-creds">
           <label class="mac-field" for="mpvApiKey">
             <span class="mac-label">API Key</span>
-            <input class="form-control" id="mpvApiKey" name="apiKey" autocomplete="off" placeholder="pk_live_â€? value="pk_live_8f3a2c91"/>
+            <input class="form-control" id="mpvApiKey" name="apiKey" autocomplete="off" placeholder="pk_live_â€¦" value="pk_live_8f3a2c91"/>
           </label>
           <label class="mac-field" for="mpvSecretKeyInteg">
             <span class="mac-label">Secret Key</span>
             <span class="mad-pass-wrap">
-              <input class="form-control" id="mpvSecretKeyInteg" name="secretKey" type="password" autocomplete="off" placeholder="sk_live_â€? value="sk_live_hidden_demo"/>
+              <input class="form-control" id="mpvSecretKeyInteg" name="secretKey" type="password" autocomplete="off" placeholder="sk_live_â€¦" value="sk_live_hidden_demo"/>
               <button type="button" class="mad-eye" data-toggle-password="mpvSecretKeyInteg" aria-label="Show secret"><i class="bi bi-eye"></i></button>
             </span>
           </label>
@@ -130,5 +134,6 @@
 <script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
 <script src="assets/js/bo-ui-standard.js?v=1.0.4"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
+<script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
 </body>
 </html>

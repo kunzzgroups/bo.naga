@@ -19,9 +19,13 @@
       href="assets/css/main-executive-modules.css?v=1.0.0"
       rel="stylesheet"
     />
+<link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-shell.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-legacy.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
   </head>
   <body
-    class="report-body brand-agent-standard main-mod-page"
+    class="report-body brand-agent-standard main-mod-page bo-charcoal bo-account-chip"
     data-access-page="brand_management"
   >
     <div class="report-shell">
@@ -41,7 +45,13 @@
             <i class="bi bi-list"></i>
           </button>
           <div></div>
-          <div class="report-actions" data-bo-profile></div>
+          <div class="report-actions">
+      <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
+        <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
+        <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
+      </button>
+      <div data-bo-profile></div>
+    </div>
         </header>
         <section class="report-content">
           <a class="main-mod-back" href="main-balance-overview.html"
@@ -146,5 +156,7 @@
     <script src="assets/js/main-exec-date-range.js?v=1.0.0"></script>
     <script src="assets/js/main-balance-adjustment.js?v=1.0.0"></script>
     <script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
+<script src="assets/js/bo-theme.js?v=1.0.0"></script>
+<script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
 </body>
 </html>

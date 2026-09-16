@@ -12,13 +12,24 @@
   <link href="assets/css/reports.css?v=1.0.49" rel="stylesheet" />
   <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet" />
   <link href="assets/css/animation-effect.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-shell.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-legacy.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-cms.css?v=1.0.0" rel="stylesheet" />
 </head>
-<body class="report-body">
+<body class="report-body bo-charcoal bo-account-chip">
 <div class="report-shell">
   <aside class="report-sidebar" id="reportSidebar"><div class="report-brand"><div>Backoffice<br><small>Admin Panel</small></div><button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button></div><nav class="report-nav"></nav></aside>
   <div class="sidebar-overlay" id="reportOverlay" data-close-sidebar></div>
   <main class="report-main">
-    <header class="report-topbar"><button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button><div class="user-title-wrap"><div class="user-title-icon"><i class="bi bi-stars"></i></div><div><h1>Animation Effect</h1></div></div><div class="report-actions" data-bo-profile></div></header>
+    <header class="report-topbar"><button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button><div class="user-title-wrap"><div class="user-title-icon"><i class="bi bi-stars"></i></div><div><h1>Animation Effect</h1></div></div><div class="report-actions">
+      <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
+        <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
+        <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
+      </button>
+      <div data-bo-profile></div>
+    </div></header>
     <section class="report-content">
       <div class="animation-layout">
         <section class="effect-card">
@@ -37,8 +48,8 @@
               <label class="field"><span>Speed</span><select id="speed"><option value="SLOW">Slow</option><option value="NORMAL" selected>Normal</option><option value="FAST">Fast</option></select></label>
               <label class="field"><span>Intensity</span><select id="intensity"><option value="LOW">Low</option><option value="MEDIUM" selected>Medium</option><option value="HIGH">High</option></select></label>
             </div>
-            <label class="field" id="customEffectField" hidden><span>Custom Effect</span><select id="customEffectName"><option value="">-- Select Custom Effect --</option></select><small>Custom effects are created in <a href="layout-section.html?section=animation-custom-effects"><b>Layout Section â†?Custom Animation Effects</b></a>. The name is linked automatically; no manual class naming is required.</small></label>
-            <div class="custom-help"><b>Performance-safe custom effects:</b> prefer <code>transform</code> and <code>opacity</code>. Configure custom code in <a href="layout-section.html" style="font-weight:700">Layout Section â†?Animation Custom CSS / JS</a>. The Naga engine pauses managed animations off-screen and when the tab is hidden.</div>
+            <label class="field" id="customEffectField" hidden><span>Custom Effect</span><select id="customEffectName"><option value="">-- Select Custom Effect --</option></select><small>Custom effects are created in <a href="layout-section.html?section=animation-custom-effects"><b>Layout Section â†’ Custom Animation Effects</b></a>. The name is linked automatically; no manual class naming is required.</small></label>
+            <div class="custom-help"><b>Performance-safe custom effects:</b> prefer <code>transform</code> and <code>opacity</code>. Configure custom code in <a href="layout-section.html" style="font-weight:700">Layout Section â†’ Animation Custom CSS / JS</a>. The Naga engine pauses managed animations off-screen and when the tab is hidden.</div>
             <div class="effect-grid two">
               <label class="field"><span>Status</span><select id="enabled"><option value="1">Enabled</option><option value="0">Disabled</option></select></label>
               <label class="field"><span>Priority Order</span><input id="sortOrder" type="number" min="0" value="0"><small>Higher number wins when scope is the same.</small></label>
@@ -70,5 +81,7 @@
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
 <script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
 <script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
+<script src="assets/js/bo-theme.js?v=1.0.0"></script>
+<script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
 </body>
 </html>
