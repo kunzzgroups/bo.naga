@@ -225,13 +225,13 @@
     const from=document.getElementById('depositFrom')?.value||'';
     const to=document.getElementById('depositTo')?.value||'';
     while(guard++<500){
-      const params=new URLSearchParams({status:'APPROVED',page:String(p),size:'100'});
+      const params=new URLSearchParams({page:String(p),size:'100'});
       if(from)params.set('dateFrom',from);
       if(to)params.set('dateTo',to);
       const json=await api(endpoint('MEMBER_DEPOSIT_LIST')+'?'+params);
       const d=json.data||{};
       const rows=d.content||d.items||d.list||[];
-      all.push(...rows);
+      all.push(...rows.filter(r=>String(r?.status||'').toUpperCase()!=='REJECTED'));
       const pg=d.pagination||d;
       const totalPages=Number(pg.totalPages||1)||1;
       if(p>=totalPages||!rows.length)break;
@@ -244,13 +244,13 @@
     const from=document.getElementById('depositFrom')?.value||'';
     const to=document.getElementById('depositTo')?.value||'';
     while(guard++<500){
-      const params=new URLSearchParams({status:'APPROVED',page:String(p),size:'100'});
+      const params=new URLSearchParams({page:String(p),size:'100'});
       if(from)params.set('dateFrom',from);
       if(to)params.set('dateTo',to);
       const json=await api(endpoint('MEMBER_WITHDRAW_LIST')+'?'+params);
       const d=json.data||{};
       const rows=d.content||d.items||d.list||[];
-      all.push(...rows);
+      all.push(...rows.filter(r=>String(r?.status||'').toUpperCase()!=='REJECTED'));
       const pg=d.pagination||d;
       const totalPages=Number(pg.totalPages||1)||1;
       if(p>=totalPages||!rows.length)break;

@@ -66,13 +66,13 @@
     const from=document.getElementById('withdrawFrom')?.value||'';
     const to=document.getElementById('withdrawTo')?.value||'';
     while(guard++<500){
-      const params=new URLSearchParams({status:'APPROVED',page:String(p),size:'100'});
+      const params=new URLSearchParams({page:String(p),size:'100'});
       if(from)params.set('dateFrom',from);
       if(to)params.set('dateTo',to);
       const json=await api(endpoint('MEMBER_WITHDRAW_LIST')+'?'+params);
       const d=json.data||{};
       const rows=d.content||d.items||d.list||[];
-      all.push(...rows);
+      all.push(...rows.filter(r=>String(r?.status||'').toUpperCase()!=='REJECTED'));
       const pg=d.pagination||d;
       const totalPages=Number(pg.totalPages||1)||1;
       if(p>=totalPages||!rows.length)break;
@@ -91,7 +91,7 @@
       }
       host.innerHTML=methods.map(m=>{
         const name=String(m.bankName||m.displayName||('Bank #'+m.id)).trim();
-        const total=withdrawals.reduce((sum,r)=>String(r?.fundingPaymentMethodId??'')===String(m.id)?sum+Math.abs(num(r.amount)):sum,0);
+        const total=withdrawals.reduce((sum,r)=>String(r?.fundingPaymentMethodId??r?.paymentMethodId??'')===String(m.id)?sum+Math.abs(num(r.amount)):sum,0);
         const max=num(m.maxAmount);
         const pctRaw=max>0?(Math.max(0,total)/max)*100:0;
         const pct=Math.min(100,pctRaw);
