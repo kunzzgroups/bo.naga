@@ -9631,3 +9631,17 @@ html[data-bo-theme="dark"] body.main-admin-security-page .mad-float-tip.is-below
   border-top-color:transparent;
   border-bottom-color:#40424E;
 }
+
+/* --------------------------------------------------------------------------
+   One tip only. The cell's own ::after/::before tip still renders here (the family's
+   show rule wins over its own hide rule at equal specificity), so adding the float tip
+   without suppressing it produced TWO stacked pills on hover. The float tip replaces it
+   for these cells; the pseudo is switched off at (0,4,2) with !important, above the
+   family's (0,3,1) pair, so the outcome does not depend on their source order.
+   -------------------------------------------------------------------------- */
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table .mad-time-tip::after,
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table .mad-time-tip::before,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-table .mad-time-tip::after,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-table .mad-time-tip::before{
+  display:none!important;
+}
