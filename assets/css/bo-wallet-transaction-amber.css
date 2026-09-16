@@ -1627,6 +1627,9 @@ body.bo-wallet-tx .report-table.bo-tx-evenfill tbody tr td{
 body.bo-wallet-tx .report-table th,
 body.bo-wallet-tx .report-table td{
   box-sizing:border-box!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  vertical-align:middle!important;
 }
 body.bo-wallet-tx .report-table thead th,
 body.bo-wallet-tx .report-content .report-table thead th{
@@ -3385,6 +3388,550 @@ html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#
     justify-content:flex-start!important;
     width:100%!important;
     flex-wrap:wrap!important;
+  }
+}
+
+/* ==========================================================================
+   Deposit / Withdraw Approval — responsive 1920 → 375
+   Preserve charcoal+amber language; adapt layout / spacing / arrangement only.
+   Breakpoints align with project Responsive Rules:
+   1920 / 1440 / 1280 / 1024 / 768 / 390 / 375
+   ========================================================================== */
+
+/* Fluid content padding (desktop → laptop) */
+body.bo-wallet-tx.deposit-approval-page .report-content,
+body.bo-wallet-tx.withdraw-approval-page .report-content{
+  padding-inline:clamp(10px,1.6vw,22px)!important;
+  gap:clamp(10px,1.2vw,14px)!important;
+}
+/* ≤1456: DATE shows calendar day only; full datetime on hover via title */
+@media (max-width:1456px){
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-datetime-time,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-datetime-time{
+    display:none!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-datetime,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-datetime{
+    cursor:help;
+  }
+}
+body.bo-wallet-tx.deposit-approval-page .table-card,
+body.bo-wallet-tx.withdraw-approval-page .table-card{
+  padding:clamp(10px,1.4vw,16px)!important;
+  min-width:0!important;
+  max-width:100%!important;
+}
+body.bo-wallet-tx.deposit-approval-page .report-topbar,
+body.bo-wallet-tx.withdraw-approval-page .report-topbar{
+  padding-inline:clamp(10px,1.4vw,18px)!important;
+  gap:10px!important;
+}
+body.bo-wallet-tx.deposit-approval-page .user-title-wrap,
+body.bo-wallet-tx.withdraw-approval-page .user-title-wrap{
+  min-width:0!important;
+  flex:1 1 auto!important;
+  overflow:hidden!important;
+}
+body.bo-wallet-tx.deposit-approval-page .user-title-wrap h1,
+body.bo-wallet-tx.withdraw-approval-page .user-title-wrap h1{
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  max-width:100%!important;
+}
+
+/* Table scrolls inside panel — never force page-wide min-width */
+body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-head-table,
+body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-body-table,
+body.bo-wallet-tx.deposit-approval-page .report-table,
+body.bo-wallet-tx.withdraw-approval-page .report-table{
+  min-width:0!important;
+  width:100%!important;
+}
+body.bo-wallet-tx.deposit-approval-page .bo-tx-table-body,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-table-body{
+  max-width:100%!important;
+}
+
+/* ---- ≤1439: denser bank grid on large-mid desktops ---- */
+@media (max-width:1439.98px){
+  body.bo-wallet-tx.deposit-approval-page .approval-pending-stats.deposit-bank-card-stats,
+body.bo-wallet-tx.withdraw-approval-page .approval-pending-stats.deposit-bank-card-stats{
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr))!important;
+    gap:10px!important;
+  }
+}
+
+/* Bank cards: one-row snap strip whenever the grid would wrap into 2+ rows.
+   Keeps the table panel tall enough to show ledger rows with internal scroll. */
+@media (max-width:1280px){
+  body.bo-wallet-tx.deposit-approval-page .approval-pending-stats.deposit-bank-card-stats,
+body.bo-wallet-tx.withdraw-approval-page .approval-pending-stats.deposit-bank-card-stats{
+    display:flex!important;
+    flex-flow:row nowrap!important;
+    align-items:stretch!important;
+    gap:10px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch;
+    scroll-snap-type:x mandatory;
+    padding-bottom:4px!important;
+    margin-bottom:10px!important;
+    max-height:none!important;
+    scrollbar-width:thin;
+  }
+  body.bo-wallet-tx.deposit-approval-page .deposit-bank-card,
+body.bo-wallet-tx.withdraw-approval-page .deposit-bank-card{
+    flex:0 0 220px!important;
+    width:220px!important;
+    max-width:220px!important;
+    scroll-snap-align:start;
+  }
+  /* Table panel must keep a usable height; rows scroll inside .bo-tx-table-body */
+  body.bo-wallet-tx.deposit-approval-page .report-content > .table-card,
+body.bo-wallet-tx.withdraw-approval-page .report-content > .table-card{
+    flex:1 1 auto!important;
+    min-height:min(52vh,420px)!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-table-body,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-table-body{
+    flex:1 1 auto!important;
+    min-height:160px!important;
+    overflow-x:auto!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  /* Toolbar: tabs on first row, filters on second — one clean line each (fixes ~1274 wrap mess) */
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-toolbar,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-toolbar,
+  html body.bo-wallet-tx.deposit-approval-page,
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar{
+    flex-direction:column!important;
+    align-items:stretch!important;
+    flex-wrap:nowrap!important;
+    row-gap:10px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-tabs,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-tabs{
+    width:100%!important;
+    max-width:100%!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-toolbar > .user-search-grid.bo-tx-filter-controls,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-toolbar > .user-search-grid.bo-tx-filter-controls,
+  html body.bo-wallet-tx.deposit-approval-page,
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls{
+    width:100%!important;
+    max-width:100%!important;
+    margin:0!important;
+    margin-left:0!important;
+    justify-content:flex-start!important;
+    flex:1 1 auto!important;
+    flex-flow:row nowrap!important;
+    gap:10px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .bo-range-field,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .bo-range-field,
+  body.bo-wallet-tx.deposit-approval-page .filter-card .bo-range-field,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .bo-range-field,
+  body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .bo-filter-range-item,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .bo-filter-range-item,
+  html body.bo-wallet-tx.deposit-approval-page .report-main .filter-card .user-search-grid > .bo-filter-range-item,
+html body.bo-wallet-tx.withdraw-approval-page .report-main .filter-card .user-search-grid > .bo-filter-range-item,
+  html body.bo-wallet-tx.deposit-approval-page .report-main .filter-card .user-search-grid > .bo-range-field,
+html body.bo-wallet-tx.withdraw-approval-page .report-main .filter-card .user-search-grid > .bo-range-field{
+    flex:0 1 240px!important;
+    width:240px!important;
+    min-width:200px!important;
+    max-width:260px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .field:has(#depositKeyword),
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .field:has(#withdrawKeyword){
+    flex:1 1 180px!important;
+    width:auto!important;
+    min-width:140px!important;
+    max-width:none!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .field:has(#depositStatus),
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .field:has(#withdrawStatus){
+    flex:0 0 120px!important;
+    width:120px!important;
+    min-width:120px!important;
+    max-width:120px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .report-actions,
+body.bo-wallet-tx.withdraw-approval-page .report-actions{
+    gap:8px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .report-actions .bo-account-meta,
+body.bo-wallet-tx.withdraw-approval-page .report-actions .bo-account-meta{
+    max-width:110px!important;
+  }
+
+  /* Prevent DATE/MEMBER collision: give date a real floor + scroll table body */
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-head-table,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-body-table{
+    min-width:1080px!important;
+    width:max(100%,980px)!important;
+    table-layout:fixed!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-col-date,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-col-date{width:156px!important;}
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-col-member,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-col-member{width:112px!important;}
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-col-amount,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-col-amount{width:96px!important;}
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-col-method,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-col-method,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-col-bank,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-col-bank{width:150px!important;}
+  body.bo-wallet-tx.withdraw-approval-page .bo-tx-col-remark{width:120px!important;}
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-col-ref,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-col-ref{width:130px!important;}
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-col-status,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-col-status{width:100px!important;}
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-col-processed,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-col-processed{width:140px!important;}
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-col-action,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-col-action{width:96px!important;}
+  body.bo-wallet-tx.deposit-approval-page .report-table th,
+body.bo-wallet-tx.withdraw-approval-page .report-table th,
+  body.bo-wallet-tx.deposit-approval-page .report-table td,
+body.bo-wallet-tx.withdraw-approval-page .report-table td{
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+  }
+}
+
+/* ---- ≤1024: keep filters wrapping only when the second row truly needs it ---- */
+@media (max-width:1024px){
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-toolbar,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-toolbar,
+  html body.bo-wallet-tx.deposit-approval-page,
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar{
+    flex-direction:column!important;
+    align-items:stretch!important;
+    flex-wrap:nowrap!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-tabs,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-tabs{
+    width:100%!important;
+    max-width:100%!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-toolbar > .user-search-grid.bo-tx-filter-controls,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-toolbar > .user-search-grid.bo-tx-filter-controls,
+  html body.bo-wallet-tx.deposit-approval-page,
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls{
+    width:100%!important;
+    max-width:100%!important;
+    margin-left:0!important;
+    justify-content:flex-start!important;
+    flex:1 1 auto!important;
+    flex-flow:row wrap!important;
+    gap:10px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .bo-range-field,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .bo-range-field,
+  body.bo-wallet-tx.deposit-approval-page .filter-card .bo-range-field,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .bo-range-field,
+  body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .bo-filter-range-item,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .bo-filter-range-item,
+  html body.bo-wallet-tx.deposit-approval-page .report-main .filter-card .user-search-grid > .bo-filter-range-item,
+html body.bo-wallet-tx.withdraw-approval-page .report-main .filter-card .user-search-grid > .bo-filter-range-item,
+  html body.bo-wallet-tx.deposit-approval-page .report-main .filter-card .user-search-grid > .bo-range-field,
+html body.bo-wallet-tx.withdraw-approval-page .report-main .filter-card .user-search-grid > .bo-range-field{
+    flex:1 1 200px!important;
+    width:auto!important;
+    min-width:min(100%,180px)!important;
+    max-width:100%!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .field:has(#depositKeyword),
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .field:has(#withdrawKeyword){
+    flex:1 1 160px!important;
+    min-width:min(100%,140px)!important;
+    max-width:100%!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .field:has(#depositStatus),
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .field:has(#withdrawStatus){
+    flex:0 0 120px!important;
+    width:120px!important;
+    min-width:120px!important;
+    max-width:140px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .user-title-wrap p,
+body.bo-wallet-tx.withdraw-approval-page .user-title-wrap p{
+    display:none!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .report-actions .bo-account-meta,
+body.bo-wallet-tx.withdraw-approval-page .report-actions .bo-account-meta{
+    display:none!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .deposit-bank-card,
+body.bo-wallet-tx.withdraw-approval-page .deposit-bank-card{
+    flex-basis:200px!important;
+    width:200px!important;
+    max-width:200px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .report-content > .table-card,
+body.bo-wallet-tx.withdraw-approval-page .report-content > .table-card{
+    min-height:min(55vh,460px)!important;
+  }
+}
+
+/* ---- ≤768 (tablet): compact strip + phone-friendly filter wrap ---- */
+@media (max-width:768px){
+  body.bo-wallet-tx.deposit-approval-page .report-content,
+body.bo-wallet-tx.withdraw-approval-page .report-content{
+    padding-inline:12px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .deposit-bank-card,
+body.bo-wallet-tx.withdraw-approval-page .deposit-bank-card{
+    flex:0 0 min(240px,78vw)!important;
+    width:min(240px,78vw)!important;
+    max-width:min(240px,78vw)!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .deposit-bank-total > strong,
+body.bo-wallet-tx.withdraw-approval-page .deposit-bank-total > strong{
+    font-size:20px!important;
+  }
+  /* Keep filters wrapping in a row until phone — saves vertical space for the table */
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-filter-controls,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-filter-controls,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-toolbar > .user-search-grid.bo-tx-filter-controls,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-toolbar > .user-search-grid.bo-tx-filter-controls,
+  html body.bo-wallet-tx.deposit-approval-page,
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls{
+    display:flex!important;
+    flex-flow:row wrap!important;
+    align-items:stretch!important;
+    gap:10px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .bo-range-field,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .bo-range-field,
+  body.bo-wallet-tx.deposit-approval-page .filter-card .bo-range-field,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .bo-range-field,
+  body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .bo-filter-range-item,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .bo-filter-range-item,
+  body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .field:has(#depositKeyword),
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .field:has(#withdrawKeyword),
+  body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .field:has(#depositStatus),
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .field:has(#withdrawStatus),
+  html body.bo-wallet-tx.deposit-approval-page .report-main .filter-card .user-search-grid > .bo-filter-range-item,
+html body.bo-wallet-tx.withdraw-approval-page .report-main .filter-card .user-search-grid > .bo-filter-range-item,
+  html body.bo-wallet-tx.deposit-approval-page .report-main .filter-card .user-search-grid > .bo-range-field,
+html body.bo-wallet-tx.withdraw-approval-page .report-main .filter-card .user-search-grid > .bo-range-field,
+  html body.bo-wallet-tx.deposit-approval-page .report-main .filter-card .user-search-grid > .field,
+html body.bo-wallet-tx.withdraw-approval-page .report-main .filter-card .user-search-grid > .field{
+    flex:1 1 160px!important;
+    width:auto!important;
+    min-width:min(100%,140px)!important;
+    max-width:100%!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .filter-card .field input,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .field input,
+  body.bo-wallet-tx.deposit-approval-page .filter-card .field select,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .field select,
+  body.bo-wallet-tx.deposit-approval-page .filter-card .bo-range-trigger,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .bo-range-trigger,
+  body.bo-wallet-tx.deposit-approval-page .filter-card .bo-date-range-btn,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .bo-date-range-btn{
+    min-height:44px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table th:nth-child(7),
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table td:nth-child(7),
+  body.bo-wallet-tx.withdraw-approval-page .bo-tx-head-table th:nth-child(8),
+  body.bo-wallet-tx.withdraw-approval-page .bo-tx-body-table td:nth-child(8),
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-col-processed,
+  body.bo-wallet-tx.withdraw-approval-page .bo-tx-col-processed,
+  body.bo-wallet-tx.withdraw-approval-page .bo-tx-head-table th:nth-child(6),
+  body.bo-wallet-tx.withdraw-approval-page .bo-tx-body-table td:nth-child(6),
+  body.bo-wallet-tx.withdraw-approval-page .bo-tx-col-remark{
+    display:none!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-head-table,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-body-table{
+    min-width:640px!important;
+    width:max(100%,640px)!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .table-card > .bo-deposit-pager-host,
+body.bo-wallet-tx.withdraw-approval-page .table-card > .bo-deposit-pager-host{
+    gap:8px!important;
+    row-gap:10px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .report-actions .bo-header-counters,
+body.bo-wallet-tx.withdraw-approval-page .report-actions .bo-header-counters{
+    gap:6px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .report-content > .table-card,
+body.bo-wallet-tx.withdraw-approval-page .report-content > .table-card{
+    min-height:min(58vh,480px)!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-table-body,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-table-body{
+    min-height:200px!important;
+  }
+}
+
+/* ---- ≤575 / ~390–375 phone ---- */
+@media (max-width:575.98px){
+  body.bo-wallet-tx.deposit-approval-page .report-content,
+body.bo-wallet-tx.withdraw-approval-page .report-content{
+    padding-inline:10px!important;
+    gap:10px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .table-card,
+body.bo-wallet-tx.withdraw-approval-page .table-card{
+    padding:10px!important;
+    border-radius:12px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .user-title-icon,
+body.bo-wallet-tx.withdraw-approval-page .user-title-icon{
+    display:none!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .user-title-wrap h1,
+body.bo-wallet-tx.withdraw-approval-page .user-title-wrap h1{
+    font-size:16px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .report-actions,
+body.bo-wallet-tx.withdraw-approval-page .report-actions{
+    gap:6px!important;
+  }
+  /* Keep title readable — counters move to sidebar / are secondary on phone */
+  body.bo-wallet-tx.deposit-approval-page .report-actions .bo-header-counters,
+body.bo-wallet-tx.withdraw-approval-page .report-actions .bo-header-counters{
+    display:none!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .report-actions .bo-header-counter,
+body.bo-wallet-tx.withdraw-approval-page .report-actions .bo-header-counter{
+    min-width:40px!important;
+    padding:4px 6px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .deposit-bank-card,
+body.bo-wallet-tx.withdraw-approval-page .deposit-bank-card{
+    flex-basis:min(240px,82vw)!important;
+    width:min(240px,82vw)!important;
+    max-width:min(240px,82vw)!important;
+    padding:12px!important;
+    gap:10px!important;
+  }
+  /* Phone: stack filters so controls are full-width; table body still scrolls */
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-filter-controls,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-filter-controls,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-toolbar > .user-search-grid.bo-tx-filter-controls,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-toolbar > .user-search-grid.bo-tx-filter-controls,
+  html body.bo-wallet-tx.deposit-approval-page,
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls{
+    flex-direction:column!important;
+    flex-wrap:nowrap!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .bo-range-field,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .bo-range-field,
+  body.bo-wallet-tx.deposit-approval-page .filter-card .bo-range-field,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .bo-range-field,
+  body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .bo-filter-range-item,
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .bo-filter-range-item,
+  body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .field:has(#depositKeyword),
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .field:has(#withdrawKeyword),
+  body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .field:has(#depositStatus),
+body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .field:has(#withdrawStatus),
+  html body.bo-wallet-tx.deposit-approval-page .report-main .filter-card .user-search-grid > .field,
+html body.bo-wallet-tx.withdraw-approval-page .report-main .filter-card .user-search-grid > .field{
+    flex:1 1 auto!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .report-content > .table-card,
+body.bo-wallet-tx.withdraw-approval-page .report-content > .table-card{
+    min-height:min(50vh,420px)!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-table-body,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-table-body{
+    min-height:180px!important;
+    overflow-y:auto!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-tabs,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-tabs{
+    justify-content:flex-start!important;
+    overflow-x:auto!important;
+    -webkit-overflow-scrolling:touch;
+    max-width:100%!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-tab,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-tab{
+    flex:0 0 auto!important;
+    min-height:40px!important;
+    padding-inline:12px!important;
+  }
+  /* Hide Reference + Processed on phone; keep Date/Member/Amount/Bank/Status/Action */
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table th:nth-child(5),
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-head-table th:nth-child(5),
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table td:nth-child(5),
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-body-table td:nth-child(5),
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-col-ref,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-col-ref,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table th:nth-child(7),
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table td:nth-child(7),
+  body.bo-wallet-tx.withdraw-approval-page .bo-tx-head-table th:nth-child(8),
+  body.bo-wallet-tx.withdraw-approval-page .bo-tx-body-table td:nth-child(8),
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-col-processed,
+  body.bo-wallet-tx.withdraw-approval-page .bo-tx-col-processed,
+  body.bo-wallet-tx.withdraw-approval-page .bo-tx-head-table th:nth-child(6),
+  body.bo-wallet-tx.withdraw-approval-page .bo-tx-body-table td:nth-child(6),
+  body.bo-wallet-tx.withdraw-approval-page .bo-tx-col-remark{
+    display:none!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-head-table,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-body-table{
+    min-width:520px!important;
+    width:max(100%,520px)!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-action-btn,
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-action-btn{
+    width:36px!important;
+    height:36px!important;
+    min-width:36px!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .table-card > .bo-deposit-pager-host,
+body.bo-wallet-tx.withdraw-approval-page .table-card > .bo-deposit-pager-host{
+    justify-content:center!important;
+  }
+  body.bo-wallet-tx.deposit-approval-page .table-card > .bo-deposit-pager-host .clean-btn,
+body.bo-wallet-tx.withdraw-approval-page .table-card > .bo-deposit-pager-host .clean-btn,
+  body.bo-wallet-tx.deposit-approval-page .table-card > .bo-deposit-pager-host button,
+body.bo-wallet-tx.withdraw-approval-page .table-card > .bo-deposit-pager-host button{
+    min-height:40px!important;
+  }
+}
+
+/* Approval / funding modal — full-bleed on small screens */
+@media (max-width:768px){
+  #bankApprovalPopup .bank-approval-backdrop{
+    padding:0!important;
+    align-items:stretch!important;
+  }
+  #bankApprovalPopup .bank-approval-dialog{
+    width:100%!important;
+    max-width:100%!important;
+    min-height:100%!important;
+    border-radius:0!important;
+  }
+}
+@media (max-width:575.98px){
+  #bankApprovalPopup .bank-approval-head,
+  #bankApprovalPopup .bank-approval-body,
+  #bankApprovalPopup .bank-approval-foot{
+    padding-left:14px!important;
+    padding-right:14px!important;
   }
 }
 
