@@ -1173,3 +1173,31 @@ showing 0 for its files).
   provider-report sheet, the Bootstrap-grey layer in `brand-agent-standard.css`, and the legacy
   navy tip fills `#0F1F33`/`#0F1C2E`. They are inert where a `bo-charcoal-*` sheet already overrides
   the same selector with `!important`, and they are the next scoped pass rather than a guess.
+
+**Dialog chrome unified site-wide: the panel is one rung lighter than the field (2026-09-16, owner:
+"其他页面的弹窗设计…要跟图二的设计风格啊" / "全站设计呀").** Measured against the reference — the merchant
+Add Credit dialog — the other dialogs' problem was not the fields (already `#FFF8EB` everywhere) but
+the **panel**: it was also `#FFF8EB`, so fields sat on their own colour and vanished into it. That is
+the flat, washy look in the owner's first screenshot. The reference runs panel `#FFFCF7` with a
+`#DCC9A8` border, which puts every field exactly one rung below its surface.
+
+| | reference (merchant Add Credit) | the rest (before) | now |
+|---|---|---|---|
+| Panel | `#FFFCF7` · border `#DCC9A8` | `#FFF8EB` · border `#EADCC8` | `#FFFCF7` · `#DCC9A8` |
+| Field | `#FFF8EB` · border `#DCC9A8` | same ✓ | same |
+| Primary button | 40px tall | 36px | 40px |
+| Field label | `#71717A` | `#27272A` | `#71717A` |
+
+- The recipe lives in `assets/css/bo-input-fill.css` (the sheet already linked last on 136 pages)
+  rather than in a new file, under the same two-ID escalation as the field rules — a plain class
+  selector loses to `body.main-admin-detail-page .mad-modal-panel{background:var(--bo-surface)}`.
+- **Trap: a stylesheet that is edited all session but never gets a new `?v=` label is served from the
+  browser cache, so the rule looks inert.** The panel rules measured as "not applied" on exactly the
+  two pages whose dialogs keep their own `#FFF8EB` rule; after bumping the label `1.0.0 → 1.0.1` the
+  panels took `#FFFCF7` with no other change. Any time a fix "does not apply", check the pin before
+  re-reading the cascade.
+- Verified: every `[class*="modal"][class*="panel"]` element's computed fill on six page families —
+  admin-detail (2 panels), provider-credentials (3), merchant-detail (3), merchant-create (1),
+  payment-method (1) — all `#FFFCF7`, primary buttons 40px, and dark untouched (no dark rule added).
+  Coverage: 136 of 142 pages link the sheet; the six that do not are five meta-refresh redirect stubs
+  and `backup_provider.html`, an orphan fragment with no `<head>`.

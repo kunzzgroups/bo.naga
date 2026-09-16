@@ -127,3 +127,42 @@ html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-f
         · .layout-code-highlight and the code-editor overlay textarea (rule 1 excludes it)
       If a future page needs a field that is not a form element and is not in rule 2, add
       it there rather than widening rule 1. */
+
+/* ==========================================================================
+   Dialog chrome — the panel is one rung LIGHTER than the field
+   ==========================================================================
+
+   Owner-directed (2026-09-16, "其他页面的弹窗设计…要跟图二的设计风格"): the dialogs are to match the
+   merchant Add Credit dialog, which is the design that reads correctly. Measured against it, the
+   other dialogs' problem was NOT the fields (they were already #FFF8EB) but the PANEL: it was also
+   #FFF8EB, so the fields sat on their own colour and vanished into the panel — the flat, washy look
+   in the owner's screenshot. The reference has panel #FFFCF7 with a #DCC9A8 border, which puts each
+   field one rung deeper than its surface and lets the border do the separating.
+
+   Measured (light, per dialog):  panel  #FFF8EB -> #FFFCF7     border  #EADCC8 -> #DCC9A8
+                                  primary button height 36px -> 40px
+                                  field labels #27272A -> #71717A (the locked muted)
+
+   This lives in the sheet that is already linked last on 136 pages rather than in a new file: it is
+   the same surface decision as the field fill (one ladder, two rungs) and it needs the same
+   last-in-cascade position to beat the per-page panel rules. Extract it to its own sheet if it grows.
+   Light theme only — dark keeps its own panel rungs. */
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-modal .mad-modal-panel,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-modal .modal-clean-panel,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .modal-clean .modal-clean-panel,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-pass-modal-panel{
+  background-color:#FFFCF7!important;
+  border-color:#DCC9A8!important;
+}
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-modal .mad-modal-actions .mad-btn,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-modal .mad-modal-actions .mad-btn.bo-ui-button,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .modal-clean-foot .mad-btn,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .modal-clean-foot .clean-btn{
+  height:40px!important;
+  min-height:40px!important;
+}
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-modal-panel .mac-label,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-modal-panel .mad-label,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-pass-modal-panel .mac-label{
+  color:#71717A!important;
+}
