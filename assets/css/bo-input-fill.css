@@ -154,13 +154,10 @@ html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-f
   background-color:#FFFCF7!important;
   border-color:#DCC9A8!important;
 }
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-modal .mad-modal-actions .mad-btn,
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-modal .mad-modal-actions .mad-btn.bo-ui-button,
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .modal-clean-foot .mad-btn,
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .modal-clean-foot .clean-btn{
-  height:40px!important;
-  min-height:40px!important;
-}
+/* Button height 36 -> 40px was part of the first pass (the reference dialog runs 40px) and was
+   REVERTED on the owner's instruction: only colour may change, layout belongs to the designers.
+   The 4px difference between the reference and the other dialogs is therefore still there, on
+   purpose, for them to decide. */
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-modal-panel .mac-label,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-modal-panel .mad-label,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-pass-modal-panel .mac-label{
