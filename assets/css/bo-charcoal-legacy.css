@@ -1046,7 +1046,7 @@ html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .i
 }
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .modal-clean-panel,
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .modal-clean-body{
-  background:#FFF8EB!important;border-color:#EADCC8!important;
+  background:#FFFCF7!important;border-color:#EADCC8!important;
 }
 html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .modal-clean-panel,
 html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .modal-clean-body{

@@ -1201,3 +1201,27 @@ the flat, washy look in the owner's first screenshot. The reference runs panel `
   payment-method (1) — all `#FFFCF7`, primary buttons 40px, and dark untouched (no dark rule added).
   Coverage: 136 of 142 pages link the sheet; the six that do not are five meta-refresh redirect stubs
   and `backup_provider.html`, an orphan fragment with no `<head>`.
+
+**Constraint after the fact (2026-09-16, owner): "不要影响我同事改的设计那些啊 设计排版 但是 颜色方面可以改".**
+Colour only — layout, spacing, type and motion belong to the designers. An audit of the four commits
+that had just landed found four places where I had crossed that line, all now reverted:
+
+- `4df6603` forced every dialog action button to `height:40px!important` — a layout property inside a
+  commit whose purpose was panel colour. Reverted in `201ab9e`. The reference dialog's buttons really
+  are 40px and the others 36px; that difference is now left visible for the design owners to settle.
+- `016afd4` copied the merchant sibling's action-row block **including its `transform`s**, so the two
+  Adjust Credit buttons gained a hover lift and — worse — their `:active` lost the sheet's own press
+  feedback (`transform:scale(.97)`) in favour of a 1px shift. Removed inside that block only
+  (`085f7f3`); the sheet's other 31 `translateY` declarations are untouched. A first attempt filtered
+  the whole file and took out 18 lines that were not mine — reverted, then redone by line range.
+- The two commits' *colour* work stands: amber gradient, cream ghost, hover colours, focus rings,
+  panel `#FFFCF7` / border `#DCC9A8`, field `#FFF8EB`, labels `#71717A`.
+- `3e9d1fc` (the retired-literal sweep) audited clean: 573 changed HTML lines are all `?v=` bumps,
+  and no `border-radius`, `font-size`, `font-weight`, `line-height`, `padding`, `margin`, `gap`,
+  `display`, `position`, `overflow` or `z-index` was touched in any of the four commits.
+- The `:not(.layout-code-pane textarea)` exclusions from `ba2a67a` are a scope change, and stay: they
+  stop the shared `.report-content` field rule from painting the code editor's transparent overlay
+  (it was already being painted before this session — that is the fix, not a disturbance).
+- **Trap, again:** the legacy panel rule I fixed at the source measured as unchanged because
+  `bo-charcoal-legacy.css` still carried `?v=1.0.0`. Bumping it to 1.0.1 is what makes the value land.
+  Every "my fix did nothing" moment today has been a stale pin.
