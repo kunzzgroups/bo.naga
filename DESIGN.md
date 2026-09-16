@@ -931,3 +931,39 @@ the page was Roles & Permissions, and the Merchant flyout showed the same wrong 
   original file was restored immediately after; its only diff is the version pins.
 - Pins: `auth.js` was at **three** different versions (`1.0.61` ×126, `1.0.62` ×2, `1.0.63` ×8, plus
   a date-style `20260907` ×2) — unified to `1.0.64` across all 138 pages.
+
+### Table zebra on the MAIN panel pages (2026-09-16, owner request)
+
+"All tables on the main pages must have zebra." They did not: measured on
+`main-admin-detail` / `main-merchant-detail` / `main-merchant-profit`, every body row was
+`background: transparent` on one panel colour, separated only by hairlines — a wide row was hard
+to follow across. Only the report family (a faint amber wash) and the transaction family
+(`bo-wallet-transaction-amber.css`) had any rhythm.
+
+- **New shared layer: `assets/css/bo-table-zebra.css`**, linked as the **last** stylesheet on the
+  27 `main-*` / `main_*.html` pages that actually contain a `<table>` (12 more have none and were
+  left alone). The scope is the link, not the selector — that is what keeps the blast radius at
+  exactly those pages.
+- **Values are the locked ones**, so every listing in the panel now stripes alike:
+  light odd `#FFF8EB` / even `#FFF1DC` / hover `#FFE8CC`; dark odd `#3A3C48` / even `#434653` /
+  hover `#444654`. These are the `--bo-table-*` values from
+  `.interface-design/system.md` → Patterns → Data tables → Transaction listing table, re-declared
+  as `--bo-zebra-*` in this layer. The report family's own faint amber wash (`rgba(217,119,6,.045)`)
+  loses to this by specificity, so the family no longer has a second, different rhythm.
+- **The stripe is painted on the cells, not on the `<tr>`.** A row background is covered by any
+  cell that sets its own — the hover rules, `.value-positive`/`.value-negative`, the avatar tints —
+  whereas painting the cells makes the stripe the base layer those sit on. It also keeps the
+  `border-collapse` hairlines crisp.
+- **Hover is restated inside this layer, after the stripes.** The pages' own `tr:hover td` rules sit
+  at a lower specificity than the striping here, and a stripe that out-ranks the hover is how a
+  table stops feeling interactive. Verified with a real mouse move: light row `#FFF1DC` → `#FFE8CC`,
+  dark `#3A3C48`/`#434653` → `#444654`, both matching the locked hover token.
+- **Semantic rows keep their meaning.** `.is-suspended-row` is excluded from the stripes *and* its
+  cells are cleared, because its red tint is painted on the `<tr>` — clearing the cells lets it
+  through (verified: cells measure transparent, the row tint still shows). `.total` is excluded but
+  deliberately **not** cleared: its fill lives on the `td` (`tr.total td`), so a transparent
+  override would have erased the total row. The single colspan empty-state row (`:has(> td.mad-empty)`)
+  is not striped.
+- Verified both themes on four pages across three families: `main-admin-detail`,
+  `main-merchant-detail`, `main-merchant-profit`, `main_merchant_report` — odd/even alternate to the
+  exact token values, hover intact, suspended row intact.
