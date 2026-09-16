@@ -15,6 +15,12 @@
   grid-column:1!important;justify-self:start!important;display:inline-flex!important;align-items:center!important;
   gap:8px!important;width:auto!important;margin:0!important;white-space:nowrap!important;color:#667085!important;font-weight:500!important;
 }
+/* Beat reports.css `.entries-control .rounded-select-wrap { margin-top:-35px }` — keep Show [N] entries on one baseline. */
+.entries-control .rounded-select-wrap{
+  display:inline-flex!important;align-items:center!important;vertical-align:middle!important;
+  margin:0!important;margin-top:0!important;height:auto!important;width:auto!important;min-width:0!important;
+  flex:0 0 auto!important;position:relative!important;overflow:visible!important;
+}
 
 .table-footer>.table-info,.admin-table-footer>.table-info,.table-pagination-wrap>.table-pagination-info,
 .ref-pagination-row>:nth-child(2),.game-table-footer>#gameShowingText,.subcategory-table-footer>#subCategoryShowingText,

@@ -5,9 +5,16 @@
   function createMirrorSelect(source){
     const select=document.createElement('select');
     select.setAttribute('aria-label','Rows per page');
-    const values=source?[...source.options].map(o=>o.value||o.textContent):['10','25','50','100'];
-    [...new Set(values)].forEach(v=>{
-      const o=document.createElement('option');o.value=v;o.textContent=v;select.appendChild(o);
+    const values=source?[...source.options].map(o=>({value:o.value||o.textContent,label:o.textContent||o.value})):[{value:'10',label:'10'},{value:'25',label:'25'},{value:'50',label:'50'},{value:'100',label:'100'}];
+    const seen=new Set();
+    values.forEach(item=>{
+      const v=String(item.value||'').trim();
+      if(!v||seen.has(v))return;
+      seen.add(v);
+      const o=document.createElement('option');
+      o.value=v;
+      o.textContent=item.label||v;
+      select.appendChild(o);
     });
     if(source) select.value=source.value;
     select.addEventListener('change',()=>{
@@ -23,16 +30,36 @@
   }
 
   function inferTotal(root,infoSource){
+    const fromData=Number(root?.dataset?.boTotal);
+    if(Number.isFinite(fromData)&&fromData>=0) return fromData;
     const candidates=[infoSource,$('[id*="Count"]',root),$('[id*="Info"]',root),$('.users-found-badge',root),$('.text-muted',root)];
     for(const el of candidates){
       if(!el)continue;
       const t=el.textContent||'';
       let m=t.match(/of\s+(\d[\d,]*)\s+entries/i);
-      if(!m)m=t.match(/(\d[\d,]*)\s*(?:entries|records?|record\(s\)|accounts|users)\s*$/i);
+      if(!m)m=t.match(/(\d[\d,]*)\s*(?:entries|records?|record\(s\)|accounts|users|request\(s\))\s*$/i);
       if(m)return Number(m[1].replace(/,/g,''));
     }
-    const tbody=$('tbody',root);
-    return tbody?[...tbody.rows].filter(r=>!r.textContent.match(/loading|no\s+record|no\s+data/i)).length:0;
+    return 0;
+  }
+
+  function resolvePageSize(root,rawSize){
+    const raw=String(rawSize??'-').trim();
+    if(/^all$/i.test(raw)) return 10000;
+    const fromData=Number(root?.dataset?.boPageSize);
+    if((raw===''||raw==='-'||/^auto$/i.test(raw))&&Number.isFinite(fromData)&&fromData>0) return fromData;
+    if(raw===''||raw==='-'||/^auto$/i.test(raw)){
+      const scroll=root.querySelector('.bo-tx-table-body')||root.querySelector('.table-wrap')||document.querySelector('.bo-tx-table-body')||document.querySelector('.table-wrap');
+      if(!scroll) return 12;
+      const head=scroll.closest('.table-wrap')?.querySelector('.bo-tx-table-head')||scroll.querySelector('thead');
+      const headH=scroll.classList.contains('bo-tx-table-body')?0:(head?Math.ceil(head.getBoundingClientRect().height):44);
+      const avail=Math.max(0,Math.floor(scroll.clientHeight)-headH);
+      const sample=scroll.querySelector('tbody tr td');
+      const rowH=sample?Math.max(38,Math.round(sample.getBoundingClientRect().height)):41;
+      return Math.max(5,Math.min(200,Math.floor(avail/rowH)||12));
+    }
+    const n=Number(raw);
+    return Number.isFinite(n)&&n>0?n:12;
   }
 
   function currentPage(pager){
@@ -74,6 +101,7 @@
     right.appendChild(prev);
     if(pager){
       pager.classList.add('pagination-clean-inner');
+      pager.classList.remove('text-muted','small');
       right.appendChild(pager);
     }
     right.appendChild(next);
@@ -83,10 +111,11 @@
     const update=()=>{
       cancelAnimationFrame(raf);
       raf=requestAnimationFrame(()=>{
-        const size=Number((sourceSelect&&sourceSelect.value)||left.querySelector('select').value||10);
+        const rawSize=(sourceSelect&&sourceSelect.value)||left.querySelector('select')?.value||'-';
+        const size=resolvePageSize(root,rawSize);
         const total=inferTotal(root,infoSource);
-        const page=currentPage(pager);
-        const from=total?((page-1)*size+1):0;
+        const page=Number(root?.dataset?.boPage)||currentPage(pager);
+        const from=total?Math.min(((page-1)*size)+1,total):0;
         const to=total?Math.min(page*size,total):0;
         const text=`Showing ${from} to ${to} of ${total} entries`;
         if(info.textContent!==text)info.textContent=text;
@@ -98,6 +127,8 @@
     if(infoSource)observer.observe(infoSource,{childList:true,characterData:true,subtree:true});
     if(pager)observer.observe(pager,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:['class','aria-current']});
     if(sourceSelect)sourceSelect.addEventListener('change',update);
+    const metaObs=new MutationObserver(update);
+    metaObs.observe(root,{attributes:true,attributeFilter:['data-bo-total','data-bo-page-size','data-bo-page']});
   }
 
   function normalizeExisting(){

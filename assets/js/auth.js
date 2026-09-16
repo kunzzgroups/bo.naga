@@ -70,6 +70,17 @@
     return (name.charAt(0) || 'A').toUpperCase();
   }
   function displayName(user){ return (user && (user.displayName || user.username)) || 'Admin'; }
+  function roleLabel(user){
+    user = user || {};
+    if(user.roleName) return String(user.roleName);
+    const type = String(user.roleType || '').toUpperCase();
+    if(user.rootAdmin === true || Number(user.rootAdmin) === 1 || type === 'ROOT') return 'Root Account';
+    if(type === 'MAIN' || user.mainAdmin === true || Number(user.mainAdmin) === 1) return 'Main Account';
+    if(type === 'MASTER') return 'Master Account';
+    if(type === 'BRAND_OWNER') return 'Brand Owner';
+    if(user.role) return String(user.role);
+    return 'Admin';
+  }
   function esc(v){
     return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -384,9 +395,12 @@
         }
         if(json.message === 'Unauthorized') this.logout();
       }catch(e){}
-      // Keep profile/session usable on a transient request failure, but never rebuild or
-      // inject sidebar definitions from frontend code.
-      if(cached && cached.username) this.enforcePageAccess(cached);
+      // Keep profile/session usable on a transient request failure. Still paint the last
+      // DB-backed menus from localStorage — do not invent menus, but do not leave .report-nav blank.
+      if(cached && cached.username){
+        this.renderSidebar(cached);
+        this.enforcePageAccess(cached);
+      }
       return cached;
     },
     applyMenuPermission: function(user){
@@ -647,9 +661,14 @@
     renderProfile: function(){
       const user = this.user();
       const name = displayName(user);
+      const role = roleLabel(user);
       document.querySelectorAll('[data-admin-name]').forEach(el => el.textContent = name);
       document.querySelectorAll('[data-admin-username]').forEach(el => el.textContent = user.username || 'admin');
-      document.querySelectorAll('[data-admin-avatar]').forEach(el => el.textContent = initials(name));
+      document.querySelectorAll('[data-admin-role]').forEach(el => el.textContent = role);
+      document.querySelectorAll('[data-admin-avatar]').forEach(el => {
+        if(el.querySelector('i.bi-person,i.bi-person-fill')) return;
+        el.textContent = initials(name);
+      });
     },
     headerCountersHtml: function(){
       return '<div class="bo-header-counters" data-bo-header-counters>' +
@@ -662,7 +681,7 @@
           '<span class="bo-header-counter-text"><small>Deposit</small><b data-header-pending-deposit>0</b></span>' +
         '</a>' +
         '<a class="bo-header-counter" href="member-withdraw.html" data-operation-notification-ack="wallet" title="Pending withdrawal requests" aria-label="Pending withdrawal requests">' +
-          '<span class="bo-header-counter-icon withdraw"><i class="bi bi-arrow-left-right"></i></span>' +
+          '<span class="bo-header-counter-icon withdraw"><i class="bi bi-box-arrow-up"></i></span>' +
           '<span class="bo-header-counter-text"><small>Withdraw</small><b data-header-pending-withdraw>0</b></span>' +
         '</a>' +
       '</div>';
@@ -699,12 +718,17 @@
     profileHtml: function(){
       const user = this.user();
       const name = displayName(user);
+      const role = roleLabel(user);
       const counters = String(user.roleType||'').toUpperCase()==='MAIN' ? '' : this.headerCountersHtml();
+      /* Locked topbar chrome (system.md / Fig.2): meta left · person avatar right · no gear */
       return counters + '<a class="bo-account-link" href="profile.html" title="Account settings" aria-label="Open account settings">' +
-        '<span class="report-avatar" data-admin-avatar>' + initials(name) + '</span>' +
-        '<span class="bo-account-name" data-admin-name>' + esc(name) + '</span>' +
-        '<i class="bi bi-gear bo-account-setting-icon" aria-hidden="true"></i>' +
-        '</a>';
+        '<span class="bo-account-meta">' +
+          '<span class="bo-account-name" data-admin-name>' + esc(name) + '</span>' +
+          '<span class="bo-account-role" data-admin-role>' + esc(role) + '</span>' +
+        '</span>' +
+        '<span class="report-avatar" aria-hidden="true"><i class="bi bi-person"></i></span>' +
+        '<i class="bi bi-gear bo-account-setting-icon" hidden aria-hidden="true"></i>' +
+      '</a>';
     },
     injectProfile: function(){
       document.querySelectorAll('[data-bo-profile]').forEach(el => { el.innerHTML = this.profileHtml(); });
