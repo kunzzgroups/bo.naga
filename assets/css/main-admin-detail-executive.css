@@ -9561,3 +9561,73 @@ html[data-bo-theme="dark"] body.main-admin-security-page .mas-table .mad-time-ti
   font-weight:600!important;
   font-variant-numeric:tabular-nums;
 }
+
+/* --------------------------------------------------------------------------
+   Time & Date float tip — the shared `.mad-float-tip` component, styled for the
+   security pages.
+   Why not the cell's own ::after tip: this page splits its header and body into two
+   tables (`.mas-table-head` outside, `.mas-table-body-scroll` scrolling), so there is NO
+   room inside the scroller above the first row — the tip is cut at the container's top
+   edge — and an overflow clip is not something `z-index` paints over. The list pages get
+   away with the same markup only because their header sits inside the scroller, which
+   leaves their first row ~47px of clearance; the tip there also paints over the header,
+   which is the look the owner asked for.
+   A real element at `position:fixed` escapes both the clip and the header, so the tip can
+   sit above the time exactly like the list pages. JS positions it (and flips it below via
+   `.is-below` when there is no room above); this layer only gives it the locked look.
+   -------------------------------------------------------------------------- */
+body.main-admin-security-page .mad-float-tip{
+  position:fixed;
+  z-index:30000;
+  pointer-events:none;
+  padding:7px 14px;
+  border-radius:999px;
+  font-size:12.5px;
+  font-weight:700;
+  line-height:1;
+  white-space:nowrap;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .12s ease, transform .12s ease;
+}
+body.main-admin-security-page .mad-float-tip.is-on{
+  opacity:1;
+  visibility:visible;
+}
+body.main-admin-security-page .mad-float-tip::after{
+  content:"";
+  position:absolute;
+  left:16px;
+  top:100%;
+  border:6px solid transparent;
+}
+body.main-admin-security-page .mad-float-tip.is-below::after{
+  top:auto;
+  bottom:100%;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mad-float-tip{
+  background:#FFF8EB;
+  color:#6b360c;
+  border:1px solid rgba(217,119,6,.28);
+  box-shadow:0 8px 22px rgba(60,48,32,.16);
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mad-float-tip::after{
+  border-top-color:#FFF8EB;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mad-float-tip.is-below::after{
+  border-top-color:transparent;
+  border-bottom-color:#FFF8EB;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mad-float-tip{
+  background:#40424E;
+  color:#F5F5F4;
+  border:1px solid rgba(245,158,11,.35);
+  box-shadow:0 12px 28px rgba(0,0,0,.35);
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mad-float-tip::after{
+  border-top-color:#40424E;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mad-float-tip.is-below::after{
+  border-top-color:transparent;
+  border-bottom-color:#40424E;
+}

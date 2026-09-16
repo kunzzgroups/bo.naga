@@ -1038,3 +1038,60 @@
     bindAmberTopbarProfile();
   }
 })();
+
+
+/* --------------------------------------------------------------------------
+   Time & Date float tip.
+   The cell's own ::after tip cannot be used in this table: the header and body are two
+   separate tables (`.mas-table-head` outside, `.mas-table-body-scroll` scrolling), so the
+   first row sits flush with the scroller's top edge and a tip drawn above it is cut off —
+   and an overflow clip is not something z-index can paint over. A fixed-position element
+   escapes the clip and the header both, which is what gives the list pages' look here.
+   Borrows the shared `.mad-float-tip` look (styled for these pages in
+   main-admin-detail-executive.css) and flips below the cell when there is no room above.
+   -------------------------------------------------------------------------- */
+(function(){
+  'use strict';
+  var tip = null, host = null;
+  function box(){
+    if(!tip || !tip.isConnected){
+      tip = document.createElement('div');
+      tip.className = 'mad-float-tip';
+      tip.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(tip);
+    }
+    return tip;
+  }
+  function hide(){
+    host = null;
+    if(tip){ tip.classList.remove('is-on'); tip.classList.remove('is-below'); }
+  }
+  function place(target){
+    var text = target.getAttribute('data-date');
+    if(!text){ hide(); return; }
+    host = target;
+    var t = box();
+    t.textContent = text;
+    t.classList.add('is-on');
+    var r = target.getBoundingClientRect();
+    var tr = t.getBoundingClientRect();
+    var above = r.top - tr.height - 10;
+    var below = above < 8;                       /* no room above -> flip under the cell */
+    t.classList.toggle('is-below', below);
+    var left = Math.max(8, Math.min(r.left, window.innerWidth - tr.width - 8));
+    t.style.left = Math.round(left) + 'px';
+    t.style.top = Math.round(below ? r.bottom + 10 : above) + 'px';
+  }
+  document.addEventListener('mouseover', function(e){
+    var el = e.target && e.target.closest ? e.target.closest('.mad-time-tip') : null;
+    if(el){ if(el !== host) place(el); return; }
+    if(host) hide();
+  });
+  document.addEventListener('focusin', function(e){
+    var el = e.target && e.target.closest ? e.target.closest('.mad-time-tip') : null;
+    if(el) place(el);
+  });
+  document.addEventListener('focusout', hide);
+  window.addEventListener('scroll', hide, true);
+  window.addEventListener('resize', hide);
+})();
