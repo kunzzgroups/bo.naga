@@ -967,3 +967,30 @@ to follow across. Only the report family (a faint amber wash) and the transactio
 - Verified both themes on four pages across three families: `main-admin-detail`,
   `main-merchant-detail`, `main-merchant-profit`, `main_merchant_report` — odd/even alternate to the
   exact token values, hover intact, suspended row intact.
+
+**IPv6 addresses were cut off in the Security & Audit log (2026-09-16, owner-reported).** The
+IP Address & Location column was `18%` — measured 208px, 176px of content after padding, about 28
+characters — while an IPv6 needs far more. Measured with the cell's own font (700 12.5px, tabular):
+
+| form | chars | text | + 32px padding |
+|---|---|---|---|
+| `43.217.146.213` | 14 | 90px | 122px |
+| `2001:d08:f4:4ef8:f51e:7b6d:d0a3:7cc` (the reported one) | 35 | 217px | 249px |
+| a full-form IPv6 | 39 | 254px | 286px |
+| an IPv4-mapped IPv6 | 46 | 284px | 316px |
+
+- The column is now a fixed **290px**, which holds a full-form IPv6 with room to spare. The width
+  comes from the three text columns beside it (Administrator 18→15%, Action/Event 22→19%, Target
+  14→12.5%), which ellipsise their own long values anyway. Verified both themes: all four forms
+  `clipped: false`, the reported one on a single 53px line, and the header table and body table
+  still column-for-column aligned (this page renders them as two separate tables, so a mismatch is
+  easy to introduce).
+- `overflow-wrap:anywhere` on the address is the **guarantee, not the mechanism**: the IPv4-mapped
+  form is longer than any sane column and now wraps onto a second line instead of being silently
+  clipped. An IP is data — half an address is worse than a taller row.
+- **Trap: a `th`/`td` width is inert when the table carries a `<colgroup>`.** The first attempt set
+  `th:nth-child(5){width:290px}` and changed nothing — measured 208px after the change — because
+  this table's widths live on `<col class="mas-col-*">` elements, and in a fixed-layout table a
+  `<col>` width beats the cell width. Both the header table and the body table carry the same
+  `.mas-col-*` classes, so setting them once keeps the two in step. When a column refuses to resize,
+  check for a colgroup before re-checking the selector.

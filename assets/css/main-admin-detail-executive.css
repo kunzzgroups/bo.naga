@@ -9645,3 +9645,38 @@ html[data-bo-theme="dark"] body.main-admin-security-page .mas-table .mad-time-ti
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-table .mad-time-tip::before{
   display:none!important;
 }
+
+/* --------------------------------------------------------------------------
+   IP Address & Location must be able to show a whole IPv6.
+   Measured with the cell's own font (700 12.5px, tabular): IPv4 90px, the owner's
+   IPv6 217px, a full 39-char IPv6 254px, an IPv4-mapped IPv6 284px. The column was
+   18% (208px, 176px of content after 32px of padding) — about 28 characters — so any
+   IPv6 was cut off mid-address.
+   Fixed 290px now, which covers a full-form IPv6 (254 + 32 = 286) with room to spare,
+   and the width comes from the three text columns beside it (Administrator,
+   Action/Event, Target), which ellipsise their own long values anyway.
+   `overflow-wrap:anywhere` is the guarantee rather than the mechanism: an IPv4-mapped
+   address (284px of text) is longer than any sane column, and it now wraps onto a second
+   line instead of being silently clipped — an IP is data, and half an IP is worse than a
+   taller row.
+   -------------------------------------------------------------------------- */
+/* The widths that actually govern are on the <col> elements: this table carries a
+   colgroup (both the header table and the body table use the same .mas-col-* classes),
+   and in a fixed-layout table a <col> width beats the th/td width. Setting the th/td
+   width alone — which is what the first attempt did — changes nothing. */
+body.main-admin-security-page .mas-table .mas-col-admin{ width:15%; }
+body.main-admin-security-page .mas-table .mas-col-event{ width:19%; }
+body.main-admin-security-page .mas-table .mas-col-target{ width:12.5%; }
+body.main-admin-security-page .mas-table .mas-col-ip{ width:290px; }
+/* and the same widths on the cells, so the two stay in step if the colgroup ever goes */
+body.main-admin-security-page .mas-table th:nth-child(2),
+body.main-admin-security-page .mas-table td:nth-child(2){ width:15%; }
+body.main-admin-security-page .mas-table th:nth-child(3),
+body.main-admin-security-page .mas-table td:nth-child(3){ width:19%; }
+body.main-admin-security-page .mas-table th:nth-child(4),
+body.main-admin-security-page .mas-table td:nth-child(4){ width:12.5%; }
+body.main-admin-security-page .mas-table th:nth-child(5),
+body.main-admin-security-page .mas-table td:nth-child(5){ width:290px; }
+/* the guarantee, not the mechanism: an IPv4-mapped address is longer than any sane
+   column, and it now wraps to a second line instead of being silently clipped */
+body.main-admin-security-page .mas-ip b{ overflow-wrap:anywhere; }
