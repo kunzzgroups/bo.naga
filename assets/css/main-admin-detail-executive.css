@@ -9680,3 +9680,34 @@ body.main-admin-security-page .mas-table td:nth-child(5){ width:290px; }
 /* the guarantee, not the mechanism: an IPv4-mapped address is longer than any sane
    column, and it now wraps to a second line instead of being silently clipped */
 body.main-admin-security-page .mas-ip b{ overflow-wrap:anywhere; }
+
+/* --------------------------------------------------------------------------
+   Modal fields: the light fill was the PANEL colour, and the focus ring was cyan.
+   Measured on the Admin Detail Reset Password modal: light fill rgb(255,248,235) —
+   #FFF8EB, exactly the panel — so the field read as one flat off-white block instead of
+   an inset well; dark was already correct (#2A2C36). The locked recipe for modal fields
+   is the control well, so light takes #F5EBDC with the form border #DCC9A8, in the
+   light theme only (a dark-symmetrical rule would repaint dark's #2A2C36).
+   The focus ring was `box-shadow: rgba(33,166,215,.14)` — a literal from the retired
+   Deep Navy Cyan palette, not a token, so no token remap ever reached it; it is the teal
+   glow the owner saw. Replaced with the locked amber ring in both themes, on the same
+   selector so the value settles rather than the rule order.
+   -------------------------------------------------------------------------- */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page .mad-modal .mad-field .form-control{
+  background-color:#F5EBDC!important;
+  border-color:#DCC9A8!important;
+}
+/* The focus ring is declared twice in this file at the SAME specificity (0,4,1): an early
+   rule with a cyan literal `rgba(33,166,215,.14)` that carries !important, and this one.
+   Without !important here the cyan wins on importance alone, whatever the order — measured
+   with the field verifiably focused (document.activeElement). The same shape as the light
+   fill above: this repo's rule is to meet an !important with an !important rather than to
+   rely on specificity or load order. */
+body.main-admin-detail-page .mad-field .form-control:focus{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-field .form-control:focus{
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
