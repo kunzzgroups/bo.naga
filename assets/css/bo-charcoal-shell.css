@@ -1687,7 +1687,7 @@ body.standardized-listing-page.report-body.bo-charcoal #madEditWorkspace .mac-fi
 body.standardized-listing-page.report-body.bo-charcoal #madEditWorkspace .mac-field textarea,
 body.standardized-listing-page.report-body.bo-charcoal #madEditWorkspace .mac-pass-wrap .form-control,
 body.standardized-listing-page.report-body.bo-charcoal #madCurrencyModal .mac-field .form-control{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -1702,7 +1702,7 @@ body.standardized-listing-page.report-body.bo-charcoal #madEditWorkspace .mac-fi
   color:#57534E!important;
 }
 body.standardized-listing-page.report-body.bo-charcoal #madEditWorkspace .mac-field .rounded-select-btn{
-  background:#F5EBDC!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -1915,8 +1915,8 @@ html:not([data-bo-theme="dark"]) body.main-admin-create-page.bo-charcoal .report
 html:not([data-bo-theme="dark"]) body.main-admin-create-page.bo-charcoal .report-content .mac-field select,
 html:not([data-bo-theme="dark"]) body.main-admin-create-page.bo-charcoal .report-content .mac-field textarea,
 html:not([data-bo-theme="dark"]) body.main-admin-create-page.bo-charcoal .mad-pass-wrap .form-control{
-background:#F5EBDC!important;
-  background-color:#F5EBDC!important;
+background:#FFF8EB!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2014,7 +2014,7 @@ color:#78716C!important;
 
 /* ---- Light ---- */
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mac-section .rounded-select-btn{
-  background:#F5EBDC!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2041,7 +2041,7 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mac-provider-pane
   border-color:#EADCC8!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mac-provider-search{
-  background:#F5EBDC!important;
+  background:#FFF8EB!important;
   border-color:#EADCC8!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mac-provider-count{
@@ -2050,7 +2050,7 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mac-provider-coun
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mac-provider-markup-field .form-control,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mac-section .mac-input-group > .form-control{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2111,7 +2111,7 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .mac-section .mac-input-
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mac-section .mac-field .form-control,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mac-section .mac-field select,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mac-section .mac-field textarea{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2198,8 +2198,8 @@ html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-c
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal .mac-section .mac-field .mac-input-group .mac-input-addon,
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal .mac-section .mac-provider-markup-field .mac-input-group > .form-control,
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal .mac-section .mac-provider-markup-field .mac-input-group .mac-input-addon{
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2237,8 +2237,8 @@ html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-c
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal .mac-section .mac-field .mac-input-group.is-prefix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal .mac-section .mac-field .mac-input-group.is-suffix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal .mac-section .mac-provider-markup-field .mac-input-group.is-suffix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2277,7 +2277,7 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #madCurrencyModal 
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #madEditWorkspace input.form-control,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #madEditWorkspace .form-control,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #madCurrencyModal .form-control{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2322,8 +2322,8 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .mac-adjust-panel .mac-a
 
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #madEditWorkspace .mac-provider-markup-field .mac-input-group > input.form-control,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #madEditWorkspace .mac-provider-markup-field .mac-input-group .mac-input-addon{
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2368,13 +2368,13 @@ html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-c
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal #madCurrencyModal input.form-control,
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal #madCreditModal input.form-control,
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal #madCreditModal select.form-control{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal #madProviderMarkup{
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2447,15 +2447,15 @@ html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-c
 }
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal .modal-clean-body input.form-control,
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal .modal-clean-body select.form-control{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal #madProviderMarkup,
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal #madCurrencyModalCode,
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal #merchantCurrencyModalCode{
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2507,8 +2507,8 @@ html:not([data-bo-theme="dark"]) body #madEditWorkspace #madProviderMarkup,
 html:not([data-bo-theme="dark"]) body #madCurrencyModal #madCurrencyModalCode,
 html:not([data-bo-theme="dark"]) body #merchantCurrencyModal #merchantCurrencyModalCode,
 html:not([data-bo-theme="dark"]) body #madCurrencyModal #merchantCurrencyModalCode{
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2693,7 +2693,7 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-cal-week span
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mad-page-size-select,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .rounded-select-btn{
-  background:#F5EBDC!important;
+  background:#FFF8EB!important;
   border-color:#EADCC8!important;
   color:#18191C!important;
 }
@@ -2765,8 +2765,8 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #settlementPayment
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #settlementPaymentForm .mac-input-group > input,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #settlementPaymentForm .mac-input-group > .form-control,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal #settlementPaymentNote{
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -2807,8 +2807,8 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .rounded-select-option.a
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal .modal-clean .mac-input-group > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal .modal-clean .mac-input-group.is-prefix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html:not([data-bo-theme="dark"]) body.standardized-listing-page.report-body.bo-charcoal .modal-clean textarea.form-control{
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -3468,7 +3468,7 @@ body.report-body.bo-charcoal .mprr-field .form-control,
 body.report-body.bo-charcoal .mprr-field .form-select,
 body.report-body.bo-charcoal .report-content .mprr-field .form-control,
 body.report-body.bo-charcoal .report-content .mprr-field .form-select{
-  background:#F5EBDC!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
   box-shadow:none!important;
@@ -3534,7 +3534,7 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .mprr-amount-prefix{
    ----------------------------------------------------------------------------- */
 body.report-body.bo-charcoal.main-merchant-profit-record-page .mprr-field .rounded-select-btn,
 body.report-body.bo-charcoal.main-merchant-profit-record-page .mprr-field .rounded-select-wrap .rounded-select-btn{
-  background:#F5EBDC!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
   box-shadow:none!important;
@@ -3893,8 +3893,8 @@ html[data-bo-theme="dark"] body.report-body.standardized-listing-page.report-bod
    stacked body prefix that settled the select options above. */
 html:not([data-bo-theme="dark"]) body.report-body.standardized-listing-page.report-body.bo-charcoal .modal-clean .mac-input-group.is-prefix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html:not([data-bo-theme="dark"]) body.report-body.standardized-listing-page.report-body.bo-charcoal .modal-clean .mac-input-group > .form-control{
-  background-color:#F5EBDC!important;
-  background:#F5EBDC!important;
+  background-color:#FFF8EB!important;
+  background:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }

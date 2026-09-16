@@ -61,6 +61,23 @@
     };
   }
 
+  /* Date for the hover tip — the same dd/mm/yyyy the list pages' Last Login / Last Logout
+     tooltips use, so the two presentations match. */
+  function dateDdMmYyyy(d){
+    if(!(d instanceof Date) || isNaN(d.getTime())) return '';
+    return pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + d.getFullYear();
+  }
+
+  /* Time visible, date on hover — mirrors timeWithDateTip() in main-admin-detail.js /
+     main-merchant-detail.js. The Time & Date column used to stack both on two lines, which
+     made every row twice as tall and repeated the same date 50 times down the column. */
+  function timeWithDateTip(d){
+    if(!(d instanceof Date) || isNaN(d.getTime())) return '<span class="mad-muted">-</span>';
+    const t = formatTime(d);
+    const date = dateDdMmYyyy(d);
+    if(!date) return '<span class="mad-time">' + esc(t.time) + '</span>';
+    return '<span class="mad-time mad-time-tip" data-date="' + esc(date) + '" tabindex="0">' + esc(t.time) + '</span>';
+  }
   function initials(name){
     const s = String(name || '').trim();
     if(!s) return '?';
@@ -789,7 +806,7 @@
       const dotClass = e.tone === 'danger' ? 'is-danger' : (e.tone === 'success' ? 'is-success' : '');
       const avClass = idx % 2 ? ' is-alt' : '';
       return '<tr class="' + (blocked ? 'is-blocked' : '') + '" data-event-id="' + esc(e.id) + '">' +
-        '<td><div class="mas-time"><b>' + esc(td.time) + '</b><small>' + esc(td.date) + '</small></div></td>' +
+        '<td class="mad-time mad-detail">' + timeWithDateTip(e.at) + '</td>' +
         '<td><div class="mas-admin"><span class="mas-avatar' + avClass + '">' + esc(initials(e.adminName)) + '</span>' +
           '<div class="mas-admin-copy"><b>' + esc(e.adminName) + '</b><small>' + esc(e.roleLabel) + '</small></div></div></td>' +
         '<td><div class="mas-event"><span class="mas-dot ' + dotClass + '"></span>' +
@@ -917,4 +934,61 @@
 
   fitTableArea();
   loadAll().then(() => requestAnimationFrame(fitTableArea));
+})();
+
+
+/* --------------------------------------------------------------------------
+   Time & Date float tip.
+   The cell's own ::after tip cannot be used in this table: the header and body are two
+   separate tables (`.mas-table-head` outside, `.mas-table-body-scroll` scrolling), so the
+   first row sits flush with the scroller's top edge and a tip drawn above it is cut off —
+   and an overflow clip is not something z-index can paint over. A fixed-position element
+   escapes the clip and the header both, which is what gives the list pages' look here.
+   Borrows the shared `.mad-float-tip` look (styled for these pages in
+   main-admin-detail-executive.css) and flips below the cell when there is no room above.
+   -------------------------------------------------------------------------- */
+(function(){
+  'use strict';
+  var tip = null, host = null;
+  function box(){
+    if(!tip || !tip.isConnected){
+      tip = document.createElement('div');
+      tip.className = 'mad-float-tip';
+      tip.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(tip);
+    }
+    return tip;
+  }
+  function hide(){
+    host = null;
+    if(tip){ tip.classList.remove('is-on'); tip.classList.remove('is-below'); }
+  }
+  function place(target){
+    var text = target.getAttribute('data-date');
+    if(!text){ hide(); return; }
+    host = target;
+    var t = box();
+    t.textContent = text;
+    t.classList.add('is-on');
+    var r = target.getBoundingClientRect();
+    var tr = t.getBoundingClientRect();
+    var above = r.top - tr.height - 10;
+    var below = above < 8;                       /* no room above -> flip under the cell */
+    t.classList.toggle('is-below', below);
+    var left = Math.max(8, Math.min(r.left, window.innerWidth - tr.width - 8));
+    t.style.left = Math.round(left) + 'px';
+    t.style.top = Math.round(below ? r.bottom + 10 : above) + 'px';
+  }
+  document.addEventListener('mouseover', function(e){
+    var el = e.target && e.target.closest ? e.target.closest('.mad-time-tip') : null;
+    if(el){ if(el !== host) place(el); return; }
+    if(host) hide();
+  });
+  document.addEventListener('focusin', function(e){
+    var el = e.target && e.target.closest ? e.target.closest('.mad-time-tip') : null;
+    if(el) place(el);
+  });
+  document.addEventListener('focusout', hide);
+  window.addEventListener('scroll', hide, true);
+  window.addEventListener('resize', hide);
 })();

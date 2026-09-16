@@ -120,7 +120,7 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .field label{color:#E7E5
 
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .field input,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .field select{
-  background:#F5EBDC!important;border:1px solid #DCC9A8!important;color:#18191C!important;
+  background:#FFF8EB!important;border:1px solid #DCC9A8!important;color:#18191C!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .field input::placeholder{color:#78716C!important}
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .field input,
@@ -588,7 +588,7 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .standard-filter-g
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .standard-filter-grid select,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .rebate-worker-grid input,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .rebate-worker-grid select{
-  background:#F5EBDC!important;border:1px solid #DCC9A8!important;color:#18191C!important;
+  background:#FFF8EB!important;border:1px solid #DCC9A8!important;color:#18191C!important;
   border-radius:8px!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .rebate-form-grid input::placeholder,
@@ -779,7 +779,7 @@ html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-leg
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-select-item select,
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>select.bo-filter-select-item,
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-select-item .rounded-select-btn{
-  background:#F5EBDC!important;border:1px solid #DCC9A8!important;color:#18191C!important;border-radius:8px!important;
+  background:#FFF8EB!important;border:1px solid #DCC9A8!important;color:#18191C!important;border-radius:8px!important;
 }
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>.bo-filter-input-item input::placeholder,
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).report-body.bo-charcoal .report-main .bo-filter-row>input.bo-filter-input-item::placeholder{
@@ -859,7 +859,7 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .permission-item{
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .permission-item:hover{background:#FFFCF7!important}
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .permission-item:has(input:checked){
-  background:#FFF1DC!important;
+  background:#FFF8EB!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .permission-item input{accent-color:#D97706!important}
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .permission-item b{color:#18191C!important}
@@ -1046,7 +1046,7 @@ html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .i
 }
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .modal-clean-panel,
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .modal-clean-body{
-  background:#FFF8EB!important;border-color:#EADCC8!important;
+  background:#FFFCF7!important;border-color:#EADCC8!important;
 }
 html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .modal-clean-panel,
 html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal #adminEditModal .modal-clean-body{
@@ -1183,7 +1183,7 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .spin2-admin-card 
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .spin2-admin-card textarea,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ratio-grid input,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ratio-grid select{
-  background:#F5EBDC!important;border:1px solid #DCC9A8!important;color:#18191C!important;border-radius:8px!important;
+  background:#FFF8EB!important;border:1px solid #DCC9A8!important;color:#18191C!important;border-radius:8px!important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .spin2-admin-card input,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .spin2-admin-card select,
@@ -1438,11 +1438,16 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .value-negative{color:#F
    `background-color:#fff!important; border:1px solid #cfd8e6!important; color:#101828`, which is
    how a white input survives on a cream page. This also covers native date inputs, which no
    page-scoped sheet styles. */
+/* The .layout-code-pane exception above is not cosmetic: those textareas are a transparent overlay
+   on a highlighted <pre> (layout-section.html), so an opaque fill hides the colourised code
+   entirely. This rule matched them from the day it was written - measured at HEAD it filled them
+   #F5EBDC too, so the exception also fixes a pre-existing defect rather than only protecting the
+   #FFF8EB input fill. */
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content select,
-html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content textarea,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content textarea:not(.layout-code-pane textarea),
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content .form-select{
-  background:#F5EBDC!important;border:1px solid #DCC9A8!important;color:#18191C!important;border-radius:8px!important;
+  background:#FFF8EB!important;border:1px solid #DCC9A8!important;color:#18191C!important;border-radius:8px!important;
 }
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content input::placeholder,
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content textarea::placeholder{

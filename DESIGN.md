@@ -973,3 +973,261 @@ to follow across. Only the report family (a faint amber wash) and the transactio
 - Verified both themes on four pages across three families: `main-admin-detail`,
   `main-merchant-detail`, `main-merchant-profit`, `main_merchant_report` — odd/even alternate to the
   exact token values, hover intact, suspended row intact.
+
+**IPv6 addresses were cut off in the Security & Audit log (2026-09-16, owner-reported).** The
+IP Address & Location column was `18%` — measured 208px, 176px of content after padding, about 28
+characters — while an IPv6 needs far more. Measured with the cell's own font (700 12.5px, tabular):
+
+| form | chars | text | + 32px padding |
+|---|---|---|---|
+| `43.217.146.213` | 14 | 90px | 122px |
+| `2001:d08:f4:4ef8:f51e:7b6d:d0a3:7cc` (the reported one) | 35 | 217px | 249px |
+| a full-form IPv6 | 39 | 254px | 286px |
+| an IPv4-mapped IPv6 | 46 | 284px | 316px |
+
+- The column is now a fixed **290px**, which holds a full-form IPv6 with room to spare. The width
+  comes from the three text columns beside it (Administrator 18→15%, Action/Event 22→19%, Target
+  14→12.5%), which ellipsise their own long values anyway. Verified both themes: all four forms
+  `clipped: false`, the reported one on a single 53px line, and the header table and body table
+  still column-for-column aligned (this page renders them as two separate tables, so a mismatch is
+  easy to introduce).
+- `overflow-wrap:anywhere` on the address is the **guarantee, not the mechanism**: the IPv4-mapped
+  form is longer than any sane column and now wraps onto a second line instead of being silently
+  clipped. An IP is data — half an address is worse than a taller row.
+- **Trap: a `th`/`td` width is inert when the table carries a `<colgroup>`.** The first attempt set
+  `th:nth-child(5){width:290px}` and changed nothing — measured 208px after the change — because
+  this table's widths live on `<col class="mas-col-*">` elements, and in a fixed-layout table a
+  `<col>` width beats the cell width. Both the header table and the body table carry the same
+  `.mas-col-*` classes, so setting them once keeps the two in step. When a column refuses to resize,
+  check for a colgroup before re-checking the selector.
+
+**The Adjust Credit summary card was cold and blue, and half of it was outside the dialog
+(2026-09-16, owner-reported).** One circle on the screenshot, two unrelated causes.
+
+- **The fill.** `.mac-adjust-summary` still carried `background:linear-gradient(180deg,#F7FBFE,#F3F7FB)`
+  — a navy-era literal, and the **only light rule** for that class in the repository: every other file
+  that styles it (`bo-charcoal-shell.css`, `main-report-charcoal.css`, `main-merchant-detail-executive.css`,
+  `main-provider-family-executive.css`) is `html[data-bo-theme="dark"]` only. **A gradient survives a
+  token remap because there is no token to remap**, and the light override written in a later pass
+  covered only the avatar — so the tile read as fixed while the block around it stayed blue-white.
+  Light now takes the file's own nested-card recipe (`.mae-security-card`, `.mac-role-priv`,
+  `.mac-policy-row`): fill `#F0E4D0` on the `#FFF8EB` panel body, border `#DCC9A8`. That keeps the
+  ladder panel → card → field at `#FFF8EB` → `#F0E4D0` → `#F5EBDC`; the control well would have made
+  the card read as one more input, since the fields sit directly below it at exactly that value. Dark
+  was already correct (`#2A2C36` on the `#383A46` panel) and is untouched — one rule, both pages that
+  mount this dialog (`main-admin-detail.html`, `main-merchant-detail.html`).
+- **The structure.** Four closing tags in that dialog had lost their `<`. Upstream commit `373a659`
+  ("admin Remove Filter, Subtitle, padiing top 8px") rewrote every `—<` as `U+FFFD U+FFFD ?`, so
+  `<span …>—</span>` became `<span …>\uFFFD\uFFFD?/span>` and the parser never closed the four
+  placeholder elements. The DOM collapsed: `.mac-adjust-summary-copy` and `.mac-adjust-balance`
+  disappeared as wrappers, `#macAdjustName` ended up **three times** in the document, and the balance
+  painted at the right edge of the **viewport** instead of inside the card. Repaired to empty content,
+  matching the sibling dialog on `main-merchant-detail.html`, where `#madCreditName`, `#madCreditSub`
+  and `#madCreditBalance` are empty too.
+- **Trap: a `?/` where you expect `</` is a destroyed closing tag, and the damage is invisible to a
+  text search that does not include the `U+FFFD` bytes.** `git log -S` found it, a selector grep never
+  would; the file looked like correct markup in an editor that renders the replacement characters
+  faintly. A repo-wide sweep for the exact pair `\uFFFD\uFFFD?/` finds this file only — but the same
+  transcode also flattened every `—` in eleven CSS comments of `main-admin-detail-executive.css` and
+  in `main-admin-edit.html` and `menu-permission.html`, where the loss is cosmetic (a comment) or
+  invisible (a JS-filled placeholder) except for `Locked system handle — cannot be changed once
+  provisioned.`, which renders two replacement glyphs to the user.
+- Verified: computed fill `#F0E4D0` / `#2A2C36`, `background-image` none, border `#DCC9A8` /
+  `rgba(255,255,255,.10)`; DOM asserts exactly one of each id, `.mac-adjust-summary` with exactly two
+  children (`-main`, `-balance`), balance text `Current Credit 0.00`; rendered and read both themes.
+
+**The Target / Resource chip overran its column and painted over the IP address (2026-09-16,
+owner-reported: "左边的已经撑过来了").** The chip was `max-width:220px` — a fixed cap that cannot
+know the column it sits in. At a 1551px viewport the Target content box is 119px and
+`ADMIN OPERATION: #1` is a 154px chip, so it painted **19px** past the cell edge (60px for
+`#1234567`, 85px for a long target). Measured before/after in both themes:
+
+| target | chip | overlapped the IP column by | after |
+|---|---|---|---|
+| `ADMIN OPERATION: #1` | 154px | 19px | 2 lines, 16px gap to the IP |
+| `ADMIN OPERATION: #1234567` | 195px | 60px | 3 lines, 16px gap |
+| a long settlement label | 220px (capped) | 85px | 4 lines, row grows 52→83px |
+
+- The fix is `max-width:100%` (resolves against the cell's content box, so the chip cannot leave its
+  column at any viewport) plus wrapping, the same choice the IP column already made: a long target
+  stays readable instead of becoming `ADMIN OPERATION…`, and the row grows instead. The common value
+  wraps to two lines without growing the row at all — the Administrator column's avatar already sets
+  the 52px row height.
+- **Trap: `text-overflow:ellipsis` needs a block container.** The chip carried
+  `white-space:nowrap; overflow:hidden; text-overflow:ellipsis` on a `display:inline-flex` box, where
+  the declaration is inert — the text becomes an anonymous flex item with `overflow:visible`, so the
+  chip silently **hard-clipped** past 220px and never drew an ellipsis. Measured proof: at 154px the
+  chip's `scrollWidth` equalled its `clientWidth`, i.e. nothing was being clipped at all. Changing to
+  `inline-block` is what makes an ellipsis (or a wrap) actually behave.
+- The column moved 12.5% → 14% and Action/Event 19% → 17.5%, so the three percentage columns still sum
+  to 46.5% and the leftover distributed across the four fixed columns — including the IP column the
+  IPv6 fix depends on — is unchanged (measured: IP still 314px, address still unclipped). Measured
+  columns at 1551px: 117 / 181 / 211 / 169 / 314 / 119 / 95.
+- Verified: all four target shapes inside the cell in both axes in both themes, zebra on the Target
+  cells intact (`#3A3C48` / `#434653`), no cell in the table newly clipped after Action/Event lost
+  1.5%, chip colors still the amber pair (`rgba(217,119,6,.12)` / `#18191C` light,
+  `rgba(245,158,11,.16)` / `#FBBF24` dark).
+
+**Every input box in the panel fills `#FFF8EB` (2026-09-16, owner-directed).** "全站 main 的输入框
+背景颜色" — given first as `#FFFCF7`, corrected to `#FFF8EB`. That is the surface rung of the cream
+ladder, so fields now read by their `#DCC9A8` border instead of as a recessed `#F5EBDC` well. The
+Admin Role Create recipe already documented its own inputs as `surface #FFF8EB` and the filter/select
+recipe already said "never form well `#F5EBDC`", so the change moves the rest of the panel onto a value
+that two locked recipes had already chosen.
+
+- **A value swap, not an override sheet.** Input fills were declared in 46 stylesheets with a spread of
+  values (`#F5EBDC`, `#FFF8EB`, `#fff`, `#F0E4D0`, …), and the pages carry ID-level `!important` rules
+  (`#pcTitle`, `#madProviderMarkup`, `#settlementType`, `#menuPermissionFilter`) that out-rank any class
+  or attribute selector, so an appended override could not reach them. Result: **177 declarations in 19
+  stylesheets** had their value swapped, keeping each rule's own specificity and importance. The diff is
+  auditable — 174 added / 174 removed lines, and every line differs from its original by exactly one
+  colour token (verified by an independent script).
+- **`assets/css/bo-input-fill.css` is the guarantee, linked last on 136 pages.** It covers controls with
+  no rule of their own plus the field-shaped boxes that carry their fill through a `var(--token)` that
+  resolves per theme (those cannot be flattened to a literal without breaking dark). Its selectors are
+  scoped `body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2)` — two ids nothing carries — the
+  specificity escalation this repo already uses (`body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy)`
+  in bo-wallet-transaction-amber.css). The step count is measured: against
+  `main-report-charcoal-content.css` `…#settlementPaymentModal .modal-body .form-control{…!important}`
+  one step still lost (the textarea computed to the old value) and two won.
+- **Trap: a light guard written as `:not([data-bo-theme="dark"])` reads as "dark" to a substring test.**
+  The first sweep skipped every rule using this repo's standard light guard — 59 declarations that
+  nothing else could reach — because the scanner tested `/data-bo-theme="dark"/` against the whole
+  selector. Strip `:not(...)` bodies before asking whether a rule is dark-scoped. The misses were only
+  found by an independent coverage audit that graded every remaining non-`#FFF8EB` field fill.
+- **Trap: a comment above a rule becomes part of its selector if comments are not masked first.** The
+  first pass repainted `.mprr-amount-prefix` — a currency addon chip — because the comment above it
+  ("…so the join with the input reads as one field") contains the word *input* and the unmasked parser
+  glued the comment onto the selector. Mask `/* … */` to equal-length blanks before parsing (offsets
+  stay valid), and never let prose decide what a rule targets.
+- **What deliberately did not change:** the addon segments (`.mac-input-addon`, `.mprr-amount-prefix`,
+  `.input-group-text`) stay one rung deeper so a joined field still reads as two parts; the locked
+  `#EDE4D4` disabled/readonly state; checkboxes, radios, file and range inputs; table action wells and
+  segmented tracks; dark theme entirely (`#2A2C36` on `#383A46`); and the code editors on
+  layout-section.html, where the textarea is a transparent overlay on a highlighted `<pre>` — an opaque
+  fill would cover the code.
+- Verified: measured computed fills across 8 page families in both themes — body fields, filter selects,
+  date-range triggers, custom select buttons, amount groups, search frames, textareas, the rich-text
+  editors and the code editor; the locked username field still reads `#EDE4D4`, dark still `#2A2C36`,
+  and no dark rule gained `#FFF8EB`.
+
+**The Adjust Credit action row hovered navy, and the dialog's rings were cyan (2026-09-16,
+owner-reported: "这里的hover").** Owner's screenshot showed Save Adjustment dark blue under the
+pointer. Measured: the default state was already amber, but five `:hover` declarations competed for
+that button and the strongest was `.mac-adjust-panel .mad-modal-actions .mad-btn-navy:hover`
+`background:#0E2F52!important` — a **literal**, not a token, so no token remap could ever reach it,
+and `#0E2F52` is the darkest value in the whole palette. The same block's ghost hover was
+`border-color:rgba(33,166,215,.45)` + `var(--bo-cyan-tint)` — cyan. Values replaced with the locked
+recipe copied verbatim from the already-fixed sibling for the same dialog
+(`main-merchant-detail-executive.css`, `[data-access-page="main_merchant_detail"] .mad-modal
+.mad-modal-actions`): primary = amber gradient, hover lifts `translateY(-1px)`; ghost = cream
+gradient, hover deepens to `#F3E8D6`. Verified by cascade: the winner for the button's `:hover` is
+now `linear-gradient(0deg,#FCD34D…)` at specificity 5001, and the navy and cyan rules are out-ranked.
+
+- **Trap: a retired hue survives as a `!important` literal on an interactive state.** The tokens in
+  this file had all been remapped (`--bo-cyan` → `#D97706`, `--bo-cyan-tint` → `rgba(217,119,6,.12)`),
+  which is why the *default* states looked right and every earlier sweep passed — but 245 literals
+  (`rgba(33,166,215,…)`, `#21A6D7`, `#123B66`, `#0E2F52`, `#0B1626`, `#7DD3FC`, `rgba(18,59,102,…)`)
+  were never remapped by anything. They are now all on the amber ladder (alpha mapped 1:1, so a wash
+  stays as light as it was), and the file has zero retired literals left.
+- The focus rings in the same dialog were cyan for the same reason: `.mac-field .form-control:focus`
+  and `.rounded-select-btn:focus` carried `box-shadow: 0 0 0 3px rgba(33,166,215,.12)` — a cyan glow,
+  which is what the owner circled around the Amount field. Both now use the locked amber ring
+  `border-color:#D97706; box-shadow:0 0 0 3px rgba(217,119,6,.14)` (dark: `#F59E0B` /
+  `rgba(245,158,11,.18)`).
+- Verified: computed values on `main-admin-detail` in both themes — panel `#FFF8EB`, summary
+  `#F0E4D0`, fields `#FFF8EB` with the `#DCC9A8` border, Save amber `#F59E0B`/`#E8901A`, Cancel on
+  the cream gradient, sidebar `#FFE8CC`, and a sweep of every element inside the dialog, the content
+  column and the sidebar reports **0 elements painting a retired colour**. Two neighbouring pages
+  that load the same sheet (`main-merchant-create`, `main-admin-edit`) keep their own values.
+
+**Site-wide: zero retired-colour literals left in any stylesheet (2026-09-16, owner-directed —
+"那就全站统一这个设计吧").** The earlier fixes all found the same thing one file at a time: this
+repo's *tokens* had been remapped to charcoal+amber, but **literals** never were, so navy/cyan and
+off-system cool greys survived on states nobody looked at (hovers, focus rings, shadows, dark fills).
+A full inventory found **379 such literals across 16 stylesheets**; the mapping table
+(`.tmp-retired-map.md` at the time) recorded which literal becomes which ladder value, split by
+light/dark scope with alpha mapped 1:1, and four agents swept disjoint file sets — each proving its
+edit was value-only (equal +/- per file, identical line/EOL/BOM counts, and a re-run of the inventory
+showing 0 for its files).
+
+| family | literals | → light | → dark |
+|---|---|---|---|
+| cyan washes / rings | `rgba(33,166,215,α)` ×~74 | `rgba(217,119,6,α)` | `rgba(245,158,11,α)` |
+| navy shadows | `rgba(18,59,102,α)`, `rgba(14,47,82,α)` | `rgba(120,80,20,α)` | `rgba(0,0,0,α)` |
+| accent | `#21A6D7` ×27, `#1B94C2` | `#D97706` | `#F59E0B` |
+| navy text | `#123B66` ×28, `#0E2F52` | `#18191C` (fill `#E8901A`) | `#F5F5F4` |
+| navy-era dark fills | `#08131F`, `#0B1624`, `#0B1626`, `#132337`, `#102030`, `#152536`, `#243B55` | — | `#2C2E38` / `#1F2128` / `#2A2C36` / `#383A46` / tip `#40424E` |
+| "white chrome" on cream | `#F8FAFC`, `#F5F8FB`, `#F0F7FB`, `#EFF6FF`, `#F7FBFF`, `#EEF2F6`, `#EEF1F7` | `#FFF8EB` / `#F5EBDC` | `#2A2C36` / `#383A46` |
+| slate text | `#64748B`, `#475569`, `#94A3B8`, `#334155` | `#71717A` / `#57534E` / `#78716C` | `#A1A1AA` / `#E7E5E4` |
+| cool borders | `#D0D5DD`, `#CFD8E6` | `#DCC9A8` / `#EADCC8` | `rgba(255,255,255,.12)` |
+
+- Three of the agents' judgment calls disagreed with each other, and the review corrected them:
+  a dark page canvas (`--bo-bg`) belongs on `#2C2E38` (the value `.interface-design/system.md` and
+  four already-migrated sheets use), not the thead rung `#1F2128`; the dark **hover tip** fill is
+  `#40424E` per the system's tip table, not `#2A2C36`; and `#1B94C2` is the retired `--bo-cyan-deep`
+  (my own inventory pattern had missed it) — now `#B45309` light / `#D97706` dark.
+- Verified by rendering, not by grep: every element on nine page/theme combinations
+  (`main-admin-detail`, `main-merchant-profit`, `main-win-lose-report`, `main_merchant_report`,
+  `agent-players`, `dashboard` in light, plus the middle three in dark — 264 to 564 elements each)
+  was scanned for a retired hue in its computed background, colour, four borders, shadow and outline:
+  **0 elements**. Pins bumped on the 15 sheets that carry one (378 page references; `image-to-url.css`
+  is loaded without a `?v=` anywhere).
+- **What is still outside this sweep, deliberately:** the cool-slate *neighbourhoods* that the map did
+  not name — `#0f172a`/`#111827`/`#101828`/`#667085`/`#344054`/`#344054` in `agent-portal.css`,
+  `#11203A`/`#1C2942`/`#657187`/`#E2E7F0` fallbacks and the navy pager accents in the
+  provider-report sheet, the Bootstrap-grey layer in `brand-agent-standard.css`, and the legacy
+  navy tip fills `#0F1F33`/`#0F1C2E`. They are inert where a `bo-charcoal-*` sheet already overrides
+  the same selector with `!important`, and they are the next scoped pass rather than a guess.
+
+**Dialog chrome unified site-wide: the panel is one rung lighter than the field (2026-09-16, owner:
+"其他页面的弹窗设计…要跟图二的设计风格啊" / "全站设计呀").** Measured against the reference — the merchant
+Add Credit dialog — the other dialogs' problem was not the fields (already `#FFF8EB` everywhere) but
+the **panel**: it was also `#FFF8EB`, so fields sat on their own colour and vanished into it. That is
+the flat, washy look in the owner's first screenshot. The reference runs panel `#FFFCF7` with a
+`#DCC9A8` border, which puts every field exactly one rung below its surface.
+
+| | reference (merchant Add Credit) | the rest (before) | now |
+|---|---|---|---|
+| Panel | `#FFFCF7` · border `#DCC9A8` | `#FFF8EB` · border `#EADCC8` | `#FFFCF7` · `#DCC9A8` |
+| Field | `#FFF8EB` · border `#DCC9A8` | same ✓ | same |
+| Primary button | 40px tall | 36px | 40px |
+| Field label | `#71717A` | `#27272A` | `#71717A` |
+
+- The recipe lives in `assets/css/bo-input-fill.css` (the sheet already linked last on 136 pages)
+  rather than in a new file, under the same two-ID escalation as the field rules — a plain class
+  selector loses to `body.main-admin-detail-page .mad-modal-panel{background:var(--bo-surface)}`.
+- **Trap: a stylesheet that is edited all session but never gets a new `?v=` label is served from the
+  browser cache, so the rule looks inert.** The panel rules measured as "not applied" on exactly the
+  two pages whose dialogs keep their own `#FFF8EB` rule; after bumping the label `1.0.0 → 1.0.1` the
+  panels took `#FFFCF7` with no other change. Any time a fix "does not apply", check the pin before
+  re-reading the cascade.
+- Verified: every `[class*="modal"][class*="panel"]` element's computed fill on six page families —
+  admin-detail (2 panels), provider-credentials (3), merchant-detail (3), merchant-create (1),
+  payment-method (1) — all `#FFFCF7`, primary buttons 40px, and dark untouched (no dark rule added).
+  Coverage: 136 of 142 pages link the sheet; the six that do not are five meta-refresh redirect stubs
+  and `backup_provider.html`, an orphan fragment with no `<head>`.
+
+**Constraint after the fact (2026-09-16, owner): "不要影响我同事改的设计那些啊 设计排版 但是 颜色方面可以改".**
+Colour only — layout, spacing, type and motion belong to the designers. An audit of the four commits
+that had just landed found four places where I had crossed that line, all now reverted:
+
+- `4df6603` forced every dialog action button to `height:40px!important` — a layout property inside a
+  commit whose purpose was panel colour. Reverted in `201ab9e`. The reference dialog's buttons really
+  are 40px and the others 36px; that difference is now left visible for the design owners to settle.
+- `016afd4` copied the merchant sibling's action-row block **including its `transform`s**, so the two
+  Adjust Credit buttons gained a hover lift and — worse — their `:active` lost the sheet's own press
+  feedback (`transform:scale(.97)`) in favour of a 1px shift. Removed inside that block only
+  (`085f7f3`); the sheet's other 31 `translateY` declarations are untouched. A first attempt filtered
+  the whole file and took out 18 lines that were not mine — reverted, then redone by line range.
+- The two commits' *colour* work stands: amber gradient, cream ghost, hover colours, focus rings,
+  panel `#FFFCF7` / border `#DCC9A8`, field `#FFF8EB`, labels `#71717A`.
+- `3e9d1fc` (the retired-literal sweep) audited clean: 573 changed HTML lines are all `?v=` bumps,
+  and no `border-radius`, `font-size`, `font-weight`, `line-height`, `padding`, `margin`, `gap`,
+  `display`, `position`, `overflow` or `z-index` was touched in any of the four commits.
+- The `:not(.layout-code-pane textarea)` exclusions from `ba2a67a` are a scope change, and stay: they
+  stop the shared `.report-content` field rule from painting the code editor's transparent overlay
+  (it was already being painted before this session — that is the fix, not a disturbance).
+- **Trap, again:** the legacy panel rule I fixed at the source measured as unchanged because
+  `bo-charcoal-legacy.css` still carried `?v=1.0.0`. Bumping it to 1.0.1 is what makes the value land.
+  Every "my fix did nothing" moment today has been a stale pin.

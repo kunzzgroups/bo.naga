@@ -335,7 +335,7 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean selec
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean textarea.form-control,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mad-modal .form-control,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-content .form-control{
-  background:#F5EBDC!important;border:1px solid #DCC9A8!important;color:#18191C!important;
+  background:#FFF8EB!important;border:1px solid #DCC9A8!important;color:#18191C!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .modal-clean .form-control::placeholder,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .mad-modal .form-control::placeholder{
@@ -355,7 +355,7 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-form-secti
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-form-section input,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-form-section select,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .policy-form-section .form-control{
-  background:#F5EBDC!important;border:1px solid #DCC9A8!important;color:#18191C!important;
+  background:#FFF8EB!important;border:1px solid #DCC9A8!important;color:#18191C!important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean textarea,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .modal-clean-body textarea,

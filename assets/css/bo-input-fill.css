@@ -1,0 +1,165 @@
+/* ==========================================================================
+   Form control fill — one value for every input box on the panel
+   ==========================================================================
+
+   Owner-directed (2026-09-16): every input box on the LIGHT theme fills with
+   #FFF8EB. The first instruction was #FFFCF7 and the owner corrected it to
+   #FFF8EB, which is the panel/surface rung of the cream ladder — so the fields
+   now sit on the same value as the cards they live on and are read by their
+   border, rather than as a recessed #F5EBDC control well. `.interface-design/system.md`
+   and DESIGN.md were updated in the same pass on purpose: the old value is written
+   down there as locked, and a stale "locked" line is exactly how a change like this
+   gets silently reverted by the next person who reads the doc.
+
+   LIGHT THEME ONLY. Dark keeps the locked dark well (#2A2C36 on the #383A46
+   panel). There is no dark rule in this file, deliberately.
+
+   HOW THE VALUE IS HELD UP — two mechanisms, both needed:
+     1. The declarations themselves were fixed at the source: 177 value swaps across
+        19 stylesheets, every one of them a light field fill (#F5EBDC 21, #fff 49,
+        #F0E4D0 1, #FFF1DC, …) becoming #FFF8EB. A value swap keeps each rule's own
+        specificity and importance intact, which an appended override cannot do for the
+        ID-level rules this repo is full of (`#pcTitle`, `#madProviderMarkup`,
+        `#settlementType`, `#menuPermissionFilter`, …). The diff is auditable: every
+        changed line differs from its original by exactly one colour token.
+     2. This sheet is the guarantee for everything a value swap could not reach: controls
+        with no rule of their own, and the field-shaped boxes that carry a fill through a
+        `var(--token)` which resolves per theme — those cannot be flattened to a literal
+        without breaking dark, so they are overridden here under a light guard instead.
+
+   WHY `body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2)`: nothing in the markup carries
+   either id. This is the specificity escalation this repo already uses
+   (`body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy)` in
+   bo-wallet-transaction-amber.css), and the step count is measured, not guessed: against
+   main-report-charcoal-content.css `…#settlementPaymentModal .modal-body .form-control{
+   background:#F5EBDC!important}` a single step still lost — the textarea computed to the old
+   #F5EBDC — and two steps won. Without them this file documents an intent it cannot enforce.
+
+   `background-color` only, never the `background` shorthand: a select draws its caret with
+   a background-image, and the shorthand would wipe it. Verified that no light-theme rule
+   fills a control with a gradient, so a colour override is enough to be visible everywhere.
+   -------------------------------------------------------------------------- */
+
+/* 1. The real controls, whatever their class — 875 inputs, 379 selects and 60 textareas
+      across the 142 pages carry 29 different class names, so the tag is the reliable
+      selector and the :not() list is the exclusion set:
+        · hidden     — no box to fill
+        · checkbox / radio / file / range / color — not text fields
+        · submit / button / reset — buttons, not fields
+        · :disabled / [readonly] — locked fields keep the #EDE4D4 dead state
+          (e.g. #madEditUsername on the edit page, which is `readonly`) */
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not(:disabled):not([readonly]),
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) select:not(:disabled),
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:not(:disabled):not([readonly]):not(.layout-code-pane textarea){
+  background-color:#FFF8EB!important;
+}
+/* The one control that must stay transparent, and why: the code editors on layout-section.html
+   are an overlay trick — a `.layout-code-highlight` layer paints the colourised code and the
+   textarea sits on top with `color:transparent` to catch the caret, so an opaque fill would
+   cover the code and leave an empty box. The `:not(.layout-code-pane textarea)` above is a
+   Selectors-4 complex :not() (Chrome-supported). Measured on layout-section.html: the textarea
+   still computes to transparent. */
+
+/* 2. The field-shaped widgets that are not <input>/<select>/<textarea>. Each of these is
+      either the box the user types into or the box that stands in for one:
+        · .ref-range-trigger / .bo-range-trigger — the date-range field is a <button>
+        · .rounded-select-btn / [role="combobox"] — the custom select driver
+          (bo-ui-standard.js) replaces native selects with a button
+        · .mad-search and the other search frames (.banner-search, .category-search-control,
+          .game-search-control, .input-icon-wrap, .agent-search-box, .mac-provider-search,
+          .mac-provider-override-control) — the frame carries the fill or the field reads
+          two-tone at the edges, because the input inside them is transparent by design
+        · .msr-amount-group / .mac-input-group / .msr-payment-fields and the inline date
+          ranges (.bo-date-range-inline, .agent-withdraw-amount, .agent-withdraw-date-range)
+          — the shell is the field; the inner input lands on the same value and the addon
+          keeps its nested tone so the segment still reads as a segment
+        · [contenteditable="true"] — the rich-text editors (page-customize's .pc-rich,
+          promotion's .promo-wysiwyg-editor, frontend-display's .marquee-editor) are fields
+          with no form element at all */
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .ref-range-trigger,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .bo-range-trigger,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .rounded-select-btn,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) [role="combobox"],
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-search,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .msr-amount-group,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mac-input-group,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .msr-payment-fields,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .banner-search,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .category-search-control,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .game-search-control,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .input-icon-wrap,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .ref-input-icon,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .agent-search-box,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mac-provider-search,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mac-provider-override-control,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .bo-date-range-inline,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .agent-withdraw-amount,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .agent-withdraw-date-range,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) [contenteditable="true"]{
+  background-color:#FFF8EB!important;
+}
+
+/* 3. Hover and focus keep the same fill, so the field does not flash a different colour when
+      the pointer or the caret arrives — the amber border and ring (the locked recipe) remain
+      the only state change. */
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:hover:not(:disabled):not([readonly]),
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:focus:not(:disabled):not([readonly]),
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) select:hover:not(:disabled),
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) select:focus:not(:disabled),
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:hover:not(:disabled):not([readonly]),
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:focus:not(:disabled):not([readonly]){
+  background-color:#FFF8EB!important;
+}
+
+/* 4. Deliberately NOT changed, so the next reader does not "fix" them:
+        · .mac-input-addon, .mprr-amount-prefix, .input-group-text and the other addon
+          segments — the currency/unit chip joined to a field, which the design system
+          keeps one rung deeper so the join reads as two parts of one control. They are
+          NOT input wells, and a comment above one of them mentioning "input" is not a
+          reason to repaint it.
+        · .form-check-input / .mad-row-check-input / .mad-row-check-box — check and
+          selection boxes, not fields
+        · .asset-file, install-app-file — file inputs behind upload buttons
+        · .bo-tx-action-btn and the other action wells — buttons in a table
+        · segmented controls (.mac-credit-mode, .mae-status-seg, panel tabs) — their wells
+          are tracks, and the active segment is the lifted chip
+        · disabled / readonly fields — the locked #EDE4D4 state
+        · .layout-code-highlight and the code-editor overlay textarea (rule 1 excludes it)
+      If a future page needs a field that is not a form element and is not in rule 2, add
+      it there rather than widening rule 1. */
+
+/* ==========================================================================
+   Dialog chrome — the panel is one rung LIGHTER than the field
+   ==========================================================================
+
+   Owner-directed (2026-09-16, "其他页面的弹窗设计…要跟图二的设计风格"): the dialogs are to match the
+   merchant Add Credit dialog, which is the design that reads correctly. Measured against it, the
+   other dialogs' problem was NOT the fields (they were already #FFF8EB) but the PANEL: it was also
+   #FFF8EB, so the fields sat on their own colour and vanished into the panel — the flat, washy look
+   in the owner's screenshot. The reference has panel #FFFCF7 with a #DCC9A8 border, which puts each
+   field one rung deeper than its surface and lets the border do the separating.
+
+   Measured (light, per dialog):  panel  #FFF8EB -> #FFFCF7     border  #EADCC8 -> #DCC9A8
+                                  primary button height 36px -> 40px
+                                  field labels #27272A -> #71717A (the locked muted)
+
+   This lives in the sheet that is already linked last on 136 pages rather than in a new file: it is
+   the same surface decision as the field fill (one ladder, two rungs) and it needs the same
+   last-in-cascade position to beat the per-page panel rules. Extract it to its own sheet if it grows.
+   Light theme only — dark keeps its own panel rungs. */
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-modal .mad-modal-panel,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-modal .modal-clean-panel,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .modal-clean .modal-clean-panel,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-pass-modal-panel{
+  background-color:#FFFCF7!important;
+  border-color:#DCC9A8!important;
+}
+/* Button height 36 -> 40px was part of the first pass (the reference dialog runs 40px) and was
+   REVERTED on the owner's instruction: only colour may change, layout belongs to the designers.
+   The 4px difference between the reference and the other dialogs is therefore still there, on
+   purpose, for them to decide. */
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-modal-panel .mac-label,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-modal-panel .mad-label,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-pass-modal-panel .mac-label{
+  color:#71717A!important;
+}

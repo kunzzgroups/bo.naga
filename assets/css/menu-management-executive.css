@@ -907,7 +907,7 @@ html[data-bo-theme="dark"] body.menu-mgmt-page .menu-name-cell > i{
   color:var(--bo-cyan)!important;
 }
 html[data-bo-theme="dark"] body.menu-mgmt-page .menu-type-pill.group{
-  color:#7DD3FC;
+  color:#FBBF24;
   background:rgba(245,158,11,.18);
   border-color:rgba(245,158,11,.28);
 }
@@ -924,10 +924,10 @@ html[data-bo-theme="dark"] body.menu-mgmt-page .menu-type-pill.orphan{
 html[data-bo-theme="dark"] body.menu-mgmt-page .menu-tree-toggle{
   border-color:rgba(245,158,11,.28);
   background:rgba(245,158,11,.12);
-  color:#7DD3FC;
+  color:#FBBF24;
 }
 html[data-bo-theme="dark"] body.menu-mgmt-page .menu-child-count{
-  color:#7DD3FC;
+  color:#FBBF24;
   background:rgba(245,158,11,.18);
 }
 html[data-bo-theme="dark"] body.menu-mgmt-page .menu-child-count.is-zero{

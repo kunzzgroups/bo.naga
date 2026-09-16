@@ -3,6 +3,12 @@ const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,
 let page=0,totalPages=0;
 async function api(path){const base=String(API_CONFIG.BASE_URL||'').replace(/\/$/,'');const r=await fetch(base+path,{headers:{...BO_AUTH.authHeader(),'X-Brand-Id':'1'},cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw Error(j.message||'Request failed');return j.data??j}
 function dt(v){return window.BO_FORMAT?.dateTime?BO_FORMAT.dateTime(v):(v?String(v).replace('T',' ').slice(0,19):'-')}
+
+/* Time visible, date in the hover tip — the presentation the Security & Audit log uses.
+   Both halves come from BO_FORMAT, which is what applies the bo_timezone setting; parsing
+   the raw value here would ignore it. Splitting its output keeps the two in step. */
+function dtParts(v){const f=String(dt(v)),i=f.indexOf(' ');return i>0?{date:f.slice(0,i),time:f.slice(i+1)}:{date:'',time:f}}
+function whenCell(v){const p=dtParts(v);if(!p.date)return '<span class="mad-time">'+esc(p.time)+'</span>';return '<span class="mad-time mad-time-tip" data-date="'+esc(p.date)+'" tabindex="0">'+esc(p.time)+'</span>'}
 function parseAfter(x){try{return JSON.parse(x.afterJson||'{}')}catch(e){return {}}}
 function ctx(x){const a=parseAfter(x);return a.businessContext||{}}
 function fields(x){return ctx(x).fields||{}}
@@ -11,7 +17,7 @@ function action(x){return String(x.action||'UPDATE').replaceAll('_',' ')}
 function status(x){const a=parseAfter(x),ok=a.success!==false&&Number(a.httpStatus||200)<400;return `<span class="settlement-status ${ok?'success':'danger'}">${ok?'Success':'Failed'}</span>`}
 function detail(x){const a=parseAfter(x),parts=[];if(a.settlementCostPercent!=null)parts.push('Provider rate: '+a.settlementCostPercent+'%');if(a.settlementCostBasis)parts.push('Basis: '+a.settlementCostBasis);if(a.currency)parts.push('Currency: '+a.currency);if(a.status)parts.push('Status: '+a.status);const e=a.extra||{};if(e.direction)parts.push(e.direction==='PAY'?'Pay to provider':'Collect from provider');if(e.amount!=null)parts.push('Amount: '+e.amount);if(e.month)parts.push('Month: '+e.month);if(e.paymentDate)parts.push('Payment: '+e.paymentDate);if(e.toMonth)parts.push('Carried to: '+e.toMonth);if(a.balance!=null)parts.push('Balance: '+a.balance);return parts.length?parts.join(' · '):(x.detail||'-')}
 function pager(){const box=$('mpaPager');if(!box)return;box.innerHTML='';if(totalPages<=1)return;const add=(label,p,disabled,active)=>{const b=document.createElement('button');b.type='button';b.className='mad-btn mad-btn-ghost'+(active?' active':'');b.textContent=label;b.disabled=disabled;b.onclick=()=>{page=p;load()};box.appendChild(b)};add('Previous',Math.max(0,page-1),page===0,false);let a=Math.max(0,page-2),z=Math.min(totalPages-1,a+4);a=Math.max(0,z-4);for(let i=a;i<=z;i++)add(String(i+1),i,false,i===page);add('Next',Math.min(totalPages-1,page+1),page>=totalPages-1,false)}
-async function load(){const body=$('mpaRows'),size=Number($('mpaPageSize')?.value||20);body.innerHTML='<tr><td colspan="7" class="mad-empty">Loading activity...</td></tr>';try{const q=new URLSearchParams({page:String(page),size:String(size)});if($('mpaActor')?.value.trim())q.set('actor',$('mpaActor').value.trim());if($('reportDateFrom')?.value)q.set('from',$('reportDateFrom').value);if($('reportDateTo')?.value)q.set('to',$('reportDateTo').value);const d=await api('/admin/main/provider-activity?'+q),a=d.content||[];totalPages=Number(d.totalPages||0);body.innerHTML=a.map(x=>`<tr><td>${esc(dt(x.createdAt))}</td><td><b>${esc(providerTarget(x))}</b></td><td>${esc(action(x))}</td><td><b>${esc(x.actor||'SYSTEM')}</b></td><td>${esc(detail(x))}</td><td>${esc(x.ipAddress||'-')}</td><td>${status(x)}</td></tr>`).join('')||'<tr><td colspan="7" class="mad-empty">No provider business activity found.</td></tr>';const total=Number(d.totalElements||0),from=total?page*size+1:0,to=Math.min(total,(page+1)*size);$('mpaInfo').textContent=`Showing ${from} to ${to} of ${total} entries`;pager()}catch(e){body.innerHTML=`<tr><td colspan="7" class="mad-empty text-danger">${esc(e.message)}</td></tr>`;$('mpaInfo').textContent='Showing 0 records';$('mpaPager').innerHTML=''}}
+async function load(){const body=$('mpaRows'),size=Number($('mpaPageSize')?.value||20);body.innerHTML='<tr><td colspan="7" class="mad-empty">Loading activity...</td></tr>';try{const q=new URLSearchParams({page:String(page),size:String(size)});if($('mpaActor')?.value.trim())q.set('actor',$('mpaActor').value.trim());if($('reportDateFrom')?.value)q.set('from',$('reportDateFrom').value);if($('reportDateTo')?.value)q.set('to',$('reportDateTo').value);const d=await api('/admin/main/provider-activity?'+q),a=d.content||[];totalPages=Number(d.totalPages||0);body.innerHTML=a.map(x=>`<tr><td class="mad-time-cell">${whenCell(x.createdAt)}</td><td><b>${esc(providerTarget(x))}</b></td><td>${esc(action(x))}</td><td><b>${esc(x.actor||'SYSTEM')}</b></td><td>${esc(detail(x))}</td><td>${esc(x.ipAddress||'-')}</td><td>${status(x)}</td></tr>`).join('')||'<tr><td colspan="7" class="mad-empty">No provider business activity found.</td></tr>';const total=Number(d.totalElements||0),from=total?page*size+1:0,to=Math.min(total,(page+1)*size);$('mpaInfo').textContent=`Showing ${from} to ${to} of ${total} entries`;pager()}catch(e){body.innerHTML=`<tr><td colspan="7" class="mad-empty text-danger">${esc(e.message)}</td></tr>`;$('mpaInfo').textContent='Showing 0 records';$('mpaPager').innerHTML=''}}
 /* ---------------------------------------------------------------------------
    Date-range picker — the fifth copy of the family calendar (the settlement ledger,
    security, profit and the merchant report each carry one; a shared driver is the
@@ -132,4 +138,54 @@ function setupDatePicker(){
 }
 
 BO_AUTH.requireLogin();setupDatePicker();load();$('mpaRefresh')?.addEventListener('click',()=>{page=0;load()});$('mpaPageSize')?.addEventListener('change',()=>{page=0;load()});$('mpaActor')?.addEventListener('change',()=>{page=0;load()});
+})();
+
+
+/* Float tip for the Date & Time column. The cell's own ::after tip is unusable here for the
+   same reason as on the Security log: the table sits inside clipping ancestors, so a tip drawn
+   above the first row is cut. A fixed-position element escapes the clip and paints over
+   everything, and it flips below the cell when there is no room above. Same runtime as
+   main-admin-security.js / main-merchant-security.js — the repo already carries several copies
+   of the date picker for the same reason, and a shared driver is the eventual cleanup. */
+(function(){
+  'use strict';
+  var tip = null, host = null;
+  function box(){
+    if(!tip || !tip.isConnected){
+      tip = document.createElement('div');
+      tip.className = 'mad-float-tip';
+      tip.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(tip);
+    }
+    return tip;
+  }
+  function hide(){ host = null; if(tip){ tip.classList.remove('is-on'); tip.classList.remove('is-below'); } }
+  function place(target){
+    var text = target.getAttribute('data-date');
+    if(!text){ hide(); return; }
+    host = target;
+    var t = box();
+    t.textContent = text;
+    t.classList.add('is-on');
+    var r = target.getBoundingClientRect();
+    var tr = t.getBoundingClientRect();
+    var above = r.top - tr.height - 10;
+    var below = above < 8;
+    t.classList.toggle('is-below', below);
+    var left = Math.max(8, Math.min(r.left, window.innerWidth - tr.width - 8));
+    t.style.left = Math.round(left) + 'px';
+    t.style.top = Math.round(below ? r.bottom + 10 : above) + 'px';
+  }
+  document.addEventListener('mouseover', function(e){
+    var el = e.target && e.target.closest ? e.target.closest('.mad-time-tip') : null;
+    if(el){ if(el !== host) place(el); return; }
+    if(host) hide();
+  });
+  document.addEventListener('focusin', function(e){
+    var el = e.target && e.target.closest ? e.target.closest('.mad-time-tip') : null;
+    if(el) place(el);
+  });
+  document.addEventListener('focusout', hide);
+  window.addEventListener('scroll', hide, true);
+  window.addEventListener('resize', hide);
 })();

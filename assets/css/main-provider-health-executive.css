@@ -101,7 +101,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content select,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content .form-select{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border:1px solid #DCC9A8!important;
   border-radius:8px!important;
   color:#18191C!important;
@@ -121,7 +121,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-famil
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):hover,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content select:hover,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content .form-select:hover{
-  background-color:#F0E4D0!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
@@ -598,7 +598,7 @@ body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .m
 }
 /* ---- Light ---- */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-wrap .rounded-select-btn{
-  background-color:#F5EBDC!important;
+  background-color:#FFF8EB!important;
   border:1px solid #DCC9A8!important;
   color:#18191C!important;
   box-shadow:none!important;
@@ -608,7 +608,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-famil
   color:#71717A;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-wrap .rounded-select-btn:hover{
-  background-color:#F0E4D0!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
 }
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-footer .rounded-select-wrap .rounded-select-btn.open,
@@ -805,4 +805,65 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
     border:0!important;
     border-radius:0!important;
   }
+}
+
+/* --------------------------------------------------------------------------
+   Date & Time column — the time in the cell, the date in a float tip on hover.
+   Same presentation as the Security & Audit log (main-admin-detail-executive.css), scoped
+   here to this page's own marker class.
+   The cell's built-in ::after tip is switched off: it is positioned above the cell, and
+   this table sits inside clipping ancestors, so for the first row (any row at the top of the
+   scroll box) it is cut off — and an overflow clip is not something z-index paints over.
+   The float tip is `position:fixed` on <body>, so it escapes the clip and paints above
+   everything; JS (main-provider-activity.js) positions it and flips it below when there is
+   no room above. One tip, not two: with the pseudo left on, both would render on hover.
+   -------------------------------------------------------------------------- */
+body.main-provider-stub-page .mad-float-tip{
+  position:fixed;
+  z-index:30000;
+  pointer-events:none;
+  padding:7px 14px;
+  border-radius:999px;
+  font-size:12.5px;
+  font-weight:700;
+  line-height:1;
+  white-space:nowrap;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .12s ease, transform .12s ease;
+}
+body.main-provider-stub-page .mad-float-tip.is-on{ opacity:1; visibility:visible; }
+body.main-provider-stub-page .mad-float-tip::after{
+  content:"";
+  position:absolute;
+  left:16px;
+  top:100%;
+  border:6px solid transparent;
+}
+body.main-provider-stub-page .mad-float-tip.is-below::after{ top:auto; bottom:100%; }
+html:not([data-bo-theme="dark"]) body.main-provider-stub-page .mad-float-tip{
+  background:#FFF8EB; color:#6b360c; border:1px solid rgba(217,119,6,.28);
+  box-shadow:0 8px 22px rgba(60,48,32,.16);
+}
+html:not([data-bo-theme="dark"]) body.main-provider-stub-page .mad-float-tip::after{ border-top-color:#FFF8EB; }
+html:not([data-bo-theme="dark"]) body.main-provider-stub-page .mad-float-tip.is-below::after{
+  border-top-color:transparent; border-bottom-color:#FFF8EB;
+}
+html[data-bo-theme="dark"] body.main-provider-stub-page .mad-float-tip{
+  background:#40424E; color:#F5F5F4; border:1px solid rgba(245,158,11,.35);
+  box-shadow:0 12px 28px rgba(0,0,0,.35);
+}
+html[data-bo-theme="dark"] body.main-provider-stub-page .mad-float-tip::after{ border-top-color:#40424E; }
+html[data-bo-theme="dark"] body.main-provider-stub-page .mad-float-tip.is-below::after{
+  border-top-color:transparent; border-bottom-color:#40424E;
+}
+/* one tip only */
+body.main-provider-stub-page .mad-table .mad-time-tip::after,
+body.main-provider-stub-page .mad-table .mad-time-tip::before{ display:none!important; }
+/* the locked "muted / time" tone for the visible time */
+html:not([data-bo-theme="dark"]) body.main-provider-stub-page .mad-table .mad-time{
+  color:#57534E; font-weight:600; font-variant-numeric:tabular-nums;
+}
+html[data-bo-theme="dark"] body.main-provider-stub-page .mad-table .mad-time{
+  color:#D4D4D8; font-weight:600; font-variant-numeric:tabular-nums;
 }
