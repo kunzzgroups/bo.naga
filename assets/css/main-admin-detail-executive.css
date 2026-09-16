@@ -4444,13 +4444,11 @@ body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-ghost:
   border-color:#E0D0B8!important;
   color:#18191C!important;
   box-shadow:0 2px 4px rgba(24,25,28,.08),0 4px 10px rgba(24,25,28,.07)!important;
-  transform:translateY(-1px)!important;
 }
 body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-ghost:active{
   background-image:linear-gradient(180deg,#FFF1DC 0%,#EADCC8 100%)!important;
   border-color:#E0D0B8!important;
   box-shadow:0 1px 2px rgba(24,25,28,.06)!important;
-  transform:translateY(1px)!important;
 }
 body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-navy,
 body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-primary,
@@ -4461,7 +4459,6 @@ body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-primar
   border:1px solid #E8901A!important;
   color:#FFFFFF!important;
   box-shadow:0 1px 2px rgba(217,119,6,.18),0 4px 10px rgba(217,119,6,.22),inset 0 1px 0 rgba(255,255,255,.35)!important;
-  transform:translateY(0);
   filter:none!important;
 }
 body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-navy:hover,
@@ -4473,7 +4470,6 @@ body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-primar
   border-color:#F59E0B!important;
   color:#FFFFFF!important;
   box-shadow:0 2px 4px rgba(217,119,6,.22),0 8px 18px rgba(217,119,6,.28),inset 0 1px 0 rgba(255,255,255,.45)!important;
-  transform:translateY(-1px)!important;
 }
 body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-navy:active,
 body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-primary:active,
@@ -4483,7 +4479,6 @@ body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-primar
   border-color:#E8901A!important;
   color:#FFFFFF!important;
   box-shadow:0 1px 2px rgba(217,119,6,.16),inset 0 1px 0 rgba(255,255,255,.2)!important;
-  transform:translateY(1px)!important;
 }
 body.main-admin-detail-page .mac-adjust-panel .rounded-select-menu:empty,
 body.main-admin-detail-page .mac-adjust-panel .rounded-select-menu:not(:has(.rounded-select-option[data-value]:not([data-value=""]))){
