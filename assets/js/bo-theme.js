@@ -1,4 +1,7 @@
-/* Shared Deep Navy Cyan theme toggle. Key: localStorage bo_theme = light|dark */
+/* Shared theme toggle. Key: localStorage bo_theme = light|dark.
+   The name is historical: the retired Deep Navy Cyan palette is gone and both themes now
+   render the locked Charcoal + Amber system (DESIGN.md). A page opts in by shipping
+   <button class="bo-theme-btn" id="boThemeToggle"> inside .report-actions. */
 (function(global){
   'use strict';
   const THEME_KEY = 'bo_theme';

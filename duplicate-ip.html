@@ -18,8 +18,12 @@
     <link href="assets/css/reports.css?v=1.0.49" rel="stylesheet" />
   <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet" />
   <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet" />
+<link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-shell.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-legacy.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
 </head>
-  <body class="report-body">
+  <body class="report-body bo-charcoal bo-account-chip">
     <div class="report-shell">
       <aside class="report-sidebar" id="reportSidebar">
         <div class="report-brand">
@@ -42,7 +46,13 @@
               <h1>Duplicate IP Checker</h1>
             </div>
           </div>
-          <div class="report-actions" data-bo-profile></div>
+          <div class="report-actions">
+      <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
+        <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
+        <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
+      </button>
+      <div data-bo-profile></div>
+    </div>
         </header>
         <section class="report-content">
           <div class="filter-card">
@@ -138,5 +148,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
 <script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
+<script src="assets/js/bo-theme.js?v=1.0.0"></script>
+<script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
 </body>
 </html>

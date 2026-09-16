@@ -424,7 +424,23 @@ Markup: `.ref-date-field > .ref-range-wrap > .ref-range-trigger` + `.ref-range-p
 4. Bump the pin in that page.
 5. Verify by measuring the reference and the new page side by side, both themes, on: trigger, panel, calendar well, rail, rail item + active, head buttons, week row, muted day, in-range day, edge day, month active, day-grid `gap`, panel/rail `box-shadow`. Ignore the per-page quantities from the list above. Light and dark should both come back empty.
 
-**Known deviation:** `main-merchant-settlement.html` paints the active rail item as a **wash** (`rgba(217,119,6,.16)` / `rgba(245,158,11,.2)`) instead of the solid fill — a page-scoped rule in `main-merchant-detail-executive.css`, not this contract. One rule to remove if the family should be fully uniform.
+**Resolved 2026-09-16 — the picker is uniform across all ten pages that carry it.** Two
+inconsistencies were closed, both found by comparing `getComputedStyle` ACROSS pages rather than
+by any colour audit:
+
+- The active rail item was a **wash** on `main-merchant-balance.html` (the picker's rail buttons
+  also carry `.rounded-select-option`, and the enhanced-select rule for that class paints `active`
+  as a wash — with a `html:not([data-bo-theme="dark"])` prefix, one class-level above an
+  unprefixed family selector, so a later unprefixed restatement lost).
+- The dark label was **white** on `main-admin-security.html` and `main-merchant-security.html`
+  where every other page (including the reference) measures `#2A2C36`.
+
+Both are invisible to a colour sweep — the values are amber in every case — and invisible to a
+review by eye at screenshot scale. They were only visible as a *disagreement across pages*.
+**When a component appears on many pages, diff its computed style between them; that comparison
+finds a class of defect nothing else does.**
+
+Superseded note (kept for history): `main-merchant-settlement.html` painted the active rail item as a **wash** (`rgba(217,119,6,.16)` / `rgba(245,158,11,.2)`) instead of the solid fill — a page-scoped rule in `main-merchant-detail-executive.css`, not this contract. One rule to remove if the family should be fully uniform.
 ### Provider family — migrated 2026-09-15
 
 `main-provider-detail.html`, `main-provider-credentials.html`, `main-provider-health.html` now run Charcoal + Amber.
@@ -466,6 +482,150 @@ Light: form pages use the **layer ladder** (lifted cards + warm shadow + amber r
 ## Shapes
 
 Action controls / theme toggle `8px`, cards `16px`, topbar avatar `12px`, chart hover tip `.trend-tip` `8px`, pills/switches `999px`, nav ~`10px`.
+
+### Opt-in `bo-charcoal` layers — the mechanism for every remaining page (2026-09-15)
+
+The twenty-odd pages documented above migrate family by family, each with its own rescoped copy
+of the charcoal block. The remaining pages do not share those families and mostly do not speak
+the `.mad-*` vocabulary at all, so they migrate through **three shared layers plus a marker
+class** instead:
+
+| File | Covers |
+|------|--------|
+| `assets/css/bo-charcoal-shell.css` | Mechanical rescope of `main-merchant-detail-executive.css` (875 prefixes, weight-preserving) — shell chrome (canvas, sidebar, topbar, tabs, filter bar, table, footer, pager, buttons, modals, tips) and the `.mad-*` content vocabulary |
+| `assets/css/bo-charcoal-legacy.css` | The `reports.css` and "standard" vocabularies the unmigrated pages actually use: `.filter-card .table-card .summary-card .report-table .metric .quick-stats .field .seg .notice .table-wrap .clean-btn .standard-list-card .standard-data-table .table-footer .entries-control .pagination-clean .page-btn .user-toolbar .user-metric .permission-* .main-mod-* .settlement-*`, plus the filter-row controls, panel surfaces, icon buttons, the date-range trigger, empty states, and the Bootstrap table variables |
+| `assets/css/bo-charcoal-primitives.css` | Components that had no owner or several contradictory ones: `.bo-ui-button*`, `.mad-btn*` (no base rule existed), Bootstrap and `.modal-clean*` / `.mad-modal*` / page modal families, `.rounded-select-*` (three to four competing definitions), `.bo-seg-thumb`, tips, the whole date-range picker, a toast primitive, switches, checkboxes, uploads |
+
+**Scope and safety.** Every rule is keyed to a `bo-charcoal` marker class that is added to a
+page's `<body>` only when that page is migrated. Nothing repaints until a page opts in, so the
+blast radius of a shared layer is exactly the set of pages that carry the marker. The layers load
+after every legacy stylesheet on the page; the rescope keeps its source's specificity exactly
+(one class-level replaces one attribute-level), which is what lets the verified amber rules
+transfer unchanged.
+
+**Per-page recipe.** Add `bo-charcoal bo-account-chip` to `<body>`; append `bo-account-chip.css`,
+`bo-charcoal-shell.css`, `bo-charcoal-legacy.css`, `bo-charcoal-primitives.css` after the last
+`assets/css` link; put the locked theme toggle in `.report-actions` with `[data-bo-profile]` as a
+direct sibling (both `auth.js` and `agent-portal.js` overwrite that element's `innerHTML`, and
+`bo-account-chip.css` keys on the direct-child step); add `bo-theme.js` + `bo-account-chip.js`.
+**Most of the remaining pages had no theme toggle at all**, so dark mode was simply unreachable
+on them — `data-bo-theme` was never written.
+
+### Traps this migration found (each cost a pass)
+
+1. **A malformed `:is()` list can make a whole family inert.** `main-report-charcoal.css` had four
+   `data-access-page` values concatenated without commas, so they formed one impossible compound
+   selector — 1307 rules never matched. `main-merchant-transactions.html` was documented as
+   migrated and still rendered the retired navy. If a migrated page shows legacy chrome, check the
+   scope selector before anything else.
+2. **`bootstrap.min.css` is cross-origin.** Its rules never appear in a same-origin style audit,
+   and no page selector out-ranks `.table > :not(caption) > * > *` cleanly. That is why white
+   `<th>`/`<td>` survived every attempt to name table classes. Bootstrap drives every table colour
+   from custom properties, so the fix is `--bs-table-bg` / `--bs-table-color` /
+   `--bs-table-border-color` / `--bs-table-striped-*` / `--bs-table-hover-*` (and `--bs-body-bg`,
+   `--bs-border-color`, the `.btn` set) on `.table` — one rule, every Bootstrap table.
+3. **`!important` parity is not enough; ID level is.** `bo-ui-standard.css` guards its filter row
+   with `body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy)` — two ID-level `:not()`
+   steps whose stated purpose is to out-rank "every legacy page-level filter rule". A class-level
+   `!important` ties on importance and loses on specificity, so the locked layer mirrors the shape
+   with two ID steps and more class weight. `bo-charcoal-off` on `<body>` is the opt-in escape.
+4. **A mechanical retint must be value-driven, not list-driven.** The locked palette contains no
+   cool-hued value in either theme — light's only blue is the documented "Secondary (info / rare)"
+   that nothing should paint with, and dark's secondary is amber — so *every* cool-hued literal is
+   wrong. A hand-written value list kept missing 3-digit `#fff`, `#65728B`, `#DFE6F0` and the
+   `#FBFCFE` header tints. Classify each value by measured HSL instead: near-white → surface,
+   light tint → border, grey text → muted, dark → ink, saturated → accent; keep a wash's alpha;
+   migrate a neutral only where it is a surface, since a plain white label on an amber fill is the
+   locked accent-on.
+5. **The first declaration in a rule is easy to skip.** Splitting a block on `;` yields a first
+   fragment that begins with `{`, so a `^property:` regex misses it — and first position is where
+   `background:#fff` usually sits. Grep the *file* for surviving cool values after a retint; do not
+   trust the transform's own report.
+6. **A page that rewrites its own document defeats an inline probe.** `provider-detail.html`
+   dropped the injected harness from the DOM. Such a page has to be checked by screenshot.
+7. **A page that redirects on API failure cannot be measured in place, and unmeasurable is not clean.**
+   `agent-portal.js` wraps its whole shell build in one try/catch: any error removes the token and
+   assigns `location.href = 'agent-login.html'`. Two consequences. First, the failure is silent —
+   nothing is logged, so a broken stub looks identical to a working one. Second, the probe leaves
+   with the old document, so the sweep reports "no report" and the whole family reads as having
+   nothing to fix. `Location.prototype.href` is not configurable in Chrome, so navigation cannot be
+   blocked from an injected script. The workable method is to drop that one script from the sweep
+   copy (`VERIFY_STRIP`) so the page stays put and its CSS can be measured, and to **report the
+   stripped list with the result**, because whatever that script builds — the sidebar nav, the
+   account chip — is then unverified. Counting such a page as clean would be a lie; counting it as
+   broken is also wrong. It is a third state and must be reported as one. Note also that the stub
+   has to answer each endpoint with a shape the page can actually consume: `portalMenuKeys` holds
+   permission keys rather than page keys (`reports`/`products`/`provider_detail`/
+   `player_game_report` → `bet_report`, `finance` → `wallet`, `withdraw` → `settlement`), and a
+   response used both as a profile object and as a list has to satisfy both.
+8. **An audit only answers the question it asks, and both of these lived in the channel it did not ask about.**
+   Two defects survived a clean sweep and were found by eye, in the same family of mistake:
+
+   - **A painted `background-image` is invisible to a computed-colour check.** The login page wrote
+     `background:#F5EBDC url(login-background-v2.png)`: `background-color` measured warm and passed,
+     while the 1.9 MB artwork painted a cold grey geometric field over the whole viewport. The rule
+     now: report every element whose `background-image` is painted and is not a gradient (a data-URI
+     SVG chevron on a native `<select>` is the one legitimate case), and look at the artwork itself.
+   - **"Is anything cool left?" cannot see amber replaced by grey.** A classifier bug in the retint
+     mapped every mid-lightness saturated cool colour to warm grey `#57534E`, producing grey primary
+     CTAs, grey active tabs, grey selected calendar days. A warm grey is not a cool value, so the
+     answer stayed "nothing cool" while the amber was simply gone. The rule now: grey is never a
+     **fill** on an accent slot in the locked system, so an accent-named control with a `#57534E`
+     fill or border is a defect **regardless of the colour counters** — and in the transform, test
+     saturation before lightness, because a saturated cool colour is an accent whatever its value.
+
+   Both were green on every gate the harness had. That is the useful part: a passing check is
+   evidence about one property, not about the page. Sweep, then look at the screenshots.
+9. **Verification must wait on a condition, not a delay.** Under load a probe that sweeps a fixed
+   time after `load` can measure a half-styled page and report the retired palette as a defect (or
+   hide a real one) — the same page flipped between 0 and 157 hits across runs. Wait until every
+   declared stylesheet is present and `readyState` is `complete`, and emit the stylesheet counts, a
+    canvas canary and `readyState` so a partial render is visible rather than believed.
+10. **Two of my own rules can fight each other, and the loser is silent.** `bo-charcoal-legacy.css`
+   painted a generic `.clean-btn` ghost at (0,4,2) `!important`, while `.bo-ui-button-primary` — the
+   class `bo-ui-standard.js` adds by label to every "Create / Save / Search" button — carried the
+   amber CTA at (0,3,1) `!important`. The ghost therefore out-ranked the primary **by one
+   class-level**, and on User Management the "Create User" CTA rendered as a ghost: transparent
+   fill, ink label, warm border, no amber anywhere. Nothing flagged it, because "amber" and "ghost"
+   are both legitimate locked appearances, and the six counters only look for *foreign* colours.
+   Two rules: a base rule in this layer must `:not()` the modifier classes it knows about
+   (`:not(.primary):not(.bo-ui-button-primary):not(.mad-btn-primary):not(.mad-btn-navy)`) rather than
+   rely on load order; and a primary restatement should carry the `body:not(#bo-charcoal-off)` ID so
+   the outcome cannot depend on which file happens to sit later. **Looking for a ghost is the only
+   check that finds this** — measure `background-image`, because a gradient never appears in
+   `background-color`.
+11. **The standard filter row has its own shape, and it is not a defect to "unify" it.** The
+   `.bo-filter-row` vocabulary used by ~100 pages takes its `42px` height, `11px` radius and
+   `12px/700` text from `bo-ui-standard.css`'s own tokens (`--bo-filter-radius:11px`, and
+   `font-size:12px!important;font-weight:700!important` on the select), applied to the input frame,
+   the select and the Reset button alike. DESIGN.md's components table records `8px` radius and
+   `13.5px` text for the *other* filter row (`.mad-filters`, merchant/admin families) — the two are
+   different components, and trap-free cross-page comparison will keep flagging the difference.
+   Per the precedent recorded for the pill thumb (`999px` vs the table's `8px`: **the family value
+   was kept for internal consistency**), the standard row keeps its own values. This has now been
+   re-derived three times; it is written down so it does not happen a fourth.
+12. **A regex in injected code is eaten before Chrome sees it.** The probe is delivered through a
+   template literal, so `\w`, `\s`, `\d` and `\(` lose their backslash on the way in. A
+   specificity scorer built on `/#[\w-]+/g` silently counted nothing and reported `sp=0` for every
+   rule — a *plausible-looking* dump that would have justified any conclusion. Seventh occurrence of
+   this mistake; the durable fix is to write no regexes in injected code at all (`indexOf`, `split`,
+   `charAt`), and to sanity-check a new probe field against a case whose answer is already known.
+
+### Adopted so far (2026-09-15)
+
+`main-report`, `main-settlement-report`, the `main-provider-{balance,settlement,transactions,
+create,endpoints}` pages, the `main-accounting-{report,settlement,due}` pages,
+`main-transaction-history`, `main-balance-{adjustment,overview}`, `main-stat-detail`, `brand-*`,
+`menu-management`, `index`, `online-users`, `admin-user`, `account-lock`, `admin-login-log`,
+`admin-operation-log`, `role`, `root-control`, `profile`, `ip-whitelist-security`,
+`compliance-policy`, the member wallet / deposit / withdrawal and `wallet-ledger` pages,
+`bulk-adjustment`, `bulk-bonus-adjustment`, `duplicate-ip`, the rebate family, the VIP family,
+the payment pages, the legacy provider pages, `player-provider-session`, `bank-deposit-usage`,
+the game-ranking reports, `spin2-management`, `wbet-bet-limit`, `rebate-management`,
+`vip-management`, `casino-overview-report`.
+
+Verified by sweeping every rendered element's computed colour on the page in both themes —
+0 retired values, 0 cool-hue hits, 0 cool-white surfaces.
 
 ## Do's and Don'ts
 
