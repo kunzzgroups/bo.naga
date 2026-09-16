@@ -108,9 +108,15 @@
     // Gateway Transactions is a drill-down of Payment Gateway and uses the same DB menu permission.
     if(p==='payment-gateway-transactions.html') return 'payment-gateway.html';
     // Merchant module drill-downs keep the Merchant sidebar item highlighted.
-    if(p==='main-merchant-create.html' || p==='main-merchant-credit.html' || p==='main-merchant-security.html' || p==='main-merchant-roles.html' || p==='main-merchant-role-create.html' || p==='main-merchant-profit.html' || p==='main-merchant-profit-record.html' || p==='main-merchant-repayments.html' || p==='main-merchant-settlement.html' || p==='merchant-profit.html'){
+    if(p==='main-merchant-create.html' || p==='main-merchant-credit.html' || p==='main-merchant-profit.html' || p==='main-merchant-profit-record.html' || p==='main-merchant-repayments.html' || p==='main-merchant-settlement.html' || p==='merchant-profit.html'){
       return 'main-merchant-detail.html';
     }
+    // Roles & Permissions (3.2) and Security & Audit (3.4) have their OWN Merchant submenu
+    // entries, so aliasing them to Merchants pointed the highlight at a different page than the
+    // one you were on. The admin side never aliased main-admin-security.html; this matches it.
+    // Create Role is a child of Roles, so it follows that entry — as the admin side maps
+    // main-admin-role-create.html to menu-permission.html rather than to its detail page.
+    if(p==='main-merchant-role-create.html') return 'main-merchant-roles.html';
     // Admin module drill-downs keep the Admin Details item highlighted.
     if(p==='main-admin-create.html' || p==='main-admin-edit.html' || p==='main-admin-credit.html'){
       return 'main-admin-detail.html';

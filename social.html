@@ -64,6 +64,10 @@
 <div class="table-footer social-table-footer"><div class="table-info" id="socialTableInfo">Social link records</div><div class="pagination-clean"><button class="page-btn" type="button">‹</button><span class="page-btn active">1</span><button class="page-btn" type="button">›</button></div></div>
 </div>
 </section>
+</main>
+</div>
+<!-- Modals stay at body level, outside .report-shell: main.report-main is a z-index:1 stacking
+     context, so a modal nested inside it can never paint above the sidebar's z-index:1040. -->
 <div aria-hidden="true" class="modal-clean pm-modal social-modal" id="socialModal">
 <div aria-hidden="true" class="modal-clean-panel pm-modal-panel social-modal-panel">
 <div aria-hidden="true" class="modal-clean-head pm-modal-head social-modal-head">
@@ -86,14 +90,12 @@
 </form>
 </div>
 </div>
-</main>
-</div>
 <script src="assets/js/config.js?v=1.0.40"></script>
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
-<script src="assets/js/auth.js?v=1.0.61"></script>
-<script src="assets/js/reports.js?v=1.0.25"></script>
+<script src="assets/js/auth.js?v=1.0.65"></script>
+<script src="assets/js/reports.js?v=1.0.29"></script>
 <script src="assets/js/social.js?v=1.0.5"></script>
 <script src="assets/js/crud-modal-pattern.js?v=1.0.2"></script>
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->

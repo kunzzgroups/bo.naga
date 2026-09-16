@@ -282,6 +282,13 @@ document.addEventListener('DOMContentLoaded', () => {
 // Desktop mini sidebar: click hamburger to collapse/restore, hover rail to slide out.
 (function(){
   function isDesktop(){ return window.matchMedia('(min-width: 992px)').matches; }
+  /* The lock is a body class, so it used to die on every navigation: collapse the sidebar,
+     click a submenu link, and the page you land on comes back with a full-width sidebar.
+     Persist it so 'locked' survives the click-through. */
+  var MINI_KEY = 'bo_sidebar_mini';
+  function readMiniPref(){ try { return localStorage.getItem(MINI_KEY) === '1'; } catch(e){ return false; } }
+  function writeMiniPref(on){ try { localStorage.setItem(MINI_KEY, on ? '1' : '0'); } catch(e){} }
+  if(document.body && readMiniPref() && isDesktop()) document.body.classList.add('sidebar-mini');
   function clearMiniHoverArtifacts(){
     var sidebar = document.getElementById('reportSidebar');
     if(window.BO_SIDEBAR && typeof window.BO_SIDEBAR.closeAllFlyouts === 'function'){
@@ -307,6 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     e.stopImmediatePropagation();
     document.body.classList.toggle('sidebar-mini');
+    writeMiniPref(document.body.classList.contains('sidebar-mini'));
     var sidebar = document.getElementById('reportSidebar');
     var overlay = document.getElementById('reportOverlay');
     if(sidebar) sidebar.classList.remove('show');
@@ -368,6 +376,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if(!isDesktop()){
       document.body.classList.remove('sidebar-mini');
       clearMiniHoverArtifacts();
+    }else if(readMiniPref()){
+      document.body.classList.add('sidebar-mini');
     }
   });
 })();

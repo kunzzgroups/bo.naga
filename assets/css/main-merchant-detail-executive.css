@@ -1207,6 +1207,13 @@ body.main-admin-detail-page[data-access-page="main_merchant_detail"] .report-act
   font-size:18px!important;
   padding:0!important;
   overflow:hidden!important;
+}
+/* The repayments-due counter is a corner badge: it overhangs its button by design, and the
+   locked toggle chrome above clips it to a wedge at the corner — the digit then sits at the
+   top-right of the visible fragment and reads as off-centre and half-cut. Only the button that
+   carries the badge opts out of the clip; the theme toggle keeps its own. */
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .bo-theme-btn.mpr-repay-btn{
+  overflow:visible!important;
 }body.main-admin-detail-page[data-access-page="main_merchant_detail"] .bo-theme-btn i[data-theme-icon]{
   position:absolute!important;
   left:0!important;top:0!important;right:0!important;bottom:0!important;
@@ -1450,6 +1457,135 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_me
 }html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-pass-modal-fields .mac-link-btn,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-pass-modal-fields .mac-link-btn:hover{
   color:#FBBF24!important;
+}
+
+/* ==========================================================================
+   Modal footer actions — locked Primary + Ghost states
+   --------------------------------------------------------------------------
+   `main-admin-detail-executive.css` still carries navy-era rules for the credit
+   panel's action row at (0,5,1):
+     body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions
+       .mad-btn-navy:hover { background:#0E2F52 }
+   The family's amber rules for the same button sit at (0,4,1), so they win the
+   default state and lose the hover — Confirm Top Up hovered navy while every
+   other state was correct.
+   The ghost failed the other way: nothing with a `:hover` out-ranked its own
+   default, so Cancel showed no hover feedback at all.
+   These selectors carry (0,5,1) / (0,6,1) so the locked states win on
+   specificity instead of load order.
+   ========================================================================== */
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-navy,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-primary,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .bo-ui-button-primary{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
+  border:1px solid #E8901A!important;
+  color:#FFFFFF!important;
+  box-shadow:0 1px 2px rgba(217,119,6,.18),0 4px 10px rgba(217,119,6,.22),inset 0 1px 0 rgba(255,255,255,.35)!important;
+  transform:translateY(0);
+  filter:none!important;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-navy:hover,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-primary:hover,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .bo-ui-button-primary:hover{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(0deg,#FCD34D 0%,#FBBF24 38%,#F59E0B 72%,#EA8608 100%)!important;
+  border-color:#F59E0B!important;
+  color:#FFFFFF!important;
+  box-shadow:0 2px 4px rgba(217,119,6,.22),0 8px 18px rgba(217,119,6,.28),inset 0 1px 0 rgba(255,255,255,.45)!important;
+  transform:translateY(-1px)!important;
+  filter:none!important;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-navy:active,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-primary:active,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .bo-ui-button-primary:active{
+  background-image:linear-gradient(180deg,#F59E0B 0%,#EA8608 100%)!important;
+  border-color:#E8901A!important;
+  color:#FFFFFF!important;
+  box-shadow:0 1px 2px rgba(217,119,6,.16),inset 0 1px 0 rgba(255,255,255,.2)!important;
+  transform:translateY(1px)!important;
+  filter:none!important;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-ghost,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-ghost.bo-ui-button{
+  background-color:#F5EBDC!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%)!important;
+  border:1px solid #DCC9A8!important;
+  color:#18191C!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06),0 2px 6px rgba(24,25,28,.05)!important;
+  transform:translateY(0);
+  filter:none!important;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-ghost:hover,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-ghost.bo-ui-button:hover{
+  background-color:#F3E8D6!important;
+  background-image:linear-gradient(0deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border-color:#E0D0B8!important;
+  color:#18191C!important;
+  box-shadow:0 2px 4px rgba(24,25,28,.08),0 4px 10px rgba(24,25,28,.07)!important;
+  transform:translateY(-1px)!important;
+  filter:none!important;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-ghost:active,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-ghost.bo-ui-button:active{
+  background-image:linear-gradient(180deg,#FFF1DC 0%,#EADCC8 100%)!important;
+  border-color:#E0D0B8!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06)!important;
+  transform:translateY(1px)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-navy,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-primary,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .bo-ui-button-primary{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border:1px solid #F59E0B!important;
+  color:#2A2C36!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.4),0 4px 12px rgba(245,158,11,.28),inset 0 1px 0 rgba(255,255,255,.28)!important;
+  filter:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-navy:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-primary:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .bo-ui-button-primary:hover{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(0deg,#FDE68A 0%,#FBBF24 40%,#F59E0B 100%)!important;
+  border-color:#FBBF24!important;
+  color:#2A2C36!important;
+  box-shadow:0 2px 4px rgba(0,0,0,.35),0 8px 18px rgba(245,158,11,.34),inset 0 1px 0 rgba(255,255,255,.4)!important;
+  transform:translateY(-1px)!important;
+  filter:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-navy:active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-primary:active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .bo-ui-button-primary:active{
+  background-image:linear-gradient(180deg,#F59E0B 0%,#D97706 100%)!important;
+  border-color:#F59E0B!important;
+  color:#2A2C36!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.18)!important;
+  transform:translateY(1px)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-ghost,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-ghost.bo-ui-button{
+  background-color:#383A46!important;
+  background-image:linear-gradient(180deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%)!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.22),0 4px 10px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.12)!important;
+  filter:none!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-ghost:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-ghost.bo-ui-button:hover{
+  background-color:#383A46!important;
+  background-image:linear-gradient(0deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%)!important;
+  border-color:rgba(255,255,255,.18)!important;
+  color:#FFFFFF!important;
+  box-shadow:0 2px 4px rgba(0,0,0,.22),0 6px 14px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.16)!important;
+  transform:translateY(-1px)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-ghost:active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-modal .mad-modal-actions .mad-btn-ghost.bo-ui-button:active{
+  background-image:linear-gradient(180deg,#383A46 0%,#2C2E38 100%)!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.24)!important;
+  transform:translateY(1px)!important;
 }
 
 @media (max-width:575.98px){body.main-admin-detail-page[data-access-page="main_merchant_detail"] .bo-account-meta{
@@ -2507,18 +2643,50 @@ html[data-bo-theme="dark"] body #madCurrencyModal #merchantCurrencyModalCode{
 }
 
 /* Credit modal footer — locked Ghost recipe (#FFFCF7→#F5EBDC→#EDE4D4 / charcoal in dark).
-   Two IDs: the legacy modal rules win on class count otherwise. */
+   Two IDs: the legacy modal rules win on class count otherwise.
+   The hover/active steps carry the same two IDs on purpose. The default alone at (2,2,1)
+   out-ranks every class-level `:hover` in this file, so Cancel had NO hover at all until
+   the states below were stated at the same level. */
 html:not([data-bo-theme="dark"]) body #madCreditModal #madCreditForm .mad-btn-ghost{
   background-color:#FFFCF7!important;
   background-image:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%)!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
+html:not([data-bo-theme="dark"]) body #madCreditModal #madCreditForm .mad-btn-ghost:hover{
+  background-color:#F3E8D6!important;
+  background-image:linear-gradient(0deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border-color:#E0D0B8!important;
+  color:#18191C!important;
+  box-shadow:0 2px 4px rgba(24,25,28,.08),0 4px 10px rgba(24,25,28,.07)!important;
+  transform:translateY(-1px)!important;
+}
+html:not([data-bo-theme="dark"]) body #madCreditModal #madCreditForm .mad-btn-ghost:active{
+  background-image:linear-gradient(180deg,#FFF1DC 0%,#EADCC8 100%)!important;
+  border-color:#E0D0B8!important;
+  color:#18191C!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06)!important;
+  transform:translateY(1px)!important;
+}
 html[data-bo-theme="dark"] body #madCreditModal #madCreditForm .mad-btn-ghost{
   background-color:#383A46!important;
   background-image:linear-gradient(180deg,#4A4C58 0%,#383A46 55%,#2C2E38 100%)!important;
   border-color:rgba(255,255,255,.12)!important;
   color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body #madCreditModal #madCreditForm .mad-btn-ghost:hover{
+  background-color:#383A46!important;
+  background-image:linear-gradient(0deg,#4A4C58 0%,#383A46 55%,#2C2E38 100%)!important;
+  border-color:rgba(255,255,255,.18)!important;
+  color:#FFFFFF!important;
+  box-shadow:0 2px 4px rgba(0,0,0,.22),0 6px 14px rgba(0,0,0,.18)!important;
+  transform:translateY(-1px)!important;
+}
+html[data-bo-theme="dark"] body #madCreditModal #madCreditForm .mad-btn-ghost:active{
+  background-image:linear-gradient(180deg,#383A46 0%,#2C2E38 100%)!important;
+  color:#FFFFFF!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.24)!important;
+  transform:translateY(1px)!important;
 }
 
 /* ==========================================================================
@@ -4159,4 +4327,105 @@ body.main-admin-security-page.main-merchant-security-page .mas-search{
     min-width:0!important;
     max-width:100%!important;
   }
+}
+
+/* ==========================================================================
+   Record Amount (main-merchant-settlement.html) — locked cream currency group
+   --------------------------------------------------------------------------
+   `.msr-amount-group` is styled by main-merchant-report-executive.css, which is
+   still navy-era: shell `#fff` on a cool-grey `#D0D5DD`, the MYR segment on the
+   canvas cream `#FFF1DC`, and a CYAN focus ring (`rgba(33,166,215,.12)`).
+   That file is shared with the other report pages, so the retint is rescoped here
+   instead — this page is the only `.msr-amount-group` page carrying
+   `data-access-page="main_merchant_detail"`.
+   The values are copied from the sibling that was already fixed:
+   `main-provider-credentials-executive.css:607-682` (Provider Credentials carries
+   the same Record Amount dialog). One shell, one border, the MYR segment on the
+   nested well, a hairline divider between the two.
+   Also here: the date column. `reports.css` pins the shared date trigger to
+   260px and this row gave it a 232px column, so the trigger overhung its own
+   column by 28px, into the amount field. 260px is the documented settlement
+   control width, so the column now matches the trigger instead.
+   ========================================================================== */
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-payment-fields .msr-amount-group.mac-input-group{
+  height:42px;
+  border:1px solid #DCC9A8;
+  border-radius:8px;
+  background:#F5EBDC;
+  overflow:hidden;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group .mac-input-addon,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-payment-fields .msr-amount-group .mac-input-addon{
+  height:100%;
+  border:0;
+  border-right:1px solid #DCC9A8;
+  border-radius:0;
+  background:#F0E4D0;
+  color:#57534E;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group > .form-control,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-payment-fields .msr-amount-group > input.form-control{
+  height:100%!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:#18191C!important;
+  text-align:right;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group > .form-control::placeholder,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-payment-fields .msr-amount-group > input.form-control::placeholder{
+  color:#78716C!important;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group:focus-within,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-payment-fields .msr-amount-group.mac-input-group:focus-within{
+  border-color:#D97706;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12);
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group:focus-within .mac-input-addon{
+  border-right-color:#D97706;
+}
+/* The native steppers sat under the right-aligned value. The family already hides
+   them on merchant amount inputs (main-admin-detail-executive.css:6881). */
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group input[type="number"]::-webkit-outer-spin-button,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group input[type="number"]::-webkit-inner-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-payment-row{
+  grid-template-columns:260px minmax(0,1fr);
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-pay-date-field-wrap,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-payment-fields .msr-pay-date-field-wrap{
+  width:260px;
+  max-width:260px;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-payment-fields .msr-amount-group.mac-input-group{
+  border-color:rgba(255,255,255,.12);
+  background:#2A2C36;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group .mac-input-addon,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-payment-fields .msr-amount-group .mac-input-addon{
+  border-right-color:rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);
+  color:#D4D4D8;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group > .form-control,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-payment-fields .msr-amount-group > input.form-control{
+  background:transparent!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group > .form-control::placeholder,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-payment-fields .msr-amount-group > input.form-control::placeholder{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group:focus-within,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-payment-fields .msr-amount-group.mac-input-group:focus-within{
+  border-color:#F59E0B;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18);
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group:focus-within .mac-input-addon{
+  border-right-color:#F59E0B;
 }
