@@ -1,0 +1,70 @@
+/* ==========================================================================
+   Table zebra for the MAIN panel pages
+   --------------------------------------------------------------------------
+   The admin / merchant / provider listing tables had NO striping at all: rows
+   measured `background: transparent` on a single panel colour, separated only by
+   hairlines, so a wide row was hard to track across. Only the report family
+   (a faint amber wash) and the transaction family (`bo-wallet-transaction-amber.css`)
+   had any rhythm.
+
+   Values are the LOCKED ones from `.interface-design/system.md` → Patterns →
+   Data tables → Transaction listing table, theme-split exactly as that table
+   specifies, so every listing in the panel now stripes alike:
+     light  odd #FFF8EB / even #FFF1DC / hover #FFE8CC
+     dark   odd #3A3C48 / even #434653 / hover #444654   (both lighter than the #383A46 panel)
+   Do not substitute "parchment", pure white, or a cool grey zebra — the spec names
+   those as the failure modes.
+
+   Two deliberate choices:
+   · The stripe is painted on the **cells**, not on the `<tr>`. A row background is
+     covered by any cell that sets its own (the hover rules, `.value-positive`, the
+     avatar tints), whereas painting the cells makes the stripe the base layer that
+     those can sit on. It also keeps `border-collapse` hairlines crisp.
+   · Hover is restated **inside this layer**. The pages already carry `tr:hover td`
+     rules, but several of them sit at a lower specificity than the striping here,
+     and a stripe that out-ranks the hover is how a table stops feeling interactive.
+
+   Load this LAST on the page so it wins over the family stylesheets, and only on
+   the pages that actually render a table — the blast radius is then exactly those.
+   ========================================================================== */
+
+html:not([data-bo-theme="dark"]){
+  --bo-zebra-row:#FFF8EB;
+  --bo-zebra-row-alt:#FFF1DC;
+  --bo-zebra-hover:#FFE8CC;
+}
+html[data-bo-theme="dark"]{
+  --bo-zebra-row:#3A3C48;
+  --bo-zebra-row-alt:#434653;
+  --bo-zebra-hover:#444654;
+}
+
+/* Odd rows — the base tone */
+html:not([data-bo-theme="dark"]) :is(.mad-table,.report-table,.mre-table,.settlement-table,.table-clean,.main-mod-table,.table) > tbody > tr:nth-child(odd):not(.total):not(.is-total):not(.is-suspended-row) > td,
+html[data-bo-theme="dark"] :is(.mad-table,.report-table,.mre-table,.settlement-table,.table-clean,.main-mod-table,.table) > tbody > tr:nth-child(odd):not(.total):not(.is-total):not(.is-suspended-row) > td{
+  background-color:var(--bo-zebra-row)!important;
+}
+/* Even rows — one step away from the panel, so the eye can follow a row */
+html:not([data-bo-theme="dark"]) :is(.mad-table,.report-table,.mre-table,.settlement-table,.table-clean,.main-mod-table,.table) > tbody > tr:nth-child(even):not(.total):not(.is-total):not(.is-suspended-row) > td,
+html[data-bo-theme="dark"] :is(.mad-table,.report-table,.mre-table,.settlement-table,.table-clean,.main-mod-table,.table) > tbody > tr:nth-child(even):not(.total):not(.is-total):not(.is-suspended-row) > td{
+  background-color:var(--bo-zebra-row-alt)!important;
+}
+/* Hover out-ranks the stripe (declared after it, same weight) */
+html:not([data-bo-theme="dark"]) :is(.mad-table,.report-table,.mre-table,.settlement-table,.table-clean,.main-mod-table,.table) > tbody > tr:not(.total):not(.is-total):not(.is-suspended-row):hover > td,
+html[data-bo-theme="dark"] :is(.mad-table,.report-table,.mre-table,.settlement-table,.table-clean,.main-mod-table,.table) > tbody > tr:not(.total):not(.is-total):not(.is-suspended-row):hover > td{
+  background-color:var(--bo-zebra-hover)!important;
+}
+
+/* Rows that carry their own meaning keep it — a status tint is information, and a
+   stripe over it would erase the signal.
+   `.is-suspended-row`: the red tint is painted on the <tr>, so clearing the cells lets
+   it through; the row is excluded from the stripes above either way.
+   `.total`: deliberately NOT cleared — its fill lives on the `td` (`tr.total td`), so a
+   transparent override would erase the total row. `:not(.total)` already keeps the
+   stripe off it. */
+html:not([data-bo-theme="dark"]) :is(.mad-table,.report-table,.mre-table,.settlement-table,.table-clean,.main-mod-table,.table) > tbody > tr.is-suspended-row > td,
+html[data-bo-theme="dark"] :is(.mad-table,.report-table,.mre-table,.settlement-table,.table-clean,.main-mod-table,.table) > tbody > tr.is-suspended-row > td,
+html:not([data-bo-theme="dark"]) :is(.mad-table,.report-table,.mre-table,.settlement-table,.table-clean,.main-mod-table,.table) > tbody > tr:has(> td.mad-empty) > td,
+html[data-bo-theme="dark"] :is(.mad-table,.report-table,.mre-table,.settlement-table,.table-clean,.main-mod-table,.table) > tbody > tr:has(> td.mad-empty) > td{
+  background-color:transparent!important;
+}
