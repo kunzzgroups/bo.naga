@@ -37,11 +37,26 @@
     if (bsb) { bsb.disabled = cash; if (cash) bsb.value = ''; }
     if (payId) payId.placeholder = cash ? 'e.g. CASH001 (optional)' : 'e.g. PAY123';
   }
+  function showVal(r){
+    const raw=r&& (r.visible??r.showOnDeposit??r.isShow??r.clientVisible??r.display??r.showStatus);
+    if(raw==null||raw===''){
+      try{
+        const o=JSON.parse(sessionStorage.getItem('bo_pm_visible_overrides')||'{}')||{};
+        if(r&&r.id!=null&&Object.prototype.hasOwnProperty.call(o,String(r.id)))return Number(o[String(r.id)])===0?'0':'1';
+      }catch(_){}
+      return '1';
+    }
+    if(typeof raw==='boolean')return raw?'1':'0';
+    const s=String(raw).trim().toLowerCase();
+    if(s==='false'||s==='no'||s==='off')return '0';
+    return Number(raw)===0?'0':'1';
+  }
   function fill(r) {
     setVal('pmId', r.id);
     setVal('pmType', r.methodType);
     syncMethodTypeUi();
     setVal('pmStatus', r.status);
+    setVal('pmVisible', showVal(r));
     setVal('pmName', r.displayName);
     setVal('pmSubtitle', r.subtitle);
     setVal('pmBankName', r.bankName);
@@ -59,12 +74,8 @@
   }
   function setMode(edit) {
     const title = $('pmPageTitle');
-    const sub = $('pmPageSub');
     const submit = $('pmSubmitBtn');
-    const eyebrow = $('pmPageEyebrow');
     if (title) title.textContent = edit ? 'Edit Payment Method' : 'Create Payment Method';
-    if (eyebrow) eyebrow.textContent = edit ? 'Edit Payment Method' : 'Payment Method';
-    if (sub) sub.textContent = edit ? 'Update this payment option for customer deposits.' : 'Add a new payment option for customer deposits.';
     if (submit) submit.innerHTML = edit
       ? '<i class="bi bi-check-lg" aria-hidden="true"></i> Save Changes'
       : '<i class="bi bi-check-lg" aria-hidden="true"></i> Create Payment Method';
@@ -87,7 +98,7 @@
       bankBsb: 'pmBsb', payId: 'pmPayId', instructions: 'pmInstructions',
       minAmount: 'pmMin', maxAmount: 'pmMax', sortOrder: 'pmSort',
       visibleVipTiers: 'pmVipTiers', dailyLimit: 'pmDailyLimit',
-      autoRotateOnLimit: 'pmAutoRotate', status: 'pmStatus'
+      autoRotateOnLimit: 'pmAutoRotate', status: 'pmStatus', visible: 'pmVisible'
     };
     Object.keys(pairs).forEach((k) => {
       const v = $(pairs[k])?.value;
@@ -95,6 +106,17 @@
     });
     const file = $('pmQr')?.files?.[0];
     if (file) fd.append('qrImage', file);
+    const vis = String($('pmVisible')?.value ?? '1') === '0' ? 0 : 1;
+    fd.append('showOnDeposit', String(vis));
+    fd.append('isShow', String(vis));
+    const idVal = $('pmId')?.value;
+    if (idVal) {
+      try {
+        const o = JSON.parse(sessionStorage.getItem('bo_pm_visible_overrides') || '{}') || {};
+        o[String(idVal)] = vis;
+        sessionStorage.setItem('bo_pm_visible_overrides', JSON.stringify(o));
+      } catch (_) {}
+    }
     const submit = $('pmSubmitBtn');
     if (submit) submit.disabled = true;
     try {
@@ -134,6 +156,8 @@
       setVal('pmSort', '0');
       setVal('pmMin', '10');
       setVal('pmMax', '0');
+      setVal('pmVisible', '1');
+      setVal('pmStatus', '1');
     }
   });
 })();

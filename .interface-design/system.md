@@ -221,7 +221,7 @@ Reference: `payment-method.html` · `body.bo-wallet-tx.payment-method-page`. Sam
 | Toolbar | Right-aligned Ghost `Bank Deposit Usage` / `Refresh` + primary amber `Create Payment Method` (no left title badge) |
 | Columns | Order · Type · Display (name + subtitle) · Details · QR · Status · Action |
 | QR | Amber `.bo-tx-link` **View** (never default blue) · `-` when empty |
-| Status | `.status-pill.active` ACTIVE · `.status-pill.off` INACTIVE |
+| Status | `.status-pill.active` ACTIVE · `.status-pill.off` SUSPEND |
 | Action | `.bo-tx-action-btn` **26×26** · Edit `is-edit` (amber well) · Delete `is-reject` (danger) |
 | Create | Opens **full page** `payment-method-create.html?from=config` (not modal) |
 
@@ -236,8 +236,11 @@ Reference: `bank-deposit-usage.html` · `body.bo-wallet-tx.bank-deposit-usage-pa
 | Summary | **Removed** — do not restore `.usage-summary-grid` metric cards |
 | Panel | Viewport-locked · toolbar filters left + Ghost `Payment Method Config` / `Refresh` right · no title badge · no link underline |
 | Table | Peach-cream zebra · square thead · `table-layout:fixed` · inner scroll · never page overflow |
-| Status | `.status-pill.active` / `.off` (same as Payment Method) |
+| Status | Clickable `.usage-status-chip` — account Active/Suspend via **`status`** · independent of Show · see Patterns → Bank Deposit Usage status chip |
+| Show | Mini Switch — bank visible on deposit via **`visible`** (1=show / 0=hide) · **not** synced with Status · no Show/Hide text |
 | Meter | Track `#F5EBDC` · fill `#B45309` · warn `#F59E0B` · over `#EF4444` |
+| Action | `.bo-tx-action-btn` Edit + Delete (same as Payment Method) |
+| Create | Opens **full page** `payment-method-create.html?from=usage` |
 
 #### Create / Edit Payment Method (locked)
 
@@ -252,6 +255,7 @@ Reference: `payment-method-create.html` · `body.bo-wallet-tx.payment-method-cre
 | Input / select / textarea / dropzone | `#FFF8EB` · border `#DCC9A8` · placeholder `#78716C` | Surface rung (not muddy `#F5EBDC`) |
 | Section head | hairline `#EADCC8` · title `#18191C` · icon `#B45309` | |
 | Labels | `#27272A` · required `*` `#B42318` | |
+| Status / Show Bank | Independent · Status = `status` · Show Bank = `visible` | |
 | Sticky footer `.pmc-sticky-footer` | `#FFFCF7` · border `#DCC9A8` · `0 -12px 32px rgba(120,80,20,.12)` | Viewport-fixed · main column only |
 | Ghost Cancel / Back | `#FFFCF7`→`#F5EBDC`→`#EDE4D4` · border `#DCC9A8` | |
 | Primary Create / Save | amber 3D · check icon · white label | |
@@ -261,7 +265,7 @@ Reference: `payment-method-create.html` · `body.bo-wallet-tx.payment-method-cre
 | Shell | `bo-wallet-tx` + amber CSS + `payment-method-create.css` (not charcoal shell) |
 | Width | **Full main column** · no centered `max-width` column · cards span content width |
 | Sections | 5 cards · Create Admin lift recipe · focus amber ring `rgba(217,119,6,.16)` |
-| Grid | `.pm-grid-4` → 4 / 3 / 2 / 1 cols at 1280 / 1024 / 768 |
+| Grid | `.pm-grid-4` → 4 / 3 / 2 / 1 cols · Basic Information `.pm-grid-basic` one row (Status / Show Bank compact) |
 | Sticky footer | **Viewport-fixed** · `left: var(--sidebar-w)` · `right:0` · `bottom:0` · does **not** cover sidebar · mini → `left: var(--rail-w)` · ≤991 → `left:0` |
 | Footer actions | Right-aligned Ghost `Cancel` + amber Primary · h `40px` |
 | Content pad | Bottom pad ≥`96px` so last card clears the fixed bar |
@@ -278,7 +282,7 @@ Reference: `bulk-adjustment.html` · `bulk-bonus-adjustment.html` · `body.bo-wa
 | Shell | `bo-wallet-tx` + amber CSS + `bulk-member-operation.css` + `bulk-adjustment-import.css` + charcoal layers + FOUC |
 | Content scroll | `.report-content` **overflow:auto** (override listing `overflow:hidden`) — panels stack vertically |
 | Mode tabs | `.bulk-mode-switch` / `.bulk-mode-btn` — **Status filter pills** recipe · cream 3D active · **never** cool blue `#1f5fe7` / `#f3f6fb` |
-| Panels | `.bulk-panel` / `.bulk-import-card` — surface `#FFF8EB` · border `#EADCC8` · radius `8px` · soft warm shadow |
+| Panels | Outer `.bulk-operation-shell` wraps both · inner `.bulk-panel` side-by-side grid · shell `#FFF8EB` / nested `#FFFCF7` · border `#EADCC8`/`#DCC9A8` · radius `8px` |
 | Inputs | listing surface `#FFF8EB` · border `#EADCC8` · height `40px` · amber focus ring · labels `11.5px/800` uppercase |
 | Summary chips | surface tile + uppercase label + tabular value (KPI strip density) |
 | Tables | peach-cream zebra · thead `#FFE8CC` / dark `#1F2128` · square corners · money `#B45309` / `#F59E0B` |
@@ -639,6 +643,41 @@ Bare `.status-pill` = PENDING · `.active` = APPROVED · `.off` = REJECTED.
 | APPROVED `.active` | bg `#DCFCE7` · text `#166534` | bg success/18 · text `#6EE7B7` |
 | REJECTED `.off` | bg `#FEE2E2` · text `#B91C1C` | bg danger/18 · text `#F87171` |
 
+#### Bank Deposit Usage status chip — `.usage-status-chip` (locked)
+
+Reference: Merchant Detail `.mad-status-chip` · Bank Deposit Usage Status column (`bank-deposit-usage.css`). **Not** the large Transaction `.status-pill` (ACTIVE/INACTIVE uppercase).
+
+**Independent of Show:** Status toggles account **`status`** (Active ↔ Suspend). Show Mini Switch toggles bank display **`visible`** (show ↔ hide on Naga deposit). Changing one must **not** change the other.
+
+| Part | Spec |
+|------|------|
+| Markup | `<button class="usage-status-chip is-active|is-suspended" data-usage-status>…>` · inner `<i class="usage-status-dot">` + label |
+| Label | Title case **`Active`** / **`Suspend`** (never `ACTIVE` / `SUSPEND` / `INACTIVE`) |
+| Field | API `status` · `1` Active · `0` Suspend · save via `PAYMENT_METHOD_SAVE` (preserve current `visible`) |
+| Size | h **`24px`** · pad `0 10px` · gap `6px` · font **`11.5px/700`** · radius **`999px`** |
+| Dot `.usage-status-dot` | **`6×6px`** circle · Active fill `#10B981` · Suspend `currentColor` |
+| Behavior | Click Active → Suspend · click Suspend → Active · busy opacity `.6` |
+| Hover Active | bg `#A7F3D0` |
+| Hover Suspend | bg `#FECACA` |
+| Focus | amber ring `2px #D97706` offset `2px` |
+
+| State | Light | Dark |
+|-------|-------|------|
+| Active `.is-active` | bg `#D1FAE5` · text `#047857` · dot `#10B981` | bg `rgba(16,185,129,.14)` · text `#6EE7B7` · dot `#34D399` |
+| Suspend `.is-suspended` | bg `#FEE2E2` · text `#B91C1C` | bg `rgba(239,68,68,.14)` · text `#FCA5A5` |
+
+#### Bank Deposit Usage Show switch — `.usage-show-switch` (locked)
+
+| Part | Spec |
+|------|------|
+| Purpose | Show / hide this bank on the customer deposit page — **not** account Active/Suspend |
+| Field | API **`visible`** · `1` show · `0` hide · aliases read: `showOnDeposit` / `isShow` / `clientVisible` / `display` / `showStatus` · default show if missing |
+| Markup | `<button class="usage-show-switch is-on|is-off" data-usage-show-id role="switch">` · track + thumb · **no** Show/Hide text |
+| Save | Optimistic in-place flip · no table reload · `PAYMENT_METHOD_SAVE` with `visible` (+ aliases) · preserve `status` · session override `bo_pm_visible_overrides` if API omits field |
+| Look | Amber filled track when on · cream track when off · white thumb |
+
+Do **not** bind Show to `status`, or Status to `visible`.
+
 ### Date / time tips
 
 | Spec | Light | Dark |
@@ -800,6 +839,8 @@ Use this when reviewing a page. Each row must exist as a Light|Dark table (or to
 | Buttons | Primary, Ghost (+ shared hover), secondary, danger, pager, chips |
 | Table | panel, header, cells, dividers, hover, money, status, avatar, footer, pager |
 | Transaction table (locked L|D) | `--bo-table-*` zebra · deep dark head `#1F2128` · square thead · bold cells · PENDING orange · action wells · no Filtered Total |
+| Bank Deposit Usage status chip | `.usage-status-chip` Active/Suspend · 6px dot · h 24 · Light\|Dark |
+| Bank Deposit Usage Show switch | `.usage-show-switch` · field `visible` · independent of Status |
 | Modals | scrim, panel, close, fields, footer actions |
 | KPI strip | tile, label, value, note, grid (Report family — see below) |
 | Roles | control card, select, scope, toolbar, matrix group/card, badges, sticky footer |
@@ -865,6 +906,9 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Deposit/Withdraw responsive 1920→375: bank strip · stacked toolbar · scrollable table · ≤1456 DATE day-only + hover time · hide secondary columns on tablet/phone | User: mid widths messy / table too short / DATE ellipsis | 2026-09-16 |
 | Withdraw Remark cell = player text only (no `Admin:` sub-line) | User: 这个也帮我移除 | 2026-09-16 |
 | Bulk Adjustment / Bulk Bonus migrated to `bo-wallet-tx` · mode tabs = Status filter pills (no cool blue) · peach-cream zebra · listing inputs · Full Light\|Dark in page CSS | User: 根据 MD 调整 Bulk Adjustment | 2026-09-16 |
+| Bank Deposit Usage Status = compact `.usage-status-chip` (Merchant `.mad-status-chip` recipe) · Active/Suspend + 6px dot · click toggle | User: Status 太大 → 要图里小胶囊；再要求写进 MD | 2026-09-16 |
+| Status (`status`) ⊥ Show (`visible`) on Bank Deposit Usage — not synced | User: Status=账号活跃；Show=银行显示/不显示 | 2026-09-16 |
+| Show switch must flip on click (optimistic + session fallback when API omits `visible`) | User: show 点一下不会变成 hide | 2026-09-16 |
 
 ### Opt-in layers for pages outside the migrated families
 

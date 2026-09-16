@@ -5,6 +5,8 @@
   const num=v=>{const n=Number(String(v==null?0:v).replace(/,/g,''));return Number.isFinite(n)?n:0;};
   const money=v=>num(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
   const endpoint=k=>API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS[k];
+  const VIS_KEY='bo_pm_visible_overrides';
+  const methodsById=new Map();
   async function api(url,opt){
     const r=await fetch(url,opt||{headers:{...BO_AUTH.authHeader()}});
     const j=await r.json().catch(()=>({}));
@@ -32,14 +34,46 @@
     }
     return all;
   }
-  function showBtn(m){
-    const on=Number(m.status)===1;
-    return `<button type="button" class="usage-show-switch ${on?'is-on':'is-off'}" data-usage-show='${esc(JSON.stringify(m))}' role="switch" aria-checked="${on?'true':'false'}" title="${on?'Click to hide this bank':'Click to show this bank'}" aria-label="${on?'Bank visible, click to hide':'Bank hidden, click to show'}"><span class="usage-show-switch-track" aria-hidden="true"><span class="usage-show-switch-thumb"></span></span></button>`;
+  function loadVisOverrides(){try{return JSON.parse(sessionStorage.getItem(VIS_KEY)||'{}')||{};}catch(_){return {};}}
+  function setVisOverride(id,val){const o=loadVisOverrides();o[String(id)]=Number(val)?1:0;sessionStorage.setItem(VIS_KEY,JSON.stringify(o));}
+  function parseShown(raw){
+    if(raw==null||raw==='')return null;
+    if(typeof raw==='boolean')return raw;
+    const s=String(raw).trim().toLowerCase();
+    if(s==='true'||s==='yes'||s==='on')return true;
+    if(s==='false'||s==='no'||s==='off')return false;
+    return Number(raw)===1;
   }
-  async function toggleShow(m,btn){
-    const next=Number(m.status)===1?0:1;
-    const fd=new FormData();
-    const fields={
+  function isActive(m){return Number(m.status)===1;}
+  function isShown(m){
+    const raw=m.visible??m.showOnDeposit??m.isShow??m.clientVisible??m.display??m.showStatus;
+    const parsed=parseShown(raw);
+    if(parsed!=null)return parsed;
+    const o=loadVisOverrides();
+    if(Object.prototype.hasOwnProperty.call(o,String(m.id)))return Number(o[String(m.id)])===1;
+    return true;
+  }
+  function showVal(m){return isShown(m)?1:0;}
+  function paintShow(btn,on){
+    if(!btn)return;
+    btn.classList.toggle('is-on',!!on);
+    btn.classList.toggle('is-off',!on);
+    btn.setAttribute('aria-checked',on?'true':'false');
+    btn.title=on?'Click to hide this bank':'Click to show this bank';
+    btn.setAttribute('aria-label',on?'Bank visible, click to hide':'Bank hidden, click to show');
+  }
+  function paintStatus(btn,on){
+    if(!btn)return;
+    btn.classList.toggle('is-active',!!on);
+    btn.classList.toggle('is-suspended',!on);
+    btn.title=on?'Click to Suspend':'Click to Activate';
+    btn.setAttribute('aria-label',on?'Active, click to Suspend':'Suspended, click to Activate');
+    const label=btn.querySelector('span');
+    if(label)label.textContent=on?'Active':'Suspend';
+  }
+  function methodPayload(m,patch){
+    const vis=patch&&Object.prototype.hasOwnProperty.call(patch,'visible')?Number(patch.visible)?1:0:showVal(m);
+    return {
       id:m.id,
       methodType:m.methodType,
       displayName:m.displayName,
@@ -56,23 +90,42 @@
       visibleVipTiers:m.visibleVipTiers,
       dailyLimit:m.dailyLimit,
       autoRotateOnLimit:m.autoRotateOnLimit,
-      status:next
+      status:isActive(m)?1:0,
+      visible:vis,
+      showOnDeposit:vis,
+      isShow:vis,
+      ...(patch||{})
     };
+  }
+  async function saveMethod(m,patch,btn,failMsg,onFail){
+    const fd=new FormData();
+    const fields=methodPayload(m,patch);
     Object.keys(fields).forEach(k=>{
       const v=fields[k];
       if(v==null||v===''){ if(k!=='id')fd.append(k,''); return; }
-      fd.append(k,v);
+      fd.append(k,String(v));
     });
     if(btn){btn.disabled=true;btn.classList.add('is-busy');}
     try{
       await api(endpoint('PAYMENT_METHOD_SAVE'),{method:'POST',headers:{...BO_AUTH.authHeader()},body:fd});
-      await load();
+      if(btn){btn.disabled=false;btn.classList.remove('is-busy');}
     }catch(err){
-      alert(err.message||'Failed to update bank visibility');
+      if(typeof onFail==='function')onFail();
+      alert(err.message||failMsg||'Update failed');
       if(btn){btn.disabled=false;btn.classList.remove('is-busy');}
     }
   }
+  function showBtn(m){
+    const on=isShown(m);
+    return `<button type="button" class="usage-show-switch ${on?'is-on':'is-off'}" data-usage-show-id="${esc(m.id)}" role="switch" aria-checked="${on?'true':'false'}" title="${on?'Click to hide this bank':'Click to show this bank'}" aria-label="${on?'Bank visible, click to hide':'Bank hidden, click to show'}"><span class="usage-show-switch-track" aria-hidden="true"><span class="usage-show-switch-thumb"></span></span></button>`;
+  }
+  function statusBtn(m){
+    const on=isActive(m);
+    return `<button type="button" class="usage-status-chip ${on?'is-active':'is-suspended'}" data-usage-status-id="${esc(m.id)}" title="${on?'Click to Suspend':'Click to Activate'}" aria-label="${on?'Active, click to Suspend':'Suspended, click to Activate'}"><i class="usage-status-dot" aria-hidden="true"></i><span>${on?'Active':'Suspend'}</span></button>`;
+  }
   function render(methods,deposits,withdrawals,manualMovements){
+    methodsById.clear();
+    (methods||[]).forEach(m=>methodsById.set(String(m.id),m));
     const stats=new Map(methods.map(m=>[String(m.id),{deposit:0,depositCount:0,withdraw:0,withdrawCount:0}]));let unmatchedDeposit=0,unmatchedWithdraw=0,unmatchedCount=0;
     deposits.forEach(r=>{const m=matchDeposit(r,methods);if(!m){unmatchedDeposit+=num(r.amount);unmatchedCount++;return;}const st=stats.get(String(m.id));st.deposit+=num(r.amount);st.depositCount++;});
     withdrawals.forEach(r=>{const m=matchWithdraw(r,methods);if(!m){unmatchedWithdraw+=num(r.amount);unmatchedCount++;return;}const st=stats.get(String(m.id));st.withdraw+=num(r.amount);st.withdrawCount++;});
@@ -98,7 +151,7 @@
         <td><div class="usage-meter"><div class="usage-meter-line"><span>${money(net)}</span><span>/ ${cap}</span></div>${max>0?`<div class="usage-track"><div class="usage-fill ${fillClass}" style="width:${Math.min(100,pct).toFixed(2)}%"></div></div>`:''}</div></td>
         <td>${dailyText}</td>
         <td>${max>0?`<b>${pct.toFixed(1)}%</b>`:'<span class="usage-muted">No max configured</span>'}</td>
-        <td><span class="status-pill ${Number(m.status)===1?'active':'off'}">${Number(m.status)===1?'ACTIVE':'INACTIVE'}</span></td>
+        <td>${statusBtn(m)}</td>
         <td class="usage-show-cell">${showBtn(m)}</td>
         <td><div class="bo-tx-actions"><a class="bo-tx-action-btn is-edit" href="payment-method-create.html?id=${encodeURIComponent(m.id)}&from=usage" title="Edit" aria-label="Edit"><i class="bi bi-pencil" aria-hidden="true"></i></a><button type="button" class="bo-tx-action-btn is-reject" title="Delete" aria-label="Delete" data-usage-del="${esc(m.id)}"><i class="bi bi-trash" aria-hidden="true"></i></button></div></td>
       </tr>`;
@@ -125,9 +178,46 @@
     }
   }
   document.addEventListener('click',e=>{
-    const showBtn=e.target.closest('[data-usage-show]');
-    if(showBtn){
-      try{toggleShow(JSON.parse(showBtn.getAttribute('data-usage-show')),showBtn);}catch(_){}
+    const statusEl=e.target.closest('[data-usage-status-id]');
+    if(statusEl){
+      if(statusEl.disabled||statusEl.classList.contains('is-busy'))return;
+      const id=String(statusEl.getAttribute('data-usage-status-id'));
+      const m=methodsById.get(id);
+      if(!m)return;
+      const prev=isActive(m)?1:0;
+      const next=prev?0:1;
+      paintStatus(statusEl,next===1);
+      m.status=next;
+      methodsById.set(id,m);
+      saveMethod(m,{status:next},statusEl,'Failed to update status',()=>{
+        m.status=prev;
+        methodsById.set(id,m);
+        paintStatus(statusEl,prev===1);
+      });
+      return;
+    }
+    const showEl=e.target.closest('[data-usage-show-id]');
+    if(showEl){
+      if(showEl.disabled||showEl.classList.contains('is-busy'))return;
+      const id=String(showEl.getAttribute('data-usage-show-id'));
+      const m=methodsById.get(id);
+      if(!m)return;
+      const prev=isShown(m)?1:0;
+      const next=prev?0:1;
+      paintShow(showEl,next===1);
+      setVisOverride(id,next);
+      m.visible=next;
+      m.showOnDeposit=next;
+      m.isShow=next;
+      methodsById.set(id,m);
+      saveMethod(m,{visible:next,showOnDeposit:next,isShow:next},showEl,'Failed to update bank visibility',()=>{
+        setVisOverride(id,prev);
+        m.visible=prev;
+        m.showOnDeposit=prev;
+        m.isShow=prev;
+        methodsById.set(id,m);
+        paintShow(showEl,prev===1);
+      });
       return;
     }
     const delBtn=e.target.closest('[data-usage-del]');

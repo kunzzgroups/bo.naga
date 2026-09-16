@@ -42,7 +42,7 @@
         <td><b>${esc(r.displayName)}</b><br><small class="bo-tx-sub">${esc(r.subtitle)}</small></td>
         <td>${details}</td>
         <td>${qr}</td>
-        <td><span class="status-pill ${statusOn ? 'active' : 'off'}">${statusOn ? 'ACTIVE' : 'INACTIVE'}</span></td>
+        <td><span class="status-pill ${statusOn ? 'active' : 'off'}">${statusOn ? 'ACTIVE' : 'SUSPEND'}</span></td>
         <td><div class="bo-tx-actions">
           <a class="bo-tx-action-btn is-edit" href="payment-method-create.html?id=${encodeURIComponent(r.id)}&from=config" title="Edit" aria-label="Edit"><i class="bi bi-pencil" aria-hidden="true"></i></a>
           <button type="button" class="bo-tx-action-btn is-reject" title="Delete" aria-label="Delete" data-del="${esc(r.id)}"><i class="bi bi-trash" aria-hidden="true"></i></button>
