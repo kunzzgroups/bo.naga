@@ -9711,3 +9711,26 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-field .form-control:
   border-color:#F59E0B!important;
   box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
 }
+
+/* --------------------------------------------------------------------------
+   Adjust Credit summary card: the light fill was a cool blue-white gradient.
+   Measured on Admin Detail (light): `background-image: linear-gradient(180deg,#F7FBFE,#F3F7FB)`
+   from line 4335 — the only LIGHT rule for `.mac-adjust-summary` in the whole repo; every
+   other file that styles it is `html[data-bo-theme="dark"]` only. It survived the charcoal
+   sweep because it is a gradient, not a colour: no token remap reaches a literal, and the
+   light override written later covered only the avatar (`#B45309` on the amber wash), which
+   is why the tile looked fixed while the block around it stayed cold.
+   Dark was already right — `#2A2C36` on the `#383A46` panel, one rung in.
+   Light takes the file's own nested-card recipe (`.mae-security-card`, `.mac-role-priv`,
+   `.mac-policy-row`): fill `#F0E4D0` on the `#FFF8EB` panel body with the `#DCC9A8` form
+   border. That keeps the ladder panel → card → field (`#FFF8EB` → `#F0E4D0` → `#F5EBDC`);
+   the control well would have made the card read as one more input, since the fields sit
+   directly below it at exactly that value.
+   One rule, both pages that mount this dialog (`main-admin-detail.html` and
+   `main-merchant-detail.html` — both carry `body.main-admin-detail-page`).
+   -------------------------------------------------------------------------- */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page .mac-adjust-summary{
+  background-color:#F0E4D0!important;
+  background-image:none!important;
+  border-color:#DCC9A8!important;
+}

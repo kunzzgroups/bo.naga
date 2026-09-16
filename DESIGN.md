@@ -994,3 +994,38 @@ characters — while an IPv6 needs far more. Measured with the cell's own font (
   `<col>` width beats the cell width. Both the header table and the body table carry the same
   `.mas-col-*` classes, so setting them once keeps the two in step. When a column refuses to resize,
   check for a colgroup before re-checking the selector.
+
+**The Adjust Credit summary card was cold and blue, and half of it was outside the dialog
+(2026-09-16, owner-reported).** One circle on the screenshot, two unrelated causes.
+
+- **The fill.** `.mac-adjust-summary` still carried `background:linear-gradient(180deg,#F7FBFE,#F3F7FB)`
+  — a navy-era literal, and the **only light rule** for that class in the repository: every other file
+  that styles it (`bo-charcoal-shell.css`, `main-report-charcoal.css`, `main-merchant-detail-executive.css`,
+  `main-provider-family-executive.css`) is `html[data-bo-theme="dark"]` only. **A gradient survives a
+  token remap because there is no token to remap**, and the light override written in a later pass
+  covered only the avatar — so the tile read as fixed while the block around it stayed blue-white.
+  Light now takes the file's own nested-card recipe (`.mae-security-card`, `.mac-role-priv`,
+  `.mac-policy-row`): fill `#F0E4D0` on the `#FFF8EB` panel body, border `#DCC9A8`. That keeps the
+  ladder panel → card → field at `#FFF8EB` → `#F0E4D0` → `#F5EBDC`; the control well would have made
+  the card read as one more input, since the fields sit directly below it at exactly that value. Dark
+  was already correct (`#2A2C36` on the `#383A46` panel) and is untouched — one rule, both pages that
+  mount this dialog (`main-admin-detail.html`, `main-merchant-detail.html`).
+- **The structure.** Four closing tags in that dialog had lost their `<`. Upstream commit `373a659`
+  ("admin Remove Filter, Subtitle, padiing top 8px") rewrote every `—<` as `U+FFFD U+FFFD ?`, so
+  `<span …>—</span>` became `<span …>\uFFFD\uFFFD?/span>` and the parser never closed the four
+  placeholder elements. The DOM collapsed: `.mac-adjust-summary-copy` and `.mac-adjust-balance`
+  disappeared as wrappers, `#macAdjustName` ended up **three times** in the document, and the balance
+  painted at the right edge of the **viewport** instead of inside the card. Repaired to empty content,
+  matching the sibling dialog on `main-merchant-detail.html`, where `#madCreditName`, `#madCreditSub`
+  and `#madCreditBalance` are empty too.
+- **Trap: a `?/` where you expect `</` is a destroyed closing tag, and the damage is invisible to a
+  text search that does not include the `U+FFFD` bytes.** `git log -S` found it, a selector grep never
+  would; the file looked like correct markup in an editor that renders the replacement characters
+  faintly. A repo-wide sweep for the exact pair `\uFFFD\uFFFD?/` finds this file only — but the same
+  transcode also flattened every `—` in eleven CSS comments of `main-admin-detail-executive.css` and
+  in `main-admin-edit.html` and `menu-permission.html`, where the loss is cosmetic (a comment) or
+  invisible (a JS-filled placeholder) except for `Locked system handle — cannot be changed once
+  provisioned.`, which renders two replacement glyphs to the user.
+- Verified: computed fill `#F0E4D0` / `#2A2C36`, `background-image` none, border `#DCC9A8` /
+  `rgba(255,255,255,.10)`; DOM asserts exactly one of each id, `.mac-adjust-summary` with exactly two
+  children (`-main`, `-balance`), balance text `Current Credit 0.00`; rendered and read both themes.
