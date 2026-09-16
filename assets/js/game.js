@@ -606,14 +606,19 @@ const GAME_API = {
     list.innerHTML = '<div class="slider-empty"><i class="bi bi-hourglass-split"></i><b>Loading games...</b></div>';
     empty.hidden = true;
     try {
-      // Load full list then filter in BO side.
-      // This keeps the filter working even when backend ignores query params or uses different param names.
-      const json = await fetchJson(GAME_API.list);
-      let rows = (json.data || []).map(normalizeGame);
-
+      // Send catalogue filters to Spring Boot instead of always downloading the
+      // complete game catalogue. This is important for large providers and also
+      // makes the selected provider the authoritative server-side filter.
       const selectedCategory = String(categoryFilter.value || '');
       const selectedSubCategory = String(subCategoryFilter.value || '');
-      const selectedProvider = String(providerFilter?.value || '').toUpperCase();
+      const selectedProvider = String(providerFilter?.value || '').trim().toUpperCase();
+      const params = new URLSearchParams();
+      if (selectedCategory) params.set('categoryId', selectedCategory);
+      if (selectedSubCategory) params.set('subCategoryId', selectedSubCategory);
+      if (selectedProvider) params.set('providerCode', selectedProvider);
+      const requestUrl = GAME_API.list + (params.toString() ? `?${params.toString()}` : '');
+      const json = await fetchJson(requestUrl);
+      let rows = (json.data || []).map(normalizeGame);
 
       if (selectedCategory) {
         rows = rows.filter(item => String(getCategoryId(item)) === selectedCategory);
