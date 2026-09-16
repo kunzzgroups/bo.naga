@@ -292,6 +292,8 @@ Sidebar **3. Transaction** pages use listing chrome: filter/select = surface `#F
 
 **Deposit / Withdraw shell (locked):** bank capacity cards above the panel · mad-pill tabs Deposit→Withdraw→All **left** + inline filters **right** inside `.table-card` (no Reset/Search/Page Size in the filter row) · Bank column = bold `Name (account)` · Member = username only · action chips `.bo-tx-action-btn` 26×26 / icon 15px (Approve/Reject/Ledger) · no Pending metrics strip · no Filtered Total bar · Withdraw Remark without `Admin:` sub-line.
 
+**Payment Method Config** (`payment-method.html`): same Transaction listing table/pager · Edit/Delete `.bo-tx-action-btn` wells · amber QR View link · form-well modal. Full notes: system.md → Payment Method Config.
+
 **Responsive (1920→375):** ≤1456 DATE day-only + hover full time · ≤1280 bank cards = horizontal snap strip (never multi-row stack that starves the table) · toolbar tabs-then-filters · table body scrolls · mid/small hide Processed / Remark / Reference as needed · never page horizontal overflow. CSS: `bo-wallet-transaction-amber.css`. Full notes: `.interface-design/system.md` → Layout → Transaction family (+ Deposit/Withdraw chrome & responsive tables).
 
 ### Roles typography (quick scale)

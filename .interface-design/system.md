@@ -163,7 +163,7 @@ Classic BO listing shells (`reports.css` + `bo-ui-standard.css`), **not** MAIN e
 |------|-------|
 | Scope | `body.bo-wallet-tx` |
 | CSS | `assets/css/bo-wallet-transaction-amber.css` (load after `bo-ui-standard`) |
-| Pages | `member-deposit`, `member-withdraw`, `member-wallet`, `wallet-ledger`, `bulk-adjustment`, `bank-deposit-usage`, `bulk-bonus-adjustment` |
+| Pages | `member-deposit`, `member-withdraw`, `member-wallet`, `wallet-ledger`, `bulk-adjustment`, `bank-deposit-usage`, `bulk-bonus-adjustment`, `payment-method` |
 | Filter / select recipe | **Admin listing chrome** + **Role select dropdown** — surface `#FFF8EB` · border `#EADCC8` · radius `8px` · never form well `#F5EBDC` |
 | Dark select selected | solid `#F59E0B` · text `#2A2C36` (same as Role select) |
 | Pager | **Table footer pager** (`.mad-pager`) — light inactive slate `#F3F4F6`/`#9CA3AF`; dark charcoal inactive; amber 3D active |
@@ -209,6 +209,21 @@ Preserve colors / hierarchy / business logic; change width, stack, and density o
 | ≤575 / 390 / 375 | Hide header **Members/Deposit/Withdraw** counters · hide title icon · filters stack full-width · hide **Reference** (+ Remark/Processed as above) · action hit area ≥36px · touch fields `min-height:44px` |
 
 Head/body column sync: body `scroll` sets `.bo-tx-table-head` `scrollLeft` (Deposit + Withdraw JS).
+
+#### Payment Method Config (locked)
+
+Reference: `payment-method.html` · `body.bo-wallet-tx.payment-method-page`. Same Transaction listing table / pager / status pills as Deposit.
+
+| Part | Spec |
+|------|------|
+| Shell | `bo-wallet-tx` + `bo-wallet-transaction-amber.css` (not charcoal shell) |
+| Panel | `.pm-list-card` = viewport-locked `.table-card` · toolbar strip · inner `.table-wrap` scroll · footer pager |
+| Toolbar | Right-aligned Ghost `Bank Deposit Usage` / `Refresh` + primary amber `Create Payment Method` (no left title badge) |
+| Columns | Order · Type · Display (name + subtitle) · Details · QR · Status · Action |
+| QR | Amber `.bo-tx-link` **View** (never default blue) · `-` when empty |
+| Status | `.status-pill.active` ACTIVE · `.status-pill.off` INACTIVE |
+| Action | `.bo-tx-action-btn` **26×26** · Edit `is-edit` (amber well) · Delete `is-reject` (danger) |
+| Modal | Form wells `#F5EBDC` · focus amber ring · full-bleed ≤768 |
 
 Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
 
