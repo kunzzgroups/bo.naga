@@ -4131,3 +4131,51 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .fiel
   }
 }
 
+/* =============================================================================
+   Wallet Ledger — Panel pill scrollbar on horizontal .table-wrap
+   Light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / `#D97706`
+   4px · no arrows · webkit only (same recipe as Bulk panels)
+   ============================================================================= */
+body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap{
+  /* Do NOT set scrollbar-width/color to a coloured pair — Chromium then uses OS arrows */
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+}
+body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap::-webkit-scrollbar{
+  width:4px!important;
+  height:4px!important;
+}
+body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap::-webkit-scrollbar-button{
+  display:none!important;
+  height:0!important;
+  width:0!important;
+}
+body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap::-webkit-scrollbar-track{
+  background:transparent!important;
+}
+body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap::-webkit-scrollbar-thumb{
+  background:#8B6B4A!important;
+  border-radius:999px!important;
+}
+body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap::-webkit-scrollbar-thumb:hover{
+  background:#5C4A30!important;
+}
+body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap::-webkit-scrollbar-corner{
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap::-webkit-scrollbar-thumb{
+  background:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap::-webkit-scrollbar-thumb:hover{
+  background:#D97706!important;
+}
+@supports not selector(::-webkit-scrollbar){
+  body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap{
+    scrollbar-width:thin;
+    scrollbar-color:#8B6B4A transparent;
+  }
+  html[data-bo-theme="dark"] body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap{
+    scrollbar-color:#F59E0B transparent;
+  }
+}
+

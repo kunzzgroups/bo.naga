@@ -15,24 +15,31 @@
 <link href="assets/css/operations-upgrade.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet">
-<link href="assets/css/bo-wallet-transaction-amber.css?v=1.0.75" rel="stylesheet"/>
+<link href="assets/css/bo-wallet-transaction-amber.css?v=1.0.95" rel="stylesheet"/>
+<script>
+(function(){
+  try{
+    if(localStorage.getItem('bo_theme')==='dark') document.documentElement.setAttribute('data-bo-theme','dark');
+  }catch(e){}
+})();
+</script>
 <style>
-/* Wallet Ledger themed multi-type dropdown */
+/* Wallet Ledger themed multi-type dropdown — Role select / listing surface MD */
 .ledger-type-field{min-width:190px!important;width:100%!important;max-width:none!important}
 .ledger-type-field>label{display:block;margin-bottom:6px}
 .ledger-type-multi{position:relative;width:100%!important;min-width:190px}
-.ledger-type-trigger{width:100%!important;min-width:190px;height:42px;border:1px solid #cfd9ec;border-radius:10px;background:#fff;padding:0 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:600;color:#172033;text-align:left;white-space:nowrap;overflow:hidden}
+.ledger-type-trigger{width:100%!important;min-width:190px;height:40px;border:1px solid #EADCC8;border-radius:8px;background:#FFF8EB;padding:0 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:600;font-size:13.5px;color:#18191C;text-align:left;white-space:nowrap;overflow:hidden}
 .ledger-type-trigger #ledgerTypeLabel{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ledger-type-trigger .bi{flex:0 0 auto;transition:transform .18s}
-.ledger-type-trigger:focus{outline:0;border-color:#2f68f5;box-shadow:0 0 0 3px rgba(47,104,245,.12)}
+.ledger-type-trigger .bi{flex:0 0 auto;transition:transform .18s;color:#57534E}
+.ledger-type-trigger:focus{outline:0;border-color:#D97706;box-shadow:0 0 0 3px rgba(217,119,6,.14)}
 .ledger-type-multi.open .ledger-type-trigger .bi{transform:rotate(180deg)}
-.ledger-type-menu{position:absolute;z-index:2200;top:calc(100% + 7px);left:0;width:240px;max-width:min(270px,calc(100vw - 32px));max-height:330px;overflow-y:auto;overflow-x:hidden;background:#fff;border:1px solid #d8e1f0;border-radius:12px;box-shadow:0 14px 34px rgba(25,45,85,.18);padding:8px;box-sizing:border-box}
-.ledger-type-menu .ledger-type-option{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;width:100%!important;min-height:40px!important;margin:0!important;padding:8px 10px!important;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:#26344d;white-space:nowrap;box-sizing:border-box;line-height:1.2}
-.ledger-type-menu .ledger-type-option:hover{background:#f2f6ff}
-.ledger-type-menu .ledger-type-option input[type="checkbox"]{display:block!important;position:static!important;flex:0 0 16px!important;width:16px!important;height:16px!important;margin:0!important;padding:0!important;accent-color:#2f68f5}
+.ledger-type-menu{position:absolute;z-index:2200;top:calc(100% + 7px);left:0;width:240px;max-width:min(270px,calc(100vw - 32px));max-height:330px;overflow:hidden;background:#FFF8EB;border:1px solid #EADCC8;border-radius:8px;box-shadow:0 14px 34px rgba(92,74,48,.16);padding:6px;box-sizing:border-box}
+.ledger-type-menu .ledger-type-option{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;width:100%!important;min-height:40px!important;margin:0!important;padding:8px 10px!important;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:#18191C;white-space:nowrap;box-sizing:border-box;line-height:1.2}
+.ledger-type-menu .ledger-type-option:hover{background:rgba(217,119,6,.10);color:#B45309}
+.ledger-type-menu .ledger-type-option input[type="checkbox"]{display:block!important;position:static!important;flex:0 0 16px!important;width:16px!important;height:16px!important;margin:0!important;padding:0!important;accent-color:#D97706}
 .ledger-type-menu .ledger-type-option span{display:inline-block!important;flex:1 1 auto!important;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:20px!important}
-.ledger-type-divider{height:1px;background:#e8edf5;margin:5px 2px}
-.ledger-type-all{color:#2457d6}
+.ledger-type-divider{height:1px;background:#EADCC8;margin:5px 2px}
+.ledger-type-all{color:#B45309}
 body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .bo-filter-other-button{
   width:100%!important;
 }
@@ -238,28 +245,58 @@ body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .
   max-width:none!important;
 }
 .wallet-ledger-page .ledger-type-field .ledger-type-menu{
-  border-radius:16px!important;
+  border-radius:8px!important;
   overflow:hidden!important;
   overflow-y:hidden!important;
   max-height:none!important;
-  padding:8px!important;
-  background:#fff!important;
+  padding:6px!important;
+  background:#FFF8EB!important;
+  border:1px solid #EADCC8!important;
 }
 .wallet-ledger-page #ledgerTypeOptions{
   max-height:248px!important;
   overflow-y:auto!important;
   overflow-x:hidden!important;
   overscroll-behavior:contain;
-  scrollbar-gutter:stable;
   padding-right:2px;
 }
-.wallet-ledger-page #ledgerTypeOptions::-webkit-scrollbar{width:8px}
-.wallet-ledger-page #ledgerTypeOptions::-webkit-scrollbar-thumb{background:#c7d3e8;border-radius:999px}
-.wallet-ledger-page #ledgerTypeOptions::-webkit-scrollbar-track{background:transparent}
-.wallet-ledger-page #ledgerTypeOptions{scrollbar-width:thin;scrollbar-color:#c7d3e8 transparent}
+/* Type menu — Panel pill scrollbar (chocolate light / amber dark) */
+.wallet-ledger-page #ledgerTypeOptions::-webkit-scrollbar{width:4px!important;height:4px!important}
+.wallet-ledger-page #ledgerTypeOptions::-webkit-scrollbar-button{display:none!important;height:0!important;width:0!important}
+.wallet-ledger-page #ledgerTypeOptions::-webkit-scrollbar-thumb{background:#8B6B4A!important;border-radius:999px!important}
+.wallet-ledger-page #ledgerTypeOptions::-webkit-scrollbar-thumb:hover{background:#5C4A30!important}
+.wallet-ledger-page #ledgerTypeOptions::-webkit-scrollbar-track{background:transparent!important}
+html[data-bo-theme="dark"] .wallet-ledger-page #ledgerTypeOptions::-webkit-scrollbar-thumb{background:#F59E0B!important}
+html[data-bo-theme="dark"] .wallet-ledger-page #ledgerTypeOptions::-webkit-scrollbar-thumb:hover{background:#D97706!important}
+@supports not selector(::-webkit-scrollbar){
+  .wallet-ledger-page #ledgerTypeOptions{scrollbar-width:thin;scrollbar-color:#8B6B4A transparent}
+  html[data-bo-theme="dark"] .wallet-ledger-page #ledgerTypeOptions{scrollbar-color:#F59E0B transparent}
+}
+html[data-bo-theme="dark"] .wallet-ledger-page .ledger-type-trigger{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] .wallet-ledger-page .ledger-type-trigger:focus{
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+html[data-bo-theme="dark"] .wallet-ledger-page .ledger-type-menu,
+html[data-bo-theme="dark"] .wallet-ledger-page .ledger-type-field .ledger-type-menu{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
+}
+html[data-bo-theme="dark"] .wallet-ledger-page .ledger-type-menu .ledger-type-option{color:#F5F5F4!important}
+html[data-bo-theme="dark"] .wallet-ledger-page .ledger-type-menu .ledger-type-option:hover{
+  background:rgba(245,158,11,.14)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] .wallet-ledger-page .ledger-type-divider{background:rgba(255,255,255,.10)!important}
+html[data-bo-theme="dark"] .wallet-ledger-page .ledger-type-all{color:#FBBF24!important}
 
 </style>
-<body class="report-body standardized-listing-page wallet-ledger-page bo-charcoal bo-account-chip">
+<body class="report-body standardized-listing-page wallet-ledger-page bo-wallet-tx bo-account-chip">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
 <div class="report-brand">
