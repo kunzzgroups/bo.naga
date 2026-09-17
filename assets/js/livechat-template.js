@@ -10,10 +10,14 @@
   const resetBtn = document.getElementById('templateResetBtn');
   const refreshBtn = document.getElementById('templateRefreshBtn');
   const formTitle = document.getElementById('templateFormTitle');
+  const searchInput = document.getElementById('templateSearch');
+  const saveBtn = document.getElementById('templateSaveBtn');
+  const formHint = document.querySelector('.template-form-card .template-pane-head p');
 
   let db = null;
   let unsubscribe = null;
   let templates = [];
+  let editingId = '';
 
   const DEFAULT_TEMPLATES = [
     {title:'Greeting', message:'Hi dear, how can I help you?', sortOrder:10, status:1},
@@ -51,6 +55,7 @@
     }
     if(resetBtn) resetBtn.addEventListener('click', resetForm);
     if(refreshBtn) refreshBtn.addEventListener('click', function(){ if(db) listenTemplates(); else renderList(getLocalTemplates()); });
+    if(searchInput) searchInput.addEventListener('input', function(){ renderList(templates); });
   }
 
   function listenTemplates(){
@@ -100,6 +105,9 @@
       });
 
       renderList(templates);
+      if(!editingId && sortInput && !titleInput.value && !messageInput.value && (!sortInput.value || sortInput.value === '0')){
+        sortInput.value = String(nextSortOrder());
+      }
 
     }, function(error){
 
@@ -187,35 +195,99 @@
     messageInput.value = t.message || '';
     sortInput.value = Number(t.sortOrder || 0);
     statusInput.value = String(t.status == null ? 1 : t.status);
-    if(formTitle) formTitle.textContent = 'Edit Template';
+    editingId = t.id || '';
+    if(formTitle) formTitle.textContent = 'Edit template';
+    if(formHint) formHint.textContent = 'Saving updates the Live Chat chip instantly.';
+    if(saveBtn) saveBtn.innerHTML = '<i class="bi bi-save"></i> Save';
     titleInput.focus();
-    window.scrollTo({top:0, behavior:'smooth'});
+    renderList(templates);
+    const formCard = document.querySelector('.template-form-card');
+    if(formCard && window.matchMedia('(max-width: 991.98px)').matches){
+      formCard.scrollIntoView({block:'start', behavior:'smooth'});
+    }
+  }
+
+  function nextSortOrder(){
+    return templates.reduce(function(n, t){ return Math.max(n, Number(t.sortOrder || 0)); }, 0) + 1;
   }
 
   function resetForm(){
     idInput.value = '';
     titleInput.value = '';
     messageInput.value = '';
-    sortInput.value = '0';
+    sortInput.value = String(nextSortOrder());
     statusInput.value = '1';
-    if(formTitle) formTitle.textContent = 'Add Template';
+    editingId = '';
+    if(formTitle) formTitle.textContent = 'New template';
+    if(formHint) formHint.textContent = 'Click a template on the left to edit it.';
+    if(saveBtn) saveBtn.innerHTML = '<i class="bi bi-save"></i> Save';
+    renderList(templates);
   }
 
   function renderList(list){
     if(!listEl) return;
     list = Array.isArray(list) ? list : [];
-    if(!list.length){ listEl.innerHTML = '<div class="livechat-empty"><span class="livechat-empty-icon"><i class="bi bi-chat-square-text"></i></span><strong>No template message yet</strong><span>Add one with the form on the left.</span></div>'; return; }
-    listEl.innerHTML = list.map(function(t){
+    const q = (searchInput && searchInput.value || '').trim().toLowerCase();
+    const visible = list.filter(function(t){
+      if(!q) return true;
+      const hay = [t.title, t.message].join(' ').toLowerCase();
+      return hay.indexOf(q) >= 0;
+    });
+    const totalEl = document.getElementById('templateListTotal');
+    if(totalEl) totalEl.textContent = visible.length ? String(visible.length) : '';
+    const addHtml = '<button type="button" class="template-list-add' + (editingId ? '' : ' is-current') + '" data-template-add><i class="bi bi-plus-lg" aria-hidden="true"></i> New template</button>';
+    if(!visible.length){
+      listEl.innerHTML = '<div class="livechat-empty"><span class="livechat-empty-icon"><i class="bi bi-chat-square-text"></i></span><strong>' + (q ? 'No matching template' : 'No template yet') + '</strong><span>' + (q ? 'Try another search.' : 'Write one on the right and save.') + '</span></div>' + addHtml;
+      bindListAdd();
+      return;
+    }
+    let activeIndex = 0;
+    const hotkeyById = {};
+    list.forEach(function(t){
+      if(Number(t.status == null ? 1 : t.status) === 1 && activeIndex < 9){
+        hotkeyById[t.id] = String(++activeIndex);
+      }
+    });
+    listEl.innerHTML = visible.map(function(t){
       const active = Number(t.status == null ? 1 : t.status) === 1;
-      return '<article class="template-list-item">' +
-        '<div class="template-list-main"><div class="template-title-line"><b>' + esc(t.title || 'Template') + '</b><span class="status-pill ' + (active ? 'active' : 'off') + '">' + (active ? 'Active' : 'Inactive') + '</span></div>' +
-        '<pre>' + esc(t.message || '') + '</pre><small>Sort: ' + esc(t.sortOrder || 0) + '</small></div>' +
-        '<div class="template-list-actions"><button type="button" class="clean-btn" data-edit="' + esc(t.id || '') + '"><i class="bi bi-pencil-square"></i> Edit</button>' +
-        '<button type="button" class="clean-btn danger" data-delete="' + esc(t.id || '') + '"><i class="bi bi-trash"></i> Delete</button></div>' +
+      const hotkey = hotkeyById[t.id] || '';
+      const selected = editingId && t.id === editingId;
+      const preview = String(t.message || '').replace(/\s+/g, ' ').trim();
+      return '<article class="template-list-item' + (selected ? ' is-editing' : '') + (active ? '' : ' is-off') + '" data-edit="' + esc(t.id || '') + '" tabindex="0" role="button" aria-pressed="' + (selected ? 'true' : 'false') + '">' +
+        '<span class="template-hotkey' + (hotkey ? '' : ' is-empty') + '" aria-hidden="true">' + (hotkey || '–') + '</span>' +
+        '<span class="template-list-copy">' +
+          '<span class="template-title-line"><b>' + esc(t.title || 'Template') + '</b><span class="status-pill ' + (active ? 'active' : 'off') + '">' + (active ? 'Active' : 'Off') + '</span></span>' +
+          '<em>' + esc(preview) + '</em>' +
+        '</span>' +
+        '<span class="template-list-actions">' +
+          '<button type="button" class="template-icon-btn" data-edit-btn="' + esc(t.id || '') + '" aria-label="Edit ' + esc(t.title || 'template') + '"><i class="bi bi-pencil"></i></button>' +
+          '<button type="button" class="template-icon-btn is-danger" data-delete="' + esc(t.id || '') + '" aria-label="Delete ' + esc(t.title || 'template') + '"><i class="bi bi-trash3"></i></button>' +
+        '</span>' +
       '</article>';
-    }).join('');
-    listEl.querySelectorAll('[data-edit]').forEach(function(btn){ btn.addEventListener('click', function(){ editTemplate(btn.dataset.edit); }); });
-    listEl.querySelectorAll('[data-delete]').forEach(function(btn){ btn.addEventListener('click', function(){ deleteTemplate(btn.dataset.delete); }); });
+    }).join('') + addHtml;
+    listEl.querySelectorAll('.template-list-item[data-edit]').forEach(function(row){
+      row.addEventListener('click', function(){ editTemplate(row.getAttribute('data-edit')); });
+      row.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); editTemplate(row.getAttribute('data-edit')); }
+      });
+    });
+    listEl.querySelectorAll('[data-edit-btn]').forEach(function(btn){
+      btn.addEventListener('click', function(e){ e.stopPropagation(); editTemplate(btn.getAttribute('data-edit-btn')); });
+    });
+    listEl.querySelectorAll('[data-delete]').forEach(function(btn){
+      btn.addEventListener('click', function(e){ e.stopPropagation(); deleteTemplate(btn.getAttribute('data-delete')); });
+    });
+    bindListAdd();
+  }
+
+  function bindListAdd(){
+    const addBtn = listEl && listEl.querySelector('[data-template-add]');
+    if(!addBtn) return;
+    addBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      resetForm();
+      if(titleInput) titleInput.focus();
+    });
   }
 
   function getLocalTemplates(){
