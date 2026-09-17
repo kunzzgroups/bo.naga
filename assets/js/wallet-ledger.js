@@ -1,6 +1,7 @@
 (function(){
   let page = 1;
   let totalPages = 1;
+  let pageSize = 20;
   const initialParams = new URLSearchParams(location.search);
   const allTimeScope = initialParams.get('scope') === 'all';
   const LEDGER_TYPES = ['DEPOSIT','WITHDRAW','ADJUSTMENT','BONUS','ADMIN_DEPOSIT','ADMIN_WITHDRAW','ADMIN_ADJUSTMENT','BULK_ADJUSTMENT','REFERRAL_REWARD','REBATE','REBATE_ADJUSTMENT','BET','WIN','LOSE','SETTLE','ROLLBACK'];
@@ -106,7 +107,7 @@
     const types = selectedTypeList();
     const from = document.getElementById('ledgerFrom')?.value;
     const to = document.getElementById('ledgerTo')?.value;
-    const size = document.getElementById('ledgerSize')?.value || '20';
+    const size = String(pageSize || 20);
     if(memberId) p.set('memberId', memberId);
     if(provider) p.set('providerCode', provider);
     p.set('types', effectiveTypeList().join(','));
@@ -172,7 +173,22 @@
     setFromUrl();
     document.getElementById('ledgerSearchBtn')?.addEventListener('click', ()=>{ page=1; load(); });
     ['ledgerMemberId','ledgerProviderCode'].forEach(id=>document.getElementById(id)?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ page=1; load(); } }));
-    ['ledgerFrom','ledgerTo','ledgerSize'].forEach(id=>document.getElementById(id)?.addEventListener('change', ()=>{ page=1; load(); }));
+    ['ledgerFrom','ledgerTo'].forEach(id=>document.getElementById(id)?.addEventListener('change', ()=>{ page=1; load(); }));
+    // Footer "Show N entries" drives page size (filter Page Size control removed)
+    const footerSizeSel = document.querySelector('.table-card .entries-control select, .table-card .bo-pagination-standard select, select[data-bo-page-size]');
+    if(footerSizeSel){
+      const n = Number(footerSizeSel.value);
+      if(Number.isFinite(n) && n > 0) pageSize = n;
+    }
+    document.addEventListener('change', e=>{
+      const sel = e.target?.closest?.('.entries-control select, .bo-pagination-standard select, select[data-bo-page-size]');
+      if(!sel || !document.body.contains(sel)) return;
+      const next = Number(sel.value);
+      if(!Number.isFinite(next) || next < 1 || next === pageSize) return;
+      pageSize = next;
+      page = 1;
+      load();
+    });
     document.getElementById('ledgerResetBtn')?.addEventListener('click', ()=>{
       ['ledgerMemberId','ledgerProviderCode'].forEach(id=>document.getElementById(id).value='');
       setSelectedTypes([]);
