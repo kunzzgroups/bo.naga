@@ -643,6 +643,22 @@ Follow-up (same day) — the two picker defects found in review:
 
 - **A pill set without `bo-seg-bounce` renders with no frame at all.** The family's active-pill fill is drawn by the shared `.bo-seg-thumb`, not by the pill: `main-merchant-detail-executive.css` sets `.mad-pill.is-active{background:transparent}` and puts the cream/charcoal raised chip in `.mad-pills.bo-seg > .bo-seg-thumb`. `main-merchant-profit.html` carried `.mad-pills` but never loaded `bo-seg-bounce.css`/`.js`, so its filter pills fell back to an unstyled grey chip while every other pill-bearing merchant page looked right. Both files are wired there now; the thumb is created by the script (`ensureThumb`) and positioned by `sync()`, which runs on mount, on resize and on any mutation of the track (class/text), so counts and clicks keep it aligned.
 
+### Live Chat — migrated 2026-09-17
+
+`livechat.html` (inbox + room) and `livechat-template.html` (Add Template form + list) now run Charcoal + Amber.
+
+Page CSS: `assets/css/livechat-executive.css` — **must load last**, after the three `bo-charcoal-*` layers. It is the only file that owns Live Chat's own vocabulary (`.livechat-*`, `.template-form-card`, `.template-chip`). `reports.css` still carries the layout/overflow rules; this file wins colour, radius, and type by source order plus `!important` where `reports.css` already used it (composer, attach button, message menu).
+
+Recipe:
+
+- Scope: `body.livechat-bo-page` / `body.livechat-template-page`. Both already carry `bo-charcoal bo-account-chip`.
+- **Inbox is a listing panel** (`#FFF8EB` · border `#EADCC8` · radius `16px`). Search matches the Roles filter: surface, `8px`, `42px`, icon `#57534E`, placeholder `#78716C`. Active row uses the locked **L2 chip** (`#FFFBEB`→`#FEF3C7` + `#D97706` frame). Hover is a wash only. Avatars are the row tile (`12px`, cream `#F5EBDC` / `#6b360c` — not a circle, not amber).
+- **Room is a split well:** message history sits in control well `#F5EBDC`; member bubbles are surface; admin bubbles are the Primary amber gradient (light text white · dark text `#2A2C36`). Composer textarea is a well; Template chips nest one step deeper (`#F0E4D0`).
+- **Message menu is a cream/charcoal panel**, never the retired Naga `#171717` / `#18191C` circle. Delete stays danger (`#991B1B` / `#F87171`). Unread NEW/count use the same danger pair — not `#ef4444`.
+- **Template Messages is a Create/Edit form.** `.template-form-card` uses the layer ladder: lift `#FFFCF7` · border `#DCC9A8` · **3px amber left rail**. Inputs are wells. The list card stays listing surface. Status pills use locked success/danger washes, not the cool `#dcfae6` / `#067647`.
+- Dark: surfaces `#383A46` / wells `#2A2C36` / borders `rgba(255,255,255,.10–.14)` / L2 chip amber-on-charcoal. Panel scrollbars follow the chocolate/amber pill (`#8B6B4A` / `#F59E0B`, `4px`, no arrows).
+- Do not restyle Live Chat inside `reports.css` — that file is shared. Further deltas go in `livechat-executive.css`.
+
 ## Layout
 
 Shell: sidebar + sticky topbar + main. One job per section. Touch targets ≥44px on coarse pointers.
@@ -818,7 +834,7 @@ create,endpoints}` pages, the `main-accounting-{report,settlement,due}` pages,
 `bulk-adjustment`, `bulk-bonus-adjustment`, `duplicate-ip`, the rebate family, the VIP family,
 the payment pages, the legacy provider pages, `player-provider-session`, `bank-deposit-usage`,
 the game-ranking reports, `spin2-management`, `wbet-bet-limit`, `rebate-management`,
-`vip-management`, `casino-overview-report`.
+`vip-management`, `casino-overview-report`, Live Chat (`livechat.html`, `livechat-template.html`).
 
 Verified by sweeping every rendered element's computed colour on the page in both themes —
 0 retired values, 0 cool-hue hits, 0 cool-white surfaces.
