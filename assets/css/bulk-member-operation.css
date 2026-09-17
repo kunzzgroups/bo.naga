@@ -318,50 +318,129 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-count-badge{
   white-space:nowrap;
 }
 
-/* ---- Member picker toolbar ---- */
+/* ---- Member picker toolbar — MD listing search (mad-search + 40px Ghost/Primary) ---- */
 body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto auto;
-  gap:10px;
-  margin-bottom:12px;
-  align-items:center;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto auto!important;
+  gap:8px!important;
+  margin-bottom:12px!important;
+  align-items:center!important;
 }
-body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar input,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar input{
-  box-sizing:border-box;
-  min-width:0;
-  width:100%;
-  height:40px;
-  min-height:40px;
-  padding:0 12px;
-  border:1px solid #EADCC8;
-  border-radius:8px;
-  background:#FFF8EB;
-  color:#18191C;
-  font-size:13.5px;
-  font-weight:600;
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search{
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  box-sizing:border-box!important;
+  min-width:0!important;
+  width:100%!important;
+  height:40px!important;
+  min-height:40px!important;
+  max-height:40px!important;
+  margin:0!important;
+  padding:0 12px!important;
+  border:1px solid #EADCC8!important;
+  border-radius:8px!important;
+  background:#FFF8EB!important;
+  box-shadow:none!important;
+  cursor:text!important;
 }
-body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar input::placeholder,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar input::placeholder{
-  color:#78716C;
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search > i,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search > i{
+  flex:0 0 auto!important;
+  color:#57534E!important;
+  font-size:15px!important;
+  line-height:1!important;
+  pointer-events:none!important;
 }
-body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar input:hover,
-body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar input:focus,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar input:hover,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar input:focus{
-  border-color:#D97706;
-  outline:none;
-  box-shadow:0 0 0 3px rgba(217,119,6,.14);
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input,
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input[type="search"],
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input[type="search"],
+body.bo-wallet-tx.bulk-adjustment-page .report-content .member-picker-toolbar .mad-search input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+body.bo-wallet-tx.bulk-bonus-adjustment-page .report-content .member-picker-toolbar .mad-search input:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
+  flex:1 1 auto!important;
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-width:0!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  color:#18191C!important;
+  font-size:13.5px!important;
+  font-weight:600!important;
+  line-height:1.2!important;
+  -webkit-appearance:none!important;
+  appearance:none!important;
 }
-body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .clean-btn,
-body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .clean-btn{
-  height:40px;
-  min-height:40px;
-  border-radius:8px;
-  font-size:12.5px;
-  font-weight:700;
-  white-space:nowrap;
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input::-webkit-search-decoration,
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input::-webkit-search-cancel-button,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input::-webkit-search-decoration,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input::-webkit-search-cancel-button{
+  display:none!important;
+  -webkit-appearance:none!important;
+}
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input::placeholder,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input::placeholder{
+  color:#78716C!important;
+  opacity:1!important;
+}
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search:hover,
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search:focus-within,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search:hover,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search:focus-within{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input:focus,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input:focus{
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+/* Legacy bare input fallback (if any page still has it) */
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar > input,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar > input{
+  box-sizing:border-box!important;
+  min-width:0!important;
+  width:100%!important;
+  height:40px!important;
+  min-height:40px!important;
+  padding:0 12px!important;
+  border:1px solid #EADCC8!important;
+  border-radius:8px!important;
+  background:#FFF8EB!important;
+  color:#18191C!important;
+  font-size:13.5px!important;
+  font-weight:600!important;
+}
+html body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .clean-btn,
+html body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .clean-btn.bo-ui-button,
+html body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .clean-btn.bo-ui-button-primary,
+html body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .clean-btn.bo-ui-button-secondary,
+html body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .clean-btn,
+html body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .clean-btn.bo-ui-button,
+html body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .clean-btn.bo-ui-button-primary,
+html body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .clean-btn.bo-ui-button-secondary{
+  box-sizing:border-box!important;
+  height:40px!important;
+  min-height:40px!important;
+  max-height:40px!important;
+  border-radius:8px!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+  white-space:nowrap!important;
+  padding:0 12px!important;
+  line-height:1!important;
 }
 
 /* ---- Member picker: clickable cards · columns follow container width ---- */
@@ -379,6 +458,52 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list{
   box-sizing:border-box;
   container-type:inline-size;
   container-name:member-picker;
+  -webkit-overflow-scrolling:touch;
+  /* Do NOT set scrollbar-width/color — Chromium then uses OS arrows and ignores ::-webkit-scrollbar */
+}
+/* MD scrollbar — Role select: 4px slate pill · no arrows */
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-list::-webkit-scrollbar,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list::-webkit-scrollbar{
+  width:4px!important;
+  height:4px!important;
+}
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-list::-webkit-scrollbar-button,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list::-webkit-scrollbar-button{
+  display:none!important;
+  height:0!important;
+  width:0!important;
+}
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-list::-webkit-scrollbar-track,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list::-webkit-scrollbar-track{
+  background:transparent!important;
+}
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-list::-webkit-scrollbar-thumb,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list::-webkit-scrollbar-thumb{
+  background:#8B6B4A!important;
+  border-radius:999px!important;
+}
+body.bo-wallet-tx.bulk-adjustment-page .member-picker-list::-webkit-scrollbar-thumb:hover,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list::-webkit-scrollbar-thumb:hover{
+  background:#5C4A30!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-list::-webkit-scrollbar-thumb,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list::-webkit-scrollbar-thumb{
+  background:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-list::-webkit-scrollbar-thumb:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list::-webkit-scrollbar-thumb:hover{
+  background:#D97706!important;
+}
+@supports not selector(::-webkit-scrollbar){
+  body.bo-wallet-tx.bulk-adjustment-page .member-picker-list,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list{
+    scrollbar-width:thin;
+    scrollbar-color:#8B6B4A transparent;
+  }
+  html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-list,
+  html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list{
+    scrollbar-color:#F59E0B transparent;
+  }
 }
 body.bo-wallet-tx.bulk-adjustment-page .member-picker-grid,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-grid{
@@ -664,8 +789,8 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table tbody tr{
 /* Body-only scrollbar — thin pill, no end arrows */
 body.bo-wallet-tx.bulk-adjustment-page .selected-table tbody::-webkit-scrollbar,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table tbody::-webkit-scrollbar{
-  width:6px!important;
-  height:6px!important;
+  width:4px!important;
+  height:4px!important;
   background:transparent!important;
 }
 body.bo-wallet-tx.bulk-adjustment-page .selected-table tbody::-webkit-scrollbar-track,
@@ -674,10 +799,15 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table tbody::-webkit-scro
 }
 body.bo-wallet-tx.bulk-adjustment-page .selected-table tbody::-webkit-scrollbar-thumb,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table tbody::-webkit-scrollbar-thumb{
-  background:#C4B5A0!important;
-  background-color:#C4B5A0!important;
+  background:#8B6B4A!important;
+  background-color:#8B6B4A!important;
   border-radius:999px!important;
   border:0!important;
+}
+body.bo-wallet-tx.bulk-adjustment-page .selected-table tbody::-webkit-scrollbar-thumb:hover,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table tbody::-webkit-scrollbar-thumb:hover{
+  background:#5C4A30!important;
+  background-color:#5C4A30!important;
 }
 body.bo-wallet-tx.bulk-adjustment-page .selected-table tbody::-webkit-scrollbar-corner,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table tbody::-webkit-scrollbar-corner{
@@ -706,6 +836,17 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table tbody::-webkit-scro
   background:transparent!important;
   background-image:none!important;
   border:0!important;
+}
+@supports not selector(::-webkit-scrollbar){
+  body.bo-wallet-tx.bulk-adjustment-page .selected-table tbody,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table tbody{
+    scrollbar-width:thin;
+    scrollbar-color:#8B6B4A transparent;
+  }
+  html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .selected-table tbody,
+  html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table tbody{
+    scrollbar-color:#F59E0B transparent;
+  }
 }
 body.bo-wallet-tx.bulk-adjustment-page .selected-table th,
 body.bo-wallet-tx.bulk-adjustment-page .selected-table td,
@@ -1129,8 +1270,19 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-co
   color:#D4D4D8;
   border-color:rgba(255,255,255,.14);
 }
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar input,
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar input,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search > i,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search > i{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar > input,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar > input,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .operation-form-grid .field input,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .operation-form-grid .field select,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .operation-form-grid .field input,
@@ -1139,16 +1291,27 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .operati
   border-color:rgba(255,255,255,.14);
   color:#F5F5F4;
 }
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar input::placeholder,
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar input::placeholder,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input{
+  background:transparent!important;
+  border:0!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input::placeholder,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search input::placeholder,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar > input::placeholder,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar > input::placeholder,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .operation-form-grid .field input::placeholder,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .operation-form-grid .field input::placeholder{
-  color:#A1A1AA;
+  color:#A1A1AA!important;
 }
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar input:hover,
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar input:focus,
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar input:hover,
-html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar input:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search:focus-within,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search:focus-within,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar > input:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar > input:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar > input:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar > input:focus,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .operation-form-grid .field input:hover,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .operation-form-grid .field input:focus,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .operation-form-grid .field select:hover,
@@ -1157,8 +1320,8 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .operati
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .operation-form-grid .field input:focus,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .operation-form-grid .field select:hover,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .operation-form-grid .field select:focus{
-  border-color:#F59E0B;
-  box-shadow:0 0 0 3px rgba(245,158,11,.18);
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
 }
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .member-picker-list,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list,
@@ -1284,13 +1447,13 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .selecte
 }
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .selected-table tbody::-webkit-scrollbar-thumb,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table tbody::-webkit-scrollbar-thumb{
-  background:#71717A!important;
-  background-color:#71717A!important;
+  background:#F59E0B!important;
+  background-color:#F59E0B!important;
 }
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .selected-table tbody::-webkit-scrollbar-thumb:hover,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table tbody::-webkit-scrollbar-thumb:hover{
-  background:#A1A1AA!important;
-  background-color:#A1A1AA!important;
+  background:#D97706!important;
+  background-color:#D97706!important;
 }
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-adjustment-page .selected-table td,
 html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table td{
@@ -1437,8 +1600,10 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .clean-b
   body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar{
     grid-template-columns:1fr 1fr;
   }
-  body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar input,
-  body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar input{
+  body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search,
+  body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar > input,
+  body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar > input{
     grid-column:1/-1;
   }
   body.bo-wallet-tx.bulk-adjustment-page .operation-form-grid,

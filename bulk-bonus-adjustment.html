@@ -12,7 +12,7 @@
 <link href="assets/css/bo-ui-standard.css?v=1.0.5" rel="stylesheet"/>
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
 <link href="assets/css/bo-wallet-transaction-amber.css?v=1.0.94" rel="stylesheet"/>
-<link href="assets/css/bulk-member-operation.css?v=1.2.6" rel="stylesheet"/>
+<link href="assets/css/bulk-member-operation.css?v=1.2.11" rel="stylesheet"/>
 <link href="assets/css/bulk-adjustment-import.css?v=1.0.4" rel="stylesheet"/>
 <link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet"/>
 <link href="assets/css/bo-charcoal-shell.css?v=1.0.0" rel="stylesheet"/>
@@ -71,7 +71,10 @@
             <span class="bulk-count-badge" id="selectedCount">0 selected</span>
           </div>
           <div class="member-picker-toolbar">
-            <input id="memberSearch" type="search" placeholder="Search username, member ID, name or mobile"/>
+            <label class="mad-search bulk-member-search" for="memberSearch">
+              <i class="bi bi-search" aria-hidden="true"></i>
+              <input id="memberSearch" type="search" placeholder="Search username, member ID, name or mobile" aria-label="Search members"/>
+            </label>
             <button class="clean-btn primary" id="memberSearchBtn" type="button"><i class="bi bi-search"></i> Search</button>
             <button class="clean-btn" id="clearSelectionBtn" type="button"><i class="bi bi-x-circle"></i> Clear selected</button>
           </div>
