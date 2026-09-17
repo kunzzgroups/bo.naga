@@ -210,18 +210,44 @@
       const hay = [c.memberName, c.memberUsername, c.conversationId, c.lastMessage].join(' ').toLowerCase();
       return !q || hay.indexOf(q) >= 0;
     });
+    const totalEl = document.getElementById('livechatInboxTotal');
+    if(totalEl) totalEl.textContent = list.length ? String(list.length) : '';
     if(!list.length){
       inboxList.innerHTML = emptyMarkup('No conversations found', 'Try another name or refresh the inbox.');
       return;
     }
+    const GROUP_LABEL = { today: 'Today', yesterday: 'Yesterday', earlier: 'Earlier' };
+    let lastBucket = '';
     inboxList.innerHTML = list.map(function(c){
       const active = c.id === selectedId ? ' active' : '';
       const unread = Number(c.adminUnreadCount || 0);
-      return '<button type="button" class="livechat-inbox-item' + active + (unread ? ' unread' : '') + '" data-id="' + esc(c.id) + '">' +
-        '<span class="avatar">' + esc(initials(c.memberName || c.memberUsername || 'M')) + '</span>' +
-        '<span class="copy"><b>' + esc(c.memberName || 'Member') + (unread ? ' <span class="unread-dot">NEW</span>' : '') + '</b><small>' + esc(c.memberUsername || c.id) + '</small><em>' + esc(c.lastMessage || 'No message') + '</em></span>' +
-        '<span class="time">' + (unread ? '<b class="unread-count">' + unread + '</b>' : '') + esc(formatTime(c.updatedAt)) + '</span>' +
-      '</button>';
+      const name = c.memberName || 'Member';
+      const user = String(c.memberUsername || '').trim();
+      const showUser = user && user.toLowerCase() !== String(name).toLowerCase();
+      const preview = String(c.lastMessage || '').replace(/\s+/g, ' ').trim() || 'No message';
+      const placeholder = !hasDisplayableLastMessage(c);
+      let previewHtml = '';
+      if(showUser) previewHtml += '<small>' + esc(user) + '</small>';
+      if(!placeholder) previewHtml += '<em>' + esc(preview) + '</em>';
+      else if(!showUser) previewHtml += '<em class="is-placeholder">' + esc(preview) + '</em>';
+      const bucket = dayBucket(c.updatedAt);
+      let group = '';
+      if(bucket !== lastBucket){
+        lastBucket = bucket;
+        group = '<div class="livechat-inbox-group">' + esc(GROUP_LABEL[bucket] || 'Earlier') + '</div>';
+      }
+      return group +
+        '<button type="button" class="livechat-inbox-item' + active + (unread ? ' unread' : '') + '" data-id="' + esc(c.id) + '" aria-pressed="' + (c.id === selectedId ? 'true' : 'false') + '">' +
+          '<span class="avatar" aria-hidden="true">' + esc(initials(name || user || 'M')) + (unread ? '<span class="livechat-inbox-pip"></span>' : '') + '</span>' +
+          '<span class="copy">' +
+            '<span class="livechat-inbox-name"><b>' + esc(name) + '</b></span>' +
+            '<span class="livechat-inbox-preview">' + previewHtml + '</span>' +
+          '</span>' +
+          '<span class="livechat-inbox-meta">' +
+            '<span class="livechat-inbox-time">' + esc(formatTime(c.updatedAt)) + '</span>' +
+            (unread ? '<span class="unread-count">' + unread + '</span>' : '') +
+          '</span>' +
+        '</button>';
     }).join('');
     inboxList.querySelectorAll('[data-id]').forEach(function(btn){
       btn.addEventListener('click', function(){ selectConversation(btn.getAttribute('data-id')); });
@@ -741,11 +767,29 @@
   function initials(name){ return (String(name || 'M').trim().charAt(0) || 'M').toUpperCase(); }
   function formatText(str){ return esc(str).replace(/\r\n|\r|\n/g, '<br>'); }
   function formatFileSize(bytes){ if(!bytes) return '0 KB'; if(bytes < 1024*1024) return Math.max(1, Math.round(bytes/1024)) + ' KB'; return (bytes/1024/1024).toFixed(1) + ' MB'; }
+  function dayDiffFromNow(ts){
+    const d = ts && ts.toDate ? ts.toDate() : null;
+    if(!d) return null;
+    const now = new Date();
+    const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startThat = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    return Math.round((startToday - startThat) / 86400000);
+  }
+  function dayBucket(ts){
+    const dayDiff = dayDiffFromNow(ts);
+    if(dayDiff === 0) return 'today';
+    if(dayDiff === 1) return 'yesterday';
+    return 'earlier';
+  }
   function formatTime(ts){
     try{
       const d = ts && ts.toDate ? ts.toDate() : null;
       if(!d) return '';
-      return d.toLocaleString([], {month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit'});
+      const dayDiff = dayDiffFromNow(ts);
+      if(dayDiff === 0) return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      if(dayDiff === 1) return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      if(dayDiff > 1 && dayDiff < 7) return d.toLocaleDateString([], {weekday:'short'});
+      return d.toLocaleDateString([], {month:'short', day:'numeric'});
     }catch(e){ return ''; }
   }
   function emptyMarkup(title, hint, isBig){

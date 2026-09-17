@@ -158,10 +158,10 @@ body.livechat-bo-page #livechatRefreshBtn{
   border-radius:8px!important;
 }
 
-/* Search — listing filter: surface, 8px, 42px */
+/* Search — well, so the list sits one layer up */
 body.livechat-bo-page .livechat-search{
   position:relative;
-  margin:0 0 12px;
+  margin:0 0 10px;
 }
 body.livechat-bo-page .livechat-search > i{
   position:absolute;
@@ -178,9 +178,9 @@ html[data-bo-theme="dark"] body.livechat-bo-page .report-content .livechat-searc
   width:100%!important;
   height:42px!important;
   padding:0 12px 0 36px!important;
-  border:1px solid var(--lc-border)!important;
+  border:1px solid var(--lc-form-border)!important;
   border-radius:8px!important;
-  background:var(--lc-surface)!important;
+  background:var(--lc-well)!important;
   color:var(--lc-ink)!important;
   font-size:13.5px!important;
   font-weight:500!important;
@@ -191,47 +191,106 @@ body.livechat-bo-page .livechat-search input::placeholder{
 }
 body.livechat-bo-page .livechat-search input:focus{
   border-color:var(--lc-primary)!important;
+  background:var(--lc-lift)!important;
   box-shadow:var(--lc-ring)!important;
   outline:0!important;
+}
+body.livechat-bo-page .livechat-inbox-total{
+  margin-left:8px;
+  font-size:12px!important;
+  font-weight:650!important;
+  font-variant-numeric:tabular-nums;
+  color:var(--lc-muted)!important;
+  letter-spacing:0;
 }
 
 /* Avatars — DESIGN.md row tile: 12px, cream/charcoal, not a circle */
 body.livechat-bo-page .livechat-inbox-item .avatar,
 body.livechat-bo-page .livechat-room-avatar{
-  width:40px!important;
-  height:40px!important;
+  width:42px!important;
+  height:42px!important;
   border-radius:12px!important;
-  background:var(--lc-avatar)!important;
+  background:linear-gradient(180deg,#F8F0E4 0%,#F5EBDC 100%)!important;
   color:var(--lc-avatar-ink)!important;
-  font-size:13px!important;
+  font-size:14px!important;
   font-weight:800!important;
   display:grid!important;
   place-items:center!important;
-  flex:0 0 40px;
+  flex:0 0 42px;
+  position:relative;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55), inset 0 0 0 1px var(--lc-form-border);
+}
+html[data-bo-theme="dark"] body.livechat-bo-page .livechat-inbox-item .avatar,
+html[data-bo-theme="dark"] body.livechat-bo-page .livechat-room-avatar{
+  background:linear-gradient(180deg,#32343E 0%,#2A2C36 100%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06), inset 0 0 0 1px var(--lc-border);
+}
+body.livechat-bo-page .livechat-inbox-pip{
+  position:absolute;
+  right:-2px;
+  bottom:-2px;
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  background:var(--lc-danger);
+  box-shadow:0 0 0 2px var(--lc-surface);
 }
 
-/* Inbox rows */
+/* Inbox rows — flush ops list with date groups */
 body.livechat-bo-page .livechat-inbox-list{
-  gap:6px!important;
+  gap:4px!important;
+  padding-right:2px;
 }
-body.livechat-bo-page .livechat-inbox-item{
-  border:1px solid var(--lc-border)!important;
-  background:var(--lc-surface)!important;
+body.livechat-bo-page .livechat-inbox-group{
+  padding:14px 8px 4px;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--lc-muted);
+  line-height:1;
+}
+body.livechat-bo-page .livechat-inbox-group:first-child{
+  padding-top:4px;
+}
+html body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item,
+html body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item.bo-ui-button,
+html body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item.bo-ui-button-secondary{
+  display:grid!important;
+  grid-template-columns:42px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:12px!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:72px!important;
+  max-height:none!important;
+  padding:10px 10px 10px 8px!important;
+  border:0!important;
   border-radius:12px!important;
-  padding:10px 12px!important;
+  background:transparent!important;
   box-shadow:none!important;
-  min-height:72px;
-  transition:background .15s ease, border-color .15s ease, box-shadow .15s ease;
+  text-align:left!important;
+  cursor:pointer;
+  overflow:visible!important;
+  box-sizing:border-box!important;
+  line-height:1.25!important;
+  transform:none!important;
+  transition:background .15s ease, box-shadow .15s ease;
 }
-html[data-bo-theme="dark"] body.livechat-bo-page .livechat-inbox-item{
-  background:#2A2C36!important;
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item.bo-ui-button-secondary{
+  background:transparent!important;
+  border:0!important;
 }
-body.livechat-bo-page .livechat-inbox-item:hover{
+html body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item:hover,
+html body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item.bo-ui-button-secondary:hover{
   background:var(--lc-canvas)!important;
-  border-color:var(--lc-border)!important;
+  border:0!important;
   box-shadow:none!important;
+  transform:none!important;
 }
-html[data-bo-theme="dark"] body.livechat-bo-page .livechat-inbox-item:hover{
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item:hover,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item.bo-ui-button-secondary:hover{
   background:#32343E!important;
 }
 body.livechat-bo-page .livechat-inbox-item:focus-visible{
@@ -240,51 +299,119 @@ body.livechat-bo-page .livechat-inbox-item:focus-visible{
 }
 html:not([data-bo-theme="dark"]) body.livechat-bo-page .livechat-inbox-item.active{
   background:linear-gradient(180deg,#FFFBEB 0%,#FEF3C7 100%)!important;
-  border-color:#D97706!important;
-  box-shadow:0 1px 2px rgba(217,119,6,.18)!important;
+  box-shadow:inset 0 0 0 1px #D97706!important;
 }
 html[data-bo-theme="dark"] body.livechat-bo-page .livechat-inbox-item.active{
   background:linear-gradient(180deg,rgba(245,158,11,.22) 0%,rgba(42,44,54,.96) 100%)!important;
-  border-color:rgba(245,158,11,.55)!important;
-  box-shadow:0 0 0 1px rgba(245,158,11,.18)!important;
+  box-shadow:inset 0 0 0 1px rgba(245,158,11,.55)!important;
 }
-html[data-bo-theme="dark"] body.livechat-bo-page .livechat-inbox-item.active b,
-html[data-bo-theme="dark"] body.livechat-bo-page .livechat-inbox-item.active em{
+html[data-bo-theme="dark"] body.livechat-bo-page .livechat-inbox-item.active b{
   color:#FBBF24!important;
 }
+html:not([data-bo-theme="dark"]) body.livechat-bo-page .livechat-inbox-item.active .livechat-inbox-pip{
+  box-shadow:0 0 0 2px #FEF3C7;
+}
 body.livechat-bo-page .livechat-inbox-item.unread:not(.active){
-  background:var(--lc-canvas)!important;
-  border-color:var(--lc-border)!important;
-  box-shadow:none!important;
+  background:transparent!important;
+}
+body.livechat-bo-page .livechat-inbox-item .copy{
+  display:flex!important;
+  flex-direction:column;
+  justify-content:center;
+  gap:4px;
+  min-width:0!important;
+  overflow:hidden;
+}
+body.livechat-bo-page .livechat-inbox-name{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+  width:100%;
 }
 body.livechat-bo-page .livechat-inbox-item b{
-  font-weight:800!important;
+  display:block!important;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-weight:700!important;
   color:var(--lc-ink)!important;
-  font-size:13.5px;
+  font-size:14px!important;
+  line-height:1.2;
+  letter-spacing:-.015em;
+}
+body.livechat-bo-page .livechat-inbox-item.unread b{
+  font-weight:800!important;
+}
+body.livechat-bo-page .livechat-inbox-preview{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-width:0;
+  width:100%;
 }
 body.livechat-bo-page .livechat-inbox-item small{
-  color:var(--lc-muted)!important;
-  font-size:12px!important;
+  flex:0 0 auto;
+  max-width:48%;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap!important;
+  color:var(--lc-avatar-ink)!important;
+  font-size:11px!important;
+  font-weight:650;
+  font-variant-numeric:tabular-nums;
+  line-height:1.2;
+  background:var(--lc-well);
+  border:1px solid var(--lc-border);
+  border-radius:6px;
+  padding:2px 6px;
+}
+html[data-bo-theme="dark"] body.livechat-bo-page .livechat-inbox-item small{
+  color:var(--lc-ink-2)!important;
+  background:var(--lc-nested);
+}
+body.livechat-bo-page .livechat-inbox-meta{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  justify-content:center;
+  gap:6px;
+  min-width:52px;
+}
+body.livechat-bo-page .livechat-inbox-time{
+  font-size:11px;
+  font-weight:600;
+  font-variant-numeric:tabular-nums;
+  color:var(--lc-muted);
+  white-space:nowrap;
+  line-height:1.2;
+}
+body.livechat-bo-page .livechat-inbox-item.unread .livechat-inbox-time{
+  color:var(--lc-primary-deep);
+  font-weight:700;
 }
 body.livechat-bo-page .livechat-inbox-item em{
+  display:block!important;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap!important;
+  font-style:normal!important;
+  font-size:12.5px!important;
+  font-weight:500;
+  line-height:1.3;
   color:var(--lc-ink-2)!important;
-  font-size:12px!important;
+}
+body.livechat-bo-page .livechat-inbox-item em.is-placeholder{
+  color:var(--lc-placeholder)!important;
   font-weight:500;
 }
-body.livechat-bo-page .livechat-inbox-item .time{
-  color:var(--lc-muted)!important;
-  font-size:11px!important;
-  font-weight:500;
+body.livechat-bo-page .livechat-inbox-item.unread em:not(.is-placeholder){
+  color:var(--lc-ink)!important;
+  font-weight:600;
 }
-body.livechat-bo-page .livechat-inbox-item .unread-dot{
-  background:var(--lc-danger)!important;
-  color:var(--lc-accent-on)!important;
-  font-weight:800!important;
-  font-size:9px!important;
-  letter-spacing:.04em;
-  padding:2px 6px!important;
-}
-html:not([data-bo-theme="dark"]) body.livechat-bo-page .livechat-inbox-item .unread-dot,
 html:not([data-bo-theme="dark"]) body.livechat-bo-page .livechat-inbox-item .unread-count{
   color:#FFFFFF!important;
 }
@@ -292,8 +419,34 @@ body.livechat-bo-page .livechat-inbox-item .unread-count{
   background:var(--lc-danger)!important;
   color:var(--lc-accent-on)!important;
   font-weight:800!important;
-  min-width:20px;
-  height:20px;
+  font-size:10px!important;
+  min-width:18px!important;
+  height:18px!important;
+  padding:0 5px;
+  border-radius:999px;
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  margin:0!important;
+}
+html body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item:not(.unread),
+html body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item.unread{
+  grid-template-columns:42px minmax(0,1fr) auto!important;
+}
+@media (min-width:992px){
+  html body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item,
+  html body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item.bo-ui-button,
+  html body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item:not(.unread){
+    min-height:72px!important;
+    height:auto!important;
+    padding:10px 10px 10px 8px!important;
+    grid-template-columns:42px minmax(0,1fr) auto!important;
+    gap:12px!important;
+  }
+  body.livechat-bo-page .livechat-inbox-item .avatar{
+    width:42px!important;
+    height:42px!important;
+  }
 }
 
 /* Member VIP / wallet chips in room head */
@@ -748,15 +901,19 @@ body.livechat-template-page .clean-btn.danger{
   body.livechat-bo-page .livechat-card-head h3{
     font-size:15px!important;
   }
-  body.livechat-bo-page .livechat-inbox-item{
-    grid-template-columns:36px minmax(0,1fr) auto!important;
-    padding:10px!important;
+  html body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item,
+  html body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item.bo-ui-button,
+  html body.report-body.bo-charcoal.livechat-bo-page button.livechat-inbox-item:not(.unread){
+    grid-template-columns:38px minmax(0,1fr) auto!important;
+    padding:10px 8px 10px 6px!important;
+    min-height:68px!important;
+    height:auto!important;
   }
   body.livechat-bo-page .livechat-inbox-item .avatar,
   body.livechat-bo-page .livechat-room-avatar{
-    width:36px!important;
-    height:36px!important;
-    flex-basis:36px;
+    width:38px!important;
+    height:38px!important;
+    flex-basis:38px;
   }
   body.livechat-bo-page .livechat-empty.big{
     padding:32px 12px!important;
