@@ -157,7 +157,7 @@
     }
     /* New Menu modal segmented controls (Status / mode tabs) — page CSS owns these.
        "Disabled" must NOT match the global danger heuristic (/disable/). */
-    if(el.matches?.('.livechat-inbox-item') || el.closest?.('.livechat-inbox-list')){
+    if(el.matches?.('.livechat-inbox-item,.livechat-inbox-pin,.livechat-msg-menu-btn,.template-icon-btn,.template-list-item,.template-list-add') || el.closest?.('.livechat-inbox-list,.livechat-inbox-menu,.livechat-msg-menu,.livechat-msg-actions,.template-list,.template-list-actions')){
       el.classList.remove('bo-ui-button','bo-ui-button-primary','bo-ui-button-secondary','bo-ui-button-danger','bo-ui-icon-button');
       delete el.dataset.boUiButton;
       return;

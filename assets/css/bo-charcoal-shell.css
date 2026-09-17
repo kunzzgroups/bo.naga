@@ -473,7 +473,26 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .r
   background:rgba(254,243,242,.95)!important;
   color:#912018!important;
   box-shadow:0 4px 12px rgba(180,35,24,.08)!important;
-}/* Light nav items */
+}
+/* Kill reports.css connected-stack seams so L1 stays isolated 10px chips (DESIGN.md). */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > .nav-group,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > a,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > a:first-child,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > a:last-child,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > :first-child,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > :last-child,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav > .nav-group,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav > a,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav > a:first-child,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav > a:last-child,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav > :first-child,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav > :last-child{
+  overflow:visible!important;
+  border:0!important;
+  border-bottom:0!important;
+  background:transparent!important;
+  border-radius:10px!important;
+}
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub),
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub):hover,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub):focus,
@@ -488,6 +507,8 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .n
   background:transparent!important;
   box-shadow:none!important;
   font-weight:800!important;
+  border:0!important;
+  border-bottom:0!important;
 }html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub) i,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group .nav-group-btn i,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group .nav-group-btn .bi-chevron-down{
@@ -624,6 +645,7 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar::after{
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav{
   margin:0!important;
   padding:12px 10px 10px!important;
+  gap:3px!important;
   border:0!important;
   border-radius:0!important;
   background:transparent!important;
@@ -676,6 +698,9 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-gro
   color:rgba(255,255,255,.86)!important;
   background:transparent!important;
   font-weight:800!important;
+  border:0!important;
+  border-bottom:0!important;
+  border-radius:10px!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub) i,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group .nav-group-btn i,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group .nav-group-btn .bi-chevron-down{
@@ -1198,18 +1223,204 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-filter-bar{
   color:#D4D4D8!important;
 }/* Top-right chrome — theme toggle + identity + amber avatar (light/dark comps) */
 body.report-body.bo-charcoal .report-actions{
+  display:flex!important;
+  flex-wrap:nowrap!important;
   gap:12px!important;
   align-items:center!important;
+  min-width:0!important;
 }body.report-body.bo-charcoal .report-actions > [data-bo-profile]{
   display:inline-flex!important;
+  flex-wrap:nowrap!important;
   align-items:center!important;
   gap:12px!important;
+  min-width:0!important;
 }/* Divider slot always reserved — only tint changes by theme (prevents cluster shift) */
 body.report-body.bo-charcoal .report-actions > [data-bo-profile]::before{
-  content:"";
-  width:1px;height:28px;flex:0 0 1px;
-  background:rgba(24,25,28,.12);
-  margin:0;
+  content:""!important;
+  display:block!important;
+  width:1px!important;height:28px!important;flex:0 0 1px!important;
+  background:rgba(24,25,28,.12)!important;
+  margin:0!important;
+  align-self:center!important;
+}body.report-body.bo-charcoal .report-actions .bo-header-counters{
+  display:inline-flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  gap:8px!important;
+  flex:0 1 auto!important;
+  min-width:0!important;
+}body.report-body.bo-charcoal .report-actions .bo-header-counter,
+body.report-body.bo-charcoal .report-actions .bo-header-counter:hover,
+body.report-body.bo-charcoal .report-actions .bo-header-counter:focus,
+body.report-body.bo-charcoal .report-actions .bo-header-counter:focus-visible{
+  box-sizing:border-box!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  flex:0 0 auto!important;
+  height:40px!important;
+  min-height:40px!important;
+  min-width:0!important;
+  padding:4px 12px 4px 4px!important;
+  border-radius:8px!important;
+  border:1px solid #EADCC8!important;
+  background:#FFFCF7!important;
+  box-shadow:none!important;
+  color:#18191C!important;
+  text-decoration:none!important;
+  transform:none!important;
+  position:relative!important;
+}body.report-body.bo-charcoal .report-actions .bo-header-counter:hover,
+body.report-body.bo-charcoal .report-actions .bo-header-counter:focus-visible{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+  outline:none!important;
+}body.report-body.bo-charcoal .report-actions .bo-header-counter-icon,
+body.report-body.bo-charcoal .report-actions .bo-header-counter-icon.members,
+body.report-body.bo-charcoal .report-actions .bo-header-counter-icon.deposit,
+body.report-body.bo-charcoal .report-actions .bo-header-counter-icon.withdraw{
+  width:32px!important;
+  height:32px!important;
+  border-radius:6px!important;
+  display:grid!important;
+  place-items:center!important;
+  flex:0 0 32px!important;
+  font-size:15px!important;
+  line-height:1!important;
+  border:0!important;
+  background:rgba(217,119,6,.12)!important;
+  color:#D97706!important;
+}body.report-body.bo-charcoal .report-actions .bo-header-counter-icon i{
+  font-size:15px!important;
+  line-height:1!important;
+  color:#D97706!important;
+}body.report-body.bo-charcoal .report-actions .bo-header-counter-text{
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  gap:1px!important;
+  line-height:1.05!important;
+  min-width:0!important;
+  position:static!important;
+  right:auto!important;
+  top:auto!important;
+  width:auto!important;
+  height:auto!important;
+  overflow:visible!important;
+}body.report-body.bo-charcoal .report-actions .bo-header-counter-text small{
+  display:block!important;
+  font-size:10px!important;
+  font-weight:700!important;
+  letter-spacing:.04em!important;
+  text-transform:uppercase!important;
+  color:#57534E!important;
+  white-space:nowrap!important;
+}body.report-body.bo-charcoal .report-actions .bo-header-counter-text b{
+  display:block!important;
+  font-size:15px!important;
+  font-weight:800!important;
+  color:#18191C!important;
+  margin:0!important;
+  font-variant-numeric:tabular-nums!important;
+  line-height:1.1!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  min-width:0!important;
+  height:auto!important;
+  padding:0!important;
+}html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-actions .bo-header-counter,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-actions .bo-header-counter:hover,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-actions .bo-header-counter:focus{
+  background:#2A2C36!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  color:#F5F5F4!important;
+}html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-actions .bo-header-counter:hover,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-actions .bo-header-counter:focus-visible{
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-actions .bo-header-counter-icon,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-actions .bo-header-counter-icon.members,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-actions .bo-header-counter-icon.deposit,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-actions .bo-header-counter-icon.withdraw,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-actions .bo-header-counter-icon i{
+  background:rgba(245,158,11,.16)!important;
+  color:#FBBF24!important;
+}html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-actions .bo-header-counter-text small{
+  color:#D4D4D8!important;
+}html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-actions .bo-header-counter-text b{
+  color:#F5F5F4!important;
+  background:transparent!important;
+}
+@media(max-width:1199.98px){
+  body.report-body.bo-charcoal .report-actions .bo-header-counter{
+    min-width:40px!important;
+    width:40px!important;
+    height:40px!important;
+    min-height:40px!important;
+    padding:4px!important;
+    justify-content:center!important;
+    position:relative!important;
+  }
+  body.report-body.bo-charcoal .report-actions .bo-header-counter-icon{
+    width:32px!important;
+    height:32px!important;
+    flex:0 0 32px!important;
+  }
+  body.report-body.bo-charcoal .report-actions .bo-header-counter-text{
+    position:absolute!important;
+    right:-2px!important;
+    top:-4px!important;
+    width:auto!important;
+    height:auto!important;
+    display:block!important;
+    padding:0!important;
+  }
+  body.report-body.bo-charcoal .report-actions .bo-header-counter-text small{
+    display:none!important;
+  }
+  body.report-body.bo-charcoal .report-actions .bo-header-counter-text b{
+    display:grid!important;
+    place-items:center!important;
+    min-width:16px!important;
+    height:16px!important;
+    padding:0 4px!important;
+    border-radius:999px!important;
+    background:#D97706!important;
+    color:#FFFFFF!important;
+    font-size:10px!important;
+    border:2px solid #FFF8EB!important;
+    margin:0!important;
+  }
+  html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-actions .bo-header-counter-text b{
+    background:#F59E0B!important;
+    color:#2A2C36!important;
+    border-color:#383A46!important;
+  }
+}
+@media(max-width:767.98px){
+  body.report-body.bo-charcoal .report-actions .bo-header-counters{gap:6px!important}
+  body.report-body.bo-charcoal .report-actions .bo-header-counter{
+    width:40px!important;min-width:40px!important;height:40px!important;border-radius:8px!important;
+  }
+}
+@media(max-width:575.98px){
+  body.report-body.bo-charcoal .report-actions .bo-header-counters .bo-header-counter:nth-child(1){
+    display:none!important;
+  }
+  body.report-body.bo-charcoal .report-topbar .user-title-icon{
+    display:none!important;
+  }
+  body.report-body.bo-charcoal .report-topbar .user-title-wrap{
+    min-width:0!important;
+  }
+  body.report-body.bo-charcoal .report-topbar .user-title-wrap h1{
+    font-size:15px!important;
+  }
+  body.report-body.bo-charcoal .report-actions{
+    flex:0 0 auto!important;
+    z-index:2!important;
+  }
 }body.report-body.bo-charcoal .bo-theme-btn{
   position:relative!important;
   box-sizing:border-box!important;
@@ -1333,7 +1544,7 @@ body.report-body.bo-charcoal .report-avatar:not(:has(> i))::before{
   border-color:#F59E0B!important;
   color:#FBBF24!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-actions > [data-bo-profile]::before{
-  background:rgba(255,255,255,.12);
+  background:rgba(255,255,255,.12)!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-account-name{
   color:#FFFFFF!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-account-role{
