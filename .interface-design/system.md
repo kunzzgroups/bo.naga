@@ -74,7 +74,7 @@ Do not use pure white `#FFFFFF` or ivory `#FFFCF8` for canvas / topbar / panels.
 | `--bo-text` | `#18191C` | `#F5F5F4` | Primary text |
 | `--bo-text-secondary` | `#27272A` | `#E7E5E4` | Secondary text |
 | `--bo-muted` | `#71717A` | `#A1A1AA` | Meta, time, captions |
-| `--bo-control-well` | `#F5EBDC` | `rgba(255,255,255,.06)` / dark inputs `#2A2C36` | Control wells, tracks, chips — **no longer the input fill** (2026-09-16: inputs are `#FFF8EB`, see Forms) |
+| `--bo-control-well` | `#F5EBDC` | `rgba(255,255,255,.06)` / dark inputs `#2A2C36` | Input wells (cream — never `#F0EFEA` / `#fff`) |
 | `--bo-placeholder` | `#78716C` | `#A1A1AA` | Placeholders on cream / charcoal wells |
 
 ### Compatibility aliases (names kept, hues changed)
@@ -169,7 +169,7 @@ Classic BO listing shells (`reports.css` + `bo-ui-standard.css`), **not** MAIN e
 | Pager | **Table footer pager** (`.mad-pager`) — light inactive slate `#F3F4F6`/`#9CA3AF`; dark charcoal inactive; amber 3D active |
 | Date range | **Date range picker** pattern (preset wash, ghost head, cream panel) — see Patterns |
 | Filter titles | Hidden on listing filters (placeholder + value carry meaning) |
-| Deposit / Withdraw tabs | `.bo-tx-tabs` / `.bo-tx-tab` — **Status filter pills** recipe (`.mad-pill`) · order Deposit → Withdraw → All · cream thumb + green/red dots · counts `(n)` from header pending |
+| Deposit / Withdraw tabs | `.bo-tx-tabs` / `.bo-tx-tab` — **Status filter pills** recipe · order Deposit → Withdraw → All · cream **capsule** thumb (`999px`) + muted idle dots · green/red only when selected · counts `(n)` · requires `bo-seg-bounce` |
 | Hover / focus / open | Same as Merchant Profit + Role select: border `#D97706` + `0 0 0 3px rgba(217,119,6,.14)` (dark: `#F59E0B` + `rgba(245,158,11,.18)`). Inputs, selects, date triggers — one recipe. Idle chrome must not kill the ring. |
 | Table frame | **Same as Admin Detail `.mad-panel`** — viewport-locked panel · inner scroll · `table-layout:fixed` · radius `8px` · no nested `.table-wrap` border · footer pins to panel bottom |
 | Table light paint | **Transaction listing table** (peach-cream zebra — no pure white) — see Patterns → Data tables |
@@ -221,9 +221,9 @@ Reference: `payment-method.html` · `body.bo-wallet-tx.payment-method-page`. Sam
 | Toolbar | Right-aligned Ghost `Bank Deposit Usage` / `Refresh` + primary amber `Create Payment Method` (no left title badge) |
 | Columns | Order · Type · Display (name + subtitle) · Details · QR · Status · Action |
 | QR | Amber `.bo-tx-link` **View** (never default blue) · `-` when empty |
-| Status | `.status-pill.active` ACTIVE · `.status-pill.off` SUSPEND |
+| Status | `.status-pill.active` ACTIVE · `.status-pill.off` INACTIVE |
 | Action | `.bo-tx-action-btn` **26×26** · Edit `is-edit` (amber well) · Delete `is-reject` (danger) |
-| Create | Opens **full page** `payment-method-create.html?from=config` (not modal) |
+| Modal | Form wells `#F5EBDC` · focus amber ring · full-bleed ≤768 |
 
 #### Bank Deposit Usage (locked)
 
@@ -232,129 +232,12 @@ Reference: `bank-deposit-usage.html` · `body.bo-wallet-tx.bank-deposit-usage-pa
 | Part | Spec |
 |------|------|
 | Shell | `bo-wallet-tx` + amber CSS + `bank-deposit-usage.css` (not charcoal) |
-| Filters | Inline inside `.bank-usage-list-card` toolbar **left** · date range + keyword only · **no Reset / Search** (change date or type to refresh · Refresh button reloads) · **filter titles hidden** |
+| Filters | Inline toolbar · **left** `.bo-tx-tabs.bo-seg` **Active → Suspend → All** — locked **Status filter pills** specimen (cream capsule thumb · muted idle dots · green/red only when selected · All has no dot · counts `(n)` · `bo-seg-bounce`) · **right** date range + keyword + `Create` + `Refresh` · **no** Payment Method Config · **no** Reset / Search |
 | Summary | **Removed** — do not restore `.usage-summary-grid` metric cards |
-| Panel | Viewport-locked · toolbar filters left + Ghost `Payment Method Config` / `Refresh` right · no title badge · no link underline |
+| Panel | Viewport-locked · tabs left + filters/actions right · no title badge · no link underline |
 | Table | Peach-cream zebra · square thead · `table-layout:fixed` · inner scroll · never page overflow |
-| Status | Clickable `.usage-status-chip` — account Active/Suspend via **`status`** · independent of Show · see Patterns → Bank Deposit Usage status chip |
-| Show | Mini Switch — bank visible on deposit via **`visible`** (1=show / 0=hide) · **not** synced with Status · no Show/Hide text |
+| Status | `.status-pill.active` **Active** · `.status-pill.off` **Suspend** · click to toggle |
 | Meter | Track `#F5EBDC` · fill `#B45309` · warn `#F59E0B` · over `#EF4444` |
-| Action | `.bo-tx-action-btn` Edit + Delete (same as Payment Method) |
-| Create | Opens **full page** `payment-method-create.html?from=usage` |
-
-#### Create / Edit Payment Method (locked)
-
-Reference: `payment-method-create.html` · `body.bo-wallet-tx.payment-method-create-page`. Full-page form (not modal). **Colors match Create Admin Account** layer ladder. Inherits menu permission from Bank Deposit Usage or Payment Method Config via `?from=usage|config`.
-
-**Layer ladder (required — same as Create Admin):**
-
-| Layer | Hex | Notes |
-|-------|-----|-------|
-| Canvas | continuum `#FFE8CC`→`#FFF8EB` | Atmosphere only |
-| Section card `.pmc-card` | `#FFFCF7` · border `#DCC9A8` · warm shadow · **3px amber gradient rail** | Primary frame — never flat `#FFF8EB` |
-| Input / select / textarea / dropzone | `#FFF8EB` · border `#DCC9A8` · placeholder `#78716C` | Surface rung (not muddy `#F5EBDC`) |
-| Section head | hairline `#EADCC8` · title `#18191C` · icon `#B45309` | |
-| Labels | `#27272A` · required `*` `#B42318` | |
-| Status / Show Bank | Independent · Status = `status` · Show Bank = `visible` | |
-| Sticky footer `.pmc-sticky-footer` | `#FFFCF7` · border `#DCC9A8` · `0 -12px 32px rgba(120,80,20,.12)` | Viewport-fixed · main column only |
-| Ghost Cancel / Back | `#FFFCF7`→`#F5EBDC`→`#EDE4D4` · border `#DCC9A8` | |
-| Primary Create / Save | amber 3D · check icon · white label | |
-
-| Part | Spec |
-|------|------|
-| Shell | `bo-wallet-tx` + amber CSS + `payment-method-create.css` (not charcoal shell) |
-| Width | **Full main column** · no centered `max-width` column · cards span content width |
-| Sections | 4 cards · 1 Method & Account (merged) · 2 Limits · 3 QR · 4 Instructions · Create Admin lift |
-| Grid | Method & Account: 4-col aligned rows · Status+Show Bank share Account Number column |
-| Sticky footer | **Viewport-fixed** · `left: var(--sidebar-w)` · `right:0` · `bottom:0` · does **not** cover sidebar · mini → `left: var(--rail-w)` · ≤991 → `left:0` |
-| Footer actions | Right-aligned Ghost `Cancel` + amber Primary · h `40px` |
-| Content pad | Bottom pad ≥`96px` so last card clears the fixed bar |
-| Dark | Card `#383A46` · input `#2A2C36` · footer translucent charcoal · Ghost charcoal 3D |
-
-Do **not** flatten cards + inputs to one cream, or use recessed `#F5EBDC` wells on this page.
-
-#### Wallet Ledger (locked)
-
-Reference: `wallet-ledger.html` · `body.bo-wallet-tx.wallet-ledger-page`. Transaction listing family — audit ledger, not Deposit/Withdraw approval.
-
-| Part | Spec |
-|------|------|
-| Shell | `bo-wallet-tx` + `bo-wallet-transaction-amber.css` (not `bo-charcoal`) |
-| KPI strip | Keep 4 `.metric` tiles (Deposit / Withdraw / Transfer / Bet Win/Lose) · 4-col desktop · 2-col ≤991 · amber icon language via `reports.js` decorate |
-| Panel | `.ledger-list-card` = viewport-locked `.table-card` · inline filters · inner `.table-wrap` scroll · footer scope + pager |
-| Filters | Date range + Member ID + Provider + Type multi · Ghost Reset + amber Search · **no** Page Size in filter row (footer only) · **filter titles hidden** |
-| Type multi | `.ledger-type-trigger` / `.ledger-type-menu` — listing surface `#FFF8EB` · border `#EADCC8` · radius `8px` · amber focus ring · never cool blue / pure white |
-| Table | Peach-cream zebra · square thead · `table-layout:fixed` · min-width ~1550 · scroll inside wrap |
-| Type cell | `.status-pill.ledger-type-chip` (PENDING-orange family) |
-| Status cell | `.status-pill` · SUCCESS/APPROVED → `.active` · FAILED/REJECTED → `.off` |
-| Money | `.ledger-amt` · pos `#B45309` · neg danger · zero muted · tabular-nums |
-| Pager | **Table footer pager** (`.mad-pager` / smart-page) — amber 3D active |
-
-#### Bulk Adjustment / Bulk Bonus Adjustment (locked)
-
-Reference: `bulk-adjustment.html` · `bulk-bonus-adjustment.html` · `body.bo-wallet-tx.bulk-adjustment-page` / `.bulk-bonus-adjustment-page`. Operation shell (not a single listing `table-card`).
-
-| Part | Spec |
-|------|------|
-| Shell | `bo-wallet-tx` + amber CSS + `bulk-member-operation.css` + `bulk-adjustment-import.css` + charcoal layers + FOUC |
-| Content scroll | `.report-content` **overflow:hidden** when Manual shell fills viewport · Excel mode may scroll |
-| Family tabs | Above shell · `.bulk-family-tabs` / `.bulk-family-tab` · **In/Out Adjustment** → `bulk-adjustment.html` · **Bonus Adjustment** → `bulk-bonus-adjustment.html` · **mad-tabs underline** recipe (full-width hairline `#EADCC8` · active bold + `2px` amber `#D97706` underline · inactive muted · no pill fill) |
-| Mode tabs | `.bulk-mode-switch` / `.bulk-mode-btn` — **only active is a cream 3D button**; idle = muted text (no fill / border / shadow) · dark active = charcoal 3D + amber ring · never cool blue |
-| Panels | Outer `.bulk-operation-shell` wraps both · inner `.bulk-panel` side-by-side grid · shell `#FFF8EB` / nested `#FFFCF7` · border `#EADCC8`/`#DCC9A8` · radius `8px` |
-| Right ops panel | `.bulk-panel-ops` top→bottom: **Configure** form → **Selected** table (flex) → **footer** (members + batch total + Submit) — form first so staff always see inputs |
-| Member picker | `.member-picker-list` = container query · `.member-picker-grid` `repeat(auto-fit, minmax(200px, 1fr))` — columns follow box width |
-| Member card | `button.member-pick-card` — avatar (name monogram) + account/meta/VIP + balance pill · click toggle · **no checkboxes** |
-| Selected table | 6 cols: `#` · `Account` · `Name` · `VIP` · `Bal` · remove · quiet ledger (cream lift `#FFFCF7` · fixed thead · tbody-only scroll · soft zebra · ghost ×) |
-| Selected scrollbar | **thin pill · no arrows** — see recipe below |
-| Inputs | listing surface `#FFF8EB` · border `#EADCC8` · height `40px` · amber focus ring · labels `11.5px/800` uppercase |
-| Summary chips | Import / batch-result KPI strip only · Manual ops uses slim **footer meta** (members + batch total) beside Submit |
-| Tables | selected = soft ledger (not peach thead) · money `#B45309` / `#FBBF24` · VIP wash chip · remove ghost until hover |
-| Primary CTA | Search / Validate / Submit / Execute = amber Primary · Clear / Download / Export = Ghost · dark label `#2A2C36` (wallet-tx locked) |
-| Dropzone | dashed `#EADCC8` · amber hover/drag · icon amber (not cool gray) |
-| Status pills | valid/success green · warning/skipped orange · error/failed red · duplicate muted (Transaction status family) |
-
-##### Selected table scrollbar — `.selected-table tbody` (locked)
-
-Body-only scroll: `thead` fixed · `tbody` `overflow-y:auto` · wrap `overflow:hidden`. Chromium custom scrollbar (not OS classic).
-
-| Part | Light | Dark |
-|------|-------|------|
-| Width | **`6px`** | same |
-| Track | transparent | transparent |
-| Thumb | `#C4B5A0` · `border-radius:999px` · no border pad | `#71717A` · hover `#A1A1AA` |
-| Buttons / arrows | **none** — `::-webkit-scrollbar-button` `display:none` · `width/height:0` | same |
-| Corner | transparent | transparent |
-| Firefox / Chromium gate | `scrollbar-width:auto` · `scrollbar-color:auto` — **never** set `scrollbar-width:thin` / `scrollbar-color` on this scroller (Chromium then uses OS scrollbars with arrows and ignores `::-webkit-*`) | same |
-| Gutter | `scrollbar-gutter:stable` | same |
-
-Do **not** use the wallet-tx listing scrollbar (`14px` slate + end arrows on `.bo-tx-table-body`) on Bulk Selected. Do **not** put scroll on `.selected-table-wrap` (header must stay fixed).
-
-##### Member pick card — `.member-pick-card` active (locked)
-
-Selectable member button. Idle uses form surface; **active = listing amber wash + primary amber border + focus-ring halo** (same recipe family as listing hover/focus — not solid CTA amber fill, not off-token ivory).
-
-| State | Light | Dark |
-|-------|-------|------|
-| Idle | bg `#FFFCF7` · border `#EADCC8` · radius `10px` | bg `#32343E` · border `rgba(255,255,255,.12)` |
-| Hover | border `#D97706` · bg `#FFF8EB` · ring `0 0 0 3px rgba(217,119,6,.10)` | border `#F59E0B` · bg `#3A3C48` · ring `rgba(245,158,11,.14)` |
-| **Active `.is-selected`** | bg `linear-gradient(180deg, #FFFBEB 0%, #FFE8CC 100%)` · border `1px solid #D97706` · ring `0 0 0 3px rgba(217,119,6,.14)` | bg `linear-gradient(180deg, rgba(245,158,11,.20), rgba(245,158,11,.08))` · border `#F59E0B` · ring `0 0 0 3px rgba(245,158,11,.18)` |
-| Avatar idle | `#F5EBDC` / `#EADCC8` · text `#6b360c` | `#2A2C36` · text `#FBBF24` |
-| Avatar active | `#FFE8CC` · border `#D97706` · text `#B45309` | `rgba(245,158,11,.18)` · border `#F59E0B` · text `#FBBF24` |
-| VIP chip active | bg `#FFF8EB` · border `#D97706` · text `#B45309` | amber wash + `#FBBF24` |
-| Balance pill | money `#B45309` · wash `rgba(217,119,6,.08–.12)` | money `#FBBF24` · wash `rgba(245,158,11,.12–.20)` |
-| Monogram | Prefer `fullName` initials (CJK first 1–2 chars · Latin word initials) · fallback username |
-
-##### Mode tab — `.bulk-mode-btn` (locked)
-
-Only the **active** tab looks like a button. Idle tabs are plain text links in the same row.
-
-| State | Light | Dark |
-|-------|-------|------|
-| Idle | transparent · no border · no shadow · text `#71717A` · weight `700` | transparent · text `#A1A1AA` |
-| Idle hover | text `#18191C` · still no chrome | text `#F4F4F5` · still no chrome |
-| **Active** | cream 3D `#FFF8EB→#F3E8D6` · border `#EADCC8` · soft lift shadow · text `#18191C` · weight `800` · h `36px` · radius `8px` | charcoal 3D `#40424E→#2A2C36` · border `rgba(245,158,11,.45)` · ring `0 0 0 3px rgba(245,158,11,.14)` · text `#F5F5F4` |
-
-Do **not** style idle tabs as Ghost / cream pills. Do **not** use cool blue thumbs or pure-white dark thumbs.
 
 Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
 
@@ -523,7 +406,7 @@ Neat amber chips (Members / Deposit / Withdraw). One icon language — no purple
 
 ### Forms
 
-- Inputs: dark soft charcoal `#2A2C36` on dark; light `#FFF8EB` on light — the panel surface, read by its `#DCC9A8` border rather than by a darker fill. **Never** `#FFFFFF` chrome, and no longer the recessed `#F5EBDC` well (owner-directed 2026-09-16: "全站 main 的输入框背景 = #FFF8EB")
+- Inputs: dark soft charcoal `#2A2C36` on dark; light well `#F5EBDC` on light — **never** `#FFFFFF` chrome
 - Focus: amber ring (never cyan) — e.g. `0 0 0 3px rgba(217,119,6,.12)`
 - **Create/Edit hierarchy:** never one flat cream — use the layer ladder below so Save CTA and sections read clearly
 
@@ -537,7 +420,7 @@ Reference: Charcoal block + `.mac-*` / `.mae-*` in `main-admin-detail-executive.
 |-------|-----|-------|
 | Canvas | continuum `#FFE8CC`→`#FFF8EB` | Atmosphere only |
 | Section card | `#FFFCF7` · border `#DCC9A8` · warm shadow · **3px amber left rail** | Primary frame |
-| Input | `#FFF8EB` · border `#DCC9A8` · placeholder `#78716C` | Editable; the border separates it from the card, not a darker fill |
+| Input well | `#F5EBDC` · border `#DCC9A8` · placeholder `#78716C` | Editable inset |
 | Nested well | `#F0E4D0` | Privileges / policy / security |
 | Chip / status active | `#FFFCF7` | Lifted controls |
 | Locked field | `#EDE4D4` · text `#57534E` | Readonly username |
@@ -547,7 +430,7 @@ Reference: Charcoal block + `.mac-*` / `.mae-*` in `main-admin-detail-executive.
 | Element | Light | Dark |
 |---------|-------|------|
 | Section (`.mac-section`) | `#FFFCF7` · border `#DCC9A8` · warm shadow · amber rail | `--bo-surface` |
-| Inputs | `#FFF8EB` · border `#DCC9A8` · placeholder `#78716C` | `#2A2C36` |
+| Inputs | `#F5EBDC` · border `#DCC9A8` · placeholder `#78716C` | `#2A2C36` |
 | Privilege / policy / security nested | `#F0E4D0` | faint wash |
 | Locked username | `#EDE4D4` · text `#57534E` | charcoal wash |
 | Status seg track | `#EDE4D4` · active pill `#FFFCF7` | charcoal |
@@ -709,41 +592,6 @@ Bare `.status-pill` = PENDING · `.active` = APPROVED · `.off` = REJECTED.
 | APPROVED `.active` | bg `#DCFCE7` · text `#166534` | bg success/18 · text `#6EE7B7` |
 | REJECTED `.off` | bg `#FEE2E2` · text `#B91C1C` | bg danger/18 · text `#F87171` |
 
-#### Bank Deposit Usage status chip — `.usage-status-chip` (locked)
-
-Reference: Merchant Detail `.mad-status-chip` · Bank Deposit Usage Status column (`bank-deposit-usage.css`). **Not** the large Transaction `.status-pill` (ACTIVE/INACTIVE uppercase).
-
-**Independent of Show:** Status toggles account **`status`** (Active ↔ Suspend). Show Mini Switch toggles bank display **`visible`** (show ↔ hide on Naga deposit). Changing one must **not** change the other.
-
-| Part | Spec |
-|------|------|
-| Markup | `<button class="usage-status-chip is-active|is-suspended" data-usage-status>…>` · inner `<i class="usage-status-dot">` + label |
-| Label | Title case **`Active`** / **`Suspend`** (never `ACTIVE` / `SUSPEND` / `INACTIVE`) |
-| Field | API `status` · `1` Active · `0` Suspend · save via `PAYMENT_METHOD_SAVE` (preserve current `visible`) |
-| Size | h **`24px`** · pad `0 10px` · gap `6px` · font **`11.5px/700`** · radius **`999px`** |
-| Dot `.usage-status-dot` | **`6×6px`** circle · Active fill `#10B981` · Suspend `currentColor` |
-| Behavior | Click Active → Suspend · click Suspend → Active · busy opacity `.6` |
-| Hover Active | bg `#A7F3D0` |
-| Hover Suspend | bg `#FECACA` |
-| Focus | amber ring `2px #D97706` offset `2px` |
-
-| State | Light | Dark |
-|-------|-------|------|
-| Active `.is-active` | bg `#D1FAE5` · text `#047857` · dot `#10B981` | bg `rgba(16,185,129,.14)` · text `#6EE7B7` · dot `#34D399` |
-| Suspend `.is-suspended` | bg `#FEE2E2` · text `#B91C1C` | bg `rgba(239,68,68,.14)` · text `#FCA5A5` |
-
-#### Bank Deposit Usage Show switch — `.usage-show-switch` (locked)
-
-| Part | Spec |
-|------|------|
-| Purpose | Show / hide this bank on the customer deposit page — **not** account Active/Suspend |
-| Field | API **`visible`** · `1` show · `0` hide · aliases read: `showOnDeposit` / `isShow` / `clientVisible` / `display` / `showStatus` · default show if missing |
-| Markup | `<button class="usage-show-switch is-on|is-off" data-usage-show-id role="switch">` · track + thumb · **no** Show/Hide text |
-| Save | Optimistic in-place flip · no table reload · `PAYMENT_METHOD_SAVE` with `visible` (+ aliases) · preserve `status` · session override `bo_pm_visible_overrides` if API omits field |
-| Look | Amber filled track when on · cream track when off · white thumb |
-
-Do **not** bind Show to `status`, or Status to `visible`.
-
 ### Date / time tips
 
 | Spec | Light | Dark |
@@ -774,14 +622,56 @@ Reference: Charcoal block `main-admin-detail-executive.css` (`data-access-page="
 | Reset / secondary action | height `42px` · Ghost/surface | charcoal Ghost |
 | Bulk delete | `#FEF3F2` / border danger/35 / text `#B42318` | danger wash / `#FF8A90` |
 
-#### Status filter pills — `.mad-pill` / `.bo-seg-thumb`
+#### Status filter pills — `.mad-pill` / `.bo-tx-tab` + `.bo-seg-thumb` (locked)
+
+Reference specimen: Active / Suspend / All on Bank Deposit Usage (and Admin Detail / Deposit–Withdraw family). **Do not** invent a different chip style.
+
+**Anatomy**
+
+| Part | Spec |
+|------|------|
+| Track | `.mad-pills.bo-seg` or `.bo-tx-tabs.bo-seg` · transparent · `inline-flex` · gap `6px` · `position:relative` · `overflow:visible` |
+| Thumb | `.bo-seg-thumb` (from `bo-seg-bounce`) draws the **only** selected frame — pills themselves stay transparent when `.is-active` |
+| Order (status) | **Active → Suspend → All** |
+| Order (Deposit family) | Deposit → Withdraw → All (same chrome; green/red dots on first two) |
+| Counts | `.bo-tx-tab-count` / `.mad-pill-count` · tabular nums · wrapped as `(n)` via `::before`/`::after` |
+| Motion | `bo-seg-bounce.css` + `BO_SEG_BOUNCE.mount(...)` — without the thumb script the selected frame disappears |
+
+**Selected chip (thumb)**
+
+| Spec | Light | Dark |
+|------|-------|------|
+| Fill | cream 3D `linear-gradient(180deg, #FFF8EB 0%, #F3E8D6 100%)` | charcoal 3D `#383A46`→`#2A2C36` |
+| Border | `1px solid #EADCC8` | `1px solid rgba(255,255,255,.12)` |
+| Shadow | `0 1px 2px rgba(24,25,28,.06), 0 2px 6px rgba(24,25,28,.05)` | soft dark lift |
+| Radius | **`999px`** (capsule — matches specimen) | same |
+| Height | `36px` (full track height) | same |
+
+**Tab label states**
 
 | State | Light | Dark |
 |-------|-------|------|
-| Track | transparent · gap `6px` | same |
-| Thumb / active pill | cream 3D `#FFF8EB`→`#F3E8D6` · radius `8px` · height `36px` | charcoal 3D thumb |
-| Active dots (Active/Suspend) | green `#059669` / red `#DC2626` | neon green / red on dark |
-| Inactive | muted text | muted `#A1A1AA` |
+| Idle text | muted `#71717A` · weight `700` · `12.5px` · height `36px` · pad `0 14px` · radius `999px` · **no fill** | muted `#A1A1AA` |
+| Selected text | ink `#18191C` · weight `700` · fill **transparent** (thumb shows through) | `#F5F5F4` |
+| Hover (not selected) | soft wash `rgba(24,25,28,.04)` · text slightly stronger | soft white/5 wash |
+
+**Status dots (`::before` — 6×6 circle)**
+
+| Tab | Idle (not selected) | Selected (`.is-active`) |
+|-----|---------------------|-------------------------|
+| **Active** | muted slate `#B8C0CC` | green `#059669` (dark: `#34D399`) |
+| **Suspend** | muted lavender-grey `#C4C0D0` | red `#DC2626` (dark: `#F87171`) |
+| **All** | **no dot** | **no dot** |
+
+Deposit / Withdraw reuse the same recipe: Deposit = green when selected · Withdraw = red when selected · All = no dot.
+
+**Do not**
+
+- Paint selected fill on the button itself (breaks bounce thumb)
+- Put a red/green dot on idle Suspend/Active (idle stays muted grey)
+- Add a dot to All
+- Use cool blue / pure white chips
+- Ship tabs without `bo-seg-bounce` when the track has class `bo-seg`
 
 #### Row chrome — avatar / status / role / money
 
@@ -898,20 +788,16 @@ Use this when reviewing a page. Each row must exist as a Light|Dark table (or to
 | Topbar | surface, theme btn, user name/avatar, hamb, page title icon |
 | Tabs | default / active underline |
 | Filters | bar, search, selects, reset, bulk delete, status pills |
-| Cards / frames | listing panel, form section lift, Roles control card, Create Role card, Create Payment Method cards |
-| Sticky footers | Roles / Create Role / Create Payment Method (`.pmc-sticky-footer`) |
+| Cards / frames | listing panel, form section lift, Roles control card, Create Role card |
 | Fields | listing surface inputs vs form wells, placeholders, focus rings, locked |
 | Date range picker | cream panel, preset wash active, ghost head, day endpoints solid |
 | Buttons | Primary, Ghost (+ shared hover), secondary, danger, pager, chips |
 | Table | panel, header, cells, dividers, hover, money, status, avatar, footer, pager |
 | Transaction table (locked L|D) | `--bo-table-*` zebra · deep dark head `#1F2128` · square thead · bold cells · PENDING orange · action wells · no Filtered Total |
-| Bank Deposit Usage status chip | `.usage-status-chip` Active/Suspend · 6px dot · h 24 · Light\|Dark |
-| Bank Deposit Usage Show switch | `.usage-show-switch` · field `visible` · independent of Status |
 | Modals | scrim, panel, close, fields, footer actions |
 | KPI strip | tile, label, value, note, grid (Report family — see below) |
 | Roles | control card, select, scope, toolbar, matrix group/card, badges, sticky footer |
 | Create Role | title, cards, inputs, chips, ghost/primary, sticky footer status |
-| Create Payment Method | full-page form, wells, sticky footer Cancel + Create/Save |
 
 ### Report family KPI strip (`.report-summary-grid`, `.mre-history-kpis`)
 
@@ -971,17 +857,6 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Deposit/Withdraw page chrome locked: bank cards strip · tabs left + inline filters right · Bank `Name (account)` · no Reset/Search in filter · action 26×26 · no Pending metrics | User aligned Withdraw to Deposit shell | 2026-09-16 |
 | Deposit/Withdraw responsive 1920→375: bank strip · stacked toolbar · scrollable table · ≤1456 DATE day-only + hover time · hide secondary columns on tablet/phone | User: mid widths messy / table too short / DATE ellipsis | 2026-09-16 |
 | Withdraw Remark cell = player text only (no `Admin:` sub-line) | User: 这个也帮我移除 | 2026-09-16 |
-| Bulk Adjustment / Bulk Bonus migrated to `bo-wallet-tx` · mode tabs = Status filter pills (no cool blue) · peach-cream zebra · listing inputs · Full Light\|Dark in page CSS | User: 根据 MD 调整 Bulk Adjustment | 2026-09-16 |
-| Bulk member pick card active locked: cream wash `#FFFBEB→#FFE8CC` · border `#D97706` · ring `rgba(217,119,6,.14)` · avatar/VIP amber wash (not solid CTA) · dark neon amber wash | User: 按钮 active 样式帮我更新在 md | 2026-09-16 |
-| Bulk family tabs above shell: In/Out ↔ Bonus · mad-tabs underline (amber bottom rail, not pills) | User: 上方 tabs 要 Administrators 那种格式 | 2026-09-16 |
-| Selected Members table = quiet ledger: 6 cols · sticky muted thead · soft zebra · ghost × (not peach thead / red remove) | User: Selected 排版要高级简单 | 2026-09-16 |
-| Right ops panel = Configure form → Selected list → footer total+Submit (remove redundant KPI chips) | User: 排版方便员工操作 | 2026-09-16 |
-| Selected tbody scrollbar locked: `6px` warm pill `#C4B5A0` / dark `#71717A` · no arrows · `scrollbar-width/color:auto` gate · thead fixed | User: scrollbar 样式先写进 MD | 2026-09-16 |
-| Mode tabs: only `.active` is cream/charcoal 3D button · idle = muted text (no pill chrome) | User: 只有 active 才显示按钮 | 2026-09-16 |
-| Bank Deposit Usage Status = compact `.usage-status-chip` (Merchant `.mad-status-chip` recipe) · Active/Suspend + 6px dot · click toggle | User: Status 太大 → 要图里小胶囊；再要求写进 MD | 2026-09-16 |
-| Status (`status`) ⊥ Show (`visible`) on Bank Deposit Usage — not synced | User: Status=账号活跃；Show=银行显示/不显示 | 2026-09-16 |
-| Show switch must flip on click (optimistic + session fallback when API omits `visible`) | User: show 点一下不会变成 hide | 2026-09-16 |
-| Wallet Ledger migrated to `bo-wallet-tx` · Type multi amber listing chrome · KPI 4-col · viewport-locked panel · peach-cream table · status SUCCESS=active | User: 根据 MD 调整 Wallet Ledger | 2026-09-16 |
 
 ### Opt-in layers for pages outside the migrated families
 

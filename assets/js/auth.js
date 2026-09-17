@@ -111,12 +111,6 @@
     if(p==='main-merchant-create.html' || p==='main-merchant-credit.html' || p==='main-merchant-profit.html' || p==='main-merchant-profit-record.html' || p==='main-merchant-repayments.html' || p==='main-merchant-settlement.html' || p==='merchant-profit.html'){
       return 'main-merchant-detail.html';
     }
-    // Create/Edit Payment Method inherits the parent list page for sidebar highlight.
-    if(p==='payment-method-create.html'){
-      let from = '';
-      try { from = String(new URLSearchParams(location.search || '').get('from') || '').toLowerCase(); } catch(e) {}
-      return from === 'config' ? 'payment-method.html' : 'bank-deposit-usage.html';
-    }
     // Roles & Permissions (3.2) and Security & Audit (3.4) have their OWN Merchant submenu
     // entries, so aliasing them to Merchants pointed the highlight at a different page than the
     // one you were on. The admin side never aliased main-admin-security.html; this matches it.
@@ -247,12 +241,6 @@
       // Payment Gateway menu selected in ROOT Role/Menu Permission. No new hardcoded
       // permission/menu row is required for this drill-down.
       if(current === 'payment-gateway-transactions.html') current = 'payment-gateway.html';
-      // Create/Edit Payment Method is a drill-down of Bank Deposit Usage / Payment Method Config.
-      if(current === 'payment-method-create.html'){
-        let from = '';
-        try { from = String(new URLSearchParams(location.search || '').get('from') || '').toLowerCase(); } catch(e) {}
-        current = from === 'config' ? 'payment-method.html' : 'bank-deposit-usage.html';
-      }
       if(current === 'main-balance-adjustment.html') current = 'main-balance-overview.html';
       // Agent Performance Detail is a drill-down page of Agent Performance Report.
       // It has no separate sidebar/menu permission, so inherit the report permission
@@ -341,13 +329,6 @@
           const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
           const key = String(m.menuKey || '').toLowerCase();
           return file === 'main_provider_report.html' || key === 'main_provider_report' || key === 'main_win_lose_report';
-        });
-      }
-      // Create/Edit Payment Method may be opened from either parent list page.
-      if(!allowed && pageName() === 'payment-method-create.html'){
-        allowed = menus.some(function(m){
-          const file = pageFile(m.url || '');
-          return file === 'payment-method.html' || file === 'bank-deposit-usage.html';
         });
       }
       if(!allowed){
