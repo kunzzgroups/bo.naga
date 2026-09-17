@@ -127,20 +127,26 @@ Theme toggle: `data-bo-theme` / `localStorage.bo_theme`. Prefer `--bo-*` tokens 
 
 ### Sidebar & canvas continuum
 
-**Rule:** Only the **canvas** does sidebar→page transition. Sidebar itself is **opaque** (covers content when expanded). Panels/tables stay solid surface.
+**Rule:** Only the **canvas** does sidebar→page transition. Sidebar itself is **opaque** (covers content when expanded). Panels/tables stay solid surface. Source: `assets/css/bo-charcoal-shell.css`.
 
 | Mode | Sidebar fill | Continuum (L→R, ~96px past sidebar) |
 |------|--------------|-------------------------------------|
 | Light | `#FFE8CC` | `#FFE8CC` → `#FFF1DC` → `#FFF3E0` → `#FFF6E8` → `#FFF8EB` |
-| Dark | `#3A3226` | `#3A3226` → `#342E28` → `#2F2E32` → `#2D2E36` → `#2C2E38` |
+| Dark | `#3A3226` (paint; token `--bo-sidebar-bg` may read `#2A2C36`) | `#3A3226` → `#342E28` → `#2F2E32` → `#2D2E36` → `#2C2E38` |
 
-Sidebar edge rail: 2px amber gradient (`#F59E0B` → `#D97706`).  
-Nav L1 weight: `font-weight: 800`. Light nav text/icons: `#6b360c`.
+**Chrome (Light | Dark)**  
+- Edge rail: light `::before` 2px `#F59E0B`→`#D97706` · dark `::after` amber gradient (dark `::before` = faint grid).  
+- Brand / close / logout: light brown text + cream chips · logout danger `#B42318` / dark `#FF8A90`.  
+- L1 weight `800`. Light text `#6b360c`. Dark default `rgba(255,255,255,.86)`.  
+- L1 hover: light `rgba(255,243,224,.78)` · dark `rgba(255,255,255,.04)`.  
+- L1 active: light cream gradient `#FFF8EF`→`#FFE8CC`→`#FFF3E0` + **3px left amber bar**; dark amber wash + **2px left bar** · text `#FBBF24`.
 
-**Desktop flyout (`.nav-group-list`)** — light `#FFF8EB` (never `#fff`; beat `reports.css`). Dark `#383A46` + `rgba(255,255,255,.14)` border.
+**Desktop flyout (`.nav-group-list`)** — light `#FFF8EB` + `rgba(92,74,48,.12)` (never `#fff`; beat `reports.css`). Dark `#383A46` + `rgba(255,255,255,.14)` · shadow `0 16px 40px rgba(0,0,0,.35)`.
 
-**L2 active (`.report-sub.active`) — locked**  
-Cream chip `#FFFBEB`→`#FEF3C7` + amber frame `#D97706` + soft amber shadow. Dark: amber/charcoal chip + `rgba(245,158,11,.55)` border · text `#FBBF24`.  
+**L2 active (`.report-sub.active`) — locked, two light chips**  
+- Inline (`.report-nav a.report-sub.active`): `#FFF8EF`→`#FFE8CC` + border `rgba(217,119,6,.28)`.  
+- Flyout (`.nav-group-list a.report-sub.active`): `#FFFBEB`→`#FEF3C7` + border `#D97706` + soft amber ring/shadow.  
+- Dark (both): amber/charcoal chip + `rgba(245,158,11,.55)` · text `#FBBF24`.  
 Hover = soft wash only (no frame). Do not use flat active wash. Full tables: `.interface-design/system.md` → Patterns → Sidebar nav.
 
 ### CSS token map (compatibility)
@@ -183,9 +189,10 @@ Every row is **Light | Dark**. Full measurements + hover/active live in `.interf
 | Table pager active | amber 3D gradient · white label · soft lift | amber 3D · text `#2A2C36` · amber glow |
 | Action icons | `#57534E` · hover amber | `#D4D4D8` · hover amber |
 | Modal close | well `#F5EBDC` · border `#EADCC8` · icon `#57534E` | charcoal well · light icon |
-| Sidebar flyout panel | `#FFF8EB` · warm border | `#383A46` · `rgba(255,255,255,.14)` |
-| Sidebar L1 active | cream gradient + left amber bar | amber glow chip + left amber bar |
-| Sidebar L2 active | `#FFFBEB`→`#FEF3C7` + border `#D97706` | amber/charcoal chip + border `rgba(245,158,11,.55)` · text `#FBBF24` |
+| Sidebar flyout panel | `#FFF8EB` · `rgba(92,74,48,.12)` · shadow `0 12px 32px rgba(60,48,32,.14)` | `#383A46` · `rgba(255,255,255,.14)` · `0 16px 40px rgba(0,0,0,.35)` |
+| Sidebar L1 active | `#FFF8EF`→`#FFE8CC`→`#FFF3E0` + **3px** left amber bar | amber wash + **2px** left bar · text `#FBBF24` |
+| Sidebar L2 active | inline `#FFF8EF`→`#FFE8CC` + `rgba(217,119,6,.28)` · flyout `#FFFBEB`→`#FEF3C7` + `#D97706` | amber/charcoal chip + `rgba(245,158,11,.55)` · text `#FBBF24` |
+| Sidebar logout | `#B42318` / icon `#D92D20` · cream danger chip | `#FF8A90` / icon `#F87171` |
 | Create / Edit section card | lift `#FFFCF7` · border `#DCC9A8` · warm shadow · **3px amber left rail** | `--bo-surface` |
 | Create / Edit inputs | `#F5EBDC` · border `#DCC9A8` · placeholder `#78716C` | `#2A2C36` · `rgba(255,255,255,.12)` |
 | Create / Edit nested well | `#F0E4D0` (privileges / policy / security) | faint wash |

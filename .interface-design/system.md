@@ -101,8 +101,9 @@ Rules:
 1. Continuum lives on **html/canvas** only (`background-attachment: fixed`).
 2. Sidebar is **opaque** (never transparent when expanded over content).
 3. Panels / tables stay **solid** `--bo-surface` (never tinted by continuum wash).
-4. Amber 2px edge rail on sidebar right edge.
-5. L1 nav labels: `font-weight: 800`. Light L1 color: `#6b360c`.
+4. Amber 2px edge rail on sidebar right edge (light `::before` · dark `::after`; dark also paints a faint grid on `::before`).
+5. L1 nav labels: `font-weight: 800`. Light L1 color: `#6b360c`. Dark L1 default `rgba(255,255,255,.86)`.
+6. Shell source: `assets/css/bo-charcoal-shell.css` — page CSS must not repaint sidebar fill/L1/L2/flyout.
 
 ### Tips / money / chrome
 
@@ -292,53 +293,61 @@ Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
 
 ### Sidebar nav
 
-- Opaque fill matching continuum left stop (`#FFE8CC` light · `#3A3226` dark)
-- L1 text/icons light: `#6b360c` · weight `800`
-- L1 active: cream chip + **left amber bar** (not the L2 frame)
-- Logout: danger red, not amber
+Source of truth: `assets/css/bo-charcoal-shell.css` (shared shell). Do not invent alternate fills from page CSS.
 
-#### L1 group button — `.nav-group-btn` (locked light/dark)
+#### Shell chrome — `.report-sidebar`
+
+| Spec | Light | Dark |
+|------|-------|------|
+| Fill (opaque paint) | `#FFE8CC` | `#3A3226` (continuum left stop; token `--bo-sidebar-bg` may still read `#2A2C36` — prefer paint stop) |
+| Border-right | `1px solid rgba(92,74,48,.14)` | `1px solid rgba(245,158,11,.22)` |
+| Text | `#6b360c` | `#FFFFFF` |
+| Expanded / mini-hover shadow | `18px 0 40px rgba(60,48,32,.14)` | `18px 0 40px rgba(0,0,0,.35)` |
+| Edge rail | `::before` 2px · `#F59E0B`→`#D97706` · opacity `.75` | `::after` 2px · `#FBBF24`→`#F59E0B`→`#D97706` · opacity `.85`; `::before` = faint grid texture |
+| Brand `.report-brand` | text `#6b360c` · bottom `rgba(92,74,48,.1)` · small `10px/700` opacity `.78` | text `#FFFFFF` · bottom `rgba(245,158,11,.18)` · small amber `rgba(245,158,11,.78)` + soft glow |
+| Close `.close-side` | bg `rgba(255,255,255,.55)` · border `rgba(92,74,48,.12)` · `#6b360c` | bg `rgba(255,255,255,.1)` · `#fff` |
+| Account footer | transparent · top `rgba(92,74,48,.1)` | transparent · top `rgba(255,255,255,.08)` |
+| Logout `.bo-sidebar-logout` | text `#B42318` · icon `#D92D20` · bg `rgba(255,255,255,.45)` · border `rgba(180,35,24,.12)` · hover `#912018` on `rgba(254,243,242,.95)` | text `#FF8A90` · icon `#F87171` · transparent · hover white on `rgba(248,113,113,.1)` + red ring |
+| Nav slab `.report-nav` | transparent · pad `12px 10px 10px` · gap `3px` · **no** nested glass | same pad · transparent |
+
+Never put `backdrop-filter` / `isolation` on `.report-sidebar` — it clips the desktop L2 flyout (`position:fixed`).
+
+#### L1 — `.nav-group-btn` / top-level `a:not(.report-sub)` (locked)
 
 | State | Light | Dark |
 |-------|-------|------|
-| Default text/icon | `#6b360c` · weight `800` | light text on warm charcoal sidebar |
-| Hover | soft wash `rgba(255,243,224,.78)` | soft `rgba(255,255,255,.05)` |
-| **Active** | cream gradient `#FFF8EF`→`#FFE8CC`→`#FFF3E0` + **3px left amber bar** `#FBBF24`→`#D97706` | amber/charcoal glow chip + **2px left amber bar** + soft amber inset |
-| Logout `.bo-sidebar-logout` | text `#B42318` · danger wash hover | danger red (not amber) |
-| Close / collapse `.close-side` | light chip on sidebar | charcoal chip |
+| Default | text/icon `#6b360c` · weight `800` · radius `10px` · transparent · icons opacity `.72` | text `rgba(255,255,255,.86)` · icons `rgba(255,255,255,.7)` · weight `800` |
+| Hover / flyout-hover | wash `rgba(255,243,224,.78)` · soft lift `0 1px 2px rgba(60,48,32,.05)` | wash `rgba(255,255,255,.04)` · text `rgba(255,255,255,.95)` · icon hover `#FBBF24` |
+| **Active / open / has-active-child** | gradient `135deg #FFF8EF → #FFE8CC → #FFF3E0` · inset white + ring `rgba(217,119,6,.18)` + lift `0 6px 16px rgba(217,119,6,.12)` · **3px left bar** `#FBBF24`→`#D97706` + soft amber glow | gradient `90deg rgba(245,158,11,.16) → .05 → transparent` · text `#FBBF24` · amber inset + glow · **2px left bar** `#FDE68A`→`#F59E0B`→`#D97706` · icon drop-shadow |
 
-L1 active uses a **left bar**, not the L2 bordered frame. Opaque sidebar fill: light `#FFE8CC` · dark `#3A3226` (continuum left stop). Token `--bo-sidebar-bg` may read `#2A2C36` in some blocks — prefer continuum left stop for paint.
+L1 active = **left amber bar**, never the L2 bordered frame.
+
+**Duplicate menu URLs:** the same page may appear under two groups (e.g. `wallet-ledger.html` as Transaction Record + Member Wallet Ledger). Active chip / open L1 belongs to the **first** match in menu sort order only — never highlight both parents.
 
 #### Desktop flyout panel — `.nav-group-list`
 
-`reports.css` sets desktop flyout `background:#fff!important`. Page CSS must beat it with equal-or-higher specificity (include `.report-nav > .nav-group > .nav-group-list`).
+`reports.css` sets desktop flyout `background:#fff!important`. Shell must beat it (include `.report-nav > .nav-group > .nav-group-list`).
 
 | Spec | Light | Dark |
 |------|-------|------|
 | Panel bg | `#FFF8EB` | `#383A46` |
 | Panel border | `1px solid rgba(92,74,48,.12)` | `1px solid rgba(255,255,255,.14)` |
-| Panel shadow | warm soft lift | `0 16px 40px rgba(0,0,0,.35)` |
+| Panel shadow | `0 12px 32px rgba(60,48,32,.14)` | `0 16px 40px rgba(0,0,0,.35)` |
 
-#### L2 item — `.report-sub` / `.nav-group-list a`
+#### L2 — `.report-sub` (inline nav + flyout)
+
+Two light active chips ship in CSS — copy the matching selector, do **not** flatten to a single wash.
 
 | State | Light | Dark |
 |-------|-------|------|
-| Default | text/icon `#6b360c` · transparent | text `rgba(255,255,255,.72)` |
-| Hover | soft wash `rgba(217,119,6,.10)` · **no** amber frame | `rgba(255,255,255,.05)` · no frame |
-| **Active (locked)** | cream chip + amber frame (below) | amber/charcoal chip + amber frame (below) |
+| Default | text/icon `#6b360c` · transparent · radius `9px` · border transparent | text `rgba(255,255,255,.62–.68)` · icons `rgba(255,255,255,.55)` |
+| Hover (inline) | wash `rgba(255,243,224,.72)` · **no** frame | `rgba(255,255,255,.05)` · text `.92` · no frame |
+| Hover (flyout) | wash `rgba(217,119,6,.08)` · **no** frame | same as inline dark hover |
+| **Active — inline** `.report-nav a.report-sub.active` | `135deg #FFF8EF → #FFE8CC` · border `1px solid rgba(217,119,6,.28)` · shadow `0 4px 12px rgba(217,119,6,.1)` · text `#6b360c` | `180deg rgba(245,158,11,.18) → rgba(43,37,33,.92)` · border `rgba(245,158,11,.55)` · text `#FBBF24` · amber ring/glow + inset |
+| **Active — flyout** `.nav-group-list a.report-sub.active` | `180deg #FFFBEB → #FEF3C7` · border `1px solid #D97706` (`--bo-sidebar-active`) · shadow `0 0 0 1px rgba(245,158,11,.12), 0 4px 14px rgba(217,119,6,.12)` · text `#6b360c` | same dark chip as inline |
+| Active `::after` rail | none (`display:none`) | none |
 
-**Active chip (copy exactly — Admin Detail reference)**  
-Do **not** use flat `rgba(217,119,6,.12)` wash alone for active (that was the wrong Roles/Dashboard look).
-
-| Spec | Light | Dark |
-|------|-------|------|
-| Background | `linear-gradient(180deg, #FFFBEB 0%, #FEF3C7 100%)` | `linear-gradient(180deg, rgba(245,158,11,.18), rgba(43,37,33,.92))` |
-| Border | `1px solid #D97706` (`--bo-sidebar-active`) | `1px solid rgba(245,158,11,.55)` |
-| Text / icon | `#6b360c` | `#FBBF24` |
-| Shadow | `0 0 0 1px rgba(245,158,11,.12), 0 4px 14px rgba(217,119,6,.12)` | amber glow + inset highlight |
-| `::after` rail | none (`display:none`) | none |
-
-Shared on: Dashboard, Roles & Permissions, Administrators, Security & Audit.
+Do **not** use flat `rgba(217,119,6,.12)` wash alone for active. Shared on: Dashboard, Roles & Permissions, Administrators, Security & Audit, and every page on `bo-charcoal-shell.css`.
 
 ### Topbar (locked chrome — copy exactly)
 
@@ -891,6 +900,7 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Light surfaces = cream `#FFF8EB` locked (no ivory / no pure white) | User confirmed Dashboard light main pane (topbar + canvas + cards) 2026-09-14 | 2026-09-14 |
 | Dark table: stronger borders + lighter text | User: dark Admin table borders “跑掉”; headers/cells too close to charcoal bg | 2026-09-14 |
 | L2 flyout active = cream chip + amber frame | User: Roles flat wash wrong; Admin Detail bordered chip correct — unify all pages | 2026-09-14 |
+| Sidebar MD synced to `bo-charcoal-shell.css` | Documented shell fill/rail/brand/close/logout + L1 + inline vs flyout L2 active (`#FFF8EF`→`#FFE8CC` vs `#FFFBEB`→`#FEF3C7`); dark L1 hover `.04` | 2026-09-17 |
 | Merchant Detail migrated to Charcoal + Amber (new `assets/css/main-merchant-detail-executive.css`, scoped to `.main-admin-detail-page.main-merchant-detail-page`, loads after the shared file) | Page still ran retired navy; matches Admin Detail reference. Scope by page class, not `data-access-page` — 8 pages share `main_merchant_detail` | 2026-09-15 |
 | Merchant family runs the Charcoal block: scope widened to `body.main-admin-detail-page[data-access-page="main_merchant_detail"]`; `main-merchant-create.html` migrated | One block serves the whole family (detail/create/security/profit/profit-record/repayments/settlement); roles pages share the attribute but load a different stylesheet, so they stay untouched | 2026-09-15 |
 | Merchant row avatar = neutral tile `#F5EBDC` / `#2A2C36`; every-third-row tint deleted; colour only on suspended rows; initials from the company name | User approved. The tint encoded row position, not data, and the indigo tile repeated the code printed beside it. Admin Detail keeps the old vocabulary | 2026-09-15 |
@@ -904,6 +914,7 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Withdraw Remark cell = player text only (no `Admin:` sub-line) | User: 这个也帮我移除 | 2026-09-16 |
 | Bulk panel pill scrollbar locked: light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / `#D97706` · `4px` · no arrows · webkit only (never cool slate / zinc) | User confirmed chocolate light thumb; dark must differ from light | 2026-09-17 |
 | Wallet Ledger = `bo-wallet-tx` · table-wrap + type menu use Panel pill chocolate scrollbar · Type dropdown retired cool blue | User: Wallet Ledger scrollbar 跟着 MD | 2026-09-17 |
+| Sidebar active chip: first matching menu URL only (wallet-ledger under Transaction wins over Member duplicate) | User: Wallet Ledger sidebar 跟着 MD；Member 不应同时高亮 | 2026-09-17 |
 
 ### Opt-in layers for pages outside the migrated families
 
@@ -945,5 +956,5 @@ Two consequences worth keeping in mind when reviewing a page:
 9. **Permission matrix dual wash:** light = cream/amber group wash; dark = cool charcoal surfaces only (amber accents, never muddy amber panel fill). Copy from Patterns → Permission matrix.
 10. **No pure white in light chrome:** canvas end, topbar, and panels use cream `#FFF8EB` (continuum → `#FFF6E8` → `#FFF8EB`). Keep `#FFFFFF` only for text-on-amber (`--bo-accent-on`). Do not settle for near-white ivory (`#FFFCF8`) on Dashboard main pane.
 11. **Dark data tables:** outer/row borders ≥ `rgba(255,255,255,.12–.14)`; header text `#E7E5E4`; cells `#F5F5F4`; muted/time `#D4D4D8`. **Transaction listing** (`body.bo-wallet-tx`): zebra odd `#3A3C48` / even `#434653` · thead `#1F2128` (deeper than body — never lifted `#40424E`). Scope light cream table CSS with `html:not([data-bo-theme="dark"])`. Copy from Patterns → Data tables → Transaction listing table.
-12. **Sidebar L2 active:** cream gradient `#FFFBEB`→`#FEF3C7` + `1px` amber border `#D97706` (dark: amber-tinted chip + `rgba(245,158,11,.55)` border). Never flat amber wash only. Beat `reports.css` flyout `#fff`. Copy from Patterns → Sidebar nav.
+12. **Sidebar L2 active:** inline = `#FFF8EF`→`#FFE8CC` + border `rgba(217,119,6,.28)`; flyout = `#FFFBEB`→`#FEF3C7` + border `#D97706`. Dark both: amber/charcoal chip + `rgba(245,158,11,.55)`. Never flat amber wash only. Beat `reports.css` flyout `#fff`. Copy from Patterns → Sidebar nav (shell CSS).
 13. **Every new chrome needs Light|Dark:** before shipping a frame/button/slot, add or update a two-column table in this file (see Coverage checklist). Do not leave “dark inherits” undocumented.

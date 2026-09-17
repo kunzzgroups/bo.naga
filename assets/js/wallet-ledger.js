@@ -151,12 +151,7 @@
       </tr>`;
     }).join('');
     totalPages = Number(pagination && pagination.totalPages) || 1;
-    const total = Number(pagination && pagination.totalElements) || rows.length;
     document.getElementById('ledgerPager').innerHTML = pageButtons(page, totalPages);
-    const filteredTotal = Number(meta && meta.filteredTotalAmount);
-    const selectedType = selectedTypeList().length ? selectedTypeList().join(', ') : 'ALL EXCEPT WALLET-TO-WALLET';
-    const scopeLabel = (meta && meta.filterScope === 'ALL_TIME') || allTimeScope ? 'All Time' : 'Selected Date';
-    document.getElementById('ledgerPageInfo').textContent = `${total.toLocaleString()} record(s) · ${scopeLabel} ${selectedType} Total: ${money(Number.isFinite(filteredTotal) ? filteredTotal : rows.reduce((a,r)=>a+num(r.amount),0))}`;
     document.getElementById('ledgerPrevBtn').disabled = page <= 1;
     document.getElementById('ledgerNextBtn').disabled = page >= totalPages;
   }
