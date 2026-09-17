@@ -237,6 +237,8 @@ Reference: `bank-deposit-usage.html` · `body.bo-wallet-tx.bank-deposit-usage-pa
 | Panel | Viewport-locked · tabs left + filters/actions right · no title badge · no link underline |
 | Table | Peach-cream zebra · square thead · `table-layout:fixed` · inner scroll · never page overflow |
 | Status | `.status-pill.active` **Active** · `.status-pill.off` **Suspend** · click to toggle |
+| Action | `.bo-tx-action-btn` **26×26** · **View** `is-view` (eye · QR open in new tab · disabled when no QR) · Edit `is-edit` · Delete `is-reject` |
+| Pager | Footer `.bo-usage-pager-host` · `.smart-pagination` / `.smart-page` (mad-pager amber active) · client page size **10** |
 | Meter | Track `#F5EBDC` · fill `#B45309` · warn `#F59E0B` · over `#EF4444` |
 
 Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
@@ -641,9 +643,9 @@ Reference specimen: Active / Suspend / All on Bank Deposit Usage (and Admin Deta
 
 | Spec | Light | Dark |
 |------|-------|------|
-| Fill | cream 3D `linear-gradient(180deg, #FFF8EB 0%, #F3E8D6 100%)` | charcoal 3D `#383A46`→`#2A2C36` |
-| Border | `1px solid #EADCC8` | `1px solid rgba(255,255,255,.12)` |
-| Shadow | `0 1px 2px rgba(24,25,28,.06), 0 2px 6px rgba(24,25,28,.05)` | soft dark lift |
+| Fill | lift cream `linear-gradient(180deg, #FFFCF7 0%, #FFF8EB 55%, #F3E8D6 100%)` — **lighter than** toolbar `#FFF8EB` so the chip reads | charcoal 3D `#383A46`→`#2A2C36` |
+| Border | `1px solid #E0D0B8` | `1px solid rgba(255,255,255,.14)` |
+| Shadow | `0 1px 2px rgba(24,25,28,.08), 0 2px 8px rgba(92,74,48,.10)` | soft dark lift |
 | Radius | **`999px`** (capsule — matches specimen) | same |
 | Height | `36px` (full track height) | same |
 
