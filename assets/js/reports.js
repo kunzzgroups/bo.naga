@@ -647,34 +647,8 @@ document.addEventListener('DOMContentLoaded', () => {
     wrap.appendChild(menu);
 
     function close(){
-      menu.classList.remove('show','is-up');
+      menu.classList.remove('show');
       btn.classList.remove('open');
-      menu.style.maxHeight='';
-    }
-
-    function placeMenu(){
-      menu.classList.remove('is-up');
-      menu.style.maxHeight='';
-      const btnRect=btn.getBoundingClientRect();
-      let clipTop=0,clipBottom=window.innerHeight;
-      let node=wrap.parentElement;
-      while(node && node!==document.body){
-        const style=window.getComputedStyle(node);
-        const oy=style.overflowY||style.overflow;
-        if(oy==='hidden'||oy==='auto'||oy==='scroll'){
-          const r=node.getBoundingClientRect();
-          clipTop=Math.max(clipTop,r.top);
-          clipBottom=Math.min(clipBottom,r.bottom);
-          break;
-        }
-        node=node.parentElement;
-      }
-      const spaceBelow=clipBottom-btnRect.bottom-8;
-      const spaceAbove=btnRect.top-clipTop-8;
-      const preferred=280;
-      const needUp=spaceBelow<Math.min(preferred,160) && spaceAbove>spaceBelow;
-      menu.classList.toggle('is-up',needUp);
-      menu.style.maxHeight=Math.max(100,Math.min(preferred,needUp?spaceAbove:spaceBelow))+'px';
     }
 
     btn.addEventListener('click',function(e){
@@ -684,18 +658,12 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       if(!hasData) return;
       const open=!menu.classList.contains('show');
-      document.querySelectorAll('.rounded-select-menu.show').forEach(function(m){
-        m.classList.remove('show','is-up');
-        m.style.maxHeight='';
-      });
+      document.querySelectorAll('.rounded-select-menu.show').forEach(m=>m.classList.remove('show'));
       document.querySelectorAll('.rounded-select-btn.open').forEach(b=>b.classList.remove('open'));
       if(open){
         sizeRoundedSelectToContent(select);
         menu.classList.add('show');
         btn.classList.add('open');
-        placeMenu();
-      }else{
-        close();
       }
     });
 
@@ -787,10 +755,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('click',function(e){
     if(!e.target.closest('.rounded-select-wrap')){
-      document.querySelectorAll('.rounded-select-menu.show').forEach(function(m){
-        m.classList.remove('show','is-up');
-        m.style.maxHeight='';
-      });
+      document.querySelectorAll('.rounded-select-menu.show').forEach(m=>m.classList.remove('show'));
       document.querySelectorAll('.rounded-select-btn.open').forEach(b=>b.classList.remove('open'));
     }
   });

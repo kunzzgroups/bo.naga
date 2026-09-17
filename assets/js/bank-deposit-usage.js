@@ -7,6 +7,8 @@
   const endpoint=k=>API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS[k];
   const VIS_KEY='bo_pm_visible_overrides';
   const methodsById=new Map();
+  let statusFilter='active';
+  let lastPayload={methods:[],deposits:[],withdrawals:[],manualMovements:[]};
   async function api(url,opt){
     const r=await fetch(url,opt||{headers:{...BO_AUTH.authHeader()}});
     const j=await r.json().catch(()=>({}));
@@ -64,12 +66,11 @@
   }
   function paintStatus(btn,on){
     if(!btn)return;
-    btn.classList.toggle('is-active',!!on);
-    btn.classList.toggle('is-suspended',!on);
+    btn.classList.toggle('active',!!on);
+    btn.classList.toggle('off',!on);
     btn.title=on?'Click to Suspend':'Click to Activate';
-    btn.setAttribute('aria-label',on?'Active, click to Suspend':'Suspended, click to Activate');
-    const label=btn.querySelector('span');
-    if(label)label.textContent=on?'Active':'Suspend';
+    btn.setAttribute('aria-label',on?'Active, click to Suspend':'Suspend, click to Activate');
+    btn.textContent=on?'Active':'Suspend';
   }
   function methodPayload(m,patch){
     const vis=patch&&Object.prototype.hasOwnProperty.call(patch,'visible')?Number(patch.visible)?1:0:showVal(m);
@@ -121,21 +122,50 @@
   }
   function statusBtn(m){
     const on=isActive(m);
-    return `<button type="button" class="usage-status-chip ${on?'is-active':'is-suspended'}" data-usage-status-id="${esc(m.id)}" title="${on?'Click to Suspend':'Click to Activate'}" aria-label="${on?'Active, click to Suspend':'Suspended, click to Activate'}"><i class="usage-status-dot" aria-hidden="true"></i><span>${on?'Active':'Suspend'}</span></button>`;
+    return `<button type="button" class="status-pill ${on?'active':'off'}" data-usage-status-id="${esc(m.id)}" title="${on?'Click to Suspend':'Click to Activate'}" aria-label="${on?'Active, click to Suspend':'Suspend, click to Activate'}">${on?'Active':'Suspend'}</button>`;
+  }
+  function syncStatusTabs(){
+    const track=document.querySelector('.bank-usage-toolbar .bo-tx-tabs');
+    if(track&&window.BO_SEG_BOUNCE){
+      try{window.BO_SEG_BOUNCE.sync(track);}catch(_){}
+    }
+  }
+  function setStatusFilter(next){
+    const v=String(next||'all').toLowerCase();
+    statusFilter=v==='active'||v==='suspend'||v==='all'?v:'all';
+    document.querySelectorAll('[data-usage-status-filter]').forEach(btn=>{
+      const on=btn.getAttribute('data-usage-status-filter')===statusFilter;
+      btn.classList.toggle('is-active',on);
+      btn.setAttribute('aria-pressed',on?'true':'false');
+    });
+    syncStatusTabs();
+    render(lastPayload.methods,lastPayload.deposits,lastPayload.withdrawals,lastPayload.manualMovements);
   }
   function render(methods,deposits,withdrawals,manualMovements){
+    lastPayload={methods:methods||[],deposits:deposits||[],withdrawals:withdrawals||[],manualMovements:manualMovements||[]};
     methodsById.clear();
-    (methods||[]).forEach(m=>methodsById.set(String(m.id),m));
-    const stats=new Map(methods.map(m=>[String(m.id),{deposit:0,depositCount:0,withdraw:0,withdrawCount:0}]));let unmatchedDeposit=0,unmatchedWithdraw=0,unmatchedCount=0;
-    deposits.forEach(r=>{const m=matchDeposit(r,methods);if(!m){unmatchedDeposit+=num(r.amount);unmatchedCount++;return;}const st=stats.get(String(m.id));st.deposit+=num(r.amount);st.depositCount++;});
-    withdrawals.forEach(r=>{const m=matchWithdraw(r,methods);if(!m){unmatchedWithdraw+=num(r.amount);unmatchedCount++;return;}const st=stats.get(String(m.id));st.withdraw+=num(r.amount);st.withdrawCount++;});
-    (manualMovements||[]).forEach(r=>{const m=methods.find(x=>String(x.id)===String(r.paymentMethodId));if(!m)return;const st=stats.get(String(m.id));const t=String(r.ledgerType||'').toUpperCase();if(t==='ADMIN_DEPOSIT'){st.deposit+=Math.abs(num(r.amount));st.depositCount++;}else if(t==='ADMIN_WITHDRAW'){st.withdraw+=Math.abs(num(r.amount));st.withdrawCount++;}});
-    const kw=norm($('usageKeyword')?.value||''),filtered=methods.filter(m=>!kw||paymentKeys(m).some(k=>k.includes(kw)));
-    const manualDeposits=(manualMovements||[]).filter(r=>String(r.ledgerType||'').toUpperCase()==='ADMIN_DEPOSIT'),manualWithdrawals=(manualMovements||[]).filter(r=>String(r.ledgerType||'').toUpperCase()==='ADMIN_WITHDRAW');
-    $('usageBankCount')&&($('usageBankCount').textContent=methods.length.toLocaleString());
-    $('usageApprovedCount')&&($('usageApprovedCount').textContent=(deposits.length+manualDeposits.length).toLocaleString());
-    $('usageApprovedAmount')&&($('usageApprovedAmount').textContent=money(deposits.reduce((a,r)=>a+num(r.amount),0)+manualDeposits.reduce((a,r)=>a+Math.abs(num(r.amount)),0)));
-    $('usageWithdrawAmount')&&($('usageWithdrawAmount').textContent=money(withdrawals.reduce((a,r)=>a+num(r.amount),0)+manualWithdrawals.reduce((a,r)=>a+Math.abs(num(r.amount)),0)));
+    lastPayload.methods.forEach(m=>methodsById.set(String(m.id),m));
+    const stats=new Map(lastPayload.methods.map(m=>[String(m.id),{deposit:0,depositCount:0,withdraw:0,withdrawCount:0}]));let unmatchedDeposit=0,unmatchedWithdraw=0,unmatchedCount=0;
+    lastPayload.deposits.forEach(r=>{const m=matchDeposit(r,lastPayload.methods);if(!m){unmatchedDeposit+=num(r.amount);unmatchedCount++;return;}const st=stats.get(String(m.id));st.deposit+=num(r.amount);st.depositCount++;});
+    lastPayload.withdrawals.forEach(r=>{const m=matchWithdraw(r,lastPayload.methods);if(!m){unmatchedWithdraw+=num(r.amount);unmatchedCount++;return;}const st=stats.get(String(m.id));st.withdraw+=num(r.amount);st.withdrawCount++;});
+    lastPayload.manualMovements.forEach(r=>{const m=lastPayload.methods.find(x=>String(x.id)===String(r.paymentMethodId));if(!m)return;const st=stats.get(String(m.id));const t=String(r.ledgerType||'').toUpperCase();if(t==='ADMIN_DEPOSIT'){st.deposit+=Math.abs(num(r.amount));st.depositCount++;}else if(t==='ADMIN_WITHDRAW'){st.withdraw+=Math.abs(num(r.amount));st.withdrawCount++;}});
+    const kw=norm($('usageKeyword')?.value||'');
+    const activeCount=lastPayload.methods.filter(isActive).length;
+    const suspendCount=lastPayload.methods.length-activeCount;
+    $('usageCountActive')&&($('usageCountActive').textContent=String(activeCount));
+    $('usageCountSuspend')&&($('usageCountSuspend').textContent=String(suspendCount));
+    $('usageCountAll')&&($('usageCountAll').textContent=String(lastPayload.methods.length));
+    const filtered=lastPayload.methods.filter(m=>{
+      if(statusFilter==='active'&&!isActive(m))return false;
+      if(statusFilter==='suspend'&&isActive(m))return false;
+      if(kw&&!paymentKeys(m).some(k=>k.includes(kw)))return false;
+      return true;
+    });
+    const manualDeposits=lastPayload.manualMovements.filter(r=>String(r.ledgerType||'').toUpperCase()==='ADMIN_DEPOSIT'),manualWithdrawals=lastPayload.manualMovements.filter(r=>String(r.ledgerType||'').toUpperCase()==='ADMIN_WITHDRAW');
+    $('usageBankCount')&&($('usageBankCount').textContent=lastPayload.methods.length.toLocaleString());
+    $('usageApprovedCount')&&($('usageApprovedCount').textContent=(lastPayload.deposits.length+manualDeposits.length).toLocaleString());
+    $('usageApprovedAmount')&&($('usageApprovedAmount').textContent=money(lastPayload.deposits.reduce((a,r)=>a+num(r.amount),0)+manualDeposits.reduce((a,r)=>a+Math.abs(num(r.amount)),0)));
+    $('usageWithdrawAmount')&&($('usageWithdrawAmount').textContent=money(lastPayload.withdrawals.reduce((a,r)=>a+num(r.amount),0)+manualWithdrawals.reduce((a,r)=>a+Math.abs(num(r.amount)),0)));
     $('usageUnmatchedAmount')&&($('usageUnmatchedAmount').textContent=money(unmatchedDeposit+unmatchedWithdraw));
     const body=$('usageBody');
     body.innerHTML=filtered.length?filtered.map(m=>{
@@ -146,8 +176,8 @@
         <td><span class="usage-bank-name">${esc(m.bankName||m.displayName||'-')}</span></td>
         <td class="usage-account">${accountHtml}</td>
         <td><b>${money(min)}</b> - <b>${max>0?money(max):'No max'}</b></td>
-        <td><b>+${money(st.deposit)}</b><br><small>${st.depositCount.toLocaleString()} deposit movement(s)</small></td>
-        <td><b>-${money(st.withdraw)}</b><br><small>${st.withdrawCount.toLocaleString()} withdrawal movement(s)</small></td>
+        <td><b>+${money(st.deposit)}</b><br><small>${st.depositCount.toLocaleString()} deposit(s)</small></td>
+        <td><b>-${money(st.withdraw)}</b><br><small>${st.withdrawCount.toLocaleString()} withdrawal(s)</small></td>
         <td><div class="usage-meter"><div class="usage-meter-line"><span>${money(net)}</span><span>/ ${cap}</span></div>${max>0?`<div class="usage-track"><div class="usage-fill ${fillClass}" style="width:${Math.min(100,pct).toFixed(2)}%"></div></div>`:''}</div></td>
         <td>${dailyText}</td>
         <td>${max>0?`<b>${pct.toFixed(1)}%</b>`:'<span class="usage-muted">No max configured</span>'}</td>
@@ -157,6 +187,7 @@
       </tr>`;
     }).join(''):'<tr><td colspan="11">No payment method found.</td></tr>';
     $('usageInfo').textContent=`${filtered.length} bank record(s) · ${unmatchedCount} unmatched approved transaction(s)`;
+    syncStatusTabs();
   }
   async function load(){
     const body=$('usageBody');
@@ -178,6 +209,12 @@
     }
   }
   document.addEventListener('click',e=>{
+    const statusTab=e.target.closest('[data-usage-status-filter]');
+    if(statusTab){
+      e.preventDefault();
+      setStatusFilter(statusTab.getAttribute('data-usage-status-filter'));
+      return;
+    }
     const statusEl=e.target.closest('[data-usage-status-id]');
     if(statusEl){
       if(statusEl.disabled||statusEl.classList.contains('is-busy'))return;
@@ -186,13 +223,14 @@
       if(!m)return;
       const prev=isActive(m)?1:0;
       const next=prev?0:1;
-      paintStatus(statusEl,next===1);
       m.status=next;
       methodsById.set(id,m);
-      saveMethod(m,{status:next},statusEl,'Failed to update status',()=>{
+      render(lastPayload.methods,lastPayload.deposits,lastPayload.withdrawals,lastPayload.manualMovements);
+      const painted=document.querySelector(`[data-usage-status-id="${CSS.escape(id)}"]`);
+      saveMethod(m,{status:next},painted,'Failed to update status',()=>{
         m.status=prev;
         methodsById.set(id,m);
-        paintStatus(statusEl,prev===1);
+        render(lastPayload.methods,lastPayload.deposits,lastPayload.withdrawals,lastPayload.manualMovements);
       });
       return;
     }
@@ -228,6 +266,10 @@
     BO_AUTH.renderProfile&&BO_AUTH.renderProfile();
     BO_AUTH.renderSidebar&&BO_AUTH.renderSidebar();
     setToday();
+    const statusTrack=document.querySelector('.bank-usage-toolbar .bo-tx-tabs');
+    if(statusTrack&&window.BO_SEG_BOUNCE){
+      window.BO_SEG_BOUNCE.mount(statusTrack,{button:':scope > .bo-tx-tab',anim:'bounce'});
+    }
     $('usageRefresh')?.addEventListener('click',load);
     $('usageFrom')?.addEventListener('change',load);
     $('usageTo')?.addEventListener('change',load);
