@@ -254,18 +254,35 @@ Reference: `bulk-adjustment.html` · `bulk-bonus-adjustment.html` · `body.bo-wa
 | Search | `.mad-search.bulk-member-search` — listing surface recipe |
 | Panel scrollbars | **Panel pill scrollbar** on `.member-picker-list` **and** `.selected-table tbody` · light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / hover `#D97706` · `4px` · no arrows |
 
-#### Panel pill scrollbar (Bulk panels)
+#### Panel pill scrollbar (Bulk · Wallet Ledger)
 
 Thin pill · **no** end arrows. Webkit only — **do not** set `scrollbar-width` / `scrollbar-color` to a coloured pair (Chromium then paints OS arrows and ignores `::-webkit-scrollbar`). Firefox: `@supports not selector(::-webkit-scrollbar)` with `scrollbar-width:thin` + matching `scrollbar-color`.
 
+Applies to:
+- Bulk `.member-picker-list` · `.selected-table tbody`
+- Wallet Ledger `.table-card > .table-wrap` (horizontal) · `#ledgerTypeOptions` (type menu)
+
 | Part | Light | Dark |
 |------|-------|------|
-| Width | `4px` | `4px` |
+| Width / height | `4px` | `4px` |
 | Thumb | chocolate `#8B6B4A` | `#F59E0B` |
 | Thumb hover | deep chocolate `#5C4A30` | `#D97706` |
 | Track / buttons | transparent · `::-webkit-scrollbar-button{display:none;height:0}` | same |
 
-**Do not** use cool slate `#98A2B3` / `#667085` on Bulk cream panels — light must read warm chocolate. **Do not** use zinc `#71717A` / `#A1A1AA` for dark. Role select menus keep their own slate light thumb (see Role select). Listing table body scrollbars (Deposit `.bo-tx-table-body`, 14px + end arrows) are a different recipe — do not copy here.
+**Do not** use cool slate `#98A2B3` / `#667085` on these cream panels — light must read warm chocolate. **Do not** use zinc `#71717A` / `#A1A1AA` for dark. Role select menus keep their own slate light thumb (see Role select). Listing table body scrollbars on Deposit/Withdraw (`.bo-tx-table-body`, 14px + end arrows) are a different recipe — do not copy here.
+
+Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
+
+#### Wallet Ledger (locked)
+
+Reference: `wallet-ledger.html` · `body.bo-wallet-tx.wallet-ledger-page` · `bo-wallet-transaction-amber.css`.
+
+| Part | Spec |
+|------|------|
+| Shell | `bo-wallet-tx` (not `bo-charcoal`) + amber CSS · FOUC theme script |
+| Filters | Surface `#FFF8EB` · Type multi-select = Role select chrome (cream · amber focus · no cool blue) |
+| Table wrap | `.table-card > .table-wrap` horizontal scroll · **Panel pill scrollbar** (chocolate light / amber dark · `4px` · no arrows) |
+| Type menu scroll | `#ledgerTypeOptions` — same pill recipe |
 
 Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
 
@@ -886,6 +903,7 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Deposit/Withdraw responsive 1920→375: bank strip · stacked toolbar · scrollable table · ≤1456 DATE day-only + hover time · hide secondary columns on tablet/phone | User: mid widths messy / table too short / DATE ellipsis | 2026-09-16 |
 | Withdraw Remark cell = player text only (no `Admin:` sub-line) | User: 这个也帮我移除 | 2026-09-16 |
 | Bulk panel pill scrollbar locked: light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / `#D97706` · `4px` · no arrows · webkit only (never cool slate / zinc) | User confirmed chocolate light thumb; dark must differ from light | 2026-09-17 |
+| Wallet Ledger = `bo-wallet-tx` · table-wrap + type menu use Panel pill chocolate scrollbar · Type dropdown retired cool blue | User: Wallet Ledger scrollbar 跟着 MD | 2026-09-17 |
 
 ### Opt-in layers for pages outside the migrated families
 
