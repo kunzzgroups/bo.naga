@@ -69,7 +69,7 @@ html[data-bo-theme="dark"] body:is(.livechat-bo-page, .livechat-template-page) *
   color:#F5F5F4;
 }
 
-/* Panel pill scrollbar — DESIGN.md chocolate / amber, 4px, no arrows */
+/* Panel pill scrollbar — DESIGN.md chocolate / amber, 6px, no arrows */
 body:is(.livechat-bo-page, .livechat-template-page) .livechat-inbox-list,
 body:is(.livechat-bo-page, .livechat-template-page) .livechat-room-messages,
 body:is(.livechat-bo-page, .livechat-template-page) .livechat-template-panel,
@@ -83,7 +83,7 @@ body:is(.livechat-bo-page, .livechat-template-page) .livechat-room-messages::-we
 body:is(.livechat-bo-page, .livechat-template-page) .livechat-template-panel::-webkit-scrollbar,
 body:is(.livechat-bo-page, .livechat-template-page) .livechat-compose::-webkit-scrollbar,
 body:is(.livechat-bo-page, .livechat-template-page) .template-list::-webkit-scrollbar{
-  width:4px;height:4px;
+  width:6px;height:6px;
 }
 body:is(.livechat-bo-page, .livechat-template-page) .livechat-inbox-list::-webkit-scrollbar-thumb,
 body:is(.livechat-bo-page, .livechat-template-page) .livechat-room-messages::-webkit-scrollbar-thumb,

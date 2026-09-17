@@ -108,6 +108,12 @@
     if(!select || select.multiple || Number(select.size)>1 || select.closest(DATE_PICKER_SELECTOR) || !select.closest('.bo-filter-row')) return;
     const item=select.matches('.bo-filter-select-item')?select:select.closest('.bo-filter-select-item');
     if(!item) return;
+    const listingFixed={depositStatus:150,withdrawStatus:150};
+    if(document.body.classList.contains('bo-wallet-tx') && listingFixed[select.id]!=null){
+      item.style.setProperty('--bo-select-width',listingFixed[select.id]+'px');
+      select.dataset.boContentSized='1';
+      return;
+    }
     const labels=Array.from(select.options||[]).map(o=>(o.textContent||o.label||'').trim()).filter(Boolean);
     const widest=Math.max(0,...labels.map(label=>measureText(label,select)));
     /* 12px left + 32px arrow side + requested 10px additional room. */
@@ -120,7 +126,14 @@
     if(!wrap || wrap.closest(DATE_PICKER_SELECTOR) || !wrap.closest('.bo-filter-row')) return;
     const item=wrap.closest('.bo-filter-select-item');
     const button=wrap.querySelector('.rounded-select-btn');
+    const select=wrap.querySelector(':scope > select');
     if(!item || !button) return;
+    const listingFixed={depositStatus:150,withdrawStatus:150};
+    if(document.body.classList.contains('bo-wallet-tx') && select && listingFixed[select.id]!=null){
+      item.style.setProperty('--bo-select-width',listingFixed[select.id]+'px');
+      wrap.dataset.boContentSized='1';
+      return;
+    }
     const labels=[visibleText(button),...Array.from(wrap.querySelectorAll('.rounded-select-option')).map(visibleText)].filter(Boolean);
     const widest=Math.max(0,...labels.map(label=>measureText(label,button)));
     const width=Math.max(80,widest+54);

@@ -183,7 +183,8 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-operation-layout{
   min-height:0;
   height:100%;
   display:grid;
-  grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);
+  /* Desktop split: Select Members 60% · Configure 40% */
+  grid-template-columns:minmax(0,3fr) minmax(280px,2fr);
   gap:16px;
   align-items:stretch;
   min-width:0;
@@ -461,11 +462,11 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list{
   -webkit-overflow-scrolling:touch;
   /* Do NOT set scrollbar-width/color — Chromium then uses OS arrows and ignores ::-webkit-scrollbar */
 }
-/* MD scrollbar — Role select: 4px slate pill · no arrows */
+/* MD scrollbar — Panel pill: 6px chocolate · no arrows */
 body.bo-wallet-tx.bulk-adjustment-page .member-picker-list::-webkit-scrollbar,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list::-webkit-scrollbar{
-  width:4px!important;
-  height:4px!important;
+  width:6px!important;
+  height:6px!important;
 }
 body.bo-wallet-tx.bulk-adjustment-page .member-picker-list::-webkit-scrollbar-button,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list::-webkit-scrollbar-button{
@@ -786,11 +787,11 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table tbody tr{
   width:100%;
   table-layout:fixed;
 }
-/* Body-only scrollbar — thin pill, no end arrows */
+/* Body-only scrollbar — panel pill 6px, no end arrows */
 body.bo-wallet-tx.bulk-adjustment-page .selected-table tbody::-webkit-scrollbar,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table tbody::-webkit-scrollbar{
-  width:4px!important;
-  height:4px!important;
+  width:6px!important;
+  height:6px!important;
   background:transparent!important;
 }
 body.bo-wallet-tx.bulk-adjustment-page .selected-table tbody::-webkit-scrollbar-track,
