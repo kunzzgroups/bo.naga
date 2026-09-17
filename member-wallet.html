@@ -10,11 +10,11 @@
 <title>Member Wallet Listing</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
-<link href="assets/css/reports.css?v=1.0.49" rel="stylesheet"/>
+<link href="assets/css/reports.css?v=1.0.50" rel="stylesheet"/>
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.3" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/bo-wallet-transaction-amber.css?v=1.0.75" rel="stylesheet"/>
+<link href="assets/css/bo-wallet-transaction-amber.css?v=1.0.94" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -56,23 +56,48 @@
 <div class="metric"><span>Total Bet</span><strong id="mwBetTotal">0.00</strong></div>
 <div class="metric"><span>Net Win/Loss</span><strong id="mwWinLossTotal">0.00</strong></div>
 </div>
-<div class="filter-card">
+<div class="table-card">
+<div class="filter-card deposit-inline-filter wallet-inline-filter">
 <div class="user-search-grid bo-filter-row">
 <div class="field"><label>Search Member</label><input id="walletKeyword" placeholder="Username / name / mobile / referrer"/></div>
-<div class="field"><label>Page Size</label><select id="walletSize"><option>20</option><option>50</option><option>100</option></select></div>
 <div class="field user-filter-actions wallet-filter-actions"><label> </label><div class="filter-action-row"><button class="clean-btn" id="walletResetBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Reset</button><button class="btn-primary-clean" id="walletSearchBtn" type="button"><i class="bi bi-search"></i> Search</button></div></div>
+<select id="walletSize" hidden data-no-rounded="1" aria-hidden="true" tabindex="-1"><option value="-" selected>-</option><option value="10">10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option><option value="All">All</option></select>
 </div>
 </div>
-<div class="table-card">
-<div class="user-toolbar mb-3"><div class="user-badge"><i class="bi bi-wallet2"></i><span>Wallet Summary</span></div><small class="text-muted" id="walletPageInfo"></small></div>
 <div class="table-wrap">
-<table class="report-table">
+<div class="bo-tx-table-head">
+<table class="report-table bo-tx-head-table">
+<colgroup>
+<col class="mw-col-member"/><col class="mw-col-money"/><col class="mw-col-provider"/><col class="mw-col-money"/><col class="mw-col-money"/><col class="mw-col-money"/><col class="mw-col-money"/><col class="mw-col-money"/><col class="mw-col-money"/><col class="mw-col-money"/><col class="mw-col-money"/><col class="mw-col-winloss"/><col class="mw-col-detail"/><col class="mw-col-detail"/><col class="mw-col-detail"/><col class="mw-col-action"/>
+</colgroup>
 <thead><tr>
-<th>Member</th><th>Main Balance</th><th>Provider Balance Detail</th><th>Total Balance</th><th>Total Deposit</th><th>Total Withdraw</th><th>Transfer In</th><th>Transfer Out</th><th>Total Bet</th><th>Total Win</th><th>Total Lose</th><th>Win/Loss</th>
-<th>Total Adjustment Detail</th><th>Total Bonus Detail</th><th>Daily Rebate Detail</th><th>Action</th>
+<th class="bo-tx-sortable" data-sort="username" aria-sort="none" scope="col"><button type="button" class="bo-tx-sort-btn"><span class="bo-tx-sort-ico" aria-hidden="true"></span>Member</button></th>
+<th class="bo-tx-sortable" data-sort="mainWalletBalance" aria-sort="none" scope="col"><button type="button" class="bo-tx-sort-btn"><span class="bo-tx-sort-ico" aria-hidden="true"></span>Main Balance</button></th>
+<th class="bo-tx-sortable" data-sort="providerWalletBalance" aria-sort="none" scope="col"><button type="button" class="bo-tx-sort-btn"><span class="bo-tx-sort-ico" aria-hidden="true"></span>Provider Balance Detail</button></th>
+<th class="bo-tx-sortable" data-sort="totalBalance" aria-sort="none" scope="col"><button type="button" class="bo-tx-sort-btn"><span class="bo-tx-sort-ico" aria-hidden="true"></span>Total Balance</button></th>
+<th class="bo-tx-sortable" data-sort="totalDeposit" aria-sort="none" scope="col"><button type="button" class="bo-tx-sort-btn"><span class="bo-tx-sort-ico" aria-hidden="true"></span>Total Deposit</button></th>
+<th class="bo-tx-sortable" data-sort="totalWithdraw" aria-sort="none" scope="col"><button type="button" class="bo-tx-sort-btn"><span class="bo-tx-sort-ico" aria-hidden="true"></span>Total Withdraw</button></th>
+<th class="bo-tx-sortable" data-sort="totalTransferIn" aria-sort="none" scope="col"><button type="button" class="bo-tx-sort-btn"><span class="bo-tx-sort-ico" aria-hidden="true"></span>Transfer In</button></th>
+<th class="bo-tx-sortable" data-sort="totalTransferOut" aria-sort="none" scope="col"><button type="button" class="bo-tx-sort-btn"><span class="bo-tx-sort-ico" aria-hidden="true"></span>Transfer Out</button></th>
+<th class="bo-tx-sortable" data-sort="totalBet" aria-sort="none" scope="col"><button type="button" class="bo-tx-sort-btn"><span class="bo-tx-sort-ico" aria-hidden="true"></span>Total Bet</button></th>
+<th class="bo-tx-sortable" data-sort="totalWin" aria-sort="none" scope="col"><button type="button" class="bo-tx-sort-btn"><span class="bo-tx-sort-ico" aria-hidden="true"></span>Total Win</button></th>
+<th class="bo-tx-sortable" data-sort="totalLose" aria-sort="none" scope="col"><button type="button" class="bo-tx-sort-btn"><span class="bo-tx-sort-ico" aria-hidden="true"></span>Total Lose</button></th>
+<th class="bo-tx-sortable" data-sort="winLoss" aria-sort="none" scope="col"><button type="button" class="bo-tx-sort-btn"><span class="bo-tx-sort-ico" aria-hidden="true"></span>Win/Loss</button></th>
+<th class="bo-tx-sortable" data-sort="totalAdjustment" aria-sort="none" scope="col"><button type="button" class="bo-tx-sort-btn"><span class="bo-tx-sort-ico" aria-hidden="true"></span>Total Adjustment Detail</button></th>
+<th class="bo-tx-sortable" data-sort="totalBonus" aria-sort="none" scope="col"><button type="button" class="bo-tx-sort-btn"><span class="bo-tx-sort-ico" aria-hidden="true"></span>Total Bonus Detail</button></th>
+<th class="bo-tx-sortable" data-sort="dailyRebate" aria-sort="none" scope="col"><button type="button" class="bo-tx-sort-btn"><span class="bo-tx-sort-ico" aria-hidden="true"></span>Daily Rebate Detail</button></th>
+<th scope="col">Action</th>
 </tr></thead>
+</table>
+</div>
+<div class="bo-tx-table-body" id="walletTableScroll">
+<table class="report-table bo-tx-body-table">
+<colgroup>
+<col class="mw-col-member"/><col class="mw-col-money"/><col class="mw-col-provider"/><col class="mw-col-money"/><col class="mw-col-money"/><col class="mw-col-money"/><col class="mw-col-money"/><col class="mw-col-money"/><col class="mw-col-money"/><col class="mw-col-money"/><col class="mw-col-money"/><col class="mw-col-winloss"/><col class="mw-col-detail"/><col class="mw-col-detail"/><col class="mw-col-detail"/><col class="mw-col-action"/>
+</colgroup>
 <tbody id="memberWalletBody"><tr><td colspan="16">Loading...</td></tr></tbody>
 </table>
+</div>
 </div>
 <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
 <button class="clean-btn" id="walletPrevBtn" type="button">Previous</button>
@@ -84,21 +109,21 @@
 </main>
 </div>
 <div aria-hidden="true" class="modal-clean" hidden="" id="providerWalletDetailModal">
-<div class="modal-clean-panel" style="max-width:900px">
+<div class="modal-clean-panel provider-wallet-detail-panel">
 <div class="modal-clean-head"><div><h3 id="providerWalletDetailTitle">Provider Wallet Detail</h3><small>Balances still held inside each game provider wallet.</small></div><button class="modal-clean-close" id="providerWalletDetailClose" type="button"><i class="bi bi-x-lg"></i></button></div>
-<div class="modal-clean-body">
+<div class="modal-clean-body provider-wallet-detail-body">
 <div class="table-wrap"><table class="report-table"><thead><tr><th>Provider</th><th>Account</th><th>Balance Left</th><th>Status</th><th>Last Updated</th><th>Session</th></tr></thead><tbody id="providerWalletDetailBody"><tr><td colspan="6">Loading...</td></tr></tbody></table></div>
-<div class="mt-3 text-end"><button class="clean-btn" id="providerWalletDetailClose2" type="button">Close</button></div>
 </div>
+<div class="modal-clean-foot provider-wallet-detail-foot"><button class="clean-btn" id="providerWalletDetailClose2" type="button">Close</button></div>
 </div>
 </div>
 <script src="assets/js/config.js?v=1.0.40"></script>
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
-<script src="assets/js/auth.js?v=1.0.65"></script>
+<script src="assets/js/auth.js?v=1.0.66"></script>
 <script src="assets/js/reports.js?v=1.0.29"></script>
-<script src="assets/js/member-wallet.js?v=1.0.5"></script>
+<script src="assets/js/member-wallet.js?v=1.0.14"></script>
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>

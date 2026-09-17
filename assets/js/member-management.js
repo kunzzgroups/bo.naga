@@ -26,16 +26,22 @@
     {key:'select', label:'', always:true},
     {key:'no', label:'#'},
     {key:'registerDate', label:'Register Date'},
+    {key:'name', label:'Name / Username', always:true},
+    {key:'mobile', label:'Mobile'},
+    {key:'mainWallet', label:'Main Wallet', always:true},
+    {key:'status', label:'Status', always:true},
+    {key:'webStatus', label:'Web Status'},
+    {key:'vipLevel', label:'VIP Level'},
+    {key:'lastLogin', label:'Last Login', extra:true},
+    {key:'kycStatus', label:'KYC Status'},
+    {key:'remark', label:'Remark', always:true},
+    {key:'action', label:'Action', always:true},
     {key:'registerSource', label:'Register Domain + IP', extra:true},
     {key:'referCode', label:'Refer Code', extra:true},
-    {key:'name', label:'Name / Username', always:true},
-    {key:'remark', label:'Remark', always:true},
-    {key:'mobile', label:'Mobile'},
     {key:'bankAccount', label:'Bank Account', extra:true},
     {key:'bank', label:'Bank'},
     {key:'referrer', label:'Referrer', extra:true},
     {key:'topReferrer', label:'Top Referrer', extra:true},
-    {key:'mainWallet', label:'Main Wallet', always:true},
     {key:'deposit', label:'Deposit'},
     {key:'withdraw', label:'Withdraw'},
     {key:'winLoss', label:'Win/Loss'},
@@ -43,15 +49,11 @@
     {key:'manual', label:'Manual', extra:true},
     {key:'commission', label:'Commission', extra:true},
     {key:'lastDeposit', label:'Last Deposit', extra:true},
-    {key:'lastLogin', label:'Last Login', extra:true},
-    {key:'lastLoginSource', label:'Last Login IP + Domain', extra:true},
-    {key:'vipLevel', label:'VIP Level'},
-    {key:'kycStatus', label:'KYC Status'},
-    {key:'status', label:'Status', always:true},
-    {key:'action', label:'Action', always:true}
+    {key:'lastLoginSource', label:'Last Login IP + Domain', extra:true}
   ];
   const MAX_VISIBLE_MEMBER_COLUMNS = 12;
-  const DEFAULT_MEMBER_COLUMNS = ['select','no','registerDate','name','remark','mobile','mainWallet','vipLevel','kycStatus','lastLogin','status','action'];
+  /* Default View: Register Date · Name / Username · Mobile · Main Wallet · Status · Web Status · VIP · Last Login · KYC · Remark · Action */
+  const DEFAULT_MEMBER_COLUMNS = ['select','registerDate','name','mobile','mainWallet','status','webStatus','vipLevel','lastLogin','kycStatus','remark','action'];
   let visibleMemberColumns = new Set(DEFAULT_MEMBER_COLUMNS);
   let memberCurrentPage = 1;
   let memberPageSize = 12;
@@ -90,6 +92,76 @@
   }
   function syncMemberPageSize(){
     memberPageSize=resolvePageSize(document.getElementById('memberPageSize')?.value);
+  }
+  function isPlaceholderRow(tr){
+    const cells=tr?.querySelectorAll('td');
+    if(!cells||cells.length<=1) return true;
+    const text=(tr.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+    return !text||text==='loading members...'||text.startsWith('no member')||text.startsWith('load member failed');
+  }
+  function resetEvenFill(){
+    const body=document.querySelector('.user-main-table tbody');
+    const table=body?.closest('table');
+    if(!body||!table) return;
+    table.classList.remove('bo-tx-evenfill');
+    table.style.height='';
+    body.querySelectorAll('tr.bo-table-fill').forEach(r=>r.remove());
+    [...body.querySelectorAll('tr')].forEach(tr=>{
+      tr.style.height='';
+      tr.querySelectorAll('td').forEach(td=>{td.style.height='';td.style.minHeight='';});
+    });
+  }
+  function evenFillRowHeights(){
+    const body=document.querySelector('.user-main-table tbody');
+    const scroll=tableBodyScroll();
+    const table=body?.closest('table');
+    if(!body||!scroll||!table) return;
+    resetEvenFill();
+    if(!isAutoPageSize(document.getElementById('memberPageSize')?.value)) return;
+    const rows=[...body.querySelectorAll('tr')].filter(tr=>!isPlaceholderRow(tr));
+    if(!rows.length) return;
+    void table.offsetHeight;
+    const head=table.querySelector('thead');
+    const headH=head?Math.ceil(head.getBoundingClientRect().height):0;
+    const avail=Math.max(0, Math.floor(scroll.clientHeight)-headH);
+    const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
+    const rowH=Math.max(38, Math.round(natural/rows.length)||44);
+    const gap=avail-natural;
+    /* Stretch only when leftover is a seam (not enough for one more full row). */
+    if(gap<2||gap>=rowH) return;
+    const base=Math.floor(avail/rows.length);
+    let rem=avail-(base*rows.length);
+    if(base<=0) return;
+    rows.forEach(tr=>{
+      const h=base+(rem>0?1:0);
+      if(rem>0) rem-=1;
+      tr.style.height=h+'px';
+      tr.querySelectorAll('td').forEach(td=>{td.style.height=h+'px';});
+    });
+    table.classList.add('bo-tx-evenfill');
+    table.style.height=(avail+headH)+'px';
+    if(scroll.scrollHeight>scroll.clientHeight){
+      const over=scroll.scrollHeight-scroll.clientHeight;
+      const shrink=Math.ceil(over/rows.length)||1;
+      rows.forEach(tr=>{
+        const h=Math.max(rowH, (parseFloat(tr.style.height)||base)-shrink);
+        tr.style.height=h+'px';
+        tr.querySelectorAll('td').forEach(td=>{td.style.height=h+'px';});
+      });
+      table.style.height=Math.max(0, avail+headH-over)+'px';
+    }
+  }
+  function scheduleEvenFill(){
+    requestAnimationFrame(()=>requestAnimationFrame(evenFillRowHeights));
+  }
+  function bindEvenFillObserver(){
+    const scroll=tableBodyScroll();
+    if(!scroll||scroll._boEvenFillObs) return;
+    scroll._boEvenFillObs=new ResizeObserver(()=>{
+      clearTimeout(scroll._boEvenFillTimer);
+      scroll._boEvenFillTimer=setTimeout(evenFillRowHeights,32);
+    });
+    scroll._boEvenFillObs.observe(scroll);
   }
 
   function memberPageButtons(current,total){
@@ -435,30 +507,11 @@
     walletResult(json.data);
   }
   function openWalletModal(member){
-    selectedWalletMember = member;
-    selectedWalletBalance = 0;
-    const modal=document.getElementById('memberWalletModal'); if(!modal) return;
     const id = first(member,['id','memberId','userId'], '');
-    const username = first(member,['username'], '-');
-    document.getElementById('walletMemberAvatar').textContent = String(username || 'M').slice(0,1).toUpperCase();
-    document.getElementById('walletMemberName').textContent = username;
-    document.getElementById('walletMemberInfo').textContent = 'ID: ' + id + ' • ' + first(member,['mobile','phone','mobileNo'], '-');
-    ['memberNewPassword','memberConfirmPassword','memberNewTransactionPassword','memberConfirmTransactionPassword'].forEach(fid=>{ const el=document.getElementById(fid); if(el) el.value=''; });
-    securityStatus('memberPasswordStatus','',''); securityStatus('memberTransactionPasswordStatus','','');
-    document.getElementById('walletAdjustAmount').value = '';
-    document.getElementById('walletAdjustRemark').value = '';
-    const bankSelect=document.getElementById('walletPaymentMethodId'); if(bankSelect) bankSelect.value='';
-    loadWalletBankOptions().catch(err=>walletStatus(err.message || 'Load casino banks failed','error'));
-    walletStatus('', ''); walletResult(null);
-    renderMemberInfo(member);
-    fillBankEdit(member);
-    bankStatus('', '');
-    setWalletTab('main');
-    modal.hidden = false;
-    document.body.classList.add('wallet-modal-open');
-    loadMemberWallet(id).catch(err=>walletStatus(err.message || 'Load wallet failed', 'error'));
+    if(!id) return;
+    window.location.href = 'member-detail.html?memberId=' + encodeURIComponent(id);
   }
-  function closeWalletModal(){ const modal=document.getElementById('memberWalletModal'); if(modal) modal.hidden = true; document.body.classList.remove('wallet-modal-open'); }
+  function closeWalletModal(){ /* Member detail is a standalone page now. */ }
   async function submitWalletAdjust(){
     if(!selectedWalletMember) return;
     const memberId = first(selectedWalletMember,['id','memberId','userId'], '');
@@ -494,7 +547,27 @@
       const d=json.data||{}, rows=Array.isArray(d.content)?d.content:[], count=Number(d.count!=null?d.count:rows.length)||0;
       metric('metricOnlineToday',count.toLocaleString());
       const onlineIds=new Set(rows.map(r=>String(r.memberId))); allMembers.forEach(m=>m.online=onlineIds.has(String(first(m,['id','memberId','userId'],''))));
+      syncWebStatusLights();
     }catch(e){ /* keep the last visible count when presence endpoint is temporarily unavailable */ }
+  }
+  function syncWebStatusLights(){
+    document.querySelectorAll('[data-web-status]').forEach(el=>{
+      const id=String(el.getAttribute('data-web-status')||'');
+      const on=!!allMembers.find(m=>String(first(m,['id','memberId','userId'],''))===id && m.online===true);
+      const label=on?'Online':'Offline';
+      el.classList.toggle('is-online', on);
+      el.classList.toggle('is-offline', !on);
+      el.title=label;
+      el.setAttribute('aria-label', label);
+      const text=el.querySelector('.member-web-status-label');
+      if(text) text.textContent=label;
+    });
+  }
+  function webStatusCell(m){
+    const id=first(m,['id','memberId','userId'],'');
+    const on=m && m.online===true;
+    const label=on?'Online':'Offline';
+    return `<span class="member-web-status ${on?'is-online':'is-offline'}" data-web-status="${esc(id)}" title="${label}" aria-label="${label}"><i class="member-web-status-dot" aria-hidden="true"></i><span class="member-web-status-label">${label}</span></span>`;
   }
   function startOnlinePresence(){ if(onlinePresenceTimer)clearInterval(onlinePresenceTimer); loadOnlinePresence(); onlinePresenceTimer=setInterval(loadOnlinePresence,5000); document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadOnlinePresence();}); window.addEventListener('focus',loadOnlinePresence); }
 
@@ -514,7 +587,8 @@
     const q = val('memberSearchQ');
     const status = val('memberSearchStatus');
     const lock = val('memberSearchLock');
-    const visit = val('memberSearchVisit');
+    const from = val('memberFrom');
+    const to = val('memberTo');
     const hay = [
       first(m,['username'], ''),
       first(m,['fullName','name','displayName'], ''),
@@ -527,19 +601,11 @@
     if(q && !hay.includes(q)) return false;
     if(status && rowStatus !== status) return false;
     if(lock && rowLock !== lock) return false;
-    if(visit){
-      const last = String(first(m,['lastLoginAt','lastLogin','last_login_at'], '')).slice(0,10);
-      if(visit === 'today' && last !== todayStr()) return false;
-      if(visit === 'this month'){
-        const d = last ? new Date(last+'T00:00:00') : null;
-        const now = new Date();
-        if(!d || d.getFullYear() !== now.getFullYear() || d.getMonth() !== now.getMonth()) return false;
-      }
-      if(visit === 'this week'){
-        const d = last ? new Date(last+'T00:00:00') : null;
-        const start = new Date(); start.setDate(start.getDate()-6); start.setHours(0,0,0,0);
-        if(!d || d < start) return false;
-      }
+    if(from || to){
+      const reg = String(first(m,['createdAt','registerDate','created_at'], '')).slice(0,10);
+      if(!reg) return false;
+      if(from && reg < from) return false;
+      if(to && reg > to) return false;
     }
     return true;
   }
@@ -642,6 +708,7 @@
       if(key==='vipLevel') return first(m,['vipLevelName'], 'VIP '+first(m,['vipLevel'],0));
       if(key==='kycStatus') return first(m,['kycStatus'],'UNVERIFIED');
       if(key==='status') return memberStatus(m);
+      if(key==='webStatus') return m && m.online===true ? 'Online' : 'Offline';
       return '';
     };
     const headers=exportCols.map(c=>c.label);
@@ -667,6 +734,7 @@
     if(!rows.length){
       table.innerHTML='<tr><td colspan="'+visibleColCount()+'">No member found.</td></tr>';
       if(cards) cards.innerHTML='<div class="member-card"><h3>No member found</h3><div class="meta">Try another search filter.</div></div>';
+      resetEvenFill();
       return;
     }
     table.innerHTML=rows.map((m, idx)=>{
@@ -677,16 +745,22 @@
         ${cell('select', `<input class="member-row-select" type="checkbox" data-member-select="${esc(id)}" ${bulkSelectedMemberIds.has(String(id))?'checked':''}>`, 'member-select-col')}
         ${cell('no', ((memberCurrentPage-1)*memberPageSize)+idx+1, 'col-no')}
         ${cell('registerDate', dtCell(first(m,['createdAt','registerDate','created_at'], '')))}
+        ${cell('name', esc(first(m,['username'], '-')), 'member-name-cell')}
+        ${cell('mobile', esc(first(m,['mobile','phone','mobileNo'], '-')))}
+        ${cell('mainWallet', money(first(m,['mainWalletBalance','mainBalance','balance'],0)), 'money-strong')}
+        ${cell('status', `<small class="status-pill ${locked?'off':''}">${esc(status)}</small>`)}
+        ${cell('webStatus', webStatusCell(m), 'member-web-status-cell')}
+        ${cell('vipLevel', esc(first(m,['vipLevelName'], 'VIP '+first(m,['vipLevel'],0))))}
+        ${cell('lastLogin', dtCell(first(m,['lastLoginAt','lastLogin','last_login_at'], '')))}
+        ${cell('kycStatus', esc(first(m,['kycStatus'],'UNVERIFIED')))}
+        ${cell('remark', first(m,['adminRemark'],'') ? `<span class="member-remark-pill" title="${esc(first(m,['adminRemark'],''))}"><i class="bi bi-chat-left-text-fill"></i><span>${esc(first(m,['adminRemark'],''))}</span></span>` : '<span class="member-remark-empty">—</span>', 'member-remark-cell')}
+        ${cell('action', `<div class="user-row-actions"><button class="icon-action view" title="View" data-member-wallet="${esc(id)}"><i class="bi bi-eye"></i></button><button class="icon-action" title="${locked?'Unlock':'Lock'}" data-member-lock="${esc(id)}" data-lock="${locked?0:1}"><i class="bi ${locked?'bi-unlock':'bi-lock'}"></i></button></div>`)}
         ${cell('registerSource', `<b>${esc(first(m,['registrationDomain','registerDomain'],'-'))}</b><br><small>${esc(first(m,['registrationIp','registerIp'],'-'))}</small>`)}
         ${cell('referCode', esc(first(m,['referrerCode','referralCode'],'-')))}
-        ${cell('name', esc(first(m,['username'], '-')), 'member-name-cell')}
-        ${cell('remark', first(m,['adminRemark'],'') ? `<span class="member-remark-pill" title="${esc(first(m,['adminRemark'],''))}"><i class="bi bi-chat-left-text-fill"></i><span>${esc(first(m,['adminRemark'],''))}</span></span>` : '<span class="member-remark-empty">—</span>', 'member-remark-cell')}
-        ${cell('mobile', esc(first(m,['mobile','phone','mobileNo'], '-')))}
         ${cell('bankAccount', esc(first(m,['bankAccount','bankAccountNumber','bankAccountNo','accountNo'], '-')))}
         ${cell('bank', esc(first(m,['bank','bankName'], '-')))}
         ${cell('referrer', esc(first(m,['referrerName','referrerFullName','referrerUsername','agentName','referrer'], '-')))}
         ${cell('topReferrer', esc(first(m,['topReferrer','topAgent','upline'], '-')))}
-        ${cell('mainWallet', money(first(m,['mainWalletBalance','mainBalance','balance'],0)), 'money-strong')}
         ${cell('deposit', money(first(m,MONEY_KEYS.deposit,0)))}
         ${cell('withdraw', money(first(m,MONEY_KEYS.withdraw,0)))}
         ${cell('winLoss', money(first(m,MONEY_KEYS.winLoss,0)))}
@@ -694,12 +768,7 @@
         ${cell('manual', money(first(m,MONEY_KEYS.manual,0)))}
         ${cell('commission', money(first(m,MONEY_KEYS.commission,0)))}
         ${cell('lastDeposit', esc(dt(first(m,['lastDepositAt','lastDeposit','last_deposit_at'], ''))))}
-        ${cell('lastLogin', dtCell(first(m,['lastLoginAt','lastLogin','last_login_at'], '')))}
         ${cell('lastLoginSource', `<b>${esc(first(m,['lastLoginDomain'],'-'))}</b><br><small>${esc(first(m,['lastLoginIp'],'-'))}</small>`)}
-        ${cell('vipLevel', esc(first(m,['vipLevelName'], 'VIP '+first(m,['vipLevel'],0))))}
-        ${cell('kycStatus', esc(first(m,['kycStatus'],'UNVERIFIED')))}
-        ${cell('status', `<small class="status-pill ${locked?'off':''}">${esc(status)}</small>`)}
-        ${cell('action', `<div class="user-row-actions"><button class="icon-action view" title="View" data-member-wallet="${esc(id)}"><i class="bi bi-eye"></i></button><button class="icon-action" title="${locked?'Unlock':'Lock'}" data-member-lock="${esc(id)}" data-lock="${locked?0:1}"><i class="bi ${locked?'bi-unlock':'bi-lock'}"></i></button></div>`)}
       </tr>`;
     }).join('');
     if(cards){
@@ -743,6 +812,7 @@
     if(info) info.textContent = total ? `Showing ${start+1} to ${start+rows.length} of ${total} entries` : 'Showing 0 to 0 of 0 entries';
     const pager=document.getElementById('memberPager');
     if(pager) pager.innerHTML = memberPageButtons(memberCurrentPage,totalPages);
+    scheduleEvenFill();
   }
 
 
@@ -828,11 +898,12 @@
         clearLockedAutoSize();
         syncMemberPageSize();
         if(memberPageSize!==prev) applySearch(false);
+        else scheduleEvenFill();
       }));
       const requestedMemberId = new URLSearchParams(location.search).get('memberId');
       if(requestedMemberId){
-        const requested = allMembers.find(m => String(first(m,['id','memberId','userId'],'')) === String(requestedMemberId));
-        if(requested) setTimeout(()=>openWalletModal(requested), 0);
+        window.location.replace('member-detail.html?memberId=' + encodeURIComponent(requestedMemberId));
+        return;
       }
     } catch(e){
       allMembers=[]; updateStats([]);
@@ -848,11 +919,13 @@
       size.addEventListener('change',()=>{
         clearLockedAutoSize();
         syncMemberPageSize();
+        if(!isAutoPageSize(size.value)) resetEvenFill();
         memberCurrentPage=1;
         applySearch(false);
       });
     }
     document.getElementById('memberPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-member-page]'); if(!b||b.disabled)return; memberCurrentPage=Number(b.dataset.memberPage)||1; applySearch(false);});
+    bindEvenFillObserver();
     let resizeTimer=0;
     window.addEventListener('resize',()=>{
       if(!isAutoPageSize(document.getElementById('memberPageSize')?.value)) return;
@@ -862,12 +935,13 @@
         clearLockedAutoSize();
         const next=autoFitPageSize();
         if(next!==prev){ memberPageSize=next; memberCurrentPage=1; applySearch(false); }
+        else scheduleEvenFill();
       },180);
     });
   }
 
   function initRoundedMemberSelects(){
-    const ids=['memberSearchStatus','memberSearchVisit','memberSearchLock'];
+    const ids=['memberSearchStatus','memberSearchLock'];
     ids.forEach(id=>{
       const select=document.getElementById(id);
       if(!select || select.dataset.roundedReady==='1') return;
@@ -1090,9 +1164,13 @@
 
   function bindSearch(){
     document.getElementById('memberSearchQ')?.addEventListener('input', applySearch);
-    ['memberSearchStatus','memberSearchVisit','memberSearchLock'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('change', applySearch); });
+    ['memberSearchStatus','memberSearchLock','memberFrom','memberTo'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('change', applySearch); });
     const resetSearch=function(){
-      ['memberSearchQ','memberSearchStatus','memberSearchVisit','memberSearchLock'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+      ['memberSearchQ','memberSearchStatus','memberSearchLock','memberFrom','memberTo'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+      const rangeText=document.querySelector('.user-search-grid .bo-range-text');
+      if(rangeText) rangeText.textContent='Select date range';
+      document.querySelector('.user-search-grid .bo-range-field')?.classList.remove('bo-range-all-time');
+      document.querySelectorAll('.user-search-grid .bo-range-presets [data-preset]').forEach(b=>{ b.classList.remove('active'); b.removeAttribute('aria-current'); });
       refreshRoundedMemberSelects();
       applySearch();
     };
@@ -1121,21 +1199,6 @@
   });
   document.addEventListener('DOMContentLoaded',()=>{
     initRoundedMemberSelects(); bindSearch(); bindColumnTools(); bindExportTool(); bindMemberPagination(); bindBulkWalletTools(); bindCreateMember(); bindTimeTips(); startOnlinePresence(); loadMembers();
-    document.getElementById('walletModalClose')?.addEventListener('click', closeWalletModal);
-    document.getElementById('memberWalletModal')?.addEventListener('click', e=>{ if(e.target.id==='memberWalletModal') closeWalletModal(); });
-    document.getElementById('walletRefreshBtn')?.addEventListener('click', ()=>{ if(selectedWalletMember) loadMemberWallet(first(selectedWalletMember,['id','memberId','userId'], '')).catch(err=>walletStatus(err.message || 'Load wallet failed', 'error')); });
-    document.getElementById('walletSubmitBtn')?.addEventListener('click', submitWalletAdjust);
-    document.getElementById('walletAdjustType')?.addEventListener('change', ()=>{ updateWalletPreview(); renderWalletBankOptions(); });
-    document.querySelectorAll('[data-wallet-tab]').forEach(btn=>btn.addEventListener('click', ()=>setWalletTab(btn.dataset.walletTab)));
-    document.getElementById('walletProviderRefreshBtn')?.addEventListener('click', ()=>loadWalletProviderAccounts().catch(err=>renderProviderError(err.message)));
-    document.getElementById('walletAdjustAmount')?.addEventListener('input', ()=>{ updateWalletPreview(); renderWalletBankOptions(); });
-    document.getElementById('saveBankProfileBtn')?.addEventListener('click', saveBankProfile);
-    // Admin Remark is a separate wallet-detail tab. Bind its save button explicitly;
-    // otherwise the button renders correctly but never submits anything.
-    document.getElementById('saveMemberAdminRemarkBtn')?.addEventListener('click', saveMemberAdminRemark);
-    document.getElementById('resetMemberPasswordBtn')?.addEventListener('click', resetMemberPassword);
-    document.getElementById('resetMemberTransactionPasswordBtn')?.addEventListener('click', resetMemberTransactionPassword);
   });
-  document.getElementById('walletInsightRefreshBtn')?.addEventListener('click',()=>loadGameInsight().catch(err=>renderInsightError(err.message)));
 })();
 

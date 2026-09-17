@@ -171,7 +171,7 @@ Classic BO listing shells (`reports.css` + `bo-ui-standard.css`), **not** MAIN e
 | Pager | **Table footer pager** (`.mad-pager`) — light inactive slate `#F3F4F6`/`#9CA3AF`; dark charcoal inactive; amber 3D active |
 | Date range | **Date range picker** pattern (preset wash, ghost head, cream panel) — listing trigger height **`36px`** · width ~`240px` — see Patterns |
 | Filter titles | Hidden on listing filters (placeholder + value carry meaning) |
-| Filter Page Size | **Not** in the filter row — footer `Show N entries` only (Deposit / Withdraw / Wallet Ledger). Options **`-` · `10` · `20` · `50` · `100` · `All`** (`#depositSize` / `#withdrawSize` / `#ledgerSize` hidden sources). Chrome = **Role select** recipe: trigger surface `#FFF8EB` / border `#EADCC8` / **`36px`** · menu open upward · options amber wash hover · dark selected solid `#F59E0B`/`#2A2C36` — never form well `#F5EBDC`. `-` = auto-fit rows · `All` = 10000 |
+| Filter Page Size | **Not** in the filter row — footer `Show N entries` only (Deposit / Withdraw / Wallet Ledger / Member Wallet). Options **`-` · `10` · `20` · `50` · `100` · `All`** (`#depositSize` / `#withdrawSize` / `#ledgerSize` / `#walletSize` hidden sources). Chrome = **Role select** recipe: trigger surface `#FFF8EB` / border `#EADCC8` / **`36px`** · menu open upward · options amber wash hover · dark selected solid `#F59E0B`/`#2A2C36` — never form well `#F5EBDC`. `-` = auto-fit rows · `All` = 10000 |
 | Deposit / Withdraw tabs | `.bo-tx-tabs` / `.bo-tx-tab` — **Status filter pills** recipe · order Deposit → Withdraw → All · cream **capsule** thumb (`999px`) + muted idle dots · green/red only when selected · counts `(n)` · requires `bo-seg-bounce` |
 | Hover / focus / open | Same as Merchant Profit + Role select: border `#D97706` + `0 0 0 3px rgba(217,119,6,.14)` (dark: `#F59E0B` + `rgba(245,158,11,.18)`). Inputs, selects, date triggers — one recipe. Idle chrome must not kill the ring. |
 | Table frame | **Same as Admin Detail `.mad-panel`** — viewport-locked panel · inner scroll · `table-layout:fixed` · radius `8px` · no nested `.table-wrap` border · footer pins to panel bottom |
@@ -266,6 +266,7 @@ Thin pill · **no** end arrows. Webkit only — **do not** set `scrollbar-width`
 Applies to:
 - Bulk `.member-picker-list` · `.selected-table tbody`
 - Wallet Ledger `.table-card > .table-wrap` (horizontal) · `#ledgerTypeOptions` (type menu)
+- Member Wallet Provider Detail modal `#providerWalletDetailModal .table-wrap` (vertical)
 
 | Part | Light | Dark |
 |------|-------|------|
@@ -294,6 +295,23 @@ Reference: `wallet-ledger.html` · `body.bo-wallet-tx.wallet-ledger-page` · `bo
 | Wallet Ledger Created/Posted | Cell = **`DD/MM/YYYY`** · hover cream pill `.wl-time-tip` = **`HH:MM:SS`** · **no arrow / beak** · `999px` · pad `7px 14px` · cream `#FFF8EB` / text `#6b360c` · fixed escape overflow |
 | Hover in strip | Reset/Search: **no** `translateY(-1px)` / upward shadow (flush under `.table-card` top border) |
 | Footer Show N | Same as **Deposit** — options `-` · `10` · `20` · `50` · `100` · `All` via hidden `#ledgerSize` · Role select cream chrome · open upward · bold options · amber wash selected |
+
+Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
+
+#### Member Wallet (locked)
+
+Reference: `member-wallet.html` · `body.bo-wallet-tx.member-wallet-page` · same Transaction listing chrome as Wallet Ledger.
+
+| Part | Spec |
+|------|------|
+| Shell | `bo-wallet-tx` + amber CSS · FOUC theme script |
+| KPI strip | 4 `.metric` tiles (Main / Provider / Total Bet / Net Win-Loss) · Member Wallet KPI specimen (icon chip amber wash) |
+| Filter strip | Inside `.table-card` → `.filter-card.wallet-inline-filter` · keyword only + Reset/Search · **no** Page Size in row |
+| Filter controls | **Listing filter controls (locked)** — keyword **`280px`** (min `220` · max `360` · flex grow) · Reset/Search `auto` · `36px` / `8px` · no hover lift |
+| Member cell | Username only (no `ID: …` sub-line) |
+| Action | `.bo-tx-action-btn` **26×26** · Ledger `is-ledger` · Adjust `is-edit` |
+| Table | Split `.bo-tx-table-head` (fixed) + `.bo-tx-table-body` (scroll) · panel pill scrollbar on body · colgroup sync |
+| Footer Show N | Same as Deposit — `-` · `10` · `20` · `50` · `100` · `All` via hidden `#walletSize` |
 
 Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
 
@@ -389,16 +407,34 @@ Do **not** use flat `rgba(217,119,6,.12)` wash alone for active. Shared on: Dash
 
 ### Topbar (locked chrome — copy exactly)
 
+**Specimen:** Deposit Approval topbar (`member-deposit.html` · `body.bo-wallet-tx`) — user-confirmed 2026-09-17.
+
 **Surface**
 
-| Mode | Topbar bg |
-|------|-----------|
-| Light | solid `#FFF8EB` |
-| Dark | solid `#383A46` |
+| Mode | Topbar bg | Height (Transaction / Approval) |
+|------|-----------|----------------------------------|
+| Light | solid `#FFF8EB` | `64px` (`--bo-header-h`) · pad-y `0` · items centered |
+| Dark | solid `#383A46` | same |
 
-**Layout (right cluster, L→R):** Theme toggle (`.bo-theme-btn`) → 1px divider → User Name / profile (`.bo-account-link`)
+**Full anatomy (L→R)**
 
-Do not invent alternate topbar account pills, bordered username chips, or navy theme icons.
+| Zone | Contents |
+|------|----------|
+| Left | `.hamb` → `.user-title-wrap` = `.user-title-icon` + `h1` (+ lead `<p>` on Deposit/Withdraw Approval only) |
+| Right `.report-actions` | `.bo-theme-btn` → `[data-bo-profile]` (optional `.bo-header-counters` + `.bo-account-link`) |
+
+**Right cluster order (L→R):** Theme toggle → **Members / Deposit / Withdraw** counters (non-`MAIN` only, injected by `auth.js`) → 1px divider (`[data-bo-profile]::before`) → User Name / profile.
+
+Do not invent alternate topbar account pills, bordered username chips, navy theme icons, or rainbow counter icons.
+
+#### Page title — `.user-title-wrap`
+
+| Spec | Light | Dark / notes |
+|------|-------|--------------|
+| Icon `.user-title-icon` | amber wash / border · glyph `--bo-cyan` (`#D97706`) · ~`36×36` · radius `10–12px` | charcoal wash · amber glyph |
+| Title `h1` | `22px/900` · `#18191C` (Approval pages may use text token; hide overflow with ellipsis) | `#F5F5F4` |
+| Lead `p` | Approval only · `12px/500` · `#57534E` / `--bo-muted` · one line | muted · **hide ≤768** |
+| Admin / most listings | **no** lead `<p>` | title + icon only |
 
 #### Theme toggle — `.bo-theme-btn`
 
@@ -415,6 +451,24 @@ Do not invent alternate topbar account pills, bordered username chips, or navy t
 
 Storage / attribute: `localStorage.bo_theme` + `html[data-bo-theme="light|dark"]`.
 
+#### Header counters — `.bo-header-counter` (ops chrome · Deposit Approval specimen)
+
+Members / Deposit / Withdraw chips. Charcoal+amber family with **per-chip identity** — no purple / green / cool rainbow. Hidden for `roleType === MAIN`.
+
+| Spec | Light | Dark |
+|------|-------|------|
+| Chip | `#FFFCF7` · border `#EADCC8` · height **`48px`** · radius **`10px`** · pad `5px 14px 5px 5px` · min-width `118px` · gap `10px` | well `#2A2C36` · border `white/16` |
+| Icon tile | **`38×38`** · radius `8px` · glyph `18px` | same size |
+| Icon · Members | wash `rgba(24,25,28,.08)` · glyph `#18191C` | wash `white/10` · glyph `#F5F5F4` |
+| Icon · Deposit | wash `rgba(217,119,6,.18)` · glyph `#D97706` | wash `rgba(245,158,11,.20)` · glyph `#FBBF24` |
+| Icon · Withdraw | wash `rgba(180,83,9,.14)` · glyph `#B45309` | wash `rgba(217,119,6,.18)` · glyph `#F59E0B` |
+| Label `small` | `11px/800` uppercase · tracking `.06em` · Members `#44403C` · Deposit `#B45309` · Withdraw `#92400E` | Members `#D4D4D8` · Deposit `#FBBF24` · Withdraw `#F59E0B` |
+| Value `b` | `18px/800` tabular · `#18191C` | `#F5F5F4` |
+| Hover / focus | border `#D97706` · bg `#FFF8EB` · ring `0 0 0 3px rgba(217,119,6,.14)` | border `#F59E0B` · bg `#32343F` · amber ring |
+| ≤1199 | icon-only square `46×46` (label/value collapse) | same |
+
+Links: Members → `index.html` · Deposit → `member-deposit.html` · Withdraw → `member-withdraw.html`. Counts from operation-notification summary.
+
 #### User Name / profile — `.bo-account-link`
 
 **Structure:** text meta (`.bo-account-meta`) left of avatar (`.report-avatar`). No gear icon (`.bo-account-setting-icon` hidden). No bordered pill around the whole control.
@@ -427,19 +481,7 @@ Storage / attribute: `localStorage.bo_theme` + `html[data-bo-theme="light|dark"]
 | Avatar size | `40×40` · radius `12px` | same |
 | Avatar fill | `#D97706` · icon `#FFFFFF` | `#F59E0B` · icon `#2A2C36` + amber glow shadow |
 | Avatar hover | `#B45309` | `#FBBF24` |
-| Divider before profile | `1px × 28px` `rgba(24,25,28,.12)` | `rgba(255,255,255,.12)` |
-
-#### Header counters — `.bo-header-counter` (Transaction / ops chrome)
-
-Neat amber chips (Members / Deposit / Withdraw). One icon language — no purple / green / orange rainbow.
-
-| Spec | Light | Dark |
-|------|-------|------|
-| Chip | `#FFFCF7` · border `#EADCC8` · height `40px` · radius `8px` · pad `4px 12px 4px 4px` | well `#2A2C36` · border `white/16` (separates from topbar `#383A46`) |
-| Icon tile | `32×32` · radius `6px` · amber wash · icon `#D97706` | amber wash · icon `#FBBF24` |
-| Label | `10px/700` uppercase · `#57534E` | `#D4D4D8` |
-| Value | `15px/800` tabular · `#18191C` | `#F5F5F4` |
-| Hover / focus | border `#D97706` + amber ring | border `#F59E0B` + amber ring |
+| Divider before profile host | `1px × 28px` `rgba(24,25,28,.12)` on `[data-bo-profile]::before` | `rgba(255,255,255,.14)` |
 
 ### Buttons (locked — Admin Detail reference)
 
@@ -891,8 +933,29 @@ Use this when reviewing a page. Each row must exist as a Light|Dark table (or to
 | Transaction table (locked L|D) | `--bo-table-*` zebra · deep dark head `#1F2128` · square thead · bold cells · PENDING orange · action wells · no Filtered Total |
 | Modals | scrim, panel, close, fields, footer actions |
 | KPI strip | tile, label, value, note, grid (Report family — see below) |
+| KPI summary card (listing) | `.metric` + `.bo-summary-icon` — Member Wallet specimen (icon chip + type metrics) |
 | Roles | control card, select, scope, toolbar, matrix group/card, badges, sticky footer |
 | Create Role | title, cards, inputs, chips, ghost/primary, sticky footer status |
+
+### KPI summary card — listing (`.quick-stats .metric`, Member Wallet specimen)
+
+Icon readout tile for Transaction listing / `bo-wallet-tx` pages. Markup: `.metric` → `.bo-summary-icon` (injected) + `span` label + `strong` value + `.bo-summary-note`. **Not** the Report-family strip below (that strip has no icon chip).
+
+| Part | Light | Dark |
+|------|-------|------|
+| Tile | `#FFF8EB` · `1px solid #EADCC8` · radius **`16px`** · pad **`16px 18px`** · min-h **`104px`** · `--bo-shadow` | `#383A46` · `1px solid rgba(255,255,255,.10)` · same pad/radius/min-h · shadow none |
+| Grid | `52px minmax(0,1fr)` · **`column-gap: 24px`** · align center | same |
+| Icon well | `52×52` · `50%` · bg `rgba(217,119,6,.12)` · border `rgba(217,119,6,.18)` · glyph `#D97706` / `22px` | bg `rgba(245,158,11,.16)` · border `rgba(245,158,11,.28)` · glyph `#FBBF24` |
+| Label (`span`) | `12px` / `800` · `#57534E` · lh `1.2` | `#D4D4D8` |
+| Value (`strong`) | `23px` / `900` · `#18191C` · lh `1.05` · margin `2px 0` | `#F5F5F4` |
+| Note (`.bo-summary-note`) | `11px` / `600` · `#71717A` · lh `1.2` | `#A1A1AA` |
+| Strip | `repeat(4,minmax(0,1fr))` · gap `14px` · **↔ table-card `16px`** · ≤1024 → 2 · ≤575 → 1 | same |
+
+**Listing vertical rhythm:** `.report-content` flex `gap:16px` between KPI strip and `.table-card`. Filter strip pad `14px 16px` + bottom hairline, then thead. Do not use `12px` here.
+
+**Never** `gap: unset` after `column-gap` (clears icon↔text space). Amber icons only — no green/purple rainbow wells. CSS: `reports.css` + `bo-wallet-transaction-amber.css`.
+
+**User Management** (`.user-metric`): same locked specimen — radius `16px` · pad `16px 18px` · min-h `104px` · icon `52×52` amber wash · gap `24px` · label (`small`) `12px/800` · value `23px/900` · note (`span`) `11px/600`. CSS: `bo-charcoal-legacy.css`.
 
 ### Report family KPI strip (`.report-summary-grid`, `.mre-history-kpis`)
 
@@ -962,6 +1025,8 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Deposit/Withdraw toolbar filters = listing MD geometry (`36px` · gap `10` · date `240` · keyword `140` · status `150`) | User: 这里的框的大小跟着 MD 的来调 | 2026-09-17 |
 | Bulk Manual split = Select Members **60%** · Configure **40%** (`3fr` / `2fr`) | User: 左边 60% · 右边红框 40% | 2026-09-17 |
 | Panel pill scrollbar thickness **`6px`** (was `4px`) — Bulk · Wallet Ledger · Livechat | User: scrollbar 再粗一点点 · 更新 MD | 2026-09-17 |
+| **Member Wallet** aligned to listing MD — no Page Size in filter · footer `#walletSize` · action 26×26 wells · username-only Member cell · panel pill scrollbar | User: 用MD来调整这些东西 | 2026-09-17 |
+| **Topbar anatomy locked** (Deposit Approval specimen): left hamb + icon + title (+ Approval lead) · right theme → Members/Deposit/Withdraw counters `48×`/`10px` · User Name + avatar · height `64px` | User: 把表头的部分更新进 MD | 2026-09-17 |
 
 ### Opt-in layers for pages outside the migrated families
 
@@ -998,7 +1063,7 @@ Two consequences worth keeping in mind when reviewing a page:
 4. When adding CSS tokens, prefer `--bo-*` names; map accents through amber (`--bo-cyan` = amber).
 5. Offer to update this file when a pattern is reused 2+ times with stable measurements.
 6. New pages must follow Charcoal + Amber; migrate legacy navy/cyan pages toward these tokens when touched.
-7. **Unify chrome:** every page’s Theme toggle, User Name block, Primary CTA, and Ghost/Export must match the Topbar + Buttons specs above — do not freestyle.
+7. **Unify chrome:** every page’s Theme toggle, header counters (when present), User Name block, Primary CTA, and Ghost/Export must match the Topbar + Buttons specs above — do not freestyle.
 8. **Dark mode must beat legacy CSS:** `reports.css` still has `.report-body{background:#f5f7fb!important}`. Page CSS must override body/html/canvas with equal-or-higher specificity + `!important`, or white frames will leak around dark cards. Never assume MD tokens alone paint the canvas.
 9. **Permission matrix dual wash:** light = cream/amber group wash; dark = cool charcoal surfaces only (amber accents, never muddy amber panel fill). Copy from Patterns → Permission matrix.
 10. **No pure white in light chrome:** canvas end, topbar, and panels use cream `#FFF8EB` (continuum → `#FFF6E8` → `#FFF8EB`). Keep `#FFFFFF` only for text-on-amber (`--bo-accent-on`). Do not settle for near-white ivory (`#FFFCF8`) on Dashboard main pane.

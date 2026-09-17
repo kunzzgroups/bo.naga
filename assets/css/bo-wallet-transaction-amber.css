@@ -1,4 +1,4 @@
-/* BO sidebar category: 3. Transaction — Charcoal + Amber
+/* BO sidebar category: 3. Transaction ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Charcoal + Amber
    Aligns Deposit / Withdraw / Wallet / Bulk pages to Admin Detail.
    Scope: body.bo-wallet-tx
    Light + dark via html[data-bo-theme] / localStorage.bo_theme
@@ -71,7 +71,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx{
   --bo-shadow:none;
   --bo-tx-well:#2A2C36;
   --bo-tx-well-border:rgba(255,255,255,.14);
-  /* Dark table zebra — odd #3A3C48 · even #434653; head deeper than body */
+  /* Dark table zebra ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ odd #3A3C48 ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· even #434653; head deeper than body */
   --bo-table-paper:#383A46;
   --bo-table-head:#1F2128;
   --bo-table-row:#3A3C48;
@@ -122,7 +122,7 @@ body.bo-wallet-tx .report-content{
   min-height:0!important;
   display:flex!important;
   flex-direction:column!important;
-  gap:12px!important;
+  gap:16px!important;
   overflow:hidden!important;
   padding-bottom:16px!important;
 }
@@ -239,7 +239,7 @@ html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.bo
   opacity:1;
 }
 
-/* L1 active — cream chip + left amber pill bar (locked reference) */
+/* L1 active ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ cream chip + left amber pill bar (locked reference) */
 html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub).active,
 html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group.open > .nav-group-btn,
 html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn,
@@ -308,7 +308,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group.bo-flyou
   overflow:hidden;
   text-shadow:0 0 18px rgba(245,158,11,.45);
 }
-/* L1 dark hover — amber chip (same signal as active; beat reports.css blue) */
+/* L1 dark hover ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ amber chip (same signal as active; beat reports.css blue) */
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):hover i,
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):focus-visible i,
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > a:not(.report-sub):hover span i,
@@ -375,7 +375,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav > .nav-
   box-shadow:0 16px 40px rgba(0,0,0,.35)!important;
 }
 
-/* L2 idle / hover / active — amber frame chip (locked reference) */
+/* L2 idle / hover / active ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ amber frame chip (locked reference) */
 html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub,
 html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub{
   position:relative!important;
@@ -392,7 +392,7 @@ html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-li
   color:#6b360c!important;
   border-color:transparent!important;
 }
-/* Beat reports.css `.report-nav a:hover i{color:#1d4ed8}` — L2 icons stay charcoal, never BO blue */
+/* Beat reports.css `.report-nav a:hover i{color:#1d4ed8}` ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ L2 icons stay charcoal, never BO blue */
 html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .report-nav a.report-sub i,
 html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub i,
 html:not([data-bo-theme="dark"]) body.bo-wallet-tx .report-sidebar .nav-group-list a i,
@@ -435,7 +435,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.r
   background:rgba(255,255,255,.05)!important;
   color:rgba(255,255,255,.92)!important;
 }
-/* L2 icons — amber series (beat reports.css #1d4ed8 hover/active) */
+/* L2 icons ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ amber series (beat reports.css #1d4ed8 hover/active) */
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .report-nav a.report-sub i,
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a.report-sub i,
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-sidebar .nav-group-list a i,
@@ -500,7 +500,7 @@ body.bo-wallet-tx .hamb{
   color:var(--bo-text)!important;
 }
 
-/* ---- Topbar actions — theme + counters + account in one row ---- */
+/* ---- Topbar actions ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ theme + counters + account in one row ---- */
 body.bo-wallet-tx .report-actions{
   display:flex!important;
   flex-wrap:nowrap!important;
@@ -533,7 +533,7 @@ body.bo-wallet-tx .report-actions .bo-header-counters{
   flex:0 1 auto!important;
   min-width:0!important;
 }
-/* Header counters — larger click targets; charcoal+amber family with per-chip identity */
+/* Header counters ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ larger click targets; charcoal+amber family with per-chip identity */
 body.bo-wallet-tx .report-actions .bo-header-counter{
   box-sizing:border-box!important;
   display:inline-flex!important;
@@ -861,7 +861,7 @@ body.bo-wallet-tx .metric span,
 body.bo-wallet-tx .text-muted,
 body.bo-wallet-tx .user-badge{color:var(--bo-muted)!important}
 body.bo-wallet-tx .metric strong{color:var(--bo-text)!important}
-/* Beat reports.css .report-content .quick-stats … color:#101828 / #52627a */
+/* Beat reports.css .report-content .quick-stats ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ color:#101828 / #52627a */
 body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric span,
 body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric strong,
 body.bo-wallet-tx .approval-pending-stats .metric span,
@@ -873,13 +873,13 @@ body.bo-wallet-tx .bo-summary-note{
 }
 body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric span,
 body.bo-wallet-tx .approval-pending-stats .metric span{
-  color:var(--bo-muted)!important;
-  font-weight:700!important;
+  color:#57534E!important;
+  font-weight:800!important;
 }
 body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric strong,
 body.bo-wallet-tx .approval-pending-stats .metric strong{
   color:var(--bo-text)!important;
-  font-weight:800!important;
+  font-weight:900!important;
 }
 body.bo-wallet-tx .report-content .quick-stats .bo-summary-note,
 body.bo-wallet-tx .approval-pending-stats .bo-summary-note,
@@ -890,6 +890,7 @@ body.bo-wallet-tx .bo-summary-note{
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric span,
 html[data-bo-theme="dark"] body.bo-wallet-tx .approval-pending-stats .metric span{
   color:#D4D4D8!important;
+  font-weight:800!important;
 }
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric strong,
 html[data-bo-theme="dark"] body.bo-wallet-tx .approval-pending-stats .metric strong{
@@ -906,9 +907,9 @@ body.bo-wallet-tx .user-badge{
   color:var(--bo-text-secondary)!important;
 }
 
-/* ---- Control chrome sync (listing filters — surface, not form well) ----
-   MD Admin listing / Role select: trigger `#FFF8EB` · border `#EADCC8`.
-   Form wells `#F5EBDC` stay for Create/Edit only — not Transaction listings. */
+/* ---- Control chrome sync (listing filters ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ surface, not form well) ----
+   MD Admin listing / Role select: trigger `#FFF8EB` ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· border `#EADCC8`.
+   Form wells `#F5EBDC` stay for Create/Edit only ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ not Transaction listings. */
 body.bo-wallet-tx{
   --bo-tx-well:#FFF8EB;
   --bo-tx-well-border:#EADCC8;
@@ -916,7 +917,7 @@ body.bo-wallet-tx{
   --bo-tx-amber-mid:#F59E0B;
   --bo-tx-amber-deep:#EA8608;
   --bo-tx-amber-solid:#D97706;
-  /* Light table — same peach-cream family as page (no muddy yellow parchment) */
+  /* Light table ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ same peach-cream family as page (no muddy yellow parchment) */
   --bo-table-paper:var(--bo-surface);   /* #FFF8EB */
   --bo-table-head:#FFE8CC;              /* sidebar peach ledge */
   --bo-table-row:var(--bo-surface);     /* #FFF8EB */
@@ -959,7 +960,7 @@ body.bo-wallet-tx .bo-range-trigger{
   color:var(--bo-text)!important;
   box-shadow:none!important;
 }
-/* Do not set -webkit-text-fill-color on text inputs — it paints placeholders with value color. */
+/* Do not set -webkit-text-fill-color on text inputs ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ it paints placeholders with value color. */
 body.bo-wallet-tx .rounded-select-btn,
 body.bo-wallet-tx .report-main .rounded-select-btn,
 body.bo-wallet-tx .bo-pagination .rounded-select-btn,
@@ -1052,7 +1053,7 @@ body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .
   color:var(--bo-cyan-deep)!important;
 }
 
-/* Primary amber — Search CTA + active page share the same fill */
+/* Primary amber ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Search CTA + active page share the same fill */
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .bo-filter-search-button,
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .btn-primary-clean,
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row button[id*="search" i],
@@ -1182,10 +1183,10 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-menu{
   box-shadow:0 16px 40px rgba(0,0,0,.45)!important;
 }
 
-/* Interactive amber ring — see file-end lock (must beat idle box-shadow:none). */
+/* Interactive amber ring ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ see file-end lock (must beat idle box-shadow:none). */
 body.bo-wallet-tx .field label{color:var(--bo-text-secondary)!important;font-weight:700}
 
-/* Filter bar: no field titles — controls + placeholder/value carry the meaning */
+/* Filter bar: no field titles ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ controls + placeholder/value carry the meaning */
 body.bo-wallet-tx .report-main .bo-filter-row > .field > label,
 body.bo-wallet-tx .report-main .bo-filter-row > .bo-filter-item > label,
 body.bo-wallet-tx .report-main .bo-filter-row > .bo-filter-range-item > label,
@@ -1279,7 +1280,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx #withdrawResetBtn:hover{
   transform:translateY(-1px)!important;
 }
 
-/* Tables — parchment ledger (light: no #fff; dark: charcoal slab) */
+/* Tables ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ parchment ledger (light: no #fff; dark: charcoal slab) */
 body.bo-wallet-tx .table-card{
   display:flex!important;
   flex-direction:column!important;
@@ -1310,7 +1311,7 @@ body.bo-wallet-tx.withdraw-approval-page .table-card > .deposit-inline-filter.fi
   box-shadow:none!important;
   background:var(--bo-table-row)!important;
 }
-/* Deposit / Withdraw toolbar — tabs left, filters right */
+/* Deposit / Withdraw toolbar ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ tabs left, filters right */
 body.bo-wallet-tx .bo-tx-toolbar{
   display:flex!important;
   flex-flow:row nowrap!important;
@@ -1500,7 +1501,7 @@ body.bo-wallet-tx .table-card .table-wrap{
   box-shadow:none!important;
   background:var(--bo-table-paper)!important;
 }
-/* Fixed header — scrollbar never crosses thead */
+/* Fixed header ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ scrollbar never crosses thead */
 body.bo-wallet-tx .bo-tx-table-head{
   flex:0 0 auto!important;
   overflow:hidden!important;
@@ -1508,7 +1509,7 @@ body.bo-wallet-tx .bo-tx-table-head{
   border-bottom:1px solid var(--bo-table-line)!important;
   scrollbar-gutter:stable;
 }
-/* Body-only scroll — slate pill thumb lives here */
+/* Body-only scroll ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ slate pill thumb lives here */
 body.bo-wallet-tx .bo-tx-table-body{
   flex:1 1 auto!important;
   min-height:0!important;
@@ -1535,7 +1536,7 @@ body.bo-wallet-tx .bo-tx-col-remark{width:12%;}
 body.bo-wallet-tx .bo-tx-col-status{width:10%;}
 body.bo-wallet-tx .bo-tx-col-processed{width:12%;}
 body.bo-wallet-tx .bo-tx-col-action{width:9%;}
-/* Table body scrollbar — slate pill thumb + end arrows (reference) */
+/* Table body scrollbar ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ slate pill thumb + end arrows (reference) */
 body.bo-wallet-tx .bo-tx-table-body::-webkit-scrollbar{
   width:14px!important;
   height:14px!important;
@@ -1676,7 +1677,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .report-table thead th{
   border-right-color:rgba(255,255,255,.08)!important;
   background:var(--bo-table-head,#1F2128)!important;
 }
-/* Row canvas — beat reports.css #fff / #fcfdff zebra */
+/* Row canvas ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ beat reports.css #fff / #fcfdff zebra */
 body.bo-wallet-tx .report-table tbody tr td,
 body.bo-wallet-tx .report-content .report-table tbody tr td,
 body.bo-wallet-tx .report-content .report-table tbody tr:nth-child(odd) td,
@@ -1718,7 +1719,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .report-table,
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-table tbody{
   background:var(--bo-table-paper,#383A46)!important;
 }
-/* Dark zebra — odd surface · even deeper canvas (mirrors light) */
+/* Dark zebra ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ odd surface ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· even deeper canvas (mirrors light) */
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-table tbody tr td,
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .report-table tbody tr td,
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-content .report-table tbody tr:nth-child(odd) td,
@@ -1744,7 +1745,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .report-table td strong{
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-table td small{
   color:#A1A1AA!important;
 }
-/* Status pills — PENDING orange · APPROVED green · REJECTED red */
+/* Status pills ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ PENDING orange ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· APPROVED green ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· REJECTED red */
 html:not([data-bo-theme="dark"]) body.bo-wallet-tx .status-pill{
   background:#FFEDD5!important;
   color:#EA580C!important;
@@ -1762,7 +1763,7 @@ html:not([data-bo-theme="dark"]) body.bo-wallet-tx .status-pill.off{
   color:#B91C1C!important;
   border:1px solid rgba(185,28,28,.28)!important;
 }
-/* Dark — PENDING amber · APPROVED green · REJECTED red */
+/* Dark ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ PENDING amber ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· APPROVED green ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· REJECTED red */
 html[data-bo-theme="dark"] body.bo-wallet-tx .status-pill{
   background:rgba(245,158,11,.20)!important;
   color:#FBBF24!important;
@@ -1802,7 +1803,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .bo-pagination-standard .table-info
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .table-info{
   color:#D4D4D8!important;
 }
-/* Panel footers — total bar + pager pin to bottom of fixed frame */
+/* Panel footers ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ total bar + pager pin to bottom of fixed frame */
 body.bo-wallet-tx .table-card > .approval-total-bar{
   flex:0 0 auto!important;
   margin:0!important;
@@ -1836,7 +1837,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .d-flex.justify-conte
   background:#383A46!important;
 }
 
-/* Row Approve / Reject — cream Ghost tiles; semantic icon (beat .btn min-width:82px) */
+/* Row Approve / Reject ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ cream Ghost tiles; semantic icon (beat .btn min-width:82px) */
 body.bo-wallet-tx .bo-tx-actions,
 body.bo-wallet-tx .report-table .bo-tx-actions,
 body.bo-wallet-tx.deposit-approval-page #depositBody td:last-child > .bo-tx-actions,
@@ -1878,7 +1879,7 @@ body.bo-wallet-tx .bo-tx-action-btn i{
   margin:0!important;
   pointer-events:none!important;
 }
-/* Ledger chip — same 26×26 well as Approve/Reject (beat reports.css .bo-icon-action) */
+/* Ledger chip ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ same 26ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ26 well as Approve/Reject (beat reports.css .bo-icon-action) */
 html body.bo-wallet-tx .report-table .bo-tx-action-btn.is-ledger,
 html body.bo-wallet-tx.withdraw-approval-page .report-table a.bo-tx-action-btn.is-ledger,
 html body.bo-wallet-tx .report-table a.bo-tx-action-btn.is-ledger.bo-icon-action,
@@ -1986,7 +1987,7 @@ body.bo-wallet-tx .media-tabs a.active{
   color:var(--bo-accent-on)!important;
 }
 
-/* ---- Logout footer — beat bo-ui-standard.css white strip ---- */
+/* ---- Logout footer ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ beat bo-ui-standard.css white strip ---- */
 html:not([data-bo-theme="dark"]) body.bo-wallet-tx .bo-sidebar-account-footer{
   background:transparent!important;
   border-top:1px solid rgba(92,74,48,.1)!important;
@@ -2032,8 +2033,8 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .bo-sidebar-logout:hover{
 }
 
 /* ==========================================================================
-   Content workspace — filter row, CTA, pagination, metrics
-   Beat reports.css 5-col deposit grid (crushes Reset → "set") and
+   Content workspace ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ filter row, CTA, pagination, metrics
+   Beat reports.css 5-col deposit grid (crushes Reset ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "set") and
    bo-ui-standard Search blue (#2864ed).
    ========================================================================== */
 
@@ -2049,7 +2050,7 @@ body.bo-wallet-tx{
   --bo-page-text:var(--bo-text);
 }
 
-/* Force flex filter row — Date | Search | Status in one horizontal strip */
+/* Force flex filter row ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Date | Search | Status in one horizontal strip */
 body.bo-wallet-tx .report-main .user-search-grid.bo-filter-row,
 body.bo-wallet-tx.deposit-approval-page .user-search-grid,
 body.bo-wallet-tx.withdraw-approval-page .user-search-grid,
@@ -2066,7 +2067,7 @@ body.bo-wallet-tx.bank-deposit-usage-page .user-search-grid{
   width:100%!important;
   min-width:0!important;
 }
-/* Toolbar filters sit RIGHT of Deposit/Withdraw tabs — must not claim full width */
+/* Toolbar filters sit RIGHT of Deposit/Withdraw tabs ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ must not claim full width */
 body.bo-wallet-tx.deposit-approval-page .bo-tx-toolbar > .user-search-grid.bo-tx-filter-controls,
 body.bo-wallet-tx.withdraw-approval-page .bo-tx-toolbar > .user-search-grid.bo-tx-filter-controls,
 body.bo-wallet-tx .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls{
@@ -2096,7 +2097,7 @@ body.bo-wallet-tx .bo-tx-toolbar{
     justify-content:flex-start!important;
   }
 }
-/* Listing filter geometry (MD) — Deposit/Withdraw toolbar = Wallet Ledger specimen */
+/* Listing filter geometry (MD) ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Deposit/Withdraw toolbar = Wallet Ledger specimen */
 body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .bo-range-field,
 body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .bo-range-field,
 body.bo-wallet-tx.deposit-approval-page .filter-card .bo-range-field,
@@ -2125,7 +2126,7 @@ body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .field
   max-width:150px!important;
   grid-column:auto!important;
 }
-/* Page size lives in footer only — never show a leaked control in the filter strip */
+/* Page size lives in footer only ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ never show a leaked control in the filter strip */
 body.bo-wallet-tx .user-search-grid #depositSize,
 body.bo-wallet-tx .user-search-grid #withdrawSize,
 body.bo-wallet-tx .user-search-grid #ledgerSize,
@@ -2168,7 +2169,7 @@ body.bo-wallet-tx .report-main .bo-filter-row > .bo-filter-range-item{
   min-width:0!important;
   overflow:visible!important;
 }
-/* Date range — field + trigger must share width (reports.css locks trigger to 390px) */
+/* Date range ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ field + trigger must share width (reports.css locks trigger to 390px) */
 html body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-filter-range-item,
 html body.bo-wallet-tx .report-main .filter-card .bo-filter-row > .bo-range-field,
 html body.bo-wallet-tx .report-main .filter-card .user-search-grid > .bo-filter-range-item,
@@ -2204,7 +2205,7 @@ body.bo-wallet-tx .bo-range-trigger .bo-range-icon,
 body.bo-wallet-tx .bo-range-trigger .bo-range-arrow{color:var(--bo-cyan)!important}
 body.bo-wallet-tx .bo-range-text{color:var(--bo-text)!important;font-weight:700!important}
 
-/* Date-range popover — cream dual-pane; divider casts soft shadow into calendar (reference).
+/* Date-range popover ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ cream dual-pane; divider casts soft shadow into calendar (reference).
    Kill reports.css cool gray/blue (#f8fafc / #eef2ff / #5061f5). */
 body.bo-wallet-tx .bo-range-pop,
 body.bo-wallet-tx .report-main .bo-range-pop{
@@ -2236,7 +2237,7 @@ body.bo-wallet-tx .bo-range-presets button{
   color:#374151!important;
   font-weight:bold!important;
   font-size:13px!important;
-  border-radius:0!important; /* flush to divider — no inner round against the rail */
+  border-radius:0!important; /* flush to divider ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ no inner round against the rail */
   border:0!important;
   box-shadow:none!important;
   text-align:left!important;
@@ -2246,7 +2247,7 @@ body.bo-wallet-tx .bo-range-presets button:hover{
   background:rgba(217,119,6,.10)!important;
   color:#B45309!important;
 }
-/* Preset active — soft peach wash + amber ink; square against the divider */
+/* Preset active ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ soft peach wash + amber ink; square against the divider */
 body.bo-wallet-tx .bo-range-presets button.active{
   background:#FFF1DC!important;
   color:#B45309!important;
@@ -2267,7 +2268,7 @@ body.bo-wallet-tx .bo-range-cal-head{
   gap:7px!important;
   align-items:center!important;
 }
-/* Month / year / arrows — ghost */
+/* Month / year / arrows ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ghost */
 body.bo-wallet-tx .bo-range-cal-head button,
 body.bo-wallet-tx .bo-range-cal-head select,
 body.bo-wallet-tx .bo-range-cal-head .bo-range-head-pick{
@@ -2323,14 +2324,14 @@ body.bo-wallet-tx .bo-range-day.muted{
   color:#A8A29E!important;
   background:transparent!important;
 }
-/* In-range — continuous peach bar, square corners */
+/* In-range ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ continuous peach bar, square corners */
 body.bo-wallet-tx .bo-range-day.in-range,
 body.bo-wallet-tx .bo-range-day.in-range:hover{
   background:#FFF1DC!important;
   color:#B45309!important;
   border-radius:0!important;
 }
-/* Endpoints — solid amber; round only the outer edge */
+/* Endpoints ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ solid amber; round only the outer edge */
 body.bo-wallet-tx .bo-range-day.start,
 body.bo-wallet-tx .bo-range-day.start:hover{
   background:#D97706!important;
@@ -2451,7 +2452,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .bo-range-year-grid button.active{
   color:#FBBF24!important;
 }
 
-/* Keyword search grows; selects sized by content (JS) — never overflow neighbors */
+/* Keyword search grows; selects sized by content (JS) ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ never overflow neighbors */
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item,
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .field:has(select),
 body.bo-wallet-tx .report-main .bo-filter-row > .field:has(select),
@@ -2514,13 +2515,13 @@ body.bo-wallet-tx .report-main .bo-filter-row .clean-btn{
   flex:0 0 120px!important;
 }
 
-/* Deposit: inline filter is the panel head (mad-filter-bar role) — styles in Tables block */
+/* Deposit: inline filter is the panel head (mad-filter-bar role) ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ styles in Tables block */
 
 /*
- * Search / Reset — beat bo-ui-standard's higher-specificity lock:
+ * Search / Reset ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ beat bo-ui-standard's higher-specificity lock:
  *   body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy)
  *     .report-main .bo-filter-row .bo-filter-search-button { #2864ed }
- * :not(#id) counts as an ID in specificity — mirror it + add .bo-wallet-tx.
+ * :not(#id) counts as an ID in specificity ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ mirror it + add .bo-wallet-tx.
  */
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row button[id*="search" i],
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row button[id*="apply" i],
@@ -2585,24 +2586,35 @@ body.bo-wallet-tx .quick-stats{
   gap:14px!important;
   margin-bottom:16px!important;
 }
-/* Wallet Ledger — 4 summary metrics in one row on desktop */
+/* Wallet Ledger / Member Wallet ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 4 summary metrics in one row on desktop */
 body.bo-wallet-tx.wallet-ledger-page .report-content > .quick-stats,
-body.bo-wallet-tx.wallet-ledger-page .quick-stats{
+body.bo-wallet-tx.wallet-ledger-page .quick-stats,
+body.bo-wallet-tx.member-wallet-page .report-content > .quick-stats,
+body.bo-wallet-tx.member-wallet-page .quick-stats{
   grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+/* Icon ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ label breathing room inside Member Wallet KPI cards */
+body.bo-wallet-tx.member-wallet-page .report-content .quick-stats:not(.user-stats) .metric{
+  column-gap:24px!important;
+  grid-template-columns:52px minmax(0,1fr)!important;
 }
 @media(max-width:1024px){
   body.bo-wallet-tx.wallet-ledger-page .report-content > .quick-stats,
-  body.bo-wallet-tx.wallet-ledger-page .quick-stats{
+  body.bo-wallet-tx.wallet-ledger-page .quick-stats,
+  body.bo-wallet-tx.member-wallet-page .report-content > .quick-stats,
+  body.bo-wallet-tx.member-wallet-page .quick-stats{
     grid-template-columns:repeat(2,minmax(0,1fr))!important;
   }
 }
 @media(max-width:575.98px){
   body.bo-wallet-tx.wallet-ledger-page .report-content > .quick-stats,
-  body.bo-wallet-tx.wallet-ledger-page .quick-stats{
+  body.bo-wallet-tx.wallet-ledger-page .quick-stats,
+  body.bo-wallet-tx.member-wallet-page .report-content > .quick-stats,
+  body.bo-wallet-tx.member-wallet-page .quick-stats{
     grid-template-columns:1fr!important;
   }
 }
-/* Deposit bank capacity strip — Charcoal+Amber ops cards */
+/* Deposit bank capacity strip ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Charcoal+Amber ops cards */
 body.bo-wallet-tx.deposit-approval-page .approval-pending-stats.deposit-bank-card-stats,
 body.deposit-approval-page .approval-pending-stats.deposit-bank-card-stats,
 body.bo-wallet-tx.withdraw-approval-page .approval-pending-stats.deposit-bank-card-stats,
@@ -2772,7 +2784,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .deposit-bank-fill.is-over{
 html[data-bo-theme="dark"] body.bo-wallet-tx .deposit-bank-meter.is-empty .deposit-bank-fill{
   background:#52525B!important;
 }
-/* Summary icons — kill reports.css blue/green/purple rainbow → amber only */
+/* Summary icons ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ kill reports.css blue/green/purple rainbow ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ amber only */
 body.bo-wallet-tx .bo-summary-icon,
 body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric .bo-summary-icon,
 body.bo-wallet-tx .report-content .quick-stats:not(.user-stats) .metric:nth-child(2) .bo-summary-icon,
@@ -2832,7 +2844,7 @@ body.bo-wallet-tx .approval-total-bar strong{
   font-variant-numeric:tabular-nums;
 }
 
-/* Pagination — Show N (bottom-left) · Showing (center) · pager (right) */
+/* Pagination ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Show N (bottom-left) ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Showing (center) ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· pager (right) */
 body.bo-wallet-tx .report-main .bo-pagination-standard,
 body.bo-wallet-tx .report-main .table-footer.standard-pagination,
 body.bo-wallet-tx .table-card > .bo-pagination-standard,
@@ -2849,7 +2861,7 @@ body.bo-wallet-tx .table-card > .bo-deposit-pager-host.bo-pagination-standard{
   position:relative!important;
   z-index:6!important;
 }
-/* DOM order: entries · info · pager — keep natural L/C/R */
+/* DOM order: entries ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· info ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· pager ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ keep natural L/C/R */
 body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control,
 body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control{
   grid-column:1!important;
@@ -2887,7 +2899,7 @@ body.bo-wallet-tx .table-card > .bo-pagination-standard > .pagination-clean{
   gap:6px!important;
   overflow:visible!important;
 }
-/* Page numbers live in #depositPager / #withdrawPager between ‹ › — keep visible. */
+/* Page numbers live in #depositPager / #withdrawPager between ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂº ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ keep visible. */
 body.bo-wallet-tx .pagination-clean > .pagination-clean-inner,
 body.bo-wallet-tx .pagination-clean > #depositPager,
 body.bo-wallet-tx .pagination-clean > #withdrawPager{
@@ -2925,7 +2937,7 @@ body.bo-wallet-tx #withdrawPager > .smart-pagination{
   flex:0 0 auto!important;
   overflow:visible!important;
 }
-/* Outer ‹ › already navigate — hide duplicate first/last from legacy pageButtons HTML. */
+/* Outer ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂº already navigate ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ hide duplicate first/last from legacy pageButtons HTML. */
 body.bo-wallet-tx .pagination-clean-inner .smart-page.first,
 body.bo-wallet-tx .pagination-clean-inner .smart-page.last,
 body.bo-wallet-tx #depositPager .smart-page.first,
@@ -2948,7 +2960,7 @@ body.bo-wallet-tx #withdrawPager > .smart-page{
   flex:0 0 auto!important;
 }
 /* Kill reports.css `.entries-control .rounded-select-wrap { margin-top:-35px }`
-   which lifts the page-size dropdown above the "Show … entries" baseline. */
+   which lifts the page-size dropdown above the "Show ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ entries" baseline. */
 body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-wrap,
 body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-wrap{
   display:inline-flex!important;
@@ -2978,7 +2990,7 @@ body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control selec
   min-height:36px!important;
   flex:0 0 72px!important;
   box-sizing:border-box!important;
-  /* Role select / listing surface — not form well #F5EBDC */
+  /* Role select / listing surface ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ not form well #F5EBDC */
   background:#FFF8EB!important;
   background-color:#FFF8EB!important;
   border:1px solid #EADCC8!important;
@@ -2988,7 +3000,7 @@ body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control selec
   font-weight:700!important;
   box-shadow:none!important;
 }
-/* Keep the native select visually hidden — do not inherit the 72×36 trigger size. */
+/* Keep the native select visually hidden ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ do not inherit the 72ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ36 trigger size. */
 body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-wrap > select,
 body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-wrap > select{
   position:absolute!important;
@@ -3005,7 +3017,7 @@ body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .roun
   border:0!important;
   overflow:hidden!important;
 }
-/* Show N entries — Role select recipe (MD), open upward · listing 36px trigger */
+/* Show N entries ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Role select recipe (MD), open upward ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· listing 36px trigger */
 body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-menu,
 body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-menu{
   top:auto!important;
@@ -3125,7 +3137,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-buttons
   color:#E7E5E4!important;
   -webkit-text-fill-color:#E7E5E4;
 }
-/* Pagination active — MD mad-pager amber 3D */
+/* Pagination active ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ MD mad-pager amber 3D */
 body.bo-wallet-tx .pagination-clean .page-btn.active,
 body.bo-wallet-tx .pagination-clean button.active,
 body.bo-wallet-tx .table-page-btn.active,
@@ -3155,7 +3167,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standar
   color:#F5F5F4!important;
 }
 
-/* ===== MD lock — Select / filter chrome (system.md Forms + Radius) =====
+/* ===== MD lock ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Select / filter chrome (system.md Forms + Radius) =====
    Filter controls / selects / date trigger = 8px. Beat bo-ui-standard 11px. */
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row select,
@@ -3188,7 +3200,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standar
   background:#383A46!important;
   border:1px solid rgba(255,255,255,.14)!important;
 }
-/* Dark option — MD Role select: hover wash · selected solid amber + charcoal text */
+/* Dark option ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ MD Role select: hover wash ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· selected solid amber + charcoal text */
 html[data-bo-theme="dark"] body.bo-wallet-tx .rounded-select-option:hover,
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-option:hover,
 html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .rounded-select-option:hover{
@@ -3206,7 +3218,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx:not(#bo-filter-standard-off):not(#b
   -webkit-text-fill-color:#2A2C36;
 }
 
-/* Listing select trigger type — MD Role select: 13.5px / 600 */
+/* Listing select trigger type ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ MD Role select: 13.5px / 600 */
 body.bo-wallet-tx .rounded-select-btn,
 body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-btn,
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-btn{
@@ -3214,11 +3226,11 @@ body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .
   font-weight:600!important;
 }
 
-/* ===== Interactive ring lock — Merchant Profit / Role select =====
-   Hover · focus · open: amber border + soft outer glow.
+/* ===== Interactive ring lock ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Merchant Profit / Role select =====
+   Hover ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· focus ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· open: amber border + soft outer glow.
    Light: `#D97706` + `0 0 0 3px rgba(217,119,6,.14)`
    Dark:  `#F59E0B` + `0 0 0 3px rgba(245,158,11,.18)`
-   Must sit after idle chrome (`box-shadow:none`) with ≥ equal specificity. */
+   Must sit after idle chrome (`box-shadow:none`) with ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ equal specificity. */
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):hover,
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus,
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus-visible,
@@ -3332,7 +3344,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .filter-card .bo-filte
   outline:0!important;
 }
 
-/* Page-size menu lock (Fig.1) — beat MD solid-amber option; quiet slate selected chip */
+/* Page-size menu lock (Fig.1) ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ beat MD solid-amber option; quiet slate selected chip */
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-menu,
 html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-menu{
   background:#2A2C36!important;
@@ -3348,7 +3360,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standa
   -webkit-text-fill-color:#E7E5E4;
 }
 
-/* Table body scrollbar — final authority (beat reports.css + injected global ::-webkit-scrollbar) */
+/* Table body scrollbar ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ final authority (beat reports.css + injected global ::-webkit-scrollbar) */
 body.bo-wallet-tx.standardized-listing-page .table-card > .table-wrap > .bo-tx-table-body{
   scrollbar-width:auto!important;
   scrollbar-color:auto!important;
@@ -3383,7 +3395,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.standardized-listing-page .table-ca
   background-color:#D4D4D8!important;
 }
 
-/* Deposit/Withdraw toolbar — beat bo-ui-standard :not(#id) specificity */
+/* Deposit/Withdraw toolbar ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ beat bo-ui-standard :not(#id) specificity */
 html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar,
 html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar{
   display:flex!important;
@@ -3408,7 +3420,7 @@ html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#
   margin:0 0 0 auto!important;
   margin-left:auto!important;
 }
-/* Beat bo-ui-standard 42px — Deposit/Withdraw toolbar = MD listing 36px geometry */
+/* Beat bo-ui-standard 42px ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Deposit/Withdraw toolbar = MD listing 36px geometry */
 html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .bo-range-field,
 html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .bo-range-field,
 html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .bo-filter-range-item,
@@ -3474,19 +3486,19 @@ html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#
 }
 
 /* ==========================================================================
-   Deposit / Withdraw Approval — responsive 1920 → 375
+   Deposit / Withdraw Approval ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ responsive 1920 ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 375
    Preserve charcoal+amber language; adapt layout / spacing / arrangement only.
    Breakpoints align with project Responsive Rules:
    1920 / 1440 / 1280 / 1024 / 768 / 390 / 375
    ========================================================================== */
 
-/* Fluid content padding (desktop → laptop) */
+/* Fluid content padding (desktop ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ laptop) */
 body.bo-wallet-tx.deposit-approval-page .report-content,
 body.bo-wallet-tx.withdraw-approval-page .report-content{
   padding-inline:clamp(10px,1.6vw,22px)!important;
   gap:clamp(10px,1.2vw,14px)!important;
 }
-/* ≤1456: DATE shows calendar day only; full datetime on hover via title */
+/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤1456: DATE shows calendar day only; full datetime on hover via title */
 @media (max-width:1456px){
   body.bo-wallet-tx.deposit-approval-page .bo-tx-datetime-time,
 body.bo-wallet-tx.withdraw-approval-page .bo-tx-datetime-time{
@@ -3522,7 +3534,7 @@ body.bo-wallet-tx.withdraw-approval-page .user-title-wrap h1{
   max-width:100%!important;
 }
 
-/* Table scrolls inside panel — never force page-wide min-width */
+/* Table scrolls inside panel ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ never force page-wide min-width */
 body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table,
 body.bo-wallet-tx.withdraw-approval-page .bo-tx-head-table,
 body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table,
@@ -3537,7 +3549,7 @@ body.bo-wallet-tx.withdraw-approval-page .bo-tx-table-body{
   max-width:100%!important;
 }
 
-/* ---- ≤1439: denser bank grid on large-mid desktops ---- */
+/* ---- ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤1439: denser bank grid on large-mid desktops ---- */
 @media (max-width:1439.98px){
   body.bo-wallet-tx.deposit-approval-page .approval-pending-stats.deposit-bank-card-stats,
 body.bo-wallet-tx.withdraw-approval-page .approval-pending-stats.deposit-bank-card-stats{
@@ -3586,7 +3598,7 @@ body.bo-wallet-tx.withdraw-approval-page .bo-tx-table-body{
     -webkit-overflow-scrolling:touch;
   }
 
-  /* Toolbar: tabs on first row, filters on second — one clean line each (fixes ~1274 wrap mess) */
+  /* Toolbar: tabs on first row, filters on second ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ one clean line each (fixes ~1274 wrap mess) */
   body.bo-wallet-tx.deposit-approval-page .bo-tx-toolbar,
 body.bo-wallet-tx.withdraw-approval-page .bo-tx-toolbar,
   html body.bo-wallet-tx.deposit-approval-page,
@@ -3690,7 +3702,7 @@ body.bo-wallet-tx.withdraw-approval-page .report-table td{
   }
 }
 
-/* ---- ≤1024: keep filters wrapping only when the second row truly needs it ---- */
+/* ---- ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤1024: keep filters wrapping only when the second row truly needs it ---- */
 @media (max-width:1024px){
   body.bo-wallet-tx.deposit-approval-page .bo-tx-toolbar,
 body.bo-wallet-tx.withdraw-approval-page .bo-tx-toolbar,
@@ -3765,7 +3777,7 @@ body.bo-wallet-tx.withdraw-approval-page .report-content > .table-card{
   }
 }
 
-/* ---- ≤768 (tablet): compact strip + phone-friendly filter wrap ---- */
+/* ---- ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤768 (tablet): compact strip + phone-friendly filter wrap ---- */
 @media (max-width:768px){
   body.bo-wallet-tx.deposit-approval-page .report-content,
 body.bo-wallet-tx.withdraw-approval-page .report-content{
@@ -3781,7 +3793,7 @@ body.bo-wallet-tx.withdraw-approval-page .deposit-bank-card{
 body.bo-wallet-tx.withdraw-approval-page .deposit-bank-total > strong{
     font-size:20px!important;
   }
-  /* Keep filters wrapping in a row until phone — saves vertical space for the table */
+  /* Keep filters wrapping in a row until phone ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ saves vertical space for the table */
   body.bo-wallet-tx.deposit-approval-page .bo-tx-filter-controls,
 body.bo-wallet-tx.withdraw-approval-page .bo-tx-filter-controls,
   body.bo-wallet-tx.deposit-approval-page .bo-tx-toolbar > .user-search-grid.bo-tx-filter-controls,
@@ -3861,7 +3873,7 @@ body.bo-wallet-tx.withdraw-approval-page .bo-tx-table-body{
   }
 }
 
-/* ---- ≤575 / ~390–375 phone ---- */
+/* ---- ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤575 / ~390ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ375 phone ---- */
 @media (max-width:575.98px){
   body.bo-wallet-tx.deposit-approval-page .report-content,
 body.bo-wallet-tx.withdraw-approval-page .report-content{
@@ -3885,7 +3897,7 @@ body.bo-wallet-tx.withdraw-approval-page .user-title-wrap h1{
 body.bo-wallet-tx.withdraw-approval-page .report-actions{
     gap:6px!important;
   }
-  /* Keep title readable — counters move to sidebar / are secondary on phone */
+  /* Keep title readable ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ counters move to sidebar / are secondary on phone */
   body.bo-wallet-tx.deposit-approval-page .report-actions .bo-header-counters,
 body.bo-wallet-tx.withdraw-approval-page .report-actions .bo-header-counters{
     display:none!important;
@@ -3995,7 +4007,7 @@ body.bo-wallet-tx.withdraw-approval-page .table-card > .bo-deposit-pager-host bu
   }
 }
 
-/* Approval / funding modal — full-bleed on small screens */
+/* Approval / funding modal ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ full-bleed on small screens */
 @media (max-width:768px){
   #bankApprovalPopup .bank-approval-backdrop{
     padding:0!important;
@@ -4018,7 +4030,7 @@ body.bo-wallet-tx.withdraw-approval-page .table-card > .bo-deposit-pager-host bu
 }
 
 /* ==========================================================================
-   Payment Method Config (`body.payment-method-page`) — Transaction listing
+   Payment Method Config (`body.payment-method-page`) ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Transaction listing
    ========================================================================== */
 body.bo-wallet-tx.payment-method-page .pm-list-card{
   display:flex!important;
@@ -4103,30 +4115,39 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .bo-tx-link:hov
   color:#F59E0B!important;
 }
 
-/* Edit = control-well chip (same family as ledger); Delete reuses is-reject */
-html body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit{
+/* Edit / Adjust = amber control-well chip (Payment Method + Member Wallet) */
+html body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit,
+html body.bo-wallet-tx.member-wallet-page .report-table .bo-tx-action-btn.is-edit,
+html body.bo-wallet-tx .report-table a.bo-tx-action-btn.is-edit{
   background:var(--bo-control-well,#F5EBDC)!important;
   border:1px solid var(--bo-border,#EADCC8)!important;
   color:#B45309!important;
   box-shadow:none!important;
+  text-decoration:none!important;
 }
-html body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit:hover{
+html body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit:hover,
+html body.bo-wallet-tx.member-wallet-page .report-table .bo-tx-action-btn.is-edit:hover,
+html body.bo-wallet-tx .report-table a.bo-tx-action-btn.is-edit:hover{
   background:rgba(217,119,6,.12)!important;
   border-color:#D97706!important;
   color:#92400E!important;
 }
-html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit{
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit,
+html[data-bo-theme="dark"] body.bo-wallet-tx.member-wallet-page .report-table .bo-tx-action-btn.is-edit,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table a.bo-tx-action-btn.is-edit{
   background:#2A2C36!important;
   border-color:rgba(255,255,255,.14)!important;
   color:#FBBF24!important;
 }
-html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit:hover{
+html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .report-table .bo-tx-action-btn.is-edit:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.member-wallet-page .report-table .bo-tx-action-btn.is-edit:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-table a.bo-tx-action-btn.is-edit:hover{
   background:rgba(245,158,11,.16)!important;
   border-color:#F59E0B!important;
   color:#FDE68A!important;
 }
 
-/* Modal — form well ladder + radius 8px (Transaction / Roles recipe) */
+/* Modal ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ form well ladder + radius 8px (Transaction / Roles recipe) */
 body.bo-wallet-tx.payment-method-page .pm-modal-panel{
   border-radius:12px!important;
   background:var(--bo-surface,#FFF8EB)!important;
@@ -4212,8 +4233,9 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .fiel
   }
 }
 
-/* Wallet Ledger — filters live inside table-card (Deposit inline recipe) */
-body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter{
+/* Wallet Ledger / Member Wallet ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ filters live inside table-card (Deposit inline recipe) */
+body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter,
+body.bo-wallet-tx.member-wallet-page .table-card > .filter-card.wallet-inline-filter{
   margin:0!important;
   padding:10px 14px!important;
   border:0!important;
@@ -4222,8 +4244,9 @@ body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-fi
   box-shadow:none!important;
   background:var(--bo-table-row,#FFF8EB)!important;
 }
-/* Compact filter controls — beat bo-ui-standard double :not(#id) 42px/190px */
-html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row{
+/* Compact filter controls ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ beat bo-ui-standard double :not(#id) 42px/190px */
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row{
   display:flex!important;
   flex-flow:row wrap!important;
   align-items:flex-end!important;
@@ -4233,7 +4256,9 @@ html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet
   overflow:visible!important;
 }
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-item,
-html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .field{
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .field,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-item,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .field{
   position:relative!important;
   overflow:hidden!important;
   box-sizing:border-box!important;
@@ -4245,6 +4270,26 @@ html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet
   min-width:120px!important;
   max-width:140px!important;
   flex:0 0 140px!important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-input-item,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .field.bo-filter-input-item,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .field:has(#walletKeyword){
+  width:280px!important;
+  min-width:220px!important;
+  max-width:360px!important;
+  flex:1 1 280px!important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .wallet-filter-actions{
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+  overflow:visible!important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .wallet-filter-actions .filter-action-row{
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  gap:10px!important;
 }
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .ledger-type-field{
   width:150px!important;
@@ -4283,7 +4328,14 @@ html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .clean-btn,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .btn-primary-clean,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .bo-range-trigger,
-html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ref-range-trigger{
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ref-range-trigger,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .field input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row :is(.bo-filter-reset-button,.bo-filter-search-button),
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row #walletResetBtn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row #walletSearchBtn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .clean-btn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .btn-primary-clean{
   height:36px!important;
   min-height:36px!important;
   max-height:36px!important;
@@ -4292,7 +4344,9 @@ html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-select-item select,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-select-item .rounded-select-btn,
-html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ledger-type-trigger{
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ledger-type-trigger,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .field input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]){
   width:100%!important;
   max-width:100%!important;
   min-width:0!important;
@@ -4303,7 +4357,12 @@ html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .clean-btn,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .btn-primary-clean,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row button[id*="reset" i],
-html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row button[id*="search" i]{
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row button[id*="search" i],
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row :is(.bo-filter-reset-button,.bo-filter-search-button),
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row #walletResetBtn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row #walletSearchBtn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .clean-btn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .btn-primary-clean{
   width:auto!important;
   min-width:0!important;
   max-width:none!important;
@@ -4313,9 +4372,10 @@ html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet
   flex:0 0 auto!important;
 }
 /* Hide legacy page-info summary if any remnant remains */
-html body.bo-wallet-tx.wallet-ledger-page #ledgerPageInfo{display:none!important}
+html body.bo-wallet-tx.wallet-ledger-page #ledgerPageInfo,
+html body.bo-wallet-tx.member-wallet-page #walletPageInfo{display:none!important}
 
-/* Inline filter sits flush under .table-card top border — no lift/upward shadow on hover */
+/* Inline filter sits flush under .table-card top border ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ no lift/upward shadow on hover */
 html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter .clean-btn:hover,
 html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter .btn-primary-clean:hover,
 html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter #ledgerResetBtn:hover,
@@ -4323,18 +4383,133 @@ html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inli
 html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter .bo-filter-reset-button:hover,
 html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter .bo-filter-search-button:hover,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .clean-btn:hover,
-html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter #ledgerResetBtn:hover{
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter #ledgerResetBtn:hover,
+html body.bo-wallet-tx.member-wallet-page .table-card > .filter-card.wallet-inline-filter .clean-btn:hover,
+html body.bo-wallet-tx.member-wallet-page .table-card > .filter-card.wallet-inline-filter .btn-primary-clean:hover,
+html body.bo-wallet-tx.member-wallet-page .table-card > .filter-card.wallet-inline-filter #walletResetBtn:hover,
+html body.bo-wallet-tx.member-wallet-page .table-card > .filter-card.wallet-inline-filter #walletSearchBtn:hover,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter .clean-btn:hover,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.member-wallet-page .report-main .table-card > .filter-card.wallet-inline-filter #walletResetBtn:hover{
   transform:none!important;
   box-shadow:none!important;
 }
 
-/* Wallet Ledger — Panel pill scrollbar on horizontal .table-wrap
-   Light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / `#D97706`
-   6px · no arrows · webkit only (same recipe as Bulk panels) */
+/* Wallet Ledger ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Panel pill scrollbar on horizontal .table-wrap
+   Light chocolate `#8B6B4A` / hover `#5C4A30` ÃÂÃÂÃÂÃÂ· dark `#F59E0B` / `#D97706`
+   6px ÃÂÃÂÃÂÃÂ· no arrows ÃÂÃÂÃÂÃÂ· webkit only (same recipe as Bulk panels) */
 body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap{
-  /* Do NOT set scrollbar-width/color to a coloured pair — Chromium then uses OS arrows */
+  /* Do NOT set scrollbar-width/color to a coloured pair ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Chromium then uses OS arrows */
   overflow-x:auto!important;
   overflow-y:hidden!important;
+}
+/* Member Wallet ÃÂ¢ÃÂÃÂ frame only; scroll lives in .bo-tx-table-body (fixed head) */
+body.bo-wallet-tx.member-wallet-page .table-card > .table-wrap{
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+body.bo-wallet-tx.member-wallet-page .mw-col-member{width:140px;min-width:140px}
+body.bo-wallet-tx.member-wallet-page .mw-col-provider{width:210px;min-width:210px}
+body.bo-wallet-tx.member-wallet-page .mw-col-money{width:132px;min-width:132px}
+body.bo-wallet-tx.member-wallet-page .mw-col-detail{width:210px;min-width:210px}
+body.bo-wallet-tx.member-wallet-page .mw-col-winloss{width:112px;min-width:112px}
+body.bo-wallet-tx.member-wallet-page .mw-col-action{width:96px;min-width:96px}
+body.bo-wallet-tx.member-wallet-page .bo-tx-table-head .report-table,
+body.bo-wallet-tx.member-wallet-page .bo-tx-table-body .report-table{
+  table-layout:fixed!important;
+  width:max(100%,2360px)!important;
+  min-width:2360px!important;
+}
+body.bo-wallet-tx.member-wallet-page .bo-tx-head-table th,
+body.bo-wallet-tx.member-wallet-page .bo-tx-head-table th .bo-tx-sort-btn{
+  overflow:visible!important;
+  text-overflow:clip!important;
+  white-space:nowrap!important;
+}
+body.bo-wallet-tx.member-wallet-page .bo-tx-table-body,
+body.bo-wallet-tx.member-wallet-page .bo-tx-table-head{
+  cursor:grab;
+}
+body.bo-wallet-tx.member-wallet-page .bo-tx-table-body.is-hdrag,
+body.bo-wallet-tx.member-wallet-page .bo-tx-table-head.is-hdrag,
+body.bo-wallet-tx.member-wallet-page .bo-tx-table-body:active,
+body.bo-wallet-tx.member-wallet-page .bo-tx-table-head:active{
+  cursor:grabbing;
+}
+body.bo-wallet-tx.member-wallet-page .bo-tx-table-body.is-hdrag{
+  user-select:none!important;
+}
+body.bo-wallet-tx.member-wallet-page .bo-tx-sort-btn,
+body.bo-wallet-tx.member-wallet-page .bo-tx-action-btn,
+body.bo-wallet-tx.member-wallet-page .wallet-total-link{
+  cursor:pointer!important;
+}
+/* Panel pill scrollbar on Member Wallet body â beat standardized-listing slate 14px recipe */
+html body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body,
+body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body{
+  scrollbar-width:auto!important;
+  scrollbar-color:auto!important;
+}
+/* Show `-` (auto-fit): fill viewport, no vertical scrollbar — Deposit contract */
+html body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card[data-bo-autofit] > .table-wrap > .bo-tx-table-body,
+body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card[data-bo-autofit] > .table-wrap > .bo-tx-table-body,
+html body.bo-wallet-tx.member-wallet-page .bo-tx-table-body[data-bo-autofit],
+body.bo-wallet-tx.member-wallet-page .bo-tx-table-body[data-bo-autofit]{
+  overflow-y:hidden!important;
+}
+html body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar,
+body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar{
+  width:6px!important;
+  height:6px!important;
+  background:transparent!important;
+}
+html body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-button,
+body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-button,
+html body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-button:single-button{
+  display:none!important;
+  height:0!important;
+  width:0!important;
+}
+html body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-track,
+body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-track{
+  background:transparent!important;
+}
+html body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-thumb,
+body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-thumb{
+  background:#8B6B4A!important;
+  background-color:#8B6B4A!important;
+  border-radius:999px!important;
+  border:0!important;
+  background-clip:border-box!important;
+  min-height:40px!important;
+  box-shadow:none!important;
+}
+html body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-thumb:hover,
+body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-thumb:hover{
+  background:#5C4A30!important;
+  background-color:#5C4A30!important;
+}
+html body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-corner,
+body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-corner{
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-thumb{
+  background:#F59E0B!important;
+  background-color:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body::-webkit-scrollbar-thumb:hover{
+  background:#D97706!important;
+  background-color:#D97706!important;
+}
+@supports not selector(::-webkit-scrollbar){
+  html body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body,
+  body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body{
+    scrollbar-width:thin;
+    scrollbar-color:#8B6B4A transparent;
+  }
+  html[data-bo-theme="dark"] body.bo-wallet-tx.standardized-listing-page.member-wallet-page .table-card > .table-wrap > .bo-tx-table-body{
+    scrollbar-color:#F59E0B transparent;
+  }
 }
 body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap::-webkit-scrollbar{
   width:6px!important;
@@ -4374,3 +4549,169 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.wallet-ledger-page .table-card > .t
   }
 }
 
+
+/* Provider Wallet Detail modal ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ wider panel + capped height + table edge-to-edge */
+body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-panel{
+  width:min(1120px,calc(100vw - 48px))!important;
+  max-width:min(1120px,calc(100vw - 48px))!important;
+  max-height:min(640px,72vh)!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+}
+body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-panel > .modal-clean-head,
+body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-foot{
+  flex:0 0 auto!important;
+}
+body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-body{
+  padding:0!important;
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-body > .table-wrap{
+  margin:0!important;
+  border-radius:0!important;
+  border-left:0!important;
+  border-right:0!important;
+  border-top:0!important;
+  max-width:none!important;
+  width:100%!important;
+  flex:1 1 auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:auto!important;
+  /* Panel pill scrollbar (MD): do NOT set coloured scrollbar-width/color pair ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Chromium paints OS arrows */
+}
+body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-body > .table-wrap::-webkit-scrollbar{
+  width:6px!important;
+  height:6px!important;
+}
+body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-body > .table-wrap::-webkit-scrollbar-button{
+  display:none!important;
+  height:0!important;
+  width:0!important;
+}
+body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-body > .table-wrap::-webkit-scrollbar-track{
+  background:transparent!important;
+}
+body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-body > .table-wrap::-webkit-scrollbar-thumb{
+  background:#8B6B4A!important;
+  border-radius:999px!important;
+}
+body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-body > .table-wrap::-webkit-scrollbar-thumb:hover{
+  background:#5C4A30!important;
+}
+body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-body > .table-wrap::-webkit-scrollbar-corner{
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-body > .table-wrap::-webkit-scrollbar-thumb{
+  background:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-body > .table-wrap::-webkit-scrollbar-thumb:hover{
+  background:#D97706!important;
+}
+@supports not selector(::-webkit-scrollbar){
+  body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-body > .table-wrap{
+    scrollbar-width:thin;
+    scrollbar-color:#8B6B4A transparent;
+  }
+  html[data-bo-theme="dark"] body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-body > .table-wrap{
+    scrollbar-color:#F59E0B transparent;
+  }
+}
+body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-body .report-table{
+  width:100%!important;
+  margin:0!important;
+  table-layout:auto!important;
+}
+body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-body .report-table th,
+body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-body .report-table td{
+  white-space:nowrap!important;
+}
+body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-body .report-table td.provider-wallet-updated{
+  min-width:168px!important;
+  font-variant-numeric:tabular-nums;
+}
+body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-foot{
+  justify-content:flex-end!important;
+  padding:12px 16px!important;
+  background:var(--bo-table-row,#FFF8EB)!important;
+}
+@media(max-width:575.98px){
+  body.bo-wallet-tx.member-wallet-page #providerWalletDetailModal .provider-wallet-detail-panel{
+    max-height:min(560px,78vh)!important;
+  }
+}
+
+/* Member Wallet column sort A-Z */
+body.bo-wallet-tx.member-wallet-page .bo-tx-head-table th.bo-tx-sortable{
+  padding:0!important;
+  vertical-align:middle!important;
+}
+body.bo-wallet-tx.member-wallet-page .bo-tx-head-table th.bo-tx-sortable .bo-tx-sort-btn{
+  appearance:none; -webkit-appearance:none;
+  display:inline-flex!important; align-items:center!important; justify-content:center!important; gap:4px!important;
+  width:100%!important; min-height:100%!important;
+  margin:0!important; padding:10px 12px!important;
+  border:0!important; background:transparent!important;
+  color:inherit!important; font:inherit!important; font-weight:700!important;
+  letter-spacing:inherit!important; text-transform:inherit!important;
+  text-align:center!important; white-space:nowrap!important;
+  cursor:pointer!important; line-height:1.2!important;
+}
+body.bo-wallet-tx.member-wallet-page .bo-tx-head-table th.bo-tx-sortable .bo-tx-sort-btn:hover{
+  color:#92400E!important;
+}
+body.bo-wallet-tx.member-wallet-page .bo-tx-head-table th.bo-tx-sortable .bo-tx-sort-ico{
+  display:inline-block!important; width:0.7em!important; height:0.9em!important;
+  position:relative!important; flex:0 0 auto!important; opacity:.35!important;
+}
+body.bo-wallet-tx.member-wallet-page .bo-tx-head-table th.bo-tx-sortable .bo-tx-sort-ico::before,
+body.bo-wallet-tx.member-wallet-page .bo-tx-head-table th.bo-tx-sortable .bo-tx-sort-ico::after{
+  content:''!important; position:absolute!important; left:50%!important;
+  border-left:3.5px solid transparent!important; border-right:3.5px solid transparent!important;
+  transform:translateX(-50%)!important;
+}
+body.bo-wallet-tx.member-wallet-page .bo-tx-head-table th.bo-tx-sortable .bo-tx-sort-ico::before{
+  top:0!important; border-bottom:4.5px solid currentColor!important;
+}
+body.bo-wallet-tx.member-wallet-page .bo-tx-head-table th.bo-tx-sortable .bo-tx-sort-ico::after{
+  bottom:0!important; border-top:4.5px solid currentColor!important;
+}
+body.bo-wallet-tx.member-wallet-page .bo-tx-head-table th.bo-tx-sortable.is-sorted .bo-tx-sort-ico{
+  opacity:1!important; color:#D97706!important;
+}
+body.bo-wallet-tx.member-wallet-page .bo-tx-head-table th.bo-tx-sortable.is-asc .bo-tx-sort-ico::after{
+  opacity:.25!important;
+}
+body.bo-wallet-tx.member-wallet-page .bo-tx-head-table th.bo-tx-sortable.is-desc .bo-tx-sort-ico::before{
+  opacity:.25!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.member-wallet-page .bo-tx-head-table th.bo-tx-sortable .bo-tx-sort-btn:hover{
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.member-wallet-page .bo-tx-head-table th.bo-tx-sortable.is-sorted .bo-tx-sort-ico{
+  color:#F59E0B!important;
+}
+/* Member Wallet Action column — center header + cells */
+body.bo-wallet-tx.member-wallet-page .bo-tx-head-table th:last-child,
+body.bo-wallet-tx.member-wallet-page .bo-tx-body-table td:last-child{
+  text-align:center!important;
+}
+body.bo-wallet-tx.member-wallet-page .bo-tx-body-table td:last-child .d-flex{
+  justify-content:center!important;
+}
+/* Member Wallet amount columns — right align */
+body.bo-wallet-tx.member-wallet-page .bo-tx-body-table td:nth-child(n+2):nth-child(-n+15){
+  text-align:right!important;
+}
+body.bo-wallet-tx.member-wallet-page .bo-tx-body-table td:nth-child(n+2):nth-child(-n+15) .wallet-total-link,
+body.bo-wallet-tx.member-wallet-page .bo-tx-body-table td:nth-child(n+2):nth-child(-n+15) .status-pill,
+body.bo-wallet-tx.member-wallet-page .bo-tx-body-table td:nth-child(n+2):nth-child(-n+15) b{
+  display:inline-block!important;
+  text-align:right!important;
+  width:auto!important;
+}

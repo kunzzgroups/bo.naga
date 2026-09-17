@@ -104,6 +104,7 @@
     if(p==='main-provider-settlement.html' || p==='main-provider-balance.html' || p==='main-provider-transactions.html') return 'main_provider_report.html';
     if(p==='main-merchant-balance.html' || p==='main-merchant-transactions.html') return 'main_merchant_report.html';
     if(p==='brand-detail.html') return 'brand-management.html';
+    if(p==='member-detail.html') return 'index.html';
     if(p==='provider-detail.html') return 'main-accounting-report.html';
     // Gateway Transactions is a drill-down of Payment Gateway and uses the same DB menu permission.
     if(p==='payment-gateway-transactions.html') return 'payment-gateway.html';
@@ -239,6 +240,8 @@
       // Brand Detail is a drill-down of Brand Management and has no separate sidebar permission.
       // Inherit Brand Management access so MAIN/Boss users with Brands permission are not redirected.
       if(current === 'brand-detail.html') current = 'brand-management.html';
+      // Member Detail / Wallet is a drill-down of User Management (index.html).
+      if(current === 'member-detail.html') current = 'index.html';
       if(current === 'provider-detail.html') current = 'main-accounting-report.html';
       // Transaction history is intentionally a separate page, but it inherits the
       // Payment Gateway menu selected in ROOT Role/Menu Permission. No new hardcoded

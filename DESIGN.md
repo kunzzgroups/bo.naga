@@ -59,6 +59,27 @@ spacing:
   md: "16px"
   lg: "24px"
   xl: "32px"
+components:
+  kpi-summary-card:
+    backgroundColor: "{colors.surface-light}"
+    textColor: "{colors.text-light}"
+    rounded: "{rounded.card}"
+    padding: "16px 18px"
+    height: "104px"
+  kpi-summary-icon:
+    backgroundColor: "rgba(217,119,6,0.12)"
+    textColor: "{colors.primary-light}"
+    rounded: "{rounded.pill}"
+    size: "52px"
+  kpi-summary-label:
+    typography: "12px/800"
+    textColor: "#57534E"
+  kpi-summary-value:
+    typography: "23px/900"
+    textColor: "{colors.text-light}"
+  kpi-summary-note:
+    typography: "11px/600"
+    textColor: "{colors.muted-light}"
 ---
 
 # Design System — Charcoal + Amber
@@ -176,6 +197,7 @@ Every row is **Light | Dark**. Full measurements + hover/active live in `.interf
 | Modal panel / close / scrim | cream panel · close well `#F5EBDC` · scrim `rgba(15,23,42,.55)` | `#383A46` · charcoal close · same scrim |
 | Tabs active | text `#18191C` · underline `#D97706` | text `#F4F4F5` · underline `#F59E0B` |
 | Filter bar / search | surface · `#EADCC8` · icon `#57534E` · **listing h `36px` / radius `8px`** (Wallet Ledger specimen) | charcoal · white/14 · muted icon · same `36px` |
+| KPI summary card (`.metric` + `.bo-summary-icon`) | surface `#FFF8EB` · border `#EADCC8` · radius `16px` · pad `16px 18px` · min-h `104px` · icon↔text gap **`24px`** · icon `52×52` amber wash | surface `#383A46` · border white/10 · same geometry · icon amber neon wash |
 | Status pills (Active/Suspend/All) | cream capsule thumb `999px` · idle muted dots · green/red **only when selected** · All = no dot · counts `(n)` | charcoal capsule · neon green/red when selected |
 | Permission group (open) | cream `#FFFCF7` · head `#FFF8EB`→`#FFF1DC` · amber border | cool `#383A46` · open head `#40424E` · body `#2C2E38` · amber border only |
 | Permission card | surface `#FFF8EB` · hover `#FFFCF7` · checked `#FFF8EB` · current `#FFF1DC` | `#2A2C36` · hover `#32343E` · checked/current amber tint only |
@@ -205,14 +227,23 @@ Every row is **Light | Dark**. Full measurements + hover/active live in `.interf
 
 ### Topbar chrome (locked — all pages)
 
-Order: **Theme toggle** → divider → **User Name + avatar**.
+**Specimen (2026-09-17):** Deposit Approval (`member-deposit.html` · `body.bo-wallet-tx.deposit-approval-page`) — cream topbar with full left title + right ops cluster. Copy this anatomy; do not freestyle alternate account pills or counter rainbows.
 
-**Padding and title (2026-09-15).** `.report-topbar` is `padding:10px 20px` on every page — the Dashboard's value, which `reports.css` now carries as the base (`12px 20px` before) so no page needs its own rule. The mobile variants (`padding:10px 12px`, and the `max-width:700px` `8px 10px` for `.standardized-listing-page`) are unchanged, as is the mini-sidebar `padding-left:20px`.
+**Anatomy**
 
-**No page carries a subtitle.** The `.user-title-wrap` block is the icon tile plus a single `<h1>`: the lead `<p>` ("Manage administrator credentials, …") was removed from 118 pages in the same pass. `main-merchant-detail.js` still queries that `<p>` (its `setPageChrome()` swaps the lead between list and edit wording) — the lookup is null-guarded, so it is simply inert now; wire it back if the lead ever returns.
+| Side | Order (L→R) |
+|------|-------------|
+| Left | `.hamb` (sidebar open) → `.user-title-wrap` (`.user-title-icon` + `h1` [+ lead `<p>` on Deposit/Withdraw Approval]) |
+| Right (`.report-actions`) | `.bo-theme-btn` → `[data-bo-profile]` = optional **header counters** (non-`MAIN` roles) → 1px divider → `.bo-account-link` (name + role + avatar) |
+
+**Padding and height.** Base `.report-topbar` is `padding:10px 20px` (Dashboard value in `reports.css`). Transaction / Deposit–Withdraw pages pin height **`64px`** (`--bo-header-h`) with vertical pad `0` and centered row. Mobile variants (`padding:10px 12px`, and the `max-width:700px` `8px 10px` for `.standardized-listing-page`) are unchanged, as is the mini-sidebar `padding-left:20px`.
+
+**Title block (`.user-title-wrap`).** Icon tile + `<h1>` on every page. **Admin / most listing pages:** title only (no lead). **Deposit / Withdraw Approval:** keep one-line lead under the title (e.g. “Review and process member deposit requests.”) — muted `12px/500`. Hide the lead at ≤768. `main-merchant-detail.js` still null-guards a missing `<p>`.
 
 **Theme toggle (`.bo-theme-btn`)**  
 `36×36`, radius `8px`, transparent fill. Light: border `rgba(24,25,28,.18)`, icon `#3F3F46`. Dark: border `rgba(245,158,11,.4)`, icon `#F59E0B`. Hover dark → `#FBBF24`. Focus outline `#D97706`.
+
+**Header counters (`.bo-header-counter`)** — Members / Deposit / Withdraw chips injected by `auth.js` for non-`MAIN` roles. Larger cream chips (not rainbow). Light: chip `#FFFCF7` · border `#EADCC8` · **h `48px`** · radius **`10px`** · icon tile **`38×38`**. Members = charcoal icon wash; Deposit = bright amber; Withdraw = deep amber. Label `11px/800` uppercase · value `18px/800` tabular. Dark: well `#2A2C36` · border `white/16`. Full table: `.interface-design/system.md` → Patterns → Topbar.
 
 **User Name (`.bo-account-link`)**  
 No bordered pill / no gear. Name `14px/700` (`#18191C` light · `#FFFFFF` dark). Role `11px` mono (`#71717A` light · `#F59E0B` dark). Avatar `40×40` radius `12px`: light `#D97706` / white icon; dark `#F59E0B` / `#2A2C36` icon + amber glow. Hover avatar: `#B45309` / `#FBBF24`.
@@ -229,6 +260,28 @@ No bordered pill / no gear. Name `14px/700` (`#18191C` light · `#FFFFFF` dark).
 | Focus | amber 2px outline |
 
 Do not freestyle topbar account chips or primary fills (no navy/cyan primary). Full tables live in `.interface-design/system.md` → Patterns.
+
+### KPI summary card (locked — Member Wallet specimen)
+
+Icon + label + value + note tile used on Transaction listing pages (`body.bo-wallet-tx`), specimen: **Member Wallet** (`.quick-stats .metric` + injected `.bo-summary-icon` + `.bo-summary-note`). Do not use rainbow icon chips (green/purple) — amber wash only.
+
+| Part | Light | Dark |
+|------|-------|------|
+| Tile (`.metric`) | bg `#FFF8EB` · border `1px #EADCC8` · radius **`16px`** · pad **`16px 18px`** · min-height **`104px`** · shadow `--bo-shadow` | bg `#383A46` · border `rgba(255,255,255,.10)` · same pad/radius/min-h · shadow none |
+| Layout | CSS grid `52px minmax(0,1fr)` · **`column-gap: 24px`** (icon↔text) · `align-items: center` | same |
+| Icon well (`.bo-summary-icon`) | **`52×52`** · radius `50%` · bg `rgba(217,119,6,.12)` · border `1px solid rgba(217,119,6,.18)` · glyph `#D97706` · glyph size `22px` | bg `rgba(245,158,11,.16)` · border `rgba(245,158,11,.28)` · glyph `#FBBF24` |
+| Label (`span`) | **`12px` / `800`** · `#57534E` · line-height `1.2` | `#D4D4D8` · same size/weight |
+| Value (`strong`) | **`23px` / `900`** · `#18191C` · line-height `1.05` · margin `2px 0` · tabular-nums | `#F5F5F4` · same size/weight |
+| Note (`.bo-summary-note`) | **`11px` / `600`** · `#71717A` · line-height `1.2` | `#A1A1AA` · same size/weight |
+| Strip (`.quick-stats`) | `repeat(4, minmax(0,1fr))` · gap `14px` · **↔ table-card gap `16px`** · **≤1024 → 2 col** · **≤575 → 1 col** | same |
+
+**Listing vertical rhythm (locked):** KPI strip → table panel = **`16px`** (flex `gap` on `.report-content`, strip `margin-bottom:0`). Filter strip inside `.table-card` = pad **`14px 16px`** + `1px` bottom hairline, then thead flush — same on User Management, Member Wallet, Deposit/Withdraw. Do not mix `12px` content gap with `16px` strip margin.
+
+**Do not** set `gap: unset` after `column-gap` — the shorthand clears icon↔text spacing.
+
+**Also applies to User Management** (`.user-metric` + `.metric-icon`, `index.html`) — same geometry/type/icon wash; label is `<small>` instead of `<span>`, note is `<span>` instead of `.bo-summary-note`. CSS: `bo-charcoal-legacy.css`.
+
+CSS: `reports.css` (geometry + type) · `bo-wallet-transaction-amber.css` (amber icon + muted colors + 4-col Member Wallet strip) · `bo-charcoal-legacy.css` (User Management). Full table: `.interface-design/system.md` → Patterns → KPI summary card.
 
 ### Permission matrix (Roles & Permissions)
 
@@ -296,6 +349,8 @@ Do not paint options with cool blue/cyan. Attention shake (`.is-attention`) is m
 ### Transaction listing family (`body.bo-wallet-tx`)
 
 Sidebar **3. Transaction** pages use listing chrome: filter/select = surface `#FFF8EB` (not form well `#F5EBDC`); dark selected option = `#F59E0B` / `#2A2C36`; pager = mad-pager slate inactive + amber active; **date range popover** = cream panel `12px` · preset active wash `#FFF1DC`/`#B45309` (never solid CTA) · ghost month/year head · divider shadow into calendar; **table frame** = Admin Detail `.mad-panel` (viewport-locked · inner scroll · `table-layout:fixed` · radius `8px`); **table zebra** = light `#FFF8EB`/`#FFF1DC` · dark `#3A3C48`/`#434653` · head light `#FFE8CC` / dark `#1F2128` · **no pure white** · thead corners square · cell `bold` · PENDING orange / APPROVED green / REJECTED red.
+
+**Topbar (locked — Deposit Approval specimen):** height `64px` · surface `#FFF8EB` · left = hamb + page icon + title (+ Approval lead line) · right = theme → Members/Deposit/Withdraw counters (non-`MAIN`) → User Name + amber avatar. See Topbar chrome above.
 
 **Listing filter controls (locked — Wallet Ledger specimen):** height **`36px`** · radius **`8px`** · row gap **`10px`** · pad `0 12px` · date trigger ~`240px` · text inputs `140px` · Type `150px` · Reset/Search `width:auto` · **no** Page Size in the filter row (footer only) · flush strips: no hover `translateY`. Beat `bo-ui-standard` `--bo-filter-height:42px` / `11px` radius. Full table: `.interface-design/system.md` → Patterns → Listing filter controls.
 
@@ -846,7 +901,7 @@ Verified by sweeping every rendered element's computed colour on the page in bot
 - Keep light/dark parity when changing colors.
 - Use continuum on canvas only; keep sidebar opaque; keep panels solid.
 - Prefer `--bo-*` tokens; treat `--bo-cyan*` as amber.
-- Copy Admin Detail topbar (theme + User Name) and Primary/Ghost button recipes on every migrated page.
+- Copy locked topbar anatomy (theme → counters when present → User Name) and Primary/Ghost button recipes on every migrated page.
 - Override legacy light canvas (`reports.css` `.report-body{background:#f5f7fb!important}`) on every dark page, or white frames will leak.
 
 **Don't**

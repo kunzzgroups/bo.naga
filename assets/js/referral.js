@@ -88,7 +88,7 @@
     const cards=document.getElementById('refMemberCards');
     updateStats(rows);
     if(!rows.length){
-      body.innerHTML='<tr><td colspan="8" class="ref-empty">No member found.</td></tr>';
+      body.innerHTML='<tr><td colspan="7" class="ref-empty">No member found.</td></tr>';
       cards.innerHTML='<div class="ref-mobile-card"><h3>No member found</h3><div class="meta">Try another search filter.</div></div>';
       return;
     }
@@ -152,7 +152,7 @@
     state.selected={id,name};
     renderMembers();
     const body=document.getElementById('refDownlineBody');
-    const level=document.getElementById('refLevel').value||1;
+    const level=document.getElementById('refLevel')?.value||'1';
     document.getElementById('refDownlineTitle').textContent='Downline of '+name;
     document.getElementById('refSelectedMeta').textContent='Level '+level;
     body.innerHTML='<tr><td colspan="5" class="ref-loading">Loading...</td></tr>';
@@ -167,7 +167,8 @@
   }
   function resetFilters(){
     document.getElementById('refKeyword').value='';
-    document.getElementById('refLevel').value='1';
+    const levelEl=document.getElementById('refLevel');
+    if(levelEl) levelEl.value='1';
     const today=ymd(new Date());
     document.getElementById('refDateFrom').value=today;
     document.getElementById('refDateTo').value=today;
@@ -417,11 +418,8 @@
   async function saveRewardConfig(){const b=document.getElementById('refRewardSave');try{b.disabled=true;const body={enabled:Number(document.getElementById('refRewardEnabled').value),mode:document.getElementById('refRewardMode').value,value:Number(document.getElementById('refRewardValue').value||0)};const j=await api(endpoint('REFERRAL_CONFIG'),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(body)});state.defaultReward={...body};const d=j.data||{};const extra=Number(d.creditedCount||0)>0?`\nCredited ${d.creditedCount} missing referral reward(s), total MYR ${money(d.creditedAmount)}.`:'';alert((j.message||'Saved')+extra);closeRewardConfig();await loadRewardConfig();await loadMembers();}catch(e){alert(e.message);}finally{b.disabled=false;}}
 
   document.addEventListener('DOMContentLoaded',()=>{
-    document.getElementById('refSearch')?.addEventListener('click',loadMembers);
-    document.getElementById('refReset')?.addEventListener('click',resetFilters);
     initDatePicker();
     document.getElementById('refKeyword')?.addEventListener('keydown',e=>{if(e.key==='Enter')loadMembers();});
-    document.getElementById('refLevel')?.addEventListener('change',()=>{if(state.selected)loadDownline(state.selected.id,state.selected.name);});
     document.getElementById('refRewardMode')?.addEventListener('change',updateRewardLabel);
     document.getElementById('refRewardSave')?.addEventListener('click',saveRewardConfig);
     document.getElementById('refRewardConfigOpen')?.addEventListener('click',openRewardConfig);

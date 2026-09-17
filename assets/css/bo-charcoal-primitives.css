@@ -508,10 +508,13 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-picker{
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-presets{
   background:#FFF8EB!important;border-right:1px solid #EADCC8!important;
 }
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-presets button{color:#374151!important}
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-presets button:hover{background:#F5EBDC!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-presets button{color:#18191C!important;font-size:13px!important;font-weight:700!important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-presets button:hover{
+  background:rgba(217,119,6,.10)!important;color:#B45309!important;
+}
+/* Preset active = amber wash (never solid CTA fill) — system.md Date range picker */
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-presets button.active{
-  background:#D97706!important;color:#FFFFFF!important;
+  background:#FFF1DC!important;color:#B45309!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-range-calendar{background:transparent!important}
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .ref-cal-head button{
@@ -547,10 +550,12 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-picker{
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-presets{
   background:#383A46!important;border-right:1px solid rgba(255,255,255,.14)!important;
 }
-html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-presets button{color:#E7E5E4!important}
-html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-presets button:hover{background:rgba(255,255,255,.06)!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-presets button{color:#F5F5F4!important;font-size:13px!important;font-weight:700!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-presets button:hover{
+  background:rgba(245,158,11,.14)!important;color:#FBBF24!important;
+}
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .ref-range-presets button.active{
-  background:#F59E0B!important;color:#2A2C36!important;
+  background:rgba(245,158,11,.16)!important;color:#FBBF24!important;
 }
 /* Month / year grid item active. Light is deliberately PLAIN (transparent, #374151) — the
    reference only fills this control in dark. Measured on main-merchant-profit.html, both

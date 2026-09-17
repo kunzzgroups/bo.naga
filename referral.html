@@ -14,12 +14,20 @@
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.5" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-shell.css?v=1.0.0" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-legacy.css?v=1.0.1" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-account-chip.css?v=1.0.1" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-shell.css?v=1.0.2" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-legacy.css?v=1.0.13" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-primitives.css?v=1.0.1" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-cms.css?v=1.0.0" rel="stylesheet" />
 <link href="assets/css/bo-input-fill.css?v=1.0.1" rel="stylesheet" />
+<script>
+(function(){
+  try{
+    if(localStorage.getItem('bo_theme')==='dark') document.documentElement.setAttribute('data-bo-theme','dark');
+  }catch(e){}
+})();
+</script>
+</head>
 <body class="report-body referral-page bo-charcoal bo-account-chip">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
@@ -28,32 +36,32 @@
 </aside>
 <div class="sidebar-overlay" data-close-sidebar="" id="reportOverlay"></div>
 <main class="report-main">
-<header class="report-topbar referral-topbar">
+<header class="report-topbar">
 <button class="hamb" data-open-sidebar=""><i class="bi bi-list"></i></button>
 <div class="user-title-wrap">
 <div class="user-title-icon"><i class="bi bi-diagram-2"></i></div>
-<div><h1>Referral Network</h1></div>
+<div>
+<h1>Referral Network</h1>
+</div>
 </div>
 <div class="report-actions">
-      <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
-        <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
-        <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
-      </button>
-      <div data-bo-profile></div>
-    </div>
+<button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode"><i class="bi bi-sun-fill" data-theme-icon="sun"></i><i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i></button>
+<div data-bo-profile=""></div>
+</div>
 </header>
 <section class="report-content referral-content">
 <div class="referral-stats-grid">
-<div class="ref-stat-card"><div class="ref-stat-icon purple"><i class="bi bi-people"></i></div><div><span>Total Members</span><strong id="refTotalMembers">0</strong><small>All registered members</small></div></div>
-<div class="ref-stat-card"><div class="ref-stat-icon green"><i class="bi bi-diagram-3"></i></div><div><span>Total Downline</span><strong id="refTotalDownline">0</strong><small>All levels combined</small></div></div>
-<div class="ref-stat-card"><div class="ref-stat-icon violet"><i class="bi bi-bar-chart-line"></i></div><div><span>Total Commission</span><strong id="refTotalCommission">0.00</strong><small>All time earned</small></div></div>
-<div class="ref-stat-card"><div class="ref-stat-icon orange"><i class="bi bi-person-plus"></i></div><div><span>New This Month</span><strong id="refNewThisMonth">0</strong><small>New members joined</small></div></div>
+<div class="ref-stat-card"><div class="ref-stat-icon" aria-hidden="true"><i class="bi bi-people"></i></div><div><span>Total Members</span><strong id="refTotalMembers">0</strong><small>All registered members</small></div></div>
+<div class="ref-stat-card"><div class="ref-stat-icon" aria-hidden="true"><i class="bi bi-diagram-3"></i></div><div><span>Total Downline</span><strong id="refTotalDownline">0</strong><small>All levels combined</small></div></div>
+<div class="ref-stat-card"><div class="ref-stat-icon" aria-hidden="true"><i class="bi bi-bar-chart-line"></i></div><div><span>Total Commission</span><strong id="refTotalCommission">0.00</strong><small>All time earned</small></div></div>
+<div class="ref-stat-card"><div class="ref-stat-icon" aria-hidden="true"><i class="bi bi-person-plus"></i></div><div><span>New This Month</span><strong id="refNewThisMonth">0</strong><small>New members joined</small></div></div>
 </div>
+<div class="referral-panels-shell">
 <div class="referral-filter-card">
 <div class="referral-filter-grid bo-filter-row">
 <div class="field ref-date-field"><label>Date Range</label>
 <div class="ref-range-wrap">
-<button class="ref-range-trigger" id="refDateTrigger" type="button"><span class="ref-range-icon"><i class="bi bi-calendar3"></i></span><span id="refDateLabel">Select date range</span><i class="bi bi-chevron-down ms-auto"></i></button>
+<button class="ref-range-trigger" id="refDateTrigger" type="button" aria-label="Date range"><span class="ref-range-icon"><i class="bi bi-calendar3"></i></span><span id="refDateLabel">Select date range</span><i class="bi bi-chevron-down ms-auto"></i></button>
 <input id="refDateFrom" type="hidden"/><input id="refDateTo" type="hidden"/>
 <div class="ref-range-picker" id="refRangePicker">
 <div class="ref-range-presets">
@@ -83,9 +91,9 @@
 </div>
 </div>
 </div>
-<div class="field"><label>Search Member</label><div class="ref-input-icon"><input id="refKeyword" placeholder="Username / mobile / referral code"/><i class="bi bi-search"></i></div></div>
-<div class="field"><label>Level</label><select id="refLevel"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div>
-<div class="ref-filter-actions"><button class="clean-btn" id="refReset" type="button"><i class="bi bi-arrow-clockwise"></i> Reset</button><button class="clean-btn primary" id="refSearch" type="button"><i class="bi bi-search"></i> Search</button><button class="clean-btn" id="refRewardConfigOpen" type="button"><i class="bi bi-gear"></i> Reward Config</button></div>
+<div class="field"><label>Search Member</label><input id="refKeyword" aria-label="Search member" placeholder="Username / mobile / name"/></div>
+<select id="refLevel" hidden data-no-rounded="1" aria-hidden="true" tabindex="-1"><option selected>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+<button class="clean-btn" id="refRewardConfigOpen" type="button"><i class="bi bi-gear"></i> Reward Config</button>
 </div>
 </div>
 <div class="referral-panels-grid">
@@ -94,7 +102,7 @@
 <div class="ref-table-wrap">
 <table class="ref-table ref-members-table">
 <thead><tr><th>#</th><th>Member</th><th>Referral Name</th><th>L1</th><th>Reward Setting</th><th>Joined Date</th><th>Action</th></tr></thead>
-<tbody id="refMemberBody"><tr><td colspan="8">Loading...</td></tr></tbody>
+<tbody id="refMemberBody"><tr><td colspan="7">Loading...</td></tr></tbody>
 </table>
 </div>
 <div class="ref-mobile-list" id="refMemberCards"></div>
@@ -112,6 +120,7 @@
 <div class="ref-mobile-list" id="refDownlineCards"></div>
 <div class="ref-pagination-row"><div>Show <select><option>10</option></select> entries</div><div id="refDownlineShowing">Showing 0 to 0 of 0 entries</div><div class="ref-pager"><button>‹</button><b>1</b><button>›</button></div></div>
 <div class="ref-info-note"><i class="bi bi-info-circle-fill"></i> Select a member from the list to view their downline members.</div>
+</div>
 </div>
 </div>
 </section>
@@ -166,7 +175,7 @@
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
 <script src="assets/js/auth.js?v=1.0.65"></script>
 <script src="assets/js/reports.js?v=1.0.29"></script>
-<script src="assets/js/referral.js?v=1.0.25"></script>
+<script src="assets/js/referral.js?v=1.0.28"></script>
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
@@ -178,4 +187,4 @@
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 <script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
 </body>
-</link></head></html>
+</html>
