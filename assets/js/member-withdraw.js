@@ -208,7 +208,7 @@
     if(track&&window.BO_SEG_BOUNCE) window.BO_SEG_BOUNCE.mount(track,{button:':scope > .bo-tx-tab',anim:'bounce'});
   }
 
-  document.addEventListener('DOMContentLoaded',()=>{
+  const initWithdrawPage=()=>{
     syncTxTypeTabs('withdraw');
     let keywordTimer=0;
     const runSearch=()=>{page=1;clearLockedAutoSize();load();};
@@ -243,5 +243,7 @@
         else evenFillRowHeights();
       },180);
     });
-  });
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initWithdrawPage,{once:true});
+  else initWithdrawPage();
 })();

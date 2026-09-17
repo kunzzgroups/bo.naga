@@ -1,4 +1,4 @@
-﻿(function(){
+(function(){
   'use strict';
 
   const GROUP_META = {
@@ -276,11 +276,20 @@
     [bottom].forEach(b=>{if(b)b.disabled=true;});
     msg('Saving role and permissions...','');
     try{
-      const payload={name,code:slugify(name),remark:'',status:1};
-      const brandId=merchantScopeId(); if(!brandId) throw new Error('Select a Merchant first.'); const scopedHeaders={'Content-Type':'application/json',...BO_AUTH.authHeader(),'X-Brand-Id':brandId}; const saved=await api(BO_AUTH.roleSaveUrl(),{method:'POST',headers:scopedHeaders,body:JSON.stringify(payload)});
+      const roleType=String(document.getElementById('mrcRoleUsage')?.value||'CUSTOM').toUpperCase();
+      const payload={name,code:slugify(name),remark:'',status:1,roleType};
+      const brandId=merchantScopeId();
+      if(roleType!=='BRAND_OWNER'&&!brandId) throw new Error('Select a Merchant first.');
+      // BRAND_OWNER is a reusable platform permission template. Standard roles stay
+      // merchant-scoped exactly as before. The API validates who may create it.
+      const scopedHeaders={'Content-Type':'application/json',...BO_AUTH.authHeader()};
+      if(roleType!=='BRAND_OWNER'&&brandId) scopedHeaders['X-Brand-Id']=brandId;
+      const saved=await api(BO_AUTH.roleSaveUrl(),{method:'POST',headers:scopedHeaders,body:JSON.stringify(payload)});
       let roleId=saved.data?.id;
       if(!roleId){
-        const roles=await api(BO_AUTH.roleListUrl(),{headers:{...BO_AUTH.authHeader(),'X-Brand-Id':brandId}});
+        const lookupHeaders={...BO_AUTH.authHeader()};
+        if(roleType!=='BRAND_OWNER'&&brandId) lookupHeaders['X-Brand-Id']=brandId;
+        const roles=await api(roleType==='BRAND_OWNER'&&BO_AUTH.roleListAllUrl?BO_AUTH.roleListAllUrl():BO_AUTH.roleListUrl(),{headers:lookupHeaders});
         const rows=Array.isArray(roles.data)?roles.data:[];
         roleId=rows.find(r=>r.code===payload.code)?.id;
       }
@@ -290,7 +299,10 @@
       const missing=ids.filter(id=>!new Set(persisted).has(id));
       if(missing.length) throw new Error('Some selected menu permissions were rejected by the API.');
       msg('Role created successfully.','success');
-      setTimeout(function(){ location.href='main-merchant-roles.html?merchantId='+encodeURIComponent(brandId)+'&roleId='+encodeURIComponent(String(roleId)); },450);
+      setTimeout(function(){
+        const q=roleType==='BRAND_OWNER'?('?roleId='+encodeURIComponent(String(roleId))):('?merchantId='+encodeURIComponent(brandId)+'&roleId='+encodeURIComponent(String(roleId)));
+        location.href='main-merchant-roles.html'+q;
+      },450);
     }catch(err){
       msg(String(err&&err.message||'Unable to save role.'),'error');
       [bottom].forEach(b=>{if(b)b.disabled=false;});

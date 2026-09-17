@@ -5,7 +5,6 @@
   const num=v=>{const n=Number(String(v==null?0:v).replace(/,/g,''));return Number.isFinite(n)?n:0;};
   const money=v=>num(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
   const endpoint=k=>API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS[k];
-  const VIS_KEY='bo_pm_visible_overrides';
   const methodsById=new Map();
   let statusFilter='active';
   let listPage=1;
@@ -65,8 +64,6 @@
     }
     return all;
   }
-  function loadVisOverrides(){try{return JSON.parse(sessionStorage.getItem(VIS_KEY)||'{}')||{};}catch(_){return {};}}
-  function setVisOverride(id,val){const o=loadVisOverrides();o[String(id)]=Number(val)?1:0;sessionStorage.setItem(VIS_KEY,JSON.stringify(o));}
   function parseShown(raw){
     if(raw==null||raw==='')return null;
     if(typeof raw==='boolean')return raw;
@@ -80,8 +77,6 @@
     const raw=m.visible??m.showOnDeposit??m.isShow??m.clientVisible??m.display??m.showStatus;
     const parsed=parseShown(raw);
     if(parsed!=null)return parsed;
-    const o=loadVisOverrides();
-    if(Object.prototype.hasOwnProperty.call(o,String(m.id)))return Number(o[String(m.id)])===1;
     return true;
   }
   function showVal(m){return isShown(m)?1:0;}
@@ -291,13 +286,12 @@
       const prev=isShown(m)?1:0;
       const next=prev?0:1;
       paintShow(showEl,next===1);
-      setVisOverride(id,next);
+      
       m.visible=next;
       m.showOnDeposit=next;
       m.isShow=next;
       methodsById.set(id,m);
       saveMethod(m,{visible:next,showOnDeposit:next,isShow:next},showEl,'Failed to update bank visibility',()=>{
-        setVisOverride(id,prev);
         m.visible=prev;
         m.showOnDeposit=prev;
         m.isShow=prev;

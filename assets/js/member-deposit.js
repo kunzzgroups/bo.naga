@@ -458,7 +458,7 @@
     if(track&&window.BO_SEG_BOUNCE) window.BO_SEG_BOUNCE.mount(track,{button:':scope > .bo-tx-tab',anim:'bounce'});
   }
 
-  document.addEventListener('DOMContentLoaded',()=>{
+  const initDepositPage=()=>{
     syncTxTypeTabs('deposit');
     let keywordTimer=0;
     const runSearch=()=>{page=1;clearLockedAutoSize();load();renderBankCards();refreshTxTabCounts();};
@@ -492,5 +492,7 @@
         else evenFillRowHeights();
       },180);
     });
-  });
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initDepositPage,{once:true});
+  else initDepositPage();
 })();

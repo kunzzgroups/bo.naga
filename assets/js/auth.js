@@ -169,7 +169,8 @@
       icon: String((m && m.icon) || 'bi-circle'),
       parentKey: String((m && m.parentKey) || ''),
       sortOrder: Number((m && m.sortOrder) || 0),
-      status: Number((m && (m.status == null ? 1 : m.status)))
+      status: Number((m && (m.status == null ? 1 : m.status))),
+      showInSidebar: Number((m && (m.showInSidebar == null ? 1 : m.showInSidebar)))
     };
   }
 
@@ -429,7 +430,7 @@
       // menu renaming, parent repair or frontend permission overrides.
       const menus = sourceMenus.map(normalizeMenu)
         .filter(function(m){
-          if(m.status !== 1 || !m.url || m.url === '#') return false;
+          if(m.status !== 1 || m.showInSidebar !== 1 || !m.url || m.url === '#') return false;
           // Admin / Merchant Credit Control pages are retired — keep Adjust/Add Credit on list pages.
           const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
           const key = String(m.menuKey || '').toLowerCase();
