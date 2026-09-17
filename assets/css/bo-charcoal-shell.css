@@ -455,6 +455,13 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .r
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav::after{
   content:none!important;
   display:none!important;
+}/* Beat reports.css cream .nav-group cards — L1 sits on opaque sidebar */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > .nav-group{
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
 }html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-sidebar-account-footer{
   background:transparent!important;
   border-top:1px solid rgba(92,74,48,.1)!important;
@@ -630,6 +637,14 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar::after{
   box-shadow:none!important;
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
+}html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav > .nav-group,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav > .nav-group.open,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav > .nav-group.bo-flyout-hover{
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-sidebar-account-footer{
   margin:0!important;
   padding:10px!important;
@@ -1204,10 +1219,14 @@ body.report-body.bo-charcoal .report-actions{
   display:inline-flex!important;
   align-items:center!important;
   gap:12px!important;
-}/* Divider slot always reserved — only tint changes by theme (prevents cluster shift) */
-body.report-body.bo-charcoal .report-actions > [data-bo-profile]::before{
+}body.report-body.bo-charcoal .report-actions > [data-bo-profile]::before{
+  content:none!important;display:none!important;
+}/* Divider immediately before User Name (MD: theme → counters → divider → profile) */
+body.report-body.bo-charcoal .report-actions .bo-account-link::before,
+body.report-body.bo-charcoal .bo-account-link::before{
   content:"";
   width:1px;height:28px;flex:0 0 1px;
+  align-self:center;
   background:rgba(24,25,28,.12);
   margin:0;
 }body.report-body.bo-charcoal .bo-theme-btn{
@@ -1247,6 +1266,7 @@ body.report-body.bo-charcoal .bo-theme-btn i[data-theme-icon][hidden]{
   outline:2px solid #D97706!important;outline-offset:2px!important;
 }body.report-body.bo-charcoal .report-actions .bo-account-link,
 body.report-body.bo-charcoal .bo-account-link{
+  display:inline-flex!important;
   height:auto!important;min-width:0!important;padding:0!important;
   border:0!important;border-radius:0!important;
   background:transparent!important;
@@ -1332,7 +1352,8 @@ body.report-body.bo-charcoal .report-avatar:not(:has(> i))::before{
   background:rgba(245,158,11,.1)!important;
   border-color:#F59E0B!important;
   color:#FBBF24!important;
-}html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-actions > [data-bo-profile]::before{
+}html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-actions .bo-account-link::before,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-account-link::before{
   background:rgba(255,255,255,.12);
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-account-name{
   color:#FFFFFF!important;
@@ -1349,7 +1370,122 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-avatar{
   color:#2A2C36!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-account-link:hover .report-avatar{
   background:#FBBF24!important;
-}/* Dark hover tips — soft charcoal + amber (replace navy/cyan) */
+}/* Header counters — locked Transaction / ops chrome (no rainbow icons) */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-header-counters{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-header-counter,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal a.bo-header-counter{
+  box-sizing:border-box!important;
+  height:40px!important;
+  min-width:0!important;
+  padding:4px 12px 4px 4px!important;
+  border:1px solid #EADCC8!important;
+  border-radius:8px!important;
+  background:#FFFCF7!important;
+  color:#18191C!important;
+  box-shadow:none!important;
+  text-decoration:none!important;
+  transform:none!important;
+  gap:8px!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-header-counter:hover,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-header-counter:focus-visible,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal a.bo-header-counter:hover,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal a.bo-header-counter:focus-visible{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+  transform:none!important;
+  outline:none!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-header-counter-icon,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-header-counter-icon.members,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-header-counter-icon.deposit,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-header-counter-icon.withdraw{
+  width:32px!important;height:32px!important;
+  border-radius:6px!important;
+  background:rgba(217,119,6,.12)!important;
+  color:#D97706!important;
+  font-size:15px!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-header-counter-text small{
+  font-size:10px!important;
+  font-weight:700!important;
+  letter-spacing:.06em!important;
+  text-transform:uppercase!important;
+  color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-header-counter-text b{
+  font-size:15px!important;
+  font-weight:800!important;
+  font-variant-numeric:tabular-nums!important;
+  color:#18191C!important;
+  margin-top:1px!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-header-counter,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal a.bo-header-counter{
+  box-sizing:border-box!important;
+  height:40px!important;
+  min-width:0!important;
+  padding:4px 12px 4px 4px!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  border-radius:8px!important;
+  background:#2A2C36!important;
+  color:#F5F5F4!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-header-counter:hover,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-header-counter:focus-visible,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal a.bo-header-counter:hover,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal a.bo-header-counter:focus-visible{
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+  transform:none!important;
+  outline:none!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-header-counter-icon,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-header-counter-icon.members,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-header-counter-icon.deposit,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-header-counter-icon.withdraw{
+  width:32px!important;height:32px!important;
+  border-radius:6px!important;
+  background:rgba(245,158,11,.16)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-header-counter-text small{
+  font-size:10px!important;
+  font-weight:700!important;
+  letter-spacing:.06em!important;
+  text-transform:uppercase!important;
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-header-counter-text b{
+  font-size:15px!important;
+  font-weight:800!important;
+  font-variant-numeric:tabular-nums!important;
+  color:#F5F5F4!important;
+}
+@media(max-width:1199.98px){
+  html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-header-counter,
+  html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal a.bo-header-counter,
+  html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-header-counter,
+  html[data-bo-theme="dark"] body.report-body.bo-charcoal a.bo-header-counter{
+    width:40px!important;min-width:40px!important;height:40px!important;
+    padding:4px!important;justify-content:center!important;
+  }
+}
+@media(max-width:575.98px){
+  html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-header-counters,
+  html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-header-counter,
+  html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-header-counters,
+  html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-header-counter{
+    display:none!important;
+  }
+}
+/* Dark hover tips — soft charcoal + amber (replace navy/cyan) */
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-time-tip::after,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-icon-btn[data-tip]::after{
   background:#40424E!important;
