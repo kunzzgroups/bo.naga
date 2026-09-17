@@ -510,9 +510,14 @@ document.addEventListener('DOMContentLoaded', () => {
     /* Filter rows / pagination entries: size the FIELD, keep wrap at 100% so
        Status/Page Size and "Show N entries" never overflow neighbors
        (was Math.max(160) wrap inside an 80–112px cell). */
-    const contentWidth=(inFilterRow || inEntriesControl)
+    let contentWidth=(inFilterRow || inEntriesControl)
       ? Math.max(inEntriesControl ? 72 : 80, widest+(inEntriesControl ? 44 : 54))
       : Math.max(160, widest+72);
+    /* Transaction listing MD — Status locked at 150px (Wallet Ledger Type specimen) */
+    const listingFixed={depositStatus:150,withdrawStatus:150};
+    if(document.body.classList.contains('bo-wallet-tx') && listingFixed[select.id]!=null){
+      contentWidth=listingFixed[select.id];
+    }
 
     if(isCompactAutoWidthWrap(parts.wrap)){
       if(inFilterRow || inEntriesControl){

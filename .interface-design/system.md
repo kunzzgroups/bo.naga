@@ -112,7 +112,7 @@ Rules:
 | Hover tip bg | `#FFF8EB` | `#40424E` |
 | Hover tip text | `#6b360c` | `#F5F5F4` |
 | Hover tip border | `rgba(217,119,6,.28)` | `rgba(245,158,11,.35)` |
-| Tip radius | `8px` | `8px` |
+| Tip radius | Chart `.trend-tip` **`8px`** · datetime / float / icon tips **`999px` pill** | same |
 | Money positive | `#B45309` | `#F59E0B` |
 | Ghost / Export gradient | soft gray | `#4A4C58` → `#383A46` → `#2C2E38` |
 | Modal z-index | `30000` (above sidebar / flyout) | same |
@@ -132,6 +132,7 @@ Scale: `4, 8, 10, 12, 14, 16, 18, 20, 24, 32`
 | Avatar (topbar) | `12px` |
 | Pills / switches | `999px` |
 | Chart hover tip (`.trend-tip`) | `8px` |
+| Datetime / float / icon tip (`.mad-float-tip` · `.wl-time-tip` · Last Login) | `999px` pill |
 
 ### Typography
 
@@ -170,7 +171,7 @@ Classic BO listing shells (`reports.css` + `bo-ui-standard.css`), **not** MAIN e
 | Pager | **Table footer pager** (`.mad-pager`) — light inactive slate `#F3F4F6`/`#9CA3AF`; dark charcoal inactive; amber 3D active |
 | Date range | **Date range picker** pattern (preset wash, ghost head, cream panel) — listing trigger height **`36px`** · width ~`240px` — see Patterns |
 | Filter titles | Hidden on listing filters (placeholder + value carry meaning) |
-| Filter Page Size | **Not** in the filter row — footer `Show N entries` only (Wallet Ledger / Deposit / Withdraw) |
+| Filter Page Size | **Not** in the filter row — footer `Show N entries` only (Deposit / Withdraw / Wallet Ledger). Options **`-` · `10` · `20` · `50` · `100` · `All`** (`#depositSize` / `#withdrawSize` / `#ledgerSize` hidden sources). Chrome = **Role select** recipe: trigger surface `#FFF8EB` / border `#EADCC8` / **`36px`** · menu open upward · options amber wash hover · dark selected solid `#F59E0B`/`#2A2C36` — never form well `#F5EBDC`. `-` = auto-fit rows · `All` = 10000 |
 | Deposit / Withdraw tabs | `.bo-tx-tabs` / `.bo-tx-tab` — **Status filter pills** recipe · order Deposit → Withdraw → All · cream **capsule** thumb (`999px`) + muted idle dots · green/red only when selected · counts `(n)` · requires `bo-seg-bounce` |
 | Hover / focus / open | Same as Merchant Profit + Role select: border `#D97706` + `0 0 0 3px rgba(217,119,6,.14)` (dark: `#F59E0B` + `rgba(245,158,11,.18)`). Inputs, selects, date triggers — one recipe. Idle chrome must not kill the ring. |
 | Table frame | **Same as Admin Detail `.mad-panel`** — viewport-locked panel · inner scroll · `table-layout:fixed` · radius `8px` · no nested `.table-wrap` border · footer pins to panel bottom |
@@ -190,6 +191,7 @@ Reference pages: `member-deposit.html` · `member-withdraw.html`. Same shell; Wi
 | Body | `body.bo-wallet-tx.deposit-approval-page` / `.withdraw-approval-page` — keep this class; charcoal shells must **not** replace it |
 | Bank capacity strip | `#depositBankCards` / `#withdrawBankCards` · `.deposit-bank-card-stats` · grid `auto-fit` / `minmax(220px,1fr)` on wide · cream card · letter mark · amount · max-amount meter |
 | Toolbar | Inside `.table-card` → `.deposit-inline-filter` → `.bo-tx-toolbar`: **left** `.bo-tx-tabs.bo-seg` · **right** `.bo-tx-filter-controls` (date range + keyword + status) |
+| Filter controls | **Listing filter controls (locked)** — height **`36px`** · gap **`10px`** · radius **`8px`** · date **`240px`** · keyword **`140px`** · status **`150px`** · surface `#FFF8EB` / `#EADCC8` (same as Wallet Ledger specimen) |
 | Filter strip | **No** Reset / Search / Page Size in the filter row — page size lives in footer only (`#depositSize` / `#withdrawSize` stay hidden) |
 | Columns (Deposit) | Date · Member · Amount · **Bank** (header label, not Method) · Reference · Status · Processed · Action |
 | Columns (Withdraw) | Date · Member · Amount · Bank · Reference · Remark · Status · Processed · Action |
@@ -253,8 +255,9 @@ Reference: `bulk-adjustment.html` · `bulk-bonus-adjustment.html` · `body.bo-wa
 |------|------|
 | Shell | `bo-wallet-tx` + amber CSS + `bulk-member-operation.css` (not charcoal) |
 | Mode tabs | Manual Selection · Excel / XLSX Upload — family segment chrome |
+| Manual split | `.bulk-operation-layout` — **Select Members `60%`** (`3fr`) · **Configure `40%`** (`2fr` · min `280px`) · stacks to `1fr` on narrow |
 | Search | `.mad-search.bulk-member-search` — listing surface recipe |
-| Panel scrollbars | **Panel pill scrollbar** on `.member-picker-list` **and** `.selected-table tbody` · light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / hover `#D97706` · `4px` · no arrows |
+| Panel scrollbars | **Panel pill scrollbar** on `.member-picker-list` **and** `.selected-table tbody` · light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / hover `#D97706` · **`6px`** · no arrows |
 
 #### Panel pill scrollbar (Bulk · Wallet Ledger)
 
@@ -266,7 +269,7 @@ Applies to:
 
 | Part | Light | Dark |
 |------|-------|------|
-| Width / height | `4px` | `4px` |
+| Width / height | **`6px`** | **`6px`** |
 | Thumb | chocolate `#8B6B4A` | `#F59E0B` |
 | Thumb hover | deep chocolate `#5C4A30` | `#D97706` |
 | Track / buttons | transparent · `::-webkit-scrollbar-button{display:none;height:0}` | same |
@@ -286,9 +289,11 @@ Reference: `wallet-ledger.html` · `body.bo-wallet-tx.wallet-ledger-page` · `bo
 | Filter strip | Inside `.table-card` → `.filter-card.wallet-inline-filter` · pad `10px 14px` · bottom hairline `#EADCC8` · **no** Page Size in row |
 | Filter controls | **Listing filter controls (locked)** — see Patterns · date `240px` · Member/Provider `140px` · Type `150px` · Reset/Search `auto` (content + `0 12px`) |
 | Type multi-select | Trigger = listing control chrome · menu/options = **Role select** option recipe (cream · amber wash hover · dark selected solid amber) |
-| Table wrap | `.table-card > .table-wrap` horizontal scroll · **Panel pill scrollbar** (chocolate light / amber dark · `4px` · no arrows) |
+| Table wrap | `.table-card > .table-wrap` horizontal scroll · **Panel pill scrollbar** (chocolate light / amber dark · **`6px`** · no arrows) |
 | Type menu scroll | `#ledgerTypeOptions` — same pill recipe |
+| Wallet Ledger Created/Posted | Cell = **`DD/MM/YYYY`** · hover cream pill `.wl-time-tip` = **`HH:MM:SS`** · **no arrow / beak** · `999px` · pad `7px 14px` · cream `#FFF8EB` / text `#6b360c` · fixed escape overflow |
 | Hover in strip | Reset/Search: **no** `translateY(-1px)` / upward shadow (flush under `.table-card` top border) |
+| Footer Show N | Same as **Deposit** — options `-` · `10` · `20` · `50` · `100` · `All` via hidden `#ledgerSize` · Role select cream chrome · open upward · bold options · amber wash selected |
 
 Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
 
@@ -554,7 +559,7 @@ Native select hidden; enhancer builds custom control. Reference: `menu-permissio
 | Menu | surface · border · `8px` · soft shadow · pad `6px` | surface · deep shadow |
 | Option hover | `--bo-cyan-tint` · text `--bo-cyan-deep` | `rgba(245,158,11,.14)` |
 | Option selected (dark) | — | fill `#F59E0B` · text `#2A2C36` |
-| Scrollbar thumb | `#98A2B3` / hover `#667085` · `4px` pill · no arrows (menu only — Bulk panels use chocolate light) | `#F59E0B` / `#D97706` |
+| Scrollbar thumb | `#98A2B3` / hover `#667085` · `4px` pill · no arrows (menu only — Bulk/Wallet panels use chocolate **`6px`**) | `#F59E0B` / `#D97706` |
 | Field label | `11px/800` uppercase · tracking `.08em` | same |
 
 #### Date range picker (`.bo-range-*` / `.ref-range-*` — locked)
@@ -684,8 +689,9 @@ Bare `.status-pill` = PENDING · `.active` = APPROVED · `.off` = REJECTED.
 | Spec | Light | Dark |
 |------|-------|------|
 | Chart tip `.trend-tip` | bg `#FFF8EB` · text `#6b360c` · border amber/28 · radius **`8px`** | bg `#40424E` · text `#F5F5F4` · border amber/35 · **`8px`** |
-| Icon / float tip `[data-tip]` / `.mad-float-tip` | same cream / charcoal colors · may use **pill** radius `999px` | same |
-| Never | navy `#0F1F33` tip | navy tip |
+| Icon / float tip `[data-tip]` / `.mad-float-tip` / Last Login | cream `#FFF8EB` · text `#6b360c` · border `rgba(217,119,6,.28)` · shadow `0 8px 22px rgba(60,48,32,.16)` · pad `7px 14px` · **`999px` pill** · beak arrow | `#40424E` · `#F5F5F4` · border `rgba(245,158,11,.35)` · shadow `0 12px 28px rgba(0,0,0,.35)` · **`999px`** |
+| Wallet Ledger Created/Posted `.wl-time-tip` | Cell date `DD/MM/YYYY` · tip time `HH:MM:SS` · cream pill · **no arrow** · `position:fixed` | same |
+| Never | navy `#0F1F33` tip · native `title` inside overflow-hidden tables | navy tip |
 
 ### Admin listing chrome (filters / tabs / row chrome — locked light/dark)
 
@@ -947,10 +953,15 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Deposit/Withdraw page chrome locked: bank cards strip · tabs left + inline filters right · Bank `Name (account)` · no Reset/Search in filter · action 26×26 · no Pending metrics | User aligned Withdraw to Deposit shell | 2026-09-16 |
 | Deposit/Withdraw responsive 1920→375: bank strip · stacked toolbar · scrollable table · ≤1456 DATE day-only + hover time · hide secondary columns on tablet/phone | User: mid widths messy / table too short / DATE ellipsis | 2026-09-16 |
 | Withdraw Remark cell = player text only (no `Admin:` sub-line) | User: 这个也帮我移除 | 2026-09-16 |
-| Bulk panel pill scrollbar locked: light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / `#D97706` · `4px` · no arrows · webkit only (never cool slate / zinc) | User confirmed chocolate light thumb; dark must differ from light | 2026-09-17 |
+| Bulk panel pill scrollbar locked: light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / `#D97706` · **`6px`** · no arrows · webkit only (never cool slate / zinc) | User: scrollbar 再粗一点点；was `4px` | 2026-09-17 |
 | Wallet Ledger = `bo-wallet-tx` · table-wrap + type menu use Panel pill chocolate scrollbar · Type dropdown retired cool blue | User: Wallet Ledger scrollbar 跟着 MD | 2026-09-17 |
 | Sidebar active chip: first matching menu URL only (wallet-ledger under Transaction wins over Member duplicate) | User: Wallet Ledger sidebar 跟着 MD；Member 不应同时高亮 | 2026-09-17 |
 | **Listing filter controls locked at `36px` / radius `8px` / gap `10px`** (Wallet Ledger specimen) — date `240` · inputs `140` · Type `150` · Reset/Search auto · no Page Size in filter row · no hover lift in flush strips | User: 按钮和框大小更新进 MD，之后统一用这个大小 | 2026-09-17 |
+| Wallet Ledger Created/Posted = cell `DD/MM/YYYY` · cream pill tip `HH:MM:SS` · **no arrow** (图一标准 hover) | User: 图一无箭头；图二有箭头错；格子显示日期 | 2026-09-17 |
+| Footer **Show N entries** = Deposit contract (`-` · `10` · `20` · `50` · `100` · `All` · Role select cream · `#ledgerSize`) | User: 跟 new deposit 一样，写进 MD | 2026-09-17 |
+| Deposit/Withdraw toolbar filters = listing MD geometry (`36px` · gap `10` · date `240` · keyword `140` · status `150`) | User: 这里的框的大小跟着 MD 的来调 | 2026-09-17 |
+| Bulk Manual split = Select Members **60%** · Configure **40%** (`3fr` / `2fr`) | User: 左边 60% · 右边红框 40% | 2026-09-17 |
+| Panel pill scrollbar thickness **`6px`** (was `4px`) — Bulk · Wallet Ledger · Livechat | User: scrollbar 再粗一点点 · 更新 MD | 2026-09-17 |
 
 ### Opt-in layers for pages outside the migrated families
 

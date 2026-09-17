@@ -508,7 +508,7 @@ body.livechat-bo-page .bo-ui-icon-button{all:unset}
 .report-main .bo-filter-row>:has(#dashTimezone), .report-main .bo-filter-row>select#dashTimezone{--bo-select-width:169px;}
 .report-main .bo-filter-row>:has(#dbgStatus), .report-main .bo-filter-row>select#dbgStatus{--bo-select-width:119px;}
 .report-main .bo-filter-row>:has(#depositSize), .report-main .bo-filter-row>select#depositSize{--bo-select-width:80px;}
-.report-main .bo-filter-row>:has(#depositStatus), .report-main .bo-filter-row>select#depositStatus{--bo-select-width:112px;}
+.report-main .bo-filter-row>:has(#depositStatus), .report-main .bo-filter-row>select#depositStatus{--bo-select-width:150px;}
 .report-main .bo-filter-row>:has(#gameRankSize), .report-main .bo-filter-row>select#gameRankSize{--bo-select-width:80px;}
 .report-main .bo-filter-row>:has(#gameSortFilter), .report-main .bo-filter-row>select#gameSortFilter{--bo-select-width:157px;}
 .report-main .bo-filter-row>:has(#ledgerSize), .report-main .bo-filter-row>select#ledgerSize{--bo-select-width:80px;}
@@ -530,7 +530,7 @@ body.livechat-bo-page .bo-ui-icon-button{all:unset}
 .report-main .bo-filter-row>:has(#vipLogSource), .report-main .bo-filter-row>select#vipLogSource{--bo-select-width:146px;}
 .report-main .bo-filter-row>:has(#walletSize), .report-main .bo-filter-row>select#walletSize{--bo-select-width:80px;}
 .report-main .bo-filter-row>:has(#withdrawSize), .report-main .bo-filter-row>select#withdrawSize{--bo-select-width:80px;}
-.report-main .bo-filter-row>:has(#withdrawStatus), .report-main .bo-filter-row>select#withdrawStatus{--bo-select-width:112px;}
+.report-main .bo-filter-row>:has(#withdrawStatus), .report-main .bo-filter-row>select#withdrawStatus{--bo-select-width:150px;}
 
 /* Dynamic dropdowns start compact; bo-ui-standard.js recalculates them when options arrive. */
 .report-main .bo-filter-row>:has(#subCategoryFilter), .report-main .bo-filter-row>select#subCategoryFilter{--bo-select-width:80px;}
