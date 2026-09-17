@@ -23,6 +23,7 @@
 <link href="assets/css/main-security-picker.css?v=1.0.0" rel="stylesheet"/>
 <link href="assets/css/bo-table-zebra.css?v=1.0.0" rel="stylesheet"/>
 <link href="assets/css/bo-input-fill.css?v=1.0.1" rel="stylesheet"/>
+<link href="assets/css/main-mobile-responsive.css?v=1.0.0" rel="stylesheet">
 </head>
 <body class="report-body standardized-listing-page main-admin-detail-page main-admin-security-page" data-access-page="main_admin_security">
 <div class="report-shell">
@@ -192,6 +193,17 @@
             <col class="mas-col-status"/>
             <col class="mas-col-details"/>
           </colgroup>
+          <thead class="mas-mobile-inline-head" aria-hidden="true">
+            <tr>
+              <th>Time &amp; Date</th>
+              <th>Administrator</th>
+              <th>Action / Event</th>
+              <th>Target / Resource</th>
+              <th>IP Address &amp; Location</th>
+              <th>Status</th>
+              <th>Details</th>
+            </tr>
+          </thead>
           <tbody id="masTableBody">
             <tr><td colspan="7" class="mad-empty">Loading audit events...</td></tr>
           </tbody>
@@ -236,7 +248,7 @@
 <script src="assets/js/auth.js?v=1.0.66"></script>
 <script src="assets/js/permission-tabs.js?v=1.0.0"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
-<script src="assets/js/main-admin-security.js?v=1.1.17"></script>
+<script src="assets/js/main-admin-security.js?v=1.1.18"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>

@@ -6,6 +6,15 @@
   const tableWrap = document.querySelector('.mas-table-wrap');
   const tableScroll = document.getElementById('masTableScroll') || document.querySelector('.mas-table-body-scroll');
   const panelEl = document.querySelector('.mas-panel');
+
+  // Keep the split audit header aligned with the body on touch/trackpad horizontal scroll.
+  // The body is the single two-axis mobile scroller; the header mirrors only scrollLeft.
+  const tableHead = document.querySelector('.mas-table-head');
+  if(tableScroll && tableHead){
+    tableScroll.addEventListener('scroll', function(){
+      tableHead.scrollLeft = tableScroll.scrollLeft;
+    }, { passive: true });
+  }
   const searchEl = document.getElementById('masSearch');
   const eventTypeEl = document.getElementById('masEventType');
   const statusEl = document.getElementById('masStatus');

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>if(!window.__bulkTemplateLoad)location.replace("bulk-adjustment.html?tab=bonus");</script>
+<script>if(!window.__bulkTemplateLoad && new URLSearchParams(location.search).get('combined')!=='1')location.replace("bulk-adjustment.html?tab=bonus");</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 <meta charset="utf-8"/>
@@ -56,7 +56,7 @@
 <section class="report-content">
   <nav class="bulk-family-tabs" aria-label="Bulk adjustment type">
     <a class="bulk-family-tab" href="bulk-adjustment.html?tab=winlose">Win/Lose Adjustment</a>
-    <a class="bulk-family-tab is-active" href="bulk-adjustment.html?tab=bonus" aria-current="page">Bonus Adjustment</a>
+    <a class="bulk-family-tab is-active" href="bulk-bonus-adjustment.html?combined=1" aria-current="page">Bonus Adjustment</a>
   </nav>
   <div class="bulk-operation-shell">
     <div class="bulk-mode-switch" role="tablist" aria-label="Bulk bonus adjustment mode">
@@ -228,6 +228,17 @@
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
 <script src="assets/js/reports.js?v=1.0.30"></script>
 <script src="assets/js/auth.js?v=1.0.66"></script>
+<script>
+(function(){
+  function refreshCombinedBulkSidebar(){
+    try{
+      if(window.BO_AUTH&&typeof BO_AUTH.renderSidebar==='function') BO_AUTH.renderSidebar(BO_AUTH.user());
+    }catch(e){}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',refreshCombinedBulkSidebar,{once:true});
+  else refreshCombinedBulkSidebar();
+})();
+</script>
 <script>window.BULK_OPERATION_CONFIG={mode:'bonus'};</script>
 <script src="assets/js/bulk-member-operation.js?v=1.1.2"></script>
 <script src="assets/js/bulk-bonus-adjustment-import.js?v=20260817.2"></script>

@@ -397,7 +397,13 @@
     try{
       const [json,methods]=await Promise.all([api(endpoint('MEMBER_DEPOSIT_LIST')+'?'+q()),paymentMethods().catch(()=>[])]);
       const data=json.data||{};
-      render(data.content||[],data.pagination||{},methods);
+      // The list endpoint has existed in both ApiResponse shapes in production:
+      // pagination may be top-level and rows may be data.content, data.items/list,
+      // or data itself. Keep the transaction page compatible with all of them so
+      // the tab count and visible rows can never disagree only because of shape.
+      const rows=Array.isArray(data)?data:(data.content||data.items||data.list||json.content||json.items||json.list||[]);
+      const pagination=json.pagination||data.pagination||((data&&typeof data==='object')?data:{});
+      render(Array.isArray(rows)?rows:[],pagination,methods);
     }
     catch(e){if(body)body.innerHTML='<tr><td colspan="8" class="text-danger">'+esc(e.message)+'</td></tr>';}
   }

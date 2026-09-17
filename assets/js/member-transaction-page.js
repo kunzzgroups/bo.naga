@@ -15,6 +15,6 @@
     const tr=document.querySelector('.bo-tx-head-table thead tr');if(tr)tr.innerHTML='<th>Date</th><th>Member</th><th>Amount</th><th>Bank</th><th>Reference</th><th>Remark</th><th>Status</th><th>Processed</th><th>Action</th>';
     const body=document.getElementById('withdrawBody');if(body)body.innerHTML='<tr><td colspan="9">Loading...</td></tr>';
     script.src='assets/js/member-withdraw.js?v=1.0.38';
-  }else{script.src='assets/js/member-deposit.js?v=1.0.37';}
+  }else{script.src='assets/js/member-deposit.js?v=1.0.38';}
   document.body.appendChild(script);
 })();

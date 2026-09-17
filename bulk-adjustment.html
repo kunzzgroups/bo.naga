@@ -3,11 +3,11 @@
 <head>
 <script>
 (function(){
-  if(new URLSearchParams(location.search).get('tab')!=='bonus')return;
-  try{
-    var x=new XMLHttpRequest();x.open('GET','bulk-bonus-adjustment.html',false);x.send(null);
-    if(x.status>=200&&x.status<300){var html=x.responseText.replace(/<script>if\(!window\.__bulkTemplateLoad\)[\s\S]*?<\/script>/,'');document.open();document.write(html);document.close();}
-  }catch(e){console.error('Unable to load Bonus Adjustment tab',e);}
+  /* Keep Bonus as its own complete document. Injecting it with document.write
+     re-declared config/auth/Firebase globals and could stop sidebar startup. */
+  if(new URLSearchParams(location.search).get('tab')==='bonus'){
+    location.replace('bulk-bonus-adjustment.html?combined=1');
+  }
 })();
 </script>
 
@@ -31,9 +31,11 @@
 <link href="assets/css/bo-input-fill.css?v=1.0.1" rel="stylesheet"/>
 <script>
 (function(){
-  try{
-    if(localStorage.getItem('bo_theme')==='dark') document.documentElement.setAttribute('data-bo-theme','dark');
-  }catch(e){}
+  /* Keep Bonus as its own complete document. Injecting it with document.write
+     re-declared config/auth/Firebase globals and could stop sidebar startup. */
+  if(new URLSearchParams(location.search).get('tab')==='bonus'){
+    location.replace('bulk-bonus-adjustment.html?combined=1');
+  }
 })();
 </script>
 </head>
