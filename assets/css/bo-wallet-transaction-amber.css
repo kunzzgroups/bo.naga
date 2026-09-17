@@ -4159,6 +4159,22 @@ body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-fi
   background:var(--bo-table-row,#FFF8EB)!important;
 }
 /* Compact filter controls — beat bo-ui-standard double :not(#id) 42px/190px */
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row{
+  display:flex!important;
+  flex-flow:row wrap!important;
+  align-items:flex-end!important;
+  gap:10px!important;
+  width:100%!important;
+  min-width:0!important;
+  overflow:visible!important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-item,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .field{
+  position:relative!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+  margin:0!important;
+}
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-input-item,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .field.bo-filter-input-item{
   width:140px!important;
@@ -4171,25 +4187,29 @@ html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet
   min-width:130px!important;
   max-width:150px!important;
   flex:0 0 150px!important;
+  overflow:visible!important; /* menu must escape */
 }
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-select-item{
-  width:72px!important;
-  min-width:72px!important;
-  max-width:72px!important;
-  flex:0 0 72px!important;
-  --bo-select-width:72px;
+  display:none!important;
 }
-html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-range-item{
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-range-item,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-range-field{
   width:240px!important;
-  min-width:200px!important;
-  max-width:260px!important;
-  flex:0 1 240px!important;
+  min-width:220px!important;
+  max-width:240px!important;
+  flex:0 0 240px!important;
+  overflow:visible!important; /* calendar pop must escape */
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .bo-range-trigger,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ref-range-trigger{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
 }
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-select-item select,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-select-item .rounded-select-btn,
-html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .bo-range-trigger,
-html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ref-range-trigger,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ledger-type-trigger,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ledger-type-multi,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row :is(.bo-filter-reset-button,.bo-filter-search-button),
@@ -4197,11 +4217,21 @@ html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row #ledgerResetBtn,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row #ledgerSearchBtn,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .clean-btn,
-html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .btn-primary-clean{
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .btn-primary-clean,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .bo-range-trigger,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ref-range-trigger{
   height:36px!important;
   min-height:36px!important;
   max-height:36px!important;
   box-sizing:border-box!important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-select-item select,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-select-item .rounded-select-btn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ledger-type-trigger{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
 }
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row :is(.bo-filter-reset-button,.bo-filter-search-button),
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row #ledgerResetBtn,
@@ -4220,6 +4250,19 @@ html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet
 }
 /* Hide legacy page-info summary if any remnant remains */
 html body.bo-wallet-tx.wallet-ledger-page #ledgerPageInfo{display:none!important}
+
+/* Inline filter sits flush under .table-card top border — no lift/upward shadow on hover */
+html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter .clean-btn:hover,
+html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter .btn-primary-clean:hover,
+html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter #ledgerResetBtn:hover,
+html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter #ledgerSearchBtn:hover,
+html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter .bo-filter-reset-button:hover,
+html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter .bo-filter-search-button:hover,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .clean-btn:hover,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter #ledgerResetBtn:hover{
+  transform:none!important;
+  box-shadow:none!important;
+}
 
 /* Wallet Ledger — Panel pill scrollbar on horizontal .table-wrap
    Light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / `#D97706`
