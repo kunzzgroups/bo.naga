@@ -237,7 +237,35 @@ Reference: `bank-deposit-usage.html` · `body.bo-wallet-tx.bank-deposit-usage-pa
 | Panel | Viewport-locked · tabs left + filters/actions right · no title badge · no link underline |
 | Table | Peach-cream zebra · square thead · `table-layout:fixed` · inner scroll · never page overflow |
 | Status | `.status-pill.active` **Active** · `.status-pill.off` **Suspend** · click to toggle |
+| Action | `.bo-tx-action-btn` **26×26** · **View** `is-view` (eye · QR open in new tab · disabled when no QR) · Edit `is-edit` · Delete `is-reject` |
+| Pager | Footer `.bo-usage-pager-host` · `.smart-pagination` / `.smart-page` (mad-pager amber active) · client page size **10** |
 | Meter | Track `#F5EBDC` · fill `#B45309` · warn `#F59E0B` · over `#EF4444` |
+
+Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
+
+#### Bulk Adjustment / Bulk Bonus (locked)
+
+Reference: `bulk-adjustment.html` · `bulk-bonus-adjustment.html` · `body.bo-wallet-tx.bulk-adjustment-page` / `.bulk-bonus-adjustment-page` · `bulk-member-operation.css`.
+
+| Part | Spec |
+|------|------|
+| Shell | `bo-wallet-tx` + amber CSS + `bulk-member-operation.css` (not charcoal) |
+| Mode tabs | Manual Selection · Excel / XLSX Upload — family segment chrome |
+| Search | `.mad-search.bulk-member-search` — listing surface recipe |
+| Panel scrollbars | **Panel pill scrollbar** on `.member-picker-list` **and** `.selected-table tbody` · light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / hover `#D97706` · `4px` · no arrows |
+
+#### Panel pill scrollbar (Bulk panels)
+
+Thin pill · **no** end arrows. Webkit only — **do not** set `scrollbar-width` / `scrollbar-color` to a coloured pair (Chromium then paints OS arrows and ignores `::-webkit-scrollbar`). Firefox: `@supports not selector(::-webkit-scrollbar)` with `scrollbar-width:thin` + matching `scrollbar-color`.
+
+| Part | Light | Dark |
+|------|-------|------|
+| Width | `4px` | `4px` |
+| Thumb | chocolate `#8B6B4A` | `#F59E0B` |
+| Thumb hover | deep chocolate `#5C4A30` | `#D97706` |
+| Track / buttons | transparent · `::-webkit-scrollbar-button{display:none;height:0}` | same |
+
+**Do not** use cool slate `#98A2B3` / `#667085` on Bulk cream panels — light must read warm chocolate. **Do not** use zinc `#71717A` / `#A1A1AA` for dark. Role select menus keep their own slate light thumb (see Role select). Listing table body scrollbars (Deposit `.bo-tx-table-body`, 14px + end arrows) are a different recipe — do not copy here.
 
 Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
 
@@ -467,7 +495,7 @@ Native select hidden; enhancer builds custom control. Reference: `menu-permissio
 | Menu | surface · border · `8px` · soft shadow · pad `6px` | surface · deep shadow |
 | Option hover | `--bo-cyan-tint` · text `--bo-cyan-deep` | `rgba(245,158,11,.14)` |
 | Option selected (dark) | — | fill `#F59E0B` · text `#2A2C36` |
-| Scrollbar thumb | `#98A2B3` / hover `#667085` · `4px` pill · no arrows | `#F59E0B` / `#D97706` |
+| Scrollbar thumb | `#98A2B3` / hover `#667085` · `4px` pill · no arrows (menu only — Bulk panels use chocolate light) | `#F59E0B` / `#D97706` |
 | Field label | `11px/800` uppercase · tracking `.08em` | same |
 
 #### Date range picker (`.bo-range-*` / `.ref-range-*` — locked)
@@ -641,9 +669,9 @@ Reference specimen: Active / Suspend / All on Bank Deposit Usage (and Admin Deta
 
 | Spec | Light | Dark |
 |------|-------|------|
-| Fill | cream 3D `linear-gradient(180deg, #FFF8EB 0%, #F3E8D6 100%)` | charcoal 3D `#383A46`→`#2A2C36` |
-| Border | `1px solid #EADCC8` | `1px solid rgba(255,255,255,.12)` |
-| Shadow | `0 1px 2px rgba(24,25,28,.06), 0 2px 6px rgba(24,25,28,.05)` | soft dark lift |
+| Fill | lift cream `linear-gradient(180deg, #FFFCF7 0%, #FFF8EB 55%, #F3E8D6 100%)` — **lighter than** toolbar `#FFF8EB` so the chip reads | charcoal 3D `#383A46`→`#2A2C36` |
+| Border | `1px solid #E0D0B8` | `1px solid rgba(255,255,255,.14)` |
+| Shadow | `0 1px 2px rgba(24,25,28,.08), 0 2px 8px rgba(92,74,48,.10)` | soft dark lift |
 | Radius | **`999px`** (capsule — matches specimen) | same |
 | Height | `36px` (full track height) | same |
 
@@ -857,6 +885,7 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Deposit/Withdraw page chrome locked: bank cards strip · tabs left + inline filters right · Bank `Name (account)` · no Reset/Search in filter · action 26×26 · no Pending metrics | User aligned Withdraw to Deposit shell | 2026-09-16 |
 | Deposit/Withdraw responsive 1920→375: bank strip · stacked toolbar · scrollable table · ≤1456 DATE day-only + hover time · hide secondary columns on tablet/phone | User: mid widths messy / table too short / DATE ellipsis | 2026-09-16 |
 | Withdraw Remark cell = player text only (no `Admin:` sub-line) | User: 这个也帮我移除 | 2026-09-16 |
+| Bulk panel pill scrollbar locked: light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / `#D97706` · `4px` · no arrows · webkit only (never cool slate / zinc) | User confirmed chocolate light thumb; dark must differ from light | 2026-09-17 |
 
 ### Opt-in layers for pages outside the migrated families
 

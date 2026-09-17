@@ -8,7 +8,36 @@
   const VIS_KEY='bo_pm_visible_overrides';
   const methodsById=new Map();
   let statusFilter='active';
+  let listPage=1;
+  const PAGE_SIZE=10;
   let lastPayload={methods:[],deposits:[],withdrawals:[],manualMovements:[]};
+  function uploadUrl(name){
+    if(!name)return '';
+    if(/^https?:\/\//i.test(name))return name;
+    const base=(API_CONFIG.STATIC_UPLOAD_BASE_URL||'https://static.titanx7.com').replace(/\/$/,'');
+    const path=String(name).trim();
+    if(path.startsWith('/uploads/'))return base+path;
+    if(path.startsWith('uploads/'))return base+'/'+path;
+    return base+'/uploads/payment/'+path;
+  }
+  function pageButtons(current,total){
+    total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
+    const pages=[]; const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};
+    add(1); for(let n=current-2;n<=current+2;n++) add(n); add(total); pages.sort((a,b)=>a-b);
+    let html='<div class="smart-pagination" role="navigation" aria-label="Table pagination">';
+    html+='<button type="button" class="smart-page first" data-usage-page="1" '+(current<=1?'disabled':'')+' title="First page"><i class="bi bi-chevron-bar-left" aria-hidden="true"></i></button>';
+    let prev=0; pages.forEach(n=>{if(prev&&n-prev>1)html+='<span class="smart-page-ellipsis">…</span>'; html+='<button type="button" class="smart-page '+(n===current?'active':'')+'" data-usage-page="'+n+'" '+(n===current?'aria-current="page"':'')+'>'+n+'</button>'; prev=n;});
+    html+='<button type="button" class="smart-page last" data-usage-page="'+total+'" '+(current>=total?'disabled':'')+' title="Last page"><i class="bi bi-chevron-bar-right" aria-hidden="true"></i></button>';
+    html+='</div><span class="smart-page-summary">Page '+current+' / '+total+'</span>';
+    return html;
+  }
+  function qrViewBtn(m){
+    const url=uploadUrl(m.qrImage||m.qrUrl||m.qr||'');
+    if(url){
+      return `<a class="bo-tx-action-btn is-view" href="${esc(url)}" target="_blank" rel="noopener" title="View QR" aria-label="View QR"><i class="bi bi-eye" aria-hidden="true"></i></a>`;
+    }
+    return `<button type="button" class="bo-tx-action-btn is-view is-disabled" disabled title="No QR image" aria-label="No QR image"><i class="bi bi-eye" aria-hidden="true"></i></button>`;
+  }
   async function api(url,opt){
     const r=await fetch(url,opt||{headers:{...BO_AUTH.authHeader()}});
     const j=await r.json().catch(()=>({}));
@@ -133,6 +162,7 @@
   function setStatusFilter(next){
     const v=String(next||'all').toLowerCase();
     statusFilter=v==='active'||v==='suspend'||v==='all'?v:'all';
+    listPage=1;
     document.querySelectorAll('[data-usage-status-filter]').forEach(btn=>{
       const on=btn.getAttribute('data-usage-status-filter')===statusFilter;
       btn.classList.toggle('is-active',on);
@@ -161,6 +191,9 @@
       if(kw&&!paymentKeys(m).some(k=>k.includes(kw)))return false;
       return true;
     });
+    const totalPages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE)||1);
+    listPage=Math.max(1,Math.min(listPage,totalPages));
+    const pageRows=filtered.slice((listPage-1)*PAGE_SIZE,listPage*PAGE_SIZE);
     const manualDeposits=lastPayload.manualMovements.filter(r=>String(r.ledgerType||'').toUpperCase()==='ADMIN_DEPOSIT'),manualWithdrawals=lastPayload.manualMovements.filter(r=>String(r.ledgerType||'').toUpperCase()==='ADMIN_WITHDRAW');
     $('usageBankCount')&&($('usageBankCount').textContent=lastPayload.methods.length.toLocaleString());
     $('usageApprovedCount')&&($('usageApprovedCount').textContent=(lastPayload.deposits.length+manualDeposits.length).toLocaleString());
@@ -168,7 +201,7 @@
     $('usageWithdrawAmount')&&($('usageWithdrawAmount').textContent=money(lastPayload.withdrawals.reduce((a,r)=>a+num(r.amount),0)+manualWithdrawals.reduce((a,r)=>a+Math.abs(num(r.amount)),0)));
     $('usageUnmatchedAmount')&&($('usageUnmatchedAmount').textContent=money(unmatchedDeposit+unmatchedWithdraw));
     const body=$('usageBody');
-    body.innerHTML=filtered.length?filtered.map(m=>{
+    body.innerHTML=pageRows.length?pageRows.map(m=>{
       const st=stats.get(String(m.id))||{deposit:0,depositCount:0,withdraw:0,withdrawCount:0};
       const net=st.deposit-st.withdraw,min=num(m.minAmount),max=num(m.maxAmount),daily=num(m.dailyLimit),pct=max>0?(Math.max(0,net)/max*100):0,fillClass=pct>=100?'over':pct>=80?'warn':'',cap=max>0?money(max):'No max',dailyText=daily>0?money(daily):'-';
       const accountHtml=m.accountName||m.accountNumber?`${m.accountName?`<span class="usage-account-line">${esc(m.accountName)}</span>`:''}${m.accountNumber?`<span class="usage-account-line">${esc(m.accountNumber)}</span>`:''}`:'<span class="usage-account-line">-</span>';
@@ -183,10 +216,16 @@
         <td>${max>0?`<b>${pct.toFixed(1)}%</b>`:'<span class="usage-muted">No max configured</span>'}</td>
         <td>${statusBtn(m)}</td>
         <td class="usage-show-cell">${showBtn(m)}</td>
-        <td><div class="bo-tx-actions"><a class="bo-tx-action-btn is-edit" href="payment-method-create.html?id=${encodeURIComponent(m.id)}&from=usage" title="Edit" aria-label="Edit"><i class="bi bi-pencil" aria-hidden="true"></i></a><button type="button" class="bo-tx-action-btn is-reject" title="Delete" aria-label="Delete" data-usage-del="${esc(m.id)}"><i class="bi bi-trash" aria-hidden="true"></i></button></div></td>
+        <td><div class="bo-tx-actions">${qrViewBtn(m)}<a class="bo-tx-action-btn is-edit" href="payment-method-create.html?id=${encodeURIComponent(m.id)}&from=usage" title="Edit" aria-label="Edit"><i class="bi bi-pencil" aria-hidden="true"></i></a><button type="button" class="bo-tx-action-btn is-reject" title="Delete" aria-label="Delete" data-usage-del="${esc(m.id)}"><i class="bi bi-trash" aria-hidden="true"></i></button></div></td>
       </tr>`;
     }).join(''):'<tr><td colspan="11">No payment method found.</td></tr>';
-    $('usageInfo').textContent=`${filtered.length} bank record(s) · ${unmatchedCount} unmatched approved transaction(s)`;
+    const from=filtered.length?((listPage-1)*PAGE_SIZE+1):0;
+    const to=Math.min(listPage*PAGE_SIZE,filtered.length);
+    $('usageInfo').textContent=filtered.length
+      ?`Showing ${from}–${to} of ${filtered.length} bank record(s) · ${unmatchedCount} unmatched approved transaction(s)`
+      :`0 bank record(s) · ${unmatchedCount} unmatched approved transaction(s)`;
+    const pagerHost=$('usagePagerHost');
+    if(pagerHost) pagerHost.innerHTML=pageButtons(listPage,totalPages);
     syncStatusTabs();
   }
   async function load(){
@@ -209,6 +248,15 @@
     }
   }
   document.addEventListener('click',e=>{
+    const pageBtn=e.target.closest('[data-usage-page]');
+    if(pageBtn){
+      if(pageBtn.disabled)return;
+      const next=Number(pageBtn.getAttribute('data-usage-page'));
+      if(!Number.isFinite(next)||next<1)return;
+      listPage=next;
+      render(lastPayload.methods,lastPayload.deposits,lastPayload.withdrawals,lastPayload.manualMovements);
+      return;
+    }
     const statusTab=e.target.closest('[data-usage-status-filter]');
     if(statusTab){
       e.preventDefault();
@@ -273,8 +321,8 @@
     $('usageRefresh')?.addEventListener('click',load);
     $('usageFrom')?.addEventListener('change',load);
     $('usageTo')?.addEventListener('change',load);
-    $('usageKeyword')?.addEventListener('keydown',e=>{if(e.key==='Enter')load();});
-    $('usageKeyword')?.addEventListener('input',()=>{clearTimeout(window.__usageKwTimer);window.__usageKwTimer=setTimeout(load,280);});
+    $('usageKeyword')?.addEventListener('keydown',e=>{if(e.key==='Enter'){listPage=1;render(lastPayload.methods,lastPayload.deposits,lastPayload.withdrawals,lastPayload.manualMovements);}});
+    $('usageKeyword')?.addEventListener('input',()=>{clearTimeout(window.__usageKwTimer);window.__usageKwTimer=setTimeout(()=>{listPage=1;render(lastPayload.methods,lastPayload.deposits,lastPayload.withdrawals,lastPayload.manualMovements);},280);});
     setTimeout(load,0);
   });
 })();
