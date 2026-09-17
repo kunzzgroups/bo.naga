@@ -66,7 +66,7 @@
 <link href="assets/css/member-admin-remark.css?v=1.0.0" rel="stylesheet"/>
 <link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-shell.css?v=1.0.2" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-legacy.css?v=1.1.6" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-legacy.css?v=1.1.19" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
 <link href="assets/css/bo-input-fill.css?v=1.0.1" rel="stylesheet" />
 </link></head>
@@ -121,22 +121,14 @@
 <span>Active users</span>
 </div>
 </div>
-<div class="filter-card">
+<div class="table-card">
+<div class="user-toolbar">
 <div class="user-search-grid bo-filter-row">
-<div class="field">
-<label>Name / Username</label><input id="memberSearchName" placeholder="Search name or username"/>
+<div class="field um-search-item">
+<input aria-label="Search" id="memberSearchQ" placeholder="Search name, mobile, agent, bank"/>
 </div>
 <div class="field">
-<label>Mobile No.</label><input id="memberSearchMobile" placeholder="Search mobile"/>
-</div>
-<div class="field">
-<label>Agent</label><input id="memberSearchAgent" placeholder="Agent / referrer"/>
-</div>
-<div class="field">
-<label>Bank</label><input id="memberSearchBank" placeholder="Bank"/>
-</div>
-<div class="field">
-<label>Status</label><select id="memberSearchStatus">
+<select aria-label="Status" id="memberSearchStatus">
 <option value="">All</option>
 <option value="active">Active</option>
 <option value="inactive">Inactive</option>
@@ -144,7 +136,7 @@
 </select>
 </div>
 <div class="field">
-<label>Last Visit</label><select id="memberSearchVisit">
+<select aria-label="Last Visit" id="memberSearchVisit">
 <option value="">All</option>
 <option value="today">Today</option>
 <option value="this week">This Week</option>
@@ -152,7 +144,7 @@
 </select>
 </div>
 <div class="field">
-<label>Lock</label><select id="memberSearchLock">
+<select aria-label="Lock" id="memberSearchLock">
 <option value="">All</option>
 <option value="normal">Normal</option>
 <option value="locked">Locked</option>
@@ -160,14 +152,7 @@
 </div>
 <div class="user-filter-actions filter-action-row">
 <button class="clean-btn" id="memberFilterResetBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Reset</button>
-<button class="btn-primary-clean" id="memberSearchBtn" type="button"><i class="bi bi-search"></i> Search</button>
 </div>
-</div>
-</div>
-<div class="table-card">
-<div class="user-toolbar mb-3">
-<div class="user-title-row">
-<span class="users-found-badge" id="usersFoundBadge">0 Users Found</span>
 </div>
 <div class="user-toolbar-actions">
 <div class="column-menu-wrap desktop-only">
@@ -205,7 +190,7 @@
 <div class="member-card-list mt-3"><div class="member-card"><h3>Loading members...</h3><div class="meta">Please wait.</div></div></div>
 <div class="table-footer" id="memberPaginationWrap">
 <label class="entries-control">Show
-                <select id="memberPageSize"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select>
+                <select id="memberPageSize" aria-label="Rows per page"><option value="-" selected>-</option><option value="10">10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option><option value="All">All</option></select>
                 entries
               </label>
 <div class="table-info" id="memberPageInfo">Showing 0 to 0 of 0 entries</div>
@@ -382,7 +367,7 @@
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
 <script src="assets/js/reports.js?v=1.0.29"></script>
 <script src="assets/js/auth.js?v=1.0.65"></script>
-<script src="assets/js/member-management.js?v=1.0.15"></script>
+<script src="assets/js/member-management.js?v=1.0.21"></script>
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
