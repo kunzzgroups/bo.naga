@@ -927,15 +927,15 @@ body.bo-wallet-tx{
 }
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row select,
-body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .field input,
+body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .field input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row .field select,
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-input-item input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item select,
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-btn,
-body.bo-wallet-tx .field input,
+body.bo-wallet-tx .field input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
 body.bo-wallet-tx .field select,
 body.bo-wallet-tx .field textarea,
-body.bo-wallet-tx .bo-filter-row input,
+body.bo-wallet-tx .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
 body.bo-wallet-tx .bo-filter-row select,
 body.bo-wallet-tx .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="hidden"]),
 body.bo-wallet-tx .report-content select,
@@ -2075,7 +2075,7 @@ body.bo-wallet-tx .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-
   flex-flow:row wrap!important;
   align-items:center!important;
   justify-content:flex-end!important;
-  gap:12px!important;
+  gap:10px!important;
   width:auto!important;
   max-width:calc(100% - 200px)!important;
   min-width:0!important;
@@ -2096,46 +2096,51 @@ body.bo-wallet-tx .bo-tx-toolbar{
     justify-content:flex-start!important;
   }
 }
-/* Beat reports.css width:100% on .bo-range-field that forced a full-row stack */
+/* Listing filter geometry (MD) — Deposit/Withdraw toolbar = Wallet Ledger specimen */
 body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .bo-range-field,
 body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .bo-range-field,
 body.bo-wallet-tx.deposit-approval-page .filter-card .bo-range-field,
 body.bo-wallet-tx.withdraw-approval-page .filter-card .bo-range-field,
 body.bo-wallet-tx .report-main .filter-card .user-search-grid > .bo-range-field,
 body.bo-wallet-tx .report-main .filter-card .user-search-grid > .bo-filter-range-item{
-  flex:0 1 280px!important;
-  width:280px!important;
+  flex:0 0 240px!important;
+  width:240px!important;
   min-width:220px!important;
-  max-width:320px!important;
+  max-width:240px!important;
   grid-column:auto!important;
 }
 body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .field:has(#depositKeyword),
 body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .field:has(#withdrawKeyword){
-  flex:1 1 220px!important;
-  width:auto!important;
-  min-width:180px!important;
-  max-width:360px!important;
+  flex:0 0 140px!important;
+  width:140px!important;
+  min-width:120px!important;
+  max-width:140px!important;
   grid-column:auto!important;
 }
 body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .field:has(#depositStatus),
 body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .field:has(#withdrawStatus){
-  flex:0 0 auto!important;
-  width:var(--bo-select-width,140px)!important;
-  min-width:120px!important;
-  max-width:none!important;
+  flex:0 0 150px!important;
+  width:150px!important;
+  min-width:130px!important;
+  max-width:150px!important;
   grid-column:auto!important;
 }
 /* Page size lives in footer only — never show a leaked control in the filter strip */
 body.bo-wallet-tx .user-search-grid #depositSize,
 body.bo-wallet-tx .user-search-grid #withdrawSize,
+body.bo-wallet-tx .user-search-grid #ledgerSize,
 body.bo-wallet-tx .user-search-grid .rounded-select-wrap:has(#depositSize),
 body.bo-wallet-tx .user-search-grid .rounded-select-wrap:has(#withdrawSize),
+body.bo-wallet-tx .user-search-grid .rounded-select-wrap:has(#ledgerSize),
 body.bo-wallet-tx .filter-card > #depositSize,
 body.bo-wallet-tx .filter-card > #withdrawSize,
+body.bo-wallet-tx .filter-card > #ledgerSize,
 body.bo-wallet-tx .filter-card > .rounded-select-wrap:has(#depositSize),
 body.bo-wallet-tx .filter-card > .rounded-select-wrap:has(#withdrawSize),
+body.bo-wallet-tx .filter-card > .rounded-select-wrap:has(#ledgerSize),
 body.bo-wallet-tx select#depositSize[hidden],
-body.bo-wallet-tx select#withdrawSize[hidden]{
+body.bo-wallet-tx select#withdrawSize[hidden],
+body.bo-wallet-tx select#ledgerSize[hidden]{
   display:none!important;
   width:0!important;
   height:0!important;
@@ -2188,7 +2193,7 @@ body.bo-wallet-tx .bo-range-trigger{
   max-width:100%!important;
   flex:none!important;
   box-sizing:border-box!important;
-  height:42px!important;
+  height:36px!important;
   background:var(--bo-tx-well,#FFF8EB)!important;
   border:1px solid var(--bo-tx-well-border,#EADCC8)!important;
   border-radius:8px!important;
@@ -2973,8 +2978,10 @@ body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control selec
   min-height:36px!important;
   flex:0 0 72px!important;
   box-sizing:border-box!important;
-  background:var(--bo-control-well)!important;
-  border:1px solid var(--bo-border)!important;
+  /* Role select / listing surface — not form well #F5EBDC */
+  background:#FFF8EB!important;
+  background-color:#FFF8EB!important;
+  border:1px solid #EADCC8!important;
   border-radius:8px!important;
   color:var(--bo-text)!important;
   font-size:13px!important;
@@ -2998,7 +3005,7 @@ body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .roun
   border:0!important;
   overflow:hidden!important;
 }
-/* Fig.1 page-size menu — open upward, centered bold options, quiet selected chip */
+/* Show N entries — Role select recipe (MD), open upward · listing 36px trigger */
 body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-menu,
 body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-menu{
   top:auto!important;
@@ -3009,7 +3016,10 @@ body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .roun
   min-width:100%!important;
   max-width:none!important;
   padding:6px!important;
-  border-radius:10px!important;
+  border-radius:8px!important;
+  background:#FFF8EB!important;
+  border:1px solid #EADCC8!important;
+  box-shadow:0 12px 28px rgba(92,74,48,.12)!important;
   z-index:80!important;
   max-height:min(260px,50vh)!important;
   overflow-x:hidden!important;
@@ -3033,42 +3043,46 @@ body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .roun
   color:var(--bo-text)!important;
 }
 body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option:hover,
-body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option:hover{
-  background:rgba(24,25,28,.05)!important;
-  color:#18191C!important;
-}
+body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option:hover,
 body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option.active,
 body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option.is-active,
 body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option.active,
 body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option.is-active{
-  background:rgba(217,119,6,.12)!important;
-  color:#B45309!important;
-  -webkit-text-fill-color:#B45309;
+  background:var(--bo-cyan-tint)!important;
+  color:var(--bo-cyan-deep)!important;
+  -webkit-text-fill-color:var(--bo-cyan-deep);
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-btn,
+html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-btn{
+  background:#2A2C36!important;
+  background-color:#2A2C36!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
 }
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-menu,
 html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-menu{
-  background:#2A2C36!important;
-  border:1px solid rgba(255,255,255,.16)!important;
+  background:#383A46!important;
+  border:1px solid rgba(255,255,255,.14)!important;
   box-shadow:0 14px 32px rgba(0,0,0,.45)!important;
 }
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option,
 html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option{
-  color:#F5F5F4!important;
-  -webkit-text-fill-color:#F5F5F4;
+  color:#E7E5E4!important;
+  -webkit-text-fill-color:#E7E5E4;
 }
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option:hover,
 html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option:hover{
-  background:rgba(255,255,255,.08)!important;
-  color:#FFFFFF!important;
-  -webkit-text-fill-color:#FFFFFF;
+  background:rgba(245,158,11,.14)!important;
+  color:#F5F5F4!important;
+  -webkit-text-fill-color:#F5F5F4;
 }
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option.active,
 html[data-bo-theme="dark"] body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-option.is-active,
 html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option.active,
 html[data-bo-theme="dark"] body.bo-wallet-tx .table-card > .bo-pagination-standard > .entries-control .rounded-select-option.is-active{
-  background:rgba(255,255,255,.12)!important;
-  color:#E7E5E4!important;
-  -webkit-text-fill-color:#E7E5E4;
+  background:#F59E0B!important;
+  color:#2A2C36!important;
+  -webkit-text-fill-color:#2A2C36;
 }
 body.bo-wallet-tx .table-card:has(.bo-pagination-standard .rounded-select-menu.show),
 body.bo-wallet-tx .table-card:has(.entries-control .rounded-select-menu.show){
@@ -3148,7 +3162,7 @@ body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item .rounded-select-btn,
 body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row > .bo-filter-select-item select,
 body.bo-wallet-tx .report-main .bo-filter-row .rounded-select-btn,
-body.bo-wallet-tx .report-main .bo-filter-row input,
+body.bo-wallet-tx .report-main .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
 body.bo-wallet-tx .report-main .bo-filter-row select,
 body.bo-wallet-tx .rounded-select-btn,
 body.bo-wallet-tx .report-main .bo-pagination-standard > .entries-control .rounded-select-btn,
@@ -3387,12 +3401,62 @@ html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#
   flex-flow:row nowrap!important;
   align-items:center!important;
   justify-content:flex-end!important;
-  gap:12px!important;
+  gap:10px!important;
   width:auto!important;
   max-width:none!important;
   min-width:0!important;
   margin:0 0 0 auto!important;
   margin-left:auto!important;
+}
+/* Beat bo-ui-standard 42px — Deposit/Withdraw toolbar = MD listing 36px geometry */
+html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .bo-range-field,
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .bo-range-field,
+html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .bo-filter-range-item,
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .bo-filter-range-item{
+  flex:0 0 240px!important;
+  width:240px!important;
+  min-width:220px!important;
+  max-width:240px!important;
+  overflow:visible!important;
+}
+html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .field:has(#depositKeyword),
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .field:has(#withdrawKeyword),
+html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .bo-filter-input-item,
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .bo-filter-input-item{
+  flex:0 0 140px!important;
+  width:140px!important;
+  min-width:120px!important;
+  max-width:140px!important;
+}
+html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .field:has(#depositStatus),
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .field:has(#withdrawStatus),
+html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .bo-filter-select-item,
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .bo-filter-select-item{
+  flex:0 0 150px!important;
+  width:150px!important;
+  min-width:130px!important;
+  max-width:150px!important;
+  overflow:visible!important;
+}
+html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls .bo-range-trigger,
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls .bo-range-trigger,
+html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls .ref-range-trigger,
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls .ref-range-trigger,
+html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls select,
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls select,
+html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls .rounded-select-btn,
+html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls .rounded-select-btn{
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  box-sizing:border-box!important;
+  border-radius:8px!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  padding:0 12px!important;
 }
 @media(max-width:767.98px){
   html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar,
@@ -3560,24 +3624,24 @@ body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .bo-fi
 html body.bo-wallet-tx.withdraw-approval-page .report-main .filter-card .user-search-grid > .bo-filter-range-item,
   html body.bo-wallet-tx.deposit-approval-page .report-main .filter-card .user-search-grid > .bo-range-field,
 html body.bo-wallet-tx.withdraw-approval-page .report-main .filter-card .user-search-grid > .bo-range-field{
-    flex:0 1 240px!important;
+    flex:0 0 240px!important;
     width:240px!important;
     min-width:200px!important;
-    max-width:260px!important;
+    max-width:240px!important;
   }
   body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .field:has(#depositKeyword),
 body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .field:has(#withdrawKeyword){
-    flex:1 1 180px!important;
-    width:auto!important;
-    min-width:140px!important;
-    max-width:none!important;
+    flex:0 0 140px!important;
+    width:140px!important;
+    min-width:120px!important;
+    max-width:140px!important;
   }
   body.bo-wallet-tx.deposit-approval-page .filter-card .user-search-grid > .field:has(#depositStatus),
 body.bo-wallet-tx.withdraw-approval-page .filter-card .user-search-grid > .field:has(#withdrawStatus){
-    flex:0 0 120px!important;
-    width:120px!important;
-    min-width:120px!important;
-    max-width:120px!important;
+    flex:0 0 150px!important;
+    width:150px!important;
+    min-width:130px!important;
+    max-width:150px!important;
   }
   body.bo-wallet-tx.deposit-approval-page .report-actions,
 body.bo-wallet-tx.withdraw-approval-page .report-actions{
@@ -4159,6 +4223,22 @@ body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-fi
   background:var(--bo-table-row,#FFF8EB)!important;
 }
 /* Compact filter controls — beat bo-ui-standard double :not(#id) 42px/190px */
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row{
+  display:flex!important;
+  flex-flow:row wrap!important;
+  align-items:flex-end!important;
+  gap:10px!important;
+  width:100%!important;
+  min-width:0!important;
+  overflow:visible!important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-item,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .field{
+  position:relative!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+  margin:0!important;
+}
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-input-item,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .field.bo-filter-input-item{
   width:140px!important;
@@ -4171,25 +4251,29 @@ html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet
   min-width:130px!important;
   max-width:150px!important;
   flex:0 0 150px!important;
+  overflow:visible!important; /* menu must escape */
 }
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-select-item{
-  width:72px!important;
-  min-width:72px!important;
-  max-width:72px!important;
-  flex:0 0 72px!important;
-  --bo-select-width:72px;
+  display:none!important;
 }
-html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-range-item{
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-range-item,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-range-field{
   width:240px!important;
-  min-width:200px!important;
-  max-width:260px!important;
-  flex:0 1 240px!important;
+  min-width:220px!important;
+  max-width:240px!important;
+  flex:0 0 240px!important;
+  overflow:visible!important; /* calendar pop must escape */
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .bo-range-trigger,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ref-range-trigger{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
 }
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-select-item select,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-select-item .rounded-select-btn,
-html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .bo-range-trigger,
-html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ref-range-trigger,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ledger-type-trigger,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ledger-type-multi,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row :is(.bo-filter-reset-button,.bo-filter-search-button),
@@ -4197,11 +4281,21 @@ html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row #ledgerResetBtn,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row #ledgerSearchBtn,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .clean-btn,
-html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .btn-primary-clean{
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .btn-primary-clean,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .bo-range-trigger,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ref-range-trigger{
   height:36px!important;
   min-height:36px!important;
   max-height:36px!important;
   box-sizing:border-box!important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-select-item select,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-select-item .rounded-select-btn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ledger-type-trigger{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
 }
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row :is(.bo-filter-reset-button,.bo-filter-search-button),
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row #ledgerResetBtn,
@@ -4221,17 +4315,30 @@ html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet
 /* Hide legacy page-info summary if any remnant remains */
 html body.bo-wallet-tx.wallet-ledger-page #ledgerPageInfo{display:none!important}
 
+/* Inline filter sits flush under .table-card top border — no lift/upward shadow on hover */
+html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter .clean-btn:hover,
+html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter .btn-primary-clean:hover,
+html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter #ledgerResetBtn:hover,
+html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter #ledgerSearchBtn:hover,
+html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter .bo-filter-reset-button:hover,
+html body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter .bo-filter-search-button:hover,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .clean-btn:hover,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter #ledgerResetBtn:hover{
+  transform:none!important;
+  box-shadow:none!important;
+}
+
 /* Wallet Ledger — Panel pill scrollbar on horizontal .table-wrap
    Light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / `#D97706`
-   4px · no arrows · webkit only (same recipe as Bulk panels) */
+   6px · no arrows · webkit only (same recipe as Bulk panels) */
 body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap{
   /* Do NOT set scrollbar-width/color to a coloured pair — Chromium then uses OS arrows */
   overflow-x:auto!important;
   overflow-y:hidden!important;
 }
 body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap::-webkit-scrollbar{
-  width:4px!important;
-  height:4px!important;
+  width:6px!important;
+  height:6px!important;
 }
 body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap::-webkit-scrollbar-button{
   display:none!important;

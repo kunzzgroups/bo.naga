@@ -171,11 +171,11 @@ Every row is **Light | Dark**. Full measurements + hover/active live in `.interf
 | Primary hover | reverse lift `#FCD34D`→`#FBBF24`→`#F59E0B`→`#EA8608` | reverse `#FDE68A`→`#FBBF24`→`#F59E0B` |
 | Ghost / Export | `#FFFCF7`→`#F5EBDC`→`#EDE4D4`, border `#DCC9A8`, text `#18191C` (form) · listing `#FFF8EB`→`#F3E8D6` | `#4A4C58`→`#383A46`→`#2C2E38`, text `#F5F5F4` |
 | Ghost hover (Create Role Back/Cancel) | reverse cream · border `#E0D0B8` · lift (no amber fill) | reverse charcoal · lift |
-| Hover tip | `#FFF8EB` + amber border, text `#6b360c`, radius `8px` (icon tips may be pill) | `#40424E` + amber border, text `#F5F5F4` |
+| Hover tip | `#FFF8EB` + amber border, text `#6b360c` · chart tips radius `8px` · **datetime / float / Last Login tips = `999px` pill** (pad `7px 14px`) | `#40424E` + amber border, text `#F5F5F4` · same radii |
 | Money positive / zero | `#B45309` / `#71717A` | `#F59E0B` / `#A1A1AA` |
 | Modal panel / close / scrim | cream panel · close well `#F5EBDC` · scrim `rgba(15,23,42,.55)` | `#383A46` · charcoal close · same scrim |
 | Tabs active | text `#18191C` · underline `#D97706` | text `#F4F4F5` · underline `#F59E0B` |
-| Filter bar / search | surface · `#EADCC8` · icon `#57534E` | charcoal · white/14 · muted icon |
+| Filter bar / search | surface · `#EADCC8` · icon `#57534E` · **listing h `36px` / radius `8px`** (Wallet Ledger specimen) | charcoal · white/14 · muted icon · same `36px` |
 | Status pills (Active/Suspend/All) | cream capsule thumb `999px` · idle muted dots · green/red **only when selected** · All = no dot · counts `(n)` | charcoal capsule · neon green/red when selected |
 | Permission group (open) | cream `#FFFCF7` · head `#FFF8EB`→`#FFF1DC` · amber border | cool `#383A46` · open head `#40424E` · body `#2C2E38` · amber border only |
 | Permission card | surface `#FFF8EB` · hover `#FFFCF7` · checked `#FFF8EB` · current `#FFF1DC` | `#2A2C36` · hover `#32343E` · checked/current amber tint only |
@@ -222,7 +222,7 @@ No bordered pill / no gear. Name `14px/700` (`#18191C` light · `#FFFFFF` dark).
 | Spec | Value |
 |------|-------|
 | Radius | `8px` |
-| Height | `36px` default · `40px` modal · `42px` filter Reset/Add |
+| Height | **`36px`** default (listing filters + page chrome) · `40px` modal · Delete Role toolbar may stay `42px` until migrated |
 | Weight | `700` |
 | Classes | Primary: `.mad-btn-primary` / `.mad-btn-navy` / `.bo-ui-button-primary` (all amber). Ghost: `.mad-btn-ghost` / Export |
 | Motion | hover `-1px` · active `+1px` |
@@ -272,7 +272,7 @@ Dark: Ghost charcoal gradient; Primary amber with dark text `#2A2C36`. CSS: `mai
 
 ### Roles & Permissions filter (`.mp-search` / `#menuPermissionFilter` — locked)
 
-**List page** (`menu-permission.html`): filter matches Role select — surface `#FFF8EB` · border `#EADCC8` · icon `#57534E` · placeholder `#78716C` (frame + input, incl. disabled). Height `42px` · input text `13.5px/500`.  
+**List page** (`menu-permission.html`): filter matches Role select — surface `#FFF8EB` · border `#EADCC8` · icon `#57534E` · placeholder `#78716C` (frame + input, incl. disabled). Height target **`36px`** when next touched (legacy CSS may still show `42px`). Input text `13.5px/500`.  
 **Create Role** (`main-admin-role-create.html`): Role Name + filter both surface `#FFF8EB` (same family as list controls). Role Name `14px/600` · label `11.5px/800` uppercase.  
 Always beat `reports.css` `#fff!important`. Dark: charcoal well `#2A2C36`. CSS: `menu-permission-executive.css` + `main-admin-role-create.css`.
 
@@ -297,9 +297,11 @@ Do not paint options with cool blue/cyan. Attention shake (`.is-attention`) is m
 
 Sidebar **3. Transaction** pages use listing chrome: filter/select = surface `#FFF8EB` (not form well `#F5EBDC`); dark selected option = `#F59E0B` / `#2A2C36`; pager = mad-pager slate inactive + amber active; **date range popover** = cream panel `12px` · preset active wash `#FFF1DC`/`#B45309` (never solid CTA) · ghost month/year head · divider shadow into calendar; **table frame** = Admin Detail `.mad-panel` (viewport-locked · inner scroll · `table-layout:fixed` · radius `8px`); **table zebra** = light `#FFF8EB`/`#FFF1DC` · dark `#3A3C48`/`#434653` · head light `#FFE8CC` / dark `#1F2128` · **no pure white** · thead corners square · cell `bold` · PENDING orange / APPROVED green / REJECTED red.
 
-**Deposit / Withdraw shell (locked):** bank capacity cards above the panel · mad-pill tabs Deposit→Withdraw→All **left** + inline filters **right** inside `.table-card` (no Reset/Search/Page Size in the filter row) · Bank column = bold `Name (account)` · Member = username only · action chips `.bo-tx-action-btn` 26×26 / icon 15px (Approve/Reject/Ledger) · no Pending metrics strip · no Filtered Total bar · Withdraw Remark without `Admin:` sub-line.
+**Listing filter controls (locked — Wallet Ledger specimen):** height **`36px`** · radius **`8px`** · row gap **`10px`** · pad `0 12px` · date trigger ~`240px` · text inputs `140px` · Type `150px` · Reset/Search `width:auto` · **no** Page Size in the filter row (footer only) · flush strips: no hover `translateY`. Beat `bo-ui-standard` `--bo-filter-height:42px` / `11px` radius. Full table: `.interface-design/system.md` → Patterns → Listing filter controls.
 
-**Payment Method Config** (`payment-method.html`): same Transaction listing table/pager · Edit/Delete `.bo-tx-action-btn` wells · amber QR View link · form-well modal. **Bank Deposit Usage** twin: Active/Suspend/All pills · View QR + mad-pager · no Config link. **Bulk Adjustment / Bulk Bonus:** panel pill scrollbars on member picker + selected table — light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / `#D97706` · `4px` · no arrows (not cool slate). **Wallet Ledger:** `bo-wallet-tx` · same chocolate pill on `.table-wrap` (horizontal) + type menu. Full notes: `.interface-design/system.md` → Bulk / Wallet Ledger / Panel pill scrollbar.
+**Deposit / Withdraw shell (locked):** bank capacity cards above the panel · mad-pill tabs Deposit→Withdraw→All **left** + inline filters **right** inside `.table-card` (no Reset/Search/Page Size in the filter row) · filter boxes = listing **`36px`** · date `240` · keyword `140` · status `150` · gap `10` · Bank column = bold `Name (account)` · Member = username only · action chips `.bo-tx-action-btn` 26×26 / icon 15px (Approve/Reject/Ledger) · no Pending metrics strip · no Filtered Total bar · Withdraw Remark without `Admin:` sub-line.
+
+**Payment Method Config** (`payment-method.html`): same Transaction listing table/pager · Edit/Delete `.bo-tx-action-btn` wells · amber QR View link · form-well modal. **Bank Deposit Usage** twin: Active/Suspend/All pills · View QR + mad-pager · no Config link. **Bulk Adjustment / Bulk Bonus:** Manual split **60% / 40%** (Select Members · Configure) · panel pill scrollbars on member picker + selected table — light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / `#D97706` · **`6px`** · no arrows (not cool slate). **Wallet Ledger:** `bo-wallet-tx` · same chocolate pill on `.table-wrap` (horizontal) + type menu · **specimen** for 36px filter geometry · **Created/Posted Time** = date `DD/MM/YYYY` in cell · cream pill tip `HH:MM:SS` · **no arrow** · footer **Show N entries** = same as Deposit (`-` · `10` · `20` · `50` · `100` · `All` · Role select chrome · `#ledgerSize` hidden). Full notes: `.interface-design/system.md` → Bulk / Wallet Ledger / Panel pill scrollbar / Listing filter controls / Date time tips.
 
 **Responsive (1920→375):** ≤1456 DATE day-only + hover full time · ≤1280 bank cards = horizontal snap strip (never multi-row stack that starves the table) · toolbar tabs-then-filters · table body scrolls · mid/small hide Processed / Remark / Reference as needed · never page horizontal overflow. CSS: `bo-wallet-transaction-amber.css`. Full notes: `.interface-design/system.md` → Layout → Transaction family (+ Deposit/Withdraw chrome & responsive tables).
 
@@ -563,7 +565,7 @@ Markup: `.ref-date-field > .ref-range-wrap > .ref-range-trigger` + `.ref-range-p
 | Part | Light | Dark |
 |------|-------|------|
 | Field (`.ref-date-field`) | width is **per page** (see below) | — |
-| Trigger `.ref-range-trigger` | bg `--bo-surface` `#FFF8EB` · border 1px `--bo-border` `#EADCC8` · radius `10px` · text `--bo-text` `#18191C` · `13px/700` · h `42px` | bg `#2A2C36` · border `rgba(255,255,255,.12)` · text `--bo-text` `#F5F5F4` |
+| Trigger `.ref-range-trigger` | bg `--bo-surface` `#FFF8EB` · border 1px `--bo-border` `#EADCC8` · radius `8–10px` · text `--bo-text` `#18191C` · `13px/700` · **listing h `36px`** (Wallet Ledger / `bo-wallet-tx`; MAIN executive may still measure `42px` until migrated) | bg `#2A2C36` · border `rgba(255,255,255,.12)` · text `--bo-text` `#F5F5F4` |
 | Panel `.ref-range-picker` | bg `--bo-surface` `#FFF8EB` · border `--bo-border` `#EADCC8` · radius `12px` · **`box-shadow: 0 12px 30px rgba(60,48,32,.14)`** | bg `#383A46` · border `rgba(255,255,255,.14)` · radius `12px` · **`box-shadow: 0 16px 38px rgba(0,0,0,.4)`** |
 | Calendar well `.ref-range-calendar` | transparent (the panel shows through) | bg `--bo-surface` `#383A46` (opaque) |
 | Rail `.ref-range-presets` | bg `--bo-surface` · border `--bo-border` · width `112px` · pad `8px 0` · **same `box-shadow` as the panel** | bg `#383A46` · border `rgba(255,255,255,.14)` · same shadow as the panel |
@@ -790,16 +792,7 @@ on them — `data-bo-theme` was never written.
    the outcome cannot depend on which file happens to sit later. **Looking for a ghost is the only
    check that finds this** — measure `background-image`, because a gradient never appears in
    `background-color`.
-11. **The standard filter row has its own shape, and it is not a defect to "unify" it.** The
-   `.bo-filter-row` vocabulary used by ~100 pages takes its `42px` height, `11px` radius and
-   `12px/700` text from `bo-ui-standard.css`'s own tokens (`--bo-filter-radius:11px`, and
-   `font-size:12px!important;font-weight:700!important` on the select), applied to the input frame,
-   the select and the Reset button alike. DESIGN.md's components table records `8px` radius and
-   `13.5px` text for the *other* filter row (`.mad-filters`, merchant/admin families) — the two are
-   different components, and trap-free cross-page comparison will keep flagging the difference.
-   Per the precedent recorded for the pill thumb (`999px` vs the table's `8px`: **the family value
-   was kept for internal consistency**), the standard row keeps its own values. This has now been
-   re-derived three times; it is written down so it does not happen a fourth.
+11. **Listing filter rows are locked at `36px` / `8px` radius (Wallet Ledger specimen).** Older notes that treated `bo-ui-standard` `--bo-filter-height:42px` / `--bo-filter-radius:11px` as a permanent second family are **superseded** for Transaction listing / `bo-wallet-tx` / `.bo-filter-row` on those pages. Beat the 42px tokens in `bo-wallet-transaction-amber.css`. MAIN executive `.mad-filters` and Roles `.mp-search` may still show legacy heights until those pages are migrated — then bring them to **`36px`**. Full metrics: `.interface-design/system.md` → Patterns → Listing filter controls.
 12. **A regex in injected code is eaten before Chrome sees it.** The probe is delivered through a
    template literal, so `\w`, `\s`, `\d` and `\(` lose their backslash on the way in. A
    specificity scorer built on `/#[\w-]+/g` silently counted nothing and reported `sp=0` for every
