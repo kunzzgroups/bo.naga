@@ -25,6 +25,7 @@
   let editingMessageId = '';
   let editingOriginalText = '';
   let lastUnreadTotal = Number(localStorage.getItem('bo_livechat_last_unread_total') || '0');
+  let inboxMenuEl = null;
   let originalTitle = document.title;
   let templateMessages = [];
   let unsubscribeTemplates = null;
@@ -103,6 +104,10 @@
     if(editCancel) editCancel.addEventListener('click', cancelEditing);
     document.addEventListener('click', function(e){
       if(!e.target.closest('.livechat-msg-actions')) document.querySelectorAll('.livechat-msg-menu.show').forEach(function(m){m.classList.remove('show');});
+      if(!e.target.closest('.livechat-inbox-menu,.livechat-inbox-pin')) hideInboxMenu();
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') hideInboxMenu();
     });
 
     if(attachBtn && fileInput){
@@ -202,29 +207,147 @@
     return hasDisplayableLastMessage(conversation) || conversation._hasActualMessage === true;
   }
 
+  const PIN_STORE = 'bo_livechat_pinned';
+  function readPins(){
+    try{
+      const merged = {};
+      Object.keys(localStorage).forEach(function(k){
+        if(k !== PIN_STORE && k.indexOf('bo_livechat_pinned_') !== 0) return;
+        try{
+          const raw = JSON.parse(localStorage.getItem(k) || '{}');
+          if(raw && typeof raw === 'object' && !Array.isArray(raw)) Object.assign(merged, raw);
+        }catch(e){}
+      });
+      return merged;
+    }catch(e){ return {}; }
+  }
+  function writePins(map){
+    try{ localStorage.setItem(PIN_STORE, JSON.stringify(map || {})); }catch(e){}
+  }
+  function isPinned(id){
+    return !!readPins()[id];
+  }
+  function togglePin(id){
+    if(!id) return;
+    const map = readPins();
+    if(map[id]) delete map[id];
+    else map[id] = Date.now();
+    writePins(map);
+    hideInboxMenu();
+    renderInbox();
+  }
+  function hideInboxMenu(){
+    if(inboxMenuEl) inboxMenuEl.classList.remove('show');
+  }
+  function ensureInboxMenu(){
+    if(inboxMenuEl) return inboxMenuEl;
+    inboxMenuEl = document.createElement('div');
+    inboxMenuEl.className = 'livechat-inbox-menu';
+    inboxMenuEl.setAttribute('role', 'menu');
+    document.body.appendChild(inboxMenuEl);
+    inboxMenuEl.addEventListener('click', function(e){
+      const btn = e.target.closest('[data-inbox-action]');
+      if(!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const id = inboxMenuEl.getAttribute('data-id');
+      if(btn.getAttribute('data-inbox-action') === 'pin') togglePin(id);
+    });
+    return inboxMenuEl;
+  }
+  function showInboxMenu(x, y, id, pinned){
+    const menu = ensureInboxMenu();
+    menu.setAttribute('data-id', id);
+    menu.innerHTML = pinned
+      ? '<button type="button" role="menuitem" data-inbox-action="pin"><i class="bi bi-pin-angle"></i> Unpin</button>'
+      : '<button type="button" role="menuitem" data-inbox-action="pin"><i class="bi bi-pin-angle-fill"></i> Pin to top</button>';
+    menu.classList.add('show');
+    const pad = 8;
+    const w = 172;
+    const left = Math.min(Math.max(pad, x), window.innerWidth - w - pad);
+    menu.style.left = left + 'px';
+    menu.style.top = Math.max(pad, y) + 'px';
+    requestAnimationFrame(function(){
+      const rect = menu.getBoundingClientRect();
+      if(rect.bottom > window.innerHeight - pad){
+        menu.style.top = Math.max(pad, y - rect.height) + 'px';
+      }
+    });
+  }
+
   function renderInbox(){
     if(!inboxList) return;
     const q = (searchInput && searchInput.value || '').trim().toLowerCase();
+    const pins = readPins();
     const list = conversations.filter(function(c){
       if(!hasActualConversationMessage(c)) return false;
       const hay = [c.memberName, c.memberUsername, c.conversationId, c.lastMessage].join(' ').toLowerCase();
       return !q || hay.indexOf(q) >= 0;
+    }).slice().sort(function(a, b){
+      const ap = pins[a.id] ? 1 : 0;
+      const bp = pins[b.id] ? 1 : 0;
+      return bp - ap;
     });
+    const totalEl = document.getElementById('livechatInboxTotal');
+    if(totalEl) totalEl.textContent = list.length ? String(list.length) : '';
     if(!list.length){
       inboxList.innerHTML = emptyMarkup('No conversations found', 'Try another name or refresh the inbox.');
       return;
     }
+    const GROUP_LABEL = { pinned: 'Pinned', today: 'Today', yesterday: 'Yesterday', earlier: 'Earlier' };
+    let lastBucket = '';
     inboxList.innerHTML = list.map(function(c){
-      const active = c.id === selectedId ? ' active' : '';
+      const isActive = c.id === selectedId;
+      const pinned = !!pins[c.id];
+      const active = isActive ? ' active' : '';
       const unread = Number(c.adminUnreadCount || 0);
-      return '<button type="button" class="livechat-inbox-item' + active + (unread ? ' unread' : '') + '" data-id="' + esc(c.id) + '">' +
-        '<span class="avatar">' + esc(initials(c.memberName || c.memberUsername || 'M')) + '</span>' +
-        '<span class="copy"><b>' + esc(c.memberName || 'Member') + (unread ? ' <span class="unread-dot">NEW</span>' : '') + '</b><small>' + esc(c.memberUsername || c.id) + '</small><em>' + esc(c.lastMessage || 'No message') + '</em></span>' +
-        '<span class="time">' + (unread ? '<b class="unread-count">' + unread + '</b>' : '') + esc(formatTime(c.updatedAt)) + '</span>' +
-      '</button>';
+      const name = c.memberName || 'Member';
+      const user = String(c.memberUsername || '').trim();
+      const showUser = user && user.toLowerCase() !== String(name).toLowerCase();
+      const preview = String(c.lastMessage || '').replace(/\s+/g, ' ').trim() || 'No message';
+      const placeholder = !hasDisplayableLastMessage(c);
+      let previewHtml = '';
+      if(showUser) previewHtml += '<small>' + esc(user) + '</small>';
+      if(!placeholder) previewHtml += '<em>' + esc(preview) + '</em>';
+      else if(!showUser) previewHtml += '<em class="is-placeholder">' + esc(preview) + '</em>';
+      const bucket = pinned ? 'pinned' : dayBucket(c.updatedAt);
+      let group = '';
+      if(bucket !== lastBucket){
+        lastBucket = bucket;
+        group = '<div class="livechat-inbox-group' + (bucket === 'pinned' ? ' is-pinned' : '') + '">' +
+          (bucket === 'pinned' ? '<i class="bi bi-pin-angle-fill" aria-hidden="true"></i>' : '') +
+          esc(GROUP_LABEL[bucket] || 'Earlier') + '</div>';
+      }
+      return group +
+        '<div class="livechat-inbox-row' + (pinned ? ' is-pinned' : '') + (isActive ? ' is-active' : '') + '">' +
+          '<button type="button" class="livechat-inbox-item' + active + (unread ? ' unread' : '') + '" data-id="' + esc(c.id) + '" aria-pressed="' + (isActive ? 'true' : 'false') + '"' + (isActive ? ' aria-current="true"' : '') + '>' +
+            '<span class="avatar" aria-hidden="true">' + esc(initials(name || user || 'M')) + (unread ? '<span class="livechat-inbox-pip"></span>' : '') + '</span>' +
+            '<span class="copy">' +
+              '<span class="livechat-inbox-name"><b>' + esc(name) + '</b></span>' +
+              '<span class="livechat-inbox-preview">' + previewHtml + '</span>' +
+            '</span>' +
+            '<span class="livechat-inbox-meta">' +
+              (isActive ? '<span class="livechat-inbox-open">Open</span>' : (unread ? '<span class="unread-count">' + unread + '</span>' : '')) +
+              '<span class="livechat-inbox-time">' + esc(formatTime(c.updatedAt)) + '</span>' +
+            '</span>' +
+          '</button>' +
+          '<button type="button" class="livechat-inbox-pin' + (pinned ? ' is-on' : '') + '" data-pin-id="' + esc(c.id) + '" aria-pressed="' + (pinned ? 'true' : 'false') + '" aria-label="' + (pinned ? 'Unpin conversation' : 'Pin conversation to top') + '" title="' + (pinned ? 'Unpin' : 'Pin to top') + '"><i class="bi ' + (pinned ? 'bi-pin-angle-fill' : 'bi-pin-angle') + '"></i></button>' +
+        '</div>';
     }).join('');
-    inboxList.querySelectorAll('[data-id]').forEach(function(btn){
+    inboxList.querySelectorAll('.livechat-inbox-item[data-id]').forEach(function(btn){
       btn.addEventListener('click', function(){ selectConversation(btn.getAttribute('data-id')); });
+      btn.addEventListener('contextmenu', function(e){
+        e.preventDefault();
+        const id = btn.getAttribute('data-id');
+        showInboxMenu(e.clientX, e.clientY, id, isPinned(id));
+      });
+    });
+    inboxList.querySelectorAll('[data-pin-id]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        togglePin(btn.getAttribute('data-pin-id'));
+      });
     });
   }
 
@@ -261,7 +384,7 @@
     setComposerVisible(true);
     renderInbox();
     const conv = conversations.find(c => c.id === id) || {id:id};
-    roomHead.innerHTML = '<div class="livechat-room-avatar">' + esc(initials(conv.memberName || 'M')) + '</div><div><h2>' + esc(conv.memberName || 'Member') + '</h2><p>' + esc(conv.memberUsername || conv.id) + '</p></div>';
+    roomHead.innerHTML = '<div class="livechat-room-id"><div class="livechat-room-avatar">' + esc(initials(conv.memberName || 'M')) + '</div><div class="livechat-room-id-copy"><h2>' + esc(conv.memberName || 'Member') + '</h2><p>' + esc(conv.memberUsername || conv.id) + '</p></div></div>';
     loadMemberCasinoStats(conv.memberUsername || conv.id, id);
     markConversationRead(id);
     if(unsubscribeMessages){ unsubscribeMessages(); unsubscribeMessages = null; }
@@ -272,6 +395,7 @@
         // after unsubscribe(). Never let that stale callback replace/clear the
         // room the admin has just selected.
         if(selectedId !== id || listenerSeq !== messageListenerSeq) return;
+        messagesEl.dataset.followLatest = 'false';
         messagesEl.innerHTML = '';
         if(snapshot.empty){
           // Keep the room selected. An initial cache snapshot may be empty even
@@ -281,8 +405,27 @@
           messagesEl.innerHTML = emptyMarkup('Loading conversation messages', '', true);
           return;
         }
-        snapshot.forEach(function(doc){ renderMessage(doc.id, doc.data()); });
-        messagesEl.scrollTop = messagesEl.scrollHeight;
+        let lastDay = '';
+        snapshot.forEach(function(doc){
+          const data = doc.data();
+          const stamp = formatDayStamp(data.createdAt);
+          if(stamp && stamp !== lastDay){
+            lastDay = stamp;
+            const sep = document.createElement('div');
+            sep.className = 'livechat-msg-day';
+            sep.innerHTML = '<span>' + esc(stamp) + '</span>';
+            messagesEl.appendChild(sep);
+          }
+          renderMessage(doc.id, data);
+        });
+        const lastMsg = messagesEl.querySelector('.livechat-msg:last-of-type');
+        if(lastMsg && lastMsg.offsetHeight > messagesEl.clientHeight - 48){
+          messagesEl.dataset.followLatest = 'false';
+          lastMsg.scrollIntoView({block:'start', inline:'nearest'});
+        }else{
+          messagesEl.dataset.followLatest = 'true';
+          messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
       }, function(error){
         if(selectedId !== id || listenerSeq !== messageListenerSeq) return;
         messagesEl.innerHTML = emptyMarkup('Unable to load messages', error.message || '', true);
@@ -294,32 +437,39 @@
     selectedId = '';
     ++messageListenerSeq;
     if(unsubscribeMessages){ unsubscribeMessages(); unsubscribeMessages = null; }
-    roomHead.innerHTML = '<div class="livechat-room-avatar">?</div><div><h2>Select a conversation</h2><p>Choose a member from the inbox to start reply.</p></div>';
+    roomHead.innerHTML = '<div class="livechat-room-id"><div class="livechat-room-avatar">?</div><div class="livechat-room-id-copy"><h2>Select a conversation</h2><p>Choose a member from the inbox to start reply.</p></div></div>';
     messagesEl.innerHTML = emptyMarkup('Select a conversation', 'Choose a member from the inbox to start reply.', true);
     setComposerVisible(false);
   }
 
   function renderMessage(messageId, msg){
     const isAdmin = msg.senderType === 'admin';
+    const senderName = msg.senderName || (isAdmin ? 'Admin' : 'Member');
+    const letter = String(senderName).trim().charAt(0).toUpperCase() || '?';
     const wrap = document.createElement('div');
     wrap.className = 'livechat-msg ' + (isAdmin ? 'admin' : 'member');
     wrap.dataset.messageId = messageId;
-    let html = '<div class="bubble"><div class="name">' + esc(msg.senderName || (isAdmin ? 'Admin' : 'Member')) + '</div>';
+    const avatar = '<div class="livechat-msg-avatar" aria-hidden="true">' + esc(letter) + '</div>';
+    let actionsHtml = '';
     if(isAdmin && !msg.recalled){
       const hasFiles = Array.isArray(msg.attachments) && msg.attachments.length > 0;
       const hasText = !!String(msg.text || '').trim();
       let actionButtons = '';
       if(hasFiles){
-        actionButtons += '<button type="button" data-msg-action="recall">Recall Message</button>'+
-          '<button type="button" data-msg-action="delete">Delete Message</button>';
+        actionButtons += '<button type="button" data-msg-action="recall"><i class="bi bi-arrow-counterclockwise"></i> Recall</button>'+
+          '<button type="button" data-msg-action="delete"><i class="bi bi-trash3"></i> Delete</button>';
       }else if(hasText){
-        actionButtons += '<button type="button" data-msg-action="edit">Edit Message</button>'+          '<button type="button" data-msg-action="recall">Recall Message</button>'+          '<button type="button" data-msg-action="delete">Delete Message</button>';
+        actionButtons += '<button type="button" data-msg-action="edit"><i class="bi bi-pencil"></i> Edit</button>'+
+          '<button type="button" data-msg-action="recall"><i class="bi bi-arrow-counterclockwise"></i> Recall</button>'+
+          '<button type="button" data-msg-action="delete"><i class="bi bi-trash3"></i> Delete</button>';
       }
       if(actionButtons){
-        html += '<div class="livechat-msg-actions"><button type="button" class="livechat-msg-menu-btn" aria-label="Message actions"><i class="bi bi-three-dots-vertical"></i></button>'+
+        actionsHtml = '<div class="livechat-msg-actions"><button type="button" class="livechat-msg-menu-btn" aria-label="Message actions"><i class="bi bi-three-dots-vertical"></i></button>'+
           '<div class="livechat-msg-menu">'+actionButtons+'</div></div>';
       }
     }
+    let html = isAdmin ? actionsHtml : avatar;
+    html += '<div class="bubble"><div class="name">' + esc(senderName) + '</div>';
     if(msg.recalled){
       html += '<div class="livechat-recalled"><i class="bi bi-arrow-counterclockwise"></i> Message recalled</div>';
     }else if(msg.text){
@@ -335,7 +485,8 @@
       });
       html += '</div>';
     }
-    html += '<div class="msg-time">' + esc(formatTime(msg.createdAt)) + (msg.editedAt && !msg.recalled ? ' · Edited' : '') + '</div></div>';
+    html += '<div class="msg-time">' + esc(formatClock(msg.createdAt)) + (msg.editedAt && !msg.recalled ? ' · Edited' : '') + '</div></div>';
+    if(isAdmin) html += avatar;
     wrap.innerHTML = html;
     messagesEl.appendChild(wrap);
     const menuBtn=wrap.querySelector('.livechat-msg-menu-btn');
@@ -739,13 +890,49 @@
 
   function safeFileName(name){ return String(name || 'attachment').replace(/[^a-zA-Z0-9._-]/g, '_'); }
   function initials(name){ return (String(name || 'M').trim().charAt(0) || 'M').toUpperCase(); }
-  function formatText(str){ return esc(str).replace(/\r\n|\r|\n/g, '<br>'); }
+  function formatText(str){ return esc(str); }
   function formatFileSize(bytes){ if(!bytes) return '0 KB'; if(bytes < 1024*1024) return Math.max(1, Math.round(bytes/1024)) + ' KB'; return (bytes/1024/1024).toFixed(1) + ' MB'; }
+  function dayDiffFromNow(ts){
+    const d = ts && ts.toDate ? ts.toDate() : null;
+    if(!d) return null;
+    const now = new Date();
+    const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startThat = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    return Math.round((startToday - startThat) / 86400000);
+  }
+  function dayBucket(ts){
+    const dayDiff = dayDiffFromNow(ts);
+    if(dayDiff === 0) return 'today';
+    if(dayDiff === 1) return 'yesterday';
+    return 'earlier';
+  }
+  function formatDayStamp(ts){
+    const dayDiff = dayDiffFromNow(ts);
+    if(dayDiff === null) return '';
+    if(dayDiff === 0) return 'Today';
+    if(dayDiff === 1) return 'Yesterday';
+    try{
+      const d = ts && ts.toDate ? ts.toDate() : null;
+      if(!d) return '';
+      return d.toLocaleDateString([], {weekday:'short', month:'short', day:'numeric'});
+    }catch(e){ return ''; }
+  }
+  function formatClock(ts){
+    try{
+      const d = ts && ts.toDate ? ts.toDate() : null;
+      if(!d) return '';
+      return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    }catch(e){ return ''; }
+  }
   function formatTime(ts){
     try{
       const d = ts && ts.toDate ? ts.toDate() : null;
       if(!d) return '';
-      return d.toLocaleString([], {month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit'});
+      const dayDiff = dayDiffFromNow(ts);
+      if(dayDiff === 0) return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      if(dayDiff === 1) return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      if(dayDiff > 1 && dayDiff < 7) return d.toLocaleDateString([], {weekday:'short'});
+      return d.toLocaleDateString([], {month:'short', day:'numeric'});
     }catch(e){ return ''; }
   }
   function emptyMarkup(title, hint, isBig){
@@ -761,13 +948,13 @@
 // Keep reply composer visible and provide a one-click jump to the newest message.
 (function(){
   function initScrollHelper(){
-    const room=document.querySelector('.livechat-room-card');
+    const thread=document.querySelector('.livechat-room-thread');
     const box=document.getElementById('livechatMessages');
-    if(!room||!box||room.querySelector('.livechat-scroll-bottom')) return;
+    if(!thread||!box||thread.querySelector('.livechat-scroll-bottom')) return;
     const btn=document.createElement('button');
     btn.type='button';btn.className='livechat-scroll-bottom';btn.title='Scroll to latest message';btn.setAttribute('aria-label','Scroll to latest message');
     btn.innerHTML='<i class="bi bi-arrow-down"></i>';
-    room.appendChild(btn);
+    thread.appendChild(btn);
     const nearBottom=()=>box.scrollHeight-box.scrollTop-box.clientHeight<90;
     const update=()=>btn.classList.toggle('show',!nearBottom()&&box.scrollHeight>box.clientHeight+40);
     btn.addEventListener('click',()=>box.scrollTo({top:box.scrollHeight,behavior:'smooth'}));

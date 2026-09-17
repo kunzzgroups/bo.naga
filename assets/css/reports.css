@@ -5517,9 +5517,12 @@ body.modal-open{overflow:hidden!important}
   .livechat-bo-page .sidebar-overlay{
     display:none!important;
   }
-  .livechat-bo-page .close-side,
-  .livechat-bo-page .hamb{
+  .livechat-bo-page .close-side{
     display:none!important;
+  }
+  body.livechat-bo-page.sidebar-mini .report-main{
+    margin-left:var(--rail-w)!important;
+    width:calc(100% - var(--rail-w))!important;
   }
   .livechat-bo-page .livechat-admin-shell{
     grid-template-columns:360px minmax(0,1fr)!important;

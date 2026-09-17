@@ -170,6 +170,11 @@
     }
     /* New Menu modal segmented controls (Status / mode tabs) — page CSS owns these.
        "Disabled" must NOT match the global danger heuristic (/disable/). */
+    if(el.matches?.('.livechat-inbox-item,.livechat-inbox-pin,.livechat-msg-menu-btn,.template-icon-btn,.template-list-item,.template-list-add') || el.closest?.('.livechat-inbox-list,.livechat-inbox-menu,.livechat-msg-menu,.livechat-msg-actions,.template-list,.template-list-actions')){
+      el.classList.remove('bo-ui-button','bo-ui-button-primary','bo-ui-button-secondary','bo-ui-button-danger','bo-ui-icon-button');
+      delete el.dataset.boUiButton;
+      return;
+    }
     if(el.matches?.('.nm-status-btn,.nm-mode-tab,.bo-theme-btn,#boThemeToggle,.mad-btn,.mad-tab,.mad-pill,.mad-icon-btn,.mad-eye,.mac-link-btn,.mac-change-role,.mac-credit-mode-btn,.mac-currency-add-btn,.mac-currency-add-inline,.mac-currency-chip-remove,.mac-currency-picker-item,.mac-currency-move-btn,.mac-currency-pane-item,.mprr-mode-btn,.mprr-entry-opt,.mp-scope-btn,.mrc-chip-btn,.mrc-btn,.status-pill,.usage-show-switch,.usage-status-chip,.bo-tx-tab') || el.closest?.('.nm-status-seg,.nm-mode-tabs,#newMenuModal .nm-status-seg,#newMenuModal .nm-mode-tabs,.mp-workspace,.mrc-workspace,.mad-workspace,.mad-modal,.mad-pager,.mac-workspace,.mp-scope,.mprr-entry-options')){
       el.classList.remove('bo-ui-button','bo-ui-button-primary','bo-ui-button-secondary','bo-ui-button-danger','bo-ui-icon-button');
       delete el.dataset.boUiButton;
