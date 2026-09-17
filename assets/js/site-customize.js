@@ -373,7 +373,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
   <div class="brand-mobile-account-actions">
     <a href="deposit.html" class="brand-mobile-account-action"><img src="assets/custom/images/deposit.png" alt="Deposit"><span>Deposit</span></a>
     <a href="withdraw.html" class="brand-mobile-account-action"><img src="assets/custom/images/withdraw.png" alt="Withdraw"><span>Withdraw</span></a>
-    <button type="button" class="brand-mobile-account-action" onclick="window.NAGA_SITE_SHELL && window.NAGA_SITE_SHELL.refreshBalance && window.NAGA_SITE_SHELL.refreshBalance()"><img src="assets/custom/images/refresh.png" alt="Refresh"><span>Refresh</span></button>
+    <button type="button" class="brand-mobile-account-action" data-refresh-main-wallet><img src="assets/custom/images/refresh.png" alt="Refresh"><span>Refresh</span></button>
   </div>
 </section>`,
         'frontend-sidebar': `<div class="mobile-menu-head">
