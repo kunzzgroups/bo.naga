@@ -165,11 +165,12 @@ Classic BO listing shells (`reports.css` + `bo-ui-standard.css`), **not** MAIN e
 | Scope | `body.bo-wallet-tx` |
 | CSS | `assets/css/bo-wallet-transaction-amber.css` (load after `bo-ui-standard`) |
 | Pages | `member-deposit`, `member-withdraw`, `member-wallet`, `wallet-ledger`, `bulk-adjustment`, `bank-deposit-usage`, `bulk-bonus-adjustment`, `payment-method` |
-| Filter / select recipe | **Admin listing chrome** + **Role select dropdown** — surface `#FFF8EB` · border `#EADCC8` · radius `8px` · never form well `#F5EBDC` |
+| Filter / select recipe | **Listing filter controls (locked)** — height **`36px`** · radius **`8px`** · gap **`10px`** · surface `#FFF8EB` · border `#EADCC8` · never form well `#F5EBDC` · Type multi = Role select option chrome |
 | Dark select selected | solid `#F59E0B` · text `#2A2C36` (same as Role select) |
 | Pager | **Table footer pager** (`.mad-pager`) — light inactive slate `#F3F4F6`/`#9CA3AF`; dark charcoal inactive; amber 3D active |
-| Date range | **Date range picker** pattern (preset wash, ghost head, cream panel) — see Patterns |
+| Date range | **Date range picker** pattern (preset wash, ghost head, cream panel) — listing trigger height **`36px`** · width ~`240px` — see Patterns |
 | Filter titles | Hidden on listing filters (placeholder + value carry meaning) |
+| Filter Page Size | **Not** in the filter row — footer `Show N entries` only (Wallet Ledger / Deposit / Withdraw) |
 | Deposit / Withdraw tabs | `.bo-tx-tabs` / `.bo-tx-tab` — **Status filter pills** recipe · order Deposit → Withdraw → All · cream **capsule** thumb (`999px`) + muted idle dots · green/red only when selected · counts `(n)` · requires `bo-seg-bounce` |
 | Hover / focus / open | Same as Merchant Profit + Role select: border `#D97706` + `0 0 0 3px rgba(217,119,6,.14)` (dark: `#F59E0B` + `rgba(245,158,11,.18)`). Inputs, selects, date triggers — one recipe. Idle chrome must not kill the ring. |
 | Table frame | **Same as Admin Detail `.mad-panel`** — viewport-locked panel · inner scroll · `table-layout:fixed` · radius `8px` · no nested `.table-wrap` border · footer pins to panel bottom |
@@ -277,19 +278,51 @@ Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
 #### Wallet Ledger (locked)
 
 Reference: `wallet-ledger.html` · `body.bo-wallet-tx.wallet-ledger-page` · `bo-wallet-transaction-amber.css`.
+**Specimen for listing filter control size** — measure here; other Transaction listing pages unify to the same metrics.
 
 | Part | Spec |
 |------|------|
 | Shell | `bo-wallet-tx` (not `bo-charcoal`) + amber CSS · FOUC theme script |
-| Filters | Surface `#FFF8EB` · Type multi-select = Role select chrome (cream · amber focus · no cool blue) |
+| Filter strip | Inside `.table-card` → `.filter-card.wallet-inline-filter` · pad `10px 14px` · bottom hairline `#EADCC8` · **no** Page Size in row |
+| Filter controls | **Listing filter controls (locked)** — see Patterns · date `240px` · Member/Provider `140px` · Type `150px` · Reset/Search `auto` (content + `0 12px`) |
+| Type multi-select | Trigger = listing control chrome · menu/options = **Role select** option recipe (cream · amber wash hover · dark selected solid amber) |
 | Table wrap | `.table-card > .table-wrap` horizontal scroll · **Panel pill scrollbar** (chocolate light / amber dark · `4px` · no arrows) |
 | Type menu scroll | `#ledgerTypeOptions` — same pill recipe |
+| Hover in strip | Reset/Search: **no** `translateY(-1px)` / upward shadow (flush under `.table-card` top border) |
 
 Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
 
 ---
 
 ## Patterns
+
+### Listing filter controls (locked — Wallet Ledger specimen)
+
+**Canonical size for Transaction listing filters** (`.bo-filter-row` / `.wallet-inline-filter` / Deposit–Withdraw inline toolbar). Reference: `wallet-ledger.html` filter strip. **Do not** ship `42px` / `11px` radius on these rows going forward — beat `bo-ui-standard` `--bo-filter-height:42px` with the amber layer.
+
+| Spec | Value |
+|------|-------|
+| Height | **`36px`** · `min/max-height:36px` · `box-sizing:border-box` |
+| Radius | **`8px`** (not `11px`) |
+| Row gap | **`10px`** |
+| Strip padding | `10px 14px` (inline-in-table-card) |
+| Surface | `#FFF8EB` · border `#EADCC8` · never form well `#F5EBDC` |
+| Text | inputs `12px/700` · date trigger `13px/700` · buttons `12.5px/800` |
+| Control pad | `0 12px` |
+| Focus / open | border `#D97706` + `0 0 0 3px rgba(217,119,6,.14)` (dark: `#F59E0B` + `rgba(245,158,11,.18)`) |
+| Labels | Hidden (placeholder + value) |
+
+| Control | Width (desktop) |
+|---------|-----------------|
+| Date range trigger | `240px` (flex `0 0 240px` · min `220`) |
+| Text input (Member / Provider / keyword) | `140px` |
+| Type multi / select-like | `150px` |
+| Page size | **Not in filter row** — footer only |
+| Reset / Search | `width:auto` · `flex:0 0 auto` · pad `0 12px` |
+
+**Buttons in the strip:** Ghost Reset + Primary Search — same **`36px`** · listing Ghost / Primary 3D fills · **no** hover lift when the strip sits flush under a panel top border.
+
+**Out of scope (keep their own heights until migrated):** Roles `.mp-search` / Role select trigger on `menu-permission` · MAIN executive `.mad-filters` · modal footers (`40px`). When those listing-adjacent filters are next touched, bring them to **`36px`**.
 
 ### Sidebar nav
 
@@ -409,13 +442,13 @@ Neat amber chips (Members / Deposit / Withdraw). One icon language — no purple
 
 | Spec | Value |
 |------|-------|
-| Base height | `36px` (filter Reset / Add Currency / Bulk Delete may be `42px`) |
+| Base height | **`36px`** (listing filters / page chrome). Modal actions `40px`. Danger Delete Role may stay `42px` until that toolbar is migrated |
 | Modal action height | `40px` |
-| Padding | `0 14px` (modal `0 16px`) |
+| Padding | `0 12–14px` (listing filter buttons `0 12px` · modal `0 16px`) |
 | Radius | `8px` |
-| Font | `12.5–13px` / weight `700` |
+| Font | `12.5–13px` / weight `700–800` |
 | Gap (icon+label) | `6–8px` |
-| Motion | hover `translateY(-1px)` · active `translateY(1px)` · ease ~`0.14s` |
+| Motion | hover `translateY(-1px)` · active `translateY(1px)` · ease ~`0.14s` — **except** flush inline filter strips (Wallet Ledger): no lift |
 | Focus | `outline: 2px solid` amber (`--bo-cyan` / `#D97706`) · offset `2px` |
 
 **Classes:** Primary = `.mad-btn-primary` / `.mad-btn-navy` / `.bo-ui-button-primary` (alias; all amber). Ghost / Export = `.mad-btn-ghost` / `#madExportBtn`. Never restore navy fill as primary.
@@ -672,9 +705,11 @@ Reference: Charcoal block `main-admin-detail-executive.css` (`data-access-page="
 |------|-------|------|
 | Bar | surface `#FFF8EB` · bottom border `#EADCC8` | surface `#383A46` · bottom `rgba(255,255,255,.14)` |
 | Search frame `.mad-search` | surface · border `#EADCC8` · icon `#57534E` · input transparent/cream · placeholder `#78716C` | charcoal well · muted icon · placeholder `#A1A1AA` |
-| Filter select / rounded trigger | cream surface · amber focus ring | `#2A2C36` · amber focus |
-| Reset / secondary action | height `42px` · Ghost/surface | charcoal Ghost |
+| Filter select / rounded trigger | cream surface · amber focus ring · height **`36px`** (listing) | `#2A2C36` · amber focus |
+| Reset / secondary action | height **`36px`** · Ghost/surface (listing) | charcoal Ghost |
 | Bulk delete | `#FEF3F2` / border danger/35 / text `#B42318` | danger wash / `#FF8A90` |
+
+Transaction listing / Wallet Ledger: use **Listing filter controls (locked)** — not the old `42px` / `11px` `bo-ui-standard` tokens.
 
 #### Status filter pills — `.mad-pill` / `.bo-tx-tab` + `.bo-seg-thumb` (locked)
 
@@ -915,6 +950,7 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Bulk panel pill scrollbar locked: light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / `#D97706` · `4px` · no arrows · webkit only (never cool slate / zinc) | User confirmed chocolate light thumb; dark must differ from light | 2026-09-17 |
 | Wallet Ledger = `bo-wallet-tx` · table-wrap + type menu use Panel pill chocolate scrollbar · Type dropdown retired cool blue | User: Wallet Ledger scrollbar 跟着 MD | 2026-09-17 |
 | Sidebar active chip: first matching menu URL only (wallet-ledger under Transaction wins over Member duplicate) | User: Wallet Ledger sidebar 跟着 MD；Member 不应同时高亮 | 2026-09-17 |
+| **Listing filter controls locked at `36px` / radius `8px` / gap `10px`** (Wallet Ledger specimen) — date `240` · inputs `140` · Type `150` · Reset/Search auto · no Page Size in filter row · no hover lift in flush strips | User: 按钮和框大小更新进 MD，之后统一用这个大小 | 2026-09-17 |
 
 ### Opt-in layers for pages outside the migrated families
 
