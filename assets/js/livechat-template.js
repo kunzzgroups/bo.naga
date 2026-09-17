@@ -58,7 +58,7 @@
 
   if(unsubscribe) unsubscribe();
 
-  listEl.innerHTML = '<div class="livechat-empty">Loading templates...</div>';
+  listEl.innerHTML = '<div class="livechat-empty"><span class="livechat-empty-icon"><i class="bi bi-chat-square-text"></i></span><strong>Loading templates</strong></div>';
 
   unsubscribe = db.collection('livechat_templates')
     .onSnapshot(async function(snapshot){
@@ -204,7 +204,7 @@
   function renderList(list){
     if(!listEl) return;
     list = Array.isArray(list) ? list : [];
-    if(!list.length){ listEl.innerHTML = '<div class="livechat-empty">No template message yet.</div>'; return; }
+    if(!list.length){ listEl.innerHTML = '<div class="livechat-empty"><span class="livechat-empty-icon"><i class="bi bi-chat-square-text"></i></span><strong>No template message yet</strong><span>Add one with the form on the left.</span></div>'; return; }
     listEl.innerHTML = list.map(function(t){
       const active = Number(t.status == null ? 1 : t.status) === 1;
       return '<article class="template-list-item">' +

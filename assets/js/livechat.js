@@ -211,7 +211,7 @@
       return !q || hay.indexOf(q) >= 0;
     });
     if(!list.length){
-      inboxList.innerHTML = '<div class="livechat-empty">No conversations found.</div>';
+      inboxList.innerHTML = emptyMarkup('No conversations found', 'Try another name or refresh the inbox.');
       return;
     }
     inboxList.innerHTML = list.map(function(c){
@@ -229,7 +229,7 @@
   }
 
   function renderInboxMessage(text){
-    if(inboxList) inboxList.innerHTML = '<div class="livechat-empty">' + esc(text) + '</div>';
+    if(inboxList) inboxList.innerHTML = emptyMarkup(text);
   }
 
   async function loadMemberCasinoStats(username, conversationId){
@@ -265,7 +265,7 @@
     loadMemberCasinoStats(conv.memberUsername || conv.id, id);
     markConversationRead(id);
     if(unsubscribeMessages){ unsubscribeMessages(); unsubscribeMessages = null; }
-    messagesEl.innerHTML = '<div class="livechat-empty big">Loading messages...</div>';
+    messagesEl.innerHTML = emptyMarkup('Loading messages', '', true);
     unsubscribeMessages = db.collection('conversations').doc(id).collection('messages').orderBy('createdAt','asc')
       .onSnapshot(function(snapshot){
         // Firestore can still deliver a queued callback from the previous room
@@ -278,14 +278,14 @@
           // though the server snapshot that follows contains the real messages.
           // Previously clearRoom() unsubscribed here, so the real data never had
           // a chance to render and the UI jumped back to "Select a conversation".
-          messagesEl.innerHTML = '<div class="livechat-empty big">Loading conversation messages...</div>';
+          messagesEl.innerHTML = emptyMarkup('Loading conversation messages', '', true);
           return;
         }
         snapshot.forEach(function(doc){ renderMessage(doc.id, doc.data()); });
         messagesEl.scrollTop = messagesEl.scrollHeight;
       }, function(error){
         if(selectedId !== id || listenerSeq !== messageListenerSeq) return;
-        messagesEl.innerHTML = '<div class="livechat-empty big">Unable to load messages. ' + esc(error.message || '') + '</div>';
+        messagesEl.innerHTML = emptyMarkup('Unable to load messages', error.message || '', true);
       });
   }
 
@@ -294,8 +294,8 @@
     selectedId = '';
     ++messageListenerSeq;
     if(unsubscribeMessages){ unsubscribeMessages(); unsubscribeMessages = null; }
-    roomHead.innerHTML = '<div class="livechat-room-avatar">?</div><div><h2>Select a conversation</h2><p>Choose member from left inbox to start reply.</p></div>';
-    messagesEl.innerHTML = '<div class="livechat-empty big">No conversation selected.</div>';
+    roomHead.innerHTML = '<div class="livechat-room-avatar">?</div><div><h2>Select a conversation</h2><p>Choose a member from the inbox to start reply.</p></div>';
+    messagesEl.innerHTML = emptyMarkup('Select a conversation', 'Choose a member from the inbox to start reply.', true);
     setComposerVisible(false);
   }
 
@@ -747,6 +747,13 @@
       if(!d) return '';
       return d.toLocaleString([], {month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit'});
     }catch(e){ return ''; }
+  }
+  function emptyMarkup(title, hint, isBig){
+    return '<div class="livechat-empty' + (isBig ? ' big' : '') + '">' +
+      '<span class="livechat-empty-icon"><i class="bi bi-chat-dots"></i></span>' +
+      (title ? '<strong>' + esc(title) + '</strong>' : '') +
+      (hint ? '<span>' + esc(hint) + '</span>' : '') +
+      '</div>';
   }
   function esc(value){ return String(value == null ? '' : value).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]; }); }
 })();
