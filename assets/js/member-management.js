@@ -54,8 +54,43 @@
   const DEFAULT_MEMBER_COLUMNS = ['select','no','registerDate','name','remark','mobile','mainWallet','vipLevel','kycStatus','lastLogin','status','action'];
   let visibleMemberColumns = new Set(DEFAULT_MEMBER_COLUMNS);
   let memberCurrentPage = 1;
-  let memberPageSize = 10;
+  let memberPageSize = 12;
   let memberFilteredRows = [];
+  let lockedAutoSize = null;
+
+  function tableBodyScroll(){
+    return document.querySelector('.table-card > .table-wrap') || document.querySelector('.table-wrap');
+  }
+  function measureAutoPageSize(){
+    const scroll=tableBodyScroll();
+    if(!scroll) return 12;
+    const head=scroll.querySelector('thead');
+    const headH=head?Math.ceil(head.getBoundingClientRect().height):44;
+    const avail=Math.max(0,Math.floor(scroll.clientHeight)-headH);
+    const sample=scroll.querySelector('tbody tr td');
+    const rowH=sample?Math.max(38,Math.round(sample.getBoundingClientRect().height)):41;
+    return Math.max(5,Math.min(200,Math.floor(avail/rowH)||12));
+  }
+  function autoFitPageSize(){
+    if(lockedAutoSize!=null) return lockedAutoSize;
+    lockedAutoSize=measureAutoPageSize();
+    return lockedAutoSize;
+  }
+  function clearLockedAutoSize(){ lockedAutoSize=null; }
+  function isAutoPageSize(raw){
+    const v=String(raw??'-').trim();
+    return v===''||v==='-'||/^auto$/i.test(v);
+  }
+  function resolvePageSize(raw){
+    const v=String(raw??document.getElementById('memberPageSize')?.value??'-').trim();
+    if(isAutoPageSize(v)) return autoFitPageSize();
+    if(/^all$/i.test(v)) return 10000;
+    const n=Number(v);
+    return Number.isFinite(n)&&n>0?n:autoFitPageSize();
+  }
+  function syncMemberPageSize(){
+    memberPageSize=resolvePageSize(document.getElementById('memberPageSize')?.value);
+  }
 
   function memberPageButtons(current,total){
     total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
@@ -83,6 +118,91 @@
   }
   function money(v){ return num(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
   function dt(v){ return window.BO_FORMAT && window.BO_FORMAT.dateTime ? window.BO_FORMAT.dateTime(v) : (v ? String(v).replace('T',' ').slice(0,19) : '-'); }
+  function dtParts(v){
+    const full=dt(v);
+    if(!full||full==='-') return {full:'-',day:'-',time:''};
+    const m=String(full).match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})\s+(.+)$/);
+    if(m){
+      const raw=String(m[4]).trim();
+      const tm=raw.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+      const time=tm
+        ? `${String(tm[1]).padStart(2,'0')}:${tm[2]}:${tm[3]||'00'}`
+        : raw.slice(0,8);
+      const day=`${String(m[3]).padStart(2,'0')}/${String(m[2]).padStart(2,'0')}/${m[1]}`;
+      return {full,day,time};
+    }
+    return {full,day:full,time:''};
+  }
+  function dtCell(v){
+    const p=dtParts(v);
+    if(p.full==='-') return '<span class="mad-muted">-</span>';
+    if(!p.time) return `<span class="bo-tx-datetime">${esc(p.day)}</span>`;
+    return `<span class="bo-tx-datetime" tabindex="0" data-tip="${esc(p.time)}">${esc(p.day)}</span>`;
+  }
+  function ensureTimeTip(){
+    let tip=document.getElementById('umTimeTip');
+    if(tip) return tip;
+    tip=document.createElement('div');
+    tip.id='umTimeTip';
+    tip.className='um-time-tip';
+    tip.setAttribute('role','tooltip');
+    tip.setAttribute('aria-hidden','true');
+    document.body.appendChild(tip);
+    return tip;
+  }
+  function placeTimeTip(el){
+    const tip=ensureTimeTip();
+    const text=el.getAttribute('data-tip')||'';
+    if(!text){ hideTimeTip(); return; }
+    tip.textContent=text;
+    tip.classList.add('is-on');
+    tip.classList.remove('is-below');
+    const r=el.getBoundingClientRect();
+    const tr=tip.getBoundingClientRect();
+    let top=r.top-tr.height-8;
+    let below=false;
+    if(top<8){
+      below=true;
+      top=r.bottom+8;
+    }
+    tip.classList.toggle('is-below', below);
+    const left=Math.max(8,Math.min(r.left+r.width/2-tr.width/2, window.innerWidth-tr.width-8));
+    tip.style.left=Math.round(left)+'px';
+    tip.style.top=Math.round(top)+'px';
+  }
+  function hideTimeTip(){
+    const tip=document.getElementById('umTimeTip');
+    if(tip) tip.classList.remove('is-on','is-below');
+  }
+  function bindTimeTips(){
+    const body=document.querySelector('.user-main-table tbody');
+    if(!body||body.dataset.tipBound==='1') return;
+    body.dataset.tipBound='1';
+    body.addEventListener('mouseover',e=>{
+      const el=e.target.closest?.('.bo-tx-datetime[data-tip]');
+      if(el) placeTimeTip(el);
+    });
+    body.addEventListener('mouseout',e=>{
+      const el=e.target.closest?.('.bo-tx-datetime[data-tip]');
+      if(!el) return;
+      const next=e.relatedTarget;
+      if(next&&el.contains(next)) return;
+      hideTimeTip();
+    });
+    body.addEventListener('focusin',e=>{
+      const el=e.target.closest?.('.bo-tx-datetime[data-tip]');
+      if(el) placeTimeTip(el);
+    });
+    body.addEventListener('focusout',e=>{
+      const el=e.target.closest?.('.bo-tx-datetime[data-tip]');
+      if(!el) return;
+      const next=e.relatedTarget;
+      if(next&&el.contains(next)) return;
+      hideTimeTip();
+    });
+    window.addEventListener('scroll',hideTimeTip,true);
+    window.addEventListener('resize',hideTimeTip);
+  }
   function signedAmount(type, amount){
     const n = num(amount);
     if(type === 'WITHDRAW') return -Math.abs(n);
@@ -391,23 +511,20 @@
   function todayStr(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 
   function memberMatches(m){
-    const name = val('memberSearchName');
-    const mobile = val('memberSearchMobile');
-    const agent = val('memberSearchAgent');
-    const bank = val('memberSearchBank');
+    const q = val('memberSearchQ');
     const status = val('memberSearchStatus');
     const lock = val('memberSearchLock');
     const visit = val('memberSearchVisit');
-    const hayName = `${first(m,['username'], '')} ${first(m,['fullName','name','displayName'], '')}`.toLowerCase();
-    const hayMobile = String(first(m,['mobile','phone','mobileNo'], '')).toLowerCase();
-    const hayAgent = String(first(m,['referrerName','referrerFullName','referrerUsername','agentName','referrer'], '')).toLowerCase();
-    const hayBank = String(first(m,['bank','bankName'], '')).toLowerCase();
+    const hay = [
+      first(m,['username'], ''),
+      first(m,['fullName','name','displayName'], ''),
+      first(m,['mobile','phone','mobileNo'], ''),
+      first(m,['referrerName','referrerFullName','referrerUsername','agentName','referrer'], ''),
+      first(m,['bank','bankName'], '')
+    ].join(' ').toLowerCase();
     const rowStatus = memberStatus(m).toLowerCase();
     const rowLock = rowStatus === 'locked' ? 'locked' : 'normal';
-    if(name && !hayName.includes(name)) return false;
-    if(mobile && !hayMobile.includes(mobile)) return false;
-    if(agent && !hayAgent.includes(agent)) return false;
-    if(bank && !hayBank.includes(bank)) return false;
+    if(q && !hay.includes(q)) return false;
     if(status && rowStatus !== status) return false;
     if(lock && rowLock !== lock) return false;
     if(visit){
@@ -490,8 +607,7 @@
   function currentFilteredMembers(){ return allMembers.filter(memberMatches); }
   function downloadCsv(filename, rows){
     // Export only data columns. UI checkbox/action columns are never useful in CSV.
-    // The on-screen Name / Username cell intentionally stays stacked, but export
-    // splits it into two independent columns so Excel cannot merge the values.
+    // Name is username on screen; export still splits Name + Username for Excel.
     const visible = MEMBER_TABLE_COLUMNS.filter(c=>isColVisible(c.key) && !['select','action'].includes(c.key));
     const exportCols=[];
     visible.forEach(c=>{
@@ -548,8 +664,6 @@
     if(!table) return;
     updateStats(rows);
     renderTableHead();
-    const foundBadge=document.getElementById('usersFoundBadge');
-    if(foundBadge) foundBadge.textContent = memberFilteredRows.length + ' Users Found';
     if(!rows.length){
       table.innerHTML='<tr><td colspan="'+visibleColCount()+'">No member found.</td></tr>';
       if(cards) cards.innerHTML='<div class="member-card"><h3>No member found</h3><div class="meta">Try another search filter.</div></div>';
@@ -562,10 +676,10 @@
       return `<tr>
         ${cell('select', `<input class="member-row-select" type="checkbox" data-member-select="${esc(id)}" ${bulkSelectedMemberIds.has(String(id))?'checked':''}>`, 'member-select-col')}
         ${cell('no', ((memberCurrentPage-1)*memberPageSize)+idx+1, 'col-no')}
-        ${cell('registerDate', esc(dt(first(m,['createdAt','registerDate','created_at'], ''))))}
+        ${cell('registerDate', dtCell(first(m,['createdAt','registerDate','created_at'], '')))}
         ${cell('registerSource', `<b>${esc(first(m,['registrationDomain','registerDomain'],'-'))}</b><br><small>${esc(first(m,['registrationIp','registerIp'],'-'))}</small>`)}
         ${cell('referCode', esc(first(m,['referrerCode','referralCode'],'-')))}
-        ${cell('name', `<b>${esc(first(m,['username'], '-'))}</b><br><small>${esc(first(m,['fullName','name','displayName'], ''))}</small>`, 'member-name-cell')}
+        ${cell('name', esc(first(m,['username'], '-')), 'member-name-cell')}
         ${cell('remark', first(m,['adminRemark'],'') ? `<span class="member-remark-pill" title="${esc(first(m,['adminRemark'],''))}"><i class="bi bi-chat-left-text-fill"></i><span>${esc(first(m,['adminRemark'],''))}</span></span>` : '<span class="member-remark-empty">—</span>', 'member-remark-cell')}
         ${cell('mobile', esc(first(m,['mobile','phone','mobileNo'], '-')))}
         ${cell('bankAccount', esc(first(m,['bankAccount','bankAccountNumber','bankAccountNo','accountNo'], '-')))}
@@ -580,9 +694,9 @@
         ${cell('manual', money(first(m,MONEY_KEYS.manual,0)))}
         ${cell('commission', money(first(m,MONEY_KEYS.commission,0)))}
         ${cell('lastDeposit', esc(dt(first(m,['lastDepositAt','lastDeposit','last_deposit_at'], ''))))}
-        ${cell('lastLogin', esc(dt(first(m,['lastLoginAt','lastLogin','last_login_at'], ''))))}
+        ${cell('lastLogin', dtCell(first(m,['lastLoginAt','lastLogin','last_login_at'], '')))}
         ${cell('lastLoginSource', `<b>${esc(first(m,['lastLoginDomain'],'-'))}</b><br><small>${esc(first(m,['lastLoginIp'],'-'))}</small>`)}
-        ${cell('vipLevel', `<b>${esc(first(m,['vipLevelName'],'VIP '+first(m,['vipLevel'],0)))}</b><br><small>VIP ${esc(first(m,['vipLevel'],0))} · ${Number(first(m,['vipExperience'],0)||0).toLocaleString()} EXP</small>`)}
+        ${cell('vipLevel', esc(first(m,['vipLevelName'], 'VIP '+first(m,['vipLevel'],0))))}
         ${cell('kycStatus', esc(first(m,['kycStatus'],'UNVERIFIED')))}
         ${cell('status', `<small class="status-pill ${locked?'off':''}">${esc(status)}</small>`)}
         ${cell('action', `<div class="user-row-actions"><button class="icon-action view" title="View" data-member-wallet="${esc(id)}"><i class="bi bi-eye"></i></button><button class="icon-action" title="${locked?'Unlock':'Lock'}" data-member-lock="${esc(id)}" data-lock="${locked?0:1}"><i class="bi ${locked?'bi-unlock':'bi-lock'}"></i></button></div>`)}
@@ -597,7 +711,7 @@
           <div class="member-card-head"><label><input class="member-row-select" type="checkbox" data-member-select="${esc(id)}" ${bulkSelectedMemberIds.has(String(id))?'checked':''}> <h3 style="display:inline">${esc(first(m,['username'], '-'))}</h3></label><span class="status-pill ${locked?'off':''}">${esc(status)}</span></div>
           <div class="meta">${esc(first(m,['fullName','name','displayName'], '-'))} • ${esc(first(m,['mobile','phone','mobileNo'], '-'))}</div>
           ${first(m,['adminRemark'],'') ? `<div class="member-card-remark"><i class="bi bi-chat-left-text-fill me-1"></i>${esc(first(m,['adminRemark'],''))}</div>` : ''}
-          <div class="meta">Registered: ${esc(dt(first(m,['createdAt','registerDate','created_at'], '')))}</div>
+          <div class="meta">Registered: ${esc(dtParts(first(m,['createdAt','registerDate','created_at'], '')).day)}</div>
           <div class="member-grid">
             <span>Bank</span><b>${esc(first(m,['bank','bankName'], '-'))}</b>
             <span>Main Wallet</span><b>${money(first(m,['mainWalletBalance','mainBalance','balance'],0))}</b>
@@ -605,7 +719,7 @@
             <span>Withdraw</span><b>${money(first(m,MONEY_KEYS.withdraw,0))}</b>
             <span>Win/Loss</span><b>${money(first(m,MONEY_KEYS.winLoss,0))}</b>
             <span>Bonus</span><b>${money(first(m,MONEY_KEYS.bonus,0))}</b>
-            <span>Commission</span><b>${money(first(m,MONEY_KEYS.commission,0))}</b><span>VIP / KYC / Risk</span><b>${esc(first(m,['vipLevelName'],'VIP '+first(m,['vipLevel'],0)))} · ${Number(first(m,['vipExperience'],0)||0).toLocaleString()} EXP · ${esc(first(m,['kycStatus'],'UNVERIFIED'))} · ${esc(first(m,['riskStatus'],'NORMAL'))}</b>
+            <span>Commission</span><b>${money(first(m,MONEY_KEYS.commission,0))}</b><span>VIP / KYC / Risk</span><b>${esc(first(m,['vipLevelName'],'VIP '+first(m,['vipLevel'],0)))} · ${esc(first(m,['kycStatus'],'UNVERIFIED'))} · ${esc(first(m,['riskStatus'],'NORMAL'))}</b>
           </div>
           <div class="d-grid gap-2 mt-3">
             <button class="clean-btn primary w-100" data-member-wallet="${esc(id)}">View Details</button>
@@ -708,6 +822,13 @@
       });
       updateStats(allMembers);
       applySearch();
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        if(!isAutoPageSize(document.getElementById('memberPageSize')?.value)) return;
+        const prev=memberPageSize;
+        clearLockedAutoSize();
+        syncMemberPageSize();
+        if(memberPageSize!==prev) applySearch(false);
+      }));
       const requestedMemberId = new URLSearchParams(location.search).get('memberId');
       if(requestedMemberId){
         const requested = allMembers.find(m => String(first(m,['id','memberId','userId'],'')) === String(requestedMemberId));
@@ -722,8 +843,27 @@
 
   function bindMemberPagination(){
     const size=document.getElementById('memberPageSize');
-    if(size){ memberPageSize=Number(size.value)||10; size.addEventListener('change',()=>{memberPageSize=Number(size.value)||10; memberCurrentPage=1; applySearch(false);}); }
-    document.getElementById('memberPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-member-page]'); if(!b||b.disabled)return; memberCurrentPage=Number(b.dataset.memberPage)||1; applySearch(false); document.querySelector('.user-main-table')?.scrollIntoView({behavior:'smooth',block:'start'});});
+    if(size){
+      syncMemberPageSize();
+      size.addEventListener('change',()=>{
+        clearLockedAutoSize();
+        syncMemberPageSize();
+        memberCurrentPage=1;
+        applySearch(false);
+      });
+    }
+    document.getElementById('memberPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-member-page]'); if(!b||b.disabled)return; memberCurrentPage=Number(b.dataset.memberPage)||1; applySearch(false);});
+    let resizeTimer=0;
+    window.addEventListener('resize',()=>{
+      if(!isAutoPageSize(document.getElementById('memberPageSize')?.value)) return;
+      clearTimeout(resizeTimer);
+      resizeTimer=setTimeout(()=>{
+        const prev=lockedAutoSize;
+        clearLockedAutoSize();
+        const next=autoFitPageSize();
+        if(next!==prev){ memberPageSize=next; memberCurrentPage=1; applySearch(false); }
+      },180);
+    });
   }
 
   function initRoundedMemberSelects(){
@@ -949,11 +1089,10 @@
   }
 
   function bindSearch(){
-    ['memberSearchName','memberSearchMobile','memberSearchAgent','memberSearchBank'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input', applySearch); });
+    document.getElementById('memberSearchQ')?.addEventListener('input', applySearch);
     ['memberSearchStatus','memberSearchVisit','memberSearchLock'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('change', applySearch); });
-    document.getElementById('memberSearchBtn')?.addEventListener('click', applySearch);
     const resetSearch=function(){
-      ['memberSearchName','memberSearchMobile','memberSearchAgent','memberSearchBank','memberSearchStatus','memberSearchVisit','memberSearchLock'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+      ['memberSearchQ','memberSearchStatus','memberSearchVisit','memberSearchLock'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
       refreshRoundedMemberSelects();
       applySearch();
     };
@@ -981,7 +1120,7 @@
     catch(err){ alert(err.message || 'Update failed'); }
   });
   document.addEventListener('DOMContentLoaded',()=>{
-    initRoundedMemberSelects(); bindSearch(); bindColumnTools(); bindExportTool(); bindMemberPagination(); bindBulkWalletTools(); bindCreateMember(); startOnlinePresence(); loadMembers();
+    initRoundedMemberSelects(); bindSearch(); bindColumnTools(); bindExportTool(); bindMemberPagination(); bindBulkWalletTools(); bindCreateMember(); bindTimeTips(); startOnlinePresence(); loadMembers();
     document.getElementById('walletModalClose')?.addEventListener('click', closeWalletModal);
     document.getElementById('memberWalletModal')?.addEventListener('click', e=>{ if(e.target.id==='memberWalletModal') closeWalletModal(); });
     document.getElementById('walletRefreshBtn')?.addEventListener('click', ()=>{ if(selectedWalletMember) loadMemberWallet(first(selectedWalletMember,['id','memberId','userId'], '')).catch(err=>walletStatus(err.message || 'Load wallet failed', 'error')); });
