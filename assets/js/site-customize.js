@@ -762,7 +762,11 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     }
 
     async function saveSection() {
-        const payload = new URLSearchParams();
+        // Use multipart FormData for layout source instead of URL-encoded source code.
+        // The section editor can contain HTML/CSS/JS characters that are commonly flagged by
+        // reverse-proxy/WAF form-body rules. Spring's existing @RequestParam endpoint accepts
+        // multipart fields directly, so this does not require an API change.
+        const payload = new FormData();
         const safeHtml = ensureAuthFeedbackMarkup(activeSection, htmlEditor.value || '');
         const safeCss = ensureAuthFeedbackCss(activeSection, cssEditor.value || '');
         if (safeHtml !== htmlEditor.value || safeCss !== cssEditor.value) {
@@ -783,8 +787,9 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         try {
             const res = await fetch(API_CUSTOMIZE_SECTION_URL, {
                 method: 'POST',
-                headers: brandScopedHeaders({ 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }),
-                body: payload.toString()
+                // Do not set Content-Type manually; the browser must add the multipart boundary.
+                headers: brandScopedHeaders({ 'Accept': 'application/json' }),
+                body: payload
             });
             const json = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(json.message || 'Save failed');
