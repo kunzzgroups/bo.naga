@@ -3552,11 +3552,11 @@ body:has(#dbgRows) .report-table thead th:last-child{
   }
   .wallet-ledger-page #ledgerSearchBtn,
   .wallet-ledger-page #ledgerResetBtn{
-    width:100%!important;
-    height:42px!important;
-    min-height:42px!important;
-    border-radius:10px!important;
-    padding:0 16px!important;
+    width:auto!important;
+    height:36px!important;
+    min-height:36px!important;
+    border-radius:8px!important;
+    padding:0 12px!important;
     display:inline-flex!important;
     align-items:center!important;
     justify-content:center!important;
@@ -3649,7 +3649,7 @@ body:has(#ledgerFrom) .field:has(#ledgerSize){grid-column:5!important}
 body:has(#ledgerFrom) .ledger-reset-field{grid-column:6!important}
 body:has(#ledgerFrom) .ledger-search-field{grid-column:7!important}
 body:has(#ledgerFrom) #ledgerResetBtn,
-body:has(#ledgerFrom) #ledgerSearchBtn{height:42px!important}
+body:has(#ledgerFrom) #ledgerSearchBtn{height:36px!important;min-height:36px!important}
 
 /* Deposit / Withdraw approval use the same balanced filter and action order. */
 body:has(#depositKeyword) .filter-card .user-search-grid,

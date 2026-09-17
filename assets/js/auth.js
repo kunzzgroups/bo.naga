@@ -172,10 +172,13 @@
     };
   }
 
-  function menuLinkHtml(m, isSub){
+  function menuLinkHtml(m, isSub, forceActive){
     const href = esc(m.url || '#');
-    const active = pageFile(sidebarActivePage()) === pageFile(m.url || '');
-    const cls = (isSub ? 'report-sub ' : '') + (active ? 'active' : '');
+    // forceActive boolean: caller resolved duplicate URLs (first menu match wins).
+    const isActive = typeof forceActive === 'boolean'
+      ? forceActive
+      : pageFile(sidebarActivePage()) === pageFile(m.url || '');
+    const cls = (isSub ? 'report-sub ' : '') + (isActive ? 'active' : '');
     return '<a href="' + href + '" class="' + cls.trim() + '" data-menu-key="' + esc(m.menuKey) + '">' +
       '<span><i class="bi ' + esc(m.icon || 'bi-circle') + ' me-2"></i>' + esc(m.title) + '</span></a>';
   }
@@ -492,17 +495,40 @@
       roots.sort(function(a,b){ return Number(a.sortOrder||0)-Number(b.sortOrder||0)||String(a.title||'').localeCompare(String(b.title||'')); });
 
       const activePage=sidebarActivePage();
+      const activeFile=pageFile(activePage);
+      // Same HTML can appear under multiple groups (e.g. wallet-ledger in Transaction + Member).
+      // MD: only the first match (menu sort order) owns the active chip / open L1 bar.
+      let primaryGroupKey=null;
+      let primaryMenuKey=null;
+      roots.some(function(root){
+        if(root.kind==='menu'){
+          if(pageFile(root.menu.url||'')===activeFile){
+            primaryMenuKey=root.menu.menuKey;
+            return true;
+          }
+          return false;
+        }
+        const hit=root.items.find(function(m){return pageFile(m.url||'')===activeFile;});
+        if(hit){
+          primaryGroupKey=root.key;
+          primaryMenuKey=hit.menuKey;
+          return true;
+        }
+        return false;
+      });
       let html='';
       roots.forEach(function(root){
         if(root.kind==='menu'){
-          html+=menuLinkHtml(root.menu,false);
+          html+=menuLinkHtml(root.menu,false, primaryMenuKey!=null && root.menu.menuKey===primaryMenuKey);
           return;
         }
-        const isOpen=root.items.some(function(m){return pageFile(activePage)===pageFile(m.url||'');});
+        const isOpen=primaryGroupKey!=null && root.key===primaryGroupKey;
         html+='<div class="nav-group '+(isOpen?'open':'')+'" data-menu-group="'+esc(root.key)+'">'+
           '<button type="button" class="nav-group-btn" aria-expanded="'+(isOpen?'true':'false')+'">'+
           '<span><i class="bi '+esc(root.icon)+' me-2"></i>'+esc(root.title)+'</span><i class="bi bi-chevron-down"></i></button>'+
-          '<div class="nav-group-list '+(isOpen?'show':'')+'">'+root.items.map(function(m){return menuLinkHtml(m,true);}).join('')+'</div></div>';
+          '<div class="nav-group-list '+(isOpen?'show':'')+'">'+root.items.map(function(m){
+            return menuLinkHtml(m,true, primaryMenuKey!=null && m.menuKey===primaryMenuKey);
+          }).join('')+'</div></div>';
       });
       nav.innerHTML=html;
 

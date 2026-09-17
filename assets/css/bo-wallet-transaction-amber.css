@@ -2580,6 +2580,23 @@ body.bo-wallet-tx .quick-stats{
   gap:14px!important;
   margin-bottom:16px!important;
 }
+/* Wallet Ledger — 4 summary metrics in one row on desktop */
+body.bo-wallet-tx.wallet-ledger-page .report-content > .quick-stats,
+body.bo-wallet-tx.wallet-ledger-page .quick-stats{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+@media(max-width:1024px){
+  body.bo-wallet-tx.wallet-ledger-page .report-content > .quick-stats,
+  body.bo-wallet-tx.wallet-ledger-page .quick-stats{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
+@media(max-width:575.98px){
+  body.bo-wallet-tx.wallet-ledger-page .report-content > .quick-stats,
+  body.bo-wallet-tx.wallet-ledger-page .quick-stats{
+    grid-template-columns:1fr!important;
+  }
+}
 /* Deposit bank capacity strip — Charcoal+Amber ops cards */
 body.bo-wallet-tx.deposit-approval-page .approval-pending-stats.deposit-bank-card-stats,
 body.deposit-approval-page .approval-pending-stats.deposit-bank-card-stats,
@@ -4131,11 +4148,82 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.payment-method-page .pm-modal .fiel
   }
 }
 
-/* =============================================================================
-   Wallet Ledger — Panel pill scrollbar on horizontal .table-wrap
+/* Wallet Ledger — filters live inside table-card (Deposit inline recipe) */
+body.bo-wallet-tx.wallet-ledger-page .table-card > .filter-card.wallet-inline-filter{
+  margin:0!important;
+  padding:10px 14px!important;
+  border:0!important;
+  border-bottom:1px solid var(--bo-table-line,#EADCC8)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background:var(--bo-table-row,#FFF8EB)!important;
+}
+/* Compact filter controls — beat bo-ui-standard double :not(#id) 42px/190px */
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-input-item,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .field.bo-filter-input-item{
+  width:140px!important;
+  min-width:120px!important;
+  max-width:140px!important;
+  flex:0 0 140px!important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .ledger-type-field{
+  width:150px!important;
+  min-width:130px!important;
+  max-width:150px!important;
+  flex:0 0 150px!important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-select-item{
+  width:72px!important;
+  min-width:72px!important;
+  max-width:72px!important;
+  flex:0 0 72px!important;
+  --bo-select-width:72px;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-range-item{
+  width:240px!important;
+  min-width:200px!important;
+  max-width:260px!important;
+  flex:0 1 240px!important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-select-item select,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row > .bo-filter-select-item .rounded-select-btn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .bo-range-trigger,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ref-range-trigger,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ledger-type-trigger,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .ledger-type-multi,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row :is(.bo-filter-reset-button,.bo-filter-search-button),
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .bo-filter-other-button,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row #ledgerResetBtn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row #ledgerSearchBtn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .clean-btn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .btn-primary-clean{
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  box-sizing:border-box!important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row :is(.bo-filter-reset-button,.bo-filter-search-button),
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row #ledgerResetBtn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row #ledgerSearchBtn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .clean-btn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row .btn-primary-clean,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row button[id*="reset" i],
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).bo-wallet-tx.wallet-ledger-page .report-main .table-card > .filter-card.wallet-inline-filter .bo-filter-row button[id*="search" i]{
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+  padding:0 12px!important;
+  font-size:12.5px!important;
+  border-radius:8px!important;
+  flex:0 0 auto!important;
+}
+/* Hide legacy page-info summary if any remnant remains */
+html body.bo-wallet-tx.wallet-ledger-page #ledgerPageInfo{display:none!important}
+
+/* Wallet Ledger — Panel pill scrollbar on horizontal .table-wrap
    Light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / `#D97706`
-   4px · no arrows · webkit only (same recipe as Bulk panels)
-   ============================================================================= */
+   4px · no arrows · webkit only (same recipe as Bulk panels) */
 body.bo-wallet-tx.wallet-ledger-page .table-card > .table-wrap{
   /* Do NOT set scrollbar-width/color to a coloured pair — Chromium then uses OS arrows */
   overflow-x:auto!important;

@@ -309,6 +309,8 @@ Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
 
 L1 active uses a **left bar**, not the L2 bordered frame. Opaque sidebar fill: light `#FFE8CC` · dark `#3A3226` (continuum left stop). Token `--bo-sidebar-bg` may read `#2A2C36` in some blocks — prefer continuum left stop for paint.
 
+**Duplicate menu URLs:** the same page may appear under two groups (e.g. `wallet-ledger.html` as Transaction Record + Member Wallet Ledger). Active chip / open L1 belongs to the **first** match in menu sort order only — never highlight both parents.
+
 #### Desktop flyout panel — `.nav-group-list`
 
 `reports.css` sets desktop flyout `background:#fff!important`. Page CSS must beat it with equal-or-higher specificity (include `.report-nav > .nav-group > .nav-group-list`).
@@ -904,6 +906,7 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Withdraw Remark cell = player text only (no `Admin:` sub-line) | User: 这个也帮我移除 | 2026-09-16 |
 | Bulk panel pill scrollbar locked: light chocolate `#8B6B4A` / hover `#5C4A30` · dark `#F59E0B` / `#D97706` · `4px` · no arrows · webkit only (never cool slate / zinc) | User confirmed chocolate light thumb; dark must differ from light | 2026-09-17 |
 | Wallet Ledger = `bo-wallet-tx` · table-wrap + type menu use Panel pill chocolate scrollbar · Type dropdown retired cool blue | User: Wallet Ledger scrollbar 跟着 MD | 2026-09-17 |
+| Sidebar active chip: first matching menu URL only (wallet-ledger under Transaction wins over Member duplicate) | User: Wallet Ledger sidebar 跟着 MD；Member 不应同时高亮 | 2026-09-17 |
 
 ### Opt-in layers for pages outside the migrated families
 
