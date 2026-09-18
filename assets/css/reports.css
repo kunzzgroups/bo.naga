@@ -5750,9 +5750,13 @@ body.withdraw-approval-page .report-table .btn{min-width:82px;font-weight:700;bo
 .promo-provider-rules{margin-top:0}
 .promo-provider-rule .category-provider-game-info b{font-size:13px}.promo-provider-rule .category-provider-game-info small{font-size:11px}
 @media(max-width:700px){.promo-game-access-section-title{align-items:flex-start;flex-direction:column;gap:3px}.promo-provider-selector{grid-template-columns:1fr 1fr}.promo-provider-choice{min-width:0}}
-\n/* Referral table 2026-08-12: compact 7-column layout; keep View/Reward actions visible. */
-.referral-page .ref-table-wrap{overflow-x:auto!important;overflow-y:hidden!important}
-.referral-page .ref-members-table{min-width:650px!important;table-layout:fixed!important}
+/* Referral table: MD-style frame + footer; keep pager fully visible. */
+.referral-page .ref-table-wrap{overflow-x:auto!important;overflow-y:visible!important;border:1px solid #EADCC8!important;border-radius:12px!important;background:#FFF8EB!important}
+.referral-page .referral-panel-card,.referral-page .referral-panels-grid{overflow:visible!important;min-width:0!important}
+.referral-page .ref-table{width:100%!important;min-width:0!important;table-layout:fixed!important;border-collapse:separate!important;border-spacing:0!important}
+.referral-page .ref-table thead th{overflow:visible!important;text-overflow:clip!important;white-space:nowrap!important}
+.referral-page .ref-table tbody td{overflow:hidden;text-overflow:ellipsis}
+.referral-page .ref-members-table{min-width:0!important;table-layout:fixed!important}
 .referral-page .ref-members-table th:nth-child(1),.referral-page .ref-members-table td:nth-child(1){width:38px!important;text-align:center!important}
 .referral-page .ref-members-table th:nth-child(2),.referral-page .ref-members-table td:nth-child(2){width:27%!important}
 .referral-page .ref-members-table th:nth-child(3),.referral-page .ref-members-table td:nth-child(3){width:20%!important}
@@ -5762,12 +5766,99 @@ body.withdraw-approval-page .report-table .btn{min-width:82px;font-weight:700;bo
 .referral-page .ref-members-table th:nth-child(7),.referral-page .ref-members-table td:nth-child(7){width:82px!important;text-align:center!important;overflow:visible!important}
 .referral-page .ref-action-buttons{display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;white-space:nowrap!important}
 .referral-page .ref-view-btn.ref-view-icon,.referral-page .ref-config-btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 32px!important;width:32px!important;min-width:32px!important;height:32px!important;padding:0!important}
-.referral-page .ref-downline-table{min-width:520px!important;table-layout:fixed!important}
+.referral-page .ref-downline-table{min-width:0!important;table-layout:fixed!important}
 .referral-page .ref-downline-table th:nth-child(1),.referral-page .ref-downline-table td:nth-child(1){width:38px!important;text-align:center!important}
-.referral-page .ref-downline-table th:nth-child(2),.referral-page .ref-downline-table td:nth-child(2){width:34%!important}
-.referral-page .ref-downline-table th:nth-child(3),.referral-page .ref-downline-table td:nth-child(3){width:28%!important}
-.referral-page .ref-downline-table th:nth-child(4),.referral-page .ref-downline-table td:nth-child(4){width:110px!important;text-align:center!important}
-.referral-page .ref-downline-table th:nth-child(5),.referral-page .ref-downline-table td:nth-child(5){width:92px!important;text-align:right!important}
+.referral-page .ref-downline-table th:nth-child(2),.referral-page .ref-downline-table td:nth-child(2){width:auto!important}
+.referral-page .ref-downline-table th:nth-child(3),.referral-page .ref-downline-table td:nth-child(3){width:120px!important;text-align:center!important}
+.referral-page .ref-downline-table th:nth-child(4),.referral-page .ref-downline-table td:nth-child(4){width:110px!important;text-align:right!important}
+.referral-page .ref-table .bo-tx-datetime{cursor:default;font-variant-numeric:tabular-nums;white-space:nowrap}
+.referral-page .table-footer.ref-pagination-row{
+  box-sizing:border-box!important;width:100%!important;min-width:0!important;min-height:56px!important;
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  justify-content:space-between!important;align-items:center!important;
+  gap:8px!important;margin:0!important;padding:12px 8px 4px!important;overflow:visible!important;
+  background:transparent!important;border:0!important;
+  grid-template-columns:none!important;
+}
+.referral-page .table-footer.ref-pagination-row > .entries-control{
+  display:inline-flex!important;align-items:center!important;
+  gap:8px!important;margin:0!important;padding:0!important;white-space:nowrap!important;
+  font-size:12.5px!important;font-weight:600!important;color:#57534E!important;
+  width:auto!important;max-width:none!important;overflow:visible!important;position:relative!important;z-index:9!important;
+  flex:0 0 auto!important;order:1!important;justify-self:auto!important;grid-column:auto!important;
+}
+.referral-page .table-footer.ref-pagination-row > .table-info{
+  display:none!important;
+}
+.referral-page .table-footer.ref-pagination-row > .pagination-clean{
+  display:inline-flex!important;align-items:center!important;
+  gap:6px!important;margin:0 0 0 auto!important;padding:0!important;overflow:visible!important;
+  max-width:none!important;flex:0 0 auto!important;order:3!important;
+  position:relative!important;z-index:9!important;
+  justify-self:auto!important;grid-column:auto!important;margin-left:auto!important;
+}
+/* MD Show dropdown: rounded-select, opens upward, wrap stays 72px */
+.referral-page .table-footer.ref-pagination-row .entries-control .rounded-select-wrap{
+  position:relative!important;display:inline-flex!important;align-items:stretch!important;
+  width:72px!important;min-width:72px!important;max-width:72px!important;height:36px!important;
+  flex:0 0 72px!important;margin:0!important;overflow:visible!important;
+}
+.referral-page .table-footer.ref-pagination-row .entries-control .rounded-select-wrap > select{
+  position:absolute!important;inset:0!important;opacity:0!important;pointer-events:none!important;
+  width:100%!important;height:36px!important;margin:0!important;
+}
+.referral-page .table-footer.ref-pagination-row .entries-control .rounded-select-btn{
+  position:absolute!important;inset:0!important;width:100%!important;min-width:0!important;max-width:none!important;
+  height:36px!important;min-height:36px!important;padding:0 12px!important;border-radius:8px!important;
+  border:1px solid #EADCC8!important;background:#FFF8EB!important;color:#18191C!important;
+  font-size:13px!important;font-weight:700!important;box-shadow:none!important;
+}
+.referral-page .table-footer.ref-pagination-row .entries-control .rounded-select-btn.open,
+.referral-page .table-footer.ref-pagination-row .entries-control .rounded-select-btn:focus{
+  border-color:#D97706!important;box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+.referral-page .table-footer.ref-pagination-row .entries-control .rounded-select-menu{
+  top:auto!important;bottom:calc(100% + 6px)!important;left:0!important;right:auto!important;
+  width:100%!important;min-width:100%!important;max-width:none!important;
+  padding:6px!important;border-radius:8px!important;
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;
+  box-shadow:0 12px 28px rgba(92,74,48,.12)!important;z-index:3000!important;
+  max-height:min(260px,50vh)!important;overflow-x:hidden!important;overflow-y:auto!important;box-sizing:border-box!important;
+}
+.referral-page .table-footer.ref-pagination-row .entries-control .rounded-select-option{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:100%!important;min-height:34px!important;height:auto!important;padding:6px 8px!important;margin:0!important;
+  border-radius:8px!important;text-align:center!important;font-size:13px!important;font-weight:700!important;
+  line-height:1.2!important;background:transparent!important;color:#18191C!important;
+}
+.referral-page .table-footer.ref-pagination-row .entries-control .rounded-select-option:hover,
+.referral-page .table-footer.ref-pagination-row .entries-control .rounded-select-option.active,
+.referral-page .table-footer.ref-pagination-row .entries-control .rounded-select-option.is-active{
+  background:rgba(217,119,6,.12)!important;color:#B45309!important;
+}
+.referral-page .table-footer.ref-pagination-row .pagination-clean .page-btn,
+.referral-page .table-footer.ref-pagination-row .pagination-clean button,
+.referral-page .table-footer.ref-pagination-row .ref-pager button,
+.referral-page .table-footer.ref-pagination-row .ref-pager b{
+  box-sizing:border-box!important;min-width:36px!important;width:auto!important;height:36px!important;min-height:36px!important;padding:0 10px!important;border-radius:8px!important;overflow:visible!important;flex:0 0 auto!important;
+}
+.referral-page .referral-panel-card{padding-left:16px!important;padding-right:16px!important;overflow:visible!important}
+.referral-page .referral-panel-card:has(.rounded-select-menu.show){z-index:30!important}
+html[data-bo-theme="dark"] .referral-page .ref-table-wrap{border-color:rgba(255,255,255,.14)!important;background:#383A46!important}
+html[data-bo-theme="dark"] .referral-page .table-footer.ref-pagination-row > .entries-control,
+html[data-bo-theme="dark"] .referral-page .table-footer.ref-pagination-row > .table-info{color:#D4D4D8!important}
+html[data-bo-theme="dark"] .referral-page .table-footer.ref-pagination-row .entries-control .rounded-select-btn{
+  background:#2A2C36!important;border-color:rgba(255,255,255,.12)!important;color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] .referral-page .table-footer.ref-pagination-row .entries-control .rounded-select-menu{
+  background:#383A46!important;border:1px solid rgba(255,255,255,.14)!important;box-shadow:0 14px 32px rgba(0,0,0,.45)!important;
+}
+html[data-bo-theme="dark"] .referral-page .table-footer.ref-pagination-row .entries-control .rounded-select-option{color:#E7E5E4!important;background:transparent!important}
+html[data-bo-theme="dark"] .referral-page .table-footer.ref-pagination-row .entries-control .rounded-select-option:hover{background:rgba(245,158,11,.14)!important;color:#F5F5F4!important}
+html[data-bo-theme="dark"] .referral-page .table-footer.ref-pagination-row .entries-control .rounded-select-option.active,
+html[data-bo-theme="dark"] .referral-page .table-footer.ref-pagination-row .entries-control .rounded-select-option.is-active{
+  background:#F59E0B!important;color:#2A2C36!important;
+}
 
 /* Generic dynamic translation module: multiline and rich HTML fields. */
 .dynamic-text-edit textarea{border:1px solid #EADCC8;border-radius:12px;padding:10px 12px;background:#FFF8EB;width:100%;max-width:100%;box-sizing:border-box;resize:vertical;min-height:96px;font:inherit;line-height:1.5}
