@@ -106,6 +106,7 @@
     if(p==='brand-detail.html') return 'brand-management.html';
     if(p==='member-detail.html') return 'index.html';
     if(p==='provider-detail.html') return 'main-accounting-report.html';
+    if(p==='slider-edit.html') return 'slider.html';
     // Gateway Transactions is a drill-down of Payment Gateway and uses the same DB menu permission.
     if(p==='payment-gateway-transactions.html') return 'payment-gateway.html';
     // Merchant module drill-downs keep the Merchant sidebar item highlighted.
@@ -244,6 +245,8 @@
       // Member Detail / Wallet is a drill-down of User Management (index.html).
       if(current === 'member-detail.html') current = 'index.html';
       if(current === 'provider-detail.html') current = 'main-accounting-report.html';
+      // Create/Edit Banner is a drill-down of Banner Management.
+      if(current === 'slider-edit.html') current = 'slider.html';
       // Transaction history is intentionally a separate page, but it inherits the
       // Payment Gateway menu selected in ROOT Role/Menu Permission. No new hardcoded
       // permission/menu row is required for this drill-down.

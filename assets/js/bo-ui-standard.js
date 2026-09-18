@@ -12,7 +12,6 @@
     '.report-main .category-filter-card',
     '.report-main .game-filterbar',
     '.report-main .game-filter-card',
-    '.report-main .banner-filterbar',
     '.report-main .pwt-filter-grid',
     '.report-main .provider-filter-grid',
     '.report-main .report-filter-grid',
@@ -158,6 +157,8 @@
 
   function styleButton(el){
     if(!el || el.closest('.report-sidebar,.report-topbar,.sidebar-overlay,.dropdown-menu,.rounded-select-menu,'+DATE_PICKER_SELECTOR+','+DATE_RANGE_SELECTOR+',.pagination-clean,.bo-pagination-buttons,.bo-global-modal')) return;
+    /* Banner toolbar owns Ghost Refresh + Primary Add; skip global button paint. */
+    if(el.closest('.banner-filterbar')) return;
     if(el.closest('.bo-filter-row')){styleFilterButton(el);return;}
     /* Form dropdown controls keep their page-original styling. The global dropdown
        standard is intentionally limited to filter rows only. */
