@@ -41,15 +41,23 @@
     const el=document.getElementById('walletModalResult');
     if(el) el.textContent = data ? JSON.stringify(data, null, 2) : '';
     const details=document.getElementById('walletTechDetails');
-    if(details) details.hidden = !data;
+    if(details){
+      details.hidden = !data;
+      if(data) details.open = true;
+    }
   }
   function memberIdOfSelected(){ return selectedWalletMember ? first(selectedWalletMember,['id','memberId','userId'], '') : ''; }
   function securityStatus(id,msg,type){ const el=document.getElementById(id); if(el){ el.textContent=msg||''; el.className='upload-status' + (type ? ' ' + type : ''); } }
   function bankStatus(msg,type){ const el=document.getElementById('bankProfileStatus'); if(el){ el.textContent=msg||''; el.className='upload-status' + (type ? ' ' + type : ''); } }
 
   function setWalletTab(name){
+    if(name === 'remark' || name === 'password' || name === 'transactionPassword') name = 'profile';
     document.querySelectorAll('[data-wallet-tab]').forEach(btn=>btn.classList.toggle('active', btn.dataset.walletTab === name));
     document.querySelectorAll('[data-wallet-pane]').forEach(pane=>pane.classList.toggle('active', pane.dataset.walletPane === name));
+    const stage = document.querySelector('.md-stage');
+    if(stage) stage.dataset.mdTab = name;
+    const footer = document.getElementById('mdStageFooter');
+    if(footer) footer.hidden = name !== 'profile';
     if(name === 'provider') loadWalletProviderAccounts().catch(err=>renderProviderError(err.message));
     if(name === 'ledger') loadWalletLedgerPreview().catch(err=>renderLedgerError(err.message));
     if(name === 'bet') loadWalletBetPreview().catch(err=>renderBetError(err.message));
@@ -62,7 +70,9 @@
   }
 
   function infoGrid(items){
-    return '<div class="wallet-balance-box">' + items.map(([k,v])=>`<div class="mini-box"><span>${esc(k)}</span><b style="font-size:15px">${esc(v || '-')}</b></div>`).join('') + '</div>';
+    return '<dl class="md-profile-sheet">' + items.map(([k,v])=>
+      `<div class="md-profile-field"><dt>${esc(k)}</dt><dd>${esc(v || '-')}</dd></div>`
+    ).join('') + '</dl>';
   }
   function renderMemberInfo(member){
     const profile = document.getElementById('walletProfileInfo');
@@ -72,7 +82,7 @@
       ['Mobile', first(member,['mobile','phone','mobileNo'], '-')], ['Status', memberStatus(member)],
       ['Referrer', first(member,['referrerName','referrerFullName','referrerUsername','agentName','referrer'], '-')], ['Top Referrer', first(member,['topReferrer','topAgent','upline'], '-')],
       ['Register Date', dt(first(member,['createdAt','registerDate','created_at'], ''))], ['Last Login', dt(first(member,['lastLoginAt','lastLogin','last_login_at'], ''))],
-      ['Last Deposit', dt(first(member,['lastDepositAt','lastDeposit','last_deposit_at'], ''))], ['Admin Remark', first(member,['adminRemark'], '-') ]
+      ['Last Deposit', dt(first(member,['lastDepositAt','lastDeposit','last_deposit_at'], ''))]
     ]);
     fillAdminRemark(member);
     if(bank) bank.innerHTML = infoGrid([
@@ -256,9 +266,9 @@
     if(!field||!select)return;
     if(type==='ADJUSTMENT'){ field.hidden=true; select.value=''; return; }
     field.hidden=false;
-    if(label)label.textContent=type==='DEPOSIT'?'Casino Receiving Bank':'Casino Funding Bank';
+    if(label)label.textContent=type==='DEPOSIT'?'Receiving bank':'Funding bank';
     const current=select.value;
-    select.innerHTML='<option value="">-- Select casino bank / payment method --</option>'+walletBankOptions.map(b=>{
+    select.innerHTML='<option value="">Select bank / payment method</option>'+walletBankOptions.map(b=>{
       const usage=num(b.usage);
       const insufficient=type==='WITHDRAW' && (usage<=0 || (amount>0 && usage<amount));
       const status=type==='WITHDRAW'?' · Usage MYR '+money(usage)+(insufficient?' · INSUFFICIENT':''):'';
@@ -266,8 +276,8 @@
     }).join('');
     if([...select.options].some(o=>o.value===current&&!o.disabled)) select.value=current;
     if(hint) hint.textContent=type==='DEPOSIT'
-      ? 'This manual topup adds to the selected bank usage.'
-      : 'This manual withdrawal deducts from the selected bank usage. Banks with 0.00 or insufficient usage are disabled.';
+      ? 'Counts toward bank usage for this topup.'
+      : 'Deducts from bank usage. Zero / insufficient banks are disabled.';
   }
   async function loadWalletBankOptions(){
     const json=await api(MEMBER_WALLET_API.bankOptions,{headers:{...BO_AUTH.authHeader()}});
@@ -385,14 +395,26 @@
     }
   }
 
+  function activeWalletTab(){
+    return document.querySelector('[data-wallet-tab].active')?.dataset?.walletTab || 'main';
+  }
+  function refreshActiveWalletTab(){
+    const tab=activeWalletTab();
+    const memberId=selectedWalletMember ? first(selectedWalletMember,['id','memberId','userId'], '') : '';
+    if(tab==='provider') return loadWalletProviderAccounts().catch(err=>renderProviderError(err.message));
+    if(tab==='insight') return loadGameInsight().catch(err=>renderInsightError(err.message));
+    if(tab==='ledger') return loadWalletLedgerPreview().catch(err=>renderLedgerError(err.message));
+    if(tab==='bet') return loadWalletBetPreview().catch(err=>renderBetError(err.message));
+    if(!memberId) return;
+    return loadMemberWallet(memberId).catch(err=>walletStatus(err.message || 'Load wallet failed', 'error'));
+  }
+
   document.addEventListener('DOMContentLoaded',()=>{
-    document.getElementById('walletRefreshBtn')?.addEventListener('click', ()=>{ if(selectedWalletMember) loadMemberWallet(first(selectedWalletMember,['id','memberId','userId'], '')).catch(err=>walletStatus(err.message || 'Load wallet failed', 'error')); });
+    document.getElementById('walletRefreshBtn')?.addEventListener('click', ()=>{ refreshActiveWalletTab(); });
     document.getElementById('walletSubmitBtn')?.addEventListener('click', submitWalletAdjust);
     document.getElementById('walletAdjustType')?.addEventListener('change', ()=>{ updateWalletPreview(); renderWalletBankOptions(); });
     document.getElementById('walletAdjustAmount')?.addEventListener('input', ()=>{ updateWalletPreview(); renderWalletBankOptions(); });
     document.querySelectorAll('[data-wallet-tab]').forEach(btn=>btn.addEventListener('click', ()=>setWalletTab(btn.dataset.walletTab)));
-    document.getElementById('walletProviderRefreshBtn')?.addEventListener('click', ()=>loadWalletProviderAccounts().catch(err=>renderProviderError(err.message)));
-    document.getElementById('walletInsightRefreshBtn')?.addEventListener('click',()=>loadGameInsight().catch(err=>renderInsightError(err.message)));
     document.getElementById('saveBankProfileBtn')?.addEventListener('click', saveBankProfile);
     document.getElementById('saveMemberAdminRemarkBtn')?.addEventListener('click', saveMemberAdminRemark);
     document.getElementById('resetMemberPasswordBtn')?.addEventListener('click', resetMemberPassword);

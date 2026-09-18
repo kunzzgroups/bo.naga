@@ -18,7 +18,7 @@
 <link href="assets/css/bo-charcoal-legacy.css?v=1.1.29" rel="stylesheet"/>
 <link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet"/>
 <link href="assets/css/bo-input-fill.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/member-detail.css?v=1.3.9" rel="stylesheet"/>
+<link href="assets/css/member-detail.css?v=1.5.0" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -72,9 +72,6 @@
 <div class="md-rail-group">
 <span class="md-rail-label">Account</span>
 <button class="wallet-side-tab" data-wallet-tab="profile" type="button"><i class="bi bi-person-lines-fill"></i><span>Member Info</span></button>
-<button class="wallet-side-tab" data-wallet-tab="remark" type="button"><i class="bi bi-chat-left-text-fill"></i><span>Admin Remark</span></button>
-<button class="wallet-side-tab" data-wallet-tab="password" type="button"><i class="bi bi-key"></i><span>Change Password</span></button>
-<button class="wallet-side-tab" data-wallet-tab="transactionPassword" type="button"><i class="bi bi-shield-lock"></i><span>Transaction Password</span></button>
 <button class="wallet-side-tab" data-wallet-tab="bank" type="button"><i class="bi bi-bank"></i><span>Bank Info</span></button>
 </div>
 </aside>
@@ -92,6 +89,7 @@
 </div>
 </div>
 <div class="md-identity-actions">
+<button class="md-btn md-btn-ghost md-btn-icon" id="walletRefreshBtn" type="button" title="Refresh" aria-label="Refresh"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i></button>
 <a class="md-btn md-btn-ghost" href="index.html" id="memberDetailBack"><i class="bi bi-arrow-left"></i> Back</a>
 </div>
 </header>
@@ -99,56 +97,47 @@
 <section class="wallet-tab-content">
 <div class="wallet-tab-pane active" data-wallet-pane="main">
 <div class="md-pane-frame md-pane-frame--wallet">
-<header class="md-pane-head">
-<div>
-<h3>Main Wallet</h3>
-<p>Top up, withdraw, or manually adjust this member’s main balance.</p>
-</div>
-<button class="md-btn md-btn-ghost" id="walletRefreshBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
-</header>
 
-<div class="md-main-split">
-<aside class="md-balance-hero" aria-live="polite">
+<div class="md-wallet-ops">
+<aside class="md-balance-strip" aria-live="polite">
 <div class="md-balance-cell">
-<span class="md-balance-label">Current balance</span>
+<span class="md-balance-label">Current</span>
 <strong class="md-balance-value" id="walletCurrentBalance">$0.00</strong>
 </div>
-<div class="md-balance-divider" aria-hidden="true"></div>
+<div class="md-balance-flow" aria-hidden="true"><i class="bi bi-arrow-right"></i></div>
 <div class="md-balance-cell is-preview">
-<span class="md-balance-label">After this operation</span>
+<span class="md-balance-label">After</span>
 <strong class="md-balance-value" id="walletNewBalance">$0.00</strong>
-<span class="md-balance-delta is-zero" id="walletBalanceDelta">No change</span>
 </div>
+<span class="md-balance-delta is-zero" id="walletBalanceDelta">No change</span>
 </aside>
 
+<div class="md-wallet-body">
 <div class="md-action-panel">
-<div class="wallet-adjust-grid">
-<div class="field"><label for="walletAdjustType">Operation Type</label><select id="walletAdjustType"><option value="DEPOSIT">Topup / Payment Deposit</option><option value="WITHDRAW">Approved Member Withdrawal</option><option value="ADJUSTMENT">Manual Adjustment</option></select></div>
-<div class="field"><label for="walletAdjustAmount">Amount</label><input id="walletAdjustAmount" placeholder="Example: 100 or -50 for adjustment" step="0.01" type="number"/></div>
-<div class="field full" id="walletBankField"><label for="walletPaymentMethodId" id="walletBankLabel">Casino Receiving Bank</label><select id="walletPaymentMethodId"><option value="">-- Select casino bank / payment method --</option></select><small class="text-secondary" id="walletBankHint">This manual topup adds to the selected bank usage.</small></div>
-<div class="field full"><label for="walletAdjustRemark">Reason / Remark</label><textarea id="walletAdjustRemark" placeholder="Example: payment approved / withdrawal approved / correction" rows="3"></textarea></div>
+<div class="wallet-adjust-grid wallet-adjust-grid--ops">
+<div class="field"><label for="walletAdjustType">Type</label><select id="walletAdjustType"><option value="DEPOSIT">Topup / Deposit</option><option value="WITHDRAW">Withdraw</option><option value="ADJUSTMENT">Manual Adjustment</option></select></div>
+<div class="field is-amount"><label for="walletAdjustAmount">Amount</label><input id="walletAdjustAmount" placeholder="0.00" step="0.01" type="number" inputmode="decimal"/></div>
+<div class="field full" id="walletBankField"><label for="walletPaymentMethodId" id="walletBankLabel">Receiving bank</label><select id="walletPaymentMethodId"><option value="">Select bank / payment method</option></select><small class="text-secondary" id="walletBankHint">Counts toward bank usage for this topup.</small></div>
+<div class="field full"><label for="walletAdjustRemark">Remark <span class="md-optional">optional</span></label><textarea id="walletAdjustRemark" placeholder="Payment approved, correction…" rows="2"></textarea></div>
 </div>
 <div class="md-action-footer">
 <div class="upload-status" id="walletModalStatus"></div>
 <div class="md-action-btns">
-<button class="md-btn md-btn-primary" id="walletSubmitBtn" type="button"><i class="bi bi-check2-circle"></i> Process Main Wallet</button>
-</div>
-</div>
+<button class="md-btn md-btn-primary" id="walletSubmitBtn" type="button"><i class="bi bi-check2-circle"></i> Process</button>
 </div>
 </div>
 </div>
 
-<details class="md-tech" id="walletTechDetails" hidden>
-<summary>Technical response <span class="md-tech-hint">for audit / debug</span></summary>
+<details class="md-tech" id="walletTechDetails" hidden open>
+<summary>Technical response <span class="md-tech-hint">audit / debug</span></summary>
 <pre id="walletModalResult"></pre>
 </details>
 </div>
+</div>
+</div>
+</div>
 
 <div class="wallet-tab-pane" data-wallet-pane="provider">
-<div class="md-pane-toolbar">
-<div class="md-pane-intro"><div><h3>Provider Accounts</h3><p>Balances and activity across linked game providers.</p></div></div>
-<button class="md-btn md-btn-ghost" id="walletProviderRefreshBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
-</div>
 <div class="md-table-card"><div class="table-wrap"><table class="wallet-mini-table"><thead><tr><th>Provider</th><th>Account</th><th>Balance</th><th>Total Bet</th><th>Total Win</th><th>Total Lose</th><th>Status</th></tr></thead><tbody id="walletProviderBody"><tr><td colspan="7">Select this tab to load provider accounts.</td></tr></tbody></table></div></div>
 </div>
 
@@ -169,10 +158,6 @@
 </div>
 
 <div class="wallet-tab-pane" data-wallet-pane="insight">
-<div class="md-pane-toolbar">
-<div class="md-pane-intro"><div><h3>Player Game Follow Up</h3><p>Highest turnover and most frequently played games.</p></div></div>
-<button class="md-btn md-btn-ghost" id="walletInsightRefreshBtn" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
-</div>
 <div class="md-section-block">
 <h4>Highest Turnover Games</h4>
 <div class="md-table-card"><div class="table-wrap"><table class="wallet-mini-table"><thead><tr><th>#</th><th>Provider</th><th>Game</th><th>Total Turnover</th><th>Play Count</th><th>Last Played</th></tr></thead><tbody id="walletTopTurnoverBody"><tr><td colspan="6">Select this tab to load data.</td></tr></tbody></table></div></div>
@@ -184,25 +169,26 @@
 </div>
 
 <div class="wallet-tab-pane" data-wallet-pane="profile">
-<div class="md-pane-intro"><div><h3>Member Info</h3><p>Registration and contact snapshot.</p></div></div>
-<div class="wallet-empty" id="walletProfileInfo">-</div>
+<div class="md-account-stack">
+<div class="md-section-block md-section-block--profile">
+<h4>Profile</h4>
+<div class="md-profile-host" id="walletProfileInfo">-</div>
 </div>
 
-<div class="wallet-tab-pane" data-wallet-pane="remark">
-<div class="md-pane-intro"><div><h3>Admin Remark</h3><p>Internal BO note only. Players never see this remark.</p></div></div>
-<div class="md-action-panel">
+<div class="md-account-ops">
+<div class="md-section-block">
+<h4>Admin Remark</h4>
+<p class="md-section-note">Internal BO note only. Players never see this remark.</p>
+<div class="md-action-panel md-action-panel--inset">
 <div class="admin-remark-editor"><label for="memberAdminRemark">Remark</label><textarea id="memberAdminRemark" maxlength="500" rows="6" placeholder="Example: Partner / shareholder / special player / follow up today..."></textarea><div class="admin-remark-meta" id="memberAdminRemarkMeta">No remark yet.</div></div>
-<div class="md-action-footer">
-<div class="upload-status" id="memberAdminRemarkStatus"></div>
-<div class="md-action-btns"><button class="md-btn md-btn-primary" id="saveMemberAdminRemarkBtn" type="button"><i class="bi bi-save"></i> Save Remark</button></div>
-</div>
 </div>
 </div>
 
-<div class="wallet-tab-pane" data-wallet-pane="password">
-<div class="md-pane-intro"><div><h3>Change Member Password</h3><p>Reset the selected member’s login password.</p></div></div>
-<div class="md-action-panel">
-<div class="wallet-adjust-grid">
+<div class="md-section-block">
+<h4>Login Password</h4>
+<p class="md-section-note">Reset the member’s login password.</p>
+<div class="md-action-panel md-action-panel--inset">
+<div class="wallet-adjust-grid md-security-fields">
 <div class="field"><label for="memberNewPassword">New Password</label><input autocomplete="new-password" id="memberNewPassword" maxlength="20" minlength="8" placeholder="8 - 20 characters" type="password"/></div>
 <div class="field"><label for="memberConfirmPassword">Confirm New Password</label><input autocomplete="new-password" id="memberConfirmPassword" maxlength="20" minlength="8" placeholder="Enter again" type="password"/></div>
 </div>
@@ -213,16 +199,20 @@
 </div>
 </div>
 
-<div class="wallet-tab-pane" data-wallet-pane="transactionPassword">
-<div class="md-pane-intro"><div><h3>Reset Transaction Password</h3><p>Used for withdrawals and secured wallet actions.</p></div></div>
-<div class="md-action-panel">
-<div class="wallet-adjust-grid">
+<div class="md-section-block">
+<h4>Transaction Password</h4>
+<p class="md-section-note">Used for withdrawals and secured wallet actions.</p>
+<div class="md-action-panel md-action-panel--inset">
+<div class="wallet-adjust-grid md-security-fields">
 <div class="field"><label for="memberNewTransactionPassword">New Transaction Password</label><input autocomplete="new-password" id="memberNewTransactionPassword" maxlength="20" minlength="6" placeholder="6 - 20 characters" type="password"/></div>
 <div class="field"><label for="memberConfirmTransactionPassword">Confirm Transaction Password</label><input autocomplete="new-password" id="memberConfirmTransactionPassword" maxlength="20" minlength="6" placeholder="Enter again" type="password"/></div>
 </div>
 <div class="md-action-footer">
 <div class="upload-status" id="memberTransactionPasswordStatus"></div>
 <div class="md-action-btns"><button class="md-btn md-btn-primary" id="resetMemberTransactionPasswordBtn" type="button"><i class="bi bi-shield-lock"></i> Reset Transaction Password</button></div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -249,6 +239,15 @@
 </div>
 </div>
 </section>
+
+<footer class="md-stage-footer" id="mdStageFooter" hidden>
+<div class="md-stage-footer-meta">
+<span class="upload-status" id="memberAdminRemarkStatus"></span>
+</div>
+<div class="md-stage-footer-actions">
+<button class="md-btn md-btn-primary" id="saveMemberAdminRemarkBtn" type="button"><i class="bi bi-save"></i> Save</button>
+</div>
+</footer>
 </div>
 </div>
 </section>
@@ -260,7 +259,7 @@
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
 <script src="assets/js/reports.js?v=1.0.29"></script>
 <script src="assets/js/auth.js?v=1.0.66"></script>
-<script src="assets/js/member-detail.js?v=1.1.2"></script>
+<script src="assets/js/member-detail.js?v=1.2.0"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
