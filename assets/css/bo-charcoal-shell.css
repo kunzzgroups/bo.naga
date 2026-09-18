@@ -653,17 +653,20 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub),
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub):hover,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub):focus,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub) > span,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group .nav-group-btn,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group .nav-group-btn:hover,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group .nav-group-btn:focus,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group .nav-group-btn:focus-visible,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group .nav-group-btn > span,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group.open > .nav-group-btn{
   border-radius:10px!important;
   color:#6b360c!important;
   background:transparent!important;
   box-shadow:none!important;
-  font-weight:800!important;
+  font-weight:900!important;
+  letter-spacing:-.01em;
   border:0!important;
   border-bottom:0!important;
 }html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub) i,
@@ -854,15 +857,18 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub),
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub):hover,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub):focus,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub) > span,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group .nav-group-btn,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group .nav-group-btn:hover,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group .nav-group-btn:focus,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group .nav-group-btn:focus-visible,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group .nav-group-btn > span,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group.open > .nav-group-btn{
   color:rgba(255,255,255,.86)!important;
   background:transparent!important;
-  font-weight:800!important;
+  font-weight:900!important;
+  letter-spacing:-.01em;
   border:0!important;
   border-bottom:0!important;
   border-radius:10px!important;
