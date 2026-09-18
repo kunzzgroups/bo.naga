@@ -54,11 +54,14 @@
   const MAX_VISIBLE_MEMBER_COLUMNS = 12;
   /* Default View: Register Date · Name / Username · Mobile · Main Wallet · Status · Web Status · VIP · Last Login · KYC · Remark · Action */
   const DEFAULT_MEMBER_COLUMNS = ['select','registerDate','name','mobile','mainWallet','status','webStatus','vipLevel','lastLogin','kycStatus','remark','action'];
+  const UNSORTABLE_COLS = new Set(['select','action']);
   let visibleMemberColumns = new Set(DEFAULT_MEMBER_COLUMNS);
   let memberCurrentPage = 1;
   let memberPageSize = 12;
   let memberFilteredRows = [];
   let lockedAutoSize = null;
+  let memberSortKey = 'registerDate';
+  let memberSortDir = 'desc';
 
   function tableBodyScroll(){
     return document.querySelector('.table-card > .table-wrap') || document.querySelector('.table-wrap');
@@ -622,7 +625,85 @@
       table.classList.toggle('many-columns', false);
       table.classList.add('member-max-12');
     }
-    head.innerHTML = MEMBER_TABLE_COLUMNS.filter(c=>isColVisible(c.key)).map(c=>c.key==='select' ? `<th data-col="select" class="member-select-col"><input type="checkbox" id="memberSelectPage" title="Select current page"></th>` : `<th data-col="${c.key}">${esc(c.label)}</th>`).join('');
+    head.innerHTML = MEMBER_TABLE_COLUMNS.filter(c=>isColVisible(c.key)).map(c=>{
+      if(c.key==='select') return `<th data-col="select" class="member-select-col"><input type="checkbox" id="memberSelectPage" title="Select current page"></th>`;
+      if(UNSORTABLE_COLS.has(c.key)) return `<th data-col="${c.key}">${esc(c.label)}</th>`;
+      return `<th class="um-sortable" data-col="${c.key}" data-sort="${c.key}" aria-sort="none" scope="col"><button type="button" class="um-sort-btn"><span class="um-sort-ico" aria-hidden="true"></span>${esc(c.label)}</button></th>`;
+    }).join('');
+    syncSortHeaders();
+  }
+  function isSortableCol(key){ return key && !UNSORTABLE_COLS.has(key); }
+  function sortRaw(m, key){
+    if(key==='no') return num(first(m,['id','memberId','userId'],0));
+    if(key==='registerDate'){ const t=new Date(first(m,['createdAt','registerDate','created_at'],'')).getTime(); return Number.isFinite(t)?t:0; }
+    if(key==='name') return String(first(m,['username'],'')).toLocaleLowerCase();
+    if(key==='mobile') return String(first(m,['mobile','phone','mobileNo'],'')).toLocaleLowerCase();
+    if(key==='mainWallet') return num(first(m,['mainWalletBalance','mainBalance','balance'],0));
+    if(key==='status') return memberStatus(m).toLocaleLowerCase();
+    if(key==='webStatus') return m && m.online===true ? 1 : 0;
+    if(key==='vipLevel') return num(first(m,['vipLevel'],0));
+    if(key==='lastLogin'){ const t=new Date(first(m,['lastLoginAt','lastLogin','last_login_at'],'')).getTime(); return Number.isFinite(t)?t:0; }
+    if(key==='kycStatus') return String(first(m,['kycStatus'],'UNVERIFIED')).toLocaleLowerCase();
+    if(key==='remark') return String(first(m,['adminRemark'],'')).toLocaleLowerCase();
+    if(key==='registerSource') return [first(m,['registrationDomain','registerDomain'],''),first(m,['registrationIp','registerIp'],'')].filter(Boolean).join(' ').toLocaleLowerCase();
+    if(key==='referCode') return String(first(m,['referrerCode','referralCode','referCode'],'')).toLocaleLowerCase();
+    if(key==='bankAccount') return String(first(m,['bankAccount','bankAccountNumber','bankAccountNo','accountNo'],'')).toLocaleLowerCase();
+    if(key==='bank') return String(first(m,['bank','bankName'],'')).toLocaleLowerCase();
+    if(key==='referrer') return String(first(m,['referrerName','referrerFullName','referrerUsername','agentName','referrer'],'')).toLocaleLowerCase();
+    if(key==='topReferrer') return String(first(m,['topReferrer','topAgent','upline'],'')).toLocaleLowerCase();
+    if(key==='deposit') return num(first(m,MONEY_KEYS.deposit,0));
+    if(key==='withdraw') return num(first(m,MONEY_KEYS.withdraw,0));
+    if(key==='winLoss') return num(first(m,MONEY_KEYS.winLoss,0));
+    if(key==='bonus') return num(first(m,MONEY_KEYS.bonus,0));
+    if(key==='manual') return num(first(m,MONEY_KEYS.manual,0));
+    if(key==='commission') return num(first(m,MONEY_KEYS.commission,0));
+    if(key==='lastDeposit'){ const t=new Date(first(m,['lastDepositAt','lastDeposit','last_deposit_at'],'')).getTime(); return Number.isFinite(t)?t:0; }
+    if(key==='lastLoginSource') return [first(m,['lastLoginDomain'],''),first(m,['lastLoginIp'],'')].filter(Boolean).join(' ').toLocaleLowerCase();
+    return '';
+  }
+  function compareMembers(a,b,key,dir){
+    const av=sortRaw(a,key);
+    const bv=sortRaw(b,key);
+    let cmp=0;
+    if(typeof av==='string' || typeof bv==='string'){
+      cmp=String(av).localeCompare(String(bv),undefined,{numeric:true,sensitivity:'base'});
+    }else{
+      cmp=av===bv?0:(av<bv?-1:1);
+    }
+    if(cmp===0){
+      const ida=num(first(a,['id','memberId','userId'],0));
+      const idb=num(first(b,['id','memberId','userId'],0));
+      cmp=ida===idb?String(first(a,['username'],'')).localeCompare(String(first(b,['username'],''))):(ida<idb?-1:1);
+    }
+    return dir==='desc'?-cmp:cmp;
+  }
+  function syncSortHeaders(){
+    document.querySelectorAll('.user-main-table th.um-sortable').forEach(th=>{
+      const key=th.getAttribute('data-sort');
+      const active=key && key===memberSortKey;
+      th.setAttribute('aria-sort', active?(memberSortDir==='asc'?'ascending':'descending'):'none');
+      th.classList.toggle('is-sorted', active);
+      th.classList.toggle('is-asc', active && memberSortDir==='asc');
+      th.classList.toggle('is-desc', active && memberSortDir==='desc');
+    });
+  }
+  function setMemberSort(key){
+    if(!isSortableCol(key)) return;
+    if(memberSortKey===key) memberSortDir=memberSortDir==='asc'?'desc':'asc';
+    else { memberSortKey=key; memberSortDir='asc'; }
+    applySearch();
+  }
+  function bindSortHeaders(){
+    const table=document.querySelector('.user-main-table');
+    if(!table || table._umSortBound) return;
+    table._umSortBound=true;
+    table.addEventListener('click',e=>{
+      if(e.target.closest('input,button.icon-action,[data-member-wallet],[data-member-lock]')) return;
+      const th=e.target.closest('th.um-sortable[data-sort]');
+      if(!th||!table.contains(th)) return;
+      e.preventDefault();
+      setMemberSort(th.getAttribute('data-sort'));
+    });
   }
   function visibleColCount(){ return MEMBER_TABLE_COLUMNS.filter(c=>isColVisible(c.key)).length || 1; }
   function visibleMemberColumnCount(){ return MEMBER_TABLE_COLUMNS.filter(c=>isColVisible(c.key)).length; }
@@ -761,12 +842,12 @@
         ${cell('bank', esc(first(m,['bank','bankName'], '-')))}
         ${cell('referrer', esc(first(m,['referrerName','referrerFullName','referrerUsername','agentName','referrer'], '-')))}
         ${cell('topReferrer', esc(first(m,['topReferrer','topAgent','upline'], '-')))}
-        ${cell('deposit', money(first(m,MONEY_KEYS.deposit,0)))}
-        ${cell('withdraw', money(first(m,MONEY_KEYS.withdraw,0)))}
-        ${cell('winLoss', money(first(m,MONEY_KEYS.winLoss,0)))}
-        ${cell('bonus', money(first(m,MONEY_KEYS.bonus,0)))}
-        ${cell('manual', money(first(m,MONEY_KEYS.manual,0)))}
-        ${cell('commission', money(first(m,MONEY_KEYS.commission,0)))}
+        ${cell('deposit', money(first(m,MONEY_KEYS.deposit,0)), 'money-strong')}
+        ${cell('withdraw', money(first(m,MONEY_KEYS.withdraw,0)), 'money-strong')}
+        ${cell('winLoss', money(first(m,MONEY_KEYS.winLoss,0)), 'money-strong')}
+        ${cell('bonus', money(first(m,MONEY_KEYS.bonus,0)), 'money-strong')}
+        ${cell('manual', money(first(m,MONEY_KEYS.manual,0)), 'money-strong')}
+        ${cell('commission', money(first(m,MONEY_KEYS.commission,0)), 'money-strong')}
         ${cell('lastDeposit', esc(dt(first(m,['lastDepositAt','lastDeposit','last_deposit_at'], ''))))}
         ${cell('lastLoginSource', `<b>${esc(first(m,['lastLoginDomain'],'-'))}</b><br><small>${esc(first(m,['lastLoginIp'],'-'))}</small>`)}
       </tr>`;
@@ -801,6 +882,9 @@
 
   function applySearch(resetPage=true){
     memberFilteredRows = allMembers.filter(memberMatches);
+    if(isSortableCol(memberSortKey)){
+      memberFilteredRows.sort((a,b)=>compareMembers(a,b,memberSortKey,memberSortDir));
+    }
     if(resetPage) memberCurrentPage = 1;
     const total = memberFilteredRows.length;
     const totalPages = Math.max(1, Math.ceil(total / memberPageSize));
@@ -1198,7 +1282,7 @@
     catch(err){ alert(err.message || 'Update failed'); }
   });
   document.addEventListener('DOMContentLoaded',()=>{
-    initRoundedMemberSelects(); bindSearch(); bindColumnTools(); bindExportTool(); bindMemberPagination(); bindBulkWalletTools(); bindCreateMember(); bindTimeTips(); startOnlinePresence(); loadMembers();
+    initRoundedMemberSelects(); bindSearch(); bindColumnTools(); bindExportTool(); bindMemberPagination(); bindBulkWalletTools(); bindCreateMember(); bindTimeTips(); bindSortHeaders(); startOnlinePresence(); loadMembers();
   });
 })();
 

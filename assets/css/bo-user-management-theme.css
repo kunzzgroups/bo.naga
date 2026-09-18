@@ -95,8 +95,49 @@ html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):n
   overflow:visible!important;
 }
 
-html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .table-wrap:has(.user-main-table)::-webkit-scrollbar-track{
+/* Panel pill scrollbar — 6px (MD chocolate/amber). Beat OS default thickness. */
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .table-wrap:has(.user-main-table){
+  scrollbar-width:thin!important;
+  scrollbar-color:#8B6B4A transparent!important;
+}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .table-wrap:has(.user-main-table)::-webkit-scrollbar{
+  width:6px!important;
+  height:6px!important;
   background:transparent!important;
+}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .table-wrap:has(.user-main-table)::-webkit-scrollbar-button,
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .table-wrap:has(.user-main-table)::-webkit-scrollbar-button:single-button{
+  display:none!important;
+  width:0!important;
+  height:0!important;
+}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .table-wrap:has(.user-main-table)::-webkit-scrollbar-track{
+  background:transparent!important;
+}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .table-wrap:has(.user-main-table)::-webkit-scrollbar-thumb{
+  background:#8B6B4A!important;
+  background-color:#8B6B4A!important;
+  border-radius:999px!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .table-wrap:has(.user-main-table)::-webkit-scrollbar-thumb:hover{
+  background:#5C4A30!important;
+  background-color:#5C4A30!important;
+}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .table-wrap:has(.user-main-table)::-webkit-scrollbar-corner{
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .table-wrap:has(.user-main-table){
+  scrollbar-color:#F59E0B transparent!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .table-wrap:has(.user-main-table)::-webkit-scrollbar-thumb{
+  background:#F59E0B!important;
+  background-color:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .table-wrap:has(.user-main-table)::-webkit-scrollbar-thumb:hover{
+  background:#D97706!important;
+  background-color:#D97706!important;
 }
 
 html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .entries-control,
@@ -233,4 +274,88 @@ html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):n
   background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
   border:1px solid #F59E0B!important;
   color:#2A2C36!important;
+}
+
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table th.um-sortable{
+  padding:0!important;
+  cursor:pointer!important;
+}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table th.um-sortable .um-sort-btn{
+  appearance:none;
+  -webkit-appearance:none;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:5px!important;
+  width:100%!important;
+  min-height:100%!important;
+  margin:0!important;
+  padding:10px 12px!important;
+  border:0!important;
+  background:transparent!important;
+  color:inherit!important;
+  font:inherit!important;
+  font-weight:700!important;
+  letter-spacing:inherit!important;
+  text-transform:inherit!important;
+  text-align:left!important;
+  white-space:nowrap!important;
+  cursor:pointer!important;
+  line-height:1.3!important;
+}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table th.um-sortable .um-sort-ico{
+  display:inline-block!important;
+  width:0.7em!important;
+  height:0.9em!important;
+  position:relative!important;
+  flex:0 0 auto!important;
+  opacity:.35!important;
+}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table th.um-sortable .um-sort-ico::before,
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table th.um-sortable .um-sort-ico::after{
+  content:''!important;
+  position:absolute!important;
+  left:50%!important;
+  border-left:3.5px solid transparent!important;
+  border-right:3.5px solid transparent!important;
+  transform:translateX(-50%)!important;
+}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table th.um-sortable .um-sort-ico::before{
+  top:0!important;
+  border-bottom:4.5px solid currentColor!important;
+}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table th.um-sortable .um-sort-ico::after{
+  bottom:0!important;
+  border-top:4.5px solid currentColor!important;
+}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table th.um-sortable.is-sorted .um-sort-ico{
+  opacity:1!important;
+  color:#D97706!important;
+}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table th.um-sortable.is-asc .um-sort-ico::after{
+  opacity:.25!important;
+}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table th.um-sortable.is-desc .um-sort-ico::before{
+  opacity:.25!important;
+}
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table th.um-sortable .um-sort-btn:hover{
+  color:#92400E!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table th.um-sortable .um-sort-btn:hover{
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table th.um-sortable.is-sorted .um-sort-ico{
+  color:#F59E0B!important;
+}
+
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table tbody td.money-strong,
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table tbody td[data-col="mainWallet"],
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table tbody td[data-col="deposit"],
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table tbody td[data-col="withdraw"],
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table tbody td[data-col="winLoss"],
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table tbody td[data-col="bonus"],
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table tbody td[data-col="manual"],
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off).user-management-page.report-body.bo-charcoal .user-main-table tbody td[data-col="commission"]{
+  text-align:right!important;
+  font-variant-numeric:tabular-nums!important;
 }
