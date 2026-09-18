@@ -6,6 +6,12 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 (function () {
     const ACTIVE_BRAND_ID = (window.BO_BRAND && BO_BRAND.activeId ? BO_BRAND.activeId() : 1);
     const STORAGE_KEY = 'naga_main_layout_customize_files:' + ACTIVE_BRAND_ID;
+    const LAYOUT = window.SITE_CUSTOMIZE_LAYOUT;
+    const mount = document.querySelector('.brand-assets-card');
+    const statusBox = document.getElementById('customizeStatus');
+    const saveBtn = document.getElementById('saveCustomizeBtn');
+    const resetLayoutBtn = document.getElementById('resetAssetLayoutBtn');
+    const assetsPanel = document.getElementById('main-layout');
 
     function cleanCustomBaseUrl(value) {
         const fallback = 'https://corepayx.com/assets/custom/images';
@@ -22,46 +28,46 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         return CUSTOM_ASSET_BASE_URL + '/' + cleanFileName + '?v=1.0.0';
     }
 
-    const assets = [
-        { field: 'logoUrl', fileKey: 'logo', label: 'logo', fallback: assetUrl('logo.png') },
-        { field: 'faviconUrl', fileKey: 'favicon', label: 'favicon', fallback: assetUrl('favicon.png') },
-        { field: 'faviconUrl2', fileKey: 'favicon2', label: 'favicon 32x32', fallback: assetUrl('favicon2.png') },
-        { field: 'faviconUrl3', fileKey: 'favicon3', label: 'favicon 180x180', fallback: assetUrl('favicon3.png') },
-        { field: 'pageBackgroundUrl', fileKey: 'background', label: 'background', fallback: assetUrl('background.png'), apiKeys: ['backgroundUrl', 'pageBackgroundUrl', 'background'] },
-        { field: 'mobileBackgroundUrl', fileKey: 'mobileBackground', label: 'mobile background', fallback: '', apiKeys: ['mobileBackgroundUrl', 'mobileBackground'] },
-        { field: 'referralUrl', fileKey: 'referral', label: 'referral', fallback: assetUrl('referral.png') },
-        { field: 'shareUrl', fileKey: 'share', label: 'share', fallback: assetUrl('share.png') },
-        { field: 'downlineUrl', fileKey: 'downline', label: 'downline', fallback: assetUrl('downline.png') },
-        { field: 'copylinkUrl', fileKey: 'copylink', label: 'copy link', fallback: assetUrl('copylink.png') },
-        { field: 'loginUrl', fileKey: 'login', label: 'login', fallback: assetUrl('login.gif') },
-        { field: 'registerUrl', fileKey: 'register', label: 'register', fallback: assetUrl('register.gif') },
-        { field: 'depositUrl', fileKey: 'deposit', label: 'deposit', fallback: assetUrl('deposit.png') },
-        { field: 'withdrawUrl', fileKey: 'withdraw', label: 'withdraw', fallback: assetUrl('withdraw.png') },
-        { field: 'refreshUrl', fileKey: 'refresh', label: 'refresh', fallback: assetUrl('refresh.png') },
-        { field: 'homeUrl', fileKey: 'home', label: 'home', fallback: assetUrl('home.png') },
-        { field: 'historyUrl', fileKey: 'history', label: 'history', fallback: assetUrl('history.png') },
-        { field: 'bonusUrl', fileKey: 'bonus', label: 'bonus', fallback: assetUrl('bonus.png') },
-        { field: 'livechatUrl', fileKey: 'livechat', label: 'live chat', fallback: assetUrl('livechat.png') },
-        { field: 'settingUrl', fileKey: 'setting', label: 'setting', fallback: assetUrl('setting.png') },
-        { field: 'providerAllUrl', fileKey: 'providerAll', label: 'All provider image', fallback: '', apiKeys: ['providerAllUrl', 'providerAll'] },
-    ];
+    function normalizeUrl(value) {
+        if (!value) return '';
 
+        let url = String(value).trim();
+
+        // Old saved/local values may point to BO domain or a relative ../naga path.
+        // Force all custom image previews to the real frontend asset domain.
+        url = url.replace(/^https?:\/\/bo\.corepayx\.com\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
+        url = url.replace(/^https?:\/\/www\.corepayx\.com\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
+        url = url.replace(/^https?:\/\/corepayx\.com\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
+        url = url.replace(/^\.\.\/naga\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
+        url = url.replace(/^\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
+        url = url.replace(/^assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
+        if (/^\/assets\/custom\/brands\//i.test(url)) url = 'https://titanx7.com' + url;
+        if (/^assets\/custom\/brands\//i.test(url)) url = 'https://titanx7.com/' + url;
+
+        return url.replace(/([^:])\/\/+/g, '$1/');
+    }
+
+    let assets = [];
     const fields = {};
     const selectedFiles = {};
     const fieldToFileKey = {};
-    const defaultSettings = { version: '1.0.0' };
+    let defaultSettings = { version: '1.0.0' };
+    let latestSettings = { version: '1.0.0' };
+    let uploadBound = false;
+    let apiLoaded = false;
 
-    assets.forEach((asset) => {
-        fields[asset.field] = document.getElementById(asset.field);
-        selectedFiles[asset.fileKey] = null;
-        fieldToFileKey[asset.field] = asset.fileKey;
-        defaultSettings[asset.field] = normalizeUrl(asset.fallback);
-    });
-
-    if (!fields.logoUrl) return;
-
-    const statusBox = document.getElementById('customizeStatus');
-    const saveBtn = document.getElementById('saveCustomizeBtn');
+    function rebuildAssetIndex() {
+        assets = LAYOUT ? LAYOUT.flattenAssets(assetUrl) : [];
+        Object.keys(fields).forEach((k) => delete fields[k]);
+        Object.keys(fieldToFileKey).forEach((k) => delete fieldToFileKey[k]);
+        defaultSettings = { version: latestSettings.version || '1.0.0' };
+        assets.forEach((asset) => {
+            fields[asset.field] = document.getElementById(asset.field);
+            if (!(asset.fileKey in selectedFiles)) selectedFiles[asset.fileKey] = null;
+            fieldToFileKey[asset.field] = asset.fileKey;
+            defaultSettings[asset.field] = normalizeUrl(asset.fallback);
+        });
+    }
 
     function setStatus(message, type) {
         if (!statusBox) return;
@@ -107,6 +113,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 
     function setSettings(settings) {
         const data = Object.assign({}, defaultSettings, settings || {});
+        latestSettings = data;
         assets.forEach((asset) => {
             const input = fields[asset.field];
             if (!input) return;
@@ -115,6 +122,78 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             updatePreview(asset.field, input.value);
         });
     }
+
+    function snapshotSettings() {
+        const data = Object.assign({}, latestSettings);
+        assets.forEach((asset) => {
+            const input = fields[asset.field];
+            if (input) data[asset.field] = input.value;
+        });
+        return data;
+    }
+
+    function bindUploadRows() {
+        document.querySelectorAll('.asset-upload-row').forEach((row) => {
+            if (row.dataset.bound === '1') return;
+            row.dataset.bound = '1';
+            const fieldKey = row.dataset.field;
+            const fileKey = fieldToFileKey[fieldKey];
+            const fileInput = row.querySelector('.asset-file');
+            const chooseBtn = row.querySelector('.choose-btn');
+            const clearBtn = row.querySelector('.upload-asset-btn');
+
+            if (!fieldKey || !fileKey || !fileInput || !chooseBtn || !clearBtn) return;
+
+            chooseBtn.addEventListener('click', () => fileInput.click());
+
+            fileInput.addEventListener('change', () => {
+                const file = fileInput.files[0] || null;
+                if (!file) return;
+
+                if (!isAllowedByInputAccept(file, fileInput.accept)) {
+                    setStatus('This file type is not allowed. Please choose JPG, JPEG, PNG, WEBP or GIF only.', 'error');
+                    fileInput.value = '';
+                    selectedFiles[fileKey] = null;
+                    return;
+                }
+
+                selectedFiles[fileKey] = file;
+                updatePreview(fieldKey, URL.createObjectURL(file));
+                updateAssetText(fieldKey, file.name + ' selected', true);
+                setSaveButtonDefault();
+                setStatus(file.name + ' selected. Click Save to upload.', '');
+            });
+
+            clearBtn.addEventListener('click', () => {
+                selectedFiles[fileKey] = null;
+                fileInput.value = '';
+                updatePreview(fieldKey, (fields[fieldKey] && fields[fieldKey].value.trim()) || '');
+                updateAssetText(fieldKey, 'Current image loaded', false);
+                setSaveButtonDefault();
+                setStatus('Selected file cleared.', '');
+            });
+        });
+        uploadBound = true;
+    }
+
+    function remountLayout(message) {
+        if (!LAYOUT || !mount) return;
+        const snap = snapshotSettings();
+        LAYOUT.render(mount, ACTIVE_BRAND_ID);
+        rebuildAssetIndex();
+        if (!fields.logoUrl) return;
+        setSettings(snap);
+        bindUploadRows();
+        LAYOUT.bindArrange(mount, ACTIVE_BRAND_ID, () => remountLayout('Layout updated. Placement saved in this browser.'));
+        if (message) setStatus(message, 'success');
+    }
+
+    if (LAYOUT && mount) {
+        LAYOUT.render(mount, ACTIVE_BRAND_ID);
+    }
+    rebuildAssetIndex();
+
+    if (!fields.logoUrl) return;
 
     function saveLocal(settings) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
@@ -127,25 +206,6 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         } catch (e) {
             setSettings(defaultSettings);
         }
-    }
-
-    function normalizeUrl(value) {
-        if (!value) return '';
-
-        let url = String(value).trim();
-
-        // Old saved/local values may point to BO domain or a relative ../naga path.
-        // Force all custom image previews to the real frontend asset domain.
-        url = url.replace(/^https?:\/\/bo\.corepayx\.com\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
-        url = url.replace(/^https?:\/\/www\.corepayx\.com\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
-        url = url.replace(/^https?:\/\/corepayx\.com\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
-        url = url.replace(/^\.\.\/naga\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
-        url = url.replace(/^\/assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
-        url = url.replace(/^assets\/custom\/images/i, CUSTOM_ASSET_BASE_URL);
-        if (/^\/assets\/custom\/brands\//i.test(url)) url = 'https://titanx7.com' + url;
-        if (/^assets\/custom\/brands\//i.test(url)) url = 'https://titanx7.com/' + url;
-
-        return url.replace(/([^:])\/\/+/g, '$1/');
     }
 
     function getFirstValue(source, keys) {
@@ -265,54 +325,41 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         }
     }
 
-    document.querySelectorAll('.asset-upload-row').forEach((row) => {
-        const fieldKey = row.dataset.field;
-        const fileKey = fieldToFileKey[fieldKey];
-        const fileInput = row.querySelector('.asset-file');
-        const chooseBtn = row.querySelector('.choose-btn');
-        const clearBtn = row.querySelector('.upload-asset-btn');
-
-        if (!fieldKey || !fileKey || !fileInput || !chooseBtn || !clearBtn) return;
-
-        chooseBtn.addEventListener('click', () => fileInput.click());
-
-        fileInput.addEventListener('change', () => {
-            const file = fileInput.files[0] || null;
-            if (!file) return;
-
-            if (!isAllowedByInputAccept(file, fileInput.accept)) {
-                setStatus('This file type is not allowed. Please choose JPG, JPEG, PNG, WEBP or GIF only.', 'error');
-                fileInput.value = '';
-                selectedFiles[fileKey] = null;
-                return;
-            }
-
-            selectedFiles[fileKey] = file;
-            updatePreview(fieldKey, URL.createObjectURL(file));
-            updateAssetText(fieldKey, file.name + ' selected', true);
-            setSaveButtonDefault();
-            setStatus(file.name + ' selected. Click Save to upload.', '');
-        });
-
-        clearBtn.addEventListener('click', () => {
-            selectedFiles[fileKey] = null;
-            fileInput.value = '';
-            updatePreview(fieldKey, fields[fieldKey].value.trim());
-            updateAssetText(fieldKey, 'Current image loaded', false);
-            setSaveButtonDefault();
-            setStatus('Selected file cleared.', '');
-        });
-    });
+    bindUploadRows();
+    if (LAYOUT && mount) {
+        LAYOUT.bindArrange(mount, ACTIVE_BRAND_ID, () => remountLayout('Layout updated. Placement saved in this browser.'));
+    }
 
     saveBtn.addEventListener('click', saveMainLayout);
+    resetLayoutBtn?.addEventListener('click', () => {
+        if (!LAYOUT) return;
+        LAYOUT.resetPlacement(ACTIVE_BRAND_ID);
+        remountLayout('Layout reset to default zones.');
+    });
+
     loadSettings();
     // Always revalidate from the current brand API. Local storage is only a fast
     // first paint and is separated per brand, so TitanX assets cannot leak into
     // a newly selected branding.
     fetch(API_CUSTOMIZE_MAIN_LAYOUT_URL, {cache:'no-cache'})
       .then(res => res.ok ? res.json() : Promise.reject(new Error('Load failed')))
-      .then(applyApiResponse)
+      .then((json) => {
+        apiLoaded = true;
+        applyApiResponse(json);
+      })
       .catch(() => {});
+
+    document.querySelectorAll('.custom-tabs[aria-label="Asset language"] .custom-tab').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const locale = btn.dataset.locale;
+            if (!locale) return;
+            document.querySelectorAll('.custom-tabs[aria-label="Asset language"] .custom-tab').forEach((item) => {
+                item.classList.toggle('active', item === btn);
+                item.setAttribute('aria-selected', item === btn ? 'true' : 'false');
+            });
+            if (assetsPanel) assetsPanel.setAttribute('data-assets-locale', locale);
+        });
+    });
 })();
 
 
@@ -802,9 +849,9 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         }
     }
 
-    document.querySelectorAll('.custom-tab').forEach((btn) => {
+    document.querySelectorAll('.custom-tab[data-tab]').forEach((btn) => {
         btn.addEventListener('click', () => {
-            document.querySelectorAll('.custom-tab').forEach((item) => item.classList.remove('active'));
+            document.querySelectorAll('.custom-tab[data-tab]').forEach((item) => item.classList.remove('active'));
             document.querySelectorAll('.custom-tab-panel').forEach((panel) => panel.classList.remove('active'));
             btn.classList.add('active');
             const panel = document.getElementById(btn.dataset.tab);
