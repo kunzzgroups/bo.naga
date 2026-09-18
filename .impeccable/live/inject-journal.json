@@ -1,0 +1,1288 @@
+{
+  "version": 1,
+  "appRoot": "C:\\Users\\hwang\\OneDrive\\Desktop\\bo.naga-design",
+  "framework": "vite-generic",
+  "port": 8400,
+  "pid": 34368,
+  "recordedAt": "2026-09-18T04:16:13.678Z",
+  "artifacts": [
+    {
+      "kind": "patched",
+      "path": "account-lock.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "admin-login-log.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "admin-operation-log.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "admin-user.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "advertisement-popup.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-bet-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-bonus.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-change-password.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-commission-admin.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-dashboard.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-detail.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-login.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-management.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-payout-admin.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-performance-detail.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-performance-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-player-detail.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-player-game-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-players.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-products.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-profile.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-promotion-admin.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-provider-detail.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-reimbursement-admin.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-settlement-admin.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-wallet.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "agent-withdraw.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "animation-effect.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "bank-deposit-usage.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "bonus-category-item.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "bonus-category-title.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "brand-detail.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "brand-management.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "brand-overview.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "bulk-adjustment.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "bulk-bonus-adjustment.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "casino-bonus-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "casino-breakdown-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "casino-deposit-withdraw-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "casino-overview-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "casino-provider-winloss-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "change-password.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "compliance-policy.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "currency-management.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "daily-rebate-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "daily-rebate-setting.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "dashboard.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "duplicate-ip.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "frequently-played-games.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "frontend-display.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "game-category.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "game-provider.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "game-sub-category.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "game.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "highest-turnover-games.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "image-to-url.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "index.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "ip-whitelist-security.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "language.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "layout-section.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "livechat-template.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "livechat.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "login.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-accounting-due.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-accounting-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-accounting-settlement.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-admin-create.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-admin-credit.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-admin-detail.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-admin-edit.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-admin-role-create.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-admin-security.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-balance-adjustment.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-balance-overview.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-dashboard.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-merchant-balance.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-merchant-create.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-merchant-credit.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-merchant-detail.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-merchant-profit-record.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-merchant-profit.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-merchant-repayments.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-merchant-role-create.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-merchant-roles.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-merchant-security.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-merchant-settlement.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-merchant-transactions.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-provider-balance.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-provider-create.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-provider-credentials.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-provider-detail.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-provider-endpoints.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-provider-health.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-provider-settlement.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-provider-transactions.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-settlement-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-stat-detail.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-transaction-history.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main-win-lose-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main_merchant_report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "main_provider_report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "manual-rebate-approval.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "member-deposit.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "member-detail.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "member-wallet.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "member-withdraw.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "menu-management.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "menu-permission.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "merchant-profit.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "online-users.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "page-customize.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "payment-gateway-transactions.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "payment-gateway.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "payment-method-create.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "payment-method.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "player-provider-session.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "profile.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "promotion-debug.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "promotion-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "promotion.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "provider-bet-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "provider-detail.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "provider-wallet-transaction.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "rebate-log.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "rebate-management.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "referral.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "role.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "root-control.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "site-customize.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "slider.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "social.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "spin2-management.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "timezone-setting.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "transaction-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "vip-exp-log.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "vip-management.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "vip-reward-log.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "vip-worker-settings.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "wallet-ledger.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "wbet-bet-limit.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    },
+    {
+      "kind": "patched",
+      "path": "win-lose-report.html",
+      "patch": "live-tag",
+      "markers": [
+        "impeccable-live-start",
+        "data-impeccable-csp-original"
+      ]
+    }
+  ]
+}
