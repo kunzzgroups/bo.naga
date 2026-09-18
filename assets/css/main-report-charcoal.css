@@ -425,11 +425,11 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
   border-bottom:1px solid rgba(92,74,48,.1)!important;
   background:transparent!important;
   color:#6b360c!important;
-  letter-spacing:-.03em!important;
+  letter-spacing:normal!important;
 }html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-brand small{
   color:#6b360c!important;
   letter-spacing:.14em!important;
-  font-weight:700!important;
+  font-weight:bold!important;
   font-size:10px!important;
   text-shadow:none;
   opacity:.78;

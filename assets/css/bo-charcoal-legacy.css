@@ -1344,18 +1344,36 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .provider-page-btn.activ
    reference (main-admin-detail-executive.css:240-258), not a re-invention. */
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-topbar .hamb,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-topbar > .hamb{
-  width:40px!important;height:40px!important;min-width:40px!important;
+  box-sizing:border-box!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;
+  padding:8px 10px!important;
   background:#FFF8EB!important;border:1px solid #EADCC8!important;color:#18191C!important;
-  border-radius:8px!important;
+  border-radius:10px!important;font-size:20px!important;line-height:1.5!important;box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-topbar .hamb i,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-topbar > .hamb i{
+  color:inherit!important;font-size:20px!important;line-height:1.5!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-topbar .hamb:hover{
   background:#FFFCF7!important;border-color:#D97706!important;color:#B45309!important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-topbar .hamb,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-topbar > .hamb{
-  width:40px!important;height:40px!important;min-width:40px!important;
+  box-sizing:border-box!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;
+  padding:8px 10px!important;
   background:#383A46!important;border:1px solid rgba(255,255,255,.14)!important;color:#F5F5F4!important;
-  border-radius:8px!important;
+  border-radius:10px!important;font-size:20px!important;line-height:1.5!important;box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-topbar .hamb i,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-topbar > .hamb i{
+  color:inherit!important;font-size:20px!important;line-height:1.5!important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-topbar .hamb:hover{
   border-color:rgba(245,158,11,.5)!important;color:#F59E0B!important;
@@ -1366,19 +1384,21 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-topbar .hamb:hov
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .user-title-icon{
   width:36px!important;height:36px!important;min-width:36px!important;flex:0 0 36px!important;
   border-radius:12px!important;background:rgba(217,119,6,.12)!important;color:#D97706!important;
-  border:1px solid rgba(217,119,6,.22)!important;font-size:18px!important;
+  border:1px solid rgba(217,119,6,.22)!important;font-size:20px!important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .user-title-icon{
   width:36px!important;height:36px!important;min-width:36px!important;flex:0 0 36px!important;
   border-radius:12px!important;background:rgba(245,158,11,.16)!important;color:#F59E0B!important;
-  border:1px solid rgba(245,158,11,.28)!important;font-size:18px!important;
+  border:1px solid rgba(245,158,11,.28)!important;font-size:20px!important;
 }
-body.report-body.bo-charcoal .user-title-icon i{color:inherit!important}
+body.report-body.bo-charcoal .user-title-icon i{color:inherit!important;font-size:20px!important}
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-topbar .user-title-wrap h1{
-  color:#18191C!important;font-size:22px!important;font-weight:900!important;letter-spacing:-.01em;
+  color:#18191C!important;font-size:22px!important;font-weight:900!important;letter-spacing:-.02em!important;
+  font-family:ui-sans-serif,"Segoe UI",system-ui,sans-serif!important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-topbar .user-title-wrap h1{
-  color:#F5F5F4!important;font-size:22px!important;font-weight:900!important;letter-spacing:-.01em;
+  color:#F5F5F4!important;font-size:22px!important;font-weight:900!important;letter-spacing:-.02em!important;
+  font-family:ui-sans-serif,"Segoe UI",system-ui,sans-serif!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-topbar .user-title-wrap p{
   color:#71717A!important;font-size:12px!important;font-weight:500!important;
@@ -3105,10 +3125,12 @@ html[data-bo-theme="dark"] body.referral-page.report-body.bo-charcoal .report-to
 }
 html body.referral-page.report-body.bo-charcoal .report-topbar > .hamb{
   display:inline-flex!important;align-items:center!important;justify-content:center!important;
-  width:40px!important;height:40px!important;min-width:40px!important;flex:0 0 40px!important;
-  border-radius:8px!important;border:1px solid #EADCC8!important;
-  background:#FFF8EB!important;color:#18191C!important;font-size:20px!important;
-  box-shadow:none!important;padding:0!important;
+  box-sizing:border-box!important;
+  width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;flex:0 0 auto!important;
+  padding:8px 10px!important;
+  border-radius:10px!important;border:1px solid #EADCC8!important;
+  background:#FFF8EB!important;color:#18191C!important;font-size:20px!important;line-height:1.5!important;
+  box-shadow:none!important;
 }
 html[data-bo-theme="dark"] body.referral-page.report-body.bo-charcoal .report-topbar > .hamb{
   background:#383A46!important;border-color:rgba(255,255,255,.14)!important;color:#F5F5F4!important;
@@ -3121,7 +3143,7 @@ html body.referral-page.report-body.bo-charcoal .report-topbar .user-title-icon{
   width:36px!important;height:36px!important;min-width:36px!important;flex:0 0 36px!important;
   border-radius:12px!important;display:grid!important;place-items:center!important;
   background:rgba(217,119,6,.12)!important;color:#D97706!important;
-  border:1px solid rgba(217,119,6,.22)!important;font-size:18px!important;
+  border:1px solid rgba(217,119,6,.22)!important;font-size:20px!important;
 }
 html[data-bo-theme="dark"] body.referral-page.report-body.bo-charcoal .report-topbar .user-title-icon{
   background:rgba(245,158,11,.16)!important;color:#F59E0B!important;
@@ -3129,7 +3151,8 @@ html[data-bo-theme="dark"] body.referral-page.report-body.bo-charcoal .report-to
 }
 html body.referral-page.report-body.bo-charcoal .report-topbar .user-title-wrap h1{
   margin:0!important;font-size:22px!important;font-weight:900!important;line-height:1.2!important;
-  color:#18191C!important;letter-spacing:-.01em!important;
+  color:#18191C!important;letter-spacing:-.02em!important;
+  font-family:ui-sans-serif,"Segoe UI",system-ui,sans-serif!important;
   white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
 }
 html[data-bo-theme="dark"] body.referral-page.report-body.bo-charcoal .report-topbar .user-title-wrap h1{

@@ -332,8 +332,6 @@
     const id = first(member,['id','memberId','userId'], '');
     const username = first(member,['username'], '-');
     const status = memberStatus(member);
-    const crumb = document.getElementById('memberDetailCrumb');
-    if(crumb) crumb.textContent = username || ('ID ' + id);
     document.title = (username || 'Member') + ' · Member Detail';
     const avatar=document.getElementById('walletMemberAvatar');
     if(avatar) avatar.textContent = String(username || 'M').slice(0,1).toUpperCase();
