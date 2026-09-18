@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit Banner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="assets/css/reports.css?v=1.0.50" rel="stylesheet" />
+    <link href="assets/css/bo-ui-standard.css?v=1.0.5" rel="stylesheet" />
+    <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet" />
+    <link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
+    <link href="assets/css/bo-charcoal-shell.css?v=1.0.0" rel="stylesheet" />
+    <link href="assets/css/bo-charcoal-legacy.css?v=1.0.1" rel="stylesheet" />
+    <link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
+    <link href="assets/css/bo-charcoal-cms.css?v=1.0.18" rel="stylesheet" />
+    <link href="assets/css/bo-input-fill.css?v=1.0.1" rel="stylesheet" />
+    <script>
+      (function(){
+        try{
+          if(localStorage.getItem('bo_theme')==='dark') document.documentElement.setAttribute('data-bo-theme','dark');
+        }catch(e){}
+      })();
+    </script>
+  </head>
+  <body class="report-body bo-charcoal bo-account-chip banner-management-page banner-edit-page">
+    <div class="report-shell">
+      <aside class="report-sidebar" id="reportSidebar">
+        <div class="report-brand">
+          <div>Backoffice<br /><small>Admin Panel</small></div>
+          <button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button>
+        </div>
+        <nav class="report-nav"></nav>
+      </aside>
+      <div class="sidebar-overlay" id="reportOverlay" data-close-sidebar></div>
+      <main class="report-main">
+        <header class="report-topbar">
+          <button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button>
+          <div class="user-title-wrap">
+            <div class="user-title-icon"><i class="bi bi-images"></i></div>
+            <div>
+              <h1 id="bannerEditPageTitle">Create Banner</h1>
+            </div>
+          </div>
+          <div class="report-actions">
+            <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
+              <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
+              <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
+            </button>
+            <div data-bo-profile></div>
+          </div>
+        </header>
+
+        <section class="report-content banner-edit-workspace">
+          <form id="sliderForm" class="slider-form banner-edit-form" novalidate>
+            <input type="hidden" id="sliderId" name="id" />
+            <input type="hidden" id="sliderStatus" name="status" value="1" />
+
+            <section class="banner-edit-section">
+              <header class="banner-edit-section-head">
+                <div class="banner-edit-section-title">
+                  <span class="banner-edit-section-icon" aria-hidden="true"><i class="bi bi-film"></i></span>
+                  <div>
+                    <h2>Hero Artwork</h2>
+                    <p>Drop the default slide and an optional Chinese variant. Preview stays 16:9.</p>
+                  </div>
+                </div>
+                <a class="clean-btn mad-btn-ghost banner-edit-back" id="bannerBackLink" href="slider.html">
+                  <i class="bi bi-arrow-left" aria-hidden="true"></i> Back to list
+                </a>
+              </header>
+
+              <div class="banner-upload-grid">
+                <div class="banner-upload-pane">
+                  <div class="banner-upload-pane-label">
+                    <span>Default Image</span>
+                    <b>*</b>
+                  </div>
+                  <div class="slider-upload-box banner-stage-drop" id="sliderDropZone">
+                    <input type="file" id="sliderImage" name="image" accept="image/*" />
+                    <div class="slider-upload-placeholder" id="sliderUploadPlaceholder">
+                      <i class="bi bi-cloud-arrow-up"></i>
+                      <strong>Drop hero image</strong>
+                      <small>PNG · JPG · WEBP · GIF</small>
+                    </div>
+                    <img id="sliderPreview" alt="Banner preview" hidden />
+                  </div>
+                  <p class="banner-upload-hint" id="sliderCurrentImage" hidden>Keep current image unless you choose a new file.</p>
+                </div>
+
+                <div class="banner-upload-pane">
+                  <div class="banner-upload-pane-label">
+                    <span>Chinese Image</span>
+                    <em>Optional</em>
+                  </div>
+                  <div class="slider-upload-box banner-stage-drop is-optional" id="sliderDropZoneZh">
+                    <input type="file" id="sliderImageZh" name="imageZh" accept="image/*" />
+                    <div class="slider-upload-placeholder" id="sliderUploadPlaceholderZh">
+                      <i class="bi bi-cloud-arrow-up"></i>
+                      <strong>Drop Chinese image</strong>
+                      <small>Falls back to default if empty</small>
+                    </div>
+                    <img id="sliderPreviewZh" alt="Chinese slider preview" hidden />
+                  </div>
+                  <p class="banner-upload-hint" id="sliderCurrentImageZh" hidden>Keep current Chinese image unless you choose a new file.</p>
+                </div>
+              </div>
+            </section>
+
+            <section class="banner-edit-section">
+              <header class="banner-edit-section-head">
+                <div class="banner-edit-section-title">
+                  <span class="banner-edit-section-icon is-copy" aria-hidden="true"><i class="bi bi-card-heading"></i></span>
+                  <div>
+                    <h2>Display Details</h2>
+                    <p>Name the slide, set destination, order, and publish state.</p>
+                  </div>
+                </div>
+              </header>
+
+              <div class="banner-detail-grid">
+                <div class="field">
+                  <label for="sliderTitle">Title <b>*</b></label>
+                  <input id="sliderTitle" name="title" type="text" placeholder="e.g. Weekly Ranking Bonus" autocomplete="off" />
+                </div>
+                <div class="field">
+                  <label for="sliderTitleZh">Chinese Title</label>
+                  <input id="sliderTitleZh" name="titleZh" type="text" placeholder="例如：每周排名奖金" autocomplete="off" />
+                </div>
+                <div class="field banner-field-span">
+                  <label for="sliderLinkUrl">Link URL</label>
+                  <input id="sliderLinkUrl" name="linkUrl" type="text" placeholder="https://example.com or bonus.html" autocomplete="off" />
+                </div>
+                <div class="field">
+                  <label for="sliderSortOrder">Sort Order</label>
+                  <input id="sliderSortOrder" name="sortOrder" type="number" min="0" value="0" />
+                </div>
+                <div class="field">
+                  <span class="banner-field-label">Status</span>
+                  <div class="banner-status-seg" role="group" aria-label="Banner status">
+                    <button type="button" class="banner-status-opt is-active" data-status="1">Active</button>
+                    <button type="button" class="banner-status-opt" data-status="2">Suspend</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="upload-status" id="sliderStatusBox"></div>
+            </section>
+          </form>
+        </section>
+
+        <footer class="banner-edit-footer" id="bannerEditFooter">
+          <div class="banner-edit-footer-meta">
+            <span class="banner-edit-footer-icon" aria-hidden="true"><i class="bi bi-images"></i></span>
+            <div class="banner-edit-footer-copy">
+              <strong id="bannerFooterTitle">Create Banner</strong>
+              <span id="bannerEditNote">Upload a hero image and set display details.</span>
+              <span class="banner-ready-pill" id="bannerReadyPill">Draft</span>
+            </div>
+          </div>
+          <div class="banner-edit-footer-actions">
+            <button class="clean-btn mad-btn-ghost" id="resetSliderBtn" type="button" form="sliderForm"><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Reset</button>
+            <button class="clean-btn primary" id="saveSliderBtn" type="submit" form="sliderForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Save Banner</button>
+          </div>
+        </footer>
+      </main>
+    </div>
+
+    <script src="assets/js/config.js?v=1.0.40"></script>
+    <script src="assets/js/brand-context.js?v=1.0.4"></script>
+    <script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
+    <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
+    <script src="assets/js/auth.js?v=1.0.68"></script>
+    <script src="assets/js/reports.js?v=1.0.29"></script>
+    <script src="assets/js/slider-edit.js?v=1.0.1"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script src="assets/js/firebase-config.js?v=1.0.0"></script>
+    <script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
+    <script src="assets/js/bo-ui-standard.js?v=1.0.2"></script>
+    <script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
+    <script src="assets/js/bo-theme.js?v=1.0.0"></script>
+    <script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
+  </body>
+</html>

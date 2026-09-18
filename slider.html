@@ -16,10 +16,10 @@
 <link href="assets/css/bo-charcoal-shell.css?v=1.0.0" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-legacy.css?v=1.0.1" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-cms.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-cms.css?v=1.0.19" rel="stylesheet" />
 <link href="assets/css/bo-input-fill.css?v=1.0.1" rel="stylesheet" />
 </head>
-  <body class="report-body bo-charcoal bo-account-chip">
+  <body class="report-body bo-charcoal bo-account-chip banner-management-page">
     <div class="report-shell">
       <aside class="report-sidebar" id="reportSidebar">
           <div class="report-brand">
@@ -48,128 +48,20 @@
         </header>
 
         <section class="report-content">
-          <div class="slider-page-grid">
-            <div class="slider-form-card">
-              <div class="section-title mb-3">
-                <div>
-                  <h3 id="sliderFormTitle">Create Banner</h3>
-                </div>
-              </div>
-
-              <form id="sliderForm" class="slider-form">
-                <input type="hidden" id="sliderId" name="id" />
-                <div class="slider-upload-box" id="sliderDropZone">
-                  <input type="file" id="sliderImage" name="image" accept="image/*" />
-                  <div class="slider-upload-placeholder" id="sliderUploadPlaceholder">
-                    <i class="bi bi-cloud-arrow-up"></i>
-                    <strong>Choose image or drag here</strong>
-                    <small>PNG, JPG, WEBP, GIF accepted</small>
-                  </div>
-                  <img id="sliderPreview" alt="Banner preview" hidden />
-                </div>
-                <div class="slider-current-image" id="sliderCurrentImage" hidden>
-                  Current image will remain if no new image selected.
-                </div>
-
-                <div class="slider-upload-section-title mt-3">
-                  <span>Chinese Image</span>
-                  <small>Optional. If empty, frontend uses default image.</small>
-                </div>
-                <div class="slider-upload-box slider-upload-box-compact" id="sliderDropZoneZh">
-                  <input type="file" id="sliderImageZh" name="imageZh" accept="image/*" />
-                  <div class="slider-upload-placeholder" id="sliderUploadPlaceholderZh">
-                    <i class="bi bi-cloud-arrow-up"></i>
-                    <strong>Choose Chinese image or drag here</strong>
-                    <small>PNG, JPG, WEBP, GIF accepted</small>
-                  </div>
-                  <img id="sliderPreviewZh" alt="Chinese slider preview" hidden />
-                </div>
-                <div class="slider-current-image" id="sliderCurrentImageZh" hidden>
-                  Current Chinese image will remain if no new Chinese image selected.
-                </div>
-
-                <div class="field mt-3">
-                  <label>Title</label>
-                  <input id="sliderTitle" name="title" type="text" placeholder="Example: Weekly Ranking Bonus" />
-                </div>
-                <div class="field">
-                  <label>Chinese Title</label>
-                  <input id="sliderTitleZh" name="titleZh" type="text" placeholder="Example: 每周排名奖金" />
-                </div>
-                <div class="field">
-                  <label>Link URL</label>
-                  <input id="sliderLinkUrl" name="linkUrl" type="text" placeholder="https://example.com or bonus.html" />
-                </div>
-                <div class="slider-two-col">
-                  <div class="field">
-                    <label>Sort Order</label>
-                    <input id="sliderSortOrder" name="sortOrder" type="number" min="0" value="0" />
-                  </div>
-                  <div class="field">
-                    <label>Status</label>
-                    <select id="sliderStatus" name="status">
-                      <option value="1">Active</option>
-                      <option value="2">Inactive</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="slider-form-actions">
-                  <button class="clean-btn primary" id="saveSliderBtn" type="submit"><i class="bi bi-save"></i> Save Banner</button>
-                  <button class="clean-btn" id="resetSliderBtn" type="button"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
-                </div>
-                <div class="upload-status" id="sliderStatusBox"></div>
-              </form>
-            </div>
-
+          <div class="slider-page-grid banner-list-only">
             <div class="slider-list-card banner-dashboard">
-              <div class="banner-stats" id="bannerStats">
-                <article><span class="banner-stat-icon total"><i class="bi bi-layers"></i></span><div><small>Total Banners</small><strong id="bannerTotalCount">0</strong><p>All banners in this branding</p></div></article>
-                <article><span class="banner-stat-icon active"><i class="bi bi-check-circle"></i></span><div><small>Active</small><strong id="bannerActiveCount">0</strong><p>Currently active banners</p></div></article>
-                <article><span class="banner-stat-icon inactive"><i class="bi bi-pause-circle"></i></span><div><small>Inactive</small><strong id="bannerInactiveCount">0</strong><p>Inactive banners</p></div></article>
+              <div class="banner-filterbar" data-bo-filter-exempt="1">
+                <label class="banner-search"><i class="bi bi-search" aria-hidden="true"></i><input id="bannerSearchInput" type="search" placeholder="Search banner..." autocomplete="off" /></label>
+                <select id="bannerStatusFilter" aria-label="Filter banner status"><option value="all">All Status</option><option value="1">Active</option><option value="2">Suspend</option></select>
+                <button class="clean-btn mad-btn-ghost" id="refreshSliderBtn" type="button" title="Refresh"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i><span>Refresh</span></button>
+                <a class="clean-btn primary" id="addBannerBtn" href="slider-edit.html"><i class="bi bi-plus-lg" aria-hidden="true"></i><span>Add Banner</span></a>
               </div>
 
-              <div class="banner-filterbar bo-filter-row">
-                <label class="banner-search"><i class="bi bi-search"></i><input id="bannerSearchInput" type="search" placeholder="Search banner..." /></label>
-                <select id="bannerStatusFilter" aria-label="Filter banner status"><option value="all">All Status</option><option value="1">Active</option><option value="2">Inactive</option></select>
-                <button class="clean-btn" id="refreshSliderBtn" type="button" title="Refresh"><i class="bi bi-arrow-clockwise"></i><span>Refresh</span></button>
-                <button class="clean-btn primary crud-add-btn" id="addBannerBtn" type="button"><i class="bi bi-plus-circle"></i><span>Add Banner</span></button>
-              </div>
-
-              <div class="banner-workspace" id="bannerWorkspace" hidden>
-                <div class="banner-featured">
-                  <button class="banner-nav prev" id="bannerPrevBtn" type="button" aria-label="Previous banner"><i class="bi bi-chevron-left"></i></button>
-                  <img id="bannerFeaturedImage" alt="Selected banner preview" />
-                  <div class="banner-image-fallback" id="bannerFeaturedFallback"><i class="bi bi-image"></i></div>
-                  <button class="banner-nav next" id="bannerNextBtn" type="button" aria-label="Next banner"><i class="bi bi-chevron-right"></i></button>
-                  <div class="banner-dots" id="bannerDots"></div>
+              <div class="banner-gallery-stage" id="bannerGalleryStage">
+                <div class="banner-gallery" id="sliderList" role="list"></div>
+                <div class="slider-empty" id="sliderEmpty" hidden>
+                  <i class="bi bi-images"></i><b>No banners found</b><small>Create your first banner or change the filters.</small>
                 </div>
-
-                <aside class="banner-detail-panel">
-                  <div class="banner-detail-head"><h3>Banner Details</h3><span id="bannerDetailStatus" class="slider-pill active">Active</span></div>
-                  <dl>
-                    <div><dt><i class="bi bi-house"></i>Name</dt><dd id="bannerDetailName">-</dd></div>
-                    <div><dt><i class="bi bi-check-circle"></i>Status</dt><dd id="bannerDetailStatusText">-</dd></div>
-                    <div><dt><i class="bi bi-sliders"></i>Sort Order</dt><dd id="bannerDetailSort">-</dd></div>
-                    <div><dt><i class="bi bi-link-45deg"></i>Destination</dt><dd><a id="bannerDetailLink" href="#" target="_blank" rel="noopener">No link</a></dd></div>
-                    <div><dt><i class="bi bi-calendar3"></i>Updated At</dt><dd id="bannerDetailUpdated">-</dd></div>
-                    <div><dt><i class="bi bi-person"></i>Updated By</dt><dd id="bannerDetailUpdatedBy">Super Admin</dd></div>
-                  </dl>
-                  <div class="banner-detail-actions">
-                    <button class="clean-btn banner-edit-detail" id="bannerEditSelected" type="button"><i class="bi bi-pencil-square"></i> Edit Banner</button>
-                    <button class="clean-btn danger banner-delete-detail" id="bannerDeleteSelected" type="button"><i class="bi bi-trash3"></i> Delete Banner</button>
-                  </div>
-                </aside>
-              </div>
-
-              <div class="slider-empty" id="sliderEmpty" hidden>
-                <i class="bi bi-images"></i><b>No banners found</b><small>Create your first banner or change the filters.</small>
-              </div>
-
-              <div class="banner-strip-wrap" id="bannerStripWrap" hidden>
-                <button class="banner-strip-nav prev" id="bannerStripPrev" type="button" aria-label="Scroll banners left"><i class="bi bi-chevron-left"></i></button>
-                <div class="slider-list banner-strip" id="sliderList"></div>
-                <button class="banner-strip-nav next" id="bannerStripNext" type="button" aria-label="Scroll banners right"><i class="bi bi-chevron-right"></i></button>
               </div>
             </div>
           </div>
@@ -181,19 +73,18 @@
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
-    <script src="assets/js/auth.js?v=1.0.66"></script>
+    <script src="assets/js/auth.js?v=1.0.68"></script>
     <script src="assets/js/reports.js?v=1.0.29"></script>
     <script src="assets/js/dynamic-translation.js?v=1.0.6"></script>
-    <script src="assets/js/slider.js?v=1.0.10"></script>
+  <script src="assets/js/slider.js?v=1.0.19"></script>
       <script src="assets/js/dynamic-translation-init.js?v=1.0.1"></script>
-      <script src="assets/js/crud-modal-pattern.js?v=1.0.2"></script>
 
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
 <script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
-  <script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
+  <script src="assets/js/bo-ui-standard.js?v=1.0.2"></script>
 <script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 <script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
