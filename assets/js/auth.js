@@ -248,6 +248,15 @@
       // Payment Gateway menu selected in ROOT Role/Menu Permission. No new hardcoded
       // permission/menu row is required for this drill-down.
       if(current === 'payment-gateway-transactions.html') current = 'payment-gateway.html';
+      // Create/Edit Payment Method is a drill-down page, not a standalone sidebar menu.
+      // Inherit the page the admin opened it from so Bank Deposit Usage users are not
+      // incorrectly redirected to their landing page, while Payment Method Config keeps
+      // using its own ROOT-assigned permission.
+      if(current === 'payment-method-create.html'){
+        let pmSource = '';
+        try { pmSource = String(new URLSearchParams(location.search || '').get('from') || '').toLowerCase(); } catch(e) {}
+        current = pmSource === 'usage' ? 'bank-deposit-usage.html' : 'payment-method.html';
+      }
       if(current === 'main-balance-adjustment.html') current = 'main-balance-overview.html';
       // Agent Performance Detail is a drill-down page of Agent Performance Report.
       // It has no separate sidebar/menu permission, so inherit the report permission
