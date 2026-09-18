@@ -185,3 +185,37 @@
  .report-main .table-footer>.pagination-clean{grid-area:pager!important;grid-column:auto!important;justify-self:end!important;max-width:100%!important;overflow-x:auto!important}
  .report-main .table-footer>.table-info{grid-area:info!important;grid-column:auto!important;justify-self:center!important;width:100%!important;white-space:normal!important}
 }
+
+/* Referral Network: Show left, pager hard-right (override 3-col grid above) */
+body.referral-page .report-main .table-footer.ref-pagination-row,
+body.referral-page .table-footer.ref-pagination-row{
+  display:flex!important;
+  flex-direction:row!important;
+  flex-wrap:nowrap!important;
+  justify-content:space-between!important;
+  align-items:center!important;
+  grid-template-columns:none!important;
+  grid-template-areas:none!important;
+  width:100%!important;
+}
+body.referral-page .report-main .table-footer.ref-pagination-row > .table-info,
+body.referral-page .table-footer.ref-pagination-row > .table-info{
+  display:none!important;
+}
+body.referral-page .report-main .table-footer.ref-pagination-row > .entries-control,
+body.referral-page .table-footer.ref-pagination-row > .entries-control{
+  flex:0 0 auto!important;
+  margin:0!important;
+  grid-column:auto!important;
+  grid-area:auto!important;
+  justify-self:auto!important;
+}
+body.referral-page .report-main .table-footer.ref-pagination-row > .pagination-clean,
+body.referral-page .table-footer.ref-pagination-row > .pagination-clean{
+  flex:0 0 auto!important;
+  margin-left:auto!important;
+  margin-right:0!important;
+  grid-column:auto!important;
+  grid-area:auto!important;
+  justify-self:auto!important;
+}
