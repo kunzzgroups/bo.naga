@@ -65,7 +65,7 @@ html body.advertisement-popup-page.report-body.bo-charcoal:not(#bo-charcoal-off)
 html body.advertisement-popup-page.report-body.bo-charcoal:not(#bo-charcoal-off) .ad-config-grid{
   flex:1 1 auto!important;min-height:0!important;
   display:grid!important;
-  grid-template-columns:minmax(0,1.35fr) minmax(300px,.68fr)!important;
+  grid-template-columns:minmax(0,3fr) minmax(280px,2fr)!important;
   gap:16px!important;align-items:stretch!important;
 }
 

@@ -1,5 +1,5 @@
 /* Advertisement Popup — layout base (craft chrome in bo-advertisement-popup-md.css) */
-.ad-config-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.68fr);gap:16px;align-items:stretch}
+.ad-config-grid{display:grid;grid-template-columns:minmax(0,3fr) minmax(280px,2fr);gap:16px;align-items:stretch}
 .ad-config-card,.ad-live-preview-card{display:flex;flex-direction:column;min-width:0}
 .ad-card-scroll{flex:1 1 auto;min-height:0;overflow:auto;padding:16px 18px 8px}
 .ad-section-title{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #EADCC8}
