@@ -376,6 +376,23 @@ html body.site-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off) .ass
 html body.site-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off) .custom-status{
   grid-column:1 / -1;min-height:22px;margin:4px 0 0;font-size:12.5px;font-weight:700;
 }
+
+/* Language Translation: span full content width (not one column of .customize-card grid) */
+html body.site-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off) #dynamicMainLayoutTranslationForm{
+  grid-column:1 / -1;
+  display:block;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  margin:14px 0 0;
+}
+html body.site-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off) #dynamicMainLayoutTranslationForm .dynamic-translation-panel{
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
+  margin:0;
+}
 html:not([data-bo-theme="dark"]) body.site-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off) .custom-status{color:#18191C}
 html:not([data-bo-theme="dark"]) body.site-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off) .custom-status.success{color:#027A48}
 html:not([data-bo-theme="dark"]) body.site-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off) .custom-status.error{color:#B42318}
