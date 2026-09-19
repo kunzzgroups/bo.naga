@@ -68,7 +68,6 @@
   let currentInstallLogoUrl='';
   let previewObjectUrl='';
   const message=document.getElementById('frontendDisplayMessage');
-  const note=document.getElementById('displaySettingNote');
   const endpoint=String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+API_CONFIG.ENDPOINTS.FRONTEND_DISPLAY_SETTING;
 
   function headers(json){
@@ -481,14 +480,6 @@
     liveTransactionRandomPriceRow?.classList.toggle('is-hidden',!random);
   }
 
-  function renderNote(){
-    const on=select.value==='1';
-    note.textContent=on
-      ?'Bonus display is enabled. The homepage bonus and promotion column will be shown.'
-      :'Bonus display is disabled. The homepage bonus and promotion column will be hidden.';
-    note.classList.toggle('off',!on);
-  }
-
   async function load(){
     setMessage('Loading...');
     const response=await fetch(endpoint+(endpoint.includes('?')?'&':'?')+'_cfg='+Date.now(),{headers:headers(false),cache:'no-store'});
@@ -514,7 +505,6 @@
     if(liveTransactionRandomMaxPrice) liveTransactionRandomMaxPrice.value=Number(data.liveTransactionRandomMaxPrice??5000).toFixed(2);
     renderLiveTransactionMode();
     if(marqueeEditor){ marqueeEditor.innerHTML=data.marqueeContent||''; applyMarqueeBackground(DEFAULT_MARQUEE_BG_COLOR); if(marqueeTextColorBar) marqueeTextColorBar.style.backgroundColor=DEFAULT_MARQUEE_TEXT_COLOR; syncMarquee(); }
-    renderNote();
     await loadInstallSetting();
     setMessage('');
   }
@@ -579,7 +569,6 @@
       syncSelect(savedValue);
       if(json.data){ minDeposit.value=Number(json.data.minDepositAmount||depositValue).toFixed(2); minWithdrawal.value=Number(json.data.minWithdrawalAmount||withdrawalValue).toFixed(2); if(rebateThreshold) rebateThreshold.value=Number(json.data.rebateAutoCreditThreshold??rebateThresholdValue).toFixed(2); if(marqueeEnabled) syncSelectValue(marqueeEnabled,json.data.marqueeEnabled); if(leaderboardEnabled) syncSelectValue(leaderboardEnabled,json.data.leaderboardEnabled); if(vipSidebarEnabled) syncSelectValue(vipSidebarEnabled,json.data.vipSidebarEnabled); if(liveTransactionEnabled) syncSelectValue(liveTransactionEnabled,json.data.liveTransactionEnabled); if(liveTransactionMode){liveTransactionMode.value=String(json.data.liveTransactionMode||liveTransactionModeValue).toUpperCase()==='FAKE'?'FAKE':'REAL';liveTransactionMode.dispatchEvent(new Event('change',{bubbles:true}));} if(liveTransactionIntervalSeconds) liveTransactionIntervalSeconds.value=String(json.data.liveTransactionIntervalSeconds||liveTransactionIntervalValue); if(liveTransactionRandomMinSeconds) liveTransactionRandomMinSeconds.value=String(json.data.liveTransactionRandomMinSeconds||liveTransactionRandomMinSecondsValue); if(liveTransactionRandomMaxSeconds) liveTransactionRandomMaxSeconds.value=String(json.data.liveTransactionRandomMaxSeconds||liveTransactionRandomMaxSecondsValue); if(liveTransactionRandomMinRows) liveTransactionRandomMinRows.value=String(json.data.liveTransactionRandomMinRows||liveTransactionRandomMinRowsValue); if(liveTransactionRandomMaxRows) liveTransactionRandomMaxRows.value=String(json.data.liveTransactionRandomMaxRows||liveTransactionRandomMaxRowsValue); if(liveTransactionRandomMinPrice) liveTransactionRandomMinPrice.value=Number(json.data.liveTransactionRandomMinPrice??liveTransactionRandomMinPriceValue).toFixed(2); if(liveTransactionRandomMaxPrice) liveTransactionRandomMaxPrice.value=Number(json.data.liveTransactionRandomMaxPrice??liveTransactionRandomMaxPriceValue).toFixed(2); renderLiveTransactionMode(); if(marqueeEditor){marqueeEditor.innerHTML=json.data.marqueeContent||marqueeHtml;syncMarquee();} }
       await saveInstallSetting();
-      renderNote();
       setMessage('Frontend display setting and Add to Home Screen settings saved successfully.','success');
     }catch(error){
       setMessage(error.message,'error');
@@ -589,7 +578,6 @@
     }
   }
 
-  select.addEventListener('change',renderNote);
   liveTransactionMode?.addEventListener('change',renderLiveTransactionMode);
 
   document.querySelectorAll('[data-fd-switch]').forEach(function(btn){

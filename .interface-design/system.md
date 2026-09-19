@@ -362,8 +362,9 @@ Source of truth: `assets/css/bo-charcoal-shell.css` (shared shell). Do not inven
 | Edge rail | `::before` 2px · `#F59E0B`→`#D97706` · opacity `.75` | `::after` 2px · `#FBBF24`→`#F59E0B`→`#D97706` · opacity `.85`; `::before` = faint grid texture |
 | Brand `.report-brand` | text `#6b360c` · bottom `rgba(92,74,48,.1)` · small `10px/700` opacity `.78` | text `#FFFFFF` · bottom `rgba(245,158,11,.18)` · small amber `rgba(245,158,11,.78)` + soft glow |
 | Close `.close-side` | bg `rgba(255,255,255,.55)` · border `rgba(92,74,48,.12)` · `#6b360c` | bg `rgba(255,255,255,.1)` · `#fff` |
-| Account footer | transparent · top `rgba(92,74,48,.1)` | transparent · top `rgba(255,255,255,.08)` |
+| Account footer | transparent · top `rgba(92,74,48,.1)` · **height `--bo-shell-foot-h` (`68px`)** · pad `10px` · flex center | transparent · top `rgba(255,255,255,.08)` · same height token |
 | Logout `.bo-sidebar-logout` | text `#B42318` · icon `#D92D20` · bg `rgba(255,255,255,.45)` · border `rgba(180,35,24,.12)` · hover `#912018` on `rgba(254,243,242,.95)` | text `#FF8A90` · icon `#F87171` · transparent · hover white on `rgba(248,113,113,.1)` + red ring |
+| Page sticky footers | **Same `--bo-shell-foot-h`** · flush to main bottom · top hairline aligns with Account footer divider (e.g. Frontend Display `.fd-save-bar`) | same |
 | Nav slab `.report-nav` | transparent · pad `12px 10px 10px` · gap `3px` · **no** nested glass | same pad · transparent |
 
 Never put `backdrop-filter` / `isolation` on `.report-sidebar` — it clips the desktop L2 flyout (`position:fixed`).
@@ -1027,6 +1028,7 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Panel pill scrollbar thickness **`6px`** (was `4px`) — Bulk · Wallet Ledger · Livechat | User: scrollbar 再粗一点点 · 更新 MD | 2026-09-17 |
 | **Member Wallet** aligned to listing MD — no Page Size in filter · footer `#walletSize` · action 26×26 wells · username-only Member cell · panel pill scrollbar | User: 用MD来调整这些东西 | 2026-09-17 |
 | **Topbar anatomy locked** (Deposit Approval specimen): left hamb + icon + title (+ Approval lead) · right theme → Members/Deposit/Withdraw counters `48×`/`10px` · User Name + avatar · height `64px` | User: 把表头的部分更新进 MD | 2026-09-17 |
+| **Shell foot band** `--bo-shell-foot-h:68px` — Account footer + page sticky footers share height so Logout hairline aligns with Save bar top | User: 表尾和 logout 上方的线对齐 | 2026-09-19 |
 
 ### Opt-in layers for pages outside the migrated families
 

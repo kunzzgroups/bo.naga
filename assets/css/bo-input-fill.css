@@ -50,7 +50,7 @@
           (e.g. #madEditUsername on the edit page, which is `readonly`) */
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not(:disabled):not([readonly]),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) select:not(:disabled),
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:not(:disabled):not([readonly]):not(.layout-code-pane textarea){
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:not(:disabled):not([readonly]):not(.layout-code-pane textarea):not(.pc-rich-source):not(#pcRichSource){
   background-color:#FFF8EB!important;
 }
 /* The one control that must stay transparent, and why: the code editors on layout-section.html
@@ -109,8 +109,8 @@ html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-f
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:focus:not(:disabled):not([readonly]),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) select:hover:not(:disabled),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) select:focus:not(:disabled),
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:hover:not(:disabled):not([readonly]):not(.layout-code-pane textarea),
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:focus:not(:disabled):not([readonly]):not(.layout-code-pane textarea){
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:hover:not(:disabled):not([readonly]):not(.layout-code-pane textarea):not(.pc-rich-source):not(#pcRichSource),
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:focus:not(:disabled):not([readonly]):not(.layout-code-pane textarea):not(.pc-rich-source):not(#pcRichSource){
   background-color:#FFF8EB!important;
 }
 
