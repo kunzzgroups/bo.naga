@@ -414,12 +414,21 @@
     applyPopoverColor(rgbToHex(r,g,b));
   }
 
+  function isDarkTheme(){
+    return document.documentElement.getAttribute('data-bo-theme')==='dark';
+  }
+
   function applyMarqueeBackground(value){
     const hex=normalizeHexColor(value,DEFAULT_MARQUEE_BG_COLOR);
     marqueeBgValue=hex;
     if(marqueeBgColorChip) marqueeBgColorChip.style.backgroundColor=hex;
-    if(marqueeEditor) marqueeEditor.style.backgroundColor=hex;
+    // Live preview always shows the real storefront colour.
     if(marqueePreviewBar) marqueePreviewBar.style.backgroundColor=hex;
+    // Editor chrome follows admin theme: keep light default out of dark mode so the page stays charcoal.
+    if(marqueeEditor){
+      const useThemeChrome=isDarkTheme() && hex.toUpperCase()===DEFAULT_MARQUEE_BG_COLOR.toUpperCase();
+      marqueeEditor.style.backgroundColor=useThemeChrome?'':hex;
+    }
   }
 
   function applyMarqueeTextColor(value){
@@ -649,6 +658,9 @@
       const anchor=marqueeColorMode==='bg'?marqueeBgColorBtn:marqueeTextColorBtn;
       positionColorPopover(anchor);
     },{passive:true});
+    new MutationObserver(function(){
+      applyMarqueeBackground(marqueeBgValue);
+    }).observe(document.documentElement,{attributes:true,attributeFilter:['data-bo-theme']});
   }
   chooseInstallAppLogo?.addEventListener('click',()=>installAppLogoFile?.click());
   installAppLogoFile?.addEventListener('change',async e=>{

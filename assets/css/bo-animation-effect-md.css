@@ -54,6 +54,181 @@ html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .r
   html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar .user-title-wrap h1{font-size:17px!important}
 }
 
+/* ---- Mode tabs: inside left composer card chrome ---- */
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-head{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  padding:10px 14px;
+  border-bottom:1px solid transparent;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-head{
+  border-bottom-color:#EADCC8;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-head{
+  border-bottom-color:rgba(255,255,255,.12);
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-tabs{
+  flex:0 0 auto;
+  align-self:flex-start;
+  margin:0;
+  max-width:100%;
+  display:inline-flex!important;align-items:center!important;gap:6px!important;
+  position:relative!important;min-height:36px!important;
+  padding:0!important;background:transparent!important;
+  border:0!important;border-radius:0!important;overflow:visible!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-tabs .bo-tx-tab{
+  display:inline-flex!important;align-items:center!important;position:relative!important;z-index:1!important;
+  height:36px!important;min-height:36px!important;padding:0 14px!important;margin:0!important;gap:0!important;
+  border:1px solid transparent!important;border-radius:999px!important;background:transparent!important;
+  color:#71717A!important;font-size:12.5px!important;font-weight:700!important;line-height:1!important;
+  text-decoration:none!important;white-space:nowrap!important;cursor:pointer!important;box-shadow:none!important;
+  transition:color .16s ease,background .16s ease!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-tabs .bo-tx-tab::before,
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-tabs .bo-tx-tab::after{
+  content:none!important;display:none!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-tabs .bo-tx-tab:hover:not(.is-active){
+  color:#18191C!important;background:rgba(24,25,28,.04)!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-tabs.bo-seg > .bo-seg-thumb{
+  top:0!important;height:100%!important;border-radius:999px!important;box-sizing:border-box!important;
+  background-color:#FFFCF7!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 55%,#F3E8D6 100%)!important;
+  border:1px solid #E0D0B8!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.08),0 2px 8px rgba(92,74,48,.10)!important;
+  opacity:1!important;z-index:0!important;pointer-events:none!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-tabs.bo-seg > .bo-tx-tab{
+  background:transparent!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-tabs.bo-seg .bo-tx-tab.is-active,
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-tabs:not(.bo-seg) .bo-tx-tab.is-active{
+  background:transparent!important;border-color:transparent!important;box-shadow:none!important;
+  color:#18191C!important;font-weight:700!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-tabs:not(:has(> .bo-seg-thumb)) .bo-tx-tab.is-active{
+  background-color:#FFFCF7!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 55%,#F3E8D6 100%)!important;
+  border:1px solid #E0D0B8!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.08),0 2px 8px rgba(92,74,48,.10)!important;
+  color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-tabs .bo-tx-tab{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-tabs .bo-tx-tab:hover:not(.is-active){
+  color:#F4F4F5!important;background:rgba(255,255,255,.06)!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-tabs.bo-seg > .bo-seg-thumb{
+  background-color:#2A2C36!important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%)!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.25)!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-tabs.bo-seg .bo-tx-tab.is-active{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-mode-tabs:not(:has(> .bo-seg-thumb)) .bo-tx-tab.is-active{
+  background-color:#2A2C36!important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%)!important;
+  border-color:rgba(255,255,255,.14)!important;color:#F5F5F4!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-card--composer .animation-mode-panel{
+  flex:1 1 auto;min-height:0;display:none;flex-direction:column;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-card--composer .animation-mode-panel.is-active{
+  display:flex;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-card--composer .animation-mode-panel[hidden]{
+  display:none!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .animation-layout[data-effect-mode="effect"]{
+  grid-template-columns:minmax(0,1fr)!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .animation-layout[data-effect-mode="effect"] .effect-card--composer{
+  grid-column:1 / -1;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .animation-layout[data-effect-mode="effect"] .effect-card--ledger,
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #animationLedger[hidden]{
+  display:none!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost{
+  flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:10px 14px 12px;
+  overflow:hidden;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-editor{
+  border-right-color:#EADCC8;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-studio{
+  background:#2A2C36;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-editor{
+  border-right-color:rgba(255,255,255,.12);
+  background:linear-gradient(165deg,#383A46 0%,#2A2C36 100%);
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-library{
+  background:rgba(0,0,0,.18);
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-editor-head h3,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-library-head h3,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-row-name,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-empty b{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-lede,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-field > span,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-empty{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-identity,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-dock,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-row-card,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-field input,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-field select,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-preview,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-hints li,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-chip{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#D4D4D8!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-tip{
+  background:rgba(245,158,11,.1)!important;
+  border-color:rgba(245,158,11,.25)!important;
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-row-card.is-editing{
+  background:linear-gradient(135deg,#383A46,#2A2C36)!important;
+  border-color:rgba(245,158,11,.4)!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-icon-btn{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-count{
+  background:rgba(245,158,11,.16)!important;
+  color:#FBBF24!important;
+  border-color:rgba(245,158,11,.35)!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-help-code{
+  background:rgba(245,158,11,.16)!important;
+  border-color:rgba(245,158,11,.3)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #customAnimationHost .cam-empty{
+  background:rgba(0,0,0,.2)!important;
+  border-color:rgba(255,255,255,.12)!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .visually-hidden{
+  position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
+  overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
+}
+
 /* ---- Shell: stretch both panels evenly ---- */
 html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main{
   display:flex;flex-direction:column;min-height:0;overflow:hidden;

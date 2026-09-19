@@ -686,13 +686,41 @@ body.frontend-display-page .fd-save-bar .clean-btn.primary i{ font-size:16px; li
 .display-range-separator,.display-range-unit{ color:#57534E; font-size:12.5px; font-weight:700; white-space:nowrap; }
 .random-demo-only.is-hidden{ display:none!important; }
 
-html[data-bo-theme="dark"] .fd-workspace{ background:#2F313C; border-top-color:rgba(255,255,255,.12); }
-html[data-bo-theme="dark"] .fd-grid{ background:#383A46; border-color:rgba(255,255,255,.14); box-shadow:none; }
-html[data-bo-theme="dark"] .fd-panel{ background:#383A46; border-color:rgba(255,255,255,.10); }
-html[data-bo-theme="dark"] .fd-panel-head{ background:#32343E; border-bottom-color:rgba(255,255,255,.12); }
+/* Dark Charcoal ladder — canvas / panel / head / field / hairline / ink / amber */
+html[data-bo-theme="dark"] body.frontend-display-page{
+  --fd-dark-canvas:#2F313C;
+  --fd-dark-panel:#383A46;
+  --fd-dark-head:#32343E;
+  --fd-dark-field:#2A2C36;
+  --fd-dark-line:rgba(255,255,255,.12);
+  --fd-dark-line-soft:rgba(255,255,255,.10);
+  --fd-dark-ink:#F5F5F4;
+  --fd-dark-muted:#A1A1AA;
+  --fd-dark-muted-2:#D4D4D8;
+  --fd-dark-amber:#F59E0B;
+  --fd-dark-amber-soft:#FBBF24;
+}
+html[data-bo-theme="dark"] .fd-workspace{
+  background:var(--fd-dark-canvas); border-top-color:var(--fd-dark-line);
+}
+html[data-bo-theme="dark"] .fd-grid{
+  background:var(--fd-dark-panel); border-color:rgba(255,255,255,.14); box-shadow:none;
+}
+html[data-bo-theme="dark"] .fd-panel{
+  background:var(--fd-dark-panel); border-color:var(--fd-dark-line-soft);
+  border-bottom-color:var(--fd-dark-line-soft);
+}
+html[data-bo-theme="dark"] #fd-sec-visibility,
+html[data-bo-theme="dark"] #fd-sec-install{ border-right-color:var(--fd-dark-line-soft); }
+html[data-bo-theme="dark"] .fd-panel-head{
+  background:var(--fd-dark-head); border-bottom-color:var(--fd-dark-line);
+}
+html[data-bo-theme="dark"] .fd-panel-head i{
+  background:rgba(245,158,11,.14); border-color:rgba(245,158,11,.32); color:var(--fd-dark-amber-soft);
+}
 html[data-bo-theme="dark"] body.frontend-display-page .fd-save-bar{
-  background:#2F313C!important;
-  border-top-color:rgba(255,255,255,.12)!important;
+  background:var(--fd-dark-canvas)!important;
+  border-top-color:var(--fd-dark-line)!important;
   box-shadow:0 -12px 32px rgba(0,0,0,.35)!important;
 }
 html[data-bo-theme="dark"] .fd-panel-head span,
@@ -700,40 +728,88 @@ html[data-bo-theme="dark"] .display-setting-copy p,
 html[data-bo-theme="dark"] .display-preview-note,
 html[data-bo-theme="dark"] .install-app-help,
 html[data-bo-theme="dark"] .display-range-separator,
-html[data-bo-theme="dark"] .display-range-unit{ color:#D4D4D8; }
+html[data-bo-theme="dark"] .display-range-unit,
+html[data-bo-theme="dark"] .fd-color-pop-hint,
+html[data-bo-theme="dark"] .fd-color-pop-meta span,
+html[data-bo-theme="dark"] .fd-color-rgb label{ color:var(--fd-dark-muted-2); }
 html[data-bo-theme="dark"] .fd-panel-head h3,
-html[data-bo-theme="dark"] .display-setting-copy h2{ color:#F5F5F4; }
+html[data-bo-theme="dark"] .display-setting-copy h2{ color:var(--fd-dark-ink); }
 html[data-bo-theme="dark"] .display-setting-row,
+html[data-bo-theme="dark"] #fd-sec-visibility #frontendDisplayBrandRow,
 html[data-bo-theme="dark"] #fd-sec-live .fd-metric-tile,
-html[data-bo-theme="dark"] #fd-sec-limits .display-setting-row{ border-color:rgba(255,255,255,.10); }
-html[data-bo-theme="dark"] .fd-switch-track{ background:#2A2C36; border-color:rgba(255,255,255,.14); }
-html[data-bo-theme="dark"] .fd-switch-thumb{ background:#F5F5F4; }
-html[data-bo-theme="dark"] .fd-switch-text{ color:#A1A1AA; }
-html[data-bo-theme="dark"] .fd-switch[aria-checked="true"] .fd-switch-text{ color:#FBBF24; }
-html[data-bo-theme="dark"] .display-preview-note.off{ color:#FBBF24; }
-html[data-bo-theme="dark"] .marquee-toolbar{ background:#2A2C36; border-color:rgba(255,255,255,.12); }
-html[data-bo-theme="dark"] .marquee-tool{ background:#383A46; border-color:rgba(255,255,255,.12); color:#F5F5F4; }
-html[data-bo-theme="dark"] .marquee-editor,
-html[data-bo-theme="dark"] .marquee-preview{ background:#2A2C36; border-color:rgba(255,255,255,.12); color:#F5F5F4; }
-html[data-bo-theme="dark"] .marquee-preview-label{
-  background:#32343E; border-color:rgba(255,255,255,.12); color:#A1A1AA;
+html[data-bo-theme="dark"] #fd-sec-limits .display-setting-row{ border-color:var(--fd-dark-line-soft); }
+html[data-bo-theme="dark"] #fd-sec-live .fd-metric-tile,
+html[data-bo-theme="dark"] #fd-sec-limits .display-setting-row{ border-right-color:var(--fd-dark-line-soft); }
+html[data-bo-theme="dark"] .fd-switch-track{ background:var(--fd-dark-field); border-color:rgba(255,255,255,.14); }
+html[data-bo-theme="dark"] .fd-switch-thumb{ background:var(--fd-dark-ink); }
+html[data-bo-theme="dark"] .fd-switch-text{ color:var(--fd-dark-muted); }
+html[data-bo-theme="dark"] .fd-switch[aria-checked="true"] .fd-switch-track{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 55%,#EA8608 100%);
+  border-color:#E8901A;
 }
+html[data-bo-theme="dark"] .fd-switch[aria-checked="true"] .fd-switch-text{ color:var(--fd-dark-amber-soft); }
+html[data-bo-theme="dark"] .display-preview-note.off{ color:var(--fd-dark-amber-soft); }
+
+/* Marquee editor chrome = dark field; Live preview keeps real storefront colours via inline style */
+html[data-bo-theme="dark"] .marquee-toolbar{
+  background:var(--fd-dark-field)!important; border-color:var(--fd-dark-line)!important;
+}
+html[data-bo-theme="dark"] .marquee-tool{
+  background:var(--fd-dark-panel)!important; border-color:var(--fd-dark-line)!important; color:var(--fd-dark-ink)!important;
+}
+html[data-bo-theme="dark"] .marquee-tool:hover,
+html[data-bo-theme="dark"] .marquee-tool-color.is-open{
+  background:#3F4250!important; border-color:var(--fd-dark-amber)!important; color:var(--fd-dark-amber-soft)!important;
+}
+html[data-bo-theme="dark"] .marquee-tool-bg-chip{ border-color:rgba(255,255,255,.18); }
+html[data-bo-theme="dark"] .marquee-editor{
+  background:var(--fd-dark-field)!important;
+  border-color:var(--fd-dark-line)!important;
+  color:var(--fd-dark-ink);
+}
+html[data-bo-theme="dark"] .marquee-editor:focus{
+  border-color:var(--fd-dark-amber)!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+html[data-bo-theme="dark"] .marquee-editor:empty:before{ color:var(--fd-dark-muted); }
+html[data-bo-theme="dark"] .marquee-preview{
+  /* no !important — inline bg from JS is the real marquee colour */
+  border-color:var(--fd-dark-line);
+  color:var(--fd-dark-ink);
+}
+html[data-bo-theme="dark"] .marquee-preview-label{
+  background:var(--fd-dark-head)!important; border-color:var(--fd-dark-line)!important; color:var(--fd-dark-muted)!important;
+}
+html[data-bo-theme="dark"] .marquee-preview-label i{ color:var(--fd-dark-amber-soft); }
 html[data-bo-theme="dark"] .fd-color-pop{
-  background:#383A46; border-color:rgba(255,255,255,.14);
+  background:var(--fd-dark-panel); border-color:rgba(255,255,255,.14);
   box-shadow:0 16px 36px rgba(0,0,0,.45);
 }
 html[data-bo-theme="dark"] .fd-color-pop-head strong,
-html[data-bo-theme="dark"] .fd-color-pop-meta code{ color:#F5F5F4; }
-html[data-bo-theme="dark"] .fd-color-pop-preview{ background:#2A2C36; border-color:rgba(255,255,255,.12); }
+html[data-bo-theme="dark"] .fd-color-pop-meta code{ color:var(--fd-dark-ink); }
+html[data-bo-theme="dark"] .fd-color-pop-preview{ background:var(--fd-dark-field); border-color:var(--fd-dark-line); }
 html[data-bo-theme="dark"] .fd-color-pop-hex,
 html[data-bo-theme="dark"] .fd-color-rgb input{
-  background:#2A2C36; border-color:rgba(255,255,255,.12); color:#F5F5F4;
+  background:var(--fd-dark-field)!important; border-color:var(--fd-dark-line)!important; color:var(--fd-dark-ink)!important;
 }
 html[data-bo-theme="dark"] .fd-color-sv,
-html[data-bo-theme="dark"] .fd-color-hue{ border-color:rgba(255,255,255,.12); }
-html[data-bo-theme="dark"] .fd-color-pop-close{ color:#A1A1AA; }
-html[data-bo-theme="dark"] .fd-color-pop-close:hover{ background:#2A2C36; color:#F5F5F4; }
-html[data-bo-theme="dark"] .install-app-logo-preview{ background:#2A2C36; border-color:rgba(255,255,255,.12); color:#F5F5F4; }
+html[data-bo-theme="dark"] .fd-color-hue{ border-color:var(--fd-dark-line); }
+html[data-bo-theme="dark"] .fd-color-pop-close{ color:var(--fd-dark-muted); }
+html[data-bo-theme="dark"] .fd-color-pop-close:hover{ background:var(--fd-dark-field); color:var(--fd-dark-ink); }
+html[data-bo-theme="dark"] .fd-color-swatch-btn{ border-color:rgba(255,255,255,.14); box-shadow:none; }
+html[data-bo-theme="dark"] .install-app-logo-preview{
+  background:var(--fd-dark-field)!important; border-color:var(--fd-dark-line)!important; color:var(--fd-dark-muted)!important;
+}
+html[data-bo-theme="dark"] .install-app-logo-actions .clean-btn{
+  background:var(--fd-dark-field)!important;
+  border-color:var(--fd-dark-line)!important;
+  color:var(--fd-dark-ink)!important;
+}
+html[data-bo-theme="dark"] .install-app-logo-actions .clean-btn:hover{
+  border-color:var(--fd-dark-amber)!important; color:var(--fd-dark-amber-soft)!important;
+}
+html[data-bo-theme="dark"] #fd-sec-live .fd-metric-tile:last-child,
+html[data-bo-theme="dark"] #fd-sec-limits .display-setting-row:last-child{ border-bottom-color:transparent; }
 
 @media (max-width:1100px){
   body.frontend-display-page{ --fd-pad-x:12px; }
@@ -745,6 +821,10 @@ html[data-bo-theme="dark"] .install-app-logo-preview{ background:#2A2C36; border
     border-right:0;
     border-bottom:1px solid #EADCC8;
     min-height:0;
+  }
+  html[data-bo-theme="dark"] #fd-sec-live .fd-metric-tile,
+  html[data-bo-theme="dark"] #fd-sec-limits .display-setting-row{
+    border-bottom-color:rgba(255,255,255,.10);
   }
   #fd-sec-live .fd-metric-tile:last-child,
   #fd-sec-limits .display-setting-row:last-child{ border-bottom:0; }
@@ -1105,7 +1185,7 @@ html[data-bo-theme="dark"] .install-app-logo-preview{ background:#2A2C36; border
 <script src="assets/js/config.js?v=1.0.40"></script>
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
-<script src="assets/js/currency-runtime.js?v=1.0.1"></script><script src="assets/js/reports.js?v=1.0.29"></script><script src="assets/js/auth.js?v=1.0.66"></script><script src="assets/js/frontend-display.js?v=20260919-layout-12&old=1.0.8"></script>
+<script src="assets/js/currency-runtime.js?v=1.0.1"></script><script src="assets/js/reports.js?v=1.0.29"></script><script src="assets/js/auth.js?v=1.0.66"></script><script src="assets/js/frontend-display.js?v=20260919-dark-1&old=1.0.8"></script>
 
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>

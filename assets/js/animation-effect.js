@@ -189,11 +189,45 @@
     }).join('');
   }
   async function loadRules(){const j=await json(base()+'/admin/animation-setting/list');rules=dataOf(j);render()}
-  function reset(){ $('effectForm').reset();$('effectId').value='';$('effectFormTitle').textContent='Create Animation Rule';$('applyTo').value='GAME';refreshScopeOptions('GLOBAL');$('scopeType').value='GLOBAL';$('animationType').value='FLOAT_GLOW';$('customEffectName').value='';$('speed').value='NORMAL';$('intensity').value='MEDIUM';$('enabled').value='1';$('sortOrder').value='0';refreshTarget();preview();setStatus('');render() }
-  function edit(id){const r=rules.find(x=>String(x.id)===String(id));if(!r)return;$('effectId').value=r.id;$('effectFormTitle').textContent='Edit Rule #'+r.id;$('applyTo').value=r.applyTo;refreshScopeOptions(r.scopeType);$('scopeType').value=r.scopeType;const custom=customNameFromType(r.animationType);$('animationType').value=custom?'CUSTOM':r.animationType;refreshCustomOptions(custom);$('customEffectName').value=custom;$('speed').value=r.speed;$('intensity').value=r.intensity;$('enabled').value=String(r.enabled);$('sortOrder').value=String(r.sortOrder||0);refreshTarget((r.scopeType==='PROVIDER'||r.scopeType==='ASSET')?r.targetCode:r.targetId);preview();render();const composer=document.querySelector('.effect-card--composer');if(composer)composer.scrollIntoView({behavior:'smooth',block:'nearest'});else window.scrollTo({top:0,behavior:'smooth'})}
+  function reset(){ $('effectForm').reset();$('effectId').value='';const title=$('effectFormTitle');if(title)title.textContent='Create Animation Rule';$('applyTo').value='GAME';refreshScopeOptions('GLOBAL');$('scopeType').value='GLOBAL';$('animationType').value='FLOAT_GLOW';$('customEffectName').value='';$('speed').value='NORMAL';$('intensity').value='MEDIUM';$('enabled').value='1';$('sortOrder').value='0';refreshTarget();preview();setStatus('');render() }
+  function edit(id){const r=rules.find(x=>String(x.id)===String(id));if(!r)return;setWorkspaceMode('rule');$('effectId').value=r.id;const title=$('effectFormTitle');if(title)title.textContent='Edit Rule #'+r.id;$('applyTo').value=r.applyTo;refreshScopeOptions(r.scopeType);$('scopeType').value=r.scopeType;const custom=customNameFromType(r.animationType);$('animationType').value=custom?'CUSTOM':r.animationType;refreshCustomOptions(custom);$('customEffectName').value=custom;$('speed').value=r.speed;$('intensity').value=r.intensity;$('enabled').value=String(r.enabled);$('sortOrder').value=String(r.sortOrder||0);refreshTarget((r.scopeType==='PROVIDER'||r.scopeType==='ASSET')?r.targetCode:r.targetId);preview();render();const composer=document.querySelector('.effect-card--composer');if(composer)composer.scrollIntoView({behavior:'smooth',block:'nearest'});else window.scrollTo({top:0,behavior:'smooth'})}
   function targetInfo(){const scope=$('scopeType').value,v=$('targetValue').value,opt=$('targetValue').selectedOptions[0];if(scope==='GLOBAL')return {targetName:'All'};if(!v)throw new Error('Please select a target');if(scope==='PROVIDER'||scope==='ASSET')return {targetCode:v,targetName:opt?opt.textContent:v};return {targetId:Number(v),targetName:opt?opt.textContent:v}}
-  function animationTypeValue(){if($('animationType').value!=='CUSTOM')return $('animationType').value;const name=String($('customEffectName').value||'').trim().toUpperCase();if(!name)throw new Error('Please select a custom effect.');const fx=customEffects.find(x=>String(x.effectName||'').toUpperCase()===name);if(!fx)throw new Error('Selected custom effect no longer exists.');if(Number(fx.enabled)!==1)throw new Error('Selected custom effect is disabled. Enable it in Layout Section first.');return 'CUSTOM_'+name}
+  function animationTypeValue(){if($('animationType').value!=='CUSTOM')return $('animationType').value;const name=String($('customEffectName').value||'').trim().toUpperCase();if(!name)throw new Error('Please select a custom effect.');const fx=customEffects.find(x=>String(x.effectName||'').toUpperCase()===name);if(!fx)throw new Error('Selected custom effect no longer exists.');if(Number(fx.enabled)!==1)throw new Error('Selected custom effect is disabled. Enable it in the Create Effect tab first.');return 'CUSTOM_'+name}
+  function setWorkspaceMode(mode){
+    const next=mode==='effect'?'effect':'rule';
+    const layout=$('animationLayout');
+    const ledger=$('animationLedger');
+    if(layout) layout.setAttribute('data-effect-mode',next);
+    if(ledger) ledger.hidden=next==='effect';
+    document.querySelectorAll('[data-effect-mode]').forEach(btn=>{
+      if(!btn.classList.contains('bo-tx-tab'))return;
+      const on=btn.dataset.effectMode===next;
+      btn.classList.toggle('is-active',on);
+      btn.setAttribute('aria-pressed',on?'true':'false');
+    });
+    document.querySelectorAll('[data-effect-panel]').forEach(panel=>{
+      const on=panel.dataset.effectPanel===next;
+      panel.classList.toggle('is-active',on);
+      panel.hidden=!on;
+    });
+    if(window.CustomAnimationManager&&typeof CustomAnimationManager.setActive==='function'){
+      CustomAnimationManager.setActive(next==='effect');
+    }
+    const modeTrack=document.querySelector('.effect-mode-tabs');
+    if(modeTrack&&window.BO_SEG_BOUNCE){
+      try{window.BO_SEG_BOUNCE.sync(modeTrack)}catch(_){}
+    }
+    if(next==='rule'){
+      loadCustomEffects().catch(()=>{});
+    }
+  }
   $('applyTo').addEventListener('change',()=>{refreshScopeOptions();refreshTarget();});$('scopeType').addEventListener('change',()=>refreshTarget());['animationType','speed','intensity'].forEach(id=>$(id).addEventListener('change',preview));$('customEffectName').addEventListener('change',preview);$('resetEffect').addEventListener('click',reset);$('refreshEffect').addEventListener('click',()=>loadRules().catch(e=>setStatus(e.message,true)));
+  document.querySelector('.effect-mode-tabs')?.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-effect-mode]');
+    if(!btn)return;
+    setWorkspaceMode(btn.dataset.effectMode);
+  });
+  document.addEventListener('bo:custom-animation-changed',()=>{loadCustomEffects().catch(()=>{})});
   $('effectForm').addEventListener('submit',async e=>{e.preventDefault();try{const payload=Object.assign({id:$('effectId').value?Number($('effectId').value):null,applyTo:$('applyTo').value,scopeType:$('scopeType').value,animationType:animationTypeValue(),speed:$('speed').value,intensity:$('intensity').value,enabled:Number($('enabled').value),sortOrder:Number($('sortOrder').value||0)},targetInfo());await json(base()+'/admin/animation-setting/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});setStatus('Rule saved. Frontend picks it up on the next refresh.');await loadRules();reset()}catch(err){setStatus(err.message,true)}});
   document.querySelector('.effect-wall-toolbar')?.addEventListener('click',e=>{
     const btn=e.target.closest('.effect-filter');if(!btn)return;
@@ -227,9 +261,14 @@
   });
   Promise.all([loadTargets(),loadRules(),loadCustomEffects()]).then(()=>{
     reset();
+    setWorkspaceMode('rule');
     const statusTrack=document.querySelector('.effect-status-tabs');
+    const modeTrack=document.querySelector('.effect-mode-tabs');
     if(statusTrack&&window.BO_SEG_BOUNCE){
       window.BO_SEG_BOUNCE.mount(statusTrack,{button:':scope > .bo-tx-tab',anim:'bounce'});
+    }
+    if(modeTrack&&window.BO_SEG_BOUNCE){
+      window.BO_SEG_BOUNCE.mount(modeTrack,{button:':scope > .bo-tx-tab',anim:'bounce'});
     }
   }).catch(e=>setStatus(e.message,true));
 })();
