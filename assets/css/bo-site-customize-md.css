@@ -355,10 +355,10 @@ html body.site-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off) .ass
   border-radius:999px;border:1px solid transparent;
 }
 html:not([data-bo-theme="dark"]) body.site-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off) .asset-slot-zones{
-  background:rgba(255,255,255,.55);border-color:rgba(92,74,48,.10);
+  background:rgba(255,255,255,.55);border-color:#DCC9A8;
 }
 html[data-bo-theme="dark"] body.site-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off) .asset-slot-zones{
-  background:rgba(0,0,0,.22);border-color:rgba(255,255,255,.10);
+  background:rgba(0,0,0,.22);border-color:rgba(255,255,255,.18);
 }
 html body.site-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off) .asset-slot-zone-btn{
   height:26px;min-width:44px;padding:0 10px;border:0;border-radius:999px;
