@@ -1,0 +1,649 @@
+/* Animation Effect — Charcoal + Amber MD
+   Load after animation-effect.css + bo-charcoal-cms.css.
+   Locked tokens: .interface-design/system.md → Topbar / Data tables / form ladder.
+*/
+
+/* ---- Topbar: Deposit Approval specimen (64px · pad-y 0) ---- */
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar{
+  height:64px!important;min-height:64px!important;max-height:64px!important;
+  padding:0 20px!important;gap:12px!important;
+  box-sizing:border-box!important;align-items:center!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar .hamb{
+  width:36px!important;height:36px!important;min-width:36px!important;
+  border-radius:8px!important;flex:0 0 36px!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar .user-title-wrap{
+  display:flex!important;align-items:center!important;gap:12px!important;min-width:0;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar .user-title-icon{
+  width:36px!important;height:36px!important;border-radius:12px!important;
+  display:grid!important;place-items:center!important;flex:0 0 36px!important;
+  font-size:18px!important;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar .user-title-icon{
+  background:rgba(217,119,6,.12)!important;border:1px solid rgba(217,119,6,.22)!important;color:#D97706!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar .user-title-icon{
+  background:rgba(245,158,11,.16)!important;border:1px solid rgba(245,158,11,.28)!important;color:#FBBF24!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar .user-title-wrap h1{
+  margin:0!important;font-size:22px!important;font-weight:900!important;line-height:1.2!important;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar .user-title-wrap h1{color:#18191C!important}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar .user-title-wrap h1{color:#F5F5F4!important}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar .report-actions{
+  gap:10px!important;align-items:center!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar .bo-theme-btn{
+  width:36px!important;height:36px!important;min-width:36px!important;flex:0 0 36px!important;
+  border-radius:8px!important;padding:0!important;
+}
+@media (max-width:1199.98px){
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar .bo-header-counter{
+    width:46px!important;min-width:46px!important;height:46px!important;padding:4px!important;
+  }
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar .bo-header-counter-text{display:none!important}
+}
+@media (max-width:575.98px){
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar{
+    padding:0 12px!important;height:60px!important;min-height:60px!important;max-height:60px!important;
+  }
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar .bo-header-counters{display:none!important}
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar .user-title-wrap h1{font-size:17px!important}
+}
+
+/* ---- Shell: stretch both panels evenly ---- */
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main{
+  display:flex;flex-direction:column;min-height:0;overflow:hidden;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-content{
+  flex:1 1 auto;display:flex;flex-direction:column;min-height:0;overflow:hidden;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .animation-layout{
+  flex:1 1 auto;min-height:0;
+  display:grid!important;
+  grid-template-columns:minmax(300px,.82fr) minmax(0,1.58fr)!important;
+  gap:16px!important;
+  align-items:stretch!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-card{
+  display:flex;flex-direction:column;min-width:0;min-height:0;
+  border-radius:8px!important;padding:0!important;overflow:hidden;
+  box-shadow:0 1px 2px rgba(24,25,28,.04),0 2px 8px rgba(92,74,48,.06)!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-card--ledger{
+  box-shadow:0 1px 2px rgba(24,25,28,.05),0 4px 14px rgba(92,74,48,.08)!important;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-card{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-card{
+  background:#383A46!important;border:1px solid rgba(255,255,255,.14)!important;box-shadow:none!important;
+}
+
+/* ---- Card chrome: title row ---- */
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-title{
+  flex:0 0 auto;margin:0!important;padding:14px 16px;align-items:center;
+  border-bottom:1px solid transparent;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-title{
+  border-bottom-color:#EADCC8;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-title{
+  border-bottom-color:rgba(255,255,255,.12);
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-title h3{
+  margin:0 0 2px!important;font-size:16px!important;font-weight:800!important;letter-spacing:-.01em;line-height:1.25;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-title h3{color:#18191C!important}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-title h3{color:#F5F5F4!important}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-title p{
+  margin:0!important;font-size:12px!important;font-weight:600!important;line-height:1.4;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-title p{color:#57534E!important}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-title p{color:#A1A1AA!important}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-title.list-title .clean-btn{
+  height:36px!important;min-height:36px!important;padding:0 14px!important;
+  border-radius:8px!important;font-size:12.5px!important;font-weight:800!important;
+  flex:0 0 auto;align-self:center;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-count{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:22px;height:22px;padding:0 7px;margin-left:8px;vertical-align:middle;
+  border-radius:999px;font-size:11px;font-weight:800;font-variant-numeric:tabular-nums;
+  letter-spacing:0;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-count{
+  background:#FFE8CC;color:#6b360c;border:1px solid rgba(217,119,6,.28);
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-count{
+  background:rgba(245,158,11,.16);color:#FBBF24;border:1px solid rgba(245,158,11,.35);
+}
+
+/* ---- Composer: fields (no scroll) · live stage · save dock ---- */
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-card--composer{
+  overflow:visible!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) form.effect-composer{
+  flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:0!important;
+  overflow:visible!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-composer-scroll{
+  flex:0 0 auto;min-height:0;max-height:none;overflow:visible!important;
+  padding:12px 16px 8px;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-block{
+  margin:0 0 10px;padding:10px 12px;border-radius:8px;border:1px solid transparent;
+  overflow:visible!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-block:last-child{margin-bottom:0}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-block{
+  background:#FFFCF7;border-color:#EADCC8;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-block{
+  background:#2A2C36;border-color:rgba(255,255,255,.10);
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-block-label{
+  margin:0 0 8px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1.2;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-block-label{color:#6b360c}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-block-label{color:#FBBF24}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-block .field{margin-bottom:8px!important}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-block .field:last-child{margin-bottom:0!important}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-block .effect-grid{margin-bottom:0}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-block .field > span{
+  font-size:12px!important;font-weight:700!important;letter-spacing:0;text-transform:none;
+}
+/* Native <select> must paint above neighbouring panels */
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-composer-scroll .field select{
+  position:relative;z-index:2;
+}
+
+/* Live preview fills leftover space — overflow visible so motion isn't clipped */
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-preview-panel{
+  flex:1 1 auto;min-height:150px;display:flex;flex-direction:column;gap:8px;
+  margin:8px 16px 0;padding:12px 14px;border-radius:10px;border:1px solid transparent;
+  overflow:visible!important;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-preview-panel{
+  background:#F0E4D0;border-color:#DCC9A8;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-preview-panel{
+  background:#1F2128;border-color:rgba(255,255,255,.12);
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-preview-panel .preview-meta{
+  flex:0 0 auto;min-width:0;display:flex;flex-direction:column;gap:3px;align-items:center;text-align:center;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .preview-meta > span{
+  font-size:12px!important;font-weight:800!important;letter-spacing:0;text-transform:none;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .preview-meta > span{color:#18191C!important}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .preview-meta > span{color:#F5F5F4!important}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .preview-meta > small{
+  font-size:11.5px;font-weight:600;line-height:1.35;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .preview-meta > small{color:#57534E}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .preview-meta > small{color:#A1A1AA}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .preview-stage{
+  flex:1 1 auto;min-height:120px;width:100%;border-radius:10px;display:grid;place-items:center;
+  border:0;background:transparent;overflow:visible!important;padding:12px;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .preview-stage .effect-preview,
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #effectPreview.effect-preview{
+  width:135px!important;height:110px!important;min-width:135px;min-height:110px;
+  margin:0!important;border-radius:16px!important;font-size:15px;font-weight:900;
+  /* Keep motion variables + allow transforms to paint */
+  --naga-effect-duration:2.35s;
+  --naga-effect-distance:7px;
+  --naga-effect-scale:1.04;
+  --naga-effect-glow:15px;
+  will-change:transform,filter;
+  transform-origin:center center;
+}
+/* Re-assert keyframe animations with higher specificity (MD sheet loads after animation-effect.css) */
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #effectPreview.effect-preview.fx-float{
+  animation:fxFloat var(--naga-effect-duration) ease-in-out infinite!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #effectPreview.effect-preview.fx-glow{
+  animation:fxGlow var(--naga-effect-duration) ease-in-out infinite!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #effectPreview.effect-preview.fx-pulse,
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #effectPreview.effect-preview.fx-zoom{
+  animation:fxPulse var(--naga-effect-duration) ease-in-out infinite!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #effectPreview.effect-preview.fx-bounce{
+  animation:fxBounce var(--naga-effect-duration) ease-in-out infinite!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #effectPreview.effect-preview.fx-sway{
+  animation:fxSway var(--naga-effect-duration) ease-in-out infinite!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #effectPreview.effect-preview.fx-shake{
+  animation:fxShake var(--naga-effect-duration) ease-in-out infinite!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #effectPreview.effect-preview.fx-float-glow{
+  animation:fxFloatGlow var(--naga-effect-duration) ease-in-out infinite!important;
+}
+
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-dock{
+  flex:0 0 auto;padding:12px 16px 14px;border-top:1px solid transparent;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-dock{
+  background:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 100%);border-top-color:#EADCC8;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-dock{
+  background:linear-gradient(180deg,#32343E 0%,#383A46 100%);border-top-color:rgba(255,255,255,.12);
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-actions{
+  margin:0;gap:10px;display:flex;flex-wrap:wrap;
+  justify-content:flex-end;align-items:center;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-actions .clean-btn.primary{
+  flex:0 0 auto;min-width:132px;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-actions .clean-btn{
+  height:36px!important;min-height:36px!important;padding:0 14px!important;
+  border-radius:8px!important;font-size:12.5px!important;font-weight:800!important;
+  flex:0 0 auto;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status{
+  min-height:0;margin:0;font-size:12px;font-weight:700;line-height:1.35;
+  text-align:right;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status:empty{
+  display:none;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status:not(:empty){
+  min-height:18px;margin-top:8px;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status.ok{color:#027A48}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status.bad{color:#B42318}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status.ok{color:#6EE7B7}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status.bad{color:#F87171}
+
+/* ---- Form fields ---- */
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-grid{
+  gap:12px!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-grid.two{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-grid.three{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field{
+  margin-bottom:12px!important;gap:6px!important;min-width:0;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field > span{
+  font-size:12px!important;font-weight:700!important;letter-spacing:0;text-transform:none;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field > span{color:#57534E!important}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field > span{color:#A1A1AA!important}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field select,
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field input{
+  height:36px!important;border-radius:8px!important;padding:0 12px!important;
+  font-size:13px!important;font-weight:700!important;width:100%;box-sizing:border-box;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field select,
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field input{
+  background:#F5EBDC!important;border:1px solid #DCC9A8!important;color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field select,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field input{
+  background:#2A2C36!important;border:1px solid rgba(255,255,255,.14)!important;color:#F5F5F4!important;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field select:focus,
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field input:focus{
+  border-color:#D97706!important;box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;outline:none;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field select:focus,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field input:focus{
+  border-color:#F59E0B!important;box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;outline:none;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field small{
+  font-size:11px!important;font-weight:600!important;line-height:1.35;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field small{color:#57534E!important}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .field small{color:#A1A1AA!important}
+
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .custom-help{
+  margin:8px 0 0!important;padding:10px 12px!important;border-radius:8px!important;
+  font-size:11.5px!important;line-height:1.5;font-weight:600;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .custom-help{
+  background:#FFF8EB!important;border:1px solid #DCC9A8!important;color:#57534E!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .custom-help{
+  background:#1F2128!important;border:1px solid rgba(255,255,255,.12)!important;color:#A1A1AA!important;
+}
+
+/* ---- Card rule wall ---- */
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-toolbar{
+  flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+  padding:10px 16px;border-bottom:1px solid transparent;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-toolbar{
+  border-bottom-color:#EADCC8;background:#FFF8EB;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-toolbar{
+  border-bottom-color:rgba(255,255,255,.10);background:#32343E;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-sep{
+  width:1px;height:22px;margin:0 2px;flex:0 0 auto;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-sep{background:#EADCC8}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-sep{background:rgba(255,255,255,.14)}
+
+/* Status / element tabs — same specimen as Deposit·Withdraw / Bank Usage */
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-toolbar .bo-tx-tabs{
+  display:inline-flex!important;align-items:center!important;gap:6px!important;
+  flex:0 0 auto!important;position:relative!important;min-height:36px!important;
+  padding:0!important;margin:0!important;background:transparent!important;
+  border:0!important;border-radius:0!important;overflow:visible!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-toolbar .bo-tx-tab{
+  display:inline-flex!important;align-items:center!important;position:relative!important;z-index:1!important;
+  height:36px!important;min-height:36px!important;padding:0 14px!important;margin:0!important;gap:8px!important;
+  border:1px solid transparent!important;border-radius:999px!important;background:transparent!important;
+  color:#71717A!important;font-size:12.5px!important;font-weight:700!important;line-height:1!important;
+  text-decoration:none!important;white-space:nowrap!important;cursor:pointer!important;box-shadow:none!important;
+  transition:color .16s ease,background .16s ease!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-toolbar .bo-tx-tab-count{
+  display:inline!important;font-weight:700!important;font-variant-numeric:tabular-nums!important;color:inherit!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-toolbar .bo-tx-tab-count::before{content:"("!important}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-toolbar .bo-tx-tab-count::after{content:")"!important}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-toolbar .bo-tx-tab:hover:not(.is-active){
+  color:#18191C!important;background:rgba(24,25,28,.04)!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status-tabs.bo-seg > .bo-seg-thumb{
+  top:0!important;height:100%!important;border-radius:999px!important;box-sizing:border-box!important;
+  background-color:#FFFCF7!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 55%,#F3E8D6 100%)!important;
+  border:1px solid #E0D0B8!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.08),0 2px 8px rgba(92,74,48,.10)!important;
+  opacity:1!important;z-index:0!important;pointer-events:none!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status-tabs.bo-seg > .bo-tx-tab{
+  background:transparent!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status-tabs.bo-seg .bo-tx-tab.is-active,
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status-tabs:not(.bo-seg) .bo-tx-tab.is-active{
+  background:transparent!important;border-color:transparent!important;box-shadow:none!important;
+  color:#18191C!important;font-weight:700!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status-tabs:not(:has(> .bo-seg-thumb)) .bo-tx-tab.is-active,
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-element-tabs .bo-tx-tab.is-active{
+  background-color:#FFFCF7!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 55%,#F3E8D6 100%)!important;
+  border:1px solid #E0D0B8!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.08),0 2px 8px rgba(92,74,48,.10)!important;
+  color:#18191C!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-filter[data-effect-status="on"]::before,
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-filter[data-effect-status="off"]::before{
+  content:""!important;width:6px!important;height:6px!important;border-radius:50%!important;
+  flex:0 0 auto!important;display:inline-block!important;box-shadow:none!important;background:#B8C0CC!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-filter[data-effect-status="off"]::before{
+  background:#C4C0D0!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-filter[data-effect-status="all"]::before{
+  content:none!important;display:none!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-filter.is-active[data-effect-status="on"]::before{
+  background:#059669!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-filter.is-active[data-effect-status="off"]::before{
+  background:#DC2626!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-toolbar .bo-tx-tab{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-toolbar .bo-tx-tab:hover:not(.is-active){
+  color:#F4F4F5!important;background:rgba(255,255,255,.06)!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status-tabs.bo-seg > .bo-seg-thumb{
+  background-color:#2A2C36!important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%)!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.25)!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status-tabs.bo-seg .bo-tx-tab.is-active{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status-tabs:not(:has(> .bo-seg-thumb)) .bo-tx-tab.is-active,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-element-tabs .bo-tx-tab.is-active{
+  background-color:#2A2C36!important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%)!important;
+  border-color:rgba(255,255,255,.14)!important;color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-filter[data-effect-status="on"]::before,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-filter[data-effect-status="off"]::before{
+  background:#6B7280!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-filter.is-active[data-effect-status="on"]::before{
+  background:#34D399!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-filter.is-active[data-effect-status="off"]::before{
+  background:#F87171!important;
+}
+
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-wrap{
+  flex:1 1 auto;min-height:0;overflow:auto;padding:14px 16px 18px;scrollbar-width:thin;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-wrap{
+  scrollbar-color:#8B6B4A transparent;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-wrap{
+  scrollbar-color:#F59E0B transparent;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-wrap::-webkit-scrollbar{width:6px;height:6px}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-wrap::-webkit-scrollbar-button{display:none;height:0;width:0}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-wrap::-webkit-scrollbar-track{background:transparent}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-wrap::-webkit-scrollbar-thumb{
+  background:#8B6B4A;border-radius:999px;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-wrap::-webkit-scrollbar-thumb{
+  background:#F59E0B;border-radius:999px;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;align-content:start;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-card{
+  position:relative;display:flex;flex-direction:column;gap:8px;min-width:0;padding:14px 14px 14px 16px;
+  border-radius:10px;border:1px solid transparent;cursor:pointer;
+  transition:border-color .14s ease,box-shadow .14s ease,transform .14s ease,background .14s ease;
+  overflow:hidden;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-card::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  border-radius:10px 0 0 10px;pointer-events:none;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-card.is-on::before{
+  background:#12B76A;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-card.is-off::before{
+  background:#D6D3D1;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-card.is-on::before{
+  background:#10B981;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-card.is-off::before{
+  background:rgba(255,255,255,.22);
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-card{
+  background:#FFFCF7;border-color:#EADCC8;
+  box-shadow:0 1px 2px rgba(24,25,28,.04);
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-card:hover{
+  border-color:rgba(217,119,6,.45);box-shadow:0 4px 14px rgba(92,74,48,.10);transform:translateY(-1px);
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-card{
+  background:#2A2C36;border-color:rgba(255,255,255,.12);box-shadow:none;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-card:hover{
+  border-color:rgba(245,158,11,.4);
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-card.is-off{opacity:.88}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-card.is-editing{
+  outline:none;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-card.is-editing{
+  border-color:#D97706;box-shadow:0 0 0 3px rgba(217,119,6,.16),0 4px 14px rgba(92,74,48,.08);
+  background:#FFF8EB;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-card.is-editing{
+  border-color:#F59E0B;box-shadow:0 0 0 3px rgba(245,158,11,.2);
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-card:focus-visible{
+  outline:2px solid #D97706;outline-offset:2px;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-card-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-fx{
+  margin:0;min-width:0;flex:1 1 auto;font-size:17px;font-weight:800;letter-spacing:-.015em;line-height:1.25;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-fx{color:#18191C}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-fx{color:#F5F5F4}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-where{
+  margin:0;min-width:0;font-size:12.5px;font-weight:600;line-height:1.35;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-where{color:#57534E}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-where{color:#A1A1AA}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-meta-line{
+  margin:0;font-size:12px;font-weight:600;line-height:1.35;font-variant-numeric:tabular-nums;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-meta-line{color:#78716C}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-rule-meta-line{color:#71717A}
+
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  height:22px;padding:0 8px;border-radius:999px;
+  font-size:10.5px!important;font-weight:800!important;letter-spacing:.03em;
+  text-transform:uppercase;flex:0 0 auto;line-height:1;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-badge{
+  background:#F5EBDC!important;color:#6b360c!important;border:1px solid rgba(217,119,6,.28);
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-badge{
+  background:#1F2128!important;color:#FBBF24!important;border:1px solid rgba(245,158,11,.35);
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status-pill{
+  display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;
+  height:22px;padding:0 9px;border-radius:999px;
+  font-size:11px!important;font-weight:700!important;letter-spacing:0;
+  text-transform:none;line-height:1;border:1px solid transparent;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status-pill.is-on{
+  background:#DCFCE7!important;color:#166534!important;border-color:rgba(22,101,52,.25);
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status-pill.is-off{
+  background:#FEE2E2!important;color:#B91C1C!important;border-color:rgba(185,28,28,.25);
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status-pill.is-on{
+  background:rgba(16,185,129,.18)!important;color:#6EE7B7!important;border-color:rgba(110,231,183,.35);
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-status-pill.is-off{
+  background:rgba(248,113,113,.18)!important;color:#F87171!important;border-color:rgba(248,113,113,.35);
+}
+
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-row-actions{
+  display:flex;gap:6px;justify-content:flex-end;align-items:center;flex:0 0 auto;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-icon-btn{
+  width:28px!important;height:28px!important;border-radius:6px!important;padding:0!important;
+  display:inline-grid;place-items:center;font-size:13px;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-icon-btn{
+  background:#F5EBDC!important;border:1px solid #EADCC8!important;color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-icon-btn:hover{
+  border-color:#D97706!important;color:#D97706!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-icon-btn{
+  background:#1F2128!important;border:1px solid rgba(255,255,255,.14)!important;color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-icon-btn:hover{
+  border-color:rgba(245,158,11,.45)!important;color:#FBBF24!important;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-icon-btn[data-delete]:hover{
+  color:#B42318!important;border-color:rgba(180,35,24,.35)!important;
+}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-icon-btn[data-delete]:hover{
+  color:#F87171!important;border-color:rgba(248,113,113,.4)!important;
+}
+
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-empty{
+  flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;padding:48px 24px;text-align:center;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-empty i{
+  font-size:28px;line-height:1;opacity:.85;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-empty b{
+  font-size:15px;font-weight:800;
+}
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-empty span{
+  max-width:320px;font-size:12.5px;font-weight:600;line-height:1.45;
+}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-empty{color:#57534E}
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-empty i,
+html:not([data-bo-theme="dark"]) body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-empty b{color:#6b360c}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-empty{color:#A1A1AA}
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-empty i,
+html[data-bo-theme="dark"] body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-empty b{color:#FBBF24}
+
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-wrap.is-empty,
+html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall-wrap[hidden]{
+  display:none!important;
+}
+
+/* ---- Responsive ---- */
+@media (max-width:1100px){
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .animation-layout{
+    grid-template-columns:1fr!important;
+  }
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-card{
+    min-height:0;
+  }
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-card--ledger{
+    min-height:min(420px,55vh);
+  }
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-wall{
+    grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  }
+}
+@media (max-width:640px){
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-grid.two,
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-grid.three{
+    grid-template-columns:1fr!important;
+  }
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-title.list-title{
+    flex-wrap:wrap;gap:10px;
+  }
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-title.list-title .clean-btn{
+    width:100%;
+  }
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-preview-panel{
+    min-height:140px;margin:8px 12px 0;
+  }
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-actions{
+    justify-content:stretch;
+  }
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) .effect-actions .clean-btn{
+    flex:1 1 auto;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  /* This page's job is previewing motion — keep Live Preview animating */
+  html body.animation-effect-page.report-body.bo-charcoal:not(#bo-charcoal-off) #effectPreview.effect-preview[class*="fx-"]{
+    animation-duration:3.2s!important;
+  }
+}
