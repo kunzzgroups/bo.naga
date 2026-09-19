@@ -7,14 +7,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Frontend Display</title>
+<script>
+(function(){
+  try{
+    if(localStorage.getItem('bo_theme')==='dark') document.documentElement.setAttribute('data-bo-theme','dark');
+  }catch(e){}
+})();
+</script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <link href="assets/css/reports.css?v=1.0.57" rel="stylesheet">
-<style>
-.display-setting-card{width:100%;max-width:980px;margin-left:auto;margin-right:auto}.display-setting-stack{display:grid;gap:14px}.display-setting-row{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:24px;align-items:center;padding:20px;border:1px solid #EADCC8;border-radius:16px;background:#FFF8EB}.display-setting-copy h2{font-size:18px;font-weight:900;margin:0 0 6px;color:#18191C}.display-setting-copy p{margin:0;color:#57534E;font-weight:600}.display-setting-select{width:100%;min-height:46px;border:1px solid #EADCC8;border-radius:12px;padding:0 14px;background:#FFF8EB;font-weight:800;color:#18191C}.display-setting-actions{display:flex;justify-content:flex-end;margin-top:16px}.display-setting-actions .clean-btn{min-width:190px}.display-preview-note{margin-top:14px;border-radius:12px;padding:12px 14px;background:#F5EBDC;color:#57534E;font-weight:700}.display-preview-note.off{background:#fff7ed;color:#c2410c}@media(max-width:700px){.display-setting-row{grid-template-columns:1fr}.display-setting-actions{display:grid}.display-setting-actions .clean-btn{width:100%}}
-.marquee-editor-wrap{width:100%;display:grid;gap:8px}.marquee-toolbar{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:1px solid #EADCC8;border-bottom:0;border-radius:12px 12px 0 0;background:#F5EBDC}.marquee-tool{min-width:38px;height:34px;border:1px solid #EADCC8;border-radius:8px;background:#FFF8EB;color:#18191C;font-weight:800;display:inline-grid;place-items:center;cursor:pointer}.marquee-tool:hover{background:#F5EBDC;color:#57534E}.marquee-color{width:42px;height:34px;padding:4px;border:1px solid #EADCC8;border-radius:8px;background:#FFF8EB;cursor:pointer}.marquee-editor{min-height:130px;max-height:260px;overflow:auto;border:1px solid #EADCC8;border-radius:0 0 12px 12px;padding:12px 14px;background:#FFF8EB;color:#18191C;font-weight:600;outline:none}.marquee-editor:focus{border-color:#78716C;box-shadow:0 0 0 3px #EADCC8}.marquee-editor:empty:before{content:attr(data-placeholder);color:#78716C;pointer-events:none}.marquee-preview{overflow:hidden;white-space:nowrap;border:1px solid #EADCC8;border-radius:10px;padding:9px 12px;background:#F5EBDC;color:#18191C}.marquee-preview-inner{display:inline-block;animation:boMarqueePreview 12s linear infinite}@keyframes boMarqueePreview{from{transform:translateX(40vw)}to{transform:translateX(-100%)}}
-.install-app-setting-control{display:grid;gap:10px}.install-app-logo-line{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.install-app-logo-preview{width:84px;height:84px;border:1px dashed #78716C;border-radius:18px;background:#F5EBDC;display:grid;place-items:center;overflow:hidden;color:#78716C;font-size:12px;font-weight:800;text-align:center}.install-app-logo-preview img{width:100%;height:100%;object-fit:cover}.install-app-logo-actions{display:flex;gap:8px;flex-wrap:wrap}.install-app-help{font-size:12px;color:#57534E;font-weight:600}.install-app-file{display:none}.display-range-control{display:grid;grid-template-columns:1fr auto 1fr auto;gap:8px;align-items:center}.display-range-control input{min-width:0}.display-range-separator,.display-range-unit{color:#57534E;font-size:13px;font-weight:800;white-space:nowrap}.random-demo-only.is-hidden{display:none}@media(max-width:700px){.display-range-control{grid-template-columns:1fr auto 1fr}.display-range-unit{grid-column:1/-1}}
-</style>
+
   <link href="assets/css/bo-ui-standard.css?v=1.0.6" rel="stylesheet" />
   <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet" />
 <link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
@@ -23,8 +26,790 @@
 <link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-cms.css?v=1.0.0" rel="stylesheet" />
 <link href="assets/css/bo-input-fill.css?v=1.0.1" rel="stylesheet" />
+<style>
+/* Frontend Display — full-bleed Charcoal + Amber ops console
+   Color: #F5EBDC canvas · #FFFCF7 surface · #DCC9A8 border · #D97706 amber · #18191C ink
+   Layout: single outer frame, internal cells. Fixed footer. No intro banner.
+   Principles: scan left → act right; denser tiles for toggles & metrics. */
+body.frontend-display-page{ --fd-header-h:64px; --fd-pad-x:16px; --fd-footer-h:68px; }
+body.frontend-display-page.report-body,
+html:has(body.frontend-display-page){
+  height:100%!important;
+  overflow:hidden!important;
+}
+body.frontend-display-page .report-shell{
+  height:100dvh!important;
+  max-height:100dvh!important;
+  overflow:hidden!important;
+}
+body.frontend-display-page .report-topbar{
+  height:var(--fd-header-h)!important;min-height:var(--fd-header-h)!important;max-height:var(--fd-header-h)!important;
+  box-sizing:border-box!important;padding:0 20px!important;align-items:center!important;gap:12px!important;
+}
+body.frontend-display-page .report-brand{
+  height:var(--fd-header-h)!important;min-height:var(--fd-header-h)!important;max-height:var(--fd-header-h)!important;box-sizing:border-box!important;
+}
+body.frontend-display-page .report-main{
+  min-width:0;
+  display:flex!important;
+  flex-direction:column!important;
+  height:100dvh!important;
+  max-height:100dvh!important;
+  overflow:hidden!important;
+}
+body.frontend-display-page .report-content{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  padding:0 0 var(--fd-footer-h)!important;
+  max-width:none!important;
+  margin:0!important;
+  width:100%!important;
+  box-sizing:border-box;
+}
+
+/* Full-bleed workspace — no max-width, no side gutters */
+.fd-workspace{
+  flex:1 1 auto;
+  min-height:0;
+  width:100%;
+  max-width:none;
+  margin:0;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  border:0;
+  border-radius:0;
+  background:#FFF8EB;
+  box-shadow:none;
+  border-top:1px solid #DCC9A8;
+}
+.fd-board{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-x:hidden;
+  overflow-y:auto;
+  padding:12px var(--fd-pad-x) 16px;
+  display:grid;
+  gap:12px;
+  align-content:start;
+}
+
+/* One outer frame — locked 2-col tracks so mid-lines align top-to-bottom */
+.fd-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  grid-template-areas:
+    "visibility live"
+    "install limits"
+    "marquee marquee";
+  gap:0;
+  align-items:stretch;
+  border:1px solid #DCC9A8;
+  border-radius:12px;
+  overflow:hidden;
+  background:#FFFCF7;
+  box-shadow:0 1px 0 rgba(92,74,48,.04);
+}
+.fd-panel{
+  margin:0;
+  padding:0;
+  overflow:hidden;
+  border:0;
+  border-bottom:1px solid #EADCC8;
+  border-radius:0;
+  background:#FFFCF7;
+  box-shadow:none;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  max-width:100%;
+  min-height:0;
+  height:100%;
+}
+#fd-sec-visibility{ grid-area:visibility; border-right:1px solid #EADCC8; }
+#fd-sec-live{ grid-area:live; }
+#fd-sec-install{ grid-area:install; border-right:1px solid #EADCC8; }
+#fd-sec-limits{ grid-area:limits; }
+#fd-sec-marquee{ grid-area:marquee; border-right:0; border-bottom:0; }
+.fd-panel::before{ display:none; }
+.fd-panel-wide{
+  grid-column:1 / -1;
+  border-right:0;
+}
+.fd-panel-head{
+  display:flex; align-items:center; gap:10px;
+  padding:11px 14px;
+  border-bottom:1px solid #EADCC8;
+  background:#F5EBDC;
+}
+.fd-panel-head > div:nth-child(2){ min-width:0; flex:1; }
+.fd-panel-head-action{
+  margin-left:auto;
+  display:flex; align-items:center;
+  flex:0 0 auto;
+}
+.fd-panel-head i{
+  width:28px;height:28px;flex:0 0 28px;
+  display:grid;place-items:center;
+  border-radius:7px;
+  background:rgba(217,119,6,.12);
+  border:1px solid rgba(217,119,6,.25);
+  color:#D97706;
+  font-size:13px;
+}
+.fd-panel-head h3{
+  margin:0;
+  font-size:13px;
+  font-weight:800;
+  color:#18191C;
+  letter-spacing:-.01em;
+}
+.fd-panel-head span{
+  display:block;
+  margin-top:1px;
+  font-size:11px;
+  font-weight:500;
+  color:#78716C;
+}
+.fd-panel-body{ display:flex; flex-direction:column; flex:1; }
+
+/* Visibility — switch rows, no per-toggle frames */
+#fd-sec-visibility .fd-panel-body{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:8px;
+}
+#fd-sec-visibility #frontendDisplayBrandRow{
+  grid-column:1 / -1;
+  grid-template-columns:minmax(0,1fr) minmax(200px,320px);
+  align-items:center;
+  border:0;
+  border-bottom:1px solid #EADCC8;
+  background:transparent;
+}
+#fd-sec-visibility .fd-switch-tile{
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  border:0!important;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  min-height:0;
+}
+#fd-sec-visibility .fd-switch-tile .fd-control{
+  justify-content:flex-end;
+  background:transparent;
+  border:0;
+  padding:0;
+  box-shadow:none;
+}
+#fd-sec-visibility .fd-switch-tile .fd-switch{
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  padding:0;
+}
+
+/* Live Feed — mode full width, demo metrics in 3 columns */
+#fd-sec-live .fd-panel-body{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+#fd-sec-live #liveTransactionModeRow,
+#fd-sec-live #liveTransactionRefreshRow{
+  grid-column:1 / -1;
+  grid-template-columns:minmax(0,1fr) minmax(180px,280px);
+  border-right:0;
+}
+#fd-sec-live .fd-metric-tile{
+  grid-template-columns:1fr;
+  align-items:start;
+  gap:8px;
+  padding:14px;
+  border-right:1px solid #EADCC8;
+  border-bottom:0;
+}
+#fd-sec-live .fd-metric-tile:last-child{ border-right:0; }
+#fd-sec-live .fd-metric-tile .fd-control{ justify-content:stretch; }
+#fd-sec-live .fd-metric-tile.is-hidden{ display:none!important; }
+
+/* Wallet limits — 3 fields across */
+#fd-sec-limits .fd-panel-body{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  min-width:0;
+}
+#fd-sec-limits .display-setting-row{
+  grid-template-columns:1fr;
+  align-items:start;
+  gap:8px;
+  border-right:1px solid #EADCC8;
+  border-bottom:0;
+  padding:14px;
+  min-width:0;
+}
+#fd-sec-limits .display-setting-row:last-child{ border-right:0; }
+#fd-sec-limits .fd-control{ justify-content:stretch; }
+
+.display-setting-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(160px,280px);
+  gap:10px 16px;
+  align-items:center;
+  padding:12px 14px;
+  border:0;
+  border-bottom:1px solid #EADCC8;
+  background:transparent;
+}
+.display-setting-row:last-child{ border-bottom:0; }
+.display-setting-row.is-stack{
+  grid-template-columns:1fr !important;
+  align-items:stretch;
+}
+.display-setting-row.is-stack .display-setting-copy{ margin-bottom:2px; }
+.fd-marquee-row{ border-bottom:0!important; padding:14px!important; }
+.display-setting-copy h2{
+  font-size:13px;
+  font-weight:800;
+  margin:0 0 2px;
+  color:#18191C;
+  letter-spacing:-.01em;
+}
+.display-setting-copy p{
+  margin:0;
+  color:#57534E;
+  font-size:11.5px;
+  font-weight:500;
+  line-height:1.35;
+}
+.display-setting-copy p b{ font-weight:700; color:#3F3F46; }
+
+.fd-control{ display:flex; justify-content:flex-end; align-items:center; min-width:0; }
+.fd-control .rounded-select-wrap,
+.fd-control .display-setting-select,
+.fd-control .display-range-control{ width:100%; }
+
+.fd-switch{
+  display:inline-flex; align-items:center; gap:10px;
+  margin:0; padding:0!important; border:0!important; background:transparent!important;
+  box-shadow:none!important; cursor:pointer;
+  font:inherit; color:inherit;
+  height:auto!important; min-height:0!important; min-width:0!important;
+  width:auto!important; max-width:none!important;
+  border-radius:0!important; line-height:1!important;
+}
+body.frontend-display-page button.fd-switch,
+body.frontend-display-page button.fd-switch.bo-ui-button,
+body.frontend-display-page button.fd-switch.bo-ui-button-secondary,
+body.frontend-display-page button.fd-switch.bo-ui-button-primary{
+  border:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  padding:0!important;
+  height:auto!important;
+  min-height:0!important;
+  min-width:0!important;
+  width:auto!important;
+  border-radius:0!important;
+}
+.fd-switch:focus-visible{ outline:2px solid #D97706; outline-offset:3px; border-radius:8px; }
+.fd-switch-track{
+  position:relative;
+  width:48px; height:28px; flex:0 0 48px;
+  border-radius:999px;
+  background:#E7E0D4;
+  border:1px solid #DCC9A8;
+  transition:background .16s cubic-bezier(.23,1,.32,1), border-color .16s ease;
+}
+.fd-switch-thumb{
+  position:absolute; top:2px; left:2px;
+  width:22px; height:22px;
+  border-radius:50%;
+  background:#FFFCF7;
+  box-shadow:0 1px 3px rgba(60,48,32,.2);
+  transition:transform .16s cubic-bezier(.23,1,.32,1);
+}
+.fd-switch[aria-checked="true"] .fd-switch-track{
+  background:linear-gradient(180deg,#FBBF24,#D97706);
+  border-color:#E8901A;
+}
+.fd-switch[aria-checked="true"] .fd-switch-thumb{ transform:translateX(20px); }
+.fd-switch-text{
+  min-width:2.4rem;
+  font-size:12.5px;
+  font-weight:800;
+  color:#57534E;
+  text-align:left;
+}
+.fd-switch[aria-checked="true"] .fd-switch-text{ color:#B45309; }
+.fd-native-switch{ position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:-1px!important; overflow:hidden!important; clip:rect(0,0,0,0)!important; border:0!important; }
+
+.display-setting-select{
+  width:100%; height:38px; min-height:38px; max-height:38px; box-sizing:border-box;
+  border:1px solid #DCC9A8!important; border-radius:8px!important; padding:0 12px!important;
+  background:#F5EBDC!important; font-size:13px!important; font-weight:600!important; color:#18191C!important;
+  outline:none;
+}
+html body.frontend-display-page.report-body.bo-charcoal .display-setting-row .rounded-select-wrap{
+  width:100%!important; min-width:0!important; max-width:100%!important;
+}
+html:not([data-bo-theme="dark"]) body.frontend-display-page.report-body.bo-charcoal:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2):not(#bo-charcoal-off) .display-setting-row .rounded-select-btn,
+html:not([data-bo-theme="dark"]) body.frontend-display-page.report-body.bo-charcoal:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2):not(#bo-charcoal-off) .display-setting-row .display-setting-select,
+html:not([data-bo-theme="dark"]) body.frontend-display-page.report-body.bo-charcoal:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2):not(#bo-charcoal-off) .report-content .display-setting-row input.display-setting-select:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
+  height:38px!important; min-height:38px!important; max-height:38px!important;
+  background:#F5EBDC!important; border:1px solid #DCC9A8!important; border-radius:8px!important;
+  font-size:13px!important; font-weight:600!important; color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.frontend-display-page.report-body.bo-charcoal:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .display-setting-row .rounded-select-btn.open,
+html:not([data-bo-theme="dark"]) body.frontend-display-page.report-body.bo-charcoal:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .display-setting-row .rounded-select-btn:focus,
+html:not([data-bo-theme="dark"]) body.frontend-display-page.report-body.bo-charcoal:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .display-setting-row .display-setting-select:focus{
+  border-color:#D97706!important; box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+html[data-bo-theme="dark"] body.frontend-display-page.report-body.bo-charcoal:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2):not(#bo-charcoal-off) .display-setting-row .rounded-select-btn,
+html[data-bo-theme="dark"] body.frontend-display-page.report-body.bo-charcoal:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2):not(#bo-charcoal-off) .display-setting-row .display-setting-select,
+html[data-bo-theme="dark"] body.frontend-display-page.report-body.bo-charcoal:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2):not(#bo-charcoal-off) .report-content .display-setting-row input.display-setting-select:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
+  height:38px!important; min-height:38px!important; max-height:38px!important;
+  background:#2A2C36!important; border:1px solid rgba(255,255,255,.12)!important; color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.frontend-display-page.report-body.bo-charcoal:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .display-setting-row .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.frontend-display-page.report-body.bo-charcoal:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .display-setting-row .rounded-select-btn:focus,
+html[data-bo-theme="dark"] body.frontend-display-page.report-body.bo-charcoal:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .display-setting-row .display-setting-select:focus{
+  border-color:#F59E0B!important; box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+
+/* Viewport-fixed action bar — Create Account pattern */
+body.frontend-display-page .fd-save-bar{
+  position:fixed!important;
+  left:var(--sidebar-w,260px)!important;
+  right:0!important;
+  bottom:0!important;
+  z-index:40!important;
+  width:auto!important;
+  max-width:none!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:12px!important;
+  flex-wrap:wrap!important;
+  margin:0!important;
+  padding:14px 24px!important;
+  border:0!important;
+  border-top:1px solid #DCC9A8!important;
+  border-radius:0!important;
+  background:#FFFCF7!important;
+  box-shadow:0 -12px 32px rgba(120,80,20,.12)!important;
+  box-sizing:border-box!important;
+  pointer-events:auto;
+}
+body.sidebar-mini.frontend-display-page .fd-save-bar{
+  left:var(--rail-w,72px)!important;
+}
+body.frontend-display-page .fd-save-bar .upload-status{
+  flex:1 1 100%;
+  margin:0;
+  order:3;
+}
+body.frontend-display-page .display-preview-note{
+  margin:0; padding:0; border:0; background:transparent;
+  margin-right:auto;
+  color:#57534E; font-size:12.5px; font-weight:600;
+  min-width:0;
+}
+body.frontend-display-page .display-preview-note.off{ background:transparent; color:#C2410C; }
+body.frontend-display-page .display-setting-actions{
+  display:flex; align-items:center; justify-content:flex-end;
+  gap:10px; margin:0; padding:0; border:0; background:transparent;
+}
+body.frontend-display-page .fd-save-bar .clean-btn{
+  min-width:150px; height:40px; border-radius:8px; font-size:13px; font-weight:800;
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:0 16px;
+}
+body.frontend-display-page .fd-save-bar .clean-btn.primary{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
+  border:1px solid #E8901A!important;
+  color:#fff!important;
+  box-shadow:0 8px 18px rgba(217,119,6,.22), inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+body.frontend-display-page .fd-save-bar .clean-btn.primary i{ font-size:16px; line-height:1; }
+
+.marquee-editor-wrap{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+.marquee-toolbar{
+  position:relative;
+  display:flex; flex-wrap:wrap; align-items:center; gap:6px; padding:8px 10px;
+  border:1px solid #DCC9A8; border-bottom:0; border-radius:8px 8px 0 0; background:#F5EBDC;
+}
+.marquee-tool{
+  min-width:36px; height:32px; border:1px solid #DCC9A8; border-radius:8px; background:#FFFCF7; color:#18191C;
+  font-weight:800; display:inline-grid; place-items:center; cursor:pointer;
+  padding:0!important; box-shadow:none!important;
+}
+.marquee-tool:hover{ background:#FFF8EB; border-color:#D97706; color:#B45309; }
+.marquee-tool-color{
+  position:relative;
+  overflow:visible;
+  cursor:pointer;
+}
+.marquee-tool-color.is-open{
+  background:#FFF8EB; border-color:#D97706; color:#B45309;
+}
+.marquee-tool-color-bar{
+  position:absolute; left:7px; right:7px; bottom:4px;
+  height:3px; border-radius:2px; background:#18191C; pointer-events:none;
+}
+.marquee-tool-color .bi-paint-bucket,
+.marquee-tool-color .bi-fonts{ font-size:14px; line-height:1; }
+.marquee-tool-bg-chip{
+  position:absolute; left:7px; right:7px; bottom:4px;
+  height:3px; border-radius:2px; background:#F5EBDC; border:1px solid rgba(92,74,48,.18); pointer-events:none;
+}
+
+/* Custom Charcoal+Amber colour popover — fixed + portaled to body so panels don't clip it */
+.fd-color-pop{
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:1200;
+  width:280px;
+  padding:12px;
+  display:none;
+  flex-direction:column;
+  gap:10px;
+  border:1px solid #DCC9A8;
+  border-radius:12px;
+  background:#FFFCF7;
+  box-shadow:0 16px 40px rgba(92,74,48,.22), 0 0 0 1px rgba(255,255,255,.4) inset;
+}
+.fd-color-pop.is-open{ display:flex; }
+.fd-color-pop-head{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+}
+.fd-color-pop-head strong{
+  font-size:12.5px; font-weight:800; color:#18191C; letter-spacing:-.01em;
+}
+.fd-color-pop-close{
+  width:28px; height:28px; border:0; border-radius:8px;
+  background:transparent; color:#78716C; cursor:pointer;
+  display:grid; place-items:center;
+}
+.fd-color-pop-close:hover{ background:#F5EBDC; color:#18191C; }
+.fd-color-pop-preview{
+  display:flex; align-items:center; gap:10px;
+  padding:8px 10px;
+  border:1px solid #EADCC8;
+  border-radius:10px;
+  background:#F5EBDC;
+}
+.fd-color-pop-chip{
+  width:36px; height:36px; flex:0 0 36px;
+  border-radius:10px;
+  border:1px solid rgba(92,74,48,.18);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45);
+}
+.fd-color-pop-meta{ min-width:0; display:grid; gap:2px; }
+.fd-color-pop-meta span{
+  font-size:10.5px; font-weight:700; color:#78716C; letter-spacing:.04em; text-transform:uppercase;
+}
+.fd-color-pop-meta code{
+  font-size:13px; font-weight:800; color:#18191C; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+.fd-color-swatches{
+  display:grid;
+  grid-template-columns:repeat(8,1fr);
+  gap:6px;
+}
+.fd-color-swatch-btn{
+  width:100%; aspect-ratio:1;
+  border:1px solid rgba(92,74,48,.16);
+  border-radius:8px;
+  padding:0; cursor:pointer;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.fd-color-swatch-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 10px rgba(92,74,48,.16);
+}
+.fd-color-swatch-btn.is-active{
+  outline:2px solid #D97706;
+  outline-offset:1px;
+  border-color:#D97706;
+}
+
+/* Custom spectrum (replaces native OS picker) */
+.fd-color-spectrum{
+  display:grid;
+  gap:10px;
+}
+.fd-color-sv{
+  position:relative;
+  width:100%;
+  height:148px;
+  border-radius:10px;
+  border:1px solid #DCC9A8;
+  cursor:crosshair;
+  touch-action:none;
+  background:
+    linear-gradient(to top,#000,transparent),
+    linear-gradient(to right,#fff,var(--fd-hue,#D97706));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
+}
+.fd-color-sv-cursor{
+  position:absolute;
+  width:14px; height:14px;
+  border:2px solid #fff;
+  border-radius:50%;
+  box-shadow:0 0 0 1px rgba(24,25,28,.45), 0 2px 6px rgba(24,25,28,.25);
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  left:100%; top:0;
+}
+.fd-color-hue{
+  position:relative;
+  height:14px;
+  border-radius:999px;
+  border:1px solid #DCC9A8;
+  cursor:pointer;
+  touch-action:none;
+  background:linear-gradient(to right,
+    #ff0000 0%,#ffff00 17%,#00ff00 33%,#00ffff 50%,#0000ff 67%,#ff00ff 83%,#ff0000 100%);
+}
+.fd-color-hue-thumb{
+  position:absolute;
+  top:50%; left:0;
+  width:16px; height:16px;
+  border-radius:50%;
+  border:2px solid #FFFCF7;
+  background:#D97706;
+  box-shadow:0 0 0 1px #DCC9A8, 0 2px 6px rgba(92,74,48,.28);
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.fd-color-rgb{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+}
+.fd-color-rgb label{
+  display:grid;
+  gap:4px;
+  margin:0;
+  font-size:10.5px;
+  font-weight:800;
+  color:#78716C;
+  letter-spacing:.04em;
+}
+.fd-color-rgb input{
+  width:100%; height:34px; box-sizing:border-box;
+  border:1px solid #DCC9A8; border-radius:8px;
+  padding:0 8px; background:#F5EBDC; color:#18191C;
+  font-size:12.5px; font-weight:700;
+  font-variant-numeric:tabular-nums;
+}
+.fd-color-rgb input:focus{
+  outline:none; border-color:#D97706; box-shadow:0 0 0 3px rgba(217,119,6,.14);
+}
+.fd-color-pop-hex{
+  height:36px; width:100%; box-sizing:border-box;
+  border:1px solid #DCC9A8; border-radius:8px;
+  padding:0 10px; background:#F5EBDC; color:#18191C;
+  font-size:12.5px; font-weight:700; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  text-transform:uppercase;
+}
+.fd-color-pop-hex:focus{ outline:none; border-color:#D97706; box-shadow:0 0 0 3px rgba(217,119,6,.14); }
+.fd-color-pop-hint{
+  margin:0;
+  font-size:11px; font-weight:600; color:#78716C; line-height:1.35;
+}
+.marquee-editor{
+  min-height:96px; max-height:180px; overflow:auto;
+  border:1px solid #DCC9A8; border-radius:0; padding:12px 14px;
+  background:#F5EBDC; color:#18191C; font-size:13px; font-weight:600; outline:none;
+}
+.marquee-editor:focus{ border-color:#D97706; box-shadow:0 0 0 3px rgba(217,119,6,.14); }
+.marquee-editor:empty:before{ content:attr(data-placeholder); color:#78716C; pointer-events:none; }
+.marquee-preview-label{
+  display:flex; align-items:center; gap:8px;
+  margin:0; padding:8px 12px 0;
+  border:1px solid #DCC9A8; border-top:0; border-bottom:0;
+  background:#FFFCF7;
+  font-size:11px; font-weight:700; color:#78716C; letter-spacing:.02em;
+}
+.marquee-preview-label i{ color:#D97706; font-size:12px; }
+.marquee-preview{
+  overflow:hidden; white-space:nowrap;
+  border:1px solid #DCC9A8; border-radius:0 0 8px 8px;
+  padding:0; background:#F5EBDC; color:#18191C;
+  min-height:42px; display:block;
+  position:relative;
+}
+.marquee-preview-inner{
+  display:inline-block!important;
+  white-space:nowrap;
+  padding:11px 0;
+  padding-left:100%;
+  will-change:transform;
+  animation:boMarqueePreview 14s linear infinite;
+  color:inherit;
+}
+@keyframes boMarqueePreview{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(-100%); }
+}
+.marquee-editor-wrap > textarea[hidden]{ display:none!important; }
+
+.install-app-setting-control{ display:grid; gap:10px; width:100%; }
+.install-app-logo-line{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.install-app-logo-preview{
+  width:72px; height:72px; border:1px dashed #DCC9A8; border-radius:12px; background:#F5EBDC;
+  display:grid; place-items:center; overflow:hidden; color:#78716C; font-size:11px; font-weight:700; text-align:center;
+}
+.install-app-logo-preview img{ width:100%; height:100%; object-fit:cover; }
+.install-app-logo-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+.install-app-logo-actions .clean-btn{ height:36px; border-radius:8px; font-size:12.5px; font-weight:700; }
+.install-app-help{ font-size:12px; color:#57534E; font-weight:500; }
+.install-app-file{ display:none; }
+.display-range-control{ display:grid; grid-template-columns:1fr auto 1fr auto; gap:8px; align-items:center; width:100%; }
+.display-range-control input{ min-width:0; }
+.display-range-separator,.display-range-unit{ color:#57534E; font-size:12.5px; font-weight:700; white-space:nowrap; }
+.random-demo-only.is-hidden{ display:none!important; }
+
+html[data-bo-theme="dark"] .fd-workspace{ background:#2F313C; border-top-color:rgba(255,255,255,.12); }
+html[data-bo-theme="dark"] .fd-grid{ background:#383A46; border-color:rgba(255,255,255,.14); box-shadow:none; }
+html[data-bo-theme="dark"] .fd-panel{ background:#383A46; border-color:rgba(255,255,255,.10); }
+html[data-bo-theme="dark"] .fd-panel-head{ background:#32343E; border-bottom-color:rgba(255,255,255,.12); }
+html[data-bo-theme="dark"] body.frontend-display-page .fd-save-bar{
+  background:#2F313C!important;
+  border-top-color:rgba(255,255,255,.12)!important;
+  box-shadow:0 -12px 32px rgba(0,0,0,.35)!important;
+}
+html[data-bo-theme="dark"] .fd-panel-head span,
+html[data-bo-theme="dark"] .display-setting-copy p,
+html[data-bo-theme="dark"] .display-preview-note,
+html[data-bo-theme="dark"] .install-app-help,
+html[data-bo-theme="dark"] .display-range-separator,
+html[data-bo-theme="dark"] .display-range-unit{ color:#D4D4D8; }
+html[data-bo-theme="dark"] .fd-panel-head h3,
+html[data-bo-theme="dark"] .display-setting-copy h2{ color:#F5F5F4; }
+html[data-bo-theme="dark"] .display-setting-row,
+html[data-bo-theme="dark"] #fd-sec-live .fd-metric-tile,
+html[data-bo-theme="dark"] #fd-sec-limits .display-setting-row{ border-color:rgba(255,255,255,.10); }
+html[data-bo-theme="dark"] .fd-switch-track{ background:#2A2C36; border-color:rgba(255,255,255,.14); }
+html[data-bo-theme="dark"] .fd-switch-thumb{ background:#F5F5F4; }
+html[data-bo-theme="dark"] .fd-switch-text{ color:#A1A1AA; }
+html[data-bo-theme="dark"] .fd-switch[aria-checked="true"] .fd-switch-text{ color:#FBBF24; }
+html[data-bo-theme="dark"] .display-preview-note.off{ color:#FBBF24; }
+html[data-bo-theme="dark"] .marquee-toolbar{ background:#2A2C36; border-color:rgba(255,255,255,.12); }
+html[data-bo-theme="dark"] .marquee-tool{ background:#383A46; border-color:rgba(255,255,255,.12); color:#F5F5F4; }
+html[data-bo-theme="dark"] .marquee-editor,
+html[data-bo-theme="dark"] .marquee-preview{ background:#2A2C36; border-color:rgba(255,255,255,.12); color:#F5F5F4; }
+html[data-bo-theme="dark"] .marquee-preview-label{
+  background:#32343E; border-color:rgba(255,255,255,.12); color:#A1A1AA;
+}
+html[data-bo-theme="dark"] .fd-color-pop{
+  background:#383A46; border-color:rgba(255,255,255,.14);
+  box-shadow:0 16px 36px rgba(0,0,0,.45);
+}
+html[data-bo-theme="dark"] .fd-color-pop-head strong,
+html[data-bo-theme="dark"] .fd-color-pop-meta code{ color:#F5F5F4; }
+html[data-bo-theme="dark"] .fd-color-pop-preview{ background:#2A2C36; border-color:rgba(255,255,255,.12); }
+html[data-bo-theme="dark"] .fd-color-pop-hex,
+html[data-bo-theme="dark"] .fd-color-rgb input{
+  background:#2A2C36; border-color:rgba(255,255,255,.12); color:#F5F5F4;
+}
+html[data-bo-theme="dark"] .fd-color-sv,
+html[data-bo-theme="dark"] .fd-color-hue{ border-color:rgba(255,255,255,.12); }
+html[data-bo-theme="dark"] .fd-color-pop-close{ color:#A1A1AA; }
+html[data-bo-theme="dark"] .fd-color-pop-close:hover{ background:#2A2C36; color:#F5F5F4; }
+html[data-bo-theme="dark"] .install-app-logo-preview{ background:#2A2C36; border-color:rgba(255,255,255,.12); color:#F5F5F4; }
+
+@media (max-width:1100px){
+  body.frontend-display-page{ --fd-pad-x:12px; }
+  #fd-sec-visibility .fd-panel-body,
+  #fd-sec-live .fd-panel-body,
+  #fd-sec-limits .fd-panel-body{ grid-template-columns:1fr; }
+  #fd-sec-live .fd-metric-tile,
+  #fd-sec-limits .display-setting-row{
+    border-right:0;
+    border-bottom:1px solid #EADCC8;
+    min-height:0;
+  }
+  #fd-sec-live .fd-metric-tile:last-child,
+  #fd-sec-limits .display-setting-row:last-child{ border-bottom:0; }
+  #fd-sec-limits .display-setting-row,
+  #fd-sec-live #liveTransactionModeRow,
+  #fd-sec-live #liveTransactionRefreshRow,
+  #fd-sec-visibility #frontendDisplayBrandRow{
+    grid-template-columns:minmax(0,1fr) minmax(140px,220px);
+    align-items:center;
+  }
+}
+@media (max-width:991.98px){
+  body.frontend-display-page .fd-save-bar,
+  body.sidebar-mini.frontend-display-page .fd-save-bar{ left:0!important; }
+  body.frontend-display-page.sidebar-open .fd-save-bar{ left:min(86vw,320px)!important; }
+}
+@media (max-width:900px){
+  .fd-grid{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "visibility"
+      "live"
+      "install"
+      "limits"
+      "marquee";
+  }
+  #fd-sec-visibility,
+  #fd-sec-install{ border-right:0; }
+  .fd-panel-wide{ grid-column:auto; }
+}
+@media (max-width:700px){
+  body.frontend-display-page{ --fd-pad-x:10px; --fd-footer-h:96px; }
+  body.frontend-display-page .report-topbar{
+    height:auto!important; min-height:var(--fd-header-h)!important; max-height:none!important; padding:8px 10px!important;
+  }
+  .display-setting-row,
+  #fd-sec-limits .display-setting-row,
+  #fd-sec-live #liveTransactionModeRow,
+  #fd-sec-live #liveTransactionRefreshRow,
+  #fd-sec-visibility #frontendDisplayBrandRow{ grid-template-columns:1fr; gap:10px; }
+  .fd-control{ justify-content:flex-start; }
+  body.frontend-display-page .fd-save-bar{
+    justify-content:stretch!important;
+    padding:12px 14px!important;
+  }
+  body.frontend-display-page .display-preview-note{ margin-right:0; flex:1 1 100%; }
+  body.frontend-display-page .display-setting-actions{ width:100%; }
+  body.frontend-display-page .fd-save-bar .clean-btn{ width:100%; min-width:0; }
+  .display-range-control{ grid-template-columns:1fr auto 1fr; }
+  .display-range-unit{ grid-column:1/-1; }
+  .fd-panel-head{ flex-wrap:wrap; }
+  .fd-panel-head-action{ width:100%; margin-left:0; justify-content:flex-start; }
+}
+@media (max-width:575.98px){
+  body.frontend-display-page .report-topbar .user-title-icon{ display:none!important; }
+}
+@media (prefers-reduced-motion:reduce){
+  /* Live preview must still scroll — that is the feature being demonstrated. */
+  .marquee-preview-inner{ animation-duration:28s; }
+  .fd-switch-track,.fd-switch-thumb{ transition:none; }
+}
+</style>
+
 </head>
-<body class="report-body standardized-listing-page bo-charcoal bo-account-chip">
+<body class="report-body standardized-listing-page bo-charcoal bo-account-chip frontend-display-page">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar"><div class="report-brand"><div>Backoffice<br><small>Admin Panel</small></div><button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button></div><nav class="report-nav"></nav></aside>
 <div class="sidebar-overlay" id="reportOverlay" data-close-sidebar></div>
@@ -37,207 +822,297 @@
       <div data-bo-profile></div>
     </div></header>
 <section class="report-content">
-<div class="table-card display-setting-card">
-  <div class="user-toolbar mb-3"><div class="user-badge"><i class="bi bi-house-gear"></i><span>Homepage Display</span></div></div>
-  <div class="display-setting-stack">
-  <div class="display-setting-row" id="frontendDisplayBrandRow" style="display:none">
-    <div class="display-setting-copy">
-      <h2>Editing Brand</h2>
-      <p>For Root/Master accounts, choose exactly which brand storefront this display setting applies to.</p>
-    </div>
-    <select id="frontendDisplayBrandTarget" class="display-setting-select" aria-label="Frontend display target brand"></select>
-  </div>
-  <div class="display-setting-row">
-    <div class="display-setting-copy">
-      <h2>Bonus Display</h2>
-      <p>Enable or disable the bonus and promotion column displayed on the TitanXgaming frontend main page.</p>
-    </div>
-    <select id="homeBonusEnabled" class="display-setting-select" aria-label="Bonus display status">
-      <option value="1">Enabled</option>
-      <option value="0">Disabled</option>
-    </select>
-  </div>
-  <div class="display-setting-row">
-    <div class="display-setting-copy">
-      <h2>Leaderboard in Sidebar</h2>
-      <p>Show or hide the casino Leaderboard entry in the Naga frontend sidebar. This only controls sidebar visibility; leaderboard data remains read-only.</p>
-    </div>
-    <select id="leaderboardEnabled" class="display-setting-select" aria-label="Leaderboard sidebar visibility">
-      <option value="1">Enabled</option>
-      <option value="0">Disabled</option>
-    </select>
-  </div>
-  <div class="display-setting-row">
-    <div class="display-setting-copy">
-      <h2>VIP in Sidebar</h2>
-      <p>Show or hide the VIP entry in the Naga frontend sidebar for the selected brand.</p>
-    </div>
-    <select id="vipSidebarEnabled" class="display-setting-select" aria-label="VIP sidebar visibility">
-      <option value="1">Enabled</option>
-      <option value="0">Disabled</option>
-    </select>
-  </div>
-  <div class="display-setting-row">
-    <div class="display-setting-copy">
-      <h2>Live Transaction</h2>
-      <p>Show or hide the live transaction board below the Referral Bonus section on the frontend homepage.</p>
-    </div>
-    <select id="liveTransactionEnabled" class="display-setting-select" aria-label="Live transaction visibility">
-      <option value="1">Enabled</option>
-      <option value="0">Disabled</option>
-    </select>
-  </div>
-  <div class="display-setting-row">
-    <div class="display-setting-copy">
-      <h2>Live Transaction Data</h2>
-      <p><b>Real Transactions</b> uses completed deposit/withdraw records and recent provider activity. <b>Random Demo</b> generates masked random activity continuously.</p>
-    </div>
-    <select id="liveTransactionMode" class="display-setting-select" aria-label="Live transaction data mode">
-      <option value="REAL">Real Transactions</option>
-      <option value="FAKE">Random Demo</option>
-    </select>
-  </div>
-  <div class="display-setting-row" id="liveTransactionRefreshRow">
-    <div class="display-setting-copy">
-      <h2>Live Transaction Refresh</h2>
-      <p>For Real Transactions, set a fixed refresh/rotation time. Minimum 2 seconds and maximum 60 seconds.</p>
-    </div>
-    <input id="liveTransactionIntervalSeconds" class="display-setting-select" type="number" min="2" max="60" step="1" value="5" aria-label="Live transaction refresh seconds">
-  </div>
-  <div class="display-setting-row random-demo-only is-hidden" id="liveTransactionRandomSecondsRow">
-    <div class="display-setting-copy">
-      <h2>Random Demo Interval</h2>
-      <p>When Random Demo is selected, randomly choose the next update time between these two values.</p>
-    </div>
-    <div class="display-range-control">
-      <input id="liveTransactionRandomMinSeconds" class="display-setting-select" type="number" min="2" max="60" step="1" value="3" aria-label="Random demo minimum seconds">
-      <span class="display-range-separator">to</span>
-      <input id="liveTransactionRandomMaxSeconds" class="display-setting-select" type="number" min="2" max="60" step="1" value="8" aria-label="Random demo maximum seconds">
-      <span class="display-range-unit">seconds</span>
-    </div>
-  </div>
-  <div class="display-setting-row random-demo-only is-hidden" id="liveTransactionRandomRowsRow">
-    <div class="display-setting-copy">
-      <h2>Random Demo Transaction Count</h2>
-      <p>Randomly choose how many demo transaction entries are produced per update, between the minimum and maximum below.</p>
-    </div>
-    <div class="display-range-control">
-      <input id="liveTransactionRandomMinRows" class="display-setting-select" type="number" min="1" max="20" step="1" value="1" aria-label="Random demo minimum transaction count">
-      <span class="display-range-separator">to</span>
-      <input id="liveTransactionRandomMaxRows" class="display-setting-select" type="number" min="1" max="20" step="1" value="4" aria-label="Random demo maximum transaction count">
-      <span class="display-range-unit">transactions</span>
-    </div>
-  </div>
-  <div class="display-setting-row random-demo-only is-hidden" id="liveTransactionRandomPriceRow">
-    <div class="display-setting-copy">
-      <h2>Random Demo Price</h2>
-      <p>Randomly choose each demo transaction amount between the minimum and maximum price below.</p>
-    </div>
-    <div class="display-range-control">
-      <input id="liveTransactionRandomMinPrice" class="display-setting-select" type="number" min="0.01" max="1000000" step="0.01" value="10.00" aria-label="Random demo minimum price">
-      <span class="display-range-separator">to</span>
-      <input id="liveTransactionRandomMaxPrice" class="display-setting-select" type="number" min="0.01" max="1000000" step="0.01" value="5000.00" aria-label="Random demo maximum price">
-      <span class="display-range-unit">amount</span>
-    </div>
-  </div>
-  <div class="display-setting-row">
-    <div class="display-setting-copy">
-      <h2>Header Marquee</h2>
-      <p>Show a continuously scrolling announcement directly below the Naga frontend header on every page that has a header.</p>
-    </div>
-    <select id="marqueeEnabled" class="display-setting-select" aria-label="Marquee status">
-      <option value="1">Enabled</option>
-      <option value="0">Disabled</option>
-    </select>
-  </div>
-  <div class="display-setting-row" style="grid-template-columns:1fr">
-    <div class="display-setting-copy">
-      <h2>Marquee Text</h2>
-      <p>WYSIWYG content for the scrolling announcement. Basic text formatting and colour are supported.</p>
-    </div>
-    <div class="marquee-editor-wrap">
-      <div class="marquee-toolbar" role="toolbar" aria-label="Marquee formatting">
-        <button type="button" class="marquee-tool" data-marquee-cmd="bold" title="Bold"><b>B</b></button>
-        <button type="button" class="marquee-tool" data-marquee-cmd="italic" title="Italic"><i>I</i></button>
-        <button type="button" class="marquee-tool" data-marquee-cmd="underline" title="Underline"><u>U</u></button>
-        <input type="color" id="marqueeColor" class="marquee-color" value="#ffffff" title="Text colour">
-        <button type="button" class="marquee-tool" data-marquee-cmd="removeFormat" title="Clear formatting"><i class="bi bi-eraser"></i></button>
-      </div>
-      <div id="marqueeEditor" class="marquee-editor" contenteditable="true" data-placeholder="Enter the announcement text that should keep scrolling below the header..."></div>
-      <textarea id="marqueeContent" hidden></textarea>
-      <div class="marquee-preview"><span class="marquee-preview-inner" id="marqueePreview">Marquee preview</span></div>
-    </div>
-  </div>
-  <div class="display-setting-row">
-    <div class="display-setting-copy">
-      <h2>Add to Home Screen - Display Name</h2>
-      <p>Name shown by Android/iOS when the player adds TitanX to the device Home Screen.</p>
-    </div>
-    <div class="install-app-setting-control">
-      <input id="installAppDisplayName" class="display-setting-select" type="text" maxlength="100" value="TitanX Gaming" aria-label="Install app display name">
-      <div class="install-app-help">Recommended: keep the name short enough to display clearly below the app icon.</div>
-    </div>
-  </div>
-  <div class="display-setting-row">
-    <div class="display-setting-copy">
-      <h2>Add to Home Screen - Logo</h2>
-      <p>Logo used for the installed Home Screen icon. Upload a square 512×512 PNG for the most consistent Android/iOS result.</p>
-    </div>
-    <div class="install-app-setting-control">
-      <div class="install-app-logo-line">
-        <div class="install-app-logo-preview" id="installAppLogoPreview"><span>No logo</span></div>
-        <div class="install-app-logo-actions">
-          <input id="installAppLogoFile" class="install-app-file" type="file" accept="image/png">
-          <button type="button" class="clean-btn" id="chooseInstallAppLogo"><i class="bi bi-upload"></i> Upload Logo</button>
-          <button type="button" class="clean-btn danger" id="removeInstallAppLogo"><i class="bi bi-trash"></i> Remove</button>
+<div class="fd-workspace">
+  <div class="fd-board">
+    <div class="fd-grid">
+      <section class="fd-panel" id="fd-sec-visibility">
+        <div class="fd-panel-head">
+          <i class="bi bi-eye" aria-hidden="true"></i>
+          <div><h3>Visibility</h3><span>Homepage &amp; sidebar modules</span></div>
         </div>
-      </div>
-      <div class="install-app-help" id="installAppLogoHelp">PNG only, exactly 512×512 px. The selected image is uploaded when you click Save Setting.</div>
+        <div class="fd-panel-body">
+          <div class="display-setting-row" id="frontendDisplayBrandRow" style="display:none">
+            <div class="display-setting-copy">
+              <h2>Editing Brand</h2>
+              <p>Choose which brand storefront these settings apply to.</p>
+            </div>
+            <div class="fd-control">
+              <select id="frontendDisplayBrandTarget" class="display-setting-select" aria-label="Frontend display target brand"></select>
+            </div>
+          </div>
+          <div class="display-setting-row fd-switch-tile">
+    <div class="display-setting-copy"><h2>Bonus Display</h2><p>Bonus &amp; promo column on the main page.</p></div>
+    <div class="fd-control">
+      <button type="button" class="fd-switch" role="switch" aria-checked="false" data-fd-switch="homeBonusEnabled" aria-label="Bonus display">
+        <span class="fd-switch-track" aria-hidden="true"><span class="fd-switch-thumb"></span></span>
+        <span class="fd-switch-text">Off</span>
+      </button>
+      <select id="homeBonusEnabled" class="fd-native-switch" data-no-rounded="1" hidden aria-hidden="true">
+        <option value="1">Enabled</option>
+        <option value="0">Disabled</option>
+      </select>
     </div>
   </div>
+          <div class="display-setting-row fd-switch-tile">
+    <div class="display-setting-copy"><h2>Leaderboard</h2><p>Sidebar entry only — data stays read-only.</p></div>
+    <div class="fd-control">
+      <button type="button" class="fd-switch" role="switch" aria-checked="false" data-fd-switch="leaderboardEnabled" aria-label="Leaderboard sidebar">
+        <span class="fd-switch-track" aria-hidden="true"><span class="fd-switch-thumb"></span></span>
+        <span class="fd-switch-text">Off</span>
+      </button>
+      <select id="leaderboardEnabled" class="fd-native-switch" data-no-rounded="1" hidden aria-hidden="true">
+        <option value="1">Enabled</option>
+        <option value="0">Disabled</option>
+      </select>
+    </div>
+  </div>
+          <div class="display-setting-row fd-switch-tile">
+    <div class="display-setting-copy"><h2>VIP Sidebar</h2><p>VIP entry for the selected brand.</p></div>
+    <div class="fd-control">
+      <button type="button" class="fd-switch" role="switch" aria-checked="false" data-fd-switch="vipSidebarEnabled" aria-label="VIP sidebar">
+        <span class="fd-switch-track" aria-hidden="true"><span class="fd-switch-thumb"></span></span>
+        <span class="fd-switch-text">Off</span>
+      </button>
+      <select id="vipSidebarEnabled" class="fd-native-switch" data-no-rounded="1" hidden aria-hidden="true">
+        <option value="1">Enabled</option>
+        <option value="0">Disabled</option>
+      </select>
+    </div>
+  </div>
+          <div class="display-setting-row fd-switch-tile">
+    <div class="display-setting-copy"><h2>Live Transaction</h2><p>Board below Referral Bonus.</p></div>
+    <div class="fd-control">
+      <button type="button" class="fd-switch" role="switch" aria-checked="false" data-fd-switch="liveTransactionEnabled" aria-label="Live transaction">
+        <span class="fd-switch-track" aria-hidden="true"><span class="fd-switch-thumb"></span></span>
+        <span class="fd-switch-text">Off</span>
+      </button>
+      <select id="liveTransactionEnabled" class="fd-native-switch" data-no-rounded="1" hidden aria-hidden="true">
+        <option value="1">Enabled</option>
+        <option value="0">Disabled</option>
+      </select>
+    </div>
+  </div>
+        </div>
+      </section>
 
-  <div class="display-setting-row">
-    <div class="display-setting-copy">
-      <h2>Minimum Deposit</h2>
-      <p>Global minimum amount a player can submit for a normal deposit request.</p>
-    </div>
-    <input id="minDepositAmount" class="display-setting-select" type="number" min="0.01" step="0.01" value="10.00" aria-label="Minimum deposit amount">
+      <section class="fd-panel" id="fd-sec-live">
+        <div class="fd-panel-head">
+          <i class="bi bi-broadcast" aria-hidden="true"></i>
+          <div><h3>Live Feed</h3><span>Source &amp; refresh behaviour</span></div>
+        </div>
+        <div class="fd-panel-body">
+          <div class="display-setting-row" id="liveTransactionModeRow">
+    <div class="display-setting-copy"><h2>Live Transaction Data</h2><p><b>Real</b> uses deposits/withdrawals. <b>Random Demo</b> generates masked activity.</p></div>
+    <div class="fd-control"><select id="liveTransactionMode" class="display-setting-select" aria-label="Live transaction data mode"><option value="REAL">Real Transactions</option><option value="FAKE">Random Demo</option></select></div>
   </div>
-  <div class="display-setting-row">
-    <div class="display-setting-copy">
-      <h2>Minimum Withdrawal</h2>
-      <p>Global minimum amount for a normal withdrawal. A promotion with an exact Fixed Max Withdraw amount keeps its own configured amount.</p>
-    </div>
-    <input id="minWithdrawalAmount" class="display-setting-select" type="number" min="0.01" step="0.01" value="50.00" aria-label="Minimum withdrawal amount">
-  </div>
-  <div class="display-setting-row">
-    <div class="display-setting-copy">
-      <h2>Rebate Auto Credit Threshold</h2>
-      <p>If a member's payable rebate for the settlement cycle is at or below this amount, credit automatically. Above this amount requires Manual Rebate Approval. Set 0 to keep each rebate rule's existing Claim Mode.</p>
-    </div>
-    <input id="rebateAutoCreditThreshold" class="display-setting-select" type="number" min="0" step="0.01" value="0.00" aria-label="Rebate auto credit threshold">
-  </div>
-  </div>
+          <div class="display-setting-row" id="liveTransactionRefreshRow">
+            <div class="display-setting-copy">
+              <h2>Refresh Interval</h2>
+              <p>Fixed rotation for Real Transactions. 2–60 seconds.</p>
+            </div>
+            <div class="fd-control">
+              <input id="liveTransactionIntervalSeconds" class="display-setting-select" type="number" min="2" max="60" step="1" value="5" aria-label="Live transaction refresh seconds">
+            </div>
+          </div>
+          <div class="display-setting-row random-demo-only is-hidden fd-metric-tile" id="liveTransactionRandomSecondsRow">
+            <div class="display-setting-copy">
+              <h2>Demo Interval</h2>
+              <p>Random next update between these values.</p>
+            </div>
+            <div class="fd-control">
+              <div class="display-range-control">
+                <input id="liveTransactionRandomMinSeconds" class="display-setting-select" type="number" min="2" max="60" step="1" value="3" aria-label="Random demo minimum seconds">
+                <span class="display-range-separator">to</span>
+                <input id="liveTransactionRandomMaxSeconds" class="display-setting-select" type="number" min="2" max="60" step="1" value="8" aria-label="Random demo maximum seconds">
+                <span class="display-range-unit">sec</span>
+              </div>
+            </div>
+          </div>
+          <div class="display-setting-row random-demo-only is-hidden fd-metric-tile" id="liveTransactionRandomRowsRow">
+            <div class="display-setting-copy">
+              <h2>Demo Count</h2>
+              <p>How many demo rows per update.</p>
+            </div>
+            <div class="fd-control">
+              <div class="display-range-control">
+                <input id="liveTransactionRandomMinRows" class="display-setting-select" type="number" min="1" max="20" step="1" value="1" aria-label="Random demo minimum transaction count">
+                <span class="display-range-separator">to</span>
+                <input id="liveTransactionRandomMaxRows" class="display-setting-select" type="number" min="1" max="20" step="1" value="4" aria-label="Random demo maximum transaction count">
+                <span class="display-range-unit">rows</span>
+              </div>
+            </div>
+          </div>
+          <div class="display-setting-row random-demo-only is-hidden fd-metric-tile" id="liveTransactionRandomPriceRow">
+            <div class="display-setting-copy">
+              <h2>Demo Price</h2>
+              <p>Amount range for each demo transaction.</p>
+            </div>
+            <div class="fd-control">
+              <div class="display-range-control">
+                <input id="liveTransactionRandomMinPrice" class="display-setting-select" type="number" min="0.01" max="1000000" step="0.01" value="10.00" aria-label="Random demo minimum price">
+                <span class="display-range-separator">to</span>
+                <input id="liveTransactionRandomMaxPrice" class="display-setting-select" type="number" min="0.01" max="1000000" step="0.01" value="5000.00" aria-label="Random demo maximum price">
+                <span class="display-range-unit">amt</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  
-  <div class="display-preview-note" id="displaySettingNote">Loading current setting...</div>
-  <div class="display-setting-actions"><button class="clean-btn primary" id="saveFrontendDisplay" type="button"><i class="bi bi-save"></i> Save Setting</button></div>
-  <div id="frontendDisplayMessage" class="upload-status mt-2"></div>
+      <section class="fd-panel" id="fd-sec-install">
+        <div class="fd-panel-head">
+          <i class="bi bi-phone" aria-hidden="true"></i>
+          <div><h3>Add to Home Screen</h3><span>Name &amp; icon when players install</span></div>
+        </div>
+        <div class="fd-panel-body">
+          <div class="display-setting-row is-stack">
+            <div class="display-setting-copy">
+              <h2>Display Name</h2>
+              <p>Shown under the icon on Android/iOS. Keep it short.</p>
+            </div>
+            <div class="install-app-setting-control">
+              <input id="installAppDisplayName" class="display-setting-select" type="text" maxlength="100" value="TitanX Gaming" aria-label="Install app display name">
+            </div>
+          </div>
+          <div class="display-setting-row is-stack">
+            <div class="display-setting-copy">
+              <h2>Logo</h2>
+              <p>Square 512×512 PNG for the most consistent result.</p>
+            </div>
+            <div class="install-app-setting-control">
+              <div class="install-app-logo-line">
+                <div class="install-app-logo-preview" id="installAppLogoPreview"><span>No logo</span></div>
+                <div class="install-app-logo-actions">
+                  <input id="installAppLogoFile" class="install-app-file" type="file" accept="image/png">
+                  <button type="button" class="clean-btn" id="chooseInstallAppLogo"><i class="bi bi-upload"></i> Upload</button>
+                  <button type="button" class="clean-btn danger" id="removeInstallAppLogo"><i class="bi bi-trash"></i> Remove</button>
+                </div>
+              </div>
+              <div class="install-app-help" id="installAppLogoHelp">PNG only, exactly 512×512. Uploaded when you save.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="fd-panel" id="fd-sec-limits">
+        <div class="fd-panel-head">
+          <i class="bi bi-cash-coin" aria-hidden="true"></i>
+          <div><h3>Wallet Limits</h3><span>Deposit, withdraw &amp; rebate floors</span></div>
+        </div>
+        <div class="fd-panel-body">
+          <div class="display-setting-row">
+    <div class="display-setting-copy"><h2>Minimum Deposit</h2><p>Lowest amount for a normal deposit request.</p></div>
+    <div class="fd-control"><input id="minDepositAmount" class="display-setting-select" type="number" min="0.01" step="0.01" value="10.00" aria-label="Minimum deposit amount"></div>
+  </div>
+          <div class="display-setting-row">
+    <div class="display-setting-copy"><h2>Minimum Withdrawal</h2><p>Lowest amount for a normal withdrawal.</p></div>
+    <div class="fd-control"><input id="minWithdrawalAmount" class="display-setting-select" type="number" min="0.01" step="0.01" value="50.00" aria-label="Minimum withdrawal amount"></div>
+  </div>
+          <div class="display-setting-row">
+    <div class="display-setting-copy"><h2>Rebate Auto Credit</h2><p>At or below → auto credit. Above → manual approval. 0 keeps each rule.</p></div>
+    <div class="fd-control"><input id="rebateAutoCreditThreshold" class="display-setting-select" type="number" min="0" step="0.01" value="0.00" aria-label="Rebate auto credit threshold"></div>
+  </div>
+        </div>
+      </section>
+
+      <section class="fd-panel fd-panel-wide" id="fd-sec-marquee">
+        <div class="fd-panel-head">
+          <i class="bi bi-type" aria-hidden="true"></i>
+          <div><h3>Header Marquee</h3><span>Scrolling announcement under the player header</span></div>
+          <div class="fd-panel-head-action">
+            <button type="button" class="fd-switch" role="switch" aria-checked="false" data-fd-switch="marqueeEnabled" aria-label="Header marquee">
+              <span class="fd-switch-track" aria-hidden="true"><span class="fd-switch-thumb"></span></span>
+              <span class="fd-switch-text">Off</span>
+            </button>
+            <select id="marqueeEnabled" class="fd-native-switch" data-no-rounded="1" hidden aria-hidden="true">
+              <option value="1">Enabled</option>
+              <option value="0">Disabled</option>
+            </select>
+          </div>
+        </div>
+        <div class="fd-panel-body">
+          <div class="display-setting-row is-stack fd-marquee-row">
+            <div class="display-setting-copy">
+              <h2>Marquee Text</h2>
+              <p>Edit above — preview scrolls below like the player header.</p>
+            </div>
+            <div class="marquee-editor-wrap">
+              <div class="marquee-toolbar" role="toolbar" aria-label="Marquee formatting">
+                <button type="button" class="marquee-tool" data-marquee-cmd="bold" title="Bold"><b>B</b></button>
+                <button type="button" class="marquee-tool" data-marquee-cmd="italic" title="Italic"><i>I</i></button>
+                <button type="button" class="marquee-tool" data-marquee-cmd="underline" title="Underline"><u>U</u></button>
+                <button type="button" class="marquee-tool" data-marquee-cmd="removeFormat" title="Clear formatting"><i class="bi bi-eraser"></i></button>
+                <button type="button" class="marquee-tool marquee-tool-color" id="marqueeBgColorBtn" title="Background colour" aria-label="Background colour" aria-expanded="false" aria-controls="fdColorPop">
+                  <i class="bi bi-paint-bucket" aria-hidden="true"></i>
+                  <span class="marquee-tool-bg-chip" id="marqueeBgColorChip" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="marquee-tool marquee-tool-color" id="marqueeTextColorBtn" title="Text colour" aria-label="Text colour" aria-expanded="false" aria-controls="fdColorPop">
+                  <i class="bi bi-fonts" aria-hidden="true"></i>
+                  <span class="marquee-tool-color-bar" id="marqueeTextColorBar" aria-hidden="true"></span>
+                </button>
+                <div class="fd-color-pop" id="fdColorPop" role="dialog" aria-label="Colour picker" hidden>
+                  <div class="fd-color-pop-head">
+                    <strong id="fdColorPopTitle">Text colour</strong>
+                    <button type="button" class="fd-color-pop-close" id="fdColorPopClose" aria-label="Close colour picker"><i class="bi bi-x-lg"></i></button>
+                  </div>
+                  <div class="fd-color-pop-preview">
+                    <span class="fd-color-pop-chip" id="fdColorPopChip" aria-hidden="true"></span>
+                    <div class="fd-color-pop-meta">
+                      <span id="fdColorPopModeLabel">Selected</span>
+                      <code id="fdColorPopHexLabel">#18191C</code>
+                    </div>
+                  </div>
+                  <div class="fd-color-swatches" id="fdColorSwatches" role="listbox" aria-label="Preset colours"></div>
+                  <div class="fd-color-spectrum" id="fdColorSpectrum">
+                    <div class="fd-color-sv" id="fdColorSv" role="slider" aria-label="Saturation and brightness" tabindex="0">
+                      <span class="fd-color-sv-cursor" id="fdColorSvCursor" aria-hidden="true"></span>
+                    </div>
+                    <div class="fd-color-hue" id="fdColorHue" role="slider" aria-label="Hue" tabindex="0">
+                      <span class="fd-color-hue-thumb" id="fdColorHueThumb" aria-hidden="true"></span>
+                    </div>
+                    <div class="fd-color-rgb">
+                      <label>R<input type="number" id="fdColorR" min="0" max="255" step="1" value="24" aria-label="Red"></label>
+                      <label>G<input type="number" id="fdColorG" min="0" max="255" step="1" value="25" aria-label="Green"></label>
+                      <label>B<input type="number" id="fdColorB" min="0" max="255" step="1" value="28" aria-label="Blue"></label>
+                    </div>
+                    <input type="text" class="fd-color-pop-hex" id="fdColorPopHex" value="#18191C" maxlength="7" spellcheck="false" aria-label="Hex colour">
+                  </div>
+                  <p class="fd-color-pop-hint">Drag the spectrum, edit RGB, or type a hex.</p>
+                </div>
+              </div>
+              <div id="marqueeEditor" class="marquee-editor" contenteditable="true" data-placeholder="Enter the announcement text that should keep scrolling below the header..."></div>
+              <textarea id="marqueeContent" hidden></textarea>
+              <div class="marquee-preview-label"><i class="bi bi-play-circle" aria-hidden="true"></i> Live preview</div>
+              <div class="marquee-preview" id="marqueePreviewBar"><span class="marquee-preview-inner" id="marqueePreview">Marquee preview</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div id="frontendDisplayMessage" class="upload-status"></div>
+  </div>
 </div>
 </section>
+
+<footer class="fd-save-bar" id="fdSaveBar">
+  <div class="display-preview-note" id="displaySettingNote">Loading current setting...</div>
+  <div class="display-setting-actions">
+    <button class="clean-btn primary" id="saveFrontendDisplay" type="button"><i class="bi bi-check2" aria-hidden="true"></i> Save Setting</button>
+  </div>
+</footer>
 </main>
 </div>
 <script src="assets/js/config.js?v=1.0.40"></script>
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
-<script src="assets/js/currency-runtime.js?v=1.0.1"></script><script src="assets/js/reports.js?v=1.0.29"></script><script src="assets/js/auth.js?v=1.0.66"></script><script src="assets/js/frontend-display.js?v=20260906-vip-sidebar-1&old=1.0.8"></script>
+<script src="assets/js/currency-runtime.js?v=1.0.1"></script><script src="assets/js/reports.js?v=1.0.29"></script><script src="assets/js/auth.js?v=1.0.66"></script><script src="assets/js/frontend-display.js?v=20260919-layout-12&old=1.0.8"></script>
 
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
 <script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
-  <script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
+  <script src="assets/js/bo-ui-standard.js?v=1.0.3"></script>
 <script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 <script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
