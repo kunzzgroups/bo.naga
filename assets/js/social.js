@@ -41,10 +41,32 @@
     return window.BO_FORMAT && BO_FORMAT.dateTime ? BO_FORMAT.dateTime(value) : (value || '-');
   }
 
+  function cardMarkup(row) {
+    var image = uploadUrl(row.image);
+    var serialized = escapeHtml(JSON.stringify(row));
+    var updated = escapeHtml(formatDate(row.updatedAt || row.createdAt));
+    var url = escapeHtml(row.url);
+    return '' +
+      '<article class="social-card">' +
+        '<div class="social-card-media">' +
+          '<img src="' + escapeHtml(image) + '" alt="Social image" loading="lazy">' +
+        '</div>' +
+        '<div class="social-card-body">' +
+          '<a class="social-card-url bo-tx-link" href="' + url + '" target="_blank" rel="noopener noreferrer" title="' + url + '">' + url + '</a>' +
+          '<div class="social-card-meta"><span class="social-card-meta-label">Last updated</span><time class="social-card-time">' + updated + '</time></div>' +
+        '</div>' +
+        '<div class="social-card-actions">' +
+          '<button type="button" class="bo-tx-action-btn is-edit" title="Edit" aria-label="Edit" data-social-edit="' + serialized + '"><i class="bi bi-pencil" aria-hidden="true"></i></button>' +
+          '<button type="button" class="bo-tx-action-btn is-reject" title="Delete" aria-label="Delete" data-social-delete="' + escapeHtml(row.id) + '"><i class="bi bi-trash" aria-hidden="true"></i></button>' +
+        '</div>' +
+      '</article>';
+  }
+
   async function load() {
     var body = document.getElementById('socialBody');
     var info = document.getElementById('socialTableInfo');
-    body.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
+    if (!body) return;
+    body.innerHTML = '<div class="social-card-state">Loading...</div>';
 
     try {
       var json = await api(endpoint('SOCIAL_LIST'));
@@ -52,24 +74,14 @@
       if (info) info.textContent = rows.length + ' social link' + (rows.length === 1 ? '' : 's');
 
       if (!rows.length) {
-        body.innerHTML = '<tr><td colspan="4">No social link found.</td></tr>';
+        body.innerHTML = '<div class="social-card-state">No social link found.</div>';
         return;
       }
 
-      body.innerHTML = rows.map(function (row) {
-        var image = uploadUrl(row.image);
-        var serialized = escapeHtml(JSON.stringify(row));
-        return '<tr>' +
-          '<td><div class="social-thumb-wrap"><img src="' + escapeHtml(image) + '" alt="Social image" loading="lazy"></div></td>' +
-          '<td class="social-url-cell"><a href="' + escapeHtml(row.url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(row.url) + '</a></td>' +
-          '<td>' + escapeHtml(formatDate(row.updatedAt || row.createdAt)) + '</td>' +
-          '<td><button class="clean-btn social-icon-btn primary" title="Edit" data-social-edit="' + serialized + '"><i class="bi bi-pencil"></i></button> ' +
-          '<button class="clean-btn social-icon-btn danger" title="Delete" data-social-delete="' + escapeHtml(row.id) + '"><i class="bi bi-trash"></i></button></td>' +
-          '</tr>';
-      }).join('');
+      body.innerHTML = rows.map(cardMarkup).join('');
     } catch (error) {
       if (info) info.textContent = 'Unable to load social links';
-      body.innerHTML = '<tr><td colspan="4" class="text-danger">' + escapeHtml(error.message) + '</td></tr>';
+      body.innerHTML = '<div class="social-card-state is-error">' + escapeHtml(error.message) + '</div>';
     }
   }
 
