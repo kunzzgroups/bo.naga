@@ -1418,7 +1418,8 @@ html body.site-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off) .cus
 html[data-bo-theme="dark"] body.site-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off) .custom-tab.active::after{background:#F59E0B}
 
 html body.site-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off) .custom-tab-panel.active{
-  flex:1 1 auto;min-height:0;overflow:auto;padding:16px 16px 20px;scrollbar-width:none;
+  flex:1 1 auto;min-height:0;overflow:auto;padding:16px 16px 20px;
+  /* scrollbar: MD panel pill via bo-site-customize-md.css — do not set scrollbar-width here */
 }
 html body.site-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off) .section-title{margin:0 0 12px!important;align-items:baseline}
 html body.site-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off) .section-title h3{
