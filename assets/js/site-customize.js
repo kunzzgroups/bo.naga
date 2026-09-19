@@ -905,7 +905,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 
     (async function bootLayoutEditors() {
         try {
-            const cm6Url = new URL('assets/js/layout-section-cm6.js?v=1.0.8', window.location.href).href;
+            const cm6Url = new URL('assets/js/layout-section-cm6.js?v=1.0.22', window.location.href).href;
             const mod = await import(cm6Url);
             cmEditors = mod.mountLayoutCodeEditors({
                 html: htmlEditor,

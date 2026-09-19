@@ -17,7 +17,7 @@
 <link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-cms.css?v=1.0.0" rel="stylesheet" />
 <link href="assets/css/bo-input-fill.css?v=1.0.3" rel="stylesheet" />
-<link href="assets/css/bo-layout-section-md.css?v=1.0.17" rel="stylesheet" />
+<link href="assets/css/bo-layout-section-md.css?v=1.0.33" rel="stylesheet" />
 <script type="importmap">
 {
   "imports": {
@@ -99,8 +99,30 @@
 
               <div class="layout-editor-main">
                 <div class="layout-editor-current">
-                  Editing: <strong id="currentSectionName">Right Panel</strong>
-                  <small id="currentSectionKey">right-panel</small>
+                  <div class="layout-editor-current-meta">
+                    Editing: <strong id="currentSectionName">Right Panel</strong>
+                    <small id="currentSectionKey">right-panel</small>
+                  </div>
+                  <div class="layout-find-bar" id="layoutFindBar" role="search">
+                    <div class="layout-find-query">
+                      <i class="bi bi-search layout-find-icon" aria-hidden="true"></i>
+                      <input id="layoutFindInput" type="search" placeholder="Find" autocomplete="off" spellcheck="false" aria-label="Find in editor" />
+                    </div>
+                    <kbd class="layout-find-hint" aria-hidden="true">Ctrl+F</kbd>
+                    <span class="layout-find-count" id="layoutFindCount" data-empty="1" aria-live="polite"></span>
+                    <div class="layout-find-actions" role="group" aria-label="Find controls">
+                      <button type="button" class="layout-find-nav" id="layoutFindPrev" title="Previous match (Shift+Enter)" aria-label="Previous match">
+                        <svg class="layout-find-chevron" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" focusable="false">
+                          <path d="M2.2 7.6 L6 3.8 L9.8 7.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </button>
+                      <button type="button" class="layout-find-nav" id="layoutFindNext" title="Next match (Enter)" aria-label="Next match">
+                        <svg class="layout-find-chevron" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" focusable="false">
+                          <path d="M2.2 4.4 L6 8.2 L9.8 4.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="layout-code-grid" id="layoutCodeGrid">
@@ -151,14 +173,14 @@
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
     <script src="assets/js/auth.js?v=1.0.66"></script>
     <script src="assets/js/reports.js?v=1.0.29"></script>
-    <script src="assets/js/site-customize.js?v=1.0.42"></script>
+    <script src="assets/js/site-customize.js?v=1.0.56"></script>
 
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
 <script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
-<script src="assets/js/bo-ui-standard.js?v=1.0.2"></script><script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
+<script src="assets/js/bo-ui-standard.js?v=1.0.3"></script><script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 <script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
 </body>
