@@ -42,9 +42,11 @@ function renderInline(){
  $('adInlineImage').src=currentImageUrl||'';$('adInlineImage').hidden=!hasImage;
  $('adInlineTitle').textContent=title.value.trim();$('adInlineTitle').hidden=!hasTitle;
  $('adInlineMessage').textContent=message.value.trim();$('adInlineMessage').hidden=!hasMessage;
- const btnText=button.value.trim();const hasButton=!!(btnText&&link.value.trim());
+ const btnText=button.value.trim();const hasButton=!!btnText;
  $('adInlineButton').textContent=btnText;$('adInlineButton').hidden=!hasButton;
  $('adInlineContent').hidden=!(hasTitle||hasMessage||hasButton);
+ $('adInlinePreview').classList.toggle('ad-preview-image-only',hasImage&&!hasTitle&&!hasMessage&&!hasButton);
+ $('adInlinePreview').classList.toggle('ad-preview-with-copy',hasImage&&(hasTitle||hasMessage||hasButton));
  $('adInlineEmpty').hidden=hasImage||hasTitle||hasMessage||hasButton;
  const on=enabled.value==='1';
  $('adInlineStatus').textContent=on?'Enabled':'Disabled';
