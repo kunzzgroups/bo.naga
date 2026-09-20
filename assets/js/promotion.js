@@ -1,12 +1,15 @@
 (function(){
+  const isEditPage=document.body.classList.contains('promotion-edit-page');
   const form=document.getElementById('promoForm');
-  if(!form)return;
+  const list=document.getElementById('promoList');
+  if(!form && !list)return;
   const $=id=>document.getElementById(id);
-  const box=$('promoStatusBox'), list=$('promoList'), empty=$('promoEmpty');
+  const box=$('promoStatusBox');
   const searchInput=$('promoSearchInput'), categoryFilter=$('promoCategoryFilter'), statusFilter=$('promoStatusFilter'), sortFilter=$('promoSortFilter');
-  const totalCount=$('promoTotalCount'), activeCount=$('promoActiveCount'), activePercent=$('promoActivePercent'), showingText=$('promoShowingText');
+  const showingText=$('promoShowingText');
   let rows=[];
   let promoPage=0;
+  let lockedAutoSize=null;
   let categoryTitles=[];
   let selectedPromoImage=null;
   let detailHtmlMode=false;
@@ -15,6 +18,86 @@
   let promoGames=[];
   let promoLegacyAllowedTokens=[];
   let promotionGameConfigReady=Promise.resolve();
+
+  function editPageUrl(id){
+    // Use .html for Live Server (5500). Put id in the hash so serve cleanUrls
+    // redirects (promotion-edit.html → /promotion-edit) do not drop the param.
+    return id!=null && id!=='' ? ('promotion-edit.html#id='+encodeURIComponent(id)) : 'promotion-edit.html';
+  }
+  function syncEditChrome(title, note, ready){
+    if($('promoFormTitle')) $('promoFormTitle').textContent=title;
+    if($('promoFooterTitle')) $('promoFooterTitle').textContent=title;
+    if($('promoEditNote') && note!=null) $('promoEditNote').textContent=note;
+    const pill=$('promoReadyPill');
+    if(pill){
+      pill.textContent=ready?'Editing':'Draft';
+      pill.classList.toggle('is-ready', !!ready);
+    }
+    document.title=title+' · Backoffice';
+  }
+  function queryEditId(){
+    try{
+      const fromQuery=new URLSearchParams(location.search).get('id');
+      if(fromQuery) return fromQuery;
+      const hash=String(location.hash||'').replace(/^#/, '');
+      if(!hash) return null;
+      if(/^id=/i.test(hash)) return decodeURIComponent(hash.slice(3));
+      const params=new URLSearchParams(hash);
+      if(params.get('id')) return params.get('id');
+      if(/^\d+$/.test(hash)) return hash;
+      return null;
+    }catch(e){ return null; }
+  }
+
+  /* Show N: `-` = auto-fit rows into the list viewport — no page/list scroll. */
+  function promoListScroll(){
+    return $('promoListScroll')||document.querySelector('.promotion-tx-body')||list;
+  }
+  function isAutoPageSize(raw){
+    const v=String(raw??'-').trim();
+    return v===''||v==='-'||/^auto$/i.test(v);
+  }
+  function measureAutoPageSize(){
+    const scroll=promoListScroll();
+    if(!scroll) return 8;
+    const avail=Math.max(0,Math.floor(scroll.clientHeight));
+    const sample=scroll.querySelector('tbody tr.promotion-data-row')||scroll.querySelector('tbody tr');
+    const rowH=sample?Math.max(48,Math.round(sample.getBoundingClientRect().height)):56;
+    return Math.max(3,Math.min(200,Math.floor(avail/rowH)||8));
+  }
+  function autoFitPageSize(){
+    if(lockedAutoSize!=null) return lockedAutoSize;
+    lockedAutoSize=measureAutoPageSize();
+    return lockedAutoSize;
+  }
+  function clearLockedAutoSize(){ lockedAutoSize=null; }
+  function resolvePageSize(raw){
+    const v=String(raw??$('promoPageSize')?.value??'-').trim();
+    if(isAutoPageSize(v)) return autoFitPageSize();
+    if(/^all$/i.test(v)) return 10000;
+    const n=Number(v);
+    return Number.isFinite(n)&&n>0?n:autoFitPageSize();
+  }
+  function syncAutofitMode(){
+    const auto=isAutoPageSize($('promoPageSize')?.value);
+    const card=document.querySelector('.manage-list-card.promotion-modern-page');
+    const scroll=promoListScroll();
+    if(card) card.toggleAttribute('data-bo-autofit', auto);
+    if(scroll) scroll.toggleAttribute('data-bo-autofit', auto);
+  }
+  let autofitReloading=false;
+  function shrinkAutofitIfOverflow(){
+    if(autofitReloading) return;
+    if(!isAutoPageSize($('promoPageSize')?.value)) return;
+    const scroll=promoListScroll();
+    if(!scroll) return;
+    if(scroll.scrollHeight<=scroll.clientHeight+1) return;
+    if(lockedAutoSize==null||lockedAutoSize<=3) return;
+    lockedAutoSize=Math.max(3,lockedAutoSize-1);
+    autofitReloading=true;
+    promoPage=0;
+    try{ render(); } finally { autofitReloading=false; }
+  }
 
   function selectedVipTierCsv(){
     const el=$('promoClaimableVipTiers');
@@ -26,12 +109,56 @@
     if(!el)return;
     const values=new Set(String(csv||'').split(',').map(v=>v.trim()).filter(Boolean));
     [...el.options].forEach(o=>{o.selected=o.value?values.has(o.value):values.size===0;});
+    syncPromoVipChips();
+  }
+  function syncPromoVipChips(){
+    const el=$('promoClaimableVipTiers');
+    const host=$('promoVipChips');
+    if(!el||!host)return;
+    const selected=new Set([...el.selectedOptions].map(o=>o.value));
+    const allOn=selected.has('')||[...el.selectedOptions].every(o=>!o.value);
+    host.querySelectorAll('.promo-vip-chip').forEach(btn=>{
+      const v=btn.getAttribute('data-value')??'';
+      const on=v===''?allOn&&![...el.options].some(o=>o.value&&o.selected):selected.has(v);
+      btn.classList.toggle('is-on',on);
+      btn.setAttribute('aria-pressed',on?'true':'false');
+    });
+  }
+  function ensurePromoVipPicker(){
+    const el=$('promoClaimableVipTiers');
+    const host=$('promoVipChips');
+    if(!el||!host||host.dataset.bound==='1')return;
+    host.dataset.bound='1';
+    host.addEventListener('click',function(e){
+      const btn=e.target.closest('.promo-vip-chip');
+      if(!btn||!host.contains(btn))return;
+      const value=btn.getAttribute('data-value')??'';
+      if(value===''){
+        [...el.options].forEach(o=>{o.selected=!o.value;});
+      }else{
+        const opt=[...el.options].find(o=>o.value===value);
+        if(!opt)return;
+        opt.selected=!opt.selected;
+        const any=[...el.options].some(o=>o.value&&o.selected);
+        const allOpt=[...el.options].find(o=>!o.value);
+        if(allOpt) allOpt.selected=!any;
+      }
+      syncPromoVipChips();
+      el.dispatchEvent(new Event('change',{bubbles:true}));
+    });
   }
   function renderPromotionVipOptions(selected){
     const el=$('promoClaimableVipTiers');
+    const host=$('promoVipChips');
     if(!el)return;
+    ensurePromoVipPicker();
     const ordered=[...vipLevels].filter(x=>Number(x.enabled??1)===1).sort((a,b)=>Number(a.sortOrder||0)-Number(b.sortOrder||0));
     el.innerHTML='<option value="">All VIP Levels</option>'+ordered.map(x=>`<option value="${esc(x.sortOrder)}">VIP ${esc(x.sortOrder)} - ${esc(x.name||x.levelKey||'')}</option>`).join('');
+    if(host){
+      host.innerHTML=
+        '<button type="button" class="promo-vip-chip is-all" data-value="" aria-pressed="false"><span class="promo-vip-chip-check" aria-hidden="true"></span><span class="promo-vip-chip-text">All VIP Levels</span></button>'+
+        ordered.map(x=>`<button type="button" class="promo-vip-chip" data-value="${esc(x.sortOrder)}" aria-pressed="false"><span class="promo-vip-chip-check" aria-hidden="true"></span><span class="promo-vip-chip-text"><b>VIP ${esc(x.sortOrder)}</b><small>${esc(x.name||x.levelKey||'')}</small></span></button>`).join('');
+    }
     setSelectedVipTiers(selected);
   }
   async function loadPromotionVipLevels(){
@@ -46,7 +173,7 @@
   function promoApi(k){ return API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS[k]; }
   function val(id){const el=$(id); const v=el?el.value:''; return v===''?null:v;}
   function num(id){const v=val(id);return v===null?null:Number(v);}
-  function set(m,t){box.textContent=m||'';box.className='upload-status '+(t||'');}
+  function set(m,t){if(!box)return;box.textContent=m||'';box.className='upload-status '+(t||'');}
   function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
   function money(v){return v==null||v===''?'-':Number(v).toFixed(2)}
   function showImagePreview(src){ const img=$('promoImagePreview'), cur=$('promoImageCurrent'); if(img&&src){img.src=src;img.hidden=false;} if(cur)cur.textContent=src?'Current/selected image preview':''; }
@@ -160,9 +287,12 @@
       return `<section class="category-provider-rule promo-provider-rule" data-provider-code="${esc(code)}">
         <div class="category-provider-rule-head">
           <div class="category-provider-rule-title"><span class="category-provider-rule-icon"><i class="bi bi-controller"></i></span><div><b>${esc(promoGameProviderName(provider)||code)}</b><small>${games.length} game(s) available</small></div></div>
-          <div class="category-provider-mode-switch" role="radiogroup" aria-label="Allowed games mode">
-            <label><input type="radio" name="promoProviderMode_${esc(code)}" value="ALL" ${mode!=='SELECTED'?'checked':''}><span><i class="bi bi-collection-play"></i> All Games</span></label>
-            <label><input type="radio" name="promoProviderMode_${esc(code)}" value="SELECTED" ${mode==='SELECTED'?'checked':''}><span><i class="bi bi-check2-square"></i> Selected Games</span></label>
+          <div class="promo-provider-rule-actions">
+            <div class="category-provider-mode-switch promo-provider-mode" role="radiogroup" aria-label="Allowed games mode">
+              <label class="promo-provider-mode-opt"><input type="radio" name="promoProviderMode_${esc(code)}" value="ALL" ${mode!=='SELECTED'?'checked':''}><span><i class="bi bi-collection-play"></i> All Games</span></label>
+              <label class="promo-provider-mode-opt"><input type="radio" name="promoProviderMode_${esc(code)}" value="SELECTED" ${mode==='SELECTED'?'checked':''}><span><i class="bi bi-check2-square"></i> Selected Games</span></label>
+            </div>
+            <button type="button" class="promo-provider-rule-remove" data-unpick="${esc(code)}" title="Remove ${esc(promoGameProviderName(provider)||code)}" aria-label="Remove ${esc(promoGameProviderName(provider)||code)}"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
           </div>
         </div>
         <div class="category-provider-assignment" ${mode==='SELECTED'?'':'hidden'}>
@@ -173,7 +303,7 @@
           </div>
         </div>
       </section>`;
-    }).join('')||'<div class="category-provider-empty-state"><i class="bi bi-controller"></i><b>No provider restriction selected</b><small>This promotion is allowed for all games/providers.</small></div>';
+    }).join('')||'<div class="category-provider-empty-state promo-provider-empty-state"><i class="bi bi-controller"></i><b>No provider restriction</b><small>This promotion is allowed for all games and providers.</small></div>';
   }
   function syncAllowedGamesField(){
     const field=$('promoAllowedGames');
@@ -189,6 +319,17 @@
     updatePromoAllowedSummary();
     return field.value;
   }
+  function updatePromoProviderCount(){
+    const root=$('promoGameAccessConfig');
+    const countEl=root?.querySelector('#promoProviderCount');
+    if(!root)return;
+    const codes=selectedPromotionProviderCodes();
+    const n=codes.length;
+    if(countEl){
+      countEl.textContent=n?`${n} in roster`:'Open to all';
+      countEl.classList.toggle('has-selection',n>0);
+    }
+  }
   function updatePromoAllowedSummary(){
     const root=$('promoGameAccessConfig');
     const summary=root?.querySelector('.promo-game-access-summary');
@@ -199,6 +340,15 @@
     let text=!rules.length&&!promoLegacyAllowedTokens.length?'All games/providers allowed':`${allProviders} provider(s) all games · ${selectedGames} individually selected game(s)`;
     if(promoLegacyAllowedTokens.length) text+=` · ${promoLegacyAllowedTokens.length} legacy rule(s) preserved`;
     summary.innerHTML=`<i class="bi bi-shield-check"></i><span>${esc(text)}</span>`;
+    updatePromoProviderCount();
+  }
+  function filterPromoProviderChoices(query){
+    const root=$('promoGameAccessConfig');
+    const q=String(query||'').trim().toLowerCase();
+    root?.querySelectorAll('.promo-provider-choice').forEach(label=>{
+      const hay=String(label.getAttribute('data-search')||'').toLowerCase();
+      label.hidden=!!q&&!hay.includes(q);
+    });
   }
   function applyAllowedGamesToSelector(value){
     const root=$('promoGameAccessConfig');
@@ -237,11 +387,38 @@
   function renderPromoGameAccessShell(){
     const root=$('promoGameAccessConfig');
     if(!root)return;
-    root.innerHTML=`<div class="promo-game-access-summary"><i class="bi bi-shield-check"></i><span>All games/providers allowed</span></div>
-      <div class="promo-game-access-section-title"><b>Select Provider</b><small>Choose one or more providers to restrict this promotion.</small></div>
-      <div class="category-provider-selector promo-provider-selector">${promoProviders.map(p=>{const code=promoGameProviderCode(p);return `<label class="category-provider-choice promo-provider-choice" role="button"><input type="checkbox" value="${esc(code)}"><span class="category-provider-choice-name">${esc(promoGameProviderName(p)||code)}</span></label>`;}).join('')||'<small class="text-muted">No active provider available.</small>'}</div>
-      <div class="category-provider-rules promo-provider-rules"></div>`;
+    const gameCountByProvider=new Map();
+    promoGames.forEach(g=>{
+      const code=promoGameProviderCode(g);
+      if(!code)return;
+      gameCountByProvider.set(code,(gameCountByProvider.get(code)||0)+1);
+    });
+    const choices=promoProviders.map(p=>{
+      const code=promoGameProviderCode(p);
+      const name=promoGameProviderName(p)||code;
+      const n=gameCountByProvider.get(code)||0;
+      return `<label class="category-provider-choice promo-provider-choice" role="button" data-search="${esc((name+' '+code).toLowerCase())}"><input type="checkbox" value="${esc(code)}"><span class="promo-provider-check" aria-hidden="true"></span><span class="promo-provider-choice-text"><span class="category-provider-choice-name">${esc(name)}</span><small class="promo-provider-choice-meta">${n} games</small></span></label>`;
+    }).join('')||'<small class="promo-provider-empty">No active provider available.</small>';
+    root.innerHTML=`<section class="promo-provider-block">
+        <div class="promo-provider-toolbar">
+          <div class="promo-game-access-section-title"><b>Select Provider</b><small>Pick providers to restrict this promotion. Leave empty to allow every provider.</small></div>
+          <div class="promo-provider-tools">
+            <label class="promo-provider-search"><i class="bi bi-search" aria-hidden="true"></i><input id="promoProviderSearch" type="search" placeholder="Search providers…" autocomplete="off" spellcheck="false"></label>
+            <span class="promo-provider-count" id="promoProviderCount">Open to all</span>
+          </div>
+        </div>
+        <div class="promo-game-access-summary"><i class="bi bi-shield-check"></i><span>All games/providers allowed</span></div>
+        <div class="promo-provider-catalog">
+          <div class="promo-provider-catalog-label">Catalog</div>
+          <div class="category-provider-selector promo-provider-selector">${choices}</div>
+        </div>
+      </section>
+      <div class="promo-provider-rules-wrap">
+        <div class="promo-provider-rules-label">Access rules</div>
+        <div class="category-provider-rules promo-provider-rules"></div>
+      </div>`;
     rebuildPromoProviderCards(new Map());
+    updatePromoProviderCount();
   }
   async function loadPromotionGameConfig(){
     const root=$('promoGameAccessConfig');
@@ -385,6 +562,14 @@
     setSelectExact('promoSingleLeft', source.singleLeft, 0);
   }
 
+  async function ensurePromoRowsForLayout(){
+    if(rows.length) return;
+    try{
+      const j=await req(promoApi('PROMOTION_LIST')+'?_='+Date.now());
+      rows=(Array.isArray(j.data)?j.data:[]).map(normalizePromotion);
+    }catch(_){}
+  }
+
   function clampSpanSelects(){
     const dc=Number(val('promoDesktopColumns')||2), mc=Number(val('promoMobileColumns')||1);
     const ds=$('promoDesktopSpan'), ms=$('promoMobileSpan');
@@ -416,6 +601,7 @@
   }
 
   function reset(){
+    if(!form) return;
     form.reset();
     resetPromoGameAccess();
     $('promoId').value='';
@@ -435,10 +621,10 @@
     if($('promoWithdrawalRestriction')) $('promoWithdrawalRestriction').value='NONE';
     updatePolicyVisibility();
     setDetailEditorContent('');
-    $('promoFormTitle').textContent='Create Promotion';
-    set('','');
+    syncEditChrome('Create Promotion','Configure display, bonus rules, and claim policy.',false);
     refreshVisibleSelects(form);
-    window.scrollTo({top:0,behavior:'smooth'});
+    set('','');
+    if(!isEditPage) window.scrollTo({top:0,behavior:'smooth'});
   }
 
   function fill(raw){
@@ -485,10 +671,10 @@
     $('promoStatus').value=String(x.status??1);
     const dt=v=>v?String(v).slice(0,16):''; $('promoStartAt').value=dt(x.startAt); $('promoEndAt').value=dt(x.endAt); $('promoClaimStartAt').value=dt(x.claimStartAt); $('promoClaimEndAt').value=dt(x.claimEndAt); $('promoCompletionDeadlineMode').value=x.completionDeadlineMode||'NO_EXPIRY'; $('promoCompletionDays').value=x.completionDays??''; $('promoCompletionFixedAt').value=dt(x.completionFixedAt); $('promoRebatePolicy').value=x.rebatePolicy||'DISABLED'; $('promoRebateStartCondition').value=x.rebateStartCondition||'PROMOTION_COMPLETED'; $('promoEligibleBalanceType').value=x.eligibleBalanceType||'MAIN_PLUS_BONUS'; $('promoEligibleBalanceThreshold').value=x.eligibleBalanceThreshold??''; $('promoNewDepositRequired').value=String(x.newDepositRequired??0); $('promoCanClaimRebate').value=x.canClaimRebate||'AFTER_PROMOTION_COMPLETED'; $('promoCompletionMode').value=x.completionMode||'AUTO_COMPLETE'; $('promoRewardClaimMode').value=x.rewardClaimMode||'NO_ADDITIONAL_CLAIM'; $('promoWalletConsumptionPriority').value=x.walletConsumptionPriority||'BONUS_FIRST'; $('promoWinAllocationRule').value=x.winAllocationRule||'RETURN_TO_STAKE_SOURCE'; $('promoWithdrawalRestriction').value=x.withdrawalRestriction||'NONE'; $('promoExcessBalanceAction').value=x.excessBalanceAction||'KEEP_LOCKED';
     updatePolicyVisibility();
-    $('promoFormTitle').textContent='Edit Promotion #'+x.id;
-    refreshVisibleSelects(form);
-    set('Editing promotion. Save to update.','success');
-    window.scrollTo({top:0,behavior:'smooth'});
+    syncEditChrome('Edit Promotion #'+x.id,'Update rules, placement, and claim policy for this bonus.',true);
+    if(form) refreshVisibleSelects(form);
+    set(isEditPage?'':'Editing promotion. Save to update.', isEditPage?'':'success');
+    if(!isEditPage) window.scrollTo({top:0,behavior:'smooth'});
   }
 
   function filteredRows(){
@@ -511,70 +697,114 @@
   }
 
   function render(){
+    if(!list) return;
     const filtered=filteredRows();
-    const pageSize=Number(($('promoPageSize')&&$('promoPageSize').value)||20);
+    syncAutofitMode();
+    const pageSize=resolvePageSize($('promoPageSize')?.value);
     const pages=Math.ceil(filtered.length/pageSize); if(pages===0)promoPage=0; else promoPage=Math.min(promoPage,pages-1);
     const start=promoPage*pageSize, visible=filtered.slice(start,start+pageSize);
-    list.innerHTML=''; empty.hidden=filtered.length>0;
-    const active=rows.filter(x=>Number(x.status)===1).length;
-    if(totalCount) totalCount.textContent=rows.length;
-    if(activeCount) activeCount.textContent=active;
-    if(activePercent) activePercent.textContent=(rows.length?Math.round(active*100/rows.length):0)+'% of total';
     if(showingText) showingText.textContent=`Showing ${filtered.length?start+1:0} to ${Math.min(start+pageSize,filtered.length)} of ${filtered.length} entries`;
-    visible.forEach(x=>{
-      const d=document.createElement('div'); d.className='promotion-table-row';
-      const category=x.bonusCategoryTitleName||categoryName(x.bonusCategoryTitleId)||'No Category';
-      const desc=(x.description||x.detailText||'').replace(/<[^>]*>/g,'').slice(0,120);
-      d.innerHTML=`
-        <div class="promotion-main-cell">
-          <div class="promotion-thumb">${x.bonusImageUrl?`<img src="${esc(x.bonusImageUrl)}" alt="${esc(x.name||'Promotion')}">`:'<i class="bi bi-image"></i>'}</div>
-          <div class="promotion-copy"><b>${esc(x.name||'-')}</b><small>${esc(x.promotionCode||('PROMO-'+x.id))} <span>•</span> ${esc(category)} <span>•</span> Order: ${esc(x.displayOrder??0)}</small><p>${esc(desc||x.ruleText||'No description')}</p></div>
-        </div>
-        <div class="promotion-detail-cell"><span class="promo-chip">${esc(x.claimCondition||'MANUAL')}</span><span class="promo-chip">${esc(x.bonusType||'FIXED')}</span><small>Rebate: ${esc((x.rebatePolicy||'DISABLED').replaceAll('_',' '))}</small></div>
-        <div class="promotion-status-cell"><span class="slider-pill ${Number(x.status)===1?'active':'inactive'}"><i class="bi ${Number(x.status)===1?'bi-check-circle':'bi-pause-circle'}"></i>${Number(x.status)===1?'Active':'Inactive'}</span></div>
-        <div class="promotion-action-cell"><button class="icon-action-btn" title="Clone" aria-label="Clone" data-clone="${x.id}"><i class="bi bi-copy"></i></button><button class="icon-action-btn edit edit-btn" title="Edit" aria-label="Edit" data-edit="${x.id}"><i class="bi bi-pencil-square"></i></button><button class="icon-action-btn delete btn-delete" title="Delete" aria-label="Delete" data-del="${x.id}"><i class="bi bi-trash"></i></button></div>`;
-      list.appendChild(d);
-    });
+    if(!filtered.length){
+      list.innerHTML='<tr><td colspan="4">No promotion found.</td></tr>';
+    }else{
+      list.innerHTML='';
+      visible.forEach(x=>{
+        const tr=document.createElement('tr'); tr.className='promotion-data-row';
+        const category=x.bonusCategoryTitleName||categoryName(x.bonusCategoryTitleId)||'Uncategorized';
+        const code=x.promotionCode||('PROMO-'+x.id);
+        const desc=(x.description||x.detailText||x.ruleText||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
+        const rebateOn=!/DISABLED|NONE|^$/i.test(String(x.rebatePolicy||'DISABLED'));
+        tr.title=desc||'';
+        tr.innerHTML=`
+          <td class="promotion-main-cell">
+            <div class="promotion-main-inner">
+              <div class="promotion-thumb">${x.bonusImageUrl?`<img src="${esc(x.bonusImageUrl)}" alt="">`:'<i class="bi bi-image" aria-hidden="true"></i>'}</div>
+              <div class="promotion-copy">
+                <b class="promo-title">${esc(x.name||'Untitled promotion')}</b>
+                <div class="promo-meta">
+                  <span class="promo-code">${esc(code)}</span>
+                  <span class="promo-cat">${esc(category)}</span>
+                  <span class="promo-order">Order ${esc(x.displayOrder??0)}</span>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="promotion-detail-cell">
+            <span class="promo-chip">${esc(x.claimCondition||'MANUAL')}</span>
+            <span class="promo-chip">${esc(x.bonusType||'FIXED')}</span>
+            <span class="promo-rebate${rebateOn?' is-on':''}">${rebateOn?'Rebate on':'Rebate off'}</span>
+          </td>
+          <td class="promotion-status-cell"><span class="slider-pill ${Number(x.status)===1?'active':'inactive'}"><i class="bi ${Number(x.status)===1?'bi-check-circle':'bi-pause-circle'}" aria-hidden="true"></i>${Number(x.status)===1?'Active':'Inactive'}</span></td>
+          <td class="promotion-action-cell"><a class="icon-action-btn edit edit-btn is-edit" href="${editPageUrl(x.id)}" title="Edit" aria-label="Edit"><i class="bi bi-pencil-square"></i></a><button class="icon-action-btn delete btn-delete is-reject" title="Delete" aria-label="Delete" data-del="${x.id}" type="button"><i class="bi bi-trash"></i></button></td>`;
+        list.appendChild(tr);
+      });
+    }
     const pager=$('promoPager'); if(pager){let h=`<button class="page-btn" ${promoPage<=0?'disabled':''} data-p="${promoPage-1}"><i class="bi bi-chevron-left"></i></button>`;for(let i=Math.max(0,promoPage-2);i<=Math.min(pages-1,promoPage+2);i++)h+=`<button class="page-btn ${i===promoPage?'active':''}" data-p="${i}">${i+1}</button>`;h+=`<button class="page-btn" ${promoPage>=pages-1||!pages?'disabled':''} data-p="${promoPage+1}"><i class="bi bi-chevron-right"></i></button>`;pager.innerHTML=h;}
+    if(isAutoPageSize($('promoPageSize')?.value)){
+      requestAnimationFrame(()=>{
+        shrinkAutofitIfOverflow();
+      });
+    }
   }
 
   async function req(url,opt){opt=opt||{};const u=window.BO_AUTH&&BO_AUTH.user?BO_AUTH.user():{};const actor=u.username||u.displayName||localStorage.getItem('adminUsername')||localStorage.getItem('admin_username')||'ADMIN';opt.headers=Object.assign({},window.BO_AUTH&&BO_AUTH.authHeader?BO_AUTH.authHeader():{}, {'X-Admin-Username':actor,'Cache-Control':'no-cache','Pragma':'no-cache'},opt.headers||{});opt.cache=opt.cache||'no-store';const r=await fetch(url,opt);const j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw new Error(j.message||'Request failed');return j;}
-  async function load(){set('Loading...','');const j=await req(promoApi('PROMOTION_LIST')+'?_='+Date.now());rows=(Array.isArray(j.data)?j.data:[]).map(normalizePromotion);render();set('','');}
+  async function load(){
+    if(!list) return;
+    set('Loading...','');
+    const j=await req(promoApi('PROMOTION_LIST')+'?_='+Date.now());
+    rows=(Array.isArray(j.data)?j.data:[]).map(normalizePromotion);
+    clearLockedAutoSize();
+    render();
+    if(isAutoPageSize($('promoPageSize')?.value)){
+      requestAnimationFrame(()=>{
+        clearLockedAutoSize();
+        render();
+      });
+    }
+    set('','');
+  }
 
-  form.addEventListener('submit',async e=>{
-    e.preventDefault();
-    try{
-      if(!val('promoName'))throw new Error('Name is required');
-      validatePolicy();
-      set('Saving...','');
-      await req(promoApi('PROMOTION_SAVE_FORM'),{method:'POST',body:payload()});
-      set('Saved successfully','success');
-      reset();
-      load();
-    }catch(err){set(err.message,'error');}
-  });
-  $('promoResetBtn').onclick=reset;
-  $('promoRefreshBtn').onclick=load;
-  $('applyPromoFilters').onclick=()=>{promoPage=0;render();};
-  $('resetPromoFilters').onclick=()=>{ if(searchInput)searchInput.value=''; if(categoryFilter)categoryFilter.value=''; if(statusFilter)statusFilter.value=''; if(sortFilter)sortFilter.value='orderAsc'; promoPage=0; render(); };
-  searchInput?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();render();}});
-  list.addEventListener('click',async e=>{
-    const eb=e.target.closest('[data-edit]'),cb=e.target.closest('[data-clone]'),db=e.target.closest('[data-del]');
-    if(eb){
+  async function loadEditDetail(id){
+    set('Loading promotion...','');
+    const detailUrl=promoApi('PROMOTION_DETAIL').replace('{id}',id);
+    const detailResponse=await req(detailUrl+(detailUrl.includes('?')?'&':'?')+'_='+Date.now());
+    const fresh=normalizePromotion(detailResponse.data||{});
+    if(String(fresh.id)!==String(id)) throw new Error('Promotion detail response does not match the selected ID');
+    const required=['bonusCategoryTitleId','desktopColumns','mobileColumns','desktopSpan','mobileSpan'];
+    const missing=required.filter(k=>fresh[k]===null||fresh[k]===undefined||fresh[k]==='');
+    if(missing.length) throw new Error('Exact promotion detail is missing database fields: '+missing.join(', '));
+    fill(fresh);
+    set('','');
+  }
+
+  if(form){
+    form.addEventListener('submit',async e=>{
+      e.preventDefault();
       try{
-        set('Loading exact promotion row from database...','');
-        const detailUrl=promoApi('PROMOTION_DETAIL').replace('{id}',eb.dataset.edit);
-        const detailResponse=await req(detailUrl+(detailUrl.includes('?')?'&':'?')+'_='+Date.now());
-        const fresh=normalizePromotion(detailResponse.data||{});
-        if(String(fresh.id)!==String(eb.dataset.edit)) throw new Error('Promotion detail response does not match the selected ID');
-        const required=['bonusCategoryTitleId','desktopColumns','mobileColumns','desktopSpan','mobileSpan'];
-        const missing=required.filter(k=>fresh[k]===null||fresh[k]===undefined||fresh[k]==='');
-        if(missing.length) throw new Error('Exact promotion detail is missing database fields: '+missing.join(', '));
+        if(!val('promoName'))throw new Error('Name is required');
+        validatePolicy();
+        set('Saving...','');
+        await req(promoApi('PROMOTION_SAVE_FORM'),{method:'POST',body:payload()});
+        if(isEditPage){
+          set('Saved successfully. Returning to list...','success');
+          setTimeout(()=>{ location.href='promotion.html'; },450);
+          return;
+        }
+        set('Saved successfully','success');
         reset();
-        fill(fresh);
-        set('','');
-      }catch(err){set(err.message||'Unable to load promotion','error');}
-    } if(cb&&await BO_DIALOG.confirm('Clone this promotion as an inactive draft?',{title:'Clone Promotion',confirmText:'Clone'})){await req(promoApi('PROMOTION_CLONE').replace('{id}',cb.dataset.clone),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});load();}
+        load();
+      }catch(err){set(err.message,'error');}
+    });
+  }
+  $('promoResetBtn')&&(($('promoResetBtn').onclick=reset));
+  $('promoRefreshBtn')&&(($('promoRefreshBtn').onclick=load));
+  const applyFilters=()=>{promoPage=0;render();};
+  searchInput?.addEventListener('input',applyFilters);
+  categoryFilter?.addEventListener('change',applyFilters);
+  statusFilter?.addEventListener('change',applyFilters);
+  sortFilter?.addEventListener('change',applyFilters);
+  list?.addEventListener('click',async e=>{
+    const db=e.target.closest('[data-del]');
     if(db&&await BO_DIALOG.confirm('Delete this promotion?', {title:'Delete Promotion', confirmText:'Delete'})){await req(promoApi('PROMOTION_DELETE'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:Number(db.dataset.del)})});load();}
   });
 
@@ -585,6 +815,7 @@
       providerInput.closest('.promo-provider-choice')?.classList.toggle('is-selected',providerInput.checked);
       rebuildPromoProviderCards(existing);
       syncAllowedGamesField();
+      updatePromoProviderCount();
       return;
     }
     const modeInput=e.target.closest('.promo-provider-rule input[type="radio"]');
@@ -593,9 +824,44 @@
       const assignment=card?.querySelector('.category-provider-assignment');
       if(assignment)assignment.hidden=modeInput.value!=='SELECTED';
       syncAllowedGamesField();
+      /* Focus/scrollIntoView on the radio can scroll .promo-edit-workspace
+         even when overflow is hidden — that shoves #promoForm off-screen (blank page). */
+      const workspace=document.querySelector('.promo-edit-workspace');
+      if(workspace) workspace.scrollTop=0;
+      if(modeInput.value==='SELECTED'&&assignment){
+        requestAnimationFrame(function(){
+          const form=$('promoForm');
+          const ws=document.querySelector('.promo-edit-workspace');
+          if(ws) ws.scrollTop=0;
+          if(!form)return;
+          const formRect=form.getBoundingClientRect();
+          const head=card?.querySelector('.category-provider-rule-head')||assignment;
+          const targetRect=head.getBoundingClientRect();
+          if(targetRect.top<formRect.top+12||targetRect.top>formRect.bottom-120){
+            const next=form.scrollTop+(targetRect.top-formRect.top)-16;
+            form.scrollTo({top:Math.max(0,next),behavior:'smooth'});
+          }
+          requestAnimationFrame(function(){ if(ws) ws.scrollTop=0; });
+        });
+      }
+    }
+  });
+  $('promoGameAccessConfig')?.addEventListener('input',e=>{
+    if(e.target&&e.target.id==='promoProviderSearch'){
+      filterPromoProviderChoices(e.target.value);
     }
   });
   $('promoGameAccessConfig')?.addEventListener('click',e=>{
+    const unpick=e.target.closest?.('[data-unpick]');
+    if(unpick){
+      const code=String(unpick.getAttribute('data-unpick')||'').toUpperCase();
+      const input=rootInputForProvider(code);
+      if(input){
+        input.checked=false;
+        input.dispatchEvent(new Event('change',{bubbles:true}));
+      }
+      return;
+    }
     const btn=e.target.closest('.category-provider-game-action');
     if(!btn)return;
     const row=btn.closest('.category-provider-game-row'), card=btn.closest('.promo-provider-rule');
@@ -608,6 +874,12 @@
     refreshPromoAssignmentCard(card);
     syncAllowedGamesField();
   });
+
+  function rootInputForProvider(code){
+    const root=$('promoGameAccessConfig');
+    if(!root||!code)return null;
+    return [...root.querySelectorAll('.promo-provider-choice input')].find(inp=>String(inp.value||'').toUpperCase()===code)||null;
+  }
   $('promoGameAccessConfig')?.addEventListener('input',e=>{
     const input=e.target.closest('.category-provider-game-search');
     if(!input)return;
@@ -618,17 +890,55 @@
     list?.querySelectorAll('.category-provider-game-row').forEach(row=>{row.hidden=!!q&&!String(row.dataset.search||'').includes(q);});
   });
 
-  $('promoPageSize')?.addEventListener('change',()=>{promoPage=0;render();});
+  $('promoPageSize')?.addEventListener('change',()=>{
+    clearLockedAutoSize();
+    promoPage=0;
+    render();
+  });
   $('promoPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(!b||b.disabled)return;promoPage=Number(b.dataset.p);render();});
+  let autofitResizeTimer=null;
+  window.addEventListener('resize',()=>{
+    if(!isAutoPageSize($('promoPageSize')?.value)) return;
+    clearTimeout(autofitResizeTimer);
+    autofitResizeTimer=setTimeout(()=>{
+      clearLockedAutoSize();
+      promoPage=0;
+      render();
+    },120);
+  });
   const promoImageInput=$('promoImage');
   if(promoImageInput){ promoImageInput.addEventListener('change',()=>{ const f=promoImageInput.files&&promoImageInput.files[0]; selectedPromoImage=f||null; if(f) showImagePreview(URL.createObjectURL(f)); }); }
-  $('promoBonusCategoryTitleId')?.addEventListener('change',()=>{ applyCategorySectionLayoutForNewItem(); clampSpanSelects(); });
+  $('promoBonusCategoryTitleId')?.addEventListener('change',()=>{ ensurePromoRowsForLayout().then(()=>{ applyCategorySectionLayoutForNewItem(); clampSpanSelects(); }); });
   $('promoDesktopColumns')?.addEventListener('change',clampSpanSelects);
   $('promoMobileColumns')?.addEventListener('change',clampSpanSelects);
   ['promoCompletionDeadlineMode','promoRebatePolicy','promoRebateStartCondition','promoWithdrawalRestriction'].forEach(id=>$(id)?.addEventListener('change',updatePolicyVisibility));
-  updatePolicyVisibility();
-  initDetailEditor();
-  promotionGameConfigReady=loadPromotionGameConfig();
-  loadCategoryTitles().then(()=>load()).catch(e=>set(e.message,'error'));
+  if(form){
+    updatePolicyVisibility();
+    initDetailEditor();
+    promotionGameConfigReady=loadPromotionGameConfig();
+  }
+  /* Workspace must never scroll — focus/scrollIntoView on Selected Games radios
+     was shifting it and leaving a blank cream viewport (form off-screen). */
+  if(isEditPage){
+    const workspace=document.querySelector('.promo-edit-workspace');
+    if(workspace){
+      const lockWs=()=>{ if(workspace.scrollTop) workspace.scrollTop=0; };
+      lockWs();
+      workspace.addEventListener('scroll',lockWs,{passive:true});
+    }
+  }
+  loadCategoryTitles().then(async ()=>{
+    if(isEditPage){
+      const id=queryEditId();
+      if(id){
+        try{ await loadEditDetail(id); }
+        catch(e){ set(e.message||'Unable to load promotion','error'); }
+      }else{
+        reset();
+      }
+      return;
+    }
+    await load();
+  }).catch(e=>set(e.message,'error'));
   loadPromotionVipLevels();
 })();

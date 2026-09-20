@@ -96,6 +96,19 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-content{
   background:#FFF8EB!important;
   backdrop-filter:none;
   -webkit-backdrop-filter:none;
+}
+/* Topbar anatomy (system.md) — Deposit specimen: 64px · pad-y 0 · items centered */
+body.report-body.bo-charcoal{
+  --bo-header-h:64px;
+}
+body.report-body.bo-charcoal .report-topbar{
+  height:var(--bo-header-h)!important;
+  min-height:var(--bo-header-h)!important;
+  max-height:var(--bo-header-h)!important;
+  box-sizing:border-box!important;
+  padding-top:0!important;
+  padding-bottom:0!important;
+  align-items:center!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal{
   /* Dark mode: soft charcoal (not dead black) · Primary #F59E0B */
   --bo-navy:#F5F5F4;

@@ -506,7 +506,7 @@ body.livechat-bo-page .bo-ui-icon-button{all:unset}
 .report-main .bo-filter-row>:has(#categorySortFilter), .report-main .bo-filter-row>select#categorySortFilter{--bo-select-width:157px;}
 .report-main .bo-filter-row>:has(#categoryStatusFilter), .report-main .bo-filter-row>select#categoryStatusFilter{--bo-select-width:125px;}
 .report-main .bo-filter-row>:has(#dashTimezone), .report-main .bo-filter-row>select#dashTimezone{--bo-select-width:169px;}
-.report-main .bo-filter-row>:has(#dbgStatus), .report-main .bo-filter-row>select#dbgStatus{--bo-select-width:119px;}
+.report-main .bo-filter-row>:has(#dbgStatus), .report-main .bo-filter-row>select#dbgStatus{--bo-select-width:150px;}
 .report-main .bo-filter-row>:has(#depositSize), .report-main .bo-filter-row>select#depositSize{--bo-select-width:80px;}
 .report-main .bo-filter-row>:has(#depositStatus), .report-main .bo-filter-row>select#depositStatus{--bo-select-width:150px;}
 .report-main .bo-filter-row>:has(#gameRankSize), .report-main .bo-filter-row>select#gameRankSize{--bo-select-width:80px;}

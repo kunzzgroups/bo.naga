@@ -128,6 +128,20 @@
     return `<div class="dynamic-text-edit"><input type="text" value="${esc(value)}" ${common}><button class="clean-btn primary" type="button" data-dt-save-text data-lang="${esc(langCode)}" data-field="${esc(f.key)}"><i class="bi bi-save"></i> Save Text</button></div>`;
   }
 
+  function imageEditorHtml(f, value, langCode){
+    const preview = value
+      ? `<img src="${esc(value)}" alt="${esc(f.label)}" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('span'),{textContent:'No image'}))">`
+      : '<span>No image</span>';
+    return `<div class="dynamic-image-edit">` +
+      `<div class="dynamic-image-preview">${preview}</div>` +
+      `<label class="dynamic-file-pick">` +
+        `<input type="file" accept="image/*" data-dt-file data-lang="${esc(langCode)}" data-field="${esc(f.key)}">` +
+        `<span class="dynamic-file-pick-ui" aria-hidden="true"><i class="bi bi-folder2-open"></i><em data-dt-file-label>Choose file</em></span>` +
+      `</label>` +
+      `<button class="clean-btn primary" type="button" data-dt-save-image data-lang="${esc(langCode)}" data-field="${esc(f.key)}"><i class="bi bi-upload"></i> Save Image</button>` +
+    `</div>`;
+  }
+
   async function render(ctx){
     const refId = ctx.idInput.value;
     const panel = ensurePanel(ctx.form);
@@ -152,7 +166,7 @@
         const data = translations[lang.code] || {};
         return `<div class="dynamic-lang-card"><div class="dynamic-lang-title"><b>${esc(lang.name)}</b><span class="dynamic-lang-code">${esc(lang.code)}</span></div>${fields.map(f=>{
           const value = f.type === 'image' ? (data[f.key+'Url'] || data[f.key] || '') : (data[f.key] || '');
-          return `<div class="dynamic-field-row"><label>${esc(f.label)}</label>${f.type === 'image' ? `<div class="dynamic-image-edit"><input type="file" accept="image/*" data-dt-file data-lang="${esc(lang.code)}" data-field="${esc(f.key)}"><div class="dynamic-image-preview">${value ? `<img src="${esc(value)}" alt="${esc(f.label)}">` : '<span>No image</span>'}</div><button class="clean-btn primary" type="button" data-dt-save-image data-lang="${esc(lang.code)}" data-field="${esc(f.key)}"><i class="bi bi-upload"></i> Save Image</button></div>` : textEditorHtml(f,value,lang.code)}</div>`;
+          return `<div class="dynamic-field-row"><label>${esc(f.label)}</label>${f.type === 'image' ? imageEditorHtml(f, value, lang.code) : textEditorHtml(f,value,lang.code)}</div>`;
         }).join('')}</div>`;
       }).join('');
     }catch(e){
@@ -182,10 +196,16 @@
     const field = input.dataset.field;
     const row = input.closest('.dynamic-image-edit');
     const preview = row ? row.querySelector('.dynamic-image-preview') : null;
+    const label = row ? row.querySelector('[data-dt-file-label]') : null;
     const file = input.files && input.files[0];
+    if(label){
+      label.textContent = file ? file.name : 'Choose file';
+      label.title = file ? file.name : '';
+    }
     if(!preview || !file) return;
     if(!file.type || !file.type.startsWith('image/')){
       input.value = '';
+      if(label){ label.textContent = 'Choose file'; label.removeAttribute('title'); }
       alert('Please choose image file only.');
       return;
     }

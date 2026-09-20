@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Rebate Detail</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+<link href="assets/css/reports.css?v=1.0.57" rel="stylesheet"/>
+<link href="assets/css/rebate-pages.css?v=1.0.16" rel="stylesheet"/>
+<link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
+<link href="assets/css/bo-ui-standard.css?v=1.0.6" rel="stylesheet"/>
+<link href="assets/css/bo-targeted-fixes.css?v=1.0.2" rel="stylesheet"/>
+<link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet"/>
+<link href="assets/css/bo-charcoal-shell.css?v=1.0.8" rel="stylesheet"/>
+<link href="assets/css/bo-charcoal-legacy.css?v=1.1.29" rel="stylesheet"/>
+<link href="assets/css/bo-charcoal-primitives.css?v=1.0.3" rel="stylesheet"/>
+<link href="assets/css/bo-charcoal-cms.css?v=1.0.30" rel="stylesheet"/>
+<link href="assets/css/bo-input-fill.css?v=1.0.1" rel="stylesheet"/>
+<script>
+(function(){
+  try{
+    if(localStorage.getItem('bo_theme')==='dark') document.documentElement.setAttribute('data-bo-theme','dark');
+  }catch(e){}
+})();
+</script>
+</head>
+<body class="report-body rebate-page manual-rebate-detail-page bo-charcoal bo-account-chip">
+<div class="report-shell">
+<aside class="report-sidebar" id="reportSidebar">
+<div class="report-brand"><div>Backoffice<br/><small>Admin Panel</small></div>
+<button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button>
+</div>
+<nav class="report-nav"></nav>
+</aside>
+<div class="sidebar-overlay" data-close-sidebar id="reportOverlay"></div>
+<main class="report-main">
+<header class="report-topbar">
+<button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button>
+<div class="user-title-wrap">
+<div class="user-title-icon"><i class="bi bi-list-columns-reverse"></i></div>
+<div>
+<h1 id="detailPageTitle">Rebate Detail</h1>
+</div>
+</div>
+<div class="report-actions">
+<button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
+<i class="bi bi-sun-fill" data-theme-icon="sun"></i>
+<i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
+</button>
+<div data-bo-profile></div>
+</div>
+</header>
+<section class="report-content">
+<div class="standard-list-card mra-detail-card">
+<div class="mra-detail-toolbar">
+<div class="mra-detail-range">
+<div class="field">
+<label>From</label>
+<input id="detailFrom" type="date"/>
+</div>
+<div class="field">
+<label>To</label>
+<input id="detailTo" type="date"/>
+</div>
+</div>
+<a class="clean-btn" id="detailBack" href="manual-rebate-approval.html"><i class="bi bi-arrow-left"></i> Back to Approval</a>
+</div>
+<div class="mra-detail-table-shell">
+<div class="mra-detail-table-head" id="detailTableHead">
+<table class="standard-data-table mra-detail-table">
+<colgroup>
+<col style="width:14%"/>
+<col style="width:10%"/>
+<col style="width:14%"/>
+<col style="width:8%"/>
+<col style="width:12%"/>
+<col style="width:16%"/>
+<col style="width:26%"/>
+</colgroup>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Category</th>
+<th class="num">Eligible Turnover</th>
+<th class="num">Rate</th>
+<th class="num">Rebate</th>
+<th>Status</th>
+<th>Reference</th>
+</tr>
+</thead>
+</table>
+</div>
+<div class="standard-table-wrap mra-detail-table-wrap" id="detailTableBody">
+<table class="standard-data-table mra-detail-table">
+<colgroup>
+<col style="width:14%"/>
+<col style="width:10%"/>
+<col style="width:14%"/>
+<col style="width:8%"/>
+<col style="width:12%"/>
+<col style="width:16%"/>
+<col style="width:26%"/>
+</colgroup>
+<tbody id="detailRows">
+<tr><td class="table-empty" colspan="7">Loading...</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="table-footer standard-pagination mra-table-footer">
+<div class="table-info" id="detailShowing">Showing 0 entries</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+
+<script src="assets/js/config.js?v=1.0.40"></script>
+<script src="assets/js/brand-context.js?v=1.0.4"></script>
+<script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
+<script src="assets/js/currency-runtime.js?v=1.0.1"></script>
+<script src="assets/js/reports.js?v=1.0.29"></script>
+<script src="assets/js/auth.js?v=1.0.69"></script>
+<script src="assets/js/dialog.js?v=1.0.0"></script>
+<script src="assets/js/bo-date-range.js?v=1.0.16"></script>
+<script src="assets/js/manual-rebate-detail.js?v=1.0.4"></script>
+<script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
+<script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="assets/js/firebase-config.js?v=1.0.0"></script>
+<script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
+<script src="assets/js/bo-theme.js?v=1.0.0"></script>
+<script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
+</body>
+</html>
