@@ -384,7 +384,15 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 
     function brandScopedHeaders(extra) {
         const headers = Object.assign({}, (window.BO_AUTH && BO_AUTH.authHeader ? BO_AUTH.authHeader() : {}), extra || {});
-        const id = Number((window.BO_BRAND && BO_BRAND.activeId ? BO_BRAND.activeId() : localStorage.getItem('bo_active_brand_id')) || 1) || 1;
+        // Tenant/Brand Owner accounts are permanently scoped to their own brand. Never let a
+        // stale bo_active_brand_id from a previous MAIN/ROOT session decide where CSS is saved.
+        // Platform accounts may still use the explicitly selected active brand.
+        const user = (window.BO_AUTH && BO_AUTH.user ? BO_AUTH.user() : {}) || {};
+        const roleType = String(user.roleType || '').toUpperCase();
+        const platform = user.rootAdmin === true || Number(user.rootAdmin) === 1 || user.masterAdmin === true || Number(user.masterAdmin) === 1 || roleType === 'ROOT' || roleType === 'MASTER' || roleType === 'MAIN';
+        const tenantId = Number(user.brandId || user.adminBrandId || 0);
+        const activeId = Number((window.BO_BRAND && BO_BRAND.activeId ? BO_BRAND.activeId() : localStorage.getItem('bo_active_brand_id')) || 1) || 1;
+        const id = !platform && tenantId > 0 ? tenantId : activeId;
         headers['X-Brand-Id'] = String(id);
         return headers;
     }
