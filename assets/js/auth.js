@@ -108,6 +108,7 @@
     if(p==='provider-detail.html') return 'main-accounting-report.html';
     if(p==='slider-edit.html') return 'slider.html';
     if(p==='promotion-edit.html') return 'promotion.html';
+    if(p==='vip-level-edit.html') return 'vip-management.html';
     // Gateway Transactions is a drill-down of Payment Gateway and uses the same DB menu permission.
     if(p==='payment-gateway-transactions.html') return 'payment-gateway.html';
     if(p==='manual-rebate-detail.html') return 'manual-rebate-approval.html';
@@ -251,6 +252,8 @@
       if(current === 'slider-edit.html') current = 'slider.html';
       // Promotion create/edit is a drill-down of Promotion Bonus listing.
       if(current === 'promotion-edit.html') current = 'promotion.html';
+      // VIP Level create/edit is a drill-down of VIP Management.
+      if(current === 'vip-level-edit.html') current = 'vip-management.html';
       // Bonus Category Item is a drill-down of Bonus Category Title (Manage Items).
       if(current === 'bonus-category-item.html') current = 'bonus-category-title.html';
       // Transaction history is intentionally a separate page, but it inherits the
