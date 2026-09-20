@@ -163,8 +163,7 @@
       'Identity, type, claim trigger, VIP access and frontend status.',
       [
         'promoName', 'promoCode', 'promoBonusType', 'promoClaimCondition',
-        'promoStatus', 'promoWallet', 'promoDisplayAmount', 'promoDisplayOrder',
-        'promoClaimableVipTiers'
+        'promoStatus', 'promoWallet', 'promoDisplayAmount', 'promoDisplayOrder'
       ],
       'Basic'
     ));
@@ -219,9 +218,8 @@
       'promo-sec-rebate',
       'Rebate Policy',
       'bi-percent',
-      'Rebate eligibility while this promotion is active.',
+      'Control whether members under this promotion are eligible for rebate and when eligibility begins.',
       [
-        'promoEligibleForDailyRebate',
         'promoRebatePolicy', 'promoRebateStartCondition', 'promoEligibleBalanceType',
         'promoEligibleBalanceThreshold', 'promoNewDepositRequired', 'promoCanClaimRebate'
       ],
@@ -241,27 +239,40 @@
       'promo-sec-content',
       'Terms & Frontend Content',
       'bi-card-text',
-      'Internal notes, member-facing terms and popup content.',
+      'Member-facing copy for the promotion modal, plus language translations.',
       ['promoDescription', 'promoDetailEditor'],
       'Content'
     ));
 
+    // Dock Language Translation inside Content so it reads as one composition.
+    (function dockTranslationHost() {
+      var content = container.querySelector('#promo-sec-content .promo-standard-section-grid');
+      if (!content || content.querySelector('[data-translation-panel-host]')) return;
+      var hostField = document.createElement('div');
+      hostField.className = 'field full promo-translation-host-field';
+      hostField.innerHTML =
+        '<div class="promo-content-split-label" aria-hidden="true">' +
+          '<i class="bi bi-translate"></i><span>Translations</span>' +
+        '</div>' +
+        '<div data-translation-panel-host class="promo-translation-host"></div>';
+      content.appendChild(hostField);
+    })();
+
     var remaining = Array.from(originalGrid.children).filter(function (node) {
       return node.classList && node.classList.contains('field');
     });
-    if (remaining.length) {
-      var extra = section(
-        'promo-sec-extra',
-        'Additional Configuration',
-        'bi-journal-check',
-        'Supporting calculation and administrative information.',
-        [],
-        'More'
-      );
-      var extraGrid = extra.querySelector('.promo-standard-section-grid');
-      remaining.forEach(function (node) { extraGrid.appendChild(node); });
-      container.insertBefore(extra, container.lastElementChild);
-    }
+    // Claimable VIP + Daily Rebate eligibility historically lived with the Deposit/Winover note.
+    var extra = section(
+      'promo-sec-extra',
+      'Additional Configuration',
+      'bi-journal-check',
+      'VIP access, daily-rebate eligibility and supporting calculation notes.',
+      ['promoClaimableVipTiers', 'promoEligibleForDailyRebate'],
+      'More'
+    );
+    var extraGrid = extra.querySelector('.promo-standard-section-grid');
+    remaining.forEach(function (node) { extraGrid.appendChild(node); });
+    container.insertBefore(extra, container.lastElementChild);
 
     originalGrid.replaceWith(container);
 

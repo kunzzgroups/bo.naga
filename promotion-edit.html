@@ -19,7 +19,7 @@
 <link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet"/>
 <link href="assets/css/bo-charcoal-cms.css?v=1.0.50" rel="stylesheet"/>
 <link href="assets/css/bo-input-fill.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/promotion-edit.css?v=1.0.31" rel="stylesheet"/>
+<link href="assets/css/promotion-edit.css?v=1.0.46" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -65,7 +65,10 @@
 </div>
 <div class="field full"><label>Promotion /
                                             Bonus Image</label>
+<label class="promo-file-pick">
 <input accept="image/png,image/jpeg,image/webp,image/gif" id="promoImage" type="file" data-translation-key="bonusImage" data-translation-type="image" data-translation-label="Promotion / Bonus Image"/>
+<span class="promo-file-pick-ui" aria-hidden="true"><i class="bi bi-image"></i><em data-promo-file-label>Choose image</em></span>
+</label>
 <div class="promo-image-preview-wrap"><img class="promo-image-preview" hidden="" id="promoImagePreview"/><span class="promo-help" id="promoImageCurrent"></span></div>
 </div>
 <div class="field full"><label>Item Name
@@ -183,19 +186,19 @@
                                                     already claimed
                                                     promotions.</small></div></div></div>
 <div class="field"><label>Display
-                                            Start</label><input id="promoStartAt" type="datetime-local"/><div class="promo-help">Optional.
+                                            Start</label><div class="rebate-dt-shell"><button type="button" class="rebate-dt-trigger" data-dt-for="promoStartAt" aria-label="Select display start"><span class="rebate-dt-text is-empty">Select date &amp; time</span><i class="bi bi-calendar3" aria-hidden="true"></i></button><input id="promoStartAt" class="rebate-dt-native" type="datetime-local" lang="en" tabindex="-1"/></div><div class="promo-help">Optional.
                                             Frontend can display from this
                                             date.</div></div>
 <div class="field"><label>Display
-                                            End</label><input id="promoEndAt" type="datetime-local"/><div class="promo-help">Optional.
+                                            End</label><div class="rebate-dt-shell"><button type="button" class="rebate-dt-trigger" data-dt-for="promoEndAt" aria-label="Select display end"><span class="rebate-dt-text is-empty">Select date &amp; time</span><i class="bi bi-calendar3" aria-hidden="true"></i></button><input id="promoEndAt" class="rebate-dt-native" type="datetime-local" lang="en" tabindex="-1"/></div><div class="promo-help">Optional.
                                             Frontend stops showing after this
                                             date.</div></div>
 <div class="field"><label>Claim
-                                            Start</label><input id="promoClaimStartAt" type="datetime-local"/><div class="promo-help">Optional. Members
+                                            Start</label><div class="rebate-dt-shell"><button type="button" class="rebate-dt-trigger" data-dt-for="promoClaimStartAt" aria-label="Select claim start"><span class="rebate-dt-text is-empty">Select date &amp; time</span><i class="bi bi-calendar3" aria-hidden="true"></i></button><input id="promoClaimStartAt" class="rebate-dt-native" type="datetime-local" lang="en" tabindex="-1"/></div><div class="promo-help">Optional. Members
                                             cannot claim before this
                                             date.</div></div>
 <div class="field"><label>Claim
-                                            End</label><input id="promoClaimEndAt" type="datetime-local"/><div class="promo-help">Optional. New
+                                            End</label><div class="rebate-dt-shell"><button type="button" class="rebate-dt-trigger" data-dt-for="promoClaimEndAt" aria-label="Select claim end"><span class="rebate-dt-text is-empty">Select date &amp; time</span><i class="bi bi-calendar3" aria-hidden="true"></i></button><input id="promoClaimEndAt" class="rebate-dt-native" type="datetime-local" lang="en" tabindex="-1"/></div><div class="promo-help">Optional. New
                                             claims stop after this
                                             date.</div></div>
 <div class="field"><label>Completion
@@ -206,7 +209,7 @@
 <div class="field" data-policy-field="completion-days"><label>Completion
                                             Days</label><input id="promoCompletionDays" min="1" placeholder="e.g. 7" type="number"/></div>
 <div class="field" data-policy-field="completion-fixed"><label>Fixed
-                                            Completion Date</label><input id="promoCompletionFixedAt" type="datetime-local"/></div>
+                                            Completion Date</label><div class="rebate-dt-shell"><button type="button" class="rebate-dt-trigger" data-dt-for="promoCompletionFixedAt" aria-label="Select fixed completion date"><span class="rebate-dt-text is-empty">Select date &amp; time</span><i class="bi bi-calendar3" aria-hidden="true"></i></button><input id="promoCompletionFixedAt" class="rebate-dt-native" type="datetime-local" lang="en" tabindex="-1"/></div></div>
 <div class="field"><label>Completion
                                             Mode</label><select id="promoCompletionMode"><option value="AUTO_COMPLETE">Auto
                                                 Complete</option><option value="MANUAL_REVIEW">Manual
@@ -342,25 +345,35 @@
 </div>
 </div>
 <div class="field full"><label>Description /
-                                            Terms</label><textarea id="promoDescription" data-translation-key="description" data-translation-type="textarea" data-translation-label="Description / Terms" data-translation-rows="6" placeholder="Requirements, terms and conditions shown in TitanXgaming frontend modal" rows="6"></textarea>
+                                            Terms</label><textarea id="promoDescription" data-translation-key="description" data-translation-type="textarea" data-translation-label="Description / Terms" data-translation-rows="6" placeholder="Requirements, terms and conditions shown in the member-facing promotion modal" rows="5"></textarea>
 </div>
 <div class="field full"><label>Popup Detail
                                             Content (WYSIWYG Editor)</label>
 <div class="promo-wysiwyg-wrap">
-<div class="promo-wysiwyg-toolbar" id="promoDetailToolbar"><button data-cmd="bold" type="button"><b>B</b></button><button data-cmd="italic" type="button"><i>I</i></button><button data-cmd="underline" type="button"><u>U</u></button><span class="sep"></span><button data-cmd="formatBlock" data-value="H2" type="button">H2</button><button data-cmd="formatBlock" data-value="H3" type="button">H3</button><button data-cmd="formatBlock" data-value="P" type="button">P</button><span class="sep"></span><button data-cmd="insertUnorderedList" type="button">�?
-                                                    List</button><button data-cmd="insertOrderedList" type="button">1.
-                                                    List</button><button data-cmd="justifyLeft" type="button">Left</button><button data-cmd="justifyCenter" type="button">Center</button><span class="sep"></span><button data-cmd="insertCheck" type="button">�?
-                                                    Row</button><button data-cmd="insertCross" type="button">�?
-                                                    Row</button><button data-cmd="insertHr" type="button">Line</button><button data-cmd="clear" type="button">Clear</button><button data-cmd="toggleHtml" type="button">HTML
-                                                    Mode</button></div>
-<div class="promo-wysiwyg-editor" contenteditable="true" data-placeholder="Type promotion popup content here. Example: title, requirements, terms, VIP rules..." id="promoDetailEditor">
+<div class="promo-wysiwyg-toolbar" id="promoDetailToolbar" role="toolbar" aria-label="Popup content formatting">
+<button data-cmd="bold" type="button" title="Bold"><b>B</b></button>
+<button data-cmd="italic" type="button" title="Italic"><i>I</i></button>
+<button data-cmd="underline" type="button" title="Underline"><u>U</u></button>
+<span class="sep" aria-hidden="true"></span>
+<button data-cmd="formatBlock" data-value="H2" type="button" title="Heading 2">H2</button>
+<button data-cmd="formatBlock" data-value="H3" type="button" title="Heading 3">H3</button>
+<button data-cmd="formatBlock" data-value="P" type="button" title="Paragraph">P</button>
+<span class="sep" aria-hidden="true"></span>
+<button data-cmd="insertUnorderedList" type="button" title="Bullet list"><i class="bi bi-list-ul" aria-hidden="true"></i></button>
+<button data-cmd="insertOrderedList" type="button" title="Numbered list"><i class="bi bi-list-ol" aria-hidden="true"></i></button>
+<button data-cmd="justifyLeft" type="button" title="Align left"><i class="bi bi-text-left" aria-hidden="true"></i></button>
+<button data-cmd="justifyCenter" type="button" title="Align center"><i class="bi bi-text-center" aria-hidden="true"></i></button>
+<span class="sep" aria-hidden="true"></span>
+<button data-cmd="insertCheck" type="button" title="Requirement row">✓ Row</button>
+<button data-cmd="insertCross" type="button" title="Restriction row">✕ Row</button>
+<button data-cmd="insertHr" type="button" title="Horizontal line">Line</button>
+<button data-cmd="clear" type="button" title="Clear content">Clear</button>
+<button data-cmd="toggleHtml" type="button" title="Toggle HTML mode" class="promo-wysiwyg-html-btn">HTML</button>
+</div>
+<div class="promo-wysiwyg-editor" contenteditable="true" data-placeholder="Type promotion popup content here. Example: title, requirements, terms, VIP rules…" id="promoDetailEditor">
 </div>
 </div><textarea class="promo-hidden-source" id="promoDetailText" rows="12" data-translation-key="detailText" data-translation-type="html" data-translation-label="Popup Rich Content" data-translation-rows="10"></textarea>
-<div class="promo-help">Type normally
-                                            like Word. Use �?Row / �?Row for
-                                            requirement
-                                            lines. HTML Mode is optional if you
-                                            want to paste custom HTML.</div>
+<div class="promo-help">Type normally like Word. Use ✓ Row / ✕ Row for requirement lines. HTML mode is optional for pasting custom markup.</div>
 </div>
 </div>
 <div class="upload-status" id="promoStatusBox"></div>
@@ -368,14 +381,6 @@
 </section>
 
 <footer class="promo-edit-footer" id="promoEditFooter">
-<div class="promo-edit-footer-meta">
-<span class="promo-edit-footer-icon" aria-hidden="true"><i class="bi bi-gift"></i></span>
-<div class="promo-edit-footer-copy">
-<strong id="promoFooterTitle">Create Promotion</strong>
-<span id="promoEditNote">Configure display, bonus rules, and claim policy.</span>
-<span class="promo-ready-pill" id="promoReadyPill">Draft</span>
-</div>
-</div>
 <div class="promo-edit-footer-actions">
 <a class="clean-btn mad-btn-ghost" id="promoBackLink" href="promotion.html"><i class="bi bi-arrow-left" aria-hidden="true"></i> Back to list</a>
 <button class="clean-btn mad-btn-ghost" id="promoResetBtn" type="button" form="promoForm"><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Reset</button>
@@ -391,8 +396,8 @@
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
 <script src="assets/js/auth.js?v=1.0.67"></script>
 <script src="assets/js/reports.js?v=1.0.30"></script>
-<script src="assets/js/promotion.js?v=1.0.32"></script>
-<script src="assets/js/promotion-form-sections.js?v=1.0.11"></script>
+<script src="assets/js/promotion.js?v=1.0.36"></script>
+<script src="assets/js/promotion-form-sections.js?v=1.0.15"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>

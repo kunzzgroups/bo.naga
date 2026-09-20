@@ -24,15 +24,8 @@
     // redirects (promotion-edit.html → /promotion-edit) do not drop the param.
     return id!=null && id!=='' ? ('promotion-edit.html#id='+encodeURIComponent(id)) : 'promotion-edit.html';
   }
-  function syncEditChrome(title, note, ready){
+  function syncEditChrome(title){
     if($('promoFormTitle')) $('promoFormTitle').textContent=title;
-    if($('promoFooterTitle')) $('promoFooterTitle').textContent=title;
-    if($('promoEditNote') && note!=null) $('promoEditNote').textContent=note;
-    const pill=$('promoReadyPill');
-    if(pill){
-      pill.textContent=ready?'Editing':'Draft';
-      pill.classList.toggle('is-ready', !!ready);
-    }
     document.title=title+' · Backoffice';
   }
   function queryEditId(){
@@ -176,8 +169,20 @@
   function set(m,t){if(!box)return;box.textContent=m||'';box.className='upload-status '+(t||'');}
   function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
   function money(v){return v==null||v===''?'-':Number(v).toFixed(2)}
+  function syncPromoFileLabel(file){
+    const pick=document.querySelector('#promoForm .promo-file-pick');
+    const label=pick&&pick.querySelector('[data-promo-file-label]');
+    if(!pick||!label) return;
+    if(file&&file.name){
+      label.textContent=file.name;
+      pick.classList.add('has-file');
+    }else{
+      label.textContent='Choose image';
+      pick.classList.remove('has-file');
+    }
+  }
   function showImagePreview(src){ const img=$('promoImagePreview'), cur=$('promoImageCurrent'); if(img&&src){img.src=src;img.hidden=false;} if(cur)cur.textContent=src?'Current/selected image preview':''; }
-  function clearImagePreview(){ selectedPromoImage=null; const input=$('promoImage'); if(input) input.value=''; const img=$('promoImagePreview'); if(img){img.src='';img.hidden=true;} const cur=$('promoImageCurrent'); if(cur)cur.textContent=''; }
+  function clearImagePreview(){ selectedPromoImage=null; const input=$('promoImage'); if(input) input.value=''; syncPromoFileLabel(null); const img=$('promoImagePreview'); if(img){img.src='';img.hidden=true;} const cur=$('promoImageCurrent'); if(cur)cur.textContent=''; }
   function categoryName(id){ const f=categoryTitles.find(x=>String(x.id)===String(id)); return f?f.name:''; }
   function firstDefined(obj, keys){
     for(const key of keys){
@@ -403,7 +408,7 @@
         <div class="promo-provider-toolbar">
           <div class="promo-game-access-section-title"><b>Select Provider</b><small>Pick providers to restrict this promotion. Leave empty to allow every provider.</small></div>
           <div class="promo-provider-tools">
-            <label class="promo-provider-search"><i class="bi bi-search" aria-hidden="true"></i><input id="promoProviderSearch" type="search" placeholder="Search providers…" autocomplete="off" spellcheck="false"></label>
+            <label class="promo-provider-search"><i class="bi bi-search" aria-hidden="true"></i><input id="promoProviderSearch" type="search" placeholder="Search providers..." autocomplete="off" spellcheck="false"></label>
             <span class="promo-provider-count" id="promoProviderCount">Open to all</span>
           </div>
         </div>
@@ -617,12 +622,14 @@
     if($('promoEndAt')) $('promoEndAt').value='';
     if($('promoClaimStartAt')) $('promoClaimStartAt').value='';
     if($('promoClaimEndAt')) $('promoClaimEndAt').value='';
+    if($('promoCompletionFixedAt')) $('promoCompletionFixedAt').value='';
     if($('promoCompletionDeadlineMode')) $('promoCompletionDeadlineMode').value='NO_EXPIRY';
     if($('promoWithdrawalRestriction')) $('promoWithdrawalRestriction').value='NONE';
     updatePolicyVisibility();
     setDetailEditorContent('');
     syncEditChrome('Create Promotion','Configure display, bonus rules, and claim policy.',false);
     refreshVisibleSelects(form);
+    if(typeof syncDatetimeFields==='function') syncDatetimeFields();
     set('','');
     if(!isEditPage) window.scrollTo({top:0,behavior:'smooth'});
   }
@@ -673,6 +680,7 @@
     updatePolicyVisibility();
     syncEditChrome('Edit Promotion #'+x.id,'Update rules, placement, and claim policy for this bonus.',true);
     if(form) refreshVisibleSelects(form);
+    if(typeof syncDatetimeFields==='function') syncDatetimeFields();
     set(isEditPage?'':'Editing promotion. Save to update.', isEditPage?'':'success');
     if(!isEditPage) window.scrollTo({top:0,behavior:'smooth'});
   }
@@ -907,7 +915,7 @@
     },120);
   });
   const promoImageInput=$('promoImage');
-  if(promoImageInput){ promoImageInput.addEventListener('change',()=>{ const f=promoImageInput.files&&promoImageInput.files[0]; selectedPromoImage=f||null; if(f) showImagePreview(URL.createObjectURL(f)); }); }
+  if(promoImageInput){ promoImageInput.addEventListener('change',()=>{ const f=promoImageInput.files&&promoImageInput.files[0]; selectedPromoImage=f||null; syncPromoFileLabel(f||null); if(f) showImagePreview(URL.createObjectURL(f)); }); }
   $('promoBonusCategoryTitleId')?.addEventListener('change',()=>{ ensurePromoRowsForLayout().then(()=>{ applyCategorySectionLayoutForNewItem(); clampSpanSelects(); }); });
   $('promoDesktopColumns')?.addEventListener('change',clampSpanSelects);
   $('promoMobileColumns')?.addEventListener('change',clampSpanSelects);
@@ -916,6 +924,318 @@
     updatePolicyVisibility();
     initDetailEditor();
     promotionGameConfigReady=loadPromotionGameConfig();
+  }
+  /* —— MD form datetime popover (.rebate-dt-*) —— */
+  const promoDtIds=['promoStartAt','promoEndAt','promoClaimStartAt','promoClaimEndAt','promoCompletionFixedAt'];
+  function fmtDatetimeLocal(v){
+    const raw=String(v||'').trim();
+    if(!raw) return '';
+    const [datePart,timePart='']=raw.split('T');
+    const bits=datePart.split('-');
+    if(bits.length!==3) return raw.replace('T',' ');
+    return bits[2]+'/'+bits[1]+'/'+bits[0]+(timePart?' '+timePart.slice(0,5):'');
+  }
+  function syncDatetimeField(id){
+    const inputEl=$(id); if(!inputEl) return;
+    const shell=inputEl.closest('.rebate-dt-shell');
+    const text=shell&&shell.querySelector('.rebate-dt-text');
+    if(!text) return;
+    const label=fmtDatetimeLocal(inputEl.value);
+    if(label){ text.textContent=label; text.classList.remove('is-empty'); }
+    else{ text.textContent='Select date & time'; text.classList.add('is-empty'); }
+  }
+  function syncDatetimeFields(){ promoDtIds.forEach(syncDatetimeField); }
+  function closeAllDatetimePops(except){
+    document.querySelectorAll('#promoForm .rebate-dt-pop.show').forEach(pop=>{
+      if(except&&pop===except) return;
+      pop.classList.remove('show');
+      pop.style.top=''; pop.style.left=''; pop.style.bottom='';
+    });
+    document.querySelectorAll('#promoForm .rebate-dt-shell.is-open').forEach(shell=>{
+      if(except&&shell.contains(except)) return;
+      shell.classList.remove('is-open');
+    });
+  }
+  function parseDatetimeLocal(v){
+    const raw=String(v||'').trim();
+    if(!raw) return null;
+    const d=new Date(raw.includes('T')?raw:raw+'T00:00');
+    return isNaN(d.getTime())?null:d;
+  }
+  function toDatetimeLocal(d){
+    if(!d||isNaN(d.getTime())) return '';
+    const pad=n=>String(n).padStart(2,'0');
+    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());
+  }
+  function ensureDatetimePop(shell,inputEl){
+    let pop=shell.querySelector('.rebate-dt-pop');
+    if(pop&&pop.dataset.dtV!=='5'){ pop.remove(); pop=null; }
+    if(pop) return pop;
+    pop=document.createElement('div');
+    pop.className='rebate-dt-pop';
+    pop.dataset.dtV='5';
+    pop.innerHTML=[
+      '<div class="rebate-dt-summary">',
+      '<span class="rebate-dt-summary-text" data-summary>—</span>',
+      '<button type="button" class="rebate-dt-summary-clear" data-clear aria-label="Clear">Clear</button>',
+      '</div>',
+      '<div class="rebate-dt-body">',
+      '<div class="rebate-dt-cal">',
+      '<div class="rebate-dt-cal-head">',
+      '<button type="button" class="rebate-dt-nav" data-nav="-1" aria-label="Previous month"><i class="bi bi-chevron-left"></i></button>',
+      '<button type="button" class="rebate-dt-month" data-month-label></button>',
+      '<button type="button" class="rebate-dt-nav" data-nav="1" aria-label="Next month"><i class="bi bi-chevron-right"></i></button>',
+      '</div>',
+      '<div class="rebate-dt-week"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>',
+      '<div class="rebate-dt-days" data-days></div>',
+      '</div>',
+      '<div class="rebate-dt-time">',
+      '<div class="rebate-dt-step" data-step="hour">',
+      '<span class="rebate-dt-step-label">Hour</span>',
+      '<button type="button" class="rebate-dt-step-btn" data-hour-up aria-label="Hour up"><i class="bi bi-chevron-up"></i></button>',
+      '<button type="button" class="rebate-dt-step-val" data-hour-val title="Click to pick">00</button>',
+      '<button type="button" class="rebate-dt-step-btn" data-hour-down aria-label="Hour down"><i class="bi bi-chevron-down"></i></button>',
+      '</div>',
+      '<div class="rebate-dt-time-colon" aria-hidden="true">:</div>',
+      '<div class="rebate-dt-step" data-step="min">',
+      '<span class="rebate-dt-step-label">Min</span>',
+      '<button type="button" class="rebate-dt-step-btn" data-min-up aria-label="Minute up"><i class="bi bi-chevron-up"></i></button>',
+      '<button type="button" class="rebate-dt-step-val" data-min-val title="Click to pick">00</button>',
+      '<button type="button" class="rebate-dt-step-btn" data-min-down aria-label="Minute down"><i class="bi bi-chevron-down"></i></button>',
+      '</div>',
+      '</div>',
+      '<div class="rebate-dt-pick" data-pick hidden>',
+      '<div class="rebate-dt-pick-bar">',
+      '<button type="button" class="rebate-dt-pick-back" data-pick-back aria-label="Back"><i class="bi bi-chevron-left"></i></button>',
+      '<span class="rebate-dt-pick-title" data-pick-title>Hour</span>',
+      '</div>',
+      '<div class="rebate-dt-pick-quick" data-pick-quick hidden></div>',
+      '<div class="rebate-dt-pick-grid" data-pick-grid></div>',
+      '</div>',
+      '</div>',
+      '<div class="rebate-dt-foot">',
+      '<button type="button" class="rebate-dt-foot-ghost" data-today>Today</button>',
+      '<button type="button" class="rebate-dt-foot-primary" data-done>Done</button>',
+      '</div>'
+    ].join('');
+    shell.appendChild(pop);
+    const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const pad=n=>String(n).padStart(2,'0');
+    let view=new Date();
+    let pickKind=null;
+    const pickEl=pop.querySelector('[data-pick]');
+    const pickGrid=pop.querySelector('[data-pick-grid]');
+    const pickQuick=pop.querySelector('[data-pick-quick]');
+    const pickTitle=pop.querySelector('[data-pick-title]');
+    function selected(){ return parseDatetimeLocal(inputEl.value)||null; }
+    function baseDate(){
+      const sel=selected();
+      if(sel) return new Date(sel);
+      const n=new Date(); n.setSeconds(0,0); return n;
+    }
+    function commit(d){
+      inputEl.value=toDatetimeLocal(d);
+      inputEl.dispatchEvent(new Event('input',{bubbles:true}));
+      inputEl.dispatchEvent(new Event('change',{bubbles:true}));
+      syncDatetimeField(inputEl.id);
+      render();
+    }
+    function nudge(kind,delta){
+      const d=baseDate();
+      if(kind==='hour') d.setHours((d.getHours()+delta+24)%24);
+      else d.setMinutes((d.getMinutes()+delta+60)%60);
+      commit(d);
+    }
+    function closePick(){ pickKind=null; pickEl.hidden=true; pop.classList.remove('is-picking'); }
+    function openPick(kind){
+      pickKind=kind;
+      const cur=baseDate();
+      const active=kind==='hour'?cur.getHours():cur.getMinutes();
+      pickTitle.textContent=kind==='hour'?'Hour':'Minute';
+      pickQuick.hidden=kind!=='min';
+      pickQuick.innerHTML='';
+      if(kind==='min'){
+        [0,15,30,45].forEach(m=>{
+          const b=document.createElement('button');
+          b.type='button';
+          b.className='rebate-dt-pick-chip'+(m===active?' is-selected':'');
+          b.textContent=':'+pad(m);
+          b.addEventListener('click',e=>{ e.preventDefault();e.stopPropagation(); const d=baseDate(); d.setMinutes(m,0,0); commit(d); closePick(); });
+          pickQuick.appendChild(b);
+        });
+      }
+      pickGrid.className='rebate-dt-pick-grid'+(kind==='hour'?' is-hour':' is-min');
+      pickGrid.innerHTML='';
+      const count=kind==='hour'?24:60;
+      for(let i=0;i<count;i++){
+        const b=document.createElement('button');
+        b.type='button';
+        b.className='rebate-dt-pick-opt'+(i===active?' is-selected':'');
+        b.textContent=pad(i);
+        b.addEventListener('click',e=>{
+          e.preventDefault();e.stopPropagation();
+          const d=baseDate();
+          if(kind==='hour') d.setHours(i); else d.setMinutes(i,0,0);
+          commit(d); closePick();
+        });
+        pickGrid.appendChild(b);
+      }
+      pickEl.hidden=false;
+      pop.classList.add('is-picking');
+      const selBtn=pickGrid.querySelector('.is-selected');
+      if(selBtn) requestAnimationFrame(()=>selBtn.scrollIntoView({block:'nearest'}));
+    }
+    function placePop(){
+      pop.classList.remove('is-up');
+      pop.style.bottom='auto';
+      const shellRect=shell.getBoundingClientRect();
+      const popW=Math.min(348, window.innerWidth-36);
+      const popH=300;
+      let left=Math.min(Math.max(12, shellRect.left), window.innerWidth-popW-12);
+      const spaceBelow=window.innerHeight-shellRect.bottom-12;
+      if(spaceBelow<popH && shellRect.top>popH+12){
+        pop.classList.add('is-up');
+        pop.style.top='auto';
+        pop.style.bottom=(window.innerHeight-shellRect.top+6)+'px';
+      }else{
+        pop.style.top=(shellRect.bottom+6)+'px';
+        pop.style.bottom='auto';
+      }
+      pop.style.left=left+'px';
+      pop.style.width=popW+'px';
+    }
+    function render(){
+      const sel=selected();
+      const focus=sel?new Date(sel):view;
+      if(!pop.dataset.viewLocked) view=new Date(focus.getFullYear(),focus.getMonth(),1);
+      pop.querySelector('[data-month-label]').textContent=MONTHS[view.getMonth()]+' '+view.getFullYear();
+      const summary=pop.querySelector('[data-summary]');
+      if(sel){
+        summary.textContent=sel.getDate()+' '+MONTHS[sel.getMonth()]+' '+sel.getFullYear()+' · '+pad(sel.getHours())+':'+pad(sel.getMinutes());
+        summary.classList.remove('is-empty');
+      }else{
+        summary.textContent='Pick a date & time';
+        summary.classList.add('is-empty');
+      }
+      const days=pop.querySelector('[data-days]');
+      days.innerHTML='';
+      const first=new Date(view.getFullYear(),view.getMonth(),1);
+      const offset=first.getDay();
+      const daysInMonth=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();
+      const cellCount=Math.ceil((offset+daysInMonth)/7)*7;
+      const selKey=sel?sel.getFullYear()+'-'+pad(sel.getMonth()+1)+'-'+pad(sel.getDate()):'';
+      const now=new Date();
+      const todayKey=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate());
+      for(let i=0;i<cellCount;i++){
+        const d=new Date(view.getFullYear(),view.getMonth(),i-offset+1);
+        const key=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+        const btn=document.createElement('button');
+        btn.type='button';
+        btn.textContent=String(d.getDate());
+        btn.className='rebate-dt-day'
+          +(d.getMonth()!==view.getMonth()?' is-muted':'')
+          +(key===selKey?' is-selected':'')
+          +(key===todayKey?' is-today':'');
+        btn.addEventListener('click',e=>{
+          e.preventDefault();e.stopPropagation();
+          const base=baseDate();
+          const next=new Date(d.getFullYear(),d.getMonth(),d.getDate(),base.getHours(),base.getMinutes(),0,0);
+          pop.dataset.viewLocked='1';
+          view=new Date(d.getFullYear(),d.getMonth(),1);
+          commit(next);
+        });
+        days.appendChild(btn);
+      }
+      const hour=sel?sel.getHours():baseDate().getHours();
+      const minute=sel?sel.getMinutes():baseDate().getMinutes();
+      pop.querySelector('[data-hour-val]').textContent=pad(hour);
+      pop.querySelector('[data-min-val]').textContent=pad(minute);
+    }
+    if(!pop.dataset.wired){
+      pop.dataset.wired='1';
+      pop.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',e=>{
+        e.preventDefault();e.stopPropagation();
+        pop.dataset.viewLocked='1';
+        view=new Date(view.getFullYear(),view.getMonth()+Number(b.dataset.nav),1);
+        render();
+      }));
+      pop.querySelector('[data-clear]').addEventListener('click',e=>{
+        e.preventDefault();e.stopPropagation();
+        inputEl.value='';
+        inputEl.dispatchEvent(new Event('input',{bubbles:true}));
+        inputEl.dispatchEvent(new Event('change',{bubbles:true}));
+        syncDatetimeField(inputEl.id);
+        delete pop.dataset.viewLocked;
+        closePick(); closeAllDatetimePops();
+      });
+      pop.querySelector('[data-today]').addEventListener('click',e=>{ e.preventDefault();e.stopPropagation(); delete pop.dataset.viewLocked; closePick(); commit(new Date()); });
+      pop.querySelector('[data-done]').addEventListener('click',e=>{ e.preventDefault();e.stopPropagation(); if(!selected()) commit(baseDate()); closePick(); closeAllDatetimePops(); });
+      pop.querySelector('[data-hour-up]').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();nudge('hour',1);});
+      pop.querySelector('[data-hour-down]').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();nudge('hour',-1);});
+      pop.querySelector('[data-min-up]').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();nudge('min',1);});
+      pop.querySelector('[data-min-down]').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();nudge('min',-1);});
+      pop.querySelector('[data-hour-val]').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openPick('hour');});
+      pop.querySelector('[data-min-val]').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openPick('min');});
+      pop.querySelector('[data-pick-back]').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();closePick();});
+      pop.addEventListener('click',e=>e.stopPropagation());
+      pop._closePick=closePick;
+    }
+    pop._render=render;
+    pop._place=placePop;
+    return pop;
+  }
+  function openDatetimePop(inputEl){
+    const shell=inputEl.closest('.rebate-dt-shell');
+    if(!shell) return;
+    const pop=ensureDatetimePop(shell,inputEl);
+    const opening=!pop.classList.contains('show');
+    closeAllDatetimePops(opening?pop:null);
+    if(!opening){ pop.classList.remove('show'); shell.classList.remove('is-open'); if(pop._closePick) pop._closePick(); return; }
+    delete pop.dataset.viewLocked;
+    if(pop._closePick) pop._closePick();
+    pop._render();
+    pop.classList.add('show');
+    shell.classList.add('is-open');
+    pop._place();
+  }
+  function wireDatetimeFields(){
+    if(!form) return;
+    document.querySelectorAll('#promoForm .rebate-dt-trigger').forEach(btn=>{
+      if(btn.dataset.dtWired==='1') return;
+      btn.dataset.dtWired='1';
+      btn.addEventListener('click',e=>{
+        e.preventDefault(); e.stopPropagation();
+        const inputEl=$(btn.getAttribute('data-dt-for'));
+        if(!inputEl) return;
+        openDatetimePop(inputEl);
+      });
+    });
+    promoDtIds.forEach(id=>{
+      const inputEl=$(id); if(!inputEl||inputEl.dataset.dtWired==='1') return;
+      inputEl.dataset.dtWired='1';
+      inputEl.addEventListener('input',()=>syncDatetimeField(id));
+      inputEl.addEventListener('change',()=>syncDatetimeField(id));
+    });
+    if(!document.documentElement.dataset.promoDtDocWired){
+      document.documentElement.dataset.promoDtDocWired='1';
+      document.addEventListener('click',e=>{
+        if(e.target.closest('#promoForm .rebate-dt-shell')) return;
+        closeAllDatetimePops();
+      });
+      document.addEventListener('keydown',e=>{
+        if(e.key!=='Escape') return;
+        const openPop=document.querySelector('#promoForm .rebate-dt-pop.show');
+        if(openPop&&openPop.classList.contains('is-picking')&&openPop._closePick){ openPop._closePick(); return; }
+        closeAllDatetimePops();
+      });
+      window.addEventListener('resize',()=>{
+        document.querySelectorAll('#promoForm .rebate-dt-pop.show').forEach(pop=>{ if(pop._place) pop._place(); });
+      },{passive:true});
+      form.addEventListener('scroll',()=>{
+        document.querySelectorAll('#promoForm .rebate-dt-pop.show').forEach(pop=>{ if(pop._place) pop._place(); });
+      },{passive:true});
+    }
+    syncDatetimeFields();
   }
   /* Workspace must never scroll — focus/scrollIntoView on Selected Games radios
      was shifting it and leaving a blank cream viewport (form off-screen). */
@@ -926,6 +1246,7 @@
       lockWs();
       workspace.addEventListener('scroll',lockWs,{passive:true});
     }
+    wireDatetimeFields();
   }
   loadCategoryTitles().then(async ()=>{
     if(isEditPage){
