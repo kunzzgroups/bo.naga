@@ -47,7 +47,6 @@ function renderInline(){
  $('adInlineContent').hidden=!(hasTitle||hasMessage||hasButton);
  $('adInlinePreview').classList.toggle('ad-preview-image-only',hasImage&&!hasTitle&&!hasMessage&&!hasButton);
  $('adInlinePreview').classList.toggle('ad-preview-with-copy',hasImage&&(hasTitle||hasMessage||hasButton));
- $('adInlineEmpty').hidden=hasImage||hasTitle||hasMessage||hasButton;
  const on=enabled.value==='1';
  $('adInlineStatus').textContent=on?'Enabled':'Disabled';
  $('adInlineStatus').classList.toggle('is-on',on);
