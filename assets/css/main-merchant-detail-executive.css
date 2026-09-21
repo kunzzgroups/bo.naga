@@ -1892,7 +1892,9 @@ html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page
 }
 html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"].mad-editing #madEditWorkspace .mac-footer-actions{
   background:rgba(56,58,70,.96)!important;
-  border-top-color:rgba(255,255,255,.14)!important;
+  /* Same reasoning as the light hairline: the sidebar's account block draws this line at
+     rgba(255,255,255,.08), so the bar matches it and the band closes on ONE line in dark too. */
+  border-top-color:rgba(255,255,255,.08)!important;
 }
 html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page[data-access-page="main_merchant_detail"] #madEditWorkspace .mac-audit-block{
   background:linear-gradient(180deg,rgba(245,158,11,.06) 0%,var(--bo-surface,#383A46) 42%)!important;
@@ -3589,18 +3591,21 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_me
 }
 
 /* Field labels — optional tag was #98A2B3 (:128-135), the required marker #E04F16
-   (:127). The marker is re-pointed at the system danger exactly as the amber admin
-   form does (.mac-label b → var(--bo-danger), #991B1B light / #F87171 dark). */
+   (:127). Both tags are the 11.5px/800 uppercase micro-label family, whose system
+   colour is `var(--bo-muted)` (main-admin-role-create.css:154) — #71717A light /
+   #A1A1AA dark here, not the #57534E this block first used. The marker is re-pointed
+   at the system danger exactly as the amber admin form does (.mac-label b →
+   var(--bo-danger), #991B1B light / #F87171 dark). */
 body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mprr-optional,
 body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mprr-amount-tag{
-  color:#57534E!important;
+  color:#71717A!important;
 }
 body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mprr-label b{
   color:#991B1B!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mprr-optional,
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mprr-amount-tag{
-  color:#D4D4D8!important;
+  color:#A1A1AA!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mprr-label b{
   color:#F87171!important;
@@ -3790,13 +3795,65 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_me
 
 
 /* -----------------------------------------------------------------------------
+   6. Form section card — the create/edit layer ladder, and its field labels
+   The token block in section 1 re-pointed --mprr-* so the card's CONTENT went amber,
+   but `.mprr-card` itself was left reading --mprr-surface (#FFF8EB) — the listing
+   surface, which is also the fill of every control inside it. Card and fields then
+   painted the same cream: the panel stopped lifting, the fields stopped reading as
+   inset wells, and the card lost the amber rail. That is the "flat cream" the locked
+   light rule forbids (DESIGN.md → the ladder is lift #FFFCF7 → well #F5EBDC).
+
+   Values are copied from the merchant family's verified form card,
+   `.mac-section` on main-merchant-create.html (main-merchant-detail-executive.css:2007-2019):
+   #FFFCF7 lift · #DCC9A8 border · 8px radius · warm 0 10px 28px shadow · a 3px
+   #F59E0B→#D97706 rail inset 12px from the top and bottom edges. Dark is already a
+   ladder (--mprr-surface #383A46 card over #2A2C36 wells) and stays as it is, so the
+   rail — a light-mode-only affordance on the reference card — is light-only here too.
+
+   NOT copied from .mac-section: its `overflow:hidden`. The reference can afford it
+   because nothing in it opens a popup; this card holds the house custom selects
+   (reports.js rewrites every select into .rounded-select-wrap) whose menu is an
+   absolutely-positioned 280px panel that would be clipped by the card bounds. The
+   rail does not need `overflow:hidden` — at left:0/top:12px it clears the 8px corner.
+
+   Labels: `.mprr-label` inherited --mprr-muted (#57534E). The design system's field
+   label for this exact component — 11.5px/800 uppercase — is `color:var(--bo-muted)`
+   (main-admin-role-create.css:154), which is #71717A light / #A1A1AA dark on this
+   scope (DESIGN.md → Muted). The "(Optional)" and in-field "GROSS" tags are the same
+   micro-label family and were pinned to #57534E by section 2; they move with it.
+   The required `*` marker stays at the danger pair set in section 2.
+   ----------------------------------------------------------------------------- */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"].main-merchant-profit-record-page .mprr-card{
+  position:relative;
+  background:#FFFCF7!important;
+  border-color:#DCC9A8!important;
+  border-radius:8px!important;
+  box-shadow:0 0 0 1px rgba(120,80,20,.04),0 10px 28px rgba(120,80,20,.10)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_merchant_detail"].main-merchant-profit-record-page .mprr-card::before{
+  content:"";
+  position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;
+  background:linear-gradient(180deg,#F59E0B 0%,#D97706 100%);
+  pointer-events:none;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"].main-merchant-profit-record-page .mprr-label{
+  color:#71717A!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"].main-merchant-profit-record-page .mprr-label{
+  color:#A1A1AA!important;
+}
+
+
+/* -----------------------------------------------------------------------------
    Left alone on purpose:
    · .mprr-chips/.mprr-chip/.mprr-entry-options/.mprr-entry-opt/.mprr-entry-radio/
      .mprr-entry-copy/.mprr-entry-badge/.mprr-info/.mprr-help — the card renders a
      `select#mprrEntryType` instead and main-merchant-profit-record.js never emits these
      nodes, so their navy/cyan rules cannot match this page.
-   · .mprr-card / .mprr-card-head / .mprr-label / .mprr-draft / .mprr-date-wrap > i —
-     all read var(--mprr-*) only, already re-pointed by the token block in section 1.
+   · .mprr-card-head / .mprr-draft / .mprr-date-wrap > i — read var(--mprr-*) only,
+     already re-pointed by the token block in section 1. --mprr-muted (#57534E) stays
+     the footer/draft/icon grey (DESIGN.md → muted/time on cream); only the field-label
+     consumers were lifted to #71717A in section 6, by class rather than by token.
    · .upload-status.success/.error (#087a2f / #b00020 from reports.css) and the
      `.mprr-amount-wrap.is-stopped` orange state #E04F16 — semantic green/red/amber-red
      status hues, not part of the retired navy palette.

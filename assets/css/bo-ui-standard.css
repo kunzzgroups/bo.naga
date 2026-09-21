@@ -763,6 +763,103 @@ body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .
 .report-sidebar .report-brand{flex:0 0 auto}
 .report-sidebar .report-nav{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden}
 .bo-sidebar-account-footer{flex:0 0 auto;padding:10px;border-top:1px solid var(--line,#EADCC8);background:#FFF8EB}
+
+/* ==========================================================================
+   The bottom band — the sidebar account block and the page's sticky action bar
+   ==========================================================================
+
+   Every page with a bottom action bar closes with TWO hairlines: the bar's top border and the
+   sidebar account block's. Both elements end flush with the viewport (bar `bottom:0`, block at
+   the sidebar's end), so if their heights differ their top edges sit at different y and the
+   screen reads as two parallel lines a few px apart instead of one line across the page.
+
+   Measured at 1440×900, light and dark (the heights are theme-independent):
+     .mac-footer-actions   73px   (create/edit family: 14px padding ×2 + the 44px button + 1px)
+     .mprr-footer          65px   (Merchant Profit Record)
+     .mrc-sticky-footer    69px   (Create Role)
+     .pmc-sticky-footer    71px   (Payment Method Create)
+     .mp-footer            60px   (Menu Permission — its own min-height)
+     .vle-footer           68px   (VIP Level Edit)
+   Against blocks of 66-70px, so every one of them was off by 1-8px. Each rule below pins the
+   block to ITS page's bar height; the block keeps its horizontal padding and centres the Logout
+   row inside the pinned height, so a future change to the Logout row cannot break the alignment.
+
+   The hairline is stated once for the whole band: the account block draws
+   rgba(92,74,48,.1) in light / rgba(255,255,255,.08) in dark, and the bars had their own
+   values (#DCC9A8, #EADCC8, var(--bo-line,#E6EDF5), white .1–.14) — aligned but two colours
+   still reads as two lines.
+   -------------------------------------------------------------------------- */
+
+html:not([data-bo-theme="dark"]) body:not(#bo-bottom-band-off) .mac-footer-actions,
+html:not([data-bo-theme="dark"]) body:not(#bo-bottom-band-off) .mprr-footer,
+html:not([data-bo-theme="dark"]) body:not(#bo-bottom-band-off) .mrc-sticky-footer,
+html:not([data-bo-theme="dark"]) body:not(#bo-bottom-band-off) .pmc-sticky-footer,
+html:not([data-bo-theme="dark"]) body:not(#bo-bottom-band-off) .mp-footer,
+html:not([data-bo-theme="dark"]) body:not(#bo-bottom-band-off) .vle-footer{
+  border-top-color:rgba(92,74,48,.1)!important;
+}
+
+/* The band's fill is the owner-specified panel rung #FFFCF7 (the locked sticky-footer value in
+   `.interface-design/system.md`): the bars were a mix of #FFF8EB (`--bo-surface`), #FFFCF7 and a
+   translucent white rgba(255,255,255,.96), so the strip changed tone from page to page. Solid, so
+   the value renders exactly — a translucent fill reads as whatever is underneath. Dark keeps the
+   translucent charcoal. */
+html:not([data-bo-theme="dark"]) body:not(#bo-bottom-band-off) .mac-footer-actions,
+html:not([data-bo-theme="dark"]) body:not(#bo-bottom-band-off) .mprr-footer,
+html:not([data-bo-theme="dark"]) body:not(#bo-bottom-band-off) .mrc-sticky-footer,
+html:not([data-bo-theme="dark"]) body:not(#bo-bottom-band-off) .pmc-sticky-footer,
+html:not([data-bo-theme="dark"]) body:not(#bo-bottom-band-off) .mp-footer,
+html:not([data-bo-theme="dark"]) body:not(#bo-bottom-band-off) .vle-footer{
+  background:#FFFCF7!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-bottom-band-off) .mac-footer-actions,
+html[data-bo-theme="dark"] body:not(#bo-bottom-band-off) .mprr-footer,
+html[data-bo-theme="dark"] body:not(#bo-bottom-band-off) .mrc-sticky-footer,
+html[data-bo-theme="dark"] body:not(#bo-bottom-band-off) .pmc-sticky-footer,
+html[data-bo-theme="dark"] body:not(#bo-bottom-band-off) .mp-footer,
+html[data-bo-theme="dark"] body:not(#bo-bottom-band-off) .vle-footer{
+  background:rgba(56,58,70,.96)!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-bottom-band-off) .mac-footer-actions,
+html[data-bo-theme="dark"] body:not(#bo-bottom-band-off) .mprr-footer,
+html[data-bo-theme="dark"] body:not(#bo-bottom-band-off) .mrc-sticky-footer,
+html[data-bo-theme="dark"] body:not(#bo-bottom-band-off) .pmc-sticky-footer,
+html[data-bo-theme="dark"] body:not(#bo-bottom-band-off) .mp-footer,
+html[data-bo-theme="dark"] body:not(#bo-bottom-band-off) .vle-footer{
+  border-top-color:rgba(255,255,255,.08)!important;
+}
+/* vip-level-edit's own sheet states this hairline with four class-levels, which out-ranks the
+   rule above; the extra `:not()` step (an id level, the same escalation bo-input-fill.css uses)
+   settles it rather than editing that sheet and re-pinning it in five pages. */
+html:not(#bo-bottom-band-off)[data-bo-theme="dark"] body:not(#bo-bottom-band-off) .vle-footer{
+  border-top-color:rgba(255,255,255,.08)!important;
+}
+
+/* The block becomes a pinned-height flex box — only on the pages that actually show a bar
+   (`:has()` on the bar itself, so a page carrying the create-page class without a footer bar,
+   e.g. main-provider-endpoints.html, is untouched). Merchant Detail carries its bar in the DOM
+   while the EDIT workspace is closed, so it is keyed on `.mad-editing` instead, and excluded
+   from the `:has()` form. */
+body:not(#bo-bottom-band-off):has(.mac-footer-actions):not(.main-merchant-detail-page) .report-sidebar .bo-sidebar-account-footer,
+body.main-merchant-detail-page.mad-editing .report-sidebar .bo-sidebar-account-footer,
+body:not(#bo-bottom-band-off):has(.mprr-footer) .report-sidebar .bo-sidebar-account-footer,
+body:not(#bo-bottom-band-off):has(.mrc-sticky-footer) .report-sidebar .bo-sidebar-account-footer,
+body:not(#bo-bottom-band-off):has(.pmc-sticky-footer) .report-sidebar .bo-sidebar-account-footer,
+body:not(#bo-bottom-band-off):has(.mp-footer:not([hidden])) .report-sidebar .bo-sidebar-account-footer,
+body:not(#bo-bottom-band-off):has(.vle-footer) .report-sidebar .bo-sidebar-account-footer{
+  padding-top:0!important;
+  padding-bottom:0!important;
+  display:flex!important;
+  align-items:center!important;
+  box-sizing:border-box!important;
+}
+body:not(#bo-bottom-band-off):has(.mac-footer-actions):not(.main-merchant-detail-page) .report-sidebar .bo-sidebar-account-footer,
+body.main-merchant-detail-page.mad-editing .report-sidebar .bo-sidebar-account-footer{height:73px!important}
+body:not(#bo-bottom-band-off):has(.mprr-footer) .report-sidebar .bo-sidebar-account-footer{height:65px!important}
+body:not(#bo-bottom-band-off):has(.mrc-sticky-footer) .report-sidebar .bo-sidebar-account-footer{height:69px!important}
+body:not(#bo-bottom-band-off):has(.pmc-sticky-footer) .report-sidebar .bo-sidebar-account-footer{height:71px!important}
+body:not(#bo-bottom-band-off):has(.mp-footer:not([hidden])) .report-sidebar .bo-sidebar-account-footer{height:60px!important}
+body:not(#bo-bottom-band-off):has(.vle-footer) .report-sidebar .bo-sidebar-account-footer{height:68px!important}
 .bo-sidebar-logout{min-height:44px;width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;text-decoration:none;color:#b42318!important;font-weight:800}
 .bo-sidebar-logout:hover{background:#fff1f0;color:#b42318!important}
 .bo-sidebar-logout i{font-size:17px;color:#d92d20!important}
