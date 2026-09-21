@@ -634,9 +634,25 @@
             if(!style){
               style=d.createElement('style');
               style.id='dashboardEmbeddedShellStyle';
-              style.textContent='.report-sidebar,.sidebar-overlay,.report-topbar{display:none!important}.report-shell{display:block!important;min-height:100vh!important}.report-main{margin-left:0!important;width:100%!important;min-width:0!important}.report-content{padding-top:20px!important}body{overflow-x:hidden!important}';
+              style.textContent='html,body{width:100%!important;max-width:100%!important;margin:0!important;overflow-x:hidden!important}*,*::before,*::after{box-sizing:border-box!important}.report-sidebar,.sidebar-overlay,.report-topbar{display:none!important}.report-shell{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:100vh!important;margin:0!important;padding:0!important}.report-main{display:block!important;margin:0!important;padding:0!important;width:100%!important;max-width:100%!important;min-width:0!important}.report-content{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:20px!important;overflow-x:hidden!important}.report-content>*{max-width:100%!important;min-width:0!important}.table-wrap,.table-responsive,[class*=table-wrap],[class*=table-responsive]{max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch}.table-card,.filter-card,.summary-card,[class*=card]{max-width:100%}.container,.container-fluid{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}';
               d.head.appendChild(style);
             }
+            // Keep every embedded BO page inside the dashboard workspace width and
+            // grow the frame with its content so page controls never sit underneath
+            // or outside the dashboard shell.
+            const resizeFrame=function(){
+              const de=d.documentElement, b=d.body;
+              const h=Math.max(650, de?de.scrollHeight:0, b?b.scrollHeight:0);
+              frame.style.height=h+'px';
+            };
+            resizeFrame();
+            if(frame.__boResizeObserver) frame.__boResizeObserver.disconnect();
+            if(window.ResizeObserver && d.body){
+              frame.__boResizeObserver=new ResizeObserver(resizeFrame);
+              frame.__boResizeObserver.observe(d.body);
+            }
+            setTimeout(resizeFrame,80);
+            setTimeout(resizeFrame,350);
           }catch(e){}
         });
       }
