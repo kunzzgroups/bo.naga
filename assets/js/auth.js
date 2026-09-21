@@ -606,9 +606,40 @@
       const configured=cfg&&cfg.headerConfigured===true;
       if(configured){(cfg.headerMenuKeys||[]).forEach(k=>{const m=allowed.get(k);if(m)chosen.push(m);});}
       else chosen=all.filter(m=>m.showInSidebar===1).sort((a,b)=>a.sortOrder-b.sortOrder||a.title.localeCompare(b.title)).slice(0,6);
-      const active=pageFile(location.pathname);
-      nav.innerHTML=chosen.map(m=>'<a href="'+esc(m.url)+'" class="'+(pageFile(m.url)===active?'active':'')+'" title="'+esc(m.title)+'" aria-label="'+esc(m.title)+'"><i class="bi '+esc(m.icon||'bi-circle')+'"></i><span>'+esc(m.title)+'</span></a>').join('');
+      nav.innerHTML=chosen.map(m=>'<a href="'+esc(m.url)+'" data-dashboard-panel-url="'+esc(m.url)+'" title="'+esc(m.title)+'" aria-label="'+esc(m.title)+'"><i class="bi '+esc(m.icon||'bi-circle')+'"></i><span>'+esc(m.title)+'</span></a>').join('');
       nav.hidden=chosen.length===0;
+      nav.onclick=function(event){
+        const link=event.target.closest('a[data-dashboard-panel-url]');
+        if(!link)return;
+        event.preventDefault();
+        let url=link.getAttribute('data-dashboard-panel-url')||'';
+        // The Dashboard shortcut opens the preserved old dashboard content instead
+        // of recursively loading dashboard.html inside itself.
+        if(pageFile(url)==='dashboard.html') url='dashboard-backup.html';
+        const frame=document.getElementById('dashboardWorkspaceFrame');
+        if(!frame){ location.href=link.href; return; }
+        nav.querySelectorAll('a').forEach(a=>a.classList.remove('active'));
+        link.classList.add('active');
+        frame.hidden=false;
+        frame.src=url;
+      };
+      const frame=document.getElementById('dashboardWorkspaceFrame');
+      if(frame && !frame.dataset.shellBound){
+        frame.dataset.shellBound='1';
+        frame.addEventListener('load',function(){
+          try{
+            const d=frame.contentDocument;
+            if(!d)return;
+            let style=d.getElementById('dashboardEmbeddedShellStyle');
+            if(!style){
+              style=d.createElement('style');
+              style.id='dashboardEmbeddedShellStyle';
+              style.textContent='.report-sidebar,.sidebar-overlay,.report-topbar{display:none!important}.report-shell{display:block!important;min-height:100vh!important}.report-main{margin-left:0!important;width:100%!important;min-width:0!important}.report-content{padding-top:20px!important}body{overflow-x:hidden!important}';
+              d.head.appendChild(style);
+            }
+          }catch(e){}
+        });
+      }
       if(!document.querySelector('link[data-bo-quicknav-css]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/css/bo-global-quicknav.css?v=1.0.0';l.dataset.boQuicknavCss='1';document.head.appendChild(l);}
     },
     bindDynamicSidebarEvents: function(){
