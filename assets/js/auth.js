@@ -587,10 +587,18 @@
       return cfg;
     },
     renderQuickNav: function(cfg){
+      // Dashboard shortcuts are intentionally dashboard-only. The UI setting is
+      // still loaded globally because sidebar interaction applies to every page.
+      const activeFile=pageFile(location.pathname);
+      let nav=document.getElementById('boGlobalQuickNav');
+      if(activeFile!=='dashboard.html'){
+        if(nav) nav.remove();
+        return;
+      }
       const topbar=document.querySelector('.report-main > .report-topbar');
       if(!topbar)return;
-      let nav=document.getElementById('boGlobalQuickNav');
       if(!nav){nav=document.createElement('nav');nav.id='boGlobalQuickNav';nav.className='bo-global-quicknav';nav.setAttribute('aria-label','Backoffice shortcuts');topbar.insertAdjacentElement('afterend',nav);}
+
       const user=this.user();
       const all=(Array.isArray(user&&user.menus)?user.menus:[]).map(normalizeMenu).filter(m=>m.status===1&&m.url&&m.url!=='#');
       const allowed=new Map(all.map(m=>[m.menuKey,m]));
