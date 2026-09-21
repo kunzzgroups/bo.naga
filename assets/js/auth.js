@@ -186,9 +186,14 @@
       : pageFile(sidebarActivePage()) === pageFile(m.url || '');
     const cls = (isSub ? 'report-sub ' : '') + (isActive ? 'active' : '');
     const pinned = new Set((window.__boUiSetting&&Array.isArray(window.__boUiSetting.headerMenuKeys))?window.__boUiSetting.headerMenuKeys:[]).has(m.menuKey);
+    // Dashboard pin controls belong to the normal BO only. Main/Executive panel
+    // pages must retain their original sidebar without pin/unpin UI.
+    const currentFile = pageFile(location.pathname);
+    const isMainPanel = /^main[-_]/i.test(currentFile);
+    const pinHtml = isMainPanel ? '' :
+      '<span class="bo-sidebar-pin '+(pinned?'is-pinned':'')+'" data-bo-pin-menu="'+esc(m.menuKey)+'" title="'+(pinned?'Unpin from Dashboard':'Pin to Dashboard')+'" aria-label="'+(pinned?'Unpin from Dashboard':'Pin to Dashboard')+'"><i class="bi '+(pinned?'bi-pin-angle-fill':'bi-pin-angle')+'"></i></span>';
     return '<a href="' + href + '" class="' + cls.trim() + '" data-menu-key="' + esc(m.menuKey) + '">' +
-      '<span><i class="bi ' + esc(m.icon || 'bi-circle') + ' me-2"></i>' + esc(m.title) + '</span>' +
-      '<span class="bo-sidebar-pin '+(pinned?'is-pinned':'')+'" data-bo-pin-menu="'+esc(m.menuKey)+'" title="'+(pinned?'Unpin from Dashboard':'Pin to Dashboard')+'" aria-label="'+(pinned?'Unpin from Dashboard':'Pin to Dashboard')+'"><i class="bi '+(pinned?'bi-pin-angle-fill':'bi-pin-angle')+'"></i></span></a>';
+      '<span><i class="bi ' + esc(m.icon || 'bi-circle') + ' me-2"></i>' + esc(m.title) + '</span>' + pinHtml + '</a>';
   }
 
   window.BO_AUTH = {
