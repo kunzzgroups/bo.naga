@@ -592,6 +592,17 @@ body.main-admin-detail-page .mad-add-currency-btn.mad-btn:hover,
 body.main-admin-detail-page button.mad-add-currency-btn:hover{
   background:rgba(217,119,6,.08)!important;color:var(--bo-navy)!important;border-color:var(--bo-cyan)!important;
 }
+/* Export sits in the filter row beside Reset, so it takes that row's geometry;
+   the fill/hover come from .mad-btn-ghost (main-report-charcoal.css). */
+body.main-admin-detail-page .mad-export-btn,
+body.main-admin-detail-page .mad-export-btn.mad-btn,
+body.main-admin-detail-page .mad-export-btn.mad-btn-ghost{
+  height:42px!important;min-height:42px!important;padding:0 14px!important;
+  flex:0 0 auto!important;white-space:nowrap!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;
+  font-size:13px!important;font-weight:700!important;line-height:1!important;
+}
+body.main-admin-detail-page .mad-export-btn i{font-size:13px;line-height:1}
 body.main-admin-detail-page .mad-bulk-delete-btn,
 body.main-admin-detail-page .mad-bulk-delete-btn.mad-btn{
   height:42px!important;min-height:42px!important;padding:0 14px!important;
@@ -2901,7 +2912,7 @@ body.main-merchant-create-page .mac-provider-selected-card{
   padding:10px 11px;
   border:1px solid var(--bo-border);
   border-radius:10px;
-  background:#fff;
+  background:#FFFCF7;
 }
 body.main-merchant-create-page .mac-provider-selected-card:hover{
   border-color:rgba(217,119,6,.28);
@@ -2918,7 +2929,7 @@ body.main-merchant-create-page .mac-provider-base-tag{
   flex:0 0 auto;
   display:inline-flex;align-items:center;
   max-width:58%;padding:2px 7px;border-radius:999px;
-  background:#F0F3F8;color:#667085;font-size:10.5px;font-weight:700;line-height:1.3;
+  background:rgba(217,119,6,.12);color:#B45309;font-size:10.5px;font-weight:700;line-height:1.3;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 body.main-merchant-create-page .mac-provider-selected-fields{
@@ -2954,7 +2965,7 @@ body.main-merchant-create-page .mac-provider-override-control input:focus{
 body.main-merchant-create-page .mac-provider-override-unit{
   flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;
   min-width:28px;padding:0 8px;
-  border-left:1px solid var(--bo-border);background:#F7F9FC;color:var(--bo-muted);
+  border-left:1px solid var(--bo-border);background:#F5EBDC;color:var(--bo-muted);
   font-size:11px;font-weight:700;line-height:1;
 }
 body.main-merchant-create-page .mac-provider-eff-wrap{
@@ -2963,8 +2974,8 @@ body.main-merchant-create-page .mac-provider-eff-wrap{
 }
 body.main-merchant-create-page .mac-provider-eff{
   display:flex;align-items:center;height:32px;padding:0 10px;
-  border-radius:8px;background:#F7F9FC;
-  font-size:12.5px;font-weight:800;color:var(--bo-navy);white-space:nowrap;line-height:1.2;
+  border-radius:8px;background:rgba(217,119,6,.12);
+  font-size:12.5px;font-weight:800;color:#B45309;white-space:nowrap;line-height:1.2;
   box-sizing:border-box;
 }
 @media(max-width:1100px){
@@ -3648,24 +3659,6 @@ body.main-admin-security-page .mas-table-wrap{
   overflow:hidden;
   position:relative;
 }
-/* Split head / body: scrollbar only beside data rows (recommended pattern) */
-body.main-admin-security-page .mas-table-head{
-  flex:0 0 auto;
-  overflow-x:hidden;overflow-y:hidden;
-  scrollbar-gutter:stable;
-  background:var(--bo-surface);
-  border-bottom:1px solid var(--bo-border);
-}
-body.main-admin-security-page .mas-table-body-scroll{
-  flex:1 1 auto;min-height:0;
-  overflow-x:hidden;overflow-y:auto;
-  overscroll-behavior:contain;
-  scrollbar-gutter:stable;
-}
-body.main-admin-security-page .mas-table-head .mas-table,
-body.main-admin-security-page .mas-table-body-scroll .mas-table{
-  height:auto;width:100%;min-width:0;
-}
 body.main-admin-security-page .mas-table-head .mas-table th{
   background:transparent;
   border-bottom:0;
@@ -3746,7 +3739,7 @@ body.main-admin-security-page .mas-toolbar{
   align-items:stretch!important;
   justify-content:flex-start!important;
   flex-wrap:nowrap!important;
-  gap:12px;
+  gap:10px;
   overflow:visible;position:relative;z-index:30;
 }
 body.main-admin-security-page .mas-cats{
@@ -3851,48 +3844,6 @@ body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-selec
   color:var(--bo-cyan-deep)!important;
 }
 
-body.main-admin-security-page .mas-table{
-  table-layout:fixed;
-  width:100%;
-  min-width:0;
-}
-body.main-admin-security-page .mas-table .mas-col-time{width:108px}
-body.main-admin-security-page .mas-table .mas-col-admin{width:18%}
-body.main-admin-security-page .mas-table .mas-col-event{width:22%}
-body.main-admin-security-page .mas-table .mas-col-target{width:14%}
-body.main-admin-security-page .mas-table .mas-col-ip{width:18%}
-body.main-admin-security-page .mas-table .mas-col-status{width:110px}
-body.main-admin-security-page .mas-table .mas-col-details{width:88px}
-body.main-admin-security-page .mas-table th{
-  font-size:12px!important;font-weight:700;letter-spacing:.03em;text-transform:none;
-  padding:14px 16px;
-}
-body.main-admin-security-page .mas-table td{padding:6px 16px;vertical-align:middle}
-body.main-admin-security-page .mas-table th:first-child,
-body.main-admin-security-page .mas-table td:first-child{padding-left:8px}
-body.main-admin-security-page .mas-table th:last-child,
-body.main-admin-security-page .mas-table td:last-child{padding-right:8px}
-/* Column balance: keep Date compact, Details pinned last */
-body.main-admin-security-page .mas-table th:nth-child(1),
-body.main-admin-security-page .mas-table td:nth-child(1){width:108px;text-align:left;padding-left:8px} /* Time & Date */
-body.main-admin-security-page .mas-table th:nth-child(2),
-body.main-admin-security-page .mas-table td:nth-child(2){width:18%;text-align:left} /* Administrator */
-body.main-admin-security-page .mas-table th:nth-child(3){
-  width:22%;text-align:center;padding-right:16px;
-} /* Action / Event header */
-body.main-admin-security-page .mas-table td:nth-child(3){
-  width:22%;text-align:left;padding-right:16px;
-} /* Action / Event data */
-body.main-admin-security-page .mas-table th:nth-child(4),
-body.main-admin-security-page .mas-table td:nth-child(4){width:14%;text-align:left;padding-left:16px} /* Target */
-body.main-admin-security-page .mas-table th:nth-child(5),
-body.main-admin-security-page .mas-table td:nth-child(5){width:18%;text-align:left} /* IP */
-body.main-admin-security-page .mas-table th:nth-child(6),
-body.main-admin-security-page .mas-table td:nth-child(6){width:110px;text-align:left} /* Status */
-body.main-admin-security-page .mas-table th:nth-child(7),
-body.main-admin-security-page .mas-table td:nth-child(7){
-  width:88px;text-align:right;padding-right:8px;
-} /* Details · last */
 body.main-admin-security-page .mas-table tbody tr.is-blocked td{
   background:rgba(239,51,64,.06);
 }
@@ -3907,23 +3858,23 @@ body.main-admin-security-page .mas-time b{
 body.main-admin-security-page .mas-time small{
   font-size:11.5px;font-weight:600;color:var(--bo-muted);white-space:nowrap;
 }
-body.main-admin-security-page .mas-admin{display:flex;align-items:center;gap:12px;min-width:0}
+body.main-admin-security-page .mas-admin{display:flex;align-items:center;gap:9px;min-width:0}
 body.main-admin-security-page .mas-avatar{
-  width:40px;height:40px;border-radius:50%;flex:0 0 40px;
+  width:34px;height:34px;border-radius:50%;flex:0 0 34px;
   display:grid;place-items:center;font-size:12px;font-weight:800;
   background:var(--bo-cyan-tint);color:var(--bo-navy);
 }
 body.main-admin-security-page .mas-avatar.is-alt{background:rgba(217,119,6,.14);color:var(--bo-navy)}
 body.main-admin-security-page .mas-admin-copy{min-width:0}
 body.main-admin-security-page .mas-admin-copy b{
-  display:block;font-size:16px;font-weight:800;color:var(--bo-text);line-height:1.25;
+  display:block;font-size:14.5px;font-weight:800;color:var(--bo-text);line-height:1.25;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 body.main-admin-security-page .mas-admin-copy small{
   display:block;font-size:10.5px;font-weight:600;color:var(--bo-muted);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px;
 }
-body.main-admin-security-page .mas-event{display:flex;align-items:flex-start;justify-content:flex-start;gap:8px;min-width:0;width:100%}
+body.main-admin-security-page .mas-event{display:flex;align-items:flex-start;justify-content:flex-start;gap:7px;min-width:0;width:100%}
 body.main-admin-security-page .mas-dot{
   width:8px;height:8px;border-radius:50%;flex:0 0 8px;margin-top:5px;background:var(--bo-cyan);
 }
@@ -3989,21 +3940,62 @@ body.main-admin-security-page .mas-view{
 }
 body.main-admin-security-page .mas-view:hover{color:var(--bo-cyan-deep,#B45309);text-decoration:underline}
 
-body.main-admin-security-page .mas-detail-panel{width:min(560px,calc(100vw - 32px))}
-body.main-admin-security-page .mas-detail-grid{
-  display:grid;grid-template-columns:140px minmax(0,1fr);gap:10px 14px;margin:0 0 14px;
+body.main-admin-security-page .mas-detail-panel .mas-detail-fields{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px 12px;margin:0 0 14px;
 }
-body.main-admin-security-page .mas-detail-grid dt{
-  margin:0;font-size:12px;font-weight:700;color:var(--bo-muted);
+body.main-admin-security-page .mas-detail-panel .mas-field{min-width:0}
+body.main-admin-security-page .mas-detail-panel .mas-field.is-wide{grid-column:1 / -1}
+body.main-admin-security-page .mas-detail-panel .mas-field dt{
+  margin:0 0 3px;font-size:11.5px;font-weight:650;color:var(--bo-muted);
 }
-body.main-admin-security-page .mas-detail-grid dd{
-  margin:0;font-size:13px;font-weight:650;color:var(--bo-text);word-break:break-word;
+body.main-admin-security-page .mas-detail-panel .mas-field dd{
+  margin:0;font-size:13px;font-weight:700;line-height:1.35;color:var(--bo-text);
+  word-break:break-word;overflow-wrap:anywhere;
 }
+body.main-admin-security-page .mas-detail-block{margin:0 0 14px}
+body.main-admin-security-page .mas-detail-block:last-child{margin-bottom:0}
+body.main-admin-security-page .mas-detail-block-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 8px;
+}
+body.main-admin-security-page .mas-detail-block-head .mas-detail-block-title{margin:0}
+body.main-admin-security-page .mas-detail-block-title{
+  display:flex;align-items:center;gap:8px;
+  margin:0 0 8px;font-size:12.5px;font-weight:800;color:var(--bo-navy);
+}
+body.main-admin-security-page .mas-detail-block-title i{
+  width:22px;height:22px;border-radius:6px;flex:0 0 22px;
+  display:grid;place-items:center;font-size:11px;
+  background:var(--bo-cyan-tint);color:var(--bo-cyan);
+}
+/* Copy sits in the section's title row rather than floating inside the well: over the payload
+   it would either reserve a blank band at the top of the JSON (what the first pass did) or let
+   a long line run under it. */
 body.main-admin-security-page .mas-detail-raw{
-  margin:0 0 14px;padding:12px;border-radius:8px;
+  margin:0;padding:10px;border-radius:8px;
   background:var(--bo-control-well,#F5EBDC);border:1px solid var(--bo-border);
-  font-size:12px;line-height:1.45;color:var(--bo-text-secondary);
-  max-height:220px;overflow:auto;white-space:pre-wrap;word-break:break-word;
+  font-size:12px;line-height:1.4;color:var(--bo-text-secondary);
+  max-height:320px;overflow:auto;white-space:pre-wrap;word-break:break-word;
+}
+body.main-admin-security-page .mas-raw-copy{
+  display:inline-flex;align-items:center;gap:5px;flex:0 0 auto;
+  height:26px;padding:0 10px;border-radius:7px;
+  border:1px solid var(--bo-border);background:var(--bo-surface);
+  color:var(--bo-muted);font-size:11.5px;font-weight:700;cursor:pointer;
+  transition:color .14s var(--bo-ease),border-color .14s var(--bo-ease);
+}
+body.main-admin-security-page .mas-raw-copy:hover{color:var(--bo-cyan);border-color:var(--bo-cyan)}
+body.main-admin-security-page .mas-raw-copy.is-done{color:var(--bo-success);border-color:var(--bo-success)}
+body.main-admin-security-page .mas-detail-reason{
+  margin:0;padding:12px 14px;border-radius:8px;
+  background:var(--bo-control-well,#F5EBDC);border:1px solid var(--bo-border);
+  font-size:13px;font-weight:600;line-height:1.45;color:var(--bo-text);
+  word-break:break-word;overflow-wrap:anywhere;
+}
+
+@media(max-width:767.98px){
+  /* The pills row is the last row of the toolbar now, so its spacing belongs on top of it
+     rather than below — main-mobile-responsive.css still puts it at the bottom. */
+  body.main-admin-security-page .mas-toolbar .mas-cats{margin:10px 0 0!important}
 }
 
 body.main-admin-security-page .mad-pager .smart-page.active,
@@ -5405,8 +5397,17 @@ body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-edit-actions{
   width:auto!important;max-width:none!important;
   display:flex;justify-content:flex-end;align-items:center;gap:10px;
   margin:0;padding:14px 24px;
-  background:rgba(255,255,255,.96);
-  border-top:1px solid var(--bo-line, #E6EDF5);
+  /* Owner-specified panel rung (bo-ui-standard.css states it for every bar as well). Was a
+     translucent rgba(255,255,255,.96), which reads as whatever is underneath rather than as the
+     value. */
+  background:#FFFCF7;
+  /* The bar and the sidebar's account block are ONE band across the bottom of the page: both
+     end flush with the viewport, so their top hairlines must also land on one line and be one
+     colour. The account block's hairline is rgba(92,74,48,.1)
+     (main-merchant-detail-executive.css) — the bar states the same value here. It was
+     `var(--bo-line,#E6EDF5)`: that token is defined nowhere in this theme, so the cool
+     blue-grey fallback painted and the two lines disagreed in colour as well as in y. */
+  border-top:1px solid rgba(92,74,48,.1);
   box-shadow:0 -8px 24px rgba(15,23,42,.06);
   backdrop-filter:blur(8px);
   box-sizing:border-box;
@@ -5424,6 +5425,7 @@ body.sidebar-mini.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-f
     left:min(86vw,320px)!important;
   }
 }
+
 body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions .mad-btn,
 body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions .mad-btn.mad-btn-ghost,
 body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions .mad-btn.mad-btn-navy,
@@ -6241,7 +6243,8 @@ body.main-merchant-detail-page .mac-provider-selected-card{
   padding:10px 11px;
   border:1px solid var(--bo-border);
   border-radius:10px;
-  background:#fff;
+  /* Owner-specified card rung. */
+  background:#FFFCF7;
 }
 
 body.main-merchant-detail-page .mac-provider-selected-card:hover{
@@ -6262,7 +6265,10 @@ body.main-merchant-detail-page .mac-provider-base-tag{
   flex:0 0 auto;
   display:inline-flex;align-items:center;
   max-width:58%;padding:2px 7px;border-radius:999px;
-  background:#F0F3F8;color:#667085;font-size:10.5px;font-weight:700;line-height:1.3;
+  /* Amber metadata pill — the recipe `.mac-provider-count` in the pane head right above these
+     cards already uses (amber wash on #B45309). Was the legacy admin cool grey F0F3F8/667085,
+     the only cool hues left in the section, and the same three controls that were wrong in dark. */
+  background:rgba(217,119,6,.12);color:#B45309;font-size:10.5px;font-weight:700;line-height:1.3;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 
@@ -6315,7 +6321,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-provider-override-unit{
   flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;
   align-self:stretch;height:auto;min-height:100%;
   min-width:28px;padding:0 8px;margin:0;
-  border-left:1px solid var(--bo-border);background:#F7F9FC;color:var(--bo-muted);
+  border-left:1px solid var(--bo-border);background:#F5EBDC;color:var(--bo-muted);
   font-size:11px;font-weight:700;line-height:1;box-sizing:border-box;
 }
 
@@ -6328,8 +6334,8 @@ body.main-merchant-detail-page #madEditWorkspace .mac-provider-eff-wrap{
 body.main-merchant-detail-page .mac-provider-eff,
 body.main-merchant-detail-page #madEditWorkspace .mac-provider-eff{
   display:flex;align-items:center;height:32px;min-height:32px;padding:0 10px;
-  border-radius:8px;background:#F7F9FC;
-  font-size:12.5px;font-weight:800;color:var(--bo-navy);white-space:nowrap;line-height:1.2;
+  border-radius:8px;background:rgba(217,119,6,.12);
+  font-size:12.5px;font-weight:800;color:#B45309;white-space:nowrap;line-height:1.2;
   box-sizing:border-box;
 }
 
@@ -6538,6 +6544,30 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-override
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-search{
   background:#2A2C36;
   border-color:var(--bo-border);
+}
+
+/* --------------------------------------------------------------------------
+   Selected-pricing card chrome — the dark halves, restated at ID level
+   These three frames are pinned for LIGHT by rules carrying `#madEditWorkspace` at (1,1,2),
+   and an ID out-ranks any class count — so the dark rules above (0,3,2, no ID) never reached
+   them inside the edit workspace. Measured on main-merchant-detail.html, dark: the Override
+   frame stayed cream #FFF8EB while the value's colour came from the dark token (#F5F5F4) —
+   white on cream, the typed number was invisible; the % segment and the Effective pill stayed
+   #F7F9FC, lit pills on a dark card. The same ID in the dark selector settles both.
+   Edit Merchant only: main-merchant-create.html renders this vocabulary outside the ID, which
+   is why its dark rules above already win there.
+   -------------------------------------------------------------------------- */
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-provider-override-control,
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-provider-override-unit,
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-provider-eff{
+  background:#2A2C36!important;
+  border-color:var(--bo-border)!important;
+}
+/* The light rule for the Effective value states the amber literal #B45309 and carries
+   `#madEditWorkspace`, so it is (1,1,2) and would also win in dark — amber on the charcoal
+   well. The dark value is restated at the same level. */
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-provider-eff{
+  color:var(--bo-text)!important;
 }
 
 /* Edit credit row keeps 4 columns including currency control */

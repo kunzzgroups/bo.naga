@@ -5,6 +5,16 @@
   const infoEl = document.getElementById('masTableInfo');
   const tableWrap = document.querySelector('.mas-table-wrap');
   const tableScroll = document.getElementById('masTableScroll') || document.querySelector('.mas-table-body-scroll');
+
+  /* Keep the split audit header aligned with the body on horizontal scroll. The body was the
+     only scroller until the detail column narrowed the table panel below the table's 1040px
+     floor; now both scroll, and the header mirrors the body's scrollLeft. */
+  const tableHead = document.querySelector('.mas-table-head');
+  if(tableScroll && tableHead){
+    tableScroll.addEventListener('scroll', function(){
+      tableHead.scrollLeft = tableScroll.scrollLeft;
+    }, { passive: true });
+  }
   const panelEl = document.querySelector('.mas-panel');
   const searchEl = document.getElementById('masSearch');
   const eventTypeEl = document.getElementById('masEventType');
@@ -13,16 +23,61 @@
   const fromEl = document.getElementById('masFrom');
   const toEl = document.getElementById('masTo');
   const resetBtn = document.getElementById('masReset');
-  const detailModal = document.getElementById('masDetailModal');
+  const pagerEl = document.getElementById('masPager');
+  const detailPanel = document.getElementById('masDetailPanel');
   const detailTitle = document.getElementById('masDetailTitle');
-  const detailSub = document.getElementById('masDetailSub');
   const detailGrid = document.getElementById('masDetailGrid');
+  const detailStatus = document.getElementById('masDetailStatus');
+  const detailSub = document.getElementById('masDetailSub');
+  const detailInfoLabel = document.getElementById('masInfoLabel');
+  const detailDeviceLabel = document.getElementById('masDeviceLabel');
+  const detailIds = document.getElementById('masDetailIds');
+  const detailCards = document.getElementById('masDetailCards');
+  const jsonToggle = document.getElementById('masJsonToggle');
+  const jsonToggleLabel = document.getElementById('masJsonToggleLabel');
+  const payloadBox = document.getElementById('masPayload');
+  const detailKv = document.getElementById('masDetailKv');
+  const detailHash = document.getElementById('masDetailHash');
+  const detailReasonBlock = document.getElementById('masDetailReasonBlock');
+  const detailReason = document.getElementById('masDetailReason');
   const detailRaw = document.getElementById('masDetailRaw');
+  const rawCopyBtn = document.getElementById('masRawCopy');
+
+  /* In the drawer's field list, these are the values long enough that a half-width column
+     would wrap them into a tower — they take the whole row instead. */
+  const DETAIL_WIDE_KEY = /ip address|user agent|summary|detail/i;
+  const ACTOR_LABEL = 'Merchant';
 
   let allEvents = [];
   let filtered = [];
   let category = 'all';
+  let page = 1;
   let resizeTimer = null;
+
+  const PAGE_SIZE = 10;
+
+  /* Same pager markup and same window as the merchant / admin listings
+     (see pageButtons() in main-merchant-detail.js): first page, last page and the two either
+     side of the current one, with an ellipsis wherever the run skips. */
+  function pageButtons(current, total){
+    total = Math.max(1, Number(total) || 1);
+    current = Math.max(1, Math.min(Number(current) || 1, total));
+    const pages = [];
+    const add = n => { if(n >= 1 && n <= total && !pages.includes(n)) pages.push(n); };
+    add(1);
+    for(let n = current - 2; n <= current + 2; n++) add(n);
+    add(total);
+    pages.sort((a, b) => a - b);
+    let html = '<button type="button" class="smart-page nav-text" data-page="' + Math.max(1, current - 1) + '" ' + (current <= 1 ? 'disabled' : '') + '>Previous</button>';
+    let prev = 0;
+    pages.forEach(n => {
+      if(prev && n - prev > 1) html += '<span class="smart-page-ellipsis">…</span>';
+      html += '<button type="button" class="smart-page ' + (n === current ? 'active' : '') + '" data-page="' + n + '" ' + (n === current ? 'aria-current="page"' : '') + '>' + n + '</button>';
+      prev = n;
+    });
+    html += '<button type="button" class="smart-page nav-text" data-page="' + Math.min(total, current + 1) + '" ' + (current >= total ? 'disabled' : '') + '>Next</button>';
+    return html;
+  }
 
   const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const pickerState = { view: new Date(), selectingStart: true, mode: 'days', yearPageStart: new Date().getFullYear() - 5, hover: '' };
@@ -331,13 +386,15 @@
       status: failed ? 'blocked' : 'success',
       tone: failed ? 'danger' : 'cyan',
       detail: {
-        Time: row.loginAt || '—',
+        'Time & Date': at ? (ymd(at) + ' ' + formatTime(at).time) : (row.loginAt || '—'),
         Username: row.username || '—',
         'Display Name': row.displayName || '—',
         Status: failed ? 'Blocked' : 'Success',
-        IP: row.ipAddress || '—',
+        'IP Address': row.ipAddress || '—',
         'User Agent': row.userAgent || '—',
-        Reason: row.failureReason || '—'
+        /* Left empty rather than dashed: the drawer drops the whole Reason section when there
+           is nothing to show, and a '—' placeholder would read as a value. */
+        Reason: row.failureReason || ''
       },
       merchantId: row.brandId == null ? null : Number(row.brandId),
       raw: row
@@ -361,13 +418,14 @@
       }catch(e){}
     }
     const fullDetail = String(row.detail || '').trim();
+    const opAt = parseDate(row.createdAt);
     const detailMap = {
-      Time: row.createdAt || '—',
+      'Time & Date': opAt ? (ymd(opAt) + ' ' + formatTime(opAt).time) : (row.createdAt || '—'),
       Actor: row.actor || 'SYSTEM',
       Action: row.action || '—',
       Entity: row.entityType || '—',
       'Entity ID': row.entityId != null ? String(row.entityId) : '—',
-      IP: row.ipAddress || '—',
+      'IP Address': row.ipAddress || '—',
       Summary: subtitle,
       Status: ok ? 'Success' : 'Failed'
     };
@@ -762,6 +820,9 @@
       if(category !== 'all' && e.category !== category) return false;
       return true;
     });
+    /* Any filter change is a new result set, so the old page number means nothing: back to
+       the first page. The pager itself calls renderTable() directly and keeps its page. */
+    page = 1;
     renderTable();
   }
 
@@ -784,16 +845,20 @@
   function renderTable(){
     if(!tbody) return;
     const total = filtered.length;
-    const rows = filtered;
+    const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if(page > pages) page = pages;
+    const start = (page - 1) * PAGE_SIZE;
+    const rows = filtered.slice(start, start + PAGE_SIZE);
 
     if(infoEl){
       infoEl.textContent = total
-        ? ('Showing ' + total.toLocaleString() + ' records')
+        ? ('Showing ' + (start + 1).toLocaleString() + ' to ' + (start + rows.length).toLocaleString() + ' of ' + total.toLocaleString() + ' records')
         : 'Showing 0 records';
     }
+    if(pagerEl) pagerEl.innerHTML = total ? pageButtons(page, pages) : '';
 
     if(!rows.length){
-      tbody.innerHTML = '<tr><td colspan="7" class="mad-empty">No audit events found.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="mad-empty">No audit events found.</td></tr>';
       fitTableArea();
       return;
     }
@@ -804,8 +869,11 @@
       const statusLabel = e.status === 'blocked' ? 'Blocked' : (e.status === 'failed' ? 'Failed' : 'Success');
       const statusClass = e.status === 'blocked' ? 'is-blocked' : (e.status === 'failed' ? 'is-failed' : 'is-success');
       const dotClass = e.tone === 'danger' ? 'is-danger' : (e.tone === 'success' ? 'is-success' : '');
-      const avClass = idx % 2 ? ' is-alt' : '';
-      return '<tr class="' + (blocked ? 'is-blocked' : '') + '" data-event-id="' + esc(e.id) + '">' +
+      /* Row position, not page position: the avatar wash has to keep alternating across a
+         page boundary instead of restarting at row 1 on every page. */
+      const avClass = (start + idx) % 2 ? ' is-alt' : '';
+      return '<tr class="' + (blocked ? 'is-blocked' : '') + '" data-event-id="' + esc(e.id) + '"' +
+          ' tabindex="0" aria-label="View detail: ' + esc(e.title) + ' — ' + esc(e.adminName) + '">' +
         '<td class="mad-time mad-detail">' + timeWithDateTip(e.at) + '</td>' +
         '<td><div class="mas-admin"><span class="mas-avatar' + avClass + '">' + esc(initials(e.adminName)) + '</span>' +
           '<div class="mas-admin-copy"><b>' + esc(e.adminName) + '</b><small>' + esc(e.roleLabel) + '</small></div></div></td>' +
@@ -814,7 +882,6 @@
         '<td><span class="mas-target" title="' + esc(e.target) + '">' + esc(e.target) + '</span></td>' +
         '<td><div class="mas-ip"><b>' + esc(e.ip) + '</b><small><i class="bi bi-geo-alt-fill"></i> ' + esc(e.location) + '</small></div></td>' +
         '<td><span class="mas-status ' + statusClass + '"><i></i>' + statusLabel + '</span></td>' +
-        '<td><button type="button" class="mas-view" data-mas-view="' + esc(e.id) + '">View <i class="bi bi-chevron-right"></i></button></td>' +
       '</tr>';
     }).join('');
 
@@ -825,39 +892,290 @@
     return allEvents.find(e => e.id === id) || filtered.find(e => e.id === id);
   }
 
-  function openDetail(id){
-    const e = findEvent(id);
-    if(!e || !detailModal) return;
-    if(detailTitle) detailTitle.textContent = e.title || 'Event Details';
-    if(detailSub) detailSub.textContent = (e.adminName || '') + (e.at ? ' · ' + e.at.toLocaleString() : '');
-    if(detailGrid){
-      const entries = Object.entries(e.detail || {});
-      detailGrid.innerHTML = entries.map(([k, v]) =>
-        '<dt>' + esc(k) + '</dt><dd>' + esc(v) + '</dd>'
-      ).join('');
-    }
-    if(detailRaw){
-      try{
-        detailRaw.hidden = false;
-        detailRaw.textContent = JSON.stringify(e.raw || {}, null, 2);
-      }catch(err){
-        detailRaw.hidden = true;
-      }
-    }
-    detailModal.classList.add('show');
-    detailModal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('modal-open');
+  /* One label-over-value pair for the Key-Value tab. A <div> wrapping dt/dd inside a <dl> is the
+     valid way to give each pair its own grid cell, which puts two fields side by side on a row. */
+  function detailField(label, value, wide){
+    return '<div class="mas-field' + (wide ? ' is-wide' : '') + '">' +
+      '<dt>' + esc(label) + '</dt>' +
+      '<dd>' + esc(value == null || value === '' ? '—' : value) + '</dd>' +
+    '</div>';
   }
 
+  function card(label, value, sub, opts){
+    opts = opts || {};
+    return '<div class="mas-card' + (opts.wide ? ' is-wide' : '') + '">' +
+      '<span class="mas-card-label">' + esc(label) + '</span>' +
+      '<b class="mas-card-value">' + esc(value) + '</b>' +
+      (sub ? '<small class="mas-card-sub">' + esc(sub) + '</small>' : '') +
+      (opts.copy
+        ? '<button type="button" class="mas-card-copy" data-mas-copy="' + esc(opts.copy) + '"' +
+            ' aria-label="Copy ' + esc(label) + '" title="Copy"><i class="bi bi-clipboard"></i></button>'
+        : '') +
+    '</div>';
+  }
+
+  /* Client OS and browser, read out of the user agent the row already carries. Nothing here is
+     inferred beyond what that string names: if it does not say, the card is not built. */
+  function parseClient(ua){
+    const s = String(ua || '');
+    let os = '', br = '', m;
+    if(!s) return { os: '', browser: '' };
+    if((m = s.match(/Windows NT ([\d.]+)/))){
+      os = 'Windows NT ' + m[1] + (/Win64|x64/.test(s) ? ' (x64)' : (/WOW64/.test(s) ? ' (x86)' : ''));
+    }else if((m = s.match(/Mac OS X ([_\d]+)/))){
+      os = 'macOS ' + m[1].replace(/_/g, '.');
+    }else if((m = s.match(/(iPhone|iPad)[^)]*OS ([\d_]+)/))){
+      os = m[1] + ' ' + m[2].replace(/_/g, '.');
+    }else if((m = s.match(/Android ([\d.]+)/))){
+      os = 'Android ' + m[1];
+    }else if(/Linux/.test(s)){
+      os = 'Linux';
+    }
+    if((m = s.match(/Edg\/([\d.]+)/))) br = 'Edge ' + m[1];
+    else if((m = s.match(/OPR\/([\d.]+)/))) br = 'Opera ' + m[1];
+    else if((m = s.match(/Chrome\/([\d.]+)/))) br = 'Chrome ' + m[1];
+    else if((m = s.match(/Firefox\/([\d.]+)/))) br = 'Firefox ' + m[1];
+    else if((m = s.match(/Version\/([\d.]+)[^)]*Safari/))) br = 'Safari ' + m[1];
+    return { os: os, browser: br };
+  }
+
+  /* Which pane the payload block is showing. The copy button always copies the raw payload, which
+     is what its label says, whichever pane is on screen. */
+  function setPayloadTab(which){
+    const raw = which !== 'kv';
+    if(detailRaw) detailRaw.hidden = !raw;
+    if(detailKv) detailKv.hidden = raw;
+    if(detailPanel){
+      detailPanel.querySelectorAll('[data-mas-tab]').forEach(b => {
+        const on = b.getAttribute('data-mas-tab') === which;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+    }
+  }
+
+  /* A digest of the payload exactly as this panel is displaying it — not a server-side audit
+     chain, and not called one: the label says where it came from. Hidden where crypto.subtle is
+     unavailable (a non-secure origin), so it never claims more than it can do. */
+  let hashToken = 0;
+  function fillHash(text){
+    if(!detailHash) return;
+    const token = ++hashToken;
+    detailHash.hidden = true;
+    if(!text || !(window.crypto && window.crypto.subtle && window.crypto.subtle.digest)) return;
+    try{
+      window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)).then(buf => {
+        if(token !== hashToken) return;
+        const hex = Array.prototype.map.call(new Uint8Array(buf), b => b.toString(16).padStart(2, '0')).join('');
+        detailHash.textContent = 'SHA-256 ' + hex.slice(0, 12) + '\u2026' + hex.slice(-12) +
+          ' \u00b7 computed in your browser from this payload';
+        detailHash.hidden = false;
+      }).catch(() => {});
+    }catch(e){}
+  }
+
+  function copyText(text, btn){
+    if(!text) return;
+    const done = () => {
+      if(!btn) return;
+      const label = btn.querySelector('.mas-raw-copy-label');
+      const icon = btn.querySelector('i');
+      btn.classList.add('is-done');
+      clearTimeout(btn._t);
+      if(label){
+        const was = label.textContent;
+        label.textContent = 'Copied';
+        btn._t = setTimeout(() => { btn.classList.remove('is-done'); label.textContent = was; }, 1400);
+      }else{
+        const was = icon ? icon.className : '';
+        if(icon) icon.className = 'bi bi-check2';
+        btn._t = setTimeout(() => { btn.classList.remove('is-done'); if(icon) icon.className = was; }, 1200);
+      }
+    };
+    const fallback = () => {
+      try{
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '-1000px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        done();
+      }catch(err){}
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(fallback);
+    }else{
+      fallback();
+    }
+  }
+
+  /* The panel, as the owner's mockup lays it out: a head that names the event and its result,
+     then Login/Event Information, Device & Location, Technical Details with the record's ids and
+     a View JSON toggle, the reason when there is one, and the payload digest.
+     Everything shown is a field the row actually carries. The Device & Location group is dropped
+     whole when an event has neither a user agent nor a location (operation rows have no user
+     agent at all), and "Desktop / Mobile" is the only thing classified rather than read out. */
+  function formatWhen(e){
+    if(!(e.at instanceof Date)) return '';
+    return e.at.getFullYear() + '-' + pad2(e.at.getMonth() + 1) + '-' + pad2(e.at.getDate()) +
+      ' ' + formatTime(e.at).time;
+  }
+
+  function fillDetail(e){
+    const isLogin = e.source === 'login';
+    const failed = e.status === 'blocked' || e.status === 'failed';
+    const statusLabel = e.status === 'blocked' ? 'Blocked' : (e.status === 'failed' ? 'Failed' : 'Success');
+    const when = formatWhen(e);
+    const ua = String((e.raw && e.raw.userAgent) || '');
+    const client = parseClient(ua);
+
+    if(detailTitle) detailTitle.textContent = e.title || 'Audit Log Detail';
+    if(detailStatus){
+      detailStatus.textContent = statusLabel;
+      detailStatus.className = 'mas-head-status ' + (failed ? 'is-bad' : 'is-ok');
+      detailStatus.hidden = false;
+    }
+    if(detailSub){
+      detailSub.textContent = [ e.adminName, when ].filter(Boolean).join('  \u00b7  ');
+      detailSub.hidden = !detailSub.textContent;
+    }
+
+    if(detailInfoLabel) detailInfoLabel.innerHTML =
+      '<i class="bi ' + (isLogin ? 'bi-person' : 'bi-activity') + '"></i> ' +
+      (isLogin ? 'Login Information' : 'Event Information');
+    if(detailGrid){
+      const rows = isLogin
+        ? [ [ 'Administrator', e.adminName ], [ 'Username', e.username ],
+            [ 'IP Address', e.ip ], [ 'Login Time', when ], [ 'Result', statusLabel ] ]
+        : [ [ 'Actor', e.adminName ], [ 'Action', e.title ],
+            [ 'Target / Resource', e.target ], [ 'IP Address', e.ip ], [ 'Time & Date', when ] ];
+      detailGrid.innerHTML = rows
+        .filter(([, v]) => v !== '' && v != null)
+        .map(([k, v]) => detailField(k, v, /ip|user agent|target/i.test(k)))
+        .join('');
+    }
+
+    if(detailDeviceLabel && detailCards){
+      const cards = [
+        client.os ? card('OS', client.os) : '',
+        client.browser ? card('Browser', client.browser) : '',
+        ua ? card('Device', /Mobile|Android|iPhone|iPad/i.test(ua) ? 'Mobile' : 'Desktop') : '',
+        e.location && e.location !== '\u2014' ? card('Location', e.location) : '',
+        ua ? card('User Agent', ua, '', { wide: true, copy: ua }) : ''
+      ].filter(Boolean);
+      detailCards.innerHTML = cards.join('');
+      detailDeviceLabel.hidden = !cards.length;
+      detailCards.hidden = !cards.length;
+    }
+
+    if(detailIds){
+      const raw = e.raw || {};
+      const ids = [
+        [ 'Event ID', raw.id ], [ 'Admin ID', raw.adminId ], [ 'Brand ID', raw.brandId ]
+      ].filter(([, v]) => v != null && v !== '');
+      detailIds.innerHTML = ids.length
+        ? ids.map(([k, v]) => detailField(k, '#' + v, false)).join('')
+        : detailField('Event ID', '\u2014', false);
+    }
+
+    if(detailKv){
+      const rows = [ [ 'Event Type', e.title ], [ 'Target Resource', e.target ], [ ACTOR_LABEL, e.adminName ] ]
+        .concat(Object.entries(e.detail || {}).filter(([k]) => k !== 'Reason'));
+      detailKv.innerHTML = rows.map(([k, v]) => detailField(k, v, DETAIL_WIDE_KEY.test(k))).join('');
+    }
+
+    /* Reason is only worth a section when there is one — a successful event has no failure
+       reason, and an empty labelled box is noise. */
+    if(detailReason){
+      const reason = String((e.detail && e.detail.Reason) || '').trim();
+      detailReason.textContent = reason;
+      if(detailReasonBlock) detailReasonBlock.hidden = !reason;
+    }
+
+    let rawText = '';
+    try{ rawText = JSON.stringify(e.raw || {}, null, 2); }catch(err){ rawText = ''; }
+    if(detailRaw) detailRaw.textContent = rawText;
+    setPayloadTab('raw');
+    setPayloadOpen(false);
+    fillHash(rawText);
+  }
+
+  /* The ids are the compact summary; the payload is one click away, as in the mockup. */
+  function setPayloadOpen(open){
+    if(payloadBox) payloadBox.hidden = !open;
+    if(jsonToggle){
+      jsonToggle.classList.toggle('is-open', !!open);
+      jsonToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    if(jsonToggleLabel) jsonToggleLabel.textContent = open ? 'Hide JSON' : 'View JSON';
+  }
+
+  /* The row is the control now (the Details column it replaced cost 72px of table width).
+     is-active is what says which event the panel is showing. */
+  function setActiveRow(id){
+    if(!tbody) return;
+    tbody.querySelectorAll('tr[data-event-id]').forEach(tr => {
+      const on = tr.getAttribute('data-event-id') === String(id);
+      tr.classList.toggle('is-active', on);
+      if(on){ tr.setAttribute('aria-current', 'true'); } else { tr.removeAttribute('aria-current'); }
+    });
+  }
+
+  /* Opening the detail takes ~158px out of the table, so the sidebar folds to its 72px rail for
+     as long as the panel is open — the owner's own suggestion ("我点开audit log detail后 我的sidebar
+     自动收起"), and it is also what lets the filter row stay on one line.
+     Two rules keep this from fighting the user or reports.js:
+       · it is desktop-only (≤800px the sidebar is an off-canvas drawer, not a column);
+       · the saved preference (bo_sidebar_mini) is never written, and the collapse is only undone
+         if this code is what collapsed it — so a rail the user chose stays a rail.
+     While it is a rail, reports.js's own hover-expand still works, so the nav is one hover away. */
+  const MINI_CLASS = 'sidebar-mini';
+  function foldSidebar(fold){
+    if(!window.matchMedia('(min-width:801px)').matches) return;
+    const body = document.body;
+    if(fold){
+      /* Already a rail because of this panel: keep the marker, or closing cannot undo it.
+         (Reading it the other way round — "it is a rail, so the user must want one" — cleared the
+         marker on the second row the user clicked, and the sidebar then stayed folded for good.) */
+      if(body.dataset.masFolded === '1') return;
+      if(body.classList.contains(MINI_CLASS)) return;
+      body.dataset.masFolded = '1';
+      body.classList.add(MINI_CLASS);
+    }else{
+      const weFolded = body.dataset.masFolded === '1';
+      delete body.dataset.masFolded;
+      if(weFolded) body.classList.remove(MINI_CLASS);
+    }
+  }
+
+  function openDetail(id){
+    const e = findEvent(id);
+    if(!e || !detailPanel) return;
+    if(detailTitle) detailTitle.textContent = 'Audit Log Detail';
+    fillDetail(e);
+    detailPanel.hidden = false;
+    document.body.classList.add('mas-detail-open');
+    setActiveRow(e.id);
+    foldSidebar(true);
+  }
+
+  /* The body is only locked at the full-screen breakpoint (see the ≤1439.98px block in
+     bo-security-audit.css) — on desktop the panel is a column, not an overlay, and freezing the
+     page behind it would hide anything below the fold. */
   function closeDetail(){
-    if(!detailModal) return;
-    detailModal.classList.remove('show');
-    detailModal.setAttribute('aria-hidden', 'true');
-    if(!document.querySelector('.modal-clean.show')) document.body.classList.remove('modal-open');
+    if(!detailPanel) return;
+    detailPanel.hidden = true;
+    document.body.classList.remove('mas-detail-open');
+    setActiveRow(null);
+    foldSidebar(false);
   }
 
   async function loadAll(){
-    if(tbody) tbody.innerHTML = '<tr><td colspan="7" class="mad-empty">Loading audit events...</td></tr>';
+    if(tbody) tbody.innerHTML = '<tr><td colspan="6" class="mad-empty">Loading audit events...</td></tr>';
     try{
       await loadMerchants();
       let loginErr = null;
@@ -879,7 +1197,7 @@
       filtered = [];
       updateKpis([]);
       if(infoEl) infoEl.textContent = 'Showing 0 records';
-      if(tbody) tbody.innerHTML = '<tr><td colspan="7" class="mad-empty text-danger">' + esc(err.message || 'Load audit failed') + '</td></tr>';
+      if(tbody) tbody.innerHTML = '<tr><td colspan="6" class="mad-empty text-danger">' + esc(err.message || 'Load audit failed') + '</td></tr>';
       fitTableArea();
     }
   }
@@ -924,13 +1242,46 @@
   });
 
   tbody && tbody.addEventListener('click', e => {
-    const btn = e.target.closest('[data-mas-view]');
-    if(!btn) return;
-    openDetail(btn.getAttribute('data-mas-view'));
+    const tr = e.target.closest('tr[data-event-id]');
+    if(!tr) return;
+    openDetail(tr.getAttribute('data-event-id'));
+  });
+  /* Keyboard parity: the row carries tabindex, so Enter / Space must open it. The time cell's
+     hover tip is focusable too, and it must not be treated as "open this row". */
+  tbody && tbody.addEventListener('keydown', e => {
+    if(e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+    const tr = e.target.closest('tr[data-event-id]');
+    if(!tr) return;
+    e.preventDefault();
+    openDetail(tr.getAttribute('data-event-id'));
   });
 
   document.querySelectorAll('[data-mas-close]').forEach(btn => btn.addEventListener('click', closeDetail));
-  detailModal && detailModal.addEventListener('click', e => { if(e.target === detailModal) closeDetail(); });
+  rawCopyBtn && rawCopyBtn.addEventListener('click', () => {
+    copyText(detailRaw ? detailRaw.textContent || '' : '', rawCopyBtn);
+  });
+  /* One delegated handler for everything inside the panel that is rebuilt per event: the copy
+     buttons on the IP / User Agent cards, and the payload's two tabs. */
+  detailPanel && detailPanel.addEventListener('click', e => {
+    const copyBtn = e.target.closest('[data-mas-copy]');
+    if(copyBtn){ copyText(copyBtn.getAttribute('data-mas-copy'), copyBtn); return; }
+    const tab = e.target.closest('[data-mas-tab]');
+    if(tab){ setPayloadTab(tab.getAttribute('data-mas-tab')); return; }
+    if(e.target.closest('#masJsonToggle')) setPayloadOpen(!!(payloadBox && payloadBox.hidden));
+  });
+  document.addEventListener('keydown', e => {
+    if(e.key !== 'Escape') return;
+    if(detailPanel && !detailPanel.hidden) closeDetail();
+  });
+  pagerEl && pagerEl.addEventListener('click', e => {
+    const btn = e.target.closest('[data-page]');
+    if(!btn || btn.disabled) return;
+    const next = Number(btn.getAttribute('data-page'));
+    if(!next || next === page) return;
+    page = next;
+    renderTable();
+    if(tableScroll) tableScroll.scrollTop = 0;
+  });
 
   fitTableArea();
   loadAll().then(() => requestAnimationFrame(fitTableArea));

@@ -23,7 +23,6 @@
   let currency = 'MYR';
   let range = null;
   let expanded = new Set();
-  let syncedAt = Date.now();
 
   async function api(path) {
     const r = await fetch(API_CONFIG.BASE_URL + path, {
@@ -287,14 +286,6 @@
     document.querySelectorAll('.mre-cur-label').forEach((el) => {
       el.textContent = `(${currency})`;
     });
-  }
-
-  function updateSyncLabel() {
-    const el = $('reportSyncLabel');
-    if (!el) return;
-    const mins = Math.max(0, Math.floor((Date.now() - syncedAt) / 60000));
-    const text = mins < 1 ? 'Synced just now' : (`Synced ${mins} min ago`);
-    el.innerHTML = `<i class="bi bi-arrow-repeat" aria-hidden="true"></i> ${text}`;
   }
 
   function updateCounts() {
@@ -678,8 +669,6 @@
       merchants = normalizeMerchants(settlement.brands || [], accounting.brands || []);
       updateCounts();
       applyFilters();
-      syncedAt = Date.now();
-      updateSyncLabel();
     } catch (e) {
       console.error(e);
       merchants = [];
@@ -847,7 +836,6 @@
     });
 
     $('reportExport')?.addEventListener('click', exportCsv);
-    $('reportSyncLabel')?.addEventListener('click', () => { load(); });
 
     load();
   }

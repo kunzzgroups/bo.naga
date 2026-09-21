@@ -394,6 +394,8 @@ Recipe used (reuse it for the remaining `main-merchant-*` pages):
 - **Editing a shared `.js`/`.css` without bumping its `?v=` makes the fix look broken.** The browser keys the HTTP cache on the full URL, so a page (or preview harness) pinning the old version keeps executing the previous file — a verification run then reports "no requests / no change" while the server is serving the new code. Bump `?v=` in every referencing page in the same pass; the merchant stylesheet references were unified to `1.4.2` across 14 pages for this reason.
 - `main-merchant-balance.html`, `main-merchant-transactions.html` and `main_merchant_report.html` are **migrated as of 2026-09-15** through the Report family block below, not through this file — they load `main-merchant-report-executive.css` for their `.mmr-*` / `.settlement-*` deltas, and their picker shares the report family's scope.
 - Page-scoped legacy files (`main-merchant-profit.css`, `main-merchant-profit-record.css`, `main-merchant-repayments.css`) carry their own navy token blocks (`--mpr-*`, `--mprr-*`, `--mprd-*`, `#FFFFFF` surfaces, `#F5F8FB` canvases). Those pages are in the family by `data-access-page`, so the shared block covers their shell and the token layer flips most of their content; only hard-coded leftovers inside the page-scoped classes needed extra rules.
+- **Re-pointing the `--mprr-*` tokens is not the same as migrating the page (found 2026-09-21, Record Profit).** The Record Profit block re-pointed the tokens, which fixed everything that *reads* one — but `.mprr-card` reads `--mprr-surface`, so the form's section card landed on `#FFF8EB`, the exact fill of every control inside it. Card and fields painted the same cream: the panel stopped lifting, the fields stopped reading as inset wells, and the card lost its amber left rail. A two-way diff of the *rendered* colour sets could not see this — every value it produced was already on a sibling page — because the bug was **which** colour was applied where, not an off-palette hex. Diff computed styles per *element role*, not the palette as a whole. The fix copies `.mac-section` on `main-merchant-create.html` (#FFFCF7 · `#DCC9A8` · 8px · `0 10px 28px rgba(120,80,20,.10)` · 3px `#F59E0B`→`#D97706` rail inset 12px). Two things to keep: the rail is **light-only** (the reference card is a light-mode ladder; dark already lifts `#383A46` over `#2A2C36` wells), and the reference's `overflow:hidden` is **not** copied — this card holds house custom selects whose 280px menu panel would be clipped by the card bounds (`.report-main` already clips with `overflow:hidden`; do not add a second one).
+- Field micro-labels (11.5px/800 uppercase) take `color:var(--bo-muted)` — `#71717A` light / `#A1A1AA` dark — per `main-admin-role-create.css`. `--mprr-muted` (`#57534E`) is the muted-on-cream value for footer/draft/icon text (DESIGN.md → Muted), not for field labels; re-point the label *classes*, not the token, or the footer greys go with them.
 - Beware a mechanical rescope: swapping only `.main-dashboard-page` in a selector like `body.main-dashboard-page …` leaves a stray `body` and produces the invalid `bodybody…`, which silently makes every rule in that group inert. Grep for `bodybody` after any scripted rescope.
 - `main-merchant-settlement.html` is in the family by `data-access-page` even though its sidebar key is a report key, so it inherits the whole block by linking the file. Its `.mre-*` report chrome lives in `main-merchant-report-executive.css`.
 - The modal scrims (`.modal-clean.mad-modal`, `.sidebar-overlay`) keep a dark translucent `rgba(15,23,42,.55)` in both themes. That is a backdrop, not chrome, and reads as neutral — leave it.
@@ -704,6 +706,14 @@ Follow-up (same day) — the two picker defects found in review:
 - **The health page now uses the family date-range picker.** It carried two native `input[type=date]` fields; it now has the same `.ref-*` markup as its siblings (`#reportDateTrigger` / `#reportRangePicker` / `#reportCal*`, 8 presets), driven by new code in `main-provider-activity.js`. The request window is unchanged (`from` / `to` on `/admin/main/provider-activity`) and it defaults to **This Month** with the strip contract, so all four provider pages read alike. That makes **five** copies of the calendar in the repo — a shared driver is the eventual cleanup.
 - **The credentials ledger panel was clipped.** `main-provider-report-executive.css:125` anchors it `right:0;left:auto` while `reports.css:3595` pins the field to 292px, so the 390px panel hung 98px to the LEFT of its trigger (measured panel.x 223 vs field.x 321) and the nearest clipping ancestor (`.mad-panel`, `overflow:hidden`, x=304) cut the entire preset rail off. The merchant reference and every other page anchor left (panel.x == field.x), so the credentials file now anchors left — inside `@media(min-width:768px)`, because below that `reports.css` turns the picker into a fixed sheet (`position:fixed; top:96px`) and a page-level `left:0` would flatten it to the viewport edge. Flush-left at mobile is what the merchant pages already do, so it was left alone rather than diverging.
 - **The picker treatment lives in the family file now.** The Admin Detail block never carried the calendar rules — they sit in `main-dashboard-executive.css` and were ported per family — which is why the shared file gained a rescoped copy of the merchant file's verified picker + strip sections (trigger, rail, panel, head/week/month/year grids, day cells, hover, `is-start` / `is-end` / `is-preview`).
+
+Follow-up — the Activity Logs footer now matches the Providers tab (2026-09-21):
+
+`main-provider-health.html`'s footer was the odd one out in the family: a three-slot bar (its own "Show N entries" select on the left, the pager centred, "Showing …" on the right) with a bespoke `.mad-btn` pager. It now uses the same two-slot contract as `main-provider-detail.html` and every other listing — "Showing X to Y of Z entries" flush left, the page ladder flush right — so the page-size control is gone and `main-provider-activity.js` pins the request to `size=20`.
+
+That removes the health page's half of the page-size defect above, and with it the whole override block `main-provider-health-executive.css` carried to re-enable the select against `main-admin-detail-executive.css:1108-1112`. Nothing replaces it: the pager is now painted by the shared contract (`main-admin-detail-executive.css:1113-1146` geometry + `main-provider-family-executive.css:332-370` / `:1281-1296` colour), and `.mad-footer` keeps the family's `#FFF8EB` / `#EADCC8` surface via `--bo-surface` / `--bo-border`, which is what the Providers tab already resolved to.
+
+`main-provider-activity.js` now emits `.smart-page` buttons — Previous/Next as `.nav-text`, first and last page always present, a ±2 window around the current one, gap collapsed to an ellipsis — the same ladder `main-provider-detail.js` builds, so the two tabs read as one control. Verified: both footers measure `info.left 41` / `pager.right 1559` at 1600px light mode, no horizontal overflow at 480px, and a page-2 click issues `page=1&size=20` and re-labels to "Showing 21 to 40 of 139 entries".
 
 - **A pill set without `bo-seg-bounce` renders with no frame at all.** The family's active-pill fill is drawn by the shared `.bo-seg-thumb`, not by the pill: `main-merchant-detail-executive.css` sets `.mad-pill.is-active{background:transparent}` and puts the cream/charcoal raised chip in `.mad-pills.bo-seg > .bo-seg-thumb`. `main-merchant-profit.html` carried `.mad-pills` but never loaded `bo-seg-bounce.css`/`.js`, so its filter pills fell back to an unstyled grey chip while every other pill-bearing merchant page looked right. Both files are wired there now; the thumb is created by the script (`ensureThumb`) and positioned by `sync()`, which runs on mount, on resize and on any mutation of the track (class/text), so counts and clicks keep it aligned.
 
@@ -1045,3 +1055,526 @@ to follow across. Only the report family (a faint amber wash) and the transactio
 - Verified both themes on four pages across three families: `main-admin-detail`,
   `main-merchant-detail`, `main-merchant-profit`, `main_merchant_report` — odd/even alternate to the
   exact token values, hover intact, suspended row intact.
+### Provider Pricing & Markup → Selected pricing: dark-mode Override, and the two lines at the bottom (2026-09-21, user-reported)
+
+Two reports in one message, then a correction on the second.
+
+- **Dark: the typed Override number was invisible.** Measured on a harness that reproduces
+  `main-merchant-detail.html`'s edit workspace with the real stylesheets (`getComputedStyle`, CSS
+  transitions disabled — a control mid-transition otherwise reports its light value): in dark,
+  `.mac-provider-override-control` computed `#FFF8EB` while its `input` took its colour from the
+  dark token (`#F5F5F4`) — white text on a cream well. The `%` segment and the Effective pill
+  computed `#F7F9FC`, lit pills on a dark card. Cause: the LIGHT rules that pin those three frames
+  carry `#madEditWorkspace` (e.g. `body.main-merchant-detail-page #madEditWorkspace
+  .mac-provider-eff` is (1,1,2)), and an ID out-ranks any class count, so the dark rules meant to
+  flip them (0,3,2, no ID — `html[data-bo-theme="dark"] body.main-merchant-detail-page
+  .mac-provider-eff-wrap .mac-provider-eff`) never applied inside the edit workspace. That is
+  DESIGN.md's own ID trap: when a control is pinned by an ID, its other theme belongs at the same
+  level. Fixed by restating those three dark halves with the same ID — `#2A2C36` /
+  `var(--bo-border)`, the locked dark well. The input needed no new rule: its colour and
+  transparent fill were already right, they were landing on the wrong surface.
+  The provider/currency dark block in `main-admin-detail-executive.css` appears **twice** (~6405
+  and ~6505) and both copies are inert for these three frames; the ID-level restatement is the one
+  that decides. `main-merchant-create.html` never had the bug — its form renders outside
+  `#madEditWorkspace` (see the "same form vocabulary, but outside" note above) — verified by
+  re-measuring the harness with the create page's body class set.
+- **The bottom of the screen carried TWO parallel hairlines.** The sidebar's account block
+  (`.bo-sidebar-account-footer`) and the sticky edit bar are the same band across the bottom: both
+  end flush with the viewport, but the block was 70px (10px/12px padding around a 48px Logout row,
+  `main-merchant-detail-executive.css:442`) against the bar's 73px (14px padding ×2 + the 44px
+  button + its 1px border), so their top borders sat 3px apart — measured at x=180 image and x=1200
+  image of the owner's screenshot: block hairline y=872, bar hairline y=868. Fixed by pinning the
+  block to the bar's height for `.mad-editing` only (the bar is the only reason the two share an
+  edge): `height:73px`, flex-centred, padding-top/bottom zeroed. Pinned rather than
+  padding-tweaked so it survives any future change to the Logout row's own height. Verified: block
+  and bar both top 827 / bottom 900, so the two hairlines are one line, in both themes.
+- The bar's hairline was also the wrong colour for a shared line: `var(--bo-line, #E6EDF5)`, a
+  token **defined nowhere in this theme**, so the cool blue-grey fallback painted against the
+  sidebar block's warm `rgba(92,74,48,.1)`. The bar now states the sidebar's value, and dark
+  matches the block's `rgba(255,255,255,.08)` (was `.14`). One line, one colour.
+- **Do not inset the bar to "line it up with the content."** The first attempt anchored it at
+  `calc(var(--sidebar-w) + 24px)` / `right:24px` with rounded top corners, on the theory that the
+  bar stuck 24px out past the section card (the workspace's own side padding is 24px). The owner
+  rejected it outright — the bar is full-bleed by design, and the defect was the *second* line,
+  not the bar's edges. Reverted in the same pass. The reading that survives is the one written
+  above: balance the two lines against each other, leave the band alone.
+- **The Selected-pricing card chrome's light palette — as the owner specified.** The first report
+  ("Selected Pricing 颜色需要调整") was about the cool-grey chrome inside these cards. After one
+  rejected direction (all-beige) and a rendered three-way choice, the owner's answer was explicit
+  and is what is in the tree: the **card keeps the owner-specified rung `#FFFCF7`** (not white, not
+  the pane's `#FFF8EB`), and the Base tag and the Effective value take the amber metadata recipe
+  `rgba(217,119,6,.12)` / `#B45309` — the same one `.mac-provider-count` in the pane head above them
+  uses — with the `%` segment on the nested well `#F5EBDC`. Applied to BOTH
+  `main-merchant-detail-page` and its `main-merchant-create-page` twin. The cool-grey literals
+  `#F0F3F8` / `#667085` / `#F7F9FC` are gone from this component in light; `#98A2B3` remains on the
+  small OVERRIDE / EFFECTIVE labels.
+  **Dark keeps the charcoal well** — the tag already took `rgba(255,255,255,.06)`+muted and the
+  `%` segment / Effective pill take `#2A2C36` from the ID-level block above. One trap came with the
+  amber: the light rule for the Effective value states a literal `#B45309` and carries
+  `#madEditWorkspace`, so it is (1,1,2) and would win in dark too — amber on charcoal. The dark
+  colour is restated at the same level (`var(--bo-text)`).
+  **Lesson for the next colour request:** the value the owner states (`#FFFCF7`) is the value to
+  apply; a rendered option that keeps the pills but changes the card fill is still a change to the
+  thing they specified.
+- `?v=` was bumped `1.0.219 → 1.0.220` on all 25 `main-admin-detail-executive.css` references in
+  the same pass (a page pinning the old version keeps executing the old file, and the fix then
+  reads as "not applied").
+- **Do not blanket-`sed -i` over `*.html` in this repo.** `sed -i` rewrote the line endings of every
+  file it touched (CRLF → LF) and `git status` then reported ~150 files modified with no content
+  change. Bump pins with a byte-level replace that leaves the rest of the file byte-identical.
+
+### The bottom band on every page with a sticky action bar (2026-09-21, owner request)
+
+"其他页面也是要去调整下方的平行线" — the two-hairline defect is not specific to Merchant Detail, so it
+is now fixed wherever a page has both a sticky bottom bar and the sidebar account block.
+
+- **Measured at 1440×900, light and dark (heights are theme-independent):** `.mac-footer-actions`
+  73px · `.mprr-footer` 65px · `.mrc-sticky-footer` 69px · `.pmc-sticky-footer` 71px ·
+  `.mp-footer` 60px · `.vle-footer` 68px — against account blocks of 66–70px, so **every** page with
+  a bar was off by 1–8px: Add Admin / Add Merchant / Add Provider / Merchant Repayments (73 vs 70),
+  Merchant Profit Record (65 vs 70), Create Role (69 vs 68), Payment Method Create (71 vs 70),
+  Menu Permission (60 vs 68), VIP Level Edit (68 vs 68 ✓ the one page that happened to match).
+- **One rule set in `bo-ui-standard.css`**, next to the `.bo-sidebar-account-footer` definition it
+  overrides — the one stylesheet all twelve bar pages load. The block is pinned to *its* page's bar
+  height and becomes a flex box that centres the Logout row, so a future change to that row cannot
+  break the alignment again. Each rule is keyed on the bar element itself with `:has()` —
+  `body:has(.mprr-footer) .report-sidebar .bo-sidebar-account-footer{height:65px}` — which keeps
+  pages that carry the create-page class without a bar (`main-provider-endpoints.html`) untouched,
+  and needs no per-page list. Merchant Detail is the exception: its bar is in the DOM while the edit
+  workspace is closed, so it is keyed on `.mad-editing` instead and excluded from the `:has()` form.
+- **One hairline, one colour:** the block draws `rgba(92,74,48,.1)` light / `rgba(255,255,255,.08)`
+  dark on every page; the bars had their own values (`#DCC9A8`, `#EADCC8`, `var(--bo-line,#E6EDF5)`,
+  white `.1`–`.14`). The bars now state the block's value, so the band closes on one line in one
+  colour. `vip-pages-targeted.css` states its own hairline at a higher class count, so that one is
+  escalated with the repo's `:not(#…)` id step rather than edited and re-pinned in five pages.
+- Verified by measurement on all twelve pages in both themes (bar top == block top, border colours
+  equal), plus a control: `dashboard.html` and `main-provider-endpoints.html` keep the block at its
+  natural height because they have no bar.
+- **The band's FILL is the owner-specified `#FFFCF7` too** ("指标的颜色也是还没改到我要的颜色", with the
+  DevTools pointed at `.mac-edit-actions`). The bars were a mix — `#FFF8EB` (from `--bo-surface`),
+  `#FFFCF7` (bo-charcoal) and a translucent `rgba(255,255,255,.96)` — so the strip changed tone from
+  page to page, and a translucent fill reads as whatever is underneath rather than as the value. All
+  six bar classes now state `#FFFCF7` solid in light and `rgba(56,58,70,.96)` in dark, from the same
+  block in `bo-ui-standard.css`; Merchant Detail's own rule states `#FFFCF7` in place as well, next
+  to the geometry it owns. This is the locked sticky-footer value in `.interface-design/system.md`
+  ("Sticky footer | #FFFCF7 · border #DCC9A8 · stronger warm shadow"). Note the earlier revert of
+  "the current look" was aimed at the bar's *geometry* (the inset + rounded experiment) — the warm
+  fill went out with it by mistake and is back.
+- `?v=` for `bo-ui-standard.css` unified to `1.0.7` on all 139 referencing pages — it was at
+  1.0.4 and 1.0.6, and a page pinned to either would keep serving the file without the new rules.
+### Repayments Due table — the ops-table recipe was leaking into it (2026-09-21, user-reported)
+
+"Payment Due 字体和table 都需要再调整." Measured against the Profit Report's own ledger
+(`.mad-table` on the same body class, both themes), the page differed in four ways — three of them
+leaks from a rule set written for a different table.
+
+- **Cell 3/4 alignment.** `main-admin-detail-executive.css` right-aligns cell 3 ("Credit Balance")
+  and centres cell 4 ("Last Active") for **every** `.mad-table` under `body.main-admin-detail-page`,
+  padding included. Here those cells are **Merchant** and **Status**: the merchant name was pushed to
+  the right edge of a 24% column with ~280px of empty column to its left, and the status pill sat
+  centred over a left-aligned body. Restated at that rule's own weight from the later sheet
+  (`text-align:left`, padding back to 12px) — the ledger's equivalents (Merchant, Type) are both
+  left-aligned. Measured `nameOffsetFromCellLeft` 12px after the fix.
+- **Columns disappeared below 1400px.** The same sheet hides cells 4/6/7/8 on every `.mad-table`
+  under 1400px (and 6/7/8 under 1200). Headers hid; the body cells never did — they carry no
+  `data-label` — so the head simply stopped matching the body: measured 9/9 headers at 1600,
+  **8/9 at 1366** (no "Payment amount", on the most common laptop width), 5/9 at 1100. The Profit
+  ledger already carries the guard for this ("don't inherit Merchant list column-hiding"); this page
+  now carries it too, plus the `thead`/`tbody`/`tr` half of it so the ≤992px "card list" rebuild
+  cannot take the grid either (its cells are the amount inputs). Verified 9/9 headers and cells with
+  head↔body column widths equal at 1600 / 1366 / 1200 / 1100 / 992 / 900 / 768 / 430.
+- **Head type was a step small.** 11px / `.01em` / 12px padding → the family's `.mad-table th`
+  recipe, 12px / `.03em` / `14px 12px`. The head now matches the ledger's rather than reading as a
+  different table on the same screen.
+- **Money cells were not bold.** Due and Paid measured 400 while the ledger's Amount column is 800 —
+  only "Balance" read as a figure (it was already 800, and red). `td.num` is now 800 + tabular-nums;
+  Date stays 400, so the emphasis is money-only. The status pill's 10px was a step off the locked
+  scale; the ledger's own chip (`.mpr-kind`) is 11px/800, so both read at 11px.
+- `?v=` bumped `1.0.5 → 1.0.7` (two passes) in the same change, per the pin rule above.
+- **The amount control, second report** ("这里的设计 是不是要再调整？" — a crop of the "Payment amount"
+  header over the input). Three things, all of them the same leak family or the family recipe:
+  - **The native steppers sat on the right-aligned value.** `type="number"` with no reset — the same
+    defect `main-merchant-detail-executive.css:4448` already fixes for the settlement modal's
+    `.msr-amount-group` ("The native steppers sat under the right-aligned value"), which this input
+    shares the `mac-input-group is-prefix` markup with. Both `-webkit-*-spin-button` resets +
+    `appearance:textfield` now apply here too.
+  - **The group was 168px wide inside a 244px cell**, right-aligned: 64px of empty cell sat to its
+    left, so the right-aligned "Payment amount" header floated over a half-empty column. The group now
+    fills its column (`max-width:none`) and shares both edges with it.
+  - **Below 992px it then collapsed to 94px.** That layout is content-driven, where a percentage
+    width does not feed intrinsic sizing — and the same card block also zeroes `min-width` on every
+    direct child of a cell (`… .mad-table td > *`), which killed the first floor I set. The floor
+    (`150px`) is restated inside the ≤991.98 block, scoped `td > .mprd-row-amount` at (0,3,2). It
+    stays out of the base rule on purpose: in the fixed desktop layout a cell's `min-width` is
+    ignored and cells do not clip, so the group spilled past its column at 992–1366px. Measured input
+    width after: 105px at ≤900, 74–187px from 992 to 1600, group never outside its cell, 9/9 headers
+    and head↔body widths equal at 1600 / 1440 / 1366 / 1280 / 1200 / 1100 / 992 / 900 / 768 / 430.
+  - **The typed figure was 12px/700** while the money columns beside it are 13px/800 — the amount you
+    type read a size down from the amount you are paying. Now 13px/800.
+
+### Security & Audit — the detail view is a right-hand drawer, and the list paginates (2026-09-21, owner request)
+
+"我要更改所有安全页面的audit log", with the target as a mockup: the detail opens as a panel on the
+right instead of a centred dialog, and the list area changes with it. Both Security & Audit pages —
+`main-merchant-security.html` and `main-admin-security.html`, which share the `.mas-*` component and
+the `body.main-admin-security-page` scope.
+
+- **The detail column is no longer a `<dl>` of two columns with the payload under it.** The old body
+  was a 140px/1fr term-definition grid plus an uncopyable `<pre>` that filled the panel, and the head
+  repeated the event as a subtitle. It is now three sections from the mockup: the event's own fields
+  as **label over value**, `Event Details` (the payload in its own well, copy button in the section's
+  title row), and `Related Information` (Event Type / Target Resource / Merchant — **Administrator**
+  on the admin page). The head is the static title `Audit Log Detail`.
+- **`Reason` is a conditional fourth section** (owner: "reason的话没有用的话就移除"). A successful
+  event has no `failureReason`, so the section is dropped entirely rather than shown as an empty
+  labelled box with a `—` in it. **This needed a change in the mapper, not just the renderer:**
+  `mapLogin` produced `Reason: row.failureReason || '—'`, and that placeholder is a truthy string —
+  the first pass rendered "Reason: —" for every successful login. It is now `|| ''`, and the section
+  hides on the empty string. Verified all three shapes: successful login → 2 sections, blocked login →
+  3 with "Invalid username or password", an operation row (which carries no `Reason` key at all) → 2.
+- **The fields come from the event's existing `detail` map, not a new one.** `mapLogin` already
+  produced exactly the mockup's set, so only two keys were renamed for the new layout (`Time` → the
+  formatted `2026-09-21 14:44:19`, not the raw `…T14:44:19.358465`; `IP` → `IP Address`) and
+  `Reason` is filtered out of the grid to be rendered once, in its own section. `mapOperation` gets
+  the same two renames; it deliberately gains **no** `User Agent` row, because operation rows carry
+  no `userAgent` and a permanent `—` is noise, not fidelity.
+- **The two long values take the whole row.** `IP Address` and `User Agent` are full-width
+  (`is-wide`, `grid-column:1/-1`); at a 460px drawer a half column wraps a user agent into a tower.
+- **The copy button sits in the `Event Details` title row, not inside the well (owner: "event details
+  的设计需要再调整").** Floating it in the well's top-right corner forces one of two bad outcomes:
+  reserve a blank band at the top of the JSON for it (what the first pass did — measured a 38px dead
+  strip above the `{`), or let a long line run underneath it. Moving it out costs nothing and the
+  well becomes pure content, with the JSON starting 8px under the title. The well is also taller
+  (`max-height` 280 → 320px) so the common login payload fits without an inner scrollbar — verified
+  `scrollHeight == clientHeight` at 285px for a 12-line payload, where 280 still clipped it.
+- **It is a column, not an overlay — the second owner pass ("我想看完整的table + Audit Log Detail").**
+  The first version was a right-hand drawer over the list, which covered the Details column and
+  part of Status/IP. At ≥1440px the workspace becomes a two-column grid and the panel is an
+  `<aside>` **sibling of the table panel**, so the tabs and the KPI chips above keep the full
+  width and the table simply yields the column — every column of the table stays visible while an
+  event is open. There is no scrim, no backdrop, and no body scroll lock on desktop: the list
+  stays live and `View` on another row just swaps the panel's contents. Esc and both Close
+  controls still close it. Below 1440 there is no room for both, so the panel is a full-screen
+  view instead.
+- **Below 1440 the panel is `position:fixed;inset:0`, and that needed two fixes found by
+  measuring, not by reading:**
+  - **The sticky topbar painted over the panel's head**, hiding the title and the X. Cause:
+    `.report-content` is a stacking context (`position:relative`, `z-index:1`, the latter
+    declared `!important` in `reports.css`), so the panel's own `z-index:10000` is only ordered
+    *inside* it while the topbar (`z-index:5000`) is a sibling above the whole thing. The content
+    is lifted to `z-index:6000!important` while `body.mas-detail-open` is set.
+  - **The panel rested 10px down, invisible, at `opacity:0`.** An entrance `@keyframes` with
+    `animation-fill-mode:both` holds the `from` state; a panel un-hidden without the animation
+    actually running stays there. The keyframes are gone — a full-screen surface does not need
+    an entrance animation, and a stuck one is worse than none.
+
+- **The scrim is lighter than the modal's (`.24` against `.55`).** The mockup keeps the list legible
+  behind the panel; a full modal scrim on a side panel that covers a third of the screen reads as a
+  different component. The page is still dimmed, so the panel is still the obvious focus.
+- **The panel's body child keeps `border-radius:0`.** A full-height drawer has no bottom edge for the
+  child's square corners to fight with, so the earlier `0 0 8px 8px` fix has nothing to do here.
+- **The list paginates at 10, in the footer, with the family's own pager.** `pageButtons()` is
+  copied verbatim from `main-merchant-detail.js` (first / last / two either side, ellipsis), and the
+  `.mad-pager` + `.mad-footer-right` chrome already existed under `body.main-admin-detail-page` — the
+  security CSS even had the amber `.smart-page.active` rule waiting for it. The footer's text follows
+  the family ("Showing 11 to 20 of 25 records"), not the old "Showing 25 records".
+- **The pager keeps its page; every filter change resets to page 1.** `applyFilters()` sets `page = 1`
+  and the pager calls `renderTable()` directly — otherwise a filter change on page 7 lands on an empty
+  page. Verified: page 2 → click a category pill → page 1, "Showing 1 to 4 of 4 records".
+- **Row position, not page position, drives the avatar wash.** `avClass` uses `start + idx` so the
+  alternation does not restart at row 1 on every page.
+- **The pills row moved below the filter row, per the mockup.** This is a DOM swap, not `order`: the
+  toolbar becomes `display:block` below 768px, where `order` stops applying and the pills would jump
+  back to the top with their `margin-bottom` still set. That mobile rule is neutralised to `margin:10px
+  0 0` in the same change.
+- **A panel head ("Audit Log / View all system activities and changes") was built from the mockup and
+  then removed on the owner's word — it is not in the final markup.** It never reached a commit; the
+  panel still opens straight into the filter bar.
+- **The table's columns are px, not percentages, and that is what fixed the crushing.** The
+  percentage set needed `306px + 72% ≤ table width` to resolve — a table of **1093px or more**.
+  With the detail column open the table panel is 960–1370px, and below 1093 the middle columns
+  collapsed: measured on the 1280 viewport, Merchant **47px**, Action/Event **55px**, Target
+  **44px**, with the target chip one character per line — exactly what the owner saw. A px set
+  (96/140/162/108/142/100/72) that sums to the table's own floor is deterministic there, and the
+  browser hands spare width to the columns above it. Measured after, with the panel open:
+  1440 → 96/130/151/121/290/100/72; 1568 → 97/159/185/148/294/101/73; 1920 → 125/204/238/191/378/131/94;
+  1280 (full-screen panel) → 105/171/200/160/318/110/79. No column wraps to a single character.
+- **The head and body scrollers must share the same `scrollbar-gutter`.** They are two separate
+  tables; the body reserves 15px for its vertical scrollbar and the head does not unless told
+  to. With that mismatch every column misaligned by 15px (measured `headTableW 1376` against
+  `bodyTableW 1361`). The head stays `overflow-x:hidden` and is scrolled programmatically, but
+  keeps `scrollbar-gutter:stable`. After: header and body cell offsets are 0 at 1280 / 1440 /
+  1568 / 1920.
+- **Space is bought back where it is cheapest**, per the owner ("多节省空间 不要太多gap和padding"):
+  the column gap 16→12px, the panel `clamp(330px,23vw,410px)` rather than a flat 460px, the
+  detail body padding 18/20→14/14, the section gap 18→14, the table cell padding 16→10px, the
+  toolbar gap 12→10px, the row avatar 40→34px with its gap 12→9px.
+- **The list side needed the header-scroll sync the admin page already had.** Narrowing the table
+  panel below the table's floor makes the body scroll sideways; the merchant page never had the
+  `scrollLeft` mirror that `main-admin-security.js` carries, so it was added there too.
+- **Drawer and pager were verified in a real browser, not reasoned about.** A throwaway harness page
+  (real markup + real stylesheets, a stubbed `fetch` and a MAIN session in `localStorage`) was served
+  by the dev server at 127.0.0.1:8080: 10 rows on page 1, 10 on page 2, 5 on page 3, the scroller
+  reset to top on each page change, Esc / backdrop / Close all closing, the copy button flipping to
+  `Copied`, the drawer 460×720 flush to the right edge at 1280 (no horizontal overflow:
+  `scrollWidth == clientWidth`), full-bleed 390×844 in a 390px frame, and 10 rows filling the panel
+  without a gap at a 1000px-tall viewport. Both themes, both pages. The harness files were deleted
+  after the pass.
+- **The second pass was verified the same way**, per-event: successful login → `Event Details` +
+  `Related Information` only; blocked login → 3 sections with the reason text; operation row → 2
+  sections; copy button centred with the `Event Details` title on the admin page in dark.
+- **The third pass was measured at four widths** in frames of the real pages (auth scripts
+  stripped from the harness this time, because a same-site iframe gets its own partitioned
+  localStorage and the login guard bounced the frame to `login.html`): workspace/grid state,
+  panel position/width/z-index, per-column widths, header↔body cell offsets, and whether any
+  cell wrapped to one character. Both branches, both pages, both themes.
+- **The owner's own screen still failed after all of that, and the cause was the cache, not the
+  code.** The server was provably serving the new stylesheet (`curl` showed the HTML referencing
+  `?v=1.0.229` and the CSS containing the px column set), but the page they were looking at
+  rendered the *new panel layout with the old percentage columns* — a state that only existed
+  between two of my own pin bumps. So the rules that took four passes to get right now live in
+  **their own file, `assets/css/bo-security-audit.css`, linked last on the two pages**: a URL the
+  browser has never fetched cannot be served stale, and a mid-edit in-place change to a 9,800-line
+  stylesheet cannot leave one page half-updated. Their duplicates were deleted from
+  `main-admin-detail-executive.css` in the same pass, so there is one source of truth per rule.
+  **A reload is still needed once** — the *HTML* they had open referenced the old pins and had no
+  link to the new file.
+- **The toolbar was over-wide for real, independently of the cache**: search 360 + date 260 +
+  three selects at 140 + Reset needed ≈ 1010px in a 1023px panel with the detail open, and the
+  merchant page's extra Merchant select — an enhanced `.rounded-select-wrap` whose width is
+  content-driven, not the native `.mad-select` — pushed it over. Caps are now search 200/date
+  206/select 96 with the row gap at 5px. **Measured at 1500px with the panel open: the filter row
+  is one line (200+260+169+160+80 = 869 in 1023), the table panel is 1023, and the columns are
+  118/172/198/132/174/123/88 — every column readable, the IPv6 on one line, no horizontal scroll.**
+  Note the date field's 260px is pinned `!important` by an earlier fix (its range label needs the
+  room), so it survives these caps on purpose; on the merchant page at ~1568 the extra select still
+  wraps the last control to a second line.
+- **The Details column is gone; the row is the control** (owner: "把 details 的功能去除 用点击 active
+  的方式去呈现 那么就省空间了"). Six columns now, and the freed 72px went back to the ones that
+  needed it — Action/Event +24, IP +28, Target +20. The row takes `cursor:pointer`, `tabindex="0"`
+  and an `aria-label`, opens the panel on click *and* on Enter/Space, and the open event keeps an
+  amber wash plus a 3px left accent bar. Blocked rows keep their red: their two wash states are
+  restated after the amber ones at the same weight, so selection never erases the semantic colour.
+  Measured after: selected row `rgba(245,158,11,.26)`, blocked+selected `rgba(239,51,64,.20)`,
+  plain odd `rgb(58,60,72)` / even `rgb(67,70,83)` in dark.
+- **The active wash needed the stripe layer's own selector shape, and this is the trap worth
+  remembering.** `bo-table-zebra.css` paints these cells `!important` through
+  `html:not([data-bo-theme="dark"]) :is(.mad-table,…) > tbody > tr:nth-child(odd):not(…) > td` —
+  **(0,6,4)** — and the security tables carry `mad-table` too. My plain selector with `!important`
+  was (0,4,4) and lost, so the selected row kept the zebra stripe and only the accent bar appeared.
+  The fix mirrors that shape with `.is-active` added, reaching (0,7,5). Same lesson as the
+  `.rounded-select-wrap` caps below: when a rule is pinned `!important`, matching **specificity**
+  is what decides, not load order alone.
+- **The toolbar now fits by construction rather than by `flex-wrap`.** The enhanced selects'
+  widths are content-driven (they ignored a `max-width` cap — measured 194/169/160 either way) and
+  the date range is pinned at 260px by an earlier fix, so on the merchant page the row exceeded
+  the panel and dropped Event Types / Status / Reset to a second line. What actually binds:
+  the date range is overridden with a doubled class (`.mas-filters.mas-filters`, +1 specificity) to
+  240px, the search is capped at 160, Reset's padding is trimmed to 10px, gaps are 4px. Measured
+  needed-vs-available with the panel open — one line at all three: **1440 → 939 in 982;
+  1500 → 1015 in 1042; 1568 → 1015 in 1097**, no clipping of any select's label.
+- **`getComputedStyle().flexWrap` is not trustworthy in the in-app browser pane**, and one
+  diagnostic proved it: setting `element.style.flexWrap='nowrap'` inline still read back `wrap`,
+  and a CSSOM sweep found no matching rule declaring it. Geometry (rects) stayed consistent, so
+  every conclusion in this pass is drawn from measured widths and heights, not from that property.
+  The `flex-wrap:nowrap!important` rule is kept because it is still the right behaviour, but
+  nothing depends on it.
+- **The sidebar is narrower, and that is a change to the whole app, not to these two pages**
+  (owner: "sidebar的空间可能可以再节省收紧一点点 让我页面的展示更有空间"). `--sidebar-w` went
+  **280px → 252px → 230px** in `reports.css` — and in its `reports-dashboard-original.css` twin,
+  which three pages still link — (the second step was the owner asking for 230 outright), with the nav chrome trimmed to match: `.report-nav` padding 10 → 8px and the
+  row padding 10px/12px → 9px/10px. Those trims return 8px to the labels, so the sidebar's usable
+  text width only drops from 212px to 186px while the sidebar itself gives the content 50px.
+  **Every page moves, together, on purpose**: the sidebar is shared furniture, and a width that
+  differed between pages would jump as you navigate. Consumers all read `var(--sidebar-w,280px)`
+  — `.report-main{margin-left}`, the desktop flyout's `--bo-sidebar-flyout-left`, and the dark
+  canvas gradient's `calc(var(--sidebar-w) * .72)` — so one value moves all of them.
+  **Measured slack before choosing it** (canvas text widths against the row's real text box, with
+  every nav group expanded): the longest label in the whole menu is `11.1 Menu Management` at
+  150px against 166px of text box at 230px — **16px of slack**, next is `2.2 Roles & Permissions`
+  at 145px / 21px slack. Zero labels wrap. That 16px is the headroom on this decision: a menu
+  label longer than ~166px, or a sub-item indent grown by more than 16px, will wrap.
+- **These two pages also give back their own outer padding**: the workspace held 24px on each side
+  at desktop widths (48px of table width spent on margin) and is now `clamp(10px,1.6vw,16px)`.
+  Together with the sidebar that is **+66px of content width** on both security pages (measured:
+  workspace 1028 → 1050, table panel 996 → 1018 at a 1280 viewport).
+- **Bumping `reports.css`'s pin meant touching all 140 pages that reference it** (`?v=1.0.64` →
+  `1.0.65`). That is the cost of a shared-shell change, and it is the repo's own pin rule: leaving
+  some pages on the old pin would leave them on the old cached stylesheet and on a 280px sidebar.
+- **Known limit, measured, not hidden:** on the merchant page at a 1280 viewport *with the sidebar
+  expanded*, the filter row still wrapped at the time of the 252px pass (it needed ≈1033px in
+  970px); re-measured at 230px it needs 1033px in 992px, still two lines. That is the whole
+  arithmetic of the row: search 160 + date 240 + three content-sized selects 216/169/160 + Reset 68
+  + 20 of gaps = 1033, and no label here can be shortened without truncating it. It fits from
+  roughly a 1600px window up, and on the owner's own screen (≈1900px) it is one line. — the Reset button drops
+  to the second line. It is no worse than before this pass (the row needed more room then; the
+  narrower sidebar is what brought it from 952 to 996 of panel width), and it resolves on any
+  window from roughly 1600px up, or with the sidebar collapsed to the 72px rail. Closing the last
+  63px would mean truncating the date-range label, which is not worth it.
+- **Opening the detail folds the sidebar to its 72px rail** (owner: "他wrap下来了 可是 我不要 或者
+  就是 我点开audit log detail后 我的sidebar自动收起"). This is what makes the filter row fit without
+  truncating anything: measured at a 1280 viewport, the table panel goes 1018 → 1176px and the
+  filter row's 996px requirement sits in 1150px of room instead of 992.
+  Three things keep it from fighting the rest of the app:
+  - it is **desktop-only** (`matchMedia('(min-width:801px)')`); ≤800px the sidebar is an off-canvas
+    drawer, not a column;
+  - the saved preference is **never written** — `bo_sidebar_mini` is untouched — and the fold is
+    only undone if this code is what folded it (`body.dataset.masFolded`), so a rail the user chose
+    stays a rail after the panel closes;
+  - `reports.js`'s own hover-expand still works on the rail, so the nav is one hover away.
+  Verified end to end: closed → sidebar 230 / main margin 230 / panel 1018; open → 72 / 72 / 1176;
+  close → back to 230 with the marker cleared and the preference still `null`.
+- **The row was also trimmed to fit, so it is one line in *both* states** — the fold gives room
+  while reading, the trim gives it while not: search capped at 132px, gaps at 3px, Reset's padding
+  at 6px, and the filter bar's own padding at 10/8 instead of 10/12. Measured at 1280 with the
+  sidebar expanded: **996px needed in 1000px available — one line, no clipping.**
+- **`flex-wrap:nowrap` was removed rather than kept.** Forcing it does produce one line, but the
+  row then overflows and `.mas-panel`'s `overflow:hidden` clips the Reset button — measured 1007px
+  into 970px. Wrapping is the better failure mode, and with the trims above it no longer triggers.
+  (Whether that property was even reaching the element could not be settled: an inline
+  `flex-wrap:nowrap!important` changed the layout, the stylesheet rule with the same declaration
+  did not, and a CSSOM sweep found no competing rule. Nothing depends on it now.)
+- **The `Action / Event` head is left-aligned like its cells** (owner: "action/event的align 与下面的
+  不对齐"). It was the only column in this table whose head disagreed with its body: `th:nth-child(3)`
+   carried `text-align:center` while `td:nth-child(3)` was left — inherited from the original
+  stylesheet and preserved through the column-width rewrite without being questioned. The caption
+  sat half a column (≈40px) to the right of every event title beneath it. Measured after: head text
+  and cell text share a left edge (delta 0) on Time & Date, Merchant, Action/Event and IP; Target
+  and Status read −10px only because those cells begin with a chip that carries its own 10px of
+  padding, so the head lines up with the chip's box, which is correct.
+- **The panel's information architecture now follows the reference the owner supplied**, using
+  only what these events actually carry. What the reference has, and what happened to it:
+  | reference block | here |
+  | --- | --- |
+  | Identity card (avatar, name, role chip, `Username · User ID`) | built from `adminName`, `roleLabel`, `username` and `raw.adminId` |
+  | IP Address + geo, with copy | built from `ipAddress` / `location` |
+  | Result / risk | **Result** only — the status plus the failure reason. There is no risk score |
+  | Client OS, Browser Engine | parsed out of the `userAgent` the row already has (Windows / macOS / iOS / Android / Linux; Edge / Opera / Chrome / Firefox / Safari) |
+  | User Agent, full width | the field itself |
+  | Tabs `Raw JSON` / `Key-Value` + `Copy JSON` | Raw = `e.raw`; Key-Value = Event Type / Target Resource / actor + the event's `detail` map, i.e. what the old "Related Information" section carried |
+  | `ESC` hint in the head | real — Esc does close the panel |
+  | `Audit Chain Verified · SHA256 · Tamper-proof · Immutable` | a **client-computed** digest of the payload as displayed, labelled as exactly that. Not presented as a server audit chain, because this system has none |
+  | `Password + TOTP 2FA` | **omitted** — nothing in a login-log row says how the user authenticated |
+  | `View Admin Profile →` | **omitted** — operation rows carry an actor *name*, not an id, so the link would be dead half the time |
+- **`Password + TOTP 2FA` and the risk level are the two things worth revisiting**: they are the
+  only reference blocks with no data behind them. If the login-log endpoint ever returns an auth
+  method or the admin record exposes a 2FA flag, both drop straight into the "Security & Network
+  Details" grid.
+- **Cards degrade instead of showing dashes.** An operation row carries no `userAgent` at all, so
+  its panel builds two cards (IP Address, Result) rather than five with three empty ones.
+- **The panel did not get bigger.** Same `clamp(300px,20vw,380px)` column, same table panel beside
+  it — this pass re-organises the panel's own content only, per the owner's "别搞坏我屏幕的设计空间".
+  Measured in the narrow column (1500 viewport): panel 300px, identity card + 2-column mini cards
+  at 124px each, the User Agent card 255px full width, **no text overflow in any card or label**,
+  and the table panel still 926px with all six columns readable.
+- Verified end to end in the harness: identity (`BO` / `boss2` / `Administrator` / `Username: k ·
+  User ID: #14`), the five cards with OS and browser parsed from both a Windows-Chrome and a
+  macOS-Safari agent, tab switching both ways, the card copy button flipping to a check for 1.2s,
+  the payload hash line, Reason appearing only on the blocked event, and the admin page's actor
+  label reading Administrator where the merchant page's reads Merchant.
+- **The detail panel was rebuilt a second time to the owner's mockup** — a titled head, sectioned
+  label/value rows, and a compact Technical Details line:
+  | mockup block | here |
+  | --- | --- |
+  | Head: event title + result chip + `actor · time` | was a static "Audit Log Detail"; now `e.title`, a Success/Blocked/Failed chip and `adminName · time` |
+  | Login Information (Administrator, Username, IP Address, Login Time) | label→value rows; the label becomes **Event Information** and the rows Actor / Action / Target / IP / Time for operation rows |
+  | Device & Location (OS, Browser, Device, Location + User Agent + Copy) | OS and Browser parsed from the row's user agent, Device is Desktop/Mobile, Location is `location`; **the whole group disappears** when an event has neither a user agent nor a location — operation rows have no user agent at all |
+  | Technical Details (Event ID / Admin ID / Brand ID + `View JSON`) | the ids as a row of label/value pairs plus a toggle that reveals the payload, which keeps its Raw JSON / Key-Value tabs and Copy JSON |
+  | Reason, payload digest | kept from the previous pass |
+  | `View ›` Details column, `10 / page` selector, Windows/Chrome brand logos | **not taken**: the column was removed on the owner's own instruction (the row is the click target and it buys 72px), the family hides the page-size select on these pages, and there are no brand assets to draw — bootstrap icons stand in |
+  | `Password + TOTP 2FA`, risk level | still no data behind them |
+- **At a 1280 viewport the panel is full-screen, and that is deliberate.** The mockup shows a
+  side-by-side at 1280, but it also carries **three** filter controls where these pages carry six,
+  and it has no sidebar competing for width. The arithmetic here: an 820px table floor + a 300px
+  panel + the sidebar leaves the filter row ~864px, and that row needs 996px — it would wrap to two
+  lines, which the owner has already asked twice not to happen. Split stays at ≥1440.
+- **The sidebar fold was broken for three revisions by my own bulk edit, not by the design.** The
+  splice that replaced `fillDetail` ran from the wrong start marker to `function openDetail(id){`
+  and swallowed `setActiveRow` and `MINI_CLASS`/`foldSidebar`, which sat in between — leaving their
+  call sites behind. The symptom was exact: the panel opened and `mas-detail-open` was applied (the
+  line before the call), then the click handler died, so the sidebar never folded **and the row
+  highlight never appeared**. Caught by collecting `window.onerror` on the live page rather than by
+  re-reading the patch. A static check is now part of the loop: strip comments and strings, then
+  flag any called-but-undefined name (it would have caught all three occurrences).
+- **The fold guard had a second bug worth stating**: on the second row the user clicked, the code
+  saw an existing rail and concluded "the user wants a rail", clearing the marker — so closing the
+  panel left the sidebar folded for good. It now returns early when the marker is already set.
+  Verified end to end at 1280: closed → sidebar 230, panel 1018; open → 72, panel **1176** (the
+  content really does reflow); second row → still 72 with the marker intact; close → 230 and the
+  row highlight cleared; `bo_sidebar_mini` still `null` throughout.
+- **The payload's two tabs fell back to browser-default buttons, and it was the same splice.**
+  The block that replaced the panel's information architecture spanned from the old section
+  comment to `/* ---- Page padding`, and the `.mas-tab` rules lived inside it — `.mas-tabs` (the
+  container) was restored, the three rules that style the buttons were not. So `Raw JSON` and
+  `Key-Value` rendered as native `<button>` chrome with a border each, which is exactly what the
+  owner photographed. They were also `flex:1 1 auto`, stretching to ~560px each at a wide panel,
+  which is not the mockup's compact chip; both are now content-width (73px and 72px measured, no
+  text clipped) with the copy button riding at the right of the same row.
+- **Two static guards now run before any page is opened**, because this class of loss — a splice
+  that removes a definition but leaves its call or its rule — has now happened three times and is
+  invisible in a diff you are skimming:
+  - `undefined calls`: strip comments and string literals, then flag any called-but-undefined
+    function name. It catches all three occurrences.
+  - `missing class rules`: collect every `mas-*` / `bo-*` class the two pages and their scripts
+    use, and check each against **every** stylesheet in `assets/css`. It catches the `.mas-tab`
+    loss. Current state: 74 classes used, 72 with a rule; the two exceptions are deliberate —
+    `mas-raw-copy-label` (a span targeted by JS for the Copied label, styled by inheriting the
+    button's font) and the `mas-table-head-table` / `mas-table-body-table` markers (styling comes
+    from `.mas-table`, which both tables also carry).
+- **Both payload panes are now the same well, and the scrollbar is the table's, not the browser's**
+  (owner: "图一 container 间距 还有 scrollbar颜色 / 图二 event type开始的align问题与上面的 raw json |
+  key value 的不对称 要对齐").
+  - **The asymmetry was real and measurable**: only the Raw JSON pane was a framed well (border +
+    10px padding), so its text started at x=25 while the Key-Value list, being a bare `<dl>` inside
+    the body padding, started at x=14 — switching tabs shifted the text 11px left. Both panes now
+    carry `.mas-payload-pane` (same background, border, radius, 10px padding, 320px max-height) and
+    the measured text offsets are **equal at x=25 (delta 0)**.
+  - **The scrollbar was the browser default** — no colour, and the JSON ran under the thumb. Both
+    panes now use the table's recipe (`#98A2B3`, hover `#667085`, rounded thumb inset by a 3px
+    transparent border, 12px lane) plus `scrollbar-gutter:stable`, so the lane is reserved and the
+    text never sits beneath it.
+  - **The gap between the tab row and the pane was 0**, because the pane's own `margin-top` lost to
+    the inherited `.mas-payload .mas-detail-raw{margin-top:0}`; it is now 8px on the head, measured
+    8px in both panes.
+- **The scrollbars are warm now, because a cool blue-grey on cream reads as another palette**
+  (owner: "scrollbar颜色不对 与系统主题色系不对"). The panes had been given `#98A2B3` — copied from
+  the old table recipe, which is a cool slate — on a `#F5EBDC` well. They now use the warm recipe
+  this app already ships on several families (`bo-social-md`, `bo-layout-section-md`,
+  `bo-advertisement-popup-md`, `bo-animation-effect-md`, `bo-user-management-theme`, the `vip-*`
+  sheets): **`#8B6B4A` in light, `#F59E0B` in dark, `scrollbar-width:thin`**, applied to the panel
+  body and both payload panes. Measured: `rgb(139,107,74)` light / `rgb(245,158,11)` dark.
+  - **The `::-webkit-scrollbar*` pair was deleted rather than kept**, because it can never win:
+    `bo-charcoal-shell.css` records the finding that once `scrollbar-color` is set Chromium ignores
+    the webkit rules and takes the thumb from the standard property. Writing both is a rule that
+    looks effective and is not.
+  - **The audit table's scroller was deliberately left alone.** It already has a documented
+    decision — the retired slate grey was replaced with the warm border tone `#EADCC8` in light and
+    amber in dark — enforced by a `!important` rule in `main-merchant-detail-executive.css`, so a
+    rule here could not win and should not overturn it. Both tones are warm; measured table value
+    in light is `rgb(234,220,200)`.
+- **The Reset button was the odd one out in its own row** (owner: "reset按键的设计需要再调整一下 有点
+  不是很美观的大小"). Measured against the controls beside it: **6px of horizontal padding** where the
+  select chips use 10-12px, a **6px** gap between its icon and label where they use **10px**, and a
+  10px radius on the date trigger against 8px everywhere else. It now carries 0 12px / 10px gap /
+  8px radius at the same 42px height and 13px/600 type as the select chips — measured 80×42.
+  Its darker fill (`#F3E8D6` against the fields' `#FFF8EB`) was left alone: that is the one thing
+  marking it as an action rather than another field.
+- **Two controls in that row cannot be restyled from CSS at all, and it is worth knowing why:**
+  - **The merchant select's width is inline `!important`.** `bo-ui-standard.js` measures its widest
+    option and the wrapper ends up with
+    `style="width:216px !important; min-width:216px !important; max-width:216px !important"`.
+    Inline `!important` outranks every stylesheet declaration, so even setting the
+    `--bo-select-width` custom property — which does take, measured 176px on the element — changes
+    nothing, because the wrapper's inline width beats the `var()` rule that consumes it. Its 216px
+    therefore grows with the brand list.
+  - **The date trigger's 10px radius is not in any stylesheet.** A CSSOM sweep for a rule matching
+    it with `border-radius` returns nothing, and `border-radius:8px!important` from this sheet does
+    not move it either — so the picker writes it inline with priority, the same wall as the select.
+- **The row was kept on one line by the levers that do bind** rather than by fighting those two:
+  the search box (118px) and the row gaps (2px). Measured with the Reset at its proper size:
+  **993px needed in 1000 available — one line, 7px of slack**, search not clipped.
+- Verified pins: `main-admin-detail-executive.css` was at a single version across its 24 pages and
+  is now `1.0.230` on all 24 (bumped 221 → 230 across this change and its five owner passes);
+  `bo-security-audit.css` is new and linked last on the two security pages at `?v=1.1.10`;
+  `reports.css` 1.0.64 → `1.0.66` on all 140 pages that reference it (two passes);
+  `main-admin-security.js` 1.1.18 → `1.2.1`; `main-merchant-security.js` 1.0.13 → `1.1.1`.
