@@ -198,7 +198,7 @@ html[data-bo-theme="dark"] body.vip-exp-log-page .vip-log-toolbar > #vipAdjustOp
   color:#2A2C36 !important;
 }
 
-/* ---- Table ---- */
+/* ---- Table: fixed head + body-only scroll (Deposit / Member Wallet MD) ---- */
 html body.vip-exp-log-page .vip-admin-table-wrap{
   flex:1 1 auto !important;
   min-height:0 !important;
@@ -207,22 +207,65 @@ html body.vip-exp-log-page .vip-admin-table-wrap{
   border:0 !important;
   border-radius:0 !important;
   box-shadow:none !important;
+  display:flex !important;
+  flex-direction:column !important;
+  overflow:hidden !important;
+  background:#FFF8EB !important;
+  position:relative !important;
+  z-index:1 !important;
+}
+/* Beat vip-pages-targeted rounded wrap that scrolls the whole table. */
+html body.vip-log-page.vip-exp-log-page .vip-admin-table-wrap{
+  overflow:hidden !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+}
+html body.vip-exp-log-page .vip-tx-table-head{
+  flex:0 0 auto !important;
+  overflow:hidden !important;
+  background:#FFE8CC !important;
+  border-bottom:1px solid #EADCC8 !important;
+  z-index:2 !important;
+}
+html body.vip-exp-log-page .vip-tx-table-body{
+  flex:1 1 auto !important;
+  min-height:0 !important;
   overflow:auto !important;
+  overflow-x:auto !important;
+  overflow-y:auto !important;
   background:#FFF8EB !important;
   -webkit-overflow-scrolling:touch;
 }
-html[data-bo-theme="dark"] body.vip-exp-log-page .vip-admin-table-wrap{background:#383A46 !important}
+/* MD Show `-`: auto-fit rows into viewport — no vertical scrollbar on body. */
+html body.vip-exp-log-page .vip-tx-table-body[data-bo-autofit],
+html body.vip-exp-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body,
+html body.vip-exp-log-page .vip-admin-table-wrap[data-bo-autofit] .vip-tx-table-body{
+  overflow-y:hidden !important;
+  scrollbar-gutter:auto !important;
+}
+html body.vip-exp-log-page .vip-admin-table.bo-tx-evenfill tbody td{
+  vertical-align:middle !important;
+}
+html[data-bo-theme="dark"] body.vip-exp-log-page .vip-admin-table-wrap,
+html[data-bo-theme="dark"] body.vip-exp-log-page .vip-tx-table-body{background:#383A46 !important}
+html[data-bo-theme="dark"] body.vip-exp-log-page .vip-tx-table-head{
+  background:#1F2128 !important;
+  border-bottom-color:rgba(255,255,255,.12) !important;
+}
 
-html body.vip-exp-log-page .vip-admin-table-wrap::-webkit-scrollbar{width:6px;height:6px}
-html body.vip-exp-log-page .vip-admin-table-wrap::-webkit-scrollbar-button{display:none;height:0;width:0}
-html body.vip-exp-log-page .vip-admin-table-wrap::-webkit-scrollbar-thumb{background:#8B6B4A;border-radius:999px}
-html body.vip-exp-log-page .vip-admin-table-wrap::-webkit-scrollbar-thumb:hover{background:#5C4A30}
-html body.vip-exp-log-page .vip-admin-table-wrap::-webkit-scrollbar-track{background:transparent}
-html[data-bo-theme="dark"] body.vip-exp-log-page .vip-admin-table-wrap::-webkit-scrollbar-thumb{background:#F59E0B}
-html[data-bo-theme="dark"] body.vip-exp-log-page .vip-admin-table-wrap::-webkit-scrollbar-thumb:hover{background:#D97706}
+/* Panel pill scrollbar — body only */
+html body.vip-exp-log-page .vip-tx-table-body::-webkit-scrollbar{width:6px;height:6px}
+html body.vip-exp-log-page .vip-tx-table-body::-webkit-scrollbar-button{display:none;height:0;width:0}
+html body.vip-exp-log-page .vip-tx-table-body::-webkit-scrollbar-thumb{background:#8B6B4A;border-radius:999px}
+html body.vip-exp-log-page .vip-tx-table-body::-webkit-scrollbar-thumb:hover{background:#5C4A30}
+html body.vip-exp-log-page .vip-tx-table-body::-webkit-scrollbar-track{background:transparent}
+html body.vip-exp-log-page .vip-tx-table-body::-webkit-scrollbar-corner{background:transparent}
+html[data-bo-theme="dark"] body.vip-exp-log-page .vip-tx-table-body::-webkit-scrollbar-thumb{background:#F59E0B}
+html[data-bo-theme="dark"] body.vip-exp-log-page .vip-tx-table-body::-webkit-scrollbar-thumb:hover{background:#D97706}
 @supports not selector(::-webkit-scrollbar){
-  html body.vip-exp-log-page .vip-admin-table-wrap{scrollbar-width:thin;scrollbar-color:#8B6B4A transparent}
-  html[data-bo-theme="dark"] body.vip-exp-log-page .vip-admin-table-wrap{scrollbar-color:#F59E0B transparent}
+  html body.vip-exp-log-page .vip-tx-table-body{scrollbar-width:thin;scrollbar-color:#8B6B4A transparent}
+  html[data-bo-theme="dark"] body.vip-exp-log-page .vip-tx-table-body{scrollbar-color:#F59E0B transparent}
 }
 
 html body.vip-exp-log-page .vip-admin-table{
@@ -248,11 +291,16 @@ html body.vip-exp-log-page .vip-admin-table tbody td:last-child{
   padding-right:16px !important;
   border-right:0 !important;
 }
-html body.vip-exp-log-page .vip-admin-table thead th{
-  position:sticky;
-  top:0;
-  z-index:2;
+/* MD Transaction thead — peach ledge #FFE8CC / #6b360c, square, fixed (not sticky) */
+html body.vip-exp-log-page .vip-admin-table thead th,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.vip-exp-log-page .vip-admin-table thead th,
+html:not([data-bo-theme="dark"]) body.vip-log-page.vip-exp-log-page .vip-admin-table thead th,
+html:not([data-bo-theme="dark"]) body.vip-log-page.vip-exp-log-page .vip-admin-table th{
+  position:static !important;
+  top:auto !important;
+  z-index:auto !important;
   background:#FFE8CC !important;
+  background-color:#FFE8CC !important;
   color:#6b360c !important;
   font-size:11px !important;
   font-weight:700 !important;
@@ -260,6 +308,9 @@ html body.vip-exp-log-page .vip-admin-table thead th{
   text-transform:uppercase !important;
   white-space:nowrap !important;
   border-radius:0 !important;
+  border-top:0 !important;
+  border-bottom:0 !important;
+  box-shadow:none !important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.vip-exp-log-page .vip-admin-table tbody td{
   font-size:13px !important;
@@ -295,15 +346,29 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.vip-exp-log-page .vip-ad
 html body.vip-exp-log-page .vip-admin-table thead th:first-child,
 html body.vip-exp-log-page .vip-admin-table thead th:last-child,
 html body.vip-exp-log-page .vip-admin-table tbody tr:last-child td:first-child,
-html body.vip-exp-log-page .vip-admin-table tbody tr:last-child td:last-child{
+html body.vip-exp-log-page .vip-admin-table tbody tr:last-child td:last-child,
+html body.vip-exp-log-page .vip-admin-table thead th:first-child,
+html body.vip-exp-log-page .vip-admin-table thead th:last-child{
   border-radius:0 !important;
+  border-top-left-radius:0 !important;
+  border-top-right-radius:0 !important;
+  border-bottom-left-radius:0 !important;
+  border-bottom-right-radius:0 !important;
 }
 
-html[data-bo-theme="dark"] body.vip-exp-log-page .vip-admin-table thead th{
+html[data-bo-theme="dark"] body.vip-exp-log-page .vip-admin-table thead th,
+html[data-bo-theme="dark"] body.vip-log-page.vip-exp-log-page .vip-admin-table thead th,
+html[data-bo-theme="dark"] body.vip-log-page.vip-exp-log-page .vip-admin-table th{
+  position:static !important;
+  top:auto !important;
+  z-index:auto !important;
   background:#1F2128 !important;
+  background-color:#1F2128 !important;
   color:#E7E5E4 !important;
-  border-bottom-color:rgba(255,255,255,.12) !important;
+  border-bottom:0 !important;
   border-right-color:rgba(255,255,255,.06) !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
 }
 html[data-bo-theme="dark"] body.vip-exp-log-page .vip-admin-table tbody td{
   background:#3A3C48 !important;
@@ -400,7 +465,9 @@ html[data-bo-theme="dark"] body.vip-exp-log-page .vip-log-empty{
   background:#3A3C48 !important;
 }
 
-/* ---- Footer pager ---- */
+/* ---- Footer pager ----
+   Beat reports.css `.rounded-select-wrap{width:100%}` which stretches the
+   page-size control across "Show … entries" and clips to "Show 20ries". */
 html body.vip-exp-log-page .vip-log-card > .table-footer{
   flex:0 0 auto;
   margin-top:auto;
@@ -411,28 +478,140 @@ html body.vip-exp-log-page .vip-log-card > .table-footer{
   padding:10px 14px !important;
   background:#FFF8EB !important;
   border-top:1px solid #EADCC8 !important;
+  overflow:visible !important;
+  position:relative !important;
+  z-index:5 !important;
 }
 html[data-bo-theme="dark"] body.vip-exp-log-page .vip-log-card > .table-footer{
   background:#383A46 !important;
   border-top-color:rgba(255,255,255,.12) !important;
 }
+html body.vip-exp-log-page .table-footer > .entries-control,
 html body.vip-exp-log-page .table-footer .entries-control{
-  color:#57534E;
-  font-size:12.5px;
-  font-weight:600;
-  white-space:nowrap;
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  width:auto !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  overflow:visible !important;
+  position:relative !important;
+  z-index:9 !important;
+  color:#57534E !important;
+  font-size:12.5px !important;
+  font-weight:600 !important;
+  white-space:nowrap !important;
+}
+html body.vip-exp-log-page .table-footer .entries-control .rounded-select-wrap{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:stretch !important;
+  width:72px !important;
+  min-width:72px !important;
+  max-width:72px !important;
+  height:36px !important;
+  margin:0 !important;
+  margin-top:0 !important;
+  overflow:visible !important;
+  flex:0 0 72px !important;
+}
+html body.vip-exp-log-page .table-footer .entries-control .rounded-select-wrap > select{
+  position:absolute !important;
+  inset:0 !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+  width:100% !important;
+  height:36px !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+}
+html body.vip-exp-log-page .table-footer .entries-control .rounded-select-btn,
+html body.vip-exp-log-page .table-footer .entries-control select{
+  box-sizing:border-box !important;
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+  margin:0 !important;
+  border:1px solid #EADCC8 !important;
+  border-radius:8px !important;
+  background:#FFF8EB !important;
+  color:#18191C !important;
+  font-size:13px !important;
+  font-weight:700 !important;
+  box-shadow:none !important;
 }
 html body.vip-exp-log-page .table-footer .entries-control select{
-  height:36px;
-  min-width:68px;
-  margin:0 6px;
-  padding:0 8px;
-  border:1px solid #EADCC8;
-  border-radius:8px;
-  background:#FFF8EB;
-  color:#18191C;
-  font-size:12.5px;
-  font-weight:700;
+  display:inline-block !important;
+  width:72px !important;
+  min-width:72px !important;
+  max-width:72px !important;
+  padding:0 8px !important;
+  flex:0 0 72px !important;
+}
+html body.vip-exp-log-page .table-footer .entries-control .rounded-select-btn{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  min-width:0 !important;
+  max-width:none !important;
+  padding:0 12px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:6px !important;
+  cursor:pointer !important;
+}
+html body.vip-exp-log-page .table-footer .entries-control .rounded-select-btn.open,
+html body.vip-exp-log-page .table-footer .entries-control .rounded-select-btn:focus{
+  border-color:#D97706 !important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14) !important;
+  outline:0 !important;
+}
+html body.vip-exp-log-page .table-footer .entries-control .rounded-select-menu{
+  top:auto !important;
+  bottom:calc(100% + 6px) !important;
+  left:0 !important;
+  right:auto !important;
+  width:100% !important;
+  min-width:100% !important;
+  max-width:none !important;
+  padding:6px !important;
+  border-radius:8px !important;
+  background:#FFF8EB !important;
+  border:1px solid #EADCC8 !important;
+  box-shadow:0 12px 28px rgba(92,74,48,.12) !important;
+  z-index:3000 !important;
+  max-height:min(260px,50vh) !important;
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+  box-sizing:border-box !important;
+}
+html body.vip-exp-log-page .table-footer .entries-control .rounded-select-option{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:100% !important;
+  min-height:34px !important;
+  padding:6px 8px !important;
+  margin:0 !important;
+  border-radius:8px !important;
+  text-align:center !important;
+  font-size:13px !important;
+  font-weight:700 !important;
+  line-height:1.2 !important;
+  background:transparent !important;
+  color:#18191C !important;
+}
+html body.vip-exp-log-page .table-footer .entries-control .rounded-select-option:hover,
+html body.vip-exp-log-page .table-footer .entries-control .rounded-select-option.active,
+html body.vip-exp-log-page .table-footer .entries-control .rounded-select-option.is-active{
+  background:rgba(217,119,6,.12) !important;
+  color:#B45309 !important;
+}
+html body.vip-exp-log-page .vip-log-card:has(.entries-control .rounded-select-menu.show){
+  overflow:visible !important;
 }
 html body.vip-exp-log-page .table-footer .table-info{
   text-align:center;
@@ -455,11 +634,34 @@ html body.vip-exp-log-page .table-footer .pagination-clean button{
   font-weight:700;
 }
 html[data-bo-theme="dark"] body.vip-exp-log-page .table-footer .entries-control,
-html[data-bo-theme="dark"] body.vip-exp-log-page .table-footer .table-info{color:#D4D4D8}
+html[data-bo-theme="dark"] body.vip-exp-log-page .table-footer .table-info{color:#D4D4D8 !important}
+html[data-bo-theme="dark"] body.vip-exp-log-page .table-footer .entries-control .rounded-select-btn,
 html[data-bo-theme="dark"] body.vip-exp-log-page .table-footer .entries-control select{
-  background:#2A2C36;
-  border-color:rgba(255,255,255,.12);
-  color:#F5F5F4;
+  background:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.vip-exp-log-page .table-footer .entries-control .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.vip-exp-log-page .table-footer .entries-control .rounded-select-btn:focus{
+  border-color:#F59E0B !important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18) !important;
+}
+html[data-bo-theme="dark"] body.vip-exp-log-page .table-footer .entries-control .rounded-select-menu{
+  background:#383A46 !important;
+  border-color:rgba(255,255,255,.14) !important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4) !important;
+}
+html[data-bo-theme="dark"] body.vip-exp-log-page .table-footer .entries-control .rounded-select-option{
+  color:#E7E5E4 !important;
+}
+html[data-bo-theme="dark"] body.vip-exp-log-page .table-footer .entries-control .rounded-select-option:hover{
+  background:rgba(245,158,11,.14) !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.vip-exp-log-page .table-footer .entries-control .rounded-select-option.active,
+html[data-bo-theme="dark"] body.vip-exp-log-page .table-footer .entries-control .rounded-select-option.is-active{
+  background:#F59E0B !important;
+  color:#2A2C36 !important;
 }
 
 /* ---- Adjust modal ---- */
