@@ -7,6 +7,11 @@
   const bodyEl=document.getElementById('reportBody'),headEl=document.getElementById('reportHead');
   const pageSizeEl=document.getElementById('reportPageSize'),showingEl=document.getElementById('reportShowing'),pagerEl=document.getElementById('reportPager');
   const tableWrap=document.querySelector('.transaction-report-page .table-wrap')||document.querySelector('.table-wrap');
+  const tableHeadEl=document.getElementById('reportTableHead')||tableWrap?.querySelector?.('.bo-tx-table-head');
+  const tableBodyEl=document.getElementById('reportTableBody')||tableWrap?.querySelector?.('.bo-tx-table-body');
+  const headColsEl=document.getElementById('reportHeadCols');
+  const bodyColsEl=document.getElementById('reportBodyCols');
+  const scrollHost=tableBodyEl||tableWrap;
   const pageRoot=document.body;
   let allRows=[],page=1,lockedAutoSize=null;
   // Every BO report now opens on Today by default. Wider ranges are opt-in via the picker.
@@ -85,6 +90,25 @@
   const cols=window.OP_REPORT_KIND==='promotion-report'
     ?[['name','Promotion'],['promotionCode','Code'],['claimCount','Claims'],['uniqueClaimers','Unique Claimers'],['repeatedClaimCount','Repeated Claims'],['payoutAmount','Payouts']]
     :[['id','ID'],['memberId','Member'],['ledgerType','Type'],['walletBucket','Wallet'],['amount','In / Out'],['beforeBalance','Before'],['afterBalance','After'],['createdBy','Created By'],['approvedBy','Approved By'],['reasonCode','Reason'],['referenceNo','Reference'],['remark','Remark'],['createdAt','Created'],['postedAt','Posted']];
+  /* Deposit Approval recipe: shared colgroup keeps head/body columns locked together. */
+  const colClassByKey={
+    id:'tr-col-id',memberId:'tr-col-member',ledgerType:'tr-col-type',walletBucket:'tr-col-wallet',
+    amount:'tr-col-amount',beforeBalance:'tr-col-before',afterBalance:'tr-col-after',
+    createdBy:'tr-col-created-by',approvedBy:'tr-col-approved-by',reasonCode:'tr-col-reason',
+    referenceNo:'tr-col-ref',remark:'tr-col-remark',createdAt:'tr-col-created',postedAt:'tr-col-posted',
+    name:'tr-col-name',promotionCode:'tr-col-code',claimCount:'tr-col-claims',
+    uniqueClaimers:'tr-col-unique',repeatedClaimCount:'tr-col-repeat',payoutAmount:'tr-col-payout'
+  };
+  function paintColgroups(){
+    const html=cols.map(c=>`<col class="${colClassByKey[c[0]]||'tr-col'}"/>`).join('');
+    if(headColsEl)headColsEl.innerHTML=html;
+    if(bodyColsEl)bodyColsEl.innerHTML=html;
+  }
+  function bindHeadBodyScroll(){
+    if(!tableHeadEl||!tableBodyEl||tableBodyEl.dataset.scrollBound==='1')return;
+    tableBodyEl.dataset.scrollBound='1';
+    tableBodyEl.addEventListener('scroll',()=>{tableHeadEl.scrollLeft=tableBodyEl.scrollLeft;},{passive:true});
+  }
   function token(){return localStorage.getItem('bo_admin_token')||localStorage.getItem('admin_token')||localStorage.getItem('token')||'';}
   function num(v){const n=Number(v);return Number.isFinite(n)?n:0;}
   function money(v){return num(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -98,8 +122,9 @@
   function typeCell(v){
     const s=String(v??'').trim();
     if(!s||s==='-')return emptyCell();
-    const kind=/OUT/i.test(s)?'is-out':/IN/i.test(s)?'is-in':'';
-    return `<span class="tr-type-chip ${kind}">${esc(s)}</span>`;
+    /* Deposit Approval status-pill recipe: bare = amber, .active = in, .off = out. */
+    const kind=/OUT/i.test(s)?'off':/IN/i.test(s)?'active':'';
+    return `<span class="status-pill ${kind}">${esc(s)}</span>`;
   }
   function moneyCell(v,{signed=false}={}){
     if(v==null||v===''||v==='-')return emptyCell();
@@ -130,6 +155,14 @@
   function isAutofit(){const r=rawPageSize();return r===''||r==='-'||/^auto$/i.test(r);}
   function isAll(){return /^all$/i.test(rawPageSize());}
   function measureAutoPageSize(){
+    if(!scrollHost)return lockedAutoSize||10;
+    /* Split head/body (Deposit): measure against body scroll host only. */
+    if(tableBodyEl){
+      const avail=Math.max(0,Math.floor(tableBodyEl.clientHeight));
+      const sample=tableBodyEl.querySelector('tbody tr td:not(.table-empty)');
+      const rowH=sample?Math.max(36,Math.round(sample.getBoundingClientRect().height)):41;
+      return Math.max(5,Math.min(200,Math.floor(avail/rowH)||10));
+    }
     if(!tableWrap)return lockedAutoSize||10;
     const head=tableWrap.querySelector('thead');
     const headH=head?Math.ceil(head.getBoundingClientRect().height):44;
@@ -158,12 +191,96 @@
     const btn=wrap?.querySelector?.('.rounded-select-btn span');
     if(isAutofit()&&btn)btn.textContent='-';
   }
+  /* MD (Member Deposit) Show "-" recipe: measure the rows actually painted, then either
+     grow (gap ≥ one row → more data fits), shrink (overflow → drop one row), or stretch
+     the leftover seam evenly across rows so a row is never left half-clipped. */
+  function isPlaceholderRow(tr){
+    const cells=tr.querySelectorAll('td');
+    if(cells.length<=1)return true;
+    const text=(tr.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+    return !text||text==='loading...'||text.startsWith('no records');
+  }
+  function evenFillTable(){return bodyEl?.closest?.('table')||null;}
+  function resetEvenFill(){
+    const table=evenFillTable();
+    if(!table)return;
+    table.classList.remove('bo-tx-evenfill');
+    table.style.height='';
+    bodyEl.querySelectorAll('tr').forEach(tr=>{
+      tr.style.height='';
+      tr.querySelectorAll('td').forEach(td=>{td.style.height='';});
+    });
+  }
+  function evenFillRowHeights(){
+    const table=evenFillTable();
+    if(!tableBodyEl||!table||!bodyEl)return;
+    resetEvenFill();
+    if(!isAutofit())return;
+    const rows=[...bodyEl.querySelectorAll('tr')].filter(tr=>!isPlaceholderRow(tr));
+    if(!rows.length)return;
+    void table.offsetHeight;
+    /* Prefer the inner content box after any horizontal scrollbar has claimed space —
+       otherwise stretch targets a height that still overflows once the X bar appears. */
+    const avail=Math.max(0,Math.floor(tableBodyEl.clientHeight));
+    const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
+    const rowH=Math.max(30,Math.round(natural/rows.length)||36);
+    const gap=avail-natural;
+    /* Stretch leftover seam only when it's smaller than one full row — grow/shrink is settleAutofit. */
+    if(natural>avail+1||gap<2||gap>=rowH){
+      /* Still clamp any 1–2px paint overflow so overflow-y:hidden isn't fighting a thumb. */
+      if(tableBodyEl.scrollHeight>tableBodyEl.clientHeight&&rows.length){
+        const over=tableBodyEl.scrollHeight-tableBodyEl.clientHeight;
+        const shrink=Math.ceil(over/rows.length)||1;
+        rows.forEach(tr=>{
+          const h=Math.max(rowH,Math.round(tr.getBoundingClientRect().height)-shrink);
+          tr.style.height=h+'px';
+          tr.querySelectorAll('td').forEach(td=>{td.style.height=h+'px';});
+        });
+        table.classList.add('bo-tx-evenfill');
+        table.style.height=Math.max(0,avail-over)+'px';
+      }
+      return;
+    }
+    const base=Math.floor(avail/rows.length);
+    let rem=avail-(base*rows.length);
+    if(base<=0)return;
+    rows.forEach(tr=>{
+      const h=base+(rem>0?1:0);
+      if(rem>0)rem-=1;
+      tr.style.height=h+'px';
+      tr.querySelectorAll('td').forEach(td=>{td.style.height=h+'px';});
+    });
+    table.classList.add('bo-tx-evenfill');
+    table.style.height=avail+'px';
+    if(tableBodyEl.scrollHeight>tableBodyEl.clientHeight){
+      const over=tableBodyEl.scrollHeight-tableBodyEl.clientHeight;
+      const shrink=Math.ceil(over/rows.length)||1;
+      rows.forEach(tr=>{
+        const h=Math.max(rowH,(parseFloat(tr.style.height)||base)-shrink);
+        tr.style.height=h+'px';
+        tr.querySelectorAll('td').forEach(td=>{td.style.height=h+'px';});
+      });
+      table.style.height=Math.max(0,avail-over)+'px';
+    }
+  }
+  function bindAutofitResizeObserver(){
+    if(!tableBodyEl||tableBodyEl._boAutofitObs||typeof ResizeObserver==='undefined')return;
+    tableBodyEl._boAutofitObs=new ResizeObserver(()=>{
+      if(!isAutofit())return;
+      clearTimeout(tableBodyEl._boAutofitTimer);
+      tableBodyEl._boAutofitTimer=setTimeout(()=>{lockedAutoSize=null;render();},120);
+    });
+    tableBodyEl._boAutofitObs.observe(tableBodyEl);
+  }
   function render(){
     syncAutofitClass();
+    paintColgroups();
+    bindHeadBodyScroll();
+    bindAutofitResizeObserver();
     const size=resolvePageSize(),total=allRows.length,pages=Math.max(1,Math.ceil(total/Math.max(1,size)));
     page=Math.min(Math.max(1,page),pages);
     const start=(page-1)*size,rows=allRows.slice(start,start+size);
-    headEl.innerHTML='<tr>'+cols.map(c=>`<th title="${esc(c[1])}">${c[1]}</th>`).join('')+'</tr>';
+    if(headEl)headEl.innerHTML='<tr>'+cols.map(c=>`<th title="${esc(c[1])}">${c[1]}</th>`).join('')+'</tr>';
     bodyEl.innerHTML=rows.length?rows.map(x=>'<tr>'+cols.map(c=>{
       return `<td${tdClass(c[0])}>${cellHtml(c[0],x[c[0]])}</td>`;
     }).join('')+'</tr>').join(''):`<tr><td colspan="${cols.length}" class="table-empty">No records found.</td></tr>`;
@@ -171,36 +288,65 @@
     bindFloatTips();
     paintSelectLabel();
     if(isAutofit())requestAnimationFrame(()=>settleAutofit());
+    else resetEvenFill();
     if(!pagerEl)return;
     const btn=(label,target,disabled,active=false,icon='')=>`<button type="button" class="page-btn${active?' active':''}" data-page="${target}" ${disabled?'disabled':''} aria-label="${label}">${icon?`<i class="bi ${icon}"></i>`:label}</button>`;
-    // First · Prev · page window (always 1 + last, ellipsis when gaps > 1) · Next · Last — locked pager anatomy.
+    /* Deposit Approval pager: Prev · page window · Next (no First/Last). */
     const pageList=(()=>{
       const list=[];const add=n=>{if(n>=1&&n<=pages&&!list.includes(n))list.push(n);};
       add(1);for(let n=page-2;n<=page+2;n++)add(n);add(pages);list.sort((a,b)=>a-b);return list;
     })();
-    let h=btn('First',1,page<=1,false,'bi-chevron-bar-left')+btn('Previous',page-1,page<=1,false,'bi-chevron-left');
+    let h=btn('Previous',page-1,page<=1,false,'bi-chevron-left');
     let prevN=0;
     pageList.forEach(n=>{
       if(prevN&&n-prevN>1)h+='<span class="smart-page-ellipsis" aria-hidden="true">…</span>';
       h+=btn(String(n),n,false,n===page);
       prevN=n;
     });
-    h+=btn('Next',page+1,page>=pages,false,'bi-chevron-right')+btn('Last',pages,page>=pages,false,'bi-chevron-bar-right');
+    h+=btn('Next',page+1,page>=pages,false,'bi-chevron-right');
     pagerEl.innerHTML=h;
   }
   function settleAutofit(){
-    if(!isAutofit()||!tableWrap)return;
-    const measured=measureAutoPageSize();
-    if(measured!==lockedAutoSize){
-      lockedAutoSize=measured;
+    if(!isAutofit()||!tableBodyEl||!bodyEl)return;
+    /* Measure the rows actually painted (natural height), not a guessed sample —
+       clears any stale evenFill inline heights from the previous settle first. */
+    resetEvenFill();
+    void tableBodyEl.offsetHeight;
+    const rows=[...bodyEl.querySelectorAll('tr')].filter(tr=>!isPlaceholderRow(tr));
+    if(!rows.length)return;
+    const avail=Math.max(0,Math.floor(tableBodyEl.clientHeight));
+    const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
+    const rowH=Math.max(30,Math.round(natural/rows.length)||36);
+    const overflow=tableBodyEl.scrollHeight>tableBodyEl.clientHeight+1||natural>avail+1;
+    let target=Math.max(5,Math.min(200,Math.floor(avail/rowH)||rows.length));
+    if(overflow){
+      /* Shrink by (at least) one — a clipped row must never stay half-visible. */
+      target=Math.max(5,Math.min(target,rows.length-1));
+    }else{
+      /* Grow only up to what this page actually has left — never invent rows that
+         don't exist (last/short page), which would loop forever. */
+      const size=lockedAutoSize||rows.length;
+      const start=(page-1)*size;
+      const availableOnPage=Math.max(0,allRows.length-start)||rows.length;
+      target=Math.min(target,Math.max(rows.length,availableOnPage));
+    }
+    if(target!==rows.length){
+      lockedAutoSize=target;
       render();
       return;
     }
-    /* Verify no overflow; shrink by 1 and retry (VIP EXP verifyAndLock). */
-    if(tableWrap.scrollHeight>tableWrap.clientHeight+1&&lockedAutoSize>5){
-      lockedAutoSize=lockedAutoSize-1;
-      render();
-    }
+    lockedAutoSize=rows.length;
+    /* Verify with a real post-paint overflow check before locking — a cold first paint
+       can under-measure avail/rowH and settle one row too many. Recurses, shrinking by
+       1 each frame, until no overflow remains (VIP EXP verifyAndLock). */
+    requestAnimationFrame(()=>{
+      if(tableBodyEl.scrollHeight>tableBodyEl.clientHeight+1&&lockedAutoSize>5){
+        lockedAutoSize=lockedAutoSize-1;
+        render();
+        return;
+      }
+      evenFillRowHeights();
+    });
   }
   async function fetchRows(type){
     let u=`${base}${window.OP_REPORT_ENDPOINT}?from=${encodeURIComponent(from.value)}&to=${encodeURIComponent(to.value)}`;
@@ -227,7 +373,11 @@
       page=1;if(isAutofit())lockedAutoSize=null;render();
     }catch(e){allRows=[];if(isAutofit())lockedAutoSize=null;render();if(window.BO_DIALOG)await BO_DIALOG.alert(e.message||'Unable to load report.',{title:'Report Error',type:'error'});}
   }
-  document.getElementById('reportSearch').onclick=()=>{lockedAutoSize=null;load();};
+  document.getElementById('reportSearch')?.addEventListener?.('click',()=>{lockedAutoSize=null;load();});
+  const reload=()=>{lockedAutoSize=null;load();};
+  from?.addEventListener('change',reload);
+  to?.addEventListener('change',reload);
+  document.getElementById('reportType')?.addEventListener('change',reload);
   pageSizeEl?.addEventListener('change',()=>{lockedAutoSize=null;page=1;render();});
   pagerEl?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(!b||b.disabled)return;page=Number(b.dataset.page)||1;render();});
   let resizeTimer=0;
