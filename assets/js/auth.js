@@ -189,7 +189,14 @@
     // Dashboard pin controls belong to the normal BO only. Main/Executive panel
     // pages must retain their original sidebar without pin/unpin UI.
     const currentFile = pageFile(location.pathname);
-    const isMainPanel = /^main[-_]/i.test(currentFile);
+    let sidebarViewer = {};
+    try { sidebarViewer = JSON.parse(localStorage.getItem('bo_admin_user') || '{}') || {}; } catch(e) {}
+    const sidebarRoleType = String(sidebarViewer.roleType || '').toUpperCase();
+    const isMainAccount = sidebarRoleType === 'MAIN' || sidebarViewer.mainAdmin === true || Number(sidebarViewer.mainAdmin) === 1;
+    // Some MAIN pages intentionally reuse the exact same HTML as BO (for example
+    // menu-management.html), so filename-only detection is not sufficient. Hide
+    // Dashboard pin controls by authenticated account type as well as main-* page name.
+    const isMainPanel = isMainAccount || /^main[-_]/i.test(currentFile);
     const pinHtml = isMainPanel ? '' :
       '<button type="button" class="bo-sidebar-pin '+(pinned?'is-pinned':'')+'" data-bo-pin-menu="'+esc(m.menuKey)+'" title="'+(pinned?'Unpin from Dashboard':'Pin to Dashboard')+'" aria-label="'+(pinned?'Unpin from Dashboard':'Pin to Dashboard')+'"><i class="bi '+(pinned?'bi-pin-angle-fill':'bi-pin-angle')+'"></i></button>';
     return '<a href="' + href + '" class="' + cls.trim() + '" data-menu-key="' + esc(m.menuKey) + '">' +
