@@ -757,8 +757,91 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         updateHighlight(editor);
     }
 
+    /**
+     * Manual undo/redo stack for the plain-<textarea> fallback editors (used when CodeMirror 6
+     * fails to load). Native browser undo breaks the moment code assigns `.value` directly
+     * (Tab indent, section load, save-time sanitization), so Ctrl+Z / Ctrl+Shift+Z get their
+     * own history instead of depending on it.
+     */
+    function attachTextareaHistory(editor) {
+        const MAX_ENTRIES = 200;
+        const COALESCE_MS = 450;
+        let stack = [{ value: editor.value, start: editor.selectionStart, end: editor.selectionEnd }];
+        let index = 0;
+        let pendingTimer = null;
+
+        function snapshotNow() {
+            const entry = { value: editor.value, start: editor.selectionStart, end: editor.selectionEnd };
+            if (stack[index] && stack[index].value === entry.value) return;
+            stack = stack.slice(0, index + 1);
+            stack.push(entry);
+            if (stack.length > MAX_ENTRIES) stack.shift();
+            index = stack.length - 1;
+        }
+
+        function scheduleSnapshot() {
+            if (pendingTimer) clearTimeout(pendingTimer);
+            pendingTimer = setTimeout(() => {
+                pendingTimer = null;
+                snapshotNow();
+            }, COALESCE_MS);
+        }
+
+        function flushPending() {
+            if (!pendingTimer) return;
+            clearTimeout(pendingTimer);
+            pendingTimer = null;
+            snapshotNow();
+        }
+
+        function apply(entry) {
+            editor.value = entry.value;
+            try { editor.setSelectionRange(entry.start, entry.end); } catch (err) {
+                editor.selectionStart = editor.selectionEnd = entry.start;
+            }
+            updateCodeEditor(editor);
+        }
+
+        function undoNow() {
+            flushPending();
+            if (index <= 0) return;
+            index -= 1;
+            apply(stack[index]);
+        }
+
+        function redoNow() {
+            flushPending();
+            if (index >= stack.length - 1) return;
+            index += 1;
+            apply(stack[index]);
+        }
+
+        editor.__boHistory = {
+            /** Call right after a discrete programmatic edit (e.g. Tab indent) so it becomes its own step. */
+            recordDiscreteEdit: () => { flushPending(); snapshotNow(); },
+            /** Call after loading new content (section switch) so undo can't cross document boundaries. */
+            reset: () => {
+                if (pendingTimer) { clearTimeout(pendingTimer); pendingTimer = null; }
+                stack = [{ value: editor.value, start: editor.selectionStart, end: editor.selectionEnd }];
+                index = 0;
+            },
+            undo: undoNow,
+            redo: redoNow,
+        };
+
+        editor.addEventListener('input', scheduleSnapshot);
+        editor.addEventListener('keydown', (event) => {
+            const mod = event.ctrlKey || event.metaKey;
+            if (!mod || event.key.toLowerCase() !== 'z') return;
+            event.preventDefault();
+            if (event.shiftKey) redoNow();
+            else undoNow();
+        });
+    }
+
     function bindLineNumbers(editor) {
         if (!editor) return;
+        attachTextareaHistory(editor);
         ['input', 'change', 'keyup'].forEach((eventName) => {
             editor.addEventListener(eventName, () => updateCodeEditor(editor));
         });
@@ -770,6 +853,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             editor.value = editor.value.substring(0, startPos) + '  ' + editor.value.substring(endPos);
             editor.selectionStart = editor.selectionEnd = startPos + 2;
             updateCodeEditor(editor);
+            editor.__boHistory?.recordDiscreteEdit();
         });
         editor.addEventListener('scroll', () => {
             const lineBox = document.querySelector('[data-line-for="' + editor.id + '"]');
@@ -809,6 +893,9 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         cssEditor.value = css;
         jsEditor.value = js;
         updateAllLineNumbers();
+        // New document loaded (section switch/reload): undo must not reach into the
+        // previously edited section's content.
+        [htmlEditor, cssEditor, jsEditor].forEach((editor) => editor.__boHistory?.reset());
     }
 
     async function loadSection(sectionKey) {
@@ -856,6 +943,10 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
                 htmlEditor.value = safeHtml;
                 cssEditor.value = safeCss;
                 updateAllLineNumbers();
+                // Auto-corrected content on save is a real edit, not a new document — keep
+                // earlier undo history intact and just record this as its own step.
+                htmlEditor.__boHistory?.recordDiscreteEdit();
+                cssEditor.__boHistory?.recordDiscreteEdit();
             }
         }
 

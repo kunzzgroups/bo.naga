@@ -793,6 +793,32 @@
     }
   }
 
+  let boNavConfig={headerMenuKeys:[],headerConfigured:false,sidebarInteraction:'HOVER'};
+  function renderBoNavConfig(){
+    const grid=$('boHeaderShortcutGrid'); if(!grid)return;
+    const selected=new Set(boNavConfig.headerMenuKeys||[]);
+    const list=(rows||[]).filter(m=>Number(m.status)===1&&String(m.url||'').trim()&&String(m.url||'').trim()!=='#').sort(sortByOrderThenTitle);
+    grid.innerHTML=list.map(m=>`<label class="bo-nav-shortcut-option" title="${esc(m.title)}"><input type="checkbox" data-bo-header-menu="${esc(m.menuKey)}" ${selected.has(m.menuKey)?'checked':''}><i class="bi ${esc(m.icon||'bi-circle')}"></i><span>${esc(m.title)}</span></label>`).join('')||'<span class="text-muted">No active page menus available.</span>';
+    document.querySelectorAll('input[name="sidebarInteraction"]').forEach(x=>x.checked=x.value===String(boNavConfig.sidebarInteraction||'HOVER').toUpperCase());
+    updateBoNavCount();
+  }
+  function updateBoNavCount(){const n=document.querySelectorAll('[data-bo-header-menu]:checked').length;const el=$('boHeaderShortcutCount');if(el)el.textContent=n+' selected';}
+  async function loadBoNavConfig(){
+    try{const j=await api(API_CONFIG.BASE_URL+'/admin/ui-setting',{headers:{...BO_AUTH.authHeader()}});boNavConfig=Object.assign(boNavConfig,j.data||{});}catch(e){status('boNavConfigStatus',e.message,'error');}
+    renderBoNavConfig();
+  }
+  async function saveBoNavConfig(){
+    const btn=$('saveBoNavConfig');if(btn)btn.disabled=true;
+    const keys=[...document.querySelectorAll('[data-bo-header-menu]:checked')].map(x=>x.getAttribute('data-bo-header-menu'));
+    const mode=document.querySelector('input[name="sidebarInteraction"]:checked')?.value||'HOVER';
+    status('boNavConfigStatus','Saving display settings...','');
+    try{
+      const j=await api(API_CONFIG.BASE_URL+'/admin/ui-setting',{method:'PUT',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify({headerMenuKeys:keys,sidebarInteraction:mode})});
+      boNavConfig=Object.assign(boNavConfig,j.data||{}, {headerConfigured:true});
+      status('boNavConfigStatus','Navigation display saved. It applies to every Backoffice page.','success');
+      BO_AUTH.loadUiSetting?.();
+    }catch(e){status('boNavConfigStatus',e.message,'error');}finally{if(btn)btn.disabled=false;}
+  }
   document.addEventListener('DOMContentLoaded',function(){
     try{
       const saved=sessionStorage.getItem(PANEL_KEY);
@@ -811,7 +837,9 @@
     });
 
     $('openMenuModalBtn')?.addEventListener('click',openNew);
-    $('refreshMenuBtn')?.addEventListener('click',load);
+    $('refreshMenuBtn')?.addEventListener('click',async()=>{await load();await loadBoNavConfig();});
+    $('saveBoNavConfig')?.addEventListener('click',saveBoNavConfig);
+    $('boHeaderShortcutGrid')?.addEventListener('change',updateBoNavCount);
     document.querySelectorAll('[data-close-nm]').forEach(x=>x.addEventListener('click',closeModal));
     $('newMenuModal')?.addEventListener('click',e=>{if(e.target===$('newMenuModal'))closeModal();});
     $('nmSaveBtn')?.addEventListener('click',()=>{ if(nmMode==='group') saveGroup(); else saveItem(); });
@@ -889,7 +917,7 @@
 
     setNmMode('group',{skipPreview:true});
     syncTabUi();
-    load();
+    load().then(loadBoNavConfig);
   });
 
   document.querySelectorAll('[data-menu-sidebar]').forEach(btn=>{

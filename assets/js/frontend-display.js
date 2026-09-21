@@ -1,6 +1,8 @@
 (function(){
   const select=document.getElementById('homeBonusEnabled');
   const saveBtn=document.getElementById('saveFrontendDisplay');
+  const boSidebarInteraction=document.getElementById('boSidebarInteraction');
+  let boUiSetting={headerMenuKeys:[],headerConfigured:false,sidebarInteraction:'HOVER'};
   const minDeposit=document.getElementById('minDepositAmount');
   const minWithdrawal=document.getElementById('minWithdrawalAmount');
   const rebateThreshold=document.getElementById('rebateAutoCreditThreshold');
@@ -509,6 +511,24 @@
     setMessage('');
   }
 
+  async function loadBoSidebarInteraction(){
+    if(!boSidebarInteraction||!window.BO_AUTH) return;
+    try{
+      const r=await fetch(API_CONFIG.BASE_URL+'/admin/ui-setting',{headers:{...BO_AUTH.authHeader()},cache:'no-store'});
+      const j=await r.json().catch(()=>({}));
+      if(r.ok&&j.status!=='error'&&j.data){boUiSetting=Object.assign(boUiSetting,j.data);boSidebarInteraction.value=String(boUiSetting.sidebarInteraction||'HOVER').toUpperCase();}
+    }catch(e){}
+  }
+  async function saveBoSidebarInteraction(){
+    if(!boSidebarInteraction||!window.BO_AUTH) return;
+    const mode=String(boSidebarInteraction.value||'HOVER').toUpperCase();
+    const r=await fetch(API_CONFIG.BASE_URL+'/admin/ui-setting',{method:'PUT',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify({headerMenuKeys:Array.isArray(boUiSetting.headerMenuKeys)?boUiSetting.headerMenuKeys:[],sidebarInteraction:mode})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||j.status==='error') throw new Error(j.message||'Unable to save collapsed sidebar behavior');
+    boUiSetting=Object.assign(boUiSetting,j.data||{},{sidebarInteraction:mode});
+    if(window.BO_AUTH&&BO_AUTH.loadUiSetting) await BO_AUTH.loadUiSetting();
+  }
+
   async function save(){
     const old=saveBtn.innerHTML;
     saveBtn.disabled=true;
@@ -569,7 +589,8 @@
       syncSelect(savedValue);
       if(json.data){ minDeposit.value=Number(json.data.minDepositAmount||depositValue).toFixed(2); minWithdrawal.value=Number(json.data.minWithdrawalAmount||withdrawalValue).toFixed(2); if(rebateThreshold) rebateThreshold.value=Number(json.data.rebateAutoCreditThreshold??rebateThresholdValue).toFixed(2); if(marqueeEnabled) syncSelectValue(marqueeEnabled,json.data.marqueeEnabled); if(leaderboardEnabled) syncSelectValue(leaderboardEnabled,json.data.leaderboardEnabled); if(vipSidebarEnabled) syncSelectValue(vipSidebarEnabled,json.data.vipSidebarEnabled); if(liveTransactionEnabled) syncSelectValue(liveTransactionEnabled,json.data.liveTransactionEnabled); if(liveTransactionMode){liveTransactionMode.value=String(json.data.liveTransactionMode||liveTransactionModeValue).toUpperCase()==='FAKE'?'FAKE':'REAL';liveTransactionMode.dispatchEvent(new Event('change',{bubbles:true}));} if(liveTransactionIntervalSeconds) liveTransactionIntervalSeconds.value=String(json.data.liveTransactionIntervalSeconds||liveTransactionIntervalValue); if(liveTransactionRandomMinSeconds) liveTransactionRandomMinSeconds.value=String(json.data.liveTransactionRandomMinSeconds||liveTransactionRandomMinSecondsValue); if(liveTransactionRandomMaxSeconds) liveTransactionRandomMaxSeconds.value=String(json.data.liveTransactionRandomMaxSeconds||liveTransactionRandomMaxSecondsValue); if(liveTransactionRandomMinRows) liveTransactionRandomMinRows.value=String(json.data.liveTransactionRandomMinRows||liveTransactionRandomMinRowsValue); if(liveTransactionRandomMaxRows) liveTransactionRandomMaxRows.value=String(json.data.liveTransactionRandomMaxRows||liveTransactionRandomMaxRowsValue); if(liveTransactionRandomMinPrice) liveTransactionRandomMinPrice.value=Number(json.data.liveTransactionRandomMinPrice??liveTransactionRandomMinPriceValue).toFixed(2); if(liveTransactionRandomMaxPrice) liveTransactionRandomMaxPrice.value=Number(json.data.liveTransactionRandomMaxPrice??liveTransactionRandomMaxPriceValue).toFixed(2); renderLiveTransactionMode(); if(marqueeEditor){marqueeEditor.innerHTML=json.data.marqueeContent||marqueeHtml;syncMarquee();} }
       await saveInstallSetting();
-      setMessage('Frontend display setting and Add to Home Screen settings saved successfully.','success');
+      await saveBoSidebarInteraction();
+      setMessage('Frontend display settings saved successfully.','success');
     }catch(error){
       setMessage(error.message,'error');
     }finally{
@@ -667,5 +688,5 @@
 
   if(brandTarget){brandTarget.addEventListener('change',()=>{selectedTargetBrandId=Number(brandTarget.value)||1;localStorage.setItem('bo_active_brand_id',String(selectedTargetBrandId));if(window.BO_BRAND&&BO_BRAND.invalidate)BO_BRAND.invalidate();load().catch(error=>setMessage(error.message,'error'));});}
   saveBtn.addEventListener('click',save);
-  (async()=>{await loadBrandTarget();await load();})().catch(error=>setMessage(error.message,'error'));
+  (async()=>{await loadBrandTarget();await Promise.all([load(),loadBoSidebarInteraction()]);})().catch(error=>setMessage(error.message,'error'));
 })();

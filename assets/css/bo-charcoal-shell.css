@@ -307,7 +307,7 @@ body.report-body.bo-charcoal .mad-tab[aria-current="page"]{
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-tab[aria-current="page"]{
   color:var(--bo-text,#F4F4F5)!important;
   border-bottom-color:var(--bo-sidebar-active,#F59E0B)!important;
-}/* Primary CTA — bright orange gradient + soft lift shadow */
+}/* Primary CTA — amber gradient, reverse stops on hover, no shadow (MD) */
 body.report-body.bo-charcoal .mad-btn-primary,
 body.report-body.bo-charcoal .mad-btn-primary.bo-ui-button,
 body.report-body.bo-charcoal .mad-btn-primary.bo-ui-button-primary,
@@ -325,10 +325,12 @@ body.report-body.bo-charcoal a#madAddBtn{
   background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
   border:1px solid #E8901A!important;
   color:#fff!important;
-  box-shadow:0 1px 2px rgba(217,119,6,.18),0 4px 10px rgba(217,119,6,.22),inset 0 1px 0 rgba(255,255,255,.35)!important;
-  transform:translateY(0);
-  transition:transform .14s ease,box-shadow .14s ease,background-image .14s ease,filter .14s ease!important;
-  filter:none;
+  box-shadow:none!important;
+  filter:none!important;
+  text-shadow:none!important;
+  transform:none;
+  /* Never transition background-image — gradient reverse must snap */
+  transition:border-color .14s ease!important;
 }body.report-body.bo-charcoal .mad-btn-primary:hover,
 body.report-body.bo-charcoal .mad-btn-primary.bo-ui-button-primary:hover,
 body.report-body.bo-charcoal .mad-btn-navy:hover,
@@ -336,23 +338,25 @@ body.report-body.bo-charcoal .bo-ui-button-primary:hover,
 body.report-body.bo-charcoal .btn-primary:hover,
 body.report-body.bo-charcoal button.btn-primary:hover,
 body.report-body.bo-charcoal a#madAddBtn:hover{
-  background-color:#F59E0B!important;
-  background-image:linear-gradient(0deg,#FCD34D 0%,#FBBF24 38%,#F59E0B 72%,#EA8608 100%)!important;
+  background-color:#EA8608!important;
+  background-image:linear-gradient(180deg,#EA8608 0%,#F59E0B 42%,#FBBF24 100%)!important;
   border-color:#F59E0B!important;
   color:#fff!important;
-  box-shadow:0 2px 4px rgba(217,119,6,.20),0 6px 14px rgba(217,119,6,.26),inset 0 1px 0 rgba(255,255,255,.4)!important;
-  filter:none;
-  transform:translateY(-1px);
+  box-shadow:none!important;
+  filter:none!important;
+  text-shadow:none!important;
+  transform:none;
 }body.report-body.bo-charcoal .mad-btn-primary:active,
 body.report-body.bo-charcoal .mad-btn-primary.bo-ui-button-primary:active,
 body.report-body.bo-charcoal .mad-btn-navy:active,
 body.report-body.bo-charcoal .bo-ui-button-primary:active,
 body.report-body.bo-charcoal .btn-primary:active,
 body.report-body.bo-charcoal button.btn-primary:active{
-  transform:translateY(1px)!important;
+  transform:none!important;
   background:linear-gradient(180deg,#F59E0B 0%,#EA8608 100%)!important;
-  box-shadow:0 1px 2px rgba(217,119,6,.16),inset 0 1px 0 rgba(255,255,255,.2)!important;
-  filter:none;
+  background-image:linear-gradient(180deg,#F59E0B 0%,#EA8608 100%)!important;
+  box-shadow:none!important;
+  filter:none!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn-primary,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn-primary.bo-ui-button,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn-primary.bo-ui-button-primary,
@@ -367,33 +371,43 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal a#madAddBtn{
   background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
   border:1px solid #F59E0B!important;
   color:#2A2C36!important;
-  box-shadow:0 1px 2px rgba(0,0,0,.4),0 4px 12px rgba(245,158,11,.28),inset 0 1px 0 rgba(255,255,255,.28)!important;
+  box-shadow:none!important;
+  filter:none!important;
+  text-shadow:none!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn-primary:hover,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn-navy:hover,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-ui-button-primary:hover,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal a#madAddBtn:hover{
-  background-color:#F59E0B!important;
-  background-image:linear-gradient(0deg,#FDE68A 0%,#FBBF24 40%,#F59E0B 100%)!important;
+  background-color:#D97706!important;
+  background-image:linear-gradient(180deg,#D97706 0%,#F59E0B 45%,#FBBF24 100%)!important;
   border-color:#FBBF24!important;
   color:#2A2C36!important;
-  box-shadow:0 2px 4px rgba(0,0,0,.35),0 8px 18px rgba(245,158,11,.34),inset 0 1px 0 rgba(255,255,255,.4)!important;
-  transform:translateY(-1px)!important;
+  box-shadow:none!important;
+  filter:none!important;
+  text-shadow:none!important;
+  transform:none!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn-primary:active,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn-navy:active,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-ui-button-primary:active,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal a#madAddBtn:active{
-  transform:translateY(1px)!important;
+  transform:none!important;
   background-image:linear-gradient(180deg,#F59E0B 0%,#D97706 100%)!important;
   color:#2A2C36!important;
-  box-shadow:0 1px 2px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.18)!important;
-}/* Active pager — light: orange gradient lift; dark: bright orange glow */
+  box-shadow:none!important;
+  filter:none!important;
+}/* Active pager — amber gradient, no shadow (MD Table footer pager) */
 body.report-body.bo-charcoal .mad-pager .smart-page.active,
-body.report-body.bo-charcoal .mad-pager button.active{
+body.report-body.bo-charcoal .mad-pager button.active,
+body.report-body.bo-charcoal .pagination-clean button.active,
+body.report-body.bo-charcoal .smart-page.active,
+body.report-body.bo-charcoal .page-btn.active,
+body.report-body.bo-charcoal .table-page-btn.active{
   background-color:#F59E0B!important;
   background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 48%,#D97706 100%)!important;
   border:1px solid #D97706!important;
   color:#fff!important;
-  box-shadow:0 1px 2px rgba(217,119,6,.25),0 3px 8px rgba(217,119,6,.22),inset 0 1px 0 rgba(255,255,255,.35)!important;
+  box-shadow:none!important;
+  filter:none!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-pager .smart-page,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-pager button{
   background:#383A46!important;
@@ -413,12 +427,17 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-pager button:disabl
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-pager .smart-page.active,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-pager button.active,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-pager .smart-page.active.bo-ui-button,
-html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-pager .smart-page.active.bo-ui-button-primary{
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-pager .smart-page.active.bo-ui-button-primary,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .pagination-clean button.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .smart-page.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .page-btn.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .table-page-btn.active{
   background-color:#F59E0B!important;
   background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 48%,#D97706 100%)!important;
   border:1px solid #F59E0B!important;
   color:#2A2C36!important;
-  box-shadow:0 0 0 1px rgba(245,158,11,.25),0 2px 8px rgba(245,158,11,.45),0 6px 18px rgba(245,158,11,.28),inset 0 1px 0 rgba(255,255,255,.35)!important;
+  box-shadow:none!important;
+  filter:none!important;
 }body.report-body.bo-charcoal .mad-btn:hover:not(.mad-btn-primary):not(.mad-btn-navy):not(.mad-btn-ghost):not(.bo-ui-button-primary):not(.btn-primary):not(#madExportBtn),
 body.report-body.bo-charcoal .mad-btn.bo-ui-button:hover:not(.mad-btn-primary):not(.mad-btn-ghost):not(.bo-ui-button-primary),
 body.report-body.bo-charcoal .mad-btn.bo-ui-button-secondary:hover:not(.mad-btn-ghost){
@@ -428,7 +447,7 @@ body.report-body.bo-charcoal .mad-btn.bo-ui-button-secondary:hover:not(.mad-btn-
   background-image:none!important;
   box-shadow:none!important;
   transform:none;
-}/* Primary CTA hover must win over generic .mad-btn:hover — reverse gradient to 0deg */
+}/* Primary CTA hover must win over generic .mad-btn:hover — reverse stops, no shadow */
 body.report-body.bo-charcoal a.mad-btn-primary:hover,
 body.report-body.bo-charcoal a#madAddBtn:hover,
 body.report-body.bo-charcoal .mad-btn-primary:hover,
@@ -437,24 +456,27 @@ body.report-body.bo-charcoal .mad-btn-navy:hover,
 body.report-body.bo-charcoal .bo-ui-button-primary:hover,
 body.report-body.bo-charcoal .btn-primary:hover,
 body.report-body.bo-charcoal button.btn-primary:hover{
-  background-color:#F59E0B!important;
-  background-image:linear-gradient(0deg,#FCD34D 0%,#FBBF24 38%,#F59E0B 72%,#EA8608 100%)!important;
+  background-color:#EA8608!important;
+  background-image:linear-gradient(180deg,#EA8608 0%,#F59E0B 42%,#FBBF24 100%)!important;
   border-color:#F59E0B!important;
   color:#fff!important;
-  box-shadow:0 2px 4px rgba(217,119,6,.22),0 8px 18px rgba(217,119,6,.28),inset 0 1px 0 rgba(255,255,255,.45)!important;
+  box-shadow:none!important;
   filter:none!important;
-  transform:translateY(-1px)!important;
+  text-shadow:none!important;
+  transform:none!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal a.mad-btn-primary:hover,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal a#madAddBtn:hover,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn-primary:hover,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-btn-navy:hover,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-ui-button-primary:hover{
-  background-color:#F59E0B!important;
-  background-image:linear-gradient(0deg,#FDE68A 0%,#FBBF24 40%,#F59E0B 100%)!important;
+  background-color:#D97706!important;
+  background-image:linear-gradient(180deg,#D97706 0%,#F59E0B 45%,#FBBF24 100%)!important;
   border-color:#FBBF24!important;
   color:#2A2C36!important;
-  box-shadow:0 2px 4px rgba(0,0,0,.3),0 8px 18px rgba(245,158,11,.34),inset 0 1px 0 rgba(255,255,255,.45)!important;
-  transform:translateY(-1px)!important;
+  box-shadow:none!important;
+  filter:none!important;
+  text-shadow:none!important;
+  transform:none!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-pill:hover:not(.is-active) .mad-pill-count{
   background:transparent!important;
   color:inherit!important;

@@ -1,160 +1,107 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="assets/css/reports.css?v=1.0.57" rel="stylesheet">
-    <link href="assets/css/operations-upgrade.css?v=1.0.2" rel="stylesheet">
-    <link href="assets/css/bo-ui-standard.css?v=1.0.6" rel="stylesheet">
-<link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-shell.css?v=1.0.7" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-legacy.css?v=1.1.29" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-cms.css?v=1.0.0" rel="stylesheet" />
-<link href="assets/css/bo-input-fill.css?v=1.0.1" rel="stylesheet" />
-    <style>
-        /* Dashboard only: keep date range on the left and pin timezone to the far right. */
-        .report-main .report-content > .ops-filter {
-            position: relative !important;
-            display: block !important;
-            width: 100% !important;
-            min-height: 96px !important;
-            padding-right: 330px !important;
-        }
-        .report-main .report-content > .ops-filter .dash-date-field {
-            width: 390px !important;
-            max-width: 100% !important;
-            min-width: 0 !important;
-            margin: 0 !important;
-        }
-        .report-main .report-content > .ops-filter .dashboard-timezone-clock {
-            position: absolute !important;
-            right: 20px !important;
-            top: 50% !important;
-            transform: translateY(-50%) !important;
-            margin: 0 !important;
-            white-space: nowrap !important;
-            text-align: right !important;
-        }
-        @media (max-width: 900px) {
-            .report-main .report-content > .ops-filter {
-                padding-right: 16px !important;
-                padding-bottom: 16px !important;
-                min-height: 0 !important;
-            }
-            .report-main .report-content > .ops-filter .dash-date-field {
-                width: 100% !important;
-            }
-            .report-main .report-content > .ops-filter .dashboard-timezone-clock {
-                position: static !important;
-                display: block !important;
-                width: 100% !important;
-                margin: 14px 0 0 !important;
-                transform: none !important;
-                white-space: normal !important;
-                overflow-wrap: anywhere !important;
-                text-align: right !important;
-                line-height: 1.35 !important;
-                text-align: right !important;
-            }
-        }
-    </style>
-</head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="assets/css/reports.css?v=1.0.57" rel="stylesheet">
+<link href="assets/css/operations-upgrade.css?v=1.0.2" rel="stylesheet">
+<link href="assets/css/bo-ui-standard.css?v=1.0.6" rel="stylesheet">
+<link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet">
+<link href="assets/css/bo-charcoal-shell.css?v=1.0.7" rel="stylesheet">
+<link href="assets/css/bo-charcoal-legacy.css?v=1.1.29" rel="stylesheet">
+<link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet">
+<link href="assets/css/bo-charcoal-cms.css?v=1.0.0" rel="stylesheet">
+<link href="assets/css/bo-input-fill.css?v=1.0.1" rel="stylesheet">
+<style>
+.dashboard-workspace{padding:0!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:calc(100vh - 142px);background:transparent;overflow-x:hidden!important}
+.dashboard-workspace-frame{display:block;width:100%!important;max-width:100%!important;min-width:0!important;height:calc(100vh - 142px);min-height:650px;border:0;background:transparent;overflow:hidden}
+.dashboard-workspace-frame[hidden]{display:none!important}
 
+/* Dashboard shell only: remove the old top header and keep the sidebar toggle inside the sidebar. */
+.dashboard-hidden-topbar{display:none!important;height:0!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important}
+.dashboard-sidebar-brand{justify-content:space-between!important}
+.dashboard-sidebar-toggle{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:42px!important;height:42px!important;min-width:42px!important;padding:0!important;border:1px solid var(--line,#EADCC8)!important;border-radius:11px!important;background:#FFF8EB!important;color:#18191C!important;cursor:pointer!important;pointer-events:auto!important}
+.dashboard-sidebar-toggle i{font-size:22px!important}
+@media(min-width:992px){
+  body.sidebar-mini .dashboard-sidebar-brand{justify-content:center!important;padding:0!important}
+  body.sidebar-mini .dashboard-sidebar-brand>div{display:none!important}
+  body.sidebar-mini .dashboard-sidebar-toggle{display:inline-flex!important;opacity:1!important;visibility:visible!important;width:42px!important;min-width:42px!important}
+  body.sidebar-mini .report-sidebar:hover .dashboard-sidebar-brand,
+  body.sidebar-mini .report-sidebar.is-mini-hover .dashboard-sidebar-brand{justify-content:space-between!important;padding:0 14px!important}
+  body.sidebar-mini .report-sidebar:hover .dashboard-sidebar-brand>div,
+  body.sidebar-mini .report-sidebar.is-mini-hover .dashboard-sidebar-brand>div{display:block!important;opacity:1!important;visibility:visible!important;width:auto!important}
+}
+@media(max-width:991.98px){.dashboard-sidebar-toggle{display:inline-flex!important}.dashboard-sidebar-brand .close-side{display:inline-flex!important}}
+@media(min-width:992px){
+  /* After clicking the Dashboard sidebar toggle, keep the rail visibly collapsed until
+     the pointer leaves it. This prevents the normal hover-to-expand rule from making
+     the click look like it did nothing. Hover behaviour resumes on the next hover. */
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar,
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover,
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar.is-mini-hover{width:var(--rail-w)!important;max-width:var(--rail-w)!important;min-width:var(--rail-w)!important;box-shadow:none!important;overflow-x:hidden!important}
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .report-brand{justify-content:center!important;padding:0!important}
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .report-brand>div:not(.logo),
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .report-nav>a:not(.report-sub) span,
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .nav-group-btn span,
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .nav-group-btn .bi-chevron-down,
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .report-nav small{opacity:0!important;visibility:hidden!important;width:0!important;overflow:hidden!important}
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .report-nav>a:not(.report-sub),
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .nav-group-btn{justify-content:center!important;padding-left:0!important;padding-right:0!important}
+}
+</style>
+</head>
 <body class="report-body bo-charcoal bo-account-chip">
-    <div class="report-shell">
-        <aside class="report-sidebar" id="reportSidebar">
-            <div class="report-brand">
-                <div>Backoffice<br><small>Admin Panel</small></div><button class="close-side" data-close-sidebar><i
-                        class="bi bi-x-lg"></i></button>
-            </div>
-            <nav class="report-nav"></nav>
-        </aside>
-        <div class="sidebar-overlay" data-close-sidebar></div>
-        <main class="report-main">
-            <header class="report-topbar"><button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button>
-                <div class="user-title-wrap">
-                    <div class="user-title-icon"><i class="bi bi-speedometer2"></i></div>
-                    <div>
-                        <h1>Dashboard</h1>
-                    </div>
-                </div>
-                <div class="report-actions">
-      <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
-        <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
-        <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
-      </button>
-      <div data-bo-profile></div>
-    </div>
-            </header>
-            <section class="report-content">
-                <div class="ops-filter">
-                    <div class="field ref-date-field dash-date-field"><label>Date Range</label>
-                        <div class="ref-range-wrap"><button type="button" class="ref-range-trigger"
-                                id="dashDateTrigger"><span class="ref-range-icon"><i
-                                        class="bi bi-calendar3"></i></span><span id="dashDateLabel">Select date
-                                    range</span><i class="bi bi-chevron-down ms-auto"></i></button><input id="dashFrom"
-                                type="hidden"><input id="dashTo" type="hidden">
-                            <div class="ref-range-picker" id="dashRangePicker">
-                                <div class="ref-range-presets"><button type="button"
-                                        data-dash-range-preset="today">Today</button><button type="button"
-                                        data-dash-range-preset="yesterday">Yesterday</button><button type="button"
-                                        data-dash-range-preset="thisWeek">This Week</button><button type="button"
-                                        data-dash-range-preset="lastWeek">Last Week</button><button type="button"
-                                        data-dash-range-preset="thisMonth">This Month</button><button type="button"
-                                        data-dash-range-preset="lastMonth">Last Month</button><button type="button"
-                                        data-dash-range-preset="thisYear">This Year</button><button type="button"
-                                        data-dash-range-preset="lastYear">Last Year</button></div>
-                                <div class="ref-range-calendar">
-                                    <div class="ref-cal-head"><button type="button" id="dashCalPrev"><i
-                                                class="bi bi-chevron-left"></i></button><button type="button"
-                                            class="ref-head-pick" id="dashCalMonth"></button><button type="button"
-                                            class="ref-head-pick" id="dashCalYear"></button><button type="button"
-                                            id="dashCalNext"><i class="bi bi-chevron-right"></i></button></div>
-                                    <div class="ref-cal-month-grid" id="dashCalMonthGrid"></div>
-                                    <div class="ref-cal-year-grid" id="dashCalYearGrid"></div>
-                                    <div class="ref-cal-day-view" id="dashCalDayView">
-                                        <div class="ref-cal-week">
-                                            <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
-                                        </div>
-                                        <div class="ref-cal-days" id="dashCalDays"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <span id="dashClock" class="timezone-chip dashboard-timezone-clock" aria-label="Dashboard timezone and current time"></span>
-                </div>
-                <br>
-                <div class="ops-grid" id="dashboardCards"></div>
-            </section>
-        </main>
-    </div>
-    <script src="assets/js/config.js?v=1.0.31"></script>
+<div class="report-shell">
+  <aside class="report-sidebar" id="reportSidebar">
+    <div class="report-brand dashboard-sidebar-brand"><div>Backoffice<br><small>Admin Panel</small></div><button type="button" class="hamb dashboard-sidebar-toggle" data-open-sidebar aria-label="Toggle sidebar" title="Toggle sidebar"><i class="bi bi-list"></i></button><button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button></div>
+    <nav class="report-nav"></nav>
+  </aside>
+  <div class="sidebar-overlay" data-close-sidebar></div>
+  <main class="report-main">
+    <header class="report-topbar dashboard-hidden-topbar" aria-hidden="true"></header>
+    <section class="report-content dashboard-workspace">
+      <iframe id="dashboardWorkspaceFrame" class="dashboard-workspace-frame" title="Dashboard selected page" hidden></iframe>
+    </section>
+  </main>
+</div>
+<script src="assets/js/config.js?v=1.0.31"></script>
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
-    <script src="assets/js/bo-date-range.js?v=1.0.16"></script>
-    <script src="assets/js/dashboard.js?v=1.0.6"></script>
-    <script src="assets/js/reports.js?v=1.0.29"></script>
-    <script src="assets/js/auth.js?v=1.0.66"></script>
-    <script defer src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
+<script src="assets/js/reports.js?v=1.0.29"></script>
+<script src="assets/js/auth.js?v=1.0.79"></script>
+<script defer src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
 <script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
-
-<!-- Global live-chat unread reminder: sounds across BO until admin unread count reaches 0. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>
 <script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 <script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
-</body>
 
+<script>
+/* Dashboard-only: make the sidebar button collapse immediately even while the pointer
+   is still sitting over the sidebar. No shared sidebar behaviour is changed. */
+(function(){
+  var sidebar=document.getElementById('reportSidebar');
+  var toggle=document.querySelector('.dashboard-sidebar-toggle');
+  if(!sidebar||!toggle) return;
+  toggle.addEventListener('pointerdown',function(){
+    if(window.innerWidth>=992 && !document.body.classList.contains('sidebar-mini')){
+      document.body.classList.add('dashboard-mini-hold');
+    }
+  });
+  sidebar.addEventListener('mouseleave',function(){
+    document.body.classList.remove('dashboard-mini-hold');
+  });
+  window.addEventListener('resize',function(){
+    if(window.innerWidth<992) document.body.classList.remove('dashboard-mini-hold');
+  });
+})();
+</script>
+</body>
 </html>

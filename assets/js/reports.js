@@ -563,8 +563,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(isCompactAutoWidthWrap(parts.wrap)){
       if(inFilterRow || inEntriesControl){
-        const item=parts.wrap.closest('.bo-filter-select-item,.field,.entries-control') || parts.wrap.parentElement;
-        if(item && (inFilterRow || item.classList.contains('bo-filter-select-item') || item.classList.contains('field'))){
+        /* Never size the .bo-filter-row itself — that collapses keyword+select
+           into the select's width and clips the dropdown (VIP Reward Log). */
+        const item=parts.wrap.closest('.bo-filter-select-item,.field,.entries-control') || parts.wrap;
+        if(item && !item.classList.contains('bo-filter-row') && (item.classList.contains('bo-filter-select-item') || item.classList.contains('field') || item.classList.contains('entries-control') || item===parts.wrap)){
           item.style.setProperty('--bo-select-width', contentWidth+'px');
           item.style.setProperty('width', contentWidth+'px', 'important');
           item.style.setProperty('min-width', contentWidth+'px', 'important');

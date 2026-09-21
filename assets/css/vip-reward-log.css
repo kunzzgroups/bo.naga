@@ -1,0 +1,1635 @@
+
+   Scope: body.vip-reward-log-page. Beat bo-ui-standard 42px/11px and vip-pages-targeted. */
+
+html body.vip-reward-log-page.report-body.bo-charcoal .report-main{
+  min-height:100vh !important;
+  min-height:100dvh !important;
+  height:100vh !important;
+  height:100dvh !important;
+  display:flex !important;
+  flex-direction:column !important;
+  overflow:hidden !important;
+}
+html body.vip-reward-log-page.report-body.bo-charcoal .report-topbar{flex:0 0 auto !important}
+html body.vip-reward-log-page.report-body.bo-charcoal .report-content{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:16px !important;
+  overflow:hidden !important;
+  padding-bottom:16px !important;
+}
+
+/* ---- Panel ---- */
+html body.vip-reward-log-page .report-content > .vip-log-card,
+html body.vip-reward-log-page .vip-log-card{
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  margin:0 !important;
+  padding:0 !important;
+  border:1px solid #EADCC8 !important;
+  border-radius:8px !important;
+  overflow:hidden !important;
+  background:#FFF8EB !important;
+  box-shadow:0 0 0 1px rgba(92,74,48,.04), 0 1px 2px -1px rgba(60,48,32,.06), 0 2px 8px rgba(60,48,32,.05);
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-card{
+  background:#383A46 !important;
+  border-color:rgba(255,255,255,.14) !important;
+  box-shadow:none;
+}
+
+/* ---- Toolbar: filters row (Wallet Ledger specimen) ---- */
+html body.vip-reward-log-page .vip-log-toolbar{
+  flex:0 0 auto;
+  display:flex;
+  flex-flow:row wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 14px;
+  border-bottom:1px solid #EADCC8;
+  background:#FFF8EB;
+  position:relative;
+  z-index:6;
+  overflow:visible !important;
+  min-width:0;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-toolbar{
+  background:#383A46;
+  border-bottom-color:rgba(255,255,255,.12);
+}
+
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row{
+  display:flex !important;
+  flex-flow:row nowrap !important;
+  align-items:center !important;
+  align-content:center !important;
+  gap:10px !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  margin:0 0 0 auto !important;
+  padding:0 !important;
+  flex:0 0 auto !important;
+  overflow:visible !important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > *{
+  margin:0 !important;
+}
+
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardKeyword,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > input.bo-filter-input-item{
+  width:280px !important;
+  min-width:220px !important;
+  max-width:280px !important;
+  flex:0 0 280px !important;
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+  padding:0 12px !important;
+  border:1px solid #EADCC8 !important;
+  border-radius:8px !important;
+  background:#FFF8EB !important;
+  color:#18191C !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  box-sizing:border-box !important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardType,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > select.bo-filter-select-item,
+html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters.bo-filter-row > .rounded-select-wrap{
+  width:190px !important;
+  min-width:190px !important;
+  max-width:190px !important;
+  flex:0 0 190px !important;
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+  box-sizing:border-box !important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardType,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > select.bo-filter-select-item{
+  padding:0 32px 0 12px !important;
+  border:1px solid #EADCC8 !important;
+  border-radius:8px !important;
+  background-color:#FFF8EB !important;
+  color:#18191C !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardKeyword:focus,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardType:focus{
+  outline:0 !important;
+  border-color:#D97706 !important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14) !important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardKeyword::placeholder{
+  color:#78716C !important;
+  opacity:1 !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+}
+
+
+html body.vip-reward-log-page .vip-log-filters .rounded-select-wrap{
+  position:relative !important;
+  width:190px !important;
+  min-width:190px !important;
+  max-width:190px !important;
+  flex:0 0 190px !important;
+  height:36px !important;
+}
+html body.vip-reward-log-page .vip-log-filters .rounded-select-wrap > select{
+  position:absolute !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+  width:1px !important;
+  height:1px !important;
+}
+html body.vip-reward-log-page .vip-log-filters .rounded-select-btn{
+  box-sizing:border-box !important;
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:0 !important;
+  width:100% !important;
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+  padding:0 28px 0 12px !important;
+  border:1px solid #EADCC8 !important;
+  border-radius:8px !important;
+  background:#FFF8EB !important;
+  color:#18191C !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  box-shadow:none !important;
+  cursor:pointer !important;
+}
+/* Beat bo-ui-standard's `body:not(#id):not(#id) ... .rounded-select-btn{height:42px}` —
+   each :not(#id) counts as ID-level specificity, so it otherwise wins over plain classes
+   above regardless of load order. Re-declare height at matching-or-higher specificity. */
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .rounded-select-wrap .rounded-select-btn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .vip-log-filters .rounded-select-wrap .rounded-select-btn{
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+  border-radius:8px !important;
+}
+html body.vip-reward-log-page .vip-log-filters .rounded-select-btn span{
+  display:block !important;
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+  text-align:left !important;
+}
+html body.vip-reward-log-page .vip-log-filters .rounded-select-btn .bi{
+  position:absolute !important;
+  right:12px !important;
+  top:50% !important;
+  transform:translateY(-50%) !important;
+  margin:0 !important;
+  color:#57534E !important;
+  font-size:12px !important;
+  flex:0 0 auto !important;
+  pointer-events:none !important;
+}
+html body.vip-reward-log-page .vip-log-filters .rounded-select-btn.open,
+html body.vip-reward-log-page .vip-log-filters .rounded-select-btn:focus{
+  border-color:#D97706 !important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14) !important;
+  outline:0 !important;
+}
+html body.vip-reward-log-page .vip-log-filters .rounded-select-menu{
+  display:none !important;
+  position:absolute !important;
+  z-index:40 !important;
+  top:calc(100% + 6px) !important;
+  left:0 !important;
+  right:auto !important;
+  width:100% !important;
+  min-width:100% !important;
+  max-width:none !important;
+  max-height:min(280px,46vh) !important;
+  padding:6px !important;
+  border:1px solid #EADCC8 !important;
+  border-radius:8px !important;
+  background:#FFF8EB !important;
+  box-shadow:0 12px 28px rgba(92,74,48,.12) !important;
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+  box-sizing:border-box !important;
+}
+html body.vip-reward-log-page .vip-log-filters .rounded-select-menu.show{display:flex !important;flex-direction:column !important}
+html body.vip-reward-log-page .vip-log-filters .rounded-select-option{
+  display:flex !important;
+  align-items:center !important;
+  width:100% !important;
+  min-height:34px !important;
+  margin:0 !important;
+  padding:6px 10px !important;
+  border:0 !important;
+  border-radius:8px !important;
+  background:transparent !important;
+  color:#18191C !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1.2 !important;
+  text-align:left !important;
+  white-space:nowrap !important;
+  cursor:pointer !important;
+}
+html body.vip-reward-log-page .vip-log-filters .rounded-select-option:hover,
+html body.vip-reward-log-page .vip-log-filters .rounded-select-option.active,
+html body.vip-reward-log-page .vip-log-filters .rounded-select-option.is-active{
+  background:rgba(217,119,6,.12) !important;
+  color:#B45309 !important;
+}
+
+html body.vip-reward-log-page .vip-log-filters .rounded-select-menu::-webkit-scrollbar,
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-menu::-webkit-scrollbar{
+  width:4px !important;
+  height:4px !important;
+  background:transparent !important;
+}
+html body.vip-reward-log-page .vip-log-filters .rounded-select-menu::-webkit-scrollbar-button,
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-menu::-webkit-scrollbar-button{
+  display:none !important;
+  width:0 !important;
+  height:0 !important;
+  background:transparent !important;
+}
+html body.vip-reward-log-page .vip-log-filters .rounded-select-menu::-webkit-scrollbar-track,
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-menu::-webkit-scrollbar-track{
+  background:transparent !important;
+}
+html body.vip-reward-log-page .vip-log-filters .rounded-select-menu::-webkit-scrollbar-thumb,
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-menu::-webkit-scrollbar-thumb{
+  background:#98A2B3 !important;
+  border-radius:999px !important;
+  border:0 !important;
+  min-height:28px !important;
+}
+html body.vip-reward-log-page .vip-log-filters .rounded-select-menu::-webkit-scrollbar-thumb:hover,
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-menu::-webkit-scrollbar-thumb:hover{
+  background:#667085 !important;
+}
+@supports not selector(::-webkit-scrollbar){
+  html body.vip-reward-log-page .vip-log-filters .rounded-select-menu,
+  html body.vip-reward-log-page .table-footer .entries-control .rounded-select-menu{
+    scrollbar-width:thin;
+    scrollbar-color:#98A2B3 transparent;
+  }
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-filters .rounded-select-btn{
+  background:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-filters .rounded-select-btn .bi{color:#D4D4D8 !important}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-filters .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-filters .rounded-select-btn:focus{
+  border-color:#F59E0B !important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18) !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-filters .rounded-select-menu{
+  background:#383A46 !important;
+  border-color:rgba(255,255,255,.14) !important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4) !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-filters .rounded-select-option{color:#E7E5E4 !important}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-filters .rounded-select-option:hover{
+  background:rgba(245,158,11,.14) !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-filters .rounded-select-option.active,
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-filters .rounded-select-option.is-active{
+  background:#F59E0B !important;
+  color:#2A2C36 !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-filters .rounded-select-menu::-webkit-scrollbar-thumb,
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .entries-control .rounded-select-menu::-webkit-scrollbar-thumb{
+  background:#F59E0B !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-filters .rounded-select-menu::-webkit-scrollbar-thumb:hover,
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .entries-control .rounded-select-menu::-webkit-scrollbar-thumb:hover{
+  background:#D97706 !important;
+}
+
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardReset,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardSearch,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row :is(.bo-filter-reset-button,.bo-filter-search-button),
+html body.vip-reward-log-page .vip-log-toolbar > #rewardAdjustNever{
+  width:auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  flex:0 0 auto !important;
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+  padding:0 12px !important;
+  border-radius:8px !important;
+  font-size:12.5px !important;
+  font-weight:800 !important;
+  transform:translateY(0) !important;
+  box-sizing:border-box !important;
+  transition:transform .14s ease,box-shadow .14s ease,background-image .14s ease,border-color .14s ease,filter .14s ease !important;
+}
+
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardReset,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .bo-filter-reset-button{
+  background-color:#F3E8D6 !important;
+  background-image:linear-gradient(180deg,#FFF8EB 0%,#F3E8D6 100%) !important;
+  border:1px solid #EADCC8 !important;
+  color:#18191C !important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06),0 2px 6px rgba(24,25,28,.05) !important;
+}
+
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardSearch,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .bo-filter-search-button,
+html body.vip-reward-log-page .vip-log-toolbar > #rewardAdjustNever{
+  background-color:#F59E0B !important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%) !important;
+  border:1px solid #E8901A !important;
+  color:#FFFFFF !important;
+  box-shadow:none !important;
+}
+/* MD Ghost hover / active */
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardReset:hover,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .bo-filter-reset-button:hover{
+  background-color:#F3E8D6 !important;
+  background-image:linear-gradient(0deg,#FFF8EB 0%,#F3E8D6 100%) !important;
+  border-color:#E0D0B8 !important;
+  color:#18191C !important;
+  box-shadow:none !important;
+  transform:translateY(-1px) !important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardReset:active,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .bo-filter-reset-button:active{
+  background-image:linear-gradient(180deg,#FFF1DC 0%,#EADCC8 100%) !important;
+  border-color:#EADCC8 !important;
+  box-shadow:none !important;
+  transform:translateY(1px) !important;
+}
+
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardSearch:hover,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .bo-filter-search-button:hover,
+html body.vip-reward-log-page .vip-log-toolbar > #rewardAdjustNever:hover{
+  background-color:#F59E0B !important;
+  background-image:linear-gradient(0deg,#FCD34D 0%,#FBBF24 38%,#F59E0B 72%,#EA8608 100%) !important;
+  border-color:#F59E0B !important;
+  color:#FFFFFF !important;
+  box-shadow:none !important;
+  filter:none !important;
+  transform:translateY(-1px) !important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardSearch:active,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .bo-filter-search-button:active,
+html body.vip-reward-log-page .vip-log-toolbar > #rewardAdjustNever:active{
+  background:linear-gradient(180deg,#F59E0B 0%,#EA8608 100%) !important;
+  background-image:linear-gradient(180deg,#F59E0B 0%,#EA8608 100%) !important;
+  border-color:#E8901A !important;
+  color:#FFFFFF !important;
+  box-shadow:none !important;
+  filter:none !important;
+  transform:translateY(1px) !important;
+}
+html body.vip-reward-log-page .vip-log-toolbar > #rewardAdjustNever:focus,
+html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters button:focus{
+  outline:2px solid #D97706 !important;
+  outline-offset:2px !important;
+}
+
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardKeyword,
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardType{
+  background-color:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardKeyword:focus,
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardType:focus{
+  border-color:#F59E0B !important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18) !important;
+}
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardKeyword::placeholder{
+  color:#A1A1AA !important;
+}
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardReset,
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .bo-filter-reset-button{
+  background-color:#383A46 !important;
+  background-image:linear-gradient(180deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%) !important;
+  border-color:rgba(255,255,255,.14) !important;
+  color:#F5F5F4 !important;
+  box-shadow:0 1px 2px rgba(0,0,0,.22),0 4px 10px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.12) !important;
+}
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardReset:hover,
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .bo-filter-reset-button:hover{
+  background-image:linear-gradient(0deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%) !important;
+  border-color:rgba(255,255,255,.18) !important;
+  color:#FFFFFF !important;
+  box-shadow:0 2px 4px rgba(0,0,0,.22),0 6px 14px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.16) !important;
+  transform:translateY(-1px) !important;
+}
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardReset:active,
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .bo-filter-reset-button:active{
+  background-image:linear-gradient(180deg,#383A46 0%,#2C2E38 100%) !important;
+  transform:translateY(1px) !important;
+  box-shadow:0 1px 2px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.1) !important;
+}
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardSearch,
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .bo-filter-search-button,
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-toolbar > #rewardAdjustNever{
+  background-color:#F59E0B !important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%) !important;
+  border-color:#F59E0B !important;
+  color:#2A2C36 !important;
+  box-shadow:0 1px 2px rgba(0,0,0,.4),0 4px 12px rgba(245,158,11,.28),inset 0 1px 0 rgba(255,255,255,.28) !important;
+}
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardSearch:hover,
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .bo-filter-search-button:hover,
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-toolbar > #rewardAdjustNever:hover{
+  background-image:linear-gradient(0deg,#FDE68A 0%,#FBBF24 40%,#F59E0B 100%) !important;
+  border-color:#FBBF24 !important;
+  color:#2A2C36 !important;
+  box-shadow:0 2px 4px rgba(0,0,0,.35),0 8px 18px rgba(245,158,11,.34),inset 0 1px 0 rgba(255,255,255,.4) !important;
+  transform:translateY(-1px) !important;
+}
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardSearch:active,
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .bo-filter-search-button:active,
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-toolbar > #rewardAdjustNever:active{
+  background-image:linear-gradient(180deg,#F59E0B 0%,#D97706 100%) !important;
+  color:#2A2C36 !important;
+  box-shadow:0 1px 2px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.18) !important;
+  transform:translateY(1px) !important;
+}
+
+/* ---- Table: fixed head + body-only scroll (Deposit / Member Wallet MD) ---- */
+html body.vip-reward-log-page .vip-admin-table-wrap{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  display:flex !important;
+  flex-direction:column !important;
+  overflow:hidden !important;
+  background:#FFF8EB !important;
+  position:relative !important;
+  z-index:1 !important;
+}
+/* Beat vip-pages-targeted rounded wrap that scrolls the whole table. */
+html body.vip-log-page.vip-reward-log-page .vip-admin-table-wrap{
+  overflow:hidden !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+}
+html body.vip-reward-log-page .vip-tx-table-head{
+  flex:0 0 auto !important;
+  overflow:hidden !important;
+  background:#FFE8CC !important;
+  border-bottom:1px solid #EADCC8 !important;
+  z-index:2 !important;
+}
+html body.vip-reward-log-page .vip-tx-table-body{
+  /* basis 0 â€” keep the flex leftover after All, don't shrink-wrap to the short row set */
+  flex:1 1 0% !important;
+  min-height:0 !important;
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+  background:#FFF8EB !important;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-gutter:auto !important;
+}
+/* Default Show `-` autofit: fixed frame, never a vertical body scrollbar. */
+html body.vip-reward-log-page .vip-tx-table-body[data-bo-autofit],
+html body.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body,
+html body.vip-reward-log-page .vip-admin-table-wrap[data-bo-autofit] .vip-tx-table-body{
+  overflow-y:hidden !important;
+  scrollbar-gutter:auto !important;
+}
+/* Fixed page sizes (10/20/50/100/All) may scroll body; still no page chrome scroll. */
+html body.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body{
+  overflow-y:auto !important;
+}
+/* `-` only sets data-bo-autofit ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã¯Â¿Â½ All / 10 / 20 / ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ may scroll (VIP EXP Log). */
+html body.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body,
+html body.vip-reward-log-page .vip-admin-table-wrap[data-bo-autofit] .vip-tx-table-body,
+html body.vip-reward-log-page .vip-tx-table-body[data-bo-autofit]{
+  overflow-y:hidden !important;
+}
+html body.vip-reward-log-page .vip-admin-table.bo-tx-evenfill tbody td{
+  vertical-align:middle !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-admin-table-wrap,
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-tx-table-body{background:#383A46 !important}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-tx-table-head{
+  background:#1F2128 !important;
+  border-bottom-color:rgba(255,255,255,.12) !important;
+}
+
+
+html body.vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar{width:6px;height:6px}
+html body.vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-button{display:none;height:0;width:0}
+html body.vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-thumb{background:#8B6B4A;border-radius:999px}
+html body.vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-thumb:hover{background:#5C4A30}
+html body.vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-track{background:transparent}
+html body.vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-corner{background:transparent}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-thumb{background:#F59E0B}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-thumb:hover{background:#D97706}
+@supports not selector(::-webkit-scrollbar){
+  html body.vip-reward-log-page .vip-tx-table-body{scrollbar-width:thin;scrollbar-color:#8B6B4A transparent}
+  html[data-bo-theme="dark"] body.vip-reward-log-page .vip-tx-table-body{scrollbar-color:#F59E0B transparent}
+}
+
+html body.vip-reward-log-page .vip-admin-table{
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  table-layout:fixed !important;
+  border-collapse:collapse !important;
+  border-spacing:0 !important;
+}
+
+/* Column rhythm: REFERENCE/REMARK wider; trim spare from STATUS/BASE/RATE. */
+html body.vip-reward-log-page .vip-admin-table col.vip-c-date{width:9%}
+html body.vip-reward-log-page .vip-admin-table col.vip-c-member{width:9%}
+html body.vip-reward-log-page .vip-admin-table col.vip-c-type{width:10%}
+html body.vip-reward-log-page .vip-admin-table col.vip-c-period{width:8%}
+html body.vip-reward-log-page .vip-admin-table col.vip-c-base{width:7%}
+html body.vip-reward-log-page .vip-admin-table col.vip-c-rate{width:6%}
+html body.vip-reward-log-page .vip-admin-table col.vip-c-reward{width:11%}
+html body.vip-reward-log-page .vip-admin-table col.vip-c-maint{width:10%}
+html body.vip-reward-log-page .vip-admin-table col.vip-c-status{width:8%}
+html body.vip-reward-log-page .vip-admin-table col.vip-c-ref{width:22%}
+html body.vip-reward-log-page .vip-admin-table thead th,
+html body.vip-reward-log-page .vip-admin-table tbody td{
+  padding:10px 10px !important;
+  border-right:1px solid rgba(107,54,12,.08) !important;
+  border-bottom:1px solid #EADCC8 !important;
+  vertical-align:middle !important;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+html body.vip-reward-log-page .vip-admin-table thead th:first-child,
+html body.vip-reward-log-page .vip-admin-table tbody td:first-child{padding-left:16px !important}
+html body.vip-reward-log-page .vip-admin-table thead th:last-child,
+html body.vip-reward-log-page .vip-admin-table tbody td:last-child{
+  padding-right:16px !important;
+  border-right:0 !important;
+}
+
+html body.vip-reward-log-page .vip-admin-table thead th,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.vip-reward-log-page .vip-admin-table thead th,
+html:not([data-bo-theme="dark"]) body.vip-log-page.vip-reward-log-page .vip-admin-table thead th,
+html:not([data-bo-theme="dark"]) body.vip-log-page.vip-reward-log-page .vip-admin-table th{
+  position:static !important;
+  top:auto !important;
+  z-index:auto !important;
+  background:#FFE8CC !important;
+  background-color:#FFE8CC !important;
+  color:#6b360c !important;
+  font-size:11px !important;
+  font-weight:700 !important;
+  letter-spacing:.04em !important;
+  text-transform:uppercase !important;
+  white-space:nowrap !important;
+  border-radius:0 !important;
+  border-top:0 !important;
+  border-bottom:0 !important;
+  box-shadow:none !important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.vip-reward-log-page .vip-admin-table tbody td{
+  font-size:13px !important;
+  font-weight:700 !important;
+  color:#18191C !important;
+  background:#FFF8EB !important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.vip-reward-log-page .vip-admin-table tbody tr:nth-child(even) td{background:#FFF1DC !important}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.vip-reward-log-page .vip-admin-table tbody tr:hover td{background:#FFE8CC !important}
+
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.vip-reward-log-page .vip-admin-table tbody td.vip-log-num{
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum";
+  font-weight:700;
+  color:#18191C !important;
+  white-space:nowrap;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.vip-reward-log-page .vip-admin-table tbody td.vip-exp-positive{
+  color:#047857 !important;
+  font-weight:800 !important;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum";
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.vip-reward-log-page .vip-admin-table tbody td.vip-exp-negative{
+  color:#B42318 !important;
+  font-weight:800 !important;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum";
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.vip-reward-log-page .vip-admin-table tbody td.vip-log-num{color:#F5F5F4 !important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.vip-reward-log-page .vip-admin-table tbody td.vip-exp-positive{color:#6EE7B7 !important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.vip-reward-log-page .vip-admin-table tbody td.vip-exp-negative{color:#F87171 !important}
+html body.vip-reward-log-page .vip-admin-table thead th:first-child,
+html body.vip-reward-log-page .vip-admin-table thead th:last-child,
+html body.vip-reward-log-page .vip-admin-table tbody tr:last-child td:first-child,
+html body.vip-reward-log-page .vip-admin-table tbody tr:last-child td:last-child,
+html body.vip-reward-log-page .vip-admin-table thead th:first-child,
+html body.vip-reward-log-page .vip-admin-table thead th:last-child{
+  border-radius:0 !important;
+  border-top-left-radius:0 !important;
+  border-top-right-radius:0 !important;
+  border-bottom-left-radius:0 !important;
+  border-bottom-right-radius:0 !important;
+}
+
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-admin-table thead th,
+html[data-bo-theme="dark"] body.vip-log-page.vip-reward-log-page .vip-admin-table thead th,
+html[data-bo-theme="dark"] body.vip-log-page.vip-reward-log-page .vip-admin-table th{
+  position:static !important;
+  top:auto !important;
+  z-index:auto !important;
+  background:#1F2128 !important;
+  background-color:#1F2128 !important;
+  color:#E7E5E4 !important;
+  border-bottom:0 !important;
+  border-right-color:rgba(255,255,255,.06) !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-admin-table tbody td{
+  background:#3A3C48 !important;
+  color:#F5F5F4 !important;
+  border-bottom-color:rgba(255,255,255,.12) !important;
+  border-right-color:rgba(255,255,255,.06) !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-admin-table tbody tr:nth-child(even) td{background:#434653 !important}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-admin-table tbody tr:hover td{background:#444654 !important}
+
+/* Cells */
+html body.vip-reward-log-page .vip-log-datetime{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  line-height:1.2;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum";
+  white-space:nowrap;
+  cursor:help;
+}
+html body.vip-reward-log-page .vip-log-date{color:#18191C;font-weight:700}
+html body.vip-reward-log-page .vip-log-time{color:#57534E;font-size:12px;font-weight:600}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-date{color:#F5F5F4}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-time{color:#D4D4D8}
+
+html body.vip-reward-log-page .vip-log-member b{
+  display:block;
+  color:#18191C;
+  font-weight:800;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+html body.vip-reward-log-page .vip-log-member small{
+  display:block;
+  margin-top:2px;
+  color:#57534E;
+  font-size:12px;
+  font-weight:600;
+  font-variant-numeric:tabular-nums;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-member b{color:#F5F5F4}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-member small{color:#D4D4D8}
+
+html body.vip-reward-log-page .vip-source-pill{
+  display:inline-flex;
+  align-items:center;
+  max-width:100%;
+  padding:4px 8px;
+  border-radius:999px;
+  background:#F5EBDC;
+  color:#57534E;
+  font-size:10.5px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-source-pill{
+  background:#2A2C36;
+  color:#D4D4D8;
+}
+
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.vip-reward-log-page .vip-admin-table tbody td.vip-log-num{
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum";
+  font-weight:700;
+  color:#18191C !important;
+  white-space:nowrap;
+}
+
+html body.vip-reward-log-page .vip-log-clip{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#374151;
+  font-weight:600;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-clip{color:#E7E5E4}
+
+html body.vip-reward-log-page .vip-log-empty{
+  text-align:center !important;
+  padding:48px 16px !important;
+  color:#57534E !important;
+  font-weight:600 !important;
+  background:#FFF8EB !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-empty{
+  color:#D4D4D8 !important;
+  background:#3A3C48 !important;
+}
+
+/* ---- Footer pager ----
+   Beat reports.css `.rounded-select-wrap{width:100%}` which stretches the
+   page-size control across "Show N entries" and clips to "Show 20ries". */
+
+html body.vip-reward-log-page .vip-log-card > .table-footer{
+  flex:0 0 auto;
+  margin-top:auto;
+  display:grid !important;
+  grid-template-columns:auto 1fr auto !important;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px !important;
+  background:#FFF8EB !important;
+  border-top:1px solid #EADCC8 !important;
+  overflow:visible !important;
+  position:relative !important;
+  z-index:5 !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-card > .table-footer{
+  background:#383A46 !important;
+  border-top-color:rgba(255,255,255,.12) !important;
+}
+html body.vip-reward-log-page .table-footer > .entries-control,
+html body.vip-reward-log-page .table-footer .entries-control{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  width:auto !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  overflow:visible !important;
+  position:relative !important;
+  z-index:9 !important;
+  color:#57534E !important;
+  font-size:12.5px !important;
+  font-weight:600 !important;
+  white-space:nowrap !important;
+}
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-wrap{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:stretch !important;
+  width:72px !important;
+  min-width:72px !important;
+  max-width:72px !important;
+  height:36px !important;
+  margin:0 !important;
+  margin-top:0 !important;
+  overflow:visible !important;
+  flex:0 0 72px !important;
+}
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-wrap > select{
+  position:absolute !important;
+  inset:0 !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+  width:100% !important;
+  height:36px !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+}
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-btn,
+html body.vip-reward-log-page .table-footer .entries-control select{
+  box-sizing:border-box !important;
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+  margin:0 !important;
+  border:1px solid #EADCC8 !important;
+  border-radius:8px !important;
+  background:#FFF8EB !important;
+  color:#18191C !important;
+  font-size:13px !important;
+  font-weight:700 !important;
+  box-shadow:none !important;
+}
+html body.vip-reward-log-page .table-footer .entries-control select{
+  display:inline-block !important;
+  width:72px !important;
+  min-width:72px !important;
+  max-width:72px !important;
+  padding:0 8px !important;
+  flex:0 0 72px !important;
+}
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-btn{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  min-width:0 !important;
+  max-width:none !important;
+  padding:0 26px 0 10px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:0 !important;
+  cursor:pointer !important;
+}
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-btn span{
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+}
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-btn .bi{
+  position:absolute !important;
+  right:10px !important;
+  top:50% !important;
+  transform:translateY(-50%) !important;
+  margin:0 !important;
+  font-size:12px !important;
+  line-height:1 !important;
+  color:#57534E !important;
+  pointer-events:none !important;
+}
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-btn.open,
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-btn:focus{
+  border-color:#D97706 !important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14) !important;
+  outline:0 !important;
+}
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-menu{
+  top:auto !important;
+  bottom:calc(100% + 6px) !important;
+  left:0 !important;
+  right:auto !important;
+  width:100% !important;
+  min-width:100% !important;
+  max-width:none !important;
+  padding:6px !important;
+  border-radius:8px !important;
+  background:#FFF8EB !important;
+  border:1px solid #EADCC8 !important;
+  box-shadow:0 12px 28px rgba(92,74,48,.12) !important;
+  z-index:3000 !important;
+  max-height:min(260px,50vh) !important;
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+  box-sizing:border-box !important;
+}
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-option{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:100% !important;
+  min-height:34px !important;
+  padding:6px 8px !important;
+  margin:0 !important;
+  border-radius:8px !important;
+  text-align:center !important;
+  font-size:13px !important;
+  font-weight:700 !important;
+  line-height:1.2 !important;
+  background:transparent !important;
+  color:#18191C !important;
+}
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-option:hover,
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-option.active,
+html body.vip-reward-log-page .table-footer .entries-control .rounded-select-option.is-active{
+  background:rgba(217,119,6,.12) !important;
+  color:#B45309 !important;
+}
+html body.vip-reward-log-page .vip-log-card:has(.entries-control .rounded-select-menu.show){
+  overflow:visible !important;
+}
+html body.vip-reward-log-page .table-footer .table-info{
+  text-align:center;
+  color:#57534E;
+  font-size:12.5px;
+  font-weight:600;
+}
+html body.vip-reward-log-page .table-footer .pagination-clean{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  padding:0;
+}
+html body.vip-reward-log-page .table-footer .pagination-clean .smart-page-ellipsis{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:20px;
+  height:36px;
+  color:#9CA3AF;
+  font-size:13px;
+  font-weight:700;
+  user-select:none;
+}
+html body.vip-reward-log-page .table-footer .pagination-clean button{
+  min-width:40px;
+  height:36px;
+  padding:0 10px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:700;
+  border:1px solid transparent;
+  background:#F3F4F6;
+  color:#9CA3AF;
+  box-shadow:none;
+  transition:background .14s ease,color .14s ease,border-color .14s ease,box-shadow .14s ease;
+}
+html body.vip-reward-log-page .table-footer .pagination-clean button.smart-page.first,
+html body.vip-reward-log-page .table-footer .pagination-clean button.smart-page.last{
+  min-width:36px;
+  width:36px;
+  padding:0;
+}
+html body.vip-reward-log-page .table-footer .pagination-clean button:hover:not(:disabled):not(.active){
+  background:#E5E7EB;
+  color:#374151;
+}
+html body.vip-reward-log-page .table-footer .pagination-clean button.active{
+  background-color:#F59E0B !important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 48%,#D97706 100%) !important;
+  border:1px solid #D97706 !important;
+  color:#fff !important;
+  box-shadow:none !important;
+}
+html body.vip-reward-log-page .table-footer .pagination-clean button:disabled{
+  opacity:.42;
+  cursor:not-allowed;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .pagination-clean button{
+  background:#383A46 !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  color:#A1A1AA !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .pagination-clean button:hover:not(:disabled):not(.active){
+  background:#444654 !important;
+  border-color:rgba(255,255,255,.18) !important;
+  color:#E7E5E4 !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .pagination-clean button.active{
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 48%,#D97706 100%) !important;
+  border-color:#F59E0B !important;
+  color:#2A2C36 !important;
+  box-shadow:none !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .entries-control,
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .table-info{color:#D4D4D8 !important}
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .entries-control .rounded-select-btn,
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .entries-control select{
+  background:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .entries-control .rounded-select-btn .bi{
+  color:#D4D4D8 !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .entries-control .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .entries-control .rounded-select-btn:focus{
+  border-color:#F59E0B !important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18) !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .entries-control .rounded-select-menu{
+  background:#383A46 !important;
+  border-color:rgba(255,255,255,.14) !important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4) !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .entries-control .rounded-select-option{
+  color:#E7E5E4 !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .entries-control .rounded-select-option:hover{
+  background:rgba(245,158,11,.14) !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .entries-control .rounded-select-option.active,
+html[data-bo-theme="dark"] body.vip-reward-log-page .table-footer .entries-control .rounded-select-option.is-active{
+  background:#F59E0B !important;
+  color:#2A2C36 !important;
+}
+
+@media (prefers-reduced-motion:reduce){
+  html body.vip-reward-log-page .vip-log-toolbar button,
+  html body.vip-reward-log-page .mad-btn,
+  html body.vip-reward-log-page .table-footer .pagination-clean button{
+    transition:none !important;
+    transform:none !important;
+  }
+}
+
+/* ---- Responsive ---- */
+@media (max-width:1456px){
+  html body.vip-reward-log-page .vip-log-time{display:none}
+}
+@media (max-width:1280px){
+  html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row{
+    flex-flow:row wrap !important;
+  }
+  html body.vip-reward-log-page .vip-log-toolbar{align-items:flex-start}
+}
+@media (max-width:1024px){
+  html body.vip-reward-log-page .user-title-wrap p,
+  html body.vip-reward-log-page .bo-account-meta{display:none}
+}
+@media (max-width:768px){
+  html body.vip-reward-log-page .vip-log-toolbar{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row{
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+  }
+  html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardKeyword{
+    grid-column:1 / -1;
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    flex:none !important;
+  }
+  html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardType,
+  html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters.bo-filter-row > .rounded-select-wrap{
+    grid-column:1 / -1;
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    flex:none !important;
+  }
+  html body.vip-reward-log-page .vip-log-toolbar > #rewardAdjustNever{width:100% !important}
+  html body.vip-reward-log-page .vip-admin-table .vip-col-remark{display:none}
+  html body.vip-reward-log-page .vip-log-card > .table-footer{
+    grid-template-columns:1fr auto !important;
+  }
+  html body.vip-reward-log-page .table-footer .table-info{
+    grid-column:1 / -1;
+    text-align:center;
+  }
+  html body.vip-reward-log-page .vip-adjust-dialog{border-radius:0 !important}
+}
+@media (max-width:575px){
+  html body.vip-reward-log-page .user-title-icon,
+  html body.vip-reward-log-page .report-topbar .user-title-icon,
+  html body.vip-reward-log-page .bo-header-counters{display:none !important}
+  html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row{
+    grid-template-columns:1fr !important;
+  }
+  html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardReset,
+  html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardSearch{
+    width:100% !important;
+    min-height:44px !important;
+    height:44px !important;
+  }
+  html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardKeyword,
+  html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardType{
+    min-height:44px !important;
+    height:44px !important;
+  }
+  html body.vip-reward-log-page .vip-log-toolbar > #rewardAdjustNever{
+    min-height:44px !important;
+    height:44px !important;
+  }
+  html body.vip-reward-log-page .vip-admin-table .vip-col-reference{display:none}
+  html body.vip-reward-log-page .vip-adjust-dialog .vip-form-grid{grid-template-columns:1fr}
+}
+
+
+/* ---- Hard lock: keyword + Type side-by-side (no .report-main dependency) ---- */
+html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters.bo-filter-row,
+html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters{
+  display:flex !important;
+  flex-flow:row nowrap !important;
+  align-items:center !important;
+  gap:10px !important;
+  width:auto !important;
+  max-width:none !important;
+  flex:0 0 auto !important;
+  overflow:visible !important;
+}
+html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters > #rewardKeyword,
+html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters > input{
+  width:280px !important;
+  min-width:220px !important;
+  max-width:280px !important;
+  flex:0 0 280px !important;
+  flex-shrink:0 !important;
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+  box-sizing:border-box !important;
+}
+html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters > .rounded-select-wrap,
+html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters > #rewardType,
+html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters > select{
+  width:190px !important;
+  min-width:190px !important;
+  max-width:190px !important;
+  flex:0 0 190px !important;
+  flex-shrink:0 !important;
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+  box-sizing:border-box !important;
+}
+
+/* ---- Toolbar layout: tabs left, keyword+type right (never clip Type) ---- */
+html body.vip-reward-log-page .vip-log-toolbar{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:center !important;
+  justify-content:unset !important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row{
+  justify-self:end !important;
+  margin:0 !important;
+  flex:0 0 auto !important;
+  flex-shrink:0 !important;
+}
+html body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs{
+  justify-self:start !important;
+  width:auto !important;
+  max-width:100% !important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardKeyword,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > input.bo-filter-input-item{
+  width:280px !important;
+  min-width:220px !important;
+  max-width:280px !important;
+  flex:0 0 280px !important;
+  flex-shrink:0 !important;
+}
+html body.vip-reward-log-page .vip-log-filters .rounded-select-wrap,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .rounded-select-wrap,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .rounded-select-wrap.bo-filter-select-item{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:stretch !important;
+  width:190px !important;
+  min-width:190px !important;
+  max-width:190px !important;
+  flex:0 0 190px !important;
+  flex-shrink:0 !important;
+  height:36px !important;
+  overflow:visible !important;
+}
+html body.vip-reward-log-page .vip-log-filters .rounded-select-wrap > .rounded-select-btn{
+  width:190px !important;
+  min-width:190px !important;
+  max-width:190px !important;
+}
+@media (max-width:768px){
+  html body.vip-reward-log-page .vip-log-toolbar{
+    grid-template-columns:1fr !important;
+  }
+  html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row{
+    justify-self:stretch !important;
+    width:100% !important;
+  }
+}
+
+/* ---- Reward Log extras: status select + semantic status pills ---- */
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardStatus{
+  width:150px !important;
+  min-width:150px !important;
+  max-width:150px !important;
+  flex:0 0 150px !important;
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+  padding:0 32px 0 12px !important;
+  border:1px solid #EADCC8 !important;
+  border-radius:8px !important;
+  background-color:#FFF8EB !important;
+  color:#18191C !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  box-sizing:border-box !important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardStatus:focus{
+  outline:0 !important;
+  border-color:#D97706 !important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14) !important;
+}
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardStatus{
+  background-color:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardStatus:focus{
+  border-color:#F59E0B !important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18) !important;
+}
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardKeyword{
+  width:280px !important;
+  min-width:220px !important;
+  max-width:280px !important;
+  flex:0 0 280px !important;
+}
+html body.vip-reward-log-page .vip-admin-table{min-width:0 !important;width:100% !important;max-width:100% !important}
+/* ---- Status tabs (Transaction MD specimen) ---- */
+html body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:6px !important;
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  position:relative !important;
+  min-height:36px !important;
+  padding:0 !important;
+  margin:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  overflow:visible !important;
+}
+html body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs.bo-seg > .bo-seg-thumb{
+  top:0 !important;
+  height:100% !important;
+  border-radius:999px !important;
+  background-color:#F3E8D6 !important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 55%,#F3E8D6 100%) !important;
+  border:1px solid #E0D0B8 !important;
+  box-shadow:0 1px 2px rgba(24,25,28,.08),0 2px 8px rgba(92,74,48,.10) !important;
+  box-sizing:border-box !important;
+  opacity:1;
+}
+html body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs .bo-tx-tab{
+  display:inline-flex !important;
+  align-items:center !important;
+  position:relative !important;
+  z-index:1 !important;
+  height:36px !important;
+  min-height:36px !important;
+  padding:0 14px !important;
+  margin:0 !important;
+  gap:8px !important;
+  border:1px solid transparent !important;
+  border-radius:999px !important;
+  background:transparent !important;
+  color:#71717A !important;
+  font-size:12.5px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  white-space:nowrap !important;
+  cursor:pointer !important;
+  box-shadow:none !important;
+  transition:color .16s ease,background .16s ease !important;
+}
+html body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs .bo-tx-tab[data-reward-status="AVAILABLE"]::before,
+html body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs .bo-tx-tab[data-reward-status="PAID"]::before,
+html body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs .bo-tx-tab[data-reward-status="SKIPPED"]::before{
+  content:"" !important;
+  width:6px !important;
+  height:6px !important;
+  border-radius:50% !important;
+  flex:0 0 auto !important;
+  background:#B8C0CC !important;
+}
+html body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs .bo-tx-tab[data-reward-status="SKIPPED"]::before{background:#C4C0D0 !important}
+html body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs .bo-tx-tab:hover:not(.is-active){
+  color:#18191C !important;
+  background:rgba(24,25,28,.04) !important;
+}
+html body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs .bo-tx-tab.is-active{
+  color:#18191C !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+}
+html body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs:not(.bo-seg) .bo-tx-tab.is-active{
+  background-color:#F3E8D6 !important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 55%,#F3E8D6 100%) !important;
+  border-color:#E0D0B8 !important;
+  box-shadow:0 1px 2px rgba(24,25,28,.08),0 2px 8px rgba(92,74,48,.10) !important;
+}
+html body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs .bo-tx-tab.is-active[data-reward-status="AVAILABLE"]::before{background:#EA580C !important}
+html body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs .bo-tx-tab.is-active[data-reward-status="PAID"]::before{background:#059669 !important}
+html body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs .bo-tx-tab.is-active[data-reward-status="SKIPPED"]::before{background:#DC2626 !important}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs.bo-seg > .bo-seg-thumb{
+  background-color:#2A2C36 !important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%) !important;
+  border-color:rgba(255,255,255,.14) !important;
+  box-shadow:0 1px 2px rgba(0,0,0,.35) !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs .bo-tx-tab{color:#A1A1AA !important}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs .bo-tx-tab:hover:not(.is-active){
+  color:#F4F4F5 !important;
+  background:rgba(255,255,255,.06) !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs .bo-tx-tab.is-active{color:#F5F5F4 !important}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs .bo-tx-tab.is-active[data-reward-status="AVAILABLE"]::before{background:#FBBF24 !important}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs .bo-tx-tab.is-active[data-reward-status="PAID"]::before{background:#34D399 !important}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs .bo-tx-tab.is-active[data-reward-status="SKIPPED"]::before{background:#F87171 !important}
+
+
+/* Money / rate / maint stay readable - no mid-value ellipsis */
+html body.vip-reward-log-page .vip-admin-table tbody td.vip-log-num,
+html body.vip-reward-log-page .vip-admin-table tbody td.vip-col-base,
+html body.vip-reward-log-page .vip-admin-table tbody td.vip-col-rate,
+html body.vip-reward-log-page .vip-admin-table tbody td.vip-col-maint{
+  text-overflow:clip;
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum";
+}
+html body.vip-reward-log-page .vip-admin-table tbody td .vip-log-stack{
+  min-width:0;
+}
+html body.vip-reward-log-page .vip-admin-table tbody td .vip-source-pill{
+  max-width:100%;
+}
+
+/* Type pill stays neutral; status uses Transaction MD semantics */
+html body.vip-reward-log-page .vip-admin-table .status-pill{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  max-width:100%;
+  margin:0 !important;
+  padding:4px 8px !important;
+  border-radius:999px !important;
+  border:1px solid rgba(234,88,12,.35) !important;
+  background:#FFEDD5 !important;
+  color:#EA580C !important;
+  font-size:10.5px !important;
+  font-weight:800 !important;
+  letter-spacing:.04em !important;
+  text-transform:uppercase !important;
+  white-space:nowrap !important;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+html body.vip-reward-log-page .vip-admin-table .status-pill.active{
+  border-color:rgba(22,101,52,.2) !important;
+  background:#DCFCE7 !important;
+  color:#166534 !important;
+}
+html body.vip-reward-log-page .vip-admin-table .status-pill.off{
+  border-color:rgba(185,28,28,.25) !important;
+  background:#FEE2E2 !important;
+  color:#B91C1C !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-admin-table .status-pill{
+  border-color:rgba(245,158,11,.35) !important;
+  background:rgba(245,158,11,.20) !important;
+  color:#FBBF24 !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-admin-table .status-pill.active{
+  border-color:rgba(110,231,183,.35) !important;
+  background:rgba(16,185,129,.18) !important;
+  color:#6EE7B7 !important;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-admin-table .status-pill.off{
+  border-color:rgba(248,113,113,.35) !important;
+  background:rgba(248,113,113,.18) !important;
+  color:#F87171 !important;
+}
+
+html body.vip-reward-log-page .vip-log-stack{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  min-width:0;
+  line-height:1.25;
+}
+html body.vip-reward-log-page .vip-log-stack b{
+  color:#18191C;
+  font-weight:800;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+html body.vip-reward-log-page .vip-log-stack small{
+  color:#57534E;
+  font-size:12px;
+  font-weight:600;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-stack b{color:#F5F5F4}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-stack small{color:#D4D4D8}
+
+html body.vip-reward-log-page .vip-log-money{
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum";
+  font-weight:800;
+  color:#B45309;
+  white-space:nowrap;
+}
+html[data-bo-theme="dark"] body.vip-reward-log-page .vip-log-money{color:#F59E0B}
+
+@media (max-width:1280px){
+  html body.vip-reward-log-page .vip-admin-table .vip-col-rate,
+  html body.vip-reward-log-page .vip-admin-table .vip-col-base{display:none}
+  html body.vip-reward-log-page .vip-admin-table{
+    min-width:0 !important;
+    width:100% !important;
+    max-width:100% !important;
+  }
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-base,
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-rate{width:0}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-date{width:10%}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-member{width:10%}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-type{width:11%}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-period{width:10%}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-reward{width:12%}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-maint{width:12%}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-status{width:9%}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-ref{width:26%}
+}
+@media (max-width:768px){
+  html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row{
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+  }
+  html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardKeyword{
+    grid-column:1 / -1;
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    flex:none !important;
+  }
+  html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardType,
+  html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardStatus{
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    flex:none !important;
+  }
+  html body.vip-reward-log-page .vip-admin-table .vip-col-period,
+  html body.vip-reward-log-page .vip-admin-table .vip-col-maint{display:none}
+  html body.vip-reward-log-page .vip-admin-table{min-width:0 !important;width:100% !important}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-period,
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-maint{width:0}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-date{width:16%}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-member{width:16%}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-type{width:18%}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-reward{width:18%}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-status{width:14%}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-ref{width:18%}
+}
+@media (max-width:575px){
+  html body.vip-reward-log-page .vip-admin-table .vip-col-reference{display:none}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-ref{width:0}
+  html body.vip-reward-log-page .vip-admin-table{min-width:0 !important;width:100% !important;max-width:100% !important}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-date{width:20%}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-member{width:20%}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-type{width:22%}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-reward{width:22%}
+  html body.vip-reward-log-page .vip-admin-table col.vip-c-status{width:16%}
+}
+
+@media (max-width:768px){
+  html body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs{
+    width:100% !important;
+    flex-wrap:wrap !important;
+  }
+  html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row{
+    margin-left:0 !important;
+    width:100% !important;
+  }
+}
+
+
+/* ==== Fixed frame lock (beat vip-pages-targeted overflow:auto / min-width) ==== */
+html body.report-body.bo-charcoal.vip-log-page.vip-reward-log-page,
+html body.vip-log-page.vip-reward-log-page.report-body.bo-charcoal{
+  height:100vh !important;
+  height:100dvh !important;
+  max-height:100vh !important;
+  max-height:100dvh !important;
+  overflow:hidden !important;
+}
+html body.vip-log-page.vip-reward-log-page.report-body.bo-charcoal .report-main,
+html body.vip-log-page.vip-reward-log-page .report-main{
+  height:100vh !important;
+  height:100dvh !important;
+  max-height:100vh !important;
+  max-height:100dvh !important;
+  display:flex !important;
+  flex-direction:column !important;
+  overflow:hidden !important;
+}
+html body.vip-log-page.vip-reward-log-page .report-content{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  overflow:hidden !important;
+}
+html body.vip-log-page.vip-reward-log-page .report-content > .vip-log-card,
+html body.vip-log-page.vip-reward-log-page .vip-log-card{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  padding:0 !important;
+  border-radius:8px !important;
+  overflow:hidden !important;
+}
+html body.vip-log-page.vip-reward-log-page .vip-admin-table-wrap{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+}
+html body.vip-log-page.vip-reward-log-page .vip-tx-table-body,
+html body.vip-log-page.vip-reward-log-page .vip-admin-table-wrap .vip-tx-table-body{
+  flex:1 1 0% !important;
+  min-height:0 !important;
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+}
+/* All / 10 / 20 / 50 / 100 ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã¯Â¿Â½ body scrolls (VIP EXP Log specimen) */
+html body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body{
+  overflow-y:auto !important;
+}
+html body.vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body{
+  overflow-y:hidden !important;
+}
+/* Chromium: sizing/thumb colour come purely from ::-webkit-scrollbar* below. Setting
+   scrollbar-width here (even "thin") makes Chromium fall back to the native OS scrollbar
+   (arrows included) and ignore the ::-webkit-scrollbar rules — so Firefox-only fallback
+   lives behind @supports not selector(::-webkit-scrollbar). */
+@supports not selector(::-webkit-scrollbar){
+  html body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body{
+    scrollbar-width:thin !important;
+    scrollbar-color:#8B6B4A transparent !important;
+  }
+  html body.vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body{
+    scrollbar-width:none !important;
+  }
+  html[data-bo-theme="dark"] body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body{
+    scrollbar-color:#F59E0B transparent !important;
+  }
+}
+html body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body::-webkit-scrollbar{
+  width:6px !important;
+  height:6px !important;
+  display:block !important;
+}
+html body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body::-webkit-scrollbar-track{
+  background:transparent !important;
+}
+html body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body::-webkit-scrollbar-corner{
+  background:transparent !important;
+}
+html body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body::-webkit-scrollbar-button{
+  display:none !important;
+  height:0 !important;
+  width:0 !important;
+}
+html body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body::-webkit-scrollbar-thumb{
+  background:#8B6B4A !important;
+  border-radius:999px !important;
+}
+html body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body::-webkit-scrollbar-thumb:hover{
+  background:#5C4A30 !important;
+}
+html[data-bo-theme="dark"] body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body::-webkit-scrollbar-thumb{
+  background:#F59E0B !important;
+}
+html[data-bo-theme="dark"] body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body::-webkit-scrollbar-thumb:hover{
+  background:#D97706 !important;
+}
+html body.vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar{
+  width:0 !important;
+  height:0 !important;
+  display:none !important;
+}
+html body.vip-log-page.vip-reward-log-page .vip-admin-table,
+html body.vip-log-page.vip-reward-log-page table.vip-admin-table{
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  table-layout:fixed !important;
+}

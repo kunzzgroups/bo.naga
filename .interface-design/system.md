@@ -168,10 +168,10 @@ Classic BO listing shells (`reports.css` + `bo-ui-standard.css`), **not** MAIN e
 | Pages | `member-deposit`, `member-withdraw`, `member-wallet`, `wallet-ledger`, `bulk-adjustment`, `bank-deposit-usage`, `bulk-bonus-adjustment`, `payment-method` |
 | Filter / select recipe | **Listing filter controls (locked)** — height **`36px`** · radius **`8px`** · gap **`10px`** · surface `#FFF8EB` · border `#EADCC8` · never form well `#F5EBDC` · Type multi = Role select option chrome |
 | Dark select selected | solid `#F59E0B` · text `#2A2C36` (same as Role select) |
-| Pager | **Table footer pager** (`.mad-pager` / `.page-btn`) — layout: left `Show N` · **center** `Showing…` · right First/Prev/pages/Next/Last · light inactive slate `#F3F4F6`/`#9CA3AF`; dark charcoal inactive; amber 3D active |
+| Pager | **Table footer pager** — anatomy **First · Prev · pages(+ellipsis) · Next · Last** · light inactive slate `#F3F4F6`/`#9CA3AF` · amber gradient active · **no shadow** |
 | Date range | **Date range picker** pattern (preset wash, ghost head, cream panel) — listing trigger height **`36px`** · width ~`240px` — see Patterns |
 | Filter titles | Hidden on listing filters (placeholder + value carry meaning) |
-| Filter Page Size | **Not** in the filter row — footer `Show N entries` only (Deposit / Withdraw / Wallet Ledger / Member Wallet / Rebate Management). Options **`-` · `10` · `20` · `50` · `100` · `All`**. **Default selected = `-`** (never pre-select `20`). Chrome = **Role select** recipe: trigger surface `#FFF8EB` / border `#EADCC8` / **`36px`** · menu open upward · options amber wash hover · dark selected solid `#F59E0B`/`#2A2C36` — never form well `#F5EBDC`. `-` = auto-fit / default rows · `All` = 10000 |
+| Filter Page Size | **Not** in the filter row — footer `Show N entries` only (Deposit / Withdraw / Wallet Ledger / Member Wallet / VIP logs). Options **`-` · `10` · `20` · `50` · `100` · `All`**. `-` = auto-fit · no body scroll · trigger shows **`-`**. `All` = 10000 · **body scrolls** (VIP EXP Log specimen). Fixed sizes may scroll. Chrome = **Role select** recipe. |
 | Deposit / Withdraw tabs | `.bo-tx-tabs` / `.bo-tx-tab` — **Status filter pills** recipe · order Deposit → Withdraw → All · cream **capsule** thumb (`999px`) + muted idle dots · green/red only when selected · counts `(n)` · requires `bo-seg-bounce` |
 | Hover / focus / open | Same as Merchant Profit + Role select: border `#D97706` + `0 0 0 3px rgba(217,119,6,.14)` (dark: `#F59E0B` + `rgba(245,158,11,.18)`). Inputs, selects, date triggers — one recipe. Idle chrome must not kill the ring. |
 | Table frame | **Same as Admin Detail `.mad-panel`** — viewport-locked panel · inner scroll · `table-layout:fixed` · radius `8px` · no nested `.table-wrap` border · footer pins to panel bottom |
@@ -331,9 +331,10 @@ Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
 | Strip padding | `10px 14px` (inline-in-table-card) |
 | Surface | `#FFF8EB` · border `#EADCC8` · never form well `#F5EBDC` |
 | Text | inputs `12px/700` · date trigger `13px/700` · buttons `12.5px/800` |
-| Control pad | `0 12px` |
+| Control pad | `0 12px` (text inputs / buttons) · **select trigger `0 28px 0 12px`** (room for pinned chevron) |
 | Focus / open | border `#D97706` + `0 0 0 3px rgba(217,119,6,.14)` (dark: `#F59E0B` + `rgba(245,158,11,.18)`) |
 | Labels | Hidden (placeholder + value) |
+| Select chevron | **Pinned `right:12px`** — see Role select dropdown · never trail the label |
 
 | Control | Width (desktop) |
 |---------|-----------------|
@@ -362,9 +363,8 @@ Source of truth: `assets/css/bo-charcoal-shell.css` (shared shell). Do not inven
 | Edge rail | `::before` 2px · `#F59E0B`→`#D97706` · opacity `.75` | `::after` 2px · `#FBBF24`→`#F59E0B`→`#D97706` · opacity `.85`; `::before` = faint grid texture |
 | Brand `.report-brand` | text `#6b360c` · bottom `rgba(92,74,48,.1)` · small `10px/700` opacity `.78` | text `#FFFFFF` · bottom `rgba(245,158,11,.18)` · small amber `rgba(245,158,11,.78)` + soft glow |
 | Close `.close-side` | bg `rgba(255,255,255,.55)` · border `rgba(92,74,48,.12)` · `#6b360c` | bg `rgba(255,255,255,.1)` · `#fff` |
-| Account footer | transparent · top `rgba(92,74,48,.1)` · **height `--bo-shell-foot-h` (`68px`)** · pad `10px` · flex center | transparent · top `rgba(255,255,255,.08)` · same height token |
+| Account footer | transparent · top `rgba(92,74,48,.1)` | transparent · top `rgba(255,255,255,.08)` |
 | Logout `.bo-sidebar-logout` | text `#B42318` · icon `#D92D20` · bg `rgba(255,255,255,.45)` · border `rgba(180,35,24,.12)` · hover `#912018` on `rgba(254,243,242,.95)` | text `#FF8A90` · icon `#F87171` · transparent · hover white on `rgba(248,113,113,.1)` + red ring |
-| Page sticky footers | **Same `--bo-shell-foot-h`** · flush to main bottom · top hairline aligns with Account footer divider (e.g. Frontend Display `.fd-save-bar`) | same |
 | Nav slab `.report-nav` | transparent · pad `12px 10px 10px` · gap `3px` · **no** nested glass | same pad · transparent |
 
 Never put `backdrop-filter` / `isolation` on `.report-sidebar` — it clips the desktop L2 flyout (`position:fixed`).
@@ -378,8 +378,6 @@ Never put `backdrop-filter` / `isolation` on `.report-sidebar` — it clips the 
 | **Active / open / has-active-child** | gradient `135deg #FFF8EF → #FFE8CC → #FFF3E0` · inset white + ring `rgba(217,119,6,.18)` + lift `0 6px 16px rgba(217,119,6,.12)` · **3px left bar** `#FBBF24`→`#D97706` + soft amber glow | gradient `90deg rgba(245,158,11,.16) → .05 → transparent` · text `#FBBF24` · amber inset + glow · **2px left bar** `#FDE68A`→`#F59E0B`→`#D97706` · icon drop-shadow |
 
 L1 active = **left amber bar**, never the L2 bordered frame.
-
-**Duplicate menu URLs:** the same page may appear under two groups (e.g. `wallet-ledger.html` as Transaction Record + Member Wallet Ledger). Active chip / open L1 belongs to the **first** match in menu sort order only — never highlight both parents.
 
 #### Desktop flyout panel — `.nav-group-list`
 
@@ -508,10 +506,12 @@ Links: Members → `index.html` · Deposit → `member-deposit.html` · Withdraw
 | Default fill | `linear-gradient(180deg, #FBBF24 0%, #F59E0B 42%, #EA8608 100%)` | `linear-gradient(180deg, #FBBF24 0%, #F59E0B 45%, #D97706 100%)` |
 | Border | `#E8901A` | `#F59E0B` |
 | Label | `#FFFFFF` | `#2A2C36` |
-| Shadow | soft amber lift + inset top highlight | charcoal lift + amber glow + inset |
-| Hover fill | `linear-gradient(0deg, #FCD34D → #FBBF24 → #F59E0B → #EA8608)` | `linear-gradient(0deg, #FDE68A → #FBBF24 → #F59E0B)` |
+| Shadow | **none** (no drop / lift / inset) | **none** |
+| Hover fill | reverse stops on same axis `linear-gradient(180deg, #EA8608 → #F59E0B → #FBBF24)` | reverse `linear-gradient(180deg, #D97706 → #F59E0B → #FBBF24)` |
 | Hover border | `#F59E0B` | `#FBBF24` |
 | Active fill | `linear-gradient(180deg, #F59E0B → #EA8608)` | `linear-gradient(180deg, #F59E0B → #D97706)` |
+
+Hover motion is **gradient reverse only** (stop order flipped on `180deg`). Do **not** transition `background-image` (browsers skip the flip). Do **not** add amber glow, inset highlight, `translateY` lift, or any `box-shadow` on Primary.
 
 #### Ghost / Export
 
@@ -593,17 +593,21 @@ Reference: `main-admin-role-create.css` (must beat `reports.css` `.report-conten
 
 #### Role select dropdown (Roles list — `.rounded-select-*`)
 
-Native select hidden; enhancer builds custom control. Reference: `menu-permission-executive.css`.
+Native select hidden; enhancer builds custom control (`reports.js` → `.rounded-select-btn` + `.bi-chevron-down`). Reference: VIP EXP Log All Sources + `menu-permission-executive.css`. Listing filters use this chrome at **`36px`**.
 
 | Part | Light | Dark |
 |------|-------|------|
-| Trigger | `#FFF8EB` · border `#EADCC8` · `40px` · `13.5px/600` · `8px` radius | `#2A2C36` |
+| Trigger | `#FFF8EB` · border `#EADCC8` · listing **`36px`** (Roles form may stay `40px`) · `12px/700` · `8px` radius · padding **`0 28px 0 12px`** (room for chevron) | `#2A2C36` · same padding |
+| **Chevron (locked)** | `bi-chevron-down` · **`position:absolute; right:12px; top:50%; transform:translateY(-50%)`** · `font-size:12px` · color `#57534E` · `pointer-events:none` | same pin · color `#D4D4D8` |
+| Label span | left-aligned · `flex:1` · ellipsis · **never** share row gap with chevron (chevron is not `space-between` sibling layout) | same |
 | Open / focus | border `#D97706` · `0 0 0 3px rgba(217,119,6,.14)` | amber border + `rgba(245,158,11,.18)` ring |
 | Menu | surface · border · `8px` · soft shadow · pad `6px` | surface · deep shadow |
 | Option hover | `--bo-cyan-tint` · text `--bo-cyan-deep` | `rgba(245,158,11,.14)` |
 | Option selected (dark) | — | fill `#F59E0B` · text `#2A2C36` |
 | Scrollbar thumb | `#98A2B3` / hover `#667085` · `4px` pill · no arrows (menu only — Bulk/Wallet panels use chocolate **`6px`**) | `#F59E0B` / `#D97706` |
 | Field label | `11px/800` uppercase · tracking `.08em` | same |
+
+**Do not** leave the chevron trailing the label (flex gap / `space-between` with huge right padding from `bo-ui-standard` `padding-right:32px`). Pin it to the trigger’s right inset **`12px`**. Footer Show N (narrow `72px`) may use **`right:10px`**.
 
 #### Date range picker (`.bo-range-*` / `.ref-range-*` — locked)
 
@@ -675,29 +679,31 @@ Reference: `main-admin-detail.html` / `main-admin-security.html` + Charcoal bloc
 | Search / form placeholder | `#78716C` on cream wells | `#A1A1AA` |
 | Modal close (`.modal-clean-close`) | `#F5EBDC` · border `#EADCC8` · icon `#57534E` | charcoal well · light icon |
 
-#### Table footer pager (`.mad-pager` — locked light/dark)
+#### Table footer pager (locked light/dark)
 
-Reference: Charcoal block in `main-admin-detail-executive.css` (+ merchant twin). Classes: `.mad-pager .smart-page` / `button` / listing `.page-btn`. Metrics: min-width `40px` · height `36px` · radius `8px` · `13px/700`.
+**Specimen:** VIP EXP Log (`#vipLogPagination` / `.pagination-clean`) — same chrome as `.mad-pager .smart-page`. Metrics: min-width `40px` · height `36px` · radius `8px` · gap `8px` · `13px/700`. First/Last icon buttons: `36×36` · padding `0`.
 
-**Layout (listing — locked).** Specimen: Manual Rebate Approval / Rebate Management (`.mra-table-footer` / `.rebate-table-footer`). Grid `1fr auto 1fr` — **Showing centered**.
+**Required anatomy (left → right) — every listing footer uses this:**
 
-| Slot | Content |
-|------|---------|
-| Left | `Show [N] entries` — options **`-` · `10` · `20` · `50` · `100` · `All`** (Deposit contract). **Default = `-` selected** (`-` = auto-fit / default; never ship with `20` pre-selected) |
-| Center | `Showing X to Y of Z entries` — horizontally centered in the footer strip |
-| Right | Pager controls, packed to the end |
+| Slot | Control | Icon / content | Behavior |
+|------|---------|----------------|----------|
+| 1 | First | `bi-chevron-bar-left` (bar+‹) | `data-*-page="1"` · disabled on page 1 |
+| 2 | Previous | `‹` or `bi-chevron-left` | current − 1 · disabled on page 1 |
+| 3 | Page window | numbered buttons | always include **1** and **last**; window ±2 around current; insert `…` (`span.smart-page-ellipsis`) when gaps > 1 |
+| 4 | Next | `›` or `bi-chevron-right` | current + 1 · disabled on last |
+| 5 | Last | `bi-chevron-bar-right` (›+bar) | jump to `totalPages` · disabled on last |
 
-**Pager controls (order locked):** First (`bi-chevron-bar-left`) · Previous (`bi-chevron-left`) · page number buttons · Next (`bi-chevron-right`) · Last (`bi-chevron-bar-right`). Active page = amber 3D. Disabled First/Prev on page 1; disabled Next/Last on last page / empty.
+Do **not** ship prev/next-only pagers on new or touched listing pages. Match VIP EXP Log `renderPages` (First · Prev · window+ellipsis · Next · Last). When touching Wallet Ledger / Member Wallet `pageButtons`, add Prev/Next to reach the same anatomy.
 
 | State | Light | Dark |
 |-------|-------|------|
-| Default (inactive page) | bg `#F3F4F6` · text `#9CA3AF` · no border | bg `#383A46` · border `rgba(255,255,255,.12)` · text `#A1A1AA` |
+| Default (inactive / nav) | bg `#F3F4F6` · text `#9CA3AF` · no border · **no shadow** | bg `#383A46` · border `rgba(255,255,255,.12)` · text `#A1A1AA` · **no shadow** |
 | Hover (not active) | bg `#E5E7EB` · text `#374151` | bg `#444654` · border white/18 · text `#E7E5E4` |
-| Active (current page) | amber 3D `#FBBF24`→`#F59E0B`→`#D97706` · border `#D97706` · text `#fff` · soft amber lift + inset | same amber 3D · border `#F59E0B` · text `#2A2C36` · stronger amber glow |
-| Disabled | muted grey (opacity kept readable) | bg `#2A2C36` · border white/06 · text `#52525B` |
-| Ellipsis | muted / placeholder | muted |
+| Active (current page) | amber gradient `180deg #FBBF24 → #F59E0B → #D97706` · border `#D97706` · text `#fff` · **no shadow** (no lift / inset) | same gradient · border `#F59E0B` · text `#2A2C36` · **no shadow / no glow** |
+| Disabled | opacity ~`.42` · `cursor:not-allowed` | bg `#2A2C36` · border white/06 · text `#52525B` |
+| Ellipsis | text `#9CA3AF` · not a button | muted |
 
-Light inactive stays cool slate (not cream) so the amber active page reads as the only warm signal in the pager row. Dark inactive is charcoal surface — never cream. Do not use navy/cyan for active.
+Light inactive stays cool slate (not cream) so the amber active page is the only warm signal. Dark inactive is charcoal — never cream. Do not use navy/cyan for active. Active page follows Primary CTA: gradient only, **never** drop/inset shadow.
 
 Do **not** use dark header `#71717A` or row borders `rgba(255,255,255,.06–.08)` — fails contrast on `#383A46`.
 
@@ -848,43 +854,6 @@ Deposit / Withdraw reuse the same recipe: Deposit = green when selected · Withd
 
 Mount modals under `body`, not inside `main`.
 
-#### Form datetime popover (`.rebate-dt-*` — locked)
-
-**Specimen:** Rebate Management · Add/Edit Rebate Rule · Start At / End At (`rebate-management.html` + `rebate-management-craft.css` + `rebate-management.js`).
-
-**Do not** use native `<input type="datetime-local">` chrome (OS blue / Chinese locale picker). Hide the native control; drive value through a custom trigger + popover.
-
-**Layout (compact · side-by-side):**
-
-```
-┌ summary (selected · Clear) ─────────┐
-│ calendar (left) │ Hour/Min rail     │
-│                 │ (▲ value ▼)       │
-├ Today ───────────────────── Done ───┤
-```
-
-| Spec | Value |
-|------|-------|
-| Pop size | ~`348×293` · radius `12px` · body grid `1fr 86px` |
-| Calendar | Short month label · day cells `28×28` pill · selected solid amber · today soft amber wash (not outline-only) · weeks = only as many as needed (not fixed 6) |
-| Time rail | Hour + Min stacked · steppers for fine nudge · **value click = quick pick** |
-| Quick pick | Overlay covers body · Hour `00–23` 6-col grid · Min chips `:00/:15/:30/:45` + `00–59` grid · back chevron · Esc closes pick first |
-| Foot | Ghost `Today` · Primary `Done` · height compact (~`26–28` pad) |
-| Trigger | Form well (ladder) · display `DD/MM/YYYY HH:mm` · empty = “Select date & time” |
-
-| Part | Light | Dark |
-|------|-------|------|
-| Pop panel | `#FFF8EB` · border `#EADCC8` · soft warm shadow | `#383A46` · white/12 · deep shadow |
-| Summary strip | `#FFFCF7` · bottom hairline · text `#18191C` · Clear muted | `#2A2C36` · text `#F5F5F4` · Clear `#A1A1AA` |
-| Calendar / rail split | hairline `#EADCC8` · rail bg `#FFFCF7` | white/10 · rail `#2A2C36` |
-| Day selected | solid `#D97706` · text `#fff` | solid `#F59E0B` · text `#18191C` |
-| Day today (not selected) | text `#D97706` · wash `rgba(217,119,6,.08)` | text `#FBBF24` · wash amber/12 |
-| Step value | well `#FFF8EB` · border `#EADCC8` · pick caret hint | `#383A46` · white/12 |
-| Pick overlay | `#FFF8EB` · selected chip/opt solid amber | `#383A46` · selected `#F59E0B` / text `#18191C` |
-| Done | Primary amber (Buttons) | Primary dark · text `#18191C` |
-
-**Rejected:** tall vertical stack · scroll drums with OS scrollbars · amber outline lens on time · native datetime blue chrome · clicking the value only nudges ±1 (must open pick).
-
 ### Permission matrix (Roles & Permissions — locked)
 
 Reference: `menu-permission.html` + `assets/css/menu-permission-executive.css` (also `main-merchant-roles`, `main-*-role-create`). Classes: `.mp-group` / `.mp-group-head` / `.mp-group-body` / `.mp-menu-card`.
@@ -976,11 +945,10 @@ Use this when reviewing a page. Each row must exist as a Light|Dark table (or to
 | Cards / frames | listing panel, form section lift, Roles control card, Create Role card |
 | Fields | listing surface inputs vs form wells, placeholders, focus rings, locked |
 | Date range picker | cream panel, preset wash active, ghost head, day endpoints solid |
-| Form datetime popover | `.rebate-dt-*` side-by-side compact · value click → hour/min grid · no native datetime chrome |
 | Buttons | Primary, Ghost (+ shared hover), secondary, danger, pager, chips |
 | Table | panel, header, cells, dividers, hover, money, status, avatar, footer, pager |
 | Transaction table (locked L|D) | `--bo-table-*` zebra · deep dark head `#1F2128` · square thead · bold cells · PENDING orange · action wells · no Filtered Total |
-| Modals | scrim, panel, close, fields, footer actions, **form datetime popover** |
+| Modals | scrim, panel, close, fields, footer actions |
 | KPI strip | tile, label, value, note, grid (Report family — see below) |
 | KPI summary card (listing) | `.metric` + `.bo-summary-icon` — Member Wallet specimen (icon chip + type metrics) |
 | Roles | control card, select, scope, toolbar, matrix group/card, badges, sticky footer |
@@ -1076,14 +1044,16 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Panel pill scrollbar thickness **`6px`** (was `4px`) — Bulk · Wallet Ledger · Livechat | User: scrollbar 再粗一点点 · 更新 MD | 2026-09-17 |
 | **Member Wallet** aligned to listing MD — no Page Size in filter · footer `#walletSize` · action 26×26 wells · username-only Member cell · panel pill scrollbar | User: 用MD来调整这些东西 | 2026-09-17 |
 | **Topbar anatomy locked** (Deposit Approval specimen): left hamb + icon + title (+ Approval lead) · right theme → Members/Deposit/Withdraw counters `48×`/`10px` · User Name + avatar · height `64px` | User: 把表头的部分更新进 MD | 2026-09-17 |
-| **Shell foot band** `--bo-shell-foot-h:68px` — Account footer + page sticky footers share height so Logout hairline aligns with Save bar top | User: 表尾和 logout 上方的线对齐 | 2026-09-19 |
-| **Listing table footer layout locked** — left `Show N` · **center** `Showing…` · right First/Prev/pages/Next/Last (amber active) · grid `1fr auto 1fr` (Rebate Management specimen; supersedes prior right-grouped Showing) | User: Showing 要居中；更新 MD | 2026-09-20 |
-| Footer Show N **default = `-`** (options `-` · `10` · `20` · `50` · `100` · `All`; never pre-select `20`) | User: show 要默认是 -；写进 MD | 2026-09-20 |
-| **Rebate Rule modal** = Create/Edit Admin form ladder — section `#FFFCF7` + 3px amber rail · input wells `#F5EBDC`/`#DCC9A8` (not listing `#FFF8EB`) · sticky foot Ghost+Primary `40px` · rate grid 4-col | User: /interface-design 调整 Add Rebate Rule | 2026-09-20 |
-| Charcoal topbar height locked `64px` / pad-y `0` (Deposit specimen); Show N select `line-height:normal` (fix height/line-height clip) | User: 表头要跟着MD来调整，表尾的show 框数字看不完全 | 2026-09-20 |
-| Manual Rebate footer Show N = **Role select** (`.rounded-select-*`) · open upward · cream · amber wash selected · dark solid `#F59E0B`/`#2A2C36` — never native blue | User: 下来选项的设计也不对，可以看MD来调整 | 2026-09-20 |
-| **Form datetime popover** (Rebate Start/End At) locked — side-by-side compact ~`348×293` · calendar + Hour/Min steppers · **click value → quick-pick grid** (`:00/:15/:30/:45` + full mins) · never native `datetime-local` chrome | User: 左右排 · 不要那么大 · 要快速选择 · 更新进 MD | 2026-09-20 |
-| Rebate dark workbench: kill `.rebate-chrome` / `.rebate-tabs` card frame (legacy `#2A2C36`+border) — transparent tabs + table borderless on charcoal canvas | User: dark mode 不要有这种背景框 | 2026-09-20 |
+| **Primary CTA = amber gradient + reverse on hover · no shadow** (drop / lift / inset all off) | User: 主按钮渐变倒反、不要阴影；更新 MD | 2026-09-21 |
+| **Table footer pager anatomy locked** — First · Prev · pages(+ellipsis) · Next · Last · amber active · **no shadow** · VIP EXP specimen | User: 这个帮我更新在md 之后全部用这个 | 2026-09-21 |
+| **Role select chevron pinned right:12px** (absolute · never trail label) · listing trigger pad 0 28px 0 12px · VIP EXP All Sources specimen | User: chevron pin right 12px into MD | 2026-09-21 |
+| Footer Show N: **`-` · `10` · `20` · `50` · `100` · `All`** · `-` no scroll · **`All` scrolls** (VIP EXP Log) | User: All 的功能参考 VIP EXP LOG，show=all 可以 scroll | 2026-09-21 |
+| **VIP Reward Log** toolbar filters = listing MD geometry (`36px` · gap `10` · keyword **`140`** · Type **`150`** · Role select chevron `right:12px`) | User: 这里的框要跟着MD来调整 | 2026-09-21 |
+| Autofit even-fill (`-`) only **stretches rows when leftover gap < one row height**; if gap ≥ one row, leave natural height (no forced stretch) — VIP EXP Log + VIP Reward Log | User: table 展示数据空间少于一行数据框才要自动拉高 | 2026-09-21 |
+| Autofit row-count (`-`) reverted to **`Math.floor`** (ceil regressed — a row added past capacity went invisible, clipped by `overflow:hidden`) — never add a row that doesn't fully fit; a leftover gap smaller than one row is handled only by the even-fill stretch, never by adding a row — VIP EXP Log + VIP Reward Log | User: tbody 只能完美显示11行，第12行看不到数据；空间少于一行高度就该拉匀不是加数据 | 2026-09-21 |
+| Autofit lock **must reset on every filter/tab change** (status tab, type/source select, keyword search) — a status tab with taller row content (e.g. longer remark wrap) reused the row count locked in by the *previous* tab and overflowed, clipping the last row under `overflow:hidden`; every filter mutation now clears the lock before reloading so `settleAutofitFromPaint` re-measures against the new content — VIP EXP Log + VIP Reward Log | User: 还是一样 (Paid tab still clipping row 12 after floor revert) | 2026-09-21 |
+| Autofit settle **must verify with a real post-paint overflow check on every path**, including when the floor-calculated target already equals the current row count — a cold first paint (F5) can under-measure `avail`/`rowH` and lock one row too many with no reload to trigger a recheck (the "already matches → lock immediately" shortcut skipped verification), while a manual reselect happened to route through the reload branch and got checked; fixed by wrapping both the "keep current rows" and "reload to new count" paths in the same `verifyAndLock()` (rAF-based, shrinks by 1 and retries until no `scrollHeight>clientHeight` overflow) — VIP EXP Log + VIP Reward Log | User: F5 刷新后变成显示 12（手动点选时是完美的 11） | 2026-09-21 |
+| **Autofit (`-`) behavior CONFIRMED — canonical spec** for any listing footer `Show N entries`: (1) trigger always paints literal `-`, never the fitted count; (2) body scroll locked off (`overflow-y:hidden`) only while `-` is active — `All`/`10`/`20`/`50`/`100` may scroll; (3) row count = `Math.floor(availableHeight / rowHeight)` — **never** `Math.ceil` or any count that could add a row not fully visible, since an overflowing row is clipped invisible by `overflow:hidden` rather than becoming scrollable; (4) leftover gap is stretched evenly across existing rows **only when the gap is smaller than one row height** — a gap ≥ one row height means load more rows instead of stretching; (5) the settle/measure cycle (and its `lockedAutoSize` cache) must be reset on **every** trigger that can change row content — page-size change, status/segment tab, type/source select, keyword search (input debounce + Enter) — so a new dataset with different row heights is always re-measured, never inherits a stale locked count from the previous dataset. (6) before locking any settled count — whether reached by reload or by the first paint already matching — re-verify with an actual `scrollHeight>clientHeight` check on the next frame and shrink-by-1-and-retry if it still overflows; never trust the floor calculation alone as proof of fit. Reference implementation: `assets/js/vip-exp-log.js` + `assets/js/vip-reward-log.js` (`measureAutoPageSize`, `scrollAvail`, `settleAutofitFromPaint`, `verifyAndLock`, `evenFillRowHeights`, `reloadForFilterChange`). Any new listing that adopts `-`/`All` must follow this spec exactly. | User: 对了, show = - 的功能就是这样 | 2026-09-21 |
 
 ### Opt-in layers for pages outside the migrated families
 
@@ -1127,3 +1097,5 @@ Two consequences worth keeping in mind when reviewing a page:
 11. **Dark data tables:** outer/row borders ≥ `rgba(255,255,255,.12–.14)`; header text `#E7E5E4`; cells `#F5F5F4`; muted/time `#D4D4D8`. **Transaction listing** (`body.bo-wallet-tx`): zebra odd `#3A3C48` / even `#434653` · thead `#1F2128` (deeper than body — never lifted `#40424E`). Scope light cream table CSS with `html:not([data-bo-theme="dark"])`. Copy from Patterns → Data tables → Transaction listing table.
 12. **Sidebar L2 active:** inline = `#FFF8EF`→`#FFE8CC` + border `rgba(217,119,6,.28)`; flyout = `#FFFBEB`→`#FEF3C7` + border `#D97706`. Dark both: amber/charcoal chip + `rgba(245,158,11,.55)`. Never flat amber wash only. Beat `reports.css` flyout `#fff`. Copy from Patterns → Sidebar nav (shell CSS).
 13. **Every new chrome needs Light|Dark:** before shipping a frame/button/slot, add or update a two-column table in this file (see Coverage checklist). Do not leave “dark inherits” undocumented.
+14. **Table footer pager anatomy:** First · Prev · page window (+ ellipsis) · Next · Last. Specimen: VIP EXP Log. Amber active = gradient only (**no shadow**). Do not ship prev/next-only pagers on new or touched listing pages. Copy from Patterns → Data tables → Table footer pager.
+15. **Role select chevron:** pin `bi-chevron-down` at **`right:12px`** (absolute, vertically centered). Do not let it trail the label. Beat `bo-ui-standard` `padding-right:32px` on custom triggers. Copy from Patterns → Role select dropdown.

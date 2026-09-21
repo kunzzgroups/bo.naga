@@ -1,0 +1,152 @@
+/* Global configurable BO icon navigation. Kept isolated from page-specific layout. */
+.bo-global-quicknav{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));width:100%;background:#D97706;border-bottom:1px solid rgba(255,255,255,.18);position:relative;z-index:20}
+.bo-global-quicknav a{min-height:72px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:#fff;font-size:31px;border-right:1px solid rgba(255,255,255,.08);transition:background .15s ease}
+.bo-global-quicknav a:nth-child(6n){border-right:0}.bo-global-quicknav a:hover,.bo-global-quicknav a.active{background:#F5EBDC;color:#fff}.bo-global-quicknav a i{line-height:1}.bo-global-quicknav a span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.bo-nav-config-card{margin-bottom:18px;padding:20px}.bo-nav-config-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}.bo-nav-config-head h2{font-size:18px;margin:0 0 5px}.bo-nav-config-head p{margin:0;color:#6b7280;font-size:13px}.bo-nav-config-mode{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:16px 0;border-bottom:1px solid var(--bo-border,#e5e7eb)}.bo-nav-config-mode label{display:inline-flex;align-items:center;gap:7px;cursor:pointer}.bo-nav-shortcut-title{display:flex;justify-content:space-between;align-items:center;margin:16px 0 10px}.bo-nav-shortcut-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}.bo-nav-shortcut-option{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid #d8dee8;border-radius:10px;cursor:pointer;min-width:0}.bo-nav-shortcut-option i{font-size:20px}.bo-nav-shortcut-option span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:700}.bo-nav-shortcut-option:has(input:checked){border-color:#d97706;background:rgba(217,119,6,.07)}
+body.bo-sidebar-click-mode .report-sidebar .nav-group.bo-flyout-hover .nav-group-list{display:none!important}
+@media(max-width:991px){.bo-global-quicknav{grid-template-columns:repeat(3,minmax(0,1fr))}.bo-global-quicknav a{min-height:58px;font-size:24px}.bo-nav-shortcut-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bo-nav-config-head{display:block}.bo-nav-config-head button{margin-top:12px}}
+@media(max-width:520px){.bo-global-quicknav{grid-template-columns:repeat(3,minmax(0,1fr))}.bo-nav-shortcut-grid{grid-template-columns:1fr}}
+@media(min-width:992px){
+  body.bo-sidebar-click-mode.sidebar-mini .report-sidebar:hover,
+  body.bo-sidebar-click-mode.sidebar-mini .report-sidebar.is-mini-hover{width:var(--rail-w)!important;max-width:var(--rail-w)!important;min-width:var(--rail-w)!important;box-shadow:none!important}
+  body.bo-sidebar-click-mode.sidebar-mini .report-sidebar:hover .report-brand>div:not(.logo),
+  body.bo-sidebar-click-mode.sidebar-mini .report-sidebar:hover .report-nav>a:not(.report-sub) span,
+  body.bo-sidebar-click-mode.sidebar-mini .report-sidebar:hover .nav-group-btn span,
+  body.bo-sidebar-click-mode.sidebar-mini .report-sidebar:hover .nav-group-btn .bi-chevron-down,
+  body.bo-sidebar-click-mode.sidebar-mini .report-sidebar:hover .report-nav small{opacity:0!important;visibility:hidden!important;width:0!important;overflow:hidden!important}
+  body.bo-sidebar-click-mode.sidebar-mini:has(.report-sidebar:hover) .report-topbar{padding-left:20px!important}
+  body.bo-sidebar-click-mode.sidebar-mini .report-sidebar:hover .report-nav a{justify-content:center!important;padding:12px 0!important}
+  body.bo-sidebar-click-mode.sidebar-mini .report-sidebar:hover .report-nav a i{margin:0!important;font-size:17px!important}
+  body.bo-sidebar-click-mode.sidebar-mini .report-sidebar:hover .nav-group{border:0!important;background:transparent!important;overflow:visible!important}
+  body.bo-sidebar-click-mode.sidebar-mini .report-sidebar:hover .nav-group-btn{justify-content:center!important;padding:12px 0!important;border-radius:12px!important;background:#fff8eb!important;color:#18191c!important;border:1px solid transparent!important}
+}
+/* Dashboard pin bar: auto-fit selected pins, up to 12 per row. */
+.bo-global-quicknav{grid-template-columns:repeat(var(--bo-nav-cols,1),minmax(0,1fr))!important}
+.bo-global-quicknav a{position:relative;cursor:pointer;min-width:0}
+.bo-global-quicknav a.is-dragging{opacity:.45}
+.bo-dashboard-unpin{position:absolute;top:5px;right:7px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:13px;opacity:0;transition:opacity .15s ease,background .15s ease;cursor:pointer}
+.bo-global-quicknav a:hover .bo-dashboard-unpin,.bo-global-quicknav a:focus-within .bo-dashboard-unpin{opacity:1}
+.bo-dashboard-unpin:hover{background:rgba(255,255,255,.18)}
+.report-nav a[data-menu-key]{position:relative;padding-right:38px}
+.bo-sidebar-pin{position:absolute;right:9px;top:50%;transform:translateY(-50%);width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:7px;opacity:0;cursor:pointer;font-size:14px;z-index:3}
+.report-nav a[data-menu-key]:hover .bo-sidebar-pin,.report-nav a[data-menu-key]:focus-within .bo-sidebar-pin,.bo-sidebar-pin.is-pinned{opacity:1}
+.bo-sidebar-pin:hover{background:rgba(217,119,6,.12)}
+.bo-sidebar-pin.is-pinned{color:#d97706}
+@media(max-width:991px){.bo-global-quicknav{grid-template-columns:repeat(auto-fit,minmax(110px,1fr))!important}.bo-dashboard-unpin{opacity:1}.bo-sidebar-pin{opacity:1}}
+@media(max-width:620px){.bo-global-quicknav{grid-template-columns:repeat(auto-fit,minmax(88px,1fr))!important}}
+
+/* Dashboard pin controls are always visible so every eligible sidebar page can be pinned/unpinned without hover. */
+.bo-sidebar-pin{opacity:1!important}
+.report-nav a[data-menu-key] .bo-sidebar-pin{visibility:visible!important;pointer-events:auto!important}
+
+/* 2026-09-21: Keep normal BO sidebar/flyout labels readable after adding pin controls.
+   Scope excludes Main/Executive pages; pin button gets its own fixed space and the
+   desktop submenu flyout is wide enough for the original menu label + pin. */
+@media (min-width:992px){
+  body:not(.main-dashboard-page):not(.main-admin-detail-page) .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list{
+    width:340px!important;
+    min-width:300px!important;
+    max-width:min(380px,calc(100vw - var(--bo-sidebar-flyout-left,288px) - 16px))!important;
+  }
+  body:not(.main-dashboard-page):not(.main-admin-detail-page) .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list a[data-menu-key]{
+    display:flex!important;
+    align-items:center!important;
+    width:100%!important;
+    min-width:0!important;
+    padding-right:44px!important;
+    box-sizing:border-box!important;
+  }
+  body:not(.main-dashboard-page):not(.main-admin-detail-page) .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list a[data-menu-key] > span:not(.bo-sidebar-pin){
+    flex:1 1 auto!important;
+    min-width:0!important;
+    width:auto!important;
+    max-width:none!important;
+    white-space:normal!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+  }
+  body:not(.main-dashboard-page):not(.main-admin-detail-page) .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list .bo-sidebar-pin{
+    right:10px!important;
+    flex:0 0 26px!important;
+  }
+}
+
+
+/* 2026-09-21: Sidebar pin layout isolation.
+   Pin is a real button (not a span) so legacy mini-sidebar/flyout span rules cannot
+   resize, hide, wrap or offset it on pages with their own sidebar CSS. */
+.bo-sidebar-pin{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  border:0!important;
+  padding:0!important;
+  margin:0!important;
+  background:transparent!important;
+  font:inherit!important;
+  line-height:1!important;
+  box-shadow:none!important;
+  flex:0 0 26px!important;
+}
+.bo-sidebar-pin:hover,.bo-sidebar-pin:focus-visible{background:rgba(217,119,6,.12)!important;outline:none}
+.report-nav a[data-menu-key]{position:relative}
+.report-nav a[data-menu-key] > span:not(.bo-sidebar-pin){min-width:0}
+@media (min-width:992px){
+  body:not(.main-dashboard-page):not(.main-admin-detail-page) .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list a[data-menu-key]{
+    padding-right:46px!important;
+  }
+  body:not(.main-dashboard-page):not(.main-admin-detail-page) .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list .bo-sidebar-pin{
+    position:absolute!important;right:10px!important;top:50%!important;transform:translateY(-50%)!important;
+    width:26px!important;height:26px!important;min-width:26px!important;max-width:26px!important;
+  }
+}
+
+/* 2026-09-21: Keep sidebar pin/unpin visually identical to the original icon-only control. */
+.bo-sidebar-pin,
+.bo-sidebar-pin:hover,
+.bo-sidebar-pin:focus,
+.bo-sidebar-pin:focus-visible,
+.bo-sidebar-pin:active,
+.bo-sidebar-pin.is-pinned{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  padding:0!important;
+}
+.bo-sidebar-pin::-moz-focus-inner{border:0!important;padding:0!important}
+
+/* 2026-09-21 final pin visual reset: override page-specific/global button skins.
+   Keep the button element for layout isolation, but render it exactly as an icon-only control. */
+html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin,
+html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin:hover,
+html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin:focus,
+html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin:focus-visible,
+html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin:active,
+html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin.is-pinned {
+  -webkit-appearance:none!important;
+  appearance:none!important;
+  background:none!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  border:none!important;
+  border-width:0!important;
+  border-style:none!important;
+  border-color:transparent!important;
+  outline:none!important;
+  outline-width:0!important;
+  box-shadow:none!important;
+  filter:none!important;
+  border-radius:0!important;
+  padding:0!important;
+  margin:0!important;
+  min-width:26px!important;
+  max-width:26px!important;
+  width:26px!important;
+  height:26px!important;
+  color:inherit!important;
+}
+html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin.is-pinned { color:#8b4513!important; }
+html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin::-moz-focus-inner { border:0!important; padding:0!important; }
