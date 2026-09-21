@@ -168,10 +168,10 @@ Classic BO listing shells (`reports.css` + `bo-ui-standard.css`), **not** MAIN e
 | Pages | `member-deposit`, `member-withdraw`, `member-wallet`, `wallet-ledger`, `bulk-adjustment`, `bank-deposit-usage`, `bulk-bonus-adjustment`, `payment-method` |
 | Filter / select recipe | **Listing filter controls (locked)** — height **`36px`** · radius **`8px`** · gap **`10px`** · surface `#FFF8EB` · border `#EADCC8` · never form well `#F5EBDC` · Type multi = Role select option chrome |
 | Dark select selected | solid `#F59E0B` · text `#2A2C36` (same as Role select) |
-| Pager | **Table footer pager** (`.mad-pager`) — light inactive slate `#F3F4F6`/`#9CA3AF`; dark charcoal inactive; amber 3D active |
+| Pager | **Table footer pager** — anatomy **First · Prev · pages(+ellipsis) · Next · Last** · light inactive slate `#F3F4F6`/`#9CA3AF` · amber gradient active · **no shadow** |
 | Date range | **Date range picker** pattern (preset wash, ghost head, cream panel) — listing trigger height **`36px`** · width ~`240px` — see Patterns |
 | Filter titles | Hidden on listing filters (placeholder + value carry meaning) |
-| Filter Page Size | **Not** in the filter row — footer `Show N entries` only (Deposit / Withdraw / Wallet Ledger / Member Wallet). Options **`-` · `10` · `20` · `50` · `100` · `All`** (`#depositSize` / `#withdrawSize` / `#ledgerSize` / `#walletSize` hidden sources). Chrome = **Role select** recipe: trigger surface `#FFF8EB` / border `#EADCC8` / **`36px`** · menu open upward · options amber wash hover · dark selected solid `#F59E0B`/`#2A2C36` — never form well `#F5EBDC`. `-` = auto-fit rows · `All` = 10000 |
+| Filter Page Size | **Not** in the filter row — footer `Show N entries` only (Deposit / Withdraw / Wallet Ledger / Member Wallet / VIP logs). Options **`-` (label `Auto`) · `10` · `20` · `50` · `100` · `All`**. `-` = auto-fit rows into viewport (trigger may show the fitted count, e.g. `10`, while value stays `-`) · `All` = 10000. Chrome = **Role select** recipe. |
 | Deposit / Withdraw tabs | `.bo-tx-tabs` / `.bo-tx-tab` — **Status filter pills** recipe · order Deposit → Withdraw → All · cream **capsule** thumb (`999px`) + muted idle dots · green/red only when selected · counts `(n)` · requires `bo-seg-bounce` |
 | Hover / focus / open | Same as Merchant Profit + Role select: border `#D97706` + `0 0 0 3px rgba(217,119,6,.14)` (dark: `#F59E0B` + `rgba(245,158,11,.18)`). Inputs, selects, date triggers — one recipe. Idle chrome must not kill the ring. |
 | Table frame | **Same as Admin Detail `.mad-panel`** — viewport-locked panel · inner scroll · `table-layout:fixed` · radius `8px` · no nested `.table-wrap` border · footer pins to panel bottom |
@@ -331,9 +331,10 @@ Theme: FOUC + `#boThemeToggle` sibling of `[data-bo-profile]` + `bo-theme.js`.
 | Strip padding | `10px 14px` (inline-in-table-card) |
 | Surface | `#FFF8EB` · border `#EADCC8` · never form well `#F5EBDC` |
 | Text | inputs `12px/700` · date trigger `13px/700` · buttons `12.5px/800` |
-| Control pad | `0 12px` |
+| Control pad | `0 12px` (text inputs / buttons) · **select trigger `0 28px 0 12px`** (room for pinned chevron) |
 | Focus / open | border `#D97706` + `0 0 0 3px rgba(217,119,6,.14)` (dark: `#F59E0B` + `rgba(245,158,11,.18)`) |
 | Labels | Hidden (placeholder + value) |
+| Select chevron | **Pinned `right:12px`** — see Role select dropdown · never trail the label |
 
 | Control | Width (desktop) |
 |---------|-----------------|
@@ -505,10 +506,12 @@ Links: Members → `index.html` · Deposit → `member-deposit.html` · Withdraw
 | Default fill | `linear-gradient(180deg, #FBBF24 0%, #F59E0B 42%, #EA8608 100%)` | `linear-gradient(180deg, #FBBF24 0%, #F59E0B 45%, #D97706 100%)` |
 | Border | `#E8901A` | `#F59E0B` |
 | Label | `#FFFFFF` | `#2A2C36` |
-| Shadow | soft amber lift + inset top highlight | charcoal lift + amber glow + inset |
-| Hover fill | `linear-gradient(0deg, #FCD34D → #FBBF24 → #F59E0B → #EA8608)` | `linear-gradient(0deg, #FDE68A → #FBBF24 → #F59E0B)` |
+| Shadow | **none** (no drop / lift / inset) | **none** |
+| Hover fill | reverse stops on same axis `linear-gradient(180deg, #EA8608 → #F59E0B → #FBBF24)` | reverse `linear-gradient(180deg, #D97706 → #F59E0B → #FBBF24)` |
 | Hover border | `#F59E0B` | `#FBBF24` |
 | Active fill | `linear-gradient(180deg, #F59E0B → #EA8608)` | `linear-gradient(180deg, #F59E0B → #D97706)` |
+
+Hover motion is **gradient reverse only** (stop order flipped on `180deg`). Do **not** transition `background-image` (browsers skip the flip). Do **not** add amber glow, inset highlight, `translateY` lift, or any `box-shadow` on Primary.
 
 #### Ghost / Export
 
@@ -590,17 +593,21 @@ Reference: `main-admin-role-create.css` (must beat `reports.css` `.report-conten
 
 #### Role select dropdown (Roles list — `.rounded-select-*`)
 
-Native select hidden; enhancer builds custom control. Reference: `menu-permission-executive.css`.
+Native select hidden; enhancer builds custom control (`reports.js` → `.rounded-select-btn` + `.bi-chevron-down`). Reference: VIP EXP Log All Sources + `menu-permission-executive.css`. Listing filters use this chrome at **`36px`**.
 
 | Part | Light | Dark |
 |------|-------|------|
-| Trigger | `#FFF8EB` · border `#EADCC8` · `40px` · `13.5px/600` · `8px` radius | `#2A2C36` |
+| Trigger | `#FFF8EB` · border `#EADCC8` · listing **`36px`** (Roles form may stay `40px`) · `12px/700` · `8px` radius · padding **`0 28px 0 12px`** (room for chevron) | `#2A2C36` · same padding |
+| **Chevron (locked)** | `bi-chevron-down` · **`position:absolute; right:12px; top:50%; transform:translateY(-50%)`** · `font-size:12px` · color `#57534E` · `pointer-events:none` | same pin · color `#D4D4D8` |
+| Label span | left-aligned · `flex:1` · ellipsis · **never** share row gap with chevron (chevron is not `space-between` sibling layout) | same |
 | Open / focus | border `#D97706` · `0 0 0 3px rgba(217,119,6,.14)` | amber border + `rgba(245,158,11,.18)` ring |
 | Menu | surface · border · `8px` · soft shadow · pad `6px` | surface · deep shadow |
 | Option hover | `--bo-cyan-tint` · text `--bo-cyan-deep` | `rgba(245,158,11,.14)` |
 | Option selected (dark) | — | fill `#F59E0B` · text `#2A2C36` |
 | Scrollbar thumb | `#98A2B3` / hover `#667085` · `4px` pill · no arrows (menu only — Bulk/Wallet panels use chocolate **`6px`**) | `#F59E0B` / `#D97706` |
 | Field label | `11px/800` uppercase · tracking `.08em` | same |
+
+**Do not** leave the chevron trailing the label (flex gap / `space-between` with huge right padding from `bo-ui-standard` `padding-right:32px`). Pin it to the trigger’s right inset **`12px`**. Footer Show N (narrow `72px`) may use **`right:10px`**.
 
 #### Date range picker (`.bo-range-*` / `.ref-range-*` — locked)
 
@@ -672,19 +679,31 @@ Reference: `main-admin-detail.html` / `main-admin-security.html` + Charcoal bloc
 | Search / form placeholder | `#78716C` on cream wells | `#A1A1AA` |
 | Modal close (`.modal-clean-close`) | `#F5EBDC` · border `#EADCC8` · icon `#57534E` | charcoal well · light icon |
 
-#### Table footer pager (`.mad-pager` — locked light/dark)
+#### Table footer pager (locked light/dark)
 
-Reference: Charcoal block in `main-admin-detail-executive.css` (+ merchant twin). Classes: `.mad-pager .smart-page` / `button`. Metrics: min-width `40px` · height `36px` · radius `8px` · `13px/700`.
+**Specimen:** VIP EXP Log (`#vipLogPagination` / `.pagination-clean`) — same chrome as `.mad-pager .smart-page`. Metrics: min-width `40px` · height `36px` · radius `8px` · gap `8px` · `13px/700`. First/Last icon buttons: `36×36` · padding `0`.
+
+**Required anatomy (left → right) — every listing footer uses this:**
+
+| Slot | Control | Icon / content | Behavior |
+|------|---------|----------------|----------|
+| 1 | First | `bi-chevron-bar-left` (bar+‹) | `data-*-page="1"` · disabled on page 1 |
+| 2 | Previous | `‹` or `bi-chevron-left` | current − 1 · disabled on page 1 |
+| 3 | Page window | numbered buttons | always include **1** and **last**; window ±2 around current; insert `…` (`span.smart-page-ellipsis`) when gaps > 1 |
+| 4 | Next | `›` or `bi-chevron-right` | current + 1 · disabled on last |
+| 5 | Last | `bi-chevron-bar-right` (›+bar) | jump to `totalPages` · disabled on last |
+
+Do **not** ship prev/next-only pagers on new or touched listing pages. Match VIP EXP Log `renderPages` (First · Prev · window+ellipsis · Next · Last). When touching Wallet Ledger / Member Wallet `pageButtons`, add Prev/Next to reach the same anatomy.
 
 | State | Light | Dark |
 |-------|-------|------|
-| Default (inactive page) | bg `#F3F4F6` · text `#9CA3AF` · no border | bg `#383A46` · border `rgba(255,255,255,.12)` · text `#A1A1AA` |
+| Default (inactive / nav) | bg `#F3F4F6` · text `#9CA3AF` · no border · **no shadow** | bg `#383A46` · border `rgba(255,255,255,.12)` · text `#A1A1AA` · **no shadow** |
 | Hover (not active) | bg `#E5E7EB` · text `#374151` | bg `#444654` · border white/18 · text `#E7E5E4` |
-| Active (current page) | amber 3D `#FBBF24`→`#F59E0B`→`#D97706` · border `#D97706` · text `#fff` · soft amber lift + inset | same amber 3D · border `#F59E0B` · text `#2A2C36` · stronger amber glow |
-| Disabled | muted grey (opacity kept readable) | bg `#2A2C36` · border white/06 · text `#52525B` |
-| Ellipsis | muted / placeholder | muted |
+| Active (current page) | amber gradient `180deg #FBBF24 → #F59E0B → #D97706` · border `#D97706` · text `#fff` · **no shadow** (no lift / inset) | same gradient · border `#F59E0B` · text `#2A2C36` · **no shadow / no glow** |
+| Disabled | opacity ~`.42` · `cursor:not-allowed` | bg `#2A2C36` · border white/06 · text `#52525B` |
+| Ellipsis | text `#9CA3AF` · not a button | muted |
 
-Light inactive stays cool slate (not cream) so the amber active page reads as the only warm signal in the pager row. Dark inactive is charcoal surface — never cream. Do not use navy/cyan for active.
+Light inactive stays cool slate (not cream) so the amber active page is the only warm signal. Dark inactive is charcoal — never cream. Do not use navy/cyan for active. Active page follows Primary CTA: gradient only, **never** drop/inset shadow.
 
 Do **not** use dark header `#71717A` or row borders `rgba(255,255,255,.06–.08)` — fails contrast on `#383A46`.
 
@@ -1025,6 +1044,9 @@ Grid `repeat(5,minmax(0,1fr))`, gap `12px`. **No per-tile accent rail and no ico
 | Panel pill scrollbar thickness **`6px`** (was `4px`) — Bulk · Wallet Ledger · Livechat | User: scrollbar 再粗一点点 · 更新 MD | 2026-09-17 |
 | **Member Wallet** aligned to listing MD — no Page Size in filter · footer `#walletSize` · action 26×26 wells · username-only Member cell · panel pill scrollbar | User: 用MD来调整这些东西 | 2026-09-17 |
 | **Topbar anatomy locked** (Deposit Approval specimen): left hamb + icon + title (+ Approval lead) · right theme → Members/Deposit/Withdraw counters `48×`/`10px` · User Name + avatar · height `64px` | User: 把表头的部分更新进 MD | 2026-09-17 |
+| **Primary CTA = amber gradient + reverse on hover · no shadow** (drop / lift / inset all off) | User: 主按钮渐变倒反、不要阴影；更新 MD | 2026-09-21 |
+| **Table footer pager anatomy locked** — First · Prev · pages(+ellipsis) · Next · Last · amber active · **no shadow** · VIP EXP specimen | User: 这个帮我更新在md 之后全部用这个 | 2026-09-21 |
+| **Role select chevron pinned right:12px** (absolute · never trail label) · listing trigger pad 0 28px 0 12px · VIP EXP All Sources specimen | User: chevron pin right 12px into MD | 2026-09-21 |
 
 ### Opt-in layers for pages outside the migrated families
 
@@ -1065,10 +1087,8 @@ Two consequences worth keeping in mind when reviewing a page:
 8. **Dark mode must beat legacy CSS:** `reports.css` still has `.report-body{background:#f5f7fb!important}`. Page CSS must override body/html/canvas with equal-or-higher specificity + `!important`, or white frames will leak around dark cards. Never assume MD tokens alone paint the canvas.
 9. **Permission matrix dual wash:** light = cream/amber group wash; dark = cool charcoal surfaces only (amber accents, never muddy amber panel fill). Copy from Patterns → Permission matrix.
 10. **No pure white in light chrome:** canvas end, topbar, and panels use cream `#FFF8EB` (continuum → `#FFF6E8` → `#FFF8EB`). Keep `#FFFFFF` only for text-on-amber (`--bo-accent-on`). Do not settle for near-white ivory (`#FFFCF8`) on Dashboard main pane.
-<<<<<<< HEAD
-11. **Dark data tables:** outer/row borders ≥ `rgba(255,255,255,.12–.14)`; header `#E7E5E4`; cells `#F5F5F4`; muted/time `#D4D4D8`. Scope light cream table CSS with `html:not([data-bo-theme="dark"])`. Copy from Patterns → Data tables.
-=======
 11. **Dark data tables:** outer/row borders ≥ `rgba(255,255,255,.12–.14)`; header text `#E7E5E4`; cells `#F5F5F4`; muted/time `#D4D4D8`. **Transaction listing** (`body.bo-wallet-tx`): zebra odd `#3A3C48` / even `#434653` · thead `#1F2128` (deeper than body — never lifted `#40424E`). Scope light cream table CSS with `html:not([data-bo-theme="dark"])`. Copy from Patterns → Data tables → Transaction listing table.
->>>>>>> feature/member
 12. **Sidebar L2 active:** inline = `#FFF8EF`→`#FFE8CC` + border `rgba(217,119,6,.28)`; flyout = `#FFFBEB`→`#FEF3C7` + border `#D97706`. Dark both: amber/charcoal chip + `rgba(245,158,11,.55)`. Never flat amber wash only. Beat `reports.css` flyout `#fff`. Copy from Patterns → Sidebar nav (shell CSS).
 13. **Every new chrome needs Light|Dark:** before shipping a frame/button/slot, add or update a two-column table in this file (see Coverage checklist). Do not leave “dark inherits” undocumented.
+14. **Table footer pager anatomy:** First · Prev · page window (+ ellipsis) · Next · Last. Specimen: VIP EXP Log. Amber active = gradient only (**no shadow**). Do not ship prev/next-only pagers on new or touched listing pages. Copy from Patterns → Data tables → Table footer pager.
+15. **Role select chevron:** pin `bi-chevron-down` at **`right:12px`** (absolute, vertically centered). Do not let it trail the label. Beat `bo-ui-standard` `padding-right:32px` on custom triggers. Copy from Patterns → Role select dropdown.

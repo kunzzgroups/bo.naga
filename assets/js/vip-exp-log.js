@@ -209,7 +209,25 @@
   }
  }
  function renderInfo(rowCount){const info=$('#vipLogPageInfo');if(!info)return;const from=totalElements&&rowCount?((page-1)*pageSize+1):0;const to=totalElements?Math.min((page-1)*pageSize+rowCount,totalElements):0;info.textContent=`Showing ${from} to ${to} of ${totalElements} entries`;}
- function renderPages(){const w=$('#vipLogPagination');if(!w)return;let html=`<button type="button" ${page<=1?'disabled':''} data-log-page="${page-1}" aria-label="Previous page">‹</button>`;for(let i=Math.max(1,page-2);i<=Math.min(totalPages,page+2);i++)html+=`<button type="button" class="${i===page?'active':''}" data-log-page="${i}" ${i===page?'aria-current="page"':''}>${i}</button>`;html+=`<button type="button" ${page>=totalPages?'disabled':''} data-log-page="${page+1}" aria-label="Next page">›</button>`;w.innerHTML=html;}
+ function renderPages(){
+  const w=$('#vipLogPagination');if(!w)return;
+  const total=Math.max(1,Number(totalPages)||1);
+  const current=Math.max(1,Math.min(Number(page)||1,total));
+  const pages=[]; const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};
+  add(1); for(let n=current-2;n<=current+2;n++) add(n); add(total); pages.sort((a,b)=>a-b);
+  let html='';
+  html+=`<button type="button" class="smart-page first" data-log-page="1" ${current<=1?'disabled':''} title="First page" aria-label="First page"><i class="bi bi-chevron-bar-left" aria-hidden="true"></i></button>`;
+  html+=`<button type="button" data-log-page="${current-1}" ${current<=1?'disabled':''} aria-label="Previous page">‹</button>`;
+  let prev=0;
+  pages.forEach(n=>{
+   if(prev&&n-prev>1) html+='<span class="smart-page-ellipsis" aria-hidden="true">…</span>';
+   html+=`<button type="button" class="${n===current?'active':''}" data-log-page="${n}" ${n===current?'aria-current="page"':''}>${n}</button>`;
+   prev=n;
+  });
+  html+=`<button type="button" data-log-page="${current+1}" ${current>=total?'disabled':''} aria-label="Next page">›</button>`;
+  html+=`<button type="button" class="smart-page last" data-log-page="${total}" ${current>=total?'disabled':''} title="Last page" aria-label="Last page"><i class="bi bi-chevron-bar-right" aria-hidden="true"></i></button>`;
+  w.innerHTML=html;
+ }
  function modal(show){
   const m=$('#vipAdjustModal');if(!m)return;
   m.classList.toggle('show',show);
@@ -217,21 +235,7 @@
   document.body.classList.toggle('vip-modal-open',show||document.querySelector('#vipModal.show'));
   if(show) setTimeout(()=>$('#vipAdjustMemberId')?.focus(),40);
  }
- function resetFilters(){
-  const kw=$('#vipLogKeyword'),src=$('#vipLogSource'),size=$('#vipLogPageSize');
-  if(kw)kw.value='';
-  if(src)src.value='';
-  if(size){
-   size.value='-';
-   size.dispatchEvent(new Event('bo:select-sync',{bubbles:true}));
-  }
-  clearLockedAutoSize();
-  syncAutofitMode();
-  load(1);
- }
  document.addEventListener('click',e=>{
-  if(e.target.closest('#vipLogSearch'))load(1);
-  if(e.target.closest('#vipLogReset'))resetFilters();
   if(e.target.closest('#vipAdjustOpen'))modal(true);
   if(e.target.closest('[data-close-adjust]'))modal(false);
   const b=e.target.closest('[data-log-page]');
@@ -240,8 +244,10 @@
  });
  document.addEventListener('keydown',e=>{
   if(e.key==='Escape' && $('#vipAdjustModal')?.classList.contains('show')) modal(false);
-  if(e.key==='Enter' && e.target && (e.target.id==='vipLogKeyword' || e.target.id==='vipLogSource')){e.preventDefault();load(1);}
+  if(e.key==='Enter' && e.target && e.target.id==='vipLogKeyword'){e.preventDefault();load(1);}
  });
+ $('#vipLogSource')?.addEventListener('change',()=>load(1));
+ $('#vipLogKeyword')?.addEventListener('search',()=>load(1));
  $('#vipLogPageSize')?.addEventListener('change',()=>{
   clearLockedAutoSize();
   syncPageSize();
