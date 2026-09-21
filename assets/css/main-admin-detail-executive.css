@@ -1165,6 +1165,12 @@ body.main-admin-detail-page .mad-modal-panel{
   border-radius:8px!important;border:1px solid var(--bo-border)!important;
   background:var(--bo-surface)!important;box-shadow:var(--bo-shadow)!important;
 }
+/* The panel's body child carries the SAME surface colour and a square box, and the panel's
+   overflow stays visible (.mac-adjust-panel needs it), so the child's square corners painted
+   over the panel's rounded bottom corners. Match the child's bottom radius to the panel's. */
+body.main-admin-detail-page .mad-modal-panel > .modal-clean-body{
+  border-radius:0 0 8px 8px;
+}
 body.main-admin-detail-page .mad-modal-title{display:flex;align-items:center;gap:12px}
 body.main-admin-detail-page .mad-modal-icon{
   width:40px;height:40px;border-radius:8px;display:grid;place-items:center;
@@ -1503,7 +1509,7 @@ body.main-admin-detail-page .mad-modal-actions{display:flex;justify-content:flex
   }
   body.main-admin-detail-page .mad-modal-panel,
   body.main-admin-detail-page .mad-pass-modal-panel{
-    width:100%;max-width:none;border-radius:14px 14px 0 0!important;
+    width:100%;max-width:none;
     max-height:min(92dvh, 920px);overflow:auto;
   }
   body.main-admin-detail-page .mad-modal-actions{
@@ -1514,6 +1520,23 @@ body.main-admin-detail-page .mad-modal-actions{display:flex;justify-content:flex
   }
   body.main-admin-detail-page .mad-eye{
     width:44px;height:44px;right:2px;
+  }
+}
+
+/* Bottom-sheet corners belong ONLY where the dialog is really anchored to the bottom.
+   At ≤575.98px main-mobile-responsive.css forces .modal-clean to align-items:flex-end, so the
+   panel is a true sheet and square bottom corners are correct. Between 576 and 991.98px the
+   panel stays centred (bo-targeted-fixes.css pins .modal-clean:not([hidden]) to align-items:center,
+   which outranks the align-items:flex-end above), so the square corners just floated mid-screen —
+   the Add Credit defect. Above 575.98px the panel keeps the locked 8px card radius. */
+@media(max-width:575.98px){
+  body.main-admin-detail-page .mad-modal-panel,
+  body.main-admin-detail-page .mad-pass-modal-panel{
+    border-radius:14px 14px 0 0!important;
+  }
+  /* The sheet's bottom edge is square, so the child must not round it either. */
+  body.main-admin-detail-page .mad-modal-panel > .modal-clean-body{
+    border-radius:0;
   }
 }
 
@@ -2252,6 +2275,41 @@ body.main-merchant-create-page .mac-currency-pane-item-tag{
   color:var(--bo-muted,#667085);
   font-size:10.5px;
   font-weight:700;
+}
+/* Discard control for a staged currency in the Add Currency modal's left (Added) pane.
+   Deliberately unscoped: the pane item above is restyled per page family, but this class is
+   new, so nothing competes with it and one block covers both hosts (merchant create + detail).
+   The pane item is a <button>, so this is a span[role=button] — a nested <button> is invalid. */
+.mac-currency-pane-item-remove{
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  width:22px;
+  height:22px;
+  border-radius:999px;
+  background:rgba(120,80,20,.08);
+  color:var(--bo-muted,#667085);
+  font-size:14px;
+  font-weight:800;
+  line-height:1;
+  cursor:pointer;
+  transition:background .14s var(--bo-ease,ease),color .14s var(--bo-ease,ease);
+}
+.mac-currency-pane-item-remove:hover{
+  background:rgba(180,35,24,.12);
+  color:var(--bo-danger,#B42318);
+}
+.mac-currency-pane-item-remove:focus-visible{
+  outline:2px solid var(--bo-cyan,#D97706);
+  outline-offset:1px;
+}
+html[data-bo-theme="dark"] .mac-currency-pane-item-remove{
+  background:rgba(148,163,184,.18);
+  color:#94A3B8;
+}
+html[data-bo-theme="dark"] .mac-currency-pane-item-remove:hover{
+  background:rgba(248,113,113,.18);
+  color:#F87171;
 }
 body.main-merchant-create-page .mac-currency-dual-actions{
   display:flex;
@@ -9178,7 +9236,8 @@ html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="m
   background:#FFFCF7!important;
   border:1px solid #DCC9A8!important;
   box-shadow:0 0 0 1px rgba(120,80,20,.04),0 10px 28px rgba(120,80,20,.10)!important;
-  overflow:hidden;
+  /* No overflow:hidden — it clipped the absolute .mac-role-menu dropdown. The amber
+     rail is inset 12px with its own radius, so it never needed the clip. */
 }
 html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-section::before{
   content:"";

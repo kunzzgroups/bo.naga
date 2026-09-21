@@ -12,7 +12,7 @@
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.6" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.216" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.219" rel="stylesheet"/>
 <link href="assets/css/main-merchant-detail-executive.css?v=1.4.9" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=1.0.1" rel="stylesheet"/>
 <script>
@@ -191,7 +191,7 @@
         <div class="mac-subblock">
           <h4 class="mac-subblock-title"><span class="mac-subblock-dot" aria-hidden="true"></span> Admin Master Credentials</h4>
           <div class="mac-fields-stack mac-master-fields">
-            <div class="mac-fields mac-fields-row mac-fields-row-3">
+            <div class="mac-fields mac-fields-row mac-fields-row-4">
               <label class="mac-field" for="madViewMaster">
                 <span class="mac-label">Login ID / Username</span>
                 <input class="form-control" id="madViewMaster" readonly/>
@@ -205,6 +205,12 @@
                 <select class="form-control" id="madEditStatus">
                   <option value="1">Active</option>
                   <option value="0">Suspended</option>
+                </select>
+              </label>
+              <label class="mac-field mac-field-role" for="madEditMasterRole">
+                <span class="mac-label">Role</span>
+                <select class="form-control" id="madEditMasterRole">
+                  <option value="" data-role-type="BRAND_OWNER">Brand Owner</option>
                 </select>
               </label>
             </div>
@@ -547,7 +553,7 @@
 <script src="assets/js/auth.js?v=1.0.79"></script>
 <script src="assets/js/main-merchant-visibility.js?v=1.0.0"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
-<script src="assets/js/main-merchant-detail.js?v=1.1.29"></script>
+<script src="assets/js/main-merchant-detail.js?v=1.1.34"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>

@@ -69,8 +69,13 @@
  }
  function currencyModalItemHtml(code, side){
   const selected=currencyModalSelected.has(code+'|'+side);
+  // Only the left (Added) pane carries a discard control: Apply never commits that pane, so a
+  // staged code can be dropped outright. The right pane IS the committed list.
+  const remove=side==='added'
+   ?`<span class="mac-currency-pane-item-remove" role="button" tabindex="0" data-mac-currency-remove="${esc(code)}" aria-label="Discard ${esc(code)}" title="Discard ${esc(code)}">&times;</span>`
+   :'';
   return `<button type="button" class="mac-currency-pane-item${selected?' is-selected':''}" role="listitem" data-mac-currency-side="${side}" data-mac-currency-code="${esc(code)}" aria-pressed="${selected?'true':'false'}">
-    <span class="mac-currency-pane-item-code">${esc(code)}</span>
+    <span class="mac-currency-pane-item-code">${esc(code)}</span>${remove}
   </button>`;
  }
  function renderCurrencyDualLists(){
@@ -106,6 +111,17 @@
    [...currencyModalSelected].forEach(k=>{ if(!k.endsWith('|'+side)) currencyModalSelected.delete(k); });
    currencyModalSelected.add(key);
   }
+  renderCurrencyDualLists();
+ }
+ function discardStagedCurrency(code){
+  const key=normalizeCurrencyCode(code);
+  if(!key) return;
+  // The left pane is derived (activeCurrencyRows − draft), so dropping the catalog entry is the
+  // only lever that removes it. Apply commits the right pane alone, so nothing committed changes.
+  const i=currencyOptions.findIndex(x=>String(x.currencyCode||'').toUpperCase()===key);
+  if(i>=0) currencyOptions.splice(i,1);
+  currencyModalSelected.delete(key+'|added');
+  setCurrencyModalStatus(key+' discarded.', 'success');
   renderCurrencyDualLists();
  }
  function moveSelectedToAdded(){
@@ -455,6 +471,8 @@
  $('merchantCurrencyMoveRight')?.addEventListener('click', ()=>moveSelectedToAvailable());
 
  $('merchantCurrencyDual')?.addEventListener('click', e=>{
+  const remove=e.target.closest&&e.target.closest('[data-mac-currency-remove]');
+  if(remove){ e.preventDefault(); e.stopPropagation(); discardStagedCurrency(remove.getAttribute('data-mac-currency-remove')); return; }
   const item=e.target.closest&&e.target.closest('[data-mac-currency-code]');
   if(!item) return;
   const code=normalizeCurrencyCode(item.getAttribute('data-mac-currency-code'));
@@ -469,6 +487,16 @@
    return;
   }
   toggleCurrencyModalSelection(code, side);
+ });
+
+ // The discard control is a span[role=button] inside the item button, so Enter/Space needs
+ // handling here — the parent button would otherwise absorb the key as a selection.
+ $('merchantCurrencyDual')?.addEventListener('keydown', e=>{
+  if(e.key!=='Enter' && e.key!==' ') return;
+  const remove=e.target.closest&&e.target.closest('[data-mac-currency-remove]');
+  if(!remove) return;
+  e.preventDefault(); e.stopPropagation();
+  discardStagedCurrency(remove.getAttribute('data-mac-currency-remove'));
  });
 
  document.querySelectorAll('[data-mac-currency-close]').forEach(btn=>{
