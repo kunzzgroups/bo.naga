@@ -658,7 +658,12 @@
  }
  function currencyModalItemHtml(code, side){
   const selected=currencyModalSelected.has(code+'|'+side);
-  return '<button type="button" class="mac-currency-pane-item'+(selected?' is-selected':'')+'" role="listitem" data-mad-currency-side="'+side+'" data-mad-currency-code="'+esc(code)+'" aria-pressed="'+(selected?'true':'false')+'"><span class="mac-currency-pane-item-code">'+esc(code)+'</span></button>';
+  // Only the left (Added) pane carries a discard control: Apply never commits that pane, so a
+  // staged code can be dropped outright. The right pane IS the committed list.
+  const remove=side==='added'
+   ?'<span class="mac-currency-pane-item-remove" role="button" tabindex="0" data-mad-currency-remove="'+esc(code)+'" aria-label="Discard '+esc(code)+'" title="Discard '+esc(code)+'">&times;</span>'
+   :'';
+  return '<button type="button" class="mac-currency-pane-item'+(selected?' is-selected':'')+'" role="listitem" data-mad-currency-side="'+side+'" data-mad-currency-code="'+esc(code)+'" aria-pressed="'+(selected?'true':'false')+'"><span class="mac-currency-pane-item-code">'+esc(code)+'</span>'+remove+'</button>';
  }
  function renderCurrencyDualLists(){
   const addedList=$('madCurrencyAddedList');
@@ -692,6 +697,17 @@
    [...currencyModalSelected].forEach(k=>{ if(!k.endsWith('|'+side)) currencyModalSelected.delete(k); });
    currencyModalSelected.add(key);
   }
+  renderCurrencyDualLists();
+ }
+ function discardStagedCurrency(code){
+  const key=normalizeCurrencyCode(code);
+  if(!key) return;
+  // The left pane is derived (activeCurrencyRows − draft), so dropping the catalog entry is the
+  // only lever that removes it. Apply commits the right pane alone, so nothing committed changes.
+  const i=currencyOptions.findIndex(x=>String(x.currencyCode||'').toUpperCase()===key);
+  if(i>=0) currencyOptions.splice(i,1);
+  currencyModalSelected.delete(key+'|added');
+  setCurrencyModalStatus(key+' discarded.', 'success');
   renderCurrencyDualLists();
  }
  function moveSelectedToAdded(){
@@ -995,8 +1011,71 @@
  }
 
  async function saveProviderPricing(id){await api('/admin/merchants/'+id+'/provider-pricing',{method:'POST',headers:hdr(),body:JSON.stringify({providerMarkupPercent:markupValue(),providers:selectedProviderPayload()})});}
- async function open(id){try{const d=await api('/admin/merchants/'+id,{headers:BO_AUTH.authHeader()}),b=d.brand||d;detail=d;editing=b;const m=d.masterAccount||await api('/admin/merchants/'+id+'/master-account',{headers:BO_AUTH.authHeader()}).catch(()=>null);$('madEditId').value=b.id;$('madEditCode').value=b.code||'';$('madEditName').value=b.name||'';$('madEditDomain').value=b.primaryDomain||'';$('madEditAliases').value=b.domainAliases||'';hydrateEnabledCurrencies(b);$('madEditFrontendRoot').value=b.frontendRoot||'';$('madEditCreditMode').value=b.creditMode||'WHOLE';$('madEditStatus').value=String(b.status??1);const thr=Number(b.lowCreditThreshold||0);if($('madEditThreshold'))$('madEditThreshold').value=Number.isFinite(thr)?thr:0;editingMaster=m||null;$('madViewMaster').value=m?.username||b.masterUsername||'-';$('madViewCreatedBy').value=b.createdByName||b.createdByUsername||m?.createdByName||'Legacy / Migration';hydrateAuditMeta(b,m);if($('madViewCreditBalance'))$('madViewCreditBalance').value=money(b.creditBalance);const passA=$('madEditMasterPassword'),passB=$('madEditMasterPasswordConfirm');if(passA){passA.type='password';passA.value='';}if(passB){passB.type='password';passB.value='';}document.querySelectorAll('#madEditWorkspace [data-toggle-password]').forEach(btn=>{const icon=btn.querySelector('i');if(icon)icon.className='bi bi-eye-slash';btn.setAttribute('aria-pressed','false');btn.setAttribute('aria-label',btn.getAttribute('data-toggle-password')==='madEditMasterPasswordConfirm'?'Show confirm password':'Show password');});$('madProviderMarkup').value=Number(b.providerMarkupPercent||0);hydrateProviders(d);$('madEditFormStatus').textContent='';if(listWorkspace){listWorkspace.hidden=true;listWorkspace.setAttribute('aria-hidden','true');}if(editWorkspace){editWorkspace.hidden=false;editWorkspace.setAttribute('aria-hidden','false');}document.body.classList.add('mad-editing');setPageChrome(true);window.scrollTo({top:0,behavior:'smooth'});}catch(e){if(window.BO_DIALOG?.alert)BO_DIALOG.alert(e.message,{title:'Unable to Load Merchant',type:'error'});else alert(e.message)}}
+ async function open(id){try{const d=await api('/admin/merchants/'+id,{headers:BO_AUTH.authHeader()}),b=d.brand||d;detail=d;editing=b;const m=d.masterAccount||await api('/admin/merchants/'+id+'/master-account',{headers:BO_AUTH.authHeader()}).catch(()=>null);$('madEditId').value=b.id;$('madEditCode').value=b.code||'';$('madEditName').value=b.name||'';$('madEditDomain').value=b.primaryDomain||'';$('madEditAliases').value=b.domainAliases||'';hydrateEnabledCurrencies(b);$('madEditFrontendRoot').value=b.frontendRoot||'';$('madEditCreditMode').value=b.creditMode||'WHOLE';$('madEditStatus').value=String(b.status??1);const thr=Number(b.lowCreditThreshold||0);if($('madEditThreshold'))$('madEditThreshold').value=Number.isFinite(thr)?thr:0;editingMaster=m||null;loadEditMasterRoles(m||null,b);$('madViewMaster').value=m?.username||b.masterUsername||'-';$('madViewCreatedBy').value=b.createdByName||b.createdByUsername||m?.createdByName||'Legacy / Migration';hydrateAuditMeta(b,m);if($('madViewCreditBalance'))$('madViewCreditBalance').value=money(b.creditBalance);const passA=$('madEditMasterPassword'),passB=$('madEditMasterPasswordConfirm');if(passA){passA.type='password';passA.value='';}if(passB){passB.type='password';passB.value='';}document.querySelectorAll('#madEditWorkspace [data-toggle-password]').forEach(btn=>{const icon=btn.querySelector('i');if(icon)icon.className='bi bi-eye-slash';btn.setAttribute('aria-pressed','false');btn.setAttribute('aria-label',btn.getAttribute('data-toggle-password')==='madEditMasterPasswordConfirm'?'Show confirm password':'Show password');});$('madProviderMarkup').value=Number(b.providerMarkupPercent||0);hydrateProviders(d);$('madEditFormStatus').textContent='';if(listWorkspace){listWorkspace.hidden=true;listWorkspace.setAttribute('aria-hidden','true');}if(editWorkspace){editWorkspace.hidden=false;editWorkspace.setAttribute('aria-hidden','false');}document.body.classList.add('mad-editing');setPageChrome(true);window.scrollTo({top:0,behavior:'smooth'});}catch(e){if(window.BO_DIALOG?.alert)BO_DIALOG.alert(e.message,{title:'Unable to Load Merchant',type:'error'});else alert(e.message)}}
  function close(){if(editWorkspace){editWorkspace.hidden=true;editWorkspace.setAttribute('aria-hidden','true');}if(listWorkspace){listWorkspace.hidden=false;listWorkspace.setAttribute('aria-hidden','false');}document.body.classList.remove('mad-editing');editingMaster=null;setPageChrome(false);}
+ // Merchant master roles are reusable platform role templates (one role can serve many brands;
+ // tenant isolation still comes from admin_user.brand_id), so this mirrors the create form's
+ // selector and never offers ROOT/MASTER/MAIN executive roles.
+ async function loadEditMasterRoles(master, brand){
+  const sel=$('madEditMasterRole');
+  if(!sel) return;
+  // Current role, honoured the way the list grid shows it (roleName(b) uses this same
+  // forgiving chain) rather than trusting master.roleId alone. A merchant created by an old
+  // path may have _no_ master account yet (login shown as "-") yet carry a role on the brand.
+  const currentId=master&&master.roleId!=null?String(master.roleId):'';
+  const currentType=String((master&&(master.roleType||master.role))||'').toUpperCase();
+  const nested=master||null;
+  const currentLabel=String(
+    (brand&&(brand.masterRoleName||brand.roleName)) ||
+    (nested&&(nested.roleName||nested.role||nested.roleType)) ||
+    (brand&&(brand.masterRole||brand.role||brand.masterRoleType||brand.roleType)) ||
+    ''
+  ).toUpperCase();
+  let use=[];
+  try{
+   const primary=BO_AUTH.roleListAllUrl?BO_AUTH.roleListAllUrl():BO_AUTH.roleListUrl();
+   let rows=[];
+   try{
+    const j=await fetch(primary,{headers:BO_AUTH.authHeader(),cache:'no-store'}).then(r=>r.json());
+    if(j&&j.status!=='error') rows=Array.isArray(j.data)?j.data:[];
+   }catch(_){
+    const j=await fetch(BO_AUTH.roleListUrl(),{headers:BO_AUTH.authHeader(),cache:'no-store'}).then(r=>r.json());
+    if(j&&j.status!=='error') rows=Array.isArray(j.data)?j.data:[];
+   }
+   use=rows.filter(r=>{
+    const type=String(r.roleType||r.type||'CUSTOM').toUpperCase();
+    const global=r.brandId==null||r.brandId==='';
+    return global && Number(r.status==null?1:r.status)===1 && type==='BRAND_OWNER';
+   });
+  }catch(e){ use=[]; }
+  const items=use.map(r=>{
+   const id=r.id!=null&&r.id!==''?String(r.id):'';
+   return {id,type:String(r.roleType||r.type||'BRAND_OWNER').toUpperCase(),label:String(r.name||r.code||'Brand Owner')};
+  });
+  // Prefer matching a template by the current display label, then by id, then by type.
+  // Only when none hit does the master really have an assignable role in the template list.
+  let match=items.find(o=>currentLabel&&o.label.toUpperCase()===currentLabel)||
+            items.find(o=>o.id&&o.id===currentId)||
+            items.find(o=>currentType&&o.type===currentType)||
+            null;
+  const hasCurrent=!!(currentId||currentType||currentLabel);
+  if(!match){
+   if(hasCurrent){
+    // The master's role is not one of the Brand Owner templates — keep it selectable, so merely
+    // opening this form can never silently rewrite it on save.
+    items.unshift({id:currentId,type:currentType||'BRAND_OWNER',
+      label:(currentLabel||currentType||currentId)+' (current)'});
+    match=items[0];
+   }else{
+    // No role yet. Offer an explicit empty choice instead of letting the first template become
+    // the default and be silently granted by an unrelated save.
+    items.unshift({id:'',type:'',label:'No role assigned'});
+    match=items[0];
+   }
+  }
+  sel.innerHTML=items.map(o=>'<option value="'+esc(o.id)+'" data-role-type="'+esc(o.type)+'"'+
+   (o===match?' selected':'')+'>'+esc(o.label)+'</option>').join('');
+ }
 
  document.querySelectorAll('[data-mad-status]').forEach(btn=>{
   btn.addEventListener('click',()=>{
@@ -1129,7 +1208,7 @@
   if($('madCurrencyModal')?.classList.contains('show')){ closeCurrencyModal(); return; }
   if($('madResetPasswordModal')?.classList.contains('show')) closeResetPassword();
  });
-  form?.addEventListener('submit',async e=>{e.preventDefault();const st=$('madEditFormStatus');try{const pass=($('madEditMasterPassword')?.value||'');const confirm=($('madEditMasterPasswordConfirm')?.value||'');const masterUser=(editingMaster?.username||'').trim();if(pass||confirm){if(pass.length<8) throw new Error('Merchant Master password must be at least 8 characters');if(pass!==confirm) throw new Error('Confirm password does not match');if(pass&&!masterUser) throw new Error('This merchant has no master account yet.');}st.textContent='Saving merchant and provider pricing...';const id=+$('madEditId').value;await api('/admin/merchants/save',{method:'POST',headers:hdr(),body:JSON.stringify({id,code:$('madEditCode').value,name:$('madEditName').value.trim(),primaryDomain:$('madEditDomain').value.trim(),currency:($('madEditCurrency').value||'').trim()||'MYR',enabledCurrencies:enabledCurrencyPayload(),frontendRoot:$('madEditFrontendRoot').value.trim(),creditMode:$('madEditCreditMode').value,status:+$('madEditStatus').value,domainAliases:($('madEditAliases')?.value||'').trim(),lowCreditThreshold:Number($('madEditThreshold')?.value||0),providerMarkupPercent:Number($('madProviderMarkup').value||0)})});await saveProviderPricing(id);if(pass){const username=masterUser;const payload={displayName:editingMaster?.displayName||editingMaster?.name||username,username,password:pass,status:editingMaster?.status==null?1:Number(editingMaster.status)};if(editingMaster?.roleId!=null) payload.roleId=Number(editingMaster.roleId);if(editingMaster?.roleType) payload.roleType=editingMaster.roleType;await api('/admin/merchants/'+encodeURIComponent(id)+'/master-account',{method:'POST',headers:hdr(),body:JSON.stringify(payload)});}st.textContent='Merchant updated successfully.';await load();setTimeout(close,450)}catch(x){st.textContent=x.message}});
+  form?.addEventListener('submit',async e=>{e.preventDefault();const st=$('madEditFormStatus');try{const pass=($('madEditMasterPassword')?.value||'');const confirm=($('madEditMasterPasswordConfirm')?.value||'');const masterUser=(editingMaster?.username||'').trim();if(pass||confirm){if(pass.length<8) throw new Error('Merchant Master password must be at least 8 characters');if(pass!==confirm) throw new Error('Confirm password does not match');if(pass&&!masterUser) throw new Error('This merchant has no master account yet.');}st.textContent='Saving merchant and provider pricing...';const id=+$('madEditId').value;await api('/admin/merchants/save',{method:'POST',headers:hdr(),body:JSON.stringify({id,code:$('madEditCode').value,name:$('madEditName').value.trim(),primaryDomain:$('madEditDomain').value.trim(),currency:($('madEditCurrency').value||'').trim()||'MYR',enabledCurrencies:enabledCurrencyPayload(),frontendRoot:$('madEditFrontendRoot').value.trim(),creditMode:$('madEditCreditMode').value,status:+$('madEditStatus').value,domainAliases:($('madEditAliases')?.value||'').trim(),lowCreditThreshold:Number($('madEditThreshold')?.value||0),providerMarkupPercent:Number($('madProviderMarkup').value||0)})});await saveProviderPricing(id);if(masterUser){const roleSel=$('madEditMasterRole');const pickedId=roleSel?.value||'';const pickedType=(roleSel?.selectedOptions?.[0]?.getAttribute('data-role-type')||'').toUpperCase();const payload={displayName:editingMaster?.displayName||editingMaster?.name||masterUser,username:masterUser,password:pass||null,status:editingMaster?.status==null?1:Number(editingMaster.status)};const roleId=pickedId||(editingMaster?.roleId!=null?String(editingMaster.roleId):'');const roleType=pickedType||String(editingMaster?.roleType||editingMaster?.role||'').toUpperCase();if(roleId) payload.roleId=Number(roleId);if(roleType) payload.roleType=roleType;await api('/admin/merchants/'+encodeURIComponent(id)+'/master-account',{method:'POST',headers:hdr(),body:JSON.stringify(payload)});}st.textContent='Merchant updated successfully.';await load();setTimeout(close,450)}catch(x){st.textContent=x.message}});
  $('madEditCurrency')?.addEventListener('change',()=>{
   syncEnabledWithPrimary();
   syncCurrencyUnits();
@@ -1155,6 +1234,8 @@
  $('madCurrencyMoveLeft')?.addEventListener('click', ()=>moveSelectedToAdded());
  $('madCurrencyMoveRight')?.addEventListener('click', ()=>moveSelectedToAvailable());
  $('madCurrencyDual')?.addEventListener('click', e=>{
+  const remove=e.target.closest&&e.target.closest('[data-mad-currency-remove]');
+  if(remove){ e.preventDefault(); e.stopPropagation(); discardStagedCurrency(remove.getAttribute('data-mad-currency-remove')); return; }
   const item=e.target.closest&&e.target.closest('[data-mad-currency-code]');
   if(!item) return;
   const code=normalizeCurrencyCode(item.getAttribute('data-mad-currency-code'));
@@ -1168,6 +1249,15 @@
    return;
   }
   toggleCurrencyModalSelection(code, side);
+ });
+ // The discard control is a span[role=button] inside the item button, so Enter/Space needs
+ // handling here — the parent button would otherwise absorb the key as a selection.
+ $('madCurrencyDual')?.addEventListener('keydown', e=>{
+  if(e.key!=='Enter' && e.key!==' ') return;
+  const remove=e.target.closest&&e.target.closest('[data-mad-currency-remove]');
+  if(!remove) return;
+  e.preventDefault(); e.stopPropagation();
+  discardStagedCurrency(remove.getAttribute('data-mad-currency-remove'));
  });
  document.querySelectorAll('[data-mad-currency-close]').forEach(btn=>btn.addEventListener('click', ()=>closeCurrencyModal()));
  $('madProviderSearch')?.addEventListener('input', e=>{ providerSearch=e.target.value||''; renderCatalog(); });
