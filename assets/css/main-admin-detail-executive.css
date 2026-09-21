@@ -1165,6 +1165,12 @@ body.main-admin-detail-page .mad-modal-panel{
   border-radius:8px!important;border:1px solid var(--bo-border)!important;
   background:var(--bo-surface)!important;box-shadow:var(--bo-shadow)!important;
 }
+/* The panel's body child carries the SAME surface colour and a square box, and the panel's
+   overflow stays visible (.mac-adjust-panel needs it), so the child's square corners painted
+   over the panel's rounded bottom corners. Match the child's bottom radius to the panel's. */
+body.main-admin-detail-page .mad-modal-panel > .modal-clean-body{
+  border-radius:0 0 8px 8px;
+}
 body.main-admin-detail-page .mad-modal-title{display:flex;align-items:center;gap:12px}
 body.main-admin-detail-page .mad-modal-icon{
   width:40px;height:40px;border-radius:8px;display:grid;place-items:center;
@@ -1527,6 +1533,10 @@ body.main-admin-detail-page .mad-modal-actions{display:flex;justify-content:flex
   body.main-admin-detail-page .mad-modal-panel,
   body.main-admin-detail-page .mad-pass-modal-panel{
     border-radius:14px 14px 0 0!important;
+  }
+  /* The sheet's bottom edge is square, so the child must not round it either. */
+  body.main-admin-detail-page .mad-modal-panel > .modal-clean-body{
+    border-radius:0;
   }
 }
 
