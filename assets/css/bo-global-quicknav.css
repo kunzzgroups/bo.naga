@@ -38,3 +38,35 @@ body.bo-sidebar-click-mode .report-sidebar .nav-group.bo-flyout-hover .nav-group
 /* Dashboard pin controls are always visible so every eligible sidebar page can be pinned/unpinned without hover. */
 .bo-sidebar-pin{opacity:1!important}
 .report-nav a[data-menu-key] .bo-sidebar-pin{visibility:visible!important;pointer-events:auto!important}
+
+/* 2026-09-21: Keep normal BO sidebar/flyout labels readable after adding pin controls.
+   Scope excludes Main/Executive pages; pin button gets its own fixed space and the
+   desktop submenu flyout is wide enough for the original menu label + pin. */
+@media (min-width:992px){
+  body:not(.main-dashboard-page):not(.main-admin-detail-page) .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list{
+    width:340px!important;
+    min-width:300px!important;
+    max-width:min(380px,calc(100vw - var(--bo-sidebar-flyout-left,288px) - 16px))!important;
+  }
+  body:not(.main-dashboard-page):not(.main-admin-detail-page) .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list a[data-menu-key]{
+    display:flex!important;
+    align-items:center!important;
+    width:100%!important;
+    min-width:0!important;
+    padding-right:44px!important;
+    box-sizing:border-box!important;
+  }
+  body:not(.main-dashboard-page):not(.main-admin-detail-page) .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list a[data-menu-key] > span:not(.bo-sidebar-pin){
+    flex:1 1 auto!important;
+    min-width:0!important;
+    width:auto!important;
+    max-width:none!important;
+    white-space:normal!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+  }
+  body:not(.main-dashboard-page):not(.main-admin-detail-page) .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list .bo-sidebar-pin{
+    right:10px!important;
+    flex:0 0 26px!important;
+  }
+}
