@@ -1,7 +1,709 @@
-.usage-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:16px}.usage-summary-card{background:#fff;border:1px solid #dfe6f2;border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:4px}.usage-summary-card span{font-size:12px;font-weight:700;color:#61708f}.usage-summary-card strong{font-size:24px;line-height:1.1;color:#09142b}.usage-summary-card small{color:#71809d}.bank-usage-filter{grid-template-columns:minmax(390px,430px) minmax(260px,1fr) 130px 130px}.usage-bank-name{font-weight:800;color:#0a1630}.usage-bank-sub{display:block;color:#71809d;margin-top:3px}.usage-account{line-height:1.45}.usage-meter{min-width:170px}.usage-meter-line{display:flex;justify-content:space-between;gap:10px;font-weight:700}.usage-track{height:8px;background:#edf2fb;border-radius:999px;overflow:hidden;margin-top:8px}.usage-fill{height:100%;background:#2f63ef;border-radius:999px;max-width:100%}.usage-fill.warn{background:#f59e0b}.usage-fill.over{background:#ef4444}.usage-muted{color:#8794ad}.usage-status{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:800}.usage-status.active{background:#dcfce7;color:#15803d}.usage-status.inactive{background:#f1f5f9;color:#64748b}@media(max-width:1100px){.usage-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bank-usage-filter{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:640px){.usage-summary-grid{grid-template-columns:1fr}.bank-usage-filter{grid-template-columns:1fr}.usage-summary-card{padding:15px}}
+/* Bank Deposit Usage — Transaction listing companion (body.bo-wallet-tx.bank-deposit-usage-page) */
 
-/* Bank Usage: use one BO date-range picker instead of separate From / To inputs. */
-.bank-deposit-usage-page .bank-usage-filter>.bo-range-field{width:100%;min-width:390px;max-width:430px}
-.bank-deposit-usage-page .bank-usage-filter>.bo-range-field .bo-range-trigger{width:100%}
-@media(max-width:1100px){.bank-deposit-usage-page .bank-usage-filter>.bo-range-field{min-width:0;max-width:none}}
-@media(max-width:640px){.bank-deposit-usage-page .bank-usage-filter>.bo-range-field{width:100%;min-width:0;max-width:none}.bank-deposit-usage-page .bo-range-pop{left:0;right:auto;max-width:calc(100vw - 32px)}}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card{
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  border-radius:8px!important;
+  padding:0!important;
+}
+
+/* One toolbar row: status tabs left · date/search + actions right */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card > .bank-usage-toolbar{
+  flex:0 0 auto!important;
+  margin:0!important;
+  padding:10px 14px!important;
+  border-bottom:1px solid var(--bo-table-line,#EADCC8)!important;
+  background:var(--bo-table-paper,#FFF8EB)!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px 16px!important;
+  min-height:0!important;
+  width:100%!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-toolbar > .bo-tx-tabs{
+  flex:0 0 auto!important;
+  overflow:visible!important;
+  position:relative!important;
+  gap:6px!important;
+}
+/* Selected frame — lighter than toolbar `#FFF8EB` so the capsule reads (MD specimen) */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-toolbar .bo-tx-tabs.bo-seg > .bo-seg-thumb{
+  top:0!important;
+  height:100%!important;
+  border-radius:999px!important;
+  background-color:#FFFCF7!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 55%,#F3E8D6 100%)!important;
+  border:1px solid #E0D0B8!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.08),0 2px 8px rgba(92,74,48,.10)!important;
+  box-sizing:border-box!important;
+  opacity:1!important;
+  z-index:0!important;
+  pointer-events:none!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-toolbar .bo-tx-tab{
+  border-radius:999px!important;
+  gap:8px!important;
+  color:#71717A!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-toolbar .bo-tx-tabs.bo-seg > .bo-tx-tab{
+  position:relative!important;
+  z-index:1!important;
+  background:transparent!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-toolbar .bo-tx-tabs:not(.bo-seg) .bo-tx-tab.is-active,
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-toolbar .bo-tx-tabs.bo-seg .bo-tx-tab.is-active{
+  background:transparent!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  color:#18191C!important;
+  font-weight:700!important;
+}
+/* Fallback when bounce thumb missing — still show cream capsule */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-toolbar .bo-tx-tabs:not(:has(> .bo-seg-thumb)) .bo-tx-tab.is-active{
+  background-color:#FFFCF7!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 55%,#F3E8D6 100%)!important;
+  border:1px solid #E0D0B8!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.08),0 2px 8px rgba(92,74,48,.10)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-toolbar .bo-tx-tabs.bo-seg > .bo-seg-thumb{
+  background-color:#2A2C36!important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%)!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.25)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-toolbar .bo-tx-tabs.bo-seg .bo-tx-tab.is-active{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-toolbar .bo-tx-tabs:not(:has(> .bo-seg-thumb)) .bo-tx-tab.is-active{
+  background-color:#2A2C36!important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%)!important;
+  border-color:rgba(255,255,255,.14)!important;
+}
+/* Active green · Suspend muted→red · All no dot (Status filter pills MD) */
+body.bo-wallet-tx.bank-deposit-usage-page .bo-tx-tab[data-usage-status-filter="active"]::before,
+body.bo-wallet-tx.bank-deposit-usage-page .bo-tx-tab[data-usage-status-filter="suspend"]::before{
+  content:""!important;
+  width:6px!important;
+  height:6px!important;
+  border-radius:50%!important;
+  flex:0 0 auto!important;
+  background:#B8C0CC!important;
+  box-shadow:none!important;
+  display:inline-block!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bo-tx-tab[data-usage-status-filter="suspend"]::before{
+  background:#C4C0D0!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bo-tx-tab[data-usage-status-filter="all"]::before{
+  content:none!important;
+  display:none!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bo-tx-tab.is-active[data-usage-status-filter="active"]::before{
+  background:#059669!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bo-tx-tab.is-active[data-usage-status-filter="suspend"]::before{
+  background:#DC2626!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .bo-tx-tab[data-usage-status-filter="active"]::before,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .bo-tx-tab[data-usage-status-filter="suspend"]::before{
+  background:#6B7280!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .bo-tx-tab.is-active[data-usage-status-filter="active"]::before{
+  background:#34D399!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .bo-tx-tab.is-active[data-usage-status-filter="suspend"]::before{
+  background:#F87171!important;
+}
+
+/* Filters = single horizontal flex row, shared 40px control height */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-filter.bo-filter-row,
+body.bo-wallet-tx.bank-deposit-usage-page .report-main .bank-usage-filter.bo-filter-row{
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  align-items:center!important;
+  gap:8px!important;
+  flex:0 1 auto!important;
+  min-width:0!important;
+  margin:0!important;
+  width:auto!important;
+  max-width:none!important;
+  grid-template-columns:none!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-filter > .field,
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-filter > .bo-range-field,
+body.bo-wallet-tx.bank-deposit-usage-page .report-main .bank-usage-filter > .field,
+body.bo-wallet-tx.bank-deposit-usage-page .report-main .bank-usage-filter > .bo-range-field{
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  margin:0!important;
+  padding:0!important;
+  gap:0!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+  flex:0 1 auto!important;
+}
+/* Date-range host replaces From/To — keep those fields out of the row */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-filter > .field.bo-filter-hidden-item,
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-filter > .field:has(#usageFrom),
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-filter > .field:has(#usageTo),
+body.bo-wallet-tx.bank-deposit-usage-page .report-main .bank-usage-filter > .field.bo-filter-hidden-item,
+body.bo-wallet-tx.bank-deposit-usage-page .report-main .bank-usage-filter > .field:has(#usageFrom),
+body.bo-wallet-tx.bank-deposit-usage-page .report-main .bank-usage-filter > .field:has(#usageTo){
+  display:none!important;
+  width:0!important;
+  min-width:0!important;
+  max-width:0!important;
+  flex:0 0 0!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border:0!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-filter > .bo-range-field{
+  flex:0 1 260px!important;
+  max-width:280px!important;
+  min-width:200px!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-filter > .bank-usage-keyword-field{
+  flex:1 1 180px!important;
+  max-width:280px!important;
+  min-width:140px!important;
+}
+
+/* Beat bo-ui-standard filter authority (needs matching :not(#id) weight) */
+html body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bank-usage-filter .bo-range-trigger,
+html body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bank-usage-filter #usageKeyword,
+html body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bank-usage-filter .bank-usage-keyword-field input,
+html body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bank-usage-list-card .user-toolbar-actions .clean-btn{
+  box-sizing:border-box!important;
+  height:40px!important;
+  min-height:40px!important;
+  max-height:40px!important;
+  border-radius:8px!important;
+  font-size:13px!important;
+  font-weight:700!important;
+  line-height:1!important;
+}
+html body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bank-usage-filter .bo-range-trigger,
+html body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bank-usage-filter #usageKeyword,
+html body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bank-usage-filter .bank-usage-keyword-field input{
+  width:100%!important;
+  padding:0 12px!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card .user-toolbar-actions,
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card .bank-usage-actions{
+  display:flex!important;
+  gap:8px!important;
+  align-items:center!important;
+  flex:0 1 auto!important;
+  flex-wrap:nowrap!important;
+  margin-left:auto!important;
+  min-width:0!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card .user-toolbar-actions .clean-btn{
+  width:auto!important;
+  min-width:0!important;
+  padding:0 12px!important;
+  white-space:nowrap!important;
+  text-decoration:none!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card .user-toolbar-actions a.clean-btn:hover,
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card .user-toolbar-actions a.clean-btn:focus,
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card .user-toolbar-actions a.clean-btn:visited{
+  text-decoration:none!important;
+}
+/* Primary CTA — Charcoal + Amber system.md (Buttons locked); height 40px to match toolbar row */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card .user-toolbar-actions .clean-btn.primary{
+  height:40px!important;
+  min-height:40px!important;
+  max-height:40px!important;
+  padding:0 14px!important;
+  border-radius:8px!important;
+  font-size:13px!important;
+  font-weight:700!important;
+  gap:8px!important;
+  color:#fff!important;
+  border:1px solid #E8901A!important;
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
+  box-shadow:0 8px 18px rgba(217,119,6,.22), inset 0 1px 0 rgba(255,255,255,.35)!important;
+  transition:transform .14s ease, box-shadow .14s ease, filter .14s ease!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card .user-toolbar-actions .clean-btn.primary:hover,
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card .user-toolbar-actions .clean-btn.primary:focus{
+  color:#fff!important;
+  border-color:#F59E0B!important;
+  background:linear-gradient(0deg,#FCD34D 0%,#FBBF24 28%,#F59E0B 62%,#EA8608 100%)!important;
+  transform:translateY(-1px)!important;
+  box-shadow:0 10px 22px rgba(217,119,6,.28), inset 0 1px 0 rgba(255,255,255,.4)!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card .user-toolbar-actions .clean-btn.primary:active{
+  transform:translateY(1px)!important;
+  background:linear-gradient(180deg,#F59E0B 0%,#EA8608 100%)!important;
+  box-shadow:0 4px 10px rgba(217,119,6,.18)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card .user-toolbar-actions .clean-btn.primary{
+  color:#2A2C36!important;
+  border-color:#F59E0B!important;
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.35), 0 0 0 1px rgba(245,158,11,.2), inset 0 1px 0 rgba(255,255,255,.25)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card .user-toolbar-actions .clean-btn.primary:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card .user-toolbar-actions .clean-btn.primary:focus{
+  color:#2A2C36!important;
+  border-color:#FBBF24!important;
+  background:linear-gradient(0deg,#FDE68A 0%,#FBBF24 40%,#F59E0B 100%)!important;
+}
+
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card > .table-wrap{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow:auto!important;
+  border:0!important;
+  border-radius:0!important;
+  background:var(--bo-table-paper,#FFF8EB)!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table{
+  width:100%!important;
+  min-width:1480px!important;
+  table-layout:fixed!important;
+  margin:0!important;
+  border-collapse:separate!important;
+  border-spacing:0!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table thead th,
+body.bo-wallet-tx.bank-deposit-usage-page .report-content .bank-usage-table thead th{
+  border-radius:0!important;
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  line-height:1.3!important;
+  hyphens:manual;
+  padding:12px 14px!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th,
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td{
+  box-sizing:border-box!important;
+  vertical-align:middle!important;
+  padding:12px 14px!important;
+  overflow:hidden!important;
+}
+/* Content columns breathe · control columns fixed (scroll inside .table-wrap) */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(1),
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(1){width:12%!important;} /* Bank */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(2),
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(2){width:12%!important;} /* Account */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(3),
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(3){width:11%!important;} /* Transaction Range */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(4),
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(4){width:11%!important;} /* Deposits */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(5),
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(5){width:11%!important;} /* Withdrawals */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(6),
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(6){width:11%!important;} /* Net Used / Max */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(7),
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(7){width:9%!important; text-align:center!important;} /* Daily Threshold */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(8),
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(8){
+  width:88px!important;
+  min-width:88px!important;
+  max-width:88px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+} /* Usage — compact */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(9),
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(9){
+  width:112px!important;
+  min-width:112px!important;
+  max-width:112px!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  padding-left:10px!important;
+  padding-right:10px!important;
+} /* Status — room for ACTIVE/INACTIVE pill */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(10),
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(10){
+  width:72px!important;
+  min-width:72px!important;
+  max-width:72px!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  padding-left:8px!important;
+  padding-right:8px!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+} /* Show — no ellipsis beside switch */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(10) .usage-show-switch,
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(10) .usage-show-switch.bo-ui-icon-button{
+  width:40px!important;
+  min-width:40px!important;
+  max-width:40px!important;
+  height:22px!important;
+  min-height:22px!important;
+  max-height:22px!important;
+  padding:0!important;
+  margin:0 auto!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  box-shadow:none!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(11),
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(11){
+  width:118px!important;
+  min-width:118px!important;
+  max-width:118px!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  padding-left:8px!important;
+  padding-right:12px!important;
+} /* Action — View + Edit + Delete */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(11) .bo-tx-actions{
+  justify-content:center!important;
+  gap:6px!important;
+  overflow:visible!important;
+}
+/* Action chips — Transaction MD 26×26 wells (not blue link icons) */
+html body.bo-wallet-tx.bank-deposit-usage-page .report-table .bo-tx-action-btn.is-view,
+html body.bo-wallet-tx.bank-deposit-usage-page .report-table a.bo-tx-action-btn.is-view{
+  background:var(--bo-control-well,#F5EBDC)!important;
+  border:1px solid var(--bo-border,#EADCC8)!important;
+  color:#57534E!important;
+  box-shadow:none!important;
+  text-decoration:none!important;
+}
+html body.bo-wallet-tx.bank-deposit-usage-page .report-table .bo-tx-action-btn.is-view:hover,
+html body.bo-wallet-tx.bank-deposit-usage-page .report-table a.bo-tx-action-btn.is-view:hover{
+  background:rgba(217,119,6,.12)!important;
+  border-color:#D97706!important;
+  color:#92400E!important;
+}
+html body.bo-wallet-tx.bank-deposit-usage-page .report-table .bo-tx-action-btn.is-view.is-disabled,
+html body.bo-wallet-tx.bank-deposit-usage-page .report-table .bo-tx-action-btn.is-view:disabled{
+  opacity:.38!important;
+  cursor:not-allowed!important;
+  pointer-events:none!important;
+}
+html body.bo-wallet-tx.bank-deposit-usage-page .report-table .bo-tx-action-btn.is-edit{
+  background:var(--bo-control-well,#F5EBDC)!important;
+  border:1px solid var(--bo-border,#EADCC8)!important;
+  color:#B45309!important;
+  box-shadow:none!important;
+  text-decoration:none!important;
+}
+html body.bo-wallet-tx.bank-deposit-usage-page .report-table .bo-tx-action-btn.is-edit:hover{
+  background:rgba(217,119,6,.12)!important;
+  border-color:#D97706!important;
+  color:#92400E!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .report-table .bo-tx-action-btn.is-view,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .report-table a.bo-tx-action-btn.is-view,
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .report-table .bo-tx-action-btn.is-edit{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#FBBF24!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table .usage-show-cell{
+  display:table-cell!important;
+}
+/* Status — Transaction MD `.status-pill` (same as Payment Method; clickable button) */
+body.bo-wallet-tx.bank-deposit-usage-page button.status-pill,
+body.bo-wallet-tx.bank-deposit-usage-page button.status-pill.bo-ui-button,
+body.bo-wallet-tx.bank-deposit-usage-page button.status-pill.bo-ui-button-secondary,
+body.bo-wallet-tx.bank-deposit-usage-page button.status-pill.bo-ui-button-danger{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:0!important;
+  margin:0!important;
+  margin-top:0!important;
+  border-radius:999px!important;
+  font-family:inherit!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  letter-spacing:.02em!important;
+  padding:5px 10px!important;
+  white-space:nowrap!important;
+  vertical-align:middle!important;
+  cursor:pointer!important;
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  box-shadow:none!important;
+  max-width:none!important;
+  width:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  transform:none!important;
+  transition:filter .15s ease, opacity .15s ease!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page button.status-pill:hover:not(:disabled){
+  filter:brightness(.97)!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page button.status-pill:focus-visible{
+  outline:2px solid #D97706!important;
+  outline-offset:2px!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page button.status-pill:disabled,
+body.bo-wallet-tx.bank-deposit-usage-page button.status-pill.is-busy{
+  opacity:.6!important;
+  cursor:wait!important;
+}
+/* Mini Switch — Charcoal + Amber */
+body.bo-wallet-tx.bank-deposit-usage-page .usage-show-switch{
+  box-sizing:border-box!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:0!important;
+  height:auto!important;
+  min-width:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  cursor:pointer!important;
+  font:inherit!important;
+  color:inherit!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .usage-show-switch-track{
+  position:relative!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  width:40px!important;
+  height:22px!important;
+  flex:0 0 40px!important;
+  border-radius:999px!important;
+  border:1px solid #E0D0B8!important;
+  background:linear-gradient(180deg,#F3E8D6 0%,#EADCC8 100%)!important;
+  box-shadow:inset 0 1px 2px rgba(92,74,48,.12)!important;
+  transition:background .18s ease, border-color .18s ease, box-shadow .18s ease!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .usage-show-switch-thumb{
+  position:absolute!important;
+  top:2px!important;
+  left:2px!important;
+  width:16px!important;
+  height:16px!important;
+  border-radius:50%!important;
+  background:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 100%)!important;
+  border:1px solid #EADCC8!important;
+  box-shadow:0 2px 6px rgba(92,74,48,.18)!important;
+  transition:transform .18s cubic-bezier(.22,1,.36,1), background .18s ease, border-color .18s ease, box-shadow .18s ease!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .usage-show-switch.is-on .usage-show-switch-track{
+  border-color:#E8901A!important;
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#EA8608 100%)!important;
+  box-shadow:0 4px 12px rgba(217,119,6,.22), inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .usage-show-switch.is-on .usage-show-switch-thumb{
+  transform:translateX(18px)!important;
+  background:#fff!important;
+  border-color:rgba(255,255,255,.85)!important;
+  box-shadow:0 2px 8px rgba(146,64,14,.28)!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .usage-show-switch:hover:not(:disabled) .usage-show-switch-track{
+  filter:brightness(1.03)!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .usage-show-switch:focus-visible{
+  outline:none!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .usage-show-switch:focus-visible .usage-show-switch-track{
+  outline:2px solid #D97706!important;
+  outline-offset:2px!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .usage-show-switch:active:not(:disabled) .usage-show-switch-thumb{
+  width:18px!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .usage-show-switch:disabled,
+body.bo-wallet-tx.bank-deposit-usage-page .usage-show-switch.is-busy{
+  opacity:.6!important;
+  cursor:wait!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .usage-show-switch-track{
+  border-color:rgba(255,255,255,.14)!important;
+  background:linear-gradient(180deg,#4A4C58 0%,#383A46 100%)!important;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.35)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .usage-show-switch-thumb{
+  background:linear-gradient(180deg,#F5F5F4 0%,#E7E5E4 100%)!important;
+  border-color:rgba(255,255,255,.2)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .usage-show-switch.is-on .usage-show-switch-track{
+  border-color:#F59E0B!important;
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  box-shadow:0 0 0 1px rgba(245,158,11,.2), 0 6px 16px rgba(0,0,0,.35)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.bank-deposit-usage-page .usage-show-switch:focus-visible .usage-show-switch-track{
+  outline-color:#F59E0B!important;
+}
+/* Never set display:block on td — that breaks row geometry into “boxed” cells */
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td.usage-account{
+  display:table-cell!important;
+  line-height:1.45!important;
+  word-break:break-word!important;
+  overflow:hidden!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table .usage-bank-name,
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table .usage-account-line{
+  display:block!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table .usage-meter{
+  min-width:0!important;
+  width:100%!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td small{
+  display:block!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card > .table-footer{
+  flex:0 0 auto!important;
+  margin:0!important;
+  padding:10px 16px!important;
+  border-top:1px solid var(--bo-table-line,#EADCC8)!important;
+  background:var(--bo-table-paper,#FFF8EB)!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:10px 16px!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card > .table-footer .table-info{
+  margin:0!important;
+  flex:1 1 auto!important;
+  min-width:0!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card > .table-footer .bo-usage-pager-host{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:10px!important;
+  flex:0 0 auto!important;
+  margin-left:auto!important;
+}
+
+.usage-bank-name{
+  font-weight:800;
+  color:var(--bo-text,#18191C);
+}
+.usage-account,
+.usage-account-line{line-height:1.45}
+.usage-meter{min-width:140px}
+.usage-meter-line{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-weight:700;
+  font-variant-numeric:tabular-nums;
+}
+.usage-track{
+  height:8px;
+  background:#F5EBDC;
+  border-radius:999px;
+  overflow:hidden;
+  margin-top:6px;
+  min-height:8px;
+}
+html[data-bo-theme="dark"] .usage-track{background:#2A2C36}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table .usage-track{
+  height:8px!important;
+  min-height:8px!important;
+  margin-top:6px!important;
+  border:0!important;
+}
+body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table .usage-meter-line{
+  display:flex!important;
+  justify-content:flex-start!important;
+  align-items:baseline!important;
+  gap:4px!important;
+  flex-wrap:nowrap!important;
+  white-space:nowrap!important;
+}
+.usage-fill{
+  height:100%;
+  background:#B45309;
+  border-radius:999px;
+  max-width:100%;
+}
+.usage-fill.warn{background:#F59E0B}
+.usage-fill.over{background:#EF4444}
+.usage-muted{color:var(--bo-muted,#78716C)}
+
+@media (max-width:1280px){
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card > .bank-usage-toolbar{
+    flex-wrap:wrap!important;
+  }
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-toolbar > .bo-tx-tabs{
+    width:100%!important;
+  }
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card .user-toolbar-actions,
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card .bank-usage-actions{
+    margin-left:0!important;
+    width:100%!important;
+    justify-content:flex-end!important;
+    flex-wrap:wrap!important;
+  }
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-filter.bo-filter-row{
+    flex:1 1 auto!important;
+    min-width:220px!important;
+  }
+}
+@media (max-width:1024px){
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-filter.bo-filter-row{
+    flex-wrap:wrap!important;
+  }
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-filter > .bo-range-field,
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-filter > .bank-usage-keyword-field{
+    flex:1 1 200px!important;
+    max-width:none!important;
+  }
+}
+@media (max-width:768px){
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(3),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(3),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(7),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(7){
+    display:none!important;
+  }
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table{min-width:780px!important}
+}
+@media (max-width:640px){
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-filter.bo-filter-row{
+    flex-direction:column!important;
+    align-items:stretch!important;
+  }
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-filter > .bo-range-field,
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-filter > .bank-usage-keyword-field{
+    flex:1 1 auto!important;
+    width:100%!important;
+    max-width:none!important;
+  }
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(2),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(2),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(8),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(8){
+    display:none!important;
+  }
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table{min-width:620px!important}
+}

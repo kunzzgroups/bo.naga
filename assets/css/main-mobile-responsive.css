@@ -1,0 +1,741 @@
+/* MAIN/Boss mobile responsive layer.
+   Mobile-only overrides: desktop styles are intentionally untouched. */
+@media (max-width: 991.98px) {
+  html, body { max-width:100%; overflow-x:hidden; }
+  body .report-shell { min-width:0; width:100%; }
+  body .report-main { min-width:0; width:100%; margin-left:0!important; }
+  body .report-content { min-width:0; width:100%; padding-left:14px!important; padding-right:14px!important; }
+  body .report-sidebar { width:min(86vw,320px)!important; max-width:320px; z-index:1200!important; }
+  body .sidebar-overlay, body .sidebar-backdrop { z-index:1190!important; }
+
+  body .report-topbar { min-width:0; padding-left:14px!important; padding-right:14px!important; gap:10px; }
+  body .report-topbar > * { min-width:0; }
+  body .user-title-wrap, body .page-title-wrap, body .mad-title-wrap { min-width:0; }
+  body .user-title-wrap h1, body .page-title-wrap h1, body .mad-title-wrap h1 { white-space:normal; overflow-wrap:anywhere; }
+  body .report-actions { margin-left:auto; min-width:0; gap:6px!important; }
+
+  body .main-tabs, body .mad-tabs, body .merchant-tabs, body .provider-tabs,
+  body .report-tabs, body .detail-tabs, body .setting-tabs, body .nav-tabs {
+    max-width:100%; overflow-x:auto; overflow-y:hidden; flex-wrap:nowrap!important;
+    -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  body .main-tabs::-webkit-scrollbar, body .mad-tabs::-webkit-scrollbar,
+  body .merchant-tabs::-webkit-scrollbar, body .provider-tabs::-webkit-scrollbar,
+  body .report-tabs::-webkit-scrollbar, body .detail-tabs::-webkit-scrollbar { display:none; }
+  body .main-tabs > *, body .mad-tabs > *, body .merchant-tabs > *, body .provider-tabs > *,
+  body .report-tabs > *, body .detail-tabs > *, body .setting-tabs > *, body .nav-tabs > * { flex:0 0 auto; white-space:nowrap; }
+
+  body .table-wrap, body .table-responsive, body .mad-table-wrap, body .main-mod-table-wrap,
+  body .provider-table-wrap, body .merchant-table-wrap, body .report-table-wrap {
+    width:100%; max-width:100%; overflow-x:auto!important; -webkit-overflow-scrolling:touch;
+  }
+  body table { max-width:none; }
+
+  body .filter-row, body .filters-row, body .toolbar-row, body .main-mod-actions,
+  body .provider-exec-actions, body .mad-toolbar, body .report-toolbar {
+    max-width:100%; flex-wrap:wrap!important;
+  }
+  body input, body select, body textarea, body button { max-width:100%; }
+
+  body .modal-clean, body .mad-modal, body .bo-modal { padding-left:12px!important; padding-right:12px!important; }
+  body .modal-clean-panel, body .mad-modal-panel, body .bo-modal-panel { max-width:calc(100vw - 24px)!important; }
+
+  body .main-exec-kpis, body .main-mod-kpis, body .summary-grid, body .stats-grid,
+  body .merchant-summary-grid, body .provider-summary-grid { min-width:0; }
+}
+
+@media (max-width: 767.98px) {
+  body .report-content { padding:14px 10px 24px!important; }
+  body .report-topbar { min-height:64px; padding:8px 10px!important; }
+  body .report-topbar .hamb { flex:0 0 auto; }
+  body .report-actions .summary-chip, body .report-actions .top-stat,
+  body .report-actions .header-stat, body .report-actions .exec-stat { min-width:0!important; }
+
+  body .main-exec-kpis, body .main-mod-kpis, body .summary-grid, body .stats-grid,
+  body .merchant-summary-grid, body .provider-summary-grid,
+  body .form-grid, body .form-grid-2, body .form-grid-3, body .detail-grid,
+  body .mad-grid, body .merchant-grid, body .provider-grid { grid-template-columns:1fr!important; }
+
+  body .filter-row, body .filters-row, body .toolbar-row, body .report-toolbar,
+  body .main-mod-actions, body .provider-exec-actions { align-items:stretch!important; }
+  body .filter-row > *, body .filters-row > *, body .toolbar-row > *, body .report-toolbar > * { min-width:0; }
+
+  body .card, body .table-card, body .filter-card, body .form-panel, body .settings-card,
+  body .main-mod-card, body .mad-card { max-width:100%; }
+}
+
+@media (max-width: 575.98px) {
+  body .report-topbar { gap:6px; }
+  body .report-actions { gap:4px!important; }
+  body .report-profile-btn > span:not(.report-avatar), body .profile-mini > span:not(.report-avatar) { display:none!important; }
+  body .user-title-wrap p, body .page-title-wrap p, body .mad-title-wrap p { display:none; }
+  body .user-title-wrap h1, body .page-title-wrap h1, body .mad-title-wrap h1 { font-size:18px!important; line-height:1.2; }
+  body .user-title-icon, body .page-title-icon { width:38px!important; height:38px!important; flex:0 0 38px; }
+
+  body .report-content { padding-left:8px!important; padding-right:8px!important; }
+  body .main-exec, body .main-mod-page .report-content { min-width:0; }
+  body .main-exec-kpis, body .main-mod-kpis, body .summary-grid, body .stats-grid,
+  body .merchant-summary-grid, body .provider-summary-grid { grid-template-columns:1fr!important; }
+
+  body .modal-clean { align-items:flex-end!important; padding:8px!important; }
+  body .modal-clean-panel { width:100%!important; max-width:100%!important; max-height:calc(100dvh - 16px)!important; margin:0!important; }
+  body .dropdown-menu, body .report-profile-menu { max-width:calc(100vw - 16px)!important; }
+
+  body input, body select, body textarea { font-size:16px; }
+  body .pagination, body .main-mod-pager, body .provider-pagination { max-width:100%; flex-wrap:wrap; }
+}
+
+/* Mobile interaction hardening — intentionally isolated from desktop. */
+@media (max-width: 991.98px) {
+  /* Drawer must be a real opaque interaction layer above its backdrop. */
+  body .report-sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    background: var(--bo-sidebar-bg, #FFE8CC) !important;
+    z-index: 2147483001 !important;
+    pointer-events: auto !important;
+    touch-action: pan-y !important;
+    -webkit-overflow-scrolling: touch;
+    isolation: isolate;
+  }
+  body .report-sidebar.show { transform: translateX(0) !important; visibility: visible !important; }
+  body .report-sidebar *, body .report-sidebar a, body .report-sidebar button {
+    pointer-events: auto !important;
+    touch-action: manipulation;
+  }
+  body .sidebar-overlay, body .sidebar-backdrop {
+    z-index: 2147483000 !important;
+    pointer-events: none !important;
+  }
+  body .sidebar-overlay.show, body .sidebar-backdrop.show { pointer-events: auto !important; }
+  body.sidebar-open .report-sidebar { pointer-events: auto !important; }
+  body.sidebar-open { overflow: hidden !important; }
+
+  /* Mobile sidebar groups stay inside the drawer; never use desktop flyout geometry. */
+  body .report-sidebar .nav-group,
+  body .report-sidebar .report-nav { overflow: visible !important; }
+  body .report-sidebar .nav-group-list {
+    position: static !important;
+    inset: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Common page containers must be allowed to shrink to the viewport. */
+  body .report-shell, body .report-main, body .report-content,
+  body .main-exec, body .main-mod-page, body .main-page,
+  body .content-card, body .panel, body .section-card,
+  body .form-card, body .detail-card, body .main-card { min-width: 0 !important; max-width: 100% !important; }
+
+  /* Fixed multi-column layouts collapse without changing desktop definitions. */
+  body .main-grid, body .content-grid, body .section-grid,
+  body .two-col, body .two-column, body .three-col, body .three-column,
+  body .form-row-grid, body .detail-layout, body .merchant-layout,
+  body .provider-layout, body .role-layout, body .security-layout {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Toolbars remain touchable and do not escape the viewport. */
+  body .report-toolbar, body .toolbar, body .filter-bar, body .filters,
+  body .actions-row, body .page-actions, body .header-actions {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex-wrap: wrap !important;
+  }
+
+  body .dropdown-menu, body .report-profile-menu,
+  body .custom-select-menu, body .select-dropdown {
+    z-index: 2147483002 !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  body .main-grid, body .content-grid, body .section-grid,
+  body .two-col, body .two-column, body .three-col, body .three-column,
+  body .form-row-grid, body .detail-layout, body .merchant-layout,
+  body .provider-layout, body .role-layout, body .security-layout {
+    grid-template-columns: minmax(0,1fr) !important;
+  }
+
+  body .report-content > *, body .main-page > *, body .main-exec > * { max-width: 100% !important; }
+  body .field, body .form-group, body .input-group { min-width: 0 !important; max-width: 100% !important; }
+  body .field input, body .field select, body .field textarea,
+  body .form-group input, body .form-group select, body .form-group textarea { width: 100%; }
+
+  /* Horizontal scrolling is preferable to clipped/overlapping operational tables. */
+  body .table-wrap, body .table-responsive, body [class*="table-wrap"], body [class*="table-scroll"] {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* 2026-09-18 mobile QA hardening: shell, touch targets and dense admin pages. */
+@media (max-width: 991.98px) {
+  /* The backdrop begins after the drawer. This prevents a stacking-context on an
+     individual page from ever painting/capturing taps over the drawer itself. */
+  body .sidebar-overlay,
+  body .sidebar-backdrop {
+    inset: 0 0 0 min(86vw, 320px) !important;
+    width: auto !important;
+    height: 100dvh !important;
+  }
+  body .sidebar-overlay.show,
+  body .sidebar-backdrop.show { display:block !important; }
+
+  body .report-sidebar { width:min(86vw,320px)!important; }
+  body .report-sidebar .report-nav,
+  body .report-sidebar .nav-group,
+  body .report-sidebar .nav-group-list { position:relative!important; z-index:1!important; }
+  body .report-sidebar .nav-group-btn,
+  body .report-sidebar a,
+  body .report-sidebar button { min-height:44px; }
+
+  /* Header: never let account controls occupy the title's space. */
+  body .report-topbar { display:flex!important; align-items:center!important; width:100%!important; }
+  body .report-topbar .user-title-wrap,
+  body .report-topbar .page-title-wrap,
+  body .report-topbar .mad-title-wrap { flex:1 1 auto!important; width:auto!important; overflow:hidden!important; }
+  body .report-topbar .report-actions { flex:0 0 auto!important; position:static!important; transform:none!important; }
+  body .report-topbar .bo-account-meta,
+  body .report-topbar .bo-profile-meta,
+  body .report-topbar .profile-meta { display:none!important; }
+  body .report-topbar .bo-account-link,
+  body .report-topbar [data-bo-profile] { min-width:0!important; width:auto!important; }
+
+  /* Shared admin chrome must not place its action over the tab strip. */
+  body .mad-chrome { min-width:0!important; max-width:100%!important; }
+  body .mad-tabs { min-width:0!important; max-width:100%!important; }
+
+  /* Security/audit: keep dense controls readable rather than squeezing them. */
+  body.main-admin-security-page .mas-chrome-kpis,
+  body.main-admin-security-page .mas-kpis { min-width:0!important; max-width:100%!important; }
+  body.main-admin-security-page .mas-kpis {
+    display:flex!important; overflow-x:auto!important; overflow-y:hidden!important;
+    gap:8px!important; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  body.main-admin-security-page .mas-kpis::-webkit-scrollbar { display:none; }
+  body.main-admin-security-page .mas-kpi { flex:0 0 auto!important; min-width:150px!important; }
+  body.main-admin-security-page .mas-cats {
+    display:flex!important; flex-wrap:nowrap!important; overflow-x:auto!important; overflow-y:hidden!important;
+    max-width:100%!important; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  body.main-admin-security-page .mas-cats::-webkit-scrollbar { display:none; }
+  body.main-admin-security-page .mas-cats .mad-pill { flex:0 0 auto!important; white-space:nowrap!important; }
+  body.main-admin-security-page .mas-table-wrap,
+  body.main-admin-security-page .mas-table-body-scroll,
+  body.main-admin-security-page .mas-table-head { max-width:100%!important; overflow-x:auto!important; }
+  body.main-admin-security-page .mas-table { min-width:900px!important; width:900px!important; table-layout:auto!important; }
+}
+
+@media (max-width: 767.98px) {
+  body .report-topbar { min-height:58px!important; padding:7px 9px!important; gap:7px!important; }
+  body .report-topbar .hamb,
+  body .report-topbar .bo-theme-btn,
+  body .report-topbar .user-title-icon,
+  body .report-topbar .page-title-icon { width:36px!important; height:36px!important; min-width:36px!important; flex:0 0 36px!important; }
+  body .report-topbar .user-title-wrap,
+  body .report-topbar .page-title-wrap { gap:7px!important; }
+  body .report-topbar h1 { font-size:16px!important; line-height:1.15!important; white-space:nowrap!important; overflow:hidden!important; text-overflow:ellipsis!important; }
+  body .report-actions { gap:6px!important; }
+
+  body.main-admin-security-page .mad-chrome { display:block!important; height:auto!important; min-height:0!important; }
+  body.main-admin-security-page .mad-tabs { width:100%!important; overflow-x:auto!important; }
+  body.main-admin-security-page .mas-chrome-kpis { width:100%!important; margin-top:10px!important; }
+  body.main-admin-security-page .mas-toolbar { display:block!important; }
+  body.main-admin-security-page .mas-cats { width:100%!important; margin-bottom:10px!important; }
+  body.main-admin-security-page .mas-filters { display:grid!important; grid-template-columns:1fr!important; width:100%!important; gap:8px!important; }
+  body.main-admin-security-page .mas-search,
+  body.main-admin-security-page .mas-date-field,
+  body.main-admin-security-page .mas-filters > * { width:100%!important; min-width:0!important; max-width:100%!important; flex:none!important; }
+  body.main-admin-security-page .mas-date-field .ref-range-wrap,
+  body.main-admin-security-page .mas-date-field .ref-range-trigger { width:100%!important; min-width:0!important; max-width:100%!important; }
+}
+
+@media (max-width: 575.98px) {
+  body .report-topbar .user-title-icon,
+  body .report-topbar .page-title-icon { display:none!important; }
+  body .report-topbar h1 { font-size:15px!important; }
+  body .report-topbar .bo-account-avatar,
+  body .report-topbar .report-avatar { width:36px!important; height:36px!important; min-width:36px!important; }
+
+  body.main-admin-security-page .mas-kpi { min-width:142px!important; }
+  body.main-admin-security-page .mad-panel { overflow:hidden!important; }
+}
+
+/* Roles & Permissions is part of the Boss/Main administration flow even though its
+   filename is not main-*. Keep these rules mobile-only. */
+@media (max-width: 767.98px) {
+  body.menu-permission-page .mp-chrome,
+  body.menu-permission-page .mad-chrome {
+    display:grid!important; grid-template-columns:minmax(0,1fr)!important;
+    height:auto!important; min-height:0!important; max-height:none!important;
+    row-gap:8px!important; padding:0 0 8px!important;
+  }
+  body.menu-permission-page .mad-tabs {
+    width:100%!important; max-width:100%!important; overflow-x:auto!important; overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  body.menu-permission-page .mad-tabs::-webkit-scrollbar { display:none; }
+  body.menu-permission-page .mad-tab { flex:0 0 auto!important; padding:0 10px!important; }
+  body.menu-permission-page .mad-chrome-actions {
+    width:100%!important; height:auto!important; min-height:0!important;
+    justify-self:stretch!important; justify-content:flex-end!important;
+  }
+  body.menu-permission-page .mp-add-role-btn { position:static!important; transform:none!important; }
+  body.menu-permission-page .mp-role-row { display:grid!important; grid-template-columns:1fr!important; gap:8px!important; }
+  body.menu-permission-page .mp-role-label,
+  body.menu-permission-page .mp-role-row .rounded-select-wrap,
+  body.menu-permission-page .mp-role-row .mp-role-select,
+  body.menu-permission-page .mp-delete-role-btn,
+  body.menu-permission-page .mp-assigned-pill { width:100%!important; min-width:0!important; max-width:100%!important; }
+  body.menu-permission-page .mp-toolbar { display:flex!important; flex-direction:column!important; align-items:stretch!important; gap:8px!important; }
+  body.menu-permission-page .mp-toolbar-actions { display:flex!important; flex-wrap:wrap!important; width:100%!important; margin-left:0!important; gap:6px!important; }
+  body.menu-permission-page .mp-toolbar-actions > * { flex:1 1 auto!important; min-width:0!important; }
+  body.menu-permission-page .mp-control-card,
+  body.menu-permission-page .mp-form,
+  body.menu-permission-page .mp-workspace { min-width:0!important; max-width:100%!important; }
+}
+
+/* === Mobile QA pass v1.0.3: tab breathing room + audit table visibility === */
+@media (max-width: 767.98px) {
+  /* Every Main/Boss tab rail stays on one line and is finger-scrollable. */
+  body .mad-tabs,
+  body .main-tabs,
+  body .merchant-tabs,
+  body .provider-tabs,
+  body .setting-tabs,
+  body .report-tabs,
+  body .custom-tabs {
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    max-width:100%!important;
+    min-width:0!important;
+    gap:0!important;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-x:contain;
+    scrollbar-width:none;
+    touch-action:pan-x;
+  }
+  body .mad-tabs::-webkit-scrollbar,
+  body .main-tabs::-webkit-scrollbar,
+  body .merchant-tabs::-webkit-scrollbar,
+  body .provider-tabs::-webkit-scrollbar,
+  body .setting-tabs::-webkit-scrollbar,
+  body .report-tabs::-webkit-scrollbar,
+  body .custom-tabs::-webkit-scrollbar { display:none!important; }
+  body .mad-tabs > *, body .main-tabs > *, body .merchant-tabs > *,
+  body .provider-tabs > *, body .setting-tabs > *, body .report-tabs > *,
+  body .custom-tabs > * { flex:0 0 auto!important; white-space:nowrap!important; }
+
+  /* Tabs and page actions must occupy separate rows with visible breathing room. */
+  body .mad-chrome { row-gap:12px!important; }
+  body .mad-chrome-actions { position:static!important; transform:none!important; margin:0!important; }
+
+  body.menu-permission-page .mad-chrome { row-gap:12px!important; padding-bottom:12px!important; }
+  body.menu-permission-page .mad-tabs { padding:0 4px 6px!important; }
+  body.menu-permission-page .mad-chrome-actions {
+    display:flex!important; width:100%!important; padding:0 4px!important;
+    justify-content:flex-end!important; align-items:center!important;
+  }
+  body.menu-permission-page .mp-add-role-btn { margin:0!important; min-height:40px!important; }
+
+  /* Security & Audit: the whole 7-column table has ONE horizontal scroller.
+     Do not squeeze columns or give header/body separate horizontal scroll positions. */
+  body.main-admin-security-page .mas-table-wrap {
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-x:contain;
+    touch-action:pan-x pan-y;
+  }
+  body.main-admin-security-page .mas-table-head,
+  body.main-admin-security-page .mas-table-body-scroll {
+    width:900px!important;
+    min-width:900px!important;
+    max-width:none!important;
+    overflow-x:visible!important;
+  }
+  body.main-admin-security-page .mas-table-body-scroll {
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch;
+  }
+  body.main-admin-security-page .mas-table {
+    width:900px!important;
+    min-width:900px!important;
+    max-width:none!important;
+    table-layout:fixed!important;
+  }
+  body.main-admin-security-page .mas-table th,
+  body.main-admin-security-page .mas-table td {
+    visibility:visible!important;
+    opacity:1!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  body.main-admin-security-page .mad-footer { min-width:0!important; width:100%!important; }
+}
+
+/* === Mobile QA v1.0.4: final tab/action separation === */
+@media (max-width: 767.98px) {
+  /* Admin family: the tab rail is always its own row. Long tab sets scroll instead
+     of shrinking, wrapping or colliding with page actions. */
+  body.menu-permission-page .mp-chrome.mad-chrome {
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:auto auto!important;
+    align-items:stretch!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    padding:0 0 12px!important;
+    row-gap:10px!important;
+    overflow:visible!important;
+  }
+  body.menu-permission-page .mp-chrome.mad-chrome > .mad-tabs {
+    grid-column:1!important;
+    grid-row:1!important;
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    justify-self:stretch!important;
+    align-self:stretch!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    height:42px!important;
+    min-height:42px!important;
+    padding:0!important;
+    margin:0!important;
+    gap:4px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior-x:contain!important;
+    touch-action:pan-x!important;
+    scrollbar-width:none!important;
+  }
+  body.menu-permission-page .mp-chrome.mad-chrome > .mad-tabs > .mad-tab {
+    flex:0 0 auto!important;
+    width:auto!important;
+    min-width:max-content!important;
+    height:42px!important;
+    padding:0 12px!important;
+    white-space:nowrap!important;
+  }
+  body.menu-permission-page .mp-chrome.mad-chrome > .mad-chrome-actions {
+    grid-column:1!important;
+    grid-row:2!important;
+    position:static!important;
+    inset:auto!important;
+    transform:none!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-end!important;
+    justify-self:stretch!important;
+    align-self:stretch!important;
+    width:100%!important;
+    height:40px!important;
+    min-height:40px!important;
+    padding:0!important;
+    margin:0!important;
+    overflow:visible!important;
+  }
+  body.menu-permission-page .mp-chrome.mad-chrome > .mad-chrome-actions > .mp-add-role-btn {
+    position:static!important;
+    inset:auto!important;
+    transform:none!important;
+    float:none!important;
+    margin:0!important;
+    height:40px!important;
+    min-height:40px!important;
+  }
+
+  /* Security page uses the already-good admin tab appearance, but long rails must
+     remain horizontally swipeable without affecting the KPI row below. */
+  body.main-admin-security-page .mad-chrome > .mad-tabs {
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior-x:contain!important;
+    touch-action:pan-x!important;
+    scrollbar-width:none!important;
+  }
+  body.main-admin-security-page .mad-chrome > .mad-tabs > .mad-tab {
+    flex:0 0 auto!important;
+    min-width:max-content!important;
+    white-space:nowrap!important;
+  }
+
+  /* Keep the audit table as a readable desktop-width table inside one mobile
+     scroller; never collapse columns into the first visible sliver. */
+  body.main-admin-security-page .mad-table-wrap.mas-table-wrap {
+    position:relative!important;
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch!important;
+    touch-action:pan-x pan-y!important;
+  }
+  body.main-admin-security-page .mas-table-head,
+  body.main-admin-security-page .mas-table-body-scroll {
+    width:960px!important;
+    min-width:960px!important;
+    max-width:none!important;
+  }
+  body.main-admin-security-page table.mas-table {
+    display:table!important;
+    width:960px!important;
+    min-width:960px!important;
+    max-width:none!important;
+    table-layout:fixed!important;
+  }
+  body.main-admin-security-page table.mas-table thead { display:table-header-group!important; }
+  body.main-admin-security-page table.mas-table tbody { display:table-row-group!important; }
+  body.main-admin-security-page table.mas-table tr { display:table-row!important; }
+  body.main-admin-security-page table.mas-table th,
+  body.main-admin-security-page table.mas-table td {
+    display:table-cell!important;
+    min-width:0!important;
+    visibility:visible!important;
+    opacity:1!important;
+  }
+}
+
+/* === Mobile QA v1.0.5: Security & Audit single touch scroller === */
+@media (max-width: 767.98px) {
+  body.main-admin-security-page .report-main {
+    height:100dvh!important;
+    min-height:100dvh!important;
+    overflow:hidden!important;
+  }
+  body.main-admin-security-page .mas-panel {
+    min-height:0!important;
+    overflow:hidden!important;
+  }
+  body.main-admin-security-page .mad-table-wrap.mas-table-wrap {
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow:hidden!important;
+    touch-action:auto!important;
+  }
+  body.main-admin-security-page .mas-table-head {
+    flex:0 0 auto!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    overflow:hidden!important;
+  }
+  body.main-admin-security-page .mas-table-head > table.mas-table {
+    width:960px!important;
+    min-width:960px!important;
+    max-width:none!important;
+  }
+  body.main-admin-security-page .mas-table-body-scroll {
+    flex:1 1 auto!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    min-height:180px!important;
+    overflow-x:auto!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior:auto!important;
+    touch-action:pan-x pan-y!important;
+    scrollbar-gutter:auto!important;
+  }
+  body.main-admin-security-page .mas-table-body-scroll > table.mas-table {
+    width:960px!important;
+    min-width:960px!important;
+    max-width:none!important;
+  }
+}
+
+
+/* === Mobile QA v1.0.6: Security & Audit header/body column lock === */
+body.main-admin-security-page .mas-mobile-inline-head { display:none; }
+@media (max-width: 767.98px) {
+  /* On mobile the heading lives in the SAME 960px table as the rows.
+     This removes split-table width rounding and guarantees every heading follows its data column. */
+  body.main-admin-security-page .mas-table-head { display:none!important; }
+  body.main-admin-security-page .mas-table-body-table > .mas-mobile-inline-head {
+    display:table-header-group!important;
+  }
+  body.main-admin-security-page .mas-table-body-table > .mas-mobile-inline-head th {
+    visibility:visible!important;
+    opacity:1!important;
+  }
+}
+
+/* === Mobile QA v1.0.7: Security & Audit exact column geometry === */
+@media (max-width: 767.98px) {
+  /* Use one explicit pixel grid whose widths add up to the 960px mobile audit table.
+     This prevents desktop percentage widths / nth-child widths from being re-resolved
+     differently as the touch scroller moves. Header and every body cell share this grid. */
+  body.main-admin-security-page .mas-table-body-table {
+    width:960px!important;
+    min-width:960px!important;
+    max-width:960px!important;
+    table-layout:fixed!important;
+    border-collapse:collapse!important;
+  }
+  body.main-admin-security-page .mas-table-body-table col.mas-col-time    { width:120px!important; }
+  body.main-admin-security-page .mas-table-body-table col.mas-col-admin   { width:170px!important; }
+  body.main-admin-security-page .mas-table-body-table col.mas-col-event   { width:190px!important; }
+  body.main-admin-security-page .mas-table-body-table col.mas-col-target  { width:130px!important; }
+  body.main-admin-security-page .mas-table-body-table col.mas-col-ip      { width:170px!important; }
+  body.main-admin-security-page .mas-table-body-table col.mas-col-status  { width:100px!important; }
+  body.main-admin-security-page .mas-table-body-table col.mas-col-details { width:80px!important; }
+
+  body.main-admin-security-page .mas-table-body-table > thead > tr > th:nth-child(1),
+  body.main-admin-security-page .mas-table-body-table > tbody > tr > td:nth-child(1) { width:120px!important; min-width:120px!important; max-width:120px!important; }
+  body.main-admin-security-page .mas-table-body-table > thead > tr > th:nth-child(2),
+  body.main-admin-security-page .mas-table-body-table > tbody > tr > td:nth-child(2) { width:170px!important; min-width:170px!important; max-width:170px!important; }
+  body.main-admin-security-page .mas-table-body-table > thead > tr > th:nth-child(3),
+  body.main-admin-security-page .mas-table-body-table > tbody > tr > td:nth-child(3) { width:190px!important; min-width:190px!important; max-width:190px!important; }
+  body.main-admin-security-page .mas-table-body-table > thead > tr > th:nth-child(4),
+  body.main-admin-security-page .mas-table-body-table > tbody > tr > td:nth-child(4) { width:130px!important; min-width:130px!important; max-width:130px!important; }
+  body.main-admin-security-page .mas-table-body-table > thead > tr > th:nth-child(5),
+  body.main-admin-security-page .mas-table-body-table > tbody > tr > td:nth-child(5) { width:170px!important; min-width:170px!important; max-width:170px!important; }
+  body.main-admin-security-page .mas-table-body-table > thead > tr > th:nth-child(6),
+  body.main-admin-security-page .mas-table-body-table > tbody > tr > td:nth-child(6) { width:100px!important; min-width:100px!important; max-width:100px!important; }
+  body.main-admin-security-page .mas-table-body-table > thead > tr > th:nth-child(7),
+  body.main-admin-security-page .mas-table-body-table > tbody > tr > td:nth-child(7) { width:80px!important; min-width:80px!important; max-width:80px!important; }
+
+  /* Identical box model on the inline header and data cells. */
+  body.main-admin-security-page .mas-table-body-table > thead > tr > th,
+  body.main-admin-security-page .mas-table-body-table > tbody > tr > td {
+    box-sizing:border-box!important;
+    padding-left:10px!important;
+    padding-right:10px!important;
+  }
+  body.main-admin-security-page .mas-table-body-table > thead > tr > th:nth-child(6),
+  body.main-admin-security-page .mas-table-body-table > tbody > tr > td:nth-child(6) {
+    text-align:left!important;
+  }
+  body.main-admin-security-page .mas-table-body-table > thead > tr > th:nth-child(7),
+  body.main-admin-security-page .mas-table-body-table > tbody > tr > td:nth-child(7) {
+    text-align:right!important;
+  }
+}
+
+/* === Mobile QA v1.0.8: Merchant Settlement Ledger table containment === */
+@media (max-width: 767.98px) {
+  /* Keep the settlement ledger as a real table inside its own touch scroller.
+     Do not let page-level responsive rules squeeze its 8 columns into the phone width. */
+  body.main-merchant-report-page[data-report-view="settlement"] .mre-panel[data-report-panel="settlement"] {
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    overflow:hidden!important;
+  }
+  body.main-merchant-report-page[data-report-view="settlement"] .mre-settlement-scroll,
+  body.main-merchant-report-page[data-report-view="settlement"] .mad-table-wrap.mre-settlement-scroll {
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    overflow-x:auto!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    touch-action:pan-x pan-y!important;
+    overscroll-behavior:auto!important;
+  }
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table {
+    display:table!important;
+    width:960px!important;
+    min-width:960px!important;
+    max-width:960px!important;
+    table-layout:fixed!important;
+    border-collapse:separate!important;
+    border-spacing:0!important;
+    margin:0!important;
+  }
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table thead {
+    display:table-header-group!important;
+  }
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table tbody {
+    display:table-row-group!important;
+  }
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table tr {
+    display:table-row!important;
+  }
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table th,
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table td {
+    display:table-cell!important;
+    box-sizing:border-box!important;
+    white-space:nowrap!important;
+    vertical-align:middle!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table th:nth-child(1),
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table td:nth-child(1) { width:120px!important; }
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table th:nth-child(2),
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table td:nth-child(2) { width:150px!important; }
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table th:nth-child(3),
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table td:nth-child(3) { width:110px!important; }
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table th:nth-child(4),
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table td:nth-child(4),
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table th:nth-child(5),
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table td:nth-child(5),
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table th:nth-child(6),
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table td:nth-child(6) { width:125px!important; }
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table th:nth-child(7),
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table td:nth-child(7) { width:95px!important; }
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table th:nth-child(8),
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-table.msr-settle-table td:nth-child(8) { width:115px!important; }
+
+  /* Controls and footer stay inside the viewport. */
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-ledger-tools {
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    gap:8px!important;
+    align-items:center!important;
+  }
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-date-field,
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-date-field .ref-range-wrap,
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-date-field .ref-range-trigger,
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-date-field .mre-date-trigger {
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+  body.main-merchant-report-page[data-report-view="settlement"] .mre-table-footer {
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+  }
+  body.main-merchant-report-page[data-report-view="settlement"] .mre-table-footer .mad-footer-right {
+    min-width:0!important;
+    max-width:100%!important;
+    flex-wrap:wrap!important;
+  }
+}

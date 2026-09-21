@@ -70,6 +70,17 @@
     return (name.charAt(0) || 'A').toUpperCase();
   }
   function displayName(user){ return (user && (user.displayName || user.username)) || 'Admin'; }
+  function roleLabel(user){
+    user = user || {};
+    if(user.roleName) return String(user.roleName);
+    const type = String(user.roleType || '').toUpperCase();
+    if(user.rootAdmin === true || Number(user.rootAdmin) === 1 || type === 'ROOT') return 'Root Account';
+    if(type === 'MAIN' || user.mainAdmin === true || Number(user.mainAdmin) === 1) return 'Main Account';
+    if(type === 'MASTER') return 'Master Account';
+    if(type === 'BRAND_OWNER') return 'Brand Owner';
+    if(user.role) return String(user.role);
+    return 'Admin';
+  }
   function esc(v){
     return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -93,13 +104,20 @@
     if(p==='main-provider-settlement.html' || p==='main-provider-balance.html' || p==='main-provider-transactions.html') return 'main_provider_report.html';
     if(p==='main-merchant-balance.html' || p==='main-merchant-transactions.html') return 'main_merchant_report.html';
     if(p==='brand-detail.html') return 'brand-management.html';
+    if(p==='member-detail.html') return 'index.html';
     if(p==='provider-detail.html') return 'main-accounting-report.html';
     // Gateway Transactions is a drill-down of Payment Gateway and uses the same DB menu permission.
     if(p==='payment-gateway-transactions.html') return 'payment-gateway.html';
     // Merchant module drill-downs keep the Merchant sidebar item highlighted.
-    if(p==='main-merchant-create.html' || p==='main-merchant-credit.html' || p==='main-merchant-security.html' || p==='main-merchant-roles.html' || p==='main-merchant-role-create.html' || p==='main-merchant-profit.html' || p==='main-merchant-profit-record.html' || p==='main-merchant-repayments.html' || p==='main-merchant-settlement.html' || p==='merchant-profit.html'){
+    if(p==='main-merchant-create.html' || p==='main-merchant-credit.html' || p==='main-merchant-profit.html' || p==='main-merchant-profit-record.html' || p==='main-merchant-repayments.html' || p==='main-merchant-settlement.html' || p==='merchant-profit.html'){
       return 'main-merchant-detail.html';
     }
+    // Roles & Permissions (3.2) and Security & Audit (3.4) have their OWN Merchant submenu
+    // entries, so aliasing them to Merchants pointed the highlight at a different page than the
+    // one you were on. The admin side never aliased main-admin-security.html; this matches it.
+    // Create Role is a child of Roles, so it follows that entry — as the admin side maps
+    // main-admin-role-create.html to menu-permission.html rather than to its detail page.
+    if(p==='main-merchant-role-create.html') return 'main-merchant-roles.html';
     // Admin module drill-downs keep the Admin Details item highlighted.
     if(p==='main-admin-create.html' || p==='main-admin-edit.html' || p==='main-admin-credit.html'){
       return 'main-admin-detail.html';
@@ -151,14 +169,18 @@
       icon: String((m && m.icon) || 'bi-circle'),
       parentKey: String((m && m.parentKey) || ''),
       sortOrder: Number((m && m.sortOrder) || 0),
-      status: Number((m && (m.status == null ? 1 : m.status)))
+      status: Number((m && (m.status == null ? 1 : m.status))),
+      showInSidebar: Number((m && (m.showInSidebar == null ? 1 : m.showInSidebar)))
     };
   }
 
-  function menuLinkHtml(m, isSub){
+  function menuLinkHtml(m, isSub, forceActive){
     const href = esc(m.url || '#');
-    const active = pageFile(sidebarActivePage()) === pageFile(m.url || '');
-    const cls = (isSub ? 'report-sub ' : '') + (active ? 'active' : '');
+    // forceActive boolean: caller resolved duplicate URLs (first menu match wins).
+    const isActive = typeof forceActive === 'boolean'
+      ? forceActive
+      : pageFile(sidebarActivePage()) === pageFile(m.url || '');
+    const cls = (isSub ? 'report-sub ' : '') + (isActive ? 'active' : '');
     return '<a href="' + href + '" class="' + cls.trim() + '" data-menu-key="' + esc(m.menuKey) + '">' +
       '<span><i class="bi ' + esc(m.icon || 'bi-circle') + ' me-2"></i>' + esc(m.title) + '</span></a>';
   }
@@ -219,6 +241,8 @@
       // Brand Detail is a drill-down of Brand Management and has no separate sidebar permission.
       // Inherit Brand Management access so MAIN/Boss users with Brands permission are not redirected.
       if(current === 'brand-detail.html') current = 'brand-management.html';
+      // Member Detail / Wallet is a drill-down of User Management (index.html).
+      if(current === 'member-detail.html') current = 'index.html';
       if(current === 'provider-detail.html') current = 'main-accounting-report.html';
       // Transaction history is intentionally a separate page, but it inherits the
       // Payment Gateway menu selected in ROOT Role/Menu Permission. No new hardcoded
@@ -384,9 +408,12 @@
         }
         if(json.message === 'Unauthorized') this.logout();
       }catch(e){}
-      // Keep profile/session usable on a transient request failure, but never rebuild or
-      // inject sidebar definitions from frontend code.
-      if(cached && cached.username) this.enforcePageAccess(cached);
+      // Keep profile/session usable on a transient request failure. Still paint the last
+      // DB-backed menus from localStorage — do not invent menus, but do not leave .report-nav blank.
+      if(cached && cached.username){
+        this.renderSidebar(cached);
+        this.enforcePageAccess(cached);
+      }
       return cached;
     },
     applyMenuPermission: function(user){
@@ -403,7 +430,7 @@
       // menu renaming, parent repair or frontend permission overrides.
       const menus = sourceMenus.map(normalizeMenu)
         .filter(function(m){
-          if(m.status !== 1 || !m.url || m.url === '#') return false;
+          if(m.status !== 1 || m.showInSidebar !== 1 || !m.url || m.url === '#') return false;
           // Admin / Merchant Credit Control pages are retired — keep Adjust/Add Credit on list pages.
           const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
           const key = String(m.menuKey || '').toLowerCase();
@@ -472,17 +499,40 @@
       roots.sort(function(a,b){ return Number(a.sortOrder||0)-Number(b.sortOrder||0)||String(a.title||'').localeCompare(String(b.title||'')); });
 
       const activePage=sidebarActivePage();
+      const activeFile=pageFile(activePage);
+      // Same HTML can appear under multiple groups (e.g. wallet-ledger in Transaction + Member).
+      // MD: only the first match (menu sort order) owns the active chip / open L1 bar.
+      let primaryGroupKey=null;
+      let primaryMenuKey=null;
+      roots.some(function(root){
+        if(root.kind==='menu'){
+          if(pageFile(root.menu.url||'')===activeFile){
+            primaryMenuKey=root.menu.menuKey;
+            return true;
+          }
+          return false;
+        }
+        const hit=root.items.find(function(m){return pageFile(m.url||'')===activeFile;});
+        if(hit){
+          primaryGroupKey=root.key;
+          primaryMenuKey=hit.menuKey;
+          return true;
+        }
+        return false;
+      });
       let html='';
       roots.forEach(function(root){
         if(root.kind==='menu'){
-          html+=menuLinkHtml(root.menu,false);
+          html+=menuLinkHtml(root.menu,false, primaryMenuKey!=null && root.menu.menuKey===primaryMenuKey);
           return;
         }
-        const isOpen=root.items.some(function(m){return pageFile(activePage)===pageFile(m.url||'');});
+        const isOpen=primaryGroupKey!=null && root.key===primaryGroupKey;
         html+='<div class="nav-group '+(isOpen?'open':'')+'" data-menu-group="'+esc(root.key)+'">'+
           '<button type="button" class="nav-group-btn" aria-expanded="'+(isOpen?'true':'false')+'">'+
           '<span><i class="bi '+esc(root.icon)+' me-2"></i>'+esc(root.title)+'</span><i class="bi bi-chevron-down"></i></button>'+
-          '<div class="nav-group-list '+(isOpen?'show':'')+'">'+root.items.map(function(m){return menuLinkHtml(m,true);}).join('')+'</div></div>';
+          '<div class="nav-group-list '+(isOpen?'show':'')+'">'+root.items.map(function(m){
+            return menuLinkHtml(m,true, primaryMenuKey!=null && m.menuKey===primaryMenuKey);
+          }).join('')+'</div></div>';
       });
       nav.innerHTML=html;
 
@@ -647,9 +697,14 @@
     renderProfile: function(){
       const user = this.user();
       const name = displayName(user);
+      const role = roleLabel(user);
       document.querySelectorAll('[data-admin-name]').forEach(el => el.textContent = name);
       document.querySelectorAll('[data-admin-username]').forEach(el => el.textContent = user.username || 'admin');
-      document.querySelectorAll('[data-admin-avatar]').forEach(el => el.textContent = initials(name));
+      document.querySelectorAll('[data-admin-role]').forEach(el => el.textContent = role);
+      document.querySelectorAll('[data-admin-avatar]').forEach(el => {
+        if(el.querySelector('i.bi-person,i.bi-person-fill')) return;
+        el.textContent = initials(name);
+      });
     },
     headerCountersHtml: function(){
       return '<div class="bo-header-counters" data-bo-header-counters>' +
@@ -662,7 +717,7 @@
           '<span class="bo-header-counter-text"><small>Deposit</small><b data-header-pending-deposit>0</b></span>' +
         '</a>' +
         '<a class="bo-header-counter" href="member-withdraw.html" data-operation-notification-ack="wallet" title="Pending withdrawal requests" aria-label="Pending withdrawal requests">' +
-          '<span class="bo-header-counter-icon withdraw"><i class="bi bi-arrow-left-right"></i></span>' +
+          '<span class="bo-header-counter-icon withdraw"><i class="bi bi-box-arrow-up"></i></span>' +
           '<span class="bo-header-counter-text"><small>Withdraw</small><b data-header-pending-withdraw>0</b></span>' +
         '</a>' +
       '</div>';
@@ -699,12 +754,17 @@
     profileHtml: function(){
       const user = this.user();
       const name = displayName(user);
+      const role = roleLabel(user);
       const counters = String(user.roleType||'').toUpperCase()==='MAIN' ? '' : this.headerCountersHtml();
+      /* Locked topbar chrome (system.md / Fig.2): meta left · person avatar right · no gear */
       return counters + '<a class="bo-account-link" href="profile.html" title="Account settings" aria-label="Open account settings">' +
-        '<span class="report-avatar" data-admin-avatar>' + initials(name) + '</span>' +
-        '<span class="bo-account-name" data-admin-name>' + esc(name) + '</span>' +
-        '<i class="bi bi-gear bo-account-setting-icon" aria-hidden="true"></i>' +
-        '</a>';
+        '<span class="bo-account-meta">' +
+          '<span class="bo-account-name" data-admin-name>' + esc(name) + '</span>' +
+          '<span class="bo-account-role" data-admin-role>' + esc(role) + '</span>' +
+        '</span>' +
+        '<span class="report-avatar" aria-hidden="true"><i class="bi bi-person"></i></span>' +
+        '<i class="bi bi-gear bo-account-setting-icon" hidden aria-hidden="true"></i>' +
+      '</a>';
     },
     injectProfile: function(){
       document.querySelectorAll('[data-bo-profile]').forEach(el => { el.innerHTML = this.profileHtml(); });

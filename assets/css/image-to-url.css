@@ -63,7 +63,7 @@ h1 {
   border: 1px solid #e5e7eb;
   border-radius: 14px;
   overflow: hidden;
-  background: #f8fafc;
+  background: #F5EBDC;
 }
 .preview-wrap img {
   display: block;
@@ -97,12 +97,12 @@ h1 {
 #resultUrl,
 textarea {
   width: 100%;
-  border: 1px solid #d0d5dd;
+  border: 1px solid #DCC9A8;
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 14px;
   outline: none;
-  background: #fff;
+  background: #FFF8EB;
 }
 textarea {
   resize: vertical;

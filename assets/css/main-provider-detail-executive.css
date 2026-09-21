@@ -1,0 +1,351 @@
+/* ==========================================================================
+   MAIN Provider Detail — Charcoal + Amber (page slice)
+   Scope: body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page)
+   Every rule below carries that prefix (plus html[data-bo-theme="dark"] where the modes differ).
+
+   Complements assets/css/main-provider-family-executive.css. That file owns the shared shell
+   of this family — tokens, canvas continuum, sidebar, topbar, tabs, panels, filter bar, table,
+   footer, pager, buttons, modals, icon buttons + tooltips, tips, row avatar — and it already
+   reaches this page because main-provider-detail.html can carry main-provider-family-page.
+   This file carries only what the shared block cannot know:
+
+     .mpv-* vocabulary emitted by assets/js/main-provider-detail.js (tile, name copy, verified
+     mark, status pill, actions cell, header badge), the [data-mpv-status] filter pills (the
+     family dots key on data-mad-status and never match here), the .rounded-select-* trigger
+     reports.js builds inside .mad-filters, the pager ellipsis the shared pager rules skip, the
+     empty state, and the four data columns the JS renders as bare <td>s.
+
+   Load order: added as the LAST stylesheet on the page, after main-provider-family-executive.css
+   and bo-account-chip.css. Several legacy rules below TIE with the family file on specificity and
+   carry !important in both files; this file's later source position is what settles those ties,
+   so it must stay after the family file.
+
+   Out of scope (do not apply this file to them — the :not() above plus the missing marker class
+   keep every rule here away): main-provider-create.html (main-provider-create-page),
+   main-provider-endpoints.html (main-provider-integration-page), and
+   main-provider-credentials.html, which also carries main-report-exec-page. Nothing here may be
+   lifted into a shared file without re-measuring against those three.
+
+   Legacy still loaded on this page that these rules are written to beat:
+     - assets/css/main-provider-executive.css — body.main-provider-detail-page .mpv-* at (0,2,1),
+       including .mpv-mark's hue palette, .mpv-status's translucent washes and the cyan
+       .mpv-active-badge wash.
+     - assets/css/main-admin-detail-executive.css — body.main-admin-detail-page .mad-search /
+       .mad-filters .rounded-select-* / .mad-pager / .mad-empty, most of them !important, with the
+       retired cyan focus rings and pure #fff control surfaces.
+     - assets/css/table-pagination-horizontal.css:57 — .smart-page-ellipsis pinned on a cool gray
+       with !important (the family pager rules never covered the ellipsis).
+     - assets/css/reports.css:1455-1460 / 1639-1644 — .rounded-select-* on #fff with an indigo
+       focus ring (the filter selects; colours only, geometry is inline-locked, see below).
+
+   Already handled for this page by the family file — deliberately NOT restated here:
+     .mad-btn-ghost (#mpvExportBtn, #mpvResetBtn), .mad-pager .smart-page inactive + active +
+     disabled, .mad-pills / .mad-pill base / .bo-seg-thumb / hover, all three .mad-pill-count
+     variants (is-active-count / is-warn-count / is-danger-count — the family's blanket
+     .mad-pill-count{color:inherit!important} outranks the per-variant legacy colours),
+     .mad-footer / .mad-footer-info, .mad-icon-btn colour + hover, .mad-search frame + placeholder,
+     .mad-table th/td, .mad-sync (var(--bo-muted) is the locked muted token), .mad-empty padding
+     and base colour.
+   ========================================================================== */
+
+/* ---- Header badge (.mpv-active-badge — "N Active" beside the page title) ---- */
+/* Light: amber tint chip on the cream topbar. Dark: same chip lifted on amber/16 with the
+   bright amber label. Replaces the legacy cyan wash (main-provider-executive.css:15). */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-active-badge{
+  background:rgba(217,119,6,.12)!important;
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-active-badge{
+  background:rgba(245,158,11,.16)!important;
+  color:#FBBF24!important;
+}
+
+/* ---- Filter pills — [data-mpv-status] dot legend ---- */
+/* The page's pills carry data-mpv-status (All / Active / Maintenance / Suspended); the family's
+   dots are keyed to data-mad-status, so this legend is drawn here. Geometry matches the family
+   dots exactly; only the colours differ per status. The active pill's FILL is not painted on the
+   pill — bo-seg-bounce.css forces .bo-seg > .mad-pill.is-active{background:transparent!important}
+   and the family draws the cream/charcoal thumb on .mad-pills.bo-seg > .bo-seg-thumb. */
+body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pill[data-mpv-status="active"]::before,
+body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pill[data-mpv-status="maintenance"]::before,
+body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pill[data-mpv-status="suspended"]::before{
+  content:"";
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  flex:0 0 auto;
+  box-shadow:none;
+}
+/* Light — dot is neutral until its pill is the current filter, then it names the status. */
+body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pill[data-mpv-status="active"]::before,
+body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pill[data-mpv-status="maintenance"]::before,
+body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pill[data-mpv-status="suspended"]::before{
+  background:#B8C0CC!important;
+}
+body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pill.is-active[data-mpv-status="active"]::before{
+  background:#059669!important;
+}
+body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pill.is-active[data-mpv-status="maintenance"]::before{
+  background:#D97706!important;
+}
+body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pill.is-active[data-mpv-status="suspended"]::before{
+  background:#DC2626!important;
+}
+/* Dark — charcoal dot, neon glow in the status colour while the pill is the current filter. */
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pill[data-mpv-status="active"]::before,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pill[data-mpv-status="maintenance"]::before,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pill[data-mpv-status="suspended"]::before{
+  background:#3F3F46!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pill.is-active[data-mpv-status="active"]::before{
+  background:#34D399!important;
+  box-shadow:0 0 0 2px rgba(52,211,153,.18),0 0 10px rgba(52,211,153,.55)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pill.is-active[data-mpv-status="maintenance"]::before{
+  background:#F59E0B!important;
+  box-shadow:0 0 0 2px rgba(245,158,11,.18),0 0 10px rgba(245,158,11,.55)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pill.is-active[data-mpv-status="suspended"]::before{
+  background:#F87171!important;
+  box-shadow:0 0 0 2px rgba(248,113,113,.15),0 0 8px rgba(248,113,113,.4)!important;
+}
+
+/* ---- Filter bar — search frame + typed selects (#mpvSearchInput, #mpvTypeFilter, #mpvEnvFilter) ---- */
+/* reports.js wraps every <select> in .rounded-select-wrap and builds .rounded-select-btn /
+   -menu / -option, so the visible control is the BUTTON, not the <select>. reports.css paints
+   those on #fff with an indigo focus ring, and main-admin-detail-executive.css rings
+   .mad-search:focus-within with the retired cyan — both are restated on amber here.
+   GEOMETRY IS OFF LIMITS: main-provider-detail.js:272-287 writes width / min-width / max-width /
+   flex on .rounded-select-wrap, .rounded-select-btn, .rounded-select-menu and the bare <select>
+   through style.setProperty(...,'important') and re-applies it from a MutationObserver. Inline
+   !important outranks any stylesheet, so only colours, borders, radius and shadows belong here. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-search:focus-within{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-filters > .rounded-select-wrap .rounded-select-btn.open,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-filters > .rounded-select-wrap .rounded-select-btn:focus{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-search i{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-search:focus-within{
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-filters > .rounded-select-wrap .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-filters > .rounded-select-wrap .rounded-select-btn:focus{
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+  color:#F5F5F4!important;
+}
+/* Menu options. Light already resolves to the locked amber wash + deep amber through
+   var(--bo-cyan-tint) / var(--bo-cyan-deep) — only the dark states need restating: the wash was
+   cyan rgba(33,166,215,.14) and the selected option needs the locked solid amber fill. */
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option:hover:not(.active):not(.is-active){
+  background:rgba(245,158,11,.16)!important;
+  color:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option.active:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option.is-active,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option.is-active:hover{
+  background:#F59E0B!important;
+  color:#2A2C36!important;
+}
+
+/* ---- Status pill (.mpv-status.is-active | .is-maintenance | .is-suspended) ---- */
+/* Same recipe as the family's .mad-status so this list reads like Admin / Merchant: solid
+   green / amber / red chips with a solid dot in light, amber-tinted charcoal chips with a neon
+   dot in dark. The legacy washes are translucent cyan-era rgb() values, and the base pill is
+   cool #F2F4F7 — off-ladder on cream. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-status{
+  background:#F5EBDC!important;
+  color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-status.is-active{
+  background:#D1FAE5!important;
+  color:#047857!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-status.is-active i{
+  background:#10B981!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-status.is-maintenance{
+  background:#FEF3C7!important;
+  color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-status.is-maintenance i{
+  background:#D97706!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-status.is-suspended{
+  background:#FEE2E2!important;
+  color:#B91C1C!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-status.is-suspended i{
+  background:#DC2626!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-status{
+  background:#2A2C36!important;
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-status.is-active{
+  background:rgba(16,185,129,.14)!important;
+  color:#6EE7B7!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-status.is-active i{
+  background:#34D399!important;
+  box-shadow:0 0 0 2px rgba(52,211,153,.18),0 0 10px rgba(52,211,153,.55)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-status.is-maintenance{
+  background:rgba(245,158,11,.16)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-status.is-maintenance i{
+  background:#F59E0B!important;
+  box-shadow:0 0 0 2px rgba(245,158,11,.18),0 0 10px rgba(245,158,11,.55)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-status.is-suspended{
+  background:rgba(239,68,68,.14)!important;
+  color:#FCA5A5!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-status.is-suspended i{
+  background:#F87171!important;
+  box-shadow:0 0 0 2px rgba(248,113,113,.15),0 0 8px rgba(248,113,113,.4)!important;
+}
+
+/* ---- Table cells — provider list (.mpv-table, 7 columns) ---- */
+/* Row tile. DESIGN.md's row avatar is a neutral index marker (light #F5EBDC / #6b360c, dark
+   #2A2C36 / #E7E5E4). main-provider-detail.js hashes the provider code into
+   .is-teal / .is-violet / .is-amber / .is-rose / .is-slate — a colour that encodes nothing — so
+   all five variants collapse to the one neutral tile. The edge is an INSET ring, not a border,
+   so the 40x40 flex box stays exactly as main-provider-executive.css sized it. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-mark,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-mark.is-teal,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-mark.is-violet,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-mark.is-amber,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-mark.is-rose,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-mark.is-slate{
+  background-color:#F5EBDC!important;
+  color:#6b360c!important;
+  box-shadow:inset 0 0 0 1px #EADCC8!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-mark,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-mark.is-teal,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-mark.is-violet,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-mark.is-amber,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-mark.is-rose,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-mark.is-slate{
+  background-color:#2A2C36!important;
+  color:#E7E5E4!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)!important;
+}
+/* Suspended row: the tile agrees with the status pill instead of contradicting it — the one
+   variant that carries real information (same recipe as the family's suspended .mad-avatar). */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-table tbody tr:has(.mpv-status.is-suspended) .mpv-mark{
+  background-color:#FEE2E2!important;
+  color:#B91C1C!important;
+  box-shadow:inset 0 0 0 1px rgba(239,51,64,.30)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-table tbody tr:has(.mpv-status.is-suspended) .mpv-mark{
+  background-color:rgba(239,68,68,.14)!important;
+  color:#FCA5A5!important;
+  box-shadow:inset 0 0 0 1px rgba(248,113,113,.30)!important;
+}
+/* Description line under the provider name — locked muted-on-cream #57534E, not the legacy
+   var(--bo-muted) #71717A that DESIGN.md calls out as too faint inside a table. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-table .mpv-name-copy small{
+  color:#57534E!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-table .mpv-name-copy small{
+  color:#D4D4D8!important;
+}
+/* Verified check — amber accent, stated as a literal so it cannot drift back to cyan with
+   var(--bo-cyan) re-tokenisation. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-verified{
+  color:#D97706!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-verified{
+  color:#F59E0B!important;
+}
+/* Column rhythm. The JS renders bare <td>s, so the family's .mad-money / .mad-time hooks never
+   match: column 2 currency, 3 provider rate, 4 settlement wording, 6 outstanding amount. Rates
+   and amounts take the house mono + tabular treatment; outstanding is this page's money column,
+   so it takes the locked positive-money tone. The metrics are stated once, unscoped by theme —
+   a light-only rule here would have left dark on the sans stack and drifted the parity. */
+body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-table td:nth-child(2){
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important;
+  font-weight:600!important;
+  letter-spacing:.04em!important;
+}
+body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-table td:nth-child(3),
+body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-table td:nth-child(6){
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important;
+  font-variant-numeric:tabular-nums!important;
+  font-weight:700!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-table td:nth-child(2){
+  color:#57534E!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-table td:nth-child(2){
+  color:#D4D4D8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-table td:nth-child(3){
+  color:#27272A!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-table td:nth-child(3){
+  color:#F5F5F4!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-table td:nth-child(4){
+  color:#57534E!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-table td:nth-child(4){
+  color:#D4D4D8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-table td:nth-child(6){
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-table td:nth-child(6){
+  color:#F59E0B!important;
+}
+/* Actions cell. main-provider-detail.js renders the edit control as <a class="mad-icon-btn">;
+   no rule anywhere kills Bootstrap's a{text-decoration:underline}, and the anchor's only child
+   is an icon, so the underline paints a stray rule under the glyph. Colour and hover belong to
+   the family's .mad-icon-btn rules — only the affordance is fixed here. */
+body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mpv-actions > a.mad-icon-btn{
+  text-decoration:none!important;
+}
+
+/* ---- Empty state (.mad-empty, also .mad-empty.text-danger) ---- */
+/* main-admin-detail-executive.css:829 pins .mad-empty on var(--bo-muted) with !important, which
+   outranks Bootstrap's .text-danger — so the error row printed by main-provider-detail.js:359
+   renders muted instead of red. Both states are restated at a specificity that wins. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-empty{
+  color:#57534E!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-empty{
+  color:#D4D4D8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-empty.text-danger{
+  color:#991B1B!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-empty.text-danger{
+  color:#F87171!important;
+}
+
+/* ---- Pager ellipsis (.smart-page-ellipsis inside #mpvPager) ---- */
+/* table-pagination-horizontal.css:57 pins .smart-page-ellipsis on a cool gray with !important.
+   main-admin-detail-executive.css:1144 already declares var(--bo-placeholder) for it but never
+   wins against that !important, and the family pager rules skip the ellipsis entirely — so the
+   reference value is restated here with the !important and the prefix it needs. The buttons
+   themselves (inactive #F3F4F6/#9CA3AF, active amber 3D, disabled charcoal) come from the
+   family file and must not be restated. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pager .smart-page-ellipsis{
+  color:var(--bo-placeholder)!important;
+  font-weight:700!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page:not(.main-report-exec-page) .mad-pager .smart-page-ellipsis{
+  color:var(--bo-placeholder)!important;
+  font-weight:700!important;
+}

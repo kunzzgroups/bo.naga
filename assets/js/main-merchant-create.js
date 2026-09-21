@@ -584,15 +584,18 @@
       const j=await fetch(BO_AUTH.roleListUrl(),{headers:BO_AUTH.authHeader(),cache:'no-store'}).then(r=>r.json());
       if(j&&j.status!=='error') rows=Array.isArray(j.data)?j.data:[];
     }
-    const brandOwner=rows.filter(r=>{
-      const type=String(r.roleType||r.type||'').toUpperCase();
-      const code=String(r.code||'').toUpperCase();
-      const name=String(r.name||'').toLowerCase();
-      return type==='BRAND_OWNER'||code==='BRAND_OWNER'||name.includes('brand owner');
-    }).filter(r=>Number(r.status==null?1:r.status)===1);
-    const list=brandOwner.length?brandOwner:[{id:'',name:'Brand Owner',roleType:'BRAND_OWNER'}];
-    const globalOnly=list.filter(r=>r.brandId==null||r.brandId===''||r.id==='');
-    const use=globalOnly.length?globalOnly:list;
+    // Merchant master roles are reusable platform role templates. One role can be
+    // assigned to many merchant brands; tenant isolation still comes from admin_user.brand_id.
+    // Never show ROOT/MASTER/MAIN executive roles in this merchant-owner selector.
+    const use=rows.filter(r=>{
+      const type=String(r.roleType||r.type||'CUSTOM').toUpperCase();
+      const global=r.brandId==null||r.brandId==='';
+      return global && Number(r.status==null?1:r.status)===1 && type==='BRAND_OWNER';
+    });
+    if(!use.length){
+      sel.innerHTML='<option value="" selected>No Brand Owner role configured</option>';
+      return;
+    }
     sel.innerHTML=use.map((r,i)=>{
       const id=r.id!=null&&r.id!==''?String(r.id):'';
       const label=esc(r.name||r.code||'Brand Owner');

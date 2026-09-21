@@ -5,8 +5,91 @@
   function num(v){const n=Number(v||0);return Number.isFinite(n)?n:0;}
   function money(v){return num(v).toFixed(2);}
   function dt(v){return window.BO_FORMAT?.dateTime?window.BO_FORMAT.dateTime(v):(v?String(v).replace('T',' ').slice(0,19):'-');}
-  function dateOnly(v){const s=dt(v);return s==='-'?'-':s;}
-  function initials(r){const s=String(r.username||r.fullName||r.mobile||'U').trim();return esc(s.slice(0,2).toUpperCase());}
+  function dtParts(v){
+    const full=dt(v);
+    if(!full||full==='-') return {full:'-',day:'-',time:''};
+    const m=String(full).match(/^(\d{4}-\d{2}-\d{2})\s+(.+)$/);
+    if(m){
+      const raw=String(m[2]).trim();
+      const tm=raw.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+      const time=tm?`${String(tm[1]).padStart(2,'0')}:${tm[2]}:${tm[3]||'00'}`:raw.slice(0,8);
+      return {full,day:m[1],time};
+    }
+    return {full,day:full,time:''};
+  }
+  function dateOnly(v){return dtParts(v).day;}
+  function joinedDateHtml(v){
+    const p=dtParts(v);
+    if(p.full==='-') return '-';
+    if(!p.time) return `<span class="bo-tx-datetime">${esc(p.day)}</span>`;
+    return `<span class="bo-tx-datetime" tabindex="0" data-tip="${esc(p.time)}">${esc(p.day)}</span>`;
+  }
+  function ensureTimeTip(){
+    let tip=document.getElementById('refTimeTip');
+    if(tip) return tip;
+    tip=document.createElement('div');
+    tip.id='refTimeTip';
+    tip.className='um-time-tip';
+    tip.setAttribute('role','tooltip');
+    tip.setAttribute('aria-hidden','true');
+    document.body.appendChild(tip);
+    return tip;
+  }
+  function placeTimeTip(el){
+    const tip=ensureTimeTip();
+    const text=el.getAttribute('data-tip')||'';
+    if(!text){ hideTimeTip(); return; }
+    tip.textContent=text;
+    tip.classList.add('is-on');
+    tip.classList.remove('is-below');
+    const r=el.getBoundingClientRect();
+    const tr=tip.getBoundingClientRect();
+    let top=r.top-tr.height-8;
+    let below=false;
+    if(top<8){ below=true; top=r.bottom+8; }
+    tip.classList.toggle('is-below', below);
+    const left=Math.max(8,Math.min(r.left+r.width/2-tr.width/2, window.innerWidth-tr.width-8));
+    tip.style.left=Math.round(left)+'px';
+    tip.style.top=Math.round(top)+'px';
+  }
+  function hideTimeTip(){
+    const tip=document.getElementById('refTimeTip');
+    if(tip) tip.classList.remove('is-on','is-below');
+  }
+  function bindTimeTips(root){
+    if(!root||root.dataset.tipBound==='1') return;
+    root.dataset.tipBound='1';
+    root.addEventListener('mouseover',e=>{
+      const el=e.target.closest?.('.bo-tx-datetime[data-tip]');
+      if(el) placeTimeTip(el);
+    });
+    root.addEventListener('mouseout',e=>{
+      const el=e.target.closest?.('.bo-tx-datetime[data-tip]');
+      if(!el) return;
+      if(e.relatedTarget&&el.contains(e.relatedTarget)) return;
+      hideTimeTip();
+    });
+    root.addEventListener('focusin',e=>{
+      const el=e.target.closest?.('.bo-tx-datetime[data-tip]');
+      if(el) placeTimeTip(el);
+    });
+    root.addEventListener('focusout',e=>{
+      const el=e.target.closest?.('.bo-tx-datetime[data-tip]');
+      if(!el) return;
+      if(e.relatedTarget&&el.contains(e.relatedTarget)) return;
+      hideTimeTip();
+    });
+  }
+  function initials(r){
+    const name=String(firstVal(r,['fullName','name'],'')||'').trim();
+    if(name){
+      const parts=name.split(/\s+/).filter(Boolean);
+      if(parts.length>=2) return esc((parts[0][0]+parts[1][0]).toUpperCase());
+      return esc(name.slice(0,2).toUpperCase());
+    }
+    const fallback=String(firstVal(r,['username','mobile'],'U')||'U').trim();
+    return esc(fallback.slice(0,2).toUpperCase());
+  }
   function firstVal(obj,keys,fb){for(const k of keys){if(obj&&obj[k]!=null&&obj[k]!=='' )return obj[k];}return fb;}
   async function api(url,opt){
     const res=await fetch(url,opt||{headers:{...BO_AUTH.authHeader()}});
@@ -45,9 +128,7 @@
   function memberNameHtml(r){
     const username=esc(firstVal(r,['username','mobile','id'],'-'));
     const full=esc(firstVal(r,['fullName','name'],''));
-    const mobile=esc(firstVal(r,['mobile','phone'],''));
-    const meta=[full,mobile].filter(Boolean).join(' • ');
-    return `<div class="ref-member-cell"><span class="ref-avatar">${initials(r)}</span><div class="ref-member-name"><b>${username}</b>${meta?`<small>${meta}</small>`:''}</div></div>`;
+    return `<div class="ref-member-cell"><span class="ref-avatar">${initials(r)}</span><div class="ref-member-name"><b>${username}</b>${full?`<small>${full}</small>`:''}</div></div>`;
   }
   function referrerMember(r){
     const parentId=firstVal(r,['referrerMemberId','referrer_member_id','referredByMemberId'],null);
@@ -72,9 +153,8 @@
     const enabled=Number(firstVal(r,['rewardEnabled'],0))===1;
     const mode=String(firstVal(r,['rewardMode'],'FIXED')).toUpperCase();
     const value=num(firstVal(r,['rewardValue'],0));
-    const source=String(firstVal(r,['rewardConfigSource'],'DEFAULT')).toUpperCase();
     const label=!enabled?'Disabled':(mode==='PERCENTAGE'?`${value}% of Default`:`MYR ${money(value)} Fixed`);
-    return `<div class="ref-reward-setting"><b>${esc(label)}</b><small class="${source==='MEMBER'?'personal':'default'}">${source==='MEMBER'?'Personal':'Default'}</small></div>`;
+    return `<div class="ref-reward-setting"><b>${esc(label)}</b></div>`;
   }
   function hasReferral(r){
     return num(firstVal(r,['level1Count','l1Count','totalDownline','downlineCount'],0)) > 0;
@@ -88,7 +168,7 @@
     const cards=document.getElementById('refMemberCards');
     updateStats(rows);
     if(!rows.length){
-      body.innerHTML='<tr><td colspan="8" class="ref-empty">No member found.</td></tr>';
+      body.innerHTML='<tr><td colspan="7" class="ref-empty">No member found.</td></tr>';
       cards.innerHTML='<div class="ref-mobile-card"><h3>No member found</h3><div class="meta">Try another search filter.</div></div>';
       return;
     }
@@ -97,7 +177,7 @@
       const name=esc(firstVal(r,['username','mobile','id'],'-'));
       const referralName=referrerHtml(r);
       const l1=esc(firstVal(r,['level1Count','l1Count','totalDownline','downlineCount'],0));
-      const joined=esc(dateOnly(firstVal(r,['createdAt','registerDate','registeredAt','joinedAt'],'')));
+      const joined=joinedDateHtml(firstVal(r,['createdAt','registerDate','registeredAt','joinedAt'],''));
       const active=state.selected && String(state.selected.id)===String(firstVal(r,['id','memberId'],''));
       return `<tr class="${active?'active':''}"><td>${i+1}</td><td>${memberNameHtml(r)}</td><td>${referralName}</td><td>${l1}</td><td>${rewardSettingHtml(r)}</td><td>${joined}</td><td><div class="ref-action-buttons"><button class="ref-view-btn ref-view-icon" data-view="${id}" data-name="${name}" title="View downline" aria-label="View downline"><i class="bi bi-eye"></i></button><button class="ref-config-btn" data-reward-member="${id}" data-name="${name}" title="Configure reward" aria-label="Configure reward"><i class="bi bi-gear"></i></button></div></td></tr>`;
     }).join('');
@@ -106,7 +186,7 @@
       const name=esc(firstVal(r,['username','mobile','id'],'-'));
       const referralName=esc(referrerName(r));
       const l1=esc(firstVal(r,['level1Count','l1Count','totalDownline','downlineCount'],0));
-      const joined=esc(dateOnly(firstVal(r,['createdAt','registerDate','registeredAt','joinedAt'],'')));
+      const joined=joinedDateHtml(firstVal(r,['createdAt','registerDate','registeredAt','joinedAt'],''));
       return `<div class="ref-mobile-card"><div class="ref-mobile-card-head"><div>${memberNameHtml(r)}</div><b>#${i+1}</b></div><div class="ref-mobile-grid"><span>Referral Name</span><b>${referralName}</b><span>L1</span><b>${l1}</b><span>Reward Setting</span><b>${rewardSettingHtml(r)}</b><span>Joined Date</span><b>${joined}</b></div><div class="ref-mobile-actions"><button class="ref-view-btn ref-view-mobile" data-view="${id}" data-name="${name}"><i class="bi bi-eye"></i> View Downline</button><button class="ref-config-btn ref-config-mobile" data-reward-member="${id}" data-name="${name}"><i class="bi bi-gear"></i> Reward</button></div></div>`;
     }).join('');
   }
@@ -118,20 +198,19 @@
     document.getElementById('refSelectedCommission').textContent=money(totalCommission);
     document.getElementById('refDownlineShowing').textContent=rows.length?`Showing 1 to ${rows.length} of ${rows.length} entries`:'Showing 0 to 0 of 0 entries';
     if(!rows.length){
-      body.innerHTML='<tr><td colspan="5" class="ref-empty">No downline found.</td></tr>';
+      body.innerHTML='<tr><td colspan="4" class="ref-empty">No downline found.</td></tr>';
       cards.innerHTML='<div class="ref-mobile-card"><h3>No downline found</h3><div class="meta">This member has no downline for selected level.</div></div>';
       return;
     }
     body.innerHTML=rows.map((r,i)=>{
-      const referralName=referrerHtml(r);
-      const joined=esc(dateOnly(firstVal(r,['createdAt','registerDate','registeredAt','joinedAt'],'')));
+      const joined=joinedDateHtml(firstVal(r,['createdAt','registerDate','registeredAt','joinedAt'],''));
       const comm=money(firstVal(r,['commission','totalCommission'],0));
-      return `<tr><td>${i+1}</td><td>${memberNameHtml(r)}</td><td>${referralName}</td><td>${joined}</td><td class="ref-commission">${comm}</td></tr>`;
+      return `<tr><td>${i+1}</td><td>${memberNameHtml(r)}</td><td>${joined}</td><td class="ref-commission">${comm}</td></tr>`;
     }).join('');
     cards.innerHTML=rows.map((r,i)=>{
-      const joined=esc(dateOnly(firstVal(r,['createdAt','registerDate','registeredAt','joinedAt'],'')));
+      const joined=joinedDateHtml(firstVal(r,['createdAt','registerDate','registeredAt','joinedAt'],''));
       const comm=money(firstVal(r,['commission','totalCommission'],0));
-      return `<div class="ref-mobile-card"><div class="ref-mobile-card-head"><div>${memberNameHtml(r)}</div><b>#${i+1}</b></div><div class="ref-mobile-grid"><span>Referral Name</span><b>${esc(referrerName(r))}</b><span>Joined Date</span><b>${joined}</b><span>Commission</span><b class="ref-commission">${comm}</b></div></div>`;
+      return `<div class="ref-mobile-card"><div class="ref-mobile-card-head"><div>${memberNameHtml(r)}</div><b>#${i+1}</b></div><div class="ref-mobile-grid"><span>Joined Date</span><b>${joined}</b><span>Commission</span><b class="ref-commission">${comm}</b></div></div>`;
     }).join('');
   }
   async function loadMembers(){
@@ -152,22 +231,23 @@
     state.selected={id,name};
     renderMembers();
     const body=document.getElementById('refDownlineBody');
-    const level=document.getElementById('refLevel').value||1;
+    const level=document.getElementById('refLevel')?.value||'1';
     document.getElementById('refDownlineTitle').textContent='Downline of '+name;
     document.getElementById('refSelectedMeta').textContent='Level '+level;
-    body.innerHTML='<tr><td colspan="5" class="ref-loading">Loading...</td></tr>';
+    body.innerHTML='<tr><td colspan="4" class="ref-loading">Loading...</td></tr>';
     document.getElementById('refDownlineCards').innerHTML='<div class="ref-mobile-card"><h3>Loading...</h3></div>';
     try{
       const json=await api(endpoint('REFERRAL_DOWNLINE')+'?memberId='+encodeURIComponent(id)+'&level='+encodeURIComponent(level));
       state.downline=getRows(json);
       renderDownline(state.downline);
     }catch(e){
-      body.innerHTML='<tr><td colspan="5" class="text-danger">'+esc(e.message)+'</td></tr>';
+      body.innerHTML='<tr><td colspan="4" class="text-danger">'+esc(e.message)+'</td></tr>';
     }
   }
   function resetFilters(){
     document.getElementById('refKeyword').value='';
-    document.getElementById('refLevel').value='1';
+    const levelEl=document.getElementById('refLevel');
+    if(levelEl) levelEl.value='1';
     const today=ymd(new Date());
     document.getElementById('refDateFrom').value=today;
     document.getElementById('refDateTo').value=today;
@@ -177,7 +257,7 @@
     document.getElementById('refSelectedMeta').textContent='Select member';
     document.getElementById('refSelectedDownline').textContent='0';
     document.getElementById('refSelectedCommission').textContent='0.00';
-    document.getElementById('refDownlineBody').innerHTML='<tr><td colspan="5">Select member to view downline members.</td></tr>';
+    document.getElementById('refDownlineBody').innerHTML='<tr><td colspan="4">Select member to view downline members.</td></tr>';
     document.getElementById('refDownlineCards').innerHTML='';
     document.getElementById('refDownlineShowing').textContent='Showing 0 to 0 of 0 entries';
     loadMembers();
@@ -417,11 +497,12 @@
   async function saveRewardConfig(){const b=document.getElementById('refRewardSave');try{b.disabled=true;const body={enabled:Number(document.getElementById('refRewardEnabled').value),mode:document.getElementById('refRewardMode').value,value:Number(document.getElementById('refRewardValue').value||0)};const j=await api(endpoint('REFERRAL_CONFIG'),{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(body)});state.defaultReward={...body};const d=j.data||{};const extra=Number(d.creditedCount||0)>0?`\nCredited ${d.creditedCount} missing referral reward(s), total MYR ${money(d.creditedAmount)}.`:'';alert((j.message||'Saved')+extra);closeRewardConfig();await loadRewardConfig();await loadMembers();}catch(e){alert(e.message);}finally{b.disabled=false;}}
 
   document.addEventListener('DOMContentLoaded',()=>{
-    document.getElementById('refSearch')?.addEventListener('click',loadMembers);
-    document.getElementById('refReset')?.addEventListener('click',resetFilters);
     initDatePicker();
+    bindTimeTips(document.getElementById('refMemberBody'));
+    bindTimeTips(document.getElementById('refDownlineBody'));
+    bindTimeTips(document.getElementById('refMemberCards'));
+    bindTimeTips(document.getElementById('refDownlineCards'));
     document.getElementById('refKeyword')?.addEventListener('keydown',e=>{if(e.key==='Enter')loadMembers();});
-    document.getElementById('refLevel')?.addEventListener('change',()=>{if(state.selected)loadDownline(state.selected.id,state.selected.name);});
     document.getElementById('refRewardMode')?.addEventListener('change',updateRewardLabel);
     document.getElementById('refRewardSave')?.addEventListener('click',saveRewardConfig);
     document.getElementById('refRewardConfigOpen')?.addEventListener('click',openRewardConfig);

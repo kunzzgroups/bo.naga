@@ -1,14 +1,14 @@
-﻿/* Deep Navy Cyan �� Main Admin Detail
+﻿/* Deep Navy Cyan — Main Admin Detail
    Tokens from .interface-design/system.md */
 
 body.main-admin-detail-page{
-  /* Deep Navy Cyan �� lock page + neutralize global BO blues/indigos */
-  --bo-navy:#123B66;
-  --bo-cyan:#21A6D7;
-  --bo-cyan-deep:#1B94C2;
+  /* Deep Navy Cyan — lock page + neutralize global BO blues/indigos */
+  --bo-navy:#18191C;
+  --bo-cyan:#D97706;
+  --bo-cyan-deep:#B45309;
   --bo-success:#12B76A;
   --bo-danger:#EF3340;
-  --bo-bg:#F5F8FB;
+  --bo-bg:#FFF1DC;
   --bo-surface:#FFFFFF;
   --bo-border:#E2E7F0;
   --bo-text:#11203A;
@@ -16,17 +16,17 @@ body.main-admin-detail-page{
   --bo-muted:#657187;
   --bo-sidebar-bg:#072647;
   --bo-sidebar-text:#FFFFFF;
-  --bo-sidebar-active:#21A6D7;
-  --bo-cyan-tint:rgba(33,166,215,.10);
-  --bo-cyan-tint-strong:rgba(33,166,215,.16);
-  --bo-control-well:#EEF1F7;
+  --bo-sidebar-active:#D97706;
+  --bo-cyan-tint:rgba(217,119,6,.10);
+  --bo-cyan-tint-strong:rgba(217,119,6,.16);
+  --bo-control-well:#F5EBDC;
   --bo-control-well-hover:#E4E9F2;
-  --bo-control-border:#D0D5DD;
+  --bo-control-border:#EADCC8;
   --bo-placeholder:#98A2B3;
-  --bo-navy-hover:#0E2F52;
-  --bo-ui-blue:#21A6D7;
-  --bo-ui-blue-hover:#1B94C2;
-  --bo-shadow:0 0 0 1px rgba(18,59,102,.04),0 1px 2px -1px rgba(18,59,102,.06),0 2px 8px rgba(26,45,80,.018);
+  --bo-navy-hover:#E8901A;
+  --bo-ui-blue:#D97706;
+  --bo-ui-blue-hover:#D97706;
+  --bo-shadow:0 0 0 1px rgba(120,80,20,.04),0 1px 2px -1px rgba(120,80,20,.06),0 2px 8px rgba(26,45,80,.018);
   --bo-ease:cubic-bezier(0.23,1,0.32,1);
   color:var(--bo-text);
   background:var(--bo-bg)!important;
@@ -125,7 +125,7 @@ body.main-admin-detail-page .report-sidebar .report-nav > a:not(.report-sub).act
 }
 body.main-admin-detail-page .report-sidebar .report-nav > a:not(.report-sub):hover,
 body.main-admin-detail-page .report-sidebar .report-nav > a:not(.report-sub):focus-visible{
-  background:rgba(33,166,215,.16)!important;
+  background:rgba(217,119,6,.16)!important;
   color:#fff!important;
 }
 body.main-admin-detail-page .report-sidebar .report-nav > a:not(.report-sub).active{
@@ -148,7 +148,7 @@ body.main-admin-detail-page .report-sidebar .nav-group .nav-group-btn{
 }
 body.main-admin-detail-page .report-sidebar .nav-group .nav-group-btn:hover,
 body.main-admin-detail-page .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn{
-  background:rgba(33,166,215,.16)!important;
+  background:rgba(217,119,6,.16)!important;
   color:#fff!important;
 }
 body.main-admin-detail-page .report-sidebar .nav-group .nav-group-btn i{
@@ -167,7 +167,7 @@ body.main-admin-detail-page .report-sidebar .report-nav a.report-sub{
 }
 body.main-admin-detail-page .report-sidebar .report-nav a.report-sub:hover,
 body.main-admin-detail-page .report-sidebar .report-nav a.report-sub.active{
-  background:rgba(33,166,215,.1)!important;
+  background:rgba(217,119,6,.1)!important;
   color:var(--bo-navy)!important;
   border-color:transparent!important;
   box-shadow:none!important;
@@ -373,7 +373,7 @@ body.main-admin-detail-page a.mad-btn-primary:visited{
 body.main-admin-detail-page .mad-btn:hover,
 body.main-admin-detail-page .mad-btn.bo-ui-button:hover,
 body.main-admin-detail-page .mad-btn.bo-ui-button-secondary:hover{
-  border-color:rgba(33,166,215,.45)!important;color:var(--bo-navy)!important;background:var(--bo-cyan-tint)!important;
+  border-color:rgba(217,119,6,.45)!important;color:var(--bo-navy)!important;background:var(--bo-cyan-tint)!important;
 }
 body.main-admin-detail-page .mad-btn-primary,
 body.main-admin-detail-page .mad-btn-primary.bo-ui-button,
@@ -402,7 +402,7 @@ body.main-admin-detail-page .mad-icon-btn:focus-visible{
   outline:2px solid var(--bo-cyan)!important;outline-offset:2px!important;
 }
 
-/* Filter bar �� single row, control-well surface (mock) */
+/* Filter bar — single row, control-well surface (mock) */
 body.main-admin-detail-page .mad-filter-bar{
   display:flex;align-items:center;justify-content:space-between;gap:16px;
   flex-wrap:nowrap;
@@ -427,7 +427,7 @@ body.main-admin-detail-page .mad-pill-count{
   display:inline-flex;align-items:center;justify-content:center;
   min-width:22px;height:20px;padding:0 7px;border-radius:8px;
   font-size:11.5px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;
-  background:rgba(33,166,215,.12);color:var(--bo-cyan-deep);
+  background:rgba(217,119,6,.12);color:var(--bo-cyan-deep);
 }
 body.main-admin-detail-page .mad-pill-count.is-active-count{
   background:transparent;color:#17B26A;padding:0;min-width:0;height:auto;
@@ -437,7 +437,7 @@ body.main-admin-detail-page .mad-pill-count.is-danger-count{
 }
 body.main-admin-detail-page .mad-pill.is-active{
   background:var(--bo-surface)!important;color:var(--bo-navy)!important;font-weight:700;
-  box-shadow:0 0 0 1px rgba(18,59,102,.05),0 1px 2px rgba(18,59,102,.07);
+  box-shadow:0 0 0 1px rgba(120,80,20,.05),0 1px 2px rgba(120,80,20,.07);
 }
 body.main-admin-detail-page .mad-pill:hover:not(.is-active){background:rgba(255,255,255,.6);color:var(--bo-navy)}
 
@@ -451,7 +451,7 @@ body.main-admin-detail-page .mad-sr-only{
   overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
 }
 body.main-admin-detail-page .mad-req{color:var(--bo-danger);font-weight:800}
-/* reports.js wraps selects �� .rounded-select-wrap{width:100%} �� keep filter row side-by-side */
+/* reports.js wraps selects — .rounded-select-wrap{width:100%} — keep filter row side-by-side */
 /* Filter selects: width locked to longest option via JS */
 body.main-admin-detail-page .mad-filters > .rounded-select-wrap,
 body.main-admin-detail-page .mad-filters .rounded-select-wrap{
@@ -472,7 +472,7 @@ body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-
 body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-btn.open,
 body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-btn:focus{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;outline:0!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;outline:0!important;
 }
 body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu,
 body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-menu{
@@ -503,7 +503,7 @@ body.main-admin-detail-page .mad-filters .rounded-select-wrap .rounded-select-me
   background:var(--bo-cyan-tint)!important;
   color:var(--bo-cyan-deep)!important;
 }
-/* Search �� match Menu Permission .mp-search */
+/* Search — match Menu Permission .mp-search */
 body.main-admin-detail-page .mad-search{
   display:flex;align-items:center;gap:10px;
   flex:0 1 220px;width:220px;max-width:100%;min-width:160px;
@@ -514,7 +514,7 @@ body.main-admin-detail-page .mad-search{
 body.main-admin-detail-page .mad-search i{
   flex:0 0 auto;color:var(--bo-placeholder);font-size:15px;line-height:1;pointer-events:none;
 }
-/* Kill global .report-content input box �� keep only outer .mad-search frame */
+/* Kill global .report-content input box — keep only outer .mad-search frame */
 body.main-admin-detail-page .mad-search input,
 body.main-admin-detail-page .mad-search input[type="search"],
 body.main-admin-detail-page .report-content .mad-search input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
@@ -534,7 +534,7 @@ body.main-admin-detail-page .mad-search input::-webkit-search-results-decoration
 body.main-admin-detail-page .mad-search input::placeholder{color:var(--bo-placeholder)!important;opacity:1}
 body.main-admin-detail-page .mad-search:focus-within{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;
 }
 body.main-admin-detail-page .mad-search input:focus,
 body.main-admin-detail-page #madSearchInput:focus{
@@ -557,7 +557,7 @@ body.main-admin-detail-page select.mad-select{
 }
 body.main-admin-detail-page .mad-select:focus{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;outline:0!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;outline:0!important;
 }
 body.main-admin-detail-page .mad-reset-btn,
 body.main-admin-detail-page .mad-reset-btn.mad-btn,
@@ -590,7 +590,7 @@ body.main-admin-detail-page .mad-add-currency-btn i{font-size:13px;line-height:1
 body.main-admin-detail-page .mad-add-currency-btn:hover,
 body.main-admin-detail-page .mad-add-currency-btn.mad-btn:hover,
 body.main-admin-detail-page button.mad-add-currency-btn:hover{
-  background:rgba(33,166,215,.08)!important;color:var(--bo-navy)!important;border-color:var(--bo-cyan)!important;
+  background:rgba(217,119,6,.08)!important;color:var(--bo-navy)!important;border-color:var(--bo-cyan)!important;
 }
 body.main-admin-detail-page .mad-bulk-delete-btn,
 body.main-admin-detail-page .mad-bulk-delete-btn.mad-btn{
@@ -825,7 +825,7 @@ body.main-admin-detail-page .mad-table tbody tr:hover,
 body.main-admin-detail-page .mad-table tbody tr:focus-within{z-index:6}
 body.main-admin-detail-page .mad-table thead{position:relative;z-index:1}
 body.main-admin-detail-page .mad-table tbody tr:last-child td{border-bottom:0}
-body.main-admin-detail-page .mad-table tbody tr:hover td{background:rgba(33,166,215,.035)}
+body.main-admin-detail-page .mad-table tbody tr:hover td{background:rgba(217,119,6,.035)}
 body.main-admin-detail-page .mad-empty{text-align:center;padding:48px 16px!important;color:var(--bo-muted)!important}
 
 body.main-admin-detail-page .mad-user{display:flex;align-items:center;gap:12px;min-width:0}
@@ -909,7 +909,7 @@ body.main-admin-detail-page button.mad-status{
   transition:background .15s ease,color .15s ease,opacity .15s ease;
 }
 body.main-admin-detail-page button.mad-status:hover{
-  background:rgba(33,166,215,.08);
+  background:rgba(217,119,6,.08);
 }
 body.main-admin-detail-page button.mad-status.is-suspended:hover{
   background:#FEE4E2;
@@ -969,9 +969,9 @@ body.main-admin-detail-page .mad-icon-btn{
   transition:background .16s var(--bo-ease),color .16s var(--bo-ease),transform .16s var(--bo-ease),box-shadow .16s var(--bo-ease);
 }
 body.main-admin-detail-page .mad-icon-btn:hover{
-  background:rgba(33,166,215,.10);color:var(--bo-cyan);
+  background:rgba(217,119,6,.10);color:var(--bo-cyan);
   transform:translateY(-1px);
-  box-shadow:0 4px 10px rgba(18,59,102,.08);
+  box-shadow:0 4px 10px rgba(120,80,20,.08);
 }
 body.main-admin-detail-page .mad-icon-btn:active{transform:translateY(0);box-shadow:none}
 body.main-admin-detail-page .mad-icon-btn.is-success{
@@ -1055,12 +1055,12 @@ html.mad-float-tips body.main-admin-detail-page .mad-icon-btn[data-tip]::before{
   border-top-color:transparent;border-bottom-color:#0F1F33;
 }
 html[data-bo-theme="dark"] .mad-float-tip{
-  background:#243B55;color:#F5F8FB;
+  background:#40424E;color:#F5F5F4;
   border:1px solid rgba(125,211,252,.22);
   box-shadow:0 12px 28px rgba(0,0,0,.5);
 }
-html[data-bo-theme="dark"] .mad-float-tip::after{border-top-color:#243B55}
-html[data-bo-theme="dark"] .mad-float-tip.is-below::after{border-top-color:transparent;border-bottom-color:#243B55}
+html[data-bo-theme="dark"] .mad-float-tip::after{border-top-color:#40424E}
+html[data-bo-theme="dark"] .mad-float-tip.is-below::after{border-top-color:transparent;border-bottom-color:#40424E}
 body.main-admin-detail-page .mad-money{font-variant-numeric:tabular-nums;font-weight:700;color:var(--bo-text)}
 body.main-admin-detail-page .mad-muted{color:var(--bo-muted)}
 body.main-admin-detail-page .mad-time{font-variant-numeric:tabular-nums;color:var(--bo-text-secondary);font-weight:600}
@@ -1151,7 +1151,7 @@ body.main-admin-detail-page a:not(.mad-tab):not(.mad-btn):not(.bo-account-link):
 }
 body.main-admin-detail-page .mad-field .form-control:focus{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.14)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
   outline:0!important;
 }
 body.main-admin-detail-page .mad-modal .bo-ui-button-primary,
@@ -1234,7 +1234,7 @@ body.main-admin-detail-page .mad-modal-actions{display:flex;justify-content:flex
   body.main-admin-detail-page .mad-search{width:auto;flex:1 1 100%;min-width:0}
 }
 
-/* ========== Adapt: phone + tablet (desktop �� mobile web) ========== */
+/* ========== Adapt: phone + tablet (desktop — mobile web) ========== */
 @media(max-width:1023.98px){
   body.main-admin-detail-page .mad-workspace{
     padding:8px 14px max(20px, env(safe-area-inset-bottom, 0px))!important;
@@ -1327,9 +1327,9 @@ body.main-admin-detail-page .mad-modal-actions{display:flex;justify-content:flex
   body.main-admin-detail-page .report-topbar .user-title-wrap p{display:none}
 }
 
-/* Card rows once shell is drawer-width (covers 768 / iPad portrait / 824��768) */
+/* Card rows once shell is drawer-width (covers 768 / iPad portrait / 824—768) */
 @media(max-width:991.98px){
-  /* Scroll the workspace �� panel must not clip card list */
+  /* Scroll the workspace — panel must not clip card list */
   body.main-admin-detail-page .mad-workspace{
     padding:12px 10px max(16px, env(safe-area-inset-bottom, 0px))!important;
     overflow-x:hidden!important;
@@ -1467,7 +1467,7 @@ body.main-admin-detail-page .mad-modal-actions{display:flex;justify-content:flex
   }
   body.main-admin-detail-page .mad-more-btn:hover,
   body.main-admin-detail-page .mad-row.is-open .mad-more-btn{
-    border-color:rgba(33,166,215,.45);color:var(--bo-cyan);background:var(--bo-cyan-tint);
+    border-color:rgba(217,119,6,.45);color:var(--bo-cyan);background:var(--bo-cyan-tint);
   }
   body.main-admin-detail-page .mad-table td[data-label="Actions"] .mad-actions{
     display:inline-flex;grid-template-columns:none;gap:6px;width:auto;
@@ -1607,7 +1607,7 @@ body.main-admin-detail-page .mad-modal-actions{display:flex;justify-content:flex
   body.main-admin-detail-page .mad-table tbody tr:hover td{background:transparent}
 }
 
-/* Only reunite chrome on wide landscape tablets �� not 824��768 */
+/* Only reunite chrome on wide landscape tablets — not 824—768 */
 @media(min-width:1100px) and (max-width:1280px) and (orientation:landscape){
   body.main-admin-detail-page .mad-chrome{
     flex-direction:row;flex-wrap:wrap;align-items:center;gap:12px;
@@ -1620,14 +1620,14 @@ body.main-admin-detail-page .mad-modal-actions{display:flex;justify-content:flex
 }
 
 html[data-bo-theme="dark"] body.main-admin-detail-page{
-  --bo-bg:#08131F;--bo-surface:#102030;--bo-border:rgba(255,255,255,.08);
-  --bo-text:#F5F8FB;--bo-text-secondary:#D0D7E2;--bo-muted:#8A95A8;
-  --bo-sidebar-bg:#08131F;--bo-shadow:none;--bo-cyan-tint:rgba(33,166,215,.16);
-  --bo-cyan-tint-strong:rgba(33,166,215,.24);
+  --bo-bg:#2C2E38;--bo-surface:#383A46;--bo-border:rgba(255,255,255,.08);
+  --bo-text:#F5F5F4;--bo-text-secondary:#D0D7E2;--bo-muted:#A1A1AA;
+  --bo-sidebar-bg:#3A3226;--bo-shadow:none;--bo-cyan-tint:rgba(217,119,6,.16);
+  --bo-cyan-tint-strong:rgba(217,119,6,.24);
   --bo-control-well:rgba(255,255,255,.06);
   --bo-control-well-hover:rgba(255,255,255,.10);
   --bo-control-border:rgba(255,255,255,.12);
-  --bo-placeholder:#8A95A8;
+  --bo-placeholder:#A1A1AA;
   --bo-navy-hover:var(--bo-cyan-deep);
   color-scheme:dark;
 }
@@ -1636,7 +1636,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-modal-title h2,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-modal-title h3,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-user-copy b{color:var(--bo-text)!important}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-row-check-box{
-  background:#0B1626;border-color:#334155;
+  background:#2A2C36;border-color:rgba(255,255,255,.12);
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-row-check-input:hover + .mad-row-check-box{
   border-color:var(--bo-cyan);
@@ -1691,16 +1691,16 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-pill:hover:not(.is-a
   color:var(--bo-text);
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-pill:hover:not(.is-active) .mad-pill-count{
-  background:rgba(33,166,215,.32);
+  background:rgba(217,119,6,.32);
   color:#A5F3FC;
 }
 /* Pill counts: light cyan on tinted chip (light-theme cyan-deep is too dim on dark) */
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-pill-count{
-  background:rgba(33,166,215,.24);
-  color:#7DD3FC;
+  background:rgba(217,119,6,.24);
+  color:#FBBF24;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-pill.is-active .mad-pill-count{
-  background:rgba(33,166,215,.32);
+  background:rgba(217,119,6,.32);
   color:#A5F3FC;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-pill-count.is-active-count{
@@ -1723,12 +1723,12 @@ html[data-bo-theme="dark"] body.main-admin-detail-page button.mad-add-currency-b
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-add-currency-btn:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page button.mad-add-currency-btn:hover{
-  background:rgba(33,166,215,.12)!important;border-color:var(--bo-cyan)!important;color:var(--bo-cyan)!important;
+  background:rgba(217,119,6,.12)!important;border-color:var(--bo-cyan)!important;color:var(--bo-cyan)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-btn.open,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-btn:focus{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.18)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.18)!important;
   color:var(--bo-text)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu{
@@ -1743,7 +1743,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-s
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option.active,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-filters > .rounded-select-wrap .rounded-select-menu .rounded-select-option.is-active{
-  background:rgba(33,166,215,.14)!important;
+  background:rgba(217,119,6,.14)!important;
   color:var(--bo-text)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-search input,
@@ -1792,7 +1792,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .nav-grou
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
 html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .nav-group.open > .nav-group-btn{
-  background:rgba(33,166,215,.16)!important;
+  background:rgba(217,119,6,.16)!important;
   color:#fff!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .nav-group-list,
@@ -1806,7 +1806,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .report-n
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .report-nav a.report-sub:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page .report-sidebar .report-nav a.report-sub.active{
-  background:rgba(33,166,215,.14)!important;color:#fff!important;
+  background:rgba(217,119,6,.14)!important;color:#fff!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .bo-sidebar-account-footer{
   background:var(--bo-sidebar-bg)!important;
@@ -1828,10 +1828,10 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .bo-account-link:hover{
 html[data-bo-theme="dark"] body.main-admin-detail-page .bo-account-name{color:var(--bo-text)!important}
 html[data-bo-theme="dark"] body.main-admin-detail-page .bo-account-setting-icon{color:var(--bo-muted)!important}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-avatar{
-  background:rgba(33,166,215,.18)!important;color:#7DD3FC!important;
+  background:rgba(217,119,6,.18)!important;color:#FBBF24!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn{
-  color:#8A95A8;
+  color:#A1A1AA;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-status.is-active{
   background:transparent;color:#7cffc8;
@@ -1850,7 +1850,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-table td:nth-child(3
   padding:0;border-radius:0;box-shadow:none;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn:hover{
-  background:rgba(33,166,215,.16);color:#7DD3FC;
+  background:rgba(217,119,6,.16);color:#FBBF24;
   box-shadow:0 4px 12px rgba(0,0,0,.25);
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-success{
@@ -1861,30 +1861,30 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-success:
   box-shadow:0 4px 12px rgba(18,183,106,.18);
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-danger{
-  color:#8A95A8;background:transparent;
+  color:#A1A1AA;background:transparent;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-danger:hover{
   color:#FF8A90;background:rgba(239,51,64,.18);
   box-shadow:0 4px 12px rgba(239,51,64,.16);
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn[data-tip]::after{
-  background:#243B55;color:#F5F8FB;
+  background:#40424E;color:#F5F5F4;
   border:1px solid rgba(125,211,252,.22);
   box-shadow:0 12px 28px rgba(0,0,0,.5);
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn[data-tip]::before{border-top-color:#243B55;border-bottom-color:transparent}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn[data-tip]::before{border-top-color:#40424E;border-bottom-color:transparent}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-time-tip::after{
-  background:#243B55;color:#F5F8FB;
+  background:#40424E;color:#F5F5F4;
   border:1px solid rgba(125,211,252,.22);
   box-shadow:0 12px 28px rgba(0,0,0,.5);
 }
-html[data-bo-theme="dark"] body.main-admin-detail-page .mad-time-tip::before{border-top-color:#243B55}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-time-tip::before{border-top-color:#40424E}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-danger[data-tip]::after{background:#5C1A22}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-danger[data-tip]::before{border-bottom-color:#5C1A22;border-top-color:transparent}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-success[data-tip]::after{background:#0A4A32}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-icon-btn.is-success[data-tip]::before{border-bottom-color:#0A4A32;border-top-color:transparent}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-table tbody tr:hover td{
-  background:rgba(33,166,215,.08);
+  background:rgba(217,119,6,.08);
 }
 
 /* ========== Create Admin Account (full page) ========== */
@@ -1916,7 +1916,7 @@ body.main-admin-create-page .mac-head-main{display:flex;align-items:center;gap:1
 body.main-admin-create-page .mac-head-icon{
   width:48px;height:48px;border-radius:50%;flex:0 0 48px;
   display:grid;place-items:center;
-  background:rgba(33,166,215,.12);color:var(--bo-cyan);font-size:22px;
+  background:rgba(217,119,6,.12);color:var(--bo-cyan);font-size:22px;
 }
 body.main-admin-create-page .mac-head h2{
   margin:0;font-size:22px;font-weight:800;color:var(--bo-text);letter-spacing:-.02em;text-wrap:balance;
@@ -1931,11 +1931,11 @@ body.main-admin-create-page .mac-section-head .mac-back-section{
 }
 body.main-admin-create-page .mac-sandbox-badge{
   display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;
-  border-radius:8px;background:rgba(33,166,215,.1);color:var(--bo-cyan-deep);
+  border-radius:8px;background:rgba(217,119,6,.1);color:var(--bo-cyan-deep);
   font-size:12px;font-weight:700;white-space:nowrap;
 }
 body.main-admin-create-page .mac-sandbox-dot{
-  width:8px;height:8px;border-radius:50%;background:var(--bo-cyan);box-shadow:0 0 0 3px rgba(33,166,215,.2);
+  width:8px;height:8px;border-radius:50%;background:var(--bo-cyan);box-shadow:0 0 0 3px rgba(217,119,6,.2);
 }
 
 body.main-admin-create-page .mac-form{display:flex;flex-direction:column;gap:14px}
@@ -1948,7 +1948,7 @@ body.main-admin-create-page .mac-section-head{
 }
 body.main-admin-create-page .mac-section-icon{
   width:28px;height:28px;border-radius:8px;display:grid;place-items:center;
-  background:rgba(18,59,102,.06);color:var(--bo-navy);font-size:14px;
+  background:rgba(120,80,20,.06);color:var(--bo-navy);font-size:14px;
 }
 body.main-admin-create-page .mac-section-head h3{
   margin:0;flex:1;font-size:13px;font-weight:800;letter-spacing:.04em;
@@ -1971,7 +1971,7 @@ body.main-admin-create-page .mac-fields-row{
   grid-template-columns:repeat(5, minmax(0, 1fr));
   gap:14px 12px;
 }
-/* Merchant create �� mock layout: rich heads, 3/4-col grids, affixes, subsections */
+/* Merchant create — mock layout: rich heads, 3/4-col grids, affixes, subsections */
 body.main-merchant-create-page .mac-section-head-rich{
   align-items:flex-start;
   gap:12px 14px;
@@ -2044,7 +2044,7 @@ body.main-merchant-create-page .mac-subblock{
   border:1px solid var(--bo-border);
   border-radius:12px;
   background:var(--bo-surface,#fff);
-  box-shadow:var(--bo-shadow,0 0 0 1px rgba(18,59,102,.04),0 1px 2px -1px rgba(18,59,102,.06),0 2px 8px rgba(26,45,80,.018));
+  box-shadow:var(--bo-shadow,0 0 0 1px rgba(120,80,20,.04),0 1px 2px -1px rgba(120,80,20,.06),0 2px 8px rgba(26,45,80,.018));
 }
 body.main-merchant-create-page .mac-master-fields{
   gap:14px;
@@ -2105,22 +2105,22 @@ body.main-merchant-create-page .mac-currency-add-btn{
   justify-content:center;
   margin:0;
   padding:0;
-  border:1px solid #D0D5DD;
+  border:1px solid #EADCC8;
   border-left:0;
   border-radius:0 8px 8px 0;
-  background:var(--bo-bg,#F8FAFC);
-  color:var(--bo-cyan,#21A6D7);
+  background:var(--bo-bg,#FFF8EB);
+  color:var(--bo-cyan,#D97706);
   font-size:18px;
   line-height:1;
   cursor:pointer;
   transition:background .15s ease,color .15s ease,border-color .15s ease;
 }
 body.main-merchant-create-page .mac-currency-add-btn:hover{
-  background:rgba(33,166,215,.1);
+  background:rgba(217,119,6,.1);
   color:var(--bo-cyan-deep,#0E7AA8);
 }
 body.main-merchant-create-page .mac-currency-control:focus-within .mac-currency-add-btn{
-  border-color:var(--bo-cyan,#21A6D7);
+  border-color:var(--bo-cyan,#D97706);
   color:var(--bo-cyan-deep,#0E7AA8);
 }
 body.main-merchant-create-page .mac-currency-modal-panel{
@@ -2172,7 +2172,7 @@ body.main-merchant-create-page .mac-currency-pane{
   min-width:0;
   border:1px solid #E4E7EC;
   border-radius:10px;
-  background:var(--bo-bg,#F8FAFC);
+  background:var(--bo-bg,#FFF8EB);
   overflow:hidden;
 }
 body.main-merchant-create-page .mac-currency-pane-head{
@@ -2197,7 +2197,7 @@ body.main-merchant-create-page .mac-currency-pane-count{
   height:22px;
   padding:0 7px;
   border-radius:999px;
-  background:rgba(33,166,215,.12);
+  background:rgba(217,119,6,.12);
   color:var(--bo-cyan-deep,#0E7AA8);
   font-size:11px;
   font-weight:800;
@@ -2228,13 +2228,13 @@ body.main-merchant-create-page .mac-currency-pane-item{
   cursor:pointer;
 }
 body.main-merchant-create-page .mac-currency-pane-item:hover{
-  border-color:rgba(33,166,215,.35);
-  background:rgba(33,166,215,.06);
+  border-color:rgba(217,119,6,.35);
+  background:rgba(217,119,6,.06);
 }
 body.main-merchant-create-page .mac-currency-pane-item.is-selected{
-  border-color:var(--bo-cyan,#21A6D7);
-  background:rgba(33,166,215,.12);
-  box-shadow:0 0 0 2px rgba(33,166,215,.12);
+  border-color:var(--bo-cyan,#D97706);
+  background:rgba(217,119,6,.12);
+  box-shadow:0 0 0 2px rgba(217,119,6,.12);
 }
 body.main-merchant-create-page .mac-currency-pane-item.is-locked{
   cursor:default;
@@ -2248,7 +2248,7 @@ body.main-merchant-create-page .mac-currency-pane-item-tag{
   flex:0 0 auto;
   padding:2px 7px;
   border-radius:999px;
-  background:rgba(18,59,102,.08);
+  background:rgba(120,80,20,.08);
   color:var(--bo-muted,#667085);
   font-size:10.5px;
   font-weight:700;
@@ -2268,7 +2268,7 @@ body.main-merchant-create-page .mac-currency-move-btn{
   justify-content:center;
   margin:0;
   padding:0;
-  border:1px solid #D0D5DD;
+  border:1px solid #EADCC8;
   border-radius:8px;
   background:#fff;
   color:var(--bo-cyan-deep,#0E7AA8);
@@ -2276,8 +2276,8 @@ body.main-merchant-create-page .mac-currency-move-btn{
   cursor:pointer;
 }
 body.main-merchant-create-page .mac-currency-move-btn:hover:not(:disabled){
-  border-color:var(--bo-cyan,#21A6D7);
-  background:rgba(33,166,215,.1);
+  border-color:var(--bo-cyan,#D97706);
+  background:rgba(217,119,6,.1);
 }
 body.main-merchant-create-page .mac-currency-move-btn:disabled{
   opacity:.4;
@@ -2292,7 +2292,7 @@ body.main-merchant-create-page .mac-currency-modal-empty{
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-currency-add-btn{
   border-color:var(--bo-border)!important;
   background:rgba(15,23,42,.55);
-  color:var(--bo-cyan,#21A6D7);
+  color:var(--bo-cyan,#D97706);
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-currency-pane,
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-currency-pane-head,
@@ -2340,15 +2340,15 @@ body.main-merchant-create-page .mac-field .rounded-select-btn{
   border-radius:8px;
   font-size:13.5px;
   font-weight:500;
-  border:1px solid #D0D5DD!important;
-  background:#fff!important;
+  border:1px solid #DCC9A8!important;
+  background:#FFF8EB!important;
   color:var(--bo-text)!important;
   box-shadow:none!important;
 }
 body.main-merchant-create-page .mac-field .rounded-select-btn.open,
 body.main-merchant-create-page .mac-field .rounded-select-btn:focus{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;
   outline:0!important;
 }
 body.main-merchant-create-page .mac-field .rounded-select-menu{
@@ -2361,7 +2361,7 @@ body.main-merchant-create-page .mac-field .rounded-select-menu{
   border:1px solid var(--bo-border)!important;
   border-radius:8px!important;
   background:var(--bo-surface)!important;
-  box-shadow:0 12px 28px rgba(18,59,102,.12)!important;
+  box-shadow:0 12px 28px rgba(120,80,20,.16)!important;
   padding:6px!important;
 }
 body.main-merchant-create-page .mac-field .rounded-select-option{
@@ -2376,23 +2376,23 @@ body.main-merchant-create-page .mac-field .rounded-select-option:hover{
 }
 body.main-merchant-create-page .mac-field .rounded-select-option.active,
 body.main-merchant-create-page .mac-field .rounded-select-option.is-active{
-  background:rgba(33,166,215,.16)!important;
+  background:rgba(217,119,6,.16)!important;
   color:var(--bo-navy)!important;
 }
 body.main-merchant-create-page .mac-field .rounded-select-option.active:hover,
 body.main-merchant-create-page .mac-field .rounded-select-option.is-active:hover{
-  background:rgba(33,166,215,.22)!important;
+  background:rgba(217,119,6,.22)!important;
   color:var(--bo-navy)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-field .rounded-select-btn{
-  background:#0B1626!important;
+  background:#2A2C36!important;
   border-color:var(--bo-border)!important;
   color:var(--bo-text)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-field .rounded-select-btn.open,
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-field .rounded-select-btn:focus{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.18)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.18)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-field .rounded-select-menu{
   background:var(--bo-surface)!important;
@@ -2404,18 +2404,18 @@ html[data-bo-theme="dark"] body.main-merchant-create-page .mac-field .rounded-se
   color:var(--bo-text-secondary)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-field .rounded-select-option:hover{
-  background:rgba(33,166,215,.14)!important;
-  color:#7DD3FC!important;
+  background:rgba(217,119,6,.14)!important;
+  color:#FBBF24!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-field .rounded-select-option.active,
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-field .rounded-select-option.is-active{
-  background:rgba(33,166,215,.22)!important;
-  color:#E8F7FC!important;
+  background:rgba(217,119,6,.22)!important;
+  color:#F5F5F4!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-field .rounded-select-option.active:hover,
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-field .rounded-select-option.is-active:hover{
-  background:rgba(33,166,215,.28)!important;
-  color:#E8F7FC!important;
+  background:rgba(217,119,6,.28)!important;
+  color:#F5F5F4!important;
 }
 body.main-merchant-create-page .mac-fields-row-compact .mac-field small{
   font-size:11px;
@@ -2437,7 +2437,7 @@ body.main-merchant-create-page .mac-subblock-dot{
   height:7px;
   border-radius:50%;
   background:var(--bo-cyan);
-  box-shadow:0 0 0 3px rgba(33,166,215,.16);
+  box-shadow:0 0 0 3px rgba(217,119,6,.16);
   flex:0 0 auto;
 }
 body.main-merchant-create-page .mac-input-group{
@@ -2455,7 +2455,7 @@ body.main-merchant-create-page .mac-input-addon{
   z-index:1;
   min-width:52px;
   padding:0 12px;
-  border:1px solid #D0D5DD;
+  border:1px solid #DCC9A8;
   background:var(--bo-bg);
   color:var(--bo-muted);
   font-size:12px;
@@ -2472,7 +2472,7 @@ body.main-merchant-create-page .report-content .mac-input-group > input{
   height:44px!important;
   position:relative;
   z-index:0;
-  background:#fff!important;
+  background:#FFF8EB!important;
   box-shadow:none!important;
 }
 body.main-merchant-create-page .mac-input-group.is-prefix .mac-input-addon{
@@ -2535,7 +2535,7 @@ body.main-admin-create-page .report-content .mac-field textarea{
 /* Beat the base !important radius/border on joined MYR / % inputs */
 body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-prefix > .form-control,
 body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-prefix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-left:0!important;
   border-top-left-radius:0!important;
   border-bottom-left-radius:0!important;
@@ -2544,7 +2544,7 @@ body.main-merchant-create-page.main-admin-create-page .report-content .mac-field
 }
 body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-suffix > .form-control,
 body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-suffix > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-right:0!important;
   border-top-right-radius:0!important;
   border-bottom-right-radius:0!important;
@@ -2554,7 +2554,7 @@ body.main-merchant-create-page.main-admin-create-page .report-content .mac-field
 body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group:focus-within > .form-control,
 body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group:focus-within > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;
   z-index:1;
 }
 body.main-merchant-create-page.main-admin-create-page .report-content .mac-field .mac-input-group.is-prefix:focus-within > .form-control,
@@ -2616,10 +2616,10 @@ body.main-merchant-create-page .report-content .mac-provider-markup-field .mac-i
   height:34px!important;
   margin:0!important;
   padding:0 8px!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-right:0!important;
   border-radius:8px 0 0 8px!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   color:var(--bo-text)!important;
   font-family:inherit!important;
   font-size:13.5px!important;
@@ -2718,7 +2718,7 @@ body.main-merchant-create-page .mac-provider-count{
   height:20px;
   padding:0 7px;
   border-radius:999px;
-  background:rgba(33,166,215,.12);
+  background:rgba(217,119,6,.12);
   color:var(--bo-cyan-deep, #0B7EA8);
   font-size:11px;
   font-weight:800;
@@ -2742,12 +2742,12 @@ body.main-merchant-create-page .mac-provider-search{
   height:40px;
   border:1px solid var(--bo-border);
   border-radius:8px;
-  background:#fff;
+  background:#FFF8EB;
   box-sizing:border-box;
 }
 body.main-merchant-create-page .mac-provider-search:focus-within{
   border-color:var(--bo-cyan);
-  box-shadow:0 0 0 3px rgba(33,166,215,.12);
+  box-shadow:0 0 0 3px rgba(217,119,6,.12);
 }
 body.main-merchant-create-page .mac-provider-search i{color:var(--bo-muted);font-size:14px;flex:0 0 auto}
 /* Kill global .report-content input border — keep only outer .mac-provider-search frame */
@@ -2797,7 +2797,7 @@ body.main-merchant-create-page .mac-provider-chip{
 }
 body.main-merchant-create-page .mac-provider-chip:hover{
   background:#F8FBFD;
-  border-color:rgba(33,166,215,.35);
+  border-color:rgba(217,119,6,.35);
 }
 body.main-merchant-create-page .mac-provider-chip:focus-visible{
   outline:2px solid var(--bo-cyan);
@@ -2806,7 +2806,7 @@ body.main-merchant-create-page .mac-provider-chip:focus-visible{
 body.main-merchant-create-page .mac-provider-chip.is-selected{
   background:#F3FAFD;
   border-color:var(--bo-cyan);
-  box-shadow:0 0 0 1px rgba(33,166,215,.18);
+  box-shadow:0 0 0 1px rgba(217,119,6,.18);
 }
 body.main-merchant-create-page .mac-provider-chip.is-selected b{color:var(--bo-navy)}
 body.main-merchant-create-page .mac-provider-chip b{
@@ -2846,8 +2846,8 @@ body.main-merchant-create-page .mac-provider-selected-card{
   background:#fff;
 }
 body.main-merchant-create-page .mac-provider-selected-card:hover{
-  border-color:rgba(33,166,215,.28);
-  background:rgba(33,166,215,.02);
+  border-color:rgba(217,119,6,.28);
+  background:rgba(217,119,6,.02);
 }
 body.main-merchant-create-page .mac-provider-selected-title{
   display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-width:0;
@@ -2875,12 +2875,12 @@ body.main-merchant-create-page .mac-provider-override-wrap{
 }
 body.main-merchant-create-page .mac-provider-override-control{
   display:flex;align-items:stretch;height:32px;min-width:0;
-  border:1px solid var(--bo-border);border-radius:8px;background:#fff;overflow:hidden;
+  border:1px solid var(--bo-border);border-radius:8px;background:#FFF8EB;overflow:hidden;
   box-sizing:border-box;
 }
 body.main-merchant-create-page .mac-provider-override-control:focus-within{
   border-color:var(--bo-cyan);
-  box-shadow:0 0 0 3px rgba(33,166,215,.12);
+  box-shadow:0 0 0 3px rgba(217,119,6,.12);
 }
 body.main-merchant-create-page .mac-provider-override-control input,
 body.main-merchant-create-page .report-content .mac-provider-override-control input:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
@@ -2955,7 +2955,7 @@ body.main-admin-create-page .mad-eye{
   width:32px;height:32px;border:0;background:transparent;color:var(--bo-muted);cursor:pointer;
   display:grid;place-items:center;border-radius:8px;
 }
-body.main-admin-create-page .mad-eye:hover{color:var(--bo-navy);background:rgba(18,59,102,.06)}
+body.main-admin-create-page .mad-eye:hover{color:var(--bo-navy);background:rgba(120,80,20,.06)}
 
 /* Role dropdown + privileges */
 body.main-admin-create-page .mac-section-head h3 b{color:var(--bo-danger);font-weight:800}
@@ -3085,7 +3085,7 @@ body.main-admin-create-page .mac-switch{
 }
 body.main-admin-create-page .mac-switch input{position:absolute;opacity:0;width:0;height:0}
 body.main-admin-create-page .mac-switch-track{
-  width:44px;height:26px;border-radius:999px;background:#D0D5DD;
+  width:44px;height:26px;border-radius:999px;background:#F5EBDC;
   position:relative;transition:background .16s var(--bo-ease);
 }
 body.main-admin-create-page .mac-switch-thumb{
@@ -3143,7 +3143,7 @@ body.main-admin-create-page .mad-btn-navy.bo-ui-button-primary{
   background:var(--bo-navy)!important;border-color:var(--bo-navy)!important;color:#fff!important;
 }
 body.main-admin-create-page .mad-btn-navy:hover{
-  background:#0E2F52!important;border-color:#0E2F52!important;color:#fff!important;
+  background:#E8901A!important;border-color:#E8901A!important;color:#fff!important;
 }
 
 @media(max-width:1200px){
@@ -3185,7 +3185,7 @@ html[data-bo-theme="dark"] body.main-merchant-create-page .mac-subblock{
   box-shadow:none;
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-input-addon{
-  background:#0B1626!important;
+  background:#2A2C36!important;
   border-color:var(--bo-border)!important;
   color:var(--bo-muted)!important;
 }
@@ -3206,8 +3206,8 @@ html[data-bo-theme="dark"] body.main-merchant-create-page .report-content .mac-i
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-markup-field .mac-input-group > .form-control,
 html[data-bo-theme="dark"] body.main-merchant-create-page .report-content .mac-provider-markup-field .mac-input-group > input,
 html[data-bo-theme="dark"] body.main-merchant-create-page .report-content .mac-provider-markup-field .mac-input-group > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
-  background:#0B1626!important;
-  background-color:#0B1626!important;
+  background:#2A2C36!important;
+  background-color:#2A2C36!important;
   border-color:var(--bo-border)!important;
   color:var(--bo-text)!important;
   -webkit-text-fill-color:var(--bo-text)!important;
@@ -3226,7 +3226,7 @@ html[data-bo-theme="dark"] body.main-merchant-create-page .report-content .mac-p
   border-right:0!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-markup-field .mac-input-group.is-suffix .mac-input-addon.is-trailing{
-  background:#0B1626!important;
+  background:#2A2C36!important;
   border-color:var(--bo-border)!important;
   border-left:0!important;
   color:var(--bo-muted)!important;
@@ -3234,15 +3234,15 @@ html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-markup-f
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-currency-add-btn{
   border-color:var(--bo-border)!important;
   border-left:0!important;
-  background:#0B1626!important;
-  color:var(--bo-cyan,#21A6D7)!important;
+  background:#2A2C36!important;
+  color:var(--bo-cyan,#D97706)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-currency-control > .rounded-select-wrap .rounded-select-btn,
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-currency-control > select{
   border-color:var(--bo-border)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-search{
-  background:#0B1626!important;
+  background:#2A2C36!important;
   border-color:var(--bo-border)!important;
   color:var(--bo-text)!important;
 }
@@ -3260,7 +3260,7 @@ html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-pane-hea
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-pane-title strong{color:var(--bo-text)}
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-count{
-  background:rgba(33,166,215,.18);
+  background:rgba(217,119,6,.18);
   color:var(--bo-cyan);
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-chip{
@@ -3271,13 +3271,13 @@ html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-chip{
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-chip b{color:var(--bo-text)}
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-chip small{color:var(--bo-muted)}
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-chip:hover{
-  background:rgba(33,166,215,.1);
-  border-color:rgba(33,166,215,.4);
+  background:rgba(217,119,6,.1);
+  border-color:rgba(217,119,6,.4);
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-chip.is-selected{
-  background:rgba(33,166,215,.14);
+  background:rgba(217,119,6,.14);
   border-color:var(--bo-cyan);
-  box-shadow:0 0 0 1px rgba(33,166,215,.28);
+  box-shadow:0 0 0 1px rgba(217,119,6,.28);
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-chip.is-selected b{
   color:#9FE0F5;
@@ -3287,8 +3287,8 @@ html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-selected
   border-color:var(--bo-border);
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-selected-card:hover{
-  background:rgba(33,166,215,.08);
-  border-color:rgba(33,166,215,.35);
+  background:rgba(217,119,6,.08);
+  border-color:rgba(217,119,6,.35);
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-selected-title b,
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-eff{color:var(--bo-text)}
@@ -3299,7 +3299,7 @@ html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-base-tag
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-override-control,
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-eff-wrap .mac-provider-eff,
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-override-unit{
-  background:#0B1626;
+  background:#2A2C36;
   border-color:var(--bo-border);
   color:var(--bo-muted);
 }
@@ -3309,7 +3309,7 @@ html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-override
   background:transparent!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-search{
-  background:#0B1626;
+  background:#2A2C36;
   border-color:var(--bo-border);
 }
 html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-pick,
@@ -3332,7 +3332,7 @@ html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-option{
 }
 html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-option:hover,
 html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-option.is-active{
-  background:rgba(33,166,215,.14);color:var(--bo-text);
+  background:rgba(217,119,6,.14);color:var(--bo-text);
 }
 html[data-bo-theme="dark"] body.main-admin-create-page .mac-role-title-row strong,
 html[data-bo-theme="dark"] body.main-admin-create-page .mac-policy-copy strong{color:var(--bo-text)}
@@ -3881,12 +3881,22 @@ body.main-admin-security-page .mas-event-copy small{
 }
 body.main-admin-security-page .mas-table tr.is-blocked .mas-event-copy b,
 body.main-admin-security-page .mas-table tr.is-blocked .mas-time b{color:var(--bo-danger)}
+/* The chip is sized by its own text, and the old `max-width:220px` was a fixed cap that
+   could not know the column: at a 1551px viewport the column's content box is 119px, and
+   "ADMIN OPERATION: #1" is a 154px chip — measured 19px past the cell edge, painting over
+   the IP column (60px for "#1234567", 85px for a long target). `max-width:100%` resolves
+   against the cell's content box, so the chip can never leave its column at any width.
+   `white-space:nowrap` + `text-overflow:ellipsis` never worked here anyway: the ellipsis
+   needs a block container, and on this `inline-flex` box the text was hard-clipped instead
+   (measured scrollWidth == clientWidth, so nothing was even being clipped at 154px). It
+   wraps now, like the IP column, so a long target stays readable rather than becoming
+   "ADMIN OPERATION…" — the row grows instead. */
 body.main-admin-security-page .mas-target{
-  display:inline-flex;align-items:center;max-width:220px;
+  display:inline-block;max-width:100%;
   padding:4px 10px;border-radius:8px;
   background:var(--bo-cyan-tint);color:var(--bo-navy);
   font-size:12px;font-weight:700;line-height:1.3;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  overflow-wrap:anywhere;
 }
 body.main-admin-security-page .mas-table tr.is-blocked .mas-target{
   background:#FEF3F2;color:var(--bo-danger);
@@ -3933,7 +3943,7 @@ body.main-admin-security-page .mas-detail-grid dd{
 }
 body.main-admin-security-page .mas-detail-raw{
   margin:0 0 14px;padding:12px;border-radius:8px;
-  background:var(--bo-control-well,#EEF1F7);border:1px solid var(--bo-border);
+  background:var(--bo-control-well,#F5EBDC);border:1px solid var(--bo-border);
   font-size:12px;line-height:1.45;color:var(--bo-text-secondary);
   max-height:220px;overflow:auto;white-space:pre-wrap;word-break:break-word;
 }
@@ -4208,7 +4218,7 @@ body.main-admin-credit-page .mac-kpi-btn{
   transition:background .14s var(--bo-ease,ease),transform .14s var(--bo-ease,ease);
 }
 body.main-admin-credit-page .mac-kpi-btn i{font-size:14px}
-body.main-admin-credit-page .mac-kpi-btn:hover{background:#0E2F52}
+body.main-admin-credit-page .mac-kpi-btn:hover{background:#E8901A}
 body.main-admin-credit-page .mac-kpi-btn:active{transform:scale(.98)}
 body.main-admin-credit-page .mac-kpi-meta{
   color:#98A2B3;font-size:12.5px;font-weight:650;
@@ -4253,7 +4263,7 @@ body.main-admin-credit-page .mac-user{
 body.main-admin-credit-page .mac-avatar{
   width:40px;height:40px;border-radius:50%;flex:0 0 40px;
   display:grid;place-items:center;
-  background:var(--bo-cyan-tint-strong,rgba(33,166,215,.16));
+  background:var(--bo-cyan-tint-strong,rgba(217,119,6,.16));
   color:var(--bo-navy);font-size:12px;font-weight:800;
 }
 body.main-admin-credit-page .mac-user-copy{min-width:0}
@@ -4274,8 +4284,8 @@ body.main-admin-credit-page .mac-role{
 }
 body.main-admin-credit-page .mac-role.is-tier1{background:rgba(130,72,233,.12);color:#6D28D9}
 body.main-admin-credit-page .mac-role.is-regional{background:rgba(22,136,248,.12);color:#175CD3}
-body.main-admin-credit-page .mac-role.is-sub{background:rgba(33,166,215,.14);color:#0E7090}
-body.main-admin-credit-page .mac-role.is-other{background:rgba(18,59,102,.08);color:var(--bo-navy)}
+body.main-admin-credit-page .mac-role.is-sub{background:rgba(217,119,6,.14);color:#0E7090}
+body.main-admin-credit-page .mac-role.is-other{background:rgba(120,80,20,.08);color:var(--bo-navy)}
 body.main-admin-credit-page .mac-health{
   display:flex;flex-direction:column;gap:6px;min-width:140px;max-width:180px;
 }
@@ -4320,7 +4330,7 @@ body.main-admin-credit-page .mac-icon-btn{
   transition:border-color .14s var(--bo-ease,ease),color .14s var(--bo-ease,ease),background .14s var(--bo-ease,ease);
 }
 body.main-admin-credit-page .mac-icon-btn:hover{
-  border-color:var(--bo-cyan);color:var(--bo-cyan);background:rgba(33,166,215,.08);
+  border-color:var(--bo-cyan);color:var(--bo-cyan);background:rgba(217,119,6,.08);
 }
 body.main-admin-credit-page .mac-icon-btn.is-danger:hover{
   border-color:var(--bo-danger);color:var(--bo-danger);background:rgba(239,51,64,.08);
@@ -4340,7 +4350,7 @@ body.main-admin-detail-page .mac-adjust-summary-main{
 body.main-admin-detail-page .mac-adjust-avatar{
   width:44px;height:44px;border-radius:8px;flex:0 0 44px;
   display:grid;place-items:center;
-  background:rgba(33,166,215,.14);color:var(--bo-navy);
+  background:rgba(217,119,6,.14);color:var(--bo-navy);
   font-size:13px;font-weight:800;
 }
 body.main-admin-detail-page .mac-adjust-summary-copy{min-width:0}
@@ -4369,7 +4379,7 @@ body.main-admin-detail-page .mac-adjust-ops.mac-adjust-ops-amount-only{
 body.main-admin-detail-page .mac-credit-mode{
   display:grid;grid-template-columns:1fr 1fr;gap:4px;
   margin:0 0 16px;padding:4px;border-radius:10px;
-  background:var(--bo-control-well,#EEF2F6);
+  background:var(--bo-control-well,#F5EBDC);
 }
 body.main-admin-detail-page .mac-credit-mode-btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
@@ -4384,11 +4394,11 @@ body.main-admin-detail-page .mac-credit-mode-btn:hover:not(.is-active){
 }
 body.main-admin-detail-page .mac-credit-mode-btn.is-active{
   background:var(--bo-surface);color:var(--bo-navy);
-  box-shadow:0 0 0 1px rgba(18,59,102,.05),0 1px 2px rgba(18,59,102,.07);
+  box-shadow:0 0 0 1px rgba(120,80,20,.05),0 1px 2px rgba(120,80,20,.07);
 }
 body.main-admin-detail-page .mac-credit-mode-btn[data-credit-action="DEDUCT"].is-active{
   color:#B42318;
-  box-shadow:0 0 0 1px rgba(239,51,64,.14),0 1px 2px rgba(18,59,102,.07);
+  box-shadow:0 0 0 1px rgba(239,51,64,.14),0 1px 2px rgba(120,80,20,.07);
 }
 body.main-admin-detail-page .mac-credit-mode-btn:focus-visible{
   outline:2px solid var(--bo-cyan);outline-offset:2px;
@@ -4410,22 +4420,65 @@ body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn.bo-ui-
   border-radius:8px!important;font-size:13px!important;font-weight:700!important;
   gap:8px!important;
 }
+/* The action row was still navy-era: the ghost was `#fff` with a cyan hover border, and the
+   primary hovered to the literal `#E8901A` — the retired navy, and the darkest value in the
+   whole palette, so the Save button went black-blue under the pointer while every other
+   primary in the panel hovers AMBER. Values copied verbatim from the sibling that was
+   already fixed for the same dialog on the merchant side
+   (main-merchant-detail-executive.css, `[data-access-page="main_merchant_detail"]
+   .mad-modal .mad-modal-actions`), so the two credit dialogs now share one recipe:
+   primary = amber gradient, hover lifts it with translateY(-1px); ghost = cream gradient,
+   hover deepens the cream. Measured after the change — see DESIGN.md → Adjust Credit
+   action row. */
 body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-ghost,
 body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-ghost.bo-ui-button{
-  background:#fff!important;border:1px solid var(--bo-border)!important;color:var(--bo-navy)!important;
+  background-color:#F5EBDC!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%)!important;
+  border:1px solid #DCC9A8!important;
+  color:#18191C!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06),0 2px 6px rgba(24,25,28,.05)!important;
 }
 body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-ghost:hover{
-  border-color:rgba(33,166,215,.45)!important;color:var(--bo-navy)!important;background:var(--bo-cyan-tint)!important;
+  background-color:#F3E8D6!important;
+  background-image:linear-gradient(0deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border-color:#E0D0B8!important;
+  color:#18191C!important;
+  box-shadow:0 2px 4px rgba(24,25,28,.08),0 4px 10px rgba(24,25,28,.07)!important;
+}
+body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-ghost:active{
+  background-image:linear-gradient(180deg,#FFF1DC 0%,#EADCC8 100%)!important;
+  border-color:#E0D0B8!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06)!important;
 }
 body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-navy,
 body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-primary,
 body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-navy.bo-ui-button,
 body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-primary.bo-ui-button{
-  background:var(--bo-navy)!important;border-color:var(--bo-navy)!important;color:#fff!important;
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
+  border:1px solid #E8901A!important;
+  color:#FFFFFF!important;
+  box-shadow:0 1px 2px rgba(217,119,6,.18),0 4px 10px rgba(217,119,6,.22),inset 0 1px 0 rgba(255,255,255,.35)!important;
+  filter:none!important;
 }
 body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-navy:hover,
-body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-primary:hover{
-  background:#0E2F52!important;border-color:#0E2F52!important;color:#fff!important;
+body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-primary:hover,
+body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-navy.bo-ui-button:hover,
+body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-primary.bo-ui-button:hover{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(0deg,#FCD34D 0%,#FBBF24 38%,#F59E0B 72%,#EA8608 100%)!important;
+  border-color:#F59E0B!important;
+  color:#FFFFFF!important;
+  box-shadow:0 2px 4px rgba(217,119,6,.22),0 8px 18px rgba(217,119,6,.28),inset 0 1px 0 rgba(255,255,255,.45)!important;
+}
+body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-navy:active,
+body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-primary:active,
+body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-navy.bo-ui-button:active,
+body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-primary.bo-ui-button:active{
+  background-image:linear-gradient(180deg,#F59E0B 0%,#EA8608 100%)!important;
+  border-color:#E8901A!important;
+  color:#FFFFFF!important;
+  box-shadow:0 1px 2px rgba(217,119,6,.16),inset 0 1px 0 rgba(255,255,255,.2)!important;
 }
 body.main-admin-detail-page .mac-adjust-panel .rounded-select-menu:empty,
 body.main-admin-detail-page .mac-adjust-panel .rounded-select-menu:not(:has(.rounded-select-option[data-value]:not([data-value=""]))){
@@ -4439,9 +4492,9 @@ body.main-admin-detail-page .mac-adjust-panel .rounded-select-wrap{
 body.main-admin-detail-page .mac-adjust-panel .rounded-select-btn,
 body.main-admin-detail-page .mac-adjust-panel .rounded-select-wrap .rounded-select-btn{
   height:42px!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-radius:8px!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   color:var(--bo-text)!important;
   font-size:13.5px!important;
   font-weight:600!important;
@@ -4452,14 +4505,14 @@ body.main-admin-detail-page .mac-adjust-panel .rounded-select-btn:focus,
 body.main-admin-detail-page .mac-adjust-panel .rounded-select-wrap .rounded-select-btn.open,
 body.main-admin-detail-page .mac-adjust-panel .rounded-select-wrap .rounded-select-btn:focus{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;
   outline:0!important;
 }
 body.main-admin-detail-page .mac-adjust-panel .rounded-select-menu{
   border:1px solid var(--bo-border)!important;
   border-radius:8px!important;
   background:var(--bo-surface)!important;
-  box-shadow:0 12px 28px rgba(18,59,102,.12)!important;
+  box-shadow:0 12px 28px rgba(120,80,20,.16)!important;
   padding:6px!important;
   z-index:5200!important;
 }
@@ -4475,12 +4528,12 @@ body.main-admin-detail-page .mac-adjust-panel .rounded-select-option:hover{
 }
 body.main-admin-detail-page .mac-adjust-panel .rounded-select-option.active,
 body.main-admin-detail-page .mac-adjust-panel .rounded-select-option.is-active{
-  background:rgba(33,166,215,.16)!important;
+  background:rgba(217,119,6,.16)!important;
   color:var(--bo-navy)!important;
 }
 body.main-admin-detail-page .mac-adjust-panel .rounded-select-option.active:hover,
 body.main-admin-detail-page .mac-adjust-panel .rounded-select-option.is-active:hover{
-  background:rgba(33,166,215,.22)!important;
+  background:rgba(217,119,6,.22)!important;
   color:var(--bo-navy)!important;
 }
 body.main-admin-detail-page .mac-adjust-grid{
@@ -4491,34 +4544,34 @@ body.main-admin-credit-page .mac-label{
   display:block;margin:0 0 6px;font-size:12px;font-weight:700;color:var(--bo-muted);
 }
 body.main-admin-credit-page .mac-field .form-control{
-  height:42px;border:1px solid #D0D5DD;border-radius:8px;
+  height:42px;border:1px solid #DCC9A8;border-radius:8px;
   box-shadow:none;font-size:13.5px;font-weight:600;color:var(--bo-text);
 }
 body.main-admin-credit-page .mac-field .form-control:focus{
-  border-color:var(--bo-cyan);box-shadow:0 0 0 3px rgba(33,166,215,.12);
+  border-color:#D97706!important;box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
 }
 body.main-admin-detail-page .mac-adjust-panel .mac-field{display:block;margin:0 0 12px}
 body.main-admin-detail-page .mac-adjust-panel .mac-label{
   display:block;margin:0 0 6px;font-size:12px;font-weight:700;color:var(--bo-muted);
 }
 body.main-admin-detail-page .mac-adjust-panel .mac-field .form-control{
-  height:42px;border:1px solid #D0D5DD;border-radius:8px;
+  height:42px;border:1px solid #DCC9A8;border-radius:8px;
   box-shadow:none;font-size:13.5px;font-weight:600;color:var(--bo-text);
 }
 body.main-admin-detail-page .mac-adjust-panel .mac-field .form-control:focus{
-  border-color:var(--bo-cyan);box-shadow:0 0 0 3px rgba(33,166,215,.12);
+  border-color:#D97706!important;box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
 }
 body.main-admin-detail-page .mac-adjust-hint{
   margin:0 0 12px;padding:10px 12px;
-  border:1px solid rgba(33,166,215,.22);
+  border:1px solid rgba(217,119,6,.22);
   border-radius:8px;
-  background:linear-gradient(180deg,#F7FBFE 0%,#F0F7FB 100%);
+  background:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 100%);
   color:var(--bo-navy);
   font-size:12.5px;font-weight:600;line-height:1.45;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-hint{
-  background:rgba(33,166,215,.10);
-  border-color:rgba(33,166,215,.28);
+  background:rgba(217,119,6,.10);
+  border-color:rgba(217,119,6,.28);
   color:var(--bo-text);
 }
 @media(max-width:900px){
@@ -4548,12 +4601,12 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-summary{
   background:rgba(255,255,255,.04);border-color:var(--bo-border);
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-avatar{
-  background:rgba(33,166,215,.18);color:#7DD3FC;
+  background:rgba(217,119,6,.18);color:#FBBF24;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-summary-copy strong,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-balance b{color:var(--bo-text)}
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-kpi-icon{
-  background:rgba(33,166,215,.16);color:#7DD3FC;
+  background:rgba(217,119,6,.16);color:#FBBF24;
 }
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-kpi-badge.is-avail{
   background:rgba(18,183,106,.16);color:#6CE9A6;
@@ -4565,14 +4618,14 @@ html[data-bo-theme="dark"] body.main-admin-credit-page .mac-kpi-node{color:#6CE9
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-kpi-node i{color:#12B76A}
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-kpi-meta.is-share{color:#FDB022}
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-kpi-btn{background:var(--bo-cyan);color:#fff}
-html[data-bo-theme="dark"] body.main-admin-credit-page .mac-kpi-btn:hover{background:var(--bo-cyan-deep,#1B94C2)}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-kpi-btn:hover{background:var(--bo-cyan-deep,#D97706)}
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-avatar{
-  background:rgba(33,166,215,.18);color:#7DD3FC;
+  background:rgba(217,119,6,.18);color:#FBBF24;
 }
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-health-track{background:rgba(255,255,255,.08)}
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-role.is-tier1{background:rgba(130,72,233,.22);color:#C4B5FD}
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-role.is-regional{background:rgba(22,136,248,.2);color:#93C5FD}
-html[data-bo-theme="dark"] body.main-admin-credit-page .mac-role.is-sub{background:rgba(33,166,215,.2);color:#7DD3FC}
+html[data-bo-theme="dark"] body.main-admin-credit-page .mac-role.is-sub{background:rgba(217,119,6,.2);color:#FBBF24}
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-role.is-other{background:rgba(255,255,255,.06);color:var(--bo-text-secondary)}
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-status.is-active{background:rgba(18,183,106,.16);color:#6CE9A6}
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-status.is-low{background:rgba(247,144,9,.18);color:#FDB022}
@@ -4606,9 +4659,9 @@ body.main-merchant-detail-page .mad-merchant-icon-btn{
   transition:background .16s var(--bo-ease),color .16s var(--bo-ease),transform .16s var(--bo-ease),box-shadow .16s var(--bo-ease);
 }
 body.main-merchant-detail-page .mad-merchant-icon-btn:hover{
-  background:rgba(33,166,215,.10);color:var(--bo-cyan);
+  background:rgba(217,119,6,.10);color:var(--bo-cyan);
   transform:translateY(-1px);
-  box-shadow:0 4px 10px rgba(18,59,102,.08);
+  box-shadow:0 4px 10px rgba(120,80,20,.08);
 }
 body.main-merchant-detail-page .mad-merchant-icon-btn:active{transform:translateY(0);box-shadow:none}
 body.main-merchant-detail-page .mad-merchant-icon-btn.is-danger{
@@ -4659,7 +4712,7 @@ body.main-merchant-detail-page .mad-status-chip.is-suspended{
   background:#FEF3F2;
 }
 body.main-merchant-detail-page .mad-status-chip:hover{
-  background:rgba(33,166,215,.08);
+  background:rgba(217,119,6,.08);
 }
 body.main-merchant-detail-page .mad-status-chip.is-suspended:hover{
   background:#FEE4E2;
@@ -4854,20 +4907,20 @@ body.main-admin-detail-page.main-merchant-detail-page.mad-view-active .mad-merch
   }
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-merchant-icon-btn{
-  background:transparent;border:0;color:#94A3B8;
+  background:transparent;border:0;color:#A1A1AA;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-merchant-icon-btn:hover{
-  background:rgba(33,166,215,.16);color:#7DD3FC;
+  background:rgba(217,119,6,.16);color:#FBBF24;
   box-shadow:none;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-merchant-icon-btn.is-danger{
-  background:transparent;border:0;color:#94A3B8;
+  background:transparent;border:0;color:#A1A1AA;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-merchant-icon-btn.is-danger:hover{
   background:rgba(239,51,64,.16);color:#FF8A90;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-merchant-icon-btn[data-tip]::after{
-  background:#243B55;color:#F5F8FB;
+  background:#40424E;color:#F5F5F4;
   border:1px solid rgba(125,211,252,.22);
   box-shadow:0 12px 28px rgba(0,0,0,.5);
 }
@@ -4879,7 +4932,7 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-status-chip.is-su
   background:rgba(239,51,64,.14);
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mad-status-chip:hover{
-  background:rgba(33,166,215,.14);
+  background:rgba(217,119,6,.14);
 }
 
 /* ========== Dark mode polish: Credit Adjust modal + shared modal close ========== */
@@ -4888,8 +4941,8 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .mac-fi
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel input.form-control,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel select.form-control,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel textarea.form-control{
-  background:#0B1626!important;
-  background-color:#0B1626!important;
+  background:#2A2C36!important;
+  background-color:#2A2C36!important;
   border:1px solid var(--bo-border)!important;
   color:var(--bo-text)!important;
   color-scheme:dark;
@@ -4903,7 +4956,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .form-c
 html[data-bo-theme="dark"] body.main-admin-credit-page .mac-field .form-control:focus,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .form-control:focus{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.18)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.18)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel input[type="number"]{
   -moz-appearance:textfield;
@@ -4915,7 +4968,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel input[t
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounded-select-btn,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounded-select-wrap .rounded-select-btn{
-  background:#0B1626!important;
+  background:#2A2C36!important;
   border-color:var(--bo-border)!important;
   color:var(--bo-text)!important;
 }
@@ -4924,7 +4977,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounde
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounded-select-wrap .rounded-select-btn.open,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounded-select-wrap .rounded-select-btn:focus{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.18)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.18)!important;
   color:var(--bo-text)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounded-select-menu{
@@ -4937,18 +4990,18 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounde
   color:var(--bo-text-secondary)!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounded-select-option:hover{
-  background:rgba(33,166,215,.14)!important;
-  color:#7DD3FC!important;
+  background:rgba(217,119,6,.14)!important;
+  color:#FBBF24!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounded-select-option.active,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounded-select-option.is-active{
-  background:rgba(33,166,215,.22)!important;
-  color:#E8F7FC!important;
+  background:rgba(217,119,6,.22)!important;
+  color:#F5F5F4!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounded-select-option.active:hover,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .rounded-select-option.is-active:hover{
-  background:rgba(33,166,215,.28)!important;
-  color:#E8F7FC!important;
+  background:rgba(217,119,6,.28)!important;
+  color:#F5F5F4!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-summary{
   background:rgba(255,255,255,.03)!important;border-color:var(--bo-border)!important;
@@ -4958,7 +5011,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-balance b{col
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-summary-copy small,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-balance span{color:var(--bo-muted)!important}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-avatar{
-  background:rgba(33,166,215,.16)!important;color:#7DD3FC!important;
+  background:rgba(217,119,6,.16)!important;color:#FBBF24!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-ghost,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mac-adjust-panel .mad-modal-actions .mad-btn-ghost.bo-ui-button{
@@ -4985,7 +5038,7 @@ html[data-bo-theme="dark"] body.main-admin-credit-page .modal-clean-close:hover{
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-field .form-control,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-pass-wrap .form-control,
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-modal .form-control{
-  background:#0B1626!important;
+  background:#2A2C36!important;
   border-color:var(--bo-border)!important;
   color:var(--bo-text)!important;
   color-scheme:dark;
@@ -5029,7 +5082,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-section{
   border:1px solid var(--bo-border,#E4E7EC);
   border-radius:8px;
   padding:20px 22px 22px;
-  box-shadow:var(--bo-shadow,0 1px 2px rgba(18,59,102,.04));
+  box-shadow:var(--bo-shadow,0 1px 2px rgba(120,80,20,.04));
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-section-head{
   display:flex;
@@ -5044,8 +5097,8 @@ body.main-merchant-detail-page #madEditWorkspace .mac-section-icon{
   display:grid;
   place-items:center;
   flex:0 0 auto;
-  background:rgba(18,59,102,.06);
-  color:var(--bo-navy,#123B66);
+  background:rgba(120,80,20,.06);
+  color:var(--bo-navy,#18191C);
   font-size:14px;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-section-copy{
@@ -5128,9 +5181,9 @@ body.main-merchant-detail-page #madEditWorkspace .mac-label b{
 body.main-merchant-detail-page #madEditWorkspace .mac-field .form-control,
 body.main-merchant-detail-page #madEditWorkspace .mac-field select.form-control{
   height:44px!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-radius:8px!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   color:var(--bo-text,#12263A)!important;
   padding:0 14px!important;
   font-size:13.5px!important;
@@ -5140,12 +5193,12 @@ body.main-merchant-detail-page #madEditWorkspace .mac-field select.form-control{
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-field .form-control:focus,
 body.main-merchant-detail-page #madEditWorkspace .mac-field select.form-control:focus{
-  border-color:var(--bo-cyan,#21A6D7)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;
+  border-color:var(--bo-cyan,#D97706)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;
   outline:0!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-field .form-control[readonly]{
-  background:var(--bo-bg,#F8FAFC)!important;
+  background:var(--bo-bg,#EDE4D4)!important;
   color:var(--bo-text-secondary,#475467)!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-master-credit-stack{
@@ -5160,7 +5213,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-master-fields .mac-label-r
   display:flex;align-items:center;justify-content:space-between;gap:8px;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-master-fields .mac-link-btn{
-  border:0;background:transparent;padding:0;color:var(--bo-cyan,#21A6D7);
+  border:0;background:transparent;padding:0;color:var(--bo-cyan,#D97706);
   font-size:11.5px;font-weight:700;cursor:pointer;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-master-fields .mac-link-btn:hover{
@@ -5177,7 +5230,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-master-fields .mad-eye{
   width:40px;height:40px;border:0;background:transparent;color:var(--bo-muted,#667085);cursor:pointer;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-master-fields .mad-eye:hover{
-  color:var(--bo-cyan,#21A6D7);background:rgba(33,166,215,.08);
+  color:var(--bo-cyan,#D97706);background:rgba(217,119,6,.08);
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-input-group{
   display:flex;
@@ -5194,8 +5247,8 @@ body.main-merchant-detail-page #madEditWorkspace .mac-input-addon{
   z-index:1;
   min-width:52px;
   padding:0 12px;
-  border:1px solid #D0D5DD;
-  background:var(--bo-bg,#F8FAFC);
+  border:1px solid #DCC9A8;
+  background:var(--bo-bg,#F5EBDC);
   color:var(--bo-muted,#667085);
   font-size:12px;
   font-weight:700;
@@ -5209,7 +5262,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-input-group > .form-contro
   height:44px!important;
   position:relative;
   z-index:0;
-  background:#fff!important;
+  background:#FFF8EB!important;
   box-shadow:none!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-input-group.is-prefix .mac-input-addon{
@@ -5220,14 +5273,14 @@ body.main-merchant-detail-page #madEditWorkspace .mac-input-group.is-prefix > .f
   border-radius:0 8px 8px 0!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-input-group:focus-within .mac-input-addon{
-  border-color:var(--bo-cyan,#21A6D7);
+  border-color:var(--bo-cyan,#D97706);
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-input-group.is-prefix:focus-within .mac-input-addon{
   border-right:0;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-input-group.is-prefix:focus-within > .form-control{
-  border-color:var(--bo-cyan,#21A6D7)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;
+  border-color:var(--bo-cyan,#D97706)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-subblock{
   margin:0;
@@ -5250,8 +5303,8 @@ body.main-merchant-detail-page #madEditWorkspace .mac-subblock-dot{
   width:7px;
   height:7px;
   border-radius:50%;
-  background:var(--bo-cyan,#21A6D7);
-  box-shadow:0 0 0 3px rgba(33,166,215,.16);
+  background:var(--bo-cyan,#D97706);
+  box-shadow:0 0 0 3px rgba(217,119,6,.16);
   flex:0 0 auto;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-edit-pricing-block{
@@ -5277,7 +5330,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-edit-pricing-table thead t
   font-size:11.5px;
   font-weight:800;
   color:var(--bo-muted,#667085);
-  background:var(--bo-bg,#F8FAFC);
+  background:var(--bo-bg,#FFF8EB);
   border-bottom:1px solid var(--bo-border,#E4E7EC);
   white-space:nowrap;
   padding:10px 12px;
@@ -5348,8 +5401,8 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac
   border-color:rgba(148,163,184,.22);
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-section-icon{
-  background:rgba(33,166,215,.14);
-  color:#7DD3FC;
+  background:rgba(217,119,6,.14);
+  color:#FBBF24;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-section-copy h3,
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-subblock-title,
@@ -5358,17 +5411,17 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .form-control,
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field select.form-control{
-  background:#0B1626!important;
+  background:#2A2C36!important;
   border-color:var(--bo-border)!important;
   color:#E2E8F0!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .form-control[readonly]{
   background:rgba(2,6,23,.55)!important;
-  color:#94A3B8!important;
+  color:#A1A1AA!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-edit-pricing-table thead th{
   background:rgba(2,6,23,.45);
-  color:#94A3B8;
+  color:#A1A1AA;
   border-color:rgba(148,163,184,.22);
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page.mad-editing #madEditWorkspace .mac-footer-actions{
@@ -5382,9 +5435,9 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page.mad-editing #madEditWo
   color:var(--bo-text)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-input-addon{
-  background:#0B1626!important;
+  background:#2A2C36!important;
   border-color:var(--bo-border)!important;
-  color:#94A3B8!important;
+  color:#A1A1AA!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-input-group.is-prefix .mac-input-addon{
   border-right:0!important;
@@ -5394,8 +5447,8 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-provider-markup-field .mac-input-group > input,
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-provider-markup-field .mac-input-group > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-markup-field .mac-input-group > .form-control{
-  background:#0B1626!important;
-  background-color:#0B1626!important;
+  background:#2A2C36!important;
+  background-color:#2A2C36!important;
   border-color:var(--bo-border)!important;
   color:#E2E8F0!important;
   -webkit-text-fill-color:#E2E8F0!important;
@@ -5412,10 +5465,10 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-markup-f
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-provider-markup-field .mac-input-group.is-suffix .mac-input-addon.is-trailing,
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-markup-field .mac-input-group.is-suffix .mac-input-addon.is-trailing{
-  background:#0B1626!important;
+  background:#2A2C36!important;
   border-color:var(--bo-border)!important;
   border-left:0!important;
-  color:#94A3B8!important;
+  color:#A1A1AA!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .form-control,
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field select.form-control,
@@ -5427,8 +5480,8 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > button.mac-currency-add-btn{
   border-color:var(--bo-border)!important;
   border-left:0!important;
-  background:#0B1626!important;
-  color:var(--bo-cyan,#21A6D7)!important;
+  background:#2A2C36!important;
+  color:var(--bo-cyan,#D97706)!important;
 }
 
 /* ========== Merchant Edit: reuse Create currency/provider chrome ========== */
@@ -5471,11 +5524,11 @@ body.main-merchant-detail-page .mac-currency-add-btn{
   justify-content:center;
   margin:0;
   padding:0;
-  border:1px solid #D0D5DD;
+  border:1px solid #EADCC8;
   border-left:0;
   border-radius:0 8px 8px 0;
-  background:var(--bo-bg,#F8FAFC);
-  color:var(--bo-cyan,#21A6D7);
+  background:var(--bo-bg,#FFF8EB);
+  color:var(--bo-cyan,#D97706);
   font-size:18px;
   line-height:1;
   cursor:pointer;
@@ -5483,12 +5536,12 @@ body.main-merchant-detail-page .mac-currency-add-btn{
 }
 
 body.main-merchant-detail-page .mac-currency-add-btn:hover{
-  background:rgba(33,166,215,.1);
+  background:rgba(217,119,6,.1);
   color:var(--bo-cyan-deep,#0E7AA8);
 }
 
 body.main-merchant-detail-page .mac-currency-control:focus-within .mac-currency-add-btn{
-  border-color:var(--bo-cyan,#21A6D7);
+  border-color:var(--bo-cyan,#D97706);
   color:var(--bo-cyan-deep,#0E7AA8);
 }
 
@@ -5549,7 +5602,7 @@ body.main-merchant-detail-page .mac-currency-pane{
   min-width:0;
   border:1px solid #E4E7EC;
   border-radius:10px;
-  background:var(--bo-bg,#F8FAFC);
+  background:var(--bo-bg,#FFF8EB);
   overflow:hidden;
 }
 
@@ -5577,7 +5630,7 @@ body.main-merchant-detail-page .mac-currency-pane-count{
   height:22px;
   padding:0 7px;
   border-radius:999px;
-  background:rgba(33,166,215,.12);
+  background:rgba(217,119,6,.12);
   color:var(--bo-cyan-deep,#0E7AA8);
   font-size:11px;
   font-weight:800;
@@ -5611,14 +5664,14 @@ body.main-merchant-detail-page .mac-currency-pane-item{
 }
 
 body.main-merchant-detail-page .mac-currency-pane-item:hover{
-  border-color:rgba(33,166,215,.35);
-  background:rgba(33,166,215,.06);
+  border-color:rgba(217,119,6,.35);
+  background:rgba(217,119,6,.06);
 }
 
 body.main-merchant-detail-page .mac-currency-pane-item.is-selected{
-  border-color:var(--bo-cyan,#21A6D7);
-  background:rgba(33,166,215,.12);
-  box-shadow:0 0 0 2px rgba(33,166,215,.12);
+  border-color:var(--bo-cyan,#D97706);
+  background:rgba(217,119,6,.12);
+  box-shadow:0 0 0 2px rgba(217,119,6,.12);
 }
 
 body.main-merchant-detail-page .mac-currency-pane-item.is-locked{
@@ -5635,7 +5688,7 @@ body.main-merchant-detail-page .mac-currency-pane-item-tag{
   flex:0 0 auto;
   padding:2px 7px;
   border-radius:999px;
-  background:rgba(18,59,102,.08);
+  background:rgba(120,80,20,.08);
   color:var(--bo-muted,#667085);
   font-size:10.5px;
   font-weight:700;
@@ -5657,7 +5710,7 @@ body.main-merchant-detail-page .mac-currency-move-btn{
   justify-content:center;
   margin:0;
   padding:0;
-  border:1px solid #D0D5DD;
+  border:1px solid #EADCC8;
   border-radius:8px;
   background:#fff;
   color:var(--bo-cyan-deep,#0E7AA8);
@@ -5666,8 +5719,8 @@ body.main-merchant-detail-page .mac-currency-move-btn{
 }
 
 body.main-merchant-detail-page .mac-currency-move-btn:hover:not(:disabled){
-  border-color:var(--bo-cyan,#21A6D7);
-  background:rgba(33,166,215,.1);
+  border-color:var(--bo-cyan,#D97706);
+  background:rgba(217,119,6,.1);
 }
 
 body.main-merchant-detail-page .mac-currency-move-btn:disabled{
@@ -5684,8 +5737,8 @@ body.main-merchant-detail-page .mac-currency-modal-empty{
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-currency-add-btn{
   border-color:var(--bo-border);
-  background:#0B1626;
-  color:var(--bo-cyan,#21A6D7);
+  background:#2A2C36;
+  color:var(--bo-cyan,#D97706);
 }
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-currency-pane,
@@ -5749,9 +5802,9 @@ body.main-merchant-detail-page #madCurrencyModal #madCurrencyModalCode{
   min-height:44px!important;
   max-height:44px!important;
   padding:0 14px!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-radius:8px!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   color:var(--bo-text,#12263A)!important;
   font-size:13.5px!important;
   font-weight:500!important;
@@ -5855,10 +5908,10 @@ body.main-merchant-detail-page #madEditWorkspace .mac-provider-markup-field .mac
   max-height:34px!important;
   margin:0!important;
   padding:0 8px!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-right:0!important;
   border-radius:8px 0 0 8px!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   color:var(--bo-text)!important;
   font-family:inherit!important;
   font-size:13.5px!important;
@@ -5886,11 +5939,11 @@ body.main-merchant-detail-page #madEditWorkspace .mac-provider-markup-field .mac
   font-size:12px!important;
   font-weight:700!important;
   line-height:1!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-left:0!important;
   border-radius:0 8px 8px 0!important;
   box-sizing:border-box!important;
-  background:var(--bo-bg,#F8FAFC)!important;
+  background:var(--bo-bg,#F5EBDC)!important;
   color:var(--bo-muted,#667085)!important;
 }
 
@@ -5982,7 +6035,7 @@ body.main-merchant-detail-page .mac-provider-count{
   height:20px;
   padding:0 7px;
   border-radius:999px;
-  background:rgba(33,166,215,.12);
+  background:rgba(217,119,6,.12);
   color:var(--bo-cyan-deep, #0B7EA8);
   font-size:11px;
   font-weight:800;
@@ -6009,13 +6062,13 @@ body.main-merchant-detail-page .mac-provider-search{
   height:40px;
   border:1px solid var(--bo-border);
   border-radius:8px;
-  background:#fff;
+  background:#FFF8EB;
   box-sizing:border-box;
 }
 
 body.main-merchant-detail-page .mac-provider-search:focus-within{
   border-color:var(--bo-cyan);
-  box-shadow:0 0 0 3px rgba(33,166,215,.12);
+  box-shadow:0 0 0 3px rgba(217,119,6,.12);
 }
 
 body.main-merchant-detail-page .mac-provider-search i{color:var(--bo-muted);font-size:14px;flex:0 0 auto}
@@ -6073,7 +6126,7 @@ body.main-merchant-detail-page .mac-provider-chip{
 
 body.main-merchant-detail-page .mac-provider-chip:hover{
   background:#F8FBFD;
-  border-color:rgba(33,166,215,.35);
+  border-color:rgba(217,119,6,.35);
 }
 
 body.main-merchant-detail-page .mac-provider-chip:focus-visible{
@@ -6084,7 +6137,7 @@ body.main-merchant-detail-page .mac-provider-chip:focus-visible{
 body.main-merchant-detail-page .mac-provider-chip.is-selected{
   background:#F3FAFD;
   border-color:var(--bo-cyan);
-  box-shadow:0 0 0 1px rgba(33,166,215,.18);
+  box-shadow:0 0 0 1px rgba(217,119,6,.18);
 }
 
 body.main-merchant-detail-page .mac-provider-chip.is-selected b{color:var(--bo-navy)}
@@ -6134,8 +6187,8 @@ body.main-merchant-detail-page .mac-provider-selected-card{
 }
 
 body.main-merchant-detail-page .mac-provider-selected-card:hover{
-  border-color:rgba(33,166,215,.28);
-  background:rgba(33,166,215,.02);
+  border-color:rgba(217,119,6,.28);
+  background:rgba(217,119,6,.02);
 }
 
 body.main-merchant-detail-page .mac-provider-selected-title{
@@ -6171,14 +6224,14 @@ body.main-merchant-detail-page .mac-provider-override-wrap{
 body.main-merchant-detail-page .mac-provider-override-control,
 body.main-merchant-detail-page #madEditWorkspace .mac-provider-override-control{
   display:flex;align-items:stretch;height:32px;min-height:32px;max-height:32px;min-width:0;
-  border:1px solid var(--bo-border);border-radius:8px;background:#fff;overflow:hidden;
+  border:1px solid var(--bo-border);border-radius:8px;background:#FFF8EB;overflow:hidden;
   box-sizing:border-box;
 }
 
 body.main-merchant-detail-page .mac-provider-override-control:focus-within,
 body.main-merchant-detail-page #madEditWorkspace .mac-provider-override-control:focus-within{
   border-color:var(--bo-cyan);
-  box-shadow:0 0 0 3px rgba(33,166,215,.12);
+  box-shadow:0 0 0 3px rgba(217,119,6,.12);
 }
 
 body.main-merchant-detail-page .mac-provider-override-control input,
@@ -6262,7 +6315,7 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-pane-hea
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-pane-title strong{color:var(--bo-text)}
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-count{
-  background:rgba(33,166,215,.18);
+  background:rgba(217,119,6,.18);
   color:var(--bo-cyan);
 }
 
@@ -6277,14 +6330,14 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-chip b{c
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-chip small{color:var(--bo-muted)}
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-chip:hover{
-  background:rgba(33,166,215,.1);
-  border-color:rgba(33,166,215,.4);
+  background:rgba(217,119,6,.1);
+  border-color:rgba(217,119,6,.4);
 }
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-chip.is-selected{
-  background:rgba(33,166,215,.14);
+  background:rgba(217,119,6,.14);
   border-color:var(--bo-cyan);
-  box-shadow:0 0 0 1px rgba(33,166,215,.28);
+  box-shadow:0 0 0 1px rgba(217,119,6,.28);
 }
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-chip.is-selected b{
@@ -6297,8 +6350,8 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-selected
 }
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-selected-card:hover{
-  background:rgba(33,166,215,.08);
-  border-color:rgba(33,166,215,.35);
+  background:rgba(217,119,6,.08);
+  border-color:rgba(217,119,6,.35);
 }
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-selected-title b,
@@ -6313,7 +6366,7 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-override
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-eff-wrap .mac-provider-eff,
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-override-unit{
-  background:#0B1626;
+  background:#2A2C36;
   border-color:var(--bo-border);
   color:var(--bo-muted);
 }
@@ -6325,14 +6378,14 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-override
 }
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-search{
-  background:#0B1626;
+  background:#2A2C36;
   border-color:var(--bo-border);
 }
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-currency-add-btn{
   border-color:var(--bo-border);
-  background:#0B1626;
-  color:var(--bo-cyan,#21A6D7);
+  background:#2A2C36;
+  color:var(--bo-cyan,#D97706);
 }
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-currency-pane,
@@ -6362,7 +6415,7 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-pane-hea
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-pane-title strong{color:var(--bo-text)}
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-count{
-  background:rgba(33,166,215,.18);
+  background:rgba(217,119,6,.18);
   color:var(--bo-cyan);
 }
 
@@ -6377,14 +6430,14 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-chip b{c
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-chip small{color:var(--bo-muted)}
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-chip:hover{
-  background:rgba(33,166,215,.1);
-  border-color:rgba(33,166,215,.4);
+  background:rgba(217,119,6,.1);
+  border-color:rgba(217,119,6,.4);
 }
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-chip.is-selected{
-  background:rgba(33,166,215,.14);
+  background:rgba(217,119,6,.14);
   border-color:var(--bo-cyan);
-  box-shadow:0 0 0 1px rgba(33,166,215,.28);
+  box-shadow:0 0 0 1px rgba(217,119,6,.28);
 }
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-chip.is-selected b{
@@ -6397,8 +6450,8 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-selected
 }
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-selected-card:hover{
-  background:rgba(33,166,215,.08);
-  border-color:rgba(33,166,215,.35);
+  background:rgba(217,119,6,.08);
+  border-color:rgba(217,119,6,.35);
 }
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-selected-title b,
@@ -6413,7 +6466,7 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-override
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-eff-wrap .mac-provider-eff,
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-override-unit{
-  background:#0B1626;
+  background:#2A2C36;
   border-color:var(--bo-border);
   color:var(--bo-muted);
 }
@@ -6425,7 +6478,7 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-override
 }
 
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-search{
-  background:#0B1626;
+  background:#2A2C36;
   border-color:var(--bo-border);
 }
 
@@ -6473,10 +6526,10 @@ body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > select.
   max-height:44px!important;
   margin:0!important;
   box-sizing:border-box!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-right:0!important;
   border-radius:8px 0 0 8px!important;
-  background:#fff!important;
+  background:#FFF8EB!important;
   box-shadow:none!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > .rounded-select-wrap .rounded-select-menu{
@@ -6489,13 +6542,13 @@ body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > .rounde
 body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > .rounded-select-wrap .rounded-select-btn.open,
 body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > .rounded-select-wrap .rounded-select-btn:focus,
 body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > select.form-control:focus{
-  border-color:var(--bo-cyan,#21A6D7)!important;
+  border-color:var(--bo-cyan,#D97706)!important;
   box-shadow:none!important;
   outline:0!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-currency-control:focus-within > .rounded-select-wrap .rounded-select-btn,
 body.main-merchant-detail-page #madEditWorkspace .mac-currency-control:focus-within > select.form-control{
-  border-color:var(--bo-cyan,#21A6D7)!important;
+  border-color:var(--bo-cyan,#D97706)!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-currency-add-btn,
 body.main-merchant-detail-page #madEditWorkspace .mac-currency-add-btn.bo-ui-button,
@@ -6511,18 +6564,18 @@ body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > button.
   margin:0!important;
   box-sizing:border-box!important;
   line-height:1!important;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #EADCC8!important;
   border-left:0!important;
   border-radius:0 8px 8px 0!important;
-  background:var(--bo-bg,#F8FAFC)!important;
-  color:var(--bo-cyan,#21A6D7)!important;
+  background:var(--bo-bg,#FFF8EB)!important;
+  color:var(--bo-cyan,#D97706)!important;
   box-shadow:none!important;
   align-self:flex-start!important;
   position:relative;
   z-index:1;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-currency-control:focus-within .mac-currency-add-btn{
-  border-color:var(--bo-cyan,#21A6D7)!important;
+  border-color:var(--bo-cyan,#D97706)!important;
   color:var(--bo-cyan-deep,#0E7AA8)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-currency-add-btn,
@@ -6530,16 +6583,16 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > button.mac-currency-add-btn{
   border-color:var(--bo-border)!important;
   border-left:0!important;
-  background:#0B1626!important;
-  color:var(--bo-cyan,#21A6D7)!important;
+  background:#2A2C36!important;
+  color:var(--bo-cyan,#D97706)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-currency-control:focus-within .mac-currency-add-btn{
-  border-color:var(--bo-cyan,#21A6D7)!important;
-  color:#7DD3FC!important;
+  border-color:var(--bo-cyan,#D97706)!important;
+  color:#FBBF24!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > .rounded-select-wrap .rounded-select-btn,
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > select.form-control{
-  background:#0B1626!important;
+  background:#2A2C36!important;
   border-color:var(--bo-border)!important;
   color:#E2E8F0!important;
 }
@@ -6562,15 +6615,15 @@ body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-btn{
   border-radius:8px!important;
   font-size:13.5px!important;
   font-weight:500!important;
-  border:1px solid #D0D5DD!important;
-  background:#fff!important;
+  border:1px solid #DCC9A8!important;
+  background:#FFF8EB!important;
   color:var(--bo-text,#12263A)!important;
   box-shadow:none!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-btn.open,
 body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-btn:focus{
-  border-color:var(--bo-cyan,#21A6D7)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.12)!important;
+  border-color:var(--bo-cyan,#D97706)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;
   outline:0!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-menu{
@@ -6583,7 +6636,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-menu
   border:1px solid var(--bo-border,#E4E7EC)!important;
   border-radius:8px!important;
   background:var(--bo-surface,#fff)!important;
-  box-shadow:0 12px 28px rgba(18,59,102,.12)!important;
+  box-shadow:0 12px 28px rgba(120,80,20,.16)!important;
   padding:6px!important;
   z-index:40!important;
 }
@@ -6594,18 +6647,18 @@ body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-opti
   font-weight:700!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-option:hover{
-  background:var(--bo-cyan-tint,rgba(33,166,215,.12))!important;
+  background:var(--bo-cyan-tint,rgba(217,119,6,.12))!important;
   color:var(--bo-cyan-deep,#0B7FA8)!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-option.active,
 body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-option.is-active{
-  background:rgba(33,166,215,.16)!important;
-  color:var(--bo-navy,#123B66)!important;
+  background:rgba(217,119,6,.16)!important;
+  color:var(--bo-navy,#18191C)!important;
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-option.active:hover,
 body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-option.is-active:hover{
-  background:rgba(33,166,215,.22)!important;
-  color:var(--bo-navy,#123B66)!important;
+  background:rgba(217,119,6,.22)!important;
+  color:var(--bo-navy,#18191C)!important;
 }
 /* Keep currency joined control radii after unified btn styles */
 body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > .rounded-select-wrap .rounded-select-btn{
@@ -6613,14 +6666,14 @@ body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > .rounde
   border-radius:8px 0 0 8px!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-btn{
-  background:#0B1626!important;
+  background:#2A2C36!important;
   border-color:var(--bo-border)!important;
   color:var(--bo-text)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-btn.open,
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-btn:focus{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.18)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.18)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-menu{
   background:var(--bo-surface)!important;
@@ -6632,18 +6685,18 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac
   color:var(--bo-text-secondary)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-option:hover{
-  background:rgba(33,166,215,.14)!important;
-  color:#7DD3FC!important;
+  background:rgba(217,119,6,.14)!important;
+  color:#FBBF24!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-option.active,
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-option.is-active{
-  background:rgba(33,166,215,.22)!important;
-  color:#E8F7FC!important;
+  background:rgba(217,119,6,.22)!important;
+  color:#F5F5F4!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-option.active:hover,
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-field .rounded-select-option.is-active:hover{
-  background:rgba(33,166,215,.28)!important;
-  color:#E8F7FC!important;
+  background:rgba(217,119,6,.28)!important;
+  color:#F5F5F4!important;
 }
 
 /* Provider pane actions: text links like Add Merchant (not outlined buttons) */
@@ -6659,7 +6712,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-provider-pane-actions butt
   min-width:0!important;
   border-radius:0!important;
   box-shadow:none!important;
-  color:var(--bo-cyan,#21A6D7)!important;
+  color:var(--bo-cyan,#D97706)!important;
   font-size:12.5px!important;
   font-weight:700!important;
   line-height:1.2!important;
@@ -6700,7 +6753,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-provider-apply-btn.bo-ui-b
 
 /* Activity Timeline — read-only audit strip */
 body.main-merchant-detail-page #madEditWorkspace .mac-audit-block{
-  background:linear-gradient(180deg, rgba(33,166,215,.04) 0%, var(--bo-surface,#fff) 42%);
+  background:linear-gradient(180deg, rgba(217,119,6,.04) 0%, var(--bo-surface,#fff) 42%);
 }
 body.main-merchant-detail-page #madEditWorkspace .mac-audit-grid{
   display:grid;
@@ -6714,7 +6767,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-audit-item{
   min-width:0;
   margin:0;
   padding:10px 12px;
-  border:1px solid rgba(33,166,215,.14);
+  border:1px solid rgba(217,119,6,.14);
   border-radius:10px;
   background:rgba(255,255,255,.88);
 }
@@ -6726,7 +6779,7 @@ body.main-merchant-detail-page #madEditWorkspace .mac-audit-icon{
   width:30px;
   height:30px;
   border-radius:8px;
-  background:rgba(33,166,215,.1);
+  background:rgba(217,119,6,.1);
   color:var(--bo-cyan-deep,#0B7FA8);
   font-size:14px;
   line-height:1;
@@ -6786,22 +6839,22 @@ body.main-merchant-detail-page #madEditWorkspace .mac-audit-primary.is-empty{
   body.main-merchant-detail-page #madEditWorkspace .mac-audit-grid{grid-template-columns:1fr}
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-audit-block{
-  background:linear-gradient(180deg, rgba(33,166,215,.08) 0%, rgba(15,23,42,.72) 42%);
+  background:linear-gradient(180deg, rgba(217,119,6,.08) 0%, rgba(15,23,42,.72) 42%);
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-audit-item{
   background:rgba(15,23,42,.55);
   border-color:rgba(125,211,252,.16);
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-audit-icon{
-  background:rgba(33,166,215,.16);
-  color:#7DD3FC;
+  background:rgba(217,119,6,.16);
+  color:#FBBF24;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-audit-icon.is-person{
   background:rgba(148,163,184,.12);
   color:#E2E8F0;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-audit-primary{color:#E2E8F0}
-html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-audit-secondary{color:#7DD3FC}
+html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-audit-secondary{color:#FBBF24}
 
 
 /* ===== Dark mode: unified merchant control borders + Markup fill (must stay last) ===== */
@@ -6818,8 +6871,8 @@ html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-search{
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-markup-field .mac-input-group > .form-control,
 html[data-bo-theme="dark"] body.main-merchant-create-page .report-content .mac-provider-markup-field .mac-input-group > input,
 html[data-bo-theme="dark"] body.main-merchant-create-page .report-content .mac-provider-markup-field .mac-input-group > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]){
-  background:#0B1626!important;
-  background-color:#0B1626!important;
+  background:#2A2C36!important;
+  background-color:#2A2C36!important;
   border-color:var(--bo-border)!important;
   border-right:0!important;
   color:var(--bo-text)!important;
@@ -6828,7 +6881,7 @@ html[data-bo-theme="dark"] body.main-merchant-create-page .report-content .mac-p
   color-scheme:dark;
 }
 html[data-bo-theme="dark"] body.main-merchant-create-page .mac-provider-markup-field .mac-input-group.is-suffix .mac-input-addon.is-trailing{
-  background:#0B1626!important;
+  background:#2A2C36!important;
   border-color:var(--bo-border)!important;
   border-left:0!important;
   color:var(--bo-muted)!important;
@@ -6848,8 +6901,8 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-search{
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-provider-markup-field .mac-input-group > input,
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-provider-markup-field .mac-input-group > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-markup-field .mac-input-group > .form-control{
-  background:#0B1626!important;
-  background-color:#0B1626!important;
+  background:#2A2C36!important;
+  background-color:#2A2C36!important;
   border-color:var(--bo-border)!important;
   border-right:0!important;
   color:#E2E8F0!important;
@@ -6859,16 +6912,16 @@ html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-markup-f
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-provider-markup-field .mac-input-group.is-suffix .mac-input-addon.is-trailing,
 html[data-bo-theme="dark"] body.main-merchant-detail-page .mac-provider-markup-field .mac-input-group.is-suffix .mac-input-addon.is-trailing{
-  background:#0B1626!important;
+  background:#2A2C36!important;
   border-color:var(--bo-border)!important;
   border-left:0!important;
-  color:#94A3B8!important;
+  color:#A1A1AA!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-currency-add-btn,
 html[data-bo-theme="dark"] body.main-merchant-detail-page #madEditWorkspace .mac-currency-control > button.mac-currency-add-btn{
-  background:#0B1626!important;
+  background:#2A2C36!important;
   border-left:0!important;
-  color:var(--bo-cyan,#21A6D7)!important;
+  color:var(--bo-cyan,#D97706)!important;
 }
 
 /* Hide number input spinner arrows on merchant create/edit */
@@ -9151,8 +9204,8 @@ html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="m
 html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .report-content .mac-field select,
 html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .report-content .mac-field textarea,
 html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_admin_detail"] .mad-pass-wrap .form-control{
-  background:#F5EBDC!important;
-  background-color:#F5EBDC!important;
+  background:#FFF8EB!important;
+  background-color:#FFF8EB!important;
   border-color:#DCC9A8!important;
   color:#18191C!important;
 }
@@ -9287,4 +9340,454 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
   background:rgba(239,68,68,.14)!important;
   color:#FCA5A5!important;
   border-color:rgba(248,113,113,.30)!important;
+}
+
+/* ==========================================================================
+   Security & Audit (admin) — filter row: the date control keeps this page's own
+   260px, and the row wraps instead of overflowing.
+
+   reports.css sizes the shared date field with a responsive ladder, every step
+   `!important` but only (0,1,0): 390px at >=1367, 292px at 1200-1366, 195px at
+   768-1199.98 (reports.css:3730-3760, :4288-4310; the popup itself stays 390 so the
+   "trigger width matches the calendar" contract holds on the report pages). Those win
+   over the `body.main-admin-security-page .mas-date-field{flex:0 0 260px;width:260px}`
+   declared earlier in this file, so the page silently rendered 390/292/195 — and the
+   inner `.ref-range-wrap` / `.ref-range-trigger` were pinned to the same steps, which is
+   why the trigger never matched its own field.
+
+   Measured on a mocked page (row = panel width minus its paddings):
+     1150 -> search 200 + date 195 + 169 + 160 + Reset 80 + 4x8 gaps = 836 > row 789
+     1280 ->                                                          933 > row 918
+   So between roughly 992 and 1366 the five controls cannot fit, and the last one (Reset)
+   was cut off by the panel edge — `.mad-panel` clips. The row now wraps when it runs out
+   (nothing is ever clipped) and the date control keeps 260px on desktop, which is what the
+   page's own rule always intended: at 1280 the row needs 901 and has 918, so it stays on
+   one line from ~1225px up and stacks below that.
+
+   Scoped with the data attribute on purpose: main-merchant-security.html also carries
+   .main-admin-security-page, and its row belongs to the merchant family's file.
+   ========================================================================== */
+body.main-admin-security-page[data-access-page="main_admin_security"] .mas-filters{
+  flex-wrap:wrap!important;
+}
+/* The search is the shock absorber: its flex-basis decides when the row breaks, so the
+   basis is the control minimum (200px) rather than the page's 260px — that keeps the five
+   controls on one line down to ~1225px (200+260+169+160+80+4x8 = 901 <= row 918 at 1280)
+   and only then lets them stack. */
+body.main-admin-security-page[data-access-page="main_admin_security"] .mas-search{
+  flex:1 1 200px!important;
+}
+@media (min-width:801px){
+  body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field{
+    flex:0 0 260px!important;
+    width:260px!important;
+    min-width:260px!important;
+    max-width:260px!important;
+  }
+  body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-wrap,
+  body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-trigger{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+}
+
+/* ==========================================================================
+   Security & Audit (admin) — the date-range picker joins the family design
+
+   Measured before this block (light: panel #FFFFFF, preset rail #F8FAFC, trigger border
+   rgba(255,255,255,.10)), i.e. the shared cool shell, and the selected days rendered as a
+   14% amber wash with WHITE ink — invisible. The endpoint cells carry both .selected and
+   .in-range, and the .in-range rule sits later at equal specificity, so it won the fill; the
+   same interaction that bit the provider report pages. The strip radii, the hover preview and
+   the gap:0 cells now match main-merchant-security.html / the settlement picker.
+   ========================================================================== */
+body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days{
+  gap:0;
+}
+body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.selected{
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.selected.is-start.in-range:not(.is-end){
+  border-radius:8px 0 0 8px!important;
+}
+body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.selected.is-end.in-range:not(.is-start){
+  border-radius:0 8px 8px 0!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-trigger{
+  border-color:#EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-picker{
+  background:#FFF8EB!important;
+  border-color:#EADCC8!important;
+  border-radius:12px!important;
+  box-shadow:0 12px 30px rgba(60,48,32,.14)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-presets{
+  background:#FFF8EB!important;
+  border-right-color:#EADCC8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-presets button{
+  color:#374151!important;
+}
+/* …but the ACTIVE preset keeps white ink on the amber fill (legacy rule: #fff on --bo-cyan) */
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-presets button.active{
+  color:#FFFFFF!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-presets button:hover:not(.active){
+  background:rgba(217,119,6,.16)!important;
+  color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button,
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-head-pick,
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-head button{
+  background:transparent!important;
+  border-color:transparent!important;
+  color:#374151!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button:hover:not(.selected){
+  background:rgba(217,119,6,.16)!important;
+  color:#B45309!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.muted{
+  color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-week span{
+  color:#71717A!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.selected{
+  background:#D97706!important;
+  color:#FFFFFF!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.in-range:not(.selected){
+  background:rgba(217,119,6,.14)!important;
+  color:#B45309!important;
+  border-radius:0!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.is-preview:not(.selected){
+  background:rgba(217,119,6,.28)!important;
+  color:#7C2D12!important;
+}
+/* Dark trigger border: the light rule above is scoped, but the legacy token that paints this
+   border in dark resolves to the light cream (#EADCC8) — measured. Pin it to the family dark edge. */
+html[data-bo-theme="dark"] body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-trigger{
+  border-color:rgba(255,255,255,.12)!important;
+  color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-picker{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+  border-radius:12px!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-range-presets{
+  background:#2A2C36!important;
+  border-right-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.selected{
+  background:#F59E0B!important;
+  color:#2A2C36!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.in-range:not(.selected){
+  background:rgba(245,158,11,.18)!important;
+  color:#FBBF24!important;
+  border-radius:0!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page[data-access-page="main_admin_security"] .mas-date-field .ref-cal-days button.is-preview:not(.selected){
+  background:rgba(245,158,11,.32)!important;
+  color:#FDE68A!important;
+}
+
+/* ==========================================================================
+   Charcoal + Amber — leftovers the amber block above did not reach
+   (data-access-page=main_admin_detail | main_admin_security | main_admin_create).
+   Three declarations kept the retired palette because the amber block never re-declared
+   them: the credit-adjust avatar, the enhanced select's selected option, and the create
+   form's section icon in dark. Found by sweeping every rendered element's computed colour
+   in both themes; all three are invisible to a selector-level grep.
+   ========================================================================== */
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-avatar,
+body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-avatar,
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-summary .mac-adjust-avatar{
+  background:rgba(217,119,6,.14)!important;
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-avatar,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mac-adjust-avatar{
+  background:rgba(245,158,11,.16)!important;
+  color:#FBBF24!important;
+}
+/* The enhanced select's selected option keeps the wash pair the merchant family uses
+   (DESIGN.md → Role select dropdown: option hover is a wash, not a fill). */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .rounded-select-option.active,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_security"] .rounded-select-option.active{
+  background:rgba(217,119,6,.16)!important;
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .rounded-select-option.active{
+  background:rgba(245,158,11,.20)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.main-admin-create-page[data-access-page="main_admin_detail"] .mac-section-icon,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-section-icon{
+  background:rgba(245,158,11,.12)!important;
+  color:#F59E0B!important;
+}
+
+/* Credit Adjust modal fields (light) and the Security filter's selected option (dark).
+   Both keep their legacy fill because the amber block re-declares neither, and the
+   security rule below out-ranks a plain page-scoped selector, so these mirror its shape. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .form-control,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel input.form-control,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel select.form-control,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel textarea.form-control,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-ops .form-control,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-ops .rounded-select-btn{
+  background:#FFF8EB!important;
+  background-color:#FFF8EB!important;
+  border:1px solid #DCC9A8!important;
+  color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-modal-actions .mad-btn-ghost,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page[data-access-page="main_admin_detail"] .mac-adjust-panel .mad-btn-ghost{
+  background:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 100%)!important;
+  background-color:transparent!important;
+  border-color:#DCC9A8!important;
+  color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-filters .rounded-select-wrap .rounded-select-menu .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters > .rounded-select-wrap .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-filters .rounded-select-wrap .rounded-select-menu .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mas-filters > .rounded-select-wrap .rounded-select-option.active{
+  background:rgba(245,158,11,.20)!important;
+  color:#FBBF24!important;
+}
+
+/* ==========================================================================
+   Security & Audit picker: the active preset in dark.
+   Measured, not guessed: every other picker in the product (reference
+   main-merchant-profit.html, and the report family) renders the active rail item as a SOLID
+   amber fill with #2A2C36 ink in dark. main-admin-security.html and
+   main-merchant-security.html rendered it with a WHITE label instead — the same component,
+   same theme, two different values. A colour counter cannot see this (both are amber) and
+   neither can a review by eye, so it only showed up by comparing computed styles across pages.
+   The family rule for this scope wanted a wash; the reference is the contract, and DESIGN.md's
+   own guidance is to read getComputedStyle off the reference page, so this states the solid
+   fill with the mode prefix plus one ID level to settle a class chain of unknown length.
+   ========================================================================== */
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).main-admin-security-page .mas-date-field .ref-range-presets button.active,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).main-merchant-security-page .mas-date-field .ref-range-presets button.active,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).main-admin-security-page .mas-date-field .ref-range-presets .rounded-select-option.active,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).main-merchant-security-page .mas-date-field .ref-range-presets .rounded-select-option.active{
+  background:#F59E0B!important;
+  background-color:#F59E0B!important;
+  color:#2A2C36!important;
+}
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).main-admin-security-page .mas-date-field .ref-range-presets button.active,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).main-merchant-security-page .mas-date-field .ref-range-presets button.active,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).main-admin-security-page .mas-date-field .ref-range-presets .rounded-select-option.active,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).main-merchant-security-page .mas-date-field .ref-range-presets .rounded-select-option.active{
+  background:#D97706!important;
+  background-color:#D97706!important;
+  color:#FFFFFF!important;
+}
+
+/* --------------------------------------------------------------------------
+   Security & Audit — Time & Date cell.
+   The cell keeps the list pages' own markup (time visible, date in the tip), but the
+   portal list's tinting rule for it is scoped to [data-access-page="main_admin_detail"],
+   which these two pages do not match, so the locked "muted / time" values are stated
+   explicitly here. Both security pages carry `main-admin-security-page`, so one scope
+   covers the admin page and the merchant page.
+   -------------------------------------------------------------------------- */
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table td.mad-time,
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table .mad-time-tip{
+  color:#57534E!important;
+  font-weight:600!important;
+  font-variant-numeric:tabular-nums;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-table td.mad-time,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-table .mad-time-tip{
+  color:#D4D4D8!important;
+  font-weight:600!important;
+  font-variant-numeric:tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   Time & Date float tip — the shared `.mad-float-tip` component, styled for the
+   security pages.
+   Why not the cell's own ::after tip: this page splits its header and body into two
+   tables (`.mas-table-head` outside, `.mas-table-body-scroll` scrolling), so there is NO
+   room inside the scroller above the first row — the tip is cut at the container's top
+   edge — and an overflow clip is not something `z-index` paints over. The list pages get
+   away with the same markup only because their header sits inside the scroller, which
+   leaves their first row ~47px of clearance; the tip there also paints over the header,
+   which is the look the owner asked for.
+   A real element at `position:fixed` escapes both the clip and the header, so the tip can
+   sit above the time exactly like the list pages. JS positions it (and flips it below via
+   `.is-below` when there is no room above); this layer only gives it the locked look.
+   -------------------------------------------------------------------------- */
+body.main-admin-security-page .mad-float-tip{
+  position:fixed;
+  z-index:30000;
+  pointer-events:none;
+  padding:7px 14px;
+  border-radius:999px;
+  font-size:12.5px;
+  font-weight:700;
+  line-height:1;
+  white-space:nowrap;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .12s ease, transform .12s ease;
+}
+body.main-admin-security-page .mad-float-tip.is-on{
+  opacity:1;
+  visibility:visible;
+}
+body.main-admin-security-page .mad-float-tip::after{
+  content:"";
+  position:absolute;
+  left:16px;
+  top:100%;
+  border:6px solid transparent;
+}
+body.main-admin-security-page .mad-float-tip.is-below::after{
+  top:auto;
+  bottom:100%;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mad-float-tip{
+  background:#FFF8EB;
+  color:#6b360c;
+  border:1px solid rgba(217,119,6,.28);
+  box-shadow:0 8px 22px rgba(60,48,32,.16);
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mad-float-tip::after{
+  border-top-color:#FFF8EB;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mad-float-tip.is-below::after{
+  border-top-color:transparent;
+  border-bottom-color:#FFF8EB;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mad-float-tip{
+  background:#40424E;
+  color:#F5F5F4;
+  border:1px solid rgba(245,158,11,.35);
+  box-shadow:0 12px 28px rgba(0,0,0,.35);
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mad-float-tip::after{
+  border-top-color:#40424E;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mad-float-tip.is-below::after{
+  border-top-color:transparent;
+  border-bottom-color:#40424E;
+}
+
+/* --------------------------------------------------------------------------
+   One tip only. The cell's own ::after/::before tip still renders here (the family's
+   show rule wins over its own hide rule at equal specificity), so adding the float tip
+   without suppressing it produced TWO stacked pills on hover. The float tip replaces it
+   for these cells; the pseudo is switched off at (0,4,2) with !important, above the
+   family's (0,3,1) pair, so the outcome does not depend on their source order.
+   -------------------------------------------------------------------------- */
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table .mad-time-tip::after,
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table .mad-time-tip::before,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-table .mad-time-tip::after,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-table .mad-time-tip::before{
+  display:none!important;
+}
+
+/* --------------------------------------------------------------------------
+   IP Address & Location must be able to show a whole IPv6.
+   Measured with the cell's own font (700 12.5px, tabular): IPv4 90px, the owner's
+   IPv6 217px, a full 39-char IPv6 254px, an IPv4-mapped IPv6 284px. The column was
+   18% (208px, 176px of content after 32px of padding) — about 28 characters — so any
+   IPv6 was cut off mid-address.
+   Fixed 290px now, which covers a full-form IPv6 (254 + 32 = 286) with room to spare,
+   and the width comes from the three text columns beside it (Administrator,
+   Action/Event, Target), which ellipsise their own long values anyway.
+   `overflow-wrap:anywhere` is the guarantee rather than the mechanism: an IPv4-mapped
+   address (284px of text) is longer than any sane column, and it now wraps onto a second
+   line instead of being silently clipped — an IP is data, and half an IP is worse than a
+   taller row.
+   -------------------------------------------------------------------------- */
+/* The widths that actually govern are on the <col> elements: this table carries a
+   colgroup (both the header table and the body table use the same .mas-col-* classes),
+   and in a fixed-layout table a <col> width beats the th/td width. Setting the th/td
+   width alone — which is what the first attempt did — changes nothing. */
+body.main-admin-security-page .mas-table .mas-col-admin{ width:15%; }
+body.main-admin-security-page .mas-table .mas-col-event{ width:17.5%; }
+body.main-admin-security-page .mas-table .mas-col-target{ width:14%; }
+body.main-admin-security-page .mas-table .mas-col-ip{ width:290px; }
+/* The 1.5% moved from Action/Event to Target keeps the three percentage columns summing to
+   the same 46.5%, so the leftover distributed over the four fixed columns (and therefore the
+   IP column that the IPv6 fix depends on) is unchanged. Measured need: the common target
+   "ADMIN OPERATION: #1" is a 154px chip, and the old 12.5% left only a 119px content box. */
+/* and the same widths on the cells, so the two stay in step if the colgroup ever goes */
+body.main-admin-security-page .mas-table th:nth-child(2),
+body.main-admin-security-page .mas-table td:nth-child(2){ width:15%; }
+body.main-admin-security-page .mas-table th:nth-child(3),
+body.main-admin-security-page .mas-table td:nth-child(3){ width:17.5%; }
+body.main-admin-security-page .mas-table th:nth-child(4),
+body.main-admin-security-page .mas-table td:nth-child(4){ width:14%; }
+body.main-admin-security-page .mas-table th:nth-child(5),
+body.main-admin-security-page .mas-table td:nth-child(5){ width:290px; }
+/* the guarantee, not the mechanism: an IPv4-mapped address is longer than any sane
+   column, and it now wraps to a second line instead of being silently clipped */
+body.main-admin-security-page .mas-ip b{ overflow-wrap:anywhere; }
+
+/* --------------------------------------------------------------------------
+   Modal fields: the light fill was the PANEL colour, and the focus ring was cyan.
+   Measured on the Admin Detail Reset Password modal: light fill rgb(255,248,235) —
+   #FFF8EB, exactly the panel — so the field read as one flat off-white block instead of
+   an inset well; dark was already correct (#2A2C36). The locked recipe for modal fields
+   is the control well, so light takes #F5EBDC with the form border #DCC9A8, in the
+   light theme only (a dark-symmetrical rule would repaint dark's #2A2C36).
+   The focus ring was `box-shadow: rgba(217,119,6,.14)` — a literal from the retired
+   Deep Navy Cyan palette, not a token, so no token remap ever reached it; it is the teal
+   glow the owner saw. Replaced with the locked amber ring in both themes, on the same
+   selector so the value settles rather than the rule order.
+   -------------------------------------------------------------------------- */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page .mad-modal .mad-field .form-control{
+  background-color:#FFF8EB!important;
+  border-color:#DCC9A8!important;
+}
+/* The focus ring is declared twice in this file at the SAME specificity (0,4,1): an early
+   rule with a cyan literal `rgba(217,119,6,.14)` that carries !important, and this one.
+   Without !important here the cyan wins on importance alone, whatever the order — measured
+   with the field verifiably focused (document.activeElement). The same shape as the light
+   fill above: this repo's rule is to meet an !important with an !important rather than to
+   rely on specificity or load order. */
+body.main-admin-detail-page .mad-field .form-control:focus{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-field .form-control:focus{
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+
+/* --------------------------------------------------------------------------
+   Adjust Credit summary card: the light fill was a cool blue-white gradient.
+   Measured on Admin Detail (light): `background-image: linear-gradient(180deg,#F7FBFE,#F3F7FB)`
+   from line 4335 — the only LIGHT rule for `.mac-adjust-summary` in the whole repo; every
+   other file that styles it is `html[data-bo-theme="dark"]` only. It survived the charcoal
+   sweep because it is a gradient, not a colour: no token remap reaches a literal, and the
+   light override written later covered only the avatar (`#B45309` on the amber wash), which
+   is why the tile looked fixed while the block around it stayed cold.
+   Dark was already right — `#2A2C36` on the `#383A46` panel, one rung in.
+   Light takes the file's own nested-card recipe (`.mae-security-card`, `.mac-role-priv`,
+   `.mac-policy-row`): fill `#F0E4D0` on the `#FFF8EB` panel body with the `#DCC9A8` form
+   border. That keeps the ladder panel → card → field (`#FFF8EB` → `#F0E4D0` → `#F5EBDC`);
+   the control well would have made the card read as one more input, since the fields sit
+   directly below it at exactly that value.
+   One rule, both pages that mount this dialog (`main-admin-detail.html` and
+   `main-merchant-detail.html` — both carry `body.main-admin-detail-page`).
+   -------------------------------------------------------------------------- */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page .mac-adjust-summary{
+  background-color:#F0E4D0!important;
+  background-image:none!important;
+  border-color:#DCC9A8!important;
 }

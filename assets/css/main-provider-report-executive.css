@@ -2,13 +2,13 @@
    Tokens from .interface-design/system.md */
 
 body.main-report-exec-page{
-  --bo-navy:#123B66;
-  --bo-cyan:#21A6D7;
-  --bo-cyan-deep:#1B94C2;
+  --bo-navy:#18191C;
+  --bo-cyan:#D97706;
+  --bo-cyan-deep:#B45309;
   --bo-success:#12B76A;
   --bo-warn:#F79009;
   --bo-danger:#EF3340;
-  --bo-bg:#F5F8FB;
+  --bo-bg:#FFF8EB;
   --bo-surface:#FFFFFF;
   --bo-border:#E2E7F0;
   --bo-text:#11203A;
@@ -61,7 +61,7 @@ body.main-report-exec-page .mre-currency-seg{
   padding:4px;
   border-radius:8px;
   background:#E8EDF5;
-  box-shadow:inset 0 0 0 1px rgba(18,59,102,.04);
+  box-shadow:inset 0 0 0 1px rgba(120,80,20,.04);
 }
 body.main-report-exec-page .mre-cur-btn{
   appearance:none;border:0;cursor:pointer;
@@ -77,7 +77,7 @@ body.main-report-exec-page .mre-cur-btn:hover:not(.is-active){
 }
 body.main-report-exec-page .mre-cur-btn.is-active{
   background:var(--bo-navy);color:#fff;font-weight:750;
-  box-shadow:0 1px 3px rgba(18,59,102,.22);
+  box-shadow:0 1px 3px rgba(120,80,20,.22);
 }
 body.main-report-exec-page .mre-cur-btn:focus-visible{
   outline:2px solid var(--bo-cyan);outline-offset:2px;
@@ -108,7 +108,7 @@ body.main-report-exec-page .mre-date-trigger:hover,
 body.main-report-exec-page .mre-date-trigger:focus,
 body.main-report-exec-page .ref-range-wrap:focus-within .mre-date-trigger{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.14)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
   outline:0!important;
 }
 body.main-report-exec-page .mre-date-field .ref-range-icon{
@@ -137,7 +137,7 @@ body.main-report-exec-page .ref-cal-year-grid button.active{
   box-shadow:none!important;
 }
 body.main-report-exec-page .ref-cal-days button.in-range{
-  background:rgba(33,166,215,.12)!important;
+  background:rgba(217,119,6,.12)!important;
 }
 
 body.main-report-exec-page .mre-search{
@@ -212,7 +212,7 @@ body.main-admin-detail-page.main-report-exec-page .mre-table.mad-table tbody td:
   padding:6px 12px!important;
 }
 body.main-report-exec-page .mre-table tbody tr:hover{
-  background:rgba(18,59,102,.02);
+  background:rgba(120,80,20,.02);
 }
 body.main-report-exec-page .mre-table tfoot{display:none!important}
 /* 6 columns: Provider + Game Category + 4 metrics */
@@ -259,7 +259,7 @@ body.main-report-exec-page .mre-mark{
   border-radius:50%;
   font-size:11px;font-weight:800;letter-spacing:.02em;
   color:var(--bo-navy);
-  background:rgba(33,166,215,.14);
+  background:rgba(217,119,6,.14);
 }
 body.main-report-exec-page .mre-mark.is-teal,
 body.main-report-exec-page .mre-mark.is-violet,
@@ -267,7 +267,7 @@ body.main-report-exec-page .mre-mark.is-amber,
 body.main-report-exec-page .mre-mark.is-rose,
 body.main-report-exec-page .mre-mark.is-slate{
   color:var(--bo-navy);
-  background:rgba(33,166,215,.14);
+  background:rgba(217,119,6,.14);
 }
 body.main-report-exec-page .mre-provider-copy{min-width:0;overflow:hidden}
 body.main-report-exec-page .mre-provider-copy b{
@@ -379,7 +379,7 @@ body.main-report-exec-page .settlement-summary-grid{
   display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;
 }
 body.main-report-exec-page .settlement-summary-card{
-  background:#F8FAFC;border:1px solid var(--bo-border);border-radius:12px;padding:14px;
+  background:#FFF8EB;border:1px solid var(--bo-border);border-radius:12px;padding:14px;
 }
 body.main-report-exec-page .settlement-summary-card small{
   display:block;color:var(--bo-muted);font-weight:700;margin-bottom:5px;
@@ -412,7 +412,7 @@ body.main-report-exec-page .btn-mini-action{
   border-radius:8px;min-height:32px;padding:5px 9px;font-size:11px;font-weight:800;white-space:nowrap;
 }
 body.main-report-exec-page .btn-mini-settle{
-  border-color:rgba(33,166,215,.45);color:var(--bo-navy);background:rgba(33,166,215,.08);
+  border-color:#D97706;color:var(--bo-navy);background:rgba(217,119,6,.08);
 }
 body.main-report-exec-page .btn-mini-action:disabled{opacity:.45;cursor:not-allowed}
 body.main-report-exec-page .danger-soft{color:#b45309;background:#fffaf0;border-color:#fed7aa}
@@ -422,7 +422,7 @@ body.main-report-exec-page .direction-chip{
   display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;
   font-size:10px;font-weight:900;white-space:nowrap;
 }
-body.main-report-exec-page .settlement-status.primary{background:#eff6ff;color:#1d4ed8}
+body.main-report-exec-page .settlement-status.primary{background:#F5EBDC;color:#1d4ed8}
 body.main-report-exec-page .settlement-status.warning{background:#fff7ed;color:#c2410c}
 body.main-report-exec-page .settlement-status.success{background:#ecfdf3;color:#15803d}
 body.main-report-exec-page .settlement-status.info{background:#f0f9ff;color:#0369a1}
@@ -430,7 +430,7 @@ body.main-report-exec-page .direction-chip.collect{background:#ecfdf3;color:#158
 body.main-report-exec-page .direction-chip.pay{background:#fef2f2;color:#b91c1c}
 body.main-report-exec-page .settlement-payment-context{
   display:flex;justify-content:space-between;gap:12px;padding:10px 12px;
-  background:#f8fafc;border:1px solid var(--bo-border);border-radius:10px;margin-bottom:14px;
+  background:#FFF8EB;border:1px solid var(--bo-border);border-radius:10px;margin-bottom:14px;
 }
 body.main-report-exec-page .value-positive{color:var(--bo-success);font-weight:800}
 body.main-report-exec-page .value-negative{color:var(--bo-danger);font-weight:800}
@@ -438,15 +438,15 @@ body.main-report-exec-page .value-neutral{font-weight:800;color:var(--bo-text)}
 
 /* Dark mode — align with Admin/Merchant executive tokens */
 html[data-bo-theme="dark"] body.main-report-exec-page{
-  --bo-bg:#08131F;
-  --bo-surface:#102030;
+  --bo-bg:#2C2E38;
+  --bo-surface:#383A46;
   --bo-border:rgba(255,255,255,.08);
-  --bo-text:#F5F8FB;
+  --bo-text:#F5F5F4;
   --bo-text-secondary:#D0D7E2;
-  --bo-muted:#8A95A8;
+  --bo-muted:#A1A1AA;
   --bo-control-well:rgba(255,255,255,.06);
   --bo-control-border:rgba(255,255,255,.12);
-  --bo-cyan-tint:rgba(33,166,215,.16);
+  --bo-cyan-tint:rgba(245,158,11,.16);
   color-scheme:dark;
 }
 html[data-bo-theme="dark"] body.main-report-exec-page .mre-tab.mad-tab.is-active{
@@ -492,7 +492,7 @@ html[data-bo-theme="dark"] body.main-report-exec-page .mre-date-trigger:hover,
 html[data-bo-theme="dark"] body.main-report-exec-page .mre-date-trigger:focus,
 html[data-bo-theme="dark"] body.main-report-exec-page .ref-range-wrap:focus-within .mre-date-trigger{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.18)!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
   color:var(--bo-text)!important;
 }
 html[data-bo-theme="dark"] body.main-report-exec-page .mre-date-field .ref-range-picker{
@@ -513,8 +513,8 @@ html[data-bo-theme="dark"] body.main-report-exec-page .ref-range-presets button:
   color:var(--bo-text)!important;
 }
 html[data-bo-theme="dark"] body.main-report-exec-page .ref-range-presets button.active{
-  background:rgba(33,166,215,.18)!important;
-  color:#7DD3FC!important;
+  background:rgba(245,158,11,.18)!important;
+  color:#FBBF24!important;
 }
 html[data-bo-theme="dark"] body.main-report-exec-page .ref-range-calendar,
 html[data-bo-theme="dark"] body.main-report-exec-page .ref-cal-day-view,
@@ -551,11 +551,11 @@ html[data-bo-theme="dark"] body.main-report-exec-page .ref-cal-days button:disab
 html[data-bo-theme="dark"] body.main-report-exec-page .ref-cal-days button:hover:not(:disabled),
 html[data-bo-theme="dark"] body.main-report-exec-page .ref-cal-month-grid button:hover,
 html[data-bo-theme="dark"] body.main-report-exec-page .ref-cal-year-grid button:hover{
-  background:rgba(33,166,215,.16)!important;
+  background:rgba(245,158,11,.16)!important;
   color:#fff!important;
 }
 html[data-bo-theme="dark"] body.main-report-exec-page .ref-cal-days button.in-range{
-  background:rgba(33,166,215,.18)!important;
+  background:rgba(245,158,11,.18)!important;
   color:#E0F2FE!important;
 }
 html[data-bo-theme="dark"] body.main-report-exec-page .ref-cal-days button.selected,
@@ -592,8 +592,8 @@ html[data-bo-theme="dark"] body.main-report-exec-page .mre-category{
   color:var(--bo-muted)!important;
 }
 html[data-bo-theme="dark"] body.main-report-exec-page .mre-mark{
-  background:rgba(33,166,215,.22)!important;
-  color:#E8F7FC!important;
+  background:rgba(245,158,11,.22)!important;
+  color:#F5F5F4!important;
 }
 html[data-bo-theme="dark"] body.main-report-exec-page .mre-table tbody tr:hover{
   background:rgba(255,255,255,.03);
@@ -629,7 +629,7 @@ html[data-bo-theme="dark"] body.main-report-exec-page .mad-footer-info{
   color:var(--bo-muted)!important;
 }
 html[data-bo-theme="dark"] body.main-report-exec-page .mre-total-row td{
-  background:rgba(33,166,215,.08)!important;color:#fff;
+  background:rgba(245,158,11,.08)!important;color:#fff;
 }
 html[data-bo-theme="dark"] body.main-report-exec-page .mre-total-label{color:#fff}
 html[data-bo-theme="dark"] body.main-report-exec-page .settlement-form-card,

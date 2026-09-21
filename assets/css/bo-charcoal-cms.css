@@ -1,0 +1,128 @@
+/* BO shared Charcoal + Amber — CMS / settings / game / auth delta — v1.0.0
+
+   Scope: body.report-body.bo-charcoal (plus :not(#bo-charcoal-off) where one ID level is
+   needed to beat a rule the shared layers cannot out-rank). Loaded AFTER
+   bo-charcoal-primitives.css, so it is the last word on these pages.
+
+   This file carries only what the three shared layers do not already cover: the
+   page-specific vocabulary of the CMS / settings / game-management / auth pages, plus two
+   collisions with CROSS-ORIGIN or shared stylesheets that no page selector can settle.
+
+   Why a delta is needed at all: the locked palette contains NO cool-hued colour in either
+   theme, so every cool-hued computed value is a defect. The shared layers own the generic
+   chrome; what is left below is (a) Bootstrap's own vocabulary, which lives in
+   bootstrap.min.css on a CDN and is therefore un-rankable and un-auditable from a page, and
+   (b) one cascade collision inside the shared layer itself.
+
+   Page-scoped sheets retinted for this batch (each linked ONLY by pages in this batch):
+     social.css · advertisement-popup.css · custom-animation-manager.css ·
+     animation-effect.css · login.css
+   The inline <style> blocks of page-customize, frontend-display, livechat,
+   currency-management and game-provider were retinted with the same tool.
+
+   Page-scoped sheets deliberately NOT touched, because pages outside this batch load them
+   too and a shared file edit is a merge conflict with the agent working that batch:
+     agent-portal.css (12 agent-* pages) · table-pagination-horizontal.css (~70 pages) ·
+     bo-targeted-fixes.css (~75 pages) · operations-upgrade.css (8 pages) ·
+     image-to-url.css (linked by no page at all)
+   ========================================================================== */
+
+/* ================================================================== 1. links
+   answers bootstrap.min.css `a{color:rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1))}`.
+   Bootstrap 5.3 drives links from the *-rgb custom properties, so a bare <a> with no page
+   class renders #0D6EFD in both themes (measured on animation-effect.html
+   `section.effect-card < form#effectForm < div.custom-help < a`, color + border-*-color).
+   Restating the tokens — not an `a{color}` rule — is deliberate: custom properties are
+   inherited, so explicit rules such as the shared `.clean-btn` / `.bo-account-link` keep
+   their own colour and are not shadowed. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal{
+  --bs-link-color:#D97706;
+  --bs-link-hover-color:#B45309;
+  --bs-link-color-rgb:217, 119, 6;
+  --bs-link-hover-color-rgb:180, 83, 9;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal{
+  --bs-link-color:#F59E0B;
+  --bs-link-hover-color:#FBBF24;
+  --bs-link-color-rgb:245, 158, 11;
+  --bs-link-hover-color-rgb:251, 191, 36;
+}
+
+/* ================================================================== 2. form controls
+   answers bootstrap.min.css `.form-control{background-color:var(--bs-body-bg)}` and
+   `.form-select` / `.input-group-text`, plus reports.css
+   `.report-content input{background-color:#fff!important}`.
+
+   bo-charcoal-legacy.css already owns `.field input,.field select`, but a Bootstrap control
+   that is NOT inside a `.field` wrapper is uncovered and stays pure white — measured on
+   currency-management.html `div.cur-card < div.row.g-2 < div.col-* < input#rateCode.form-control`,
+   5 controls, both themes. Values mirror the legacy `.field` treatment exactly. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .form-control,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .form-select,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal textarea.form-control,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .input-group-text{
+  background-color:#FFF8EB!important;border:1px solid #DCC9A8!important;color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .form-control::placeholder{
+  color:#78716C!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .form-control,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .form-select,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal textarea.form-control,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .input-group-text{
+  background-color:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .form-control::placeholder{
+  color:#A1A1AA!important;
+}
+/* bootstrap.min.css hard-codes the focus ring (#86b7fe border + rgba(13,110,253,.25) glow),
+   so it needs a literal answer as well as the tokens. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .form-control:focus,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .form-select:focus{
+  border-color:#D97706!important;box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .form-control:focus,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .form-select:focus{
+  border-color:#F59E0B!important;box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+
+/* ==================================================== 3. active pager, both themes
+   answers a cascade collision inside the SHARED layer, which this file cannot edit.
+
+   bo-charcoal-legacy.css states the intent — "Active page — amber 3D in both themes" — and
+   declares the gradient on `body.report-body.bo-charcoal .pagination-clean .page-btn.active`
+   (0,5,1). Each of its own themed base rules
+   `html[data-bo-theme="dark"] body.report-body.bo-charcoal .pagination-clean .page-btn` and
+   `html:not([data-bo-theme="dark"]) …` is (0,5,2) and also !important, so in BOTH themes the
+   base wins the background and the active page loses its amber:
+     dark  → flat rgb(56,58,70), background-image none
+     light → flat rgb(243,244,246), i.e. the colour of an INACTIVE page
+   Measured on social.html `div.table-footer.social-table-footer.bo-pagination-standard
+   < div.pagination-clean.bo-pagination-buttons < span.page-btn.active` (probe sample
+   `pagerActive`), both themes, before this rule.
+
+   `:not(#bo-charcoal-off)` supplies the one ID level needed to rank above (0,5,2); it matches
+   every element, so this is a ranking device, not a filter. Scoped to this batch's pages
+   only, so nothing the shared file does elsewhere changes. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal:not(#bo-charcoal-off) .pagination-clean .page-btn.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal:not(#bo-charcoal-off) .pagination-clean button.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal:not(#bo-charcoal-off) .table-page-btn.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal:not(#bo-charcoal-off) .smart-page.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal:not(#bo-charcoal-off) .ref-pager b,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal:not(#bo-charcoal-off) .pwt-pager button.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal:not(#bo-charcoal-off) .vip-log-pagination button.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal:not(#bo-charcoal-off) .page-btn.active{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
+  border-color:#D97706!important;color:#FFFFFF!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal:not(#bo-charcoal-off) .pagination-clean .page-btn.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal:not(#bo-charcoal-off) .pagination-clean button.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal:not(#bo-charcoal-off) .table-page-btn.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal:not(#bo-charcoal-off) .smart-page.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal:not(#bo-charcoal-off) .ref-pager b,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal:not(#bo-charcoal-off) .pwt-pager button.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal:not(#bo-charcoal-off) .vip-log-pagination button.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal:not(#bo-charcoal-off) .page-btn.active{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border-color:#F59E0B!important;color:#2A2C36!important;
+}

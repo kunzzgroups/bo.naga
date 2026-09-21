@@ -361,7 +361,7 @@ function setupFilters(){
   });
 }
 
-const pickerState={view:new Date(),mode:'days',yearPageStart:new Date().getFullYear()-5};
+const pickerState={view:new Date(),mode:'days',yearPageStart:new Date().getFullYear()-5,hover:''};
 function pad2(n){return String(n).padStart(2,'0')}
 function ymd(d){return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())}
 function dmy(v){if(!v)return '';const a=String(v).split('-');return a.length===3?`${a[2]} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][Number(a[1])-1]} ${a[0]}`:v}
@@ -397,9 +397,20 @@ function renderCalendar(){
   const y=pickerState.view.getFullYear(),m=pickerState.view.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),start=first.getDay(),total=last.getDate(),from=$('reportDateFrom').value,to=$('reportDateTo').value;
   let html='',prevLast=new Date(y,m,0).getDate();
   for(let i=0;i<start;i++) html+=`<button type="button" class="muted" disabled>${prevLast-start+i+1}</button>`;
+  // While only the start is picked, the hovered day previews the far end so the range
+  // reads as one continuous strip before anything is committed. Hovering before the start
+  // is deliberately ignored: a click there restarts the range, and the preview must not
+  // promise something the click will not do.
+  const hover=(!to&&from&&pickerState.hover&&pickerState.hover>=from)?pickerState.hover:'';
+  const bandEnd=to||hover||'', hasBand=!!(from&&bandEnd);
   for(let d=1;d<=total;d++){
-    const val=ymd(new Date(y,m,d)),inRange=from&&to&&val>=from&&val<=to,isEdge=val===from||val===to;
-    html+=`<button type="button" data-report-day="${val}" class="${inRange?'in-range':''} ${isEdge?'selected':''}">${d}</button>`;
+    const val=ymd(new Date(y,m,d));
+    const inBand=!!(hasBand&&val>=from&&val<=bandEnd);
+    // The anchor is marked as soon as it is picked, band or no band — otherwise the first
+    // click looks like it did nothing.
+    const isStart=!!(from&&val===from),isEnd=!!(bandEnd&&val===bandEnd);
+    const isPreview=!!(hover&&val===hover);
+    html+=`<button type="button" data-report-day="${val}" class="${inBand?'in-range':''} ${isStart||isEnd?'selected':''} ${isStart?'is-start':''} ${isEnd?'is-end':''} ${isPreview?'is-preview':''}">${d}</button>`;
   }
   for(let i=1;i<=42-(start+total);i++) html+=`<button type="button" class="muted" disabled>${i}</button>`;
   days.innerHTML=html;
@@ -412,10 +423,10 @@ function setRange(a,b,preset){
   renderCalendar();
 }
 function setupDatePicker(){
-  const [a,b]=presetRange('lastMonth');
+  const [a,b]=presetRange('thisMonth');
   pickerState.view=new Date(a+'T00:00:00');
-  setRange(a,b,'lastMonth');
-  $('reportDateTrigger').addEventListener('click',e=>{e.stopPropagation();$('reportRangePicker').classList.toggle('show');pickerState.mode='days';renderCalendar();});
+  setRange(a,b,'thisMonth');
+  $('reportDateTrigger').addEventListener('click',e=>{e.stopPropagation();$('reportRangePicker').classList.toggle('show');pickerState.mode='days';pickerState.hover='';renderCalendar();});
   document.addEventListener('click',e=>{if(!e.target.closest('.ref-range-wrap')) $('reportRangePicker').classList.remove('show');});
   document.querySelectorAll('[data-report-preset]').forEach(btn=>btn.addEventListener('click',e=>{
     e.stopPropagation();
@@ -431,12 +442,32 @@ function setupDatePicker(){
   $('reportCalYear').onclick=()=>{pickerState.mode=pickerState.mode==='years'?'days':'years';renderCalendar();};
   $('reportCalMonthGrid').onclick=e=>{const b=e.target.closest('[data-report-month]');if(!b)return;pickerState.view=new Date(pickerState.view.getFullYear(),Number(b.dataset.reportMonth),1);pickerState.mode='days';renderCalendar();};
   $('reportCalYearGrid').onclick=e=>{const b=e.target.closest('[data-report-year]');if(!b)return;pickerState.view=new Date(Number(b.dataset.reportYear),pickerState.view.getMonth(),1);pickerState.mode='days';renderCalendar();};
+  $('reportCalDays').addEventListener('mouseover',e=>{
+    const b=e.target.closest('[data-report-day]');
+    const v=b?b.dataset.reportDay:'';
+    if(pickerState.hover===v) return;
+    pickerState.hover=v;
+    const f=$('reportDateFrom'),t=$('reportDateTo');
+    if(f.value&&!t.value) renderCalendar();
+  });
+  $('reportCalDays').addEventListener('mouseleave',()=>{
+    if(!pickerState.hover) return;
+    pickerState.hover='';
+    const f=$('reportDateFrom'),t=$('reportDateTo');
+    if(f.value&&!t.value) renderCalendar();
+  });
   $('reportCalDays').onclick=e=>{
     const b=e.target.closest('[data-report-day]');
     if(!b) return;
+    // renderCalendar() replaces the grid's innerHTML, so by the time this event reaches
+    // document the clicked button is detached and closest('.ref-range-wrap') fails -- the
+    // outside-click handler then read a pick inside the calendar as a click outside it and
+    // closed the picker. That made the second click of a range impossible. Keep calendar
+    // clicks inside the picker.
+    e.stopPropagation();
     const val=b.dataset.reportDay,f=$('reportDateFrom'),t=$('reportDateTo');
-    if(!f.value||(f.value&&t.value)||val<f.value){f.value=val;t.value='';markPreset('');updateDateLabel();renderCalendar();return;}
-    t.value=val;markPreset('');updateDateLabel();renderCalendar();$('reportRangePicker').classList.remove('show');load();
+    if(!f.value||(f.value&&t.value)||val<f.value){f.value=val;t.value='';pickerState.hover='';markPreset('');updateDateLabel();renderCalendar();return;}
+    t.value=val;pickerState.hover='';markPreset('');updateDateLabel();renderCalendar();$('reportRangePicker').classList.remove('show');load();
   };
 }
 

@@ -15,6 +15,12 @@
   grid-column:1!important;justify-self:start!important;display:inline-flex!important;align-items:center!important;
   gap:8px!important;width:auto!important;margin:0!important;white-space:nowrap!important;color:#667085!important;font-weight:500!important;
 }
+/* Beat reports.css `.entries-control .rounded-select-wrap { margin-top:-35px }` — keep Show [N] entries on one baseline. */
+.entries-control .rounded-select-wrap{
+  display:inline-flex!important;align-items:center!important;vertical-align:middle!important;
+  margin:0!important;margin-top:0!important;height:auto!important;width:auto!important;min-width:0!important;
+  flex:0 0 auto!important;position:relative!important;overflow:visible!important;
+}
 
 .table-footer>.table-info,.admin-table-footer>.table-info,.table-pagination-wrap>.table-pagination-info,
 .ref-pagination-row>:nth-child(2),.game-table-footer>#gameShowingText,.subcategory-table-footer>#subCategoryShowingText,
@@ -34,7 +40,7 @@
 .entries-control select,.table-page-size select,.ref-pagination-row select,.bo-pagination-standard select{
   box-sizing:border-box!important;display:inline-block!important;flex:0 0 68px!important;width:68px!important;min-width:68px!important;
   max-width:68px!important;height:40px!important;margin:0!important;padding:0 28px 0 12px!important;border:1px solid var(--bo-page-border)!important;
-  border-radius:10px!important;background-color:#fff!important;color:#1d2939!important;font-size:13px!important;font-weight:800!important;
+  border-radius:10px!important;background-color:#FFF8EB!important;color:#1d2939!important;font-size:13px!important;font-weight:800!important;
   line-height:40px!important;box-shadow:none!important;
 }
 
@@ -137,7 +143,7 @@
   width:68px!important;min-width:68px!important;max-width:68px!important;height:40px!important;
   margin:0!important;padding:0 8px!important;
   border:1px solid #d5ddea!important;border-radius:10px!important;
-  background:#fff!important;color:#1d2939!important;font-size:13px!important;font-weight:800!important;
+  background:#FFF8EB!important;color:#1d2939!important;font-size:13px!important;font-weight:800!important;
   line-height:normal!important;box-shadow:none!important;position:relative!important;z-index:20!important;
   cursor:pointer!important;overflow:visible!important;
 }
@@ -178,4 +184,38 @@
  .report-main .table-footer>.entries-control{grid-area:entries!important;grid-column:auto!important;justify-self:start!important}
  .report-main .table-footer>.pagination-clean{grid-area:pager!important;grid-column:auto!important;justify-self:end!important;max-width:100%!important;overflow-x:auto!important}
  .report-main .table-footer>.table-info{grid-area:info!important;grid-column:auto!important;justify-self:center!important;width:100%!important;white-space:normal!important}
+}
+
+/* Referral Network: Show left, pager hard-right (override 3-col grid above) */
+body.referral-page .report-main .table-footer.ref-pagination-row,
+body.referral-page .table-footer.ref-pagination-row{
+  display:flex!important;
+  flex-direction:row!important;
+  flex-wrap:nowrap!important;
+  justify-content:space-between!important;
+  align-items:center!important;
+  grid-template-columns:none!important;
+  grid-template-areas:none!important;
+  width:100%!important;
+}
+body.referral-page .report-main .table-footer.ref-pagination-row > .table-info,
+body.referral-page .table-footer.ref-pagination-row > .table-info{
+  display:none!important;
+}
+body.referral-page .report-main .table-footer.ref-pagination-row > .entries-control,
+body.referral-page .table-footer.ref-pagination-row > .entries-control{
+  flex:0 0 auto!important;
+  margin:0!important;
+  grid-column:auto!important;
+  grid-area:auto!important;
+  justify-self:auto!important;
+}
+body.referral-page .report-main .table-footer.ref-pagination-row > .pagination-clean,
+body.referral-page .table-footer.ref-pagination-row > .pagination-clean{
+  flex:0 0 auto!important;
+  margin-left:auto!important;
+  margin-right:0!important;
+  grid-column:auto!important;
+  grid-area:auto!important;
+  justify-self:auto!important;
 }

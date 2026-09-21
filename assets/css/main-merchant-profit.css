@@ -1,18 +1,18 @@
 /* Merchant Profit Report ??Deep Navy Cyan (Color Token 05) */
 
 body.main-merchant-profit-page{
-  --mpr-navy:#123B66;
-  --mpr-navy-deep:#0E2F52;
-  --mpr-cyan:#21A6D7;
-  --mpr-cyan-tint:rgba(33,166,215,.10);
+  --mpr-navy:#18191C;
+  --mpr-navy-deep:#E8901A;
+  --mpr-cyan:#D97706;
+  --mpr-cyan-tint:rgba(217,119,6,.10);
   --mpr-success:#12B76A;
   --mpr-success-tint:rgba(18,183,106,.12);
-  --mpr-bg:#F5F8FB;
+  --mpr-bg:#F5EBDC;
   --mpr-surface:#FFFFFF;
   --mpr-border:#E2E7F0;
   --mpr-text:#11203A;
   --mpr-muted:#657187;
-  --mpr-shadow:0 0 0 1px rgba(18,59,102,.04),0 1px 2px -1px rgba(18,59,102,.06),0 2px 8px rgba(26,45,80,.018);
+  --mpr-shadow:0 0 0 1px rgba(120,80,20,.04),0 1px 2px -1px rgba(120,80,20,.06),0 2px 8px rgba(26,45,80,.018);
 }
 
 body.main-merchant-profit-page .mpr-workspace{
@@ -86,7 +86,7 @@ body.main-merchant-profit-page .mpr-mini-icon{
   font-size:12px;
 }
 body.main-merchant-profit-page .mpr-mini-icon.is-navy{
-  background:rgba(18,59,102,.1);
+  background:rgba(120,80,20,.1);
   color:var(--mpr-navy);
 }
 body.main-merchant-profit-page .mpr-mini-icon.is-cyan{
@@ -153,7 +153,7 @@ body.main-merchant-profit-page .mpr-kpi-trend.is-down{
   color:#EF3340;
 }
 body.main-merchant-profit-page .mpr-kpi-trend.is-flat{
-  background:rgba(18,59,102,.08);
+  background:rgba(120,80,20,.08);
   color:var(--mpr-muted);
 }
 
@@ -346,7 +346,14 @@ body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-tab
 }
 body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table th:nth-child(9),
 body.main-admin-detail-page.main-merchant-profit-page .mpr-ledger-panel .mad-table td:nth-child(9){
-  width:6%!important;
+  /* Must be a px width, not a percentage. The ledger is `table-layout:fixed`, where a cell's
+     `min-width` is IGNORED — so the old `width:6%` shrank with everything else and the two
+     40px action buttons (68px of content in a 55px box at a 1551px window, and less below that)
+     were cut off by the panel's `overflow:hidden`. A px width IS honoured in fixed layout: the
+     percentage columns absorb the difference, so this stays 88px at every window width — which
+     is what the `min-width` here always meant. Verified 1551/1280/1152: column holds 88px, no
+     clipping, no horizontal scrollbar. */
+  width:88px!important;
   min-width:88px!important;
   max-width:none!important;
   padding-left:10px;
@@ -444,7 +451,7 @@ body.main-merchant-profit-page .mpr-modal-seg{
 body.main-merchant-profit-page .mpr-modal-seg.is-active{
   background:#fff;
   color:var(--mpr-navy);
-  box-shadow:0 1px 2px rgba(18,59,102,.08);
+  box-shadow:0 1px 2px rgba(120,80,20,.08);
 }
 body.main-merchant-profit-page .mpr-fields{
   display:grid;
@@ -531,7 +538,7 @@ html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-ledger-panel.mad-
   border-color:#24374F;
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-mini-icon.is-navy{
-  background:rgba(33,166,215,.14);
+  background:rgba(245,158,11,.14);
   color:var(--mpr-cyan);
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-modal-segs{
@@ -551,13 +558,13 @@ html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-kind.is-oneoff{
 
 /* Date range trigger + picker */
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-trigger{
-  background:var(--bo-bg,#0B1624)!important;
+  background:var(--bo-bg,#2A2C36)!important;
   border-color:var(--bo-border,#24374F)!important;
   color:var(--bo-text-secondary,#C9D4E3)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-trigger:hover,
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-trigger:focus{
-  border-color:var(--bo-cyan,#21A6D7)!important;
+  border-color:var(--bo-cyan,#F59E0B)!important;
   color:var(--bo-text,#E8EEF7)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-icon{
@@ -569,7 +576,7 @@ html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-r
   box-shadow:0 18px 50px rgba(0,0,0,.45)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-presets{
-  background:var(--bo-bg,#0B1624)!important;
+  background:var(--bo-bg,#2A2C36)!important;
   border-color:var(--bo-border,#24374F)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-presets button{
@@ -581,8 +588,8 @@ html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-r
   color:var(--bo-text,#E8EEF7)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-presets button.active{
-  background:rgba(33,166,215,.18)!important;
-  color:#7DD3FC!important;
+  background:rgba(245,158,11,.18)!important;
+  color:#FBBF24!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-range-calendar,
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-day-view{
@@ -596,7 +603,7 @@ html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-c
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-head button,
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-head .ref-head-pick{
-  background:var(--bo-bg,#0B1624)!important;
+  background:var(--bo-bg,#2A2C36)!important;
   border-color:var(--bo-border,#24374F)!important;
   color:var(--bo-text,#E8EEF7)!important;
 }
@@ -615,7 +622,7 @@ html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-c
   background:rgba(255,255,255,.06)!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-days button.in-range{
-  background:rgba(33,166,215,.14)!important;
+  background:rgba(245,158,11,.14)!important;
   color:#9FD4F0!important;
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-days button.selected,
@@ -623,18 +630,18 @@ html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-c
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-days button.end,
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-month-grid button.active,
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-date-field .ref-cal-year-grid button.active{
-  background:rgba(33,166,215,.28)!important;
-  color:#7DD3FC!important;
+  background:rgba(245,158,11,.28)!important;
+  color:#FBBF24!important;
 }
 /* Created At tip ? same dark tip token as mad-float-tip / action tips */
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-created-at[data-tip]::after{
-  background:#243B55;
-  color:#F5F8FB;
+  background:#2A2C36;
+  color:#F5F5F4;
   border:1px solid rgba(125,211,252,.22);
   box-shadow:0 12px 28px rgba(0,0,0,.5);
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-created-at[data-tip]::before{
-  border-top-color:#243B55;
+  border-top-color:#2A2C36;
 }
 
 /* Merchant Profit native-currency selector. Populated from Currency Management
@@ -659,20 +666,29 @@ body.main-merchant-profit-page .mpr-repay-btn{
   text-decoration:none;
   color:inherit;
 }
+/* Repayments-due counter on the topbar repay button.
+   The box is sized so the digit is centred by geometry, not by font metrics:
+   `line-height:14px` inside an 18px box made the digit's vertical position depend on
+   the font's ascent/descent, and it drifted ~2px off centre at some zoom levels.
+   `line-height:1` + the grid centring pins it. The overhang moved -5px -> -7px because
+   at -5px the 18px badge covered the glyph's top-right corner rather than sitting on the
+   button's corner; 17px at -7px clears the icon while leaving the neighbouring theme
+   toggle 5px of the 12px gap. */
 body.main-merchant-profit-page .mpr-repay-badge{
   position:absolute;
-  top:-5px;
-  right:-5px;
-  min-width:18px;
-  height:18px;
-  padding:0 5px;
+  top:-7px;
+  right:-7px;
+  min-width:17px;
+  height:17px;
+  padding:0 3px;
   border-radius:999px;
   background:#EF3340;
   color:#fff;
   border:2px solid var(--bo-surface,#fff);
-  font-size:10px;
+  font-size:10.5px;
   font-weight:800;
-  line-height:14px;
+  line-height:1;
+  font-variant-numeric:tabular-nums;
   display:inline-grid;
   place-items:center;
   pointer-events:none;
@@ -919,14 +935,14 @@ body.main-merchant-profit-page .mpr-repay-actions{
 }
 
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-badge{
-  border-color:var(--bo-surface,#152536);
+  border-color:var(--bo-surface,#383A46);
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-stat{
   background:rgba(255,255,255,.03);
   border-color:var(--bo-border,#24374F);
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-row-amount{
-  background:var(--bo-surface,#152536);
+  background:var(--bo-surface,#383A46);
   border-color:var(--bo-border,#24374F);
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-row-unit{

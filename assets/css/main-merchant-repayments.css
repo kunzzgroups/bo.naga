@@ -48,7 +48,7 @@ body.main-merchant-repayments-page .mprd-stat{
   gap:12px;
   border:1px solid var(--bo-border, #E2E7F0);
   border-radius:10px;
-  background:var(--bo-bg, #F5F8FB);
+  background:var(--bo-bg, #FFF8EB);
   padding:14px 16px;
 }
 body.main-merchant-repayments-page .mprd-stat-icon{
@@ -58,13 +58,13 @@ body.main-merchant-repayments-page .mprd-stat-icon{
   display:grid;
   place-items:center;
   flex:0 0 40px;
-  background:rgba(18,59,102,.08);
-  color:var(--bo-navy, #123B66);
+  background:rgba(120,80,20,.08);
+  color:var(--bo-navy, #18191C);
   font-size:18px;
 }
 body.main-merchant-repayments-page .mprd-stat-icon.is-cyan{
-  background:rgba(33,166,215,.12);
-  color:var(--bo-cyan, #21A6D7);
+  background:rgba(217,119,6,.12);
+  color:var(--bo-cyan, #D97706);
 }
 body.main-merchant-repayments-page .mprd-stat-copy{
   min-width:0;
@@ -124,7 +124,7 @@ body.main-merchant-repayments-page .mprd-table th{
   font-weight:700;
   color:var(--bo-muted, #657187);
   letter-spacing:.01em;
-  background:var(--bo-bg, #F5F8FB);
+  background:var(--bo-bg, #FFF8EB);
 }
 body.main-merchant-repayments-page .mprd-table th.num,
 body.main-merchant-repayments-page .mprd-table td.num{
@@ -222,10 +222,10 @@ body.main-merchant-repayments-page .mprd-row-amount .mac-input-addon{
   z-index:1;
   min-width:44px;
   padding:0 10px;
-  border:1px solid #D0D5DD;
+  border:1px solid #DCC9A8;
   border-right:0;
   border-radius:8px 0 0 8px;
-  background:var(--bo-bg, #F5F8FB);
+  background:var(--bo-bg, #F5EBDC);
   color:var(--bo-muted, #657187);
   font-size:11px;
   font-weight:700;
@@ -242,7 +242,7 @@ body.main-merchant-repayments-page .report-content .mprd-row-amount > input.mprd
   height:36px!important;
   position:relative;
   z-index:0;
-  border:1px solid #D0D5DD!important;
+  border:1px solid #DCC9A8!important;
   border-left:0!important;
   border-radius:0 8px 8px 0!important;
   background:var(--bo-surface, #fff)!important;
@@ -255,12 +255,12 @@ body.main-merchant-repayments-page .report-content .mprd-row-amount > input.mprd
 }
 body.main-merchant-repayments-page .mprd-row-amount:focus-within .mprd-row-unit,
 body.main-merchant-repayments-page .mprd-row-amount:focus-within .mac-input-addon{
-  border-color:var(--bo-cyan, #21A6D7);
+  border-color:var(--bo-cyan, #D97706);
   border-right:0;
 }
 body.main-merchant-repayments-page .mprd-row-amount:focus-within > .mprd-amount-input,
 body.main-merchant-repayments-page .mprd-row-amount:focus-within > .form-control{
-  border-color:var(--bo-cyan, #21A6D7)!important;
+  border-color:var(--bo-cyan, #D97706)!important;
   border-left:0!important;
   outline:none;
 }
@@ -301,8 +301,8 @@ html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-stat-icon{
   color:#9FD4F0;
 }
 html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-stat-icon.is-cyan{
-  background:rgba(33,166,215,.16);
-  color:#7DD3FC;
+  background:rgba(245,158,11,.16);
+  color:#FBBF24;
 }
 html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-stat-copy b,
 html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-merchant{
@@ -323,7 +323,7 @@ html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-row-amount .
 }
 html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-row-amount > .mprd-amount-input,
 html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-row-amount > .form-control{
-  background:var(--bo-surface,#152536)!important;
+  background:var(--bo-surface,#383A46)!important;
   border-color:var(--bo-border,#24374F)!important;
   border-left:0!important;
   color:var(--bo-text,#E8EEF7)!important;

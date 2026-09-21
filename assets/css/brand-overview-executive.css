@@ -3,20 +3,20 @@
 
 body.brand-exec-page,
 body.brand-management-page{
-  --bo-navy:#123B66;
-  --bo-cyan:#21A6D7;
+  --bo-navy:#18191C;
+  --bo-cyan:#D97706;
   --bo-success:#12B76A;
   --bo-danger:#EF3340;
-  --bo-bg:#F5F8FB;
-  --bo-surface:#FFFFFF;
-  --bo-border:#E2E7F0;
-  --bo-text:#11203A;
-  --bo-text-secondary:#1C2942;
-  --bo-muted:#657187;
-  --bo-sidebar-bg:#072647;
-  --bo-sidebar-text:#FFFFFF;
-  --bo-sidebar-active:#21A6D7;
-  --bo-shadow:0 0 0 1px rgba(18,59,102,.04),0 1px 2px -1px rgba(18,59,102,.06),0 2px 8px rgba(26,45,80,.018);
+  --bo-bg:#F5EBDC;
+  --bo-surface:#FFF8EB;
+  --bo-border:#EADCC8;
+  --bo-text:#18191C;
+  --bo-text-secondary:#18191C;
+  --bo-muted:#57534E;
+  --bo-sidebar-bg:#D97706;
+  --bo-sidebar-text:#FFF8EB;
+  --bo-sidebar-active:#D97706;
+  --bo-shadow:0 0 0 1px rgba(217,119,6,.04),0 1px 2px -1px rgba(217,119,6,.06),0 2px 8px rgba(217,119,6,.018);
   --bo-ease:cubic-bezier(0.23,1,0.32,1);
   color:var(--bo-text);
   background:var(--bo-bg)!important;
@@ -67,7 +67,7 @@ body.brand-management-page .report-sidebar{
     min-width:var(--sidebar-w)!important;
     overflow-x:hidden!important;
     z-index:6000!important;
-    box-shadow:18px 0 38px rgba(7,38,71,.28);
+    box-shadow:18px 0 38px rgba(217,119,6,.28);
   }
   body.brand-exec-page.sidebar-mini .report-sidebar:not(:hover):not(.is-mini-hover) .report-brand > div,
   body.brand-management-page.sidebar-mini .report-sidebar:not(:hover):not(.is-mini-hover) .report-brand > div{
@@ -223,7 +223,7 @@ body.brand-exec-page .report-sidebar .report-nav > a:not(.report-sub):hover,
 body.brand-exec-page .report-sidebar .report-nav > a:not(.report-sub):focus-visible,
 body.brand-management-page .report-sidebar .report-nav > a:not(.report-sub):hover,
 body.brand-management-page .report-sidebar .report-nav > a:not(.report-sub):focus-visible{
-  background:rgba(33,166,215,.16)!important;
+  background:rgba(217,119,6,.16)!important;
   color:#fff!important;
 }
 body.brand-exec-page .report-sidebar .report-nav > a:not(.report-sub).active,
@@ -253,7 +253,7 @@ body.brand-exec-page .report-sidebar .nav-group.open > .nav-group-btn,
 body.brand-management-page .report-sidebar .nav-group .nav-group-btn:hover,
 body.brand-management-page .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
 body.brand-management-page .report-sidebar .nav-group.open > .nav-group-btn{
-  background:rgba(33,166,215,.16)!important;
+  background:rgba(217,119,6,.16)!important;
   color:#fff!important;
 }
 body.brand-exec-page .report-sidebar .nav-group .nav-group-btn i,
@@ -262,7 +262,7 @@ body.brand-management-page .report-sidebar .nav-group .nav-group-btn i{
 }
 body.brand-exec-page .report-sidebar .nav-group-list,
 body.brand-management-page .report-sidebar .nav-group-list{
-  background:#fff!important;
+  background:#FFF8EB!important;
 }
 body.brand-exec-page .report-sidebar .report-nav a.report-sub,
 body.brand-management-page .report-sidebar .report-nav a.report-sub{
@@ -273,7 +273,7 @@ body.brand-exec-page .report-sidebar .report-nav a.report-sub:hover,
 body.brand-exec-page .report-sidebar .report-nav a.report-sub.active,
 body.brand-management-page .report-sidebar .report-nav a.report-sub:hover,
 body.brand-management-page .report-sidebar .report-nav a.report-sub.active{
-  background:rgba(33,166,215,.1)!important;
+  background:rgba(217,119,6,.1)!important;
   color:var(--bo-navy)!important;
   border-color:transparent!important;
   box-shadow:none!important;
@@ -321,7 +321,7 @@ body.brand-management-page .report-topbar .hamb:hover{
 body.brand-exec-page .user-title-icon,
 body.brand-management-page .user-title-icon,
 .brand-exec-topbar .user-title-icon{
-  background:rgba(33,166,215,.12)!important;
+  background:rgba(217,119,6,.12)!important;
   color:var(--bo-cyan)!important;
 }
 body.brand-exec-page .report-topbar .user-title-wrap h1,
@@ -334,7 +334,7 @@ body.brand-management-page .report-topbar .user-title-wrap p{
 }
 body.brand-exec-page .report-avatar,
 body.brand-management-page .report-avatar{
-  background:rgba(33,166,215,.18)!important;
+  background:rgba(217,119,6,.18)!important;
   color:var(--bo-navy)!important;
 }
 
@@ -353,7 +353,7 @@ body.brand-management-page .bo-range-trigger:focus-within,
 body.brand-exec-page .form-control:focus,
 body.brand-exec-page .form-select:focus{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.14)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
 }
 
 /* ---- Page content ---- */
@@ -388,7 +388,7 @@ body.brand-exec-page .ref-range-trigger:focus,
 body.brand-management-page .ref-range-trigger:hover,
 body.brand-management-page .ref-range-trigger:focus{
   border-color:var(--bo-cyan)!important;
-  box-shadow:0 0 0 3px rgba(33,166,215,.14)!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
   outline:0;
 }
 body.brand-exec-page .ref-range-icon,
@@ -404,12 +404,12 @@ body.brand-exec-page .ref-range-presets button:hover,
 body.brand-exec-page .ref-range-presets button.active,
 body.brand-management-page .ref-range-presets button:hover,
 body.brand-management-page .ref-range-presets button.active{
-  background:rgba(33,166,215,.12)!important;
+  background:rgba(217,119,6,.12)!important;
   color:var(--bo-navy)!important;
 }
 body.brand-exec-page .ref-cal-days button.in-range,
 body.brand-management-page .ref-cal-days button.in-range{
-  background:rgba(33,166,215,.12)!important;
+  background:rgba(217,119,6,.12)!important;
   color:var(--bo-navy)!important;
 }
 body.brand-exec-page .ref-cal-days button.range-start,
@@ -441,10 +441,10 @@ body.brand-management-page .ref-cal-days button.range-end{
   color:#fff;
   min-width:110px;
 }
-.brand-exec-search:hover{background:#1B94C2;border-color:#1B94C2;color:#fff}
+.brand-exec-search:hover{background:#B45309;border-color:#B45309;color:#fff}
 .brand-exec-export{margin-left:auto;min-width:106px}
 .brand-exec-export:hover{
-  background:rgba(33,166,215,.08);
+  background:rgba(217,119,6,.08);
   border-color:var(--bo-cyan);
   color:var(--bo-navy);
 }
@@ -497,7 +497,7 @@ body.brand-management-page .ref-cal-days button.range-end{
 .brand-exec-brand{display:flex;align-items:center;gap:14px;min-width:180px}
 .brand-exec-avatar{
   width:40px;height:40px;border-radius:50%;
-  background:rgba(33,166,215,.12);
+  background:rgba(217,119,6,.12);
   color:var(--bo-cyan);
   display:grid;place-items:center;
   font-weight:900;font-size:15px;flex:0 0 40px;
@@ -512,7 +512,7 @@ body.brand-management-page .ref-cal-days button.range-end{
   padding:5px 10px;border-radius:5px;font-size:11px;font-weight:800;
 }
 .brand-exec-status.active{background:rgba(18,183,106,.14);color:#0E8F52}
-.brand-exec-status.disabled{background:rgba(101,113,135,.12);color:var(--bo-muted)}
+.brand-exec-status.disabled{background:rgba(217,119,6,.12);color:var(--bo-muted)}
 .brand-exec-detail{
   height:34px;padding:0 12px;
   border:1px solid var(--bo-border);border-radius:6px;
@@ -522,7 +522,7 @@ body.brand-management-page .ref-cal-days button.range-end{
   transition:border-color .16s var(--bo-ease),color .16s var(--bo-ease),background .16s var(--bo-ease);
 }
 .brand-exec-detail:hover{
-  background:rgba(33,166,215,.08);
+  background:rgba(217,119,6,.08);
   border-color:var(--bo-cyan);
   color:var(--bo-navy);
 }
@@ -581,7 +581,7 @@ body.brand-management-page .ref-cal-days button.range-end{
 .brand-exec-page-size:focus{
   border-color:var(--bo-cyan)!important;
   outline:0;
-  box-shadow:0 0 0 3px rgba(33,166,215,.14);
+  box-shadow:0 0 0 3px rgba(217,119,6,.14);
 }
 .brand-exec-loading{opacity:.72;pointer-events:none}
 .brand-exec-name-link{color:inherit;text-decoration:none}
@@ -644,7 +644,7 @@ body.brand-exec-page .bo-theme-btn:hover,
 body.brand-management-page .bo-theme-btn:hover{
   border-color:var(--bo-cyan);
   color:var(--bo-cyan);
-  background:rgba(33,166,215,.10);
+  background:rgba(217,119,6,.10);
 }
 body.brand-exec-page .bo-theme-btn:focus-visible,
 body.brand-management-page .bo-theme-btn:focus-visible{
@@ -657,20 +657,20 @@ body.brand-management-page .bo-theme-btn:active{transform:scale(.97)}
 /* ---- Dark mode ---- */
 html[data-bo-theme="dark"] body.brand-exec-page,
 html[data-bo-theme="dark"] body.brand-management-page{
-  --bo-bg:#08131F;
-  --bo-surface:#102030;
+  --bo-bg:#F59E0B;
+  --bo-surface:#F59E0B;
   --bo-border:rgba(255,255,255,.08);
-  --bo-text:#F5F8FB;
-  --bo-text-secondary:#D0D7E2;
-  --bo-muted:#8A95A8;
-  --bo-sidebar-bg:#08131F;
+  --bo-text:#F5F5F4;
+  --bo-text-secondary:rgba(255,255,255,.12);
+  --bo-muted:#D4D4D8;
+  --bo-sidebar-bg:#F59E0B;
   --bo-shadow:none;
   color-scheme:dark;
   background:var(--bo-bg)!important;
 }
 html[data-bo-theme="dark"]:has(body.brand-exec-page),
 html[data-bo-theme="dark"]:has(body.brand-management-page){
-  background:#08131F;
+  background:#F59E0B;
 }
 html[data-bo-theme="dark"] body.brand-exec-page .report-shell,
 html[data-bo-theme="dark"] body.brand-management-page .report-shell,
@@ -705,13 +705,13 @@ html[data-bo-theme="dark"] body.brand-management-page .report-topbar .user-title
 }
 html[data-bo-theme="dark"] body.brand-exec-page .user-title-icon,
 html[data-bo-theme="dark"] body.brand-management-page .user-title-icon{
-  background:rgba(33,166,215,.18)!important;
+  background:rgba(245,158,11,.18)!important;
   color:var(--bo-cyan)!important;
 }
 html[data-bo-theme="dark"] body.brand-exec-page .report-avatar,
 html[data-bo-theme="dark"] body.brand-management-page .report-avatar{
-  background:rgba(33,166,215,.22)!important;
-  color:#F5F8FB!important;
+  background:rgba(245,158,11,.22)!important;
+  color:#F5F5F4!important;
 }
 html[data-bo-theme="dark"] body.brand-exec-page .report-actions .bo-account-link,
 html[data-bo-theme="dark"] body.brand-management-page .report-actions .bo-account-link,
@@ -761,7 +761,7 @@ html[data-bo-theme="dark"] body.brand-management-page .ref-range-picker{
 }
 html[data-bo-theme="dark"] body.brand-exec-page .ref-range-presets,
 html[data-bo-theme="dark"] body.brand-management-page .ref-range-presets{
-  background:#0c1a2a!important;
+  background:#F59E0B!important;
   border-right-color:var(--bo-border)!important;
 }
 html[data-bo-theme="dark"] body.brand-exec-page .ref-range-presets button,
@@ -772,7 +772,7 @@ html[data-bo-theme="dark"] body.brand-exec-page .ref-range-presets button:hover,
 html[data-bo-theme="dark"] body.brand-exec-page .ref-range-presets button.active,
 html[data-bo-theme="dark"] body.brand-management-page .ref-range-presets button:hover,
 html[data-bo-theme="dark"] body.brand-management-page .ref-range-presets button.active{
-  background:rgba(33,166,215,.14)!important;
+  background:rgba(245,158,11,.14)!important;
   color:#fff!important;
 }
 html[data-bo-theme="dark"] body.brand-exec-page .ref-cal-head button,
@@ -812,7 +812,7 @@ html[data-bo-theme="dark"] body.brand-exec-page .report-sidebar .report-nav a.re
 html[data-bo-theme="dark"] body.brand-exec-page .report-sidebar .report-nav a.report-sub.active,
 html[data-bo-theme="dark"] body.brand-management-page .report-sidebar .report-nav a.report-sub:hover,
 html[data-bo-theme="dark"] body.brand-management-page .report-sidebar .report-nav a.report-sub.active{
-  background:rgba(33,166,215,.16)!important;
+  background:rgba(245,158,11,.16)!important;
   color:#fff!important;
 }
 
@@ -832,7 +832,7 @@ html[data-bo-theme="dark"] body.brand-management-page .form-select{
 }
 html[data-bo-theme="dark"] body.brand-management-page .report-table thead th,
 html[data-bo-theme="dark"] body.brand-management-page table.table thead th{
-  background:#0c1a2a!important;
+  background:#F59E0B!important;
   color:var(--bo-muted)!important;
   border-color:var(--bo-border)!important;
 }

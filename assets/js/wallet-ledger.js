@@ -1,11 +1,56 @@
 (function(){
   let page = 1;
   let totalPages = 1;
+  let pageSize = 20;
+  let lockedAutoSize = null;
   const initialParams = new URLSearchParams(location.search);
   const allTimeScope = initialParams.get('scope') === 'all';
   const LEDGER_TYPES = ['DEPOSIT','WITHDRAW','ADJUSTMENT','BONUS','ADMIN_DEPOSIT','ADMIN_WITHDRAW','ADMIN_ADJUSTMENT','BULK_ADJUSTMENT','REFERRAL_REWARD','REBATE','REBATE_ADJUSTMENT','BET','WIN','LOSE','SETTLE','ROLLBACK'];
   const WALLET_TO_WALLET_TYPES = new Set(['TRANSFER_IN','TRANSFER_OUT']);
   const selectedTypes = new Set();
+
+  /* Same Show N entries contract as Deposit / Withdraw: - · 10 · 20 · 50 · 100 · All */
+  function tableBodyScroll(){
+    return document.querySelector('.table-card .table-wrap') || document.querySelector('.table-wrap');
+  }
+  function measureAutoPageSize(){
+    const scroll=tableBodyScroll();
+    if(!scroll) return 12;
+    const head=scroll.querySelector('thead');
+    const headH=head?Math.ceil(head.getBoundingClientRect().height):44;
+    const avail=Math.max(0,Math.floor(scroll.clientHeight)-headH);
+    const sample=scroll.querySelector('tbody tr td');
+    const rowH=sample?Math.max(38,Math.round(sample.getBoundingClientRect().height)):41;
+    return Math.max(5,Math.min(200,Math.floor(avail/rowH)||12));
+  }
+  function autoFitPageSize(){
+    if(lockedAutoSize!=null) return lockedAutoSize;
+    lockedAutoSize=measureAutoPageSize();
+    return lockedAutoSize;
+  }
+  function clearLockedAutoSize(){ lockedAutoSize=null; }
+  function isAutoPageSize(raw){
+    const v=String(raw??'-').trim();
+    return v===''||v==='-'||/^auto$/i.test(v);
+  }
+  function resolvePageSize(raw){
+    const v=String(raw??document.getElementById('ledgerSize')?.value??'-').trim();
+    if(isAutoPageSize(v)) return autoFitPageSize();
+    if(/^all$/i.test(v)) return 10000;
+    const n=Number(v);
+    return Number.isFinite(n)&&n>0?n:autoFitPageSize();
+  }
+  function publishPagerMeta(pagination,size){
+    const card=document.querySelector('.table-card');
+    if(!card) return;
+    const total=Number(pagination?.totalElements);
+    if(Number.isFinite(total)&&total>=0) card.dataset.boTotal=String(total);
+    else delete card.dataset.boTotal;
+    const n=Number(size);
+    if(Number.isFinite(n)&&n>0) card.dataset.boPageSize=String(n);
+    else delete card.dataset.boPageSize;
+    card.dataset.boPage=String(page);
+  }
 
   function pageButtons(current,total){
     total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
@@ -22,6 +67,94 @@
   function num(v){ const n = Number(v || 0); return Number.isFinite(n) ? n : 0; }
   function money(v){ return num(v).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}); }
   function dt(v){ return window.BO_FORMAT && window.BO_FORMAT.dateTime ? window.BO_FORMAT.dateTime(v) : (v ? String(v).replace('T',' ').slice(0,19) : '-'); }
+  function dtParts(v){
+    const full=dt(v);
+    if(!full||full==='-') return {full:'-',day:'-',time:''};
+    const m=String(full).match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})\s+(.+)$/);
+    if(m){
+      const raw=String(m[4]).trim();
+      const tm=raw.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+      const time=tm
+        ? `${String(tm[1]).padStart(2,'0')}:${tm[2]}:${tm[3]||'00'}`
+        : raw.slice(0,8);
+      // DD/MM/YYYY — same as Admin Last Login tip text
+      const day=`${String(m[3]).padStart(2,'0')}/${String(m[2]).padStart(2,'0')}/${m[1]}`;
+      return {full,day,time};
+    }
+    return {full,day:full,time:''};
+  }
+  function dtCell(v){
+    const p=dtParts(v);
+    if(p.full==='-') return '<span class="mad-muted">-</span>';
+    // Cell = date (DD/MM/YYYY) · cream pill tip (no arrow) = HH:MM:SS
+    if(!p.time) return `<span class="bo-tx-datetime">${esc(p.day)}</span>`;
+    return `<span class="bo-tx-datetime" tabindex="0" data-tip="${esc(p.time)}">${esc(p.day)}</span>`;
+  }
+  function ensureTimeTip(){
+    let tip=document.getElementById('wlTimeTip');
+    if(tip) return tip;
+    tip=document.createElement('div');
+    tip.id='wlTimeTip';
+    tip.className='wl-time-tip';
+    tip.setAttribute('role','tooltip');
+    tip.setAttribute('aria-hidden','true');
+    document.body.appendChild(tip);
+    return tip;
+  }
+  function placeTimeTip(el){
+    const tip=ensureTimeTip();
+    const text=el.getAttribute('data-tip')||'';
+    if(!text){ hideTimeTip(); return; }
+    tip.textContent=text;
+    tip.classList.add('is-on');
+    tip.classList.remove('is-below');
+    const r=el.getBoundingClientRect();
+    const tr=tip.getBoundingClientRect();
+    let top=r.top-tr.height-8;
+    let below=false;
+    if(top<8){
+      below=true;
+      top=r.bottom+8;
+    }
+    tip.classList.toggle('is-below', below);
+    // Center over the date cell
+    const left=Math.max(8,Math.min(r.left+r.width/2-tr.width/2, window.innerWidth-tr.width-8));
+    tip.style.left=Math.round(left)+'px';
+    tip.style.top=Math.round(top)+'px';
+  }
+  function hideTimeTip(){
+    const tip=document.getElementById('wlTimeTip');
+    if(tip) tip.classList.remove('is-on','is-below');
+  }
+  function bindTimeTips(){
+    const body=document.getElementById('walletLedgerBody');
+    if(!body||body.dataset.tipBound==='1') return;
+    body.dataset.tipBound='1';
+    body.addEventListener('mouseover',e=>{
+      const el=e.target.closest?.('.bo-tx-datetime[data-tip]');
+      if(el) placeTimeTip(el);
+    });
+    body.addEventListener('mouseout',e=>{
+      const el=e.target.closest?.('.bo-tx-datetime[data-tip]');
+      if(!el) return;
+      const next=e.relatedTarget;
+      if(next&&el.contains(next)) return;
+      hideTimeTip();
+    });
+    body.addEventListener('focusin',e=>{
+      const el=e.target.closest?.('.bo-tx-datetime[data-tip]');
+      if(el) placeTimeTip(el);
+    });
+    body.addEventListener('focusout',e=>{
+      const el=e.target.closest?.('.bo-tx-datetime[data-tip]');
+      if(!el) return;
+      const next=e.relatedTarget;
+      if(next&&el.contains(next)) return;
+      hideTimeTip();
+    });
+    window.addEventListener('scroll',hideTimeTip,true);
+    window.addEventListener('resize',hideTimeTip);
+  }
   async function api(endpoint){
     const res = await fetch(endpoint, {headers:{...BO_AUTH.authHeader()}});
     const json = await res.json().catch(()=>({}));
@@ -36,6 +169,13 @@
     // type so the backend can keep pagination and totals accurate.
     return selected.length ? selected : [...LEDGER_TYPES];
   }
+  function typeDisplayLabel(type){
+    return String(type||'')
+      .split('_')
+      .filter(Boolean)
+      .map(part=>part.charAt(0)+part.slice(1).toLowerCase())
+      .join(' ');
+  }
   function syncTypeControl(){
     const list=selectedTypeList();
     const hidden=document.getElementById('ledgerType');
@@ -44,7 +184,19 @@
     if(hidden) hidden.value=list.join(',');
     if(all) all.checked=list.length===0;
     document.querySelectorAll('[data-ledger-type]').forEach(cb=>{cb.checked=selectedTypes.has(cb.dataset.ledgerType);});
-    if(label) label.textContent=list.length===0?'All':(list.length===1?list[0]:`${list.length} selected`);
+    if(label) label.textContent=list.length===0?'All types':(list.length===1?typeDisplayLabel(list[0]):`${list.length} selected`);
+  }
+  function statusPillClass(status){
+    const s=String(status||'').toUpperCase();
+    if(s==='SUCCESS'||s==='APPROVED'||s==='COMPLETED'||s==='DONE') return 'active';
+    if(s==='FAILED'||s==='REJECTED'||s==='CANCELLED'||s==='CANCELED'||s==='ERROR') return 'off';
+    return '';
+  }
+  function amtClass(v){
+    const n=num(v);
+    if(n<0) return 'is-neg';
+    if(n===0) return 'is-zero';
+    return 'is-pos';
   }
   function setSelectedTypes(values){
     selectedTypes.clear();
@@ -57,7 +209,7 @@
     const trigger=document.getElementById('ledgerTypeTrigger');
     const menu=document.getElementById('ledgerTypeMenu');
     if(!options||!wrap||!trigger||!menu)return;
-    options.innerHTML=LEDGER_TYPES.map(t=>`<label class="ledger-type-option"><input type="checkbox" data-ledger-type="${t}"><span>${t}</span></label>`).join('');
+    options.innerHTML=LEDGER_TYPES.map(t=>`<label class="ledger-type-option"><input type="checkbox" data-ledger-type="${t}"><span>${typeDisplayLabel(t)}</span></label>`).join('');
     trigger.addEventListener('click',()=>{const open=menu.hidden;menu.hidden=!open;wrap.classList.toggle('open',open);trigger.setAttribute('aria-expanded',String(open));});
     options.addEventListener('change',e=>{const cb=e.target.closest('[data-ledger-type]');if(!cb)return;cb.checked?selectedTypes.add(cb.dataset.ledgerType):selectedTypes.delete(cb.dataset.ledgerType);syncTypeControl();});
     document.getElementById('ledgerTypeAll')?.addEventListener('change',e=>{if(e.target.checked)setSelectedTypes([]);});
@@ -94,14 +246,14 @@
     const types = selectedTypeList();
     const from = document.getElementById('ledgerFrom')?.value;
     const to = document.getElementById('ledgerTo')?.value;
-    const size = document.getElementById('ledgerSize')?.value || '20';
+    pageSize = resolvePageSize(document.getElementById('ledgerSize')?.value);
     if(memberId) p.set('memberId', memberId);
     if(provider) p.set('providerCode', provider);
     p.set('types', effectiveTypeList().join(','));
     if(from) p.set('from', from);
     if(to) p.set('to', to);
     p.set('page', page);
-    p.set('size', size);
+    p.set('size', String(pageSize));
     return p.toString();
   }
   function metric(id, v){ const el=document.getElementById(id); if(el) el.textContent = money(v); }
@@ -118,31 +270,29 @@
     if(!rows.length){ body.innerHTML='<tr><td colspan="15">No ledger records found.</td></tr>'; }
     else body.innerHTML = rows.map(r => {
       const amt = num(r.amount);
+      const status = r.status || '-';
+      const statusCls = statusPillClass(status);
       return `<tr>
-        <td>${esc(dt(r.createdAt || r.created_at))}</td>
-        <td>${esc(dt(r.postedAt || r.posted_at || r.completedAt || r.approvedAt))}</td>
-        <td><b>${esc(r.username || '-')}</b><br><small>ID: ${esc(r.memberId || '')}</small></td>
+        <td>${dtCell(r.createdAt || r.created_at)}</td>
+        <td>${dtCell(r.postedAt || r.posted_at || r.completedAt || r.approvedAt)}</td>
+        <td>${esc(r.username || '-')}</td>
         <td>${esc(r.providerCode || '-')}</td>
-        <td><span class="status-pill">${esc(r.ledgerType || '-')}</span></td>
-        <td><b class="${amt < 0 ? 'text-danger' : 'text-success'}">${money(amt)}</b></td>
-        <td>${money(r.beforeBalance)}</td>
-        <td>${money(r.afterBalance)}</td>
+        <td><span class="status-pill ledger-type-chip">${esc(r.ledgerType || '-')}</span></td>
+        <td class="ledger-amt ${amtClass(amt)}">${money(amt)}</td>
+        <td class="ledger-amt">${money(r.beforeBalance)}</td>
+        <td class="ledger-amt">${money(r.afterBalance)}</td>
         <td>${esc(r.gameCode || '-')}</td>
-        <td><b>${esc(r.createdBy || r.adjustedBy || '-')}</b></td>
-        <td><b>${esc(r.approvedBy || r.reviewedBy || '-')}</b></td>
+        <td>${esc(r.createdBy || r.adjustedBy || '-')}</td>
+        <td>${esc(r.approvedBy || r.reviewedBy || '-')}</td>
         <td>${esc(r.reasonCode || r.reason || '-')}</td>
-        <td><small>${esc(r.relatedId || r.referenceNo || r.depositId || r.withdrawalId || r.bonusId || r.rebateId || '-')}</small></td>
-        <td><small>${esc(r.remark || '-')}</small></td>
-        <td>${esc(r.status || '-')}</td>
+        <td>${esc(r.relatedId || r.referenceNo || r.depositId || r.withdrawalId || r.bonusId || r.rebateId || '-')}</td>
+        <td>${esc(r.remark || '-')}</td>
+        <td><span class="status-pill ${statusCls}">${esc(status)}</span></td>
       </tr>`;
     }).join('');
     totalPages = Number(pagination && pagination.totalPages) || 1;
-    const total = Number(pagination && pagination.totalElements) || rows.length;
+    publishPagerMeta(pagination, pageSize);
     document.getElementById('ledgerPager').innerHTML = pageButtons(page, totalPages);
-    const filteredTotal = Number(meta && meta.filteredTotalAmount);
-    const selectedType = selectedTypeList().length ? selectedTypeList().join(', ') : 'ALL EXCEPT WALLET-TO-WALLET';
-    const scopeLabel = (meta && meta.filterScope === 'ALL_TIME') || allTimeScope ? 'All Time' : 'Selected Date';
-    document.getElementById('ledgerPageInfo').textContent = `${total.toLocaleString()} record(s) · ${scopeLabel} ${selectedType} Total: ${money(Number.isFinite(filteredTotal) ? filteredTotal : rows.reduce((a,r)=>a+num(r.amount),0))}`;
     document.getElementById('ledgerPrevBtn').disabled = page <= 1;
     document.getElementById('ledgerNextBtn').disabled = page >= totalPages;
   }
@@ -159,14 +309,26 @@
   }
   document.addEventListener('DOMContentLoaded', function(){
     initTypeMulti();
+    bindTimeTips();
     ensureDefaultDates();
     setFromUrl();
     document.getElementById('ledgerSearchBtn')?.addEventListener('click', ()=>{ page=1; load(); });
     ['ledgerMemberId','ledgerProviderCode'].forEach(id=>document.getElementById(id)?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ page=1; load(); } }));
-    ['ledgerFrom','ledgerTo','ledgerSize'].forEach(id=>document.getElementById(id)?.addEventListener('change', ()=>{ page=1; load(); }));
+    ['ledgerFrom','ledgerTo'].forEach(id=>document.getElementById(id)?.addEventListener('change', ()=>{ page=1; load(); }));
+    // Footer "Show N entries" mirrors #ledgerSize (Deposit/Withdraw contract)
+    pageSize = resolvePageSize(document.getElementById('ledgerSize')?.value);
+    document.getElementById('ledgerSize')?.addEventListener('change', ()=>{
+      clearLockedAutoSize();
+      pageSize = resolvePageSize(document.getElementById('ledgerSize')?.value);
+      page = 1;
+      load();
+    });
     document.getElementById('ledgerResetBtn')?.addEventListener('click', ()=>{
       ['ledgerMemberId','ledgerProviderCode'].forEach(id=>document.getElementById(id).value='');
       setSelectedTypes([]);
+      const sizeEl=document.getElementById('ledgerSize');
+      if(sizeEl) sizeEl.value='-';
+      clearLockedAutoSize();
       const now=new Date(), pad=n=>String(n).padStart(2,'0');
       const today=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
       document.getElementById('ledgerFrom').value=today;

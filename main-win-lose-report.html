@@ -7,15 +7,15 @@
 <title>Win/Lose Report</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
-<link href="assets/css/reports.css?v=1.0.48" rel="stylesheet"/>
+<link href="assets/css/reports.css?v=1.0.50" rel="stylesheet"/>
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
-<link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet"/>
+<link href="assets/css/bo-ui-standard.css?v=1.0.5" rel="stylesheet"/>
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<link href="assets/css/main-admin-detail-executive.css?v=1.0.21" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=1.0.216" rel="stylesheet"/>
 <link href="assets/css/main-provider-report-executive.css?v=1.0.18" rel="stylesheet"/>
 <link href="assets/css/main-merchant-report-executive.css?v=1.0.3" rel="stylesheet"/>
-<link href="assets/css/main-win-lose-report.css?v=1.0.11" rel="stylesheet"/>
-<link href="assets/css/bo-seg-bounce.css?v=1.0.0" rel="stylesheet"/>
+<link href="assets/css/main-win-lose-report.css?v=1.0.12" rel="stylesheet"/>
+<link href="assets/css/bo-seg-bounce.css?v=1.0.1" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -23,8 +23,14 @@
   }catch(e){}
 })();
 </script>
+<link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet"/>
+<link href="assets/css/main-report-charcoal.css?v=1.0.16" rel="stylesheet"/>
+<link href="assets/css/main-report-charcoal-content.css?v=1.0.1" rel="stylesheet"/>
+<link href="assets/css/bo-table-zebra.css?v=1.0.0" rel="stylesheet"/>
+<link href="assets/css/bo-input-fill.css?v=1.0.1" rel="stylesheet"/>
+<link href="assets/css/main-mobile-responsive.css?v=1.0.0" rel="stylesheet">
 </head>
-<body class="report-body standardized-listing-page main-admin-detail-page main-report-exec-page main-win-lose-page" data-access-page="main_report" data-report-view="winlose">
+<body class="report-body standardized-listing-page main-admin-detail-page main-report-exec-page main-win-lose-page bo-account-chip" data-access-page="main_report" data-report-view="winlose">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
 <div class="report-brand"><div>Backoffice<br/><small>Executive Panel</small></div><button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button></div>
@@ -38,7 +44,6 @@
     <div class="user-title-icon"><i class="bi bi-graph-up-arrow"></i></div>
     <div>
       <h1>Win/Lose Report</h1>
-      <p>Merchant win/lose by period, with provider consumption breakdown.</p>
     </div>
   </div>
   <div class="report-actions">
@@ -51,6 +56,12 @@
 </header>
 
 <section class="report-content mad-workspace mre-workspace">
+  <div class="mad-chrome mre-chrome">
+    <div class="mad-chrome-actions mre-chrome-actions">
+      <span class="mad-sync" id="reportSyncLabel"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> Synced just now</span>
+      <button class="mad-btn mad-btn-ghost" type="button" id="reportExport"><i class="bi bi-upload"></i> Export</button>
+    </div>
+  </div>
   <div class="mad-panel mre-panel" data-report-panel="winlose">
     <div class="mad-filter-bar mre-filter-bar">
       <div class="mad-pills" role="group" aria-label="Merchant status" data-bo-seg-anim="bounce">
@@ -59,6 +70,45 @@
         <button type="button" class="mad-pill" data-wl-status="suspended" aria-pressed="false">Suspended <span class="mad-pill-count is-danger-count" id="wlCountSuspended">0</span></button>
       </div>
       <div class="mad-filters">
+        <div class="mre-period-group">
+          <div class="field ref-date-field mre-date-field main-mod-date main-exec-date-field">
+            <input type="hidden" id="winLoseFrom"/>
+            <input type="hidden" id="winLoseTo"/>
+            <div class="ref-range-wrap">
+              <button class="ref-range-trigger mre-date-trigger" id="winLoseDateTrigger" type="button" aria-label="Select date range" aria-expanded="false">
+                <span class="ref-range-icon"><i class="bi bi-calendar3"></i></span>
+                <span id="winLoseDateLabel">Select date range</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+              </button>
+              <div class="ref-range-picker" id="winLoseRangePicker">
+                <div class="ref-range-presets">
+                  <button data-winlose-preset="today" type="button">Today</button>
+                  <button data-winlose-preset="yesterday" type="button">Yesterday</button>
+                  <button data-winlose-preset="thisWeek" type="button">This Week</button>
+                  <button data-winlose-preset="lastWeek" type="button">Last Week</button>
+                  <button data-winlose-preset="thisMonth" type="button">This Month</button>
+                  <button data-winlose-preset="lastMonth" type="button">Last Month</button>
+                  <button data-winlose-preset="thisYear" type="button">This Year</button>
+                  <button data-winlose-preset="lastYear" type="button">Last Year</button>
+                </div>
+                <div class="ref-range-calendar">
+                  <div class="ref-cal-head">
+                    <button id="winLoseCalPrev" type="button"><i class="bi bi-chevron-left"></i></button>
+                    <button class="ref-head-pick" id="winLoseCalMonth" type="button"></button>
+                    <button class="ref-head-pick" id="winLoseCalYear" type="button"></button>
+                    <button id="winLoseCalNext" type="button"><i class="bi bi-chevron-right"></i></button>
+                  </div>
+                  <div class="ref-cal-month-grid" id="winLoseCalMonthGrid"></div>
+                  <div class="ref-cal-year-grid" id="winLoseCalYearGrid"></div>
+                  <div class="ref-cal-day-view" id="winLoseCalDayView">
+                    <div class="ref-cal-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+                    <div class="ref-cal-days" id="winLoseCalDays"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <label class="mad-search mre-search" for="wlSearchInput">
           <i class="bi bi-search" aria-hidden="true"></i>
           <input id="wlSearchInput" type="search" placeholder="Search by merchant name..." autocomplete="off"/>
@@ -76,56 +126,17 @@
           <option value="suspended">Suspended</option>
         </select>
         <button class="mad-btn mad-btn-ghost mad-reset-btn" type="button" id="wlResetBtn"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
-        <button class="mad-btn mad-btn-ghost" type="button" id="reportExport"><i class="bi bi-upload"></i> Export</button>
       </div>
     </div>
 
-    <div class="mre-scope-bar" aria-label="Currency and period">
+    <div class="mre-scope-bar" aria-label="Currency">
       <div class="mre-currency-group">
         <span class="mre-scope-label">Currency</span>
         <div class="mre-currency-seg" role="group" aria-label="Currency" id="wlCurrencySeg">
           <span class="mre-cur-loading" aria-hidden="true">…</span>
         </div>
       </div>
-      <div class="mre-period-group">
-        <div class="field ref-date-field mre-date-field main-mod-date main-exec-date-field">
-          <input type="hidden" id="winLoseFrom"/>
-          <input type="hidden" id="winLoseTo"/>
-          <div class="ref-range-wrap">
-            <button class="ref-range-trigger mre-date-trigger" id="winLoseDateTrigger" type="button" aria-label="Select date range" aria-expanded="false">
-              <span class="ref-range-icon"><i class="bi bi-calendar3"></i></span>
-              <span id="winLoseDateLabel">Select date range</span>
-              <i class="bi bi-chevron-down ms-auto"></i>
-            </button>
-            <div class="ref-range-picker" id="winLoseRangePicker">
-              <div class="ref-range-presets">
-                <button data-winlose-preset="today" type="button">Today</button>
-                <button data-winlose-preset="yesterday" type="button">Yesterday</button>
-                <button data-winlose-preset="thisWeek" type="button">This Week</button>
-                <button data-winlose-preset="lastWeek" type="button">Last Week</button>
-                <button data-winlose-preset="thisMonth" type="button">This Month</button>
-                <button data-winlose-preset="lastMonth" type="button">Last Month</button>
-                <button data-winlose-preset="thisYear" type="button">This Year</button>
-                <button data-winlose-preset="lastYear" type="button">Last Year</button>
-              </div>
-              <div class="ref-range-calendar">
-                <div class="ref-cal-head">
-                  <button id="winLoseCalPrev" type="button"><i class="bi bi-chevron-left"></i></button>
-                  <button class="ref-head-pick" id="winLoseCalMonth" type="button"></button>
-                  <button class="ref-head-pick" id="winLoseCalYear" type="button"></button>
-                  <button id="winLoseCalNext" type="button"><i class="bi bi-chevron-right"></i></button>
-                </div>
-                <div class="ref-cal-month-grid" id="winLoseCalMonthGrid"></div>
-                <div class="ref-cal-year-grid" id="winLoseCalYearGrid"></div>
-                <div class="ref-cal-day-view" id="winLoseCalDayView">
-                  <div class="ref-cal-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
-                  <div class="ref-cal-days" id="winLoseCalDays"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
     </div>
 
     <div class="mad-table-wrap report-table-scroll mre-scroll-table wl-scroll-table">
@@ -183,13 +194,14 @@
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
-<script src="assets/js/reports.js?v=1.0.25"></script>
-<script src="assets/js/auth.js?v=1.0.61"></script>
+<script src="assets/js/reports.js?v=1.0.29"></script>
+<script src="assets/js/auth.js?v=1.0.66"></script>
 <script src="assets/js/permission-tabs.js?v=1.0.0"></script>
 <script src="assets/js/bo-seg-bounce.js?v=1.0.0"></script>
 <script src="assets/js/main-exec-date-range.js?v=1.0.1"></script>
-<script src="assets/js/main-win-lose-report.js?v=1.0.12"></script>
+<script src="assets/js/main-win-lose-report.js?v=1.0.13"></script>
 <script src="assets/js/bo-ui-standard.js?v=1.0.4"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
+<script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
 </body>
 </html>

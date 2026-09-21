@@ -1420,3 +1420,156 @@ html[data-bo-theme="dark"] body.main-dashboard-page .report-sidebar .nav-group-l
   color:#FBBF24!important;
 }
 
+
+/* ==========================================================================
+   Date-range picker unified with the report family — 2026-09-15
+
+   The Dashboard was the source of the amber picker rules, but it only restyled what its own
+   view needed at the time: the panel, the preset rail, the muted days and the edge cells still
+   came from reports.css (white panel, #f8fafc rail, #cbd5e1 muted days, 6px edge radius), and in
+   dark mode the in-range band had no wash at all. Measured element by element against the Report
+   family pages, which now carry the complete treatment, and matched here:
+
+     * panel and preset rail sit on the surface colour (light cream, dark #383A46) with the warm
+       shadow;
+     * day cells are transparent on the panel and muted days read #57534E / #71717A rather than
+       the cool #98A2B3 / #CBD5E1 greys;
+     * the in-range band is a flat wash — light rgba(217,119,6,.12), dark rgba(245,158,11,.18);
+     * the band edges are solid amber with radius 8px, and only the OUTER corners round. The
+       calendar script emits in-range/selected without is-start/is-end, so the outer edge is found
+       with :is(:first-child,:not(.in-range)+*) and :has(+ button:not(.in-range)) — the same
+       technique the report pages use, so a whole row of the band reads as one strip instead of
+       two rounded pills joined by a flat connector.
+
+   Values match main-report-charcoal.css rule for rule; keep the two in step.
+   ========================================================================== */
+
+/* ---- Light ---- */
+body.main-dashboard-page .ref-range-picker{
+  background:var(--bo-surface,#FFF8EB)!important;
+  border-color:var(--bo-border,#EADCC8)!important;
+  box-shadow:0 12px 30px rgba(60,48,32,.14)!important;
+}
+body.main-dashboard-page .ref-range-presets{
+  background:var(--bo-surface,#FFF8EB)!important;
+  border-right-color:var(--bo-border,#EADCC8)!important;
+}
+body.main-dashboard-page .ref-cal-head button{
+  border:0!important;
+  background:transparent!important;
+  color:#374151!important;
+}
+body.main-dashboard-page .ref-cal-days button{
+  background:transparent!important;
+  color:#374151!important;
+}
+body.main-dashboard-page .ref-cal-days button.muted{
+  background:transparent!important;
+  color:#57534E!important;
+}
+body.main-dashboard-page .ref-cal-days button:hover:not(:disabled){
+  background:rgba(217,119,6,.16)!important;
+  color:#B45309!important;
+}
+body.main-dashboard-page .ref-cal-days button.in-range{
+  background:rgba(217,119,6,.14)!important;
+  color:#B45309!important;
+}
+body.main-dashboard-page .ref-cal-days button.selected{
+  background:#D97706!important;
+  color:#FFFFFF!important;
+  border-radius:8px!important;
+}
+body.main-dashboard-page .ref-cal-week span{color:#71717A!important;}
+html:not([data-bo-theme="dark"]) body.main-dashboard-page .ref-range-presets button:not(.active){color:#374151!important;}
+html:not([data-bo-theme="dark"]) body.main-dashboard-page .ref-cal-days button.selected.in-range:not(.is-start):not(.is-end):is(:first-child,:not(.in-range)+*){border-radius:8px 0 0 8px!important;}
+html:not([data-bo-theme="dark"]) body.main-dashboard-page .ref-cal-days button.selected.in-range:not(.is-start):not(.is-end):is(:last-child,:has(+ button:not(.in-range))){border-radius:0 8px 8px 0!important;}
+html:not([data-bo-theme="dark"]) body.main-dashboard-page .ref-cal-days button.selected.in-range:not(.is-start):not(.is-end):is(:first-child,:not(.in-range)+*):is(:last-child,:has(+ button:not(.in-range))){border-radius:8px!important;}
+
+/* ---- Dark ---- */
+html[data-bo-theme="dark"] body.main-dashboard-page .ref-range-picker{
+  border-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-dashboard-page .ref-range-presets{
+  background:var(--bo-surface,#383A46)!important;
+  border-right-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-dashboard-page .main-exec-date-field .ref-range-trigger{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:var(--bo-text,#F5F5F4)!important;
+}
+html[data-bo-theme="dark"] body.main-dashboard-page .ref-cal-head button{
+  background:transparent!important;
+  border-color:transparent!important;
+  color:var(--bo-text-secondary,#E7E5E4)!important;
+}
+html[data-bo-theme="dark"] body.main-dashboard-page .ref-cal-days button{
+  background:transparent!important;
+  color:var(--bo-text-secondary,#E7E5E4)!important;
+}
+html[data-bo-theme="dark"] body.main-dashboard-page .ref-cal-days button:hover:not(:disabled){
+  background:rgba(245,158,11,.16)!important;
+  color:#FFFFFF!important;
+}
+html[data-bo-theme="dark"] body.main-dashboard-page .ref-cal-days button.in-range{
+  background:rgba(245,158,11,.18)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.main-dashboard-page .ref-cal-days button.selected{
+  background:#F59E0B!important;
+  color:#2A2C36!important;
+  border-radius:8px!important;
+}
+html[data-bo-theme="dark"] body.main-dashboard-page .ref-cal-days button.selected.in-range:not(.is-start):not(.is-end):is(:first-child,:not(.in-range)+*){border-radius:8px 0 0 8px!important;}
+html[data-bo-theme="dark"] body.main-dashboard-page .ref-cal-days button.selected.in-range:not(.is-start):not(.is-end):is(:last-child,:has(+ button:not(.in-range))){border-radius:0 8px 8px 0!important;}
+html[data-bo-theme="dark"] body.main-dashboard-page .ref-cal-days button.selected.in-range:not(.is-start):not(.is-end):is(:first-child,:not(.in-range)+*):is(:last-child,:has(+ button:not(.in-range))){border-radius:8px!important;}
+
+
+/* ---- Day cells touch, so the in-range band is continuous (the base sets gap:3px) ---- */
+body.main-dashboard-page .ref-cal-days{gap:0;}
+
+
+/* ---- Month / year grid active cell, and the dark trigger label (reference values) ---- */
+/* In LIGHT the reference leaves the month/year grid active cell as plain text — the amber fill
+   is reserved for the preset rail and the range edges; in DARK it is an amber chip. And the dark
+   trigger label is --bo-text (#F5F5F4), one step brighter than --bo-text-secondary. ---- */
+html:not([data-bo-theme="dark"]) body.main-dashboard-page .ref-cal-month-grid button.active,
+html:not([data-bo-theme="dark"]) body.main-dashboard-page .ref-cal-year-grid button.active{
+  background:transparent!important;
+  color:#374151!important;
+}
+
+/* ---- Rail shadow / border and the dark calendar well (reference values) ---- */
+/* The reference draws the rail with the same shadow as the panel and a --bo-border edge, and in
+   dark mode the calendar well is the opaque surface rather than transparent. ---- */
+html:not([data-bo-theme="dark"]) body.main-dashboard-page .ref-range-presets{
+  border-color:var(--bo-border,#EADCC8)!important;
+  box-shadow:0 12px 30px rgba(60,48,32,.14)!important;
+}
+html[data-bo-theme="dark"] body.main-dashboard-page .ref-range-presets{
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
+}
+html[data-bo-theme="dark"] body.main-dashboard-page .ref-range-calendar{
+  background:var(--bo-surface,#383A46)!important;
+}
+
+/* ---- Dark active preset label is WHITE on the reference ---- */
+/* main-merchant-profit.html renders the dark active preset and the dark month/year active cell as
+   #F59E0B with a WHITE label (its range EDGES use #2A2C36). The page rule that produces it has a
+   higher specificity than the family rule, so reading the family rule alone gives #2A2C36 and is
+   wrong. ---- */
+html[data-bo-theme="dark"] body.main-dashboard-page .ref-range-presets button.active,
+html[data-bo-theme="dark"] body.main-dashboard-page .ref-cal-month-grid button.active,
+html[data-bo-theme="dark"] body.main-dashboard-page .ref-cal-year-grid button.active{
+  color:#FFFFFF!important;
+}
+
+/* ---- Month/year head buttons: the reference box carries a transparent 1px border ---- */
+/* The dashboard file pins .ref-cal-head button to border:0!important, so this needs the same weight. */
+/* .ref-cal-head button is pinned to border:0!important at (0,2,2), so this needs BOTH weight and a
+   selector that out-ranks it: the button type plus the class. */
+body.main-dashboard-page .ref-cal-head button.ref-head-pick{
+  border:1px solid transparent!important;
+}

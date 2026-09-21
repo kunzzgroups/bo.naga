@@ -109,6 +109,8 @@ const GAME_API = {
   const gameUrl = document.getElementById('gameUrl');
   const providerCode = document.getElementById('gameProviderCode');
   const gameCode = document.getElementById('gameCode');
+  const customVariablesBox = document.getElementById('gameCustomVariables');
+  const addCustomVariableBtn = document.getElementById('addGameCustomVariableBtn');
   const sortOrder = document.getElementById('gameSortOrder');
   const status = document.getElementById('gameStatus');
   const imageInput = document.getElementById('gameImage');
@@ -302,7 +304,7 @@ const GAME_API = {
 
   function categoryOptions(withAll) {
     const options = categories.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join('');
-    return (withAll ? '<option value="">All Categories</option>' : '') + (options || '<option value="">No category found</option>');
+    return (withAll ? '<option value="">All Categories</option>' : '<option value="">No Category (Optional)</option>') + options;
   }
 
   function subCategoryOptions(catId, withAll, providerVal) {
@@ -378,17 +380,50 @@ const GAME_API = {
     return value;
   }
 
+  function addCustomVariableRow(item = {}) {
+    if (!customVariablesBox) return;
+    const row = document.createElement('div');
+    row.className = 'game-custom-variable-row';
+    row.style.cssText = 'display:grid;grid-template-columns:90px 1fr 1fr 42px;gap:8px;align-items:center;margin:8px 0;';
+    row.innerHTML = `
+      <label style="margin:0;display:flex;align-items:center;gap:5px;font-size:12px"><input type="checkbox" class="gcv-enabled" ${item.enabled === false ? '' : 'checked'}> Enabled</label>
+      <input type="text" class="gcv-key" maxlength="64" placeholder="Key e.g. playType" value="${escapeHtml(item.key || '')}">
+      <input type="text" class="gcv-value" placeholder="Value e.g. 4" value="${escapeHtml(item.value || '')}">
+      <button type="button" class="clean-btn gcv-remove" title="Remove"><i class="bi bi-trash"></i></button>`;
+    row.querySelector('.gcv-remove').addEventListener('click', () => row.remove());
+    customVariablesBox.appendChild(row);
+  }
+
+  function setCustomVariables(raw) {
+    if (!customVariablesBox) return;
+    customVariablesBox.innerHTML = '';
+    let items = raw;
+    if (typeof raw === 'string' && raw.trim()) { try { items = JSON.parse(raw); } catch (_) { items = []; } }
+    if (!Array.isArray(items)) items = [];
+    items.forEach(addCustomVariableRow);
+  }
+
+  function collectCustomVariables() {
+    if (!customVariablesBox) return [];
+    return Array.from(customVariablesBox.querySelectorAll('.game-custom-variable-row')).map(row => ({
+      key: row.querySelector('.gcv-key').value.trim(),
+      value: row.querySelector('.gcv-value').value.trim(),
+      enabled: row.querySelector('.gcv-enabled').checked
+    })).filter(item => item.key && item.value);
+  }
+
   function resetForm() {
     id.value = '';
     providerCode.value = '';
     providerCode.removeAttribute('title');
     delete providerCode.dataset.autoFilledFromSubCategory;
-    if (categories[0]) categoryId.value = String(categories[0].id);
+    categoryId.value = '';
     refreshSubCategoryOptions();
     syncProviderFromSubCategory({ clearWhenMissing: true });
     name.value = '';
     gameUrl.value = '';
     if (gameCode) gameCode.value = '';
+    setCustomVariables([]);
     sortOrder.value = '0';
     status.value = '1';
     selectedFile = null;
@@ -470,6 +505,7 @@ const GAME_API = {
     name.value = item.name || '';
     gameUrl.value = item.gameUrl || '';
     if (gameCode) gameCode.value = item.gameCode || '';
+    setCustomVariables(item.providerCustomVariables || item.provider_custom_variables || []);
     sortOrder.value = item.sortOrder ?? 0;
     status.value = String(item.status ?? 1);
     selectedFile = null;
@@ -570,14 +606,19 @@ const GAME_API = {
     list.innerHTML = '<div class="slider-empty"><i class="bi bi-hourglass-split"></i><b>Loading games...</b></div>';
     empty.hidden = true;
     try {
-      // Load full list then filter in BO side.
-      // This keeps the filter working even when backend ignores query params or uses different param names.
-      const json = await fetchJson(GAME_API.list);
-      let rows = (json.data || []).map(normalizeGame);
-
+      // Send catalogue filters to Spring Boot instead of always downloading the
+      // complete game catalogue. This is important for large providers and also
+      // makes the selected provider the authoritative server-side filter.
       const selectedCategory = String(categoryFilter.value || '');
       const selectedSubCategory = String(subCategoryFilter.value || '');
-      const selectedProvider = String(providerFilter?.value || '').toUpperCase();
+      const selectedProvider = String(providerFilter?.value || '').trim().toUpperCase();
+      const params = new URLSearchParams();
+      if (selectedCategory) params.set('categoryId', selectedCategory);
+      if (selectedSubCategory) params.set('subCategoryId', selectedSubCategory);
+      if (selectedProvider) params.set('providerCode', selectedProvider);
+      const requestUrl = GAME_API.list + (params.toString() ? `?${params.toString()}` : '');
+      const json = await fetchJson(requestUrl);
+      let rows = (json.data || []).map(normalizeGame);
 
       if (selectedCategory) {
         rows = rows.filter(item => String(getCategoryId(item)) === selectedCategory);
@@ -601,11 +642,6 @@ const GAME_API = {
     e.preventDefault();
     const isUpdate = !!id.value;
 
-    if (!categoryId.value) {
-      setStatus('Please select category.', 'error');
-      categoryId.focus();
-      return;
-    }
     // Sub category is optional. 0 is intentionally sent to Spring Boot when
     // the admin leaves "Select Sub Category" selected.
     const selectedSubCategoryId = getSelectedSubCategoryId() || '0';
@@ -635,7 +671,7 @@ const GAME_API = {
 
     const fd = new FormData();
     if (isUpdate) fd.append('id', id.value);
-    fd.append('categoryId', categoryId.value);
+    fd.append('categoryId', categoryId.value || '0');
     fd.append('subCategoryId', selectedSubCategoryId);
     fd.append('name', name.value.trim());
     fd.append('gameUrl', gameUrl.value.trim());
@@ -646,6 +682,7 @@ const GAME_API = {
       fd.append('launchCode', gameCode.value.trim());
     }
     fd.append('sortOrder', sortOrder.value || '0');
+    fd.append('providerCustomVariables', JSON.stringify(collectCustomVariables()));
     fd.append('status', status.value || '1');
     if (selectedFile) fd.append('image', selectedFile);
 
@@ -795,4 +832,6 @@ const GAME_API = {
       empty.innerHTML = `<i class="bi bi-exclamation-triangle"></i><b>Unable to load setup data</b><small>${escapeHtml(err.message || 'Please create category and sub category first.')}</small>`;
     }
   })();
+  if (addCustomVariableBtn) addCustomVariableBtn.addEventListener('click', () => addCustomVariableRow());
+
 })();

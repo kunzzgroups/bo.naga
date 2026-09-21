@@ -1,0 +1,127 @@
+---
+description: Project responsive design standards
+alwaysApply: true
+---
+
+# Project Responsive Rules
+
+The current UI was designed for one desktop screen size.
+
+Preserve the existing visual design language, but do not preserve fixed dimensions that prevent responsive behavior.
+
+## Target Viewports
+
+Always consider and test:
+
+- 1920px — Large Desktop
+- 1440px — Desktop
+- 1280px — Small Desktop
+- 1024px — Laptop
+- 768px — Tablet
+- 390px — Mobile
+- 375px — Small Mobile
+
+## Design Preservation
+
+Preserve:
+
+- Colors
+- Visual style
+- Component appearance
+- Information hierarchy
+- Business logic
+
+Responsive implementation may change:
+
+- Width
+- Height
+- Padding
+- Gap
+- Grid columns
+- Component arrangement
+- Sidebar behavior
+- Table behavior
+- Typography sizing when necessary
+
+Do not redesign the UI unless required for smaller screens.
+
+## Layout
+
+Do not build layouts for only one fixed screen resolution.
+
+Prefer:
+
+- Flexible width
+- CSS Grid
+- Flexbox
+- minmax()
+- auto-fit / auto-fill
+- clamp()
+- max-width
+- Container Queries when appropriate
+
+Avoid unnecessary fixed widths and absolute positioning.
+
+## Sidebar
+
+Desktop:
+
+- Keep full sidebar where sufficient space exists
+
+Tablet / Mobile:
+
+- Collapse sidebar
+- Use hamburger navigation
+- Open as drawer / overlay
+
+## Tables
+
+Desktop:
+
+- Keep full table whenever possible
+
+Smaller screens:
+
+- Hide non-critical columns
+- OR use table container horizontal scrolling
+- OR convert to mobile card layout
+
+Never allow the entire page to horizontally scroll.
+
+## Forms
+
+Desktop:
+
+- Multi-column allowed
+
+Tablet:
+
+- Reduce columns when needed
+
+Mobile:
+
+- Prefer single column
+
+## Responsive Audit
+
+Before considering a page complete, check:
+
+1920
+1440
+1280
+1024
+768
+390
+375
+
+Check for:
+
+- Horizontal overflow
+- Sidebar issues
+- Header overlap
+- Table overflow
+- Modal overflow
+- Broken grids
+- Text clipping
+- Button overlap
+- Incorrect spacing

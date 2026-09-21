@@ -7,7 +7,7 @@
   position:absolute;top:3px;left:0;z-index:0;
   height:calc(100% - 6px);width:0;border-radius:9px;
   background:#fff;
-  box-shadow:0 0 0 1px rgba(18,59,102,.05),0 1px 2px rgba(18,59,102,.07);
+  box-shadow:0 0 0 1px rgba(120,80,20,.05),0 1px 2px rgba(120,80,20,.07);
   pointer-events:none;opacity:0;
   will-change:left,width;
   transition:left .28s cubic-bezier(.22,1,.36,1),width .28s cubic-bezier(.22,1,.36,1),opacity .18s ease;

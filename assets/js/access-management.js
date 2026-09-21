@@ -109,15 +109,17 @@
     return saved && Number(saved)>0 ? String(Number(saved)) : '';
   }
   async function fetchRoles(){
-    // Merchant Roles & Permissions is strictly scoped to the selected Merchant/Brand.
-    // This prevents the same per-brand system role (for example Brand Owner) from
-    // appearing multiple times in one dropdown.
+    // Merchant Roles & Permissions manages reusable/global Brand Owner templates.
+    // Do not scope this request to the currently selected merchant: doing so hides
+    // BRAND_OWNER roles whose brand_id is NULL (for example brand_owner_global).
     if(isMerchantRolesPage){
-      const brandId=merchantScopeId();
-      if(!brandId) return [];
-      const headers={...BO_AUTH.authHeader(),'X-Brand-Id':brandId};
-      const j=await api(BO_AUTH.roleListUrl(),{headers});
-      return Array.isArray(j.data)?j.data:[];
+      const primary = BO_AUTH.roleListAllUrl ? BO_AUTH.roleListAllUrl() : BO_AUTH.roleListUrl();
+      let j=await api(primary,{headers:{...BO_AUTH.authHeader()}});
+      let rows=Array.isArray(j.data)?j.data:[];
+      if(!rows.length && primary!==BO_AUTH.roleListUrl()){
+        try{j=await api(BO_AUTH.roleListUrl(),{headers:{...BO_AUTH.authHeader()}});rows=Array.isArray(j.data)?j.data:[];}catch(e){}
+      }
+      return rows;
     }
     // Platform Role Management shows the existing platform catalogue.
     const primary = platformRoleAdmin && BO_AUTH.roleListAllUrl ? BO_AUTH.roleListAllUrl() : BO_AUTH.roleListUrl();
@@ -632,6 +634,13 @@
         const rt=String(r?.roleType||'').toUpperCase();
         const active=Number(r?.status==null?1:r.status)===1;
         if(!active) return false;
+
+        // Merchant Roles & Permissions is exclusively for reusable merchant-owner
+        // permission templates. Never mix normal Admin/Main/Designer roles here.
+        if(isMerchantRolesPage){
+          const globalOwner = rt==='BRAND_OWNER' && r?.brandId == null && r?.brand_id == null && r?.merchantId == null;
+          return globalOwner && canEditRoleMenus(r);
+        }
 
         // MAIN/Boss sees all active platform/global roles maintained by ROOT, but
         // merchant Brand Owner roles stay inside Merchant Roles & Permissions.

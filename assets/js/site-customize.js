@@ -361,6 +361,21 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     <button type="button" class="top-logout-btn" data-member-logout data-i18n="logout">Logout</button>
   </div>
 </div>`,
+        'home-mobile-before-category': `<section class="brand-mobile-account-panel" aria-label="Account shortcuts">
+  <div class="brand-mobile-account-auth top-auth-actions">
+    <a class="brand-mobile-auth-btn auth-image-link" href="login.html" aria-label="Sign In"><img class="header-auth-image header-login-image" src="assets/custom/images/login.png" alt="LOGIN" decoding="async" loading="eager"></a>
+    <a class="brand-mobile-auth-btn auth-image-link" href="register.html" aria-label="Register"><img class="header-auth-image header-register-image" src="assets/custom/images/register.png" alt="REGISTER" decoding="async" loading="eager"></a>
+  </div>
+  <div class="brand-mobile-member top-member-actions">
+    <span class="brand-mobile-balance-label">Balance</span>
+    <strong data-main-wallet-balance>MYR 0.00</strong>
+  </div>
+  <div class="brand-mobile-account-actions">
+    <a href="deposit.html" class="brand-mobile-account-action"><img src="assets/custom/images/deposit.png" alt="Deposit"><span>Deposit</span></a>
+    <a href="withdraw.html" class="brand-mobile-account-action"><img src="assets/custom/images/withdraw.png" alt="Withdraw"><span>Withdraw</span></a>
+    <button type="button" class="brand-mobile-account-action" data-refresh-main-wallet><img src="assets/custom/images/refresh.png" alt="Refresh"><span>Refresh</span></button>
+  </div>
+</section>`,
         'frontend-sidebar': `<div class="mobile-menu-head">
   <div class="mobile-avatar"><i class="fa-solid fa-user"></i></div>
   <div class="mobile-menu-auth">
@@ -383,6 +398,51 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 </div>
 <div class="mobile-menu-lang" id="sideLangBtn"><span>🌐 简体中文</span><span>CN ›</span></div>
 <div class="mobile-menu-version"><span data-i18n="side_version">Version:</span> 1.1.0</div>`
+    };
+
+    const DEFAULT_SECTION_CSS = {
+        'home-mobile-before-category': `/* Mobile only. The frontend slot is hidden on desktop and stays empty for other brands. */
+.brand-mobile-account-panel {
+  margin: 10px 10px 14px;
+  padding: 14px 16px;
+  border: 1px solid rgba(151, 117, 255, .35);
+  border-radius: 20px;
+  background: rgba(13, 13, 18, .94);
+  box-shadow: 0 0 18px rgba(116, 82, 220, .18);
+}
+.brand-mobile-account-auth,
+.brand-mobile-member { display: flex; gap: 12px; align-items: center; }
+.brand-mobile-account-auth > a { flex: 1; min-width: 0; }
+.brand-mobile-account-auth img { display: block; width: 100%; height: 40px; object-fit: contain; }
+.brand-mobile-member { justify-content: space-between; min-height: 40px; }
+.brand-mobile-balance-label { opacity: .75; }
+.brand-mobile-account-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+.brand-mobile-account-action {
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font: inherit;
+  cursor: pointer;
+}
+.brand-mobile-account-action img { width: 100%; max-width: 108px; height: 34px; object-fit: contain; }
+.brand-mobile-account-action span { font-size: 12px; }
+@media (min-width: 768px) {
+  .home-mobile-before-category-slot { display: none !important; }
+}`
     };
 
     function upgradeAuthButtonsToImages(sectionKey, html) {
@@ -516,6 +576,10 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         if (DEFAULT_SECTION_HTML[sectionKey] && !normalized.html.trim()) {
             normalized.html = DEFAULT_SECTION_HTML[sectionKey];
             normalized.usingDefaultHtml = true;
+            if (DEFAULT_SECTION_CSS[sectionKey] && !normalized.css.trim()) {
+                normalized.css = DEFAULT_SECTION_CSS[sectionKey];
+                normalized.usingDefaultCss = true;
+            }
             return normalized;
         }
 
@@ -698,7 +762,11 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     }
 
     async function saveSection() {
-        const payload = new URLSearchParams();
+        // Use multipart FormData for layout source instead of URL-encoded source code.
+        // The section editor can contain HTML/CSS/JS characters that are commonly flagged by
+        // reverse-proxy/WAF form-body rules. Spring's existing @RequestParam endpoint accepts
+        // multipart fields directly, so this does not require an API change.
+        const payload = new FormData();
         const safeHtml = ensureAuthFeedbackMarkup(activeSection, htmlEditor.value || '');
         const safeCss = ensureAuthFeedbackCss(activeSection, cssEditor.value || '');
         if (safeHtml !== htmlEditor.value || safeCss !== cssEditor.value) {
@@ -719,8 +787,9 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         try {
             const res = await fetch(API_CUSTOMIZE_SECTION_URL, {
                 method: 'POST',
-                headers: brandScopedHeaders({ 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }),
-                body: payload.toString()
+                // Do not set Content-Type manually; the browser must add the multipart boundary.
+                headers: brandScopedHeaders({ 'Accept': 'application/json' }),
+                body: payload
             });
             const json = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(json.message || 'Save failed');

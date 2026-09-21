@@ -282,6 +282,13 @@ document.addEventListener('DOMContentLoaded', () => {
 // Desktop mini sidebar: click hamburger to collapse/restore, hover rail to slide out.
 (function(){
   function isDesktop(){ return window.matchMedia('(min-width: 992px)').matches; }
+  /* The lock is a body class, so it used to die on every navigation: collapse the sidebar,
+     click a submenu link, and the page you land on comes back with a full-width sidebar.
+     Persist it so 'locked' survives the click-through. */
+  var MINI_KEY = 'bo_sidebar_mini';
+  function readMiniPref(){ try { return localStorage.getItem(MINI_KEY) === '1'; } catch(e){ return false; } }
+  function writeMiniPref(on){ try { localStorage.setItem(MINI_KEY, on ? '1' : '0'); } catch(e){} }
+  if(document.body && readMiniPref() && isDesktop()) document.body.classList.add('sidebar-mini');
   function clearMiniHoverArtifacts(){
     var sidebar = document.getElementById('reportSidebar');
     if(window.BO_SIDEBAR && typeof window.BO_SIDEBAR.closeAllFlyouts === 'function'){
@@ -307,6 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     e.stopImmediatePropagation();
     document.body.classList.toggle('sidebar-mini');
+    writeMiniPref(document.body.classList.contains('sidebar-mini'));
     var sidebar = document.getElementById('reportSidebar');
     var overlay = document.getElementById('reportOverlay');
     if(sidebar) sidebar.classList.remove('show');
@@ -368,6 +376,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if(!isDesktop()){
       document.body.classList.remove('sidebar-mini');
       clearMiniHoverArtifacts();
+    }else if(readMiniPref()){
+      document.body.classList.add('sidebar-mini');
     }
   });
 })();
@@ -495,19 +505,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const widest=Math.max.apply(null, labels.map(function(label){
       return measureLabelWidth(label, parts.button);
     }));
-    /* left pad ~14 + chevron/right pad ~46 + breathing room */
-    const contentWidth=Math.max(160, widest+72);
+    const inFilterRow=!!parts.wrap.closest('.bo-filter-row');
+    const inEntriesControl=!!parts.wrap.closest('.entries-control,.bo-pagination-standard');
+    /* Filter rows / pagination entries: size the FIELD, keep wrap at 100% so
+       Status/Page Size and "Show N entries" never overflow neighbors
+       (was Math.max(160) wrap inside an 80–112px cell). */
+    let contentWidth=(inFilterRow || inEntriesControl)
+      ? Math.max(inEntriesControl ? 72 : 80, widest+(inEntriesControl ? 44 : 54))
+      : Math.max(160, widest+72);
+    /* Transaction listing MD — Status locked at 150px (Wallet Ledger Type specimen) */
+    const listingFixed={depositStatus:150,withdrawStatus:150};
+    if(document.body.classList.contains('bo-wallet-tx') && listingFixed[select.id]!=null){
+      contentWidth=listingFixed[select.id];
+    }
 
     if(isCompactAutoWidthWrap(parts.wrap)){
-      parts.wrap.style.setProperty('width', contentWidth+'px','important');
-      parts.wrap.style.setProperty('min-width', contentWidth+'px','important');
-      parts.wrap.style.setProperty('max-width', contentWidth+'px','important');
-      parts.wrap.style.setProperty('flex','0 0 '+contentWidth+'px','important');
-      parts.button.style.setProperty('width', '100%','important');
-      parts.button.style.setProperty('min-width', contentWidth+'px','important');
-      parts.menu.style.setProperty('width', contentWidth+'px','important');
-      parts.menu.style.setProperty('min-width', contentWidth+'px','important');
-      parts.menu.style.setProperty('max-width', contentWidth+'px','important');
+      if(inFilterRow || inEntriesControl){
+        const item=parts.wrap.closest('.bo-filter-select-item,.field,.entries-control') || parts.wrap.parentElement;
+        if(item && (inFilterRow || item.classList.contains('bo-filter-select-item') || item.classList.contains('field'))){
+          item.style.setProperty('--bo-select-width', contentWidth+'px');
+          item.style.setProperty('width', contentWidth+'px', 'important');
+          item.style.setProperty('min-width', contentWidth+'px', 'important');
+          item.style.setProperty('max-width', contentWidth+'px', 'important');
+          item.style.setProperty('flex', '0 0 '+contentWidth+'px', 'important');
+        }
+        parts.wrap.style.setProperty('width', inEntriesControl ? contentWidth+'px' : '100%', 'important');
+        parts.wrap.style.setProperty('min-width', inEntriesControl ? contentWidth+'px' : '0', 'important');
+        parts.wrap.style.setProperty('max-width', inEntriesControl ? contentWidth+'px' : '100%', 'important');
+        if(inEntriesControl){
+          parts.wrap.style.setProperty('flex', '0 0 '+contentWidth+'px', 'important');
+        }else{
+          parts.wrap.style.removeProperty('flex');
+        }
+        parts.button.style.setProperty('width', '100%', 'important');
+        parts.button.style.setProperty('min-width', '0', 'important');
+        parts.menu.style.setProperty('width', '100%', 'important');
+        parts.menu.style.setProperty('min-width', contentWidth+'px', 'important');
+        parts.menu.style.setProperty('max-width', 'none', 'important');
+      }else{
+        parts.wrap.style.setProperty('width', contentWidth+'px','important');
+        parts.wrap.style.setProperty('min-width', contentWidth+'px','important');
+        parts.wrap.style.setProperty('max-width', contentWidth+'px','important');
+        parts.wrap.style.setProperty('flex','0 0 '+contentWidth+'px','important');
+        parts.button.style.setProperty('width', '100%','important');
+        parts.button.style.setProperty('min-width', contentWidth+'px','important');
+        parts.menu.style.setProperty('width', contentWidth+'px','important');
+        parts.menu.style.setProperty('min-width', contentWidth+'px','important');
+        parts.menu.style.setProperty('max-width', contentWidth+'px','important');
+      }
     }else{
       // Form fields: menu must match the visible trigger width (not max-content).
       const boxWidth=Math.ceil((parts.button.getBoundingClientRect().width||parts.wrap.getBoundingClientRect().width||0));
@@ -581,6 +626,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function enhanceSelect(select){
     if(!select || select.dataset.noRounded==='1' || select.multiple || select.size>1) return;
+    if(select.hidden || select.getAttribute('aria-hidden')==='true' || select.type==='hidden') return;
 
     if(select.closest('.rounded-select-wrap')){
       select.dataset.roundedReady='1';

@@ -40,7 +40,31 @@
     if (bsb) { bsb.disabled = cash; if (cash) bsb.value = ''; }
     if (payId) payId.placeholder = cash ? 'e.g. CASH001 (optional)' : 'e.g. PAY123';
   }
-  async function load() { const body = document.getElementById('pmBody'); body.innerHTML = '<tr><td colspan="7">Loading...</td></tr>'; try { const json = await api(endpoint('PAYMENT_METHOD_LIST')); const rows = (json.data && json.data.content) || []; if (!rows.length) { body.innerHTML = '<tr><td colspan="7">No payment method found.</td></tr>'; return; } body.innerHTML = rows.map(r => `<tr><td>${esc(r.sortOrder || 0)}</td><td><b>${esc(r.methodType)}</b></td><td><b>${esc(r.displayName)}</b><br><small>${esc(r.subtitle)}</small></td><td>${r.bankName ? 'Bank: ' + esc(r.bankName) + '<br>' : ''}${r.accountName ? 'Name: ' + esc(r.accountName) + '<br>' : ''}${r.accountNumber ? 'Acc: ' + esc(r.accountNumber) + '<br>' : ''}${r.bankBsb ? 'BSB: ' + esc(r.bankBsb) + '<br>' : ''}${r.payId ? 'Pay ID: ' + esc(r.payId) : ''}</td><td>${r.qrImage ? `<a target="_blank" href="${esc(uploadUrl(r.qrImage))}">View</a>` : '-'}</td><td><span class="status-pill ${Number(r.status) === 1 ? 'active' : 'off'}">${Number(r.status) === 1 ? 'ACTIVE' : 'INACTIVE'}</span></td><td><button class="clean-btn pm-icon-btn primary" title="Edit" data-edit='${esc(JSON.stringify(r))}'><i class="bi bi-pencil"></i></button> <button class="clean-btn pm-icon-btn danger" title="Delete" data-del="${esc(r.id)}"><i class="bi bi-trash"></i></button></td></tr>`).join(''); } catch (e) { body.innerHTML = '<tr><td colspan="7" class="text-danger">' + esc(e.message) + '</td></tr>'; } }
+  async function load() { const body = document.getElementById('pmBody'); body.innerHTML = '<tr><td colspan="7">Loading...</td></tr>'; try { const json = await api(endpoint('PAYMENT_METHOD_LIST')); const rows = (json.data && json.data.content) || []; if (!rows.length) { body.innerHTML = '<tr><td colspan="7">No payment method found.</td></tr>'; return; } body.innerHTML = rows.map(r => {
+      const details = [
+        r.bankName ? 'Bank: ' + esc(r.bankName) : '',
+        r.accountName ? 'Name: ' + esc(r.accountName) : '',
+        r.accountNumber ? 'Acc: ' + esc(r.accountNumber) : '',
+        r.bankBsb ? 'BSB: ' + esc(r.bankBsb) : '',
+        r.payId ? 'Pay ID: ' + esc(r.payId) : ''
+      ].filter(Boolean).join('<br>');
+      const qr = r.qrImage
+        ? `<a class="bo-tx-link" target="_blank" rel="noopener" href="${esc(uploadUrl(r.qrImage))}">View</a>`
+        : '-';
+      const statusOn = Number(r.status) === 1;
+      return `<tr>
+        <td>${esc(r.sortOrder || 0)}</td>
+        <td><b>${esc(r.methodType)}</b></td>
+        <td><b>${esc(r.displayName)}</b><br><small class="bo-tx-sub">${esc(r.subtitle)}</small></td>
+        <td>${details}</td>
+        <td>${qr}</td>
+        <td><span class="status-pill ${statusOn ? 'active' : 'off'}">${statusOn ? 'ACTIVE' : 'INACTIVE'}</span></td>
+        <td><div class="bo-tx-actions">
+          <button type="button" class="bo-tx-action-btn is-edit" title="Edit" aria-label="Edit" data-edit='${esc(JSON.stringify(r))}'><i class="bi bi-pencil" aria-hidden="true"></i></button>
+          <button type="button" class="bo-tx-action-btn is-reject" title="Delete" aria-label="Delete" data-del="${esc(r.id)}"><i class="bi bi-trash" aria-hidden="true"></i></button>
+        </div></td>
+      </tr>`;
+    }).join(''); } catch (e) { body.innerHTML = '<tr><td colspan="7" class="text-danger">' + esc(e.message) + '</td></tr>'; } }
   function setVal(id, v) { const el = document.getElementById(id); if (el) el.value = v == null ? '' : v; }
   function closeModal(){ document.getElementById('pmModal')?.classList.remove('show'); } function openModal(){ document.getElementById('pmModal')?.classList.add('show'); } function reset(close=true) { document.getElementById('pmForm').reset(); setVal('pmId', ''); setVal('pmSort', '0'); setVal('pmMin', '10'); setVal('pmMax', '0'); document.getElementById('pmFormTitle').textContent = 'Create Payment Method'; document.getElementById('pmSubmitBtn').textContent = 'Create Payment Method'; syncMethodTypeUi(); if(close) closeModal(); }
   function edit(r) { setVal('pmId', r.id); setVal('pmType', r.methodType); syncMethodTypeUi(); setVal('pmStatus', r.status); setVal('pmName', r.displayName); setVal('pmSubtitle', r.subtitle); setVal('pmBankName', r.bankName); setVal('pmAccountName', r.accountName); setVal('pmAccountNo', r.accountNumber); setVal('pmBsb', r.bankBsb); setVal('pmPayId', r.payId); setVal('pmSort', r.sortOrder); setVal('pmMin', r.minAmount); setVal('pmMax', r.maxAmount); setVal('pmVipTiers', r.visibleVipTiers); setVal('pmDailyLimit', r.dailyLimit); setVal('pmAutoRotate', r.autoRotateOnLimit); setVal('pmInstructions', r.instructions); document.getElementById('pmFormTitle').textContent = 'Edit Payment Method #' + r.id; document.getElementById('pmSubmitBtn').textContent = 'Save Changes'; openModal(); }

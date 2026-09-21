@@ -544,8 +544,12 @@
     if($('menuId')) $('menuId').value='';
     if($('menuSort')) $('menuSort').value='100';
     if($('menuStatus')) $('menuStatus').value='1';
+    if($('menuShowInSidebar')) $('menuShowInSidebar').value='1';
     document.querySelectorAll('[data-menu-status]').forEach(btn=>{
       btn.classList.toggle('active',btn.getAttribute('data-menu-status')==='1');
+    });
+    document.querySelectorAll('[data-menu-sidebar]').forEach(btn=>{
+      btn.classList.toggle('active',btn.getAttribute('data-menu-sidebar')==='1');
     });
     renderGroupSelect('');
     status('menuFormStatus','','');
@@ -618,6 +622,10 @@
     document.querySelectorAll('[data-menu-status]').forEach(btn=>{
       btn.classList.toggle('active',btn.getAttribute('data-menu-status')===String(Number(m.status)==1?1:0));
     });
+    $('menuShowInSidebar').value=String(Number(m.showInSidebar)==0?0:1);
+    document.querySelectorAll('[data-menu-sidebar]').forEach(btn=>{
+      btn.classList.toggle('active',btn.getAttribute('data-menu-sidebar')===String(Number(m.showInSidebar)==0?0:1));
+    });
     syncItemIconPreview();
     openModal('item');
     updateLivePreview();
@@ -659,7 +667,8 @@
       icon:$('menuIcon').value.trim()||'bi-circle',
       parentKey:$('menuParent').value,
       sortOrder:readSort($('menuSort').value,0),
-      status:Number($('menuStatus').value)
+      status:Number($('menuStatus').value),
+      showInSidebar:Number($('menuShowInSidebar').value)
     };
     if(!payload.title||!payload.menuKey||!payload.url){
       status('menuFormStatus','Please complete Menu Title, Permission Key and Page URL.','error');
@@ -881,5 +890,14 @@
     setNmMode('group',{skipPreview:true});
     syncTabUi();
     load();
+  });
+
+  document.querySelectorAll('[data-menu-sidebar]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const value=btn.getAttribute('data-menu-sidebar')==='0'?'0':'1';
+      if($('menuShowInSidebar')) $('menuShowInSidebar').value=value;
+      document.querySelectorAll('[data-menu-sidebar]').forEach(x=>x.classList.toggle('active',x===btn));
+      updateLivePreview();
+    });
   });
 })();

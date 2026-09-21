@@ -1,5 +1,5 @@
 (function(){
-  const PAIRS=[['betFrom','betTo'],['txFrom','txTo'],['sessionFrom','sessionTo'],['ledgerFrom','ledgerTo'],['casinoFrom','casinoTo'],['reportFrom','reportTo'],['manualFrom','manualTo'],['wlFrom','wlTo'],['depositFrom','depositTo'],['withdrawFrom','withdrawTo'],['usageFrom','usageTo'],['agentDashFrom','agentDashTo'],['agentPlayerFrom','agentPlayerTo'],['agentBetFrom','agentBetTo'],['agentSettlementFrom','agentSettlementTo'],['agentWalletFrom','agentWalletTo'],['agentProductFrom','agentProductTo'],['agentReportFrom','agentReportTo'],['agentBonusFrom','agentBonusTo'],['adminAgentBetFrom','adminAgentBetTo'],['accFrom','accTo'],['detailFrom','detailTo'],['adminAgentFrom','adminAgentTo'],['agentCommissionFrom','agentCommissionTo'],['agentSettlementAdminFrom','agentSettlementAdminTo'],['agentClaimFrom','agentClaimTo'],['agentPayoutFrom','agentPayoutTo'],['agentPromotionFrom','agentPromotionTo'],['perfFrom','perfTo']];
+  const PAIRS=[['betFrom','betTo'],['txFrom','txTo'],['sessionFrom','sessionTo'],['ledgerFrom','ledgerTo'],['casinoFrom','casinoTo'],['reportFrom','reportTo'],['manualFrom','manualTo'],['wlFrom','wlTo'],['depositFrom','depositTo'],['withdrawFrom','withdrawTo'],['usageFrom','usageTo'],['agentDashFrom','agentDashTo'],['agentPlayerFrom','agentPlayerTo'],['agentBetFrom','agentBetTo'],['agentSettlementFrom','agentSettlementTo'],['agentWalletFrom','agentWalletTo'],['agentProductFrom','agentProductTo'],['agentReportFrom','agentReportTo'],['agentBonusFrom','agentBonusTo'],['adminAgentBetFrom','adminAgentBetTo'],['accFrom','accTo'],['detailFrom','detailTo'],['adminAgentFrom','adminAgentTo'],['agentCommissionFrom','agentCommissionTo'],['agentSettlementAdminFrom','agentSettlementAdminTo'],['agentClaimFrom','agentClaimTo'],['agentPayoutFrom','agentPayoutTo'],['agentPromotionFrom','agentPromotionTo'],['perfFrom','perfTo'],['memberFrom','memberTo']];
   const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const pad=n=>String(n).padStart(2,'0');
   const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -30,7 +30,15 @@
     }
     let view=new Date(),start=(isLedgerAllTime||allowEmpty)&&!from.value?'':(from.value||todayValue),end=(isLedgerAllTime||allowEmpty)&&!to.value?'':(to.value||todayValue),mode='days',yearPageStart=view.getFullYear()-5;
     function syncText(){txt.textContent=isLedgerAllTime && !start && !end ? 'All Time' : (start?(fmt(start)+(end?' - '+fmt(end):' - Select end date')):'Select date range')}
-    function commit(a,b){start=iso(a);end=iso(b);from.value=start;to.value=end;from.dispatchEvent(new Event('change',{bubbles:true}));to.dispatchEvent(new Event('change',{bubbles:true}));syncText()}
+    function syncPresetActive(){
+      host.querySelectorAll('[data-preset]').forEach(b=>{
+        const r=rangeFor(b.dataset.preset);
+        const match=!!start&&!!end&&start===iso(r[0])&&end===iso(r[1]);
+        b.classList.toggle('active',match);
+        if(match)b.setAttribute('aria-current','true');else b.removeAttribute('aria-current');
+      });
+    }
+    function commit(a,b){start=iso(a);end=iso(b);from.value=start;to.value=end;from.dispatchEvent(new Event('change',{bubbles:true}));to.dispatchEvent(new Event('change',{bubbles:true}));syncText();syncPresetActive()}
     function setMode(next){mode=next;monthGrid.classList.toggle('show',mode==='months');yearGrid.classList.toggle('show',mode==='years');dayView.classList.toggle('hide',mode!=='days')}
     function renderMonthGrid(){monthGrid.innerHTML=MONTHS.map((m,i)=>`<button type="button" data-month="${i}" class="${i===view.getMonth()?'active':''}">${m}</button>`).join('')}
     function renderYearGrid(){yearGrid.innerHTML=Array.from({length:12},(_,i)=>yearPageStart+i).map(y=>`<button type="button" data-year="${y}" class="${y===view.getFullYear()?'active':''}">${y}</button>`).join('')}
@@ -45,25 +53,25 @@
         if(!start||end){
           start=v;end='';
           from.value=start;to.value='';
-          syncText();render();
+          syncText();syncPresetActive();render();
           pop.classList.add('show');
         }else{
           if(v<start){end=start;start=v}else end=v;
           from.value=start;to.value=end;
           from.dispatchEvent(new Event('change',{bubbles:true}));
           to.dispatchEvent(new Event('change',{bubbles:true}));
-          syncText();render();
+          syncText();syncPresetActive();render();
           setTimeout(()=>pop.classList.remove('show'),120);
         }
-      });days.appendChild(b)}setMode(mode)}
+      });days.appendChild(b)}syncPresetActive();setMode(mode)}
     trig.addEventListener('click',e=>{e.stopPropagation();document.querySelectorAll('.bo-range-pop.show').forEach(x=>{if(x!==pop)x.classList.remove('show')});pop.classList.toggle('show');mode='days';render()});
-    host.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{host.querySelectorAll('[data-preset]').forEach(x=>{x.classList.remove('active');x.removeAttribute('aria-current')});b.classList.add('active');b.setAttribute('aria-current','true');const r=rangeFor(b.dataset.preset);commit(r[0],r[1]);view=new Date(r[0]);mode='days';render();pop.classList.remove('show')}));
+    host.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{const r=rangeFor(b.dataset.preset);commit(r[0],r[1]);view=new Date(r[0]);mode='days';render();pop.classList.remove('show')}));
     host.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{if(mode==='years'){yearPageStart+=Number(b.dataset.nav)*12}else{view.setMonth(view.getMonth()+Number(b.dataset.nav))}render()}));
     monthBtn.addEventListener('click',e=>{e.stopPropagation();mode=mode==='months'?'days':'months';render()});yearBtn.addEventListener('click',e=>{e.stopPropagation();yearPageStart=view.getFullYear()-5;mode=mode==='years'?'days':'years';render()});
     monthGrid.addEventListener('click',e=>{const b=e.target.closest('[data-month]');if(!b)return;const selectedMonth=Number(b.dataset.month),selectedYear=view.getFullYear();view=new Date(selectedYear,selectedMonth,1);commit(new Date(selectedYear,selectedMonth,1),new Date(selectedYear,selectedMonth+1,0));mode='days';render();pop.classList.remove('show')});
     yearGrid.addEventListener('click',e=>{const b=e.target.closest('[data-year]');if(!b)return;const selectedYear=Number(b.dataset.year);view=new Date(selectedYear,0,1);commit(new Date(selectedYear,0,1),new Date(selectedYear,11,31));mode='days';render();pop.classList.remove('show')});
-    const syncExternal=()=>{start=from.value||'';end=to.value||'';syncText();render()};from.addEventListener('change',syncExternal);to.addEventListener('change',syncExternal);
-    document.addEventListener('click',e=>{const path=typeof e.composedPath==='function'?e.composedPath():[];if(!host.contains(e.target)&&!path.includes(host))pop.classList.remove('show')});syncText();render();
+    const syncExternal=()=>{start=from.value||'';end=to.value||'';syncText();syncPresetActive();render()};from.addEventListener('change',syncExternal);to.addEventListener('change',syncExternal);
+    document.addEventListener('click',e=>{const path=typeof e.composedPath==='function'?e.composedPath():[];if(!host.contains(e.target)&&!path.includes(host))pop.classList.remove('show')});syncText();syncPresetActive();render();
   }
   document.addEventListener('DOMContentLoaded',()=>PAIRS.forEach(p=>build(document.getElementById(p[0]),document.getElementById(p[1]))));
 })();

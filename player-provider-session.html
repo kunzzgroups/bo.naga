@@ -10,11 +10,16 @@
 <title>Provider Sessions</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
-<link href="assets/css/reports.css?v=1.0.48" rel="stylesheet"/>
+<link href="assets/css/reports.css?v=1.0.50" rel="stylesheet"/>
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.2" rel="stylesheet"/>
-<link href="assets/css/bo-ui-standard.css?v=1.0.4" rel="stylesheet">
+<link href="assets/css/bo-ui-standard.css?v=1.0.5" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
-<body class="report-body standardized-listing-page provider-session-page">
+<link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-shell.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-legacy.css?v=1.0.1" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/bo-input-fill.css?v=1.0.1" rel="stylesheet" />
+<body class="report-body standardized-listing-page provider-session-page bo-charcoal bo-account-chip">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
 <div class="report-brand">
@@ -30,10 +35,15 @@
 <div class="user-title-icon"><i class="bi bi-broadcast-pin"></i></div>
 <div>
 <h1>Provider Sessions</h1>
-<p>Monitor member game-provider sessions and settlement status.</p>
 </div>
 </div>
-<div class="report-actions" data-bo-profile=""></div>
+<div class="report-actions">
+      <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
+        <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
+        <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
+      </button>
+      <div data-bo-profile></div>
+    </div>
 </header>
 <section class="report-content">
 <!-- <div class="filter-card page-hero-card">
@@ -70,8 +80,8 @@
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
-<script src="assets/js/auth.js?v=1.0.61"></script>
-<script src="assets/js/reports.js?v=1.0.25"></script>
+<script src="assets/js/auth.js?v=1.0.66"></script>
+<script src="assets/js/reports.js?v=1.0.29"></script>
 <script src="assets/js/bo-date-range.js?v=1.0.16"></script>
 <script src="assets/js/player-provider-session.js"></script>
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
@@ -82,5 +92,7 @@
 <script src="assets/js/pagination-standardizer.js?v=1.0.1"></script>
 <script src="assets/js/operation-global-notification.js?v=1.0.5"></script>
 <script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
+<script src="assets/js/bo-theme.js?v=1.0.0"></script>
+<script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
 </body>
 </link></head></html>

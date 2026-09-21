@@ -1,10 +1,14 @@
 :root{
-  --login-ink:#172033;
-  --login-muted:#70798b;
-  --login-border:rgba(170,181,201,.42);
-  --login-accent:#4f6ef7;
-  --login-accent-dark:#3954d8;
-  --login-ring:rgba(79,110,247,.14);
+  --login-ink:#18191C;
+  --login-muted:#57534E;
+  --login-border:#DCC9A8;
+  --login-accent:#D97706;
+  --login-accent-dark:#B45309;
+  --login-ring:rgba(217,119,6,.14);
+  --login-surface:#FFF8EB;
+  --login-lift:#FFFCF7;
+  --login-well:#F5EBDC;
+  --login-canvas:#FFF1DC;
 }
 
 html,
@@ -16,9 +20,8 @@ body.bo-login-body{
   margin:0;
   min-height:100vh;
   color:var(--login-ink);
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
-  background:#f7f9fd url("../images/login-background-v2.png") center center/cover no-repeat fixed !important;
-  overflow-x:hidden;
+  font-family:ui-sans-serif,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  background:linear-gradient(100deg,#FFE8CC 0%,#FFF1DC 22%,#FFF3E0 55%,#FFF6E8 78%,#FFF8EB 100%) fixed;
 }
 
 .auth-page{
@@ -28,11 +31,7 @@ body.bo-login-body{
   display:grid;
   place-items:center;
   padding:clamp(24px,5vw,72px) 20px;
-  background-image:url("../images/login-background-v2.png") !important;
-  background-position:center center !important;
-  background-size:cover !important;
-  background-repeat:no-repeat !important;
-  background-color:#f7f9fd !important;
+  background-image:none;
 }
 
 /* Keep the supplied artwork fully visible. The previous white radial overlay
@@ -45,39 +44,25 @@ body.bo-login-body{
   position:relative;
   width:min(100%,440px);
   padding:clamp(26px,4vw,38px);
-  border:1px solid rgba(255,255,255,.96);
-  border-radius:28px;
-  background:rgba(255,255,255,.84);
-  box-shadow:
-    0 30px 80px rgba(69,83,112,.18),
-    0 8px 26px rgba(86,101,131,.09),
-    inset 0 1px 0 rgba(255,255,255,.95);
-  backdrop-filter:blur(13px) saturate(118%);
-  -webkit-backdrop-filter:blur(13px) saturate(118%);
-  overflow:hidden;
-  animation:loginCardIn .5s cubic-bezier(.2,.75,.25,1) both;
+  border:1px solid #EADCC8;
+  border-radius:16px;
+  background:#FFF8EB;
+  box-shadow:0 1px 2px rgba(60,48,32,.06),0 18px 48px rgba(60,48,32,.14);
 }
 
 .auth-card::before{
   content:"";
   position:absolute;
   inset:0 0 auto;
-  height:4px;
-  background:linear-gradient(90deg,transparent,var(--login-accent),#83a4ff,transparent);
-  opacity:.78;
+  height:3px;
+  border-radius:16px 16px 0 0;
+  background:linear-gradient(90deg,#FBBF24,#D97706);
+  opacity:1;
 }
 
-.auth-card::after{
-  content:"";
-  position:absolute;
-  width:190px;
-  height:190px;
-  right:-100px;
-  top:-120px;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(111,141,255,.16),rgba(111,141,255,0) 70%);
-  pointer-events:none;
-}
+/* The decorative amber glow used to sit outside the card (right:-100px;top:-120px) and
+   rendered as a floating smudge on the canvas. The 3px amber rail carries the accent instead. */
+.auth-card::after{content:none}
 
 .auth-brand{
   display:flex;
@@ -85,7 +70,7 @@ body.bo-login-body{
   justify-content:center;
   gap:10px;
   margin-bottom:26px;
-  color:#59647a;
+  color:#57534E;
   font-size:12px;
   font-weight:800;
   letter-spacing:.15em;
@@ -97,11 +82,11 @@ body.bo-login-body{
   height:34px;
   display:grid;
   place-items:center;
-  border:1px solid rgba(79,110,247,.16);
-  border-radius:11px;
+  border:1px solid rgba(217,119,6,.16);
+  border-radius:12px;
   color:var(--login-accent);
-  background:linear-gradient(145deg,#fff,#eef3ff);
-  box-shadow:0 8px 18px rgba(79,110,247,.12);
+  background:linear-gradient(145deg,#FFF8EB,#F5EBDC);
+  box-shadow:0 8px 18px rgba(217,119,6,.12);
 }
 
 .auth-brand-mark svg{
@@ -120,11 +105,11 @@ body.bo-login-body{
   margin:0 auto 16px;
   display:grid;
   place-items:center;
-  border:1px solid rgba(79,110,247,.14);
-  border-radius:20px;
+  border:1px solid rgba(217,119,6,.14);
+  border-radius:12px;
   color:var(--login-accent);
-  background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(235,241,255,.88));
-  box-shadow:0 14px 30px rgba(79,110,247,.14);
+  background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(217,119,6,.88));
+  box-shadow:0 14px 30px rgba(217,119,6,.14);
 }
 
 .auth-icon svg{
@@ -146,6 +131,10 @@ body.bo-login-body{
   color:var(--login-muted);
   font-size:12px;
   line-height:1.6;
+  /* A long sentence at a fixed 320px left a single word ("Management.") alone on line two.
+     balance re-splits a short paragraph into even lines; it only applies up to six lines,
+     which is exactly the range this hint occupies. */
+  text-wrap:balance;
 }
 
 .auth-field{
@@ -155,7 +144,7 @@ body.bo-login-body{
 .auth-field label{
   display:block;
   margin-bottom:8px;
-  color:#39445a;
+  color:#18191C;
   font-size:13px;
   font-weight:750;
 }
@@ -171,7 +160,7 @@ body.bo-login-body{
   z-index:2;
   width:19px;
   height:19px;
-  color:#8b95a8;
+  color:#57534E;
   transform:translateY(-50%);
   pointer-events:none;
 }
@@ -181,30 +170,30 @@ body.bo-login-body{
   height:44px;
   margin:0!important;
   padding:0 46px 0 46px;
-  color:#1d2939;
+  color:#18191C;
   font-size:14px;
   font-weight:600;
-  border:1px solid var(--login-border);
-  border-radius:15px;
-  background:rgba(250,252,255,.84);
-  box-shadow:inset 0 1px 2px rgba(16,24,40,.025);
-  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease,transform .18s ease;
+  border:1px solid #DCC9A8;
+  border-radius:8px;
+  background:#FFF8EB;
+  box-shadow:none;
+  transition:border-color .15s ease,box-shadow .15s ease,background .15s ease;
 }
 
 .auth-input-wrap .form-control::placeholder{
-  color:#a2aaba;
+  color:#78716C;
   font-weight:500;
 }
 
 .auth-input-wrap .form-control:hover{
-  border-color:rgba(139,154,181,.6);
-  background:rgba(255,255,255,.92);
+  border-color:rgba(217,119,6,.55);
+  background:#FFFCF7;
 }
 
 .auth-input-wrap .form-control:focus{
-  border-color:rgba(79,110,247,.72);
-  background:#fff;
-  box-shadow:0 0 0 4px var(--login-ring),0 7px 20px rgba(63,82,121,.07);
+  border-color:#D97706;
+  background:#FFF8EB;
+  box-shadow:0 0 0 3px var(--login-ring);
   outline:0;
 }
 
@@ -218,7 +207,7 @@ body.bo-login-body{
   display:grid;
   place-items:center;
   padding:0;
-  color:#7f899d;
+  color:#57534E;
   border:0;
   border-radius:10px;
   background:transparent;
@@ -230,7 +219,7 @@ body.bo-login-body{
 .password-toggle:hover,
 .password-toggle:focus-visible{
   color:var(--login-accent);
-  background:#eef2ff;
+  background:#F5EBDC;
   outline:0;
 }
 
@@ -246,7 +235,7 @@ body.bo-login-body{
   gap:12px;
   min-height:22px;
   margin:-2px 0 18px;
-  color:#7a8497;
+  color:#57534E;
   font-size:12px;
 }
 
@@ -259,14 +248,14 @@ body.bo-login-body{
 .secure-note svg{
   width:14px;
   height:14px;
-  color:#5f78e9;
+  color:#78716C;
 }
 
 .upload-status{
   min-height:0;
   margin:0 0 14px!important;
   padding:0;
-  border-radius:11px;
+  border-radius:8px;
   font-size:13px;
   font-weight:700;
   line-height:1.45;
@@ -278,9 +267,9 @@ body.bo-login-body{
   display:flex;
   align-items:center;
   padding:10px 13px;
-  border:1px solid #dce3ef;
-  background:rgba(247,249,253,.9);
-  color:#566176;
+  border:1px solid #EADCC8;
+  background:rgba(217,119,6,.9);
+  color:#57534E;
 }
 
 .upload-status.error{
@@ -303,14 +292,14 @@ body.bo-login-body{
   justify-content:center;
   gap:10px;
   margin-top:2px;
-  border:0;
-  border-radius:15px;
-  color:#fff;
+  border:1px solid #E8901A;
+  border-radius:8px;
+  color:#FFFFFF;
   font-size:14px;
-  font-weight:800;
+  font-weight:700;
   letter-spacing:.01em;
-  background:linear-gradient(135deg,#6881f5 0%,var(--login-accent) 48%,var(--login-accent-dark) 100%);
-  box-shadow:0 14px 28px rgba(63,82,216,.24),inset 0 1px 0 rgba(255,255,255,.25);
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%);
+  box-shadow:0 1px 2px rgba(180,83,9,.28),inset 0 1px 0 rgba(255,255,255,.35);
   overflow:hidden;
   transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
 }
@@ -325,9 +314,11 @@ body.bo-login-body{
 }
 
 .auth-submit.btn:hover{
-  color:#fff;
+  color:#FFFFFF;
+  background:linear-gradient(0deg,#FCD34D 0%,#FBBF24 45%,#F59E0B 100%);
+  border-color:#F59E0B;
   transform:translateY(-1px);
-  box-shadow:0 17px 32px rgba(63,82,216,.29),inset 0 1px 0 rgba(255,255,255,.25);
+  box-shadow:0 6px 18px rgba(180,83,9,.28),inset 0 1px 0 rgba(255,255,255,.4);
 }
 
 .auth-submit.btn:hover::before{
@@ -340,7 +331,7 @@ body.bo-login-body{
 
 .auth-submit.btn:focus-visible{
   color:#fff;
-  box-shadow:0 0 0 4px rgba(79,110,247,.18),0 14px 28px rgba(63,82,216,.24);
+  box-shadow:0 0 0 4px rgba(217,119,6,.18),0 14px 28px rgba(217,119,6,.24);
 }
 
 .auth-submit.btn:disabled{
@@ -374,7 +365,7 @@ body.bo-login-body{
   justify-content:center;
   gap:7px;
   margin-top:24px;
-  color:#8a94a6;
+  color:#57534E;
   font-size:11.5px;
   text-align:center;
 }
@@ -406,7 +397,7 @@ body.bo-login-body{
 
   .auth-card{
     padding:26px 20px 24px;
-    border-radius:22px;
+    border-radius:16px;
   }
 
   .auth-brand{
@@ -420,7 +411,7 @@ body.bo-login-body{
   .auth-icon{
     width:56px;
     height:56px;
-    border-radius:18px;
+    border-radius:12px;
   }
 
   .auth-input-wrap .form-control,
@@ -437,3 +428,98 @@ body.bo-login-body{
     transition-duration:.01ms!important;
   }
 }
+
+/* ==========================================================================
+   Charcoal + Amber — dark mode. This file had NO dark rules at all, so the
+   login page was effectively light-only: the card stayed cream because the
+   shared layers cover it, while the canvas and the CTA had no dark counterpart.
+   ========================================================================== */
+html[data-bo-theme="dark"] body.bo-login-body{
+  color:#F5F5F4;
+  background:linear-gradient(100deg,#3A3226 0%,#342E28 22%,#2F2E32 55%,#2D2E36 78%,#2C2E38 100%) fixed;
+}
+html[data-bo-theme="dark"] .auth-card{
+  background:#383A46;
+  border-color:rgba(255,255,255,.14);
+  box-shadow:0 1px 2px rgba(0,0,0,.35),0 18px 48px rgba(0,0,0,.45);
+}
+html[data-bo-theme="dark"] .auth-brand{color:#D4D4D8}
+html[data-bo-theme="dark"] .auth-brand-mark{
+  background:linear-gradient(145deg,#4A4C58,#2A2C36);
+  border-color:rgba(245,158,11,.35);
+  color:#F59E0B;
+  box-shadow:none;
+}
+html[data-bo-theme="dark"] .auth-card h1{color:#F5F5F4}
+html[data-bo-theme="dark"] .auth-subtitle{color:#D4D4D8}
+html[data-bo-theme="dark"] .auth-field label{color:#E7E5E4}
+html[data-bo-theme="dark"] .auth-input-wrap .form-control{
+  background:#2A2C36;border-color:rgba(255,255,255,.12);color:#F5F5F4;
+}
+html[data-bo-theme="dark"] .auth-input-wrap .form-control::placeholder{color:#A1A1AA}
+html[data-bo-theme="dark"] .auth-input-wrap .form-control:hover{
+  background:#32343E;border-color:rgba(245,158,11,.45);
+}
+html[data-bo-theme="dark"] .auth-input-wrap .form-control:focus{
+  background:#2A2C36;border-color:#F59E0B;box-shadow:0 0 0 3px rgba(245,158,11,.18);
+}
+html[data-bo-theme="dark"] .auth-input-icon,
+html[data-bo-theme="dark"] .password-toggle{color:#A1A1AA}
+html[data-bo-theme="dark"] .secure-note{color:#D4D4D8}
+html[data-bo-theme="dark"] .secure-note svg{color:#F59E0B}
+html[data-bo-theme="dark"] .auth-submit.btn{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%);
+  border-color:#F59E0B;
+  color:#2A2C36;
+  box-shadow:0 1px 2px rgba(0,0,0,.35),0 0 0 1px rgba(245,158,11,.2);
+}
+html[data-bo-theme="dark"] .auth-submit.btn:hover{
+  background:linear-gradient(0deg,#FDE68A 0%,#FBBF24 45%,#F59E0B 100%);
+  border-color:#FBBF24;
+  color:#2A2C36;
+}
+/* The theme toggle, top-right, at the locked 36x36 / 8px. The page already loaded bo-theme.js
+   but had nowhere to put the button, so dark mode was unreachable from the login screen. */
+.auth-theme-slot{
+  position:fixed;
+  top:20px;
+  right:22px;
+  z-index:5;
+}
+.auth-theme-slot .bo-theme-btn{
+  width:36px;height:36px;border-radius:8px;background:transparent;
+  border:1px solid rgba(24,25,28,.18);color:#3F3F46;
+  display:inline-flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;
+}
+.auth-theme-slot .bo-theme-btn:hover{background:rgba(24,25,28,.05);border-color:rgba(24,25,28,.28);color:#18191C}
+html[data-bo-theme="dark"] .auth-theme-slot .bo-theme-btn{
+  border-color:rgba(245,158,11,.4);color:#F59E0B;
+}
+html[data-bo-theme="dark"] .auth-theme-slot .bo-theme-btn:hover{
+  background:rgba(245,158,11,.10);border-color:#F59E0B;color:#FBBF24;
+}
+.auth-theme-slot .bo-theme-btn:focus-visible{outline:2px solid #D97706;outline-offset:2px}
+/* Brand row: the same wordmark the sidebar carries, so the login screen reads as this product. */
+.auth-brand{
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  margin:0 0 22px;color:#6b360c;
+}
+.auth-brand-copy{display:flex;flex-direction:column;line-height:1.15;text-align:left}
+.auth-brand-copy b{font-size:15px;font-weight:800;letter-spacing:-.01em;color:#18191C}
+.auth-brand-copy small{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#78716C}
+html[data-bo-theme="dark"] .auth-brand{color:#F59E0B}
+html[data-bo-theme="dark"] .auth-brand-copy b{color:#F5F5F4}
+html[data-bo-theme="dark"] .auth-brand-copy small{color:#A1A1AA}
+/* Belt and braces for the dark canvas: `.auth-page` is the 100vh element and it is painted
+   explicitly here, so the viewport is dark even if a later-loaded sheet restates the body. */
+html[data-bo-theme="dark"] body.bo-login-body{background:#2C2E38!important}
+html[data-bo-theme="dark"] .auth-page{background:#2C2E38!important}
+html:not([data-bo-theme="dark"]) .auth-page{background:#FFF1DC!important}
+
+/* Shape audit (batch D visual pass): this file had drifted off the locked scale with 11/18/20/22px.
+   DESIGN.md's Shapes line fixes the values at 8 (controls / theme toggle), 10 (nav), 12 (topbar
+   avatar), 16 (cards), 999 (pills). The two icon tiles are ONE role on sibling pages -- the 34px
+   .auth-brand-mark on login.html and the 62/56px .auth-icon on agent-login.html -- so they take the
+   avatar value 12px instead of two different invented ones. .upload-status is a small notice
+   surface and takes 8px like the other small surfaces. The small-screen .auth-card keeps the
+   locked 16px rather than growing to 22px on mobile. */
