@@ -18,6 +18,8 @@ import {
   history,
   historyKeymap,
   indentWithTab,
+  undo,
+  redo,
 } from '@codemirror/commands';
 import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
@@ -358,6 +360,12 @@ function createView(prep) {
         highlightSelectionMatches({ maxMatches: 500 }),
         keymap.of([
           indentWithTab,
+          /* Explicit Ctrl+Z / Ctrl+Shift+Z on every platform. historyKeymap only maps
+             Mod-Shift-z to redo on mac (Windows/Linux default to Mod-y instead), so these
+             two bindings are declared ahead of historyKeymap to guarantee the requested
+             shortcuts regardless of OS. */
+          { key: 'Mod-z', run: undo, preventDefault: true },
+          { key: 'Mod-Shift-z', run: redo, preventDefault: true },
           ...closeBracketsKeymap,
           ...defaultKeymap,
           ...searchKeymap.filter((b) => b.key !== 'Mod-f'),
