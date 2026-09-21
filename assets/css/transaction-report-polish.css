@@ -23,6 +23,9 @@
 .transaction-report-page .report-topbar{flex:0 0 64px!important}
 
 /* —— Table card = viewport-locked panel (filter + table + footer) —— */
+html body.report-body.transaction-report-page.bo-charcoal .report-content > .table-card,
+html body.report-body.transaction-report-page .report-content > .table-card,
+.transaction-report-page .report-content > .table-card,
 .transaction-report-page .table-card{
   display:flex!important;
   flex:1 1 auto!important;
@@ -30,9 +33,11 @@
   overflow:hidden!important;
   flex-direction:column!important;
   padding:0!important;
+  margin:0!important;
   border:1px solid #eadcc8!important;
-  border-radius:8px!important;
+  border-radius:12px!important;
   background:#fff8eb!important;
+  box-shadow:0 8px 22px rgba(217,119,6,.04)!important;
 }
 
 /* —— Inline filter strip (Wallet Ledger locked recipe) —— */
@@ -71,7 +76,8 @@
 .transaction-report-page .ops-filter .field label,
 .transaction-report-page .ops-filter .bo-range-field>label{display:none!important}
 
-/* Type select — listing control 150px · Role select chrome */
+/* Type select — listing control 150px · Role select chrome.
+   Beat bo-ui-standard `body:not(#…)… .rounded-select-btn{height:42px}`. */
 .transaction-report-page .ops-filter>#typeBox,
 .transaction-report-page .ops-filter>.bo-filter-select-item{
   display:flex!important;
@@ -90,6 +96,8 @@
   display:block!important;
   width:100%!important;
   height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
   margin:0!important;
 }
 .transaction-report-page .ops-filter>#typeBox .rounded-select-wrap>select,
@@ -100,15 +108,20 @@
   pointer-events:none!important;
   width:100%!important;
   height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
   margin:0!important;
   padding:0!important;
   border:0!important;
 }
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).transaction-report-page .report-main .ops-filter.bo-filter-row > #typeBox select,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).transaction-report-page .report-main .ops-filter.bo-filter-row > #typeBox .rounded-select-btn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).transaction-report-page .report-main .ops-filter.bo-filter-row > .bo-filter-select-item select,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).transaction-report-page .report-main .ops-filter.bo-filter-row > .bo-filter-select-item .rounded-select-btn,
+html body.transaction-report-page .report-main .ops-filter .rounded-select-btn,
 .transaction-report-page .ops-filter input,
 .transaction-report-page .ops-filter select,
-.transaction-report-page .ops-filter .rounded-select-btn,
-.transaction-report-page .ops-filter .btn-primary-clean,
-.transaction-report-page #reportSearch{
+.transaction-report-page .ops-filter .rounded-select-btn{
   height:36px!important;
   min-height:36px!important;
   max-height:36px!important;
@@ -197,126 +210,177 @@
   color:#b45309!important;
 }
 
-/* Primary Search — amber gradient · no shadow · no hover lift (flush strip) */
-.transaction-report-page #reportSearch{
-  min-width:76px!important;
-  width:auto!important;
-  flex:0 0 auto!important;
-  margin:0!important;
-  padding:0 12px!important;
-  border:1px solid #e8901a!important;
-  background:linear-gradient(180deg,#fbbf24 0%,#f59e0b 42%,#ea8608 100%)!important;
-  color:#fff!important;
-  font-size:12.5px!important;
-  font-weight:800!important;
-  box-shadow:none!important;
-  transform:none!important;
-}
-.transaction-report-page #reportSearch:hover{
-  background:linear-gradient(180deg,#ea8608 0%,#f59e0b 42%,#fbbf24 100%)!important;
-  border-color:#f59e0b!important;
-  box-shadow:none!important;
-  transform:none!important;
-}
-.transaction-report-page #reportSearch:active{
-  background:linear-gradient(180deg,#f59e0b 0%,#ea8608 100%)!important;
-  box-shadow:none!important;
-  transform:none!important;
-}
-.transaction-report-page #reportSearch:focus{
-  outline:2px solid #d97706!important;
-  outline-offset:2px!important;
-}
-
+/* Beat charcoal legacy (`html … body.report-body.bo-charcoal .table-wrap`) so the
+   head/body frame flushes like Deposit — no nested wrap border. */
+html body.report-body.transaction-report-page.bo-charcoal .table-wrap,
 .transaction-report-page .table-wrap{
+  display:flex!important;
   flex:1 1 auto!important;
+  flex-direction:column!important;
   min-height:0!important;
-  overflow:auto!important;
+  width:100%!important;
+  max-width:100%!important;
+  overflow:hidden!important;
   border:0!important;
   border-radius:0!important;
+  box-shadow:none!important;
+  background:#fff8eb!important;
 }
-/* Panel pill scrollbar (locked MD — Wallet Ledger). */
-.transaction-report-page .table-wrap::-webkit-scrollbar{
+/* Deposit Approval anatomy: fixed head · body-only scroll · shared col widths. */
+html body.report-body.transaction-report-page.bo-charcoal .bo-tx-table-head,
+.transaction-report-page .bo-tx-table-head{
+  flex:0 0 auto!important;
+  overflow:hidden!important;
+  background:#ffe8cc!important;
+  border-bottom:1px solid #eadcc8!important;
+  scrollbar-gutter:stable;
+}
+html body.report-body.transaction-report-page.bo-charcoal .bo-tx-table-body,
+.transaction-report-page .bo-tx-table-body{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow-x:auto!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch;
+  background:#fff8eb!important;
+  scrollbar-gutter:stable;
+}
+.transaction-report-page .bo-tx-table-head .report-table,
+.transaction-report-page .bo-tx-table-body .report-table{
+  margin:0!important;
+}
+/* Panel pill scrollbar (locked MD — Wallet Ledger) — body host only. */
+.transaction-report-page .bo-tx-table-body::-webkit-scrollbar{
   width:6px!important;
   height:6px!important;
 }
-.transaction-report-page .table-wrap::-webkit-scrollbar-track{
+.transaction-report-page .bo-tx-table-body::-webkit-scrollbar-track{
   background:transparent!important;
 }
-.transaction-report-page .table-wrap::-webkit-scrollbar-button{
+.transaction-report-page .bo-tx-table-body::-webkit-scrollbar-button{
   display:none!important;
   height:0!important;
   width:0!important;
 }
-.transaction-report-page .table-wrap::-webkit-scrollbar-thumb{
+.transaction-report-page .bo-tx-table-body::-webkit-scrollbar-thumb{
   background:#8b6b4a!important;
   border-radius:999px!important;
 }
-.transaction-report-page .table-wrap::-webkit-scrollbar-thumb:hover{
+.transaction-report-page .bo-tx-table-body::-webkit-scrollbar-thumb:hover{
   background:#5c4a30!important;
 }
 @supports not selector(::-webkit-scrollbar){
-  .transaction-report-page .table-wrap{
+  .transaction-report-page .bo-tx-table-body{
     scrollbar-width:thin;
     scrollbar-color:#8b6b4a transparent;
   }
 }
-html[data-bo-theme="dark"] .transaction-report-page .table-wrap::-webkit-scrollbar-thumb{
+html[data-bo-theme="dark"] .transaction-report-page .bo-tx-table-body::-webkit-scrollbar-thumb{
   background:#f59e0b!important;
 }
-html[data-bo-theme="dark"] .transaction-report-page .table-wrap::-webkit-scrollbar-thumb:hover{
+html[data-bo-theme="dark"] .transaction-report-page .bo-tx-table-body::-webkit-scrollbar-thumb:hover{
   background:#d97706!important;
 }
 @supports not selector(::-webkit-scrollbar){
-  html[data-bo-theme="dark"] .transaction-report-page .table-wrap{
+  html[data-bo-theme="dark"] .transaction-report-page .bo-tx-table-body{
     scrollbar-color:#f59e0b transparent;
   }
 }
 
-/* Autofit (-) locks body scroll; fixed sizes / All may scroll. */
-.transaction-report-page.tr-autofit .table-wrap{
+/* Autofit (-) locks body scroll; fixed sizes / All may scroll.
+   Must beat `html body…bo-charcoal .bo-tx-table-body{overflow-y:auto}` above —
+   otherwise Show "-" still paints a near-full vertical thumb when rows fit. */
+html body.report-body.transaction-report-page.bo-charcoal.tr-autofit .bo-tx-table-body,
+html body.report-body.transaction-report-page.tr-autofit .bo-tx-table-body,
+.transaction-report-page.tr-autofit .bo-tx-table-body{
   overflow-y:hidden!important;
+  scrollbar-gutter:auto!important;
 }
 
+html body.report-body.transaction-report-page.bo-charcoal .report-table,
 .transaction-report-page .report-table{
   width:100%!important;
   min-width:1320px!important;
   table-layout:fixed!important;
   border-collapse:collapse!important;
+  border-spacing:0!important;
   font-size:13px!important;
+  background:#fff8eb!important;
 }
-/* Narrow empty audit cols; give Remark / Type / Reference room. */
-.transaction-report-page .report-table th:nth-child(1),
-.transaction-report-page .report-table td:nth-child(1){width:4%!important}
-.transaction-report-page .report-table th:nth-child(2),
-.transaction-report-page .report-table td:nth-child(2){width:5%!important}
-.transaction-report-page .report-table th:nth-child(3),
-.transaction-report-page .report-table td:nth-child(3){width:10%!important}
-.transaction-report-page .report-table th:nth-child(4),
-.transaction-report-page .report-table td:nth-child(4){width:5%!important}
-.transaction-report-page .report-table th:nth-child(5),
-.transaction-report-page .report-table td:nth-child(5){width:6.5%!important;text-align:right!important}
-.transaction-report-page .report-table th:nth-child(6),
-.transaction-report-page .report-table td:nth-child(6){width:6.5%!important;text-align:right!important}
-.transaction-report-page .report-table th:nth-child(7),
-.transaction-report-page .report-table td:nth-child(7){width:6.5%!important;text-align:right!important}
-.transaction-report-page .report-table th:nth-child(8),
-.transaction-report-page .report-table td:nth-child(8){width:5.5%!important}
-.transaction-report-page .report-table th:nth-child(9),
-.transaction-report-page .report-table td:nth-child(9){width:5.5%!important}
-.transaction-report-page .report-table th:nth-child(10),
-.transaction-report-page .report-table td:nth-child(10){width:5%!important}
-.transaction-report-page .report-table th:nth-child(11),
-.transaction-report-page .report-table td:nth-child(11){width:8.5%!important}
-.transaction-report-page .report-table th:nth-child(12),
-.transaction-report-page .report-table td:nth-child(12){width:16%!important}
-.transaction-report-page .report-table th:nth-child(13),
-.transaction-report-page .report-table td:nth-child(13){width:8%!important}
-.transaction-report-page .report-table th:nth-child(14),
-.transaction-report-page .report-table td:nth-child(14){width:8%!important}
+/* Shared colgroup widths — head + body stay locked (Deposit recipe). */
+.transaction-report-page .tr-col-id{width:4%!important}
+.transaction-report-page .tr-col-member{width:5%!important}
+.transaction-report-page .tr-col-type{width:10%!important}
+.transaction-report-page .tr-col-wallet{width:5%!important}
+.transaction-report-page .tr-col-amount{width:6.5%!important}
+.transaction-report-page .tr-col-before{width:6.5%!important}
+.transaction-report-page .tr-col-after{width:6.5%!important}
+.transaction-report-page .tr-col-created-by{width:5.5%!important}
+.transaction-report-page .tr-col-approved-by{width:5.5%!important}
+.transaction-report-page .tr-col-reason{width:5%!important}
+.transaction-report-page .tr-col-ref{width:8.5%!important}
+.transaction-report-page .tr-col-remark{width:16%!important}
+.transaction-report-page .tr-col-created{width:8%!important}
+.transaction-report-page .tr-col-posted{width:8%!important}
+/* Beat charcoal `th{background:transparent;border-right:0}` so head bar + cell chrome match Deposit. */
+html body.report-body.transaction-report-page.bo-charcoal .report-table th,
+html body.report-body.transaction-report-page.bo-charcoal .report-table thead th,
 .transaction-report-page .report-table th{
+  position:static!important;
+  top:auto!important;
+  z-index:1!important;
+  background:#ffe8cc!important;
+  color:#6b360c!important;
+  padding:12px 12px!important;
+  font-size:11px!important;
+  line-height:1.2!important;
+  letter-spacing:.04em!important;
+  text-transform:uppercase!important;
+  font-weight:700!important;
+  text-align:left!important;
+  border-radius:0!important;
+  border-top-left-radius:0!important;
+  border-top-right-radius:0!important;
+  white-space:nowrap!important;
   overflow:hidden!important;
   text-overflow:ellipsis!important;
+  border-bottom:1px solid #eadcc8!important;
+  border-right:1px solid rgba(107,54,12,.08)!important;
+  box-sizing:border-box!important;
+  vertical-align:middle!important;
+}
+html body.report-body.transaction-report-page.bo-charcoal .report-table td,
+html body.report-body.transaction-report-page.bo-charcoal .report-table tbody td,
+.transaction-report-page .report-table td{
+  padding:12px 12px!important;
+  font-size:13px!important;
+  line-height:1.2!important;
+  font-weight:700!important;
+  color:#18191c!important;
+  text-align:left!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  border-bottom:1px solid #eadcc8!important;
+  border-right:1px solid rgba(107,54,12,.07)!important;
+  box-sizing:border-box!important;
+  vertical-align:middle!important;
+}
+/* Numeric cols after the left default so alignment sticks (Deposit Amount recipe). */
+html body.report-body.transaction-report-page.bo-charcoal .report-table th:nth-child(5),
+html body.report-body.transaction-report-page.bo-charcoal .report-table td:nth-child(5),
+html body.report-body.transaction-report-page.bo-charcoal .report-table th:nth-child(6),
+html body.report-body.transaction-report-page.bo-charcoal .report-table td:nth-child(6),
+html body.report-body.transaction-report-page.bo-charcoal .report-table th:nth-child(7),
+html body.report-body.transaction-report-page.bo-charcoal .report-table td:nth-child(7),
+.transaction-report-page .report-table th:nth-child(5),
+.transaction-report-page .report-table td:nth-child(5),
+.transaction-report-page .report-table th:nth-child(6),
+.transaction-report-page .report-table td:nth-child(6),
+.transaction-report-page .report-table th:nth-child(7),
+.transaction-report-page .report-table td:nth-child(7),
+.transaction-report-page .report-table td.tr-num{
+  text-align:right!important;
 }
 .transaction-report-page .tr-dt{
   display:inline-block!important;
@@ -372,38 +436,66 @@ html[data-bo-theme="dark"] .tr-float-tip{
   border:1px solid rgba(245,158,11,.35)!important;
   box-shadow:0 12px 28px rgba(0,0,0,.35)!important;
 }
-.transaction-report-page .report-table th{
-  position:sticky!important;
-  top:0!important;
-  z-index:2!important;
-  background:#ffe8cc!important;
-  color:#6b360c!important;
-  padding:10px 12px!important;
-  font-size:11px!important;
-  line-height:1.2!important;
-  letter-spacing:.04em!important;
-  text-transform:uppercase!important;
-  font-weight:700!important;
-  border-radius:0!important;
-  white-space:nowrap!important;
-  border-bottom:1px solid #eadcc8!important;
-  border-right:1px solid rgba(107,54,12,.08)!important;
-}
-.transaction-report-page .report-table td{
-  padding:10px 12px!important;
-  font-size:13px!important;
-  line-height:1.2!important;
-  font-weight:700!important;
-  color:#18191c!important;
-  white-space:nowrap!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-  border-bottom:1px solid #f0e6d8!important;
-  border-right:1px solid rgba(107,54,12,.07)!important;
-}
 .transaction-report-page .report-table th:last-child,
 .transaction-report-page .report-table td:last-child{
   border-right:0!important;
+}
+.transaction-report-page .report-table th:first-child,
+.transaction-report-page .report-table td:first-child{
+  padding-left:16px!important;
+}
+.transaction-report-page .report-table th:last-child,
+.transaction-report-page .report-table td:last-child{
+  padding-right:16px!important;
+}
+
+/* —— Table content (Deposit Approval specimen) —— */
+.transaction-report-page .report-table .status-pill{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:0!important;
+  padding:4px 10px!important;
+  border-radius:999px!important;
+  border:1px solid rgba(234,88,12,.35)!important;
+  background:#ffedd5!important;
+  color:#ea580c!important;
+  font-size:11px!important;
+  font-weight:800!important;
+  line-height:1.2!important;
+  letter-spacing:.02em!important;
+  white-space:nowrap!important;
+  vertical-align:middle!important;
+}
+.transaction-report-page .report-table .status-pill.active{
+  background:#dcfce7!important;
+  color:#166534!important;
+  border-color:rgba(22,101,52,.22)!important;
+}
+.transaction-report-page .report-table .status-pill.off{
+  background:#fee2e2!important;
+  color:#b91c1c!important;
+  border-color:rgba(185,28,28,.28)!important;
+}
+.transaction-report-page .report-table .tr-empty{
+  color:#a8a29e!important;
+  font-weight:700!important;
+}
+.transaction-report-page .report-table .tr-id,
+.transaction-report-page .report-table .tr-amt{
+  font-variant-numeric:tabular-nums!important;
+  font-weight:700!important;
+  color:#18191c!important;
+}
+.transaction-report-page .report-table .tr-amt.is-neg{color:#b91c1c!important}
+.transaction-report-page .report-table .tr-amt.is-pos{color:#166534!important}
+.transaction-report-page .report-table .tr-amt.is-zero{color:#78716c!important}
+.transaction-report-page .report-table td.tr-num{
+  text-align:right!important;
+  font-variant-numeric:tabular-nums!important;
+}
+.transaction-report-page .report-table td.tr-type{
+  overflow:visible!important;
 }
 .transaction-report-page .report-table .table-empty{
   height:36px!important;
@@ -414,35 +506,47 @@ html[data-bo-theme="dark"] .tr-float-tip{
   font-size:13px!important;
   font-weight:700!important;
 }
+html body.report-body.transaction-report-page.bo-charcoal .report-table tbody tr:nth-child(odd) td,
+html body.report-body.transaction-report-page.bo-charcoal .report-table tbody tr:nth-child(odd):not(.total) td,
 .transaction-report-page .report-table tbody tr:nth-child(odd) td{
   background:#fff8eb!important;
 }
+html body.report-body.transaction-report-page.bo-charcoal .report-table tbody tr:nth-child(even) td,
+html body.report-body.transaction-report-page.bo-charcoal .report-table tbody tr:nth-child(even):not(.total) td,
 .transaction-report-page .report-table tbody tr:nth-child(even) td{
   background:#fff1dc!important;
 }
+html body.report-body.transaction-report-page.bo-charcoal .report-table tbody tr:hover td,
 .transaction-report-page .report-table tbody tr:hover td{
   background:#ffe8cc!important;
 }
 
-/* —— Footer —— */
+/* —— Footer = Deposit Approval `bo-pagination-standard` recipe —— */
+html body.report-body.transaction-report-page.bo-charcoal .table-card > .table-footer,
+html body.report-body.transaction-report-page.bo-charcoal .table-card > .bo-pagination-standard,
+.transaction-report-page .table-card > .table-footer,
 .transaction-report-page .table-footer{
   display:grid!important;
-  grid-template-columns:auto 1fr auto!important;
+  grid-template-columns:auto minmax(0,1fr) auto!important;
   align-items:center!important;
   gap:12px!important;
   flex:0 0 auto!important;
-  min-height:58px!important;
   margin:0!important;
-  padding:10px 14px!important;
+  margin-top:auto!important;
+  padding:14px 16px!important;
+  min-height:58px!important;
   border-top:1px solid #eadcc8!important;
   background:#fff8eb!important;
   overflow:visible!important;
   position:relative!important;
-  z-index:5!important;
+  z-index:6!important;
 }
-.transaction-report-page .table-footer>.entries-control{
+html body.report-body.transaction-report-page.bo-charcoal .table-footer > .entries-control,
+.transaction-report-page .table-footer > .entries-control{
+  grid-column:1!important;
   display:inline-flex!important;
   align-items:center!important;
+  justify-content:flex-start!important;
   justify-self:start!important;
   width:auto!important;
   min-width:0!important;
@@ -453,17 +557,18 @@ html[data-bo-theme="dark"] .tr-float-tip{
   padding:0!important;
   white-space:nowrap!important;
   color:#57534e!important;
-  font-size:12.5px!important;
+  font-size:13px!important;
   font-weight:600!important;
+  line-height:1!important;
   overflow:visible!important;
   position:relative!important;
-  z-index:9!important;
+  z-index:8!important;
 }
 /* Kill reports.css Show N lift — VIP EXP Role select recipe. */
-.transaction-report-page .table-footer>.entries-control .rounded-select-wrap{
+.transaction-report-page .table-footer > .entries-control .rounded-select-wrap{
   position:relative!important;
   display:inline-flex!important;
-  align-items:stretch!important;
+  align-items:center!important;
   width:72px!important;
   min-width:72px!important;
   max-width:72px!important;
@@ -472,8 +577,9 @@ html[data-bo-theme="dark"] .tr-float-tip{
   margin-top:0!important;
   overflow:visible!important;
   flex:0 0 72px!important;
+  box-sizing:border-box!important;
 }
-.transaction-report-page .table-footer>.entries-control .rounded-select-wrap>select{
+.transaction-report-page .table-footer > .entries-control .rounded-select-wrap > select{
   position:absolute!important;
   inset:0!important;
   opacity:0!important;
@@ -484,157 +590,200 @@ html[data-bo-theme="dark"] .tr-float-tip{
   padding:0!important;
   border:0!important;
 }
-.transaction-report-page .table-footer>.entries-control .rounded-select-btn,
-.transaction-report-page .table-footer>.entries-control>#reportPageSize{
+.transaction-report-page .table-footer > .entries-control .rounded-select-btn,
+.transaction-report-page .table-footer > .entries-control > #reportPageSize{
   box-sizing:border-box!important;
   height:36px!important;
   min-height:36px!important;
   max-height:36px!important;
-  margin:0!important;
-  border:1px solid #eadcc8!important;
-  border-radius:8px!important;
-  background-color:#fff8eb!important;
-  color:#18191c!important;
-  font-size:13px!important;
-  font-weight:700!important;
-  box-shadow:none!important;
-}
-.transaction-report-page .table-footer>.entries-control>#reportPageSize{
-  display:inline-block!important;
   width:72px!important;
   min-width:72px!important;
   max-width:72px!important;
-  padding:0 8px!important;
-  flex:0 0 72px!important;
-}
-.transaction-report-page .table-footer>.entries-control .rounded-select-btn{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  min-width:0!important;
-  max-width:none!important;
+  margin:0!important;
   padding:0 26px 0 10px!important;
+  border:1px solid #eadcc8!important;
+  border-radius:8px!important;
+  background:#fff8eb!important;
+  color:#18191c!important;
+  font-size:13px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  box-shadow:none!important;
+}
+.transaction-report-page .table-footer > .entries-control > #reportPageSize{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+}
+.transaction-report-page .table-footer > .entries-control .rounded-select-btn{
   display:inline-flex!important;
   align-items:center!important;
   justify-content:flex-start!important;
-  gap:0!important;
+  position:relative!important;
   cursor:pointer!important;
 }
-.transaction-report-page .table-footer>.entries-control .rounded-select-btn span{
-  flex:1 1 auto!important;
-  min-width:0!important;
+.transaction-report-page .table-footer > .entries-control .rounded-select-btn span{
   overflow:hidden!important;
   text-overflow:ellipsis!important;
   white-space:nowrap!important;
 }
-.transaction-report-page .table-footer>.entries-control .rounded-select-btn .bi{
+.transaction-report-page .table-footer > .entries-control .rounded-select-btn .bi{
   position:absolute!important;
-  right:10px!important;
+  right:8px!important;
   top:50%!important;
   transform:translateY(-50%)!important;
-  margin:0!important;
   font-size:12px!important;
-  line-height:1!important;
+  color:#78716c!important;
   pointer-events:none!important;
-  color:#57534e!important;
 }
-.transaction-report-page .table-footer>.entries-control .rounded-select-btn.open,
-.transaction-report-page .table-footer>.entries-control .rounded-select-btn:focus{
-  border-color:#d97706!important;
-  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+.transaction-report-page .table-footer > .entries-control .rounded-select-btn.open,
+.transaction-report-page .table-footer > .entries-control .rounded-select-btn:focus{
+  border-color:#f59e0b!important;
   outline:0!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
 }
-.transaction-report-page .table-footer>.entries-control .rounded-select-menu{
-  top:auto!important;
-  bottom:calc(100% + 6px)!important;
+.transaction-report-page .table-footer > .entries-control .rounded-select-menu{
+  position:absolute!important;
   left:0!important;
   right:auto!important;
+  top:auto!important;
+  bottom:calc(100% + 6px)!important;
   width:100%!important;
   min-width:100%!important;
-  max-width:none!important;
+  z-index:40!important;
+  margin:0!important;
   padding:6px!important;
-  border-radius:8px!important;
-  background:#fff8eb!important;
   border:1px solid #eadcc8!important;
-  box-shadow:0 12px 28px rgba(92,74,48,.12)!important;
-  z-index:3000!important;
-  max-height:min(260px,50vh)!important;
-  overflow:hidden auto!important;
+  border-radius:10px!important;
+  background:#fff8eb!important;
+  box-shadow:0 12px 28px rgba(28,25,23,.12)!important;
+  max-height:min(220px,50vh)!important;
+  overflow:auto!important;
 }
-.transaction-report-page .table-footer>.entries-control .rounded-select-option{
+.transaction-report-page .table-footer > .entries-control .rounded-select-option{
   display:flex!important;
   align-items:center!important;
-  justify-content:center!important;
-  width:100%!important;
-  min-height:34px!important;
+  min-height:32px!important;
   padding:6px 8px!important;
-  margin:0!important;
   border-radius:8px!important;
-  text-align:center!important;
   font-size:13px!important;
   font-weight:700!important;
-  line-height:1.2!important;
-  background:transparent!important;
   color:#18191c!important;
+  background:transparent!important;
   cursor:pointer!important;
 }
-.transaction-report-page .table-footer>.entries-control .rounded-select-option:hover,
-.transaction-report-page .table-footer>.entries-control .rounded-select-option.active,
-.transaction-report-page .table-footer>.entries-control .rounded-select-option.is-active{
+.transaction-report-page .table-footer > .entries-control .rounded-select-option:hover,
+.transaction-report-page .table-footer > .entries-control .rounded-select-option.active,
+.transaction-report-page .table-footer > .entries-control .rounded-select-option.is-active{
   background:rgba(217,119,6,.12)!important;
   color:#b45309!important;
 }
-.transaction-report-page .table-footer .table-info{
+html body.report-body.transaction-report-page.bo-charcoal .table-footer > .table-info,
+.transaction-report-page .table-footer > .table-info{
+  grid-column:2!important;
   justify-self:center!important;
   text-align:center!important;
   color:#57534e!important;
-  font-size:12.5px!important;
+  font-size:13px!important;
   font-weight:600!important;
+  line-height:1!important;
 }
-.transaction-report-page .table-footer .pagination-clean{justify-self:end!important}
+html body.report-body.transaction-report-page.bo-charcoal .table-footer > .pagination-clean,
+.transaction-report-page .table-footer > .pagination-clean{
+  grid-column:3!important;
+  justify-self:end!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  overflow:visible!important;
+}
 
-/* Pager — cool slate idle · amber active · no shadow */
+/* Pager — Deposit slate idle · amber active */
+html body.report-body.transaction-report-page.bo-charcoal .pagination-clean .page-btn,
+html body.report-body.transaction-report-page.bo-charcoal .pagination-clean button,
 .transaction-report-page .pagination-clean .page-btn,
 .transaction-report-page .pagination-clean button{
+  box-sizing:border-box!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
   height:36px!important;
   min-height:36px!important;
   min-width:40px!important;
+  width:auto!important;
+  padding:0 12px!important;
+  margin:0!important;
   border-radius:8px!important;
   border:0!important;
   background:#f3f4f6!important;
   color:#9ca3af!important;
+  -webkit-text-fill-color:#9ca3af;
+  font-size:13px!important;
+  font-weight:800!important;
+  line-height:1!important;
   box-shadow:none!important;
 }
+html body.report-body.transaction-report-page.bo-charcoal .pagination-clean .page-btn:hover:not(:disabled):not(.active),
+html body.report-body.transaction-report-page.bo-charcoal .pagination-clean button:hover:not(:disabled):not(.active),
 .transaction-report-page .pagination-clean .page-btn:hover:not(:disabled):not(.active),
 .transaction-report-page .pagination-clean button:hover:not(:disabled):not(.active){
   background:#e5e7eb!important;
   color:#374151!important;
+  -webkit-text-fill-color:#374151;
 }
+html body.report-body.transaction-report-page.bo-charcoal .pagination-clean .page-btn.active,
+html body.report-body.transaction-report-page.bo-charcoal .pagination-clean button.active,
 .transaction-report-page .pagination-clean .page-btn.active,
 .transaction-report-page .pagination-clean button.active{
   background:linear-gradient(180deg,#fbbf24 0%,#f59e0b 45%,#d97706 100%)!important;
-  border:1px solid #d97706!important;
+  border:1px solid #e8901a!important;
   color:#fff!important;
-  box-shadow:none!important;
+  -webkit-text-fill-color:#fff;
+  box-shadow:0 1px 2px rgba(217,119,6,.18),0 4px 10px rgba(217,119,6,.18),inset 0 1px 0 rgba(255,255,255,.35)!important;
 }
+html body.report-body.transaction-report-page.bo-charcoal .pagination-clean .page-btn:disabled,
+html body.report-body.transaction-report-page.bo-charcoal .pagination-clean button:disabled,
 .transaction-report-page .pagination-clean .page-btn:disabled,
 .transaction-report-page .pagination-clean button:disabled{
   background:#f3f4f6!important;
   color:#9ca3af!important;
+  -webkit-text-fill-color:#9ca3af;
   opacity:.42!important;
+  cursor:not-allowed!important;
 }
 .transaction-report-page .pagination-clean .smart-page-ellipsis{
   color:#9ca3af!important;
   font-weight:700!important;
   min-width:20px!important;
   text-align:center!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
 }
 
 /* —— Dark —— */
-html[data-bo-theme="dark"] .transaction-report-page .table-card,
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .report-content > .table-card,
+html[data-bo-theme="dark"] .transaction-report-page .table-card{
+  border-color:rgba(255,255,255,.14)!important;
+  background:#383a46!important;
+  border-radius:12px!important;
+}
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .table-card > .table-footer,
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .table-footer,
 html[data-bo-theme="dark"] .transaction-report-page .table-footer{
   border-color:rgba(255,255,255,.14)!important;
   background:#383a46!important;
+}
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .table-wrap,
+html[data-bo-theme="dark"] .transaction-report-page .table-wrap,
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .bo-tx-table-body,
+html[data-bo-theme="dark"] .transaction-report-page .bo-tx-table-body{
+  background:#383a46!important;
+  border:0!important;
+}
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .bo-tx-table-head,
+html[data-bo-theme="dark"] .transaction-report-page .bo-tx-table-head{
+  background:#1f2128!important;
+  border-bottom-color:rgba(255,255,255,.14)!important;
 }
 html[data-bo-theme="dark"] .transaction-report-page .table-card > .ops-filter{
   border-bottom-color:rgba(255,255,255,.12)!important;
@@ -672,21 +821,16 @@ html[data-bo-theme="dark"] .transaction-report-page .ops-filter .rounded-select-
   background:#f59e0b!important;
   color:#2a2c36!important;
 }
-html[data-bo-theme="dark"] .transaction-report-page #reportSearch{
-  border-color:#f59e0b!important;
-  background:linear-gradient(180deg,#fbbf24 0%,#f59e0b 45%,#d97706 100%)!important;
-  color:#2a2c36!important;
-}
-html[data-bo-theme="dark"] .transaction-report-page #reportSearch:hover{
-  background:linear-gradient(180deg,#d97706 0%,#f59e0b 45%,#fbbf24 100%)!important;
-  border-color:#fbbf24!important;
-}
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .report-table th,
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .report-table thead th,
 html[data-bo-theme="dark"] .transaction-report-page .report-table th{
   background:#1f2128!important;
   color:#e7e5e4!important;
   border-bottom:1px solid rgba(255,255,255,.14)!important;
   border-right:1px solid rgba(255,255,255,.06)!important;
 }
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .report-table td,
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .report-table tbody td,
 html[data-bo-theme="dark"] .transaction-report-page .report-table td{
   color:#f5f5f4!important;
   border-bottom:1px solid rgba(255,255,255,.12)!important;
@@ -700,15 +844,40 @@ html[data-bo-theme="dark"] .transaction-report-page .report-table .table-empty{
   color:#f5f5f4!important;
   background:#3a3c48!important;
 }
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .report-table tbody tr:nth-child(odd) td,
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .report-table tbody tr:nth-child(odd):not(.total) td,
 html[data-bo-theme="dark"] .transaction-report-page .report-table tbody tr:nth-child(odd) td{
   background:#3a3c48!important;
 }
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .report-table tbody tr:nth-child(even) td,
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .report-table tbody tr:nth-child(even):not(.total) td,
 html[data-bo-theme="dark"] .transaction-report-page .report-table tbody tr:nth-child(even) td{
   background:#434653!important;
 }
 html[data-bo-theme="dark"] .transaction-report-page .report-table tbody tr:hover td{
   background:#444654!important;
 }
+html[data-bo-theme="dark"] .transaction-report-page .report-table .status-pill{
+  background:rgba(245,158,11,.20)!important;
+  color:#fbbf24!important;
+  border-color:rgba(245,158,11,.35)!important;
+}
+html[data-bo-theme="dark"] .transaction-report-page .report-table .status-pill.active{
+  background:rgba(18,183,106,.18)!important;
+  color:#6ee7b7!important;
+  border-color:rgba(110,231,183,.22)!important;
+}
+html[data-bo-theme="dark"] .transaction-report-page .report-table .status-pill.off{
+  background:rgba(248,113,113,.18)!important;
+  color:#f87171!important;
+  border-color:rgba(248,113,113,.28)!important;
+}
+html[data-bo-theme="dark"] .transaction-report-page .report-table .tr-empty{color:#71717a!important}
+html[data-bo-theme="dark"] .transaction-report-page .report-table .tr-id,
+html[data-bo-theme="dark"] .transaction-report-page .report-table .tr-amt{color:#f5f5f4!important}
+html[data-bo-theme="dark"] .transaction-report-page .report-table .tr-amt.is-neg{color:#f87171!important}
+html[data-bo-theme="dark"] .transaction-report-page .report-table .tr-amt.is-pos{color:#6ee7b7!important}
+html[data-bo-theme="dark"] .transaction-report-page .report-table .tr-amt.is-zero{color:#a1a1aa!important}
 html[data-bo-theme="dark"] .transaction-report-page .table-footer>.entries-control{color:#d4d4d8!important}
 html[data-bo-theme="dark"] .transaction-report-page .table-footer .table-info{color:#d4d4d8!important}
 html[data-bo-theme="dark"] .transaction-report-page .table-footer>.entries-control .rounded-select-btn,
@@ -738,30 +907,42 @@ html[data-bo-theme="dark"] .transaction-report-page .table-footer>.entries-contr
   background:#f59e0b!important;
   color:#2a2c36!important;
 }
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .pagination-clean .page-btn,
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .pagination-clean button,
 html[data-bo-theme="dark"] .transaction-report-page .pagination-clean .page-btn,
 html[data-bo-theme="dark"] .transaction-report-page .pagination-clean button{
   background:#383a46!important;
   border:1px solid rgba(255,255,255,.12)!important;
   color:#a1a1aa!important;
+  -webkit-text-fill-color:#a1a1aa;
 }
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .pagination-clean .page-btn:hover:not(:disabled):not(.active),
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .pagination-clean button:hover:not(:disabled):not(.active),
 html[data-bo-theme="dark"] .transaction-report-page .pagination-clean .page-btn:hover:not(:disabled):not(.active),
 html[data-bo-theme="dark"] .transaction-report-page .pagination-clean button:hover:not(:disabled):not(.active){
   background:#444654!important;
   border-color:rgba(255,255,255,.18)!important;
   color:#e7e5e4!important;
+  -webkit-text-fill-color:#e7e5e4;
 }
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .pagination-clean .page-btn.active,
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .pagination-clean button.active,
 html[data-bo-theme="dark"] .transaction-report-page .pagination-clean .page-btn.active,
 html[data-bo-theme="dark"] .transaction-report-page .pagination-clean button.active{
   background:linear-gradient(180deg,#fbbf24 0%,#f59e0b 45%,#d97706 100%)!important;
   border-color:#f59e0b!important;
   color:#2a2c36!important;
-  box-shadow:none!important;
+  -webkit-text-fill-color:#2a2c36;
+  box-shadow:0 1px 2px rgba(0,0,0,.35),0 0 0 1px rgba(245,158,11,.35),0 2px 10px rgba(245,158,11,.28)!important;
 }
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .pagination-clean .page-btn:disabled,
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .pagination-clean button:disabled,
 html[data-bo-theme="dark"] .transaction-report-page .pagination-clean .page-btn:disabled,
 html[data-bo-theme="dark"] .transaction-report-page .pagination-clean button:disabled{
   background:#2a2c36!important;
   border-color:rgba(255,255,255,.06)!important;
   color:#52525b!important;
+  -webkit-text-fill-color:#52525b;
 }
 
 @media(max-width:1024px){
@@ -788,8 +969,7 @@ html[data-bo-theme="dark"] .transaction-report-page .pagination-clean button:dis
   .transaction-report-page .ops-filter>#typeBox,
   .transaction-report-page .ops-filter>.bo-filter-select-item,
   .transaction-report-page .ops-filter input,
-  .transaction-report-page .ops-filter select,
-  .transaction-report-page #reportSearch{
+  .transaction-report-page .ops-filter select{
     width:100%!important;
     min-width:0!important;
     max-width:100%!important;
