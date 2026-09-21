@@ -1,15 +1,13 @@
 (function(){
  const $=s=>document.querySelector(s), esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- let page=1,totalPages=1,totalElements=0,pageSize=20,lockedAutoSize=null,autofitReloading=false;
+ let page=1,totalPages=1,totalElements=0,pageSize=20,lockedAutoSize=null,autofitReloading=false,autofitSettled=false;
  const endpoint=k=>API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS[k];
  const headers=()=>Object.assign({'Content-Type':'application/json'},window.BO_AUTH?BO_AUTH.authHeader():{});
  const pad=n=>String(n).padStart(2,'0');
  const COLS=8;
 
- /* Same Show N entries contract as Deposit / Member Wallet MD:
-    - · 10 · 20 · 50 · 100 · All
-    `-` = auto-fit rows into viewport — no vertical scrollbar.
-    Scroll lives only in `.vip-tx-table-body` (fixed head). */
+ /* Show N entries: - · 10 · 20 · 50 · 100 · all
+    `-` = auto-fit rows into viewport — no vertical scrollbar. */
  function tableBodyScroll(){
   return document.getElementById('vipLogTableScroll')
     || document.querySelector('.vip-tx-table-body')
@@ -29,7 +27,7 @@
   /* Body-only scrollport — do not subtract thead (head is outside). */
   const avail=Math.max(0,Math.floor(scroll.clientHeight));
   const rowH=naturalRowHeight(scroll);
-  /* Floor only — never add a row that would overflow and create a scrollbar. */
+  /* Floor only — never add a row that would overflow and go invisible under overflow:hidden. */
   return Math.max(5,Math.min(200,Math.floor(avail/rowH)||12));
  }
  function autoFitPageSize(){
@@ -37,7 +35,10 @@
   lockedAutoSize=measureAutoPageSize();
   return lockedAutoSize;
  }
- function clearLockedAutoSize(){ lockedAutoSize=null; }
+ function clearLockedAutoSize(){
+  lockedAutoSize=null;
+  autofitSettled=false;
+ }
  function isAutoPageSize(raw){
   const v=String(raw??'-').trim();
   return v===''||v==='-'||/^auto$/i.test(v);
@@ -79,17 +80,61 @@
    tr.querySelectorAll('td').forEach(td=>{td.style.height='';td.style.minHeight='';});
   });
  }
- function shrinkAutofitIfOverflow(){
-  if(autofitReloading) return;
+ /* MD Show `-`: floor(avail/rowH). Gap ≥ one row → load more. Gap < one row → stretch.
+    Never keep a stale locked count from All / the previous dataset. */
+ function scrollAvail(scroll){
+  const wrap=scroll.closest('.vip-admin-table-wrap');
+  const head=wrap?.querySelector('.vip-tx-table-head');
+  const wrapRoom=wrap?Math.max(0,Math.floor(wrap.clientHeight-(head?.offsetHeight||0))):0;
+  return Math.max(Math.floor(scroll.clientHeight)||0, wrapRoom);
+ }
+ function settleAutofitFromPaint(){
+  if(autofitReloading||autofitSettled) return;
   if(!isAutoPageSize($('#vipLogPageSize')?.value)) return;
   const scroll=tableBodyScroll();
-  if(!scroll) return;
-  if(scroll.scrollHeight<=scroll.clientHeight+1) return;
-  if(lockedAutoSize==null||lockedAutoSize<=5) return;
-  lockedAutoSize=Math.max(5,lockedAutoSize-1);
-  pageSize=lockedAutoSize;
+  const body=$('#vipExpLogBody');
+  if(!scroll||!body) return;
+  resetEvenFill();
+  void scroll.offsetHeight;
+  const rows=[...body.querySelectorAll('tr')].filter(tr=>!isPlaceholderRow(tr));
+  if(!rows.length) return;
+  const avail=scrollAvail(scroll);
+  const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
+  const rowH=Math.max(44,Math.round(natural/rows.length)||52);
+  const overflow=scroll.scrollHeight>scroll.clientHeight+1||natural>avail+1;
+  /* Floor only — never ceil a row that overflow:hidden would clip. */
+  let target=Math.max(5,Math.min(200,Math.floor(avail/rowH)||rows.length));
+  if(overflow) target=Math.max(5,Math.min(target,rows.length-1));
+  /* Stop only when this paint IS the floor count. A matching lock with fewer
+     painted rows (All → `-`) must reload, not freeze the short set. */
+  /* Verify with a real post-paint overflow check before locking, on EVERY path — a cold first
+     paint (F5) can under-measure avail/rowH and settle one row too many even when target already
+     equals the current row count, which the old "already matches → lock immediately" shortcut
+     never re-checked. Recurses, shrinking by 1 each frame, until no overflow remains. */
+  const verifyAndLock=()=>{
+   requestAnimationFrame(()=>{
+    const sc=tableBodyScroll();
+    if(sc&&sc.scrollHeight>sc.clientHeight+1&&lockedAutoSize>5){
+     lockedAutoSize=Math.max(5,lockedAutoSize-1);
+     pageSize=lockedAutoSize;
+     autofitReloading=true;
+     Promise.resolve(load(1)).finally(()=>{autofitReloading=false;verifyAndLock();});
+     return;
+    }
+    autofitSettled=true;
+    evenFillRowHeights();
+   });
+  };
+  if(target===rows.length){
+   lockedAutoSize=rows.length;
+   pageSize=lockedAutoSize;
+   verifyAndLock();
+   return;
+  }
+  lockedAutoSize=target;
+  pageSize=target;
   autofitReloading=true;
-  Promise.resolve(load(1)).finally(()=>{ autofitReloading=false; });
+  Promise.resolve(load(1)).finally(()=>{autofitReloading=false;verifyAndLock();});
  }
  function evenFillRowHeights(){
   const body=$('#vipExpLogBody');
@@ -105,11 +150,8 @@
   const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
   const rowH=Math.max(44,Math.round(natural/rows.length)||52);
   const gap=avail-natural;
-  if(natural>avail+1){
-   shrinkAutofitIfOverflow();
-   return;
-  }
-  if(gap<2||gap>=rowH) return;
+  /* Stretch leftover seam only when it's smaller than one full row — grow/shrink is settleAutofitFromPaint. */
+  if(natural>avail+1||gap<2||gap>=rowH) return;
   const base=Math.floor(avail/rows.length);
   let rem=avail-(base*rows.length);
   if(base<=0) return;
@@ -134,8 +176,11 @@
  }
  function scheduleEvenFill(){
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   if(isAutoPageSize($('#vipLogPageSize')?.value)&&!autofitSettled){
+    settleAutofitFromPaint();
+    return;
+   }
    evenFillRowHeights();
-   shrinkAutofitIfOverflow();
   }));
  }
  function bindEvenFillObserver(){
@@ -244,15 +289,31 @@
  });
  document.addEventListener('keydown',e=>{
   if(e.key==='Escape' && $('#vipAdjustModal')?.classList.contains('show')) modal(false);
-  if(e.key==='Enter' && e.target && e.target.id==='vipLogKeyword'){e.preventDefault();load(1);}
+  if(e.key==='Enter' && e.target && e.target.id==='vipLogKeyword'){e.preventDefault();reloadForFilterChange(1);}
  });
- $('#vipLogSource')?.addEventListener('change',()=>load(1));
- $('#vipLogKeyword')?.addEventListener('search',()=>load(1));
+ /* Any filter change can swap in taller or shorter rows — re-settle autofit for the new content
+    instead of reusing a size locked in for the previous dataset. */
+ function reloadForFilterChange(p){
+  if(isAutoPageSize($('#vipLogPageSize')?.value)) clearLockedAutoSize();
+  load(p||1);
+ }
+ $('#vipLogSource')?.addEventListener('change',()=>reloadForFilterChange(1));
+ $('#vipLogKeyword')?.addEventListener('search',()=>reloadForFilterChange(1));
  $('#vipLogPageSize')?.addEventListener('change',()=>{
   clearLockedAutoSize();
-  syncPageSize();
   syncAutofitMode();
-  load(1);
+  /* All → `-`: drop tall All content first so the flex scrollport
+     reports the real viewport height before we measure. */
+  const body=$('#vipExpLogBody');
+  if(isAutoPageSize($('#vipLogPageSize')?.value)&&body){
+   body.innerHTML=emptyRow('Loading…');
+   resetEvenFill();
+  }
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   clearLockedAutoSize();
+   syncPageSize();
+   load(1);
+  }));
  });
  $('#vipAdjustForm')?.addEventListener('submit',async e=>{
   e.preventDefault();
@@ -286,3 +347,4 @@
   load(1);
  }));
 })();
+

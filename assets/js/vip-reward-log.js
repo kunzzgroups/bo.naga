@@ -1,16 +1,15 @@
 (function(){
  const $=s=>document.querySelector(s), esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- let page=1,totalPages=1,totalElements=0,pageSize=20,lockedAutoSize=null,autofitReloading=false;
+ let page=1,totalPages=1,totalElements=0,pageSize=20,lockedAutoSize=null,autofitReloading=false,autofitSettled=false;
  const endpoint=k=>API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS[k];
  const headers=()=>Object.assign({'Content-Type':'application/json'},window.BO_AUTH?BO_AUTH.authHeader():{});
  const pad=n=>String(n).padStart(2,'0');
  const COLS=10;
  const money=v=>(window.BO_CURRENCY?.code?.()||'MYR')+' '+Number(v||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
 
- /* Same Show N entries contract as VIP EXP Log / Deposit MD:
-    - · 10 · 20 · 50 · 100 · All
-    `-` = auto-fit rows into viewport — no vertical scrollbar.
-    Scroll lives only in `.vip-tx-table-body` (fixed head). */
+ /* Show N entries: - · 10 · 20 · 50 · 100 · All
+    `-` = auto-fit row count, no body scroll (like VIP EXP Log).
+    `All` = size 10000, body scrolls (like VIP EXP Log). */
  function tableBodyScroll(){
   return document.getElementById('rewardTableScroll')
     || document.querySelector('.vip-tx-table-body')
@@ -28,7 +27,7 @@
   if(!scroll) return 12;
   const avail=Math.max(0,Math.floor(scroll.clientHeight));
   const rowH=naturalRowHeight(scroll);
-  /* Floor only — leave 1px slack so the fixed frame never grows a y-scrollbar. */
+  /* Floor only — never add a row that would overflow and go invisible under overflow:hidden. */
   const n=Math.floor(avail/rowH)||12;
   return Math.max(5,Math.min(200,n));
  }
@@ -37,7 +36,10 @@
   lockedAutoSize=measureAutoPageSize();
   return lockedAutoSize;
  }
- function clearLockedAutoSize(){ lockedAutoSize=null; }
+ function clearLockedAutoSize(){
+  lockedAutoSize=null;
+  autofitSettled=false;
+ }
  function isAutoPageSize(raw){
   const v=String(raw??'-').trim();
   return v===''||v==='-'||/^auto$/i.test(v);
@@ -55,15 +57,14 @@
   return pageSize;
  }
  function syncAutofitLabel(){
-  /* MD: value stays `-` (menu label Auto); trigger may show fitted count. */
+  /* Keep trigger as `-` while autofit. Never paint fitted count. */
   const sel=$('#rewardPageSize');
   if(!sel||!isAutoPageSize(sel.value)) return;
-  const n=Number(lockedAutoSize||pageSize);
-  if(!(n>0)) return;
   const btn=sel.closest('.rounded-select-wrap')?.querySelector('.rounded-select-btn span');
-  if(btn) btn.textContent=String(n);
+  if(btn) btn.textContent='-';
  }
  function syncAutofitMode(){
+  /* Match VIP EXP Log: only `-` locks no-scroll. All / 10 / 20 / … may scroll. */
   const auto=isAutoPageSize($('#rewardPageSize')?.value);
   const card=document.querySelector('.vip-log-card');
   const wrap=document.querySelector('.vip-admin-table-wrap');
@@ -89,18 +90,59 @@
    tr.querySelectorAll('td').forEach(td=>{td.style.height='';td.style.minHeight='';});
   });
  }
- function shrinkAutofitIfOverflow(){
-  if(autofitReloading) return;
+ /* MD Show `-`: floor(avail/rowH). Gap ≥ one row → load more. Gap < one row → stretch.
+    Never keep a stale locked count from All / the previous dataset. */
+ function scrollAvail(scroll){
+  const wrap=scroll.closest('.vip-admin-table-wrap');
+  const head=wrap?.querySelector('.vip-tx-table-head');
+  const wrapRoom=wrap?Math.max(0,Math.floor(wrap.clientHeight-(head?.offsetHeight||0))):0;
+  return Math.max(Math.floor(scroll.clientHeight)||0, wrapRoom);
+ }
+ function settleAutofitFromPaint(){
+  if(autofitReloading||autofitSettled) return;
   if(!isAutoPageSize($('#rewardPageSize')?.value)) return;
   const scroll=tableBodyScroll();
-  if(!scroll) return;
-  if(scroll.scrollHeight<=scroll.clientHeight+1) return;
-  if(lockedAutoSize==null||lockedAutoSize<=5) return;
-  lockedAutoSize=Math.max(5,lockedAutoSize-1);
-  pageSize=lockedAutoSize;
-  syncAutofitLabel();
+  const body=$('#rewardBody');
+  if(!scroll||!body) return;
+  resetEvenFill();
+  void scroll.offsetHeight;
+  const rows=[...body.querySelectorAll('tr')].filter(tr=>!isPlaceholderRow(tr));
+  if(!rows.length) return;
+  const avail=scrollAvail(scroll);
+  const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
+  const rowH=Math.max(44,Math.round(natural/rows.length)||52);
+  const overflow=scroll.scrollHeight>scroll.clientHeight+1||natural>avail+1;
+  let target=Math.max(5,Math.min(200,Math.floor(avail/rowH)||rows.length));
+  if(overflow) target=Math.max(5,Math.min(target,rows.length-1));
+  /* Verify with a real post-paint overflow check before locking, on EVERY path — a cold first
+     paint (F5) can under-measure avail/rowH and settle one row too many even when target already
+     equals the current row count, which the old "already matches → lock immediately" shortcut
+     never re-checked (manual reselect happened to route through the reload branch and got the
+     check; F5 didn't). Recurses, shrinking by 1 each frame, until no overflow remains. */
+  const verifyAndLock=()=>{
+   requestAnimationFrame(()=>{
+    const sc=tableBodyScroll();
+    if(sc&&sc.scrollHeight>sc.clientHeight+1&&lockedAutoSize>5){
+     lockedAutoSize=Math.max(5,lockedAutoSize-1);
+     pageSize=lockedAutoSize;
+     autofitReloading=true;
+     Promise.resolve(load(1)).finally(()=>{autofitReloading=false;verifyAndLock();});
+     return;
+    }
+    autofitSettled=true;
+    evenFillRowHeights();
+   });
+  };
+  if(target===rows.length){
+   lockedAutoSize=rows.length;
+   pageSize=lockedAutoSize;
+   verifyAndLock();
+   return;
+  }
+  lockedAutoSize=target;
+  pageSize=target;
   autofitReloading=true;
-  Promise.resolve(load(1)).finally(()=>{ autofitReloading=false; });
+  Promise.resolve(load(1)).finally(()=>{autofitReloading=false;verifyAndLock();});
  }
  function evenFillRowHeights(){
   const body=$('#rewardBody');
@@ -116,11 +158,8 @@
   const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
   const rowH=Math.max(44,Math.round(natural/rows.length)||52);
   const gap=avail-natural;
-  if(natural>avail+1){
-   shrinkAutofitIfOverflow();
-   return;
-  }
-  if(gap<2||gap>=rowH) return;
+  /* Stretch leftover seam only when it's smaller than one full row — never reload from here. */
+  if(natural>avail+1||gap<2||gap>=rowH) return;
   const base=Math.floor(avail/rows.length);
   let rem=avail-(base*rows.length);
   if(base<=0) return;
@@ -145,8 +184,11 @@
  }
  function scheduleEvenFill(){
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   if(isAutoPageSize($('#rewardPageSize')?.value)&&!autofitSettled){
+    settleAutofitFromPaint();
+    return;
+   }
    evenFillRowHeights();
-   shrinkAutofitIfOverflow();
   }));
  }
  function bindEvenFillObserver(){
@@ -162,7 +204,7 @@
     syncAutofitMode();
     if(next!==prev) load(1);
     else scheduleEvenFill();
-   },32);
+   },120);
   });
   scroll._boEvenFillObs.observe(scroll);
  }
@@ -261,10 +303,16 @@
   html+=`<button type="button" class="smart-page last" data-reward-page="${total}" ${current>=total?'disabled':''} title="Last page" aria-label="Last page"><i class="bi bi-chevron-bar-right" aria-hidden="true"></i></button>`;
   w.innerHTML=html;
  }
+ /* Any filter/tab change can swap in taller or shorter rows — re-settle autofit for the new content
+    instead of reusing a size locked in for the previous dataset (stale lock caused the Paid-tab overflow). */
+ function reloadForFilterChange(p){
+  if(isAutoPageSize($('#rewardPageSize')?.value)) clearLockedAutoSize();
+  load(p||1);
+ }
  let keywordTimer=0;
  function scheduleKeywordSearch(){
   clearTimeout(keywordTimer);
-  keywordTimer=setTimeout(()=>load(1),280);
+  keywordTimer=setTimeout(()=>reloadForFilterChange(1),280);
  }
  function activeStatus(){
   const tab=$('#rewardStatusTabs .bo-tx-tab.is-active');
@@ -281,7 +329,7 @@
   if(window.BO_SEG_BOUNCE){
    try{window.BO_SEG_BOUNCE.sync(track);}catch(_){}
   }
-  load(1);
+  reloadForFilterChange(1);
  }
  document.addEventListener('click',e=>{
   const tab=e.target.closest('#rewardStatusTabs .bo-tx-tab');
@@ -293,11 +341,11 @@
   if(e.key==='Enter' && e.target && e.target.id==='rewardKeyword'){
    e.preventDefault();
    clearTimeout(keywordTimer);
-   load(1);
+   reloadForFilterChange(1);
   }
  });
  $('#rewardKeyword')?.addEventListener('input',scheduleKeywordSearch);
- $('#rewardType')?.addEventListener('change',()=>load(1));
+ $('#rewardType')?.addEventListener('change',()=>reloadForFilterChange(1));
  /* reports.js must not shrink .vip-log-filters / page-size to the select width. */
  function unlockRewardFilters(){
   const clear=(el)=>{
@@ -350,17 +398,7 @@
   clearLockedAutoSize();
   syncAutofitMode();
   load(1).then(()=>{
-   /* After paint, shrink until the fixed frame has no y-overflow. */
-   let guard=0;
-   const tighten=()=>{
-    if(guard++>8) return;
-    const scroll=tableBodyScroll();
-    if(!scroll||!isAutoPageSize($('#rewardPageSize')?.value)) return;
-    if(scroll.scrollHeight<=scroll.clientHeight+1){ scheduleEvenFill(); return; }
-    shrinkAutofitIfOverflow();
-    setTimeout(tighten,40);
-   };
-   setTimeout(tighten,60);
+   setTimeout(()=>settleAutofitFromPaint(),60);
   });
  }));
 })();

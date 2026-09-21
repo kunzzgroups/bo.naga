@@ -447,7 +447,8 @@ html body.vip-exp-log-page .vip-tx-table-head{
   z-index:2 !important;
 }
 html body.vip-exp-log-page .vip-tx-table-body{
-  flex:1 1 auto !important;
+  /* basis 0 — stay the flex leftover after All collapses, don't shrink-wrap to the short row set */
+  flex:1 1 0% !important;
   min-height:0 !important;
   overflow:auto !important;
   overflow-x:auto !important;
