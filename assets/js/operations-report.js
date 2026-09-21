@@ -11,6 +11,75 @@
   from.value=today;to.value=today;
   if(window.OP_REPORT_KIND==='promotion-report')document.getElementById('typeBox').style.display='none';
   const esc=v=>String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+  // Date/time cell — DD/MM/YYYY on the cell, HH:MM:SS on hover (Wallet Ledger locked pattern).
+  const dt=v=>window.BO_FORMAT&&window.BO_FORMAT.dateTime?window.BO_FORMAT.dateTime(v):(v?String(v).replace('T',' ').slice(0,19):'-');
+  function dtParts(v){
+    const full=dt(v);
+    if(!full||full==='-')return{full:'-',day:'-',time:''};
+    const m=String(full).match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})\s+(.+)$/);
+    if(m){
+      const raw=String(m[4]).trim();
+      const tm=raw.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+      const time=tm?`${String(tm[1]).padStart(2,'0')}:${tm[2]}:${tm[3]||'00'}`:raw.slice(0,8);
+      const day=`${String(m[3]).padStart(2,'0')}/${String(m[2]).padStart(2,'0')}/${m[1]}`;
+      return{full,day,time};
+    }
+    return{full,day:full,time:''};
+  }
+  function dtCell(v){
+    const p=dtParts(v);
+    if(p.full==='-')return '<span class="mad-muted">-</span>';
+    if(!p.time)return `<span class="tr-dt">${esc(p.day)}</span>`;
+    return `<span class="tr-dt" tabindex="0" data-tip="${esc(p.time)}">${esc(p.day)}</span>`;
+  }
+  function remarkCell(v){
+    const s=String(v??'').trim();
+    if(!s)return '<span class="mad-muted">-</span>';
+    return `<span class="tr-remark" tabindex="0" data-tip="${esc(s)}">${esc(s)}</span>`;
+  }
+  // Shared floating tip (position:fixed) so it can never be clipped by the table's
+  // overflow:hidden scroll container — same recipe as Wallet Ledger `.wl-time-tip`.
+  function ensureFloatTip(){
+    let tip=document.getElementById('trFloatTip');
+    if(tip)return tip;
+    tip=document.createElement('div');
+    tip.id='trFloatTip';
+    tip.className='tr-float-tip';
+    tip.setAttribute('role','tooltip');
+    tip.setAttribute('aria-hidden','true');
+    document.body.appendChild(tip);
+    return tip;
+  }
+  function placeFloatTip(el){
+    const tip=ensureFloatTip();
+    const text=el.getAttribute('data-tip')||'';
+    if(!text){hideFloatTip();return;}
+    tip.textContent=text;
+    tip.classList.toggle('is-wide',el.classList.contains('tr-remark'));
+    tip.classList.add('is-on');
+    const r=el.getBoundingClientRect();
+    const tr=tip.getBoundingClientRect();
+    let top=r.top-tr.height-8,below=false;
+    if(top<8){below=true;top=r.bottom+8;}
+    tip.classList.toggle('is-below',below);
+    const left=Math.max(8,Math.min(r.left+r.width/2-tr.width/2,window.innerWidth-tr.width-8));
+    tip.style.left=Math.round(left)+'px';
+    tip.style.top=Math.round(top)+'px';
+  }
+  function hideFloatTip(){
+    const tip=document.getElementById('trFloatTip');
+    if(tip)tip.classList.remove('is-on','is-below');
+  }
+  function bindFloatTips(){
+    if(!bodyEl||bodyEl.dataset.tipBound==='1')return;
+    bodyEl.dataset.tipBound='1';
+    bodyEl.addEventListener('mouseover',e=>{const el=e.target.closest?.('.tr-dt[data-tip],.tr-remark[data-tip]');if(el)placeFloatTip(el);});
+    bodyEl.addEventListener('mouseout',e=>{const el=e.target.closest?.('.tr-dt[data-tip],.tr-remark[data-tip]');if(!el)return;const next=e.relatedTarget;if(next&&el.contains(next))return;hideFloatTip();});
+    bodyEl.addEventListener('focusin',e=>{const el=e.target.closest?.('.tr-dt[data-tip],.tr-remark[data-tip]');if(el)placeFloatTip(el);});
+    bodyEl.addEventListener('focusout',e=>{const el=e.target.closest?.('.tr-dt[data-tip],.tr-remark[data-tip]');if(!el)return;const next=e.relatedTarget;if(next&&el.contains(next))return;hideFloatTip();});
+    window.addEventListener('scroll',hideFloatTip,true);
+    window.addEventListener('resize',hideFloatTip);
+  }
   const cols=window.OP_REPORT_KIND==='promotion-report'
     ?[['name','Promotion'],['promotionCode','Code'],['claimCount','Claims'],['uniqueClaimers','Unique Claimers'],['repeatedClaimCount','Repeated Claims'],['payoutAmount','Payouts']]
     :[['id','ID'],['memberId','Member'],['ledgerType','Type'],['walletBucket','Wallet'],['amount','In / Out'],['beforeBalance','Before'],['afterBalance','After'],['createdBy','Created By'],['approvedBy','Approved By'],['reasonCode','Reason'],['referenceNo','Reference'],['remark','Remark'],['createdAt','Created'],['postedAt','Posted']];
@@ -19,13 +88,30 @@
     const size=Number(pageSizeEl?.value||10),total=allRows.length,pages=Math.max(1,Math.ceil(total/size));page=Math.min(Math.max(1,page),pages);
     const start=(page-1)*size,rows=allRows.slice(start,start+size);
     headEl.innerHTML='<tr>'+cols.map(c=>`<th>${c[1]}</th>`).join('')+'</tr>';
-    bodyEl.innerHTML=rows.length?rows.map(x=>'<tr>'+cols.map(c=>`<td>${esc(x[c[0]]??'-')}</td>`).join('')+'</tr>').join(''):`<tr><td colspan="${cols.length}" class="table-empty">No records found.</td></tr>`;
+    bodyEl.innerHTML=rows.length?rows.map(x=>'<tr>'+cols.map(c=>{
+      const v=x[c[0]];
+      if(c[0]==='createdAt'||c[0]==='postedAt')return `<td>${dtCell(v)}</td>`;
+      if(c[0]==='remark')return `<td>${remarkCell(v)}</td>`;
+      return `<td>${esc(v??'-')}</td>`;
+    }).join('')+'</tr>').join(''):`<tr><td colspan="${cols.length}" class="table-empty">No records found.</td></tr>`;
     if(showingEl)showingEl.textContent=`Showing ${total?start+1:0} to ${Math.min(start+size,total)} of ${total} entries`;
+    bindFloatTips();
     if(!pagerEl)return;
     const btn=(label,target,disabled,active=false,icon='')=>`<button type="button" class="page-btn${active?' active':''}" data-page="${target}" ${disabled?'disabled':''} aria-label="${label}">${icon?`<i class="bi ${icon}"></i>`:label}</button>`;
+    // First · Prev · page window (always 1 + last, ellipsis when gaps > 1) · Next · Last — locked pager anatomy.
+    const pageList=(()=>{
+      const list=[];const add=n=>{if(n>=1&&n<=pages&&!list.includes(n))list.push(n);};
+      add(1);for(let n=page-2;n<=page+2;n++)add(n);add(pages);list.sort((a,b)=>a-b);return list;
+    })();
     let h=btn('First',1,page<=1,false,'bi-chevron-bar-left')+btn('Previous',page-1,page<=1,false,'bi-chevron-left');
-    const lo=Math.max(1,page-2),hi=Math.min(pages,page+2);for(let i=lo;i<=hi;i++)h+=btn(String(i),i,false,i===page);
-    h+=btn('Next',page+1,page>=pages,false,'bi-chevron-right')+btn('Last',pages,page>=pages,false,'bi-chevron-bar-right');pagerEl.innerHTML=h;
+    let prevN=0;
+    pageList.forEach(n=>{
+      if(prevN&&n-prevN>1)h+='<span class="smart-page-ellipsis" aria-hidden="true">…</span>';
+      h+=btn(String(n),n,false,n===page);
+      prevN=n;
+    });
+    h+=btn('Next',page+1,page>=pages,false,'bi-chevron-right')+btn('Last',pages,page>=pages,false,'bi-chevron-bar-right');
+    pagerEl.innerHTML=h;
   }
   async function fetchRows(type){
     let u=`${base}${window.OP_REPORT_ENDPOINT}?from=${encodeURIComponent(from.value)}&to=${encodeURIComponent(to.value)}`;
