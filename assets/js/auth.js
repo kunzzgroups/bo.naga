@@ -574,6 +574,35 @@
         footer.innerHTML='<a class="bo-sidebar-logout" href="#logout" data-bo-logout title="Logout"><i class="bi bi-box-arrow-right"></i><span>Logout</span></a>';
       }
     },
+    loadUiSetting: async function(){
+      let cfg={headerMenuKeys:[],headerConfigured:false,sidebarInteraction:'HOVER'};
+      try{
+        const r=await fetch(API_CONFIG.BASE_URL+'/admin/ui-setting',{headers:{...this.authHeader()},cache:'no-store'});
+        const j=await r.json().catch(()=>({}));
+        if(r.ok&&j.status!=='error'&&j.data) cfg=Object.assign(cfg,j.data);
+      }catch(e){}
+      window.__boUiSetting=cfg;
+      document.body.classList.toggle('bo-sidebar-click-mode',String(cfg.sidebarInteraction||'HOVER').toUpperCase()==='CLICK');
+      this.renderQuickNav(cfg);
+      return cfg;
+    },
+    renderQuickNav: function(cfg){
+      const topbar=document.querySelector('.report-main > .report-topbar');
+      if(!topbar)return;
+      let nav=document.getElementById('boGlobalQuickNav');
+      if(!nav){nav=document.createElement('nav');nav.id='boGlobalQuickNav';nav.className='bo-global-quicknav';nav.setAttribute('aria-label','Backoffice shortcuts');topbar.insertAdjacentElement('afterend',nav);}
+      const user=this.user();
+      const all=(Array.isArray(user&&user.menus)?user.menus:[]).map(normalizeMenu).filter(m=>m.status===1&&m.url&&m.url!=='#');
+      const allowed=new Map(all.map(m=>[m.menuKey,m]));
+      let chosen=[];
+      const configured=cfg&&cfg.headerConfigured===true;
+      if(configured){(cfg.headerMenuKeys||[]).forEach(k=>{const m=allowed.get(k);if(m)chosen.push(m);});}
+      else chosen=all.filter(m=>m.showInSidebar===1).sort((a,b)=>a.sortOrder-b.sortOrder||a.title.localeCompare(b.title)).slice(0,6);
+      const active=pageFile(location.pathname);
+      nav.innerHTML=chosen.map(m=>'<a href="'+esc(m.url)+'" class="'+(pageFile(m.url)===active?'active':'')+'" title="'+esc(m.title)+'" aria-label="'+esc(m.title)+'"><i class="bi '+esc(m.icon||'bi-circle')+'"></i><span>'+esc(m.title)+'</span></a>').join('');
+      nav.hidden=chosen.length===0;
+      if(!document.querySelector('link[data-bo-quicknav-css]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/css/bo-global-quicknav.css?v=1.0.0';l.dataset.boQuicknavCss='1';document.head.appendChild(l);}
+    },
     bindDynamicSidebarEvents: function(){
       // Some legacy pages call this explicitly while auth.js also initializes it
       // on DOMContentLoaded. Bind only once; duplicate delegated listeners would
@@ -668,12 +697,12 @@
         sidebarFlyoutHoverTimers.set(group, timer);
       }
       document.addEventListener('mouseover', function(e){
-        if(window.innerWidth < 992) return;
+        if(window.innerWidth < 992 || document.body.classList.contains('bo-sidebar-click-mode')) return;
         const group = e.target.closest && e.target.closest('.report-sidebar .nav-group');
         if(group) openSidebarFlyoutOnHover(group);
       });
       document.addEventListener('mouseout', function(e){
-        if(window.innerWidth < 992) return;
+        if(window.innerWidth < 992 || document.body.classList.contains('bo-sidebar-click-mode')) return;
         const group = e.target.closest && e.target.closest('.report-sidebar .nav-group');
         if(!group) return;
         const next = e.relatedTarget;
@@ -701,13 +730,15 @@
           const list = group && group.querySelector('.nav-group-list');
           if(!group || !list) return;
           if(window.innerWidth >= 992){
-            // Desktop flyouts are hover-only. Clicking a main menu must never pin
-            // the flyout open or make the next page load with the flyout visible.
-            // Keep the current hover flyout in place and let submenu links navigate.
             positionSidebarFlyout(group);
-            group.classList.remove('open');
-            list.classList.remove('show');
-            btn.setAttribute('aria-expanded','false');
+            if(document.body.classList.contains('bo-sidebar-click-mode')){
+              const willOpen=!group.classList.contains('bo-flyout-hover');
+              closeAllSidebarFlyouts();
+              if(willOpen){group.classList.add('bo-flyout-hover');window.__boSidebarActiveFlyout=group;btn.setAttribute('aria-expanded','true');}
+              return;
+            }
+            // Hover mode: a desktop click never pins the flyout.
+            group.classList.remove('open');list.classList.remove('show');btn.setAttribute('aria-expanded','false');
             return;
           }
           // Mobile/tablet keeps the original accordion click behaviour.
@@ -812,7 +843,7 @@
     window.BO_AUTH.injectProfile();
     window.BO_AUTH.bindDynamicSidebarEvents();
     // Sidebar is intentionally rendered only after fresh DB-backed /me + menu-group data returns.
-    window.BO_AUTH.refreshMe(true);
+    window.BO_AUTH.refreshMe(true).then(function(){ return window.BO_AUTH.loadUiSetting(); }).catch(function(){ window.BO_AUTH.loadUiSetting(); });
     document.addEventListener('click', function(e){
       const logout = e.target.closest && e.target.closest('[data-bo-logout]');
       if(logout){ e.preventDefault(); window.BO_AUTH.logout(); }
