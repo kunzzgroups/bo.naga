@@ -1503,7 +1503,7 @@ body.main-admin-detail-page .mad-modal-actions{display:flex;justify-content:flex
   }
   body.main-admin-detail-page .mad-modal-panel,
   body.main-admin-detail-page .mad-pass-modal-panel{
-    width:100%;max-width:none;border-radius:14px 14px 0 0!important;
+    width:100%;max-width:none;
     max-height:min(92dvh, 920px);overflow:auto;
   }
   body.main-admin-detail-page .mad-modal-actions{
@@ -1514,6 +1514,19 @@ body.main-admin-detail-page .mad-modal-actions{display:flex;justify-content:flex
   }
   body.main-admin-detail-page .mad-eye{
     width:44px;height:44px;right:2px;
+  }
+}
+
+/* Bottom-sheet corners belong ONLY where the dialog is really anchored to the bottom.
+   At ≤575.98px main-mobile-responsive.css forces .modal-clean to align-items:flex-end, so the
+   panel is a true sheet and square bottom corners are correct. Between 576 and 991.98px the
+   panel stays centred (bo-targeted-fixes.css pins .modal-clean:not([hidden]) to align-items:center,
+   which outranks the align-items:flex-end above), so the square corners just floated mid-screen —
+   the Add Credit defect. Above 575.98px the panel keeps the locked 8px card radius. */
+@media(max-width:575.98px){
+  body.main-admin-detail-page .mad-modal-panel,
+  body.main-admin-detail-page .mad-pass-modal-panel{
+    border-radius:14px 14px 0 0!important;
   }
 }
 
