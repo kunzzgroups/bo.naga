@@ -191,7 +191,7 @@
     const currentFile = pageFile(location.pathname);
     const isMainPanel = /^main[-_]/i.test(currentFile);
     const pinHtml = isMainPanel ? '' :
-      '<span class="bo-sidebar-pin '+(pinned?'is-pinned':'')+'" data-bo-pin-menu="'+esc(m.menuKey)+'" title="'+(pinned?'Unpin from Dashboard':'Pin to Dashboard')+'" aria-label="'+(pinned?'Unpin from Dashboard':'Pin to Dashboard')+'"><i class="bi '+(pinned?'bi-pin-angle-fill':'bi-pin-angle')+'"></i></span>';
+      '<button type="button" class="bo-sidebar-pin '+(pinned?'is-pinned':'')+'" data-bo-pin-menu="'+esc(m.menuKey)+'" title="'+(pinned?'Unpin from Dashboard':'Pin to Dashboard')+'" aria-label="'+(pinned?'Unpin from Dashboard':'Pin to Dashboard')+'"><i class="bi '+(pinned?'bi-pin-angle-fill':'bi-pin-angle')+'"></i></button>';
     return '<a href="' + href + '" class="' + cls.trim() + '" data-menu-key="' + esc(m.menuKey) + '">' +
       '<span><i class="bi ' + esc(m.icon || 'bi-circle') + ' me-2"></i>' + esc(m.title) + '</span>' + pinHtml + '</a>';
   }
@@ -459,6 +459,16 @@
       this.renderSidebar(user || this.user());
     },
     renderSidebar: function(user){
+      // Pin controls exist on every normal BO sidebar, not only dashboard.html.
+      // Load their isolated stylesheet before rendering so page-specific/native button
+      // styles can never turn the pin icon into a bordered/background button.
+      if(!document.querySelector('link[data-bo-quicknav-css]')){
+        const pinCss=document.createElement('link');
+        pinCss.rel='stylesheet';
+        pinCss.href='assets/css/bo-global-quicknav.css?v=1.1.2';
+        pinCss.dataset.boQuicknavCss='1';
+        document.head.appendChild(pinCss);
+      }
       const nav = document.querySelector('.report-nav');
       if(!nav) return;
       user = user || this.user();
@@ -650,7 +660,7 @@
       };
       const frame=document.getElementById('dashboardWorkspaceFrame');
       if(frame&&!frame.dataset.shellBound){frame.dataset.shellBound='1';frame.addEventListener('load',function(){try{const d=frame.contentDocument;if(!d)return;if(d.documentElement)d.documentElement.classList.add('dashboard-embedded-page');if(d.body)d.body.classList.add('dashboard-embedded-page');let style=d.getElementById('dashboardEmbeddedShellStyle');if(!style){style=d.createElement('style');style.id='dashboardEmbeddedShellStyle';style.textContent='html,body{width:100%!important;max-width:100%!important;margin:0!important;overflow-x:hidden!important}*,*::before,*::after{box-sizing:border-box!important}.report-sidebar,.sidebar-overlay,.report-topbar{display:none!important}.report-shell{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:100vh!important;margin:0!important;padding:0!important}.report-main{display:block!important;margin:0!important;padding:0!important;width:100%!important;max-width:100%!important;min-width:0!important}.report-content{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:20px!important;overflow-x:hidden!important}.report-content>*{max-width:100%!important;min-width:0!important}.table-wrap,.table-responsive,[class*=table-wrap],[class*=table-responsive]{max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch}.table-card,.filter-card,.summary-card,[class*=card]{max-width:100%}.container,.container-fluid{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}.dashboard-embedded-page .report-main,body.dashboard-embedded-page.sidebar-mini .report-main,body.dashboard-embedded-page.livechat-bo-page .report-main,body.dashboard-embedded-page.livechat-bo-page.sidebar-mini .report-main{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important}.dashboard-embedded-page .report-content,body.dashboard-embedded-page.sidebar-mini .report-content,body.dashboard-embedded-page.livechat-bo-page .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important;padding-left:20px!important;padding-right:20px!important}.dashboard-embedded-page .report-shell{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important}.dashboard-embedded-page .livechat-admin-shell{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .report-main,html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page.sidebar-mini .report-main{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .report-content,html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page.sidebar-mini .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;padding-left:20px!important;padding-right:20px!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .livechat-admin-shell{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}';d.head.appendChild(style);}const resizeFrame=function(){const de=d.documentElement,b=d.body;frame.style.height=Math.max(650,de?de.scrollHeight:0,b?b.scrollHeight:0)+'px';};resizeFrame();if(frame.__boResizeObserver)frame.__boResizeObserver.disconnect();if(window.ResizeObserver&&d.body){frame.__boResizeObserver=new ResizeObserver(resizeFrame);frame.__boResizeObserver.observe(d.body);}setTimeout(resizeFrame,80);setTimeout(resizeFrame,350);}catch(e){}});}
-      if(!document.querySelector('link[data-bo-quicknav-css]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/css/bo-global-quicknav.css?v=1.1.1';l.dataset.boQuicknavCss='1';document.head.appendChild(l);}
+      if(!document.querySelector('link[data-bo-quicknav-css]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/css/bo-global-quicknav.css?v=1.1.2';l.dataset.boQuicknavCss='1';document.head.appendChild(l);}
     },
     bindDynamicSidebarEvents: function(){
       // Some legacy pages call this explicitly while auth.js also initializes it

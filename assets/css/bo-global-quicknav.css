@@ -70,3 +70,83 @@ body.bo-sidebar-click-mode .report-sidebar .nav-group.bo-flyout-hover .nav-group
     flex:0 0 26px!important;
   }
 }
+
+
+/* 2026-09-21: Sidebar pin layout isolation.
+   Pin is a real button (not a span) so legacy mini-sidebar/flyout span rules cannot
+   resize, hide, wrap or offset it on pages with their own sidebar CSS. */
+.bo-sidebar-pin{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  border:0!important;
+  padding:0!important;
+  margin:0!important;
+  background:transparent!important;
+  font:inherit!important;
+  line-height:1!important;
+  box-shadow:none!important;
+  flex:0 0 26px!important;
+}
+.bo-sidebar-pin:hover,.bo-sidebar-pin:focus-visible{background:rgba(217,119,6,.12)!important;outline:none}
+.report-nav a[data-menu-key]{position:relative}
+.report-nav a[data-menu-key] > span:not(.bo-sidebar-pin){min-width:0}
+@media (min-width:992px){
+  body:not(.main-dashboard-page):not(.main-admin-detail-page) .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list a[data-menu-key]{
+    padding-right:46px!important;
+  }
+  body:not(.main-dashboard-page):not(.main-admin-detail-page) .report-sidebar .nav-group.bo-flyout-hover > .nav-group-list .bo-sidebar-pin{
+    position:absolute!important;right:10px!important;top:50%!important;transform:translateY(-50%)!important;
+    width:26px!important;height:26px!important;min-width:26px!important;max-width:26px!important;
+  }
+}
+
+/* 2026-09-21: Keep sidebar pin/unpin visually identical to the original icon-only control. */
+.bo-sidebar-pin,
+.bo-sidebar-pin:hover,
+.bo-sidebar-pin:focus,
+.bo-sidebar-pin:focus-visible,
+.bo-sidebar-pin:active,
+.bo-sidebar-pin.is-pinned{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  padding:0!important;
+}
+.bo-sidebar-pin::-moz-focus-inner{border:0!important;padding:0!important}
+
+/* 2026-09-21 final pin visual reset: override page-specific/global button skins.
+   Keep the button element for layout isolation, but render it exactly as an icon-only control. */
+html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin,
+html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin:hover,
+html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin:focus,
+html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin:focus-visible,
+html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin:active,
+html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin.is-pinned {
+  -webkit-appearance:none!important;
+  appearance:none!important;
+  background:none!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  border:none!important;
+  border-width:0!important;
+  border-style:none!important;
+  border-color:transparent!important;
+  outline:none!important;
+  outline-width:0!important;
+  box-shadow:none!important;
+  filter:none!important;
+  border-radius:0!important;
+  padding:0!important;
+  margin:0!important;
+  min-width:26px!important;
+  max-width:26px!important;
+  width:26px!important;
+  height:26px!important;
+  color:inherit!important;
+}
+html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin.is-pinned { color:#8b4513!important; }
+html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin::-moz-focus-inner { border:0!important; padding:0!important; }
