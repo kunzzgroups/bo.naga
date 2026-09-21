@@ -83,10 +83,10 @@ html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-rewar
 
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardKeyword,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > input.bo-filter-input-item{
-  width:140px !important;
-  min-width:140px !important;
-  max-width:140px !important;
-  flex:0 0 140px !important;
+  width:280px !important;
+  min-width:220px !important;
+  max-width:280px !important;
+  flex:0 0 280px !important;
   height:36px !important;
   min-height:36px !important;
   max-height:36px !important;
@@ -102,10 +102,10 @@ html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-rewar
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardType,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > select.bo-filter-select-item,
 html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters.bo-filter-row > .rounded-select-wrap{
-  width:150px !important;
-  min-width:150px !important;
-  max-width:150px !important;
-  flex:0 0 150px !important;
+  width:190px !important;
+  min-width:190px !important;
+  max-width:190px !important;
+  flex:0 0 190px !important;
   height:36px !important;
   min-height:36px !important;
   max-height:36px !important;
@@ -137,10 +137,10 @@ html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-rewar
 
 html body.vip-reward-log-page .vip-log-filters .rounded-select-wrap{
   position:relative !important;
-  width:150px !important;
-  min-width:150px !important;
-  max-width:150px !important;
-  flex:0 0 150px !important;
+  width:190px !important;
+  min-width:190px !important;
+  max-width:190px !important;
+  flex:0 0 190px !important;
   height:36px !important;
 }
 html body.vip-reward-log-page .vip-log-filters .rounded-select-wrap > select{
@@ -171,6 +171,16 @@ html body.vip-reward-log-page .vip-log-filters .rounded-select-btn{
   line-height:1 !important;
   box-shadow:none !important;
   cursor:pointer !important;
+}
+/* Beat bo-ui-standard's `body:not(#id):not(#id) ... .rounded-select-btn{height:42px}` —
+   each :not(#id) counts as ID-level specificity, so it otherwise wins over plain classes
+   above regardless of load order. Re-declare height at matching-or-higher specificity. */
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .rounded-select-wrap .rounded-select-btn,
+html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .vip-log-filters .rounded-select-wrap .rounded-select-btn{
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+  border-radius:8px !important;
 }
 html body.vip-reward-log-page .vip-log-filters .rounded-select-btn span{
   display:block !important;
@@ -1125,10 +1135,10 @@ html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters{
 }
 html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters > #rewardKeyword,
 html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters > input{
-  width:140px !important;
-  min-width:140px !important;
-  max-width:140px !important;
-  flex:0 0 140px !important;
+  width:280px !important;
+  min-width:220px !important;
+  max-width:280px !important;
+  flex:0 0 280px !important;
   flex-shrink:0 !important;
   height:36px !important;
   min-height:36px !important;
@@ -1138,10 +1148,10 @@ html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters > input{
 html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters > .rounded-select-wrap,
 html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters > #rewardType,
 html body.vip-reward-log-page .vip-log-toolbar .vip-log-filters > select{
-  width:150px !important;
-  min-width:150px !important;
-  max-width:150px !important;
-  flex:0 0 150px !important;
+  width:190px !important;
+  min-width:190px !important;
+  max-width:190px !important;
+  flex:0 0 190px !important;
   flex-shrink:0 !important;
   height:36px !important;
   min-height:36px !important;
@@ -1169,10 +1179,10 @@ html body.vip-reward-log-page .vip-log-toolbar > .bo-tx-tabs{
 }
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardKeyword,
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > input.bo-filter-input-item{
-  width:140px !important;
-  min-width:140px !important;
-  max-width:140px !important;
-  flex:0 0 140px !important;
+  width:280px !important;
+  min-width:220px !important;
+  max-width:280px !important;
+  flex:0 0 280px !important;
   flex-shrink:0 !important;
 }
 html body.vip-reward-log-page .vip-log-filters .rounded-select-wrap,
@@ -1181,18 +1191,18 @@ html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-rewar
   position:relative !important;
   display:inline-flex !important;
   align-items:stretch !important;
-  width:150px !important;
-  min-width:150px !important;
-  max-width:150px !important;
-  flex:0 0 150px !important;
+  width:190px !important;
+  min-width:190px !important;
+  max-width:190px !important;
+  flex:0 0 190px !important;
   flex-shrink:0 !important;
   height:36px !important;
   overflow:visible !important;
 }
 html body.vip-reward-log-page .vip-log-filters .rounded-select-wrap > .rounded-select-btn{
-  width:150px !important;
-  min-width:150px !important;
-  max-width:150px !important;
+  width:190px !important;
+  min-width:190px !important;
+  max-width:190px !important;
 }
 @media (max-width:768px){
   html body.vip-reward-log-page .vip-log-toolbar{
@@ -1237,10 +1247,10 @@ html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-stan
   box-shadow:0 0 0 3px rgba(245,158,11,.18) !important;
 }
 html body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-reward-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > #rewardKeyword{
-  width:140px !important;
-  min-width:140px !important;
-  max-width:140px !important;
-  flex:0 0 140px !important;
+  width:280px !important;
+  min-width:220px !important;
+  max-width:280px !important;
+  flex:0 0 280px !important;
 }
 html body.vip-reward-log-page .vip-admin-table{min-width:0 !important;width:100% !important;max-width:100% !important}
 /* ---- Status tabs (Transaction MD specimen) ---- */
@@ -1562,16 +1572,54 @@ html body.vip-log-page.vip-reward-log-page .vip-admin-table-wrap .vip-tx-table-b
 /* All / 10 / 20 / 50 / 100 ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã¯Â¿Â½ body scrolls (VIP EXP Log specimen) */
 html body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body{
   overflow-y:auto !important;
-  scrollbar-width:thin !important;
 }
 html body.vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body{
   overflow-y:hidden !important;
-  scrollbar-width:none !important;
+}
+/* Chromium: sizing/thumb colour come purely from ::-webkit-scrollbar* below. Setting
+   scrollbar-width here (even "thin") makes Chromium fall back to the native OS scrollbar
+   (arrows included) and ignore the ::-webkit-scrollbar rules — so Firefox-only fallback
+   lives behind @supports not selector(::-webkit-scrollbar). */
+@supports not selector(::-webkit-scrollbar){
+  html body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body{
+    scrollbar-width:thin !important;
+    scrollbar-color:#8B6B4A transparent !important;
+  }
+  html body.vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body{
+    scrollbar-width:none !important;
+  }
+  html[data-bo-theme="dark"] body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body{
+    scrollbar-color:#F59E0B transparent !important;
+  }
 }
 html body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body::-webkit-scrollbar{
   width:6px !important;
   height:6px !important;
   display:block !important;
+}
+html body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body::-webkit-scrollbar-track{
+  background:transparent !important;
+}
+html body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body::-webkit-scrollbar-corner{
+  background:transparent !important;
+}
+html body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body::-webkit-scrollbar-button{
+  display:none !important;
+  height:0 !important;
+  width:0 !important;
+}
+html body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body::-webkit-scrollbar-thumb{
+  background:#8B6B4A !important;
+  border-radius:999px !important;
+}
+html body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body::-webkit-scrollbar-thumb:hover{
+  background:#5C4A30 !important;
+}
+html[data-bo-theme="dark"] body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body::-webkit-scrollbar-thumb{
+  background:#F59E0B !important;
+}
+html[data-bo-theme="dark"] body.vip-log-page.vip-reward-log-page .vip-log-card:not([data-bo-autofit]) .vip-tx-table-body::-webkit-scrollbar-thumb:hover{
+  background:#D97706 !important;
 }
 html body.vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar{
   width:0 !important;
