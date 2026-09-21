@@ -800,35 +800,9 @@
           return;
         }
         const link = e.target.closest && e.target.closest('.report-nav a[href]');
-        // Dashboard is a persistent shell: sidebar page links must open inside the
-        // Dashboard workspace, exactly like a pinned shortcut, instead of navigating
-        // away and restoring that page's standalone header/sidebar layout.
-        if(link && pageFile(location.pathname)==='dashboard.html'){
-          const href=link.getAttribute('href')||'';
-          if(href && href!=='#' && !/^javascript:/i.test(href)){
-            e.preventDefault();
-            let url=href;
-            if(pageFile(url)==='dashboard.html') url='dashboard-backup.html';
-            const frame=document.getElementById('dashboardWorkspaceFrame');
-            if(frame){
-              frame.hidden=false;
-              frame.src=url;
-              const nav=document.getElementById('boGlobalQuickNav');
-              if(nav){
-                nav.querySelectorAll('a[data-dashboard-panel-url]').forEach(function(a){
-                  a.classList.toggle('active',pageFile(a.getAttribute('data-dashboard-panel-url')||'')===pageFile(href));
-                });
-              }
-              document.querySelectorAll('.report-sidebar .nav-group.bo-flyout-hover').forEach(dismissSidebarFlyout);
-              if(window.innerWidth < 992){
-                document.getElementById('reportSidebar')?.classList.remove('show');
-                document.getElementById('reportOverlay')?.classList.remove('show');
-                document.body.classList.remove('sidebar-open');
-              }
-              return;
-            }
-          }
-        }
+        // Dashboard-only chrome must not change normal BO page navigation.
+        // Sidebar links keep their original href behaviour so pages opened from the
+        // sidebar retain their standalone topbar (counters/profile/logout UI).
         if(link && window.innerWidth < 992){
           document.getElementById('reportSidebar')?.classList.remove('show');
           document.getElementById('reportOverlay')?.classList.remove('show');
