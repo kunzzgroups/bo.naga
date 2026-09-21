@@ -20,20 +20,49 @@
 .dashboard-workspace{padding:0!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:calc(100vh - 142px);background:transparent;overflow-x:hidden!important}
 .dashboard-workspace-frame{display:block;width:100%!important;max-width:100%!important;min-width:0!important;height:calc(100vh - 142px);min-height:650px;border:0;background:transparent;overflow:hidden}
 .dashboard-workspace-frame[hidden]{display:none!important}
+
+/* Dashboard shell only: remove the old top header and keep the sidebar toggle inside the sidebar. */
+.dashboard-hidden-topbar{display:none!important;height:0!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important}
+.dashboard-sidebar-brand{justify-content:space-between!important}
+.dashboard-sidebar-toggle{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:42px!important;height:42px!important;min-width:42px!important;padding:0!important;border:1px solid var(--line,#EADCC8)!important;border-radius:11px!important;background:#FFF8EB!important;color:#18191C!important;cursor:pointer!important;pointer-events:auto!important}
+.dashboard-sidebar-toggle i{font-size:22px!important}
+@media(min-width:992px){
+  body.sidebar-mini .dashboard-sidebar-brand{justify-content:center!important;padding:0!important}
+  body.sidebar-mini .dashboard-sidebar-brand>div{display:none!important}
+  body.sidebar-mini .dashboard-sidebar-toggle{display:inline-flex!important;opacity:1!important;visibility:visible!important;width:42px!important;min-width:42px!important}
+  body.sidebar-mini .report-sidebar:hover .dashboard-sidebar-brand,
+  body.sidebar-mini .report-sidebar.is-mini-hover .dashboard-sidebar-brand{justify-content:space-between!important;padding:0 14px!important}
+  body.sidebar-mini .report-sidebar:hover .dashboard-sidebar-brand>div,
+  body.sidebar-mini .report-sidebar.is-mini-hover .dashboard-sidebar-brand>div{display:block!important;opacity:1!important;visibility:visible!important;width:auto!important}
+}
+@media(max-width:991.98px){.dashboard-sidebar-toggle{display:inline-flex!important}.dashboard-sidebar-brand .close-side{display:inline-flex!important}}
+@media(min-width:992px){
+  /* After clicking the Dashboard sidebar toggle, keep the rail visibly collapsed until
+     the pointer leaves it. This prevents the normal hover-to-expand rule from making
+     the click look like it did nothing. Hover behaviour resumes on the next hover. */
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar,
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover,
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar.is-mini-hover{width:var(--rail-w)!important;max-width:var(--rail-w)!important;min-width:var(--rail-w)!important;box-shadow:none!important;overflow-x:hidden!important}
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .report-brand{justify-content:center!important;padding:0!important}
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .report-brand>div:not(.logo),
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .report-nav>a:not(.report-sub) span,
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .nav-group-btn span,
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .nav-group-btn .bi-chevron-down,
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .report-nav small{opacity:0!important;visibility:hidden!important;width:0!important;overflow:hidden!important}
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .report-nav>a:not(.report-sub),
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .nav-group-btn{justify-content:center!important;padding-left:0!important;padding-right:0!important}
+}
 </style>
 </head>
 <body class="report-body bo-charcoal bo-account-chip">
 <div class="report-shell">
   <aside class="report-sidebar" id="reportSidebar">
-    <div class="report-brand"><div>Backoffice<br><small>Admin Panel</small></div><button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button></div>
+    <div class="report-brand dashboard-sidebar-brand"><div>Backoffice<br><small>Admin Panel</small></div><button type="button" class="hamb dashboard-sidebar-toggle" data-open-sidebar aria-label="Toggle sidebar" title="Toggle sidebar"><i class="bi bi-list"></i></button><button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button></div>
     <nav class="report-nav"></nav>
   </aside>
   <div class="sidebar-overlay" data-close-sidebar></div>
   <main class="report-main">
-    <header class="report-topbar"><button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button>
-      <div class="user-title-wrap"><div class="user-title-icon"><i class="bi bi-speedometer2"></i></div><div><h1>Dashboard</h1></div></div>
-      <div class="report-actions"><button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode"><i class="bi bi-sun-fill" data-theme-icon="sun"></i><i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i></button><div data-bo-profile></div></div>
-    </header>
+    <header class="report-topbar dashboard-hidden-topbar" aria-hidden="true"></header>
     <section class="report-content dashboard-workspace">
       <iframe id="dashboardWorkspaceFrame" class="dashboard-workspace-frame" title="Dashboard selected page" hidden></iframe>
     </section>
@@ -53,5 +82,26 @@
 <script src="assets/js/livechat-global-notification.js?v=1.0.11"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 <script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
+
+<script>
+/* Dashboard-only: make the sidebar button collapse immediately even while the pointer
+   is still sitting over the sidebar. No shared sidebar behaviour is changed. */
+(function(){
+  var sidebar=document.getElementById('reportSidebar');
+  var toggle=document.querySelector('.dashboard-sidebar-toggle');
+  if(!sidebar||!toggle) return;
+  toggle.addEventListener('pointerdown',function(){
+    if(window.innerWidth>=992 && !document.body.classList.contains('sidebar-mini')){
+      document.body.classList.add('dashboard-mini-hold');
+    }
+  });
+  sidebar.addEventListener('mouseleave',function(){
+    document.body.classList.remove('dashboard-mini-hold');
+  });
+  window.addEventListener('resize',function(){
+    if(window.innerWidth<992) document.body.classList.remove('dashboard-mini-hold');
+  });
+})();
+</script>
 </body>
 </html>
