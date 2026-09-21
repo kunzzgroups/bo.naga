@@ -185,8 +185,10 @@
       ? forceActive
       : pageFile(sidebarActivePage()) === pageFile(m.url || '');
     const cls = (isSub ? 'report-sub ' : '') + (isActive ? 'active' : '');
+    const pinned = new Set((window.__boUiSetting&&Array.isArray(window.__boUiSetting.headerMenuKeys))?window.__boUiSetting.headerMenuKeys:[]).has(m.menuKey);
     return '<a href="' + href + '" class="' + cls.trim() + '" data-menu-key="' + esc(m.menuKey) + '">' +
-      '<span><i class="bi ' + esc(m.icon || 'bi-circle') + ' me-2"></i>' + esc(m.title) + '</span></a>';
+      '<span><i class="bi ' + esc(m.icon || 'bi-circle') + ' me-2"></i>' + esc(m.title) + '</span>' +
+      '<span class="bo-sidebar-pin '+(pinned?'is-pinned':'')+'" data-bo-pin-menu="'+esc(m.menuKey)+'" title="'+(pinned?'Unpin from Dashboard':'Pin to Dashboard')+'" aria-label="'+(pinned?'Unpin from Dashboard':'Pin to Dashboard')+'"><i class="bi '+(pinned?'bi-pin-angle-fill':'bi-pin-angle')+'"></i></span></a>';
   }
 
   window.BO_AUTH = {
@@ -583,84 +585,67 @@
       }catch(e){}
       window.__boUiSetting=cfg;
       document.body.classList.toggle('bo-sidebar-click-mode',String(cfg.sidebarInteraction||'HOVER').toUpperCase()==='CLICK');
+      this.renderSidebar(this.user());
       this.renderQuickNav(cfg);
       return cfg;
     },
+    saveDashboardPins: async function(keys){
+      const current=window.__boUiSetting||{headerMenuKeys:[],sidebarInteraction:'HOVER'};
+      const clean=[];const seen=new Set();
+      (keys||[]).forEach(function(k){k=String(k||'');if(k&&!seen.has(k)){seen.add(k);clean.push(k);}});
+      const r=await fetch(API_CONFIG.BASE_URL+'/admin/ui-setting',{method:'PUT',headers:{'Content-Type':'application/json',...this.authHeader()},body:JSON.stringify({headerMenuKeys:clean,sidebarInteraction:String(current.sidebarInteraction||'HOVER').toUpperCase()})});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||j.status==='error') throw new Error(j.message||'Unable to save Dashboard pins');
+      window.__boUiSetting=Object.assign({},current,j.data||{},{headerMenuKeys:clean,headerConfigured:true});
+      this.renderSidebar(this.user());
+      this.renderQuickNav(window.__boUiSetting);
+      return window.__boUiSetting;
+    },
+    toggleDashboardPin: async function(menuKey){
+      menuKey=String(menuKey||'');
+      if(!menuKey)return;
+      const cfg=window.__boUiSetting||{headerMenuKeys:[],sidebarInteraction:'HOVER'};
+      const before=Array.isArray(cfg.headerMenuKeys)?cfg.headerMenuKeys.slice():[];
+      const keys=before.slice();
+      const i=keys.indexOf(menuKey);if(i>=0)keys.splice(i,1);else keys.push(menuKey);
+      // Optimistic update makes the pin/unpin action visible immediately. The API
+      // remains the source of truth; on failure restore the previous state.
+      window.__boUiSetting=Object.assign({},cfg,{headerMenuKeys:keys,headerConfigured:true});
+      this.renderSidebar(this.user());
+      this.renderQuickNav(window.__boUiSetting);
+      try{return await this.saveDashboardPins(keys);}
+      catch(err){window.__boUiSetting=Object.assign({},cfg,{headerMenuKeys:before});this.renderSidebar(this.user());this.renderQuickNav(window.__boUiSetting);throw err;}
+    },
     renderQuickNav: function(cfg){
-      // Dashboard shortcuts are intentionally dashboard-only. The UI setting is
-      // still loaded globally because sidebar interaction applies to every page.
       const activeFile=pageFile(location.pathname);
       let nav=document.getElementById('boGlobalQuickNav');
-      if(activeFile!=='dashboard.html'){
-        if(nav) nav.remove();
-        return;
-      }
-      const topbar=document.querySelector('.report-main > .report-topbar');
-      if(!topbar)return;
-      if(!nav){nav=document.createElement('nav');nav.id='boGlobalQuickNav';nav.className='bo-global-quicknav';nav.setAttribute('aria-label','Backoffice shortcuts');topbar.insertAdjacentElement('afterend',nav);}
-
+      if(activeFile!=='dashboard.html'){if(nav)nav.remove();return;}
+      const topbar=document.querySelector('.report-main > .report-topbar');if(!topbar)return;
+      if(!nav){nav=document.createElement('nav');nav.id='boGlobalQuickNav';nav.className='bo-global-quicknav';nav.setAttribute('aria-label','Dashboard pinned pages');topbar.insertAdjacentElement('afterend',nav);}
       const user=this.user();
       const all=(Array.isArray(user&&user.menus)?user.menus:[]).map(normalizeMenu).filter(m=>m.status===1&&m.url&&m.url!=='#');
-      const allowed=new Map(all.map(m=>[m.menuKey,m]));
-      let chosen=[];
-      const configured=cfg&&cfg.headerConfigured===true;
-      if(configured){(cfg.headerMenuKeys||[]).forEach(k=>{const m=allowed.get(k);if(m)chosen.push(m);});}
-      else chosen=all.filter(m=>m.showInSidebar===1).sort((a,b)=>a.sortOrder-b.sortOrder||a.title.localeCompare(b.title)).slice(0,6);
-      nav.innerHTML=chosen.map(m=>'<a href="'+esc(m.url)+'" data-dashboard-panel-url="'+esc(m.url)+'" title="'+esc(m.title)+'" aria-label="'+esc(m.title)+'"><i class="bi '+esc(m.icon||'bi-circle')+'"></i><span>'+esc(m.title)+'</span></a>').join('');
+      const allowed=new Map(all.map(m=>[m.menuKey,m]));let chosen=[];
+      (cfg&&Array.isArray(cfg.headerMenuKeys)?cfg.headerMenuKeys:[]).forEach(k=>{const m=allowed.get(k);if(m)chosen.push(m);});
+      const cols=Math.max(1,Math.min(12,chosen.length));nav.style.setProperty('--bo-nav-cols',String(cols));
+      nav.innerHTML=chosen.map(m=>'<a href="'+esc(m.url)+'" draggable="true" data-dashboard-panel-url="'+esc(m.url)+'" data-dashboard-menu-key="'+esc(m.menuKey)+'" title="'+esc(m.title)+'" aria-label="'+esc(m.title)+'"><i class="bi '+esc(m.icon||'bi-circle')+'"></i><span>'+esc(m.title)+'</span><span class="bo-dashboard-unpin" data-dashboard-unpin="'+esc(m.menuKey)+'" title="Unpin from Dashboard" aria-label="Unpin '+esc(m.title)+'"><i class="bi bi-pin-angle-fill"></i></span></a>').join('');
       nav.hidden=chosen.length===0;
-      nav.onclick=function(event){
-        const link=event.target.closest('a[data-dashboard-panel-url]');
-        if(!link)return;
-        event.preventDefault();
-        let url=link.getAttribute('data-dashboard-panel-url')||'';
-        // The Dashboard shortcut opens the preserved old dashboard content instead
-        // of recursively loading dashboard.html inside itself.
-        if(pageFile(url)==='dashboard.html') url='dashboard-backup.html';
-        const frame=document.getElementById('dashboardWorkspaceFrame');
-        if(!frame){ location.href=link.href; return; }
-        nav.querySelectorAll('a').forEach(a=>a.classList.remove('active'));
-        link.classList.add('active');
-        frame.hidden=false;
-        frame.src=url;
+      let dragged=null,dragMoved=false,dragSaving=false;
+      nav.ondragstart=function(e){const a=e.target.closest('a[data-dashboard-menu-key]');if(!a)return;dragged=a;dragMoved=false;a.classList.add('is-dragging');if(e.dataTransfer){e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',a.dataset.dashboardMenuKey||'');}};
+      nav.ondragover=function(e){if(!dragged)return;e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect='move';const over=e.target.closest('a[data-dashboard-menu-key]');if(!over||over===dragged)return;const r=over.getBoundingClientRect();const horizontal=Math.abs(e.clientX-(r.left+r.width/2))>=Math.abs(e.clientY-(r.top+r.height/2));const before=horizontal?e.clientX<r.left+r.width/2:e.clientY<r.top+r.height/2;const ref=before?over:over.nextElementSibling;if(ref!==dragged&&dragged.nextElementSibling!==ref){nav.insertBefore(dragged,ref);dragMoved=true;}};
+      nav.ondrop=function(e){if(dragged)e.preventDefault();};
+      nav.ondragend=async function(){if(!dragged)return;dragged.classList.remove('is-dragging');dragged=null;if(!dragMoved)return;dragSaving=true;const keys=[...nav.querySelectorAll('[data-dashboard-menu-key]')].map(a=>a.dataset.dashboardMenuKey);const previous=Array.isArray(window.__boUiSetting&&window.__boUiSetting.headerMenuKeys)?window.__boUiSetting.headerMenuKeys.slice():[];window.__boUiSetting=Object.assign({},window.__boUiSetting||{},{headerMenuKeys:keys,headerConfigured:true});try{await BO_AUTH.saveDashboardPins(keys);}catch(err){console.error(err);window.__boUiSetting=Object.assign({},window.__boUiSetting||{},{headerMenuKeys:previous});BO_AUTH.renderSidebar(BO_AUTH.user());BO_AUTH.renderQuickNav(window.__boUiSetting);}finally{setTimeout(function(){dragSaving=false;},0);}};
+      nav.onclick=async function(event){
+        if(dragSaving){event.preventDefault();return;}
+        const unpin=event.target.closest('[data-dashboard-unpin]');
+        if(unpin){event.preventDefault();event.stopPropagation();const key=unpin.getAttribute('data-dashboard-unpin');const active=unpin.closest('a')?.classList.contains('active');try{await BO_AUTH.toggleDashboardPin(key);if(active){const f=document.getElementById('dashboardWorkspaceFrame');if(f){f.src='about:blank';f.hidden=true;}}}catch(err){console.error(err);}return;}
+        const link=event.target.closest('a[data-dashboard-panel-url]');if(!link)return;
+        event.preventDefault();let url=link.getAttribute('data-dashboard-panel-url')||'';if(pageFile(url)==='dashboard.html')url='dashboard-backup.html';
+        const frame=document.getElementById('dashboardWorkspaceFrame');if(!frame){location.href=link.href;return;}
+        nav.querySelectorAll('a').forEach(a=>a.classList.remove('active'));link.classList.add('active');frame.hidden=false;frame.src=url;
       };
       const frame=document.getElementById('dashboardWorkspaceFrame');
-      if(frame && !frame.dataset.shellBound){
-        frame.dataset.shellBound='1';
-        frame.addEventListener('load',function(){
-          try{
-            const d=frame.contentDocument;
-            if(!d)return;
-            // Mark the child page as embedded so its normal desktop sidebar offsets
-            // cannot reserve a second (invisible) sidebar inside the dashboard.
-            if(d.documentElement) d.documentElement.classList.add('dashboard-embedded-page');
-            if(d.body) d.body.classList.add('dashboard-embedded-page');
-            let style=d.getElementById('dashboardEmbeddedShellStyle');
-            if(!style){
-              style=d.createElement('style');
-              style.id='dashboardEmbeddedShellStyle';
-              style.textContent='html,body{width:100%!important;max-width:100%!important;margin:0!important;overflow-x:hidden!important}*,*::before,*::after{box-sizing:border-box!important}.report-sidebar,.sidebar-overlay,.report-topbar{display:none!important}.report-shell{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:100vh!important;margin:0!important;padding:0!important}.report-main{display:block!important;margin:0!important;padding:0!important;width:100%!important;max-width:100%!important;min-width:0!important}.report-content{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:20px!important;overflow-x:hidden!important}.report-content>*{max-width:100%!important;min-width:0!important}.table-wrap,.table-responsive,[class*=table-wrap],[class*=table-responsive]{max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch}.table-card,.filter-card,.summary-card,[class*=card]{max-width:100%}.container,.container-fluid{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}.dashboard-embedded-page .report-main,body.dashboard-embedded-page.sidebar-mini .report-main,body.dashboard-embedded-page.livechat-bo-page .report-main,body.dashboard-embedded-page.livechat-bo-page.sidebar-mini .report-main{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important}.dashboard-embedded-page .report-content,body.dashboard-embedded-page.sidebar-mini .report-content,body.dashboard-embedded-page.livechat-bo-page .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important;padding-left:20px!important;padding-right:20px!important}.dashboard-embedded-page .report-shell{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important}.dashboard-embedded-page .livechat-admin-shell{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}';
-              d.head.appendChild(style);
-            }
-            // Keep every embedded BO page inside the dashboard workspace width and
-            // grow the frame with its content so page controls never sit underneath
-            // or outside the dashboard shell.
-            const resizeFrame=function(){
-              const de=d.documentElement, b=d.body;
-              const h=Math.max(650, de?de.scrollHeight:0, b?b.scrollHeight:0);
-              frame.style.height=h+'px';
-            };
-            resizeFrame();
-            if(frame.__boResizeObserver) frame.__boResizeObserver.disconnect();
-            if(window.ResizeObserver && d.body){
-              frame.__boResizeObserver=new ResizeObserver(resizeFrame);
-              frame.__boResizeObserver.observe(d.body);
-            }
-            setTimeout(resizeFrame,80);
-            setTimeout(resizeFrame,350);
-          }catch(e){}
-        });
-      }
-      if(!document.querySelector('link[data-bo-quicknav-css]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/css/bo-global-quicknav.css?v=1.0.0';l.dataset.boQuicknavCss='1';document.head.appendChild(l);}
+      if(frame&&!frame.dataset.shellBound){frame.dataset.shellBound='1';frame.addEventListener('load',function(){try{const d=frame.contentDocument;if(!d)return;if(d.documentElement)d.documentElement.classList.add('dashboard-embedded-page');if(d.body)d.body.classList.add('dashboard-embedded-page');let style=d.getElementById('dashboardEmbeddedShellStyle');if(!style){style=d.createElement('style');style.id='dashboardEmbeddedShellStyle';style.textContent='html,body{width:100%!important;max-width:100%!important;margin:0!important;overflow-x:hidden!important}*,*::before,*::after{box-sizing:border-box!important}.report-sidebar,.sidebar-overlay,.report-topbar{display:none!important}.report-shell{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:100vh!important;margin:0!important;padding:0!important}.report-main{display:block!important;margin:0!important;padding:0!important;width:100%!important;max-width:100%!important;min-width:0!important}.report-content{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:20px!important;overflow-x:hidden!important}.report-content>*{max-width:100%!important;min-width:0!important}.table-wrap,.table-responsive,[class*=table-wrap],[class*=table-responsive]{max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch}.table-card,.filter-card,.summary-card,[class*=card]{max-width:100%}.container,.container-fluid{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}.dashboard-embedded-page .report-main,body.dashboard-embedded-page.sidebar-mini .report-main,body.dashboard-embedded-page.livechat-bo-page .report-main,body.dashboard-embedded-page.livechat-bo-page.sidebar-mini .report-main{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important}.dashboard-embedded-page .report-content,body.dashboard-embedded-page.sidebar-mini .report-content,body.dashboard-embedded-page.livechat-bo-page .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important;padding-left:20px!important;padding-right:20px!important}.dashboard-embedded-page .report-shell{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important}.dashboard-embedded-page .livechat-admin-shell{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}';d.head.appendChild(style);}const resizeFrame=function(){const de=d.documentElement,b=d.body;frame.style.height=Math.max(650,de?de.scrollHeight:0,b?b.scrollHeight:0)+'px';};resizeFrame();if(frame.__boResizeObserver)frame.__boResizeObserver.disconnect();if(window.ResizeObserver&&d.body){frame.__boResizeObserver=new ResizeObserver(resizeFrame);frame.__boResizeObserver.observe(d.body);}setTimeout(resizeFrame,80);setTimeout(resizeFrame,350);}catch(e){}});}
+      if(!document.querySelector('link[data-bo-quicknav-css]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/css/bo-global-quicknav.css?v=1.1.0';l.dataset.boQuicknavCss='1';document.head.appendChild(l);}
     },
     bindDynamicSidebarEvents: function(){
       // Some legacy pages call this explicitly while auth.js also initializes it
@@ -782,6 +767,8 @@
         if(e.key === 'Escape') closeAllSidebarFlyouts();
       });
       document.addEventListener('click', function(e){
+        const pin=e.target.closest&&e.target.closest('[data-bo-pin-menu]');
+        if(pin){e.preventDefault();e.stopPropagation();const key=pin.getAttribute('data-bo-pin-menu');pin.disabled=true;BO_AUTH.toggleDashboardPin(key).catch(function(err){console.error(err);}).finally(function(){pin.disabled=false;});return;}
         const btn = e.target.closest && e.target.closest('.nav-group-btn');
         if(btn){
           e.preventDefault();
