@@ -1069,9 +1069,14 @@
     items.unshift({id:currentId,type:currentType||'BRAND_OWNER',
       label:(currentLabel||currentType||currentId)+' (current)'});
     match=items[0];
+   }else if(items.length){
+    // Nothing anywhere carries a role. The list grid shows every such merchant as "Brand Owner"
+    // (roleName() ends in a hardcoded 'Brand Owner' default, and the filter/export reuse it), so
+    // this picker matches the grid instead of inventing a "No role assigned" state that no other
+    // view has. The templates are already filtered to BRAND_OWNER, so the first is that role.
+    match=items[0];
    }else{
-    // No role yet. Offer an explicit empty choice instead of letting the first template become
-    // the default and be silently granted by an unrelated save.
+    // No templates configured at all — the only honest thing left to show.
     items.unshift({id:'',type:'',label:'No role assigned'});
     match=items[0];
    }
