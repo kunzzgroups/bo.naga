@@ -64,23 +64,211 @@
     $('targetHelp').textContent=apply==='SITE_ASSET'?'The selected Site Customize image can use the same built-in or custom effects. Language-specific replacement images inherit the same animation automatically.':scope==='PROVIDER'?'Selecting a provider can animate the provider card itself or every game from that provider.':scope==='CATEGORY'?'When Category Button is selected, an enabled BO rule overrides the original Naga category animation. Disabling/deleting the rule restores the original behavior. Category scope can also target providers/games assigned to it.':'Use One Game when only a specific game should animate.';
   }
   function customNameFromType(type){const t=String(type||'').toUpperCase();return t.startsWith('CUSTOM_')?t.slice(7):''}
-  function refreshCustomField(){const custom=$('animationType').value==='CUSTOM';$('customEffectField').hidden=!custom;if(!custom)$('customEffectName').value=''}
+  function refreshCustomField(){
+    const custom=$('animationType').value==='CUSTOM';
+    $('customEffectField').hidden=!custom;
+    const help=$('customHelp');
+    if(help) help.hidden=!custom;
+    if(!custom)$('customEffectName').value='';
+  }
+  function animationLabel(){
+    const sel=$('animationType');
+    const opt=sel&&sel.selectedOptions[0];
+    if($('animationType').value==='CUSTOM'){
+      const n=String($('customEffectName').value||'').trim();
+      return n?('Custom · '+n):'Custom';
+    }
+    return opt?opt.textContent:'Animation';
+  }
   function preview(){
-    const el=$('effectPreview'),type=$('animationType').value.toLowerCase().replaceAll('_','-'),speed=$('speed').value,intensity=$('intensity').value;
-    refreshCustomField();el.className='effect-preview';el.style.animationDuration=speed==='SLOW'?'3.4s':speed==='FAST'?'1.25s':'2.35s';el.style.setProperty('--naga-effect-distance',intensity==='LOW'?'4px':intensity==='HIGH'?'11px':'7px');el.style.setProperty('--naga-effect-scale',intensity==='LOW'?'1.018':intensity==='HIGH'?'1.065':'1.035');el.style.setProperty('--naga-effect-glow',intensity==='LOW'?'8px':intensity==='HIGH'?'22px':'14px');
-    if(type==='custom'){el.textContent=$('customEffectName').value.trim()||'CUSTOM';return}
-    el.textContent='TITANX';if(type!=='none')el.classList.add('fx-'+type);
+    const el=$('effectPreview');
+    if(!el) return;
+    const type=$('animationType').value.toLowerCase().replaceAll('_','-');
+    const speed=$('speed').value, intensity=$('intensity').value;
+    const duration=speed==='SLOW'?'3.4s':speed==='FAST'?'1.25s':'2.35s';
+    refreshCustomField();
+    el.className='effect-preview';
+    el.style.animation='none';
+    el.style.setProperty('--naga-effect-duration', duration);
+    el.style.setProperty('--naga-effect-distance', intensity==='LOW'?'6px':intensity==='HIGH'?'14px':'9px');
+    el.style.setProperty('--naga-effect-scale', intensity==='LOW'?'1.03':intensity==='HIGH'?'1.08':'1.05');
+    el.style.setProperty('--naga-effect-glow', intensity==='LOW'?'10px':intensity==='HIGH'?'24px':'16px');
+    if(type==='custom'){el.textContent=$('customEffectName').value.trim()||'CUSTOM'}
+    else{
+      el.textContent='TITANX';
+      if(type!=='none') el.classList.add('fx-'+type);
+    }
+    // Force animation restart after class swap
+    void el.offsetWidth;
+    el.style.animation='';
+    el.style.animationDuration=duration;
+    const hint=$('previewHint');
+    if(hint){
+      const sOpt=$('speed').selectedOptions[0], iOpt=$('intensity').selectedOptions[0];
+      hint.textContent=animationLabel()+' · '+(sOpt?sOpt.textContent:speed)+' · '+(iOpt?iOpt.textContent:intensity);
+    }
   }
   function targetName(rule){if(rule.scopeType==='GLOBAL')return 'All';return rule.targetName||rule.targetCode||('#'+rule.targetId)}
-  function effectLabel(type){const c=customNameFromType(type);return c?'CUSTOM: '+c:String(type||'').replaceAll('_',' + ')}
-  function render(){const body=$('effectList');$('effectEmpty').hidden=rules.length>0;body.innerHTML=rules.map(r=>'<tr><td><b>'+esc(r.applyTo)+'</b></td><td><span class="effect-badge">'+esc(r.scopeType)+'</span> '+esc(targetName(r))+'</td><td>'+esc(effectLabel(r.animationType))+'</td><td>'+esc(r.speed)+'</td><td>'+esc(r.intensity)+'</td><td><span class="effect-badge '+(Number(r.enabled)===1?'':'off')+'">'+(Number(r.enabled)===1?'Enabled':'Disabled')+'</span></td><td>'+Number(r.sortOrder||0)+'</td><td><div class="effect-row-actions"><button class="effect-icon-btn" data-edit="'+r.id+'" title="Edit"><i class="bi bi-pencil"></i></button><button class="effect-icon-btn" data-delete="'+r.id+'" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>').join('')}
+  function titleCaseWords(v){
+    return String(v==null?'':v).trim().replace(/\s+/g,' ').toLowerCase().replace(/\b[a-z]/g,c=>c.toUpperCase());
+  }
+  function applyToLabel(v){
+    const map={GAME:'Game',PROVIDER:'Provider',CATEGORY:'Category',CATEGORY_BUTTON:'Category Button',SITE_ASSET:'Site Asset'};
+    return map[String(v||'').toUpperCase()]||titleCaseWords(String(v||'').replaceAll('_',' '));
+  }
+  function scopeLabel(v){
+    const map={GLOBAL:'Global',CATEGORY:'Category',PROVIDER:'Provider',GAME:'Game',ASSET:'Asset'};
+    return map[String(v||'').toUpperCase()]||titleCaseWords(String(v||'').replaceAll('_',' '));
+  }
+  function metaLabel(v){return titleCaseWords(String(v||'').replaceAll('_',' '))}
+  function effectLabel(type){
+    const c=customNameFromType(type);
+    if(c) return 'Custom · '+titleCaseWords(c.replaceAll('_',' '));
+    return titleCaseWords(String(type||'').replaceAll('_',' + '));
+  }
+  let statusFilter='on', elementFilter='';
+  function filteredRules(){
+    return rules.filter(r=>{
+      const on=Number(r.enabled)===1;
+      if(statusFilter==='on' && !on) return false;
+      if(statusFilter==='off' && on) return false;
+      if(elementFilter && String(r.applyTo||'')!==elementFilter) return false;
+      return true;
+    });
+  }
+  function syncFilterChrome(){
+    document.querySelectorAll('.effect-filter').forEach(btn=>{
+      const f=btn.dataset.filter;
+      const isStatus=['all','on','off'].includes(f);
+      const active=isStatus ? statusFilter===f : elementFilter===f;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-pressed', active?'true':'false');
+    });
+    const onN=rules.filter(r=>Number(r.enabled)===1).length;
+    const set=(key,n)=>{const el=document.querySelector('[data-filter-count="'+key+'"]');if(el)el.textContent=String(n)};
+    set('all',rules.length);set('on',onN);set('off',rules.length-onN);
+    const statusTrack=document.querySelector('.effect-status-tabs');
+    if(statusTrack&&window.BO_SEG_BOUNCE){
+      try{window.BO_SEG_BOUNCE.sync(statusTrack);}catch(_){}
+    }
+  }
+  function syncCount(){
+    const countEl=$('effectCount'), wrap=$('effectWallWrap'), empty=$('effectEmpty'), filterEmpty=$('effectFilterEmpty');
+    const n=rules.length, shown=filteredRules().length;
+    if(countEl){countEl.textContent=String(n);countEl.hidden=n===0}
+    if(empty) empty.hidden=n>0;
+    if(filterEmpty) filterEmpty.hidden=!(n>0 && shown===0);
+    if(wrap){wrap.hidden=n===0 || shown===0;wrap.classList.toggle('is-empty', n===0 || shown===0)}
+    syncFilterChrome();
+  }
+  function render(){
+    const body=$('effectList');
+    if(!body) return;
+    const editingId=String($('effectId').value||'');
+    const rows=filteredRules();
+    syncCount();
+    body.innerHTML=rows.map(r=>{
+      const on=Number(r.enabled)===1;
+      const active=editingId && String(r.id)===editingId;
+      const fx=effectLabel(r.animationType);
+      const where=[applyToLabel(r.applyTo),scopeLabel(r.scopeType),targetName(r)].filter(Boolean).join(' · ');
+      const meta=[metaLabel(r.speed),metaLabel(r.intensity),'Priority '+Number(r.sortOrder||0)].join(' · ');
+      return (
+        '<article class="effect-rule-card'+(active?' is-editing':'')+(on?' is-on':' is-off')+'" role="listitem" data-rule-id="'+r.id+'" tabindex="0" aria-label="'+esc(fx)+' · '+(on?'Enabled':'Disabled')+' · '+esc(where)+'">'+
+          '<header class="effect-rule-card-head">'+
+            '<p class="effect-rule-fx" title="'+esc(fx)+'">'+esc(fx)+'</p>'+
+            '<div class="effect-row-actions">'+
+              '<button type="button" class="effect-icon-btn" data-edit="'+r.id+'" title="Edit" aria-label="Edit"><i class="bi bi-pencil"></i></button>'+
+              '<button type="button" class="effect-icon-btn" data-delete="'+r.id+'" title="Delete" aria-label="Delete"><i class="bi bi-trash"></i></button>'+
+            '</div>'+
+          '</header>'+
+          '<p class="effect-rule-where" title="'+esc(where)+'">'+esc(where)+'</p>'+
+          '<p class="effect-rule-meta-line">'+esc(meta)+'</p>'+
+        '</article>'
+      );
+    }).join('');
+  }
   async function loadRules(){const j=await json(base()+'/admin/animation-setting/list');rules=dataOf(j);render()}
-  function reset(){ $('effectForm').reset();$('effectId').value='';$('effectFormTitle').textContent='Create Animation Rule';$('applyTo').value='GAME';refreshScopeOptions('GLOBAL');$('scopeType').value='GLOBAL';$('animationType').value='FLOAT_GLOW';$('customEffectName').value='';$('speed').value='NORMAL';$('intensity').value='MEDIUM';$('enabled').value='1';$('sortOrder').value='0';refreshTarget();preview();setStatus('') }
-  function edit(id){const r=rules.find(x=>String(x.id)===String(id));if(!r)return;$('effectId').value=r.id;$('effectFormTitle').textContent='Edit Animation Rule #'+r.id;$('applyTo').value=r.applyTo;refreshScopeOptions(r.scopeType);$('scopeType').value=r.scopeType;const custom=customNameFromType(r.animationType);$('animationType').value=custom?'CUSTOM':r.animationType;refreshCustomOptions(custom);$('customEffectName').value=custom;$('speed').value=r.speed;$('intensity').value=r.intensity;$('enabled').value=String(r.enabled);$('sortOrder').value=String(r.sortOrder||0);refreshTarget((r.scopeType==='PROVIDER'||r.scopeType==='ASSET')?r.targetCode:r.targetId);preview();window.scrollTo({top:0,behavior:'smooth'})}
+  function reset(){ $('effectForm').reset();$('effectId').value='';const title=$('effectFormTitle');if(title)title.textContent='Create Animation Rule';$('applyTo').value='GAME';refreshScopeOptions('GLOBAL');$('scopeType').value='GLOBAL';$('animationType').value='FLOAT_GLOW';$('customEffectName').value='';$('speed').value='NORMAL';$('intensity').value='MEDIUM';$('enabled').value='1';$('sortOrder').value='0';refreshTarget();preview();setStatus('');render() }
+  function edit(id){const r=rules.find(x=>String(x.id)===String(id));if(!r)return;setWorkspaceMode('rule');$('effectId').value=r.id;const title=$('effectFormTitle');if(title)title.textContent='Edit Rule #'+r.id;$('applyTo').value=r.applyTo;refreshScopeOptions(r.scopeType);$('scopeType').value=r.scopeType;const custom=customNameFromType(r.animationType);$('animationType').value=custom?'CUSTOM':r.animationType;refreshCustomOptions(custom);$('customEffectName').value=custom;$('speed').value=r.speed;$('intensity').value=r.intensity;$('enabled').value=String(r.enabled);$('sortOrder').value=String(r.sortOrder||0);refreshTarget((r.scopeType==='PROVIDER'||r.scopeType==='ASSET')?r.targetCode:r.targetId);preview();render();const composer=document.querySelector('.effect-card--composer');if(composer)composer.scrollIntoView({behavior:'smooth',block:'nearest'});else window.scrollTo({top:0,behavior:'smooth'})}
   function targetInfo(){const scope=$('scopeType').value,v=$('targetValue').value,opt=$('targetValue').selectedOptions[0];if(scope==='GLOBAL')return {targetName:'All'};if(!v)throw new Error('Please select a target');if(scope==='PROVIDER'||scope==='ASSET')return {targetCode:v,targetName:opt?opt.textContent:v};return {targetId:Number(v),targetName:opt?opt.textContent:v}}
-  function animationTypeValue(){if($('animationType').value!=='CUSTOM')return $('animationType').value;const name=String($('customEffectName').value||'').trim().toUpperCase();if(!name)throw new Error('Please select a custom effect.');const fx=customEffects.find(x=>String(x.effectName||'').toUpperCase()===name);if(!fx)throw new Error('Selected custom effect no longer exists.');if(Number(fx.enabled)!==1)throw new Error('Selected custom effect is disabled. Enable it in Layout Section first.');return 'CUSTOM_'+name}
+  function animationTypeValue(){if($('animationType').value!=='CUSTOM')return $('animationType').value;const name=String($('customEffectName').value||'').trim().toUpperCase();if(!name)throw new Error('Please select a custom effect.');const fx=customEffects.find(x=>String(x.effectName||'').toUpperCase()===name);if(!fx)throw new Error('Selected custom effect no longer exists.');if(Number(fx.enabled)!==1)throw new Error('Selected custom effect is disabled. Enable it in the Create Effect tab first.');return 'CUSTOM_'+name}
+  function setWorkspaceMode(mode){
+    const next=mode==='effect'?'effect':'rule';
+    const layout=$('animationLayout');
+    const ledger=$('animationLedger');
+    if(layout) layout.setAttribute('data-effect-mode',next);
+    if(ledger) ledger.hidden=next==='effect';
+    document.querySelectorAll('[data-effect-mode]').forEach(btn=>{
+      if(!btn.classList.contains('bo-tx-tab'))return;
+      const on=btn.dataset.effectMode===next;
+      btn.classList.toggle('is-active',on);
+      btn.setAttribute('aria-pressed',on?'true':'false');
+    });
+    document.querySelectorAll('[data-effect-panel]').forEach(panel=>{
+      const on=panel.dataset.effectPanel===next;
+      panel.classList.toggle('is-active',on);
+      panel.hidden=!on;
+    });
+    if(window.CustomAnimationManager&&typeof CustomAnimationManager.setActive==='function'){
+      CustomAnimationManager.setActive(next==='effect');
+    }
+    const modeTrack=document.querySelector('.effect-mode-tabs');
+    if(modeTrack&&window.BO_SEG_BOUNCE){
+      try{window.BO_SEG_BOUNCE.sync(modeTrack)}catch(_){}
+    }
+    if(next==='rule'){
+      loadCustomEffects().catch(()=>{});
+    }
+  }
   $('applyTo').addEventListener('change',()=>{refreshScopeOptions();refreshTarget();});$('scopeType').addEventListener('change',()=>refreshTarget());['animationType','speed','intensity'].forEach(id=>$(id).addEventListener('change',preview));$('customEffectName').addEventListener('change',preview);$('resetEffect').addEventListener('click',reset);$('refreshEffect').addEventListener('click',()=>loadRules().catch(e=>setStatus(e.message,true)));
-  $('effectForm').addEventListener('submit',async e=>{e.preventDefault();try{const payload=Object.assign({id:$('effectId').value?Number($('effectId').value):null,applyTo:$('applyTo').value,scopeType:$('scopeType').value,animationType:animationTypeValue(),speed:$('speed').value,intensity:$('intensity').value,enabled:Number($('enabled').value),sortOrder:Number($('sortOrder').value||0)},targetInfo());await json(base()+'/admin/animation-setting/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});setStatus('Animation rule saved successfully. On frontend refresh the latest rule is revalidated immediately; the previous cached rule is only used as an instant startup fallback.');await loadRules();reset()}catch(err){setStatus(err.message,true)}});
-  $('effectList').addEventListener('click',async e=>{const editBtn=e.target.closest('[data-edit]'),delBtn=e.target.closest('[data-delete]');if(editBtn)return edit(editBtn.dataset.edit);if(delBtn){if(!(await BO_DIALOG.confirm('Delete this animation rule?',{title:'Delete Animation Rule',confirmText:'Delete',type:'danger'})))return;try{await json(base()+'/admin/animation-setting/delete?id='+encodeURIComponent(delBtn.dataset.delete),{method:'POST'});await loadRules();setStatus('Animation rule deleted. Refresh Naga and the original built-in behavior is restored after the latest rules are revalidated.')}catch(err){setStatus(err.message,true)}}});
-  Promise.all([loadTargets(),loadRules(),loadCustomEffects()]).then(()=>{reset()}).catch(e=>setStatus(e.message,true));
+  document.querySelector('.effect-mode-tabs')?.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-effect-mode]');
+    if(!btn)return;
+    setWorkspaceMode(btn.dataset.effectMode);
+  });
+  document.addEventListener('bo:custom-animation-changed',()=>{loadCustomEffects().catch(()=>{})});
+  $('effectForm').addEventListener('submit',async e=>{e.preventDefault();try{const payload=Object.assign({id:$('effectId').value?Number($('effectId').value):null,applyTo:$('applyTo').value,scopeType:$('scopeType').value,animationType:animationTypeValue(),speed:$('speed').value,intensity:$('intensity').value,enabled:Number($('enabled').value),sortOrder:Number($('sortOrder').value||0)},targetInfo());await json(base()+'/admin/animation-setting/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});setStatus('Rule saved. Frontend picks it up on the next refresh.');await loadRules();reset()}catch(err){setStatus(err.message,true)}});
+  document.querySelector('.effect-wall-toolbar')?.addEventListener('click',e=>{
+    const btn=e.target.closest('.effect-filter');if(!btn)return;
+    const f=btn.dataset.filter;
+    if(['all','on','off'].includes(f)){
+      statusFilter=f;
+    }else{
+      elementFilter=elementFilter===f?'':f;
+    }
+    render();
+  });
+  $('effectList').addEventListener('click',async e=>{
+    const delBtn=e.target.closest('[data-delete]');
+    const editBtn=e.target.closest('[data-edit]');
+    const card=e.target.closest('.effect-rule-card');
+    if(delBtn){
+      e.stopPropagation();
+      if(!(await BO_DIALOG.confirm('Delete this animation rule?',{title:'Delete Animation Rule',confirmText:'Delete',type:'danger'})))return;
+      try{await json(base()+'/admin/animation-setting/delete?id='+encodeURIComponent(delBtn.dataset.delete),{method:'POST'});await loadRules();setStatus('Rule deleted. Built-in behaviour returns after Naga revalidates.')}catch(err){setStatus(err.message,true)}
+      return;
+    }
+    if(editBtn){e.stopPropagation();return edit(editBtn.dataset.edit)}
+    if(card) return edit(card.dataset.ruleId);
+  });
+  $('effectList').addEventListener('keydown',e=>{
+    if(e.key!=='Enter' && e.key!==' ') return;
+    const card=e.target.closest('.effect-rule-card');
+    if(!card || e.target.closest('button')) return;
+    e.preventDefault();
+    edit(card.dataset.ruleId);
+  });
+  Promise.all([loadTargets(),loadRules(),loadCustomEffects()]).then(()=>{
+    reset();
+    setWorkspaceMode('rule');
+    const statusTrack=document.querySelector('.effect-status-tabs');
+    const modeTrack=document.querySelector('.effect-mode-tabs');
+    if(statusTrack&&window.BO_SEG_BOUNCE){
+      window.BO_SEG_BOUNCE.mount(statusTrack,{button:':scope > .bo-tx-tab',anim:'bounce'});
+    }
+    if(modeTrack&&window.BO_SEG_BOUNCE){
+      window.BO_SEG_BOUNCE.mount(modeTrack,{button:':scope > .bo-tx-tab',anim:'bounce'});
+    }
+  }).catch(e=>setStatus(e.message,true));
 })();

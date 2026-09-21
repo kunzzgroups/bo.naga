@@ -106,8 +106,12 @@
     if(p==='brand-detail.html') return 'brand-management.html';
     if(p==='member-detail.html') return 'index.html';
     if(p==='provider-detail.html') return 'main-accounting-report.html';
+    if(p==='slider-edit.html') return 'slider.html';
+    if(p==='promotion-edit.html') return 'promotion.html';
+    if(p==='vip-level-edit.html') return 'vip-management.html';
     // Gateway Transactions is a drill-down of Payment Gateway and uses the same DB menu permission.
     if(p==='payment-gateway-transactions.html') return 'payment-gateway.html';
+    if(p==='manual-rebate-detail.html') return 'manual-rebate-approval.html';
     // Merchant module drill-downs keep the Merchant sidebar item highlighted.
     if(p==='main-merchant-create.html' || p==='main-merchant-credit.html' || p==='main-merchant-profit.html' || p==='main-merchant-profit-record.html' || p==='main-merchant-repayments.html' || p==='main-merchant-settlement.html' || p==='merchant-profit.html'){
       return 'main-merchant-detail.html';
@@ -244,10 +248,29 @@
       // Member Detail / Wallet is a drill-down of User Management (index.html).
       if(current === 'member-detail.html') current = 'index.html';
       if(current === 'provider-detail.html') current = 'main-accounting-report.html';
+      // Create/Edit Banner is a drill-down of Banner Management.
+      if(current === 'slider-edit.html') current = 'slider.html';
+      // Promotion create/edit is a drill-down of Promotion Bonus listing.
+      if(current === 'promotion-edit.html') current = 'promotion.html';
+      // VIP Level create/edit is a drill-down of VIP Management.
+      if(current === 'vip-level-edit.html') current = 'vip-management.html';
+      // Bonus Category Item is a drill-down of Bonus Category Title (Manage Items).
+      if(current === 'bonus-category-item.html') current = 'bonus-category-title.html';
       // Transaction history is intentionally a separate page, but it inherits the
       // Payment Gateway menu selected in ROOT Role/Menu Permission. No new hardcoded
       // permission/menu row is required for this drill-down.
       if(current === 'payment-gateway-transactions.html') current = 'payment-gateway.html';
+      // Rebate Detail is a drill-down of Manual Rebate Approval.
+      if(current === 'manual-rebate-detail.html') current = 'manual-rebate-approval.html';
+      // Create/Edit Payment Method is a drill-down page, not a standalone sidebar menu.
+      // Inherit the page the admin opened it from so Bank Deposit Usage users are not
+      // incorrectly redirected to their landing page, while Payment Method Config keeps
+      // using its own ROOT-assigned permission.
+      if(current === 'payment-method-create.html'){
+        let pmSource = '';
+        try { pmSource = String(new URLSearchParams(location.search || '').get('from') || '').toLowerCase(); } catch(e) {}
+        current = pmSource === 'usage' ? 'bank-deposit-usage.html' : 'payment-method.html';
+      }
       if(current === 'main-balance-adjustment.html') current = 'main-balance-overview.html';
       // Agent Performance Detail is a drill-down page of Agent Performance Report.
       // It has no separate sidebar/menu permission, so inherit the report permission
@@ -302,6 +325,14 @@
         return current === 'profile.html';
       }
       let allowed = menus.some(function(m){ return pageFile(m.url || '') === current; });
+      // Bonus Category Item may be assigned as its own menu row, or only opened via
+      // Manage Items from Bonus Category Title. Allow either permission.
+      if(!allowed && pageName() === 'bonus-category-item.html'){
+        allowed = menus.some(function(m){
+          const file = pageFile(m.url || '');
+          return file === 'bonus-category-item.html' || file === 'bonus-category-title.html';
+        });
+      }
       // Backward compatibility: older roles may only have the original
       // agent_management menu. That parent permission is allowed to open the new
       // Agent Management child pages, while newly configured roles can grant each

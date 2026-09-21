@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>MD Preview — Bonus Category Title</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link href="assets/css/reports.css" rel="stylesheet" />
+  <link href="assets/css/bo-charcoal-cms.css?v=1.0.54" rel="stylesheet" />
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body { padding: 0; background: #E8D9C4; font-family: system-ui, sans-serif; height: 100dvh; overflow: hidden; }
+    .report-main { max-width: none; margin: 0; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+    .report-content { padding: 12px 16px 16px !important; flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+  </style>
+</head>
+<body class="page-bonus-category-title report-body bo-charcoal standardized-listing-page standardized-content-management">
+  <div class="report-main">
+    <section class="report-content">
+    <div class="manage-page-grid crud-list-only-grid">
+    <div class="manage-list-card category-modern-page bonus-title-modern-page">
+      <div class="bonus-title-panel">
+        <div class="bonus-title-strip section-title slider-list-title standardized-toolbar-title category-toolbar-title bonus-title-toolbar crud-list-titlebar">
+          <div class="bonus-title-filterbar" data-bo-filter-exempt="1">
+            <label class="bonus-title-search"><i class="bi bi-search" aria-hidden="true"></i><input id="bonusSearchInput" type="search" placeholder="Search by title..." /></label>
+            <select id="bonusSortFilter">
+              <option value="sortAsc">Sort Order (Asc)</option>
+              <option value="sortDesc">Sort Order (Desc)</option>
+              <option value="nameAsc">Name (A-Z)</option>
+              <option value="nameDesc">Name (Z-A)</option>
+            </select>
+          </div>
+          <div class="crud-title-actions bonus-title-actions">
+            <button class="clean-btn mad-btn-ghost crud-toolbar-btn" type="button"><i class="bi bi-arrow-clockwise"></i><span class="btn-label">Refresh</span></button>
+            <button class="clean-btn primary crud-add-btn crud-toolbar-btn" type="button"><i class="bi bi-plus-circle"></i><span class="btn-label">Add Bonus Category Title</span></button>
+          </div>
+        </div>
+
+        <div class="category-table-wrap bonus-title-table-wrap">
+          <div class="bonus-title-table-head" role="row">
+            <span class="bonus-title-head-drag" aria-hidden="true"></span>
+            <span class="bonus-title-head-name">Bonus Category Title</span>
+            <span class="bonus-title-head-status">Status</span>
+            <span class="bonus-title-head-actions">Actions</span>
+          </div>
+          <div class="manage-list category-table bonus-title-table" role="rowgroup">
+            <div class="category-table-row bonus-title-table-row">
+              <span class="category-drag" aria-hidden="true"><i class="bi bi-grip-vertical"></i></span>
+              <div class="category-main-cell">
+                <div class="category-thumb-full"></div>
+                <div class="category-copy"><b>KICK START BONUS</b><small>ID: 1 • Sort: 1</small></div>
+              </div>
+              <div class="category-status-cell"><span class="status-pill active">ACTIVE</span></div>
+              <div class="category-action-cell">
+                <button class="icon-action-btn is-view" type="button" data-tip="Manage Items" aria-label="Manage Items"><i class="bi bi-collection" aria-hidden="true"></i></button>
+                <button class="icon-action-btn is-edit" type="button" data-tip="Edit" aria-label="Edit"><i class="bi bi-pencil-square" aria-hidden="true"></i></button>
+                <button class="icon-action-btn is-reject" type="button" data-tip="Delete" aria-label="Delete"><i class="bi bi-trash" aria-hidden="true"></i></button>
+              </div>
+            </div>
+            <div class="category-table-row bonus-title-table-row">
+              <span class="category-drag" aria-hidden="true"><i class="bi bi-grip-vertical"></i></span>
+              <div class="category-main-cell">
+                <div class="category-thumb-full"></div>
+                <div class="category-copy"><b>WELCOME BONUS</b><small>ID: 2 • Sort: 2</small></div>
+              </div>
+              <div class="category-status-cell"><span class="status-pill active">ACTIVE</span></div>
+              <div class="category-action-cell">
+                <button class="icon-action-btn is-view" type="button" data-tip="Manage Items" aria-label="Manage Items"><i class="bi bi-collection" aria-hidden="true"></i></button>
+                <button class="icon-action-btn is-edit" type="button" data-tip="Edit" aria-label="Edit"><i class="bi bi-pencil-square" aria-hidden="true"></i></button>
+                <button class="icon-action-btn is-reject" type="button" data-tip="Delete" aria-label="Delete"><i class="bi bi-trash" aria-hidden="true"></i></button>
+              </div>
+            </div>
+            <div class="category-table-row bonus-title-table-row">
+              <span class="category-drag" aria-hidden="true"><i class="bi bi-grip-vertical"></i></span>
+              <div class="category-main-cell">
+                <div class="category-thumb-full"></div>
+                <div class="category-copy"><b>RELOAD BONUS</b><small>ID: 3 • Sort: 3</small></div>
+              </div>
+              <div class="category-status-cell"><span class="status-pill active">ACTIVE</span></div>
+              <div class="category-action-cell">
+                <button class="icon-action-btn is-view" type="button" data-tip="Manage Items" aria-label="Manage Items"><i class="bi bi-collection" aria-hidden="true"></i></button>
+                <button class="icon-action-btn is-edit" type="button" data-tip="Edit" aria-label="Edit"><i class="bi bi-pencil-square" aria-hidden="true"></i></button>
+                <button class="icon-action-btn is-reject" type="button" data-tip="Delete" aria-label="Delete"><i class="bi bi-trash" aria-hidden="true"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="table-footer standard-pagination category-table-footer bonus-title-footer bo-pagination-standard">
+            <div class="entries-control">Show
+              <select id="bonusPageSize" aria-label="Show entries">
+                <option value="-" selected>-</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="All">All</option>
+              </select>
+              entries
+            </div>
+            <div class="table-info" id="bonusShowingText">Showing 1 to 5 of 5 entries</div>
+            <nav class="pagination-clean bo-pagination-buttons mad-pager" id="bonusPager" aria-label="Table pagination">
+              <button type="button" class="page-btn" disabled aria-label="First"><i class="bi bi-chevron-bar-left"></i></button>
+              <button type="button" class="page-btn" disabled aria-label="Previous"><i class="bi bi-chevron-left"></i></button>
+              <button type="button" class="page-btn active" aria-current="page">1</button>
+              <button type="button" class="page-btn" disabled aria-label="Next"><i class="bi bi-chevron-right"></i></button>
+              <button type="button" class="page-btn" disabled aria-label="Last"><i class="bi bi-chevron-bar-right"></i></button>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    </section>
+  </div>
+
+  <div id="crudPatternModal" class="crud-pattern-modal show">
+    <div class="crud-pattern-backdrop"></div>
+    <div class="crud-pattern-dialog">
+      <div class="crud-pattern-head">
+        <h2 id="crudPatternTitle">Edit Bonus Category #1</h2>
+        <button type="button" class="crud-pattern-close" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="crud-pattern-body" id="crudPatternBody">
+        <div class="manage-form-card crud-modal-form-card">
+          <div class="section-title mb-3"><div><h3 id="bonusFormTitle">Create Bonus Title</h3></div></div>
+          <form id="bonusForm" class="slider-form">
+            <div class="slider-upload-box" id="bonusDropZone">
+              <input type="file" id="bonusImage" name="image" accept="image/*" />
+              <div class="slider-upload-placeholder" id="bonusUploadPlaceholder" hidden>
+                <i class="bi bi-cloud-arrow-up"></i>
+                <strong>Choose image or drag here</strong>
+                <small>PNG, JPG, WEBP, GIF accepted</small>
+              </div>
+              <img id="bonusPreview" alt="Bonus category preview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='160'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%23F59E0B'/%3E%3Cstop offset='1' stop-color='%23B45309'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='480' height='160' fill='url(%23g)'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' fill='%23FFF8EB' font-family='system-ui' font-size='28' font-weight='800'%3EKICK START BONUS%3C/text%3E%3C/svg%3E" />
+            </div>
+            <div class="slider-current-image" id="bonusCurrentImage" hidden></div>
+            <div class="field">
+              <label>Name</label>
+              <input id="bonusName" name="name" type="text" value="KICK START BONUS" />
+            </div>
+            <div class="field">
+              <label>Sort Order</label>
+              <input id="bonusSortOrder" name="sortOrder" type="number" min="0" value="1" />
+            </div>
+            <div class="dynamic-translation-panel" data-dynamic-translation-panel="1">
+              <div class="dynamic-translation-head">
+                <div><h3>Language Translation</h3></div>
+                <button class="clean-btn" type="button" data-refresh-translation><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+              </div>
+              <div class="dynamic-translation-body" data-dynamic-translation-body>
+                <div class="dynamic-lang-card">
+                  <div class="dynamic-lang-title"><b>Chinese</b><span class="dynamic-lang-code">zh</span></div>
+                  <div class="dynamic-field-row">
+                    <label>Image</label>
+                    <div class="dynamic-image-edit">
+                      <div class="dynamic-image-preview"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='176' height='112'%3E%3Crect width='176' height='112' fill='%23B45309'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' fill='%23FFF8EB' font-family='system-ui' font-size='12' font-weight='700'%3EKICK%3C/text%3E%3C/svg%3E" alt="Image" /></div>
+                      <label class="dynamic-file-pick">
+                        <input type="file" accept="image/*" />
+                        <span class="dynamic-file-pick-ui"><i class="bi bi-folder2-open"></i><em data-dt-file-label>Choose file</em></span>
+                      </label>
+                      <button class="clean-btn primary" type="button"><i class="bi bi-upload"></i> Save Image</button>
+                    </div>
+                  </div>
+                  <div class="dynamic-field-row">
+                    <label>Name</label>
+                    <div class="dynamic-text-edit">
+                      <input type="text" value="" placeholder="Chinese name" />
+                      <button class="clean-btn primary" type="button"><i class="bi bi-save"></i> Save Text</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="slider-form-actions">
+              <button class="clean-btn primary" id="saveBonusBtn" type="button"><i class="bi bi-save"></i> Save Category</button>
+              <button class="clean-btn" id="resetBonusBtn" type="button"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="assets/js/reports.js?v=1.0.29"></script>
+</body>
+</html>

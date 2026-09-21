@@ -506,7 +506,7 @@ body.livechat-bo-page .bo-ui-icon-button{all:unset}
 .report-main .bo-filter-row>:has(#categorySortFilter), .report-main .bo-filter-row>select#categorySortFilter{--bo-select-width:157px;}
 .report-main .bo-filter-row>:has(#categoryStatusFilter), .report-main .bo-filter-row>select#categoryStatusFilter{--bo-select-width:125px;}
 .report-main .bo-filter-row>:has(#dashTimezone), .report-main .bo-filter-row>select#dashTimezone{--bo-select-width:169px;}
-.report-main .bo-filter-row>:has(#dbgStatus), .report-main .bo-filter-row>select#dbgStatus{--bo-select-width:119px;}
+.report-main .bo-filter-row>:has(#dbgStatus), .report-main .bo-filter-row>select#dbgStatus{--bo-select-width:150px;}
 .report-main .bo-filter-row>:has(#depositSize), .report-main .bo-filter-row>select#depositSize{--bo-select-width:80px;}
 .report-main .bo-filter-row>:has(#depositStatus), .report-main .bo-filter-row>select#depositStatus{--bo-select-width:150px;}
 .report-main .bo-filter-row>:has(#gameRankSize), .report-main .bo-filter-row>select#gameRankSize{--bo-select-width:80px;}
@@ -739,13 +739,14 @@ body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .
 .report-sidebar .report-nav>a:not(.report-sub){
   min-height:42px!important;margin:0!important;padding:11px 12px!important;border-radius:0!important;
   background:linear-gradient(204deg,#57534E,#57534E)!important;color:#fff!important;
-  border-bottom:1px solid rgba(255,255,255,.45)!important;font-weight:800!important;
+  border-bottom:1px solid rgba(255,255,255,.45)!important;font-weight:900!important;
 }
 .report-sidebar .report-nav>a:not(.report-sub) i{color:#fff!important}
 .report-sidebar .report-nav>a:not(.report-sub):first-child{border-radius:12px 12px 0 0!important}
 .report-sidebar .report-nav>a:not(.report-sub):last-child{border-radius:0 0 12px 12px!important}
 .report-sidebar .nav-group{margin:0!important;border-radius:0!important;border-left:0!important;border-right:0!important;border-top:0!important}
-.report-sidebar .nav-group .nav-group-btn{margin:0!important;border-radius:0!important;min-height:44px!important}
+.report-sidebar .nav-group .nav-group-btn{margin:0!important;border-radius:0!important;min-height:44px!important;font-weight:900!important}
+.report-sidebar .nav-group .nav-group-btn > span{font-weight:900!important}
 .report-sidebar .nav-group-list{background:#F5EBDC!important}
 
 /* 2026-09-03: direct account settings header + sidebar-bottom logout */

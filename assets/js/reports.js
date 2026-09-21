@@ -514,9 +514,51 @@ document.addEventListener('DOMContentLoaded', () => {
       ? Math.max(inEntriesControl ? 72 : 80, widest+(inEntriesControl ? 44 : 54))
       : Math.max(160, widest+72);
     /* Transaction listing MD — Status locked at 150px (Wallet Ledger Type specimen) */
-    const listingFixed={depositStatus:150,withdrawStatus:150};
+    const listingFixed={depositStatus:150,withdrawStatus:150,dbgStatus:150};
     if(document.body.classList.contains('bo-wallet-tx') && listingFixed[select.id]!=null){
       contentWidth=listingFixed[select.id];
+    }
+    /* Promotion Bonus listing — keep filter strip even; CSS owns field widths */
+    if(parts.wrap.closest('.promotion-filter-card') || select.dataset.boAutoWidth==='0'){
+      const item=parts.wrap.closest('.bo-filter-select-item,.field');
+      if(item){
+        item.style.removeProperty('--bo-select-width');
+        item.style.removeProperty('width');
+        item.style.removeProperty('min-width');
+        item.style.removeProperty('max-width');
+        item.style.removeProperty('flex');
+      }
+      parts.wrap.style.setProperty('width','100%','important');
+      parts.wrap.style.setProperty('min-width','0','important');
+      parts.wrap.style.setProperty('max-width','100%','important');
+      parts.wrap.style.removeProperty('flex');
+      parts.button.style.setProperty('width','100%','important');
+      parts.button.style.setProperty('min-width','0','important');
+      const boxWidth=Math.ceil((parts.button.getBoundingClientRect().width||parts.wrap.getBoundingClientRect().width||0));
+      if(boxWidth>0){
+        parts.menu.style.setProperty('width', boxWidth+'px','important');
+        parts.menu.style.setProperty('min-width', boxWidth+'px','important');
+        parts.menu.style.setProperty('max-width','none','important');
+      }
+      return;
+    }
+    /* Promotion Log mobile: let CSS stack Status full-width */
+    if(document.body.classList.contains('promotion-log-page') && select.id==='dbgStatus' && window.matchMedia('(max-width:768px)').matches){
+      const item=parts.wrap.closest('.bo-filter-select-item,.field');
+      if(item){
+        item.style.setProperty('--bo-select-width','100%');
+        item.style.removeProperty('width');
+        item.style.removeProperty('min-width');
+        item.style.removeProperty('max-width');
+        item.style.removeProperty('flex');
+      }
+      parts.wrap.style.setProperty('width','100%','important');
+      parts.wrap.style.setProperty('min-width','0','important');
+      parts.wrap.style.setProperty('max-width','100%','important');
+      parts.wrap.style.removeProperty('flex');
+      parts.button.style.setProperty('width','100%','important');
+      parts.button.style.setProperty('min-width','0','important');
+      return;
     }
 
     if(isCompactAutoWidthWrap(parts.wrap)){
@@ -576,6 +618,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const parts=findParts(select);
     if(!parts.wrap || !parts.button || !parts.menu) return;
 
+    parts.button.disabled=!!select.disabled;
+    parts.button.setAttribute('aria-disabled',select.disabled?'true':'false');
     parts.button.innerHTML='<span>'+escapeHtml(selectedLabel(select))+'</span><i class="bi bi-chevron-down"></i>';
     const options=Array.from(select.options||[]);
     const currentItems=Array.from(parts.menu.querySelectorAll('.rounded-select-option'));
@@ -658,10 +702,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btn.addEventListener('click',function(e){
       e.stopPropagation();
-      const hasData=Array.from(select.options||[]).some(function(o){
-        return String(o.value||'')!=='';
-      });
-      if(!hasData) return;
+      /* Open whenever options exist — even a single empty placeholder
+         (e.g. VIP Level before list loads / No levels configured).
+         Skipping empty-value-only selects made those menus look dead. */
+      if(select.disabled || !(select.options&&select.options.length)) return;
       const open=!menu.classList.contains('show');
       document.querySelectorAll('.rounded-select-menu.show').forEach(m=>m.classList.remove('show'));
       document.querySelectorAll('.rounded-select-btn.open').forEach(b=>b.classList.remove('open'));
