@@ -13,7 +13,7 @@
       'game.html': {formId:'gameForm', idSelector:'#gameId', refType:'game'},
       'bonus-category-title.html': {formId:'bonusForm', idSelector:'#bonusId', refType:'bonus_category'},
       'bonus-category-item.html': {formId:'bonusItemForm', idSelector:'#bonusItemId', refType:'bonus_category_item'},
-      'site-customize.html': {assetPanel:true, refType:'main_layout', refId:1}
+      'site-customize.html': {assetPanel:true, refType:'main_layout', refId:1, containerSelector:'#main-layout'}
     };
     const cfg = map[page];
     if(cfg && cfg.assetPanel) window.DynamicTranslation.attachAssetPanel(cfg);

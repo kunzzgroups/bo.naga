@@ -18,11 +18,11 @@
 .provider-bet-report-page .bo-range-field,
 .provider-transaction-page .bo-range-field,
 body.provider-session-page .bo-range-field,
-.rebate-page .bo-range-field{flex:0 0 390px!important;width:390px!important;max-width:390px!important}
+.rebate-page .bo-range-field{flex:0 0 240px!important;width:240px!important;max-width:240px!important;min-width:220px!important}
 .provider-bet-report-page .bo-range-trigger,
 .provider-transaction-page .bo-range-trigger,
 body.provider-session-page .bo-range-trigger,
-.rebate-page .bo-range-trigger{width:390px!important;max-width:390px!important}
+.rebate-page .bo-range-trigger{width:100%!important;max-width:240px!important}
 .wallet-ledger-page .bo-range-field,
 .wallet-ledger-page .filter-card .bo-range-field,
 .wallet-ledger-page .bo-filter-range-item{
@@ -212,7 +212,7 @@ body.provider-session-page .bo-range-trigger,
 .rebate-page .bo-range-pop{
   z-index:5000!important;
   overflow:hidden!important;
-  width:390px!important;
+  width:min(520px,calc(100vw - 32px))!important;
   max-width:calc(100vw - 32px)!important;
 }
 @media(max-width:767.98px){

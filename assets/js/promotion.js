@@ -1,12 +1,15 @@
 (function(){
+  const isEditPage=document.body.classList.contains('promotion-edit-page');
   const form=document.getElementById('promoForm');
-  if(!form)return;
+  const list=document.getElementById('promoList');
+  if(!form && !list)return;
   const $=id=>document.getElementById(id);
-  const box=$('promoStatusBox'), list=$('promoList'), empty=$('promoEmpty');
+  const box=$('promoStatusBox');
   const searchInput=$('promoSearchInput'), categoryFilter=$('promoCategoryFilter'), statusFilter=$('promoStatusFilter'), sortFilter=$('promoSortFilter');
-  const totalCount=$('promoTotalCount'), activeCount=$('promoActiveCount'), activePercent=$('promoActivePercent'), showingText=$('promoShowingText');
+  const showingText=$('promoShowingText');
   let rows=[];
   let promoPage=0;
+  let lockedAutoSize=null;
   let categoryTitles=[];
   let selectedPromoImage=null;
   let detailHtmlMode=false;
@@ -15,6 +18,79 @@
   let promoGames=[];
   let promoLegacyAllowedTokens=[];
   let promotionGameConfigReady=Promise.resolve();
+
+  function editPageUrl(id){
+    // Use .html for Live Server (5500). Put id in the hash so serve cleanUrls
+    // redirects (promotion-edit.html → /promotion-edit) do not drop the param.
+    return id!=null && id!=='' ? ('promotion-edit.html#id='+encodeURIComponent(id)) : 'promotion-edit.html';
+  }
+  function syncEditChrome(title){
+    if($('promoFormTitle')) $('promoFormTitle').textContent=title;
+    document.title=title+' · Backoffice';
+  }
+  function queryEditId(){
+    try{
+      const fromQuery=new URLSearchParams(location.search).get('id');
+      if(fromQuery) return fromQuery;
+      const hash=String(location.hash||'').replace(/^#/, '');
+      if(!hash) return null;
+      if(/^id=/i.test(hash)) return decodeURIComponent(hash.slice(3));
+      const params=new URLSearchParams(hash);
+      if(params.get('id')) return params.get('id');
+      if(/^\d+$/.test(hash)) return hash;
+      return null;
+    }catch(e){ return null; }
+  }
+
+  /* Show N: `-` = auto-fit rows into the list viewport — no page/list scroll. */
+  function promoListScroll(){
+    return $('promoListScroll')||document.querySelector('.promotion-tx-body')||list;
+  }
+  function isAutoPageSize(raw){
+    const v=String(raw??'-').trim();
+    return v===''||v==='-'||/^auto$/i.test(v);
+  }
+  function measureAutoPageSize(){
+    const scroll=promoListScroll();
+    if(!scroll) return 8;
+    const avail=Math.max(0,Math.floor(scroll.clientHeight));
+    const sample=scroll.querySelector('tbody tr.promotion-data-row')||scroll.querySelector('tbody tr');
+    const rowH=sample?Math.max(48,Math.round(sample.getBoundingClientRect().height)):56;
+    return Math.max(3,Math.min(200,Math.floor(avail/rowH)||8));
+  }
+  function autoFitPageSize(){
+    if(lockedAutoSize!=null) return lockedAutoSize;
+    lockedAutoSize=measureAutoPageSize();
+    return lockedAutoSize;
+  }
+  function clearLockedAutoSize(){ lockedAutoSize=null; }
+  function resolvePageSize(raw){
+    const v=String(raw??$('promoPageSize')?.value??'-').trim();
+    if(isAutoPageSize(v)) return autoFitPageSize();
+    if(/^all$/i.test(v)) return 10000;
+    const n=Number(v);
+    return Number.isFinite(n)&&n>0?n:autoFitPageSize();
+  }
+  function syncAutofitMode(){
+    const auto=isAutoPageSize($('promoPageSize')?.value);
+    const card=document.querySelector('.manage-list-card.promotion-modern-page');
+    const scroll=promoListScroll();
+    if(card) card.toggleAttribute('data-bo-autofit', auto);
+    if(scroll) scroll.toggleAttribute('data-bo-autofit', auto);
+  }
+  let autofitReloading=false;
+  function shrinkAutofitIfOverflow(){
+    if(autofitReloading) return;
+    if(!isAutoPageSize($('promoPageSize')?.value)) return;
+    const scroll=promoListScroll();
+    if(!scroll) return;
+    if(scroll.scrollHeight<=scroll.clientHeight+1) return;
+    if(lockedAutoSize==null||lockedAutoSize<=3) return;
+    lockedAutoSize=Math.max(3,lockedAutoSize-1);
+    autofitReloading=true;
+    promoPage=0;
+    try{ render(); } finally { autofitReloading=false; }
+  }
 
   function selectedVipTierCsv(){
     const el=$('promoClaimableVipTiers');
@@ -26,12 +102,56 @@
     if(!el)return;
     const values=new Set(String(csv||'').split(',').map(v=>v.trim()).filter(Boolean));
     [...el.options].forEach(o=>{o.selected=o.value?values.has(o.value):values.size===0;});
+    syncPromoVipChips();
+  }
+  function syncPromoVipChips(){
+    const el=$('promoClaimableVipTiers');
+    const host=$('promoVipChips');
+    if(!el||!host)return;
+    const selected=new Set([...el.selectedOptions].map(o=>o.value));
+    const allOn=selected.has('')||[...el.selectedOptions].every(o=>!o.value);
+    host.querySelectorAll('.promo-vip-chip').forEach(btn=>{
+      const v=btn.getAttribute('data-value')??'';
+      const on=v===''?allOn&&![...el.options].some(o=>o.value&&o.selected):selected.has(v);
+      btn.classList.toggle('is-on',on);
+      btn.setAttribute('aria-pressed',on?'true':'false');
+    });
+  }
+  function ensurePromoVipPicker(){
+    const el=$('promoClaimableVipTiers');
+    const host=$('promoVipChips');
+    if(!el||!host||host.dataset.bound==='1')return;
+    host.dataset.bound='1';
+    host.addEventListener('click',function(e){
+      const btn=e.target.closest('.promo-vip-chip');
+      if(!btn||!host.contains(btn))return;
+      const value=btn.getAttribute('data-value')??'';
+      if(value===''){
+        [...el.options].forEach(o=>{o.selected=!o.value;});
+      }else{
+        const opt=[...el.options].find(o=>o.value===value);
+        if(!opt)return;
+        opt.selected=!opt.selected;
+        const any=[...el.options].some(o=>o.value&&o.selected);
+        const allOpt=[...el.options].find(o=>!o.value);
+        if(allOpt) allOpt.selected=!any;
+      }
+      syncPromoVipChips();
+      el.dispatchEvent(new Event('change',{bubbles:true}));
+    });
   }
   function renderPromotionVipOptions(selected){
     const el=$('promoClaimableVipTiers');
+    const host=$('promoVipChips');
     if(!el)return;
+    ensurePromoVipPicker();
     const ordered=[...vipLevels].filter(x=>Number(x.enabled??1)===1).sort((a,b)=>Number(a.sortOrder||0)-Number(b.sortOrder||0));
     el.innerHTML='<option value="">All VIP Levels</option>'+ordered.map(x=>`<option value="${esc(x.sortOrder)}">VIP ${esc(x.sortOrder)} - ${esc(x.name||x.levelKey||'')}</option>`).join('');
+    if(host){
+      host.innerHTML=
+        '<button type="button" class="promo-vip-chip is-all" data-value="" aria-pressed="false"><span class="promo-vip-chip-check" aria-hidden="true"></span><span class="promo-vip-chip-text">All VIP Levels</span></button>'+
+        ordered.map(x=>`<button type="button" class="promo-vip-chip" data-value="${esc(x.sortOrder)}" aria-pressed="false"><span class="promo-vip-chip-check" aria-hidden="true"></span><span class="promo-vip-chip-text"><b>VIP ${esc(x.sortOrder)}</b><small>${esc(x.name||x.levelKey||'')}</small></span></button>`).join('');
+    }
     setSelectedVipTiers(selected);
   }
   async function loadPromotionVipLevels(){
@@ -46,11 +166,23 @@
   function promoApi(k){ return API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS[k]; }
   function val(id){const el=$(id); const v=el?el.value:''; return v===''?null:v;}
   function num(id){const v=val(id);return v===null?null:Number(v);}
-  function set(m,t){box.textContent=m||'';box.className='upload-status '+(t||'');}
+  function set(m,t){if(!box)return;box.textContent=m||'';box.className='upload-status '+(t||'');}
   function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
   function money(v){return v==null||v===''?'-':Number(v).toFixed(2)}
+  function syncPromoFileLabel(file){
+    const pick=document.querySelector('#promoForm .promo-file-pick');
+    const label=pick&&pick.querySelector('[data-promo-file-label]');
+    if(!pick||!label) return;
+    if(file&&file.name){
+      label.textContent=file.name;
+      pick.classList.add('has-file');
+    }else{
+      label.textContent='Choose image';
+      pick.classList.remove('has-file');
+    }
+  }
   function showImagePreview(src){ const img=$('promoImagePreview'), cur=$('promoImageCurrent'); if(img&&src){img.src=src;img.hidden=false;} if(cur)cur.textContent=src?'Current/selected image preview':''; }
-  function clearImagePreview(){ selectedPromoImage=null; const input=$('promoImage'); if(input) input.value=''; const img=$('promoImagePreview'); if(img){img.src='';img.hidden=true;} const cur=$('promoImageCurrent'); if(cur)cur.textContent=''; }
+  function clearImagePreview(){ selectedPromoImage=null; const input=$('promoImage'); if(input) input.value=''; syncPromoFileLabel(null); const img=$('promoImagePreview'); if(img){img.src='';img.hidden=true;} const cur=$('promoImageCurrent'); if(cur)cur.textContent=''; }
   function categoryName(id){ const f=categoryTitles.find(x=>String(x.id)===String(id)); return f?f.name:''; }
   function firstDefined(obj, keys){
     for(const key of keys){
@@ -160,9 +292,12 @@
       return `<section class="category-provider-rule promo-provider-rule" data-provider-code="${esc(code)}">
         <div class="category-provider-rule-head">
           <div class="category-provider-rule-title"><span class="category-provider-rule-icon"><i class="bi bi-controller"></i></span><div><b>${esc(promoGameProviderName(provider)||code)}</b><small>${games.length} game(s) available</small></div></div>
-          <div class="category-provider-mode-switch" role="radiogroup" aria-label="Allowed games mode">
-            <label><input type="radio" name="promoProviderMode_${esc(code)}" value="ALL" ${mode!=='SELECTED'?'checked':''}><span><i class="bi bi-collection-play"></i> All Games</span></label>
-            <label><input type="radio" name="promoProviderMode_${esc(code)}" value="SELECTED" ${mode==='SELECTED'?'checked':''}><span><i class="bi bi-check2-square"></i> Selected Games</span></label>
+          <div class="promo-provider-rule-actions">
+            <div class="category-provider-mode-switch promo-provider-mode" role="radiogroup" aria-label="Allowed games mode">
+              <label class="promo-provider-mode-opt"><input type="radio" name="promoProviderMode_${esc(code)}" value="ALL" ${mode!=='SELECTED'?'checked':''}><span><i class="bi bi-collection-play"></i> All Games</span></label>
+              <label class="promo-provider-mode-opt"><input type="radio" name="promoProviderMode_${esc(code)}" value="SELECTED" ${mode==='SELECTED'?'checked':''}><span><i class="bi bi-check2-square"></i> Selected Games</span></label>
+            </div>
+            <button type="button" class="promo-provider-rule-remove" data-unpick="${esc(code)}" title="Remove ${esc(promoGameProviderName(provider)||code)}" aria-label="Remove ${esc(promoGameProviderName(provider)||code)}"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
           </div>
         </div>
         <div class="category-provider-assignment" ${mode==='SELECTED'?'':'hidden'}>
@@ -173,7 +308,7 @@
           </div>
         </div>
       </section>`;
-    }).join('')||'<div class="category-provider-empty-state"><i class="bi bi-controller"></i><b>No provider restriction selected</b><small>This promotion is allowed for all games/providers.</small></div>';
+    }).join('')||'<div class="category-provider-empty-state promo-provider-empty-state"><i class="bi bi-controller"></i><b>No provider restriction</b><small>This promotion is allowed for all games and providers.</small></div>';
   }
   function syncAllowedGamesField(){
     const field=$('promoAllowedGames');
@@ -189,6 +324,17 @@
     updatePromoAllowedSummary();
     return field.value;
   }
+  function updatePromoProviderCount(){
+    const root=$('promoGameAccessConfig');
+    const countEl=root?.querySelector('#promoProviderCount');
+    if(!root)return;
+    const codes=selectedPromotionProviderCodes();
+    const n=codes.length;
+    if(countEl){
+      countEl.textContent=n?`${n} in roster`:'Open to all';
+      countEl.classList.toggle('has-selection',n>0);
+    }
+  }
   function updatePromoAllowedSummary(){
     const root=$('promoGameAccessConfig');
     const summary=root?.querySelector('.promo-game-access-summary');
@@ -199,6 +345,15 @@
     let text=!rules.length&&!promoLegacyAllowedTokens.length?'All games/providers allowed':`${allProviders} provider(s) all games · ${selectedGames} individually selected game(s)`;
     if(promoLegacyAllowedTokens.length) text+=` · ${promoLegacyAllowedTokens.length} legacy rule(s) preserved`;
     summary.innerHTML=`<i class="bi bi-shield-check"></i><span>${esc(text)}</span>`;
+    updatePromoProviderCount();
+  }
+  function filterPromoProviderChoices(query){
+    const root=$('promoGameAccessConfig');
+    const q=String(query||'').trim().toLowerCase();
+    root?.querySelectorAll('.promo-provider-choice').forEach(label=>{
+      const hay=String(label.getAttribute('data-search')||'').toLowerCase();
+      label.hidden=!!q&&!hay.includes(q);
+    });
   }
   function applyAllowedGamesToSelector(value){
     const root=$('promoGameAccessConfig');
@@ -237,11 +392,38 @@
   function renderPromoGameAccessShell(){
     const root=$('promoGameAccessConfig');
     if(!root)return;
-    root.innerHTML=`<div class="promo-game-access-summary"><i class="bi bi-shield-check"></i><span>All games/providers allowed</span></div>
-      <div class="promo-game-access-section-title"><b>Select Provider</b><small>Choose one or more providers to restrict this promotion.</small></div>
-      <div class="category-provider-selector promo-provider-selector">${promoProviders.map(p=>{const code=promoGameProviderCode(p);return `<label class="category-provider-choice promo-provider-choice" role="button"><input type="checkbox" value="${esc(code)}"><span class="category-provider-choice-name">${esc(promoGameProviderName(p)||code)}</span></label>`;}).join('')||'<small class="text-muted">No active provider available.</small>'}</div>
-      <div class="category-provider-rules promo-provider-rules"></div>`;
+    const gameCountByProvider=new Map();
+    promoGames.forEach(g=>{
+      const code=promoGameProviderCode(g);
+      if(!code)return;
+      gameCountByProvider.set(code,(gameCountByProvider.get(code)||0)+1);
+    });
+    const choices=promoProviders.map(p=>{
+      const code=promoGameProviderCode(p);
+      const name=promoGameProviderName(p)||code;
+      const n=gameCountByProvider.get(code)||0;
+      return `<label class="category-provider-choice promo-provider-choice" role="button" data-search="${esc((name+' '+code).toLowerCase())}"><input type="checkbox" value="${esc(code)}"><span class="promo-provider-check" aria-hidden="true"></span><span class="promo-provider-choice-text"><span class="category-provider-choice-name">${esc(name)}</span><small class="promo-provider-choice-meta">${n} games</small></span></label>`;
+    }).join('')||'<small class="promo-provider-empty">No active provider available.</small>';
+    root.innerHTML=`<section class="promo-provider-block">
+        <div class="promo-provider-toolbar">
+          <div class="promo-game-access-section-title"><b>Select Provider</b><small>Pick providers to restrict this promotion. Leave empty to allow every provider.</small></div>
+          <div class="promo-provider-tools">
+            <label class="promo-provider-search"><i class="bi bi-search" aria-hidden="true"></i><input id="promoProviderSearch" type="search" placeholder="Search providers..." autocomplete="off" spellcheck="false"></label>
+            <span class="promo-provider-count" id="promoProviderCount">Open to all</span>
+          </div>
+        </div>
+        <div class="promo-game-access-summary"><i class="bi bi-shield-check"></i><span>All games/providers allowed</span></div>
+        <div class="promo-provider-catalog">
+          <div class="promo-provider-catalog-label">Catalog</div>
+          <div class="category-provider-selector promo-provider-selector">${choices}</div>
+        </div>
+      </section>
+      <div class="promo-provider-rules-wrap">
+        <div class="promo-provider-rules-label">Access rules</div>
+        <div class="category-provider-rules promo-provider-rules"></div>
+      </div>`;
     rebuildPromoProviderCards(new Map());
+    updatePromoProviderCount();
   }
   async function loadPromotionGameConfig(){
     const root=$('promoGameAccessConfig');
@@ -385,6 +567,14 @@
     setSelectExact('promoSingleLeft', source.singleLeft, 0);
   }
 
+  async function ensurePromoRowsForLayout(){
+    if(rows.length) return;
+    try{
+      const j=await req(promoApi('PROMOTION_LIST')+'?_='+Date.now());
+      rows=(Array.isArray(j.data)?j.data:[]).map(normalizePromotion);
+    }catch(_){}
+  }
+
   function clampSpanSelects(){
     const dc=Number(val('promoDesktopColumns')||2), mc=Number(val('promoMobileColumns')||1);
     const ds=$('promoDesktopSpan'), ms=$('promoMobileSpan');
@@ -416,6 +606,7 @@
   }
 
   function reset(){
+    if(!form) return;
     form.reset();
     resetPromoGameAccess();
     $('promoId').value='';
@@ -431,14 +622,16 @@
     if($('promoEndAt')) $('promoEndAt').value='';
     if($('promoClaimStartAt')) $('promoClaimStartAt').value='';
     if($('promoClaimEndAt')) $('promoClaimEndAt').value='';
+    if($('promoCompletionFixedAt')) $('promoCompletionFixedAt').value='';
     if($('promoCompletionDeadlineMode')) $('promoCompletionDeadlineMode').value='NO_EXPIRY';
     if($('promoWithdrawalRestriction')) $('promoWithdrawalRestriction').value='NONE';
     updatePolicyVisibility();
     setDetailEditorContent('');
-    $('promoFormTitle').textContent='Create Promotion';
-    set('','');
+    syncEditChrome('Create Promotion','Configure display, bonus rules, and claim policy.',false);
     refreshVisibleSelects(form);
-    window.scrollTo({top:0,behavior:'smooth'});
+    if(typeof syncDatetimeFields==='function') syncDatetimeFields();
+    set('','');
+    if(!isEditPage) window.scrollTo({top:0,behavior:'smooth'});
   }
 
   function fill(raw){
@@ -485,10 +678,11 @@
     $('promoStatus').value=String(x.status??1);
     const dt=v=>v?String(v).slice(0,16):''; $('promoStartAt').value=dt(x.startAt); $('promoEndAt').value=dt(x.endAt); $('promoClaimStartAt').value=dt(x.claimStartAt); $('promoClaimEndAt').value=dt(x.claimEndAt); $('promoCompletionDeadlineMode').value=x.completionDeadlineMode||'NO_EXPIRY'; $('promoCompletionDays').value=x.completionDays??''; $('promoCompletionFixedAt').value=dt(x.completionFixedAt); $('promoRebatePolicy').value=x.rebatePolicy||'DISABLED'; $('promoRebateStartCondition').value=x.rebateStartCondition||'PROMOTION_COMPLETED'; $('promoEligibleBalanceType').value=x.eligibleBalanceType||'MAIN_PLUS_BONUS'; $('promoEligibleBalanceThreshold').value=x.eligibleBalanceThreshold??''; $('promoNewDepositRequired').value=String(x.newDepositRequired??0); $('promoCanClaimRebate').value=x.canClaimRebate||'AFTER_PROMOTION_COMPLETED'; $('promoCompletionMode').value=x.completionMode||'AUTO_COMPLETE'; $('promoRewardClaimMode').value=x.rewardClaimMode||'NO_ADDITIONAL_CLAIM'; $('promoWalletConsumptionPriority').value=x.walletConsumptionPriority||'BONUS_FIRST'; $('promoWinAllocationRule').value=x.winAllocationRule||'RETURN_TO_STAKE_SOURCE'; $('promoWithdrawalRestriction').value=x.withdrawalRestriction||'NONE'; $('promoExcessBalanceAction').value=x.excessBalanceAction||'KEEP_LOCKED';
     updatePolicyVisibility();
-    $('promoFormTitle').textContent='Edit Promotion #'+x.id;
-    refreshVisibleSelects(form);
-    set('Editing promotion. Save to update.','success');
-    window.scrollTo({top:0,behavior:'smooth'});
+    syncEditChrome('Edit Promotion #'+x.id,'Update rules, placement, and claim policy for this bonus.',true);
+    if(form) refreshVisibleSelects(form);
+    if(typeof syncDatetimeFields==='function') syncDatetimeFields();
+    set(isEditPage?'':'Editing promotion. Save to update.', isEditPage?'':'success');
+    if(!isEditPage) window.scrollTo({top:0,behavior:'smooth'});
   }
 
   function filteredRows(){
@@ -511,70 +705,114 @@
   }
 
   function render(){
+    if(!list) return;
     const filtered=filteredRows();
-    const pageSize=Number(($('promoPageSize')&&$('promoPageSize').value)||20);
+    syncAutofitMode();
+    const pageSize=resolvePageSize($('promoPageSize')?.value);
     const pages=Math.ceil(filtered.length/pageSize); if(pages===0)promoPage=0; else promoPage=Math.min(promoPage,pages-1);
     const start=promoPage*pageSize, visible=filtered.slice(start,start+pageSize);
-    list.innerHTML=''; empty.hidden=filtered.length>0;
-    const active=rows.filter(x=>Number(x.status)===1).length;
-    if(totalCount) totalCount.textContent=rows.length;
-    if(activeCount) activeCount.textContent=active;
-    if(activePercent) activePercent.textContent=(rows.length?Math.round(active*100/rows.length):0)+'% of total';
     if(showingText) showingText.textContent=`Showing ${filtered.length?start+1:0} to ${Math.min(start+pageSize,filtered.length)} of ${filtered.length} entries`;
-    visible.forEach(x=>{
-      const d=document.createElement('div'); d.className='promotion-table-row';
-      const category=x.bonusCategoryTitleName||categoryName(x.bonusCategoryTitleId)||'No Category';
-      const desc=(x.description||x.detailText||'').replace(/<[^>]*>/g,'').slice(0,120);
-      d.innerHTML=`
-        <div class="promotion-main-cell">
-          <div class="promotion-thumb">${x.bonusImageUrl?`<img src="${esc(x.bonusImageUrl)}" alt="${esc(x.name||'Promotion')}">`:'<i class="bi bi-image"></i>'}</div>
-          <div class="promotion-copy"><b>${esc(x.name||'-')}</b><small>${esc(x.promotionCode||('PROMO-'+x.id))} <span>•</span> ${esc(category)} <span>•</span> Order: ${esc(x.displayOrder??0)}</small><p>${esc(desc||x.ruleText||'No description')}</p></div>
-        </div>
-        <div class="promotion-detail-cell"><span class="promo-chip">${esc(x.claimCondition||'MANUAL')}</span><span class="promo-chip">${esc(x.bonusType||'FIXED')}</span><small>Rebate: ${esc((x.rebatePolicy||'DISABLED').replaceAll('_',' '))}</small></div>
-        <div class="promotion-status-cell"><span class="slider-pill ${Number(x.status)===1?'active':'inactive'}"><i class="bi ${Number(x.status)===1?'bi-check-circle':'bi-pause-circle'}"></i>${Number(x.status)===1?'Active':'Inactive'}</span></div>
-        <div class="promotion-action-cell"><button class="icon-action-btn" title="Clone" aria-label="Clone" data-clone="${x.id}"><i class="bi bi-copy"></i></button><button class="icon-action-btn edit edit-btn" title="Edit" aria-label="Edit" data-edit="${x.id}"><i class="bi bi-pencil-square"></i></button><button class="icon-action-btn delete btn-delete" title="Delete" aria-label="Delete" data-del="${x.id}"><i class="bi bi-trash"></i></button></div>`;
-      list.appendChild(d);
-    });
+    if(!filtered.length){
+      list.innerHTML='<tr><td colspan="4">No promotion found.</td></tr>';
+    }else{
+      list.innerHTML='';
+      visible.forEach(x=>{
+        const tr=document.createElement('tr'); tr.className='promotion-data-row';
+        const category=x.bonusCategoryTitleName||categoryName(x.bonusCategoryTitleId)||'Uncategorized';
+        const code=x.promotionCode||('PROMO-'+x.id);
+        const desc=(x.description||x.detailText||x.ruleText||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
+        const rebateOn=!/DISABLED|NONE|^$/i.test(String(x.rebatePolicy||'DISABLED'));
+        tr.title=desc||'';
+        tr.innerHTML=`
+          <td class="promotion-main-cell">
+            <div class="promotion-main-inner">
+              <div class="promotion-thumb">${x.bonusImageUrl?`<img src="${esc(x.bonusImageUrl)}" alt="">`:'<i class="bi bi-image" aria-hidden="true"></i>'}</div>
+              <div class="promotion-copy">
+                <b class="promo-title">${esc(x.name||'Untitled promotion')}</b>
+                <div class="promo-meta">
+                  <span class="promo-code">${esc(code)}</span>
+                  <span class="promo-cat">${esc(category)}</span>
+                  <span class="promo-order">Order ${esc(x.displayOrder??0)}</span>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="promotion-detail-cell">
+            <span class="promo-chip">${esc(x.claimCondition||'MANUAL')}</span>
+            <span class="promo-chip">${esc(x.bonusType||'FIXED')}</span>
+            <span class="promo-rebate${rebateOn?' is-on':''}">${rebateOn?'Rebate on':'Rebate off'}</span>
+          </td>
+          <td class="promotion-status-cell"><span class="slider-pill ${Number(x.status)===1?'active':'inactive'}"><i class="bi ${Number(x.status)===1?'bi-check-circle':'bi-pause-circle'}" aria-hidden="true"></i>${Number(x.status)===1?'Active':'Inactive'}</span></td>
+          <td class="promotion-action-cell"><a class="icon-action-btn edit edit-btn is-edit" href="${editPageUrl(x.id)}" title="Edit" aria-label="Edit"><i class="bi bi-pencil-square"></i></a><button class="icon-action-btn delete btn-delete is-reject" title="Delete" aria-label="Delete" data-del="${x.id}" type="button"><i class="bi bi-trash"></i></button></td>`;
+        list.appendChild(tr);
+      });
+    }
     const pager=$('promoPager'); if(pager){let h=`<button class="page-btn" ${promoPage<=0?'disabled':''} data-p="${promoPage-1}"><i class="bi bi-chevron-left"></i></button>`;for(let i=Math.max(0,promoPage-2);i<=Math.min(pages-1,promoPage+2);i++)h+=`<button class="page-btn ${i===promoPage?'active':''}" data-p="${i}">${i+1}</button>`;h+=`<button class="page-btn" ${promoPage>=pages-1||!pages?'disabled':''} data-p="${promoPage+1}"><i class="bi bi-chevron-right"></i></button>`;pager.innerHTML=h;}
+    if(isAutoPageSize($('promoPageSize')?.value)){
+      requestAnimationFrame(()=>{
+        shrinkAutofitIfOverflow();
+      });
+    }
   }
 
   async function req(url,opt){opt=opt||{};const u=window.BO_AUTH&&BO_AUTH.user?BO_AUTH.user():{};const actor=u.username||u.displayName||localStorage.getItem('adminUsername')||localStorage.getItem('admin_username')||'ADMIN';opt.headers=Object.assign({},window.BO_AUTH&&BO_AUTH.authHeader?BO_AUTH.authHeader():{}, {'X-Admin-Username':actor,'Cache-Control':'no-cache','Pragma':'no-cache'},opt.headers||{});opt.cache=opt.cache||'no-store';const r=await fetch(url,opt);const j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw new Error(j.message||'Request failed');return j;}
-  async function load(){set('Loading...','');const j=await req(promoApi('PROMOTION_LIST')+'?_='+Date.now());rows=(Array.isArray(j.data)?j.data:[]).map(normalizePromotion);render();set('','');}
+  async function load(){
+    if(!list) return;
+    set('Loading...','');
+    const j=await req(promoApi('PROMOTION_LIST')+'?_='+Date.now());
+    rows=(Array.isArray(j.data)?j.data:[]).map(normalizePromotion);
+    clearLockedAutoSize();
+    render();
+    if(isAutoPageSize($('promoPageSize')?.value)){
+      requestAnimationFrame(()=>{
+        clearLockedAutoSize();
+        render();
+      });
+    }
+    set('','');
+  }
 
-  form.addEventListener('submit',async e=>{
-    e.preventDefault();
-    try{
-      if(!val('promoName'))throw new Error('Name is required');
-      validatePolicy();
-      set('Saving...','');
-      await req(promoApi('PROMOTION_SAVE_FORM'),{method:'POST',body:payload()});
-      set('Saved successfully','success');
-      reset();
-      load();
-    }catch(err){set(err.message,'error');}
-  });
-  $('promoResetBtn').onclick=reset;
-  $('promoRefreshBtn').onclick=load;
-  $('applyPromoFilters').onclick=()=>{promoPage=0;render();};
-  $('resetPromoFilters').onclick=()=>{ if(searchInput)searchInput.value=''; if(categoryFilter)categoryFilter.value=''; if(statusFilter)statusFilter.value=''; if(sortFilter)sortFilter.value='orderAsc'; promoPage=0; render(); };
-  searchInput?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();render();}});
-  list.addEventListener('click',async e=>{
-    const eb=e.target.closest('[data-edit]'),cb=e.target.closest('[data-clone]'),db=e.target.closest('[data-del]');
-    if(eb){
+  async function loadEditDetail(id){
+    set('Loading promotion...','');
+    const detailUrl=promoApi('PROMOTION_DETAIL').replace('{id}',id);
+    const detailResponse=await req(detailUrl+(detailUrl.includes('?')?'&':'?')+'_='+Date.now());
+    const fresh=normalizePromotion(detailResponse.data||{});
+    if(String(fresh.id)!==String(id)) throw new Error('Promotion detail response does not match the selected ID');
+    const required=['bonusCategoryTitleId','desktopColumns','mobileColumns','desktopSpan','mobileSpan'];
+    const missing=required.filter(k=>fresh[k]===null||fresh[k]===undefined||fresh[k]==='');
+    if(missing.length) throw new Error('Exact promotion detail is missing database fields: '+missing.join(', '));
+    fill(fresh);
+    set('','');
+  }
+
+  if(form){
+    form.addEventListener('submit',async e=>{
+      e.preventDefault();
       try{
-        set('Loading exact promotion row from database...','');
-        const detailUrl=promoApi('PROMOTION_DETAIL').replace('{id}',eb.dataset.edit);
-        const detailResponse=await req(detailUrl+(detailUrl.includes('?')?'&':'?')+'_='+Date.now());
-        const fresh=normalizePromotion(detailResponse.data||{});
-        if(String(fresh.id)!==String(eb.dataset.edit)) throw new Error('Promotion detail response does not match the selected ID');
-        const required=['bonusCategoryTitleId','desktopColumns','mobileColumns','desktopSpan','mobileSpan'];
-        const missing=required.filter(k=>fresh[k]===null||fresh[k]===undefined||fresh[k]==='');
-        if(missing.length) throw new Error('Exact promotion detail is missing database fields: '+missing.join(', '));
+        if(!val('promoName'))throw new Error('Name is required');
+        validatePolicy();
+        set('Saving...','');
+        await req(promoApi('PROMOTION_SAVE_FORM'),{method:'POST',body:payload()});
+        if(isEditPage){
+          set('Saved successfully. Returning to list...','success');
+          setTimeout(()=>{ location.href='promotion.html'; },450);
+          return;
+        }
+        set('Saved successfully','success');
         reset();
-        fill(fresh);
-        set('','');
-      }catch(err){set(err.message||'Unable to load promotion','error');}
-    } if(cb&&await BO_DIALOG.confirm('Clone this promotion as an inactive draft?',{title:'Clone Promotion',confirmText:'Clone'})){await req(promoApi('PROMOTION_CLONE').replace('{id}',cb.dataset.clone),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});load();}
+        load();
+      }catch(err){set(err.message,'error');}
+    });
+  }
+  $('promoResetBtn')&&(($('promoResetBtn').onclick=reset));
+  $('promoRefreshBtn')&&(($('promoRefreshBtn').onclick=load));
+  const applyFilters=()=>{promoPage=0;render();};
+  searchInput?.addEventListener('input',applyFilters);
+  categoryFilter?.addEventListener('change',applyFilters);
+  statusFilter?.addEventListener('change',applyFilters);
+  sortFilter?.addEventListener('change',applyFilters);
+  list?.addEventListener('click',async e=>{
+    const db=e.target.closest('[data-del]');
     if(db&&await BO_DIALOG.confirm('Delete this promotion?', {title:'Delete Promotion', confirmText:'Delete'})){await req(promoApi('PROMOTION_DELETE'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:Number(db.dataset.del)})});load();}
   });
 
@@ -585,6 +823,7 @@
       providerInput.closest('.promo-provider-choice')?.classList.toggle('is-selected',providerInput.checked);
       rebuildPromoProviderCards(existing);
       syncAllowedGamesField();
+      updatePromoProviderCount();
       return;
     }
     const modeInput=e.target.closest('.promo-provider-rule input[type="radio"]');
@@ -593,9 +832,44 @@
       const assignment=card?.querySelector('.category-provider-assignment');
       if(assignment)assignment.hidden=modeInput.value!=='SELECTED';
       syncAllowedGamesField();
+      /* Focus/scrollIntoView on the radio can scroll .promo-edit-workspace
+         even when overflow is hidden — that shoves #promoForm off-screen (blank page). */
+      const workspace=document.querySelector('.promo-edit-workspace');
+      if(workspace) workspace.scrollTop=0;
+      if(modeInput.value==='SELECTED'&&assignment){
+        requestAnimationFrame(function(){
+          const form=$('promoForm');
+          const ws=document.querySelector('.promo-edit-workspace');
+          if(ws) ws.scrollTop=0;
+          if(!form)return;
+          const formRect=form.getBoundingClientRect();
+          const head=card?.querySelector('.category-provider-rule-head')||assignment;
+          const targetRect=head.getBoundingClientRect();
+          if(targetRect.top<formRect.top+12||targetRect.top>formRect.bottom-120){
+            const next=form.scrollTop+(targetRect.top-formRect.top)-16;
+            form.scrollTo({top:Math.max(0,next),behavior:'smooth'});
+          }
+          requestAnimationFrame(function(){ if(ws) ws.scrollTop=0; });
+        });
+      }
+    }
+  });
+  $('promoGameAccessConfig')?.addEventListener('input',e=>{
+    if(e.target&&e.target.id==='promoProviderSearch'){
+      filterPromoProviderChoices(e.target.value);
     }
   });
   $('promoGameAccessConfig')?.addEventListener('click',e=>{
+    const unpick=e.target.closest?.('[data-unpick]');
+    if(unpick){
+      const code=String(unpick.getAttribute('data-unpick')||'').toUpperCase();
+      const input=rootInputForProvider(code);
+      if(input){
+        input.checked=false;
+        input.dispatchEvent(new Event('change',{bubbles:true}));
+      }
+      return;
+    }
     const btn=e.target.closest('.category-provider-game-action');
     if(!btn)return;
     const row=btn.closest('.category-provider-game-row'), card=btn.closest('.promo-provider-rule');
@@ -608,6 +882,12 @@
     refreshPromoAssignmentCard(card);
     syncAllowedGamesField();
   });
+
+  function rootInputForProvider(code){
+    const root=$('promoGameAccessConfig');
+    if(!root||!code)return null;
+    return [...root.querySelectorAll('.promo-provider-choice input')].find(inp=>String(inp.value||'').toUpperCase()===code)||null;
+  }
   $('promoGameAccessConfig')?.addEventListener('input',e=>{
     const input=e.target.closest('.category-provider-game-search');
     if(!input)return;
@@ -618,17 +898,368 @@
     list?.querySelectorAll('.category-provider-game-row').forEach(row=>{row.hidden=!!q&&!String(row.dataset.search||'').includes(q);});
   });
 
-  $('promoPageSize')?.addEventListener('change',()=>{promoPage=0;render();});
+  $('promoPageSize')?.addEventListener('change',()=>{
+    clearLockedAutoSize();
+    promoPage=0;
+    render();
+  });
   $('promoPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(!b||b.disabled)return;promoPage=Number(b.dataset.p);render();});
+  let autofitResizeTimer=null;
+  window.addEventListener('resize',()=>{
+    if(!isAutoPageSize($('promoPageSize')?.value)) return;
+    clearTimeout(autofitResizeTimer);
+    autofitResizeTimer=setTimeout(()=>{
+      clearLockedAutoSize();
+      promoPage=0;
+      render();
+    },120);
+  });
   const promoImageInput=$('promoImage');
-  if(promoImageInput){ promoImageInput.addEventListener('change',()=>{ const f=promoImageInput.files&&promoImageInput.files[0]; selectedPromoImage=f||null; if(f) showImagePreview(URL.createObjectURL(f)); }); }
-  $('promoBonusCategoryTitleId')?.addEventListener('change',()=>{ applyCategorySectionLayoutForNewItem(); clampSpanSelects(); });
+  if(promoImageInput){ promoImageInput.addEventListener('change',()=>{ const f=promoImageInput.files&&promoImageInput.files[0]; selectedPromoImage=f||null; syncPromoFileLabel(f||null); if(f) showImagePreview(URL.createObjectURL(f)); }); }
+  $('promoBonusCategoryTitleId')?.addEventListener('change',()=>{ ensurePromoRowsForLayout().then(()=>{ applyCategorySectionLayoutForNewItem(); clampSpanSelects(); }); });
   $('promoDesktopColumns')?.addEventListener('change',clampSpanSelects);
   $('promoMobileColumns')?.addEventListener('change',clampSpanSelects);
   ['promoCompletionDeadlineMode','promoRebatePolicy','promoRebateStartCondition','promoWithdrawalRestriction'].forEach(id=>$(id)?.addEventListener('change',updatePolicyVisibility));
-  updatePolicyVisibility();
-  initDetailEditor();
-  promotionGameConfigReady=loadPromotionGameConfig();
-  loadCategoryTitles().then(()=>load()).catch(e=>set(e.message,'error'));
+  if(form){
+    updatePolicyVisibility();
+    initDetailEditor();
+    promotionGameConfigReady=loadPromotionGameConfig();
+  }
+  /* —— MD form datetime popover (.rebate-dt-*) —— */
+  const promoDtIds=['promoStartAt','promoEndAt','promoClaimStartAt','promoClaimEndAt','promoCompletionFixedAt'];
+  function fmtDatetimeLocal(v){
+    const raw=String(v||'').trim();
+    if(!raw) return '';
+    const [datePart,timePart='']=raw.split('T');
+    const bits=datePart.split('-');
+    if(bits.length!==3) return raw.replace('T',' ');
+    return bits[2]+'/'+bits[1]+'/'+bits[0]+(timePart?' '+timePart.slice(0,5):'');
+  }
+  function syncDatetimeField(id){
+    const inputEl=$(id); if(!inputEl) return;
+    const shell=inputEl.closest('.rebate-dt-shell');
+    const text=shell&&shell.querySelector('.rebate-dt-text');
+    if(!text) return;
+    const label=fmtDatetimeLocal(inputEl.value);
+    if(label){ text.textContent=label; text.classList.remove('is-empty'); }
+    else{ text.textContent='Select date & time'; text.classList.add('is-empty'); }
+  }
+  function syncDatetimeFields(){ promoDtIds.forEach(syncDatetimeField); }
+  function closeAllDatetimePops(except){
+    document.querySelectorAll('#promoForm .rebate-dt-pop.show').forEach(pop=>{
+      if(except&&pop===except) return;
+      pop.classList.remove('show');
+      pop.style.top=''; pop.style.left=''; pop.style.bottom='';
+    });
+    document.querySelectorAll('#promoForm .rebate-dt-shell.is-open').forEach(shell=>{
+      if(except&&shell.contains(except)) return;
+      shell.classList.remove('is-open');
+    });
+  }
+  function parseDatetimeLocal(v){
+    const raw=String(v||'').trim();
+    if(!raw) return null;
+    const d=new Date(raw.includes('T')?raw:raw+'T00:00');
+    return isNaN(d.getTime())?null:d;
+  }
+  function toDatetimeLocal(d){
+    if(!d||isNaN(d.getTime())) return '';
+    const pad=n=>String(n).padStart(2,'0');
+    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());
+  }
+  function ensureDatetimePop(shell,inputEl){
+    let pop=shell.querySelector('.rebate-dt-pop');
+    if(pop&&pop.dataset.dtV!=='5'){ pop.remove(); pop=null; }
+    if(pop) return pop;
+    pop=document.createElement('div');
+    pop.className='rebate-dt-pop';
+    pop.dataset.dtV='5';
+    pop.innerHTML=[
+      '<div class="rebate-dt-summary">',
+      '<span class="rebate-dt-summary-text" data-summary>—</span>',
+      '<button type="button" class="rebate-dt-summary-clear" data-clear aria-label="Clear">Clear</button>',
+      '</div>',
+      '<div class="rebate-dt-body">',
+      '<div class="rebate-dt-cal">',
+      '<div class="rebate-dt-cal-head">',
+      '<button type="button" class="rebate-dt-nav" data-nav="-1" aria-label="Previous month"><i class="bi bi-chevron-left"></i></button>',
+      '<button type="button" class="rebate-dt-month" data-month-label></button>',
+      '<button type="button" class="rebate-dt-nav" data-nav="1" aria-label="Next month"><i class="bi bi-chevron-right"></i></button>',
+      '</div>',
+      '<div class="rebate-dt-week"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>',
+      '<div class="rebate-dt-days" data-days></div>',
+      '</div>',
+      '<div class="rebate-dt-time">',
+      '<div class="rebate-dt-step" data-step="hour">',
+      '<span class="rebate-dt-step-label">Hour</span>',
+      '<button type="button" class="rebate-dt-step-btn" data-hour-up aria-label="Hour up"><i class="bi bi-chevron-up"></i></button>',
+      '<button type="button" class="rebate-dt-step-val" data-hour-val title="Click to pick">00</button>',
+      '<button type="button" class="rebate-dt-step-btn" data-hour-down aria-label="Hour down"><i class="bi bi-chevron-down"></i></button>',
+      '</div>',
+      '<div class="rebate-dt-time-colon" aria-hidden="true">:</div>',
+      '<div class="rebate-dt-step" data-step="min">',
+      '<span class="rebate-dt-step-label">Min</span>',
+      '<button type="button" class="rebate-dt-step-btn" data-min-up aria-label="Minute up"><i class="bi bi-chevron-up"></i></button>',
+      '<button type="button" class="rebate-dt-step-val" data-min-val title="Click to pick">00</button>',
+      '<button type="button" class="rebate-dt-step-btn" data-min-down aria-label="Minute down"><i class="bi bi-chevron-down"></i></button>',
+      '</div>',
+      '</div>',
+      '<div class="rebate-dt-pick" data-pick hidden>',
+      '<div class="rebate-dt-pick-bar">',
+      '<button type="button" class="rebate-dt-pick-back" data-pick-back aria-label="Back"><i class="bi bi-chevron-left"></i></button>',
+      '<span class="rebate-dt-pick-title" data-pick-title>Hour</span>',
+      '</div>',
+      '<div class="rebate-dt-pick-quick" data-pick-quick hidden></div>',
+      '<div class="rebate-dt-pick-grid" data-pick-grid></div>',
+      '</div>',
+      '</div>',
+      '<div class="rebate-dt-foot">',
+      '<button type="button" class="rebate-dt-foot-ghost" data-today>Today</button>',
+      '<button type="button" class="rebate-dt-foot-primary" data-done>Done</button>',
+      '</div>'
+    ].join('');
+    shell.appendChild(pop);
+    const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const pad=n=>String(n).padStart(2,'0');
+    let view=new Date();
+    let pickKind=null;
+    const pickEl=pop.querySelector('[data-pick]');
+    const pickGrid=pop.querySelector('[data-pick-grid]');
+    const pickQuick=pop.querySelector('[data-pick-quick]');
+    const pickTitle=pop.querySelector('[data-pick-title]');
+    function selected(){ return parseDatetimeLocal(inputEl.value)||null; }
+    function baseDate(){
+      const sel=selected();
+      if(sel) return new Date(sel);
+      const n=new Date(); n.setSeconds(0,0); return n;
+    }
+    function commit(d){
+      inputEl.value=toDatetimeLocal(d);
+      inputEl.dispatchEvent(new Event('input',{bubbles:true}));
+      inputEl.dispatchEvent(new Event('change',{bubbles:true}));
+      syncDatetimeField(inputEl.id);
+      render();
+    }
+    function nudge(kind,delta){
+      const d=baseDate();
+      if(kind==='hour') d.setHours((d.getHours()+delta+24)%24);
+      else d.setMinutes((d.getMinutes()+delta+60)%60);
+      commit(d);
+    }
+    function closePick(){ pickKind=null; pickEl.hidden=true; pop.classList.remove('is-picking'); }
+    function openPick(kind){
+      pickKind=kind;
+      const cur=baseDate();
+      const active=kind==='hour'?cur.getHours():cur.getMinutes();
+      pickTitle.textContent=kind==='hour'?'Hour':'Minute';
+      pickQuick.hidden=kind!=='min';
+      pickQuick.innerHTML='';
+      if(kind==='min'){
+        [0,15,30,45].forEach(m=>{
+          const b=document.createElement('button');
+          b.type='button';
+          b.className='rebate-dt-pick-chip'+(m===active?' is-selected':'');
+          b.textContent=':'+pad(m);
+          b.addEventListener('click',e=>{ e.preventDefault();e.stopPropagation(); const d=baseDate(); d.setMinutes(m,0,0); commit(d); closePick(); });
+          pickQuick.appendChild(b);
+        });
+      }
+      pickGrid.className='rebate-dt-pick-grid'+(kind==='hour'?' is-hour':' is-min');
+      pickGrid.innerHTML='';
+      const count=kind==='hour'?24:60;
+      for(let i=0;i<count;i++){
+        const b=document.createElement('button');
+        b.type='button';
+        b.className='rebate-dt-pick-opt'+(i===active?' is-selected':'');
+        b.textContent=pad(i);
+        b.addEventListener('click',e=>{
+          e.preventDefault();e.stopPropagation();
+          const d=baseDate();
+          if(kind==='hour') d.setHours(i); else d.setMinutes(i,0,0);
+          commit(d); closePick();
+        });
+        pickGrid.appendChild(b);
+      }
+      pickEl.hidden=false;
+      pop.classList.add('is-picking');
+      const selBtn=pickGrid.querySelector('.is-selected');
+      if(selBtn) requestAnimationFrame(()=>selBtn.scrollIntoView({block:'nearest'}));
+    }
+    function placePop(){
+      pop.classList.remove('is-up');
+      pop.style.bottom='auto';
+      const shellRect=shell.getBoundingClientRect();
+      const popW=Math.min(348, window.innerWidth-36);
+      const popH=300;
+      let left=Math.min(Math.max(12, shellRect.left), window.innerWidth-popW-12);
+      const spaceBelow=window.innerHeight-shellRect.bottom-12;
+      if(spaceBelow<popH && shellRect.top>popH+12){
+        pop.classList.add('is-up');
+        pop.style.top='auto';
+        pop.style.bottom=(window.innerHeight-shellRect.top+6)+'px';
+      }else{
+        pop.style.top=(shellRect.bottom+6)+'px';
+        pop.style.bottom='auto';
+      }
+      pop.style.left=left+'px';
+      pop.style.width=popW+'px';
+    }
+    function render(){
+      const sel=selected();
+      const focus=sel?new Date(sel):view;
+      if(!pop.dataset.viewLocked) view=new Date(focus.getFullYear(),focus.getMonth(),1);
+      pop.querySelector('[data-month-label]').textContent=MONTHS[view.getMonth()]+' '+view.getFullYear();
+      const summary=pop.querySelector('[data-summary]');
+      if(sel){
+        summary.textContent=sel.getDate()+' '+MONTHS[sel.getMonth()]+' '+sel.getFullYear()+' · '+pad(sel.getHours())+':'+pad(sel.getMinutes());
+        summary.classList.remove('is-empty');
+      }else{
+        summary.textContent='Pick a date & time';
+        summary.classList.add('is-empty');
+      }
+      const days=pop.querySelector('[data-days]');
+      days.innerHTML='';
+      const first=new Date(view.getFullYear(),view.getMonth(),1);
+      const offset=first.getDay();
+      const daysInMonth=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();
+      const cellCount=Math.ceil((offset+daysInMonth)/7)*7;
+      const selKey=sel?sel.getFullYear()+'-'+pad(sel.getMonth()+1)+'-'+pad(sel.getDate()):'';
+      const now=new Date();
+      const todayKey=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate());
+      for(let i=0;i<cellCount;i++){
+        const d=new Date(view.getFullYear(),view.getMonth(),i-offset+1);
+        const key=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+        const btn=document.createElement('button');
+        btn.type='button';
+        btn.textContent=String(d.getDate());
+        btn.className='rebate-dt-day'
+          +(d.getMonth()!==view.getMonth()?' is-muted':'')
+          +(key===selKey?' is-selected':'')
+          +(key===todayKey?' is-today':'');
+        btn.addEventListener('click',e=>{
+          e.preventDefault();e.stopPropagation();
+          const base=baseDate();
+          const next=new Date(d.getFullYear(),d.getMonth(),d.getDate(),base.getHours(),base.getMinutes(),0,0);
+          pop.dataset.viewLocked='1';
+          view=new Date(d.getFullYear(),d.getMonth(),1);
+          commit(next);
+        });
+        days.appendChild(btn);
+      }
+      const hour=sel?sel.getHours():baseDate().getHours();
+      const minute=sel?sel.getMinutes():baseDate().getMinutes();
+      pop.querySelector('[data-hour-val]').textContent=pad(hour);
+      pop.querySelector('[data-min-val]').textContent=pad(minute);
+    }
+    if(!pop.dataset.wired){
+      pop.dataset.wired='1';
+      pop.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',e=>{
+        e.preventDefault();e.stopPropagation();
+        pop.dataset.viewLocked='1';
+        view=new Date(view.getFullYear(),view.getMonth()+Number(b.dataset.nav),1);
+        render();
+      }));
+      pop.querySelector('[data-clear]').addEventListener('click',e=>{
+        e.preventDefault();e.stopPropagation();
+        inputEl.value='';
+        inputEl.dispatchEvent(new Event('input',{bubbles:true}));
+        inputEl.dispatchEvent(new Event('change',{bubbles:true}));
+        syncDatetimeField(inputEl.id);
+        delete pop.dataset.viewLocked;
+        closePick(); closeAllDatetimePops();
+      });
+      pop.querySelector('[data-today]').addEventListener('click',e=>{ e.preventDefault();e.stopPropagation(); delete pop.dataset.viewLocked; closePick(); commit(new Date()); });
+      pop.querySelector('[data-done]').addEventListener('click',e=>{ e.preventDefault();e.stopPropagation(); if(!selected()) commit(baseDate()); closePick(); closeAllDatetimePops(); });
+      pop.querySelector('[data-hour-up]').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();nudge('hour',1);});
+      pop.querySelector('[data-hour-down]').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();nudge('hour',-1);});
+      pop.querySelector('[data-min-up]').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();nudge('min',1);});
+      pop.querySelector('[data-min-down]').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();nudge('min',-1);});
+      pop.querySelector('[data-hour-val]').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openPick('hour');});
+      pop.querySelector('[data-min-val]').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openPick('min');});
+      pop.querySelector('[data-pick-back]').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();closePick();});
+      pop.addEventListener('click',e=>e.stopPropagation());
+      pop._closePick=closePick;
+    }
+    pop._render=render;
+    pop._place=placePop;
+    return pop;
+  }
+  function openDatetimePop(inputEl){
+    const shell=inputEl.closest('.rebate-dt-shell');
+    if(!shell) return;
+    const pop=ensureDatetimePop(shell,inputEl);
+    const opening=!pop.classList.contains('show');
+    closeAllDatetimePops(opening?pop:null);
+    if(!opening){ pop.classList.remove('show'); shell.classList.remove('is-open'); if(pop._closePick) pop._closePick(); return; }
+    delete pop.dataset.viewLocked;
+    if(pop._closePick) pop._closePick();
+    pop._render();
+    pop.classList.add('show');
+    shell.classList.add('is-open');
+    pop._place();
+  }
+  function wireDatetimeFields(){
+    if(!form) return;
+    document.querySelectorAll('#promoForm .rebate-dt-trigger').forEach(btn=>{
+      if(btn.dataset.dtWired==='1') return;
+      btn.dataset.dtWired='1';
+      btn.addEventListener('click',e=>{
+        e.preventDefault(); e.stopPropagation();
+        const inputEl=$(btn.getAttribute('data-dt-for'));
+        if(!inputEl) return;
+        openDatetimePop(inputEl);
+      });
+    });
+    promoDtIds.forEach(id=>{
+      const inputEl=$(id); if(!inputEl||inputEl.dataset.dtWired==='1') return;
+      inputEl.dataset.dtWired='1';
+      inputEl.addEventListener('input',()=>syncDatetimeField(id));
+      inputEl.addEventListener('change',()=>syncDatetimeField(id));
+    });
+    if(!document.documentElement.dataset.promoDtDocWired){
+      document.documentElement.dataset.promoDtDocWired='1';
+      document.addEventListener('click',e=>{
+        if(e.target.closest('#promoForm .rebate-dt-shell')) return;
+        closeAllDatetimePops();
+      });
+      document.addEventListener('keydown',e=>{
+        if(e.key!=='Escape') return;
+        const openPop=document.querySelector('#promoForm .rebate-dt-pop.show');
+        if(openPop&&openPop.classList.contains('is-picking')&&openPop._closePick){ openPop._closePick(); return; }
+        closeAllDatetimePops();
+      });
+      window.addEventListener('resize',()=>{
+        document.querySelectorAll('#promoForm .rebate-dt-pop.show').forEach(pop=>{ if(pop._place) pop._place(); });
+      },{passive:true});
+      form.addEventListener('scroll',()=>{
+        document.querySelectorAll('#promoForm .rebate-dt-pop.show').forEach(pop=>{ if(pop._place) pop._place(); });
+      },{passive:true});
+    }
+    syncDatetimeFields();
+  }
+  /* Workspace must never scroll — focus/scrollIntoView on Selected Games radios
+     was shifting it and leaving a blank cream viewport (form off-screen). */
+  if(isEditPage){
+    const workspace=document.querySelector('.promo-edit-workspace');
+    if(workspace){
+      const lockWs=()=>{ if(workspace.scrollTop) workspace.scrollTop=0; };
+      lockWs();
+      workspace.addEventListener('scroll',lockWs,{passive:true});
+    }
+    wireDatetimeFields();
+  }
+  loadCategoryTitles().then(async ()=>{
+    if(isEditPage){
+      const id=queryEditId();
+      if(id){
+        try{ await loadEditDetail(id); }
+        catch(e){ set(e.message||'Unable to load promotion','error'); }
+      }else{
+        reset();
+      }
+      return;
+    }
+    await load();
+  }).catch(e=>set(e.message,'error'));
   loadPromotionVipLevels();
 })();

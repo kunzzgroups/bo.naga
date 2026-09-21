@@ -1,49 +1,228 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Page Customize</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"><link href="assets/css/reports.css?v=1.0.57" rel="stylesheet"><link href="assets/css/bo-ui-standard.css?v=1.0.6" rel="stylesheet">
-<link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-shell.css?v=1.0.7" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-legacy.css?v=1.1.29" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-cms.css?v=1.0.0" rel="stylesheet" />
-<link href="assets/css/bo-input-fill.css?v=1.0.1" rel="stylesheet" />
-<style>.pc-grid{display:grid;grid-template-columns:310px 1fr;gap:16px}.pc-card{background:#FFF8EB;border:1px solid #EADCC8;border-radius:14px;padding:16px;margin-bottom:16px}.pc-list-item{padding:12px;border:1px solid #EADCC8;border-radius:10px;margin-bottom:8px;cursor:pointer}.pc-list-item.active{outline:2px solid #D97706}.pc-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.pc-field.full{grid-column:1/-1}.pc-field label{font-size:12px;font-weight:700;margin-bottom:5px;display:block}.pc-field input,.pc-field select,.pc-field textarea{width:100%;border:1px solid #EADCC8;border-radius:9px;padding:9px}.pc-editor{border:1px solid #EADCC8;border-radius:10px;overflow:hidden}.pc-toolbar{display:flex;flex-wrap:wrap;gap:4px;padding:8px;border-bottom:1px solid #EADCC8;background:#F5EBDC}.pc-toolbar button,.pc-toolbar select{height:32px;border:1px solid #EADCC8;background:#FFF8EB;border-radius:6px;padding:0 8px}.pc-rich{min-height:260px;padding:14px;outline:none;background:#FFF8EB}.pc-rich-source{display:none;width:100%;min-height:360px;border:0;border-radius:0;padding:14px;resize:vertical;background:#2A2C36;color:#F5F5F4;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;line-height:1.55;outline:none}.pc-editor.source-mode .pc-rich{display:none}.pc-editor.source-mode .pc-rich-source{display:block}.pc-editor.source-mode .pc-toolbar [data-rich-tool]{opacity:.45;pointer-events:none}.pc-view-toggle{margin-left:auto;display:flex;gap:4px}.pc-view-toggle button.active{background:#D97706;color:#fff;border-color:#D97706}.pc-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;min-height:130px}.pc-help{font-size:12px;color:#57534E}.pc-url{word-break:break-all;font-family:ui-monospace,monospace;font-size:12px;background:#F5EBDC;padding:10px;border-radius:8px}.pc-actions{display:flex;gap:8px;flex-wrap:wrap}.pc-advanced details{margin-top:8px}.pc-advanced summary{font-weight:700;cursor:pointer}.pc-switch{display:flex;align-items:center;gap:8px}.pc-empty{text-align:center;color:#57534E;padding:22px}@media(max-width:1000px){.pc-grid{grid-template-columns:1fr}}@media(max-width:700px){.pc-form-grid{grid-template-columns:1fr}.pc-field.full{grid-column:auto}}
-    /* This page's own classes live in this inline block, so the shared layers cannot reach them,
-       and it carried no dark rules at all: every .pc-* surface stayed cream on the charcoal
-       canvas. */
-    html[data-bo-theme="dark"] .pc-card{ background:#383A46;border-color:rgba(255,255,255,.14) }
-    html[data-bo-theme="dark"] .pc-list-item{ border-color:rgba(255,255,255,.14) }
-    html[data-bo-theme="dark"] .pc-list-item.active{ outline-color:#F59E0B }
-    html[data-bo-theme="dark"] .pc-toolbar{ background:#2A2C36;border-bottom-color:rgba(255,255,255,.12) }
-    html[data-bo-theme="dark"] .pc-toolbar button,
-    html[data-bo-theme="dark"] .pc-toolbar select{ background:#383A46;border-color:rgba(255,255,255,.12);color:#F5F5F4 }
-    html[data-bo-theme="dark"] .pc-view-toggle button.active{ background:#F59E0B;color:#2A2C36;border-color:#F59E0B }
-    html[data-bo-theme="dark"] .pc-rich{ background:#383A46;color:#F5F5F4 }
-    html[data-bo-theme="dark"] .pc-editor{ border-color:rgba(255,255,255,.14) }
-    html[data-bo-theme="dark"] .pc-field label{ color:#E7E5E4 }
-    html[data-bo-theme="dark"] .pc-field input,
-    html[data-bo-theme="dark"] .pc-field select,
-    html[data-bo-theme="dark"] .pc-field textarea{ background:#2A2C36;border-color:rgba(255,255,255,.12);color:#F5F5F4 }
-    html[data-bo-theme="dark"] .pc-help,
-    html[data-bo-theme="dark"] .pc-empty{ color:#D4D4D8 }
-    html[data-bo-theme="dark"] .pc-url{ background:#2A2C36;color:#E7E5E4 }
-</style></head>
-<body class="report-body standardized-listing-page bo-charcoal bo-account-chip"><div class="report-shell"><aside class="report-sidebar" id="reportSidebar"><div class="report-brand"><div>Backoffice<br><small>Admin Panel</small></div><button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button></div><nav class="report-nav"></nav></aside><div class="sidebar-overlay" data-close-sidebar id="reportOverlay"></div><main class="report-main"><header class="report-topbar"><button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button><div class="user-title-wrap"><div class="user-title-icon"><i class="bi bi-file-earmark-code"></i></div><div><h1>Page Customize</h1></div></div><div class="report-actions">
-      <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
-        <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
-        <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
-      </button>
-      <div data-bo-profile></div>
-    </div></header><section class="report-content">
-<div class="pc-card"><b>Flow:</b> create a page �?choose/confirm its frontend domain �?design it �?Save �?the generated page keeps the normal frontend shell �?copy the URL and place it anywhere from Layout Section. Partner Withdrawals remains Partnership-only.</div>
-<div class="pc-grid"><div><div class="pc-card"><div class="d-flex justify-content-between align-items-center mb-3"><h3 class="m-0 fs-6">Pages</h3><button class="clean-btn primary" id="pcNew"><i class="bi bi-plus-lg"></i> New Page</button></div><div id="pcList"><div class="pc-empty">Loading...</div></div></div></div>
-<div><div class="pc-card"><div class="d-flex justify-content-between align-items-center mb-3"><div><h3 class="m-0 fs-6" id="pcFormTitle">Create Page</h3><div class="pc-help">Saving physically generates a brand-scoped <code>.html</code> file.</div></div><span id="pcState" class="badge text-bg-secondary">New</span></div>
-<form id="pcForm"><div class="pc-form-grid"><div class="pc-field"><label>Page Name *</label><input id="pcTitle" placeholder="Partnership"></div><div class="pc-field"><label>HTML Filename / Slug *</label><input id="pcSlug" placeholder="partnership"><div class="pc-help">Creates partnership.html. Lowercase letters, numbers and hyphens only.</div></div><div class="pc-field"><label>Status</label><select id="pcEnabled"><option value="1">Enabled</option><option value="0">Disabled</option></select></div><div class="pc-field"><label>Frontend Domain</label><input id="pcFrontendDomain" list="pcFrontendDomainOptions" placeholder="https://titanx7.com"><datalist id="pcFrontendDomainOptions"></datalist><div class="pc-help">Auto-filled from the selected brand. You may choose one of that brand's public domains/aliases for this page.</div></div><div class="pc-field full"><label>Generated HTML URL</label><div class="pc-url" id="pcUrl">Save the page first.</div></div>
-<div class="pc-field full"><label>Rich Content Editor</label><div class="pc-help mb-2">Use <b>Visual</b> for rich-text editing or switch to <b>HTML</b> to paste/edit the exact HTML for this content. Switching back to Visual renders the HTML immediately.</div><div class="pc-editor" id="pcEditor"><div class="pc-toolbar" id="pcToolbar"><button type="button" data-rich-tool data-cmd="bold"><b>B</b></button><button type="button" data-rich-tool data-cmd="italic"><i>I</i></button><button type="button" data-rich-tool data-cmd="underline"><u>U</u></button><button type="button" data-rich-tool data-cmd="strikeThrough"><s>S</s></button><button type="button" data-rich-tool data-block="h1">H1</button><button type="button" data-rich-tool data-block="h2">H2</button><button type="button" data-rich-tool data-cmd="insertUnorderedList"><i class="bi bi-list-ul"></i></button><button type="button" data-rich-tool data-cmd="insertOrderedList"><i class="bi bi-list-ol"></i></button><button type="button" data-rich-tool data-cmd="justifyLeft"><i class="bi bi-text-left"></i></button><button type="button" data-rich-tool data-cmd="justifyCenter"><i class="bi bi-text-center"></i></button><button type="button" data-rich-tool data-cmd="justifyRight"><i class="bi bi-text-right"></i></button><button type="button" data-rich-tool id="pcLink"><i class="bi bi-link-45deg"></i></button><button type="button" data-rich-tool id="pcImage"><i class="bi bi-image"></i></button><button type="button" data-rich-tool data-cmd="removeFormat">Tx</button><span class="pc-view-toggle"><button type="button" id="pcVisualMode" class="active"><i class="bi bi-eye"></i> Visual</button><button type="button" id="pcHtmlMode"><i class="bi bi-code-slash"></i> HTML</button></span></div><div id="pcRich" class="pc-rich" contenteditable="true"></div><textarea id="pcRichSource" class="pc-rich-source" spellcheck="false" aria-label="Rich content HTML source"></textarea></div></div>
-<div id="pcPartnershipOptions" class="pc-field full" hidden><div class="pc-grid"><div class="pc-field full"><div class="pc-switch"><input type="checkbox" id="pcShowTx"><label for="pcShowTx" class="m-0">Show Partner Withdrawals section</label></div><div class="pc-help">Available only for <b>partnership.html</b>. Live mode reads withdrawals from the selected partner brand, never from the page owner brand.</div></div><div class="pc-field"><label>Partnership Brand</label><select id="pcPartnerBrand"><option value="">Select partner brand</option></select><div class="pc-help">Choose the brand whose partnership withdrawal data should be displayed.</div></div><div class="pc-field"><label>Transaction Source</label><select id="pcTxMode"><option value="MANUAL_RANDOM">Manual list / random order</option><option value="LIVE_WITHDRAWAL">Live approved withdrawals</option></select></div><div class="pc-field"><label>Rows to Show</label><input id="pcTxLimit" type="number" min="1" max="50" value="10"></div><div class="pc-field"><label>Section Title</label><input id="pcTxTitle" value="PARTNER WITHDRAWALS"></div><div class="pc-field"><label>Withdrawal Section Position</label><select id="pcTxPosition"><option value="AFTER_CONTENT">After page content</option><option value="BEFORE_CONTENT">Before page content</option><option value="CUSTOM_SLOT">Custom position inside Rich Content</option></select><div class="pc-help">Choose where the Partner Withdrawals block appears on the generated Partnership page.</div></div><div class="pc-field"><label>Custom Position</label><button type="button" class="clean-btn" id="pcInsertTxSlot"><i class="bi bi-pin-map"></i> Insert Withdrawals Here</button><div class="pc-help">For Custom position, place the marker at the current cursor in the Rich Content editor. In HTML mode the marker is <code>&lt;div data-partner-withdrawals-slot=&quot;1&quot;&gt;&lt;/div&gt;</code>.</div></div><div class="pc-field full"><label>Manual Random Transactions</label><textarea id="pcManualTx" rows="6" placeholder="https://.../logo.png | 61*****411 | 300.00 | POKIES\nhttps://.../logo2.png | 61*****324 | 10.00 | BETWAY365"></textarea><div class="pc-help">One row per line: <code>logo URL | masked member | amount | label</code>. Order is randomized each load.</div></div></div></div>
-<div class="pc-field full pc-advanced"><details><summary>Advanced HTML / CSS / JavaScript</summary><div class="mt-3"><label>Custom HTML</label><textarea class="pc-code" id="pcHtml" rows="8" placeholder="<section>...</section>"></textarea></div><div class="mt-3"><label>Custom CSS</label><textarea class="pc-code" id="pcCss" rows="8" placeholder=".my-section { ... }"></textarea></div><div class="mt-3"><label>Custom JavaScript</label><textarea class="pc-code" id="pcJs" rows="8" placeholder="document.addEventListener('DOMContentLoaded', ...)"></textarea></div></details></div></div>
-<div class="pc-actions mt-3"><button class="clean-btn primary" type="submit"><i class="bi bi-save"></i> Save & Generate HTML</button><button class="clean-btn" type="button" id="pcStarter"><i class="bi bi-stars"></i> Partnership Starter</button><a class="clean-btn" href="layout-section.html"><i class="bi bi-layout-text-window-reverse"></i> Open Layout Section</a><button class="clean-btn" type="button" id="pcPreview"><i class="bi bi-box-arrow-up-right"></i> Preview</button><button class="clean-btn" type="button" id="pcCopy"><i class="bi bi-copy"></i> Copy URL</button><button class="clean-btn" type="button" id="pcDelete"><i class="bi bi-trash"></i> Delete</button></div></form></div></div></div>
-</section></main></div><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script><script src="assets/js/config.js?v=1.0.95"></script>
-<script src="assets/js/main-currency-runtime.js?v=1.0.2"></script><script src="assets/js/auth.js?v=1.0.66"></script><script src="assets/js/page-customize.js?v=1.0.4"></script><script src="assets/js/currency-runtime.js?v=1.0.1"></script>
-<script src="assets/js/bo-theme.js?v=1.0.0"></script>
-<script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
-</body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Page Customize</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/reports.css?v=1.0.57" rel="stylesheet">
+  <link href="assets/css/bo-ui-standard.css?v=1.0.6" rel="stylesheet">
+  <link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
+  <link href="assets/css/bo-charcoal-shell.css?v=1.0.7" rel="stylesheet" />
+  <link href="assets/css/bo-charcoal-legacy.css?v=1.1.29" rel="stylesheet" />
+  <link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
+  <link href="assets/css/bo-charcoal-cms.css?v=1.0.0" rel="stylesheet" />
+  <link href="assets/css/bo-input-fill.css?v=1.0.2" rel="stylesheet" />
+  <link href="assets/css/bo-page-customize-md.css?v=20260919-html-1" rel="stylesheet" />
+</head>
+<body class="report-body standardized-listing-page bo-charcoal bo-account-chip page-customize-page">
+  <div class="report-shell">
+    <aside class="report-sidebar" id="reportSidebar">
+      <div class="report-brand">
+        <div>Backoffice<br><small>Admin Panel</small></div>
+        <button class="close-side" data-close-sidebar><i class="bi bi-x-lg"></i></button>
+      </div>
+      <nav class="report-nav"></nav>
+    </aside>
+    <div class="sidebar-overlay" data-close-sidebar id="reportOverlay"></div>
+    <main class="report-main">
+      <header class="report-topbar">
+        <button class="hamb" data-open-sidebar><i class="bi bi-list"></i></button>
+        <div class="user-title-wrap">
+          <div class="user-title-icon"><i class="bi bi-file-earmark-code"></i></div>
+          <div><h1>Page Customize</h1></div>
+        </div>
+        <div class="report-actions">
+          <button type="button" class="bo-theme-btn" id="boThemeToggle" aria-pressed="false" title="Switch to dark mode" aria-label="Switch to dark mode">
+            <i class="bi bi-sun-fill" data-theme-icon="sun"></i>
+            <i class="bi bi-moon-fill" data-theme-icon="moon" hidden></i>
+          </button>
+          <div data-bo-profile></div>
+        </div>
+      </header>
+      <section class="report-content">
+        <div class="pc-grid">
+          <div class="pc-card">
+            <div class="pc-card-head">
+              <h3>Pages</h3>
+              <button class="clean-btn primary" id="pcNew" type="button"><i class="bi bi-plus-lg"></i> New Page</button>
+            </div>
+            <div class="pc-list-scroll" id="pcList"><div class="pc-empty">Loading...</div></div>
+          </div>
+
+          <div class="pc-card pc-card--editor">
+            <div class="pc-card-head">
+              <div>
+                <h3 id="pcFormTitle" class="pc-form-title">Create Page</h3>
+                <div class="pc-help">Generates a brand-scoped <code>.html</code> file on save.</div>
+              </div>
+              <span id="pcState" class="badge text-bg-secondary">New</span>
+            </div>
+
+            <form id="pcForm" class="pc-form">
+              <div class="pc-form-scroll">
+                <section class="pc-section">
+                  <div class="pc-section-label">Page</div>
+                  <div class="pc-form-grid">
+                    <div class="pc-field">
+                      <label for="pcTitle">Page Name *</label>
+                      <input id="pcTitle" placeholder="Partnership" autocomplete="off">
+                    </div>
+                    <div class="pc-field">
+                      <label for="pcSlug">Slug *</label>
+                      <input id="pcSlug" placeholder="partnership" autocomplete="off">
+                      <div class="pc-help">Lowercase, numbers, hyphens → <code>slug.html</code></div>
+                    </div>
+                    <div class="pc-field">
+                      <label for="pcEnabled">Status</label>
+                      <select id="pcEnabled">
+                        <option value="1">Enabled</option>
+                        <option value="0">Disabled</option>
+                      </select>
+                    </div>
+                    <div class="pc-field">
+                      <label for="pcFrontendDomain">Frontend Domain</label>
+                      <input id="pcFrontendDomain" list="pcFrontendDomainOptions" placeholder="https://titanx7.com" autocomplete="off">
+                      <datalist id="pcFrontendDomainOptions"></datalist>
+                      <div class="pc-help">Brand domain or alias for this page.</div>
+                    </div>
+                    <div class="pc-field full">
+                      <label>Generated URL</label>
+                      <div class="pc-url is-empty" id="pcUrl">Save to generate URL</div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="pc-section">
+                  <div class="pc-section-label">Content</div>
+                  <div class="pc-field full">
+                    <div class="pc-editor" id="pcEditor">
+                      <div class="pc-toolbar" id="pcToolbar">
+                        <button type="button" data-rich-tool data-cmd="bold" title="Bold"><b>B</b></button>
+                        <button type="button" data-rich-tool data-cmd="italic" title="Italic"><i>I</i></button>
+                        <button type="button" data-rich-tool data-cmd="underline" title="Underline"><u>U</u></button>
+                        <button type="button" data-rich-tool data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
+                        <button type="button" data-rich-tool data-block="h1" title="Heading 1">H1</button>
+                        <button type="button" data-rich-tool data-block="h2" title="Heading 2">H2</button>
+                        <button type="button" data-rich-tool data-cmd="insertUnorderedList" title="Bullet list"><i class="bi bi-list-ul"></i></button>
+                        <button type="button" data-rich-tool data-cmd="insertOrderedList" title="Numbered list"><i class="bi bi-list-ol"></i></button>
+                        <button type="button" data-rich-tool data-cmd="justifyLeft" title="Align left"><i class="bi bi-text-left"></i></button>
+                        <button type="button" data-rich-tool data-cmd="justifyCenter" title="Align center"><i class="bi bi-text-center"></i></button>
+                        <button type="button" data-rich-tool data-cmd="justifyRight" title="Align right"><i class="bi bi-text-right"></i></button>
+                        <button type="button" data-rich-tool id="pcLink" title="Insert link"><i class="bi bi-link-45deg"></i></button>
+                        <button type="button" data-rich-tool id="pcImage" title="Insert image"><i class="bi bi-image"></i></button>
+                        <button type="button" data-rich-tool data-cmd="removeFormat" title="Clear formatting">Tx</button>
+                        <span class="pc-view-toggle">
+                          <button type="button" id="pcVisualMode" class="active"><i class="bi bi-eye"></i> Visual</button>
+                          <button type="button" id="pcHtmlMode"><i class="bi bi-code-slash"></i> HTML</button>
+                        </span>
+                      </div>
+                      <div id="pcRich" class="pc-rich" contenteditable="true" data-placeholder="Write page content…"></div>
+                      <textarea id="pcRichSource" class="pc-rich-source" spellcheck="false" aria-label="Rich content HTML source"></textarea>
+                      <div class="pc-source-resize" id="pcSourceResize" role="separator" aria-orientation="horizontal" aria-label="Drag to resize HTML editor" title="Drag to resize">
+                        <span class="pc-source-resize-grip" aria-hidden="true"></span>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <div id="pcPartnershipOptions" class="pc-section" hidden>
+                  <div class="pc-section-label">Partner Withdrawals</div>
+                  <div class="pc-form-grid pc-partner-well">
+                    <div class="pc-field full">
+                      <div class="pc-switch">
+                        <input type="checkbox" id="pcShowTx">
+                        <label for="pcShowTx" class="m-0">Show Partner Withdrawals section</label>
+                      </div>
+                      <div class="pc-help">Only for <b>partnership.html</b>. Live data comes from the partner brand.</div>
+                    </div>
+                    <div class="pc-field">
+                      <label for="pcPartnerBrand">Partnership Brand</label>
+                      <select id="pcPartnerBrand"><option value="">Select partner brand</option></select>
+                    </div>
+                    <div class="pc-field">
+                      <label for="pcTxMode">Transaction Source</label>
+                      <select id="pcTxMode">
+                        <option value="MANUAL_RANDOM">Manual list / random order</option>
+                        <option value="LIVE_WITHDRAWAL">Live approved withdrawals</option>
+                      </select>
+                    </div>
+                    <div class="pc-field">
+                      <label for="pcTxLimit">Rows to Show</label>
+                      <input id="pcTxLimit" type="number" min="1" max="50" value="10">
+                    </div>
+                    <div class="pc-field">
+                      <label for="pcTxTitle">Section Title</label>
+                      <input id="pcTxTitle" value="PARTNER WITHDRAWALS">
+                    </div>
+                    <div class="pc-field">
+                      <label for="pcTxPosition">Section Position</label>
+                      <select id="pcTxPosition">
+                        <option value="AFTER_CONTENT">After page content</option>
+                        <option value="BEFORE_CONTENT">Before page content</option>
+                        <option value="CUSTOM_SLOT">Custom slot in content</option>
+                      </select>
+                    </div>
+                    <div class="pc-field">
+                      <label>Custom Position</label>
+                      <button type="button" class="clean-btn" id="pcInsertTxSlot"><i class="bi bi-pin-map"></i> Insert Slot</button>
+                      <div class="pc-help">Places a marker at the cursor.</div>
+                    </div>
+                    <div class="pc-field full">
+                      <label for="pcManualTx">Manual Transactions</label>
+                      <textarea id="pcManualTx" rows="5" placeholder="logo URL | masked member | amount | label"></textarea>
+                      <div class="pc-help">One row per line. Order randomized on each load.</div>
+                    </div>
+                  </div>
+                </div>
+
+                <section class="pc-section pc-advanced">
+                  <details>
+                    <summary>Advanced HTML / CSS / JavaScript</summary>
+                    <div class="pc-advanced-body">
+                      <div class="pc-field">
+                        <label for="pcHtml">Custom HTML</label>
+                        <textarea class="pc-code" id="pcHtml" rows="6" placeholder="<section>...</section>"></textarea>
+                      </div>
+                      <div class="pc-field">
+                        <label for="pcCss">Custom CSS</label>
+                        <textarea class="pc-code" id="pcCss" rows="6" placeholder=".my-section { ... }"></textarea>
+                      </div>
+                      <div class="pc-field">
+                        <label for="pcJs">Custom JavaScript</label>
+                        <textarea class="pc-code" id="pcJs" rows="6" placeholder="document.addEventListener('DOMContentLoaded', ...)"></textarea>
+                      </div>
+                    </div>
+                  </details>
+                </section>
+              </div>
+
+              <div class="pc-actions">
+                <div class="pc-actions-tools">
+                  <button class="clean-btn" type="button" id="pcStarter"><i class="bi bi-stars"></i> Partnership Starter</button>
+                  <a class="clean-btn" href="layout-section.html"><i class="bi bi-layout-text-window-reverse"></i> Layout Section</a>
+                  <button class="clean-btn" type="button" id="pcPreview"><i class="bi bi-box-arrow-up-right"></i> Preview</button>
+                  <button class="clean-btn" type="button" id="pcCopy"><i class="bi bi-copy"></i> Copy URL</button>
+                </div>
+                <div class="pc-actions-primary">
+                  <button class="clean-btn danger-soft" type="button" id="pcDelete"><i class="bi bi-trash"></i> Delete</button>
+                  <button class="clean-btn primary" type="submit"><i class="bi bi-save"></i> Save &amp; Generate</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/config.js?v=1.0.95"></script>
+  <script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
+  <script src="assets/js/auth.js?v=1.0.66"></script>
+  <script src="assets/js/page-customize.js?v=1.0.7"></script>
+  <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
+  <script src="assets/js/bo-theme.js?v=1.0.0"></script>
+  <script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
+</body>
+</html>

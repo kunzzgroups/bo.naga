@@ -50,7 +50,7 @@
           (e.g. #madEditUsername on the edit page, which is `readonly`) */
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not(:disabled):not([readonly]),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) select:not(:disabled),
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:not(:disabled):not([readonly]):not(.layout-code-pane textarea){
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:not(:disabled):not([readonly]):not(.layout-code-pane textarea):not(.pc-rich-source):not(#pcRichSource){
   background-color:#FFF8EB!important;
 }
 /* The one control that must stay transparent, and why: the code editors on layout-section.html
@@ -75,7 +75,8 @@ html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-f
           keeps its nested tone so the segment still reads as a segment
         · [contenteditable="true"] — the rich-text editors (page-customize's .pc-rich,
           promotion's .promo-wysiwyg-editor, frontend-display's .marquee-editor) are fields
-          with no form element at all */
+          with no form element at all. CM6 `.cm-content` is also contenteditable — excluded
+          so Layout Section HTML/CSS/JS panes keep their own 米白 fill. */
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .ref-range-trigger,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .bo-range-trigger,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .rounded-select-btn,
@@ -95,19 +96,21 @@ html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-f
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .bo-date-range-inline,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .agent-withdraw-amount,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .agent-withdraw-date-range,
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) [contenteditable="true"]{
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) [contenteditable="true"]:not(.cm-content){
   background-color:#FFF8EB!important;
 }
 
 /* 3. Hover and focus keep the same fill, so the field does not flash a different colour when
       the pointer or the caret arrives — the amber border and ring (the locked recipe) remain
-      the only state change. */
+      the only state change.
+      Same .layout-code-pane textarea exclusion as rule 1: that overlay must stay transparent
+      on hover/focus too, or the cream fill covers the syntax layer (layout-section CSS pane). */
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:hover:not(:disabled):not([readonly]),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:focus:not(:disabled):not([readonly]),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) select:hover:not(:disabled),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) select:focus:not(:disabled),
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:hover:not(:disabled):not([readonly]),
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:focus:not(:disabled):not([readonly]){
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:hover:not(:disabled):not([readonly]):not(.layout-code-pane textarea):not(.pc-rich-source):not(#pcRichSource),
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:focus:not(:disabled):not([readonly]):not(.layout-code-pane textarea):not(.pc-rich-source):not(#pcRichSource){
   background-color:#FFF8EB!important;
 }
 
@@ -124,7 +127,7 @@ html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-f
         · segmented controls (.mac-credit-mode, .mae-status-seg, panel tabs) — their wells
           are tracks, and the active segment is the lifted chip
         · disabled / readonly fields — the locked #EDE4D4 state
-        · .layout-code-highlight and the code-editor overlay textarea (rule 1 excludes it)
+        · .layout-code-highlight and the code-editor overlay textarea (rules 1 and 3 exclude it)
       If a future page needs a field that is not a form element and is not in rule 2, add
       it there rather than widening rule 1. */
 

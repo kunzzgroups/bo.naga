@@ -1,0 +1,145 @@
+/* Promotion Bonus — keep real <table> columns aligned with thead.
+   Beats reports.css `.promotion-table-row{display:grid}` which collapses tbody. */
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-head-table,
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-body-table{
+  width:100%!important;min-width:100%!important;max-width:100%!important;
+  table-layout:fixed!important;border-collapse:collapse!important;margin:0!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-body-table tbody tr.promotion-data-row,
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-body-table tbody tr.promotion-table-row{
+  display:table-row!important;
+  grid-template-columns:none!important;gap:0!important;
+  min-height:0!important;padding:0!important;border:0!important;
+  background:transparent!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-body-table tbody tr.promotion-data-row > td,
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-body-table tbody tr.promotion-table-row > td{
+  display:table-cell!important;
+  float:none!important;width:auto!important;max-width:none!important;
+  vertical-align:middle!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-col-promotion{width:48%!important;}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-col-bonus{width:24%!important;}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-col-status{width:14%!important;}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-col-actions{width:14%!important;}
+
+/* Cell content: flex lives inside cells, not on the td itself */
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-main-inner{
+  display:flex!important;align-items:center!important;gap:14px!important;min-width:0!important;width:100%!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-detail-cell{
+  white-space:normal!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-detail-cell .promo-chip,
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-detail-cell .promo-rebate{
+  display:inline-flex!important;vertical-align:middle!important;margin:2px 6px 2px 0!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-action-cell{
+  text-align:right!important;white-space:nowrap!important;
+}
+
+/* Keep head/body width in sync when body scrollbar appears */
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-tx-head,
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-tx-body,
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .manage-list-card.promotion-modern-page[data-bo-autofit] .promotion-tx-body,
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-tx-body[data-bo-autofit]{
+  scrollbar-gutter:stable!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-tx-head{
+  overflow-y:hidden!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-head-table,
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-body-table{
+  width:100%!important;
+}
+
+/* Table full-bleed: no left/right padding on card or cells */
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .manage-list-card.promotion-modern-page{
+  padding-left:0!important;padding-right:0!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .manage-list-card.promotion-modern-page > .promotion-filter-card,
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .manage-list-card.promotion-modern-page > .table-footer{
+  padding-left:16px!important;padding-right:16px!important;box-sizing:border-box!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-table-wrap{
+  margin-left:0!important;margin-right:0!important;
+  border-radius:0!important;
+  width:100%!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-head-table thead th,
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-body-table tbody td{
+  padding-left:12px!important;padding-right:12px!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-head-table thead th:first-child,
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-body-table tbody td:first-child{
+  padding-left:12px!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-head-table thead th:last-child,
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-body-table tbody td:last-child{
+  padding-right:12px!important;
+}
+
+/* Dense readable rows — shorter tbody, tighter type stack */
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-head-table thead th{
+  padding-top:8px!important;padding-bottom:8px!important;
+  border-right:0!important;border-left:0!important;border-bottom:0!important;
+  box-shadow:none!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-body-table tbody td{
+  padding-top:6px!important;padding-bottom:6px!important;
+  height:auto!important;min-height:0!important;line-height:1.2!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-main-inner{
+  gap:10px!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-thumb{
+  width:96px!important;height:48px!important;flex:0 0 96px!important;
+  border-radius:8px!important;font-size:16px!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-thumb img{
+  width:100%!important;height:100%!important;object-fit:contain!important;display:block!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-copy{
+  gap:2px!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-title{
+  font-size:13px!important;font-weight:800!important;line-height:1.2!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-meta{
+  gap:6px!important;flex-wrap:nowrap!important;overflow:hidden!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-code{
+  font-size:10.5px!important;padding:1px 5px!important;border-radius:4px!important;
+  max-width:140px!important;line-height:1.2!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-cat,
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-order{
+  font-size:11px!important;line-height:1.2!important;max-width:none!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-chip{
+  height:20px!important;padding:0 6px!important;font-size:10px!important;border-radius:5px!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-rebate{
+  font-size:11px!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-status-cell .slider-pill{
+  height:22px!important;min-height:22px!important;padding:0 8px!important;
+  font-size:11px!important;gap:4px!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-action-cell .icon-action-btn{
+  width:26px!important;height:26px!important;min-width:26px!important;min-height:26px!important;max-width:26px!important;
+  border-radius:6px!important;font-size:15px!important;margin-left:6px!important;
+  padding:0!important;box-sizing:border-box!important;flex:0 0 26px!important;
+  text-decoration:none!important;vertical-align:middle!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-action-cell .icon-action-btn:first-child{
+  margin-left:0!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-action-cell .icon-action-btn > i{
+  font-size:15px!important;line-height:1!important;width:auto!important;height:auto!important;display:block!important;
+}
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-detail-cell .promo-chip,
+html body.promotion-bonus-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promotion-detail-cell .promo-rebate{
+  margin:0 6px 0 0!important;
+}
+

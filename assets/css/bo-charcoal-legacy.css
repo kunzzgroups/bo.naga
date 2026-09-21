@@ -1501,7 +1501,7 @@ html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charc
 }
 html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content select,
-html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content textarea,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content textarea:not(.layout-code-pane textarea),
 html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content .form-select{
   background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;color:#F5F5F4!important;border-radius:8px!important;
 }

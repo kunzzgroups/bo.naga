@@ -9,20 +9,20 @@ const endpoint=String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+(API_CONFIG.END
 let selectedFile=null, currentImageUrl='', removeImage=false;
 
 function headers(){ return window.BO_AUTH?BO_AUTH.authHeader():{}; }
-function setMsg(text,type){msgBox.textContent=text||'';msgBox.className='upload-status mt-2 '+(type||'');}
+function setMsg(text,type){msgBox.textContent=text||'';msgBox.className='upload-status ad-msg'+(type?' '+type:'');}
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
-function modeLabel(v){return v==='ONCE_AFTER_CLOSE'?'After Close, Do Not Show Again':v==='DAILY'?'Once Every Day':'Every Refresh';}
+function modeLabel(v){return v==='ONCE_AFTER_CLOSE'?'After close, hide':v==='DAILY'?'Once a day':'Every refresh';}
 function updateModeHelp(){
  const help=$('adPopupModeHelp'),note=$('adBehaviorNote').querySelector('span');
  if(mode.value==='ONCE_AFTER_CLOSE'){
-   help.textContent='After a member closes this version, it stays hidden until you save/update the popup again.';
-   note.textContent='Once-after-close uses the member browser storage. Saving this configuration creates a new popup version, so it can be shown again.';
+   help.textContent='Hidden after close until you save a new version.';
+   note.textContent='After close uses browser storage. Saving creates a new version so it can show again.';
  }else if(mode.value==='DAILY'){
-   help.textContent='After the member closes it, it stays hidden for the rest of that calendar day.';
-   note.textContent='Daily mode is tracked in the member browser. On a new local calendar day, the popup becomes eligible to show again.';
+   help.textContent='Hidden for the rest of the local calendar day after close.';
+   note.textContent='Daily mode resets at local midnight. Closing early still counts for that day.';
  }else{
-   help.textContent='Popup appears again after every homepage refresh.';
-   note.textContent='Every Refresh ignores previous close history. Closing hides it only until the homepage is refreshed or opened again.';
+   help.textContent='Shows again after every homepage refresh.';
+   note.textContent='Every refresh ignores close history. Closing only hides it until the next load.';
  }
  renderInline();
 }
@@ -42,24 +42,16 @@ function renderInline(){
  $('adInlineImage').src=currentImageUrl||'';$('adInlineImage').hidden=!hasImage;
  $('adInlineTitle').textContent=title.value.trim();$('adInlineTitle').hidden=!hasTitle;
  $('adInlineMessage').textContent=message.value.trim();$('adInlineMessage').hidden=!hasMessage;
- const btnText=button.value.trim();const hasButton=!!(btnText&&link.value.trim());
+ const btnText=button.value.trim();const hasButton=!!btnText;
  $('adInlineButton').textContent=btnText;$('adInlineButton').hidden=!hasButton;
  $('adInlineContent').hidden=!(hasTitle||hasMessage||hasButton);
- $('adInlineEmpty').hidden=hasImage||hasTitle||hasMessage||hasButton;
- $('adInlineStatus').textContent=enabled.value==='1'?'Enabled':'Disabled';
- $('adInlineStatus').style.color=enabled.value==='1'?'#039855':'#d92d20';
+ $('adInlinePreview').classList.toggle('ad-preview-image-only',hasImage&&!hasTitle&&!hasMessage&&!hasButton);
+ $('adInlinePreview').classList.toggle('ad-preview-with-copy',hasImage&&(hasTitle||hasMessage||hasButton));
+ const on=enabled.value==='1';
+ $('adInlineStatus').textContent=on?'Enabled':'Disabled';
+ $('adInlineStatus').classList.toggle('is-on',on);
+ $('adInlineStatus').classList.toggle('is-off',!on);
  $('adInlineMode').textContent=modeLabel(mode.value);
-}
-function previewFull(){
- const src=currentImageUrl, t=title.value.trim(), m=message.value.trim(), url=link.value.trim(), bt=button.value.trim();
- if(!src&&!t&&!m){setMsg('Add an image, title or message before previewing.','error');return;}
- const overlay=$('adBoPreviewOverlay');
- const i=$('adBoPreviewImage');i.src=src||'';i.hidden=!src;
- const ti=$('adBoPreviewTitle');ti.textContent=t;ti.hidden=!t;
- const me=$('adBoPreviewMessage');me.textContent=m;me.hidden=!m;
- const a=$('adBoPreviewButton');a.textContent=bt||'View More';a.href=url||'#';a.hidden=!url;
- $('adBoPreviewImageLink').href=url||'#';$('adBoPreviewImageLink').style.pointerEvents=url?'auto':'none';
- overlay.hidden=false;
 }
 async function load(){
  setMsg('Loading...');
@@ -92,8 +84,31 @@ drop.addEventListener('drop',e=>chooseFile(e.dataTransfer.files&&e.dataTransfer.
 $('removeAdPopupImage').addEventListener('click',()=>{selectedFile=null;imageInput.value='';removeImage=true;setImage('');renderInline();setMsg('Image marked for removal. Click Save Setting to apply.','success');});
 [enabled,title,message,link,button].forEach(el=>el.addEventListener(el.tagName==='SELECT'?'change':'input',renderInline));
 mode.addEventListener('change',updateModeHelp);
-$('previewAdPopup').addEventListener('click',previewFull);$('closeAdBoPreview').addEventListener('click',()=>{$('adBoPreviewOverlay').hidden=true;});
-$('adBoPreviewOverlay').addEventListener('click',e=>{if(e.target===$('adBoPreviewOverlay'))$('adBoPreviewOverlay').hidden=true;});
 refreshBtn.addEventListener('click',()=>load().catch(e=>setMsg(e.message,'error')));saveBtn.addEventListener('click',save);
+
+(function mountDeviceTabs(){
+  const frame=$('adDevicePreview');
+  const icon=$('adPreviewSectionIcon');
+  const tabs=[...document.querySelectorAll('.ad-device-tab')];
+  if(!frame||!tabs.length)return;
+  function setDevice(device){
+    const next=device==='desktop'?'desktop':'mobile';
+    frame.setAttribute('data-device',next);
+    tabs.forEach(tab=>{
+      const on=tab.getAttribute('data-device')===next;
+      tab.classList.toggle('is-active',on);
+      tab.setAttribute('aria-selected',on?'true':'false');
+    });
+    if(icon){
+      icon.innerHTML=next==='desktop'?'<i class="bi bi-display"></i>':'<i class="bi bi-phone"></i>';
+    }
+    try{sessionStorage.setItem('ad_popup_preview_device',next);}catch(e){}
+  }
+  tabs.forEach(tab=>tab.addEventListener('click',()=>setDevice(tab.getAttribute('data-device'))));
+  let saved='mobile';
+  try{saved=sessionStorage.getItem('ad_popup_preview_device')||'mobile';}catch(e){}
+  setDevice(saved);
+})();
+
 load().catch(e=>setMsg(e.message,'error'));
 })();

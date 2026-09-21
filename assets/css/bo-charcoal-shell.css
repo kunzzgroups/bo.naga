@@ -63,6 +63,8 @@ body.report-body.bo-charcoal{
   --bo-ui-blue-hover:#B45309;
   --bo-shadow:0 0 0 1px rgba(24,25,28,.04),0 1px 2px -1px rgba(24,25,28,.06),0 2px 8px rgba(24,25,28,.04);
   --bo-accent-on:#FFFFFF;
+  /* Bottom band — sidebar Logout hairline + page sticky footers share this height */
+  --bo-shell-foot-h:68px;
 }html:has(body.report-body.bo-charcoal){
   background:#FFF1DC;
 }/* Light canvas — orange → cream (locked; no near-white fade) */
@@ -94,6 +96,19 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-content{
   background:#FFF8EB!important;
   backdrop-filter:none;
   -webkit-backdrop-filter:none;
+}
+/* Topbar anatomy (system.md) — Deposit specimen: 64px · pad-y 0 · items centered */
+body.report-body.bo-charcoal{
+  --bo-header-h:64px;
+}
+body.report-body.bo-charcoal .report-topbar{
+  height:var(--bo-header-h)!important;
+  min-height:var(--bo-header-h)!important;
+  max-height:var(--bo-header-h)!important;
+  box-sizing:border-box!important;
+  padding-top:0!important;
+  padding-bottom:0!important;
+  align-items:center!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal{
   /* Dark mode: soft charcoal (not dead black) · Primary #F59E0B */
   --bo-navy:#F5F5F4;
@@ -617,7 +632,12 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .r
   border-top:1px solid rgba(92,74,48,.1)!important;
   box-shadow:none!important;
   margin:0!important;
-  padding:10px 10px 12px!important;
+  padding:10px 10px!important;
+  box-sizing:border-box!important;
+  height:var(--bo-shell-foot-h,68px)!important;
+  min-height:var(--bo-shell-foot-h,68px)!important;
+  display:flex!important;
+  align-items:center!important;
 }html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .bo-sidebar-logout{
   border-radius:10px!important;
   color:#B42318!important;
@@ -827,6 +847,11 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-
   background:transparent!important;
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
+  box-sizing:border-box!important;
+  height:var(--bo-shell-foot-h,68px)!important;
+  min-height:var(--bo-shell-foot-h,68px)!important;
+  display:flex!important;
+  align-items:center!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-sidebar-logout{
   background:transparent!important;
   border-color:transparent!important;

@@ -107,7 +107,7 @@
     if(!select || select.multiple || Number(select.size)>1 || select.closest(DATE_PICKER_SELECTOR) || !select.closest('.bo-filter-row')) return;
     const item=select.matches('.bo-filter-select-item')?select:select.closest('.bo-filter-select-item');
     if(!item) return;
-    const listingFixed={depositStatus:150,withdrawStatus:150};
+    const listingFixed={depositStatus:150,withdrawStatus:150,dbgStatus:150};
     if(document.body.classList.contains('bo-wallet-tx') && listingFixed[select.id]!=null){
       item.style.setProperty('--bo-select-width',listingFixed[select.id]+'px');
       select.dataset.boContentSized='1';
@@ -127,7 +127,7 @@
     const button=wrap.querySelector('.rounded-select-btn');
     const select=wrap.querySelector(':scope > select');
     if(!item || !button) return;
-    const listingFixed={depositStatus:150,withdrawStatus:150};
+    const listingFixed={depositStatus:150,withdrawStatus:150,dbgStatus:150};
     if(document.body.classList.contains('bo-wallet-tx') && select && listingFixed[select.id]!=null){
       item.style.setProperty('--bo-select-width',listingFixed[select.id]+'px');
       wrap.dataset.boContentSized='1';
@@ -159,6 +159,8 @@
     if(!el || el.closest('.report-sidebar,.report-topbar,.sidebar-overlay,.dropdown-menu,.rounded-select-menu,'+DATE_PICKER_SELECTOR+','+DATE_RANGE_SELECTOR+',.pagination-clean,.bo-pagination-buttons,.bo-global-modal')) return;
     /* Banner toolbar owns Ghost Refresh + Primary Add; skip global button paint. */
     if(el.closest('.banner-filterbar')) return;
+    /* Bonus Category Title strip — CMS owns Ghost Refresh + Primary Add typography. */
+    if(el.closest('.bonus-title-strip,.bonus-title-filterbar')) return;
     if(el.closest('.bo-filter-row')){styleFilterButton(el);return;}
     /* Form dropdown controls keep their page-original styling. The global dropdown
        standard is intentionally limited to filter rows only. */
@@ -176,7 +178,12 @@
       delete el.dataset.boUiButton;
       return;
     }
-    if(el.matches?.('.wallet-side-tab,.nm-status-btn,.nm-mode-tab,.bo-theme-btn,#boThemeToggle,.mad-btn,.mad-tab,.mad-pill,.mad-icon-btn,.mad-eye,.mac-link-btn,.mac-change-role,.mac-credit-mode-btn,.mac-currency-add-btn,.mac-currency-add-inline,.mac-currency-chip-remove,.mac-currency-picker-item,.mac-currency-move-btn,.mac-currency-pane-item,.mprr-mode-btn,.mprr-entry-opt,.mp-scope-btn,.mrc-chip-btn,.mrc-btn,.status-pill,.usage-show-switch,.usage-status-chip,.bo-tx-tab,.banner-status-opt,.slider-pill,.custom-tab,.asset-slot-drag,.asset-slot-zone-btn') || el.closest?.('.md-rail,.nm-status-seg,.nm-mode-tabs,#newMenuModal .nm-status-seg,#newMenuModal .nm-mode-tabs,.mp-workspace,.mrc-workspace,.mad-workspace,.mad-modal,.mad-pager,.mac-workspace,.mp-scope,.mprr-entry-options,.banner-status-seg,.custom-tabs[aria-label="Asset language"],.asset-slot-chrome,.asset-slot-zones')){
+    if(el.closest?.('.layout-find-bar,.layout-find-actions')){
+      el.classList.remove('bo-ui-button','bo-ui-button-primary','bo-ui-button-secondary','bo-ui-button-danger','bo-ui-icon-button');
+      delete el.dataset.boUiButton;
+      return;
+    }
+    if(el.matches?.('.fd-switch,[role="switch"],.marquee-tool,.fd-color-swatch-btn,.fd-color-pop-close,.wallet-side-tab,.nm-status-btn,.nm-mode-tab,.bo-theme-btn,#boThemeToggle,.mad-btn,.mad-tab,.mad-pill,.mad-icon-btn,.mad-eye,.mac-link-btn,.mac-change-role,.mac-credit-mode-btn,.mac-currency-add-btn,.mac-currency-add-inline,.mac-currency-chip-remove,.mac-currency-picker-item,.mac-currency-move-btn,.mac-currency-pane-item,.mprr-mode-btn,.mprr-entry-opt,.mp-scope-btn,.mrc-chip-btn,.mrc-btn,.status-pill,.usage-show-switch,.usage-status-chip,.bo-tx-tab,.banner-status-opt,.slider-pill,.custom-tab,.asset-slot-drag,.asset-slot-zone-btn') || el.closest?.('.md-rail,.nm-status-seg,.nm-mode-tabs,#newMenuModal .nm-status-seg,#newMenuModal .nm-mode-tabs,.mp-workspace,.mrc-workspace,.mad-workspace,.mad-modal,.mad-pager,.mac-workspace,.mp-scope,.mprr-entry-options,.banner-status-seg,.custom-tabs[aria-label="Asset language"],.asset-slot-chrome,.asset-slot-zones,.fd-color-pop,.pc-toolbar,.pc-editor')){
       el.classList.remove('bo-ui-button','bo-ui-button-primary','bo-ui-button-secondary','bo-ui-button-danger','bo-ui-icon-button');
       delete el.dataset.boUiButton;
       return;

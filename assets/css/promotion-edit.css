@@ -1,0 +1,1862 @@
+/* Promotion Edit — Create/Edit form ladder (Charcoal + Amber)
+   Match Admin Create/Edit + Rebate Rule: section #FFFCF7 + amber rail,
+   recessed wells #F5EBDC. Must beat bo-input-fill.css listing fill #FFF8EB. */
+
+/* —— Shell / scroll —— */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-shell{
+  height:100dvh!important;min-height:0!important;overflow:hidden!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main{
+  display:flex!important;flex-direction:column!important;
+  height:100dvh!important;max-height:100dvh!important;min-height:0!important;overflow:hidden!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .report-topbar{
+  flex:0 0 auto!important;border-bottom:0!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-workspace{
+  flex:1 1 0%!important;display:flex!important;flex-direction:column!important;
+  gap:10px!important;width:100%!important;max-width:none!important;margin:0!important;
+  min-width:0!important;min-height:0!important;
+  padding:12px 20px 16px!important;box-sizing:border-box!important;
+  /* clip — not hidden: overflow:hidden still accepts programmatic / focus scrolling */
+  overflow:clip!important;
+  overscroll-behavior:none!important;
+  overflow-anchor:none!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm{
+  display:flex!important;flex-direction:column!important;gap:10px!important;
+  /* basis 0 so content growth never expands the workspace (only scrolls inside form) */
+  flex:1 1 0%!important;min-height:0!important;height:auto!important;max-height:100%!important;
+  width:100%!important;max-width:none!important;margin:0!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  overflow-anchor:none!important;
+}
+/* Form children must not flex-shrink — shrinking + overflow:hidden traps scroll */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm > *{
+  flex:0 0 auto!important;min-height:auto!important;
+}
+
+/* Panel pill scrollbar (MD) — chocolate 6px, no arrows */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm::-webkit-scrollbar{
+  width:6px!important;height:6px!important;background:transparent!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm::-webkit-scrollbar-track{
+  background:transparent!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm::-webkit-scrollbar-thumb{
+  background:#8B6B4A!important;border-radius:999px!important;border:0!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm::-webkit-scrollbar-thumb:hover{
+  background:#5C4A30!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm::-webkit-scrollbar-thumb{
+  background:#F59E0B!important;border-radius:999px!important;border:0!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm::-webkit-scrollbar-thumb:hover{
+  background:#D97706!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm::-webkit-scrollbar-corner{
+  background:transparent!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm::-webkit-scrollbar-button,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm::-webkit-scrollbar-button:single-button,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm::-webkit-scrollbar-button:start:decrement,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm::-webkit-scrollbar-button:end:increment,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm::-webkit-scrollbar-button:vertical:start:decrement,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm::-webkit-scrollbar-button:vertical:end:increment{
+  display:none!important;width:0!important;height:0!important;
+}
+@supports not selector(::-webkit-scrollbar){
+  html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm{
+    scrollbar-width:thin!important;scrollbar-color:#8B6B4A transparent!important;
+  }
+  html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm{
+    scrollbar-width:thin!important;scrollbar-color:#F59E0B transparent!important;
+  }
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-sections{
+  display:flex!important;flex-direction:column!important;gap:10px!important;
+}
+
+/* —— Outer panel wrapping jump + all sections —— */
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-panel{
+  display:flex!important;flex-direction:column!important;gap:10px!important;
+  width:100%!important;max-width:none!important;margin:0!important;
+  padding:14px 16px 16px!important;box-sizing:border-box!important;
+  border:1px solid #EADCC8!important;border-radius:12px!important;
+  background:#FFF8EB!important;
+  box-shadow:0 1px 2px rgba(92,74,48,.04)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-panel{
+  display:flex!important;flex-direction:column!important;gap:10px!important;
+  width:100%!important;padding:14px 16px 16px!important;box-sizing:border-box!important;
+  border:1px solid rgba(255,255,255,.12)!important;border-radius:12px!important;
+  background:#23252E!important;box-shadow:none!important;
+}
+
+/* —— Section jump tabs (icon + label; active = cream pill) —— */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump{
+  position:relative!important;top:auto!important;z-index:8!important;
+  flex:0 0 auto!important;
+  display:flex!important;flex-wrap:nowrap!important;align-items:center!important;
+  width:100%!important;max-width:100%!important;
+  margin:0!important;padding:2px 0 10px!important;
+  border:0!important;border-bottom:1px solid #EADCC8!important;border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump{
+  border-bottom-color:rgba(255,255,255,.10)!important;background:transparent!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-track{
+  display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:4px 2px!important;
+  width:100%!important;max-width:100%!important;padding:0!important;
+  border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;
+  height:36px!important;padding:0 14px!important;border-radius:999px!important;
+  border:1px solid transparent!important;background:transparent!important;
+  color:#71717A!important;font-size:12.5px!important;font-weight:700!important;line-height:1!important;
+  cursor:pointer!important;white-space:nowrap!important;
+  box-shadow:none!important;outline:none!important;-webkit-tap-highlight-color:transparent!important;
+  transition:color .12s ease,background-color .12s ease,box-shadow .12s ease,border-color .12s ease!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn>i{
+  font-size:15px!important;line-height:1!important;color:#B8C0CC!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn:hover:not(.is-active)>i{
+  color:#98A2B3!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn>span{
+  font:inherit!important;color:inherit!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn:hover:not(.is-active){
+  color:#57534E!important;background:transparent!important;border-color:transparent!important;
+}
+/* Selected = cream thumb + burnt-orange icon */
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn.is-active{
+  border:1px solid #E0D0B8!important;
+  background-color:#FFFCF7!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 55%,#F3E8D6 100%)!important;
+  color:#18191C!important;font-weight:700!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.08),0 2px 8px rgba(92,74,48,.10)!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn.is-active>i{
+  color:#9C4300!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn:focus,
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn:focus-visible{
+  outline:none!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;
+  height:36px!important;padding:0 16px!important;border-radius:999px!important;
+  border:1px solid transparent!important;background:transparent!important;
+  color:#A1A1AA!important;font-size:12.5px!important;font-weight:700!important;cursor:pointer!important;
+  box-shadow:none!important;outline:none!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn>i{color:#6B7280!important;font-size:15px!important;}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn:hover:not(.is-active){
+  color:#E7E5E4!important;background:rgba(255,255,255,.05)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn.is-active{
+  border:1px solid rgba(255,255,255,.14)!important;
+  background-color:#2A2C36!important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%)!important;
+  color:#F5F5F4!important;font-weight:700!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.35)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn.is-active>i{
+  color:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn:focus,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn:focus-visible{
+  outline:none!important;
+}
+
+/* —— Section cards (form lift + amber rail) —— */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section{
+  padding:12px 14px 12px 13px!important;border-radius:10px!important;
+  border-left:3px solid #D97706!important;
+  scroll-margin-top:12px!important;
+  box-sizing:border-box!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section{
+  border:1px solid #DCC9A8!important;border-left:3px solid #D97706!important;
+  background:#FFFCF7!important;
+  box-shadow:0 1px 2px rgba(92,74,48,.04)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section{
+  border:1px solid rgba(255,255,255,.12)!important;border-left:3px solid #F59E0B!important;
+  background:#2A2C36!important;box-shadow:none!important;
+}
+
+/* —— Section head —— */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-head{
+  display:flex!important;align-items:flex-start!important;gap:10px!important;
+  margin:0 0 12px!important;padding:0 0 10px!important;
+  border-bottom:1px solid #EADCC8!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-head{
+  border-bottom-color:rgba(255,255,255,.10)!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-head>i{
+  width:28px!important;height:28px!important;min-width:28px!important;
+  display:inline-grid!important;place-items:center!important;
+  border-radius:8px!important;font-size:14px!important;line-height:1!important;
+  background:linear-gradient(180deg,#FFF8EB 0%,#FFE8CC 100%)!important;
+  border:1px solid #EADCC8!important;color:#9C4300!important;flex:0 0 28px!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-head>i{
+  width:28px!important;height:28px!important;min-width:28px!important;
+  display:inline-grid!important;place-items:center!important;
+  border-radius:8px!important;font-size:14px!important;
+  background:rgba(245,158,11,.14)!important;border:1px solid rgba(245,158,11,.28)!important;
+  color:#F59E0B!important;flex:0 0 28px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-head b{
+  display:block!important;font-size:13px!important;font-weight:800!important;
+  color:#18191C!important;line-height:1.25!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-head small{
+  display:block!important;margin-top:3px!important;font-size:12px!important;font-weight:500!important;
+  color:#57534E!important;line-height:1.4!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-head b{color:#F5F5F4!important;}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-head small{color:#A1A1AA!important;}
+
+/* —— Field grid: denser columns so full width stays operable —— */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-grid{
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px 12px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-grid>.field{
+  margin:0!important;min-width:0!important;display:flex!important;flex-direction:column!important;gap:0!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-grid>.field.policy-hidden{
+  display:none!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-grid>.field.full{
+  grid-column:1/-1!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-grid>.field.span-2{
+  grid-column:span 2!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-grid>.field.span-3{
+  grid-column:span 3!important;
+}
+
+/* Display layout — flat card · Section | This card (match locked MD comp) */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-grid>.field.full.promo-display-layout{
+  display:flex!important;flex-direction:column!important;gap:14px!important;
+  margin:0!important;min-width:0!important;width:100%!important;
+  grid-column:1/-1!important;
+  padding:16px 18px 18px!important;box-sizing:border-box!important;
+  border:1px solid #EADCC8!important;border-radius:10px!important;
+  background:#FFFCF7!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-grid>.field.full.promo-display-layout{
+  border-color:rgba(255,255,255,.12)!important;
+  background:#23252E!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-head{
+  display:flex!important;flex-direction:column!important;gap:4px!important;padding:0!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-head>b{
+  font-size:14px!important;font-weight:800!important;color:#18191C!important;line-height:1.25!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-head>small{
+  font-size:12.5px!important;font-weight:500!important;color:#78716C!important;line-height:1.4!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-head>b{color:#F5F5F4!important;}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-head>small{color:#A1A1AA!important;}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-panes{
+  display:grid!important;
+  grid-template-columns:minmax(0,2fr) minmax(0,3fr)!important;
+  gap:0!important;min-width:0!important;width:100%!important;
+  border:0!important;border-radius:0!important;
+  overflow:visible!important;
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-panes{
+  border:0!important;background:transparent!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-pane{
+  display:flex!important;flex-direction:column!important;gap:12px!important;
+  min-width:0!important;padding:0 18px 0 0!important;box-sizing:border-box!important;
+  overflow:visible!important;border-radius:0!important;background:transparent!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-pane[data-pane="section"]{
+  border-radius:0!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-pane[data-pane="card"]{
+  padding:0 0 0 18px!important;
+  border-left:1px solid #EADCC8!important;border-radius:0!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-pane[data-pane="card"]{
+  border-left-color:rgba(255,255,255,.12)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-pane-head{
+  display:flex!important;align-items:baseline!important;justify-content:space-between!important;
+  gap:10px!important;min-width:0!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-pane-title{
+  font-size:13px!important;font-weight:800!important;color:#18191C!important;line-height:1.2!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-pane-hint{
+  font-size:11.5px!important;font-weight:600!important;color:#A8A29E!important;line-height:1.2!important;
+  white-space:nowrap!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-pane-title{color:#F5F5F4!important;}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-pane-hint{color:#A1A1AA!important;}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-controls{
+  display:grid!important;gap:10px 12px!important;min-width:0!important;width:100%!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-controls.is-section{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-controls.is-card{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-controls>.field{
+  display:flex!important;flex-direction:column!important;
+  margin:0!important;min-width:0!important;width:auto!important;
+  overflow:visible!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-controls>.field>label{
+  letter-spacing:.04em!important;text-transform:uppercase!important;
+}
+
+/* Let rounded-select menus escape Layout + section stacking */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-grid>.field.full.promo-display-layout,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-panes,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-controls{
+  overflow:visible!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-display-layout .rounded-select-wrap{
+  position:relative!important;overflow:visible!important;z-index:2!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-display-layout .rounded-select-wrap:has(.rounded-select-menu.show),
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-display-layout .rounded-select-wrap:has(.rounded-select-btn.open){
+  z-index:80!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-display-layout .rounded-select-menu{
+  z-index:90!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section:has(.rounded-select-menu.show),
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout:has(.rounded-select-menu.show){
+  position:relative!important;z-index:40!important;overflow:visible!important;
+}
+/* Keep form as the only page scroller — never flip to overflow:visible (traps scroll in nested lists) */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm{
+  overflow-x:hidden!important;overflow-y:auto!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-workspace{
+  overflow:hidden!important;
+}
+
+/* —— Claimable VIP Tier — chip picker (replaces stretched multi-select) —— */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-field>.promo-vip-picker{
+  margin-top:6px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-native{
+  position:absolute!important;width:1px!important;height:1px!important;
+  margin:-1px!important;padding:0!important;border:0!important;overflow:hidden!important;
+  clip:rect(0,0,0,0)!important;white-space:nowrap!important;
+  min-height:0!important;max-height:none!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chips{
+  display:flex!important;flex-wrap:wrap!important;align-items:stretch!important;
+  gap:8px!important;min-width:0!important;width:100%!important;
+  padding:10px!important;box-sizing:border-box!important;
+  border:1px solid #EADCC8!important;border-radius:10px!important;
+  background:#F0E4D0!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chips{
+  border-color:rgba(255,255,255,.12)!important;background:rgba(255,255,255,.05)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip{
+  display:inline-flex!important;align-items:center!important;gap:8px!important;
+  margin:0!important;min-width:0!important;max-width:100%!important;
+  height:36px!important;padding:0 12px 0 10px!important;box-sizing:border-box!important;
+  border:1px solid #DCC9A8!important;border-radius:8px!important;
+  background:#F5EBDC!important;color:#18191C!important;
+  font:inherit!important;font-size:12.5px!important;font-weight:700!important;line-height:1.2!important;
+  text-align:left!important;cursor:pointer!important;
+  box-shadow:none!important;appearance:none!important;-webkit-appearance:none!important;
+  transition:border-color .12s ease,background-color .12s ease,box-shadow .12s ease!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip.is-all{
+  flex:0 0 auto!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip:not(.is-all){
+  flex:0 1 auto!important;min-width:132px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip-text{
+  display:flex!important;flex-direction:column!important;gap:1px!important;min-width:0!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip-text>b{
+  font-size:12.5px!important;font-weight:800!important;color:inherit!important;line-height:1.15!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip-text>small{
+  font-size:10.5px!important;font-weight:600!important;color:#78716C!important;line-height:1.15!important;
+  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:120px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip.is-all .promo-vip-chip-text{
+  flex-direction:row!important;align-items:center!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip-check{
+  flex:0 0 auto!important;width:16px!important;height:16px!important;border-radius:5px!important;
+  border:1.5px solid #C4A882!important;background:#FFFCF7!important;
+  box-sizing:border-box!important;position:relative!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip:hover{
+  border-color:#D97706!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip:focus-visible{
+  outline:none!important;border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip.is-on{
+  border-color:#D97706!important;
+  background:rgba(217,119,6,.12)!important;
+  color:#6b360c!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip.is-on .promo-vip-chip-text>small{
+  color:#9C4300!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip.is-on .promo-vip-chip-check{
+  border-color:#D97706!important;background:#D97706!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip.is-on .promo-vip-chip-check::after{
+  content:""!important;position:absolute!important;left:4px!important;top:1px!important;
+  width:5px!important;height:9px!important;
+  border:solid #fff!important;border-width:0 2px 2px 0!important;
+  transform:rotate(45deg)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip{
+  border-color:rgba(255,255,255,.14)!important;background:#2A2C36!important;color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip-check{
+  border-color:rgba(255,255,255,.22)!important;background:rgba(0,0,0,.25)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip-text>small{color:#A1A1AA!important;}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip.is-on{
+  border-color:#F59E0B!important;background:rgba(245,158,11,.16)!important;color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip.is-on .promo-vip-chip-text>small{color:#F59E0B!important;}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip.is-on .promo-vip-chip-check{
+  border-color:#F59E0B!important;background:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip.is-on .promo-vip-chip-check::after{
+  border-color:#2A2C36!important;
+}
+@media (max-width:768px){
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip:not(.is-all){
+    flex:1 1 calc(50% - 4px)!important;min-width:0!important;
+  }
+}
+@media (max-width:390px){
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip:not(.is-all),
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-vip-chip.is-all{
+    flex:1 1 100%!important;
+  }
+}
+
+/* —— Labels —— */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-grid .field>label{
+  display:block!important;margin:0!important;
+  color:#57534E!important;font-size:11px!important;font-weight:800!important;
+  letter-spacing:.04em!important;text-transform:uppercase!important;line-height:1.3!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-grid .field>label{
+  color:#A1A1AA!important;
+}
+
+/* —— Control wells (beat bo-input-fill #FFF8EB) —— */
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not(:disabled):not(.rebate-dt-native):not(#promoProviderSearch),
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid select:not(:disabled),
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid .rounded-select-btn,
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid [role="combobox"]{
+  width:100%!important;height:36px!important;min-height:36px!important;max-height:36px!important;
+  margin-top:6px!important;box-sizing:border-box!important;
+  border:1px solid #DCC9A8!important;border-radius:8px!important;padding:0 12px!important;
+  background-color:#F5EBDC!important;
+  color:#18191C!important;font-size:13px!important;font-weight:600!important;line-height:normal!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid select[multiple]{
+  height:auto!important;min-height:112px!important;max-height:none!important;padding:8px 10px!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid textarea:not(:disabled){
+  width:100%!important;height:auto!important;min-height:120px!important;max-height:none!important;
+  margin-top:6px!important;box-sizing:border-box!important;
+  border:1px solid #DCC9A8!important;border-radius:8px!important;padding:12px 14px!important;
+  background-color:#F5EBDC!important;
+  color:#18191C!important;font-size:13.5px!important;font-weight:500!important;line-height:1.5!important;
+  box-shadow:none!important;resize:vertical!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid input:hover:not(:disabled):not([readonly]):not(.rebate-dt-native),
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid input:focus:not(:disabled):not([readonly]):not(.rebate-dt-native),
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid select:hover:not(:disabled),
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid select:focus:not(:disabled),
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid textarea:hover:not(:disabled),
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid textarea:focus:not(:disabled),
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid .rounded-select-btn:hover,
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid .rounded-select-btn.open,
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid .rounded-select-btn:focus{
+  background-color:#F5EBDC!important;
+  outline:none!important;border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid input::placeholder,
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .promo-standard-section-grid textarea::placeholder{
+  color:#78716C!important;opacity:1!important;
+}
+
+/* Dark wells */
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-standard-section-grid input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not(.rebate-dt-native):not(#promoProviderSearch),
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-standard-section-grid select,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-standard-section-grid .rounded-select-btn{
+  width:100%!important;height:36px!important;min-height:36px!important;max-height:36px!important;
+  margin-top:6px!important;box-sizing:border-box!important;
+  border:1px solid rgba(255,255,255,.14)!important;border-radius:8px!important;padding:0 12px!important;
+  background-color:#2A2C36!important;color:#F5F5F4!important;
+  font-size:13px!important;font-weight:600!important;box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-standard-section-grid select[multiple]{
+  height:auto!important;min-height:112px!important;max-height:none!important;padding:8px 10px!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-standard-section-grid textarea{
+  width:100%!important;height:auto!important;min-height:120px!important;max-height:none!important;
+  margin-top:6px!important;box-sizing:border-box!important;
+  border:1px solid rgba(255,255,255,.14)!important;border-radius:8px!important;padding:12px 14px!important;
+  background-color:#2A2C36!important;color:#F5F5F4!important;
+  font-size:13.5px!important;font-weight:500!important;line-height:1.5!important;
+  box-shadow:none!important;resize:vertical!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-standard-section-grid input:focus,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-standard-section-grid select:focus,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-standard-section-grid textarea:focus,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-standard-section-grid .rounded-select-btn:focus,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-standard-section-grid .rounded-select-btn.open{
+  outline:none!important;border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+
+/* File pick — MD shell (hide native locale chrome) */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-file-pick{
+  position:relative!important;display:block!important;
+  margin-top:6px!important;cursor:pointer!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-file-pick>input[type="file"]{
+  position:absolute!important;inset:0!important;z-index:2!important;
+  width:100%!important;height:100%!important;margin:0!important;padding:0!important;
+  opacity:0!important;cursor:pointer!important;border:0!important;
+  font-size:0!important;color:transparent!important;background:transparent!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-file-pick-ui{
+  display:flex!important;align-items:center!important;gap:10px!important;
+  width:100%!important;height:40px!important;min-height:40px!important;
+  padding:0 14px!important;box-sizing:border-box!important;
+  border-radius:8px!important;
+  font-size:13px!important;font-weight:700!important;
+  overflow:hidden!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-file-pick-ui{
+  border:1px solid #DCC9A8!important;
+  background:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%)!important;
+  color:#18191C!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06)!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-file-pick:hover .promo-file-pick-ui,
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-file-pick:focus-within .promo-file-pick-ui{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-file-pick-ui>i{
+  flex:0 0 auto!important;color:#B45309!important;font-size:16px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-file-pick-ui>em{
+  flex:1 1 auto!important;min-width:0!important;margin:0!important;
+  font-style:normal!important;font-weight:700!important;
+  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-file-pick.has-file .promo-file-pick-ui>em{
+  color:#18191C!important;font-weight:800!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-file-pick-ui{
+  border:1px solid rgba(255,255,255,.14)!important;
+  background:linear-gradient(180deg,#3A3C48 0%,#2F313C 55%,#2A2C36 100%)!important;
+  color:#F5F5F4!important;box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-file-pick:hover .promo-file-pick-ui,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-file-pick:focus-within .promo-file-pick-ui{
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-file-pick-ui>i{color:#FBBF24!important;}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-file-pick.has-file .promo-file-pick-ui>em{color:#F5F5F4!important;}
+
+/* Rounded-select wrap fills cell */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-standard-section-grid .rounded-select-wrap{
+  display:block!important;width:100%!important;margin-top:0!important;padding:0!important;
+  border:0!important;background:transparent!important;
+}
+
+/* Help / nested content */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-help{
+  margin-top:5px!important;font-size:11px!important;font-weight:500!important;
+  letter-spacing:0!important;text-transform:none!important;color:#78716C!important;line-height:1.35!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .field.full>.promo-help:first-child,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-help.promo-rule-box{
+  margin-top:6px!important;padding:10px 12px!important;border-radius:8px!important;
+  border:1px solid #EADCC8!important;background:#F0E4D0!important;color:#57534E!important;
+  font-weight:600!important;line-height:1.45!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-help{color:#A1A1AA!important;}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .field.full>.promo-help:first-child,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-help.promo-rule-box{
+  border-color:rgba(255,255,255,.14)!important;background:#23252E!important;color:#D6D3D1!important;
+}
+
+/* —— Content: Description + WYSIWYG editor chrome —— */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm #promo-sec-content .promo-standard-section-grid{
+  gap:14px 12px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm #promoDescription{
+  min-height:128px!important;
+  height:auto!important;
+  max-height:none!important;
+  resize:vertical!important;
+  line-height:1.5!important;
+  font-size:13.5px!important;
+  font-weight:500!important;
+  padding:12px 14px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-wrap{
+  margin-top:6px!important;
+  border:1px solid #DCC9A8!important;
+  border-radius:10px!important;
+  background:#FFFCF7!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-wrap{
+  border-color:rgba(255,255,255,.12)!important;
+  background:#2A2C36!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-toolbar{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  gap:6px!important;
+  padding:10px 12px!important;
+  border-bottom:1px solid #EADCC8!important;
+  background:#FFF1DC!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-toolbar{
+  border-bottom-color:rgba(255,255,255,.10)!important;
+  background:#40424E!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-toolbar button{
+  height:32px!important;
+  min-width:32px!important;
+  margin:0!important;
+  padding:0 10px!important;
+  border:1px solid #DCC9A8!important;
+  border-radius:8px!important;
+  background:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%)!important;
+  color:#18191C!important;
+  font-size:12px!important;
+  font-weight:800!important;
+  line-height:1!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06)!important;
+  cursor:pointer!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-toolbar button i{
+  font-size:14px!important;
+  line-height:1!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-toolbar button:hover{
+  border-color:#D97706!important;
+  color:#B45309!important;
+  background:#FFF8EB!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-toolbar button.active,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-toolbar button.promo-wysiwyg-html-btn.is-on{
+  background:#D97706!important;
+  border-color:#D97706!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-toolbar button{
+  border-color:rgba(255,255,255,.14)!important;
+  background:#383A46!important;
+  color:#F5F5F4!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-toolbar button:hover{
+  border-color:#F59E0B!important;
+  color:#FBBF24!important;
+  background:rgba(245,158,11,.12)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-toolbar button.active{
+  background:#F59E0B!important;
+  border-color:#F59E0B!important;
+  color:#18191C!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-toolbar .sep{
+  width:1px!important;height:22px!important;margin:0 2px!important;
+  background:#EADCC8!important;align-self:center!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-toolbar .sep{
+  background:rgba(255,255,255,.14)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-editor{
+  min-height:220px!important;
+  max-height:min(52vh,480px)!important;
+  overflow:auto!important;
+  padding:16px 18px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#F5EBDC!important;
+  color:#18191C!important;
+  font-size:14px!important;
+  line-height:1.55!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-editor:focus{
+  background:#FFF8EB!important;
+  box-shadow:inset 0 0 0 2px rgba(217,119,6,.18)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-editor{
+  background:#2A2C36!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-editor:focus{
+  background:#323440!important;
+  box-shadow:inset 0 0 0 2px rgba(245,158,11,.22)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-editor:empty:before{
+  color:#A8A29E!important;
+  font-weight:500!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-editor.h2,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-editor h2,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-editor h3{
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-editor h2,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-editor h3{
+  color:#FBBF24!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-editor.html-mode{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace!important;
+  white-space:pre-wrap!important;
+  background:#18191C!important;
+  color:#F5EBDC!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .field:has(.promo-wysiwyg-wrap) > .promo-help{
+  margin-top:8px!important;
+}
+
+/* —— Language Translation (docked in Content) —— */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-content-split-label{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  margin:4px 0 10px!important;
+  padding-top:6px!important;
+  border-top:1px dashed #EADCC8!important;
+  color:#78716C!important;
+  font-size:11px!important;
+  font-weight:800!important;
+  letter-spacing:.06em!important;
+  text-transform:uppercase!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-content-split-label i{
+  color:#D97706!important;
+  font-size:13px!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-content-split-label{
+  border-top-color:rgba(255,255,255,.12)!important;
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-content-split-label i{
+  color:#FBBF24!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-translation-host{
+  display:block!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  min-width:0!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm > .dynamic-translation-panel{
+  flex:0 0 auto!important;
+  align-self:stretch!important;
+  min-height:auto!important;
+  height:auto!important;
+  max-height:none!important;
+  overflow:hidden!important;
+  margin:0!important;
+  padding:0!important;
+  border:1px solid #EADCC8!important;
+  border-radius:10px!important;
+  background:#FFFCF7!important;
+  box-shadow:none!important;
+  box-sizing:border-box!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm > .dynamic-translation-panel{
+  border-color:rgba(255,255,255,.12)!important;
+  background:var(--bo-surface,#383A46)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel .dynamic-translation-head,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm > .dynamic-translation-panel .dynamic-translation-head{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  margin:0!important;
+  padding:10px 14px!important;
+  min-height:44px!important;
+  border-bottom:1px solid #EADCC8!important;
+  background:#FFF1DC!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel .dynamic-translation-head{
+  border-bottom-color:rgba(255,255,255,.10)!important;
+  background:#40424E!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel .dynamic-translation-head h3{
+  margin:0!important;
+  font-size:13px!important;
+  font-weight:800!important;
+  line-height:1.3!important;
+  color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel .dynamic-translation-head h3{
+  color:#F5F5F4!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel [data-refresh-translation],
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel .dynamic-translation-head .clean-btn{
+  height:32px!important;
+  min-height:32px!important;
+  padding:0 12px!important;
+  border-radius:8px!important;
+  gap:6px!important;
+  font-size:12px!important;
+  font-weight:800!important;
+  background:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%)!important;
+  border:1px solid #DCC9A8!important;
+  color:#18191C!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel [data-refresh-translation]:hover{
+  border-color:#D97706!important;
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel [data-refresh-translation]{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+  box-shadow:none!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel .dynamic-translation-body{
+  min-height:0!important;
+  padding:14px!important;
+  overflow:visible!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel .dt-state{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  gap:6px!important;
+  min-height:120px!important;
+  padding:22px 18px!important;
+  border:1px dashed #DCC9A8!important;
+  border-radius:10px!important;
+  background:#F5EBDC!important;
+  color:#57534E!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel .dt-state > i{
+  font-size:22px!important;
+  color:#D97706!important;
+  margin-bottom:4px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel .dt-state > b{
+  font-size:13.5px!important;
+  font-weight:800!important;
+  color:#18191C!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel .dt-state > span,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel .dt-state .dt-state-hint{
+  max-width:36ch!important;
+  font-size:12.5px!important;
+  font-weight:500!important;
+  line-height:1.45!important;
+  color:#78716C!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel .dt-state{
+  border-color:rgba(255,255,255,.14)!important;
+  background:rgba(255,255,255,.05)!important;
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel .dt-state > i{color:#FBBF24!important;}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel .dt-state > b{color:#F5F5F4!important;}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .dynamic-translation-panel .dt-state > span{color:#A1A1AA!important;}
+
+@media (max-width:768px){
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-editor{
+    min-height:180px!important;
+    max-height:40vh!important;
+    padding:12px 14px!important;
+  }
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-wysiwyg-toolbar{
+    padding:8px 10px!important;
+    gap:5px!important;
+  }
+}
+
+/* Image preview — nested well */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-image-preview-wrap{
+  margin-top:10px!important;display:flex!important;align-items:flex-start!important;gap:12px!important;flex-wrap:wrap!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-image-preview{
+  width:min(100%,520px)!important;max-width:100%!important;max-height:220px!important;
+  border-radius:8px!important;border:1px solid #DCC9A8!important;
+  background:#F0E4D0!important;object-fit:contain!important;padding:6px!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-image-preview{
+  border-color:rgba(255,255,255,.12)!important;background:#2A2C36!important;
+}
+
+/* Game access nested well */
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-game-access{
+  border:1px solid #DCC9A8!important;border-radius:8px!important;background:#F0E4D0!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-game-access{
+  border-color:rgba(255,255,255,.12)!important;background:#2A2C36!important;
+}
+
+/* —— Select Provider — dense catalog + MD search —— */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-game-access-config{
+  display:grid!important;gap:14px!important;margin-top:8px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-block{
+  display:grid!important;gap:12px!important;
+  padding:16px 18px 18px!important;box-sizing:border-box!important;
+  border:1px solid #EADCC8!important;border-radius:10px!important;
+  background:#FFFCF7!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-block{
+  border-color:rgba(255,255,255,.12)!important;
+  background:#23252E!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-toolbar{
+  display:flex!important;flex-wrap:wrap!important;align-items:flex-start!important;
+  justify-content:space-between!important;gap:12px 16px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-game-access-section-title{
+  display:flex!important;flex-direction:column!important;gap:3px!important;
+  margin:0!important;align-items:flex-start!important;min-width:0!important;flex:1 1 240px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-game-access-section-title>b{
+  font-size:14px!important;font-weight:800!important;color:#18191C!important;line-height:1.25!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-game-access-section-title>small{
+  font-size:12.5px!important;font-weight:500!important;color:#78716C!important;line-height:1.4!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-game-access-section-title>b{color:#F5F5F4!important;}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-game-access-section-title>small{color:#A1A1AA!important;}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-tools{
+  display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:nowrap!important;
+  flex:0 0 auto!important;
+}
+/* Search — cream well (light); charcoal well (dark); icon clear of text */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-search{
+  position:relative!important;display:block!important;
+  margin:0!important;min-width:0!important;width:min(300px,56vw)!important;flex:0 0 auto!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-search>i{
+  position:absolute!important;left:11px!important;top:50%!important;transform:translateY(-50%)!important;
+  z-index:1!important;color:#A8A29E!important;font-size:14px!important;line-height:1!important;
+  pointer-events:none!important;opacity:.9!important;width:14px!important;text-align:center!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-search>input,
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-search>input[type="search"],
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm #promoProviderSearch{
+  display:block!important;width:100%!important;
+  height:36px!important;min-height:36px!important;max-height:36px!important;
+  margin:0!important;margin-top:0!important;padding:0 14px 0 38px!important;box-sizing:border-box!important;
+  border:1px solid #DCC9A8!important;border-radius:8px!important;
+  background:#F5EBDC!important;color:#18191C!important;
+  font-size:13px!important;font-weight:500!important;line-height:36px!important;
+  box-shadow:none!important;-webkit-appearance:none!important;appearance:none!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-search>input::placeholder,
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm #promoProviderSearch::placeholder{
+  color:#A8A29E!important;opacity:1!important;font-weight:500!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-search>input::-webkit-search-decoration,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-search>input::-webkit-search-cancel-button{
+  -webkit-appearance:none!important;appearance:none!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-search>input:hover,
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm #promoProviderSearch:hover{
+  border-color:#D0BFA0!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-search>input:focus,
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm #promoProviderSearch:focus{
+  outline:none!important;border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;background:#FFF8EB!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-search>i{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-search>input,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-search>input[type="search"],
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm #promoProviderSearch{
+  display:block!important;width:100%!important;
+  height:36px!important;min-height:36px!important;max-height:36px!important;
+  margin:0!important;margin-top:0!important;padding:0 14px 0 38px!important;box-sizing:border-box!important;
+  border:1px solid rgba(255,255,255,.14)!important;border-radius:8px!important;
+  background:#2A2C36!important;color:#F5F5F4!important;
+  font-size:13px!important;font-weight:500!important;line-height:36px!important;
+  box-shadow:none!important;-webkit-appearance:none!important;appearance:none!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-search>input::placeholder,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm #promoProviderSearch::placeholder{
+  color:#71717A!important;opacity:1!important;font-weight:500!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-search>input:hover,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm #promoProviderSearch:hover{
+  border-color:rgba(255,255,255,.22)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-search>input:focus,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm #promoProviderSearch:focus{
+  outline:none!important;border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;background:#323440!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-count{
+  flex:0 0 auto!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  height:36px!important;min-height:36px!important;padding:0 12px!important;
+  font-size:12px!important;font-weight:800!important;color:#57534E!important;
+  white-space:nowrap!important;border-radius:8px!important;line-height:1!important;
+  background:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%)!important;
+  border:1px solid #DCC9A8!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-count.has-selection{
+  color:#9C4300!important;background:rgba(217,119,6,.12)!important;border-color:rgba(217,119,6,.28)!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-count{
+  color:#E7E5E4!important;
+  background:linear-gradient(180deg,#3A3C48 0%,#2F313C 55%,#2A2C36 100%)!important;
+  border-color:rgba(255,255,255,.14)!important;box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-count.has-selection{
+  color:#FBBF24!important;background:rgba(245,158,11,.16)!important;border-color:rgba(245,158,11,.35)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-game-access-summary{
+  display:flex!important;align-items:center!important;gap:8px!important;
+  margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
+  background:transparent!important;color:#B45309!important;font-size:12.5px!important;font-weight:600!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-game-access-summary>i{
+  color:#D97706!important;font-size:14px!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-game-access-summary{
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-game-access-summary>i{color:#F59E0B!important;}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-catalog{
+  display:grid!important;gap:8px!important;min-width:0!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-catalog-label,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-rules-label{
+  font-size:10.5px!important;font-weight:800!important;letter-spacing:.06em!important;
+  text-transform:uppercase!important;color:#A8A29E!important;line-height:1!important;
+  padding:0 2px!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-catalog-label,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-rules-label{
+  color:#71717A!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-selector{
+  display:grid!important;grid-template-columns:repeat(auto-fill,minmax(132px,1fr))!important;
+  gap:6px!important;align-content:start!important;
+  max-height:none!important;overflow:visible!important;overflow-x:hidden!important;
+  padding:0!important;margin:0!important;box-sizing:border-box!important;
+  border:0!important;border-radius:0!important;
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-selector{
+  border:0!important;background:transparent!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice{
+  position:relative!important;display:flex!important;align-items:center!important;gap:8px!important;
+  margin:0!important;min-width:0!important;width:auto!important;min-height:44px!important;
+  padding:7px 10px!important;box-sizing:border-box!important;
+  border:1px solid #DCC9A8!important;border-radius:8px!important;
+  background:#F5EBDC!important;cursor:pointer!important;
+  box-shadow:none!important;transition:border-color .12s ease,background-color .12s ease,box-shadow .12s ease!important;
+  user-select:none!important;justify-content:flex-start!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice input{
+  position:absolute!important;opacity:0!important;pointer-events:none!important;width:0!important;height:0!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice[hidden]{
+  display:none!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice:hover{
+  border-color:#D97706!important;background:#FFFCF7!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice:focus-within{
+  outline:none!important;border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice.is-selected{
+  border-color:#D97706!important;background:rgba(217,119,6,.14)!important;
+  box-shadow:inset 0 0 0 1px rgba(217,119,6,.2)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-check{
+  flex:0 0 auto!important;width:16px!important;height:16px!important;border-radius:5px!important;
+  border:1.5px solid #C4A882!important;background:#FFFCF7!important;
+  box-sizing:border-box!important;position:relative!important;display:block!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice.is-selected .promo-provider-check{
+  border-color:#D97706!important;background:#D97706!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice.is-selected .promo-provider-check::after{
+  content:""!important;position:absolute!important;left:4px!important;top:1px!important;
+  width:5px!important;height:9px!important;
+  border:solid #fff!important;border-width:0 2px 2px 0!important;
+  transform:rotate(45deg)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice-text{
+  display:flex!important;flex-direction:column!important;gap:1px!important;min-width:0!important;flex:1 1 auto!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice .category-provider-choice-name{
+  min-width:0!important;
+  font-size:12px!important;font-weight:800!important;line-height:1.2!important;
+  color:#18191C!important;text-transform:uppercase!important;letter-spacing:.01em!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice-meta{
+  font-size:10.5px!important;font-weight:600!important;color:#A8A29E!important;line-height:1.15!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice.is-selected .category-provider-choice-name{
+  color:#6b360c!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice.is-selected .promo-provider-choice-meta{
+  color:#9C4300!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-empty{
+  grid-column:1/-1!important;color:#78716C!important;font-size:12.5px!important;font-weight:600!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice{
+  border-color:rgba(255,255,255,.14)!important;background:#2A2C36!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice:hover{
+  border-color:#F59E0B!important;background:#323440!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice:focus-within{
+  outline:none!important;border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-check{
+  border-color:rgba(255,255,255,.22)!important;background:rgba(0,0,0,.25)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice .category-provider-choice-name{color:#F5F5F4!important;}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice-meta{color:#71717A!important;}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice.is-selected{
+  border-color:#F59E0B!important;background:rgba(245,158,11,.16)!important;
+  box-shadow:inset 0 0 0 1px rgba(245,158,11,.25)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice.is-selected .promo-provider-check{
+  border-color:#F59E0B!important;background:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice.is-selected .promo-provider-check::after{
+  border-color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice.is-selected .category-provider-choice-name{
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-choice.is-selected .promo-provider-choice-meta{
+  color:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-empty{
+  color:#A1A1AA!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-rules-wrap{
+  display:grid!important;gap:6px!important;min-width:0!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-rules{
+  display:grid!important;gap:10px!important;min-width:0!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-empty-state{
+  display:grid!important;justify-items:center!important;gap:4px!important;
+  padding:20px 14px!important;border:1px dashed #EADCC8!important;border-radius:10px!important;
+  background:#F5EBDC!important;color:#78716C!important;text-align:center!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-empty-state>i{font-size:22px!important;color:#A8A29E!important;}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-empty-state>b{color:#18191C!important;font-size:13px!important;}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-empty-state{
+  border-color:rgba(255,255,255,.14)!important;background:#2A2C36!important;color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-empty-state>i{color:#71717A!important;}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-empty-state>b{color:#F5F5F4!important;}
+@media (max-width:768px){
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-selector{
+    grid-template-columns:repeat(auto-fill,minmax(132px,1fr))!important;
+  }
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-tools{
+    width:100%!important;flex-wrap:wrap!important;
+  }
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-search{
+    width:100%!important;flex:1 1 auto!important;
+  }
+}
+@media (max-width:390px){
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-selector{
+    grid-template-columns:1fr 1fr!important;
+  }
+}
+
+/* Selected Games assignment — keep lists inside form viewport, above sticky footer */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm{
+  scroll-padding-bottom:96px!important;
+  padding-bottom:72px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-rule{
+  overflow:visible!important;
+  border:1px solid #EADCC8!important;border-left:3px solid #D97706!important;border-radius:10px!important;
+  background:#FFFCF7!important;box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-rule{
+  border-color:rgba(255,255,255,.12)!important;border-left-color:#F59E0B!important;background:rgba(0,0,0,.18)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-rule-head{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:12px!important;flex-wrap:wrap!important;
+  padding:12px 14px!important;border-bottom:1px solid #EADCC8!important;background:#F5EBDC!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-rule-head{
+  border-bottom-color:rgba(255,255,255,.10)!important;background:rgba(255,255,255,.05)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-rule-title b{
+  color:#18191C!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-rule-icon{
+  background:rgba(217,119,6,.12)!important;color:#D97706!important;border-radius:8px!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-rule-title b{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-rule-icon{
+  background:rgba(245,158,11,.16)!important;color:#F59E0B!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-rule-actions{
+  display:inline-flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important;
+  margin-left:auto!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-rule-remove{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:32px!important;height:32px!important;margin:0!important;padding:0!important;
+  border:1px solid #EADCC8!important;border-radius:8px!important;
+  background:#FFFCF7!important;color:#A8A29E!important;
+  cursor:pointer!important;appearance:none!important;-webkit-appearance:none!important;
+  transition:border-color .12s ease,color .12s ease,background-color .12s ease!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-rule-remove>i{font-size:12px!important;}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-rule-remove:hover{
+  border-color:#991B1B!important;color:#991B1B!important;background:rgba(153,27,27,.06)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-rule-remove{
+  border-color:rgba(255,255,255,.14)!important;background:#2A2C36!important;color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-rule-remove:hover{
+  border-color:#F87171!important;color:#F87171!important;background:rgba(248,113,113,.12)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-mode,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-mode-switch{
+  display:inline-flex!important;align-items:center!important;gap:4px!important;
+  padding:3px!important;border:1px solid #EADCC8!important;border-radius:999px!important;
+  background:#EDE4D4!important;box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-mode,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-mode-switch{
+  background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.12)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-mode-opt,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-mode-switch label{
+  margin:0!important;cursor:pointer!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-mode-opt>span,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-mode-switch span{
+  display:inline-flex!important;align-items:center!important;gap:6px!important;
+  padding:7px 12px!important;border-radius:999px!important;
+  font-size:12.5px!important;font-weight:700!important;color:#78716C!important;
+  background:transparent!important;box-shadow:none!important;white-space:nowrap!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-mode-opt>span>i,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-mode-switch span>i{
+  font-size:13px!important;color:inherit!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-mode-opt input:checked+span,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-mode-switch input:checked+span{
+  background:#FFFCF7!important;color:#6b360c!important;
+  box-shadow:0 1px 2px rgba(92,74,48,.10)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-mode-opt>span,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-mode-switch span{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .promo-provider-mode-opt input:checked+span,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-mode-switch input:checked+span{
+  background:#2A2C36!important;color:#FBBF24!important;
+  box-shadow:0 1px 3px rgba(0,0,0,.35)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-assignment{
+  padding:12px 14px 14px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-assignment-note{
+  border-color:rgba(217,119,6,.28)!important;background:rgba(217,119,6,.10)!important;color:#6b360c!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-assignment-note{
+  border-color:rgba(245,158,11,.35)!important;background:rgba(245,158,11,.12)!important;color:#FBBF24!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-assignment-grid{
+  gap:12px!important;
+  align-items:start!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-game-column{
+  min-width:0!important;
+  align-self:start!important;
+  width:100%!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-game-search{
+  height:34px!important;min-height:34px!important;max-height:34px!important;
+  border-color:#DCC9A8!important;border-radius:8px!important;background:#F5EBDC!important;
+  color:#18191C!important;font-size:12.5px!important;font-weight:600!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-game-search:focus{
+  border-color:#D97706!important;box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-game-search{
+  border-color:rgba(255,255,255,.14)!important;background:#2A2C36!important;color:#F5F5F4!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-game-list{
+  max-height:none!important;min-height:0!important;height:auto!important;
+  overflow:visible!important;
+  border-color:#EADCC8!important;border-radius:8px!important;background:#F5EBDC!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-game-list .category-provider-empty{
+  padding:18px 12px!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-game-list{
+  border-color:rgba(255,255,255,.12)!important;background:#2A2C36!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-game-row{
+  min-height:48px!important;padding:8px 10px!important;
+  border-bottom-color:#EADCC8!important;background:#F5EBDC!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-game-row:hover{
+  background:#F0E4D0!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-game-row{
+  border-bottom-color:rgba(255,255,255,.08)!important;background:#2A2C36!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-game-row:hover{
+  background:rgba(255,255,255,.06)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-game-action{
+  background:#FFFCF7!important;
+}
+@media (max-width:900px){
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .category-provider-assignment-grid{
+    grid-template-columns:1fr!important;
+  }
+}
+
+/* —— Sticky footer —— */
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-footer{
+  flex:0 0 auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;
+  gap:16px!important;flex-wrap:wrap!important;padding:14px 28px!important;margin:0!important;
+  background:#FFFCF7!important;border-top:1px solid #DCC9A8!important;
+  box-shadow:0 -8px 24px rgba(92,74,48,.08)!important;z-index:6!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-footer{
+  flex:0 0 auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;
+  gap:16px!important;flex-wrap:wrap!important;padding:14px 28px!important;margin:0!important;
+  background:rgba(42,44,54,.98)!important;border-top:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:0 -8px 24px rgba(0,0,0,.28)!important;z-index:6!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-footer-actions{
+  display:flex!important;align-items:center!important;gap:10px!important;flex-wrap:wrap!important;
+}
+
+/* Ghost + Primary CTAs — same ladder as Rebate Rule / Admin Create */
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-footer-actions .clean-btn.mad-btn-ghost,
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) a.clean-btn.mad-btn-ghost{
+  height:40px!important;min-height:40px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:6px!important;padding:0 16px!important;border-radius:8px!important;text-decoration:none!important;
+  background:#FFFCF7!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%)!important;
+  border:1px solid #DCC9A8!important;color:#18191C!important;
+  font-size:13px!important;font-weight:700!important;
+  box-shadow:0 1px 2px rgba(92,74,48,.06),inset 0 1px 0 rgba(255,255,255,.55)!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-footer-actions .clean-btn.mad-btn-ghost:hover,
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) a.clean-btn.mad-btn-ghost:hover{
+  background-image:linear-gradient(0deg,#FFFCF7 0%,#F5EBDC 45%,#EDE4D4 100%)!important;
+  border-color:#D97706!important;color:#6b360c!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-footer-actions .clean-btn.primary{
+  height:40px!important;min-height:40px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:6px!important;padding:0 16px!important;border-radius:8px!important;
+  border:1px solid #E8901A!important;
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
+  color:#fff!important;font-size:13px!important;font-weight:800!important;
+  box-shadow:0 1px 2px rgba(217,119,6,.2),0 4px 12px rgba(217,119,6,.18),inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-footer-actions .clean-btn.primary:hover{
+  background-image:linear-gradient(0deg,#FCD34D 0%,#FBBF24 38%,#F59E0B 72%,#EA8608 100%)!important;
+  border-color:#F59E0B!important;transform:translateY(-1px);
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-footer-actions .clean-btn.primary i{color:#fff!important;}
+
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-footer-actions .clean-btn.mad-btn-ghost,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) a.clean-btn.mad-btn-ghost{
+  height:40px!important;min-height:40px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:6px!important;padding:0 16px!important;border-radius:8px!important;text-decoration:none!important;
+  background-image:linear-gradient(180deg,#4A4C58 0%,#383A46 55%,#2C2E38 100%)!important;
+  border:1px solid rgba(255,255,255,.14)!important;color:#F5F5F4!important;
+  font-size:13px!important;font-weight:700!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-footer-actions .clean-btn.primary{
+  height:40px!important;min-height:40px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:6px!important;padding:0 16px!important;border-radius:8px!important;
+  border:1px solid #F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 50%,#D97706 100%)!important;
+  color:#2A2C36!important;font-size:13px!important;font-weight:800!important;
+}
+
+@media (max-width:1439px){
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
+}
+@media (max-width:1024px){
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-workspace{padding:12px 14px 16px!important;}
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-footer{padding:12px 16px!important;}
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-panes{
+    grid-template-columns:1fr!important;
+  }
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-pane[data-pane="section"]{
+    padding:0 0 14px!important;
+  }
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-pane[data-pane="card"]{
+    padding:14px 0 0!important;
+    border-left:none!important;border-top:1px solid #EADCC8!important;
+    border-radius:0!important;
+  }
+  html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-pane[data-pane="card"]{
+    border-top-color:rgba(255,255,255,.12)!important;
+  }
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-controls.is-card{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-controls.is-card>.field:last-child{
+    grid-column:1/-1!important;
+  }
+}
+@media (max-width:768px){
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-workspace{padding:10px!important;}
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-footer{padding:12px!important;}
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-grid{grid-template-columns:1fr!important;}
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-controls.is-section,
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-controls.is-card{
+    grid-template-columns:1fr!important;
+  }
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-display-layout-controls.is-card>.field:last-child{
+    grid-column:auto!important;
+  }
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-grid>.field.span-2,
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-standard-section-grid>.field.span-3{
+    grid-column:1/-1!important;
+  }
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-footer-actions{width:100%!important;}
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-footer-actions .clean-btn{flex:1 1 auto!important;}
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump{padding:2px 0 8px!important;}
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-track{gap:2px!important;}
+  html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .promo-edit-jump-btn{height:34px!important;padding:0 12px!important;font-size:12.5px!important;}
+}
+
+/* —— Form datetime popover (MD locked · .rebate-dt-*) —— */
+/* Start At / End At — MD date-trigger chrome on form wells (hide native locale chrome) */
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .rebate-dt-shell{
+  position:relative!important;display:block!important;margin-top:6px!important;
+  height:36px!important;min-height:36px!important;box-sizing:border-box!important;
+  border:1px solid #DCC9A8!important;border-radius:8px!important;
+  background-color:#F5EBDC!important;
+  box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .rebate-dt-shell:focus-within{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-trigger{
+  position:relative!important;z-index:1!important;
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;
+  width:100%!important;height:100%!important;margin:0!important;padding:0 12px!important;
+  border:0!important;border-radius:8px!important;background:transparent!important;
+  color:#18191C!important;font-size:13px!important;font-weight:600!important;line-height:1!important;
+  font-variant-numeric:tabular-nums!important;letter-spacing:-.01em!important;
+  cursor:pointer!important;box-shadow:none!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-text{
+  flex:1 1 auto!important;min-width:0!important;text-align:left!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-text.is-empty{
+  color:#78716C!important;font-weight:500!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-trigger > .bi-calendar3{
+  flex:0 0 auto!important;font-size:15px!important;color:#57534E!important;opacity:.9!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-shell:focus-within .rebate-dt-trigger > .bi-calendar3{
+  color:#D97706!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .rebate-dt-native{
+  position:absolute!important;inset:0!important;z-index:0!important;
+  width:100%!important;height:100%!important;margin:0!important;padding:0!important;
+  border:0!important;opacity:0!important;pointer-events:none!important;
+  background:transparent!important;color:transparent!important;
+  -webkit-appearance:none!important;appearance:none!important;
+}
+html:not([data-bo-theme="dark"]) body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) #promoForm .rebate-dt-native::-webkit-calendar-picker-indicator{
+  display:none!important;opacity:0!important;
+}
+
+/* Datetime popover v4 — side-by-side · compact */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-shell{position:relative!important}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pop{
+  display:none!important;position:fixed!important;z-index:12000!important;
+  width:min(348px,calc(100vw - 36px))!important;
+  border:1px solid #EADCC8!important;border-radius:12px!important;
+  background:#FFF8EB!important;
+  box-shadow:0 16px 36px rgba(92,74,48,.16)!important;
+  overflow:hidden!important;
+  font-family:ui-sans-serif,"Segoe UI",system-ui,sans-serif!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pop.show{display:flex!important;flex-direction:column!important}
+/* is-up placement is JS-driven (position:fixed viewport coords) — do not override bottom */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-summary{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;
+  padding:8px 10px!important;
+  border-bottom:1px solid #EADCC8!important;
+  background:#FFFCF7!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-summary-text{
+  min-width:0!important;font-size:12.5px!important;font-weight:700!important;
+  letter-spacing:-.01em!important;color:#18191C!important;
+  font-variant-numeric:tabular-nums!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-summary-text.is-empty{
+  color:#A8A29E!important;font-weight:600!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-summary-clear{
+  flex:0 0 auto!important;border:0!important;background:transparent!important;
+  padding:2px 6px!important;border-radius:6px!important;cursor:pointer!important;
+  color:#A8A29E!important;font-size:11.5px!important;font-weight:650!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-summary-clear:hover{
+  color:#B45309!important;background:rgba(217,119,6,.08)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-body{
+  display:grid!important;grid-template-columns:minmax(0,1fr) 86px!important;
+  gap:0!important;padding:0!important;align-items:stretch!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-cal{
+  padding:8px 8px 6px!important;border:0!important;border-right:1px solid #EADCC8!important;min-width:0!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-cal-head{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:2px!important;
+  margin:0 0 6px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-nav{
+  border:0!important;background:transparent!important;box-shadow:none!important;
+  color:#57534E!important;font-size:12px!important;
+  width:26px!important;height:26px!important;min-width:26px!important;padding:0!important;
+  border-radius:8px!important;cursor:pointer!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-month{
+  border:0!important;background:transparent!important;box-shadow:none!important;
+  color:#18191C!important;font-size:12.5px!important;font-weight:700!important;
+  height:26px!important;padding:0 4px!important;border-radius:8px!important;
+  flex:1 1 auto!important;cursor:default!important;letter-spacing:-.015em!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-nav:hover{
+  background:#F5EBDC!important;color:#18191C!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-week{
+  display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;gap:0!important;
+  margin:0 0 2px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-week span{
+  text-align:center!important;color:#A8A29E!important;font-size:10px!important;font-weight:600!important;
+  line-height:18px!important;letter-spacing:0!important;text-transform:none!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-days{
+  display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;gap:1px!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-day{
+  height:28px!important;min-height:28px!important;max-height:28px!important;
+  width:auto!important;min-width:0!important;padding:0!important;margin:0!important;
+  border:0!important;border-radius:999px!important;
+  background:transparent!important;color:#18191C!important;
+  font-size:12px!important;font-weight:600!important;line-height:28px!important;cursor:pointer!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  box-sizing:border-box!important;box-shadow:none!important;
+  transition:background .12s ease,color .12s ease!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-day:hover{
+  background:#F5EBDC!important;color:#18191C!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-day.is-muted{color:#D6C7B3!important}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-day.is-today:not(.is-selected){
+  box-shadow:none!important;color:#D97706!important;font-weight:700!important;
+  background:rgba(217,119,6,.08)!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-day.is-selected,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-day.is-selected:hover{
+  background:#D97706!important;color:#fff!important;
+  box-shadow:none!important;font-weight:700!important;
+}
+/* Right rail: hour | min stacked compact */
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-time{
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  gap:6px!important;margin:0!important;padding:6px 4px!important;
+  background:#FFFCF7!important;border:0!important;border-radius:0!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-time-colon{display:none!important}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-step{
+  display:flex!important;flex-direction:column!important;align-items:center!important;gap:1px!important;
+  min-width:0!important;width:100%!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-step-label{
+  font-size:10px!important;font-weight:600!important;color:#A8A29E!important;
+  letter-spacing:0!important;text-transform:none!important;margin:0!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-step-btn,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-step-btn.bi,
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm button.rebate-dt-step-btn{
+  width:28px!important;height:20px!important;min-height:20px!important;max-height:20px!important;
+  padding:0!important;margin:0!important;border:0!important;border-radius:6px!important;
+  background:transparent!important;color:#78716C!important;cursor:pointer!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  font-size:10px!important;line-height:1!important;box-shadow:none!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-step-btn i{
+  font-size:10px!important;line-height:1!important;pointer-events:none!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-step-btn:hover{
+  background:#F5EBDC!important;color:#18191C!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-step-val{
+  width:52px!important;max-width:52px!important;height:32px!important;min-height:32px!important;padding:0!important;
+  border:1px solid #EADCC8!important;border-radius:8px!important;
+  background:#FFF8EB!important;color:#18191C!important;
+  font-size:16px!important;font-weight:700!important;letter-spacing:-.02em!important;
+  font-variant-numeric:tabular-nums!important;cursor:pointer!important;
+  box-shadow:none!important;position:relative!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-step-val::after{
+  content:""!important;position:absolute!important;right:5px!important;bottom:5px!important;
+  width:0!important;height:0!important;
+  border-left:3px solid transparent!important;border-right:3px solid transparent!important;
+  border-top:4px solid #C4B5A0!important;opacity:.9!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-step-val:hover{
+  border-color:#D97706!important;color:#B45309!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-body{position:relative!important}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick{
+  position:absolute!important;inset:0!important;z-index:5!important;
+  display:flex!important;flex-direction:column!important;gap:6px!important;
+  padding:8px!important;background:#FFF8EB!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick[hidden]{display:none!important}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-bar{
+  display:flex!important;align-items:center!important;gap:4px!important;flex:0 0 auto!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-back{
+  width:26px!important;height:26px!important;min-height:26px!important;padding:0!important;margin:0!important;
+  border:0!important;border-radius:8px!important;background:transparent!important;color:#57534E!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;cursor:pointer!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-back:hover{background:#F5EBDC!important}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-title{
+  font-size:12.5px!important;font-weight:700!important;color:#18191C!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-quick{
+  display:flex!important;flex-wrap:wrap!important;gap:4px!important;flex:0 0 auto!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-quick[hidden]{display:none!important}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-chip{
+  height:26px!important;min-height:26px!important;padding:0 10px!important;margin:0!important;
+  border:1px solid #EADCC8!important;border-radius:999px!important;background:#FFFCF7!important;
+  color:#57534E!important;font-size:11.5px!important;font-weight:700!important;cursor:pointer!important;
+  font-variant-numeric:tabular-nums!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-chip:hover{
+  border-color:#D97706!important;color:#B45309!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-chip.is-selected{
+  background:#D97706!important;border-color:#D97706!important;color:#fff!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-grid{
+  flex:1 1 auto!important;min-height:0!important;overflow:auto!important;
+  display:grid!important;gap:3px!important;align-content:start!important;
+  scrollbar-width:thin!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-grid.is-hour{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-grid.is-min{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-opt{
+  height:28px!important;min-height:28px!important;padding:0!important;margin:0!important;
+  border:0!important;border-radius:8px!important;background:transparent!important;
+  color:#18191C!important;font-size:12px!important;font-weight:650!important;cursor:pointer!important;
+  font-variant-numeric:tabular-nums!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-opt:hover{background:#F5EBDC!important;color:#B45309!important}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-opt.is-selected{
+  background:#D97706!important;color:#fff!important;font-weight:700!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick{background:#383A46!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-back{color:#A1A1AA!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-back:hover{background:rgba(255,255,255,.06)!important;color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-title{color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-chip{
+  background:#2A2C36!important;border-color:rgba(255,255,255,.12)!important;color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-chip:hover{
+  border-color:#F59E0B!important;color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-chip.is-selected{
+  background:#F59E0B!important;border-color:#F59E0B!important;color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-opt{color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-opt:hover{background:rgba(255,255,255,.06)!important;color:#FBBF24!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pick-opt.is-selected{
+  background:#F59E0B!important;color:#18191C!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-foot{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;
+  padding:6px 8px 8px!important;border-top:1px solid #EADCC8!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-foot-ghost{
+  border:0!important;background:transparent!important;padding:5px 8px!important;
+  border-radius:8px!important;cursor:pointer!important;
+  color:#57534E!important;font-size:12px!important;font-weight:650!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-foot-ghost:hover{
+  background:#F5EBDC!important;color:#18191C!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-foot-primary{
+  border:0!important;padding:5px 12px!important;border-radius:8px!important;cursor:pointer!important;
+  background:#D97706!important;color:#fff!important;
+  font-size:12px!important;font-weight:700!important;
+  box-shadow:none!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-foot-primary:hover{
+  background:#B45309!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-pop{
+  background:#383A46!important;border-color:rgba(255,255,255,.12)!important;
+  box-shadow:0 16px 36px rgba(0,0,0,.5)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-summary{
+  background:#2A2C36!important;border-bottom-color:rgba(255,255,255,.10)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-summary-text{color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-summary-text.is-empty{color:#71717A!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-summary-clear{color:#A1A1AA!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-summary-clear:hover{
+  color:#FBBF24!important;background:rgba(245,158,11,.12)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-cal{border-right-color:rgba(255,255,255,.10)!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-nav{color:#A1A1AA!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-month{color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-nav:hover{
+  background:rgba(255,255,255,.06)!important;color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-week span{color:#71717A!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-day{color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-day:hover{
+  background:rgba(255,255,255,.06)!important;color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-day.is-muted{color:#52525B!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-day.is-today:not(.is-selected){
+  color:#FBBF24!important;background:rgba(245,158,11,.12)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-day.is-selected,
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-day.is-selected:hover{
+  background:#F59E0B!important;color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-time{
+  background:#2A2C36!important;border-color:transparent!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-step-label{color:#71717A!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-step-btn{color:#A1A1AA!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-step-btn:hover{
+  background:rgba(255,255,255,.06)!important;color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-step-val{
+  background:#383A46!important;border-color:rgba(255,255,255,.12)!important;color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-step-val:hover{
+  border-color:#F59E0B!important;color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-foot{border-top-color:rgba(255,255,255,.10)!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-foot-ghost{color:#A1A1AA!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-foot-ghost:hover{
+  background:rgba(255,255,255,.06)!important;color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-foot-primary{
+  background:#F59E0B!important;color:#18191C!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-foot-primary:hover{
+  background:#D97706!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-shell{
+  background-color:#2A2C36!important;border-color:rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-shell:focus-within{
+  border-color:#F59E0B!important;box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-trigger{color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-text.is-empty{color:#A1A1AA!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-trigger > .bi-calendar3{color:#D4D4D8!important}
+html[data-bo-theme="dark"] body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-shell:focus-within .rebate-dt-trigger > .bi-calendar3{color:#FBBF24!important}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .rebate-dt-shell.is-open{
+  z-index:40!important;
+}
+html body.promotion-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) #promoForm .field:has(.rebate-dt-pop.show){
+  position:relative!important;z-index:40!important;
+}
+

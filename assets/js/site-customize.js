@@ -384,11 +384,21 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 
     function brandScopedHeaders(extra) {
         const headers = Object.assign({}, (window.BO_AUTH && BO_AUTH.authHeader ? BO_AUTH.authHeader() : {}), extra || {});
-        const id = Number((window.BO_BRAND && BO_BRAND.activeId ? BO_BRAND.activeId() : localStorage.getItem('bo_active_brand_id')) || 1) || 1;
+        // Tenant/Brand Owner accounts are permanently scoped to their own brand. Never let a
+        // stale bo_active_brand_id from a previous MAIN/ROOT session decide where CSS is saved.
+        // Platform accounts may still use the explicitly selected active brand.
+        const user = (window.BO_AUTH && BO_AUTH.user ? BO_AUTH.user() : {}) || {};
+        const roleType = String(user.roleType || '').toUpperCase();
+        const platform = user.rootAdmin === true || Number(user.rootAdmin) === 1 || user.masterAdmin === true || Number(user.masterAdmin) === 1 || roleType === 'ROOT' || roleType === 'MASTER' || roleType === 'MAIN';
+        const tenantId = Number(user.brandId || user.adminBrandId || 0);
+        const activeId = Number((window.BO_BRAND && BO_BRAND.activeId ? BO_BRAND.activeId() : localStorage.getItem('bo_active_brand_id')) || 1) || 1;
+        const id = !platform && tenantId > 0 ? tenantId : activeId;
         headers['X-Brand-Id'] = String(id);
         return headers;
     }
     let activeSection = document.querySelector('.layout-section-item.active')?.dataset.section || 'right-panel';
+    /** @type {null | { getHtml: Function, getCss: Function, getJs: Function, setValues: Function, setHtml: Function, setCss: Function }} */
+    let cmEditors = null;
 
     // These are the current Naga site-shell defaults. They are shown in the BO editor
     // when no custom section has been saved yet. CSS and JS intentionally stay empty,
@@ -777,10 +787,27 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         [htmlEditor, cssEditor, jsEditor].forEach(updateCodeEditor);
     }
 
+    function readHtml() {
+        return cmEditors ? cmEditors.getHtml() : (htmlEditor.value || '');
+    }
+    function readCss() {
+        return cmEditors ? cmEditors.getCss() : (cssEditor.value || '');
+    }
+    function readJs() {
+        return cmEditors ? cmEditors.getJs() : (jsEditor.value || '');
+    }
+
     function setEditors(data) {
-        htmlEditor.value = data?.html || '';
-        cssEditor.value = data?.css || '';
-        jsEditor.value = data?.js || '';
+        const html = data?.html || '';
+        const css = data?.css || '';
+        const js = data?.js || '';
+        if (cmEditors) {
+            cmEditors.setValues({ html: html, css: css, js: js });
+            return;
+        }
+        htmlEditor.value = html;
+        cssEditor.value = css;
+        jsEditor.value = js;
         updateAllLineNumbers();
     }
 
@@ -814,18 +841,28 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         // reverse-proxy/WAF form-body rules. Spring's existing @RequestParam endpoint accepts
         // multipart fields directly, so this does not require an API change.
         const payload = new FormData();
-        const safeHtml = ensureAuthFeedbackMarkup(activeSection, htmlEditor.value || '');
-        const safeCss = ensureAuthFeedbackCss(activeSection, cssEditor.value || '');
-        if (safeHtml !== htmlEditor.value || safeCss !== cssEditor.value) {
-            htmlEditor.value = safeHtml;
-            cssEditor.value = safeCss;
-            updateAllLineNumbers();
+        let htmlValue = readHtml();
+        let cssValue = readCss();
+        const jsValue = readJs();
+        const safeHtml = ensureAuthFeedbackMarkup(activeSection, htmlValue);
+        const safeCss = ensureAuthFeedbackCss(activeSection, cssValue);
+        if (safeHtml !== htmlValue || safeCss !== cssValue) {
+            htmlValue = safeHtml;
+            cssValue = safeCss;
+            if (cmEditors) {
+                cmEditors.setHtml(safeHtml);
+                cmEditors.setCss(safeCss);
+            } else {
+                htmlEditor.value = safeHtml;
+                cssEditor.value = safeCss;
+                updateAllLineNumbers();
+            }
         }
 
         payload.append('key', activeSection);
         payload.append('html', safeHtml);
         payload.append('css', safeCss);
-        payload.append('js', jsEditor.value || '');
+        payload.append('js', jsValue);
 
         saveBtn.disabled = true;
         saveBtn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Saving...';
@@ -866,13 +903,29 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             btn.classList.add('active');
             activeSection = btn.dataset.section;
             updateHeader(btn);
-            loadSection(activeSection);
+            loadSection(activeSection).catch(() => {});
         });
     });
 
-    [htmlEditor, cssEditor, jsEditor].forEach(bindLineNumbers);
     reloadBtn?.addEventListener('click', () => loadSection(activeSection));
     saveBtn.addEventListener('click', saveSection);
     updateHeader(document.querySelector('.layout-section-item.active'));
-    loadSection(activeSection);
+
+    (async function bootLayoutEditors() {
+        try {
+            const cm6Url = new URL('assets/js/layout-section-cm6.js?v=1.0.22', window.location.href).href;
+            const mod = await import(cm6Url);
+            cmEditors = mod.mountLayoutCodeEditors({
+                html: htmlEditor,
+                css: cssEditor,
+                js: jsEditor
+            });
+            window.BO_LAYOUT_CM6 = cmEditors;
+        } catch (err) {
+            console.warn('[layout-section] CodeMirror 6 unavailable, using textarea fallback.', err);
+            window.__layoutCm6Error = String(err && err.message ? err.message : err);
+            [htmlEditor, cssEditor, jsEditor].forEach(bindLineNumbers);
+        }
+        loadSection(activeSection);
+    })();
 })();
