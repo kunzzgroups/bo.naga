@@ -6,7 +6,9 @@
   const from=document.getElementById('reportFrom'),to=document.getElementById('reportTo');
   const bodyEl=document.getElementById('reportBody'),headEl=document.getElementById('reportHead');
   const pageSizeEl=document.getElementById('reportPageSize'),showingEl=document.getElementById('reportShowing'),pagerEl=document.getElementById('reportPager');
-  let allRows=[],page=1;
+  const tableWrap=document.querySelector('.transaction-report-page .table-wrap')||document.querySelector('.table-wrap');
+  const pageRoot=document.body;
+  let allRows=[],page=1,lockedAutoSize=null;
   // Every BO report now opens on Today by default. Wider ranges are opt-in via the picker.
   from.value=today;to.value=today;
   if(window.OP_REPORT_KIND==='promotion-report')document.getElementById('typeBox').style.display='none';
@@ -28,13 +30,13 @@
   }
   function dtCell(v){
     const p=dtParts(v);
-    if(p.full==='-')return '<span class="mad-muted">-</span>';
+    if(p.full==='-')return emptyCell();
     if(!p.time)return `<span class="tr-dt">${esc(p.day)}</span>`;
     return `<span class="tr-dt" tabindex="0" data-tip="${esc(p.time)}">${esc(p.day)}</span>`;
   }
   function remarkCell(v){
     const s=String(v??'').trim();
-    if(!s)return '<span class="mad-muted">-</span>';
+    if(!s)return emptyCell();
     return `<span class="tr-remark" tabindex="0" data-tip="${esc(s)}">${esc(s)}</span>`;
   }
   // Shared floating tip (position:fixed) so it can never be clipped by the table's
@@ -84,18 +86,91 @@
     ?[['name','Promotion'],['promotionCode','Code'],['claimCount','Claims'],['uniqueClaimers','Unique Claimers'],['repeatedClaimCount','Repeated Claims'],['payoutAmount','Payouts']]
     :[['id','ID'],['memberId','Member'],['ledgerType','Type'],['walletBucket','Wallet'],['amount','In / Out'],['beforeBalance','Before'],['afterBalance','After'],['createdBy','Created By'],['approvedBy','Approved By'],['reasonCode','Reason'],['referenceNo','Reference'],['remark','Remark'],['createdAt','Created'],['postedAt','Posted']];
   function token(){return localStorage.getItem('bo_admin_token')||localStorage.getItem('admin_token')||localStorage.getItem('token')||'';}
+  function num(v){const n=Number(v);return Number.isFinite(n)?n:0;}
+  function money(v){return num(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function amtClass(v){const n=num(v);if(n<0)return 'is-neg';if(n===0)return 'is-zero';return 'is-pos';}
+  function emptyCell(){return '<span class="tr-empty">-</span>';}
+  function textCell(v){
+    const s=String(v??'').trim();
+    if(!s||s==='-')return emptyCell();
+    return esc(s);
+  }
+  function typeCell(v){
+    const s=String(v??'').trim();
+    if(!s||s==='-')return emptyCell();
+    const kind=/OUT/i.test(s)?'is-out':/IN/i.test(s)?'is-in':'';
+    return `<span class="tr-type-chip ${kind}">${esc(s)}</span>`;
+  }
+  function moneyCell(v,{signed=false}={}){
+    if(v==null||v===''||v==='-')return emptyCell();
+    const n=num(v);
+    const cls=signed?amtClass(n):'';
+    return `<span class="tr-amt ${cls}">${esc(money(n))}</span>`;
+  }
+  function cellHtml(key,v){
+    if(key==='createdAt'||key==='postedAt')return dtCell(v);
+    if(key==='remark')return remarkCell(v);
+    if(key==='ledgerType')return typeCell(v);
+    if(key==='amount')return moneyCell(v,{signed:true});
+    if(key==='beforeBalance'||key==='afterBalance')return moneyCell(v);
+    if(key==='id'||key==='memberId'){
+      const s=String(v??'').trim();
+      return s?`<span class="tr-id">${esc(s)}</span>`:emptyCell();
+    }
+    return textCell(v);
+  }
+  function tdClass(key){
+    if(key==='amount'||key==='beforeBalance'||key==='afterBalance')return ' class="tr-num"';
+    if(key==='ledgerType')return ' class="tr-type"';
+    if(key==='createdAt'||key==='postedAt')return ' class="tr-date"';
+    if(key==='remark')return ' class="tr-remark-col"';
+    return '';
+  }
+  function rawPageSize(){return String(pageSizeEl?.value??'-').trim();}
+  function isAutofit(){const r=rawPageSize();return r===''||r==='-'||/^auto$/i.test(r);}
+  function isAll(){return /^all$/i.test(rawPageSize());}
+  function measureAutoPageSize(){
+    if(!tableWrap)return lockedAutoSize||10;
+    const head=tableWrap.querySelector('thead');
+    const headH=head?Math.ceil(head.getBoundingClientRect().height):44;
+    const avail=Math.max(0,Math.floor(tableWrap.clientHeight)-headH);
+    const sample=tableWrap.querySelector('tbody tr td:not(.table-empty)');
+    const rowH=sample?Math.max(36,Math.round(sample.getBoundingClientRect().height)):41;
+    return Math.max(5,Math.min(200,Math.floor(avail/rowH)||10));
+  }
+  function resolvePageSize(){
+    if(isAll())return 10000;
+    if(isAutofit()){
+      if(lockedAutoSize)return lockedAutoSize;
+      lockedAutoSize=measureAutoPageSize();
+      return lockedAutoSize;
+    }
+    const n=Number(rawPageSize());
+    return Number.isFinite(n)&&n>0?n:10;
+  }
+  function syncAutofitClass(){
+    if(!pageRoot)return;
+    pageRoot.classList.toggle('tr-autofit',isAutofit());
+  }
+  function paintSelectLabel(){
+    /* Autofit trigger always paints literal "-" (VIP EXP contract), never the fitted count. */
+    const wrap=pageSizeEl?.closest?.('.rounded-select-wrap');
+    const btn=wrap?.querySelector?.('.rounded-select-btn span');
+    if(isAutofit()&&btn)btn.textContent='-';
+  }
   function render(){
-    const size=Number(pageSizeEl?.value||10),total=allRows.length,pages=Math.max(1,Math.ceil(total/size));page=Math.min(Math.max(1,page),pages);
+    syncAutofitClass();
+    const size=resolvePageSize(),total=allRows.length,pages=Math.max(1,Math.ceil(total/Math.max(1,size)));
+    page=Math.min(Math.max(1,page),pages);
     const start=(page-1)*size,rows=allRows.slice(start,start+size);
-    headEl.innerHTML='<tr>'+cols.map(c=>`<th>${c[1]}</th>`).join('')+'</tr>';
+    headEl.innerHTML='<tr>'+cols.map(c=>`<th title="${esc(c[1])}">${c[1]}</th>`).join('')+'</tr>';
     bodyEl.innerHTML=rows.length?rows.map(x=>'<tr>'+cols.map(c=>{
-      const v=x[c[0]];
-      if(c[0]==='createdAt'||c[0]==='postedAt')return `<td>${dtCell(v)}</td>`;
-      if(c[0]==='remark')return `<td>${remarkCell(v)}</td>`;
-      return `<td>${esc(v??'-')}</td>`;
+      return `<td${tdClass(c[0])}>${cellHtml(c[0],x[c[0]])}</td>`;
     }).join('')+'</tr>').join(''):`<tr><td colspan="${cols.length}" class="table-empty">No records found.</td></tr>`;
     if(showingEl)showingEl.textContent=`Showing ${total?start+1:0} to ${Math.min(start+size,total)} of ${total} entries`;
     bindFloatTips();
+    paintSelectLabel();
+    if(isAutofit())requestAnimationFrame(()=>settleAutofit());
     if(!pagerEl)return;
     const btn=(label,target,disabled,active=false,icon='')=>`<button type="button" class="page-btn${active?' active':''}" data-page="${target}" ${disabled?'disabled':''} aria-label="${label}">${icon?`<i class="bi ${icon}"></i>`:label}</button>`;
     // First · Prev · page window (always 1 + last, ellipsis when gaps > 1) · Next · Last — locked pager anatomy.
@@ -112,6 +187,20 @@
     });
     h+=btn('Next',page+1,page>=pages,false,'bi-chevron-right')+btn('Last',pages,page>=pages,false,'bi-chevron-bar-right');
     pagerEl.innerHTML=h;
+  }
+  function settleAutofit(){
+    if(!isAutofit()||!tableWrap)return;
+    const measured=measureAutoPageSize();
+    if(measured!==lockedAutoSize){
+      lockedAutoSize=measured;
+      render();
+      return;
+    }
+    /* Verify no overflow; shrink by 1 and retry (VIP EXP verifyAndLock). */
+    if(tableWrap.scrollHeight>tableWrap.clientHeight+1&&lockedAutoSize>5){
+      lockedAutoSize=lockedAutoSize-1;
+      render();
+    }
   }
   async function fetchRows(type){
     let u=`${base}${window.OP_REPORT_ENDPOINT}?from=${encodeURIComponent(from.value)}&to=${encodeURIComponent(to.value)}`;
@@ -135,11 +224,21 @@
         const type=window.OP_REPORT_KIND==='promotion-report'?'':document.getElementById('reportType').value;
         allRows=await fetchRows(type);
       }
-      page=1;render();
-    }catch(e){allRows=[];render();if(window.BO_DIALOG)await BO_DIALOG.alert(e.message||'Unable to load report.',{title:'Report Error',type:'error'});}
+      page=1;if(isAutofit())lockedAutoSize=null;render();
+    }catch(e){allRows=[];if(isAutofit())lockedAutoSize=null;render();if(window.BO_DIALOG)await BO_DIALOG.alert(e.message||'Unable to load report.',{title:'Report Error',type:'error'});}
   }
-  document.getElementById('reportSearch').onclick=load;
-  pageSizeEl?.addEventListener('change',()=>{page=1;render();});
+  document.getElementById('reportSearch').onclick=()=>{lockedAutoSize=null;load();};
+  pageSizeEl?.addEventListener('change',()=>{lockedAutoSize=null;page=1;render();});
   pagerEl?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(!b||b.disabled)return;page=Number(b.dataset.page)||1;render();});
+  let resizeTimer=0;
+  window.addEventListener('resize',()=>{
+    if(!isAutofit())return;
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(()=>{lockedAutoSize=null;render();},120);
+  });
+  /* Re-paint "-" after reports.js wraps #reportPageSize in .rounded-select-wrap. */
+  document.addEventListener('DOMContentLoaded',paintSelectLabel);
+  setTimeout(paintSelectLabel,0);
+  setTimeout(paintSelectLabel,120);
   load();
 })();
