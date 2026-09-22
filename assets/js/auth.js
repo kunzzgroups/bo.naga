@@ -484,6 +484,12 @@
       if(!nav) return;
       user = user || this.user();
       const sourceMenus = Array.isArray(user && user.menus) ? user.menus : [];
+      // A menu group/category is part of the assigned navigation hierarchy even when all
+      // of its child pages are configured as hidden from the sidebar. Keep those assigned
+      // parent groups so hiding every subcategory does not make the main category vanish.
+      const assignedGroupKeys = new Set(sourceMenus.map(normalizeMenu)
+        .filter(function(m){ return m.status === 1 && String(m.parentKey||'').trim(); })
+        .map(function(m){ return String(m.parentKey||'').trim(); }));
 
       // Database-only sidebar: no hardcoded fallback menus, injected pages, role filters,
       // menu renaming, parent repair or frontend permission overrides.
@@ -501,7 +507,7 @@
         })
         .sort(function(a,b){ return a.sortOrder - b.sortOrder || a.title.localeCompare(b.title); });
 
-      if(!menus.length){
+      if(!menus.length && !assignedGroupKeys.size){
         nav.innerHTML='';
         return;
       }
@@ -516,6 +522,10 @@
         }else{
           top.push(m);
         }
+      });
+      assignedGroupKeys.forEach(function(key){
+        const meta=GROUP_META[key];
+        if(meta && Number(meta.status==null?1:meta.status)===1 && !groups[key]) groups[key]=[];
       });
 
       // Render top-level pages and DB menu groups in one shared sort sequence.
@@ -585,7 +595,16 @@
           html+=menuLinkHtml(root.menu,false, primaryMenuKey!=null && root.menu.menuKey===primaryMenuKey);
           return;
         }
-        const isOpen=primaryGroupKey!=null && root.key===primaryGroupKey;
+        const hasVisibleChildren=root.items.length>0;
+        const isOpen=hasVisibleChildren && primaryGroupKey!=null && root.key===primaryGroupKey;
+        if(!hasVisibleChildren){
+          // Assigned + active category whose active children are all Hidden: keep only
+          // the category row. It must not expose a chevron or an empty submenu/flyout.
+          html+='<div class="nav-group nav-group-empty" data-menu-group="'+esc(root.key)+'">'+
+            '<div class="nav-group-btn" aria-disabled="true">'+
+            '<span><i class="bi '+esc(root.icon)+' me-2"></i>'+esc(root.title)+'</span></div></div>';
+          return;
+        }
         html+='<div class="nav-group '+(isOpen?'open':'')+'" data-menu-group="'+esc(root.key)+'">'+
           '<button type="button" class="nav-group-btn" aria-expanded="'+(isOpen?'true':'false')+'">'+
           '<span><i class="bi '+esc(root.icon)+' me-2"></i>'+esc(root.title)+'</span><i class="bi bi-chevron-down"></i></button>'+

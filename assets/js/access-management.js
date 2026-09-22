@@ -72,7 +72,8 @@
   // account behave like MASTER and expose protected platform roles.
   const rootAdmin = currentAdmin && !mainAdmin && (currentRoleType==='ROOT' || (Number(currentAdmin.id)===1 && currentAdmin.brandId==null));
   const masterAdmin = currentAdmin && !mainAdmin && !rootAdmin && currentRoleType==='MASTER';
-  const platformRoleAdmin = currentAdmin && (rootAdmin || masterAdmin || mainAdmin || currentAdmin.brandId == null);
+  const tenantAdmin = currentAdmin && currentAdmin.brandId != null && !rootAdmin && !mainAdmin;
+  const platformRoleAdmin = currentAdmin && !tenantAdmin && (rootAdmin || masterAdmin || mainAdmin || currentAdmin.brandId == null);
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function networkErrorMessage(err, fallback){
     const msg = String((err && err.message) || '');
