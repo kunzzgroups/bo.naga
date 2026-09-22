@@ -57,6 +57,7 @@
   };
   const TABLES = new Map();
   let pageSizeLock = null;
+  let autoSteps = 0;
   let activeTableId = null;
 
   function tableState(id){
@@ -68,8 +69,13 @@
   function measureAutoPageSize(){
     const wrap = document.querySelector('.table-card .table-wrap');
     if(!wrap) return null;
+    /* `report-table-split.js` lifts the thead OUT of the scroller at ≥992px, so a missing thead
+       means the wrap is body-only and there is no head to subtract. The `44` that used to stand in
+       for "no thead" was subtracted anyway and cost the fit exactly one row: measured 676px of
+       panel at 38px rows, `(676 - 44) / 38 = 16.6 → 16` rows, leaving a 68px dead band above the
+       footer on all four casino reports. */
     const head = wrap.querySelector('thead');
-    const headH = head ? Math.ceil(head.getBoundingClientRect().height) : 44;
+    const headH = head ? Math.ceil(head.getBoundingClientRect().height) : 0;
     const cell = wrap.querySelector('tbody tr td');
     if(!cell) return null;
     const rowH = Math.max(34, Math.round(cell.getBoundingClientRect().height)) || 41;
@@ -131,12 +137,17 @@
       info.textContent = 'Showing ' + (total ? start + 1 : 0) + ' to ' + to + ' of ' + total + ' entries';
     }
     renderPager(state, totalPages);
-    /* The Show N entries default (`-`) fits the rows to the panel. It can only be
-       measured once rows exist, so the first paint resolves it and re-renders when
-       the fitted size differs. Runs at most once: the lock makes the second pass agree. */
-    if(pageSizeLock == null && isAutoPageSize(pageSizeOption())){
+    /* The Show N entries default (`-`) fits the rows to the panel — and the fit is settled
+       against the rows that were ACTUALLY painted, not against the first estimate. That first
+       estimate runs while the body still holds the `Loading...` placeholder (42px against the
+       38px a real row renders), and because the first measurement also set the lock, the fit was
+       never re-derived: the panel kept one row of dead space under the last row on all four
+       casino reports. Re-measuring after the paint costs nothing here — this page slices
+       client-side, so a correction is a re-render, not a request. */
+    if(isAutoPageSize(pageSizeOption()) && autoSteps < 3){
       const fitted = measureAutoPageSize();
-      if(fitted != null){ pageSizeLock = fitted; if(fitted !== size) return renderTablePage(state); }
+      if(fitted != null && fitted !== size){ autoSteps++; pageSizeLock = fitted; return renderTablePage(state); }
+      autoSteps = 0;
     }
   }
   function mountRows(id, rows, emptyText){
@@ -338,6 +349,7 @@
     document.addEventListener('change', function(e){
       if(!e.target || e.target.id !== 'crPageSize') return;
       pageSizeLock = null;
+      autoSteps = 0;
       const state = activeTableId ? TABLES.get(activeTableId) : null;
       if(!state) return;
       state.page = 1;

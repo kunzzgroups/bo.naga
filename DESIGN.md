@@ -1861,8 +1861,314 @@ an `!important` sheet rule. The pattern: check what actually won, never what was
 notes **0**, **zero truncated labels or values** at every one, and six-in-one-row wherever a tile is
 ≥1201px wide — 302px per tile at 1920, 195px at 1536 — two columns below that.
 
-**Pins:** `bo-report-family.css` 1.0.18 → **1.0.19**, `agent-performance-report.css` → **1.0.6**,
-`agent-performance-report.js` → **1.0.6**.
+**Pins (final):** `bo-report-family.css` **1.0.19**, `agent-performance-report.css` **1.0.11** (it moved
+five times while the two authority-layer rules above were beaten), `agent-performance-report.js`
+**1.0.6**, `player-game-ranking.js` **1.0.3**.
+
+### 8.1–8.11: the date strip joins the table card, and the tables lose their grid (2026-09-22)
+
+Owner: “检查report的所有页面从 8.1 至 8.11 · 1.那个日期和table 要和图二的设计一样 · 2.然后table header
+是没有线条设计的”, and while the pass was running: “table数据里 也不应该有线条哈哈 要跟统一其他页面”.
+
+**图二 is `index.html` (User Management), and what it says is that the filter row is not a card.**
+There the date/search/status controls are the first band *inside* the table card (`index.html` →
+`.table-card > .user-toolbar > .user-search-grid.bo-filter-row`), sitting directly on the amber head
+band, so the filters and the table read as one object with one inset. Nine of the eleven report pages
+instead carried a `.filter-card` of their own (8.11's is `.perf-filter-card`, 8.5's a bare
+`.ops-filter`), and `reports.css` gives such a card full standalone chrome — 1px `#EADCC8`, 16px
+radius, its own shadow — so each rendered as a **separate rounded box floating a gap above the table
+card**. That separation is the reported defect.
+
+**Joined in CSS, not by restructuring nine pages of markup** (`bo-report-family.css` §19, desktop-only):
+
+| Piece | Was | Now |
+| --- | --- | --- |
+| strip padding | `16px` | `12px 16px` — the inset §14 already gives every band inside the card |
+| strip bottom border / radii / shadow | `1px` · `16px` · own shadow | `0` · `0` · `none` |
+| strip bottom margin | `0` (zeroed by §15) | `-16px`, cancelling the content column's flex gap |
+| table card top border / radii | `1px` · `16px` | `0` · `0` |
+
+`12px 16px` is not decoration: it is the same inset as `.table-card > *` in §14, which is why the
+filter control and the first header cell share a left edge — measured, filter control box **295** and
+the first header cell's text **295** (its box starts at 279 and carries the 16px inset).
+
+**`:has(+ .table-card)` is load-bearing.** 8.4 Casino Overview Report has no table at all; without the
+guard the negative margin drags its KPI strip up over the filter card. `transaction-report-page` stays
+excluded for the reason §14 excludes it (8.7's filter is already a band inside its card and owns its
+own chrome).
+
+**The head and the body lose their vertical rules.** The head band drew
+`border-right:1px solid rgba(107,54,12,.08)!important` (plus a dark `rgba(255,255,255,.08)`), the body
+`rgba(107,54,12,.06)` (plus dark `.06`) — the “线条” the owner pointed at. Both are now `0`. The row
+hairline stays (`1px #EADCC8`, dark `rgba(255,255,255,.12)`): rows are told apart by the zebra band and
+that hairline, exactly as in 图二 and on every other listing. **8.7 needed its own rule** — its page
+sheet states both column rules itself at `(0,4,2)` with `!important`, so a family rule carrying the
+family's usual two `:not(#…)` guards (two IDs) is what beats it, and nothing else about 8.7's recipe is
+touched.
+
+**Measured on all eleven pages** (auth-stubbed temp harnesses, deleted after the pass): seam
+**0px** on the ten merged pages, strip `border-bottom-width 0` / `border-bottom-left-radius 0` /
+`box-shadow none` / `margin-bottom -16px` / `padding 12px 16px`, table card `border-top-width 0` /
+`border-top-left-radius 0`; head `border-right-width 0` with the `#FFE8CC` fill intact (dark
+`#1F2128` / `#E7E5E4`), body `border-right-width 0` with the `0.8px` row hairline intact;
+`transaction-report` untouched inside its card; `casino-overview-report` untouched as a standalone
+card. **Below 992px the merge is off** — stacked cards, seam 16px, full chrome — because there the
+sidebar is an off-canvas drawer and the stack is the right shape.
+
+**And the reported “scroll不到下方” was this same frame.** The production screenshot was
+`casino-overview-report.html`: a filter strip plus **18 KPI tiles and no table**, inside a shell where
+§15 sets `overflow:hidden` on `.report-shell` / `.report-main` / `.report-content`. With no
+`.table-wrap` anywhere, nothing could scroll and the tiles below the fold were unreachable. Fix: the
+content column may still scroll itself (`overflow:hidden; overflow-y:auto`) — the shell, the pinned
+topbar and the sidebar all stay — plus a `280px` floor on the table card so a short window can never
+shrink a panel to zero (a zero-height card hides its own table).
+
+- **Costs the table pages nothing:** their `.table-card` is `flex:1 1 auto` with `min-height:0`, so it
+  fits the column exactly and this scroller never activates — confirmed `contentScrollable:false` on
+  all ten table pages.
+- **Pre-fix proof:** at 1512×640 with the old `overflow:hidden` simulated, **2 of 18 tiles** were
+  unreachable; with the fix `scrollHeight 702 > clientHeight 576` and all 18 reachable.
+- **No regression on the pinned header:** 60 synthetic rows on `win-lose-report` — head band viewport
+  `y` **257 before, 257 after scrolling**, first row `302 → -98`, and the document itself still not
+  scrollable (`documentElement.scrollHeight == innerHeight`).
+
+**Pin:** `bo-report-family.css` 1.0.19 → **1.0.20** on all eleven pages. Nothing else moved — no JS
+changed.
+
+### The report family's pagination is the LISTING pagination — audited page by page (2026-09-22)
+
+Owner: “这里有问题 默认show - entries 的话 可是仍然能scroll”, then “确认好report所有页面的pagination的
+功能逻辑是跟其他页面统一”.
+
+**The house meaning of `-` is "fit the rows to the panel", and it is not a report-family invention.**
+`assets/js/pagination-standardizer.js` → `resolvePageSize()` is what the ~130 non-report listings run:
+
+| Control value | Meaning |
+| --- | --- |
+| `-` / blank / `auto` | **fit** — `max(5, min(200, floor(available / rowHeight) || 12))` |
+| `All` | everything (`10000`) |
+| a number | that number, falling back to the fit when unparsable |
+
+`member-management.js` (`autoFitPageSize()` + `evenFillRowHeights()`) is the same recipe on the
+reference listing, and `operations-report.js` even pins the trigger's label to `-` as “the VIP EXP
+contract” — so `-` **staying** `-` in the control is intended; what was wrong was pages that read it
+as a fixed number. With `-` read as a hard 20 the panel was over-filled and scrolled behind the
+pinned head while the footer claimed `Showing 1 to N of N entries` — exactly the screenshot.
+
+**Audit of the eleven** (each page's own script, since the family has no shared page-size module):
+
+| Page | `-` before | `-` now | Ladder markup |
+| --- | --- | --- | --- |
+| Win/Lose Report | **hard 20** | **fit** | was classless `‹`/`›` buttons — **now the locked rungs** |
+| the four casino reports | fit (`measureAutoPageSize()`) | fit, unchanged | locked ✓ |
+| Promotion / Transaction report | fit (`operations-report.js`) | fit, unchanged | locked ✓ |
+| the two games reports | fit (`fitPlan()`) | fit, unchanged | locked ✓ |
+| Agent Performance Report | **no `-` option at all** (hard 20) | **option added, fits** | locked ✓ |
+| Casino Overview Report | no table, no footer | — | — |
+
+Every page's control now carries the identical option set with `-` selected
+(`- · 10 · 20 · 50 · 100 · All`) — verified by reading all eleven files' markup.
+
+**Win/Lose Report** (`win-lose-report.js`, server-paginated, so the fit has to be resolved *before*
+the request): `isAutoPageSize()` / `measureAutoPageSize()` / `currentPageSize()` follow the shapes the
+casino pages and `pagination-standardizer.js` already use, measuring the **body** scroller and
+subtracting the head only while it is still inside it (`report-table-split.js` lifts it out at
+≥992px). One refinement per session, the casino pages' pattern: the fit resolved from the placeholder
+row is re-measured from real rows once they exist and the page reloads only if the two disagree —
+visible in the request trace as `13@p1 → 12@p1`. Resizing re-fits while in auto mode, as
+`casino-report.js` and `player-game-ranking.js` do. Its `renderPages()` was rewritten onto the locked
+ladder anatomy (`smart-page first` · `smart-page nav-text` · numbered `smart-page` + ellipsis ·
+`smart-page nav-text` · `smart-page last`); the old one emitted bare `‹`/`›` buttons, which miss the
+rung geometry entirely because the family stylesheet sizes `.smart-page`, not `.pagination-clean button`.
+
+**Measured** (auth- and API-stubbed harness, 57 synthetic rows, 1512×900): control on `-` →
+`size=12`, 12 rows, `.table-wrap` `scrollHeight 511 == clientHeight 511` → **`wrapScrolls:false`**,
+footer `Showing 1 to 12 of 57 entries`; page 2 → `size=12&page=2`, first row `13`,
+`Showing 13 to 24 of 57 entries`, still no inner scroll. Ladder rungs all **36px** tall, First/Last
+**36×36**, the info block dead-centre in the footer (centre **886** vs footer centre **886**).
+
+**Agent Performance Report** was the only one of the eleven whose control had no `-` at all
+(10/20/50/100/All, hard 20): the option is added and `perfSize()` resolves the fit the same way
+(client-side pagination here, so no extra request — measured `-` → 8 rows at a 57px row
+(`floor(511/57)`), `wrapScrolls:false`, `Showing 1 to 8 of 57 agents`, every rung `.smart-page`).
+
+**Cost, stated plainly:** on the two server-paginated pages whose fit lands on a different number than
+the placeholder-row estimate, the first paint costs **one extra request** (`13@p1` then `12@p1`). It is
+the same one-shot correction the casino pages already make, and it happens once per session, not per
+filter change.
+
+**Pins:** `win-lose-report.js` 1.0.6 → **1.0.7**, `agent-performance-report.js` 1.0.6 → **1.0.7**
+(plus the new `<option>` in `agent-performance-report.html`).
+
+### Agent Performance Detail — the missing twelfth family page (2026-09-22)
+
+Owner: “http://127.0.0.1:8080/agent-performance-detail.html?agentId=1&from=2026-09-22&to=2026-09-22
+这个页面的设计 你还没帮我优化”.
+
+It was the drill-down of 8.11 and had none of the family treatment — no `bo-report-family` marker, no
+family sheet, no split head, no footer. Measured on the page as it was:
+
+| | Before | After |
+| --- | --- | --- |
+| KPI strip | **raw inline text** — `TurnoverRM 1,385,271.50Valid bet` stacked down the page | the family's `.metric` tiles, 6 in one row, 88px |
+| Table head | amber band **with column rules** (head and body) | lineless, per the family recipe |
+| Head pinning | none — the document scrolled | split head, pinned; only the rows scroll |
+| Footer | `Showing 40 betting records`, no control, no ladder | three-slot grid: page size · info · ladder |
+| Panel | 40 rows in one **2468px** panel; document **3225px** in a 950px viewport | rows fitted to the panel, document locked |
+| Dark mode | ops cards stayed **light** (`#FFF8EB` + `#57534E`) with light values on them | `#383A46` / `#D4D4D8`, same trio as the tile |
+
+**Why the strip was raw text:** the tiles were `<div class="perf-kpi">` and **no stylesheet in this
+repository has ever defined `.perf-kpi`** — only `.perf-detail-kpis{grid-template-columns:…}`, a grid
+template on a container that was not a grid. `#detailKpis` also had no `.quick-stats`, so even the
+family's tile rules had nothing to hook. Fixed by emitting the same `<div class="metric">` markup
+`agent-performance-report.js` does and putting `quick-stats perf-kpis` on the container.
+
+**It also had no pagination at all.** It now carries the listing footer with the listing's semantics
+(`-` fits, `All` everything, a number that number) and the locked ladder — `Showing 1 to 6 of 40
+entries` with eight rungs at 1512×950.
+
+**The fit has to be settled against what was painted, not measured once.** Both directions of getting
+it wrong were measured on this page: the pre-paint estimate is one row too many (5 rows in a 212px
+panel at 54px ⇒ `scrollHeight 269 > clientHeight 212`, so the panel scrolled at the default), and a
+correction loop that computes the row height as `scrollHeight / painted` **over**-corrects downward —
+`scrollHeight` is clamped to `clientHeight` whenever the rows do not overflow, so a fitted page reads
+back as if each row were taller than it is (3 rows became 2, leaving 54px of dead panel). `settleFit()`
+therefore uses a painted row's own box and converges in at most three passes — the same
+settle-what-you-painted approach `operations-report.js` already uses.
+
+**The KPI recipe is now ONE compact band, and neither line may be cut off.** Six tiles at 1216px are
+191px wide with a 111px text column; the roomier ≥1366 recipe (38px well, 11px label, 19px value)
+ellipsised five of this page's six values, because `RM 1,385,271.50` needs 144px. The tightened
+recipe (30px well, 10px gap, 10px label, 16px value) fits them, so it now covers the whole six-up
+range and the 1366 band is gone. The `white-space:nowrap` + ellipsis pair this sheet used to set on
+both lines is replaced by wrapping: a KPI number that reads `RM 1,385…` is not a number, and a label
+that reads `Bonus / Settle…` is not a label. Verified at 1600/1512/1440/1366/1280/1201: **one row,
+zero clipped values, zero clipped labels, `slack 0`** (at 1201 the label wraps and the tile grows to
+100px, which is the honest outcome).
+
+**Also:** the stray `<link href="bo-input-fill.css">` that sat **between `</head>` and `<body>`** moved
+into the head, and the duplicated date range in the table-card title bar (`#detailRange`, already in
+the topbar subtitle) went with the bar, as on 8.11.
+
+**Pins:** `agent-performance-detail.js` **1.0.3** (new, was 1.0.0 and unstyled), the page now links
+`bo-report-family.css` **1.0.20** and `report-table-split.js` **1.0.5**, and
+`agent-performance-report.css` 1.0.11 → **1.0.15** (it moved for the `#detailKpis` selectors, the
+perf-op radius, the collapsed KPI band and the dark ops variant).
+
+### Agent Performance Detail: the eight-card financial block is now a disclosure (2026-09-22)
+
+Owner: “框中的部分 我想做成收起来的功能 因为太大了”, then “放上去一点 too much gap”.
+
+The financial readout (Deposit · Withdraw · Bonus · Player Win · Player Loss · Settlement · Pending ·
+Available Balance) is eight cards in a 2×4 grid — **247px of the page's height for reference data**,
+on a page whose reason to exist is the betting-records table below it. It is now a disclosure, and
+its control lives in the page's **own header row**, right-aligned after the agent name:
+
+| | Collapsed (default) | Expanded |
+| --- | --- | --- |
+| Control | in the header row (`aria-expanded="false"`, chevron at rest) | same row, chevron rotated 90° |
+| Cards | hidden — the panel is `display:none`, so it contributes **no** height | 211px, opened between the KPI strip and the table |
+| Table panel | **636px → 9 rows** fitted (1904×900) | 409px → 5 rows |
+
+**Why the control moved twice.** As its own row it cost a 36px band *plus* two 16px gaps, and the
+owner read it as a floating chip between the KPI strip and the table. Moving it into the header row
+removes the band entirely. The cards themselves stay where they were — between the KPI strip and the
+table — so the reading order is unchanged: headline numbers, then their breakdown, then the records.
+
+**The second, less obvious gap.** Hiding only the grid left a **0px-high panel in the flex column**,
+and the column's 16px gap applies on both sides of it, so the KPI strip and the table card ended up
+**32px** apart when collapsed — the very “too much gap” the control was moved up to remove. Measured
+before/after: `gapKpiToCard` 32 → **16**. The panel is now `display:none` as a whole.
+
+**Toggling re-fits the table.** This page is viewport-locked (§15), so collapsing the block hands
+~270px to the table panel and the fitted row count has to be re-derived — a disclosure that only
+changes `display` would leave the table sized for the expanded layout. `setOpsOpen()` therefore
+resets the fit and re-renders when the control is used.
+
+**The state persists** (`localStorage: bo_perf_detail_ops_open`) because it is a preference about the
+panel's height, and it is applied **before the first render** — `setOpsOpen(opsOpen(), false)` runs
+ahead of `renderRows()`, so the fit is measured against the panel the reader will actually see.
+Applying it afterwards would fit rows to the expanded height and then collapse the block out from
+under them. Verified collapsed → expanded → collapsed → reload: 9 / 5 / 9 / 9 rows at 1904×900.
+
+**The summary line is the first thing to go, not the name:** below 1500px the
+`Deposit · withdraw · bonus · settlement · balance` hint is hidden and the control shrinks to its
+label (measured 453px → 179px at 1366), with the agent name ellipsising rather than being squeezed.
+
+**The toggle keeps the page's own button chrome** — measured `#FFF8EB` fill, 1px `#EADCC8`, 8px
+radius, 36px tall, the same treatment `Back to Report` gets beside it. The first version also
+declared `border:0; background:transparent; width:100%`, and **all three were dead**: a global
+`.report-main button` rule wins them. They are deleted rather than left in place, because
+declarations that are written and never applied are exactly how this file has been misread before.
+
+**Pins:** `agent-performance-report.css` 1.0.15 → **1.0.19**, `agent-performance-detail.js`
+1.0.3 → **1.0.5**.
+
+### The `-` page-size fit, audited page by page across the family (2026-09-22)
+
+Owner: “你看还有一些report的页面 没调整好他的默认 entries 但能scroll的问题 处理完后记得 要帮我审核清楚”.
+
+The screenshots were the two games pages: `Showing 1 to 14 of 15 members` with the last row cut behind a
+scrollbar while the control still read its default `-`. **Four distinct bugs** were found behind that
+one symptom, and each was measured before it was changed:
+
+1. **A hard-coded row height.** `player-game-ranking.js` measured with `ROW_H = 40` while these rows
+   render at **41** (13px text, 10px cell padding, the provider pill), so `floor(avail / 40)` asked
+   the server for exactly one row more than the panel can show. Now measured from a painted row
+   (`measureRowH`), with 41 only as the fallback.
+2. **A head subtracted that was no longer there.** `casino-report.js` and `operations-report.js` both
+   used `headH = head ? height : 44` — a stand-in for "no thead found". At ≥992px
+   `report-table-split.js` lifts the head **out** of the scroller, so the wrap is body-only and there
+   is no head to subtract; the 44 came off anyway, worth one row. Measured on the casino reports:
+   676px of panel at 38px rows, `(676 − 44) / 38 = 16.6 → 16`, leaving a 68px dead band above the
+   footer. Now `: 0`.
+3. **Settle corrections that never reached the request.** Three separate reasons, all silent:
+   `player-game-ranking.js` read `plan.size` in its auto path and so ignored the `fitLock` it had just
+   computed (which also made it loop — eight identical `size=18` calls); its `load(false)` was called
+   from inside `load()`'s `try` block where `loading` is still true, and `load()` bails on that guard;
+   and `operations-report.js`'s `settleAutofit()` required `tableBodyEl`, which does not exist on
+   promotion-report at all (`#reportTableBody` and `.bo-tx-table-body` are the transaction page's),
+   so the whole settle was skipped on one of the two pages that share it. All three are fixed —
+   the size now comes from one place (`requestedSize()`), the reload is deferred a tick, and both
+   settle paths read `scrollHost` (`tableBodyEl || tableWrap`).
+4. **A fit that converges against transient geometry.** The panel's height still moves during the
+   first paints (the head is split out; a `min-width:1500px` table claims its 6px horizontal bar), so
+   a fit that agrees at convergence can be one row long a frame later. Measured on 8.11: 10 rows at
+   57px = 570 in a 562px panel — the last 6px of the last row behind the bar — and on the games page
+   at 1280×760: 12 rows at 41px = 492 in a 491px panel. Both now **verify one frame later**
+   (`requestAnimationFrame` re-check) and step down once if the painted rows really do overflow, the
+   same post-paint verification `operations-report.js` already had.
+
+**The audit, all twelve pages, on a stubbed API** (57 rows / 20 rows, 1512×950; every harness stubbed
+the API before any page script — `operations-report.js` loads at parse time and had to be intercepted
+first):
+
+| Page | Rows fitted | Row height | Panel cap | Verdict |
+| --- | --- | --- | --- | --- |
+| Win/Lose Report | 13 | 41px | 561px | no scroll |
+| Casino Deposit/Withdraw | 17 | 38px | 676px | no scroll |
+| Casino Breakdown | 17 | 38px | 676px | no scroll |
+| Casino Provider Win/Loss | 17 | 38px | 681px | no scroll |
+| Casino Bonus | 17 | 38px | 681px | no scroll |
+| Promotion Report | 17 | 41px | 681px | no scroll |
+| Transaction Report | 16 | 43px | 722px | no scroll |
+| Frequently Played Games | 16 | 41px | 681px | no scroll (also 12/531, 11/491, 14/591, 15/631 at 1366/1280/1440/1600) |
+| Highest Turnover Games | 16 | 41px | 681px | same five widths |
+| Agent Performance Report | 9 | 57px | 562px | no scroll, 6 tiles one row |
+| Agent Performance Detail | 6 | 54px | 362px | no scroll, 6 tiles one row |
+| Casino Overview Report | no table | — | — | 18 tiles scroll inside the content column (see §15) |
+
+On every one: the control reads `-`, the document itself is **not** scrollable, the content column is
+not scrollable, no panel has a scrollbar at the fitted size, and no tile label or value is clipped.
+
+**A note on the measurement harness**, because it cost two false readings: `API_CONFIG.BASE_URL` on a
+local machine resolves to the **production** host, so a harness that stubs `fetch` after `config.js`
+silently measures *production's* 401 — and a harness that stubs it after `operations-report.js` misses
+that page's parse-time load entirely. The stub goes first in `<head>`, before every other script.
+
+**Pins:** `player-game-ranking.js` 1.0.3 → **1.0.8**, `casino-report.js` 1.0.17 → **1.0.19**,
+`operations-report.js` 1.0.13 → **1.0.15**, `agent-performance-report.js` 1.0.7 → **1.0.9**
+(and `win-lose-report.js` **1.0.7** from the earlier pass in this same audit).
 
 ### The DB-side menu label defect (reported, not fixable here)
 
