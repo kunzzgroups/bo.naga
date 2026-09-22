@@ -1,29 +1,269 @@
-.agent-admin-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}.agent-admin-metric{display:flex;align-items:center;gap:14px;background:#FFF8EB;border:1px solid #EADCC8;border-radius:14px;padding:16px 18px;min-height:92px}.agent-admin-metric .ico{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#F5EBDC;color:#57534E;font-size:21px;flex:0 0 48px}.agent-admin-metric:nth-child(2) .ico{background:#eaf9f0;color:#14a65a}.agent-admin-metric:nth-child(3) .ico{background:#fff5e8;color:#f59e0b}.agent-admin-metric:nth-child(4) .ico{background:#fff0f0;color:#ef4444}.agent-admin-metric small{display:block;color:#57534E}.agent-admin-metric strong{display:block;font-size:24px;line-height:1.15;margin-top:3px}.agent-admin-table .status-pill{display:inline-flex;padding:4px 10px;border-radius:999px;background:#eaf9f0;color:#159447;font-weight:700;font-size:12px}.agent-admin-table .status-pill.off{background:#F5EBDC;color:#57534E}.agent-admin-table .money-positive{color:#159447;font-weight:700}.agent-admin-table .money-negative{color:#ef4444;font-weight:700}.agent-admin-action{width:34px;height:34px;border:1px solid #EADCC8;border-radius:9px;background:#FFF8EB;color:#57534E;display:inline-flex;align-items:center;justify-content:center}.agent-admin-tabs{display:flex;gap:28px;border-bottom:1px solid #EADCC8;margin:0 0 14px}.agent-admin-tabs button{border:0;background:transparent;padding:12px 4px;color:#57534E;font-weight:600;border-bottom:2px solid transparent}.agent-admin-tabs button.active{color:#57534E;border-color:#E8901A}.agent-detail-summary{display:grid;grid-template-columns:1.4fr repeat(5,minmax(0,1fr));gap:12px;align-items:stretch}.agent-detail-identity,.agent-detail-stat{border:1px solid #EADCC8;border-radius:14px;background:#FFF8EB;padding:15px}.agent-detail-identity{display:flex;gap:12px;align-items:center}.agent-detail-avatar{width:58px;height:58px;border-radius:50%;background:#F5EBDC;color:#57534E;display:flex;align-items:center;justify-content:center;font-size:26px}.agent-detail-stat span{display:block;color:#57534E;font-size:12px}.agent-detail-stat strong{display:block;font-size:18px;margin-top:4px}.agent-approval-card{background:#FFF8EB;border:1px solid #EADCC8;border-radius:14px;padding:16px}.agent-proof-link{display:inline-flex;align-items:center;gap:6px;color:#57534E;font-weight:600;text-decoration:none}.agent-approval-actions{display:flex;gap:8px}.approve-btn,.reject-btn,.pay-btn{width:36px;height:36px;border-radius:9px;background:#FFF8EB;display:inline-flex;align-items:center;justify-content:center}.approve-btn{border:1px solid #b7e8cb;color:#159447}.reject-btn{border:1px solid #ffcaca;color:#ef4444}.pay-btn{border:1px solid #EADCC8;color:#57534E}@media(max-width:1200px){.agent-admin-metrics{grid-template-columns:repeat(2,1fr)}.agent-detail-summary{grid-template-columns:repeat(2,1fr)}}
+/* Agent admin listing — Charcoal + Amber (see .interface-design/system.md) */
 
-/* 2026-08-28 final: Agent Management dropdowns follow the approved Agent Performance standard.
-   reports.js turns selects into .rounded-select-wrap, so reserve real space from the custom menu
-   (not only the hidden native select) and keep each dropdown wide enough for its label/options. */
-.filter-card{overflow:visible!important;}
-.filter-card .bo-filter-row>.field:has(select),
-.filter-card .bo-filter-row>.field:has(.rounded-select-wrap){
-  min-width:150px!important;
+.agent-admin-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:0}
+
+/* KPI tiles: amber icon wash only (no rainbow per-tile accents) */
+.agent-admin-metric,
+.quick-stats.agent-admin-metrics .metric{
+  display:grid!important;
+  grid-template-columns:52px minmax(0,1fr)!important;
+  grid-template-rows:auto auto auto!important;
+  column-gap:24px!important;
+  align-items:center!important;
+  min-height:104px!important;
+  padding:16px 18px!important;
+  background:#FFF8EB!important;
+  border:1px solid #EADCC8!important;
+  border-radius:16px!important;
+  box-shadow:0 8px 22px rgba(92,74,48,.06)!important;
 }
+.agent-admin-metric .bo-summary-icon,
+.quick-stats.agent-admin-metrics .metric .bo-summary-icon,
+body.agent-management-page .quick-stats.agent-admin-metrics .metric:nth-child(n) .bo-summary-icon{
+  grid-row:1/4;
+  width:52px;height:52px;border-radius:50%;
+  display:grid;place-items:center;
+  background:rgba(217,119,6,.12)!important;
+  border:1px solid rgba(217,119,6,.18)!important;
+  color:#D97706!important;
+  font-size:22px;flex:0 0 auto;
+}
+html[data-bo-theme="dark"] body.agent-management-page .quick-stats.agent-admin-metrics .metric:nth-child(n) .bo-summary-icon{
+  background:rgba(245,158,11,.16)!important;border-color:rgba(245,158,11,.28)!important;color:#FBBF24!important;
+}
+.agent-admin-metric .ico{display:none!important}
+.agent-admin-metric span,
+.quick-stats.agent-admin-metrics .metric span{
+  grid-column:2;font-size:12px!important;font-weight:800!important;color:#57534E!important;line-height:1.2;margin:0!important;
+}
+.agent-admin-metric strong,
+.quick-stats.agent-admin-metrics .metric strong{
+  grid-column:2;font-size:23px!important;font-weight:900!important;color:#18191C!important;
+  margin:2px 0!important;line-height:1.05!important;font-variant-numeric:tabular-nums;
+}
+.agent-admin-metric .bo-summary-note,
+.quick-stats.agent-admin-metrics .metric .bo-summary-note{
+  grid-column:2;font-size:11px!important;font-weight:600!important;color:#71717A!important;line-height:1.2;
+}
+
+html[data-bo-theme="dark"] .agent-admin-metric,
+html[data-bo-theme="dark"] .quick-stats.agent-admin-metrics .metric{
+  background:#383A46!important;border-color:rgba(255,255,255,.10)!important;box-shadow:none!important;
+}
+html[data-bo-theme="dark"] .agent-admin-metric .bo-summary-icon,
+html[data-bo-theme="dark"] .quick-stats.agent-admin-metrics .metric .bo-summary-icon{
+  background:rgba(245,158,11,.16)!important;border-color:rgba(245,158,11,.28)!important;color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] .agent-admin-metric span,
+html[data-bo-theme="dark"] .quick-stats.agent-admin-metrics .metric span{color:#D4D4D8!important}
+html[data-bo-theme="dark"] .agent-admin-metric strong,
+html[data-bo-theme="dark"] .quick-stats.agent-admin-metrics .metric strong{color:#F5F5F4!important}
+html[data-bo-theme="dark"] .agent-admin-metric .bo-summary-note,
+html[data-bo-theme="dark"] .quick-stats.agent-admin-metrics .metric .bo-summary-note{color:#A1A1AA!important}
+
+/* Status + money — exact tokens lifted from the live User Management listing
+   (assets/css/bo-charcoal-legacy.css → .user-management-page .status-pill / .money-strong).
+   This is the real locked specimen — copy pixel values from here, not the prose MD table. */
+.agent-admin-table .status-pill.agent-status-pill{display:inline-flex!important;align-items:center!important;padding:4px 8px!important;border-radius:999px!important;font-weight:800!important;font-size:10.5px!important;text-transform:uppercase!important;letter-spacing:.04em!important;border:0!important}
+.agent-admin-table .status-pill.agent-status-pill.active{background:#D1FAE5!important;color:#047857!important}
+.agent-admin-table .status-pill.agent-status-pill.off{background:#FEE2E2!important;color:#B91C1C!important}
+html[data-bo-theme="dark"] .agent-admin-table .status-pill.agent-status-pill.active{background:rgba(16,185,129,.16)!important;color:#34D399!important}
+html[data-bo-theme="dark"] .agent-admin-table .status-pill.agent-status-pill.off{background:rgba(248,113,113,.16)!important;color:#FCA5A5!important}
+
+/* Money: always amber, like .money-strong on Main Wallet/Deposit/Withdraw — no muted-zero variant */
+.agent-admin-table .money-positive{color:#B45309!important;font-variant-numeric:tabular-nums}
+.agent-admin-table .money-negative{color:#991B1B!important;font-variant-numeric:tabular-nums}
+html[data-bo-theme="dark"] .agent-admin-table .money-positive{color:#F59E0B!important}
+html[data-bo-theme="dark"] .agent-admin-table .money-negative{color:#F87171!important}
+
+/* Username emphasis — .member-name-cell b: 800 on top of the table's own 700 base.
+   Extra body classes needed to out-specify bo-charcoal-agent.css's
+   ".report-table tbody td>b" restatement, which also carries !important. */
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page .agent-admin-table .agent-name-cell b{color:#18191C!important;font-weight:800!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page .agent-admin-table .agent-name-cell b{color:#F5F5F4!important}
+
+/* Row action icon — .user-row-actions .icon-action: 26×26 cream well, not the generic 30×30 chip */
+.agent-admin-action{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:26px!important;height:26px!important;min-width:26px!important;min-height:26px!important;
+  flex:0 0 26px!important;padding:0!important;
+  background:#F5EBDC!important;border:1px solid #EADCC8!important;border-radius:8px!important;color:#57534E!important;
+}
+.agent-admin-action i{font-size:13px}
+.agent-admin-action:hover{background:#FFFCF7!important;border-color:#D97706!important;color:#B45309!important}
+html[data-bo-theme="dark"] .agent-admin-action{background:#2A2C36!important;border-color:rgba(255,255,255,.12)!important;color:#D4D4D8!important}
+html[data-bo-theme="dark"] .agent-admin-action:hover{background:#2A2C36!important;border-color:#F59E0B!important;color:#F59E0B!important}
+
+.agent-admin-tabs{display:flex;gap:28px;border-bottom:1px solid #EADCC8;margin:0 0 14px}
+.agent-admin-tabs button{border:0;background:transparent;padding:12px 4px;color:#57534E;font-weight:600;border-bottom:2px solid transparent}
+.agent-admin-tabs button.active{color:#18191C;border-color:#D97706;font-weight:800}
+
+.agent-detail-summary{display:grid;grid-template-columns:1.4fr repeat(5,minmax(0,1fr));gap:12px;align-items:stretch}
+.agent-detail-identity,.agent-detail-stat{border:1px solid #EADCC8;border-radius:14px;background:#FFF8EB;padding:15px}
+.agent-detail-identity{display:flex;gap:12px;align-items:center}
+.agent-detail-avatar{width:58px;height:58px;border-radius:50%;background:#F5EBDC;color:#57534E;display:flex;align-items:center;justify-content:center;font-size:26px}
+.agent-detail-stat span{display:block;color:#57534E;font-size:12px}
+.agent-detail-stat strong{display:block;font-size:18px;margin-top:4px;font-variant-numeric:tabular-nums}
+.agent-approval-card{background:#FFF8EB;border:1px solid #EADCC8;border-radius:14px;padding:16px}
+.agent-proof-link{display:inline-flex;align-items:center;gap:6px;color:#57534E;font-weight:600;text-decoration:none}
+.agent-approval-actions{display:flex;gap:8px}
+.approve-btn,.reject-btn,.pay-btn{width:36px;height:36px;border-radius:8px;background:#FFF8EB;display:inline-flex;align-items:center;justify-content:center}
+.approve-btn{border:1px solid rgba(22,101,52,.28);color:#067647}
+.reject-btn{border:1px solid rgba(185,28,28,.28);color:#B42318}
+.pay-btn{border:1px solid #EADCC8;color:#57534E}
+
+/* ===== Agents listing page (agent-management.html) ===== */
+body.agent-management-page .report-main{display:flex;flex-direction:column;height:100dvh;min-height:0;overflow:hidden}
+body.agent-management-page .report-content{
+  flex:1;min-height:0;display:flex;flex-direction:column;gap:16px;overflow:hidden;padding-bottom:16px;
+}
+body.agent-management-page .quick-stats.agent-admin-metrics{flex:0 0 auto;margin-bottom:0}
+
+body.agent-management-page .agent-list-panel{
+  flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;
+  padding:0!important;border-radius:8px!important;
+  border:1px solid #EADCC8!important;background:#FFF8EB!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.agent-management-page .agent-list-panel{
+  border-color:rgba(255,255,255,.14)!important;background:#383A46!important;
+}
+body.agent-management-page .agent-inline-filter{
+  flex:0 0 auto;margin:0!important;border:0!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;
+  padding:14px 16px!important;border-bottom:1px solid #EADCC8!important;
+  overflow:visible!important;
+}
+html[data-bo-theme="dark"] body.agent-management-page .agent-inline-filter{border-bottom-color:rgba(255,255,255,.12)!important}
+
+body.agent-management-page .agent-mgmt-filter-row{
+  display:flex!important;flex-wrap:wrap;align-items:center;gap:10px!important;
+}
+body.agent-management-page .agent-inline-filter .field>label{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+body.agent-management-page .agent-inline-filter input,
+body.agent-management-page .agent-inline-filter select,
+body.agent-management-page .agent-inline-filter .rounded-select-btn,
+body.agent-management-page .agent-inline-filter .clean-btn,
+body.agent-management-page .agent-inline-filter .btn-primary-clean,
+body.agent-management-page .agent-inline-filter .bo-range-trigger{
+  height:36px!important;min-height:36px!important;max-height:36px!important;
+  border-radius:8px!important;box-sizing:border-box!important;
+  font-size:12px!important;font-weight:700!important;
+}
+body.agent-management-page .agent-inline-filter input,
+body.agent-management-page .agent-inline-filter select,
+body.agent-management-page .agent-inline-filter .rounded-select-btn,
+body.agent-management-page .agent-inline-filter .bo-range-trigger{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;
+}
+body.agent-management-page .agent-inline-filter .clean-btn,
+body.agent-management-page .agent-inline-filter .btn-primary-clean{
+  padding:0 12px!important;flex:0 0 auto;width:auto!important;
+}
+body.agent-management-page .agent-inline-filter .clean-btn:hover,
+body.agent-management-page .agent-inline-filter .btn-primary-clean:hover{
+  transform:none!important;box-shadow:none!important;
+}
+body.agent-management-page .agent-mgmt-search{flex:1 1 220px;min-width:180px;max-width:360px}
+body.agent-management-page .agent-mgmt-status,
+body.agent-management-page .agent-mgmt-plan{flex:0 0 150px;min-width:140px}
+body.agent-management-page .agent-mgmt-range{flex:0 0 240px;min-width:220px;max-width:260px}
+body.agent-management-page .agent-mgmt-range .bo-range-field{width:100%!important;max-width:none!important}
+body.agent-management-page .agent-mgmt-actions{display:flex;gap:10px;margin-left:auto}
+
+/* Fixed frame — viewport-locked panel, inner scroll, table-layout fixed.
+   Colors copied 1:1 from the live reference specimen: assets/css/bo-charcoal-legacy.css
+   .user-management-page .user-main-table (thead/tbody/zebra/hover/money — see screenshot).
+   Selector carries the full body class chain (report-body.bo-charcoal.brand-agent-standard)
+   so it out-specifies bo-charcoal-agent.css's generic ".report-table thead/tbody td" rules,
+   which also ship !important and would otherwise win on load order alone. */
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-wrap{
+  flex:1;min-height:0;overflow:auto;
+  border:0!important;border-radius:0!important;background:#FFF8EB!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table{table-layout:fixed;width:100%;border-collapse:collapse}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table thead th{
+  position:sticky;top:0;z-index:2;
+  background:#FFE8CC!important;color:#6b360c!important;
+  font-size:11px!important;font-weight:700!important;text-transform:uppercase!important;letter-spacing:.04em!important;
+  border-bottom:1px solid #EADCC8!important;border-right:0!important;border-radius:0!important;
+  padding:10px 12px!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table tbody td{
+  padding:10px 12px!important;font-size:13px!important;font-weight:700!important;
+  color:#18191C!important;background:#FFF8EB!important;
+  border-right:0!important;border-bottom:1px solid #EADCC8!important;
+  font-variant-numeric:tabular-nums;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table tbody tr:nth-child(even) td{background:#FFF1DC!important}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table tbody tr:hover td{background:#FFE8CC!important}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table .table-empty{text-align:center;color:#57534E;font-weight:600;padding:28px 12px!important;background:#FFF8EB!important}
+
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-wrap{background:#383A46!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table thead th{
+  background:#1F2128!important;color:#E7E5E4!important;border-bottom-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table tbody td{
+  color:#F5F5F4!important;background:#3A3C48!important;border-bottom-color:rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table tbody tr:nth-child(even) td{background:#434653!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table tbody tr:hover td{background:#444654!important}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table .table-empty{background:#383A46!important}
+
+/* Table footer (Show N entries / Showing X to Y of Z / pager) uses the shared
+   .table-footer + .entries-control + .table-info + .pagination-clean recipe.
+   Layout comes from table-pagination-horizontal.css; amber theming (active page,
+   panel background/border) comes from bo-charcoal-legacy.css's unscoped
+   "body.report-body.bo-charcoal .table-footer" rules — no page-specific CSS needed. */
+
+/* Dropdown clearance (shared agent admin filters) */
+.filter-card{overflow:visible!important}
+.filter-card .bo-filter-row>.field:has(select),
+.filter-card .bo-filter-row>.field:has(.rounded-select-wrap){min-width:150px!important}
 .filter-card .bo-filter-row>.field:has(.rounded-select-wrap) .rounded-select-wrap,
 .filter-card .bo-filter-row>.field:has(.rounded-select-wrap) .rounded-select-btn,
 .filter-card .bo-filter-row>.field:has(select) select{
   width:100%!important;min-width:100%!important;max-width:100%!important;box-sizing:border-box!important;
 }
-.filter-card .rounded-select-menu{z-index:80!important;}
+.filter-card .rounded-select-menu{z-index:80!important}
 @media (min-width:1101px){
-  .filter-card{position:relative!important;z-index:20!important;transition:margin-bottom .12s ease!important;}
+  .filter-card{position:relative!important;z-index:20!important;transition:margin-bottom .12s ease!important}
   .filter-card.agent-admin-select-open{
     z-index:40!important;
     margin-bottom:var(--agent-admin-menu-space,130px)!important;
   }
-  .filter-card.agent-admin-select-open + *{position:relative!important;z-index:1!important;}
+  .filter-card.agent-admin-select-open + *{position:relative!important;z-index:1!important}
+  body.agent-management-page .agent-list-panel:has(.agent-admin-select-open)>.table-wrap{position:relative;z-index:1}
 }
 @media (max-width:1100px){
   .filter-card .bo-filter-row>.field:has(select),
-  .filter-card .bo-filter-row>.field:has(.rounded-select-wrap){min-width:0!important;}
-  .filter-card.agent-admin-select-open{margin-bottom:0!important;}
+  .filter-card .bo-filter-row>.field:has(.rounded-select-wrap){min-width:0!important}
+  .filter-card.agent-admin-select-open{margin-bottom:0!important}
+  body.agent-management-page .agent-mgmt-actions{margin-left:0;width:100%}
+  body.agent-management-page .agent-mgmt-search{max-width:none}
+}
+@media (max-width:1024px){
+  .agent-admin-metrics,.quick-stats.agent-admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:768px){
+  body.agent-management-page .report-content{overflow:auto}
+  body.agent-management-page .agent-list-panel{min-height:320px}
+  body.agent-management-page .agent-mgmt-filter-row{flex-direction:column;align-items:stretch}
+  body.agent-management-page .agent-mgmt-status,
+  body.agent-management-page .agent-mgmt-plan,
+  body.agent-management-page .agent-mgmt-range{flex:1 1 auto;width:100%;max-width:none}
+  body.agent-management-page .agent-inline-filter input,
+  body.agent-management-page .agent-inline-filter select,
+  body.agent-management-page .agent-inline-filter .rounded-select-btn,
+  body.agent-management-page .agent-inline-filter .bo-range-trigger{min-height:44px!important;height:44px!important;max-height:44px!important}
+}
+@media (max-width:575px){
+  .agent-admin-metrics,.quick-stats.agent-admin-metrics{grid-template-columns:1fr}
+  .agent-admin-metric .bo-summary-icon,.quick-stats.agent-admin-metrics .metric .bo-summary-icon{width:44px;height:44px;font-size:18px}
+  body.agent-management-page .agent-admin-table{min-width:980px}
+}
+@media (max-width:1200px){
+  .agent-detail-summary{grid-template-columns:repeat(2,1fr)}
 }

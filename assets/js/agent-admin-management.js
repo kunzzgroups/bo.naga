@@ -14,8 +14,20 @@ async function req(path,opt={}){const r=await fetch(apiUrl(path),{...opt,headers
 function d(v){return String(v||'').slice(0,10)} function dt(v){return String(v||'').replace('T',' ').slice(0,19)||'-'}
 function range(from,to){return [$(from)?.value||'',$(to)?.value||''];}
 function inRange(v,from,to){const x=d(v);return(!from||x>=from)&&(!to||x<=to)}
-function metric(icon,label,value,small){return `<div class="agent-admin-metric"><span class="ico"><i class="bi ${icon}"></i></span><div><small>${esc(label)}</small><strong>${esc(value)}</strong>${small?`<small>${esc(small)}</small>`:''}</div></div>`}
-function status(s){s=String(s||'').toUpperCase();return `<span class="status-pill ${['ACTIVE','APPROVED','PAID'].includes(s)?'':'off'}">${esc(s||'-')}</span>`}
+function metric(icon,label,value,small){return `<div class="metric agent-admin-metric"><div class="bo-summary-icon"><i class="bi ${icon}"></i></div><span>${esc(label)}</span><strong>${esc(value)}</strong>${small?`<div class="bo-summary-note">${esc(small)}</div>`:''}</div>`}
+function status(s){s=String(s||'').toUpperCase();const active=['ACTIVE','APPROVED','PAID'].includes(s);return `<span class="status-pill agent-status-pill ${active?'active':(s==='SUSPENDED'||s==='REJECTED'?'off':'')}">${esc(s||'-')}</span>`}
+function moneyCell(v){const n=Number(v||0);return `<span class="${n<0?'money-negative':'money-positive'}">RM ${money(n)}</span>`}
+function pageSizeOf(selectId){const raw=$(selectId)?.value||'-';if(/^all$/i.test(raw))return Infinity;const n=Number(raw);return Number.isFinite(n)&&n>0?n:10}
+function pageButtons(current,total,dataAttr,label){
+  total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
+  const pages=[]; const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};
+  add(1); for(let n=current-2;n<=current+2;n++) add(n); add(total); pages.sort((a,b)=>a-b);
+  let html=`<div class="smart-pagination" role="navigation" aria-label="${esc(label||'Table')} pagination">`;
+  html+=`<button type="button" class="smart-page first" data-${dataAttr}="1" ${current<=1?'disabled':''} title="First page"><i class="bi bi-chevron-bar-left"></i></button>`;
+  let prev=0; pages.forEach(n=>{if(prev&&n-prev>1)html+='<span class="smart-page-ellipsis">…</span>'; html+=`<button type="button" class="smart-page ${n===current?'active':''}" data-${dataAttr}="${n}" ${n===current?'aria-current="page"':''}>${n}</button>`; prev=n;});
+  html+=`<button type="button" class="smart-page last" data-${dataAttr}="${total}" ${current>=total?'disabled':''} title="Last page"><i class="bi bi-chevron-bar-right"></i></button></div>`;
+  return html;
+}
 function currentPage(){return location.pathname.split('/').pop()||''}
 async function loadAgents(){return await req('/api/admin/brand-agent/list')||[]}
 
@@ -75,7 +87,30 @@ function stabilizeAgentAdminDropdowns(){
   }
 }
 
-async function agentsPage(){let rows=await loadAgents();const render=()=>{const q=($('adminAgentSearch')?.value||'').toLowerCase(),st=$('adminAgentStatus')?.value||'', [from,to]=range('adminAgentFrom','adminAgentTo');const all=rows.filter(a=>(!q||[a.code,a.name,a.loginUsername].some(v=>String(v||'').toLowerCase().includes(q)))&&(!st||String(a.status)===st)&&inRange(a.createdAt,from,to));const active=all.filter(a=>Number(a.status)===1).length,pending=all.reduce((n,a)=>n+(Number(a.pendingSettlement||0)>0?1:0),0),suspended=all.filter(a=>Number(a.status)!==1).length;$('agentAdminMetrics').innerHTML=metric('bi-people','Total Agents',whole(all.length),'Selected period')+metric('bi-person-check','Active Agents',whole(active),'Selected period')+metric('bi-hourglass-split','Pending Review',whole(pending),'Settlement pending')+metric('bi-person-x','Suspended',whole(suspended),'Current status');$('adminAgentsRows').innerHTML=all.map(a=>`<tr><td><b>${esc(a.code||('AGT'+a.id))}</b></td><td>${esc(a.name||'-')}</td><td>${whole(a.memberCount)}</td><td>${whole(a.memberCount)}</td><td>RM ${money(a.totalBetMtd)}</td><td>RM ${money(a.commissionMtd)}</td><td>RM ${money(a.pendingSettlement)}</td><td>${status(Number(a.status)===1?'Active':'Suspended')}</td><td>${esc(d(a.createdAt)||'-')}</td><td><a class="agent-admin-action" title="View Details" href="agent-detail.html?id=${encodeURIComponent(a.id)}"><i class="bi bi-eye"></i></a></td></tr>`).join('')||'<tr><td colspan="10" class="table-empty">No agents found.</td></tr>';$('adminAgentsShowing').textContent=`Showing 1 to ${all.length} of ${all.length} agents`;};$('adminAgentSearchBtn').onclick=render;$('adminAgentReset').onclick=()=>{if($('adminAgentSearch'))$('adminAgentSearch').value='';if($('adminAgentStatus'))$('adminAgentStatus').value='';render()};render();}
+async function agentsPage(){
+  let rows=await loadAgents();
+  let currentPage=1;
+  const render=(resetPage)=>{
+    if(resetPage)currentPage=1;
+    const q=($('adminAgentSearch')?.value||'').toLowerCase(),st=$('adminAgentStatus')?.value||'', [from,to]=range('adminAgentFrom','adminAgentTo');
+    const all=rows.filter(a=>(!q||[a.code,a.name,a.loginUsername].some(v=>String(v||'').toLowerCase().includes(q)))&&(!st||String(a.status)===st)&&inRange(a.createdAt,from,to));
+    const active=all.filter(a=>Number(a.status)===1).length,pending=all.reduce((n,a)=>n+(Number(a.pendingSettlement||0)>0?1:0),0),suspended=all.filter(a=>Number(a.status)!==1).length;
+    $('agentAdminMetrics').innerHTML=metric('bi-people','Total Agents',whole(all.length),'Selected period')+metric('bi-person-check','Active Agents',whole(active),'Selected period')+metric('bi-hourglass-split','Pending Review',whole(pending),'Settlement pending')+metric('bi-person-x','Suspended',whole(suspended),'Current status');
+    const total=all.length,size=pageSizeOf('adminAgentsPageSize'),totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
+    if(currentPage>totalPages)currentPage=totalPages;
+    const start=Number.isFinite(size)?(currentPage-1)*size:0;
+    const pageRows=Number.isFinite(size)?all.slice(start,start+size):all;
+    $('adminAgentsRows').innerHTML=pageRows.map(a=>`<tr><td class="agent-name-cell"><b>${esc(a.code||('AGT'+a.id))}</b></td><td class="agent-name-cell"><b>${esc(a.name||'-')}</b></td><td>${whole(a.memberCount)}</td><td>${whole(a.memberCount)}</td><td>${moneyCell(a.totalBetMtd)}</td><td>${moneyCell(a.commissionMtd)}</td><td>${moneyCell(a.pendingSettlement)}</td><td>${status(Number(a.status)===1?'Active':'Suspended')}</td><td>${esc(d(a.createdAt)||'-')}</td><td><a class="agent-admin-action" title="View Details" href="agent-detail.html?id=${encodeURIComponent(a.id)}"><i class="bi bi-eye"></i></a></td></tr>`).join('')||'<tr><td colspan="10" class="table-empty">No agents found.</td></tr>';
+    const from2=total?start+1:0,to2=total?Math.min(start+pageRows.length,total):0;
+    $('adminAgentsShowing').textContent=`Showing ${from2} to ${to2} of ${total} entries`;
+    $('adminAgentsPager').innerHTML=pageButtons(currentPage,totalPages,'agent-page','Agent table');
+  };
+  $('adminAgentsPager').addEventListener('click',e=>{const b=e.target.closest('[data-agent-page]');if(!b||b.disabled)return;currentPage=Number(b.dataset.agentPage)||1;render(false);});
+  $('adminAgentsPageSize')?.addEventListener('change',()=>render(true));
+  $('adminAgentSearchBtn').onclick=()=>render(true);
+  $('adminAgentReset').onclick=()=>{if($('adminAgentSearch'))$('adminAgentSearch').value='';if($('adminAgentStatus'))$('adminAgentStatus').value='';render(true)};
+  render(true);
+}
 
 async function commissionPage(){const agents=await loadAgents();async function render(){const q=($('agentCommissionSearch')?.value||'').toLowerCase(),[from]=range('agentCommissionFrom','agentCommissionTo');const list=agents.filter(a=>!q||[a.code,a.name].some(v=>String(v||'').toLowerCase().includes(q)));const reports=await Promise.all(list.map(async a=>{try{return {a,r:await req('/api/admin/brand-agent/'+a.id+'/report?date='+encodeURIComponent(from||new Date().toISOString().slice(0,10)))};}catch(e){return {a,r:{}}}}));let totalBet=0,pl=0,com=0;reports.forEach(x=>{totalBet+=Number(x.r.totalTurnover||0);pl+=Number(x.r.customerLoss||0);com+=Number(x.r.availableCommission||0)});$('agentCommissionMetrics').innerHTML=metric('bi-cash-stack','Total Bet','RM '+money(totalBet),'Selected KPI cycles')+metric('bi-graph-up-arrow','Customer P/L','RM '+money(pl),'Loss + / Win -')+metric('bi-percent','Commission','RM '+money(com),'Available commission')+metric('bi-people','Agents',whole(reports.length),'Selected agents');$('agentCommissionRows').innerHTML=reports.map(({a,r})=>`<tr><td><b>${esc(a.code)}</b><small class="d-block">${esc(a.name)}</small></td><td>${whole(a.memberCount)}</td><td>RM ${money(r.totalTurnover)}</td><td class="${Number(r.customerLoss||0)>=0?'money-positive':'money-negative'}">RM ${money(r.customerLoss)}</td><td>${money(a.commissionPercent)}%</td><td>RM ${money(r.availableCommission)}</td><td>RM ${money(a.walletBalance)}</td></tr>`).join('')||'<tr><td colspan="7" class="table-empty">No commission records.</td></tr>';} $('agentCommissionLoad').onclick=render;await render();}
 
