@@ -4,6 +4,59 @@
 .bo-global-quicknav a:nth-child(6n){border-right:0}.bo-global-quicknav a:hover,.bo-global-quicknav a.active{background:#F5EBDC;color:#fff}.bo-global-quicknav a i{line-height:1}.bo-global-quicknav a span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .bo-nav-config-card{margin-bottom:18px;padding:20px}.bo-nav-config-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}.bo-nav-config-head h2{font-size:18px;margin:0 0 5px}.bo-nav-config-head p{margin:0;color:#6b7280;font-size:13px}.bo-nav-config-mode{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:16px 0;border-bottom:1px solid var(--bo-border,#e5e7eb)}.bo-nav-config-mode label{display:inline-flex;align-items:center;gap:7px;cursor:pointer}.bo-nav-shortcut-title{display:flex;justify-content:space-between;align-items:center;margin:16px 0 10px}.bo-nav-shortcut-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}.bo-nav-shortcut-option{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid #d8dee8;border-radius:10px;cursor:pointer;min-width:0}.bo-nav-shortcut-option i{font-size:20px}.bo-nav-shortcut-option span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:700}.bo-nav-shortcut-option:has(input:checked){border-color:#d97706;background:rgba(217,119,6,.07)}
 body.bo-sidebar-click-mode .report-sidebar .nav-group.bo-flyout-hover .nav-group-list{display:none!important}
+/* The flyout's height must come from its own row, not from the viewport.
+   `reports.css` pins `.report-sidebar .report-nav > .nav-group > .nav-group-list`
+   to `max-height: calc(100vh - 24px) !important`, and an `!important` stylesheet
+   declaration beats the inline `max-height` that `positionSidebarFlyout()` in
+   auth.js writes — so the cap the JS measured from the room below the row was
+   silently discarded (measured: inline `547px`, computed `926.4px`).
+   On the owner's window the Report row sits at y=573, so the panel was allowed
+   to run to 573+504=1077 in a 950px viewport: the last entries sat **below the
+   screen**, and because the 504px content was still smaller than the 926px cap,
+   `overflow-y:auto` produced **no scrollbar either** — 8.11 was neither visible
+   nor scrollable, which is exactly the reported "无法点到 8.11".
+   The custom property is the JS's cap, carried at a specificity higher than the
+   reports.css rule so it wins while both are `!important`; the `100vh - 24px`
+   fallback keeps the old behaviour on any page where the JS has not run.
+   Reacting to pointer movement is what the JS comment above `positionSidebarFlyout`
+   describes as the earlier failure: a panel detached from its row forces a long
+   diagonal across the sibling menu rows, each of which closes this flyout. */
+.report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list{
+  max-height:var(--bo-sidebar-flyout-max,calc(-24px + 100vh))!important;
+  overflow-y:auto;
+}
+/* The flyout's scrollbar — the locked **Panel pill** recipe, and app-wide.
+   Until now this recipe lived only in `bo-report-family.css` under
+   `body.bo-report-family`, so it reached the eleven Report pages and nothing else,
+   while the sidebar flyout is painted on **every** BO page by auth.js. Measured on
+   the same element, same geometry, by the scrollbar's own layout gutter
+   (`offsetWidth - clientWidth`): **7px** with the marker (6px pill + 1px border) and
+   **17px** without it — the raw OS scrollbar, thick grey with the arrow buttons,
+   which is what the owner photographed ("我的scroll的设计以及颜色 要统一").
+   The sidebar is shared chrome, so its scrollbar belongs in the sidebar's own layer
+   (this sheet, injected by auth.js on every sidebar page), not in a page-family sheet.
+   Values are the locked ones and match the Panel pill used by the table wraps:
+   webkit-only, 6px, light chocolate `#8B6B4A` / hover `#5C4A30`, dark `#F59E0B` /
+   `#D97706`, arrows removed.
+   Do NOT set `scrollbar-width` / `scrollbar-color` for WebKit: once `scrollbar-color`
+   is set Chromium ignores the `::-webkit-scrollbar` rules and paints OS arrows — the
+   trap already recorded under Panel pill scrollbar. That is why the standard
+   properties appear only inside the `@supports not selector(::-webkit-scrollbar)`
+   branch, which Chromium fails and Firefox passes.
+   `:not(.rounded-select-menu)` mirrors the family sheet: `bo-ui-standard.js` reuses
+   the `.nav-group-list` class for a select dropdown, whose scrollbar is not this one. */
+.report-sidebar .nav-group-list:not(.rounded-select-menu)::-webkit-scrollbar{ width:6px; height:6px; }
+.report-sidebar .nav-group-list:not(.rounded-select-menu)::-webkit-scrollbar-track{ background:transparent; }
+.report-sidebar .nav-group-list:not(.rounded-select-menu)::-webkit-scrollbar-button{ display:none; height:0; width:0; }
+.report-sidebar .nav-group-list:not(.rounded-select-menu)::-webkit-scrollbar-thumb{ border-radius:999px; background:#8B6B4A; }
+.report-sidebar .nav-group-list:not(.rounded-select-menu)::-webkit-scrollbar-thumb:hover{ background:#5C4A30; }
+html[data-bo-theme="dark"] .report-sidebar .nav-group-list:not(.rounded-select-menu)::-webkit-scrollbar-thumb{ background:#F59E0B; }
+html[data-bo-theme="dark"] .report-sidebar .nav-group-list:not(.rounded-select-menu)::-webkit-scrollbar-thumb:hover{ background:#D97706; }
+@supports not selector(::-webkit-scrollbar){
+  .report-sidebar .nav-group-list:not(.rounded-select-menu){ scrollbar-width:thin; }
+  html:not([data-bo-theme="dark"]) .report-sidebar .nav-group-list:not(.rounded-select-menu){ scrollbar-color:#8B6B4A transparent; }
+  html[data-bo-theme="dark"] .report-sidebar .nav-group-list:not(.rounded-select-menu){ scrollbar-color:#F59E0B transparent; }
+}
 @media(max-width:991px){.bo-global-quicknav{grid-template-columns:repeat(3,minmax(0,1fr))}.bo-global-quicknav a{min-height:58px;font-size:24px}.bo-nav-shortcut-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bo-nav-config-head{display:block}.bo-nav-config-head button{margin-top:12px}}
 @media(max-width:520px){.bo-global-quicknav{grid-template-columns:repeat(3,minmax(0,1fr))}.bo-nav-shortcut-grid{grid-template-columns:1fr}}
 @media(min-width:992px){

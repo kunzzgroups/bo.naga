@@ -43,6 +43,113 @@
     return fields.some(function(k){ return num(row && row[k]) !== 0; });
   }
 
+  /* ------------------------------------------------------------------ paging
+     Each report page mounts exactly one of these bodies. The column counts are the
+     real <thead> widths of the page that carries the body; a loading / empty / error
+     row that claims a different colspan tears the table apart. */
+  const COLS = {
+    crBreakdownBody: 12,
+    crProviderBody: 9,
+    crStatusBody: 14,
+    crDepositStatusBody: 8,
+    crWithdrawStatusBody: 8,
+    crBonusBody: 5
+  };
+  const TABLES = new Map();
+  let pageSizeLock = null;
+  let activeTableId = null;
+
+  function tableState(id){
+    if(!TABLES.has(id)) TABLES.set(id, { bodyId: id, cols: COLS[id] || 1, rows: [], empty: 'No data.', page: 1 });
+    return TABLES.get(id);
+  }
+  function pageSizeOption(){ const el = document.getElementById('crPageSize'); return el ? el.value : '-'; }
+  function isAutoPageSize(raw){ const v = String(raw == null ? '' : raw).trim(); return v === '' || v === '-' || /^auto$/i.test(v); }
+  function measureAutoPageSize(){
+    const wrap = document.querySelector('.table-card .table-wrap');
+    if(!wrap) return null;
+    const head = wrap.querySelector('thead');
+    const headH = head ? Math.ceil(head.getBoundingClientRect().height) : 44;
+    const cell = wrap.querySelector('tbody tr td');
+    if(!cell) return null;
+    const rowH = Math.max(34, Math.round(cell.getBoundingClientRect().height)) || 41;
+    const avail = Math.floor(wrap.clientHeight) - headH;
+    return Math.max(5, Math.min(200, Math.floor(avail / rowH) || 20));
+  }
+  function autoPageSize(){
+    if(pageSizeLock == null){ const m = measureAutoPageSize(); if(m == null) return 20; pageSizeLock = m; }
+    return pageSizeLock;
+  }
+  function resolvePageSize(raw){
+    const v = String(raw == null ? '-' : raw).trim();
+    if(/^all$/i.test(v)) return Infinity;
+    if(isAutoPageSize(v)) return autoPageSize();
+    const n = Number(v);
+    return Number.isFinite(n) && n > 0 ? n : autoPageSize();
+  }
+  /* Numbered window: ±2 around the current page, plus the first and last page,
+     with a gap of more than one collapsed into an ellipsis. */
+  function pagerNumbers(current, total){
+    const out = [];
+    const add = n => { if(n >= 1 && n <= total && out.indexOf(n) < 0) out.push(n); };
+    add(1);
+    for(let n = current - 2; n <= current + 2; n++) add(n);
+    add(total);
+    return out.sort((a, b) => a - b);
+  }
+  function renderPager(state, totalPages){
+    const nav = document.getElementById('crPager');
+    if(!nav) return;
+    const current = state.page;
+    let html = '';
+    html += '<button type="button" class="smart-page first" data-cr-page="1" ' + (current <= 1 ? 'disabled' : '') + ' title="First page" aria-label="First page"><i class="bi bi-chevron-bar-left" aria-hidden="true"></i></button>';
+    html += '<button type="button" class="smart-page nav-text" data-cr-page="' + (current - 1) + '" ' + (current <= 1 ? 'disabled' : '') + ' title="Previous page" aria-label="Previous page"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>';
+    let prev = 0;
+    pagerNumbers(current, totalPages).forEach(function(n){
+      if(prev && n - prev > 1) html += '<span class="smart-page-ellipsis" aria-hidden="true">\u2026</span>';
+      html += '<button type="button" class="smart-page' + (n === current ? ' active' : '') + '" data-cr-page="' + n + '" ' + (n === current ? 'aria-current="page"' : '') + '>' + n + '</button>';
+      prev = n;
+    });
+    html += '<button type="button" class="smart-page nav-text" data-cr-page="' + (current + 1) + '" ' + (current >= totalPages ? 'disabled' : '') + ' title="Next page" aria-label="Next page"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>';
+    html += '<button type="button" class="smart-page last" data-cr-page="' + totalPages + '" ' + (current >= totalPages ? 'disabled' : '') + ' title="Last page" aria-label="Last page"><i class="bi bi-chevron-bar-right" aria-hidden="true"></i></button>';
+    nav.innerHTML = html;
+  }
+  function renderTablePage(state){
+    const body = document.getElementById(state.bodyId);
+    if(!body) return;
+    const size = resolvePageSize(pageSizeOption());
+    const total = state.rows.length;
+    const totalPages = size === Infinity ? 1 : Math.max(1, Math.ceil(total / size));
+    if(state.page > totalPages) state.page = totalPages;
+    if(state.page < 1) state.page = 1;
+    const start = size === Infinity ? 0 : (state.page - 1) * size;
+    const slice = state.rows.slice(start, start + (size === Infinity ? total : size));
+    body.innerHTML = slice.length ? slice.join('') : '<tr><td colspan="' + state.cols + '">' + esc(state.empty) + '</td></tr>';
+    const info = document.getElementById('crFooterInfo');
+    if(info){
+      const to = total ? Math.min(start + slice.length, total) : 0;
+      info.textContent = 'Showing ' + (total ? start + 1 : 0) + ' to ' + to + ' of ' + total + ' entries';
+    }
+    renderPager(state, totalPages);
+    /* The Show N entries default (`-`) fits the rows to the panel. It can only be
+       measured once rows exist, so the first paint resolves it and re-renders when
+       the fitted size differs. Runs at most once: the lock makes the second pass agree. */
+    if(pageSizeLock == null && isAutoPageSize(pageSizeOption())){
+      const fitted = measureAutoPageSize();
+      if(fitted != null){ pageSizeLock = fitted; if(fitted !== size) return renderTablePage(state); }
+    }
+  }
+  function mountRows(id, rows, emptyText){
+    const body = document.getElementById(id);
+    if(!body) return;
+    const state = tableState(id);
+    state.rows = rows || [];
+    state.empty = emptyText || 'No data.';
+    state.page = 1;
+    activeTableId = id;
+    renderTablePage(state);
+  }
+
   function renderCommon(data){
     const title = REPORT_TITLES[pageType()] || 'Casino Report';
     const h = document.querySelector('[data-report-title]');
@@ -84,10 +191,8 @@
     }
   }
   function renderBreakdown(rows){
-    const body=document.getElementById('crBreakdownBody'); if(!body) return;
     rows = (rows || []).filter(function(r){ return hasAnyData(r, ['newMembers','depositMembers','depositCount','depositAmount','withdrawMembers','withdrawCount','withdrawAmount','activeBetMembers','validBetAmount','memberWinLoss','companyWinLoss']); });
-    if(!rows.length){ body.innerHTML='<tr><td colspan="12">No data.</td></tr>'; return; }
-    body.innerHTML = rows.map(r=>`<tr>
+    mountRows('crBreakdownBody', rows.map(r=>`<tr>
       <td><b>${esc(r.date || r.label)}</b></td>
       <td>${whole(r.newMembers)}</td>
       <td>${whole(r.depositMembers)}</td>
@@ -100,13 +205,11 @@
       <td>${money(r.validBetAmount)}</td>
       <td class="${num(r.memberWinLoss)<0?'text-danger':'text-success'}">${money(r.memberWinLoss)}</td>
       <td class="${num(r.companyWinLoss)<0?'text-danger':'text-success'}"><b>${money(r.companyWinLoss)}</b></td>
-    </tr>`).join('');
+    </tr>`), 'No data.');
   }
   function renderProvider(rows){
-    const body=document.getElementById('crProviderBody'); if(!body) return;
     rows = (rows || []).filter(function(r){ return hasAnyData(r, ['activeMembers','betCount','betAmount','validBetAmount','payout','memberWinLoss','companyWinLoss']); });
-    if(!rows.length){ body.innerHTML='<tr><td colspan="9">No provider bet records.</td></tr>'; return; }
-    body.innerHTML = rows.map(r=>`<tr><td><b>${esc(r.date || '-')}</b></td><td><b>${esc(r.providerCode)}</b></td><td>${whole(r.activeMembers)}</td><td>${whole(r.betCount)}</td><td>${money(r.betAmount)}</td><td>${money(r.validBetAmount)}</td><td>${money(r.payout)}</td><td class="${num(r.memberWinLoss)<0?'text-danger':'text-success'}">${money(r.memberWinLoss)}</td><td class="${num(r.companyWinLoss)<0?'text-danger':'text-success'}"><b>${money(r.companyWinLoss)}</b></td></tr>`).join('');
+    mountRows('crProviderBody', rows.map(r=>`<tr><td><b>${esc(r.date || '-')}</b></td><td><b>${esc(r.providerCode)}</b></td><td>${whole(r.activeMembers)}</td><td>${whole(r.betCount)}</td><td>${money(r.betAmount)}</td><td>${money(r.validBetAmount)}</td><td>${money(r.payout)}</td><td class="${num(r.memberWinLoss)<0?'text-danger':'text-success'}">${money(r.memberWinLoss)}</td><td class="${num(r.companyWinLoss)<0?'text-danger':'text-success'}"><b>${money(r.companyWinLoss)}</b></td></tr>`), 'No provider bet records.');
   }
   function renderStatus(rows){
     const depositBody=document.getElementById('crDepositStatusBody');
@@ -116,44 +219,35 @@
 
     if(depositBody){
       const depositRows = rows.filter(function(r){ return hasAnyData(r, ['depositApprovedMembers','depositApprovedCount','depositApprovedAmount','depositPendingCount','depositPendingAmount','depositFailedCount','depositFailedAmount']); });
-      if(!depositRows.length){
-        depositBody.innerHTML='<tr><td colspan="8">No deposit request data.</td></tr>';
-      } else {
-        depositBody.innerHTML = depositRows.map(r=>`<tr>
-          <td><b>${esc(r.date)}</b></td>
-          <td>${whole(r.depositApprovedMembers)}</td>
-          <td>${whole(r.depositApprovedCount)}</td>
-          <td>${money(r.depositApprovedAmount)}</td>
-          <td>${whole(r.depositPendingCount)}</td>
-          <td>${money(r.depositPendingAmount)}</td>
-          <td>${whole(r.depositFailedCount)}</td>
-          <td>${money(r.depositFailedAmount)}</td>
-        </tr>`).join('');
-      }
+      mountRows('crDepositStatusBody', depositRows.map(r=>`<tr>
+        <td><b>${esc(r.date)}</b></td>
+        <td>${whole(r.depositApprovedMembers)}</td>
+        <td>${whole(r.depositApprovedCount)}</td>
+        <td>${money(r.depositApprovedAmount)}</td>
+        <td>${whole(r.depositPendingCount)}</td>
+        <td>${money(r.depositPendingAmount)}</td>
+        <td>${whole(r.depositFailedCount)}</td>
+        <td>${money(r.depositFailedAmount)}</td>
+      </tr>`), 'No deposit request data.');
     }
 
     if(withdrawBody){
       const withdrawRows = rows.filter(function(r){ return hasAnyData(r, ['withdrawApprovedMembers','withdrawApprovedCount','withdrawApprovedAmount','withdrawPendingCount','withdrawPendingAmount','withdrawFailedCount','withdrawFailedAmount']); });
-      if(!withdrawRows.length){
-        withdrawBody.innerHTML='<tr><td colspan="8">No withdraw request data.</td></tr>';
-      } else {
-        withdrawBody.innerHTML = withdrawRows.map(r=>`<tr>
-          <td><b>${esc(r.date)}</b></td>
-          <td>${whole(r.withdrawApprovedMembers)}</td>
-          <td>${whole(r.withdrawApprovedCount)}</td>
-          <td>${money(r.withdrawApprovedAmount)}</td>
-          <td>${whole(r.withdrawPendingCount)}</td>
-          <td>${money(r.withdrawPendingAmount)}</td>
-          <td>${whole(r.withdrawFailedCount)}</td>
-          <td>${money(r.withdrawFailedAmount)}</td>
-        </tr>`).join('');
-      }
+      mountRows('crWithdrawStatusBody', withdrawRows.map(r=>`<tr>
+        <td><b>${esc(r.date)}</b></td>
+        <td>${whole(r.withdrawApprovedMembers)}</td>
+        <td>${whole(r.withdrawApprovedCount)}</td>
+        <td>${money(r.withdrawApprovedAmount)}</td>
+        <td>${whole(r.withdrawPendingCount)}</td>
+        <td>${money(r.withdrawPendingAmount)}</td>
+        <td>${whole(r.withdrawFailedCount)}</td>
+        <td>${money(r.withdrawFailedAmount)}</td>
+      </tr>`), 'No withdraw request data.');
     }
 
     if(legacyBody){
       const combinedRows = rows.filter(function(r){ return hasAnyData(r, ['depositApprovedMembers','depositApprovedCount','depositApprovedAmount','depositPendingAmount','depositFailedCount','depositFailedAmount','withdrawApprovedMembers','withdrawApprovedCount','withdrawApprovedAmount','withdrawPendingAmount','withdrawFailedCount','withdrawFailedAmount','netCashflow']); });
-      if(!combinedRows.length){ legacyBody.innerHTML='<tr><td colspan="14">No deposit / withdraw request data.</td></tr>'; return; }
-      legacyBody.innerHTML = combinedRows.map(r=>`<tr>
+      mountRows('crStatusBody', combinedRows.map(r=>`<tr>
         <td><b>${esc(r.date)}</b></td>
         <td>${whole(r.depositApprovedMembers)}</td>
         <td>${whole(r.depositApprovedCount)}</td>
@@ -168,14 +262,12 @@
         <td>${whole(r.withdrawFailedCount)}</td>
         <td>${money(r.withdrawFailedAmount)}</td>
         <td class="${num(r.netCashflow)<0?'text-danger':'text-success'}"><b>${money(r.netCashflow)}</b></td>
-      </tr>`).join('');
+      </tr>`), 'No deposit / withdraw request data.');
     }
   }
   function renderBonus(rows){
-    const body=document.getElementById('crBonusBody'); if(!body) return;
     rows = (rows || []).filter(function(r){ return hasAnyData(r, ['memberCount','claimCount','bonusAmount']); });
-    if(!rows.length){ body.innerHTML='<tr><td colspan="5">No bonus ledger data.</td></tr>'; return; }
-    body.innerHTML = rows.map(r=>`<tr><td><b>${esc(r.date || '-')}</b></td><td><b>${esc(r.referenceNo || r.promotionName || '-')}</b></td><td>${whole(r.memberCount)}</td><td>${whole(r.claimCount)}</td><td>${money(r.bonusAmount)}</td></tr>`).join('');
+    mountRows('crBonusBody', rows.map(r=>`<tr><td><b>${esc(r.date || '-')}</b></td><td><b>${esc(r.referenceNo || r.promotionName || '-')}</b></td><td>${whole(r.memberCount)}</td><td>${whole(r.claimCount)}</td><td>${money(r.bonusAmount)}</td></tr>`), 'No bonus ledger data.');
   }
   function render(data){
     renderCommon(data);
@@ -187,11 +279,16 @@
     renderBonus(Array.isArray(data.bonusDaily) ? data.bonusDaily : (Array.isArray(data.bonus) ? data.bonus : []));
   }
   async function load(){
-    ['crBreakdownBody','crProviderBody','crStatusBody','crDepositStatusBody','crWithdrawStatusBody','crBonusBody'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML='<tr><td colspan="12">Loading...</td></tr>'; });
+    Object.keys(COLS).forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML='<tr><td colspan="'+COLS[id]+'">Loading...</td></tr>'; });
     try{ const json = await api(url() + '?' + params()); render(json.data || {}); }
     catch(e){
       const target = document.querySelector('tbody[id^="cr"]');
-      if(target) target.innerHTML='<tr><td colspan="12" class="text-danger">'+esc(e.message)+'</td></tr>';
+      const cols = target ? (COLS[target.id] || 1) : 1;
+      if(target) target.innerHTML='<tr><td colspan="'+cols+'" class="text-danger">'+esc(e.message)+'</td></tr>';
+      const state = activeTableId ? TABLES.get(activeTableId) : null;
+      if(state){ state.rows=[]; state.page=1; renderPager(state, 1); }
+      const info = document.getElementById('crFooterInfo');
+      if(info) info.textContent='Showing 0 to 0 of 0 entries';
     }
   }
 
@@ -208,25 +305,10 @@
     });
   }
 
-  function setTodayAndLoad(){
-    const preset = document.querySelector('.bo-range-field [data-preset="today"]');
-    if(preset){
-      preset.click();
-      load();
-      return;
-    }
-    const today = new Date();
-    const pad = n => String(n).padStart(2, '0');
-    const value = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
-    const from = document.getElementById('casinoFrom');
-    const to = document.getElementById('casinoTo');
-    if(from) from.value = value;
-    if(to) to.value = value;
-    load();
-  }
   document.addEventListener('DOMContentLoaded', function(){
-    document.getElementById('casinoSearchBtn')?.addEventListener('click', load);
-    document.getElementById('casinoResetBtn')?.addEventListener('click', setTodayAndLoad);
+    // No Search / Reset buttons on this family (owner: "report的所有reset，search，refresh按键
+    // 全去除"). The date range auto-applies as soon as a complete range is chosen — see
+    // autoLoadSelectedRange below — so the row needs no trigger at all.
 
     // Match Referral Network behaviour: once a complete date range is selected,
     // refresh the report immediately without requiring the Search button.
@@ -240,6 +322,27 @@
     }
     document.getElementById('casinoFrom')?.addEventListener('change', autoLoadSelectedRange);
     document.getElementById('casinoTo')?.addEventListener('change', autoLoadSelectedRange);
+
+    // Pager + Show N entries live in the page footer. One table is mounted per page,
+    // so the pager only has to resolve the body that actually rendered.
+    document.addEventListener('click', function(e){
+      const btn = e.target.closest('[data-cr-page]');
+      if(!btn || btn.disabled || !activeTableId) return;
+      const state = TABLES.get(activeTableId);
+      if(!state) return;
+      const next = Number(btn.getAttribute('data-cr-page'));
+      if(!Number.isFinite(next) || next === state.page) return;
+      state.page = next;
+      renderTablePage(state);
+    });
+    document.addEventListener('change', function(e){
+      if(!e.target || e.target.id !== 'crPageSize') return;
+      pageSizeLock = null;
+      const state = activeTableId ? TABLES.get(activeTableId) : null;
+      if(!state) return;
+      state.page = 1;
+      renderTablePage(state);
+    });
 
     load();
   });

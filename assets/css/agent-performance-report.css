@@ -1,10 +1,63 @@
-.perf-filter-card,.perf-table-card{background:#FFF8EB;border:1px solid #EADCC8;border-radius:14px;padding:16px;margin-bottom:14px}.perf-filter-card .bo-filter-row{display:grid!important;grid-template-columns:minmax(260px,1.35fr) 180px 180px minmax(200px,.9fr) 120px!important;gap:12px!important;align-items:end!important}.perf-filter-card .field{min-width:0}.perf-filter-card .bo-range-field{width:100%!important;max-width:none!important}.perf-filter-card input,.perf-filter-card select{height:42px!important}.perf-main-brand.hidden{display:none!important}.perf-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:14px}.perf-kpi{min-height:108px;background:#FFF8EB;border:1px solid #EADCC8;border-radius:14px;padding:17px;display:flex;align-items:center;gap:13px}.perf-kpi-icon{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex:0 0 46px;background:#F5EBDC;color:#57534E;font-size:20px}.perf-kpi:nth-child(2) .perf-kpi-icon{background:#eaf9ef;color:#13a153}.perf-kpi:nth-child(3) .perf-kpi-icon{background:#f2eaff;color:#7c3aed}.perf-kpi:nth-child(4) .perf-kpi-icon{background:#F5EBDC;color:#57534E}.perf-kpi:nth-child(5) .perf-kpi-icon{background:#fff3df;color:#e69a0b}.perf-kpi:nth-child(6) .perf-kpi-icon{background:#ffebee;color:#e83f50}.perf-kpi span{display:block;font-size:12px;color:#18191C}.perf-kpi strong{display:block;margin-top:3px;font-size:20px;color:#D97706;white-space:nowrap}.perf-kpi small{display:block;margin-top:4px;font-size:10px;color:#57534E}.perf-table-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.perf-table-head h2{font-size:16px;margin:0;font-weight:800}.perf-table-head small{color:#57534E}.perf-table{min-width:1500px}.perf-table td,.perf-table th{vertical-align:middle}.perf-agent-cell{display:flex;align-items:center;gap:9px}.perf-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#F5EBDC;color:#57534E;font-weight:800}.perf-agent-cell b{display:block}.perf-agent-cell small{display:block;color:#57534E}.perf-status{display:inline-flex;padding:4px 9px;border-radius:999px;font-size:10px;font-weight:700;background:#eaf9ef;color:#16813e}.perf-status.off{background:#fff0f0;color:#d63f3f}.perf-eye{width:36px;height:34px;border:1px solid #EADCC8;border-radius:9px;background:#FFF8EB;color:#57534E;display:inline-grid;place-items:center}.perf-eye:hover{background:#F5EBDC}.perf-pos{color:#079447}.perf-neg{color:#e13737}.perf-footer{display:flex;justify-content:space-between;margin-top:12px;color:#57534E;font-size:12px}.perf-detail-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}.perf-detail-name{font-size:18px;font-weight:800}.perf-detail-kpis{grid-template-columns:repeat(6,minmax(0,1fr))}.perf-empty{text-align:center!important;padding:24px!important;color:#57534E!important}@media(max-width:1400px){.perf-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:1100px){.perf-filter-card .bo-filter-row{grid-template-columns:repeat(2,minmax(0,1fr))!important}.perf-filter-card .btn-primary-clean{width:100%}}@media(max-width:700px){.perf-kpis{grid-template-columns:1fr}.perf-filter-card .bo-filter-row{grid-template-columns:1fr!important}}
+/* 2026-09-22: the family's cards (`.filter-card` / `.table-card`) resolve to 16px, so this page's
+   own card pair was the only one at 14px — the inconsistency the owner flagged. The table card
+   already read 16px (reports.css wins for `.table-card`); this brings the filter card with it. */
+.perf-filter-card,.perf-table-card{background:#FFF8EB;border:1px solid #EADCC8;border-radius:16px;padding:16px;margin-bottom:14px}
+/* the KPI tiles are the family's KPI strip, which is 16px too (`.quick-stats .metric`) */
+.perf-filter-card .bo-filter-row{display:grid!important;grid-template-columns:minmax(260px,1.35fr) 180px 180px minmax(200px,.9fr) 120px!important;gap:12px!important;align-items:end!important}.perf-filter-card .field{min-width:0}.perf-filter-card .bo-range-field{width:100%!important;max-width:none!important}.perf-filter-card input,.perf-filter-card select{height:42px!important}.perf-main-brand.hidden{display:none!important}/* 2026-09-22: six tiles across, but the tiles themselves are the family's `.metric` — the host
+   carries `.quick-stats` so bo-report-family.css and reports.js's decorator (amber icon well
+   + note) apply exactly as on every other report page. */
+#perfKpis.quick-stats{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+/* 2026-09-22 (owner: "我电脑屏幕想要一排展示完"): six tiles stay on ONE row at whatever width the
+   machine is — the 1600px step down to three columns put them on two rows, which is not what the
+   owner wants. The tile is therefore made genuinely compact for six-up rather than resized down by
+   width: 38px well, 12px gap, 11px label, 19px value, `min-height:88px`. Below 1024px the ladder
+   steps to 2 then 1 and the family's full-size tile comes back.
+
+   EVERY declaration here needs `!important`, and that is the whole catch: `reports.css` pins the
+   tile at `.report-content .quick-stats:not(.user-stats) .metric` **with `!important`** (four
+   class-level selectors), and an `!important` cascade beats a higher-specificity rule that is not
+   itself important. Without it the compact recipe was inert — measured tile still `52px 83.4px`
+   with `padding:16px 18px`, `min-height:104px` and a 12px label, which truncated `Total Turnover`
+   (needs 87px, had 83px). With IDs + `!important` the IDs decide, and this sheet wins. */
+#perfKpis.quick-stats .metric{padding:12px 14px!important;min-height:88px!important;grid-template-columns:38px minmax(0,1fr)!important;column-gap:12px!important}
+#perfKpis.quick-stats .metric .bo-summary-icon{width:38px!important;height:38px!important;flex-basis:38px!important;font-size:17px!important}
+#perfKpis.quick-stats .metric span{font-size:11px!important}
+#perfKpis.quick-stats .metric strong{font-size:19px!important}
+#perfKpis.quick-stats .metric span,
+#perfKpis.quick-stats .metric strong{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+/* 1280–1365: still one row, tightened once more. Measured at 1280 with the recipe above the widest
+   label (`Total Turnover`, 11px/800) needed 80px of a 74px column and ellipsised; 10.5px label,
+   32px well and a 10px gap put it back inside (column 80px). */
+@media(max-width:1365px){
+  #perfKpis.quick-stats .metric{padding:10px 11px!important;grid-template-columns:30px minmax(0,1fr)!important;column-gap:9px!important}
+  #perfKpis.quick-stats .metric .bo-summary-icon{width:30px!important;height:30px!important;flex-basis:30px!important;font-size:14px!important}
+  #perfKpis.quick-stats .metric span{font-size:10px!important}
+  #perfKpis.quick-stats .metric strong{font-size:16px!important}
+}
+/* step up before the six-up row starts ellipsising: measured, six tiles need ≥1200 CSS px for the
+   longest label (`Total Turnover`, 10.5px/800) to fit — at 1152 four labels truncated. */
+@media(max-width:1200px){
+  #perfKpis.quick-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #perfKpis.quick-stats .metric{padding:16px 18px!important;min-height:104px!important;grid-template-columns:52px minmax(0,1fr)!important;column-gap:24px!important}
+  #perfKpis.quick-stats .metric .bo-summary-icon{width:52px!important;height:52px!important;flex-basis:52px!important;font-size:22px!important}
+  #perfKpis.quick-stats .metric span{font-size:12px!important}
+  #perfKpis.quick-stats .metric strong{font-size:23px!important}
+}
+@media(max-width:575px){#perfKpis.quick-stats{grid-template-columns:1fr!important}}
+@media(max-width:1024px){
+  #perfKpis.quick-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #perfKpis.quick-stats .metric{padding:16px 18px;min-height:104px;grid-template-columns:52px minmax(0,1fr);column-gap:24px}
+  #perfKpis.quick-stats .metric .bo-summary-icon{width:52px;height:52px;flex-basis:52px;font-size:22px}
+  #perfKpis.quick-stats .metric span{font-size:12px}
+  #perfKpis.quick-stats .metric strong{font-size:23px}
+}
+@media(max-width:575px){#perfKpis.quick-stats{grid-template-columns:1fr}}.perf-table-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.perf-table-head h2{font-size:16px;margin:0;font-weight:800}.perf-table-head small{color:#57534E}.perf-table{min-width:1500px}.perf-table td,.perf-table th{vertical-align:middle}.perf-agent-cell{display:flex;align-items:center;gap:9px}.perf-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#F5EBDC;color:#57534E;font-weight:800}.perf-agent-cell b{display:block}.perf-agent-cell small{display:block;color:#57534E}.perf-status{display:inline-flex;padding:4px 9px;border-radius:999px;font-size:10px;font-weight:700;background:#eaf9ef;color:#16813e}.perf-status.off{background:#fff0f0;color:#d63f3f}.perf-eye{width:36px;height:34px;border:1px solid #EADCC8;border-radius:9px;background:#FFF8EB;color:#57534E;display:inline-grid;place-items:center}.perf-eye:hover{background:#F5EBDC}.perf-pos{color:#079447}.perf-neg{color:#e13737}.perf-footer{display:flex;justify-content:space-between;margin-top:12px;color:#57534E;font-size:12px}.perf-detail-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}.perf-detail-name{font-size:18px;font-weight:800}.perf-detail-kpis{grid-template-columns:repeat(6,minmax(0,1fr))}.perf-empty{text-align:center!important;padding:24px!important;color:#57534E!important}@media(max-width:1100px){.perf-filter-card .bo-filter-row{grid-template-columns:repeat(2,minmax(0,1fr))!important}.perf-filter-card .btn-primary-clean{width:100%}}@media(max-width:700px){#perfKpis.quick-stats{grid-template-columns:1fr}.perf-filter-card .bo-filter-row{grid-template-columns:1fr!important}}
 
 .perf-ops{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}.perf-op{background:#FFF8EB;border:1px solid #EADCC8;border-radius:12px;padding:14px 16px}.perf-op span{display:block;font-size:11px;color:#57534E}.perf-op strong{display:block;font-size:17px;margin-top:3px}.perf-op small{display:block;font-size:10px;color:#57534E;margin-top:3px}@media(max-width:1100px){.perf-ops{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.perf-ops{grid-template-columns:1fr}}
 
 /* 2026-08-28: keep Agent Performance icons centered regardless of generic span rules */
-.perf-kpi .perf-kpi-icon{display:grid!important;place-items:center!important;align-items:center!important;justify-items:center!important;line-height:1!important;padding:0!important}
-.perf-kpi .perf-kpi-icon i{display:block!important;line-height:1!important;margin:0!important}
+
+
 .perf-eye{display:inline-grid!important;place-items:center!important;align-items:center!important;justify-items:center!important;line-height:1!important;padding:0!important}
 .perf-eye i{display:block!important;line-height:1!important;margin:0!important}
 
@@ -40,3 +93,22 @@
   }
   .perf-filter-card.select-menu-open{margin-bottom:0!important;}
 }
+
+/* 2026-09-22: Export moved out of the table card's own bar and into the filter row (owner: "把export的功能放同一排 然后要在table的container 上方"). The row's fifth grid column was the 120px slot the removed Search button used, so the button lands at the row's right end with no new number. */
+/* Export sits at the row's right end, like the Member listing's action cluster.
+   Two things in `bo-ui-standard.css` have to be beaten, both at two-ID specificity and both
+   `!important`:
+     1. `body:not(#…):not(#…).report-main .bo-filter-row` forces `display:flex!important`, so this
+        sheet's own `grid-template-columns` never applied — the row is a flex line (measured
+        `rowDisplay:"flex"`, `tracks:"none"`);
+     2. `.report-main .bo-filter-row > *{margin:0!important}` resets the margin on every child, so a
+        plain `margin-left:auto` measures `0px` and the button stays packed against the last field
+        (measured: button right 1110 against row right 1465).
+   Hence the two `:not(#…)` guards — the same lever this repo uses elsewhere for that layer — plus
+   the extra classes so the margin genuinely wins. Measured after: gap to the row's right edge 0. */
+body:not(#perf-export-off):not(#bo-report-family-off) .perf-filter-card .bo-filter-row > .perf-export-slot{
+  margin-left:auto!important;
+  display:flex;
+  align-items:center;
+}
+.perf-filter-card .perf-export-slot .clean-btn{height:36px!important;padding:0 14px!important;white-space:nowrap}

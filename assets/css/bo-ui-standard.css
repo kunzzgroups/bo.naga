@@ -762,6 +762,13 @@ body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .
 .report-sidebar{display:flex!important;flex-direction:column!important;overflow:hidden!important}
 .report-sidebar .report-brand{flex:0 0 auto}
 .report-sidebar .report-nav{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden}
+/* The nav is this sidebar scroll area (the rule above), and its scrollbar is hidden
+   on purpose: the OS default thumb and its arrow buttons read as foreign chrome in
+   the cream rail, and the owner asked for a hidden-scrollbar sidebar. The wheel and
+   trackpad still scroll it, so do not restore a styled scrollbar here without an
+   owner decision. */
+.report-sidebar .report-nav{scrollbar-width:none}
+.report-sidebar .report-nav::-webkit-scrollbar{display:none}
 .bo-sidebar-account-footer{flex:0 0 auto;padding:10px;border-top:1px solid var(--line,#EADCC8);background:#FFF8EB}
 
 /* ==========================================================================
