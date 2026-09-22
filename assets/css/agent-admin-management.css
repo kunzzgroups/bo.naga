@@ -114,6 +114,98 @@ html[data-bo-theme="dark"] .agent-admin-action:hover{background:#2A2C36!importan
 
 /* ===== Agents listing page (agent-management.html) ===== */
 body.agent-management-page .report-main{display:flex;flex-direction:column;height:100dvh;min-height:0;overflow:hidden}
+
+/* Show "-" autofit: hide vertical scrollbar (VIP Log / Member Management recipe).
+   Must beat the later overflow:auto!important table-wrap rules. */
+html body.report-body.bo-charcoal.brand-agent-standard .table-wrap[data-bo-autofit],
+html body.report-body.bo-charcoal.brand-agent-standard .table-card .table-wrap[data-bo-autofit],
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content .table-card>.table-wrap[data-bo-autofit],
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content .table-card>.table-wrap[data-bo-autofit],
+html body.agent-management-page .agent-list-panel>.table-wrap[data-bo-autofit],
+html body.agent-commission-page .table-card .table-wrap[data-bo-autofit],
+html body.agent-claim-page .table-card .table-wrap[data-bo-autofit],
+html body.agent-payout-page .table-card .table-wrap[data-bo-autofit]{
+  overflow-y:hidden!important;
+  scrollbar-gutter:auto!important;
+}
+
+/* Panel pill scrollbar (MD) — chocolate light / amber dark · 6px · no arrows.
+   Do NOT set scrollbar-width/color on Chromium (forces OS arrows). */
+html body.report-body.bo-charcoal.brand-agent-standard .table-card .table-wrap::-webkit-scrollbar,
+html body.agent-management-page .agent-list-panel>.table-wrap::-webkit-scrollbar,
+html body.agent-commission-page .table-card .table-wrap::-webkit-scrollbar,
+html body.agent-claim-page .table-card .table-wrap::-webkit-scrollbar,
+html body.agent-payout-page .table-card .table-wrap::-webkit-scrollbar{
+  width:6px;
+  height:6px;
+}
+html body.report-body.bo-charcoal.brand-agent-standard .table-card .table-wrap::-webkit-scrollbar-button,
+html body.agent-management-page .agent-list-panel>.table-wrap::-webkit-scrollbar-button,
+html body.agent-commission-page .table-card .table-wrap::-webkit-scrollbar-button,
+html body.agent-claim-page .table-card .table-wrap::-webkit-scrollbar-button,
+html body.agent-payout-page .table-card .table-wrap::-webkit-scrollbar-button{
+  display:none;
+  height:0;
+  width:0;
+}
+html body.report-body.bo-charcoal.brand-agent-standard .table-card .table-wrap::-webkit-scrollbar-track,
+html body.agent-management-page .agent-list-panel>.table-wrap::-webkit-scrollbar-track,
+html body.agent-commission-page .table-card .table-wrap::-webkit-scrollbar-track,
+html body.agent-claim-page .table-card .table-wrap::-webkit-scrollbar-track,
+html body.agent-payout-page .table-card .table-wrap::-webkit-scrollbar-track,
+html body.report-body.bo-charcoal.brand-agent-standard .table-card .table-wrap::-webkit-scrollbar-corner,
+html body.agent-management-page .agent-list-panel>.table-wrap::-webkit-scrollbar-corner,
+html body.agent-commission-page .table-card .table-wrap::-webkit-scrollbar-corner,
+html body.agent-claim-page .table-card .table-wrap::-webkit-scrollbar-corner,
+html body.agent-payout-page .table-card .table-wrap::-webkit-scrollbar-corner{
+  background:transparent;
+}
+html body.report-body.bo-charcoal.brand-agent-standard .table-card .table-wrap::-webkit-scrollbar-thumb,
+html body.agent-management-page .agent-list-panel>.table-wrap::-webkit-scrollbar-thumb,
+html body.agent-commission-page .table-card .table-wrap::-webkit-scrollbar-thumb,
+html body.agent-claim-page .table-card .table-wrap::-webkit-scrollbar-thumb,
+html body.agent-payout-page .table-card .table-wrap::-webkit-scrollbar-thumb{
+  background:#8B6B4A;
+  border-radius:999px;
+}
+html body.report-body.bo-charcoal.brand-agent-standard .table-card .table-wrap::-webkit-scrollbar-thumb:hover,
+html body.agent-management-page .agent-list-panel>.table-wrap::-webkit-scrollbar-thumb:hover,
+html body.agent-commission-page .table-card .table-wrap::-webkit-scrollbar-thumb:hover,
+html body.agent-claim-page .table-card .table-wrap::-webkit-scrollbar-thumb:hover,
+html body.agent-payout-page .table-card .table-wrap::-webkit-scrollbar-thumb:hover{
+  background:#5C4A30;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard .table-card .table-wrap::-webkit-scrollbar-thumb,
+html[data-bo-theme="dark"] body.agent-management-page .agent-list-panel>.table-wrap::-webkit-scrollbar-thumb,
+html[data-bo-theme="dark"] body.agent-commission-page .table-card .table-wrap::-webkit-scrollbar-thumb,
+html[data-bo-theme="dark"] body.agent-claim-page .table-card .table-wrap::-webkit-scrollbar-thumb,
+html[data-bo-theme="dark"] body.agent-payout-page .table-card .table-wrap::-webkit-scrollbar-thumb{
+  background:#F59E0B;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard .table-card .table-wrap::-webkit-scrollbar-thumb:hover,
+html[data-bo-theme="dark"] body.agent-management-page .agent-list-panel>.table-wrap::-webkit-scrollbar-thumb:hover,
+html[data-bo-theme="dark"] body.agent-commission-page .table-card .table-wrap::-webkit-scrollbar-thumb:hover,
+html[data-bo-theme="dark"] body.agent-claim-page .table-card .table-wrap::-webkit-scrollbar-thumb:hover,
+html[data-bo-theme="dark"] body.agent-payout-page .table-card .table-wrap::-webkit-scrollbar-thumb:hover{
+  background:#D97706;
+}
+@supports not selector(::-webkit-scrollbar){
+  html body.report-body.bo-charcoal.brand-agent-standard .table-card .table-wrap,
+  html body.agent-management-page .agent-list-panel>.table-wrap,
+  html body.agent-commission-page .table-card .table-wrap,
+  html body.agent-claim-page .table-card .table-wrap,
+  html body.agent-payout-page .table-card .table-wrap{
+    scrollbar-width:thin;
+    scrollbar-color:#8B6B4A transparent;
+  }
+  html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard .table-card .table-wrap,
+  html[data-bo-theme="dark"] body.agent-management-page .agent-list-panel>.table-wrap,
+  html[data-bo-theme="dark"] body.agent-commission-page .table-card .table-wrap,
+  html[data-bo-theme="dark"] body.agent-claim-page .table-card .table-wrap,
+  html[data-bo-theme="dark"] body.agent-payout-page .table-card .table-wrap{
+    scrollbar-color:#F59E0B transparent;
+  }
+}
 /* brand-agent-standard.css forces `.report-content{padding-bottom:28px!important}` and
    reports.css gives every .table-card a 16px bottom margin — together they pull the panel
    ~44px off the bottom edge. The User Management specimen sits 18px from the edge, so pin
@@ -367,16 +459,20 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.sta
    so it out-specifies bo-charcoal-agent.css's generic ".report-table thead/tbody td" rules,
    which also ship !important and would otherwise win on load order alone. */
 body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-wrap{
-  flex:1 1 auto;min-height:0;height:100%;overflow:auto;
+  flex:1 1 auto;min-height:0;height:100%;overflow-x:auto;overflow-y:auto;
   border:0!important;border-radius:0!important;background:#FFF8EB!important;
 }
-body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table{table-layout:fixed;width:100%;border-collapse:collapse}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table{table-layout:fixed;width:100%;border-collapse:separate;border-spacing:0}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table thead{
+  position:sticky;top:0;z-index:4;
+}
 body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table thead th{
-  position:sticky;top:0;z-index:2;
+  position:sticky;top:0;z-index:4;
   background:#FFE8CC!important;color:#6b360c!important;
   font-size:11px!important;font-weight:700!important;text-transform:uppercase!important;letter-spacing:.04em!important;
   border-bottom:1px solid #EADCC8!important;border-right:0!important;border-radius:0!important;
   padding:10px 12px!important;
+  box-shadow:0 1px 0 #EADCC8;
 }
 body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table tbody td{
   padding:10px 12px!important;font-size:13px!important;font-weight:700!important;
@@ -593,19 +689,22 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.sta
 }
 
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .table-wrap{
-  background:#FCF8EC!important;
+  background:#FFF8EB!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table thead th{
-  background:#F9E7CF!important;
+  background:#FFE8CC!important;
   color:#6B360C!important;
 }
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table tbody td,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table tbody td{
+  background:#FFF8EB!important;
+  color:#18191C!important;
+}
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table tbody tr:nth-child(even) td{
-  background:#FCF8EC!important;
+  background:#FFF1DC!important;
   color:#18191C!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table tbody tr:hover td{
-  background:#F9E7CF!important;
+  background:#FFE8CC!important;
 }
 html[data-bo-theme="dark"] body.agent-payout-page .table-card,
 html[data-bo-theme="dark"] body.agent-payout-page .table-card .table-wrap,
@@ -616,9 +715,13 @@ html[data-bo-theme="dark"] body.agent-payout-page .table-card>.table-footer{
   color:#D4D4D8!important;
 }
 html[data-bo-theme="dark"] body.agent-payout-page .table-card .report-table th{
+  position:sticky!important;
+  top:0!important;
+  z-index:4!important;
   background:#1F2128!important;
   color:#E7E5E4!important;
   border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 1px 0 rgba(255,255,255,.14)!important;
 }
 html[data-bo-theme="dark"] body.agent-payout-page .table-card .report-table td{
   background:#3A3C48!important;
@@ -660,7 +763,7 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standa
   flex:1 1 auto!important;
   min-height:0!important;
   overflow:auto!important;
-  background:#FCF8EC!important;
+  background:#FFF8EB!important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content .table-card>.table-wrap{
   flex:1 1 auto!important;
@@ -767,10 +870,6 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standa
   border:1px solid #E4E4E7!important;
   color:#27272A!important;
 }
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content .table-card,
-html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content .table-card{
-  overflow:visible!important;
-}
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-footer,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-footer{
   position:relative!important;
@@ -794,15 +893,12 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.age
   bottom:calc(100% + 6px)!important;
   z-index:3000!important;
 }
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content,
-html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content{
-  overflow:visible!important;
-}
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-main,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-main{
   display:flex!important;
   flex-direction:column!important;
-  min-height:100dvh!important;
+  height:100dvh!important;
+  min-height:0!important;
   overflow:hidden!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content,
@@ -870,19 +966,22 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.age
 
 /* Claim table color contract: overrides the later brand-agent table defaults. */
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-claim-page .table-card .table-wrap{
-  background:#FCF8EC!important;
+  background:#FFF8EB!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-claim-page .table-card .report-table thead th{
-  background:#F9E7CF!important;
+  background:#FFE8CC!important;
   color:#6B360C!important;
 }
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-claim-page .table-card .report-table tbody td,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-claim-page .table-card .report-table tbody td{
+  background:#FFF8EB!important;
+  color:#18191C!important;
+}
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-claim-page .table-card .report-table tbody tr:nth-child(even) td{
-  background:#FCF8EC!important;
+  background:#FFF1DC!important;
   color:#18191C!important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-claim-page .table-card .report-table tbody tr:hover td{
-  background:#F9E7CF!important;
+  background:#FFE8CC!important;
 }
 
 /* Payout listing uses the same fixed-frame table contract as claims. */
@@ -959,21 +1058,30 @@ body.agent-payout-page .table-card .filter-card .field:nth-child(4){
 body.agent-payout-page .table-card .table-wrap{
   flex:1 1 auto!important;
   min-height:0!important;
-  overflow:auto!important;
-  background:#FCF8EC!important;
+  overflow-x:auto!important;
+  overflow-y:auto!important;
+  background:#FFF8EB!important;
 }
 body.agent-payout-page .table-card .report-table{
   width:100%!important;
   min-width:900px!important;
   table-layout:fixed!important;
-  border-collapse:collapse!important;
+  /* separate — collapse breaks position:sticky on thead in Chromium */
+  border-collapse:separate!important;
+  border-spacing:0!important;
 }
-body.agent-payout-page .table-card .report-table th{
+body.agent-payout-page .table-card .report-table thead{
   position:sticky!important;
   top:0!important;
-  z-index:2!important;
+  z-index:4!important;
+}
+body.agent-payout-page .table-card .report-table thead th,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table thead th{
+  position:sticky!important;
+  top:0!important;
+  z-index:4!important;
   padding:10px 12px!important;
-  background:#F9E7CF!important;
+  background:#FFE8CC!important;
   color:#6B360C!important;
   border-bottom:1px solid #EADCC8!important;
   border-radius:0!important;
@@ -981,10 +1089,11 @@ body.agent-payout-page .table-card .report-table th{
   font-weight:700!important;
   text-transform:uppercase!important;
   letter-spacing:.04em!important;
+  box-shadow:0 1px 0 #EADCC8!important;
 }
 body.agent-payout-page .table-card .report-table td{
   padding:10px 12px!important;
-  background:#FCF8EC!important;
+  background:#FFF8EB!important;
   color:#18191C!important;
   border-bottom:1px solid #EADCC8!important;
   font-size:13px!important;
@@ -992,10 +1101,10 @@ body.agent-payout-page .table-card .report-table td{
   white-space:nowrap!important;
 }
 body.agent-payout-page .table-card .report-table tbody tr:nth-child(even) td{
-  background:#FCF8EC!important;
+  background:#FFF1DC!important;
 }
 body.agent-payout-page .table-card .report-table tbody tr:hover td{
-  background:#F9E7CF!important;
+  background:#FFE8CC!important;
 }
 body.agent-payout-page .table-card .table-empty{
   padding:28px 12px!important;
@@ -1086,7 +1195,8 @@ body.agent-payout-page .table-footer .smart-page{
 body.agent-commission-page .report-main{
   display:flex;
   flex-direction:column;
-  min-height:100dvh;
+  height:100dvh;
+  min-height:0;
   overflow:hidden;
 }
 body.agent-commission-page .report-content{
@@ -1192,7 +1302,8 @@ body.agent-commission-page .table-card>.filter-card{
 body.agent-commission-page .table-card .table-wrap{
   flex:1 1 auto;
   min-height:0;
-  overflow:auto;
+  overflow-x:auto;
+  overflow-y:auto;
   border:0!important;
   border-radius:0!important;
   background:#FFF8EB!important;
@@ -1201,12 +1312,18 @@ body.agent-commission-page .table-card .report-table{
   width:100%;
   min-width:760px;
   table-layout:fixed;
-  border-collapse:collapse;
+  border-collapse:separate;
+  border-spacing:0;
+}
+body.agent-commission-page .table-card .report-table thead{
+  position:sticky;
+  top:0;
+  z-index:4;
 }
 body.agent-commission-page .table-card .report-table th{
   position:sticky;
   top:0;
-  z-index:2;
+  z-index:4;
   padding:10px 12px!important;
   background:#FFE8CC!important;
   color:#6B360C!important;
@@ -1216,6 +1333,7 @@ body.agent-commission-page .table-card .report-table th{
   font-weight:700!important;
   text-transform:uppercase;
   letter-spacing:.04em;
+  box-shadow:0 1px 0 #EADCC8;
 }
 body.agent-commission-page .table-card .report-table td{
   padding:10px 12px!important;
@@ -1352,9 +1470,13 @@ html[data-bo-theme="dark"] body.agent-commission-page .filter-card .field label{
   color:#D4D4D8!important;
 }
 html[data-bo-theme="dark"] body.agent-commission-page .table-card .report-table th{
+  position:sticky!important;
+  top:0!important;
+  z-index:4!important;
   background:#1F2128!important;
   color:#E7E5E4!important;
   border-bottom-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 1px 0 rgba(255,255,255,.14)!important;
 }
 html[data-bo-theme="dark"] body.agent-commission-page .table-card .report-table td{
   background:#3A3C48!important;
@@ -1467,7 +1589,8 @@ body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agen
 body.agent-claim-page .report-main{
   display:flex;
   flex-direction:column;
-  min-height:100dvh;
+  height:100dvh;
+  min-height:0;
   overflow:hidden;
 }
 body.agent-claim-page .report-content{
@@ -1593,23 +1716,30 @@ body.agent-claim-page .table-card>.d-flex small{
 body.agent-claim-page .table-card .table-wrap{
   flex:1 1 auto;
   min-height:0;
-  overflow:auto;
+  overflow-x:auto;
+  overflow-y:auto;
   border:0!important;
   border-radius:0!important;
-  background:#FCF8EC!important;
+  background:#FFF8EB!important;
 }
 body.agent-claim-page .table-card .report-table{
   width:100%;
   min-width:900px;
   table-layout:fixed;
-  border-collapse:collapse;
+  border-collapse:separate;
+  border-spacing:0;
+}
+body.agent-claim-page .table-card .report-table thead{
+  position:sticky;
+  top:0;
+  z-index:4;
 }
 body.agent-claim-page .table-card .report-table th{
   position:sticky;
   top:0;
-  z-index:2;
+  z-index:4;
   padding:10px 12px!important;
-  background:#F9E7CF!important;
+  background:#FFE8CC!important;
   color:#6B360C!important;
   border-bottom:1px solid #EADCC8!important;
   border-right:0!important;
@@ -1618,10 +1748,11 @@ body.agent-claim-page .table-card .report-table th{
   font-weight:700!important;
   text-transform:uppercase;
   letter-spacing:.04em;
+  box-shadow:0 1px 0 #EADCC8;
 }
 body.agent-claim-page .table-card .report-table td{
   padding:10px 12px!important;
-  background:#FCF8EC!important;
+  background:#FFF8EB!important;
   color:#18191C!important;
   border-bottom:1px solid #EADCC8!important;
   border-right:0!important;
@@ -1631,10 +1762,10 @@ body.agent-claim-page .table-card .report-table td{
   white-space:nowrap;
 }
 body.agent-claim-page .table-card .report-table tbody tr:nth-child(even) td{
-  background:#FCF8EC!important;
+  background:#FFF1DC!important;
 }
 body.agent-claim-page .table-card .report-table tbody tr:hover td{
-  background:#F9E7CF!important;
+  background:#FFE8CC!important;
 }
 body.agent-claim-page .table-card .table-empty{
   padding:28px 12px!important;
@@ -1780,9 +1911,13 @@ html[data-bo-theme="dark"] body.agent-claim-page .table-card>.d-flex small{
   color:#D4D4D8!important;
 }
 html[data-bo-theme="dark"] body.agent-claim-page .table-card .report-table th{
+  position:sticky!important;
+  top:0!important;
+  z-index:4!important;
   background:#1F2128!important;
   color:#E7E5E4!important;
   border-bottom-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 1px 0 rgba(255,255,255,.14)!important;
 }
 html[data-bo-theme="dark"] body.agent-claim-page .table-card .report-table td{
   background:#3A3C48!important;
