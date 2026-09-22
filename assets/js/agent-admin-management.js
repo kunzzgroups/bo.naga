@@ -11,7 +11,12 @@ function apiUrl(path){
   return base+p;
 }
 async function req(path,opt={}){const r=await fetch(apiUrl(path),{...opt,headers:{...(opt.headers||{}),...BO_AUTH.authHeader(),...(opt.body?{'Content-Type':'application/json'}:{})}}),j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw Error(j.message||'Request failed');return j.data;}
-function d(v){return String(v||'').slice(0,10)} function dt(v){return String(v||'').replace('T',' ').slice(0,19)||'-'}
+function d(v){
+  const s=String(v||'').trim();
+  if(/^\d{2}\/\d{2}\/\d{4}/.test(s)){const [day,month,year]=s.slice(0,10).split('/');return year+'-'+month+'-'+day}
+  return s.slice(0,10)
+}
+function dt(v){return String(v||'').replace('T',' ').slice(0,19)||'-'}
 function range(from,to){return [$(from)?.value||'',$(to)?.value||''];}
 function inRange(v,from,to){const x=d(v);return(!from||x>=from)&&(!to||x<=to)}
 function metric(icon,label,value,small){return `<div class="metric agent-admin-metric"><div class="bo-summary-icon"><i class="bi ${icon}"></i></div><span>${esc(label)}</span><strong>${esc(value)}</strong>${small?`<div class="bo-summary-note">${esc(small)}</div>`:''}</div>`}
@@ -23,9 +28,11 @@ function pageButtons(current,total,dataAttr,label){
   const pages=[]; const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};
   add(1); for(let n=current-2;n<=current+2;n++) add(n); add(total); pages.sort((a,b)=>a-b);
   let html=`<div class="smart-pagination" role="navigation" aria-label="${esc(label||'Table')} pagination">`;
+  html+=`<button type="button" class="smart-page first" data-${dataAttr}="1" ${current<=1?'disabled':''} title="First page"><i class="bi bi-chevron-bar-left"></i></button>`;
   html+=`<button type="button" class="smart-page prev" data-${dataAttr}="${Math.max(1,current-1)}" ${current<=1?'disabled':''} title="Previous page"><i class="bi bi-chevron-left"></i></button>`;
   let prev=0; pages.forEach(n=>{if(prev&&n-prev>1)html+='<span class="smart-page-ellipsis">…</span>'; html+=`<button type="button" class="smart-page ${n===current?'active':''}" data-${dataAttr}="${n}" ${n===current?'aria-current="page"':''}>${n}</button>`; prev=n;});
-  html+=`<button type="button" class="smart-page next" data-${dataAttr}="${Math.min(total,current+1)}" ${current>=total?'disabled':''} title="Next page"><i class="bi bi-chevron-right"></i></button></div>`;
+  html+=`<button type="button" class="smart-page next" data-${dataAttr}="${Math.min(total,current+1)}" ${current>=total?'disabled':''} title="Next page"><i class="bi bi-chevron-right"></i></button>`;
+  html+=`<button type="button" class="smart-page last" data-${dataAttr}="${total}" ${current>=total?'disabled':''} title="Last page"><i class="bi bi-chevron-bar-right"></i></button></div>`;
   return html;
 }
 function currentPage(){return location.pathname.split('/').pop()||''}
@@ -180,15 +187,16 @@ async function settlementPage(){let rows=await settlementData();const render=()=
 async function claimPage(){
   let rows=await req('/api/admin/brand-agent/ad-claims')||[];
   let currentPage=1;
+  const claimDate=x=>x.createdAt||x.created_at||x.submittedAt||x.submitted_at||x.claimDate||x.claim_date||x.date;
   const render=resetPage=>{
     if(resetPage)currentPage=1;
     const q=($('agentClaimSearch')?.value||'').toLowerCase(),st=$('agentClaimStatus')?.value||'', [from,to]=range('agentClaimFrom','agentClaimTo');
-    const filtered=rows.filter(x=>(!q||[x.id,x.agentCode,x.agentName].some(v=>String(v||'').toLowerCase().includes(q)))&&(!st||String(x.status).toUpperCase()===st)&&inRange(x.createdAt,from,to));
+    const filtered=rows.filter(x=>(!q||[x.id,x.agentCode,x.agentName].some(v=>String(v||'').toLowerCase().includes(q)))&&(!st||String(x.status).toUpperCase()===st)&&inRange(claimDate(x),from,to));
     const size=pageSizeOf('agentClaimPageSize'),total=filtered.length,totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
     if(currentPage>totalPages)currentPage=totalPages;
     const start=Number.isFinite(size)?(currentPage-1)*size:0;
     const pageRows=Number.isFinite(size)?filtered.slice(start,start+size):filtered;
-    $('agentClaimRows').innerHTML=pageRows.map(x=>'<tr><td>'+esc(dt(x.createdAt))+'</td><td><b>'+esc(x.agentName||'-')+'</b><small class="d-block">ID: '+esc(x.agentId)+' ? '+esc(x.agentCode||'')+'</small></td><td><span class="badge text-bg-light">Ad Claim</span></td><td><b>'+money(x.amount)+'</b></td><td>AD-'+esc(x.id)+'</td><td>'+status(x.status)+'</td><td>'+(x.proofImageUrl?'<a class="agent-proof-link" href="'+esc(x.proofImageUrl)+'" target="_blank"><i class="bi bi-image"></i> View proof</a>':'-')+'</td><td><div class="agent-approval-actions">'+(String(x.status).toUpperCase()==='PENDING'?'<button class="approve-btn" data-claim-approve="'+x.id+'"><i class="bi bi-check-lg"></i></button><button class="reject-btn" data-claim-reject="'+x.id+'"><i class="bi bi-x-lg"></i></button>':'')+'</div></td></tr>').join('')||'<tr><td colspan="8" class="table-empty">No reimbursement / ad claim requests.</td></tr>';
+    $('agentClaimRows').innerHTML=pageRows.map(x=>'<tr><td>'+esc(dt(claimDate(x)))+'</td><td><b>'+esc(x.agentName||'-')+'</b><small class="d-block">ID: '+esc(x.agentId)+' ? '+esc(x.agentCode||'')+'</small></td><td><span class="badge text-bg-light">Ad Claim</span></td><td><b>'+money(x.amount)+'</b></td><td>AD-'+esc(x.id)+'</td><td>'+status(x.status)+'</td><td>'+(x.proofImageUrl?'<a class="agent-proof-link" href="'+esc(x.proofImageUrl)+'" target="_blank"><i class="bi bi-image"></i> View proof</a>':'-')+'</td><td><div class="agent-approval-actions">'+(String(x.status).toUpperCase()==='PENDING'?'<button class="approve-btn" data-claim-approve="'+x.id+'"><i class="bi bi-check-lg"></i></button><button class="reject-btn" data-claim-reject="'+x.id+'"><i class="bi bi-x-lg"></i></button>':'')+'</div></td></tr>').join('')||'<tr><td colspan="8" class="table-empty">No reimbursement / ad claim requests.</td></tr>';
     const from2=total?start+1:0,to2=total?Math.min(start+pageRows.length,total):0;
     $('agentClaimShowing').textContent='Showing '+from2+' to '+to2+' of '+total+' entries';
     $('agentClaimPager').innerHTML=pageButtons(currentPage,totalPages,'claim-page','Claim table');
@@ -206,8 +214,25 @@ async function claimPage(){
   };
   render(true);
 }
-async function payoutPage(){let rows=await settlementData();const render=()=>{const q=($('agentPayoutSearch')?.value||'').toLowerCase(),st=$('agentPayoutStatus')?.value||'', [from,to]=range('agentPayoutFrom','agentPayoutTo');const f=rows.filter(x=>(!q||[x.id,x.agentCode,x.agentName].some(v=>String(v||'').toLowerCase().includes(q)))&&(!st||String(x.settlementStatus).toUpperCase()===st)&&inRange(x.createdAt,from,to));$('agentPayoutMetrics').innerHTML=metric('bi-wallet2','Approved For Payout','RM '+money(f.filter(x=>String(x.settlementStatus).toUpperCase()==='APPROVED').reduce((a,x)=>a+Number(x.requestedAmount||0),0)),'Ready to pay')+metric('bi-hourglass-split','Pending','RM '+money(f.filter(x=>String(x.settlementStatus).toUpperCase()==='PENDING').reduce((a,x)=>a+Number(x.requestedAmount||0),0)),'Under review')+metric('bi-check2-circle','Paid',whole(f.filter(x=>String(x.settlementStatus).toUpperCase()==='PAID').length),'Selected period');$('agentPayoutRows').innerHTML=f.map(x=>`<tr><td>#${esc(x.id)}</td><td><b>${esc(x.agentName||'-')}</b><small class="d-block">${esc(x.agentCode||'')}</small></td><td>${esc(dt(x.createdAt))}</td><td>RM ${money(x.requestedAmount)}</td><td>${x.bankName?`${esc(x.bankName)}<small class="d-block">**** ${esc(String(x.bankAccountNumber||'').slice(-4))}</small>`:'Registered payout account'}</td><td>${status(x.settlementStatus)}</td><td>${esc(x.paymentReference||'-')}</td><td>${String(x.settlementStatus).toUpperCase()==='APPROVED'?`<button class="pay-btn" data-pay="${x.id}" title="Mark Paid"><i class="bi bi-cash-stack"></i></button>`:'-'}</td></tr>`).join('')||'<tr><td colspan="8" class="table-empty">No payout requests.</td></tr>'};$('agentPayoutLoad').onclick=render;$('agentPayoutRows').onclick=async e=>{const b=e.target.closest('[data-pay]');if(!b)return;const ref=await BO_DIALOG.prompt('Enter payment reference','',{title:'Mark Payout Paid',inputLabel:'Payment reference'});if(ref==null)return;await req('/api/admin/brand-agent/settlement/'+b.dataset.pay+'/pay',{method:'POST',body:JSON.stringify({paymentReference:ref})});rows=await settlementData();render()};render();}
-
+async function payoutPage(){
+  let rows=await settlementData(),currentPage=1;
+  const render=resetPage=>{
+    if(resetPage)currentPage=1;
+    const q=($('agentPayoutSearch')?.value||'').toLowerCase(),st=$('agentPayoutStatus')?.value||'', [from,to]=range('agentPayoutFrom','agentPayoutTo');
+    const filtered=rows.filter(x=>(!q||[x.id,x.agentCode,x.agentName].some(v=>String(v||'').toLowerCase().includes(q)))&&(!st||String(x.settlementStatus).toUpperCase()===st)&&inRange(x.createdAt,from,to));
+    const size=pageSizeOf('agentPayoutPageSize'),total=filtered.length,totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
+    if(currentPage>totalPages)currentPage=totalPages;
+    const start=Number.isFinite(size)?(currentPage-1)*size:0,pageRows=Number.isFinite(size)?filtered.slice(start,start+size):filtered;
+    $('agentPayoutRows').innerHTML=pageRows.map(x=>'<tr><td>#'+esc(x.id)+'</td><td><b>'+esc(x.agentName||'-')+'</b><small class="d-block">'+esc(x.agentCode||'')+'</small></td><td>'+esc(dt(x.createdAt))+'</td><td>RM '+money(x.requestedAmount)+'</td><td>'+(x.bankName?esc(x.bankName)+'<small class="d-block">**** '+esc(String(x.bankAccountNumber||'').slice(-4))+'</small>':'Registered payout account')+'</td><td>'+status(x.settlementStatus)+'</td><td>'+esc(x.paymentReference||'-')+'</td><td>'+(String(x.settlementStatus).toUpperCase()==='APPROVED'?'<button class="pay-btn" data-pay="'+x.id+'" title="Mark Paid"><i class="bi bi-cash-stack"></i></button>':'-')+'</td></tr>').join('')||'<tr><td colspan="8" class="table-empty">No payout requests.</td></tr>';
+    $('agentPayoutShowing').textContent='Showing '+(total?start+1:0)+' to '+(total?Math.min(start+pageRows.length,total):0)+' of '+total+' entries';
+    $('agentPayoutPager').innerHTML=pageButtons(currentPage,totalPages,'payout-page','Payout table');
+  };
+  ['agentPayoutSearch','agentPayoutFrom','agentPayoutTo','agentPayoutStatus'].forEach(id=>$(id)?.addEventListener(id==='agentPayoutSearch'?'input':'change',()=>render(true)));
+  $('agentPayoutPageSize')?.addEventListener('change',()=>render(true));
+  $('agentPayoutPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-payout-page]');if(!b||b.disabled)return;currentPage=Number(b.dataset.payoutPage)||1;render(false);});
+  $('agentPayoutRows').onclick=async e=>{const b=e.target.closest('[data-pay]');if(!b)return;const ref=await BO_DIALOG.prompt('Enter payment reference','',{title:'Mark Payout Paid',inputLabel:'Payment reference'});if(ref==null)return;await req('/api/admin/brand-agent/settlement/'+b.dataset.pay+'/pay',{method:'POST',body:JSON.stringify({paymentReference:ref})});rows=await settlementData();render(true);};
+  render(true);
+}
 async function promotionPage(){async function render(){const[from,to]=range('agentPromotionFrom','agentPromotionTo'),q=($('agentPromotionSearch')?.value||'').toLowerCase();let rows=[];try{rows=await req('/api/admin/operations/promotion-report?from='+encodeURIComponent(from)+'&to='+encodeURIComponent(to))||[]}catch(e){}rows=rows.filter(x=>!q||[x.name,x.promotionCode].some(v=>String(v||'').toLowerCase().includes(q)));$('agentPromotionRows').innerHTML=rows.map(x=>`<tr><td><b>${esc(x.name||'-')}</b><small class="d-block">${esc(x.promotionCode||'')}</small></td><td>${whole(x.claimCount)}</td><td>${whole(x.uniqueClaimers)}</td><td>RM ${money(x.payoutAmount)}</td><td>${whole(x.repeatedClaimCount)}</td></tr>`).join('')||'<tr><td colspan="5" class="table-empty">No promotion activity.</td></tr>'}$('agentPromotionLoad').onclick=render;await render();}
 
 async function init(){BO_AUTH.requireLogin();await BO_AUTH.refreshMe();stabilizeAgentAdminDropdowns();const p=currentPage();try{if(p==='agent-management.html')await agentsPage();else if(p==='agent-commission-admin.html')await commissionPage();else if(p==='agent-settlement-admin.html')await settlementPage();else if(p==='agent-reimbursement-admin.html')await claimPage();else if(p==='agent-payout-admin.html')await payoutPage();else if(p==='agent-promotion-admin.html')await promotionPage();}catch(e){console.error(e);window.BO_DIALOG?.alert?.(e.message,{title:'Agent Management',type:'error'});}finally{stabilizeAgentAdminDropdowns();}}

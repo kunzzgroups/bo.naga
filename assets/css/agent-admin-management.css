@@ -592,6 +592,282 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.sta
   }
 }
 
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .table-wrap{
+  background:#FCF8EC!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table thead th{
+  background:#F9E7CF!important;
+  color:#6B360C!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table tbody td,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table tbody tr:nth-child(even) td{
+  background:#FCF8EC!important;
+  color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table tbody tr:hover td{
+  background:#F9E7CF!important;
+}
+html[data-bo-theme="dark"] body.agent-payout-page .table-card,
+html[data-bo-theme="dark"] body.agent-payout-page .table-card .table-wrap,
+html[data-bo-theme="dark"] body.agent-payout-page .table-card>.filter-card,
+html[data-bo-theme="dark"] body.agent-payout-page .table-card>.table-footer{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.agent-payout-page .table-card .report-table th{
+  background:#1F2128!important;
+  color:#E7E5E4!important;
+  border-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.agent-payout-page .table-card .report-table td{
+  background:#3A3C48!important;
+  color:#F5F5F4!important;
+  border-color:rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.agent-payout-page .table-card .report-table tbody tr:nth-child(even) td{
+  background:#434653!important;
+}
+html[data-bo-theme="dark"] body.agent-payout-page .table-card .report-table tbody tr:hover td{
+  background:#444654!important;
+}
+
+/* Payout: keep the listing surfaces, remove the extra outer wrapper frame. */
+body.agent-payout-page .table-card{
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+}
+body.agent-payout-page .table-card>.filter-card{
+  border:0!important;
+  border-radius:0!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content .table-card{
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  padding:0!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content .table-card{
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  padding:0!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content .table-card>.table-wrap{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow:auto!important;
+  background:#FCF8EC!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content .table-card>.table-wrap{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow:auto!important;
+  background:#383A46!important;
+}
+
+/* Payout dialogs follow the locked Charcoal + Amber modal tokens. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-backdrop{
+  background:rgba(15,23,42,.55)!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-dialog{
+  background:#FFF8EB!important;
+  border:1px solid #EADCC8!important;
+  color:#18191C!important;
+  box-shadow:0 24px 70px rgba(60,48,32,.28)!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-dialog h3{
+  color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-message,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-input-wrap span{
+  color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-icon{
+  background:#F5EBDC!important;
+  color:#57534E!important;
+  border:0!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-input{
+  background:#F5EBDC!important;
+  border:1px solid #EADCC8!important;
+  color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-close,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-secondary{
+  background:#FFF8EB!important;
+  border:1px solid #EADCC8!important;
+  color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-primary{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#D97706 100%)!important;
+  border:1px solid #D97706!important;
+  color:#FFFFFF!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-backdrop{
+  background:rgba(15,23,42,.55)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-dialog{
+  background:#383A46!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.5)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-dialog h3{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-message,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-input-wrap span{
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-icon{
+  background:#2A2C36!important;
+  color:#D4D4D8!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-input{
+  background:#2A2C36!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-close,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-secondary{
+  background:#2A2C36!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-primary{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border:1px solid #F59E0B!important;
+  color:#2A2C36!important;
+  box-shadow:none!important;
+}
+
+/* Payout modal light mode matches the Create User cream-input / white-panel reference. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-dialog{
+  background:#FFFFFF!important;
+  border:1px solid #E4E4E7!important;
+  box-shadow:0 24px 70px rgba(24,25,28,.24)!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-icon{
+  background:#F5EBDC!important;
+  color:#57534E!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-input{
+  background:#FCF8EC!important;
+  border:1px solid #DCC9A8!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-close,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .bo-global-secondary{
+  background:#FFFFFF!important;
+  border:1px solid #E4E4E7!important;
+  color:#27272A!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content .table-card,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content .table-card{
+  overflow:visible!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-footer,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-footer{
+  position:relative!important;
+  z-index:20!important;
+  overflow:visible!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-footer .entries-control,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-footer .entries-control{
+  position:relative!important;
+  z-index:30!important;
+  overflow:visible!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-footer .entries-control .rounded-select-wrap,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-footer .entries-control .rounded-select-wrap{
+  position:relative!important;
+  overflow:visible!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-footer .entries-control .rounded-select-menu,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-footer .entries-control .rounded-select-menu{
+  top:auto!important;
+  bottom:calc(100% + 6px)!important;
+  z-index:3000!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content{
+  overflow:visible!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-main,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-main{
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:100dvh!important;
+  overflow:hidden!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:16px!important;
+  padding:16px!important;
+  overflow:hidden!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .table-wrap,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .table-wrap,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table tbody,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table tbody,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table tbody tr,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table tbody tr,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table tbody td,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .table-card .report-table tbody td{
+  border-radius:0!important;
+}
+
+/* Payout matches the full-height reimbursement listing frame. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content{
+  display:flex!important;
+  flex:1 1 auto!important;
+  flex-direction:column!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content .table-card{
+  display:flex!important;
+  flex:1 1 auto!important;
+  flex-direction:column!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  border:1px solid #EADCC8!important;
+  border-radius:8px!important;
+  background:#FCF8EC!important;
+  box-shadow:none!important;
+  padding:0!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content{
+  display:flex!important;
+  flex:1 1 auto!important;
+  flex-direction:column!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.agent-payout-page .report-content .table-card{
+  display:flex!important;
+  flex:1 1 auto!important;
+  flex-direction:column!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  border-radius:8px!important;
+  background:#383A46!important;
+  box-shadow:none!important;
+  padding:0!important;
+}
+
 /* Claim table color contract: overrides the later brand-agent table defaults. */
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-claim-page .table-card .table-wrap{
   background:#FCF8EC!important;
@@ -607,6 +883,200 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standa
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-claim-page .table-card .report-table tbody tr:hover td{
   background:#F9E7CF!important;
+}
+
+/* Payout listing uses the same fixed-frame table contract as claims. */
+body.agent-payout-page .report-content{
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:0!important;
+  gap:16px!important;
+}
+body.agent-payout-page .table-card{
+  display:flex!important;
+  flex:1 1 auto!important;
+  flex-direction:column!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  border:1px solid #EADCC8!important;
+  border-radius:8px!important;
+  background:#FFF8EB!important;
+}
+body.agent-payout-page .table-card>.filter-card{
+  flex:0 0 auto!important;
+  margin:0!important;
+  padding:14px 16px!important;
+  border:0!important;
+  border-bottom:1px solid #EADCC8!important;
+  border-radius:0!important;
+  background:#FFF8EB!important;
+}
+body.agent-payout-page .table-card>.filter-card .field>label{
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  padding:0!important;
+  margin:-1px!important;
+  overflow:hidden!important;
+  clip:rect(0,0,0,0)!important;
+  white-space:nowrap!important;
+  border:0!important;
+}
+body.agent-payout-page .table-card .filter-card .bo-filter-row{
+  display:grid!important;
+  grid-template-columns:240px minmax(140px,1fr) 150px!important;
+  gap:10px!important;
+  align-items:center!important;
+}
+body.agent-payout-page .table-card .filter-card .field.wide{
+  min-width:0!important;
+}
+body.agent-payout-page .table-card .filter-card input,
+body.agent-payout-page .table-card .filter-card select{
+  box-sizing:border-box!important;
+  width:100%!important;
+  height:36px!important;
+  min-height:36px!important;
+  border:1px solid #EADCC8!important;
+  border-radius:8px!important;
+  background:#FFF8EB!important;
+  color:#18191C!important;
+  font-size:12px!important;
+  font-weight:700!important;
+}
+body.agent-payout-page .table-card .filter-card .field:nth-child(1){
+  grid-column:1;
+}
+body.agent-payout-page .table-card .filter-card .field:nth-child(2){
+  display:none!important;
+}
+body.agent-payout-page .table-card .filter-card .field:nth-child(3){
+  grid-column:2;
+}
+body.agent-payout-page .table-card .filter-card .field:nth-child(4){
+  grid-column:3;
+}
+body.agent-payout-page .table-card .table-wrap{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow:auto!important;
+  background:#FCF8EC!important;
+}
+body.agent-payout-page .table-card .report-table{
+  width:100%!important;
+  min-width:900px!important;
+  table-layout:fixed!important;
+  border-collapse:collapse!important;
+}
+body.agent-payout-page .table-card .report-table th{
+  position:sticky!important;
+  top:0!important;
+  z-index:2!important;
+  padding:10px 12px!important;
+  background:#F9E7CF!important;
+  color:#6B360C!important;
+  border-bottom:1px solid #EADCC8!important;
+  border-radius:0!important;
+  font-size:11px!important;
+  font-weight:700!important;
+  text-transform:uppercase!important;
+  letter-spacing:.04em!important;
+}
+body.agent-payout-page .table-card .report-table td{
+  padding:10px 12px!important;
+  background:#FCF8EC!important;
+  color:#18191C!important;
+  border-bottom:1px solid #EADCC8!important;
+  font-size:13px!important;
+  font-weight:700!important;
+  white-space:nowrap!important;
+}
+body.agent-payout-page .table-card .report-table tbody tr:nth-child(even) td{
+  background:#FCF8EC!important;
+}
+body.agent-payout-page .table-card .report-table tbody tr:hover td{
+  background:#F9E7CF!important;
+}
+body.agent-payout-page .table-card .table-empty{
+  padding:28px 12px!important;
+  color:#57534E!important;
+  text-align:left!important;
+}
+body.agent-payout-page .table-card>.table-footer{
+  flex:0 0 auto!important;
+  min-height:64px!important;
+  display:grid!important;
+  grid-template-columns:minmax(190px,1fr) minmax(260px,1fr) minmax(190px,1fr)!important;
+  align-items:center!important;
+  gap:12px!important;
+  padding:14px 16px!important;
+  background:#FCF8EC!important;
+  border-top:1px solid #EADCC8!important;
+  color:#57534E!important;
+  font-size:12.5px!important;
+}
+body.agent-payout-page .table-footer .entries-control{
+  grid-column:1;
+  justify-self:start;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin:0;
+  white-space:nowrap;
+  font-weight:600;
+}
+body.agent-payout-page .table-footer .entries-control select{
+  width:68px!important;
+  min-width:68px!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:0 8px!important;
+  border:1px solid #EADCC8!important;
+  border-radius:8px!important;
+  background:#FCF8EC!important;
+  color:#18191C!important;
+  font-size:13px!important;
+  font-weight:700!important;
+}
+body.agent-payout-page .table-footer .table-info{
+  grid-column:2;
+  justify-self:center;
+  white-space:nowrap;
+  font-weight:600;
+}
+body.agent-payout-page .table-footer .pagination-clean{
+  grid-column:3;
+  justify-self:end;
+}
+body.agent-payout-page .table-footer .smart-page{
+  min-width:40px;
+  height:36px;
+  padding:0 14px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:700;
+}
+@media (max-width:575px){
+  body.agent-payout-page .table-card .filter-card .bo-filter-row{
+    grid-template-columns:1fr!important;
+  }
+  body.agent-payout-page .table-card .filter-card .field:nth-child(1),
+  body.agent-payout-page .table-card .filter-card .field:nth-child(3),
+  body.agent-payout-page .table-card .filter-card .field:nth-child(4){
+    grid-column:auto!important;
+  }
+  body.agent-payout-page .table-card>.table-footer{
+    grid-template-columns:1fr auto!important;
+  }
+  body.agent-payout-page .table-footer .table-info{
+    grid-column:1 / -1;
+    grid-row:2;
+    justify-self:start;
+  }
+  body.agent-payout-page .table-footer .pagination-clean{
+    grid-column:2;
+    grid-row:1;
+  }
 }
 @media (max-width:1200px){
   .agent-detail-summary{grid-template-columns:repeat(2,1fr)}
