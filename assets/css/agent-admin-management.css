@@ -114,13 +114,21 @@ html[data-bo-theme="dark"] .agent-admin-action:hover{background:#2A2C36!importan
 
 /* ===== Agents listing page (agent-management.html) ===== */
 body.agent-management-page .report-main{display:flex;flex-direction:column;height:100dvh;min-height:0;overflow:hidden}
-body.agent-management-page .report-content{
-  flex:1;min-height:0;display:flex;flex-direction:column;gap:16px;overflow:hidden;padding-bottom:16px;
+/* brand-agent-standard.css forces `.report-content{padding-bottom:28px!important}` and
+   reports.css gives every .table-card a 16px bottom margin — together they pull the panel
+   ~44px off the bottom edge. The User Management specimen sits 18px from the edge, so pin
+   that here with matching weight. */
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .report-content{
+  flex:1;min-height:0;display:flex;flex-direction:column;gap:16px;overflow:hidden;
+  padding-bottom:18px!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel{
+  margin:0!important;
 }
 body.agent-management-page .quick-stats.agent-admin-metrics{flex:0 0 auto;margin-bottom:0}
 
 body.agent-management-page .agent-list-panel{
-  flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;
+  flex:1 1 auto;min-height:0;height:100%;display:flex;flex-direction:column;overflow:hidden;
   padding:0!important;border-radius:8px!important;
   border:1px solid #EADCC8!important;background:#FFF8EB!important;
   box-shadow:none!important;
@@ -166,12 +174,191 @@ body.agent-management-page .agent-inline-filter .clean-btn:hover,
 body.agent-management-page .agent-inline-filter .btn-primary-clean:hover{
   transform:none!important;box-shadow:none!important;
 }
-body.agent-management-page .agent-mgmt-search{flex:1 1 220px;min-width:180px;max-width:360px}
-body.agent-management-page .agent-mgmt-status,
-body.agent-management-page .agent-mgmt-plan{flex:0 0 150px;min-width:140px}
-body.agent-management-page .agent-mgmt-range{flex:0 0 240px;min-width:220px;max-width:260px}
-body.agent-management-page .agent-mgmt-range .bo-range-field{width:100%!important;max-width:none!important}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-mgmt-search{
+  flex:0 0 220px!important;
+  width:220px!important;
+  min-width:220px!important;
+  max-width:220px!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-mgmt-search input{
+  box-sizing:border-box!important;
+  width:100%!important;
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+}
+body.agent-management-page .agent-mgmt-status{flex:0 0 150px;min-width:140px}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-mgmt-plan{
+  flex:0 0 200px!important;
+  min-width:200px!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-mgmt-plan .rounded-select-btn,
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-mgmt-plan select{
+  width:100%!important;
+}
+body.agent-management-page .agent-mgmt-filter-right>.bo-range-field{flex:0 0 auto;min-width:220px}
 body.agent-management-page .agent-mgmt-actions{display:flex;gap:10px;margin-left:auto}
+/* Right-hand filter group (Date Range · Commission Plan · Search) stays grouped and
+   flush to the row's right edge, wrapping onto its own right-aligned line if the row
+   runs out of width — instead of the search bar dropping to the left on a bare line. */
+body.agent-management-page .agent-mgmt-filter-right{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:10px;
+  flex:1 1 auto;min-width:0;
+}
+
+/* Status filter pills — locked recipe (.bo-tx-tabs.bo-seg / .bo-tx-tab + .bo-seg-thumb)
+   Spec source: .interface-design/system.md "Status filter pills (locked)" +
+   assets/css/bank-deposit-usage.css reference specimen. Track stays transparent;
+   bo-seg-bounce.js paints the only selected frame via .bo-seg-thumb. */
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs.bo-tx-tabs{
+  flex:0 0 auto!important;
+  overflow:visible!important;
+  position:relative!important;
+  gap:6px!important;
+}
+/* Push the whole right-hand group (Date Range · Commission Plan · Search) to the
+   row's right edge. bo-ui-standard.css ships
+   `body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main
+   .bo-filter-row > *{margin:0!important}` — the two :not(#id) guards give it
+   ID-level specificity that beats any class chain, so the override below must
+   match that same specificity tier (our body carries neither ID, so both :not()
+   still match and the tiebreak falls to source order/extra classes). */
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-mgmt-filter-right{
+  margin-left:auto!important;
+}
+body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .agent-mgmt-filter-right{
+  margin-left:auto!important;
+}
+/* Selected frame — lighter than filter row background so the capsule reads */
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs.bo-seg > .bo-seg-thumb{
+  top:0!important;
+  height:100%!important;
+  border-radius:999px!important;
+  background-color:#FFFCF7!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 55%,#F3E8D6 100%)!important;
+  border:1px solid #E0D0B8!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.08),0 2px 8px rgba(92,74,48,.10)!important;
+  box-sizing:border-box!important;
+  opacity:1!important;
+  z-index:0!important;
+  pointer-events:none!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  height:36px!important;
+  padding:0 14px!important;
+  border:1px solid transparent!important;
+  border-radius:999px!important;
+  gap:8px!important;
+  color:#71717A!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  cursor:pointer!important;
+  box-shadow:none!important;
+}
+/* Defense in depth: bo-ui-standard.js auto-tags every button inside .bo-filter-row as
+   .bo-filter-other-button, and bo-ui-standard.css forces height:42px!important on it via
+   a :not(#id) selector (ID-level specificity beats any class chain). The auto-tagger now
+   excludes .bo-tx-tabs, but keep this ID-specificity-matched override as a safety net so a
+   stale/cached bo-ui-standard.js can never re-inflate the locked pill height. */
+body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .agent-status-tabs.bo-tx-tabs .bo-tx-tab.bo-filter-other-button{
+  height:36px!important;
+  min-height:36px!important;
+  padding:0 14px!important;
+  margin:0!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs.bo-seg > .bo-tx-tab{
+  position:relative!important;
+  z-index:1!important;
+  background:transparent!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab.is-active{
+  background:transparent!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  color:#18191C!important;
+  font-weight:700!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab:hover:not(.is-active){
+  color:#18191C!important;
+  background:rgba(24,25,28,.04)!important;
+}
+/* Fallback when bounce thumb missing — still show cream capsule */
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs:not(:has(> .bo-seg-thumb)) .bo-tx-tab.is-active{
+  background-color:#FFFCF7!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 55%,#F3E8D6 100%)!important;
+  border:1px solid #E0D0B8!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.08),0 2px 8px rgba(92,74,48,.10)!important;
+}
+/* Status dots — 6×6 circle, muted idle · green/red only when selected · All has no dot */
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab[data-agent-status="1"]::before,
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab[data-agent-status="0"]::before{
+  content:""!important;
+  width:6px!important;
+  height:6px!important;
+  border-radius:50%!important;
+  flex:0 0 auto!important;
+  background:#B8C0CC!important;
+  box-shadow:none!important;
+  display:inline-block!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab[data-agent-status="0"]::before{
+  background:#C4C0D0!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab[data-agent-status=""]::before{
+  content:none!important;
+  display:none!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab.is-active[data-agent-status="1"]::before{
+  background:#059669!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab.is-active[data-agent-status="0"]::before{
+  background:#DC2626!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab-count{
+  margin-left:0!important;
+  color:inherit!important;
+  font-size:inherit!important;
+  font-weight:inherit!important;
+  font-variant-numeric:tabular-nums!important;
+}
+body.agent-management-page .agent-status-filter-select{
+  display:none!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs.bo-seg > .bo-seg-thumb{
+  background-color:#2A2C36!important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%)!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.25)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab.is-active{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs:not(:has(> .bo-seg-thumb)) .bo-tx-tab.is-active{
+  background-color:#2A2C36!important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%)!important;
+  border-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab:hover:not(.is-active){
+  color:#F5F5F4!important;
+  background:rgba(255,255,255,.06)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab[data-agent-status="1"]::before,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab[data-agent-status="0"]::before{
+  background:#6B7280!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab.is-active[data-agent-status="1"]::before{
+  background:#34D399!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab.is-active[data-agent-status="0"]::before{
+  background:#F87171!important;
+}
 
 /* Fixed frame — viewport-locked panel, inner scroll, table-layout fixed.
    Colors copied 1:1 from the live reference specimen: assets/css/bo-charcoal-legacy.css
@@ -180,7 +367,7 @@ body.agent-management-page .agent-mgmt-actions{display:flex;gap:10px;margin-left
    so it out-specifies bo-charcoal-agent.css's generic ".report-table thead/tbody td" rules,
    which also ship !important and would otherwise win on load order alone. */
 body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-wrap{
-  flex:1;min-height:0;overflow:auto;
+  flex:1 1 auto;min-height:0;height:100%;overflow:auto;
   border:0!important;border-radius:0!important;background:#FFF8EB!important;
 }
 body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-admin-table{table-layout:fixed;width:100%;border-collapse:collapse}
@@ -217,6 +404,111 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.sta
    Layout comes from table-pagination-horizontal.css; amber theming (active page,
    panel background/border) comes from bo-charcoal-legacy.css's unscoped
    "body.report-body.bo-charcoal .table-footer" rules — no page-specific CSS needed. */
+/* Keep the Agent footer on the same measurements as the Main Admin Detail footer. */
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-footer{
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:minmax(190px,1fr) minmax(260px,1fr) minmax(190px,1fr)!important;
+  align-items:center!important;
+  gap:12px!important;
+  width:100%!important;
+  min-height:64px!important;
+  margin:0!important;
+  padding:14px 16px!important;
+  overflow:visible!important;
+  background:#FFF8EB!important;
+  border:0!important;
+  color:#57534E!important;
+  font-size:12.5px!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-footer>.entries-control{
+  grid-column:1!important;
+  justify-self:start!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  margin:0!important;
+  color:#57534E!important;
+  font-size:12.5px!important;
+  font-weight:600!important;
+  white-space:nowrap!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-footer>.entries-control select{
+  width:68px!important;
+  min-width:68px!important;
+  max-width:68px!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:0 8px!important;
+  font-size:13px!important;
+  font-weight:700!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-footer>.table-info{
+  grid-column:2!important;
+  justify-self:center!important;
+  margin:0!important;
+  color:#57534E!important;
+  font-size:12.5px!important;
+  font-weight:600!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-footer>.pagination-clean{
+  grid-column:3!important;
+  justify-self:end!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:6px!important;
+  margin:0!important;
+  padding:0!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-footer .smart-pagination{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  margin:0!important;
+  padding:0!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-footer .smart-page{
+  box-sizing:border-box!important;
+  min-width:40px!important;
+  width:auto!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:0 14px!important;
+  border-radius:8px!important;
+  font-size:13px!important;
+  font-weight:700!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-footer .smart-page.prev,
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-footer .smart-page.next{
+  min-width:40px!important;
+  padding:0!important;
+}
+/* The footer sits at the bottom of a viewport-locked panel (overflow:hidden), so the
+   "Show N entries" rounded-select menu must open UPWARD over the table instead of
+   dropping below the panel edge where it gets clipped. */
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-footer{
+  position:relative!important;z-index:6!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-footer>.entries-control,
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-footer>.entries-control .rounded-select-wrap{
+  position:relative!important;overflow:visible!important;
+}
+body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-footer>.entries-control .rounded-select-menu{
+  top:auto!important;
+  bottom:calc(100% + 6px)!important;
+  z-index:3000!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-footer{
+  background:#383A46!important;
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-footer>.entries-control,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-list-panel>.table-footer>.table-info{
+  color:#D4D4D8!important;
+}
 
 /* Dropdown clearance (shared agent admin filters) */
 .filter-card{overflow:visible!important}
@@ -242,7 +534,9 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.sta
   .filter-card .bo-filter-row>.field:has(.rounded-select-wrap){min-width:0!important}
   .filter-card.agent-admin-select-open{margin-bottom:0!important}
   body.agent-management-page .agent-mgmt-actions{margin-left:0;width:100%}
-  body.agent-management-page .agent-mgmt-search{max-width:none}
+  body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-mgmt-search{
+    flex:1 1 auto!important;width:100%!important;min-width:0!important;max-width:none!important;
+  }
 }
 @media (max-width:1024px){
   .agent-admin-metrics,.quick-stats.agent-admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -251,9 +545,23 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.sta
   body.agent-management-page .report-content{overflow:auto}
   body.agent-management-page .agent-list-panel{min-height:320px}
   body.agent-management-page .agent-mgmt-filter-row{flex-direction:column;align-items:stretch}
+  body.agent-management-page .agent-mgmt-filter-right{flex:1 1 auto!important;width:100%!important;max-width:none!important;margin-left:0!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important}
+  /* The tabs' own flex/width/justify-content is set below via the triple-:not()
+     rule, which is required to outrank bo-ui-standard.css's generic heuristic —
+     `.bo-filter-row > :is(.field,label,div):has(> button):not(:has(input,select))`
+     — which also forces `display:block` on it. Guarded by the same double
+     :not(#id) ID-specificity trick, PLUS the :has()/:not(:has()) pseudo-classes
+     add type-selector weight that out-specifies a plain 2-ID/3-class match.
+     A third harmless :not(#id) guard (never present on this body) adds one
+     more ID-tier of specificity, which always outranks any number of
+     classes/types, so it must restate display:flex too. */
+  body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy):not(#agent-mgmt-tabs-standardize-off) .report-main .agent-status-tabs.bo-tx-tabs{
+    display:flex!important;flex:1 1 auto!important;width:100%!important;max-width:none!important;margin-left:0!important;justify-content:space-between!important;
+  }
+  body.agent-management-page .agent-mgmt-filter-right .bo-range-field,
   body.agent-management-page .agent-mgmt-status,
   body.agent-management-page .agent-mgmt-plan,
-  body.agent-management-page .agent-mgmt-range{flex:1 1 auto;width:100%;max-width:none}
+  body.agent-management-page .agent-mgmt-range{flex:1 1 auto!important;width:100%!important;max-width:none!important;margin-left:0!important}
   body.agent-management-page .agent-inline-filter input,
   body.agent-management-page .agent-inline-filter select,
   body.agent-management-page .agent-inline-filter .rounded-select-btn,
@@ -263,6 +571,21 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.sta
   .agent-admin-metrics,.quick-stats.agent-admin-metrics{grid-template-columns:1fr}
   .agent-admin-metric .bo-summary-icon,.quick-stats.agent-admin-metrics .metric .bo-summary-icon{width:44px;height:44px;font-size:18px}
   body.agent-management-page .agent-admin-table{min-width:980px}
+  /* "Active (128) / Suspend (12) / All (140)" at full 14px padding + 6px gap can
+     exceed the available width once the tabs stretch to fill a narrow (<=575px)
+     row (measured overflow at 390px). Tighten padding/gap so all three pills
+     stay on one line without clipping or overlapping. */
+  body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs.bo-tx-tabs{
+    gap:4px!important;
+  }
+  body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-status-tabs .bo-tx-tab{
+    padding:0 9px!important;
+    gap:5px!important;
+    font-size:11.5px!important;
+  }
+  body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .agent-status-tabs.bo-tx-tabs .bo-tx-tab.bo-filter-other-button{
+    padding:0 9px!important;
+  }
 }
 @media (max-width:1200px){
   .agent-detail-summary{grid-template-columns:repeat(2,1fr)}

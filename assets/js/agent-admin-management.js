@@ -23,9 +23,9 @@ function pageButtons(current,total,dataAttr,label){
   const pages=[]; const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};
   add(1); for(let n=current-2;n<=current+2;n++) add(n); add(total); pages.sort((a,b)=>a-b);
   let html=`<div class="smart-pagination" role="navigation" aria-label="${esc(label||'Table')} pagination">`;
-  html+=`<button type="button" class="smart-page first" data-${dataAttr}="1" ${current<=1?'disabled':''} title="First page"><i class="bi bi-chevron-bar-left"></i></button>`;
+  html+=`<button type="button" class="smart-page prev" data-${dataAttr}="${Math.max(1,current-1)}" ${current<=1?'disabled':''} title="Previous page"><i class="bi bi-chevron-left"></i></button>`;
   let prev=0; pages.forEach(n=>{if(prev&&n-prev>1)html+='<span class="smart-page-ellipsis">…</span>'; html+=`<button type="button" class="smart-page ${n===current?'active':''}" data-${dataAttr}="${n}" ${n===current?'aria-current="page"':''}>${n}</button>`; prev=n;});
-  html+=`<button type="button" class="smart-page last" data-${dataAttr}="${total}" ${current>=total?'disabled':''} title="Last page"><i class="bi bi-chevron-bar-right"></i></button></div>`;
+  html+=`<button type="button" class="smart-page next" data-${dataAttr}="${Math.min(total,current+1)}" ${current>=total?'disabled':''} title="Next page"><i class="bi bi-chevron-right"></i></button></div>`;
   return html;
 }
 function currentPage(){return location.pathname.split('/').pop()||''}
@@ -93,7 +93,13 @@ async function agentsPage(){
   const render=(resetPage)=>{
     if(resetPage)currentPage=1;
     const q=($('adminAgentSearch')?.value||'').toLowerCase(),st=$('adminAgentStatus')?.value||'', [from,to]=range('adminAgentFrom','adminAgentTo');
-    const all=rows.filter(a=>(!q||[a.code,a.name,a.loginUsername].some(v=>String(v||'').toLowerCase().includes(q)))&&(!st||String(a.status)===st)&&inRange(a.createdAt,from,to));
+    const base=rows.filter(a=>(!q||[a.code,a.name,a.loginUsername].some(v=>String(v||'').toLowerCase().includes(q)))&&inRange(a.createdAt,from,to));
+    const activeCount=base.filter(a=>Number(a.status)===1).length;
+    const suspendedCount=base.filter(a=>Number(a.status)!==1).length;
+    document.querySelector('[data-agent-status-count="1"]')?.replaceChildren(document.createTextNode(`(${activeCount})`));
+    document.querySelector('[data-agent-status-count="0"]')?.replaceChildren(document.createTextNode(`(${suspendedCount})`));
+    document.querySelector('[data-agent-status-count="all"]')?.replaceChildren(document.createTextNode(`(${base.length})`));
+    const all=base.filter(a=>!st||String(a.status)===st);
     const active=all.filter(a=>Number(a.status)===1).length,pending=all.reduce((n,a)=>n+(Number(a.pendingSettlement||0)>0?1:0),0),suspended=all.filter(a=>Number(a.status)!==1).length;
     $('agentAdminMetrics').innerHTML=metric('bi-people','Total Agents',whole(all.length),'Selected period')+metric('bi-person-check','Active Agents',whole(active),'Selected period')+metric('bi-hourglass-split','Pending Review',whole(pending),'Settlement pending')+metric('bi-person-x','Suspended',whole(suspended),'Current status');
     const total=all.length,size=pageSizeOf('adminAgentsPageSize'),totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
@@ -107,8 +113,25 @@ async function agentsPage(){
   };
   $('adminAgentsPager').addEventListener('click',e=>{const b=e.target.closest('[data-agent-page]');if(!b||b.disabled)return;currentPage=Number(b.dataset.agentPage)||1;render(false);});
   $('adminAgentsPageSize')?.addEventListener('change',()=>render(true));
-  $('adminAgentSearchBtn').onclick=()=>render(true);
-  $('adminAgentReset').onclick=()=>{if($('adminAgentSearch'))$('adminAgentSearch').value='';if($('adminAgentStatus'))$('adminAgentStatus').value='';render(true)};
+  ['adminAgentFrom','adminAgentTo','adminAgentStatus','adminAgentPlan'].forEach(id=>$(id)?.addEventListener('change',()=>render(true)));
+  $('adminAgentSearch')?.addEventListener('input',()=>render(true));
+  document.querySelectorAll('[data-agent-status]').forEach(tab=>tab.addEventListener('click',()=>{
+    const value=tab.dataset.agentStatus??'';
+    const select=$('adminAgentStatus');
+    if(select) {
+      select.value=value;
+      select.dispatchEvent(new Event('change',{bubbles:true}));
+    }
+    document.querySelectorAll('[data-agent-status]').forEach(x=>{
+      const active=x===tab;
+      x.classList.toggle('is-active',active);
+      x.setAttribute('aria-pressed',String(active));
+    });
+  }));
+  const agentStatusTrack=document.querySelector('.agent-status-tabs');
+  if(agentStatusTrack&&window.BO_SEG_BOUNCE){
+    window.BO_SEG_BOUNCE.mount(agentStatusTrack,{button:':scope > .bo-tx-tab',anim:'bounce'});
+  }
   render(true);
 }
 
