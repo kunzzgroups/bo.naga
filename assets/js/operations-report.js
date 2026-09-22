@@ -156,18 +156,20 @@
   function isAll(){return /^all$/i.test(rawPageSize());}
   function measureAutoPageSize(){
     if(!scrollHost)return lockedAutoSize||10;
-    /* Split head/body (Deposit): measure against body scroll host only. */
-    if(tableBodyEl){
-      const avail=Math.max(0,Math.floor(tableBodyEl.clientHeight));
-      const sample=tableBodyEl.querySelector('tbody tr td:not(.table-empty)');
-      const rowH=sample?Math.max(36,Math.round(sample.getBoundingClientRect().height)):41;
-      return Math.max(5,Math.min(200,Math.floor(avail/rowH)||10));
-    }
-    if(!tableWrap)return lockedAutoSize||10;
-    const head=tableWrap.querySelector('thead');
-    const headH=head?Math.ceil(head.getBoundingClientRect().height):44;
-    const avail=Math.max(0,Math.floor(tableWrap.clientHeight)-headH);
-    const sample=tableWrap.querySelector('tbody tr td:not(.table-empty)');
+    /* `scrollHost` (already `tableBodyEl || tableWrap`) rather than `tableBodyEl` alone: on
+       promotion-report neither `#reportTableBody` nor `.bo-tx-table-body` exists, so the old
+       branch test fell through to the `tableWrap` path and `settleAutofit()` — whose guard also
+       required `tableBodyEl` — could not run at all, which is why that page kept a dead band
+       above its footer.
+       The head is subtracted only while it is INSIDE the measured scroller: the split head
+       (`report-table-split.js`) and the transaction page's own head table both live outside the
+       body scroller, and the `44` that used to stand in for "no head found" was subtracted
+       anyway — worth exactly one row (measured: 681px of panel at 38px rows, `(681-44)/38 = 16.7
+       → 16` rows, leaving 67px of empty panel). */
+    const head=scrollHost.querySelector('thead');
+    const headH=head?Math.ceil(head.getBoundingClientRect().height):0;
+    const avail=Math.max(0,Math.floor(scrollHost.clientHeight)-headH);
+    const sample=scrollHost.querySelector('tbody tr td:not(.table-empty)');
     const rowH=sample?Math.max(36,Math.round(sample.getBoundingClientRect().height)):41;
     return Math.max(5,Math.min(200,Math.floor(avail/rowH)||10));
   }
@@ -213,7 +215,7 @@
   }
   function evenFillRowHeights(){
     const table=evenFillTable();
-    if(!tableBodyEl||!table||!bodyEl)return;
+    if(!scrollHost||!table||!bodyEl)return;
     resetEvenFill();
     if(!isAutofit())return;
     const rows=[...bodyEl.querySelectorAll('tr')].filter(tr=>!isPlaceholderRow(tr));
@@ -221,15 +223,15 @@
     void table.offsetHeight;
     /* Prefer the inner content box after any horizontal scrollbar has claimed space —
        otherwise stretch targets a height that still overflows once the X bar appears. */
-    const avail=Math.max(0,Math.floor(tableBodyEl.clientHeight));
+    const avail=Math.max(0,Math.floor(scrollHost.clientHeight));
     const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
     const rowH=Math.max(30,Math.round(natural/rows.length)||36);
     const gap=avail-natural;
     /* Stretch leftover seam only when it's smaller than one full row — grow/shrink is settleAutofit. */
     if(natural>avail+1||gap<2||gap>=rowH){
       /* Still clamp any 1–2px paint overflow so overflow-y:hidden isn't fighting a thumb. */
-      if(tableBodyEl.scrollHeight>tableBodyEl.clientHeight&&rows.length){
-        const over=tableBodyEl.scrollHeight-tableBodyEl.clientHeight;
+      if(scrollHost.scrollHeight>scrollHost.clientHeight&&rows.length){
+        const over=scrollHost.scrollHeight-scrollHost.clientHeight;
         const shrink=Math.ceil(over/rows.length)||1;
         rows.forEach(tr=>{
           const h=Math.max(rowH,Math.round(tr.getBoundingClientRect().height)-shrink);
@@ -252,8 +254,8 @@
     });
     table.classList.add('bo-tx-evenfill');
     table.style.height=avail+'px';
-    if(tableBodyEl.scrollHeight>tableBodyEl.clientHeight){
-      const over=tableBodyEl.scrollHeight-tableBodyEl.clientHeight;
+    if(scrollHost.scrollHeight>scrollHost.clientHeight){
+      const over=scrollHost.scrollHeight-scrollHost.clientHeight;
       const shrink=Math.ceil(over/rows.length)||1;
       rows.forEach(tr=>{
         const h=Math.max(rowH,(parseFloat(tr.style.height)||base)-shrink);
@@ -311,17 +313,17 @@
     pagerEl.innerHTML=h;
   }
   function settleAutofit(){
-    if(!isAutofit()||!tableBodyEl||!bodyEl)return;
+    if(!isAutofit()||!scrollHost||!bodyEl)return;
     /* Measure the rows actually painted (natural height), not a guessed sample —
        clears any stale evenFill inline heights from the previous settle first. */
     resetEvenFill();
-    void tableBodyEl.offsetHeight;
+    void scrollHost.offsetHeight;
     const rows=[...bodyEl.querySelectorAll('tr')].filter(tr=>!isPlaceholderRow(tr));
     if(!rows.length)return;
-    const avail=Math.max(0,Math.floor(tableBodyEl.clientHeight));
+    const avail=Math.max(0,Math.floor(scrollHost.clientHeight));
     const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
     const rowH=Math.max(30,Math.round(natural/rows.length)||36);
-    const overflow=tableBodyEl.scrollHeight>tableBodyEl.clientHeight+1||natural>avail+1;
+    const overflow=scrollHost.scrollHeight>scrollHost.clientHeight+1||natural>avail+1;
     let target=Math.max(5,Math.min(200,Math.floor(avail/rowH)||rows.length));
     if(overflow){
       /* Shrink by (at least) one — a clipped row must never stay half-visible. */
@@ -344,7 +346,7 @@
        can under-measure avail/rowH and settle one row too many. Recurses, shrinking by
        1 each frame, until no overflow remains (VIP EXP verifyAndLock). */
     requestAnimationFrame(()=>{
-      if(tableBodyEl.scrollHeight>tableBodyEl.clientHeight+1&&lockedAutoSize>5){
+      if(scrollHost.scrollHeight>scrollHost.clientHeight+1&&lockedAutoSize>5){
         lockedAutoSize=lockedAutoSize-1;
         render();
         return;
