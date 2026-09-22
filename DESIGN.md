@@ -1020,6 +1020,860 @@ the page was Roles & Permissions, and the Merchant flyout showed the same wrong 
 - Pins: `auth.js` was at **three** different versions (`1.0.61` ×126, `1.0.62` ×2, `1.0.63` ×8, plus
   a date-style `20260907` ×2) — unified to `1.0.64` across all 138 pages.
 
+### Sidebar scrollbar hidden — and it was not the element it looked like (2026-09-22, owner request)
+
+“我要隐藏式的sidebar”, with a screenshot of the rail wearing the OS default scrollbar: a thick
+grey thumb with arrow buttons at both ends, which reads as foreign chrome on the cream rail.
+
+- **The scroller is `.report-nav`, not `.report-sidebar`.** `reports.css` declares
+  `overflow:auto` on the sidebar, which is what makes it *look* like the scroll container, and the
+  first pass hid the sidebar’s scrollbar. Measured in a harness carrying the real stylesheets:
+  the sidebar computes `overflow-y:hidden` with `scrollHeight == clientHeight` and can never
+  scroll, because `bo-ui-standard.css` pins it to `display:flex;flex-direction:column;
+  overflow:hidden` and hands the scrolling to the nav two lines later (`flex:1 1 auto;
+  min-height:0;overflow-y:auto`). The nav measured a **15px gutter** against the sidebar’s 1px
+  border, and `elementFromPoint` on the scrollbar lane returned `nav.report-nav`.
+  **A rule aimed at the sidebar would have been inert on 140 of the 141 sidebar pages** — the
+  same failure mode this file records elsewhere: a rule that looks effective and is not.
+- The locked rule is two declarations on the real scroller, placed in `bo-ui-standard.css` next
+  to the `overflow-y:auto` it hides: `scrollbar-width:none` (Firefox, and Chromium 121+, where it
+  is also the only way to kill the arrow buttons) plus `.report-nav::-webkit-scrollbar{
+  display:none}` for older WebKit. The same pair is kept on `.report-sidebar` in `reports.css`
+  for `layout-section.html`, the single sidebar page that does not load `bo-ui-standard.css`.
+- **Hidden, not styled, and that is the point.** This repo has a scrollbar-pill recipe
+  (`#8B6B4A` light / `#F59E0B` dark, `6px`, no arrows — Panel pill scrollbar). The owner asked
+  for a hidden scrollbar here, so no pill was added. Wheel, trackpad and keyboard still scroll it.
+- **Removing the gutter cannot cost anything.** The nav gains the 15px the scrollbar reserved, and
+  the sidebar’s measured slack for its longest menu label was only 16px (→ sidebar width),
+  so the extra room reduces wrap risk rather than adding any. Verified in both themes:
+  `scrollbar-width:none`, gutter **15 → 0**, `scrollTop` still moves, and no scrollbar is
+  painted in the rendered screenshot.
+- Pins in the same pass: `reports.css` 1.0.66 → **1.0.67** (141 pages) and
+  `bo-ui-standard.css` 1.0.7/1.0.6 → **1.0.8** (140 pages).
+
+### Sidebar width set to 260px (2026-09-22, owner request)
+
+“我的sidebar的宽度帮我改至260px” — the rail goes back out, 230 → **260px**, reversing the last of the
+280 → 252 → 230 tightening steps recorded under Security & Audit above.
+
+- **One value, four declarations.** `--sidebar-w:230px` → `260px` in `reports.css` (its two
+  `:root` blocks) and the same way in its `reports-dashboard-original.css` twin. Nothing else
+  needed an edit, because every consumer reads the variable: `.report-sidebar{width}`,
+  `.report-main{margin-left}`, the desktop flyout’s `--bo-sidebar-flyout-left`, and the dark
+  canvas gradient’s `calc(var(--sidebar-w) * .72)`. Verified on real pages rather than a harness:
+  on `main-merchant-security.html` the variable, the computed sidebar width and `.report-main`’s
+  margin all read **260px**, and the flyout anchors at **268px** (260 + 8) — so it follows the
+  wider rail instead of leaving a gap. `--rail-w` is untouched: the mini rail is still **72px**.
+- **The 30px comes out of content width, and one row notices.** The security pages’ filter row is
+  the tightest layout in the app — measured above at 996px needed in 1000px available on a 1280
+  viewport, i.e. 7px of slack. Re-measured on `main-merchant-security.html` at both values:
+
+  | viewport | sidebar 230px | sidebar 260px |
+  | --- | --- | --- |
+  | 1920 / 1440 | one line | one line |
+  | **1280** | **one line** (993 needed in 1000) | **two lines** (993 needed in 970) |
+  | 1152 | two lines | two lines |
+
+  So the wrap threshold moves from roughly 1273px to roughly 1303px: on windows inside that ~30px
+  band, with the sidebar expanded and the detail panel closed, that row now folds to two lines
+  where it used to fit. The owner’s own ~1900px screen is unaffected, and opening the detail panel
+  still folds the rail to 72px, which is the case the row was tuned for. **Left for the owner to
+  call**, because every lever in that row is deliberate — further search capping or gap trimming
+  degrades a row already tuned by hand across several passes.
+- **The nav cannot regress by widening.** The longest label measured 150px against a 166px text
+  box at 230px, i.e. 16px of slack, so at 260px there is roughly 46px. No nav label wrapped in the
+  rendered check and no page gained horizontal overflow.
+- Two widths that deliberately do **not** move: the Agent Portal’s own shell
+  (`.agent-modern .report-sidebar{width:250px!important}` in `agent-portal.css` — a separate
+  surface no BO page loads) and `main-merchant-profit.css`’s `230px` date field, which is a
+  coincidence of value rather than the rail. `bo-layout-section-md.css` and
+  `brand-overview-executive.css` size a page menu with `var(--sidebar-w)`, so those panels follow
+  to 260px by design.
+- Pins in the same pass: `reports.css` 1.0.66 → **1.0.67** (141 pages) and the twin
+  `reports-dashboard-original.css` 1.0.8 → **1.0.9**. No HTML was edited beyond the version
+  string.
+
+### 8. Report regularised — items 8.1 … 8.11 (2026-09-22, owner request)
+
+“把图里的 8. report 从8.1至8.11 重新整顿一遍”. Eleven pages, brought onto the locked chrome
+through a shared marker layer: `body.bo-report-family` + `assets/css/bo-report-family.css`,
+linked LAST. Nothing repaints until a page carries the marker, so the blast radius is exactly
+those eleven pages — the same opt-in mechanism as `bo-charcoal`.
+
+Pages: `casino-overview-report`, `casino-deposit-withdraw-report`, `casino-breakdown-report`,
+`casino-bonus-report`, `casino-provider-winloss-report`, `promotion-report`, `transaction-report`,
+`win-lose-report`, `agent-performance-report`, `highest-turnover-games`, `frequently-played-games`.
+
+**Measured before → after (1440px, both themes).** Every value below was read from
+`getComputedStyle` on the real page, not inferred:
+
+| Item | Before | After |
+| --- | --- | --- |
+| Table footer (`“Showing X to Y of Z”` + ladder) | `display:block`, **no hairline**, slots stacked, on 6 pages | `flex`, 1px hairline, info flush left, ladder flush right (16px = the padding) |
+| Filter controls | 42px tall, radius 10–11px | **36px / 8px** |
+| Injected `Date Range` label | `display:block` on 7 pages | hidden |
+| `table-layout` | `auto` on 9 pages | **`fixed`** |
+| thead corners | 11px radius | **square** |
+| Body cells | 12px / 400 | **13px / 700** |
+| Zebra | odd `#FFF8EB` but even **`#FFF3E0`** (legacy), and *none at all* on `agent-performance-report` | odd `#FFF8EB` / even **`#FFF1DC`**; dark `#3A3C48` / `#434653` |
+| Pager | prev/next-only on 3 pages | **First · Prev · window(± 2, 1+last, ellipsis) · Next · Last**, active = amber gradient, no shadow, rungs 36×36 |
+| Page size | in the filter row | in the footer (`- · 10 · 20 · 50 · 100 · All`) |
+
+**Four traps this pass found, each measured:**
+
+1. **The scroller’s layout half lives under a body class these pages do not carry.**
+   `.mad-footer` / `.mad-footer-right` / `.mad-pager` are laid out in
+   `main-admin-detail-executive.css` under `body.main-admin-detail-page`; `bo-charcoal-shell.css`
+   only colours them. So building the markup contract correctly produced a *stacked, hairline-less*
+   footer — the pages got worse before they got better. Six pages were in that state until the
+   layout was restated in the family sheet. **A component whose markup and layout are owned by
+   different files migrates as two halves; shipping one half is a regression, not progress.**
+2. **Two ID-level `:not()` steps are not automatically enough — count the class-level weight.**
+   `.bo-filter-row`’s geometry is guarded by `bo-ui-standard.css`’s "final authority layer"
+   at **(2,6,2)** with `!important`. The first family rule matched its ID shape but reached only
+   **(2,5,2)** — it lost by one class-level, which is invisible when reading the selector and
+   obvious when you print both. The fix carries three extra body classes every one of these pages
+   has, to reach (2,8,2). The same layer also hard-codes `42px`, so redeclaring
+   `--bo-filter-height` / `--bo-filter-radius` / `--bo-control-height` on `<body>` is the *other*
+   half of the fix: a token override needs no contest at all.
+3. **The zebra layer loses to the legacy even-row fill, and one page had no stripe at all.**
+   `bo-charcoal-legacy.css` paints odd `#FFF8EB` / even `#FFF3E0` at (0,6,5); `bo-table-zebra.css`
+   sits at (0,6,4) and therefore never applied its even value. Two agents disagreed about this on
+   inspection (one predicted zebra wins, one predicted legacy); injecting rows and reading the
+   computed colour settled it — even rows were `rgb(255,243,224)`. `agent-performance-report.html`
+   measured odd and even **identical**, i.e. no zebra whatsoever, which no static reading showed.
+   **When two rules are within one class-level, measure — reading selector text is not enough.**
+4. **A page can be malformed enough that markup edits silently no-op.**
+   `casino-overview-report.html` has **no `</head>`** — the last `<link>` is followed directly by
+   `<body>`. An insertion keyed on `</head>` refuses on that page (the script declined rather than
+   writing somewhere wrong); its stylesheet link goes before `<body>` instead. Worth knowing before
+   any future sweep assumes every page has a closed head.
+
+Also worth recording, because it makes the diff safe rather than noisy: these eleven pages are
+**LF in the index** while `core.autocrlf=true`, so the working tree is expected to hold CRLF. Two
+agents normalised their files to CRLF and one insertion added a bare LF — git reports all six as
+"LF will be replaced by CRLF", meaning it normalises them itself and the diffs stay content-only
+(the largest page diff is 29 lines, not a whole-file rewrite). `git diff --numstat` is the check:
+a whole-file count means an encoding accident, a handful of lines means the edit is real.
+
+**Left deliberately, not overlooked:**
+
+- `win-lose-report.html` **is a duplicate of `main-win-lose-report.html`** and is still in place.
+  `auth.js:158-159` maps both filenames to the same sidebar title, `:379` admits both to the same
+  permission rule, and `:529-540` injects `main-win-lose-report.html` when neither is configured —
+  so which one opens depends on the DB menu row, and neither file can be deleted from here. They
+  are also **different reports**: `win-lose-report.js` renders per-member rows from
+  `WIN_LOSE_REPORT_LIST`, `main-win-lose-report.js` renders per-merchant rows with provider
+  breakdowns. Both were brought to the same chrome so either is presentable; the duplicate itself
+  is the owner’s call.
+- `casino-overview-report.html`’s **`Commission` tile is hardcoded `0.00`** — no `id`, and
+  `casino-report.js` never writes it because the summary payload carries no commission field.
+  Not faked; it needs an API value.
+- The two games pages have **no date control**, and `player-game-ranking.js` has never sent a date
+  range (the request is `page/size/search/providerCode` only). One was not invented: that would
+  guess a query contract. If the endpoint accepts `from`/`to`, the locked picker drops in.
+- `transaction-report.html` keeps its own `bo-pagination-standard` class, so its footer resolves to
+  `grid` rather than `flex` — the same two-slot order and the same 16px flush right, so it is
+  cosmetically identical, and one rung measures 40×36 rather than 36×36.
+**Two more defects found only by rendering the page with data (2026-09-22, owner report).**
+The owner said the pages looked unchanged. They were looking at a *measurement harness*
+(`.tmp-v-*.html`, auth stripped, no data) rather than the page — but rendering the real page
+with a stubbed payload exposed two defects that every computed-style check had passed:
+
+- **The table scrollbar was the raw OS default.** `scrollbar-color: auto`, thick grey, with the
+  arrow buttons. `reports.css` styles `.table-wrap::-webkit-scrollbar` for the horizontal axis
+  only (9px, cool track), and the warm pill in the tree is scoped to `.user-management-page`, so
+  nothing reached these pages. Now the locked **Panel pill** recipe: webkit-only, 6px, light
+  `#8B6B4A` / hover `#5C4A30`, dark `#F59E0B` / `#D97706`, `::-webkit-scrollbar-button` removed,
+  with a `@supports not selector(::-webkit-scrollbar)` branch for Firefox. The standard
+  properties are deliberately **not** written for WebKit: once `scrollbar-color` is set Chromium
+  ignores the webkit rules and paints OS arrows, which is the trap already recorded under Panel
+  pill scrollbar.
+- **`table-layout:fixed` + `width:100%` clipped the last column.** The locked listing frame wants
+  `fixed`, but with no floor the ten-column ranking tables shared the panel width and the
+  `LAST PLAYED` header and its cells were **cut mid-value at the panel edge** — a regression this
+  pass introduced, invisible to every colour/geometry check because no property had the wrong
+  value; the *column* had the wrong width. Fixed with a width floor keyed on the real header count
+  (`:has(thead th:nth-child(10))` → `min-width:1120px`, `:nth-child(14)` → `1520px`) so
+  `.table-wrap` scrolls sideways — the locked frame’s behaviour — instead of losing content.
+  Measured after: table 1120px in a 1091px wrap, `scrollWidth > clientWidth`, every column
+  reachable.
+
+**The lesson, and it is the same one twice in one pass:** computed style answers "is this property
+right", not "does this look right". A `fixed` table with the correct `table-layout` value, the
+correct zebra colour and the correct cell weight was still **unreadable**, because the defect was
+a *width* and a *scrollbar*, and neither shows up as a wrong colour. **Render the page with real
+data and look at it** — a four-agent static audit plus a full computed-style matrix both missed
+these.
+
+**Still open, and named as such rather than quietly dropped:** the *page-level* scrollbar (far
+right of the viewport) is still the OS default. It is not this family’s to change — it belongs to
+every page of the app, so it needs one repo-wide decision, the way `bo-table-zebra.css` was made
+a shared layer. Also still open: the footer’s `Show N entries` select stays a native `<select>`
+because `bo-ui-standard.js` only upgrades selects inside `.bo-filter-row`, so it does not get the
+Role-select cream chrome.
+**Third defect from the same render (owner report: “日期外围有一个很丑的border”).** The date
+control sat inside **three** nested frames. Walking the ancestor chain with `getComputedStyle` on
+the real page:
+
+| frame | surface | border | radius |
+| --- | --- | --- | --- |
+| `.filter-card` | `#FFF8EB` | 0.8px `#EADCC8` | **16px** |
+| `.mad-filters.user-search-grid.bo-filter-row` | `#FFF8EB` | 0.8px `#EADCC8` | **0px** |
+| `.bo-range-trigger` | `#FFF8EB` | 0.8px `#EADCC8` | 8px |
+
+The middle one is the offender: a square-cornered duplicate of the card’s own surface, drawn
+immediately inside the rounded card, so the eye reads a stray rectangle around the date field.
+It is not a bug in the date control — the picker driver and the control were both correct.
+It comes from `bo-charcoal-legacy.css`:
+`html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal:not(.user-management-page) .user-search-grid{background:#FFF8EB;border:1px solid #EADCC8}`
+— a rule written for the pages where that row **is** the filter card. On these eleven it sits
+inside one, so the row must own layout only and let the card own the surface and the border.
+Added to the family sheet at the ID weight (`#bo-report-family-off` / `#bo-charcoal-off`).
+Measured after: `.bo-range-trigger` and `.filter-card` are the only two frames left in the chain.
+
+**Pin bumped in the same pass:** `bo-report-family.css` 1.0.0 → **1.0.1** on all eleven pages.
+Every one of the three fixes above landed in a file whose URL had not changed, which is the
+documented way for a fix to be verified and still reported as “no change” — the browser keys its
+cache on the full URL, so an edited sheet under the same `?v=` is exactly the failure mode this
+file warns about twice. The fixes were correct and invisible.
+**8.2 Deposit / Withdraw Report — two more, one of them mine (2026-09-22, owner report “设计也是跑偏了”).**
+
+- **The table headers overlapped.** Fourteen columns (`Date`, then Approved / Pending / Failed
+  × Count / Amount for Deposit and Withdraw, then Net Cash Flow) drawn on top of each other,
+  because this pass had set `table-layout:fixed`: with no explicit column widths, `fixed` splits the
+  panel evenly, so a 14-column table got ~108px per column while `Deposit Approved Members` needs
+  ~180px — and `reports.css` sets `white-space:nowrap` on those cells, so the text did not wrap,
+  it **collided**. These tables were `auto` before this pass. **A width floor is not a fix either:**
+  the first attempt added `:has(th:nth-child(10)){min-width:1120px}` / `:nth-child(14){1520px}`, and
+  the required width depends on the header *text*, not on the column count, so any single number is
+  wrong for some page. The family sheet now pins `table-layout:auto` and the floor rules are gone:
+  columns take their content width and `.table-wrap` scrolls sideways. Measured after: `auto`,
+  **zero** headers with `scrollWidth > clientWidth`, table 2359px inside a 1570px wrap.
+  **This is a deliberate, measured deviation from DESIGN.md’s listing frame (`table-layout:fixed`)**
+  and it applies only to `body.bo-report-family`: `fixed` is right for a table whose columns carry
+  known widths and wrong for a dense report table that has none.
+- **The footer’s page-size control stacked on three lines.** The markup is
+  `<label class="cr-page-size-label">Show <select>…</select> entries</label>`, and `reports.js`
+  upgrades that select into a **block** `.rounded-select-wrap` — being block, it broke the label’s
+  inline flow, so the rendered control read `Show` / `[select]` / `entries` down the side of the
+  footer while the ladder sat beside it. Fixed by making the label (and `.entries-control`) a flex
+  row. Measured after: label height **40px** in one row, right slot 40px, text and select on the same
+  line.
+- Pin **1.0.1 → 1.0.2** on all eleven pages in the same pass, for the reason recorded immediately
+  above — this is the second time in one session that a fix landed in an already-published URL.
+
+**The pattern worth naming, now three times over:** every one of these defects was a *layout* defect
+that no property-value audit can see. A table with the correct `table-layout` value can still have
+overlapping headers; a `<label>` with the correct font can still stack; a filter row with the correct
+background colour can still draw a duplicate frame. Computed style answers “is this declaration
+right”; only **rendering the page and looking at it** answers “is this readable”.
+- The subagent pass touched only page HTML and page-family JS; the one shared file edited is the
+  new `bo-report-family.css`. No existing shared stylesheet was modified for this work.
+
+**8.3 Win/Lose Report — three owner requests (2026-09-22, owner report with a screenshot of
+`win-lose-report.html`).** “1. 调整日期设计与其他container的对齐 2. 搜索按键我觉得没必要了 通常选中那些选项就自动
+输出数据了 3. table设计要优化去参考统一其他页面”.
+
+- **The date control did not align with the select containers, and the `select` rule was already
+  correct.** `reports.js` hides the native `<select>` inside a `.rounded-select-wrap` and paints a
+  `.rounded-select-btn` trigger in its place. The family sheet pinned the *native select* to 36px —
+  which it was — but the **visible trigger** is owned by three other files and none of them agrees
+  with this row: `reports.css` pins `42px` on `.rounded-select-btn` (twice, one `!important`),
+  `bo-charcoal-primitives.css` pins `40px!important` at (0,3,3), and `bo-ui-standard.css`'s authority
+  layer pins `42px!important` on the hidden select at (2,6,2). So the trigger stayed 42px while the
+  date trigger resolved to 36px; `.bo-filter-row` is `align-items:flex-end`, so the two shared a
+  bottom edge but not a top one — measured **213→255 against 219→255**, i.e. every select in the row
+  sat 6px higher than the date field, which is exactly what the screenshot shows.
+  **A check of the `select` rule alone cannot find this**, because the `select` rule was already
+  right; the wrong value lives on the element the row actually shows. Fixed by adding
+  `.rounded-select-wrap` / `.rounded-select-btn` to the family control group. Measured after: all
+  five controls 36px at `y=213` in both themes.
+- **Search removed; every filter applies itself.** The button is gone from the markup and
+  `wlSearch` from the script. `wlCategory`, `wlProvider`, `wlVip` and the date range each reload on
+  `change`, and Reset reloads too. The range picker commits by dispatching `change` on `wlFrom`
+  **and** `wlTo` in the same task, so the reload is deferred one tick and collapsed — without that,
+  one date pick fires two identical requests. Verified with a `fetch` spy: one change → exactly
+  **one** request, with `page` reset to 1. (The first measurement read “4 requests per change”
+  because each of my own `evaluate` calls had stacked another `fetch` wrapper around the last one;
+  the spy must be installed once, or it counts itself.)
+- **Table brought onto the locked listing recipe** — the same one `transaction-report.html` (8.7)
+  already carries, i.e. the front-end reference the owner meant by “统一其他页面”. The ten other
+  family pages measured **identical to each other** (thead `background: transparent`, `th` padding
+  `10px 9px`, tracking `.22px`, no column rules), so “unify with the other pages” could not mean
+  “match 8.1/8.2” — they already matched. The flat head was never a decision either: `reports.css`
+  gives `.standardized-listing-page .report-table thead th` a `#F5EBDC` fill and
+  `bo-charcoal-legacy.css` then kills it with `background:transparent!important` at (0,4,3). The
+  family sheet now carries the locked `--bo-table-head` values: head `#FFE8CC` / text `#6b360c`
+  (dark `#1F2128` / `#E7E5E4`, the head **deeper** than the body), `11px/700`, uppercase, tracking
+  `.04em`, sticky, plus the soft column rules and the 16px first/last cell inset.
+  `.transaction-report-page` is `:not()`-excluded: it already implements this recipe, including a
+  deliberate `position:static` on its head that these rules would have undone.
+- **The card's 18px padding is gone, and the first column now lines up with the row above it.**
+  With `18px` on `.table-card` and `9px` on the first cell, the first column's text started at
+  **307px** while the filter row above it starts at **295px** — the table looked inset against the
+  card it sits in. The locked frame owns the border, not the inset, so the card is `padding:0` and
+  the first/last cell carries the 16px inset: measured **296px against 295px**. Interior chrome
+  (`user-toolbar`, `perf-table-head`) keeps its own `12px 16px` inset so no badge touches the border,
+  and the head bar and footer hairline now reach the card edge like the reference.
+- **Trap re-confirmed, and it bit again here:** the first/last-inset rule was first written as
+  `padding-left` / `padding-right` longhands. The rule matched, parsed, and carried `!important` at
+  nominally higher specificity — and the computed value **stayed `12px`**, losing to the base rule's
+  `padding` shorthand. Restating the inset as the full **`padding` shorthand** on a rule carrying a
+  third ID guard fixed it. **When an `!important` rule matches and does not apply, stop counting
+  `:not()` weight by hand and restate the property in the same form as the rule that is winning.**
+- Pin **`bo-report-family.css` 1.0.6 → 1.0.7 on all eleven pages** and `win-lose-report.js`
+  1.0.4 → **1.0.5**, for the reason this file records three times already: a fix that lands in an
+  already-published URL is verified and still reported as “no change”.
+
+**Deliberately left:** `.table-card` / `.filter-card` still resolve to **16px** radius, not the
+locked panel's `8px` — `reports.css` pins both as a pair at (2,2,2) with `!important` and they are
+consistent with each other, so changing one alone would look worse. `agent-performance-report.html`'s
+injected `.bo-filter-search-button` is still **42px** in a 36px row (the same 6px defect on a control
+the owner did not ask about); and the table body's dark cell colour resolves to `#D4D4D8` rather than
+the locked `#F5F5F4` — both pre-existing, both outside this request.
+
+### Sidebar flyout — 8.11 unreachable, and the panel jumped under the cursor (2026-09-22)
+
+Owner, with a screenshot of the open 8. Report flyout: “我sidebar 看report 展开后 无法点到 8.11
+能不能帮我处理一下 也不要 乱我的光标乱跳 导致点不到其他的页面 比如 8.1”.
+
+**The cap the flyout JS computes was being thrown away by an `!important` rule in another sheet.**
+`positionSidebarFlyout()` in `auth.js` measures the room below its own row and writes
+`list.style.maxHeight = cap`. `reports.css` pins the same element with
+
+```
+.report-sidebar .report-nav > .nav-group > .nav-group-list{max-height:calc(100vh - 24px)!important}
+```
+
+and **an `!important` stylesheet declaration out-ranks a non-important inline style** — so the cap
+was silently discarded. Measured on the reproduced geometry (row at y=571, 1900×950): inline
+`547px`, computed **`926.4px`**. The consequences are both of the owner's symptoms, from one cause:
+
+- The panel was permitted to run to `571 + 504 = 1075` in a 950px viewport, so **8.9 / 8.10 / 8.11
+  sat below the screen**.
+- Because the 504px content was still *shorter* than the 926px allowance, `overflow-y:auto` produced
+  **no scrollbar either** — measured `scrollable:false`. 8.11 was neither visible nor reachable.
+
+**And the panel was positioned on the wrong frame.** The cap, the inline write and a possible
+top-correction all sat inside a `requestAnimationFrame`, so the panel painted one frame at its
+uncapped height and was then shrunk and moved — a visible jump under the pointer. That is the
+“光标乱跳”, and it is the mechanism the function's own comment already describes from an earlier
+round (“the hover jumped and the panel shut before 8.1 could be clicked”).
+
+**Fix, two files:**
+
+- `assets/js/auth.js` — `positionSidebarFlyout` now computes the cap **synchronously, before paint**.
+  Every input is a rect that already exists, so the rAF bought nothing; removing it makes the panel
+  paint once, positioned and capped. The cap is also published as a custom property:
+  `group.style.setProperty('--bo-sidebar-flyout-max', cap + 'px')`. (The inline write is kept as the
+  fallback for any page that does not load the sheet below, but it is the property that wins.)
+- `assets/css/bo-global-quicknav.css` — consumes it at a specificity **higher** than the
+  `reports.css` rule (both `!important`, more classes):
+  `.report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list{max-height:var(--bo-sidebar-flyout-max,calc(-24px + 100vh))!important}`.
+  The `100vh - 24px` fallback keeps the previous behaviour wherever the JS has not run.
+
+**Measured after** (same reproduced geometry, row 571, 1900×950): property and computed max-height
+`367px`, panel `571→938` inside the viewport, `scrollable:true` (content 502px vs client 365px), and
+after scrolling all eleven entries are fully in view — `8.11 Provider Report` at y=885. On the real
+session (`win-lose-report.html`, row at 260) the cap resolves to `589px` with the panel fitting.
+
+**Two traps worth keeping:**
+
+1. **An `!important` stylesheet rule beats an inline style.** This is the second time in this session
+   that a value was "set" and visibly had no effect — the first was the `padding-left` longhand losing
+   to a `padding` shorthand. A JS-computed size that lives inline is not a contract; it is a
+   suggestion. If the value must win, it has to reach the cascade through something that can win
+   (here: a custom property consumed by a higher-specificity `!important` rule).
+2. **A `requestAnimationFrame` is not a guarantee.** Diagnosing this needed a probe that could see
+   the frame *not* arriving: in the in-app browser renderer rAF never fired at all (`rAF NEVER fired
+   within 1.5s`, and the same starvation is why screenshots time out there), which is what exposed the
+   deferred write. Geometry that needs no post-layout measurement does not belong in a frame
+   callback — deferring it costs one frame of wrong layout at best, and the whole correction at worst.
+
+**Pins bumped in the same pass, for the documented reason (a fix under an unchanged URL is verified
+and still reported as “no change”):** `auth.js` 1.0.85 → **1.0.86** on all **130** pages that link it,
+and `bo-global-quicknav.css` 1.1.2 → **1.1.3** in both `auth.js` injection sites plus
+`menu-management.html`. Note the second one as a reminder: `auth.js` injects that sheet with a
+**hardcoded** version string, so editing the sheet does nothing until that string moves.
+
+**Correction to the reproduction method, recorded because it cost a false result:** several tabs were
+open on the same URL from earlier measurements, and binding “the first tab whose URL matches” picked
+one still running the **pre-fix** `auth.js` — which showed the property empty and read exactly like
+the fix had failed. The in-app browser keeps released tabs visible at the same URL, so a same-URL
+match is not identification; bind the tab that was just loaded, or re-navigate first.
+
+### Sidebar flyout scrollbar — the recipe was scoped to 11 pages, not to the sidebar (2026-09-22)
+
+Owner: “欸 我的scroll的设计以及颜色 要统一 而不是现在图里的颜色”, with a screenshot of the open 8. Report
+flyout showing a thick grey OS scrollbar with arrow buttons.
+
+**The recipe was right; its scope was wrong.** The locked **Panel pill** scrollbar for the flyout
+lived in `bo-report-family.css` under `body.bo-report-family` — so it reached exactly the eleven
+Report pages. But auth.js paints the sidebar (and therefore this flyout) on **every** BO page, so on
+the other ~130 pages the panel fell back to the raw OS scrollbar. The exact page in the screenshot
+does not need to be identified: any page without the marker reproduces it.
+
+**Measured on one identical element, same geometry, from the scrollbar's own layout gutter**
+(`offsetWidth − clientWidth`, which is *how wide the scrollbar Chromium actually reserved* — the
+cheap way to tell a styled scrollbar from the OS one without a screenshot):
+
+| scope | gutter | what paints |
+| --- | --- | --- |
+| with `bo-report-family` | **7px** | locked 6px pill + 1px border |
+| marker absent (every other BO page) | **17px** | OS scrollbar, thick grey, arrow buttons |
+| dark theme (with marker) | **7px** | locked pill |
+
+**Fix — the sidebar's scrollbar moved into the sidebar's own layer.** The recipe now lives in
+`assets/css/bo-global-quicknav.css` (injected by auth.js on every sidebar page) as
+`.report-sidebar .nav-group-list:not(.rounded-select-menu)`, same locked values: webkit-only, 6px,
+light chocolate `#8B6B4A` / hover `#5C4A30`, dark `#F59E0B` / `#D97706`, arrows removed. The copy in
+`bo-report-family.css` is **deleted, not duplicated** — every page that loads that sheet also loads
+this one, and a second copy would drift. The `@supports not selector(::-webkit-scrollbar)` branch is
+kept for Firefox and must stay: setting `scrollbar-color` for WebKit makes Chromium ignore the
+`::-webkit-scrollbar` rules and paint OS arrows, the trap already recorded under Panel pill scrollbar.
+
+**Measured after:** gutter **7px** on a family page, on a page with the marker removed, and in dark
+theme — one scrollbar, three scopes.
+
+**The gate that would have caught this, now the cheap default for scrollbar work:** assert the gutter,
+not the rule. Reading the stylesheet said the recipe was correct, and it was; the defect was *which
+pages it reached*, which only the element's own reserved width reveals. It is one number, needs no
+screenshot, and works in a renderer that never composites.
+
+**Pins bumped in the same pass** (the reason is recorded twice above — a fix under an unchanged URL is
+verified and still reported as “no change”, and it bit again here: after moving the recipe, the
+non-family scope still measured 17px because `bo-global-quicknav.css?v=1.1.3` was cached):
+`bo-global-quicknav.css` 1.1.3 → **1.1.4** (auth.js ×2 and `menu-management.html`), `auth.js`
+1.0.86 → **1.0.87** on all 130 pages, and `bo-report-family.css` 1.0.7 → **1.0.8** on the eleven —
+the last one because that sheet had rules *removed*, and a stale copy would keep applying them.
+
+### 8.1–8.11 viewport-locked — the table header now stays put (2026-09-22)
+
+Owner: “我的report 8.1 至 8.11 的页面所有设计 需要做到像图二那样 而且我table scroll down的时候
+table header要定死 只能scroll里面的数据”. 图二 is the User Management listing (`index.html`).
+
+**The header could not be pinned because there was nothing for it to stick to.** `position:sticky`
+was already on these `th` (section 14), and it was inert: `reports.css` leaves `.report-shell` at
+`min-height:100vh` and `.report-content` as plain block flow, so the **document** grew with the row
+count and the whole page scrolled — the header scrolled away with it, and a sticky element inside a
+non-scrolling box does nothing no matter what its own declarations say.
+
+**Fix — the locked frame `system.md` already documents as “Fixed frame (locked — Admin Detail)”, the
+one `index.html` uses**, added to `bo-report-family.css` as section 15:
+
+| Part | Value |
+| --- | --- |
+| `.report-shell` | `height:100dvh` · `overflow:hidden` |
+| `.report-main` | `100dvh` · flex column · `overflow:hidden` |
+| `.report-content` | `flex:1` · `min-height:0` · flex column · `gap:16px` · `overflow:hidden` |
+| KPI strip / `.filter-card` | `flex:0 0 auto` (they keep their height; the table takes the remainder) |
+| `.table-card` | `flex:1` · `min-height:0` · flex column (keeps its own `padding:0` / `overflow:hidden` from section 14) |
+| `.table-wrap` | `flex:1` · `min-height:0` · `overflow:auto` — **the only scroller** |
+| `.mad-footer` | `flex:0 0 auto` — already `margin-top:auto`, so it pins to the panel bottom |
+
+The `16px` vertical rhythm is now the flex `gap`, so each card's own `margin-bottom:16px` is zeroed —
+otherwise the gap counted twice. **Desktop-only (`min-width:992px`)**: below that the sidebar is an
+off-canvas drawer and a viewport-locked panel on a phone is worse than page scroll, so the natural
+flow is kept there.
+
+**Measured, `.report-table tbody` filled with 60 rows (1900×950):** the document no longer scrolls
+(`scrollHeight == innerHeight`, `scrollY 0`); `.table-wrap` is the scroller (`scrollHeight 2345` vs
+`clientHeight 579`); the header's viewport `y` is **283 before scrolling, 283 after 300px, 283 at the
+very bottom** while the first row moves **327 → 27**; the last row is reachable at the bottom. On
+`casino-deposit-withdraw-report` (the page in the owner's image 1, 14 columns) the header sits at
+**163** at the top, mid-scroll and at the bottom.
+
+**Checked at four window sizes** (1900×950, 1900×780, 1440×700, 1280×640) on `win-lose-report` and on
+four sibling pages (`casino-deposit-withdraw-report`, `highest-turnover-games`, `transaction-report`,
+`agent-performance-report`): in every case `.report-content` keeps a fixed height, the card bottom
+stays inside the viewport, nothing is clipped and nothing overlaps the footer. At the tightest size
+(1280×640) the filter row wraps to two lines and the table still gets 224px — about four rows — which
+is the intended trade: the panel takes the remainder.
+
+**Follow-up from the same render — the scrollbar corner (2026-09-22, owner “优化一下” with the
+bottom-right corner of the table ringed).** Adding the inner vertical scroller put two scrollbars in
+the same box, and their meeting point is painted by `::-webkit-scrollbar-corner` — which this sheet
+**never styled**, so it drew a default block exactly where the owner's red box was. The locked recipe
+in `bo-user-management-theme.css` styles that corner, and the family block was also missing two other
+declarations the locked recipe carries:
+
+| Missing | Consequence |
+| --- | --- |
+| `::-webkit-scrollbar-corner{background:transparent}` | a stray block at the bottom-right corner — the owner's red box |
+| `::-webkit-scrollbar-button:single-button` (`display:none`) | the plain `::-webkit-scrollbar-button` does not cover Chromium's single-button state, so the up/down arrows keep painting on a 6px bar |
+| `background:transparent` on `::-webkit-scrollbar`, `border:0` / `box-shadow:none` / `background-color` on the thumb | the bar could still take a default fill and the thumb a default border |
+
+All three are now mirrored from the locked recipe verbatim for `.table-wrap` / `.table-card`. Measured
+after: the corner rule matches the element, and the vertical gutter stays **7px** (6px pill + 1px
+card border) — the additions did not thicken the bar. Also re-checked in the same pass that
+`.report-shell` gaining `overflow:hidden` does **not** clip the sidebar flyout: it is
+`position:fixed`, and `overflow:hidden` on an ancestor clips fixed descendants only when that ancestor
+also has a transform/filter/contain. Measured with the flyout open: box fully inside the viewport
+(`266 → 606` wide, `260 → 368` tall in a 1500×900 window), cap applied at `558px`.
+
+**Deliberately kept:** the family's `table-layout:auto` deviation (section 4) and its 16px cell inset
+(section 14) — this pass changed the *frame*, not the table chrome, which already matched image 2
+(cream `#FFE8CC` head, uppercase `11px/700`, column rules, `13px/700` cells). `transaction-report.html`
+is not excluded here the way it is in section 14: its own sheet already builds a bespoke two-table
+frame from `.bo-tx-table-head` / `.bo-tx-table-body`, and section 15's `.table-card` flex column is
+compatible with it — measured, the card ends at 928 inside the 950 viewport with no clipping.
+
+**Pin bumped:** `bo-report-family.css` 1.0.8 → **1.0.9** on all eleven pages.
+
+### 8.1–8.11 — the head is split out of the scrolling box (2026-09-22)
+
+Owner: “我要的是这个呀”, with a write-up of the technique: **表头放在滚动容器外面，所以滚动条只覆盖表体这一段，
+表头旁边干干净净**, at the cost of “列宽关系要靠 `table-layout:fixed` 自己维持，两个 table 的宽度必须一致”,
+using `scrollbar-gutter:stable` on both sides “不需要任何魔法数字”, and noting the header's reserved gutter must
+be filled with the header's background + a bottom border “否则右上角会缺一块”.
+
+That is the shape this repo already ships on the transaction family — a separate head table plus a
+body scroller with `scrollLeft` mirroring (`member-deposit.js`, `member-wallet.js`,
+`operations-report.js`, `transaction-report.html`). The eleven report pages had the header *inside*
+the scroller, so the bar ran the full panel height beside the header and its corner collided with
+the card's radius — the artefact the owner first ringed as “优化一下”.
+
+**Built:** `assets/js/report-table-split.js` (new) plus `bo-report-family.css` §16. On ≥992px, for
+each `.table-card` in `body.bo-report-family` (excluding `.transaction-report-page`, which owns its
+own split), the `thead` is moved into a `.bo-report-head` div above `.table-wrap`; the wrap keeps the
+body and stays the only vertical scroller; a `scroll` listener mirrors its `scrollLeft` into the head
+container so the wide pages' horizontal scroll still moves the headings with their columns.
+Below 992px nothing is split (the page keeps its natural flow and the single sticky-header table),
+matching §15's own desktop-only frame.
+
+**Why the widths are derived by the script rather than authored into 11 pages.** The write-up's cost
+is that the two tables' widths must be maintained by hand. These tables have 5 to 16 columns each
+with no widths authored anywhere, and `table-layout:fixed` **without** widths is the only thing you
+get for free — an even split. That is what DESIGN.md already records being measured and reverted:
+“`fixed` splits the panel width evenly across the columns… a 14-column table got ~108px per column
+and the headers **overlapped**”. Hand-writing 11 sets of percentages cannot be checked by looking at
+the page, and getting one wrong is a visibly truncated heading. So the script measures instead: it
+asks each table for its natural per-column widths (`width:max-content`), takes the **per-column max
+of the header row and a body row**, scales every column by one factor to fill the card when the
+content is narrower than it, and applies the result as a matching `colgroup` + `fixed` + `width` to
+**both** tables. Identical by construction, content-driven, re-derived on resize and whenever the
+body re-renders (a `MutationObserver` on the `tbody`).
+
+**Measured, win-lose-report (1500×900):** head row at `y=282`, wrap starting at `y=327` — the bar
+covers the body only; header `y` **282 before, 282 after scrolling the body 300px, 282 at the
+bottom** while the first row moves `328 → -72`; both tables `1195px` in a `1195px` wrap (fills, no
+horizontal scrollbar — same as before the split); column left edges identical between head and body;
+0 truncated headings; page still doesn't scroll. **casino-deposit-withdraw (14 columns):** both tables
+`2525px`, columns identical, edges aligned, 0 truncated headings (it keeps the horizontal scroll it
+always had), and scrolling the body 150px moves the head to 150 — the mirror works.
+
+**Three measurement traps this cost, each of which produced a wrong number before it was caught:**
+
+1. **The body row alone truncates the headings.** With the header split out, the body table no longer
+   knows how wide its own headings need to be. Deriving widths from a body row truncated **twelve**
+   headings on the 14-column page (`Deposit Approved Members` → `Deposit Appr`). The fix is the
+   per-column max with the header row — which is what the single table's `auto` layout computed, since
+   the heading row *was* one of its rows.
+2. **The empty/loading state is a single `<td colspan>` row.** Its one measured cell is the *full row
+   width*, and taking it as column 0's need pinned column 0 to the whole card — measured columns
+   `[1195, 235, 191, …]`, a **2296px table in a 1195px wrap**, on a page that had no column widths to
+   begin with. The script now skips any body row that does not have one cell per column and falls back
+   to header-only widths, which is exactly right while the data is loading.
+3. **`min-width:100%` makes a "natural" measurement anything but.** `reports.css` pins
+   `.report-table{min-width:100%}`; left in place it floors the table at the container width, so
+   `max-content` returns the *filled* distribution. Max-ing two filled distributions then exceeds the
+   container — measured a 1352px table in a 1195px wrap, i.e. a pointless horizontal scrollbar
+   appearing on a page that filled its card before. The measurement now neutralises `min-width` and
+   `max-width` as well as `width` and `table-layout`.
+
+The pattern in all three: **the numbers were only wrong in states I did not think to measure** — the
+loading state, the wide page, and the stylesheet's own floors. Each was found by asserting a specific
+value (columns identical, no truncation, table width == wrap width) rather than by reading the code.
+
+**Pins:** `bo-report-family.css` 1.0.10 → **1.0.13** (eleven pages; also bumped for the mirrored side
+border, below) and the new `report-table-split.js` at **1.0.5** on the nine pages that have a table
+(it is not added to `casino-overview-report.html`, which has none, nor to `transaction-report.html`,
+which splits already).
+
+**One pixel that mattered:** the head's content box started 1px left of the body's because
+`.table-wrap` carries a 1px side border that the head lacked — every column edge was off by that
+pixel (`deltaX 0.8px`, `columnEdgesAlign:false`). The head now carries the same side border in the
+card frame's own colour, so it is invisible but the two boxes agree.
+
+### The nested rounded box around the table body (2026-09-22, owner “奇怪的border radius”)
+
+Owner: “我的展示数据的table 怎么有奇怪的border radius 你要帮我去除掉 不然影响我的table 美观”.
+
+`reports.css` gives `.table-wrap` — the table's own scroll box — **a 1px border and a 12px radius**
+(`.standardized-listing-page .table-wrap{border-radius:12px!important}`), i.e. a second rounded box
+drawn inside the card's own 16px rounded box. The locked listing frame is explicit that the scroller
+carries **no nested border/radius** — the panel owns the frame — so this was always a deviation; it
+was simply *masked* while the header lived inside the scroller, because the bar covered the top of
+that box and the whole thing read as one object.
+
+Splitting the head out (above) removed the cover: the wrap became a visibly separate rounded box, and
+its rounded corner sitting against the scrollbar is the shape the owner first ringed as “优化一下” and
+has now named. Fixed by zeroing the nested frame on the family:
+
+```css
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .table-card > .table-wrap{
+  border:0!important;
+  border-radius:0!important;
+}
+```
+
+The card keeps its radius and `overflow:hidden`, so the table is still rounded — **once**, by the frame
+that owns it, the same as the User Management listing.
+
+**The paired change:** the head's side borders had been added to mirror that 1px wrap border, and they
+had to come off in the same edit — with the wrap borderless, leftover side borders on the head would
+have re-introduced the 1px column-edge offset from the opposite direction. Measured after: `.table-wrap`
+and `.bo-report-head` both `border-radius:0`, boxes identical (`x 278.8`, `w 1202.4`, `clientWidth`
+1197 both), `edgesMatch:true`, `fillsCard:true`, 0 truncated headings, header pinned at `y=282`.
+The only radii left inside the table area are the 8px pager rungs and the footer select, which are
+controls, not the table. Checked on `transaction-report`, `casino-breakdown-report` and
+`agent-performance-report` in both themes: every `.table-wrap` `0px`, no clipping, page still fixed —
+`transaction-report`'s own frame (card `12px`, `.bo-tx-table-body`) is untouched.
+
+**Pin:** `bo-report-family.css` 1.0.13 → **1.0.14** on the eleven pages.
+
+### Report pages: no Reset / Search / Refresh, and the Members count moved to the title (2026-09-22)
+
+Owner: “member显示移去上面 然后report的所有reset，search，refresh按键全去除”.
+
+**Every Reset / Search / Refresh control is gone from the eleven report pages**, and each filter now
+applies itself — the same contract the owner set for Win/Lose earlier ("通常选中那些选项就自动输出数据了"),
+extended to the whole family. What was removed, and what took over its job:
+
+| Pages | Removed | Replacement |
+| --- | --- | --- |
+| 5 × `casino-*-report` | `casinoResetBtn`, `casinoSearchBtn` | the shared range picker already reloads on a complete range (`casino-report.js` → `autoLoadSelectedRange`), so the row needs no trigger; the dead `setTodayAndLoad` helper went with the Reset button that was its only caller |
+| `promotion-report`, `transaction-report` | `reportReset`, `reportSearch` | `operations-report.js` **already** reloaded on `from`/`to`/`reportType` change; only the two listeners were removed |
+| `highest-turnover-games`, `frequently-played-games` | `gameRankReset`, `gameRankSearchBtn`, `gameRankRefresh` | the two text fields reload on a 400 ms input debounce (`Enter` still works), the footer page-size on change |
+| `agent-performance-report` | `perfSearch` | brand / agent / date-range reload on change, the keyword field on a 400 ms debounce |
+| `win-lose-report` | `wlReset` | already self-applying from this session's earlier pass |
+
+**Two of those scripts would have thrown on load if only the markup had been edited.**
+`player-game-ranking.js` used unguarded `$('gameRankSearchBtn').onclick = …` and
+`agent-performance-report.js` likewise for `perfSearch`; both are replaced by guarded wiring, so
+deleting the buttons is not enough — the JS has to stop expecting them. (The casino, ops and
+win-lose listeners were already `?.`-guarded, which is why only these two mattered.)
+
+**The Members count moved into the page title.** On the two games pages the `#gameRankCount` chip sat
+in a `.user-toolbar` inside the table card with a Refresh button beside it; the chip now sits next to
+the `<h1>` and that toolbar is gone. **The id is unchanged**, so `player-game-ranking.js` keeps
+writing the count without knowing it moved. The title's inner block becomes a flex row only on pages
+that carry the chip — `:has(> .users-found-badge)` — so no other page's title is restyled.
+Three casino pages still carry an **empty** `.user-toolbar`; rather than edit their markup, the
+interior-chrome rule now skips `:empty` and hides it, which also removes the 24px of blank space it
+was reserving above the table.
+
+**Verified on an auth-stubbed harness** (the same pattern as the nav probe: `/auth/admin/me` and
+`menu-groups` answered locally so the permission-gated pages open and their own scripts run, with no
+real session touched) — all ten pages: **0 stray Reset/Search/Refresh buttons, 0 JS errors**, badge in
+the title on both games pages, and the filters really do fire: casino date range → 1 request,
+ranking text → 1 request **from the debounce handler** (traced by stack; an earlier count of 2 was a
+leftover from the page's initial load, not a double-fire), performance keyword → 1 request. The empty
+toolbar measures `display:none; height:0` with the head flush at the card top.
+
+**Pins:** `bo-report-family.css` → **1.0.15**, `casino-report.js` → 1.0.17, `operations-report.js` →
+1.0.13, `player-game-ranking.js` → 1.0.2, `agent-performance-report.js` → 1.0.2, `win-lose-report.js`
+→ 1.0.6. Bumped with a filename boundary so the `main-*` pages that share these script names
+(`main-win-lose-report.js`) were not touched.
+
+### Agent Performance Report brought onto the family layout (2026-09-22)
+
+Owner: “这个页面的设计 跟其他页面的设计不太统一 排版应该是卡片 下来就是日期那排 然后 TitanX Gaming ·
+2026-08-01 - 2026-08-31 麻烦去除掉没有用 然后 再把export的功能放同一排 然后要在table的container 上方啊”.
+
+- **Order fixed:** the page had filter row → KPI strip → table. Every other report page puts the KPI
+  strip first (Win/Lose is KPI → filter → table), so this one was the odd page out. Now
+  `perf-kpis` → `perf-filter-card` → `table-card`, measured on the rendered page.
+- **The “TitanX Gaming · 2026-08-01 - 2026-08-31” line is gone** (`#perfScopeLabel`, with the
+  `.perf-table-head` bar that held it). The script wrote to it on every load
+  (`$('perfScopeLabel').textContent = …`), so the element and that write had to go **together** —
+  deleting only the markup would have thrown on every load.
+- **Export moved onto the filter row, above the table**, into the slot the removed Search button used
+  to occupy, right-aligned like the Member listing's action cluster.
+- **Radii aligned:** this page's own card pair was 14px where the family's cards are 16px (and the
+  table card already resolved to 16px through `reports.css`, so the filter card was the visible
+  mismatch). `.perf-filter-card`, `.perf-table-card` and the KPI tiles are now 16px.
+
+**Two authority-layer rules had to be beaten to right-align that one button, and both are worth
+knowing:**
+
+1. `body:not(#…):not(#…).report-main .bo-filter-row` in `bo-ui-standard.css` forces
+   `display:flex!important` at two-ID specificity — so **this page's own
+   `.perf-filter-card .bo-filter-row{display:grid!important; grid-template-columns:…}` has never
+   applied**. Measured `rowDisplay:"flex"`, `tracks:"none"`: the row is a flex line, and the grid
+   tracks this sheet describes are dead weight. My first attempt (`grid-column:-2/-1`) was therefore
+   a no-op.
+2. The same layer resets `.report-main .bo-filter-row > *{margin:0!important}`, so a plain
+   `margin-left:auto` computed to `0px` and the button stayed packed against the last field —
+   measured button right **1110** against row right **1465**. The fix is the repo's usual lever for
+   that layer: two `:not(#…)` ID guards plus extra classes, so the margin wins.
+   **Measured after: gap to the row's right edge 0**, button 36px, on the same row as the filters and
+   above the table card.
+
+**Pins:** `agent-performance-report.css` 1.0.0 → **1.0.4** (it moved three times while the two rules
+above were being beaten — each one under an unchanged URL would have looked like “no change”),
+`agent-performance-report.js` → **1.0.3**.
+
+### Report pagination footers unified with the listings (2026-09-22)
+
+Owner: “所有report页面的 8.1 至8.11 的pagination设计 要统一跟图里和其他页面一样”.
+
+The report family's footer was a **two-slot flex** — info on the left, `Show N entries` and the ladder
+grouped on the right. Every listing page in the app (`vip-exp-log`, `index.html`, `vip-reward-log`)
+uses the **three-slot grid** instead, and that is what the owner's screenshot shows:
+`Show N entries` left · “Showing X to Y of Z” centred · the ladder right.
+
+**Markup — all ten footers reordered** to `entries-control`, info, ladder as direct children, with the
+`.mad-footer-right` wrapper gone. Three different shapes had to converge: the plain form (win-lose,
+promotion, transaction, agent-performance), `label.cr-page-size-label` on the four casino pages, and
+the two games pages where the `Show` control was **nested inside the info block** — that one was
+extracted, and its `Show` wrapper became `.entries-control` like everywhere else.
+
+**CSS — `bo-report-family.css` §1 now mirrors `table-pagination-horizontal.css` verbatim:**
+
+```css
+grid-template-columns:minmax(190px,1fr) minmax(260px,1fr) minmax(190px,1fr)!important;
+.entries-control → grid-column:1 · justify-self:start
+info             → grid-column:2 · justify-self:center · text-align:center
+ladder           → grid-column:3 · justify-self:end
+```
+
+The columns are taken from the reference sheet rather than chosen, so the report family and the
+listings agree by construction instead of by eye. §11's `.mad-footer-right{gap}` rule described the
+wrapper that no longer exists and was replaced by a note.
+
+**One page needed the ID guards.** `transaction-report-polish.css` sizes this same footer with
+`grid-template-columns:auto minmax(0,1fr) auto!important` at five-class specificity, so its side tracks
+were content-sized — the pinned 72px select on the left against a 232px ladder on the right — which
+pushed the middle track's centre ~76px left of the footer's: measured info centre **800** against
+footer centre **880**. The family's grid rule now carries the usual two `:not(#…)` guards, because IDs
+out-rank class counts. **Measured after: info centre 880 against centre 880, offset 0.**
+
+**Verified on all ten** (live for win-lose; the auth-stubbed harness for the other nine, each page's
+CSS pin regenerated first so no stale sheet could pass): `display:grid`, three slots in the right
+order, `Show` flush left, info centred, ladder flush right at `footer right − 16`, footer on one line,
+**0 JS errors**. The earlier run that showed `transaction` off-centre was the real defect above, not a
+measurement artifact.
+
+**Pin:** `bo-report-family.css` 1.0.15 → **1.0.17** (it moved twice: once for the grid, once for the
+guards).
+
+### Agent Performance: tile design, footer dropdown, missing ladder (2026-09-22)
+
+Owner, on the same page: “1.卡片的设计需要去统一 2.pagination的 下来选单有被遮挡 需要去调整好
+3.当前页面好像没有设计到 页数器？”.
+
+**1. The KPI tiles were the only bespoke ones in the family.** They rendered `.perf-kpi` with a
+per-tile icon well cycling green → purple → amber → red and an **amber value**, where every other
+report page's strip is `.quick-stats > .metric`: one amber well, `12px/800` `#57534E` label,
+`23px/900` `#18191C` value, `11px/600` note. The page now emits `.metric` and `#perfKpis` carries
+`.quick-stats`, so the family's CSS and `reports.js`'s decorator own it. Measured identical to
+`win-lose-report`'s tiles: well **52×52**, radius `50%`, tile `border-radius:14px` /
+`min-height:104px`, label 12px `#57534E`, value 23px/900 `#18191C`. The tile's own `.perf-kpi*` rules
+(23 mentions) were deleted rather than left dead; the strip keeps a page-level 6-across override.
+
+**The icon chip has to be written by the page, and that is a finding about the shared decorator.**
+`reports.js` decorates `.quick-stats:not(.user-stats) .metric`, but its `MutationObserver` calls
+`run(addedNode)` → `addedNode.querySelectorAll(sel)` — a **descendant** search. A tile set written
+wholesale into the strip (`innerHTML = …`) arrives as six `.metric` nodes, none of which contains a
+`.metric`, so nothing matches and the tiles render **without their amber well** (measured: tile
+present, `.bo-summary-icon` null). Every other page's tiles are in the markup at load, which is why
+only this page was affected. The page now emits the chip itself — `card()` grew an icon argument, with
+the glyphs it always used — and `reports.js` skips an already-decorated tile. **Not fixed in
+`reports.js` on purpose:** that file is pinned on ~141 pages, so a one-line observer fix would cost a
+141-file pin sweep for one page's benefit. Worth doing in a pass that is touching that layer anyway.
+
+**2. The footer dropdown opened out of the window.** `reports.css` positions `.rounded-select-menu`
+at `top:calc(100% + 6px)`, and the family's footer sits at the bottom of a viewport-locked card —
+measured menu `869 → 1099` in a 900px viewport with the card ending at 878, i.e. **not one item
+reachable**. Flipped to open above the trigger in `bo-report-family.css` §17, mirroring the recipe the
+referral page already ships for its own footer select (same reason: a page-size control at the bottom
+of the page). Measured after: menu `622 → 815`, **5 items reachable**, opens above the trigger.
+
+**3. No ladder on a single page.** `paintPager()` returned early for `pages<=1`
+(`host.innerHTML=''`), so with one page the footer showed only `Show N entries` and the info — the
+owner's “没有设计到 页数器”. The family's contract is to render First · Prev · window · Next · Last
+with the ends disabled. Early return removed here **and** in `player-game-ranking.js`, which had the
+same `if(total<=1)` guard. Measured in the data state: **5 rungs — First page, Previous page, 1
+(active), Next page, Last page — with 4 disabled.**
+
+**Verified on an auth-stubbed harness** whose stub also answers `/agent-performance/brands` and
+`/reports/agent-performance`, so the page's real `load()` path runs rather than its 401 fallback
+(`roleType:'MAIN'` exercises the MAIN-only brand field; `rootAdmin:true` is kept in the same payload
+because auth.js's access gate compares the menu list against the harness filename and otherwise
+bounces the page to login). Data state: 6 tiles with the family's geometry and glyphs, rows rendered,
+`Showing 1 to 1 of 1 agent`, 5 rungs, dropdown above the trigger with its items reachable, **0 JS
+errors**.
+
+**Pins:** `bo-report-family.css` 1.0.17 → **1.0.18**, `agent-performance-report.css` → **1.0.5**,
+`agent-performance-report.js` → **1.0.5**, `player-game-ranking.js` → **1.0.3**.
+
+### KPI tiles lose their note line; the six-up strip stops crushing (2026-09-22)
+
+Owner: “卡片的那些提示词就不需要了吧 然后再帮我调整一下设计就行了” — the second line under each KPI value
+(`All time bets`, `Selected brand`, `Assigned players`, `House P/L`…).
+
+**The notes are hidden in CSS, scoped to the family.** On these pages they come from two different
+places — written by `agent-performance-report.js`, or injected by `reports.js`'s `.bo-summary-note`
+decorator on the other ten — so the only lever that removes them from all eleven without touching the
+shared decorator is a rule:
+
+```css
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .quick-stats .metric .bo-summary-note{display:none!important}
+```
+
+`reports.js` is pinned on ~141 pages, so editing the decorator for this would have cost a 141-file pin
+sweep. The tile keeps its locked geometry — radius `14px` · `min-height:104px` · 52px amber well ·
+`12px/800` label · `23px/900` value — so the strip is still the same component the rest of the app
+uses, minus one text line. Verified on `win-lose-report`: the note node is present, `display:none`,
+height 0, and the tile still measures 104px / 14px / 52px well. The page's own JS also stopped
+emitting one, so its tiles carry no dead node.
+
+**The six-up strip has to stay on ONE row — and the tile had to be made compact to earn it.** The
+first attempt sized the strip by *available width*: six tiles above 1600px, three below. On the
+owner's machine that produced two rows, and the reply was “我电脑屏幕想要一排展示完” — stepping down was
+the wrong answer. The tile is now made genuinely compact for six-up, and the ladder steps up only
+when six tiles could no longer hold their own text:
+
+| Band | Layout | Tile |
+| --- | --- | --- |
+| ≥1366px | **6 × 1 row** | 38px well · 12px gap · 11px label · 19px value · `min-height:88px` |
+| 1201–1365px | **6 × 1 row** | 30px well · 9px gap · 10px label · 16px value |
+| ≤1200px | 2 columns | the family's full-size tile (52px well · 12px label · 23px value · `104px`) |
+| ≤575px | 1 column | same |
+
+**The threshold is measured, not guessed.** Six tiles need ≥1200 CSS px for the longest label
+(`Total Turnover`) to fit — at 1152 four labels ellipsised, which is why the step-up sits at 1200. The
+owner's ~1536px viewport therefore gets one clean row at 195px per tile.
+
+**Every declaration in that block needs `!important`, and that is the whole catch.** `reports.css`
+pins the KPI tile at `.report-content .quick-stats:not(.user-stats) .metric` **with `!important`** (four
+class-level selectors), and an `!important` declaration beats a *higher-specificity* rule that is not
+itself important. Without it the compact recipe was completely inert — measured tile still
+`52px 83.4px`, `padding:16px 18px`, `min-height:104px`, a 12px label, and `Total Turnover` truncated
+(needed 87px, had 83px). With `#perfKpis` (an ID) **plus** `!important` the IDs decide and this sheet
+wins. **This is the third time in this session that a rule was "set" and measurably had no effect** —
+the others were a `padding-left` longhand losing to a `padding` shorthand, and an inline size losing to
+an `!important` sheet rule. The pattern: check what actually won, never what was written.
+
+**Measured at ten widths** (1920 / 1600 / 1536 / 1440 / 1366 / 1280 / 1240 / 1201 / 1200 / 1152):
+notes **0**, **zero truncated labels or values** at every one, and six-in-one-row wherever a tile is
+≥1201px wide — 302px per tile at 1920, 195px at 1536 — two columns below that.
+
+**Pins:** `bo-report-family.css` 1.0.18 → **1.0.19**, `agent-performance-report.css` → **1.0.6**,
+`agent-performance-report.js` → **1.0.6**.
+
+### The DB-side menu label defect (reported, not fixable here)
+
+In the 8. Report flyout, **item 3 renders as `Win/Lose Report` with no `8.3` prefix** while every
+neighbour is numbered (`8.1 Overview Report` … `8.11 Frequently Games Report`). These labels do
+not exist in this repository: `auth.js` builds the sidebar from "DB-backed menus from localStorage"
+and its own comment says "Database Menu Management is authoritative. Never rewrite a configured
+menu URL in the sidebar." The label is therefore a menu record, editable in
+`menu-management.html` — not a code change, and not something this pass could or should have
+worked around in JS.
+
 ### Table zebra on the MAIN panel pages (2026-09-16, owner request)
 
 "All tables on the main pages must have zebra." They did not: measured on

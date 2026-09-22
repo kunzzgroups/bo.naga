@@ -290,20 +290,24 @@
     if(isAutofit())requestAnimationFrame(()=>settleAutofit());
     else resetEvenFill();
     if(!pagerEl)return;
-    const btn=(label,target,disabled,active=false,icon='')=>`<button type="button" class="page-btn${active?' active':''}" data-page="${target}" ${disabled?'disabled':''} aria-label="${label}">${icon?`<i class="bi ${icon}"></i>`:label}</button>`;
-    /* Deposit Approval pager: Prev · page window · Next (no First/Last). */
+    const btn=(label,target,disabled,active=false,icon='',cls='page-btn')=>`<button type="button" class="${cls}${active?' active':''}" data-page="${target}" ${disabled?'disabled':''} aria-label="${label}"${active?' aria-current="page"':''}>${icon?`<i class="bi ${icon}"></i>`:label}</button>`;
+    /* Locked pager anatomy (VIP EXP Log / Wallet Ledger specimen):
+       First · Previous · numbered window (±2 around current, always 1 and last, gaps > 1
+       collapsed to an ellipsis) · Next · Last. Never a prev/next-only pager. */
     const pageList=(()=>{
       const list=[];const add=n=>{if(n>=1&&n<=pages&&!list.includes(n))list.push(n);};
       add(1);for(let n=page-2;n<=page+2;n++)add(n);add(pages);list.sort((a,b)=>a-b);return list;
     })();
-    let h=btn('Previous',page-1,page<=1,false,'bi-chevron-left');
+    let h=btn('First page',1,page<=1,false,'bi-chevron-bar-left','smart-page first');
+    h+=btn('Previous page',page-1,page<=1,false,'bi-chevron-left');
     let prevN=0;
     pageList.forEach(n=>{
       if(prevN&&n-prevN>1)h+='<span class="smart-page-ellipsis" aria-hidden="true">…</span>';
       h+=btn(String(n),n,false,n===page);
       prevN=n;
     });
-    h+=btn('Next',page+1,page>=pages,false,'bi-chevron-right');
+    h+=btn('Next page',page+1,page>=pages,false,'bi-chevron-right');
+    h+=btn('Last page',pages,page>=pages,false,'bi-chevron-bar-right','smart-page last');
     pagerEl.innerHTML=h;
   }
   function settleAutofit(){
@@ -373,7 +377,9 @@
       page=1;if(isAutofit())lockedAutoSize=null;render();
     }catch(e){allRows=[];if(isAutofit())lockedAutoSize=null;render();if(window.BO_DIALOG)await BO_DIALOG.alert(e.message||'Unable to load report.',{title:'Report Error',type:'error'});}
   }
-  document.getElementById('reportSearch')?.addEventListener?.('click',()=>{lockedAutoSize=null;load();});
+  /* No Search / Reset buttons on this family (owner: "report的所有reset，search，refresh按键
+     全去除"). Every control below reloads on its own change event, which is what those buttons
+     used to trigger. */
   const reload=()=>{lockedAutoSize=null;load();};
   from?.addEventListener('change',reload);
   to?.addEventListener('change',reload);

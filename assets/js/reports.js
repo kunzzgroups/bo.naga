@@ -73,11 +73,31 @@ document.addEventListener('DOMContentLoaded', () => {
     group.style.setProperty('--bo-sidebar-flyout-left', left + 'px');
     group.style.setProperty('--bo-sidebar-flyout-top', top + 'px');
     requestAnimationFrame(() => {
-      const h = Math.min(list.scrollHeight || 0, Math.max(120, window.innerHeight - 24));
-      if (top + h > window.innerHeight - 12) {
-        top = Math.max(12, window.innerHeight - h - 12);
-        group.style.setProperty('--bo-sidebar-flyout-top', Math.round(top) + 'px');
-      }
+      // Size the panel by the space BELOW its own row, and never move it up.
+      // Owner report: on a short window the 11-entry Report flyout could not be
+      // reached. The old code measured `scrollHeight` (about 620px) against the
+      // viewport and clamped the panel's top to 12 — roughly 200px ABOVE the row it
+      // belongs to (measured: row 228, panel 12). Reaching the first item was then a
+      // long diagonal that crossed the sibling menu rows, and each of those fires its
+      // own mouseenter, which closes this flyout — so the hover jumped and the panel
+      // shut before 8.1 could be clicked. Capping to the room below keeps the panel
+      // beside its row, so the pointer never leaves that row's band; the list scrolls
+      // internally when the menu is longer than the space available.
+                        // The cap is the SMALLER of the room below this row and 62% of the viewport.
+            // Taking only the viewport fraction (a first attempt) still overflowed below the row
+            // on a tall window, so the panel was pushed back up and detached again  measured on
+            // the owner's screen at 975px tall with the row at 546: fraction 605 > room 417, so the
+            // panel sat 188px above its row. Using the room below keeps it beside the row in every
+            // geometry where the row is not near the very bottom of the viewport, and because
+            // top + cap can then never exceed the viewport, no upward shift is needed at all.
+            const roomBelow = window.innerHeight - top - 12;
+            const cap = Math.max(160, Math.min(Math.round(window.innerHeight * 0.62), roomBelow));
+            list.style.maxHeight = cap + 'px';
+            list.style.overflowY = 'auto';
+            // only reachable when the row sits at the very bottom (roomBelow < the 160px floor)
+            let placedTop = Math.max(12, Math.round(br.top));
+            if(placedTop + cap > window.innerHeight - 12) placedTop = Math.max(12, window.innerHeight - cap - 12);
+            group.style.setProperty('--bo-sidebar-flyout-top', Math.round(placedTop) + 'px');
     });
   };
 
@@ -100,7 +120,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!group || window.innerWidth < 992) return;
 
     const previous = window.__boSidebarActiveFlyout;
-    if (previous && previous !== group) closeSidebarFlyoutImmediately(previous);
+    if (previous && previous !== group) {
+    // Hover intent. A pointer travelling from its row into the flyout crosses the sibling
+    // rows, and taking over on every crossing is what made the hover jump and closed the
+    // flyout before its first entry could be clicked. Require the pointer to rest on the new
+    // group for a moment; a fly-through never takes over, so the open flyout survives the
+    // journey into its own panel.
+    const intentGroup = group;
+    if (group.__boFlyoutIntent) clearTimeout(group.__boFlyoutIntent);
+    group.__boFlyoutIntent = setTimeout(function () {
+    group.__boFlyoutIntent = null;
+    if (!intentGroup.matches(':hover')) return;
+    if (window.__boSidebarActiveFlyout === intentGroup) return;
+    const prev = window.__boSidebarActiveFlyout;
+    if (prev && prev !== intentGroup) closeSidebarFlyoutImmediately(prev);
+    openSidebarFlyoutOnHover(intentGroup);
+    }, 140);
+    return;
+    }
     document.querySelectorAll('.report-sidebar .nav-group').forEach(other => {
       if (other !== group && other !== previous && (other.classList.contains('bo-flyout-hover') || other.classList.contains('open'))) {
         closeSidebarFlyoutImmediately(other);
@@ -134,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
       void group.offsetWidth;
       requestAnimationFrame(() => group.classList.remove('bo-flyout-instant-hide'));
       if (window.__boSidebarActiveFlyout === group) window.__boSidebarActiveFlyout = null;
-    }, 90);
+    }, 400);
     sidebarFlyoutHoverTimers.set(group, timer);
   };
 
