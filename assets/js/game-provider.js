@@ -21,9 +21,17 @@ const PROVIDER_GAME_API = { sync: adminApi('PROVIDER_GAME_SYNC'), debug: adminAp
 const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.PROVIDER_CALLBACK_PREVIEW, report: adminApi('WALLET_LEDGER_SUMMARY') };
 
 (function(){
-  const form = document.getElementById('providerForm'); if (!form) return;
+  const form = document.getElementById('providerForm');
+  const list = document.getElementById('providerList');
+  const isFormPage = !!form;
+  const isListPage = !!list;
+  if (!isFormPage && !isListPage) return;
   let tenantMode=false; let tenantContextLoaded=false;
-  const list = document.getElementById('providerList'), empty = document.getElementById('providerEmpty'), statusBox = document.getElementById('providerStatusBox');
+  const empty = document.getElementById('providerEmpty'), statusBox = document.getElementById('providerStatusBox');
+  const providerSearchInput = document.getElementById('providerSearchInput');
+  const CREATE_PAGE = 'game-provider-create.html';
+  const LIST_PAGE = 'game-provider.html';
+  function editPageUrl(id){ return CREATE_PAGE + (id ? ('?id=' + encodeURIComponent(id)) : ''); }
   const ids = ['providerId','providerCode','providerName','providerType','providerCategoryIds','providerImageUrl','providerBrandImageUrl','walletMode','settlementCostPercent','settlementCostBasis','integrationType','httpMethod','currency','apiBaseUrl','operatorId','secretKey','keyEnvironment','boLoginUrl','boUsername','boPassword','providerVariables','apiActionConfigs','signatureType','signatureOutputCase','signatureTemplate','ukeyLength','ukeyPrefix','ukeyStaticValue','createPlayerPath','balancePath','depositPath','withdrawPath','launchPath','gameListPath','createPlayerRequestTemplate','balanceRequestTemplate','depositRequestTemplate','withdrawRequestTemplate','launchRequestTemplate','gameListRequestTemplate','responseBalancePath','responseLaunchUrlPath','responseGameListPath','responseGameCodePath','responseGameNamePath','responseGameImagePath','gameImageApiUrlTemplate','gameImageRemoteApiUrlTemplate','gameImageRemoteApiHttpMethod','gameImageRemoteApiRequestTemplate','gameImageRemoteApiResponsePath','gameImageFallbackUrlTemplate','frontendGameFallbackImageUrl','responseGameCategoryPath','responseSuccessPath','responseSuccessValue','responseErrorMessagePath','callbackMemberPath','callbackGameCodePath','callbackBetIdPath','callbackTxIdPath','callbackBetAmountPath','callbackWinAmountPath','callbackValidBetAmountPath','callbackRoundIdPath','callbackStatusPath','callbackEventTypePath','callbackSignaturePath','callbackSuccessResponse','callbackDuplicateResponse','sortOrder','providerStatus'];
   const el = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
   const title = document.getElementById('providerFormTitle'), saveBtn = document.getElementById('saveProviderBtn'), resetBtn = document.getElementById('resetProviderBtn');
@@ -46,8 +54,8 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     const btn = document.querySelector('[data-wallet-action="' + CSS.escape(String(action || '')) + '"]');
     if(btn) btn.disabled = !!busy;
   }
-  function setStatus(message, type){ statusBox.textContent = message || ''; statusBox.className = 'upload-status' + (type ? ' ' + type : ''); const top=document.getElementById('providerStatusBoxTop'); if(top){ top.textContent=message||''; top.className=statusBox.className; } }
-  function setBusy(busy){ saveBtn.disabled = busy; saveBtn.innerHTML = busy ? '<i class="bi bi-hourglass-split"></i> Saving...' : '<i class="bi bi-save"></i> Save Provider'; }
+  function setStatus(message, type){ const cls = 'upload-status' + (type ? ' ' + type : ''); if(statusBox){ statusBox.textContent = message || ''; statusBox.className = cls; } const top=document.getElementById('providerStatusBoxTop'); if(top){ top.textContent=message||''; top.className=cls; } }
+  function setBusy(busy){ if(!saveBtn) return; saveBtn.disabled = busy; saveBtn.innerHTML = busy ? '<i class="bi bi-hourglass-split"></i> Saving...' : '<i class="bi bi-check2"></i> Save Provider'; }
   function prettyJsonText(value){
     if(value === undefined || value === null || value === '') return '';
     try{
@@ -136,7 +144,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       pullLogTimingEnabled.checked=false;
     }
   }
-  function reset(){ form.querySelectorAll('input,select,textarea').forEach(node=>node.disabled=false); form.reset(); el.providerId.value=''; el.currency.value='MYR'; el.sortOrder.value='0'; el.providerStatus.value='1'; el.integrationType.value='GENERIC_API'; el.httpMethod.value='POST'; el.signatureType.value='MD5'; el.signatureOutputCase.value='LOWER'; el.ukeyLength.value='8'; el.ukeyPrefix.value=''; el.ukeyStaticValue.value=''; if(el.keyEnvironment) el.keyEnvironment.value='STAGING'; if(el.boLoginUrl) el.boLoginUrl.value=''; if(el.boUsername) el.boUsername.value=''; if(el.boPassword) el.boPassword.value=''; if(el.providerVariables) el.providerVariables.value=''; if(el.apiActionConfigs) el.apiActionConfigs.value=''; if(walletFlow) walletFlow.value='TRANSFER_BEFORE_LAUNCH'; if(withdrawNegativeAmount) withdrawNegativeAmount.checked=false; if(pullLogTimingEnabled) pullLogTimingEnabled.checked=false; if(pullLogWindowValue) pullLogWindowValue.value='15'; if(pullLogWindowUnit) pullLogWindowUnit.value='minutes'; if(pullLogEndDelaySeconds) pullLogEndDelaySeconds.value='0'; if(pullLogTimezone) pullLogTimezone.value='Asia/Kuala_Lumpur'; if(pullLogDateTimeFormat) pullLogDateTimeFormat.value='yyyy-MM-dd HH:mm:ss'; if(el.gameImageApiUrlTemplate) el.gameImageApiUrlTemplate.value=''; if(el.gameImageRemoteApiUrlTemplate) el.gameImageRemoteApiUrlTemplate.value=''; if(el.gameImageRemoteApiHttpMethod) el.gameImageRemoteApiHttpMethod.value='GET'; if(el.gameImageRemoteApiRequestTemplate) el.gameImageRemoteApiRequestTemplate.value=''; if(el.gameImageRemoteApiResponsePath) el.gameImageRemoteApiResponsePath.value=''; if(el.gameImageFallbackUrlTemplate) el.gameImageFallbackUrlTemplate.value=''; if(el.frontendGameFallbackImageUrl) el.frontendGameFallbackImageUrl.value=''; renderCategoryOptions(''); title.textContent='Create Provider'; el.providerCode.disabled=false; setStatus('', ''); window.scrollTo({top:0, behavior:'smooth'}); }
+  function reset(){ if(!form) return; form.querySelectorAll('input,select,textarea').forEach(node=>node.disabled=false); form.reset(); el.providerId.value=''; el.currency.value='MYR'; el.sortOrder.value='0'; el.providerStatus.value='1'; el.integrationType.value='GENERIC_API'; el.httpMethod.value='POST'; el.signatureType.value='MD5'; el.signatureOutputCase.value='LOWER'; el.ukeyLength.value='8'; el.ukeyPrefix.value=''; el.ukeyStaticValue.value=''; if(el.keyEnvironment) el.keyEnvironment.value='STAGING'; if(el.boLoginUrl) el.boLoginUrl.value=''; if(el.boUsername) el.boUsername.value=''; if(el.boPassword) el.boPassword.value=''; if(el.providerVariables) el.providerVariables.value=''; if(el.apiActionConfigs) el.apiActionConfigs.value=''; if(walletFlow) walletFlow.value='TRANSFER_BEFORE_LAUNCH'; if(withdrawNegativeAmount) withdrawNegativeAmount.checked=false; if(pullLogTimingEnabled) pullLogTimingEnabled.checked=false; if(pullLogWindowValue) pullLogWindowValue.value='15'; if(pullLogWindowUnit) pullLogWindowUnit.value='minutes'; if(pullLogEndDelaySeconds) pullLogEndDelaySeconds.value='0'; if(pullLogTimezone) pullLogTimezone.value='Asia/Kuala_Lumpur'; if(pullLogDateTimeFormat) pullLogDateTimeFormat.value='yyyy-MM-dd HH:mm:ss'; if(el.gameImageApiUrlTemplate) el.gameImageApiUrlTemplate.value=''; if(el.gameImageRemoteApiUrlTemplate) el.gameImageRemoteApiUrlTemplate.value=''; if(el.gameImageRemoteApiHttpMethod) el.gameImageRemoteApiHttpMethod.value='GET'; if(el.gameImageRemoteApiRequestTemplate) el.gameImageRemoteApiRequestTemplate.value=''; if(el.gameImageRemoteApiResponsePath) el.gameImageRemoteApiResponsePath.value=''; if(el.gameImageFallbackUrlTemplate) el.gameImageFallbackUrlTemplate.value=''; if(el.frontendGameFallbackImageUrl) el.frontendGameFallbackImageUrl.value=''; renderCategoryOptions(''); if(title) title.textContent='Create Provider'; el.providerCode.disabled=false; setStatus('', ''); window.scrollTo({top:0, behavior:'smooth'}); }
   function payload(){
     syncWalletFlowToJson();
     syncWithdrawNegativeToJson();
@@ -183,7 +191,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       select.dispatchEvent(new Event('change', { bubbles: true }));
     });
   }
-  function edit(item){ el.providerId.value=item.id||''; el.providerCode.value=item.code||''; el.providerName.value=item.name||''; renderCategoryOptions(item.categoryIds || item.category_ids || ''); el.providerImageUrl.value=item.providerImageUrl||''; el.providerBrandImageUrl.value=item.providerBrandImageUrl||item.provider_brand_image_url||''; setSelectValue(el.walletMode, providerField(item,'walletMode','wallet_mode','TRANSFER'), 'TRANSFER'); if(el.settlementCostPercent) el.settlementCostPercent.value=providerField(item,'settlementCostPercent','settlement_cost_percent','0'); setSelectValue(el.settlementCostBasis, providerField(item,'settlementCostBasis','settlement_cost_basis','HOUSE_WIN'), 'HOUSE_WIN'); el.currency.value=providerField(item,'currency','currency','MYR'); setSelectValue(el.integrationType, providerField(item,'integrationType','integration_type','GENERIC_API'), 'GENERIC_API'); setSelectValue(el.httpMethod, providerField(item,'httpMethod','http_method','POST'), 'POST'); el.apiBaseUrl.value=item.apiBaseUrl||''; el.operatorId.value=item.operatorId||''; el.secretKey.value=item.secretKey||''; if(el.keyEnvironment) el.keyEnvironment.value=providerField(item,'keyEnvironment','key_environment','STAGING'); if(el.boLoginUrl) el.boLoginUrl.value=providerField(item,'boLoginUrl','bo_login_url',''); if(el.boUsername) el.boUsername.value=providerField(item,'boUsername','bo_username',''); if(el.boPassword){ el.boPassword.value=providerField(item,'boPassword','bo_password',''); el.boPassword.type='password'; } if(el.providerVariables) el.providerVariables.value=prettyJsonText(item.providerVariables ?? item.provider_variables ?? ''); if(el.apiActionConfigs) el.apiActionConfigs.value=prettyJsonText(item.apiActionConfigs ?? item.api_action_configs ?? ''); syncWalletFlowFromJson(); syncWithdrawNegativeFromJson(); syncPullLogTimingFromJson(); el.signatureType.value=item.signatureType||'MD5'; el.signatureOutputCase.value=item.signatureOutputCase||'LOWER'; el.signatureTemplate.value=item.signatureTemplate||''; el.ukeyLength.value=item.ukeyLength||8; el.ukeyPrefix.value=item.ukeyPrefix||''; el.ukeyStaticValue.value=item.ukeyStaticValue||''; el.createPlayerPath.value=item.createPlayerPath||''; el.balancePath.value=item.balancePath||''; el.depositPath.value=item.depositPath||''; el.withdrawPath.value=item.withdrawPath||''; el.launchPath.value=item.launchPath||''; el.gameListPath.value=item.gameListPath||''; el.createPlayerRequestTemplate.value=item.createPlayerRequestTemplate||''; el.balanceRequestTemplate.value=item.balanceRequestTemplate||''; el.depositRequestTemplate.value=item.depositRequestTemplate||''; el.withdrawRequestTemplate.value=item.withdrawRequestTemplate||''; el.launchRequestTemplate.value=item.launchRequestTemplate||''; el.gameListRequestTemplate.value=item.gameListRequestTemplate||''; el.responseBalancePath.value=item.responseBalancePath||''; el.responseLaunchUrlPath.value=item.responseLaunchUrlPath||''; el.responseGameListPath.value=item.responseGameListPath||''; el.responseGameCodePath.value=item.responseGameCodePath||''; el.responseGameNamePath.value=item.responseGameNamePath||''; ['responseGameImagePath','gameImageApiUrlTemplate','gameImageRemoteApiUrlTemplate','gameImageRemoteApiHttpMethod','gameImageRemoteApiRequestTemplate','gameImageRemoteApiResponsePath','gameImageFallbackUrlTemplate','frontendGameFallbackImageUrl','responseGameCategoryPath','responseSuccessPath','responseSuccessValue','responseErrorMessagePath','callbackMemberPath','callbackGameCodePath','callbackBetIdPath','callbackTxIdPath','callbackBetAmountPath','callbackWinAmountPath','callbackValidBetAmountPath','callbackRoundIdPath','callbackStatusPath','callbackEventTypePath','callbackSignaturePath','callbackSuccessResponse','callbackDuplicateResponse'].forEach(k=>{ if(el[k]) el[k].value=item[k]||''; }); if(el.gameImageRemoteApiHttpMethod && !el.gameImageRemoteApiHttpMethod.value) el.gameImageRemoteApiHttpMethod.value='GET'; el.sortOrder.value=item.sortOrder??0; el.providerStatus.value=String(item.status??1); el.providerCode.disabled=true; title.textContent='Edit Provider #' + item.id;
+  function edit(item){ if(!form) return; el.providerId.value=item.id||''; el.providerCode.value=item.code||''; el.providerName.value=item.name||''; renderCategoryOptions(item.categoryIds || item.category_ids || ''); el.providerImageUrl.value=item.providerImageUrl||''; el.providerBrandImageUrl.value=item.providerBrandImageUrl||item.provider_brand_image_url||''; setSelectValue(el.walletMode, providerField(item,'walletMode','wallet_mode','TRANSFER'), 'TRANSFER'); if(el.settlementCostPercent) el.settlementCostPercent.value=providerField(item,'settlementCostPercent','settlement_cost_percent','0'); setSelectValue(el.settlementCostBasis, providerField(item,'settlementCostBasis','settlement_cost_basis','HOUSE_WIN'), 'HOUSE_WIN'); el.currency.value=providerField(item,'currency','currency','MYR'); setSelectValue(el.integrationType, providerField(item,'integrationType','integration_type','GENERIC_API'), 'GENERIC_API'); setSelectValue(el.httpMethod, providerField(item,'httpMethod','http_method','POST'), 'POST'); el.apiBaseUrl.value=item.apiBaseUrl||''; el.operatorId.value=item.operatorId||''; el.secretKey.value=item.secretKey||''; if(el.keyEnvironment) el.keyEnvironment.value=providerField(item,'keyEnvironment','key_environment','STAGING'); if(el.boLoginUrl) el.boLoginUrl.value=providerField(item,'boLoginUrl','bo_login_url',''); if(el.boUsername) el.boUsername.value=providerField(item,'boUsername','bo_username',''); if(el.boPassword){ el.boPassword.value=providerField(item,'boPassword','bo_password',''); el.boPassword.type='password'; } if(el.providerVariables) el.providerVariables.value=prettyJsonText(item.providerVariables ?? item.provider_variables ?? ''); if(el.apiActionConfigs) el.apiActionConfigs.value=prettyJsonText(item.apiActionConfigs ?? item.api_action_configs ?? ''); syncWalletFlowFromJson(); syncWithdrawNegativeFromJson(); syncPullLogTimingFromJson(); el.signatureType.value=item.signatureType||'MD5'; el.signatureOutputCase.value=item.signatureOutputCase||'LOWER'; el.signatureTemplate.value=item.signatureTemplate||''; el.ukeyLength.value=item.ukeyLength||8; el.ukeyPrefix.value=item.ukeyPrefix||''; el.ukeyStaticValue.value=item.ukeyStaticValue||''; el.createPlayerPath.value=item.createPlayerPath||''; el.balancePath.value=item.balancePath||''; el.depositPath.value=item.depositPath||''; el.withdrawPath.value=item.withdrawPath||''; el.launchPath.value=item.launchPath||''; el.gameListPath.value=item.gameListPath||''; el.createPlayerRequestTemplate.value=item.createPlayerRequestTemplate||''; el.balanceRequestTemplate.value=item.balanceRequestTemplate||''; el.depositRequestTemplate.value=item.depositRequestTemplate||''; el.withdrawRequestTemplate.value=item.withdrawRequestTemplate||''; el.launchRequestTemplate.value=item.launchRequestTemplate||''; el.gameListRequestTemplate.value=item.gameListRequestTemplate||''; el.responseBalancePath.value=item.responseBalancePath||''; el.responseLaunchUrlPath.value=item.responseLaunchUrlPath||''; el.responseGameListPath.value=item.responseGameListPath||''; el.responseGameCodePath.value=item.responseGameCodePath||''; el.responseGameNamePath.value=item.responseGameNamePath||''; ['responseGameImagePath','gameImageApiUrlTemplate','gameImageRemoteApiUrlTemplate','gameImageRemoteApiHttpMethod','gameImageRemoteApiRequestTemplate','gameImageRemoteApiResponsePath','gameImageFallbackUrlTemplate','frontendGameFallbackImageUrl','responseGameCategoryPath','responseSuccessPath','responseSuccessValue','responseErrorMessagePath','callbackMemberPath','callbackGameCodePath','callbackBetIdPath','callbackTxIdPath','callbackBetAmountPath','callbackWinAmountPath','callbackValidBetAmountPath','callbackRoundIdPath','callbackStatusPath','callbackEventTypePath','callbackSignaturePath','callbackSuccessResponse','callbackDuplicateResponse'].forEach(k=>{ if(el[k]) el[k].value=item[k]||''; }); if(el.gameImageRemoteApiHttpMethod && !el.gameImageRemoteApiHttpMethod.value) el.gameImageRemoteApiHttpMethod.value='GET'; el.sortOrder.value=item.sortOrder??0; el.providerStatus.value=String(item.status??1); el.providerCode.disabled=true; if(title) title.textContent='Edit Provider #' + item.id; if(isFormPage) document.title = 'Edit Provider #' + item.id;
     if(tenantMode){
       const editable=new Set(['providerImageUrl','providerBrandImageUrl','frontendGameFallbackImageUrl']);
       form.querySelectorAll('input,select,textarea').forEach(node=>{ if(node.id && node.id!=='providerId') node.disabled=!editable.has(node.id); });
@@ -196,17 +204,19 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     }
     window.scrollTo({top:0, behavior:'smooth'}); }
   async function editFresh(id, button){
+    if(isListPage && !isFormPage){
+      window.location.href = editPageUrl(id);
+      return;
+    }
     const originalHtml = button ? button.innerHTML : '';
     if(button){ button.disabled = true; button.innerHTML = '<i class="bi bi-hourglass-split"></i> Loading...'; }
     try{
-      // Re-read the provider list before editing. This avoids using the stale card object that
-      // can remain in memory immediately after save/update while the async reload is still running.
       const providerJson = await fetchJson(PROVIDER_API.list + (PROVIDER_API.list.includes('?') ? '&' : '?') + '_ts=' + Date.now(), { cache: 'no-store' });
       rows = providerJson.data || providerJson || [];
       const item = rows.find(x => String(x.id) === String(id));
       if(!item) throw new Error('Provider not found. Please refresh and try again.');
       edit(item);
-      render();
+      if(isListPage) render();
     }catch(err){
       setStatus(err.message || 'Unable to load latest provider data.', 'error');
     }finally{
@@ -214,7 +224,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     }
   }
 
-  function providerOptions(){ const opts = rows.map(x => `<option value="${escapeHtml(x.code)}" data-provider-id="${escapeHtml(x.id)}">${escapeHtml(x.code)} - ${escapeHtml(x.name)}</option>`).join('') || '<option value="">No provider</option>'; walletProviderCode.innerHTML = opts; const cb=document.getElementById('callbackProviderCode'); if(cb) cb.innerHTML=opts; }
+  function providerOptions(){ if(!walletProviderCode) return; const opts = rows.map(x => `<option value="${escapeHtml(x.code)}" data-provider-id="${escapeHtml(x.id)}">${escapeHtml(x.code)} - ${escapeHtml(x.name)}</option>`).join('') || '<option value="">No provider</option>'; walletProviderCode.innerHTML = opts; const cb=document.getElementById('callbackProviderCode'); if(cb) cb.innerHTML=opts; }
   function maskCredential(value){
     const text = String(value || '');
     if(!text) return '-';
@@ -281,10 +291,17 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     return { onCount, total: names.length, missing, invalid: parsed.invalid, body: `${badges}${invalid}` };
   }
   function render(){
+    if(!list) return;
+    const q = String(providerSearchInput && providerSearchInput.value || '').trim().toLowerCase();
+    const visible = !q ? rows : rows.filter(item => {
+      const hay = [item.code, item.name, item.walletMode, item.integrationType, item.currency, item.apiBaseUrl, item.keyEnvironment || item.key_environment]
+        .map(v => String(v || '').toLowerCase()).join(' ');
+      return hay.includes(q);
+    });
     list.innerHTML='';
-    empty.hidden = rows.length > 0;
+    if(empty) empty.hidden = visible.length > 0;
     providerOptions();
-    rows.forEach(item => {
+    visible.forEach(item => {
       const linkedGameCount = Number(item.gameCount ?? item.game_count ?? 0);
       const isActive = Number(item.status) === 1;
       const env = String(item.keyEnvironment || item.key_environment || 'STAGING').toUpperCase() === 'LIVE' ? 'LIVE' : 'STAGING';
@@ -335,8 +352,24 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       ]);
       rows = providerJson.data || providerJson || [];
       categories = categoryJson.data || categoryJson || [];
-      renderCategoryOptions(el.providerId.value ? (rows.find(r => String(r.id) === String(el.providerId.value)) || {}).categoryIds : '');
-      render(); providerOptions(); setStatus('Latest provider and category data loaded.', 'success');
+      if(form && el.providerCategoryIds){
+        renderCategoryOptions(el.providerId.value ? (rows.find(r => String(r.id) === String(el.providerId.value)) || {}).categoryIds : '');
+      }
+      if(isListPage) render();
+      providerOptions();
+      if(isFormPage){
+        const params = new URLSearchParams(window.location.search);
+        const editId = params.get('id');
+        if(editId){
+          const item = rows.find(x => String(x.id) === String(editId));
+          if(item) edit(item);
+          else setStatus('Provider #' + editId + ' not found.', 'error');
+        } else {
+          setStatus('', '');
+        }
+      } else {
+        setStatus('Latest provider and category data loaded.', 'success');
+      }
     }catch(err){ setStatus(err.message || 'Failed to load.', 'error'); }
   }
 
@@ -354,6 +387,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
           })
         });
         setStatus(json.message||'Brand provider images saved.','success');
+        if(isFormPage){ window.location.href = LIST_PAGE + '?saved=1'; return; }
         reset(); await load();
       }catch(err){setStatus(err.message||'Save failed.','error');}finally{setBusy(false);}
       return;
@@ -374,6 +408,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         body:JSON.stringify(payload())
       });
       setStatus(json.message || 'Saved.', 'success');
+      if(isFormPage){ window.location.href = LIST_PAGE + '?saved=1'; return; }
       reset();
       await load();
     }catch(err){
@@ -578,9 +613,9 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     catch(err){ setStatus('API Action Configs JSON invalid: ' + err.message, 'error'); }
   }
 
-  form.addEventListener('submit', save);
+  if(form) form.addEventListener('submit', save);
   const toggleBoPasswordBtn=document.getElementById('toggleBoPasswordBtn'); if(toggleBoPasswordBtn && el.boPassword) toggleBoPasswordBtn.addEventListener('click', ()=>{ const show=el.boPassword.type==='password'; el.boPassword.type=show?'text':'password'; toggleBoPasswordBtn.innerHTML=show?'<i class="bi bi-eye-slash"></i>':'<i class="bi bi-eye"></i>'; });
-  if(el.apiActionConfigs) el.apiActionConfigs.addEventListener('input', () => { syncWalletFlowFromJson(); syncWithdrawNegativeFromJson(); syncPullLogTimingFromJson(); }); if(walletFlow) walletFlow.addEventListener('change', () => { try{ syncWalletFlowToJson(); }catch(err){ setStatus('API Action Configs JSON invalid: ' + err.message, 'error'); } }); if(pullLogTimingEnabled) pullLogTimingEnabled.addEventListener('change', syncPullLogTimingToJson); [pullLogWindowValue,pullLogWindowUnit,pullLogEndDelaySeconds,pullLogTimezone,pullLogDateTimeFormat].filter(Boolean).forEach(node => node.addEventListener('change', () => { if(pullLogTimingEnabled?.checked) syncPullLogTimingToJson(); })); const formatActionBtn=document.getElementById('formatActionConfigBtn'); if(formatActionBtn) formatActionBtn.addEventListener('click', formatActionConfig); resetBtn.addEventListener('click', reset); if(toggleApiDebugToolsBtn) toggleApiDebugToolsBtn.addEventListener('click', openApiDebugTools); if(closeApiDebugToolsBtn) closeApiDebugToolsBtn.addEventListener('click', closeApiDebugTools); if(apiDebugToolsModal){ apiDebugToolsModal.addEventListener('click', e => { if(e.target === apiDebugToolsModal) closeApiDebugTools(); }); } document.addEventListener('keydown', e => { if(e.key === 'Escape' && apiDebugToolsModal && apiDebugToolsModal.classList.contains('show')) closeApiDebugTools(); }); list.addEventListener('click', async e => {
+  if(el.apiActionConfigs) el.apiActionConfigs.addEventListener('input', () => { syncWalletFlowFromJson(); syncWithdrawNegativeFromJson(); syncPullLogTimingFromJson(); }); if(walletFlow) walletFlow.addEventListener('change', () => { try{ syncWalletFlowToJson(); }catch(err){ setStatus('API Action Configs JSON invalid: ' + err.message, 'error'); } }); if(pullLogTimingEnabled) pullLogTimingEnabled.addEventListener('change', syncPullLogTimingToJson); [pullLogWindowValue,pullLogWindowUnit,pullLogEndDelaySeconds,pullLogTimezone,pullLogDateTimeFormat].filter(Boolean).forEach(node => node.addEventListener('change', () => { if(pullLogTimingEnabled?.checked) syncPullLogTimingToJson(); })); const formatActionBtn=document.getElementById('formatActionConfigBtn'); if(formatActionBtn) formatActionBtn.addEventListener('click', formatActionConfig); if(resetBtn) resetBtn.addEventListener('click', reset); if(toggleApiDebugToolsBtn) toggleApiDebugToolsBtn.addEventListener('click', openApiDebugTools); if(closeApiDebugToolsBtn) closeApiDebugToolsBtn.addEventListener('click', closeApiDebugTools); if(apiDebugToolsModal){ apiDebugToolsModal.addEventListener('click', e => { if(e.target === apiDebugToolsModal) closeApiDebugTools(); }); } document.addEventListener('keydown', e => { if(e.key === 'Escape' && apiDebugToolsModal && apiDebugToolsModal.classList.contains('show')) closeApiDebugTools(); }); if(providerSearchInput){ providerSearchInput.addEventListener('input', render); providerSearchInput.addEventListener('search', render); } if(list) list.addEventListener('click', async e => {
     const foldBtn=e.target.closest('[data-provider-fold]');
     if(foldBtn){
       const card=foldBtn.closest('.provider-card');
@@ -619,7 +654,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         catch(_){ setStatus('Unable to copy.', 'error'); }
       }
     }
-  }); document.querySelectorAll('[data-wallet-action]').forEach(btn => btn.addEventListener('click', () => wallet(btn.dataset.walletAction))); const syncBtn=document.getElementById('syncSelectedProviderBtn'); if(syncBtn) syncBtn.addEventListener('click', syncGames); const debugBtn=document.getElementById('debugSelectedProviderBtn'); if(debugBtn) debugBtn.addEventListener('click', debugGames); const cbBtn=document.getElementById('callbackPreviewBtn'); if(cbBtn) cbBtn.addEventListener('click', callbackPreview); const reportBtn=document.getElementById('ledgerSummaryBtn'); if(reportBtn) reportBtn.addEventListener('click', ledgerSummary); reset(); load();
+  }); document.querySelectorAll('[data-wallet-action]').forEach(btn => btn.addEventListener('click', () => wallet(btn.dataset.walletAction))); const syncBtn=document.getElementById('syncSelectedProviderBtn'); if(syncBtn) syncBtn.addEventListener('click', syncGames); const debugBtn=document.getElementById('debugSelectedProviderBtn'); if(debugBtn) debugBtn.addEventListener('click', debugGames); const cbBtn=document.getElementById('callbackPreviewBtn'); if(cbBtn) cbBtn.addEventListener('click', callbackPreview); const reportBtn=document.getElementById('ledgerSummaryBtn'); if(reportBtn) reportBtn.addEventListener('click', ledgerSummary); if(form) reset(); load();
 })();
 
 (function(){
