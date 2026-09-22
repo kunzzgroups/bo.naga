@@ -26,7 +26,10 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
   const list = document.getElementById('providerList'), empty = document.getElementById('providerEmpty'), statusBox = document.getElementById('providerStatusBox');
   const ids = ['providerId','providerCode','providerName','providerType','providerCategoryIds','providerImageUrl','providerBrandImageUrl','walletMode','settlementCostPercent','settlementCostBasis','integrationType','httpMethod','currency','apiBaseUrl','operatorId','secretKey','keyEnvironment','boLoginUrl','boUsername','boPassword','providerVariables','apiActionConfigs','signatureType','signatureOutputCase','signatureTemplate','ukeyLength','ukeyPrefix','ukeyStaticValue','createPlayerPath','balancePath','depositPath','withdrawPath','launchPath','gameListPath','createPlayerRequestTemplate','balanceRequestTemplate','depositRequestTemplate','withdrawRequestTemplate','launchRequestTemplate','gameListRequestTemplate','responseBalancePath','responseLaunchUrlPath','responseGameListPath','responseGameCodePath','responseGameNamePath','responseGameImagePath','gameImageApiUrlTemplate','gameImageRemoteApiUrlTemplate','gameImageRemoteApiHttpMethod','gameImageRemoteApiRequestTemplate','gameImageRemoteApiResponsePath','gameImageFallbackUrlTemplate','frontendGameFallbackImageUrl','responseGameCategoryPath','responseSuccessPath','responseSuccessValue','responseErrorMessagePath','callbackMemberPath','callbackGameCodePath','callbackBetIdPath','callbackTxIdPath','callbackBetAmountPath','callbackWinAmountPath','callbackValidBetAmountPath','callbackRoundIdPath','callbackStatusPath','callbackEventTypePath','callbackSignaturePath','callbackSuccessResponse','callbackDuplicateResponse','sortOrder','providerStatus'];
   const el = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
-  const title = document.getElementById('providerFormTitle'), saveBtn = document.getElementById('saveProviderBtn'), refreshBtn = document.getElementById('refreshProviderBtn'), resetBtn = document.getElementById('resetProviderBtn');
+  const title = document.getElementById('providerFormTitle'), saveBtn = document.getElementById('saveProviderBtn'), resetBtn = document.getElementById('resetProviderBtn');
+  const toggleApiDebugToolsBtn = document.getElementById('toggleApiDebugToolsBtn');
+  const apiDebugToolsModal = document.getElementById('apiDebugToolsModal');
+  const closeApiDebugToolsBtn = document.getElementById('closeApiDebugToolsBtn');
   const walletFlow = document.getElementById('walletFlow');
   const withdrawNegativeAmount = document.getElementById('withdrawNegativeAmount');
   const pullLogTimingEnabled = document.getElementById('pullLogTimingEnabled');
@@ -44,7 +47,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     if(btn) btn.disabled = !!busy;
   }
   function setStatus(message, type){ statusBox.textContent = message || ''; statusBox.className = 'upload-status' + (type ? ' ' + type : ''); const top=document.getElementById('providerStatusBoxTop'); if(top){ top.textContent=message||''; top.className=statusBox.className; } }
-  function setBusy(busy){ saveBtn.disabled = busy; refreshBtn.disabled = busy; saveBtn.innerHTML = busy ? '<i class="bi bi-hourglass-split"></i> Saving...' : '<i class="bi bi-save"></i> Save Provider'; }
+  function setBusy(busy){ saveBtn.disabled = busy; saveBtn.innerHTML = busy ? '<i class="bi bi-hourglass-split"></i> Saving...' : '<i class="bi bi-save"></i> Save Provider'; }
   function prettyJsonText(value){
     if(value === undefined || value === null || value === '') return '';
     try{
@@ -266,14 +269,16 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       .map(key => String(key).toUpperCase())
       .sort();
     const names = [...standard, ...extras];
+    const onCount = names.reduce((n, name) => n + (actionConfigured(item, configs, name) ? 1 : 0), 0);
+    const missing = names.filter(name => !actionConfigured(item, configs, name));
     const badges = names.map(name => {
       const on = actionConfigured(item, configs, name);
-      return `<span class="provider-api-capability ${on ? 'is-on' : 'is-off'}" title="${escapeHtml(name)} ${on ? 'configured/enabled' : 'missing or disabled'}"><i class="bi ${on ? 'bi-check-circle-fill' : 'bi-x-circle'}"></i>${escapeHtml(name)}</span>`;
+      return `<span class="provider-api-capability ${on ? 'is-on' : 'is-off'}" title="${escapeHtml(name)} ${on ? 'configured/enabled' : 'missing or disabled'}"><i class="bi ${on ? 'bi-check' : 'bi-dash'}" aria-hidden="true"></i>${escapeHtml(name)}</span>`;
     }).join('');
     const invalid = parsed.invalid
-      ? '<span class="provider-api-capability is-invalid" title="API Action Configs is not valid JSON"><i class="bi bi-exclamation-triangle-fill"></i>INVALID JSON</span>'
+      ? '<span class="provider-api-capability is-invalid"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i>INVALID JSON</span>'
       : '';
-    return `<div class="provider-api-capabilities"><div class="provider-api-capabilities-title"><i class="bi bi-diagram-3 me-1"></i>API Capabilities</div>${badges}${invalid}</div>`;
+    return { onCount, total: names.length, missing, invalid: parsed.invalid, body: `${badges}${invalid}` };
   }
   function render(){
     list.innerHTML='';
@@ -281,16 +286,41 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     providerOptions();
     rows.forEach(item => {
       const linkedGameCount = Number(item.gameCount ?? item.game_count ?? 0);
-      const gameHtml = linkedGameCount > 0
-        ? `<small class="text-secondary provider-game-summary"><i class="bi bi-controller me-1"></i>${linkedGameCount} linked game${linkedGameCount === 1 ? '' : 's'}</small>`
-        : '<small class="text-secondary provider-game-summary">No game linked yet. Set this code in Game → Provider Code.</small>';
+      const isActive = Number(item.status) === 1;
       const env = String(item.keyEnvironment || item.key_environment || 'STAGING').toUpperCase() === 'LIVE' ? 'LIVE' : 'STAGING';
       const boUrl = item.boLoginUrl || item.bo_login_url || '';
       const boUsername = item.boUsername || item.bo_username || '';
       const boPassword = item.boPassword || item.bo_password || '';
+      const categoryNames = (item.categoryIds || item.category_ids || '').split(',')
+        .map(id => (categories.find(c => String(c.id) === String(id)) || {}).name)
+        .filter(Boolean)
+        .join(', ') || 'No category';
+      const apiUrl = String(item.apiBaseUrl || '').trim();
+      const caps = providerCapabilityHtml(item);
+      const sortVal = item.sortOrder ?? 0;
+      const metaLine = [
+        categoryNames,
+        item.walletMode || 'TRANSFER',
+        item.integrationType || 'GENERIC_API',
+        item.currency || 'MYR',
+        `${linkedGameCount} games`,
+        `Sort ${sortVal}`
+      ].map(t => `<span>${escapeHtml(String(t))}</span>`).join('<span class="provider-meta-sep" aria-hidden="true">·</span>');
+      const actionsHtml = tenantMode
+        ? `<button class="clean-btn provider-edit-btn" type="button" data-edit-id="${escapeHtml(item.id)}"><i class="bi bi-image" aria-hidden="true"></i><span>Brand</span></button>`
+        : `<button class="clean-btn provider-edit-btn" type="button" data-edit-id="${escapeHtml(item.id)}"><i class="bi bi-pencil" aria-hidden="true"></i><span>Edit</span></button><button class="clean-btn provider-icon-btn provider-delete-btn" type="button" data-delete-id="${escapeHtml(item.id)}" title="Delete" aria-label="Delete"><i class="bi bi-trash" aria-hidden="true"></i></button>`;
+      const codeLabel = String(item.code || '').trim();
+      const nameLabel = String(item.name || '').trim();
+      const showCodeEyebrow = codeLabel && codeLabel.toUpperCase() !== nameLabel.toUpperCase();
+      const readyPct = caps.total ? Math.round((caps.onCount / caps.total) * 100) : 0;
+      const missingHint = caps.invalid
+        ? 'Invalid JSON'
+        : (caps.missing && caps.missing.length
+          ? `${caps.missing.slice(0, 2).join(', ')}${caps.missing.length > 2 ? ` +${caps.missing.length - 2}` : ''} missing`
+          : 'All ready');
       const card=document.createElement('div');
-      card.className='manage-card';
-      card.innerHTML=`<div class="manage-thumb game-thumb">${item.providerImageUrl ? `<img src="${escapeHtml(item.providerImageUrl)}" alt="${escapeHtml(item.name || item.code)}" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;">` : `<i class="bi bi-hdd-network fs-1 text-secondary"></i>`}</div><div class="manage-card-body"><div class="slider-card-title"><b>${escapeHtml(item.code)} - ${escapeHtml(item.name)}</b>${statusPill(item.status)}<span class="slider-pill ${env === 'LIVE' ? 'active' : 'inactive'}"><i class="bi ${env === 'LIVE' ? 'bi-broadcast' : 'bi-tools'}"></i>${env === 'LIVE' ? 'Live Key' : 'Staging Key'}</span></div><div class="slider-meta"><span><i class="bi bi-tag me-1"></i>${escapeHtml((item.categoryIds || item.category_ids || '').split(',').map(id => (categories.find(c => String(c.id) === String(id)) || {}).name).filter(Boolean).join(', ') || 'No category')}</span><span><i class="bi bi-wallet2 me-1"></i>${escapeHtml(item.walletMode || 'TRANSFER')}</span><span><i class="bi bi-plug me-1"></i>${escapeHtml(item.integrationType || 'GENERIC_API')}</span><span><i class="bi bi-cash me-1"></i>${escapeHtml(item.currency || 'MYR')}</span><span><i class="bi bi-controller me-1"></i>${linkedGameCount} games</span><span><i class="bi bi-link-45deg me-1"></i>${escapeHtml(item.apiBaseUrl || '-')}</span><span><i class="bi bi-sort-numeric-down me-1"></i>Sort: ${escapeHtml(item.sortOrder ?? 0)}</span></div>${providerCapabilityHtml(item)}<div class="provider-access-record mt-3 p-3 border rounded-3 bg-light"><div class="fw-bold mb-2"><i class="bi bi-shield-lock me-1"></i>Provider BO Login Record</div><div class="row g-2 small"><div class="col-12 col-xl-5"><span class="text-secondary">URL:</span> ${boUrl ? `<a href="${escapeHtml(boUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(boUrl)}</a>` : '-'}</div><div class="col-12 col-md-5 col-xl-3"><span class="text-secondary">Username:</span> <code>${escapeHtml(boUsername || '-')}</code></div><div class="col-12 col-md-7 col-xl-4"><span class="text-secondary">Password:</span> <code data-provider-password-id="${escapeHtml(item.id)}">${escapeHtml(maskCredential(boPassword))}</code>${boPassword ? ` <button class="clean-btn py-1 px-2 ms-1" type="button" data-reveal-password-id="${escapeHtml(item.id)}"><i class="bi bi-eye"></i> Reveal</button><button class="clean-btn py-1 px-2 ms-1" type="button" data-copy-password-id="${escapeHtml(item.id)}"><i class="bi bi-copy"></i> Copy</button>` : ''}</div></div></div><div class="d-flex gap-2 flex-wrap mt-2">${gameHtml}</div></div><div class="slider-card-actions">${tenantMode?`<button class="clean-btn primary" type="button" data-edit-id="${escapeHtml(item.id)}"><i class="bi bi-image"></i> Edit Brand Images</button><span class="small text-muted"><i class="bi bi-lock"></i> Provider settings managed by master</span>`:`<button class="clean-btn primary" type="button" data-edit-id="${escapeHtml(item.id)}"><i class="bi bi-pencil-square"></i> Edit</button><button class="clean-btn danger" type="button" data-delete-id="${escapeHtml(item.id)}"><i class="bi bi-trash"></i> Delete</button>`}</div>`;
+      card.className='manage-card provider-card is-vault-first is-fold-collapsed';
+      card.innerHTML=`<header class="provider-card-head"><div class="manage-thumb game-thumb">${item.providerImageUrl ? `<img src="${escapeHtml(item.providerImageUrl)}" alt="${escapeHtml(item.name || item.code)}">` : `<i class="bi bi-hdd-network" aria-hidden="true"></i>`}</div><div class="provider-card-identity">${showCodeEyebrow ? `<p class="provider-card-code">${escapeHtml(codeLabel)}</p>` : ''}<div class="provider-title-row"><h3 class="provider-card-label">${escapeHtml(nameLabel || codeLabel)}</h3><span class="provider-status ${isActive ? 'is-on' : 'is-off'}"><i class="provider-status-dot" aria-hidden="true"></i>${isActive ? 'Active' : 'Inactive'}</span><span class="provider-env-pill ${env === 'LIVE' ? 'is-live' : 'is-staging'}">${env === 'LIVE' ? 'Live Key' : 'Staging'}</span></div></div><div class="slider-card-actions">${actionsHtml}</div></header><section class="provider-ready" aria-label="API readiness"><div class="provider-ready-top"><span class="provider-ready-count">${caps.onCount}/${caps.total} ready</span><span class="provider-ready-hint ${caps.onCount === caps.total && !caps.invalid ? 'is-complete' : 'is-gap'}">${escapeHtml(missingHint)}</span></div><div class="provider-ready-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${readyPct}"><span class="provider-ready-fill" style="width:${readyPct}%"></span></div></section><button type="button" class="provider-fold-toggle" data-provider-fold aria-expanded="false"><span class="provider-fold-icon" aria-hidden="true"><i class="bi bi-shield-lock"></i></span><span class="provider-fold-label">BO Login</span><span class="provider-fold-status ${(boUrl || boUsername || boPassword) ? 'is-set' : 'is-empty'}">${(boUrl || boUsername || boPassword) ? 'On file' : 'Empty'}</span><i class="bi bi-chevron-down provider-fold-chevron" aria-hidden="true"></i></button><div class="provider-fold-panel" data-provider-fold-panel hidden><section class="provider-vault"><div class="provider-cred-row"><div class="provider-cred-field"><span class="provider-k">URL</span><div class="provider-cred-well">${boUrl ? `<a href="${escapeHtml(boUrl)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(boUrl)}">${escapeHtml(boUrl)}</a>` : '<span class="provider-empty">—</span>'}${boUrl ? `<button type="button" class="provider-well-btn" data-copy-text="${escapeHtml(boUrl)}" title="Copy URL" aria-label="Copy URL"><i class="bi bi-copy" aria-hidden="true"></i></button>` : ''}</div></div><div class="provider-cred-field"><span class="provider-k">Username</span><div class="provider-cred-well"><code>${escapeHtml(boUsername || '—')}</code>${boUsername ? `<button type="button" class="provider-well-btn" data-copy-text="${escapeHtml(boUsername)}" title="Copy username" aria-label="Copy username"><i class="bi bi-copy" aria-hidden="true"></i></button>` : ''}</div></div><div class="provider-cred-field"><span class="provider-k">Password</span><div class="provider-cred-well provider-cred-password"><code data-provider-password-id="${escapeHtml(item.id)}">${escapeHtml(maskCredential(boPassword))}</code>${boPassword ? `<button type="button" class="provider-well-btn provider-reveal-btn" data-reveal-password-id="${escapeHtml(item.id)}" title="Reveal"><i class="bi bi-eye" aria-hidden="true"></i><span>Reveal</span></button><button type="button" class="provider-well-btn" data-copy-password-id="${escapeHtml(item.id)}" title="Copy"><i class="bi bi-copy" aria-hidden="true"></i><span>Copy</span></button>` : ''}</div></div></div></section><footer class="provider-card-foot"><p class="provider-meta-line">${metaLine}</p>${apiUrl ? `<button type="button" class="provider-endpoint-btn" data-copy-text="${escapeHtml(apiUrl)}" title="Copy API URL">${escapeHtml(apiUrl)}</button>` : ''}</footer></div>`;
       list.appendChild(card);
     });
   }
@@ -512,6 +542,36 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
   async function callbackPreview(){ const code=document.getElementById('callbackProviderCode').value; const raw=document.getElementById('callbackSample').value || '{}'; const box=document.getElementById('callbackResult'); try{ const json=await fetchJson(CALLBACK_API.previewBase + '/' + encodeURIComponent(code), {method:'POST', headers:{'Content-Type':'application/json'}, body:raw}); box.textContent=JSON.stringify(json.data,null,2); }catch(err){ box.textContent=err.message || 'Callback preview failed'; } }
   async function ledgerSummary(){ const code=document.getElementById('callbackProviderCode').value; const from=document.getElementById('reportFrom').value; const to=document.getElementById('reportTo').value; const box=document.getElementById('callbackResult'); let url=CALLBACK_API.report + '?providerCode=' + encodeURIComponent(code); if(from) url += '&from=' + encodeURIComponent(from); if(to) url += '&to=' + encodeURIComponent(to); try{ const json=await fetchJson(url); box.textContent=JSON.stringify(json.data,null,2); }catch(err){ box.textContent=err.message || 'Report failed'; } }
 
+  function openApiDebugTools(){
+    if(!apiDebugToolsModal) return;
+    apiDebugToolsModal.hidden = false;
+    apiDebugToolsModal.setAttribute('aria-hidden', 'false');
+    apiDebugToolsModal.classList.add('show');
+    if(toggleApiDebugToolsBtn){
+      toggleApiDebugToolsBtn.setAttribute('aria-expanded', 'true');
+      toggleApiDebugToolsBtn.classList.add('is-active');
+    }
+    document.body.classList.add('modal-open');
+    const firstField = document.getElementById('walletMemberId');
+    if(firstField) setTimeout(() => firstField.focus(), 40);
+  }
+  function closeApiDebugTools(){
+    if(!apiDebugToolsModal) return;
+    apiDebugToolsModal.classList.remove('show');
+    apiDebugToolsModal.setAttribute('aria-hidden', 'true');
+    apiDebugToolsModal.hidden = true;
+    if(toggleApiDebugToolsBtn){
+      toggleApiDebugToolsBtn.setAttribute('aria-expanded', 'false');
+      toggleApiDebugToolsBtn.classList.remove('is-active');
+      toggleApiDebugToolsBtn.focus();
+    }
+    document.body.classList.remove('modal-open');
+  }
+  function toggleApiDebugTools(){
+    if(!apiDebugToolsModal) return;
+    if(apiDebugToolsModal.classList.contains('show')) closeApiDebugTools();
+    else openApiDebugTools();
+  }
   function formatActionConfig(){
     if(!el.apiActionConfigs) return;
     try{ el.apiActionConfigs.value = JSON.stringify(JSON.parse(el.apiActionConfigs.value || '{}'), null, 2); syncWalletFlowFromJson(); syncWithdrawNegativeFromJson(); syncPullLogTimingFromJson(); setStatus('API Action Configs JSON formatted.', 'success'); }
@@ -520,7 +580,46 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
 
   form.addEventListener('submit', save);
   const toggleBoPasswordBtn=document.getElementById('toggleBoPasswordBtn'); if(toggleBoPasswordBtn && el.boPassword) toggleBoPasswordBtn.addEventListener('click', ()=>{ const show=el.boPassword.type==='password'; el.boPassword.type=show?'text':'password'; toggleBoPasswordBtn.innerHTML=show?'<i class="bi bi-eye-slash"></i>':'<i class="bi bi-eye"></i>'; });
-  if(el.apiActionConfigs) el.apiActionConfigs.addEventListener('input', () => { syncWalletFlowFromJson(); syncWithdrawNegativeFromJson(); syncPullLogTimingFromJson(); }); if(walletFlow) walletFlow.addEventListener('change', () => { try{ syncWalletFlowToJson(); }catch(err){ setStatus('API Action Configs JSON invalid: ' + err.message, 'error'); } }); if(pullLogTimingEnabled) pullLogTimingEnabled.addEventListener('change', syncPullLogTimingToJson); [pullLogWindowValue,pullLogWindowUnit,pullLogEndDelaySeconds,pullLogTimezone,pullLogDateTimeFormat].filter(Boolean).forEach(node => node.addEventListener('change', () => { if(pullLogTimingEnabled?.checked) syncPullLogTimingToJson(); })); const formatActionBtn=document.getElementById('formatActionConfigBtn'); if(formatActionBtn) formatActionBtn.addEventListener('click', formatActionConfig); resetBtn.addEventListener('click', reset); refreshBtn.addEventListener('click', load); list.addEventListener('click', async e => { const eb=e.target.closest('[data-edit-id]'), db=e.target.closest('[data-delete-id]'), rb=e.target.closest('[data-reveal-password-id]'), cb=e.target.closest('[data-copy-password-id]'); if(eb){ editFresh(eb.dataset.editId, eb); } if(db) remove(db.dataset.deleteId); if(rb){ const item=rows.find(x=>String(x.id)===String(rb.dataset.revealPasswordId)); const target=list.querySelector('[data-provider-password-id="'+CSS.escape(String(rb.dataset.revealPasswordId))+'"]'); if(item && target){ const currentlyRevealed=rb.dataset.revealed==='1'; target.textContent=currentlyRevealed ? maskCredential(item.boPassword || item.bo_password || '') : (item.boPassword || item.bo_password || '-'); rb.dataset.revealed=currentlyRevealed?'0':'1'; rb.innerHTML=currentlyRevealed?'<i class="bi bi-eye"></i> Reveal':'<i class="bi bi-eye-slash"></i> Hide'; } } if(cb){ const item=rows.find(x=>String(x.id)===String(cb.dataset.copyPasswordId)); const password=item && (item.boPassword || item.bo_password || ''); if(password){ try{ await navigator.clipboard.writeText(password); setStatus('Provider BO password copied.', 'success'); }catch(_){ setStatus('Unable to copy password. Use Reveal and copy manually.', 'error'); } } } }); document.querySelectorAll('[data-wallet-action]').forEach(btn => btn.addEventListener('click', () => wallet(btn.dataset.walletAction))); const syncBtn=document.getElementById('syncSelectedProviderBtn'); if(syncBtn) syncBtn.addEventListener('click', syncGames); const debugBtn=document.getElementById('debugSelectedProviderBtn'); if(debugBtn) debugBtn.addEventListener('click', debugGames); const cbBtn=document.getElementById('callbackPreviewBtn'); if(cbBtn) cbBtn.addEventListener('click', callbackPreview); const reportBtn=document.getElementById('ledgerSummaryBtn'); if(reportBtn) reportBtn.addEventListener('click', ledgerSummary); reset(); load();
+  if(el.apiActionConfigs) el.apiActionConfigs.addEventListener('input', () => { syncWalletFlowFromJson(); syncWithdrawNegativeFromJson(); syncPullLogTimingFromJson(); }); if(walletFlow) walletFlow.addEventListener('change', () => { try{ syncWalletFlowToJson(); }catch(err){ setStatus('API Action Configs JSON invalid: ' + err.message, 'error'); } }); if(pullLogTimingEnabled) pullLogTimingEnabled.addEventListener('change', syncPullLogTimingToJson); [pullLogWindowValue,pullLogWindowUnit,pullLogEndDelaySeconds,pullLogTimezone,pullLogDateTimeFormat].filter(Boolean).forEach(node => node.addEventListener('change', () => { if(pullLogTimingEnabled?.checked) syncPullLogTimingToJson(); })); const formatActionBtn=document.getElementById('formatActionConfigBtn'); if(formatActionBtn) formatActionBtn.addEventListener('click', formatActionConfig); resetBtn.addEventListener('click', reset); if(toggleApiDebugToolsBtn) toggleApiDebugToolsBtn.addEventListener('click', openApiDebugTools); if(closeApiDebugToolsBtn) closeApiDebugToolsBtn.addEventListener('click', closeApiDebugTools); if(apiDebugToolsModal){ apiDebugToolsModal.addEventListener('click', e => { if(e.target === apiDebugToolsModal) closeApiDebugTools(); }); } document.addEventListener('keydown', e => { if(e.key === 'Escape' && apiDebugToolsModal && apiDebugToolsModal.classList.contains('show')) closeApiDebugTools(); }); list.addEventListener('click', async e => {
+    const foldBtn=e.target.closest('[data-provider-fold]');
+    if(foldBtn){
+      const card=foldBtn.closest('.provider-card');
+      const panel=card && card.querySelector('[data-provider-fold-panel]');
+      const open=foldBtn.getAttribute('aria-expanded')!=='false';
+      foldBtn.setAttribute('aria-expanded', open ? 'false' : 'true');
+      if(card) card.classList.toggle('is-fold-collapsed', open);
+      if(panel) panel.hidden=open;
+      return;
+    }
+    const eb=e.target.closest('[data-edit-id]'), db=e.target.closest('[data-delete-id]'), rb=e.target.closest('[data-reveal-password-id]'), cb=e.target.closest('[data-copy-password-id]'), ct=e.target.closest('[data-copy-text]');
+    if(eb){ editFresh(eb.dataset.editId, eb); }
+    if(db) remove(db.dataset.deleteId);
+    if(rb){
+      const item=rows.find(x=>String(x.id)===String(rb.dataset.revealPasswordId));
+      const target=list.querySelector('[data-provider-password-id="'+CSS.escape(String(rb.dataset.revealPasswordId))+'"]');
+      if(item && target){
+        const currentlyRevealed=rb.dataset.revealed==='1';
+        target.textContent=currentlyRevealed ? maskCredential(item.boPassword || item.bo_password || '') : (item.boPassword || item.bo_password || '-');
+        rb.dataset.revealed=currentlyRevealed?'0':'1';
+        rb.innerHTML=currentlyRevealed?'<i class="bi bi-eye" aria-hidden="true"></i><span>Reveal</span>':'<i class="bi bi-eye-slash" aria-hidden="true"></i><span>Hide</span>';
+      }
+    }
+    if(cb){
+      const item=rows.find(x=>String(x.id)===String(cb.dataset.copyPasswordId));
+      const password=item && (item.boPassword || item.bo_password || '');
+      if(password){
+        try{ await navigator.clipboard.writeText(password); setStatus('Provider BO password copied.', 'success'); }
+        catch(_){ setStatus('Unable to copy password. Use Reveal and copy manually.', 'error'); }
+      }
+    }
+    if(ct){
+      const value = ct.getAttribute('data-copy-text') || '';
+      if(value){
+        try{ await navigator.clipboard.writeText(value); setStatus('Copied.', 'success'); }
+        catch(_){ setStatus('Unable to copy.', 'error'); }
+      }
+    }
+  }); document.querySelectorAll('[data-wallet-action]').forEach(btn => btn.addEventListener('click', () => wallet(btn.dataset.walletAction))); const syncBtn=document.getElementById('syncSelectedProviderBtn'); if(syncBtn) syncBtn.addEventListener('click', syncGames); const debugBtn=document.getElementById('debugSelectedProviderBtn'); if(debugBtn) debugBtn.addEventListener('click', debugGames); const cbBtn=document.getElementById('callbackPreviewBtn'); if(cbBtn) cbBtn.addEventListener('click', callbackPreview); const reportBtn=document.getElementById('ledgerSummaryBtn'); if(reportBtn) reportBtn.addEventListener('click', ledgerSummary); reset(); load();
 })();
 
 (function(){

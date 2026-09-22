@@ -1,0 +1,770 @@
+/* API Debug Tools toggle + modal */
+.page-game-provider #toggleApiDebugToolsBtn.is-active{
+  border-color:#D97706 !important;
+  color:#B45309 !important;
+  background:#FFFCF7 !important;
+}
+
+.page-game-provider #apiDebugToolsModal.modal-clean{
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+
+.page-game-provider #apiDebugToolsModal.modal-clean.show{
+  display:flex !important;
+}
+
+.page-game-provider .api-debug-modal-panel{
+  width:min(1040px, calc(100vw - 32px));
+  max-height:calc(100vh - 32px);
+}
+
+.page-game-provider .api-debug-modal-panel .modal-clean-head small{
+  display:block;
+  margin-top:4px;
+  font-weight:600;
+  color:#78716C;
+}
+
+.page-game-provider .api-debug-modal-panel .slider-form-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+body.modal-open{
+  overflow:hidden;
+}
+
+/* Game Provider — Vault-first (Scheme C)
+   Signature: BO credential wells as the stage.
+   Caps → amber readiness bar. Identity → compact top rail.
+   Palette: Charcoal + Amber (locked) */
+
+html body.page-game-provider.standardized-listing-page #providerList,
+html body.page-game-provider #providerList{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:16px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  overflow:visible !important;
+}
+
+html body.page-game-provider.standardized-listing-page #providerList .provider-card,
+html body.page-game-provider #providerList .provider-card{
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  gap:0 !important;
+  align-items:stretch !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:1px solid #EADCC8 !important;
+  border-radius:16px !important;
+  background:#FFF8EB !important;
+  box-shadow:0 1px 2px rgba(24,25,28,.04), 0 14px 32px rgba(92,74,48,.07) !important;
+  overflow:hidden;
+}
+
+/* —— Top rail —— */
+.page-game-provider #providerList .provider-card-head{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  min-width:0;
+  padding:16px 18px 14px;
+  background:#FFFCF7;
+  border-bottom:1px solid #F0E6D8;
+}
+
+html body.page-game-provider.standardized-listing-page #providerList .manage-thumb.game-thumb,
+html body.page-game-provider #providerList .manage-thumb.game-thumb{
+  width:96px !important;
+  height:52px !important;
+  border-radius:12px !important;
+  background:#FFF8EB;
+  border:1px solid #EADCC8;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  flex:0 0 96px;
+  margin:0;
+}
+
+.page-game-provider #providerList .manage-thumb.game-thumb img{
+  width:100%;
+  height:100%;
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  object-position:center;
+  border-radius:10px;
+}
+
+.page-game-provider #providerList .manage-thumb.game-thumb i{
+  font-size:22px;
+  color:#B45309;
+  opacity:.75;
+}
+
+.page-game-provider #providerList .provider-card-identity{
+  display:grid;
+  gap:4px;
+  min-width:0;
+  flex:1 1 auto;
+}
+
+.page-game-provider #providerList .provider-card-code{
+  margin:0;
+  font-size:10.5px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#B45309;
+  line-height:1.2;
+}
+
+.page-game-provider #providerList .provider-title-row{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px 10px;
+  min-width:0;
+}
+
+.page-game-provider #providerList .provider-card-label{
+  margin:0;
+  font-size:18px;
+  font-weight:800;
+  letter-spacing:-.02em;
+  line-height:1.15;
+  color:#18191C;
+}
+
+.page-game-provider #providerList .provider-status,
+.page-game-provider #providerList .provider-env-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  height:22px;
+  padding:0 9px;
+  border-radius:999px;
+  font-size:10.5px;
+  font-weight:750;
+}
+
+.page-game-provider #providerList .provider-status.is-on{
+  background:#ECFDF3;
+  color:#047857;
+}
+
+.page-game-provider #providerList .provider-status.is-off{
+  background:#F5EBDC;
+  color:#78716C;
+}
+
+.page-game-provider #providerList .provider-status-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:currentColor;
+}
+
+.page-game-provider #providerList .provider-env-pill.is-live{
+  background:rgba(217,119,6,.12);
+  color:#B45309;
+}
+
+.page-game-provider #providerList .provider-env-pill.is-staging{
+  background:#F5EBDC;
+  color:#78716C;
+}
+
+/* Actions */
+html body.page-game-provider #providerList .slider-card-actions{
+  display:inline-flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  gap:8px !important;
+  width:auto !important;
+  min-width:0 !important;
+  padding:0 !important;
+  margin:0 0 0 auto !important;
+  flex:0 0 auto;
+}
+
+html body.page-game-provider #providerList .slider-card-actions .provider-edit-btn{
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:6px !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  height:36px !important;
+  min-height:36px !important;
+  padding:0 14px !important;
+  border-radius:8px !important;
+  border:1px solid #EADCC8 !important;
+  background:#FFF8EB !important;
+  color:#18191C !important;
+  font-size:12.5px !important;
+  font-weight:800 !important;
+  flex:0 0 auto !important;
+  overflow:visible !important;
+}
+
+html body.page-game-provider #providerList .slider-card-actions .provider-edit-btn:hover{
+  border-color:#D97706 !important;
+}
+
+html body.page-game-provider #providerList .slider-card-actions .provider-edit-btn i{
+  font-size:14px !important;
+  margin:0 !important;
+  color:#57534E;
+}
+
+html body.page-game-provider #providerList .slider-card-actions .provider-edit-btn span,
+html body.page-game-provider #providerList .slider-card-actions .provider-edit-btn .btn-label{
+  display:inline !important;
+  font-size:12.5px !important;
+  color:inherit !important;
+}
+
+html body.page-game-provider #providerList .slider-card-actions .provider-icon-btn{
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:36px !important;
+  min-width:36px !important;
+  max-width:36px !important;
+  height:36px !important;
+  min-height:36px !important;
+  padding:0 !important;
+  border-radius:8px !important;
+  font-size:0 !important;
+  flex:0 0 36px !important;
+  overflow:hidden !important;
+}
+
+html body.page-game-provider #providerList .slider-card-actions .provider-delete-btn{
+  border:1px solid rgba(180,35,24,.22) !important;
+  background:#FEF3F2 !important;
+  color:#B42318 !important;
+}
+
+html body.page-game-provider #providerList .slider-card-actions .provider-icon-btn i{
+  font-size:15px !important;
+  margin:0 !important;
+}
+
+html body.page-game-provider #providerList .slider-card-actions .provider-icon-btn span{
+  display:none !important;
+}
+
+/* —— Readiness strip —— */
+.page-game-provider #providerList .provider-ready{
+  display:grid;
+  gap:8px;
+  padding:12px 18px 14px;
+  background:#FFF8EB;
+  border-bottom:1px solid #F0E6D8;
+}
+
+.page-game-provider #providerList .provider-ready-top{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  min-width:0;
+}
+
+.page-game-provider #providerList .provider-ready-count{
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.02em;
+  color:#B45309;
+  font-variant-numeric:tabular-nums;
+}
+
+.page-game-provider #providerList .provider-ready-hint{
+  font-size:12px;
+  font-weight:600;
+  color:#78716C;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  max-width:60%;
+  text-align:right;
+}
+
+.page-game-provider #providerList .provider-ready-hint.is-complete{
+  color:#047857;
+}
+
+.page-game-provider #providerList .provider-ready-hint.is-gap{
+  color:#B45309;
+}
+
+.page-game-provider #providerList .provider-ready-track{
+  height:6px;
+  border-radius:999px;
+  background:#F0E4D0;
+  overflow:hidden;
+}
+
+.page-game-provider #providerList .provider-ready-fill{
+  display:block;
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(90deg, #D97706, #F59E0B);
+  transition:width .25s ease;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .page-game-provider #providerList .provider-ready-fill{ transition:none; }
+}
+
+/* —— Fold toggle (quiet rail; avoid CTA look) —— */
+html body.page-game-provider #providerList .provider-fold-toggle,
+html body.page-game-provider #providerList button.provider-fold-toggle.bo-ui-button,
+html body.page-game-provider #providerList button.provider-fold-toggle.bo-ui-button-primary,
+html body.page-game-provider #providerList button.provider-fold-toggle.bo-ui-button-secondary{
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  width:100% !important;
+  min-width:0 !important;
+  max-width:none !important;
+  height:auto !important;
+  min-height:0 !important;
+  margin:0 !important;
+  padding:11px 16px !important;
+  border:0 !important;
+  border-top:1px solid #F0E6D8 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  background:#FFF8EB !important;
+  background-image:none !important;
+  color:#18191C !important;
+  text-align:left !important;
+  font-weight:600 !important;
+  cursor:pointer !important;
+}
+
+html body.page-game-provider #providerList .provider-fold-toggle:hover,
+html body.page-game-provider #providerList button.provider-fold-toggle.bo-ui-button:hover,
+html body.page-game-provider #providerList button.provider-fold-toggle.bo-ui-button-primary:hover{
+  background:#FFFCF7 !important;
+  background-image:none !important;
+  color:#18191C !important;
+}
+
+html body.page-game-provider #providerList .provider-fold-toggle:focus-visible{
+  outline:2px solid #D97706 !important;
+  outline-offset:-2px !important;
+}
+
+.page-game-provider #providerList .provider-fold-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 28px;
+  width:28px;
+  height:28px;
+  border-radius:8px;
+  border:1px solid #EADCC8;
+  background:#FFFCF7;
+  color:#78716C;
+  font-size:14px;
+}
+
+.page-game-provider #providerList .provider-fold-label{
+  flex:1 1 auto;
+  min-width:0;
+  font-size:12.5px;
+  font-weight:750;
+  letter-spacing:.02em;
+  color:#57534E;
+}
+
+.page-game-provider #providerList .provider-fold-status{
+  flex:0 0 auto;
+  font-size:11.5px;
+  font-weight:650;
+  color:#A8A29E;
+}
+
+.page-game-provider #providerList .provider-fold-status.is-set{
+  color:#047857;
+}
+
+.page-game-provider #providerList .provider-fold-status.is-empty{
+  color:#A8A29E;
+}
+
+.page-game-provider #providerList .provider-fold-chevron{
+  flex:0 0 auto;
+  font-size:14px;
+  color:#A8A29E;
+  line-height:1;
+  transition:transform .18s ease;
+}
+
+.page-game-provider #providerList .provider-fold-toggle[aria-expanded="true"] .provider-fold-chevron{
+  transform:rotate(180deg);
+}
+
+.page-game-provider #providerList .provider-card.is-fold-collapsed .provider-fold-toggle{
+  border-bottom:0 !important;
+}
+
+.page-game-provider #providerList .provider-fold-panel[hidden]{
+  display:none !important;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .page-game-provider #providerList .provider-fold-chevron{ transition:none; }
+}
+
+/* —— Vault stage —— */
+.page-game-provider #providerList .provider-vault{
+  display:grid;
+  gap:12px;
+  padding:18px;
+  background:#F5EBDC;
+  border-bottom:1px solid #EADCC8;
+}
+
+.page-game-provider #providerList .provider-section-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  min-width:0;
+}
+
+.page-game-provider #providerList .provider-section-title{
+  margin:0;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:#78716C;
+}
+
+.page-game-provider #providerList .provider-cred-row{
+  display:grid;
+  grid-template-columns:minmax(0,1.35fr) minmax(0,.85fr) minmax(0,1.05fr);
+  gap:12px;
+  min-width:0;
+}
+
+.page-game-provider #providerList .provider-cred-field{
+  display:grid;
+  gap:6px;
+  min-width:0;
+}
+
+.page-game-provider #providerList .provider-k{
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:#A8A29E;
+}
+
+.page-game-provider #providerList .provider-cred-well{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  min-width:0;
+  min-height:48px;
+  padding:0 8px 0 14px;
+  border-radius:12px;
+  border:1px solid #EADCC8;
+  background:#FFFCF7;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55);
+}
+
+.page-game-provider #providerList .provider-cred-well > a,
+.page-game-provider #providerList .provider-cred-well > code,
+.page-game-provider #providerList .provider-cred-well > .provider-empty{
+  flex:1 1 auto;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:13.5px;
+  font-weight:600;
+  color:#18191C;
+  text-decoration:none;
+}
+
+.page-game-provider #providerList .provider-cred-well > a{
+  color:#B45309;
+}
+
+.page-game-provider #providerList .provider-cred-well > a:hover{
+  text-decoration:underline;
+}
+
+.page-game-provider #providerList .provider-cred-well > code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:13px;
+  font-weight:600;
+  color:#18191C;
+  background:transparent;
+  padding:0;
+}
+
+.page-game-provider #providerList .provider-cred-password > code{
+  letter-spacing:.06em;
+  color:#57534E;
+}
+
+.page-game-provider #providerList .provider-well-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  flex:0 0 auto;
+  height:30px;
+  min-width:30px;
+  padding:0 9px;
+  border-radius:8px;
+  border:1px solid transparent;
+  background:transparent;
+  color:#78716C;
+  font-size:11px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.page-game-provider #providerList .provider-well-btn:hover{
+  background:#FFF8EB;
+  border-color:#EADCC8;
+  color:#B45309;
+}
+
+.page-game-provider #providerList .provider-well-btn:focus-visible{
+  outline:2px solid #D97706;
+  outline-offset:1px;
+}
+
+.page-game-provider #providerList .provider-reveal-btn{
+  border-color:#EADCC8;
+  background:#FFF8EB;
+}
+
+/* —— Foot meta —— */
+.page-game-provider #providerList .provider-card-foot{
+  display:grid;
+  gap:4px;
+  padding:12px 18px 14px;
+  background:#FFF8EB;
+}
+
+.page-game-provider #providerList .provider-meta-line{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:0;
+  margin:0;
+  font-size:12px;
+  font-weight:500;
+  line-height:1.45;
+  color:#A8A29E;
+}
+
+.page-game-provider #providerList .provider-meta-line > span{
+  max-width:200px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.page-game-provider #providerList .provider-meta-sep{
+  margin:0 7px;
+  color:#D6C4AE;
+  font-weight:600;
+}
+
+.page-game-provider #providerList .provider-endpoint-btn{
+  display:block;
+  max-width:100%;
+  margin:0;
+  padding:0;
+  border:0;
+  background:transparent;
+  text-align:left;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:11px;
+  font-weight:500;
+  line-height:1.4;
+  color:#C4B5A0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  cursor:pointer;
+}
+
+.page-game-provider #providerList .provider-endpoint-btn:hover{
+  color:#B45309;
+}
+
+.page-game-provider #providerList .provider-endpoint-btn:focus-visible{
+  outline:2px solid #D97706;
+  outline-offset:2px;
+  border-radius:4px;
+}
+
+/* Legacy capability chips (unused in vault-first; keep safe) */
+.page-game-provider #providerList .provider-api-capability-row{ display:none; }
+
+/* Dark */
+html[data-bo-theme="dark"] body.page-game-provider #providerList .provider-card{
+  background:#383A46 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  box-shadow:none !important;
+}
+
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-card-head{
+  background:#2A2C36;
+  border-bottom-color:rgba(255,255,255,.10);
+}
+
+html[data-bo-theme="dark"] .page-game-provider #providerList .manage-thumb.game-thumb{
+  background:#383A46;
+  border-color:rgba(255,255,255,.12);
+}
+
+html[data-bo-theme="dark"] .page-game-provider #providerList .manage-thumb.game-thumb i{ color:#F59E0B; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-card-code{ color:#FBBF24; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-card-label{ color:#F5F5F4; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-status.is-on{
+  background:rgba(16,185,129,.16);
+  color:#6EE7B7;
+}
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-status.is-off,
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-env-pill.is-staging{
+  background:rgba(255,255,255,.06);
+  color:#A1A1AA;
+}
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-env-pill.is-live{
+  background:rgba(245,158,11,.16);
+  color:#FBBF24;
+}
+html[data-bo-theme="dark"] body.page-game-provider #providerList .provider-edit-btn{
+  background:#383A46 !important;
+  border-color:rgba(255,255,255,.14) !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider #providerList .provider-delete-btn{
+  background:rgba(248,113,113,.12) !important;
+  border-color:rgba(248,113,113,.35) !important;
+  color:#F87171 !important;
+}
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-ready{
+  background:#383A46;
+  border-bottom-color:rgba(255,255,255,.10);
+}
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-fold-toggle,
+html[data-bo-theme="dark"] body.page-game-provider #providerList button.provider-fold-toggle.bo-ui-button,
+html[data-bo-theme="dark"] body.page-game-provider #providerList button.provider-fold-toggle.bo-ui-button-primary{
+  background:#383A46 !important;
+  background-image:none !important;
+  border-top-color:rgba(255,255,255,.10) !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-fold-toggle:hover,
+html[data-bo-theme="dark"] body.page-game-provider #providerList button.provider-fold-toggle.bo-ui-button:hover{
+  background:#2A2C36 !important;
+  background-image:none !important;
+}
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-fold-icon{
+  background:#2A2C36;
+  border-color:rgba(255,255,255,.12);
+  color:#A1A1AA;
+}
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-fold-label{ color:#D6D3D1; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-fold-status.is-set{ color:#6EE7B7; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-fold-status.is-empty,
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-fold-chevron{ color:#71717A; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-ready-count{ color:#FBBF24; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-ready-hint{ color:#A1A1AA; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-ready-hint.is-complete{ color:#6EE7B7; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-ready-hint.is-gap{ color:#FBBF24; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-ready-track{ background:rgba(255,255,255,.08); }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-ready-fill{
+  background:linear-gradient(90deg, #D97706, #FBBF24);
+}
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-vault{
+  background:#2A2C36;
+  border-bottom-color:rgba(255,255,255,.10);
+}
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-section-title{ color:#A1A1AA; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-k{ color:#A1A1AA; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-cred-well{
+  background:#383A46;
+  border-color:rgba(255,255,255,.12);
+  box-shadow:none;
+}
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-cred-well > a{ color:#FBBF24; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-cred-well > code{ color:#F5F5F4; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-cred-password > code{ color:#A1A1AA; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-well-btn{ color:#A1A1AA; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-well-btn:hover,
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-reveal-btn{
+  background:#2A2C36;
+  border-color:rgba(255,255,255,.14);
+  color:#FBBF24;
+}
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-card-foot{
+  background:#383A46;
+}
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-meta-line{ color:#71717A; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-meta-sep{ color:#52525B; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-endpoint-btn{ color:#52525B; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .provider-endpoint-btn:hover{ color:#FBBF24; }
+
+@media (max-width:1100px){
+  .page-game-provider #providerList .provider-cred-row{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width:768px){
+  .page-game-provider #providerList .provider-card-head{
+    flex-wrap:wrap;
+    padding:14px;
+  }
+  html body.page-game-provider #providerList .slider-card-actions{
+    width:100% !important;
+    margin-left:0 !important;
+    justify-content:flex-end !important;
+  }
+  .page-game-provider #providerList .provider-vault,
+  .page-game-provider #providerList .provider-ready,
+  .page-game-provider #providerList .provider-card-foot,
+  .page-game-provider #providerList .provider-fold-toggle{
+    padding-left:12px;
+    padding-right:12px;
+  }
+  .page-game-provider #providerList .provider-card-label{ font-size:16px; }
+  .page-game-provider #providerList .provider-reveal-btn span{ display:none; }
+  .page-game-provider #providerList .provider-ready-hint{ max-width:55%; }
+}
+
+@media (max-width:390px){
+  html body.page-game-provider #providerList .manage-thumb.game-thumb{
+    width:72px !important;
+    height:42px !important;
+    flex-basis:72px;
+  }
+}
