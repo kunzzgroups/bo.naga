@@ -334,7 +334,12 @@ body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.tran
   background:#FFE8CC!important;
   color:#6b360c!important;
   border-bottom:1px solid #EADCC8!important;
-  border-right:1px solid rgba(107,54,12,.08)!important;
+  /* The head carries NO vertical rules. Owner: "table header是没有线条设计的" — 图二's head
+     band (`index.html`, User Management) is a clean fill closed by a single hairline; the
+     dividers this sheet drew on the amber band were the "线条" being pointed at, and the
+     dark-mode `border-right-color` that came with them goes with them. The body keeps its own
+     column rules: those are 0.06 alpha and the request named the header. */
+  border-right:0!important;
   border-top-left-radius:0!important;
   border-top-right-radius:0!important;
   padding:12px!important;
@@ -355,7 +360,7 @@ html[data-bo-theme="dark"] body:not(#bo-report-family-off):not(#bo-charcoal-off)
   background:#1F2128!important;
   color:#E7E5E4!important;
   border-bottom:1px solid rgba(255,255,255,.14)!important;
-  border-right-color:rgba(255,255,255,.08)!important;
+  border-right:0!important;
 }
 body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-table thead th:last-child,
 body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-content .report-table thead th:last-child{
@@ -364,14 +369,18 @@ body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.tran
 body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-table tbody td{
   padding:10px 12px!important;
   border-bottom:1px solid #EADCC8!important;
-  border-right:1px solid rgba(107,54,12,.06)!important;
+  /* No vertical rules in the body either. Owner, after the head: "table数据里 也不应该有线条哈哈
+     要跟统一其他页面" — 图二's rows are separated by the horizontal hairline alone, and the faint
+     `rgba(107,54,12,.06)` column rules this sheet drew are the only place the family showed a
+     grid. Rows are told apart by the zebra band and the row hairline, as on every other listing. */
+  border-right:0!important;
   line-height:1.35!important;
   box-sizing:border-box!important;
   vertical-align:middle!important;
 }
 html[data-bo-theme="dark"] body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-table tbody td{
   border-bottom:1px solid rgba(255,255,255,.12)!important;
-  border-right-color:rgba(255,255,255,.06)!important;
+  border-right:0!important;
 }
 body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-table tbody td:last-child,
 body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-table thead th:last-child{
@@ -406,6 +415,17 @@ body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.tran
 }
 /* the one-cell empty state spans the full width — no rules, centred readout */
 body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-table tbody > tr:has(> td[colspan]) > td{
+  border-right:0!important;
+}
+
+/* 8.7 keeps its own head chrome — see the note above — but it must not be the one page in the
+   family still drawing a grid. Owner: "table数据里 也不应该有线条哈哈 要跟统一其他页面".
+   The page sheet states those two column rules for the head AND the body
+   (`transaction-report-polish.css` → `.report-table th` / `.report-table td`), at (0,4,2) with
+   `!important`; these two `:not(#…)` guards put this rule at two IDs, so it wins without a
+   specificity guessing game. Nothing else about 8.7's recipe is touched. */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family.transaction-report-page .report-table thead th,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family.transaction-report-page .report-table tbody td{
   border-right:0!important;
 }
 
@@ -458,16 +478,29 @@ body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.tran
     display:flex;
     flex-direction:column;
     gap:16px;
+    /* `overflow:hidden` on BOTH axes clipped a page that has no table at all. 8.4 Casino
+       Overview Report is a filter strip plus 18 KPI tiles in this viewport-locked shell, so
+       there was nothing scrollable anywhere and the tiles below the fold were unreachable —
+       owner: "scroll不到下方". Allowing the content column itself to scroll on Y fixes that
+       while keeping the locked shell, the pinned topbar and the sidebar intact.
+       It costs the table pages nothing: their `.table-card` is `flex:1 1 auto` with
+       `min-height:0`, so it fits the column exactly and this scroller never activates.
+       (x stays hidden: the table's own wrap owns horizontal scrolling.) */
     overflow:hidden;
+    overflow-y:auto;
   }
   /* the 16px rhythm is the flex gap now, not each card's own bottom margin */
   body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > *{
     margin-bottom:0!important;
     flex:0 0 auto;
   }
+  /* The 280px floor is the smallest a panel can be and still show its head band, a few rows and
+     its footer. Without it a short window shrinks the card toward zero, and a zero-height card
+     with no overflow of its own paints its table over whatever sits below it. With the floor the
+     content column overflows instead, which is the failure mode that scrolls. */
   body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > .table-card{
     flex:1 1 auto;
-    min-height:0;
+    min-height:280px;
     display:flex;
     flex-direction:column;
   }
@@ -856,4 +889,58 @@ body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .nav-grou
 }
 body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .nav-group-list:not(.rounded-select-menu){
   padding:6px;
+}
+
+/* --------------------------------------------------------------------------
+   19. The filter strip and the table are ONE card
+   Owner: "检查report的所有页面从 8.1 至 8.11 · 1.那个日期和table 要和图二的设计一样".
+   图二 is the User Management listing (`index.html`): its filter row is not a card of its
+   own — it is the first band **inside** the table card, immediately above the table, so the
+   filters and the table read as one object sharing one inset.
+
+   Nine of these pages carry that filter row in a `.filter-card` of its own (8.11's is a
+   `.perf-filter-card`, 8.5's is a bare `.ops-filter`), and `reports.css` gives such a card the
+   full standalone chrome — 1px `#EADCC8`, 16px radius, its own shadow — so it rendered as a
+   separate rounded box floating a gap above the table card. That separation is the "日期和table
+   不像图二" being reported. Joining the two in CSS rather than restructuring nine pages' markup:
+   the strip drops its bottom border, its bottom radii and its shadow; the table card drops its
+   top border and its top radii; and the strip's `-16px` bottom margin cancels the content
+   column's own flex gap (section 15) so the two edges touch and read as one 16px-radius card.
+
+   `:has(+ .table-card)` is load-bearing. 8.4 Casino Overview Report has no table at all, and
+   without the guard the negative margin there would drag the KPI strip up over the filter card.
+
+   `12px 16px` is the inset section 14 already gives every other band inside the card
+   (`.table-card > *`), so the strip and the head band under it share one left edge — measured
+   after: filter control and first header cell both start at 296px.
+
+   `transaction-report-page` is excluded for the same reason as section 14: 8.7's filter row is
+   already a band inside its card and must keep its own chrome.
+
+   Desktop-only, like the frame it cancels the gap of. Below 992px the column is plain block
+   flow with each card's own `margin-bottom`, and stacked cards are the right shape there.
+
+   Not guarded against 8.11's `.select-menu-open` / `:has(#perfBrand:focus)` clearance margins
+   (`agent-performance-report.css`, 2026-08-28): those are non-important or two-class rules and
+   section 15's `margin-bottom:0!important` at two IDs already overrode them, so this changes
+   that page's dropdown behaviour not at all.
+   -------------------------------------------------------------------------- */
+@media (min-width:992px){
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-content > .filter-card:has(+ .table-card),
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-content > .perf-filter-card:has(+ .table-card),
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-content > .ops-filter:has(+ .table-card){
+    margin-bottom:-16px!important;
+    padding:12px 16px!important;
+    border-bottom:0!important;
+    border-bottom-left-radius:0!important;
+    border-bottom-right-radius:0!important;
+    box-shadow:none!important;
+  }
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-content > .filter-card + .table-card,
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-content > .perf-filter-card + .table-card,
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-content > .ops-filter + .table-card{
+    border-top:0!important;
+    border-top-left-radius:0!important;
+    border-top-right-radius:0!important;
+  }
 }

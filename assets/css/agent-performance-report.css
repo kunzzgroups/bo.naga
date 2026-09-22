@@ -6,12 +6,19 @@
 .perf-filter-card .bo-filter-row{display:grid!important;grid-template-columns:minmax(260px,1.35fr) 180px 180px minmax(200px,.9fr) 120px!important;gap:12px!important;align-items:end!important}.perf-filter-card .field{min-width:0}.perf-filter-card .bo-range-field{width:100%!important;max-width:none!important}.perf-filter-card input,.perf-filter-card select{height:42px!important}.perf-main-brand.hidden{display:none!important}/* 2026-09-22: six tiles across, but the tiles themselves are the family's `.metric` — the host
    carries `.quick-stats` so bo-report-family.css and reports.js's decorator (amber icon well
    + note) apply exactly as on every other report page. */
-#perfKpis.quick-stats{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+:is(#perfKpis,#detailKpis).quick-stats{grid-template-columns:repeat(6,minmax(0,1fr))!important}
 /* 2026-09-22 (owner: "我电脑屏幕想要一排展示完"): six tiles stay on ONE row at whatever width the
    machine is — the 1600px step down to three columns put them on two rows, which is not what the
    owner wants. The tile is therefore made genuinely compact for six-up rather than resized down by
-   width: 38px well, 12px gap, 11px label, 19px value, `min-height:88px`. Below 1024px the ladder
-   steps to 2 then 1 and the family's full-size tile comes back.
+   width. Below 1200px the ladder steps to 2 then 1 and the family's full-size tile comes back.
+
+   ONE compact band, not two. There used to be a roomier ≥1366 recipe (38px well, 11px label,
+   19px value) and a tightened ≤1365 one; measured on the Agent Performance Detail page, whose KPI
+   values are six-figure RM amounts (`RM 1,385,271.50` needs 144px at 19px) in a 111px text column,
+   the roomier band ellipsised five of its six values and the tightened one fits them at 16px. Since
+   a KPI number that is cut off is worse than a slightly smaller one, the tightened recipe now
+   applies to the whole six-up range, and the value WRAPS rather than truncating when a number is
+   still too long (a wrap costs a line; an ellipsis costs the number).
 
    EVERY declaration here needs `!important`, and that is the whole catch: `reports.css` pins the
    tile at `.report-content .quick-stats:not(.user-stats) .metric` **with `!important`** (four
@@ -19,41 +26,67 @@
    itself important. Without it the compact recipe was inert — measured tile still `52px 83.4px`
    with `padding:16px 18px`, `min-height:104px` and a 12px label, which truncated `Total Turnover`
    (needs 87px, had 83px). With IDs + `!important` the IDs decide, and this sheet wins. */
-#perfKpis.quick-stats .metric{padding:12px 14px!important;min-height:88px!important;grid-template-columns:38px minmax(0,1fr)!important;column-gap:12px!important}
-#perfKpis.quick-stats .metric .bo-summary-icon{width:38px!important;height:38px!important;flex-basis:38px!important;font-size:17px!important}
-#perfKpis.quick-stats .metric span{font-size:11px!important}
-#perfKpis.quick-stats .metric strong{font-size:19px!important}
-#perfKpis.quick-stats .metric span,
-#perfKpis.quick-stats .metric strong{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
-/* 1280–1365: still one row, tightened once more. Measured at 1280 with the recipe above the widest
-   label (`Total Turnover`, 11px/800) needed 80px of a 74px column and ellipsised; 10.5px label,
-   32px well and a 10px gap put it back inside (column 80px). */
-@media(max-width:1365px){
-  #perfKpis.quick-stats .metric{padding:10px 11px!important;grid-template-columns:30px minmax(0,1fr)!important;column-gap:9px!important}
-  #perfKpis.quick-stats .metric .bo-summary-icon{width:30px!important;height:30px!important;flex-basis:30px!important;font-size:14px!important}
-  #perfKpis.quick-stats .metric span{font-size:10px!important}
-  #perfKpis.quick-stats .metric strong{font-size:16px!important}
-}
+:is(#perfKpis,#detailKpis).quick-stats .metric{padding:10px 12px!important;min-height:88px!important;grid-template-columns:30px minmax(0,1fr)!important;column-gap:10px!important}
+:is(#perfKpis,#detailKpis).quick-stats .metric .bo-summary-icon{width:30px!important;height:30px!important;flex-basis:30px!important;font-size:14px!important}
+:is(#perfKpis,#detailKpis).quick-stats .metric span{font-size:10px!important}
+:is(#perfKpis,#detailKpis).quick-stats .metric strong{font-size:16px!important}
+/* Neither line may be cut off: a KPI number that reads `RM 1,385…` is not a number, and a label
+   that reads `Bonus / Settle…` is not a label. Both wrap to a second line instead — the tile
+   grows past its 88px floor by that line, which is visible and honest, where an ellipsis is
+   silent data loss. Measured at 1280px: `Bonus / Settlement` needs 91px in an 88px column. */
+:is(#perfKpis,#detailKpis).quick-stats .metric span{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:break-word!important}
+:is(#perfKpis,#detailKpis).quick-stats .metric strong{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important}
 /* step up before the six-up row starts ellipsising: measured, six tiles need ≥1200 CSS px for the
    longest label (`Total Turnover`, 10.5px/800) to fit — at 1152 four labels truncated. */
 @media(max-width:1200px){
-  #perfKpis.quick-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-  #perfKpis.quick-stats .metric{padding:16px 18px!important;min-height:104px!important;grid-template-columns:52px minmax(0,1fr)!important;column-gap:24px!important}
-  #perfKpis.quick-stats .metric .bo-summary-icon{width:52px!important;height:52px!important;flex-basis:52px!important;font-size:22px!important}
-  #perfKpis.quick-stats .metric span{font-size:12px!important}
-  #perfKpis.quick-stats .metric strong{font-size:23px!important}
+  :is(#perfKpis,#detailKpis).quick-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  :is(#perfKpis,#detailKpis).quick-stats .metric{padding:16px 18px!important;min-height:104px!important;grid-template-columns:52px minmax(0,1fr)!important;column-gap:24px!important}
+  :is(#perfKpis,#detailKpis).quick-stats .metric .bo-summary-icon{width:52px!important;height:52px!important;flex-basis:52px!important;font-size:22px!important}
+  :is(#perfKpis,#detailKpis).quick-stats .metric span{font-size:12px!important}
+  :is(#perfKpis,#detailKpis).quick-stats .metric strong{font-size:23px!important}
 }
-@media(max-width:575px){#perfKpis.quick-stats{grid-template-columns:1fr!important}}
+@media(max-width:575px){:is(#perfKpis,#detailKpis).quick-stats{grid-template-columns:1fr!important}}
 @media(max-width:1024px){
-  #perfKpis.quick-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-  #perfKpis.quick-stats .metric{padding:16px 18px;min-height:104px;grid-template-columns:52px minmax(0,1fr);column-gap:24px}
-  #perfKpis.quick-stats .metric .bo-summary-icon{width:52px;height:52px;flex-basis:52px;font-size:22px}
-  #perfKpis.quick-stats .metric span{font-size:12px}
-  #perfKpis.quick-stats .metric strong{font-size:23px}
+  :is(#perfKpis,#detailKpis).quick-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  :is(#perfKpis,#detailKpis).quick-stats .metric{padding:16px 18px;min-height:104px;grid-template-columns:52px minmax(0,1fr);column-gap:24px}
+  :is(#perfKpis,#detailKpis).quick-stats .metric .bo-summary-icon{width:52px;height:52px;flex-basis:52px;font-size:22px}
+  :is(#perfKpis,#detailKpis).quick-stats .metric span{font-size:12px}
+  :is(#perfKpis,#detailKpis).quick-stats .metric strong{font-size:23px}
 }
-@media(max-width:575px){#perfKpis.quick-stats{grid-template-columns:1fr}}.perf-table-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.perf-table-head h2{font-size:16px;margin:0;font-weight:800}.perf-table-head small{color:#57534E}.perf-table{min-width:1500px}.perf-table td,.perf-table th{vertical-align:middle}.perf-agent-cell{display:flex;align-items:center;gap:9px}.perf-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#F5EBDC;color:#57534E;font-weight:800}.perf-agent-cell b{display:block}.perf-agent-cell small{display:block;color:#57534E}.perf-status{display:inline-flex;padding:4px 9px;border-radius:999px;font-size:10px;font-weight:700;background:#eaf9ef;color:#16813e}.perf-status.off{background:#fff0f0;color:#d63f3f}.perf-eye{width:36px;height:34px;border:1px solid #EADCC8;border-radius:9px;background:#FFF8EB;color:#57534E;display:inline-grid;place-items:center}.perf-eye:hover{background:#F5EBDC}.perf-pos{color:#079447}.perf-neg{color:#e13737}.perf-footer{display:flex;justify-content:space-between;margin-top:12px;color:#57534E;font-size:12px}.perf-detail-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}.perf-detail-name{font-size:18px;font-weight:800}.perf-detail-kpis{grid-template-columns:repeat(6,minmax(0,1fr))}.perf-empty{text-align:center!important;padding:24px!important;color:#57534E!important}@media(max-width:1100px){.perf-filter-card .bo-filter-row{grid-template-columns:repeat(2,minmax(0,1fr))!important}.perf-filter-card .btn-primary-clean{width:100%}}@media(max-width:700px){#perfKpis.quick-stats{grid-template-columns:1fr}.perf-filter-card .bo-filter-row{grid-template-columns:1fr!important}}
+@media(max-width:575px){:is(#perfKpis,#detailKpis).quick-stats{grid-template-columns:1fr}}.perf-table-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.perf-table-head h2{font-size:16px;margin:0;font-weight:800}.perf-table-head small{color:#57534E}.perf-table{min-width:1500px}.perf-table td,.perf-table th{vertical-align:middle}.perf-agent-cell{display:flex;align-items:center;gap:9px}.perf-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#F5EBDC;color:#57534E;font-weight:800}.perf-agent-cell b{display:block}.perf-agent-cell small{display:block;color:#57534E}.perf-status{display:inline-flex;padding:4px 9px;border-radius:999px;font-size:10px;font-weight:700;background:#eaf9ef;color:#16813e}.perf-status.off{background:#fff0f0;color:#d63f3f}.perf-eye{width:36px;height:34px;border:1px solid #EADCC8;border-radius:9px;background:#FFF8EB;color:#57534E;display:inline-grid;place-items:center}.perf-eye:hover{background:#F5EBDC}.perf-pos{color:#079447}.perf-neg{color:#e13737}.perf-footer{display:flex;justify-content:space-between;margin-top:12px;color:#57534E;font-size:12px}.perf-detail-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}.perf-detail-name{font-size:18px;font-weight:800}.perf-detail-kpis{grid-template-columns:repeat(6,minmax(0,1fr))}.perf-empty{text-align:center!important;padding:24px!important;color:#57534E!important}@media(max-width:1100px){.perf-filter-card .bo-filter-row{grid-template-columns:repeat(2,minmax(0,1fr))!important}.perf-filter-card .btn-primary-clean{width:100%}}@media(max-width:700px){:is(#perfKpis,#detailKpis).quick-stats{grid-template-columns:1fr}.perf-filter-card .bo-filter-row{grid-template-columns:1fr!important}}
 
-.perf-ops{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}.perf-op{background:#FFF8EB;border:1px solid #EADCC8;border-radius:12px;padding:14px 16px}.perf-op span{display:block;font-size:11px;color:#57534E}.perf-op strong{display:block;font-size:17px;margin-top:3px}.perf-op small{display:block;font-size:10px;color:#57534E;margin-top:3px}@media(max-width:1100px){.perf-ops{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.perf-ops{grid-template-columns:1fr}}
+.perf-ops{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+/* The eight-card financial readout is a DISCLOSURE — owner: "框中的部分 我想做成收起来的功能 因为太大了",
+   and then "放上去一点 too much gap": the control sits in the page's header row, where it costs no band
+   of its own. The cards open between the KPI strip and the table, so the reading order is unchanged.
+   The chevron is keyed off the button and the grid's display off the panel — they are no longer
+   parent and child, so both carry `data-open`.
+   The toggle keeps the page's OWN button chrome (measured: #FFF8EB fill, 1px #EADCC8, 8px radius,
+   36px tall — the same treatment `Back to Report` gets beside it). Deliberately no
+   `border/background` reset here: a global `.report-main button` rule wins those, and declarations
+   that are written but never applied are how this file has been misread before. */
+.perf-ops-toggle{display:flex;align-items:center;gap:8px;margin-left:auto;flex:0 1 auto;min-width:0;padding:6px 12px;color:#57534E;font-size:12px;font-weight:800;text-align:left;cursor:pointer}
+.perf-ops-toggle:hover{color:#18191C}
+.perf-ops-toggle i{font-size:11px;transition:transform .15s ease}
+.perf-ops-toggle[data-open="1"] i{transform:rotate(90deg)}
+.perf-ops-toggle small{font-weight:600;color:#78716C;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* The PANEL is hidden, not emptied: a collapsed panel left in the flex column keeps contributing the
+   column's 16px gap on both sides of a 0px box, so the gap between the KPI strip and the table read
+   32px — the very "too much gap" this control was moved up to remove. */
+.perf-ops-panel[data-open="0"]{display:none}
+/* the header row must not be squeezed by the control at laptop widths, and the summary line is the
+   first thing to go rather than the name. */
+.perf-detail-top{min-width:0}
+.perf-detail-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:1500px){.perf-ops-toggle small{display:none}}
+html[data-bo-theme="dark"] .perf-ops-toggle{color:#D4D4D8}
+html[data-bo-theme="dark"] .perf-ops-toggle:hover{color:#F5F5F4}
+html[data-bo-theme="dark"] .perf-ops-toggle small{color:#A1A1AA}.perf-op{background:#FFF8EB;border:1px solid #EADCC8;border-radius:14px;padding:14px 16px}.perf-op span{display:block;font-size:11px;color:#57534E}.perf-op strong{display:block;font-size:17px;margin-top:3px}.perf-op small{display:block;font-size:10px;color:#57534E;margin-top:3px}/* the ops readout cards had no dark variant at all: measured with data-bo-theme=dark they stayed
+   #FFF8EB with #57534E labels while their own VALUE inherited the dark #F5F5F4 — light text on a
+   light card. Same surface/border/muted trio as the family tile beside them. */
+html[data-bo-theme="dark"] .perf-op{background:#383A46;border-color:rgba(255,255,255,.14)}
+html[data-bo-theme="dark"] .perf-op span,html[data-bo-theme="dark"] .perf-op small{color:#D4D4D8}
+@media(max-width:1100px){.perf-ops{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.perf-ops{grid-template-columns:1fr}}
 
 /* 2026-08-28: keep Agent Performance icons centered regardless of generic span rules */
 
