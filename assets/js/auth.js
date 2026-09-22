@@ -130,6 +130,8 @@
     if(p==='main-provider-create.html' || p==='main-provider-endpoints.html' || p==='main-provider-credentials.html' || p==='main-provider-health.html'){
       return 'main-provider-detail.html';
     }
+    // Game Provider create/edit is a drill-down of Game Provider Management.
+    if(p==='game-provider-create.html') return 'game-provider.html';
     return p;
   }
 
@@ -314,6 +316,8 @@
       if(current === 'main-provider-endpoints.html') current = 'main-provider-detail.html';
       if(current === 'main-provider-credentials.html') current = 'main-provider-detail.html';
       if(current === 'main-provider-health.html') current = 'main-provider-detail.html';
+      // Game Provider create/edit inherits Game Provider Management menu permission.
+      if(current === 'game-provider-create.html') current = 'game-provider.html';
       const agentChildPages = new Set([
         'agent-commission-admin.html','agent-settlement-admin.html','agent-reimbursement-admin.html',
         'agent-payout-admin.html','agent-promotion-admin.html'
