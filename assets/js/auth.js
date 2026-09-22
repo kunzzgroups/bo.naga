@@ -472,7 +472,7 @@
       if(!document.querySelector('link[data-bo-quicknav-css]')){
         const pinCss=document.createElement('link');
         pinCss.rel='stylesheet';
-        pinCss.href='assets/css/bo-global-quicknav.css?v=1.1.2';
+        pinCss.href='assets/css/bo-global-quicknav.css?v=1.1.4';
         pinCss.dataset.boQuicknavCss='1';
         document.head.appendChild(pinCss);
       }
@@ -667,7 +667,7 @@
       };
       const frame=document.getElementById('dashboardWorkspaceFrame');
       if(frame&&!frame.dataset.shellBound){frame.dataset.shellBound='1';frame.addEventListener('load',function(){try{const d=frame.contentDocument;if(!d)return;if(d.documentElement)d.documentElement.classList.add('dashboard-embedded-page');if(d.body)d.body.classList.add('dashboard-embedded-page');let style=d.getElementById('dashboardEmbeddedShellStyle');if(!style){style=d.createElement('style');style.id='dashboardEmbeddedShellStyle';style.textContent='html,body{width:100%!important;max-width:100%!important;margin:0!important;overflow-x:hidden!important}*,*::before,*::after{box-sizing:border-box!important}.report-sidebar,.sidebar-overlay,.report-topbar{display:none!important}.report-shell{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:100vh!important;margin:0!important;padding:0!important}.report-main{display:block!important;margin:0!important;padding:0!important;width:100%!important;max-width:100%!important;min-width:0!important}.report-content{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:20px!important;overflow-x:hidden!important}.report-content>*{max-width:100%!important;min-width:0!important}.table-wrap,.table-responsive,[class*=table-wrap],[class*=table-responsive]{max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch}.table-card,.filter-card,.summary-card,[class*=card]{max-width:100%}.container,.container-fluid{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}.dashboard-embedded-page .report-main,body.dashboard-embedded-page.sidebar-mini .report-main,body.dashboard-embedded-page.livechat-bo-page .report-main,body.dashboard-embedded-page.livechat-bo-page.sidebar-mini .report-main{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important}.dashboard-embedded-page .report-content,body.dashboard-embedded-page.sidebar-mini .report-content,body.dashboard-embedded-page.livechat-bo-page .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important;padding-left:20px!important;padding-right:20px!important}.dashboard-embedded-page .report-shell{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important}.dashboard-embedded-page .livechat-admin-shell{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .report-main,html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page.sidebar-mini .report-main{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .report-content,html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page.sidebar-mini .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;padding-left:20px!important;padding-right:20px!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .livechat-admin-shell{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}';d.head.appendChild(style);}const resizeFrame=function(){const de=d.documentElement,b=d.body;frame.style.height=Math.max(650,de?de.scrollHeight:0,b?b.scrollHeight:0)+'px';};resizeFrame();if(frame.__boResizeObserver)frame.__boResizeObserver.disconnect();if(window.ResizeObserver&&d.body){frame.__boResizeObserver=new ResizeObserver(resizeFrame);frame.__boResizeObserver.observe(d.body);}setTimeout(resizeFrame,80);setTimeout(resizeFrame,350);}catch(e){}});}
-      if(!document.querySelector('link[data-bo-quicknav-css]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/css/bo-global-quicknav.css?v=1.1.2';l.dataset.boQuicknavCss='1';document.head.appendChild(l);}
+      if(!document.querySelector('link[data-bo-quicknav-css]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/css/bo-global-quicknav.css?v=1.1.4';l.dataset.boQuicknavCss='1';document.head.appendChild(l);}
     },
     bindDynamicSidebarEvents: function(){
       // Some legacy pages call this explicitly while auth.js also initializes it
@@ -685,15 +685,49 @@
         const sr = sidebar.getBoundingClientRect();
         const left = Math.max(8, Math.round(sr.right + 6));
         let top = Math.max(12, Math.round(br.top));
+
+        // Size the panel by the space BELOW its own row, and never move it up.
+        // Owner report: on a short window the 11-entry Report flyout could not be
+        // reached. The old code measured `scrollHeight` (about 620px) against the
+        // viewport and clamped the panel's top to 12 — roughly 200px ABOVE the row it
+        // belongs to (measured on the owner's screen: row 228, panel 12). Reaching the
+        // first item was then a long diagonal that crossed the sibling menu rows, and
+        // each of those fires its own mouseenter, which closes this flyout — so the
+        // hover jumped and the panel shut before 8.1 could be clicked. Capping to the
+        // room below keeps the panel beside its row, so the pointer never leaves that
+        // row's band; the list scrolls internally when the menu is longer than the
+        // space available.
+        // The cap is the SMALLER of the room below this row and 62% of the viewport.
+        // Taking only the viewport fraction (a first attempt) still overflowed below the row
+        // on a tall window, so the panel was pushed back up and detached again — measured on
+        // the owner's screen at 975px tall with the row at 546: fraction 605 > room 417, so the
+        // panel sat 188px above its row. Using the room below keeps it beside the row in every
+        // geometry where the row is not near the very bottom of the viewport.
+        const roomBelow = window.innerHeight - top - 12;
+        const cap = Math.max(160, Math.min(Math.round(window.innerHeight * 0.62), roomBelow));
+        // only reachable when the row sits at the very bottom (roomBelow < the 160px floor)
+        if(top + cap > window.innerHeight - 12) top = Math.max(12, window.innerHeight - cap - 12);
+
+        // Every input above is a rect that already exists, so the panel is positioned
+        // and capped SYNCHRONOUSLY, before the frame paints. Both of these used to ride
+        // inside a requestAnimationFrame, which cost two things: the panel painted one
+        // frame at its uncapped height and was then shrunk and possibly moved (a visible
+        // jump under the cursor — part of the owner's "光标乱跳"), and whenever the frame
+        // did not arrive promptly the cap never applied at all.
         group.style.setProperty('--bo-sidebar-flyout-left', left + 'px');
-        group.style.setProperty('--bo-sidebar-flyout-top', top + 'px');
-        requestAnimationFrame(function(){
-          const h = Math.min(list.scrollHeight || 0, Math.max(120, window.innerHeight - 24));
-          if(top + h > window.innerHeight - 12){
-            top = Math.max(12, window.innerHeight - h - 12);
-            group.style.setProperty('--bo-sidebar-flyout-top', Math.round(top) + 'px');
-          }
-        });
+        group.style.setProperty('--bo-sidebar-flyout-top', Math.round(top) + 'px');
+        // The inline value is the fallback; the property is what actually wins.
+        // `reports.css` pins this element at `max-height: calc(100vh - 24px) !important`,
+        // and an `!important` stylesheet declaration out-ranks an inline one, so an inline
+        // value alone is silently ignored (measured: inline 547px, computed 926.4px). With
+        // the row at 573 in a 950px window that let the panel run to 1075 — the last three
+        // entries below the screen — and because the 504px content was still shorter than
+        // that allowance, `overflow-y:auto` produced no scrollbar either, so 8.11 was
+        // neither visible nor scrollable. bo-global-quicknav.css consumes the property at a
+        // higher specificity than that reports.css rule, so the cap computed here applies.
+        group.style.setProperty('--bo-sidebar-flyout-max', cap + 'px');
+        list.style.maxHeight = cap + 'px';
+        list.style.overflowY = 'auto';
       }
       const sidebarFlyoutHoverTimers = new WeakMap();
       function dismissSidebarFlyout(group){
@@ -735,7 +769,24 @@
         if(!group || window.innerWidth < 992 || !group.closest('.report-sidebar')) return;
 
         const previous = window.__boSidebarActiveFlyout;
-        if(previous && previous !== group) closeSidebarFlyoutImmediately(previous);
+        if (previous && previous !== group) {
+        // Hover intent. A pointer travelling from its row into the flyout crosses the sibling
+        // rows, and taking over on every crossing is what made the hover jump and closed the
+        // flyout before its first entry could be clicked. Require the pointer to rest on the new
+        // group for a moment; a fly-through never takes over, so the open flyout survives the
+        // journey into its own panel.
+        const intentGroup = group;
+        if (group.__boFlyoutIntent) clearTimeout(group.__boFlyoutIntent);
+        group.__boFlyoutIntent = setTimeout(function () {
+        group.__boFlyoutIntent = null;
+        if (!intentGroup.matches(':hover')) return;
+        if (window.__boSidebarActiveFlyout === intentGroup) return;
+        const prev = window.__boSidebarActiveFlyout;
+        if (prev && prev !== intentGroup) closeSidebarFlyoutImmediately(prev);
+        openSidebarFlyoutOnHover(intentGroup);
+        }, 140);
+        return;
+        }
         document.querySelectorAll('.report-sidebar .nav-group').forEach(function(other){
           if(other !== group && other !== previous && (other.classList.contains('bo-flyout-hover') || other.classList.contains('open'))){
             closeSidebarFlyoutImmediately(other);
@@ -759,7 +810,7 @@
           const list = group.querySelector('.nav-group-list');
           if(group.matches(':hover') || (list && list.matches(':hover'))) return;
           dismissSidebarFlyout(group);
-        }, 90);
+        }, 400);
         sidebarFlyoutHoverTimers.set(group, timer);
       }
       document.addEventListener('mouseover', function(e){

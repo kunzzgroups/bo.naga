@@ -307,14 +307,16 @@
     for (let n = cur - 2; n <= cur + 2; n++) addPage(n);
     addPage(total);
     pages.sort((a, b) => a - b);
-    let html = `<button type="button" class="smart-page nav-text" data-page="${Math.max(1, cur - 1)}"${cur <= 1 ? ' disabled' : ''}>Previous</button>`;
+    let html = `<button type="button" class="smart-page first" data-page="1"${cur <= 1 ? ' disabled' : ''} title="First page" aria-label="First page"><i class="bi bi-chevron-bar-left" aria-hidden="true"></i></button>`
+      + `<button type="button" class="smart-page nav-text" data-page="${Math.max(1, cur - 1)}"${cur <= 1 ? ' disabled' : ''}>Previous</button>`;
     let prev = 0;
     pages.forEach((n) => {
       if (prev && n - prev > 1) html += '<span class="smart-page-ellipsis">…</span>';
       html += `<button type="button" class="smart-page${n === cur ? ' active' : ''}" data-page="${n}"${n === cur ? ' aria-current="page"' : ''}>${n}</button>`;
       prev = n;
     });
-    html += `<button type="button" class="smart-page nav-text" data-page="${Math.min(total, cur + 1)}"${cur >= total ? ' disabled' : ''}>Next</button>`;
+    html += `<button type="button" class="smart-page nav-text" data-page="${Math.min(total, cur + 1)}"${cur >= total ? ' disabled' : ''}>Next</button>`
+      + `<button type="button" class="smart-page last" data-page="${total}"${cur >= total ? ' disabled' : ''} title="Last page" aria-label="Last page"><i class="bi bi-chevron-bar-right" aria-hidden="true"></i></button>`;
     return html;
   }
 

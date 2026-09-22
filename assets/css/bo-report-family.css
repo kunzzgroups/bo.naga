@@ -1,0 +1,859 @@
+/* ==========================================================================
+   8. Report family — the eleven report pages, brought onto the locked chrome
+   ==========================================================================
+
+   Scope: `body.bo-report-family`, a marker class carried only by the eleven
+   pages under sidebar group 8. Report (8.1 Overview … 8.11 Frequently Played).
+   Nothing repaints until a page carries the marker, so the blast radius is
+   exactly those pages — the same opt-in mechanism as `bo-charcoal`.
+
+   Why a file of its own rather than rules inside an existing layer:
+   every rule below either (a) has to out-rank a rule that is pinned at
+   (0,6,5) by `bo-charcoal-legacy.css`, or (b) is the layout half of a
+   component whose layout lives in `main-admin-detail-executive.css` under
+   `body.main-admin-detail-page` — a class these pages do not carry. Putting
+   them in a new sheet linked LAST keeps one source of truth per rule and, per
+   the `bo-security-audit.css` precedent, a URL the browser has never fetched
+   cannot be served stale.
+
+   Every value is taken from the locked tables in DESIGN.md and
+   .interface-design/system.md. Do not introduce values that are not there.
+
+   Measured on the pages before this sheet (1440px, both themes):
+   - `.mad-footer` had NO layout on six pages: `display:block`, no hairline,
+     the two slots stacked vertically.
+   - filter controls 42px tall (locked: 36px), radius 10–11px (locked: 8px).
+   - `table-layout` was `auto` on nine pages (locked: `fixed`).
+   - thead corners 11px (locked: square).
+   - body cells 12px/400 (locked: 13px/700).
+   - even-row zebra resolved to `#FFF3E0` (legacy) instead of the locked
+     `#FFF1DC`; `agent-performance-report.html` had no stripe at all.
+   - the "Date Range" label injected by `bo-date-range.js` rendered as
+     `display:block` on seven pages.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Table footer — the two-slot contract
+   Slot 1 "Showing X to Y of Z" · Slot 2 the page ladder.
+   Layout copied from the reference (main-admin-detail-executive.css).
+   -------------------------------------------------------------------------- */
+/* `!important` because three of these pages also carry `table-footer`, whose
+   grid from table-pagination-horizontal.css would otherwise keep the older
+   3-slot order (page size left · info centre · ladder right). */
+/* Owner: "所有report页面的 8.1 至8.11 的pagination设计 要统一跟图里和其他页面一样" — the footer
+   was a two-slot flex (info left · Show+pager grouped right) which matched none of the listing
+   pages. Every reference (`.table-footer` on vip-exp-log / index.html / vip-reward-log, and the
+   owner's screenshot) is the same three-slot line: `Show N entries` left · "Showing X to Y of Z"
+   centred · the ladder right. This is that arrangement, with the columns taken verbatim from
+   `table-pagination-horizontal.css` so the report family and the listings agree by construction
+   rather than by eye. The footer markup on all ten pages was reordered to match in the same pass
+   (`entries-control`, info, pager as direct children, no `.mad-footer-right` wrapper). */
+/* Two `:not(#…)` guards on the grid rule: `transaction-report-polish.css` sizes this same footer
+   with `grid-template-columns:auto minmax(0,1fr) auto!important` at five-class specificity, which
+   made its side tracks content-sized — the pinned 72px select on the left against a 232px ladder on
+   the right — so the middle track's centre sat ~76px left of the footer's and the info looked
+   off-centre (measured info centre 800 against footer centre 880). IDs out-rank class counts, so
+   the equal thirds now apply on that page too. */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .mad-footer{
+  display:grid!important;
+  grid-template-columns:minmax(190px,1fr) minmax(260px,1fr) minmax(190px,1fr)!important;
+  align-items:center!important;
+  justify-content:stretch!important;
+  gap:16px;
+  margin-top:auto;
+  padding:14px 16px;
+  border-top:1px solid var(--bo-border,#EADCC8);
+  background:var(--bo-surface,#FFF8EB);
+}
+body.bo-report-family .mad-footer > .entries-control,
+body.bo-report-family .mad-footer > .cr-page-size-label{
+  grid-column:1;
+  justify-self:start;
+  width:auto;
+}
+body.bo-report-family .mad-footer-info,
+body.bo-report-family .mad-footer > .table-info{
+  grid-column:2;
+  justify-self:center;
+  text-align:center;
+  color:#57534E;
+  font-size:12.5px;
+  font-weight:600;
+}
+body.bo-report-family .mad-footer > .mad-pager,
+body.bo-report-family .mad-footer > .pagination-clean{
+  grid-column:3;
+  justify-self:end;
+}
+
+/* --------------------------------------------------------------------------
+   2. Page ladder — First · Prev · window(+ellipsis) · Next · Last
+   Chrome already exists in bo-charcoal-legacy.css; only the rung geometry is
+   restated, because First/Last must be 36x36 with no padding.
+   -------------------------------------------------------------------------- */
+body.bo-report-family .mad-pager,
+body.bo-report-family nav.mad-pager{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+body.bo-report-family .mad-pager .smart-page{
+  min-width:40px;
+  height:36px;
+  padding:0 14px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:700;
+}
+/* `.pagination-clean button{min-width:40px!important}` out-ranks a plain
+   `.smart-page` rule, so the icon rungs need `!important` too to read 36x36. */
+body.bo-report-family .mad-pager .smart-page.first,
+body.bo-report-family .mad-pager .smart-page.last{
+  min-width:36px!important;
+  width:36px!important;
+  padding:0!important;
+}
+/* the amber 3D active rung, gradient only — no shadow (locked) */
+body.bo-report-family .mad-pager .smart-page.active{
+  border-color:#D97706;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%);
+  color:#FFFFFF;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.bo-report-family .mad-pager .smart-page.active{
+  border-color:#F59E0B;
+  color:#2A2C36;
+}
+
+/* --------------------------------------------------------------------------
+   3. Listing filter controls — 36px / 8px / surface (Wallet Ledger specimen).
+   The global tokens in bo-ui-standard.css are 42px / 11px and the locked
+   36px recipe only exists under body.bo-wallet-tx / .user-management-page.
+   -------------------------------------------------------------------------- */
+/* Two levers, because the layer being beaten does two different things:
+   1. `bo-ui-standard.css` consumes `--bo-filter-height` / `--bo-filter-radius` /
+      `--bo-control-height`. Redeclaring those on <body> resolves them to the locked
+      values for every consumer by inheritance — no specificity contest at all.
+   2. Its "final authority layer" also hard-codes `42px` in a rule at (2,6,2)
+      (`…not(#…).report-main .bo-filter-row > .bo-filter-input-item input…`).
+      A token cannot win that, so the selector below carries three extra body
+      classes every one of these pages has (`bo-charcoal`, `bo-account-chip`) to
+      reach (2,8,2) and win on specificity rather than load order. */
+body.bo-report-family{
+  --bo-filter-height:36px;
+  --bo-filter-radius:8px;
+  --bo-control-height:36px;
+}
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family.bo-charcoal.bo-account-chip .report-main .bo-filter-row input:not([type=hidden]):not([type=checkbox]):not([type=radio]),
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family.bo-charcoal.bo-account-chip .report-main .bo-filter-row select,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family.bo-charcoal.bo-account-chip .report-main .bo-filter-row .bo-range-trigger,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family.bo-charcoal.bo-account-chip .report-main .bo-filter-row .ref-range-trigger,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family.bo-charcoal.bo-account-chip .report-main .bo-filter-row .clean-btn,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family.bo-charcoal.bo-account-chip .report-main .bo-filter-row .btn-primary-clean,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family.bo-charcoal.bo-account-chip .report-main .bo-filter-row .bo-ui-button,
+/* The select control this row actually shows is NOT the native <select> pinned
+   above: `reports.js` hides that one inside a `.rounded-select-wrap` and paints a
+   `.rounded-select-btn` trigger in its place. The button is owned by three other
+   files and none of them agrees with this row — `reports.css` pins `42px` (twice,
+   one of them `!important`), `bo-charcoal-primitives.css` pins `40px!important` at
+   (0,3,3), and `bo-ui-standard.css`'s authority layer pins `42px!important` on the
+   hidden native select at (2,6,2). So the select *trigger* stayed 42px while the
+   date trigger resolved to 36px; with `align-items:flex-end` on the row the two
+   shared a bottom edge but not a top one — measured 213→255 against 219→255, i.e.
+   every select sat **6px higher** than the date field. That is the misalignment the
+   owner photographed, and it is invisible to a check of the `select` rule alone,
+   because the `select` rule was already correct. */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family.bo-charcoal.bo-account-chip .report-main .bo-filter-row .rounded-select-wrap,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family.bo-charcoal.bo-account-chip .report-main .bo-filter-row .rounded-select-btn{
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  border-radius:8px!important;
+  box-sizing:border-box;
+}
+html:not([data-bo-theme="dark"]) body.bo-report-family .bo-filter-row .bo-range-trigger,
+html:not([data-bo-theme="dark"]) body.bo-report-family .bo-filter-row .ref-range-trigger{
+  background:#FFF8EB;
+  border-color:#EADCC8;
+}
+/* Reset / Search sit flush in the row — no hover lift (locked) */
+body.bo-report-family .bo-filter-row .clean-btn:hover,
+body.bo-report-family .bo-filter-row .btn-primary-clean:hover{
+  transform:none;
+}
+
+/* The date-range driver injects its own <label>Date Range</label>. Listing
+   filters carry no visible titles — the trigger value carries the meaning. */
+body.bo-report-family .bo-filter-row > .bo-range-field > label,
+body.bo-report-family .bo-filter-row .bo-range-field > label,
+body.bo-report-family .bo-filter-row .ref-date-field > label{
+  display:none!important;
+}
+
+/* --------------------------------------------------------------------------
+   4. Table — locked listing frame
+   `table-layout:fixed` + square thead corners + 13px/700 cells. The zebra
+   values themselves come from bo-table-zebra.css; only the two rules it loses
+   on specificity are restated here (see 5).
+   -------------------------------------------------------------------------- */
+body.bo-report-family .table-card{
+  border:1px solid var(--bo-border,#EADCC8);
+  border-radius:8px;
+  background:var(--bo-surface,#FFF8EB);
+  overflow:hidden;
+}
+html[data-bo-theme="dark"] body.bo-report-family .table-card{
+  border-color:rgba(255,255,255,.14);
+  background:#383A46;
+}
+/* NOT `table-layout:fixed`, deliberately — a measured deviation from the listing
+   frame. `fixed` splits the panel width evenly across the columns, and these
+   report tables carry no explicit column widths at all, so a 14-column table got
+   ~108px per column and the headers **overlapped each other** on the rendered
+   page ("Deposit Approved Members" needs ~180px). `reports.css` already sets
+   `white-space:nowrap` on `.report-table th/td`, so the natural `auto` layout
+   sizes every column to its content and `.table-wrap` scrolls sideways — which is
+   what these pages did before this pass. A width floor was tried first
+   (`:has(th:nth-child(10|14))`) and is not enough either: the required width
+   depends on the header *text*, not on the column count, so any single number is
+   wrong for some page. Content-driven is the only value that is right for all of
+   them. */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-table{
+  table-layout:auto!important;
+  width:100%!important;
+  border-collapse:collapse;
+}
+body.bo-report-family .report-table th:first-child,
+body.bo-report-family .report-table th:last-child,
+body.bo-report-family .report-table thead th{
+  border-top-left-radius:0!important;
+  border-top-right-radius:0!important;
+}
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-table tbody td{
+  font-size:13px!important;
+  font-weight:700!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-report-family .report-table tbody td{ color:#18191C; }
+html[data-bo-theme="dark"] body.bo-report-family .report-table tbody td{ color:#F5F5F4; }
+/* a muted note/meta cell keeps its lighter weight */
+html:not([data-bo-theme="dark"]) body.bo-report-family .report-table tbody td.text-muted,
+html:not([data-bo-theme="dark"]) body.bo-report-family .report-table tbody td .text-muted{ font-weight:600; }
+
+/* --------------------------------------------------------------------------
+   5. Zebra — the stripe pair the ledger actually shows
+   bo-charcoal-legacy.css paints odd `#FFF8EB` and even `#FFF3E0` at (0,6,5),
+   which out-ranks bo-table-zebra.css at (0,6,4) — measured: even rows came
+   back `rgb(255,243,224)`. These rules carry the marker class (+1 class-level)
+   so the locked pair wins: odd `#FFF8EB`/`#3A3C48`, even `#FFF1DC`/`#434653`,
+   hover `#FFE8CC`/`#444654`.
+   -------------------------------------------------------------------------- */
+html:not([data-bo-theme="dark"]) body.bo-report-family .report-table tbody > tr:nth-child(odd):not(.total):not(.is-total):not(.is-suspended-row) > td{
+  background:#FFF8EB!important;
+  background-image:none!important;
+}
+html:not([data-bo-theme="dark"]) body.bo-report-family .report-table tbody > tr:nth-child(even):not(.total):not(.is-total):not(.is-suspended-row) > td{
+  background:#FFF1DC!important;
+  background-image:none!important;
+}
+html[data-bo-theme="dark"] body.bo-report-family .report-table tbody > tr:nth-child(odd):not(.total):not(.is-total):not(.is-suspended-row) > td{
+  background:#3A3C48!important;
+  background-image:none!important;
+}
+html[data-bo-theme="dark"] body.bo-report-family .report-table tbody > tr:nth-child(even):not(.total):not(.is-total):not(.is-suspended-row) > td{
+  background:#434653!important;
+  background-image:none!important;
+}
+body.bo-report-family .report-table tbody > tr:not(.total):not(.is-total):not(.is-suspended-row):hover > td{
+  background:#FFE8CC!important;
+  background-image:none!important;
+}
+html[data-bo-theme="dark"] body.bo-report-family .report-table tbody > tr:not(.total):not(.is-total):not(.is-suspended-row):hover > td{
+  background:#444654!important;
+  background-image:none!important;
+}
+/* total / semantic rows keep their own fill, and the empty-state row (one
+   colspan cell) is never striped */
+body.bo-report-family .report-table tbody > tr.total > td,
+body.bo-report-family .report-table tbody > tr.is-total > td,
+body.bo-report-family .report-table tbody > tr.is-suspended-row > td,
+body.bo-report-family .report-table tbody > tr:has(> td[colspan]) > td{
+  background:transparent!important;
+}
+
+/* --------------------------------------------------------------------------
+   14. Listing table chrome — the locked head + cell recipe, family-wide
+   Owner: "table设计要优化去参考统一其他页面". The ten pages below were already
+   identical to each other in the table (measured `thead` bg `transparent`,
+   `th` padding `10px 9px`, letter-spacing `.22px`, no column rules) — so
+   "unify with the other pages" cannot mean "match 8.1/8.2", they already
+   matched. What the owner was comparing against is `transaction-report.html`
+   (8.7), the one family page that carries the **locked Transaction listing**
+   recipe in its own page sheet (`transaction-report-polish.css`): head
+   `#FFE8CC` / `#6b360c` at `11px/700` uppercase `.04em`, real cell padding,
+   and the soft column rules that make a wide row readable. That page is
+   `:not()`-excluded here — it already implements this recipe, including a
+   deliberate `position:static` on its head that these rules would undo.
+
+   The flat head was never a decision. `reports.css` gives
+   `.standardized-listing-page .report-table thead th` a `#F5EBDC` fill (the
+   control-well value, not the head value), and `bo-charcoal-legacy.css` then
+   kills it with `background:transparent!important` at (0,4,3) — which is why
+   the family renders no head at all. The fill below is the value the locked MD
+   actually specifies for a table head (`--bo-table-head`): `#FFE8CC` light,
+   `#1F2128` dark (dark head is **deeper** than the body, never a lift).
+
+   Also zeroes the card's own padding: with `18px` on `.table-card` plus the old
+   `9px` on the first cell, the first column's text started at 307px while the
+   filter row above it starts at 295px. The locked frame owns the border, not the
+   inset — the first/last cell carries the 16px inset instead, which lands the
+   column text at 294px, i.e. flush with the filter row it sits under, and lets
+   the head bar and the footer hairline reach the card edge like the reference.
+   -------------------------------------------------------------------------- */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .table-card{
+  padding:0!important;
+}
+/* Interior chrome inside the card keeps its own inset, so a page that puts a
+   toolbar / head strip above its table (`user-toolbar`, `perf-table-head`) does
+   not end up with its badge touching the card border. `.table-wrap` and the
+   footer are deliberately excluded — those are the two that must bleed. */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .table-card > *:not(.table-wrap):not(.mad-footer):not(.bo-report-head):not(script):not(link):not(:empty){
+  padding:12px 16px!important;
+  margin:0!important;
+}
+/* An empty `.user-toolbar` (three casino pages ship one) otherwise reserves this inset as blank
+   space above the table. The badge/Refresh toolbar on the two games pages was removed outright
+   when the count moved to the title. */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .table-card > :empty{
+  display:none!important;
+}
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-table thead th,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-content .report-table thead th{
+  position:sticky!important;
+  top:0!important;
+  z-index:2!important;
+  background:#FFE8CC!important;
+  color:#6b360c!important;
+  border-bottom:1px solid #EADCC8!important;
+  border-right:1px solid rgba(107,54,12,.08)!important;
+  border-top-left-radius:0!important;
+  border-top-right-radius:0!important;
+  padding:12px!important;
+  font-size:11px!important;
+  font-weight:700!important;
+  line-height:1.2!important;
+  letter-spacing:.04em!important;
+  text-transform:uppercase!important;
+  text-align:left!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  box-sizing:border-box!important;
+  vertical-align:middle!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-table thead th,
+html[data-bo-theme="dark"] body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-content .report-table thead th{
+  background:#1F2128!important;
+  color:#E7E5E4!important;
+  border-bottom:1px solid rgba(255,255,255,.14)!important;
+  border-right-color:rgba(255,255,255,.08)!important;
+}
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-table thead th:last-child,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-content .report-table thead th:last-child{
+  border-right:0!important;
+}
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-table tbody td{
+  padding:10px 12px!important;
+  border-bottom:1px solid #EADCC8!important;
+  border-right:1px solid rgba(107,54,12,.06)!important;
+  line-height:1.35!important;
+  box-sizing:border-box!important;
+  vertical-align:middle!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-table tbody td{
+  border-bottom:1px solid rgba(255,255,255,.12)!important;
+  border-right-color:rgba(255,255,255,.06)!important;
+}
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-table tbody td:last-child,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-table thead th:last-child{
+  border-right:0!important;
+}
+/* first / last column inset — the locked frame's 16px cell inset.
+   Two deliberate departures from the rest of this file, both because the plain
+   form measurably did NOT apply: the inset is stated as the FULL `padding`
+   shorthand (the base rule above declares `padding`, and a `padding-left`
+   longhand in a nominally higher-specificity rule still lost to it — the rule
+   matched and parsed while the computed value stayed `12px`), and the selector
+   carries a third ID guard so the winner never depends on counting
+   `:not()` weight by hand. Measured after: the first header cell's text starts
+   at 296px against the filter row's 295px. */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page):not(#bo-inset-off) .report-table thead th:first-child{
+  padding:12px 12px 12px 16px!important;
+}
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page):not(#bo-inset-off) .report-table thead th:last-child{
+  padding:12px 16px 12px 12px!important;
+}
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page):not(#bo-inset-off) .report-table tbody td:first-child{
+  padding:10px 12px 10px 16px!important;
+}
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page):not(#bo-inset-off) .report-table tbody td:last-child{
+  padding:10px 16px 10px 12px!important;
+}
+/* a single-cell row (the empty state) is both ends at once */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page):not(#bo-inset-off) .report-table thead th:first-child:last-child,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page):not(#bo-inset-off) .report-table tbody td:first-child:last-child{
+  padding-left:16px!important;
+  padding-right:16px!important;
+}
+/* the one-cell empty state spans the full width — no rules, centred readout */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-table tbody > tr:has(> td[colspan]) > td{
+  border-right:0!important;
+}
+
+/* --------------------------------------------------------------------------
+   15. Viewport-locked table panel — the header stays, only the rows scroll
+   Owner: “我的report 8.1 至 8.11 的页面所有设计 需要做到像图二那样 而且我table scroll
+   down的时候 table header要定死 只能scroll里面的数据”. 图二 is the User Management
+   listing (`index.html`), which uses the frame `system.md` already documents as
+   **locked — Admin Detail**:
+
+     Shell  `.report-main` = `100dvh` flex column · `overflow:hidden`
+     Panel  `.table-card` = `flex:1` · `min-height:0` · `overflow:hidden`
+     Scroll `.table-wrap` = `flex:1` · `overflow-y:auto`
+     Header sticky top inside the wrap
+
+   The eleven report pages did not have that frame: `reports.css` leaves
+   `.report-shell` at `min-height:100vh` and `.report-content` as plain block flow,
+   so the document grew with the row count and the whole **page** scrolled while the
+   header scrolled away with it. `position:sticky` was already on these `th` (see
+   section 14) but had nothing to stick inside — a sticky element inside a
+   non-scrolling box is inert. That is why the header could not be pinned no matter
+   what the `th` said.
+
+   Desktop-only (`min-width:992px`): below that the sidebar is an off-canvas drawer
+   and a viewport-locked panel on a phone is worse than page scroll, so the natural
+   flow is kept.
+
+   The KPI strip and the filter card are `flex:0 0 auto` so they keep their height and
+   the table takes the remainder; `.table-card` carries the family's own
+   `padding:0`/`overflow:hidden` from section 14, and the footer is already
+   `margin-top:auto`, so it pins to the panel bottom.
+   -------------------------------------------------------------------------- */
+@media (min-width:992px){
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-shell{
+    height:100dvh;
+    min-height:0;
+    overflow:hidden;
+  }
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-main{
+    height:100dvh;
+    max-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    min-width:0;
+  }
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content{
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    overflow:hidden;
+  }
+  /* the 16px rhythm is the flex gap now, not each card's own bottom margin */
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > *{
+    margin-bottom:0!important;
+    flex:0 0 auto;
+  }
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > .table-card{
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+  }
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .table-card > .table-wrap{
+    flex:1 1 auto;
+    min-height:0;
+    overflow:auto;
+  }
+  /* interior chrome stays put; only the wrap flexes */
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .table-card > .mad-footer{
+    flex:0 0 auto;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   15b. The Members count, in the page title
+   Owner: "member显示移去上面" — the `15 Members` chip used to sit in a `.user-toolbar`
+   inside the table card, above the table, with a Refresh button beside it. It now sits
+   next to the page heading, and that toolbar is gone (the Refresh button with it).
+   `#gameRankCount` keeps its id, so `player-game-ranking.js` still writes the count
+   without knowing where it lives.
+   `:has()` scopes the row layout to pages that actually carry the chip, so no other
+   page's title block is restyled.
+   -------------------------------------------------------------------------- */
+body.bo-report-family .user-title-wrap > div:has(> .users-found-badge){
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  min-width:0;
+}
+body.bo-report-family .user-title-wrap .users-found-badge{
+  height:24px;
+  flex:0 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   16. Split head — the scroll bar covers the BODY only, not the header row
+   Owner: "我要的是这个呀" with the two-table write-up: 表头放在滚动容器外面，所以滚动条只覆盖表体
+   这一段，表头旁边干干净净. Built by `assets/js/report-table-split.js`; this is its layout half.
+   The header table is moved out of `.table-wrap` into `.bo-report-head`, so the wrap's
+   scroll bar starts below the header instead of running the full panel height beside it
+   — which is also what put the corner block under the header's right end.
+
+   `scrollbar-gutter:stable` on BOTH containers is the write-up's own point and there is no
+   magic number in it: the body wrap reserves the bar's 6px whether or not it currently
+  scrolls, the head reserves the same 6px, so both boxes end up with the same client width
+   and one table width fits both. It also stops the table shifting 6px sideways the moment
+   rows finish loading, which these pages did on every load.
+   The head's reserved gutter is painted by the head wrapper's own background + bottom
+   hairline (below), so the top-right corner is not left missing a piece — the write-up's
+   third point.
+   -------------------------------------------------------------------------- */
+body.bo-report-family .bo-report-head{
+  flex:0 0 auto;
+  overflow:hidden;
+  scrollbar-gutter:stable;
+  background:#FFE8CC;
+  /* Only the bottom hairline: the head's content box must match the wrap's, and the wrap
+     carries no side border of its own (see the nested-frame rule below). When the wrap still
+     had one, the head had to mirror it or every column edge was off by that pixel. */
+  border-bottom:1px solid #EADCC8;
+}
+body.bo-report-family .bo-report-head > table.report-table{
+  margin:0;
+  border-collapse:collapse;
+}
+/* The reserved gutter IS the styled scrollbar's width, so the head has to declare the same
+   6px bar as the body wrap. Without this, `scrollbar-gutter:stable` reserves the OS default
+   (~15px) on the head and the two containers end up different client widths — measured 1187
+   vs 1195 — which is the asymmetry the write-up's "no magic numbers" line exists to avoid.
+   The bar itself never shows (the head is `overflow:hidden`); only its reserved width matters. */
+body.bo-report-family .bo-report-head::-webkit-scrollbar{
+  width:6px;
+  height:6px;
+  background:transparent;
+}
+body.bo-report-family .bo-report-head::-webkit-scrollbar-track{
+  background:transparent;
+}
+body.bo-report-family .bo-report-head::-webkit-scrollbar-button,
+body.bo-report-family .bo-report-head::-webkit-scrollbar-button:single-button{
+  display:none;
+  height:0;
+  width:0;
+}
+body.bo-report-family .bo-report-head::-webkit-scrollbar-corner{
+  background:transparent;
+}
+/* the head bar's own fill, so the header wrapper and its cells cannot disagree */
+body.bo-report-family .bo-report-head .report-table thead th{
+  border-bottom:0;
+}
+html[data-bo-theme="dark"] body.bo-report-family .bo-report-head{
+  background:#1F2128;
+  border-color:rgba(255,255,255,.14);
+}
+/* the body wrap is the only vertical scroller — reserve its gutter too (see above) */
+body.bo-report-family .table-card > .table-wrap{
+  scrollbar-gutter:stable;
+}
+/* No nested frame. `reports.css` gives `.table-wrap` its own 1px border AND a 12px radius
+   (`.standardized-listing-page .table-wrap{border-radius:12px!important}`), i.e. a second rounded
+   box inside the card's own 16px rounded box. The locked listing frame says the scroller has
+   **no nested border/radius** — the panel owns the frame — and the owner reported it directly:
+   "我的展示数据的table 怎么有奇怪的border radius 你要帮我去除掉". It was masked while the header
+   lived inside the scroller; splitting the head out made the rounded box a visible, separate
+   object, and its rounded corner sitting against the scrollbar is the shape ringed earlier.
+   The card keeps its radius and `overflow:hidden`, so the table is still rounded — once, by the
+   frame that owns it, exactly like the User Management listing. */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .table-card > .table-wrap{
+  border:0!important;
+  border-radius:0!important;
+}
+@media (min-width:992px){
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .table-card > .bo-report-head{
+    flex:0 0 auto;
+  }
+  /* the header is no longer inside a scroller, so sticky has nothing to do */
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .bo-report-head .report-table thead th{
+    position:static!important;
+    top:auto!important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   6. Footer page-size control — the Role-select recipe's surface
+   (the custom chevron chrome comes from bo-ui-standard.js, which only wraps
+   selects inside .bo-filter-row; this keeps the footer select on-surface)
+   -------------------------------------------------------------------------- */
+body.bo-report-family .mad-footer select,
+body.bo-report-family .mad-footer .rounded-select-btn{
+  height:36px;
+  border-radius:8px;
+}
+html:not([data-bo-theme="dark"]) body.bo-report-family .mad-footer select{
+  background:#FFF8EB;
+  border:1px solid #EADCC8;
+  color:#18191C;
+}
+html[data-bo-theme="dark"] body.bo-report-family .mad-footer select{
+  background:#2A2C36;
+  border:1px solid rgba(255,255,255,.14);
+  color:#F5F5F4;
+}
+
+/* --------------------------------------------------------------------------
+   8. Panel scrollbars — the locked "Panel pill" recipe
+   reports.css gives `.table-wrap::-webkit-scrollbar` a 9px height and a cool-track
+   pair that only applies horizontally, and the warm pill elsewhere in the tree is
+   scoped to `.user-management-page`. Measured on a rendered page: the scrollbar
+   was the OS default (`scrollbar-color: auto`) — thick grey with arrow buttons,
+   the loudest non-themed surface left on these pages.
+   Per the locked recipe: webkit-only, 6px, warm chocolate / amber, no arrows.
+   Do NOT also set `scrollbar-width`/`scrollbar-color` to a coloured pair — once
+   `scrollbar-color` is set Chromium ignores these rules and paints OS arrows.
+   -------------------------------------------------------------------------- */
+body.bo-report-family .table-wrap::-webkit-scrollbar,
+body.bo-report-family .table-card::-webkit-scrollbar{
+  width:6px;
+  height:6px;
+  background:transparent;
+}
+body.bo-report-family .table-wrap::-webkit-scrollbar-track,
+body.bo-report-family .table-card::-webkit-scrollbar-track{
+  background:transparent;
+}
+/* Both the plain button and Chromium's `:single-button` state — the latter is the
+   one the up/down arrows are matched by, so hiding only the plain button leaves the
+   arrows painting on a 6px bar. Mirrors the locked recipe verbatim. */
+body.bo-report-family .table-wrap::-webkit-scrollbar-button,
+body.bo-report-family .table-wrap::-webkit-scrollbar-button:single-button,
+body.bo-report-family .table-card::-webkit-scrollbar-button,
+body.bo-report-family .table-card::-webkit-scrollbar-button:single-button{
+  display:none;
+  height:0;
+  width:0;
+}
+body.bo-report-family .table-wrap::-webkit-scrollbar-thumb,
+body.bo-report-family .table-card::-webkit-scrollbar-thumb{
+  border-radius:999px;
+  background:#8B6B4A;
+  background-color:#8B6B4A;
+  border:0;
+  box-shadow:none;
+}
+body.bo-report-family .table-wrap::-webkit-scrollbar-thumb:hover,
+body.bo-report-family .table-card::-webkit-scrollbar-thumb:hover{
+  background:#5C4A30;
+  background-color:#5C4A30;
+}
+/* The meeting point of the two scrollbars. Unstyled it paints a default block — the
+   stray corner the owner ringed once the table gained an inner vertical scroller
+   (`overflow:auto` on both axes, section 15). The locked recipe styles it
+   transparent; this sheet was missing it. */
+body.bo-report-family .table-wrap::-webkit-scrollbar-corner,
+body.bo-report-family .table-card::-webkit-scrollbar-corner{
+  background:transparent;
+}
+html[data-bo-theme="dark"] body.bo-report-family .table-wrap::-webkit-scrollbar-thumb,
+html[data-bo-theme="dark"] body.bo-report-family .table-card::-webkit-scrollbar-thumb{
+  background:#F59E0B;
+  background-color:#F59E0B;
+}
+html[data-bo-theme="dark"] body.bo-report-family .table-wrap::-webkit-scrollbar-thumb:hover,
+html[data-bo-theme="dark"] body.bo-report-family .table-card::-webkit-scrollbar-thumb:hover{
+  background:#D97706;
+  background-color:#D97706;
+}
+/* Firefox has no ::-webkit-scrollbar; only there is the standard property safe */
+@supports not selector(::-webkit-scrollbar){
+  body.bo-report-family .table-wrap,
+  body.bo-report-family .table-card,
+  body.bo-report-family .bo-report-head{
+    scrollbar-width:thin;
+  }
+  html:not([data-bo-theme="dark"]) body.bo-report-family .table-wrap,
+  html:not([data-bo-theme="dark"]) body.bo-report-family .table-card,
+  html:not([data-bo-theme="dark"]) body.bo-report-family .bo-report-head{
+    scrollbar-color:#8B6B4A transparent;
+  }
+  html[data-bo-theme="dark"] body.bo-report-family .table-wrap,
+  html[data-bo-theme="dark"] body.bo-report-family .table-card,
+  html[data-bo-theme="dark"] body.bo-report-family .bo-report-head{
+    scrollbar-color:#F59E0B transparent;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   9. The footer's page-size control reads as one line
+   The markup is `<label class="cr-page-size-label">Show <select>…</select>
+   entries</label>`, and `reports.js` upgrades the select into a **block**
+   `.rounded-select-wrap`. Being block, it broke the label's inline flow, so the
+   rendered control stacked as "Show" / [select] / "entries" on three lines
+   (measured on 8.2). Overflowing the label is wrong too: the label must be a
+   flex row so the three pieces sit on one line whatever the select's wrapper is.
+   -------------------------------------------------------------------------- */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .mad-footer .cr-page-size-label,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .mad-footer .entries-control{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  white-space:nowrap;
+}
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .mad-footer .cr-page-size-label > *,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .mad-footer .entries-control > *{
+  flex:0 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   10. The filter row is a layout container, not a second card
+   Owner report: "日期外围有一个很丑的border". Measured on the real page, the date
+   control sat inside THREE nested frames: `.filter-card` (cream, 1px #EADCC8,
+   16px radius) → `.user-search-grid` (cream, 1px #EADCC8, **square** corners) →
+   the trigger itself. The middle box is the offender, and it is not a bug in the
+   control: `bo-charcoal-legacy.css` paints `.user-search-grid` with a surface and
+   a border because on other pages that row *is* the card. Here it sits inside one,
+   so it drew a square-cornered duplicate of the card's own surface — which reads
+   as a stray rectangle around the date field.
+   The card owns the surface and the border; the row only owns the layout.
+   -------------------------------------------------------------------------- */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .filter-card .user-search-grid,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .filter-card .bo-filter-row,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .mad-filter-bar .bo-filter-row{
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+
+/* --------------------------------------------------------------------------
+   11. Footer page-size control — narrow, and clear of the ladder
+   The locked spec puts `Show N entries` on a **72px** control ("Footer Show N
+   (narrow `72px`)"). Measured on 8.2 the enhanced wrapper was **158px**, so the
+   word "entries" ran straight into the amber page rung with no gap — what the
+   owner photographed as the pagination area needing work.
+   `reports.js` sizes that wrapper from the `--bo-select-width` custom property
+   (default `100%`, rewritten to the measured content width), so the property is
+   pinned on the footer **and** the wrapper / button / native select are pinned by
+   width — whichever lever the driver used, the control ends up 72px.
+   -------------------------------------------------------------------------- */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .mad-footer{ --bo-select-width:72px; }
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .mad-footer .rounded-select-wrap,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .mad-footer .rounded-select-btn,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .mad-footer select.mad-page-size-select,
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .mad-footer .entries-control select{
+  width:72px!important;
+  min-width:72px!important;
+  max-width:72px!important;
+  flex:0 0 72px!important;
+  height:36px!important;
+  border-radius:8px!important;
+}
+html:not([data-bo-theme="dark"]) body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .mad-footer select.mad-page-size-select,
+html:not([data-bo-theme="dark"]) body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .mad-footer .entries-control select{
+  background:#FFF8EB;
+  border:1px solid #EADCC8;
+  color:#18191C;
+}
+html[data-bo-theme="dark"] body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .mad-footer select.mad-page-size-select,
+html[data-bo-theme="dark"] body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .mad-footer .entries-control select{
+  background:#2A2C36;
+  border:1px solid rgba(255,255,255,.14);
+  color:#F5F5F4;
+}
+/* the `.mad-footer-right` wrapper is gone: the three footer slots are direct grid children, so the
+   spacing between them is the grid's own 16px column gap (see §1). */
+
+/* --------------------------------------------------------------------------
+   18. KPI tiles carry no note line
+   Owner: "卡片的那些提示词就不需要了吧" — the `All time bets` / `Selected brand` /
+   `Assigned players` line under each KPI value. On this family the notes are either written by the
+   page (agent-performance) or injected by reports.js's `.bo-summary-note` decorator (the other ten),
+   so hiding them has to be done in CSS, scoped to `body.bo-report-family`: that removes them from all
+   eleven pages without touching the shared decorator, which is pinned on ~141 pages.
+   The tile keeps its locked geometry (radius 14px · min-height 104px · 52px well), so the strip still
+   reads as the same component the rest of the app uses — it simply has no second text line.
+   -------------------------------------------------------------------------- */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .quick-stats .metric .bo-summary-note{
+  display:none!important;
+}
+
+/* --------------------------------------------------------------------------
+   17. Footer page-size dropdown opens UPWARD
+   Owner: "pagination的 下来选单有被遮挡 需要去调整好". The footer sits at the bottom of a
+   viewport-locked card, and `reports.css` positions `.rounded-select-menu` at
+   `top:calc(100% + 6px)` — so the menu opened below it and straight out of the window:
+   measured menu 869→1099 in a 900px viewport with the card ending at 878, i.e. **not one
+   menu item reachable**, which is the遮挡.
+   Flipped to open above the trigger instead. This mirrors the recipe the referral page already
+   ships for its own footer select (`reports.css` → `.referral-page .table-footer … .rounded-select-menu`),
+   which was written for the same reason: a page-size control at the bottom of the page.
+   -------------------------------------------------------------------------- */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .mad-footer .rounded-select-menu{
+  top:auto!important;
+  bottom:calc(100% + 6px)!important;
+  left:0!important;
+  right:auto!important;
+  width:100%!important;
+  min-width:100%!important;
+  max-width:none!important;
+  max-height:min(260px,50vh)!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  z-index:3200!important;
+  box-sizing:border-box!important;
+}
+
+/* --------------------------------------------------------------------------
+   7. Disabled rungs — legacy pins `opacity:1!important` in light
+   -------------------------------------------------------------------------- */
+body.bo-report-family .mad-pager .smart-page:disabled{
+  opacity:.42!important;
+  cursor:not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   12. The flyout's internal scroll — MOVED OUT of this sheet (2026-09-22)
+   The warm Panel pill recipe that used to sit here was scoped to
+   `body.bo-report-family`, i.e. to these eleven pages — but the sidebar flyout is
+   painted on **every** BO page by auth.js, so on the other ~130 pages it fell back
+   to the raw OS scrollbar. Measured on one identical element by the scrollbar's own
+   layout gutter (`offsetWidth - clientWidth`): **7px** with this marker (6px pill +
+   1px border), **17px** without it. The owner asked for the design and colour to be
+   unified, so the recipe now lives in the sidebar's own layer,
+   `assets/css/bo-global-quicknav.css` (injected by auth.js on every sidebar page),
+   as `.report-sidebar .nav-group-list:not(.rounded-select-menu)`. Same values, one
+   source of truth. Nothing is left here on purpose: every page that loads this sheet
+   also loads that one, and a second copy would drift.
+   -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
+   13. Compact flyout rows — so all eleven Report entries fit on screen
+   Owner: "还是点不到 8.11 而且...". At ~45px per row the 11-entry Report group is
+   ~495px, which does not fit under its row in a typical laptop window, so the last
+   entries always fell below the fold. Tightening the row to ~36px brings the whole
+   group to ~400px, so every entry is on screen at once and no scrolling is needed.
+   Scoped to the report family: only this group is ever long enough to matter.
+   -------------------------------------------------------------------------- */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .nav-group-list a.report-sub{
+  padding:7px 10px;
+  margin-bottom:0;
+}
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .nav-group-list a.report-sub span{
+  line-height:1.35;
+}
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .nav-group-list:not(.rounded-select-menu){
+  padding:6px;
+}
