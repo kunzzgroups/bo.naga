@@ -22,7 +22,148 @@ function inRange(v,from,to){const x=d(v);return(!from||x>=from)&&(!to||x<=to)}
 function metric(icon,label,value,small){return `<div class="metric agent-admin-metric"><div class="bo-summary-icon"><i class="bi ${icon}"></i></div><span>${esc(label)}</span><strong>${esc(value)}</strong>${small?`<div class="bo-summary-note">${esc(small)}</div>`:''}</div>`}
 function status(s){s=String(s||'').toUpperCase();const active=['ACTIVE','APPROVED','PAID'].includes(s);return `<span class="status-pill agent-status-pill ${active?'active':(s==='SUSPENDED'||s==='REJECTED'?'off':'')}">${esc(s||'-')}</span>`}
 function moneyCell(v){const n=Number(v||0);return `<span class="${n<0?'money-negative':'money-positive'}">RM ${money(n)}</span>`}
-function pageSizeOf(selectId){const raw=$(selectId)?.value||'-';if(/^all$/i.test(raw))return Infinity;const n=Number(raw);return Number.isFinite(n)&&n>0?n:10}
+const AGENT_ADMIN_AUTO_SIZE={};
+const AGENT_ADMIN_AUTOFIT_BUSY={};
+function isAutoPageSize(raw){const v=String(raw??'-').trim();return v===''||v==='-'||/^auto$/i.test(v);}
+function syncAutofitAttr(bodyId,selectId){
+  const body=$(bodyId);
+  const wrap=body?.closest('.table-wrap');
+  const auto=isAutoPageSize($(selectId)?.value);
+  wrap?.toggleAttribute('data-bo-autofit',!!auto);
+  if(!auto){
+    const table=body?.closest('table');
+    if(table){table.classList.remove('bo-tx-evenfill');table.style.height='';}
+    if(body)[...body.querySelectorAll('tr')].forEach(tr=>{tr.style.height='';tr.querySelectorAll('td').forEach(td=>{td.style.height=''});});
+  }
+}
+function measureAutoPageSize(bodyId){
+  const body=$(bodyId);
+  const wrap=body?.closest('.table-wrap');
+  if(!wrap) return 10;
+  const table=wrap.querySelector('table');
+  const head=table?.querySelector('thead');
+  const headH=head?Math.ceil(head.getBoundingClientRect().height):44;
+  const avail=Math.max(0,Math.floor(wrap.clientHeight)-headH);
+  const sampleRows=[...wrap.querySelectorAll('tbody tr')].filter(tr=>!tr.querySelector('.table-empty'));
+  const sample=sampleRows[0];
+  const rowH=sample?Math.max(38,Math.round(sample.getBoundingClientRect().height)):48;
+  /* Floor only — never add a row that overflow:hidden would clip (VIP Log recipe). */
+  return Math.max(5,Math.min(200,Math.floor(avail/rowH)||10));
+}
+function autoFitPageSize(bodyId){
+  if(AGENT_ADMIN_AUTO_SIZE[bodyId]!=null) return AGENT_ADMIN_AUTO_SIZE[bodyId];
+  AGENT_ADMIN_AUTO_SIZE[bodyId]=measureAutoPageSize(bodyId);
+  return AGENT_ADMIN_AUTO_SIZE[bodyId];
+}
+function clearLockedAutoSize(bodyId){
+  delete AGENT_ADMIN_AUTO_SIZE[bodyId];
+  delete AGENT_ADMIN_AUTOFIT_BUSY[bodyId];
+  delete $(bodyId)?.dataset.boAutofitSettled;
+}
+function pageSizeOf(selectId,bodyId){
+  const raw=$(selectId)?.value||'-';
+  if(/^all$/i.test(raw))return Infinity;
+  if(isAutoPageSize(raw))return autoFitPageSize(bodyId);
+  const n=Number(raw);
+  return Number.isFinite(n)&&n>0?n:autoFitPageSize(bodyId);
+}
+/* Show "-" = autofit: grow/shrink until rows exactly fill the wrap with no
+   scrollbar (VIP EXP Log / Member Management recipe). data-bo-autofit on the
+   wrap forces overflow-y:hidden so a 1px rounding seam never paints a bar. */
+function evenFillTableRows(bodyId,selectId,render){
+  const body=$(bodyId);
+  if(!body) return;
+  const wrap=body.closest('.table-wrap');
+  const table=body.closest('table');
+  if(!wrap||!table) return;
+  syncAutofitAttr(bodyId,selectId);
+  table.classList.remove('bo-tx-evenfill');
+  table.style.height='';
+  [...body.querySelectorAll('tr')].forEach(tr=>{
+    tr.style.height='';
+    tr.querySelectorAll('td').forEach(td=>{td.style.height=''});
+  });
+  if(!isAutoPageSize($(selectId)?.value)) return;
+  if(AGENT_ADMIN_AUTOFIT_BUSY[bodyId]) return;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    if(!isAutoPageSize($(selectId)?.value)) return;
+    const rows=[...body.querySelectorAll('tr')].filter(tr=>!tr.querySelector('.table-empty'));
+    if(!rows.length) return;
+    void wrap.offsetHeight;
+    const head=table.querySelector('thead');
+    const headH=head?Math.ceil(head.getBoundingClientRect().height):0;
+    const avail=Math.max(0,Math.floor(wrap.clientHeight)-headH);
+    const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
+    const rowH=Math.max(38,Math.round(natural/rows.length)||48);
+    const overflow=wrap.scrollHeight>wrap.clientHeight+1||natural>avail+1;
+    let target=Math.max(5,Math.min(200,Math.floor(avail/rowH)||rows.length));
+    if(overflow) target=Math.max(5,Math.min(target,rows.length-1));
+    if(target!==rows.length&&render&&!body.dataset.boAutofitSettled){
+      AGENT_ADMIN_AUTO_SIZE[bodyId]=target;
+      AGENT_ADMIN_AUTOFIT_BUSY[bodyId]=true;
+      Promise.resolve(render(true)).finally(()=>{
+        AGENT_ADMIN_AUTOFIT_BUSY[bodyId]=false;
+        requestAnimationFrame(()=>{
+          if(wrap.scrollHeight>wrap.clientHeight+1&&AGENT_ADMIN_AUTO_SIZE[bodyId]>5){
+            AGENT_ADMIN_AUTO_SIZE[bodyId]=Math.max(5,AGENT_ADMIN_AUTO_SIZE[bodyId]-1);
+            AGENT_ADMIN_AUTOFIT_BUSY[bodyId]=true;
+            Promise.resolve(render(true)).finally(()=>{AGENT_ADMIN_AUTOFIT_BUSY[bodyId]=false;evenFillTableRows(bodyId,selectId,render);});
+            return;
+          }
+          body.dataset.boAutofitSettled='1';
+          evenFillTableRows(bodyId,selectId,render);
+        });
+      });
+      return;
+    }
+    if(overflow&&AGENT_ADMIN_AUTO_SIZE[bodyId]>5&&render&&!body.dataset.boAutofitSettled){
+      AGENT_ADMIN_AUTO_SIZE[bodyId]=Math.max(5,(AGENT_ADMIN_AUTO_SIZE[bodyId]||rows.length)-1);
+      AGENT_ADMIN_AUTOFIT_BUSY[bodyId]=true;
+      Promise.resolve(render(true)).finally(()=>{AGENT_ADMIN_AUTOFIT_BUSY[bodyId]=false;evenFillTableRows(bodyId,selectId,render);});
+      return;
+    }
+    body.dataset.boAutofitSettled='1';
+    const gap=avail-natural;
+    if(gap<2||gap>=rowH) return;
+    const base=Math.floor(avail/rows.length);
+    let rem=avail-(base*rows.length);
+    if(base<=0) return;
+    rows.forEach(tr=>{
+      const h=base+(rem>0?1:0);
+      if(rem>0)rem-=1;
+      tr.style.height=h+'px';
+      tr.querySelectorAll('td').forEach(td=>{td.style.height=h+'px'});
+    });
+    table.classList.add('bo-tx-evenfill');
+    table.style.height=(avail+headH)+'px';
+    if(wrap.scrollHeight>wrap.clientHeight){
+      const over=wrap.scrollHeight-wrap.clientHeight;
+      const shrink=Math.ceil(over/rows.length)||1;
+      rows.forEach(tr=>{
+        const h=Math.max(rowH,(parseFloat(tr.style.height)||base)-shrink);
+        tr.style.height=h+'px';
+        tr.querySelectorAll('td').forEach(td=>{td.style.height=h+'px'});
+      });
+      table.style.height=Math.max(0,avail+headH-over)+'px';
+    }
+  }));
+}
+function bindAutoFitPageSize(selectId,bodyId,render){
+  syncAutofitAttr(bodyId,selectId);
+  $(selectId)?.addEventListener('change',()=>syncAutofitAttr(bodyId,selectId));
+  let resizeTimer=0;
+  window.addEventListener('resize',()=>{
+    if(!isAutoPageSize($(selectId)?.value)) return;
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(()=>{
+      const prev=AGENT_ADMIN_AUTO_SIZE[bodyId];
+      clearLockedAutoSize(bodyId);
+      const next=autoFitPageSize(bodyId);
+      if(next!==prev) render(true);
+      else evenFillTableRows(bodyId,selectId,render);
+    },180);
+  });
+}
 function pageButtons(current,total,dataAttr,label){
   total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
   const pages=[]; const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};
@@ -109,7 +250,7 @@ async function agentsPage(){
     const all=base.filter(a=>!st||String(a.status)===st);
     const active=all.filter(a=>Number(a.status)===1).length,pending=all.reduce((n,a)=>n+(Number(a.pendingSettlement||0)>0?1:0),0),suspended=all.filter(a=>Number(a.status)!==1).length;
     $('agentAdminMetrics').innerHTML=metric('bi-people','Total Agents',whole(all.length),'Selected period')+metric('bi-person-check','Active Agents',whole(active),'Selected period')+metric('bi-hourglass-split','Pending Review',whole(pending),'Settlement pending')+metric('bi-person-x','Suspended',whole(suspended),'Current status');
-    const total=all.length,size=pageSizeOf('adminAgentsPageSize'),totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
+    const total=all.length,size=pageSizeOf('adminAgentsPageSize','adminAgentsRows'),totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
     if(currentPage>totalPages)currentPage=totalPages;
     const start=Number.isFinite(size)?(currentPage-1)*size:0;
     const pageRows=Number.isFinite(size)?all.slice(start,start+size):all;
@@ -117,9 +258,11 @@ async function agentsPage(){
     const from2=total?start+1:0,to2=total?Math.min(start+pageRows.length,total):0;
     $('adminAgentsShowing').textContent=`Showing ${from2} to ${to2} of ${total} entries`;
     $('adminAgentsPager').innerHTML=pageButtons(currentPage,totalPages,'agent-page','Agent table');
+    evenFillTableRows('adminAgentsRows','adminAgentsPageSize',render);
   };
   $('adminAgentsPager').addEventListener('click',e=>{const b=e.target.closest('[data-agent-page]');if(!b||b.disabled)return;currentPage=Number(b.dataset.agentPage)||1;render(false);});
-  $('adminAgentsPageSize')?.addEventListener('change',()=>render(true));
+  $('adminAgentsPageSize')?.addEventListener('change',()=>{clearLockedAutoSize('adminAgentsRows');render(true);});
+  bindAutoFitPageSize('adminAgentsPageSize','adminAgentsRows',render);
   ['adminAgentFrom','adminAgentTo','adminAgentStatus','adminAgentPlan'].forEach(id=>$(id)?.addEventListener('change',()=>render(true)));
   $('adminAgentSearch')?.addEventListener('input',()=>render(true));
   document.querySelectorAll('[data-agent-status]').forEach(tab=>tab.addEventListener('click',()=>{
@@ -163,7 +306,7 @@ async function commissionPage(){
     let totalBet=0,pl=0,com=0;
     reports.forEach(x=>{totalBet+=Number(x.r.totalTurnover||0);pl+=Number(x.r.customerLoss||0);com+=Number(x.r.availableCommission||0)});
     $('agentCommissionMetrics').innerHTML=metric('bi-cash-stack','Total Bet','RM '+money(totalBet),'Selected KPI cycles')+metric('bi-graph-up-arrow','Customer P/L','RM '+money(pl),'Loss + / Win -')+metric('bi-percent','Commission','RM '+money(com),'Available commission')+metric('bi-people','Agents',whole(reports.length),'Selected agents');
-    const size=pageSizeOf('agentCommissionPageSize'),total=reports.length,totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
+    const size=pageSizeOf('agentCommissionPageSize','agentCommissionRows'),total=reports.length,totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
     if(currentPage>totalPages)currentPage=totalPages;
     const start=Number.isFinite(size)?(currentPage-1)*size:0;
     const pageReports=Number.isFinite(size)?reports.slice(start,start+size):reports;
@@ -173,12 +316,14 @@ async function commissionPage(){
     const from2=total?start+1:0,to2=total?Math.min(start+pageReports.length,total):0;
     $('agentCommissionShowing').textContent='Showing '+from2+' to '+to2+' of '+total+' entries';
     $('agentCommissionPager').innerHTML=pageButtons(currentPage,totalPages,'commission-page','Commission table');
+    evenFillTableRows('agentCommissionRows','agentCommissionPageSize',render);
   }
   $('agentCommissionSearch')?.addEventListener('input',()=>render(true));
   $('agentCommissionFrom')?.addEventListener('change',()=>render(true));
   $('agentCommissionTo')?.addEventListener('change',()=>render(true));
-  $('agentCommissionPageSize')?.addEventListener('change',()=>render(true));
+  $('agentCommissionPageSize')?.addEventListener('change',()=>{clearLockedAutoSize('agentCommissionRows');render(true);});
   $('agentCommissionPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-commission-page]');if(!b||b.disabled)return;currentPage=Number(b.dataset.commissionPage)||1;render(false);});
+  bindAutoFitPageSize('agentCommissionPageSize','agentCommissionRows',render);
   await render(true);
 }
 async function settlementData(){return await req('/api/admin/brand-agent/settlements')||[]}
@@ -192,7 +337,7 @@ async function claimPage(){
     if(resetPage)currentPage=1;
     const q=($('agentClaimSearch')?.value||'').toLowerCase(),st=$('agentClaimStatus')?.value||'', [from,to]=range('agentClaimFrom','agentClaimTo');
     const filtered=rows.filter(x=>(!q||[x.id,x.agentCode,x.agentName].some(v=>String(v||'').toLowerCase().includes(q)))&&(!st||String(x.status).toUpperCase()===st)&&inRange(claimDate(x),from,to));
-    const size=pageSizeOf('agentClaimPageSize'),total=filtered.length,totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
+    const size=pageSizeOf('agentClaimPageSize','agentClaimRows'),total=filtered.length,totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
     if(currentPage>totalPages)currentPage=totalPages;
     const start=Number.isFinite(size)?(currentPage-1)*size:0;
     const pageRows=Number.isFinite(size)?filtered.slice(start,start+size):filtered;
@@ -200,13 +345,15 @@ async function claimPage(){
     const from2=total?start+1:0,to2=total?Math.min(start+pageRows.length,total):0;
     $('agentClaimShowing').textContent='Showing '+from2+' to '+to2+' of '+total+' entries';
     $('agentClaimPager').innerHTML=pageButtons(currentPage,totalPages,'claim-page','Claim table');
+    evenFillTableRows('agentClaimRows','agentClaimPageSize',render);
   };
   $('agentClaimSearch')?.addEventListener('input',()=>render(true));
   $('agentClaimFrom')?.addEventListener('change',()=>render(true));
   $('agentClaimTo')?.addEventListener('change',()=>render(true));
   $('agentClaimStatus')?.addEventListener('change',()=>render(true));
-  $('agentClaimPageSize')?.addEventListener('change',()=>render(true));
+  $('agentClaimPageSize')?.addEventListener('change',()=>{clearLockedAutoSize('agentClaimRows');render(true);});
   $('agentClaimPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-claim-page]');if(!b||b.disabled)return;currentPage=Number(b.dataset.claimPage)||1;render(false);});
+  bindAutoFitPageSize('agentClaimPageSize','agentClaimRows',render);
   $('agentClaimRows').onclick=async e=>{
     const ap=e.target.closest('[data-claim-approve]'),rj=e.target.closest('[data-claim-reject]');
     if(ap){await req('/api/admin/brand-agent/ad-claim/'+ap.dataset.claimApprove+'/approve',{method:'POST',body:'{}'});rows=await req('/api/admin/brand-agent/ad-claims')||[];render(true);}
@@ -220,20 +367,43 @@ async function payoutPage(){
     if(resetPage)currentPage=1;
     const q=($('agentPayoutSearch')?.value||'').toLowerCase(),st=$('agentPayoutStatus')?.value||'', [from,to]=range('agentPayoutFrom','agentPayoutTo');
     const filtered=rows.filter(x=>(!q||[x.id,x.agentCode,x.agentName].some(v=>String(v||'').toLowerCase().includes(q)))&&(!st||String(x.settlementStatus).toUpperCase()===st)&&inRange(x.createdAt,from,to));
-    const size=pageSizeOf('agentPayoutPageSize'),total=filtered.length,totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
+    const size=pageSizeOf('agentPayoutPageSize','agentPayoutRows'),total=filtered.length,totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
     if(currentPage>totalPages)currentPage=totalPages;
     const start=Number.isFinite(size)?(currentPage-1)*size:0,pageRows=Number.isFinite(size)?filtered.slice(start,start+size):filtered;
     $('agentPayoutRows').innerHTML=pageRows.map(x=>'<tr><td>#'+esc(x.id)+'</td><td><b>'+esc(x.agentName||'-')+'</b><small class="d-block">'+esc(x.agentCode||'')+'</small></td><td>'+esc(dt(x.createdAt))+'</td><td>RM '+money(x.requestedAmount)+'</td><td>'+(x.bankName?esc(x.bankName)+'<small class="d-block">**** '+esc(String(x.bankAccountNumber||'').slice(-4))+'</small>':'Registered payout account')+'</td><td>'+status(x.settlementStatus)+'</td><td>'+esc(x.paymentReference||'-')+'</td><td>'+(String(x.settlementStatus).toUpperCase()==='APPROVED'?'<button class="pay-btn" data-pay="'+x.id+'" title="Mark Paid"><i class="bi bi-cash-stack"></i></button>':'-')+'</td></tr>').join('')||'<tr><td colspan="8" class="table-empty">No payout requests.</td></tr>';
     $('agentPayoutShowing').textContent='Showing '+(total?start+1:0)+' to '+(total?Math.min(start+pageRows.length,total):0)+' of '+total+' entries';
     $('agentPayoutPager').innerHTML=pageButtons(currentPage,totalPages,'payout-page','Payout table');
+    evenFillTableRows('agentPayoutRows','agentPayoutPageSize',render);
   };
   ['agentPayoutSearch','agentPayoutFrom','agentPayoutTo','agentPayoutStatus'].forEach(id=>$(id)?.addEventListener(id==='agentPayoutSearch'?'input':'change',()=>render(true)));
-  $('agentPayoutPageSize')?.addEventListener('change',()=>render(true));
+  $('agentPayoutPageSize')?.addEventListener('change',()=>{clearLockedAutoSize('agentPayoutRows');render(true);});
   $('agentPayoutPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-payout-page]');if(!b||b.disabled)return;currentPage=Number(b.dataset.payoutPage)||1;render(false);});
+  bindAutoFitPageSize('agentPayoutPageSize','agentPayoutRows',render);
   $('agentPayoutRows').onclick=async e=>{const b=e.target.closest('[data-pay]');if(!b)return;const ref=await BO_DIALOG.prompt('Enter payment reference','',{title:'Mark Payout Paid',inputLabel:'Payment reference'});if(ref==null)return;await req('/api/admin/brand-agent/settlement/'+b.dataset.pay+'/pay',{method:'POST',body:JSON.stringify({paymentReference:ref})});rows=await settlementData();render(true);};
   render(true);
 }
-async function promotionPage(){async function render(){const[from,to]=range('agentPromotionFrom','agentPromotionTo'),q=($('agentPromotionSearch')?.value||'').toLowerCase();let rows=[];try{rows=await req('/api/admin/operations/promotion-report?from='+encodeURIComponent(from)+'&to='+encodeURIComponent(to))||[]}catch(e){}rows=rows.filter(x=>!q||[x.name,x.promotionCode].some(v=>String(v||'').toLowerCase().includes(q)));$('agentPromotionRows').innerHTML=rows.map(x=>`<tr><td><b>${esc(x.name||'-')}</b><small class="d-block">${esc(x.promotionCode||'')}</small></td><td>${whole(x.claimCount)}</td><td>${whole(x.uniqueClaimers)}</td><td>RM ${money(x.payoutAmount)}</td><td>${whole(x.repeatedClaimCount)}</td></tr>`).join('')||'<tr><td colspan="5" class="table-empty">No promotion activity.</td></tr>'}$('agentPromotionLoad').onclick=render;await render();}
+async function promotionPage(){
+  let currentPage=1,rows=[];
+  const render=async resetPage=>{
+    if(resetPage)currentPage=1;
+    const [from,to]=range('agentPromotionFrom','agentPromotionTo'),q=($('agentPromotionSearch')?.value||'').toLowerCase();
+    try{rows=await req('/api/admin/operations/promotion-report?from='+encodeURIComponent(from)+'&to='+encodeURIComponent(to))||[]}catch(e){rows=[];}
+    const filtered=rows.filter(x=>!q||[x.name,x.promotionCode].some(v=>String(v||'').toLowerCase().includes(q)));
+    const size=pageSizeOf('agentPromotionPageSize','agentPromotionRows'),total=filtered.length,totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
+    if(currentPage>totalPages)currentPage=totalPages;
+    const start=Number.isFinite(size)?(currentPage-1)*size:0,pageRows=Number.isFinite(size)?filtered.slice(start,start+size):filtered;
+    $('agentPromotionRows').innerHTML=pageRows.map(x=>'<tr><td><b>'+esc(x.name||'-')+'</b><small class="d-block">'+esc(x.promotionCode||'')+'</small></td><td>'+whole(x.claimCount)+'</td><td>'+whole(x.uniqueClaimers)+'</td><td>RM '+money(x.payoutAmount)+'</td><td>'+whole(x.repeatedClaimCount)+'</td></tr>').join('')||'<tr><td colspan="5" class="table-empty">No promotion activity.</td></tr>';
+    $('agentPromotionShowing').textContent='Showing '+(total?start+1:0)+' to '+(total?Math.min(start+pageRows.length,total):0)+' of '+total+' entries';
+    $('agentPromotionPager').innerHTML=pageButtons(currentPage,totalPages,'promotion-page','Promotion table');
+    evenFillTableRows('agentPromotionRows','agentPromotionPageSize',render);
+  };
+  ['agentPromotionFrom','agentPromotionTo'].forEach(id=>$(id)?.addEventListener('change',()=>render(true)));
+  $('agentPromotionSearch')?.addEventListener('input',()=>render(true));
+  $('agentPromotionPageSize')?.addEventListener('change',()=>{clearLockedAutoSize('agentPromotionRows');render(true);});
+  $('agentPromotionPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-promotion-page]');if(!b||b.disabled)return;currentPage=Number(b.dataset.promotionPage)||1;render(false);});
+  bindAutoFitPageSize('agentPromotionPageSize','agentPromotionRows',render);
+  await render(true);
+}
 
 async function init(){BO_AUTH.requireLogin();await BO_AUTH.refreshMe();stabilizeAgentAdminDropdowns();const p=currentPage();try{if(p==='agent-management.html')await agentsPage();else if(p==='agent-commission-admin.html')await commissionPage();else if(p==='agent-settlement-admin.html')await settlementPage();else if(p==='agent-reimbursement-admin.html')await claimPage();else if(p==='agent-payout-admin.html')await payoutPage();else if(p==='agent-promotion-admin.html')await promotionPage();}catch(e){console.error(e);window.BO_DIALOG?.alert?.(e.message,{title:'Agent Management',type:'error'});}finally{stabilizeAgentAdminDropdowns();}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
