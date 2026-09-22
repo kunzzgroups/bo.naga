@@ -1,0 +1,452 @@
+/* Security & Audit (main-admin-security.html · main-merchant-security.html) — the final word
+   on this page's layout. Linked LAST, and as its own file on purpose: these are the rules that
+   took several passes to get right, and an in-place edit to main-admin-detail-executive.css was
+   still being served from the browser's cache while the owner was testing — the page rendered
+   the new panel layout with the old percentage column widths, which crushes every middle column.
+   A file the browser has never seen cannot be stale.
+   Everything below is scoped to `body.main-admin-security-page`, a class only these two pages
+   carry, so nothing here can reach another page. */
+
+/* ---- Table: px columns, not percentages ------------------------------------------------
+   The percentage set needed `306px + 72% ≤ table width`, i.e. a table of 1093px or more. With
+   the detail column open the table panel is 820–1370px, and below 1093 the middle columns got
+   the deficit: measured at a 1280 viewport, Merchant 47px and Action/Event 55px, the target
+   chip one character per line. A px set summing to the table's own floor is deterministic at
+   the floor; above it the browser hands the spare width to the columns.
+   The Details column is gone — the row itself opens the panel (see the row block below) — and
+   its 72px was given back here: Action/Event +24, IP +28, Target +20. */
+body.main-admin-security-page .mas-table{
+  table-layout:fixed;
+  width:100%;
+  min-width:820px;
+}
+body.main-admin-security-page .mas-table .mas-col-time{width:96px}
+body.main-admin-security-page .mas-table .mas-col-admin{width:140px}
+body.main-admin-security-page .mas-table .mas-col-event{width:186px}
+body.main-admin-security-page .mas-table .mas-col-target{width:128px}
+body.main-admin-security-page .mas-table .mas-col-ip{width:170px}
+body.main-admin-security-page .mas-table .mas-col-status{width:100px}
+body.main-admin-security-page .mas-table th{padding:12px 10px}
+body.main-admin-security-page .mas-table td{padding:6px 10px;vertical-align:middle}
+body.main-admin-security-page .mas-table th:first-child,
+body.main-admin-security-page .mas-table td:first-child{padding-left:8px}
+body.main-admin-security-page .mas-table th:last-child,
+body.main-admin-security-page .mas-table td:last-child{padding-right:8px}
+body.main-admin-security-page .mas-table th:nth-child(1),
+body.main-admin-security-page .mas-table td:nth-child(1){width:96px;text-align:left;padding-left:8px}
+body.main-admin-security-page .mas-table th:nth-child(2),
+body.main-admin-security-page .mas-table td:nth-child(2){width:140px;text-align:left}
+body.main-admin-security-page .mas-table th:nth-child(3),
+body.main-admin-security-page .mas-table td:nth-child(3){width:186px;text-align:left}
+/* The Action / Event head used to be centred while its cells are left-aligned, so the caption sat
+   half a column to the right of every event title under it — the one column in this table whose
+   head and body disagreed (owner: "action/event的align 与下面的不对齐"). Every other head here is
+   left-aligned, so this one is too. */
+body.main-admin-security-page .mas-table th:nth-child(4),
+body.main-admin-security-page .mas-table td:nth-child(4){width:128px;text-align:left}
+body.main-admin-security-page .mas-table th:nth-child(5),
+body.main-admin-security-page .mas-table td:nth-child(5){width:170px;text-align:left}
+body.main-admin-security-page .mas-table th:nth-child(6),
+body.main-admin-security-page .mas-table td:nth-child(6){width:100px;text-align:left;padding-right:8px}
+
+/* ---- The row is the control -------------------------------------------------------------
+   Replaces the "View ›" cell. The affordance has to be visible without the button, so the row
+   takes a pointer and a hover wash, and the row the panel is showing keeps a stronger tint plus
+   a left accent bar — that tint is the only thing that says which event is on the right.
+   The selector is deliberately written the long way, mirroring bo-table-zebra.css: that layer
+   paints these same cells `!important` through
+   `html:not([data-bo-theme="dark"]) :is(.mad-table,…) > tbody > tr:nth-child(odd):not(…) > td`,
+   which is (0,6,4). A plain selector here loses no matter how much `!important` it carries, and
+   the security tables carry `mad-table` too — so the selected row kept the zebra stripe and the
+   amber never appeared. Same shape as the stripe, plus `.is-active`, wins at (0,7,5).
+   Blocked rows keep their red wash: their rules are restated at this weight, after these, so
+   the semantic colour survives while the accent bar still marks the selection. */
+body.main-admin-security-page .mas-table tbody tr[data-event-id]{cursor:pointer}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table > tbody > tr[data-event-id]:hover:not(.total):not(.is-total) > td,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-table > tbody > tr[data-event-id]:hover:not(.total):not(.is-total) > td{
+  background-color:var(--bo-cyan-tint)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table > tbody > tr[data-event-id].is-active:not(.total):not(.is-total) > td,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-table > tbody > tr[data-event-id].is-active:not(.total):not(.is-total) > td{
+  background-color:var(--bo-cyan-tint-strong)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table > tbody > tr.is-blocked[data-event-id]:hover:not(.total):not(.is-total) > td,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-table > tbody > tr.is-blocked[data-event-id]:hover:not(.total):not(.is-total) > td{
+  background-color:rgba(239,51,64,.12)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-security-page .mas-table > tbody > tr.is-blocked[data-event-id].is-active:not(.total):not(.is-total) > td,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-table > tbody > tr.is-blocked[data-event-id].is-active:not(.total):not(.is-total) > td{
+  background-color:rgba(239,51,64,.20)!important;
+}
+body.main-admin-security-page .mas-table tbody tr[data-event-id].is-active > td:first-child{
+  box-shadow:inset 3px 0 0 var(--bo-cyan);
+}
+body.main-admin-security-page .mas-table tbody tr[data-event-id]:focus-visible{
+  outline:2px solid var(--bo-cyan);
+  outline-offset:-2px;
+}
+
+/* Head and body are two separate tables: the body reserves 15px for its vertical scrollbar and
+   the head must reserve the same, or every column misaligns by exactly that much (measured
+   headTableW 1376 against bodyTableW 1361 before this). The head itself scrolls only
+   programmatically, mirroring the body's scrollLeft. */
+body.main-admin-security-page .mas-table-head{
+  flex:0 0 auto;
+  overflow-x:hidden;overflow-y:hidden;
+  scrollbar-gutter:stable;
+}
+body.main-admin-security-page .mas-table-body-scroll{
+  flex:1 1 auto;min-height:0;
+  overflow-x:auto;overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+}
+body.main-admin-security-page .mas-table-head .mas-table,
+body.main-admin-security-page .mas-table-body-scroll .mas-table{
+  height:auto;width:100%;min-width:820px;
+}
+
+/* ---- Toolbar: one row, no wasted width --------------------------------------------------
+   The row is: search + date range + the merchant / event-type / status selects + Reset. The
+   selects are enhanced `.rounded-select-wrap` controls whose width is content-driven, and the
+   date range is pinned at 240px by an earlier fix (its label needs the room). On the merchant
+   page that added up to more than the panel had, so the row wrapped and dropped Event Types /
+   Status / Reset onto a second line.
+   Rather than depend on `flex-wrap` — this environment reports it inconsistently, so the
+   computed value could not be trusted while measuring — the row is made to FIT: the search box
+   capped at 160px, the date range at 240, Reset trimmed to a 10px pad, gaps at 4px.
+   Capping the enhanced selects is impossible from CSS: `sizeRoundedSelect()` in bo-ui-standard.js
+   measures the WIDEST option label and pins the wrapper to it through the custom property
+   `--bo-select-width`, so the wrapper's used min-width equals its content and no rule here can
+   shrink it. It turned out not to be needed. Measured needed-vs-available with the panel
+   open, one line at all three: 1440 → 939 in 982; 1500 → 1015 in 1042; 1568 → 1015 in 1097.
+   At a 1280 viewport the row needs 996 in 1002 with the sidebar expanded, and 996 in 1150 while
+   the detail is open — the latter because opening the panel folds the sidebar (see the page JS). */
+/* `.mas-filters.mas-filters` is not a typo: it is one class of specificity, and that is what it
+   takes. The date range is pinned `flex:0 0 260px!important` by an earlier fix and the enhanced
+   selects by `min-width:140/160px!important`, both at (0,3,1) — equal to a plain version of
+   these selectors, and equal-specificity `!important` is decided by document order. Doubling the
+   class makes these win outright, so the caps actually bind. */
+body.main-admin-security-page .mas-filters.mas-filters{gap:2px}
+body.main-admin-security-page .mas-filters.mas-filters .mas-search{flex:0 1 118px;width:auto;max-width:118px;min-width:110px}
+body.main-admin-security-page .mas-filters.mas-filters .mas-date-field{
+  flex:0 0 240px!important;width:240px!important;min-width:0!important;max-width:240px!important;
+}
+body.main-admin-security-page .mas-filters.mas-filters .mad-select{min-width:96px}
+body.main-admin-security-page .mas-filters.mas-filters > .rounded-select-wrap{min-width:0!important}
+body.main-admin-security-page .mas-filters.mas-filters > .rounded-select-wrap .rounded-select-btn{
+  min-width:0!important;width:auto!important;
+  padding-left:10px!important;padding-right:10px!important;
+}
+/* At 1280 with the sidebar expanded the row is ~20px short, and the three selects carry 28px of
+   horizontal padding between them that buys nothing. Trimming it is what closes the gap without
+   touching any label. */
+/* The Reset button was the odd one out in its own row: 6px of horizontal padding against the
+   select chips' 10-12px and a 6px gap between its icon and label against their 10px, so it read
+   as a cramped, heavier control. It now shares the family's spacing, and the date trigger's 10px
+   radius is brought to the 8px every other control in the row uses. Its darker fill is left
+   alone — that is the one thing marking it as an action rather than another field. */
+body.main-admin-security-page .mas-filters .mad-reset-btn{
+  padding:0 12px!important;gap:10px!important;border-radius:8px!important;
+}
+body.main-admin-security-page .mas-filters .ref-range-trigger{border-radius:8px!important}
+/* The merchant select cannot be capped from here, and that is worth recording: it is sized from
+   its WIDEST option and the wrapper ends up carrying
+   `style="width:216px !important; min-width:216px !important; max-width:216px !important"`.
+   Inline `!important` outranks every stylesheet declaration, so even setting the `--bo-select-width`
+   custom property (which does take — measured 176px on the element) changes nothing, because the
+   wrapper's own inline width wins over the `var()` rule that consumes it. Its 216px therefore grows
+   with the brand list; the row is kept on one line by the search box and the gaps instead. */
+
+body.main-admin-security-page .mas-panel > .mad-filter-bar{padding:10px 8px}
+body.main-admin-security-page .mas-toolbar{gap:10px}
+/* No `flex-wrap:nowrap` here on purpose. It was tried: it does produce one line, but the row
+   then overflows by ~37px and the panel's `overflow:hidden` clips the Reset button — a worse
+   failure than wrapping. The row is sized to fit instead (see the numbers above), and if it ever
+   does not, wrapping is the graceful outcome. */
+
+/* ---- Detail panel: the mockup's information architecture ----------------------------------
+   A head that names the event and its result, then Login/Event Information (label→value rows),
+   Device & Location (four small facts plus the user agent), Technical Details (the record's ids
+   and a View JSON toggle) and the reason when there is one. Built only from fields the rows
+   carry; the group disappears when an event has nothing for it. */
+body.main-admin-security-page .mas-head-copy{min-width:0}
+body.main-admin-security-page .mas-head-title{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+body.main-admin-security-page .mas-head-title h3{
+  margin:0;font-size:15px;font-weight:800;line-height:1.2;color:var(--bo-navy);
+}
+body.main-admin-security-page .mas-head-status{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;
+  padding:2px 8px;border-radius:999px;
+  font-size:10.5px;font-weight:800;line-height:1.6;
+}
+body.main-admin-security-page .mas-head-status.is-ok{background:rgba(18,183,106,.14);color:#027A48}
+body.main-admin-security-page .mas-head-status.is-bad{background:rgba(239,51,64,.14);color:#B42318}
+body.main-admin-security-page .mad-modal-title small{
+  display:block;margin-top:1px;font-size:11px;font-weight:600;color:var(--bo-muted);
+  overflow-wrap:anywhere;
+}
+body.main-admin-security-page .mas-section-label{
+  display:flex;align-items:center;gap:6px;
+  margin:14px 0 7px;font-size:10px;font-weight:800;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--bo-muted);
+}
+body.main-admin-security-page .mas-section-label i{font-size:11px;color:var(--bo-cyan)}
+body.main-admin-security-page .mas-detail-body > .mas-section-label:first-child{margin-top:0}
+/* The ids block and the JSON toggle share one row, like the mockup's Technical Details line. */
+body.main-admin-security-page .mas-tech{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:8px 10px;border:1px solid var(--bo-border);border-radius:8px;background:var(--bo-bg);
+}
+body.main-admin-security-page .mas-tech-ids{
+  display:flex;flex:1 1 auto;min-width:0;gap:12px;flex-wrap:wrap;margin:0;
+}
+body.main-admin-security-page .mas-tech-ids .mas-field{min-width:0}
+body.main-admin-security-page .mas-tech-ids .mas-field dt{
+  margin:0;font-size:9.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+}
+body.main-admin-security-page .mas-tech-ids .mas-field dd{
+  margin:1px 0 0;font-size:12px;font-weight:800;font-variant-numeric:tabular-nums;
+}
+body.main-admin-security-page .mas-tech-json{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;
+  height:28px;padding:0 10px;border-radius:7px;cursor:pointer;
+  border:1px solid var(--bo-border);background:var(--bo-surface);
+  color:var(--bo-text-secondary);font-size:11.5px;font-weight:700;
+}
+body.main-admin-security-page .mas-tech-json:hover{color:var(--bo-cyan);border-color:var(--bo-cyan)}
+body.main-admin-security-page .mas-tech-json.is-open{color:var(--bo-cyan);border-color:var(--bo-cyan);background:var(--bo-cyan-tint)}
+body.main-admin-security-page .mas-payload{margin-top:8px}
+body.main-admin-security-page .mas-payload .mas-detail-raw{margin-top:0}
+body.main-admin-security-page .mas-detail-fields.is-kv{margin-bottom:0}
+/* breathing room between the tab row and the pane below it — the pane's own `margin-top` loses
+   to the `.mas-payload .mas-detail-raw{margin-top:0}` rule it inherited, so the gap lives here */
+body.main-admin-security-page .mas-payload-head{margin-bottom:8px}
+
+body.main-admin-security-page .mas-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+body.main-admin-security-page .mas-card{
+  position:relative;min-width:0;
+  padding:7px 9px;border:1px solid var(--bo-border);border-radius:8px;background:var(--bo-bg);
+}
+body.main-admin-security-page .mas-card.is-wide{grid-column:1 / -1}
+body.main-admin-security-page .mas-card-label{
+  display:block;font-size:9.5px;font-weight:800;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--bo-muted);
+}
+body.main-admin-security-page .mas-card-value{
+  display:block;margin-top:2px;font-size:12.5px;font-weight:800;line-height:1.35;
+  color:var(--bo-text);overflow-wrap:anywhere;
+}
+body.main-admin-security-page .mas-card-sub{
+  display:block;margin-top:1px;font-size:10.5px;font-weight:600;line-height:1.4;
+  color:var(--bo-muted);overflow-wrap:anywhere;
+}
+body.main-admin-security-page .mas-card-copy{
+  position:absolute;top:5px;right:5px;
+  width:20px;height:20px;border:0;border-radius:6px;cursor:pointer;
+  background:transparent;color:var(--bo-muted);
+  display:grid;place-items:center;font-size:11px;
+}
+body.main-admin-security-page .mas-card-copy:hover{background:var(--bo-control-well);color:var(--bo-cyan)}
+body.main-admin-security-page .mas-card-copy.is-done{color:var(--bo-success)}
+/* The label, the two tabs and the copy button share one wrapping row: in a 300px panel they do
+   not fit on a line together, so the tabs take one line and the copy button the next. */
+body.main-admin-security-page .mas-payload-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+/* Content width, not a share of the row: the two chips and the copy button then sit together at
+   the left and right of one line, and at a 300px panel 150 + 6 + 98 still fits inside the 272px
+   of body width — so the copy button no longer wraps to a second line. */
+body.main-admin-security-page .mas-tabs{
+  display:inline-flex;flex:0 1 auto;min-width:0;gap:4px;
+  padding:3px;border:1px solid var(--bo-border);border-radius:8px;background:var(--bo-bg);
+}
+body.main-admin-security-page .mas-tab{
+  flex:0 0 auto;min-width:0;height:24px;padding:0 10px;
+  border:0;border-radius:6px;cursor:pointer;background:transparent;
+  color:var(--bo-muted);font-size:11px;font-weight:700;line-height:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+body.main-admin-security-page .mas-tab:hover{color:var(--bo-text)}
+body.main-admin-security-page .mas-tab.is-active{
+  background:var(--bo-surface);color:var(--bo-text);
+  box-shadow:0 1px 2px rgba(24,25,28,.08);
+}
+/* The copy button rides at the end of the row it shares with the tabs. */
+body.main-admin-security-page .mas-payload-head .mas-raw-copy{margin-left:auto}
+body.main-admin-security-page .mas-hash{
+  margin:14px 0 0;font-size:10.5px;font-weight:600;color:var(--bo-muted);
+  font-variant-numeric:tabular-nums;overflow-wrap:anywhere;
+}
+body.main-admin-security-page .mas-esc-hint{
+  flex:0 0 auto;padding:2px 6px;border:1px solid var(--bo-border);border-radius:5px;
+  font-size:10px;font-weight:700;color:var(--bo-muted);
+}
+
+/* The audit table's own scroller, in the same warm tones as the panel above it.
+   Two things make this rule the one that decides:
+     · the rule it replaces is `body.main-admin-detail-page[data-access-page="main_merchant_detail"]
+       .mas-table-body-scroll{scrollbar-color:#EADCC8!important}` — (0,3,1) with !important — and it
+       only matches the MERCHANT page. The admin page had nothing overriding the base sheet's cool
+       slate grey (`#98A2B3`), so the two pages of the same component disagreed. This selector is
+       (0,4,1), carries !important, and lives in the sheet that loads last.
+     · `scrollbar-width:thin` is set on the HEAD too. They are two separate tables with
+       `scrollbar-gutter:stable`, so each reserves a lane equal to its own scrollbar width; giving
+       the body a thin bar and leaving the head at auto would reserve different lanes and misalign
+       every column — the same trap already recorded for the gutter itself. */
+body.main-admin-security-page .mas-panel .mas-table-wrap .mas-table-head,
+body.main-admin-security-page .mas-panel .mas-table-wrap .mas-table-body-scroll{
+  scrollbar-width:thin;
+  scrollbar-color:#8B6B4A transparent!important;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-panel .mas-table-wrap .mas-table-head,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-panel .mas-table-wrap .mas-table-body-scroll{
+  scrollbar-color:#F59E0B transparent!important;
+}
+
+/* ---- Page padding ----------------------------------------------------------------------
+   The sidebar got narrower (--sidebar-w 280 → 252 in reports.css, shared by every page), and
+   these two pages give back their own outer padding as well: the workspace held 24px on each
+   side at desktop widths, which is 48px of table width spent on margin. */
+body.main-admin-security-page .mas-workspace{
+  padding-left:clamp(10px,1.6vw,16px)!important;
+  padding-right:clamp(10px,1.6vw,16px)!important;
+}
+
+/* ---- Detail: a column beside the table, never over it ----------------------------------
+   Both earlier versions (a centred modal, then a right-hand drawer) covered part of the list.
+   At ≥1440px the workspace becomes two columns and the panel is a sibling of the table panel,
+   so the tabs and KPI chips keep the full width and every table column stays visible. Below
+   1440 there is not enough room for both and the panel takes the whole viewport. */
+body.main-admin-security-page .mas-detail-panel{
+  display:flex;flex-direction:column;min-height:0;overflow:hidden;
+  background:var(--bo-surface);
+  border:1px solid var(--bo-border);border-radius:8px;
+}
+body.main-admin-security-page .mas-detail-panel[hidden]{display:none}
+body.main-admin-security-page .mas-detail-head{
+  flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 12px;border-bottom:1px solid var(--bo-border);
+}
+body.main-admin-security-page .mas-detail-close{
+  width:32px;height:32px;flex:0 0 32px;border-radius:8px;cursor:pointer;
+  border:1px solid var(--bo-border);background:var(--bo-bg);color:var(--bo-text-secondary);
+  display:grid;place-items:center;font-size:14px;
+}
+body.main-admin-security-page .mas-detail-close:hover{background:var(--bo-control-well);color:var(--bo-text)}
+body.main-admin-security-page .mas-detail-body{
+  flex:1 1 auto;min-height:0;overflow:auto;padding:14px 14px 12px;
+}
+body.main-admin-security-page .mas-detail-foot{
+  flex:0 0 auto;display:flex;justify-content:flex-end;gap:8px;
+  padding:10px 14px;border-top:1px solid var(--bo-border);
+}
+body.main-admin-security-page .mas-detail-panel .mas-detail-fields{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px 12px;margin:0 0 14px;
+}
+body.main-admin-security-page .mas-detail-panel .mas-field{min-width:0}
+body.main-admin-security-page .mas-detail-panel .mas-field.is-wide{grid-column:1 / -1}
+body.main-admin-security-page .mas-detail-panel .mas-field dt{
+  margin:0 0 3px;font-size:11.5px;font-weight:650;color:var(--bo-muted);
+}
+body.main-admin-security-page .mas-detail-panel .mas-field dd{
+  margin:0;font-size:13px;font-weight:700;line-height:1.35;color:var(--bo-text);
+  word-break:break-word;overflow-wrap:anywhere;
+}
+body.main-admin-security-page .mas-detail-block{margin:0 0 14px}
+body.main-admin-security-page .mas-detail-block:last-child{margin-bottom:0}
+body.main-admin-security-page .mas-detail-block-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 8px;
+}
+body.main-admin-security-page .mas-detail-block-head .mas-detail-block-title{margin:0}
+body.main-admin-security-page .mas-detail-block-title{
+  display:flex;align-items:center;gap:8px;
+  margin:0 0 8px;font-size:12.5px;font-weight:800;color:var(--bo-navy);
+}
+body.main-admin-security-page .mas-detail-block-title i{
+  width:22px;height:22px;border-radius:6px;flex:0 0 22px;
+  display:grid;place-items:center;font-size:11px;
+  background:var(--bo-cyan-tint);color:var(--bo-cyan);
+}
+/* Copy lives in the section's title row: floating it over the payload either reserves a blank
+   band above the JSON or lets a long line run underneath it. */
+/* Both payload panes are the same well, so switching tabs does not shift the text sideways and
+   neither one looks like an afterthought. `scrollbar-gutter` reserves a lane so the JSON never
+   runs under the thumb; the thumb's colour comes from the warm recipe applied below. */
+body.main-admin-security-page .mas-payload-pane{
+  margin:8px 0 0;padding:10px;border-radius:8px;
+  background:var(--bo-control-well,#F5EBDC);border:1px solid var(--bo-border);
+  max-height:320px;overflow:auto;
+  scrollbar-gutter:stable;
+}
+/* The scrollbars are the warm ones this app already ships elsewhere — #8B6B4A on cream, amber
+   in dark, thin — rather than a cool blue-grey that reads as a different palette on the cream
+   well. `scrollbar-color` is the property Chromium actually obeys here: once it is set, the
+   `::-webkit-scrollbar*` rules are ignored (bo-charcoal-shell.css records the same finding), so
+   the colour, hover and width all come from the two standard properties and there is no point
+   writing the webkit pair.
+   The audit TABLE's scroller is deliberately not in this list: bo-charcoal-shell.css records the
+   decision for it (the retired slate grey was replaced with the warm border tone #EADCC8 in light
+   and amber in dark) and enforces it with !important, so a rule here could not win and should not
+   overturn it. Both tones are warm, which is the point of this change. */
+body.main-admin-security-page .mas-detail-body,
+body.main-admin-security-page .mas-payload-pane{
+  scrollbar-width:thin;
+  scrollbar-color:#8B6B4A transparent;
+}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-detail-body,
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-payload-pane{
+  scrollbar-color:#F59E0B transparent;
+}
+body.main-admin-security-page .mas-detail-raw{
+  font-size:12px;line-height:1.4;color:var(--bo-text-secondary);
+  white-space:pre-wrap;word-break:break-word;
+}
+body.main-admin-security-page .mas-raw-copy{
+  display:inline-flex;align-items:center;gap:5px;flex:0 0 auto;
+  height:26px;padding:0 10px;border-radius:7px;
+  border:1px solid var(--bo-border);background:var(--bo-surface);
+  color:var(--bo-muted);font-size:11.5px;font-weight:700;cursor:pointer;
+  transition:color .14s var(--bo-ease),border-color .14s var(--bo-ease);
+}
+body.main-admin-security-page .mas-raw-copy:hover{color:var(--bo-cyan);border-color:var(--bo-cyan)}
+body.main-admin-security-page .mas-raw-copy.is-done{color:var(--bo-success);border-color:var(--bo-success)}
+body.main-admin-security-page .mas-detail-reason{
+  margin:0;padding:12px 14px;border-radius:8px;
+  background:var(--bo-control-well,#F5EBDC);border:1px solid var(--bo-border);
+  font-size:13px;font-weight:600;line-height:1.45;color:var(--bo-text);
+  word-break:break-word;overflow-wrap:anywhere;
+}
+
+@media(min-width:1440px){
+  body.main-admin-security-page .mas-workspace:has(> .mas-detail-panel:not([hidden])){
+    display:grid;
+    grid-template-columns:minmax(0,1fr) clamp(300px,20vw,380px);
+    grid-template-rows:auto minmax(0,1fr);
+    gap:12px;
+  }
+  body.main-admin-security-page .mas-workspace:has(> .mas-detail-panel:not([hidden])) > .mad-chrome{
+    grid-column:1 / -1;
+  }
+  body.main-admin-security-page .mas-workspace:has(> .mas-detail-panel:not([hidden])) > .mad-panel{
+    grid-column:1;grid-row:2;min-width:0;
+  }
+  body.main-admin-security-page .mas-workspace:has(> .mas-detail-panel:not([hidden])) > .mas-detail-panel{
+    grid-column:2;grid-row:2;
+  }
+}
+@media(max-width:1439.98px){
+  /* The panel is `fixed`, not flowing, because .mas-workspace clips, and no ancestor between it
+     and the viewport creates a containing block for a fixed box (checked: no transform /
+     filter / will-change on the chain). No backdrop: a full-screen panel does not need one, and
+     the page behind it is frozen instead so a swipe on the payload does not scroll the list.
+     The z-index on .report-content is load-bearing — that element is a stacking context
+     (position:relative + z-index:1, the latter declared !important in reports.css), so the
+     panel's own z-index is only ordered INSIDE it and the sticky topbar (z-index 5000, a
+     sibling) painted over the panel's head, title and close button included. The panel carries
+     no entrance animation: with animation-fill-mode:both, a panel un-hidden without the
+     animation actually running rested at the `from` state — 10px down, opacity 0, invisible. */
+  body.main-admin-security-page.mas-detail-open{overflow:hidden!important}
+  body.main-admin-security-page.mas-detail-open .report-content.mad-workspace{z-index:6000!important}
+  body.main-admin-security-page .mas-detail-panel{
+    position:fixed;inset:0;z-index:10000;border:0;border-radius:0;
+  }
+}

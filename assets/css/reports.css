@@ -17,7 +17,7 @@
   unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
 }
 :root{
-  --sidebar-w:280px;
+  --sidebar-w:230px;
   --bg:#F5EBDC;
   --card:#ffffff;
   --text:#18191C;
@@ -38,8 +38,8 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 .report-brand{height:64px;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid var(--line);font-weight:800;color:#18191C}
 .report-brand .logo{width:34px;height:34px;border-radius:10px;background:#F5EBDC;color:#18191C;display:grid;place-items:center;flex:0 0 auto}
 .report-brand small{color:var(--muted);font-weight:600}
-.report-nav{padding:10px}
-.report-nav a{display:flex;align-items:center;justify-content:space-between;gap:8px;text-decoration:none;color:#18191C;padding:10px 12px;border-radius:10px;margin-bottom:3px;font-weight:800;line-height:1.2}
+.report-nav{padding:8px}
+.report-nav a{display:flex;align-items:center;justify-content:space-between;gap:8px;text-decoration:none;color:#18191C;padding:9px 10px;border-radius:10px;margin-bottom:3px;font-weight:800;line-height:1.2}
 .report-nav a i{color:#57534E}
 .report-nav a:hover,.report-nav a.active{background:var(--primary-soft);color:#57534E}
 .report-nav a:hover i,.report-nav a.active i{color:#57534E}
@@ -150,7 +150,7 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 @media(max-width:575.98px){.dropdown-menu,.report-profile-menu{position:fixed!important;top:54px!important;right:8px!important;width:min(300px,calc(100vw - 16px))!important;max-width:calc(100vw - 16px)!important}}
 
 /* ===== Sidebar mini / hover layout update ===== */
-:root{--rail-w:72px;--sidebar-w:280px}
+:root{--rail-w:72px;--sidebar-w:230px}
 .report-topbar .hamb{display:inline-flex;align-items:center;justify-content:center;font-size:20px;border:0;background:#FFF8EB;color:#D97706;box-shadow:none}
 .report-sidebar{width:var(--sidebar-w);transition:width .22s ease,transform .22s ease,box-shadow .22s ease;overflow-x:hidden}
 .report-main{transition:margin-left .22s ease}
@@ -6186,6 +6186,64 @@ html[data-bo-theme="dark"] .report-sidebar .nav-group .nav-group-btn:focus,
 html[data-bo-theme="dark"] .report-sidebar .nav-group .nav-group-btn:focus-visible{
   outline:0!important;
   box-shadow:none!important;
+}
+
+/* 2026-09-21: one keyboard-focus language for the whole back office.
+
+   Focus used to be declared per shell — bo-charcoal-primitives, the admin / merchant detail
+   sheets, the provider / brand / dashboard sheets — so the locked "2px amber outline, 2px
+   offset" only ever reached the controls each sheet happened to list (.mad-btn,
+   .bo-ui-button, .clean-btn, .mad-tab, .mad-pill, .mad-icon-btn, .bo-theme-btn…). Everything
+   else — icon buttons, plain buttons, tabs, pagination, in-page links, the sidebar's own
+   group buttons — kept the browser's `outline:auto`, the near-black box. Tabbing therefore
+   showed an amber outline on one button and a black box on the next one along.
+
+   This replaces all of that with the sidebar's own hover language and no outline anywhere:
+   a warm amber wash plus a soft lift, which is the fill the rail already gives a row on
+   :hover (rgba(255,243,224,.78) on L1, .72 on sub-items). The wash is an inset shadow, not
+   a background, so it paints over whatever colour or gradient the control already has —
+   nothing has to give up its own palette, and the label stays crisp because inner shadows
+   paint under the content.
+
+   It sits in a layer on purpose: un-layered !important declarations lose to layered ones,
+   which is what lets one rule beat every per-shell !important outline rule without copying
+   their selectors or escalating specificity. Corollary for maintainers — a page that wants
+   its own focus style has to join this layer, not just add !important; and this file must
+   keep loading after the layers of any stylesheet it has to outrank. Light mode only; the
+   dark theme declares its own focus resets. Form fields are deliberately left out — they
+   already have their own (amber) focus treatment. */
+@layer bo-focus{
+  html:not([data-bo-theme="dark"]) :is(a, button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], summary, [tabindex]:not([tabindex="-1"])):focus-visible{
+    outline:0!important;
+    box-shadow:inset 0 0 0 999px rgba(217,119,6,.22), 0 2px 12px rgba(217,119,6,.34)!important;
+  }
+  /* The rail's L1 rows and sub-items mirror their hover fill exactly rather than the wash
+     above; the seams the legacy connected-stack rows carry are dropped while focused so a
+     row reads as one pill instead of a pill with a line through its foot. */
+  html:not([data-bo-theme="dark"]) .report-sidebar .report-nav > a:not(.report-sub):focus-visible,
+  html:not([data-bo-theme="dark"]) .report-sidebar .nav-group .nav-group-btn:focus-visible{
+    background:rgba(255,243,224,.78)!important;
+    color:#6b360c!important;
+    border-bottom-color:transparent!important;
+    border-radius:10px!important;
+    box-shadow:0 1px 2px rgba(60,48,32,.05)!important;
+  }
+  html:not([data-bo-theme="dark"]) .report-sidebar .report-nav a.report-sub:focus-visible{
+    background:rgba(255,243,224,.72)!important;
+    color:#6b360c!important;
+    border-color:transparent!important;
+    border-radius:9px!important;
+    box-shadow:0 1px 2px rgba(60,48,32,.05)!important;
+  }
+  html:not([data-bo-theme="dark"]) .report-sidebar .bo-sidebar-logout:focus-visible{
+    background:rgba(254,243,242,.95)!important;
+    color:#912018!important;
+    box-shadow:0 4px 12px rgba(180,35,24,.08)!important;
+  }
+  html:not([data-bo-theme="dark"]) .report-sidebar .report-brand .close-side:focus-visible{
+    background:#F5EBDC!important;
+    color:#18191C!important;
+  }
 }
 @media (min-width:992px){
   html[data-bo-theme="dark"] .report-sidebar .report-nav > .nav-group > .nav-group-list,

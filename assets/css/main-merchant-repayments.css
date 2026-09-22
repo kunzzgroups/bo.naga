@@ -120,15 +120,61 @@ body.main-merchant-repayments-page .mprd-table td{
   text-overflow:ellipsis;
 }
 body.main-merchant-repayments-page .mprd-table th{
-  font-size:11px;
+  /* Same head recipe as `.mad-table th` (12px / 700 / .03em / 14px 12px) so this table reads as
+     the Profit Report's own ledger. It carried 11px/.01em and 12px padding. */
+  padding:14px 12px;
+  font-size:12px;
   font-weight:700;
   color:var(--bo-muted, #657187);
-  letter-spacing:.01em;
+  letter-spacing:.03em;
   background:var(--bo-bg, #FFF8EB);
 }
 body.main-merchant-repayments-page .mprd-table th.num,
 body.main-merchant-repayments-page .mprd-table td.num{
   text-align:right;
+}
+/* Money cells are bold across this family (the ledger's Amount column measures 800/tabular);
+   Due and Paid were plain 400 here, so only Balance read as a figure. */
+body.main-merchant-repayments-page .mprd-table td.num{
+  font-weight:800;
+  font-variant-numeric:tabular-nums;
+}
+
+/* ---- The grid keeps its columns at every width -------------------------------------------
+   The admin sheet hides cells 4/6/7/8 on EVERY `.mad-table` below 1400px and rebuilds any
+   `.mad-table` as an unlabelled card stack below 992px. Both were written for the ops listing
+   and both cost this table: at 1366 the header row lost "Payment amount" while its cells stayed,
+   so the head no longer matched the body; at 1100 four headers were gone. Measured 9/9 headers at
+   1600, 8/9 at 1366, 5/9 at 1100. The Profit ledger carries the same guard ("don't inherit
+   Merchant list column-hiding") — this is that guard, plus the thead/tbody/row half of it. */
+body.main-merchant-repayments-page .mprd-table thead{display:table-header-group!important}
+body.main-merchant-repayments-page .mprd-table tbody{display:table-row-group!important}
+body.main-merchant-repayments-page .mprd-table tr{display:table-row!important}
+body.main-merchant-repayments-page .mprd-table th,
+body.main-merchant-repayments-page .mprd-table td{
+  display:table-cell!important;
+}
+@media(max-width:991.98px){
+  /* Same block that drops the cells also strips their padding/border and kills the min-width;
+     the wrap scrolls sideways, so restate the three things it took. */
+  body.main-merchant-repayments-page .mprd-table{
+    min-width:860px!important;
+    table-layout:auto;
+  }
+  body.main-merchant-repayments-page .mprd-table th,
+  body.main-merchant-repayments-page .mprd-table td{
+    padding:12px!important;
+    border:0!important;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  /* That block also zeroes `min-width` on every direct child of a cell
+     (`… .mad-table td > *`), which stripped the amount group's floor and left ~49px to type in. */
+  body.main-merchant-repayments-page .mprd-table td > .mprd-row-amount{
+    min-width:150px;
+    max-width:none;
+  }
 }
 
 /* Balanced columns — avoid large empty gap in the middle */
@@ -140,6 +186,21 @@ body.main-merchant-repayments-page .mprd-table th:nth-child(3),
 body.main-merchant-repayments-page .mprd-table td:nth-child(3){width:24%}
 body.main-merchant-repayments-page .mprd-table th:nth-child(4),
 body.main-merchant-repayments-page .mprd-table td:nth-child(4){width:10%}
+/* Cell 3/4 are Merchant and Status here, but the admin sheet's ops-table recipe right-aligns cell 3
+   ("Credit Balance") and centres cell 4 ("Last Active") for EVERY `.mad-table`, padding included.
+   The merchant name was pushed to the right edge of a 24% column with ~280px of empty column to its
+   left, and the Status pill sat centred. Restated at that rule's own weight from this later sheet;
+   the ledger's equivalents (Merchant, Type) are both left-aligned. */
+body.main-merchant-repayments-page .mprd-table th:nth-child(3),
+body.main-merchant-repayments-page .mprd-table td:nth-child(3){
+  text-align:left;
+  padding-right:12px;
+}
+body.main-merchant-repayments-page .mprd-table th:nth-child(4),
+body.main-merchant-repayments-page .mprd-table td:nth-child(4){
+  text-align:left;
+  padding-left:12px;
+}
 body.main-merchant-repayments-page .mprd-table th:nth-child(5),
 body.main-merchant-repayments-page .mprd-table td:nth-child(5){width:10%}
 body.main-merchant-repayments-page .mprd-table th:nth-child(6),
@@ -186,7 +247,9 @@ body.main-merchant-repayments-page .mprd-status{
   gap:5px;
   border-radius:999px;
   padding:4px 8px;
-  font-size:10px;
+  /* 10px was a step off the locked type scale; the ledger's own status chip (.mpr-kind) is
+     11px/800, so the two tables' pills now read at the same size. */
+  font-size:11px;
   font-weight:800;
   background:#FFF4E5;
   color:#B54708;
@@ -199,12 +262,15 @@ body.main-merchant-repayments-page .mprd-balance{
   font-weight:800;
   color:#B42318;
 }
-/* Joined MYR + amount — same pattern as Create Merchant .mac-input-group */
+/* Joined MYR + amount — same pattern as Create Merchant .mac-input-group.
+   The group fills its column: at 168px in a 244px cell it sat 64px in from the left edge, so the
+   right-aligned "Payment amount" header floated over a half-empty column. The column is 13% and
+   the control now shares both edges with it. */
 body.main-merchant-repayments-page .mprd-row-amount{
   display:flex;
   align-items:stretch;
   width:100%;
-  max-width:168px;
+  max-width:none;
   margin-left:auto;
   height:36px;
   min-width:0;
@@ -212,6 +278,17 @@ body.main-merchant-repayments-page .mprd-row-amount{
   border-radius:0;
   background:transparent;
   overflow:visible;
+}
+/* The native steppers sat on top of the right-aligned value — the family already removes them on
+   its other merchant amount inputs (.msr-amount-group, same mac-input-group markup). */
+body.main-merchant-repayments-page .mprd-row-amount input[type="number"]::-webkit-outer-spin-button,
+body.main-merchant-repayments-page .mprd-row-amount input[type="number"]::-webkit-inner-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+body.main-merchant-repayments-page .mprd-row-amount input[type="number"]{
+  -moz-appearance:textfield;
+  appearance:textfield;
 }
 body.main-merchant-repayments-page .mprd-row-amount .mprd-row-unit,
 body.main-merchant-repayments-page .mprd-row-amount .mac-input-addon{
@@ -248,8 +325,9 @@ body.main-merchant-repayments-page .report-content .mprd-row-amount > input.mprd
   background:var(--bo-surface, #fff)!important;
   box-shadow:none!important;
   text-align:right;
-  font-weight:700;
-  font-size:12px;
+  /* The typed figure is money beside 13px money columns; it rendered a size down at 12px. */
+  font-weight:800;
+  font-size:13px;
   padding:0 10px!important;
   color:var(--bo-text, #11203A)!important;
 }
