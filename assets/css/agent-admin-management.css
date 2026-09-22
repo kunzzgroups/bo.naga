@@ -591,6 +591,23 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.brand-agent-standard.sta
     padding:0 9px!important;
   }
 }
+
+/* Claim table color contract: overrides the later brand-agent table defaults. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-claim-page .table-card .table-wrap{
+  background:#FCF8EC!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-claim-page .table-card .report-table thead th{
+  background:#F9E7CF!important;
+  color:#6B360C!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-claim-page .table-card .report-table tbody td,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-claim-page .table-card .report-table tbody tr:nth-child(even) td{
+  background:#FCF8EC!important;
+  color:#18191C!important;
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard.agent-claim-page .table-card .report-table tbody tr:hover td{
+  background:#F9E7CF!important;
+}
 @media (max-width:1200px){
   .agent-detail-summary{grid-template-columns:repeat(2,1fr)}
 }
@@ -974,4 +991,371 @@ body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agen
 body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-commission-page .agent-admin-table thead th:first-child,
 body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-commission-page .agent-admin-table thead th:last-child{
   border-radius:0!important;
+}
+
+/* ===== Reimbursement / Ad Claim listing ===== */
+body.agent-claim-page .report-main{
+  display:flex;
+  flex-direction:column;
+  min-height:100dvh;
+  overflow:hidden;
+}
+body.agent-claim-page .report-content{
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  padding:16px!important;
+  overflow:hidden;
+}
+body.agent-claim-page .agent-admin-metrics{
+  display:none!important;
+  flex:0 0 auto;
+  margin:0!important;
+}
+body.agent-claim-page .filter-card{
+  flex:0 0 auto;
+  margin:0!important;
+  padding:14px 16px!important;
+  border-radius:8px!important;
+  border:1px solid #EADCC8!important;
+  background:#FFF8EB!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+body.agent-claim-page .filter-card .bo-filter-row{
+  display:grid!important;
+  grid-template-columns:minmax(180px,220px) minmax(180px,220px) minmax(220px,1fr) 150px;
+  align-items:end;
+  gap:10px!important;
+}
+body.agent-claim-page .filter-card .field{
+  min-width:0!important;
+  margin:0!important;
+}
+body.agent-claim-page .filter-card .field label{
+  display:block!important;
+  position:static!important;
+  width:auto!important;
+  height:auto!important;
+  margin:0 0 6px!important;
+  color:#57534E!important;
+  font-size:11px!important;
+  font-weight:800!important;
+  line-height:1.1;
+}
+body.agent-claim-page .filter-card input,
+body.agent-claim-page .filter-card select{
+  width:100%!important;
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  box-sizing:border-box!important;
+  border:1px solid #EADCC8!important;
+  border-radius:8px!important;
+  background:#FFF8EB!important;
+  color:#18191C!important;
+  font-size:12px!important;
+  font-weight:700!important;
+}
+body.agent-claim-page .filter-card input:focus,
+body.agent-claim-page .filter-card select:focus{
+  border-color:#D97706!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
+}
+body.agent-claim-page .table-card>.filter-card .field>label{
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  padding:0!important;
+  margin:-1px!important;
+  overflow:hidden!important;
+  clip:rect(0,0,0,0)!important;
+  white-space:nowrap!important;
+  border:0!important;
+}
+body.agent-claim-page .table-card{
+  flex:1 1 auto;
+  min-height:0;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden;
+  border:1px solid #EADCC8!important;
+  border-radius:8px!important;
+  background:#FFF8EB!important;
+  box-shadow:none!important;
+  display:flex;
+  flex-direction:column;
+}
+body.agent-claim-page .table-card>.filter-card{
+  flex:0 0 auto;
+  width:100%;
+  margin:0!important;
+  padding:14px 16px!important;
+  border:0!important;
+  border-bottom:1px solid #EADCC8!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+body.agent-claim-page .table-card>.d-flex{
+  flex:0 0 auto;
+  min-height:48px;
+  margin:0!important;
+  padding:12px 16px!important;
+  border-bottom:1px solid #EADCC8!important;
+}
+body.agent-claim-page .table-card>.d-flex h5{
+  margin:0!important;
+  color:#18191C!important;
+  font-size:15px!important;
+  font-weight:800!important;
+}
+body.agent-claim-page .table-card>.d-flex h5 i{
+  color:#D97706!important;
+}
+body.agent-claim-page .table-card>.d-flex small{
+  color:#57534E!important;
+  font-size:11px!important;
+  font-weight:700!important;
+}
+body.agent-claim-page .table-card .table-wrap{
+  flex:1 1 auto;
+  min-height:0;
+  overflow:auto;
+  border:0!important;
+  border-radius:0!important;
+  background:#FCF8EC!important;
+}
+body.agent-claim-page .table-card .report-table{
+  width:100%;
+  min-width:900px;
+  table-layout:fixed;
+  border-collapse:collapse;
+}
+body.agent-claim-page .table-card .report-table th{
+  position:sticky;
+  top:0;
+  z-index:2;
+  padding:10px 12px!important;
+  background:#F9E7CF!important;
+  color:#6B360C!important;
+  border-bottom:1px solid #EADCC8!important;
+  border-right:0!important;
+  border-radius:0!important;
+  font-size:11px!important;
+  font-weight:700!important;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+body.agent-claim-page .table-card .report-table td{
+  padding:10px 12px!important;
+  background:#FCF8EC!important;
+  color:#18191C!important;
+  border-bottom:1px solid #EADCC8!important;
+  border-right:0!important;
+  font-size:13px!important;
+  font-weight:700!important;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+body.agent-claim-page .table-card .report-table tbody tr:nth-child(even) td{
+  background:#FCF8EC!important;
+}
+body.agent-claim-page .table-card .report-table tbody tr:hover td{
+  background:#F9E7CF!important;
+}
+body.agent-claim-page .table-card .table-empty{
+  padding:28px 12px!important;
+  color:#57534E!important;
+  text-align:center;
+  font-weight:600!important;
+}
+body.agent-claim-page .table-card>.table-footer{
+  flex:0 0 auto;
+  min-height:64px;
+  display:grid!important;
+  grid-template-columns:minmax(190px,1fr) minmax(260px,1fr) minmax(190px,1fr);
+  align-items:center;
+  gap:12px;
+  margin:0!important;
+  padding:14px 16px!important;
+  background:#FCF8EC!important;
+  border-top:1px solid #EADCC8!important;
+  color:#57534E!important;
+  font-size:12.5px;
+  position:relative!important;
+  z-index:6!important;
+  overflow:visible!important;
+}
+body.agent-claim-page .table-footer .entries-control{
+  grid-column:1;
+  justify-self:start;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin:0;
+  white-space:nowrap;
+  font-weight:600;
+}
+body.agent-claim-page .table-footer .entries-control,
+body.agent-claim-page .table-footer .entries-control .rounded-select-wrap{
+  position:relative!important;
+  overflow:visible!important;
+}
+body.agent-claim-page .table-footer .entries-control .rounded-select-menu{
+  top:auto!important;
+  bottom:calc(100% + 6px)!important;
+  z-index:3000!important;
+}
+body.agent-claim-page .table-footer .entries-control select{
+  width:68px!important;
+  min-width:68px!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:0 8px!important;
+  border:1px solid #EADCC8!important;
+  border-radius:8px!important;
+  background:#FFF8EB!important;
+  color:#18191C!important;
+  font-size:13px!important;
+  font-weight:700!important;
+}
+body.agent-claim-page .table-footer .table-info{
+  grid-column:2;
+  justify-self:center;
+  margin:0;
+  text-align:center;
+  white-space:nowrap;
+  font-weight:600;
+}
+body.agent-claim-page .table-footer .pagination-clean{
+  grid-column:3;
+  justify-self:end;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin:0;
+  padding:0;
+}
+body.agent-claim-page .table-footer .smart-pagination{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+body.agent-claim-page .table-footer .smart-page{
+  box-sizing:border-box;
+  min-width:40px;
+  height:36px;
+  padding:0 14px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:700;
+}
+body.agent-claim-page .table-footer .smart-page.prev,
+body.agent-claim-page .table-footer .smart-page.next{
+  min-width:40px;
+  padding:0;
+}
+html[data-bo-theme="dark"] body.agent-claim-page .table-card>.table-footer{
+  background:#383A46!important;
+  border-top-color:rgba(255,255,255,.12)!important;
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.agent-claim-page .table-footer .entries-control select{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+}
+body.agent-claim-page .agent-approval-actions{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+body.agent-claim-page .approve-btn,
+body.agent-claim-page .reject-btn{
+  width:26px!important;
+  height:26px!important;
+  min-width:26px!important;
+  padding:0!important;
+  border-radius:6px!important;
+}
+html[data-bo-theme="dark"] body.agent-claim-page .filter-card,
+html[data-bo-theme="dark"] body.agent-claim-page .table-card,
+html[data-bo-theme="dark"] body.agent-claim-page .table-card .table-wrap{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.agent-claim-page .table-card>.filter-card{
+  border-bottom-color:rgba(255,255,255,.12)!important;
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.agent-claim-page .filter-card input,
+html[data-bo-theme="dark"] body.agent-claim-page .filter-card select{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.agent-claim-page .filter-card .field label{
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.agent-claim-page .table-card>.d-flex{
+  border-bottom-color:rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.agent-claim-page .table-card>.d-flex h5{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.agent-claim-page .table-card>.d-flex small{
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.agent-claim-page .table-card .report-table th{
+  background:#1F2128!important;
+  color:#E7E5E4!important;
+  border-bottom-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.agent-claim-page .table-card .report-table td{
+  background:#3A3C48!important;
+  color:#F5F5F4!important;
+  border-bottom-color:rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.agent-claim-page .table-card .report-table tbody tr:nth-child(even) td{
+  background:#434653!important;
+}
+html[data-bo-theme="dark"] body.agent-claim-page .table-card .report-table tbody tr:hover td{
+  background:#444654!important;
+}
+@media (max-width:1024px){
+  body.agent-claim-page .filter-card .bo-filter-row{
+    grid-template-columns:minmax(180px,1fr) minmax(160px,1fr) minmax(180px,1fr);
+  }
+  body.agent-claim-page .filter-card .field.wide{
+    grid-column:1 / span 2;
+  }
+}
+@media (max-width:768px){
+  body.agent-claim-page .report-content{overflow:auto}
+  body.agent-claim-page .filter-card .bo-filter-row{grid-template-columns:1fr}
+  body.agent-claim-page .filter-card .field.wide{grid-column:auto}
+}
+@media (max-width:575px){
+  body.agent-claim-page .report-content{padding:12px!important}
+  body.agent-claim-page .agent-admin-metrics{grid-template-columns:1fr 1fr}
+  body.agent-claim-page .table-card>.d-flex{padding:10px 12px!important}
+  body.agent-claim-page .table-card>.d-flex h5{font-size:13px!important}
+  body.agent-claim-page .table-card>.table-footer{
+    grid-template-columns:1fr auto;
+    gap:8px;
+    padding:10px 12px!important;
+  }
+  body.agent-claim-page .table-footer .entries-control{grid-column:1}
+  body.agent-claim-page .table-footer .table-info{
+    grid-column:1 / -1;
+    grid-row:2;
+    justify-self:start;
+  }
+  body.agent-claim-page .table-footer .pagination-clean{
+    grid-column:2;
+    grid-row:1;
+  }
 }
