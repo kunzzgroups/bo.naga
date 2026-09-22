@@ -135,8 +135,45 @@ async function agentsPage(){
   render(true);
 }
 
-async function commissionPage(){const agents=await loadAgents();async function render(){const q=($('agentCommissionSearch')?.value||'').toLowerCase(),[from]=range('agentCommissionFrom','agentCommissionTo');const list=agents.filter(a=>!q||[a.code,a.name].some(v=>String(v||'').toLowerCase().includes(q)));const reports=await Promise.all(list.map(async a=>{try{return {a,r:await req('/api/admin/brand-agent/'+a.id+'/report?date='+encodeURIComponent(from||new Date().toISOString().slice(0,10)))};}catch(e){return {a,r:{}}}}));let totalBet=0,pl=0,com=0;reports.forEach(x=>{totalBet+=Number(x.r.totalTurnover||0);pl+=Number(x.r.customerLoss||0);com+=Number(x.r.availableCommission||0)});$('agentCommissionMetrics').innerHTML=metric('bi-cash-stack','Total Bet','RM '+money(totalBet),'Selected KPI cycles')+metric('bi-graph-up-arrow','Customer P/L','RM '+money(pl),'Loss + / Win -')+metric('bi-percent','Commission','RM '+money(com),'Available commission')+metric('bi-people','Agents',whole(reports.length),'Selected agents');$('agentCommissionRows').innerHTML=reports.map(({a,r})=>`<tr><td><b>${esc(a.code)}</b><small class="d-block">${esc(a.name)}</small></td><td>${whole(a.memberCount)}</td><td>RM ${money(r.totalTurnover)}</td><td class="${Number(r.customerLoss||0)>=0?'money-positive':'money-negative'}">RM ${money(r.customerLoss)}</td><td>${money(a.commissionPercent)}%</td><td>RM ${money(r.availableCommission)}</td><td>RM ${money(a.walletBalance)}</td></tr>`).join('')||'<tr><td colspan="7" class="table-empty">No commission records.</td></tr>';} $('agentCommissionLoad').onclick=render;await render();}
-
+async function commissionPage(){
+  const agents=await loadAgents();
+  let currentPage=1;
+  async function render(resetPage){
+    if(resetPage)currentPage=1;
+    const q=($('agentCommissionSearch')?.value||'').toLowerCase(),[from,to]=range('agentCommissionFrom','agentCommissionTo');
+    const list=agents.filter(a=>!q||[a.code,a.name].some(v=>String(v||'').toLowerCase().includes(q)));
+    const startDate=from||new Date().toISOString().slice(0,10),endDate=to&&to>=startDate?to:startDate;
+    const dates=[];let cursor=new Date(startDate+'T00:00:00Z'),lastDate=new Date(endDate+'T00:00:00Z');
+    while(cursor<=lastDate&&dates.length<366){dates.push(cursor.toISOString().slice(0,10));cursor.setUTCDate(cursor.getUTCDate()+1);}
+    const reports=await Promise.all(list.map(async a=>{
+      const daily=await Promise.all(dates.map(day=>req('/api/admin/brand-agent/'+a.id+'/report?date='+encodeURIComponent(day)).catch(()=>({}))));
+      const r=daily.reduce((sum,item)=>{
+        ['totalTurnover','customerLoss','availableCommission'].forEach(key=>{sum[key]=(Number(sum[key])||0)+(Number(item?.[key])||0);});
+        return sum;
+      },{});
+      return {a,r};
+    }));
+    let totalBet=0,pl=0,com=0;
+    reports.forEach(x=>{totalBet+=Number(x.r.totalTurnover||0);pl+=Number(x.r.customerLoss||0);com+=Number(x.r.availableCommission||0)});
+    $('agentCommissionMetrics').innerHTML=metric('bi-cash-stack','Total Bet','RM '+money(totalBet),'Selected KPI cycles')+metric('bi-graph-up-arrow','Customer P/L','RM '+money(pl),'Loss + / Win -')+metric('bi-percent','Commission','RM '+money(com),'Available commission')+metric('bi-people','Agents',whole(reports.length),'Selected agents');
+    const size=pageSizeOf('agentCommissionPageSize'),total=reports.length,totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
+    if(currentPage>totalPages)currentPage=totalPages;
+    const start=Number.isFinite(size)?(currentPage-1)*size:0;
+    const pageReports=Number.isFinite(size)?reports.slice(start,start+size):reports;
+    $('agentCommissionRows').innerHTML=pageReports.map(({a,r})=>
+      '<tr><td><b>'+esc(a.code)+'</b><small class="d-block">'+esc(a.name)+'</small></td><td>'+whole(a.memberCount)+'</td><td>RM '+money(r.totalTurnover)+'</td><td class="'+(Number(r.customerLoss||0)>=0?'money-positive':'money-negative')+'">RM '+money(r.customerLoss)+'</td><td>'+money(a.commissionPercent)+'%</td><td>RM '+money(r.availableCommission)+'</td><td>RM '+money(a.walletBalance)+'</td></tr>'
+    ).join('')||'<tr><td colspan="7" class="table-empty">No commission records.</td></tr>';
+    const from2=total?start+1:0,to2=total?Math.min(start+pageReports.length,total):0;
+    $('agentCommissionShowing').textContent='Showing '+from2+' to '+to2+' of '+total+' entries';
+    $('agentCommissionPager').innerHTML=pageButtons(currentPage,totalPages,'commission-page','Commission table');
+  }
+  $('agentCommissionSearch')?.addEventListener('input',()=>render(true));
+  $('agentCommissionFrom')?.addEventListener('change',()=>render(true));
+  $('agentCommissionTo')?.addEventListener('change',()=>render(true));
+  $('agentCommissionPageSize')?.addEventListener('change',()=>render(true));
+  $('agentCommissionPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-commission-page]');if(!b||b.disabled)return;currentPage=Number(b.dataset.commissionPage)||1;render(false);});
+  await render(true);
+}
 async function settlementData(){return await req('/api/admin/brand-agent/settlements')||[]}
 async function settlementPage(){let rows=await settlementData();const render=()=>{const q=($('agentSettlementAdminSearch')?.value||'').toLowerCase(),st=$('agentSettlementAdminStatus')?.value||'', [from,to]=range('agentSettlementAdminFrom','agentSettlementAdminTo');const filtered=rows.filter(x=>(!q||[x.id,x.agentCode,x.agentName].some(v=>String(v||'').toLowerCase().includes(q)))&&(!st||String(x.settlementStatus).toUpperCase()===st)&&inRange(x.createdAt,from,to));const pending=filtered.filter(x=>String(x.settlementStatus).toUpperCase()==='PENDING');$('agentSettlementMetrics').innerHTML=metric('bi-people','Pending Count',whole(pending.length),'Overview total')+metric('bi-cash-stack','Pending Amount','RM '+money(pending.reduce((a,x)=>a+Number(x.requestedAmount||0),0)),'Overview total')+metric('bi-check2-circle','Approved',whole(filtered.filter(x=>String(x.settlementStatus).toUpperCase()==='APPROVED').length),'Selected period')+metric('bi-wallet2','Paid',whole(filtered.filter(x=>String(x.settlementStatus).toUpperCase()==='PAID').length),'Selected period');$('agentSettlementAdminRows').innerHTML=filtered.map(x=>`<tr><td>${esc(dt(x.createdAt))}</td><td><b>${esc(x.agentName||'-')}</b><small class="d-block">${esc(x.agentCode||'')}</small></td><td>${esc(x.periodFrom||x.settlementMonth)} - ${esc(x.periodTo||'')}</td><td>RM ${money(x.totalTurnover)}</td><td class="${Number(x.houseWin||0)>=0?'money-positive':'money-negative'}">RM ${money(x.houseWin)}</td><td><b>RM ${money(x.requestedAmount)}</b></td><td>${status(x.settlementStatus)}</td><td><div class="agent-approval-actions">${String(x.settlementStatus).toUpperCase()==='PENDING'?`<button class="approve-btn" data-settle-approve="${x.id}" title="Approve"><i class="bi bi-check-lg"></i></button><button class="reject-btn" data-settle-reject="${x.id}" title="Reject"><i class="bi bi-x-lg"></i></button>`:''}</div></td></tr>`).join('')||'<tr><td colspan="8" class="table-empty">No settlement requests.</td></tr>';};$('agentSettlementAdminLoad').onclick=render;$('agentSettlementAdminRows').onclick=async e=>{const ap=e.target.closest('[data-settle-approve]'),rj=e.target.closest('[data-settle-reject]');if(ap){await req('/api/admin/brand-agent/settlement/'+ap.dataset.settleApprove+'/approve',{method:'POST',body:'{}'});rows=await settlementData();render()}if(rj){const reason=await BO_DIALOG.prompt('Enter rejection reason','',{title:'Reject Settlement',inputLabel:'Reason'});if(reason){await req('/api/admin/brand-agent/settlement/'+rj.dataset.settleReject+'/reject',{method:'POST',body:JSON.stringify({reason})});rows=await settlementData();render()}}};render();}
 
