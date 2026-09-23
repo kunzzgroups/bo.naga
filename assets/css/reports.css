@@ -1595,15 +1595,15 @@ body.pwt-page.modal-open .pwt-modal{pointer-events:auto}
 .bo-summary-note{grid-column:2;color:#57534E;font-size:11px;font-weight:600;line-height:1.2}
 
 /* Every regular input/select follows the approved rounded field theme. */
-.report-content select,
+.report-content select:not(#pullLogWindowUnit),
 .report-content .form-select,
-.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput),
+.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword),
 .report-content textarea{
   border:1px solid #EADCC8!important;border-radius:10px!important;background-color:#FFF8EB!important;
   box-shadow:none!important;color:#18191C;
 }
-.report-content select:focus,.report-content .form-select:focus,
-.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):focus,
+.report-content select:not(#pullLogWindowUnit):focus,.report-content .form-select:focus,
+.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):focus,
 .report-content textarea:focus{border-color:#78716C!important;box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;outline:0!important}
 
 /* Live chat keeps the composer available while only the message history scrolls. */

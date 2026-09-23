@@ -8,16 +8,16 @@
 <title>Create Provider</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
-<link href="assets/css/reports.css?v=1.0.69" rel="stylesheet"/>
+<link href="assets/css/reports.css?v=1.0.70" rel="stylesheet"/>
 <link href="assets/css/bo-ui-standard.css?v=1.0.8" rel="stylesheet"/>
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet"/>
 <link href="assets/css/main-admin-detail-executive.css?v=1.0.230" rel="stylesheet"/>
 <link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet"/>
 <link href="assets/css/bo-charcoal-shell.css?v=1.0.7" rel="stylesheet"/>
-<link href="assets/css/bo-charcoal-legacy.css?v=1.1.30" rel="stylesheet"/>
+<link href="assets/css/bo-charcoal-legacy.css?v=1.1.31" rel="stylesheet"/>
 <link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet"/>
 <link href="assets/css/bo-input-fill.css?v=1.0.2" rel="stylesheet"/>
-<link href="assets/css/game-provider.css?v=1.5.1" rel="stylesheet"/>
+<link href="assets/css/game-provider.css?v=1.5.24" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -63,16 +63,44 @@
         <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-building"></i></span>
         <div class="mac-section-copy">
           <h3>1. Identity & Settlement</h3>
-          <p>Code, name, categories, wallet mode, upstream cost, and brand images.</p>
+          <p>Who this provider is, how you settle with them, and how they appear on the frontend.</p>
         </div>
         <a class="mad-btn mad-btn-ghost mac-back-section" href="game-provider.html"><i class="bi bi-arrow-left"></i> Back to List</a>
       </header>
-      <div class="gpc-fields">
-        <div class="slider-two-col"><div class="field"><label>Provider Code</label><input id="providerCode" name="code" placeholder="Example: JDB" required /></div><div class="field"><label>Provider Name</label><input id="providerName" name="name" placeholder="Example: JDB Gaming" required /></div></div>
-                <div class="slider-two-col"><div class="field"><label>Provider Categories <span class="text-secondary small">(select one or multiple)</span></label><select id="providerCategoryIds" name="categoryIds" multiple size="5" class="provider-type-multi"></select><small class="text-secondary">Loaded from Game Category. A provider can appear under multiple frontend categories.</small><input id="providerType" name="providerType" type="hidden" value="OTHER" /></div><div class="field"><label>Wallet Mode</label><select id="walletMode" name="walletMode"><option value="TRANSFER">Transfer Wallet</option><option value="SEAMLESS">Seamless Wallet</option></select></div></div>
-                <div class="slider-two-col"><div class="field"><label>Upstream Provider Cost (%)</label><input id="settlementCostPercent" name="settlementCostPercent" type="number" min="0" step="0.0001" value="0"/><small class="text-secondary">What the platform owes this provider. Separate from the percentage charged to each brand.</small></div><div class="field"><label>Upstream Settlement Basis</label><select id="settlementCostBasis" name="settlementCostBasis"><option value="HOUSE_WIN">House Win / GGR</option><option value="TURNOVER">Turnover</option></select><small class="text-secondary">HOUSE_WIN never charges on a negative consolidated house result.</small></div></div>
-                <div class="slider-two-col"><div class="field"><label>Provider Image URL</label><input id="providerImageUrl" name="providerImageUrl" placeholder="Example: provider/fachai.png or https://..." /><small class="text-secondary">Used for the Slot Game left-side provider rail and BO provider preview.</small></div><div class="field"><label>Provider Brand Image URL</label><input id="providerBrandImageUrl" name="providerBrandImageUrl" placeholder="Example: provider/fachai-brand.png or https://..." /><small class="text-secondary">Used as the full provider card image for Hot Game, Live Game, Sport, Other, and every non-Slot category configured as Provider First. The frontend shows only this image, without the dark card or provider name.</small></div></div>
-                
+      <div class="gpc-fields gpc-identity-layout">
+        <div class="gpc-grid gpc-grid-5">
+          <div class="field"><label>Provider Code</label><input id="providerCode" name="code" placeholder="Example: JDB" required autocomplete="off" /></div>
+          <div class="field"><label>Provider Name</label><input id="providerName" name="name" placeholder="Example: JDB Gaming" required autocomplete="organization" /></div>
+          <div class="field"><label>Wallet Mode</label><select id="walletMode" name="walletMode"><option value="TRANSFER">Transfer Wallet</option><option value="SEAMLESS">Seamless Wallet</option></select></div>
+          <div class="field"><label>Upstream Cost (%)</label><input id="settlementCostPercent" name="settlementCostPercent" type="number" min="0" step="0.0001" value="0"/><small class="text-secondary">Platform cost to this provider, not brand markup.</small></div>
+          <div class="field"><label>Settlement Basis</label><select id="settlementCostBasis" name="settlementCostBasis"><option value="HOUSE_WIN">House Win / GGR</option><option value="TURNOVER">Turnover</option></select><small class="text-secondary">HOUSE_WIN skips negative house results.</small></div>
+        </div>
+
+        <div class="gpc-grid gpc-grid-3">
+          <div class="field gpc-category-field">
+            <label id="providerCategoryLabel">Provider Categories</label>
+            <select id="providerCategoryIds" name="categoryIds" multiple class="provider-type-multi gpc-category-native" tabindex="-1" aria-hidden="true"></select>
+            <div class="gpc-ms" data-gpc-ms="providerCategoryIds">
+              <button type="button" class="gpc-ms-trigger" id="providerCategoryTrigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="providerCategoryLabel">
+                <span class="gpc-ms-value" id="providerCategoryValue">Select categories…</span>
+                <i class="bi bi-chevron-down" aria-hidden="true"></i>
+              </button>
+              <div class="gpc-ms-menu" id="providerCategoryMenu" role="listbox" aria-multiselectable="true" hidden></div>
+            </div>
+            <small class="text-secondary">Pick one or more frontend shelves from Game Category.</small>
+            <input id="providerType" name="providerType" type="hidden" value="OTHER" />
+          </div>
+          <div class="field">
+            <label>Provider Image URL</label>
+            <input id="providerImageUrl" name="providerImageUrl" placeholder="provider/fachai.png or https://..." />
+            <small class="text-secondary">Slot left-rail icon and BO preview.</small>
+          </div>
+          <div class="field">
+            <label>Provider Brand Image URL</label>
+            <input id="providerBrandImageUrl" name="providerBrandImageUrl" placeholder="provider/fachai-brand.png or https://..." />
+            <small class="text-secondary">Full card art for Provider First categories.</small>
+          </div>
+        </div>
       </div>
     </section>
   
@@ -83,15 +111,19 @@
           <h3>2. Integration & Credentials</h3>
           <p>How BO talks to this provider — type, HTTP, currency, base URL, and keys.</p>
         </div>
-        
       </header>
       <div class="gpc-fields">
-        <div class="slider-two-col"><div class="field"><label>Integration Type</label><select id="integrationType" name="integrationType"><option value="GENERIC_API">Generic API Mapping</option><option value="CUSTOM_ADAPTER">Custom Java Adapter</option><option value="MANUAL">Manual / Mock</option></select></div><div class="field"><label>HTTP Method</label><select id="httpMethod" name="httpMethod"><option>POST</option><option>GET</option></select></div></div>
-                <div class="slider-two-col"><div class="field"><label>Currency</label><input id="currency" name="currency" value="MYR" /></div><div class="field"><label>Sort Order</label><input id="sortOrder" name="sortOrder" type="number" min="0" value="0" /></div></div>
-                <div class="field"><label>API Base URL</label><input id="apiBaseUrl" name="apiBaseUrl" placeholder="https://provider-api.com" /></div>
-                <div class="slider-two-col"><div class="field"><label>Operator ID</label><input id="operatorId" name="operatorId" /></div><div class="field"><label>Secret Key</label><input id="secretKey" name="secretKey" /></div></div>
-
-                
+        <div class="gpc-grid gpc-grid-4">
+          <div class="field"><label>Integration Type</label><select id="integrationType" name="integrationType"><option value="GENERIC_API">Generic API Mapping</option><option value="CUSTOM_ADAPTER">Custom Java Adapter</option><option value="MANUAL">Manual / Mock</option></select></div>
+          <div class="field"><label>HTTP Method</label><select id="httpMethod" name="httpMethod"><option>POST</option><option>GET</option></select></div>
+          <div class="field"><label>Currency</label><input id="currency" name="currency" value="MYR" /></div>
+          <div class="field"><label>Sort Order</label><input id="sortOrder" name="sortOrder" type="number" min="0" value="0" /></div>
+        </div>
+        <div class="field gpc-field-wide"><label>API Base URL</label><input id="apiBaseUrl" name="apiBaseUrl" placeholder="https://provider-api.com" /></div>
+        <div class="gpc-grid gpc-grid-2">
+          <div class="field"><label>Operator ID</label><input id="operatorId" name="operatorId" autocomplete="off" /></div>
+          <div class="field"><label>Secret Key</label><input id="secretKey" name="secretKey" autocomplete="off" /></div>
+        </div>
       </div>
     </section>
   
@@ -102,22 +134,36 @@
           <h3>3. Provider BO Access</h3>
           <p>Internal login record for this provider's backoffice. Masked on the list until Reveal.</p>
         </div>
-        
       </header>
       <div class="gpc-fields">
-        <div class="action-config-box provider-record-box">
-                  
-                  <div class="slider-two-col">
-                    <div class="field"><label>Key Environment</label><select id="keyEnvironment" name="keyEnvironment"><option value="STAGING">Staging / UAT Key</option><option value="LIVE">Live / Production Key</option></select><small class="text-secondary">Shows clearly in the provider listing which credential set is currently configured.</small></div>
-                    <div class="field"><label>Provider BO Login URL</label><input id="boLoginUrl" name="boLoginUrl" placeholder="https://provider-bo.example.com/login" /></div>
-                  </div>
-                  <div class="slider-two-col">
-                    <div class="field"><label>Provider BO Username</label><input id="boUsername" name="boUsername" autocomplete="off" /></div>
-                    <div class="field"><label>Provider BO Password</label><div class="input-group"><input id="boPassword" name="boPassword" type="password" autocomplete="new-password" /><button class="btn btn-outline-secondary" type="button" id="toggleBoPasswordBtn" title="Show or hide password"><i class="bi bi-eye"></i></button></div><small class="text-secondary">Internal record only. The listing masks this value until Reveal is pressed.</small></div>
-                  </div>
-                </div>
-
-                
+        <div class="gpc-grid gpc-grid-3">
+          <div class="field">
+            <label for="keyEnvironment">Key Environment</label>
+            <select id="keyEnvironment" name="keyEnvironment">
+              <option value="STAGING">Staging / UAT Key</option>
+              <option value="LIVE">Live / Production Key</option>
+            </select>
+            <small class="text-secondary">Shown on the provider listing as Staging or Live.</small>
+          </div>
+          <div class="field">
+            <label for="boUsername">Provider BO Username</label>
+            <input id="boUsername" name="boUsername" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label for="boPassword">Provider BO Password</label>
+            <div class="gpc-pass-group">
+              <input id="boPassword" name="boPassword" type="password" autocomplete="new-password" />
+              <button class="gpc-pass-toggle" type="button" id="toggleBoPasswordBtn" title="Show or hide password" aria-label="Show or hide password">
+                <i class="bi bi-eye" aria-hidden="true"></i>
+              </button>
+            </div>
+            <small class="text-secondary">Masked on the list until Reveal.</small>
+          </div>
+        </div>
+        <div class="field gpc-field-wide">
+          <label for="boLoginUrl">Provider BO Login URL</label>
+          <input id="boLoginUrl" name="boLoginUrl" placeholder="https://provider-bo.example.com/login" />
+        </div>
       </div>
     </section>
   
@@ -128,22 +174,33 @@
           <h3>4. Dynamic Variables</h3>
           <p>Reusable ${key} values for signatures and request templates.</p>
         </div>
-        
       </header>
-      <div class="gpc-fields">
-        <div class="field"><label>Dynamic Provider Variables</label><textarea id="providerVariables" name="providerVariables" rows="7" placeholder='{
+      <div class="gpc-fields gpc-vars-layout">
+        <div class="field gpc-vars-editor">
+          <label for="providerVariables">Dynamic Provider Variables</label>
+          <textarea id="providerVariables" name="providerVariables" rows="10" spellcheck="false" placeholder='{
   "merchant_id": "abc001",
   "merchant_key": "xxxxx",
   "nonce": "UUID",
   "random_key": "RANDOM_8",
   "player": "${account_id}",
   "unix_time": "TIMESTAMP"
-}'></textarea><small class="text-secondary">Create any ${key} here. Value can be static, ${account_id}, ${member_id}, RANDOM_8, UUID, TIMESTAMP, TIMESTAMP_SECONDS, TIMESTAMP_MILLISECONDS, NONCE_32, SESSION_ID, UUID, REQUEST_ID, ISO8601_NOW, RAW_JSON, AMOUNT_NUMBER, AMOUNT_CENTS, DATETIME, TXID. Crypto helper supported: ${aes128ecb_base64:${rawJson}:${AgentKey}}.</small></div>
-
-                
+}'></textarea>
+          <small class="text-secondary">Any key becomes <code>${key}</code>. Crypto: <code>${aes128ecb_base64:${rawJson}:${AgentKey}}</code>.</small>
+        </div>
+        <aside class="gpc-ref-panel" aria-label="Variable value helpers">
+          <h4 class="gpc-ref-title">Value helpers</h4>
+          <div class="gpc-chip-row">
+            <code>${account_id}</code><code>${member_id}</code><code>UUID</code><code>RANDOM_8</code>
+            <code>TIMESTAMP</code><code>TIMESTAMP_SECONDS</code><code>NONCE_32</code><code>SESSION_ID</code>
+            <code>REQUEST_ID</code><code>ISO8601_NOW</code><code>RAW_JSON</code><code>AMOUNT_NUMBER</code>
+            <code>AMOUNT_CENTS</code><code>DATETIME</code><code>TXID</code>
+          </div>
+          <p class="gpc-ref-note">Static strings work too. Built-ins above can be used as values without wrapping.</p>
+        </aside>
       </div>
     </section>
-  
+
     <section class="mac-section">
       <header class="mac-section-head mac-section-head-rich">
         <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-diagram-3"></i></span>
@@ -151,24 +208,26 @@
           <h3>5. API Action Configs</h3>
           <p>Per-action path, signature, and request mapping. Wallet flow and pull-log timing live here.</p>
         </div>
-        
       </header>
       <div class="gpc-fields">
-        <div class="field action-config-box">
-                  <label>API Action Configs <span class="text-secondary small">(one formula/path/template per provider API)</span></label>
-                  <div class="d-flex gap-2 flex-wrap mb-2">
-                    <button class="clean-btn" type="button" id="formatActionConfigBtn"><i class="bi bi-braces"></i> Format JSON</button>
-                  </div>
-                  <div class="field mb-2">
-                    <label>Wallet Launch Flow</label>
-                    <select id="walletFlow">
-                      <option value="TRANSFER_BEFORE_LAUNCH">Transfer Before Launch (default/current providers)</option>
-                      <option value="TRANSFER_AFTER_LAUNCH">Launch Before Transfer (759Gaming-style)</option>
-                      <option value="NO_TRANSFER">No Transfer / Launch Only</option>
-                    </select>
-                    <small class="text-secondary">Stored as top-level <code>walletFlow</code> in API Action Configs. Missing or unknown values always fall back to <code>TRANSFER_BEFORE_LAUNCH</code>, so existing live providers remain unchanged.</small>
-                  </div>
-                  <textarea id="apiActionConfigs" name="apiActionConfigs" rows="12" placeholder='{
+        <div class="gpc-toolbar">
+          <div class="field gpc-field-grow">
+            <label for="walletFlow">Wallet Launch Flow</label>
+            <select id="walletFlow">
+              <option value="TRANSFER_BEFORE_LAUNCH">Transfer Before Launch (default/current providers)</option>
+              <option value="TRANSFER_AFTER_LAUNCH">Launch Before Transfer (759Gaming-style)</option>
+              <option value="NO_TRANSFER">No Transfer / Launch Only</option>
+            </select>
+            <small class="text-secondary">Stored as top-level <code>walletFlow</code>. Unknown values fall back to <code>TRANSFER_BEFORE_LAUNCH</code>.</small>
+          </div>
+          <div class="gpc-toolbar-actions">
+            <button class="clean-btn" type="button" id="formatActionConfigBtn"><i class="bi bi-braces"></i> Format JSON</button>
+          </div>
+        </div>
+
+        <div class="field gpc-field-wide">
+          <label for="apiActionConfigs">API Action Configs <span class="gpc-label-hint">one formula / path / template per action</span></label>
+          <textarea id="apiActionConfigs" name="apiActionConfigs" rows="14" spellcheck="false" placeholder='{
   "walletFlow": "TRANSFER_BEFORE_LAUNCH",
   "GAME_LIST": {
     "functionName": "GetGameList",
@@ -195,36 +254,68 @@
     "launchUrlPath": "data.game_url"
   }
 }'></textarea>
-                  <small class="text-secondary d-block mt-2"><b>Optional chained launch:</b> set <code>LAUNCH.beforeAction</code> to an action such as <code>ACCESS_TOKEN</code>, then map its response using <code>responseVariables</code>. Extracted values such as <code>${access_token}</code> are request-scoped, can be used in launch headers/body/signature, and never overwrite saved provider variables. Existing providers without <code>beforeAction</code> are unchanged.</small>
-                  <div class="form-check mt-2">
-                    <input class="form-check-input" type="checkbox" id="withdrawNegativeAmount">
-                    <label class="form-check-label" for="withdrawNegativeAmount"><b>WITHDRAW sends negative amount</b></label>
-                    <small class="text-secondary d-block">Optional. When enabled, BO stores <code>"negativeAmount": true</code> inside the WITHDRAW action config. Spring Boot converts the amount to a negative value before signature generation and before sending the request. Disabled is the default.</small>
-                  </div>
-                  <div class="action-config-box mt-3 pull-log-timing-box">
-                    <div class="form-check mb-2">
-                      <input class="form-check-input" type="checkbox" id="pullLogTimingEnabled">
-                      <label class="form-check-label" for="pullLogTimingEnabled"><b>Custom PULL_LOG time window</b></label>
-                    </div>
-                    <div class="slider-two-col">
-                      <div class="field"><label>Window</label><div class="input-group"><input id="pullLogWindowValue" type="number" min="0" step="1" value="15"><select id="pullLogWindowUnit"><option value="minutes">Minutes</option><option value="seconds">Seconds</option></select></div></div>
-                      <div class="field"><label>End Delay (seconds)</label><input id="pullLogEndDelaySeconds" type="number" min="0" step="1" value="0"><small class="text-secondary">Optional safety delay so unsettled latest records are not queried too early.</small></div>
-                    </div>
-                    <div class="slider-two-col">
-                      <div class="field"><label>Provider Timezone</label><input id="pullLogTimezone" value="Asia/Kuala_Lumpur" placeholder="UTC, -04:00, Asia/Kuala_Lumpur"><small class="text-secondary">Supports UTC, numeric offsets and IANA timezone names.</small></div>
-                      <div class="field"><label>Date/Time Format</label><input id="pullLogDateTimeFormat" value="yyyy-MM-dd HH:mm:ss" placeholder="Java DateTimeFormatter pattern"><small class="text-secondary">Examples: <code>yyyy-MM-dd HH:mm:ss</code> or <code>yyyy-MM-dd'T'HH:mm:ss.SSSxxx</code>.</small></div>
-                    </div>
-                    <small class="text-secondary d-block">When enabled, BO stores generic timing keys inside <code>PULL_LOG</code>: <code>pullWindowMinutes</code> or <code>pullWindowSeconds</code>, <code>pullEndDelaySeconds</code>, <code>pullTimezone</code> and <code>pullDateTimeFormat</code>. Use <code>${start_datetime}</code> and <code>${end_datetime}</code> in the request template. This works for future providers without adding provider-specific Java variables.</small>
-                  </div>
-                  <small class="text-secondary">This overrides the old single Signature Formula Builder for each action. Supported actions: GAME_LIST, CREATE_PLAYER, BALANCE, DEPOSIT, WITHDRAW, LAUNCH, PLAYER_PULL_LOG and PULL_LOG. For providers without a Create Player API, set <code>"CREATE_PLAYER": { "enabled": false }</code>. Use root-level <code>"walletFlow": "TRANSFER_AFTER_LAUNCH"</code> when login must happen before transfer-in, such as 759Gaming. Optional actions such as BALANCE now fully respect <code>"enabled": false</code>. For providers that remain online after launch, set root-level <code>"autoSettleStaleSeconds": 120</code> (or longer) to prevent premature transfer-out while the game session is still active. Missing <code>enabled</code> remains enabled and missing <code>walletFlow</code> defaults to the original transfer-before-launch sequence, so existing live providers are unchanged. BET_CALLBACK is inbound and uses the fixed Spring Boot callback URL.</small>
-                  <div class="alert alert-light border mt-3 mb-0 small">
-                    <b>Settlement mapping:</b> Use <code>PLAYER_PULL_LOG</code> for providers that only expose a player/game round API requiring playerId, gameId, date, hour or timezone. Use <code>PULL_LOG</code> for provider-wide reports. Both actions share the same bet mapping fields. <br><br><b>PULL_LOG bet-log mapping:</b> configure <code>responseListPath</code>, or use <code>responseJsonStringPath</code> when the provider returns an escaped JSON array inside a field such as <code>result</code>. Then configure <code>playerIdPath</code>, <code>providerTxIdPath</code>, <code>betAmountPath</code>, <code>validBetAmountPath</code>, <code>winAmountPath</code>, <code>netAmountPath</code>, <code>settlementTimePath</code>, <code>sequencePath</code>, <code>eventTypePath</code> and <code>originalTxIdPath</code>. Provider transaction ID must be unique. Rollback/void rows must point to the original transaction ID. PLAYER_PULL_LOG runs immediately on normal exit, page close recovery and stale-session auto settlement. When PLAYER_PULL_LOG is absent, Spring Boot falls back to PULL_LOG. PULL_LOG also runs every minute as a safety net; the debug button is only for inspection/manual retry.
-                  </div>
-                </div>
-                
+          <small class="text-secondary">Chained launch: set <code>LAUNCH.beforeAction</code> (e.g. <code>ACCESS_TOKEN</code>) and map with <code>responseVariables</code>. Request-scoped values like <code>${access_token}</code> never overwrite saved provider variables.</small>
+        </div>
+
+        <div class="gpc-grid gpc-grid-2">
+          <label class="gpc-check-card" for="withdrawNegativeAmount">
+            <input class="gpc-check-input" type="checkbox" id="withdrawNegativeAmount">
+            <span class="gpc-check-box" aria-hidden="true"></span>
+            <span class="gpc-check-body">
+              <span class="gpc-check-title">WITHDRAW sends negative amount</span>
+              <span class="gpc-check-desc">Stores <code>"negativeAmount": true</code> on WITHDRAW. Amount is negated before signature and request.</span>
+            </span>
+          </label>
+          <label class="gpc-check-card" for="pullLogTimingEnabled">
+            <input class="gpc-check-input" type="checkbox" id="pullLogTimingEnabled">
+            <span class="gpc-check-box" aria-hidden="true"></span>
+            <span class="gpc-check-body">
+              <span class="gpc-check-title">Custom PULL_LOG time window</span>
+              <span class="gpc-check-desc">Writes <code>pullWindow*</code>, <code>pullEndDelaySeconds</code>, <code>pullTimezone</code>, <code>pullDateTimeFormat</code> into PULL_LOG.</span>
+            </span>
+          </label>
+        </div>
+
+        <div class="gpc-subpanel pull-log-timing-box">
+          <h4 class="gpc-subhead">PULL_LOG timing</h4>
+          <div class="gpc-grid gpc-grid-4">
+            <div class="field">
+              <label for="pullLogWindowValue">Window</label>
+              <div class="input-group gpc-window-group">
+                <input id="pullLogWindowValue" type="number" min="0" step="1" value="15">
+                <select id="pullLogWindowUnit"><option value="minutes">Minutes</option><option value="seconds">Seconds</option></select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="pullLogEndDelaySeconds">End Delay (seconds)</label>
+              <input id="pullLogEndDelaySeconds" type="number" min="0" step="1" value="0">
+              <small class="text-secondary">Safety delay for unsettled latest records.</small>
+            </div>
+            <div class="field">
+              <label for="pullLogTimezone">Provider Timezone</label>
+              <input id="pullLogTimezone" value="Asia/Kuala_Lumpur" placeholder="UTC, -04:00, Asia/Kuala_Lumpur">
+              <small class="text-secondary">UTC, offset, or IANA name.</small>
+            </div>
+            <div class="field">
+              <label for="pullLogDateTimeFormat">Date/Time Format</label>
+              <input id="pullLogDateTimeFormat" value="yyyy-MM-dd HH:mm:ss" placeholder="Java DateTimeFormatter pattern">
+              <small class="text-secondary">e.g. <code>yyyy-MM-dd'T'HH:mm:ss.SSSxxx</code></small>
+            </div>
+          </div>
+          <small class="text-secondary">Use <code>${start_datetime}</code> / <code>${end_datetime}</code> in the PULL_LOG request template.</small>
+        </div>
+
+        <details class="gpc-help">
+          <summary>Action keys, settlement mapping &amp; bet-log paths</summary>
+          <div class="gpc-help-body">
+            <p>Supported actions: <code>GAME_LIST</code>, <code>CREATE_PLAYER</code>, <code>BALANCE</code>, <code>DEPOSIT</code>, <code>WITHDRAW</code>, <code>LAUNCH</code>, <code>PLAYER_PULL_LOG</code>, <code>PULL_LOG</code>. Disable create with <code>"CREATE_PLAYER": { "enabled": false }</code>. Optional actions respect <code>"enabled": false</code>. Use <code>"autoSettleStaleSeconds": 120</code> when the session stays online after launch. BET_CALLBACK is inbound via the fixed Spring Boot callback URL.</p>
+            <p><b>Settlement:</b> <code>PLAYER_PULL_LOG</code> for player/round APIs; <code>PULL_LOG</code> for provider-wide reports. Both share bet mapping fields.</p>
+            <p><b>Bet-log mapping:</b> <code>responseListPath</code> or <code>responseJsonStringPath</code>, then <code>playerIdPath</code>, <code>providerTxIdPath</code>, <code>betAmountPath</code>, <code>validBetAmountPath</code>, <code>winAmountPath</code>, <code>netAmountPath</code>, <code>settlementTimePath</code>, <code>sequencePath</code>, <code>eventTypePath</code>, <code>originalTxIdPath</code>. Provider TX must be unique; rollback/void must point to the original TX.</p>
+          </div>
+        </details>
       </div>
     </section>
-  
+
     <section class="mac-section">
       <header class="mac-section-head mac-section-head-rich">
         <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-fingerprint"></i></span>
@@ -232,17 +323,35 @@
           <h3>6. Signature</h3>
           <p>Hash type, case, formula builder, and ukey rules.</p>
         </div>
-        
       </header>
       <div class="gpc-fields">
-        <div class="slider-two-col"><div class="field"><label>Signature Type</label><select id="signatureType" name="signatureType"><option>MD5</option><option>SHA256</option><option>NONE</option></select></div><div class="field"><label>Signature Output Case</label><select id="signatureOutputCase" name="signatureOutputCase"><option value="LOWER">Lowercase</option><option value="UPPER">Uppercase</option><option value="RAW">Raw / No Convert</option></select></div></div>
-                <div class="field"><label>Signature Formula Builder</label><input id="signatureTemplate" name="signatureTemplate" placeholder="${method}${operator_id}${account_id}${ukey}${secret_key}" /><small class="text-secondary">Use provider document formula here. Example: ${method}${operator_id}${account_id}${ukey}${secret_key}</small></div>
-                <div class="slider-two-col"><div class="field"><label>Random UKey Length</label><input id="ukeyLength" name="ukeyLength" type="number" min="1" max="64" value="8" /></div><div class="field"><label>UKey Prefix / Static Value</label><input id="ukeyPrefix" name="ukeyPrefix" placeholder="Optional prefix" /><input id="ukeyStaticValue" class="mt-2" name="ukeyStaticValue" placeholder="Optional fixed ukey, normally empty" /></div></div>
-                <div class="field"><label>Available Variables</label><div class="p-2 bg-light rounded small" style="line-height:1.8">Image templates: ${game_code}, ${game_name}, ${provider_code}, ${provider_name}, ${category}, ${key}, and row fields such as ${gameID}<br/>Player round: ${provider_player_id}, ${datePlayed}, ${hour}, ${timeZone}, ${session_start_date_time}, ${session_end_date_time}<br/>Built-in: ${operator_id}, ${secret_key}, ${account_id}, ${username}, ${member_id}, ${ukey}, ${method}, ${amount}, ${amountNumber}, ${amountCents}, ${transaction_id}, ${game_code}, ${currency}, ${request_date_time}, ${timestamp}, ${TIMESTAMP_SECONDS}, ${TIMESTAMP_MILLISECONDS}, ${NONCE_32}, ${SESSION_ID}, ${UUID}, ${REQUEST_ID}, ${ISO8601_NOW}, ${RAW_JSON}, ${signature}<br/>Signature types: MD5, SHA1, SHA256, HMAC_SHA256, HMAC_SHA1, HMAC_SHA256_BASE64, HMAC_SHA1_BASE64<br/>Crypto: ${md5:...}, ${sha1:...}, ${sha256:...}, ${aes128ecb_base64:${rawJson}:${AgentKey}}. Dynamic date values support DATETIME_FORMAT(zone|pattern), e.g. DATETIME_FORMAT(-04:00|yyMMd)<br/>Nested map game list: use Game Code Path @key and Category Path @group<br/>Typed JSON: use ${amountNumber} / ${amount_number} / ${AMOUNT_NUMBER} as the complete value to send a JSON number while existing ${amount} remains a string. Use ${amountCents} / ${amount_cents} / ${AMOUNT_CENTS} to multiply by 100 and send an integer smallest-unit value (RM 10.50 �?1050). Use ${UUID} for an RFC 4122 UUID such as provider plat_sn.<br/>Custom: any key added in Dynamic Provider Variables, example ${merchant_id}, ${nonce}, ${token}</div></div>
-                
+        <div class="gpc-grid gpc-grid-4">
+          <div class="field"><label for="signatureType">Signature Type</label><select id="signatureType" name="signatureType"><option>MD5</option><option>SHA256</option><option>NONE</option></select></div>
+          <div class="field"><label for="signatureOutputCase">Signature Output Case</label><select id="signatureOutputCase" name="signatureOutputCase"><option value="LOWER">Lowercase</option><option value="UPPER">Uppercase</option><option value="RAW">Raw / No Convert</option></select></div>
+          <div class="field"><label for="ukeyLength">Random UKey Length</label><input id="ukeyLength" name="ukeyLength" type="number" min="1" max="64" value="8" /></div>
+          <div class="field"><label for="ukeyPrefix">UKey Prefix</label><input id="ukeyPrefix" name="ukeyPrefix" placeholder="Optional prefix" /></div>
+        </div>
+        <div class="field gpc-field-wide">
+          <label for="signatureTemplate">Signature Formula Builder</label>
+          <input id="signatureTemplate" name="signatureTemplate" placeholder="${method}${operator_id}${account_id}${ukey}${secret_key}" />
+          <small class="text-secondary">Match the provider document. Example: <code>${method}${operator_id}${account_id}${ukey}${secret_key}</code></small>
+        </div>
+        <div class="field gpc-field-wide">
+          <label for="ukeyStaticValue">UKey Static Value <span class="gpc-label-hint">optional · normally empty</span></label>
+          <input id="ukeyStaticValue" name="ukeyStaticValue" placeholder="Optional fixed ukey" />
+        </div>
+        <aside class="gpc-ref-panel gpc-ref-wide" aria-label="Available variables">
+          <h4 class="gpc-ref-title">Available variables</h4>
+          <div class="gpc-ref-groups">
+            <div class="gpc-ref-group"><span class="gpc-ref-label">Built-in</span><div class="gpc-chip-row"><code>${operator_id}</code><code>${secret_key}</code><code>${account_id}</code><code>${username}</code><code>${member_id}</code><code>${ukey}</code><code>${method}</code><code>${amount}</code><code>${amountNumber}</code><code>${amountCents}</code><code>${transaction_id}</code><code>${game_code}</code><code>${currency}</code><code>${request_date_time}</code><code>${timestamp}</code><code>${UUID}</code><code>${signature}</code></div></div>
+            <div class="gpc-ref-group"><span class="gpc-ref-label">Image / round</span><div class="gpc-chip-row"><code>${game_name}</code><code>${provider_code}</code><code>${provider_name}</code><code>${category}</code><code>${gameID}</code><code>${provider_player_id}</code><code>${datePlayed}</code><code>${hour}</code><code>${timeZone}</code><code>${session_start_date_time}</code><code>${session_end_date_time}</code></div></div>
+            <div class="gpc-ref-group"><span class="gpc-ref-label">Crypto / types</span><div class="gpc-chip-row"><code>MD5</code><code>SHA256</code><code>HMAC_SHA256</code><code>${md5:…}</code><code>${aes128ecb_base64:…}</code><code>DATETIME_FORMAT(zone|pattern)</code></div></div>
+          </div>
+          <p class="gpc-ref-note"><code>${amountNumber}</code> sends a JSON number; <code>${amountCents}</code> multiplies by 100 (RM 10.50 → 1050). Custom keys from Dynamic Variables work as <code>${merchant_id}</code>.</p>
+        </aside>
       </div>
     </section>
-  
+
     <section class="mac-section">
       <header class="mac-section-head mac-section-head-rich">
         <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-signpost"></i></span>
@@ -250,16 +359,19 @@
           <h3>7. Legacy Paths</h3>
           <p>Fallback endpoint paths when action configs omit a path.</p>
         </div>
-        
       </header>
       <div class="gpc-fields">
-        <div class="slider-two-col"><div class="field"><label>Create Player Path</label><input id="createPlayerPath" name="createPlayerPath" placeholder="/CreatePlayer" /></div><div class="field"><label>Balance Path</label><input id="balancePath" name="balancePath" placeholder="/GetBalance" /></div></div>
-                <div class="slider-two-col"><div class="field"><label>Deposit Path</label><input id="depositPath" name="depositPath" placeholder="/Deposit" /></div><div class="field"><label>Withdraw Path</label><input id="withdrawPath" name="withdrawPath" placeholder="/Withdrawal" /></div></div>
-                <div class="slider-two-col"><div class="field"><label>Launch Path</label><input id="launchPath" name="launchPath" placeholder="/LaunchSport" /></div><div class="field"><label>Game List Path</label><input id="gameListPath" name="gameListPath" placeholder="/GetGameList" /></div></div>
-                
+        <div class="gpc-grid gpc-grid-3">
+          <div class="field"><label for="createPlayerPath">Create Player Path</label><input id="createPlayerPath" name="createPlayerPath" placeholder="/CreatePlayer" /></div>
+          <div class="field"><label for="balancePath">Balance Path</label><input id="balancePath" name="balancePath" placeholder="/GetBalance" /></div>
+          <div class="field"><label for="depositPath">Deposit Path</label><input id="depositPath" name="depositPath" placeholder="/Deposit" /></div>
+          <div class="field"><label for="withdrawPath">Withdraw Path</label><input id="withdrawPath" name="withdrawPath" placeholder="/Withdrawal" /></div>
+          <div class="field"><label for="launchPath">Launch Path</label><input id="launchPath" name="launchPath" placeholder="/LaunchSport" /></div>
+          <div class="field"><label for="gameListPath">Game List Path</label><input id="gameListPath" name="gameListPath" placeholder="/GetGameList" /></div>
+        </div>
       </div>
     </section>
-  
+
     <section class="mac-section">
       <header class="mac-section-head mac-section-head-rich">
         <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-file-code"></i></span>
@@ -267,43 +379,118 @@
           <h3>8. Request Templates</h3>
           <p>Legacy request body templates for each wallet action.</p>
         </div>
-        
       </header>
       <div class="gpc-fields">
-        <div class="field"><label>Create Player Request Template</label><textarea id="createPlayerRequestTemplate" rows="4" placeholder='{ "OperatorId":"${operatorId}", "AccountId":"${accountId}", "Signature":"${signature}" }'></textarea></div>
-                <div class="field"><label>Balance Request Template</label><textarea id="balanceRequestTemplate" rows="3" placeholder='{ "OperatorId":"${operatorId}", "AccountId":"${accountId}", "Signature":"${signature}" }'></textarea></div>
-                <div class="field"><label>Deposit Request Template</label><textarea id="depositRequestTemplate" rows="3" placeholder='{ "OperatorId":"${operatorId}", "AccountId":"${accountId}", "Amount":"${amount}", "TransactionId":"${transactionId}", "Signature":"${signature}" }'></textarea></div>
-                <div class="field"><label>Withdraw Request Template</label><textarea id="withdrawRequestTemplate" rows="3" placeholder='{ "OperatorId":"${operatorId}", "AccountId":"${accountId}", "Amount":"${amount}", "TransactionId":"${transactionId}", "Signature":"${signature}" }'></textarea></div>
-                <div class="field"><label>Launch Request Template</label><textarea id="launchRequestTemplate" rows="3" placeholder='{ "OperatorId":"${operatorId}", "AccountId":"${accountId}", "GameCode":"${gameCode}", "Signature":"${signature}" }'></textarea></div>
-                <div class="field"><label>Game List Request Template</label><textarea id="gameListRequestTemplate" rows="3" placeholder='{ "OperatorId":"${operatorId}", "Signature":"${signature}" }'></textarea></div>
-                
+        <div class="gpc-grid gpc-grid-2">
+          <div class="field"><label for="createPlayerRequestTemplate">Create Player</label><textarea id="createPlayerRequestTemplate" rows="4" spellcheck="false" placeholder='{ "OperatorId":"${operatorId}", "AccountId":"${accountId}", "Signature":"${signature}" }'></textarea></div>
+          <div class="field"><label for="balanceRequestTemplate">Balance</label><textarea id="balanceRequestTemplate" rows="4" spellcheck="false" placeholder='{ "OperatorId":"${operatorId}", "AccountId":"${accountId}", "Signature":"${signature}" }'></textarea></div>
+          <div class="field"><label for="depositRequestTemplate">Deposit</label><textarea id="depositRequestTemplate" rows="4" spellcheck="false" placeholder='{ "OperatorId":"${operatorId}", "AccountId":"${accountId}", "Amount":"${amount}", "TransactionId":"${transactionId}", "Signature":"${signature}" }'></textarea></div>
+          <div class="field"><label for="withdrawRequestTemplate">Withdraw</label><textarea id="withdrawRequestTemplate" rows="4" spellcheck="false" placeholder='{ "OperatorId":"${operatorId}", "AccountId":"${accountId}", "Amount":"${amount}", "TransactionId":"${transactionId}", "Signature":"${signature}" }'></textarea></div>
+          <div class="field"><label for="launchRequestTemplate">Launch</label><textarea id="launchRequestTemplate" rows="4" spellcheck="false" placeholder='{ "OperatorId":"${operatorId}", "AccountId":"${accountId}", "GameCode":"${gameCode}", "Signature":"${signature}" }'></textarea></div>
+          <div class="field"><label for="gameListRequestTemplate">Game List</label><textarea id="gameListRequestTemplate" rows="4" spellcheck="false" placeholder='{ "OperatorId":"${operatorId}", "Signature":"${signature}" }'></textarea></div>
+        </div>
       </div>
     </section>
-  
+
     <section class="mac-section">
       <header class="mac-section-head mac-section-head-rich">
         <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-arrow-left-right"></i></span>
         <div class="mac-section-copy">
-          <h3>9. Response, Images & Callbacks</h3>
+          <h3>9. Response, Images &amp; Callbacks</h3>
           <p>Response paths, game image templates, inbound callback mapping, and status.</p>
         </div>
-        
       </header>
       <div class="gpc-fields">
-        <div class="slider-two-col"><div class="field"><label>Balance Response Path</label><input id="responseBalancePath" placeholder="data.balance" /></div><div class="field"><label>Launch URL Response Path</label><input id="responseLaunchUrlPath" placeholder="data.launchUrl" /></div></div>
-                <div class="slider-two-col"><div class="field"><label>Game List Response Path</label><input id="responseGameListPath" placeholder="data.games" /></div><div class="field"><label>Game Code / Name Path</label><input id="responseGameCodePath" placeholder="gameCode" /><input id="responseGameNamePath" class="mt-2" placeholder="gameName" /></div></div>
-                <div class="slider-two-col"><div class="field"><label>Provider Game Image Key / Category Path</label><input id="responseGameImagePath" name="responseGameImagePath" placeholder="imageUrl (leave empty when provider has no image key)" /><input id="responseGameCategoryPath" name="responseGameCategoryPath" class="mt-2" placeholder="category" /></div><div class="field"><label>Success / Error Mapping</label><input id="responseSuccessPath" name="responseSuccessPath" placeholder="status" /><input id="responseSuccessValue" name="responseSuccessValue" class="mt-2" placeholder="success" /><input id="responseErrorMessagePath" name="responseErrorMessagePath" class="mt-2" placeholder="message" /></div></div>
-                <div class="field"><label>Generated Game Image URL Template <span class="text-secondary">(optional)</span></label><input id="gameImageApiUrlTemplate" name="gameImageApiUrlTemplate" placeholder="https://common-static.ppgames.net/.../${gameID}/${gameID}_200x200.png" /><small class="text-secondary">No HTTP request is made. The system only replaces variables and stores the generated URL.</small></div>
-                <div class="field"><label>Separate Game Image API URL Template <span class="text-secondary">(optional)</span></label><input id="gameImageRemoteApiUrlTemplate" name="gameImageRemoteApiUrlTemplate" placeholder="https://provider.example.com/game-image?gameId=${gameID}" /><small class="text-secondary">Used when the provider game-list response has no image. One HTTP request is made per game.</small></div>
-                <div class="slider-two-col"><div class="field"><label>Image API HTTP Method</label><select id="gameImageRemoteApiHttpMethod" name="gameImageRemoteApiHttpMethod"><option value="GET">GET</option><option value="POST">POST</option></select></div><div class="field"><label>Image API Response Path</label><input id="gameImageRemoteApiResponsePath" name="gameImageRemoteApiResponsePath" placeholder="data.imageUrl or image" /><small class="text-secondary">Leave blank only when the endpoint response itself is the image URL string.</small></div></div>
-                <div class="field"><label>Image API Request Template <span class="text-secondary">(POST optional)</span></label><textarea id="gameImageRemoteApiRequestTemplate" name="gameImageRemoteApiRequestTemplate" rows="3" placeholder='{ "gameId": "${gameID}", "operatorId": "${OperatorId}" }'></textarea><small class="text-secondary">For GET, this JSON is converted into query parameters. For POST, it is sent as JSON.</small></div>
-                <div class="field"><label>Fallback / Own Game Image Path Template <span class="text-secondary">(optional)</span></label><input id="gameImageFallbackUrlTemplate" name="gameImageFallbackUrlTemplate" placeholder="https://static.example.com/games/${provider_code}/${game_code}.png" /><small class="text-secondary">Last fallback when provider image, separate image API and generated URL are unavailable. Variables: ${game_code}, ${game_name}, ${provider_code}, ${provider_name}, ${category}, ${key}, or any response field such as ${gameID}.</small></div>
-                <div class="field"><label>Frontend Broken / Missing Game Image <span class="text-secondary">(optional)</span></label><input id="frontendGameFallbackImageUrl" name="frontendGameFallbackImageUrl" placeholder="https://static.example.com/default-game.png" /><small class="text-secondary">Shown immediately on the TitanXgaming frontend when this provider's game image is empty, returns 404, is blocked, or cannot be loaded. Use a complete image URL. When empty, the built-in assets/images/game.png is used.</small></div>
-                <div class="field"><label>Callback Mapping</label><div class="slider-two-col"><input id="callbackMemberPath" name="callbackMemberPath" placeholder="username / data.player" /><input id="callbackEventTypePath" name="callbackEventTypePath" placeholder="type / event" /></div><div class="slider-two-col mt-2"><input id="callbackGameCodePath" name="callbackGameCodePath" placeholder="gameCode" /><input id="callbackBetIdPath" name="callbackBetIdPath" placeholder="betId" /></div><div class="slider-two-col mt-2"><input id="callbackTxIdPath" name="callbackTxIdPath" placeholder="transactionId" /><input id="callbackBetAmountPath" name="callbackBetAmountPath" placeholder="betAmount" /></div><div class="slider-two-col mt-2"><input id="callbackWinAmountPath" name="callbackWinAmountPath" placeholder="winAmount" /><input id="callbackValidBetAmountPath" name="callbackValidBetAmountPath" placeholder="validBetAmount / turnover" /></div><div class="slider-two-col mt-2"><input id="callbackRoundIdPath" name="callbackRoundIdPath" placeholder="roundId" /><input id="callbackStatusPath" name="callbackStatusPath" placeholder="status" /></div><div class="slider-two-col mt-2"><input id="callbackSignaturePath" name="callbackSignaturePath" placeholder="signature" /><input disabled placeholder="Reserved for provider signature verification" /></div><small class="text-secondary">Used by the generic callback parser. Provider callback URL: /api/provider/callback/{PROVIDER_CODE}/{BET|WIN|SETTLE|ROLLBACK}</small></div>
-                <div class="slider-two-col"><div class="field"><label>Callback Success Response</label><textarea id="callbackSuccessResponse" name="callbackSuccessResponse" rows="2" placeholder='{ "status":"success" }'></textarea></div><div class="field"><label>Callback Duplicate Response</label><textarea id="callbackDuplicateResponse" name="callbackDuplicateResponse" rows="2" placeholder='{ "status":"success", "message":"duplicate" }'></textarea></div></div>
-                <div class="field"><label>Status</label><select id="providerStatus" name="status"><option value="1">Active</option><option value="2">Inactive</option></select></div>
+        <h4 class="gpc-subhead">Response paths</h4>
+        <div class="gpc-grid gpc-grid-4">
+          <div class="field"><label for="responseBalancePath">Balance Path</label><input id="responseBalancePath" placeholder="data.balance" /></div>
+          <div class="field"><label for="responseLaunchUrlPath">Launch URL Path</label><input id="responseLaunchUrlPath" placeholder="data.launchUrl" /></div>
+          <div class="field"><label for="responseGameListPath">Game List Path</label><input id="responseGameListPath" placeholder="data.games" /></div>
+          <div class="field"><label for="responseGameCodePath">Game Code Path</label><input id="responseGameCodePath" placeholder="gameCode" /></div>
+          <div class="field"><label for="responseGameNamePath">Game Name Path</label><input id="responseGameNamePath" placeholder="gameName" /></div>
+          <div class="field"><label for="responseGameImagePath">Game Image Key</label><input id="responseGameImagePath" name="responseGameImagePath" placeholder="imageUrl (empty if none)" /></div>
+          <div class="field"><label for="responseGameCategoryPath">Category Path</label><input id="responseGameCategoryPath" name="responseGameCategoryPath" placeholder="category" /></div>
+          <div class="field"><label for="responseSuccessPath">Success Path</label><input id="responseSuccessPath" name="responseSuccessPath" placeholder="status" /></div>
+          <div class="field"><label for="responseSuccessValue">Success Value</label><input id="responseSuccessValue" name="responseSuccessValue" placeholder="success" /></div>
+          <div class="field"><label for="responseErrorMessagePath">Error Message Path</label><input id="responseErrorMessagePath" name="responseErrorMessagePath" placeholder="message" /></div>
+        </div>
+
+        <h4 class="gpc-subhead">Game images</h4>
+        <div class="gpc-grid gpc-grid-2">
+          <div class="field">
+            <label for="gameImageApiUrlTemplate">Generated Image URL Template <span class="gpc-label-hint">optional</span></label>
+            <input id="gameImageApiUrlTemplate" name="gameImageApiUrlTemplate" placeholder="https://…/${gameID}/${gameID}_200x200.png" />
+            <small class="text-secondary">Variable replace only — no HTTP call.</small>
+          </div>
+          <div class="field">
+            <label for="gameImageRemoteApiUrlTemplate">Separate Image API URL <span class="gpc-label-hint">optional</span></label>
+            <input id="gameImageRemoteApiUrlTemplate" name="gameImageRemoteApiUrlTemplate" placeholder="https://provider.example.com/game-image?gameId=${gameID}" />
+            <small class="text-secondary">One HTTP request per game when list has no image.</small>
+          </div>
+        </div>
+        <div class="gpc-grid gpc-grid-3">
+          <div class="field">
+            <label for="gameImageRemoteApiHttpMethod">Image API Method</label>
+            <select id="gameImageRemoteApiHttpMethod" name="gameImageRemoteApiHttpMethod"><option value="GET">GET</option><option value="POST">POST</option></select>
+          </div>
+          <div class="field">
+            <label for="gameImageRemoteApiResponsePath">Image API Response Path</label>
+            <input id="gameImageRemoteApiResponsePath" name="gameImageRemoteApiResponsePath" placeholder="data.imageUrl or image" />
+            <small class="text-secondary">Blank if the body itself is the URL string.</small>
+          </div>
+          <div class="field">
+            <label for="frontendGameFallbackImageUrl">Frontend Broken-Image URL <span class="gpc-label-hint">optional</span></label>
+            <input id="frontendGameFallbackImageUrl" name="frontendGameFallbackImageUrl" placeholder="https://static.example.com/default-game.png" />
+            <small class="text-secondary">Empty → built-in <code>assets/images/game.png</code>.</small>
+          </div>
+        </div>
+        <div class="gpc-grid gpc-grid-2">
+          <div class="field">
+            <label for="gameImageRemoteApiRequestTemplate">Image API Request Template <span class="gpc-label-hint">POST optional</span></label>
+            <textarea id="gameImageRemoteApiRequestTemplate" name="gameImageRemoteApiRequestTemplate" rows="3" spellcheck="false" placeholder='{ "gameId": "${gameID}", "operatorId": "${OperatorId}" }'></textarea>
+            <small class="text-secondary">GET → query params; POST → JSON body.</small>
+          </div>
+          <div class="field">
+            <label for="gameImageFallbackUrlTemplate">Fallback Image Path Template <span class="gpc-label-hint">optional</span></label>
+            <input id="gameImageFallbackUrlTemplate" name="gameImageFallbackUrlTemplate" placeholder="https://static.example.com/games/${provider_code}/${game_code}.png" />
+            <small class="text-secondary">Last resort after provider image / remote API / generated URL.</small>
+          </div>
+        </div>
+
+        <h4 class="gpc-subhead">Callback mapping</h4>
+        <div class="gpc-grid gpc-grid-3">
+          <div class="field"><label for="callbackMemberPath">Member Path</label><input id="callbackMemberPath" name="callbackMemberPath" placeholder="username / data.player" /></div>
+          <div class="field"><label for="callbackEventTypePath">Event Type Path</label><input id="callbackEventTypePath" name="callbackEventTypePath" placeholder="type / event" /></div>
+          <div class="field"><label for="callbackGameCodePath">Game Code Path</label><input id="callbackGameCodePath" name="callbackGameCodePath" placeholder="gameCode" /></div>
+          <div class="field"><label for="callbackBetIdPath">Bet ID Path</label><input id="callbackBetIdPath" name="callbackBetIdPath" placeholder="betId" /></div>
+          <div class="field"><label for="callbackTxIdPath">Transaction ID Path</label><input id="callbackTxIdPath" name="callbackTxIdPath" placeholder="transactionId" /></div>
+          <div class="field"><label for="callbackBetAmountPath">Bet Amount Path</label><input id="callbackBetAmountPath" name="callbackBetAmountPath" placeholder="betAmount" /></div>
+          <div class="field"><label for="callbackWinAmountPath">Win Amount Path</label><input id="callbackWinAmountPath" name="callbackWinAmountPath" placeholder="winAmount" /></div>
+          <div class="field"><label for="callbackValidBetAmountPath">Valid Bet / Turnover Path</label><input id="callbackValidBetAmountPath" name="callbackValidBetAmountPath" placeholder="validBetAmount / turnover" /></div>
+          <div class="field"><label for="callbackRoundIdPath">Round ID Path</label><input id="callbackRoundIdPath" name="callbackRoundIdPath" placeholder="roundId" /></div>
+          <div class="field"><label for="callbackStatusPath">Status Path</label><input id="callbackStatusPath" name="callbackStatusPath" placeholder="status" /></div>
+          <div class="field"><label for="callbackSignaturePath">Signature Path</label><input id="callbackSignaturePath" name="callbackSignaturePath" placeholder="signature" /></div>
+          <div class="field"><label>Signature Verify</label><input disabled placeholder="Reserved" /><small class="text-secondary">Reserved for provider signature verification.</small></div>
+        </div>
+        <small class="text-secondary">Callback URL: <code>/api/provider/callback/{PROVIDER_CODE}/{BET|WIN|SETTLE|ROLLBACK}</code></small>
+
+        <div class="gpc-grid gpc-grid-3">
+          <div class="field">
+            <label for="callbackSuccessResponse">Callback Success Response</label>
+            <textarea id="callbackSuccessResponse" name="callbackSuccessResponse" rows="2" spellcheck="false" placeholder='{ "status":"success" }'></textarea>
+          </div>
+          <div class="field">
+            <label for="callbackDuplicateResponse">Callback Duplicate Response</label>
+            <textarea id="callbackDuplicateResponse" name="callbackDuplicateResponse" rows="2" spellcheck="false" placeholder='{ "status":"success", "message":"duplicate" }'></textarea>
+          </div>
+          <div class="field">
+            <label for="providerStatus">Status</label>
+            <select id="providerStatus" name="status"><option value="1">Active</option><option value="2">Inactive</option></select>
+          </div>
+        </div>
       </div>
     </section>
+
   <div class="upload-status" id="providerStatusBox"></div>
   <div class="upload-status" id="providerStatusBoxTop" hidden></div>
   <footer class="mac-footer-actions">
@@ -321,7 +508,7 @@
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
 <script src="assets/js/auth.js?v=1.0.88"></script>
 <script src="assets/js/reports.js?v=1.0.38"></script>
-<script src="assets/js/game-provider.js?v=1.5.0"></script>
+<script src="assets/js/game-provider.js?v=1.5.5"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=1.0.0"></script>

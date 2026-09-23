@@ -963,9 +963,10 @@ html body.page-game-provider #providerSearchInput:active{
 
 /* ========== Create / Edit Provider (standalone page) ========== */
 html body.page-game-provider-create.main-admin-create-page .mac-workspace{
-  max-width:1100px;
-  margin:0 auto;
+  max-width:none;
+  margin:0;
   width:100%;
+  padding-bottom:96px !important;
 }
 html body.page-game-provider-create .mac-section{
   background:#FFFCF7 !important;
@@ -993,8 +994,484 @@ html body.page-game-provider-create .mac-section-copy p{
 html body.page-game-provider-create .gpc-fields{
   display:flex;
   flex-direction:column;
-  gap:14px;
+  gap:16px;
 }
+html body.page-game-provider-create .gpc-identity-layout{
+  gap:18px;
+}
+html body.page-game-provider-create .gpc-grid{
+  display:grid;
+  gap:14px 16px;
+  align-items:start;
+  min-width:0;
+}
+html body.page-game-provider-create .gpc-grid-2{
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+}
+html body.page-game-provider-create .gpc-grid-3{
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+}
+html body.page-game-provider-create .gpc-grid-4{
+  grid-template-columns:repeat(4, minmax(0, 1fr));
+}
+html body.page-game-provider-create .gpc-grid-5{
+  grid-template-columns:repeat(5, minmax(0, 1fr));
+}
+html body.page-game-provider-create .gpc-field-wide{
+  width:100%;
+  min-width:0;
+}
+html body.page-game-provider-create .gpc-label-hint{
+  margin-left:6px;
+  font-size:11px;
+  font-weight:600;
+  color:var(--bo-muted,#71717A);
+  text-transform:none;
+  letter-spacing:0;
+}
+
+/* §4–9 layout helpers */
+html body.page-game-provider-create .gpc-vars-layout{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  align-items:stretch;
+}
+html body.page-game-provider-create .gpc-vars-editor{
+  min-width:0;
+}
+html body.page-game-provider-create .gpc-vars-editor textarea{
+  min-height:220px;
+  font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size:12.5px;
+  line-height:1.55;
+}
+html body.page-game-provider-create .gpc-ref-panel{
+  min-width:0;
+  padding:14px 14px 12px;
+  border:1px solid #EADCC8;
+  border-radius:12px;
+  background:transparent;
+}
+html body.page-game-provider-create .gpc-ref-wide{
+  width:100%;
+}
+html body.page-game-provider-create .gpc-ref-title,
+html body.page-game-provider-create .gpc-subhead{
+  margin:0 0 10px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--bo-text-secondary,#27272A);
+}
+html body.page-game-provider-create .gpc-subhead{
+  margin:4px 0 2px;
+  padding-top:4px;
+  border-top:1px solid #EADCC8;
+}
+html body.page-game-provider-create .gpc-fields > .gpc-subhead:first-child{
+  border-top:0;
+  padding-top:0;
+  margin-top:0;
+}
+html body.page-game-provider-create .gpc-chip-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+html body.page-game-provider-create .gpc-chip-row code{
+  display:inline-block;
+  padding:3px 7px;
+  border-radius:6px;
+  border:1px solid #EADCC8;
+  background:#FFF8EB;
+  color:#44403C;
+  font-size:11px;
+  font-weight:700;
+  line-height:1.35;
+}
+html body.page-game-provider-create .gpc-ref-note{
+  margin:10px 0 0;
+  font-size:11.5px;
+  line-height:1.45;
+  color:var(--bo-muted,#71717A);
+}
+html body.page-game-provider-create .gpc-ref-groups{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+html body.page-game-provider-create .gpc-ref-label{
+  display:block;
+  margin-bottom:6px;
+  font-size:10.5px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--bo-muted,#71717A);
+}
+html body.page-game-provider-create .gpc-toolbar{
+  display:flex;
+  align-items:flex-end;
+  gap:14px;
+  flex-wrap:wrap;
+}
+html body.page-game-provider-create .gpc-field-grow{
+  flex:1 1 280px;
+  min-width:0;
+}
+html body.page-game-provider-create .gpc-toolbar-actions{
+  flex:0 0 auto;
+  padding-bottom:22px;
+}
+html body.page-game-provider-create .gpc-toolbar-actions .clean-btn{
+  height:42px;
+  min-height:42px;
+  padding:0 14px;
+  border:1px solid #EADCC8;
+  border-radius:10px;
+  background:#FFF8EB;
+  color:var(--bo-text-secondary,#27272A);
+  font-size:12.5px;
+  font-weight:800;
+}
+html body.page-game-provider-create .gpc-toolbar-actions .clean-btn:hover{
+  border-color:#DCC9A8;
+  background:#FFF8EB;
+}
+html body.page-game-provider-create #apiActionConfigs{
+  min-height:280px;
+  font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size:12.5px;
+  line-height:1.55;
+}
+html body.page-game-provider-create .gpc-check-card{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  margin:0;
+  padding:12px 14px;
+  border:1px solid #EADCC8;
+  border-radius:12px;
+  background:#FFF8EB;
+  cursor:pointer;
+  min-width:0;
+  position:relative;
+}
+html body.page-game-provider-create .gpc-check-card:hover{
+  border-color:#DCC9A8;
+}
+html body.page-game-provider-create .gpc-check-card:has(.gpc-check-input:checked){
+  border-color:#D97706;
+  box-shadow:0 0 0 1px rgba(217,119,6,.18);
+}
+/* Native input is visually replaced by .gpc-check-box (avoids input !important wars) */
+html body.page-game-provider-create .gpc-check-card .gpc-check-input{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  margin:-1px !important;
+  padding:0 !important;
+  border:0 !important;
+  opacity:0 !important;
+  overflow:hidden !important;
+  clip:rect(0,0,0,0) !important;
+  pointer-events:none !important;
+  appearance:none !important;
+  -webkit-appearance:none !important;
+}
+html body.page-game-provider-create .gpc-check-box{
+  flex:0 0 18px;
+  width:18px;
+  height:18px;
+  margin:2px 0 0;
+  border:1.5px solid #DCC9A8;
+  border-radius:4px;
+  background-color:#FFFCF7;
+  background-image:none;
+  box-sizing:border-box;
+  transition:border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
+}
+html body.page-game-provider-create .gpc-check-card:hover .gpc-check-box{
+  border-color:#B45309;
+}
+html body.page-game-provider-create .gpc-check-card:focus-within .gpc-check-box{
+  border-color:#B45309;
+  box-shadow:0 0 0 3px rgba(217,119,6,.18);
+}
+html body.page-game-provider-create .gpc-check-input:checked + .gpc-check-box{
+  background-color:#B45309 !important;
+  border-color:#B45309 !important;
+  background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e") !important;
+  background-position:center !important;
+  background-repeat:no-repeat !important;
+  background-size:12px 12px !important;
+}
+html body.page-game-provider-create .gpc-check-body{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  min-width:0;
+}
+html body.page-game-provider-create .gpc-check-title{
+  font-size:13px;
+  font-weight:800;
+  color:var(--bo-text,#18191C);
+  line-height:1.3;
+}
+html body.page-game-provider-create .gpc-check-desc{
+  font-size:11.5px;
+  line-height:1.45;
+  color:var(--bo-muted,#71717A);
+  font-weight:500;
+}
+html body.page-game-provider-create .gpc-check-desc code,
+html body.page-game-provider-create .gpc-fields .text-secondary code,
+html body.page-game-provider-create .gpc-fields small code,
+html body.page-game-provider-create .gpc-help-body code{
+  color:#57534E;
+  background:transparent;
+  font-weight:700;
+}
+html body.page-game-provider-create .gpc-subpanel{
+  padding:14px 16px;
+  border:1px solid #EADCC8;
+  border-radius:12px;
+  background:transparent;
+}
+html body.page-game-provider-create .gpc-subpanel .gpc-subhead{
+  border-top:0;
+  padding-top:0;
+  margin-top:0;
+}
+html body.page-game-provider-create .gpc-help{
+  border:1px solid #EADCC8;
+  border-radius:12px;
+  background:transparent;
+  padding:0;
+}
+html body.page-game-provider-create .gpc-help > summary{
+  list-style:none;
+  cursor:pointer;
+  padding:12px 14px;
+  font-size:12.5px;
+  font-weight:800;
+  color:var(--bo-text-secondary,#27272A);
+  user-select:none;
+}
+html body.page-game-provider-create .gpc-help > summary::-webkit-details-marker{
+  display:none;
+}
+html body.page-game-provider-create .gpc-help > summary::before{
+  content:"▸";
+  display:inline-block;
+  margin-right:8px;
+  color:#78716C;
+  transition:transform .15s ease;
+}
+html body.page-game-provider-create .gpc-help[open] > summary::before{
+  transform:rotate(90deg);
+}
+html body.page-game-provider-create .gpc-help-body{
+  padding:0 14px 14px;
+  border-top:1px solid #EADCC8;
+}
+html body.page-game-provider-create .gpc-help-body p{
+  margin:10px 0 0;
+  font-size:12px;
+  line-height:1.55;
+  color:var(--bo-muted,#71717A);
+}
+
+/* Provider Categories — compact multi-select dropdown */
+html body.page-game-provider-create .gpc-category-field{
+  position:relative;
+  z-index:4;
+}
+html body.page-game-provider-create .gpc-category-native,
+html body.page-game-provider-create .field select.provider-type-multi.gpc-category-native{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  min-height:0 !important;
+  max-height:none !important;
+  margin:-1px !important;
+  padding:0 !important;
+  border:0 !important;
+  overflow:hidden !important;
+  clip:rect(0,0,0,0) !important;
+  white-space:nowrap !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+html body.page-game-provider-create .gpc-ms{
+  position:relative;
+  width:100%;
+  min-width:0;
+}
+html body.page-game-provider-create .gpc-ms-trigger{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  width:100%;
+  height:42px;
+  min-height:42px;
+  padding:0 13px;
+  border:1px solid #EADCC8 !important;
+  border-radius:10px;
+  background:#FFF8EB !important;
+  background-color:#FFF8EB !important;
+  color:#18191C;
+  font-size:13px;
+  font-weight:800;
+  text-align:left;
+  cursor:pointer;
+  box-shadow:none;
+  box-sizing:border-box;
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+html body.page-game-provider-create .gpc-ms-trigger:hover{
+  background:#FFF8EB !important;
+  background-color:#FFF8EB !important;
+  border-color:#DCC9A8 !important;
+}
+html body.page-game-provider-create .gpc-ms.is-open .gpc-ms-trigger,
+html body.page-game-provider-create .gpc-ms-trigger:focus,
+html body.page-game-provider-create .gpc-ms-trigger:focus-visible{
+  outline:none;
+  border-color:#78716C !important;
+  background:#FFF8EB !important;
+  background-color:#FFF8EB !important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14);
+}
+html body.page-game-provider-create .gpc-ms-trigger:disabled{
+  cursor:not-allowed;
+  opacity:.65;
+  background:#EDE4D4 !important;
+  background-color:#EDE4D4 !important;
+}
+html body.page-game-provider-create .gpc-ms-value{
+  flex:1;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-weight:800;
+  color:#18191C;
+}
+html body.page-game-provider-create .gpc-ms-value.is-placeholder{
+  color:#78716C;
+  font-weight:700;
+}
+html body.page-game-provider-create .gpc-ms-trigger > i{
+  flex:0 0 auto;
+  font-size:12px;
+  color:#57534E;
+  transition:transform .15s ease;
+}
+html body.page-game-provider-create .gpc-ms.is-open .gpc-ms-trigger > i,
+html body.page-game-provider-create .gpc-ms.is-dropup .gpc-ms-trigger > i{
+  transform:rotate(180deg);
+}
+/* Match charcoal .rounded-select-menu */
+html body.page-game-provider-create .gpc-ms-menu,
+body > .gpc-ms-menu{
+  position:fixed;
+  z-index:5200;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  max-height:280px;
+  overflow:auto;
+  padding:6px;
+  border:1px solid #EADCC8;
+  border-radius:8px;
+  background:#FFF8EB;
+  box-shadow:0 12px 30px rgba(60,48,32,.16);
+  box-sizing:border-box;
+}
+html body.page-game-provider-create .gpc-ms-menu[hidden],
+body > .gpc-ms-menu[hidden]{
+  display:none !important;
+}
+html body.page-game-provider-create .gpc-ms-empty,
+body > .gpc-ms-menu .gpc-ms-empty{
+  padding:10px 12px;
+  font-size:13px;
+  font-weight:700;
+  color:#78716C;
+}
+/* Match charcoal .rounded-select-option hover / active */
+html body.page-game-provider-create .gpc-ms-option,
+body > .gpc-ms-menu .gpc-ms-option{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:0;
+  width:100%;
+  min-height:36px;
+  padding:8px 12px;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:700;
+  color:#18191C;
+  text-align:left;
+  user-select:none;
+  box-sizing:border-box;
+}
+html body.page-game-provider-create .gpc-ms-option:hover,
+body > .gpc-ms-menu .gpc-ms-option:hover{
+  background:rgba(217,119,6,.12) !important;
+  color:#B45309 !important;
+}
+html body.page-game-provider-create .gpc-ms-option.is-on,
+body > .gpc-ms-menu .gpc-ms-option.is-on{
+  background:rgba(217,119,6,.12) !important;
+  color:#B45309 !important;
+}
+html body.page-game-provider-create .gpc-ms-option.is-on:hover,
+body > .gpc-ms-menu .gpc-ms-option.is-on:hover{
+  background:rgba(217,119,6,.18) !important;
+  color:#B45309 !important;
+}
+html body.page-game-provider-create .gpc-ms-option input,
+body > .gpc-ms-menu .gpc-ms-option input{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  min-height:0 !important;
+  max-height:none !important;
+  margin:-1px !important;
+  padding:0 !important;
+  border:0 !important;
+  overflow:hidden !important;
+  clip:rect(0,0,0,0) !important;
+  white-space:nowrap !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+html body.page-game-provider-create .gpc-ms-option span,
+body > .gpc-ms-menu .gpc-ms-option span{
+  flex:1;
+  min-width:0;
+  line-height:1.25;
+  font-weight:700;
+  color:inherit;
+}
+html body.page-game-provider-create .gpc-ms-option .gpc-ms-check,
+body > .gpc-ms-menu .gpc-ms-option .gpc-ms-check{
+  display:none;
+}
+
+/* Legacy two-col rows still used in later sections */
 html body.page-game-provider-create .gpc-fields .slider-two-col{
   display:grid;
   grid-template-columns:repeat(2, minmax(0, 1fr));
@@ -1023,49 +1500,53 @@ html body.page-game-provider-create .gpc-fields .text-secondary{
   color:var(--bo-muted,#71717A);
   text-wrap:pretty;
 }
-/* Form ladder wells: inset, darker than section — not white boxes */
-html body.page-game-provider-create .gpc-fields input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]),
-html body.page-game-provider-create .gpc-fields select,
+/* Form ladder wells — exclude joined controls (#boPassword, Window value/unit) so flush radius can win */
+html body.page-game-provider-create .gpc-fields input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not(#boPassword):not(#pullLogWindowValue),
+html body.page-game-provider-create .gpc-fields select:not([multiple]):not(.provider-type-multi):not(#pullLogWindowUnit),
 html body.page-game-provider-create .gpc-fields textarea,
-html body.page-game-provider-create .report-content .gpc-fields input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
-html body.page-game-provider-create .report-content .gpc-fields select,
+html body.page-game-provider-create .report-content .gpc-fields input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not(#boPassword):not(#pullLogWindowValue),
+html body.page-game-provider-create .report-content .gpc-fields select:not([multiple]):not(.provider-type-multi):not(#pullLogWindowUnit),
 html body.page-game-provider-create .report-content .gpc-fields textarea{
   width:100%;
-  min-height:40px;
+  min-height:42px;
+  height:42px;
   padding:9px 12px !important;
-  border-radius:8px !important;
-  border:1px solid transparent !important;
-  background:#F5EBDC !important;
-  background-color:#F5EBDC !important;
+  border-radius:10px !important;
+  border:1px solid #EADCC8 !important;
+  background:#FFF8EB !important;
+  background-color:#FFF8EB !important;
   color:var(--bo-text,#18191C) !important;
   box-shadow:none !important;
   font-size:13.5px;
   font-weight:500;
-  transition:border-color .15s cubic-bezier(0.23,1,0.32,1), background-color .15s cubic-bezier(0.23,1,0.32,1);
+  box-sizing:border-box;
+  transition:border-color .15s cubic-bezier(0.23,1,0.32,1), box-shadow .15s cubic-bezier(0.23,1,0.32,1);
 }
 html body.page-game-provider-create .gpc-fields textarea{
+  height:auto;
   min-height:120px;
   resize:vertical;
   font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size:12.5px;
   line-height:1.5;
 }
-html body.page-game-provider-create .gpc-fields input:hover,
-html body.page-game-provider-create .gpc-fields select:hover,
+html body.page-game-provider-create .gpc-fields input:hover:not([type="checkbox"]):not([type="radio"]):not(#boPassword):not(#pullLogWindowValue),
+html body.page-game-provider-create .gpc-fields select:not([multiple]):not(.provider-type-multi):not(#pullLogWindowUnit):hover,
 html body.page-game-provider-create .gpc-fields textarea:hover{
-  background:#F0E4D0 !important;
-  background-color:#F0E4D0 !important;
+  background:#FFF8EB !important;
+  background-color:#FFF8EB !important;
+  border-color:#DCC9A8 !important;
 }
-html body.page-game-provider-create .gpc-fields input:focus,
-html body.page-game-provider-create .gpc-fields select:focus,
+html body.page-game-provider-create .gpc-fields input:focus:not([type="checkbox"]):not([type="radio"]):not(#boPassword):not(#pullLogWindowValue),
+html body.page-game-provider-create .gpc-fields select:not([multiple]):not(.provider-type-multi):not(#pullLogWindowUnit):focus,
 html body.page-game-provider-create .gpc-fields textarea:focus{
   outline:none !important;
-  border-color:#D97706 !important;
-  background:#F5EBDC !important;
-  box-shadow:0 0 0 3px rgba(217,119,6,.18) !important;
+  border-color:#78716C !important;
+  background:#FFF8EB !important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12) !important;
 }
-html body.page-game-provider-create .gpc-fields input:disabled,
-html body.page-game-provider-create .gpc-fields select:disabled,
+html body.page-game-provider-create .gpc-fields input:disabled:not([type="checkbox"]):not([type="radio"]),
+html body.page-game-provider-create .gpc-fields select:not([multiple]):not(.provider-type-multi):disabled,
 html body.page-game-provider-create .gpc-fields textarea:disabled{
   background:#EDE4D4 !important;
   color:var(--bo-muted,#71717A) !important;
@@ -1074,61 +1555,306 @@ html body.page-game-provider-create .gpc-fields textarea:disabled{
 html body.page-game-provider-create .action-config-box,
 html body.page-game-provider-create .provider-record-box,
 html body.page-game-provider-create .pull-log-timing-box{
-  background:#F5EBDC;
-  border:1px solid rgba(220,201,168,.55);
-  border-radius:10px;
+  background:transparent;
+  border:1px solid #EADCC8;
+  border-radius:12px;
   padding:14px 16px;
 }
 html body.page-game-provider-create .action-config-box .field input,
 html body.page-game-provider-create .action-config-box .field select,
 html body.page-game-provider-create .action-config-box .field textarea,
 html body.page-game-provider-create .provider-record-box .field input,
-html body.page-game-provider-create .provider-record-box .field select{
-  background:#F0E4D0 !important;
+html body.page-game-provider-create .provider-record-box .field select,
+html body.page-game-provider-create .pull-log-timing-box .field input,
+html body.page-game-provider-create .pull-log-timing-box .field select,
+html body.page-game-provider-create .gpc-subpanel .field input,
+html body.page-game-provider-create .gpc-subpanel .field select{
+  background:#FFF8EB !important;
 }
 html body.page-game-provider-create .gpc-fields .bg-light,
 html body.page-game-provider-create .gpc-fields .alert-light{
-  background:#F5EBDC !important;
-  border-color:#DCC9A8 !important;
+  background:#FFF8EB !important;
+  border-color:#EADCC8 !important;
   color:var(--bo-text-secondary,#27272A) !important;
 }
 html body.page-game-provider-create .gpc-fields .input-group{
   display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
   gap:0;
   align-items:stretch;
+  width:100%;
+  min-width:0;
 }
 html body.page-game-provider-create .gpc-fields .input-group > input{
+  flex:1 1 auto !important;
+  width:auto !important;
+  min-width:0 !important;
   border-top-right-radius:0 !important;
   border-bottom-right-radius:0 !important;
 }
 html body.page-game-provider-create .gpc-fields .input-group > .btn,
 html body.page-game-provider-create .gpc-fields .input-group > select{
-  flex:0 0 auto;
-  border-radius:0 8px 8px 0 !important;
-  border:1px solid transparent !important;
-  background:#F0E4D0 !important;
-  color:var(--bo-text-secondary,#27272A);
+  flex:0 0 auto !important;
+  width:auto !important;
+  min-width:108px !important;
+  max-width:40%;
+  height:42px !important;
+  padding:0 10px !important;
+  border-radius:0 10px 10px 0 !important;
+  border:1px solid #EADCC8 !important;
+  border-left:0 !important;
+  background:#FFF8EB !important;
+  color:var(--bo-text,#18191C) !important;
+  font-size:13px;
+  font-weight:700;
+}
+html body.page-game-provider-create .gpc-subpanel,
+html body.page-game-provider-create .pull-log-timing-box{
+  overflow:visible;
+  position:relative;
+  z-index:2;
+}
+html body.page-game-provider-create .gpc-window-group:has(.rounded-select-menu.show){
+  z-index:20;
+}
+html body.page-game-provider-create .gpc-window-group,
+html body.page-game-provider-create .report-content .gpc-window-group{
+  display:flex !important;
+  flex-direction:row !important;
+  flex-wrap:nowrap !important;
+  align-items:stretch !important;
+  gap:0 !important;
+  width:100% !important;
+  min-width:0 !important;
+  height:42px !important;
+  min-height:42px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  overflow:visible !important;
+  box-sizing:border-box !important;
+  box-shadow:none !important;
+}
+html body.page-game-provider-create .gpc-window-group > #pullLogWindowValue,
+html body.page-game-provider-create .report-content .gpc-window-group > #pullLogWindowValue,
+html body.page-game-provider-create .gpc-fields .gpc-window-group > input#pullLogWindowValue{
+  flex:1 1 auto !important;
+  width:auto !important;
+  min-width:0 !important;
+  height:42px !important;
+  min-height:42px !important;
+  margin:0 !important;
+  padding:0 12px !important;
+  border:1px solid #EADCC8 !important;
+  border-right:0 !important;
+  border-radius:10px 0 0 10px !important;
+  background:#FFF8EB !important;
+  background-color:#FFF8EB !important;
+  box-shadow:none !important;
+  outline:none !important;
+}
+html body.page-game-provider-create .gpc-window-group > #pullLogWindowValue:hover,
+html body.page-game-provider-create .gpc-window-group > #pullLogWindowValue:focus{
+  border-radius:10px 0 0 10px !important;
+  background:#FFF8EB !important;
+  box-shadow:none !important;
+}
+/* Unit side — reports.js wraps into .rounded-select-wrap */
+html body.page-game-provider-create .gpc-window-group > .rounded-select-wrap,
+html body.page-game-provider-create .report-content .gpc-window-group > .rounded-select-wrap{
+  flex:0 0 auto !important;
+  width:132px !important;
+  min-width:132px !important;
+  max-width:132px !important;
+  height:42px !important;
+  position:relative !important;
+  overflow:visible !important;
+  z-index:6;
+}
+html body.page-game-provider-create .gpc-window-group > .rounded-select-wrap > .rounded-select-btn,
+html body.page-game-provider-create .report-content .gpc-window-group > .rounded-select-wrap > .rounded-select-btn,
+html body.page-game-provider-create.bo-charcoal .gpc-window-group .rounded-select-btn{
+  height:42px !important;
+  min-height:42px !important;
+  width:100% !important;
+  margin:0 !important;
+  padding:0 12px !important;
+  border:1px solid #EADCC8 !important;
+  border-left:0 !important;
+  border-radius:0 10px 10px 0 !important;
+  background:#FFF8EB !important;
+  background-color:#FFF8EB !important;
+  color:#18191C !important;
+  box-shadow:none !important;
+  font-size:13px !important;
+  font-weight:700 !important;
+}
+html body.page-game-provider-create .gpc-window-group > .rounded-select-wrap > .rounded-select-btn.open,
+html body.page-game-provider-create .gpc-window-group > .rounded-select-wrap > .rounded-select-btn:focus,
+html body.page-game-provider-create.bo-charcoal .gpc-window-group .rounded-select-btn.open,
+html body.page-game-provider-create.bo-charcoal .gpc-window-group .rounded-select-btn:focus{
+  border-color:#D97706 !important;
+  border-left:0 !important;
+  border-radius:0 10px 10px 0 !important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14) !important;
+  outline:0 !important;
+}
+html body.page-game-provider-create .gpc-window-group:focus-within > #pullLogWindowValue{
+  border-color:#D97706 !important;
+}
+html body.page-game-provider-create .gpc-window-group > .rounded-select-wrap > .rounded-select-menu,
+html body.page-game-provider-create .report-content .gpc-window-group > .rounded-select-wrap > .rounded-select-menu,
+html body.page-game-provider-create.bo-charcoal .gpc-window-group .rounded-select-menu{
+  left:0 !important;
+  right:0 !important;
+  top:calc(100% + 6px) !important;
+  width:100% !important;
+  min-width:100% !important;
+  max-width:none !important;
+  padding:6px !important;
+  border:1px solid #EADCC8 !important;
+  border-radius:10px !important;
+  background:#FFF8EB !important;
+  box-shadow:0 12px 28px rgba(120,80,20,.14) !important;
+  z-index:5000 !important;
+  box-sizing:border-box !important;
+}
+html body.page-game-provider-create .gpc-window-group .rounded-select-option,
+html body.page-game-provider-create.bo-charcoal .gpc-window-group .rounded-select-option{
+  border-radius:8px !important;
+  padding:8px 10px !important;
+  color:#18191C !important;
+  font-weight:700 !important;
+  background:transparent !important;
+}
+html body.page-game-provider-create .gpc-window-group .rounded-select-option:hover,
+html body.page-game-provider-create.bo-charcoal .gpc-window-group .rounded-select-option:hover{
+  background:rgba(217,119,6,.12) !important;
+  color:#B45309 !important;
+}
+html body.page-game-provider-create .gpc-window-group .rounded-select-option.active,
+html body.page-game-provider-create .gpc-window-group .rounded-select-option.selected,
+html body.page-game-provider-create.bo-charcoal .gpc-window-group .rounded-select-option.active,
+html body.page-game-provider-create.bo-charcoal .gpc-window-group .rounded-select-option.selected{
+  background:rgba(217,119,6,.12) !important;
+  color:#B45309 !important;
+}
+/* Native fallback if wrap has not run yet */
+html body.page-game-provider-create .gpc-window-group > #pullLogWindowUnit:not([data-rounded-ready]),
+html body.page-game-provider-create .gpc-window-group > select#pullLogWindowUnit:not([data-rounded-ready="1"]){
+  flex:0 0 132px !important;
+  width:132px !important;
+  min-width:132px !important;
+  height:42px !important;
+  margin:0 !important;
+  padding:0 10px !important;
+  border:1px solid #EADCC8 !important;
+  border-left:0 !important;
+  border-radius:0 10px 10px 0 !important;
+  background:#FFF8EB !important;
+  font-weight:700 !important;
+}
+/* Password + eye: joined control. #boPassword beats other !important radius/border rules. */
+html body.page-game-provider-create .gpc-pass-group{
+  display:flex;
+  align-items:stretch;
+  width:100%;
+  min-width:0;
+  gap:0;
+}
+html body.page-game-provider-create #boPassword,
+html body.page-game-provider-create .gpc-fields #boPassword,
+html body.page-game-provider-create .report-content .gpc-fields #boPassword{
+  flex:1 1 auto !important;
+  width:auto !important;
+  min-width:0 !important;
+  min-height:42px !important;
+  height:42px !important;
+  margin:0 !important;
+  padding:9px 12px !important;
+  border:1px solid #EADCC8 !important;
+  border-right:0 !important;
+  border-radius:10px 0 0 10px !important;
+  background:#FFF8EB !important;
+  background-color:#FFF8EB !important;
+  color:var(--bo-text,#18191C) !important;
+  box-shadow:none !important;
+  box-sizing:border-box !important;
+  font-size:13.5px !important;
+  font-weight:500 !important;
+}
+html body.page-game-provider-create #toggleBoPasswordBtn.gpc-pass-toggle,
+html body.page-game-provider-create .gpc-fields .gpc-pass-toggle{
+  flex:0 0 42px !important;
+  width:42px !important;
+  height:42px !important;
+  min-height:42px !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border:1px solid #EADCC8 !important;
+  border-left:0 !important;
+  border-radius:0 10px 10px 0 !important;
+  background:#FFF8EB !important;
+  color:#57534E !important;
+  cursor:pointer !important;
+  box-shadow:none !important;
+  box-sizing:border-box !important;
+}
+html body.page-game-provider-create #toggleBoPasswordBtn.gpc-pass-toggle:hover,
+html body.page-game-provider-create .gpc-fields .gpc-pass-toggle:hover{
+  background:#F5EBDC !important;
+  color:#B45309 !important;
+}
+html body.page-game-provider-create .gpc-pass-group:focus-within #boPassword{
+  border-color:#78716C !important;
+}
+html body.page-game-provider-create .gpc-pass-group:focus-within #toggleBoPasswordBtn.gpc-pass-toggle{
+  border-color:#78716C !important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.12) !important;
 }
 html body.page-game-provider-create .mac-footer-actions{
-  position:sticky;
-  bottom:0;
-  z-index:5;
+  position:fixed !important;
+  z-index:900 !important;
+  left:var(--sidebar-w,280px) !important;
+  right:0 !important;
+  bottom:0 !important;
+  width:auto !important;
+  max-width:none !important;
   display:flex;
   justify-content:flex-end;
+  align-items:center;
   gap:10px;
   flex-wrap:wrap;
-  padding:14px 18px;
-  margin-top:8px;
-  background:#FFFCF7;
-  border:1px solid #DCC9A8;
-  border-radius:10px;
-  box-shadow:0 -8px 28px rgba(120,80,20,.08);
+  margin:0 !important;
+  padding:14px 24px !important;
+  background:#FFFCF7 !important;
+  border:0 !important;
+  border-top:1px solid #DCC9A8 !important;
+  border-radius:0 !important;
+  box-shadow:0 -8px 24px rgba(120,80,20,.08) !important;
+  box-sizing:border-box;
+  backdrop-filter:blur(8px);
+  pointer-events:auto;
+}
+html body.sidebar-mini.page-game-provider-create .mac-footer-actions{
+  left:var(--rail-w,72px) !important;
+}
+@media (max-width:991.98px){
+  html body.page-game-provider-create .mac-footer-actions,
+  html body.sidebar-mini.page-game-provider-create .mac-footer-actions{
+    left:0 !important;
+  }
+  html body.page-game-provider-create.sidebar-open .mac-footer-actions{
+    left:min(86vw,320px) !important;
+  }
 }
 html body.page-game-provider-create #providerStatusBox{
   margin:4px 0 0;
-}
-html body.page-game-provider-create .provider-type-multi{
-  min-height:120px;
 }
 
 html[data-bo-theme="dark"] body.page-game-provider-create .mac-section{
@@ -1137,17 +1863,104 @@ html[data-bo-theme="dark"] body.page-game-provider-create .mac-section{
   border-left-color:#F59E0B !important;
 }
 html[data-bo-theme="dark"] body.page-game-provider-create .gpc-fields input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
-html[data-bo-theme="dark"] body.page-game-provider-create .gpc-fields select,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-fields select:not([multiple]):not(.provider-type-multi),
 html[data-bo-theme="dark"] body.page-game-provider-create .gpc-fields textarea{
   background:#2A2C36 !important;
   color:#F5F5F4 !important;
 }
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-ms-trigger{
+  background:#2A2C36 !important;
+  background-color:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  color:#F5F5F4;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-ms-trigger:hover{
+  background:#32343E !important;
+  background-color:#32343E !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-ms-value{
+  color:#F5F5F4;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-ms-value.is-placeholder{
+  color:#A1A1AA;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-ms-menu,
+html[data-bo-theme="dark"] body > .gpc-ms-menu{
+  background:#383A46;
+  border-color:rgba(255,255,255,.12);
+  box-shadow:0 16px 36px rgba(0,0,0,.45);
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-ms-option,
+html[data-bo-theme="dark"] body > .gpc-ms-menu .gpc-ms-option{
+  background:transparent;
+  color:#E7E5E4;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-ms-option:hover,
+html[data-bo-theme="dark"] body > .gpc-ms-menu .gpc-ms-option:hover{
+  background:rgba(245,158,11,.14) !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-ms-option.is-on,
+html[data-bo-theme="dark"] body > .gpc-ms-menu .gpc-ms-option.is-on,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-ms-option.is-on:hover,
+html[data-bo-theme="dark"] body > .gpc-ms-menu .gpc-ms-option.is-on:hover{
+  background:#F59E0B !important;
+  color:#2A2C36 !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-pass-toggle{
+  background:#2A2C36;
+  border-color:rgba(255,255,255,.12);
+  color:#E7E5E4;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-pass-toggle:hover{
+  background:#32343E;
+  color:#FBBF24;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-pass-group:focus-within .gpc-pass-toggle{
+  border-color:#F59E0B;
+}
 html[data-bo-theme="dark"] body.page-game-provider-create .action-config-box,
 html[data-bo-theme="dark"] body.page-game-provider-create .provider-record-box,
 html[data-bo-theme="dark"] body.page-game-provider-create .pull-log-timing-box,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-subpanel,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-ref-panel,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-check-card,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-help,
 html[data-bo-theme="dark"] body.page-game-provider-create .mac-footer-actions{
-  background:#32343E;
-  border-color:rgba(255,255,255,.10);
+  background:#32343E !important;
+  border-color:rgba(255,255,255,.10) !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .mac-footer-actions{
+  border-top-color:rgba(255,255,255,.10) !important;
+  box-shadow:0 -8px 24px rgba(0,0,0,.35) !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-chip-row code,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-toolbar-actions .clean-btn{
+  background:#2A2C36;
+  border-color:rgba(255,255,255,.12);
+  color:#FBBF24;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-check-title,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-ref-title,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-subhead,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-help > summary{
+  color:#E7E5E4;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-check-box{
+  background-color:#2A2C36;
+  border-color:rgba(255,255,255,.22);
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-check-card:hover .gpc-check-box,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-check-card:focus-within .gpc-check-box{
+  border-color:#F59E0B;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-check-input:checked + .gpc-check-box{
+  background-color:#D97706 !important;
+  border-color:#D97706 !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-check-card:has(.gpc-check-input:checked){
+  border-color:#F59E0B;
+  box-shadow:0 0 0 1px rgba(245,158,11,.22);
 }
 html[data-bo-theme="dark"] body.page-game-provider-create .action-config-box .field input,
 html[data-bo-theme="dark"] body.page-game-provider-create .action-config-box .field select,
@@ -1155,12 +1968,42 @@ html[data-bo-theme="dark"] body.page-game-provider-create .action-config-box .fi
   background:#2A2C36 !important;
 }
 
-@media (max-width:768px){
-  html body.page-game-provider-create .gpc-fields .slider-two-col{
+/* Desktop mid: 5 → 3 columns */
+@media (max-width:1439.98px){
+  html body.page-game-provider-create .gpc-grid-5{
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Laptop: denser grids collapse */
+@media (max-width:1279.98px){
+  html body.page-game-provider-create .gpc-grid-4,
+  html body.page-game-provider-create .gpc-grid-5{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+  html body.page-game-provider-create .gpc-grid-3{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Mobile: single column */
+@media (max-width:767.98px){
+  html body.page-game-provider-create .gpc-fields .slider-two-col,
+  html body.page-game-provider-create .gpc-grid-2,
+  html body.page-game-provider-create .gpc-grid-3,
+  html body.page-game-provider-create .gpc-grid-4,
+  html body.page-game-provider-create .gpc-grid-5{
     grid-template-columns:1fr;
   }
+  html body.page-game-provider-create .gpc-toolbar-actions{
+    padding-bottom:0;
+    width:100%;
+  }
+  html body.page-game-provider-create .gpc-toolbar-actions .clean-btn{
+    width:100%;
+  }
   html body.page-game-provider-create.main-admin-create-page .mac-workspace{
-    padding:12px 12px 88px !important;
+    padding:12px 12px 96px !important;
   }
   html body.page-game-provider-create .mac-section{
     padding:16px 14px 18px !important;

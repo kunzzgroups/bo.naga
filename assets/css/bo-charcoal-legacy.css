@@ -1483,8 +1483,8 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .value-negative{color:#F
    entirely. This rule matched them from the day it was written - measured at HEAD it filled them
    #F5EBDC too, so the exception also fixes a pre-existing defect rather than only protecting the
    #FFF8EB input fill. */
-html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput),
-html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content select,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword),
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content select:not(#pullLogWindowUnit),
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content textarea:not(.layout-code-pane textarea),
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content .form-select{
   background:#FFF8EB!important;border:1px solid #DCC9A8!important;color:#18191C!important;border-radius:8px!important;
@@ -1493,14 +1493,14 @@ html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charc
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content textarea::placeholder{
   color:#78716C!important;
 }
-html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):focus,
-html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content select:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content select:not(#pullLogWindowUnit):focus,
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content textarea:focus,
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content .form-select:focus{
   border-color:#D97706!important;box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;outline:0!important;
 }
-html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput),
-html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content select,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword),
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content select:not(#pullLogWindowUnit),
 html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content textarea:not(.layout-code-pane textarea),
 html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content .form-select{
   background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;color:#F5F5F4!important;border-radius:8px!important;
@@ -1509,8 +1509,8 @@ html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .r
 html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content textarea::placeholder{
   color:#A1A1AA!important;
 }
-html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):focus,
-html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content select:focus,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):focus,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content select:not(#pullLogWindowUnit):focus,
 html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content textarea:focus,
 html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content .form-select:focus{
   border-color:#F59E0B!important;box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;outline:0!important;

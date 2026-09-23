@@ -144,7 +144,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       pullLogTimingEnabled.checked=false;
     }
   }
-  function reset(){ if(!form) return; form.querySelectorAll('input,select,textarea').forEach(node=>node.disabled=false); form.reset(); el.providerId.value=''; el.currency.value='MYR'; el.sortOrder.value='0'; el.providerStatus.value='1'; el.integrationType.value='GENERIC_API'; el.httpMethod.value='POST'; el.signatureType.value='MD5'; el.signatureOutputCase.value='LOWER'; el.ukeyLength.value='8'; el.ukeyPrefix.value=''; el.ukeyStaticValue.value=''; if(el.keyEnvironment) el.keyEnvironment.value='STAGING'; if(el.boLoginUrl) el.boLoginUrl.value=''; if(el.boUsername) el.boUsername.value=''; if(el.boPassword) el.boPassword.value=''; if(el.providerVariables) el.providerVariables.value=''; if(el.apiActionConfigs) el.apiActionConfigs.value=''; if(walletFlow) walletFlow.value='TRANSFER_BEFORE_LAUNCH'; if(withdrawNegativeAmount) withdrawNegativeAmount.checked=false; if(pullLogTimingEnabled) pullLogTimingEnabled.checked=false; if(pullLogWindowValue) pullLogWindowValue.value='15'; if(pullLogWindowUnit) pullLogWindowUnit.value='minutes'; if(pullLogEndDelaySeconds) pullLogEndDelaySeconds.value='0'; if(pullLogTimezone) pullLogTimezone.value='Asia/Kuala_Lumpur'; if(pullLogDateTimeFormat) pullLogDateTimeFormat.value='yyyy-MM-dd HH:mm:ss'; if(el.gameImageApiUrlTemplate) el.gameImageApiUrlTemplate.value=''; if(el.gameImageRemoteApiUrlTemplate) el.gameImageRemoteApiUrlTemplate.value=''; if(el.gameImageRemoteApiHttpMethod) el.gameImageRemoteApiHttpMethod.value='GET'; if(el.gameImageRemoteApiRequestTemplate) el.gameImageRemoteApiRequestTemplate.value=''; if(el.gameImageRemoteApiResponsePath) el.gameImageRemoteApiResponsePath.value=''; if(el.gameImageFallbackUrlTemplate) el.gameImageFallbackUrlTemplate.value=''; if(el.frontendGameFallbackImageUrl) el.frontendGameFallbackImageUrl.value=''; renderCategoryOptions(''); if(title) title.textContent='Create Provider'; el.providerCode.disabled=false; setStatus('', ''); window.scrollTo({top:0, behavior:'smooth'}); }
+  function reset(){ if(!form) return; form.querySelectorAll('input,select,textarea').forEach(node=>node.disabled=false); form.reset(); el.providerId.value=''; el.currency.value='MYR'; el.sortOrder.value='0'; el.providerStatus.value='1'; el.integrationType.value='GENERIC_API'; el.httpMethod.value='POST'; el.signatureType.value='MD5'; el.signatureOutputCase.value='LOWER'; el.ukeyLength.value='8'; el.ukeyPrefix.value=''; el.ukeyStaticValue.value=''; if(el.keyEnvironment) el.keyEnvironment.value='STAGING'; if(el.boLoginUrl) el.boLoginUrl.value=''; if(el.boUsername) el.boUsername.value=''; if(el.boPassword) el.boPassword.value=''; if(el.providerVariables) el.providerVariables.value=''; if(el.apiActionConfigs) el.apiActionConfigs.value=''; if(walletFlow) walletFlow.value='TRANSFER_BEFORE_LAUNCH'; if(withdrawNegativeAmount) withdrawNegativeAmount.checked=false; if(pullLogTimingEnabled) pullLogTimingEnabled.checked=false; if(pullLogWindowValue) pullLogWindowValue.value='15'; if(pullLogWindowUnit) pullLogWindowUnit.value='minutes'; if(pullLogEndDelaySeconds) pullLogEndDelaySeconds.value='0'; if(pullLogTimezone) pullLogTimezone.value='Asia/Kuala_Lumpur'; if(pullLogDateTimeFormat) pullLogDateTimeFormat.value='yyyy-MM-dd HH:mm:ss'; if(el.gameImageApiUrlTemplate) el.gameImageApiUrlTemplate.value=''; if(el.gameImageRemoteApiUrlTemplate) el.gameImageRemoteApiUrlTemplate.value=''; if(el.gameImageRemoteApiHttpMethod) el.gameImageRemoteApiHttpMethod.value='GET'; if(el.gameImageRemoteApiRequestTemplate) el.gameImageRemoteApiRequestTemplate.value=''; if(el.gameImageRemoteApiResponsePath) el.gameImageRemoteApiResponsePath.value=''; if(el.gameImageFallbackUrlTemplate) el.gameImageFallbackUrlTemplate.value=''; if(el.frontendGameFallbackImageUrl) el.frontendGameFallbackImageUrl.value=''; renderCategoryOptions(''); setCategoryMsDisabled(false); if(title) title.textContent='Create Provider'; el.providerCode.disabled=false; setStatus('', ''); window.scrollTo({top:0, behavior:'smooth'}); }
   function payload(){
     syncWalletFlowToJson();
     syncWithdrawNegativeToJson();
@@ -168,12 +168,142 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     return data;
   }
   function selectedCategoryIds(){ return Array.from(el.providerCategoryIds?.selectedOptions || []).map(option => String(option.value)); }
+  function categoryMsParts(){
+    const root = document.querySelector('[data-gpc-ms="providerCategoryIds"]');
+    if(!root) return null;
+    const menu = document.getElementById('providerCategoryMenu') || root.querySelector('.gpc-ms-menu');
+    return {
+      root,
+      trigger: root.querySelector('.gpc-ms-trigger'),
+      value: root.querySelector('.gpc-ms-value'),
+      menu
+    };
+  }
+  function syncCategoryMsLabel(){
+    const parts = categoryMsParts();
+    if(!parts || !parts.value) return;
+    const selected = Array.from(el.providerCategoryIds?.selectedOptions || []);
+    if(!selected.length){
+      parts.value.textContent = 'Select categories…';
+      parts.value.classList.add('is-placeholder');
+      return;
+    }
+    parts.value.classList.remove('is-placeholder');
+    if(selected.length <= 2){
+      parts.value.textContent = selected.map(o => o.textContent).join(', ');
+      return;
+    }
+    parts.value.textContent = selected.length + ' categories selected';
+  }
+  function closeCategoryMs(){
+    const parts = categoryMsParts();
+    if(!parts || !parts.menu) return;
+    parts.menu.hidden = true;
+    parts.trigger?.setAttribute('aria-expanded', 'false');
+    parts.root?.classList.remove('is-open', 'is-dropup');
+    parts.menu.style.top = '';
+    parts.menu.style.left = '';
+    parts.menu.style.width = '';
+    parts.menu.style.maxHeight = '';
+  }
+  function positionCategoryMsMenu(){
+    const parts = categoryMsParts();
+    if(!parts || !parts.menu || !parts.trigger || parts.menu.hidden) return;
+    const rect = parts.trigger.getBoundingClientRect();
+    const gap = 6;
+    const maxH = 240;
+    const spaceBelow = window.innerHeight - rect.bottom - gap - 12;
+    const spaceAbove = rect.top - gap - 12;
+    const openUp = spaceBelow < 140 && spaceAbove > spaceBelow;
+    const available = Math.max(120, openUp ? spaceAbove : spaceBelow);
+    const height = Math.min(maxH, available);
+    parts.menu.style.left = Math.round(rect.left) + 'px';
+    parts.menu.style.width = Math.round(rect.width) + 'px';
+    parts.menu.style.maxHeight = Math.round(height) + 'px';
+    if(openUp){
+      parts.menu.style.top = Math.round(rect.top - gap - height) + 'px';
+      parts.root.classList.add('is-dropup');
+    } else {
+      parts.menu.style.top = Math.round(rect.bottom + gap) + 'px';
+      parts.root.classList.remove('is-dropup');
+    }
+  }
+  function openCategoryMs(){
+    const parts = categoryMsParts();
+    if(!parts || !parts.menu || !parts.trigger || parts.trigger.disabled) return;
+    parts.menu.hidden = false;
+    parts.trigger.setAttribute('aria-expanded', 'true');
+    parts.root.classList.add('is-open');
+    positionCategoryMsMenu();
+  }
+  function renderCategoryMsMenu(){
+    const parts = categoryMsParts();
+    if(!parts || !parts.menu || !el.providerCategoryIds) return;
+    const options = Array.from(el.providerCategoryIds.options || []);
+    if(!options.length){
+      parts.menu.innerHTML = '<div class="gpc-ms-empty">No categories loaded</div>';
+      return;
+    }
+    parts.menu.innerHTML = options.map(option => {
+      const id = 'gpcCatOpt_' + String(option.value).replace(/[^\w-]/g, '_');
+      return '<label class="gpc-ms-option' + (option.selected ? ' is-on' : '') + '" for="' + id + '" role="option" aria-selected="' + (option.selected ? 'true' : 'false') + '">'
+        + '<input type="checkbox" id="' + id + '" value="' + escapeHtml(option.value) + '"' + (option.selected ? ' checked' : '') + (option.disabled ? ' disabled' : '') + ' />'
+        + '<span>' + escapeHtml(option.textContent || option.value) + '</span>'
+        + '<i class="gpc-ms-check" aria-hidden="true">✓</i>'
+        + '</label>';
+    }).join('');
+  }
   function renderCategoryOptions(selectedValue){
     if(!el.providerCategoryIds) return;
     const selected = String(selectedValue || '').split(/[,|]/).map(v => v.trim()).filter(Boolean);
     el.providerCategoryIds.innerHTML = categories.map(category => `<option value="${escapeHtml(category.id)}">${escapeHtml(category.name || ('Category #' + category.id))}</option>`).join('');
     Array.from(el.providerCategoryIds.options).forEach(option => { option.selected = selected.includes(String(option.value)); });
+    renderCategoryMsMenu();
+    syncCategoryMsLabel();
   }
+  function bindCategoryMs(){
+    const parts = categoryMsParts();
+    if(!parts || !parts.menu || !parts.trigger || parts.root.dataset.bound === '1') return;
+    parts.root.dataset.bound = '1';
+    // Escape overflow clipping from .mac-workspace / .mac-section
+    if(parts.menu.parentElement !== document.body){
+      document.body.appendChild(parts.menu);
+    }
+    parts.trigger.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      if(parts.trigger.disabled) return;
+      const menu = document.getElementById('providerCategoryMenu') || parts.menu;
+      if(menu.hidden) openCategoryMs();
+      else closeCategoryMs();
+    });
+    parts.menu.addEventListener('click', function(e){ e.stopPropagation(); });
+    parts.menu.addEventListener('change', function(e){
+      const input = e.target;
+      if(!input || input.type !== 'checkbox' || !el.providerCategoryIds) return;
+      const option = Array.from(el.providerCategoryIds.options).find(o => String(o.value) === String(input.value));
+      if(option) option.selected = !!input.checked;
+      input.closest('.gpc-ms-option')?.classList.toggle('is-on', !!input.checked);
+      input.closest('.gpc-ms-option')?.setAttribute('aria-selected', input.checked ? 'true' : 'false');
+      syncCategoryMsLabel();
+      el.providerCategoryIds.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    document.addEventListener('click', function(e){
+      const menu = document.getElementById('providerCategoryMenu') || parts.menu;
+      if(!menu || menu.hidden) return;
+      if(parts.root.contains(e.target) || menu.contains(e.target)) return;
+      closeCategoryMs();
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeCategoryMs();
+    });
+    window.addEventListener('resize', function(){ if(!(document.getElementById('providerCategoryMenu') || parts.menu).hidden) positionCategoryMsMenu(); });
+    window.addEventListener('scroll', function(){
+      const menu = document.getElementById('providerCategoryMenu') || parts.menu;
+      if(menu && !menu.hidden) positionCategoryMsMenu();
+    }, true);
+  }
+  if(isFormPage) bindCategoryMs();
 
   function providerField(item, camel, snake, fallback=''){
     if(!item || typeof item !== 'object') return fallback;
@@ -191,15 +321,23 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       select.dispatchEvent(new Event('change', { bubbles: true }));
     });
   }
+  function setCategoryMsDisabled(disabled){
+    const parts = categoryMsParts();
+    if(!parts) return;
+    parts.trigger.disabled = !!disabled;
+    if(disabled) closeCategoryMs();
+  }
   function edit(item){ if(!form) return; el.providerId.value=item.id||''; el.providerCode.value=item.code||''; el.providerName.value=item.name||''; renderCategoryOptions(item.categoryIds || item.category_ids || ''); el.providerImageUrl.value=item.providerImageUrl||''; el.providerBrandImageUrl.value=item.providerBrandImageUrl||item.provider_brand_image_url||''; setSelectValue(el.walletMode, providerField(item,'walletMode','wallet_mode','TRANSFER'), 'TRANSFER'); if(el.settlementCostPercent) el.settlementCostPercent.value=providerField(item,'settlementCostPercent','settlement_cost_percent','0'); setSelectValue(el.settlementCostBasis, providerField(item,'settlementCostBasis','settlement_cost_basis','HOUSE_WIN'), 'HOUSE_WIN'); el.currency.value=providerField(item,'currency','currency','MYR'); setSelectValue(el.integrationType, providerField(item,'integrationType','integration_type','GENERIC_API'), 'GENERIC_API'); setSelectValue(el.httpMethod, providerField(item,'httpMethod','http_method','POST'), 'POST'); el.apiBaseUrl.value=item.apiBaseUrl||''; el.operatorId.value=item.operatorId||''; el.secretKey.value=item.secretKey||''; if(el.keyEnvironment) el.keyEnvironment.value=providerField(item,'keyEnvironment','key_environment','STAGING'); if(el.boLoginUrl) el.boLoginUrl.value=providerField(item,'boLoginUrl','bo_login_url',''); if(el.boUsername) el.boUsername.value=providerField(item,'boUsername','bo_username',''); if(el.boPassword){ el.boPassword.value=providerField(item,'boPassword','bo_password',''); el.boPassword.type='password'; } if(el.providerVariables) el.providerVariables.value=prettyJsonText(item.providerVariables ?? item.provider_variables ?? ''); if(el.apiActionConfigs) el.apiActionConfigs.value=prettyJsonText(item.apiActionConfigs ?? item.api_action_configs ?? ''); syncWalletFlowFromJson(); syncWithdrawNegativeFromJson(); syncPullLogTimingFromJson(); el.signatureType.value=item.signatureType||'MD5'; el.signatureOutputCase.value=item.signatureOutputCase||'LOWER'; el.signatureTemplate.value=item.signatureTemplate||''; el.ukeyLength.value=item.ukeyLength||8; el.ukeyPrefix.value=item.ukeyPrefix||''; el.ukeyStaticValue.value=item.ukeyStaticValue||''; el.createPlayerPath.value=item.createPlayerPath||''; el.balancePath.value=item.balancePath||''; el.depositPath.value=item.depositPath||''; el.withdrawPath.value=item.withdrawPath||''; el.launchPath.value=item.launchPath||''; el.gameListPath.value=item.gameListPath||''; el.createPlayerRequestTemplate.value=item.createPlayerRequestTemplate||''; el.balanceRequestTemplate.value=item.balanceRequestTemplate||''; el.depositRequestTemplate.value=item.depositRequestTemplate||''; el.withdrawRequestTemplate.value=item.withdrawRequestTemplate||''; el.launchRequestTemplate.value=item.launchRequestTemplate||''; el.gameListRequestTemplate.value=item.gameListRequestTemplate||''; el.responseBalancePath.value=item.responseBalancePath||''; el.responseLaunchUrlPath.value=item.responseLaunchUrlPath||''; el.responseGameListPath.value=item.responseGameListPath||''; el.responseGameCodePath.value=item.responseGameCodePath||''; el.responseGameNamePath.value=item.responseGameNamePath||''; ['responseGameImagePath','gameImageApiUrlTemplate','gameImageRemoteApiUrlTemplate','gameImageRemoteApiHttpMethod','gameImageRemoteApiRequestTemplate','gameImageRemoteApiResponsePath','gameImageFallbackUrlTemplate','frontendGameFallbackImageUrl','responseGameCategoryPath','responseSuccessPath','responseSuccessValue','responseErrorMessagePath','callbackMemberPath','callbackGameCodePath','callbackBetIdPath','callbackTxIdPath','callbackBetAmountPath','callbackWinAmountPath','callbackValidBetAmountPath','callbackRoundIdPath','callbackStatusPath','callbackEventTypePath','callbackSignaturePath','callbackSuccessResponse','callbackDuplicateResponse'].forEach(k=>{ if(el[k]) el[k].value=item[k]||''; }); if(el.gameImageRemoteApiHttpMethod && !el.gameImageRemoteApiHttpMethod.value) el.gameImageRemoteApiHttpMethod.value='GET'; el.sortOrder.value=item.sortOrder??0; el.providerStatus.value=String(item.status??1); el.providerCode.disabled=true; if(title) title.textContent='Edit Provider #' + item.id; if(isFormPage) document.title = 'Edit Provider #' + item.id;
     if(tenantMode){
       const editable=new Set(['providerImageUrl','providerBrandImageUrl','frontendGameFallbackImageUrl']);
       form.querySelectorAll('input,select,textarea').forEach(node=>{ if(node.id && node.id!=='providerId') node.disabled=!editable.has(node.id); });
+      setCategoryMsDisabled(true);
       saveBtn.disabled=false;
       setStatus('Brand image override mode: you can adjust the 3 frontend provider image fields for this brand only.', 'success');
     } else {
       form.querySelectorAll('input,select,textarea').forEach(node=>node.disabled=false);
       el.providerCode.disabled=true;
+      setCategoryMsDisabled(false);
       setStatus('Editing provider. Games using this Provider Code will group under this provider.', 'success');
     }
     window.scrollTo({top:0, behavior:'smooth'}); }
@@ -615,7 +753,8 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
 
   if(form) form.addEventListener('submit', save);
   const toggleBoPasswordBtn=document.getElementById('toggleBoPasswordBtn'); if(toggleBoPasswordBtn && el.boPassword) toggleBoPasswordBtn.addEventListener('click', ()=>{ const show=el.boPassword.type==='password'; el.boPassword.type=show?'text':'password'; toggleBoPasswordBtn.innerHTML=show?'<i class="bi bi-eye-slash"></i>':'<i class="bi bi-eye"></i>'; });
-  if(el.apiActionConfigs) el.apiActionConfigs.addEventListener('input', () => { syncWalletFlowFromJson(); syncWithdrawNegativeFromJson(); syncPullLogTimingFromJson(); }); if(walletFlow) walletFlow.addEventListener('change', () => { try{ syncWalletFlowToJson(); }catch(err){ setStatus('API Action Configs JSON invalid: ' + err.message, 'error'); } }); if(pullLogTimingEnabled) pullLogTimingEnabled.addEventListener('change', syncPullLogTimingToJson); [pullLogWindowValue,pullLogWindowUnit,pullLogEndDelaySeconds,pullLogTimezone,pullLogDateTimeFormat].filter(Boolean).forEach(node => node.addEventListener('change', () => { if(pullLogTimingEnabled?.checked) syncPullLogTimingToJson(); })); const formatActionBtn=document.getElementById('formatActionConfigBtn'); if(formatActionBtn) formatActionBtn.addEventListener('click', formatActionConfig); if(resetBtn) resetBtn.addEventListener('click', reset); if(toggleApiDebugToolsBtn) toggleApiDebugToolsBtn.addEventListener('click', openApiDebugTools); if(closeApiDebugToolsBtn) closeApiDebugToolsBtn.addEventListener('click', closeApiDebugTools); if(apiDebugToolsModal){ apiDebugToolsModal.addEventListener('click', e => { if(e.target === apiDebugToolsModal) closeApiDebugTools(); }); } document.addEventListener('keydown', e => { if(e.key === 'Escape' && apiDebugToolsModal && apiDebugToolsModal.classList.contains('show')) closeApiDebugTools(); }); if(providerSearchInput){ providerSearchInput.addEventListener('input', render); providerSearchInput.addEventListener('search', render); } if(list) list.addEventListener('click', async e => {
+  if(el.apiActionConfigs) el.apiActionConfigs.addEventListener('input', () => { syncWalletFlowFromJson(); syncWithdrawNegativeFromJson(); syncPullLogTimingFromJson(); }); if(walletFlow) walletFlow.addEventListener('change', () => { try{ syncWalletFlowToJson(); }catch(err){ setStatus('API Action Configs JSON invalid: ' + err.message, 'error'); } }); if(withdrawNegativeAmount) withdrawNegativeAmount.addEventListener('change', () => { try{ syncWithdrawNegativeToJson(); }catch(err){ setStatus('API Action Configs JSON invalid: ' + err.message, 'error'); } });
+  if(pullLogTimingEnabled) pullLogTimingEnabled.addEventListener('change', syncPullLogTimingToJson); [pullLogWindowValue,pullLogWindowUnit,pullLogEndDelaySeconds,pullLogTimezone,pullLogDateTimeFormat].filter(Boolean).forEach(node => node.addEventListener('change', () => { if(pullLogTimingEnabled?.checked) syncPullLogTimingToJson(); })); const formatActionBtn=document.getElementById('formatActionConfigBtn'); if(formatActionBtn) formatActionBtn.addEventListener('click', formatActionConfig); if(resetBtn) resetBtn.addEventListener('click', reset); if(toggleApiDebugToolsBtn) toggleApiDebugToolsBtn.addEventListener('click', openApiDebugTools); if(closeApiDebugToolsBtn) closeApiDebugToolsBtn.addEventListener('click', closeApiDebugTools); if(apiDebugToolsModal){ apiDebugToolsModal.addEventListener('click', e => { if(e.target === apiDebugToolsModal) closeApiDebugTools(); }); } document.addEventListener('keydown', e => { if(e.key === 'Escape' && apiDebugToolsModal && apiDebugToolsModal.classList.contains('show')) closeApiDebugTools(); }); if(providerSearchInput){ providerSearchInput.addEventListener('input', render); providerSearchInput.addEventListener('search', render); } if(list) list.addEventListener('click', async e => {
     const foldBtn=e.target.closest('[data-provider-fold]');
     if(foldBtn){
       const card=foldBtn.closest('.provider-card');
