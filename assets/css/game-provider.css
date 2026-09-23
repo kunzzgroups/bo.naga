@@ -807,12 +807,18 @@ html[data-bo-theme="dark"] .page-game-provider #providerList .provider-card-head
   border-bottom-color:rgba(255,255,255,.10);
 }
 
-html[data-bo-theme="dark"] .page-game-provider #providerList .manage-thumb.game-thumb{
-  background:#383A46;
-  border-color:rgba(255,255,255,.12);
+html[data-bo-theme="dark"] .page-game-provider #providerList .manage-thumb.game-thumb,
+html[data-bo-theme="dark"] body.page-game-provider.standardized-listing-page #providerList .manage-thumb.game-thumb,
+html[data-bo-theme="dark"] body.page-game-provider #providerList .manage-thumb.game-thumb{
+  background:#E4E4E7 !important;
+  background-color:#E4E4E7 !important;
+  border-color:rgba(255,255,255,.14) !important;
 }
 
-html[data-bo-theme="dark"] .page-game-provider #providerList .manage-thumb.game-thumb i{ color:#F59E0B; }
+html[data-bo-theme="dark"] .page-game-provider #providerList .manage-thumb.game-thumb i,
+html[data-bo-theme="dark"] body.page-game-provider #providerList .manage-thumb.game-thumb i{
+  color:#B45309;
+}
 html[data-bo-theme="dark"] .page-game-provider #providerList .provider-card-code{ color:#FBBF24; }
 html[data-bo-theme="dark"] .page-game-provider #providerList .provider-card-label{ color:#F5F5F4; }
 html[data-bo-theme="dark"] .page-game-provider #providerList .provider-status.is-on{
@@ -1919,6 +1925,35 @@ html[data-bo-theme="dark"] body.page-game-provider-create .gpc-pass-toggle:hover
 html[data-bo-theme="dark"] body.page-game-provider-create .gpc-pass-group:focus-within .gpc-pass-toggle{
   border-color:#F59E0B;
 }
+/* #boPassword light rule uses !important cream — dark must match that specificity */
+html[data-bo-theme="dark"] body.page-game-provider-create #boPassword,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-fields #boPassword,
+html[data-bo-theme="dark"] body.page-game-provider-create .report-content .gpc-fields #boPassword{
+  background:#2A2C36 !important;
+  background-color:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  border-right:0 !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create #toggleBoPasswordBtn.gpc-pass-toggle,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-fields .gpc-pass-toggle{
+  background:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  border-left:0 !important;
+  color:#E7E5E4 !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create #toggleBoPasswordBtn.gpc-pass-toggle:hover,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-fields .gpc-pass-toggle:hover{
+  background:#32343E !important;
+  color:#FBBF24 !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-pass-group:focus-within #boPassword{
+  border-color:#F59E0B !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-pass-group:focus-within #toggleBoPasswordBtn.gpc-pass-toggle{
+  border-color:#F59E0B !important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18) !important;
+}
 html[data-bo-theme="dark"] body.page-game-provider-create .action-config-box,
 html[data-bo-theme="dark"] body.page-game-provider-create .provider-record-box,
 html[data-bo-theme="dark"] body.page-game-provider-create .pull-log-timing-box,
@@ -1966,6 +2001,67 @@ html[data-bo-theme="dark"] body.page-game-provider-create .action-config-box .fi
 html[data-bo-theme="dark"] body.page-game-provider-create .action-config-box .field select,
 html[data-bo-theme="dark"] body.page-game-provider-create .action-config-box .field textarea{
   background:#2A2C36 !important;
+}
+
+/* Window value + Minutes unit — light cream !important must be retinted in dark */
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-window-group > #pullLogWindowValue,
+html[data-bo-theme="dark"] body.page-game-provider-create .report-content .gpc-window-group > #pullLogWindowValue,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-fields .gpc-window-group > input#pullLogWindowValue,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-window-group > #pullLogWindowValue:hover,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-window-group > #pullLogWindowValue:focus{
+  background:#2A2C36 !important;
+  background-color:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  border-right:0 !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-window-group > .rounded-select-wrap > .rounded-select-btn,
+html[data-bo-theme="dark"] body.page-game-provider-create .report-content .gpc-window-group > .rounded-select-wrap > .rounded-select-btn,
+html[data-bo-theme="dark"] body.page-game-provider-create.bo-charcoal .gpc-window-group .rounded-select-btn{
+  background:#2A2C36 !important;
+  background-color:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  border-left:0 !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-window-group > .rounded-select-wrap > .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-window-group > .rounded-select-wrap > .rounded-select-btn:focus,
+html[data-bo-theme="dark"] body.page-game-provider-create.bo-charcoal .gpc-window-group .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.page-game-provider-create.bo-charcoal .gpc-window-group .rounded-select-btn:focus,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-window-group:focus-within > #pullLogWindowValue{
+  border-color:#F59E0B !important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18) !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-window-group > .rounded-select-wrap > .rounded-select-menu,
+html[data-bo-theme="dark"] body.page-game-provider-create .report-content .gpc-window-group > .rounded-select-wrap > .rounded-select-menu,
+html[data-bo-theme="dark"] body.page-game-provider-create.bo-charcoal .gpc-window-group .rounded-select-menu{
+  background:#383A46 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  box-shadow:0 12px 28px rgba(0,0,0,.45) !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-window-group .rounded-select-option,
+html[data-bo-theme="dark"] body.page-game-provider-create.bo-charcoal .gpc-window-group .rounded-select-option{
+  color:#E7E5E4 !important;
+  background:transparent !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-window-group .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.page-game-provider-create.bo-charcoal .gpc-window-group .rounded-select-option:hover{
+  background:rgba(245,158,11,.14) !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-window-group .rounded-select-option.active,
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-window-group .rounded-select-option.selected,
+html[data-bo-theme="dark"] body.page-game-provider-create.bo-charcoal .gpc-window-group .rounded-select-option.active,
+html[data-bo-theme="dark"] body.page-game-provider-create.bo-charcoal .gpc-window-group .rounded-select-option.selected{
+  background:#F59E0B !important;
+  color:#2A2C36 !important;
+}
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-window-group > #pullLogWindowUnit:not([data-rounded-ready]),
+html[data-bo-theme="dark"] body.page-game-provider-create .gpc-window-group > select#pullLogWindowUnit:not([data-rounded-ready="1"]){
+  background:#2A2C36 !important;
+  background-color:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  color:#F5F5F4 !important;
 }
 
 /* Desktop mid: 5 → 3 columns */

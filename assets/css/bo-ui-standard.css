@@ -977,3 +977,26 @@ html[data-bo-theme="dark"] .bo-range-trigger:focus-within{
   border-color:var(--bo-cyan, #F59E0B)!important;
   box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
 }
+
+/* Dark mode filter text inputs ¡ª cream #FFF8EB must not leak through in dark theme */
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>.bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>input.bo-filter-input-item:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+html[data-bo-theme="dark"] .report-main .bo-filter-row>*:not(.bo-filter-range-item) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+html[data-bo-theme="dark"] .report-main .bo-filter-row>input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+html[data-bo-theme="dark"] .report-main .bo-filter-row .field input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]){
+  background:#2A2C36!important;
+  background-color:#2A2C36!important;
+  background-image:none!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+  -webkit-text-fill-color:#F5F5F4!important;
+  caret-color:#F5F5F4!important;
+  color-scheme:dark!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>.bo-filter-input-item input::placeholder,
+html[data-bo-theme="dark"] .report-main .bo-filter-row input::placeholder{
+  color:#A1A1AA!important;
+  -webkit-text-fill-color:#A1A1AA!important;
+  opacity:1!important;
+}

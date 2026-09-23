@@ -1007,6 +1007,23 @@ body.bo-report-family.bo-autofit-mode .table-card > .table-wrap{
   overflow-y:hidden!important;
 }
 
+/* Even-fill: Show `-` leftover seam stretched across painted rows (Provider Bet Report). */
+body.bo-report-family .report-table.bo-tx-evenfill{
+  height:100%!important;
+}
+body.bo-report-family .report-table.bo-tx-evenfill tbody,
+body.bo-report-family .report-table.bo-tx-evenfill tbody tr{
+  height:auto;
+}
+body.bo-report-family .report-table.bo-tx-evenfill tbody tr td{
+  box-sizing:border-box!important;
+  vertical-align:middle!important;
+}
+body.bo-report-family.bo-autofit-mode .table-card > .table-wrap{
+  flex:1 1 0%!important;
+  min-height:0!important;
+}
+
 /* --------------------------------------------------------------------------
    23. Sortable column headers
    Owner: "report的所有页面的所有table欠缺sort功能 你去查看其他页面设计出的md". The design already exists on this

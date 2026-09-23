@@ -1,0 +1,390 @@
+/* Game Category Edit — standalone page (Banner Edit shell + category shelf) */
+
+body.category-edit-page{
+  --bo-filter-height:36px;
+  --bo-control-height:36px;
+}
+
+/* Section stack: 8px between Artwork / Identity / Providers cards */
+html body.category-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .category-edit-form,
+html body.category-edit-page .category-edit-form{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:8px!important;
+  margin:0!important;
+  width:100%!important;
+  min-width:0!important;
+}
+html body.category-edit-page .category-edit-form > .banner-edit-section,
+html body.category-edit-page .category-edit-form > .upload-status{
+  margin:0!important;
+}
+
+/* Form controls: beat bo-charcoal-cms / reports 40px !important (match specificity ladder) */
+html body.category-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-section .field input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+html body.category-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-section .field select,
+html body.category-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-section .field .form-control,
+html body.category-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-section .field .form-select,
+html body.category-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-section .rounded-select-btn,
+html body.category-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-section .rounded-select-wrap,
+html body.category-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-section .banner-status-seg,
+html body.category-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .category-provider-rules .category-provider-game-search{
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  box-sizing:border-box!important;
+  border-radius:8px!important;
+}
+
+html body.category-edit-page .category-detail-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:14px 16px!important;
+  align-items:start!important;
+}
+html body.category-edit-page .category-field-span{
+  grid-column:1 / -1!important;
+}
+html body.category-edit-page .category-help-copy{
+  margin:0!important;
+  padding:12px 14px!important;
+  border:1px solid #EADCC8!important;
+  border-radius:10px!important;
+  background:#F5EBDC!important;
+  color:#57534E!important;
+  font-size:12.5px!important;
+  font-weight:500!important;
+  line-height:1.45!important;
+}
+html body.category-edit-page .category-help-copy strong{
+  color:#B45309!important;
+  font-weight:800!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-help-copy{
+  background:rgba(255,255,255,.06)!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-help-copy strong{
+  color:#FBBF24!important;
+}
+
+/* Artwork — dual square tiles (default + Chinese), Banner upload grid */
+html body.category-edit-page .category-art-grid{
+  max-width:640px!important;
+}
+html body.category-edit-page .category-image-upload{
+  width:100%!important;
+  max-width:280px!important;
+  aspect-ratio:1 / 1!important;
+  min-height:0!important;
+  height:auto!important;
+  border-radius:14px!important;
+  background:#F5EBDC!important;
+  border:1px dashed #DCC9A8!important;
+  margin:0 auto!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-image-upload{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.18)!important;
+}
+html body.category-edit-page .category-image-upload img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  border-radius:12px!important;
+}
+
+/* Provider pill grid — lobby shelf map */
+html body.category-edit-page .category-provider-selector{
+  display:grid!important;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr))!important;
+  gap:10px!important;
+  padding:14px!important;
+  border:1px solid #EADCC8!important;
+  border-radius:12px!important;
+  background:#F5EBDC!important;
+  text-align:left!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-selector{
+  background:rgba(255,255,255,.05)!important;
+  border-color:rgba(255,255,255,.14)!important;
+}
+html body.category-edit-page .category-provider-choice{
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  padding:0 12px!important;
+  margin:0!important;
+  border:1px solid #EADCC8!important;
+  border-radius:8px!important;
+  background:#FFF8EB!important;
+  box-sizing:border-box!important;
+  cursor:pointer!important;
+  transition:border-color .15s ease, box-shadow .15s ease, color .15s ease!important;
+  user-select:none!important;
+}
+html body.category-edit-page .category-provider-choice input{
+  position:absolute!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+html body.category-edit-page .category-provider-choice-name{
+  font-size:12px!important;
+  font-weight:800!important;
+  letter-spacing:.02em!important;
+  color:#57534E!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  max-width:100%!important;
+}
+html body.category-edit-page .category-provider-choice:hover{
+  border-color:rgba(217,119,6,.45)!important;
+}
+html body.category-edit-page .category-provider-choice.is-selected{
+  border-color:#D97706!important;
+  background:#FFFCF7!important;
+  box-shadow:0 0 0 2px rgba(217,119,6,.12)!important;
+}
+html body.category-edit-page .category-provider-choice.is-selected .category-provider-choice-name{
+  color:#D97706!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-choice{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-choice-name{
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-choice.is-selected{
+  border-color:#F59E0B!important;
+  background:rgba(245,158,11,.12)!important;
+  box-shadow:0 0 0 2px rgba(245,158,11,.16)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-choice.is-selected .category-provider-choice-name{
+  color:#FBBF24!important;
+}
+
+html body.category-edit-page .category-provider-hint{
+  display:block!important;
+  margin-top:8px!important;
+  color:#71717A!important;
+  font-size:12px!important;
+  font-weight:500!important;
+  line-height:1.4!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-hint{
+  color:#A1A1AA!important;
+}
+
+html body.category-edit-page .category-provider-rules{
+  display:grid!important;
+  gap:8px!important;
+  margin-top:14px!important;
+}
+
+/* Provider rule cards — Charcoal + Amber (light + dark) */
+html body.category-edit-page .category-provider-rule{
+  overflow:hidden!important;
+  border:1px solid #EADCC8!important;
+  border-radius:12px!important;
+  background:#FFFCF7!important;
+  box-shadow:none!important;
+}
+html body.category-edit-page .category-provider-rule-head{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  flex-wrap:wrap!important;
+  padding:12px 14px!important;
+  border-bottom:1px solid #EADCC8!important;
+  background:#F5EBDC!important;
+}
+html body.category-edit-page .category-provider-rule-title b{
+  color:#18191C!important;
+}
+html body.category-edit-page .category-provider-rule-title small{
+  color:#57534E!important;
+}
+html body.category-edit-page .category-provider-rule-icon{
+  background:rgba(217,119,6,.12)!important;
+  color:#D97706!important;
+  border-radius:8px!important;
+}
+html body.category-edit-page .category-provider-mode-switch{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:4px!important;
+  padding:3px!important;
+  border:1px solid #EADCC8!important;
+  border-radius:8px!important;
+  background:#EDE4D4!important;
+  box-shadow:none!important;
+}
+html body.category-edit-page .category-provider-mode-switch span{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  height:30px!important;
+  min-height:30px!important;
+  max-height:30px!important;
+  padding:0 12px!important;
+  border-radius:6px!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+  color:#78716C!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  white-space:nowrap!important;
+  box-sizing:border-box!important;
+}
+html body.category-edit-page .category-provider-mode-switch input:checked+span{
+  background:#FFFCF7!important;
+  color:#B45309!important;
+  box-shadow:0 1px 2px rgba(92,74,48,.10)!important;
+}
+
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-rule{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.12)!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-rule-head{
+  background:#2A2C36!important;
+  border-bottom-color:rgba(255,255,255,.10)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-rule-title b{
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-rule-title small{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-rule-icon{
+  background:rgba(245,158,11,.16)!important;
+  color:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-mode-switch{
+  background:rgba(255,255,255,.06)!important;
+  border-color:rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-mode-switch span{
+  color:#A1A1AA!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-mode-switch input:checked+span{
+  background:#383A46!important;
+  color:#FBBF24!important;
+  box-shadow:0 0 0 1px rgba(245,158,11,.28)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-assignment{
+  background:#2C2E38!important;
+  border-color:rgba(255,255,255,.10)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-assignment-note{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-column{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-column-head,
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-column-head b{
+  color:#F5F5F4!important;
+  border-color:rgba(255,255,255,.10)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-column-head small{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-search{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-list{
+  background:transparent!important;
+  border-color:rgba(255,255,255,.10)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-row{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.10)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-row:hover{
+  border-color:rgba(245,158,11,.35)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-info b{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-info small,
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-empty{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-action.add{
+  background:rgba(245,158,11,.14)!important;
+  color:#FBBF24!important;
+  border-color:rgba(245,158,11,.28)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-action.remove{
+  background:rgba(248,113,113,.12)!important;
+  color:#F87171!important;
+  border-color:rgba(248,113,113,.28)!important;
+}
+html body.category-edit-page .category-provider-empty-state{
+  display:grid!important;
+  place-items:center!important;
+  gap:6px!important;
+  padding:28px 16px!important;
+  border:1px dashed #EADCC8!important;
+  border-radius:12px!important;
+  background:#FFFCF7!important;
+  color:#71717A!important;
+  text-align:center!important;
+}
+html body.category-edit-page .category-provider-empty-state i{
+  font-size:22px!important;
+  color:#D97706!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-empty-state{
+  background:rgba(255,255,255,.04)!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#A1A1AA!important;
+}
+
+/* Footer: actions only, flush right */
+html body.category-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-footer{
+  justify-content:flex-end!important;
+}
+html body.category-edit-page .banner-edit-footer-meta{
+  display:none!important;
+}
+
+/* Sticky footer actions — 36px to match listing chrome */
+html body.category-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-footer .mad-btn-ghost,
+html body.category-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-footer .clean-btn.primary,
+html body.category-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-back{
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  border-radius:8px!important;
+}
+
+@media (max-width:767.98px){
+  html body.category-edit-page .category-detail-grid{
+    grid-template-columns:1fr!important;
+  }
+  html body.category-edit-page .category-provider-selector{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
+@media (max-width:420px){
+  html body.category-edit-page .category-provider-selector{
+    grid-template-columns:1fr!important;
+  }
+}
