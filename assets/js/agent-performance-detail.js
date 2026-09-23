@@ -175,6 +175,11 @@ async function init(){
      height and then collapse the block out from under them. */
   setOpsOpen(opsOpen(), false);
   renderRows();
+  /* The panel is still settling when that first fit runs — `report-table-split.js` inserts the split
+     head and the compact KPI strip takes its height after the data arrives — so the fit is re-derived
+     once more shortly after. A timer cannot miss the change the way an event can, and the second pass
+     is a fixed point (`panel / rowH` then equals the row count), so it cannot drift. */
+  setTimeout(()=>{if(isAutoSize())refit()},350);
   $('detailOpsToggle').addEventListener('click',()=>setOpsOpen($('detailOpsToggle').getAttribute('data-open')!=='1', true));
   $('detailBack').onclick=()=>history.length>1?history.back():location.href='agent-performance-report.html';
   $('detailSize').addEventListener('change',()=>{sizeLock=null;settleSteps=0;page=1;renderRows()});
@@ -187,9 +192,10 @@ async function init(){
   });
   /* In auto mode the fit follows the panel, as on the family's other pages. */
   let fitT=0;
-  window.addEventListener('resize',()=>{if(!isAutoSize())return;clearTimeout(fitT);fitT=setTimeout(()=>{sizeLock=null;settleSteps=0;page=1;renderRows()},250)});
+  const refit=()=>{sizeLock=null;settleSteps=0;page=1;renderRows()};
+  window.addEventListener('resize',()=>{if(!isAutoSize())return;clearTimeout(fitT);fitT=setTimeout(refit,250)});
 }
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>init().catch(e=>BO_DIALOG.alert(e.message,{title:'Agent Performance',type:'error'})));
 else init().catch(e=>BO_DIALOG.alert(e.message,{title:'Agent Performance',type:'error'}));
-})();
+})();
