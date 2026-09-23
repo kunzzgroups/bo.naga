@@ -53,6 +53,19 @@ html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-f
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:not(:disabled):not([readonly]):not(.layout-code-pane textarea):not(.pc-rich-source):not(#pcRichSource){
   background-color:#FFF8EB!important;
 }
+/* Search frames already carry the fill (rule 2). Inner inputs must stay transparent or the
+   field reads as a double-walled box (cream on cream + a second border). */
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .category-search-control > input,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .game-search-control > input,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .banner-search > input,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .input-icon-wrap > input,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .ref-input-icon > input,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-search > input,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .agent-search-box > input,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mac-provider-search > input,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .provider-list-search > input{
+  background-color:transparent!important;
+}
 /* The one control that must stay transparent, and why: the code editors on layout-section.html
    are an overlay trick — a `.layout-code-highlight` layer paints the colourised code and the
    textarea sits on top with `color:transparent` to catch the caret, so an opaque fill would
@@ -113,6 +126,26 @@ html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-f
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:hover:not(:disabled):not([readonly]):not(.layout-code-pane textarea):not(.pc-rich-source):not(#pcRichSource),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:focus:not(:disabled):not([readonly]):not(.layout-code-pane textarea):not(.pc-rich-source):not(#pcRichSource){
   background-color:#FFF8EB!important;
+}
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .category-search-control > input:hover,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .category-search-control > input:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .game-search-control > input:hover,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .game-search-control > input:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .banner-search > input:hover,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .banner-search > input:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .input-icon-wrap > input:hover,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .input-icon-wrap > input:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .ref-input-icon > input:hover,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .ref-input-icon > input:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-search > input:hover,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-search > input:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .agent-search-box > input:hover,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .agent-search-box > input:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mac-provider-search > input:hover,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mac-provider-search > input:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .provider-list-search > input:hover,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .provider-list-search > input:focus{
+  background-color:transparent!important;
 }
 
 /* 4. Deliberately NOT changed, so the next reader does not "fix" them:

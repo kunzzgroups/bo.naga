@@ -4166,32 +4166,52 @@ body.page-game-category.report-body{
 }
 body.page-game-category .category-filter-card .category-search-control{
   position:relative!important;
-  display:block!important;
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  align-items:center!important;
+  gap:8px!important;
   height:36px!important;
   min-height:36px!important;
   max-height:36px!important;
-  padding:0!important;
-  border:0!important;
-  background:transparent!important;
-}
-body.page-game-category .category-filter-card .category-search-control > i{
-  position:absolute!important;
-  left:12px!important;
-  top:50%!important;
-  transform:translateY(-50%)!important;
-  z-index:2!important;
-  pointer-events:none!important;
-}
-body.page-game-category .category-filter-card .category-search-control > input,
-body.page-game-category #categorySearchInput{
-  height:36px!important;
-  min-height:36px!important;
-  max-height:36px!important;
-  padding:0 12px 0 34px!important;
+  padding:0 12px!important;
   border:1px solid #EADCC8!important;
   border-radius:8px!important;
   background:#FFF8EB!important;
   box-sizing:border-box!important;
+  overflow:hidden!important;
+}
+body.page-game-category .category-filter-card .category-search-control > i{
+  position:static!important;
+  inset:auto!important;
+  transform:none!important;
+  flex:0 0 auto!important;
+  pointer-events:none!important;
+}
+body.page-game-category .category-filter-card .category-search-control > input,
+body.page-game-category #categorySearchInput{
+  flex:1 1 auto!important;
+  width:100%!important;
+  min-width:0!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  padding:0!important;
+  border:0!important;
+  border-width:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-color:transparent!important;
+  box-sizing:border-box!important;
+  box-shadow:none!important;
+}
+body.page-game-category .category-filter-card .category-search-control > input:hover,
+body.page-game-category .category-filter-card .category-search-control > input:focus,
+body.page-game-category #categorySearchInput:hover,
+body.page-game-category #categorySearchInput:focus{
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  background-color:transparent!important;
   box-shadow:none!important;
 }
 body.page-game-category .category-filter-card select,
@@ -7357,8 +7377,8 @@ html[data-bo-theme="dark"] .report-actions .merchant-repay-header-badge{box-shad
    measured a UNIFORMLY 42px row (every `.bo-filter-item` child 42: search, selects, actions;
    admin-user's fields 62 with 42px controls). A 36px search beside a 42px select would read as a
    mistake, so the row moves whole. Guard tier, so it beats the shared recipe below it.
-   The search input keeps the border here - on these pages the input owns it and the wrapper is
-   layout-only (the same split `agent-players` documents as v2.3.7).
+   Game-management search: the WRAPPER owns the border/fill; icon is a static flex sibling
+   (absolute-over-padded-input fought the :not(#id) padding rule and parked the icon outside).
    -------------------------------------------------------------------------- */
 html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row > .bo-filter-item > .game-search-control,
 html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row > .bo-filter-item > .category-search-control,
@@ -7382,11 +7402,42 @@ html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legac
   line-height:1.2!important;
 }
 html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row .game-search-control,
-html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row .category-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row .category-search-control{
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  align-items:center!important;
+  gap:8px!important;
+  padding:0 12px!important;
+  border:1px solid #EADCC8!important;
+  border-radius:8px!important;
+  background:#FFF8EB!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+}
 html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.admin-management-page .user-search-grid .input-icon-wrap{
   padding:0 12px!important;
 }
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row .game-search-control > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row .category-search-control > i{
+  position:static!important;
+  inset:auto!important;
+  transform:none!important;
+  flex:0 0 auto!important;
+  pointer-events:none!important;
+}
 html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row .game-search-control > input,
 html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row .category-search-control > input{
-  padding:0 12px 0 34px!important;
+  flex:1 1 auto!important;
+  width:100%!important;
+  min-width:0!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  padding:0!important;
+  border:0!important;
+  border-width:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-color:transparent!important;
+  box-shadow:none!important;
 }
