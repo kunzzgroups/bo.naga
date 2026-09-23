@@ -2055,6 +2055,282 @@ the topbar subtitle) went with the bar, as on 8.11.
 `agent-performance-report.css` 1.0.11 → **1.0.15** (it moved for the `#detailKpis` selectors, the
 perf-op radius, the collapsed KPI band and the dark ops variant).
 
+### Every report table now sorts by column (2026-09-22)
+
+Owner: “report的8.1 至 8.11的所有table欠缺sort功能 你去查看其他页面设计出的md 然后要确保我的数据要对齐”.
+
+**The design was already in the repo** — the Member Wallet listing (`member-wallet.js` +
+`bo-wallet-transaction-amber.css`): a head cell marked `th.bo-tx-sortable[data-sort]` whose label sits in
+a `.bo-tx-sort-btn` with a CSS-drawn double triangle (`.bo-tx-sort-ico`), the states `is-sorted` /
+`is-asc` / `is-desc`, and `aria-sort` kept in step (none → ascending → descending). That recipe is ported
+verbatim in values onto all twelve report pages from **one shared layer** — no per-page wiring, no HTML
+edits:
+
+- **`assets/js/report-table-sort.js`** builds the control and the icon on every head cell that has a
+  label, binds one delegated click + keydown per head table, and sorts the rows.
+- **`bo-report-family.css` §23** carries the visual recipe, scoped to `body.bo-report-family`.
+
+**Three things it had to solve, each measured:**
+
+1. **The head and the body are two tables** (since `report-table-split.js`): `.bo-report-head` holds the
+   `thead`, `.table-wrap` holds the `tbody`. A head cell's rows are therefore found through the **card**,
+   not through a shared `<table>`. 8.7, which owns its own split (`.bo-tx-head-table` /
+   `.bo-tx-body-table`), is covered rather than excluded.
+2. **The global button decorator claims every `<button>`.** `bo-ui-standard.js` painted these controls as
+   amber primary pills with white labels (measured `color:#fff`, amber fill) and re-scans added nodes, so
+   stripping its classes back off was a race — and the body-wide observer needed to win it is what made a
+   page hang. The control is now a **`<span role="button" tabindex="0">`**: outside that decorator's
+   selector entirely, so there is nothing to fight. Keyboard support (Enter/Space) and a focus ring are
+   wired explicitly. Verified: `tag SPAN`, zero `bo-ui-button` classes, plain `#6b360c` label with a
+   small grey triangle, amber only on the sorted column.
+3. **Pages that rebuild their own head.** 8.7 and 8.11 render `<thead>` from JS on every load — 8.7
+   again on each autofit settle — so a decoration applied once is thrown away with the old cells
+   (measured: fourteen headings decorated, then gone). A `childList` observer on the `thead`
+   re-decorates and re-syncs; a second one on the `tbody` re-applies the order after a page change.
+
+**Alignment is intact — that was the owner's second requirement.** The sort control is inside the head
+cell that already carries the column's width, and it is `width:100%` of it, so nothing about the widths
+moves. Measured on 8.7 after decorating and sorting both ways: **column delta 0px**, and on 8.11,
+promotion and win-lose likewise 0px.
+
+**Where the icon sits, in three passes** — each one driven by the owner pointing at a screenshot:
+
+1. *Icon before the label, in flow* (the Member Wallet recipe, and what the owner asked for) pushed every
+   heading ~19px right of its column's data — circled in red as “要好好对齐”.
+2. *Icon after the label* fixed the alignment but broke the design they had pointed at
+   (“他的sort的位置应该在字体之前的设计”).
+3. **Icon in the cell's own padding gutter** (`position:absolute; left:-10px`), label on the content edge —
+   both at once. Two follow-ups from the owner's screenshots:
+   - the offset started at 13px and the first column at 16px, which parked the DATE icon 3px from the card's
+     border — “图一的sort要跑出去了”; it is now **10px for every column**, so the icon sits 7px clear of the
+     card edge and still inside a 12px-inset cell.
+   - the right-aligned columns took the icon in their *trailing* gutter, which the owner read as the icon
+     having “变去后面了” (“图二的sort在尾端了”); those columns now keep the icon **leading, in flow**, so every
+     column reads `⇅ LABEL`, and the price is that a right-aligned column's label sits an icon's width left
+     of its numbers — the trade the owner chose.
+   **Measured on the Deposit/Withdraw Report at 1920:** DATE icon 285 (7px clear of the card at 278), label
+   295 = data 295; the next three columns 392/402 = 402, 596/606 = 606, 784/794 = 794 — every `alignDelta 0`
+   with the icon before its label, and Net Cash Flow's icon at 1776 before its label at 1789.
+
+**Verified:** 8.7 → 14/14 headers sortable, click `Member` ascending then descending (first cell `1`
+then `12`), delta 0. Promotion 6/6, 8.11 16/16, Win/Lose 6/6 — each ascending on first click with delta
+0. Numeric columns sort as numbers through `1,200.00` / `RM 12.5` / `-40`, with a row-index tiebreak so
+equal keys keep their order.
+
+**Sorting applies to the rows the table currently holds.** On the pages that fetch the whole set and
+paginate client-side that is the whole set; on Win/Lose and the two games reports (server-paginated) it
+orders the page on screen — a whole-set sort there needs their endpoints to accept `sort`/`order`, which
+this layer cannot assume. The wallet page makes the same bargain.
+
+**Audit: which report pages had no sort, and why.** The first cut keyed the layer to `body.bo-report-family`,
+which is only the eleven 8.x pages plus the detail drill-down — so every other report page was silently
+skipped. That is the answer to “为什么我的transaction type report 没有sort”: `provider-bet-report.html`
+(“Provider Bet Report”, the page with the Bet Event Type filter) is a report page that is **not** in the
+family marker, so the layer never ran there.
+
+| Page | Before | Now |
+| --- | --- | --- |
+| the 11 8.x pages + Agent Performance Detail | sorted | unchanged |
+| `provider-bet-report.html` — **the page in the report** | nothing | **11/11 headers sortable**, styled, delta 0 |
+| `main-report.html` — MAIN Report | nothing | **12/12 sortable** on its data card, delta 0 |
+| `agent-bet-report.html`, `agent-player-game-report.html` | nothing | wired (the layer is structural), **unverified** — both redirect to Agent login for a non-agent session |
+| `daily-rebate-report.html`, `main-accounting-report.html`, `main-settlement-report.html`, `main-win-lose-report.html`, `main_merchant_report.html`, `main_provider_report.html` | nothing | still nothing — their tables are the `standard-*` component (`.standard-list-card` / `.standard-data-table`), not `.table-card` / `.report-table`, so they are separate work |
+
+The scope is now “the script is pinned here **and** this card has a head+body pair”, and the body class
+`bo-sortable-tables` is added only once a real head cell has been decorated — that class, not the family
+marker, is what turns the styling on. Ordinary listing pages are untouched: the script is not pinned
+there, and nothing in §23 matches without the class.
+
+**Pins:** `bo-report-family.css` 1.0.27 → **1.0.29**, `report-table-sort.js` **1.0.4**, both on
+**sixteen** pages (the twelve, plus the four report pages outside the family).
+
+### Transaction Report: the head had drifted off its rows — and the columns were too narrow (2026-09-22)
+
+Owner: “Transaction Report的table header与下面的数据没有对齐”, then “反正我的transaction report要看完整所有数据”.
+
+**Three causes, all measured.**
+
+1. **The misalignment was introduced by the family sheet.** `bo-report-family.css` pins
+   `table-layout:auto!important` on `.report-table` — deliberately, because the family's tables carry no
+   authored column widths — and that rule carries two `:not(#…)` guards, so it out-ranks the transaction
+   page's own `table-layout:fixed!important` (0,4,2). With `auto` in force the page's **shared
+   `.tr-col-*` colgroup stopped binding**, and each of its two tables sized to its own content: the head
+   to its labels, the body to its data. Measured column-by-column drift `0, 7, 20, −1, 8, 18, 23, 25, 73,
+   129, 154, 162, 9, 6` px — the owner photographed exactly that. Fixed by excluding 8.7 from the rule
+   (`:not(.transaction-report-page)`), the same convention §14 and §19 already use.
+
+2. **Under `fixed`, the page's own percentages made the headings ellipsise themselves.** `MEM…`,
+   `WAL…`, `CREA…`, `APPR…`, `REAS…` — the `.tr-col-*` widths were percentages (4/5/10/5/6.5/…) of a
+   1320px table, several of them narrower than their own uppercased, `.04em`-tracked heading. The columns
+   are now **px, each measured** as `max(heading, widest data)` on the rendered page — 40, 76, 137, 72,
+   73, 70, 70, 98, 108, 73, 94, 340, 103, 103 — and the table's `min-width` is their sum (1460px), so no
+   column can be squeezed below its content; when the card is narrower the body scrolls sideways (its
+   design) and the head follows through the page's own scroll mirror.
+
+3. **The head slot and the body slot reserved different gutters.** Both carry
+   `scrollbar-gutter:stable`, but the autofit rule deliberately takes the body's gutter away in `-` mode
+   while the head kept its own — so the two slots had different client widths, and once the card is wider
+   than the columns the two tables stretch to *different* widths and the columns drift again (measured
+   5px at 1904). The head's gutter is now tied to the same mode, and the head declares the same 6px bar
+   the body uses (the fix `report-table-split.js` applies to the family pages).
+
+**Verified at 1904×900 / 1600×900 / 1512×950 / 1280×800:** the two slots' client widths are **equal**
+(1601/1601, 1297/1297, 1209/1209, 977/977), every column delta is **0px**, **zero clipped headings**,
+**zero clipped cells** — including the full `Player exit transfer back PLAYBOY session #901` in Remark —
+and at 1904 the whole table fits the card with no sideways scroll.
+
+**Pins:** `bo-report-family.css` 1.0.24 → **1.0.25**, `transaction-report-polish.css` 1.0.11 → **1.0.14**.
+
+### The sort triangles stopped following their icon — and Transaction Report stopped flickering (2026-09-23)
+
+Owner, with two screenshots (Deposit/Withdraw, Win/Lose): “检查所有report的页面 当点选日期后 table
+header的 sort与字体的距离 修好”, then on 8.7: “点选日期后 一直闪 不知道为什么 而且我的id也没有展示完整”.
+
+**The icon/label distance was one CSS value, and it broke exactly the columns it was written for.**
+The icon is a `<span>` whose two triangles are `::before`/`::after` — **absolutely positioned children**.
+An absolutely positioned box resolves against the nearest *positioned* ancestor, so the icon is only
+their containing block while it is itself positioned. The left-aligned case (icon `absolute` in the
+cell's left gutter, so the label can sit on the data) kept that property; the right-aligned rule that
+put the icon back in flow used `position:static` — which silently removed the containing block, and the
+triangles jumped to the **button**: two little arrows painted at the middle of the header cell instead
+of beside their label. Measured on Deposit/Withdraw before the fix: icon box `2721–2729`, its triangles
+`2779–2786` — 52px from their own label, and on Win/Lose's wider column an entire column's width away,
+which is what both screenshots circled. The rule is now `position:relative` with `top`/`left`/`transform`
+reset, because a *relative* box resolves percentage offsets against the **button's** height, not its own
+(the button's `align-items:center` already centres it). `position:relative` is also what the house
+reference uses: Member Wallet's `.bo-tx-sort-ico` is `relative` and in flow with `gap:4px`.
+
+**The class was renamed to say what it means, and now covers centred columns too.** It was
+`bo-sort-right`, set only for `flex-end`; a *centred* column therefore kept the absolutely-positioned
+gutter icon and detached from its centre-aligned label in exactly the same way — no page has one today
+(checked across twelve), but the next one would have. `alignControl()` now applies `bo-sort-inline` to
+every column whose computed alignment is not left/start, and the rule's job is "icon inline, immediately
+before the label".
+
+**Verified.** Isolated geometry page (only `bo-report-family.css` + `report-table-sort.js`): left/right/
+centre → icon `absolute`/`relative`/`relative`, containing block the icon in every case, gap 2–3px for
+the gutter icons and 5px in flow, nothing escaped, and after a real click `aria-sort="ascending"` with
+the icon still in flow and the rows reordered. Twelve pages swept with the real script and sheet
+(Deposit/Withdraw, Win/Lose, Breakdown, Transaction, Provider Bet, Casino Bonus, Provider Win/Loss,
+Promotion, MAIN, Frequently Played Games, Highest Turnover Games, Agent Performance): every column has a
+control, **zero escaped icons**, **zero centre-aligned columns**, and on the three that have a
+right-aligned column — Net Cash Flow, Win/Lose, In/Out+Before+After — the icon is `relative` with its
+own containing block at a 5px gap. Head-label-vs-data delta is **0px on every column of every page**.
+Four pages could not be driven in the sandbox — `casino-overview-report` builds its head from data, and
+`agent-bet-report` / `agent-player-game-report` / `agent-performance-detail` redirect to their portals;
+all four carry the same classes and pin the same two files.
+
+**Pins:** `bo-report-family.css` 1.0.34 → **1.0.35**, `report-table-sort.js` 1.0.11 → **1.0.12**.
+
+**8.7 flickered because its own fit re-triggered its own fit.** `evenFillRowHeights()` writes row
+heights and the table's height, and on this page the scroller's box *follows its content* — so the
+`ResizeObserver` watching that scroller read our own write as a panel change, cleared `lockedAutoSize`
+and re-rendered, which reset the heights, which fired the observer again. Measured: row height flipping
+47↔50px, scroller 448↔446px, **1,305 mutation records in 2.6s idle and 3,730 in the 3s after a date
+change**, forever. The observer now ignores any notification arriving within 400ms of a fit write, and
+any notification whose box differs from the one the fit was computed against by less than a pixel in
+width and 4px in height — width is the real input to a fit and is compared strictly (it measured a dead
+constant 977 through the whole loop), while a genuine panel change is tens of pixels where this
+feedback was 2. After the fix: **0 mutations, one distinct state, 5s idle**, and the same after a date
+change.
+
+**Two columns were too narrow for production data, not one.** The `.tr-col-*` widths are px values
+measured from a sample; the id read “2…” (40px column, 24px of padding alone) and the balances “58,2…”.
+Under `table-layout:fixed` the head and body colgroups must carry identical widths, so `fitColumns()`
+measures the widest rendered content per column and writes the same inline width to **both** colgroups
+— inline `!important`, because the sheet's own `.tr-col-*` widths are important. It only grows, and
+remembers the widest seen, so paging never pulls a column back in; Remark is exempt (it truncates by
+design and carries its own hover tip). The first pass can still measure before the final type is in
+force (measured 120px of text for an id that is 134px), so it re-runs on `document.fonts.ready` and at
+250/900ms. No `min-width` bookkeeping: fixed layout already sizes the table to the greater of its
+specified width and its columns' minimum — writing one from the measured cell widths fed the layout
+back into itself, adding ~10px per pass, forever. Measured after: **zero clipped columns** (id 160/160,
+balances 91/91), table 1620px growing from the CSS 1460 floor, head and body the same width, head
+labels at **delta 0** on all 14 columns.
+
+**Pins:** `operations-report.js` 1.0.15 → **1.0.18**.
+
+### Casino Overview: the date picker joins the KPI grid in one container (2026-09-22)
+
+Owner: “日期要与卡片在同一个container的设计”.
+
+On 8.4 the date control had a rounded card of its own with a full-width empty band beneath it, and the
+18 KPI tiles started again below in their own boxes — the page read as two stacked objects instead of
+one panel with a date band. It is the same join §19 applies to the table pages, aimed at the tile grid
+instead (§21, desktop only):
+
+| Piece | Was | Now |
+| --- | --- | --- |
+| date strip | own card: bottom border, 16px bottom radii, own shadow, `16px` padding | no bottom border/radii/shadow, joins the panel, `12px 16px` |
+| strip bottom margin | `0` (§15) | `-16px`, cancelling the content column's flex gap |
+| KPI grid | transparent, no border, no padding | the panel's body: `#FFF8EB`, 1px `#EADCC8`, bottom radii 16px, 16px inset |
+| KPI tiles | the family's card | **unchanged** — same `.quick-stats .metric` component as every other report page |
+
+**Measured:** seam between the two **0px**; strip `border-bottom-width 0`, `border-bottom-left-radius 0`,
+`box-shadow none`, `padding 12px 16px`, `margin-bottom -16px`; grid `background #FFF8EB`,
+`border-top-width 0` / `border-bottom-width 0.8px`, `border-top-left-radius 0`,
+`border-bottom-left-radius 16px`, `padding 16px`; tiles 383px wide with their own 0.8px border intact.
+Dark mode: panel `#383A46` with `rgba(255,255,255,.14)` borders, date band the same surface, no bottom
+hairline.
+
+**Scoped by `:has(+ .quick-stats)`**, so only a page where the strip really is followed by a KPI grid is
+affected — and that is this page alone: on Win/Lose the strip is *below* the grid, and on 8.11 the
+control above the table is a `.perf-filter-card`. Verified unchanged on `win-lose-report`: its grid has
+`background transparent` / `border 0` / `padding 0` and its strip still joins the table card
+(`gap 0`, `margin-bottom -16px`, no bottom border).
+
+**Pin:** `bo-report-family.css` 1.0.23 → **1.0.24** on all twelve pages.
+
+### Filling the last sub-row band: implemented, measured, REVERTED (2026-09-22)
+
+Owner: “report的所有页面的table在所有屏幕 当show - entries的时候 还是会有scroll的问题 建议就是把table底部拉均匀”.
+
+**What the owner is seeing on `bo.titanx7.com` is production, and production is behind.** The fixes that
+remove that scrollbar — row heights measured instead of assumed, the head not subtracted when it is
+outside the scroller, the settle corrections that used to be swallowed — are all in this working tree
+and **not deployed**. On the local build every report page fits its panel with the control on `-`, and
+this pass took the last two pages that did not:
+
+| Page | Was (this session's earlier audit) | Now |
+| --- | --- | --- |
+| Agent Performance Report | 11 rows at 603px in a 532px panel — a scrollbar at the default | **9 rows**, band 39px, no scrollbar |
+| Agent Performance Detail | 20 rows at 1074px in a 575px panel — a scrollbar | **10 rows**, band 38px, no scrollbar |
+| the other eight pages | already fitted | unchanged, bands of 20–29px, no scrollbar |
+
+Two mechanisms, both small and both kept:
+
+- **A bounded timer verifier** replaces the one-frame `requestAnimationFrame` re-check on 8.11. The
+  frame version loses its correction to its own pending flag: measured, the panel wanted 10 rows and the
+  chain stopped at 11 with the table 41px too tall and nothing re-armed it. `verifyOverflow()` re-checks
+  at 160ms, drops one row per pass, and gives up after three; it only runs while the table overflows.
+- **A timed re-fit after the first paint on the detail page** (`setTimeout(refit, 350)`), because its
+  first fit runs while the split head and the compact KPI strip are still settling.
+
+**The even fill itself was tried, measured, and reverted.** The proposal — spread the leftover band
+across the rows so the table's bottom lands exactly on the panel — was implemented in
+`report-table-split.js` (stretch the rows, or fill below them with an invisible spacer, plus a 1–4px
+shave for rounding slivers) and verified working on eight of ten pages at 1512×950: `slack 0`, no
+scrollbar, stable over repeated samples. It was removed again for one reason, measured twice:
+
+> **A shared fill cannot know the row height the page's own fit is about to measure.** Every fit here
+> decides the next row count by measuring a painted row, so any height the fill writes feeds straight
+> back into the fit — and the two watchers run independently. Measured: a stretching fill walked 8.11
+> from 9 rows to 14 with the table 205px too tall, and the detail page from 10 to 20; the spacer
+> version then produced the opposite failure, adding a spacer on top of rows whose heights grew after
+> it measured them, and *creating* the 18px overflow it was meant to remove.
+
+Making it work needs the fill and each page's fit to be one decision — the pattern
+`operations-report.js` already uses with `resetEvenFill()` → measure → `evenFillRowHeights()`, where the
+page clears the fill before measuring its own rows. Doing that properly means threading a shared
+`reset/apply` pair through the six page scripts that own a fit, which is a refactor rather than a
+styling pass, and it is **not done**: today the pages keep their natural row heights and a band smaller
+than one row sits below the last row.
+
+**Pins:** `report-table-split.js` 1.0.5 → **1.0.13** (it moved and came back through the reverted fill;
+its only surviving change is the line above `run()` that no longer exists — see the file's git status),
+`agent-performance-report.js` **1.0.14** (the timer verifier), `agent-performance-detail.js` **1.0.8**
+(the timed re-fit), `bo-report-family.css` **1.0.23** (the spacer rules added and withdrawn).
+
 ### Agent Performance Detail: the eight-card financial block is now a disclosure (2026-09-22)
 
 Owner: “框中的部分 我想做成收起来的功能 因为太大了”, then “放上去一点 too much gap”.

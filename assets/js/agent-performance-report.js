@@ -34,7 +34,7 @@ function measureFit(){
   const rowH=Math.max(34,Math.round(cell.getBoundingClientRect().height))||41;
   return Math.max(5,Math.min(200,Math.floor((Math.floor(wrap.clientHeight)-headH)/rowH)||20));
 }
-let sizeLock=null,autoSteps=0,verifyPending=false;
+let sizeLock=null,autoSteps=0;
 function perfSize(){const v=$('perfSize')?$('perfSize').value:'-';if(String(v).toLowerCase()==='all')return 0;if(isAutoSize()){if(sizeLock==null){const m=measureFit();if(m==null)return 20;sizeLock=m}return sizeLock}const n=Number(v);return n>0?n:20}
 function perfRow(a,i){return `<tr><td>${i+1}</td><td><div class="perf-agent-cell"><span class="perf-avatar">${esc(String(a.agentName||a.agentCode||'A').charAt(0).toUpperCase())}</span><div><b>${esc(a.agentName||'-')}</b><small>${esc(a.agentCode||'')}</small></div></div></td><td>${num(a.totalPlayers)}</td><td>${num(a.activePlayers)}</td><td>+${num(a.newPlayers)}</td><td>${money(a.turnover)}</td><td class="${Number(a.houseProfit||0)>=0?'perf-pos':'perf-neg'}">${money(a.houseProfit)}</td><td>RM ${money(Number(a.houseProfit||0)*Number(a.commissionPercent||0)/100)}</td><td>RM ${money(a.depositAmount)} <small class="d-block">${num(a.depositCount)} tx</small></td><td>RM ${money(a.withdrawAmount)} <small class="d-block">${num(a.withdrawCount)} tx</small></td><td>RM ${money(a.bonusAmount)}</td><td class="perf-pos">RM ${money(a.playerWin)}</td><td class="perf-neg">RM ${money(a.playerLoss)}</td><td>RM ${money(a.settlementAmount)}${Number(a.pendingSettlement||0)>0?`<small class="d-block text-warning">Pending RM ${money(a.pendingSettlement)}</small>`:''}</td><td><span class="perf-status ${Number(a.status)!==1?'off':''}">${Number(a.status)===1?'Active':'Suspended'}</span></td><td><button class="perf-eye" data-view="${a.agentId}" title="View agent betting details"><i class="bi bi-eye"></i></button></td></tr>`}
 function paintPager(pages){const host=$('perfPager');if(!host)return;/* always render: the family's ladder shows First/Prev/window/Next/Last with the ends disabled on a single page (owner: "当前页面好像没有设计到 页数器") — hiding it entirely was this page's own behaviour */const cur=perfPage,win=new Set([1,pages]);for(let n=cur-2;n<=cur+2;n++)if(n>=1&&n<=pages)win.add(n);const nums=Array.from(win).sort((a,b)=>a-b);let mid='',prev=0;nums.forEach(n=>{if(prev&&n-prev>1)mid+='<span class="smart-page-ellipsis" aria-hidden="true">\u2026</span>';mid+='<button type="button" class="smart-page'+(n===cur?' active':'')+'" data-perf-page="'+n+'" aria-label="Page '+n+'"'+(n===cur?' aria-current="page"':'')+'>'+n+'</button>';prev=n});const nav=(p,label,icon,off)=>'<button type="button" class="smart-page" data-perf-page="'+p+'" aria-label="'+label+'"'+(off?' disabled':'')+'><i class="bi '+icon+'"></i></button>';host.innerHTML=nav(1,'First page','bi-chevron-bar-left',cur===1)+nav(cur-1,'Previous page','bi-chevron-left',cur===1)+mid+nav(cur+1,'Next page','bi-chevron-right',cur===pages)+nav(pages,'Last page','bi-chevron-bar-right',cur===pages)}
@@ -58,17 +58,27 @@ function settleFit(size){
   else if(room>=rowH)target=size+1;
   if(target!==size&&autoSteps<3){autoSteps++;sizeLock=target;perfPage=1;paintRows();return}
   autoSteps=0;
-  if(verifyPending)return;
-  verifyPending=true;
-  requestAnimationFrame(()=>{
-    verifyPending=false;
+  verifyOverflow();
+}
+/* The painted rows are checked against the panel until they fit.
+   A one-frame re-check loses corrections to its own pending flag — measured on this page: the panel
+   wanted 10 rows and the chain stopped at 11 with the table 41px too tall, and nothing re-armed it,
+   so the default “-” kept a scrollbar. A bounded timer cannot be lost that way, and it only runs while
+   the table actually overflows; each pass drops one row, so it converges in at most three. */
+let verifyT=0;
+function verifyOverflow(tries){
+  tries=tries||0;
+  if(tries>=3)return;
+  clearTimeout(verifyT);
+  verifyT=setTimeout(()=>{
     if(!isAutoSize())return;
-    const w=document.querySelector('.perf-table-card .table-wrap');
+    const w=document.querySelector(".perf-table-card .table-wrap");
     if(!w||w.scrollHeight<=w.clientHeight+1)return;
     const cur=sizeLock||perfSize();
     if(cur<=5)return;
-    autoSteps=0;sizeLock=cur-1;perfPage=1;paintRows();
-  });
+    sizeLock=cur-1;autoSteps=0;perfPage=1;paintRows();
+    verifyOverflow(tries+1);
+  },160);
 }
 function stabilizePerfFilters(){
   const card=document.querySelector('.perf-filter-card'),brandField=$('perfBrandField'),agentField=$('perfAgentField');

@@ -217,8 +217,15 @@ html[data-bo-theme="dark"] body.bo-report-family .table-card{
    (`:has(th:nth-child(10|14))`) and is not enough either: the required width
    depends on the header *text*, not on the column count, so any single number is
    wrong for some page. Content-driven is the only value that is right for all of
-   them. */
-body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-table{
+   them.
+
+   8.7 is EXCLUDED (`:not(.transaction-report-page)`), and that exclusion is load-bearing: this rule
+   carries two `:not(#…)` guards, so it out-ranks the page sheet's own `table-layout:fixed!important`
+   (0,4,2). With `auto` forced on, the transaction page's shared `.tr-col-*` percentage colgroup stopped
+   binding and each table sized to its OWN content — the head to its labels, the body to its data — so the
+   head and the rows drifted apart across the row (measured: ID 0px, Wallet −1px, Reason 129px,
+   Remark 162px) and the owner photographed exactly that. */
+body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family:not(.transaction-report-page) .report-table{
   table-layout:auto!important;
   width:100%!important;
   border-collapse:collapse;
@@ -943,4 +950,212 @@ body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .nav-grou
     border-top-left-radius:0!important;
     border-top-right-radius:0!important;
   }
+}
+
+/* --------------------------------------------------------------------------
+   21. A filter strip above a KPI grid is ONE container, not two
+   Owner: "日期要与卡片在同一个container的设计" — on 8.4 Casino Overview the date picker had a rounded
+   card of its own with a full-width empty band under it, and the 18 KPI tiles started again below in
+   their own boxes, so the page read as two stacked objects instead of one panel with a date band.
+   Same join as §19, applied to the tile grid instead of the table card: the strip loses its bottom
+   border, bottom radii and shadow and its -16px margin cancels the content column's flex gap, and the
+   grid becomes the panel's body — it takes the card's own surface, border and bottom radii, with the
+   16px inset every band inside a card gets. The tiles themselves are untouched, so they stay the
+   family's `.quick-stats .metric` component, identical to the other report pages.
+   `:has(+ .quick-stats)` scopes it to pages where the two really are adjacent, so no table page is
+   affected: there the strip joins the table card by §19 instead.
+   -------------------------------------------------------------------------- */
+@media (min-width:992px){
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > .filter-card:has(+ .quick-stats){
+    margin-bottom:-16px!important;
+    padding:12px 16px!important;
+    border-bottom:0!important;
+    border-bottom-left-radius:0!important;
+    border-bottom-right-radius:0!important;
+    box-shadow:none!important;
+  }
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > .filter-card + .quick-stats{
+    background:#FFF8EB!important;
+    border:1px solid #EADCC8!important;
+    border-top:0!important;
+    border-top-left-radius:0!important;
+    border-top-right-radius:0!important;
+    border-bottom-left-radius:16px!important;
+    border-bottom-right-radius:16px!important;
+    padding:16px!important;
+    box-sizing:border-box!important;
+  }
+}
+html[data-bo-theme="dark"] body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > .filter-card + .quick-stats{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.14)!important;
+}
+
+/* --------------------------------------------------------------------------
+   22. In `-` mode the panel does not show a vertical scrollbar at all
+   Owner: "你看那个scrollbar还是无法精准在所有屏幕 在 show - entries 的情况不展示scroll". The fitted row count is
+   right and every row is on screen, but the table box can still be a hair taller than the panel — a
+   row's hairline, a sub-pixel line box — so the scroller painted a full-height thumb for a sliver
+   nobody can act on. `report-table-split.js` publishes the mode as `bo-autofit-mode` on the body, and
+   here the vertical scroller is simply turned off. It is this repo's own recipe for the same problem on
+   the transaction page (`.tr-autofit .bo-tx-table-body{overflow-y:hidden!important}`).
+   Choosing a fixed size or `All` drops the class, so there the scroller returns.
+   The gutter stays reserved (the wrap keeps `scrollbar-gutter:stable`), so nothing shifts sideways
+   when the class changes.
+   -------------------------------------------------------------------------- */
+body.bo-report-family.bo-autofit-mode .table-card > .table-wrap{
+  overflow-y:hidden!important;
+}
+
+/* --------------------------------------------------------------------------
+   23. Sortable column headers
+   Owner: "report的所有页面的所有table欠缺sort功能 你去查看其他页面设计出的md". The design already exists on this
+   repo's Member Wallet listing — `assets/js/member-wallet.js` + `bo-wallet-transaction-amber.css`:
+   a `.bo-tx-sort-btn` filling the head cell, a CSS-drawn double triangle (`.bo-tx-sort-ico`), the
+   states `is-sorted` / `is-asc` / `is-desc`, amber when active. Ported here verbatim in values, scoped
+   to `body.bo-report-family` so all twelve pages get it from one place, and driven by
+   `assets/js/report-table-sort.js`, which builds the markup (no HTML edits on twelve pages).
+   Only the values are copied; the wallet sheet's selectors stay untouched.
+   -------------------------------------------------------------------------- */
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable{
+  padding:0!important;
+  vertical-align:middle!important;
+}
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable .bo-tx-sort-btn{
+  appearance:none;
+  -webkit-appearance:none;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:5px!important;
+  width:100%!important;
+  min-height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  color:inherit!important;
+  font:inherit!important;
+  font-weight:700!important;
+  letter-spacing:inherit!important;
+  text-transform:inherit!important;
+  text-align:left!important;
+  white-space:nowrap!important;
+  cursor:pointer!important;
+  line-height:1.2!important;
+}
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable .bo-tx-sort-btn:hover{
+  color:#92400E!important;
+}
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable .bo-tx-sort-ico{
+  display:inline-block!important;
+  width:0.7em!important;
+  height:0.9em!important;
+  position:relative!important;
+  flex:0 0 auto!important;
+  opacity:.35!important;
+}
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable .bo-tx-sort-ico::before,
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable .bo-tx-sort-ico::after{
+  content:''!important;
+  position:absolute!important;
+  left:50%!important;
+  border-left:3.5px solid transparent!important;
+  border-right:3.5px solid transparent!important;
+  transform:translateX(-50%)!important;
+}
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable .bo-tx-sort-ico::before{
+  top:0!important;
+  border-bottom:4.5px solid currentColor!important;
+}
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable .bo-tx-sort-ico::after{
+  bottom:0!important;
+  border-top:4.5px solid currentColor!important;
+}
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable.is-sorted .bo-tx-sort-ico{
+  opacity:1!important;
+  color:#D97706!important;
+}
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable.is-asc .bo-tx-sort-ico::after{
+  opacity:.25!important;
+}
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable.is-desc .bo-tx-sort-ico::before{
+  opacity:.25!important;
+}
+html[data-bo-theme="dark"] body.bo-sortable-tables .report-table thead th.bo-tx-sortable .bo-tx-sort-btn:hover{
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.bo-sortable-tables .report-table thead th.bo-tx-sortable.is-sorted .bo-tx-sort-ico{
+  color:#F59E0B!important;
+}
+
+/* --------------------------------------------------------------------------
+   23b. The sort control is a span, so the global button paint cannot see it
+   `bo-ui-standard.js` paints `button, input[type=button|submit], a.btn…` — a real `<button>` here was
+   decorated as one of its primary buttons (amber fill, white label, measured `color:#fff`) and it
+   re-scans added nodes, so stripping its classes back off was a race. The control is therefore a
+   `<span role="button" tabindex="0">`: outside that selector, so there is nothing to fight. These
+   rules restore the affordance a button would have brought — pointer cursor, no text selection, and a
+   visible focus ring for the keyboard path the script wires up.
+   -------------------------------------------------------------------------- */
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable .bo-tx-sort-btn{
+  cursor:pointer;
+  -webkit-user-select:none;
+  user-select:none;
+}
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable .bo-tx-sort-btn:focus-visible{
+  outline:2px solid #D97706;
+  outline-offset:-2px;
+  border-radius:6px;
+}
+html[data-bo-theme="dark"] body.bo-sortable-tables .report-table thead th.bo-tx-sortable .bo-tx-sort-btn:focus-visible{
+  outline-color:#F59E0B;
+}
+
+/* --------------------------------------------------------------------------
+   23c. The sort icon lives in the cell's padding gutter, the label on the content edge
+   Owner: "你那个sort的位置 与其他页面member页面的 他的sort的位置应该在字体之前的设计" — the reference
+   (`index.html`, User Management) puts the icon BEFORE the label. Putting it before the label in flow was
+   the first version here, and it pushed every heading ~19px right of its column's data — the misalignment
+   the owner circled in the previous screenshot. Both are satisfiable at once: the icon is taken out of
+   flow and placed in the cell's own padding, so the LABEL starts exactly where the data does while the
+   icon still reads as "before the text".
+   ONE offset for every column (13px into the gutter, the icon is 0.7em ≈ 8px wide): the first column
+   used to sit 16px in, which parked the DATE icon flush against the card's left border and read as
+   detached from its label — owner: “那个date的sort 在table header的位置要再调整 sort的位置不美观”.
+   -------------------------------------------------------------------------- */
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable .bo-tx-sort-btn{
+  position:relative!important;
+}
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable .bo-tx-sort-ico{
+  position:absolute!important;
+  left:-10px!important;
+  top:50%!important;
+  transform:translateY(-50%)!important;
+  opacity:.4!important;
+}
+/* A column that is not left-aligned hugs its label to the right (or centres it), so the icon takes
+   its normal place in the flex line, immediately before the label, and `justify-content` places the
+   pair. It must be `relative`, NEVER `static`. The two triangles are absolutely positioned children
+   of the icon, so they resolve against the nearest POSITIONED ancestor: with a static icon that is
+   the button, and they stop tracking the icon and paint at the middle of the header cell instead —
+   measured on Deposit/Withdraw, the icon box at x 2721–2729 and its triangles at 2779–2786, 52px
+   from their own label (owner: "当点选日期后 table header的 sort与字体的距离 修好"). `relative` keeps
+   the icon a containing block for them while leaving it in flow; `top`/`left` must be reset because
+   a relative box resolves percentage offsets against the BUTTON's height, not its own, and the
+   button's own `align-items:center` already centres the icon vertically. The class is applied to
+   every non-left column — centre included — so a centred column cannot fall back to the gutter icon
+   and detach from its label the way the right-aligned ones did. */
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable .bo-tx-sort-btn.bo-sort-inline .bo-tx-sort-ico{
+  position:relative!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  transform:none!important;
+}
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable .bo-tx-sort-btn:hover .bo-tx-sort-ico{
+  opacity:.75!important;
+}
+body.bo-sortable-tables .report-table thead th.bo-tx-sortable.is-sorted .bo-tx-sort-ico{
+  opacity:1!important;
 }

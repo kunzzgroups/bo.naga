@@ -188,6 +188,10 @@
     if(!t) return;
     var widths = measure(t);
     if(widths) apply(t, widths);
+    /* Width changes can clamp or shift the body scroller; the head is a separate element and only
+       follows on a scroll EVENT, so it has to be re-locked here or the two drift apart (measured after
+       a row reorder: the heading row sat ~40px off its own columns). */
+    if(t.head && t.wrap) t.head.scrollLeft = t.wrap.scrollLeft;
   }
 
   function run(){
@@ -208,7 +212,38 @@
     }, 120);
   }
 
+
+  /* Autofit mode, published as a class on the body.
+     Owner: “你看那个scrollbar还是无法精准在所有屏幕 在 show - entries 的情况不展示scroll”. The row COUNT is fitted to
+     the panel, but the table box is a hair taller than the panel on some screens — a row border, a
+     sub-pixel line box — so a scroller still painted a full-height thumb with every row already in
+     view. Inside a no-scroll mode nobody can use that scrollbar anyway, and the page cannot know the
+     panel is a hair short. So in `-` mode the vertical scroller is turned OFF and the sliver is simply
+     not painted. It is the recipe this repo already ships on the transaction page
+     (`.tr-autofit .bo-tx-table-body{overflow-y:hidden!important}`).
+     Picking a fixed size or `All` removes the class and the scroller comes back, because then scrolling
+     is the requested behaviour. The value is read from the footer control, and re-read on its change.
+  */
+  function isDashMode(){
+    var sel = document.querySelector('body.bo-report-family .mad-footer select');
+    if(!sel) return true;
+    var v = String(sel.value).trim().toLowerCase();
+    return v === '' || v === '-' || v === 'auto';
+  }
+  function publishAutofit(){
+    if(!document.body || !document.body.classList.contains('bo-report-family')) return;
+    document.body.classList.toggle('bo-autofit-mode', isDashMode());
+  }
+  function bindAutofit(){
+    publishAutofit();
+    document.addEventListener('change', function(e){
+      if(e.target && e.target.closest && e.target.closest('.mad-footer')) publishAutofit();
+    });
+    publishAutofit();
+  }
+
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
   else run();
+  bindAutofit();
   window.addEventListener('resize', onResize);
 })();

@@ -2,6 +2,37 @@
 
 <html lang="en">
 <head>
+<script>
+window.BO_AUTH = {
+  token: function () { return "h"; },
+  user: function () { return { id: 1, username: "h", roleType: "MAIN", rootAdmin: true, menus: [] }; },
+  authHeader: function () { return { Authorization: "Bearer h" }; },
+  refreshMe: function () { return Promise.resolve(null); },
+  injectProfile: function () {}, bindDynamicSidebarEvents: function () {}, renderSidebar: function () {},
+  loadUiSetting: function () {}, requireLogin: function () { return true; }, enforcePageAccess: function () { return true; },
+  logout: function () {}, isMain: function () { return true; }, adminMeUrl: function () { return "/x"; },
+  loadMenuGroups: function () { return Promise.resolve(); }
+};
+(function () {
+  var real = window.fetch.bind(window);
+  var rows = [];
+  for (var i = 1; i <= 20; i++) rows.push({ date: "2026-08-" + (i < 10 ? "0" + i : i), depositApprovedMembers: i, depositApprovedCount: i * 2,
+    depositApprovedAmount: 100 + i, depositPendingAmount: 0, depositFailedCount: i % 3, depositFailedAmount: 30 + i,
+    withdrawApprovedMembers: 1, withdrawApprovedCount: 1, withdrawApprovedAmount: 50, withdrawPendingAmount: 5,
+    withdrawFailedCount: 0, withdrawFailedAmount: 0, netCashflow: 150 });
+  function ok(d) { return Promise.resolve(new Response(JSON.stringify({ status: "ok", data: d }), { status: 200, headers: { "Content-Type": "application/json" } })); }
+  window.fetch = function (input, init) {
+    var url = ""; try { url = typeof input === "string" ? input : (input && input.url) || ""; } catch (e) {}
+    if (!url) return real(input, init);
+    var size = 20, page = 0;
+    try { var u = new URL(url, location.href); size = Number(u.searchParams.get("size")) || 20; page = Number(u.searchParams.get("page")) || 0; } catch (e) {}
+    var slice = rows.slice(page * size, page * size + size);
+    return ok({ content: slice, rows: slice, breakdown: slice, providerDaily: slice, depositWithdrawDaily: slice, bonusDaily: slice,
+      totalElements: 20, totalPages: 1, size: size, pagination: { totalElements: 20, totalPages: 1, page: page, size: size }, summary: {}, brand: {} });
+  };
+})();
+
+</script>
 
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
@@ -80,7 +111,7 @@
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
-<script src="assets/js/auth.js?v=1.0.87"></script>
+<!-- stubbed -->
 <script src="assets/js/reports.js?v=1.0.38"></script>
 <script src="assets/js/bo-date-range.js?v=1.0.16"></script>
 <script src="assets/js/casino-report.js?v=1.0.19"></script>
