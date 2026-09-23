@@ -2342,11 +2342,25 @@ and 35 shared assets were referenced with more than one value — `bo-charcoal-c
 exactly when the file changes and is identical everywhere; the tree is stamped (**0 drift**). Forcing that
 fresh fetch is what *exposed* the pill defect, which the browser's cached copy had been hiding.
 
-**Still on the legacy tier:** the `.mp-search`/roles family (`menu-permission`, `main-merchant-roles`, both
-`*-role-create`; shared sheet `menu-permission-executive.css`) and the 42px shared recipe on `game`,
-`game-category`, `admin-user`, `livechat`. Left deliberately: `menu-permission` did not render its toolbar
-in the stubbed harness on that run, and migrating a row that cannot be measured first is how the block
-above nearly shipped into a sheet nobody loads.
+**The last two families are migrated too.** The roles/permissions rows (`menu-permission`,
+`main-merchant-roles`, `main-admin-role-create`, `main-merchant-role-create`) measured mixed —
+`.mp-toolbar` row 64 with search 42 and the action cluster 32, `.mrc-filter-row` row 42 with search 42 and
+tools 34 — and now read `mp-search:36/8px` with their action clusters at 36. The two listings that ship no
+sheet of their own — `game` and `game-category` (`body.standardized-game-management`) and `admin-user`
+(`body.admin-management-page`) — measured a **uniformly 42px row** (every `.bo-filter-item` child 42:
+search, four selects, two action buttons), so the row moved whole: search `36/8px`, selects `36/8px`,
+action buttons `36/8px`, search input `36` with its `34px` icon inset. `livechat` is the one case that
+moved **alone**: `.livechat-inbox-card` is a vertical stack (card head 36 · search · list), so the search
+drops to 36 and lands flush with the head above it.
+
+**Two lessons from this round.** (1) `game`/`game-category`/`admin-user` have no page sheet at all — they
+style themselves from the shared recipes — so their block went into `reports.css` scoped by their body
+class; and the search input's height came from `bo-ui-standard.css`'s
+`… .bo-filter-input-item input{height:42px!important}`, so that block needed a **third** `:not(#…)` guard
+(`:not(#bo-input-fill-legacy)`) to out-rank it — two were measured not enough. (2) Their action buttons sat
+in a container that *is* the `.bo-filter-item`, not inside one, so
+`… .bo-filter-item > .game-filter-actions > *` matched nothing; `….bo-filter-row .game-filter-actions > *`
+does. Measure the control, not the markup you assumed.
 
 **Wiped once and re-applied.** The back-button work and this search work were both lost when the working
 tree was reset to `origin/main` (the reflog shows `reset: moving to origin/main` three times in one
