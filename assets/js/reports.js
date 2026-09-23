@@ -601,20 +601,37 @@ document.addEventListener('DOMContentLoaded', () => {
     if(isCompactAutoWidthWrap(parts.wrap)){
       if(inFilterRow || inEntriesControl){
         /* Never size the .bo-filter-row itself — that collapses keyword+select
-           into the select's width and clips the dropdown (VIP Reward Log). */
-        const item=parts.wrap.closest('.bo-filter-select-item,.field,.entries-control') || parts.wrap;
-        if(item && !item.classList.contains('bo-filter-row') && (item.classList.contains('bo-filter-select-item') || item.classList.contains('field') || item.classList.contains('entries-control') || item===parts.wrap)){
+           into the select's width and clips the dropdown (VIP Reward Log).
+           Never size .entries-control either — that crushes "Show [N] entries"
+           into the select's 72px (Game Sub Category / MD Show N footer). */
+        const item=inEntriesControl
+          ? parts.wrap
+          : (parts.wrap.closest('.bo-filter-select-item,.field') || parts.wrap);
+        if(item && !item.classList.contains('bo-filter-row') && (item.classList.contains('bo-filter-select-item') || item.classList.contains('field') || item===parts.wrap)){
           item.style.setProperty('--bo-select-width', contentWidth+'px');
           item.style.setProperty('width', contentWidth+'px', 'important');
           item.style.setProperty('min-width', contentWidth+'px', 'important');
           item.style.setProperty('max-width', contentWidth+'px', 'important');
           item.style.setProperty('flex', '0 0 '+contentWidth+'px', 'important');
         }
+        if(inEntriesControl){
+          const row=parts.wrap.closest('.entries-control');
+          if(row){
+            row.style.removeProperty('width');
+            row.style.removeProperty('min-width');
+            row.style.removeProperty('max-width');
+            row.style.removeProperty('flex');
+            row.style.removeProperty('--bo-select-width');
+          }
+          /* MD Footer Show N — lock 72×36 Role select chrome */
+          contentWidth=Math.max(72, contentWidth);
+        }
         parts.wrap.style.setProperty('width', inEntriesControl ? contentWidth+'px' : '100%', 'important');
         parts.wrap.style.setProperty('min-width', inEntriesControl ? contentWidth+'px' : '0', 'important');
         parts.wrap.style.setProperty('max-width', inEntriesControl ? contentWidth+'px' : '100%', 'important');
         if(inEntriesControl){
           parts.wrap.style.setProperty('flex', '0 0 '+contentWidth+'px', 'important');
+          parts.wrap.style.setProperty('height', '36px', 'important');
         }else{
           parts.wrap.style.removeProperty('flex');
         }

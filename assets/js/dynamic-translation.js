@@ -103,18 +103,79 @@
     });
   }
 
+  function syncCollapseUi(panel){
+    const collapsed = panel.classList.contains('is-collapsed');
+    const toggle = panel.querySelector('[data-dt-collapse]');
+    const icon = panel.querySelector('[data-dt-collapse-icon]');
+    if(toggle){
+      toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      toggle.setAttribute('aria-label', collapsed ? 'Expand language translation' : 'Collapse language translation');
+      toggle.classList.remove('bo-ui-button','bo-ui-button-primary','bo-ui-button-secondary','bo-ui-button-danger','primary','clean-btn');
+      delete toggle.dataset.boUiButton;
+      toggle.setAttribute('data-bo-ui-skip','1');
+    }
+    if(icon){
+      icon.className = collapsed ? 'bi bi-chevron-right' : 'bi bi-chevron-down';
+      icon.setAttribute('data-dt-collapse-icon','');
+    }
+  }
+
+  function ensureCollapseChrome(panel){
+    if(!panel) return;
+    let toggle = panel.querySelector('[data-dt-collapse]');
+    if(!toggle){
+      const head = panel.querySelector('.dynamic-translation-head');
+      if(!head) return;
+      const titleWrap = head.querySelector(':scope > div, :scope > h3');
+      toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'dynamic-translation-toggle';
+      toggle.setAttribute('data-dt-collapse','');
+      toggle.setAttribute('data-bo-ui-skip','1');
+      toggle.innerHTML = '<span class="dt-collapse-chevron" aria-hidden="true"><i class="bi bi-chevron-down" data-dt-collapse-icon></i></span><span class="dt-collapse-title">Language Translation</span>';
+      if(titleWrap){
+        const existingTitle = titleWrap.querySelector('h3,b');
+        if(existingTitle && toggle.querySelector('.dt-collapse-title')){
+          toggle.querySelector('.dt-collapse-title').textContent = existingTitle.textContent.trim() || 'Language Translation';
+        }
+        titleWrap.replaceWith(toggle);
+      }else{
+        head.insertBefore(toggle, head.firstChild);
+      }
+    }else{
+      /* Migrate older toggle markup (title+lead inside button) to compact accordion control */
+      if(!toggle.querySelector('.dt-collapse-title')){
+        const oldTitle = toggle.querySelector('b,h3')?.textContent?.trim() || 'Language Translation';
+        toggle.innerHTML = `<span class="dt-collapse-chevron" aria-hidden="true"><i class="bi bi-chevron-down" data-dt-collapse-icon></i></span><span class="dt-collapse-title">${oldTitle}</span>`;
+      }
+      toggle.setAttribute('data-bo-ui-skip','1');
+      toggle.classList.remove('bo-ui-button','bo-ui-button-primary','bo-ui-button-secondary','bo-ui-button-danger','primary','clean-btn');
+      delete toggle.dataset.boUiButton;
+    }
+    if(!panel.hasAttribute('data-dt-collapse-init')){
+      const preferCollapsed = !!(panel.closest('#crudPatternModal') || document.body.classList.contains('page-game'));
+      if(preferCollapsed) panel.classList.add('is-collapsed');
+      panel.setAttribute('data-dt-collapse-init','1');
+    }
+    syncCollapseUi(panel);
+  }
+
   function ensurePanel(form){
     let panel = form.querySelector('[data-dynamic-translation-panel]');
-    if(panel) return panel;
+    if(panel){
+      ensureCollapseChrome(panel);
+      return panel;
+    }
     panel = document.createElement('div');
     panel.className = 'dynamic-translation-panel';
     panel.setAttribute('data-dynamic-translation-panel','1');
-    panel.innerHTML = '<div class="dynamic-translation-head"><div><h3>Language Translation</h3></div><button class="clean-btn" type="button" data-refresh-translation><i class="bi bi-arrow-clockwise"></i> Refresh</button></div><div data-dynamic-translation-body class="dynamic-translation-body"><div class="dt-state dt-state--idle"><i class="bi bi-translate" aria-hidden="true"></i><b>Ready when content is selected</b><span>Save or edit an item first, then manage translations here.</span></div></div>';
+    panel.innerHTML = '<div class="dynamic-translation-head"><button type="button" class="dynamic-translation-toggle" data-dt-collapse data-bo-ui-skip="1" aria-expanded="true"><span class="dt-collapse-chevron" aria-hidden="true"><i class="bi bi-chevron-down" data-dt-collapse-icon></i></span><span class="dt-collapse-title">Language Translation</span></button><button class="clean-btn" type="button" data-refresh-translation><i class="bi bi-arrow-clockwise"></i> Refresh</button></div><div data-dynamic-translation-body class="dynamic-translation-body"><div class="dt-state dt-state--idle"><i class="bi bi-translate" aria-hidden="true"></i><b>Ready when content is selected</b><span>Save or edit an item first, then manage translations here.</span></div></div>';
     const host = form.querySelector('[data-translation-panel-host]');
     const actions = form.querySelector('.slider-form-actions');
     if(host) host.appendChild(panel);
     else if(actions) actions.before(panel);
     else form.appendChild(panel);
+    ensureCollapseChrome(panel);
     return panel;
   }
 
@@ -123,9 +184,9 @@
     if(f.type==='textarea' || f.type==='html'){
       const rows=f.rows || (f.type==='html'?9:5);
       const hint=f.type==='html'?'<small class="dynamic-field-hint">HTML/rich-text markup is preserved.</small>':'';
-      return `<div class="dynamic-text-edit"><textarea rows="${rows}" ${common}>${esc(value)}</textarea>${hint}<button class="clean-btn primary" type="button" data-dt-save-text data-lang="${esc(langCode)}" data-field="${esc(f.key)}"><i class="bi bi-save"></i> Save Text</button></div>`;
+      return `<div class="dynamic-text-edit"><textarea rows="${rows}" ${common}>${esc(value)}</textarea>${hint}<button class="clean-btn dt-save-btn" type="button" data-dt-save-text data-lang="${esc(langCode)}" data-field="${esc(f.key)}"><i class="bi bi-check2"></i> Save</button></div>`;
     }
-    return `<div class="dynamic-text-edit"><input type="text" value="${esc(value)}" ${common}><button class="clean-btn primary" type="button" data-dt-save-text data-lang="${esc(langCode)}" data-field="${esc(f.key)}"><i class="bi bi-save"></i> Save Text</button></div>`;
+    return `<div class="dynamic-text-edit"><input type="text" value="${esc(value)}" ${common}><button class="clean-btn dt-save-btn" type="button" data-dt-save-text data-lang="${esc(langCode)}" data-field="${esc(f.key)}"><i class="bi bi-check2"></i> Save</button></div>`;
   }
 
   function imageEditorHtml(f, value, langCode){
@@ -138,7 +199,7 @@
         `<input type="file" accept="image/*" data-dt-file data-lang="${esc(langCode)}" data-field="${esc(f.key)}">` +
         `<span class="dynamic-file-pick-ui" aria-hidden="true"><i class="bi bi-folder2-open"></i><em data-dt-file-label>Choose file</em></span>` +
       `</label>` +
-      `<button class="clean-btn primary" type="button" data-dt-save-image data-lang="${esc(langCode)}" data-field="${esc(f.key)}"><i class="bi bi-upload"></i> Save Image</button>` +
+      `<button class="clean-btn dt-save-btn dt-save-btn--image" type="button" data-dt-save-image data-lang="${esc(langCode)}" data-field="${esc(f.key)}"><i class="bi bi-upload"></i> Upload</button>` +
     `</div>`;
   }
 
@@ -164,10 +225,19 @@
       }
       body.innerHTML = langs.map(lang => {
         const data = translations[lang.code] || {};
-        return `<div class="dynamic-lang-card"><div class="dynamic-lang-title"><b>${esc(lang.name)}</b><span class="dynamic-lang-code">${esc(lang.code)}</span></div>${fields.map(f=>{
+        const imageRows = [];
+        const textRows = [];
+        fields.forEach(f => {
           const value = f.type === 'image' ? (data[f.key+'Url'] || data[f.key] || '') : (data[f.key] || '');
-          return `<div class="dynamic-field-row"><label>${esc(f.label)}</label>${f.type === 'image' ? imageEditorHtml(f, value, lang.code) : textEditorHtml(f,value,lang.code)}</div>`;
-        }).join('')}</div>`;
+          const row = `<div class="dynamic-field-row${f.type==='image'?' dynamic-field-row--image':''}"><label>${esc(f.label)}</label>${f.type === 'image' ? imageEditorHtml(f, value, lang.code) : textEditorHtml(f,value,lang.code)}</div>`;
+          if(f.type === 'image') imageRows.push(row); else textRows.push(row);
+        });
+        return `<div class="dynamic-lang-card">` +
+          `<div class="dynamic-lang-title"><b>${esc(lang.name)}</b><span class="dynamic-lang-code">${esc(lang.code)}</span></div>` +
+          `<div class="dynamic-lang-layout">` +
+            (imageRows.length ? `<div class="dynamic-lang-media">${imageRows.join('')}</div>` : '') +
+            (textRows.length ? `<div class="dynamic-lang-texts">${textRows.join('')}</div>` : '') +
+          `</div></div>`;
       }).join('');
     }catch(e){
       const msg=String(e&&e.message||'Request failed');
@@ -181,7 +251,7 @@
     const input=ctx.form.querySelector(`[data-dt-text][data-lang="${CSS.escape(lang)}"][data-field="${CSS.escape(field)}"]`);
     const fd=new FormData(); fd.append('refType',ctx.refType); fd.append('refId',refId); fd.append('langCode',lang); fd.append('fieldKey',field); fd.append('textValue',input.value||'');
     await json(api('TRANSLATION_TEXT'),{method:'POST',body:fd});
-    btn.innerHTML='<i class="bi bi-check-circle"></i> Saved'; setTimeout(()=>btn.innerHTML='<i class="bi bi-save"></i> Save Text',1000);
+    btn.innerHTML='<i class="bi bi-check-circle"></i> Saved'; setTimeout(()=>btn.innerHTML='<i class="bi bi-check2"></i> Save',1000);
   }
   async function saveImage(ctx, btn){
     const refId=ctx.idInput.value, lang=btn.dataset.lang, field=btn.dataset.field;
@@ -225,9 +295,18 @@
     const ctx = {form, idInput, refType:options.refType, fields:options.fields || []};
     ensurePanel(form);
     form.addEventListener('click', e => {
+      const collapse=e.target.closest('[data-dt-collapse]');
       const refresh=e.target.closest('[data-refresh-translation]');
       const txt=e.target.closest('[data-dt-save-text]');
       const img=e.target.closest('[data-dt-save-image]');
+      if(collapse){
+        const panel = collapse.closest('[data-dynamic-translation-panel]');
+        if(panel){
+          panel.classList.toggle('is-collapsed');
+          syncCollapseUi(panel);
+        }
+        return;
+      }
       if(refresh){ render(ctx); }
       if(txt){ saveText(ctx, txt).catch(err=>alert(err.message)); }
       if(img){ saveImage(ctx, img).catch(err=>alert(err.message)); }

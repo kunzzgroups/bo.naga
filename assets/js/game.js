@@ -151,6 +151,11 @@ const GAME_API = {
   let providers = [];
   let picker;
   let isRestoringSelection = false;
+  let lockedAutoSize = null;
+  let autofitReloading = false;
+  let autofitSettled = false;
+  const tableWrap = document.querySelector('.game-table-wrap');
+  const panel = document.querySelector('.game-panel');
 
   function valueOf(obj, keys) {
     for (const key of keys) {
@@ -384,12 +389,11 @@ const GAME_API = {
     if (!customVariablesBox) return;
     const row = document.createElement('div');
     row.className = 'game-custom-variable-row';
-    row.style.cssText = 'display:grid;grid-template-columns:90px 1fr 1fr 42px;gap:8px;align-items:center;margin:8px 0;';
     row.innerHTML = `
-      <label style="margin:0;display:flex;align-items:center;gap:5px;font-size:12px"><input type="checkbox" class="gcv-enabled" ${item.enabled === false ? '' : 'checked'}> Enabled</label>
-      <input type="text" class="gcv-key" maxlength="64" placeholder="Key e.g. playType" value="${escapeHtml(item.key || '')}">
-      <input type="text" class="gcv-value" placeholder="Value e.g. 4" value="${escapeHtml(item.value || '')}">
-      <button type="button" class="clean-btn gcv-remove" title="Remove"><i class="bi bi-trash"></i></button>`;
+      <label class="gcv-enabled-label"><input type="checkbox" class="gcv-enabled" ${item.enabled === false ? '' : 'checked'}><span>On</span></label>
+      <input type="text" class="gcv-key" maxlength="64" placeholder="Key" value="${escapeHtml(item.key || '')}" aria-label="Custom key">
+      <input type="text" class="gcv-value" placeholder="Value" value="${escapeHtml(item.value || '')}" aria-label="Custom value">
+      <button type="button" class="clean-btn gcv-remove" title="Remove" aria-label="Remove custom value"><i class="bi bi-trash" aria-hidden="true"></i></button>`;
     row.querySelector('.gcv-remove').addEventListener('click', () => row.remove());
     customVariablesBox.appendChild(row);
   }
@@ -526,26 +530,262 @@ const GAME_API = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function buildPagination(totalPages) {
-    if (!paginationEl) return;
-    if (totalPages <= 1) {
-      paginationEl.innerHTML = '';
+  /* ===== MD Show `-` autofit (VIP EXP / Sub Category contract) ===== */
+  function isAutoPageSize(raw) {
+    const v = String(raw ?? pageSizeEl?.value ?? '-').trim();
+    return v === '' || v === '-' || /^auto$/i.test(v);
+  }
+
+  function tableBodyScroll() {
+    return list;
+  }
+
+  function naturalRowHeight() {
+    const sample = list.querySelector('.game-table-row');
+    if (sample) return Math.max(56, Math.round(sample.getBoundingClientRect().height));
+    return 76;
+  }
+
+  function measureAutoPageSize() {
+    const scroll = tableBodyScroll();
+    if (!scroll) return 12;
+    const avail = Math.max(0, Math.floor(scroll.clientHeight));
+    const rowH = naturalRowHeight();
+    /* Floor only — never add a row that would clip under overflow:hidden. */
+    return Math.max(5, Math.min(200, Math.floor(avail / rowH) || 12));
+  }
+
+  function autoFitPageSize() {
+    if (lockedAutoSize != null) return lockedAutoSize;
+    lockedAutoSize = measureAutoPageSize();
+    return lockedAutoSize;
+  }
+
+  function clearLockedAutoSize() {
+    lockedAutoSize = null;
+    autofitSettled = false;
+  }
+
+  function resolvePageSize(raw) {
+    const v = String(raw ?? pageSizeEl?.value ?? '-').trim();
+    if (isAutoPageSize(v)) return autoFitPageSize();
+    if (/^all$/i.test(v)) return 10000;
+    const n = Number(v);
+    return Number.isFinite(n) && n > 0 ? n : autoFitPageSize();
+  }
+
+  function syncAutofitLabel() {
+    /* Trigger always paints literal `-`, never the fitted count. */
+    if (!pageSizeEl || !isAutoPageSize(pageSizeEl.value)) return;
+    const btn = pageSizeEl.closest('.rounded-select-wrap')?.querySelector('.rounded-select-btn span');
+    if (btn) btn.textContent = '-';
+  }
+
+  function syncAutofitMode() {
+    const auto = isAutoPageSize(pageSizeEl?.value);
+    list.toggleAttribute('data-bo-autofit', auto);
+    tableWrap?.toggleAttribute('data-bo-autofit', auto);
+    panel?.toggleAttribute('data-bo-autofit', auto);
+    if (!auto) resetEvenFill();
+    syncAutofitLabel();
+  }
+
+  function dataRows() {
+    return [...list.querySelectorAll('.game-table-row')];
+  }
+
+  function resetEvenFill() {
+    list.classList.remove('bo-tx-evenfill');
+    list.style.height = '';
+    dataRows().forEach(row => {
+      row.style.height = '';
+      row.style.minHeight = '';
+      row.style.maxHeight = '';
+      row.style.overflow = '';
+      row.querySelectorAll('.game-main-cell, .game-detail-cell, .game-status-cell, .game-action-cell')
+        .forEach(cell => {
+          cell.style.height = '';
+          cell.style.minHeight = '';
+          cell.style.maxHeight = '';
+        });
+    });
+  }
+
+  function evenFillRowHeights() {
+    const scroll = tableBodyScroll();
+    if (!scroll) return;
+    resetEvenFill();
+    if (!isAutoPageSize(pageSizeEl?.value)) return;
+    const rows = dataRows();
+    if (!rows.length) return;
+    void list.offsetHeight;
+    const avail = Math.max(0, Math.floor(scroll.clientHeight));
+    const natural = rows.reduce((sum, row) => sum + Math.ceil(row.getBoundingClientRect().height), 0);
+    const rowH = Math.max(56, Math.round(natural / rows.length) || 76);
+    const gap = avail - natural;
+    /* Stretch only when leftover seam < one full row. */
+    if (natural > avail + 1 || gap < 2 || gap >= rowH) return;
+    const base = Math.floor(avail / rows.length);
+    let rem = avail - base * rows.length;
+    if (base <= 0) return;
+    list.classList.add('bo-tx-evenfill');
+    list.style.height = avail + 'px';
+    rows.forEach(row => {
+      const h = base + (rem > 0 ? 1 : 0);
+      if (rem > 0) rem -= 1;
+      row.style.height = h + 'px';
+      row.style.minHeight = h + 'px';
+      row.style.maxHeight = h + 'px';
+      row.style.overflow = 'hidden';
+      row.querySelectorAll('.game-main-cell, .game-detail-cell, .game-status-cell, .game-action-cell')
+        .forEach(cell => {
+          cell.style.height = h + 'px';
+          cell.style.minHeight = h + 'px';
+          cell.style.maxHeight = h + 'px';
+        });
+    });
+  }
+
+  function settleAutofitFromPaint() {
+    if (autofitReloading || autofitSettled) return;
+    if (!isAutoPageSize(pageSizeEl?.value)) return;
+    const scroll = tableBodyScroll();
+    if (!scroll) return;
+    resetEvenFill();
+    void scroll.offsetHeight;
+    const rows = dataRows();
+    if (!rows.length) {
+      const target = measureAutoPageSize();
+      if (lockedAutoSize !== target) {
+        lockedAutoSize = target;
+        autofitReloading = true;
+        renderList(currentItems, true);
+        autofitReloading = false;
+        requestAnimationFrame(() => settleAutofitFromPaint());
+      }
       return;
     }
-    const buttons = [];
-    const add = (page, label, disabled = false, active = false, extraClass = '') => {
-      buttons.push(`<button class="smart-page ${active ? 'active' : ''} ${extraClass}" type="button" data-page="${page}" ${disabled ? 'disabled' : ''}>${label}</button>`);
+    const avail = Math.max(0, Math.floor(scroll.clientHeight));
+    const natural = rows.reduce((sum, row) => sum + Math.ceil(row.getBoundingClientRect().height), 0);
+    const rowH = Math.max(56, Math.round(natural / rows.length) || 76);
+    const overflow = natural > avail + 1;
+    let target = Math.max(5, Math.min(200, Math.floor(avail / rowH) || rows.length));
+    if (overflow) target = Math.max(5, Math.min(target, rows.length - 1));
+
+    const verifyAndLock = () => {
+      requestAnimationFrame(() => {
+        const sc = tableBodyScroll();
+        const painted = dataRows();
+        if (!sc || !painted.length) {
+          autofitSettled = true;
+          syncAutofitLabel();
+          return;
+        }
+        const room = Math.max(0, Math.floor(sc.clientHeight));
+        const sum = painted.reduce((s, row) => s + Math.ceil(row.getBoundingClientRect().height), 0);
+        const clipped = sum > room + 1;
+
+        /* Verify only shrinks — grow is floor(avail/rowH) on the settle pass.
+           Growing here oscillates with ceil'd row heights (N fits → N+1 clips → N…). */
+        if (clipped && lockedAutoSize > 5) {
+          lockedAutoSize = Math.max(5, lockedAutoSize - 1);
+          autofitReloading = true;
+          renderList(currentItems, true);
+          autofitReloading = false;
+          verifyAndLock();
+          return;
+        }
+        autofitSettled = true;
+        evenFillRowHeights();
+        syncAutofitLabel();
+      });
     };
-    add(currentPage - 1, '&lsaquo;', currentPage <= 1, false, 'prev');
-    const pages = new Set([1, totalPages, currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2]);
-    let last = 0;
-    [...pages].filter(page => page >= 1 && page <= totalPages).sort((a, b) => a - b).forEach(page => {
-      if (last && page - last > 1) buttons.push('<span class="smart-page-ellipsis">…</span>');
-      add(page, page, false, page === currentPage);
-      last = page;
+
+    if (target === rows.length) {
+      lockedAutoSize = rows.length;
+      verifyAndLock();
+      return;
+    }
+    lockedAutoSize = target;
+    autofitReloading = true;
+    renderList(currentItems, true);
+    autofitReloading = false;
+    verifyAndLock();
+  }
+
+  function scheduleAutofit() {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (isAutoPageSize(pageSizeEl?.value) && !autofitSettled) {
+        settleAutofitFromPaint();
+        return;
+      }
+      evenFillRowHeights();
+      syncAutofitLabel();
+    }));
+  }
+
+  function bindEvenFillObserver() {
+    /* Observe the viewport wrap — never #gameList. evenFill writes list.style.height,
+       which re-fired a list observer → clearLocked → re-render → flicker loop. */
+    const host = tableWrap || panel;
+    if (!host || host._boEvenFillObs) return;
+    host._boEvenFillObs = new ResizeObserver(() => {
+      if (!isAutoPageSize(pageSizeEl?.value)) return;
+      if (autofitReloading) return;
+      clearTimeout(host._boEvenFillTimer);
+      host._boEvenFillTimer = setTimeout(() => {
+        if (autofitReloading) return;
+        const prev = lockedAutoSize;
+        const next = (() => {
+          /* Measure with natural row height (ignore even-fill stretch). */
+          resetEvenFill();
+          void list.offsetHeight;
+          return measureAutoPageSize();
+        })();
+        syncAutofitMode();
+        if (prev != null && next === prev) {
+          lockedAutoSize = prev;
+          autofitSettled = true;
+          evenFillRowHeights();
+          syncAutofitLabel();
+          return;
+        }
+        clearLockedAutoSize();
+        lockedAutoSize = next;
+        renderList(currentItems, true);
+        scheduleAutofit();
+      }, 48);
     });
-    add(currentPage + 1, '&rsaquo;', currentPage >= totalPages, false, 'next');
-    paginationEl.innerHTML = buttons.join('');
+    host._boEvenFillObs.observe(host);
+  }
+
+  function buildPagination(totalPages) {
+    if (!paginationEl) return;
+    const total = Math.max(1, Number(totalPages) || 1);
+    const isEmpty = !currentItems.length && total === 1;
+    const cur = Math.max(1, Math.min(currentPage, total));
+    const btn = (label, target, disabled, active, icon) =>
+      `<button type="button" class="page-btn${active ? ' active' : ''}" data-page="${target}" ${disabled ? 'disabled' : ''} aria-label="${label}"${active ? ' aria-current="page"' : ''}>${icon ? `<i class="bi ${icon}"></i>` : label}</button>`;
+    let html = btn('First', 1, cur <= 1 || isEmpty, false, 'bi-chevron-bar-left');
+    html += btn('Previous', cur - 1, cur <= 1 || isEmpty, false, 'bi-chevron-left');
+    if (isEmpty) {
+      html += btn('1', 1, true, true);
+    } else {
+      const lo = Math.max(1, cur - 2);
+      const hi = Math.min(total, cur + 2);
+      if (lo > 1) {
+        html += btn('1', 1, false, cur === 1);
+        if (lo > 2) html += '<span class="smart-page-ellipsis" aria-hidden="true">…</span>';
+      }
+      for (let i = lo; i <= hi; i++) html += btn(String(i), i, false, i === cur);
+      if (hi < total) {
+        if (hi < total - 1) html += '<span class="smart-page-ellipsis" aria-hidden="true">…</span>';
+        html += btn(String(total), total, false, cur === total);
+      }
+    }
+    html += btn('Next', cur + 1, cur >= total || isEmpty, false, 'bi-chevron-right');
+    html += btn('Last', total, cur >= total || isEmpty, false, 'bi-chevron-bar-right');
+    paginationEl.innerHTML = html;
   }
 
   function renderList(items, resetPage = false) {
@@ -562,15 +802,20 @@ const GAME_API = {
       return Number(b.id || 0) - Number(a.id || 0);
     });
 
-    const pageSize = Math.max(1, Number(pageSizeEl?.value || 10));
-    const totalPages = Math.max(1, Math.ceil(visible.length / pageSize));
+    syncAutofitMode();
+    const pageSize = resolvePageSize(pageSizeEl?.value);
+    const totalPages = Math.max(1, Math.ceil(visible.length / pageSize) || 1);
     if (currentPage > totalPages) currentPage = totalPages;
     const startIndex = (currentPage - 1) * pageSize;
     const pageItems = visible.slice(startIndex, startIndex + pageSize);
 
     if (totalCountEl) totalCountEl.textContent = currentItems.length;
     if (activeCountEl) activeCountEl.textContent = currentItems.filter(item => Number(item.status) === 1).length;
-    if (showingTextEl) showingTextEl.textContent = visible.length ? `Showing ${startIndex + 1} to ${Math.min(startIndex + pageItems.length, visible.length)} of ${visible.length} entries` : 'Showing 0 entries';
+    if (showingTextEl) {
+      const from = visible.length ? startIndex + 1 : 0;
+      const to = visible.length ? startIndex + pageItems.length : 0;
+      showingTextEl.textContent = `Showing ${from} to ${to} of ${visible.length} entries`;
+    }
     list.innerHTML = '';
     empty.hidden = visible.length > 0;
 
@@ -600,9 +845,12 @@ const GAME_API = {
       list.appendChild(row);
     });
     buildPagination(totalPages);
+    if (!autofitReloading) scheduleAutofit();
+    else syncAutofitLabel();
   }
 
   async function loadGames() {
+    clearLockedAutoSize();
     list.innerHTML = '<div class="slider-empty"><i class="bi bi-hourglass-split"></i><b>Loading games...</b></div>';
     empty.hidden = true;
     try {
@@ -779,16 +1027,33 @@ const GAME_API = {
   });
 
   categoryFilter.addEventListener('change', async () => {
+    clearLockedAutoSize();
     refreshFilterSubCategoryOptions();
     subCategoryFilter.value = '';
     await loadGames();
   });
 
-  subCategoryFilter.addEventListener('change', loadGames);
-  if (providerFilter) providerFilter.addEventListener('change', () => { refreshFilterSubCategoryOptions(); subCategoryFilter.value = ''; loadGames(); });
-  if (searchInput) searchInput.addEventListener('input', () => renderList(currentItems, true));
-  if (sortFilter) sortFilter.addEventListener('change', () => renderList(currentItems, true));
-  if (applyFiltersBtn) applyFiltersBtn.addEventListener('click', () => renderList(currentItems, true));
+  subCategoryFilter.addEventListener('change', () => { clearLockedAutoSize(); loadGames(); });
+  if (providerFilter) providerFilter.addEventListener('change', () => { clearLockedAutoSize(); refreshFilterSubCategoryOptions(); subCategoryFilter.value = ''; loadGames(); });
+  if (searchInput) {
+    let searchTimer = 0;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        clearLockedAutoSize();
+        renderList(currentItems, true);
+      }, 180);
+    });
+    searchInput.addEventListener('keydown', e => {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      clearTimeout(searchTimer);
+      clearLockedAutoSize();
+      renderList(currentItems, true);
+    });
+  }
+  if (sortFilter) sortFilter.addEventListener('change', () => { clearLockedAutoSize(); renderList(currentItems, true); });
+  if (applyFiltersBtn) applyFiltersBtn.addEventListener('click', () => { clearLockedAutoSize(); renderList(currentItems, true); });
   if (resetFiltersBtn) resetFiltersBtn.addEventListener('click', () => {
     if (searchInput) searchInput.value = '';
     if (categoryFilter) categoryFilter.value = '';
@@ -796,11 +1061,16 @@ const GAME_API = {
     if (subCategoryFilter) subCategoryFilter.value = '';
     if (providerFilter) providerFilter.value = '';
     if (sortFilter) sortFilter.value = 'newest';
+    clearLockedAutoSize();
     loadGames();
   });
 
 
-  if (pageSizeEl) pageSizeEl.addEventListener('change', () => renderList(currentItems, true));
+  if (pageSizeEl) pageSizeEl.addEventListener('change', () => {
+    clearLockedAutoSize();
+    syncAutofitMode();
+    renderList(currentItems, true);
+  });
   if (paginationEl) paginationEl.addEventListener('click', e => {
     const button = e.target.closest('[data-page]');
     if (!button || button.disabled) return;
@@ -808,7 +1078,6 @@ const GAME_API = {
     if (!Number.isFinite(page) || page < 1) return;
     currentPage = page;
     renderList(currentItems);
-    list.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
   list.addEventListener('click', e => {
@@ -822,6 +1091,8 @@ const GAME_API = {
   });
 
   (async function init() {
+    syncAutofitMode();
+    bindEvenFillObserver();
     try {
       await loadSetup();
       resetForm();

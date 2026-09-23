@@ -10,18 +10,26 @@
 <title>Game</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
-<link href="assets/css/reports.css?v=1f631778" rel="stylesheet"/>
+<link href="assets/css/reports.css?v=1f63177b" rel="stylesheet"/>
 <link href="assets/css/table-pagination-horizontal.css?v=50c582bf" rel="stylesheet"/>
-<link href="assets/css/bo-ui-standard.css?v=a920a6cc" rel="stylesheet">
+<link href="assets/css/bo-ui-standard.css?v=a920a6cd" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=7542fd4c" rel="stylesheet"/>
 <link href="assets/css/bo-account-chip.css?v=e6d15d38" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-shell.css?v=8b3a4edd" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-legacy.css?v=c36fefad" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-legacy.css?v=c36fefae" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-primitives.css?v=7b2815b6" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-cms.css?v=578c4b78" rel="stylesheet" />
-<link href="assets/css/bo-input-fill.css?v=3005315e" rel="stylesheet" />
-</link></head>
-<body class="report-body standardized-game-management bo-charcoal bo-account-chip">
+<link href="assets/css/bo-input-fill.css?v=3005315f" rel="stylesheet" />
+<link href="assets/css/game.css?v=b2c4d5ea" rel="stylesheet"/>
+<script>
+(function(){
+  try{
+    if(localStorage.getItem('bo_theme')==='dark') document.documentElement.setAttribute('data-bo-theme','dark');
+  }catch(e){}
+})();
+</script>
+</head>
+<body class="report-body standardized-game-management page-game bo-charcoal bo-account-chip">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
 <div class="report-brand">
@@ -48,7 +56,7 @@
     </div>
 </header>
 <section class="report-content">
-<div class="manage-page-grid">
+<div class="manage-page-grid crud-list-only-grid">
 <div class="manage-form-card">
 <div class="section-title mb-3">
 <div>
@@ -57,35 +65,39 @@
 </div>
 <form class="slider-form" id="gameForm">
 <input id="gameId" name="id" type="hidden"/>
-<div class="slider-upload-box game-image-upload" id="gameDropZone">
+<div class="slider-two-col game-image-pair">
+<div class="field">
+<label>Game Image</label>
+<div class="slider-upload-box slider-upload-box-compact game-image-upload" id="gameDropZone">
 <input accept="image/*" id="gameImage" name="image" type="file"/>
 <div class="slider-upload-placeholder" id="gameUploadPlaceholder">
 <i class="bi bi-cloud-arrow-up"></i>
-<strong>Choose game image or drag here</strong>
-<small>PNG, JPG, WEBP, GIF accepted</small>
+<strong>Drop or choose image</strong>
+<small>PNG · JPG · WEBP · GIF</small>
 </div>
 <img alt="Game preview" hidden="" id="gamePreview"/>
 </div>
 <div class="slider-current-image" hidden="" id="gameCurrentImage">
                   Current image will remain if no new image selected.
                 </div>
-<div class="slider-upload-section-title mt-3">
-<span>Chinese Image</span>
-<small>Optional. If empty, frontend uses default image.</small>
 </div>
+<div class="field">
+<label>Chinese Image <small class="text-muted">(optional)</small></label>
 <div class="slider-upload-box slider-upload-box-compact game-image-upload game-image-upload-zh" id="gameDropZoneZh">
 <input accept="image/*" id="gameImageZh" name="imageZh" type="file"/>
 <div class="slider-upload-placeholder" id="gameUploadPlaceholderZh">
 <i class="bi bi-cloud-arrow-up"></i>
-<strong>Choose Chinese image or drag here</strong>
-<small>PNG, JPG, WEBP, GIF accepted</small>
+<strong>Chinese image</strong>
+<small>Falls back to default if empty</small>
 </div>
 <img alt="Chinese game preview" hidden="" id="gamePreviewZh"/>
 </div>
 <div class="slider-current-image" hidden="" id="gameCurrentImageZh">
                   Current Chinese image will remain if no new Chinese image selected.
                 </div>
-<div class="slider-two-col mt-3">
+</div>
+</div>
+<div class="slider-two-col">
 <div class="field">
 <label>Category</label>
 <select id="gameCategoryId" name="categoryId"></select>
@@ -96,6 +108,7 @@
 <input type="hidden" id="gameSubCategoryValue" name="subCategoryId" value="0">
 </div>
 </div>
+<div class="slider-two-col">
 <div class="field">
 <label>Game Name</label>
 <input id="gameName" name="name" placeholder="Example: Lucky Fortune" type="text"/>
@@ -104,25 +117,26 @@
 <label>Chinese Name</label>
 <input id="gameNameZh" name="nameZh" placeholder="Chinese Game name" type="text"/>
 </div>
+</div>
 <div class="field">
 <label>Game URL</label>
 <input id="gameUrl" name="gameUrl" placeholder="https://example.com/play or internal path" type="text"/>
 </div>
 <div class="slider-two-col">
 <div class="field">
-<label>Provider Code <small class="text-muted">(required for launch)</small></label>
+<label>Provider Code</label>
 <input id="gameProviderCode" name="providerCode" placeholder="Example: WBET" type="text"/>
 </div>
 <div class="field">
-<label>Game Code <small class="text-muted">(required for launch)</small></label>
+<label>Game Code</label>
 <input id="gameCode" name="gameCode" placeholder="Example: SPORTS / 1001" type="text"/>
 </div>
 </div>
-<div class="field">
-<label>Provider Custom Values <small class="text-muted">(optional; only sent when enabled and non-empty)</small></label>
-<div id="gameCustomVariables"></div>
-<button class="clean-btn" id="addGameCustomVariableBtn" type="button"><i class="bi bi-plus-circle"></i> Add Custom Value</button>
-<small class="text-muted">Example for ASTAR Chess: key <b>playType</b>, value <b>4</b>. Other providers can use their own key/value without code changes.</small>
+<div class="field game-custom-values-field">
+<label>Provider Custom Values</label>
+<p class="game-field-hint">Optional key/value pairs sent only when enabled. Example: <code>playType</code> → <code>4</code>.</p>
+<div id="gameCustomVariables" class="game-custom-variables"></div>
+<button class="clean-btn game-custom-add-btn" id="addGameCustomVariableBtn" type="button"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add value</button>
 </div>
 <div class="slider-two-col">
 <div class="field">
@@ -144,32 +158,46 @@
 <div class="upload-status" id="gameStatusBox"></div>
 </form>
 </div>
-<div class="manage-list-card game-modern-page">
-<div class="section-title slider-list-title game-toolbar-title">
-<button class="clean-btn" id="downloadGameImagesBtn" type="button"><i class="bi bi-cloud-arrow-down"></i> <span class="btn-label">Download Images</span></button>
-<button class="clean-btn" id="refreshGameBtn" type="button"><i class="bi bi-arrow-clockwise"></i> <span class="btn-label">Refresh</span></button>
-</div>
-<div class="game-summary-grid">
-<article class="game-summary-card"><span class="game-summary-icon blue"><i class="bi bi-controller"></i></span><div><small>Total Games</small><strong id="gameTotalCount">0</strong><p>All games in system</p></div></article>
-<article class="game-summary-card"><span class="game-summary-icon green"><i class="bi bi-check-circle"></i></span><div><small>Active</small><strong id="gameActiveCount">0</strong><p>Currently active games</p></div></article>
-</div>
+<div class="manage-list-card game-modern-page crud-list-full">
+<div class="game-panel">
 <div class="game-filter-card bo-filter-row">
-<label><span>Search Game</span><div class="game-search-control"><i class="bi bi-search"></i><input id="gameSearchInput" placeholder="Search by game name..." type="search"/></div></label>
-<label><span>Category</span><select id="gameCategoryFilter"></select></label>
-<label><span>Sub Category</span><select id="gameSubCategoryFilter"></select></label>
-<label><span>Provider</span><select id="gameProviderFilter"></select></label>
-<label><span>Sort By</span><select id="gameSortFilter"><option value="newest">Newest</option><option value="sortAsc">Sort Order (Asc)</option><option value="sortDesc">Sort Order (Desc)</option><option value="nameAsc">Name (A-Z)</option><option value="nameDesc">Name (Z-A)</option></select></label>
-<div class="game-filter-actions"><button class="clean-btn" id="resetGameFilters" type="button"><i class="bi bi-arrow-counterclockwise"></i> Reset</button><button class="clean-btn primary" id="applyGameFilters" type="button"><i class="bi bi-search"></i> Search</button></div>
+<label aria-label="Search Game"><div class="game-search-control"><i class="bi bi-search" aria-hidden="true"></i><input id="gameSearchInput" name="gameSearch" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search games..." type="search"/></div></label>
+<label class="bo-filter-select-item" aria-label="Category"><select id="gameCategoryFilter" data-bo-auto-width="0"></select></label>
+<label class="bo-filter-select-item" aria-label="Sub Category"><select id="gameSubCategoryFilter" data-bo-auto-width="0"></select></label>
+<label class="bo-filter-select-item" aria-label="Provider"><select id="gameProviderFilter" data-bo-auto-width="0"></select></label>
+<label class="bo-filter-select-item" aria-label="Sort By"><select id="gameSortFilter" data-bo-auto-width="0"><option value="newest">Newest</option><option value="sortAsc">Sort Order (Asc)</option><option value="sortDesc">Sort Order (Desc)</option><option value="nameAsc">Name (A-Z)</option><option value="nameDesc">Name (Z-A)</option></select></label>
+<div class="game-filter-spacer" aria-hidden="true"></div>
+<div class="section-title slider-list-title game-toolbar-title">
+<button class="mad-btn mad-btn-ghost clean-btn" id="downloadGameImagesBtn" type="button"><i class="bi bi-cloud-arrow-down" aria-hidden="true"></i><span class="btn-label">Download Images</span></button>
+<button class="mad-btn mad-btn-ghost clean-btn" id="refreshGameBtn" type="button"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i><span class="btn-label">Refresh</span></button>
+<button class="clean-btn primary crud-add-btn" id="addGameBtn" type="button"><i class="bi bi-plus-lg" aria-hidden="true"></i><span class="btn-label">Add Game</span></button>
 </div>
-<div class="slider-empty" hidden="" id="gameEmpty"><i class="bi bi-joystick"></i><b>No games found</b><small>Create your first game.</small></div>
+</div>
 <div class="game-table-wrap">
-<div class="game-table-head"><span>Game</span><span>Details</span><span>Status</span><span>Actions</span></div>
+<div class="slider-empty" hidden="" id="gameEmpty"><i class="bi bi-joystick"></i><b>No games found</b><small>Create your first game.</small></div>
+<div class="game-table-head">
+<span class="game-head-game"><i class="bi bi-arrow-down-up" aria-hidden="true"></i> Game</span>
+<span class="game-head-details"><i class="bi bi-arrow-down-up" aria-hidden="true"></i> Details</span>
+<span class="game-head-status"><i class="bi bi-arrow-down-up" aria-hidden="true"></i> Status</span>
+<span class="game-head-actions"><i class="bi bi-arrow-down-up" aria-hidden="true"></i> Actions</span>
+</div>
 <div class="manage-list game-table" id="gameList"></div>
 </div>
-<div class="table-footer">
-<div class="entries-control"><span>Show</span><select id="gamePageSize"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select><span>entries</span></div>
-<span class="table-info" id="gameShowingText">Showing 0 entries</span>
-<div aria-label="Game list pagination" class="pagination-clean smart-pagination" id="gamePagination" role="navigation"></div>
+<div class="table-footer standard-pagination game-table-footer mad-footer bo-pagination-standard">
+<div class="entries-control">Show
+<select id="gamePageSize" aria-label="Show entries">
+<option value="-" selected>-</option>
+<option value="10">10</option>
+<option value="20">20</option>
+<option value="50">50</option>
+<option value="100">100</option>
+<option value="All">All</option>
+</select>
+entries
+</div>
+<div class="table-info mad-footer-info" id="gameShowingText">Showing 0 to 0 of 0 entries</div>
+<nav aria-label="Game list pagination" class="pagination-clean bo-pagination-buttons mad-pager" id="gamePagination" role="navigation"></nav>
+</div>
 </div>
 </div>
 </div>
@@ -182,8 +210,8 @@
 <script src="assets/js/currency-runtime.js?v=71496e4c"></script>
 <script src="assets/js/auth.js?v=26d9a999"></script>
 <script src="assets/js/reports.js?v=3d90f6eb"></script>
-<script src="assets/js/dynamic-translation.js?v=c2867c10"></script>
-<script src="assets/js/game.js?v=d1c56e3e"></script>
+<script src="assets/js/dynamic-translation.js?v=c2867c14"></script>
+<script src="assets/js/game.js?v=e2f4a805"></script>
 <script src="assets/js/dynamic-translation-init.js?v=c2b032a8"></script>
 <script src="assets/js/crud-modal-pattern.js?v=15c3c1ec"></script>
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
@@ -192,7 +220,7 @@
 <script src="assets/js/firebase-config.js?v=01bf393d"></script>
 <script src="assets/js/livechat-global-notification.js?v=402f6f19"></script>
 <script src="assets/js/pagination-standardizer.js?v=3949027a"></script>
-<script src="assets/js/bo-ui-standard.js?v=2a3d22cb"></script>
+<script src="assets/js/bo-ui-standard.js?v=2a3d22cd"></script>
 <script src="assets/js/operation-global-notification.js?v=3e3a4090"></script>
 <script src="assets/js/bo-theme.js?v=b1e789f3"></script>
 <script src="assets/js/bo-account-chip.js?v=8b9ce6d4"></script>

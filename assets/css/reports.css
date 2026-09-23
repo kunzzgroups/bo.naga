@@ -526,11 +526,19 @@ body:not(.site-customize-page) .asset-upload-row[data-field$="Zh"],
 /* Dynamic language translation editor */
 .dynamic-translation-panel{margin:18px 0;padding:16px;border:1px solid rgba(217,119,6,.35);border-radius:18px;background:#FFF8EB;box-shadow:0 8px 24px rgba(217,119,6,.04);width:100%;max-width:100%;box-sizing:border-box;overflow:hidden}
 .dynamic-translation-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
-.dynamic-translation-head h3{font-size:16px;margin:0;color:#18191C}.dynamic-translation-head small{color:#57534E;display:block;line-height:1.45}
+.dynamic-translation-head h3,.dynamic-translation-toggle-copy>b{font-size:16px;margin:0;color:#18191C;font-weight:800;display:block}.dynamic-translation-head small,.dynamic-translation-lead{color:#57534E;display:block;line-height:1.45;margin-top:4px;font-size:12px;font-weight:600}
+.dynamic-translation-toggle{appearance:none;border:0;background:transparent;padding:0;margin:0;display:flex;align-items:flex-start;gap:8px;text-align:left;cursor:pointer;color:inherit;min-width:0;flex:1 1 auto}
+.dynamic-translation-toggle [data-dt-collapse-icon]{flex:0 0 auto;margin-top:3px;font-size:14px;color:#57534E;transition:transform .16s ease}
+.dynamic-translation-toggle-copy{min-width:0}
+.dynamic-translation-panel.is-collapsed .dynamic-translation-body{display:none!important}
+.dynamic-translation-panel.is-collapsed .dynamic-translation-lead{display:none!important}
+.dynamic-translation-panel.is-collapsed .dynamic-translation-head{margin-bottom:0}
 .dynamic-translation-body{display:grid;gap:14px;width:100%;max-width:100%;box-sizing:border-box}.dynamic-lang-card{border:1px solid rgba(217,119,6,.9);border-radius:16px;padding:14px;background:#F5EBDC;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden}
-.dynamic-lang-title{display:flex;align-items:center;gap:8px;margin-bottom:12px}.dynamic-lang-title small{padding:2px 8px;border-radius:999px;background:#EADCC8;color:#18191C}
-.dynamic-field-row{display:grid;gap:8px;margin-bottom:14px;width:100%;max-width:100%;box-sizing:border-box}.dynamic-field-row label{font-weight:700;font-size:13px;color:#18191C}
-.dynamic-text-edit{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;width:100%;max-width:100%;box-sizing:border-box}.dynamic-text-edit input{border:1px solid #EADCC8;border-radius:8px;padding:0 12px;height:40px;background:#F5EBDC;width:100%;max-width:100%;box-sizing:border-box}.dynamic-text-edit .clean-btn{width:auto;min-width:118px;height:40px;min-height:40px;padding:0 14px}
+.dynamic-lang-title{display:flex;align-items:center;gap:8px;margin-bottom:12px}.dynamic-lang-title small,.dynamic-lang-code{padding:2px 8px;border-radius:999px;background:#EADCC8;color:#18191C}
+.dynamic-lang-layout{display:flex;flex-direction:column;gap:14px;width:100%;max-width:100%;box-sizing:border-box}
+.dynamic-lang-media,.dynamic-lang-texts{min-width:0;width:100%;max-width:100%;box-sizing:border-box}
+.dynamic-field-row{display:grid;gap:8px;margin-bottom:14px;width:100%;max-width:100%;box-sizing:border-box}.dynamic-field-row:last-child{margin-bottom:0}.dynamic-field-row label{font-weight:700;font-size:13px;color:#18191C}
+.dynamic-text-edit{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;width:100%;max-width:100%;box-sizing:border-box}.dynamic-text-edit input{border:1px solid #EADCC8;border-radius:8px;padding:0 12px;height:40px;background:#F5EBDC;width:100%;max-width:100%;box-sizing:border-box}.dynamic-text-edit .clean-btn,.dynamic-text-edit .dt-save-btn{width:auto;min-width:88px;height:40px;min-height:40px;padding:0 12px}
 .dynamic-image-edit{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"preview preview" "pick save";gap:8px;align-items:center;width:100%;max-width:100%;box-sizing:border-box}
 .dynamic-image-preview{grid-area:preview;width:100%;height:88px;border:1px solid #DCC9A8;border-radius:8px;background:#F5EBDC;display:grid;place-items:center;overflow:hidden;color:#78716C;font-size:11px;font-weight:700;box-sizing:border-box}.dynamic-image-preview img{width:100%;height:100%;object-fit:contain;display:block}
 .dynamic-file-pick{grid-area:pick;position:relative;display:block;min-width:0;margin:0;cursor:pointer}
@@ -538,8 +546,8 @@ body:not(.site-customize-page) .asset-upload-row[data-field$="Zh"],
 .dynamic-file-pick-ui{display:flex;align-items:center;gap:8px;width:100%;height:40px;padding:0 12px;box-sizing:border-box;border-radius:8px;border:1px solid #DCC9A8;background:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%);color:#18191C;font-size:12.5px;font-weight:800;overflow:hidden;box-shadow:0 1px 2px rgba(24,25,28,.06)}
 .dynamic-file-pick-ui>i{color:#B45309;font-size:14px;flex:0 0 auto}
 .dynamic-file-pick-ui>em{flex:1 1 auto;min-width:0;margin:0;font-style:normal;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dynamic-image-edit>.clean-btn{grid-area:save;width:auto;min-width:118px;height:40px;min-height:40px;padding:0 14px;white-space:nowrap}
-@media (max-width:575px){.dynamic-image-edit{grid-template-columns:1fr;grid-template-areas:"preview" "pick" "save"}.dynamic-image-preview{height:72px}.dynamic-image-edit>.clean-btn{width:100%}.dynamic-text-edit{grid-template-columns:1fr}.dynamic-text-edit .clean-btn{width:100%}}
+.dynamic-image-edit>.clean-btn,.dynamic-image-edit>.dt-save-btn{grid-area:save;width:auto;min-width:96px;height:40px;min-height:40px;padding:0 12px;white-space:nowrap}
+@media (max-width:575px){.dynamic-image-edit{grid-template-columns:1fr;grid-template-areas:"preview" "pick" "save"}.dynamic-image-preview{height:72px}.dynamic-image-edit>.clean-btn,.dynamic-image-edit>.dt-save-btn{width:100%}.dynamic-text-edit{grid-template-columns:1fr}.dynamic-text-edit .clean-btn,.dynamic-text-edit .dt-save-btn{width:100%}}
 @media (min-width: 1400px){.dynamic-image-edit{grid-template-columns:minmax(0,1fr) auto}}
 
 /* Create admin themed page */
@@ -1686,13 +1694,13 @@ html body.bo-wallet-tx.provider-transaction-page.pwt-page .table-card > .table-w
 /* Every regular input/select follows the approved rounded field theme. */
 .report-content select:not(#pullLogWindowUnit),
 .report-content .form-select,
-.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(.mad-search input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input):not(.bonus-title-search input),
+.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(.mad-search input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input):not(.bonus-title-search input):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input),
 .report-content textarea{
   border:1px solid #EADCC8!important;border-radius:10px!important;background-color:#FFF8EB!important;
   box-shadow:none!important;color:#18191C;
 }
 .report-content select:not(#pullLogWindowUnit):focus,.report-content .form-select:focus,
-.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(.mad-search input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input):not(.bonus-title-search input):focus,
+.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(.mad-search input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input):not(.bonus-title-search input):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):focus,
 .report-content textarea:focus{border-color:#78716C!important;box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;outline:0!important}
 
 /* Live chat keeps the composer available while only the message history scrolls. */

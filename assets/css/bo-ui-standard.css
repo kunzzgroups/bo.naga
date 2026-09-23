@@ -1,7 +1,7 @@
 /*
  * BO shared UI standard v2.1.0
  * One authoritative file for filter inputs, dropdowns and filter actions.
- * Date range: flat Dashboard style (fig.2) — navy icon + bold label, no filled icon well.
+ * Date range: flat Dashboard style (fig.2) ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ navy icon + bold label, no filled icon well.
  */
 :root{
   --bo-ui-blue:#57534E;
@@ -111,7 +111,7 @@
 
 /* Control fallback before runtime classification. */
 .report-main .bo-filter-row>input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
-.report-main .bo-filter-row>*:not(.bo-filter-range-item) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]){
+.report-main .bo-filter-row>*:not(.bo-filter-range-item) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input){
   box-sizing:border-box!important;
   height:var(--bo-filter-height)!important;
   min-height:var(--bo-filter-height)!important;
@@ -170,7 +170,7 @@
   min-width:0!important;
   max-width:100%!important;
 }
-.report-main .bo-filter-row>.bo-filter-input-item input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+.report-main .bo-filter-row>.bo-filter-input-item input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input),
 .report-main .bo-filter-row>input.bo-filter-input-item:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]){
   height:var(--bo-filter-height)!important;
   min-height:var(--bo-filter-height)!important;
@@ -189,7 +189,7 @@
 .report-main .bo-filter-row>.bo-filter-input-item :is(.input-icon-wrap,.ref-input-icon,.category-search-control,.game-search-control) input{
   padding-left:36px!important;
 }
-.report-main .bo-filter-row>.bo-filter-input-item input:focus,
+.report-main .bo-filter-row>.bo-filter-input-item input:not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):focus,
 .report-main .bo-filter-row>input.bo-filter-input-item:focus{
   border-color:var(--bo-ui-blue)!important;
   box-shadow:0 0 0 3px rgba(217,119,6,.10)!important;
@@ -533,7 +533,7 @@ body.livechat-bo-page .bo-ui-icon-button{all:unset}
 .report-main .bo-filter-row>:has(#withdrawStatus), .report-main .bo-filter-row>select#withdrawStatus{--bo-select-width:150px;}
 
 /* Dynamic dropdowns start compact; bo-ui-standard.js recalculates them when options arrive. */
-.report-main .bo-filter-row>:has(#subCategoryFilter), .report-main .bo-filter-row>select#subCategoryFilter{--bo-select-width:80px;}
+.report-main .bo-filter-row>:has(#subCategoryFilter), .report-main .bo-filter-row>select#subCategoryFilter{--bo-select-width:240px;}
 .report-main .bo-filter-row>:has(#gameCategoryFilter), .report-main .bo-filter-row>select#gameCategoryFilter{--bo-select-width:80px;}
 .report-main .bo-filter-row>:has(#gameSubCategoryFilter), .report-main .bo-filter-row>select#gameSubCategoryFilter{--bo-select-width:80px;}
 .report-main .bo-filter-row>:has(#gameProviderFilter), .report-main .bo-filter-row>select#gameProviderFilter{--bo-select-width:80px;}
@@ -580,7 +580,7 @@ body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .
   min-width:0!important;
   max-width:100%!important;
 }
-body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>.bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>.bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input),
 body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>input.bo-filter-input-item:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]){
   box-sizing:border-box!important;
   height:42px!important;
@@ -772,7 +772,7 @@ body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .
 .bo-sidebar-account-footer{flex:0 0 auto;padding:10px;border-top:1px solid var(--line,#EADCC8);background:#FFF8EB}
 
 /* ==========================================================================
-   The bottom band — the sidebar account block and the page's sticky action bar
+   The bottom band ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ the sidebar account block and the page's sticky action bar
    ==========================================================================
 
    Every page with a bottom action bar closes with TWO hairlines: the bar's top border and the
@@ -780,12 +780,12 @@ body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .
    the sidebar's end), so if their heights differ their top edges sit at different y and the
    screen reads as two parallel lines a few px apart instead of one line across the page.
 
-   Measured at 1440×900, light and dark (the heights are theme-independent):
-     .mac-footer-actions   73px   (create/edit family: 14px padding ×2 + the 44px button + 1px)
+   Measured at 1440ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ900, light and dark (the heights are theme-independent):
+     .mac-footer-actions   73px   (create/edit family: 14px padding ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ2 + the 44px button + 1px)
      .mprr-footer          65px   (Merchant Profit Record)
      .mrc-sticky-footer    69px   (Create Role)
      .pmc-sticky-footer    71px   (Payment Method Create)
-     .mp-footer            60px   (Menu Permission — its own min-height)
+     .mp-footer            60px   (Menu Permission ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ its own min-height)
      .vle-footer           68px   (VIP Level Edit)
    Against blocks of 66-70px, so every one of them was off by 1-8px. Each rule below pins the
    block to ITS page's bar height; the block keeps its horizontal padding and centres the Logout
@@ -793,7 +793,7 @@ body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .
 
    The hairline is stated once for the whole band: the account block draws
    rgba(92,74,48,.1) in light / rgba(255,255,255,.08) in dark, and the bars had their own
-   values (#DCC9A8, #EADCC8, var(--bo-line,#E6EDF5), white .1–.14) — aligned but two colours
+   values (#DCC9A8, #EADCC8, var(--bo-line,#E6EDF5), white .1ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ.14) ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ aligned but two colours
    still reads as two lines.
    -------------------------------------------------------------------------- */
 
@@ -809,7 +809,7 @@ html:not([data-bo-theme="dark"]) body:not(#bo-bottom-band-off) .vle-footer{
 /* The band's fill is the owner-specified panel rung #FFFCF7 (the locked sticky-footer value in
    `.interface-design/system.md`): the bars were a mix of #FFF8EB (`--bo-surface`), #FFFCF7 and a
    translucent white rgba(255,255,255,.96), so the strip changed tone from page to page. Solid, so
-   the value renders exactly — a translucent fill reads as whatever is underneath. Dark keeps the
+   the value renders exactly ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ a translucent fill reads as whatever is underneath. Dark keeps the
    translucent charcoal. */
 html:not([data-bo-theme="dark"]) body:not(#bo-bottom-band-off) .mac-footer-actions,
 html:not([data-bo-theme="dark"]) body:not(#bo-bottom-band-off) .mprr-footer,
@@ -842,7 +842,7 @@ html:not(#bo-bottom-band-off)[data-bo-theme="dark"] body:not(#bo-bottom-band-off
   border-top-color:rgba(255,255,255,.08)!important;
 }
 
-/* The block becomes a pinned-height flex box — only on the pages that actually show a bar
+/* The block becomes a pinned-height flex box ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ only on the pages that actually show a bar
    (`:has()` on the bar itself, so a page carrying the create-page class without a footer bar,
    e.g. main-provider-endpoints.html, is untouched). Merchant Detail carries its bar in the DOM
    while the EDIT workspace is closed, so it is keyed on `.mad-editing` instead, and excluded
@@ -883,7 +883,7 @@ body:not(#bo-bottom-band-off):has(.vle-footer) .report-sidebar .bo-sidebar-accou
 }
 
 /* ============================================================
-   Date range — global standard (fig.2 / Dashboard flat)
+   Date range ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ global standard (fig.2 / Dashboard flat)
    Applies to .ref-range-* and .bo-range-* everywhere.
    No cyan/blue filled icon well. Icon + bold navy text + chevron.
    ============================================================ */
@@ -978,10 +978,10 @@ html[data-bo-theme="dark"] .bo-range-trigger:focus-within{
   box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
 }
 
-/* Dark mode filter text inputs �� cream #FFF8EB must not leak through in dark theme */
-html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>.bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+/* Dark mode filter text inputs ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂª cream #FFF8EB must not leak through in dark theme */
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>.bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input),
 html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>input.bo-filter-input-item:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
-html[data-bo-theme="dark"] .report-main .bo-filter-row>*:not(.bo-filter-range-item) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+html[data-bo-theme="dark"] .report-main .bo-filter-row>*:not(.bo-filter-range-item) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input),
 html[data-bo-theme="dark"] .report-main .bo-filter-row>input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
 html[data-bo-theme="dark"] .report-main .bo-filter-row .field input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]){
   background:#2A2C36!important;
