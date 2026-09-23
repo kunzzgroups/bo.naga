@@ -723,17 +723,23 @@ body:not(.site-customize-page) .asset-upload-row[data-field$="Zh"],
 .pwt-page .payload-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .pwt-page .payload-block.full{grid-column:1 / -1}
 .pwt-page .payload-block label{display:flex;align-items:center;gap:6px;font-weight:900;color:#18191C;margin-bottom:8px}
-.pwt-page .payload-box{min-height:96px;max-height:360px;overflow:auto;background:#D97706!important;color:#EADCC8;border:1px solid #18191C;border-radius:14px;padding:14px;font-size:12px;line-height:1.55;white-space:pre-wrap;word-break:break-word;margin:0}
-.pwt-page .error-box{background:#fff7ed!important;color:#9a3412;border-color:#fed7aa;min-height:70px}
-.pwt-page .modal-content{border:0;border-radius:18px;box-shadow:0 24px 70px rgba(217,119,6,.26);overflow:hidden}
-.pwt-page .modal-header{background:#FFF8EB;border-bottom:1px solid var(--line);padding:16px 18px}
-.pwt-page .modal-body{background:#F5EBDC;padding:18px}
-.pwt-page .modal-footer{background:#FFF8EB;border-top:1px solid var(--line)}
+.pwt-page .payload-box{min-height:96px;max-height:360px;overflow:auto;background:#1F2128!important;color:#E7E5E4;border:1px solid rgba(255,255,255,.10);border-radius:8px;padding:14px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.55;white-space:pre-wrap;word-break:break-word;margin:0}
+.pwt-page .error-box{background:#FEF3F2!important;color:#B91C1C;border-color:rgba(185,28,28,.28);min-height:70px}
+.pwt-page .modal-content{border:0;border-radius:16px;box-shadow:0 24px 70px rgba(60,48,32,.28);overflow:hidden;background:#FFF8EB}
+.pwt-page .modal-header{background:#FFF8EB;border-bottom:1px solid #EADCC8;padding:16px 18px}
+.pwt-page .modal-body{background:#FFF8EB;padding:18px}
+.pwt-page .modal-footer{background:#FFF8EB;border-top:1px solid #EADCC8}
 .pwt-page .modal-backdrop.show{opacity:.45}
 /* Provider payload modal must cover the sticky BO header just like other BO detail modals. */
 body.pwt-page .pwt-modal{z-index:7000!important}
-body.pwt-page > .modal-backdrop{z-index:6900!important;background:#D97706!important}
-body.pwt-page > .modal-backdrop.show{opacity:.55!important;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+body.pwt-page > .modal-backdrop{z-index:6900!important;background:rgba(15,23,42,.55)!important}
+body.pwt-page > .modal-backdrop.show{opacity:1!important;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+html[data-bo-theme="dark"] .pwt-page .modal-content{background:#383A46;box-shadow:0 24px 70px rgba(0,0,0,.45)}
+html[data-bo-theme="dark"] .pwt-page .modal-header,
+html[data-bo-theme="dark"] .pwt-page .modal-body,
+html[data-bo-theme="dark"] .pwt-page .modal-footer{background:#383A46;border-color:rgba(255,255,255,.12)}
+html[data-bo-theme="dark"] .pwt-page .payload-block label{color:#F5F5F4}
+html[data-bo-theme="dark"] .pwt-page .error-box{background:rgba(248,113,113,.14)!important;color:#F87171;border-color:rgba(248,113,113,.28)}
 body.pwt-page.modal-open .report-topbar,
 body.pwt-page.modal-open .report-sidebar,
 body.pwt-page.modal-open .report-main{pointer-events:none}
@@ -763,7 +769,9 @@ body.pwt-page.modal-open .pwt-modal{pointer-events:auto}
 
 /* Provider Transactions table compact full-width fix */
 .pwt-page .table-card{overflow:hidden!important}
-.pwt-page .table-wrap{width:100%!important;max-width:100%!important;overflow-x:auto!important;background:#FFF8EB}
+html body.bo-wallet-tx.provider-transaction-page.pwt-page .table-card > .table-wrap{
+  width:100%!important;max-width:100%!important;overflow:auto!important;background:#FFF8EB
+}
 .pwt-page .report-table.pwt-table{width:100%!important;min-width:1120px!important;table-layout:fixed!important}
 .pwt-page .pwt-table th,.pwt-page .pwt-table td{padding:10px 10px!important;vertical-align:middle}
 .pwt-page .pwt-table th:nth-child(1),.pwt-page .pwt-table td:nth-child(1){width:46px}
