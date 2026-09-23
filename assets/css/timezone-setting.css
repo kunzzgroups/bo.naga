@@ -1,0 +1,307 @@
+/* Timezone Setting — Charcoal + Amber (.interface-design/system.md)
+   Signature: live BO clock preview as the focal surface */
+
+body.timezone-setting-page .report-content.tz-page {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: min(880px, 100%);
+}
+
+.tz-panel {
+  background: #FFF8EB;
+  border: 1px solid #EADCC8;
+  border-radius: 16px;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.04),
+    0 1px 2px -1px rgba(60, 48, 32, 0.06),
+    0 2px 8px rgba(92, 74, 48, 0.05);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.tz-panel-head {
+  padding: 16px 18px;
+  border-bottom: 1px solid #EADCC8;
+}
+
+.tz-panel-head h2 {
+  margin: 0;
+  color: #18191C;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.tz-panel-head h2 i {
+  color: #D97706;
+  margin-right: 6px;
+}
+
+.tz-panel-head p {
+  margin: 4px 0 0;
+  color: #57534E;
+  font-size: 12px;
+  font-weight: 500;
+  text-wrap: pretty;
+}
+
+.tz-panel-body {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: #FFFCF7;
+}
+
+/* Focal live clock */
+.tz-live {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: #F5EBDC;
+  border: 1px solid #DCC9A8;
+}
+
+.tz-live-label {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #71717A;
+}
+
+.tz-live-clock {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: #18191C;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.tz-live-meta {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #57534E;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  align-items: center;
+}
+
+.tz-live-meta .tz-offset-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: rgba(217, 119, 6, 0.12);
+  color: #B45309;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.tz-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  min-width: 0;
+}
+
+.tz-field label {
+  margin: 0;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #27272A;
+}
+
+.tz-field select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #DCC9A8;
+  background: #F5EBDC;
+  color: #18191C;
+  font-size: 13.5px;
+  font-weight: 600;
+  outline: none;
+  transition: border-color 160ms cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.tz-field select:hover {
+  border-color: #D97706;
+}
+
+.tz-field select:focus {
+  border-color: #D97706;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.14);
+}
+
+.tz-field .tz-hint {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: #71717A;
+  text-wrap: pretty;
+}
+
+.tz-panel-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  border-top: 1px solid #EADCC8;
+  background: #FFF8EB;
+}
+
+.tz-status {
+  min-height: 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #71717A;
+  flex: 1 1 160px;
+}
+
+.tz-status.is-success {
+  color: #067647;
+}
+
+.tz-status.is-error {
+  color: #991B1B;
+}
+
+.tz-panel-foot .btn-primary-clean {
+  flex: 0 0 auto;
+  min-height: 40px;
+  transition: transform 120ms cubic-bezier(0.23, 1, 0.32, 1),
+    background-color 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.tz-panel-foot .btn-primary-clean:active {
+  transform: scale(0.97);
+}
+
+/* Dark */
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-panel {
+  background: #383A46;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-panel-head,
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-panel-foot {
+  background: #383A46;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-panel-head h2 {
+  color: #F5F5F4;
+}
+
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-panel-head p,
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-live-meta,
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-field .tz-hint {
+  color: #A1A1AA;
+}
+
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-panel-body {
+  background: #32343E;
+}
+
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-live {
+  background: #2A2C36;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-live-label {
+  color: #A1A1AA;
+}
+
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-live-clock {
+  color: #F5F5F4;
+}
+
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-live-meta .tz-offset-pill {
+  background: rgba(245, 158, 11, 0.16);
+  color: #F59E0B;
+}
+
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-field label {
+  color: #E7E5E4;
+}
+
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-field select {
+  background: #2A2C36;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #F5F5F4;
+}
+
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-field select:hover,
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-field select:focus {
+  border-color: #F59E0B;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
+}
+
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-status {
+  color: #A1A1AA;
+}
+
+html[data-bo-theme="dark"] body.timezone-setting-page .tz-status.is-success {
+  color: #10B981;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tz-field select,
+  .tz-panel-foot .btn-primary-clean {
+    transition: none;
+  }
+
+  .tz-panel-foot .btn-primary-clean:active {
+    transform: none;
+  }
+}
+
+@media (max-width: 768px) {
+  body.timezone-setting-page .report-content.tz-page {
+    padding: 14px 10px 24px;
+    width: 100%;
+  }
+
+  .tz-panel-foot {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tz-panel-foot .btn-primary-clean {
+    width: 100%;
+  }
+}
+
+@media (max-width: 390px) {
+  body.timezone-setting-page .report-content.tz-page {
+    padding: 12px 8px 20px;
+  }
+
+  .tz-live-clock {
+    font-size: 26px;
+  }
+}
