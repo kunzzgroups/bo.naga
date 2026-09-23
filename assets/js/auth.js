@@ -387,12 +387,14 @@
           return key === 'main_provider_detail' || key === 'provider_detail' || file === 'main-provider-detail.html';
         });
       }
-      // Win/Lose Report can open when the role already has Provider Report under Report.
-      if(!allowed && (pageName() === 'main-win-lose-report.html' || pageName() === 'win-lose-report.html')){
+      // Win/Lose Report and Provider Report are sibling tabs of one Report workspace.
+      // A role configured with either entry may open both tabs, so changing the DB menu
+      // URL between the two does not make the other tab disappear or redirect away.
+      if(!allowed && (pageName() === 'main-win-lose-report.html' || pageName() === 'win-lose-report.html' || pageName() === 'main_provider_report.html')){
         allowed = menus.some(function(m){
           const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
           const key = String(m.menuKey || '').toLowerCase();
-          return file === 'main_provider_report.html' || key === 'main_provider_report' || key === 'main_win_lose_report';
+          return file === 'main-win-lose-report.html' || file === 'win-lose-report.html' || file === 'main_provider_report.html' || key === 'main_provider_report' || key === 'main_win_lose_report';
         });
       }
       if(!allowed){

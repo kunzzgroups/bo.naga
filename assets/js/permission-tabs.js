@@ -8,6 +8,14 @@
     if(isRoot(u)){ set.add('*'); return set; }
     var menus=Array.isArray(u&&u.menus)?u.menus:[];
     menus.forEach(function(m){ if(Number(m.status==null?1:m.status)!==1)return; var u0=base(m.url||m.href); if(u0)set.add(u0); });
+    // Win/Lose Report and Provider Report are two tabs of the same Report workspace.
+    // Granting either report entry keeps both workspace tabs visible; page access is
+    // mirrored in auth.js so the sibling tab can also be opened safely.
+    if(set.has('main-win-lose-report.html') || set.has('win-lose-report.html') || set.has('main_provider_report.html')){
+      set.add('main-win-lose-report.html');
+      set.add('win-lose-report.html');
+      set.add('main_provider_report.html');
+    }
     return set;
   }
   function apply(){
