@@ -10,12 +10,13 @@
 <title>Provider Transactions</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
-<link href="assets/css/reports.css?v=1.0.70" rel="stylesheet"/>
+<link href="assets/css/reports.css?v=1.0.76" rel="stylesheet"/>
 <link href="assets/css/table-pagination-horizontal.css?v=1.0.3" rel="stylesheet"/>
-<link href="assets/css/bo-ui-standard.css?v=1.0.8" rel="stylesheet">
+<link href="assets/css/bo-ui-standard.css?v=1.0.9" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=1.0.2" rel="stylesheet"/>
 <link href="assets/css/bo-wallet-transaction-amber.css?v=1.1.9" rel="stylesheet"/>
 <link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
+<link href="assets/css/provider-wallet-transaction-page.css?v=1.0.2" rel="stylesheet"/>
 <script>
 (function(){
   try{
@@ -68,7 +69,26 @@ html[data-bo-theme="dark"] .provider-transaction-page .table-card > .filter-card
 @media (max-width:575.98px){
   .provider-transaction-page .filter-card .bo-filter-row{grid-template-columns:1fr!important}
 }
-.provider-transaction-page .report-table.pwt-table{width:100%!important;min-width:1120px!important;table-layout:fixed!important}
+.provider-transaction-page .report-table.pwt-table{width:100%!important;min-width:1040px!important;table-layout:fixed!important}
+/* 9 cols after Member removed — redistribute former Member width into API URL */
+.provider-transaction-page .pwt-table th:nth-child(1),
+.provider-transaction-page .pwt-table td:nth-child(1){width:100px!important;white-space:nowrap!important}
+.provider-transaction-page .pwt-table th:nth-child(2),
+.provider-transaction-page .pwt-table td:nth-child(2){width:100px!important}
+.provider-transaction-page .pwt-table th:nth-child(3),
+.provider-transaction-page .pwt-table td:nth-child(3){width:100px!important}
+.provider-transaction-page .pwt-table th:nth-child(4),
+.provider-transaction-page .pwt-table td:nth-child(4){width:90px!important}
+.provider-transaction-page .pwt-table th:nth-child(5),
+.provider-transaction-page .pwt-table td:nth-child(5){width:100px!important}
+.provider-transaction-page .pwt-table th:nth-child(6),
+.provider-transaction-page .pwt-table td:nth-child(6){width:72px!important}
+.provider-transaction-page .pwt-table th:nth-child(7),
+.provider-transaction-page .pwt-table td:nth-child(7){width:auto!important;min-width:240px!important}
+.provider-transaction-page .pwt-table th:nth-child(8),
+.provider-transaction-page .pwt-table td:nth-child(8){width:168px!important}
+.provider-transaction-page .pwt-table th:nth-child(9),
+.provider-transaction-page .pwt-table td:nth-child(9){width:132px!important}
 /* Beat amber `body.bo-wallet-tx .table-wrap{overflow:hidden}` — scroll lives on wrap
    (Payment Method recipe). Show `-` keeps autofit without vertical scrollbar. */
 html body.bo-wallet-tx.provider-transaction-page .report-content.pwt-content{
@@ -118,16 +138,77 @@ html body.bo-wallet-tx.provider-transaction-page .report-table.bo-tx-evenfill tb
   display:block!important;max-width:100%!important;overflow:hidden!important;
   text-overflow:ellipsis!important;white-space:nowrap!important;
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;font-weight:600;
+  color:#57534E!important;
+}
+html[data-bo-theme="dark"] .provider-transaction-page .pwt-url,
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .pwt-url,
+html[data-bo-theme="dark"] .pwt-page .pwt-url,
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .pwt-table td:nth-child(7),
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .pwt-table td:nth-child(7) *{
+  color:#FFFFFF!important;
+}
+/* Dark filter controls — force search well (Bootstrap / type=search often stay white). */
+html[data-bo-theme="dark"] body.provider-transaction-page #txKeyword,
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page #txKeyword,
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .filter-card input,
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .filter-card .form-control,
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .filter-card .form-select,
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .bo-filter-row input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .bo-filter-row .bo-filter-input-item input,
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .bo-filter-row .field input{
+  background:#2A2C36!important;
+  background-color:#2A2C36!important;
+  background-image:none!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+  -webkit-text-fill-color:#F5F5F4!important;
+  caret-color:#F5F5F4!important;
+  color-scheme:dark!important;
+  box-shadow:none!important;
+  -webkit-appearance:none!important;
+  appearance:none!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page #txKeyword::placeholder,
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .filter-card input::placeholder,
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .bo-filter-row input::placeholder{
+  color:#A1A1AA!important;
+  -webkit-text-fill-color:#A1A1AA!important;
+  opacity:1!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page #txKeyword:focus,
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .filter-card input:focus{
+  border-color:rgba(245,158,11,.55)!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+  outline:0!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page #txKeyword:-webkit-autofill,
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page #txKeyword:-webkit-autofill:hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page #txKeyword:-webkit-autofill:focus{
+  -webkit-text-fill-color:#F5F5F4!important;
+  caret-color:#F5F5F4!important;
+  box-shadow:0 0 0 1000px #2A2C36 inset!important;
+  transition:background-color 99999s ease-out;
 }
 .provider-transaction-page .pwt-payload-btn{
   height:28px;padding:0 10px;border-radius:6px;font-size:12px;font-weight:700;
   display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
 }
-.provider-transaction-page .status-pill.is-success{
-  background:#DCFCE7;color:#166534;border:1px solid rgba(22,101,52,.2);
+/* Beat amber `body.bo-wallet-tx .status-pill{…!important}` default amber chip */
+html body.bo-wallet-tx.provider-transaction-page .status-pill.is-success{
+  background:#DCFCE7!important;color:#166534!important;border:1px solid rgba(22,101,52,.22)!important;
 }
-html[data-bo-theme="dark"] .provider-transaction-page .status-pill.is-success{
-  background:rgba(16,185,129,.18);color:#6EE7B7;border-color:rgba(110,231,183,.28);
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .status-pill.is-success{
+  background:rgba(16,185,129,.20)!important;color:#6EE7B7!important;border:1px solid rgba(110,231,183,.28)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .status-pill.off{
+  background:rgba(248,113,113,.20)!important;color:#FCA5A5!important;border:1px solid rgba(248,113,113,.32)!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .report-table td{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .report-table td b,
+html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .report-table td strong{
+  color:#FFFBEB!important;
 }
 
 /* Panel pill scrollbar on table wrap */
@@ -177,7 +258,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .table-ca
 <div class="user-search-grid bo-filter-row pwt-filter-grid">
 <div class="field"><label>From</label><input class="form-control" id="txFrom" type="date"/></div>
 <div class="field"><label>To</label><input class="form-control" id="txTo" type="date"/></div>
-<div class="field"><label>Search</label><input class="form-control" id="txKeyword" type="search" placeholder="Member ID / Provider / Type" autocomplete="off"/></div>
+<div class="field"><label>Search</label><input class="form-control" id="txKeyword" type="text" placeholder="Member ID / Provider / Type" autocomplete="off"/></div>
 <div class="field"><label>Status</label><select class="form-select" id="txStatus"><option value="">All Status</option><option>SUCCESS</option><option>FAILED</option><option>PENDING</option></select></div>
 </div>
 </div>
@@ -185,10 +266,10 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .table-ca
 <table class="report-table pwt-table">
 <thead>
 <tr>
-<th>ID</th><th>Member</th><th>Provider</th><th>Type</th><th>Amount</th><th>Status</th><th>HTTP</th><th>API URL</th><th>Created</th><th>Action</th>
+<th>ID</th><th>Provider</th><th>Type</th><th>Amount</th><th>Status</th><th>HTTP</th><th>API URL</th><th>Created</th><th>Action</th>
 </tr>
 </thead>
-<tbody id="txBody"><tr><td class="text-center py-4" colspan="10">Loading...</td></tr></tbody>
+<tbody id="txBody"><tr><td class="text-center py-4" colspan="9">Loading...</td></tr></tbody>
 </table>
 </div>
 <div class="table-footer">
@@ -204,25 +285,27 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .table-ca
 <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
 <div class="modal-content">
 <div class="modal-header">
-<div>
+<div class="pwt-modal-head-text">
 <h5 class="modal-title">Provider API Payload</h5>
-<small class="text-muted" id="txPayloadMeta">Request / response debug</small>
+<div class="pwt-payload-meta" id="txPayloadMeta" aria-live="polite">
+<span class="pwt-meta-chip muted">Request / response debug</span>
 </div>
-<button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+</div>
+<button aria-label="Close" class="clean-btn pwt-modal-close" data-bs-dismiss="modal" type="button"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
 </div>
 <div class="modal-body">
 <div class="payload-grid">
-<div class="payload-block full"><label>API URL</label><pre class="payload-box" id="txApiUrl"></pre></div>
-<div class="payload-block"><label>Request Payload</label><pre class="payload-box" id="txRequestPayload"></pre></div>
-<div class="payload-block"><label>Response Payload</label><pre class="payload-box" id="txResponsePayload"></pre></div>
-<div class="payload-block full"><label>Request Headers</label><pre class="payload-box" id="txRequestHeaders"></pre></div>
-<div class="payload-block full"><label>Signature Plain Text</label><pre class="payload-box" id="txSignaturePlainText"></pre></div>
-<div class="payload-block full"><label>Generated Signature</label><pre class="payload-box" id="txGeneratedSignature"></pre></div>
-<div class="payload-block full"><label>Exact Raw JSON Used for Signing</label><pre class="payload-box" id="txRawJson"></pre></div>
-<div class="payload-block full"><label>Error Message</label><pre class="payload-box error-box" id="txErrorMessage"></pre></div>
-<div class="payload-block full debug-json-block">
+<div class="payload-block full" data-payload="apiUrl"><label>API URL</label><pre class="payload-box" id="txApiUrl">-</pre></div>
+<div class="payload-block" data-payload="request"><label>Request Payload</label><pre class="payload-box" id="txRequestPayload">-</pre></div>
+<div class="payload-block" data-payload="response"><label>Response Payload</label><pre class="payload-box" id="txResponsePayload">-</pre></div>
+<div class="payload-block full" data-payload="headers"><label>Request Headers</label><pre class="payload-box" id="txRequestHeaders">-</pre></div>
+<div class="payload-block full" data-payload="sigPlain"><label>Signature Plain Text</label><pre class="payload-box" id="txSignaturePlainText">-</pre></div>
+<div class="payload-block full" data-payload="sigGen"><label>Generated Signature</label><pre class="payload-box" id="txGeneratedSignature">-</pre></div>
+<div class="payload-block full" data-payload="rawJson"><label>Exact Raw JSON Used for Signing</label><pre class="payload-box" id="txRawJson">-</pre></div>
+<div class="payload-block full" data-payload="error"><label>Error Message</label><pre class="payload-box error-box" id="txErrorMessage">-</pre></div>
+<div class="payload-block full debug-json-block" data-payload="debug">
 <div class="debug-json-head">
-<label><i class="bi bi-filetype-json"></i> Full Debug JSON</label>
+<label><i class="bi bi-filetype-json" aria-hidden="true"></i> Full Debug JSON</label>
 <button class="clean-btn debug-copy-btn" id="txCopyDebugJson" type="button"><i class="bi bi-copy"></i> Copy JSON</button>
 </div>
 <pre class="payload-box debug-json-box" id="txFullDebugJson">-</pre>
@@ -230,7 +313,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .table-ca
 </div>
 </div>
 <div class="modal-footer">
-<button class="clean-btn" data-bs-dismiss="modal" type="button">Close</button>
+<button class="clean-btn pwt-modal-foot-close" data-bs-dismiss="modal" type="button">Close</button>
 </div>
 </div>
 </div>
@@ -243,7 +326,7 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .table-ca
 <script src="assets/js/auth.js?v=1.0.89"></script>
 <script src="assets/js/reports.js?v=1.0.38"></script>
 <script src="assets/js/bo-date-range.js?v=1.0.16"></script>
-<script src="assets/js/provider-wallet-transaction.js?v=1.0.15"></script>
+<script src="assets/js/provider-wallet-transaction.js?v=1.0.21"></script>
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
@@ -254,5 +337,23 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.provider-transaction-page .table-ca
 <script src="assets/js/bo-ui-standard.js?v=1.0.0"></script>
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 <script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
+<style id="pwt-dark-force">
+/* Loaded last — beat any stylesheet that kept the search well white in dark mode */
+html[data-bo-theme="dark"] body.provider-transaction-page #txKeyword{
+  background:#2A2C36!important;background-color:#2A2C36!important;background-image:none!important;
+  border:1px solid rgba(255,255,255,.14)!important;color:#F5F5F4!important;
+  -webkit-text-fill-color:#F5F5F4!important;caret-color:#F5F5F4!important;
+  color-scheme:dark!important;box-shadow:none!important;
+  -webkit-appearance:none!important;appearance:none!important;
+}
+html[data-bo-theme="dark"] body.provider-transaction-page #txKeyword::placeholder{
+  color:#A1A1AA!important;-webkit-text-fill-color:#A1A1AA!important;opacity:1!important;
+}
+html[data-bo-theme="dark"] body.provider-transaction-page .pwt-url,
+html[data-bo-theme="dark"] body.provider-transaction-page .pwt-table td:nth-child(7),
+html[data-bo-theme="dark"] body.provider-transaction-page .pwt-table td:nth-child(7) *{
+  color:#FFFFFF!important;
+}
+</style>
 </body>
 </html>

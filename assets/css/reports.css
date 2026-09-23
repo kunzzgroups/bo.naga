@@ -720,34 +720,115 @@ body:not(.site-customize-page) .asset-upload-row[data-field$="Zh"],
 .pwt-page .pwt-url{display:inline-block;max-width:240px;overflow:hidden;text-overflow:ellipsis;vertical-align:bottom;color:#18191C}
 .pwt-page .pwt-pager{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px}
 .pwt-page .clean-btn:disabled{opacity:.5;cursor:not-allowed}
-.pwt-page .payload-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pwt-page .payload-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .pwt-page .payload-block.full{grid-column:1 / -1}
-.pwt-page .payload-block label{display:flex;align-items:center;gap:6px;font-weight:900;color:#18191C;margin-bottom:8px}
-.pwt-page .payload-box{min-height:96px;max-height:360px;overflow:auto;background:#1F2128!important;color:#E7E5E4;border:1px solid rgba(255,255,255,.10);border-radius:8px;padding:14px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.55;white-space:pre-wrap;word-break:break-word;margin:0}
-.pwt-page .error-box{background:#FEF3F2!important;color:#B91C1C;border-color:rgba(185,28,28,.28);min-height:70px}
-.pwt-page .modal-content{border:0;border-radius:16px;box-shadow:0 24px 70px rgba(60,48,32,.28);overflow:hidden;background:#FFF8EB}
-.pwt-page .modal-header{background:#FFF8EB;border-bottom:1px solid #EADCC8;padding:16px 18px}
-.pwt-page .modal-body{background:#FFF8EB;padding:18px}
-.pwt-page .modal-footer{background:#FFF8EB;border-top:1px solid #EADCC8}
-.pwt-page .modal-backdrop.show{opacity:.45}
+.pwt-page .payload-block label{
+  display:flex;align-items:center;gap:6px;margin-bottom:6px;
+  font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+  color:#57534E;
+}
+/* Light-gray JSON wells (neutral inset — not cream) */
+.pwt-page .payload-box{
+  min-height:72px;max-height:320px;overflow:auto;margin:0;padding:10px 12px;
+  background:#F4F4F5!important;color:#3F3F46;
+  border:1px solid #E4E4E7;border-radius:8px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:12px;line-height:1.5;white-space:pre-wrap;word-break:break-word;
+  scrollbar-width:thin;scrollbar-color:#A1A1AA transparent;scrollbar-gutter:stable;
+}
+.pwt-page .payload-block.is-empty .payload-box{
+  min-height:0;max-height:none;padding:8px 12px;color:#A1A1AA;
+}
+.pwt-page .payload-block.is-loading .payload-box{color:#A1A1AA;font-style:italic}
+.pwt-page .error-box{
+  background:#FEF3F2!important;color:#B91C1C;border-color:rgba(185,28,28,.28);min-height:56px;
+}
+.pwt-page .payload-block.is-empty .error-box{min-height:0;background:#F4F4F5!important;color:#A1A1AA;border-color:#E4E4E7}
+.pwt-page .modal-content{
+  border:0;border-radius:16px;overflow:hidden;background:#FFF8EB;
+  box-shadow:0 24px 70px rgba(60,48,32,.28);
+}
+.pwt-page .modal-header{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  background:#FFF8EB;border-bottom:1px solid #EADCC8;padding:16px 18px;
+}
+.pwt-page .pwt-modal-head-text{min-width:0;flex:1 1 auto}
+.pwt-page .pwt-modal .modal-title{
+  margin:0;font-size:18px;font-weight:800;line-height:1.25;color:#18191C;
+}
+.pwt-page .pwt-payload-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.pwt-page .pwt-meta-chip{
+  display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px;
+  border-radius:999px;border:1px solid #EADCC8;background:#FFF1DC;
+  color:#18191C;font-size:11.5px;font-weight:700;line-height:1;white-space:nowrap;
+}
+.pwt-page .pwt-meta-chip .pwt-meta-k{color:#B45309;font-size:10.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase}
+.pwt-page .pwt-meta-chip.muted{background:#F5EBDC;color:#78716C;font-weight:600}
+.pwt-page .pwt-modal-close{
+  flex:0 0 auto;width:36px;height:36px;padding:0;border-radius:8px;
+  display:inline-grid;place-items:center;line-height:1;
+  background:#F5EBDC;border:1px solid #EADCC8;color:#57534E;
+}
+.pwt-page .pwt-modal-close:hover{background:#FFE8CC;color:#18191C;border-color:#EADCC8}
+.pwt-page .modal-body{background:#FFF8EB;padding:16px 18px}
+.pwt-page .modal-footer{
+  display:flex;justify-content:flex-end;gap:10px;
+  background:#FFF8EB;border-top:1px solid #EADCC8;padding:12px 18px;
+}
+.pwt-page .pwt-modal-foot-close,
+.pwt-page .debug-copy-btn{
+  height:40px;padding:0 16px;border-radius:8px;font-size:13px;font-weight:700;
+}
+.pwt-page .modal-backdrop.show{opacity:1}
 /* Provider payload modal must cover the sticky BO header just like other BO detail modals. */
 body.pwt-page .pwt-modal{z-index:7000!important}
-body.pwt-page > .modal-backdrop{z-index:6900!important;background:rgba(15,23,42,.55)!important}
-body.pwt-page > .modal-backdrop.show{opacity:1!important;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+body.pwt-page > .modal-backdrop{
+  z-index:6900!important;
+  background:rgba(15,23,42,.55)!important;
+  background-color:rgba(15,23,42,.55)!important;
+}
+body.pwt-page > .modal-backdrop.show{
+  opacity:1!important;
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+}
 html[data-bo-theme="dark"] .pwt-page .modal-content{background:#383A46;box-shadow:0 24px 70px rgba(0,0,0,.45)}
 html[data-bo-theme="dark"] .pwt-page .modal-header,
 html[data-bo-theme="dark"] .pwt-page .modal-body,
 html[data-bo-theme="dark"] .pwt-page .modal-footer{background:#383A46;border-color:rgba(255,255,255,.12)}
-html[data-bo-theme="dark"] .pwt-page .payload-block label{color:#F5F5F4}
-html[data-bo-theme="dark"] .pwt-page .error-box{background:rgba(248,113,113,.14)!important;color:#F87171;border-color:rgba(248,113,113,.28)}
+html[data-bo-theme="dark"] .pwt-page .pwt-url{color:#FFFFFF!important}
+html[data-bo-theme="dark"] .pwt-page .pwt-modal .modal-title{color:#F5F5F4}
+html[data-bo-theme="dark"] .pwt-page .payload-block label{color:#A1A1AA}
+html[data-bo-theme="dark"] .pwt-page .payload-box{
+  background:#2A2C36!important;color:#E7E5E4;border-color:rgba(255,255,255,.10);
+  scrollbar-color:#F59E0B transparent;
+}
+html[data-bo-theme="dark"] .pwt-page .payload-block.is-empty .payload-box{color:#A1A1AA}
+html[data-bo-theme="dark"] .pwt-page .pwt-meta-chip{
+  background:rgba(245,158,11,.14);border-color:rgba(245,158,11,.28);color:#F5F5F4;
+}
+html[data-bo-theme="dark"] .pwt-page .pwt-meta-chip .pwt-meta-k{color:#FBBF24}
+html[data-bo-theme="dark"] .pwt-page .pwt-meta-chip.muted{
+  background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.10);color:#A1A1AA;
+}
+html[data-bo-theme="dark"] .pwt-page .pwt-modal-close{
+  background:#2A2C36;border-color:rgba(255,255,255,.12);color:#E7E5E4;
+}
+html[data-bo-theme="dark"] .pwt-page .pwt-modal-close:hover{background:#40424E;color:#F5F5F4}
+html[data-bo-theme="dark"] .pwt-page .error-box{
+  background:rgba(248,113,113,.14)!important;color:#F87171;border-color:rgba(248,113,113,.28);
+}
+html[data-bo-theme="dark"] .pwt-page .payload-block.is-empty .error-box{
+  background:#2A2C36!important;color:#A1A1AA;border-color:rgba(255,255,255,.10);
+}
 body.pwt-page.modal-open .report-topbar,
 body.pwt-page.modal-open .report-sidebar,
 body.pwt-page.modal-open .report-main{pointer-events:none}
 body.pwt-page.modal-open .pwt-modal{pointer-events:auto}
-.pwt-page .debug-json-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.pwt-page .debug-json-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
 .pwt-page .debug-json-head label{margin:0}
-.pwt-page .debug-copy-btn{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px}
-.pwt-page .debug-json-box{min-height:220px;max-height:520px}
+.pwt-page .debug-copy-btn{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px}
+.pwt-page .debug-json-box{min-height:180px;max-height:480px}
 .pwt-page .report-user{align-items:center;gap:8px}
 .pwt-page .report-user span{width:30px;height:30px;border-radius:999px;background:#EADCC8;color:#57534E;display:grid;place-items:center;font-weight:900}
 .pwt-page .logout-btn{border:1px solid var(--line);background:#FFF8EB;border-radius:10px;padding:8px 12px;font-weight:800;color:#18191C}
@@ -6111,10 +6192,23 @@ body.pwt-page.modal-open > .modal-backdrop {
   pointer-events: auto !important;
   background-color: #D97706 !important;
 }
+/* Provider Payload (and other pwt Bootstrap modals): MD scrim like Create User —
+   neutral dark veil + blur. Never the amber #D97706 wash above. */
+body.pwt-page.modal-open > .modal-backdrop,
+body.pwt-page > .modal-backdrop {
+  background: rgba(15, 23, 42, .55) !important;
+  background-color: rgba(15, 23, 42, .55) !important;
+}
 body.modal-open > .modal-backdrop.show,
 body.report-body.modal-open > .modal-backdrop.show,
 body.pwt-page.modal-open > .modal-backdrop.show {
   opacity: .55 !important;
+}
+body.pwt-page.modal-open > .modal-backdrop.show,
+body.pwt-page > .modal-backdrop.show {
+  opacity: 1 !important;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 body.modal-open > .modal.show .modal-dialog,
 body.modal-open > .modal.show .modal-content,

@@ -21,8 +21,12 @@
     const head = scroll.querySelector('thead');
     const headH = head ? Math.ceil(head.getBoundingClientRect().height) : 44;
     const avail = Math.max(0, Math.floor(scroll.clientHeight) - headH);
-    const sample = scroll.querySelector('tbody tr td');
-    const rowH = sample ? Math.max(44, Math.round(sample.getBoundingClientRect().height)) : 44;
+    const sampleRow = [...(scroll.querySelectorAll('tbody tr') || [])].find(tr => !isPlaceholderRow(tr));
+    const sample = sampleRow || scroll.querySelector('tbody tr td');
+    /* Prefer natural row height; floor(avail/44) under-counts when rows are ~40px → leaves a spare entry on page 2. */
+    const rowH = sample
+      ? Math.max(36, Math.min(48, Math.round(sample.getBoundingClientRect().height) || 40))
+      : 40;
     return Math.max(5, Math.min(200, Math.floor(avail / rowH) || 12));
   }
   function autoFitPageSize(){
@@ -91,6 +95,91 @@
     return Math.max(0, Math.floor(scroll.clientHeight) - headH);
   }
 
+  /* Geometry beats scrollHeight — overflow-y:hidden + sticky thead can report equal heights
+     while the last row is still half-clipped (the bug in the screenshot). */
+  function lastRowClipped(scroll, rows){
+    if (!scroll || !rows || !rows.length) return false;
+    const last = rows[rows.length - 1];
+    const wrapBox = scroll.getBoundingClientRect();
+    const rowBox = last.getBoundingClientRect();
+    return rowBox.bottom > wrapBox.bottom + 0.5;
+  }
+
+  function autofitOverflows(scroll, rows){
+    if (!scroll) return false;
+    if (scroll.scrollHeight > scroll.clientHeight + 1) return true;
+    if (!rows || !rows.length) return false;
+    const avail = bodyAvail(scroll);
+    const natural = rows.reduce((sum, tr) => sum + Math.ceil(tr.getBoundingClientRect().height), 0);
+    if (natural > avail + 1) return true;
+    return lastRowClipped(scroll, rows);
+  }
+
+  function shrinkAutofitIfOverflow(){
+    if (autofitReloading) return;
+    if (!isAutoPageSize($('txSize')?.value)) return;
+    const scroll = tableBodyScroll();
+    const body = $('txBody');
+    if (!scroll || !body) return;
+    const rows = [...body.querySelectorAll('tr')].filter(tr => !isPlaceholderRow(tr));
+    if (!autofitOverflows(scroll, rows)) return;
+    if (lockedAutoSize == null || lockedAutoSize <= 5) return;
+    lockedAutoSize = Math.max(5, lockedAutoSize - 1);
+    pageSize = lockedAutoSize;
+    page = 1;
+    autofitSettled = false;
+    autofitReloading = true;
+    Promise.resolve(load()).finally(() => {
+      autofitReloading = false;
+      requestAnimationFrame(() => {
+        if (autofitOverflows(tableBodyScroll(), [...($('txBody')?.querySelectorAll('tr') || [])].filter(tr => !isPlaceholderRow(tr))) && lockedAutoSize > 5) {
+          shrinkAutofitIfOverflow();
+          return;
+        }
+        autofitSettled = true;
+        evenFillRowHeights();
+      });
+    });
+  }
+
+  /* If first measure under-counted (e.g. rowH too tall), grow until one more would clip. */
+  function growAutofitIfRoom(){
+    if (autofitReloading || !autofitSettled) return;
+    if (!isAutoPageSize($('txSize')?.value)) return;
+    if (lockedAutoSize == null) return;
+    if (totalElements <= lockedAutoSize) return;
+    const scroll = tableBodyScroll();
+    const body = $('txBody');
+    if (!scroll || !body) return;
+    const rows = [...body.querySelectorAll('tr')].filter(tr => !isPlaceholderRow(tr));
+    if (!rows.length || autofitOverflows(scroll, rows)) return;
+    const avail = bodyAvail(scroll);
+    const natural = rows.reduce((sum, tr) => sum + Math.ceil(tr.getBoundingClientRect().height), 0);
+    const rowH = Math.max(36, Math.round(natural / rows.length) || 40);
+    const gap = avail - natural;
+    if (gap < rowH - 1) return;
+    const next = Math.min(200, lockedAutoSize + 1, totalElements);
+    if (next <= lockedAutoSize) return;
+    lockedAutoSize = next;
+    pageSize = lockedAutoSize;
+    page = 1;
+    autofitSettled = false;
+    autofitReloading = true;
+    Promise.resolve(load()).finally(() => {
+      autofitReloading = false;
+      requestAnimationFrame(() => {
+        const painted = [...($('txBody')?.querySelectorAll('tr') || [])].filter(tr => !isPlaceholderRow(tr));
+        if (autofitOverflows(tableBodyScroll(), painted)) {
+          shrinkAutofitIfOverflow();
+          return;
+        }
+        autofitSettled = true;
+        evenFillRowHeights();
+        growAutofitIfRoom();
+      });
+    });
+  }
+
   /* Post-paint settle: first measure often over-counts (rowH too small) → Showing N ≠ visible rows. */
   function settleAutofitFromPaint(){
     if (autofitReloading || autofitSettled) return;
@@ -105,7 +194,8 @@
     const avail = bodyAvail(scroll);
     const natural = rows.reduce((sum, tr) => sum + Math.ceil(tr.getBoundingClientRect().height), 0);
     const rowH = Math.max(38, Math.round(natural / rows.length) || 44);
-    const overflow = scroll.scrollHeight > scroll.clientHeight + 1 || natural > avail + 1;
+    const overflow = autofitOverflows(scroll, rows);
+    /* Floor only — never keep a row that overflow:hidden would clip. */
     let target = Math.max(5, Math.min(200, Math.floor(avail / rowH) || rows.length));
     if (overflow) target = Math.max(5, Math.min(target, rows.length - 1));
     const reloadAt = (size) => {
@@ -121,18 +211,28 @@
     const verifyAndLock = () => {
       requestAnimationFrame(() => {
         const sc = tableBodyScroll();
-        if (sc && sc.scrollHeight > sc.clientHeight + 1 && lockedAutoSize > 5) {
+        const bodyEl = $('txBody');
+        const painted = bodyEl
+          ? [...bodyEl.querySelectorAll('tr')].filter(tr => !isPlaceholderRow(tr))
+          : [];
+        if (autofitOverflows(sc, painted) && lockedAutoSize > 5) {
           reloadAt(Math.max(5, lockedAutoSize - 1));
           return;
         }
         autofitSettled = true;
         evenFillRowHeights();
+        growAutofitIfRoom();
       });
     };
     if (target === rows.length) {
       lockedAutoSize = rows.length;
       pageSize = lockedAutoSize;
       verifyAndLock();
+      return;
+    }
+    /* Prefer growing when paint shows spare space for another row and more entries exist. */
+    if (target > rows.length && totalElements > rows.length) {
+      reloadAt(Math.min(target, totalElements));
       return;
     }
     reloadAt(target);
@@ -152,8 +252,14 @@
     const natural = rows.reduce((sum, tr) => sum + Math.ceil(tr.getBoundingClientRect().height), 0);
     const rowH = Math.max(38, Math.round(natural / rows.length) || 44);
     const gap = avail - natural;
-    /* Stretch leftover seam only — grow/shrink is settleAutofitFromPaint. */
-    if (natural > avail + 1 || gap < 2 || gap >= rowH) return;
+    /* Overflow: too many rows for viewport — drop one (Show `-` must not clip). */
+    if (natural > avail + 1 || lastRowClipped(scroll, rows)) {
+      shrinkAutofitIfOverflow();
+      return;
+    }
+    /* After settle: stretch any leftover (incl. gap ≥ one row when no more rows will load). */
+    if (gap < 2) return;
+    if (!autofitSettled && gap >= rowH) return;
     const base = Math.floor(avail / rows.length);
     let rem = avail - (base * rows.length);
     if (base <= 0) return;
@@ -165,8 +271,8 @@
     });
     table.classList.add('bo-tx-evenfill');
     table.style.height = Math.floor(scroll.clientHeight) + 'px';
-    if (scroll.scrollHeight > scroll.clientHeight) {
-      const over = scroll.scrollHeight - scroll.clientHeight;
+    if (scroll.scrollHeight > scroll.clientHeight || lastRowClipped(scroll, rows)) {
+      const over = Math.max(1, scroll.scrollHeight - scroll.clientHeight);
       const shrink = Math.ceil(over / rows.length) || 1;
       rows.forEach(tr => {
         const h = Math.max(rowH, (parseFloat(tr.style.height) || base) - shrink);
@@ -174,16 +280,20 @@
         tr.querySelectorAll('td').forEach(td => { td.style.height = h + 'px'; });
       });
       table.style.height = Math.max(0, Math.floor(scroll.clientHeight) - over) + 'px';
+      if (lastRowClipped(scroll, rows)) shrinkAutofitIfOverflow();
     }
   }
 
   function scheduleEvenFill(){
     requestAnimationFrame(() => requestAnimationFrame(() => {
+      paintDarkFilterControls();
       if (isAutoPageSize($('txSize')?.value) && !autofitSettled) {
         settleAutofitFromPaint();
         return;
       }
       evenFillRowHeights();
+      shrinkAutofitIfOverflow();
+      growAutofitIfRoom();
     }));
   }
 
@@ -342,6 +452,11 @@
     const el = $('txFullDebugJson');
     if (!el) return;
     el.textContent = JSON.stringify(buildFullDebugJson(x), null, 2);
+    const block = el.closest('.payload-block');
+    if (block) {
+      block.classList.remove('is-loading');
+      block.classList.toggle('is-empty', !el.textContent || el.textContent === '-');
+    }
   }
 
   async function copyText(text){
@@ -361,6 +476,31 @@
     if (!ok) throw new Error('Copy failed');
   }
 
+  function setPayloadMeta(id, provider, type){
+    const el = $('txPayloadMeta');
+    if (!el) return;
+    const chips = [];
+    chips.push('<span class="pwt-meta-chip"><span class="pwt-meta-k">ID</span> ' + esc(id || '-') + '</span>');
+    chips.push('<span class="pwt-meta-chip">' + esc(provider || '-') + '</span>');
+    chips.push('<span class="pwt-meta-chip">' + esc(type || '-') + '</span>');
+    el.innerHTML = chips.join('');
+  }
+
+  function fillPayloadBox(id, value, opts){
+    const el = $(id);
+    if (!el) return;
+    const loading = !!(opts && opts.loading);
+    const text = loading
+      ? String((opts && opts.loadingText) || 'Loading…')
+      : pretty(value);
+    el.textContent = text;
+    const block = el.closest('.payload-block');
+    if (!block) return;
+    block.classList.toggle('is-loading', loading);
+    const empty = !loading && (text === '-' || text === '');
+    block.classList.toggle('is-empty', empty);
+  }
+
   function statusBadge(status){
     const s = String(status || '-').toUpperCase();
     let cls = 'status-pill';
@@ -374,37 +514,38 @@
     const summary = lastRows[i] || {};
     const modalEl = $('txPayloadModal');
     const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-    if ($('txPayloadMeta')) $('txPayloadMeta').textContent = 'ID ' + (summary.id || '-') + ' · ' + (summary.providerCode || '-') + ' · ' + (summary.txType || '-');
-    if ($('txApiUrl')) $('txApiUrl').textContent = pretty(summary.apiUrl || summary.url || '');
-    if ($('txRequestPayload')) $('txRequestPayload').textContent = 'Loading payload...';
-    if ($('txResponsePayload')) $('txResponsePayload').textContent = 'Loading payload...';
-    if ($('txRequestHeaders')) $('txRequestHeaders').textContent = 'Loading headers...';
-    if ($('txSignaturePlainText')) $('txSignaturePlainText').textContent = 'Loading signature input...';
-    if ($('txGeneratedSignature')) $('txGeneratedSignature').textContent = 'Loading signature...';
-    if ($('txRawJson')) $('txRawJson').textContent = 'Loading raw JSON...';
-    if ($('txErrorMessage')) $('txErrorMessage').textContent = 'Loading payload...';
-    if ($('txFullDebugJson')) $('txFullDebugJson').textContent = 'Loading full debug JSON...';
+    setPayloadMeta(summary.id, summary.providerCode || summary.provider_code, summary.txType || summary.tx_type);
+    fillPayloadBox('txApiUrl', summary.apiUrl || summary.url || '', { loading: true, loadingText: 'Loading…' });
+    fillPayloadBox('txRequestPayload', null, { loading: true, loadingText: 'Loading payload…' });
+    fillPayloadBox('txResponsePayload', null, { loading: true, loadingText: 'Loading payload…' });
+    fillPayloadBox('txRequestHeaders', null, { loading: true, loadingText: 'Loading headers…' });
+    fillPayloadBox('txSignaturePlainText', null, { loading: true, loadingText: 'Loading signature input…' });
+    fillPayloadBox('txGeneratedSignature', null, { loading: true, loadingText: 'Loading signature…' });
+    fillPayloadBox('txRawJson', null, { loading: true, loadingText: 'Loading raw JSON…' });
+    fillPayloadBox('txErrorMessage', null, { loading: true, loadingText: 'Loading…' });
+    fillPayloadBox('txFullDebugJson', null, { loading: true, loadingText: 'Loading full debug JSON…' });
     modal.show();
     try {
       const x = await get(endpoint('PROVIDER_WALLET_TRANSACTION_LIST').replace(/\/list$/, '') + '/' + encodeURIComponent(summary.id));
-      if ($('txPayloadMeta')) $('txPayloadMeta').textContent = 'ID ' + (x.id || '-') + ' · ' + (x.providerCode || '-') + ' · ' + (x.txType || '-');
-      if ($('txApiUrl')) $('txApiUrl').textContent = pretty(x.apiUrl || x.url || '');
-      if ($('txRequestPayload')) $('txRequestPayload').textContent = pretty(x.requestPayload || x.request_payload || '');
-      if ($('txResponsePayload')) $('txResponsePayload').textContent = pretty(x.responsePayload || x.response_payload || '');
-      if ($('txRequestHeaders')) $('txRequestHeaders').textContent = pretty(x.requestHeaders || x.request_headers || '');
-      if ($('txSignaturePlainText')) $('txSignaturePlainText').textContent = pretty(x.signaturePlainText || x.signature_plain_text || '');
-      if ($('txGeneratedSignature')) $('txGeneratedSignature').textContent = pretty(x.generatedSignature || x.generated_signature || '');
-      if ($('txRawJson')) $('txRawJson').textContent = pretty(x.rawJson || x.raw_json || '');
-      if ($('txErrorMessage')) $('txErrorMessage').textContent = pretty(x.errorMessage || x.error_message || '');
+      setPayloadMeta(x.id, x.providerCode || x.provider_code, x.txType || x.tx_type);
+      fillPayloadBox('txApiUrl', x.apiUrl || x.api_url || x.url || '');
+      fillPayloadBox('txRequestPayload', x.requestPayload || x.request_payload || '');
+      fillPayloadBox('txResponsePayload', x.responsePayload || x.response_payload || '');
+      fillPayloadBox('txRequestHeaders', x.requestHeaders || x.request_headers || '');
+      fillPayloadBox('txSignaturePlainText', x.signaturePlainText || x.signature_plain_text || '');
+      fillPayloadBox('txGeneratedSignature', x.generatedSignature || x.generated_signature || '');
+      fillPayloadBox('txRawJson', x.rawJson || x.raw_json || '');
+      fillPayloadBox('txErrorMessage', x.errorMessage || x.error_message || '');
       setFullDebugJson(x);
     } catch (e) {
-      if ($('txRequestPayload')) $('txRequestPayload').textContent = '-';
-      if ($('txResponsePayload')) $('txResponsePayload').textContent = '-';
-      if ($('txRequestHeaders')) $('txRequestHeaders').textContent = '-';
-      if ($('txSignaturePlainText')) $('txSignaturePlainText').textContent = '-';
-      if ($('txGeneratedSignature')) $('txGeneratedSignature').textContent = '-';
-      if ($('txRawJson')) $('txRawJson').textContent = '-';
-      if ($('txErrorMessage')) $('txErrorMessage').textContent = e.message || 'Unable to load payload';
+      fillPayloadBox('txApiUrl', summary.apiUrl || summary.api_url || summary.url || '');
+      fillPayloadBox('txRequestPayload', '');
+      fillPayloadBox('txResponsePayload', '');
+      fillPayloadBox('txRequestHeaders', '');
+      fillPayloadBox('txSignaturePlainText', '');
+      fillPayloadBox('txGeneratedSignature', '');
+      fillPayloadBox('txRawJson', '');
+      fillPayloadBox('txErrorMessage', e.message || 'Unable to load payload');
       setFullDebugJson({
         ...summary,
         apiUrl: summary.apiUrl || summary.api_url || summary.url || null,
@@ -419,7 +560,7 @@
     const controller = activeListController;
     const timeout = setTimeout(() => controller.abort(), 15000);
     try{
-      $('txBody').innerHTML = '<tr><td colspan="10" class="text-center py-4 text-muted">Loading...</td></tr>';
+      $('txBody').innerHTML = '<tr><td colspan="9" class="text-center py-4 text-muted">Loading...</td></tr>';
       const data = await get(endpoint('PROVIDER_WALLET_TRANSACTION_LIST') + '?' + query(), controller.signal);
       lastRows = readList(data);
       totalPages = readTotalPages(data);
@@ -428,7 +569,6 @@
       $('txBody').innerHTML = lastRows.length ? lastRows.map((x,i) => `
         <tr>
           <td>${esc(x.id)}</td>
-          <td>${esc(x.memberId || x.member_id || '')}</td>
           <td><b>${esc(x.providerCode || x.provider_code || '-')}</b></td>
           <td>${esc(x.txType || x.tx_type || '-')}</td>
           <td>${money(x.amount)}</td>
@@ -437,13 +577,13 @@
           <td><span class="pwt-url" title="${esc(x.apiUrl || x.api_url || '')}">${esc(x.apiUrl || x.api_url || '-')}</span></td>
           <td>${esc(dt(x.createdAt || x.created_at))}</td>
           <td><button class="clean-btn pwt-payload-btn" type="button" onclick="showProviderTxPayload(${i})"><i class="bi bi-braces"></i> Payload</button></td>
-        </tr>`).join('') : '<tr><td colspan="10" class="text-center py-4 text-muted">No records</td></tr>';
+        </tr>`).join('') : '<tr><td colspan="9" class="text-center py-4 text-muted">No records</td></tr>';
       renderPages();
       renderInfo(lastRows.length);
       if (!autofitReloading) scheduleEvenFill();
     }catch(e){
       if (e && e.name === 'AbortError') return;
-      $('txBody').innerHTML = '<tr><td colspan="10" class="text-danger text-center py-4">' + esc(e.message) + '</td></tr>';
+      $('txBody').innerHTML = '<tr><td colspan="9" class="text-danger text-center py-4">' + esc(e.message) + '</td></tr>';
       totalElements = 0;
       totalPages = 1;
       renderPages();
@@ -460,10 +600,65 @@
     load();
   }
 
+  function paintDarkFilterControls(){
+    const dark = document.documentElement.getAttribute('data-bo-theme') === 'dark';
+    const el = document.getElementById('txKeyword');
+    if (!el) return;
+    const keys = [
+      'background', 'background-color', 'background-image', 'border', 'border-color',
+      'color', '-webkit-text-fill-color', 'caret-color', 'box-shadow', 'color-scheme',
+      '-webkit-appearance', 'appearance'
+    ];
+    if (!dark) {
+      keys.forEach(k => el.style.removeProperty(k));
+      return;
+    }
+    el.style.setProperty('background', '#2A2C36', 'important');
+    el.style.setProperty('background-color', '#2A2C36', 'important');
+    el.style.setProperty('background-image', 'none', 'important');
+    el.style.setProperty('border', '1px solid rgba(255,255,255,.14)', 'important');
+    el.style.setProperty('color', '#F5F5F4', 'important');
+    el.style.setProperty('-webkit-text-fill-color', '#F5F5F4', 'important');
+    el.style.setProperty('caret-color', '#F5F5F4', 'important');
+    el.style.setProperty('box-shadow', 'none', 'important');
+    el.style.setProperty('color-scheme', 'dark', 'important');
+    el.style.setProperty('-webkit-appearance', 'none', 'important');
+    el.style.setProperty('appearance', 'none', 'important');
+    document.querySelectorAll('.provider-transaction-page .pwt-url').forEach(node => {
+      node.style.setProperty('color', '#FFFFFF', 'important');
+    });
+  }
+
+  function ensureDarkFilterStyleSheet(){
+    if (document.getElementById('pwt-dark-runtime-css')) return;
+    const s = document.createElement('style');
+    s.id = 'pwt-dark-runtime-css';
+    s.textContent = [
+      'html[data-bo-theme="dark"] body.provider-transaction-page #txKeyword{',
+      'background:#2A2C36!important;background-color:#2A2C36!important;background-image:none!important;',
+      'border:1px solid rgba(255,255,255,.14)!important;color:#F5F5F4!important;',
+      '-webkit-text-fill-color:#F5F5F4!important;caret-color:#F5F5F4!important;',
+      'color-scheme:dark!important;box-shadow:none!important;',
+      '-webkit-appearance:none!important;appearance:none!important}',
+      'html[data-bo-theme="dark"] body.provider-transaction-page #txKeyword::placeholder{',
+      'color:#A1A1AA!important;-webkit-text-fill-color:#A1A1AA!important;opacity:1!important}',
+      'html[data-bo-theme="dark"] body.provider-transaction-page .pwt-url{color:#FFFFFF!important}'
+    ].join('');
+    document.documentElement.appendChild(s);
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     BO_AUTH.requireLogin();
     BO_AUTH.renderProfile && BO_AUTH.renderProfile();
     BO_AUTH.renderSidebar && BO_AUTH.renderSidebar();
+    ensureDarkFilterStyleSheet();
+    paintDarkFilterControls();
+    /* bo-ui-standard classifies filters after us — repaint a few times so cream cannot stick */
+    [0, 50, 150, 400, 1000].forEach(ms => setTimeout(paintDarkFilterControls, ms));
+    new MutationObserver(paintDarkFilterControls).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-bo-theme']
+    });
     pageSize = resolvePageSize();
     let keywordTimer = 0;
     const kick = () => { clearTimeout(keywordTimer); keywordTimer = setTimeout(runSearch, 350); };
