@@ -141,12 +141,9 @@ const GAME_CATEGORY_API = {
   const modeFilter = document.getElementById('categoryModeFilter');
   const statusFilter = document.getElementById('categoryStatusFilter');
   const sortFilter = document.getElementById('categorySortFilter');
-  const applyFiltersBtn = document.getElementById('applyCategoryFilters');
-  const resetFiltersBtn = document.getElementById('resetCategoryFilters');
-  const totalCountEl = document.getElementById('categoryTotalCount');
-  const activeCountEl = document.getElementById('categoryActiveCount');
-  const activePercentEl = document.getElementById('categoryActivePercent');
   const showingTextEl = document.getElementById('categoryShowingText');
+  const pageSizeSelect = document.getElementById('categoryPageSize');
+  const pager = document.getElementById('categoryPager');
   const providerSelector = document.getElementById('categoryProviderSelector');
   const providerRulesBox = document.getElementById('categoryProviderRules');
   if (tenantPresentation) {
@@ -162,7 +159,49 @@ const GAME_CATEGORY_API = {
 
   let selectedFile = null;
   let currentItems = [];
+  let currentPage = 0;
   let picker;
+
+  function resolvePageSize(raw) {
+    const v = String(raw ?? '-').trim();
+    if (v === '-' || v === '') return 20;
+    if (/^all$/i.test(v)) return 10000;
+    const n = Number(v);
+    return Number.isFinite(n) && n > 0 ? n : 20;
+  }
+
+  function setShowing(from, to, total) {
+    if (!showingTextEl) return;
+    showingTextEl.textContent = `Showing ${from} to ${to} of ${total} entries`;
+  }
+
+  function renderPager(page, pages, isEmpty) {
+    if (!pager) return;
+    const total = Math.max(1, Number(pages) || 1);
+    const cur = Math.max(0, Math.min(Number(page) || 0, total - 1));
+    const btn = (label, target, disabled, active, icon) =>
+      `<button type="button" class="page-btn${active ? ' active' : ''}" data-page="${target}" ${disabled ? 'disabled' : ''} aria-label="${label}"${active ? ' aria-current="page"' : ''}>${icon ? `<i class="bi ${icon}"></i>` : label}</button>`;
+    let html = btn('First', 0, cur <= 0 || isEmpty, false, 'bi-chevron-bar-left');
+    html += btn('Previous', cur - 1, cur <= 0 || isEmpty, false, 'bi-chevron-left');
+    if (isEmpty) {
+      html += btn('1', 0, true, true);
+    } else {
+      const lo = Math.max(0, cur - 2);
+      const hi = Math.min(total - 1, cur + 2);
+      if (lo > 0) {
+        html += btn('1', 0, false, cur === 0);
+        if (lo > 1) html += '<span class="smart-page-ellipsis" aria-hidden="true">…</span>';
+      }
+      for (let i = lo; i <= hi; i++) html += btn(String(i + 1), i, false, i === cur);
+      if (hi < total - 1) {
+        if (hi < total - 2) html += '<span class="smart-page-ellipsis" aria-hidden="true">…</span>';
+        html += btn(String(total), total - 1, false, cur === total - 1);
+      }
+    }
+    html += btn('Next', cur + 1, cur >= total - 1 || isEmpty, false, 'bi-chevron-right');
+    html += btn('Last', total - 1, cur >= total - 1 || isEmpty, false, 'bi-chevron-bar-right');
+    pager.innerHTML = html;
+  }
 
 
   function parseProviderRules(value) {
@@ -370,7 +409,7 @@ const GAME_CATEGORY_API = {
 
   function setBusy(isBusy) {
     saveBtn.disabled = isBusy;
-    refreshBtn.disabled = isBusy;
+    if (refreshBtn) refreshBtn.disabled = isBusy;
     saveBtn.innerHTML = isBusy ? '<i class="bi bi-hourglass-split"></i> Saving...' : '<i class="bi bi-save"></i> Save Category';
   }
 
@@ -425,13 +464,9 @@ const GAME_CATEGORY_API = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function renderList(items) {
-    currentItems = Array.isArray(items) ? items : [];
-    const total = currentItems.length;
-    const active = currentItems.filter(item => Number(item.status) === 1).length;
-    if (totalCountEl) totalCountEl.textContent = total;
-    if (activeCountEl) activeCountEl.textContent = active;
-    if (activePercentEl) activePercentEl.textContent = `${total ? Math.round(active / total * 100) : 0}% of total`;
+  function renderList(items, resetPage) {
+    if (Array.isArray(items)) currentItems = items;
+    if (resetPage) currentPage = 0;
 
     const query = (searchInput?.value || '').trim().toLowerCase();
     const mode = modeFilter?.value || '';
@@ -450,11 +485,21 @@ const GAME_CATEGORY_API = {
       return Number(a.sortOrder || 0) - Number(b.sortOrder || 0);
     });
 
-    list.innerHTML = '';
-    empty.hidden = visible.length > 0;
-    if (showingTextEl) showingTextEl.textContent = `Showing 1 to ${visible.length} of ${visible.length} entries`;
+    const size = resolvePageSize(pageSizeSelect?.value);
+    const total = visible.length;
+    const pages = Math.max(1, Math.ceil(total / size) || 1);
+    if (currentPage >= pages) currentPage = Math.max(0, pages - 1);
+    const start = total ? currentPage * size : 0;
+    const pageRows = visible.slice(start, start + size);
+    const from = total ? start + 1 : 0;
+    const to = total ? start + pageRows.length : 0;
 
-    visible.forEach(item => {
+    list.innerHTML = '';
+    empty.hidden = total > 0;
+    setShowing(from, to, total);
+    renderPager(currentPage, pages, total === 0);
+
+    pageRows.forEach(item => {
       const row = document.createElement('div');
       row.className = 'category-table-row';
       const imageUrl = resolveImageUrl(item.imageUrl, item.image, '');
@@ -473,14 +518,14 @@ const GAME_CATEGORY_API = {
     });
   }
 
-  function applyCategoryFilters(){ renderList(currentItems); }
+  function applyCategoryFilters(){ renderList(currentItems, true); }
 
   async function loadCategories() {
     list.innerHTML = '<div class="slider-empty"><i class="bi bi-hourglass-split"></i><b>Loading categories...</b></div>';
     empty.hidden = true;
     try {
       const json = await fetchJson(GAME_CATEGORY_API.list);
-      renderList(json.data || []);
+      renderList(json.data || [], true);
     } catch (err) {
       list.innerHTML = '';
       empty.hidden = false;
@@ -608,7 +653,7 @@ const GAME_CATEGORY_API = {
 
   form.addEventListener('submit', saveCategory);
   resetBtn.addEventListener('click', resetForm);
-  refreshBtn.addEventListener('click', loadCategories);
+  refreshBtn?.addEventListener('click', loadCategories);
 
   list.addEventListener('click', e => {
     const editBtn = e.target.closest('[data-edit-id]');
@@ -621,15 +666,14 @@ const GAME_CATEGORY_API = {
   });
 
 
-  applyFiltersBtn && applyFiltersBtn.addEventListener('click', applyCategoryFilters);
   searchInput && searchInput.addEventListener('input', applyCategoryFilters);
   [modeFilter, statusFilter, sortFilter].forEach(el => el && el.addEventListener('change', applyCategoryFilters));
-  resetFiltersBtn && resetFiltersBtn.addEventListener('click', () => {
-    if (searchInput) searchInput.value = '';
-    if (modeFilter) modeFilter.value = '';
-    if (statusFilter) statusFilter.value = '';
-    if (sortFilter) sortFilter.value = 'sortAsc';
-    applyCategoryFilters();
+  pageSizeSelect?.addEventListener('change', () => renderList(undefined, true));
+  pager?.addEventListener('click', e => {
+    const btn = e.target.closest('[data-page]');
+    if (!btn || btn.disabled) return;
+    currentPage = Number(btn.dataset.page) || 0;
+    renderList();
   });
   providerConfigReady = loadProviderConfigData();
   Promise.all([providerConfigReady, loadCategories()]);
