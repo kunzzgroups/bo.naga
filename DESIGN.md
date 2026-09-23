@@ -2313,8 +2313,9 @@ generic themes now exempt **whole components** (`:not(.mad-search input):not(.mp
 :not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input)`,
 plus `:not(.bonus-title-search input)` in place of the id). Verified after: `mad-search`, `mp-search`,
 `mac-provider-search`, promotion and `bonus-title-search` each show **one** border (inner `0px/0px` in a
-`0.8px/8px` wrapper), and the input-owned recipes are untouched (`game`, `game-category`, `admin-user`,
-`livechat` still measure input `0.8px/8px` in a borderless wrapper).
+`0.8px/8px` wrapper), and the input-owned recipes remain only where a page sheet still documents that
+split (`agent-players`, `admin-user`, `livechat`). **`game` / `game-category` later flipped to the
+wrapper-owned recipe** — see the next subsection.
 
 **`agent-players` needed the opposite fix.** Its own sheet carries seven successive attempts at this same
 problem (v2.3.4 → `v2.3.7 … final single-outline fix. The wrapper is layout-only; the input owns the one
@@ -2349,8 +2350,9 @@ tools 34 — and now read `mp-search:36/8px` with their action clusters at 36. T
 sheet of their own — `game` and `game-category` (`body.standardized-game-management`) and `admin-user`
 (`body.admin-management-page`) — measured a **uniformly 42px row** (every `.bo-filter-item` child 42:
 search, four selects, two action buttons), so the row moved whole: search `36/8px`, selects `36/8px`,
-action buttons `36/8px`, search input `36` with its `34px` icon inset. `livechat` is the one case that
-moved **alone**: `.livechat-inbox-card` is a vertical stack (card head 36 · search · list), so the search
+action buttons `36/8px`. (`game` / `game-category` later moved the search chrome onto the wrapper —
+bare input; see subsection below.) `livechat` is the one case that moved **alone**:
+`.livechat-inbox-card` is a vertical stack (card head 36 · search · list), so the search
 drops to 36 and lands flush with the head above it.
 
 **Two lessons from this round.** (1) `game`/`game-category`/`admin-user` have no page sheet at all — they
@@ -2361,6 +2363,36 @@ class; and the search input's height came from `bo-ui-standard.css`'s
 in a container that *is* the `.bo-filter-item`, not inside one, so
 `… .bo-filter-item > .game-filter-actions > *` matched nothing; `….bo-filter-row .game-filter-actions > *`
 does. Measure the control, not the markup you assumed.
+
+### Game Category search: wrapper owns chrome; input is bare (2026-09-23)
+
+Owner: icon跑位 + 移除 input 的 background / border.
+
+**Recipe (locked for `body.page-game-category` / `body.standardized-game-management` search):**
+
+| Part | Owns | Spec |
+| --- | --- | --- |
+| `.category-search-control` / `.game-search-control` | the **one** visible field | flex row · `align-items:center` · gap `8px` · pad `0 12px` · height **`36px`** · radius **`8px`** · light fill `#FFF8EB` · border `#EADCC8` · dark fill `#2A2C36` · border `rgba(255,255,255,.12)` |
+| `> i.bi-search` | glyph only | `position:static` · flex `0 0 auto` · **not** absolute (absolute + wrapper padding parked the icon outside the bordered input) |
+| `> input` / `#categorySearchInput` | text only | **no** background · **no** border · **no** focus ring on the bare input · `padding:0` · `flex:1` · transparent on hover/focus too |
+| `:focus-within` on the shell | focus chrome | border `#78716C` · ring `0 0 0 3px rgba(217,119,6,.10)` |
+
+**Why the icon escaped.** Page CSS wanted absolute icon over a bordered input (`padding-left:34px`), but
+`reports.css`’s guard-tier `html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy)
+… .category-search-control{padding:0 12px!important}` (ID-level) kept padding on the wrapper while the
+input alone drew the border — magnifier sat in the wrapper’s left pad, outside the field.
+
+**Why the input kept a cream fill.** `bo-input-fill.css` rule 1 paints **every** `input` `#FFF8EB` at
+ID-level (`body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2)`), even when rule 2 already fills
+the search **frame**. Measured: wrapper cream + input cream = double wall. Fixed in `bo-input-fill.css`:
+nested inputs inside `.category-search-control` / `.game-search-control` / `.banner-search` /
+`.input-icon-wrap` / `.ref-input-icon` / `.mad-search` / `.agent-search-box` / `.mac-provider-search` /
+`.provider-list-search` force `background-color:transparent!important` (base + hover/focus). Page lock in
+`game-category.html` `<style id="game-category-footer-lock">` + `reports.css` body-scoped block match that
+tier so border/`background` stay off the bare input.
+
+**Still opposite on purpose:** `agent-players` keeps input-owned border (wrapper layout-only) — do not
+merge the two recipes.
 
 **Wiped once and re-applied.** The back-button work and this search work were both lost when the working
 tree was reset to `origin/main` (the reflog shows `reset: moving to origin/main` three times in one
