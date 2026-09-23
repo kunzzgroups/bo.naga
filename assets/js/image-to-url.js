@@ -67,6 +67,13 @@ const API_UPLOAD_URL =
   });
   dropZone.addEventListener('drop', (e) => handleFile(e.dataTransfer.files[0]));
 
+  dropZone.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      input.click();
+    }
+  });
+
   uploadBtn.addEventListener('click', async () => {
     if (!selectedFile) {
       setStatus('Please select image first.', 'error');
@@ -117,9 +124,13 @@ const API_UPLOAD_URL =
       return;
     }
     await navigator.clipboard.writeText(text);
-    const old = btn.textContent;
-    btn.textContent = 'COPIED';
-    setTimeout(() => (btn.textContent = old), 1200);
+    const oldHtml = btn.innerHTML;
+    btn.classList.add('is-copied');
+    btn.innerHTML = '<i class="bi bi-check2" aria-hidden="true"></i> COPIED';
+    setTimeout(() => {
+      btn.classList.remove('is-copied');
+      btn.innerHTML = oldHtml;
+    }, 1200);
   }
 
   copyUrlBtn.addEventListener('click', () => copyText(imageUrl.value, copyUrlBtn));
