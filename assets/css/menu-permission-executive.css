@@ -1834,3 +1834,39 @@ html[data-bo-theme="dark"] body.menu-permission-page .mp-btn-save:hover:not(:dis
   border-color:#FBBF24!important;
   color:#2A2C36!important;
 }
+
+
+/* --------------------------------------------------------------------------
+   2026-09-23 - roles / permissions rows onto the LOCKED listing tier (36px / 8px, pad 0 12px,
+   12px type). DESIGN.md line 349. Measured before: `.mp-toolbar` row 64 with `mp-search:42` and
+   `mp-toolbar-actions:32`; `.mrc-filter-row` row 42 with `mp-search:42` and `mrc-perm-tools:34`.
+   The row moves together - a 36px search beside a 42px action cluster reads as a mistake.
+   -------------------------------------------------------------------------- */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .mp-toolbar > .mp-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .mp-toolbar .mp-toolbar-actions > *,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .mp-toolbar > .rounded-select-wrap,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .mp-toolbar > .rounded-select-wrap .rounded-select-btn,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .mrc-filter-row > .mp-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .mrc-filter-row > .mrc-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .mrc-filter-row .mrc-perm-tools > *,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .mrc-filter-row > .rounded-select-wrap .rounded-select-btn{
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  border-radius:8px!important;
+  font-size:12px!important;
+  line-height:1.2!important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .mp-toolbar > .mp-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .mrc-filter-row > .mp-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .mrc-filter-row > .mrc-search{
+  padding:0 12px!important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .mp-toolbar .mp-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .mrc-filter-row .mp-search > input{
+  height:100%!important;
+  min-height:0!important;
+  border:0!important;
+  background:transparent!important;
+  font-size:12px!important;
+}

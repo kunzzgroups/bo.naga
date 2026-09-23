@@ -1597,13 +1597,13 @@ body.pwt-page.modal-open .pwt-modal{pointer-events:auto}
 /* Every regular input/select follows the approved rounded field theme. */
 .report-content select:not(#pullLogWindowUnit),
 .report-content .form-select,
-.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword),
+.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(.mad-search input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input):not(.bonus-title-search input),
 .report-content textarea{
   border:1px solid #EADCC8!important;border-radius:10px!important;background-color:#FFF8EB!important;
   box-shadow:none!important;color:#18191C;
 }
 .report-content select:not(#pullLogWindowUnit):focus,.report-content .form-select:focus,
-.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):focus,
+.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(.mad-search input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input):not(.bonus-title-search input):focus,
 .report-content textarea:focus{border-color:#78716C!important;box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;outline:0!important}
 
 /* Live chat keeps the composer available while only the message history scrolls. */
@@ -2852,7 +2852,6 @@ body:has(#gameSearchInput) .game-filter-actions .clean-btn{
 .ref-input-icon>input,
 #gameSearchInput,
 #categorySearchInput,
-#bonusSearchInput,
 #promoSearchInput,
 #bannerSearchInput,
 #adminSearchInput,
@@ -2881,7 +2880,6 @@ body:has(#gameSearchInput) .game-filter-actions .clean-btn{
 .ref-input-icon>input:focus,
 #gameSearchInput:focus,
 #categorySearchInput:focus,
-#bonusSearchInput:focus,
 #promoSearchInput:focus,
 #bannerSearchInput:focus,
 #adminSearchInput:focus,
@@ -3068,7 +3066,6 @@ body:has(#gameSearchInput) .game-filter-actions .clean-btn{
 .ref-input-icon>input,
 #bannerSearchInput,
 #categorySearchInput,
-#bonusSearchInput,
 #gameSearchInput{
   height:var(--bo-control-height)!important;
   min-height:var(--bo-control-height)!important;
@@ -6213,3 +6210,45 @@ html[data-bo-theme="dark"] .report-sidebar .nav-group .nav-group-btn:focus-visib
 .report-actions .merchant-repay-header-btn{position:relative;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
 .report-actions .merchant-repay-header-badge{position:absolute;top:-7px;right:-7px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#ef4444;color:#fff;font-size:11px;font-weight:800;line-height:20px;text-align:center;box-shadow:0 0 0 2px #fff}
 html[data-bo-theme="dark"] .report-actions .merchant-repay-header-badge{box-shadow:0 0 0 2px #E7E5E4}
+
+
+/* --------------------------------------------------------------------------
+   2026-09-23 - the two landing listings that ship no sheet of their own onto the LOCKED tier.
+   `game` and `game-category` (`body.standardized-game-management`) and `admin-user`
+   (`body.admin-management-page`) style their filter row from this file's shared recipes, and
+   measured a UNIFORMLY 42px row (every `.bo-filter-item` child 42: search, selects, actions;
+   admin-user's fields 62 with 42px controls). A 36px search beside a 42px select would read as a
+   mistake, so the row moves whole. Guard tier, so it beats the shared recipe below it.
+   The search input keeps the border here - on these pages the input owns it and the wrapper is
+   layout-only (the same split `agent-players` documents as v2.3.7).
+   -------------------------------------------------------------------------- */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row > .bo-filter-item > .game-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row > .bo-filter-item > .category-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row > .bo-filter-item > .rounded-select-wrap,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row > .bo-filter-item > .rounded-select-wrap .rounded-select-btn,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row .game-filter-actions > *,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row .category-filter-actions > *,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row .game-search-control > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row .category-search-control > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.admin-management-page .user-search-grid .input-icon-wrap,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.admin-management-page .user-search-grid .user-search-grid,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.admin-management-page .user-search-grid .rounded-select-wrap,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.admin-management-page .user-search-grid .rounded-select-wrap .rounded-select-btn,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.admin-management-page .user-search-grid .filter-action-row > *,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.admin-management-page .user-search-grid .input-icon-wrap > input{
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  border-radius:8px!important;
+  font-size:12px!important;
+  line-height:1.2!important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row .game-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row .category-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.admin-management-page .user-search-grid .input-icon-wrap{
+  padding:0 12px!important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row .game-search-control > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.standardized-game-management .bo-filter-row .category-search-control > input{
+  padding:0 12px 0 34px!important;
+}
