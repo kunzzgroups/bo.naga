@@ -3491,7 +3491,7 @@ body:has(#dbgRows) .report-table thead th:last-child{
 /* Compact desktop filters + listing header alignment (v1.0.21) */
 @media (min-width: 1100px){
   .provider-bet-report-page .user-search-grid{
-    grid-template-columns:repeat(6,minmax(0,1fr))!important;
+    grid-template-columns:minmax(240px,390px) minmax(220px,1fr) minmax(150px,170px)!important;
     gap:12px!important;
     align-items:end!important;
   }
@@ -3554,10 +3554,10 @@ body:has(#dbgRows) .report-table thead th:last-child{
   border-color:#E8901A!important;
 }
 
-/* v1.0.22 - Provider Bet Report filter follows Provider Sessions full-width desktop layout. */
+/* v1.0.22 - Provider Bet Report filter: date · combined search · event. */
 @media (min-width:1100px){
   .provider-bet-report-page .user-search-grid{
-    grid-template-columns:minmax(300px,2fr) repeat(4,minmax(150px,1fr)) 124px!important;
+    grid-template-columns:minmax(300px,390px) minmax(240px,1fr) minmax(150px,170px)!important;
     align-items:end!important;
     column-gap:12px!important;
     row-gap:12px!important;
@@ -3568,18 +3568,9 @@ body:has(#dbgRows) .report-table thead th:last-child{
     grid-column:auto!important;
     min-width:0!important;
   }
-  .provider-bet-report-page .user-search-grid .field:has(#betSearchBtn){
-    width:124px!important;
-    min-width:124px!important;
-    max-width:124px!important;
-    justify-self:stretch!important;
-  }
+  .provider-bet-report-page .user-search-grid .field:has(#betSearchBtn),
   .provider-bet-report-page #betSearchBtn{
-    width:124px!important;
-    min-width:124px!important;
-    max-width:124px!important;
-    padding-left:16px!important;
-    padding-right:16px!important;
+    display:none!important;
   }
 }
 @media (min-width:1100px) and (max-width:1200px){
@@ -3878,9 +3869,9 @@ body:has(#refDateTrigger) .ref-date-field{width:100%!important;max-width:430px!i
     align-items:end!important;
   }
 
-  /* Provider Bet Report: one compact row with balanced field widths. */
+  /* Provider Bet Report: one compact row — date · search · event. */
   .provider-bet-report-page .filter-card .user-search-grid{
-    grid-template-columns:390px 190px 190px 180px 170px 124px!important;
+    grid-template-columns:390px minmax(240px,320px) 170px!important;
     gap:12px!important;
     justify-content:start!important;
     align-items:end!important;
@@ -4071,20 +4062,18 @@ body[data-report-page] .filter-card .field:has(#casinoResetBtn){
   .wallet-ledger-page .filter-card .ledger-reset-field{grid-column:6!important;grid-row:1!important}
   .wallet-ledger-page .filter-card .ledger-search-field{grid-column:7!important;grid-row:1!important}
 
-  /* Provider Bet Report: identical one-row rhythm to Provider Sessions. */
+  /* Provider Bet Report: date · combined search · event type. */
   .provider-bet-report-page .filter-card .user-search-grid{
     display:grid!important;
-    grid-template-columns:390px 210px 210px 190px 170px 124px!important;
+    grid-template-columns:390px minmax(240px,320px) 170px!important;
     gap:12px!important;
     justify-content:start!important;
     align-items:end!important;
   }
   .provider-bet-report-page .filter-card .bo-range-field{grid-column:1!important;grid-row:1!important;width:390px!important;min-width:390px!important;max-width:390px!important;margin:0!important}
-  .provider-bet-report-page .filter-card .field:has(#betMemberId){grid-column:2!important;grid-row:1!important}
-  .provider-bet-report-page .filter-card .field:has(#betProviderCode){grid-column:3!important;grid-row:1!important}
-  .provider-bet-report-page .filter-card .field:has(#betGameCode){grid-column:4!important;grid-row:1!important}
-  .provider-bet-report-page .filter-card .field:has(#betEventType){grid-column:5!important;grid-row:1!important}
-  .provider-bet-report-page .filter-card .field:has(#betSearchBtn){grid-column:6!important;grid-row:1!important;width:124px!important;max-width:124px!important}
+  .provider-bet-report-page .filter-card .field:has(#betKeyword){grid-column:2!important;grid-row:1!important}
+  .provider-bet-report-page .filter-card .field:has(#betEventType){grid-column:3!important;grid-row:1!important}
+  .provider-bet-report-page .filter-card .field:has(#betSearchBtn){display:none!important}
 
   /* Provider Transactions: all inputs including Status on row 1; actions only on row 2. */
   .provider-transaction-page .pwt-filter-grid{
@@ -4565,7 +4554,7 @@ body[data-report-page] .filter-card .field:has(#casinoResetBtn){
 @media (min-width:1200px) and (max-width:1366px){
   .provider-bet-report-page .filter-card .user-search-grid{
     display:grid!important;
-    grid-template-columns:195px repeat(4,minmax(0,1fr))!important;
+    grid-template-columns:195px minmax(0,1.4fr) minmax(0,.8fr)!important;
     gap:12px!important;
     align-items:end!important;
     justify-content:start!important;
@@ -4578,17 +4567,9 @@ body[data-report-page] .filter-card .field:has(#casinoResetBtn){
     max-width:195px!important;
     margin:0!important;
   }
-  .provider-bet-report-page .filter-card .field:has(#betMemberId){grid-column:2!important;grid-row:1!important}
-  .provider-bet-report-page .filter-card .field:has(#betProviderCode){grid-column:3!important;grid-row:1!important}
-  .provider-bet-report-page .filter-card .field:has(#betGameCode){grid-column:4!important;grid-row:1!important}
-  .provider-bet-report-page .filter-card .field:has(#betEventType){grid-column:5!important;grid-row:1!important}
-  .provider-bet-report-page .filter-card .field:has(#betSearchBtn){
-    grid-column:1!important;
-    grid-row:2!important;
-    width:124px!important;
-    max-width:124px!important;
-    margin:6px 0 0!important;
-  }
+  .provider-bet-report-page .filter-card .field:has(#betKeyword){grid-column:2!important;grid-row:1!important}
+  .provider-bet-report-page .filter-card .field:has(#betEventType){grid-column:3!important;grid-row:1!important}
+  .provider-bet-report-page .filter-card .field:has(#betSearchBtn){display:none!important}
   .provider-bet-report-page .filter-card .user-search-grid > .field{
     min-width:0!important;
     width:100%!important;
@@ -4942,9 +4923,15 @@ body[data-report-page] .filter-card .field:has(#casinoResetBtn){
   body.wallet-ledger-page:has(#ledgerFrom) .filter-card .ledger-search-field{grid-column:7!important;grid-row:1!important}
   body.wallet-ledger-page:has(#ledgerFrom) .filter-card .user-search-grid > *{min-width:0!important;max-width:none!important}
 
-  /* Provider Bet Report and Provider Sessions: compact first column and let the
-     remaining filters share all available laptop width evenly. */
-  .provider-bet-report-page .filter-card .user-search-grid,
+  /* Provider Bet Report: date · search · event. Sessions keep their own columns. */
+  .provider-bet-report-page .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:292px minmax(0,1.4fr) minmax(0,.8fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
   body:has(#sessionFrom) .filter-card .user-search-grid{
     display:grid!important;
     grid-template-columns:292px repeat(4,minmax(0,1fr))!important;
@@ -5035,7 +5022,14 @@ body[data-report-page] .filter-card .field:has(#casinoResetBtn){
     max-width:none!important;
   }
 
-  .provider-bet-report-page .filter-card .user-search-grid,
+  .provider-bet-report-page .filter-card .user-search-grid{
+    display:grid!important;
+    grid-template-columns:292px minmax(0,1.4fr) minmax(0,.8fr)!important;
+    gap:12px!important;
+    align-items:end!important;
+    width:100%!important;
+    min-width:0!important;
+  }
   body:has(#sessionFrom) .filter-card .user-search-grid{
     display:grid!important;
     grid-template-columns:292px repeat(4,minmax(0,1fr))!important;
