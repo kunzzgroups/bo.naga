@@ -236,13 +236,10 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .agent-quick-grid 
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .agent-player-filters label>span{
   color:#18191C !important;
 }
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .agent-player-filters input,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .agent-player-filters input:not(.agent-search-box input),
   body.report-body.bo-charcoal .agent-player-filters select{
   border:1px solid #EADCC8 !important;
   background:#FFF8EB !important;
-}
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .agent-search-box{
-  border:1px solid #EADCC8 !important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .agent-search-box i{
   color:#57534E !important;
@@ -352,51 +349,14 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-modern .agen
   body.report-body.bo-charcoal.agent-modern .agent-detail-tabs button:hover{
   color:#57534E !important;
 }
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box{
-  border:1px solid #EADCC8 !important;
-  background:#FFF8EB !important;
-}
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box:focus-within{
-  border-color:#D97706 !important;
-  box-shadow:0 0 0 3px rgba(217,119,6,.10) !important;
-}
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>i{
-  color:#57534E !important;
-}
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:hover{
-  border:1px solid #EADCC8 !important;
-  background:#FFF8EB !important;
-}
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:focus,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:focus-visible{
-  border:1px solid #D97706 !important;
-  box-shadow:0 0 0 3px rgba(217,119,6,.10) !important;
-}
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box:hover,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box:focus,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box:focus-within{
-  border:1px solid #EADCC8 !important;
-  background:#FFF8EB !important;
-}
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>i{
   color:#57534E !important;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>i{
   color:#57534E !important;
 }
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:hover,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:active,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:focus,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:focus-visible{
-  border:1px solid #EADCC8 !important;
-  background:#FFF8EB !important;
-}
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:focus,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:focus-visible{
-  border-color:#D97706 !important;
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>i{
+  color:#57534E !important;
 }
 @media (min-width:992px){
   html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.agent-modern.sidebar-mini .report-sidebar:not(:hover) .report-nav .report-nav-item{
@@ -1006,13 +966,10 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .agent-quick-grid a i{
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .agent-player-filters label>span{
   color:#E7E5E4 !important;
 }
-html[data-bo-theme="dark"] body.report-body.bo-charcoal .agent-player-filters input,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .agent-player-filters input:not(.agent-search-box input),
   body.report-body.bo-charcoal .agent-player-filters select{
   border:1px solid rgba(255,255,255,.14) !important;
   background:#383A46 !important;
-}
-html[data-bo-theme="dark"] body.report-body.bo-charcoal .agent-search-box{
-  border:1px solid rgba(255,255,255,.14) !important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .agent-search-box i{
   color:#D4D4D8 !important;
@@ -1122,51 +1079,14 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-modern .agent-tab-
   body.report-body.bo-charcoal.agent-modern .agent-detail-tabs button:hover{
   color:#D4D4D8 !important;
 }
-html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box{
-  border:1px solid rgba(255,255,255,.14) !important;
-  background:#383A46 !important;
-}
-html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box:focus-within{
-  border-color:#F59E0B !important;
-  box-shadow:0 0 0 3px rgba(245,158,11,.10) !important;
-}
-html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>i{
-  color:#D4D4D8 !important;
-}
-html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:hover{
-  border:1px solid rgba(255,255,255,.14) !important;
-  background:#383A46 !important;
-}
-html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:focus,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:focus-visible{
-  border:1px solid #F59E0B !important;
-  box-shadow:0 0 0 3px rgba(245,158,11,.10) !important;
-}
-html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box:hover,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box:focus,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box:focus-within{
-  border:1px solid rgba(255,255,255,.14) !important;
-  background:#383A46 !important;
-}
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>i{
   color:#D4D4D8 !important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>i{
   color:#D4D4D8 !important;
 }
-html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:hover,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:active,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:focus,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:focus-visible{
-  border:1px solid rgba(255,255,255,.14) !important;
-  background:#383A46 !important;
-}
-html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:focus,
-  body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>input:focus-visible{
-  border-color:#F59E0B !important;
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-modern .agent-player-filters .agent-search-box>i{
+  color:#D4D4D8 !important;
 }
 @media (min-width:992px){
   html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-modern.sidebar-mini .report-sidebar:not(:hover) .report-nav .report-nav-item{

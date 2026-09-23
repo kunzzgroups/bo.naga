@@ -1597,13 +1597,13 @@ body.pwt-page.modal-open .pwt-modal{pointer-events:auto}
 /* Every regular input/select follows the approved rounded field theme. */
 .report-content select:not(#pullLogWindowUnit),
 .report-content .form-select,
-.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword),
+.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(.mad-search input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input):not(.bonus-title-search input),
 .report-content textarea{
   border:1px solid #EADCC8!important;border-radius:10px!important;background-color:#FFF8EB!important;
   box-shadow:none!important;color:#18191C;
 }
 .report-content select:not(#pullLogWindowUnit):focus,.report-content .form-select:focus,
-.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):focus,
+.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(.mad-search input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input):not(.bonus-title-search input):focus,
 .report-content textarea:focus{border-color:#78716C!important;box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;outline:0!important}
 
 /* Live chat keeps the composer available while only the message history scrolls. */
@@ -2852,7 +2852,6 @@ body:has(#gameSearchInput) .game-filter-actions .clean-btn{
 .ref-input-icon>input,
 #gameSearchInput,
 #categorySearchInput,
-#bonusSearchInput,
 #promoSearchInput,
 #bannerSearchInput,
 #adminSearchInput,
@@ -2881,7 +2880,6 @@ body:has(#gameSearchInput) .game-filter-actions .clean-btn{
 .ref-input-icon>input:focus,
 #gameSearchInput:focus,
 #categorySearchInput:focus,
-#bonusSearchInput:focus,
 #promoSearchInput:focus,
 #bannerSearchInput:focus,
 #adminSearchInput:focus,
@@ -3068,7 +3066,6 @@ body:has(#gameSearchInput) .game-filter-actions .clean-btn{
 .ref-input-icon>input,
 #bannerSearchInput,
 #categorySearchInput,
-#bonusSearchInput,
 #gameSearchInput{
   height:var(--bo-control-height)!important;
   min-height:var(--bo-control-height)!important;

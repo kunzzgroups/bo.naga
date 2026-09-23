@@ -9880,3 +9880,52 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page .mac-adjust-summary
   background-image:none!important;
   border-color:#DCC9A8!important;
 }
+
+
+/* --------------------------------------------------------------------------
+   2026-09-23 — the MAIN-executive filter row moves onto the LOCKED listing tier.
+   DESIGN.md line 349 schedules exactly this: the `.mad-filters` families "may still
+   show legacy heights until those pages are migrated — then bring them to 36px".
+   The locked recipe is the Wallet Ledger specimen: 36px tall, 8px radius, pad 0 12px,
+   12px type. The row moves WHOLE — search, selects, date trigger, ghost buttons —
+   because migrating the search alone would leave it 6px shorter than its neighbours.
+   This sheet, not bo-charcoal-shell.css: the MAIN-executive pages never load the shell
+   (measured — 14 sheets, none of them the shell); this is the skeleton they share.
+   Guard tier, so it out-ranks the legacy `body.<page> .mad-search{42px}`,
+   `… .rounded-select-btn{42px|44px}` and `.mad-reset-btn{44px}` declarations above.
+   -------------------------------------------------------------------------- */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters > .mad-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters > .rounded-select-wrap,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters > .rounded-select-wrap .rounded-select-btn,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters .mas-date-field,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters .mre-period-group,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters .ref-range-wrap,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters .ref-range-trigger,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters > .mad-btn,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters > .clean-btn,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters .reportExport,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters .mad-filter-field > select,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters > select{
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  border-radius:8px!important;
+  font-size:12px!important;
+  line-height:1.2!important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters > .mad-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters > select,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters .mad-filter-field > select{
+  padding:0 12px!important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters > .rounded-select-wrap .rounded-select-btn{
+  padding:0 34px 0 12px!important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters .mad-search > input{
+  height:100%!important;
+  min-height:0!important;
+  max-height:100%!important;
+  border:0!important;
+  background:transparent!important;
+  font-size:12px!important;
+}

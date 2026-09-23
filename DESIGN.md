@@ -2250,6 +2250,110 @@ labels at **delta 0** on all 14 columns.
 
 **Pins:** `operations-report.js` 1.0.15 → **1.0.18**.
 
+### Back controls live at the right end of their row — five pages were not (2026-09-23)
+
+Owner, with a screenshot of Agent Performance Detail: “查看其他页面的back按键统一在右边”.
+
+**The convention already existed in the sheets**, which is why most pages were right already:
+`.mac-back-section` (8 create/edit pages) and `.vle-back-list` are `margin-left:auto` inside a flex
+section head, `.mrc-back-list` sits last in a `justify-content:space-between` card head, `.pmc-form-head`
+is `justify-content:flex-end`, `.mra-detail-toolbar` is `space-between`, `.mprr-back` is `margin-left:auto`
+(and a full-width centred button below its mobile breakpoint), `.template-back` / `.banner-edit-back` sit
+last in a pane head, `.md-identity-actions` is the member card's right-hand action group.
+
+**Five were not.** Measured before → after (`gapToRowRight`, the distance from the control to its own row's
+right edge): `agent-performance-detail` 1482px → **0**, `agent-detail` 53px inside a 198px group → **0**,
+`agent-provider-detail` 47px with the control stacked under the title → **1**, `main-balance-adjustment`
+1447px (a block of its own above the heading) → **0**, `main-stat-detail` 983px (mid-row, after Search) →
+**0**. Each is fixed with the house mechanism — the control becomes the row's last child of a
+`space-between`/auto-margin row; nothing new was invented.
+
+**Two traps, both measured.** (1) `agent-detail`'s control first landed *inside* the tab strip: a button in
+a `role="tablist"` is announced as a tab, and the page's own
+`body[data-agent-detail="1"] .agent-detail-tabs .clean-btn{border:0!important;background:transparent!important;
+padding:15px 14px!important}` stripped its chrome — measured `rgba(0,0,0,0)`, no border. Moved out to the
+row as its last child, its own ghost chrome came back (0.8px `#DCC9A8`, 8px radius, `0 14px` padding).
+(2) `main-stat-detail`'s `margin-left:auto` did nothing at first, because the standard sheet's
+`body:not(#…):not(#…) .report-main .bo-filter-row > *{margin:0!important}` is **ID-level** (two `:not(#id)`
+guards) and beats a plain `#detailBack` rule regardless of source order — measured `marginLeft 0px` with
+both rules present in the CSSOM; matching that tier gives `marginLeft 983.062px` and the control flush right.
+
+**Not moved, deliberately:** `provider-detail.html`'s control is a breadcrumb trail
+(`← Provider Settlement › Provider`) — a location indicator, which belongs at the left, not the
+“Back to X” action pill the owner pointed at.
+
+### Why the search bars look different from page to page (2026-09-23)
+
+Owner: “调查所有页面的search bar设计为什么变样了 是谁影响的 再帮我解决这个问题”.
+
+**There is no single search field — there are eleven, and no single commit changed them.** Swept all 38
+pages containing a search input (auth-stubbed copies, 1920×900): `.category-search-control`,
+`.game-search-control`, `.input-icon-wrap`, `.banner-search`, `.livechat-search`, `.agent-search-box`,
+`label.bonus-title-search`, `.mad-search` (+ `.mre-search`/`.mas-search`), `.mp-search`/`.mrc-search`,
+`.mac-provider-search`, `.provider-list-search`, `.bo-filter-item`. Authored by different hands: the
+shared recipe in `reports.css` is Wang Zai's (`962da1d3`, 2026-07-13), the `mp-search` family Jk6373's
+(`6e92fd83`, 2026-09-04), the Promotion pill Jack's (`024d1f88`, 2026-09-20).
+
+**Two heights, and that is documented, not drift.** `.mad-filters` / `.mp-search` rows measured 42px on
+*every* child (search + selects + reset + date field). DESIGN.md line 349 keeps those there “until those
+pages are migrated — then bring them to 36px”. The family/listing pages were already on the locked
+`36px / 8px` recipe.
+
+**The real defect: the generic input themes draw a second border inside any bespoke search component.**
+`reports.css` (*“Every regular input/select follows the approved rounded field theme”*) and
+`bo-charcoal-legacy.css` both theme `.report-content input` at ID-level specificity, and both excluded
+bespoke fields by **enumerating ids** — `#providerSearchInput`, `#pullLogWindowValue`, `#boPassword`.
+Every custom search field had been patched out one id at a time; `#bonusSearchInput` never was, so when
+the Promotion page moved its field into a pill the input kept drawing its own border *inside* the pill,
+and — because that shared recipe also hard-codes `#bonusSearchInput` at `height:42px` — it overshot the
+`36px` pill by **6px** (measured: wrapper `0.8px/8px`, input `0.8px/10px`, `+6px`).
+
+**Fixed:** `#bonusSearchInput` removed from the three search-recipe selector lists in `reports.css`; both
+generic themes now exempt **whole components** (`:not(.mad-search input):not(.mp-search input):
+:not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input)`,
+plus `:not(.bonus-title-search input)` in place of the id). Verified after: `mad-search`, `mp-search`,
+`mac-provider-search`, promotion and `bonus-title-search` each show **one** border (inner `0px/0px` in a
+`0.8px/8px` wrapper), and the input-owned recipes are untouched (`game`, `game-category`, `admin-user`,
+`livechat` still measure input `0.8px/8px` in a borderless wrapper).
+
+**`agent-players` needed the opposite fix.** Its own sheet carries seven successive attempts at this same
+problem (v2.3.4 → `v2.3.7 … final single-outline fix. The wrapper is layout-only; the input owns the one
+visible border`), so the page wants the *input* bordered and the wrapper chrome-less — while
+`bo-charcoal-agent.css` sweeps a border onto the wrapper too, light and dark. The skin was the intruder:
+its 8 wrapper/input border rules were removed (14 selector entries; rules that also served other
+components kept theirs) and the broad `.agent-player-filters input` sweeps are exempted for that pill.
+Verified light **and** dark: wrapper `border 0px` (layout only, radius 8), input `0.8px` / radius 8 /
+`padding-left 34px` for the absolutely positioned magnifier, the row's other controls unchanged.
+
+**The legacy tier was then migrated — the row, not the search.** One guard-tier block appended to
+**`main-admin-detail-executive.css`** brings the whole `.mad-filters` row to the locked recipe (36px tall,
+8px radius, `0 12px` padding, 12px type — search, selects, date trigger and ghost buttons together,
+because moving the search alone leaves it 6px shorter than its own neighbours). The first attempt went into
+`bo-charcoal-shell.css` and did **nothing**: the MAIN-executive pages never load that sheet (measured —
+14 sheets, none of them the shell); the skeleton they share is the executive sheet. Verified on eight
+cluster pages (`main_merchant_report`, `main-merchant-detail`, `main-provider-detail`, `main-win-lose-report`,
+`main-merchant-security`, `main-admin-security`, `main-merchant-profit`, `main_provider_report`): every
+control in the row measures **36px with an 8px radius**.
+
+**And the reason a fix can be invisible: the cache pins had drifted.** The `?v=` query is only a cache key,
+and 35 shared assets were referenced with more than one value — `bo-charcoal-cms.css` **ten** (`1.0.0` on
+19 pages), `bo-ui-standard.js` nine, `bo-wallet-transaction-amber.css` seven, `config.js` five.
+`scripts/stamp-asset-pins.py` now derives each pin from the asset's own content (`sha1[0:8]`), so it changes
+exactly when the file changes and is identical everywhere; the tree is stamped (**0 drift**). Forcing that
+fresh fetch is what *exposed* the pill defect, which the browser's cached copy had been hiding.
+
+**Still on the legacy tier:** the `.mp-search`/roles family (`menu-permission`, `main-merchant-roles`, both
+`*-role-create`; shared sheet `menu-permission-executive.css`) and the 42px shared recipe on `game`,
+`game-category`, `admin-user`, `livechat`. Left deliberately: `menu-permission` did not render its toolbar
+in the stubbed harness on that run, and migrating a row that cannot be measured first is how the block
+above nearly shipped into a sheet nobody loads.
+
+**Wiped once and re-applied.** The back-button work and this search work were both lost when the working
+tree was reset to `origin/main` (the reflog shows `reset: moving to origin/main` three times in one
+session) while they were still uncommitted — the pins and the pin script survived only because they had
+been committed first. Re-applied from `scripts/restore-back-controls.py` / `scripts/restore-search-fixes.py` and re-verified. Nothing
+here protects uncommitted work from that reset: commit before syncing.
+
 ### Casino Overview: the date picker joins the KPI grid in one container (2026-09-22)
 
 Owner: “日期要与卡片在同一个container的设计”.
