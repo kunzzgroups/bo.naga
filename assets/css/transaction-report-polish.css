@@ -235,6 +235,29 @@ html body.report-body.transaction-report-page.bo-charcoal .bo-tx-table-head,
   border-bottom:1px solid #eadcc8!important;
   scrollbar-gutter:stable;
 }
+
+/* The head slot reserves the SAME 6px gutter as the body host.
+   Both divs carry `scrollbar-gutter:stable`, but only the body host declared a scrollbar width — so the
+   head reserved the OS default (~15px) and the body its own 6px. Two different client widths means the
+   two tables stretch to two different widths once the card is wider than the columns, and the extra
+   space is distributed per table, so the head drifts off the rows by the difference (measured 14px at
+   1904). Same fix `report-table-split.js` applies to the family pages: declare the bar everywhere it is
+   reserved. */
+.transaction-report-page .bo-tx-table-head::-webkit-scrollbar{
+  width:6px!important;
+  height:6px!important;
+  background:transparent!important;
+}
+.transaction-report-page .bo-tx-table-head::-webkit-scrollbar-track,
+.transaction-report-page .bo-tx-table-head::-webkit-scrollbar-corner{
+  background:transparent!important;
+}
+.transaction-report-page .bo-tx-table-head::-webkit-scrollbar-button,
+.transaction-report-page .bo-tx-table-head::-webkit-scrollbar-button:single-button{
+  display:none!important;
+  height:0!important;
+  width:0!important;
+}
 html body.report-body.transaction-report-page.bo-charcoal .bo-tx-table-body,
 .transaction-report-page .bo-tx-table-body{
   flex:1 1 auto!important;
@@ -297,31 +320,49 @@ html body.report-body.transaction-report-page.tr-autofit .bo-tx-table-body,
   scrollbar-gutter:auto!important;
 }
 
+/* The head reserves (or does not reserve) the SAME gutter as the body, in both modes.
+   The rule above takes the body gutter away in autofit on purpose, but the head kept its 6px — so in
+   autofit the two slots had different client widths, and once the card is wider than the columns the two
+   tables stretch to different widths and the columns drift (measured 5px at 1904). With the gutter tied,
+   a stretched table and a scrolled table both stay pixel-locked. */
+html body.report-body.transaction-report-page.bo-charcoal.tr-autofit .bo-tx-table-head,
+html body.report-body.transaction-report-page.tr-autofit .bo-tx-table-head,
+.transaction-report-page.tr-autofit .bo-tx-table-head{
+  scrollbar-gutter:auto!important;
+}
+
 html body.report-body.transaction-report-page.bo-charcoal .report-table,
 .transaction-report-page .report-table{
   width:100%!important;
-  min-width:1320px!important;
+  min-width:1460px!important;
   table-layout:fixed!important;
   border-collapse:collapse!important;
   border-spacing:0!important;
   font-size:13px!important;
   background:#fff8eb!important;
 }
-/* Shared colgroup widths — head + body stay locked (Deposit recipe). */
-.transaction-report-page .tr-col-id{width:4%!important}
-.transaction-report-page .tr-col-member{width:5%!important}
-.transaction-report-page .tr-col-type{width:10%!important}
-.transaction-report-page .tr-col-wallet{width:5%!important}
-.transaction-report-page .tr-col-amount{width:6.5%!important}
-.transaction-report-page .tr-col-before{width:6.5%!important}
-.transaction-report-page .tr-col-after{width:6.5%!important}
-.transaction-report-page .tr-col-created-by{width:5.5%!important}
-.transaction-report-page .tr-col-approved-by{width:5.5%!important}
-.transaction-report-page .tr-col-reason{width:5%!important}
-.transaction-report-page .tr-col-ref{width:8.5%!important}
-.transaction-report-page .tr-col-remark{width:16%!important}
-.transaction-report-page .tr-col-created{width:8%!important}
-.transaction-report-page .tr-col-posted{width:8%!important}
+/* Shared colgroup widths — head + body stay locked (Deposit recipe).
+   PX, not %, and each value is measured rather than divided up: with `table-layout:fixed` a percentage
+   split gave several columns less than their own heading needs, so the head ellipsised itself
+   (`MEM…`, `CREA…`, `APPR…`, `REAS…`) while the owner's requirement is to see the data complete
+   ("反正我的transaction report要看完整所有数据"). Each value below is the column's max(head text,
+   widest data) at the real fonts, measured on the rendered page; the total is the table's `min-width`
+   below, so nothing is ever squeezed below its content — the body scrolls sideways instead, and the
+   head follows through the existing scroll mirror in `operations-report.js`. */
+.transaction-report-page .tr-col-id{width:40px!important}
+.transaction-report-page .tr-col-member{width:76px!important}
+.transaction-report-page .tr-col-type{width:137px!important}
+.transaction-report-page .tr-col-wallet{width:72px!important}
+.transaction-report-page .tr-col-amount{width:73px!important}
+.transaction-report-page .tr-col-before{width:70px!important}
+.transaction-report-page .tr-col-after{width:70px!important}
+.transaction-report-page .tr-col-created-by{width:98px!important}
+.transaction-report-page .tr-col-approved-by{width:108px!important}
+.transaction-report-page .tr-col-reason{width:73px!important}
+.transaction-report-page .tr-col-ref{width:94px!important}
+.transaction-report-page .tr-col-remark{width:340px!important}
+.transaction-report-page .tr-col-created{width:103px!important}
+.transaction-report-page .tr-col-posted{width:103px!important}
 /* Beat charcoal `th{background:transparent;border-right:0}` so head bar + cell chrome match Deposit. */
 html body.report-body.transaction-report-page.bo-charcoal .report-table th,
 html body.report-body.transaction-report-page.bo-charcoal .report-table thead th,

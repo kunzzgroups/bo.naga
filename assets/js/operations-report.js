@@ -14,6 +14,15 @@
   const scrollHost=tableBodyEl||tableWrap;
   const pageRoot=document.body;
   let allRows=[],page=1,lockedAutoSize=null;
+  /* The fit writes row heights and the table's height, and on this page the scroller's own box
+     follows its content — so a ResizeObserver on that scroller reads our own write as a panel
+     change and asks for another fit, forever: measured rows 47↔50px, scroller 448↔446px,
+     ~500 mutation records a second, for as long as the page stays open
+     (owner: "点选日期后 一直闪 不知道为什么"). Two things shut the loop: a short window after our
+     own write during which notifications are ignored, and a tolerance on HEIGHT only — a genuine
+     panel change is tens of pixels where this feedback is 2. Width is the real input to a fit and
+     is compared strictly; it measured a constant 977 while the loop ran. */
+  let fitBox=null,fitWroteAt=0;
   // Every BO report now opens on Today by default. Wider ranges are opt-in via the picker.
   from.value=today;to.value=today;
   if(window.OP_REPORT_KIND==='promotion-report')document.getElementById('typeBox').style.display='none';
@@ -99,10 +108,60 @@
     name:'tr-col-name',promotionCode:'tr-col-code',claimCount:'tr-col-claims',
     uniqueClaimers:'tr-col-unique',repeatedClaimCount:'tr-col-repeat',payoutAmount:'tr-col-payout'
   };
+  function noteFitWrite(){
+    fitWroteAt=Date.now();
+    if(tableBodyEl)fitBox={w:tableBodyEl.clientWidth,h:tableBodyEl.clientHeight};
+  }
   function paintColgroups(){
     const html=cols.map(c=>`<col class="${colClassByKey[c[0]]||'tr-col'}"/>`).join('');
     if(headColsEl)headColsEl.innerHTML=html;
     if(bodyColsEl)bodyColsEl.innerHTML=html;
+  }
+  /* 8.7's `.tr-col-*` widths are px values measured from a sample of the data, and production
+     values are longer than that sample: the id ellipsised itself down to "2…" in a 40px column
+     whose padding alone is 24px (owner: "我的id也没有展示完整"), and the balances read "58,2…".
+     Under `table-layout:fixed` the head and body colgroups must carry identical widths, so the
+     widest rendered content per column is measured and written to BOTH colgroups as an inline
+     width — inline `!important`, because the sheet's own `.tr-col-*` widths are important and
+     would otherwise win. Grows only, and remembers the widest it has seen so paging through a
+     report never pulls a column back in. Remark is exempt: it truncates on purpose, at a width it
+     was designed for, and carries its own hover tip. */
+  const fitNeed=[];
+  function colNeed(td){
+    const cs=getComputedStyle(td);
+    const pad=(parseFloat(cs.paddingLeft)||0)+(parseFloat(cs.paddingRight)||0);
+    const range=document.createRange();
+    range.selectNodeContents(td);
+    return Math.min(Math.ceil(range.getBoundingClientRect().width+pad)+1,420);
+  }
+  function fitColumns(){
+    if(window.OP_REPORT_KIND!=='transaction-report')return;
+    if(!bodyEl||!bodyColsEl||!headColsEl)return;
+    const rows=[...bodyEl.querySelectorAll('tr')].filter(tr=>!isPlaceholderRow(tr));
+    if(!rows.length)return;
+    let grew=false;
+    for(let i=0;i<cols.length;i++){
+      if(cols[i][0]==='remark')continue;
+      let need=fitNeed[i]||0;
+      for(const tr of rows){const td=tr.children[i];if(td)need=Math.max(need,colNeed(td));}
+      fitNeed[i]=need;
+      const cell=rows[0].children[i];
+      const now=cell?Math.round(cell.getBoundingClientRect().width):0;
+      const target=Math.max(now,need);
+      if(target>now+0.5){
+        const col=bodyColsEl.children[i],hcol=headColsEl.children[i];
+        if(col)col.style.setProperty('width',target+'px','important');
+        if(hcol)hcol.style.setProperty('width',target+'px','important');
+        grew=true;
+      }
+    }
+    if(!grew)return;
+    /* No `min-width` bookkeeping: under `table-layout:fixed` the table's used width is the greater
+       of its specified width and the minimum its columns require, so growing a column grows the
+       table with it. Writing a `min-width` from the measured cell widths instead re-fed the layout
+       into itself — each pass summed the surplus the previous pass had distributed and pushed the
+       table ~10px wider, forever. */
+    noteFitWrite();
   }
   function bindHeadBodyScroll(){
     if(!tableHeadEl||!tableBodyEl||tableBodyEl.dataset.scrollBound==='1')return;
@@ -213,7 +272,8 @@
       tr.querySelectorAll('td').forEach(td=>{td.style.height='';});
     });
   }
-  function evenFillRowHeights(){
+  function evenFillRowHeights(){try{evenFillCore();}finally{noteFitWrite();}}
+  function evenFillCore(){
     const table=evenFillTable();
     if(!scrollHost||!table||!bodyEl)return;
     resetEvenFill();
@@ -269,6 +329,10 @@
     if(!tableBodyEl||tableBodyEl._boAutofitObs||typeof ResizeObserver==='undefined')return;
     tableBodyEl._boAutofitObs=new ResizeObserver(()=>{
       if(!isAutofit())return;
+      /* A notification this soon after our own fit write is that write, not a panel change. */
+      if(Date.now()-fitWroteAt<400)return;
+      const box={w:tableBodyEl.clientWidth,h:tableBodyEl.clientHeight};
+      if(fitBox&&Math.abs(box.w-fitBox.w)<1&&Math.abs(box.h-fitBox.h)<=4)return;
       clearTimeout(tableBodyEl._boAutofitTimer);
       tableBodyEl._boAutofitTimer=setTimeout(()=>{lockedAutoSize=null;render();},120);
     });
@@ -286,6 +350,7 @@
     bodyEl.innerHTML=rows.length?rows.map(x=>'<tr>'+cols.map(c=>{
       return `<td${tdClass(c[0])}>${cellHtml(c[0],x[c[0]])}</td>`;
     }).join('')+'</tr>').join(''):`<tr><td colspan="${cols.length}" class="table-empty">No records found.</td></tr>`;
+    fitColumns();
     if(showingEl)showingEl.textContent=`Showing ${total?start+1:0} to ${Math.min(start+size,total)} of ${total} entries`;
     bindFloatTips();
     paintSelectLabel();
@@ -312,7 +377,8 @@
     h+=btn('Last page',pages,page>=pages,false,'bi-chevron-bar-right','smart-page last');
     pagerEl.innerHTML=h;
   }
-  function settleAutofit(){
+  function settleAutofit(){try{settleCore();}finally{noteFitWrite();}}
+  function settleCore(){
     if(!isAutofit()||!scrollHost||!bodyEl)return;
     /* Measure the rows actually painted (natural height), not a guessed sample —
        clears any stale evenFill inline heights from the previous settle first. */
@@ -398,5 +464,12 @@
   document.addEventListener('DOMContentLoaded',paintSelectLabel);
   setTimeout(paintSelectLabel,0);
   setTimeout(paintSelectLabel,120);
+  /* The first measurement can run before the sheet's own type is in force — measured 120px of text
+     for an id that is really 134px, so the column came out 13px short until the next render. Both
+     passes are idempotent (a column only ever grows), so re-measuring costs nothing when it is
+     already right. */
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitColumns()).catch(()=>{});
+  setTimeout(fitColumns,250);
+  setTimeout(fitColumns,900);
   load();
 })();
