@@ -111,6 +111,8 @@
     if(p==='vip-level-edit.html') return 'vip-management.html';
     // Game Category create/edit is a drill-down of Game Category Management.
     if(p==='game-category-edit.html') return 'game-category.html';
+    // Game Sub Category create/edit is a drill-down of Game Sub Category Management.
+    if(p==='game-sub-category-edit.html') return 'game-sub-category.html';
     // Gateway Transactions is a drill-down of Payment Gateway and uses the same DB menu permission.
     if(p==='payment-gateway-transactions.html') return 'payment-gateway.html';
     if(p==='manual-rebate-detail.html') return 'manual-rebate-approval.html';
@@ -274,6 +276,8 @@
       if(current === 'vip-level-edit.html') current = 'vip-management.html';
       // Game Category create/edit inherits Game Category Management menu permission.
       if(current === 'game-category-edit.html') current = 'game-category.html';
+      // Game Sub Category create/edit inherits Game Sub Category Management menu permission.
+      if(current === 'game-sub-category-edit.html') current = 'game-sub-category.html';
       // Bonus Category Item is a drill-down of Bonus Category Title (Manage Items).
       if(current === 'bonus-category-item.html') current = 'bonus-category-title.html';
       // Transaction history is intentionally a separate page, but it inherits the

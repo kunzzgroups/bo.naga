@@ -1,4 +1,3 @@
-
 function adminApi(pathKey) {
   return API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS[pathKey];
 }
@@ -10,10 +9,6 @@ function escapeHtml(value) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#039;');
-}
-
-function statusText(value) {
-  return Number(value) === 1 ? 'Active' : 'Inactive';
 }
 
 function statusPill(value) {
@@ -28,114 +23,42 @@ async function fetchJson(url) {
   return json;
 }
 
-function setupImagePicker(input, dropZone, preview, placeholder, onFile, setStatus) {
-  if (!input || !dropZone || !preview || !placeholder) return;
-
-  function showPreview(src) {
-    preview.src = src;
-    preview.hidden = false;
-    placeholder.hidden = true;
-  }
-
-  function clearPreview() {
-    input.value = '';
-    preview.src = '';
-    preview.hidden = true;
-    placeholder.hidden = false;
-  }
-
-  function handleFile(file) {
-    if (!file) return;
-    if (!file.type || !file.type.startsWith('image/')) {
-      setStatus && setStatus('Please choose image file only.', 'error');
-      return;
-    }
-    onFile(file, showPreview, clearPreview);
-  }
-
-  input.addEventListener('change', () => handleFile(input.files[0]));
-
-  ['dragenter', 'dragover'].forEach(evt => {
-    dropZone.addEventListener(evt, e => {
-      e.preventDefault();
-      dropZone.classList.add('dragover');
-    });
-  });
-
-  ['dragleave', 'drop'].forEach(evt => {
-    dropZone.addEventListener(evt, e => {
-      e.preventDefault();
-      dropZone.classList.remove('dragover');
-    });
-  });
-
-  dropZone.addEventListener('drop', e => handleFile(e.dataTransfer.files[0]));
-
-  return { showPreview, clearPreview };
-}
-
-const GAME_CATEGORY_API = {
-  list: adminApi('GAME_CATEGORY_LIST')
-};
-
-const GAME_PROVIDER_API = {
-  list: adminApi('GAME_PROVIDER_LIST')
-};
-
+const GAME_CATEGORY_API = { list: adminApi('GAME_CATEGORY_LIST') };
+const GAME_PROVIDER_API = { list: adminApi('GAME_PROVIDER_LIST') };
 const GAME_SUB_CATEGORY_API = {
   list: adminApi('GAME_SUB_CATEGORY_LIST'),
-  create: adminApi('GAME_SUB_CATEGORY_CREATE'),
-  update: adminApi('GAME_SUB_CATEGORY_UPDATE'),
   delete: adminApi('GAME_SUB_CATEGORY_DELETE')
 };
 
 (function () {
   const tenantPresentation = !!(window.BO_BRAND && !window.BO_BRAND.isMaster());
-  if (tenantPresentation && document.body) document.body.dataset.crudNoAdd = '1';
-  const form = document.getElementById('subCategoryForm');
-  if (!form) return;
-  if (tenantPresentation) {
-    const formCard = form.closest('.slider-form-card,.manage-form-card,.card') || form.parentElement;
-    if (formCard) formCard.style.display = 'none';
-  }
+  const list = document.getElementById('subCategoryList');
+  const empty = document.getElementById('subCategoryEmpty');
+  if (!list || !empty) return;
 
-  const formTitle = document.getElementById('subCategoryFormTitle');
-  const id = document.getElementById('subCategoryId');
-  const categoryId = document.getElementById('subCategoryCategoryId');
-  const providerCode = document.getElementById('subCategoryProviderCode');
-  const name = document.getElementById('subCategoryName');
-  const sortOrder = document.getElementById('subCategorySortOrder');
-  const status = document.getElementById('subCategoryStatus');
-  const saveBtn = document.getElementById('saveSubCategoryBtn');
-  const resetBtn = document.getElementById('resetSubCategoryBtn');
   const refreshBtn = document.getElementById('refreshSubCategoryBtn');
   const statusBox = document.getElementById('subCategoryStatusBox');
   const filter = document.getElementById('subCategoryFilter');
-  const list = document.getElementById('subCategoryList');
-  const empty = document.getElementById('subCategoryEmpty');
-  const totalCountEl = document.getElementById('subCategoryTotalCount');
-  const activeCountEl = document.getElementById('subCategoryActiveCount');
-  const activeTextEl = document.getElementById('subCategoryActiveText');
-  const categoryCountEl = document.getElementById('subCategoryCategoryCount');
-  const providerCountEl = document.getElementById('subCategoryProviderCount');
+  const addBtn = document.getElementById('addSubCategoryBtn');
   const showingTextEl = document.getElementById('subCategoryShowingText');
   const paginationEl = document.getElementById('subCategoryPagination');
   const pageSizeEl = document.getElementById('subCategoryPageSize');
+
+  if (tenantPresentation && addBtn) addBtn.hidden = true;
 
   let currentItems = [];
   let currentPage = 1;
   let categories = [];
   let providers = [];
 
-  function setStatus(message, type) {
-    statusBox.textContent = message || '';
-    statusBox.className = 'upload-status' + (type ? ' ' + type : '');
+  function editHref(id) {
+    return 'game-sub-category-edit.html?id=' + encodeURIComponent(String(id));
   }
 
-  function setBusy(isBusy) {
-    saveBtn.disabled = isBusy;
-    refreshBtn.disabled = isBusy;
-    saveBtn.innerHTML = isBusy ? '<i class="bi bi-hourglass-split"></i> Saving...' : '<i class="bi bi-save"></i> Save Sub Category';
+  function setStatus(message, type) {
+    if (!statusBox) return;
+    statusBox.textContent = message || '';
+    statusBox.className = 'upload-status' + (type ? ' ' + type : '');
   }
 
   function categoryName(catId) {
@@ -153,86 +76,22 @@ const GAME_SUB_CATEGORY_API = {
     return item ? (item.name || clean) : (clean || '-');
   }
 
-  function fillProviderOptions() {
-    const options = providers.map(item => `<option value="${escapeHtml(providerCodeOf(item))}">${escapeHtml(item.name || providerCodeOf(item))}</option>`).join('');
-    providerCode.innerHTML = options || '<option value="">No provider found</option>';
-  }
-
-  function fillCategoryOptions() {
-    const options = categories.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join('');
-    categoryId.innerHTML = options || '<option value="">No category found</option>';
+  function fillFilterOptions() {
+    if (!filter) return;
+    const options = categories.map(item =>
+      `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`
+    ).join('');
     filter.innerHTML = '<option value="">All Categories</option>' + options;
-    fillProviderOptions();
   }
 
-  async function loadCategories() {
+  async function loadSetup() {
     const [catJson, providerJson] = await Promise.all([
       fetchJson(GAME_CATEGORY_API.list),
       fetchJson(GAME_PROVIDER_API.list).catch(() => ({ data: [] }))
     ]);
     categories = catJson.data || [];
     providers = providerJson.data || [];
-    fillCategoryOptions();
-  }
-
-  function resetForm() {
-    id.value = '';
-    if (categories[0]) categoryId.value = String(categories[0].id);
-    if (providers[0]) providerCode.value = providerCodeOf(providers[0]);
-    name.value = '';
-    sortOrder.value = '0';
-    status.value = '1';
-    formTitle.textContent = tenantPresentation ? 'Brand Sub Category Presentation' : 'Create Sub Category';
-    setStatus('', '');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function firstValue(item, keys) {
-    for (const key of keys) {
-      const value = item && item[key];
-      if (value !== undefined && value !== null && String(value).trim() !== '') return value;
-    }
-    return '';
-  }
-
-  function syncRoundedSelect(select) {
-    if (!select) return;
-    select.dispatchEvent(new Event('change', { bubbles: false }));
-  }
-
-  function editItem(item) {
-    id.value = firstValue(item, ['id', 'subCategoryId', 'sub_category_id']);
-
-    const savedCategoryId = String(firstValue(item, [
-      'categoryId', 'category_id', 'gameCategoryId', 'game_category_id'
-    ]));
-    const savedProviderCode = String(firstValue(item, [
-      'providerCode', 'provider_code', 'code'
-    ])).trim().toUpperCase();
-
-    categoryId.value = savedCategoryId;
-    providerCode.value = savedProviderCode;
-    name.value = firstValue(item, ['name', 'subCategoryName', 'sub_category_name']) || '';
-    sortOrder.value = firstValue(item, ['sortOrder', 'sort_order']) || 0;
-    status.value = String(firstValue(item, ['status']) || 1);
-
-    // The rounded dropdown is a visual wrapper around the native select.
-    // Programmatic value changes must emit change so its displayed label matches DB values.
-    syncRoundedSelect(categoryId);
-    syncRoundedSelect(providerCode);
-    syncRoundedSelect(status);
-
-    formTitle.textContent = 'Edit Sub Category #' + id.value;
-    setStatus('Editing sub category.', 'success');
-    if (window.CrudModalPattern) window.CrudModalPattern.open('Edit Sub Category');
-
-    // Re-sync once after the modal is visible in case its dropdown wrapper rendered late.
-    requestAnimationFrame(() => {
-      syncRoundedSelect(categoryId);
-      syncRoundedSelect(providerCode);
-      syncRoundedSelect(status);
-    });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    fillFilterOptions();
   }
 
   function buildPagination(totalPages) {
@@ -269,15 +128,11 @@ const GAME_SUB_CATEGORY_API = {
     const startIndex = (currentPage - 1) * pageSize;
     const pageItems = currentItems.slice(startIndex, startIndex + pageSize);
 
-    const activeCount = currentItems.filter(item => Number(item.status) === 1).length;
-    const categoryCount = new Set(currentItems.map(item => String(item.categoryId || '')).filter(Boolean)).size;
-    const providerCount = new Set(currentItems.map(item => String(item.providerCode || '').trim().toUpperCase()).filter(Boolean)).size;
-    if (totalCountEl) totalCountEl.textContent = currentItems.length;
-    if (activeCountEl) activeCountEl.textContent = activeCount;
-    if (activeTextEl) activeTextEl.textContent = currentItems.length ? `${Math.round(activeCount / currentItems.length * 100)}% of total` : '0% of total';
-    if (categoryCountEl) categoryCountEl.textContent = categoryCount;
-    if (providerCountEl) providerCountEl.textContent = providerCount;
-    if (showingTextEl) showingTextEl.textContent = currentItems.length ? `Showing ${startIndex + 1} to ${Math.min(startIndex + pageItems.length, currentItems.length)} of ${currentItems.length} entries` : 'Showing 0 entries';
+    if (showingTextEl) {
+      showingTextEl.textContent = currentItems.length
+        ? `Showing ${startIndex + 1} to ${Math.min(startIndex + pageItems.length, currentItems.length)} of ${currentItems.length} entries`
+        : 'Showing 0 entries';
+    }
 
     pageItems.forEach(item => {
       const row = document.createElement('div');
@@ -298,10 +153,9 @@ const GAME_SUB_CATEGORY_API = {
         </div>
         <div class="subcategory-status-cell">${statusPill(item.status)}</div>
         <div class="subcategory-action-cell">
-          ${tenantPresentation ? '<span class="text-muted">Read only</span>' : `<button class="icon-action-btn edit edit-btn" type="button" data-edit-id="${escapeHtml(item.id)}" aria-label="Edit" title="Edit"><i class="bi bi-pencil-square"></i></button>
-          <button class="icon-action-btn delete" type="button" data-delete-id="${escapeHtml(item.id)}" aria-label="Delete" title="Delete"><i class="bi bi-trash"></i></button>`}
-        </div>
-      `;
+          <a class="icon-action-btn edit edit-btn" href="${editHref(item.id)}" aria-label="Edit" title="Edit"><i class="bi bi-pencil-square"></i></a>
+          ${tenantPresentation ? '' : `<button class="icon-action-btn delete" type="button" data-delete-id="${escapeHtml(item.id)}" aria-label="Delete" title="Delete"><i class="bi bi-trash"></i></button>`}
+        </div>`;
       list.appendChild(row);
     });
     buildPagination(totalPages);
@@ -311,7 +165,7 @@ const GAME_SUB_CATEGORY_API = {
     list.innerHTML = '<div class="slider-empty"><i class="bi bi-hourglass-split"></i><b>Loading sub categories...</b></div>';
     empty.hidden = true;
     try {
-      const params = filter.value ? '?categoryId=' + encodeURIComponent(filter.value) : '';
+      const params = filter?.value ? '?categoryId=' + encodeURIComponent(filter.value) : '';
       const json = await fetchJson(GAME_SUB_CATEGORY_API.list + params);
       renderList(json.data || [], true);
     } catch (err) {
@@ -321,53 +175,8 @@ const GAME_SUB_CATEGORY_API = {
     }
   }
 
-  async function saveSubCategory(e) {
-    e.preventDefault();
-    const isUpdate = !!id.value;
-    if (tenantPresentation && !isUpdate) { setStatus('Brand sub categories are inherited from TitanX. Edit an existing sub category.', 'error'); return; }
-
-    if (!categoryId.value) {
-      setStatus('Please select parent category.', 'error');
-      categoryId.focus();
-      return;
-    }
-    if (!providerCode.value) {
-      setStatus('Please select provider.', 'error');
-      providerCode.focus();
-      return;
-    }
-    if (!name.value.trim()) {
-      setStatus('Please enter sub category name.', 'error');
-      name.focus();
-      return;
-    }
-
-    const fd = new FormData();
-    if (isUpdate) fd.append('id', id.value);
-    fd.append('categoryId', categoryId.value);
-    fd.append('providerCode', providerCode.value);
-    fd.append('name', name.value.trim());
-    fd.append('sortOrder', sortOrder.value || '0');
-    fd.append('status', status.value || '1');
-
-    setBusy(true);
-    setStatus(isUpdate ? 'Updating sub category...' : 'Creating sub category...', '');
-    try {
-      const res = await fetch(isUpdate ? GAME_SUB_CATEGORY_API.update : GAME_SUB_CATEGORY_API.create, { method: 'POST', body: fd });
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok || json.status === 'error') throw new Error(json.message || 'Save failed');
-      setStatus(json.message || 'Sub category saved successfully.', 'success');
-      resetForm();
-      await loadSubCategories();
-    } catch (err) {
-      setStatus(err.message || 'Save failed. Please check API URL / CORS.', 'error');
-    } finally {
-      setBusy(false);
-    }
-  }
-
   async function deleteSubCategory(subCategoryId) {
-    if (!(await BO_DIALOG.confirm('Delete this sub category?', {title:'Delete Subcategory', confirmText:'Delete'}))) return;
+    if (!(await BO_DIALOG.confirm('Delete this sub category?', { title: 'Delete Subcategory', confirmText: 'Delete' }))) return;
     const fd = new FormData();
     fd.append('id', subCategoryId);
     try {
@@ -375,25 +184,16 @@ const GAME_SUB_CATEGORY_API = {
       const json = await res.json().catch(() => ({}));
       if (!res.ok || json.status === 'error') throw new Error(json.message || 'Delete failed');
       setStatus(json.message || 'Sub category deleted.', 'success');
-      if (id.value === String(subCategoryId)) resetForm();
       await loadSubCategories();
     } catch (err) {
       setStatus(err.message || 'Delete failed.', 'error');
     }
   }
 
-  form.addEventListener('submit', saveSubCategory);
-  if (tenantPresentation) {
-    resetBtn.style.display = 'none';
-    const emptySmall = empty && empty.querySelector('small'); if (emptySmall) emptySmall.textContent = 'No sub category is available from the providers assigned to this branding.';
-  }
-  resetBtn.addEventListener('click', resetForm);
-  refreshBtn.addEventListener('click', loadSubCategories);
-  filter.addEventListener('change', loadSubCategories);
-
-
-  if (pageSizeEl) pageSizeEl.addEventListener('change', () => renderList(currentItems, true));
-  if (paginationEl) paginationEl.addEventListener('click', e => {
+  refreshBtn?.addEventListener('click', loadSubCategories);
+  filter?.addEventListener('change', loadSubCategories);
+  pageSizeEl?.addEventListener('change', () => renderList(currentItems, true));
+  paginationEl?.addEventListener('click', e => {
     const button = e.target.closest('[data-page]');
     if (!button || button.disabled) return;
     const page = Number(button.dataset.page);
@@ -404,19 +204,18 @@ const GAME_SUB_CATEGORY_API = {
   });
 
   list.addEventListener('click', e => {
-    const editBtn = e.target.closest('[data-edit-id]');
     const deleteBtn = e.target.closest('[data-delete-id]');
-    if (editBtn) {
-      const item = currentItems.find(x => String(x.id) === String(editBtn.dataset.editId));
-      if (item) editItem(item);
-    }
     if (deleteBtn) deleteSubCategory(deleteBtn.dataset.deleteId);
   });
 
+  if (tenantPresentation) {
+    const emptySmall = empty.querySelector('small');
+    if (emptySmall) emptySmall.textContent = 'No sub category is available from the providers assigned to this branding.';
+  }
+
   (async function init() {
     try {
-      await loadCategories();
-      resetForm();
+      await loadSetup();
       await loadSubCategories();
     } catch (err) {
       setStatus(err.message || 'Unable to load categories.', 'error');

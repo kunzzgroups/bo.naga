@@ -22,8 +22,7 @@
     '.report-main .debug-filter',
     '.report-main .rebate-log-filters',
     '.report-main .manual-rebate-filters',
-    '.report-main .audit-filters',
-    '.report-main .subcategory-toolbar-controls'
+    '.report-main .audit-filters'
   ].join(',');
 
   const DATE_PICKER_SELECTOR='.ref-range-picker,.bo-range-pop';

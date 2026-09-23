@@ -1,0 +1,79 @@
+/* Game Sub Category Edit — Banner Edit shell + Charcoal/Amber */
+
+body.subcategory-edit-page{
+  --bo-filter-height:36px;
+  --bo-control-height:36px;
+}
+
+html body.subcategory-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .subcategory-edit-form,
+html body.subcategory-edit-page .subcategory-edit-form{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:8px!important;
+  margin:0!important;
+  width:100%!important;
+  min-width:0!important;
+}
+html body.subcategory-edit-page .subcategory-edit-form > .banner-edit-section,
+html body.subcategory-edit-page .subcategory-edit-form > .upload-status{
+  margin:0!important;
+}
+
+/* 36px controls — beat charcoal-cms 40px !important */
+html body.subcategory-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-section .field input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+html body.subcategory-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-section .field select,
+html body.subcategory-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-section .field .form-control,
+html body.subcategory-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-section .field .form-select,
+html body.subcategory-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-section .rounded-select-btn,
+html body.subcategory-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-section .rounded-select-wrap,
+html body.subcategory-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-section .banner-status-seg{
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  box-sizing:border-box!important;
+  border-radius:8px!important;
+}
+
+html body.subcategory-edit-page .subcategory-detail-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:14px 16px!important;
+  align-items:start!important;
+}
+html body.subcategory-edit-page .subcategory-field-span{
+  grid-column:1 / -1!important;
+}
+html body.subcategory-edit-page .subcategory-help-copy{
+  margin:0!important;
+  padding:12px 14px!important;
+  border:1px solid #EADCC8!important;
+  border-radius:10px!important;
+  background:#F5EBDC!important;
+  color:#57534E!important;
+  font-size:12.5px!important;
+  font-weight:500!important;
+  line-height:1.45!important;
+}
+html[data-bo-theme="dark"] body.subcategory-edit-page .subcategory-help-copy{
+  background:rgba(255,255,255,.06)!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#A1A1AA!important;
+}
+
+html body.subcategory-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-footer{
+  justify-content:flex-end!important;
+}
+html body.subcategory-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-footer .mad-btn-ghost,
+html body.subcategory-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-footer .clean-btn.primary,
+html body.subcategory-edit-page.banner-edit-page.report-body.bo-charcoal:not(#bo-charcoal-off) .banner-edit-back{
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  border-radius:8px!important;
+}
+
+@media (max-width:767.98px){
+  html body.subcategory-edit-page .subcategory-detail-grid{
+    grid-template-columns:1fr!important;
+  }
+}

@@ -2959,24 +2959,47 @@ body:has(#categorySearchInput) .category-filter-card > .category-toolbar-title{
   min-height:0!important;
 }
 
+/* Sub Category toolbar: filter left · Refresh+Add right (see game-sub-category.css).
+   Do not use a 2-col grid here — it stacked Refresh onto Add when both lived in controls. */
 body:has(#subCategoryFilter) .subcategory-toolbar-title{
-  display:grid!important;
-  grid-template-columns:minmax(260px,1fr) minmax(360px,1.15fr)!important;
-  align-items:end!important;
+  display:flex!important;
+  flex-flow:row wrap!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:10px!important;
   width:100%!important;
+  grid-template-columns:none!important;
 }
 body:has(#subCategoryFilter) .subcategory-toolbar-controls{
-  display:grid!important;
-  grid-template-columns:minmax(220px,1fr) minmax(120px,.42fr)!important;
-  width:100%!important;
+  display:flex!important;
+  flex-flow:row wrap!important;
+  align-items:center!important;
+  gap:10px!important;
+  width:auto!important;
+  min-width:0!important;
   margin-left:0!important;
+  grid-template-columns:none!important;
+}
+body:has(#subCategoryFilter) .subcategory-toolbar-title > .crud-title-actions,
+body:has(#subCategoryFilter) .subcategory-toolbar-actions{
+  display:inline-flex!important;
+  flex-flow:row nowrap!important;
+  align-items:center!important;
+  gap:10px!important;
+  margin-left:auto!important;
+  width:auto!important;
+  flex:0 0 auto!important;
 }
 body:has(#subCategoryFilter) .subcategory-toolbar-controls select,
-body:has(#subCategoryFilter) .subcategory-toolbar-controls .clean-btn{
-  width:100%!important;
-  min-width:0!important;
+body:has(#subCategoryFilter) .subcategory-toolbar-controls .rounded-select-wrap{
+  width:auto!important;
+  min-width:220px!important;
+  max-width:280px!important;
 }
-body:has(#subCategoryFilter) .subcategory-toolbar-controls .clean-btn{
+body:has(#subCategoryFilter) .subcategory-toolbar-title .clean-btn,
+body:has(#subCategoryFilter) .subcategory-toolbar-actions .clean-btn{
+  width:auto!important;
+  min-width:max-content!important;
   justify-content:center!important;
 }
 
@@ -3013,9 +3036,6 @@ body:has(#gameSearchInput) .game-filter-actions .clean-btn{
   body:has(#bannerSearchInput) .banner-filterbar{
     grid-template-columns:1fr 1fr!important;
   }
-  body:has(#subCategoryFilter) .subcategory-toolbar-title{
-    grid-template-columns:1fr!important;
-  }
 }
 @media(max-width:700px){
   body:has(#categorySearchInput) .category-filter-card{
@@ -3037,8 +3057,15 @@ body:has(#gameSearchInput) .game-filter-actions .clean-btn{
   body:has(#categorySearchInput) .category-filter-card > .category-toolbar-title .crud-title-actions{
     width:100%!important;
   }
-  body:has(#subCategoryFilter) .subcategory-toolbar-controls{
-    grid-template-columns:1fr!important;
+  body:has(#subCategoryFilter) .subcategory-toolbar-title{
+    flex-direction:column!important;
+    align-items:stretch!important;
+  }
+  body:has(#subCategoryFilter) .subcategory-toolbar-controls,
+  body:has(#subCategoryFilter) .subcategory-toolbar-actions,
+  body:has(#subCategoryFilter) .subcategory-toolbar-title > .crud-title-actions{
+    width:100%!important;
+    margin-left:0!important;
   }
 }
 
@@ -4035,10 +4062,10 @@ body:has(#sessionFrom) [data-bo-date-range]{
 /* v1.1.31 - Use the Game Category table standard on every custom management table. */
 .subcategory-table-head,
 .subcategory-table-row{
-  grid-template-columns:26px minmax(0,1fr) 150px 116px!important;
-  gap:12px!important;
-  padding-left:20px!important;
-  padding-right:20px!important;
+  grid-template-columns:40px minmax(0,1fr) 140px 110px!important;
+  gap:0!important;
+  padding-left:0!important;
+  padding-right:0!important;
 }
 .subcategory-table-head{
   align-items:center!important;
@@ -4376,17 +4403,23 @@ body[data-report-page] tbody td[colspan]{
   gap:10px!important;
 }
 .standardized-game-management .subcategory-toolbar-title > .subcategory-toolbar-controls{
+  display:flex!important;
   width:auto!important;
-  min-width:min(496px,45vw)!important;
-  margin:0 auto 0 0!important;
-  display:block!important;
+  min-width:0!important;
+  margin:0!important;
 }
 .standardized-game-management .subcategory-toolbar-title > .subcategory-toolbar-controls select{
-  width:100%!important;
-  min-width:0!important;
+  width:auto!important;
+  min-width:220px!important;
+  max-width:280px!important;
 }
 .standardized-game-management .subcategory-toolbar-title > .crud-title-actions{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:10px!important;
   margin-left:auto!important;
+  width:auto!important;
+  flex:0 0 auto!important;
 }
 
 /* Only the outside editor frame keeps rounding; all internal editing surfaces stay square. */

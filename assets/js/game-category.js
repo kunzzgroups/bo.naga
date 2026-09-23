@@ -79,8 +79,10 @@ const GAME_CATEGORY_API = {
 
   function setStatus(message, type) {
     if (!statusBox) return;
-    statusBox.textContent = message || '';
+    const text = message || '';
+    statusBox.textContent = text;
     statusBox.className = 'upload-status' + (type ? ' ' + type : '');
+    statusBox.hidden = !text;
   }
 
   function resolvePageSize(raw) {
