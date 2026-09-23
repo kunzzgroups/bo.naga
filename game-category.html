@@ -9,7 +9,7 @@
     <title>Game Category</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-    <link href="assets/css/reports.css?v=1.0.87" rel="stylesheet" />
+    <link href="assets/css/reports.css?v=1.0.99" rel="stylesheet" />
   <link href="assets/css/bo-ui-standard.css?v=1.0.8" rel="stylesheet" />
   <link href="assets/css/bo-targeted-fixes.css?v=1.0.1" rel="stylesheet" />
 <link href="assets/css/bo-account-chip.css?v=1.0.0" rel="stylesheet" />
@@ -26,8 +26,70 @@ body.page-game-category .report-main .category-table-footer.standard-pagination{
   display:flex!important;flex-flow:row nowrap!important;align-items:center!important;
   gap:12px!important;grid-template-columns:none!important;padding:12px 16px!important;
   border-top:1px solid #EADCC8!important;background:#FFF8EB!important;color:#57534E!important;
+  overflow:visible!important;position:relative!important;z-index:60!important;
 }
-body.page-game-category .category-table-footer > .entries-control{margin-right:auto!important}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-footer.mad-footer,
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-footer.bo-pagination-standard,
+html[data-bo-theme="dark"] body.page-game-category .report-main .category-table-footer.standard-pagination{
+  border-top-color:rgba(255,255,255,.12)!important;
+  background:#383A46!important;
+  color:#D4D4D8!important;
+}
+body.page-game-category .category-table-footer > .entries-control{
+  margin-right:auto!important;overflow:visible!important;position:relative!important;z-index:61!important;
+}
+body.page-game-category .category-table-footer .rounded-select-wrap{
+  overflow:visible!important;position:relative!important;z-index:62!important;
+  width:72px!important;min-width:72px!important;max-width:72px!important;height:36px!important;
+  flex:0 0 72px!important;display:inline-flex!important;
+}
+body.page-game-category .category-table-footer .rounded-select-wrap > select{
+  position:absolute!important;inset:0!important;opacity:0!important;pointer-events:none!important;
+  width:100%!important;height:36px!important;margin:0!important;
+  appearance:none!important;-webkit-appearance:none!important;
+}
+body.page-game-category .category-table-footer .rounded-select-btn{
+  appearance:none!important;-webkit-appearance:none!important;
+  position:absolute!important;inset:0!important;
+  width:100%!important;min-width:0!important;max-width:none!important;
+  height:36px!important;padding:0 12px!important;border-radius:8px!important;
+  border:1px solid #EADCC8!important;background:#FFF8EB!important;color:#18191C!important;
+  font-size:13px!important;font-weight:700!important;box-shadow:none!important;
+  justify-content:space-between!important;
+}
+body.page-game-category .category-table-footer .rounded-select-btn.open,
+body.page-game-category .category-table-footer .rounded-select-btn:focus{
+  border-color:#D97706!important;box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;outline:0!important;
+}
+body.page-game-category .category-table-footer .rounded-select-menu{
+  display:none;z-index:3000!important;
+  top:auto!important;bottom:calc(100% + 6px)!important;left:0!important;right:auto!important;
+  width:100%!important;min-width:100%!important;max-width:none!important;
+  padding:6px!important;border-radius:8px!important;
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;
+  box-shadow:0 12px 28px rgba(92,74,48,.12)!important;
+  max-height:min(260px,50vh)!important;
+  overflow-x:hidden!important;overflow-y:auto!important;box-sizing:border-box!important;
+}
+body.page-game-category .category-table-footer .rounded-select-menu.show{display:block!important}
+body.page-game-category .category-table-footer .rounded-select-option{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:100%!important;min-height:34px!important;height:auto!important;
+  padding:6px 8px!important;margin:0!important;border:0!important;border-radius:8px!important;
+  text-align:center!important;font-size:13px!important;font-weight:700!important;line-height:1.2!important;
+  background:transparent!important;color:#18191C!important;cursor:pointer!important;
+}
+body.page-game-category .category-table-footer .rounded-select-option:hover,
+body.page-game-category .category-table-footer .rounded-select-option.active,
+body.page-game-category .category-table-footer .rounded-select-option.is-active{
+  background:rgba(217,119,6,.12)!important;color:#B45309!important;
+}
+/* unlock viewport-locked ancestors while the page-size menu is open */
+body.page-game-category.report-body .manage-list-card.category-modern-page:has(.rounded-select-menu.show),
+body.page-game-category.report-body .category-panel:has(.rounded-select-menu.show),
+body.page-game-category.report-body .report-content > .manage-page-grid:has(.rounded-select-menu.show){
+  overflow:visible!important;z-index:40!important;
+}
 body.page-game-category .report-main .bo-pagination-buttons button.active,
 body.page-game-category .category-table-footer .page-btn.active{
   background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
@@ -46,17 +108,55 @@ html body.page-game-category.report-body .report-main .category-filter-card.bo-f
 }
 html body.page-game-category.report-body .report-main .category-filter-card.bo-filter-row{
   align-items:center!important;
+  width:100%!important;
+  flex-wrap:nowrap!important;
+  justify-content:flex-start!important;
 }
 html body.page-game-category.report-body .report-main .category-filter-card.bo-filter-row > label,
 html body.page-game-category.report-body .report-main .category-filter-card.bo-filter-row > .bo-filter-input-item,
-html body.page-game-category.report-body .report-main .category-filter-card.bo-filter-row > .bo-filter-select-item,
-html body.page-game-category.report-body .report-main .category-filter-card.bo-filter-row > .category-toolbar-title{
+html body.page-game-category.report-body .report-main .category-filter-card.bo-filter-row > .bo-filter-select-item{
   display:inline-flex!important;
   align-items:center!important;
   margin:0!important;
   height:36px!important;
   min-height:36px!important;
   max-height:36px!important;
+  flex:0 0 auto!important;
+}
+/* Flex spacer pushes Add to the far right of the filter strip */
+html body.page-game-category.report-body .report-main .category-filter-card.bo-filter-row > .category-filter-spacer{
+  display:block!important;
+  flex:1 1 auto!important;
+  width:auto!important;
+  min-width:12px!important;
+  max-width:none!important;
+  height:1px!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  pointer-events:none!important;
+  order:90!important;
+}
+html body.page-game-category.report-body .report-main .category-filter-card.bo-filter-row > .category-toolbar-title,
+html body.page-game-category.report-body .report-main .category-filter-card > .category-toolbar-title{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  margin:0!important;
+  margin-left:0!important;
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  order:99!important;
+  margin-bottom:0!important;
 }
 
 /* Search: absolute icon + padded input (do NOT zero padding) */
@@ -133,34 +233,321 @@ html body.page-game-category.report-body:not(#bo-filter-standard-off):not(#bo-fi
   box-sizing:border-box!important;
   border-radius:8px!important;
 }
-html body.page-game-category.report-body .report-main .category-filter-card > .category-toolbar-title{
-  margin-left:auto!important;
+html body.page-game-category.report-body .report-main .category-filter-card > .category-toolbar-title,
+html body.page-game-category.report-body .report-main .category-filter-card.bo-filter-row > .category-toolbar-title{
+  order:99!important;
+  margin:0!important;
+  margin-bottom:0!important;
+}
+/* Add Game Category — system.md Primary CTA (listing 36px) */
+html body.page-game-category.report-body .report-main #addCategoryBtn.clean-btn.primary,
+html body.page-game-category.report-body .report-main .category-filter-card #addCategoryBtn,
+html body.page-game-category.report-body .report-main .category-filter-card .category-toolbar-title .clean-btn.primary{
+  display:inline-flex!important;
+  flex-direction:row!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  padding:0 14px!important;
+  border-radius:8px!important;
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 42%,#EA8608 100%)!important;
+  border:1px solid #E8901A!important;
+  color:#FFFFFF!important;
+  -webkit-text-fill-color:#FFFFFF!important;
+  font-size:12.5px!important;
+  font-weight:800!important;
+  line-height:1!important;
+  box-shadow:none!important;
+  text-decoration:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+  transform:none!important;
+  transition:border-color .14s ease!important;
+  white-space:nowrap!important;
+  box-sizing:border-box!important;
+}
+html body.page-game-category.report-body .report-main #addCategoryBtn.clean-btn.primary i,
+html body.page-game-category.report-body .report-main #addCategoryBtn.clean-btn.primary span,
+html body.page-game-category.report-body .report-main .category-filter-card .category-toolbar-title .clean-btn.primary i,
+html body.page-game-category.report-body .report-main .category-filter-card .category-toolbar-title .clean-btn.primary span{
+  color:#FFFFFF!important;
+  -webkit-text-fill-color:#FFFFFF!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  box-shadow:none!important;
+  vertical-align:middle!important;
+}
+/* Icon + label optically centered on one axis */
+html body.page-game-category.report-body .report-main #addCategoryBtn.clean-btn.primary i,
+html body.page-game-category.report-body .report-main .category-filter-card .category-toolbar-title .clean-btn.primary i{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 auto!important;
+  width:15px!important;
+  height:15px!important;
+  font-size:15px!important;
+  line-height:1!important;
+  position:relative!important;
+  top:0!important;
+  transform:none!important;
+}
+html body.page-game-category.report-body .report-main #addCategoryBtn.clean-btn.primary span,
+html body.page-game-category.report-body .report-main .category-filter-card .category-toolbar-title .clean-btn.primary span{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 auto!important;
+  height:15px!important;
+  font-size:12.5px!important;
+  font-weight:800!important;
+  line-height:1!important;
+  letter-spacing:0!important;
+}
+html body.page-game-category.report-body .report-main #addCategoryBtn.clean-btn.primary:hover,
+html body.page-game-category.report-body .report-main .category-filter-card .category-toolbar-title .clean-btn.primary:hover{
+  background-color:#EA8608!important;
+  background-image:linear-gradient(180deg,#EA8608 0%,#F59E0B 42%,#FBBF24 100%)!important;
+  border-color:#F59E0B!important;
+  color:#FFFFFF!important;
+  -webkit-text-fill-color:#FFFFFF!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+html body.page-game-category.report-body .report-main #addCategoryBtn.clean-btn.primary:active,
+html body.page-game-category.report-body .report-main .category-filter-card .category-toolbar-title .clean-btn.primary:active{
+  background-image:linear-gradient(180deg,#F59E0B 0%,#EA8608 100%)!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .report-main #addCategoryBtn.clean-btn.primary,
+html[data-bo-theme="dark"] body.page-game-category.report-body .report-main .category-filter-card #addCategoryBtn,
+html[data-bo-theme="dark"] body.page-game-category.report-body .report-main .category-filter-card .category-toolbar-title .clean-btn.primary{
+  background-color:#F59E0B!important;
+  background-image:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border:1px solid #F59E0B!important;
+  color:#2A2C36!important;
+  -webkit-text-fill-color:#2A2C36!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .report-main #addCategoryBtn.clean-btn.primary i,
+html[data-bo-theme="dark"] body.page-game-category.report-body .report-main #addCategoryBtn.clean-btn.primary span,
+html[data-bo-theme="dark"] body.page-game-category.report-body .report-main .category-filter-card .category-toolbar-title .clean-btn.primary i,
+html[data-bo-theme="dark"] body.page-game-category.report-body .report-main .category-filter-card .category-toolbar-title .clean-btn.primary span{
+  color:#2A2C36!important;
+  -webkit-text-fill-color:#2A2C36!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .report-main #addCategoryBtn.clean-btn.primary:hover,
+html[data-bo-theme="dark"] body.page-game-category.report-body .report-main .category-filter-card .category-toolbar-title .clean-btn.primary:hover{
+  background-image:linear-gradient(180deg,#D97706 0%,#F59E0B 42%,#FBBF24 100%)!important;
+  border-color:#FBBF24!important;
+  color:#2A2C36!important;
+  -webkit-text-fill-color:#2A2C36!important;
+  box-shadow:none!important;
 }
 html body.page-game-category.report-body .category-filter-actions{display:none!important}
 
 /* Larger category list rows for readability */
 html body.page-game-category.report-body .category-table-head{
-  grid-template-columns:32px minmax(0,1fr) 140px 110px!important;
+  grid-template-columns:40px minmax(0,1fr) 140px 110px!important;
   min-height:44px!important;height:44px!important;font-size:12px!important;
 }
 html body.page-game-category.report-body .category-table-row{
-  grid-template-columns:32px minmax(0,1fr) 140px 110px!important;
-  min-height:72px!important;
+  grid-template-columns:40px minmax(0,1fr) 140px 110px!important;
+  min-height:98px!important;
 }
 html body.page-game-category.report-body .category-table-row > .category-drag,
 html body.page-game-category.report-body .category-table-row > .category-main-cell,
 html body.page-game-category.report-body .category-table-row > .category-status-cell,
 html body.page-game-category.report-body .category-table-row > .category-action-cell{
-  min-height:72px!important;padding:12px 14px!important;
+  min-height:98px!important;padding:12px 14px!important;
 }
 html body.page-game-category.report-body .category-thumb-full{
-  width:56px!important;height:44px!important;flex:0 0 56px!important;border-radius:8px!important;
+  width:74px!important;
+  height:74px!important;
+  min-height:74px!important;
+  max-height:74px!important;
+  flex:0 0 74px!important;
+  border-radius:8px!important;
+  overflow:hidden!important;
+  padding:4px!important;
+  box-sizing:border-box!important;
+  background:#FFF8EB!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-thumb-full{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.14)!important;
+}
+html body.page-game-category.report-body .category-thumb-full img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  display:block!important;
+  background:transparent!important;
 }
 html body.page-game-category.report-body .category-copy b{font-size:15px!important;font-weight:800!important}
 html body.page-game-category.report-body .category-copy small{font-size:12.5px!important;margin-top:4px!important}
 html body.page-game-category.report-body .category-table-row .slider-pill{font-size:12px!important;padding:5px 10px!important}
 html body.page-game-category.report-body .category-table-row .icon-action-btn{
   width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;font-size:15px!important;
+}
+
+/* —— Dark mode: Game Category panel / table / filters —— */
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-panel,
+html[data-bo-theme="dark"] body.page-game-category.report-body .report-main .category-panel{
+  --bo-table-paper:#383A46;
+  --bo-table-head:#1F2128;
+  --bo-table-row:#3A3C48;
+  --bo-table-row-alt:#434653;
+  --bo-table-hover:#444654;
+  --bo-table-line:rgba(255,255,255,.12);
+  --bo-table-chip:#2A2C36;
+  border-color:rgba(255,255,255,.14)!important;
+  background:#383A46!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-filter-card,
+html[data-bo-theme="dark"] body.page-game-category.report-body .report-main .category-filter-card.bo-filter-row,
+html[data-bo-theme="dark"] body.page-game-category.report-body.bo-charcoal .category-filter-card.bo-filter-row,
+html[data-bo-theme="dark"] body.standardized-game-management.page-game-category .category-filter-card,
+html[data-bo-theme="dark"] body.page-game-category:has(#categorySearchInput) .category-filter-card,
+html[data-bo-theme="dark"] body:has(#categorySearchInput).page-game-category .category-filter-card,
+html[data-bo-theme="dark"] body.report-body:has(#categorySearchInput) .category-filter-card{
+  border-bottom:1px solid rgba(255,255,255,.12)!important;
+  background:#383A46!important;
+  background-color:#383A46!important;
+  background-image:none!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-panel,
+html[data-bo-theme="dark"] body.page-game-category.report-body.bo-charcoal .category-panel{
+  --bo-table-paper:#383A46;
+  --bo-table-head:#1F2128;
+  --bo-table-row:#3A3C48;
+  --bo-table-row-alt:#434653;
+  --bo-table-hover:#444654;
+  --bo-table-line:rgba(255,255,255,.12);
+  --bo-table-chip:#2A2C36;
+  border-color:rgba(255,255,255,.14)!important;
+  background:#383A46!important;
+  background-color:#383A46!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .report-main .category-filter-card .category-search-control > input,
+html[data-bo-theme="dark"] body.page-game-category.report-body #categorySearchInput,
+html[data-bo-theme="dark"] body.page-game-category.report-body .report-main .category-filter-card select,
+html[data-bo-theme="dark"] body.page-game-category.report-body .report-main .category-filter-card .rounded-select-btn{
+  border-color:rgba(255,255,255,.12)!important;
+  background:#2A2C36!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .report-main .category-filter-card .category-search-control > i{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body #categorySearchInput::placeholder{
+  color:#A1A1AA!important;opacity:1!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-wrap,
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table,
+html[data-bo-theme="dark"] body.page-game-category.report-body #categoryList.category-table{
+  background:#383A46!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-head{
+  background:#1F2128!important;
+  border-bottom-color:rgba(255,255,255,.12)!important;
+  color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-row,
+html[data-bo-theme="dark"] body.standardized-game-management.page-game-category .category-table-row{
+  background:#3A3C48!important;
+  border-bottom-color:rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-row:nth-child(even),
+html[data-bo-theme="dark"] body.standardized-game-management.page-game-category .category-table-row:nth-child(even){
+  background:#434653!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-row:hover,
+html[data-bo-theme="dark"] body.standardized-game-management.page-game-category .category-table-row:hover{
+  background:#444654!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-row > .category-drag{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-copy b{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-copy small{
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-row .icon-action-btn.edit{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-row .icon-action-btn.delete{
+  background:rgba(248,113,113,.14)!important;
+  border-color:rgba(248,113,113,.32)!important;
+  color:#FCA5A5!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-row .icon-action-btn.edit:hover{
+  background:rgba(245,158,11,.14)!important;
+  border-color:rgba(245,158,11,.4)!important;
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-footer > .entries-control,
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-footer > .table-info,
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-footer > .mad-footer-info{
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-footer > .entries-control select,
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-footer > .entries-control .rounded-select-btn{
+  border-color:rgba(255,255,255,.12)!important;
+  background:#2A2C36!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.page-game-category .category-table-footer .rounded-select-menu{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.35)!important;
+}
+html[data-bo-theme="dark"] body.page-game-category .category-table-footer .rounded-select-option{
+  color:#E7E5E4!important;
+  background:transparent!important;
+}
+html[data-bo-theme="dark"] body.page-game-category .category-table-footer .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.page-game-category .category-table-footer .rounded-select-option.active,
+html[data-bo-theme="dark"] body.page-game-category .category-table-footer .rounded-select-option.is-active{
+  background:rgba(245,158,11,.14)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-footer .pagination-clean .page-btn:not(.active),
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-footer .pagination-clean button:not(.active),
+html[data-bo-theme="dark"] body.page-game-category .report-main .bo-pagination-buttons button:not(.active){
+  background:#383A46!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-footer .pagination-clean .page-btn:not(.active):hover:not(:disabled),
+html[data-bo-theme="dark"] body.page-game-category.report-body .category-table-footer .pagination-clean button:not(.active):hover:not(:disabled){
+  background:#444654!important;
+  color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body.bo-charcoal .category-table-footer .pagination-clean .page-btn.active,
+html[data-bo-theme="dark"] body.page-game-category .report-main .bo-pagination-buttons button.active{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border:1px solid #F59E0B!important;
+  color:#2A2C36!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .slider-empty{
+  background:transparent!important;
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.page-game-category.report-body .manage-list-card.category-modern-page{
+  background:transparent!important;
 }
 </style>
 </head>
@@ -193,103 +580,21 @@ html body.page-game-category.report-body .category-table-row .icon-action-btn{
         </header>
 
         <section class="report-content">
-          <div class="manage-page-grid">
-            <div class="manage-form-card">
-              <div class="section-title mb-3">
-                <div>
-                  <h3 id="categoryFormTitle">Create Category</h3>
-                </div>
-              </div>
-
-              <form id="categoryForm" class="slider-form">
-                <input type="hidden" id="categoryId" name="id" />
-
-                <div class="slider-upload-box category-image-upload" id="categoryDropZone">
-                  <input type="file" id="categoryImage" name="image" accept="image/*" />
-                  <div class="slider-upload-placeholder" id="categoryUploadPlaceholder">
-                    <i class="bi bi-cloud-arrow-up"></i>
-                    <strong>Choose category image or drag here</strong>
-                    <small>PNG, JPG, WEBP, GIF accepted</small>
-                  </div>
-                  <img id="categoryPreview" alt="Category preview" hidden />
-                </div>
-                <div class="slider-current-image" id="categoryCurrentImage" hidden>
-                  Current image will remain if no new image selected.
-                </div>
-
-                <div class="slider-upload-section-title mt-3">
-                  <span>Chinese Image</span>
-                  <small>Optional. If empty, frontend uses default image.</small>
-                </div>
-                <div class="slider-upload-box slider-upload-box-compact category-image-upload category-image-upload-zh" id="categoryDropZoneZh">
-                  <input type="file" id="categoryImageZh" name="imageZh" accept="image/*" />
-                  <div class="slider-upload-placeholder" id="categoryUploadPlaceholderZh">
-                    <i class="bi bi-cloud-arrow-up"></i>
-                    <strong>Choose Chinese image or drag here</strong>
-                    <small>PNG, JPG, WEBP, GIF accepted</small>
-                  </div>
-                  <img id="categoryPreviewZh" alt="Chinese category preview" hidden />
-                </div>
-                <div class="slider-current-image" id="categoryCurrentImageZh" hidden>
-                  Current Chinese image will remain if no new Chinese image selected.
-                </div>
-
-                <div class="field mt-3">
-                  <label>Category Name</label>
-                  <input id="categoryName" name="name" type="text" placeholder="Example: Slots" />
-                </div>
-
-                <div class="field">
-                  <label>Frontend Display Mode</label>
-                  <select id="categoryDisplayMode" name="displayMode">
-                    <option value="PROVIDER_FIRST">Provider First</option>
-                    <option value="DIRECT_GAME">Direct Game List</option>
-                  </select>
-                  <small class="text-muted">Provider First = show selected providers first and continue with directly assigned games. If only one provider is assigned, games display directly automatically. Direct Game List = show all category games immediately.</small>
-                </div>
-                <div class="field category-provider-config">
-                  <label>Category Providers <small>(select one or multiple)</small></label>
-                  <div id="categoryProviderSelector" class="category-provider-selector"></div>
-                  <small class="text-muted">One provider: all provider games display directly. More than one provider: providers display first. Directly assigned games from Game Management continue to show in the same category.</small>
-                  <div id="categoryProviderRules" class="category-provider-rules"></div>
-                </div>
-
-                <div class="field">
-                  <label>Chinese Name</label>
-                  <input id="categoryNameZh" name="nameZh" type="text" placeholder="Chinese Category name" />
-                </div>
-
-                <div class="slider-two-col">
-                  <div class="field">
-                    <label>Sort Order</label>
-                    <input id="categorySortOrder" name="sortOrder" type="number" min="0" value="0" />
-                  </div>
-                  <div class="field">
-                    <label>Status</label>
-                    <select id="categoryStatus" name="status">
-                      <option value="1">Active</option>
-                      <option value="2">Inactive</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="slider-form-actions">
-                  <button class="clean-btn primary" id="saveCategoryBtn" type="submit"><i class="bi bi-save"></i> Save Category</button>
-                  <button class="clean-btn" id="resetCategoryBtn" type="button"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
-                </div>
-                <div class="upload-status" id="categoryStatusBox"></div>
-              </form>
-            </div>
-
-            <div class="manage-list-card category-modern-page">
+          <div class="manage-page-grid crud-list-only-grid">
+            <div class="manage-list-card category-modern-page crud-list-full">
               <div class="category-panel">
                 <div class="category-filter-card bo-filter-row">
                   <label aria-label="Search Category"><div class="category-search-control"><i class="bi bi-search"></i><input id="categorySearchInput" type="search" placeholder="Search by name..." /></div></label>
                   <label aria-label="Mode"><select id="categoryModeFilter"><option value="">All Modes</option><option value="PROVIDER_FIRST">Provider First</option><option value="DIRECT_GAME">Direct Game List</option></select></label>
                   <label aria-label="Status"><select id="categoryStatusFilter"><option value="">All Statuses</option><option value="1">Active</option><option value="2">Inactive</option></select></label>
                   <label aria-label="Sort By"><select id="categorySortFilter"><option value="sortAsc">Sort Order (Asc)</option><option value="sortDesc">Sort Order (Desc)</option><option value="nameAsc">Name (A-Z)</option><option value="nameDesc">Name (Z-A)</option></select></label>
-                  <div class="section-title slider-list-title category-toolbar-title"></div>
+                  <div class="category-filter-spacer" aria-hidden="true"></div>
+                  <div class="category-toolbar-title">
+                    <a class="clean-btn primary" id="addCategoryBtn" href="game-category-edit.html"><i class="bi bi-plus-circle" aria-hidden="true"></i><span>Add Game Category</span></a>
+                  </div>
                 </div>
+
+                <div class="upload-status" id="categoryStatusBox"></div>
 
                 <div class="slider-empty" id="categoryEmpty" hidden>
                   <i class="bi bi-grid-3x3-gap"></i><b>No categories found</b><small>Create your first game category.</small>
@@ -327,12 +632,11 @@ html body.page-game-category.report-body .category-table-row .icon-action-btn{
 <script src="assets/js/brand-context.js?v=1.0.4"></script>
 <script src="assets/js/main-currency-runtime.js?v=1.0.2"></script>
 <script src="assets/js/currency-runtime.js?v=1.0.1"></script>
-    <script src="assets/js/auth.js?v=1.0.89"></script>
+    <script src="assets/js/auth.js?v=1.0.90"></script>
     <script src="assets/js/reports.js?v=1.0.38"></script>
     <script src="assets/js/dynamic-translation.js?v=1.0.6"></script>
-    <script src="assets/js/game-category.js?v=1.0.14"></script>
+    <script src="assets/js/game-category.js?v=1.0.16"></script>
       <script src="assets/js/dynamic-translation-init.js?v=1.0.1"></script>
-      <script src="assets/js/crud-modal-pattern.js?v=1.0.2"></script>
 
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
