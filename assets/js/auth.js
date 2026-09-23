@@ -487,9 +487,17 @@
       // A menu group/category is part of the assigned navigation hierarchy even when all
       // of its child pages are configured as hidden from the sidebar. Keep those assigned
       // parent groups so hiding every subcategory does not make the main category vanish.
-      const assignedGroupKeys = new Set(sourceMenus.map(normalizeMenu)
-        .filter(function(m){ return m.status === 1 && String(m.parentKey||'').trim(); })
-        .map(function(m){ return String(m.parentKey||'').trim(); }));
+      const activeAssignedChildrenByGroup = {};
+      sourceMenus.map(normalizeMenu).forEach(function(m){
+        const parent=String(m.parentKey||'').trim();
+        if(m.status !== 1 || !parent || !m.url || m.url === '#') return;
+        if(!activeAssignedChildrenByGroup[parent]) activeAssignedChildrenByGroup[parent]=[];
+        activeAssignedChildrenByGroup[parent].push(m);
+      });
+      Object.keys(activeAssignedChildrenByGroup).forEach(function(key){
+        activeAssignedChildrenByGroup[key].sort(function(a,b){ return a.sortOrder-b.sortOrder || a.title.localeCompare(b.title); });
+      });
+      const assignedGroupKeys = new Set(Object.keys(activeAssignedChildrenByGroup));
 
       // Database-only sidebar: no hardcoded fallback menus, injected pages, role filters,
       // menu renaming, parent repair or frontend permission overrides.
@@ -599,10 +607,18 @@
         const isOpen=hasVisibleChildren && primaryGroupKey!=null && root.key===primaryGroupKey;
         if(!hasVisibleChildren){
           // Assigned + active category whose active children are all Hidden: keep only
-          // the category row. It must not expose a chevron or an empty submenu/flyout.
-          html+='<div class="nav-group nav-group-empty" data-menu-group="'+esc(root.key)+'">'+
-            '<div class="nav-group-btn" aria-disabled="true">'+
-            '<span><i class="bi '+esc(root.icon)+' me-2"></i>'+esc(root.title)+'</span></div></div>';
+          // the category row, with no chevron/flyout. The category itself remains usable:
+          // clicking it opens the first active assigned child page without exposing that
+          // hidden child as a sidebar submenu. If every child is inactive, this group is
+          // never added to assignedGroupKeys and therefore is not rendered at all.
+          const assignedChildren=activeAssignedChildrenByGroup[root.key]||[];
+          const target=assignedChildren.length ? assignedChildren[0] : null;
+          if(target){
+            const targetActive=primaryGroupKey!=null && root.key===primaryGroupKey;
+            html+='<div class="nav-group nav-group-empty" data-menu-group="'+esc(root.key)+'">'+
+              '<a href="'+esc(target.url)+'" class="nav-group-btn nav-group-direct '+(targetActive?'active':'')+'" data-menu-key="'+esc(target.menuKey)+'">'+
+              '<span><i class="bi '+esc(root.icon)+' me-2"></i>'+esc(root.title)+'</span></a></div>';
+          }
           return;
         }
         html+='<div class="nav-group '+(isOpen?'open':'')+'" data-menu-group="'+esc(root.key)+'">'+
@@ -867,6 +883,15 @@
         if(pin){e.preventDefault();e.stopPropagation();const key=pin.getAttribute('data-bo-pin-menu');pin.disabled=true;BO_AUTH.toggleDashboardPin(key).catch(function(err){console.error(err);}).finally(function(){pin.disabled=false;});return;}
         const btn = e.target.closest && e.target.closest('.nav-group-btn');
         if(btn){
+          // A group whose active children are all hidden is rendered as a direct anchor
+          // (no chevron / no flyout). Do not let the accordion handler swallow its href.
+          if(btn.matches('a.nav-group-direct[href]')){
+            if(window.innerWidth < 992){
+              document.getElementById('reportSidebar')?.classList.remove('show');
+              document.getElementById('reportOverlay')?.classList.remove('show');
+            }
+            return;
+          }
           e.preventDefault();
           const group = btn.closest('.nav-group');
           const list = group && group.querySelector('.nav-group-list');
