@@ -19,6 +19,8 @@
 <link href="assets/css/bo-charcoal-legacy.css?v=1.1.29" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-primitives.css?v=1.0.0" rel="stylesheet" />
 <link href="assets/css/bo-input-fill.css?v=1.0.1" rel="stylesheet" />
+<link href="assets/css/provider-session.css?v=1.0.7" rel="stylesheet" />
+</head>
 <body class="report-body standardized-listing-page provider-session-page bo-charcoal bo-account-chip">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
@@ -46,32 +48,25 @@
     </div>
 </header>
 <section class="report-content">
-<!-- <div class="filter-card page-hero-card">
-        <div class="user-toolbar">
-          <div>
-            <div class="eyebrow"><i class="bi bi-box-arrow-up-right"></i> Provider Session</div>
-            <h2>Provider Sessions</h2>
-          </div>
-        </div>
-      </div> -->
-<div class="filter-card">
-<div class="user-search-grid bo-filter-row">
-<div class="field"><label>From</label><input class="form-control" id="sessionFrom" type="date"/></div>
-<div class="field"><label>To</label><input class="form-control" id="sessionTo" type="date"/></div>
-<div class="field"><label>Member ID</label><input class="form-control" id="sessionMemberId" placeholder="Member ID"/></div>
-<div class="field"><label>Provider Code</label><input class="form-control" id="sessionProviderCode" placeholder="Provider Code"/></div>
-<div class="field"><label>Game ID</label><input class="form-control" id="sessionGameId" placeholder="Game ID"/></div>
-<div class="field"><label>Status</label><select class="form-select" id="sessionStatus"><option value="">All Status</option><option>OPEN</option><option>CLOSED</option></select></div>
-<div class="field"><label> </label><button class="btn-primary-clean w-100" id="sessionSearchBtn" type="button"><i class="bi bi-search"></i> Search</button></div>
+<div class="table-card" id="sessionTableCard">
+<div class="user-search-grid bo-filter-row session-filter-row">
+<div class="field"><label for="sessionFrom">From</label><input class="form-control" id="sessionFrom" type="date"/></div>
+<div class="field"><label for="sessionTo">To</label><input class="form-control" id="sessionTo" type="date"/></div>
+<div class="field session-keyword-field"><label for="sessionKeyword">Search</label><input class="form-control" id="sessionKeyword" placeholder="Member / Provider / Game" autocomplete="off"/></div>
+<div class="field"><label for="sessionStatus">Status</label><select class="form-select" id="sessionStatus" data-bo-auto-width="0"><option value="">All Status</option><option>OPEN</option><option>CLOSED</option></select></div>
 </div>
-</div>
-<div class="table-card">
-<div class="user-toolbar mb-3"><div class="user-badge"><i class="bi bi-box-arrow-up-right"></i><span>Session Records</span></div></div>
 <div class="table-wrap"><table class="report-table">
-<thead><tr><th>ID</th><th>Member</th><th>Provider</th><th>Game</th><th>Launch Type</th><th>Transfer</th><th>Transfer Back</th><th>Status</th><th>Started</th><th>Ended</th></tr></thead>
-<tbody id="sessionBody"><tr><td colspan="10">Loading...</td></tr></tbody>
+<colgroup>
+<col style="width:72px"/><col style="width:160px"/><col style="width:110px"/><col style="width:140px"/><col style="width:110px"/><col style="width:110px"/><col style="width:120px"/><col style="width:100px"/><col style="width:148px"/><col style="width:148px"/>
+</colgroup>
+<thead><tr><th>ID</th><th>Member</th><th>Provider</th><th>Game</th><th>Launch Type</th><th class="ps-num">Transfer</th><th class="ps-num">Transfer Back</th><th>Status</th><th>Started</th><th>Ended</th></tr></thead>
+<tbody id="sessionBody"><tr><td class="ps-empty" colspan="10">Loading...</td></tr></tbody>
 </table></div>
-<div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2"><button class="clean-btn" id="sessionPrevBtn" type="button">Previous</button><span class="text-muted small" id="sessionPager"></span><button class="clean-btn" id="sessionNextBtn" type="button">Next</button></div>
+<div class="table-footer">
+<div class="entries-control">Show <select id="sessionSize" aria-label="Rows per page"><option value="-" selected>-</option><option value="10">10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option><option value="All">All</option></select> entries</div>
+<div class="table-info" id="sessionPageInfo">Showing 0 to 0 of 0 entries</div>
+<div class="pagination-clean" id="sessionPager" role="navigation" aria-label="Table pagination"></div>
+</div>
 </div>
 </section>
 </main>
@@ -83,7 +78,7 @@
 <script src="assets/js/auth.js?v=1.0.89"></script>
 <script src="assets/js/reports.js?v=1.0.38"></script>
 <script src="assets/js/bo-date-range.js?v=1.0.16"></script>
-<script src="assets/js/player-provider-session.js"></script>
+<script src="assets/js/player-provider-session.js?v=1.0.5"></script>
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
@@ -95,4 +90,4 @@
 <script src="assets/js/bo-theme.js?v=1.0.0"></script>
 <script src="assets/js/bo-account-chip.js?v=1.0.0"></script>
 </body>
-</link></head></html>
+</html>
