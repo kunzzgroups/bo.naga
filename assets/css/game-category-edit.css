@@ -184,8 +184,157 @@ html[data-bo-theme="dark"] body.category-edit-page .category-provider-hint{
 
 html body.category-edit-page .category-provider-rules{
   display:grid!important;
-  gap:14px!important;
+  gap:8px!important;
   margin-top:14px!important;
+}
+
+/* Provider rule cards — Charcoal + Amber (light + dark) */
+html body.category-edit-page .category-provider-rule{
+  overflow:hidden!important;
+  border:1px solid #EADCC8!important;
+  border-radius:12px!important;
+  background:#FFFCF7!important;
+  box-shadow:none!important;
+}
+html body.category-edit-page .category-provider-rule-head{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  flex-wrap:wrap!important;
+  padding:12px 14px!important;
+  border-bottom:1px solid #EADCC8!important;
+  background:#F5EBDC!important;
+}
+html body.category-edit-page .category-provider-rule-title b{
+  color:#18191C!important;
+}
+html body.category-edit-page .category-provider-rule-title small{
+  color:#57534E!important;
+}
+html body.category-edit-page .category-provider-rule-icon{
+  background:rgba(217,119,6,.12)!important;
+  color:#D97706!important;
+  border-radius:8px!important;
+}
+html body.category-edit-page .category-provider-mode-switch{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:4px!important;
+  padding:3px!important;
+  border:1px solid #EADCC8!important;
+  border-radius:8px!important;
+  background:#EDE4D4!important;
+  box-shadow:none!important;
+}
+html body.category-edit-page .category-provider-mode-switch span{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  height:30px!important;
+  min-height:30px!important;
+  max-height:30px!important;
+  padding:0 12px!important;
+  border-radius:6px!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+  color:#78716C!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  white-space:nowrap!important;
+  box-sizing:border-box!important;
+}
+html body.category-edit-page .category-provider-mode-switch input:checked+span{
+  background:#FFFCF7!important;
+  color:#B45309!important;
+  box-shadow:0 1px 2px rgba(92,74,48,.10)!important;
+}
+
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-rule{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.12)!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-rule-head{
+  background:#2A2C36!important;
+  border-bottom-color:rgba(255,255,255,.10)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-rule-title b{
+  color:#FBBF24!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-rule-title small{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-rule-icon{
+  background:rgba(245,158,11,.16)!important;
+  color:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-mode-switch{
+  background:rgba(255,255,255,.06)!important;
+  border-color:rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-mode-switch span{
+  color:#A1A1AA!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-mode-switch input:checked+span{
+  background:#383A46!important;
+  color:#FBBF24!important;
+  box-shadow:0 0 0 1px rgba(245,158,11,.28)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-assignment{
+  background:#2C2E38!important;
+  border-color:rgba(255,255,255,.10)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-assignment-note{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-column{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-column-head,
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-column-head b{
+  color:#F5F5F4!important;
+  border-color:rgba(255,255,255,.10)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-column-head small{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-search{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-list{
+  background:transparent!important;
+  border-color:rgba(255,255,255,.10)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-row{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.10)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-row:hover{
+  border-color:rgba(245,158,11,.35)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-info b{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-info small,
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-empty{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-action.add{
+  background:rgba(245,158,11,.14)!important;
+  color:#FBBF24!important;
+  border-color:rgba(245,158,11,.28)!important;
+}
+html[data-bo-theme="dark"] body.category-edit-page .category-provider-game-action.remove{
+  background:rgba(248,113,113,.12)!important;
+  color:#F87171!important;
+  border-color:rgba(248,113,113,.28)!important;
 }
 html body.category-edit-page .category-provider-empty-state{
   display:grid!important;
