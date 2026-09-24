@@ -806,3 +806,72 @@ body.main-admin-detail-page.main-report-exec-page .mad-panel .mre-table tbody > 
   padding:6px 12px!important;
 }
 
+/* Panel pill scrollbar — report tables (MD unlock) */
+html body.main-admin-detail-page.main-report-exec-page[data-access-page="main_provider_report"] .mad-table-wrap,
+html body.main-admin-detail-page.main-report-exec-page[data-access-page="main_report"] .mad-table-wrap,
+html body.main-admin-detail-page.main-report-exec-page .mre-scroll-table,
+html body.main-admin-detail-page.main-report-exec-page .wl-scroll-table{
+  scrollbar-width:auto!important;
+  scrollbar-color:auto!important;
+}
+html body.main-admin-detail-page.main-report-exec-page[data-access-page="main_provider_report"] .mad-table-wrap::-webkit-scrollbar,
+html body.main-admin-detail-page.main-report-exec-page[data-access-page="main_report"] .mad-table-wrap::-webkit-scrollbar,
+html body.main-admin-detail-page.main-report-exec-page .mre-scroll-table::-webkit-scrollbar,
+html body.main-admin-detail-page.main-report-exec-page .wl-scroll-table::-webkit-scrollbar{
+  width:6px!important;
+  height:6px!important;
+  background:transparent!important;
+}
+html body.main-admin-detail-page.main-report-exec-page[data-access-page="main_provider_report"] .mad-table-wrap::-webkit-scrollbar-button,
+html body.main-admin-detail-page.main-report-exec-page[data-access-page="main_provider_report"] .mad-table-wrap::-webkit-scrollbar-button:single-button,
+html body.main-admin-detail-page.main-report-exec-page[data-access-page="main_report"] .mad-table-wrap::-webkit-scrollbar-button,
+html body.main-admin-detail-page.main-report-exec-page[data-access-page="main_report"] .mad-table-wrap::-webkit-scrollbar-button:single-button,
+html body.main-admin-detail-page.main-report-exec-page .mre-scroll-table::-webkit-scrollbar-button,
+html body.main-admin-detail-page.main-report-exec-page .mre-scroll-table::-webkit-scrollbar-button:single-button,
+html body.main-admin-detail-page.main-report-exec-page .wl-scroll-table::-webkit-scrollbar-button,
+html body.main-admin-detail-page.main-report-exec-page .wl-scroll-table::-webkit-scrollbar-button:single-button{
+  display:none!important;
+  width:0!important;
+  height:0!important;
+}
+html body.main-admin-detail-page.main-report-exec-page[data-access-page="main_provider_report"] .mad-table-wrap::-webkit-scrollbar-track,
+html body.main-admin-detail-page.main-report-exec-page[data-access-page="main_report"] .mad-table-wrap::-webkit-scrollbar-track,
+html body.main-admin-detail-page.main-report-exec-page .mre-scroll-table::-webkit-scrollbar-track,
+html body.main-admin-detail-page.main-report-exec-page .wl-scroll-table::-webkit-scrollbar-track,
+html body.main-admin-detail-page.main-report-exec-page[data-access-page="main_provider_report"] .mad-table-wrap::-webkit-scrollbar-corner,
+html body.main-admin-detail-page.main-report-exec-page[data-access-page="main_report"] .mad-table-wrap::-webkit-scrollbar-corner,
+html body.main-admin-detail-page.main-report-exec-page .mre-scroll-table::-webkit-scrollbar-corner,
+html body.main-admin-detail-page.main-report-exec-page .wl-scroll-table::-webkit-scrollbar-corner{
+  background:transparent!important;
+}
+html body.main-admin-detail-page.main-report-exec-page[data-access-page="main_provider_report"] .mad-table-wrap::-webkit-scrollbar-thumb,
+html body.main-admin-detail-page.main-report-exec-page[data-access-page="main_report"] .mad-table-wrap::-webkit-scrollbar-thumb,
+html body.main-admin-detail-page.main-report-exec-page .mre-scroll-table::-webkit-scrollbar-thumb,
+html body.main-admin-detail-page.main-report-exec-page .wl-scroll-table::-webkit-scrollbar-thumb{
+  background:#8B6B4A!important;
+  background-color:#8B6B4A!important;
+  border:0!important;
+  border-radius:999px!important;
+  box-shadow:none!important;
+}
+html body.main-admin-detail-page.main-report-exec-page[data-access-page="main_provider_report"] .mad-table-wrap::-webkit-scrollbar-thumb:hover,
+html body.main-admin-detail-page.main-report-exec-page[data-access-page="main_report"] .mad-table-wrap::-webkit-scrollbar-thumb:hover,
+html body.main-admin-detail-page.main-report-exec-page .mre-scroll-table::-webkit-scrollbar-thumb:hover,
+html body.main-admin-detail-page.main-report-exec-page .wl-scroll-table::-webkit-scrollbar-thumb:hover{
+  background:#5C4A30!important;
+  background-color:#5C4A30!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-report-exec-page[data-access-page="main_provider_report"] .mad-table-wrap::-webkit-scrollbar-thumb,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-report-exec-page[data-access-page="main_report"] .mad-table-wrap::-webkit-scrollbar-thumb,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-report-exec-page .mre-scroll-table::-webkit-scrollbar-thumb,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-report-exec-page .wl-scroll-table::-webkit-scrollbar-thumb{
+  background:#F59E0B!important;
+  background-color:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-report-exec-page[data-access-page="main_provider_report"] .mad-table-wrap::-webkit-scrollbar-thumb:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-report-exec-page[data-access-page="main_report"] .mad-table-wrap::-webkit-scrollbar-thumb:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-report-exec-page .mre-scroll-table::-webkit-scrollbar-thumb:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-report-exec-page .wl-scroll-table::-webkit-scrollbar-thumb:hover{
+  background:#D97706!important;
+  background-color:#D97706!important;
+}

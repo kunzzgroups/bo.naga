@@ -16,8 +16,38 @@
   let merchantMeta = [];
   let filtered = [];
   let page = 1;
-  let size = 10;
   let showAll = false;
+  let autoPageSize = null;
+  let resizeTimer = null;
+
+  function isAutoPageSize(value){
+    const v = String(value == null ? '-' : value).trim();
+    return v === '' || v === '-' || /^auto$/i.test(v);
+  }
+
+  function measureAutoPageSize(){
+    const wrap = document.querySelector('.wl-scroll-table');
+    if(!wrap) return 10;
+    const head = wrap.querySelector('thead');
+    const sample = wrap.querySelector('tbody tr:not(.mad-empty):not(.wl-total)');
+    const rowHeight = sample ? Math.max(36, Math.round(sample.getBoundingClientRect().height)) : 52;
+    const available = Math.max(0, Math.floor(wrap.clientHeight) - (head ? Math.ceil(head.getBoundingClientRect().height) : 0));
+    return Math.max(5, Math.min(200, Math.floor(available / rowHeight) || 10));
+  }
+
+  function pageSize() {
+    const raw = String($('wlPageSize')?.value || '-').trim();
+    if(/^all$/i.test(raw)){
+      showAll = true;
+      return Math.max(filtered.length, 1);
+    }
+    showAll = false;
+    if(isAutoPageSize(raw)){
+      if(autoPageSize == null) autoPageSize = measureAutoPageSize();
+      return autoPageSize;
+    }
+    return Math.max(1, Number(raw) || 10);
+  }
   let statusPill = 'all';
   let searchQ = '';
   let currency = 'MYR';
@@ -549,11 +579,6 @@
     render();
   }
 
-  function pageSize() {
-    if (showAll) return Math.max(filtered.length, 1);
-    return Math.max(1, Number(size) || 10);
-  }
-
   function syncScrollMode() {
     const wrap = document.querySelector('.wl-scroll-table');
     const panel = document.querySelector('.mre-panel[data-report-panel="winlose"]');
@@ -798,11 +823,18 @@
     });
 
     $('wlPageSize')?.addEventListener('change', () => {
-      const v = $('wlPageSize').value || '10';
-      showAll = v === 'all';
-      size = showAll ? 10 : Math.max(1, Number(v) || 10);
+      autoPageSize = null;
       page = 1;
       render();
+    });
+
+    window.addEventListener('resize', () => {
+      if(!isAutoPageSize($('wlPageSize')?.value)) return;
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        autoPageSize = null;
+        render();
+      }, 120);
     });
 
     document.addEventListener('click', (e) => {
@@ -839,7 +871,13 @@
 
     $('reportExport')?.addEventListener('click', exportCsv);
 
-    load();
+    load().then(() => requestAnimationFrame(() => {
+      if(isAutoPageSize($('wlPageSize')?.value)){
+        autoPageSize = null;
+        page = 1;
+        render();
+      }
+    }));
   }
 
   if (document.readyState === 'loading') {

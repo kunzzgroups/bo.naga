@@ -12,9 +12,10 @@
 <link href="assets/css/bo-ui-standard.css?v=a920a6cc" rel="stylesheet"/>
 <link href="assets/css/bo-targeted-fixes.css?v=7542fd4c" rel="stylesheet"/>
 <link href="assets/css/main-admin-detail-executive.css?v=25223479" rel="stylesheet"/>
-<link href="assets/css/main-provider-report-executive.css?v=f7527660" rel="stylesheet"/>
+<link href="assets/css/main-provider-report-executive.css?v=f7527661" rel="stylesheet"/>
 <link href="assets/css/main-merchant-report-executive.css?v=d6fd3f29" rel="stylesheet"/>
-<link href="assets/css/main-win-lose-report.css?v=449d24df" rel="stylesheet"/>
+<link href="assets/css/main-win-lose-report.css?v=449d24e0" rel="stylesheet"/>
+<link href="assets/css/main-admin-page-size.css?v=3" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=fcde0bb3" rel="stylesheet"/>
 <script>
 (function(){
@@ -24,8 +25,8 @@
 })();
 </script>
 <link href="assets/css/bo-account-chip.css?v=e6d15d38" rel="stylesheet"/>
-<link href="assets/css/main-report-charcoal.css?v=6a2bc3e8" rel="stylesheet"/>
-<link href="assets/css/main-report-charcoal-content.css?v=fc2ba006" rel="stylesheet"/>
+<link href="assets/css/main-report-charcoal.css?v=6a2bc3eb" rel="stylesheet"/>
+<link href="assets/css/main-report-charcoal-content.css?v=fc2ba007" rel="stylesheet"/>
 <link href="assets/css/bo-input-fill.css?v=3005315e" rel="stylesheet"/>
 <link href="assets/css/main-mobile-responsive.css?v=d7737bec" rel="stylesheet">
 <link href="assets/css/bo-table-zebra.css?v=5e28ddf4" rel="stylesheet"/>
@@ -170,18 +171,18 @@
     </div>
 
     <div class="mad-footer wl-footer">
-      <div class="wl-footer-left">
-        <div class="mad-footer-info" id="wlInfo">Showing 0 to 0 of 0 merchants</div>
-        <label class="wl-page-size" for="wlPageSize">
-          <select id="wlPageSize" class="mad-select wl-page-size-select" aria-label="Rows per page">
-            <option value="10" selected>10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-            <option value="all">All</option>
-          </select>
-        </label>
-      </div>
+      <label class="mad-page-size-control entries-control" for="wlPageSize">Show
+        <select id="wlPageSize" class="mad-page-size-select" aria-label="Rows per page">
+          <option value="-" selected>-</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="All">All</option>
+        </select>
+        <span>entries</span>
+      </label>
+      <div class="mad-footer-info" id="wlInfo">Showing 0 to 0 of 0 merchants</div>
       <div class="mad-footer-right">
         <nav class="mad-pager" id="wlPager" aria-label="Table pagination"></nav>
       </div>
@@ -201,7 +202,7 @@
 <script src="assets/js/permission-tabs.js?v=1.0.20"></script>
 <script src="assets/js/bo-seg-bounce.js?v=0c2f53d2"></script>
 <script src="assets/js/main-exec-date-range.js?v=2702694b"></script>
-<script src="assets/js/main-win-lose-report.js?v=08a81d48"></script>
+<script src="assets/js/main-win-lose-report.js?v=3"></script>
 <script src="assets/js/bo-ui-standard.js?v=2a3d22cb"></script>
 <script src="assets/js/bo-theme.js?v=b1e789f3"></script>
 <script src="assets/js/bo-account-chip.js?v=8b9ce6d4"></script>

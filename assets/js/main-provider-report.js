@@ -3,16 +3,22 @@ const $=id=>document.getElementById(id), esc=v=>String(v??'').replace(/[&<>"']/g
 const money=v=>Number(v||0).toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2});
 const num=v=>Number(v||0).toLocaleString('en-MY');
 const add=(a,b)=>Number(a||0)+Number(b||0), pos=v=>Math.max(Number(v||0),0), neg=v=>Math.max(-Number(v||0),0);
-/** Rows per page — fills available table height; overflow goes to page 2+ */
+/** Rows per page — Show `-` fills available table height; fixed sizes use the select. */
 let pageSize=10;
-const MIN_PAGE_SIZE=7;
-const MAX_PAGE_SIZE=40;
+const MIN_PAGE_SIZE=5;
+const MAX_PAGE_SIZE=200;
 const ROW_HEIGHT_EST=52;
+const pageSizeEl=$('mreEntriesPageSize');
 let brandPageSize=10;
 let historyPageSize=10;
 const MARKS=['','teal','violet','amber','rose','slate'];
 /** Temporary: hide report rows until real data is ready. Set false to restore API display. */
 const FORCE_EMPTY_UI=false;
+
+function isAutoPageSize(value){
+  const v=String(value==null?'-':value).trim();
+  return v===''||v==='-'||/^auto$/i.test(v);
+}
 
 let currentProviders=[], currentBrands=[], merchantDirectory=[];
 let currentHistoryRows=[], filteredHistoryRows=[], historyType='all';
@@ -213,14 +219,25 @@ function measureProviderPageSize(){
   const wrap=document.querySelector('.mre-panel[data-report-panel="provider"] .mad-table-wrap');
   if(!wrap) return pageSize;
   const thead=wrap.querySelector('thead');
+  const sample=wrap.querySelector('tbody tr:not(.mad-empty)');
+  const rowH=sample?Math.max(36,Math.round(sample.getBoundingClientRect().height)):ROW_HEIGHT_EST;
   const headH=thead?Math.ceil(thead.getBoundingClientRect().height):48;
   // Use natural row estimate (not stretched height) so leftover gap can be shared evenly
   const avail=Math.max(0,wrap.clientHeight-headH-2);
-  const n=Math.floor(avail/ROW_HEIGHT_EST);
+  const n=Math.floor(avail/rowH);
   return Math.max(MIN_PAGE_SIZE,Math.min(MAX_PAGE_SIZE,n||MIN_PAGE_SIZE));
 }
 
+function resolveProviderPageSize(){
+  const raw=String(pageSizeEl&&pageSizeEl.value||'-').trim();
+  if(/^all$/i.test(raw)) return 10000;
+  if(isAutoPageSize(raw)) return measureProviderPageSize();
+  const n=Number(raw);
+  return Number.isFinite(n)&&n>0?n:10;
+}
+
 function syncProviderPageSize(){
+  if(!isAutoPageSize(pageSizeEl&&pageSizeEl.value)) return false;
   const next=measureProviderPageSize();
   if(next===pageSize) return false;
   pageSize=next;
@@ -271,7 +288,9 @@ function renderProviders(){
   const info=$('mreTableInfo');
   if(!tbody) return;
 
-  syncProviderPageSize();
+  const auto=isAutoPageSize(pageSizeEl&&pageSizeEl.value);
+  if(auto) syncProviderPageSize();
+  else pageSize=resolveProviderPageSize();
   const total=filteredProviders.length;
   const totalPages=Math.max(1,Math.ceil(total/pageSize)||1);
   providerPage=Math.max(1,Math.min(providerPage,totalPages));
@@ -303,6 +322,11 @@ function renderProviders(){
       <td class="mre-num">${money(r.receivable)}</td>
     </tr>`;
   }).join('');
+
+  if(!auto){
+    clearProviderRowStretch();
+    return;
+  }
 
   // Refine page size once, then evenly stretch rows to fill leftover space
   if(!renderProviders._refining){
@@ -697,12 +721,21 @@ function setupFilters(){
     const n=Number(b.dataset.page);
     if(n>=1&&n<=totalPages&&n!==providerPage){providerPage=n;renderProviders();}
   });
+  pageSizeEl?.addEventListener('change',()=>{
+    providerPage=1;
+    pageSize=resolveProviderPageSize();
+    renderProviders();
+  });
   const tableWrap=document.querySelector('.mre-panel[data-report-panel="provider"] .mad-table-wrap');
   if(tableWrap&&typeof ResizeObserver!=='undefined'){
     let resizeTimer=0;
     const ro=new ResizeObserver(()=>{
       clearTimeout(resizeTimer);
       resizeTimer=setTimeout(()=>{
+        if(!isAutoPageSize(pageSizeEl&&pageSizeEl.value)){
+          clearProviderRowStretch();
+          return;
+        }
         if(syncProviderPageSize()) renderProviders();
         else distributeProviderRows();
       },80);
