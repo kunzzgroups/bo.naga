@@ -68,11 +68,11 @@
       var html = rows.map(function (r) {
         return '<option value="' + esc(r.id) + '">' + esc(r.name || r.code) + (r.roleType === 'BRAND_OWNER' ? ' (Owner)' : '') + '</option>';
       }).join('') || '<option value="">No role available for this selection</option>';
-      fill('newAdminRole', html);
-      fill('newAdminPermissionGroup', '<option value="">Select permission group (optional)</option>' + html);
+      fill('newAdminRole', '<option value="">Select role</option>' + html);
+      fill('newAdminPermissionGroup', '<option value="">Select permission group</option>' + html);
     } catch (e) {
       fill('newAdminRole', '<option value="">Unable to load roles</option>');
-      fill('newAdminPermissionGroup', '<option value="">Select permission group (optional)</option>');
+      fill('newAdminPermissionGroup', '<option value="">Select permission group</option>');
     }
   }
 
@@ -92,7 +92,7 @@
         { headers: Object.assign({}, BO_AUTH.authHeader()) });
       var json = await res.json().catch(function () { return {}; });
       var rows = Array.isArray(json.data) ? json.data : [];
-      sel.innerHTML = (user.rootAdmin ? '<option value="">Platform Master Account</option>' : '<option value="">Select Branding</option>') +
+      sel.innerHTML = '<option value="">Select branding scope</option>' +
         rows.map(function (x) { return '<option value="' + esc(x.id) + '">' + esc(x.name || x.code) + ' (#' + esc(x.id) + ')</option>'; }).join('');
       await loadRoles(sel.value ? Number(sel.value) : (user.rootAdmin ? null : (window.BO_BRAND && BO_BRAND.activeId ? BO_BRAND.activeId() : null)));
     } catch (e) {
@@ -152,6 +152,7 @@
   async function prefill() {
     if (!editId) return;
     try {
+      await bootReady;                       /* the option lists must exist before choosing from them */
       var res = await fetch(apiJsonUrl(), { headers: Object.assign({}, BO_AUTH.authHeader()) });
       var json = await res.json().catch(function () { return {}; });
       var rows = Array.isArray(json.data) ? json.data : [];
@@ -161,7 +162,7 @@
       set('newAdminUsername', row.username);
       set('newAdminDisplayName', row.displayName || row.username);
       set('newAdminStatus', row.status == null ? 1 : row.status);
-      if (row.brandId) await loadRoles(Number(row.brandId)); else if (((window.BO_AUTH && BO_AUTH.user()) || {}).rootAdmin) await loadRoles(null);
+      if (row.brandId) await loadRoles(Number(row.brandId));   /* a record in another brand re-filters the roles */
       set('newAdminBrand', row.brandId == null ? '' : row.brandId);
       set('newAdminRole', row.roleId);
       var st = document.getElementById('newAdminStatus');
@@ -172,6 +173,13 @@
     return (window.API_CONFIG ? API_CONFIG.BASE_URL + (API_CONFIG.ENDPOINTS.AUTH_ADMIN_LIST || '/auth/admin/list')
                               : '/auth/admin/list');
   }
+  /* Order matters. The brand and role option lists are fetched asynchronously and prefill()
+     selects from them, so the bootstrap starts FIRST and prefill waits on it. Started the other
+     way round (prefill first, `loadBrands()` at the end of the IIFE), the bootstrap's own
+     `loadRoles()` landed after prefill had chosen a role, re-filled the select, and reset the
+     choice to the first option - silently wrong until this design's "Select role" placeholder
+     made an unselected state visible. */
+  var bootReady = loadBrands();
   prefill();
 
   /* ---- submit: same endpoint and payload as the modal ------------------- */
@@ -249,5 +257,4 @@
     }
   });
 
-  loadBrands();
 })();

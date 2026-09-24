@@ -3985,3 +3985,44 @@ text**. The gate stayed green because its listing rule only asked for more than 
 requires a floor of five for a family listing, and that an opted-in page's row actions are anchors
 pointing at `<page>?roleId=N`. Verify: light and dark, **0 of 12 pages failing** (9 family/reference
 pages, 2 form pages, plus the edit-mode variant the harness now renders at `?roleId=3`).
+
+#### Access & Scope to the owner's reference: four-up row, generous gaps (2026-09-24)
+
+Owner, with a reference image: “add admin 和 edit admin的设计要优化成像图里那样”. Measured off the image
+itself rather than eyeballed — its own control height calibrates the scale (78px there = our 44px, so
+one image pixel is 0.564 here):
+
+| what | image | ours |
+|---|---|---|
+| column gap between the four fields | 52px | **28px** |
+| row gap (select row → Remark row) | 46px | **26px** |
+| Remark textarea height | 159px | **90px** |
+| field width | 482px | 1fr (286px at this card) |
+| control height | 78px | 44px (unchanged) |
+| accent bar | ~8px | 3px (unchanged) |
+
+The house deck is a grid of **five fixed 236px tracks**, so a four-field row used 4x236px of a 1228px
+card and left **512px blank**, and the Remark inherited the form's 14px gap instead of the row's 26px.
+Now: rows that actually carry four fields become `repeat(4, minmax(0,1fr))`, the owner's gaps apply,
+and the Remark carries `mac-field-full` (`grid-column:1 / -1`) **inside the same grid**, so the row gap
+above it is the grid's. Scoped by `:has(> .mac-field:nth-child(4))`, so the role page's single-field row
+keeps the house metric instead of stretching one field across the card.
+
+**A measurement worth recording, because it nearly sent me the wrong way.** My first pass scanned the
+image for "dark runs" and reported the accent bar as **48px** wide — which would have meant overriding
+the locked 3px accent with a 27px slab. Sampling the actual pixels showed the amber is only ~8px at
+image scale (**4.5px here**, i.e. the house bar), and the wide run was the amber *glow* plus the first
+field's border being collated into one range by a first/last-only scan. Measure the colour, not the
+extent.
+
+Placeholders now match the reference — Select role / Select status / Select branding scope / Select
+permission group — and they **exposed a real bug in edit mode**: `prefill()` ran at line 175 while
+`loadBrands()` ran at 252, and the bootstrap's own `loadRoles()` landed *after* prefill had chosen the
+role, re-filling the select and resetting the choice to its **first option**. Edit mode had therefore
+been showing a plausible-looking but wrong role (the first in the list, not the record's) for as long
+as the first option was a real role. The values are now ordered (`bootReady` — the bootstrap starts
+first, prefill awaits it) and measured: `role = 2 "Platform Master"`, `status = 1 "Active"`, and
+`branding = ""` because that admin genuinely has `brandId: null`.
+
+Three of the four selects are optional or defaulted, and the role check the page already had covers
+both create and edit, so the placeholder state is safe to submit.

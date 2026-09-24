@@ -1092,3 +1092,44 @@ html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .
 html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card thead th.bo-tx-sortable.is-desc .bo-tx-sort-ico::before{
   opacity:.25 !important;
 }
+
+/* --------------------------------------------------------------------------
+   2026-09-24 - the form cards' field rows fill the width in FOUR equal columns, and the
+   Remark row takes the whole card. The house build's `.mac-fields-row` is a grid of fixed
+   236px tracks (five of them), so a row of four fields used 4x236px of a 1228px card and the
+   remaining 512px read as blank - the owner's reference for Access & Scope shows the four
+   selects sharing the full row, with Remark on its own line below.
+   Scoped to rows that actually carry four fields, so a shorter row (the role page's single
+   Group Name) keeps the house metric instead of stretching one field across the card.
+   -------------------------------------------------------------------------- */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control.main-admin-create-page .mac-section .mac-fields-row:has(> .mac-field:nth-child(4)){
+  grid-template-columns:repeat(4, minmax(0, 1fr)) !important;
+}
+/* A field that owns its row (Remark). `1 / -1` covers it whether it sits in the four-column
+   row or in a row of its own. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control.main-admin-create-page .mac-section .mac-field-full{
+  grid-column:1 / -1 !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control.main-admin-create-page .mac-section .mac-field-full > textarea.form-control{
+  min-height:90px !important;
+  resize:vertical;
+}
+/* The character counter is a figure, so it reads at the row's right edge under the textarea
+   (the reference's per-field help is prose and stays left). */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control.main-admin-create-page .mac-section .mac-field-full > .mac-help{
+  text-align:right !important;
+}
+/* Gaps, read off the owner's reference at the scale its own control height defines (the image's
+   78px control = our 44px, so 1px there is 0.564px here): a 52px column gap is 29px, and the 46px
+   between the select row and the Remark row is 26px. The house deck's 14px/12px packs the fields
+   against each other; the reference lets the row breathe. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control.main-admin-create-page .mac-section .mac-fields-row{
+  column-gap:28px !important;
+  row-gap:26px !important;
+}
+/* The select enhancement wraps each <select>; the visible control is the wrapper's button, so
+   it has to fill the field rather than sit at its own width. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control.main-admin-create-page .mac-section .mac-field > .rounded-select-wrap,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control.main-admin-create-page .mac-section .mac-field > .rounded-select-wrap > .rounded-select-btn{
+  width:100% !important;
+}

@@ -10,18 +10,18 @@
 <title>Admin Management</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
-<link href="assets/css/reports.css?v=79fad10f" rel="stylesheet"/>
+<link href="assets/css/reports.css?v=51ba1eb0" rel="stylesheet"/>
 <style>
     .report-topbar h1 {
       font-size: 22px;
   }
   </style>
 <link href="assets/css/table-pagination-horizontal.css?v=50c582bf" rel="stylesheet"/>
-<link href="assets/css/bo-ui-standard.css?v=4780788e" rel="stylesheet">
+<link href="assets/css/bo-ui-standard.css?v=07ee1129" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=7542fd4c" rel="stylesheet"/>
 <link href="assets/css/bo-account-chip.css?v=e6d15d38" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-shell.css?v=8b3a4edd" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-legacy.css?v=2be4d37f" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-shell.css?v=15eb935e" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-legacy.css?v=baeaece7" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-primitives.css?v=7b2815b6" rel="stylesheet" />
 <link href="assets/css/bo-input-fill.css?v=02ac8651" rel="stylesheet" />
 </link><link href="assets/css/main-admin-detail-executive.css?v=27539c4d" rel="stylesheet" />
@@ -54,11 +54,11 @@
 <form class="mac-form" id="createAdminForm" novalidate>
 <section class="mac-section">
 <header class="mac-section-head"><span class="mac-section-icon" aria-hidden="true"><i class="bi bi-person-plus"></i></span><h3>Account Credentials</h3></header>
-<div class="mac-fields mac-fields-row"><label class="mac-field"><span class="mac-label">Username <b>*</b></span><input class="form-control" id="newAdminUsername" type="text" placeholder="Enter username" /></label><label class="mac-field"><span class="mac-label">Display Name <b>*</b></span><input class="form-control" id="newAdminDisplayName" type="text" placeholder="Enter display name" /></label></div><div class="mac-fields mac-fields-row"><label class="mac-field"><span class="mac-label">Password <b>*</b></span><span class="mad-pass-wrap"><input class="form-control" id="newAdminPassword" type="password" placeholder="Enter password" autocomplete="new-password" /><small class="mac-field-help" id="newAdminPasswordHelp" hidden>Leave empty to keep the current password.</small><button class="mad-eye" type="button" data-pass-toggle="newAdminPassword" aria-label="Show password"><i class="bi bi-eye"></i></button></span></label><label class="mac-field"><span class="mac-label">Confirm Password <b>*</b></span><span class="mad-pass-wrap"><input class="form-control" id="newAdminConfirmPassword" type="password" placeholder="Confirm password" autocomplete="new-password" /><button class="mad-eye" type="button" data-pass-toggle="newAdminConfirmPassword" aria-label="Show password"><i class="bi bi-eye"></i></button></span></label></div>
+<div class="mac-fields mac-fields-row"><label class="mac-field"><span class="mac-label">Username <b>*</b></span><input class="form-control" id="newAdminUsername" type="text" placeholder="Enter username" /></label><label class="mac-field"><span class="mac-label">Display Name <b>*</b></span><input class="form-control" id="newAdminDisplayName" type="text" placeholder="Enter display name" /></label><label class="mac-field"><span class="mac-label">Password <b>*</b></span><span class="mad-pass-wrap"><input class="form-control" id="newAdminPassword" type="password" placeholder="Enter password" autocomplete="new-password" /><small class="mac-field-help" id="newAdminPasswordHelp" hidden>Leave empty to keep the current password.</small><button class="mad-eye" type="button" data-pass-toggle="newAdminPassword" aria-label="Show password"><i class="bi bi-eye"></i></button></span></label><label class="mac-field"><span class="mac-label">Confirm Password <b>*</b></span><span class="mad-pass-wrap"><input class="form-control" id="newAdminConfirmPassword" type="password" placeholder="Confirm password" autocomplete="new-password" /><button class="mad-eye" type="button" data-pass-toggle="newAdminConfirmPassword" aria-label="Show password"><i class="bi bi-eye"></i></button></span></label></div>
 </section>
 <section class="mac-section">
 <header class="mac-section-head"><span class="mac-section-icon" aria-hidden="true"><i class="bi bi-shield-lock"></i></span><h3>Access &amp; Scope</h3></header>
-<div class="mac-fields mac-fields-row"><label class="mac-field"><span class="mac-label">Role <b>*</b></span><select class="form-control" id="newAdminRole"></select></label><label class="mac-field"><span class="mac-label">Status <b>*</b></span><select class="form-control" id="newAdminStatus"><option value="1">Active</option><option value="0">Inactive</option></select></label></div><div class="mac-fields mac-fields-row"><label class="mac-field"><span class="mac-label">Branding Scope</span><select class="form-control" id="newAdminBrand"></select></label><label class="mac-field"><span class="mac-label">Permission Group</span><select class="form-control" id="newAdminPermissionGroup"></select></label></div><div class="mac-fields mac-fields-row"><label class="mac-field"><span class="mac-label">Remark</span><textarea class="form-control" id="newAdminRemark" rows="4" maxlength="200" placeholder="Enter remark (optional)"></textarea><small class="mac-help" id="newAdminRemarkCount">0/200</small></label></div>
+<div class="mac-fields mac-fields-row"><label class="mac-field"><span class="mac-label">Role <b>*</b></span><select class="form-control" id="newAdminRole"></select></label><label class="mac-field"><span class="mac-label">Status <b>*</b></span><select class="form-control" id="newAdminStatus"><option value="" selected>Select status</option><option value="1">Active</option><option value="0">Inactive</option></select></label><label class="mac-field"><span class="mac-label">Branding Scope</span><select class="form-control" id="newAdminBrand"></select></label><label class="mac-field"><span class="mac-label">Permission Group</span><select class="form-control" id="newAdminPermissionGroup"></select></label><label class="mac-field mac-field-full"><span class="mac-label">Remark</span><textarea class="form-control" id="newAdminRemark" rows="5" maxlength="200" placeholder="Enter remark (optional)"></textarea><small class="mac-help" id="newAdminRemarkCount">0/200</small></label></div>
 </section>
 <div class="upload-status mb-3" id="createAdminStatus"></div>
 <footer class="mac-footer-actions">
@@ -74,7 +74,7 @@
 <script src="assets/js/main-currency-runtime.js?v=bc97a89c"></script>
 <script src="assets/js/currency-runtime.js?v=71496e4c"></script>
 <script src="assets/js/reports.js?v=063b42e4"></script>
-<script src="assets/js/auth.js?v=0155d6dc"></script>
+<script src="assets/js/auth.js?v=fd8ea628"></script>
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
