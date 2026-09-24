@@ -4486,3 +4486,10 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_me
 html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .msr-amount-group:focus-within .mac-input-addon{
   border-right-color:#F59E0B;
 }
+
+/* Merchant create custom-select menus must escape the card and sit above the
+   following section instead of being clipped or painted underneath it. */
+html:not([data-bo-theme="dark"]) body.main-admin-create-page[data-access-page="main_merchant_detail"] .mac-section:has(.rounded-select-menu.show){
+  overflow:visible!important;
+  z-index:20;
+}
