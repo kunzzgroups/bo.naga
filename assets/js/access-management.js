@@ -530,9 +530,8 @@
   function canDeleteRole(role){
     if(!role) return false;
     if(!canEditRoleMenus(role)) return false;
-    if(Number(role.systemRole)===1) return false;
     const rt=String(role.roleType||'').toUpperCase();
-    if(['ROOT','MASTER'].includes(rt)) return false;
+    if(['ROOT','MAIN','MASTER'].includes(rt)) return false;
     return true;
   }
 
