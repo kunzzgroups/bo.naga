@@ -303,12 +303,17 @@ html[data-bo-theme="dark"] body.main-admin-security-page .mas-panel .mas-table-w
 }
 
 /* ---- Page padding ----------------------------------------------------------------------
-   The sidebar got narrower (--sidebar-w 280 → 252 in reports.css, shared by every page), and
-   these two pages give back their own outer padding as well: the workspace held 24px on each
-   side at desktop widths, which is 48px of table width spent on margin. */
+   Keep Security & Audit aligned with Roles & Permissions: both workspaces use the same
+   24px desktop content inset. */
 body.main-admin-security-page .mas-workspace{
-  padding-left:clamp(10px,1.6vw,16px)!important;
-  padding-right:clamp(10px,1.6vw,16px)!important;
+  padding-left:24px!important;
+  padding-right:24px!important;
+}
+@media(max-width:991.98px){
+  body.main-admin-security-page .mas-workspace{
+    padding-left:12px!important;
+    padding-right:12px!important;
+  }
 }
 
 /* ---- Detail: a column beside the table, never over it ----------------------------------
