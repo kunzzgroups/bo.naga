@@ -1,7 +1,24 @@
-/* Global configurable BO icon navigation. Kept isolated from page-specific layout. */
-.bo-global-quicknav{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));width:100%;background:#D97706;border-bottom:1px solid rgba(255,255,255,.18);position:relative;z-index:20}
-.bo-global-quicknav a{min-height:72px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:#fff;font-size:31px;border-right:1px solid rgba(255,255,255,.08);transition:background .15s ease}
-.bo-global-quicknav a:nth-child(6n){border-right:0}.bo-global-quicknav a:hover,.bo-global-quicknav a.active{background:#F5EBDC;color:#fff}.bo-global-quicknav a i{line-height:1}.bo-global-quicknav a span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* Global configurable BO icon navigation. Kept isolated from page-specific layout.
+   2026-09-24 visual pass: layout/grid/columns untouched — only surface, icon
+   treatment and state colour were revised. The previous active/hover state painted
+   the tile near-white (#F5EBDC) while leaving the icon white, so the selected tab
+   was effectively invisible; the icon tile + underline below fixes that and gives
+   the bar the same warm-leather depth as the rest of the BO chrome. */
+.bo-global-quicknav{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));width:100%;background:linear-gradient(180deg,#E0850F 0%,#C2670B 100%);border-bottom:1px solid rgba(0,0,0,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.16);position:relative;z-index:20}
+.bo-global-quicknav a{position:relative;min-height:72px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:#FDEBD3;font-size:26px;border-right:1px solid rgba(0,0,0,.1);transition:color .16s ease}
+.bo-global-quicknav a:nth-child(6n){border-right:0}
+.bo-global-quicknav a i{line-height:1;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;transition:background .16s ease,color .16s ease,transform .16s ease}
+.bo-global-quicknav a:hover i{background:rgba(255,255,255,.14);color:#FFF8EB}
+.bo-global-quicknav a:active i{transform:scale(.94)}
+.bo-global-quicknav a.active{color:#FFF8EB}
+.bo-global-quicknav a.active i{background:#FFF8EB;color:#92400E;box-shadow:0 3px 10px rgba(0,0,0,.18)}
+.bo-global-quicknav a.active::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:26px;height:3px;border-radius:3px 3px 0 0;background:#FFF8EB}
+.bo-global-quicknav a span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(min-width:992px){
+  /* Match the 64px sidebar brand row so both header boundaries share one baseline. */
+  .bo-global-quicknav{height:64px}
+  .bo-global-quicknav a{height:64px;min-height:64px}
+}
 .bo-nav-config-card{margin-bottom:18px;padding:20px}.bo-nav-config-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}.bo-nav-config-head h2{font-size:18px;margin:0 0 5px}.bo-nav-config-head p{margin:0;color:#6b7280;font-size:13px}.bo-nav-config-mode{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:16px 0;border-bottom:1px solid var(--bo-border,#e5e7eb)}.bo-nav-config-mode label{display:inline-flex;align-items:center;gap:7px;cursor:pointer}.bo-nav-shortcut-title{display:flex;justify-content:space-between;align-items:center;margin:16px 0 10px}.bo-nav-shortcut-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}.bo-nav-shortcut-option{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid #d8dee8;border-radius:10px;cursor:pointer;min-width:0}.bo-nav-shortcut-option i{font-size:20px}.bo-nav-shortcut-option span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:700}.bo-nav-shortcut-option:has(input:checked){border-color:#d97706;background:rgba(217,119,6,.07)}
 body.bo-sidebar-click-mode .report-sidebar .nav-group.bo-flyout-hover .nav-group-list{display:none!important}
 /* The flyout's height must come from its own row, not from the viewport.
@@ -77,9 +94,11 @@ html[data-bo-theme="dark"] .report-sidebar .nav-group-list:not(.rounded-select-m
 .bo-global-quicknav{grid-template-columns:repeat(var(--bo-nav-cols,1),minmax(0,1fr))!important}
 .bo-global-quicknav a{position:relative;cursor:pointer;min-width:0}
 .bo-global-quicknav a.is-dragging{opacity:.45}
-.bo-dashboard-unpin{position:absolute;top:5px;right:7px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:13px;opacity:0;transition:opacity .15s ease,background .15s ease;cursor:pointer}
+.bo-dashboard-unpin{position:absolute;top:5px;right:7px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:11px;color:#FDEBD3;background:rgba(0,0,0,.16);opacity:0;transition:opacity .15s ease,background .15s ease,color .15s ease;cursor:pointer}
 .bo-global-quicknav a:hover .bo-dashboard-unpin,.bo-global-quicknav a:focus-within .bo-dashboard-unpin{opacity:1}
-.bo-dashboard-unpin:hover{background:rgba(255,255,255,.18)}
+.bo-dashboard-unpin:hover{background:rgba(0,0,0,.28);color:#fff}
+.bo-global-quicknav a.active .bo-dashboard-unpin{color:#92400E;background:rgba(146,64,14,.12)}
+.bo-global-quicknav a.active .bo-dashboard-unpin:hover{background:rgba(146,64,14,.22)}
 .report-nav a[data-menu-key]{position:relative;padding-right:38px}
 .bo-sidebar-pin{position:absolute;right:9px;top:50%;transform:translateY(-50%);width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:7px;opacity:0;cursor:pointer;font-size:14px;z-index:3}
 .report-nav a[data-menu-key]:hover .bo-sidebar-pin,.report-nav a[data-menu-key]:focus-within .bo-sidebar-pin,.bo-sidebar-pin.is-pinned{opacity:1}

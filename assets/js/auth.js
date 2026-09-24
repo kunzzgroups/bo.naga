@@ -123,7 +123,7 @@
     // Roles & Permissions (3.2) and Security & Audit (3.4) have their OWN Merchant submenu
     // entries, so aliasing them to Merchants pointed the highlight at a different page than the
     // one you were on. The admin side never aliased main-admin-security.html; this matches it.
-    // Create Role is a child of Roles, so it follows that entry — as the admin side maps
+    // Create Role is a child of Roles, so it follows that entry �?as the admin side maps
     // main-admin-role-create.html to menu-permission.html rather than to its detail page.
     if(p==='main-merchant-role-create.html') return 'main-merchant-roles.html';
     // Admin module drill-downs keep the Admin Details item highlighted.
@@ -468,7 +468,7 @@
         if(json.message === 'Unauthorized') this.logout();
       }catch(e){}
       // Keep profile/session usable on a transient request failure. Still paint the last
-      // DB-backed menus from localStorage — do not invent menus, but do not leave .report-nav blank.
+      // DB-backed menus from localStorage �?do not invent menus, but do not leave .report-nav blank.
       if(cached && cached.username){
         this.renderSidebar(cached);
         this.enforcePageAccess(cached);
@@ -486,7 +486,7 @@
       if(!document.querySelector('link[data-bo-quicknav-css]')){
         const pinCss=document.createElement('link');
         pinCss.rel='stylesheet';
-        pinCss.href='assets/css/bo-global-quicknav.css?v=1.1.4';
+        pinCss.href='assets/css/bo-global-quicknav.css?v=1.3.0';
         pinCss.dataset.boQuicknavCss='1';
         document.head.appendChild(pinCss);
       }
@@ -514,7 +514,7 @@
       const menus = sourceMenus.map(normalizeMenu)
         .filter(function(m){
           if(m.status !== 1 || m.showInSidebar !== 1 || !m.url || m.url === '#') return false;
-          // Admin / Merchant Credit Control pages are retired — keep Adjust/Add Credit on list pages.
+          // Admin / Merchant Credit Control pages are retired �?keep Adjust/Add Credit on list pages.
           const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
           const key = String(m.menuKey || '').toLowerCase();
           if(file === 'main-admin-credit.html' || key === 'main_admin_credit' || key === 'admin_credit') return false;
@@ -654,8 +654,13 @@
         const j=await r.json().catch(()=>({}));
         if(r.ok&&j.status!=='error'&&j.data) cfg=Object.assign(cfg,j.data);
       }catch(e){}
+      // Restore pre-click-mode behaviour: hover expands the rail. A stale CLICK
+      // value from /admin/ui-setting was still flipping on bo-sidebar-click-mode,
+      // which locks the rail width and hides the icon-bearing <span> on hover ?
+      // leaving only the always-visible pin buttons (the "????" screenshot).
+      cfg.sidebarInteraction='HOVER';
       window.__boUiSetting=cfg;
-      document.body.classList.toggle('bo-sidebar-click-mode',String(cfg.sidebarInteraction||'HOVER').toUpperCase()==='CLICK');
+      document.body.classList.remove('bo-sidebar-click-mode');
       this.renderSidebar(this.user());
       this.renderQuickNav(cfg);
       return cfg;
@@ -698,8 +703,37 @@
       const allowed=new Map(all.map(m=>[m.menuKey,m]));let chosen=[];
       (cfg&&Array.isArray(cfg.headerMenuKeys)?cfg.headerMenuKeys:[]).forEach(k=>{const m=allowed.get(k);if(m)chosen.push(m);});
       const cols=Math.max(1,Math.min(12,chosen.length));nav.style.setProperty('--bo-nav-cols',String(cols));
+      // Re-renders (pin/unpin, drag reorder) rebuild innerHTML from scratch, which would
+      // otherwise wipe the currently open tab's highlight even though its iframe content
+      // is still showing. Remember which menu key was active before the rebuild so it can
+      // be restored below instead of silently losing its selected state.
+      const prevActiveKey=nav.querySelector('a.active')?.getAttribute('data-dashboard-menu-key')||null;
       nav.innerHTML=chosen.map(m=>'<a href="'+esc(m.url)+'" draggable="true" data-dashboard-panel-url="'+esc(m.url)+'" data-dashboard-menu-key="'+esc(m.menuKey)+'" title="'+esc(m.title)+'" aria-label="'+esc(m.title)+'"><i class="bi '+esc(m.icon||'bi-circle')+'"></i><span>'+esc(m.title)+'</span><span class="bo-dashboard-unpin" data-dashboard-unpin="'+esc(m.menuKey)+'" title="Unpin from Dashboard" aria-label="Unpin '+esc(m.title)+'"><i class="bi bi-pin-angle-fill"></i></span></a>').join('');
       nav.hidden=chosen.length===0;
+      (function(){
+        const links=[...nav.querySelectorAll('a[data-dashboard-menu-key]')];
+        if(!links.length) return;
+        const restored=prevActiveKey?links.find(a=>a.getAttribute('data-dashboard-menu-key')===prevActiveKey):null;
+        if(restored){
+          // Same tab is still pinned after the rebuild: keep it highlighted, iframe
+          // content is untouched.
+          restored.classList.add('active');
+          return;
+        }
+        if(nav.dataset.autoOpened) return; // user has already navigated away deliberately
+        // First-ever render with pinned pages and nothing active yet: open the first
+        // pinned page automatically instead of leaving the workspace blank until a
+        // manual click.
+        const first=links[0];
+        const frame=document.getElementById('dashboardWorkspaceFrame');
+        if(!first||!frame) return;
+        let url=first.getAttribute('data-dashboard-panel-url')||'';
+        if(pageFile(url)==='dashboard.html') url='dashboard-backup.html';
+        first.classList.add('active');
+        frame.hidden=false;
+        frame.src=url;
+        nav.dataset.autoOpened='1';
+      })();
       let dragged=null,dragMoved=false,dragSaving=false;
       nav.ondragstart=function(e){const a=e.target.closest('a[data-dashboard-menu-key]');if(!a)return;dragged=a;dragMoved=false;a.classList.add('is-dragging');if(e.dataTransfer){e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',a.dataset.dashboardMenuKey||'');}};
       nav.ondragover=function(e){if(!dragged)return;e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect='move';const over=e.target.closest('a[data-dashboard-menu-key]');if(!over||over===dragged)return;const r=over.getBoundingClientRect();const horizontal=Math.abs(e.clientX-(r.left+r.width/2))>=Math.abs(e.clientY-(r.top+r.height/2));const before=horizontal?e.clientX<r.left+r.width/2:e.clientY<r.top+r.height/2;const ref=before?over:over.nextElementSibling;if(ref!==dragged&&dragged.nextElementSibling!==ref){nav.insertBefore(dragged,ref);dragMoved=true;}};
@@ -715,8 +749,8 @@
         nav.querySelectorAll('a').forEach(a=>a.classList.remove('active'));link.classList.add('active');frame.hidden=false;frame.src=url;
       };
       const frame=document.getElementById('dashboardWorkspaceFrame');
-      if(frame&&!frame.dataset.shellBound){frame.dataset.shellBound='1';frame.addEventListener('load',function(){try{const d=frame.contentDocument;if(!d)return;if(d.documentElement)d.documentElement.classList.add('dashboard-embedded-page');if(d.body)d.body.classList.add('dashboard-embedded-page');let style=d.getElementById('dashboardEmbeddedShellStyle');if(!style){style=d.createElement('style');style.id='dashboardEmbeddedShellStyle';style.textContent='html,body{width:100%!important;max-width:100%!important;margin:0!important;overflow-x:hidden!important}*,*::before,*::after{box-sizing:border-box!important}.report-sidebar,.sidebar-overlay,.report-topbar{display:none!important}.report-shell{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:100vh!important;margin:0!important;padding:0!important}.report-main{display:block!important;margin:0!important;padding:0!important;width:100%!important;max-width:100%!important;min-width:0!important}.report-content{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:20px!important;overflow-x:hidden!important}.report-content>*{max-width:100%!important;min-width:0!important}.table-wrap,.table-responsive,[class*=table-wrap],[class*=table-responsive]{max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch}.table-card,.filter-card,.summary-card,[class*=card]{max-width:100%}.container,.container-fluid{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}.dashboard-embedded-page .report-main,body.dashboard-embedded-page.sidebar-mini .report-main,body.dashboard-embedded-page.livechat-bo-page .report-main,body.dashboard-embedded-page.livechat-bo-page.sidebar-mini .report-main{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important}.dashboard-embedded-page .report-content,body.dashboard-embedded-page.sidebar-mini .report-content,body.dashboard-embedded-page.livechat-bo-page .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important;padding-left:20px!important;padding-right:20px!important}.dashboard-embedded-page .report-shell{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important}.dashboard-embedded-page .livechat-admin-shell{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .report-main,html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page.sidebar-mini .report-main{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .report-content,html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page.sidebar-mini .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;padding-left:20px!important;padding-right:20px!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .livechat-admin-shell{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}';d.head.appendChild(style);}const resizeFrame=function(){const de=d.documentElement,b=d.body;frame.style.height=Math.max(650,de?de.scrollHeight:0,b?b.scrollHeight:0)+'px';};resizeFrame();if(frame.__boResizeObserver)frame.__boResizeObserver.disconnect();if(window.ResizeObserver&&d.body){frame.__boResizeObserver=new ResizeObserver(resizeFrame);frame.__boResizeObserver.observe(d.body);}setTimeout(resizeFrame,80);setTimeout(resizeFrame,350);}catch(e){}});}
-      if(!document.querySelector('link[data-bo-quicknav-css]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/css/bo-global-quicknav.css?v=1.1.4';l.dataset.boQuicknavCss='1';document.head.appendChild(l);}
+      if(frame&&!frame.dataset.shellBound){frame.dataset.shellBound='1';frame.addEventListener('load',function(){try{const d=frame.contentDocument;if(!d)return;if(d.documentElement)d.documentElement.classList.add('dashboard-embedded-page');if(d.body)d.body.classList.add('dashboard-embedded-page');let style=d.getElementById('dashboardEmbeddedShellStyle');if(!style){style=d.createElement('style');style.id='dashboardEmbeddedShellStyle';style.textContent='html,body{width:100%!important;max-width:100%!important;margin:0!important;overflow-x:hidden!important}*,*::before,*::after{box-sizing:border-box!important}.report-sidebar,.sidebar-overlay,.report-topbar{display:none!important}.report-shell{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important}.report-main{display:block!important;margin:0!important;padding:0!important;width:100%!important;max-width:100%!important;min-width:0!important}.report-content{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:12px 20px 20px!important;overflow-x:hidden!important}.report-content>*{max-width:100%!important;min-width:0!important}.table-wrap,.table-responsive,[class*=table-wrap],[class*=table-responsive]{max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch}.table-card,.filter-card,.summary-card,[class*=card]{max-width:100%}.container,.container-fluid{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}.dashboard-embedded-page .report-main,body.dashboard-embedded-page.sidebar-mini .report-main,body.dashboard-embedded-page.livechat-bo-page .report-main,body.dashboard-embedded-page.livechat-bo-page.sidebar-mini .report-main{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important}.dashboard-embedded-page .report-content,body.dashboard-embedded-page.sidebar-mini .report-content,body.dashboard-embedded-page.livechat-bo-page .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important;padding-left:20px!important;padding-right:20px!important}.dashboard-embedded-page .report-shell{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important}.dashboard-embedded-page .livechat-admin-shell{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .report-main,html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page.sidebar-mini .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .report-content,html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page.sidebar-mini .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;padding-left:20px!important;padding-right:20px!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .livechat-admin-shell{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}';d.head.appendChild(style);}const resizeFrame=function(){const de=d.documentElement,b=d.body;const contentHeight=Math.max(320,de?de.scrollHeight:0,b?b.scrollHeight:0);const availableHeight=Math.max(320,window.innerHeight-frame.getBoundingClientRect().top);frame.style.height=Math.min(contentHeight,availableHeight)+'px';};resizeFrame();if(frame.__boResizeObserver)frame.__boResizeObserver.disconnect();if(window.ResizeObserver&&d.body){frame.__boResizeObserver=new ResizeObserver(resizeFrame);frame.__boResizeObserver.observe(d.body);}setTimeout(resizeFrame,80);setTimeout(resizeFrame,350);}catch(e){}});}
+      if(!document.querySelector('link[data-bo-quicknav-css]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/css/bo-global-quicknav.css?v=1.3.0';l.dataset.boQuicknavCss='1';document.head.appendChild(l);}
     },
     bindDynamicSidebarEvents: function(){
       // Some legacy pages call this explicitly while auth.js also initializes it
@@ -738,17 +772,17 @@
         // Size the panel by the space BELOW its own row, and never move it up.
         // Owner report: on a short window the 11-entry Report flyout could not be
         // reached. The old code measured `scrollHeight` (about 620px) against the
-        // viewport and clamped the panel's top to 12 — roughly 200px ABOVE the row it
+        // viewport and clamped the panel's top to 12 �?roughly 200px ABOVE the row it
         // belongs to (measured on the owner's screen: row 228, panel 12). Reaching the
         // first item was then a long diagonal that crossed the sibling menu rows, and
-        // each of those fires its own mouseenter, which closes this flyout — so the
+        // each of those fires its own mouseenter, which closes this flyout �?so the
         // hover jumped and the panel shut before 8.1 could be clicked. Capping to the
         // room below keeps the panel beside its row, so the pointer never leaves that
         // row's band; the list scrolls internally when the menu is longer than the
         // space available.
         // The cap is the SMALLER of the room below this row and 62% of the viewport.
         // Taking only the viewport fraction (a first attempt) still overflowed below the row
-        // on a tall window, so the panel was pushed back up and detached again — measured on
+        // on a tall window, so the panel was pushed back up and detached again �?measured on
         // the owner's screen at 975px tall with the row at 546: fraction 605 > room 417, so the
         // panel sat 188px above its row. Using the room below keeps it beside the row in every
         // geometry where the row is not near the very bottom of the viewport.
@@ -761,7 +795,7 @@
         // and capped SYNCHRONOUSLY, before the frame paints. Both of these used to ride
         // inside a requestAnimationFrame, which cost two things: the panel painted one
         // frame at its uncapped height and was then shrunk and possibly moved (a visible
-        // jump under the cursor — part of the owner's "光标乱跳"), and whenever the frame
+        // jump under the cursor �?part of the owner's "光标乱跳"), and whenever the frame
         // did not arrive promptly the cap never applied at all.
         group.style.setProperty('--bo-sidebar-flyout-left', left + 'px');
         group.style.setProperty('--bo-sidebar-flyout-top', Math.round(top) + 'px');
@@ -769,8 +803,8 @@
         // `reports.css` pins this element at `max-height: calc(100vh - 24px) !important`,
         // and an `!important` stylesheet declaration out-ranks an inline one, so an inline
         // value alone is silently ignored (measured: inline 547px, computed 926.4px). With
-        // the row at 573 in a 950px window that let the panel run to 1075 — the last three
-        // entries below the screen — and because the 504px content was still shorter than
+        // the row at 573 in a 950px window that let the panel run to 1075 �?the last three
+        // entries below the screen �?and because the 504px content was still shorter than
         // that allowance, `overflow-y:auto` produced no scrollbar either, so 8.11 was
         // neither visible nor scrollable. bo-global-quicknav.css consumes the property at a
         // higher specificity than that reports.css rule, so the cap computed here applies.
@@ -873,7 +907,7 @@
         if(!group) return;
         const next = e.relatedTarget;
         if(next && group.contains(next)) return;
-        // Still moving toward the fixed flyout (outside the parent box) — keep open.
+        // Still moving toward the fixed flyout (outside the parent box) �?keep open.
         if(next && next.closest && next.closest('.report-sidebar .nav-group-list')){
           const nextGroup = next.closest('.nav-group');
           if(nextGroup === group) return;
