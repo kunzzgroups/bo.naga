@@ -1,0 +1,1094 @@
+/* ============================================================================
+   Access Control family (sidebar group 11) — 11.2 Admin Management, 11.3 Staff
+   Permission, 11.4 Admin Login Log, 11.5 Admin Operation Log, 11.6 IP Whitelist
+   Security. (11.1 Roles & Permissions keeps its own matrix workspace; it carries
+   the marker only so the family is one set.)
+
+   TWO REFERENCES, ONE ANATOMY
+   The owner pointed at two pages and asked for their design:
+     · User Management (`index.html`, `body.user-management-page`) — the listing
+       specimen. Its panel is one card that CONTAINS the whole listing:
+         <div class="table-card">
+           <div class="user-toolbar">      <- filter strip: fields left, actions right
+           <div class="table-wrap">        <- the scrolling body
+           <div class="table-footer">      <- entries / info / pager
+       The Access Control pages had the filter in a SEPARATE `.filter-card` above
+       the table, plus a title bar inside it — two stacked panels where the
+       reference has one, and no page in the family looked like the product.
+     · The report family (`win-lose-report.html` and the 8.x pages) — the same
+       card, plus the locked table treatment and the app-wide `.smart-page` pager.
+
+   Both references resolve to ONE recipe, which is what this file implements. The
+   values are the ones already locked in DESIGN.md for the listing tier (peach-
+   cream zebra `#FFF8EB` / `#FFF1DC` on a `#FFE8CC` head; dark zebra `#3A3C48` /
+   `#434653` on a `#1F2128` head), so this is the product's own listing look
+   rather than a new design.
+
+   SCOPE
+   Every rule is keyed to `body.bo-access-control`, a marker carried by these
+   pages only — nothing repaints until a page opts in. `html:not(#bo-charcoal-off)`
+   is the guard tier this repo uses to out-rank `reports.css`'s and
+   `bo-ui-standard.css`'s ID-level input recipes; the earlier pass that moved the
+   filter rows to 36px needed the same two `:not(#…)` steps.
+
+   DEFECTS THIS FILE ALSO CARRIES (all measured on the rendered pages, both
+   themes, before this pass):
+     dark 11.2  .admin-cell-user b     #18191C on #2A2C36   contrast 1.27
+                .admin-cell-user small #57534E on #2A2C36   1.82
+                .admin-avatar / .current-login-pill   light #F5EBDC chips
+     dark 11.3  .role-permission-count #18191C, .role-code-pill a light chip,
+                role-type sub-label an inline #667085 in JS (2.79, cool slate)
+     dark 11.6  .ipw-control-card p #57534E on #383A46 (1.8);
+                .ipw-warning a #FFF7ED band, radius 15px
+     light 11.2 .role-pill.super #f0e7ff / #7c3aed — the rejected purple
+     11.5 both  Details cell clientWidth 157 vs scrollWidth 396, nowrap +
+                overflow:visible -> text painted over the Result badge
+     11.2 both  Role column too narrow for its own pills (overflow:visible spill)
+   ========================================================================== */
+
+
+/* ---------------------------------------------------------------------------
+   1. THE LISTING PANEL — one card that contains strip, body and footer.
+   ------------------------------------------------------------------------- */
+
+/* The card. `padding:0` and `flex-direction:column` are what let the strip and
+   the footer sit flush inside its radius and let the body take the remaining
+   height instead of the card growing.
+
+   NOTE — no `overflow:hidden` here, deliberately, although the reference panel
+   has it. This card holds house controls whose popovers live inside it: the
+   `reports.js` role select builds a 280px `.rounded-select-menu`, and 11.4's
+   date field holds `.ref-range-picker` inline. `overflow:hidden` on the card
+   clips both. DESIGN.md records the same trap on the merchant create card
+   ("the reference's overflow:hidden is not copied — this card holds house custom
+   selects whose 280px menu panel would be clipped"). The corners are rounded on
+   the two children that would otherwise square them off instead. */
+html:not(#bo-charcoal-off) body.bo-access-control .table-card{
+  display:flex !important;
+  flex-direction:column !important;
+  padding:0 !important;
+  border-radius:8px !important;
+  box-shadow:none !important;
+  margin-bottom:0 !important;
+}
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .table-card{
+  background:#FFF8EB !important;
+  border:1px solid #EADCC8 !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .table-card{
+  background:#383A46 !important;
+  border:1px solid rgba(255,255,255,.14) !important;
+}
+
+/* The strip. This is the band the whole restyle is about: it is the card's own
+   first row, not a separate panel, and it holds the fields AND the page actions
+   on one line. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .standard-card-head{
+  flex:0 0 auto !important;
+  display:flex !important;
+  flex-flow:row wrap !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:10px 12px !important;
+  margin:0 !important;
+  padding:14px 16px 12px !important;
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .standard-card-head .standard-filter-grid{
+  flex:0 1 auto !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  margin:0 !important;
+  display:flex !important;
+  flex-flow:row wrap !important;
+  align-items:flex-end !important;
+  align-content:flex-start !important;
+  gap:10px !important;
+  grid-template-columns:none !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  padding:0 !important;
+}
+/* The reference hides field labels inside the strip: the fields are identified
+   by their own placeholder / selected value. Keeping them would make this strip
+   twice as tall as User Management's. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid .field > label,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .standard-card-head .standard-filter-grid > label,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .standard-filter-grid > label,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > label{
+  display:none !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-filter-actions,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .standard-card-head .filter-action-row{
+  margin:0 !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-toolbar-actions{
+  flex:0 0 auto !important;
+  margin-left:auto !important;
+  align-self:flex-end !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  margin-bottom:0 !important;
+}
+
+/* The controls in the strip are one tier: 36px tall, 8px radius, 0 12px padding,
+   the locked listing recipe. They arrive at 42px — `bo-ui-standard.css` pins
+   `--bo-filter-height:42px` / `11px` radius on these very grids and guards it
+   with two ID-level `:not()` steps, so they have to be out-ranked at the same
+   level (DESIGN.md → trap 3: "!important parity is not enough; ID level is"). */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .rounded-select-wrap,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .rounded-select-wrap .rounded-select-btn,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .standard-filter-grid > label > .rounded-select-wrap,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .standard-filter-grid > label > .rounded-select-wrap .rounded-select-btn,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .standard-filter-grid > label > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .standard-filter-grid > label > select,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field select,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .input-icon-wrap,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .input-icon-wrap > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .filter-action-row > *,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-toolbar-actions > *:not(.users-found-badge){
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+  border-radius:8px !important;
+  font-size:12px !important;
+  line-height:1.2 !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .input-icon-wrap,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .rounded-select-wrap{
+  background:transparent !important;
+  border:0 !important;
+}
+/* The wrap is a positioning box only: no padding, so the visible button IS the
+   control's box and the chevron lands on its own border. The search field keeps
+   its inset because its input carries the border and the magnifier sits inside. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .rounded-select-wrap{
+  padding:0 !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .input-icon-wrap{
+  padding:0 !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .rounded-select-wrap > .rounded-select-btn{
+  flex:1 1 auto !important;
+  width:100% !important;
+  min-width:0 !important;
+  max-width:none !important;
+  justify-content:space-between !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .rounded-select-wrap > select{
+  position:absolute !important;
+  left:0 !important;
+  top:0 !important;
+  width:1px !important;
+  min-width:0 !important;
+  max-width:1px !important;
+  height:1px !important;
+  flex:0 0 auto !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+/* The search field keeps its inset for the magnifier. Its border colour is NOT
+   set here: the generic field theme paints it (the form value #DCC9A8) at a
+   deeper ID level than any rule in this sheet can reach without the escalation
+   DESIGN.md warns against, so `bo-charcoal-legacy.css` exempts this component
+   instead — the same mechanism that fixed `.mad-search`, `.mp-search` and
+   `#bonusSearchInput` before it. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .input-icon-wrap > input{
+  padding:0 12px 0 34px !important;
+  /* The select beside it is 8px; the generic input theme draws 10px. */
+  border-radius:8px !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .input-icon-wrap > input{
+  border-color:rgba(255,255,255,.12) !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .rounded-select-wrap .rounded-select-btn{
+  padding:0 12px !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .input-icon-wrap > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .rounded-select-wrap .rounded-select-btn{
+  background:#FFF8EB !important;
+  border:1px solid #EADCC8 !important;
+  color:#18191C !important;
+  font-weight:700 !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .input-icon-wrap > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .rounded-select-wrap .rounded-select-btn{
+  background:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  color:#F5F5F4 !important;
+}
+
+/* 11.6's protection switch is a `.table-card` too (it is a panel, not a listing).
+   The panel recipes above would make it a padding-less flex column with its text
+   centred; it is a single row — title and help on the left, the switch on the
+   right — so it is stated here instead. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card.ipw-control-card{
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:16px !important;
+  padding:14px 16px !important;
+  text-align:left !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card.ipw-control-card > div{
+  min-width:0 !important;
+  text-align:left !important;
+}
+
+/* The footer's `Show [N] entries` control. `reports.js` replaces the native
+   `<select>` with a `.rounded-select-wrap` holding the hidden native select plus
+   a visible `.rounded-select-btn`. In a FILTER row the wrap is wide, so it never
+   showed; in this 72px footer wrap the native select still had `flex:0 0 68px`
+   and its `visibility` was never turned off, so the button was squeezed to the
+   remaining ~30px and pushed to the wrap's right edge — measured at 1600px:
+   wrap 335..407, button 403..433, and the word "entries" starts at 415. The
+   button painted OVER the text (owner: "Show 10 ries"). Two rules restore the
+   documented contract: the native select leaves the flow, and the button takes
+   the wrap's full width, so the control ends at the wrap's edge and the text
+   follows it. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .entries-control .rounded-select-wrap{
+  position:relative !important;
+  /* NOT `overflow:hidden`. It tidied the button's overflow and cut the menu: the
+     wrap is 72px and the menu is absolutely positioned inside it, so hiding the
+     overflow made the dropdown invisible. The button-fill rule below is what
+     actually keeps the control inside its box. */
+  overflow:visible !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .entries-control .rounded-select-wrap > select{
+  position:absolute !important;
+  left:0 !important;
+  top:0 !important;
+  width:1px !important;
+  min-width:0 !important;
+  max-width:1px !important;
+  height:1px !important;
+  flex:0 0 auto !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .entries-control .rounded-select-wrap > .rounded-select-btn{
+  flex:1 1 auto !important;
+  width:100% !important;
+  min-width:0 !important;
+  max-width:none !important;
+}
+
+/* The table is square. The panel's curve belongs to the CARD — the reference has
+   `th:first-child` / `th:last-child` radius 0 and a 0-radius `.table-wrap`, with
+   `overflow:hidden` on the card clipping them to its own 8px. The family had
+   inherited an 11px radius on the head's outer cells and 12px on the body's
+   bottom-left (DESIGN.md → Data tables: "thead corners square"). */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card thead th,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card tbody td,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card table,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .table-wrap{
+  border-radius:0 !important;
+}
+/* Nothing needs clipping: the table is bracketed by the strip above and the
+   footer below, so it never touches a card corner. An `overflow:hidden` here
+   looked right for the corners and silently cut every dropdown that opens out of
+   the card — the footer's `Show` menu opens downward, past the card's bottom
+   edge, and disappeared (owner: "我的点 show entries 功能 没有出现选单"). */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card{
+  overflow:visible !important;
+}
+
+/* The footer's page-size menu opens upward — see the two pages that already do
+   this (`agent-commission-page`, `agent-payout-page`), same values. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-footer .entries-control .rounded-select-menu,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .admin-table-footer .entries-control .rounded-select-menu,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .bo-pagination-standard .entries-control .rounded-select-menu{
+  top:auto !important;
+  bottom:calc(100% + 6px) !important;
+  z-index:3000 !important;
+}
+
+/* ---------------------------------------------------------------------------
+   The frame that makes the panel fixed: a bounded shell, then content → KPI strip
+   → card, where only the card flexes and only the body inside it scrolls.
+   ------------------------------------------------------------------------- */
+@media (min-width:992px){
+  /* LISTINGS ONLY. `:has(.table-card)` keeps this off the family's FORM pages, which must
+     scroll. The house's own create page (main-admin-create.html) is never clamped: its shell
+     is auto-height and its `.report-content{overflow:auto}` is the scroll container, so the
+     form scrolls exactly when it outgrows the window. Why it matters: the form pages end in a
+     fixed 73px bar, and a shell clamped to 100dvh parks the last fields UNDER that bar.
+     Verified on both new pages at a 1600x800 panel - scroll to the end and the final field
+     clears the bar (and the same page at a 2000px panel needs no scroll at all, exactly like
+     the house page, so "docScrolls" is a property of the window, not of the page). */
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control:has(.table-card) .report-shell{
+    height:100dvh !important;
+  }
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control:has(.table-card) .report-main{
+    display:flex !important;
+    flex-direction:column !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+  }
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control:has(.table-card) .report-content{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    gap:16px !important;
+    overflow:hidden !important;
+    padding-bottom:16px !important;
+  }
+  /* Everything above the listing keeps its own height; the card takes the rest. */
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control:has(.table-card) .report-content > *:not(.table-card){
+    flex:0 0 auto !important;
+    margin-bottom:0 !important;
+  }
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control:has(.table-card) .report-content > .quick-stats{
+    flex:0 0 auto !important;
+    margin-bottom:0 !important;
+  }
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control:has(.table-card) .report-content > .table-card{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    margin-bottom:0 !important;
+    height:auto !important;
+    max-height:none !important;
+    align-self:stretch !important;
+  }
+  /* 11.6 puts two more panels in the column (the notice band and the protection
+     switch); they keep their height and only the listing flexes. */
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control:has(.table-card) .report-content > .table-card.ipw-control-card{
+    flex:0 0 auto !important;
+  }
+}
+
+/* The head stays put while the body scrolls — `position:sticky` is inert until
+   something actually scrolls, which is why it needs the frame above. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card thead th{
+  position:sticky !important;
+  top:0 !important;
+  z-index:2 !important;
+}
+
+/* ---------------------------------------------------------------------------
+   The modal action pair — Save/Submit (Primary) and Close/Cancel (Ghost).
+   Same geometry as every other page (36px · radius 8 · 13px/700 · cream ghost
+   gradient, amber primary); this adds the hover/active EFFECT that only the
+   Access Control modals were missing.
+   ------------------------------------------------------------------------- */
+@media (hover:hover){
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .admin-edit-actions .clean-btn:hover,
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .admin-form-actions .clean-btn:hover,
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .mac-footer-actions .mad-btn:hover,
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .role-create-actions .clean-btn:hover,
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .mac-footer-actions .mad-btn:hover{
+    transform:translateY(-1px) !important;
+  }
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .admin-edit-actions .clean-btn:active,
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .admin-form-actions .clean-btn:active,
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .mac-footer-actions .mad-btn:active,
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .role-create-actions .clean-btn:active,
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .mac-footer-actions .mad-btn:active{
+    transform:translateY(1px) !important;
+  }
+  /* Ghost: reverse cream, no amber wash (the locked hover). */
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .admin-edit-actions .clean-btn:not(.primary):hover,
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .admin-form-actions .clean-btn:not(.primary):hover,
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .role-create-actions .clean-btn:not(.primary):hover{
+    background-image:linear-gradient(0deg,#FFF8EB 0%,#F3E8D6 100%) !important;
+    border-color:#E0D0B8 !important;
+    box-shadow:0 2px 4px rgba(24,25,28,.08),0 4px 10px rgba(120,80,20,.10),inset 0 1px 0 rgba(255,255,255,.7) !important;
+  }
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .admin-edit-actions .clean-btn:not(.primary):hover,
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .admin-form-actions .clean-btn:not(.primary):hover,
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .role-create-actions .clean-btn:not(.primary):hover{
+    background-image:linear-gradient(0deg,#52545E 0%,#3A3C48 100%) !important;
+    border-color:rgba(255,255,255,.22) !important;
+    color:#F5F5F4 !important;
+  }
+  /* Primary: reverse amber. */
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .admin-edit-actions .clean-btn.primary:hover,
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .admin-form-actions .clean-btn.primary:hover,
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .role-create-actions .clean-btn.primary:hover{
+    background-image:linear-gradient(0deg,#FCD34D 0%,#FBBF24 40%,#F59E0B 75%,#EA8608 100%) !important;
+  }
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .admin-edit-actions .clean-btn.primary:hover,
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .admin-form-actions .clean-btn.primary:hover,
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .role-create-actions .clean-btn.primary:hover{
+    background-image:linear-gradient(0deg,#FCD34D 0%,#FBBF24 40%,#F59E0B 100%) !important;
+    color:#2A2C36 !important;
+  }
+}
+
+/* The wrapper is layout-only IN EVERY STATE. On focus the generic field theme
+   gives it its own amber ring on top of the input's — two concentric frames. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid .input-icon-wrap:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .standard-filter-grid .input-icon-wrap:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid .input-icon-wrap:focus,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .standard-filter-grid .input-icon-wrap:focus{
+  box-shadow:none !important;
+  border-color:transparent !important;
+  outline:none !important;
+}
+
+/* 11.4 filter row: the whole row onto the locked tier.
+   Measured before: date 42 . search 42 . All Status 36 . IP 42, the select 6px lower
+   (top 222 against 216) — the owner's "All Status 的大小与其他 container 没有对齐".
+   The previous pass reached only the select; 11.4's other three controls are a bare
+   `.field > input` (no .input-icon-wrap) and the date trigger, which those selectors
+   never matched. Three ID-steps, the depth the generic field themes guard at. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field > input:not([type="hidden"]),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .ref-range-trigger,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.bo-access-control .table-card > .user-toolbar .standard-filter-grid > label > input:not([type="hidden"]){
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+  border-radius:8px !important;
+  font-size:12px !important;
+  line-height:1.2 !important;
+  padding:0 12px !important;
+  background:#FFF8EB !important;
+  border:1px solid #EADCC8 !important;
+  color:#18191C !important;
+  font-weight:700 !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy)[data-bo-theme="dark"] body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field > input:not([type="hidden"]),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy)[data-bo-theme="dark"] body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field .ref-range-trigger{
+  background:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  color:#F5F5F4 !important;
+}
+
+/* The form pages' footer buttons keep the house form-footer metric (44px . pad 0 22px .
+   13.5px/700 . radius 8), which is main-admin-detail-executive.css's `.mac-footer-actions
+   .mad-btn` value and the one main-admin-create.html renders. The 36px listing tier is NOT
+   this bar's size: bo-ui-standard.css documents the band as 73px (14px x2 + the 44px button
+   + 1px) and pins the sidebar account block to 73px on any page carrying .mac-footer-actions
+   (body:not(#bo-bottom-band-off):has(.mac-footer-actions) .bo-sidebar-account-footer
+   {height:73px}). A 36px button made this bar 65px against a 73px block, i.e. exactly the
+   pair-of-hairlines defect that block exists to prevent - measured 65 vs 73 before the change.
+   The 44px button also matches the 44px fields above it. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .mac-footer-actions .mad-btn{
+  height:44px !important;
+  min-height:44px !important;
+  min-width:160px !important;
+  border-radius:8px !important;
+  font-size:13.5px !important;
+  font-weight:700 !important;
+  padding:0 22px !important;
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+/* Row action icons: one box, whether the control is a <button> or an <a>. The
+   edit action became a link (it opens admin-user-create.html?id=N) and measured
+   18x27 against its neighbour's 36x36, with the glyph in an 13x17 inline box —
+   the product's sizing and centring rules are written for `button.icon-action`. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card tbody .icon-action{
+  width:36px !important;
+  min-width:36px !important;
+  height:36px !important;
+  min-height:36px !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  border-radius:8px !important;
+  line-height:1 !important;
+  text-decoration:none !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card tbody .icon-action > i{
+  font-size:13px !important;
+  line-height:1 !important;
+}
+
+/* The form pages' controls, on the house create page's own measured values:
+   inputs border `#EADCC8` / radius 10px, section icon `rgba(217,119,6,.16)` with a
+   `#B45309` glyph. The family sheet and the listing tier are untouched by these. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.bo-access-control .mac-section .mac-field .form-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.bo-access-control .mac-section .mac-field .mad-pass-wrap > input{
+  border:1px solid #EADCC8 !important;
+  border-radius:10px !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .mac-section .mac-field .form-control{
+  border-color:rgba(255,255,255,.12) !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .mac-section .mac-section-head .mac-section-icon{
+  background:rgba(217,119,6,.16) !important;
+  color:#B45309 !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .mac-section .mac-section-head .mac-section-icon{
+  background:rgba(245,158,11,.12) !important;
+  color:#F59E0B !important;
+}
+
+/* The body: takes the card's remaining height and scrolls on its own. */
+html:not(#bo-charcoal-off) body.bo-access-control .table-card > .table-wrap{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  margin:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  overflow:auto !important;
+  max-width:100% !important;
+  width:100% !important;
+  /* Top corners take the card's radius so the table head's square corners are
+     clipped by the scrolling box instead of poking past the card's curve. */
+  border-top-left-radius:8px !important;
+  border-top-right-radius:8px !important;
+}
+/* Panel scrollbar — the chocolate pill the listing family uses (DESIGN.md →
+   Panel pill scrollbar): 6px, no arrow buttons. */
+html:not(#bo-charcoal-off) body.bo-access-control .table-card > .table-wrap::-webkit-scrollbar{
+  width:6px !important;
+  height:6px !important;
+}
+html:not(#bo-charcoal-off) body.bo-access-control .table-card > .table-wrap::-webkit-scrollbar-button{
+  display:none !important;
+  width:0 !important;
+  height:0 !important;
+}
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .table-card > .table-wrap::-webkit-scrollbar-thumb{
+  background:#8B6B4A !important;
+  border-radius:999px !important;
+}
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .table-card > .table-wrap::-webkit-scrollbar-thumb:hover{
+  background:#5C4A30 !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .table-card > .table-wrap::-webkit-scrollbar-thumb{
+  background:#F59E0B !important;
+  border-radius:999px !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .table-card > .table-wrap::-webkit-scrollbar-thumb:hover{
+  background:#D97706 !important;
+}
+html:not(#bo-charcoal-off) body.bo-access-control .table-card > .table-wrap::-webkit-scrollbar-track{
+  background:transparent !important;
+}
+
+/* The footer is the card's last row, flush inside the radius. */
+html:not(#bo-charcoal-off) body.bo-access-control .table-card > .table-footer,
+html:not(#bo-charcoal-off) body.bo-access-control .table-card > .admin-table-footer{
+  flex:0 0 auto !important;
+  margin:0 !important;
+  padding:12px 16px !important;
+  /* Bottom corners take the card's radius, since the card cannot clip them. */
+  border-bottom-left-radius:8px !important;
+  border-bottom-right-radius:8px !important;
+}
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .table-card > .table-footer{
+  background:#FFF8EB !important;
+  border-top:1px solid #EADCC8 !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .table-card > .table-footer{
+  background:#383A46 !important;
+  border-top:1px solid rgba(255,255,255,.14) !important;
+}
+
+
+/* ---------------------------------------------------------------------------
+   2. THE TABLE — the locked listing treatment.
+   DESIGN.md → Transaction listing table: light zebra `#FFF8EB` / `#FFF1DC` on a
+   `#FFE8CC` head with `#6b360c` ink; dark zebra `#3A3C48` / `#434653` on a
+   `#1F2128` head. User Management renders exactly this, and it is where the
+   family's own header case, cell scale and zebra are now fixed.
+   ------------------------------------------------------------------------- */
+/* 11.5 carries seven columns whose content is genuinely wide (a full timestamp,
+   an action label, a module code, a sentence). Below ~1180px of card the narrow
+   columns are narrower than their own text and `table-layout:fixed` truncates it
+   — measured at a 1280px viewport the timestamp read "2026-09-24 09:38:…". The
+   reference does not shrink its columns either: User Management pins
+   `min-width:1560px` and lets the body scroll. Same here, at this table's own
+   natural width, so a narrow window scrolls inside the card instead of losing
+   the data. The widths below are each column's MEASURED natural width at
+   13px/700 (`needs` includes the 28px of cell padding), not round numbers. */
+html:not(#bo-charcoal-off) body.bo-access-control .standard-data-table{
+  min-width:1200px !important;
+}
+html:not(#bo-charcoal-off) body.bo-access-control .table-card table{
+  table-layout:fixed !important;
+  border-collapse:separate !important;
+  border-spacing:0 !important;
+  width:100% !important;
+}
+html:not(#bo-charcoal-off) body.bo-access-control .table-card thead th,
+html:not(#bo-charcoal-off) body.bo-access-control .table-card tbody td{
+  box-sizing:border-box !important;
+  white-space:nowrap !important;
+  word-break:normal !important;
+  overflow-wrap:normal !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  padding:10px 12px !important;
+  font-size:13px !important;
+  line-height:1.3 !important;
+  text-align:left !important;
+}
+html:not(#bo-charcoal-off) body.bo-access-control .table-card thead th:first-child,
+html:not(#bo-charcoal-off) body.bo-access-control .table-card tbody td:first-child{
+  padding-left:16px !important;
+}
+html:not(#bo-charcoal-off) body.bo-access-control .table-card thead th:last-child,
+html:not(#bo-charcoal-off) body.bo-access-control .table-card tbody td:last-child{
+  padding-right:16px !important;
+}
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .table-card thead th{
+  background:#FFE8CC !important;
+  color:#6b360c !important;
+  font-size:11px !important;
+  font-weight:700 !important;
+  letter-spacing:.04em !important;
+  text-transform:uppercase !important;
+  border-bottom:1px solid #EADCC8 !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .table-card thead th{
+  background:#1F2128 !important;
+  color:#E7E5E4 !important;
+  font-size:11px !important;
+  font-weight:700 !important;
+  letter-spacing:.04em !important;
+  text-transform:uppercase !important;
+  border-bottom:1px solid rgba(255,255,255,.14) !important;
+}
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .table-card tbody td{
+  background:#FFF8EB !important;
+  color:#18191C !important;
+  font-weight:700 !important;
+  font-variant-numeric:tabular-nums;
+  border-bottom:1px solid #EADCC8 !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .table-card tbody td{
+  background:#3A3C48 !important;
+  color:#F5F5F4 !important;
+  font-weight:700 !important;
+  font-variant-numeric:tabular-nums;
+  border-bottom:1px solid rgba(255,255,255,.12) !important;
+}
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .table-card tbody tr:nth-child(even) td{
+  background:#FFF1DC !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .table-card tbody tr:nth-child(even) td{
+  background:#434653 !important;
+}
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .table-card tbody tr:hover td{
+  background:#FFE8CC !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .table-card tbody tr:hover td{
+  background:#40424E !important;
+}
+/* Sub-labels inside a cell (a username under a name, a role type under a code)
+   are secondary: lighter ink and a step down in size, not a second colour. */
+html:not(#bo-charcoal-off) body.bo-access-control .table-card tbody td small,
+html:not(#bo-charcoal-off) body.bo-access-control .table-card tbody td .table-secondary{
+  display:block;
+  margin-top:3px;
+  font-size:11px !important;
+  font-weight:600 !important;
+  line-height:1.25;
+}
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .table-card tbody td small,
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .table-card tbody td .table-secondary{
+  color:#57534E !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .table-card tbody td small,
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .table-card tbody td .table-secondary{
+  color:#D4D4D8 !important;
+}
+/* Columns that hold money or a count read as numbers, not prose. */
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .table-card tbody td b{
+  color:#18191C !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .table-card tbody td b{
+  color:#F5F5F4 !important;
+}
+
+/* Column widths (11.5 Admin Operation Log). The table is `table-layout:fixed`,
+   so a column with `overflow:visible` SPILLS rather than shrinking its text: the
+   earlier layout painted the Details sentence straight over the Result badge
+   (clientWidth 157 against scrollWidth 396). These are the measured natural
+   widths of the narrow columns at this type scale; Details takes the remainder
+   and ellipsises, with the full sentence on the cell's `title`. */
+html:not(#bo-charcoal-off) body.bo-access-control .standard-data-table th:nth-child(1),
+html:not(#bo-charcoal-off) body.bo-access-control .standard-data-table td:nth-child(1){ width:180px; }
+html:not(#bo-charcoal-off) body.bo-access-control .standard-data-table th:nth-child(2),
+html:not(#bo-charcoal-off) body.bo-access-control .standard-data-table td:nth-child(2){ width:166px; }
+html:not(#bo-charcoal-off) body.bo-access-control .standard-data-table th:nth-child(3),
+html:not(#bo-charcoal-off) body.bo-access-control .standard-data-table td:nth-child(3){ width:210px; }
+html:not(#bo-charcoal-off) body.bo-access-control .standard-data-table th:nth-child(4),
+html:not(#bo-charcoal-off) body.bo-access-control .standard-data-table td:nth-child(4){ width:192px; }
+html:not(#bo-charcoal-off) body.bo-access-control .standard-data-table th:nth-child(5),
+html:not(#bo-charcoal-off) body.bo-access-control .standard-data-table td:nth-child(5){ width:134px; }
+html:not(#bo-charcoal-off) body.bo-access-control .standard-data-table th:nth-child(6),
+html:not(#bo-charcoal-off) body.bo-access-control .standard-data-table td:nth-child(6){ width:auto; }
+html:not(#bo-charcoal-off) body.bo-access-control .standard-data-table th:nth-child(7),
+html:not(#bo-charcoal-off) body.bo-access-control .standard-data-table td:nth-child(7){ width:96px; }
+
+
+/* ---------------------------------------------------------------------------
+   3. CHIPS — one vocabulary for the whole family, in both themes.
+   Every chip here is the same object: an inset capsule that names a state. They
+   were six unrelated recipes and the dark half did not exist for any of them.
+   ------------------------------------------------------------------------- */
+
+/* A chip is a single fact on one line. Without `nowrap`, `Protected` in the
+   Action column broke onto two lines inside its capsule. */
+html:not(#bo-charcoal-off) body.bo-access-control .role-pill,
+html:not(#bo-charcoal-off) body.bo-access-control .role-code-pill,
+html:not(#bo-charcoal-off) body.bo-access-control .current-login-pill,
+html:not(#bo-charcoal-off) body.bo-access-control .users-found-badge,
+html:not(#bo-charcoal-off) body.bo-access-control .ipw-current{
+  white-space:nowrap !important;
+}
+
+/* The admin's index chip. Painted the light control well #F5EBDC in dark mode
+   before this file. Driven onto the amber wash the KPI tiles use, so the row's
+   avatar and the strip above it read as one family. The glyph takes
+   Primary-deep rather than the icon-well amber: the KPI tile's `#D97706` is a
+   locked value for a 22px decorative icon, and at an 11px text size on the same
+   wash it measures 3.02 — under the readable floor. */
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .admin-avatar{
+  background:rgba(217,119,6,.12) !important;
+  border:1px solid rgba(217,119,6,.18) !important;
+  color:#B45309 !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .admin-avatar{
+  background:rgba(245,158,11,.16) !important;
+  border:1px solid rgba(245,158,11,.28) !important;
+  color:#FBBF24 !important;
+}
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .current-login-pill{
+  background:rgba(217,119,6,.14) !important;
+  border:1px solid rgba(217,119,6,.24) !important;
+  color:#B45309 !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .current-login-pill{
+  background:rgba(245,158,11,.16) !important;
+  border:1px solid rgba(245,158,11,.30) !important;
+  color:#FBBF24 !important;
+}
+
+/* Role name chip (Admin Management). Kept at the incumbent 10px: it is a label,
+   not a state, and at 10.5px "Operations Master" overflows its column. */
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .role-pill{
+  background:#FFF8EB !important;
+  border:1px solid #EADCC8 !important;
+  color:#57534E !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .role-pill{
+  background:#2A2C36 !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  color:#D4D4D8 !important;
+}
+html:not(#bo-charcoal-off) body.bo-access-control .role-pill{
+  font-size:10px !important;
+  padding:5px 9px !important;
+}
+/* The super-admin chip was #f0e7ff / #7c3aed — the purple the design system
+   rejects. Super scope is a permission fact, so it takes the amber signal the
+   rest of the family uses for "elevated", not a second hue. */
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .role-pill.super{
+  background:rgba(217,119,6,.14) !important;
+  border:1px solid rgba(217,119,6,.30) !important;
+  color:#B45309 !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .role-pill.super{
+  background:rgba(245,158,11,.18) !important;
+  border:1px solid rgba(245,158,11,.36) !important;
+  color:#FBBF24 !important;
+}
+
+/* Role code chip (Staff Permission). Same recipe as the Role Name input the
+   design system locks for this family: surface, listing border, ink. */
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .role-code-pill{
+  background:#FFF8EB !important;
+  border:1px solid #EADCC8 !important;
+  color:#18191C !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .role-code-pill{
+  background:#2A2C36 !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  color:#F5F5F4 !important;
+}
+
+/* Status pills — Active / Inactive / Disabled / Protected / SUCCESS / FAILED.
+   Four class families did this job; they are one recipe now. */
+html:not(#bo-charcoal-off) body.bo-access-control .admin-status-pill,
+html:not(#bo-charcoal-off) body.bo-access-control .status-pill,
+html:not(#bo-charcoal-off) body.bo-access-control .standard-status,
+html:not(#bo-charcoal-off) body.bo-access-control .ipw-status{
+  font-size:10.5px !important;
+  font-weight:800 !important;
+  border-radius:999px !important;
+  padding:5px 10px !important;
+  white-space:nowrap !important;
+}
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .admin-status-pill.active,
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .status-pill.active,
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .standard-status.active,
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .ipw-status.on{
+  background:rgba(18,183,106,.14) !important;
+  border:1px solid rgba(18,183,106,.28) !important;
+  color:#15803D !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .admin-status-pill.active,
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .status-pill.active,
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .standard-status.active,
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .ipw-status.on{
+  background:rgba(16,185,129,.16) !important;
+  border:1px solid rgba(16,185,129,.32) !important;
+  color:#34D399 !important;
+}
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .admin-status-pill.disabled,
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .status-pill.off,
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .standard-status.inactive,
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .ipw-status.off{
+  background:#F5EBDC !important;
+  border:1px solid #EADCC8 !important;
+  color:#57534E !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .admin-status-pill.disabled,
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .status-pill.off,
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .standard-status.inactive,
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .ipw-status.off{
+  background:rgba(255,255,255,.08) !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  color:#D4D4D8 !important;
+}
+html:not(#bo-charcoal-off) body.bo-access-control .admin-status-pill i,
+html:not(#bo-charcoal-off) body.bo-access-control .standard-status i{
+  background:currentColor !important;
+}
+
+/* Position badge on the current IP row (IP Whitelist Security). */
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .ipw-current{
+  background:rgba(217,119,6,.14) !important;
+  border:1px solid rgba(217,119,6,.28) !important;
+  color:#B45309 !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .ipw-current{
+  background:rgba(245,158,11,.18) !important;
+  border:1px solid rgba(245,158,11,.36) !important;
+  color:#FBBF24 !important;
+}
+
+/* Permission count cell (Staff Permission). The count and its shield were both
+   light-mode ink in dark mode, at 1.3–1.8 contrast. */
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .role-permission-count{
+  color:#18191C !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .role-permission-count{
+  color:#F5F5F4 !important;
+}
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .role-permission-count i{
+  color:#D97706 !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .role-permission-count i{
+  color:#FBBF24 !important;
+}
+/* The role-type sub-label. Its colour was an inline `style="color:#667085"` in
+   access-management.js — a cool slate that measured 2.79 in dark and that no
+   theme could correct, because an inline declaration beats every selector
+   without `!important`. It is a class now so the theme owns it. */
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .role-type-label{
+  color:#57534E !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .role-type-label{
+  color:#D4D4D8 !important;
+}
+
+/* Mono facts — IP ranges, role codes. */
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .ipw-rule{
+  color:#18191C !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .ipw-rule{
+  color:#F5F5F4 !important;
+}
+
+
+/* ---------------------------------------------------------------------------
+   4. NOTICES AND THE COUNT BADGE.
+   ------------------------------------------------------------------------- */
+
+/* The count badge is the family's one "how many rows" signal, and it sits beside
+   the page title — `highest-turnover-games.html` is the reference: the `<h1>` and
+   the chip share one block and read as one line ("Highest Turnover Games
+   [15 Members]"). Without the flex row the chip falls to a second line under the
+   title, because an `<h1>` is a block. Scoped to the title's own inner block so
+   nothing else on the page is affected. */
+html:not(#bo-charcoal-off) body.bo-access-control .user-title-wrap > div{
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  min-width:0 !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .user-title-wrap > div > h1{
+  margin:0 !important;
+  /* The flex row lets the h1 shrink, and a shrunk h1 WRAPS — measured at a
+     1280px viewport the title broke onto two lines with the count chip beside the
+     first one. It ellipsises instead, so the title and its chip each stay on one
+     line and the pair only gives ground when the viewport really is too narrow. */
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  min-width:0 !important;
+}
+/* The count chip yields before the page title does. Measured at a 1280px
+   viewport: the topbar's 610px action cluster (three counters + account) leaves
+   the title block ~256px, while the title alone needs 214 and the chip 85 — so
+   one of them has to give. The title is the page's identity and the chip is a
+   nicety that the footer already states ("Showing a to b of c entries"), so the
+   chip is what stands down, and only below the width where both fit. At the
+   owner's window it is present, beside the title, as in the reference. */
+@media (max-width:1455.98px){
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .user-title-wrap .users-found-badge{
+    display:none !important;
+  }
+}
+
+html:not(#bo-charcoal-off) body.bo-access-control .users-found-badge{
+  font-size:11px !important;
+  font-weight:800 !important;
+  letter-spacing:.04em;
+  border-radius:999px !important;
+  padding:4px 10px !important;
+}
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .users-found-badge{
+  background:rgba(217,119,6,.12) !important;
+  border:1px solid rgba(217,119,6,.24) !important;
+  color:#B45309 !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .users-found-badge{
+  background:rgba(245,158,11,.16) !important;
+  border:1px solid rgba(245,158,11,.30) !important;
+  color:#FBBF24 !important;
+}
+
+/* Notice band (IP Whitelist Security). It was a #FFF7ED band with a #FED7AA
+   border and #9A3412 text — a bright bar across the top of a dark page, on three
+   values that are in no locked table — at radius 15px, against the locked set
+   (8/10/12/16/999). It takes the notice recipe and the card radius so it lines
+   up with the KPI grid beneath it. */
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .ipw-warning{
+  background:#FFF8EB !important;
+  border:1px solid #EADCC8 !important;
+  border-left:3px solid #D97706 !important;
+  color:#6b360c !important;
+  border-radius:16px !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .ipw-warning{
+  background:#383A46 !important;
+  border:1px solid rgba(255,255,255,.14) !important;
+  border-left:3px solid #F59E0B !important;
+  color:#F5F5F4 !important;
+  border-radius:16px !important;
+}
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .ipw-warning b,
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .ipw-warning strong{
+  color:#6b360c !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .ipw-warning b,
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .ipw-warning strong{
+  color:#FBBF24 !important;
+}
+
+/* The protection card's help line measured #57534E on the dark card — an
+   unreadable sentence describing the switch the operator is about to flip. */
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .ipw-control-card p{
+  color:#57534E !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .ipw-control-card p{
+  color:#D4D4D8 !important;
+}
+html:not(#bo-charcoal-off):not([data-bo-theme="dark"]) body.bo-access-control .ipw-control-card h3{
+  color:#18191C !important;
+}
+html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .ipw-control-card h3{
+  color:#F5F5F4 !important;
+}
+
+/* ---------------------------------------------------------------------------
+   5. THE SORT AFFORDANCE — the two-triangle control the reference headers carry.
+   `report-table-sort.js` decorates every `thead th` with a label inside a
+   `.table-card` and sets `body.bo-sortable-tables`, so the family got the control
+   but nothing to draw it with: the recipe lives in `bo-report-family.css` /
+   `bo-wallet-transaction-amber.css`, and the Access Control pages load neither.
+   The recipe is copied here rather than loading a whole family sheet for one
+   glyph. The header cell gives up its padding to the button so the icon and the
+   label sit as one control, aligned with the cell's own inset.
+   ------------------------------------------------------------------------- */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card thead th.bo-tx-sortable{
+  padding:0 !important;
+  vertical-align:middle !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card thead th.bo-tx-sortable .bo-tx-sort-btn{
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:5px !important;
+  width:100% !important;
+  min-height:100% !important;
+  margin:0 !important;
+  padding:10px 12px !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  color:inherit !important;
+  font:inherit !important;
+  letter-spacing:inherit !important;
+  text-transform:inherit !important;
+  cursor:pointer !important;
+  text-align:inherit !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card thead th.bo-tx-sortable:first-child .bo-tx-sort-btn{
+  padding-left:16px !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card thead th.bo-tx-sortable .bo-tx-sort-btn:hover{
+  color:#92400E !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card thead th.bo-tx-sortable .bo-tx-sort-ico{
+  display:inline-block !important;
+  width:.7em !important;
+  height:.9em !important;
+  position:relative !important;
+  flex:0 0 auto !important;
+  opacity:.35 !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card thead th.bo-tx-sortable .bo-tx-sort-ico::before,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card thead th.bo-tx-sortable .bo-tx-sort-ico::after{
+  content:'' !important;
+  position:absolute !important;
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  border-left:3.5px solid transparent !important;
+  border-right:3.5px solid transparent !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card thead th.bo-tx-sortable .bo-tx-sort-ico::before{
+  top:0 !important;
+  border-bottom:4.5px solid currentColor !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card thead th.bo-tx-sortable .bo-tx-sort-ico::after{
+  bottom:0 !important;
+  border-top:4.5px solid currentColor !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card thead th.bo-tx-sortable.is-sorted .bo-tx-sort-ico{
+  opacity:1 !important;
+  color:#D97706 !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card thead th.bo-tx-sortable.is-asc .bo-tx-sort-ico::after{
+  opacity:.25 !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card thead th.bo-tx-sortable.is-desc .bo-tx-sort-ico::before{
+  opacity:.25 !important;
+}

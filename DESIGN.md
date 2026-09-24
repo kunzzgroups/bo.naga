@@ -1093,6 +1093,183 @@ grey thumb with arrow buttons at both ends, which reads as foreign chrome on the
   `reports-dashboard-original.css` 1.0.8 → **1.0.9**. No HTML was edited beyond the version
   string.
 
+### Collapsed rail — no slide-out, the panel is the hover response (2026-09-24, owner request)
+
+Owner, with a reference screenshot of another panel's icon rail (icons down the left, a floating
+panel beside it, that panel headed by the group's own name): “sidebar的设计逻辑需要去调整 至像我图里的
+那样 收起后的逻辑 但不更改设计”. Asked which reading of “收起后的逻辑” they wanted from the collapsed
+rail, the answer was **“只弹面板，栏保持图标”** — the rail stays at its icon width and a panel opens
+beside it.
+
+**What the collapsed rail did before.** Hovering the rail slid the whole sidebar out to 260px
+(`body.sidebar-mini .report-sidebar:hover{width:var(--sidebar-w)!important}`, present in four sheets
+plus per-page-family copies), revealed every label inline, restyled the group rows into drawer
+headers, moved the topbar's left padding to follow the wider rail, raised the rail to `z-index:6000`,
+and — at the same time — opened the submenu flyout beside the *expanded* rail (measured on
+`member-deposit.html`, 1440×900: rail 72 → 260 on hover, flyout anchored at x=266, i.e. 6px past a
+rail that had just grown 188px under the pointer).
+
+**What it does now.** The rail never changes width on hover. Hovering a row opens one panel, on the
+same 6px gap, with two shapes:
+
+| Row | Collapsed-rail response |
+| --- | --- |
+| Group (has children) | The submenu panel, unchanged anatomy — now headed by the group name |
+| Top-level page, or a category whose children are all hidden | The rail label panel: the same panel shell carrying just that row's name |
+
+The header exists because the collapsed rail shows only an icon: the panel is the one place the group
+name is readable (`Wallet Management` above `Deposit Approval` / `Withdraw Approval` / … in the
+reference). It is scoped to `body.sidebar-mini`, so the **expanded** sidebar's panel is untouched —
+there the row above already names the group and the panel renders exactly as it did. The label panel
+is what keeps a top-level page readable, which the slide-out used to provide; without it, `Dashboard`
+and `Live Chat` would be anonymous icons.
+
+**No new visual language.** Both panels use the locked *Sidebar flyout panel* values (`#FFF8EB` ·
+`rgba(92,74,48,.12)` · `0 12px 32px rgba(60,48,32,.14)`; dark `#383A46` · `rgba(255,255,255,.14)` ·
+`0 16px 40px rgba(0,0,0,.35)`), and the panel header is the locked body text colour (`#18191C` /
+`#F5F5F4`) on the panel's own hairline. Rail fill, icon tile, active chip, radii, spacing and the
+flyout skeleton are unchanged — the resting rail is identical to before.
+
+**Files.** The slide-out anatomy was deleted rather than overridden — an override layer would have had
+to beat a dozen page-family rules copy-pasted from the base one at higher specificity, and the repo
+already has that lesson recorded (`!important` parity). Removed: the `:hover`/`.is-mini-hover` width,
+label-reveal, row-restyle, brand-reveal, logout-reveal and topbar-shift rules in `reports.css`
+(17 rules), the twin `reports-dashboard-original.css` (19), and the drawer background/shadow and
+reveal variants in `bo-charcoal-shell.css`, `bo-ui-standard.css`, `brand-overview-executive.css`,
+`menu-management-executive.css`, `main-dashboard-executive.css`, `main-merchant-detail-executive.css`,
+`main-provider-family-executive.css`, `main-report-charcoal.css`, `menu-permission-executive.css`.
+`.is-mini-hover` (added by `reports.js`) and the `:not(:hover):not(.is-mini-hover)` collapsed rules are
+left in place: they are inert now but weight-neutral, and removing them would have changed cascade
+weight on pages that override the same properties.
+
+**Two traps this change walked into, both recorded because they each cost a pass:**
+
+1. **The panel has to out-rank the sheets that pin sidebar children.** Six sheets declare
+   `body.<page> .report-sidebar > *{position:relative;z-index:1}` (e.g. `bo-wallet-transaction-amber.css`'s
+   `body.bo-wallet-tx .report-sidebar > *`). A direct-child label panel inherits that at a specificity
+   `.report-sidebar .bo-rail-label` cannot beat: measured before the fix on `member-deposit.html`, the
+   panel laid out at the rail's foot — `position:relative`, `z-index:1`, x 78 / y 855 instead of y 74 —
+   i.e. it read as the feature not existing at all. The rule now carries `position:fixed!important` and
+   `z-index:12050!important`, and the JS writes the `--bo-sidebar-flyout-left/top` custom properties the
+   sheet consumes (an inline `left`/`top` is the weaker declaration the moment a sheet sets them — the
+   same lesson as the flyout cap).
+2. **The flyout's item labels used to be revealed by the slide-out.** `reports.css` revealed them under
+   `.bo-flyout-hover`; the twin sheet never had that rule and relied on the sidebar `:hover` reveal that
+   also drove the slide-out. Deleting it left the three twin pages (`index.html`, `member-detail.html`,
+   `online-users.html`) with an **icon-only panel** — measured on `online-users.html`: item span
+   `font-size:0px`. Both sheets now reveal item labels from the panel state (`font-size:inherit!important`
+   added to `reports.css`'s reveal; the equivalent rule added to the twin, which had none).
+
+**Verified** in a harness that stubs `/auth/admin/me` + menu groups so the real `auth.js` paints the
+real sidebar without a login, on one page per sheet family — `member-deposit.html` (base sheet),
+`online-users.html` (twin sheet + `bo-charcoal`), `main-merchant-security.html` (main-executive
+family) — light and dark, collapsed and expanded:
+
+| Check | Result |
+| --- | --- |
+| Rail width on hover, every row, both themes | **72px** (was 260) |
+| Rail `box-shadow` on hover | **none** (was the drawer's `18px 0 40px`) |
+| Rail `z-index` on hover | **1040** (was 6000) |
+| Topbar `padding-left` while hovering | **unchanged** (was `calc(260px − 72px + 20px)`) |
+| Group row hover | panel opens, header `Wallet Management`, items **13px** |
+| Top-level / hidden-children row hover | label panel opens (`Dashboard`, `Live Chat`, `Operations`) |
+| Expanded sidebar group hover | panel opens with **no** header, inline labels 14px — unchanged |
+| Label panel skin | light `#FFF8EB` / `#18191C`, dark `#383A46` / `#F5F5F4` |
+
+Two measurement notes for anyone re-running this. The in-app renderer **does not advance CSS
+transitions** (a settled `box-shadow` reads `rgba(0,0,0,0) 0 0 0 0` indefinitely), so a computed style
+read during a transition is not the value the owner sees — disable `transition` on the element before
+reading, or the drawer shadow looks like it is still there. And the browser serves the **cached** asset
+for a `?v=` pin that has not moved, which reports the pre-edit CSS as the current state; the harness
+appends its own `&h=` token to every local asset URL for exactly that reason (the same trap `?v=` pins
+exist to avoid, one layer down).
+
+**Pins:** `reports.css`, `reports-dashboard-original.css`, `bo-global-quicknav.css`, `bo-ui-standard.css`,
+`bo-charcoal-shell.css`, `brand-overview-executive.css`, `menu-management-executive.css`,
+`menu-permission-executive.css`, `main-dashboard-executive.css`, `main-merchant-detail-executive.css`,
+`main-provider-family-executive.css`, `main-report-charcoal.css` and `auth.js` re-stamped from content
+by `scripts/stamp-asset-pins.py` across **151 pages** (pin-only diffs; verified that no page body
+changed). `auth.js` also needed its **hardcoded** `bo-global-quicknav.css?v=` (two injection sites)
+moved by hand — that string is not an HTML reference, so the stamper cannot see it, and a stale value
+there ships the whole sidebar layer old. The Agent Portal's own rail (`agent-portal.css`,
+`bo-charcoal-agent.css`, `.report-nav-item`) was **not** changed: it is its own shell on its own
+surface, and the request was about the BO sidebar.
+
+### One sidebar toggle in the rail, and pins off the collapsed icons (2026-09-24, owner request)
+
+Two fixes in one pass, both about the collapsed rail:
+
+**1. “那个点开sidebar的按键要统一像dashboard那样”.** The BO had two different controls for one action,
+in two different places:
+
+| | Dashboard shell | Every other page (before) |
+| --- | --- | --- |
+| Where | inside the rail's brand row (`dashboard.html` markup) | in the topbar, right of the rail |
+| Size | **42×42** | 42×**48** (8px padding + 20px icon + `line-height:1.5`) |
+| Radius | **11px** | 10px |
+| Icon | `22px` | `20px` |
+
+The dashboard's version is the one the owner pointed at, and the rail is also where a rail's own
+control belongs (and where the reference screenshot that started the previous pass put it). So
+`auth.js` now mounts that same button — same classes, same locked values, `bi-list`, `aria-label`,
+`data-open-sidebar` — into `.report-brand` on every page it paints (dashboard.html still ships its own
+copy; the injection is idempotent, so a menu re-render cannot stack a second one). `reports.js`'s
+delegated `[data-open-sidebar]` handler drives it unchanged, so expand/collapse works from the rail in
+both states.
+
+Consequences, all deliberate:
+
+- The **desktop topbar hamburger is hidden** now — one control, not two. It stays for the mobile
+  drawer (below 992px the rail is off-canvas and needs an opener outside itself).
+- The topbar's title block therefore starts at the topbar's own left padding, as on pages that never
+  had a hamburger.
+- The collapsed rail centres the button (`justify-content:center`, 72px rail → 42px button at x=20,
+  y=11); the expanded rail puts it at the right end of the brand row (`space-between`, x=203 at
+  260px), exactly as the dashboard does.
+- **The hide rule lives in `bo-global-quicknav.css`, not in `reports.css`.** `reports.css` and its
+  twin are also loaded by the twelve Agent Portal pages and the four scratch `_verify-*` copies, which
+  render a rail without `auth.js` and therefore never get the injected button; hiding the topbar
+  toggle in a sheet they load would have left those pages with no control at all. The sidebar's own
+  layer is loaded only by the pages that do get the rail toggle.
+- The **dark theme has a counterpart the dashboard's inline copy does not carry**: on a `#3A3226`
+  rail the dashboard's `#FFF8EB` chip would be the one light-locked surface left, so the shared copy
+  paints `#383A46` + `rgba(255,255,255,.10)` with the dark body text. Light keeps the dashboard's
+  exact values. Dashboard.html's own rules still win inside the dashboard (`!important`), so the
+  dashboard is pixel-identical to before.
+- `bo-charcoal-shell.css` and `bo-charcoal-legacy.css` each carried `display:inline-flex!important`
+  on `.report-topbar .hamb` (light **and** dark, plus a `referral-page` copy). Those declarations only
+  existed to force the desktop hamburger visible through the charcoal chrome, so they are gone; the
+  mobile block in `reports.css` shows the drawer opener on charcoal pages as it always did.
+  `livechat-executive.css`'s “restore the topbar hamburger on livechat desktop” rule is gone too —
+  its stated reason (the page would otherwise have no lock control) no longer holds.
+
+**2. “sidebar隐约看到 那个pin功能的设计在sidebar的dashboard icon那边”.** The 2026-09-21 decision that
+dashboard pins are *always* visible was made for the expanded rail. In the collapsed 72px rail those
+same buttons are 26px wide and absolutely positioned `right:9px` inside a 51px row, so each one sat on
+top of its row's own 22px icon — visible through it, which is what the owner saw. The collapsed rail
+now drops them (`body.sidebar-mini … .report-nav > a[data-menu-key] > .bo-sidebar-pin{display:none}`),
+which affects exactly the L1 rows that carry a pin (top-level pages; group rows never had one). Pinning
+from a rail is still one gesture away: expand the rail, or use the submenu panel, which carries a pin
+per entry — and the dashboard's own tiles keep their unpin control.
+
+**Verified** in the same stub-backend harness as the pass above, one page per sheet family, both
+themes:
+
+| Check | Result |
+| --- | --- |
+| Rail toggle, collapsed (base / twin+charcoal / main family) | 42×42, radius 11, icon 22px, `#FFF8EB` light / `#383A46` dark |
+| Rail toggle, expanded | same button at the brand row's right end (x=203 at 260px) |
+| Click the rail toggle | collapses ↔ expands (`sidebar-mini` toggles, rail 72 ↔ 260) |
+| Topbar hamburger, desktop 1440/1366 | **hidden** (base, twin, charcoal dark, main family) |
+| Topbar hamburger, 900px | **visible** — drawer opens (`.show`), rail toggle hidden |
+| L1 pin, collapsed rail | **hidden** (was overlapping the row icon) |
+| L1 pin, expanded rail | visible, no overlap (row 249px, pin at x=214) |
+
+**Pins:** `bo-global-quicknav.css`, `reports.css`, `reports-dashboard-original.css`,
+`bo-charcoal-shell.css`, `bo-charcoal-legacy.css`, `livechat-executive.css` and `auth.js` re-stamped
+from content; `auth.js`'s hardcoded `bo-global-quicknav.css?v=` moved by hand again (third time this
+trap has bitten — it is the single string the stamper cannot see).
+
 ### 8. Report regularised — items 8.1 … 8.11 (2026-09-22, owner request)
 
 “把图里的 8. report 从8.1至8.11 重新整顿一遍”. Eleven pages, brought onto the locked chrome
@@ -1443,7 +1620,7 @@ screenshot, and works in a renderer that never composites.
 
 **Pins bumped in the same pass** (the reason is recorded twice above — a fix under an unchanged URL is
 verified and still reported as “no change”, and it bit again here: after moving the recipe, the
-non-family scope still measured 17px because `bo-global-quicknav.css?v=1.1.3` was cached):
+non-family scope still measured 17px because `bo-global-quicknav.css?v=PIN` was cached):
 `bo-global-quicknav.css` 1.1.3 → **1.1.4** (auth.js ×2 and `menu-management.html`), `auth.js`
 1.0.86 → **1.0.87** on all 130 pages, and `bo-report-family.css` 1.0.7 → **1.0.8** on the eleven —
 the last one because that sheet had rules *removed*, and a stale copy would keep applying them.
@@ -2916,7 +3093,7 @@ the `body.main-admin-security-page` scope.
   cell wrapped to one character. Both branches, both pages, both themes.
 - **The owner's own screen still failed after all of that, and the cause was the cache, not the
   code.** The server was provably serving the new stylesheet (`curl` showed the HTML referencing
-  `?v=1.0.229` and the CSS containing the px column set), but the page they were looking at
+  `?v=PIN` and the CSS containing the px column set), but the page they were looking at
   rendered the *new panel layout with the old percentage columns* — a state that only existed
   between two of my own pin bumps. So the rules that took four passes to get right now live in
   **their own file, `assets/css/bo-security-audit.css`, linked last on the two pages**: a URL the
@@ -2984,7 +3161,7 @@ the `body.main-admin-security-page` scope.
   at desktop widths (48px of table width spent on margin) and is now `clamp(10px,1.6vw,16px)`.
   Together with the sidebar that is **+66px of content width** on both security pages (measured:
   workspace 1028 → 1050, table panel 996 → 1018 at a 1280 viewport).
-- **Bumping `reports.css`'s pin meant touching all 140 pages that reference it** (`?v=1.0.64` →
+- **Bumping `reports.css`'s pin meant touching all 140 pages that reference it** (`?v=PIN` →
   `1.0.65`). That is the cost of a shared-shell change, and it is the repo's own pin rule: leaving
   some pages on the old pin would leave them on the old cached stylesheet and on a 280px sidebar.
 - **Known limit, measured, not hidden:** on the merchant page at a 1280 viewport *with the sidebar
@@ -3161,6 +3338,611 @@ the `body.main-admin-security-page` scope.
   **993px needed in 1000 available — one line, 7px of slack**, search not clipped.
 - Verified pins: `main-admin-detail-executive.css` was at a single version across its 24 pages and
   is now `1.0.230` on all 24 (bumped 221 → 230 across this change and its five owner passes);
-  `bo-security-audit.css` is new and linked last on the two security pages at `?v=1.1.10`;
+  `bo-security-audit.css` is new and linked last on the two security pages at `?v=PIN`;
   `reports.css` 1.0.64 → `1.0.66` on all 140 pages that reference it (two passes);
   `main-admin-security.js` 1.1.18 → `1.2.1`; `main-merchant-security.js` 1.0.13 → `1.1.1`.
+### The Access Control family (11.2 – 11.6) onto the listing anatomy (2026-09-23)
+
+Owner: "优化在 access control 的 11.2 至 11.6 页面", then "你应该去参考图里的页面设计和 report 的
+页面设计", then three notes as the work landed: the count belongs beside the page title ("图二 acc
+展示的位置要像图一那样"), Reset/Search come out ("reset 和 search 可以去除"), and the first cut of
+11.2 read wrong ("在 11.2 的视觉效果很差 设计跑偏了").
+
+**Two references, one recipe.** The owner named **User Management** (`index.html`,
+`body.user-management-page`) and **the report family**. Both resolve to the same panel, which this
+document already locks as the listing tier — so this pass applied the product's own listing look to
+these five pages rather than inventing one:
+
+| Piece | Value | Source |
+| --- | --- | --- |
+| Panel | `#FFF8EB` · `1px #EADCC8` · radius `8px` · `flex column` · `padding 0` | User Management `.table-card` |
+| Strip (the card's first row) | `padding 14px 16px 12px` · `flex row wrap` · `space-between` · `gap 10px 12px` | same |
+| Strip fields | 36px / 8px radius / `padding 0 12px` / 12px · **field labels hidden** | same |
+| Strip actions | `margin-left:auto` · `align-self:flex-end` | same |
+| Body | `flex:1 1 auto` · own scroll · chocolate 6px pill scrollbar, no arrows | same |
+| Head | `#FFE8CC` head · `#6b360c` ink · 11px/700 · `.04em` · uppercase | DESIGN.md → Transaction listing table |
+| Cells | 13px/700 · `padding 10px 12px` · first/last child 16px · tabular-nums | same |
+| Zebra / hover | `#FFF8EB` / `#FFF1DC`, hover `#FFE8CC` | same |
+| Dark | panel `#383A46`, head `#1F2128`, zebra `#3A3C48` / `#434653`, hover `#40424E` | same |
+
+**The structural change is the point.** 11.2, 11.4 and 11.6 had their filter in a *separate*
+`.filter-card` above the table, plus a title bar inside it — two stacked panels where the reference
+has one. The filter row moved into the card, the title bar was dissolved, and 11.5's
+`.standard-list-card` / `.standard-card-head` became the same `.table-card` / `.user-toolbar` pair,
+so all five speak one vocabulary. 11.3 (`role.html`) shipped **no filter row at all** and now has one.
+The two listings with **no footer** (11.3, 11.6) got one from a new shared module,
+`assets/js/access-control-listing.js` — opt in with `data-ac-listing` on the card; it owns the footer
+markup and the app-wide `.smart-page` pager, the page keeps owning its rows, and a MutationObserver
+re-applies paging after the page re-renders (both pages redraw on save/toggle).
+
+**Page chrome, per the owner's notes.** The row count moved out of the card and beside the `<h1>`
+(`#adminCountBadge`, `#roleCountBadge`, `#loginLogCount`, `#ipwBadge` — **ids unchanged**, so the page
+scripts keep writing them), and the title's inner block became a flex row so the chip sits on the
+title's own line, as on `highest-turnover-games.html`. Every Reset / Search came out: the text fields
+apply on a 400 ms debounce and the selects on change, the contract the report family already uses.
+Two scripts would have **thrown on load** if only the markup had been edited — `admin-login-log.js`
+and `admin-operation-log.js` wired the removed buttons with unguarded `.onclick =`, the same trap the
+report pass recorded; both are re-wired. Refresh stays: it re-queries rather than filters, and
+11.4–11.6 have no other way to re-fetch.
+
+**Sorting** comes from the shared `report-table-sort.js`, which decorates every `thead th` with a
+label inside a `.table-card`. Its styling lives in `bo-report-family.css` /
+`bo-wallet-transaction-amber.css`, which these pages do not load, so the head cells got the control
+and nothing to draw it with — the two-triangle recipe is copied into the family sheet rather than
+loading a whole family sheet for one glyph.
+
+**Defects this pass also cleared** (all measured on the rendered pages, both themes, before the
+restyle; the harness is `.tmp-ac-review/`, an auth-stubbed copy of the tracked pages):
+
+- dark **11.2** `.admin-cell-user b` `#18191C` on a `#2A2C36` row — **contrast 1.27**; `td small`
+  1.82. The admin's own username was unreadable, and it was the light-mode literal from
+  `reports.css:1473`.
+- dark **11.3** `.role-permission-count` `#18191C`, `.role-code-pill` a light `#F5EBDC` chip on a
+  dark row, and a role-type sub-label carrying an **inline** `style="color:#667085"` written into
+  `access-management.js` — a cool slate at 2.79 that no theme could correct, because an inline
+  declaration beats every selector without `!important`. It is a class now.
+- dark **11.6** `.ipw-control-card p` `#57534E` on `#383A46` (1.8), and `.ipw-warning` a `#FFF7ED`
+  band with a `#FED7AA` border across the top of a dark page, at radius 15px against the locked set.
+- light **11.2** `.role-pill.super` painted `#f0e7ff` / `#7c3aed` — **the purple this document
+  rejects** — and the Role column too narrow for its own pills (`overflow:visible` spill on 7 of 16
+  rows; Role now takes 3 points of Display Name's width, which had the slack).
+- both **11.5** the Details cell measured `clientWidth 157` against `scrollWidth 396` with
+  `white-space:nowrap; overflow:visible`, painting an operator sentence over the Result badge. The
+  table is `table-layout:fixed`, so the column widths are the fix; Details takes the remainder,
+  ellipsises, and carries the full text on the cell's `title`. **A `table-layout:fixed` column with
+  `overflow:visible` spills — it does not shrink its text** — the first cut pinned the narrow columns
+  and the date then pushed into Admin.
+- both **11.4** the pager markup held two `U+FFFD` bytes where its chevron icons should have been, so
+  the footer rendered the literal string `?/button>` twice and offered no next arrow. It is the
+  family's `.smart-page` pager now; 11.5's own `renderPager` emitted a second pager vocabulary
+  (`.page-btn`) and was folded into the same one.
+- **Trap re-confirmed (guard tiers).** The first cut of the strip was 108px tall with the actions on a
+  second line: `bo-ui-standard.css` pins these filter grids at `width:100%` behind **two** ID-level
+  `:not()` steps, and a one-ID prefix loses to it — the grid took the whole row and pushed the actions
+  down. Every strip-layout rule now carries the same two-ID step as the control-tier rules
+  (DESIGN.md → trap 3, again).
+- **Trap (line endings).** `git checkout -- assets/css/reports.css` on this Windows clone rewrote the
+  file as CRLF, and a pin is a content hash: `scripts/stamp-asset-pins.py --check` then reported 179
+  pages out of date. The committed object is LF. Restoring the blob
+  (`git cat-file blob HEAD:assets/css/reports.css`) returned the pin to zero drift. Do not "fix" a
+  restamped pin by re-stamping — check the file's bytes first.
+- **Trap (overflow copy).** The reference panel carries `overflow:hidden`, and it is deliberately
+  **not** copied: this card holds house controls whose popovers live inside it (the `reports.js` role
+  select builds a 280px menu; 11.4's date field holds `.ref-range-picker` inline) and
+  `overflow:hidden` clips both — the same trap already recorded for the merchant create card. The
+  corners are rounded on the body and the footer instead.
+
+Scoping: `assets/css/access-control-executive.css`, every rule keyed to `body.bo-access-control` (a
+marker on these six pages only), loaded last on each. **11.1 keeps its own matrix workspace** — it
+carries the marker but no rule in the sheet matches it.
+
+**Read the harness from its own origin.** The auth-stubbed copies are served on a second port
+(`http://127.0.0.1:8090/.tmp-ac-review/<page>.html?theme=light|dark`) — **not** the port the real pages
+use. Two reasons, both learned the hard way on 2026-09-23:
+
+- The stub seeds `bo_admin_token` / `bo_admin_user` so a page opens without signing in. localStorage is
+  per-origin, so served from the real pages' origin it also replaced the operator's own session — the
+  next real page loaded with a fake token, got a 401 and logged them out.
+- The stub used to set `bo_api_base` as belt-and-braces isolation. From the same origin that also
+  pointed the REAL pages at `http://127.0.0.1:8080/api`, which does not exist, so a real page reported
+  "Request failed" with the sidebar falling back to raw group keys while looking logged in. The override
+  is gone: `resolve()` in the stub already answers every path containing `/api/`, mapping it or returning
+  an empty envelope with a console warning, so isolation never needed it.
+
+A second origin gives each its own storage: previews cannot see or disturb a signed-in session.
+
+Verified: computed styles per element role on all six pages in both themes — head `#FFE8CC` /
+`#1F2128` at 11px uppercase, cells 13px with the zebra pair, controls 36/8px, footer present,
+`.smart-page` pager on all five listings, sort icons on every head cell, the count chip on the title's
+line, no Reset/Search left, **0 non-clipping cell spills**, no text under 4.5 contrast, no cool-hue
+chips — and the light-mode bands read straight off the render (`#FFF8EB` strip → `#FFE8CC` head →
+`#EADCC8` divider → alternating `#FFF8EB` / `#FFF1DC`).
+### Access Control: the follow-up unification pass (2026-09-23, owner “有一部分页面的设计需要调整统一”)
+
+Three things still differed inside the family after the restyle. All three are now the same on
+11.2–11.6, and all three were **measured on the rendered pages**, not inferred.
+
+**1. The footer's `Show … entries` control overlapped its own text — on four of the five listings.**
+Owner's screenshot: the select read `10 ⌄` with the word `entries` painted under its arrow. Cause was
+in `assets/js/reports.js`, not in this family: the compact-auto-width branch pins the select's
+*container* to the select's content width, and its `closest()` list included `.entries-control` —
+the one container that also holds the words "Show" and "entries". Measured on `admin-user`:
+`clientWidth 72` against `scrollWidth 161`. The branch already excluded `.bo-filter-row` for exactly
+this reason (the note in the code says so — it used to clip VIP Reward Log's keyword field);
+`.entries-control` was simply missed. It is out of that list now, and the wrap below it still gets
+the exact width. Verified: 0 overflow on `admin-user`, `role`, `admin-login-log`, **and on
+`index.html` (User Management)**, which shares the file and the footer — so the fix is not a
+family-local workaround, it removes the defect wherever that footer appears.
+
+**2. 11.3 had no filter field at all.** Its strip held a label and one button while its four siblings
+each opened with fields. `role.html` now opens with a group search, wired in
+`access-control-listing.js` — the module that already owns this card's rows, so the search and the
+pager share one notion of "the rows": the page size, the `Showing a to b of c` line and the pager all
+count the rows the search left, so a search reads as a smaller listing rather than one with holes.
+Opt in with `data-ac-search` on the field; text waits out the same 400 ms debounce the report family
+uses. Verified by typing "master" (17 → 6 rows, footer `Showing 1 to 6 of 6 entries`) and clearing it
+with real keystrokes (back to 17 / 10 visible). *Note for the next reader: Playwright's `fill('')` and
+`Control+a` do not clear this input in the harness — an empty value has to be produced with
+`Backspace`, or by setting `value` and dispatching `input`. The two artifacts cost a debugging pass;
+neither is a product defect.*
+
+**3. 11.5 had no count beside its title.** The other four carry one. It now has `#opLogCount`, filled
+from the same server total that writes the footer line, so it reads `26 Records` beside "Admin
+Operation Log".
+
+**4. 11.5's narrow columns truncated their own text.** With `table-layout:fixed`, a column narrower
+than its text clips it — measured at a 1280px viewport the timestamp read `2026-09-24 09:38:…`. Each
+narrow column now carries its **measured** natural width at 13px/700 (the text's own width plus the
+28px of cell padding): 180 / 166 / 210 / 192 / 134 / — / 96, with Details taking the remainder, and
+the table gets `min-width:1200px`. That is the reference's own answer (User Management pins
+`min-width:1560px` and scrolls): a narrow window scrolls **inside the card** instead of dropping
+data, and the page itself never scrolls horizontally. Verified: `Date / Time`, `Admin`, `Action`,
+`Module` and `IP Address` all render in full at 1280; only `Details` clips, by design, with the full
+sentence on the cell's `title`.
+#### The page-size control opens on `-` — done, and what it still needs (2026-09-23)
+
+Owner: “我的 show entries 应该统一其他页面的逻辑啊 先是默认 show - entries”.
+
+Done. All five Access Control footers now carry the app's own list — **`-` · 10 · 20 · 50 · 100 ·
+`All`** — and open on **`-`**, which is the acceptance line the report family is held to
+(“on every one: the control reads `-`”). They were the only listings in the product that shipped
+`10`/`25`/`50` and opened on `10`. `All` shows everything; a number means that number.
+
+Where it lives: one resolver, `window.boAc` in `assets/js/access-control-listing.js`
+(`FIT` / `ALL` / `resolve(value, card)` / `options()`), loaded **before the page scripts** on all six
+pages and used by `admin-user.js`, `admin-login-log.js`, `admin-operation-log.js` and the module's own
+footer. `-` resolves to `fitRows(card)`: `(window height − card top − thead − footer − 8) ÷ a painted
+row's height`.
+
+**Measured, each page, 1280×720:** every footer reads `-`, no `NaN`, no page shows an empty state, and
+no panel scrolls. The fitted counts differ per page (7 / 8 / 9 / 10 / 3) because each card sits under a
+different amount of chrome — a 4-tile KPI strip, a 3-tile one plus a notice band, a protection card.
+
+**What is not right yet, and the real reason.** `admin-user` still shows 10 rather than its fit, and on
+the others the fitted footer lands **22–46px below the fold**. Both come from the same cause: **this
+card's height is its content's height, so "fit the panel" is circular** — an empty card is short, so
+the first measurement is generous (the fit computed 10 with no rows, then 6 with rows), and each row
+added makes the card taller and moves the target. The report pages do not have this problem because
+their panel is **viewport-locked** (DESIGN.md §1451 “8.1–8.11 viewport-locked”, §1524 the head split
+out of the scroller): the panel's height comes from the viewport, not from the rows, so `floor(avail /
+rowH)` is a fixed point rather than a chase.
+
+So the correct next step is not more arithmetic in `fitRows` — it is to bring these five listings onto
+the viewport-locked panel the report family already has (card pinned to the viewport, head split out,
+body the only scroller), which makes `-` exact and the footer stay put. Until then `-` is a good
+approximation on four of the five pages and a no-op on `admin-user`.
+
+Two self-inflicted breakages in this pass, both caught and repaired, both worth knowing: a text-level
+insertion landed **inside a `const` declaration** and produced `Missing initializer in const
+declaration` (the page stopped rendering entirely), and a re-fit hook was inserted **above** the
+`const total` it tested, so it threw on the temporal dead zone and rendered nothing — “Showing 0 to 0
+of 0 entries” with rows present is the signature of both. Verify a text-level edit by parsing the file
+(`node --check`), and by rendering the page, not by reading the diff.
+#### Access Control strip + table: audited against the references (2026-09-23)
+
+Owner: “我的 access control 页面的下拉选单的设计 图里的 all status 设计需要调整 和 searchbar 没有统一设计
+也是跑偏了 还有我的 table 设计应该没有 border radius 的吧 你要去审核其他页面的设计 再去优化”.
+
+**Audited first, then changed.** Measured references: `index.html` (User Management) and
+`win-lose-report.html`, both themes, on the rendered pages.
+
+**1. The table has no radius — it never should have.** Reference: `thead th:first-child` radius
+**0**, `.table-wrap` radius **0**, and the panel's curve comes from the card
+(`overflow:hidden`, radius 8px). The family had inherited **11px on the head's outer cells** and
+**12px on the body's bottom-left** — a rounded table, against this document's own rule
+(“thead corners square”, → Data tables). Now 0 on every table part, with `overflow:hidden` on the card
+so the panel's corners still read. Verified: `headRadius 0/0`, `wrapRadius 0` on all five pages.
+
+**2. `All Status` was drawn wrong, and it was the same mechanism as the footer's select.**
+Reference: the wrap *is* the button — wrap 150 = button 150, **no padding on the wrap**, the button at
+`padding 0 12px` + `justify-content:space-between` so its own border holds the chevron at its right
+edge (measured: chevron 13px inside). The family's wrap carried `padding:0 12px` (a control-tier rule
+this pass added), so the visible button sat **inset inside a wider transparent box** — chevron at the
+button's edge, wrap's box 12px past it. Fixed: wrap padding 0, the native `<select>` out of the flow,
+the button filling the box. Verified: wrap 495…663 = button 495…663, chevron 13px inside — the
+reference's own number.
+
+**3. The search field now shares the control row's design** — height 36, radius 8, background
+`#FFF8EB`, font 12/700 all equal to the select's. Two of those needed a fight worth recording: the
+generic field theme paints `#DCC9A8` (form border) and `10px` radius, and it guards itself by
+**enumerating ids inside its `:not()` chain** — `:not(#providerSearchInput):not(#pullLogWindowValue):
+:not(#boPassword)` — each of which contributes a **full ID** to its specificity. That is why a
+family-sheet rule at three ID-steps lost to it. The fix is the one this repo already established for
+`.mad-search`, `.mp-search`, `.mrc-search`, `.mac-provider-search` and `#bonusSearchInput`: exempt the
+component in the theme itself (→ “Why the search bars look different from page to page”). Added to
+both themes.
+
+**Still open, and honest about it:**
+
+- The search field's **border colour** is still `#DCC9A8` on 11.2/11.3 (the select beside it is
+  `#EADCC8`). Exempting the field in the two themes fixed the *radius*, then revealed a third rule
+  painting that border, which the same exemption did not reach. Identified: one of the
+  `bo-charcoal-legacy.css` field themes; not yet silenced.
+- **11.5's selects are still 40px / 13.5px**, not 36/8. Reason found: its controls sit inside
+  `<label>` elements in `.standard-filter-grid`, and the family's control-tier selectors descend
+  through `.user-search-grid > .field`, so they never match that page. One selector needs widening.
+#### The panel is viewport-locked — the rule the family was missing (2026-09-23)
+
+Owner: “其他页面的 table 不会因为数据多 让整个页面屏幕需要 scroll 其他的页面只是 scroll 里面的
+table数据 你好好再去审核清楚 member的 User Management 和 report 页面的设计逻辑”.
+
+**Both references do this, and this document records both. The Access Control listings had
+neither, so a long listing made the whole page scroll.**
+
+- Member → User Management (`bo-charcoal-legacy.css:2024-2035`): `.report-content` is a flex column
+  with `overflow:hidden`, the KPI strip is `flex:0 0 auto`, the listing card is
+  `flex:1 1 auto; min-height:0`.
+- the report family (`bo-report-family.css`, `@media (min-width:992px)`): `.report-shell{height:100dvh}`
+  gives the flex chain a bounded height, and its comment states the consequence of not having it —
+  with `min-height:100vh` and block flow “the document grew with the row count and the whole **page**
+  scrolled while the header scrolled away with it. `position:sticky` … had nothing to stick inside”.
+
+Applied to the family (desktop-only, `≥992px`, as the report family scopes it — below that the sidebar
+is a drawer and page scroll is the better behaviour): `.report-shell` `height:100dvh` →
+`.report-main` flex column `overflow:hidden` → `.report-content` `flex:1; min-height:0;
+overflow:hidden` → everything above the listing `flex:0 0 auto` → the listing card `flex:1;
+min-height:0` → the body `.table-wrap` the only scroller, with `thead th{position:sticky;top:0}` so
+the head stays put (sticky is inert until something actually scrolls — that is the whole point).
+
+**Measured, all six pages at 1280×720, same harness:**
+
+| page | document scrolls | card bottom vs window | footer in view | head | fitted rows |
+| --- | --- | --- | --- | --- | --- |
+| index (User Management, reference) | **no** | −16 | yes | static | 5 |
+| 11.2 | **no** | −16 | yes | sticky | 8 |
+| 11.3 | **no** | −16 | yes | sticky | 7 |
+| 11.4 | **no** | −16 | yes | sticky | 6 |
+| 11.5 | **no** | −16 | yes | sticky | 8 |
+| 11.6 | **no** | −16 (listing card) | yes | sticky | 5 |
+
+The card ending exactly **16px above the window bottom** is the reference's own value — the same
+`padding-bottom:16px` on the content column.
+
+**Still approximate, stated plainly:** on 11.2 and 11.6 the body scrolls by about a row, i.e. `-`
+over-counts slightly there. The panel's height is now stable, so the fit is a fixed point rather than
+a chase, but the *first* measurement still happens before the rows exist. The report family's own
+pages settle this with one refinement pass (`13@p1 → 12@p1` in their request trace); the family's
+one-shot re-fit should converge on the same thing and does not yet on those two.
+#### The Access Control items closed out (2026-09-23)
+
+**1. The search field's border is now the listing's `#EADCC8`, like the select beside it.** The rule
+painting the form value was `bo-charcoal-legacy.css`'s filter-row input theme
+(`… .report-main .bo-filter-row>.bo-filter-input-item input:not([type=hidden])…`). My earlier
+exemption had been appended to the `:not(.mad-search input)`-style component lists, and this rule's
+chain enumerates **attribute** steps instead, so it never matched. Exempted at all eight sites.
+Measured on 11.2 and 11.3: search `36px / rgb(234,220,200)` == the select's `36px / rgb(234,220,200)`.
+
+**2. 11.5's strip controls are on the 36/8 tier.** Its fields are `<label>`-wrapped inside
+`.standard-filter-grid`, and the family's control-tier selectors descended through
+`.user-search-grid > .field`, so they never matched that page — it measured 40px / 13.5px against the
+tier's 36 / 12. The tier selectors now cover `.standard-filter-grid > label > input/select/
+.rounded-select-btn` too. Measured: `36px / 8px`.
+
+**3. `-` now converges, so "fit" means fit.** Two separate causes, both measured:
+
+- `fitRows()` measured the **placeholder** row: "Loading…" is a single line (38px) where a real row is
+  two (57px), so 11.2 computed `319 / 38 = 8` rows where `319 / 57 = 5` fit — the body then scrolled by
+  135px. It now measures the first row that has more than one cell.
+- the settle pass re-applied the same size instead of re-measuring, and on 11.2/11.4 it was wired at
+  **init** (before any rows existed) rather than at the end of each render. Both fixed: the module's
+  settle re-resolves `boAc.resolve()` before repainting, and the page hooks sit on the render tail.
+
+Measured after: 11.2 **5 rows, `overflowBy 0`, `wrapScrolls false`**; 11.3 7 / 0 / false; 11.4 6 / 0 /
+false; 11.5 8 / 0 / false. Every page `docScrolls: false`.
+
+**11.6 keeps an inner scrollbar, deliberately.** Its column carries a notice band, a KPI strip and the
+protection card before the listing, which leaves the panel ~195px — and the house clamp
+(`max(5, …)`, `pagination-standardizer.js`) will not go below five rows, so five rows in a 195px panel
+scroll. That is the rule working, not failing: the **page** does not scroll, only the table data does,
+which is what the owner asked for.
+
+**4. 11.6's functions are verifiable now, and they work.** They never were verifiable before: the stub
+answered `POST /entry` with `{saved:true}` and then returned the same frozen 14 rows on re-read, so a
+successful write and a failed one looked identical — and the protection switch's "flipped checkbox,
+stale label" was indistinguishable from a failed POST. The stub is stateful now (it mutates its own
+copy and answers the next read from it, and the router threads the request `init` through so the body
+reaches the handler). Measured: **Add Rule** 14 → 15 rules, badge `14 Rules` → `15 Rules`, the new
+`198.51.100.7` row present; **rule toggle** Disable 0 → 1; **protection switch** opens the page's own
+**Confirm Action** dialog ("Disable BO IP whitelist? …"), so it changes state only on Confirm — which
+is why an unconfirmed click had looked like a stale label.
+#### The Access Control modals' buttons get the house hover effect (2026-09-23)
+
+Owner: “access control 的 admin management 的 edit admin 的按键要统一跟其他页面一样的按键效果”.
+
+**Geometry was already identical; the missing piece was the hover effect.** Measured, 11.2's Edit
+Admin row vs 11.3's Add Group row: both `36px · radius 8 · 13px/700`, ghost = cream 3D gradient
+`#FFFCF7`→`#F5EBDC` with border `#DCC9A8`, primary = amber 3D with border `#E8901A` — the same pair on
+both. What differed is that **neither moved on hover**: the ghost's computed `transform` was
+`matrix(1,0,0,1,0,0)` — a `translateY(0)` — where the reference page's ghost measures
+`matrix(1,0,0,1,0,-1)`, the locked `-1px` lift.
+
+**Why they never had it: there is no global `.clean-btn:hover` lift in this product.** Each family
+states it for its own action rows — `bo-charcoal-cms.css` for `site-customize-page .customize-head`
+and `promotion-bonus-page .standardized-toolbar-title`, `bo-advertisement-popup-md.css` for
+`.ad-actions`, `bo-layout-section-md.css` for `.layout-editor-actions`, `main-admin-role-create.css`
+for `.mrc-btn-ghost` / `.mrc-btn-primary` (at `translateY(-1px)!important`). The Access Control
+modals were simply never given theirs.
+
+Added to the family sheet, scoped to its three action rows (`.admin-edit-actions`,
+`.admin-form-actions`, `.role-create-actions`), with values copied from the locked recipes rather than
+invented — DESIGN.md → Buttons (“Motion hover `-1px` · active `+1px`”, Ghost hover = reverse cream
+`#FFF8EB`→`#F3E8D6` · border `#E0D0B8`) and the dark pair from `main-admin-role-create.css`
+(ghost `#52545E`→`#3A3C48` · `rgba(255,255,255,.22)`; primary `#FCD34D`→`#FBBF24`→`#F59E0B` with
+`#2A2C36` ink).
+
+Measured after, both themes: Save/Submit → `translateY(-1px)` + reverse amber; Close/Cancel →
+`translateY(-1px)` + reverse cream (light) / `#52545E`→`#3A3C48` (dark); `:active` → `+1px`. The
+reference page's own ghost is unchanged, so the effect now matches it rather than diverging.
+#### The search field showed two frames when focused (2026-09-23)
+
+Owner: “搜索设计也有问题需要去修改”, with a zoomed crop of the focused field showing a box inside a box.
+
+`reports.css` paints the focus state on **both** halves of a search field: the input gets its own
+border and ring, and the wrapper gets
+
+```css
+.input-icon-wrap:focus-within{ border-color:#78716C!important; box-shadow:0 0 0 3px rgba(217,119,6,.10)!important }
+```
+
+Measured on 11.2 while focused: input `0.8px #EADCC8` + `rgba(217,119,6,.1) 0 0 0 3px`, and
+`.input-icon-wrap` the same ring — **two concentric rounded frames**. The reference page's wrapper
+measures `border 0 · radius 0 · shadow none` in every state; it is layout-only and the input owns the
+single frame, which is the contract this document already states for these fields (“one border per
+field”, → “Why the search bars look different from page to page”).
+
+The wrapper is now layout-only in every state for the family's fields (guarded, scoped to the strip's
+`.user-search-grid` / `.standard-filter-grid`). Measured after: wrapper `0px transparent` · `shadow
+none`, input unchanged with its own ring — one frame. The select beside it was already correct on
+focus (only `.rounded-select-btn` takes the amber border + `rgba(217,119,6,.14) 0 0 0 3px`, its wrap
+stays bare).
+#### Create Admin is a page now, not a modal (2026-09-23)
+
+Owner: “create admin 也需要做成切入到一页的设计 然后再帮我优化调整设计”.
+
+**The house already has this shape, and the modal was fighting it.** `main-admin-create.html` is the
+locked Create/Edit Admin form: `.report-content.mac-workspace > form.mac-form > section.mac-section`
+cards (lift, `#DCC9A8` border, 3px amber rail) over a footer of
+`a.mad-btn.mad-btn-ghost` (Cancel) + one amber submit. Those rules are scoped
+`body.main-admin-create-page …` in `main-admin-detail-executive.css`, so the new page carries that
+class and inherits the hierarchy rather than re-deriving it.
+
+**`admin-user-create.html`** replaces the modal: same 9 fields and the same endpoint
+(`AUTH_ADMIN_CREATE`) as the modal had, `admin-user-create.js` fills Role / Branding / Permission
+group from the same two sources, wires the password reveals, validates and returns to the listing.
+Two defects the modal had are structurally impossible here:
+
+- **the password eye buttons sat OUTSIDE their fields** in the modal (its markup had no pass-wrap);
+  here each password is a `.mad-pass-wrap` with its `.mad-eye` inside it — measured: both eyes are
+  within their input's box in both themes;
+- **the action row was two amber buttons**; it is a Ghost Cancel + one amber Primary (measured:
+  `mad-btn-ghost` Cancel, `mad-btn-primary` Create Admin), and the family's hover/active rule set now
+  covers `.mac-footer-actions` so the pair lifts like every other modal footer.
+
+`.admin-user.html` loses the create modal (−3.1 kB) and its wiring (−40 lines from `admin-user.js`,
+whose `createForm`/`createBtn`/`createStatus` consts go with it); “Add Admin” is now an
+`<a href="admin-user-create.html">`, so the listing keeps one modal — the edit one.
+
+Verified in both themes: 2 sections, 9 fields, Status 2 / Role 6 / Branding 5 / Permission group 7
+options populated, document does not scroll, sidebar intact.
+#### 11.4: the filter row's controls share one height, and Refresh is gone (2026-09-23)
+
+Owner: “admin login log 的 all status 的大小与其他 container 没有对齐 而且帮我去除 refresh 按键”.
+
+**Measured before:** date range 42px · search 42px · **All Status 36px** · IP search 42px, with the
+select sitting at top 222 against its neighbours' 216 — the owner's “大小没有对齐”. The previous
+pass onto the locked tier reached only the **select** (its `.rounded-select-wrap` matched the family's
+control-tier selectors); 11.4's other three controls are a bare `.field > input` (no
+`.input-icon-wrap`) and the `.ref-range-trigger`, which those selectors never matched — so the row was
+left at two heights.
+
+All four now carry the locked listing value (36px · radius 8 · pad `0 12px` · 12px type, three
+ID-steps because the generic field themes guard at two). Measured after, both themes:
+**every control 36px at top 216** — `sameTop` and `sameHeight` both true.
+
+**Refresh is removed** from the strip (markup and its `loginLogRefresh` handler), completing the
+report family's contract for this page: no Reset, no Search, no Refresh — the text fields apply on the
+debounce and the date range reloads on a complete range. 11.4's strip is now fields only.
+
+Note for the next pass on this file: an insertion anchored on a selector block that had since been
+edited produced a **silent no-op** — `str.replace()` cannot fail, so the script printed success while
+writing nothing, and the braces count it reported was the unchanged file's. Every write in this repo
+should be verified by re-reading the file for the inserted marker, not by trusting the transform's own
+report (DESIGN.md → trap 5, and the same lesson as the retint's “do not trust the transform's own
+report”).
+#### 11.5: Refresh removed too (2026-09-23)
+
+Owner: “Admin Operation Log 也不需要 refresh 按键” — the same subtraction as 11.4, and the report
+family's contract: no Reset, no Search, no Refresh on a listing strip whose fields apply themselves.
+The button and its `$('refreshBtn').onclick=load` handler are both gone, so the strip is fields only
+(`.user-toolbar-actions` is empty and removed with it). Measured after, both themes: no `#refreshBtn`,
+9 rows, `Showing 1 to 9 of 26 entries`, 7 sortable headers, document does not scroll — the page's
+behaviour is otherwise untouched.
+#### Admin Management: Edit is a page too, and the listing has no modals left (2026-09-23)
+
+Owner: “点了 add admin 和 edit 按键 都没有跳转到正确页面”.
+
+**Add Admin was already a link** — `admin-user.html` at `add8a35d` carries
+`<a href="admin-user-create.html">` and no JS binds it any more, and :8899 was serving exactly that.
+The reason a click did nothing is the **cache asymmetry**: the HTML has no `?v=` pin while its scripts
+do, so a browser holding the previous `admin-user.html` runs the new `admin-user.js` (new pin) against
+old markup whose handler no longer exists — a dead button. Hard-reload fixes it; the lesson is
+DESIGN.md's own (“editing a shared .js without bumping its ?v= makes the fix look broken”), from the
+other side: **the document itself is the one asset that cannot be re-pinned.**
+
+**Edit is now the same page**, `?id=N`:
+
+| | page in create mode | page with `?id=3` |
+| --- | --- | --- |
+| heading | Create Admin | **Edit Admin** |
+| submit | Create Admin | **Save Changes** |
+| password | Password * / Confirm Password * | **New Password (leave empty if no change)** / Confirm New Password, blank |
+| fields | empty | **prefilled** `desmond.lim` · Desmond Lim · role 2 · status 1 |
+
+`admin-user-create.js` gained the mode: it pre-fills from the list the listing itself uses (a page has
+no `data-row` button to read), posts to `adminUpdateUrl(id)` with the modal's payload
+(`{username, displayName, status, roleId, brandId, password}`), and returns to the listing. The row's
+pencil and the mobile card's Edit are `<a href="admin-user-create.html?id=N">`, and **both modals are
+gone from `admin-user.html`** (−3.1 kB create earlier, −2.5 kB edit now); `admin-user.js` lost
+`openEdit`, the delegated edit branch and the edit submit handler.
+
+**A cut of mine took two neighbours with it, and the check that caught it was a click, not the diff.**
+Removing the delegated branch that called `openEdit` cut to the end of the shared click listener, which
+also held the **delete** and **password-reveal** branches. Restored verbatim from HEAD, then verified by
+clicking: the delete button still opens its dialog and still refuses the logged-in account
+(“You cannot delete the admin account currently logged in”), and both edit controls measure as links
+(`pencilTag: a` → `admin-user-create.html?id=1`). Two more of my own slips in the same pass — a regex
+that matched nothing while printing success, and a duplicated quote that broke the file's syntax — are
+why every substitution in this pass is now asserted (`assert n == expected`) and the file is parsed
+before anything is committed.
+#### Why the new pages bounced to the dashboard — and the form footer's size (2026-09-23)
+
+Owner: “我点 add admin 和 edit admin 都会跳回去 dashboard 而且我的 edit admin 的按键设计跑了”.
+
+**`enforcePageAccess` carries an alias table for exactly this case, and the new pages were not in
+it.** `auth.js` maps every create/edit drill-down onto the listing whose menu permission it inherits —
+`main-admin-create.html` → `main-admin-detail.html`, `main-admin-role-create.html` → `menu-permission.html`,
+`slider-edit.html` → `slider.html`, `vip-level-edit.html` → `vip-management.html`,
+`payment-method-create.html` → `payment-method.html`, and a dozen more — with the comment repeated at
+each one: “so users are not redirected to their landing page”. `admin-user-create.html` and
+`role-create.html` were missing from that table, so a non-ROOT admin opening them was judged to have
+no permission and sent back to the dashboard. Both now inherit their listing
+(`admin-user-create.html` → `admin-user.html`, `role-create.html` → `role.html`).
+
+Verified through the shipped function rather than by reading it: a **non-root** admin holding only the
+listing's menu gets `enforcePageAccess → true` and the page stays put on both; the negative control —
+the same admin with a different menu — returns `false` and is redirected away, so the test is not
+vacuous.
+
+**The form footer was on the wrong rung.** `.mad-btn` (from `main-admin-detail-executive.css`, the MAIN
+panel's form footer) measured **44px · 13.5px/700 · pad 0 22px**; this family's locked metric is
+**36px · radius 8 · 13px/700** (DESIGN.md → Buttons — 44px is not in the locked set at all). The family
+sheet now states the 36px rung for `.mac-footer-actions .mad-btn`, measured after: both buttons 36px,
+radius 8, 13px/700, the ghost cream gradient and the amber primary intact.
+
+**And one invented class of mine went with it.** The edit-mode hint used `mac-help-inline`, which no
+sheet defines — it rendered as body text inside the label at 13px/`#27272A`. The house's own constructs
+are a plain `<small>` under the input (`main-admin-create.html`'s email field does exactly that) and
+`.mac-label-row` + `.mac-link-btn` when the extra thing belongs in the label. The hint is a `<small>`
+now: 12px, muted `#57534E`, shown only in edit mode, with the label simply “New Password”.
+#### The edit pencil sat in a smaller box than the delete beside it (2026-09-23)
+
+Owner: “图一的 edit 按键跑位了”.
+
+The edit action became an `<a>` (it opens `admin-user-create.html?id=N`), and **this product's
+row-action sizing and centring are written for `button.icon-action`** — an anchor inherits none of it.
+Measured: the anchor **18×27** with its glyph in a 13×17 inline box, against the delete button's
+**36×36** with a 13×13 centred glyph. Both now carry one box (36×36 · radius 8 · `inline-grid` ·
+`place-items:center`), measured identical in both themes — `identicalBox: true`, glyph 13×13 centred
+on each.
+
+Scope note: the rule is keyed to `.table-card tbody .icon-action`, so it covers every action control
+in the family's listings and is indifferent to the tag — the same reason a `<button>` was the right
+element until a page needed to link.
+#### A working-tree asset can silently revert a committed fix (2026-09-23)
+
+Owner, after the alias commit: “点 add admin 和 edit admin 又跳回 dashboard了”.
+
+**It was not the new code — it was the checkout.** `assets/js/auth.js` carries **someone else's
+uncommitted work** in this working copy (the collapsed-sidebar rail-label feature). Every pass in this
+session moves that work aside to derive asset pins from *committed* content, and moving it back
+overwrites the file — so the alias I had just committed (and verified through the shipped function)
+was gone from the working tree while remaining correct in the commit. Their local server serves the
+working tree, so the redirect came back.
+
+Fixed in place: the alias is now written into the working-tree `auth.js` as well, appending only the
+two lines — their rail-label code is untouched — and the `.tmp-wip/` backup was refreshed to match, so
+a future move-aside/restore cycle cannot drop it again.
+
+**The rule this leaves:** when a fix lives in a file that also holds foreign uncommitted work, the
+commit is not the environment. Check the served file, not just the branch — and keep the aside-copy in
+step with anything you add. Verified after: a non-ROOT admin holding only the listing's menu gets
+`enforcePageAccess → true` and both new pages stay put, with the negative control still redirecting.
+
+### The Add/Edit Admin page on the house's own create-page ladder (2026-09-24)
+
+Owner: “先修改优化设计再 决定要不要给这个add admin和 edit admin页面scroll”. The design authority is
+`main-admin-create.html` — the house's own create page for an admin account, i.e. the same job as
+`admin-user-create.html` (`?id=N` = edit). Measured A/B, computed style, light and dark:
+
+| element | reference | family (after) |
+|---|---|---|
+| section head | `.mac-section-head` + `<h3>` 13px/800/uppercase/ls .78 | identical |
+| section icon | 28×28 · `rgba(217,119,6,.16)` · glyph `#B45309` (dark `.12` / `#F59E0B`) | identical |
+| field label | 13px/700 `#27272A` | identical |
+| field help | `<small>` 12px/500 `#57534E` | identical |
+| **input** | `1px solid #EADCC8` · **radius 10px** · 44px · pad `0 14px` · 13.5px/500 | identical |
+| **footer band** | `fixed` · pad `14px 24px` · **73px** | identical |
+| **footer button** | 44px · pad `0 22px` · 13.5px/700 · radius 8 | identical |
+
+Two things were wrong, both mine:
+
+**1. The footer was on the wrong ladder.** I had pinned `.mac-footer-actions .mad-btn` to the listing
+tier (36px). But `bo-ui-standard.css` documents this band as **73px (14px ×2 + the 44px button + 1px)**
+and pins the *sidebar account block* to 73px on any page carrying `.mac-footer-actions`
+(`body:not(#bo-bottom-band-off):has(.mac-footer-actions) .bo-sidebar-account-footer{height:73px}`).
+A 36px button made the bar **65px against a 73px block** — precisely the pair-of-parallel-hairlines
+defect that block exists to prevent. The 44px button also matches the 44px fields above it. The 36px
+tier is for *listing* controls (filter rows, pagination), not a form's action bar.
+
+**2. The field kept `#DCC9A8` / 8px.** The winner was not the field ladder (`bo-input-fill.css`) but
+`bo-charcoal-legacy.css`:
+
+```
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal .report-content
+  input:not(...#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(…)
+```
+
+**4 ID-steps and 23 class-steps.** So the `:not(#…)` escalation this repo uses elsewhere **cannot**
+beat it — parity on classes is hopeless and a fifth ID would be needed. The sheet's own design is an
+*enumeration of what it does not own*, so the fix is to extend that enumeration, exactly as its
+`.bo-access-control .input-icon-wrap input` entries already do: `:not(.bo-access-control
+.mac-field .form-control)` on its **4** input sites (light base/focus, dark base/focus). Select and
+textarea needed nothing — their legacy rules are shallower and the family sheet already out-ranked
+them, which is why only the two `<input>`s were wrong.
+
+The structural difference underneath: **`main-admin-create.html` carries no `bo-charcoal` class at
+all**, so the legacy sheet never reaches it; its inputs come from `reports.css`'s
+`.report-content input…` rung. The exemption lands the family's inputs on that same rung — measured
+after: `1px solid rgb(234, 220, 200)` / `10px`, byte-identical to the reference in both themes.
+
+#### The scroll decision, measured rather than assumed
+
+Form pages **scroll**; listings **stay locked**. The lock is scoped `:has(.table-card)`, and the house
+create page is never clamped — auto-height shell with `.report-content{overflow:auto}` as its scroller.
+
+The subtlety that corrected my earlier claim: **`docScrolls` is a property of the window, not of the
+page.** At the harness's 1600×2000 panel *nothing* scrolls — my page and the house's alike — so
+"the reference scrolls" was really "the reference was measured in a shorter window". At a realistic
+**1600×800** panel the form outgrows the window, the document scrolls, and scrolling to the end leaves
+the last field clear of the fixed 73px bar. Both new pages now render at 1600×800 in the harness so
+this stays tested (at 2000px the check would silently pass on a page that could never scroll).
+
+`verify-preview.py` now judges the two page kinds on their own terms: **form pages** on fields, labels,
+section head, 13px/800 title, the input ladder, a fixed 73px footer, `overflow:auto` content, a shell
+that is *not* clamped to `100dvh`, and the last field reachable above the bar; **listings** on the
+document not scrolling and `.table-card > .table-wrap` being the scroller. Result, light and dark:
+**10 of 11 pages OK** — the one remaining is `role-create.html`, still on the listing markup.
+
+Working-tree note: this pass ran with the colleague's uncommitted rail work set aside (166 files
+copied to `.tmp-wip/cur2/`). Their work is unstaged, untouched, and restored on disk afterwards; the
+only files in this commit are the family's own.

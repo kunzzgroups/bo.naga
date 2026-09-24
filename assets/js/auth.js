@@ -307,6 +307,12 @@
       if(current === 'main-admin-credit.html') current = 'main-admin-detail.html';
       if(current === 'main-admin-security.html') current = 'main-admin-detail.html';
       if(current === 'main-admin-role-create.html') current = 'menu-permission.html';
+      // Access Control: Admin create/edit is a drill-down of Admin Management, and the
+      // permission-group create/edit page is a drill-down of Role Management. Same
+      // contract as every alias above: inherit the listing's menu permission so a
+      // non-ROOT admin is not redirected to their landing page.
+      if(current === 'admin-user-create.html') current = 'admin-user.html';
+      if(current === 'role-create.html') current = 'role.html';
       // Merchant create / security / roles are drill-downs of Main Merchant Detail.
       // Merchant Credit Control page is retired; old bookmarks redirect via main-merchant-credit.html.
       if(current === 'main-merchant-create.html') current = 'main-merchant-detail.html';
