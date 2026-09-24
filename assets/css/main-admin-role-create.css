@@ -2,7 +2,8 @@
 
 body.main-admin-role-create-page .mrc-workspace{
   flex:1;min-height:0;overflow:auto;
-  padding:18px 24px 110px!important;
+  /* Keep the admin tab rail on the same baseline as menu-permission.html. */
+  padding:8px 24px 110px!important;
   display:flex;flex-direction:column;gap:16px;
 }
 body.main-admin-role-create-page .mrc-form{
