@@ -161,8 +161,14 @@ html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .
    display name" is 199px at 12px/700, and a 190px field leaves the input 117px once the padding
    (24px) and the magnifier (15px + 8px gap) are taken out - so the field cut its own placeholder
    mid-word, which is what the owner saw as "what happened" after the icon arrived. 260px is
-   bonus-category-title.html's own search width: 199 + 23 + 24 = 246, so it fits with room to spare. */
-html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field:has(> input:not([type="hidden"])){
+   bonus-category-title.html's own search width: 199 + 23 + 24 = 246, so it fits with room to spare.
+   The second selector is the site-wide `.bo-search-control` shape: when the wide pass moved the
+   frame from the input onto a wrapper label, `:has(> input)` stopped matching this field (the
+   input is now the label's child, not the field's) and the placeholder went back to being cut
+   mid-word - measured on the rendered page, because no computed-style audit can see a width
+   that a rule stopped applying to. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field:has(> input:not([type="hidden"])),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field:has(> .bo-search-control){
   min-width:260px !important;
 }
 /* The controls in the strip are one tier: 36px tall, 8px radius, 0 12px padding,
