@@ -9,18 +9,42 @@
   const WALLET_TO_WALLET_TYPES = new Set(['TRANSFER_IN','TRANSFER_OUT']);
   const selectedTypes = new Set();
 
-  /* Same Show N entries contract as Deposit / Withdraw: - · 10 · 20 · 50 · 100 · All */
+  /* Same Show N entries contract as Deposit / Withdraw: - · 10 · 20 · 50 · 100 · All
+     `-` = auto-fit rows into viewport — no vertical scrollbar · even-fill seam when gap < one row.
+     Fixed sizes / All may scroll (MD: VIP EXP specimen). */
   function tableBodyScroll(){
-    return document.querySelector('.table-card .table-wrap') || document.querySelector('.table-wrap');
+    return document.querySelector('.table-card .bo-tx-table-body')
+      || document.querySelector('#ledgerTableScroll')
+      || document.querySelector('.bo-tx-table-body')
+      || document.querySelector('.table-card .table-wrap')
+      || document.querySelector('.table-wrap');
+  }
+  function tableHeadScroll(){
+    return document.querySelector('.table-card .bo-tx-table-head')
+      || document.querySelector('.bo-tx-table-head');
+  }
+  /* Columns already fit — pin H-axis closed so a V-bar never opens a phantom H-scrollbar. */
+  function lockLedgerNoHScroll(){
+    const body=tableBodyScroll();
+    if(!body) return;
+    body.style.setProperty('overflow-x','hidden','important');
+    body.style.setProperty('overflow-y','auto','important');
+    if(body.scrollLeft) body.scrollLeft=0;
+    const head=tableHeadScroll();
+    if(head&&head.scrollLeft) head.scrollLeft=0;
+  }
+  function scrollBodyAvail(scroll){
+    /* Head lives outside the scroller — full clientHeight is row room. */
+    if(!scroll) return 0;
+    return Math.max(0,Math.floor(scroll.clientHeight));
   }
   function measureAutoPageSize(){
     const scroll=tableBodyScroll();
     if(!scroll) return 12;
-    const head=scroll.querySelector('thead');
-    const headH=head?Math.ceil(head.getBoundingClientRect().height):44;
-    const avail=Math.max(0,Math.floor(scroll.clientHeight)-headH);
-    const sample=scroll.querySelector('tbody tr td');
+    const avail=scrollBodyAvail(scroll);
+    const sample=scroll.querySelector('tbody tr:not(.bo-table-fill) td');
     const rowH=sample?Math.max(38,Math.round(sample.getBoundingClientRect().height)):41;
+    /* Floor only — never add a row that overflow:hidden would clip. */
     return Math.max(5,Math.min(200,Math.floor(avail/rowH)||12));
   }
   function autoFitPageSize(){
@@ -39,6 +63,127 @@
     if(/^all$/i.test(v)) return 10000;
     const n=Number(v);
     return Number.isFinite(n)&&n>0?n:autoFitPageSize();
+  }
+  function syncAutofitMode(){
+    const auto=isAutoPageSize(document.getElementById('ledgerSize')?.value);
+    const card=document.querySelector('.table-card');
+    const scroll=tableBodyScroll();
+    if(card) card.toggleAttribute('data-bo-autofit', auto);
+    if(scroll) scroll.toggleAttribute('data-bo-autofit', auto);
+    if(!auto) resetEvenFill();
+  }
+  function isPlaceholderRow(tr){
+    const cells=tr?.querySelectorAll?.('td');
+    if(cells&&cells.length<=1) return true;
+    const text=(tr?.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+    return !text||text.startsWith('loading')||text.startsWith('no ledger')||text.includes('load failed');
+  }
+  function resetEvenFill(){
+    const body=document.getElementById('walletLedgerBody');
+    const table=body?.closest('table');
+    if(!body||!table) return;
+    table.classList.remove('bo-tx-evenfill');
+    table.style.height='';
+    body.querySelectorAll('tr.bo-table-fill').forEach(r=>r.remove());
+    [...body.querySelectorAll('tr')].forEach(tr=>{
+      tr.style.height='';
+      tr.querySelectorAll('td').forEach(td=>{td.style.height='';td.style.minHeight='';});
+    });
+  }
+  let autofitReloading=false;
+  function shrinkAutofitIfOverflow(){
+    if(autofitReloading) return;
+    if(!isAutoPageSize(document.getElementById('ledgerSize')?.value)) return;
+    const scroll=tableBodyScroll();
+    if(!scroll) return;
+    if(scroll.scrollHeight<=scroll.clientHeight+1) return;
+    if(lockedAutoSize==null||lockedAutoSize<=5) return;
+    lockedAutoSize=Math.max(5,lockedAutoSize-1);
+    pageSize=lockedAutoSize;
+    autofitReloading=true;
+    page=1;
+    Promise.resolve(load()).finally(()=>{ autofitReloading=false; });
+  }
+  function evenFillRowHeights(){
+    const body=document.getElementById('walletLedgerBody');
+    const scroll=tableBodyScroll();
+    const table=body?.closest('table');
+    if(!body||!scroll||!table) return;
+    resetEvenFill();
+    if(!isAutoPageSize(document.getElementById('ledgerSize')?.value)) return;
+    const rows=[...body.querySelectorAll('tr')].filter(tr=>!isPlaceholderRow(tr));
+    if(!rows.length) return;
+    void table.offsetHeight;
+    const avail=scrollBodyAvail(scroll);
+    const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
+    const rowH=Math.max(38,Math.round(natural/rows.length)||44);
+    const gap=avail-natural;
+    /* Overflow: too many rows — drop one and reload (Show `-` must not scroll). */
+    if(natural>avail+1){
+      shrinkAutofitIfOverflow();
+      return;
+    }
+    /* Stretch only when leftover is a seam (not enough for one more full row). */
+    if(gap<2||gap>=rowH) return;
+    const base=Math.floor(avail/rows.length);
+    let rem=avail-(base*rows.length);
+    if(base<=0) return;
+    rows.forEach(tr=>{
+      const h=base+(rem>0?1:0);
+      if(rem>0) rem-=1;
+      tr.style.height=h+'px';
+      tr.querySelectorAll('td').forEach(td=>{td.style.height=h+'px';});
+    });
+    table.classList.add('bo-tx-evenfill');
+    table.style.height=Math.floor(scroll.clientHeight)+'px';
+    if(scroll.scrollHeight>scroll.clientHeight){
+      const over=scroll.scrollHeight-scroll.clientHeight;
+      const shrink=Math.ceil(over/rows.length)||1;
+      rows.forEach(tr=>{
+        const h=Math.max(rowH,(parseFloat(tr.style.height)||base)-shrink);
+        tr.style.height=h+'px';
+        tr.querySelectorAll('td').forEach(td=>{td.style.height=h+'px';});
+      });
+      table.style.height=Math.max(0,Math.floor(scroll.clientHeight)-over)+'px';
+    }
+  }
+  function scheduleEvenFill(){
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      evenFillRowHeights();
+      shrinkAutofitIfOverflow();
+      growAutofitIfRoom();
+    }));
+  }
+  function growAutofitIfRoom(){
+    if(autofitReloading) return;
+    if(!isAutoPageSize(document.getElementById('ledgerSize')?.value)) return;
+    const body=document.getElementById('walletLedgerBody');
+    const scroll=tableBodyScroll();
+    if(!body||!scroll) return;
+    const rows=[...body.querySelectorAll('tr')].filter(tr=>!isPlaceholderRow(tr));
+    if(!rows.length) return;
+    const avail=scrollBodyAvail(scroll);
+    const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
+    const rowH=Math.max(38,Math.round(natural/rows.length)||44);
+    const gap=avail-natural;
+    /* Room for at least one more full row → remeasure and reload (MD: stretch only when gap < one row). */
+    if(gap<rowH) return;
+    const next=Math.max(5,Math.min(200,Math.floor(avail/rowH)||rows.length));
+    if(next<=rows.length) return;
+    lockedAutoSize=next;
+    pageSize=next;
+    autofitReloading=true;
+    page=1;
+    Promise.resolve(load()).finally(()=>{ autofitReloading=false; });
+  }
+  function bindEvenFillObserver(){
+    const scroll=tableBodyScroll();
+    if(!scroll||scroll._boEvenFillObs) return;
+    scroll._boEvenFillObs=new ResizeObserver(()=>{
+      clearTimeout(scroll._boEvenFillTimer);
+      scroll._boEvenFillTimer=setTimeout(evenFillRowHeights,32);
+    });
+    scroll._boEvenFillObs.observe(scroll);
   }
   function publishPagerMeta(pagination,size){
     const card=document.querySelector('.table-card');
@@ -295,6 +440,8 @@
     document.getElementById('ledgerPager').innerHTML = pageButtons(page, totalPages);
     document.getElementById('ledgerPrevBtn').disabled = page <= 1;
     document.getElementById('ledgerNextBtn').disabled = page >= totalPages;
+    scheduleEvenFill();
+    lockLedgerNoHScroll();
   }
   async function load(){
     const body=document.getElementById('walletLedgerBody'); if(body) body.innerHTML='<tr><td colspan="15">Loading ledger...</td></tr>';
@@ -312,13 +459,29 @@
     bindTimeTips();
     ensureDefaultDates();
     setFromUrl();
-    document.getElementById('ledgerSearchBtn')?.addEventListener('click', ()=>{ page=1; load(); });
-    ['ledgerMemberId','ledgerProviderCode'].forEach(id=>document.getElementById(id)?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ page=1; load(); } }));
-    ['ledgerFrom','ledgerTo'].forEach(id=>document.getElementById(id)?.addEventListener('change', ()=>{ page=1; load(); }));
-    // Footer "Show N entries" mirrors #ledgerSize (Deposit/Withdraw contract)
+    lockLedgerNoHScroll();
+    const bodyScroll=tableBodyScroll();
+    const headScroll=tableHeadScroll();
+    if(bodyScroll){
+      bodyScroll.addEventListener('scroll', ()=>{
+        if(bodyScroll.scrollLeft) bodyScroll.scrollLeft=0;
+        if(headScroll) headScroll.scrollLeft=bodyScroll.scrollLeft;
+      }, {passive:true});
+      if(typeof ResizeObserver!=='undefined'){
+        new ResizeObserver(()=>lockLedgerNoHScroll()).observe(bodyScroll);
+      }
+    }
+    window.addEventListener('resize', lockLedgerNoHScroll);
+    const runSearch=()=>{ page=1; clearLockedAutoSize(); syncAutofitMode(); load(); };
+    document.getElementById('ledgerSearchBtn')?.addEventListener('click', runSearch);
+    ['ledgerMemberId','ledgerProviderCode'].forEach(id=>document.getElementById(id)?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); runSearch(); } }));
+    ['ledgerFrom','ledgerTo'].forEach(id=>document.getElementById(id)?.addEventListener('change', runSearch));
+    // Footer "Show N entries" mirrors #ledgerSize (Deposit/Withdraw / MD contract)
+    syncAutofitMode();
     pageSize = resolvePageSize(document.getElementById('ledgerSize')?.value);
     document.getElementById('ledgerSize')?.addEventListener('change', ()=>{
       clearLockedAutoSize();
+      syncAutofitMode();
       pageSize = resolvePageSize(document.getElementById('ledgerSize')?.value);
       page = 1;
       load();
@@ -329,6 +492,7 @@
       const sizeEl=document.getElementById('ledgerSize');
       if(sizeEl) sizeEl.value='-';
       clearLockedAutoSize();
+      syncAutofitMode();
       const now=new Date(), pad=n=>String(n).padStart(2,'0');
       const today=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
       document.getElementById('ledgerFrom').value=today;
@@ -340,6 +504,25 @@
     document.getElementById('ledgerPrevBtn')?.addEventListener('click', ()=>{ if(page>1){ page--; load(); } });
     document.getElementById('ledgerNextBtn')?.addEventListener('click', ()=>{ if(page<totalPages){ page++; load(); } });
     document.getElementById('ledgerPager')?.addEventListener('click', e=>{ const b=e.target.closest('[data-page]'); if(!b)return; const n=Number(b.dataset.page); if(n>=1&&n<=totalPages&&n!==page){page=n;load();} });
-    load();
+    bindEvenFillObserver();
+    let resizeTimer=0;
+    window.addEventListener('resize',()=>{
+      if(!isAutoPageSize(document.getElementById('ledgerSize')?.value)) return;
+      clearTimeout(resizeTimer);
+      resizeTimer=setTimeout(()=>{
+        const prev=lockedAutoSize;
+        clearLockedAutoSize();
+        const next=autoFitPageSize();
+        syncAutofitMode();
+        if(next!==prev){ page=1; load(); }
+        else evenFillRowHeights();
+      },180);
+    });
+    /* Wait for layout so auto-fit measures the real body height, not a collapsed shell. */
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      clearLockedAutoSize();
+      syncAutofitMode();
+      load();
+    }));
   });
 })();
