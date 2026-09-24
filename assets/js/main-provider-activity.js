@@ -1,6 +1,87 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let page=0,totalPages=0;const PAGE_SIZE=20;
+let page=0,totalPages=0,pageSize=20,autoPageSize=null,resizeTimer=null;
+const PAGE=20;
+const pageSizeEl=$('mpaEntriesPageSize');
+const tableWrap=document.querySelector('.mad-table-wrap');
+const tbody=$('mpaRows');
+
+function isAutoPageSize(value){
+  const v=String(value??'-').trim();
+  return v===''||v==='-'||/^auto$/i.test(v);
+}
+function measureAutoPageSize(){
+  if(!tableWrap) return PAGE;
+  const head=tableWrap.querySelector('thead');
+  const sample=tableWrap.querySelector('tbody tr:not(.mad-empty)');
+  const rowHeight=sample?Math.max(36,Math.round(sample.getBoundingClientRect().height)):48;
+  const available=Math.max(0,Math.floor(tableWrap.clientHeight)-(head?Math.ceil(head.getBoundingClientRect().height):0));
+  return Math.max(5,Math.min(200,Math.floor(available/rowHeight)||PAGE));
+}
+function resolvePageSize(){
+  const raw=String(pageSizeEl&&pageSizeEl.value||'-').trim();
+  if(/^all$/i.test(raw)) return 10000;
+  if(isAutoPageSize(raw)){
+    if(autoPageSize==null) autoPageSize=measureAutoPageSize();
+    return autoPageSize;
+  }
+  const n=Number(raw);
+  return Number.isFinite(n)&&n>0?n:PAGE;
+}
+function resetEvenFill(){
+  if(!tbody) return;
+  const table=tbody.closest('table');
+  if(table){ table.classList.remove('bo-tx-evenfill'); table.style.height=''; }
+  if(tableWrap) tableWrap.removeAttribute('data-bo-autofit');
+  [...tbody.querySelectorAll('tr')].forEach(tr=>{
+    tr.style.height='';
+    tr.querySelectorAll('td').forEach(td=>{td.style.height='';td.style.minHeight='';});
+  });
+}
+function evenFillRowHeights(){
+  if(!tbody||!tableWrap) return;
+  resetEvenFill();
+  if(!pageSizeEl||!isAutoPageSize(pageSizeEl.value)) return;
+  const table=tbody.closest('table');
+  if(!table) return;
+  const rows=[...tbody.querySelectorAll('tr')].filter(tr=>!tr.querySelector('.mad-empty'));
+  if(!rows.length) return;
+  void table.offsetHeight;
+  const head=tableWrap.querySelector('thead');
+  const avail=Math.max(0,Math.floor(tableWrap.clientHeight)-(head?Math.ceil(head.getBoundingClientRect().height):0));
+  const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
+  const rowH=Math.max(36,Math.round(natural/rows.length)||48);
+  if(natural>avail+1&&autoPageSize!=null&&autoPageSize>5){
+    autoPageSize=Math.max(5,autoPageSize-1);
+    load();
+    return;
+  }
+  const gap=avail-natural;
+  if(gap<2||gap>=rowH) return;
+  const base=Math.floor(avail/rows.length);
+  let rem=avail-(base*rows.length);
+  if(base<=0) return;
+  rows.forEach(tr=>{
+    const h=base+(rem>0?1:0);
+    if(rem>0) rem-=1;
+    tr.style.height=h+'px';
+    tr.querySelectorAll('td').forEach(td=>{td.style.height=h+'px';});
+  });
+  table.classList.add('bo-tx-evenfill');
+  table.style.height=(avail+(head?Math.ceil(head.getBoundingClientRect().height):0))+'px';
+  tableWrap.setAttribute('data-bo-autofit','');
+  if(tableWrap.scrollHeight>tableWrap.clientHeight){
+    const over=tableWrap.scrollHeight-tableWrap.clientHeight;
+    const shrink=Math.ceil(over/rows.length)||1;
+    rows.forEach(tr=>{
+      const h=Math.max(rowH,(parseFloat(tr.style.height)||base)-shrink);
+      tr.style.height=h+'px';
+      tr.querySelectorAll('td').forEach(td=>{td.style.height=h+'px';});
+    });
+  }
+}
+function scheduleEvenFill(){requestAnimationFrame(()=>requestAnimationFrame(evenFillRowHeights))}
+
 async function api(path){const base=String(API_CONFIG.BASE_URL||'').replace(/\/$/,'');const r=await fetch(base+path,{headers:{...BO_AUTH.authHeader(),'X-Brand-Id':'1'},cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw Error(j.message||'Request failed');return j.data??j}
 function dt(v){return window.BO_FORMAT?.dateTime?BO_FORMAT.dateTime(v):(v?String(v).replace('T',' ').slice(0,19):'-')}
 
@@ -21,7 +102,35 @@ function detail(x){const a=parseAfter(x),parts=[];if(a.settlementCostPercent!=nu
    ellipsis. Kept identical on purpose so the two tabs of this family read as one control. */
 function pageButtons(total){total=Math.max(1,Number(total)||1);const cur=page+1,pages=[],add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n)};add(1);for(let n=cur-2;n<=cur+2;n++)add(n);add(total);pages.sort((a,b)=>a-b);let html='<button type="button" class="smart-page nav-text" data-page="'+Math.max(1,cur-1)+'" '+(cur<=1?'disabled':'')+'>Previous</button>',prev=0;pages.forEach(n=>{if(prev&&n-prev>1)html+='<span class="smart-page-ellipsis">…</span>';html+='<button type="button" class="smart-page'+(n===cur?' active':'')+'" data-page="'+n+'"'+(n===cur?' aria-current="page"':'')+'>'+n+'</button>';prev=n});html+='<button type="button" class="smart-page nav-text" data-page="'+Math.min(total,cur+1)+'" '+(cur>=total?'disabled':'')+'>Next</button>';return html}
 function pager(){const box=$('mpaPager');if(!box)return;box.innerHTML=totalPages>1?pageButtons(totalPages):''}
-async function load(){const body=$('mpaRows'),size=PAGE_SIZE;body.innerHTML='<tr><td colspan="7" class="mad-empty">Loading activity...</td></tr>';try{const q=new URLSearchParams({page:String(page),size:String(size)});if($('mpaActor')?.value.trim())q.set('actor',$('mpaActor').value.trim());if($('reportDateFrom')?.value)q.set('from',$('reportDateFrom').value);if($('reportDateTo')?.value)q.set('to',$('reportDateTo').value);const d=await api('/admin/main/provider-activity?'+q),a=d.content||[];totalPages=Number(d.totalPages||0);body.innerHTML=a.map(x=>`<tr><td class="mad-time-cell">${whenCell(x.createdAt)}</td><td><b>${esc(providerTarget(x))}</b></td><td>${esc(action(x))}</td><td><b>${esc(x.actor||'SYSTEM')}</b></td><td>${esc(detail(x))}</td><td>${esc(x.ipAddress||'-')}</td><td>${status(x)}</td></tr>`).join('')||'<tr><td colspan="7" class="mad-empty">No provider business activity found.</td></tr>';const total=Number(d.totalElements||0),from=total?page*size+1:0,to=Math.min(total,(page+1)*size);$('mpaInfo').textContent=`Showing ${from} to ${to} of ${total} entries`;pager()}catch(e){body.innerHTML=`<tr><td colspan="7" class="mad-empty text-danger">${esc(e.message)}</td></tr>`;$('mpaInfo').textContent='Showing 0 to 0 of 0 entries';$('mpaPager').innerHTML=''}}
+async function load(){
+  const body=$('mpaRows');
+  pageSize=resolvePageSize();
+  const size=pageSize;
+  body.innerHTML='<tr><td colspan="7" class="mad-empty">Loading activity...</td></tr>';
+  try{
+    const q=new URLSearchParams({page:String(page),size:String(size)});
+    if($('mpaActor')?.value.trim())q.set('actor',$('mpaActor').value.trim());
+    if($('reportDateFrom')?.value)q.set('from',$('reportDateFrom').value);
+    if($('reportDateTo')?.value)q.set('to',$('reportDateTo').value);
+    const d=await api('/admin/main/provider-activity?'+q),a=d.content||[];
+    totalPages=Number(d.totalPages||0);
+    if(!a.length){
+      resetEvenFill();
+      body.innerHTML='<tr><td colspan="7" class="mad-empty">No provider business activity found.</td></tr>';
+    }else{
+      body.innerHTML=a.map(x=>`<tr><td class="mad-time-cell">${whenCell(x.createdAt)}</td><td><b>${esc(providerTarget(x))}</b></td><td>${esc(action(x))}</td><td><b>${esc(x.actor||'SYSTEM')}</b></td><td>${esc(detail(x))}</td><td>${esc(x.ipAddress||'-')}</td><td>${status(x)}</td></tr>`).join('');
+      scheduleEvenFill();
+    }
+    const total=Number(d.totalElements||0),from=total?page*size+1:0,to=Math.min(total,(page+1)*size);
+    $('mpaInfo').textContent=`Showing ${from} to ${to} of ${total} entries`;
+    pager();
+  }catch(e){
+    resetEvenFill();
+    body.innerHTML=`<tr><td colspan="7" class="mad-empty text-danger">${esc(e.message)}</td></tr>`;
+    $('mpaInfo').textContent='Showing 0 to 0 of 0 entries';
+    $('mpaPager').innerHTML='';
+  }
+}
 /* ---------------------------------------------------------------------------
    Date-range picker — the fifth copy of the family calendar (the settlement ledger,
    security, profit and the merchant report each carry one; a shared driver is the
@@ -141,8 +250,23 @@ function setupDatePicker(){
   });
 }
 
-BO_AUTH.requireLogin();setupDatePicker();load();$('mpaRefresh')?.addEventListener('click',()=>{page=0;load()});$('mpaActor')?.addEventListener('change',()=>{page=0;load()});
+BO_AUTH.requireLogin();setupDatePicker();
+load().then(()=>requestAnimationFrame(()=>{
+  if(pageSizeEl&&isAutoPageSize(pageSizeEl.value)){
+    autoPageSize=null;
+    page=0;
+    load();
+  }
+}));
+$('mpaRefresh')?.addEventListener('click',()=>{page=0;load()});
+$('mpaActor')?.addEventListener('change',()=>{page=0;load()});
 $('mpaPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(!b||b.disabled)return;const p=Number(b.dataset.page)-1;if(!Number.isFinite(p)||p===page)return;page=p;load()});
+pageSizeEl?.addEventListener('change',()=>{autoPageSize=null;page=0;load()});
+window.addEventListener('resize',()=>{
+  if(!pageSizeEl||!isAutoPageSize(pageSizeEl.value)) return;
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(()=>{autoPageSize=null;page=0;load()},120);
+});
 })();
 
 

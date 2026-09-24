@@ -15,8 +15,9 @@
 <link href="assets/css/main-admin-detail-executive.css?v=25223479" rel="stylesheet"/>
 <link href="assets/css/main-provider-executive.css?v=a3aabc5e" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=fcde0bb3" rel="stylesheet"/>
-<link href="assets/css/main-provider-family-executive.css?v=eba62efb" rel="stylesheet"/>
+<link href="assets/css/main-provider-family-executive.css?v=2" rel="stylesheet"/>
 <link href="assets/css/main-provider-detail-executive.css?v=2ebf0b2f" rel="stylesheet"/>
+<link href="assets/css/main-admin-page-size.css?v=2" rel="stylesheet"/>
 <link href="assets/css/bo-account-chip.css?v=e6d15d38" rel="stylesheet"/>
 <link href="assets/css/bo-table-zebra.css?v=5e28ddf4" rel="stylesheet"/>
 <link href="assets/css/bo-input-fill.css?v=3005315e" rel="stylesheet"/>
@@ -116,6 +117,17 @@
     </div>
 
     <div class="mad-footer">
+      <label class="mad-page-size-control entries-control" for="mpvEntriesPageSize">Show
+        <select id="mpvEntriesPageSize" class="mad-page-size-select" aria-label="Rows per page">
+          <option value="-" selected>-</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="All">All</option>
+        </select>
+        <span>entries</span>
+      </label>
       <div class="mad-footer-info" id="mpvTableInfo">Showing 0 to 0 of 0 providers</div>
       <div class="mad-footer-right">
         <nav class="mad-pager" id="mpvPager" aria-label="Table pagination"></nav>
@@ -132,7 +144,7 @@
 <script src="assets/js/reports.js?v=3d90f6eb"></script>
 <script src="assets/js/auth.js?v=1.0.20"></script>
 <script src="assets/js/bo-seg-bounce.js?v=0c2f53d2"></script>
-<script src="assets/js/main-provider-detail.js?v=260fa60e"></script>
+<script src="assets/js/main-provider-detail.js?v=2"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=01bf393d"></script>
