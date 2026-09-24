@@ -48,13 +48,20 @@
         · submit / button / reset — buttons, not fields
         · :disabled / [readonly] — locked fields keep the #EDE4D4 dead state
           (e.g. #madEditUsername on the edit page, which is `readonly`) */
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not(:disabled):not([readonly]):not(#providerSearchInput):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.mad-search input):not(.agent-search-box input):not(.mac-provider-search input):not(.provider-list-search input):not(.livechat-search input):not(.dup-search-control input):not(.bo-search-control input),
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not(:disabled):not([readonly]):not(#providerSearchInput):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.mad-search input):not(.agent-search-box input):not(.agent-assign-search input):not(.mac-provider-search input):not(.provider-list-search input):not(.livechat-search input):not(.dup-search-control input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.bonus-title-search input):not(.bo-search-control input),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) select:not(:disabled),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:not(:disabled):not([readonly]):not(.layout-code-pane textarea):not(.pc-rich-source):not(#pcRichSource){
   background-color:#FFF8EB!important;
 }
 /* Search frames already carry the fill (rule 2). Inner inputs must stay transparent or the
-   field reads as a double-walled box (cream on cream + a second border). */
+   field reads as a double-walled box (cream on cream + a second border).
+   `.mp-search` / `.mrc-search` / `.mas-search` / `.bonus-title-search` were the four frames
+   missing from this pair of lists - measured on bonus-category-title.html (`#bonusSearchInput`)
+   and main-admin-role-create.html (`#mrcFilter`), each input computed #FFF8EB inside a #FFF8EB
+   frame, and the page sheets that already tried to bare them (bo-charcoal-cms.css,
+   menu-permission-executive.css) lost on specificity to rule 1's 24-class list. Naming them
+   here is what those page rules were reaching for. */
+
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .category-search-control > input,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .game-search-control > input,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .banner-search > input,
@@ -63,6 +70,11 @@ html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-f
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-search > input,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .agent-search-box > input,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mac-provider-search > input,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mp-search > input,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mrc-search > input,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mas-search > input,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .bonus-title-search > input,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .agent-assign-search > input,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .provider-list-search > input,
 body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .bo-search-control > input{
   background-color:transparent!important;
@@ -120,8 +132,8 @@ html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-f
       the only state change.
       Same .layout-code-pane textarea exclusion as rule 1: that overlay must stay transparent
       on hover/focus too, or the cream fill covers the syntax layer (layout-section CSS pane). */
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:hover:not(:disabled):not([readonly]):not(#providerSearchInput):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.mad-search input):not(.agent-search-box input):not(.mac-provider-search input):not(.provider-list-search input):not(.livechat-search input):not(.dup-search-control input):not(.bo-search-control input),
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:focus:not(:disabled):not([readonly]):not(#providerSearchInput):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.mad-search input):not(.agent-search-box input):not(.mac-provider-search input):not(.provider-list-search input):not(.livechat-search input):not(.dup-search-control input):not(.bo-search-control input),
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:hover:not(:disabled):not([readonly]):not(#providerSearchInput):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.mad-search input):not(.agent-search-box input):not(.agent-assign-search input):not(.mac-provider-search input):not(.provider-list-search input):not(.livechat-search input):not(.dup-search-control input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.bonus-title-search input):not(.bo-search-control input),
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:focus:not(:disabled):not([readonly]):not(#providerSearchInput):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.mad-search input):not(.agent-search-box input):not(.agent-assign-search input):not(.mac-provider-search input):not(.provider-list-search input):not(.livechat-search input):not(.dup-search-control input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.bonus-title-search input):not(.bo-search-control input),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) select:hover:not(:disabled),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) select:focus:not(:disabled),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:hover:not(:disabled):not([readonly]):not(.layout-code-pane textarea):not(.pc-rich-source):not(#pcRichSource),
@@ -146,6 +158,16 @@ html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-f
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mac-provider-search > input:focus,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .provider-list-search > input:hover,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .provider-list-search > input:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mp-search > input:hover,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mp-search > input:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mrc-search > input:hover,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mrc-search > input:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mas-search > input:hover,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mas-search > input:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .bonus-title-search > input:hover,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .bonus-title-search > input:focus,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .agent-assign-search > input:hover,
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .agent-assign-search > input:focus,
 body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .bo-search-control > input:hover,
 body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .bo-search-control > input:focus{
   background-color:transparent!important;
@@ -282,6 +304,20 @@ html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legac
   line-height:1!important;
   color:#78716C!important;
   pointer-events:none!important;
+  /* The magnifier is a flex child OF the frame, never an overlay parked over it. This rule did not
+     state `position`, so a page sheet's own `> i{position:absolute;left:12px}` still won it:
+     measured on agent-players.html the glyph sat at left 12px ON TOP of the placeholder, because the
+     input is bare (padding 0) and its text therefore starts at the frame's own 12px pad - the box
+     read "Search player ID / name..." with the magnifier printed across the S. Stating the reset
+     here fixes it for every page at once, which a per-page override cannot.
+     agent-portal.css carries four successive attempts at this (v2.3.4 absolute -> v2.3.5 absolute ->
+     v2.3.6 static -> absolute again), so the page cannot be relied on to hold it. */
+  position:static!important;
+  left:auto!important;
+  top:auto!important;
+  transform:none!important;
+  z-index:auto!important;
+  width:auto!important;
 }
 html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not(#bo-search-standard-off-2) .bo-search-control > input{
   border:0!important;
@@ -304,7 +340,129 @@ html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legac
   border-color:#D97706!important;
   box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
 }
-
+/* Light side of the same statement. Three controls were simply inheriting rather than being told,
+   and did not land on the family's colours: agent-players.html's placeholder fell through to the
+   browser default #757575 and the two VIP log keyword fields (vip-exp-log.html, vip-reward-log.html)
+   to `color:#000`. Stating the pair here makes light and dark structurally identical - one block per
+   theme, the same family list, nothing left to inherit. Measured light: text #18191C on every control,
+   placeholder #78716C on every control. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .bo-search-control > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .mad-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .mrc-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .mp-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .mas-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .mac-provider-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .provider-list-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .livechat-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .dup-search-control > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .banner-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .category-search-control > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .game-search-control > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .bonus-title-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .agent-search-box > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .agent-assign-search > input{
+  color:#18191C!important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .bo-search-control > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .mad-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .mrc-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .mp-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .mas-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .mac-provider-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .provider-list-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .livechat-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .dup-search-control > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .banner-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .category-search-control > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .game-search-control > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .bonus-title-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .agent-search-box > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off):not([data-bo-theme="dark"]) .agent-assign-search > input::placeholder{
+  color:#78716C!important;
+}
+/* Dark: one chrome for every search frame. The light side of this sheet already normalises all
+   sixteen wrapper names (reports.css / bo-charcoal-legacy.css do the same), but the dark side only
+   ever named `.bo-search-control`, so a frame whose page ships no dark rule of its own stayed
+   CREAM ON A DARK PAGE - measured on game.html (`#gameSearchInput`) and game-category.html
+   (`#categorySearchInput`), the only two pages here with no sheet of their own. Their icon, text
+   and placeholder kept their light values too. Stating the dark chrome once, for the whole family,
+   is what makes dark mode one control instead of sixteen.
+   The text colour is stated rather than inherited because reports.css pins `color:#18191C` on these
+   inputs at ID level (its v31 block, and its `#adminSearchInput` list), which left admin-user,
+   bulk-adjustment / bulk-bonus-adjustment and game / game-category with #18191C text on a #2A2C36
+   frame - near-invisible. `#A1A1AA` for the icon and the placeholder is DESIGN.md's dark muted
+   token (muted-dark).
+   Measured after: every visible search control reads frame #2A2C36, border rgba(255,255,255,.12),
+   text #F5F5F4, placeholder #A1A1AA, icon #A1A1AA. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .bo-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mad-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mrc-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mp-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mas-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mac-provider-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .provider-list-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .livechat-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .dup-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .banner-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .category-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .game-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .bonus-title-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .agent-search-box,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .agent-assign-search{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.12)!important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .bo-search-control > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mad-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mrc-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mp-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mas-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mac-provider-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .provider-list-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .livechat-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .dup-search-control > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .banner-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .category-search-control > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .game-search-control > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .bonus-title-search > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .agent-search-box > input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .agent-assign-search > input{
+  color:#F5F5F4!important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .bo-search-control > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mad-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mrc-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mp-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mas-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mac-provider-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .provider-list-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .livechat-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .dup-search-control > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .banner-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .category-search-control > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .game-search-control > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .bonus-title-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .agent-search-box > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .agent-assign-search > i{
+  color:#A1A1AA!important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .bo-search-control > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mad-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mrc-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mp-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mas-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .mac-provider-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .provider-list-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .livechat-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .dup-search-control > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .banner-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .category-search-control > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .game-search-control > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .bonus-title-search > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .agent-search-box > input::placeholder,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off)[data-bo-theme="dark"] .agent-assign-search > input::placeholder{
+  color:#A1A1AA!important;
+}
 /* A well that lives in a `.field` gets a floor wide enough for its own placeholder. The house sheet
    pins this field family at 190px (`bo-ui-standard.css`, two ID steps), which leaves the input 141px
    once the frame's padding (24px) and the magnifier (15px + 8px gap) are out - and the longest

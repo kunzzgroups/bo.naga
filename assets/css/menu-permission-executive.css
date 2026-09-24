@@ -1530,8 +1530,6 @@ html[data-bo-theme="dark"] body.menu-permission-page .bo-sidebar-logout:hover{
   background:rgba(248,113,113,.1)!important;
   color:#fff!important;
 }
-html[data-bo-theme="dark"] body.menu-permission-page.sidebar-mini .report-sidebar:hover,
-html[data-bo-theme="dark"] body.menu-permission-page.sidebar-mini .report-sidebar.is-mini-hover,
 html[data-bo-theme="dark"] body.menu-permission-page .report-sidebar.show{
   background:#3A3226!important;
   box-shadow:18px 0 40px rgba(0,0,0,.35)!important;

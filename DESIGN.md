@@ -2569,13 +2569,118 @@ nested inputs inside `.category-search-control` / `.game-search-control` / `.ban
 tier so border/`background` stay off the bare input.
 
 **Still opposite on purpose:** `agent-players` keeps input-owned border (wrapper layout-only) — do not
-merge the two recipes.
+merge the two recipes. **SUPERSEDED 2026-09-24** — the magnifier in that recipe sat on top of the
+placeholder and the input overshot its own frame by 6px; the wrapper owns the chrome there now. See
+"One search control, locked (2026-09-24)".
 
 **Wiped once and re-applied.** The back-button work and this search work were both lost when the working
 tree was reset to `origin/main` (the reflog shows `reset: moving to origin/main` three times in one
 session) while they were still uncommitted — the pins and the pin script survived only because they had
 been committed first. Re-applied from `scripts/restore-back-controls.py` / `scripts/restore-search-fixes.py` and re-verified. Nothing
 here protects uncommitted work from that reset: commit before syncing.
+
+### One search control, locked (2026-09-24)
+
+Owner: “我发现很多页面的搜索设计都跑偏了 但是就修改不好 没有标准化”.
+
+**The standard.** One markup, one owner. `bo-input-fill.css` → section "5. ONE search control" is the
+only place the control is defined; every other sheet must stay out of its way.
+
+```html
+<label class="bo-search-control">
+  <i class="bi bi-search" aria-hidden="true"></i>
+  <input id="…" aria-label="Search …" placeholder="Search …" autocomplete="off" />
+</label>
+```
+
+The input carries its own `aria-label` **or** is named by the wrapping label's text (the site's older
+`label` + `.mad-sr-only` idiom does the same job). Naming is uneven across the legacy controls — 47 of the
+62 have neither an `aria-label` nor any text in their wrapper — and closing that is an accessibility pass
+of its own, not a styling one; the controls authored here carry an explicit `aria-label`.
+
+| Part | Owns | Light | Dark |
+| --- | --- | --- | --- |
+| the wrapper | the **one** visible frame | `36px` · radius `8px` · `1px #EADCC8` · `#FFF8EB` · flex row · gap `8px` · pad `0 12px` | `#2A2C36` · border `rgba(255,255,255,.12)` |
+| `> i.bi-search` | glyph only | `position:static` (a flex child, **never** an overlay) · `15px` · `#78716C` | `#A1A1AA` |
+| `> input` | text only | border `0` · background transparent · pad `0` · radius `0` · `12px/700` · text `#18191C` · placeholder `#78716C` | text `#F5F5F4` · placeholder `#A1A1AA` |
+| `:focus-within` | the only state change | border `#D97706` · ring `0 0 0 3px rgba(217,119,6,.14)` | same |
+
+**Why it kept drifting.** The control was never *wrong*, it was **out-voted**. Every generic input theme
+in the tree exempts bespoke search components by naming them one at a time:
+
+```css
+.report-content input:not(…):not(.mad-search input):not(.mp-search input):not(…)
+```
+
+Sixteen names were in those lists; `.bo-search-control`, the standard, was the seventeenth and was never
+added. So on every page that loads `reports.css`, that rule — **8 `:not(#id)` steps and 23 classes** —
+out-specified the standard's own 5-id guard and painted a second border and fill *inside* the control's
+frame. `index.html` and `online-users.html` looked right only because they load
+`reports-dashboard-original.css` instead and never meet the rule at all. DESIGN.md had already recorded
+the tidy fix and left it as a follow-up ("Adding `.bo-search-control input` to those lists beside the
+other sixteen names … is left as the follow-up"); the follow-up is what this change is. Adding to a list
+is also the *only* durable lever here: `:not(#id)` steps can always be out-numbered, which is why the
+earlier arms race never held.
+
+**What was wrong, measured** (`getComputedStyle`, 51 pages, 62 controls, both themes):
+
+| Symptom | Controls | Cause |
+| --- | --- | --- |
+| a second border + fill inside the frame | **12** — admin-login-log ×2, agent-management, agent-bet-report, agent-bonus, agent-products, agent-promotion-admin, bank-deposit-usage, manual-rebate-approval, provider-bet-report, vip-exp-log, vip-reward-log | the 8-id list above |
+| the input re-filled cream | **3** — bonus-category-title, main-admin-role-create, main-merchant-role-create | `bo-input-fill.css` rule 1 did not name `.mp-search` / `.mrc-search` / `.mas-search` / `.bonus-title-search`, so the page rules that already tried to bare them lost |
+| never had the wrapper at all | **4** — admin-user, role (bare input in a `.field`, magnifier drawn by a `::before`), main-provider-health (a bare Bootstrap `form-control`, 42px, **no magnifier**), main-accounting-settlement | markup written before the standard existed |
+| the magnifier printed **over** the placeholder | **1** — agent-players | the standard stated the icon's flex/size/colour but **not** `position`, so `agent-portal.css`'s `> i{position:absolute;left:12px}` still won while the input stayed bare — the box read "Search player ID / name…" with the glyph across the S. That sheet carries four successive attempts at this (v2.3.4 absolute → v2.3.5 absolute → v2.3.6 static → absolute again) |
+| dark mode: cream frame on a dark page; `#18191C` text on `#2A2C36`; two greys for icon and placeholder | 2 frames + 5 controls | the dark side of the standard named only `.bo-search-control`, and `reports.css` pins `color:#18191C` on these inputs at ID level. `game` / `game-category` are the two pages with no sheet of their own, so nothing else dark-themed them |
+
+**The fix, and where each part lives.**
+
+1. `reports.css`, `bo-charcoal-legacy.css`, `bo-ui-standard.css` — `:not(.bo-search-control input)` added
+   to **21 enumeration lists** (2 + 14 + 5 rules). Byte-checked: removing the inserted clause restores
+   each file byte-for-byte, so nothing else moved inside a 12MB sheet. This is the change that fixes the
+   12 double frames, and it can only ever *narrow* a rule, so it cannot touch anything outside
+   `.bo-search-control`.
+2. `bo-input-fill.css` — the four missing frame names (`.mp-search`, `.mrc-search`, `.mas-search`,
+   `.bonus-title-search`) and `.agent-assign-search` added to rule 1's exclusion list and to the
+   transparent lists in rules 2/3. Closes the 3 double fills and agent-detail's hidden control.
+3. `bo-input-fill.css` — the canonical icon rule now states the position reset (`static`, `left/top:auto`,
+   `transform:none`, `z-index:auto`). One page's sheet cannot be relied on to hold it; the standard can.
+4. `bo-input-fill.css` — **light and dark blocks that name all 17 frames once each**, so the whole family
+   shares one chrome per theme and no control inherits. Both state `color` and `::placeholder` because
+   `reports.css` pins `#18191C` at ID level in two places.
+5. Markup normalised to the canonical `label` on **5 pages**: `admin-user`, `role`,
+   `main-provider-health`, `main-accounting-settlement`, and `agent-players` (which keeps its
+   `.agent-search-box` class alongside, so the agent-portal sheet's own sizing still applies).
+
+**Verified, not assumed.** 51 pages × 2 themes, every search input measured: **light 46/46 visible
+controls byte-identical** (`fH36 fR8px fB0.8px/EADCC8 fBg#FFF8EB iB0px iBg transparent txt#18191C
+ph#78716C icon#78716C`), plus 15 more inside collapsed panels carrying the same style; **dark 45/45**. The
+remaining dark difference is the single documented tint below. The static census agrees with the rendered
+one: **62 controls, 17 frame names, all 17 known to the sheets.**
+
+**Two documented exceptions — deliberate, not drift.**
+
+| Exception | Why |
+| --- | --- |
+| `layout-section.html` `#layoutFindInput` (`.layout-find-query`, 28px / radius 7px) | a **find-in-editor** bar in a toolbar, with a `Ctrl+F` hint and its own match count — not a listing search. Excluded from the guard by name. |
+| `promotion.html` frame border `rgba(255,255,255,0.14)`, not `.12` | one rule in `bo-charcoal-cms.css` tints the whole filter row (search + selects + date trigger) together. Keeping the row self-consistent beat matching the last 2% of alpha, which on a 1px border over `#2A2C36` is not perceptible. |
+
+The old "still opposite on purpose" note for `agent-players` is **superseded**: the wrapper owns the
+chrome there too now, and its magnifier no longer overlaps its own placeholder.
+
+**The guard.** `scripts/check-search-standard.py` — run it after touching any search control or any of the
+four sheets:
+
+```sh
+python scripts/check-search-standard.py
+```
+
+It fails, naming file and line, when (a) a search input has no frame the sheets know, (b) a frame has no
+`bi-search` child, or (c) an enumeration list does not name `.bo-search-control input`. Both failure modes
+were exercised before landing this — removing the clause from `reports.css` and inventing a
+`.fancy-new-search` wrapper each produce the expected finding — so the guard is known to be able to fail,
+which is the only thing that makes it worth running. It skips the untracked `.tmp-*` scratch snapshots in
+the tree, which are pre-change copies of these same pages and would otherwise report drift that no longer
+exists.
 
 ### Casino Overview: the date picker joins the KPI grid in one container (2026-09-22)
 
