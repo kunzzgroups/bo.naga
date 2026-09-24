@@ -16,5 +16,10 @@
     const body=document.getElementById('withdrawBody');if(body)body.innerHTML='<tr><td colspan="9">Loading...</td></tr>';
     script.src='assets/js/member-withdraw.js?v=1.0.38';
   }else{script.src='assets/js/member-deposit.js?v=1.0.38';}
+  script.addEventListener('load',()=>{
+    const switcher=document.createElement('script');
+    switcher.src='assets/js/member-transaction-tab-switcher.js?v=1.0.0';
+    document.body.appendChild(switcher);
+  },{once:true});
   document.body.appendChild(script);
 })();
