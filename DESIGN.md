@@ -4026,3 +4026,28 @@ first, prefill awaits it) and measured: `role = 2 "Platform Master"`, `status = 
 
 Three of the four selects are optional or defaulted, and the role check the page already had covers
 both create and edit, so the placeholder state is safe to submit.
+
+#### Hiding a strip label took its field with it (2026-09-24)
+
+Owner, on `admin-operation-log.html`: “有按键被移除了 不小心留出一小节了” — an empty band above the table,
+which reads as leftover space from the Refresh button I removed there. It was not that; it was my own
+rule.
+
+The family sheet hid **every** `.standard-filter-grid > label` to drop the field captions (the reference
+identifies a strip field by its placeholder / selected value). That is correct where a label **is** the
+caption — the `.field > label` shape 11.2 and 11.5 use — and wrong where the label **wraps** the field,
+which is how this page writes it: `<label><span>Admin</span><input/></label>`. The sheet itself styles
+that shape (`.standard-filter-grid > label > input`, a few rules below), so the hide rule contradicted
+its own neighbour. Measured: **both fields 0x0 with `display:none`**, so the toolbar kept its padding
+and rendered as a 26px empty band.
+
+Fixed by hiding the caption, never the field: `label:not(:has(input, select, textarea))` takes
+caption-only labels whole, and `> label > span:first-child` drops just the caption inside a wrapper.
+Verified after: strip children **190x36** and **207x36**, visible controls **190x36** (input) and
+**207x36** (the enhancement's button — the 42px native `<select>` is the hidden one behind it), both on
+the locked 36px tier with `#DCC9A8` / 8px radius like 11.5's.
+
+**The gate missed this class of defect entirely**: it checked the document, the table scroller and a row
+floor, none of which care whether the strip renders — and the page passed while showing an empty band.
+It now asserts that every direct child of a family listing's filter strip renders a non-zero box *and* a
+non-zero control, which is the generic form of this bug.

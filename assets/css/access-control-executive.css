@@ -122,11 +122,25 @@ html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .
 }
 /* The reference hides field labels inside the strip: the fields are identified
    by their own placeholder / selected value. Keeping them would make this strip
-   twice as tall as User Management's. */
+   twice as tall as User Management's.
+
+   Hide the CAPTION, never the field. A strip label comes in two shapes: a bare caption whose
+   only content is text (the `.field > label` form), or the field wrapper itself - which is how
+   Admin Operation Log writes it, `<label><span>Admin</span><input/></label>`, and the family
+   sheet styles it that way too (`.standard-filter-grid > label > input` just below). Hiding
+   every `> label` therefore took the two CONTROLS with it and left an empty 26px band over the
+   table: measured on that page, both fields 0x0 with `display:none`, so the strip rendered as
+   leftover space. Caption-only labels are hidden whole; a wrapper label keeps its control and
+   loses only the caption span. */
 html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid .field > label,
-html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .standard-card-head .standard-filter-grid > label,
-html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .standard-filter-grid > label,
-html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > label{
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .standard-card-head .standard-filter-grid > label:not(:has(input, select, textarea)),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .standard-filter-grid > label:not(:has(input, select, textarea)),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > label:not(:has(input, select, textarea)){
+  display:none !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .standard-card-head .standard-filter-grid > label > span:first-child,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .standard-filter-grid > label > span:first-child,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-search-grid > label > span:first-child{
   display:none !important;
 }
 html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card > .user-toolbar .user-filter-actions,
