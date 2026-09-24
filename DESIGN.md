@@ -4219,3 +4219,19 @@ Fields that also carry a caption `<label>` (agent-management's "Search Agent", b
 "Bank / Display Name", …) are still deliberately untouched: framing them would swallow the caption, and
 that needs markup restructuring. Two cases remain out of scope by design: `layout-section.html`'s 28px
 find-in-code box and `main-provider-health.html`'s bare flex toolbar.
+
+#### The search field's own width (2026-09-24)
+
+Owner, seeing the new magnifier: “发生什么事了？”. The field had cut its own placeholder. Measured:
+“Search username or display name” is **199px** at 12px/700, and a 190px field leaves the input **117px**
+once the frame's padding (24px) and the magnifier (15px + 8px gap) are out — so the text was clipped
+mid-word, and it had been marginal even before the icon (166px for a 199px string).
+
+Fixed at the family: the search field takes **`min-width:260px`**, which is
+`bonus-category-title.html`'s own search width — 199 + 23 + 24 = 246, so it fits with room to spare.
+Two notes on getting there:
+
+- The first attempt matched the selector but computed **110px**: a house rule pins this field's minimum
+  at a deeper guard, so the rule needed the **three** ID-step form this family already uses.
+- The visual diff showed as a *byte-identical* screenshot, which is what gave it away — a rule that
+  matches but loses the cascade renders exactly like no change at all.
