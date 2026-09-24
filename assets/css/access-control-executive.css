@@ -1157,3 +1157,26 @@ html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control.m
 html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control.main-admin-create-page .mac-section .mac-field > .rounded-select-wrap > .rounded-select-btn{
   width:100% !important;
 }
+
+/* ONE frame, not two. The field is the frame (reports.css's site-wide search standard); this
+   sheet had also given the input its own frame and a 10px radius, so the control rendered as a
+   box inside a box - measured: the input at `1px rgb(234,220,200)` / radius 10px inside a field
+   framed at 1px #EADCC8 / 8px, which is what the owner saw as "怪怪的".
+   Written with plain attribute selectors and NO `:is()` / case-insensitive flag: the first
+   attempt used `:is([type="search"], [placeholder*="earch" i])` and never matched, so the rule
+   silently did nothing. Scoped to `> .field > input` so a date-range trigger in the same field
+   keeps its own frame. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field > input[placeholder*="Search"],
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field > input[placeholder*="search"],
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field > input[type="search"],
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.bo-access-control .table-card > .user-toolbar .standard-filter-grid > label > input[placeholder*="Search"],
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.bo-access-control .table-card > .user-toolbar .standard-filter-grid > label > input[placeholder*="search"],
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) body.bo-access-control .table-card > .user-toolbar .standard-filter-grid > label > input[type="search"],
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy)[data-bo-theme="dark"] body.bo-access-control .table-card > .user-toolbar .user-search-grid > .field > input[placeholder*="Search"],
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy)[data-bo-theme="dark"] body.bo-access-control .table-card > .user-toolbar .standard-filter-grid > label > input[placeholder*="Search"]{
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  padding:0 !important;
+  box-shadow:none !important;
+}
