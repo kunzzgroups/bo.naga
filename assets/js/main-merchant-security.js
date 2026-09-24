@@ -24,6 +24,7 @@
   const toEl = document.getElementById('masTo');
   const resetBtn = document.getElementById('masReset');
   const pagerEl = document.getElementById('masPager');
+  const pageSizeEl = document.getElementById('masEntriesPageSize');
   const detailPanel = document.getElementById('masDetailPanel');
   const detailTitle = document.getElementById('masDetailTitle');
   const detailGrid = document.getElementById('masDetailGrid');
@@ -55,6 +56,100 @@
   let resizeTimer = null;
 
   const PAGE_SIZE = 10;
+  let pageSize = PAGE_SIZE;
+  let autoPageSize = null;
+
+  function isAutoPageSize(value){
+    const v = String(value == null ? '-' : value).trim();
+    return v === '' || v === '-' || /^auto$/i.test(v);
+  }
+
+  function measureAutoPageSize(){
+    if(!tableScroll) return PAGE_SIZE;
+    const head = tableWrap && tableWrap.querySelector('.mas-table-head');
+    const sample = tableScroll.querySelector('tbody tr:not(.mad-empty) td');
+    const rowHeight = sample ? Math.max(36, Math.round(sample.closest('tr').getBoundingClientRect().height)) : 44;
+    const available = tableWrap
+      ? Math.max(0, Math.floor(tableWrap.clientHeight) - (head ? Math.ceil(head.getBoundingClientRect().height) : 0))
+      : tableScroll.clientHeight;
+    /* Floor only — never add a row that would overflow and clip under the scroller.
+       Leftover seam (< one row height) is stretched evenly by evenFillRowHeights(). */
+    return Math.max(5, Math.min(200, Math.floor(available / rowHeight) || PAGE_SIZE));
+  }
+
+  function resetEvenFill(){
+    if(!tbody) return;
+    const table = tbody.closest('table');
+    if(table){
+      table.classList.remove('bo-tx-evenfill');
+      table.style.height = '';
+    }
+    if(tableScroll) tableScroll.removeAttribute('data-bo-autofit');
+    [...tbody.querySelectorAll('tr')].forEach(tr => {
+      tr.style.height = '';
+      tr.querySelectorAll('td').forEach(td => { td.style.height = ''; td.style.minHeight = ''; });
+    });
+  }
+
+  /* Show `-`: stretch leftover seam across painted rows when gap < one full row height. */
+  function evenFillRowHeights(){
+    if(!tbody || !tableScroll) return;
+    resetEvenFill();
+    if(!pageSizeEl || !isAutoPageSize(pageSizeEl.value)) return;
+    const table = tbody.closest('table');
+    if(!table) return;
+    const rows = [...tbody.querySelectorAll('tr[data-event-id]')];
+    if(!rows.length) return;
+    void table.offsetHeight;
+    const avail = Math.max(0, Math.floor(tableScroll.clientHeight));
+    const natural = rows.reduce((sum, tr) => sum + Math.ceil(tr.getBoundingClientRect().height), 0);
+    const rowH = Math.max(36, Math.round(natural / rows.length) || 44);
+    /* Painted rows overflow the box (measurement drift / borders) — drop one and re-render. */
+    if(natural > avail + 1 && autoPageSize != null && autoPageSize > 5){
+      autoPageSize = Math.max(5, autoPageSize - 1);
+      renderTable();
+      return;
+    }
+    const gap = avail - natural;
+    if(gap < 2 || gap >= rowH) return;
+    const base = Math.floor(avail / rows.length);
+    let rem = avail - (base * rows.length);
+    if(base <= 0) return;
+    rows.forEach(tr => {
+      const h = base + (rem > 0 ? 1 : 0);
+      if(rem > 0) rem -= 1;
+      tr.style.height = h + 'px';
+      tr.querySelectorAll('td').forEach(td => { td.style.height = h + 'px'; });
+    });
+    table.classList.add('bo-tx-evenfill');
+    table.style.height = avail + 'px';
+    tableScroll.setAttribute('data-bo-autofit', '');
+    if(tableScroll.scrollHeight > tableScroll.clientHeight){
+      const over = tableScroll.scrollHeight - tableScroll.clientHeight;
+      const shrink = Math.ceil(over / rows.length) || 1;
+      rows.forEach(tr => {
+        const h = Math.max(rowH, (parseFloat(tr.style.height) || base) - shrink);
+        tr.style.height = h + 'px';
+        tr.querySelectorAll('td').forEach(td => { td.style.height = h + 'px'; });
+      });
+      table.style.height = Math.max(0, avail - over) + 'px';
+    }
+  }
+
+  function scheduleEvenFill(){
+    requestAnimationFrame(() => requestAnimationFrame(evenFillRowHeights));
+  }
+
+  function resolvePageSize(){
+    const raw = String(pageSizeEl && pageSizeEl.value || '-').trim();
+    if(/^all$/i.test(raw)) return 10000;
+    if(isAutoPageSize(raw)){
+      if(autoPageSize == null) autoPageSize = measureAutoPageSize();
+      return autoPageSize;
+    }
+    const n = Number(raw);
+    return Number.isFinite(n) && n > 0 ? n : PAGE_SIZE;
+  }
 
   /* Same pager markup and same window as the merchant / admin listings
      (see pageButtons() in main-merchant-detail.js): first page, last page and the two either
@@ -844,11 +939,19 @@
 
   function renderTable(){
     if(!tbody) return;
+    /* The box must be sized before we ask "how many rows fit in it" — otherwise the very
+       first auto-fill measurement reads whatever height the wrap happened to have before
+       fitTableArea() ever ran (e.g. its unset CSS `height:auto`), undercounting rows and
+       leaving a dead gap above the footer. Fitting first mirrors main-admin-detail.js, whose
+       .mad-table-wrap never needs a JS-assigned height because CSS flex alone sizes it before
+       any row-count math runs. */
+    fitTableArea();
     const total = filtered.length;
-    const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    pageSize = resolvePageSize();
+    const pages = Math.max(1, Math.ceil(total / pageSize));
     if(page > pages) page = pages;
-    const start = (page - 1) * PAGE_SIZE;
-    const rows = filtered.slice(start, start + PAGE_SIZE);
+    const start = (page - 1) * pageSize;
+    const rows = filtered.slice(start, start + pageSize);
 
     if(infoEl){
       infoEl.textContent = total
@@ -858,13 +961,13 @@
     if(pagerEl) pagerEl.innerHTML = total ? pageButtons(page, pages) : '';
 
     if(!rows.length){
+      resetEvenFill();
       tbody.innerHTML = '<tr><td colspan="6" class="mad-empty">No audit events found.</td></tr>';
       fitTableArea();
       return;
     }
 
     tbody.innerHTML = rows.map((e, idx) => {
-      const td = formatTime(e.at);
       const blocked = e.status === 'blocked' || e.status === 'failed';
       const statusLabel = e.status === 'blocked' ? 'Blocked' : (e.status === 'failed' ? 'Failed' : 'Success');
       const statusClass = e.status === 'blocked' ? 'is-blocked' : (e.status === 'failed' ? 'is-failed' : 'is-success');
@@ -886,6 +989,7 @@
     }).join('');
 
     fitTableArea();
+    scheduleEvenFill();
   }
 
   function findEvent(id){
@@ -1238,7 +1342,13 @@
 
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(fitTableArea, 120);
+    resizeTimer = setTimeout(() => {
+      fitTableArea();
+      if(pageSizeEl && isAutoPageSize(pageSizeEl.value)){
+        autoPageSize = null;
+        renderTable();
+      }
+    }, 120);
   });
 
   tbody && tbody.addEventListener('click', e => {
@@ -1282,9 +1392,27 @@
     renderTable();
     if(tableScroll) tableScroll.scrollTop = 0;
   });
+  pageSizeEl && pageSizeEl.addEventListener('change', () => {
+    autoPageSize = null;
+    page = 1;
+    renderTable();
+    if(tableScroll) tableScroll.scrollTop = 0;
+  });
 
   fitTableArea();
-  loadAll().then(() => requestAnimationFrame(fitTableArea));
+  loadAll().then(() => requestAnimationFrame(() => {
+    fitTableArea();
+    /* The auto-fill count from the very first renderTable() (above, inside loadAll) was
+       measured against the "Loading audit events..." placeholder row, not a real one, and
+       against layout metrics taken before fonts/icons had their final size. Once real rows
+       exist and the frame has settled, drop that guess and remeasure — the same recovery the
+       resize handler already performs. */
+    if(pageSizeEl && isAutoPageSize(pageSizeEl.value)){
+      autoPageSize = null;
+      page = 1;
+      renderTable();
+    }
+  }));
 })();
 
 

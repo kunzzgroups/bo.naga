@@ -114,7 +114,7 @@ body.main-admin-security-page .mas-table-body-scroll .mas-table{
    Status / Reset onto a second line.
    Rather than depend on `flex-wrap` — this environment reports it inconsistently, so the
    computed value could not be trusted while measuring — the row is made to FIT: the search box
-   capped at 160px, the date range at 240, Reset trimmed to a 10px pad, gaps at 4px.
+   capped at 220px, the date range at 240, Reset trimmed to a 10px pad, gaps at 4px.
    Capping the enhanced selects is impossible from CSS: `sizeRoundedSelect()` in bo-ui-standard.js
    measures the WIDEST option label and pins the wrapper to it through the custom property
    `--bo-select-width`, so the wrapper's used min-width equals its content and no rule here can
@@ -128,7 +128,8 @@ body.main-admin-security-page .mas-table-body-scroll .mas-table{
    these selectors, and equal-specificity `!important` is decided by document order. Doubling the
    class makes these win outright, so the caps actually bind. */
 body.main-admin-security-page .mas-filters.mas-filters{gap:2px}
-body.main-admin-security-page .mas-filters.mas-filters .mas-search{flex:0 1 118px;width:auto;max-width:118px;min-width:110px}
+/* Wide enough for "Search by merchant username..." — was 118px and clipped the placeholder. */
+body.main-admin-security-page .mas-filters.mas-filters .mas-search{flex:0 1 220px;width:auto;max-width:240px;min-width:180px}
 body.main-admin-security-page .mas-filters.mas-filters .mas-date-field{
   flex:0 0 240px!important;width:240px!important;min-width:0!important;max-width:240px!important;
 }

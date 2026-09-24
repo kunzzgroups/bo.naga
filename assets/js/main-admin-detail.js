@@ -61,7 +61,74 @@
     const sample = wrap.querySelector('tbody tr:not(.mad-empty) td');
     const rowHeight = sample ? Math.max(36, Math.round(sample.closest('tr').getBoundingClientRect().height)) : 44;
     const available = Math.max(0, Math.floor(wrap.clientHeight) - (head ? Math.ceil(head.getBoundingClientRect().height) : 0));
+    /* Floor only — never add a row that would overflow and clip. Leftover seam
+       (< one row height) is stretched evenly by evenFillRowHeights(). */
     return Math.max(5, Math.min(200, Math.floor(available / rowHeight) || 10));
+  }
+
+  function resetEvenFill(){
+    if(!tbody) return;
+    const wrap = document.querySelector('.mad-table-wrap');
+    const table = tbody.closest('table');
+    if(table){
+      table.classList.remove('bo-tx-evenfill');
+      table.style.height = '';
+    }
+    if(wrap) wrap.removeAttribute('data-bo-autofit');
+    [...tbody.querySelectorAll('tr')].forEach(tr => {
+      tr.style.height = '';
+      tr.querySelectorAll('td').forEach(td => { td.style.height = ''; td.style.minHeight = ''; });
+    });
+  }
+
+  /* Show `-`: stretch leftover seam across painted rows when gap < one full row height. */
+  function evenFillRowHeights(){
+    if(!tbody) return;
+    const wrap = document.querySelector('.mad-table-wrap');
+    if(!wrap) return;
+    resetEvenFill();
+    if(!pageSizeEl || !isAutoPageSize(pageSizeEl.value)) return;
+    const table = tbody.closest('table');
+    if(!table) return;
+    const rows = [...tbody.querySelectorAll('tr.mad-row')];
+    if(!rows.length) return;
+    void table.offsetHeight;
+    const head = wrap.querySelector('thead');
+    const avail = Math.max(0, Math.floor(wrap.clientHeight) - (head ? Math.ceil(head.getBoundingClientRect().height) : 0));
+    const natural = rows.reduce((sum, tr) => sum + Math.ceil(tr.getBoundingClientRect().height), 0);
+    const rowH = Math.max(36, Math.round(natural / rows.length) || 44);
+    if(natural > avail + 1 && autoPageSize != null && autoPageSize > 5){
+      autoPageSize = Math.max(5, autoPageSize - 1);
+      renderAdmins();
+      return;
+    }
+    const gap = avail - natural;
+    if(gap < 2 || gap >= rowH) return;
+    const base = Math.floor(avail / rows.length);
+    let rem = avail - (base * rows.length);
+    if(base <= 0) return;
+    rows.forEach(tr => {
+      const h = base + (rem > 0 ? 1 : 0);
+      if(rem > 0) rem -= 1;
+      tr.style.height = h + 'px';
+      tr.querySelectorAll('td').forEach(td => { td.style.height = h + 'px'; });
+    });
+    table.classList.add('bo-tx-evenfill');
+    table.style.height = (avail + (head ? Math.ceil(head.getBoundingClientRect().height) : 0)) + 'px';
+    wrap.setAttribute('data-bo-autofit', '');
+    if(wrap.scrollHeight > wrap.clientHeight){
+      const over = wrap.scrollHeight - wrap.clientHeight;
+      const shrink = Math.ceil(over / rows.length) || 1;
+      rows.forEach(tr => {
+        const h = Math.max(rowH, (parseFloat(tr.style.height) || base) - shrink);
+        tr.style.height = h + 'px';
+        tr.querySelectorAll('td').forEach(td => { td.style.height = h + 'px'; });
+      });
+    }
+  }
+
+  function scheduleEvenFill(){
+    requestAnimationFrame(() => requestAnimationFrame(evenFillRowHeights));
   }
 
   function resolvePageSize(){
@@ -403,6 +470,7 @@
         : 'Showing 0 to 0 of 0 administrators';
     }
     if(!rows.length){
+      resetEvenFill();
       tbody.innerHTML = '<tr><td colspan="9" class="mad-empty">No administrators found.</td></tr>';
       syncSelectionUi();
       return;
@@ -457,6 +525,7 @@
       '</tr>';
     }).join('');
     syncSelectionUi();
+    scheduleEvenFill();
   }
 
   async function loadBrandOptions(){

@@ -26,7 +26,8 @@
 <link href="assets/css/bo-table-zebra.css?v=5e28ddf4" rel="stylesheet"/>
 <link href="assets/css/bo-input-fill.css?v=3005315e" rel="stylesheet"/>
 <link href="assets/css/main-mobile-responsive.css?v=d7737bec" rel="stylesheet">
-<link href="assets/css/bo-security-audit.css?v=79c39a4d" rel="stylesheet"/>
+<link href="assets/css/bo-security-audit.css?v=2" rel="stylesheet"/>
+<link href="assets/css/main-admin-page-size.css?v=2" rel="stylesheet"/>
 </head>
 <body class="report-body standardized-listing-page main-admin-detail-page main-admin-security-page main-merchant-security-page bo-account-chip" data-access-page="main_merchant_detail">
 <div class="report-shell">
@@ -205,6 +206,17 @@
     </div>
 
     <div class="mad-footer">
+      <label class="mad-page-size-control entries-control" for="masEntriesPageSize">Show
+        <select id="masEntriesPageSize" class="mad-page-size-select" aria-label="Rows per page">
+          <option value="-" selected>-</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="All">All</option>
+        </select>
+        <span>entries</span>
+      </label>
       <div class="mad-footer-info" id="masTableInfo">Showing 0 records</div>
       <div class="mad-footer-right">
         <nav class="mad-pager" id="masPager" aria-label="Audit log pagination"></nav>
@@ -281,7 +293,7 @@
 <script src="assets/js/auth.js?v=1.0.20"></script>
 <script src="assets/js/main-merchant-visibility.js?v=03c968f4"></script>
 <script src="assets/js/bo-seg-bounce.js?v=0c2f53d2"></script>
-<script src="assets/js/main-merchant-security.js?v=4044c12e"></script>
+<script src="assets/js/main-merchant-security.js?v=2"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=01bf393d"></script>

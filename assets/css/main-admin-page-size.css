@@ -131,3 +131,120 @@ html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_ad
     justify-self:end;
   }
 }
+
+/* Merchant list + Merchant Security & Audit use the same footer geometry as
+   Admin Management. Their pages share data-access-page="main_merchant_detail",
+   so keep this extension scoped to the footer rather than changing edit forms. */
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-footer{
+  display:grid;
+  grid-template-columns:minmax(180px,1fr) minmax(220px,1fr) minmax(180px,1fr);
+  align-items:center;
+  gap:12px;
+  position:relative;
+  z-index:30;
+  overflow:visible!important;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-panel,
+body.main-admin-security-page.main-merchant-security-page[data-access-page="main_merchant_detail"] .mas-panel{
+  overflow:visible!important;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-page-size-control{
+  grid-column:1;
+  justify-self:start;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin:0;
+  color:var(--bo-muted);
+  font-size:13px;
+  font-weight:800;
+  white-space:nowrap;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-footer-info{
+  grid-column:2;
+  justify-self:center;
+  white-space:nowrap;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-footer-right{
+  grid-column:3;
+  justify-self:end;
+  margin-left:0;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-footer select.mad-page-size-select,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-page-size-control .rounded-select-wrap{
+  display:inline-flex!important;
+  align-items:center;
+  flex:0 0 auto;
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-page-size-control .rounded-select-btn{
+  height:36px!important;
+  min-width:72px!important;
+  padding:0 14px!important;
+  font-size:13px!important;
+  background:#FFF8EB!important;
+  border:1px solid #EADCC8!important;
+  border-radius:9px!important;
+  color:#18191C!important;
+}
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-page-size-control .rounded-select-menu{
+  top:auto!important;
+  bottom:calc(100% + 6px)!important;
+  background:#FFF8EB!important;
+  border:1px solid #EADCC8!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-page-size-control .rounded-select-btn{
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#F4EFE6!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-page-size-control .rounded-select-menu{
+  top:auto!important;
+  bottom:calc(100% + 6px)!important;
+  background:#2A2C36!important;
+  border-color:rgba(255,255,255,.12)!important;
+}
+@media(max-width:767.98px){
+  body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-footer{
+    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-areas:"size pager" "info info";
+    gap:10px;
+  }
+  body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-page-size-control{
+    grid-area:size;
+    grid-column:auto;
+  }
+  body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-footer-info{
+    grid-area:info;
+    grid-column:auto;
+    justify-self:center;
+    white-space:normal;
+    text-align:center;
+  }
+  body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-footer-right{
+    grid-area:pager;
+    grid-column:auto;
+    justify-self:end;
+  }
+}
+
+/* Show `-` even-fill: leftover seam (< one row) stretched across painted rows.
+   data-bo-autofit hides the body scroller so a half-row never peeks through. */
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table-wrap[data-bo-autofit],
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-table-wrap[data-bo-autofit],
+body.main-admin-security-page .mas-table-body-scroll[data-bo-autofit]{
+  overflow-y:hidden!important;
+}
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table.bo-tx-evenfill,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-table.bo-tx-evenfill,
+body.main-admin-security-page .mas-table.bo-tx-evenfill{
+  height:100%!important;
+}
+body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-table.bo-tx-evenfill tbody tr.mad-row > td,
+body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-table.bo-tx-evenfill tbody tr.mad-row > td,
+body.main-admin-security-page .mas-table.bo-tx-evenfill tbody tr[data-event-id] > td{
+  box-sizing:border-box!important;
+  vertical-align:middle!important;
+}
