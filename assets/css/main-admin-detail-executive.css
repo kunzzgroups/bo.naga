@@ -9929,3 +9929,36 @@ html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body .mad-filters .mad-s
   background:transparent!important;
   font-size:12px!important;
 }
+
+/* Joined currency / percent controls: match the Primary Currency + button
+   treatment. The shared edge is square; only the outside corners stay rounded.
+   Class-based selectors here lose to reports.css's shared field rule
+   (`.report-content input:not(#id):not(#id):not(#id):not(.x input)...`) — three
+   `:not(#id)` clauses give it ID-level specificity that no class chain can beat,
+   which is why an earlier class-only version of this fix had no visible effect.
+   Keying directly off each field's id matches that specificity so this actually wins. */
+#merchantCredit,
+#merchantThreshold,
+#madEditThreshold{
+  border-top-left-radius:0!important;
+  border-bottom-left-radius:0!important;
+  border-top-right-radius:8px!important;
+  border-bottom-right-radius:8px!important;
+}
+#merchantMarkup,
+#madProviderMarkup{
+  border-top-right-radius:0!important;
+  border-bottom-right-radius:0!important;
+  border-top-left-radius:8px!important;
+  border-bottom-left-radius:8px!important;
+}
+body.main-merchant-create-page .mac-input-group.is-prefix .mac-input-addon,
+body.main-merchant-detail-page #madEditWorkspace .mac-input-group.is-prefix .mac-input-addon{
+  border-top-right-radius:0!important;
+  border-bottom-right-radius:0!important;
+}
+body.main-merchant-create-page .mac-input-group.is-suffix .mac-input-addon.is-trailing,
+body.main-merchant-detail-page #madEditWorkspace .mac-input-group.is-suffix .mac-input-addon.is-trailing{
+  border-top-left-radius:0!important;
+  border-bottom-left-radius:0!important;
+}

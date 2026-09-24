@@ -1691,16 +1691,27 @@ html body.bo-wallet-tx.provider-transaction-page.pwt-page .table-card > .table-w
 .report-content .manage-summary .manage-card strong{grid-column:2;font-size:23px!important;font-weight:900!important;color:#18191C!important;margin:2px 0!important;line-height:1.05}
 .bo-summary-note{grid-column:2;color:#57534E;font-size:11px;font-weight:600;line-height:1.2}
 
-/* Every regular input/select follows the approved rounded field theme. */
+/* Every regular input/select follows the approved rounded field theme.
+   The five joined MYR/% merchant fields below are excluded: their own
+   page-scoped rules (main-admin-detail-executive.css) deliberately square
+   off the seam against the addon chip and round only the outer corner
+   (matching the Primary Currency control). Without this exclusion the three
+   `:not(#id)` clauses above give this rule ID-level specificity that those
+   page-scoped `.mac-input-group` radius rules can never out-specify, silently
+   forcing every joined-input corner back to the uniform 10px here. Scoped to
+   these ids (not the whole `.mac-input-group` class) because other pages'
+   `.mac-input-group` inputs (main-provider-create.html, main-provider-detail.html)
+   still depend on this rule for their background/border — only these five
+   already carry a complete replacement (background, border, radius) of their own. */
 .report-content select:not(#pullLogWindowUnit),
 .report-content .form-select,
-.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(.mad-search input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input):not(.bonus-title-search input):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.livechat-search input):not(.dup-search-control input),
+.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(#merchantCredit):not(#merchantThreshold):not(#merchantMarkup):not(#madEditThreshold):not(#madProviderMarkup):not(.mad-search input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input):not(.bonus-title-search input):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.livechat-search input):not(.dup-search-control input),
 .report-content textarea{
   border:1px solid #EADCC8!important;border-radius:10px!important;background-color:#FFF8EB!important;
   box-shadow:none!important;color:#18191C;
 }
 .report-content select:not(#pullLogWindowUnit):focus,.report-content .form-select:focus,
-.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(.mad-search input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input):not(.bonus-title-search input):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.livechat-search input):not(.dup-search-control input):focus,
+.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(#merchantCredit):not(#merchantThreshold):not(#merchantMarkup):not(#madEditThreshold):not(#madProviderMarkup):not(.mad-search input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input):not(.bonus-title-search input):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.livechat-search input):not(.dup-search-control input):focus,
 .report-content textarea:focus{border-color:#78716C!important;box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;outline:0!important}
 
 /* Live chat keeps the composer available while only the message history scrolls. */
