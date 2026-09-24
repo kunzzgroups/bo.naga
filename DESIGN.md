@@ -4146,3 +4146,42 @@ Only the width still differs, and that comes from each page's own grid column.
 The gate now asserts the standard for every family listing: 36px tall, 8px radius, `1px #DCC9A8`
 (light) / white .12 (dark), `0 12px` padding, `12px/700`, and **no icon inside the field** — which is
 the assertion that would have caught 11.2 and 11.3 being different in the first place.
+
+#### The search control, site-wide (2026-09-24)
+
+Owner: “全站页面统一bonus-category-title.html的搜索按键 确保设计都不会有问题”. Canonical, measured on that
+page: the **wrapper is the frame** (1px `#EADCC8`, radius 8px, 36px tall, pad `0 12px`), the magnifier is
+a **flex child inside** it (15px, `#78716C`), the input inside is **borderless with no padding**, and
+focus is an amber frame with a 3px `rgba(217,119,6,.14)` ring.
+
+**Audited before touching anything.** A script measured each control's *own parent* — an earlier
+regex-based pass had walked up to the page shell and reported body classes, which is why it looked like
+every page had a different wrapper. All **51 pages that carry a search input** (62 controls: 42 visible,
+20 inside closed modals) were rendered and measured. The finding: most of the site already ships the
+canonical shape, and the deviations are two clean groups:
+
+- **5 wrappers off** — bulk-adjustment (`40px`), game-provider (`radius 10px`, icon `#A8A29E`),
+  livechat + livechat-template (`13px` icon on a `#DCC9A8` frame), main-merchant-create (`40px`, icon
+  `#71717A`).
+- **16 visible controls with no frame or icon at all**, because their `.field` **input** owns the border
+  instead of a wrapper.
+
+**Landed now:** one block in `reports.css` normalises the sixteen search-wrapper idioms to the canonical
+box, radius, padding, icon size/colour, borderless input and focus ring — in one place rather than five
+page sheets, so the next page that reuses an idiom inherits the standard instead of inventing a sixth
+variant. Verified by re-running the same audit: all five now measure canonical (e.g. `mac-provider-search`
+was `40px` with a `#71717A` icon, now `36px / 8px / 0 12px / 15px #78716C`). This family's own pages use
+`.field`, not these idioms, so they are untouched — the gate stays **0 of 13** in light.
+
+**Still open, measured rather than guessed:** the 16 icon-less `.field` searches on 12 pages
+(admin-user, role, admin-login-log ×2, online-users ×2, manual-rebate-approval, provider-bet-report,
+index.html, agent-management, agent-promotion-admin, bank-deposit-usage, vip-exp-log, vip-reward-log,
+main-provider-health). **7 of those fields carry a visible caption `<label>` inside them**, so giving them
+the magnifier means restructuring markup (caption above, then a bordered wrapper holding icon + input) —
+not another CSS rule; and on this family's pages the family sheet's own input-border rules sit at a deeper
+guard, so they must be adapted in the same pass or the field ends up with two frames. Two cases left alone
+deliberately: `layout-section.html`'s `layout-find-query` (a 28px find-in-code box, not a listing search)
+and `main-provider-health.html`'s bare flex toolbar.
+
+One shade-level residue: where a page sheet pins the icon colour at a deeper guard
+(`category-search-control`, `banner-search`), the glyph stays `#57534E` rather than `#78716C`.
