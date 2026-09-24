@@ -4102,3 +4102,47 @@ links that *should* be underlined (none in this family) are untouched.
 
 The gate now counts underlined anchors on a family page and fails if any remains, so re-styling a
 `<button>` as an `<a>` cannot quietly bring the line back.
+
+#### The title icon, and one search-bar standard across the family (2026-09-24)
+
+Owner: “1.大标题的左边icon设计跑了 2.access control页面的searchbar 是否设计都统一标准”.
+
+**1. The title icon.** My own rule was the cause:
+
+```css
+body.bo-access-control .user-title-wrap > div { display:flex; align-items:center; gap:10px }
+```
+
+The icon tile is **also** a `div` child of `.user-title-wrap`, so this re-declared it `display:flex` and
+dropped the base rule's `display:grid; place-items:center` — which is what centres the glyph. The tile
+still measured 36×36 at the right position, which is why it read as "the icon moved" rather than "the
+icon is wrong": the glyph was simply off-centre inside it. Fixed with
+`> div:not(.user-title-icon)`. Verified: tile `display:grid`, `place-items:center`, glyph 20×21 with
+equal 8/8/8/8 insets. **Same trap as the filter strip's labels**: a `> div` / `> label` child selector
+reaching a child that is not the one meant.
+
+**2. The search bars were not unified.** Measured across all five listings:
+
+| | 11.2 | 11.3 | 11.4 | 11.5 | 11.6 | reference (`index.html`) |
+|---|---|---|---|---|---|---|
+| field height / radius | 36 / 8px | 36 / 8px | 36 / 8px | 36 / 8px | 36 / 8px | 36 / 8px |
+| border | `#EADCC8` | `#EADCC8` | `#DCC9A8` | `#DCC9A8` | `#DCC9A8` | `#DCC9A8` |
+| input width | **166** | 190 | 190 | 190 | 190 | 260 |
+| padding | `0 12px 0 34px` | `0 12px 0 34px` | `0 12px` | `0 12px` | `0 12px` | `0 12px` |
+| wrapper | `.input-icon-wrap` | `.input-icon-wrap` | `.field` | `.field` | `.field` | `.field` |
+| magnifier icon | yes | yes | no | no | no | no |
+
+So 11.2 and 11.3 were the outliers on three counts at once: a magnifier icon, an `.input-icon-wrap`
+wrapper with its own padding (which is what made the input 166px and left a second inside-edge), and the
+listing border colour `#EADCC8` instead of the control colour `#DCC9A8`. Only those two pages in the
+whole family carried a `bi-search`; the other three listings, the reference listing and
+`highest-turnover-games.html` all ship a plain bordered field.
+
+Unified **to the reference**: the wrapper and icon are gone, the input is a direct child of `.field`,
+and it measures `190×36`, radius `8px`, `1px #DCC9A8`, padding `0 12px`, `12px/700` — identical to
+11.4/11.5/11.6 and to the reference in both themes (dark uses the family's `rgba(255,255,255,.12)`).
+Only the width still differs, and that comes from each page's own grid column.
+
+The gate now asserts the standard for every family listing: 36px tall, 8px radius, `1px #DCC9A8`
+(light) / white .12 (dark), `0 12px` padding, `12px/700`, and **no icon inside the field** — which is
+the assertion that would have caught 11.2 and 11.3 being different in the first place.

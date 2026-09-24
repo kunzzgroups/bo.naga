@@ -937,9 +937,11 @@ html:not(#bo-charcoal-off)[data-bo-theme="dark"] body.bo-access-control .ipw-rul
    the page title — `highest-turnover-games.html` is the reference: the `<h1>` and
    the chip share one block and read as one line ("Highest Turnover Games
    [15 Members]"). Without the flex row the chip falls to a second line under the
-   title, because an `<h1>` is a block. Scoped to the title's own inner block so
-   nothing else on the page is affected. */
-html:not(#bo-charcoal-off) body.bo-access-control .user-title-wrap > div{
+   title, because an `<h1>` is a block.
+   `:not(.user-title-icon)` is load-bearing, not tidiness: the icon tile is ALSO a `div` child of
+   this wrapper, so a bare `> div` re-declared it `display:flex` and dropped the base rule's
+   `display:grid; place-items:center` — which left the glyph sitting off-centre in its tile. */
+html:not(#bo-charcoal-off) body.bo-access-control .user-title-wrap > div:not(.user-title-icon){
   display:flex !important;
   align-items:center !important;
   gap:10px !important;
