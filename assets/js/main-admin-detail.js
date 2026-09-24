@@ -28,7 +28,9 @@
   const statusFilter = document.getElementById('madStatusFilter');
   const resetBtn = document.getElementById('madResetBtn');
   const exportBtn = document.getElementById('madExportBtn');
-  const PAGE_SIZE = 10;
+  const pageSizeEl = document.getElementById('madEntriesPageSize');
+  let pageSize = 10;
+  let autoPageSize = null;
   const pageNoEl = document.getElementById('madPager');
   const infoEl = document.getElementById('madTableInfo');
   const syncLabel = document.getElementById('madSyncLabel');
@@ -46,6 +48,32 @@
   const selectAllInput = document.getElementById('madSelectAll');
   const selectAllWrap = document.getElementById('madSelectAllWrap');
   const bulkDeleteBtn = document.getElementById('madBulkDeleteBtn');
+
+  function isAutoPageSize(value){
+    const v = String(value == null ? '-' : value).trim();
+    return v === '' || v === '-' || /^auto$/i.test(v);
+  }
+
+  function measureAutoPageSize(){
+    const wrap = document.querySelector('.mad-table-wrap');
+    if(!wrap) return 10;
+    const head = wrap.querySelector('thead');
+    const sample = wrap.querySelector('tbody tr:not(.mad-empty) td');
+    const rowHeight = sample ? Math.max(36, Math.round(sample.closest('tr').getBoundingClientRect().height)) : 44;
+    const available = Math.max(0, Math.floor(wrap.clientHeight) - (head ? Math.ceil(head.getBoundingClientRect().height) : 0));
+    return Math.max(5, Math.min(200, Math.floor(available / rowHeight) || 10));
+  }
+
+  function resolvePageSize(){
+    const raw = String(pageSizeEl && pageSizeEl.value || '-').trim();
+    if(/^all$/i.test(raw)) return 10000;
+    if(isAutoPageSize(raw)){
+      if(autoPageSize == null) autoPageSize = measureAutoPageSize();
+      return autoPageSize;
+    }
+    const n = Number(raw);
+    return Number.isFinite(n) && n > 0 ? n : 10;
+  }
 
   const resetPassModal = document.getElementById('madResetPasswordModal');
   if(resetPassModal){ resetPassModal.classList.remove('show'); resetPassModal.setAttribute('aria-hidden', 'true'); }
@@ -362,7 +390,7 @@
 
   function renderAdmins(){
     if(!tbody) return;
-    const pageSize = PAGE_SIZE;
+    pageSize = resolvePageSize();
     const total = filteredAdmins.length;
     const totalPages = Math.max(1, Math.ceil(total / pageSize) || 1);
     currentPage = Math.max(1, Math.min(currentPage, totalPages));
@@ -815,9 +843,26 @@
   pageNoEl && pageNoEl.addEventListener('click', e => {
     const b = e.target.closest('[data-page]');
     if(!b || b.disabled) return;
-    const totalPages = Math.max(1, Math.ceil(filteredAdmins.length / PAGE_SIZE));
+    const totalPages = Math.max(1, Math.ceil(filteredAdmins.length / pageSize));
     const n = Number(b.dataset.page);
     if(n >= 1 && n <= totalPages && n !== currentPage){ currentPage = n; renderAdmins(); }
+  });
+
+  pageSizeEl && pageSizeEl.addEventListener('change', () => {
+    autoPageSize = null;
+    currentPage = 1;
+    renderAdmins();
+  });
+
+  let pageSizeResizeTimer = null;
+  window.addEventListener('resize', () => {
+    if(!pageSizeEl || !isAutoPageSize(pageSizeEl.value)) return;
+    clearTimeout(pageSizeResizeTimer);
+    pageSizeResizeTimer = setTimeout(() => {
+      autoPageSize = null;
+      currentPage = 1;
+      renderAdmins();
+    }, 150);
   });
 
   exportBtn && exportBtn.addEventListener('click', () => {

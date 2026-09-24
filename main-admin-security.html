@@ -12,6 +12,7 @@
 <link href="assets/css/bo-ui-standard.css?v=a920a6cc" rel="stylesheet">
 <link href="assets/css/bo-targeted-fixes.css?v=7542fd4c" rel="stylesheet"/>
 <link href="assets/css/main-admin-detail-executive.css?v=25223479" rel="stylesheet"/>
+<link href="assets/css/main-admin-page-size.css?v=1" rel="stylesheet"/>
 <link href="assets/css/bo-seg-bounce.css?v=fcde0bb3" rel="stylesheet"/>
 <script>
 (function(){
@@ -209,6 +210,17 @@
     </div>
 
     <div class="mad-footer">
+      <label class="mad-page-size-control entries-control" for="masEntriesPageSize">Show
+        <select id="masEntriesPageSize" class="mad-page-size-select" aria-label="Rows per page">
+          <option value="-" selected>-</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="All">All</option>
+        </select>
+        <span>entries</span>
+      </label>
       <div class="mad-footer-info" id="masTableInfo">Showing 0 records</div>
       <div class="mad-footer-right">
         <nav class="mad-pager" id="masPager" aria-label="Audit log pagination"></nav>

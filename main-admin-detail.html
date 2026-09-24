@@ -27,6 +27,7 @@
 <link href="assets/css/bo-targeted-fixes.css?v=7542fd4c" rel="stylesheet"/>
 
 <link href="assets/css/main-admin-detail-executive.css?v=25223479" rel="stylesheet"/>
+<link href="assets/css/main-admin-page-size.css?v=1" rel="stylesheet"/>
 
 <link href="assets/css/bo-seg-bounce.css?v=fcde0bb3" rel="stylesheet"/>
 <link href="assets/css/bo-table-zebra.css?v=5e28ddf4" rel="stylesheet"/>
@@ -218,6 +219,18 @@
 
 
     <div class="mad-footer">
+
+      <label class="mad-page-size-control entries-control" for="madEntriesPageSize">Show
+        <select id="madEntriesPageSize" class="mad-page-size-select" aria-label="Rows per page">
+          <option value="-" selected>-</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="All">All</option>
+        </select>
+        <span>entries</span>
+      </label>
 
       <div class="mad-footer-info" id="madTableInfo">Showing 0 to 0 of 0 administrators</div>
 

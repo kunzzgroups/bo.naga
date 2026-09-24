@@ -22,6 +22,7 @@
   const toEl = document.getElementById('masTo');
   const resetBtn = document.getElementById('masReset');
   const pagerEl = document.getElementById('masPager');
+  const pageSizeEl = document.getElementById('masEntriesPageSize');
   const detailPanel = document.getElementById('masDetailPanel');
   const detailTitle = document.getElementById('masDetailTitle');
   const detailGrid = document.getElementById('masDetailGrid');
@@ -52,7 +53,31 @@
   let page = 1;
   let resizeTimer = null;
 
-  const PAGE_SIZE = 10;
+  let pageSize = 10;
+  let autoPageSize = null;
+
+  function isAutoPageSize(value){
+    const v = String(value == null ? '-' : value).trim();
+    return v === '' || v === '-' || /^auto$/i.test(v);
+  }
+
+  function measureAutoPageSize(){
+    if(!tableScroll) return 10;
+    const sample = tableScroll.querySelector('tbody tr:not(.mad-empty) td');
+    const rowHeight = sample ? Math.max(36, Math.round(sample.closest('tr').getBoundingClientRect().height)) : 44;
+    return Math.max(5, Math.min(200, Math.floor(tableScroll.clientHeight / rowHeight) || 10));
+  }
+
+  function resolvePageSize(){
+    const raw = String(pageSizeEl && pageSizeEl.value || '-').trim();
+    if(/^all$/i.test(raw)) return 10000;
+    if(isAutoPageSize(raw)){
+      if(autoPageSize == null) autoPageSize = measureAutoPageSize();
+      return autoPageSize;
+    }
+    const n = Number(raw);
+    return Number.isFinite(n) && n > 0 ? n : 10;
+  }
 
   /* Same pager markup and same window as the merchant / admin listings
      (see pageButtons() in main-merchant-detail.js): first page, last page and the two either
@@ -841,11 +866,12 @@
 
   function renderTable(){
     if(!tbody) return;
+    pageSize = resolvePageSize();
     const total = filtered.length;
-    const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    const pages = Math.max(1, Math.ceil(total / pageSize));
     if(page > pages) page = pages;
-    const start = (page - 1) * PAGE_SIZE;
-    const rows = filtered.slice(start, start + PAGE_SIZE);
+    const start = (page - 1) * pageSize;
+    const rows = filtered.slice(start, start + pageSize);
 
     if(infoEl){
       infoEl.textContent = total
@@ -1215,6 +1241,11 @@
   });
   eventTypeEl && eventTypeEl.addEventListener('change', applyFilters);
   statusEl && statusEl.addEventListener('change', applyFilters);
+  pageSizeEl && pageSizeEl.addEventListener('change', () => {
+    autoPageSize = null;
+    page = 1;
+    renderTable();
+  });
   resetBtn && resetBtn.addEventListener('click', () => {
     if(searchEl) searchEl.value = '';
     if(eventTypeEl) eventTypeEl.value = '';
@@ -1234,7 +1265,14 @@
 
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(fitTableArea, 120);
+    resizeTimer = setTimeout(() => {
+      fitTableArea();
+      if(pageSizeEl && isAutoPageSize(pageSizeEl.value)){
+        autoPageSize = null;
+        page = 1;
+        renderTable();
+      }
+    }, 120);
   });
 
   tbody && tbody.addEventListener('click', e => {
