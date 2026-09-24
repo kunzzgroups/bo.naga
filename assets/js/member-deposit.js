@@ -218,10 +218,11 @@
     const params=new URLSearchParams();
     const kw=document.getElementById('depositKeyword')?.value.trim();
     const st=document.getElementById('depositStatus')?.value.trim();
+    const statusFilter=st==='ALL'?'':st;
     const from=document.getElementById('depositFrom')?.value;
     const to=document.getElementById('depositTo')?.value;
     const sz=resolvePageSize(document.getElementById('depositSize')?.value);
-    if(kw)params.set('keyword',kw); if(st)params.set('status',st); if(from)params.set('dateFrom',from); if(to)params.set('dateTo',to);
+    if(kw)params.set('keyword',kw); if(statusFilter)params.set('status',statusFilter); if(from)params.set('dateFrom',from); if(to)params.set('dateTo',to);
     params.set('page',page); params.set('size',String(sz)); return params.toString();
   }
   function paymentKeys(m){return [m.id,m.displayName,m.bankName,m.accountName,m.accountNumber,m.payId].map(norm).filter(Boolean);}
@@ -430,9 +431,10 @@
     const from=document.getElementById('depositFrom')?.value||'';
     const to=document.getElementById('depositTo')?.value||'';
     const status=document.getElementById('depositStatus')?.value||'';
+    const statusFilter=status==='ALL'?'':status;
     async function count(key){
       const params=new URLSearchParams({page:'1',size:'1'});
-      if(from)params.set('dateFrom',from); if(to)params.set('dateTo',to); if(status)params.set('status',status);
+      if(from)params.set('dateFrom',from); if(to)params.set('dateTo',to); if(statusFilter)params.set('status',statusFilter);
       const json=await api(endpoint(key)+'?'+params);
       const d=json.data||{}; const pg=json.pagination||d.pagination||d;
       const n=Number(pg.totalElements);

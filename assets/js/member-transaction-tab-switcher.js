@@ -19,7 +19,7 @@
   function controls(){
     return {
       from:$(id('From'))?.value||'',to:$(id('To'))?.value||'',
-      keyword:$(id('Keyword'))?.value.trim()||'',status:$(id('Status'))?.value||'',
+      keyword:$(id('Keyword'))?.value.trim()||'',status:(()=>{const v=$(id('Status'))?.value||'';return v==='ALL'?'':v;})(),
       size:$(id('Size'))?.value||'-'
     };
   }
@@ -85,32 +85,43 @@
     $(id('PrevBtn')).disabled=state.page<=1;$(id('NextBtn')).disabled=state.page>=state.totalPages;
   }
   async function reload(){
-    const c=controls(),params=new URLSearchParams({page:String(state.page),size:String(pageSize())});
+    const c=controls(),requestedSize=pageSize();
+    const params=new URLSearchParams({page:String(state.type==='all'?1:state.page),size:String(state.type==='all'?10000:requestedSize)});
     if(c.keyword)params.set('keyword',c.keyword);if(c.status)params.set('status',c.status);
     if(c.from)params.set('dateFrom',c.from);if(c.to)params.set('dateTo',c.to);
     const body=$(id('Body'));if(body)body.innerHTML=`<tr><td colspan="${state.type==='withdraw'||state.type==='all'?9:8}">Loading...</td></tr>`;
     try{
       const keys=state.type==='all'?['MEMBER_DEPOSIT_LIST','MEMBER_WITHDRAW_LIST']:[state.type==='withdraw'?'MEMBER_WITHDRAW_LIST':'MEMBER_DEPOSIT_LIST'];
       const responses=await Promise.all(keys.map(key=>api(endpoint(key)+'?'+params).then(json=>({json,key}))));
-      const rows=responses.flatMap(({json,key})=>{
+      let rows=responses.flatMap(({json,key})=>{
         const data=json.data||{};
         const values=Array.isArray(data)?data:(data.content||data.items||data.list||json.content||[]);
         return values.map(row=>({...row,__transactionType:key==='MEMBER_WITHDRAW_LIST'?'withdraw':'deposit'}));
       });
       rows.sort((a,b)=>String(b.createdAt||b.created_at||'').localeCompare(String(a.createdAt||a.created_at||'')));
-      const pagination=responses[0]?.pagination||responses[0]?.data?.pagination||responses[0]?.data||{};
+      let pagination=responses[0]?.pagination||responses[0]?.data?.pagination||responses[0]?.data||{};
+      if(state.type==='all'){
+        const total=rows.length,totalPages=Math.max(1,Math.ceil(total/requestedSize)),start=(state.page-1)*requestedSize;
+        rows=rows.slice(start,start+requestedSize);
+        pagination={totalElements:total,totalPages,page:state.page,size:requestedSize};
+      }
       render(rows,pagination);
     }catch(e){if(body)body.innerHTML=`<tr><td colspan="${state.type==='withdraw'||state.type==='all'?9:8}" class="text-danger">${esc(e.message)}</td></tr>`;}
   }
   function switchTab(type){
     if(type===state.type)return;
+    const current=controls();
     state.type=type;state.page=1;
     history.replaceState(null,'',`member-deposit.html?tab=${type}`);
     document.querySelectorAll('.bo-tx-tab[data-bo-tx-type]').forEach(a=>{
       const active=a.dataset.boTxType===type;a.classList.toggle('is-active',active);
       if(active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
     });
-    setTableShape();installCleanListeners();reload();
+    setTableShape();installCleanListeners();
+    const from=$(id('From')),to=$(id('To')),keyword=$(id('Keyword')),status=$(id('Status'));
+    if(from)from.value=current.from;if(to)to.value=current.to;if(keyword)keyword.value=current.keyword;
+    if(status)status.value=current.status||'ALL';
+    reload();
   }
   document.addEventListener('click',e=>{
     const tab=e.target.closest?.('.bo-tx-tab[data-bo-tx-type]');

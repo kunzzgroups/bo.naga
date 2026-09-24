@@ -73,7 +73,7 @@
   function scheduleEvenFill(){requestAnimationFrame(()=>requestAnimationFrame(evenFillRowHeights));}
   function bindEvenFillObserver(){const scroll=tableBodyScroll();if(!scroll||scroll._boEvenFillObs)return;scroll._boEvenFillObs=new ResizeObserver(()=>{clearTimeout(scroll._boEvenFillTimer);scroll._boEvenFillTimer=setTimeout(evenFillRowHeights,32);});scroll._boEvenFillObs.observe(scroll);}
   function publishPagerMeta(pagination,pageSize){const card=document.querySelector('.table-card');if(!card)return;const total=Number(pagination?.totalElements);if(Number.isFinite(total)&&total>=0)card.dataset.boTotal=String(total);else delete card.dataset.boTotal;const size=Number(pageSize);if(Number.isFinite(size)&&size>0)card.dataset.boPageSize=String(size);else delete card.dataset.boPageSize;card.dataset.boPage=String(page);}
-  function query(){const params=new URLSearchParams();const keyword=document.getElementById('withdrawKeyword')?.value.trim();const status=document.getElementById('withdrawStatus')?.value.trim();const from=document.getElementById('withdrawFrom')?.value;const to=document.getElementById('withdrawTo')?.value;const size=resolvePageSize(document.getElementById('withdrawSize')?.value);if(keyword)params.set('keyword',keyword);if(status)params.set('status',status);if(from)params.set('dateFrom',from);if(to)params.set('dateTo',to);params.set('page',page);params.set('size',String(size));return params.toString();}
+  function query(){const params=new URLSearchParams();const keyword=document.getElementById('withdrawKeyword')?.value.trim();const rawStatus=document.getElementById('withdrawStatus')?.value.trim();const status=rawStatus==='ALL'?'':rawStatus;const from=document.getElementById('withdrawFrom')?.value;const to=document.getElementById('withdrawTo')?.value;const size=resolvePageSize(document.getElementById('withdrawSize')?.value);if(keyword)params.set('keyword',keyword);if(status)params.set('status',status);if(from)params.set('dateFrom',from);if(to)params.set('dateTo',to);params.set('page',page);params.set('size',String(size));return params.toString();}
   async function loadApprovedWithdrawals(){
     let all=[],p=1,guard=0;
     const from=document.getElementById('withdrawFrom')?.value||'';
@@ -186,7 +186,8 @@
     const from=document.getElementById('withdrawFrom')?.value||'';
     const to=document.getElementById('withdrawTo')?.value||'';
     const status=document.getElementById('withdrawStatus')?.value||'';
-    async function count(key){const params=new URLSearchParams({page:'1',size:'1'});if(from)params.set('dateFrom',from);if(to)params.set('dateTo',to);if(status)params.set('status',status);const json=await api(endpoint(key)+'?'+params);const d=json.data||{};const pg=json.pagination||d.pagination||d;const n=Number(pg.totalElements);if(Number.isFinite(n))return Math.max(0,n);const rows=d.content||d.items||d.list||[];return rows.length;}
+    const statusFilter=status==='ALL'?'':status;
+    async function count(key){const params=new URLSearchParams({page:'1',size:'1'});if(from)params.set('dateFrom',from);if(to)params.set('dateTo',to);if(statusFilter)params.set('status',statusFilter);const json=await api(endpoint(key)+'?'+params);const d=json.data||{};const pg=json.pagination||d.pagination||d;const n=Number(pg.totalElements);if(Number.isFinite(n))return Math.max(0,n);const rows=d.content||d.items||d.list||[];return rows.length;}
     try{const [d,w]=await Promise.all([count('MEMBER_DEPOSIT_LIST'),count('MEMBER_WITHDRAW_LIST')]);const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=String(v);};set('boTxCountDeposit',d);set('boTxCountWithdraw',w);set('boTxCountAll',d+w);}catch(_e){}
   }
   function syncTxTypeTabs(defaultType){
