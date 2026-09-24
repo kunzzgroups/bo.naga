@@ -3946,3 +3946,42 @@ document not scrolling and `.table-card > .table-wrap` being the scroller. Resul
 Working-tree note: this pass ran with the colleague's uncommitted rail work set aside (166 files
 copied to `.tmp-wip/cur2/`). Their work is unstaged, untouched, and restored on disk afterwards; the
 only files in this commit are the family's own.
+
+### The role page: a shared script's modal assumptions, and the row actions (2026-09-24)
+
+Owner: “Role Management的add 和 edit 也要跳去一个页面 然后也要优化调整设计”. The page gets the same
+treatment as the admin one — `main-admin-create-page` on the body so the house create ladder applies,
+two `<header class="mac-section-head">` + `<h3>` pairs, fields on the `.mac-field` ladder, the
+`.mac-footer-actions` band (measured `fixed`, 73px), and the matrix toolbar where the sibling modal
+keeps it (`.role-permission-quick`, trailing the section head).
+
+**Why edit mode showed 0 of 25 ticks.** `openEdit` writes the modal title and subtitle through an
+**unguarded** dereference, 17 lines below the *guarded* version of the same write in `resetModal()`. On
+a page with no modal that throws **after** the name and the hidden id are set and **before** the
+permission fetch — so the page looked half-loaded and the matrix stayed empty. It was invisible
+because `msg()` is null-safe: the error went into an element that does not exist on this page.
+Sampled trace before the fix, every 250ms from 250ms to 4s:
+
+```
+checked=0  boxes=75  name="Senior Master"  status=""  badge="17 Groups"  editId=3
+```
+
+After guarding those two writes, the same trace measures **25 of 25 grants ticked** (26 checked boxes
+— the extra is the group toggle the matrix derives, verified against the fixture's 25 ids).
+
+**Wiring.** The listing opts in with `body[data-role-edit-page="role-create.html"]`; the shared renderer
+emits `<a class="clean-btn role-edit-btn" href="role-create.html?roleId=N">` row actions when that
+attribute is present and keeps its `<button data-edit-role>` path everywhere else, so no other page
+changes behaviour. `role.html`'s Add button is a link to the page and its modal (1733 bytes) is gone;
+the three modal hooks the shared script still touches (`#accessForm`, `#selectAllPermission`,
+`#clearAllPermission`) are now guarded. The opener (`#openRoleModalBtn`) and the `#checkList` render
+already were. Measured after: 17 rows, `roleActions.tags = "A"`, first href
+`role-create.html?roleId=2`, Add → `role-create.html`.
+
+**A regression this pass caught, and the gate hole it exposed.** `const editPage` was first declared
+inside the *desktop* row builder's arrow function, so the *mobile* builder threw
+`ReferenceError: editPage is not defined` — and the listing rendered **one row containing that error
+text**. The gate stayed green because its listing rule only asked for more than zero rows; it now
+requires a floor of five for a family listing, and that an opted-in page's row actions are anchors
+pointing at `<page>?roleId=N`. Verify: light and dark, **0 of 12 pages failing** (9 family/reference
+pages, 2 form pages, plus the edit-mode variant the harness now renders at `?roleId=3`).
