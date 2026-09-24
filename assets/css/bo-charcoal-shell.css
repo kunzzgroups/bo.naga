@@ -557,6 +557,14 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-brand,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-brand{
   letter-spacing:normal!important;
 }
+/* Unified Backoffice title size across every charcoal sidebar */
+body.report-body.bo-charcoal .report-sidebar .report-brand,
+body.report-body.bo-charcoal .report-sidebar .report-brand > div:not(.logo){
+  font-size:15px!important;
+  font-weight:800!important;
+  line-height:1.15!important;
+  letter-spacing:normal!important;
+}
 body.report-body.bo-charcoal .report-brand small{
   font-size:10px!important;
   font-weight:bold!important;
