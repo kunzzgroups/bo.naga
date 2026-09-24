@@ -874,10 +874,8 @@ body:not(#bo-bottom-band-off):has(.vle-footer) .report-sidebar .bo-sidebar-accou
   body.sidebar-mini .bo-sidebar-account-footer{padding:10px 8px}
   body.sidebar-mini .bo-sidebar-logout{justify-content:center;padding:10px 0}
   body.sidebar-mini .bo-sidebar-logout span{display:none}
-  /* 2026-09-24: the collapsed rail no longer slides out on hover, so the logout
-     row keeps its icon-only form while the pointer is on the rail. Its label
-     comes from the rail label panel, like every other collapsed row. */
-  body.sidebar-mini .report-sidebar:hover .bo-sidebar-logout{justify-content:center;padding:10px 0}
+  body.sidebar-mini .report-sidebar:hover .bo-sidebar-logout{justify-content:flex-start;padding:10px 12px}
+  body.sidebar-mini .report-sidebar:hover .bo-sidebar-logout span{display:inline}
 }
 @media(max-width:575.98px){
   .report-actions .bo-account-link{min-width:44px;width:44px;padding:0;justify-content:center}

@@ -184,7 +184,7 @@
     };
   }
 
-  function menuLinkHtml(m, isSub, forceActive, railLabel){
+  function menuLinkHtml(m, isSub, forceActive){
     const href = esc(m.url || '#');
     // forceActive boolean: caller resolved duplicate URLs (first menu match wins).
     const isActive = typeof forceActive === 'boolean'
@@ -205,10 +205,7 @@
     const isMainPanel = isMainAccount || /^main[-_]/i.test(currentFile);
     const pinHtml = isMainPanel ? '' :
       '<button type="button" class="bo-sidebar-pin '+(pinned?'is-pinned':'')+'" data-bo-pin-menu="'+esc(m.menuKey)+'" title="'+(pinned?'Unpin from Dashboard':'Pin to Dashboard')+'" aria-label="'+(pinned?'Unpin from Dashboard':'Pin to Dashboard')+'"><i class="bi '+(pinned?'bi-pin-angle-fill':'bi-pin-angle')+'"></i></button>';
-    // A top-level page row has no panel of its own, so its label travels in the
-    // attribute and is painted by the rail label panel while the sidebar is collapsed.
-    const railAttr = railLabel ? ' data-rail-label="' + esc(m.title) + '"' : '';
-    return '<a href="' + href + '" class="' + cls.trim() + '" data-menu-key="' + esc(m.menuKey) + '"' + railAttr + '>' +
+    return '<a href="' + href + '" class="' + cls.trim() + '" data-menu-key="' + esc(m.menuKey) + '">' +
       '<span><i class="bi ' + esc(m.icon || 'bi-circle') + ' me-2"></i>' + esc(m.title) + '</span>' + pinHtml + '</a>';
   }
 
@@ -495,7 +492,7 @@
       if(!document.querySelector('link[data-bo-quicknav-css]')){
         const pinCss=document.createElement('link');
         pinCss.rel='stylesheet';
-        pinCss.href='assets/css/bo-global-quicknav.css?v=c84f0546';
+        pinCss.href='assets/css/bo-global-quicknav.css?v=1.3.0';
         pinCss.dataset.boQuicknavCss='1';
         document.head.appendChild(pinCss);
       }
@@ -619,7 +616,7 @@
       let html='';
       roots.forEach(function(root){
         if(root.kind==='menu'){
-          html+=menuLinkHtml(root.menu,false, primaryMenuKey!=null && root.menu.menuKey===primaryMenuKey, true);
+          html+=menuLinkHtml(root.menu,false, primaryMenuKey!=null && root.menu.menuKey===primaryMenuKey);
           return;
         }
         const hasVisibleChildren=root.items.length>0;
@@ -635,18 +632,15 @@
           if(target){
             const targetActive=primaryGroupKey!=null && root.key===primaryGroupKey;
             html+='<div class="nav-group nav-group-empty" data-menu-group="'+esc(root.key)+'">'+
-              '<a href="'+esc(target.url)+'" class="nav-group-btn nav-group-direct '+(targetActive?'active':'')+'" data-menu-key="'+esc(target.menuKey)+'" data-rail-label="'+esc(root.title)+'">'+
+              '<a href="'+esc(target.url)+'" class="nav-group-btn nav-group-direct '+(targetActive?'active':'')+'" data-menu-key="'+esc(target.menuKey)+'">'+
               '<span><i class="bi '+esc(root.icon)+' me-2"></i>'+esc(root.title)+'</span></a></div>';
           }
           return;
         }
-        // `.bo-flyout-title` heads the panel in the collapsed rail, where the rail
-        // itself shows only the icon — so it is the one place the group name is
-        // readable. Hidden everywhere else (see bo-global-quicknav.css).
         html+='<div class="nav-group '+(isOpen?'open':'')+'" data-menu-group="'+esc(root.key)+'">'+
           '<button type="button" class="nav-group-btn" aria-expanded="'+(isOpen?'true':'false')+'">'+
           '<span><i class="bi '+esc(root.icon)+' me-2"></i>'+esc(root.title)+'</span><i class="bi bi-chevron-down"></i></button>'+
-          '<div class="nav-group-list '+(isOpen?'show':'')+'"><div class="bo-flyout-title">'+esc(root.title)+'</div>'+root.items.map(function(m){
+          '<div class="nav-group-list '+(isOpen?'show':'')+'">'+root.items.map(function(m){
             return menuLinkHtml(m,true, primaryMenuKey!=null && m.menuKey===primaryMenuKey);
           }).join('')+'</div></div>';
       });
@@ -656,32 +650,7 @@
       if(sidebar){
         let footer=sidebar.querySelector('.bo-sidebar-account-footer');
         if(!footer){footer=document.createElement('div');footer.className='bo-sidebar-account-footer';sidebar.appendChild(footer);}
-        footer.innerHTML='<a class="bo-sidebar-logout" href="#logout" data-bo-logout title="Logout" data-rail-label="Logout"><i class="bi bi-box-arrow-right"></i><span>Logout</span></a>';
-        // The rail label panel: one reused element that names the hovered row while
-        // the sidebar is collapsed. Rebuilt here so a re-render cannot leave a stale
-        // label behind (renderSidebar runs after every menu refresh).
-        let railLabel=sidebar.querySelector('.bo-rail-label');
-        if(!railLabel){railLabel=document.createElement('div');railLabel.className='bo-rail-label';railLabel.setAttribute('aria-hidden','true');sidebar.appendChild(railLabel);}
-        railLabel.classList.remove('show');
-        railLabel.textContent='';
-        // One sidebar toggle for the whole BO, mounted in the rail: the dashboard's own
-        // 42px button, same classes and values (see bo-global-quicknav.css), so every page
-        // opens and closes the rail from the same place. dashboard.html ships it in its
-        // markup; this is the same element for every other page. Idempotent, so a menu
-        // re-render cannot stack a second one.
-        const brand=sidebar.querySelector('.report-brand');
-        if(brand && !brand.querySelector('.dashboard-sidebar-toggle')){
-          const toggle=document.createElement('button');
-          toggle.type='button';
-          toggle.className='hamb dashboard-sidebar-toggle';
-          toggle.setAttribute('data-open-sidebar','');
-          toggle.setAttribute('aria-label','Toggle sidebar');
-          toggle.title='Toggle sidebar';
-          toggle.innerHTML='<i class="bi bi-list"></i>';
-          const closeSide=brand.querySelector('.close-side');
-          if(closeSide) brand.insertBefore(toggle, closeSide); else brand.appendChild(toggle);
-          brand.classList.add('dashboard-sidebar-brand');
-        }
+        footer.innerHTML='<a class="bo-sidebar-logout" href="#logout" data-bo-logout title="Logout"><i class="bi bi-box-arrow-right"></i><span>Logout</span></a>';
       }
     },
     loadUiSetting: async function(){
@@ -787,7 +756,7 @@
       };
       const frame=document.getElementById('dashboardWorkspaceFrame');
       if(frame&&!frame.dataset.shellBound){frame.dataset.shellBound='1';frame.addEventListener('load',function(){try{const d=frame.contentDocument;if(!d)return;if(d.documentElement)d.documentElement.classList.add('dashboard-embedded-page');if(d.body)d.body.classList.add('dashboard-embedded-page');let style=d.getElementById('dashboardEmbeddedShellStyle');if(!style){style=d.createElement('style');style.id='dashboardEmbeddedShellStyle';style.textContent='html,body{width:100%!important;max-width:100%!important;margin:0!important;overflow-x:hidden!important}*,*::before,*::after{box-sizing:border-box!important}.report-sidebar,.sidebar-overlay,.report-topbar{display:none!important}.report-shell{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important}.report-main{display:block!important;margin:0!important;padding:0!important;width:100%!important;max-width:100%!important;min-width:0!important}.report-content{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:12px 20px 20px!important;overflow-x:hidden!important}.report-content>*{max-width:100%!important;min-width:0!important}.table-wrap,.table-responsive,[class*=table-wrap],[class*=table-responsive]{max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch}.table-card,.filter-card,.summary-card,[class*=card]{max-width:100%}.container,.container-fluid{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}.dashboard-embedded-page .report-main,body.dashboard-embedded-page.sidebar-mini .report-main,body.dashboard-embedded-page.livechat-bo-page .report-main,body.dashboard-embedded-page.livechat-bo-page.sidebar-mini .report-main{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important}.dashboard-embedded-page .report-content,body.dashboard-embedded-page.sidebar-mini .report-content,body.dashboard-embedded-page.livechat-bo-page .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important;padding-left:20px!important;padding-right:20px!important}.dashboard-embedded-page .report-shell{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important}.dashboard-embedded-page .livechat-admin-shell{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .report-main,html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page.sidebar-mini .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .report-content,html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page.sidebar-mini .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;padding-left:20px!important;padding-right:20px!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .livechat-admin-shell{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}';d.head.appendChild(style);}const resizeFrame=function(){const de=d.documentElement,b=d.body;const contentHeight=Math.max(320,de?de.scrollHeight:0,b?b.scrollHeight:0);const availableHeight=Math.max(320,window.innerHeight-frame.getBoundingClientRect().top);frame.style.height=Math.min(contentHeight,availableHeight)+'px';};resizeFrame();if(frame.__boResizeObserver)frame.__boResizeObserver.disconnect();if(window.ResizeObserver&&d.body){frame.__boResizeObserver=new ResizeObserver(resizeFrame);frame.__boResizeObserver.observe(d.body);}setTimeout(resizeFrame,80);setTimeout(resizeFrame,350);}catch(e){}});}
-      if(!document.querySelector('link[data-bo-quicknav-css]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/css/bo-global-quicknav.css?v=c84f0546';l.dataset.boQuicknavCss='1';document.head.appendChild(l);}
+      if(!document.querySelector('link[data-bo-quicknav-css]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/css/bo-global-quicknav.css?v=1.3.0';l.dataset.boQuicknavCss='1';document.head.appendChild(l);}
     },
     bindDynamicSidebarEvents: function(){
       // Some legacy pages call this explicitly while auth.js also initializes it
@@ -849,50 +818,6 @@
         list.style.maxHeight = cap + 'px';
         list.style.overflowY = 'auto';
       }
-      // Rail label panel — the collapsed rail's answer for a row that opens no
-      // panel of its own (a top-level page, or a category whose children are all
-      // hidden). One reused element, positioned like the flyout so both sit on the
-      // same 6px gap and share the panel skin. Rail only: an expanded sidebar
-      // shows every label inline and never opens this.
-      function railLabelPanel(){
-        const sidebar = document.querySelector('.report-sidebar');
-        if(!sidebar) return null;
-        let panel = sidebar.querySelector('.bo-rail-label');
-        if(!panel){
-          panel = document.createElement('div');
-          panel.className = 'bo-rail-label';
-          panel.setAttribute('aria-hidden','true');
-          sidebar.appendChild(panel);
-        }
-        return panel;
-      }
-      function hideRailLabel(){
-        const panel = document.querySelector('.report-sidebar .bo-rail-label');
-        if(panel) panel.classList.remove('show');
-      }
-      function showRailLabel(row){
-        if(!row || window.innerWidth < 992) return;
-        if(!document.body.classList.contains('sidebar-mini')) return;
-        const panel = railLabelPanel();
-        const sidebar = row.closest('.report-sidebar');
-        const label = row.getAttribute('data-rail-label') || '';
-        if(!panel || !sidebar || !label) return;
-        panel.textContent = label;
-        const rr = row.getBoundingClientRect();
-        const sr = sidebar.getBoundingClientRect();
-        const left = Math.max(8, Math.round(sr.right + 6));
-        const top = Math.max(12, Math.round(rr.top));
-        // Same split as the group flyout: the custom properties are what the sheet
-        // consumes (it carries `!important` on `position`/`z-index`, and an inline
-        // `left`/`top` would be the weaker declaration the moment a sheet sets them),
-        // while the inline pair keeps the panel placed if the sheet is not loaded.
-        panel.style.setProperty('--bo-sidebar-flyout-left', left + 'px');
-        panel.style.setProperty('--bo-sidebar-flyout-top', top + 'px');
-        panel.style.left = left + 'px';
-        panel.style.top = top + 'px';
-        panel.classList.add('show');
-      }
-      const railLabelRows = '.report-sidebar [data-rail-label]';
       const sidebarFlyoutHoverTimers = new WeakMap();
       function dismissSidebarFlyout(group){
         if(!group) return;
@@ -910,7 +835,6 @@
       function closeAllSidebarFlyouts(){
         document.querySelectorAll('.report-sidebar .nav-group.bo-flyout-hover').forEach(dismissSidebarFlyout);
         window.__boSidebarActiveFlyout = null;
-        hideRailLabel();
       }
       window.BO_SIDEBAR = window.BO_SIDEBAR || {};
       window.BO_SIDEBAR.closeAllFlyouts = closeAllSidebarFlyouts;
@@ -932,9 +856,6 @@
       }
       function openSidebarFlyoutOnHover(group){
         if(!group || window.innerWidth < 992 || !group.closest('.report-sidebar')) return;
-        // A row with no panel (a top-level page, or a category whose children are all
-        // hidden) has no flyout to open — its name comes from the rail label instead.
-        if(!group.querySelector('.nav-group-list')) return;
 
         const previous = window.__boSidebarActiveFlyout;
         if (previous && previous !== group) {
@@ -983,19 +904,11 @@
       }
       document.addEventListener('mouseover', function(e){
         if(window.innerWidth < 992 || document.body.classList.contains('bo-sidebar-click-mode')) return;
-        const row = e.target.closest && e.target.closest(railLabelRows);
-        if(row){ showRailLabel(row); return; }
         const group = e.target.closest && e.target.closest('.report-sidebar .nav-group');
         if(group) openSidebarFlyoutOnHover(group);
       });
       document.addEventListener('mouseout', function(e){
         if(window.innerWidth < 992 || document.body.classList.contains('bo-sidebar-click-mode')) return;
-        const row = e.target.closest && e.target.closest(railLabelRows);
-        if(row){
-          const next = e.relatedTarget;
-          if(!(next && row.contains(next))) hideRailLabel();
-          return;
-        }
         const group = e.target.closest && e.target.closest('.report-sidebar .nav-group');
         if(!group) return;
         const next = e.relatedTarget;
@@ -1007,12 +920,8 @@
         }
         scheduleSidebarFlyoutHoverClose(group);
       });
-      // The label points at a row; once the rail scrolls it would point at nothing.
-      document.querySelector('.report-sidebar')?.addEventListener('scroll', hideRailLabel, {passive:true});
-      window.addEventListener('resize', hideRailLabel);
       document.addEventListener('pointerdown', function(e){
         if(window.innerWidth < 992) return;
-        hideRailLabel();
         if(e.target.closest && e.target.closest('.report-sidebar')) return;
         closeAllSidebarFlyouts();
       });
@@ -1022,8 +931,6 @@
       document.addEventListener('click', function(e){
         const pin=e.target.closest&&e.target.closest('[data-bo-pin-menu]');
         if(pin){e.preventDefault();e.stopPropagation();const key=pin.getAttribute('data-bo-pin-menu');pin.disabled=true;BO_AUTH.toggleDashboardPin(key).catch(function(err){console.error(err);}).finally(function(){pin.disabled=false;});return;}
-        // Expanding the rail puts every label back inline; the panel has nothing left to say.
-        if(e.target.closest && e.target.closest('[data-open-sidebar], .hamb')) hideRailLabel();
         const btn = e.target.closest && e.target.closest('.nav-group-btn');
         if(btn){
           // A group whose active children are all hidden is rendered as a direct anchor

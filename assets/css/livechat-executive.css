@@ -107,11 +107,13 @@ body:is(.livechat-bo-page, .livechat-template-page) .template-list::-webkit-scro
   display:none;width:0;height:0;
 }
 
-/* Header hamburger — this sheet used to restore the topbar hamburger on livechat desktop,
-   because reports.css hid it and that left the page without a lock control. The rail now
-   carries the toggle on every page (`dashboard-sidebar-toggle`, mounted by auth.js), so the
-   restore is gone: one control, in the rail, on this page too. */
+/* Header hamburger — reports.css hid .hamb on livechat desktop; restore the
+   shared charcoal toggle so the rail can collapse to 72px like every other page. */
 @media (min-width: 992px){
+  html body.report-body.bo-charcoal.livechat-bo-page .report-topbar .hamb,
+  html body.report-body.bo-charcoal.livechat-bo-page .report-topbar > .hamb{
+    display:inline-flex!important;
+  }
   html body.report-body.bo-charcoal.livechat-bo-page.sidebar-mini .report-main{
     margin-left:var(--rail-w)!important;
     width:calc(100% - var(--rail-w))!important;
@@ -1830,7 +1832,7 @@ html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legac
   transform:none!important;
   flex:0 0 auto!important;
   line-height:1!important;
-  font-size:15px!important;
+  font-size:13px!important;
 }
 html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .livechat-search > input{
   flex:1 1 auto!important;

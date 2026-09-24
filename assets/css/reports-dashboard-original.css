@@ -135,9 +135,6 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 
 /* ===== Sidebar mini / hover layout update ===== */
 :root{--rail-w:72px;--sidebar-w:260px}
-/* Desktop topbar hamburger. Shown here, hidden again by the sidebar's own layer
-   (`bo-global-quicknav.css`, injected by auth.js on every BO page) — the rail's 42px toggle
-   owns collapse/expand now. Pages that load this sheet without that one keep this control. */
 .report-topbar .hamb{display:inline-flex;align-items:center;justify-content:center;font-size:20px;border:0;background:#FFF8EB;color:#D97706;box-shadow:none}
 .report-sidebar{width:var(--sidebar-w);transition:width .22s ease,transform .22s ease,box-shadow .22s ease;overflow-x:hidden}
 .report-main{transition:margin-left .22s ease}
@@ -145,12 +142,19 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 @media(min-width:992px){
   body.sidebar-mini .report-main{margin-left:var(--rail-w)}
   body.sidebar-mini .report-sidebar{width:var(--rail-w);box-shadow:none}
+  body.sidebar-mini .report-sidebar:hover{width:var(--sidebar-w);box-shadow:18px 0 38px rgba(217,119,6,.12);z-index:1200}
   body.sidebar-mini .report-brand{justify-content:center;padding:0 12px}
   body.sidebar-mini .report-brand > div:not(.logo),
   body.sidebar-mini .report-nav a span,
   body.sidebar-mini .nav-group-btn span,
   body.sidebar-mini .nav-group-btn .bi-chevron-down,
   body.sidebar-mini .report-nav small{opacity:0;visibility:hidden;white-space:nowrap;width:0;overflow:hidden;transition:opacity .12s ease}
+  body.sidebar-mini .report-sidebar:hover .report-brand{justify-content:flex-start}
+  body.sidebar-mini .report-sidebar:hover .report-brand > div:not(.logo),
+  body.sidebar-mini .report-sidebar:hover .report-nav a span,
+  body.sidebar-mini .report-sidebar:hover .nav-group-btn span,
+  body.sidebar-mini .report-sidebar:hover .nav-group-btn .bi-chevron-down,
+  body.sidebar-mini .report-sidebar:hover .report-nav small{opacity:1;visibility:visible;width:auto;overflow:visible}
   body.sidebar-mini .report-nav{padding:10px 8px}
   body.sidebar-mini .report-nav a{justify-content:center;padding:12px 0;min-height:42px}
   body.sidebar-mini .report-nav a i{margin:0!important;font-size:17px}
@@ -159,22 +163,11 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
   body.sidebar-mini .nav-group.open .nav-group-btn{background:var(--primary-soft);color:#57534E}
   body.sidebar-mini .nav-group-btn i:first-child{margin:0!important;font-size:17px}
   body.sidebar-mini .nav-group-list{display:none!important}
-  /* 2026-09-24: the flyout's own labels. This twin sheet never carried the
-     `bo-flyout-hover` reveal that reports.css has, because the sidebar `:hover` rule
-     that used to sit below revealed them as a side effect of the slide-out; with the
-     slide-out gone, the open panel is what has to reveal its item labels (measured
-     without this rule on online-users.html: item span `font-size:0px`, panel icon-only). */
-  body.sidebar-mini .report-sidebar .nav-group.bo-flyout-hover .nav-group-list .report-sub span,
-  body.sidebar-mini .report-sidebar .nav-group.bo-flyout-hover .nav-group-list a span{
-    width:auto!important;
-    min-width:0!important;
-    max-width:none!important;
-    opacity:1!important;
-    visibility:visible!important;
-    overflow:visible!important;
-    white-space:normal!important;
-    font-size:inherit!important;
-  }
+  body.sidebar-mini .report-sidebar:hover .nav-group{border:1px solid var(--line);background:#FFF8EB;overflow:hidden}
+  body.sidebar-mini .report-sidebar:hover .nav-group-btn{justify-content:space-between;padding:11px 12px;border-radius:0;background:linear-gradient(204deg,#57534E,#57534E);color:#fff;border:0}
+  body.sidebar-mini .report-sidebar:hover .nav-group.open .nav-group-list{display:block!important}
+  body.sidebar-mini .report-sidebar:hover .report-nav a{justify-content:space-between;padding:10px 12px}
+  body.sidebar-mini .report-sidebar:hover .report-nav a i{margin-right:.5rem!important;font-size:14px}
 }
 
 @media(max-width:991.98px){
@@ -209,6 +202,18 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
     display:inline-flex!important;
     align-items:center!important;
     justify-content:center!important;
+  }
+  body.sidebar-mini .report-sidebar:hover .report-nav a span,
+  body.sidebar-mini .report-sidebar:hover .nav-group-btn span{
+    font-size:inherit!important;
+    justify-content:flex-start!important;
+  }
+  body.sidebar-mini .report-sidebar:hover .report-nav a span i,
+  body.sidebar-mini .report-sidebar:hover .nav-group-btn span i{
+    font-size:14px!important;
+    margin-right:.5rem!important;
+    width:auto!important;
+    min-width:0!important;
   }
 }
 
@@ -518,6 +523,10 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 .nav-group-list{padding:7px;background:#F5EBDC}
 .report-nav a.report-sub{display:flex;margin:0 0 3px 0;padding:9px 10px;border-radius:10px;font-size:13px}
 .report-nav a.report-sub span{font-weight:700}
+@media(min-width:992px){
+  body.sidebar-mini .report-sidebar:hover .report-nav a span,
+  body.sidebar-mini .report-sidebar:hover .nav-group-btn span{display:flex}
+}
 
 
 /* ===== BO form standardization: match Slider form style ===== */
@@ -2866,11 +2875,12 @@ body:has(#gameSearchInput) .game-filter-actions .clean-btn{
 @media(max-width:575.98px){.bo-range-month-grid,.bo-range-year-grid,.ref-cal-month-grid,.ref-cal-year-grid{gap:7px}.bo-range-month-grid button,.bo-range-year-grid button,.ref-cal-month-grid button,.ref-cal-year-grid button{height:34px}}
 
 
-/* 2026-07-16 sidebar hover, payment modal and admin modal update
-   2026-09-24: the collapsed rail no longer slides out on hover (see reports.css),
-   so the brand reveal it needed is gone; the rail keeps its resting chrome. */
+/* 2026-07-16 sidebar hover, payment modal and admin modal update */
 @media(min-width:992px){
   body.sidebar-mini .report-sidebar{overflow-y:auto!important;overflow-x:visible!important}
+  body.sidebar-mini .report-sidebar:hover{overflow-x:visible!important}
+  body.sidebar-mini .report-sidebar:hover .report-brand{width:var(--sidebar-w);min-width:var(--sidebar-w);padding:0 14px!important;justify-content:flex-start!important}
+  body.sidebar-mini .report-sidebar:hover .report-brand>div:not(.logo){display:block!important;min-width:140px!important;width:auto!important;max-width:none!important;overflow:visible!important;white-space:normal!important;opacity:1!important;visibility:visible!important;font-size:14px!important;line-height:1.25!important}
 }
 .pm-list-card{margin-bottom:0}.pm-list-card .user-toolbar-actions,.admin-list-card .user-toolbar-actions{display:flex;gap:10px;align-items:center}.pm-main-table td:last-child{white-space:nowrap}.pm-table-footer{margin-top:14px;display:flex;justify-content:space-between;align-items:center}.pm-modal,.admin-create-modal{position:fixed;inset:0;background:rgba(217,119,6,.48);z-index:10000;display:none;align-items:center;justify-content:center;padding:24px}.pm-modal.show,.admin-create-modal.show{display:flex!important}.pm-modal-panel{width:min(888px,96vw);max-height:94vh;overflow:auto;border-radius:14px}.pm-modal-head{position:sticky;top:0;background:#FFF8EB;z-index:2}.pm-modal-head h3{font-size:21px;margin:0 0 4px}.pm-modal-head small{color:#57534E}.pm-modal-body{padding:0 24px 18px}.pm-form-section{padding:16px 0;border-top:1px solid #EADCC8}.pm-form-section:first-of-type{border-top:0}.pm-form-section h4{font-size:13px;font-weight:900;color:#18191C;margin:0 0 14px;display:flex;gap:8px;align-items:center}.pm-form-grid{display:grid;gap:14px}.pm-grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}.pm-form-section .field label b{color:#ef4444}.pm-form-section .field input,.pm-form-section .field select,.pm-form-section .field textarea{width:100%;border:1px solid #EADCC8;border-radius:9px;background:#FFF8EB;color:#18191C;outline:0;padding:0 11px}.pm-form-section .field input,.pm-form-section .field select{height:40px}.pm-form-section .field textarea{padding:11px;resize:vertical}.pm-upload-zone{min-height:92px;border:1.5px dashed #78716C;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:#57534E;text-align:center}.pm-upload-zone>i{font-size:25px;color:#78716C}.pm-upload-zone b{color:#78716C}.pm-upload-zone small{font-size:11px;color:#78716C}.pm-upload-zone input{display:none}.pm-modal-actions{position:sticky;bottom:0;background:#FFF8EB;border-top:1px solid #EADCC8;margin:0 -24px -18px;padding:14px 24px;display:flex;justify-content:flex-end;gap:12px}.pm-modal-actions .clean-btn{min-width:110px}.admin-list-card{width:100%;margin-bottom:0}.admin-create-modal-panel{width:min(620px,96vw);max-height:92vh;overflow:auto}.admin-create-modal-body{padding:20px}.admin-create-modal .admin-create-stack{display:grid;grid-template-columns:1fr 1fr;gap:14px}.admin-create-modal .admin-field{margin:0}.admin-create-modal .admin-two-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;grid-column:1/-1}.admin-create-modal .admin-field:nth-child(5),.admin-create-modal .admin-field:nth-child(6){grid-column:1/-1}.admin-create-modal .admin-form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}.admin-create-modal .upload-status{margin-top:12px}.admin-list-card .user-toolbar{align-items:center}
 @media(max-width:767.98px){.pm-grid-4{grid-template-columns:1fr 1fr}.pm-modal,.admin-create-modal{padding:10px}.pm-modal-body{padding:0 14px 14px}.pm-modal-actions{margin:0 -14px -14px;padding:12px 14px}.admin-create-modal .admin-create-stack{grid-template-columns:1fr}.admin-create-modal .admin-two-fields,.admin-create-modal .admin-field:nth-child(5),.admin-create-modal .admin-field:nth-child(6){grid-column:auto}.admin-create-modal .admin-two-fields{grid-template-columns:1fr}.pm-list-card .user-toolbar-actions,.admin-list-card .user-toolbar-actions{width:100%;justify-content:flex-end}}
@@ -2878,9 +2888,7 @@ body:has(#gameSearchInput) .game-filter-actions .clean-btn{
 
 /* 2026-07-16 final collapsed-sidebar alignment fix
    Keep the rail anchored at the viewport edge and let the topbar hamburger
-   remain aligned with the main content. 2026-09-24: the rail no longer slides
-   out on hover, so nothing here moves the topbar or the rail's z-index any
-   more — the row and its flyout panel are the only hover response. */
+   remain aligned with the main content. Hover expansion overlays from x=0. */
 @media (min-width: 992px){
   .report-sidebar,
   body.sidebar-mini .report-sidebar,
@@ -2899,16 +2907,39 @@ body:has(#gameSearchInput) .game-filter-actions .clean-btn{
     margin-left:0!important;
     flex:0 0 auto!important;
   }
+  body.sidebar-mini .report-sidebar:hover .report-brand{
+    padding-left:10px!important;
+    padding-right:14px!important;
+    justify-content:flex-start!important;
+    overflow:visible!important;
+  }
+  body.sidebar-mini .report-sidebar:hover .report-brand > div:not(.logo){
+    display:block!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    white-space:nowrap!important;
+    overflow:visible!important;
+    opacity:1!important;
+    visibility:visible!important;
+  }
 }
 
 /* 2026-07-16 mini sidebar conditional hamburger alignment
-   Normal collapsed state keeps the hamburger aligned beside the icon rail. */
+   Normal collapsed state keeps the hamburger aligned beside the icon rail.
+   Only while the sidebar is hovered does it move to the expanded edge. */
 @media (min-width:992px){
   body.sidebar-mini .report-topbar{
     padding-left:20px!important;
   }
+  body.sidebar-mini:has(.report-sidebar:hover) .report-topbar{
+    padding-left:calc((var(--sidebar-w) - var(--rail-w)) + 20px)!important;
+  }
   body.sidebar-mini .report-topbar > .hamb{
     margin-left:0!important;
+  }
+  body.sidebar-mini .report-sidebar:hover{
+    z-index:6000!important;
   }
 }
 

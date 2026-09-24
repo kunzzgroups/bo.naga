@@ -161,6 +161,15 @@ body.menu-mgmt-page .bo-sidebar-logout:hover{
     min-width:var(--rail-w)!important;
     overflow-x:hidden!important;
   }
+  body.menu-mgmt-page.sidebar-mini .report-sidebar:hover,
+  body.menu-mgmt-page.sidebar-mini .report-sidebar.is-mini-hover{
+    width:var(--sidebar-w)!important;
+    max-width:var(--sidebar-w)!important;
+    min-width:var(--sidebar-w)!important;
+    overflow-x:hidden!important;
+    z-index:6000!important;
+    box-shadow:18px 0 38px rgba(217,119,6,.28);
+  }
   body.menu-mgmt-page.sidebar-mini .report-sidebar:not(:hover):not(.is-mini-hover) .report-brand > div{
     width:0!important;min-width:0!important;max-width:0!important;
     opacity:0!important;visibility:hidden!important;overflow:hidden!important;

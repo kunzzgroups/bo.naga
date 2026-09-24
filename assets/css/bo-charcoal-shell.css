@@ -237,8 +237,7 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-topbar .user-tit
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-topbar .hamb,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-topbar > .hamb{
   box-sizing:border-box!important;
-  /* 2026-09-24: no `display` here — the desktop topbar hamburger is gone (the rail carries
-     the toggle); below 992px the drawer opener is shown by reports.css's mobile block. */
+  display:inline-flex!important;
   align-items:center!important;
   justify-content:center!important;
   width:auto!important;
@@ -263,8 +262,7 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-topbar > .
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-topbar .hamb,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-topbar > .hamb{
   box-sizing:border-box!important;
-  /* 2026-09-24: no `display` here — the desktop topbar hamburger is gone (the rail carries
-     the toggle); below 992px the drawer opener is shown by reports.css's mobile block. */
+  display:inline-flex!important;
   align-items:center!important;
   justify-content:center!important;
   width:auto!important;
@@ -591,7 +589,9 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar{
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
   isolation:auto;
-}html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar.show{
+}html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.sidebar-mini .report-sidebar:hover,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.sidebar-mini .report-sidebar.is-mini-hover,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar.show{
   background:#FFE8CC!important;
   box-shadow:18px 0 40px rgba(60,48,32,.14)!important;
 }/* Amber edge rail — defines the continuum join */
@@ -799,7 +799,9 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar{
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
   isolation:auto;
-}html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar.show{
+}html[data-bo-theme="dark"] body.report-body.bo-charcoal.sidebar-mini .report-sidebar:hover,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.sidebar-mini .report-sidebar.is-mini-hover,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar.show{
   background:#3A3226!important;
   box-shadow:18px 0 40px rgba(0,0,0,.35)!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar::before{

@@ -48,7 +48,7 @@
         · submit / button / reset — buttons, not fields
         · :disabled / [readonly] — locked fields keep the #EDE4D4 dead state
           (e.g. #madEditUsername on the edit page, which is `readonly`) */
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not(:disabled):not([readonly]):not(#providerSearchInput):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.mad-search input):not(.agent-search-box input):not(.mac-provider-search input):not(.provider-list-search input):not(.livechat-search input):not(.dup-search-control input):not(.bo-search-control input),
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not(:disabled):not([readonly]):not(#providerSearchInput):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.mad-search input):not(.agent-search-box input):not(.mac-provider-search input):not(.provider-list-search input):not(.livechat-search input):not(.dup-search-control input),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) select:not(:disabled),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:not(:disabled):not([readonly]):not(.layout-code-pane textarea):not(.pc-rich-source):not(#pcRichSource){
   background-color:#FFF8EB!important;
@@ -63,8 +63,7 @@ html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-f
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-search > input,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .agent-search-box > input,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mac-provider-search > input,
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .provider-list-search > input,
-body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .bo-search-control > input{
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .provider-list-search > input{
   background-color:transparent!important;
 }
 /* The one control that must stay transparent, and why: the code editors on layout-section.html
@@ -120,8 +119,8 @@ html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-f
       the only state change.
       Same .layout-code-pane textarea exclusion as rule 1: that overlay must stay transparent
       on hover/focus too, or the cream fill covers the syntax layer (layout-section CSS pane). */
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:hover:not(:disabled):not([readonly]):not(#providerSearchInput):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.mad-search input):not(.agent-search-box input):not(.mac-provider-search input):not(.provider-list-search input):not(.livechat-search input):not(.dup-search-control input):not(.bo-search-control input),
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:focus:not(:disabled):not([readonly]):not(#providerSearchInput):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.mad-search input):not(.agent-search-box input):not(.mac-provider-search input):not(.provider-list-search input):not(.livechat-search input):not(.dup-search-control input):not(.bo-search-control input),
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:hover:not(:disabled):not([readonly]):not(#providerSearchInput):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.mad-search input):not(.agent-search-box input):not(.mac-provider-search input):not(.provider-list-search input):not(.livechat-search input):not(.dup-search-control input),
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) input:focus:not(:disabled):not([readonly]):not(#providerSearchInput):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.mad-search input):not(.agent-search-box input):not(.mac-provider-search input):not(.provider-list-search input):not(.livechat-search input):not(.dup-search-control input),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) select:hover:not(:disabled),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) select:focus:not(:disabled),
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) textarea:hover:not(:disabled):not([readonly]):not(.layout-code-pane textarea):not(.pc-rich-source):not(#pcRichSource),
@@ -145,9 +144,7 @@ html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-f
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mac-provider-search > input:hover,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mac-provider-search > input:focus,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .provider-list-search > input:hover,
-html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .provider-list-search > input:focus,
-body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .bo-search-control > input:hover,
-body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .bo-search-control > input:focus{
+html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .provider-list-search > input:focus{
   background-color:transparent!important;
 }
 
@@ -202,86 +199,4 @@ html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-f
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-modal-panel .mad-label,
 html:not([data-bo-theme="dark"]) body:not(#bo-input-fill-legacy):not(#bo-input-fill-legacy-2) .mad-pass-modal-panel .mac-label{
   color:#71717A!important;
-}
-
-/* 5. ONE search control, site-wide — the owner's standard, 2026-09-24.
-
-    "全站的搜索设计要统一 一个设计啊 只要有搜索功能都要统一标准 如 bonus-category-title.html 做标志统一"
-
-    The canonical control is bonus-category-title.html's `.bonus-title-search`, measured:
-      frame    the WRAPPER is the frame — 1px #EADCC8, radius 8px, height 36px, padding 0 12px,
-               flex row, align-center, gap 8px, box-sizing border-box; #FFF8EB light,
-               #2A2C36 + rgba(255,255,255,.12) dark
-      icon     a flex child INSIDE the frame — `bi bi-search`, 15px, #78716C
-      input    borderless: border 0, background transparent, padding 0, height 100%,
-               flex 1 1 auto, min-width 0, font 12px/700
-      focus    :focus-within -> border-color #D97706 + 0 0 0 3px rgba(217,119,6,.14)
-
-    `.bo-search-control` is that control's name in the markup, and this sheet is where it is
-    defined because THIS sheet is on every page that has a search control (51/51 measured;
-    index.html and online-users.html are the two that load no reports.css at all, and reports.css
-    is where the sixteen legacy wrapper names — .mad-search, .mp-search, .category-search-control,
-    .banner-search, … — are normalised to the same shape). Markup:
-
-        <label class="bo-search-control">
-          <i class="bi bi-search" aria-hidden="true"></i>
-          <input id="…" placeholder="Search …" autocomplete="off" />
-        </label>
-
-    A wrapping <label> is the site's own idiom (bonus-category-title.html) and gives the whole
-    well click-to-focus. A caption, where a page has one, stays OUTSIDE this element: the
-    placeholder names the field and the magnifier already says "search".
-
-    WHY THE THREE ID STEPS: on this family's pages a house sheet states the same properties at
-    two steps, so at two this rule would lose and the control would keep its old frame — the
-    measured `min-width 110px` instead of 260px defect. Three steps win; verified with
-    getComputedStyle, not with the CSS text.
-    -------------------------------------------------------------------------- */
-html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .bo-search-control{
-  height:36px!important;
-  min-height:36px!important;
-  max-height:36px!important;
-  border:1px solid #EADCC8!important;
-  border-radius:8px!important;
-  padding:0 12px!important;
-  display:flex!important;
-  align-items:center!important;
-  gap:8px!important;
-  box-sizing:border-box!important;
-  margin:0!important;
-  position:relative!important;
-  min-width:0!important;
-}
-html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not([data-bo-theme="dark"]) .bo-search-control{
-  background:#FFF8EB!important;
-}
-html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy)[data-bo-theme="dark"] .bo-search-control{
-  background:#2A2C36!important;
-  border-color:rgba(255,255,255,.12)!important;
-}
-html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .bo-search-control > i{
-  flex:0 0 auto!important;
-  font-size:15px!important;
-  line-height:1!important;
-  color:#78716C!important;
-  pointer-events:none!important;
-}
-html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .bo-search-control > input{
-  border:0!important;
-  background:transparent!important;
-  padding:0!important;
-  height:100%!important;
-  width:100%!important;
-  min-width:0!important;
-  flex:1 1 auto!important;
-  font-size:12px!important;
-  font-weight:700!important;
-  line-height:1.2!important;
-  border-radius:0!important;
-  box-shadow:none!important;
-  outline:none!important;
-}
-html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .bo-search-control:focus-within{
-  border-color:#D97706!important;
-  box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;
 }

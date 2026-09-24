@@ -58,6 +58,17 @@ body.brand-management-page .report-sidebar{
     min-width:var(--rail-w)!important;
     overflow-x:hidden!important;
   }
+  body.brand-exec-page.sidebar-mini .report-sidebar:hover,
+  body.brand-exec-page.sidebar-mini .report-sidebar.is-mini-hover,
+  body.brand-management-page.sidebar-mini .report-sidebar:hover,
+  body.brand-management-page.sidebar-mini .report-sidebar.is-mini-hover{
+    width:var(--sidebar-w)!important;
+    max-width:var(--sidebar-w)!important;
+    min-width:var(--sidebar-w)!important;
+    overflow-x:hidden!important;
+    z-index:6000!important;
+    box-shadow:18px 0 38px rgba(217,119,6,.28);
+  }
   body.brand-exec-page.sidebar-mini .report-sidebar:not(:hover):not(.is-mini-hover) .report-brand > div,
   body.brand-management-page.sidebar-mini .report-sidebar:not(:hover):not(.is-mini-hover) .report-brand > div{
     width:0!important;
@@ -106,6 +117,31 @@ body.brand-management-page .report-sidebar{
     opacity:0!important;
     visibility:hidden!important;
     overflow:hidden!important;
+  }
+  body.brand-exec-page.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub) span,
+  body.brand-exec-page.sidebar-mini .report-sidebar.is-mini-hover .report-nav > a:not(.report-sub) span,
+  body.brand-management-page.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub) span,
+  body.brand-management-page.sidebar-mini .report-sidebar.is-mini-hover .report-nav > a:not(.report-sub) span,
+  body.brand-exec-page.sidebar-mini .report-sidebar:hover .nav-group-btn span,
+  body.brand-exec-page.sidebar-mini .report-sidebar.is-mini-hover .nav-group-btn span,
+  body.brand-management-page.sidebar-mini .report-sidebar:hover .nav-group-btn span,
+  body.brand-management-page.sidebar-mini .report-sidebar.is-mini-hover .nav-group-btn span{
+    font-size:inherit!important;
+    justify-content:flex-start!important;
+  }
+  body.brand-exec-page.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub) span i,
+  body.brand-exec-page.sidebar-mini .report-sidebar.is-mini-hover .report-nav > a:not(.report-sub) span i,
+  body.brand-management-page.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub) span i,
+  body.brand-management-page.sidebar-mini .report-sidebar.is-mini-hover .report-nav > a:not(.report-sub) span i,
+  body.brand-exec-page.sidebar-mini .report-sidebar:hover .nav-group-btn span i,
+  body.brand-exec-page.sidebar-mini .report-sidebar.is-mini-hover .nav-group-btn span i,
+  body.brand-management-page.sidebar-mini .report-sidebar:hover .nav-group-btn span i,
+  body.brand-management-page.sidebar-mini .report-sidebar.is-mini-hover .nav-group-btn span i{
+    font-size:14px!important;
+    margin-right:.5rem!important;
+    width:auto!important;
+    min-width:0!important;
+    color:inherit!important;
   }
   body.brand-exec-page.sidebar-mini .report-sidebar:not(:hover):not(.is-mini-hover) .report-nav > a:not(.report-sub),
   body.brand-management-page.sidebar-mini .report-sidebar:not(:hover):not(.is-mini-hover) .report-nav > a:not(.report-sub),
