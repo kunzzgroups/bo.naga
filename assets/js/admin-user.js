@@ -1,18 +1,12 @@
 (function(){
   function pageButtons(current,total){
-    total=Math.max(1,Number(total)||1); current=Math.max(1,Math.min(Number(current)||1,total));
-    const pages=[]; const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n);};
-    add(1); for(let n=current-2;n<=current+2;n++) add(n); add(total); pages.sort((a,b)=>a-b);
-    let html='';
-    html+='<button type="button" class="smart-page first" data-page="1" '+(current<=1?'disabled':'')+' title="First page"><i class="bi bi-chevron-bar-left"></i></button>';
-    let prev=0; pages.forEach(n=>{if(prev&&n-prev>1)html+='<span class="smart-page-ellipsis">…</span>'; html+='<button type="button" class="smart-page '+(n===current?'active':'')+'" data-page="'+n+'" '+(n===current?'aria-current="page"':'')+'>'+n+'</button>'; prev=n;});
-    html+='<button type="button" class="smart-page last" data-page="'+total+'" '+(current>=total?'disabled':'')+' title="Last page"><i class="bi bi-chevron-bar-right"></i></button>';
-    return html;
+    // The house ladder (access-control-listing.js -> boAc.pageButtons): First,
+    // "Previous page", numbered rungs, "Next page", Last — the same anatomy every
+    // other listing renders, from one implementation instead of a copy per page.
+    if (window.boAc && boAc.pageButtons) return boAc.pageButtons(current, total);
+    return '<button type="button" class="smart-page" data-page="' + current + '" aria-current="page">' + current + '</button>';
   }
 
-  const createForm = document.getElementById('createAdminForm');
-  const createStatus = document.getElementById('createAdminStatus');
-  const createBtn = document.getElementById('createAdminBtn');
   const tbody = document.getElementById('adminTableBody');
   const mobileCards = document.getElementById('adminMobileCards');
   const editModal = document.getElementById('adminEditModal');
@@ -20,8 +14,6 @@
   const searchInput = document.getElementById('adminSearchInput');
   const roleFilter = document.getElementById('adminRoleFilter');
   const statusFilter = document.getElementById('adminStatusFilter');
-  const searchBtn = document.getElementById('searchAdminBtn');
-  const resetBtn = document.getElementById('resetAdminSearchBtn');
   const cancelBtn = document.getElementById('cancelCreateAdminBtn');
   const exportBtn = document.getElementById('exportAdminBtn');
   const pageSizeEl = document.getElementById('adminPageSize');
@@ -59,9 +51,11 @@
     }catch(e){ return String(value || '-'); }
   }
 
-  function shortDt(value){
-    const s = dt(value);
-    return s === '-' ? '-' : s.replace(' ', '<br>');
+  /* The date in the cell, the time on hover (`boAc.dtCell`, the member listing's own pattern).
+     This used to stack the two with a `<br>`, which made every row two lines tall for a column
+     that only needs the day. Falls back to the plain stamp if the shared helper is absent. */
+  function dateCell(value){
+    return (window.boAc && boAc.dtCell) ? boAc.dtCell(dt(value)) : dt(value);
   }
 
   function esc(value){
@@ -138,9 +132,19 @@
 
   function renderAdmins(){
     if(!tbody) return;
-    const pageSize = Number(pageSizeEl && pageSizeEl.value || 10);
+    // `-` (the default) fits the panel; `All` shows every row (boAc, see
+    // access-control-listing.js — the app-wide page-size contract).
+    const rawSize = pageSizeEl && pageSizeEl.value;
+    const pageSize = window.boAc ? boAc.resolve(rawSize, document.querySelector('.table-card'))
+                                 : (Number(rawSize) > 0 ? Number(rawSize) : 10);
     const total = filteredAdmins.length;
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    // `-` means "fit the panel": the count needs a painted row to measure, so the
+    // first render after the rows arrive re-runs once with the measured fit.
+    if (window.boAc && String(rawSize) === boAc.FIT && !renderAdmins._refit && total) {
+      const fitted = boAc.resolve(rawSize, document.querySelector('.table-card'));
+      if (fitted !== pageSize) { renderAdmins._refit = true; renderAdmins(); renderAdmins._refit = false; return; }
+    }
     currentPage = Math.max(1, Math.min(currentPage, totalPages));
     const start = (currentPage - 1) * pageSize;
     const rows = filteredAdmins.slice(start, start + pageSize);
@@ -163,19 +167,22 @@
       const protectedRoot = Number(row.id) === 1 && !viewerRoot;
       return '<tr>'+
         '<td class="admin-check-col"><input type="checkbox" class="admin-row-check" value="'+esc(row.id)+'"></td>'+
-        '<td><div class="admin-cell-user"><span class="admin-avatar">'+esc(initials(row))+'</span><div><b>'+esc(row.username)+'</b> '+(current?'<span class="current-login-pill">Current Login</span>':'')+'<br><small>'+esc(row.username)+'</small></div></div></td>'+
+        '<td><div class="admin-cell-user"><span class="admin-avatar">'+esc(initials(row))+'</span><div><b>'+esc(row.username)+'</b> '+(current?'<span class="current-login-pill">Current Login</span>':'')+'</div></div></td>'+
         '<td>'+esc(row.displayName || row.username || '-')+'</td>'+
         '<td><span class="role-pill '+(roleName(row).toLowerCase().includes('super')?'super':'')+'">'+esc(roleName(row))+'</span></td>'+
         '<td><span class="admin-status-pill '+(active?'active':'disabled')+'"><i></i>'+(active?'Active':'Disabled')+'</span></td>'+
-        '<td>'+shortDt(row.lastLoginAt || row.lastLogin || row.loginAt)+'</td>'+
-        '<td>'+shortDt(row.createdAt || row.created_at)+'</td>'+
+        '<td>'+dateCell(row.lastLoginAt || row.lastLogin || row.loginAt)+'</td>'+
+        '<td>'+dateCell(row.createdAt || row.created_at)+'</td>'+
         '<td><b>'+esc(row.createdByName || row.createdByUsername || row.createdBy || row.creator || '-')+'</b></td>'+
-        '<td><div class="user-row-actions admin-actions">'+(protectedRoot?'<span class="status-pill active" title="Root account cannot be modified by non-root administrators">Protected</span>':'<button class="icon-action admin-edit-btn" title="Edit" data-id="'+esc(row.id)+'" data-row=\''+JSON.stringify(row).replace(/'/g,'&#39;')+'\'><i class="bi bi-pencil"></i></button><button class="icon-action danger admin-delete-btn" title="Delete" type="button" data-id="'+esc(row.id)+'"><i class="bi bi-trash"></i></button>')+'</div></td>'+
+        '<td><div class="user-row-actions admin-actions">'+(protectedRoot?'<span class="status-pill active" title="Root account cannot be modified by non-root administrators">Protected</span>':'<a class="icon-action admin-edit-btn" title="Edit" href="admin-user-create.html?id='+esc(row.id)+'"><i class="bi bi-pencil"></i></a>' + '<button class="icon-action danger admin-delete-btn" title="Delete" type="button" data-id="'+esc(row.id)+'"><i class="bi bi-trash"></i></button>')+'</div></td>'+
       '</tr>';
     }).join('');
     if(mobileCards){
-      mobileCards.innerHTML = rows.map(row => { const viewer=BO_AUTH.user()||{}; const viewerRoot=viewer.rootAdmin===true||Number(viewer.rootAdmin)===1||String(viewer.roleType||'').toUpperCase()==='ROOT'||(Number(viewer.id)===1&&viewer.brandId==null); const protectedRoot=Number(row.id)===1&&!viewerRoot; return '<div class="member-card admin-mobile-card"><div class="member-card-head"><h3>'+esc(row.username)+'</h3><span class="admin-status-pill '+(Number(row.status)===1?'active':'disabled')+'"><i></i>'+(Number(row.status)===1?'Active':'Disabled')+'</span></div><div class="member-grid"><span>Display Name</span><b>'+esc(row.displayName || '-')+'</b><span>Role</span><b>'+esc(roleName(row))+'</b><span>Created</span><b>'+esc(dt(row.createdAt || row.created_at))+'</b><span>Created By</span><b>'+esc(row.createdByName || row.createdByUsername || row.createdBy || row.creator || '-')+'</b></div><div class="admin-mobile-actions">'+(protectedRoot?'<span class="status-pill active">Protected</span>':'<button class="clean-btn primary admin-edit-btn" data-id="'+esc(row.id)+'" data-row=\''+JSON.stringify(row).replace(/'/g,'&#39;')+'\'>Edit</button><button class="clean-btn danger admin-delete-btn" data-id="'+esc(row.id)+'">Delete</button>')+'</div></div>'; }).join('');
+      mobileCards.innerHTML = rows.map(row => { const viewer=BO_AUTH.user()||{}; const viewerRoot=viewer.rootAdmin===true||Number(viewer.rootAdmin)===1||String(viewer.roleType||'').toUpperCase()==='ROOT'||(Number(viewer.id)===1&&viewer.brandId==null); const protectedRoot=Number(row.id)===1&&!viewerRoot; return '<div class="member-card admin-mobile-card"><div class="member-card-head"><h3>'+esc(row.username)+'</h3><span class="admin-status-pill '+(Number(row.status)===1?'active':'disabled')+'"><i></i>'+(Number(row.status)===1?'Active':'Disabled')+'</span></div><div class="member-grid"><span>Display Name</span><b>'+esc(row.displayName || '-')+'</b><span>Role</span><b>'+esc(roleName(row))+'</b><span>Created</span><b>'+esc(dt(row.createdAt || row.created_at))+'</b><span>Created By</span><b>'+esc(row.createdByName || row.createdByUsername || row.createdBy || row.creator || '-')+'</b></div><div class="admin-mobile-actions">'+(protectedRoot?'<span class="status-pill active">Protected</span>':'<a class="clean-btn primary admin-edit-btn" href="admin-user-create.html?id='+esc(row.id)+'">Edit</a>' + '<button class="clean-btn danger admin-delete-btn" data-id="'+esc(row.id)+'">Delete</button>')+'</div></div>'; }).join('');
     }
+  // settled after the paint: `-` is verified on real rows, not the placeholder
+  // one post-paint verification pass so `-` is exact (see access-control-listing.js)
+  if (window.boAc && boAc.settle) boAc.settle(document.querySelector('.table-card'), renderAdmins);
   }
 
   async function loadBrandOptions(){
@@ -211,68 +218,12 @@
     }
   }
 
-  createForm && createForm.addEventListener('submit', async function(e){
-    e.preventDefault();
-    const pass = document.getElementById('newAdminPassword').value;
-    const confirm = document.getElementById('newAdminConfirmPassword').value;
-    if(pass !== confirm){ setStatus(createStatus, 'Confirm password does not match.', 'error'); return; }
-    createBtn.disabled = true;
-    setStatus(createStatus, 'Creating admin...', '');
-    try{
-      const currentUser=BO_AUTH.user()||{}; const brandEl=document.getElementById('newAdminBrand');
-      if(currentUser.masterAdmin && !currentUser.rootAdmin && (!brandEl||!brandEl.value)) throw new Error('Please select the branding for this administrator.');
-      if(!document.getElementById('newAdminRole').value) throw new Error(currentUser.rootAdmin&&(!brandEl||!brandEl.value)?'Please select the Master role.':'Please select a branding role.');
-      const json = await apiJson(BO_AUTH.createAdminUrl(), {
-        method: 'POST', headers: {'Content-Type':'application/json', ...BO_AUTH.authHeader()},
-        body: JSON.stringify({
-          username: document.getElementById('newAdminUsername').value.trim(),
-          displayName: document.getElementById('newAdminDisplayName').value.trim(),
-          password: pass,
-          status: Number(document.getElementById('newAdminStatus').value || 1),
-          roleId: document.getElementById('newAdminRole').value ? Number(document.getElementById('newAdminRole').value) : null,
-          brandId: document.getElementById('newAdminBrand') && document.getElementById('newAdminBrand').value ? Number(document.getElementById('newAdminBrand').value) : null,
-          remark: (document.getElementById('newAdminRemark') || {}).value || ''
-        })
-      });
-      setStatus(createStatus, json.message || 'Admin created successfully', 'success');
-      createForm.reset();
-      const rc = document.getElementById('adminRemarkCount'); if(rc) rc.textContent = '0';
-      await loadAdmins();
-      closeCreateAdmin();
-    }catch(err){ setStatus(createStatus, err.message || 'Create admin failed', 'error'); }
-    finally{ createBtn.disabled = false; }
-  });
+  /* Create Admin moved to its own page (admin-user-create.html). The modal, its
+     submit handler and its open/close wiring moved with it; this page edits only. */
 
-
-  const createModal = document.getElementById('adminCreateModal');
-  const openCreateBtn = document.getElementById('openCreateAdminBtn');
-  function openCreateAdmin(){ createForm && createForm.reset(); setStatus(createStatus,'',''); const rc=document.getElementById('adminRemarkCount'); if(rc) rc.textContent='0'; if(editModal){ editModal.classList.remove('show'); editModal.setAttribute('aria-hidden','true'); } if(createModal){ createModal.classList.add('show'); createModal.setAttribute('aria-hidden','false'); document.body.classList.add('modal-open'); } }
-  function closeCreateAdmin(){ if(createModal){ createModal.classList.remove('show'); createModal.setAttribute('aria-hidden','true'); } if(!document.querySelector('.modal-clean.show')) document.body.classList.remove('modal-open'); }
-  openCreateBtn && openCreateBtn.addEventListener('click', openCreateAdmin);
-  document.querySelectorAll('[data-close-create-admin]').forEach(btn => btn.addEventListener('click', closeCreateAdmin));
-  createModal && createModal.addEventListener('click', e => { if(e.target === createModal) closeCreateAdmin(); });
-
-  async function openEdit(btn){
-    let row = {};
-    try{ row = JSON.parse(btn.getAttribute('data-row') || '{}'); }catch(err){}
-    editingId = row.id;
-    document.getElementById('editAdminUsername').value = row.username || '';
-    document.getElementById('editAdminDisplayName').value = row.displayName || '';
-    document.getElementById('editAdminStatus').value = String(row.status == null ? 1 : row.status);
-    if(document.getElementById('editAdminBrand')) document.getElementById('editAdminBrand').value = row.brandId == null ? '' : String(row.brandId);
-    if(row.brandId) await loadRoles(Number(row.brandId)); else if((BO_AUTH.user()||{}).rootAdmin) await loadRoles(null);
-    document.getElementById('editAdminRole').value = String(row.roleId || '');
-    document.getElementById('editAdminStatus').dispatchEvent(new Event('change', {bubbles:true}));
-    document.getElementById('editAdminRole').dispatchEvent(new Event('change', {bubbles:true}));
-    document.getElementById('editAdminPassword').value = '';
-    setStatus(document.getElementById('editAdminStatusMsg'), '', '');
-    if(createModal){ createModal.classList.remove('show'); createModal.setAttribute('aria-hidden','true'); }
-    if(editModal){ editModal.classList.add('show'); editModal.setAttribute('aria-hidden','false'); document.body.classList.add('modal-open'); }
-  }
-
+  /* Edit Admin moved to its own page (admin-user-create.html?id=N): the modal,
+     its prefill and its submit handler all went with it. */
   document.addEventListener('click', function(e){
-    const edit = e.target.closest && e.target.closest('.admin-edit-btn');
-    if(edit){ const viewer=BO_AUTH.user()||{}; const viewerRoot=viewer.rootAdmin===true||Number(viewer.rootAdmin)===1||String(viewer.roleType||'').toUpperCase()==='ROOT'||(Number(viewer.id)===1&&viewer.brandId==null); if(Number(edit.dataset.id)===1&&!viewerRoot){ BO_DIALOG.alert('Root admin account is protected.'); return; } openEdit(edit); return; }
     const del = e.target.closest && e.target.closest('.admin-delete-btn');
     if(del){
       const id=Number(del.dataset.id||0);
@@ -292,32 +243,21 @@
     if(toggle){ const id = toggle.getAttribute('data-toggle-password'); const input = document.getElementById(id); if(input){ input.type = input.type === 'password' ? 'text' : 'password'; } }
   });
 
-  editForm && editForm.addEventListener('submit', async function(e){
-    e.preventDefault();
-    if(!editingId) return;
-    const statusEl = document.getElementById('editAdminStatusMsg');
-    setStatus(statusEl, 'Saving admin...', '');
-    try{
-      const json = await apiJson(BO_AUTH.adminUpdateUrl(editingId), {
-        method: 'POST', headers: {'Content-Type':'application/json', ...BO_AUTH.authHeader()},
-        body: JSON.stringify({
-          username: document.getElementById('editAdminUsername').value.trim(),
-          displayName: document.getElementById('editAdminDisplayName').value.trim(),
-          status: Number(document.getElementById('editAdminStatus').value || 1),
-          roleId: document.getElementById('editAdminRole').value ? Number(document.getElementById('editAdminRole').value) : null,
-          brandId: document.getElementById('editAdminBrand') && document.getElementById('editAdminBrand').value ? Number(document.getElementById('editAdminBrand').value) : null,
-          password: document.getElementById('editAdminPassword').value
-        })
-      });
-      setStatus(statusEl, json.message || 'Admin updated successfully', 'success');
-      if(Number(editingId) === Number((BO_AUTH.user() || {}).id) && json.data){ BO_AUTH.saveUser(json.data); }
-      await loadAdmins();
-    }catch(err){ setStatus(statusEl, err.message || 'Update admin failed', 'error'); }
-  });
+  /* The edit form lives on admin-user-create.html?id=N now. */
 
-  searchBtn && searchBtn.addEventListener('click', applyFilters);
+  // No Reset / Search in the strip any more: the fields drive the filter. Text
+  // waits out a 400ms debounce (the report family's value), the selects apply at
+  // once. Enter still commits immediately.
+  (function wireLiveFilters(){
+    let t = 0;
+    const soon = () => { clearTimeout(t); t = setTimeout(applyFilters, 400); };
+    if (searchInput) {
+      searchInput.addEventListener('input', soon);
+      searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') { clearTimeout(t); applyFilters(); } });
+    }
+    [roleFilter, statusFilter].forEach(el => el && el.addEventListener('change', applyFilters));
+  })();
   searchInput && searchInput.addEventListener('keydown', e => { if(e.key === 'Enter') applyFilters(); });
-  resetBtn && resetBtn.addEventListener('click', () => { if(searchInput) searchInput.value=''; if(roleFilter) roleFilter.value=''; if(statusFilter) statusFilter.value=''; applyFilters(); });
   cancelBtn && cancelBtn.addEventListener('click', closeCreateAdmin);
   pageSizeEl && pageSizeEl.addEventListener('change', () => { currentPage = 1; renderAdmins(); });
   prevBtn && prevBtn.addEventListener('click', () => { currentPage--; renderAdmins(); });

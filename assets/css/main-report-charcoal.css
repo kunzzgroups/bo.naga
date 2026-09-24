@@ -400,8 +400,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
   isolation:auto;
-}html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).sidebar-mini .report-sidebar:hover,
-html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).sidebar-mini .report-sidebar.is-mini-hover,
+}
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar.show{
   background:#FFE8CC!important;
   box-shadow:18px 0 40px rgba(60,48,32,.14)!important;
@@ -574,8 +573,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
   isolation:auto;
-}html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).sidebar-mini .report-sidebar:hover,
-html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).sidebar-mini .report-sidebar.is-mini-hover,
+}
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar.show{
   background:#3A3226!important;
   box-shadow:18px 0 40px rgba(0,0,0,.35)!important;
@@ -805,8 +803,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   filter:drop-shadow(0 0 6px rgba(245,158,11,.45));
 }
 
-@media(min-width:992px){body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).sidebar-mini .report-nav > a:not(.report-sub).active,
-body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active{
+@media(min-width:992px){body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).sidebar-mini .report-nav > a:not(.report-sub).active{
     background:linear-gradient(135deg, #FFF8EF 0%, #FFE8CC 48%, #FFF3E0 100%)!important;
     color:#9A3412!important;
     box-shadow:
@@ -814,16 +811,14 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
       0 0 0 1px rgba(217,119,6,.18),
       0 6px 16px rgba(217,119,6,.12)!important;
     border-radius:10px!important;
-  }html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).sidebar-mini .report-nav > a:not(.report-sub).active,
-html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active{
+  }html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).sidebar-mini .report-nav > a:not(.report-sub).active{
     background:linear-gradient(90deg, rgba(245,158,11,.16) 0%, rgba(245,158,11,.05) 45%, transparent 100%)!important;
     color:#FBBF24!important;
     box-shadow:
       inset 0 1px 0 rgba(245,158,11,.18),
       inset 0 -1px 0 rgba(245,158,11,.10),
       0 0 28px rgba(245,158,11,.12)!important;
-  }body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).sidebar-mini .report-nav > a:not(.report-sub).active::before,
-body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active::before{
+  }body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).sidebar-mini .report-nav > a:not(.report-sub).active::before{
     content:"";
     position:absolute;
     left:0;top:7px;bottom:7px;width:3px;border-radius:999px;

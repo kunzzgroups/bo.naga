@@ -600,13 +600,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(isCompactAutoWidthWrap(parts.wrap)){
       if(inFilterRow || inEntriesControl){
-        /* Never size the .bo-filter-row itself — that collapses keyword+select
-           into the select's width and clips the dropdown (VIP Reward Log).
-           Never size .entries-control either — that crushes "Show [N] entries"
-           into the select's 72px (Game Sub Category / MD Show N footer). */
-        const item=inEntriesControl
-          ? parts.wrap
-          : (parts.wrap.closest('.bo-filter-select-item,.field') || parts.wrap);
+        /* Never size a container that holds more than the select — that
+           collapses its other children into the select's width. `.bo-filter-row`
+           was excluded for this (it clipped the keyword field, VIP Reward Log);
+           `.entries-control` is the same case and was NOT excluded, so the
+           footer's `Show <select> entries` had its container pinned to the
+           select's 72px while it also holds those two words: the control
+           measured clientWidth 72 against scrollWidth 161 and "entries" painted
+           under the select's arrow. The wrap is sized instead, just below. */
+        const item=parts.wrap.closest('.bo-filter-select-item,.field') || parts.wrap;
         if(item && !item.classList.contains('bo-filter-row') && (item.classList.contains('bo-filter-select-item') || item.classList.contains('field') || item===parts.wrap)){
           item.style.setProperty('--bo-select-width', contentWidth+'px');
           item.style.setProperty('width', contentWidth+'px', 'important');

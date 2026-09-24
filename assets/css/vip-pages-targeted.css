@@ -2590,6 +2590,21 @@ html[data-bo-theme="dark"] body.vip-level-edit-page.report-body.bo-charcoal:not(
   transform:translateY(1px) !important;
 }
 
-
-
-
+/* The search field, now that its frame lives on the wrapper (2026-09-24, "one search control,
+   site-wide"). This page always sized its search to 300px; the wrapper has to take that width or
+   the placeholder "Username, mobile, reference or remark" (229px at 12px/700, measured) is cut at
+   141px. Three ID steps because the house sheet pins this row's items at 190px with two. Height
+   stays 36px: the standard frame, not this page's old 42px input. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-search-standard-off) body.vip-log-page .vip-log-filters > .bo-search-control{
+  /* 300px is this page's own number for its search, kept now that the frame lives on a wrapper.
+     Stated at four ID steps - the step the standard itself uses - because the standard sets
+     the well's width, and with two steps the house sheet's 190px `flex-basis`/`max-width`
+     clamped it (measured: 190x36 with the placeholder "Username, mobile, reference or remark"
+     cut to 141px of text). Three of the four steps win the tie on IDs; this rule also carries
+     more class steps, so it takes the cascade. */
+  width:300px !important;
+  min-width:300px !important;
+  max-width:300px !important;
+  flex:0 0 auto !important;
+  height:36px !important;
+}

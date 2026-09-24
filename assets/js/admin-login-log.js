@@ -1,4 +1,9 @@
 (function(){
+  function pageButtons(current,total){
+    if (window.boAc && boAc.pageButtons) return boAc.pageButtons(current, total);
+    return '<button type="button" class="smart-page" data-ac-page="' + current + '" aria-current="page">' + current + '</button>';
+  }
+
   'use strict';
   BO_AUTH.requireLogin(); BO_AUTH.refreshMe(); BO_AUTH.renderProfile();
   const body=document.getElementById('loginLogBody'), search=document.getElementById('loginLogSearch'), status=document.getElementById('loginLogStatus'), ip=document.getElementById('loginLogIp'), size=document.getElementById('loginLogPageSize');
@@ -25,7 +30,10 @@
     });
     page=1; render();
   }
-  function render(){const ps=Number(size.value||10), pages=Math.max(1,Math.ceil(filtered.length/ps)); page=Math.min(Math.max(1,page),pages); const rows=filtered.slice((page-1)*ps,page*ps); body.innerHTML=rows.length?rows.map((x,i)=>'<tr><td>'+((page-1)*ps+i+1)+'</td><td>'+esc(dt(x.loginAt))+'</td><td><b>'+esc(x.username||'-')+'</b><br><small>'+esc(x.displayName||'')+'</small></td><td><span class="admin-status-pill '+(x.status==='SUCCESS'?'active':'disabled')+'"><i></i>'+(x.status==='SUCCESS'?'Success':'Failed')+'</span></td><td>'+esc(x.ipAddress||'-')+'</td><td title="'+esc(x.userAgent||'')+'" style="max-width:320px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(x.userAgent||'-')+'</td><td>'+esc(x.failureReason||'-')+'</td></tr>').join(''):'<tr><td colspan="7">No login records found.</td></tr>'; document.getElementById('loginLogCount').textContent=filtered.length+' Records'; document.getElementById('loginLogInfo').textContent=filtered.length?'Showing '+((page-1)*ps+1)+' to '+Math.min(page*ps,filtered.length)+' of '+filtered.length+' entries':'Showing 0 to 0 of 0 entries'; document.getElementById('loginLogPage').textContent=page; document.getElementById('loginLogPrev').disabled=page<=1; document.getElementById('loginLogNext').disabled=page>=pages;}
+  function render(){const ps=(window.boAc?boAc.resolve(size.value,document.querySelector('.table-card')):(Number(size.value)>0?Number(size.value):10)), pages=Math.max(1,Math.ceil(filtered.length/ps)); page=Math.min(Math.max(1,page),pages); const rows=filtered.slice((page-1)*ps,page*ps); body.innerHTML=rows.length?rows.map((x,i)=>'<tr><td>'+((page-1)*ps+i+1)+'</td><td>'+esc(dt(x.loginAt))+'</td><td><b>'+esc(x.username||'-')+'</b><br><small>'+esc(x.displayName||'')+'</small></td><td><span class="admin-status-pill '+(x.status==='SUCCESS'?'active':'disabled')+'"><i></i>'+(x.status==='SUCCESS'?'Success':'Failed')+'</span></td><td>'+esc(x.ipAddress||'-')+'</td><td title="'+esc(x.userAgent||'')+'" style="max-width:320px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(x.userAgent||'-')+'</td><td>'+esc(x.failureReason||'-')+'</td></tr>').join(''):'<tr><td colspan="7">No login records found.</td></tr>'; document.getElementById('loginLogCount').textContent=filtered.length+' Records'; document.getElementById('loginLogInfo').textContent=filtered.length?'Showing '+((page-1)*ps+1)+' to '+Math.min(page*ps,filtered.length)+' of '+filtered.length+' entries':'Showing 0 to 0 of 0 entries'; document.getElementById('loginLogPager').innerHTML=pageButtons(page,pages);
+  // settled after the paint: `-` is verified on real rows, not the placeholder
+  // one post-paint verification pass so `-` is exact (see access-control-listing.js)
+  if (window.boAc && boAc.settle) boAc.settle(document.querySelector('.table-card'), render);if(window.boAc&&String(size.value)===boAc.FIT&&!render._refit&&filtered.length){const fit=boAc.resolve(size.value,document.querySelector('.table-card'));if(fit!==ps){render._refit=true;render();render._refit=false;return;}}}
   async function load(){body.innerHTML='<tr><td colspan="7">Loading...</td></tr>'; try{const j=await apiJson(BO_AUTH.adminLoginLogsUrl()); all=Array.isArray(j.data)?j.data:[]; stats(); apply();}catch(e){body.innerHTML='<tr><td colspan="7" class="text-danger">'+esc(e.message)+'</td></tr>';}}
 
   const refDatePicker={view:new Date(),selectingStart:true,mode:'days',yearPageStart:new Date().getFullYear()-5};
@@ -88,12 +96,22 @@
     });
   }
 
-  document.getElementById('loginLogSearchBtn').onclick=apply;
-  document.getElementById('loginLogReset').onclick=()=>{search.value='';status.value='';ip.value='';const [a,b]=presetRange('today');refDatePicker.view=new Date(a+'T00:00:00');setDateRange(a,b,'today',true);};
-  document.getElementById('loginLogRefresh').onclick=load;
+    /* No Reset / Search / Refresh in this strip: the fields apply themselves and
+     the date range reloads on a complete range, the report family's contract. */
+
   size.onchange=()=>{page=1;render();};
-  document.getElementById('loginLogPrev').onclick=()=>{page--;render();};
-  document.getElementById('loginLogNext').onclick=()=>{page++;render();};
+  // No Reset / Search in the strip any more: the fields drive the query. Text
+  // waits out a 400ms debounce, the select and the date range apply at once.
+  (function wireLiveFilters(){
+    let t = 0;
+    const soon = () => { clearTimeout(t); t = setTimeout(apply, 400); };
+    [search, ip].forEach(el => { if (!el) return;
+      el.addEventListener('input', soon);
+      el.addEventListener('keydown', e => { if (e.key === 'Enter') { clearTimeout(t); apply(); } });
+    });
+    if (status) status.addEventListener('change', apply);
+  })();
+  document.getElementById('loginLogPager').onclick=e=>{const b=e.target.closest('[data-page]');if(!b||b.disabled)return;page=Number(b.dataset.page)||1;render();};
   search.onkeydown=e=>{if(e.key==='Enter')apply();}; ip.onkeydown=e=>{if(e.key==='Enter')apply();};
   initDatePicker();load();
 })();

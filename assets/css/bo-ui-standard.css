@@ -111,7 +111,7 @@
 
 /* Control fallback before runtime classification. */
 .report-main .bo-filter-row>input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
-.report-main .bo-filter-row>*:not(.bo-filter-range-item) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input){
+.report-main .bo-filter-row>*:not(.bo-filter-range-item) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.bo-search-control input){
   box-sizing:border-box!important;
   height:var(--bo-filter-height)!important;
   min-height:var(--bo-filter-height)!important;
@@ -170,7 +170,7 @@
   min-width:0!important;
   max-width:100%!important;
 }
-.report-main .bo-filter-row>.bo-filter-input-item input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input),
+.report-main .bo-filter-row>.bo-filter-input-item input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.bo-search-control input),
 .report-main .bo-filter-row>input.bo-filter-input-item:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]){
   height:var(--bo-filter-height)!important;
   min-height:var(--bo-filter-height)!important;
@@ -189,7 +189,7 @@
 .report-main .bo-filter-row>.bo-filter-input-item :is(.input-icon-wrap,.ref-input-icon,.category-search-control,.game-search-control) input{
   padding-left:36px!important;
 }
-.report-main .bo-filter-row>.bo-filter-input-item input:not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):focus,
+.report-main .bo-filter-row>.bo-filter-input-item input:not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.bo-search-control input):focus,
 .report-main .bo-filter-row>input.bo-filter-input-item:focus{
   border-color:var(--bo-ui-blue)!important;
   box-shadow:0 0 0 3px rgba(217,119,6,.10)!important;
@@ -580,7 +580,7 @@ body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .
   min-width:0!important;
   max-width:100%!important;
 }
-body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>.bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input),
+body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>.bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.bo-search-control input),
 body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>input.bo-filter-input-item:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]){
   box-sizing:border-box!important;
   height:42px!important;
@@ -874,8 +874,10 @@ body:not(#bo-bottom-band-off):has(.vle-footer) .report-sidebar .bo-sidebar-accou
   body.sidebar-mini .bo-sidebar-account-footer{padding:10px 8px}
   body.sidebar-mini .bo-sidebar-logout{justify-content:center;padding:10px 0}
   body.sidebar-mini .bo-sidebar-logout span{display:none}
-  body.sidebar-mini .report-sidebar:hover .bo-sidebar-logout{justify-content:flex-start;padding:10px 12px}
-  body.sidebar-mini .report-sidebar:hover .bo-sidebar-logout span{display:inline}
+  /* 2026-09-24: the collapsed rail no longer slides out on hover, so the logout
+     row keeps its icon-only form while the pointer is on the rail. Its label
+     comes from the rail label panel, like every other collapsed row. */
+  body.sidebar-mini .report-sidebar:hover .bo-sidebar-logout{justify-content:center;padding:10px 0}
 }
 @media(max-width:575.98px){
   .report-actions .bo-account-link{min-width:44px;width:44px;padding:0;justify-content:center}
@@ -979,9 +981,9 @@ html[data-bo-theme="dark"] .bo-range-trigger:focus-within{
 }
 
 /* Dark mode filter text inputs ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂª cream #FFF8EB must not leak through in dark theme */
-html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>.bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input),
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>.bo-filter-input-item input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.bo-search-control input),
 html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>input.bo-filter-input-item:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
-html[data-bo-theme="dark"] .report-main .bo-filter-row>*:not(.bo-filter-range-item) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input),
+html[data-bo-theme="dark"] .report-main .bo-filter-row>*:not(.bo-filter-range-item) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.bo-search-control input),
 html[data-bo-theme="dark"] .report-main .bo-filter-row>input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
 html[data-bo-theme="dark"] .report-main .bo-filter-row .field input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]){
   background:#2A2C36!important;

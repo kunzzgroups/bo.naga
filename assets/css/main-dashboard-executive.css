@@ -259,8 +259,6 @@ html:not([data-bo-theme="dark"]) body.main-dashboard-page .report-sidebar .repor
   background:rgba(254,243,242,.95)!important;
   color:#912018!important;
 }
-.main-dashboard-page.sidebar-mini .report-sidebar:hover,
-.main-dashboard-page.sidebar-mini .report-sidebar.is-mini-hover,
 .main-dashboard-page .report-sidebar.show{
   background:#FFE8CC!important;
   box-shadow:18px 0 40px rgba(60,48,32,.14)!important;
@@ -1181,8 +1179,6 @@ html[data-bo-theme="dark"] body.main-dashboard-page .bo-sidebar-logout:hover{
   background:rgba(248,113,113,.1)!important;
   color:#fff!important;
 }
-html[data-bo-theme="dark"] body.main-dashboard-page.sidebar-mini .report-sidebar:hover,
-html[data-bo-theme="dark"] body.main-dashboard-page.sidebar-mini .report-sidebar.is-mini-hover,
 html[data-bo-theme="dark"] body.main-dashboard-page .report-sidebar.show{
   background:#3A3226!important;
   box-shadow:18px 0 40px rgba(0,0,0,.35)!important;

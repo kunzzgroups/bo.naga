@@ -338,7 +338,7 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 .code-grid textarea{width:100%;border:1px solid #EADCC8;border-radius:12px;padding:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;background:#FFF8EB;outline:none}
 .apply-note{margin-top:14px;display:grid;gap:8px;color:#18191C}
 .apply-note code{display:block;background:#F5EBDC;border:1px solid #EADCC8;border-radius:8px;padding:8px;white-space:normal;color:#18191C}
-.clean-btn{border:1px solid #EADCC8;background:#FFF8EB;color:#18191C;border-radius:10px;height:40px;padding:0 14px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.clean-btn{border:1px solid #EADCC8;background:#FFF8EB;color:#18191C;border-radius:10px;height:40px;padding:0 14px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
 .clean-btn.primary{background:#D97706;border-color:#E8901A;color:#fff}
 .clean-btn:disabled{opacity:.65;cursor:not-allowed}
 @media (max-width:900px){
@@ -1706,13 +1706,13 @@ html body.bo-wallet-tx.provider-transaction-page.pwt-page .table-card > .table-w
    already carry a complete replacement (background, border, radius) of their own. */
 .report-content select:not(#pullLogWindowUnit),
 .report-content .form-select,
-.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(#merchantCredit):not(#merchantThreshold):not(#merchantMarkup):not(#madEditThreshold):not(#madProviderMarkup):not(.mad-search input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input):not(.bonus-title-search input):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.livechat-search input):not(.dup-search-control input),
+.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(#merchantCredit):not(#merchantThreshold):not(#merchantMarkup):not(#madEditThreshold):not(#madProviderMarkup):not(.mad-search input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input):not(.bonus-title-search input):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.bo-access-control .input-icon-wrap input):not(.bo-access-control .user-search-grid .field > input):not(.ref-input-icon input):not(.livechat-search input):not(.dup-search-control input):not(.bo-search-control input),
 .report-content textarea{
   border:1px solid #EADCC8!important;border-radius:10px!important;background-color:#FFF8EB!important;
   box-shadow:none!important;color:#18191C;
 }
 .report-content select:not(#pullLogWindowUnit):focus,.report-content .form-select:focus,
-.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(#merchantCredit):not(#merchantThreshold):not(#merchantMarkup):not(#madEditThreshold):not(#madProviderMarkup):not(.mad-search input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input):not(.bonus-title-search input):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.ref-input-icon input):not(.livechat-search input):not(.dup-search-control input):focus,
+.report-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(#providerSearchInput):not(#pullLogWindowValue):not(#boPassword):not(#merchantCredit):not(#merchantThreshold):not(#merchantMarkup):not(#madEditThreshold):not(#madProviderMarkup):not(.mad-search input):not(.mp-search input):not(.mrc-search input):not(.mas-search input):not(.mac-provider-search input):not(.agent-search-box input):not(.bonus-title-search input):not(.game-search-control input):not(.category-search-control input):not(.banner-search input):not(.input-icon-wrap input):not(.bo-access-control .input-icon-wrap input):not(.bo-access-control .user-search-grid .field > input):not(.ref-input-icon input):not(.livechat-search input):not(.dup-search-control input):not(.bo-search-control input):focus,
 .report-content textarea:focus{border-color:#78716C!important;box-shadow:0 0 0 3px rgba(217,119,6,.12)!important;outline:0!important}
 
 /* Live chat keeps the composer available while only the message history scrolls. */
@@ -7460,4 +7460,220 @@ html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legac
   background:transparent!important;
   background-color:transparent!important;
   box-shadow:none!important;
+}
+
+/* ---------------------------------------------------------------------------
+   2026-09-24 - ONE search control, site-wide.
+
+   Owner: the search control of bonus-category-title.html is the standard for every page. Canonical =
+   that page: the wrapper IS the frame (1px #EADCC8, radius 8px, 36px tall, pad 0 12px), the magnifier
+   is a flex child inside it (15px, #78716C), and the input inside is borderless with no padding.
+
+   Measured across all 51 pages that carry a search input (the audit reads the control's own parent, so
+   it sees the real wrapper, not the page shell). Most of the site already ships this shape; five were
+   off and are normalised here rather than in five page sheets, so the next page that reuses an idiom
+   inherits the standard instead of inventing a sixth variant:
+     bulk-adjustment        .mad-search.bulk-member-search   40px tall
+     game-provider          .provider-list-search            radius 10px, icon #A8A29E
+     livechat (+ template)  .livechat-search                 13px icon, frame #DCC9A8
+     main-merchant-create   .mac-provider-search             40px tall, icon #71717A
+   --------------------------------------------------------------------------- */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mad-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mre-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mas-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mp-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mrc-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mac-provider-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .provider-list-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .game-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .category-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .banner-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .dup-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .livechat-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .ref-input-icon,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .agent-search-box,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .agent-assign-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .bonus-title-search{
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+  border:1px solid #EADCC8 !important;
+  border-radius:8px !important;
+  padding:0 12px !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  box-sizing:border-box !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not([data-bo-theme="dark"]) .mad-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not([data-bo-theme="dark"]) .mre-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not([data-bo-theme="dark"]) .mas-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not([data-bo-theme="dark"]) .mp-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not([data-bo-theme="dark"]) .mrc-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not([data-bo-theme="dark"]) .mac-provider-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not([data-bo-theme="dark"]) .provider-list-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not([data-bo-theme="dark"]) .game-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not([data-bo-theme="dark"]) .category-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not([data-bo-theme="dark"]) .banner-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not([data-bo-theme="dark"]) .dup-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not([data-bo-theme="dark"]) .livechat-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not([data-bo-theme="dark"]) .ref-input-icon,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not([data-bo-theme="dark"]) .agent-search-box,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not([data-bo-theme="dark"]) .agent-assign-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not([data-bo-theme="dark"]) .bonus-title-search{
+  background:#FFF8EB !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] .mad-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] .mre-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] .mas-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] .mp-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] .mrc-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] .mac-provider-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] .provider-list-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] .game-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] .category-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] .banner-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] .dup-search-control,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] .livechat-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] .ref-input-icon,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] .agent-search-box,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] .agent-assign-search,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off)[data-bo-theme="dark"] .bonus-title-search{
+  background:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mad-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mre-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mas-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mp-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mrc-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mac-provider-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .provider-list-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .game-search-control > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .category-search-control > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .banner-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .dup-search-control > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .livechat-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .ref-input-icon > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .agent-search-box > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .agent-assign-search > i,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .bonus-title-search > i{
+  font-size:15px !important;
+  color:#78716C !important;
+  flex:0 0 auto !important;
+  line-height:1 !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mad-search input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mre-search input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mas-search input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mp-search input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mrc-search input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mac-provider-search input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .provider-list-search input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .game-search-control input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .category-search-control input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .banner-search input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .dup-search-control input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .livechat-search input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .ref-input-icon input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .agent-search-box input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .agent-assign-search input,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .bonus-title-search input{
+  border:0 !important;
+  background:transparent !important;
+  padding:0 !important;
+  height:100% !important;
+  min-width:0 !important;
+  flex:1 1 auto !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  box-shadow:none !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mad-search:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mre-search:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mas-search:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mp-search:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mrc-search:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .mac-provider-search:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .provider-list-search:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .game-search-control:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .category-search-control:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .banner-search:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .dup-search-control:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .livechat-search:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .ref-input-icon:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .agent-search-box:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .agent-assign-search:focus-within,
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .bonus-title-search:focus-within{
+  border-color:#D97706 !important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14) !important;
+}
+
+/* ---------------------------------------------------------------------------
+   2026-09-24 - the same search control for the `.field`-shaped searches.
+
+   The sixteen wrappers above already carry the standard. These are the fields where the INPUT owns
+   the border and there is no wrapper to frame: `<div class="field"><input type="search"/></div>`.
+   They get the canonical frame and magnifier from CSS, with no markup change, and ONLY where the
+   input is the field's sole content - `:not(:has(> label))`. A `.field` that also holds a caption
+   `<label>` is a labelled field (agent-management's "Search Agent", bank-deposit-usage's
+   "Bank / Display Name", ...), and framing it would put the caption inside the frame; those need
+   their markup restructured and are deliberately NOT touched here.
+
+   Three ID steps on the guard, unlike the block above: on this family's pages the family sheet
+   already states the input's own border at three steps, so at two this would lose and the field
+   would end up with two frames - the exact defect fixed earlier in this family.
+   --------------------------------------------------------------------------- */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .field:has(> input[type="search"]):not(:has(> label)),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .field:has(> input[placeholder*="earch" i]):not(:has(> label)){
+  position:relative !important;
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+  border:1px solid #EADCC8 !important;
+  border-radius:8px !important;
+  padding:0 12px !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  box-sizing:border-box !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not([data-bo-theme="dark"]) .field:has(> input[type="search"]):not(:has(> label)),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not([data-bo-theme="dark"]) .field:has(> input[placeholder*="earch" i]):not(:has(> label)){
+  background:#FFF8EB !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy)[data-bo-theme="dark"] .field:has(> input[type="search"]):not(:has(> label)),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy)[data-bo-theme="dark"] .field:has(> input[placeholder*="earch" i]):not(:has(> label)){
+  background:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+}
+/* The magnifier, drawn by the field: the same glyph the icon font uses on every other search
+   control (`bi-search` is content "52a" in bootstrap-icons). Decorative only - the input keeps
+   its own placeholder and aria-label for assistive tech. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .field:has(> input[type="search"]):not(:has(> label)),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .field:has(> input[placeholder*="earch" i]):not(:has(> label))::before{
+  content:"\f52a" !important;
+  font-family:"bootstrap-icons" !important;
+  font-size:15px !important;
+  color:#78716C !important;
+  line-height:1 !important;
+  flex:0 0 auto !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .field:has(> input[type="search"]):not(:has(> label)),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .field:has(> input[placeholder*="earch" i]):not(:has(> label)) > input{
+  border:0 !important;
+  background:transparent !important;
+  padding:0 !important;
+  height:100% !important;
+  min-width:0 !important;
+  flex:1 1 auto !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .field:has(> input[type="search"]):not(:has(> label)),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .field:has(> input[placeholder*="earch" i]):not(:has(> label)):focus-within{
+  border-color:#D97706 !important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14) !important;
 }
