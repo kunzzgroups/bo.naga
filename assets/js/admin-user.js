@@ -51,9 +51,11 @@
     }catch(e){ return String(value || '-'); }
   }
 
-  function shortDt(value){
-    const s = dt(value);
-    return s === '-' ? '-' : s.replace(' ', '<br>');
+  /* The date in the cell, the time on hover (`boAc.dtCell`, the member listing's own pattern).
+     This used to stack the two with a `<br>`, which made every row two lines tall for a column
+     that only needs the day. Falls back to the plain stamp if the shared helper is absent. */
+  function dateCell(value){
+    return (window.boAc && boAc.dtCell) ? boAc.dtCell(dt(value)) : dt(value);
   }
 
   function esc(value){
@@ -165,12 +167,12 @@
       const protectedRoot = Number(row.id) === 1 && !viewerRoot;
       return '<tr>'+
         '<td class="admin-check-col"><input type="checkbox" class="admin-row-check" value="'+esc(row.id)+'"></td>'+
-        '<td><div class="admin-cell-user"><span class="admin-avatar">'+esc(initials(row))+'</span><div><b>'+esc(row.username)+'</b> '+(current?'<span class="current-login-pill">Current Login</span>':'')+'<br><small>'+esc(row.username)+'</small></div></div></td>'+
+        '<td><div class="admin-cell-user"><span class="admin-avatar">'+esc(initials(row))+'</span><div><b>'+esc(row.username)+'</b> '+(current?'<span class="current-login-pill">Current Login</span>':'')+'</div></div></td>'+
         '<td>'+esc(row.displayName || row.username || '-')+'</td>'+
         '<td><span class="role-pill '+(roleName(row).toLowerCase().includes('super')?'super':'')+'">'+esc(roleName(row))+'</span></td>'+
         '<td><span class="admin-status-pill '+(active?'active':'disabled')+'"><i></i>'+(active?'Active':'Disabled')+'</span></td>'+
-        '<td>'+shortDt(row.lastLoginAt || row.lastLogin || row.loginAt)+'</td>'+
-        '<td>'+shortDt(row.createdAt || row.created_at)+'</td>'+
+        '<td>'+dateCell(row.lastLoginAt || row.lastLogin || row.loginAt)+'</td>'+
+        '<td>'+dateCell(row.createdAt || row.created_at)+'</td>'+
         '<td><b>'+esc(row.createdByName || row.createdByUsername || row.createdBy || row.creator || '-')+'</b></td>'+
         '<td><div class="user-row-actions admin-actions">'+(protectedRoot?'<span class="status-pill active" title="Root account cannot be modified by non-root administrators">Protected</span>':'<a class="icon-action admin-edit-btn" title="Edit" href="admin-user-create.html?id='+esc(row.id)+'"><i class="bi bi-pencil"></i></a>' + '<button class="icon-action danger admin-delete-btn" title="Delete" type="button" data-id="'+esc(row.id)+'"><i class="bi bi-trash"></i></button>')+'</div></td>'+
       '</tr>';

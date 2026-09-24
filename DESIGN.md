@@ -4051,3 +4051,36 @@ the locked 36px tier with `#DCC9A8` / 8px radius like 11.5's.
 floor, none of which care whether the strip renders — and the page passed while showing an empty band.
 It now asserts that every direct child of a family listing's filter strip renders a non-zero box *and* a
 non-zero control, which is the generic form of this bug.
+
+#### One line per row: the name once, the date in the cell, the time on hover (2026-09-24)
+
+Owner: “在admin的column 下面数据展示为啥 还要多一个提示词 麻烦移除” and “last login 和 last logout
+展示日期 然后时间统一其他页面的悬浮设计”.
+
+**1. The Admin cell printed the username twice** — `<b>username</b><br><small>username</small>`. That
+second line was my invention; the member listing's name cell is the username alone
+(`cell('name', first(m,['username'],'-'))`). Removed; the `Current Login` pill stays. Measured before,
+the cell read `admin admin`; after, `KUkunzz Current Login` (avatar initials · name · pill).
+
+**2. LAST LOGIN and CREATED stacked date over time** with a `<br>` (my `shortDt`), which made every row
+two lines tall for columns that only need the day. They now use the member listing's own pattern —
+**date in the cell, time in the hover tip** — through `boAc.dtCell()`, added to this family's shared
+listing script. Two deliberate choices: the date stays **ISO** (this family's format) rather than the
+member listing's DD/MM/YYYY, and the tip element (`#umTimeTip`) plus its stylesheet (`.um-time-tip`, in
+bo-charcoal-legacy.css) are global, so a page running both controllers shares one tip instead of
+drawing a second.
+
+Verified functionally, not just by eye — dispatching a real `mouseover` on a cell creates `#umTimeTip`
+with `is-on`, `opacity: 1`, `visibility: visible`, positioned at that cell (1030,286), and `mouseout`
+clears it. Cells measure `text="2026-09-24" tip="09:41:07" tabindex="0"`, 16px tall, so rows are one
+line and the fit shows more of them.
+
+**3. Found while in there:** `access-control-listing.js` was included **twice** on four family pages
+(admin-user, admin-login-log, admin-operation-log, ip-whitelist-security) — the same duplicate I had
+already fixed on role.html and menu-permission.html. Harmless, because its `init()` is guarded by
+`data-ac-ready`, but it was two copies of a 334-line script per page.
+
+**Gate.** The Admin cell must not repeat a word or carry a `<small>`; a family timestamp cell must show
+the date alone, tip the time, and stay one line (≤26px). Both assertions are scoped to this family, so
+the member listing's own DD/MM/YYYY cells are not judged — which the first run proved by firing on
+`index.html` before I scoped it. Light and dark: 0 of 12 failing.

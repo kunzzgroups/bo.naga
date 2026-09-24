@@ -93,9 +93,92 @@ function fitRows(card) {
   var rowH = sample ? Math.max(38, Math.round(sample.getBoundingClientRect().height)) : 41;
   return Math.max(5, Math.min(200, Math.floor(avail / rowH) || 12));
 }
+/* ---------------------------------------------------------------------------
+   Timestamps: the DATE in the cell, the TIME on hover.
+
+   This is the member listing's own pattern (`member-management.js`: `dtCell()` writes
+   `<span class="bo-tx-datetime" data-tip="HH:MM:SS">YYYY-MM-DD</span>`, and `#umTimeTip`
+   draws the tooltip). Admin Management had been stacking date over time with a `<br>`, which
+   made every row two lines tall and read as clutter in a column that only needs the day.
+   The tip element and its stylesheet (`.um-time-tip`, in bo-charcoal-legacy.css) are global,
+   so this one controller serves every page that loads this file and a page that also runs the
+   member listing's controller shares the same tip element rather than drawing a second one.
+   The date stays ISO, the family's own format, rather than the member listing's DD/MM/YYYY.
+   --------------------------------------------------------------------------- */
+function esc(value){
+  return String(value == null ? '' : value).replace(/[&<>"']/g,
+    function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; });
+}
+
+function dtCell(value){
+  var full = String(value == null ? '' : value).trim();
+  if (!full || full === '-') return '<span class="mad-muted">-</span>';
+  var m = full.match(/^(\d{4}[-/]\d{1,2}[-/]\d{1,2})[T\s]+(\d{1,2}:\d{2}(?::\d{2})?)/);
+  if (!m) return '<span class="bo-tx-datetime">' + esc(full) + '</span>';
+  return '<span class="bo-tx-datetime" tabindex="0" data-tip="' + esc(m[2]) + '">' + esc(m[1]) + '</span>';
+}
+
+function ensureTimeTip(){
+  var tip = document.getElementById('umTimeTip');
+  if (tip) return tip;
+  tip = document.createElement('div');
+  tip.id = 'umTimeTip';
+  tip.className = 'um-time-tip';
+  tip.setAttribute('role', 'tooltip');
+  tip.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(tip);
+  return tip;
+}
+function placeTimeTip(el){
+  var tip = ensureTimeTip();
+  var text = el.getAttribute('data-tip') || '';
+  if (!text) { hideTimeTip(); return; }
+  tip.textContent = text;
+  tip.classList.add('is-on');
+  tip.classList.remove('is-below');
+  var r = el.getBoundingClientRect();
+  var tr = tip.getBoundingClientRect();
+  var top = r.top - tr.height - 8, below = false;
+  if (top < 8) { below = true; top = r.bottom + 8; }
+  tip.classList.toggle('is-below', below);
+  var left = Math.max(8, Math.min(r.left + r.width / 2 - tr.width / 2, window.innerWidth - tr.width - 8));
+  tip.style.left = Math.round(left) + 'px';
+  tip.style.top = Math.round(top) + 'px';
+}
+function hideTimeTip(){
+  var tip = document.getElementById('umTimeTip');
+  if (tip) tip.classList.remove('is-on', 'is-below');
+}
+/* Delegated, and scoped to the datetime spans: this page also carries action buttons with
+   their own `data-tip`, and those are not ours to draw. */
+function bindTimeTips(){
+  if (bindTimeTips._bound) return;
+  bindTimeTips._bound = true;
+  var find = function (e) { return e.target && e.target.closest && e.target.closest('.bo-tx-datetime[data-tip]'); };
+  document.addEventListener('mouseover', function (e) { var el = find(e); if (el) placeTimeTip(el); });
+  document.addEventListener('mouseout', function (e) {
+    var el = find(e); if (!el) return;
+    var next = e.relatedTarget;
+    if (next && el.contains(next)) return;
+    hideTimeTip();
+  });
+  document.addEventListener('focusin', function (e) { var el = find(e); if (el) placeTimeTip(el); });
+  document.addEventListener('focusout', function (e) {
+    var el = find(e); if (!el) return;
+    var next = e.relatedTarget;
+    if (next && el.contains(next)) return;
+    hideTimeTip();
+  });
+  window.addEventListener('scroll', hideTimeTip, true);
+  window.addEventListener('resize', hideTimeTip);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideTimeTip(); });
+}
+
 window.boAc = {
   FIT: '-',
   ALL: 'All',
+  /* A date cell with its time on hover - see dtCell above. */
+  dtCell: dtCell,
   /* What a select value means in rows. `card` is the listing card, for the fit. */
   resolve: function (value, card) {
     var v = String(value == null ? '' : value).trim();
@@ -326,6 +409,7 @@ window.boAc = {
     });
   }
 
+  bindTimeTips();
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
