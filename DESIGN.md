@@ -4185,3 +4185,37 @@ and `main-provider-health.html`'s bare flex toolbar.
 
 One shade-level residue: where a page sheet pins the icon colour at a deeper guard
 (`category-search-control`, `banner-search`), the glyph stays `#57534E` rather than `#78716C`.
+
+#### The magnifier for the `.field`-shaped searches (2026-09-24)
+
+Owner, after the wrapper pass: “改了吗 怎么我没看到 那个搜索icon与bonus-category-title.html同款”. Correct — the
+sixteen controls that lacked a frame at all were the ones left for the follow-up, and the screenshot was
+one of them.
+
+They get the canonical frame and magnifier **from CSS, with no markup change**, and only where the input
+is the field's sole content:
+
+```css
+.field:has(> input[type="search"]):not(:has(> label)),
+.field:has(> input[placeholder*="earch" i]):not(:has(> label)) { … frame, flex, gap 8 … }
+… ::before { content:"52a"; font-family:"bootstrap-icons"; font-size:15px; color:#78716C }
+… > input  { border:0; padding:0; height:100%; flex:1 1 auto }
+```
+
+Two things this run taught, both worth the record:
+
+- **The family's inputs carry no `type="search"`** — only a placeholder. The first attempt matched
+  `input[type="search"]` and silently did nothing on this family's pages (the frame came from the
+  family sheet and the glyph never appeared). The selector now accepts either shape.
+- **The `52a` escape was eaten**: written through a Python non-raw string, `` became a form-feed
+  character, so the CSS shipped `content:"52a"` — an invisible glyph with a reserved 15px box, which
+  reads as "the icon is missing but the text is pushed right". Repaired with an explicit backslash and
+  verified by screenshot: the magnifier now renders in the field.
+
+Guarded at **three** ID steps, not two, because on this family's pages the family sheet states the
+input's own border at three — at two this would lose and the field would end up with two frames.
+
+Fields that also carry a caption `<label>` (agent-management's "Search Agent", bank-deposit-usage's
+"Bank / Display Name", …) are still deliberately untouched: framing them would swallow the caption, and
+that needs markup restructuring. Two cases remain out of scope by design: `layout-section.html`'s 28px
+find-in-code box and `main-provider-health.html`'s bare flex toolbar.

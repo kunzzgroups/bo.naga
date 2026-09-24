@@ -7596,3 +7596,72 @@ html:not(#bo-filter-standard-off):not(#bo-charcoal-off) .bonus-title-search:focu
   border-color:#D97706 !important;
   box-shadow:0 0 0 3px rgba(217,119,6,.14) !important;
 }
+
+/* ---------------------------------------------------------------------------
+   2026-09-24 - the same search control for the `.field`-shaped searches.
+
+   The sixteen wrappers above already carry the standard. These are the fields where the INPUT owns
+   the border and there is no wrapper to frame: `<div class="field"><input type="search"/></div>`.
+   They get the canonical frame and magnifier from CSS, with no markup change, and ONLY where the
+   input is the field's sole content - `:not(:has(> label))`. A `.field` that also holds a caption
+   `<label>` is a labelled field (agent-management's "Search Agent", bank-deposit-usage's
+   "Bank / Display Name", ...), and framing it would put the caption inside the frame; those need
+   their markup restructured and are deliberately NOT touched here.
+
+   Three ID steps on the guard, unlike the block above: on this family's pages the family sheet
+   already states the input's own border at three steps, so at two this would lose and the field
+   would end up with two frames - the exact defect fixed earlier in this family.
+   --------------------------------------------------------------------------- */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .field:has(> input[type="search"]):not(:has(> label)),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .field:has(> input[placeholder*="earch" i]):not(:has(> label)){
+  position:relative !important;
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+  border:1px solid #EADCC8 !important;
+  border-radius:8px !important;
+  padding:0 12px !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  box-sizing:border-box !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not([data-bo-theme="dark"]) .field:has(> input[type="search"]):not(:has(> label)),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not([data-bo-theme="dark"]) .field:has(> input[placeholder*="earch" i]):not(:has(> label)){
+  background:#FFF8EB !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy)[data-bo-theme="dark"] .field:has(> input[type="search"]):not(:has(> label)),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy)[data-bo-theme="dark"] .field:has(> input[placeholder*="earch" i]):not(:has(> label)){
+  background:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+}
+/* The magnifier, drawn by the field: the same glyph the icon font uses on every other search
+   control (`bi-search` is content "52a" in bootstrap-icons). Decorative only - the input keeps
+   its own placeholder and aria-label for assistive tech. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .field:has(> input[type="search"]):not(:has(> label)),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .field:has(> input[placeholder*="earch" i]):not(:has(> label))::before{
+  content:"\f52a" !important;
+  font-family:"bootstrap-icons" !important;
+  font-size:15px !important;
+  color:#78716C !important;
+  line-height:1 !important;
+  flex:0 0 auto !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .field:has(> input[type="search"]):not(:has(> label)),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .field:has(> input[placeholder*="earch" i]):not(:has(> label)) > input{
+  border:0 !important;
+  background:transparent !important;
+  padding:0 !important;
+  height:100% !important;
+  min-width:0 !important;
+  flex:1 1 auto !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+}
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .field:has(> input[type="search"]):not(:has(> label)),
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy) .field:has(> input[placeholder*="earch" i]):not(:has(> label)):focus-within{
+  border-color:#D97706 !important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.14) !important;
+}
