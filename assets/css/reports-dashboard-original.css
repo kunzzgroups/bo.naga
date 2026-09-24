@@ -298,7 +298,7 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 .code-grid textarea{width:100%;border:1px solid #EADCC8;border-radius:12px;padding:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;background:#FFF8EB;outline:none}
 .apply-note{margin-top:14px;display:grid;gap:8px;color:#18191C}
 .apply-note code{display:block;background:#F5EBDC;border:1px solid #EADCC8;border-radius:8px;padding:8px;white-space:normal;color:#18191C}
-.clean-btn{border:1px solid #EADCC8;background:#FFF8EB;color:#18191C;border-radius:10px;height:40px;padding:0 14px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.clean-btn{border:1px solid #EADCC8;background:#FFF8EB;color:#18191C;border-radius:10px;height:40px;padding:0 14px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
 .clean-btn.primary{background:#D97706;border-color:#E8901A;color:#fff}
 .clean-btn:disabled{opacity:.65;cursor:not-allowed}
 @media (max-width:900px){

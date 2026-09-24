@@ -4084,3 +4084,21 @@ already fixed on role.html and menu-permission.html. Harmless, because its `init
 the date alone, tip the time, and stay one line (≤26px). Both assertions are scoped to this family, so
 the member listing's own DD/MM/YYYY cells are not judged — which the first run proved by firing on
 `index.html` before I scoped it. Light and dark: 0 of 12 failing.
+
+#### Anchor-styled buttons were underlined (2026-09-24)
+
+Owner: “为什么我的access control的所有页面的 add 按键 下面都有underline 麻烦移除可以吗”. The Add and Edit
+controls are **anchors** now (they navigate to the create/edit pages), and `.clean-btn` — the base rule
+in `reports.css`, mirrored in `reports-dashboard-original.css` — was written for `<button>`, so it never
+reset `text-decoration`. An `<a class="clean-btn primary">` therefore painted the browser's default
+**underline** under its label: measured `text-decoration-line: underline` with `color: white`, which on
+the orange "Add Admin" fill reads as a line under the text (and on the cream Edit buttons too).
+
+Fixed where the class is defined, not per page: `text-decoration:none` on the base rule in both sheets.
+That reaches every anchor-button on the product — **24 pages** carry `<a class="clean-btn">`
+(game-category, agent-detail, bank-deposit-usage, …), and the three I sampled all load `reports.css`.
+Verified on the family page: **0 of 20 anchors** still compute an underline, while the plain footnote
+links that *should* be underlined (none in this family) are untouched.
+
+The gate now counts underlined anchors on a family page and fails if any remains, so re-styling a
+`<button>` as an `<a>` cannot quietly bring the line back.
