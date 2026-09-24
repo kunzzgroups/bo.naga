@@ -532,7 +532,7 @@
     if(!canEditRoleMenus(role)) return false;
     if(Number(role.systemRole)===1) return false;
     const rt=String(role.roleType||'').toUpperCase();
-    if(['ROOT','MASTER','BRAND_OWNER'].includes(rt)) return false;
+    if(['ROOT','MASTER'].includes(rt)) return false;
     return true;
   }
 
