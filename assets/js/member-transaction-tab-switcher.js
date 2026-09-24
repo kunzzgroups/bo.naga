@@ -1,7 +1,8 @@
 (function(){
   'use strict';
 
-  const state={type:new URLSearchParams(location.search).get('tab')==='withdraw'?'withdraw':'deposit',page:1,totalPages:1,rows:[]};
+  const requestedTab=new URLSearchParams(location.search).get('tab');
+  const state={type:['deposit','withdraw','all'].includes(requestedTab)?requestedTab:'deposit',page:1,totalPages:1,rows:[]};
   const $=id=>document.getElementById(id);
   const domPrefix=document.getElementById('depositBody')?'deposit':'withdraw';
   const id=name=>domPrefix+name;
@@ -52,29 +53,30 @@
   }
   function setTableShape(){
     const withdraw=state.type==='withdraw';
-    const cols=withdraw
+    const withRemark=withdraw||state.type==='all';
+    const cols=withRemark
       ? '<col class="bo-tx-col-date"/><col class="bo-tx-col-member"/><col class="bo-tx-col-amount"/><col class="bo-tx-col-bank"/><col class="bo-tx-col-ref"/><col class="bo-tx-col-remark"/><col class="bo-tx-col-status"/><col class="bo-tx-col-processed"/><col class="bo-tx-col-action"/>'
       : '<col class="bo-tx-col-date"/><col class="bo-tx-col-member"/><col class="bo-tx-col-amount"/><col class="bo-tx-col-method"/><col class="bo-tx-col-ref"/><col class="bo-tx-col-status"/><col class="bo-tx-col-processed"/><col class="bo-tx-col-action"/>';
     document.querySelectorAll('.bo-tx-head-table colgroup,.bo-tx-body-table colgroup').forEach(c=>c.innerHTML=cols);
     const head=document.querySelector('.bo-tx-head-table thead');
-    if(head)head.innerHTML=withdraw
+    if(head)head.innerHTML=withRemark
       ? '<tr><th>Date</th><th>Member</th><th>Amount</th><th>Bank</th><th>Reference</th><th>Remark</th><th>Status</th><th>Processed</th><th>Action</th></tr>'
       : '<tr><th>Date</th><th>Member</th><th>Amount</th><th>Bank</th><th>Reference</th><th>Status</th><th>Processed</th><th>Action</th></tr>';
-    const body=$(id('Body'));if(body)body.innerHTML=`<tr><td colspan="${withdraw?9:8}">Loading...</td></tr>`;
+    const body=$(id('Body'));if(body)body.innerHTML=`<tr><td colspan="${withRemark?9:8}">Loading...</td></tr>`;
   }
   function render(rows,pagination){
-    const withdraw=state.type==='withdraw',body=$(id('Body'));
+    const withdraw=state.type==='withdraw',withRemark=withdraw||state.type==='all',body=$(id('Body'));
     if(!body)return;
     state.rows=rows;state.totalPages=Math.max(1,Number(pagination?.totalPages)||1);
-    if(!rows.length){body.innerHTML=`<tr><td colspan="${withdraw?9:8}">No ${withdraw?'withdraw':'deposit'} request found.</td></tr>`;}
+    if(!rows.length){body.innerHTML=`<tr><td colspan="${withRemark?9:8}">No ${state.type==='all'?'transaction':withdraw?'withdraw':'deposit'} request found.</td></tr>`;}
     else body.innerHTML=rows.map(r=>{
       const status=String(r.status||'-').toUpperCase(),pending=status==='PENDING';
       const actions=pending
         ? `<div class="bo-tx-actions"><button type="button" class="bo-tx-action-btn is-approve" data-tab-approve="${esc(r.id)}" title="Approve" aria-label="Approve"><i class="bi bi-check-lg"></i></button><button type="button" class="bo-tx-action-btn is-reject" data-tab-reject="${esc(r.id)}" title="Reject" aria-label="Reject"><i class="bi bi-x-lg"></i></button></div>`
         : '-';
       const common=`<td>${date(r.createdAt||r.created_at)}</td><td>${esc(r.username||'-')}</td><td>${money(r.amount)}</td>`;
-      const bank=withdraw?(r.bankName||'-'):(r.paymentMethodDisplayName||r.paymentMethodBankName||r.paymentMethod||'-');
-      const cells=withdraw
+      const bank=withdraw?(r.bankName||'-'):(r.bankName||r.paymentMethodDisplayName||r.paymentMethodBankName||r.paymentMethod||'-');
+      const cells=withRemark
         ? `${common}<td><b>${esc(bank)}</b></td><td>${esc(r.referenceNo||'-')}</td><td>${esc(r.remark||'-')}</td>`
         : `${common}<td><b>${esc(bank)}</b></td><td>${esc(r.referenceNo||'-')}</td>`;
       return `<tr>${cells}<td><span class="status-pill ${status==='APPROVED'?'active':status==='REJECTED'?'off':''}">${esc(r.status||'-')}</span></td><td>${esc(date(r.processedAt))}</td><td>${actions}</td></tr>`;
@@ -86,13 +88,19 @@
     const c=controls(),params=new URLSearchParams({page:String(state.page),size:String(pageSize())});
     if(c.keyword)params.set('keyword',c.keyword);if(c.status)params.set('status',c.status);
     if(c.from)params.set('dateFrom',c.from);if(c.to)params.set('dateTo',c.to);
-    const key=state.type==='withdraw'?'MEMBER_WITHDRAW_LIST':'MEMBER_DEPOSIT_LIST';
-    const body=$(id('Body'));if(body)body.innerHTML=`<tr><td colspan="${state.type==='withdraw'?9:8}">Loading...</td></tr>`;
+    const body=$(id('Body'));if(body)body.innerHTML=`<tr><td colspan="${state.type==='withdraw'||state.type==='all'?9:8}">Loading...</td></tr>`;
     try{
-      const json=await api(endpoint(key)+'?'+params),data=json.data||{};
-      const rows=Array.isArray(data)?data:(data.content||data.items||data.list||json.content||[]);
-      render(Array.isArray(rows)?rows:[],json.pagination||data.pagination||data||{});
-    }catch(e){if(body)body.innerHTML=`<tr><td colspan="${state.type==='withdraw'?9:8}" class="text-danger">${esc(e.message)}</td></tr>`;}
+      const keys=state.type==='all'?['MEMBER_DEPOSIT_LIST','MEMBER_WITHDRAW_LIST']:[state.type==='withdraw'?'MEMBER_WITHDRAW_LIST':'MEMBER_DEPOSIT_LIST'];
+      const responses=await Promise.all(keys.map(key=>api(endpoint(key)+'?'+params).then(json=>({json,key}))));
+      const rows=responses.flatMap(({json,key})=>{
+        const data=json.data||{};
+        const values=Array.isArray(data)?data:(data.content||data.items||data.list||json.content||[]);
+        return values.map(row=>({...row,__transactionType:key==='MEMBER_WITHDRAW_LIST'?'withdraw':'deposit'}));
+      });
+      rows.sort((a,b)=>String(b.createdAt||b.created_at||'').localeCompare(String(a.createdAt||a.created_at||'')));
+      const pagination=responses[0]?.pagination||responses[0]?.data?.pagination||responses[0]?.data||{};
+      render(rows,pagination);
+    }catch(e){if(body)body.innerHTML=`<tr><td colspan="${state.type==='withdraw'||state.type==='all'?9:8}" class="text-danger">${esc(e.message)}</td></tr>`;}
   }
   function switchTab(type){
     if(type===state.type)return;
@@ -106,11 +114,16 @@
   }
   document.addEventListener('click',e=>{
     const tab=e.target.closest?.('.bo-tx-tab[data-bo-tx-type]');
-    if(tab&&tab.dataset.boTxType!=='all'){e.preventDefault();switchTab(tab.dataset.boTxType==='withdraw'?'withdraw':'deposit');return;}
+    if(tab){e.preventDefault();switchTab(tab.dataset.boTxType);return;}
     if(e.target.closest?.('[data-tab-approve],[data-tab-reject]')){
       e.preventDefault();
       // The page-specific approval handlers remain available on the original tab.
       // Preventing navigation here keeps the tab switch itself table-only.
     }
   },true);
+  if(state.type==='all'){
+    setTableShape();
+    installCleanListeners();
+    reload();
+  }
 })();
