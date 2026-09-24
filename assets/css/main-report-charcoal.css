@@ -1,8 +1,8 @@
-/* Report family — Charcoal + Amber
+/* Report family â Charcoal + Amber
    Migrated from the retired Deep Navy Cyan look to the locked Charcoal + Amber system.
    Reference implementation: Admin Detail (main-admin-detail.html).
 
-   Scope: :is() over the report-shaped pages (five Report pages + the three Provider report pages)' data-access-page values —
+   Scope: :is() over the report-shaped pages (five Report pages + the three Provider report pages)' data-access-page values â
      main_report                     main-win-lose-report.html
      main_provider_report            main_provider_report.html
      main_merchant_report            main_merchant_report.html
@@ -14,7 +14,7 @@
    Every page in that list carries .main-admin-detail-page and .main-report-exec-page, so this
    file must load AFTER main-provider-report-executive.css (whose legacy block is Deep Navy
    Cyan for body.main-report-exec-page) and after main-admin-detail-executive.css. The :is()
-   scope carries one class-level more than either legacy scope, so it wins on specificity —
+   scope carries one class-level more than either legacy scope, so it wins on specificity â
    load order is belt and braces, not the mechanism.
 
    main-provider-report-executive.css and main-merchant-report-executive.css are ALSO loaded by
@@ -31,7 +31,7 @@
    ========================================================================== */
 
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]){
-  /* Light cream locked: surface #FFF8EB · no pure white chrome */
+  /* Light cream locked: surface #FFF8EB Â· no pure white chrome */
   --bo-navy:#18191C;
   --bo-cyan:#D97706;
   --bo-cyan-deep:#B45309;
@@ -63,7 +63,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
   --bo-accent-on:#FFFFFF;
 }html:has(body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"])){
   background:#FFF1DC;
-}/* Light canvas — orange → cream (locked; no near-white fade) */
+}/* Light canvas â orange â cream (locked; no near-white fade) */
 html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"])){
   background-color:#FFF6E8;
   background-image:linear-gradient(90deg,
@@ -93,7 +93,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
   backdrop-filter:none;
   -webkit-backdrop-filter:none;
 }html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]){
-  /* Dark mode: soft charcoal (not dead black) · Primary #F59E0B */
+  /* Dark mode: soft charcoal (not dead black) Â· Primary #F59E0B */
   --bo-navy:#F5F5F4;
   --bo-cyan:#F59E0B;
   --bo-cyan-deep:#D97706;
@@ -124,7 +124,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
   --bo-shadow:0 0 0 1px rgba(255,255,255,.04);
   --bo-accent-on:#2A2C36;
   color-scheme:dark;
-}/* Dark canvas — Warm Charcoal Continuum (sidebar → page)
+}/* Dark canvas â Warm Charcoal Continuum (sidebar â page)
    Low-chroma warm charcoal into cool charcoal; short seam (~96px).
    Panels stay solid surface so data never sits in the wash. */
 html[data-bo-theme="dark"]:has(body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"])){
@@ -159,14 +159,14 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   backdrop-filter:none;
   -webkit-backdrop-filter:none;
   border-bottom-color:rgba(255,255,255,.08)!important;
-}/* Modals above sidebar / flyouts (sidebar 1040–9100, flyout 12050) */
+}/* Modals above sidebar / flyouts (sidebar 1040â9100, flyout 12050) */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .modal-clean,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-modal{
   z-index:30000!important;
 }body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]):has(.modal-clean.show) .report-sidebar,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]):has(.mad-modal.show) .report-sidebar{
   z-index:1000!important;
-}/* Top tabs — orange underline only; text stays neutral */
+}/* Top tabs â orange underline only; text stays neutral */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-tab:hover:not(.is-disabled){
   color:var(--bo-text,#18191C)!important;
   background:transparent!important;
@@ -182,7 +182,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-tab[aria-current="page"]{
   color:var(--bo-text,#F4F4F5)!important;
   border-bottom-color:var(--bo-sidebar-active,#F59E0B)!important;
-}/* Primary CTA — bright orange gradient + soft lift shadow */
+}/* Primary CTA â bright orange gradient + soft lift shadow */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-btn-primary,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-btn-primary.bo-ui-button,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-btn-primary.bo-ui-button-primary,
@@ -261,7 +261,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   background-image:linear-gradient(180deg,#F59E0B 0%,#D97706 100%)!important;
   color:#2A2C36!important;
   box-shadow:0 1px 2px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.18)!important;
-}/* Active pager — light: orange gradient lift; dark: bright orange glow */
+}/* Active pager â light: orange gradient lift; dark: bright orange glow */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-pager .smart-page.active,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-pager button.active{
   background-color:#F59E0B!important;
@@ -303,7 +303,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
   background-image:none!important;
   box-shadow:none!important;
   transform:none;
-}/* Primary CTA hover must win over generic .mad-btn:hover — reverse gradient to 0deg */
+}/* Primary CTA hover must win over generic .mad-btn:hover â reverse gradient to 0deg */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) a.mad-btn-primary:hover,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) a#madAddBtn:hover,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-btn-primary:hover,
@@ -335,7 +335,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   color:inherit!important;
 }html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-row-check-box{
   background:#111111;border-color:#3F3F46;
-}/* Export / ghost — light: cream lift; dark: gray→black gradient */
+}/* Export / ghost â light: cream lift; dark: grayâblack gradient */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-btn-ghost,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) #madExportBtn,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-chrome-actions .mad-btn-ghost{
@@ -386,12 +386,12 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   background-image:linear-gradient(180deg,#383A46 0%,#2C2E38 100%)!important;
   box-shadow:0 1px 2px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.08),inset 0 2px 4px rgba(0,0,0,.18)!important;
 }/* ------------------------------------------------------------------
-   Sidebar — crypto terminal (Admin Detail amber trial only)
-   Light/Dark: canvas continuum (sidebar → page); panels stay solid.
-   NOTE: do NOT put backdrop-filter / isolation on .report-sidebar itself —
+   Sidebar â crypto terminal (Admin Detail amber trial only)
+   Light/Dark: canvas continuum (sidebar â page); panels stay solid.
+   NOTE: do NOT put backdrop-filter / isolation on .report-sidebar itself â
    that creates a containing block and clips the desktop L2 flyout (position:fixed).
    ------------------------------------------------------------------ */
-/* LIGHT MODE — opaque orange cream (matches continuum left; covers content when expanded) */
+/* LIGHT MODE â opaque orange cream (matches continuum left; covers content when expanded) */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar{
   background:#FFE8CC!important;
   border-right:1px solid rgba(92,74,48,.14)!important;
@@ -404,7 +404,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar.show{
   background:#FFE8CC!important;
   box-shadow:18px 0 40px rgba(60,48,32,.14)!important;
-}/* Amber edge rail — defines the continuum join */
+}/* Amber edge rail â defines the continuum join */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar::before{
   content:"";
   position:absolute;
@@ -436,7 +436,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
   background:rgba(255,255,255,.55)!important;
   border:1px solid rgba(92,74,48,.12)!important;
   color:#6b360c!important;
-}/* Nav sits on the same frosted slab — no nested glass chip */
+}/* Nav sits on the same frosted slab â no nested glass chip */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar .report-nav{
   position:relative!important;
   padding:12px 10px 10px!important;
@@ -503,7 +503,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn i{
   color:#6b360c!important;
   opacity:1;
-}/* Light L1 active — amber signal chip with soft lift */
+}/* Light L1 active â amber signal chip with soft lift */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar .report-nav > a:not(.report-sub).active,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar .nav-group.open > .nav-group-btn,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn,
@@ -564,7 +564,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar .nav-group-list a.report-sub.active::after{
   content:none!important;
   display:none!important;
-}/* DARK MODE — opaque warm charcoal (matches continuum left; covers content when expanded) */
+}/* DARK MODE â opaque warm charcoal (matches continuum left; covers content when expanded) */
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar{
   background:#3A3226!important;
   border-right:1px solid rgba(245,158,11,.22)!important;
@@ -595,7 +595,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   box-shadow:none;
   mask-image:linear-gradient(180deg,#000 0%, #000 40%, transparent 100%);
   -webkit-mask-image:linear-gradient(180deg,#000 0%, #000 40%, transparent 100%);
-}/* Amber edge rail — defines the continuum join without glow wash */
+}/* Amber edge rail â defines the continuum join without glow wash */
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar::after{
   content:"";
   display:block!important;
@@ -738,7 +738,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar .nav-group-list a.report-sub.active::after{
   content:none!important;
   display:none!important;
-}/* Light flyout panel: cream surface (locked) — beat reports.css `#fff!important` */
+}/* Light flyout panel: cream surface (locked) â beat reports.css `#fff!important` */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar .nav-group-list,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar .report-nav > .nav-group > .nav-group-list,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar .report-nav > .nav-group.bo-flyout-hover > .nav-group-list{
@@ -784,7 +784,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar .nav-group-list a.report-sub:hover{
   background:rgba(255,255,255,.05)!important;
   color:rgba(255,255,255,.92)!important;
-}/* L2 icons — amber series (override reports.css blue hover/active) */
+}/* L2 icons â amber series (override reports.css blue hover/active) */
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar .report-nav a.report-sub i,
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar .nav-group-list a.report-sub i,
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-sidebar .nav-group-list a i{
@@ -826,7 +826,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
     box-shadow:0 0 10px rgba(217,119,6,.35);
   }
 }/* ------------------------------------------------------------------
-   Light + Dark table — amber control-terminal comps
+   Light + Dark table â amber control-terminal comps
    ------------------------------------------------------------------ */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-user-copy{
   display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;
@@ -839,7 +839,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
   border-radius:4px;border:0;
   color:#B45309;background:#FEF3C7;
   font-size:10px;font-weight:700;letter-spacing:.02em;line-height:1;
-}/* Light table (scoped — do not leak cream borders into dark) */
+}/* Light table (scoped â do not leak cream borders into dark) */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-panel,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table-wrap{
   background:#FFF8EB!important;
@@ -847,7 +847,9 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
 }html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table th{
   color:#3F3F46!important;
   border-bottom:1px solid #EADCC8!important;
-  background:transparent!important;
+  /* Opaque sticky head — transparent let scrolled rows bleed into column labels. */
+  background:#FFE8CC!important;
+  box-shadow:inset 0 -1px 0 #EADCC8!important;
   font-weight:700!important;
 }html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table td{
   color:#374151!important;
@@ -912,7 +914,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table .mad-time-tip{
   color:#57534E!important;
   font-weight:600!important;
-}/* Light action icons + search — readable charcoal (never faint placeholder gray) */
+}/* Light action icons + search â readable charcoal (never faint placeholder gray) */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-icon-btn,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-icon-btn.is-danger{
   color:#57534E!important;
@@ -934,7 +936,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
   color:#57534E!important;
 }html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-modal-title small{
   color:#57534E!important;
-}/* Light modal close — cream well (never cool blue-white) */
+}/* Light modal close â cream well (never cool blue-white) */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .modal-clean-close,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-modal .modal-clean-close{
   width:36px!important;height:36px!important;border-radius:8px!important;
@@ -981,7 +983,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
   color:#374151!important;
 }body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-footer-info{
   color:#57534E!important;
-}/* Status filter pills — Active/Suspend/All match Export ghost (8px cream lift) */
+}/* Status filter pills â Active/Suspend/All match Export ghost (8px cream lift) */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-pills{
   display:inline-flex!important;
   align-items:center!important;
@@ -1091,7 +1093,8 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 }html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table th{
   color:#E7E5E4!important;
   border-bottom:1px solid rgba(255,255,255,.14)!important;
-  background:transparent!important;
+  background:#1F2128!important;
+  box-shadow:inset 0 -1px 0 rgba(255,255,255,.14)!important;
   font-weight:700!important;
 }html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table td{
   color:#F5F5F4!important;
@@ -1189,7 +1192,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   border-color:rgba(255,255,255,.14)!important;
 }html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-footer-info{
   color:#D4D4D8!important;
-}/* Top-right chrome — theme toggle + identity + amber avatar (light/dark comps) */
+}/* Top-right chrome â theme toggle + identity + amber avatar (light/dark comps) */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-actions{
   gap:12px!important;
   align-items:center!important;
@@ -1197,7 +1200,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
   display:inline-flex!important;
   align-items:center!important;
   gap:12px!important;
-}/* Divider slot always reserved — only tint changes by theme (prevents cluster shift) */
+}/* Divider slot always reserved â only tint changes by theme (prevents cluster shift) */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-actions > [data-bo-profile]::before{
   content:"";
   width:1px;height:28px;flex:0 0 1px;
@@ -1208,7 +1211,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
   box-sizing:border-box!important;
   flex:0 0 36px!important;
   width:36px!important;height:36px!important;min-width:36px!important;max-width:36px!important;
-  /* Same bordered slot in light + dark — only color changes */
+  /* Same bordered slot in light + dark â only color changes */
   border:1px solid rgba(24,25,28,.18)!important;border-radius:8px!important;
   background:transparent!important;
   color:#3F3F46!important;
@@ -1342,7 +1345,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   color:#2A2C36!important;
 }html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .bo-account-link:hover .report-avatar{
   background:#FBBF24!important;
-}/* Dark hover tips — soft charcoal + amber (replace navy/cyan) */
+}/* Dark hover tips â soft charcoal + amber (replace navy/cyan) */
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-time-tip::after,
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-icon-btn[data-tip]::after{
   background:#40424E!important;
@@ -1364,7 +1367,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 }html[data-bo-theme="dark"]:has(body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"])) .mad-float-tip.is-below::after{
   border-top-color:transparent!important;
   border-bottom-color:#40424E!important;
-}/* Light hover tips — warm cream + amber (replace navy) */
+}/* Light hover tips â warm cream + amber (replace navy) */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-time-tip::after,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-icon-btn[data-tip]::after{
   background:#FFF8EB!important;
@@ -1388,7 +1391,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
 }html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"])) .mad-float-tip.is-below::after{
   border-top-color:transparent!important;
   border-bottom-color:#FFF8EB!important;
-}/* Dark modals — Adjust Credit + Reset Password inputs match soft charcoal */
+}/* Dark modals â Adjust Credit + Reset Password inputs match soft charcoal */
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mac-adjust-panel,
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-modal-panel,
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-pass-modal-panel,
@@ -1471,7 +1474,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
    Merchant-only components
    ========================================================================== */
 
-/* Row status — one-click Active <-> Suspended. Takes the Admin Detail .mad-status pill
+/* Row status â one-click Active <-> Suspended. Takes the Admin Detail .mad-status pill
    treatment so both lists read alike; stays a button so the toggle still works. */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-status-chip{
   height:24px!important;
@@ -1521,7 +1524,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   box-shadow:0 0 0 2px rgba(52,211,153,.18),0 0 10px rgba(52,211,153,.55)!important;
 }
 
-/* Row action icons — mirror the Admin Detail .mad-icon-btn recipe */
+/* Row action icons â mirror the Admin Detail .mad-icon-btn recipe */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-merchant-icon-btn,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-merchant-icon-btn.is-danger{
   color:#57534E!important;
@@ -1550,7 +1553,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   box-shadow:none!important;
 }
 
-/* Row action tooltip — cream tip in light, charcoal tip in dark (Admin Detail recipe) */
+/* Row action tooltip â cream tip in light, charcoal tip in dark (Admin Detail recipe) */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-merchant-icon-btn[data-tip]::after{
   background:#FFF8EB!important;
   color:#6b360c!important;
@@ -1565,7 +1568,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   box-shadow:0 12px 28px rgba(0,0,0,.35)!important;
 }
 
-/* Company sub-line + load-error row — Bootstrap colour utilities are light-theme only
+/* Company sub-line + load-error row â Bootstrap colour utilities are light-theme only
    (.text-muted resolves to rgba(33,37,41,.75) and disappears on the charcoal canvas). */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table td[data-label="Company"] small,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table td[data-label="Company"] .text-muted{
@@ -1672,7 +1675,7 @@ body.standardized-listing-page.main-admin-detail-page:is([data-access-page="main
   color:#D97706!important;
 }
 
-/* Editable fields — the legacy block never covered these specific inputs, so
+/* Editable fields â the legacy block never covered these specific inputs, so
    reports.css `.report-content input{background-color:#fff!important}` painted them pure
    white. Light chrome is cream only: control well #F5EBDC, locked #EDE4D4. */
 body.standardized-listing-page.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) #madEditWorkspace .mac-field .form-control,
@@ -1834,11 +1837,11 @@ html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page
 }
 
 /* ==========================================================================
-   Merchant row avatar — neutral tile, colour reserved for state
+   Merchant row avatar â neutral tile, colour reserved for state
    The rescoped block paints this tile indigo and re-tints every third row for
    position alone. Neither variant carries data, and indigo/violet are the last
    cool hues left on the warm canvas. The tile is now a quiet index marker and the
-   only tinted variant is a suspended row — which agrees with the Status pill
+   only tinted variant is a suspended row â which agrees with the Status pill
    instead of contradicting it. Light and dark finally describe the same thing.
    ========================================================================== */
 
@@ -1877,7 +1880,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
    Detail already runs the amber ladder on its create/edit pages.
    ========================================================================== */
 
-/* Create / Edit Admin — light form hierarchy (layer ladder; not flat cream wash) Canvas continuum → lifted section → control well → nested well. Amber rail + Save CTA carry focus; secondary chrome stays quieter. */ html:not([data-bo-theme="dark"]) body.main-admin-create-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mac-section{
+/* Create / Edit Admin â light form hierarchy (layer ladder; not flat cream wash) Canvas continuum â lifted section â control well â nested well. Amber rail + Save CTA carry focus; secondary chrome stays quieter. */ html:not([data-bo-theme="dark"]) body.main-admin-create-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mac-section{
 position:relative;
   background:#FFFCF7!important;
   border:1px solid #DCC9A8!important;
@@ -1960,7 +1963,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-create-page:is([data-access-pag
 border-color:#D97706!important;
   box-shadow:0 0 0 3px rgba(217,119,6,.16)!important;
 }
-/* Ghost / secondary actions — lifted cream (readable against section lift) */ html:not([data-bo-theme="dark"]) body.main-admin-create-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-btn-ghost,
+/* Ghost / secondary actions â lifted cream (readable against section lift) */ html:not([data-bo-theme="dark"]) body.main-admin-create-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-btn-ghost,
 html:not([data-bo-theme="dark"]) body.main-admin-create-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-btn.mad-btn-ghost,
 html:not([data-bo-theme="dark"]) body.main-admin-create-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) a.mad-btn-ghost{
 background-color:#F5EBDC!important;
@@ -1998,10 +2001,10 @@ color:#78716C!important;
 /* ==========================================================================
    Create / edit form controls outside #madEditWorkspace
    main-merchant-create.html renders the same .mac-* form vocabulary as the Merchant
-   Detail edit workspace, but not inside #madEditWorkspace — so the ID-scoped block
+   Detail edit workspace, but not inside #madEditWorkspace â so the ID-scoped block
    above cannot reach it and the legacy cool chrome leaked through: white custom
    select triggers, near-white provider pane heads, and the retired cyan washes
-   rgba(33,166,215,…) on counts and active options. Scoped by .mac-section instead,
+   rgba(33,166,215,â¦) on counts and active options. Scoped by .mac-section instead,
    so it covers both contexts.
    ========================================================================== */
 
@@ -2093,7 +2096,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 }
 
 /* ==========================================================================
-   Create / repayments form controls — full set in the .mac-section context
+   Create / repayments form controls â full set in the .mac-section context
    The recovered create/edit ladder only carried the LIGHT half; the dark halves of
    these controls were scoped away with the dropped admin create/edit rules, so the
    retired navy #0B1626 survived on joined inputs, their MYR/% addons, the currency
@@ -2178,10 +2181,10 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 }
 
 /* ==========================================================================
-   Joined inputs (.mac-input-group) — both modes, family scope
+   Joined inputs (.mac-input-group) â both modes, family scope
    main-admin-detail-executive.css paints these with a rule carrying
    `body.main-merchant-create-page.main-admin-create-page .report-content
-   .mac-field .mac-input-group.is-prefix` — eight class-levels, which outbids a plain
+   .mac-field .mac-input-group.is-prefix` â eight class-levels, which outbids a plain
    `.mac-section .mac-field .form-control` selector. Hence the extra body classes here.
    Values: light well #F5EBDC / border #DCC9A8, dark well #2A2C36, addon text muted.
    ========================================================================== */
@@ -2216,10 +2219,10 @@ html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page
 }
 
 /* ==========================================================================
-   Joined inputs — overriding the legacy `is-prefix` / `is-suffix` rules
+   Joined inputs â overriding the legacy `is-prefix` / `is-suffix` rules
    main-admin-detail-executive.css pins these to the retired navy #0B1626 with
    `... .report-content .mac-field .mac-input-group.is-prefix > input:not([type="checkbox"])
-   :not([type="radio"]):not([type="file"])` — four attribute selectors inside :not(),
+   :not([type="radio"]):not([type="file"])` â four attribute selectors inside :not(),
    which is ten class-levels. Beating that needs a selector of the same shape, so this
    one deliberately mirrors it and adds .mac-section. Do not "simplify" it: the plain
    `.mac-section .mac-field .form-control` form loses to that rule.
@@ -2248,10 +2251,10 @@ html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page
 }
 
 /* ==========================================================================
-   Edit workspace — remaining ID-scoped leftovers
+   Edit workspace â remaining ID-scoped leftovers
    The legacy rules for the custom select options and the provider-markup input live
    under #madEditWorkspace, so only an ID-scoped selector can outbid them. Cyan
-   rgba(33,166,215,…) on the active option and navy #0B1626 on #madProviderMarkup
+   rgba(33,166,215,â¦) on the active option and navy #0B1626 on #madProviderMarkup
    were the last two.
    ========================================================================== */
 
@@ -2296,7 +2299,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 }
 
 /* ==========================================================================
-   Credit modal avatar + provider markup input — last two ID-scoped leftovers
+   Credit modal avatar + provider markup input â last two ID-scoped leftovers
    .mac-adjust-avatar kept the cyan wash in light mode, and #madProviderMarkup is
    pinned to navy #0B1626 by a rule carrying one more class than a bare
    `#madEditWorkspace input.form-control`, so the markup field classes are named here.
@@ -2329,9 +2332,9 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 }
 
 /* ==========================================================================
-   Currency / credit modals — consolidated chrome
+   Currency / credit modals â consolidated chrome
    Every remaining cool-hue surface lived inside the hidden modals, whose dark styling
-   is still navy (rgba(15,23,42,…), #0B1626, white pane heads). Modal-level rules carry
+   is still navy (rgba(15,23,42,â¦), #0B1626, white pane heads). Modal-level rules carry
    an ID and are later in the cascade, so the modal IDs are named explicitly here.
    ========================================================================== */
 
@@ -2410,7 +2413,7 @@ html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page
 }
 
 /* ==========================================================================
-   Currency pane + modal surfaces — class-scoped, family-wide
+   Currency pane + modal surfaces â class-scoped, family-wide
    main-merchant-create.html uses #merchantCurrencyModal while Merchant Detail uses
    #madCurrencyModal, so the ID-keyed block above only reached one of them. The legacy
    rules here are low specificity (`body.main-merchant-create-page .mac-currency-pane-count`),
@@ -2490,7 +2493,7 @@ html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page
 }
 
 /* ==========================================================================
-   Provider markup + currency code inputs — decisive override
+   Provider markup + currency code inputs â decisive override
    These two are pinned by legacy rules carrying an ID plus five class-levels, so even
    `#id` with the family scope lost. They are unique IDs inside known containers, so a
    two-ID selector settles it: no class count can outrank two IDs.
@@ -2515,7 +2518,7 @@ html[data-bo-theme="dark"] body #madCurrencyModal #merchantCurrencyModalCode{
   color:#F5F5F4!important;
 }
 
-/* Credit modal footer — locked Ghost recipe (#FFFCF7→#F5EBDC→#EDE4D4 / charcoal in dark).
+/* Credit modal footer â locked Ghost recipe (#FFFCF7â#F5EBDCâ#EDE4D4 / charcoal in dark).
    Two IDs: the legacy modal rules win on class count otherwise. */
 html:not([data-bo-theme="dark"]) body #madCreditModal #madCreditForm .mad-btn-ghost{
   background-color:#FFFCF7!important;
@@ -2531,13 +2534,13 @@ html[data-bo-theme="dark"] body #madCreditModal #madCreditForm .mad-btn-ghost{
 }
 
 /* ==========================================================================
-   Date-range picker — rescoped from the amber Dashboard
+   Date-range picker â rescoped from the amber Dashboard
    main-dashboard-executive.css already carries the locked amber treatment for the
    shared `.ref-range-*` / `.ref-cal-*` calendar (20 rules). Rather than re-derive it,
    those rules are rescoped here: `.main-dashboard-page` becomes the merchant family and
    `.main-exec-date-field` becomes `.ref-date-field`, which both pages carry, so one set
    serves the Dashboard and the merchant reports alike.
-   (A first pass produced `bodybody…` here — the `body` prefix of the Dashboard selector was left
+   (A first pass produced `bodybodyâ¦` here â the `body` prefix of the Dashboard selector was left
    behind when `.main-dashboard-page` was swapped. Invalid selectors, so those rules were inert.)
    ========================================================================== */
 
@@ -2753,7 +2756,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   color:#FBBF24!important;
 }
 
-/* Settlement payment modal + picker active states — last handful. */
+/* Settlement payment modal + picker active states â last handful. */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) #settlementPaymentDatePicker button,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) #settlementPaymentForm .mac-input-group > input,
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) #settlementPaymentForm .mac-input-group > .form-control,
@@ -2828,7 +2831,7 @@ html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page
 
 /* ---- from bo-patch-security.css ---- */
 /* ==========================================================================
-   Merchant Security & Audit — Charcoal + Amber delta
+   Merchant Security & Audit â Charcoal + Amber delta
    Page: main-merchant-security.html
    (body.main-admin-security-page.main-merchant-security-page,
     data-access-page="main_merchant_detail")
@@ -2837,7 +2840,7 @@ html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page
    that file is linked into main-merchant-security.html. Every selector carries the
    family scope, so these rules win on equal specificity by source order against the
    legacy Deep Navy Cyan block of main-admin-detail-executive.css (lines 3544-4128),
-   whose `.mas-*` rules are scoped to `body.main-admin-security-page` — a class this
+   whose `.mas-*` rules are scoped to `body.main-admin-security-page` â a class this
    page also carries.
 
    Why this file is short: the shared block re-declares the `--bo-*` tokens on
@@ -2848,10 +2851,10 @@ html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page
    or cream. Only the HARD-CODED leftovers below are still cool or near-white.
 
    Value sources, in order of preference:
-     1. The already-migrated family (main-merchant-detail-executive.css) — the
+     1. The already-migrated family (main-merchant-detail-executive.css) â the
         `.mad-status` pill recipe, the calendar hover/wash values and the table
         secondary-text values are copied verbatim, not re-derived.
-     2. menu-permission-executive.css (the other amber Security & Audit surface) —
+     2. menu-permission-executive.css (the other amber Security & Audit surface) â
         copied verbatim for the dark scrollbar pill.
      3. The target palette itself where no amber source exists for the element.
 
@@ -2897,7 +2900,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 }
 
 /* --------------------------------------------------------------------------
-   2. KPI tile — "Alerts" icon
+   2. KPI tile â "Alerts" icon
    main-admin-detail-executive.css:3656 gives `.mas-kpi-icon.is-danger` an almost
    white pink tile fill on the cream topbar. Replaced with the red counterpart of
    the wash the sibling tiles use (--bo-cyan-tint = 12% amber), so all three tiles
@@ -2915,7 +2918,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
    main-admin-detail-executive.css:3911/3913 (near-white mint / pink fills with
    the retired green and maroon ink) and 3990/3991 (dark mint and red washes) are
    the exact pill values the family already replaced on `.mad-status.is-active` /
-   `.mad-status.is-suspended` — main-merchant-detail-executive.css:944-965 and
+   `.mad-status.is-suspended` â main-merchant-detail-executive.css:944-965 and
    1150-1170. Copied verbatim so the Merchant list and the Security list agree.
    -------------------------------------------------------------------------- */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mas-status.is-success{
@@ -2957,7 +2960,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
    5. Muted / secondary text in the audit table and the detail modal
    Every legacy `.mas-*` copy rule uses `color:var(--bo-muted)`, which the shared
    block only remaps as far as the neutral cool grey pair. DESIGN.md ("Data tables
-   → Light muted on cream") locks light muted/time to #57534E and dark to #D4D4D8,
+   â Light muted on cream") locks light muted/time to #57534E and dark to #D4D4D8,
    and the family already applies exactly that to table secondary text
    (main-merchant-detail-executive.css:1561-1570 `.mad-table td small`).
    `.mas-kpi-meta` needs its :not() guards: the legacy `.is-success/.is-danger/
@@ -2986,7 +2989,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 
 /* --------------------------------------------------------------------------
    6. Search box focus ring
-   main-admin-detail-executive.css:535 hard-codes the retired cyan focus ring — a
+   main-admin-detail-executive.css:535 hard-codes the retired cyan focus ring â a
    banned tint, not a token. Pinned to this page through its own `.mas-search`
    class (the only hook that ties the rule to this file) so the shared shell of the
    other merchant pages is untouched. Ring colours copied from the migrated filter
@@ -3000,12 +3003,12 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 }
 
 /* --------------------------------------------------------------------------
-   7. Date-range picker — preset rail and month/year pickers (LIGHT ONLY)
+   7. Date-range picker â preset rail and month/year pickers (LIGHT ONLY)
    The shared block restyled the calendar CELLS but reports.css still owns the
    preset rail and the head pickers, and those are cool:
-     reports.css:1426 — `.ref-range-presets button` text in the retired slate, and
+     reports.css:1426 â `.ref-range-presets button` text in the retired slate, and
        a cool blue-white `:hover` fill;
-     reports.css:1454 — `.ref-cal-head .ref-head-pick:hover/:focus` retiring to an
+     reports.css:1454 â `.ref-cal-head .ref-head-pick:hover/:focus` retiring to an
        indigo border plus an indigo focus ring.
    Hover fill and ink are copied from the shared block's calendar hover
    (main-merchant-detail-executive.css:2662-2667). Both `:not(.active)` guards are
@@ -3014,7 +3017,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
    without the guard the active preset would render dark ink on amber.
    Dark mode already resolves these two elements through the legacy `.mas-date-field`
    rules at lines 4024-4032 and the dark base rules, so the light values must not
-   reach it — hence the guard, not a dark counterpart.
+   reach it â hence the guard, not a dark counterpart.
    -------------------------------------------------------------------------- */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mas-date-field .ref-range-presets button:not(.active){
   color:#374151!important;
@@ -3037,7 +3040,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
      (normal row), `.mas-dot`, `.mas-view`, `.mas-detail-raw`, blocked-row
      `.mas-time b` / `.mas-event-copy b`: token-only rules, already amber/cream.
    - `.mas-table tbody tr.is-blocked td` (legacy 3838/3841, red washes): already
-     neutralised — the shared block sets `.mad-table td{background:transparent
+     neutralised â the shared block sets `.mad-table td{background:transparent
      !important}` and `.mad-table tbody tr:hover td{background:#FFF1DC!important}`,
      so those washes can never paint.
    - `.mas-detail-raw` dark (legacy 4073 uses `var(--bo-bg)`): keeps the same
@@ -3053,16 +3056,16 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
 
 /* ---- from bo-patch-profit.css ---- */
 /* =============================================================================
-   Merchant Profit — Charcoal + Amber residuals
+   Merchant Profit â Charcoal + Amber residuals
    Concatenate AFTER assets/css/main-merchant-detail-executive.css.
    Scope: body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"])
-   — main-merchant-profit.html (body.main-merchant-profit-page) only.
+   â main-merchant-profit.html (body.main-merchant-profit-page) only.
 
    Only what this page needs BEYOND the shared family block: the `.mpr-*` components
    it owns (KPI chips, ledger cells, type pills, created-at tip, its date field) plus
    the retired values assets/css/main-merchant-profit.css hard-codes.
-   Values are copied from already-amber sources — the token block of
-   main-merchant-detail-executive.css and the amber form/tip/picker recipes inside it —
+   Values are copied from already-amber sources â the token block of
+   main-merchant-detail-executive.css and the amber form/tip/picker recipes inside it â
    not re-derived.
    ============================================================================= */
 
@@ -3073,12 +3076,12 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
    `body.main-merchant-profit-page`; every var(--mpr-*) consumer reads them and that
    file is off-limits. Re-declaring the block on the same element is the only short
    selector that re-points all of them at once. The family scope is COMPOUNDED onto
-   body — a descendant prefix (`... [data-access-page] body`) can never match, body is
+   body â a descendant prefix (`... [data-access-page] body`) can never match, body is
    not inside body. Specificity (0,3,1) / (0,4,2) beats the legacy (0,1,1) / (0,2,2),
    so this also outranks the page's own dark block.
-   Replaces: --mpr-navy #123B66 · --mpr-cyan #21A6D7 · --mpr-cyan-tint rgba(33,166,215,.10)
-   · --mpr-surface #FFFFFF · --mpr-bg #F5F8FB · --mpr-border #E2E7F0 · --mpr-text #11203A
-   · --mpr-muted #657187 · --mpr-shadow (navy-tinted).
+   Replaces: --mpr-navy #123B66 Â· --mpr-cyan #21A6D7 Â· --mpr-cyan-tint rgba(33,166,215,.10)
+   Â· --mpr-surface #FFFFFF Â· --mpr-bg #F5F8FB Â· --mpr-border #E2E7F0 Â· --mpr-text #11203A
+   Â· --mpr-muted #657187 Â· --mpr-shadow (navy-tinted).
    ----------------------------------------------------------------------------- */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).main-merchant-profit-page{
   --mpr-navy:#B45309!important;
@@ -3130,7 +3133,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   border-color:rgba(255,255,255,.14)!important;
 }
 
-/* KPI text — legacy var(--mpr-text) #11203A and var(--mpr-muted) #657187 (:108-133);
+/* KPI text â legacy var(--mpr-text) #11203A and var(--mpr-muted) #657187 (:108-133);
    dark (:522-526) forced #E8EEF7. */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mpr-mini-value,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mpr-merchant{
@@ -3151,7 +3154,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   color:#D4D4D8!important;
 }
 
-/* KPI icons — legacy Navy chip rgba(18,59,102,.1)/#123B66 and Cyan chip
+/* KPI icons â legacy Navy chip rgba(18,59,102,.1)/#123B66 and Cyan chip
    rgba(33,166,215,.10)/#21A6D7 (:88-99); dark navy chip switch was cyan (:533-536). */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mpr-mini-icon.is-navy,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mpr-mini-icon.is-cyan{
@@ -3169,7 +3172,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   color:#F59E0B!important;
 }
 
-/* Trend chip — the flat state carried a navy wash, rgba(18,59,102,.08) (:155-158).
+/* Trend chip â the flat state carried a navy wash, rgba(18,59,102,.08) (:155-158).
    Mapped to the "money zero" neutrals; the up/down states read success/danger from
    var(--mpr-success-tint)/var(--mpr-success), so the token block above already
    re-points them. */
@@ -3189,7 +3192,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
    keeps the money-positive amber, the PAY direction adds Bootstrap `.text-danger`.
    Legacy base colour was var(--mpr-text) (:283-287), dark forced #E8EEF7 (:522-526).
    The `.mad-table` prefix keeps the negative state above Bootstrap's
-   `.text-danger{color:…#dc3545!important}` utility.
+   `.text-danger{color:â¦#dc3545!important}` utility.
    ----------------------------------------------------------------------------- */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mpr-amount{
   color:#B45309!important;
@@ -3204,7 +3207,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   color:#F87171!important;
 }
 
-/* Type pills — live month/one-off chips only. Legacy blues #EAF3FF/#2466BD and greens
+/* Type pills â live month/one-off chips only. Legacy blues #EAF3FF/#2466BD and greens
    #EAF9F0/#16834C (:263-270); dark rgba(36,102,189,.22)/#8CBCFF and
    rgba(22,131,76,.22)/#6CE9A6 (:543-550). */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mpr-kind.is-monthly{
@@ -3224,7 +3227,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   color:#10B981!important;
 }
 
-/* Created-at tip — legacy navy tooltip #0F1F33 + rgba(15,23,42,.22) shadow (:360-402)
+/* Created-at tip â legacy navy tooltip #0F1F33 + rgba(15,23,42,.22) shadow (:360-402)
    and the navy/cyan dark twin #243B55 / #F5F8FB / rgba(125,211,252,.22) (:630-638).
    Values copied from the amber tooltips already in the shared file (cream #FFF8EB +
    #6b360c + rgba(217,119,6,.28); dark #40424E + #F5F5F4 + rgba(245,158,11,.35)). */
@@ -3253,11 +3256,11 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
    4. This page's date-range field (.mpr-date-field)
    The shared block restyles the shared `.ref-date-field` picker, but the page dark
    block (main-merchant-profit.css:553-628) pins the same elements again through
-   `.mpr-date-field` with !important, which outranks it — every rule below mirrors that
+   `.mpr-date-field` with !important, which outranks it â every rule below mirrors that
    `.mpr-date-field` shape so the amber values win on specificity, not on file order.
    Retired values replaced: trigger var(--bo-bg) canvas fill / hover #21A6D7 fallback /
-   icon #8FA0B5 · presets .active rgba(33,166,215,.18)+#7DD3FC · day .muted #5B6B80 ·
-   in-range rgba(33,166,215,.14)+#9FD4F0 · selected rgba(33,166,215,.28)+#7DD3FC ·
+   icon #8FA0B5 Â· presets .active rgba(33,166,215,.18)+#7DD3FC Â· day .muted #5B6B80 Â·
+   in-range rgba(33,166,215,.14)+#9FD4F0 Â· selected rgba(33,166,215,.28)+#7DD3FC Â·
    head buttons filled with the page canvas instead of the shared transparent cells.
    ----------------------------------------------------------------------------- */
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mpr-date-field .ref-range-trigger{
@@ -3329,28 +3332,28 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 
 /* -----------------------------------------------------------------------------
    Left alone on purpose (they cannot match this page, or they are not retired hues):
-   · .mpr-modal-segs / .mpr-modal-seg / .mpr-fields / .mpr-hint / .mpr-repay-modal,
-     .mpr-repay-table*, .mpr-repay-stat, .mpr-repay-row-* — no such markup is emitted by
+   Â· .mpr-modal-segs / .mpr-modal-seg / .mpr-fields / .mpr-hint / .mpr-repay-modal,
+     .mpr-repay-table*, .mpr-repay-stat, .mpr-repay-row-* â no such markup is emitted by
      main-merchant-profit.html or main-merchant-profit.js; the repay icon is a link.
-   · .mpr-repay-badge — #EF3340 is a live overdue counter, not the retired palette; its
+   Â· .mpr-repay-badge â #EF3340 is a live overdue counter, not the retired palette; its
      ring already reads var(--bo-surface), i.e. cream light / #383A46 dark.
-   · .mpr-repay-btn[aria-expanded] — resolves through the token block above, no !important
+   Â· .mpr-repay-btn[aria-expanded] â resolves through the token block above, no !important
      colour of its own.
-   · .mpr-kind / .mpr-created-at / .mpr-actions geometry, .mpr-ledger-panel column
-     widths, .mpr-kpi-trend.is-down (semantic red) — untouched by this migration.
+   Â· .mpr-kind / .mpr-created-at / .mpr-actions geometry, .mpr-ledger-panel column
+     widths, .mpr-kpi-trend.is-down (semantic red) â untouched by this migration.
    ============================================================================= */
 
 /* ---- from bo-patch-profit-record.css ---- */
 /* =============================================================================
-   Record Profit — Charcoal + Amber residuals
+   Record Profit â Charcoal + Amber residuals
    Concatenate AFTER assets/css/main-merchant-detail-executive.css.
    Scope: body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"])
-   — main-merchant-profit-record.html (body.main-merchant-profit-record-page) only.
+   â main-merchant-profit-record.html (body.main-merchant-profit-record-page) only.
 
    Only what this page needs BEYOND the shared family block: the `.mprr-*` form card it
    owns plus the retired values assets/css/main-merchant-profit-record.css hard-codes.
    The selects in .mprr-field are converted to the house custom select by reports.js, so
-   the visible control is `.rounded-select-btn` (the native `select` is 1×1 transparent);
+   the visible control is `.rounded-select-btn` (the native `select` is 1Ã1 transparent);
    both shapes are covered. Values are copied from the already-amber recipes
    (main-merchant-detail-executive.css amber block: #madEditWorkspace fields, tips,
    picker/custom-select states), not re-derived.
@@ -3362,13 +3365,13 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
    assets/css/main-merchant-profit-record.css:2-14 declares the navy/cyan set on
    `body.main-merchant-profit-record-page` (dark twins :516-524); every var(--mprr-*)
    consumer reads them and that file is off-limits. Re-declaring the block on the same
-   element re-points all of them at once. The family scope is COMPOUNDED onto body — a
+   element re-points all of them at once. The family scope is COMPOUNDED onto body â a
    descendant prefix (`... [data-access-page] body`) can never match; body is not inside
    body. (0,3,1) / (0,4,2) beats the legacy (0,1,1) / (0,2,2).
-   Replaces: --mprr-surface #fff · --mprr-bg #F5F8FB · --mprr-border #E2E7F0 ·
-   --mprr-text #11203A · --mprr-muted #657187 · --mprr-help #8290A3 ·
-   --mprr-cyan #21A6D7 · --mprr-cyan-tint rgba(33,166,215,.10) · --mprr-navy #123B66 ·
-   --mprr-shadow (navy-tinted); dark #0F1C2E · #08131F · #24374F · #E8EEF7 · #8A95A8 · #7B879C.
+   Replaces: --mprr-surface #fff Â· --mprr-bg #F5F8FB Â· --mprr-border #E2E7F0 Â·
+   --mprr-text #11203A Â· --mprr-muted #657187 Â· --mprr-help #8290A3 Â·
+   --mprr-cyan #21A6D7 Â· --mprr-cyan-tint rgba(33,166,215,.10) Â· --mprr-navy #123B66 Â·
+   --mprr-shadow (navy-tinted); dark #0F1C2E Â· #08131F Â· #24374F Â· #E8EEF7 Â· #8A95A8 Â· #7B879C.
    ----------------------------------------------------------------------------- */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).main-merchant-profit-record-page{
   --mprr-navy:#B45309!important;
@@ -3419,9 +3422,9 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   color:#FBBF24!important;
 }
 
-/* Field labels — optional tag was #98A2B3 (:128-135), the required marker #E04F16
+/* Field labels â optional tag was #98A2B3 (:128-135), the required marker #E04F16
    (:127). The marker is re-pointed at the system danger exactly as the amber admin
-   form does (.mac-label b → var(--bo-danger), #991B1B light / #F87171 dark). */
+   form does (.mac-label b â var(--bo-danger), #991B1B light / #F87171 dark). */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mprr-optional,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mprr-amount-tag{
   color:#57534E!important;
@@ -3439,9 +3442,9 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 
 
 /* -----------------------------------------------------------------------------
-   3. Field controls — text inputs, selects, textarea, amount addon
+   3. Field controls â text inputs, selects, textarea, amount addon
    Legacy (:140-167) painted #d0d5dd borders over pure #fff with !important, twice
-   (bare and `.report-content` prefixed) — the `.report-content` shape is mirrored here
+   (bare and `.report-content` prefixed) â the `.report-content` shape is mirrored here
    because it is the strongest of the two. Dark (:531-538) #0B1626 / #334155 / #E8EEF7.
    Replaced with the amber control recipe: #F5EBDC well + #DCC9A8 border, #2A2C36 +
    rgba(255,255,255,.12) in dark; focus #D97706 + rgba(217,119,6,.12) light and
@@ -3488,7 +3491,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   -webkit-text-fill-color:#71717A;
 }
 
-/* Amount addon (the currency prefix chip, :391-402) — legacy #F5F8FB / #d0d5dd /
+/* Amount addon (the currency prefix chip, :391-402) â legacy #F5F8FB / #d0d5dd /
    var(--mprr-muted); dark (:613-617) #132337 / #334155 / #8A95A8. Kept on the control
    well with the sibling border so the join with the input reads as one field. */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mprr-amount-prefix{
@@ -3508,7 +3511,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
    Legacy (:170-254, bare + `.rounded-select-wrap` shape, all !important): #fff fills,
    #d0d5dd borders, cyan focus rgba(33,166,215,.16), menu #fff, options #fff, option
    hover rgba(33,166,215,.10)/#1B7FA8, active rgba(33,166,215,.16)/#123B66, scrollbar
-   #98A2B3 → #667085; dark (:539-604) #0B1626 / #102030 / #334155 / #7DD3FC / #A5F3FC.
+   #98A2B3 â #667085; dark (:539-604) #0B1626 / #102030 / #334155 / #7DD3FC / #A5F3FC.
    The `.rounded-select-*` classes are shared with the already-migrated merchant pages,
    so `.main-merchant-profit-record-page` is added on each step: it is what lifts these
    over the shared block's generic `.rounded-select-btn/.rounded-select-menu/
@@ -3542,7 +3545,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
 }
 /* Light option states: the legacy hover/active rules are 4 class-levels (page class +
    .mprr-field + .rounded-select-option + pseudo) while the shared block's generic
-   `.rounded-select-option:hover/.active` rules are 5 — the shared amber wash already
+   `.rounded-select-option:hover/.active` rules are 5 â the shared amber wash already
    wins in light, so nothing is needed here. The dark legacy rules add the
    `html[data-bo-theme="dark"]` attribute step and take the lead, so they are restated. */
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).main-merchant-profit-record-page .mprr-field .rounded-select-btn,
@@ -3622,20 +3625,20 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 
 /* -----------------------------------------------------------------------------
    Left alone on purpose:
-   · .mprr-chips/.mprr-chip/.mprr-entry-options/.mprr-entry-opt/.mprr-entry-radio/
-     .mprr-entry-copy/.mprr-entry-badge/.mprr-info/.mprr-help — the card renders a
+   Â· .mprr-chips/.mprr-chip/.mprr-entry-options/.mprr-entry-opt/.mprr-entry-radio/
+     .mprr-entry-copy/.mprr-entry-badge/.mprr-info/.mprr-help â the card renders a
      `select#mprrEntryType` instead and main-merchant-profit-record.js never emits these
      nodes, so their navy/cyan rules cannot match this page.
-   · .mprr-card / .mprr-card-head / .mprr-label / .mprr-draft / .mprr-date-wrap > i —
+   Â· .mprr-card / .mprr-card-head / .mprr-label / .mprr-draft / .mprr-date-wrap > i â
      all read var(--mprr-*) only, already re-pointed by the token block in section 1.
-   · .upload-status.success/.error (#087a2f / #b00020 from reports.css) and the
-     `.mprr-amount-wrap.is-stopped` orange state #E04F16 — semantic green/red/amber-red
+   Â· .upload-status.success/.error (#087a2f / #b00020 from reports.css) and the
+     `.mprr-amount-wrap.is-stopped` orange state #E04F16 â semantic green/red/amber-red
      status hues, not part of the retired navy palette.
    ============================================================================= */
 
 /* ---- from bo-patch-repayments.css ---- */
 /* ==========================================================================
-   Repayments Due (main-merchant-repayments.html) — Charcoal + Amber
+   Repayments Due (main-merchant-repayments.html) â Charcoal + Amber
    Page patch. Concatenate at the END of assets/css/main-merchant-detail-executive.css.
 
    Only what the shared block cannot reach is in here. The shared block already
@@ -3645,7 +3648,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
    .mad-btn / .mad-btn-ghost / .mad-btn-navy, .mac-input-group + .mac-input-addon
    (the row amount lockup well), modals, tips and empty states.
 
-   Scope: body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) —
+   Scope: body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) â
    the same family scope used by the shared block. Selectors that target a class
    this page SHARES with main-merchant-detail/create/settlement.html (which are
    already migrated and verified) additionally carry .main-merchant-repayments-page
@@ -3666,13 +3669,13 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
   background:rgba(217,119,6,.12)!important; /* soft amber wash, was rgba(18,59,102,.08) */
   color:#D97706!important;                  /* amber primary, was navy #123B66 */
 }
-/* The "Total outstanding" card is the money card — same wash, deep amber glyph. */
+/* The "Total outstanding" card is the money card â same wash, deep amber glyph. */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mprd-stat-icon.is-cyan{
   background:rgba(217,119,6,.12)!important; /* was rgba(33,166,215,.12) */
   color:#B45309!important;                  /* deep amber, was cyan #21A6D7 */
 }
 
-/* Stat card copy — L75 label var(--bo-muted,#657187), L80 value var(--bo-text,#11203A).
+/* Stat card copy â L75 label var(--bo-muted,#657187), L80 value var(--bo-text,#11203A).
    Kept explicit so the retired fallbacks can never surface. */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mprd-stat-copy span{
   color:#57534E!important; /* muted */
@@ -3682,10 +3685,10 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
 }
 
 /* --------------------------------------------------------------------------
-   2. Section head copy + form hint — L27 / L90: var(--bo-muted,#657187).
+   2. Section head copy + form hint â L27 / L90: var(--bo-muted,#657187).
    L21 is the only shared-class rule in this patch: .mac-section-copy p also
    exists on main-merchant-create.html under this same family scope, hence the
-   extra .main-merchant-repayments-page class — without it the create page
+   extra .main-merchant-repayments-page class â without it the create page
    would inherit this value.
    -------------------------------------------------------------------------- */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).main-merchant-repayments-page .mac-section-copy p{
@@ -3696,8 +3699,8 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
 }
 
 /* --------------------------------------------------------------------------
-   3. Form status message — L98 success #027A48, L99 error #B42318
-   (off-system green/red) → locked success / danger.
+   3. Form status message â L98 success #027A48, L99 error #B42318
+   (off-system green/red) â locked success / danger.
    -------------------------------------------------------------------------- */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mprd-status-msg.success{
   color:#12B76A!important;
@@ -3713,7 +3716,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
    .mprd-balance cannot be shortened: the shared block colours every cell with
    `html:not([data-bo-theme="dark"]) body.main-admin-detail-page[...] .mad-table td`
    (#374151, 4 class levels, !important). `.mprd-balance` alone is 3 class
-   levels and `td.mprd-balance` is still only 4 with fewer elements — this
+   levels and `td.mprd-balance` is still only 4 with fewer elements â this
    mirrors that shape and adds .mprd-table/.num to outbid it.
    -------------------------------------------------------------------------- */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mprd-merchant{
@@ -3727,11 +3730,11 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
 }
 
 /* --------------------------------------------------------------------------
-   5. Row amount lockup — L256 / L261 raised the well border to the retired
+   5. Row amount lockup â L256 / L261 raised the well border to the retired
    cyan on focus (var(--bo-cyan,#21A6D7)). Those rules are now inert: the
    shared block sets the addon/input border with a higher specificity
    (.mac-section .mac-input-addon / .mac-section .mac-input-group > .form-control),
-   which also swallows the focus state — this restores it in amber. Values
+   which also swallows the focus state â this restores it in amber. Values
    copied from the shared block's own focus rings:
    main-merchant-detail-executive.css L1944 (light) and L1417 (dark).
    -------------------------------------------------------------------------- */
@@ -3745,7 +3748,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
 }
 
 /* --------------------------------------------------------------------------
-   6. Row delete icon button — L270 color #b34d4d, L273 hover #dc3545
+   6. Row delete icon button â L270 color #b34d4d, L273 hover #dc3545
    (bootstrap red). Mirrors the shared row-icon treatment: neutral at rest,
    danger on hover (main-merchant-detail-executive.css L906 / L1524).
    -------------------------------------------------------------------------- */
@@ -3757,11 +3760,11 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
 }
 
 /* --------------------------------------------------------------------------
-   7. Row checkbox — the box is painted by main-admin-detail-executive.css
+   7. Row checkbox â the box is painted by main-admin-detail-executive.css
    L838 (loaded by this page): `border:1.5px solid #C5CDD8; background:#fff`
-   — a pure white surface + cool grey border on the cream header and rows.
+   â a pure white surface + cool grey border on the cream header and rows.
    :not(:checked) / :not(:hover) keep the shared block's amber hover
-   (var(--bo-cyan) → #D97706) and charcoal/amber checked states intact; a
+   (var(--bo-cyan) â #D97706) and charcoal/amber checked states intact; a
    plain selector here would out-specify them and freeze the box.
    Scoped to .mprd-table so the three migrated merchant pages keep theirs.
    -------------------------------------------------------------------------- */
@@ -3776,7 +3779,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
    Dark mode
    ========================================================================== */
 
-/* 1. Stat cards — legacy L296 fill rgba(255,255,255,.03) + border
+/* 1. Stat cards â legacy L296 fill rgba(255,255,255,.03) + border
    var(--bo-border,#24374F); icons L301 rgba(255,255,255,.06)/#9FD4F0 and
    L304 rgba(33,166,215,.16)/#7DD3FC. */
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mprd-stat{
@@ -3806,7 +3809,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   color:#D4D4D8!important;
 }
 
-/* 3. Form status message — L347 #6CE9A6, L348 #FCA5A5. */
+/* 3. Form status message â L347 #6CE9A6, L348 #FCA5A5. */
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mprd-status-msg.success{
   color:#10B981!important;
 }
@@ -3814,7 +3817,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   color:#F87171!important;
 }
 
-/* 4. Merchant cell + outstanding balance — L307 (var(--bo-text,#E8EEF7)),
+/* 4. Merchant cell + outstanding balance â L307 (var(--bo-text,#E8EEF7)),
    L340 balance #FCA5A5. Same out-bid of the shared dark `.mad-table td` rule
    as the light block. */
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mprd-merchant{
@@ -3827,7 +3830,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   color:#F87171!important;
 }
 
-/* 5. Row amount lockup focus — L317 ring was rgba(255,255,255,.04) with the
+/* 5. Row amount lockup focus â L317 ring was rgba(255,255,255,.04) with the
    retired #9AA8BC text and L327 raised the border to the navy surface. */
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).main-merchant-repayments-page .mac-section .mac-input-group.mprd-row-amount:focus-within .mprd-row-unit,
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).main-merchant-repayments-page .mac-section .mac-input-group.mprd-row-amount:focus-within .mac-input-addon{
@@ -3846,7 +3849,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
   color:#F87171!important;
 }
 
-/* 7. Row checkbox — the box is #111111 on the shared block and #0B1626 in the
+/* 7. Row checkbox â the box is #111111 on the shared block and #0B1626 in the
    retired admin sheet, so the control well is pinned here. */
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]).main-merchant-repayments-page .mprd-table .mad-row-check-input:not(:checked) + .mad-row-check-box{
   background:#2A2C36!important;
@@ -3854,8 +3857,8 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 
 /* Select options in the picker/modal popovers kept the retired cyan on their ACTIVE state in
    dark mode. The source rule resists identification (it does not appear in any live sheet's
-   rule list under that selector), so this uses a stacked prefix — every class the family body
-   carries — plus the full menu path, which outranks any class-only rule that could be applied. */
+   rule list under that selector), so this uses a stacked prefix â every class the family body
+   carries â plus the full menu path, which outranks any class-only rule that could be applied. */
 html:not([data-bo-theme="dark"]) body.report-body.standardized-listing-page.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .rounded-select-wrap .rounded-select-menu .rounded-select-option.active,
 html:not([data-bo-theme="dark"]) body.report-body.standardized-listing-page.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .ref-range-picker .rounded-select-option.active,
 html:not([data-bo-theme="dark"]) body.report-body.standardized-listing-page.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .ref-range-presets .rounded-select-option.active{
@@ -3890,17 +3893,17 @@ html[data-bo-theme="dark"] body.report-body.standardized-listing-page.main-admin
 }
 
 /* ==========================================================================
-   Merchant Profit — the KPI chips sit in the page header, not in a band of their own
+   Merchant Profit â the KPI chips sit in the page header, not in a band of their own
    As a content row the strip cost 36px of chips plus an 18px gap on each side, so the
-   ledger panel started at y=197. It now starts at y=142 — 55px returned to the table,
-   about one row per screen — with the 18px gap before the panel kept.
+   ledger panel started at y=197. It now starts at y=142 â 55px returned to the table,
+   about one row per screen â with the 18px gap before the panel kept.
    Moving the strip back into the tab row is not available: measured on the live page, the
-   slack between the tabs (593px) and Record Profit is 873px at 1920 — which is exactly
-   what made it look viable — but only 489px at 1536 and 429px at 1440, against 736px of
+   slack between the tabs (593px) and Record Profit is 873px at 1920 â which is exactly
+   what made it look viable â but only 489px at 1536 and 429px at 1440, against 736px of
    chips. Below ~1900px they overflow and paint over the tab labels: the defect fixed in
    02bf5a8 / 6fe83e9. The page header is the only row with real slack. It is 68px tall and
    its title block ends roughly 1000px before the action cluster at 1920, while the chips
-   are 36px tall — so they fit inside the existing row and cost no vertical space at all.
+   are 36px tall â so they fit inside the existing row and cost no vertical space at all.
    `.bo-header-counters` already establishes counters in this header for non-MAIN roles.
    The ladder below drops the meta first, then the icon squares; the amount and the
    label that names it never go. Under 1300px the header wraps and the chips take a
@@ -3909,7 +3912,7 @@ html[data-bo-theme="dark"] body.report-body.standardized-listing-page.main-admin
 
 /* The `[data-access-page]` prefix is not decoration: reports.css pins every direct child
    of .report-topbar with `.report-topbar > div:not(.dropdown):not(.report-actions)
-   :not(.topbar-spacer){flex:1 1 auto!important}` — four class-levels from the :not()
+   :not(.topbar-spacer){flex:1 1 auto!important}` â four class-levels from the :not()
    arguments. A plain `body.main-merchant-profit-page .report-topbar > .mpr-mini-kpis`
    is (0,3,1) and loses to it, which let the chip row be squeezed to 0 width and paint
    its chips over the action buttons. This prefix is (0,5,1), and it also keeps every rule
@@ -3942,8 +3945,8 @@ body.main-merchant-profit-page.report-body:is([data-access-page="main_report"],[
 body.main-merchant-profit-page.report-body:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-topbar .mpr-mini.is-hero{min-width:0}
 
 /* The chips take width the subtitle used to have. reports.css leaves `p` free to wrap,
-   which grew the header from 68px to 86px at 1536 and 1440 — spending back a third of
-   the 54px the page just gained. nowrap + ellipsis keeps the header at one line — and the
+   which grew the header from 68px to 86px at 1536 and 1440 â spending back a third of
+   the 54px the page just gained. nowrap + ellipsis keeps the header at one line â and the
    text column needs its own min-width:0 for that to bite, otherwise the column's
    min-content width is the whole nowrap sentence (425px) and it overflows the title block
    into the chips at every width below 1700. */
@@ -3973,7 +3976,7 @@ body.main-merchant-profit-page.report-body:is([data-access-page="main_report"],[
     order:2;
   }
 }
-/* the page's own @media(max-width:1200px) hides .mpr-mini-label — written when the chips
+/* the page's own @media(max-width:1200px) hides .mpr-mini-label â written when the chips
    were a full-width content row, where a bare amount still read against the row above.
    In the header the label is the only thing naming the amount, so restate it. */
 @media (max-width:1200px){
@@ -3990,7 +3993,7 @@ body.main-merchant-profit-page.report-body:is([data-access-page="main_report"],[
      wrapped chip line was painted outside the 62px box, over the tab row. */
   body.main-merchant-profit-page.report-body:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-topbar{height:auto!important;min-height:62px}
   /* A phone header is the most expensive space on the page, so the chips claim exactly one
-     36px line: tighter padding, a 13px amount, and no repeated unit — every figure on the
+     36px line: tighter padding, a 13px amount, and no repeated unit â every figure on the
      page is MYR (there is one currency in the filter, and the amount column says so). */
   body.main-merchant-profit-page.report-body:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-topbar > .mpr-mini-kpis{gap:6px;flex-wrap:nowrap}
   body.main-merchant-profit-page.report-body:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-topbar .mpr-mini{padding:0 8px;gap:6px}
@@ -3999,10 +4002,10 @@ body.main-merchant-profit-page.report-body:is([data-access-page="main_report"],[
 }
 
 /* ==========================================================================
-   Merchant Profit — filter bar balance
+   Merchant Profit â filter bar balance
    reports.css pins EVERY `.ref-date-field` to 292px in a media query with four
    !important size declarations, so the date range was wider than its content while
-   the search box stayed at 220px and truncated its own placeholder — and because the
+   the search box stayed at 220px and truncated its own placeholder â and because the
    row is `space-between` with a non-growing tools group, ~190px of dead space sat in
    the middle. Now: the date range is sized to its content, the search is the one
    control that absorbs slack, and the tools group fills the row so nothing is left
@@ -4029,11 +4032,11 @@ html body.main-merchant-profit-page .mpr-filter-row-main .mad-search{
 }
 
 /* ==========================================================================
-   Merchant Profit — the date control was pinned twice from the outside
+   Merchant Profit â the date control was pinned twice from the outside
    Two global reports.css rules size the shared date control and are NOT scoped to
    any page: one pins `.ref-range-wrap` (it is in that selector list) to 292px, another
    pins `.ref-range-trigger` to 390px, both with min-width and max-width as well.
-   So the visible trigger was 390px inside a 292px wrapper inside a 260px field — it
+   So the visible trigger was 390px inside a 292px wrapper inside a 260px field â it
    overflowed its own column by 130px and drew over the currency select and the search
    box, which is what looked like two controls overlapping.
    Both layers are pinned back to their container here, so the trigger is exactly as
@@ -4049,14 +4052,14 @@ html body.main-admin-detail-page:is([data-access-page="main_report"],[data-acces
 }
 
 /* ==========================================================================
-   Date range picker — make the range read as ONE strip, not separate chips
+   Date range picker â make the range read as ONE strip, not separate chips
    The shared rules draw a 3px gap between day cells and give in-range days a plain wash,
    so "05 to 20" looked like a row of unrelated light squares with no connection, and there
    was no feedback at all between picking the first date and the second.
    Now: cells touch, the band is continuous, its ends are solid amber with only the outer
    corners rounded so the band flows out of them, and hovering after the first pick previews
    the whole span before anything is committed.
-   NOTE ON SPECIFICITY: the `html:not([data-bo-theme="dark"])` prefix is required here — the
+   NOTE ON SPECIFICITY: the `html:not([data-bo-theme="dark"])` prefix is required here â the
    earlier "date picker cells" block in this file sets `background:transparent!important` on
    every day cell with that prefix, so a shorter selector loses and the ends render empty.
    Scoped to the merchant family; the shared picker on the provider/main reports is untouched.
@@ -4127,7 +4130,7 @@ html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page
 }
 
 /* ==========================================================================
-   REPORT FAMILY — `.mre-*` SHELL RETINT to Charcoal + Amber
+   REPORT FAMILY â `.mre-*` SHELL RETINT to Charcoal + Amber
    Appended 2026-09-15. Nothing above this banner is modified.
 
    Everything above retints the SHARED chrome (`.report-*`, `.mad-*`, `.ref-*`).
@@ -4146,15 +4149,15 @@ html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page
    the last CSS link on all five pages). Every legacy declaration pinned with
    `!important` is answered with `!important`.
 
-   TOKEN NOTE — why this block is smaller than it looks. The legacy rules read
+   TOKEN NOTE â why this block is smaller than it looks. The legacy rules read
    `var(--bo-navy)` / `var(--bo-cyan)` / `var(--bo-surface)` / `var(--bo-border)`
-   … Those custom properties are re-declared on `body` at the top of this file,
+   â¦ Those custom properties are re-declared on `body` at the top of this file,
    so every legacy rule that goes through a token ALREADY resolves to
-   charcoal/amber — e.g. `.mre-scope-bar{background:var(--bo-surface)}`,
+   charcoal/amber â e.g. `.mre-scope-bar{background:var(--bo-surface)}`,
    `.mre-table thead th{background:var(--bo-surface,#fff)}`,
    `.mre-num{color:var(--bo-text)}`, `.mre-total-label{color:var(--bo-navy)}`.
    Only two things were still wrong: (a) hard-coded literals, and (b) the
-   `rgba(33,166,215,…)` / `rgba(18,59,102,…)` cyan/navy washes, which no token
+   `rgba(33,166,215,â¦)` / `rgba(18,59,102,â¦)` cyan/navy washes, which no token
    can reach. Those are what this block covers. Legacy `.mre-*` rules that are
    purely layout and colour-neutral are deliberately NOT restated, after being
    read: `.mre-provider`, `.mre-provider-copy`, `.mre-code`, `.mre-category`,
@@ -4166,19 +4169,19 @@ html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page
    CLASS OWNERSHIP: this block writes no rule for `.mmr-*`, `.wl-*`,
    `.settlement-*`, `.report-summary-grid`, `.mre-history-kpis`,
    `.mre-history-scroll`, `.mre-balance-scroll`, `.mre-section-pad`,
-   `#settlementPaymentModal` or `#settlementHistoryModal` — those belong to the
+   `#settlementPaymentModal` or `#settlementHistoryModal` â those belong to the
    content layer (assets/css/main-report-charcoal-content.css).
    ========================================================================== */
 
 /* ==========================================================================
-   1. CHROME — tab strip, sync chip, Export row
+   1. CHROME â tab strip, sync chip, Export row
    Legacy defeated: main-provider-report-executive.css:25-36 (light) and
-   :452-456 (dark) —
+   :452-456 (dark) â
      body.main-report-exec-page .mre-tab.mad-tab.is-active{
        background:transparent!important;color:var(--bo-navy)!important;
        border-bottom:2px solid var(--bo-navy)!important;box-shadow:none!important}
    Its token is now neutral charcoal, so the active underline was charcoal, not
-   amber. Locked (system.md → Tabs): text #18191C / #F4F4F5, underline
+   amber. Locked (system.md â Tabs): text #18191C / #F4F4F5, underline
    #D97706 / #F59E0B, no fill, no radius. The dark twin in
    main-merchant-report-executive.css:4-7 paints the underline with
    `var(--bo-cyan)`; both are outbid here.
@@ -4241,7 +4244,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
    Report pages layer `body.main-report-exec-page` on top and the legacy
    background/border go through tokens only, so the pair is restated here at the
    higher prefix with the locked edges (light #EADCC8, dark
-   rgba(255,255,255,.14) — the panel edge, not the softer .10).
+   rgba(255,255,255,.14) â the panel edge, not the softer .10).
 
    TRAP defeated here: main-admin-detail-executive.css:535-538
      body.main-admin-detail-page .mad-search:focus-within{
@@ -4252,7 +4255,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
    equivalent fix in this file is scoped to `.main-merchant-profit-page` only
    (line 3322), so these five pages were left out.
    The icon (#57534E) and placeholder (#78716C) of `.mad-search` are already
-   correct in this file — verified, nothing added.
+   correct in this file â verified, nothing added.
    ========================================================================== */
 
 /* ---- Light ---- */
@@ -4306,11 +4309,11 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 }
 
 /* ==========================================================================
-   3. SCOPE BAR — currency + period strip
+   3. SCOPE BAR â currency + period strip
    Legacy: main-provider-report-executive.css:43-58 (light) and :457-466
    (dark). Surface and border go through tokens, but the dark token is
    rgba(255,255,255,.10) while the strip edge is locked at .14; restated.
-   `.mre-currency-group` / `.mre-period-group` are flex layout only — read, no
+   `.mre-currency-group` / `.mre-period-group` are flex layout only â read, no
    colour to re-point, not restated.
    ========================================================================== */
 
@@ -4349,16 +4352,16 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 
 /* ==========================================================================
    4. CURRENCY SEGMENT
-   Legacy defeated: main-provider-report-executive.css:59-85 —
+   Legacy defeated: main-provider-report-executive.css:59-85 â
      .mre-currency-seg{background:#E8EDF5;box-shadow:inset 0 0 0 1px rgba(18,59,102,.04)}
      .mre-cur-btn{color:#5B6B7C}
      .mre-cur-btn:hover:not(.is-active){color:var(--bo-navy);background:rgba(255,255,255,.45)}
      .mre-cur-btn.is-active{background:var(--bo-navy);color:#fff;box-shadow:0 1px 3px rgba(18,59,102,.22)}
-   Three of those are cool navy/cyan literals (`#E8EDF5`, `rgba(18,59,102,…)`,
+   Three of those are cool navy/cyan literals (`#E8EDF5`, `rgba(18,59,102,â¦)`,
    `#5B6B7C`) and the active chip was a flat navy fill with white text. The
    recipe below is the locked amber segmented control from
    main-dashboard-executive.css:521-622 (light) and :1261-1301 (dark), rescoped
-   onto these pages — the Dashboard is the only place that already had it amber.
+   onto these pages â the Dashboard is the only place that already had it amber.
    The dark twin at :467-480 also pinned the active chip to a flat
    `var(--bo-cyan)` with WHITE text; dark amber fills take `--bo-accent-on`.
    ========================================================================== */
@@ -4485,18 +4488,18 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 
 /* ==========================================================================
    5. DATE CONTROL FRAME (`.mre-date-field` / `.mre-date-trigger`)
-   Legacy: main-provider-report-executive.css:88-124 — `!important` on
+   Legacy: main-provider-report-executive.css:88-124 â `!important` on
    width/min-width/max-width/height/border/border-radius/background/color/
    font-size/font-weight/box-shadow/padding; all answered below with
    `!important`. Its `:hover/:focus` ring is
-   `0 0 0 3px rgba(33,166,215,.14)` — a cyan literal — and the dark twin
+   `0 0 0 3px rgba(33,166,215,.14)` â a cyan literal â and the dark twin
    (main-provider-report-executive.css:481-497) repaints the trigger to
    `var(--bo-bg)` while the unscoped rescoped rule in this file
    (`background:var(--bo-surface)`) outranks it: in dark the trigger therefore
    had the SAME fill as the bar behind it and only a 1px hairline edge.
    Restated here with an explicit control well. Sizing (width / min-width /
    max-width / height / padding / border-radius / gap) is deliberately NOT
-   touched — the legacy values are layout, not colour.
+   touched â the legacy values are layout, not colour.
    ========================================================================== */
 
 /* ---- Light ---- */
@@ -4543,33 +4546,33 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 }
 
 /* ==========================================================================
-   6. TABLE — total row, row hover, pos/neg money columns
+   6. TABLE â total row, row hover, pos/neg money columns
    Legacy defeated:
      main-provider-report-executive.css:214-216
-       .mre-table tbody tr:hover{background:rgba(18,59,102,.02)}   ← navy wash
+       .mre-table tbody tr:hover{background:rgba(18,59,102,.02)}   â navy wash
      main-provider-report-executive.css:322-329
-       .mre-total-row td{background:#F0F6FB!important;...}          ← cool blue
-       dark twin :631-634 — rgba(33,166,215,.08)!important + `color:#fff`
+       .mre-total-row td{background:#F0F6FB!important;...}          â cool blue
+       dark twin :631-634 â rgba(33,166,215,.08)!important + `color:#fff`
      main-provider-report-executive.css:217
        .mre-table tfoot{display:none!important}
 
-   DEFECT FOUND AND FIXED — the hidden total row. Legacy line 217 put an
+   DEFECT FOUND AND FIXED â the hidden total row. Legacy line 217 put an
    `!important` `display:none` on `tfoot` for EVERY `.mre-table`, and nothing
-   anywhere re-showed it. Both loaders clear the attribute instead —
+   anywhere re-showed it. Both loaders clear the attribute instead â
    main-win-lose-report.js:579 (`foot.hidden=!total`),
-   main-merchant-report.js:217 — so `.mre-total-row` never rendered on any of
+   main-merchant-report.js:217 â so `.mre-total-row` never rendered on any of
    these five pages despite being fully populated. Re-shown here for
    `tfoot:not([hidden])`, so the `hidden` attribute still governs.
 
    `.mre-num`, `.mre-cur-label` and `.mre-total-label` go through
    `var(--bo-text)` / `var(--bo-muted)` / `var(--bo-navy)` and are already
-   correct — read and left alone, except the total row above.
+   correct â read and left alone, except the total row above.
 
    `.value-positive` / `.value-negative` / `.value-neutral` are applied to the
    `<td>` itself (main-provider-report.js:376), so the light `.mad-table td{
    color:#374151!important}` and dark `{color:#F5F5F4!important}` in this file
    out-rank the legacy semantic colours at (0,2,1) and the pos/neg split columns
-   were rendering as plain text in BOTH modes. Restored at `.mre-table …` scope
+   were rendering as plain text in BOTH modes. Restored at `.mre-table â¦` scope
    so `.value-*` outside these tables is untouched.
    ========================================================================== */
 
@@ -4636,18 +4639,18 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 }
 
 /* ==========================================================================
-   7. FOOTER — `.mre-table-footer` + `.mre-page-size-label`
+   7. FOOTER â `.mre-table-footer` + `.mre-page-size-label`
    Legacy: main-provider-report-executive.css:763-772 (`!important` on the top
-   border and padding — the border is answered below) and :738-739 for the
+   border and padding â the border is answered below) and :738-739 for the
    label. `.mre-table-footer .mad-footer-right` is flex layout only.
 
-   DEFECT FOUND AND FIXED — the invisible "Show N / page" selector.
+   DEFECT FOUND AND FIXED â the invisible "Show N / page" selector.
    main-admin-detail-executive.css:1108-1112:
      body.main-admin-detail-page .mad-footer .mad-page-size-select,
      body.main-admin-detail-page .mad-footer #madPageSize,
      body.main-admin-detail-page .mad-footer .rounded-select-wrap{
        display:none!important}
-   That is the Admin Detail's own decision — its footer has no page-size label —
+   That is the Admin Detail's own decision â its footer has no page-size label â
    but it also matches every `.mad-footer` on these five pages, where the label,
    the legacy `select` rule at main-provider-report-executive.css:739 and the JS
    change-handlers (main-win-lose-report.js:763, main-merchant-report.js:325)
@@ -4703,8 +4706,8 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 
 /* ==========================================================================
    8. SELECTS + FORM CONTROLS inside the report workspace
-   `.rounded-select-*` — the wrapper reports.js:585-604 builds around every
-   native `<select>` — is already covered by this file in both modes; read and
+   `.rounded-select-*` â the wrapper reports.js:585-604 builds around every
+   native `<select>` â is already covered by this file in both modes; read and
    verified, nothing added. What was NOT covered:
 
      a) `select.mad-select` while it is still native. Its light chrome comes
@@ -4712,7 +4715,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
         the `.mad-select` rule in main-admin-detail-executive.css:543-552 is
         scoped to the filter bar it lives in.
 
-     b) TRAP from DESIGN.md → "Traps found while migrating":
+     b) TRAP from DESIGN.md â "Traps found while migrating":
         reports.css:583-589
           .admin-form-card .form-control,.field input,.field select,.field textarea{
             border:1px solid #d0d7e2!important;border-radius:12px!important;
@@ -4803,18 +4806,18 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 
 /* ==========================================================================
    9. LEFTOVERS reaching these pages from outside the migration
-     table-pagination-horizontal.css:60 — `.smart-page-ellipsis{color:#98a2b3
-     !important}`, a hard-coded cool grey too faint on cream (DESIGN.md →
+     table-pagination-horizontal.css:60 â `.smart-page-ellipsis{color:#98a2b3
+     !important}`, a hard-coded cool grey too faint on cream (DESIGN.md â
      "Light muted on cream: use #57534E, not #9CA3AF / #A1A1AA").
    Checked and NOT needed, after reading the files:
-     * the pager buttons themselves — already covered by `.mad-pager …` in this
+     * the pager buttons themselves â already covered by `.mad-pager â¦` in this
        file at one class-level over `table-pagination-horizontal.css:37-56`
        (`.smart-page{background:#fff!important}` and the blue
        `.smart-page.active{--bo-page-blue}`);
-     * `bo-seg-bounce.css`'s `#fff` thumb — answered by the
+     * `bo-seg-bounce.css`'s `#fff` thumb â answered by the
        `.mad-pills.bo-seg > .bo-seg-thumb` rule in this file, which repaints it
-       cream `#FFF8EB`→`#F3E8D6` (light) and charcoal (dark);
-     * `bo-ui-standard.css`'s `#fff` / `#cfd8e8` controls and ghost buttons —
+       cream `#FFF8EB`â`#F3E8D6` (light) and charcoal (dark);
+     * `bo-ui-standard.css`'s `#fff` / `#cfd8e8` controls and ghost buttons â
        all scoped to `.report-main .bo-filter-row` / `.bo-pagination-buttons` /
        `.bo-global-*`, class names that do not appear on these five pages, and
        `bo-ui-standard.js`'s `styleButton()` skips anything inside
@@ -4832,17 +4835,17 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 }
 
 /* ==========================================================================
-   10. DATE-RANGE PICKER — making the two class contracts read the same
+   10. DATE-RANGE PICKER â making the two class contracts read the same
    Three pickers feed these five pages, and they do NOT emit the same classes:
 
-     * assets/js/main-exec-date-range.js (main-win-lose-report.html) — day cells
+     * assets/js/main-exec-date-range.js (main-win-lose-report.html) â day cells
        emit `in-range` + `selected` only, plus `muted` for the out-of-month
        fillers. Verified in the render loop:
          class="${inr?'in-range':''} ${sel?'selected':''}"
-     * assets/js/main-provider-report.js:807 (main_provider_report.html) — same
+     * assets/js/main-provider-report.js:807 (main_provider_report.html) â same
        subset: `class="${inRange?'in-range':''} ${isEdge?'selected':''}"`, where
        `isEdge = val===from || val===to` (:806).
-     * assets/js/main-merchant-report.js:413 (the three merchant pages) — the
+     * assets/js/main-merchant-report.js:413 (the three merchant pages) â the
        FULL contract: `in-range` + `selected` + `is-start` + `is-end` +
        `is-preview`.
 
@@ -4850,7 +4853,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
    `is-start` / `is-end` square off the outer corner of each edge. On the two
    subset pickers those classes never appear, so both edges kept the plain 8px
    pill radius of `.selected` and a range rendered as two rounded amber pills
-   joined by a flat wash — exactly the failure DESIGN.md warns about. Fixed
+   joined by a flat wash â exactly the failure DESIGN.md warns about. Fixed
    below with class-only selectors, so the shared main-exec-date-range.js does
    not have to be touched (four pages outside this migration load it):
 
@@ -4895,7 +4898,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
    Hard-coded literals in main-provider-report-executive.css that no token
    reaches, each re-pointed at the locked role:
 
-     :147-150  `.mad-pill-count.is-warn-count{color:#E04F16}` — rust, and it had
+     :147-150  `.mad-pill-count.is-warn-count{color:#E04F16}` â rust, and it had
                no counterpart on these pages at all: this file neutralises
                `is-active-count` / `is-danger-count` but never `is-warn-count`,
                which is the Maintenance count on the provider report
@@ -4903,12 +4906,12 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
                role; the dark twin is main-merchant-report-executive.css:17-20
                (`#F79009`).
      :251-271  `.mre-mark` plus its is-teal / is-violet / is-amber / is-rose /
-               is-slate variants — all five resolved to the SAME cyan wash
+               is-slate variants â all five resolved to the SAME cyan wash
                `rgba(33,166,215,.14)` with `--bo-navy` text. A decorative
                identity tile, not a data encoding, so it takes the amber wash
-               exactly as `.mas-avatar` already does (DESIGN.md → "A different
+               exactly as `.mas-avatar` already does (DESIGN.md â "A different
                component, and already consistent: `.mas-avatar`").
-     :718-725  `.mre-history-type.*` — five cool/legacy literals
+     :718-725  `.mre-history-type.*` â five cool/legacy literals
                (#1859b7 / #b66a00 / #14804a / #c2410c / #5e4bb7) with NO dark
                variant at all, so on a #383A46 panel the type label was a dark
                blue on dark charcoal. The type is carried by the text itself, so
@@ -4981,13 +4984,13 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
 
 /* ---- Filter row: the five controls are ONE row ----
    Policy, measured at 1932 / 1546 / 1440 / 1366 / 1280 / 1150:
-     * the five controls never wrap among themselves — a folded control row reads as a broken
+     * the five controls never wrap among themselves â a folded control row reads as a broken
        layout;
      * the search box is the shock absorber (it is a text field with a placeholder, and it
        ellipsises cleanly), while the date control keeps its 260px so its fixed-format label
        ("01 Sep 2026 - 15 Sep 2026") is never clipped at >=1440;
      * the status pills are never compressed, so when the row genuinely runs out the two GROUPS
-       stack — pills on one line, all five controls together on the next — which is also what
+       stack â pills on one line, all five controls together on the next â which is also what
        main-admin-detail-executive.css does below 1279px.
    This keeps the overlap fix: the date trigger is pinned to a fixed 260px by reports.css while
    its wrapper could shrink, so it used to paint over the search frame (measured
@@ -5025,7 +5028,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
 }
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-filter-bar .mad-filters > .mad-search{
   /* main-provider-report-executive.css pins the same element at
-     `flex:0 1 280px!important; min-width:180px!important`, so this needs !important parity —
+     `flex:0 1 280px!important; min-width:180px!important`, so this needs !important parity â
      without it the search keeps a 280px basis and the row wraps 180px earlier than it must. */
   flex:1 1 100px!important;
   min-width:96px!important;
@@ -5034,7 +5037,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-filter-bar .mad-filters > .rounded-select-wrap,
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-filter-bar .mad-filters > select.mad-select{
   /* reports.js writes width / min-width / max-width / flex:0 0 160px !important INLINE on this
-     wrapper, and an inline important beats any stylesheet important — so these selects cannot be
+     wrapper, and an inline important beats any stylesheet important â so these selects cannot be
      narrowed from CSS at all. Left at their natural 160px; the slack is taken from the search
      and the date field instead. */
   flex:0 0 auto!important;
@@ -5049,7 +5052,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
 
 /* The pills give up breathing room, not content: 8px less padding per pill and a 4px track gap
    buys the ~28px that lets the whole bar sit on one line at ~1450px. The labels and counts stay
-   fully visible — the pill recipe fixes the track, thumb and height, not this padding. ---- */
+   fully visible â the pill recipe fixes the track, thumb and height, not this padding. ---- */
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-filter-bar .mad-pills{gap:4px!important;}
 body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-filter-bar .mad-pills > .mad-pill{padding:0 10px!important;}
 @media (max-width:1399.98px){
@@ -5068,7 +5071,7 @@ body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-pag
 
 
 /* ---- Month / year grid active cell, and the dark trigger label (reference values) ---- */
-/* In LIGHT the reference leaves the month/year grid active cell as plain text — the amber fill
+/* In LIGHT the reference leaves the month/year grid active cell as plain text â the amber fill
    is reserved for the preset rail and the range edges; in DARK it is an amber chip. And the dark
    trigger label is --bo-text (#F5F5F4), one step brighter than --bo-text-secondary. ---- */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .ref-cal-month-grid button.active,
@@ -5097,7 +5100,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
    The active preset rail item must be a SOLID fill, not a wash.
    The rail buttons also carry `.rounded-select-option`, and the enhanced-select rule for that
    class paints `active` as a wash. That rule is prefixed with `html:not([data-bo-theme="dark"])`,
-   i.e. one class-level ABOVE an unprefixed family selector — matching its shape was the point:
+   i.e. one class-level ABOVE an unprefixed family selector â matching its shape was the point:
    an unprefixed restatement placed later in the file still lost, which is why this looks
    redundant and is not. Same story in dark, where the prefix is `html[data-bo-theme="dark"]`.
    DESIGN.md's reference (main-merchant-profit.html) measures solid in both themes.
@@ -5114,3 +5117,96 @@ html[data-bo-theme="dark"] body:not(#bo-charcoal-off).main-admin-detail-page:is(
   background-color:#F59E0B!important;
   color:#2A2C36!important;
 }
+
+/* ==========================================================================
+   Panel pill scrollbar — MD locked recipe (system.md / Bulk unlock)
+   1) Force scrollbar-width/color:auto so Chromium honours ::-webkit-scrollbar
+      (any non-auto value paints OS arrows and ignores the webkit pair).
+   2) WebKit-only 6px chocolate/amber pill, no arrows.
+   3) Firefox-only coloured thin bar under @supports not selector(::-webkit-scrollbar).
+   ========================================================================== */
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table-wrap,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mre-scroll-table,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .wl-scroll-table,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-table-scroll{
+  scrollbar-width:auto!important;
+  scrollbar-color:auto!important;
+}
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table-wrap::-webkit-scrollbar,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mre-scroll-table::-webkit-scrollbar,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .wl-scroll-table::-webkit-scrollbar,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-table-scroll::-webkit-scrollbar{
+  width:6px!important;
+  height:6px!important;
+  background:transparent!important;
+}
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table-wrap::-webkit-scrollbar-button,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mre-scroll-table::-webkit-scrollbar-button,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .wl-scroll-table::-webkit-scrollbar-button,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-table-scroll::-webkit-scrollbar-button,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table-wrap::-webkit-scrollbar-button:single-button,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mre-scroll-table::-webkit-scrollbar-button:single-button,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .wl-scroll-table::-webkit-scrollbar-button:single-button,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-table-scroll::-webkit-scrollbar-button:single-button,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table-wrap::-webkit-scrollbar-button:vertical:start:decrement,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mre-scroll-table::-webkit-scrollbar-button:vertical:start:decrement,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .wl-scroll-table::-webkit-scrollbar-button:vertical:start:decrement,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-table-scroll::-webkit-scrollbar-button:vertical:start:decrement,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table-wrap::-webkit-scrollbar-button:vertical:end:increment,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mre-scroll-table::-webkit-scrollbar-button:vertical:end:increment,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .wl-scroll-table::-webkit-scrollbar-button:vertical:end:increment,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-table-scroll::-webkit-scrollbar-button:vertical:end:increment,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table-wrap::-webkit-scrollbar-button:horizontal:start:decrement,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mre-scroll-table::-webkit-scrollbar-button:horizontal:start:decrement,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .wl-scroll-table::-webkit-scrollbar-button:horizontal:start:decrement,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-table-scroll::-webkit-scrollbar-button:horizontal:start:decrement,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table-wrap::-webkit-scrollbar-button:horizontal:end:increment,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mre-scroll-table::-webkit-scrollbar-button:horizontal:end:increment,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .wl-scroll-table::-webkit-scrollbar-button:horizontal:end:increment,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-table-scroll::-webkit-scrollbar-button:horizontal:end:increment{
+  display:none!important;
+  width:0!important;
+  height:0!important;
+}
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table-wrap::-webkit-scrollbar-track,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mre-scroll-table::-webkit-scrollbar-track,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .wl-scroll-table::-webkit-scrollbar-track,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-table-scroll::-webkit-scrollbar-track,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table-wrap::-webkit-scrollbar-corner,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mre-scroll-table::-webkit-scrollbar-corner,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .wl-scroll-table::-webkit-scrollbar-corner,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-table-scroll::-webkit-scrollbar-corner{
+  background:transparent!important;
+}
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table-wrap::-webkit-scrollbar-thumb,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mre-scroll-table::-webkit-scrollbar-thumb,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .wl-scroll-table::-webkit-scrollbar-thumb,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-table-scroll::-webkit-scrollbar-thumb{
+  background:#8B6B4A!important;
+  background-color:#8B6B4A!important;
+  border:0!important;
+  border-radius:999px!important;
+  box-shadow:none!important;
+}
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table-wrap::-webkit-scrollbar-thumb:hover,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mre-scroll-table::-webkit-scrollbar-thumb:hover,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .wl-scroll-table::-webkit-scrollbar-thumb:hover,
+html body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-table-scroll::-webkit-scrollbar-thumb:hover{
+  background:#5C4A30!important;
+  background-color:#5C4A30!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table-wrap::-webkit-scrollbar-thumb,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mre-scroll-table::-webkit-scrollbar-thumb,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .wl-scroll-table::-webkit-scrollbar-thumb,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-table-scroll::-webkit-scrollbar-thumb{
+  background:#F59E0B!important;
+  background-color:#F59E0B!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-table-wrap::-webkit-scrollbar-thumb:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mre-scroll-table::-webkit-scrollbar-thumb:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .wl-scroll-table::-webkit-scrollbar-thumb:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .report-table-scroll::-webkit-scrollbar-thumb:hover{
+  background:#D97706!important;
+  background-color:#D97706!important;
+}
+/* Firefox: native thin bar — avoid @supports not selector(::-webkit-scrollbar); Chromium falsely matches and then ignores ::-webkit-scrollbar. */

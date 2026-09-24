@@ -1,6 +1,8 @@
 (function(){'use strict';
  const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),money=v=>Number(v||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
  const body=$('madTableBody'),search=$('madSearchInput'),roleFilter=$('madRoleFilter'),currencyFilter=$('madCurrencyFilter'),editWorkspace=$('madEditWorkspace'),listWorkspace=$('madListWorkspace'),form=$('madEditForm');
+ const tableWrap=document.querySelector('.mad-table-wrap');
+ const pageSizeEl=$('madEntriesPageSize');
  const pageTitle=document.querySelector('.report-topbar h1');
  const pageLead=document.querySelector('.report-topbar .user-title-wrap p');
  const PAGE_TITLE_LIST='Merchants';
@@ -25,6 +27,91 @@
  let providerSearch='';
  const selectedMerchantIds=new Set();
  const PAGE=10;
+ let pageSize=10;
+ let autoPageSize=null;
+ function isAutoPageSize(value){
+  const v=String(value==null?'-':value).trim();
+  return v===''||v==='-'||/^auto$/i.test(v);
+ }
+ function measureAutoPageSize(){
+  if(!tableWrap) return PAGE;
+  const head=tableWrap.querySelector('thead');
+  const sample=tableWrap.querySelector('tbody tr:not(.mad-empty)');
+  const rowHeight=sample?Math.max(36,Math.round(sample.getBoundingClientRect().height)):44;
+  const available=Math.max(0,Math.floor(tableWrap.clientHeight)-(head?Math.ceil(head.getBoundingClientRect().height):0));
+  /* Floor only — never add a row that would overflow and clip. Leftover seam
+     (< one row height) is stretched evenly by evenFillRowHeights(). */
+  return Math.max(5,Math.min(200,Math.floor(available/rowHeight)||PAGE));
+ }
+ function resetEvenFill(){
+  if(!body) return;
+  const table=body.closest('table');
+  if(table){
+   table.classList.remove('bo-tx-evenfill');
+   table.style.height='';
+  }
+  tableWrap?.removeAttribute('data-bo-autofit');
+  [...body.querySelectorAll('tr')].forEach(tr=>{
+   tr.style.height='';
+   tr.querySelectorAll('td').forEach(td=>{td.style.height='';td.style.minHeight='';});
+  });
+ }
+ /* Show `-`: stretch leftover seam across painted rows when gap < one full row height. */
+ function evenFillRowHeights(){
+  if(!body||!tableWrap) return;
+  resetEvenFill();
+  if(!pageSizeEl||!isAutoPageSize(pageSizeEl.value)) return;
+  const table=body.closest('table');
+  if(!table) return;
+  const rows=[...body.querySelectorAll('tr.mad-row')];
+  if(!rows.length) return;
+  void table.offsetHeight;
+  const head=tableWrap.querySelector('thead');
+  const avail=Math.max(0,Math.floor(tableWrap.clientHeight)-(head?Math.ceil(head.getBoundingClientRect().height):0));
+  const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
+  const rowH=Math.max(36,Math.round(natural/rows.length)||44);
+  if(natural>avail+1&&autoPageSize!=null&&autoPageSize>5){
+   autoPageSize=Math.max(5,autoPageSize-1);
+   render();
+   return;
+  }
+  const gap=avail-natural;
+  if(gap<2||gap>=rowH) return;
+  const base=Math.floor(avail/rows.length);
+  let rem=avail-(base*rows.length);
+  if(base<=0) return;
+  rows.forEach(tr=>{
+   const h=base+(rem>0?1:0);
+   if(rem>0) rem-=1;
+   tr.style.height=h+'px';
+   tr.querySelectorAll('td').forEach(td=>{td.style.height=h+'px';});
+  });
+  table.classList.add('bo-tx-evenfill');
+  table.style.height=(avail+(head?Math.ceil(head.getBoundingClientRect().height):0))+'px';
+  tableWrap.setAttribute('data-bo-autofit','');
+  if(tableWrap.scrollHeight>tableWrap.clientHeight){
+   const over=tableWrap.scrollHeight-tableWrap.clientHeight;
+   const shrink=Math.ceil(over/rows.length)||1;
+   rows.forEach(tr=>{
+    const h=Math.max(rowH,(parseFloat(tr.style.height)||base)-shrink);
+    tr.style.height=h+'px';
+    tr.querySelectorAll('td').forEach(td=>{td.style.height=h+'px';});
+   });
+  }
+ }
+ function scheduleEvenFill(){
+  requestAnimationFrame(()=>requestAnimationFrame(evenFillRowHeights));
+ }
+ function resolvePageSize(){
+  const raw=String(pageSizeEl&&pageSizeEl.value||'-').trim();
+  if(/^all$/i.test(raw)) return 10000;
+  if(isAutoPageSize(raw)){
+   if(autoPageSize==null) autoPageSize=measureAutoPageSize();
+   return autoPageSize;
+  }
+  const n=Number(raw);
+  return Number.isFinite(n)&&n>0?n:PAGE;
+ }
  function pageButtons(current, total){
   total=Math.max(1, Number(total)||1);
   current=Math.max(1, Math.min(Number(current)||1, total));
@@ -281,7 +368,8 @@
   $('madCountAll').textContent=all;
   $('madCountActive').textContent=act;
   $('madCountSuspended').textContent=all-act;
-  const pages=Math.max(1,Math.ceil(filtered.length/PAGE)),st=(page-1)*PAGE,s=filtered.slice(st,st+PAGE);
+  pageSize=resolvePageSize();
+  const pages=Math.max(1,Math.ceil(filtered.length/pageSize)),st=(page-1)*pageSize,s=filtered.slice(st,st+pageSize);
   const showSelectCol=status==='suspended'||status==='all';
   body.innerHTML=s.length?s.map(b=>{
    const canDelete=!active(b);
@@ -312,6 +400,8 @@
      `<td data-label="Actions"><div class="mad-merchant-actions">${creditBtn}${resetPassBtn}<button class="mad-merchant-icon-btn" data-view="${esc(b.id)}" type="button" data-tip="Edit" aria-label="View / Edit Merchant"><i class="bi bi-pencil" aria-hidden="true"></i></button>${deleteBtn}</div></td>`+
    `</tr>`;
   }).join(''):'<tr><td colspan="11" class="mad-empty">No merchants found.</td></tr>';
+  if(!s.length) resetEvenFill();
+  else scheduleEvenFill();
   $('madTableInfo').textContent=filtered.length?`Showing ${st+1} to ${st+s.length} of ${filtered.length} merchants`:'Showing 0 to 0 of 0 merchants';
   $('madPager').innerHTML=pageButtons(page, pages);
   syncSelectionUi();
@@ -1114,6 +1204,16 @@
   apply();
  });
  $('madPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(b && !b.disabled){page=+b.dataset.page;render()}});
+ pageSizeEl?.addEventListener('change',()=>{
+  autoPageSize=null;
+  page=1;
+  render();
+ });
+ window.addEventListener('resize',()=>{
+  if(!pageSizeEl||!isAutoPageSize(pageSizeEl.value)) return;
+  autoPageSize=null;
+  render();
+ });
  body?.addEventListener('change',e=>{
   const input=e.target.closest&&e.target.closest('[data-merchant-select]');
   if(!input) return;

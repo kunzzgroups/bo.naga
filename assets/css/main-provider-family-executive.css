@@ -1,40 +1,40 @@
-/* Provider family — Charcoal + Amber
+/* Provider family â Charcoal + Amber
    Reference implementation: Admin Detail (main-admin-detail.html).
 
-   Rescoped from the locked block in main-admin-detail-executive.css ("Charcoal + Amber —
+   Rescoped from the locked block in main-admin-detail-executive.css ("Charcoal + Amber â
    Admin Detail + Security & Audit"). That block is scoped to
    data-access-page="main_admin_detail" | "main_admin_security", so it never reached these
    pages: they kept running the retired Deep Navy Cyan layer painted by
    main-admin-detail-executive.css (tokens) + main-provider-executive.css (tokens, later).
 
    Scope: body.main-admin-detail-page.main-provider-family-page
-   The marker class is on exactly three pages — main-provider-detail.html,
+   The marker class is on exactly three pages â main-provider-detail.html,
    main-provider-credentials.html, main-provider-health.html. main-provider-create.html
    (main-provider-create-page) and main-provider-endpoints.html
    (main-provider-integration-page) are NOT migrated, which is why the shared
    main-provider-executive.css is left untouched: all three pages load it.
 
-   Load order: LAST stylesheet on the page — after reports.css, bo-ui-standard.css,
+   Load order: LAST stylesheet on the page â after reports.css, bo-ui-standard.css,
    main-admin-detail-executive.css, main-provider-executive.css and
    main-provider-report-executive.css. Those files declare the navy tokens at (0,1,1);
    this file's family prefix is (0,2,1), so both specificity and source order are ours.
    Caveat: main-provider-credentials.html also carries main-merchant-report-page +
    data-report-view="settlement", so main-merchant-report-executive.css paints parts of its
-   settlement ledger at (0,2,1) — a TIE broken by load order (this file loads last). The
+   settlement ledger at (0,2,1) â a TIE broken by load order (this file loads last). The
    page-specific file main-provider-credentials-executive.css uses a three-class prefix for
    anything that must win regardless of order.
 
    Contents: tokens (light + dark), canvas continuum, sidebar, topbar, tabs, panels, filter
    bar, table, footer, pager, buttons, modals, icon buttons + tooltips, empty states, tips,
-   row avatar. Admin create/edit-only rules were dropped — they cannot match these pages.
+   row avatar. Admin create/edit-only rules were dropped â they cannot match these pages.
 
    Page-specific classes (.mpv-*, .settlement-*, .msr-*, the health stub filter row) live in
    main-provider-<page>-executive.css, one file per page.
    ========================================================================== *//* ==========================================================================
-   Charcoal + Amber — Admin Detail + Security & Audit
+   Charcoal + Amber â Admin Detail + Security & Audit
    (data-access-page=main_admin_detail | main_admin_security). Other mad pages keep Deep Navy Cyan until migrated.
    ========================================================================== */body.main-admin-detail-page.main-provider-family-page{
-  /* Light cream locked: surface #FFF8EB · no pure white chrome */
+  /* Light cream locked: surface #FFF8EB Â· no pure white chrome */
   --bo-navy:#18191C;
   --bo-cyan:#D97706;
   --bo-cyan-deep:#B45309;
@@ -68,7 +68,7 @@
 html:has(body.main-admin-detail-page.main-provider-family-page){
   background:#FFF1DC;
 }
-/* Light canvas — orange → cream (locked; no near-white fade) */html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page.main-provider-family-page){
+/* Light canvas â orange â cream (locked; no near-white fade) */html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page.main-provider-family-page){
   background-color:#FFF6E8;
   background-image:linear-gradient(90deg,
     #FFE8CC 0,
@@ -103,7 +103,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-famil
   -webkit-backdrop-filter:none;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page{
-  /* Dark mode: soft charcoal (not dead black) · Primary #F59E0B */
+  /* Dark mode: soft charcoal (not dead black) Â· Primary #F59E0B */
   --bo-navy:#F5F5F4;
   --bo-cyan:#F59E0B;
   --bo-cyan-deep:#D97706;
@@ -135,7 +135,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
   --bo-accent-on:#2A2C36;
   color-scheme:dark;
 }
-/* Dark canvas — Warm Charcoal Continuum (sidebar → page)
+/* Dark canvas â Warm Charcoal Continuum (sidebar â page)
    Low-chroma warm charcoal into cool charcoal; short seam (~96px).
    Panels stay solid surface so data never sits in the wash. */html[data-bo-theme="dark"]:has(body.main-admin-detail-page.main-provider-family-page){
   background-color:#2C2E38;
@@ -176,7 +176,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
   -webkit-backdrop-filter:none;
   border-bottom-color:rgba(255,255,255,.08)!important;
 }
-/* Modals above sidebar / flyouts (sidebar 1040–9100, flyout 12050) */body.main-admin-detail-page.main-provider-family-page .modal-clean,
+/* Modals above sidebar / flyouts (sidebar 1040â9100, flyout 12050) */body.main-admin-detail-page.main-provider-family-page .modal-clean,
 
 body.main-admin-detail-page.main-provider-family-page .mad-modal{
   z-index:30000!important;
@@ -186,7 +186,7 @@ body.main-admin-detail-page.main-provider-family-page:has(.modal-clean.show) .re
 body.main-admin-detail-page.main-provider-family-page:has(.mad-modal.show) .report-sidebar{
   z-index:1000!important;
 }
-/* Top tabs — orange underline only; text stays neutral */body.main-admin-detail-page.main-provider-family-page .mad-tab:hover:not(.is-disabled){
+/* Top tabs â orange underline only; text stays neutral */body.main-admin-detail-page.main-provider-family-page .mad-tab:hover:not(.is-disabled){
   color:var(--bo-text,#18191C)!important;
   background:transparent!important;
 }
@@ -207,7 +207,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
   color:var(--bo-text,#F4F4F5)!important;
   border-bottom-color:var(--bo-sidebar-active,#F59E0B)!important;
 }
-/* Primary CTA — bright orange gradient + soft lift shadow */body.main-admin-detail-page.main-provider-family-page .mad-btn-primary,
+/* Primary CTA â bright orange gradient + soft lift shadow */body.main-admin-detail-page.main-provider-family-page .mad-btn-primary,
 
 body.main-admin-detail-page.main-provider-family-page .mad-btn-primary.bo-ui-button,
 
@@ -329,7 +329,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
   color:#2A2C36!important;
   box-shadow:0 1px 2px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.18)!important;
 }
-/* Active pager — light: orange gradient lift; dark: bright orange glow */body.main-admin-detail-page.main-provider-family-page .mad-pager .smart-page.active,
+/* Active pager â light: orange gradient lift; dark: bright orange glow */body.main-admin-detail-page.main-provider-family-page .mad-pager .smart-page.active,
 
 body.main-admin-detail-page.main-provider-family-page .mad-pager button.active{
   background-color:#F59E0B!important;
@@ -385,7 +385,7 @@ body.main-admin-detail-page.main-provider-family-page .mad-btn.bo-ui-button-seco
   box-shadow:none!important;
   transform:none;
 }
-/* Primary CTA hover must win over generic .mad-btn:hover — reverse gradient to 0deg */body.main-admin-detail-page.main-provider-family-page a.mad-btn-primary:hover,
+/* Primary CTA hover must win over generic .mad-btn:hover â reverse gradient to 0deg */body.main-admin-detail-page.main-provider-family-page a.mad-btn-primary:hover,
 
 body.main-admin-detail-page.main-provider-family-page a#madAddBtn:hover,
 
@@ -431,7 +431,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
 html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-row-check-box{
   background:#111111;border-color:#3F3F46;
 }
-/* Export / ghost — light: cream lift; dark: gray→black gradient */body.main-admin-detail-page.main-provider-family-page .mad-btn-ghost,
+/* Export / ghost â light: cream lift; dark: grayâblack gradient */body.main-admin-detail-page.main-provider-family-page .mad-btn-ghost,
 
 body.main-admin-detail-page.main-provider-family-page #madExportBtn,
 
@@ -500,11 +500,11 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
   box-shadow:0 1px 2px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.08),inset 0 2px 4px rgba(0,0,0,.18)!important;
 }
 /* ------------------------------------------------------------------
-   Sidebar — crypto terminal (Admin Detail amber trial only)
-   Light/Dark: canvas continuum (sidebar → page); panels stay solid.
-   NOTE: do NOT put backdrop-filter / isolation on .report-sidebar itself —
+   Sidebar â crypto terminal (Admin Detail amber trial only)
+   Light/Dark: canvas continuum (sidebar â page); panels stay solid.
+   NOTE: do NOT put backdrop-filter / isolation on .report-sidebar itself â
    that creates a containing block and clips the desktop L2 flyout (position:fixed).
-   ------------------------------------------------------------------ *//* LIGHT MODE — opaque orange cream (matches continuum left; covers content when expanded) */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar{
+   ------------------------------------------------------------------ *//* LIGHT MODE â opaque orange cream (matches continuum left; covers content when expanded) */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar{
   background:#FFE8CC!important;
   border-right:1px solid rgba(92,74,48,.14)!important;
   box-shadow:none!important;
@@ -517,7 +517,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-famil
   background:#FFE8CC!important;
   box-shadow:18px 0 40px rgba(60,48,32,.14)!important;
 }
-/* Amber edge rail — defines the continuum join */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar::before{
+/* Amber edge rail â defines the continuum join */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar::before{
   content:"";
   position:absolute;
   top:12%;bottom:12%;right:0;
@@ -554,7 +554,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-famil
   border:1px solid rgba(92,74,48,.12)!important;
   color:#6b360c!important;
 }
-/* Nav sits on the same frosted slab — no nested glass chip */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav{
+/* Nav sits on the same frosted slab â no nested glass chip */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav{
   position:relative!important;
   padding:12px 10px 10px!important;
   gap:3px!important;
@@ -644,7 +644,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-famil
   color:#6b360c!important;
   opacity:1;
 }
-/* Light L1 active — amber signal chip with soft lift */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub).active,
+/* Light L1 active â amber signal chip with soft lift */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > a:not(.report-sub).active,
 
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group.open > .nav-group-btn,
 
@@ -725,7 +725,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-famil
   content:none!important;
   display:none!important;
 }
-/* DARK MODE — opaque warm charcoal (matches continuum left; covers content when expanded) */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar{
+/* DARK MODE â opaque warm charcoal (matches continuum left; covers content when expanded) */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar{
   background:#3A3226!important;
   border-right:1px solid rgba(245,158,11,.22)!important;
   box-shadow:none!important;
@@ -757,7 +757,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
   mask-image:linear-gradient(180deg,#000 0%, #000 40%, transparent 100%);
   -webkit-mask-image:linear-gradient(180deg,#000 0%, #000 40%, transparent 100%);
 }
-/* Amber edge rail — defines the continuum join without glow wash */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar::after{
+/* Amber edge rail â defines the continuum join without glow wash */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar::after{
   content:"";
   display:block!important;
   position:absolute;
@@ -951,7 +951,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
   content:none!important;
   display:none!important;
 }
-/* Light flyout panel: cream surface (locked) — beat reports.css `#fff!important` */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list,
+/* Light flyout panel: cream surface (locked) â beat reports.css `#fff!important` */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list,
 
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav > .nav-group > .nav-group-list,
 
@@ -1022,7 +1022,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
   background:rgba(255,255,255,.05)!important;
   color:rgba(255,255,255,.92)!important;
 }
-/* L2 icons — amber series (override reports.css blue hover/active) */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub i,
+/* L2 icons â amber series (override reports.css blue hover/active) */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .report-nav a.report-sub i,
 
 html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .report-sidebar .nav-group-list a.report-sub i,
 
@@ -1084,7 +1084,7 @@ body.main-admin-detail-page.main-provider-family-page.sidebar-mini .report-sideb
   }
 }
 /* ------------------------------------------------------------------
-   Light + Dark table — amber control-terminal comps
+   Light + Dark table â amber control-terminal comps
    ------------------------------------------------------------------ */body.main-admin-detail-page.main-provider-family-page .mad-user-copy{
   display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;
 }
@@ -1100,7 +1100,7 @@ body.main-admin-detail-page.main-provider-family-page .mad-you{
   color:#B45309;background:#FEF3C7;
   font-size:10px;font-weight:700;letter-spacing:.02em;line-height:1;
 }
-/* Light table (scoped — do not leak cream borders into dark) */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-panel,
+/* Light table (scoped â do not leak cream borders into dark) */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-panel,
 
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-table-wrap{
   background:#FFF8EB!important;
@@ -1194,7 +1194,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-famil
   color:#57534E!important;
   font-weight:600!important;
 }
-/* Light action icons + search — readable charcoal (never faint placeholder gray) */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-icon-btn,
+/* Light action icons + search â readable charcoal (never faint placeholder gray) */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-icon-btn,
 
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-icon-btn.is-danger{
   color:#57534E!important;
@@ -1226,7 +1226,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-famil
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-modal-title small{
   color:#57534E!important;
 }
-/* Light modal close — cream well (never cool blue-white) */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .modal-clean-close,
+/* Light modal close â cream well (never cool blue-white) */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .modal-clean-close,
 
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-modal .modal-clean-close{
   width:36px!important;height:36px!important;border-radius:8px!important;
@@ -1286,7 +1286,7 @@ body.main-admin-detail-page.main-provider-family-page .mad-pager button:hover:no
 body.main-admin-detail-page.main-provider-family-page .mad-footer-info{
   color:#57534E!important;
 }
-/* Status filter pills — Active/Suspend/All match Export ghost (8px cream lift) */body.main-admin-detail-page.main-provider-family-page .mad-pills{
+/* Status filter pills â Active/Suspend/All match Export ghost (8px cream lift) */body.main-admin-detail-page.main-provider-family-page .mad-pills{
   display:inline-flex!important;
   align-items:center!important;
   gap:6px!important;
@@ -1554,7 +1554,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
 html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-footer-info{
   color:#D4D4D8!important;
 }
-/* Top-right chrome — theme toggle + identity + amber avatar (light/dark comps) */body.main-admin-detail-page.main-provider-family-page .report-actions{
+/* Top-right chrome â theme toggle + identity + amber avatar (light/dark comps) */body.main-admin-detail-page.main-provider-family-page .report-actions{
   gap:12px!important;
   align-items:center!important;
 }
@@ -1563,7 +1563,7 @@ body.main-admin-detail-page.main-provider-family-page .report-actions > [data-bo
   align-items:center!important;
   gap:12px!important;
 }
-/* Divider slot always reserved — only tint changes by theme (prevents cluster shift) */body.main-admin-detail-page.main-provider-family-page .report-actions > [data-bo-profile]::before{
+/* Divider slot always reserved â only tint changes by theme (prevents cluster shift) */body.main-admin-detail-page.main-provider-family-page .report-actions > [data-bo-profile]::before{
   content:"";
   width:1px;height:28px;flex:0 0 1px;
   background:rgba(24,25,28,.12);
@@ -1574,7 +1574,7 @@ body.main-admin-detail-page.main-provider-family-page .bo-theme-btn{
   box-sizing:border-box!important;
   flex:0 0 36px!important;
   width:36px!important;height:36px!important;min-width:36px!important;max-width:36px!important;
-  /* Same bordered slot in light + dark — only color changes */
+  /* Same bordered slot in light + dark â only color changes */
   border:1px solid rgba(24,25,28,.18)!important;border-radius:8px!important;
   background:transparent!important;
   color:#3F3F46!important;
@@ -1751,7 +1751,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
 html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .bo-account-link:hover .report-avatar{
   background:#FBBF24!important;
 }
-/* Dark hover tips — soft charcoal + amber (replace navy/cyan) */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-time-tip::after,
+/* Dark hover tips â soft charcoal + amber (replace navy/cyan) */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-time-tip::after,
 
 html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-icon-btn[data-tip]::after{
   background:#40424E!important;
@@ -1779,7 +1779,7 @@ html[data-bo-theme="dark"]:has(body.main-admin-detail-page.main-provider-family-
   border-top-color:transparent!important;
   border-bottom-color:#40424E!important;
 }
-/* Light hover tips — warm cream + amber (replace navy) */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-time-tip::after,
+/* Light hover tips â warm cream + amber (replace navy) */html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-time-tip::after,
 
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page .mad-icon-btn[data-tip]::after{
   background:#FFF8EB!important;
@@ -1809,7 +1809,7 @@ html:not([data-bo-theme="dark"]):has(body.main-admin-detail-page.main-provider-f
   border-top-color:transparent!important;
   border-bottom-color:#FFF8EB!important;
 }
-/* Dark modals — Adjust Credit + Reset Password inputs match soft charcoal */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel,
+/* Dark modals â Adjust Credit + Reset Password inputs match soft charcoal */html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mac-adjust-panel,
 
 html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-modal-panel,
 
@@ -1926,11 +1926,11 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
   }
 }
 /* ==========================================================================
-   Row avatar — neutral tile, colour reserved for state
+   Row avatar â neutral tile, colour reserved for state
    Unified with the merchant family (assets/css/main-merchant-detail-executive.css).
    Decision 2026-09-15: the tile is an index marker, not a colour code.
      base            neutral cream / charcoal
-     .is-self        KEEP amber — on this page it means "your own account"
+     .is-self        KEEP amber â on this page it means "your own account"
      suspended row   danger wash, agreeing with the Status pill
    The former every-third-row sky tint is deleted: it encoded row position, and it was
    never scoped to light mode, so it outbid the dark rule and put a near-white chip on
@@ -1958,11 +1958,11 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
   border-color:rgba(248,113,113,.30)!important;
 }
 /* ==========================================================================
-   Modal shell — head/foot dividers
+   Modal shell â head/foot dividers
    reports.css:69 paints `.modal-clean-head{border-bottom:1px solid var(--line)}` (and the same
    for .modal-clean-foot), where --line resolves to a cool gray (the retired reports.css line token). Neither the Admin Detail
-   reference block nor the merchant family block migrated that layer — they style .mad-modal-*
-   and .modal-clean-close/-panel, not the head/foot container — so on charcoal the divider read
+   reference block nor the merchant family block migrated that layer â they style .mad-modal-*
+   and .modal-clean-close/-panel, not the head/foot container â so on charcoal the divider read
    as a light seam: measured as cool gray rgb(228,231,236) in BOTH themes on all three credentials modals.
    Warm divider in light, white/14 in dark (DESIGN.md: never leave an unscoped cool border).
    ========================================================================== */
@@ -1980,12 +1980,12 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
 }
 
 /* ==========================================================================
-   Date-range picker — shared chrome
+   Date-range picker â shared chrome
    Rescoped from the locked picker treatment in
-   assets/css/main-merchant-detail-executive.css (its "Date-range picker — rescoped from the
+   assets/css/main-merchant-detail-executive.css (its "Date-range picker â rescoped from the
    amber Dashboard" + "Report chrome: date picker cells" + "make the range read as ONE strip"
    sections). The Admin Detail block that this file otherwise mirrors never carried the
-   calendar rules — they live in main-dashboard-executive.css for the Dashboard and were
+   calendar rules â they live in main-dashboard-executive.css for the Dashboard and were
    ported per family, which is why the picker needed its own layer here.
    Covers: trigger, wrap, icon, panel, preset rail, calendar head/week/month/year grids,
    day cells (base + hover + muted), the selected/preset fills, and the strip contract
@@ -2225,4 +2225,56 @@ html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page
 }
 html[data-bo-theme="dark"] body.standardized-listing-page.main-admin-detail-page.main-provider-family-page .ref-cal-days button.is-preview.is-end:not(.selected){
   border-radius:0 8px 8px 0!important;
+}
+
+/* ==========================================================================
+   Panel pill scrollbar — MD locked recipe (system.md)
+   Light chocolate #8B6B4A / hover #5C4A30 · dark #F59E0B / #D97706 · 6px · no arrows.
+   Do NOT set scrollbar-width/color for WebKit — Chromium then paints OS arrows and
+   ignores ::-webkit-scrollbar. Firefox-only branch below.
+   ========================================================================== */
+body.main-admin-detail-page.main-provider-family-page .mad-table-wrap::-webkit-scrollbar{
+  width:6px;
+  height:6px;
+  background:transparent;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-table-wrap::-webkit-scrollbar-button,
+body.main-admin-detail-page.main-provider-family-page .mad-table-wrap::-webkit-scrollbar-button:single-button{
+  display:none;
+  width:0;
+  height:0;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-table-wrap::-webkit-scrollbar-track{
+  background:transparent;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-table-wrap::-webkit-scrollbar-thumb{
+  background:#8B6B4A;
+  background-color:#8B6B4A;
+  border:0;
+  border-radius:999px;
+  box-shadow:none;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-table-wrap::-webkit-scrollbar-thumb:hover{
+  background:#5C4A30;
+  background-color:#5C4A30;
+}
+body.main-admin-detail-page.main-provider-family-page .mad-table-wrap::-webkit-scrollbar-corner{
+  background:transparent;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table-wrap::-webkit-scrollbar-thumb{
+  background:#F59E0B;
+  background-color:#F59E0B;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table-wrap::-webkit-scrollbar-thumb:hover{
+  background:#D97706;
+  background-color:#D97706;
+}
+@supports not selector(::-webkit-scrollbar){
+  body.main-admin-detail-page.main-provider-family-page .mad-table-wrap{
+    scrollbar-width:thin;
+    scrollbar-color:#8B6B4A transparent;
+  }
+  html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page .mad-table-wrap{
+    scrollbar-color:#F59E0B transparent;
+  }
 }

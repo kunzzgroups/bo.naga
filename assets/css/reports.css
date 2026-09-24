@@ -41,7 +41,8 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
    the single sidebar page without that stylesheet. Wheel / trackpad still scroll. */
 .report-sidebar{scrollbar-width:none}
 .report-sidebar::-webkit-scrollbar{display:none}
-.report-brand{height:64px;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid var(--line);font-weight:800;color:#18191C}
+.report-brand{height:64px;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid var(--line);font-size:15px;font-weight:800;line-height:1.15;color:#18191C}
+.report-brand > div:not(.logo){font-size:15px;font-weight:800;line-height:1.15}
 .report-brand .logo{width:34px;height:34px;border-radius:10px;background:#F5EBDC;color:#18191C;display:grid;place-items:center;flex:0 0 auto}
 .report-brand small{color:var(--muted);font-weight:600}
 .report-nav{padding:8px}
@@ -3818,8 +3819,8 @@ body.standardized-game-management .report-main .category-filter-card.bo-filter-r
     white-space:normal!important;
     opacity:1!important;
     visibility:visible!important;
-    font-size:14px!important;
-    line-height:1.25!important;
+    font-size:15px!important;
+    line-height:1.15!important;
   }
   body.sidebar-mini .report-sidebar:not(:hover):not(.is-mini-hover) .report-brand,
   body.sidebar-mini .report-sidebar:not(:hover):not(.is-mini-hover) .report-brand > div:not(.logo){

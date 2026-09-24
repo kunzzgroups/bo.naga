@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const PAGE_SIZE = 7;
+  const PAGE = 7;
   const tbody = document.getElementById('mpvTableBody');
   const searchInput = document.getElementById('mpvSearchInput');
   const typeFilter = document.getElementById('mpvTypeFilter');
@@ -12,12 +12,103 @@
   const infoEl = document.getElementById('mpvTableInfo');
   const syncLabel = document.getElementById('mpvSyncLabel');
   const activeBadge = document.getElementById('mpvActiveBadge');
+  const pageSizeEl = document.getElementById('mpvEntriesPageSize');
+  const tableWrap = document.querySelector('.mad-table-wrap');
 
   let statusPill = 'all';
   let currentPage = 1;
   let allRows = [];
   let filtered = [];
   let syncedAt = Date.now();
+  let pageSize = PAGE;
+  let autoPageSize = null;
+  let resizeTimer = null;
+
+  function isAutoPageSize(value){
+    const v = String(value == null ? '-' : value).trim();
+    return v === '' || v === '-' || /^auto$/i.test(v);
+  }
+
+  function measureAutoPageSize(){
+    if(!tableWrap) return PAGE;
+    const head = tableWrap.querySelector('thead');
+    const sample = tableWrap.querySelector('tbody tr:not(.mad-empty)');
+    const rowHeight = sample ? Math.max(36, Math.round(sample.getBoundingClientRect().height)) : 52;
+    const available = Math.max(0, Math.floor(tableWrap.clientHeight) - (head ? Math.ceil(head.getBoundingClientRect().height) : 0));
+    return Math.max(5, Math.min(200, Math.floor(available / rowHeight) || PAGE));
+  }
+
+  function resolvePageSize(){
+    const raw = String(pageSizeEl && pageSizeEl.value || '-').trim();
+    if(/^all$/i.test(raw)) return 10000;
+    if(isAutoPageSize(raw)){
+      if(autoPageSize == null) autoPageSize = measureAutoPageSize();
+      return autoPageSize;
+    }
+    const n = Number(raw);
+    return Number.isFinite(n) && n > 0 ? n : PAGE;
+  }
+
+  function resetEvenFill(){
+    if(!tbody) return;
+    const table = tbody.closest('table');
+    if(table){
+      table.classList.remove('bo-tx-evenfill');
+      table.style.height = '';
+    }
+    if(tableWrap) tableWrap.removeAttribute('data-bo-autofit');
+    [...tbody.querySelectorAll('tr')].forEach(tr => {
+      tr.style.height = '';
+      tr.querySelectorAll('td').forEach(td => { td.style.height = ''; td.style.minHeight = ''; });
+    });
+  }
+
+  function evenFillRowHeights(){
+    if(!tbody || !tableWrap) return;
+    resetEvenFill();
+    if(!pageSizeEl || !isAutoPageSize(pageSizeEl.value)) return;
+    const table = tbody.closest('table');
+    if(!table) return;
+    const rows = [...tbody.querySelectorAll('tr')].filter(tr => !tr.querySelector('.mad-empty'));
+    if(!rows.length) return;
+    void table.offsetHeight;
+    const head = tableWrap.querySelector('thead');
+    const avail = Math.max(0, Math.floor(tableWrap.clientHeight) - (head ? Math.ceil(head.getBoundingClientRect().height) : 0));
+    const natural = rows.reduce((sum, tr) => sum + Math.ceil(tr.getBoundingClientRect().height), 0);
+    const rowH = Math.max(36, Math.round(natural / rows.length) || 52);
+    if(natural > avail + 1 && autoPageSize != null && autoPageSize > 5){
+      autoPageSize = Math.max(5, autoPageSize - 1);
+      render();
+      return;
+    }
+    const gap = avail - natural;
+    if(gap < 2 || gap >= rowH) return;
+    const base = Math.floor(avail / rows.length);
+    let rem = avail - (base * rows.length);
+    if(base <= 0) return;
+    rows.forEach(tr => {
+      const h = base + (rem > 0 ? 1 : 0);
+      if(rem > 0) rem -= 1;
+      tr.style.height = h + 'px';
+      tr.querySelectorAll('td').forEach(td => { td.style.height = h + 'px'; });
+    });
+    table.classList.add('bo-tx-evenfill');
+    table.style.height = (avail + (head ? Math.ceil(head.getBoundingClientRect().height) : 0)) + 'px';
+    tableWrap.setAttribute('data-bo-autofit', '');
+    if(tableWrap.scrollHeight > tableWrap.clientHeight){
+      const over = tableWrap.scrollHeight - tableWrap.clientHeight;
+      const shrink = Math.ceil(over / rows.length) || 1;
+      rows.forEach(tr => {
+        const h = Math.max(rowH, (parseFloat(tr.style.height) || base) - shrink);
+        tr.style.height = h + 'px';
+        tr.querySelectorAll('td').forEach(td => { td.style.height = h + 'px'; });
+      });
+    }
+  }
+
+  function scheduleEvenFill(){
+    requestAnimationFrame(() => requestAnimationFrame(evenFillRowHeights));
+  }
 
   function esc(v){
     return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -108,11 +199,12 @@
 
   function render(){
     if(!tbody) return;
+    pageSize = resolvePageSize();
     const total = filtered.length;
-    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE) || 1);
+    const totalPages = Math.max(1, Math.ceil(total / pageSize) || 1);
     currentPage = Math.max(1, Math.min(currentPage, totalPages));
-    const start = (currentPage - 1) * PAGE_SIZE;
-    const rows = filtered.slice(start, start + PAGE_SIZE);
+    const start = (currentPage - 1) * pageSize;
+    const rows = filtered.slice(start, start + pageSize);
     if(pageNoEl) pageNoEl.innerHTML = pageButtons(currentPage, totalPages);
     if(infoEl){
       infoEl.textContent = total
@@ -120,6 +212,7 @@
         : 'Showing 0 to 0 of 0 providers';
     }
     if(!rows.length){
+      resetEvenFill();
       tbody.innerHTML = '<tr><td colspan="7" class="mad-empty">No providers found.</td></tr>';
       return;
     }
@@ -143,6 +236,7 @@
         '</div></td>' +
       '</tr>';
     }).join('');
+    scheduleEvenFill();
   }
 
   document.querySelectorAll('[data-mpv-status]').forEach(btn => {
@@ -179,12 +273,27 @@
   pageNoEl && pageNoEl.addEventListener('click', e => {
     const b = e.target.closest('[data-page]');
     if(!b || b.disabled) return;
-    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
     const n = Number(b.dataset.page);
     if(n >= 1 && n <= totalPages && n !== currentPage){
       currentPage = n;
       render();
     }
+  });
+
+  pageSizeEl && pageSizeEl.addEventListener('change', () => {
+    autoPageSize = null;
+    currentPage = 1;
+    render();
+  });
+
+  window.addEventListener('resize', () => {
+    if(!pageSizeEl || !isAutoPageSize(pageSizeEl.value)) return;
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      autoPageSize = null;
+      render();
+    }, 120);
   });
 
   // export only
@@ -360,7 +469,13 @@
   }
 
   BO_AUTH.requireLogin();
-  loadProviders();
+  loadProviders().then(() => requestAnimationFrame(() => {
+    if(pageSizeEl && isAutoPageSize(pageSizeEl.value)){
+      autoPageSize = null;
+      currentPage = 1;
+      render();
+    }
+  }));
   updateSyncLabel();
   sizeProviderFilterSelects();
   requestAnimationFrame(sizeProviderFilterSelects);

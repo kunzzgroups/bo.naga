@@ -407,17 +407,13 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
    The footer used to be a three-slot bar carrying its own "Show N entries" select and
    a bespoke .mad-btn pager; it now matches the Providers tab (main-provider-detail.html)
    and every other listing in the family: "Showing X to Y of Z entries" on the left, the
-   page ladder on the right, no page size control.
+   page ladder on the right, Show entries control on the left (same family as
+   Merchants / Security & Audit: `-` / 10 / 20 / 50 / 100 / All).
 
-   Nothing is painted here on purpose. main-provider-detail.js and
-   main-provider-activity.js both emit .smart-page buttons inside .mad-pager, so
-   main-admin-detail-executive.css:1113-1146 (40x36, radius 8, 13/700, nav-text width)
-   and main-provider-family-executive.css:332-370 + :1281-1296 (cool slate idle, amber
-   active, .mad-footer-info colour) already cover the whole footer. The page-size rules
-   this file used to carry are gone with the control: main-admin-detail-executive.css:
-   1108-1112 hides `.mad-footer .rounded-select-wrap`, so a select in this footer could
-   only ever have been re-enabled by fighting that rule — a second footer design that
-   existed for no other reason than to route around the hide.
+   Footer geometry and the cream page-size pill live in
+   assets/css/main-admin-page-size.css under [data-access-page="main_provider_detail"].
+   That sheet also re-shows `.mad-footer .rounded-select-wrap`, which
+   main-admin-detail-executive.css otherwise hides.
    ========================================================================== */
 
 /* ==========================================================================
