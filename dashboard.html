@@ -19,8 +19,14 @@
 <style>
 html:has(body.dashboard-shell),body.dashboard-shell{height:100%;overflow:hidden!important}
 body.dashboard-shell .report-main{height:100vh;min-height:0;overflow:hidden!important}
-.dashboard-workspace{padding:0!important;width:100%!important;max-width:100%!important;min-width:0!important;height:calc(100vh - 42px);min-height:0;background:transparent;overflow:hidden!important}
-.dashboard-workspace-frame{display:block;width:100%!important;max-width:100%!important;min-width:0!important;height:100%;min-height:0;border:0;background:transparent;overflow:hidden}
+/* height:auto so the section hugs the iframe's actual (JS-measured) content
+   height instead of always claiming the full viewport — a fixed height here
+   left a blank cream rectangle below any page shorter than the viewport,
+   since the transparent section still occupied calc(100vh - 42px) regardless
+   of how tall the iframe itself ended up. max-height still caps it so a
+   taller embedded page cannot reintroduce outer page scroll. */
+.dashboard-workspace{padding:0!important;width:100%!important;max-width:100%!important;min-width:0!important;height:auto;max-height:calc(100vh - 42px);min-height:0;background:transparent;overflow:hidden!important}
+.dashboard-workspace-frame{display:block;width:100%!important;max-width:100%!important;min-width:0!important;height:auto;min-height:0;border:0;background:transparent;overflow:hidden}
 .dashboard-workspace-frame[hidden]{display:none!important}
 
 /* Dashboard shell only: remove the old top header and keep the sidebar toggle inside the sidebar. */
