@@ -1308,6 +1308,57 @@ the session *finding* another session's uncommitted edits, commit them to a scra
 with a note) before reverting anything; `git stash list` and the four files above are what that costs
 when nobody does.
 
+#### Whole-site audit against the deployed build (2026-09-24, owner: “我的sidebar 与当前live的设计逻辑有偏差”)
+
+Owner asked for a site-wide audit against what the **live** site runs, then the fix, a push and a
+merge into `main`. Live HTML is 403 (only assets are public), so the audit compared every asset:
+`https://bo.titanx7.com/assets/{css,js}/*` for all **253** files, normalised for line endings.
+
+**Comparison method note.** A first pass read the files as bytes and reported **241 of 253** assets as
+different — every difference was a few dozen bytes, i.e. live is LF and this checkout is CRLF
+(`core.autocrlf=true`). Comparing CRLF-normalised, **only 5 files differ**, and four of them are the
+rail restore above (live is *older* there: 32 slide-out rules in `reports.css`, the 2026-07-16 hover
+rules in the twin, the hamburger `display` pairs in `bo-charcoal-legacy.css`, the drawer hover shadow
+in `main-admin-detail-executive.css`). So the owner's “偏差” is exactly this: the deployed build still
+slides the collapsed rail out, while the JS half (rail toggle, panel title, rail label, pin hide —
+`auth.js` + `bo-global-quicknav.css`, byte-identical to live) is already deployed. **Landing this
+branch is the fix.**
+
+**The fifth file ran the other way, and is the same failure mode in reverse.**
+`main-report-charcoal.css` on live carries **six selector lines the repo never had**
+(`.report-sidebar .nav-group-btn.active` and its `::before`/`i` partners, light and dark — the
+“current group row” highlight added to the sibling sheets by `a0179fe5`). `git log --all -S` finds them
+in no commit and no branch: they were deployed from a working copy and never committed, exactly like
+the rail work was. Local now adopts live's content for that file (normalised diff = those six lines
+only, so nothing else rode along).
+
+**Audit result across the site** (150 pages carry the rail; every page's family checked against the
+rule set it loads):
+
+| Family (sheets) | Pages | Loads `auth.js` | Collapsed-rail logic |
+| --- | --- | --- | --- |
+| Base + `bo-charcoal` | 87 | yes | unified ✓ |
+| Base + `main-admin-detail-page` | 25 | yes | unified ✓ |
+| Base only | 11 | yes | unified ✓ |
+| Base + `menu-permission-page` | 4 | yes | unified ✓ |
+| Twin sheet (index / member-detail / online-users) | 3 | yes | unified ✓ |
+| base + brand / dashboard / livechat / menu-mgmt / social / layout-section / referral / ad-popup / animation | 9 | yes | unified ✓ |
+| Agent Portal (own shell) | 12 | **no** | keeps its own rail + topbar toggle (by design) |
+| `_verify-*.html` scratch copies | 4 | **no** | keeps the topbar toggle; no DB menus to paint |
+
+Browser-verified per family (stub-backend harness, real sheets): base (member-deposit), twin+charcoal
+(online-users), main-admin-detail (main-merchant-security), main-dashboard, provider family
+(main-provider-health), report family (main-win-lose-report, where the recovered
+`.nav-group-btn.active` gradient was confirmed applied), livechat. Every one: rail **72px** on hover,
+no drawer shadow, `z-index:1040`, rail toggle present, topbar hamburger hidden, panel opens with its
+title and 13px items.
+
+Harness note for future audits: the stub's `/auth/admin/me` regex must survive being written through a
+shell heredoc — a lost backslash there (`/auth/admin/me/` instead of `/auth\/admin\/me/`) silently
+stops intercepting the call, the page gets a real 401 and logs itself out to `login.html`, which reads
+exactly like “this page has no sidebar”. Four pages were mis-diagnosed that way before the regex was
+printed back.
+
 ### 8. Report regularised — items 8.1 … 8.11 (2026-09-22, owner request)
 
 “把图里的 8. report 从8.1至8.11 重新整顿一遍”. Eleven pages, brought onto the locked chrome
