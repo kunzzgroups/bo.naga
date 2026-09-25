@@ -4316,6 +4316,41 @@ the date alone, tip the time, and stay one line (≤26px). Both assertions are s
 the member listing's own DD/MM/YYYY cells are not judged — which the first run proved by firing on
 `index.html` before I scoped it. Light and dark: 0 of 12 failing.
 
+#### Admin Login Log: the Login Time cell gets the same treatment (2026-09-25)
+
+Owner: “这个页面的日期和时间展示 改为时间悬浮 像其他页面一样” — the LOGIN TIME column circled, every row
+reading `25/09/2026 16:40:38`.
+
+`admin-login-log.js` printed the whole stamp in the cell (`dt()` → `toLocaleString('en-GB')`). It now
+uses the family's own pair, the same two the section above landed on Admin Management: `dt()` produces
+the ISO stamp, and the cell is drawn by `boAc.dtCell()` — **date in the cell, time in the hover tip**.
+The page already loads `access-control-listing.js`, so the tip element (`#umTimeTip`) and its delegated
+handlers were already there; the only new page-side code is that pair, and the only new CSS is the cell's
+own affordance in `admin-login-log-targeted.css` (`display:inline-block`, no wrap, `tabular-nums`,
+`cursor:help` — the member listing's and Wallet Ledger's four properties). No colour override: the cell
+reads like every other cell in this table, in both themes.
+
+**The visible date format changes with it — `25/09/2026` becomes `2026-09-24`.** Deliberate: ISO is this
+family's timestamp format (the choice recorded above), and the column's own sort (`report-table-sort.js`
+compares cell *text*) then orders as a date rather than by day-of-month. Verified by holding the whole
+set on one page (size `All`) and clicking LOGIN TIME: `2026-09-22` first, `2026-09-24` last, `aria-sort`
+`ascending`, 0 JS errors.
+
+**Verified with a real mouse on the real page, not a synthetic event.** Fixtures + the API stub injected
+before the page's own scripts (`Page.addScriptToEvaluateOnNewDocument`), then
+`Input.dispatchMouseEvent` onto the cell at (516,327): `#umTimeTip` takes `is-on`, `opacity: 1`,
+`visibility: visible`, text `09:41:07`, `position: fixed`, `z-index: 40000`, cream pill
+`rgb(255,248,235)` / `rgb(107,54,12)` / `999px` in light, `rgb(64,66,78)` / `rgb(245,245,244)` in dark —
+the locked tip in both themes. It sits 8px above the cell (`aboveCell: true`, cell 84×17 at y 318, tip
+86×29 at y 282), and moving the mouse off clears it (`is-on` gone, `opacity: 0`, `visibility: hidden`).
+Cells measure `text="2026-09-24" tip="09:41:07" tabindex="0"`.
+
+Two things this pass did **not** change. Rows stay 55px tall: the Admin cell here is
+`<b>username</b><br><small>display name</small>` — a second *field*, not a repeated word, so it keeps its
+two lines and the date cell's win is consistency rather than height. And for the **first** row the tip
+lands over the thead, because the helper prefers above the cell and the header is right there; that is
+what every other page using this tip does (`if (top < 8)` is the only flip), so it was left alone.
+
 #### Anchor-styled buttons were underlined (2026-09-24)
 
 Owner: “为什么我的access control的所有页面的 add 按键 下面都有underline 麻烦移除可以吗”. The Add and Edit
