@@ -1359,6 +1359,43 @@ stops intercepting the call, the page gets a real 401 and logs itself out to `lo
 exactly like “this page has no sidebar”. Four pages were mis-diagnosed that way before the regex was
 printed back.
 
+#### Follow-up audit: does the collapsed rail move on hover anywhere? (2026-09-24)
+
+Owner: “继续审核sidebar收起后还会自动展开问题”, with a screenshot of the **deployed** site
+(`bo.titanx7.com/dashboard.html`) whose rail was expanded on hover — that is the pre-merge build, and
+the merge above is the fix (see the deploy gap below). The follow-up asked the harder question: with
+the width rules gone, does anything else still make the collapsed rail *react* like an expander?
+
+**Static sweep.** Every rule in `assets/css/` whose selector mentions the sidebar and `:hover` /
+`:focus*` / `.is-mini-hover` / `:has()`, checked for any `width` / `max-width` / `min-width` that is not
+`--rail-w`: the BO has **none** left. The only hits are `agent-portal.css` (the Agent Portal's own
+shell, which already pins its 72px rail on hover) and the `:not(:hover):not(.is-mini-hover)` collapsed
+rules that were kept deliberately. The same sweep over every page's **inline `<style>`** found exactly
+one real leftover, below.
+
+**The leftover was on the dashboard shell** (`dashboard.html`, its own inline block):
+`body.sidebar-mini .report-sidebar:hover .dashboard-sidebar-brand > div{display:block!important;
+opacity:1!important;visibility:visible!important;width:auto!important}` — the brand row's text
+(“Backoffice / Admin Panel”) resurrected itself on hover *inside* the 72px rail, clipped. It never
+changed the rail's width, but it is the one place the collapsed rail still visibly reacted to the
+pointer, which is what “自动展开” describes. Both reveal rules are now scoped to
+`body:not(.sidebar-mini)`, so they still apply in the expanded rail (where the text is visible anyway)
+and never fire in the collapsed one. `dashboard-mini-hold` and its script are left in place: that block
+forces the collapsed width and hides the same reveals, so it is now redundant but harmless.
+
+**Dynamic sweep** (stub-backend harness, 1400×880, each page rested → hover the toggle → hover the
+first row): rail width, `.report-main` margin, nav label `font-size`, brand visibility, toggle `x`,
+rail `box-shadow` — measured identical in all three states on `dashboard.html` (its own shell),
+`index.html` (twin sheet), `member-deposit.html` (base), `livechat.html` and
+`main-merchant-security.html` (main-admin-detail family). The only thing that changes is the panel or
+rail label appearing, which is the intended hover response.
+
+**Deploy gap, still open at the time of writing.** The four restored sheets are only in `main`; the live
+assets still hash to the pre-merge versions (`reports.css 9b0bb6de`, twin `ff6b5448`,
+`bo-charcoal-legacy ae99f4cf`, `main-admin-detail-executive 0bfec462`), so the owner will keep seeing
+the old hover-expand on `bo.titanx7.com` until a deploy from `main` happens. That is the one step this
+audit cannot do: the repo's own rule is that the server is a deploy target, not a workstation.
+
 ### 8. Report regularised — items 8.1 … 8.11 (2026-09-22, owner request)
 
 “把图里的 8. report 从8.1至8.11 重新整顿一遍”. Eleven pages, brought onto the locked chrome
