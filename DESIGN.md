@@ -4708,3 +4708,44 @@ code-search field, not a table search well, and 28px is its own documented recip
 `main-provider-health.html`'s bare flex toolbar (a row of filter controls, not a search well). Both are
 reported as known non-conformances rather than silently passed. `agent-players.html` already measured
 canonical before this pass and was left alone.
+
+### Every date filter opens on today (2026-09-25, owner “全站bo/main 日期 默认当日”)
+
+**The inventory first, because "全站" hides four different implementations.** 156 pages scanned; 63 carry a
+date control (BO `bo-date-range.js` and its two family copies, the Main Portal's
+`main-exec-date-range.js` → `MAIN_DATE_RANGE`, and **eighteen** page scripts with their own
+`presetRange`/`preset` dictionaries), 93 carry none. Before this pass: **35 already opened on today** (the
+BO family's implicit fallback — `bo-date-range.js` fills empty inputs with today) and **26 did not** —
+25 on *this month*, `main-stat-detail.html` on *last month* — plus two with no default at all.
+
+**41 default-setting expressions across 23 files now say today**: `presetRange('thisMonth')`,
+`preset('thisMonth')`, `defaultPreset:'thisMonth'`, `o.defaultPreset||'thisMonth'`, `k='thisMonth'`, the
+third argument of `setRange(a,b,'thisMonth',false)` (the preset pill that gets marked active), and the two
+`data-range-default` attributes. The preset **dictionaries are untouched** — `key==='thisMonth'` and the
+`data-*-preset="thisMonth"` option buttons are what the user clicks, so the regexes match the init call
+shapes only, and the scan that follows reports **0** remaining default-shaped occurrences.
+
+**Two of the 26 were not where the inventory pointed, and that is the part worth keeping.** The first
+sweep missed every `setRange(a, b, 'thisMonth', false)` — the space after the comma — which is the
+argument that lights the *This Month* pill, so those five pages would have opened on today with the wrong
+pill highlighted; found by listing *every* quoted `'thisMonth'` and classifying it by hand rather than
+trusting the pattern. And two pages override the shared picker entirely from their own script:
+`main-stat-detail.js` computed month-to-date (`mtdFrom`/`mtdTo`) after `bo-date-range.js` had already put
+today in the inputs, and `agent-management.js` set `adminAgentBetFrom` with `isoMonthStart()` — both keep
+comparing as before, they just start from today now.
+
+**Verified by rendering, not by the rule.** `check.py` loads each page and reads what the filter actually
+holds (every `*From`/`*To` input), the label the trigger shows, and which preset pill is marked active:
+**19 of 20 pages `2026-09-25 → 2026-09-25` with the Today pill, 1 deliberate harness case**
+(`brand-management.html`'s picker is MAIN-only — its script returns early for any other role — and
+verifies clean once measured as a MAIN user, which is its own precondition). One reading that looked like
+a failure was my probe's: `main-provider-credentials.html`'s first label in document order is the
+settlement modal's *payment date* ("Select date"), not the range label; the range itself was already
+today. Theme is not a variable here — no page branches its default on `data-bo-theme` — so this pass was
+measured in light only.
+
+**Two exclusions, deliberate.** `index.html` (the member roster) keeps an **empty** range: it filters
+`createdAt`, i.e. *registration* date, so "today" would open the roster showing only members who
+registered today. It is a listing with an all-time default by design, not a report. And
+`backup_provider.html` has date inputs (and everything else) with **no page script at all** — a fragment
+with no driver, so there is nothing to default.
