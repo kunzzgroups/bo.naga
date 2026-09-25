@@ -32,10 +32,15 @@ body.dashboard-shell .report-main{height:100vh;min-height:0;overflow:hidden!impo
   body.sidebar-mini .dashboard-sidebar-brand{justify-content:center!important;padding:0!important}
   body.sidebar-mini .dashboard-sidebar-brand>div{display:none!important}
   body.sidebar-mini .dashboard-sidebar-toggle{display:inline-flex!important;opacity:1!important;visibility:visible!important;width:42px!important;min-width:42px!important}
-  body.sidebar-mini .report-sidebar:hover .dashboard-sidebar-brand,
-  body.sidebar-mini .report-sidebar.is-mini-hover .dashboard-sidebar-brand{justify-content:space-between!important;padding:0 14px!important}
-  body.sidebar-mini .report-sidebar:hover .dashboard-sidebar-brand>div,
-  body.sidebar-mini .report-sidebar.is-mini-hover .dashboard-sidebar-brand>div{display:block!important;opacity:1!important;visibility:visible!important;width:auto!important}
+  /* 2026-09-24: the collapsed rail does not slide out on hover any more, so the brand row
+     must not resurrect its text on hover either — it used to reappear (clipped) inside the
+     72px rail, which reads as the sidebar expanding by itself. The reveal is kept for the
+     expanded rail, where the text is visible anyway, and `dashboard-mini-hold` below still
+     covers the frame right after a collapse click. */
+  body:not(.sidebar-mini) .report-sidebar:hover .dashboard-sidebar-brand,
+  body:not(.sidebar-mini) .report-sidebar.is-mini-hover .dashboard-sidebar-brand{justify-content:space-between!important;padding:0 14px!important}
+  body:not(.sidebar-mini) .report-sidebar:hover .dashboard-sidebar-brand>div,
+  body:not(.sidebar-mini) .report-sidebar.is-mini-hover .dashboard-sidebar-brand>div{display:block!important;opacity:1!important;visibility:visible!important;width:auto!important}
 }
 @media(max-width:991.98px){.dashboard-sidebar-toggle{display:inline-flex!important}.dashboard-sidebar-brand .close-side{display:inline-flex!important}}
 @media(min-width:992px){
