@@ -608,7 +608,13 @@
           }
           return false;
         }
-        const hit=root.items.find(function(m){return pageFile(m.url||'')===activeFile;});
+        // Groups whose visible children are all hidden from the sidebar (e.g. Admin,
+        // Merchant) render as a single direct anchor with no items in root.items, so the
+        // lookup above never matched and the group never received the active style.
+        // Fall back to the assigned (possibly hidden) children so the direct anchor can
+        // still be recognised as the active row for its own drill-down pages.
+        const hit=root.items.find(function(m){return pageFile(m.url||'')===activeFile;})
+          || (activeAssignedChildrenByGroup[root.key]||[]).find(function(m){return pageFile(m.url||'')===activeFile;});
         if(hit){
           primaryGroupKey=root.key;
           primaryMenuKey=hit.menuKey;

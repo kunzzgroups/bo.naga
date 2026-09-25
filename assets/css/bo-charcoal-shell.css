@@ -741,7 +741,8 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .n
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub).active,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group.open > .nav-group-btn,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn,
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn{
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group-btn.active{
   position:relative!important;
   background:
     linear-gradient(135deg, #FFF8EF 0%, #FFE8CC 48%, #FFF3E0 100%)!important;
@@ -757,7 +758,8 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .n
 }html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub).active::before,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group.open > .nav-group-btn::before,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn::before,
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn::before{
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn::before,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group-btn.active::before{
   content:"";
   position:absolute;
   left:0;top:7px;bottom:7px;width:3px;border-radius:999px;
@@ -768,7 +770,8 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .n
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group.open > .nav-group-btn i,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn i,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group.open > .nav-group-btn .bi-chevron-down,
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn .bi-chevron-down{
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn .bi-chevron-down,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-sidebar .nav-group-btn.active i{
   color:#6b360c!important;
   opacity:1;
   filter:none;
@@ -942,7 +945,8 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-gro
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group.open > .nav-group-btn,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn,
-html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn{
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group-btn.active{
   position:relative!important;
   background:linear-gradient(90deg, rgba(245,158,11,.16) 0%, rgba(245,158,11,.05) 45%, transparent 100%)!important;
   color:#FBBF24!important;
@@ -957,7 +961,8 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-gro
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav > a:not(.report-sub).active::before,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group.open > .nav-group-btn::before,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn::before,
-html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn::before{
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group.bo-flyout-hover:has(.report-sub.active) > .nav-group-btn::before,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group-btn.active::before{
   content:"";
   position:absolute;
   left:0;top:8px;bottom:8px;width:2px;border-radius:999px;
@@ -968,7 +973,8 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-gro
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group.open > .nav-group-btn i,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn i,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group.open > .nav-group-btn .bi-chevron-down,
-html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn .bi-chevron-down{
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group:has(.report-sub.active) > .nav-group-btn .bi-chevron-down,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-group-btn.active i{
   color:#FBBF24!important;
   filter:drop-shadow(0 0 8px rgba(245,158,11,.65));
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .report-nav a.report-sub{
@@ -1057,7 +1063,9 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-sidebar .nav-gro
 }
 
 @media(min-width:992px){body.report-body.bo-charcoal.sidebar-mini .report-nav > a:not(.report-sub).active,
-body.report-body.bo-charcoal.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active{
+body.report-body.bo-charcoal.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active,
+body.report-body.bo-charcoal.sidebar-mini .nav-group-btn.active,
+body.report-body.bo-charcoal.sidebar-mini .report-sidebar:hover .nav-group-btn.active{
     background:linear-gradient(135deg, #FFF8EF 0%, #FFE8CC 48%, #FFF3E0 100%)!important;
     color:#9A3412!important;
     box-shadow:
@@ -1066,7 +1074,9 @@ body.report-body.bo-charcoal.sidebar-mini .report-sidebar:hover .report-nav > a:
       0 6px 16px rgba(217,119,6,.12)!important;
     border-radius:10px!important;
   }html[data-bo-theme="dark"] body.report-body.bo-charcoal.sidebar-mini .report-nav > a:not(.report-sub).active,
-html[data-bo-theme="dark"] body.report-body.bo-charcoal.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active{
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.sidebar-mini .nav-group-btn.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.sidebar-mini .report-sidebar:hover .nav-group-btn.active{
     background:linear-gradient(90deg, rgba(245,158,11,.16) 0%, rgba(245,158,11,.05) 45%, transparent 100%)!important;
     color:#FBBF24!important;
     box-shadow:
@@ -1074,7 +1084,9 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.sidebar-mini .report-sid
       inset 0 -1px 0 rgba(245,158,11,.10),
       0 0 28px rgba(245,158,11,.12)!important;
   }body.report-body.bo-charcoal.sidebar-mini .report-nav > a:not(.report-sub).active::before,
-body.report-body.bo-charcoal.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active::before{
+body.report-body.bo-charcoal.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active::before,
+body.report-body.bo-charcoal.sidebar-mini .nav-group-btn.active::before,
+body.report-body.bo-charcoal.sidebar-mini .report-sidebar:hover .nav-group-btn.active::before{
     content:"";
     position:absolute;
     left:0;top:7px;bottom:7px;width:3px;border-radius:999px;

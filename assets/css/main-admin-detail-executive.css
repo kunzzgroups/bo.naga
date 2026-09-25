@@ -128,11 +128,13 @@ body.main-admin-detail-page .report-sidebar .report-nav > a:not(.report-sub):foc
   background:rgba(217,119,6,.16)!important;
   color:#fff!important;
 }
-body.main-admin-detail-page .report-sidebar .report-nav > a:not(.report-sub).active{
+body.main-admin-detail-page .report-sidebar .report-nav > a:not(.report-sub).active,
+body.main-admin-detail-page .report-sidebar .nav-group-btn.active{
   background:var(--bo-sidebar-active)!important;
   color:#fff!important;
 }
-body.main-admin-detail-page .report-sidebar .report-nav > a:not(.report-sub).active i{
+body.main-admin-detail-page .report-sidebar .report-nav > a:not(.report-sub).active i,
+body.main-admin-detail-page .report-sidebar .nav-group-btn.active i{
   color:#fff!important;
 }
 body.main-admin-detail-page .report-sidebar .nav-group .nav-group-btn{
@@ -207,7 +209,9 @@ body.main-admin-detail-page .report-nav > .nav-group:last-child:not(.open) > .na
     background:transparent!important;
   }
   body.main-admin-detail-page.sidebar-mini .report-nav > a:not(.report-sub).active,
-  body.main-admin-detail-page.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active{
+  body.main-admin-detail-page.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active,
+  body.main-admin-detail-page.sidebar-mini .nav-group-btn.active,
+  body.main-admin-detail-page.sidebar-mini .report-sidebar:hover .nav-group-btn.active{
     background:var(--bo-sidebar-active)!important;
     color:#fff!important;
   }
