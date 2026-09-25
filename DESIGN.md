@@ -1512,7 +1512,8 @@ these.
 **Still open, and named as such rather than quietly dropped:** the *page-level* scrollbar (far
 right of the viewport) is still the OS default. It is not this family’s to change — it belongs to
 every page of the app, so it needs one repo-wide decision, the way `bo-table-zebra.css` was made
-a shared layer. Also still open: the footer’s `Show N entries` select stays a native `<select>`
+a shared layer. **Closed 2026-09-25** — see “One scrollbar palette, site-wide”: the decision is the
+house pill, in `assets/css/bo-scrollbar.css`, linked from every page. Also still open: the footer’s `Show N entries` select stays a native `<select>`
 because `bo-ui-standard.js` only upgrades selects inside `.bo-filter-row`, so it does not get the
 Role-select cream chrome.
 **Third defect from the same render (owner report: “日期外围有一个很丑的border”).** The date
@@ -1750,6 +1751,72 @@ non-family scope still measured 17px because `bo-global-quicknav.css?v=PIN` was 
 `bo-global-quicknav.css` 1.1.3 → **1.1.4** (auth.js ×2 and `menu-management.html`), `auth.js`
 1.0.86 → **1.0.87** on all 130 pages, and `bo-report-family.css` 1.0.7 → **1.0.8** on the eleven —
 the last one because that sheet had rules *removed*, and a stale copy would keep applying them.
+
+### One scrollbar palette, site-wide — and the page-level bar joins it (2026-09-25)
+
+Owner: “全站main/bo 的scrollbar颜色要统一”.
+
+**The palette was never in doubt; four others had grown beside it.** A linear scan of every sheet
+plus every page's inline `<style>` (494 scrollbar rules — *not* a regex: `bo-charcoal-legacy.css`
+is 12.7 MB and a `[^{}]*?` pattern over it backtracks for minutes) found the locked **Panel pill**
+pair — light `#8B6B4A` / hover `#5C4A30`, dark `#F59E0B` / `#D97706` — alongside four competing
+palettes on the same components in different families:
+
+| Beside it | Where | Count |
+| --- | --- | --- |
+| cool slate `#98A2B3` / `#667085` | `bo-charcoal-primitives`, `provider-session`, `vip-exp/reward-log`, `main-merchant-profit-record`, `menu-permission-executive`, `main-admin-detail-executive`, `bo-wallet-transaction-amber` | 25 rules |
+| zinc dark `#A1A1AA` / `#D4D4D8` / `#71717A` | `bo-wallet-transaction-amber`, `main-merchant-profit-record`, `reports.css` | 6 |
+| tan `#EADCC8` / `#DCC9A8` | `bo-charcoal-shell`, `main-merchant-detail-executive`, `main-report-charcoal`, `reports.css`, `reports-dashboard-original.css`, `vip-management` | 18 |
+| warm grey `#57534E` / `#78716C` | same three sheets, dark branches | 8 |
+
+**The sweep is colour-only, by ROLE, and was verified as such.** 78 declarations across 14 sheets
+now state the house pair; widths, radii, borders, arrow rules, `!important` flags and `var()`
+fallbacks are untouched, and every declaration was checked to have actually changed (this repo's
+trap 5 — `str.replace()` cannot fail). Two bugs in the first pass, both caught by reading the diff
+rather than the transform's report: `html:not([data-bo-theme="dark"])` is a **light** rule that
+contains the word `dark`, so the first version flipped the family's light thumbs to amber; and the
+`@supports not selector(::-webkit-scrollbar)` branches hold a light and a dark rule inside one
+block, so judging the block by its last inner selector got half of them wrong. Also excluded:
+rules that only declare `scrollbar-gutter`/`scrollbar-width` (a panel reserving a gutter also
+declares its own surface `background`, and rewriting that would have painted the panel chocolate),
+and `var()`-valued colours — which is not a dodge: all four such vars (`--lc-thumb`,
+`--lc-thumb-hover`, `--bo-cyan`, `--bo-cyan-deep`) resolve inside the house palette already, and
+the rendered check below covers them.
+
+**The page-level bar was the piece DESIGN.md had left open** (“it belongs to every page of the app,
+so it needs one repo-wide decision”): `scrollbar-color: auto`, default width, **OS arrows**, on every
+BO and Main Portal page — measured, not assumed. It now has the house pill in a small shared layer,
+`assets/css/bo-scrollbar.css`, linked from all **150** real pages (the four that are meta-refresh
+shells have no CSS at all, so they are excluded, and `backup_provider.html` is a fragment with no
+`<head>`). The file carries three things: the document scroller, a `*` **fallback** for anything no
+family sheet has coloured — a fallback, not an override: every family rule out-specifies it, and a
+deliberately hidden bar still hides because `scrollbar-width:none` is a standard property — and the
+Firefox branch under `@supports not selector(::-webkit-scrollbar)`, never `scrollbar-color` for
+WebKit (Chromium would paint OS arrows and ignore every `::-webkit-scrollbar` rule).
+`::-webkit-scrollbar-button:single-button` is in there beside the plain variant, because the plain
+one does not cover Chromium's single-button state (the trap from the “scrollbar corner” note above).
+
+**Verified by rendering, both themes, on 23 page renders** — every changed sheet measured on a page
+that actually loads it (`account-lock`, `bank-deposit-usage`, `player-provider-session`,
+`vip-exp-log`, `vip-reward-log`, `main-merchant-profit-record`, `main-merchant-balance`,
+`main-merchant-create`, `admin-user-create`, `main-admin-role-create`, `index`, plus the earlier
+twelve): every scrollable element was forced to overflow and its **effective** colour read —
+`scrollbar-color` when it is not `auto`, otherwise `::-webkit-scrollbar-thumb`, since Chromium
+honours the former over the latter. Result: **light 149–152 of 149–152 scrollers
+`rgb(139,107,74)`, dark the same count `rgb(245,158,11)`, 0 off-palette.**
+
+**The gutter gate, as the note above asks for it** (`offsetWidth − clientWidth`, the width Chromium
+actually reserved — 15–17px is the OS bar, 6–8px is the pill): **no scroller anywhere in the sample
+reserves more than 11px.** 134 non-root scrollers in each theme: 94 at 8px (6px pill + two 1px
+borders), 17 at 6px, 12 at 0px (deliberately hidden), the rest the family's locked 9/10px horizontal
+bars. Before/after of the page bar, same page and viewport, produced by disabling only this one
+sheet: OS grey with up/down arrows → 6px chocolate pill, no arrows, no track lane.
+
+**Two things this pass deliberately did not touch.** The hidden sidebar (`scrollbar-width:none`) stays
+hidden — that was an owner decision, not drift — and the six pages that load neither `reports.css`
+nor `bo-ui-standard.css` keep an OS-width sidebar scrollbar, which is a *visibility* difference, not
+a colour one; the new layer colours it but does not hide it.
+
 
 ### 8.1–8.11 viewport-locked — the table header now stays put (2026-09-22)
 

@@ -3678,7 +3678,7 @@ body.main-admin-security-page .mas-table tbody tr[data-event-id] > td{
 /* Thin scrollbar matching reference (body only) */
 body.main-admin-security-page .mas-table-body-scroll{
   scrollbar-width:auto;
-  scrollbar-color:#98A2B3 transparent;
+  scrollbar-color:#8B6B4A transparent;
 }
 body.main-admin-security-page .mas-table-body-scroll::-webkit-scrollbar{
   width:14px;
@@ -3687,13 +3687,13 @@ body.main-admin-security-page .mas-table-body-scroll::-webkit-scrollbar-track{
   background:transparent;
 }
 body.main-admin-security-page .mas-table-body-scroll::-webkit-scrollbar-thumb{
-  background:#98A2B3;
+  background:#8B6B4A;
   border-radius:999px;
   border:3px solid transparent;
   background-clip:padding-box;
 }
 body.main-admin-security-page .mas-table-body-scroll::-webkit-scrollbar-thumb:hover{
-  background:#667085;
+  background:#5C4A30;
   border:3px solid transparent;
   background-clip:padding-box;
 }
