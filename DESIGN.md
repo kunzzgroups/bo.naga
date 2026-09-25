@@ -1270,6 +1270,44 @@ themes:
 from content; `auth.js`'s hardcoded `bo-global-quicknav.css?v=` moved by hand again (third time this
 trap has bitten — it is the single string the stamper cannot see).
 
+#### The rail work was lost once, and why (2026-09-24, owner: “我的sidebar昨天已改好的设计逻辑跑了”)
+
+Owner report, the day after the two passes above: the sidebar's collapsed-rail logic was back to the
+old slide-out. **It was not a browser cache and not a bad merge of committed code — the work had never
+been committed, so a second session on this branch removed it as “not mine”.** The trail, from the
+reflog:
+
+| Commit | What it did |
+| --- | --- |
+| `a40a9b2d` | swept **15 uncommitted rail files** into an unrelated commit (“Access Control modals”) |
+| `3bc151ae` | “Correct the previous commit: **remove 15 files that were not mine**” — reverted them |
+| `3047c431` | “**Drop a colleague's uncommitted rail work** from this branch” — the same, from the other side |
+| `222ec75f` / `e1f46889` | merged that branch into `main` (PR #65), so `main` shipped without them |
+
+The result on `origin/main` was a **half-applied feature**: `auth.js` and `bo-global-quicknav.css`
+carried the JS half (rail label panel, panel title header, rail toggle, pin hide) while `reports.css`
+still carried all 32 slide-out rules — so the rail slid out on hover again *and* the JS painted the
+collapsed-state panel beside it. Two sessions editing one working tree is what made this possible:
+the second session's hygiene (never commit files another session is holding uncommitted) is correct
+in itself, and it fired on the only copy that existed.
+
+**Recovered** from the pre-revert commit: `git show a40a9b2d:<file>` held the finished versions, and
+the deltas re-applied onto `origin/main` cleanly (8 of 9 hunks in `reports.css` applied by `patch`;
+the 9th, the 2026-09-03 mini block, had been touched by `f7c81793` — its `font-size:14px` became
+`15px` — so that block was re-edited by hand). Restored in four files: `reports.css` (32 → 2
+hover rules, the two harmless positioning ones kept), `reports-dashboard-original.css` (the three
+2026-07-16 hover rules), `bo-charcoal-legacy.css` (the `display:inline-flex!important` pairs), and
+`main-admin-detail-executive.css` (the drawer background/shadow on hover — a gap in the original
+pass, not a loss). With them, a scan for every rule class this work removed comes back empty across
+`assets/css/` except `agent-portal.css`, which is the Agent Portal's own shell.
+
+**The rule to keep from this:** in a repo where more than one session works in the same checkout,
+uncommitted work is not work. Every rail file had to be re-derived from a commit that had swept it up
+by accident. Commit the rail changes to the personal branch as soon as they verify — and if you are
+the session *finding* another session's uncommitted edits, commit them to a scratch branch (or stash
+with a note) before reverting anything; `git stash list` and the four files above are what that costs
+when nobody does.
+
 ### 8. Report regularised — items 8.1 … 8.11 (2026-09-22, owner request)
 
 “把图里的 8. report 从8.1至8.11 重新整顿一遍”. Eleven pages, brought onto the locked chrome
