@@ -1345,7 +1345,8 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .provider-page-btn.activ
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-topbar .hamb,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-topbar > .hamb{
   box-sizing:border-box!important;
-  display:inline-flex!important;
+  /* 2026-09-24: no `display` — the desktop topbar hamburger is gone (the rail carries the
+     toggle); below 992px the drawer opener comes from reports.css's mobile block. */
   align-items:center!important;
   justify-content:center!important;
   width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;
@@ -1363,7 +1364,8 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal .report-topbar .ha
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-topbar .hamb,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-topbar > .hamb{
   box-sizing:border-box!important;
-  display:inline-flex!important;
+  /* 2026-09-24: no `display` — the desktop topbar hamburger is gone (the rail carries the
+     toggle); below 992px the drawer opener comes from reports.css's mobile block. */
   align-items:center!important;
   justify-content:center!important;
   width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;
@@ -3124,7 +3126,8 @@ html[data-bo-theme="dark"] body.referral-page.report-body.bo-charcoal .report-to
   background:#383A46!important;border-bottom-color:rgba(255,255,255,.10)!important;
 }
 html body.referral-page.report-body.bo-charcoal .report-topbar > .hamb{
-  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  /* 2026-09-24: no `display` — see the charcoal block above. */
+  align-items:center!important;justify-content:center!important;
   box-sizing:border-box!important;
   width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;flex:0 0 auto!important;
   padding:8px 10px!important;
