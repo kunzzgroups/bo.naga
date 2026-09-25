@@ -3356,15 +3356,15 @@ html[data-bo-theme="dark"] body.standardized-listing-page.report-body.bo-charcoa
    thumb, deep amber hover).
    -------------------------------------------------------------------------- */
 body.report-body.bo-charcoal .mas-table-body-scroll{
-  scrollbar-color:#EADCC8 transparent!important;
+  scrollbar-color:#8B6B4A transparent!important;
 }
 body.report-body.bo-charcoal .mas-table-body-scroll::-webkit-scrollbar-thumb{
-  background:#EADCC8!important;
-  background-color:#EADCC8!important;
+  background:#8B6B4A!important;
+  background-color:#8B6B4A!important;
 }
 body.report-body.bo-charcoal .mas-table-body-scroll::-webkit-scrollbar-thumb:hover{
-  background:#DCC9A8!important;
-  background-color:#DCC9A8!important;
+  background:#5C4A30!important;
+  background-color:#5C4A30!important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .mas-table-body-scroll{
   scrollbar-color:#F59E0B transparent!important;
@@ -4018,10 +4018,10 @@ body.report-body.bo-charcoal.main-merchant-profit-record-page .mprr-field .round
   box-shadow:0 12px 30px rgba(60,48,32,.14)!important;
 }
 body.report-body.bo-charcoal.main-merchant-profit-record-page .mprr-field .rounded-select-wrap .rounded-select-menu::-webkit-scrollbar-thumb{
-  background:#EADCC8!important;
+  background:#8B6B4A!important;
 }
 body.report-body.bo-charcoal.main-merchant-profit-record-page .mprr-field .rounded-select-wrap .rounded-select-menu::-webkit-scrollbar-thumb:hover{
-  background:#DCC9A8!important;
+  background:#5C4A30!important;
 }
 /* Light option states: the legacy hover/active rules are 4 class-levels (page class +
    .mprr-field + .rounded-select-option + pseudo) while the shared block's generic
@@ -4048,10 +4048,10 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.main-merchant-profit-rec
   box-shadow:0 16px 38px rgba(0,0,0,.4)!important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.main-merchant-profit-record-page .mprr-field .rounded-select-wrap .rounded-select-menu::-webkit-scrollbar-thumb{
-  background:#57534E!important;
+  background:#F59E0B!important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.main-merchant-profit-record-page .mprr-field .rounded-select-wrap .rounded-select-menu::-webkit-scrollbar-thumb:hover{
-  background:#78716C!important;
+  background:#D97706!important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.main-merchant-profit-record-page .mprr-field .rounded-select-wrap .rounded-select-menu .rounded-select-option:hover{
   background:rgba(245,158,11,.12)!important;
