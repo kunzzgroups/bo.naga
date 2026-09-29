@@ -369,3 +369,57 @@ html[data-bo-theme="dark"] .report-shell .report-main .report-topbar[data-bo-top
    consistent, and 1b above removes the reason the sheets used to shrink it (an
    unshrinkable title). If a smaller phone size is preferred, add one breakpoint here -
    it is a one-line change. */
+
+/* ---------------------------------------------------------------------------
+   4. The Live Chat workspace fills the frame (desktop only)
+
+   livechat.html is the one page that behaves like an application: the page itself
+   never scrolls, the conversation list and the message history scroll inside their
+   own panels, and the composer stays put. That chain used to be
+
+       .report-main{height:100vh}
+       .report-content{height:calc(100vh - 60px); padding-bottom:14px}
+
+   with the 60px standing in for the topbar - which is 64px plus its 1px hairline.
+   The content box therefore ran 5px past the viewport, so the workspace was clipped
+   at the bottom while the leftover 14px (against the frame's 18px sides) read as an
+   empty strip under it. Owner: "这里还有位子，高度可以拉匀".
+
+   The chain is flex instead of that guess: the header takes what it takes, the
+   content frame takes the rest, the workspace takes the frame, and the panel now
+   ends flush with the bottom of the window. Nothing about the inner panels' own
+   sizing changes - they still scroll the same way.
+
+   The declarations live here rather than in the page's family sheet because
+   `.report-content` / `.report-topbar` are shell selectors, and
+   scripts/check-shell-drift.js refuses a new shell metric anywhere but this file.
+
+   Desktop only. Below 992px the page scrolls normally, and reports.css' own reset
+   (.livechat-bo-page, max-width:991.98px) stays in charge of every one of these
+   boxes. ------------------------------------------------------------------- */
+@media (min-width:992px){
+  body.livechat-bo-page .report-main{
+    height:100vh!important;
+    overflow:hidden!important;
+    display:flex;
+    flex-direction:column;
+  }
+  /* The header keeps its own box and hands the remainder to the content frame. */
+  body.livechat-bo-page .report-main > .report-topbar{
+    flex:0 0 auto;
+  }
+  body.livechat-bo-page .report-content{
+    height:auto!important;
+    overflow:hidden!important;
+    /* Flush bottom: the sides keep the frame's 18px (section 0c). */
+    padding-bottom:0!important;
+    display:flex;
+    flex-direction:column;
+    flex:1 1 auto;
+  }
+  body.livechat-bo-page .livechat-admin-shell{
+    height:auto!important;
+    min-height:0;
+    flex:1 1 auto;
+  }
+}
