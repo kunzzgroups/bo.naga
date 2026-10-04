@@ -107,22 +107,28 @@ function updateSchedulePeek(){
   const peek=$('schedulePeek');
   const dailyOn=String($('rwDailyEnabled')?.value)==='1';
   const weeklyOn=String($('rwWeeklyEnabled')?.value)==='1';
-  const dailyBadge=$('rwDailyBadge'),weeklyBadge=$('rwWeeklyBadge');
+  const monthlyOn=String($('rwMonthlyEnabled')?.value)==='1';
+  const dailyBadge=$('rwDailyBadge'),weeklyBadge=$('rwWeeklyBadge'),monthlyBadge=$('rwMonthlyBadge');
   if(dailyBadge){dailyBadge.textContent=dailyOn?'On':'Off';dailyBadge.classList.toggle('is-off',!dailyOn);}
   if(weeklyBadge){weeklyBadge.textContent=weeklyOn?'On':'Off';weeklyBadge.classList.toggle('is-off',!weeklyOn);}
+  if(monthlyBadge){monthlyBadge.textContent=monthlyOn?'On':'Off';monthlyBadge.classList.toggle('is-off',!monthlyOn);}
   const dailyCard=document.querySelector('.rebate-cycle-card[data-cycle="daily"]');
   const weeklyCard=document.querySelector('.rebate-cycle-card[data-cycle="weekly"]');
+  const monthlyCard=document.querySelector('.rebate-cycle-card[data-cycle="monthly"]');
   if(dailyCard)dailyCard.classList.toggle('is-disabled',!dailyOn);
   if(weeklyCard)weeklyCard.classList.toggle('is-disabled',!weeklyOn);
+  if(monthlyCard)monthlyCard.classList.toggle('is-disabled',!monthlyOn);
   if(!peek)return;
   const auto=String($('rwAutomaticEnabled')?.value)==='1';
   const dailyTime=$('rwDailyTime')?.value||'00:01';
   const weeklyTime=$('rwWeeklyTime')?.value||'00:15';
+  const monthlyTime=$('rwMonthlyTime')?.value||'00:20';
+  const monthlyDay=Number($('rwMonthlyDay')?.value||1);
   const weekMap={1:'Mon',2:'Tue',3:'Wed',4:'Thu',5:'Fri',6:'Sat',7:'Sun'};
   const weeklyDay=weekMap[Number($('rwWeeklyDay')?.value||1)]||'Mon';
   const tz=$('rwTimeZone')?.value||'Asia/Kuala_Lumpur';
   if(!auto){peek.textContent='Automatic settlement off · '+tz;return;}
-  peek.textContent=(dailyOn?'Daily '+dailyTime:'Daily off')+' · '+(weeklyOn?'Weekly '+weeklyDay+' '+weeklyTime:'Weekly off')+' · '+tz;
+  peek.textContent=(dailyOn?'Daily '+dailyTime:'Daily off')+' · '+(weeklyOn?'Weekly '+weeklyDay+' '+weeklyTime:'Weekly off')+' · '+(monthlyOn?'Monthly day '+monthlyDay+' '+monthlyTime:'Monthly off')+' · '+tz;
 }
 function setScheduleOpen(open){
   const card=document.querySelector('.rebate-schedule');
@@ -142,14 +148,18 @@ function renderWorkerSetting(s){
   input('rwWeeklyEnabled',s.weeklyEnabled==null?1:s.weeklyEnabled);
   input('rwWeeklyDay',s.weeklyDay==null?1:s.weeklyDay);
   input('rwWeeklyTime',s.weeklyTime||'00:15');
+  input('rwMonthlyEnabled',s.monthlyEnabled==null?1:s.monthlyEnabled);
+  input('rwMonthlyDay',s.monthlyDay==null?1:s.monthlyDay);
+  input('rwMonthlyTime',s.monthlyTime||'00:20');
   applyWorkerFoot('rwLastDaily',workerStatusText(s.lastDailyStatus,s.lastDailyRun,s.lastDailyMessage));
   applyWorkerFoot('rwLastWeekly',workerStatusText(s.lastWeeklyStatus,s.lastWeeklyRun,s.lastWeeklyMessage));
+  applyWorkerFoot('rwLastMonthly',workerStatusText(s.lastMonthlyStatus,s.lastMonthlyRun,s.lastMonthlyMessage));
   updateSchedulePeek();
 }
 async function loadWorkerSetting(){try{renderWorkerSetting(await request(base+'/api/admin/rebate/worker-settings'));}catch(e){showError(e);}}
-function workerBody(){return{automaticEnabled:Number($('rwAutomaticEnabled').value),timeZone:$('rwTimeZone').value.trim(),dailyEnabled:Number($('rwDailyEnabled').value),dailyTime:$('rwDailyTime').value,weeklyEnabled:Number($('rwWeeklyEnabled').value),weeklyDay:Number($('rwWeeklyDay').value),weeklyTime:$('rwWeeklyTime').value};}
-const saveRebateWorker=$('saveRebateWorker');if(saveRebateWorker)saveRebateWorker.onclick=async()=>{try{const b=workerBody();if(!b.timeZone)throw Error('Timezone is required');if(!b.dailyTime)throw Error('Daily settlement time is required');if(!b.weeklyTime)throw Error('Weekly settlement time is required');const out=await request(base+'/api/admin/rebate/worker-settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});renderWorkerSetting(out);BO_DIALOG.alert('Rebate settlement schedule saved. The scheduler will use the new settings without server restart.',{title:'Schedule Saved'});}catch(e){showError(e);}};
-['rwAutomaticEnabled','rwTimeZone','rwDailyEnabled','rwDailyTime','rwWeeklyEnabled','rwWeeklyDay','rwWeeklyTime'].forEach(id=>{const el=$(id);if(el)el.addEventListener('change',updateSchedulePeek);if(el)el.addEventListener('input',updateSchedulePeek);});
+function workerBody(){return{automaticEnabled:Number($('rwAutomaticEnabled').value),timeZone:$('rwTimeZone').value.trim(),dailyEnabled:Number($('rwDailyEnabled').value),dailyTime:$('rwDailyTime').value,weeklyEnabled:Number($('rwWeeklyEnabled').value),weeklyDay:Number($('rwWeeklyDay').value),weeklyTime:$('rwWeeklyTime').value,monthlyEnabled:Number($('rwMonthlyEnabled').value),monthlyDay:Number($('rwMonthlyDay').value),monthlyTime:$('rwMonthlyTime').value};}
+const saveRebateWorker=$('saveRebateWorker');if(saveRebateWorker)saveRebateWorker.onclick=async()=>{try{const b=workerBody();if(!b.timeZone)throw Error('Timezone is required');if(!b.dailyTime)throw Error('Daily settlement time is required');if(!b.weeklyTime)throw Error('Weekly settlement time is required');if(!b.monthlyTime)throw Error('Monthly settlement time is required');const out=await request(base+'/api/admin/rebate/worker-settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});renderWorkerSetting(out);BO_DIALOG.alert('Rebate settlement schedule saved. The scheduler will use the new settings without server restart.',{title:'Schedule Saved'});}catch(e){showError(e);}};
+['rwAutomaticEnabled','rwTimeZone','rwDailyEnabled','rwDailyTime','rwWeeklyEnabled','rwWeeklyDay','rwWeeklyTime','rwMonthlyEnabled','rwMonthlyDay','rwMonthlyTime'].forEach(id=>{const el=$(id);if(el)el.addEventListener('change',updateSchedulePeek);if(el)el.addEventListener('input',updateSchedulePeek);});
 const toggleRebateSchedule=$('toggleRebateSchedule');
 if(toggleRebateSchedule)toggleRebateSchedule.onclick=()=>{
   const open=toggleRebateSchedule.getAttribute('aria-expanded')!=='true';
@@ -163,6 +173,7 @@ $('rulePageSize').onchange=()=>{state.rulePage=0;renderRules();};
 $('rebateRows').onclick=async e=>{const del=e.target.closest('[data-delete]');if(del){const x=state.rules.find(r=>String(r.id)===del.dataset.delete);if(await BO_DIALOG.confirm('Delete '+(x?x.name:'this rebate rule')+'?',{title:'Delete Rebate Rule',confirmText:'Delete',danger:true})){try{await request(base+'/api/admin/rebate/rules/delete/'+del.dataset.delete,{method:'POST'});await loadRules();}catch(err){showError(err);}}}};
 $('runSettle').onclick=async()=>{if(!await BO_DIALOG.confirm('Run yesterday rebate settlement now? The cursor batch is idempotent and will not duplicate completed records.',{title:'Run Rebate Settlement',confirmText:'Run Settlement'}))return;try{const out=await request(base+'/api/admin/rebate/settle',{method:'POST'});BO_DIALOG.alert('Settlement completed. Batch #'+(out&&out.id||'-'),{title:'Settlement Complete'});loadBatches();}catch(e){showError(e);}};
 const runWeeklySettleBtn=$('runWeeklySettle');if(runWeeklySettleBtn)runWeeklySettleBtn.onclick=async()=>{if(!await BO_DIALOG.confirm('Finalize the previous completed week now? Weekly rules will compare the member weekly rebate total against the auto-credit threshold.',{title:'Finalize Weekly Rebate',confirmText:'Finalize Week'}))return;try{const out=await request(base+'/api/admin/rebate/settle-weekly',{method:'POST'});BO_DIALOG.alert('Weekly rebate finalized for '+(out?.from||'-')+' to '+(out?.to||'-')+'.',{title:'Weekly Rebate Complete'});}catch(e){showError(e);}};
+const runMonthlySettleBtn=$('runMonthlySettle');if(runMonthlySettleBtn)runMonthlySettleBtn.onclick=async()=>{if(!await BO_DIALOG.confirm('Finalize the previous completed month now? Monthly rules use the already-calculated daily rebate amounts and only change when they become claimable/credited.',{title:'Finalize Monthly Rebate',confirmText:'Finalize Month'}))return;try{const out=await request(base+'/api/admin/rebate/settle-monthly',{method:'POST'});BO_DIALOG.alert('Monthly rebate finalized for '+(out?.from||'-')+' to '+(out?.to||'-')+'.',{title:'Monthly Rebate Complete'});}catch(e){showError(e);}};
 
 async function loadBatches(){try{state.batches=await request(base+'/api/admin/rebate/batches')||[];const b=state.batches[0];$('latestBatchStatus').textContent=b?String(b.status||'-').replaceAll('_',' '):'-';$('latestBatchText').textContent=b?String(b.settlementDate||'')+' · '+Number(b.processedCount||0).toLocaleString('en-US')+' processed':'No batch record';renderBatches();}catch(e){$('batchRows').innerHTML='<tr><td colspan="10" class="table-empty">'+esc(e.message)+'</td></tr>';}}
 function renderBatches(){const size=pageSize('batchPageSize'),d=clientPage(state.batches,state.batchPage,size);state.batchPage=d.page;$('batchRows').innerHTML=d.rows.length?d.rows.map(x=>'<tr><td>#'+esc(x.id)+'</td><td>'+esc(x.settlementDate||'-')+'</td><td>'+statusBadge(x.status)+'</td><td>'+Number(x.processedCount||0).toLocaleString('en-US')+'</td><td>'+Number(x.successCount||0).toLocaleString('en-US')+'</td><td>'+Number(x.failedCount||0).toLocaleString('en-US')+'</td><td><b>'+money(x.totalRebate)+'</b></td><td>'+dateCell(x.startedAt)+'</td><td>'+dateCell(x.completedAt)+'</td><td>'+esc(x.createdBy||'SYSTEM')+'</td></tr>').join(''):'<tr><td colspan="10" class="table-empty">No settlement batches found.</td></tr>';const from=d.total?d.start+1:0,to=Math.min(d.start+size,d.total);$('batchShowing').textContent='Showing '+from+' to '+to+' of '+d.total+' entries';pager('batchPager',d.page,d.pages,p=>{state.batchPage=p;renderBatches();});}
