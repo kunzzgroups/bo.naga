@@ -429,7 +429,7 @@
   function renderInfo(rowCount){
     const info = $('betPageInfo');
     if (!info) return;
-    const from = totalElements && rowCount ? ((page - 1) * pageSize + 1) : 0;
+    const from = totalElements && rowCount ? Math.min((page - 1) * pageSize + 1, totalElements) : 0;
     const to = totalElements ? Math.min((page - 1) * pageSize + rowCount, totalElements) : 0;
     info.textContent = 'Showing ' + from + ' to ' + to + ' of ' + totalElements + ' entries';
   }
@@ -438,6 +438,11 @@
   async function load(){
     const loadSeq=++betLoadSeq;
     pageSize = resolvePageSize();
+    /* "All" is ONE request for the whole report, so a stale rung must not turn it into "page 3 of
+       a 10000-row page" (see the append block below), and no request may ask for a page the report
+       no longer has. */
+    if (pageSize >= 10000) page = 1;
+    page = Math.min(Math.max(1, page || 1), Math.max(1, totalPages));
     syncAutofitMode();
     try {
       const data = await get(endpoint('PROVIDER_BET_REPORT_LIST') + '?' + query());
@@ -445,8 +450,29 @@
       const rows = readList(data).map(toBetRow);
       totalPages = readTotalPages(data);
       totalElements = readTotalElements(data, rows.length);
-      $('betBody').innerHTML = rows.length ? rows.map(x => `<tr>
-        <td>${esc(x.id)}</td>
+      /* The endpoint caps `size` at 100: All asks for 10000, gets the cap and is still told the real
+         total, so it used to read "Showing 1 to 100 of N" under the server's own page count (four
+         rungs for 370 rows) - and a rung then asked for "page 3 of a 10000-row page", printing
+         "Showing 20001 to 370 of 370". Keep asking for the next page in the size the endpoint
+         actually served until the total is in hand - the same contract as b8d0cd93. */
+      const wanted = page === 1 ? Math.min(pageSize, totalElements || rows.length) : rows.length;
+      if (page === 1 && rows.length && rows.length < wanted) {
+        const chunk = rows.length;
+        for (let np = 2; rows.length < wanted; np++) {
+          const q2 = new URLSearchParams(query());
+          q2.set('page', String(np));
+          q2.set('size', String(chunk));
+          const d2 = await get(endpoint('PROVIDER_BET_REPORT_LIST') + '?' + q2);
+          if (loadSeq !== betLoadSeq) return;
+          const more = readList(d2).map(toBetRow);
+          if (!more.length) break;
+          rows.push(...more);
+        }
+        /* Every row is in hand, so the report IS one page (the server's count is its cap's). */
+        totalPages = Math.max(1, Math.ceil(totalElements / Math.max(1, rows.length)));
+      }
+      $('betBody').innerHTML = rows.length ? rows.map((x, ri) => `<tr>
+        <td>${(page - 1) * pageSize + ri + 1}</td>
         <td><b>${esc(memberName(x))}</b><br><small>ID: ${esc(x.memberId || '-')}</small></td>
         <td>${esc(x.providerCode)}</td>
         <td>${esc(x.gameName || '-')}</td>

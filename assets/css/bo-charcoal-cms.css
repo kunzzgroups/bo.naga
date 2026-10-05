@@ -2649,7 +2649,12 @@ html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off)
   width: 100% !important;
   box-sizing: border-box !important;
 }
-html[data-bo-theme="dark"] body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-item-strip {
+/* The light rule above states TWO selectors and this pair only repeated the first, so the element
+   matching the second - `.section-title.bonus-item-strip.crud-list-titlebar`, the one that renders on
+   bonus-category-item - stayed cream: measured in dark as bg rgb(255,248,235) on a rgb(56,58,70)
+   panel. Same chain, both selectors. */
+html[data-bo-theme="dark"] body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-item-strip,
+html[data-bo-theme="dark"] body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .section-title.bonus-item-strip.crud-list-titlebar {
   border-bottom-color: rgba(255, 255, 255, 0.12) !important;
   background: #383A46 !important;
 }

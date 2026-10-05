@@ -71,3 +71,7 @@ html[data-bo-theme="dark"] body.report-body .main-mod-back:hover{
   background-image:linear-gradient(180deg,#383A46 0%,#2C2E38 100%)!important;
   border-color:rgba(255,255,255,.18)!important;color:#F5F5F4!important;
 }
+
+/* Dark: measured on main-accounting-due - the footer line read rgb(87,83,78) on a rgb(56,58,70) card
+   (contrast ~1.6, effectively invisible). Same family, same surface. */
+html[data-bo-theme="dark"] .main-mod-footer{color:#A1A1AA}
