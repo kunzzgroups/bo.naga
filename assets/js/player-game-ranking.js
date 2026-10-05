@@ -89,7 +89,7 @@
   function info(rows,size){
     const el=$('gameRankInfo');if(!el)return;
     const total=Number(totalElements)||0, n=Array.isArray(rows)?rows.length:0;
-    const from=(total&&n)?page*size+1:0, to=(total&&n)?Math.min(page*size+n,total):0;
+    const from=(total&&n)?Math.min(page*size+1,total):0, to=(total&&n)?Math.min(page*size+n,total):0;
     el.textContent='Showing '+from+' to '+to+' of '+total+' members';
   }
   /* Table footer pager — locked anatomy: First · Previous · numbered window (±2 around the
@@ -113,6 +113,9 @@
   async function load(reset){
     if(loading)return;
     if(reset)page=0;
+    /* A stale rung must never ask for a page the report no longer has: the ladder and this number
+       are the two halves of the same contract (see the All block below). */
+    page=Math.min(Math.max(0,page||0),Math.max(0,(Number(totalPages)||1)-1));
     loading=true;
     const body=$('gameRankBody');
     body.innerHTML='<tr><td colspan="'+COLS+'">Loading...</td></tr>';
@@ -131,7 +134,28 @@
       if(!r.ok||j.status==='error')throw new Error(j.message||'Request failed');
       const d=j.data||{},rows=d.content||[];
       totalPages=Number(d.totalPages||0);totalElements=Number(d.totalElements||0);
-      const pageSize=Number(d.size||size)||size;
+      let pageSize=Number(d.size||size)||size;
+      /* "All" asks for size 10000, but the endpoint caps size: it answers with the cap (100 rows)
+         and still reports the real total, so All used to read "Showing 1 to 100 of 370 members"
+         with the server's own page count (4) printed as four rungs - and asking for "page 3 of a
+         10000-row page" then printed "Showing 20001 to 370 of 370". Keep asking for the next page
+         in the size the endpoint actually served until the total is in hand. */
+      const wanted=Math.min(size,totalElements||rows.length);
+      if(page===0&&rows.length&&rows.length<wanted){
+        const chunk=rows.length;
+        for(let np=1;rows.length<wanted;np++){
+          const q2=new URLSearchParams(qs);q2.set('page',String(np));q2.set('size',String(chunk));
+          const r2=await fetch(API_CONFIG.BASE_URL+endpoint()+'?'+q2,{headers:BO_AUTH.authHeader()});
+          const j2=await r2.json().catch(()=>({}));
+          const more=((j2&&j2.data&&j2.data.content)||[]);
+          if(!more.length)break;
+          rows.push(...more);
+        }
+        /* Every row is in hand, so the report IS one page: leaving the server's totalPages kept
+           rungs under a complete list. */
+        totalPages=Math.max(1,Math.ceil(totalElements/Math.max(1,rows.length)));
+        pageSize=rows.length;
+      }
       $('gameRankCount').textContent=totalElements+' Members';
       info(rows,pageSize);pager();
       body.innerHTML=rows.length?rows.map((r,i)=>`<tr><td>${page*pageSize+i+1}</td><td>${esc(r.memberId)}</td><td>${esc(r.username||'-')}</td><td>${esc(r.fullName||'-')}</td><td>${esc(r.mobile||'-')}</td><td><span class="status-pill info">${esc(r.providerCode||'-')}</span></td><td>${esc(r.gameCode||'-')}</td><td><strong>${money(r.totalTurnover)}</strong></td><td>${Number(r.playCount||0)}</td><td>${dt(r.lastPlayedAt)}</td></tr>`).join(''):'<tr><td colspan="'+COLS+'">No settled game records found.</td></tr>';

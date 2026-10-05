@@ -1398,7 +1398,13 @@
                declaration outranks every important stylesheet declaration, so the outcome is
                decided by the cascade origin instead of by whichever selector is longer. The
                frame is still invisible until activateFrame below, so nothing flashes. */
-            ['report-sidebar','sidebar-overlay','report-topbar'].forEach(function(name){
+            /* The global quick nav is injected right after the topbar (id `boGlobalQuickNav`, class
+               `bo-global-quicknav`, built from the dashboard's pinned pages) and was NOT part of the
+               three names above: framed inside the dashboard it stayed the one band still visible
+               under the back office header. Owner: "图一的report-topbar 又出现在dashboard了". Same
+               cascade-origin trick as the rest of this list - the page's own sheet can still win a
+               specificity race, an important inline declaration cannot. */
+            ['report-sidebar','sidebar-overlay','report-topbar','bo-global-quicknav'].forEach(function(name){
               const el=d.querySelector('.'+name);
               if(el) el.style.setProperty('display','none','important');
             });
