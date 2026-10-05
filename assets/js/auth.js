@@ -235,10 +235,11 @@
     'site-customize.html':{label:'Site Customize',order:2,module:'design'},
     'advertisement-popup.html':{label:'Advertisement Popup',order:3,module:'design'},
     'frontend-display.html':{label:'Frontend Display',order:4,module:'design'},
-    'social.html':{label:'Social Link',order:5,module:'design'},
-    'layout-section.html':{label:'Layout Section',order:6,module:'design'},
-    'page-customize.html':{label:'Page Customize',order:7,module:'design'},
-    'image-to-url.html':{label:'Image To URL',order:8,module:'design'},
+    'topup-reward.html':{label:'Top-up Reward',order:5,module:'design'},
+    'social.html':{label:'Social Link',order:6,module:'design'},
+    'layout-section.html':{label:'Layout Section',order:7,module:'design'},
+    'page-customize.html':{label:'Page Customize',order:8,module:'design'},
+    'image-to-url.html':{label:'Image To URL',order:9,module:'design'},
     // 11. Access Control. All six rows of the group are registered, so it collapses to one
     // Access Control row and the row carries them. Five are ordinary BO pages; Roles &
     // Permissions (11.1, menu-permission.html) is a Main panel page (data-bo-shell="main") that

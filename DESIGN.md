@@ -6195,3 +6195,209 @@ above the action bar, both list pages still open the audit modal (delegated hand
 `audit-spa-swaps --twice` on all three pages: 0 flagged. Guards: `check-shell-drift` OK · `check-global-collisions`
 0 · `check-spa-readiness` 136 complete / 0 short · `pin-spa` 0 · `check-asset-pins` 0 stale (157 pages, 4893
 references).
+
+### The Create Agent page on the house create ladder (2026-10-05)
+
+Owner: "只针对 agent-management 的 create agent 按键后的页面 · 大标题的 agent details 要去除 换成
+Create New Agent · 再统一标准页面像图二一样".
+
+**The page had no create page under it.** `agent-detail.html` never linked
+`main-admin-detail-executive.css` — the sheet that owns the house's form ladder
+(`.report-content.mac-workspace > form.mac-form > section.mac-section`) and the fixed
+`.mac-footer-actions` band. Its Details tab was one `.cardx` card (brand-agent-standard.css)
+holding a `.row g-3` form, so the page read as a drill-down; and the BO charcoal block that
+colours the ladder for every BO create page (`bo-charcoal-shell.css` § Create / Edit Admin,
+`body.main-admin-create-page.bo-charcoal`) had nothing to paint. Two lines bring it in: the
+sheet link and `main-admin-create-page` on the body. `.cardx` is dropped from the Details
+panel, so the numbered `.mac-section` cards *are* the frame — no card inside a card.
+
+**Measured against `game-provider-create.html`** (the BO create page already on this ladder),
+computed style, light, 1560px:
+
+| element | reference | agent create |
+|---|---|---|
+| section card | `#FFFCF7` · 1px `#DCC9A8` · radius 8 · pad `20px 22px 22px` · 3px amber rail `::before` (inset 12px) | identical |
+| section head `h3` | 13px/800 · ls .78 · uppercase | identical |
+| section copy `p` | 12.5px/500 `#71717A` | identical |
+| section icon | 28×28 · radius 8 · `rgba(217,119,6,.1)` · glyph `#D97706` | identical |
+| field | 44px · radius 10 · `#DCC9A8` · well `#FFF8EB` · pad `0 14px` | identical |
+| back link | 36px · pad `0 14px` · 12.5px/700 · radius 8 | identical |
+| action band | `fixed` · 73px · pad `14px 24px` · `#FFFCF7` · border-top `rgba(92,74,48,.1)` · `left:260px` · buttons 44px / min-width 160 / radius 8 | identical |
+| dark | section `#383A46` · border `rgba(255,255,255,.1)` · band `rgba(56,58,70,.96)` · **no rail** (light-only, as documented) | identical |
+
+The page's own `<title>`/pin stays `Agent Details`, so the *edit* mode is unchanged; the create
+page's heading is stated per mode (below).
+
+**Assets.** `assets/css/agent-detail-page.css` (new, scope `body.agent-detail-page` — one
+loader) owns only what the ladder cannot know:
+
+- the create-mode strip: `#agentDetailToolbar` and `#agentDetailSummaryTop` are hidden under
+  `body.agent-create-mode` (the tabs are blocked in that mode anyway, and the identity summary
+  describes an agent that does not exist yet);
+- the 2/3/4-column field grids. They are *not* the merchant `.mac-fields-row-N` classes: those
+  are scoped `body.main-merchant-create-page`, and adding that body class to an agent page for
+  four column counts drags 272 merchant rules along with it;
+- the portal-menu check rows (44px · radius 10 · well fill · amber frame and ink on
+  `:has(input:checked)`), because five naked checkboxes next to `.mac-field` rows measured as
+  loose chrome;
+- the action band's 44px button. `.mad-btn` globally states **36px** — the *listing* tier, not
+  the form bar's, which is why `.bo-access-control` pages carry the same override. The band is
+  73px only because its button is 44px (`bo-ui-standard.css` documents the pairing);
+- the panels behind the tabs and the identity strip above them (§ *The same page's other tabs*).
+
+No shell selector appears in it, so `check-shell-drift` is untouched.
+
+**Mode lives in the script, not the markup.** One file serves create (`?new=1`) and edit
+(`?id=N`); the topbar and the action band are shared. `agent-detail-ui.js` applies
+`agent-create-mode` plus the mode's title (`Create New Agent` / `Agent Details`), icon
+(`bi-person-plus` / `bi-person-workspace`) and submit label (`Create Agent` / `Save Agent`), and
+re-applies it on `bo:spa:content` — the router replaces the header with the target document's own
+and re-derives the pinned title *after* the page's scripts have run, so a mode applied only at
+script start is overwritten on a swap. The same call re-runs from `agent:detail-loaded`, because
+a save out of create mode rewrites the URL to `?id=N` in the same document (verified: the page
+flips to edit mode with the toolbar, the `name · code` heading and the summary back).
+
+The click path to this page is a **full load**, not a swap: `agent-management.html`'s Create
+Agent is a plain `<a>` and the router only takes over the rail, the module row, the pin bar and
+`[data-bo-spa-link]` (`canSwap` says true, the click never reaches it). The swap re-apply is
+there for a later eligible link, and is guarded on the file name because the listener outlives
+the navigation away.
+
+**Kept on purpose:** `#formTitle` — hidden, because `agent-management.js` writes it unguarded in
+`fill()` and `newAgent()` and would throw without it. Every id the shared save path touches
+(`#agentForm`, `#agentCode`, `#agentMsg`, `[data-agent-menu]`, …) is unchanged. The old section
+label carried a lost UTF-8 character (`Red Share Mode (Win <U+FFFD>?/ Loss +)`); the wording is
+now in the section copy as `Win (−) / Loss +`.
+
+**Verified** headless, light and dark, 1560×900 / 1560×1000 / 1280×900: create and edit (fields
+filled from the API), tab switching, save-out-of-create flipping to edit, the check rows toggling
+amber/well, the last section clear of the band at the end of the scroll, no page errors.
+Guards: `check-shell-drift` OK · `check-global-collisions` 0 · `check-spa-readiness` 136 complete /
+0 short · `check-asset-pins` clean apart from a pre-existing stale pin
+(`assets/js/rebate-management.js`, someone else's uncommitted change — left alone).
+
+**The strip overflow is fixed in the second pass below** — the value ellipsises inside a column that may shrink.
+
+#### The same page's other tabs, and the strip above them (2026-10-05, second pass)
+
+Owner: "这个 http://127.0.0.1:8098/agent-detail.html?id=1 页面也是要优化统一". The ladder had
+reached the Details tab only; Overview / Players / Betting / Bonus / Adjustments / Activity Log
+were still `.cardx` cards with the page's original head (`<h5>` 16px/800 + `<small>`, a 42px
+rounded icon) and the identity + KPI strip above them carried its own material.
+
+**The layer ladder was missing, not just the frame.** Measured before, light: the panel card and
+everything inside it painted the *same* cream — panel `#FFF8EB`/`#EADCC8`/radius 16 (the page's
+own charcoal pass), metric tiles `#FFF8EB`/`#EADCC8`/radius 12, info blocks the same again with a
+shadow. Three rungs of the page were one colour, so the info blocks read as cards inside a card
+and the KPI tiles did not read as anything. After, computed:
+
+| element | before | after |
+|---|---|---|
+| panel `.mac-section` | `#FFF8EB` · 16px · pad 18 | **`#FFFCF7` · 1px `#DCC9A8` · 8px · pad `20px 22px 22px` · ladder shadow · 3px amber rail** |
+| panel head | `h5` 16px/800, icon 42px radius 12 | **`h3` 13px/800 ls .78 uppercase + 12.5px/500 copy, icon 28×28 radius 8** |
+| info block | `#FFF8EB` · radius 12 · shadow (a second lift) | **nested well `#F0E4D0` · 1px `#DCC9A8` · radius 10 · no shadow**, head 11.5px/800 uppercase muted |
+| KPI tile | `#FFF8EB` · radius 12 · label 10px / hint 9px | **stat rung `#FFF8EB` · `#EADCC8` · radius 10 · no shadow**, label/hint **11px** |
+| identity + KPI strip | `#FFF8EB` · radius 12 · shadow | **same stat rung, radius 10, no shadow** |
+| table head | 11px/700, *sentence case* | **uppercase · ls .04em** — the casing the listing gets from `.standardized-listing-page` |
+| wallet hint | `#D4D4D8` (the DARK muted) on cream | `--bo-muted` `#71717A`; its icon moved to the amber wash every other stat icon uses |
+
+The 10px/9px labels were below the house's own floor and disagreed with the strip's 11px ones;
+the info block's rows kept the page's label/value grid, only on themed hairlines instead of the
+cool `#edf1f6`.
+
+**The strip's money overflow is fixed, not hidden.** `#agentDetailSummaryTop` clipped
+`RM 482,000.50` mid-glyph inside a 174px stat (scrollWidth 1280 vs clientWidth 1258 at 1560px):
+the columns were `minmax(165px,1fr)` and the value could not shrink. Columns are now
+`minmax(0,1fr)` and the value ellipsises — a long amount degrades instead of losing digits.
+
+**Same ids, same wiring.** All 29 ids of the region are byte-identical to what the page had
+(`#agentOverviewMetrics`, `#assignedPlayerRows`, `#adminAgentBetSummary`, `#agentWalletRows[2]`,
+`#loadReport` / `#settleMonth` / `#approveSettlement` / `#paySettlement`, `#agentBonusExpenseSummary`,
+`#openAssignPlayers`, `#openWalletAdjust[2]`, …) — the shared listing script fills them unchanged.
+
+**Trap worth remembering (cost me a repair).** The hashline `patch` tool "self-healed" a
+`PUT N.=M` block replacement by *inserting* the new lines and keeping the old ones, and while doing
+it dropped one line per panel (the players table row, the wallet table, the bets filter+table, the
+history table, the overview metrics host). It reported success — `三方自愈` — and nothing failed
+until the DOM probe showed the panels sitting as direct children of `.report-content` instead of
+`#agentDetail`, with `div open/close` no longer balanced against HEAD. The region was rebuilt from
+`git show HEAD:` with only the frame/head conversion applied mechanically (asserting the div
+balance and the id set afterwards), never hand-edited. **Check the raw div balance and the id set
+after a block patch here, not just the screenshot.**
+
+#### The strip above the panels: no heading, tabs on the left, one Back recipe (2026-10-05, third pass)
+
+Owner: "Agent1 · AG1001 去除不需要展示 再把 tab align 去 left 顶替 Agent1 · AG1001 的位置 再调整统一
+back to agents 的按键".
+
+The strip carried three things in a row: the `name · code` heading (`#agentDetailHeading`, written
+by `agent-detail-ui.js` on load and on every tab switch), the tab row, and a Back button. Now:
+
+- **the heading is gone** (markup and both writes in `agent-detail-ui.js`; nothing else touched the
+  node, so nothing else needed a guard). The `name · code` identity is already in the strip above
+  the page (`AG1004 / Skyline Partner` cards) and in the section copy, so the strip was repeating it;
+- **the tabs take that position** — `justify-content:flex-start`, `margin:0`, still `flex:1`, so
+  they start flush at the content's left edge (measured `left 278` = `.report-content` left + its
+  18px padding, exactly where the house's `.bo-module-tabs` row starts on agent-management.html)
+  and the Back link keeps the right edge. Their type moved to the module row's **13.5px/800**
+  (active) / 700 (rest) with the 2px amber underline (light `#D97706` / dark `#F59E0B`); the label
+  gap is the module row's 4px + 12px paddings;
+- **the Back link is the house's own button**, not a new one: it became an `<a class="mad-btn
+  mad-btn-ghost" href="agent-management.html">` (same id, no JS handler — the anchor navigates,
+  which also makes middle-click work) and measures **36px · radius 8 · pad `0 14px` · 12.5px/700 ·
+  three-stop cream `#FFFCF7→#F5EBDC 55%→#EDE4D4` · border `#DCC9A8` · ink `#18191C`**, hover
+  reverse cream + `translateY(-1px)`; dark `#4A4C58→#383A46 48%→#2C2E38` · `rgba(255,255,255,.12)`
+  · `#F5F5F4`. That is the pair five other detail pages carry as "Back to list", so this page is
+  now the sixth rather than a sixth variant.
+
+**Why both states needed the page's own weight.** The page's inline charcoal block declared the tab
+type (`13px`) and the Back link's fill (`background:transparent`) at (0,4,2)–(0,5,2) with
+`!important`; the sheet's plain `body.agent-detail-page` selectors lost to them silently — measured
+`font-size:13px` and `background:rgba(0,0,0,0)` after the first attempt. Both are restated at the
+same shape (`html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] …`),
+which is what the file's header already tells the next reader to do.
+
+**Verified** headless 1560×1000, light and dark: heading absent from the DOM, first tab at the
+content's left edge, active/inactive type, Back link geometry/colours matching the specimen, dark
+gradient + border, 0 page errors. Guards re-run clean (`check-shell-drift` OK · `check-global-collisions`
+0 · `check-spa-readiness` 136 · `check-control-height` 0 · `check-asset-pins` clean apart from the
+pre-existing `rebate-management.js` pin).
+
+#### The form dropdowns: a clipped menu and a trigger on the wrong tier (2026-10-05, fourth pass)
+
+Owner: "这些下拉选单的css都需要去检查 并且修复", with the open Parent Agent menu cut off mid-row on the
+live page.
+
+`reports.js` rewrites every `<select>` into `.rounded-select-wrap > .rounded-select-btn +
+.rounded-select-menu` (bo-charcoal-primitives.css §3), so what the form shows is that button, not a
+native select. Two defects, both measured on `agent-detail.html?new=1`, both invisible on the empty
+one-option state:
+
+- **the menu was clipped by the card.** The BO ladder's light card carries `overflow:hidden`
+  (bo-charcoal-shell.css § Create / Edit Admin) and the menu is an absolutely positioned panel
+  (`max-height:280`) — with five options it measured 246..440 against a card that ends at 308, and
+  `elementFromPoint` at the *middle of the open menu* returned the next section's `<h3>`: the panel
+  was cut off mid-row, exactly as reported. `main-merchant-detail-executive.css:4082` already
+  records the call for `.mprr-card` — "NOT copied from .mac-section: its `overflow:hidden` … this
+  card holds the house custom selects … that would be clipped by the card bounds" — and the rail
+  does not need the clip (it is inset 12px, so it clears the 8px corner). This page's cards are now
+  `overflow:visible`, and the open menu hit-tests to itself over the following card.
+- **the trigger sat on the dialog tier.** `bo-charcoal-primitives.css` states
+  `.rounded-select-btn` at **40px / radius 8**; its neighbours inside a `.mac-field` are **44px /
+  radius 10** (the form tier — and the hidden native select itself already computes 44px), so the
+  row had a 4px step: measured 44 against 40 on the same line. The trigger and its menu are now
+  44px / radius 10 inside `.mac-field`, i.e. the same field the label and help text belong to.
+
+**Not a page-specific quirk:** `admin-user-create.html` carries the same pair (40px trigger beside
+a 44px input, `overflow:hidden` card) — that page is where this shape was copied from, not a page
+that fixed it. The two declarations are page-scoped here because the ladder and the primitives
+sheet are shared; if the other create pages are moved onto them, the rules belong in
+`bo-charcoal-primitives.css` / the ladder instead.
+
+**Verified** headless, light and dark, 1560×1000: all seven form dropdowns (`#parentAgentId`,
+`#agentStatus`, `#monthlyKpiEnabled`, `#kpiPeriod`, `#kpiBasis`, `#carryForwardEnabled`,
+`#redShareEnabled`) report `label === selected option text` after a `?id=` load (reports.js patches
+the `value` setter, so `fill()` stays in sync), the open menu (5 options, 194px tall) paints above
+the following card with every row hit-testable, the menu inside the last card is fully in the
+viewport once the field is scrolled to, and the panel keeps the house cream/charcoal fill with the
+amber selected row. 0 page errors.

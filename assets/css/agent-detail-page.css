@@ -1,0 +1,387 @@
+/* ============================================================================
+   Agent drill-down — the whole page (agent-detail.html) on the house ladder.
+
+   The page is a drill-down, so it carries the house create-page ladder rather than a
+   card of its own:
+       .report-content > .agent-detail-panel.mac-section          (Overview / Players / …)
+       .report-content > [data-agent-panel="details"] > form.mac-form > section.mac-section
+   and the ladder itself (section card + amber rail, field well, fixed action band) is
+   main-admin-detail-executive.css's `.mac-section` / `.mac-field` / `.mac-footer-actions`,
+   re-stated for BO charcoal in bo-charcoal-shell.css (§ Create / Edit Admin) and
+   bo-ui-standard.css (§ the 73px band). Nothing there is duplicated here.
+
+   This sheet owns only what the ladder cannot know:
+     · the create-mode strip (?new=1) and the form's field grids / menu check rows / band;
+     · the inner blocks of a panel — nested WELL for the info lists, stat rung for the
+       metric tiles — and the numbers/labels inside them;
+     · the identity + KPI strip above the panels, including how a money value that is
+       wider than its card degrades.
+   Scope is body.agent-detail-page — agent-detail.html is its only loader. No shell
+   selector (.report-topbar / .report-sidebar / .report-content / .report-nav /
+   .report-brand), so the shell-drift guard is untouched.
+
+   Two weight rules this page needs, because its own inline charcoal pass states the same
+   declarations at (0,5,2) with `!important`: every override below carries the same shape
+   (`html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] …`) and
+   this sheet is linked last, so load order settles it. Lowering those selectors without
+   re-measuring gives the old cream back — the page's block and the ladder paint the very
+   same elements.
+
+   Reference geometry (measured on game-provider-create.html, the BO create page this one
+   is aligned with): footer fixed · 73px · pad 14px 24px · #FFFCF7 · border-top
+   rgba(92,74,48,.1) · buttons 44px / min-width 160 / pad 0 22px / radius 8 · section
+   #FFFCF7 · 1px #DCC9A8 · radius 8 · pad 20px 22px 22px · head 13px/800/.04em uppercase ·
+   icon 28×28 radius 8 · field 44px radius 10.
+   ============================================================================ */
+
+/* --- Create mode: the tab strip and the identity summary describe an existing agent. ---
+   agent-detail-ui.js sets the mode from ?new=1; the same class also drops the fixed
+   footer's grid of tabs so the page reads as one form. */
+body.agent-detail-page.agent-create-mode #agentDetailToolbar,
+body.agent-detail-page.agent-create-mode #agentDetailSummaryTop{display:none!important}
+
+/* --- The action band is position:fixed; the last section has to clear it. --- */
+body.agent-detail-page .agent-mac-panel{padding-bottom:96px}
+body.agent-detail-page .agent-mac-form{gap:14px}
+
+/* --- Section heads: icon + numbered title + copy + the page's Back link. --- */
+body.agent-detail-page .mac-section-head-rich{align-items:center;gap:10px 12px;margin-bottom:18px}
+body.agent-detail-page .mac-section-copy{flex:1;min-width:0}
+body.agent-detail-page .mac-section-copy h3{margin:0;flex:none}
+body.agent-detail-page .mac-section-copy p{
+  margin:4px 0 0;font-size:12.5px;font-weight:500;line-height:1.45;
+  color:var(--bo-muted,#71717A);text-wrap:pretty;
+}
+body.agent-detail-page .agent-mac-hint{font-weight:700;color:var(--bo-muted,#71717A)}
+
+/* --- Field rows. `.mac-fields` is the ladder's grid; these set the column count. --- */
+body.agent-detail-page .mac-fields.agent-mac-grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+body.agent-detail-page .mac-fields.agent-mac-grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+body.agent-detail-page .mac-fields.agent-mac-grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+body.agent-detail-page .agent-mac-stack{display:flex;flex-direction:column;gap:16px}
+
+/* --- Portal menu access: the module list as check rows on the form tier (44px, radius 10,
+   inset well) instead of five naked checkboxes. --- */
+body.agent-detail-page .agent-mac-menu-field{max-width:none}
+body.agent-detail-page .agent-menu-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:2px;
+}
+body.agent-detail-page .agent-menu-opt{
+  display:flex;align-items:center;gap:10px;margin:0;
+  height:44px;min-height:44px;padding:0 14px;box-sizing:border-box;
+  border:1px solid var(--bo-control-border,#EADCC8);border-radius:10px;
+  background:var(--bo-control-well,#F5EBDC);
+  color:var(--bo-text,#18191C);font-size:13.5px;font-weight:600;
+  cursor:pointer;
+  transition:background .14s ease,border-color .14s ease;
+}
+body.agent-detail-page .agent-menu-opt:hover{background:var(--bo-control-well-hover,#F0E4D0)}
+body.agent-detail-page .agent-menu-opt .form-check-input{
+  margin:0;flex:0 0 auto;width:16px;height:16px;accent-color:#D97706;
+}
+body.agent-detail-page .agent-menu-opt span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html:not([data-bo-theme="dark"]) body.agent-detail-page .agent-menu-opt:has(input:checked){
+  border-color:#D97706;background:rgba(217,119,6,.10);color:#B45309;
+}
+html[data-bo-theme="dark"] body.agent-detail-page .agent-menu-opt{
+  border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#F5F5F4;
+}
+html[data-bo-theme="dark"] body.agent-detail-page .agent-menu-opt:hover{background:rgba(255,255,255,.10)}
+html[data-bo-theme="dark"] body.agent-detail-page .agent-menu-opt .form-check-input{accent-color:#F59E0B}
+html[data-bo-theme="dark"] body.agent-detail-page .agent-menu-opt:has(input:checked){
+  border-color:#F59E0B;background:rgba(245,158,11,.14);color:#FCD34D;
+}
+
+/* --- Action band: the form-footer tier (44px button, 13.5px/700, radius 8) and the
+   submit's status message, which the shared script writes into #agentMsg. --- */
+html:not(#bo-charcoal-off) body.agent-detail-page .mac-footer-actions .mad-btn{
+  height:44px!important;min-height:44px!important;min-width:160px!important;
+  padding:0 22px!important;border-radius:8px!important;
+  font-size:13.5px!important;font-weight:700!important;
+  box-sizing:border-box!important;display:inline-flex!important;
+  align-items:center!important;justify-content:center!important;
+}
+body.agent-detail-page .mac-footer-actions .agent-form-msg{
+  margin-right:auto;max-width:46%;min-width:0;
+  font-size:12.5px;font-weight:700;color:var(--bo-muted,#71717A);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+
+/* --- Narrow panels: 4 and 3 column rows fold to 2, then to one. --- */
+@media (max-width:1400px){
+  body.agent-detail-page .mac-fields.agent-mac-grid-4,
+  body.agent-detail-page .mac-fields.agent-mac-grid-3,
+  body.agent-detail-page .agent-menu-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:800px){
+  body.agent-detail-page .mac-fields.agent-mac-grid-2,
+  body.agent-detail-page .mac-fields.agent-mac-grid-3,
+  body.agent-detail-page .mac-fields.agent-mac-grid-4,
+  body.agent-detail-page .agent-menu-grid{grid-template-columns:1fr}
+  body.agent-detail-page .agent-mac-panel{padding-bottom:132px}
+}
+@media (max-width:991.98px){
+  body.agent-detail-page .mac-footer-actions .agent-form-msg{max-width:100%;white-space:normal}
+}
+
+/* ============================================================================
+   The panels behind the tabs (Overview / Players / Betting / Bonus / Adjustments /
+   Activity Log) and the identity + KPI strip above them.
+
+   The ladder gives the panel its frame (lift #FFFCF7, 1px #DCC9A8, radius 8, amber rail
+   in light). Everything inside a panel sits one rung BELOW it — a nested well or a stat
+   tile — because the page's own pass painted the panel and its inner cards the same
+   cream (#FFF8EB / #EADCC8 / radius 16): no lift, no nesting, and the info blocks read as
+   cards inside a card.
+   ============================================================================ */
+
+/* --- Info lists (Agent Information / Commission & KPI / Related Management) : nested well. --- */
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-admin-info-card{
+  background:#F0E4D0!important;
+  border:1px solid #DCC9A8!important;
+  border-radius:10px!important;
+  box-shadow:none!important;
+  padding:16px 18px!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-admin-info-card{
+  background:rgba(255,255,255,.05)!important;
+  border-color:rgba(255,255,255,.10)!important;
+}
+/* The block's title is a micro-label, not a card title — the house rung for a heading that
+   sits inside a well (labels are 11.5/800 uppercase muted everywhere else on the page). */
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-admin-info-card h6{
+  font-size:11.5px!important;
+  font-weight:800!important;
+  letter-spacing:.04em!important;
+  text-transform:uppercase!important;
+  color:var(--bo-muted,#71717A)!important;
+  margin-bottom:10px!important;
+}
+/* Rows keep the page's grid (label / value), on themed hairlines instead of cool greys. */
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-info-list,
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-info-row{
+  border-color:rgba(120,80,20,.14)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-info-list,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-info-row{
+  border-color:rgba(255,255,255,.08)!important;
+}
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-info-row span{
+  color:var(--bo-muted,#71717A)!important;
+}
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-info-row b{
+  color:var(--bo-text,#18191C)!important;
+  font-weight:700!important;
+  font-variant-numeric:tabular-nums;
+}
+
+/* --- Metric tiles (panel KPI row, the bets summary's .metric, the wallet balance card):
+   the house stat rung — surface + hairline, not a second lift. --- */
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-admin-metric-card,
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] #adminAgentBetSummary .metric,
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-balance-card{
+  background:#FFF8EB!important;
+  border:1px solid #EADCC8!important;
+  border-radius:10px!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-admin-metric-card,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] #adminAgentBetSummary .metric,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-balance-card{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.12)!important;
+}
+/* 10px / 9px labels were below the house floor and disagree with the identity strip's 11px. */
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-admin-metric-card small{
+  font-size:11px!important;font-weight:600!important;color:var(--bo-muted,#71717A)!important;
+}
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-admin-metric-card strong{
+  font-size:16px!important;font-weight:800!important;color:var(--bo-text,#18191C)!important;
+  font-variant-numeric:tabular-nums;
+}
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-admin-metric-card span:not(.agent-admin-metric-icon){
+  font-size:11px!important;color:var(--bo-muted,#71717A)!important;
+}
+
+/* --- Identity + KPI strip: same stat rung as the tiles, so the only lifted surfaces on the
+   page are the section cards. --- */
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-detail-identity,
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-detail-stat{
+  background:#FFF8EB!important;
+  border:1px solid #EADCC8!important;
+  border-radius:10px!important;
+  box-shadow:none!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-detail-identity,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-detail-stat{
+  background:#383A46!important;
+  border-color:rgba(255,255,255,.12)!important;
+}
+/* A money value can be wider than its card (RM 482,000.50 in a 174px stat). It used to be
+   clipped mid-glyph because the card could not shrink; it now ellipsises inside a column
+   that is allowed to shrink. */
+body.agent-detail-page[data-agent-detail="1"] #agentDetailSummaryTop.agent-detail-summary{
+  grid-template-columns:minmax(300px,1.6fr) repeat(5,minmax(0,1fr))!important;
+}
+body.agent-detail-page[data-agent-detail="1"] #agentDetailSummaryTop .agent-detail-stat-copy{
+  min-width:0!important;overflow:hidden;
+}
+body.agent-detail-page[data-agent-detail="1"] #agentDetailSummaryTop .agent-detail-stat-copy strong{
+  display:block!important;max-width:100%;
+  overflow:hidden;text-overflow:ellipsis;
+}
+
+/* --- Panels stack with the ladder's own rhythm (the page uses mt-3 / mb-3 utilities). --- */
+body.agent-detail-page[data-agent-detail="1"] .agent-detail-panel.mac-section{margin-bottom:0}
+body.agent-detail-page[data-agent-detail="1"] .agent-grid > .agent-detail-panel.mac-section + .agent-detail-panel.mac-section{margin-top:14px}
+
+/* --- Wallet balance tile (Adjustments panel): the hint was `#D4D4D8` — the DARK muted
+   value — on a cream tile, i.e. almost invisible in light mode, and its icon was a plain
+   grey well while every other stat icon on the page is the amber wash. --- */
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-balance-card small{
+  font-size:11px!important;font-weight:600!important;color:var(--bo-muted,#71717A)!important;
+}
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-balance-card strong{
+  color:var(--bo-text,#18191C)!important;font-variant-numeric:tabular-nums;
+}
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-balance-card span:not(.agent-balance-icon){
+  font-size:11px!important;color:var(--bo-muted,#71717A)!important;
+}
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-balance-card .agent-balance-icon{
+  background:rgba(217,119,6,.12)!important;
+  border:1px solid rgba(217,119,6,.18)!important;
+  color:#D97706!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-balance-card .agent-balance-icon{
+  background:rgba(245,158,11,.16)!important;
+  border-color:rgba(245,158,11,.28)!important;
+  color:#F59E0B!important;
+}
+
+/* --- In-card tables: the header recipe (fill #FFE8CC · ink #6b360c · 11px/700) already
+   matches the Agent module's listing; what was missing is the casing/tracking that listing
+   gets from `.standardized-listing-page`. These panels are mini listings, so they read the
+   same way. --- */
+html body.report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .report-table thead th{
+  font-size:11px!important;
+  font-weight:700!important;
+  letter-spacing:.04em!important;
+  text-transform:uppercase!important;
+}
+
+/* ============================================================================
+   The tab strip (#agentDetailToolbar) — the house's module-row recipe (bo-module-tabs,
+   measured on agent-management.html): text-only tabs flush at the content's left edge · 4px
+   gap · 13.5px/800 · 2px amber underline on the current one · one hairline along the strip.
+   The "Agent1 · AG1001" heading that used to hold the left position is gone, so the tabs take
+   it; the Back link keeps the right edge.
+
+   Both states are stated at the page's OWN weight and shape, because its inline charcoal block
+   declares them at (0,4,2)–(0,5,2) with `!important`: the tab type was pinned to 13px there,
+   and the Back link was flattened to `background:transparent` (the flat "toolbar ghost").
+   Lowering either selector without re-measuring gives the old value back.
+
+   The Back link needs no new recipe: `.mad-btn.mad-btn-ghost` is the house Ghost specimen and
+   the same pair five other detail pages carry as "Back to list" (36px · radius 8 · pad 0 14px ·
+   12.5px/700 · three-stop cream #FFFCF7→#F5EBDC 55%→#EDE4D4 · border #DCC9A8 · hover reverse
+   cream + 1px lift; dark #4A4C58→#383A46 48%→#2C2E38 · rgba(255,255,255,.12)). Only the two
+   declarations the page overrides are restated here.
+   ============================================================================ */
+html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] #agentDetailToolbar .agent-detail-tabs{
+  justify-content:flex-start!important;
+  margin:0!important;
+  flex:1 1 auto!important;
+}
+html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] #agentDetailToolbar .agent-detail-tabs .clean-btn{
+  font-size:13.5px!important;
+  font-weight:800!important;
+}
+html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] #agentDetailToolbar .agent-detail-tabs .clean-btn:not(.primary):not([aria-selected="true"]){
+  font-weight:700!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] #agentDetailToolbar .agent-detail-tabs .clean-btn.primary,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] #agentDetailToolbar .agent-detail-tabs .clean-btn[aria-selected="true"]{
+  border-bottom-color:#F59E0B!important;
+}
+
+/* --- Back to Agents: the Ghost specimen, restated where the page flattened it. --- */
+html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] #agentDetailToolbar #backAgentList{
+  flex:0 0 auto!important;
+  margin-left:auto!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:0 14px!important;
+  border:1px solid #DCC9A8!important;
+  border-radius:8px!important;
+  background:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%)!important;
+  color:#18191C!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+  text-decoration:none!important;
+  white-space:nowrap!important;
+  box-shadow:0 1px 2px rgba(60,48,32,.06),inset 0 1px 0 rgba(255,255,255,.7)!important;
+}
+html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] #agentDetailToolbar #backAgentList:hover{
+  background:linear-gradient(0deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border-color:#E0D0B8!important;
+  transform:translateY(-1px);
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] #agentDetailToolbar #backAgentList{
+  border-color:rgba(255,255,255,.12)!important;
+  background:linear-gradient(180deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%)!important;
+  color:#F5F5F4!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.28)!important;
+}
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] #agentDetailToolbar #backAgentList:hover{
+  background:linear-gradient(0deg,#383A46 0%,#2C2E38 100%)!important;
+  border-color:rgba(255,255,255,.18)!important;
+  transform:translateY(-1px);
+}
+
+/* ============================================================================
+   Form dropdowns — reports.js rewrites every <select> into
+   .rounded-select-wrap > .rounded-select-btn + .rounded-select-menu, so the control
+   the user sees here is that button, not a native select.
+
+   Two defects were measured on this page (both invisible on an empty state):
+
+   1. THE MENU WAS CLIPPED BY THE CARD. The BO ladder's light card carries
+      `overflow:hidden` (bo-charcoal-shell.css, § Create / Edit Admin), and the menu is an
+      absolutely-positioned panel (max-height 280) — with five options it measured
+      246..440 against a card that ended at 308, and `elementFromPoint` at the menu's
+      middle returned the *next section's h3*: the panel was cut off mid-row.
+      `main-merchant-detail-executive.css:4082` already records this exact call for
+      .mprr-card ("NOT copied from .mac-section: its overflow:hidden — this card holds the
+      house custom selects … that would be clipped by the card bounds"), and the rail does
+      not need the clip (it is inset 12px, so it clears the 8px corner).
+   2. THE TRIGGER WAS ON THE WRONG TIER. bo-charcoal-primitives.css states
+      `.rounded-select-btn` at 40px / radius 8 — the dialog tier. Inside a `.mac-field` the
+      neighbours are 44px / radius 10 (the form tier, and the hidden native select itself is
+      already 44px), so the row showed a 4px step: measured 44 against 40 on the same row.
+      Both the trigger and its menu now read as the field they belong to.
+
+   platform note: admin-user-create.html has the same pair (40px trigger beside a 44px
+   input, `overflow:hidden` card) — that page is the one this shape was copied from, not a
+   page that fixed it.
+   ============================================================================ */
+html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .mac-section{
+  overflow:visible!important;
+}
+html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .mac-field > .rounded-select-wrap,
+html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .mac-field > .rounded-select-wrap > .rounded-select-btn{
+  width:100%!important;
+}
+html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .mac-field > .rounded-select-wrap > .rounded-select-btn{
+  height:44px!important;
+  min-height:44px!important;
+  border-radius:10px!important;
+  font-size:13.5px!important;
+  font-weight:600!important;
+}
+html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .mac-field > .rounded-select-wrap > .rounded-select-menu{
+  border-radius:10px!important;
+}

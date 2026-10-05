@@ -310,13 +310,17 @@ html[data-bo-theme="dark"] body.agent-management-page .agent-admin-table tbody t
 
 body.agent-management-page .agent-mgmt-status{flex:0 0 150px;min-width:140px}
 body.agent-management-page .agent-mgmt-filter-right>.bo-range-field{flex:0 0 auto;min-width:220px}
-body.agent-management-page .agent-mgmt-actions{display:flex;gap:10px;margin-left:auto}
-/* Right-hand filter group (Date Range · Commission Plan · Search) stays grouped and
-   flush to the row's right edge, wrapping onto its own right-aligned line if the row
-   runs out of width — instead of the search bar dropping to the left on a bare line. */
+/* The row's right-hand action group (Create Agent). `margin-left:auto` cannot live in
+   this rule: bo-ui-standard.css's `body:not(#…):not(#…) .report-main .bo-filter-row > *
+   {margin:0!important}` is ID-level and would win, so the push is declared at that same
+   tier below — a plain class chain here would compute `margin-left:0px` and look dead. */
+body.agent-management-page .agent-mgmt-actions{display:flex;gap:10px}
+/* Filter group (Date Range · Status · Search) sits immediately after the status pills
+   (owner: "日期与搜索按键要移至 All 胶囊右边"). It neither stretches nor right-aligns: the
+   row's free space belongs to the Create Agent CTA, which is the right-hand anchor. */
 body.agent-management-page .agent-mgmt-filter-right{
-  display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:10px;
-  flex:1 1 auto;min-width:0;
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:10px;
+  flex:0 0 auto;min-width:0;
 }
 
 /* Status filter pills — locked recipe (.bo-tx-tabs.bo-seg / .bo-tx-tab + .bo-seg-thumb)
@@ -329,17 +333,16 @@ body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page:is(.
   position:relative!important;
   gap:6px!important;
 }
-/* Push the whole right-hand group (Date Range · Commission Plan · Search) to the
-   row's right edge. bo-ui-standard.css ships
+/* The Create Agent CTA anchors the row's right edge. bo-ui-standard.css ships
    `body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main
    .bo-filter-row > *{margin:0!important}` — the two :not(#id) guards give it
    ID-level specificity that beats any class chain, so the override below must
    match that same specificity tier (our body carries neither ID, so both :not()
-   still match and the tiebreak falls to source order/extra classes). */
-body.report-body.bo-charcoal.brand-agent-standard.standardized-listing-page.agent-management-page .agent-mgmt-filter-right{
-  margin-left:auto!important;
-}
-body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .agent-mgmt-filter-right{
+   still match, and the extra class on the child wins the tiebreak).
+   The auto margin lives here rather than on .agent-mgmt-filter-right: on the
+   filter group it would right-align the group's own overflow line, and a second
+   auto margin on the same line would split the free space between them. */
+body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-filter-row>.agent-mgmt-actions{
   margin-left:auto!important;
 }
 /* Selected frame — lighter than filter row background so the capsule reads */
