@@ -6416,10 +6416,13 @@ Fixed so far: the report filter strips and footers (7fcc9ac3), the VIP log selec
 Performance's filter card / avatar / status pill, the three report lists (b325d8be), plus
 `.cur-card` (currency-management), the bulk-wallet modal (index), `.manage-form-card`,
 `.section-title.bonus-item-strip`, `.provider-pricing-badge`, `.main-mod-footer`.
-Still open, and deliberately not half-fixed: the cream `.bonus-item-strip` band and the dark
-`.btn-label` drawn on it are ONE object — changing either alone makes the strip unreadable, so they need
-a measured pass together. Small text islands also await measurement (`.slider-upload-placeholder`,
-`reports.css`'s `.permission-empty`, the `frontend-display.html` inline colour-picker rules).
+The cream `.bonus-item-strip` band and the dark `.btn-label` drawn on it are ONE object - changing
+either alone makes the strip unreadable - so they were measured and fixed together; the pair's real
+cause was that the light rule lists TWO selectors and its dark counterpart had only repeated the first.
+Also fixed in that pass: `.slider-upload-placeholder` (dark text over a dark drop zone - unreadable
+BEFORE the pass), `.main-mod-footer`. Excluded after measuring, so nobody re-opens them:
+`.permission-empty` and `.main-mod-page-size` are already dark-adapted, and `.marquee-preview` paints
+the banner's own cream on purpose (it previews what will be published).
 
 **2. "All" against an endpoint that caps its own size** — the server answers with its cap (100) and still
 reports the real total, so All renders one page of rows under the *server's* page count, and clicking a

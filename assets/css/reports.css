@@ -427,6 +427,17 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 .slider-upload-placeholder i{font-size:42px;color:#57534E}
 .slider-upload-placeholder strong{font-size:16px;color:#D97706}
 .slider-upload-placeholder small{font-size:12px;color:#57534E}
+/* Dark: this placeholder is dark text on the drop zone - measured in dark as color rgb(24,25,28)
+   over a rgb(42,44,54) drop zone (unreadable already), its icon and small line rgb(87,83,78). */
+html[data-bo-theme="dark"] .slider-upload-placeholder{color:#E7E5E4}
+html[data-bo-theme="dark"] .slider-upload-placeholder i,
+html[data-bo-theme="dark"] .slider-upload-placeholder small{color:#A1A1AA}
+/* Dark: the strip's own text. The light rule is the generic `.section-title span{color:#18191C!important}`,
+   so once the strip turns charcoal its label would be dark on dark; scoped to the strip, the surface
+   this pair was measured on. */
+html[data-bo-theme="dark"] .section-title.bonus-item-strip span,
+html[data-bo-theme="dark"] .section-title.bonus-item-strip .btn-label,
+html[data-bo-theme="dark"] .section-title.bonus-item-strip .btn-label i{color:#E7E5E4 !important}
 #sliderPreview{width:100%;height:100%;min-height:220px;object-fit:contain;background:#F5EBDC;padding:8px}
 .slider-current-image{font-size:12px;color:#57534E;margin-top:8px;font-weight:700}
 .slider-form-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
