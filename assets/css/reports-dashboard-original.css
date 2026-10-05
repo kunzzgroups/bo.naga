@@ -4926,10 +4926,16 @@ body[data-report-page] .filter-card .field:has(#casinoResetBtn){
 /* v1.0.41 - Stable compact-desktop Wallet Ledger filters.
    At 1367px-class viewports the sidebar leaves too little content width for
    seven controls in one row. Keep all fields readable and move only the two
-   action buttons to a clean second row instead of allowing horizontal overflow. */
+   action buttons to a clean second row instead of allowing horizontal overflow.
+   Keep in sync with reports.css: `overflow:hidden` clipped the Date Range popup
+   and the row's dropdowns to this card's own 57px box, so the guard clips X only
+   (`overflow-x:clip` does not create the hidden/visible forcing pair, so
+   `overflow-y:visible` is honoured). Wallet Ledger loads reports.css, not this
+   twin, but the twins stay identical. */
 @media (min-width:992px) and (max-width:1499.98px){
   body.wallet-ledger-page .filter-card{
-    overflow:hidden!important;
+    overflow-x:clip!important;
+    overflow-y:visible!important;
   }
   body.wallet-ledger-page .filter-card .user-search-grid{
     display:grid!important;

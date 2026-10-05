@@ -6243,8 +6243,22 @@ body[data-report-page] .filter-card .field:has(#casinoResetBtn){
    seven controls in one row. Keep all fields readable and move only the two
    action buttons to a clean second row instead of allowing horizontal overflow. */
 @media (min-width:992px) and (max-width:1499.98px){
+  /* v1.0.41's horizontal guard, without clipping the row's own popups.
+     `overflow:hidden` clipped EVERY absolutely-positioned descendant to this card's
+     57px box, so the Date Range popup (measured: popup 182..500 inside a card of
+     129..186 - only its first 4px stayed visible, and elementFromPoint at the popup's
+     middle hit the table body) and the row's dropdowns were unreachable. The card does
+     not actually overflow horizontally (measured scrollWidth <= clientWidth at both
+     widths below), so the guard only has to clip X: `overflow-x:clip` does that without
+     the hidden/visible forcing pair, so `overflow-y:visible` is honoured and the popup
+     escapes. This media query is what flips the clip, and inside the dashboard the page's
+     own viewport is the FRAME width - window minus the 230px sidebar - so a page that is
+     never in this band standalone (1600) lands in it once pinned (frame 1338 at a 1568
+     window). Measured after the change, pinned, frame 1370: popup reachable, no
+     horizontal overflow. */
   body.wallet-ledger-page .filter-card{
-    overflow:hidden!important;
+    overflow-x:clip!important;
+    overflow-y:visible!important;
   }
   body.wallet-ledger-page .filter-card .user-search-grid{
     display:grid!important;

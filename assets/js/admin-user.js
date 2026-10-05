@@ -261,7 +261,12 @@
 
   /* Edit Admin moved to its own page (admin-user-create.html?id=N): the modal,
      its prefill and its submit handler all went with it. */
-  document.addEventListener('click', function(e){
+  /* Delegated, and therefore registered at file scope - but this file is page-private, so the
+     router runs it again on every entry and each run added another copy of the handler to a
+     document that outlives the frame (measured: admin-user.js:264 +1 listener per entry). One
+     slot on window, the pattern SPA.md gives for document-level bindings: replace, not stack. */
+  if(window.__boAdminDeleteClick) document.removeEventListener('click',window.__boAdminDeleteClick);
+  window.__boAdminDeleteClick=function(e){
     const del = e.target.closest && e.target.closest('.admin-delete-btn');
     if(del){
       const id=Number(del.dataset.id||0);
@@ -279,7 +284,8 @@
     }
     const toggle = e.target.closest && e.target.closest('[data-toggle-password]');
     if(toggle){ const id = toggle.getAttribute('data-toggle-password'); const input = document.getElementById(id); if(input){ input.type = input.type === 'password' ? 'text' : 'password'; } }
-  });
+  };
+  document.addEventListener('click',window.__boAdminDeleteClick);
 
   /* The edit form lives on admin-user-create.html?id=N now. */
 

@@ -316,7 +316,14 @@
       if(fileInput) previewSelectedImage(form, fileInput);
     });
     let last = null;
-    setInterval(()=>{ if(idInput.value !== last){ last = idInput.value; render(ctx); }}, 400);
+    /* Self-terminating. The form belongs to the content frame, so after a swap it is detached
+       while this interval keeps polling its inputs forever - one more per form per entry, all
+       of them rendering into a dead panel. isConnected is the cheapest release there is; nothing
+       has to know when the frame went away. */
+    const idPoll = setInterval(()=>{
+      if(!form.isConnected){ clearInterval(idPoll); return; }
+      if(idInput.value !== last){ last = idInput.value; render(ctx); }
+    }, 400);
     render(ctx);
   }
 

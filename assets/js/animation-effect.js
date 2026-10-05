@@ -227,7 +227,11 @@
     if(!btn)return;
     setWorkspaceMode(btn.dataset.effectMode);
   });
-  document.addEventListener('bo:custom-animation-changed',()=>{loadCustomEffects().catch(()=>{})});
+  /* Re-run per entry, document-level custom event (measured: animation-effect.html +1 per entry
+     at :230). Slot: only the newest closure (this entry's loader) survives. */
+  if(window.__boEffectChanged) document.removeEventListener('bo:custom-animation-changed',window.__boEffectChanged);
+  window.__boEffectChanged=()=>{loadCustomEffects().catch(()=>{})};
+  document.addEventListener('bo:custom-animation-changed',window.__boEffectChanged);
   $('effectForm').addEventListener('submit',async e=>{e.preventDefault();try{const payload=Object.assign({id:$('effectId').value?Number($('effectId').value):null,applyTo:$('applyTo').value,scopeType:$('scopeType').value,animationType:animationTypeValue(),speed:$('speed').value,intensity:$('intensity').value,enabled:Number($('enabled').value),sortOrder:Number($('sortOrder').value||0)},targetInfo());await json(base()+'/admin/animation-setting/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});setStatus('Rule saved. Frontend picks it up on the next refresh.');await loadRules();reset()}catch(err){setStatus(err.message,true)}});
   document.querySelector('.effect-wall-toolbar')?.addEventListener('click',e=>{
     const btn=e.target.closest('.effect-filter');if(!btn)return;

@@ -655,7 +655,13 @@
     paintDarkFilterControls();
     /* bo-ui-standard classifies filters after us — repaint a few times so cream cannot stick */
     [0, 50, 150, 400, 1000].forEach(ms => setTimeout(paintDarkFilterControls, ms));
-    new MutationObserver(paintDarkFilterControls).observe(document.documentElement, {
+    /* Page-private file: the router re-runs it on every entry, and an observer registered on
+       documentElement stays registered for as long as that element lives - so every entry used
+       to add another one (each repainting the theme filter controls on every later attribute
+       change). One slot, previous detached first. */
+    if(window.__boPwtThemeObserver) window.__boPwtThemeObserver.disconnect();
+    window.__boPwtThemeObserver = new MutationObserver(paintDarkFilterControls);
+    window.__boPwtThemeObserver.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['data-bo-theme']
     });

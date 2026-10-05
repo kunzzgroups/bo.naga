@@ -188,11 +188,15 @@
     }
   });
 
-  document.addEventListener('keydown', (e) => {
+  /* Page-private file re-run on every entry: the Escape handler stacked on a document that
+     outlives the frame (measured: duplicate-ip.html +1 per entry at :191). Slot: replace. */
+  if(window.__boDupEsc) document.removeEventListener('keydown',window.__boDupEsc);
+  window.__boDupEsc = (e) => {
     if (e.key === 'Escape' && document.getElementById('dupUsersModal')?.classList.contains('show')) {
       closeUsersModal();
     }
-  });
+  };
+  document.addEventListener('keydown', window.__boDupEsc);
 
   paginationEl?.addEventListener('click', (e) => {
     const b = e.target.closest('[data-page]');

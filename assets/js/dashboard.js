@@ -84,7 +84,12 @@
     document.getElementById('dashCalYear').addEventListener('click',e=>{e.stopPropagation();pickerState.yearPageStart=pickerState.view.getFullYear()-5;pickerState.mode=pickerState.mode==='years'?'days':'years';renderCalendar()});
     document.getElementById('dashCalMonthGrid').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-dash-month]');if(!b)return;pickerState.view.setMonth(Number(b.dataset.dashMonth));pickerState.mode='days';renderCalendar()});
     document.getElementById('dashCalYearGrid').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-dash-year]');if(!b)return;pickerState.view.setFullYear(Number(b.dataset.dashYear));pickerState.mode='months';renderCalendar()});
-    document.addEventListener('click',e=>{if(!picker.contains(e.target)&&!trigger.contains(e.target))picker.classList.remove('show')});
+    /* Per-entry picker init, document-level: each entry stacked another outside-click handler on
+       a document that outlives the frame (measured: dashboard-backup.html +1 per entry at :87).
+       Slot replace keeps THIS entry's picker/trigger. */
+    if(window.__boDashPickerClose) document.removeEventListener('click',window.__boDashPickerClose);
+    window.__boDashPickerClose=e=>{if(!picker.contains(e.target)&&!trigger.contains(e.target))picker.classList.remove('show')};
+    document.addEventListener('click',window.__boDashPickerClose);
   }
 
   const cards=[['Members','members','bi-people','index.html'],['New Members','newMembers','bi-person-plus','index.html'],['Approved Deposit','depositAmount','bi-wallet2','member-deposit.html'],['Pending Deposit','pendingDepositAmount','bi-hourglass-split','member-deposit.html?status=PENDING'],['Approved Withdrawal','withdrawAmount','bi-cash-stack','member-withdraw.html'],['Pending Withdrawal','pendingWithdrawalAmount','bi-exclamation-circle','member-withdraw.html?status=PENDING'],['Valid Bet','validBet','bi-graph-up-arrow','provider-bet-report.html'],['Bet Amount','betAmount','bi-dice-5','provider-bet-report.html'],['Win Amount','winAmount','bi-trophy','provider-bet-report.html'],['Net Win/Loss','netWinLoss','bi-activity','provider-bet-report.html'],['Bonus','bonusAmount','bi-gift','promotion-report.html'],['Rebate','rebateAmount','bi-percent','daily-rebate-report.html'],['Adjustment','adjustmentAmount','bi-sliders','wallet-ledger.html?type=ADJUSTMENT&scope=all']];

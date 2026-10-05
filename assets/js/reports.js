@@ -1,3 +1,20 @@
+/* Every document-level binding in this file goes through ONE slot.
+
+The document outlives the content frame, and bo-spa re-executes this file whenever the page
+being left does not load it (ip-whitelist-security.html and page-customize.html are the two BO
+pages that do not link it). The guarded DOMContentLoaded body below covers the REPLAY path
+only; the blocks below run on every EXECUTION, so each such hop stacked another 11 document
+listeners - measured with DOMDebugger: five entries into ip-whitelist-security.html took the
+document from 91 to 124 listeners, 11 per hop, all still firing at the end. The slot removes
+the previous registration and keeps the newest closure, which is the shape SPA.md prescribes
+for document-level bindings. */
+function boDocSlot(name, type, fn, opts) {
+  var key = '__boReportsDoc' + name, prev = window[key];
+  if (prev) document.removeEventListener(type, prev.fn, prev.opts);
+  window[key] = { fn: fn, opts: opts };
+  document.addEventListener(type, fn, opts);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   /* bo-spa.js replays DOMContentLoaded, scoped, after every content swap. This handler binds
      straight onto SHELL rows when they exist at fire time: .nav-group-btn rows get a
@@ -318,13 +335,13 @@ document.addEventListener('DOMContentLoaded', () => {
     wrap.classList.toggle('open', willOpen);
     btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
   }
-  document.addEventListener('click', handleProfileClick, true);
-  document.addEventListener('touchstart', handleProfileClick, {capture:true, passive:false});
-  document.addEventListener('click', function(e){
+  boDocSlot('ProfileClick', 'click', handleProfileClick, true);
+  boDocSlot('ProfileTouch', 'touchstart', handleProfileClick, {capture:true, passive:false});
+  boDocSlot('ProfileClose', 'click', function(e){
     if(e.target.closest && e.target.closest('.dropdown,.report-profile-wrap,.dropdown-menu,.report-profile-menu')) return;
     closeAllProfileMenus();
   });
-  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeAllProfileMenus(); });
+  boDocSlot('ProfileEscape', 'keydown', function(e){ if(e.key === 'Escape') closeAllProfileMenus(); });
 })();
 
 // Desktop mini sidebar: click hamburger to collapse/restore, hover rail to slide out.
@@ -356,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
-  document.addEventListener('click', function(e){
+  boDocSlot('SidebarToggle', 'click', function(e){
     var btn = e.target.closest && e.target.closest('[data-open-sidebar], .hamb');
     if(!btn || !isDesktop()) return;
     e.preventDefault();
@@ -884,21 +901,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // form.reset() updates the native controls after the reset event dispatches.
   // Refresh twice so both the immediate state and the browser's final reset state are reflected.
-  document.addEventListener('reset',function(event){
+  boDocSlot('SelectReset', 'reset',function(event){
     const form=event.target;
     setTimeout(function(){ syncScope(form); },0);
     requestAnimationFrame(function(){ syncScope(form); });
   },true);
 
-  document.addEventListener('change',function(event){
+  boDocSlot('SelectChange', 'change',function(event){
     if(event.target && event.target.matches && event.target.matches('select')) queueSync(event.target);
   },true);
 
-  document.addEventListener('input',function(event){
+  boDocSlot('SelectInput', 'input',function(event){
     if(event.target && event.target.matches && event.target.matches('select')) queueSync(event.target);
   },true);
 
-  document.addEventListener('click',function(e){
+  boDocSlot('SelectClose', 'click',function(e){
     if(!e.target.closest('.rounded-select-wrap')){
       document.querySelectorAll('.rounded-select-menu.show').forEach(m=>m.classList.remove('show'));
       document.querySelectorAll('.rounded-select-btn.open').forEach(b=>b.classList.remove('open'));
@@ -909,13 +926,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // SPA replay re-dispatches DOMContentLoaded; the observer below is cumulative, so guard inside boot (it also runs via setTimeout).
     if(window.__boSelectSyncBooted) return; window.__boSelectSyncBooted=1;
     syncScope(document);
+    /* While a swap is in flight, leave the work to bo:spa:content (fired after the target
+       page's scripts and its DOMContentLoaded replay). A swap replaces the content frame and
+       THEN runs the page's own scripts, and those scripts own some of these selects - they
+       claim them with the same `data-rounded-ready` marker used below. Acting on the observer
+       callback instead (it fires in the microtask right after the frame is replaced, i.e.
+       before those scripts) made the owner depend on how the page was reached: measured on
+       index.html arriving from another page, the two member-search fields came out at this
+       file's 99px and the page's own 150px rule never got to apply, wrapping the search row
+       onto one line (toolbar 108px -> 62px, table 355px -> 401px) - a direct load keeps the
+       page's geometry. Deferring also means a swap enhances exactly what a direct load does. */
     new MutationObserver(function(records){
+      if(window.BO_SPA && BO_SPA.debug && BO_SPA.debug.isBusy && BO_SPA.debug.isBusy()) return;
       records.forEach(function(record){
         record.addedNodes.forEach(function(node){
           if(node.nodeType===1) syncScope(node);
         });
       });
     }).observe(document.documentElement,{childList:true,subtree:true});
+    document.addEventListener('bo:spa:content',function(){ syncScope(document); });
   }
 
   window.BOSelectSync={
@@ -960,7 +989,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   /* SPA: the notice is a body-level container; a frame swap must not leave it over the page
      that arrives. */
-  document.addEventListener('bo:spa:before', function(){ if(modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); } });
+  boDocSlot('AlertBefore', 'bo:spa:before', function(){ if(modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); } });
 })();
 
 
@@ -1010,7 +1039,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* SPA: an unanswered confirm/prompt at swap time resolves as a cancel - its asker's page is
      gone, and leaving it open kept the pending promise (and the old page's continuation) alive
      over the new content. */
-  document.addEventListener('bo:spa:before', function(){
+  boDocSlot('DialogBefore', 'bo:spa:before', function(){
     if(!modal || !modal.classList.contains('show')) return;
     modal.classList.remove('show'); modal.setAttribute('aria-hidden','true');
     var r=resolver; resolver=null; if(r) r(inputWrap && inputWrap.classList.contains('show')?null:false);
@@ -1027,7 +1056,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(window.DynamicTranslation){ window.DynamicTranslation.autoAttach(document); return; }
     if(document.querySelector('script[data-dynamic-translation-loader]')) return;
     const script=document.createElement('script');
-    script.src='assets/js/dynamic-translation.js?v=5ad59a20';
+    script.src='assets/js/dynamic-translation.js?v=8797093e';
     script.async=false;
     script.setAttribute('data-dynamic-translation-loader','1');
     script.onload=function(){ if(window.DynamicTranslation) window.DynamicTranslation.autoAttach(document); };

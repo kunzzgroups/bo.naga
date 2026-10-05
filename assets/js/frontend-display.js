@@ -652,14 +652,21 @@
     bindSpectrumPointer(fdColorSv,updateSvFromEvent,'sv');
     bindSpectrumPointer(fdColorHue,updateHueFromEvent,'hue');
     fdColorPop?.addEventListener('click',function(e){ e.stopPropagation(); });
-    document.addEventListener('click',function(e){
+    /* Per-entry init, document-level handlers: the popover they close belongs to THIS entry,
+       and each entry used to leave one more pair behind (measured: frontend-display.html +2 per
+       entry at :652/:657). Slot replace keeps the newest closure. */
+    if(window.__boFdColorClose) document.removeEventListener('click',window.__boFdColorClose);
+    window.__boFdColorClose=function(e){
       if(!fdColorPop||!fdColorPop.classList.contains('is-open')) return;
       if(e.target.closest('#fdColorPop,#marqueeBgColorBtn,#marqueeTextColorBtn')) return;
       closeColorPopover();
-    });
-    document.addEventListener('keydown',function(e){
+    };
+    document.addEventListener('click',window.__boFdColorClose);
+    if(window.__boFdColorEsc) document.removeEventListener('keydown',window.__boFdColorEsc);
+    window.__boFdColorEsc=function(e){
       if(e.key==='Escape') closeColorPopover();
-    });
+    };
+    document.addEventListener('keydown',window.__boFdColorEsc);
     window.addEventListener('resize',function(){
       if(!fdColorPop||!fdColorPop.classList.contains('is-open')) return;
       const anchor=marqueeColorMode==='bg'?marqueeBgColorBtn:marqueeTextColorBtn;
@@ -670,9 +677,16 @@
       const anchor=marqueeColorMode==='bg'?marqueeBgColorBtn:marqueeTextColorBtn;
       positionColorPopover(anchor);
     },{passive:true});
-    new MutationObserver(function(){
+    /* Page-private file, so a re-entry re-executes it; the observer's target is
+       documentElement, which survives the swap - and a MutationObserver stays registered on its
+       target for as long as that target lives. Without the disconnect each entry stacked another
+       observer over a document that outlives the frame (this page's own marquee state closed
+       over inside). One slot: the previous entry's observer is detached first. */
+    if(window.__boFdThemeObserver) window.__boFdThemeObserver.disconnect();
+    window.__boFdThemeObserver = new MutationObserver(function(){
       applyMarqueeBackground(marqueeBgValue);
-    }).observe(document.documentElement,{attributes:true,attributeFilter:['data-bo-theme']});
+    });
+    window.__boFdThemeObserver.observe(document.documentElement,{attributes:true,attributeFilter:['data-bo-theme']});
   }
   /* The board is this page's scroll container and the save bar is pinned under it, so a menu that
      reaches past the board's bottom edge is cut off there — measured at 1560x500 with the brand

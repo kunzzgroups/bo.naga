@@ -312,17 +312,30 @@
 
   function ensureAlert(){
     if(alertModal) return alertModal;
+    /* Reuse the container a previous EXECUTION of this file left on the body. A swap re-runs a
+       shared file when the page being left does not load it, and nothing sweeps a container a
+       shared script created (the router only converges the page's own markup). Without this,
+       every execution that raised an alert appended another .bo-global-modal - and registered
+       another release listener (measured on page-customize.html: +1 listener per entry at
+       bo-ui-standard.js:325). `.onclick =` below has replace semantics, so re-wiring a reused
+       container is idempotent. */
+    alertModal=document.querySelector('.bo-global-modal[data-bo-global-kind="alert"]');
+    if(!alertModal){
     alertModal=document.createElement('div');
     alertModal.className='bo-global-modal';alertModal.setAttribute('aria-hidden','true');
     alertModal.innerHTML='<div class="bo-global-backdrop"></div><section class="bo-global-dialog" role="alertdialog" aria-modal="true"><button class="bo-global-close" type="button" aria-label="Close"><i class="bi bi-x-lg"></i></button><header><span class="bo-global-icon"><i class="bi bi-info-circle"></i></span><div><h3>Notice</h3><p class="bo-global-message"></p></div></header><footer><button type="button" class="bo-global-primary">OK</button></footer></section>';
+    alertModal.setAttribute('data-bo-global-kind','alert');
     document.body.appendChild(alertModal);
+    }
     const close=()=>{alertModal.classList.remove('show');alertModal.setAttribute('aria-hidden','true');};
     alertModal.querySelector('.bo-global-primary').onclick=close;
     alertModal.querySelector('.bo-global-close').onclick=close;
     alertModal.querySelector('.bo-global-backdrop').onclick=close;
     /* A shared notice must not outlive the page it was raised from - the frame swap is a cut,
-       and this modal lives on `body`. */
-    document.addEventListener('bo:spa:before', close);
+       and this modal lives on `body`. One slot: the newest close wins. */
+    if(window.__boUiStandardAlertBefore) document.removeEventListener('bo:spa:before',window.__boUiStandardAlertBefore);
+    window.__boUiStandardAlertBefore=close;
+    document.addEventListener('bo:spa:before',window.__boUiStandardAlertBefore);
     return alertModal;
   }
 
@@ -347,9 +360,12 @@
 
   function ensureDialog(){
     if(dialogModal) return dialogModal;
-    dialogModal=document.createElement('div');dialogModal.className='bo-global-modal';dialogModal.setAttribute('aria-hidden','true');
+    dialogModal=document.querySelector('.bo-global-modal[data-bo-global-kind="dialog"]');
+    if(!dialogModal){
+    dialogModal=document.createElement('div');dialogModal.className='bo-global-modal';dialogModal.setAttribute('aria-hidden','true');dialogModal.setAttribute('data-bo-global-kind','dialog');
     dialogModal.innerHTML='<div class="bo-global-backdrop"></div><section class="bo-global-dialog" role="dialog" aria-modal="true"><button class="bo-global-close" type="button" aria-label="Close"><i class="bi bi-x-lg"></i></button><header><span class="bo-global-icon"><i class="bi bi-question-circle"></i></span><div><h3>Confirm Action</h3><p class="bo-global-message"></p></div></header><label class="bo-global-input-wrap"><span>Value</span><input class="bo-global-input" type="text" autocomplete="off"></label><footer><button type="button" class="bo-global-secondary">Cancel</button><button type="button" class="bo-global-primary">Confirm</button></footer></section>';
     document.body.appendChild(dialogModal);
+    }
     const finish=value=>{dialogModal.classList.remove('show');dialogModal.setAttribute('aria-hidden','true');const resolve=dialogResolver;dialogResolver=null;if(resolve)resolve(value);};
     dialogModal.querySelector('.bo-global-primary').onclick=()=>finish(dialogModal.dataset.input==='1'?dialogModal.querySelector('.bo-global-input').value:true);
     dialogModal.querySelector('.bo-global-secondary').onclick=()=>finish(dialogModal.dataset.input==='1'?null:false);
@@ -359,7 +375,9 @@
     /* A confirm/prompt awaiting an answer when the frame is replaced resolves as a cancel:
        the asker's page is gone, and letting the modal sit over the next page kept the
        pending promise (and the old page's continuation) alive. */
-    document.addEventListener('bo:spa:before', function(){ finish(dialogModal.dataset.input==='1'?null:false); });
+    if(window.__boUiStandardDialogBefore) document.removeEventListener('bo:spa:before',window.__boUiStandardDialogBefore);
+    window.__boUiStandardDialogBefore=function(){ finish(dialogModal.dataset.input==='1'?null:false); };
+    document.addEventListener('bo:spa:before',window.__boUiStandardDialogBefore);
     return dialogModal;
   }
 
