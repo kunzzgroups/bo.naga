@@ -698,13 +698,13 @@
           return file === 'main-win-lose-report.html' || file === 'win-lose-report.html' || file === 'main_provider_report.html' || key === 'main_provider_report' || key === 'main_win_lose_report';
         });
       }
-      /* Online Users is the destination of the User Management KPI tile ("Online Now"). Its
-         menu row is ROOT-configured and the BO role grants live in the Main panel, so an
-         account whose menus carry the Member module but not this row had the tile bounce it
-         straight to the landing page (reported twice from the owner's environment). Same
-         shape as the sibling exceptions above: whoever can see the Member module may open its
-         online list. The predicate is shared with member-management.js so the tile and the
-         guard always agree. */
+      /* Online Users belongs to the Member module. Its menu row is ROOT-configured and the BO
+         role grants live in the Main panel, so an account whose menus carry the Member module
+         but not this row could not open the page at all (found when the User Management KPI
+         tile linked to it; the owner has since asked for a read-out tile, but the page is
+         still reached from its own toolbar link and from the module's menus). Same shape as
+         the sibling exceptions above: whoever can see the Member module may open its online
+         list. */
       if(!allowed && currentFile() === 'online-users.html' && this.memberModuleMenu(user)){
         allowed = true;
       }
