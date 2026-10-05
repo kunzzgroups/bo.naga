@@ -290,7 +290,11 @@ body.report-body.bo-charcoal.rebate-page .report-content > .rebate-schedule{
      `tbody#auditRows`. The menu's own z-index only competes inside this context. */
   position:relative;z-index:3;
 }
-/* Pill tabs — Deposit/Withdraw recipe, no status dots, no (n) counts */
+/* Pill tabs — Deposit/Withdraw recipe, no status dots, no (n) counts.
+   The capsule below is only the recipe's static half - the active pill's own background, which
+   can at best cross-fade in place. `:not(.bo-seg)` steps aside once rebate-management.js mounts
+   bo-seg-bounce's travelling thumb, and keeps the row looking exactly as it does today while
+   the class is absent: before the mount, or if that file never loads. */
 .rebate-page .rebate-chrome .rebate-tabs.bo-tx-tabs,
 .rebate-page .rebate-chrome .rebate-tabs,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs.bo-tx-tabs,
@@ -331,17 +335,30 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebat
   color:#18191C!important;
   background:rgba(24,25,28,.04)!important;
 }
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs .bo-tx-tab.is-active,
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs .bo-tx-tab.active,
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs .mad-tab.is-active,
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs .mad-tab.active,
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs button.active,
-html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs button.is-active{
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs:not(.bo-seg) .bo-tx-tab.is-active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs:not(.bo-seg) .bo-tx-tab.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs:not(.bo-seg) .mad-tab.is-active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs:not(.bo-seg) .mad-tab.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs:not(.bo-seg) button.active,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs:not(.bo-seg) button.is-active{
   color:#18191C!important;font-weight:700!important;
   background-color:#F3E8D6!important;
   background-image:linear-gradient(180deg,#FFF8EB 0%,#F3E8D6 100%)!important;
   border-color:#EADCC8!important;
   box-shadow:0 1px 2px rgba(24,25,28,.06),0 2px 6px rgba(24,25,28,.05)!important;
+}
+/* The travelling half: bo-seg-bounce thumb, mounted by rebate-management.js. The settled
+   values are the pair this page already painted (member-deposit row measures rgb(243,232,214)
+   plus the same gradient), so the capsule look does not change - only that it is now a box of
+   its own, free to travel. top:0/height:100% replaces the shared thumb inset. */
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs.bo-seg > .bo-seg-thumb{
+  top:0!important;height:100%!important;border-radius:999px!important;
+  background-color:#F3E8D6!important;
+  background-image:linear-gradient(180deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border:1px solid #EADCC8!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.06),0 2px 6px rgba(24,25,28,.05)!important;
+  box-sizing:border-box!important;
+  opacity:1;
 }
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs .bo-tx-tab.is-active i,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs .mad-tab.is-active i,
@@ -865,16 +882,25 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chro
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs .mad-tab:hover:not(.is-active):not(.active){
   color:#F5F5F4!important;background:rgba(255,255,255,.06)!important;
 }
-html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs .bo-tx-tab.is-active,
-html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs .bo-tx-tab.active,
-html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs .mad-tab.is-active,
-html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs .mad-tab.active,
-html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs button.active{
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs:not(.bo-seg) .bo-tx-tab.is-active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs:not(.bo-seg) .bo-tx-tab.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs:not(.bo-seg) .mad-tab.is-active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs:not(.bo-seg) .mad-tab.active,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs:not(.bo-seg) button.active{
   color:#F5F5F4!important;
   background-color:#2A2C36!important;
   background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%)!important;
   border-color:rgba(255,255,255,.14)!important;
   box-shadow:0 1px 2px rgba(0,0,0,.25)!important;
+}
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs.bo-seg > .bo-seg-thumb{
+  top:0!important;height:100%!important;border-radius:999px!important;
+  background-color:#2A2C36!important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%)!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.25)!important;
+  box-sizing:border-box!important;
+  opacity:1;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs .bo-tx-tab.is-active i,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs .mad-tab.is-active i,
