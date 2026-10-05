@@ -783,7 +783,7 @@
 
   async function saveRole(e){
     e.preventDefault();
-    const btn=document.getElementById('saveRoleBtn'), name=document.getElementById('name').value.trim(), editId=document.getElementById('roleEditId').value, oldCode=document.getElementById('roleEditCode').value;
+    const btn=document.getElementById('saveRoleBtn')||document.getElementById('rcSubmit'), name=document.getElementById('name').value.trim(), editId=document.getElementById('roleEditId').value, oldCode=document.getElementById('roleEditCode').value;
     const ids=expandAdminMenuAliases([...document.querySelectorAll('#checkList .permission-item input:checked')].map(x=>Number(x.value)));
     if(!name){msg(roleStatusEl,'Group name is required.','error');return;}
     if(!ids.length){msg(roleStatusEl,'Please select at least one menu permission.','error');return;}
