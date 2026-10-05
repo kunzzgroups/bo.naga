@@ -553,6 +553,34 @@
     return 'ACTIVE';
   }
   function metric(id, value){ const el=document.getElementById(id); if(el) el.textContent = value; }
+  /* The Online Now tile links to online-users.html, and auth.js's page guard bounces any page
+     the account's menus do not contain straight to the landing page (`enforcePageAccess`: a
+     menu row AND the role grant, both backend-owned). A tile that always links is therefore a
+     tile that can dump the user on the dashboard - reported twice from the owner's
+     environment. Link it only when the menus really include it; otherwise the tile stays a
+     read-out and a click does nothing. auth.js re-runs its own check on every SPA swap, so
+     granting the menu turns this tile back into a working link with no further change. */
+  function syncOnlineTile(){
+    const tile=document.querySelector('.user-metric[href="online-users.html"]');
+    if(!tile) return;
+    let ok=false;
+    try{
+      /* Same normalisation as auth.js pageFile(): basename, and a missing extension means .html. */
+      const file=function(u){
+        let f=String(u==null?'':u).split('/').pop().split('?')[0].split('#')[0].trim().toLowerCase();
+        if(!f||f==='.'||f==='..') f='index.html';
+        if(!/\.[a-z0-9]+$/i.test(f)) f+='.html';
+        return f;
+      };
+      ok=(BO_AUTH.allowedMenus(BO_AUTH.user())||[]).some(m=>file(m.url)==='online-users.html');
+    }catch(e){ ok=false; }
+    if(ok) return;
+    tile.removeAttribute('href');
+    tile.removeAttribute('data-bo-spa-link');
+    tile.removeAttribute('aria-label');
+    tile.style.cursor='default';
+    tile.title='Online Users is not in this account\u2019s menus';
+  }
   let onlinePresenceTimer = null;
   async function loadOnlinePresence(){
     try{
@@ -1304,7 +1332,7 @@
     catch(err){ alert(err.message || 'Update failed'); }
   });
   document.addEventListener('DOMContentLoaded',()=>{
-    initRoundedMemberSelects(); bindSearch(); bindColumnTools(); bindExportTool(); bindMemberPagination(); bindBulkWalletTools(); bindCreateMember(); bindTimeTips(); bindSortHeaders(); startOnlinePresence(); loadMembers();
+    syncOnlineTile(); initRoundedMemberSelects(); bindSearch(); bindColumnTools(); bindExportTool(); bindMemberPagination(); bindBulkWalletTools(); bindCreateMember(); bindTimeTips(); bindSortHeaders(); startOnlinePresence(); loadMembers();
   });
 })();
 
