@@ -236,6 +236,21 @@
    const j=await r.json();
    const d=j.data||{},rows=d.content||[],pg=d.pagination||{};
    totalPages=Number(pg.totalPages||1);totalElements=Number(pg.totalElements??pg.total??rows.length);
+   /* "All" asks for size 10000, but the endpoint caps size at 100: it answers with 100 rows and
+      still reports the real total, so All used to read "Showing 1 to 100 of 122". Keep asking for
+      the next page in the size the endpoint actually served until the total is reached. */
+   const wanted=Math.min(pageSize,totalElements||rows.length);
+   if(page===1&&rows.length&&rows.length<wanted){
+    const chunk=rows.length;
+    for(let np=2;rows.length<wanted;np++){
+     const q2=new URLSearchParams(q);q2.set('page',String(np));q2.set('size',String(chunk));
+     const r2=await fetch(endpoint('VIP_EXP_LOGS')+'?'+q2,{headers:headers()});
+     const j2=await r2.json();
+     const more=(j2&&j2.data&&j2.data.content)||[];
+     if(!more.length) break;
+     rows.push(...more);
+    }
+   }
    if(body)body.innerHTML=rows.length?rows.map(x=>{
     const dt=splitDate(x.createdAt);
     const change=Number(x.experienceChange||0);

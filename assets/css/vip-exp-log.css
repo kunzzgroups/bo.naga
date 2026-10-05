@@ -1245,3 +1245,39 @@ html body.vip-exp-log-page .vip-modal.show{display:flex !important}
   html body.vip-exp-log-page .vip-admin-table .vip-col-reference{display:none}
   html body.vip-exp-log-page .vip-adjust-dialog .vip-form-grid{grid-template-columns:1fr}
 }
+/* DARK: the filter-row select had no counterpart on this page: measured in dark, the trigger
+   still computed rgb(255,248,235) / rgb(24,25,28) while vip-reward-log's rendered rgb(42,44,54) /
+   rgb(245,245,244) off the very same shared .rounded-select-* component. Sibling's values, this
+   page's own chains (the long one included, so they win). */
+html[data-bo-theme="dark"] body.vip-exp-log-page .vip-log-filters .rounded-select-btn,
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-exp-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .bo-filter-select-item .rounded-select-btn{
+  background:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.vip-exp-log-page .vip-log-filters .rounded-select-btn .bi,
+html[data-bo-theme="dark"] body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy).vip-exp-log-page .report-main .vip-log-toolbar .vip-log-filters.bo-filter-row > .bo-filter-select-item .rounded-select-btn .bi{
+  color:#D4D4D8 !important;
+}
+html[data-bo-theme="dark"] body.vip-exp-log-page .vip-log-filters .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.vip-exp-log-page .vip-log-filters .rounded-select-btn:focus{
+  border-color:#F59E0B !important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18) !important;
+}
+html[data-bo-theme="dark"] body.vip-exp-log-page .vip-log-filters .rounded-select-menu{
+  background:#383A46 !important;
+  border-color:rgba(255,255,255,.14) !important;
+  box-shadow:0 16px 38px rgba(0,0,0,.4) !important;
+}
+html[data-bo-theme="dark"] body.vip-exp-log-page .vip-log-filters .rounded-select-option{
+  color:#E7E5E4 !important;
+}
+html[data-bo-theme="dark"] body.vip-exp-log-page .vip-log-filters .rounded-select-option:hover{
+  background:rgba(245,158,11,.14) !important;
+  color:#F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.vip-exp-log-page .vip-log-filters .rounded-select-option.active,
+html[data-bo-theme="dark"] body.vip-exp-log-page .vip-log-filters .rounded-select-option.is-active{
+  background:#F59E0B !important;
+  color:#2A2C36 !important;
+}
