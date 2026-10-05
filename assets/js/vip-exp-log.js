@@ -225,7 +225,7 @@
  }
  function emptyRow(msg){return `<tr><td class="vip-log-empty" colspan="${COLS}">${esc(msg)}</td></tr>`;}
  async function load(p){
-  page=p||1;
+  page=Math.min(Math.max(1,p||1),Math.max(1,totalPages));
   syncPageSize();
   syncAutofitMode();
   const q=new URLSearchParams({page:String(page),size:String(pageSize)}),kw=$('#vipLogKeyword')?.value.trim(),src=$('#vipLogSource')?.value;
@@ -250,6 +250,11 @@
      if(!more.length) break;
      rows.push(...more);
     }
+    /* All answers in cap-sized chunks: once every row is in hand the report IS one page. Leaving
+       the server's totalPages (it computes them against its own cap - 4 for 370 rows) kept four
+       rungs under a list that was already complete, and clicking one asked for "page 3 of a
+       10000-row page": the footer then read "Showing 20001 to 370 of 370". */
+    totalPages=Math.max(1,Math.ceil(totalElements/Math.max(1,rows.length)));
    }
    if(body)body.innerHTML=rows.length?rows.map(x=>{
     const dt=splitDate(x.createdAt);
@@ -275,7 +280,7 @@
    resetEvenFill();
   }
  }
- function renderInfo(rowCount){const info=$('#vipLogPageInfo');if(!info)return;const from=totalElements&&rowCount?((page-1)*pageSize+1):0;const to=totalElements?Math.min((page-1)*pageSize+rowCount,totalElements):0;info.textContent=`Showing ${from} to ${to} of ${totalElements} entries`;}
+ function renderInfo(rowCount){const info=$('#vipLogPageInfo');if(!info)return;const from=totalElements&&rowCount?Math.min((page-1)*pageSize+1,totalElements):0;const to=totalElements?Math.min((page-1)*pageSize+rowCount,totalElements):0;info.textContent=`Showing ${from} to ${to} of ${totalElements} entries`;}
  function renderPages(){
   const w=$('#vipLogPagination');if(!w)return;
   const total=Math.max(1,Number(totalPages)||1);
