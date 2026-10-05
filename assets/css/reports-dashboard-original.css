@@ -1,6 +1,6 @@
 
 :root{
-  --sidebar-w:260px;
+  --sidebar-w:250px;
   --bg:#F5EBDC;
   --card:#ffffff;
   --text:#18191C;
@@ -134,7 +134,7 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 @media(max-width:575.98px){.dropdown-menu,.report-profile-menu{position:fixed!important;top:54px!important;right:8px!important;width:min(300px,calc(100vw - 16px))!important;max-width:calc(100vw - 16px)!important}}
 
 /* ===== Sidebar mini / hover layout update ===== */
-:root{--rail-w:72px;--sidebar-w:260px}
+:root{--rail-w:72px;--sidebar-w:250px}
 /* Desktop topbar hamburger. Shown here, hidden again by the sidebar's own layer
    (`bo-global-quicknav.css`, injected by auth.js on every BO page) — the rail's 42px toggle
    owns collapse/expand now. Pages that load this sheet without that one keep this control. */
