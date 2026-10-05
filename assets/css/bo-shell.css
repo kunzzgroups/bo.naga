@@ -185,6 +185,17 @@ html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .repor
   line-height:15.6px!important;
 }
 
+/* One rail width for the whole BO: 250px, the value the owner's live site and the design use.
+   The tree carried 260px because reports.css and reports-dashboard-original.css each declare it
+   twice in a `:root` block that came in with a stale-snapshot WIP commit (0da8f81d, "must not
+   be merged as-is") - measured on main: .report-sidebar = 260x804 on dashboard.html and
+   member-wallet.html, while the live site reads 250. The four declarations are back to 250px;
+   this lock keeps the value here (the shell owns the rail's metrics) so a theme sheet cannot
+   move it again - `width` and custom properties are outside the drift guard's metric list. */
+html:not(#bo-charcoal-off) body.report-body{
+  --sidebar-w:250px;
+}
+
 /* 0e-pre. Rail rows: one padding for every row, and the pin's space reserved only where a pin
    can actually appear.
    bo-global-quicknav.css reserved `.report-nav a[data-menu-key]{padding-right:38px}` for the
