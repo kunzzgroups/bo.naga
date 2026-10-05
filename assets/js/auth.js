@@ -235,11 +235,10 @@
     'site-customize.html':{label:'Site Customize',order:2,module:'design'},
     'advertisement-popup.html':{label:'Advertisement Popup',order:3,module:'design'},
     'frontend-display.html':{label:'Frontend Display',order:4,module:'design'},
-    'topup-reward.html':{label:'Top-up Reward',order:5,module:'design'},
-    'social.html':{label:'Social Link',order:6,module:'design'},
-    'layout-section.html':{label:'Layout Section',order:7,module:'design'},
-    'page-customize.html':{label:'Page Customize',order:8,module:'design'},
-    'image-to-url.html':{label:'Image To URL',order:9,module:'design'},
+    'social.html':{label:'Social Link',order:5,module:'design'},
+    'layout-section.html':{label:'Layout Section',order:6,module:'design'},
+    'page-customize.html':{label:'Page Customize',order:7,module:'design'},
+    'image-to-url.html':{label:'Image To URL',order:8,module:'design'},
     // 11. Access Control. All six rows of the group are registered, so it collapses to one
     // Access Control row and the row carries them. Five are ordinary BO pages; Roles &
     // Permissions (11.1, menu-permission.html) is a Main panel page (data-bo-shell="main") that
@@ -1385,6 +1384,24 @@
               style.textContent=self._dashboardShellCss;
               d.head.appendChild(style);
             }
+            /* The injected sheet above hides the page's own shell at ONE class, and the module
+               sheets pin exactly those elements back on with `!important` at a much higher
+               specificity: `bo-charcoal-legacy.css` carries
+               `html body.referral-page.report-body.bo-charcoal .report-topbar{...display:flex!important}`
+               (0,4,2), and 87 display declarations of that family exist across assets/css, up to
+               (0,6,3). Hiding it from a stylesheet alone is therefore a specificity race the page
+               always wins - measured: referral.html opened in the workspace with the injected
+               sheet already in place still reported its topbar at display:flex / 64px, while
+               wallet-ledger.html (which has no such rule of its own) reported none / 0. That is
+               the difference the owner saw between two pinned panels.
+               The style attribute is the one place a page rule cannot reach: an important inline
+               declaration outranks every important stylesheet declaration, so the outcome is
+               decided by the cascade origin instead of by whichever selector is longer. The
+               frame is still invisible until activateFrame below, so nothing flashes. */
+            ['report-sidebar','sidebar-overlay','report-topbar'].forEach(function(name){
+              const el=d.querySelector('.'+name);
+              if(el) el.style.setProperty('display','none','important');
+            });
             /* Swap as soon as shell CSS is in — keep the previous page visible until this moment. */
             requestAnimationFrame(function(){activateFrame(frame);});
           }catch(e){activateFrame(frame);}
