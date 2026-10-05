@@ -104,7 +104,7 @@
   }
   const cols=window.OP_REPORT_KIND==='promotion-report'
     ?[['name','Promotion'],['promotionCode','Code'],['claimCount','Claims'],['uniqueClaimers','Unique Claimers'],['repeatedClaimCount','Repeated Claims'],['payoutAmount','Payouts']]
-    :[['id','ID'],['memberId','Member'],['ledgerType','Type'],['walletBucket','Wallet'],['amount','In / Out'],['beforeBalance','Before'],['afterBalance','After'],['createdBy','Created By'],['approvedBy','Approved By'],['reasonCode','Reason'],['referenceNo','Reference'],['remark','Remark'],['createdAt','Created'],['postedAt','Posted']];
+    :[['id','#'],['memberId','Member'],['ledgerType','Type'],['walletBucket','Wallet'],['amount','In / Out'],['beforeBalance','Before'],['afterBalance','After'],['createdBy','Created By'],['approvedBy','Approved By'],['reasonCode','Reason'],['referenceNo','Reference'],['remark','Remark'],['createdAt','Created'],['postedAt','Posted']];
   /* Deposit Approval recipe: shared colgroup keeps head/body columns locked together. */
   const colClassByKey={
     id:'tr-col-id',memberId:'tr-col-member',ledgerType:'tr-col-type',walletBucket:'tr-col-wallet',
@@ -355,8 +355,13 @@
     page=Math.min(Math.max(1,page),pages);
     const start=(page-1)*size,rows=allRows.slice(start,start+size);
     if(headEl)headEl.innerHTML='<tr>'+cols.map(c=>`<th title="${esc(c[1])}">${c[1]}</th>`).join('')+'</tr>';
-    bodyEl.innerHTML=rows.length?rows.map(x=>'<tr>'+cols.map(c=>{
-      return `<td${tdClass(c[0])}>${cellHtml(c[0],x[c[0]])}</td>`;
+    bodyEl.innerHTML=rows.length?rows.map((x,ri)=>'<tr>'+cols.map(c=>{
+      /* First column = the row's serial, not its database id: 1..N over the report, continuing
+         across pages (11.. on page 2). Owner: "页面的序列号也有问题 … Transaction：ID 列改成
+         1…N 行号" - and it is the `#` heading `report-table-sort.js` looks for when it renumbers
+         the column after a sort (its `renumberDisplayRows` only runs when th[0] reads `#`). */
+      const v=c[0]==='id'?(start+ri+1):x[c[0]];
+      return `<td${tdClass(c[0])}>${cellHtml(c[0],v)}</td>`;
     }).join('')+'</tr>').join(''):`<tr><td colspan="${cols.length}" class="table-empty">No records found.</td></tr>`;
     fitColumns();
     if(showingEl)showingEl.textContent=`Showing ${total?start+1:0} to ${Math.min(start+size,total)} of ${total} entries`;
