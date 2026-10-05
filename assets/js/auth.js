@@ -479,6 +479,20 @@
       const isMain = roleType === 'MAIN' || (user && user.mainAdmin === true) || Number(user && user.mainAdmin) === 1;
       return menus.length ? menus[0].url : (isMain ? 'main-profile.html' : 'profile.html');
     },
+    /* True when the account's menus carry any Member-module entry - the BO Member group's tabs
+       (User Management / Member Wallet / Wallet Ledger / Referral Network) or a member-family
+       key. One source of truth for two callers: enforcePageAccess's online-users exception
+       below, and the KPI tile's link-or-read-out decision in member-management.js. Keeping it
+       here means the tile can never say "open this page" where the guard would bounce it. */
+    memberModuleMenu: function(user){
+      const menus = this.allowedMenus(user || this.user());
+      const files = ['index.html','member-detail.html','member-wallet.html','member-deposit.html','member-withdraw.html','wallet-ledger.html','referral.html'];
+      return menus.some(function(m){
+        const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
+        const key = String(m.menuKey || '').toLowerCase();
+        return files.indexOf(file) !== -1 || key.indexOf('member') === 0 || key === 'wallet' || key === 'wallet_ledger' || key === 'referral' || key === 'referral_network';
+      });
+    },
     enforcePageAccess: function(user, target){
       user = user || this.user();
       /* The SPA passes the destination's path: it has to decide BEFORE the frame is replaced,
@@ -683,6 +697,16 @@
           const key = String(m.menuKey || '').toLowerCase();
           return file === 'main-win-lose-report.html' || file === 'win-lose-report.html' || file === 'main_provider_report.html' || key === 'main_provider_report' || key === 'main_win_lose_report';
         });
+      }
+      /* Online Users is the destination of the User Management KPI tile ("Online Now"). Its
+         menu row is ROOT-configured and the BO role grants live in the Main panel, so an
+         account whose menus carry the Member module but not this row had the tile bounce it
+         straight to the landing page (reported twice from the owner's environment). Same
+         shape as the sibling exceptions above: whoever can see the Member module may open its
+         online list. The predicate is shared with member-management.js so the tile and the
+         guard always agree. */
+      if(!allowed && currentFile() === 'online-users.html' && this.memberModuleMenu(user)){
+        allowed = true;
       }
       if(!allowed){
         const landing = this.landingPage(user);
