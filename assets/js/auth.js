@@ -1329,7 +1329,7 @@
       };
     },
     _dashboardNavToken: 0,
-    _dashboardShellCss: 'html,body{width:100%!important;max-width:100%!important;margin:0!important;overflow-x:hidden!important}*,*::before,*::after{box-sizing:border-box!important}.report-sidebar,.sidebar-overlay,.report-topbar{display:none!important}.report-shell{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important}.report-sidebar,.report-main{transition:none!important}.report-main{display:block!important;margin:0!important;padding:0!important;width:100%!important;max-width:100%!important;min-width:0!important;transition:none!important}.report-content{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:12px 20px 20px!important;overflow-x:hidden!important}.report-content>*{max-width:100%!important;min-width:0!important}.table-wrap,.table-responsive,[class*=table-wrap],[class*=table-responsive]{max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch}.table-card,.filter-card,.summary-card,[class*=card]{max-width:100%}.container,.container-fluid{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}.dashboard-embedded-page .report-main,body.dashboard-embedded-page.sidebar-mini .report-main,body.dashboard-embedded-page.livechat-bo-page .report-main,body.dashboard-embedded-page.livechat-bo-page.sidebar-mini .report-main{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important;transition:none!important}.dashboard-embedded-page .report-content,body.dashboard-embedded-page.sidebar-mini .report-content,body.dashboard-embedded-page.livechat-bo-page .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important;padding-left:20px!important;padding-right:20px!important}.dashboard-embedded-page .report-shell{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important}.dashboard-embedded-page .livechat-admin-shell{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .report-main,html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page.sidebar-mini .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .report-content,html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page.sidebar-mini .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;padding-left:20px!important;padding-right:20px!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .livechat-admin-shell{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}',
+    _dashboardShellCss: 'html,body{width:100%!important;max-width:100%!important;margin:0!important;overflow-x:hidden!important}*,*::before,*::after{box-sizing:border-box!important}.report-sidebar,.sidebar-overlay,.report-topbar,.bo-module-tabs{display:none!important}.report-shell{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important}.report-sidebar,.report-main{transition:none!important}.report-main{display:block!important;margin:0!important;padding:0!important;width:100%!important;max-width:100%!important;min-width:0!important;transition:none!important}.report-content{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:12px 20px 20px!important;overflow-x:hidden!important}.report-content>*{max-width:100%!important;min-width:0!important}.table-wrap,.table-responsive,[class*=table-wrap],[class*=table-responsive]{max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch}.table-card,.filter-card,.summary-card,[class*=card]{max-width:100%}.container,.container-fluid{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}.dashboard-embedded-page .report-main,body.dashboard-embedded-page.sidebar-mini .report-main,body.dashboard-embedded-page.livechat-bo-page .report-main,body.dashboard-embedded-page.livechat-bo-page.sidebar-mini .report-main{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important;transition:none!important}.dashboard-embedded-page .report-content,body.dashboard-embedded-page.sidebar-mini .report-content,body.dashboard-embedded-page.livechat-bo-page .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important;padding-left:20px!important;padding-right:20px!important}.dashboard-embedded-page .report-shell{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important}.dashboard-embedded-page .livechat-admin-shell{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .report-main,html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page.sidebar-mini .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;min-width:0!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .report-content,html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page.sidebar-mini .report-content{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100%!important;padding-left:20px!important;padding-right:20px!important}html.dashboard-embedded-page body.report-body.bo-charcoal.livechat-bo-page .livechat-admin-shell{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}',
     bindDashboardWorkspace: function(){
       if(window.__boDashboardWorkspaceBound) return;
       window.__boDashboardWorkspaceBound=true;
@@ -1344,12 +1344,28 @@
       };
       fitWorkspace();
       window.addEventListener('resize',fitWorkspace);
+      /* One place that hides the embedded page's own shell, because it has to run twice: on load,
+         and again after the frame is activated - a page script can rebuild these elements, and on a
+         back-and-forth switch the load handler can be skipped entirely (its nav-token guard and the
+         "document not readable yet" branch both return early). `.bo-module-tabs` is the module's own
+         tab row - the Report strip the owner kept seeing under the back-office header while
+         switching Wallet Ledger <-> Referral Network. */
+      const hideFrameShell=function(d){
+        if(!d) return;
+        ['report-sidebar','sidebar-overlay','report-topbar','bo-global-quicknav','bo-module-tabs'].forEach(function(name){
+          const el=d.querySelector('.'+name);
+          if(el) el.style.setProperty('display','none','important');
+        });
+      };
       const activateFrame=function(incoming){
         if(!incoming) return;
         if(incoming.dataset.boNavToken && incoming.dataset.boNavToken!==String(self._dashboardNavToken)) return;
         const others=[frames.a,frames.b].filter(function(f){return f&&f!==incoming;});
         incoming.classList.remove('is-bo-frame-pending');
         incoming.hidden=false;
+        /* Re-assert the shell hiding: on a back-and-forth switch the load handler may have been
+           skipped, and the page may have rebuilt these elements after its own scripts ran. */
+        try{ hideFrameShell(incoming.contentDocument); }catch(_e){}
         requestAnimationFrame(function(){
           incoming.classList.add('is-bo-frame-active');
         });
@@ -1404,10 +1420,7 @@
                under the back office header. Owner: "图一的report-topbar 又出现在dashboard了". Same
                cascade-origin trick as the rest of this list - the page's own sheet can still win a
                specificity race, an important inline declaration cannot. */
-            ['report-sidebar','sidebar-overlay','report-topbar','bo-global-quicknav'].forEach(function(name){
-              const el=d.querySelector('.'+name);
-              if(el) el.style.setProperty('display','none','important');
-            });
+            hideFrameShell(d);
             /* Swap as soon as shell CSS is in — keep the previous page visible until this moment. */
             requestAnimationFrame(function(){activateFrame(frame);});
           }catch(e){activateFrame(frame);}
