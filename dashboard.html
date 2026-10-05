@@ -28,8 +28,17 @@ body.dashboard-shell .report-main{height:100vh;min-height:0;overflow:hidden!impo
 .dashboard-workspace-frame.is-bo-frame-active{opacity:1;pointer-events:auto;z-index:2}
 .dashboard-workspace-frame.is-bo-frame-pending{opacity:0!important;pointer-events:none!important;transition:none!important}
 
-/* Dashboard shell only: remove the old top header and keep the sidebar toggle inside the sidebar. */
-.dashboard-hidden-topbar{display:none!important;height:0!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important}
+/* Dashboard shell only: remove the old top header and keep the sidebar toggle inside the sidebar.
+   The selector carries the frame and the element's own class on purpose. `reports.css` - and its
+   twin `reports-dashboard-original.css`, which the three pages that load no reports.css use
+   (index.html / member-detail.html / online-users.html) - pins
+   `.report-topbar{...display:flex!important}` at one class, and the router only ever ADDS
+   stylesheets: arriving at dashboard.html from one of those three pages appends that twin AFTER
+   this rule, and with equal specificity and both `!important` the document order decides - the
+   header came back over the workspace and pushed the panel down (measured: header 64px visible
+   after member -> dashboard, and the workspace below it). At two classes plus the frame this
+   intent no longer depends on which sheets the session has collected. */
+.report-main > .report-topbar.dashboard-hidden-topbar{display:none!important;height:0!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important}
 .dashboard-sidebar-brand{justify-content:space-between!important}
 .dashboard-sidebar-toggle{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:42px!important;height:42px!important;min-width:42px!important;padding:0!important;border:1px solid var(--line,#EADCC8)!important;border-radius:11px!important;background:#FFF8EB!important;color:#18191C!important;cursor:pointer!important;pointer-events:auto!important}
 .dashboard-sidebar-toggle i{font-size:22px!important}
