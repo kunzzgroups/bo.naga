@@ -236,6 +236,28 @@ html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .bo-si
   box-sizing:border-box!important;
 }
 
+/* 0f-pre. The Online Users frame. The page's card stopped at its content height (measured
+   626px of an 844px frame at 1568x940), so the pagination row hung mid-page and everything
+   under it was empty frame - the owner's "下面一大片空白". Same three-step recipe the report
+   family uses, stated here because the drift guard rightly refuses layout metrics on shell
+   selectors in a theme sheet: the content column is a flex column, the card takes the slack,
+   the table area takes the slack inside the card, and the footer lands on the frame bottom. */
+html:not(#bo-charcoal-off) body.report-body.online-users-page .report-shell .report-content{
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:0!important;
+}
+html:not(#bo-charcoal-off) body.report-body.online-users-page .report-shell .report-content > .table-card{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+html:not(#bo-charcoal-off) body.report-body.online-users-page .report-shell .report-content > .table-card .table-wrap{
+  flex:1 1 auto!important;
+  min-height:0!important;
+}
+
 /* 0f. The app-style content frame (Live Chat). That page is a fixed-height app: the
    inbox and the room are sized from the frame, so the frame has to be exactly the space
    left under the topbar - the workspace scrolls, the frame does not.
