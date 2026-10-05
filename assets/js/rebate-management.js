@@ -244,5 +244,12 @@ $('closeAuditDetail').onclick=$('closeAuditDetailBottom').onclick=()=>setModal('
 async function loadRecon(){const size=pageSize('reconPageSize'),q=new URLSearchParams({page:state.reconPage,size});try{const d=await request(base+'/api/admin/rebate/reconciliations?'+q)||{},rows=d.content||[];state.reconLast=Math.max(0,(d.totalPages||0)-1);const issues=Number(d.totalElements||0)&&rows.filter(x=>String(x.status).toUpperCase()!=='MATCHED').length;$('reconIssueCount').textContent=Number(issues||0).toLocaleString('en-US');$('reconRows').innerHTML=rows.length?rows.map(x=>'<tr><td>'+dateCell(x.createdAt)+'</td><td>#'+esc(x.sessionId||'-')+'</td><td>'+esc(x.memberId||'-')+'</td><td title="'+esc(x.providerCode||'-')+'">'+esc(x.providerCode||'-')+'</td><td>'+money(x.expectedMain)+'</td><td>'+money(x.expectedBonus)+'</td><td>'+money(x.actualProviderBalance)+'</td><td class="'+(Math.abs(Number(x.differenceAmount||0))>.01?'negative':'')+'">'+money(x.differenceAmount)+'</td><td>'+statusBadge(x.status)+'</td><td class="detail-cell" title="'+esc(x.detail||'-')+'">'+esc(x.detail||'-')+'</td></tr>').join(''):'<tr><td colspan="10" class="table-empty">No reconciliation records found.</td></tr>';const from=d.numberOfElements?d.number*size+1:0,to=d.number*size+(d.numberOfElements||0);$('reconShowing').textContent='Showing '+from+' to '+to+' of '+(d.totalElements||0)+' entries';pager('reconPager',d.number||0,d.totalPages||0,p=>{state.reconPage=p;loadRecon();});}catch(e){$('reconRows').innerHTML='<tr><td colspan="10" class="table-empty">'+esc(e.message)+'</td></tr>';}}
 $('reconPageSize').onchange=()=>{state.reconPage=0;loadRecon();};$('refreshRecon').onclick=loadRecon;
 
+/* The capsule this row paints is only the static half of the Deposit/Withdraw recipe it was
+   copied from. The travelling half is bo-seg-bounce's thumb, mounted by every other
+   `.bo-tx-tabs` page (member-deposit.js, member-withdraw.js, vip-reward-log.js) and never by
+   this one - the whole difference in motion. switchTab only toggles classes and the thumb's
+   MutationObserver watches `class`/`aria-selected`, so one mount covers every later click. */
+const rebateTabs=document.querySelector('.rebate-tabs');
+if(rebateTabs&&window.BO_SEG_BOUNCE) window.BO_SEG_BOUNCE.mount(rebateTabs,{button:':scope > .bo-tx-tab',anim:'bounce'});
 loadWorkerSetting();loadRules();loadBatches();
 })();
