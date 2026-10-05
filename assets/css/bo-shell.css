@@ -185,15 +185,16 @@ html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .repor
   line-height:15.6px!important;
 }
 
-/* One rail width for the whole BO: 250px, the value the owner's live site and the design use.
-   The tree carried 260px because reports.css and reports-dashboard-original.css each declare it
-   twice in a `:root` block that came in with a stale-snapshot WIP commit (0da8f81d, "must not
-   be merged as-is") - measured on main: .report-sidebar = 260x804 on dashboard.html and
-   member-wallet.html, while the live site reads 250. The four declarations are back to 250px;
-   this lock keeps the value here (the shell owns the rail's metrics) so a theme sheet cannot
-   move it again - `width` and custom properties are outside the drift guard's metric list. */
+/* One rail width for the whole BO: 230px - the owner's value, carried in the tree by 1e87f664
+   (Security & Audit panel) and re-applied from their working tree after the sync. The tree
+   briefly read 260px because reports.css and reports-dashboard-original.css each declare it
+   twice in a :root block that came in with a stale-snapshot WIP commit (0da8f81d, "must not be
+   merged as-is"); a first pass of this fix then read 250px off a live deployment that predates
+   1e87f664. Measured: 260x804 before, 230 after, on dashboard.html and member-wallet.html. The
+   lock keeps the value here (the shell owns the rail's metrics) - `width` and custom properties
+   sit outside the drift guard's metric list. */
 html:not(#bo-charcoal-off) body.report-body{
-  --sidebar-w:250px;
+  --sidebar-w:230px;
 }
 
 /* 0e-pre. Rail rows: one padding for every row, and the pin's space reserved only where a pin
