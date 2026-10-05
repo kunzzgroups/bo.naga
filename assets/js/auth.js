@@ -1249,7 +1249,11 @@
       // is still showing. Remember which menu key was active before the rebuild so it can
       // be restored below instead of silently losing its selected state.
       const prevActiveKey=nav.querySelector('a.active')?.getAttribute('data-dashboard-menu-key')||null;
-      nav.innerHTML=chosen.map(m=>'<a href="'+esc(m.url)+'" draggable="true" data-dashboard-panel-url="'+esc(m.url)+'" data-dashboard-menu-key="'+esc(m.menuKey)+'" title="'+esc(m.title)+'" aria-label="'+esc(m.title)+'"><i class="bi '+esc(m.icon||'bi-circle')+'"></i><span>'+esc(m.title)+'</span><span class="bo-dashboard-unpin" data-dashboard-unpin="'+esc(m.menuKey)+'" title="Unpin from Dashboard" aria-label="Unpin '+esc(m.title)+'"><i class="bi bi-pin-angle-fill"></i></span></a>').join('');
+      /* The strip shows the icon the page itself shows: its pinned `data-bo-icon` (carried in the
+         manifest) wins over the menu row's icon - the two are different sources and drifted apart
+         (owner: "pin过去dashboard的icon就不对了"). Falls back to the menu, then a circle. */
+      const pageIcons=window.__BO_SPA_PAGE_ICONS||{};
+      nav.innerHTML=chosen.map(m=>{const ic=pageIcons[pageFile(m.url)]||m.icon||'bi-circle';return '<a href="'+esc(m.url)+'" draggable="true" data-dashboard-panel-url="'+esc(m.url)+'" data-dashboard-menu-key="'+esc(m.menuKey)+'" title="'+esc(m.title)+'" aria-label="'+esc(m.title)+'"><i class="bi '+esc(ic)+'"></i><span>'+esc(m.title)+'</span><span class="bo-dashboard-unpin" data-dashboard-unpin="'+esc(m.menuKey)+'" title="Unpin from Dashboard" aria-label="Unpin '+esc(m.title)+'"><i class="bi bi-pin-angle-fill"></i></span></a>';}).join('');
       nav.hidden=chosen.length===0;
       (function(){
         const links=[...nav.querySelectorAll('a[data-dashboard-menu-key]')];
