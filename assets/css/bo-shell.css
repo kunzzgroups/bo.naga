@@ -248,6 +248,27 @@ html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .bo-si
   box-sizing:border-box!important;
 }
 
+/* 0f-pre-a. brand-overview: the full frame chain the report and agent families carry. Measured
+   pinned into the dashboard workspace (1440x900): .report-main computed block and the bottom
+   content ended 395px above the frame bottom, so the card and its footer floated mid-frame.
+   Both ends of the chain are needed: a flex column on .report-main with a definite height, a
+   flex:1 content, then the page own card classes - they are brand-exec-*, not .table-card. */
+html:not(#bo-charcoal-off) body.report-body.brand-exec-page .report-shell .report-main{
+  display:flex!important;flex-direction:column!important;height:100dvh!important;min-height:0!important;
+}
+html:not(#bo-charcoal-off) body.report-body.brand-exec-page .report-shell .report-content{
+  display:flex!important;flex-direction:column!important;flex:1 1 auto!important;min-height:0!important;
+}
+html:not(#bo-charcoal-off) body.report-body.brand-exec-page .report-shell .report-content > .brand-exec-card{
+  flex:1 1 auto!important;min-height:0!important;display:flex!important;flex-direction:column!important;
+}
+html:not(#bo-charcoal-off) body.report-body.brand-exec-page .report-shell .report-content .brand-exec-table-wrap{
+  flex:1 1 auto!important;min-height:0!important;
+}
+html:not(#bo-charcoal-off) body.report-body.brand-exec-page .report-shell .report-content .brand-exec-footer{
+  margin-top:auto!important;
+}
+
 /* 0f-pre. The Online Users frame. The page's card stopped at its content height (measured
    626px of an 844px frame at 1568x940), so the pagination row hung mid-page and everything
    under it was empty frame - the owner's "下面一大片空白". Same three-step recipe the report
