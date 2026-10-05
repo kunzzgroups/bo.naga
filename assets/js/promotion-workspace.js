@@ -27,9 +27,6 @@
   var searchInput    = $('promoWorkspaceSearch');
   var statusFilter   = $('promoWorkspaceStatus');
   var sortFilter     = $('promoWorkspaceSort');
-  var showingText    = $('promoWorkspaceShowingText');
-  var pageSizeSelect = $('promoWorkspacePageSize');
-  var pager          = $('promoWorkspacePager');
   var statusBox      = $('promoWorkspaceStatusBox');
 
   var categories = [];
@@ -37,10 +34,6 @@
   var UNCATEGORIZED_ID = '__uncategorized__';
   var byCategory = {};          // categoryId (string) -> [promotion]
   var expanded   = {};          // categoryId (string) -> true
-  var page       = 0;
-  var lockedAutoSize = null;      // fitted row count ...
-  var lockedBoxHeight = null;     // ... for THIS list height
-  var autofitReloading = false;
 
   /* ------------------------------------------------------------------ utils */
 
@@ -168,9 +161,8 @@
       categories = rawCategories.map(normalizeCategory);
       promotions = rawPromotions.map(normalizePromotion);
       groupPromotions();
-      lockedAutoSize = null;
-      lockedBoxHeight = null;
-      render(true);
+      expanded = {};
+      render();
     }catch(err){
       listEl.innerHTML = '<div class="promo-group-empty"><i class="bi bi-exclamation-triangle"></i>' +
         '<b>Unable to load promotions</b><small>' + esc(err.message || 'Please check API URL / CORS.') + '</small></div>';
@@ -226,95 +218,16 @@
     });
   }
 
-  /* Show N: `-` = as many rows as the list viewport holds (the same contract the
-     old pages used). The list is the scroll container, so its clientHeight is the
-     budget — MINUS the head row, which headHtml() renders INSIDE that container (see
-     its comment) and which therefore occupies part of the budget: ignoring it
-     overcounted by one row's share and is why the fit had to be corrected afterwards
-     one row at a time, by a loop that only ever ran on the paint tick it happened to
-     get. The row height is measured from a painted row whenever one exists; the 76px
-     floor is only the first-paint guess. */
-  var ROW_FLOOR = 76;
+  /* ------------------------------------------------------- filtering
 
-  function isAutoPageSize(raw){
-    var v = String(raw == null ? '-' : raw).trim();
-    return v === '' || v === '-' || /^auto$/i.test(v);
-  }
-
-  function measureAutoPageSize(){
-    var head = listEl.querySelector('.bonus-title-table-head');
-    var headH = head ? Math.ceil(head.getBoundingClientRect().height) : 0;
-    var avail = Math.max(0, Math.floor(listEl.clientHeight) - headH);
-    var sample = listEl.querySelector('.bonus-title-table-row');
-    var rowH = sample ? Math.max(60, Math.ceil(sample.getBoundingClientRect().height)) : ROW_FLOOR;
-    return Math.max(3, Math.min(200, Math.floor(avail / rowH) || 10));
-  }
-
-  /* The fit describes the box the list HAS. It is re-measured when that box changes
-     instead of being locked on the first call, because on a fresh load the module tab
-     row is injected ~450ms in — auth.js draws it once the menu request answers — and takes
-     its 48px off the frame after the first fit. Locked to that first measurement the page
-     kept one row too many (5 rows in a box that holds 4, so the pager's single page was
-     the whole list and no pager was drawn at all), while a SPA swap — where the router
-     mounts the tab row BEFORE the target's scripts run — measured the settled box and
-     paginated. Two page sizes for the same page and data, decided by arrival path. */
-  function autoFitPageSize(){
-    var box = listEl.clientHeight;
-    if(lockedAutoSize == null || lockedBoxHeight !== box){
-      lockedBoxHeight = box;
-      lockedAutoSize = measureAutoPageSize();
-    }
-    return lockedAutoSize;
-  }
-
-  function resolvePageSize(raw){
-    var v = String(raw == null ? ((pageSizeSelect && pageSizeSelect.value) || '-') : raw).trim();
-    if(isAutoPageSize(v)) return autoFitPageSize();
-    if(/^all$/i.test(v)) return 10000;
-    var n = Number(v);
-    return (isFinite(n) && n > 0) ? n : autoFitPageSize();
-  }
-
-  function anyExpanded(){
-    for(var k in expanded) if(expanded[k]) return true;
-    return false;
-  }
-
-  /* The autofit count is a guess made before the rows exist; if the rendered
-     rows still overflow, drop one and re-render until they fit. */
-  function shrinkAutofitIfOverflow(){
-    if(autofitReloading) return;
-    if(anyExpanded()) return;
-    if(!isAutoPageSize(pageSizeSelect && pageSizeSelect.value)) return;
-    if(listEl.scrollHeight <= listEl.clientHeight + 1) return;
-    if(lockedAutoSize == null || lockedAutoSize <= 3) return;
-    lockedAutoSize = Math.max(3, lockedAutoSize - 1);
-    autofitReloading = true;
-    page = 0;
-    try{ render(false); } finally { autofitReloading = false; }
-  }
-
-  /* A single page still gets a pager. Every sibling listing draws one
-     (game-category.js, game-sub-category.js, bonus-category-title.js — this page's own
-     predecessor — and promotion.js), so an empty right-hand side of the footer read as
-     broken pagination rather than as "there is only one page" (owner: "pagination 设计
-     与功能失效"). The shape is the same as everywhere else: prev/next disabled, the one
-     page active; a list with no rows shows the same disabled 1. */
-  function renderPager(current, pages){
-    if(!pager) return;
-    var total = Math.max(1, Number(pages) || 0);
-    current = Math.max(0, Math.min(Number(current) || 0, total - 1));
-    var html = '<button class="page-btn" type="button" data-page="' + (current - 1) + '"' +
-      (current <= 0 ? ' disabled' : '') + ' aria-label="Previous page"><i class="bi bi-chevron-left"></i></button>';
-    var from = Math.max(0, current - 2), to = Math.min(total - 1, current + 2);
-    for(var i = from; i <= to; i++){
-      html += '<button class="page-btn' + (i === current ? ' active' : '') + '" type="button" data-page="' + i +
-        '"' + (i === current ? ' aria-current="page"' : '') + '>' + (i + 1) + '</button>';
-    }
-    html += '<button class="page-btn" type="button" data-page="' + (current + 1) + '"' +
-      (current >= total - 1 ? ' disabled' : '') + ' aria-label="Next page"><i class="bi bi-chevron-right"></i></button>';
-    pager.innerHTML = html;
-  }
+     No paging. The list renders every matching category and scrolls when they do not fit
+     (owner: "把 pagination 的设计功能去除" — footer band, Show N and the pager all gone from
+     promotion.html). That retires the whole auto-fit machine this page used to carry: the
+     `Show: -` fit (measure the box, guess a row count, then drop one row per paint until it
+     fitted), the ResizeObserver that re-ran it when the module tab row landed, and the pager.
+     `page`, `lockedAutoSize`, `lockedBoxHeight`, `autofitReloading` and the row-budget code
+     went with them - the list's own scroll is now the only thing that moves when the content
+     is taller than the box. */
 
   /* --------------------------------------------------------------- rendering */
 
@@ -332,8 +245,8 @@
     var actions = synthetic ? '' : (
       '<a class="icon-action-btn is-view" data-tip="Manage Items" aria-label="Manage Items"' +
         ' href="bonus-category-item.html?titleId=' + esc(key) + '"><i class="bi bi-collection" aria-hidden="true"></i></a>' +
-      '<button class="icon-action-btn is-edit edit-btn" data-tip="Edit" aria-label="Edit" type="button"' +
-        ' data-cat-edit="' + esc(key) + '"><i class="bi bi-pencil-square" aria-hidden="true"></i></button>' +
+      '<a class="icon-action-btn is-edit edit" data-tip="Edit" aria-label="Edit"' +
+        ' href="bonus-category-title-edit.html?id=' + encodeURIComponent(key) + '"><i class="bi bi-pencil-square" aria-hidden="true"></i></a>' +
       '<button class="icon-action-btn is-reject delete btn-delete" data-tip="Delete" aria-label="Delete" type="button"' +
         ' data-cat-del="' + esc(key) + '"><i class="bi bi-trash" aria-hidden="true"></i></button>'
     );
@@ -458,9 +371,7 @@
     '</div>';
   }
 
-  function render(resetPage){
-    if(resetPage) page = 0;
-
+  function render(){
     var rows = visibleCategories();
     var orphans = uncategorizedCategory();
     if(orphans){
@@ -474,18 +385,9 @@
       });
       if(status ? childHit : (nameHit || childHit)) rows = rows.concat([orphans]);
     }
-    var size = resolvePageSize(pageSizeSelect && pageSizeSelect.value);
-    var pages = Math.ceil(rows.length / size) || 0;
-    if(pages === 0) page = 0; else page = Math.min(page, pages - 1);
 
-    var start = page * size;
-    var visible = rows.slice(start, start + size);
-
-    if(showingText){
-      showingText.textContent = 'Showing ' + (rows.length ? start + 1 : 0) + ' to ' +
-        Math.min(start + size, rows.length) + ' of ' + rows.length + ' entries';
-    }
-    renderPager(page, pages);
+    // Every match is drawn: there is no page to slice to any more.
+    var visible = rows;
 
     listEl.innerHTML = headHtml() + visible.map(categoryRowHtml).join('');
     if(!visible.length){
@@ -493,10 +395,6 @@
         '<i class="bi bi-award"></i>' +
         (categories.length ? 'No bonus category title matches the current filter.'
                            : 'No bonus category title found. Create your first one.') + '</div>';
-    }
-
-    if(isAutoPageSize(pageSizeSelect && pageSizeSelect.value)){
-      requestAnimationFrame(shrinkAutofitIfOverflow);
     }
   }
 
@@ -556,163 +454,15 @@
     }
   }
 
-  /* ------------------------------------------------------------------ form */
-
-  function setupCategoryForm(){
-    var form = $('bonusForm');
-    if(!form) return;
-
-    var idInput = $('bonusId');
-    var nameInput = $('bonusName');
-    var sortInput = $('bonusSortOrder');
-    var imageInput = $('bonusImage');
-    var dropZone = $('bonusDropZone');
-    var preview = $('bonusPreview');
-    var placeholder = $('bonusUploadPlaceholder');
-    var currentImage = $('bonusCurrentImage');
-    var formTitle = $('bonusFormTitle');
-    var saveBtn = $('saveBonusBtn');
-    var resetBtn = $('resetBonusBtn');
-    var formStatus = $('bonusStatusBox');
-    var selectedFile = null;
-
-    function showPreview(src){
-      if(!preview || !placeholder) return;
-      preview.src = src;
-      preview.hidden = false;
-      placeholder.hidden = true;
-    }
-
-    function clearPreview(){
-      selectedFile = null;
-      if(imageInput) imageInput.value = '';
-      if(preview){ preview.src = ''; preview.hidden = true; }
-      if(placeholder) placeholder.hidden = false;
-    }
-
-    function status(message, type){
-      if(!formStatus) return;
-      formStatus.textContent = message || '';
-      formStatus.className = 'upload-status ' + (type || '');
-    }
-
-    function reset(){
-      if(idInput) idInput.value = '';
-      if(nameInput) nameInput.value = '';
-      if(sortInput) sortInput.value = '0';
-      clearPreview();
-      if(currentImage) currentImage.hidden = true;
-      if(formTitle) formTitle.textContent = 'Create Bonus Title';
-      status('', '');
-    }
-
-    function edit(key){
-      var cat = categories.filter(function(c){ return String(c.id) === String(key); })[0];
-      if(!cat) return;
-      if(idInput) idInput.value = cat.id || '';
-      if(nameInput) nameInput.value = cat.name || '';
-      if(sortInput) sortInput.value = cat.sortOrder == null ? 0 : cat.sortOrder;
-      clearPreview();
-      var src = imageUrl(cat);
-      if(src) showPreview(src); else clearPreview();
-      if(currentImage) currentImage.hidden = !src;
-      if(formTitle) formTitle.textContent = 'Edit Bonus Category #' + cat.id;
-      status('', '');
-    }
-
-    if(imageInput && dropZone){
-      imageInput.addEventListener('change', function(){
-        var file = imageInput.files && imageInput.files[0];
-        if(!file) return;
-        if(!file.type || file.type.indexOf('image/') !== 0){
-          status('Please choose image file only.', 'error');
-          return;
-        }
-        selectedFile = file;
-        showPreview(URL.createObjectURL(file));
-        status('Image ready. Click Save to upload.', 'success');
-      });
-      ['dragenter','dragover'].forEach(function(evt){
-        dropZone.addEventListener(evt, function(e){ e.preventDefault(); dropZone.classList.add('dragover'); });
-      });
-      ['dragleave','drop'].forEach(function(evt){
-        dropZone.addEventListener(evt, function(e){ e.preventDefault(); dropZone.classList.remove('dragover'); });
-      });
-      dropZone.addEventListener('drop', function(e){
-        var file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-        if(!file) return;
-        if(!file.type || file.type.indexOf('image/') !== 0){ status('Please choose image file only.', 'error'); return; }
-        selectedFile = file;
-        showPreview(URL.createObjectURL(file));
-        status('Image ready. Click Save to upload.', 'success');
-      });
-    }
-
-    form.addEventListener('submit', async function(e){
-      e.preventDefault();
-      var isUpdate = !!(idInput && idInput.value);
-      if(nameInput && !nameInput.value.trim()){
-        status('Please enter name.', 'error');
-        nameInput.focus();
-        return;
-      }
-      if(!isUpdate && !selectedFile){
-        status('Please choose category image.', 'error');
-        return;
-      }
-      var fd = new FormData();
-      fd.append('name', nameInput ? nameInput.value.trim() : '');
-      fd.append('sortOrder', (sortInput && sortInput.value) || '0');
-      if(selectedFile) fd.append('image', selectedFile);
-
-      var url = isUpdate
-        ? apiUrl('BONUS_CATEGORY_TITLE_UPDATE') + '/' + encodeURIComponent(idInput.value)
-        : apiUrl('BONUS_CATEGORY_TITLE_CREATE');
-
-      if(saveBtn) saveBtn.disabled = true;
-      status(isUpdate ? 'Updating category...' : 'Creating category...', '');
-      try{
-        var json = await req(url, { method: 'POST', body: fd });
-        status(json.message || 'Category saved successfully.', 'success');
-        reset();
-        await load();
-      }catch(err){
-        status(err.message || 'Save failed. Please check API URL / CORS.', 'error');
-      }finally{
-        if(saveBtn) saveBtn.disabled = false;
-      }
-    });
-
-    if(resetBtn) resetBtn.addEventListener('click', reset);
-    reset();
-
-    /* crud-modal-pattern.js opens the shared modal when a .edit-btn is clicked;
-       this is the hook that puts the right category into the form first. */
-    setupCategoryForm.edit = edit;
-    setupCategoryForm.reset = reset;
-  }
-
   /* ------------------------------------------------------------------ wiring */
 
-  /* The category form lives in its own card (crud-modal-pattern.js lifts that card
-     into the shared modal), so wire it before anything can ask to edit one. */
-  setupCategoryForm();
-
-  /* Add Bonus Category. crud-modal-pattern.js is asked to open the modal rather than
-     attaching its own Add button: the pattern derives that button's label from the
-     topbar ("Promotion Bonus"), which would title a category form after the page. */
-  var addCategoryBtn = $('promoAddCategoryBtn');
-  addCategoryBtn && addCategoryBtn.addEventListener('click', function(){
-    setupCategoryForm.reset();
-    if(window.CrudModalPattern) window.CrudModalPattern.open('Add Bonus Category Title');
-  });
+  /* No category form on this page any more: "Add Bonus Category" and a row's pencil are plain
+     links to bonus-category-title-edit.html, which owns the form, the image upload and the save
+     (it used to be a card here, lifted into the shared modal by crud-modal-pattern.js). */
 
   listEl.addEventListener('click', function(e){
     var toggle = e.target.closest('[data-toggle]');
     if(toggle){ toggleCategory(toggle.getAttribute('data-toggle')); return; }
-
-    var editBtn = e.target.closest('[data-cat-edit]');
-    if(editBtn){ setupCategoryForm.edit && setupCategoryForm.edit(editBtn.getAttribute('data-cat-edit')); return; }
 
     var delCat = e.target.closest('[data-cat-del]');
     if(delCat){ deleteCategory(delCat.getAttribute('data-cat-del')); return; }
@@ -726,51 +476,92 @@
     if(row && !e.target.closest('a, button')) toggleCategory(row.getAttribute('data-category-row'));
   });
 
-  searchInput && searchInput.addEventListener('input', function(){ render(true); });
+  searchInput && searchInput.addEventListener('input', function(){ render(); });
   searchInput && searchInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') e.preventDefault(); });
-  statusFilter && statusFilter.addEventListener('change', function(){ render(true); });
-  sortFilter && sortFilter.addEventListener('change', function(){ render(true); });
-  pageSizeSelect && pageSizeSelect.addEventListener('change', function(){
-    lockedAutoSize = null;
-    lockedBoxHeight = null;
-    render(true);
-  });
-  pager && pager.addEventListener('click', function(e){
-    var btn = e.target.closest('[data-page]');
-    if(!btn || btn.disabled) return;
-    page = Number(btn.getAttribute('data-page')) || 0;
-    render(false);
-  });
+  statusFilter && statusFilter.addEventListener('change', function(){ render(); });
+  sortFilter && sortFilter.addEventListener('change', function(){ render(); });
 
-  /* Re-fit when the list's box changes under it: the module tab row on a fresh load, the
-     sidebar collapsing, a window resize, the KPI strip arriving. One code path for all of
-     them — the window-resize listener this replaces covered only one, and only by guessing
-     at a 150ms delay. The list is a fixed-height scroll container (flex:1 1 0 with
-     overflow-y:auto), so re-rendering rows cannot change its clientHeight and the observer
-     cannot loop on its own output; the equality guard below is the belt to that braces.
-     Kept on the element, like every other observer in the BO scripts (`_boEvenFillObs`), so
-     re-running the script on the page it already owns is a no-op. */
-  function refitToBox(){
-    if(!isAutoPageSize(pageSizeSelect && pageSizeSelect.value)) return;
-    lockedAutoSize = null;
-    lockedBoxHeight = null;
-    render(false);
+  /* ---------------------------------------------------------- row-action tip
+
+     ONE fixed element on <body>, not an ::after inside the row. The page's tips used to be a CSS
+     bubble plus a family of `:has(.icon-action-btn[data-tip]:hover)` rules in bo-charcoal-cms.css
+     that flipped every clipping ancestor - this list's scroll container among them - to
+     `overflow: visible !important` so the bubble could escape. Measured with a real pointer on a
+     sub-item's edit button: the list went `auto -> visible`, clientWidth 1232 -> 1238, every row
+     and the sticky head with it, and snapped back on mouse-out - the owner's "指标悬浮在展开的 sub
+     item 的 edit 按键会整个页面会闪动". The promotion rows had no bubble at all (`::after`
+     content `none`), so the un-clipping bought nothing on the row being pointed at. Fixed
+     positioning needs no ancestor un-clipped, so the bubble now lives on <body> - the Promotion
+     Log page's `.pl-act-tip` recipe - and the page's bubble and un-clip rules are gone.
+
+     One element per document: <body> outlives the content frame a swap replaces, so the element
+     is kept on `window` and reused; the scroll/resize listeners are document-level and therefore
+     slots, like promotion-debug.js's `__boPlScroll`. */
+  function tipEl(){
+    var tip = window.__boWsTip;
+    if(tip && tip.parentNode) return tip;
+    tip = document.createElement('div');
+    tip.id = 'promoWsTip';
+    tip.className = 'promo-ws-tip';
+    tip.setAttribute('role', 'tooltip');
+    tip.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(tip);
+    window.__boWsTip = tip;
+    return tip;
   }
 
-  if(window.ResizeObserver && !listEl._boAutofitObs){
-    var lastBoxHeight = listEl.clientHeight;
-    listEl._boAutofitObs = new ResizeObserver(function(){
-      if(listEl.clientHeight === lastBoxHeight) return;
-      lastBoxHeight = listEl.clientHeight;
-      requestAnimationFrame(refitToBox);
-    });
-    listEl._boAutofitObs.observe(listEl);
-  }else if(!window.ResizeObserver){
-    var resizeTimer = null;
-    window.addEventListener('resize', function(){
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(refitToBox, 150);
-    });
+  function hideTip(){
+    var tip = window.__boWsTip;
+    if(tip) tip.classList.remove('is-on', 'is-below');
+  }
+
+  function placeTip(el){
+    var text = el.getAttribute('data-tip') || '';
+    if(!text){ hideTip(); return; }
+    var tip = tipEl();
+    tip.textContent = text;
+    tip.classList.add('is-on');
+    tip.classList.remove('is-below');
+    var r = el.getBoundingClientRect();
+    var tr = tip.getBoundingClientRect();
+    var top = r.top - tr.height - 8, below = false;
+    if(top < 8){ below = true; top = r.bottom + 8; }
+    tip.classList.toggle('is-below', below);
+    var left = Math.max(8, Math.min(r.left + r.width / 2 - tr.width / 2, window.innerWidth - tr.width - 8));
+    tip.style.left = Math.round(left) + 'px';
+    tip.style.top = Math.round(top) + 'px';
+  }
+
+  function tipTarget(e){
+    return (e.target && e.target.closest) ? e.target.closest('#promoWorkspaceList [data-tip]') : null;
+  }
+
+  listEl.addEventListener('mouseover', function(e){ var el = tipTarget(e); if(el) placeTip(el); });
+  listEl.addEventListener('mouseout', function(e){
+    var el = tipTarget(e);
+    if(!el) return;
+    var next = e.relatedTarget;
+    if(next && el.contains(next)) return;
+    hideTip();
+  });
+  listEl.addEventListener('focusin', function(e){ var el = tipTarget(e); if(el) placeTip(el); });
+  listEl.addEventListener('focusout', function(e){
+    var el = tipTarget(e);
+    if(!el) return;
+    var next = e.relatedTarget;
+    if(next && el.contains(next)) return;
+    hideTip();
+  });
+
+  if(window.__boWsTipScroll) window.removeEventListener('scroll', window.__boWsTipScroll, true);
+  window.__boWsTipScroll = hideTip;
+  window.addEventListener('scroll', window.__boWsTipScroll, true);
+  if(window.__boWsTipResize) window.removeEventListener('resize', window.__boWsTipResize);
+  window.__boWsTipResize = hideTip;
+  window.addEventListener('resize', window.__boWsTipResize);
+  if(!window.__boWsTipSpa){
+    window.__boWsTipSpa = 1;
+    document.addEventListener('bo:spa:before', function(){ hideTip(); });
   }
 
   load();

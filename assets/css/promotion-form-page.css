@@ -1,0 +1,683 @@
+/* Promotion module — the two form pages on the house's own form-page ladder.
+   ---------------------------------------------------------------------------
+   Owner: 「参考 rebate-rule-edit.html」, after the two Create/Edit forms were lifted into the
+   shared crud modal: the reference is a PAGE, not a dialog — a title bar with a subtitle, one
+   column of section cards (each an `h4` with an icon and, on the first one, the house's
+   "Back to list" control at the right end of the header row), the fields laid out in a 3-column
+   grid inside each section, and a Cancel/Save bar fixed to the viewport bottom.
+
+   Loaded by:
+     bonus-category-title-edit.html   the Bonus Category Title create/edit form (new page)
+     bonus-category-item.html         the Bonus Category Item form, inline in its card
+
+   The values are the reference sheet's (rebate-rule-edit.css), restated here for `.pform-*`
+   selectors rather than copied into that page's scope: section #FFFCF7 / #2A2C36 with a 3px amber
+   left edge, 36px recessed wells, 11px/800 uppercase labels, and the footer's amber primary.
+
+   Colours only for the theme ladder; the metrics are this sheet's own because the shell drift
+   guard only owns the shell (topbar / sidebar / content frame). */
+
+/* ---------------------------------------------------------------- page frame ---------------
+   The CONTENT FRAME is the shell's (`bo-shell.css` states its inset and the frame scrolls), so
+   this sheet does not touch `.report-content` - the drift guard refuses a new metric on a shell
+   selector anywhere but there. The workspace is only a width/padding wrapper inside it; the flow
+   is the frame's. */
+.pform-workspace{
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* the fixed footer's height + its own breathing room, so the last field is never under it */
+  padding-bottom: calc(var(--bo-shell-foot-h, 68px) + 16px + env(safe-area-inset-bottom, 0px));
+}
+.pform{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+}
+.pform-body{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---------------------------------------------------------------- sections ----------------- */
+.pform-section{
+  padding: 12px 14px;
+  border: 1px solid #DCC9A8;
+  border-left: 3px solid #D97706;
+  border-radius: 10px;
+  background: #FFFCF7;
+  box-shadow: 0 1px 2px rgba(92, 74, 48, 0.04);
+}
+.pform-section h4{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 9px;
+  padding: 0 0 8px;
+  border-bottom: 1px solid #EADCC8;
+  color: #18191C;
+  font-size: 13px;
+  font-weight: 800;
+}
+.pform-sec-icon{
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border: 1px solid #EADCC8;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #FFF8EB 0%, #FFE8CC 100%);
+  color: #D97706;
+}
+.pform-sec-icon i{ font-size: 14px; margin: 0; color: inherit; }
+
+/* Back to list — the house back control, at the right end of the header row. Measured off the
+   pages that already carry one (rebate-rule-edit .rre-back, manual-rebate-detail #detailBack,
+   vip-level-edit .vle-back-list, payment-method-create #pmBackLink, game-category-edit
+   .banner-edit-back): 36px · radius 8 · pad 0 14px · 12.5px/700 · 3-stop cream · #DCC9A8. */
+.pform-back{
+  margin-left: auto;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid #DCC9A8;
+  border-radius: 8px;
+  background-color: #F5EBDC;
+  background-image: linear-gradient(180deg, #FFFCF7 0%, #F5EBDC 55%, #EDE4D4 100%);
+  color: #18191C;
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(60, 48, 32, 0.06), 0 2px 6px rgba(120, 80, 20, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  transition: background-image 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+}
+.pform-back i{ font-size: 14px; line-height: 1; color: inherit; }
+.pform-back:hover,
+.pform-back:focus-visible{
+  background-image: linear-gradient(180deg, #FFF8EB 0%, #F3E8D6 100%);
+  border-color: #D97706;
+  color: #18191C;
+  transform: translateY(-1px);
+}
+.pform-back:focus-visible{ outline: 2px solid #D97706; outline-offset: 2px; }
+.pform-back:active{ transform: translateY(1px); }
+
+/* ---------------------------------------------------------------- field grid ---------------- */
+.pform-grid{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+/* The item form shares its page with the item list, so it gets two columns instead of three. */
+.pform--narrow .pform-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.pform-grid > .wide{ grid-column: 1 / -1; }
+.pform-grid > label,
+.pform-grid > .pform-field{
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin: 0;
+  color: #57534E;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.pform-grid > label > input:not([type="hidden"]):not([type="file"]),
+.pform-grid > label > select,
+.pform-grid > .pform-field > input:not([type="hidden"]):not([type="file"]),
+.pform-grid > .pform-field > select{
+  width: 100%;
+  /* 36: the rung `rebate-rule-edit.html` uses (measured there: input and select both 36, text
+     13px/600, `0 12px` padding). The selects in these forms are house selects wrapped by
+     custom-select.js (`label > .rounded-select-wrap > select`, min-height 40 from the shared
+     recipe), so their height is forced below too or a row's two bottom edges never line up. */
+  height: 36px;
+  min-height: 36px;
+  max-height: 36px;
+  margin-top: 6px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  border: 1px solid #DCC9A8;
+  border-radius: 8px;
+  background-color: #F5EBDC;
+  color: #18191C;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: normal;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.pform-grid > label > input::placeholder,
+.pform-grid > .pform-field > input::placeholder{ color: #78716C; opacity: 1; }
+.pform-grid > label > input:focus,
+.pform-grid > label > select:focus,
+.pform-grid > .pform-field > input:focus,
+.pform-grid > .pform-field > select:focus{
+  border-color: #D97706;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.14);
+  outline: none;
+}
+.pform-grid .rounded-select-wrap,
+.pform-grid .rounded-select-wrap > select{
+  height: 36px;
+  min-height: 36px;
+  max-height: 36px;
+}
+/* Label row on ONE line even when it carries an inline hint. The base cell is a column flex, so
+   `Item Name <small>(optional)</small>` put the hint on its own row and pushed that cell's input
+   16px below the select beside it (measured: select y=367 vs input y=383). The reference page keeps
+   its labels on one line by putting a qualifier IN the label (`Rule Name *`); here the label wraps
+   and every control is forced onto the next line, so a row's controls line up whatever its label
+   says. The hint is not moved below the control: it qualifies the label, and that would have cost
+   this card - the whole point of the tighter rhythm - another 38px. */
+.pform-grid > label,
+.pform-grid > .pform-field{
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 6px;
+}
+.pform-grid > label > input,
+.pform-grid > label > select,
+.pform-grid > label > .rounded-select-wrap,
+.pform-grid > label > .slider-upload-box,
+.pform-grid > label > .pform-help,
+.pform-grid > label > .upload-status,
+.pform-grid > .pform-field > input,
+.pform-grid > .pform-field > select,
+.pform-grid > .pform-field > .rounded-select-wrap,
+.pform-grid > .pform-field > .pform-help,
+.pform-grid > .pform-field > .upload-status{
+  flex: 0 0 100%;
+}
+
+.pform-help{
+  margin-top: 4px;
+  color: #78716C;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.35;
+}
+.pform-help[hidden]{ display: none; }
+
+/* The upload pane inside a grid cell. */
+/* 104, not the 163/187 it measured: the global recipe (reports-dashboard-original.css) is
+   `.slider-upload-placeholder{padding:22px;gap:6px}` around a 42px/63px icon and a 16px line = 161px
+   of content, which overrules whatever `min-height` the box asks for. Scoped to this form, the
+   other pages that own that recipe are untouched. */
+.pform-grid .slider-upload-box{
+  margin-top: 6px;
+  min-height: 104px;
+  padding: 0;
+  border: 1px dashed #DCC9A8;
+  border-radius: 8px;
+  background: #F5EBDC;
+}
+.pform-grid .slider-upload-box .slider-upload-placeholder{ padding: 10px; gap: 4px; }
+.pform-grid .slider-upload-box .slider-upload-placeholder i{ font-size: 26px; line-height: 1; }
+.pform-grid .slider-upload-box .slider-upload-placeholder strong{ font-size: 13px; line-height: 1.25; }
+.pform-grid .slider-upload-box .slider-upload-placeholder small{ font-size: 11px; line-height: 1.25; }
+.pform-grid .slider-upload-box img{ max-height: 96px; }
+.pform-grid .slider-upload-box:hover,
+.pform-grid .slider-upload-box.dragover{ border-color: #D97706; background: #FFFCF7; }
+.pform-grid .slider-upload-box img{
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  display: block;
+}
+
+/* The translation panel is a wide, tall column inside these forms: media above texts in a 1254px
+   section put a 1200px-wide "No image" area on top of the name field. Side by side the panel is
+   ~80px shorter and the empty box stops reading as a band. The colours stay the shared recipe's. */
+.pform .dynamic-translation-panel{ margin: 14px 0; padding: 14px; }
+.pform .dynamic-lang-card{ padding: 12px; }
+.pform .dynamic-lang-layout{
+  display: grid;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+@media (max-width: 899.98px){
+  .pform .dynamic-lang-layout{ grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------------------------------------------------------------- footer ------------------- */
+.pform-footer{
+  position: fixed;
+  left: var(--sidebar-w, 230px);
+  right: 0;
+  bottom: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  height: calc(var(--bo-shell-foot-h, 68px) + env(safe-area-inset-bottom, 0px));
+  min-height: calc(var(--bo-shell-foot-h, 68px) + env(safe-area-inset-bottom, 0px));
+  padding: 0 22px env(safe-area-inset-bottom, 0px);
+  box-sizing: border-box;
+  border-top: 1px solid #DCC9A8;
+  background: #FFFCF7;
+  /* the bar reads as a surface of its own rather than as the page running out */
+  box-shadow: 0 -10px 30px rgba(92, 74, 48, 0.12), 0 -1px 0 rgba(255, 255, 255, 0.7);
+}
+body.sidebar-mini .pform-footer{ left: var(--rail-w, 72px); }
+.pform-footer .clean-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  /* The size here is the fallback: `bo-ui-standard.js` dresses these as house `bo-ui-button`s, whose
+     rung (36) wins with a more specific `!important` rule - measured on both form pages, Cancel and
+     Save both 36. Left as the intended size for a page that loads without the dresser. */
+  height: 40px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.pform-footer .clean-btn:not(.primary){
+  border: 1px solid #DCC9A8;
+  background: #FFFCF7;
+  background-image: linear-gradient(180deg, #FFFCF7 0%, #F5EBDC 55%, #EDE4D4 100%);
+  color: #18191C;
+  box-shadow: 0 1px 2px rgba(92, 74, 48, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+.pform-footer .clean-btn:not(.primary):hover{
+  background-image: linear-gradient(0deg, #FFFCF7 0%, #F5EBDC 45%, #EDE4D4 100%);
+  border-color: #D97706;
+  color: #6b360c;
+}
+.pform-footer .clean-btn.primary{
+  border: 1px solid #E8901A;
+  background-color: #F59E0B;
+  background-image: linear-gradient(180deg, #FBBF24 0%, #F59E0B 42%, #EA8608 100%);
+  color: #fff;
+  font-weight: 800;
+  box-shadow: none;
+}
+.pform-footer .clean-btn.primary:hover{
+  background-image: linear-gradient(0deg, #FCD34D 0%, #FBBF24 38%, #F59E0B 72%, #EA8608 100%);
+  border-color: #F59E0B;
+  transform: translateY(-1px);
+}
+.pform-footer .clean-btn.primary i{ color: #fff; }
+/* The item page keeps its list beside the form, so its actions stay in the card rather than in a
+   viewport-fixed bar; `data-pform-inline` says so. The row sits at the card's bottom, full-bleed to
+   the card's edge, and the form scrolls ABOVE it - so the buttons never cover a field (owner first:
+   「直接覆盖利用好空间吧」, then, on the floating overlay: 「还是之前好看点」 - this row is that
+   look, with the band extended to the card's own bottom edge instead of stopping inside its padding). */
+.pform-footer[data-pform-inline]{
+  position: static;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  flex: 0 0 auto;
+  width: auto;
+  height: auto;
+  min-height: 0;
+  margin: 0 -18px;
+  padding: 12px 18px;
+  border-top: 1px solid #EADCC8;
+  border-radius: 0 0 13px 13px;
+  background: #FFFCF7;
+  box-shadow: 0 -8px 18px rgba(92, 74, 48, 0.05);
+}
+.pform-footer[data-pform-inline] .clean-btn{
+  box-shadow: 0 1px 2px rgba(92, 74, 48, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+html[data-bo-theme="dark"] .pform-footer[data-pform-inline]{
+  background: #2A2C36;
+  border-top-color: rgba(255, 255, 255, 0.12);
+  box-shadow: none;
+}
+html[data-bo-theme="dark"] .pform-footer[data-pform-inline] .clean-btn{
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------------------------------------------------------------- status line --------------- */
+.pform .upload-status{
+  min-height: 0;
+  margin: 0;
+  color: #57534E;
+  font-size: 12px;
+  font-weight: 600;
+}
+.pform .upload-status:empty{ display: none; }
+.pform .upload-status.error{ color: #B42318; }
+.pform .upload-status.success{ color: #067647; }
+
+/* The panel's empty / loading / error block: reports.css only states it inside the old modal's
+   scope (`#crudPatternModal .dt-state`), so on a page it collapses into one run of inline text
+   ("No item selectedSave default content first…"). Same grid the modal used. */
+.pform .dt-state{
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 10px;
+  row-gap: 4px;
+  align-items: start;
+  margin: 0;
+  line-height: 1.45;
+}
+.pform .dt-state i{
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: start;
+  margin: 2px 0 0;
+  color: #D97706;
+  font-size: 15px;
+}
+.pform .dt-state b{
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  color: #18191C;
+  font-size: 12.5px;
+  font-weight: 800;
+}
+.pform .dt-state span,
+.pform .dt-state .dt-state-hint{
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  color: #78716C;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* ---------------------------------------------------------------- dark --------------------- */
+html[data-bo-theme="dark"] .pform-section{
+  background: #2A2C36;
+  border-color: rgba(255, 255, 255, 0.12);
+  border-left-color: #F59E0B;
+  box-shadow: none;
+}
+html[data-bo-theme="dark"] .pform-section h4{
+  color: #F5F5F4;
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+html[data-bo-theme="dark"] .pform-sec-icon{
+  background: #1F2128;
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #FBBF24;
+}
+html[data-bo-theme="dark"] .pform-grid > label,
+html[data-bo-theme="dark"] .pform-grid > .pform-field{ color: #D4D4D8; }
+html[data-bo-theme="dark"] .pform-grid > label > input:not([type="hidden"]):not([type="file"]),
+html[data-bo-theme="dark"] .pform-grid > label > select,
+html[data-bo-theme="dark"] .pform-grid > .pform-field > input:not([type="hidden"]):not([type="file"]),
+html[data-bo-theme="dark"] .pform-grid > .pform-field > select{
+  background-color: #2A2C36;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #F5F5F4;
+}
+html[data-bo-theme="dark"] .pform-grid > label > input:focus,
+html[data-bo-theme="dark"] .pform-grid > label > select:focus,
+html[data-bo-theme="dark"] .pform-grid > .pform-field > input:focus,
+html[data-bo-theme="dark"] .pform-grid > .pform-field > select:focus{
+  border-color: #F59E0B;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
+}
+html[data-bo-theme="dark"] .pform-grid .slider-upload-box{
+  background: #1F2128;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+html[data-bo-theme="dark"] .pform-help{ color: #A1A1AA; }
+/* The panel's collapse chevron shipping as #57534E on a #2A2C36 header: measured invisible (the
+   shared recipe's dark half sets the header, not the chevron). #A1A1AA is the dark partner of the
+   #78716C the panel uses in light. Its text inputs are NOT touched - they are deliberately muted in
+   both themes (measured light #78716C / dark #A1A1AA), and an override here lost to whatever paints
+   them, which is the tell that it was a house choice rather than a gap. */
+html[data-bo-theme="dark"] .pform .dt-collapse-chevron,
+html[data-bo-theme="dark"] .pform .dt-collapse-chevron i{ color: #A1A1AA; }
+html[data-bo-theme="dark"] .pform-back{
+  background-color: #383A46;
+  background-image: linear-gradient(180deg, #4A4C58 0%, #383A46 55%, #2C2E38 100%);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #F5F5F4;
+}
+html[data-bo-theme="dark"] .pform-back:hover,
+html[data-bo-theme="dark"] .pform-back:focus-visible{
+  background-image: linear-gradient(0deg, #4A4C58 0%, #383A46 100%);
+  border-color: rgba(245, 158, 11, 0.45);
+}
+html[data-bo-theme="dark"] .pform-footer{
+  background: #2A2C36;
+  border-top-color: rgba(255, 255, 255, 0.12);
+  box-shadow: none;
+}
+html[data-bo-theme="dark"] .pform-footer .clean-btn:not(.primary){
+  background: #383A46;
+  background-image: linear-gradient(180deg, #4A4C58 0%, #383A46 55%, #2C2E38 100%);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #F5F5F4;
+}
+html[data-bo-theme="dark"] .pform-footer .clean-btn.primary{
+  color: #2A2C36;
+  border-color: #F59E0B;
+}
+html[data-bo-theme="dark"] .pform-footer .clean-btn.primary i{ color: #2A2C36; }
+html[data-bo-theme="dark"] .pform .dt-state i{ color: #FBBF24; }
+html[data-bo-theme="dark"] .pform .dt-state b{ color: #F5F5F4; }
+html[data-bo-theme="dark"] .pform .dt-state span,
+html[data-bo-theme="dark"] .pform .dt-state .dt-state-hint{ color: #A1A1AA; }
+html[data-bo-theme="dark"] .pform .upload-status{ color: #D4D4D8; }
+html[data-bo-theme="dark"] .pform .upload-status.error{ color: #F87171; }
+html[data-bo-theme="dark"] .pform .upload-status.success{ color: #34D399; }
+
+/* The Language Translation panel inside a section: its card is reports.css's light-only recipe,
+   so it carries its own dark skin here - the same values the Title page's modal block uses. */
+.pform-grid .dynamic-translation-panel{ margin: 0; min-width: 0; }
+html[data-bo-theme="dark"] .pform .dynamic-lang-card{
+  background: #2A2C36;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: none;
+}
+html[data-bo-theme="dark"] .pform .dynamic-lang-title b{ color: #F5F5F4; }
+html[data-bo-theme="dark"] .pform .dynamic-lang-code{ background: #1F2128; color: #D4D4D8; }
+html[data-bo-theme="dark"] .pform .dynamic-field-row > label{ color: #D4D4D8; }
+html[data-bo-theme="dark"] .pform .dynamic-text-edit > input,
+html[data-bo-theme="dark"] .pform .dynamic-text-edit > textarea{
+  background: #1F2128;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #F5F5F4;
+}
+html[data-bo-theme="dark"] .pform .dynamic-image-preview{
+  background: #1F2128;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+html[data-bo-theme="dark"] .pform .dynamic-file-pick,
+html[data-bo-theme="dark"] .pform .dynamic-file-pick-ui{
+  background: #2A2C36;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #D4D4D8;
+}
+
+/* ---------------------------------------------------------------- narrow ------------------- */
+@media (max-width: 1199.98px){
+  .pform-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 767.98px){
+  .pform-grid,
+  .pform--narrow .pform-grid{ grid-template-columns: minmax(0, 1fr); }
+  .pform-footer{ padding: 0 14px env(safe-area-inset-bottom, 0px); }
+  .pform-footer .clean-btn{ flex: 1 1 auto; }
+}
+
+/* ------------------------------------------------- item page: two panes, each scrolling --------
+   bonus-category-item.html is a listing with its form beside it, and its frame does not scroll:
+   `.report-content` is a flex column, the item list owns the frame and scrolls inside its own
+   panel, and the form card was lifted into the shared modal. With the form inline again the page
+   is two panes side by side - the form card on the left scrolling inside itself, the list on the
+   right exactly as it was - which is the shape this page had before the modal, and the shape of
+   every other BO listing that shows a form next to a list. */
+/* The card is a fixed box with a SCROLLING middle and a STATIC action row at its bottom - not one
+   scroll area with a sticky bar inside it. The sticky version floated over the fields while the card
+   scrolled (owner's screenshot: Reset/Save Item sitting between the Layout rows), which no amount of
+   surface fixes: content has to pass under a sticky bar. Here the bar is outside the scroller, so
+   nothing is ever covered and Save stays reachable without scrolling to the end. */
+html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .manage-page-grid > .manage-form-card{
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  max-height: 100% !important;
+  /* static, NOT relative: reports.css makes every `.manage-form-card` `position: sticky; top: 12px`
+     (it is a sticky side form on the pages whose document scrolls). Give the card any positioned
+     value and that offset turns into a plain 12px downward shift with `bottom: -12px` - measured:
+     the card sat at y=88 while its grid row and the list panel started at y=76, so it overflowed the
+     grid by 12px and the grid's `overflow: hidden` clipped the card's bottom border, its bottom
+     radius and the lower half of the action band (owner: 容器没对齐右边 / 底部也没有设计线条 - both
+     were this one shift). Nothing on this page needs the card as an anchor: the action row is in
+     flow and the fade is a mask on the scrolling body. */
+  position: static !important;
+  top: auto !important;
+  bottom: auto !important;
+  overflow: hidden !important;
+}
+html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .manage-page-grid > .manage-form-card > #bonusItemForm{
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  width: 100% !important;
+}
+html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .manage-page-grid > .manage-form-card > #bonusItemForm > .pform-body{
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  /* breathing room under the last row, then a soft cut: a row clipped by the action band reads as
+     "there is more below" instead of as a broken edge (owner's 底部裁切加渐隐). */
+  padding: 0 0 12px !important;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 20px), rgba(0, 0, 0, 0) 100%);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 20px), rgba(0, 0, 0, 0) 100%);
+}
+html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .manage-page-grid > .manage-form-card > #bonusItemForm > .pform-footer[data-pform-inline]{
+  /* in flow and outside the scroller: the card is the fixed box, `.pform-body` scrolls, this row is
+     the card's bottom band. */
+  position: static !important;
+  align-self: stretch !important;
+}
+html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .manage-page-grid > .manage-list-card{
+  min-width: 0 !important;
+}
+@media (max-width: 1199.98px){
+  html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .manage-page-grid{
+    grid-template-columns: minmax(0, 1fr) !important;
+    overflow-y: auto !important;
+  }
+  html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .manage-page-grid > .manage-form-card{
+    overflow: visible !important;
+    max-height: none !important;
+  }
+}
+
+
+/* Custom selects: reports.js turns every <select> into `.rounded-select-btn` + a menu beside the
+   hidden native one, and those keep the base sheet's own sizing - measured on the item form, the
+   category-title control's value span rendered 564px wide inside a 233px cell and painted over the
+   next field's label ("ITEM NAME (OPTIONAL)"), with the control 40px tall next to 36px inputs. */
+.pform-grid > label > .rounded-select-wrap,
+.pform-grid > .pform-field > .rounded-select-wrap{
+  margin-top: 6px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+.pform-grid > label > .rounded-select-wrap > .rounded-select-btn,
+.pform-grid > .pform-field > .rounded-select-wrap > .rounded-select-btn{
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  padding: 0 12px !important;
+  box-sizing: border-box !important;
+  border: 1px solid #DCC9A8 !important;
+  border-radius: 8px !important;
+  background: #F5EBDC !important;
+  color: #18191C !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+.pform-grid > label > .rounded-select-wrap > .rounded-select-btn > span,
+.pform-grid > .pform-field > .rounded-select-wrap > .rounded-select-btn > span{
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  display: block !important;
+}
+.pform-grid > label > .rounded-select-wrap > .rounded-select-btn.open{
+  border-color: #D97706 !important;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.14) !important;
+}
+html[data-bo-theme="dark"] .pform-grid > label > .rounded-select-wrap > .rounded-select-btn,
+html[data-bo-theme="dark"] .pform-grid > .pform-field > .rounded-select-wrap > .rounded-select-btn{
+  background: #2A2C36 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #F5F5F4 !important;
+}
+
+/* `(optional)` is a note inside the field name, not part of it: the uppercase treatment and the
+   one-line rule apply to the name, and the input below keeps a normal wrap so the cell's height
+   stays the grid's business. */
+.pform-grid > label{ white-space: nowrap; }
+.pform-grid > label > small,
+.pform-grid > .pform-field > small{
+  color: #78716C;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.pform-grid > label > input,
+.pform-grid > label > select,
+.pform-grid > label > .rounded-select-wrap,
+.pform-grid > label > .slider-upload-box,
+.pform-grid > label > small.pform-help{ white-space: normal; }
+
+/* The item list's title filter is a custom select too, and the category titles are long: at the
+   pane width the one-pane page gives the list, the value painted out of its pill and over the
+   Refresh button beside it (measured: value span 590px inside a 280px control). */
+html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-item-filterbar .rounded-select-wrap{
+  min-width: 0 !important;
+  max-width: 280px !important;
+}
+html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-item-filterbar .rounded-select-btn{
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-item-filterbar .rounded-select-btn > span{
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  display: block !important;
+}

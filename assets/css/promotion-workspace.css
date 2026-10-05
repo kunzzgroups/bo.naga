@@ -403,3 +403,56 @@ html:not(#bo-charcoal-off):not(#bo-charcoal-legacy) body.promotion-workspace-pag
   min-width: 0 !important;
   white-space: nowrap !important;
 }
+
+/* ------------------------------------------------------------------ row-action tip
+
+   The tip is a FIXED element appended to <body> by assets/js/promotion-workspace.js, not an
+   ::after inside the row. It used to be the latter, plus a set of
+   `:has(.icon-action-btn[data-tip]:hover){overflow:visible}` rules in bo-charcoal-cms.css that
+   un-clipped every ancestor - including this page's scroll container - so the bubble could
+   escape. Measured with a real pointer hovering a sub-item's edit button: the list went
+   `auto -> visible`, clientWidth 1232 -> 1238, every row and the sticky head with it, then back
+   on mouse-out (owner: "指标悬浮在展开的 sub item 的 edit 按键会整个页面会闪动"). Both the bubble
+   and those un-clip rules are gone; a fixed element needs no ancestor to cooperate, so the
+   table's box cannot change while a tip is up. The recipe is the Promotion Log page's
+   `.pl-act-tip` (cream pill, no beak) so the two read as one control. */
+body.promotion-workspace-page .promo-ws-tip{
+  position: fixed;
+  z-index: 10050;
+  max-width: 240px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: #FFF8EB;
+  border: 1px solid rgba(217, 119, 6, 0.28);
+  box-shadow: 0 8px 22px rgba(60, 48, 32, 0.16);
+  color: #6b360c;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(2px);
+  transition: opacity 0.12s ease, visibility 0.12s ease, transform 0.12s ease;
+}
+body.promotion-workspace-page .promo-ws-tip.is-on{
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+body.promotion-workspace-page .promo-ws-tip::before,
+body.promotion-workspace-page .promo-ws-tip::after{
+  content: none;
+  display: none;
+}
+html[data-bo-theme="dark"] body.promotion-workspace-page .promo-ws-tip{
+  background: #40424E;
+  border-color: rgba(245, 158, 11, 0.35);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  color: #F5F5F4;
+}
+@media (prefers-reduced-motion: reduce){
+  body.promotion-workspace-page .promo-ws-tip{ transition: none; }
+}

@@ -1138,63 +1138,9 @@ html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off
   position: relative !important;
   z-index: 1 !important;
 }
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-table-row:has(.icon-action-btn[data-tip]:hover),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-table-row:has(.icon-action-btn[data-tip]:focus-visible),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-table-row:has(.icon-action-btn[data-tip]:focus) {
-  z-index: 60 !important;
-}
 html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-table-head {
   position: relative !important;
   z-index: 2 !important;
-}
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-table-row .icon-action-btn[data-tip] {
-  position: relative !important;
-  overflow: visible !important;
-}
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-table-row .icon-action-btn[data-tip]::after {
-  content: attr(data-tip) !important;
-  position: absolute !important;
-  left: 50% !important;
-  bottom: calc(100% + 8px) !important;
-  top: auto !important;
-  right: auto !important;
-  transform: translateX(-50%) translateY(3px) !important;
-  padding: 5px 10px !important;
-  border-radius: 999px !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.01em !important;
-  line-height: 1.2 !important;
-  white-space: nowrap !important;
-  box-shadow: 0 8px 18px rgba(120, 80, 20, 0.14) !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-  transition: opacity 0.14s ease, transform 0.14s ease, visibility 0.14s ease !important;
-  z-index: 80 !important;
-}
-html:not([data-bo-theme="dark"]) body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-table-row .icon-action-btn[data-tip]::after {
-  background: #FFF8EB !important;
-  color: #6b360c !important;
-  border: 1px solid rgba(217, 119, 6, 0.28) !important;
-}
-html[data-bo-theme="dark"] body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-table-row .icon-action-btn[data-tip]::after {
-  background: #40424E !important;
-  color: #F5F5F4 !important;
-  border: 1px solid rgba(245, 158, 11, 0.35) !important;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35) !important;
-}
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-table-row .icon-action-btn[data-tip]:hover::after,
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-table-row .icon-action-btn[data-tip]:focus-visible::after,
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-table-row .icon-action-btn[data-tip]:focus::after {
-  opacity: 1 !important;
-  visibility: visible !important;
-  transform: translateX(-50%) translateY(0) !important;
-}
-@media (prefers-reduced-motion: reduce) {
-  html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-table-row .icon-action-btn[data-tip]::after {
-    transition: none !important;
-  }
 }
 
 html:not([data-bo-theme="dark"]) body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .category-table-footer { padding: 12px 16px !important; margin: 0px !important; border-top: 1px solid rgb(234, 220, 200) !important; color: rgb(87, 83, 78) !important; font-size: 12.5px !important; font-weight: 600 !important; background: rgb(255, 248, 235) !important; }
@@ -2097,6 +2043,14 @@ html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off
   flex: 1 1 0 !important;
   min-height: 0 !important;
   overflow: auto !important;
+  /* The lane is reserved whether or not the bar is painted: this container's own header
+     (`.bonus-title-table-head`) is rendered INSIDE it and shares its width by construction, so
+     the bar arriving is a layout change for the whole table. Measured on promotion.html,
+     expanding the first group (the moment the list first overflows): clientWidth 1238 -> 1232,
+     every row 1238 -> 1232, the sticky head with them - the owner's "展开 Promotion Title 时
+     scroll 会跳动". Same statement the sibling scroller makes above:
+     `.promotion-tx-body{scrollbar-gutter:stable}`. */
+  scrollbar-gutter: stable !important;
 }
 html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-footer,
 html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .category-table-footer.bonus-title-footer {
@@ -2104,61 +2058,6 @@ html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off
   border-radius: 0 0 16px 16px !important;
 }
 /* Tips / open selects need to escape clipped ancestors (panel + table scroll) */
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-panel:has(.icon-action-btn[data-tip]:hover),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-panel:has(.icon-action-btn[data-tip]:focus-visible),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-panel:has(.icon-action-btn[data-tip]:focus),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main .bonus-title-panel:has(.icon-action-btn[data-tip]:hover),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main .bonus-title-panel:has(.icon-action-btn[data-tip]:focus-visible),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main .bonus-title-panel:has(.icon-action-btn[data-tip]:focus),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-panel:has(.rounded-select-menu.show),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main .bonus-title-panel:has(.rounded-select-menu.show),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-table-wrap:has(.icon-action-btn[data-tip]:hover),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-table-wrap:has(.icon-action-btn[data-tip]:focus-visible),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-table-wrap:has(.icon-action-btn[data-tip]:focus),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .category-table-wrap.bonus-title-table-wrap:has(.icon-action-btn[data-tip]:hover),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .category-table-wrap.bonus-title-table-wrap:has(.icon-action-btn[data-tip]:focus-visible),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .category-table-wrap.bonus-title-table-wrap:has(.icon-action-btn[data-tip]:focus),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .manage-list.bonus-title-table:has(.icon-action-btn[data-tip]:hover),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .manage-list.bonus-title-table:has(.icon-action-btn[data-tip]:focus-visible),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .manage-list.bonus-title-table:has(.icon-action-btn[data-tip]:focus),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) #bonusList.bonus-title-table:has(.icon-action-btn[data-tip]:hover),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) #bonusList.bonus-title-table:has(.icon-action-btn[data-tip]:focus-visible),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) #bonusList.bonus-title-table:has(.icon-action-btn[data-tip]:focus) {
-  overflow: visible !important;
-}
-
-/* ==================================================== 5d. Tip overflow escape (high specificity) */
-html:not([data-bo-theme="dark"]) body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-charcoal-legacy) .report-main .bonus-title-panel:has(.icon-action-btn[data-tip]:hover),
-html:not([data-bo-theme="dark"]) body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-charcoal-legacy) .report-main .bonus-title-panel:has(.icon-action-btn[data-tip]:focus-visible),
-html:not([data-bo-theme="dark"]) body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-charcoal-legacy) .report-main .bonus-title-panel:has(.icon-action-btn[data-tip]:focus),
-html[data-bo-theme="dark"] body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-charcoal-legacy) .report-main .bonus-title-panel:has(.icon-action-btn[data-tip]:hover),
-html[data-bo-theme="dark"] body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-charcoal-legacy) .report-main .bonus-title-panel:has(.icon-action-btn[data-tip]:focus-visible),
-html[data-bo-theme="dark"] body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-charcoal-legacy) .report-main .bonus-title-panel:has(.icon-action-btn[data-tip]:focus),
-html:not([data-bo-theme="dark"]) body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-charcoal-legacy) .report-main .category-table-wrap.bonus-title-table-wrap:has(.icon-action-btn[data-tip]:hover),
-html:not([data-bo-theme="dark"]) body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-charcoal-legacy) .report-main .category-table-wrap.bonus-title-table-wrap:has(.icon-action-btn[data-tip]:focus-visible),
-html:not([data-bo-theme="dark"]) body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-charcoal-legacy) .report-main .category-table-wrap.bonus-title-table-wrap:has(.icon-action-btn[data-tip]:focus),
-html[data-bo-theme="dark"] body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-charcoal-legacy) .report-main .category-table-wrap.bonus-title-table-wrap:has(.icon-action-btn[data-tip]:hover),
-html[data-bo-theme="dark"] body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-charcoal-legacy) .report-main .category-table-wrap.bonus-title-table-wrap:has(.icon-action-btn[data-tip]:focus-visible),
-html[data-bo-theme="dark"] body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-charcoal-legacy) .report-main .category-table-wrap.bonus-title-table-wrap:has(.icon-action-btn[data-tip]:focus),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main .manage-list.category-table.bonus-title-table:has(.icon-action-btn[data-tip]:hover),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main .manage-list.category-table.bonus-title-table:has(.icon-action-btn[data-tip]:focus-visible),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main .manage-list.category-table.bonus-title-table:has(.icon-action-btn[data-tip]:focus),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main #bonusList.manage-list.bonus-title-table:has(.icon-action-btn[data-tip]:hover),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main #bonusList.manage-list.bonus-title-table:has(.icon-action-btn[data-tip]:focus-visible),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main #bonusList.manage-list.bonus-title-table:has(.icon-action-btn[data-tip]:focus) {
-  overflow: visible !important;
-}
-
-/* List must stack above table head while tip is open (head is a sibling of the list) */
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main .manage-list.category-table.bonus-title-table:has(.icon-action-btn[data-tip]:hover),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main .manage-list.category-table.bonus-title-table:has(.icon-action-btn[data-tip]:focus-visible),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main .manage-list.category-table.bonus-title-table:has(.icon-action-btn[data-tip]:focus),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main #bonusList.manage-list.bonus-title-table:has(.icon-action-btn[data-tip]:hover),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main #bonusList.manage-list.bonus-title-table:has(.icon-action-btn[data-tip]:focus-visible),
-html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .report-main #bonusList.manage-list.bonus-title-table:has(.icon-action-btn[data-tip]:focus) {
-  position: relative !important;
-  z-index: 20 !important;
-}
 html body.page-bonus-category-title.report-body.bo-charcoal:not(#bo-charcoal-off) .bonus-title-table-head {
   z-index: 1 !important;
 }
@@ -2591,14 +2490,28 @@ html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off)
 }
 html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .report-content > .manage-page-grid,
 html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .report-content > .manage-page-grid.crud-list-only-grid {
-  display: flex !important;
-  flex-direction: column !important;
+  /* Two panes again: the form card on the left (it scrolls inside itself), the item list on the
+     right (it keeps the panel that owns the frame). This was `display:flex; flex-direction:column`
+     with `grid-template-columns:none` for the modal era, when the form was lifted out and the list
+     was the only thing left in the frame. 620px is the form column: its own two-column field grid
+     needs ~250 per field, and the list's table head states 200+180+100+150 = 630px of columns, so
+     the column stops at 620 - the widest the form can get while the list still fits its head
+     without a horizontal scrollbar (owner: 右栏列表为空时太窄，两栏要平衡). */
+  display: grid !important;
+  grid-template-columns: minmax(520px, 620px) minmax(0, 1fr) !important;
+  align-items: stretch !important;
   flex: 1 1 0 !important;
   min-height: 0 !important;
-  gap: 0 !important;
+  gap: 16px !important;
   margin: 0 !important;
   overflow: hidden !important;
-  grid-template-columns: none !important;
+}
+@media (max-width: 1199.98px){
+  html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .report-content > .manage-page-grid,
+  html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .report-content > .manage-page-grid.crud-list-only-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    overflow-y: auto !important;
+  }
 }
 html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .manage-list-card.bonus-item-modern-page,
 html body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) .manage-list-card.category-modern-page {
@@ -2894,6 +2807,55 @@ html:not([data-bo-theme="dark"]) body.page-bonus-category-item.report-body.bo-ch
   box-shadow: 0 24px 70px rgba(217, 119, 6, 0.22) !important;
   overflow: hidden !important;
   flex: 0 1 auto !important;
+}
+
+/* The listing itself: the group band and the card chrome reports.css states in light only. */
+html[data-bo-theme="dark"] body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) #bonusItemList .bonus-item-group-title {
+  background: #2A2C36 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+  color: #F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) #bonusItemList .bonus-item-group-title i,
+html[data-bo-theme="dark"] body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) #bonusItemList .bonus-item-group-title span {
+  color: #A1A1AA !important;
+}
+html[data-bo-theme="dark"] body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) #bonusItemList .bonus-item-card {
+  background: #383A46 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+}
+html[data-bo-theme="dark"] body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) #bonusItemList .bonus-item-card .slider-card-title b {
+  color: #F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) #bonusItemList .bonus-item-card .slider-meta,
+html[data-bo-theme="dark"] body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) #bonusItemList .bonus-item-card .slider-meta span {
+  color: #D4D4D8 !important;
+}
+html[data-bo-theme="dark"] body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) #bonusItemList .bonus-item-card .bonus-item-thumb {
+  background: #2A2C36 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+html[data-bo-theme="dark"] body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) #bonusItemList .bonus-item-card .bonus-item-thumb i {
+  color: #A1A1AA !important;
+}
+/* Status pill row: the Title page's dark pill, on the card that carries it here. */
+html[data-bo-theme="dark"] body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) #bonusItemList .bonus-item-card .slider-pill.active {
+  background: rgba(16, 185, 129, 0.18) !important;
+  border: 1px solid rgba(110, 231, 183, 0.35) !important;
+  color: #6EE7B7 !important;
+}
+html[data-bo-theme="dark"] body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) #bonusItemList .bonus-item-card .slider-pill.inactive {
+  background: rgba(248, 113, 113, 0.16) !important;
+  border: 1px solid rgba(248, 113, 113, 0.32) !important;
+  color: #F87171 !important;
+}
+html[data-bo-theme="dark"] body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) #bonusItemList .bonus-item-card .slider-card-actions .clean-btn:not(.primary) {
+  background: #2A2C36 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #F5F5F4 !important;
+}
+html[data-bo-theme="dark"] body.page-bonus-category-item.report-body.bo-charcoal:not(#bo-charcoal-off) #bonusItemList .bonus-item-card .slider-card-actions .clean-btn:not(.primary):hover {
+  border-color: rgba(245, 158, 11, 0.45) !important;
+  color: #FBBF24 !important;
 }
 
 

@@ -113,6 +113,9 @@
     // promotion list. That URL is a redirect stub onto promotion.html
     // (bonus-category-title.html), so the sidebar must highlight that row.
     if(p==='bonus-category-title.html') return 'promotion.html';
+    // Create/Edit Bonus Category Title is a drill-down of the Promotion Bonus list it is opened
+    // from (bonus-category-title-edit.html). Its own row is the same one promotion.html lights.
+    if(p==='bonus-category-title-edit.html') return 'promotion.html';
     if(p==='vip-level-edit.html') return 'vip-management.html';
     // Create/Edit Rebate Rule is a drill-down of the rebate list it was opened from
     // (Rebate Management, or Rebate Setting when the link carried ?from=setting).
@@ -566,6 +569,9 @@
       // Bonus Category Item is a drill-down of Bonus Category Title (Manage Items),
       // which now lives on the Promotion Bonus page.
       if(current === 'bonus-category-item.html') current = 'promotion.html';
+      // Create/Edit Bonus Category Title is a drill-down of the same list: the category form used
+      // to be a modal on promotion.html, and it is now its own page.
+      if(current === 'bonus-category-title-edit.html') current = 'promotion.html';
       // Transaction history is intentionally a separate page, but it inherits the
       // Payment Gateway menu selected in ROOT Role/Menu Permission. No new hardcoded
       // permission/menu row is required for this drill-down.

@@ -273,6 +273,21 @@
       delete el.dataset.boUiButton;
       return;
     }
+    /* Row actions (`.icon-action-btn`) are a page-owned family and this dresser only ever saw HALF
+       of it: the selector below covers `button` and `a.btn`-style anchors, never `a.icon-action-btn`,
+       so in one action cell the `<button>` half got `bo-ui-icon-button` (36px, `flex:0 0 40px`, i.e.
+       it cannot shrink) while the `<a>` half kept the page sheet's 26px and was then flex-shrunk by
+       its pinned sibling. Measured on rebate-management.html: the edit anchor rendered 15.5x26 next
+       to a 36x36 delete button - the owner's "rules 编辑 Icon 跑位". On promotion.html the same dress
+       stretched the CMS's own 26px recipe into 36x26 ovals beside the 26x26 view anchor. Excluded
+       here (like `.usage-show-switch`, `.slider-pill` and the other page-owned chip families above)
+       so both halves keep the box their own sheet states - the same fix DESIGN.md records for the
+       admin-user pencil ("the edit pencil sat in a smaller box than the delete beside it"). */
+    if(el.matches?.('.icon-action-btn') || el.closest?.('.standard-actions')){
+      el.classList.remove('bo-ui-button','bo-ui-button-primary','bo-ui-button-secondary','bo-ui-button-danger','bo-ui-icon-button');
+      delete el.dataset.boUiButton;
+      return;
+    }
     if(el.matches?.('.fd-switch,[role="switch"],.marquee-tool,.fd-color-swatch-btn,.fd-color-pop-close,.wallet-side-tab,.nm-status-btn,.nm-mode-tab,.bo-theme-btn,#boThemeToggle,.mad-btn,.mad-tab,.mad-pill,.mad-icon-btn,.mad-eye,.mac-link-btn,.mac-change-role,.mac-credit-mode-btn,.mac-currency-add-btn,.mac-currency-add-inline,.mac-currency-chip-remove,.mac-currency-picker-item,.mac-currency-move-btn,.mac-currency-pane-item,.mprr-mode-btn,.mprr-entry-opt,.mp-scope-btn,.mrc-chip-btn,.mrc-btn,.status-pill,.usage-show-switch,.usage-status-chip,.bo-tx-tab,.banner-status-opt,.slider-pill,.custom-tab,.asset-slot-drag,.asset-slot-zone-btn') || el.closest?.('.md-rail,.nm-status-seg,.nm-mode-tabs,#newMenuModal .nm-status-seg,#newMenuModal .nm-mode-tabs,.mp-workspace,.mrc-workspace,.mad-workspace,.mad-modal,.mad-pager,.mac-workspace,.mp-scope,.mprr-entry-options,.banner-status-seg,.custom-tabs[aria-label="Asset language"],.asset-slot-chrome,.asset-slot-zones,.fd-color-pop,.pc-toolbar,.pc-editor')){
       el.classList.remove('bo-ui-button','bo-ui-button-primary','bo-ui-button-secondary','bo-ui-button-danger','bo-ui-icon-button');
       delete el.dataset.boUiButton;

@@ -7,6 +7,19 @@
   function findFormCard(){
     return document.querySelector('.slider-page-grid > .slider-form-card, .manage-page-grid > .manage-form-card, .template-page-grid > .template-form-card');
   }
+  /* The card this file lifts into the modal is no longer a child of the page grid, so the
+     grid-scoped finder above stops seeing it the moment init() has run. The edit delegation
+     resolves the card at CLICK time - with only findFormCard() it therefore found nothing and
+     returned, which is why "Edit" filled the form and opened nothing (measured on
+     bonus-category-item.html: #crudPatternModal never got .show, the form's own values were set).
+     init() keeps using the grid-scoped finder: it is the one that must see the card BEFORE it is
+     lifted, and a stale card left in the modal body by a swap must not be re-lifted. */
+  function findLiftedFormCard(){
+    var card = findFormCard();
+    if(card) return card;
+    var body = document.getElementById('crudPatternBody');
+    return body ? body.querySelector(':scope > .slider-form-card, :scope > .manage-form-card, :scope > .template-form-card') : null;
+  }
   function findListCard(){
     return document.querySelector('.slider-page-grid > .slider-list-card, .manage-page-grid > .manage-list-card, .template-page-grid > .template-list-card');
   }
@@ -197,8 +210,10 @@
       if(/\bedit\b/.test(label) || btn.matches('[data-edit], [data-action="edit"], .edit-btn, .btn-edit')){
         setTimeout(function(){
           /* Nothing lifted => nothing to edit: opening anyway is what produced that empty shell,
-             so a page without a card can no longer be made to show one. */
-          var card = findFormCard();
+             so a page without a card can no longer be made to show one. The card may already have
+             been lifted into the modal body by init() - that is the normal state, and the reason
+             this asks for the card's current home rather than the page grid. */
+          var card = findLiftedFormCard();
           if(!card) return;
           openModal(text(card.querySelector('h1,h2,h3,h4,h5')) || ('Edit ' + pageLabel()));
         }, 120);

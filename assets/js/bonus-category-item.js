@@ -93,6 +93,13 @@ const BONUS_CATEGORY_ITEM_API = {
   const desktopSpan = document.getElementById('bonusItemDesktopSpan');
   const mobileSpan = document.getElementById('bonusItemMobileSpan');
   const singleLeft = document.getElementById('bonusItemSingleLeft');
+  /* `#bonusItemSingleLeft` (and `#bonusItemClassPreview`) are not in this page's markup any more.
+     Both were read unguarded, so resetForm()/editItem()/saveItem() threw at the `singleLeft.checked`
+     line: reset stopped before the form title and the status box, edit stopped before the form title
+     (the modal was then titled "Create Bonus"), and SAVE threw before its first fetch - the button
+     appeared to do nothing at all. Every read of it is optional now (`classPreview` was already
+     guarded this way by whoever wrote the forEach below); the control's value is simply absent
+     from the payload, exactly as the buttonless markup implies. */
   const classPreview = document.getElementById('bonusItemClassPreview');
   const status = document.getElementById('bonusItemStatus');
   const imageInput = document.getElementById('bonusItemImage');
@@ -109,6 +116,10 @@ const BONUS_CATEGORY_ITEM_API = {
   const filterTitle = document.getElementById('bonusItemFilterTitle');
 
   let selectedFile = null;
+  /* `singleLeft` has no control on this page, so it cannot be read off the DOM at save time. Its
+     loaded value is kept here and sent back unchanged, so editing an item that carries the flag
+     cannot silently clear it on a missing field. */
+  let loadedSingleLeft = 0;
   let currentItems = [];
   let titleOptions = [];
   let picker;
@@ -133,7 +144,7 @@ const BONUS_CATEGORY_ITEM_API = {
   }
 
   function buildGridClass() {
-    return 'bonus-grid d-cols-' + (desktopColumns.value || '2') + ' m-cols-' + (mobileColumns.value || '1') + (singleLeft.checked ? ' single-left' : '');
+    return 'bonus-grid d-cols-' + (desktopColumns.value || '2') + ' m-cols-' + (mobileColumns.value || '1') + (singleLeft && singleLeft.checked ? ' single-left' : '');
   }
 
   function buildCardClass() {
@@ -187,7 +198,8 @@ const BONUS_CATEGORY_ITEM_API = {
     mobileColumns.value = '1';
     desktopSpan.value = '1';
     mobileSpan.value = '1';
-    singleLeft.checked = false;
+    if (singleLeft) singleLeft.checked = false;
+    loadedSingleLeft = 0;
     status.value = '1';
     updateClassPreview();
     selectedFile = null;
@@ -208,7 +220,8 @@ const BONUS_CATEGORY_ITEM_API = {
     mobileColumns.value = String(item.mobileColumns ?? 1);
     desktopSpan.value = String(item.desktopSpan ?? 1);
     mobileSpan.value = String(item.mobileSpan ?? 1);
-    singleLeft.checked = Number(item.singleLeft ?? 0) === 1;
+    if (singleLeft) singleLeft.checked = Number(item.singleLeft ?? 0) === 1;
+    loadedSingleLeft = Number(item.singleLeft ?? 0) === 1 ? 1 : 0;
     status.value = String(item.status ?? 1);
     updateClassPreview();
     selectedFile = null;
@@ -316,7 +329,7 @@ const BONUS_CATEGORY_ITEM_API = {
     fd.append('mobileColumns', mobileColumns.value || '1');
     fd.append('desktopSpan', desktopSpan.value || '1');
     fd.append('mobileSpan', mobileSpan.value || '1');
-    fd.append('singleLeft', singleLeft.checked ? '1' : '0');
+    fd.append('singleLeft', singleLeft ? (singleLeft.checked ? '1' : '0') : String(loadedSingleLeft));
     fd.append('status', status.value || '1');
     if (selectedFile) fd.append('image', selectedFile);
 

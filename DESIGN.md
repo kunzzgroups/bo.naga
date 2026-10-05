@@ -6468,3 +6468,284 @@ identical (member-detail.html: same 38px), so this was a per-row-type difference
 - `bo-global-quicknav.css` keeps only `position:relative` (the pin's anchor); its 38px reserve moved to
   the shell. `scripts/shell-drift-baseline.json` went 2616 → 2615 declarations, one entry removed with
   its declaration, and `check-shell-drift.js` reports OK.
+
+## Three Promotion-module reports: the action pair, the list that moved on expand, the Manage Items page (2026-10-05)
+
+Owner, one list: 「Rebate Management 的 rules 编辑 Icon 跑位」·「Promotion Bonus 展开 Promotion Title 时
+Scroll 会出现跳动」·「点击进去 Manage Item 夜间有问题 / Edit 没效果」. Measured in the offline harness
+(static server + stubbed API, 1512x900, both themes) — three unrelated causes, none of them the one the
+symptom suggested.
+
+### A. The global button dresser dressed only half of the row-action family
+
+`bo-ui-standard.js` `scanButtons` covers `button, input[type=button|submit], a.btn, a.clean-btn,
+a.btn-primary-clean, a.btn-soft` — an `a.icon-action-btn` is not in that list, so in one action cell the
+`<button>` half got `bo-ui-icon-button` (36px from `bo-charcoal-primitives.css`, and `flex:0 0 40px` from
+`bo-ui-standard.css`, i.e. it cannot shrink) while the `<a>` half kept the page sheet's 26px and was then
+flex-shrunk by that pinned sibling. Measured on `rebate-management.html` before: the edit anchor
+**15.5x26** at x=1404.5 against the delete button's **36x36** at x=1428 — the squashed pencil the owner
+reported. The same dress also stretched `promotion.html`'s CMS-owned trio into `26 / 36x26 / 36x26`
+(ovals beside a square), and `game-category.html`'s pair into `34` + `36`.
+
+Fixed at the source: `.icon-action-btn` (and anything inside `.standard-actions`) is excluded from the
+dresser, like `.usage-show-switch`, `.slider-pill` and the other page-owned chip families already in that
+list. After: rebate `25.8x26 / 25.8x26` (one box, one centre, pair inside the 88px Action cell),
+`promotion.html` `26/26/26`, `game-category` `34/34`, and `manual-rebate-approval`'s single view button
+back to its sheet's 26px. This is the same class of defect DESIGN.md records for the admin-user pencil
+("the edit pencil sat in a smaller box than the delete beside it", 2026-09-23) — there the fix was to give
+the anchor the button's box; here the page's own rung is the one both halves should sit on.
+
+### B. The Promotion Bonus list moved 6px sideways the moment the first group was expanded
+
+`#promoWorkspaceList` (`.bonus-title-table`) is the scroll container, and `bonus-title-table-head` is
+rendered INSIDE it and shares its width by construction (that is the comment on its own rule). The
+container had `scrollbar-gutter:auto`, so the scrollbar arriving at the first expansion took 6px off the
+content: measured `clientWidth 1238 -> 1232`, every row `1238 -> 1232`, the sticky head with them. That is
+the jump that accompanies the click — the table (and its header labels) pops left, and pops back on
+collapse. `bo-charcoal-cms.css` now states `scrollbar-gutter:stable` on that scroller, the same statement
+the sibling `.promotion-tx-body` already carries; measured after: `1232 -> 1232`, delta 0.
+
+What it is NOT: the expansion itself does not re-render, does not scroll, and does not move the rows the
+operator is looking at (measured: the clicked row and a reference row below it keep their y, `scrollTop`
+unchanged, row identity preserved). Paths that DO rebuild the rows — the module tab row landing on entry,
+a window resize — are absorbed by the browser's scroll anchoring in every sequence probed here, so no
+scroll-restoration code was added: a version that carried `scrollTop` across `refitToBox()` was written,
+measured to change nothing, and reverted rather than shipped.
+
+The owner then asked for the bar itself not to arrive ("展开后有 scrollbar"). Two attempts, both measured
+and both dropped: `overflow-y:scroll` changes NOTHING (Chrome paints no thumb while the content fits —
+0 thumb pixels collapsed, 2156 expanded, same box in both states), and painting the track/thumb
+transparent while `Show:-` was selected worked (0 thumb pixels) but the selection it was scoped to no
+longer exists — see D below, which removed that control and with it the question.
+
+### D. Promotion Bonus: the pagination band is gone (owner: 「把 pagination 的设计功能去除」)
+
+Scoped to this page only. `promotion.html`'s list card no longer ends in a `.table-footer`: no `Show N
+entries`, no `Showing x to y of z entries`, no pager. Every matching category is rendered and the list
+scrolls when they do not fit — measured on the fixture tree: 14 of 14 categories drawn (5 before, behind
+a pager nobody clicked), no `.table-footer`, `#promoWorkspacePageSize` and `#promoWorkspacePager` absent,
+and the list still ends flush with the card's bottom border (list bottom 883 / card bottom 884) so the
+band's removal left no gap where it used to sit.
+
+That retired the machinery that existed only to page the list, and it is **161 lines out, 17 in** in
+`promotion-workspace.js`: the `Show: -` row budget (`measureAutoPageSize` / `autoFitPageSize`),
+`resolvePageSize` / `isAutoPageSize`, `shrinkAutofitIfOverflow` (the drop-one-row-per-paint loop) and its
+`autofitReloading` / `anyExpanded` guards, `renderPager`, the `page` / `lockedAutoSize` / `lockedBoxHeight`
+state, the `pageSizeSelect` and pager listeners, and the ResizeObserver + `refitToBox` that re-ran the fit
+when the module tab row landed. `render()` now draws `visibleCategories()` whole (plus the synthetic
+Uncategorized group) and takes no page argument. The scroll container keeps `scrollbar-gutter:stable`, so
+nothing shifts sideways when the bar appears — it appears whenever the content is taller than the box,
+which is now the normal case rather than only after an expansion.
+
+### F. The two Create/Edit forms are pages on the house's form ladder (2026-10-05)
+
+Owner: 「这两个都要优化成一页式的 然后要有back按键在右上角」, on the first attempt 「这不对吧 我说的一页式
+是像其他页面那样好看整齐美观」, and then, decisively, 「参考 rebate-rule-edit.html」. That reference is a
+PAGE, not a dialog: a title bar with a subtitle, one column of section cards (each an `h4` with an
+icon and, on the first, the house's "Back to list" control at the right end of the header row), the
+fields in a 3-column grid inside each section, and a Cancel/Save bar fixed to the viewport bottom.
+
+So both forms stopped being modals:
+
+- **`bonus-category-title-edit.html` is new** — the Bonus Category Title form, moved out of
+  promotion.html (where it was a card crud-modal-pattern.js lifted into the shared modal) and onto
+  the ladder: `Category Image & Name` (image pane | Name | Sort Order) and `Content Per Language`
+  sections, `← Back to list` in the first header row, `Cancel` / `Save Category` in the fixed footer.
+  `?id=<category id>` is edit mode. promotion.html's "Add Bonus Category" is a link to it and a row's
+  pencil is `bonus-category-title-edit.html?id=N` — the pencil used to be a `<button data-cat-edit>`
+  that opened the modal, so `promotion-workspace.js` lost its whole form half (`setupCategoryForm`,
+  the Add handler, the edit branch).
+- **`bonus-category-item.html` keeps its form inline** — no `crud-modal-pattern.js`, no
+  `data-crud-*`: the form card sits in the page's own two-pane grid beside the item list, in the same
+  section/grid/footer shape. Its frame returned to two panes (the modal era had
+  `display:flex; flex-direction:column` with `grid-template-columns:none`, the list owning the frame
+  because the form had been lifted out): 560px form column + the list, the form scrolling inside its
+  own card, the list keeping the panel that owns the frame.
+
+Both pages load one new sheet, `assets/css/promotion-form-page.css`, written off the reference's
+measured values (section #FFFCF7 / #2A2C36 with a 3px amber left edge, 36px recessed wells,
+11px/800 uppercase labels, the back control 36px · radius 8 · pad 0 14px · 12.5px/700 · 3-stop
+cream · #DCC9A8, the footer's amber primary at the shell's `--bo-shell-foot-h`). Measured after: the
+category form is 392px columns in a 720px dialog's worth of card with the page fitting a 760px
+window, the item form's pane is 560 + 664 with the list's table head (200+180+100+150 = 630px of
+columns) inside it and no horizontal overflow.
+
+Two things this reverted or replaced, rather than leaving dead:
+
+- the shared modal's Back button (crud-modal-pattern.js + reports.css) is gone: it existed only for
+  these two forms, and both now carry the reference's own `← Back to list`.
+- the one-page modal craft this session had added for them (~470 lines of `#crudPatternModal` rules
+  in bo-charcoal-cms.css) is gone with the modals. The item page's `*Zh` fields stay deleted
+  (dynamic-translation.js strips them on load anyway) and the language card's dark skin moved into
+  the new sheet, so the panel is themed on a page as well as it was in the modal.
+
+Also fixed on the way, because the panes are narrower than the frame was: a custom select's value
+painted 564px inside a 233px cell and over the next field's label (both in the form and in the item
+list's title filter) - it ellipsizes now - and the item list's own filter select needed the same
+treatment at 664px.
+
+`auth.js` aliases the new page onto `promotion.html` twice, the way every drill-down here does: in
+`sidebarActivePage()` for the rail highlight, and in the permission mapping so a non-ROOT admin whose
+menus include Promotion is not bounced to their landing page (the failure mode DESIGN.md records for
+`admin-user-create.html`). The page is in the SPA manifest and pinned; it carries
+`page-bonus-category-title` on `<body>` so it inherits that family's frame (a baselined shell
+declaration) - the drift guard refuses a NEW metric on `.report-content` anywhere but `bo-shell.css`,
+and the first cut of this sheet hit exactly that.
+
+### E. Promotion Bonus: the row-action tip is a page-level element now (owner: 「做成全页，不然我指标悬浮在展开的 sub item 的 edit 按键会整个页面会闪动」)
+
+The tips were CSS `::after` bubbles inside the row, plus a family of
+`:has(.icon-action-btn[data-tip]:hover){overflow:visible!important}` rules in `bo-charcoal-cms.css`
+that un-clipped every ancestor the bubble had to escape — this page's scroll container among them.
+Hovering a sub-item's edit button therefore stopped the list being a scroll container. Measured with
+a real pointer (a synthetic `mouseover` does NOT activate `:hover` — the first probe showed nothing):
+
+| | list overflow | list clientWidth | row / sticky head width |
+|---|---|---|---|
+| at rest | `auto` | 1232 | 1232 |
+| hovering the sub-item's edit | **`visible`** | **1238** | **1238** |
+| pointer away | `auto` | 1232 | 1232 |
+
+That 6px there-and-back on every hover is the "整个页面会闪动". And it bought nothing on those rows:
+the promotion rows never had a bubble at all (`::after` `content: none` — only
+`.bonus-title-table-row` got one), so the un-clipping happened with no tip to show.
+
+Fixed by moving the tip out of the row entirely, the way the Promotion Log page already does it
+(`.pl-act-tip`): `promotion-workspace.js` appends one `#promoWsTip` (`position:fixed`) to `<body>` and
+places it on `mouseover`/`focusin` of any `[data-tip]` in the list, hiding it on
+`mouseout`/`focusout`/scroll/resize and on `bo:spa:before`. One element per document (`window.__boWsTip`)
+because `<body>` outlives the frame a swap replaces, and the document-level listeners are slots, like
+`promotion-debug.js`'s `__boPlScroll`. `promotion-workspace.css` owns the bubble's look (the cream pill /
+dark `#40424E` recipe). The page's `::after` bubble and the whole un-clip + stacking family were deleted
+from `bo-charcoal-cms.css` (~110 lines: the `::after` base, its light/dark pairs, the hover rule, its
+reduced-motion twin, the `z-index:60` row rule and both `overflow:visible` groups).
+
+After: hovering any of the 46 tip targets leaves the list `auto` / 1232 / 1232 (unchanged), and the tip
+itself appears as a fixed child of `<body>` with the right text ("Manage Items", "Edit", "Delete",
+"Edit promotion", "Delete promotion") placed above the button, flipping below near the top edge. The
+card still ends 16px above the viewport — the same `.report-content` bottom padding Promotion Log has —
+so nothing about the page's height changed with it.
+
+Still verified after the change (harness, 1512x900): search filters ("cashback" -> 2 rows), Sort
+Asc/Desc, expand/collapse of a group, the category Edit button opening the modal on the right form
+("Edit Bonus Category #1"), 0 JS errors. Untouched: `.bonus-title-footer` rules in `bo-charcoal-cms.css`
+(no markup uses them now; they are shared with the redirect stub's preview and were not worth the risk of
+deleting blind).
+
+### C. Manage Items: the modal it never opened, a crash on a control that no longer exists, and a light recipe
+
+Three separate defects on `bonus-category-item.html`:
+
+1. **Edit filled the form and opened nothing.** The card is lifted into `#crudPatternBody` by
+   `crud-modal-pattern.js`'s `init()`, which is exactly what makes `findFormCard()` (`.manage-page-grid >
+   .manage-form-card`) stop matching it. The edit delegation resolves the card at click time and returned
+   early on "no card => nothing to edit" — so the form's values were set and the modal never got `.show`
+   (measured: `modalShown:false`, `#crudPatternTitle` still "Add"). A second finder now also looks in the
+   modal body, and only the delegation uses it (init must keep seeing the card *before* it is lifted).
+   After: `.show` true, title "Edit Bonus Item #701", form filled.
+2. **`#bonusItemSingleLeft` is not in the markup any more** but `bonus-category-item.js` read it
+   unguarded in `resetForm()`, `editItem()` and `saveItem()`. Each threw at the `singleLeft.checked` line:
+   reset stopped before the form title and the status box, edit stopped before the title (hence the modal
+   would have been titled "Create Bonus"), and SAVE threw before its first `fetch` — the button did
+   nothing at all, silently. Every read is optional now, and the value the record was loaded with is sent
+   back unchanged (`singleLeft:"1"` measured in the update POST), so an item that carries the flag cannot
+   be cleared by a missing field.
+3. **Dark mode was a light recipe with a dark card around it.** Measured before: the Create/Edit dialog
+   `#FFF8EB` in BOTH themes under its own `#F5F5F4` text, `.crud-pattern-head h2` and the form's `h3`
+   `#18191C` (dark-on-cream), the modal's inputs cream, and in the list the group band `#FFF8EB`, the item
+   card's title `#18191C` on `#383A46`, `.slider-pill.active` `#DCFCE7` with `#D4D4D8` text and the thumb
+   well `#F5EBDC`. The page's modal block had only its `html:not([data-bo-theme="dark"])` half (the Title
+   page's block has both); the list bands come from `reports.css`, which states them in light only.
+   `bo-charcoal-cms.css` now carries the dark counterparts, values taken from the Title page's own dark
+   block so the two Create/Edit modals match: dialog `#383A46`, inputs `#2A2C36`, labels `#D4D4D8`, group
+   band `#2A2C36`, card title `#F5F5F4`, pills `rgba(16,185,129,.18)/#6EE7B7` and the thumb well
+   `#2A2C36`. Colours only — the shell drift guard is unaffected (`check-shell-drift.js`: OK).
+
+Verification: the three claims above are re-measured by `.pi-tmp-fix3/verify-all.py` (harness scratch, not
+committed), plus `node --check` on the two scripts, `check-asset-pins.js` (4 assets restamped across 149
+pages), `check-shell-drift.js`, `check-global-collisions.js`, `check-spa-readiness.js` and
+`pin-spa.js --check` — all OK.
+
+### The Manage Items card: rhythm, alignment and the column split, measured
+
+The owner's review of the left card ("被框住的区域还得优化调整设计") turned up more than spacing. Each number
+below was measured on the harness at 1568x790, before and after.
+
+- **The form was 1029px in a 599px pane** — 1.7 screens for ten fields, so the first section alone filled
+  the view. Three real space eaters, none of them the fields:
+  - the upload pane measured **187px**: the page inherits the global recipe in `reports-dashboard-original.css`
+    (`.slider-upload-placeholder{padding:22px;gap:6px}` + a 42px/63px icon + a 16px line = 161px of content),
+    which overrides the 104px `min-height` the box asks for. Scoped to this page: placeholder inset 10,
+    icon 26px/1, title 13px, hint 11px, box padding 0 -> **104px**.
+  - section padding 14/16 -> 12/14, `h4` block 12+10 -> 9+8, grid gap 12/14 -> 10/12, body gap 12 -> 10.
+  - the label rows below.
+  After: **920px** (was 1029), i.e. 321px below the fold instead of 430. `bonus-category-title-edit.html`
+  keeps the looser rhythm on purpose — it is a full page with two sections and it fits without scrolling.
+- **`Item Name (optional)` sat 16px lower than the select beside it** (measured: select y=367 vs input y=383).
+  The cell is a column flex, so an inline `<small>(optional)</small>` becomes a second flex item and pushes
+  its own control down a row while the neighbouring cell's control stays put. The reference page avoids this
+  by qualifying the label in the label text (`Rule Name *`). Here the label wraps and every control is
+  forced onto the next line (`flex: 0 0 100%`), so a row's controls line up whatever its label says —
+  measured after: 349/349, 581/581, 661/661, 741/741. The hint was NOT moved below the control (the
+  reference's `.rebate-field-help` position): it qualifies the label, and that would have cost the card
+  another 38px, which is the thing being fixed.
+- **A select was 40px and the input beside it 36px.** The selects in these forms are house selects
+  (`label > .rounded-select-wrap > select`, `min-height:40px` from the shared recipe), so the sheet's
+  hand-written 36px only ever applied to inputs and the two bottom edges in a row never matched. Inputs are
+  40px now — the house control rung (`reports.css` `.field input{height:40px}`). Both form pages.
+- **The card's column grew 560 -> 620px** (`.report-content > .manage-page-grid` in `bo-charcoal-cms.css`,
+  the page's own baselined rule — a frame metric may not live in `promotion-form-page.css`, which is what
+  the shell drift guard enforces). 620 is the ceiling: the list's table head states 200+180+100+150 = 630px
+  of columns, and the pane it gets at 1568 is 660. The two panes now read 620 / 660 instead of 560 / 720.
+- **The scrolling middle ends in a 12px gap and a soft cut** (`mask-image` over the pane's last 20px): a row
+  clipped by the action band reads as "more below" instead of as a broken edge. The band itself is the
+  card's own bottom row, full-bleed to its edge (measured: 249..807 x 676..737 inside a card of 248..808).
+
+Verification: `.pi-tmp-fix3/js/align.js` + `probe.py` (page geometry), `check-shell-drift.js`,
+`check-asset-pins.js`, `check-global-collisions.js`, `check-spa-readiness.js`, `pin-spa.js` — all OK.
+
+The next round of the same review (容器没对齐右边 / 底部也没有设计线条) was **one** defect with two faces, and it
+was mine: the card carried `position: relative` (added when the action row was briefly an absolutely positioned
+overlay), and `reports.css` gives every `.manage-form-card` `position: sticky; top: 12px` — the sticky form of
+pages whose document scrolls. A positioned value turns that offset into a plain 12px downward shift
+(`top: 12px; bottom: -12px`), so the card measured **y=88..815 while its grid row and the list panel were
+y=76..803**: it overflowed the grid, `overflow: hidden` cut the card's bottom border, its bottom radius and the
+lower half of the action band, and the two containers' tops and bottoms sat 12px apart. The card is `static`
+with `top/bottom: auto` now and the boxes match exactly (76..803 both). Nothing on this page needs the card as
+a positioning anchor: the action row is in flow and the fade is a mask on the scrolling body. **A page rule that
+only bites once you make an element positioned is invisible in the diff — check what the house sheets already
+say about the element you are about to position.**
+
+### `bonus-category-title-edit.html` — the same review, four items
+
+The owner asked for the same pass on the edit page (「这个页面也需要调整」) and picked all four things offered.
+The measurements below are the harness at 1568x819, before -> after.
+
+- **The rhythm became the shared value.** The tighter numbers that first landed scoped to the item page
+  (body gap 12->10, section padding 14/16->12/14, `h4` block 12+10->9+8, grid gap 12/14->10/12, help 5->4)
+  are the base of `promotion-form-page.css` now, and the 163px upload pane -> 104 applies to both pages:
+  it is the global `.slider-upload-placeholder` recipe (22px inset, a 42px/63px icon, a 16px line = 161px
+  of content) that overrules the box's own `min-height`, scoped here so the pages that own that recipe are
+  untouched. Item page 1029 -> 904 (321 -> 276 below the fold); edit page 911 -> 737, i.e. **10px** below
+  the fold instead of 184.
+- **Controls moved 40 -> 36**, the rung `rebate-rule-edit.html` uses - measured there: input and select both
+  36px, text 13px/600, `0 12px` padding. The selects in these forms are house selects (`custom-select.js`
+  wraps them: `label > .rounded-select-wrap > select`, `min-height: 40` from the shared recipe), so their
+  height is forced in the same block; without it a row's two bottom edges never line up. (The earlier
+  40 -> the house `.field input` rung was wrong for these pages: the page they are modelled on says 36.)
+- **The translation panel now sits beside itself.** `.dynamic-lang-layout` was a column, so a 1254px
+  section put a 1200px-wide "No image" area on top of the name field. Two columns (media 300px + texts)
+  took the panel 396 -> 307 and the layout 245 -> 164: `Image / Choose file / Upload` on the left, `Name /
+  Save` on the right, which is also what the width was for.
+- **The action bar reads as a surface**: `box-shadow: 0 -10px 30px rgba(92,74,48,.12)` instead of the 8px
+  `.06` it inherited, top border kept, and Cancel is no longer a different height from Save (the dresser
+  settles both at 36 - see below).
+- **Dark**: the translation panel's collapse chevron shipped `#57534E` on a `#2A2C36` header, measured
+  invisible; it follows the panel's own light/dark pairing now (`#78716C` / `#A1A1AA`). Its text inputs are
+  deliberately muted in **both** themes (measured light `#78716C`, dark `#A1A1AA`) - the override written
+  for them lost to whatever paints them, which is how the house choice announced itself. Two lessons kept
+  here: a "dark-mode bug" that also exists in light is a pairing, not a bug; and when an `!important` of
+  yours loses, find out who wins before writing a louder one (`bo-ui-standard.js` dresses `.clean-btn` as a
+  `bo-ui-button`, whose 36px rung wins; the declaration in the footer is documented as the fallback rather
+  than escalated).
+

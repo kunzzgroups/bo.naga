@@ -21,9 +21,9 @@
 <link href="assets/css/bo-charcoal-shell.css?v=b43bfd5f" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-legacy.css?v=8fced50e" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-primitives.css?v=ff214d1a" rel="stylesheet" />
-<link href="assets/css/bo-charcoal-cms.css?v=9077bcc9" rel="stylesheet" />
+<link href="assets/css/bo-charcoal-cms.css?v=9e94ddbb" rel="stylesheet" />
 <link href="assets/css/promotion-table-align.css?v=b0096e1d" rel="stylesheet" />
-<link href="assets/css/promotion-workspace.css?v=411aa023" rel="stylesheet" />
+<link href="assets/css/promotion-workspace.css?v=9e86fc75" rel="stylesheet" />
 <link href="assets/css/bo-input-fill.css?v=1ab80f49" rel="stylesheet" />
 <link href="assets/css/bo-scrollbar.css?v=39f413e5" rel="stylesheet"/>
 <link href="assets/css/bo-control-height.css?v=ff703846" rel="stylesheet">
@@ -44,11 +44,16 @@
   and roles that only hold the `bonus_category_title` menu all keep working
   (assets/js/auth.js maps that permission onto promotion.html).
 
-  `page-bonus-category-title` on <body> is deliberate: it lets the parent row and
-  the category form reuse that page's existing light/dark treatment instead of a
-  second copy of it. Only the child panel is new — assets/css/promotion-workspace.css.
+  `page-bonus-category-title` on <body> is deliberate: it lets the parent row reuse that page's
+  existing light/dark treatment instead of a second copy of it; only the child panel is new —
+  assets/css/promotion-workspace.css.
+
+  The category form is NOT here: it is its own page (bonus-category-title-edit.html, built on the
+  house's form ladder like rebate-rule-edit.html), reached from "Add Bonus Category" and from a
+  row's pencil. It used to be a card on this page that crud-modal-pattern.js lifted into the shared
+  modal; this page no longer loads that script.
 -->
-<body class="report-body standardized-content-management promotion-workspace-page promotion-bonus-page page-bonus-category-title bo-charcoal bo-account-chip" data-crud-no-add="1">
+<body class="report-body standardized-content-management promotion-workspace-page promotion-bonus-page page-bonus-category-title bo-charcoal bo-account-chip">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
 <div class="report-brand">
@@ -68,75 +73,31 @@
 <label><span class="promo-filter-label">Status</span><select id="promoWorkspaceStatus" aria-label="Status" data-bo-auto-width="0"><option value="">All Statuses</option><option value="1">Active</option><option value="2">Inactive</option></select></label>
 <label><span class="promo-filter-label">Sort By</span><select id="promoWorkspaceSort" aria-label="Sort By" data-bo-auto-width="0"><option value="sortAsc">Sort Order (Asc)</option><option value="sortDesc">Sort Order (Desc)</option><option value="nameAsc">Name (A-Z)</option><option value="nameDesc">Name (Z-A)</option></select></label>
 <div class="section-title slider-list-title standardized-toolbar-title game-toolbar-title promotion-toolbar-actions">
-<button class="clean-btn primary" id="promoAddCategoryBtn" type="button"><i class="bi bi-plus-lg" aria-hidden="true"></i><span class="btn-label">Add Bonus Category</span></button>
+<a class="clean-btn primary" id="promoAddCategoryBtn" href="bonus-category-title-edit.html"><i class="bi bi-plus-lg" aria-hidden="true"></i><span class="btn-label">Add Bonus Category</span></a>
 <a class="clean-btn primary" id="promoAddBtn" href="promotion-edit.html"><i class="bi bi-plus-lg" aria-hidden="true"></i><span class="btn-label">Add Promotion Bonus</span></a>
 </div>
 </div>
 
-<!-- Page-level status. It sits ABOVE the table, not under the pagination band.
-     `.upload-status` carries a 22px min-height, and as the list card's last child that
-     band sat INSIDE the card below the footer: the pagination band then ended 33px above
+<!-- Page-level status. It sits ABOVE the table, not under it. As the list card's last child
+     it used to sit INSIDE the card below the footer: the pagination band then ended 33px above
      the card's bottom edge instead of flush with it, and the divider above "Show entries"
-     landed 113px above the viewport bottom against 81px on Promotion Log and 82px on
-     User Management - the line the owner reported as "not aligned with the sidebar's".
-     Up here a message can only push the table down; the band cannot move. -->
+     landed 113px above the viewport bottom against 81px on Promotion Log and 82px on User
+     Management - the line the owner reported as "not aligned with the sidebar's". Up here a
+     message can only push the table down; nothing below it can move.
+
+     The footer itself is gone from this page (owner: "把 pagination 的设计功能去除"): no Show N,
+     no "Showing x to y of z", no pager. Every matching category is rendered and the list scrolls
+     when they do not fit, so the band that used to be pinned to the card's bottom edge - and the
+     10px of card padding under it - went with it (assets/js/promotion-workspace.js no longer
+     carries the row-budget/pager machine). -->
 <div class="upload-status" id="promoWorkspaceStatusBox"></div>
 
 <div class="category-table-wrap bonus-title-table-wrap promotion-workspace-wrap">
 <div class="manage-list category-table bonus-title-table promotion-workspace-table" id="promoWorkspaceList" role="rowgroup"></div>
-<div class="table-footer standard-pagination category-table-footer bonus-title-footer bo-pagination-standard">
-<div class="entries-control">Show
-                                    <select id="promoWorkspacePageSize" aria-label="Show entries"><option value="-" selected>-</option><option value="10">10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option><option value="All">All</option></select>
-                                    entries</div>
-<div class="table-info" id="promoWorkspaceShowingText">Showing 0 to 0 of 0
-                                    entries</div>
-<nav class="pagination-clean bo-pagination-buttons mad-pager" id="promoWorkspacePager" aria-label="Table pagination"></nav>
-</div>
 </div>
 </div>
 
-<!-- Category create/edit. crud-modal-pattern.js lifts this card into the shared
-     modal; this page opens it (Add / a row's edit button) so the modal can be titled
-     for a category rather than inheriting the page's own "Promotion Bonus" label —
-     hence data-crud-no-add on <body>, which stops the pattern injecting its own Add
-     button. The Chinese fields are not authored here: dynamic-translation.js owns them
-     through the declarative data-translation-* attributes below (it strips the legacy
-     nameZh/imageZh inputs). -->
-<div class="manage-form-card">
-<div class="section-title mb-3">
-<div>
-<h3 id="bonusFormTitle">Create Bonus Title</h3>
-</div>
-</div>
-<form id="bonusForm" class="slider-form" data-translation-ref-type="bonus_category" data-translation-id-selector="#bonusId">
-<input type="hidden" id="bonusId" name="id" />
-<div class="slider-upload-box" id="bonusDropZone">
-<input type="file" id="bonusImage" name="image" accept="image/*" />
-<div class="slider-upload-placeholder" id="bonusUploadPlaceholder">
-<i class="bi bi-cloud-arrow-up"></i>
-<strong>Choose image or drag here</strong>
-<small>PNG, JPG, WEBP, GIF accepted</small>
-</div>
-<img id="bonusPreview" alt="Bonus category preview" hidden />
-</div>
-<div class="slider-current-image" id="bonusCurrentImage" hidden>
-                  Current image will remain if no new image selected.
-                </div>
-<div class="field mt-3">
-<label>Name</label>
-<input id="bonusName" name="name" type="text" placeholder="Example: Hot Promotion" />
-</div>
-<div class="field">
-<label>Sort Order</label>
-<input id="bonusSortOrder" name="sortOrder" type="number" min="0" value="0" />
-</div>
-<div class="slider-form-actions">
-<button class="clean-btn primary" id="saveBonusBtn" type="submit"><i class="bi bi-save"></i> Save Category</button>
-<button class="clean-btn" id="resetBonusBtn" type="button"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
-</div>
-<div class="upload-status" id="bonusStatusBox"></div>
-</form>
-</div>
+
 </div>
 </section>
 </main>
@@ -145,21 +106,20 @@
 <script src="assets/js/brand-context.js?v=27360386"></script>
 <script src="assets/js/main-currency-runtime.js?v=2b28e860"></script>
 <script src="assets/js/currency-runtime.js?v=b63c89fb"></script>
-<script src="assets/js/auth.js?v=549bfbc4"></script>
+<script src="assets/js/auth.js?v=f805dcdd"></script>
 <script src="assets/js/reports.js?v=61324e04"></script>
 <script src="assets/js/dynamic-translation.js?v=8797093e"></script>
-<script src="assets/js/promotion-workspace.js?v=d8174bc7"></script>
+<script src="assets/js/promotion-workspace.js?v=22e77461"></script>
 <script src="assets/js/dynamic-translation-init.js?v=d0dc7e1e"></script>
-<script src="assets/js/crud-modal-pattern.js?v=2dc71b77"></script>
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=c41fc3b0"></script>
 <script src="assets/js/livechat-global-notification.js?v=d7f4667a"></script>
-<script src="assets/js/bo-ui-standard.js?v=a77a4f6b"></script>
+<script src="assets/js/bo-ui-standard.js?v=890f213b"></script>
 <script src="assets/js/operation-global-notification.js?v=efe72819"></script>
 <script src="assets/js/bo-theme.js?v=d78603d9"></script>
 <script src="assets/js/bo-account-chip.js?v=57839162"></script>
-<script src="assets/js/bo-spa-manifest.js?v=da424977"></script><script src="assets/js/bo-spa.js?v=a458ab39"></script>
+<script src="assets/js/bo-spa-manifest.js?v=f02bbd4e"></script><script src="assets/js/bo-spa.js?v=a458ab39"></script>
 </body>
 </html>
