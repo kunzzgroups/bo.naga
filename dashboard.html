@@ -42,6 +42,18 @@ body.dashboard-shell .report-main{height:100vh;min-height:0;overflow:hidden!impo
 .dashboard-sidebar-brand{justify-content:space-between!important}
 .dashboard-sidebar-toggle{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:42px!important;height:42px!important;min-width:42px!important;padding:0!important;border:1px solid var(--line,#EADCC8)!important;border-radius:11px!important;background:#FFF8EB!important;color:#18191C!important;cursor:pointer!important;pointer-events:auto!important}
 .dashboard-sidebar-toggle i{font-size:22px!important}
+/* The pair above is the light theme's and must keep `!important`: the sheets that repeat these
+   values (`reports.css`, `bo-ui-standard.css`, `bo-global-quicknav.css`, each inside a
+   `min-width:992px` block) pin the same element at three classes. That same `!important` also
+   outranked their non-important `html[data-bo-theme="dark"] .report-sidebar .report-brand
+   .dashboard-sidebar-toggle`, so on this one page the chip stayed cream in the dark theme
+   while it went dark everywhere else (measured, dark: rgb(255,248,235) here vs rgb(56,58,70)
+   on member-detail.html). The dark pair therefore lives here too, with the values those
+   sheets use, plus the hovers. `--line` already follows the theme, so the border needed
+   no counterpart. */
+html[data-bo-theme="dark"] .dashboard-sidebar-toggle{background:#383A46!important;color:#F5F5F4!important}
+.dashboard-sidebar-toggle:hover{background:#FFF1DC!important;color:#18191C!important}
+html[data-bo-theme="dark"] .dashboard-sidebar-toggle:hover{background:#40424E!important;color:#F5F5F4!important}
 @media(min-width:992px){
   body.sidebar-mini .dashboard-sidebar-brand{justify-content:center!important;padding:0!important}
   body.sidebar-mini .dashboard-sidebar-brand>div{display:none!important}
