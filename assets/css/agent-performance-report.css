@@ -145,3 +145,15 @@ body:not(#perf-export-off):not(#bo-report-family-off) .perf-filter-card .bo-filt
   align-items:center;
 }
 .perf-filter-card .perf-export-slot .clean-btn{height:36px!important;padding:0 14px!important;white-space:nowrap}
+
+/* Dark: the pieces this sheet owns that had no dark pair - measured in dark they stayed at the
+   light values: the filter card rgb(255,248,235) + border rgb(234,220,200), the avatar chip
+   rgb(245,235,220) with rgb(87,83,78) text, the status pill rgb(234,249,239) / rgb(22,129,62),
+   and the agent-code line rgb(87,83,78) on a #3A3C48 row. Values follow the house dark idioms
+   (bo-account-chip's avatar tint, agent-admin-management's status pill: rgba(16,185,129,.16)
+   with #34D399), so this page reads like the rest of the back office at night. */
+html[data-bo-theme="dark"] .perf-filter-card{background:#383A46;border-color:rgba(255,255,255,.14)}
+html[data-bo-theme="dark"] .perf-avatar{background:rgba(245,158,11,.16);color:#FBBF24}
+html[data-bo-theme="dark"] .perf-agent-cell small{color:#A1A1AA}
+html[data-bo-theme="dark"] .perf-status{background:rgba(16,185,129,.16);color:#34D399}
+html[data-bo-theme="dark"] .perf-status.off{background:rgba(248,113,113,.16);color:#F87171}

@@ -117,3 +117,13 @@
   margin:0!important;
   padding:0 28px 0 12px!important;
 }
+
+/* Dark: the filter strip is the table card's top band (bo-report-family §19 joins them), but the
+   strip itself is a card of its own - reports.css / operations-upgrade.css give it a light
+   surface only. Measured with data-bo-theme=dark: the strip still painted rgb(255,248,235)
+   / border rgb(234,220,200) above a #383A46 table card, so the page opened with a cream band.
+   Same surface as every other band inside the card (bo-report-family §21's dark pair). */
+html[data-bo-theme="dark"] body.promotion-report-page .report-content > .ops-filter{
+  background:#383A46 !important;
+  border-color:rgba(255,255,255,.14) !important;
+}
