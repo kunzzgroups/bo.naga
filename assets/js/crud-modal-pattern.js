@@ -189,10 +189,18 @@
       if(btn.closest('#crudPatternModal')) return;
       var label = text(btn).toLowerCase();
       if(label.includes('delete') || label.includes('view') || label.includes('refresh')) return;
-      if(label.includes('edit') || btn.matches('[data-edit], [data-action="edit"], .edit-btn, .btn-edit')){
+      /* `\bedit\b`, not `includes('edit')`: "cred-edit-ed" contains the letters, and the rebate
+         pages' status filter is a button menu whose "Credited" option therefore read as an Edit
+         button - measured: choosing it opened an empty "Edit Manual Rebate Approval" dialog (this
+         delegation is document-level, so it is still live on a page that never loaded this file,
+         after a swap from one that did). A word boundary keeps "Edit" / "Edit Game" / "Edit/View". */
+      if(/\bedit\b/.test(label) || btn.matches('[data-edit], [data-action="edit"], .edit-btn, .btn-edit')){
         setTimeout(function(){
+          /* Nothing lifted => nothing to edit: opening anyway is what produced that empty shell,
+             so a page without a card can no longer be made to show one. */
           var card = findFormCard();
-          openModal((card ? text(card.querySelector('h1,h2,h3,h4,h5')) : '') || ('Edit ' + pageLabel()));
+          if(!card) return;
+          openModal(text(card.querySelector('h1,h2,h3,h4,h5')) || ('Edit ' + pageLabel()));
         }, 120);
       }
     }, true);
