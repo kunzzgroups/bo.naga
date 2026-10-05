@@ -1032,3 +1032,22 @@ html[data-bo-theme="dark"] .transaction-report-page .pagination-clean button:dis
     grid-column:1/-1;grid-row:2;justify-self:center
   }
 }
+
+/* Dark: the footer is the one band that stayed light - its own light rule (below, and the
+   `.bo-pagination-standard` block in table-pagination-horizontal.css) paints rgb(255,248,235)
+   with a rgb(234,220,200) top border and rgb(102,112,133) text, all !important, and had no
+   dark pair: measured in dark the entries strip and the pager sat on a cream band while the
+   table above was charcoal. The pager rungs themselves (56,58,70) and the entries select
+   (42,44,54) were already dark - only the band and its text were not. */
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .table-card > .bo-pagination-standard{
+  background-color:#383A46 !important;
+  border-top-color:rgba(255,255,255,.14) !important;
+  color:#D4D4D8 !important;
+}
+/* And the band's two labels: table-pagination-horizontal.css pins both to `color:#667085!important`
+   for any .bo-pagination-standard, so the footer's own colour could not reach them. Same dark
+   grey the rest of the back office uses for these two lines. */
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .table-card > .bo-pagination-standard > .entries-control,
+html[data-bo-theme="dark"] body.report-body.transaction-report-page.bo-charcoal .table-card > .bo-pagination-standard > .table-info{
+  color:#D4D4D8 !important;
+}
