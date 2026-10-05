@@ -572,7 +572,12 @@
         if(!/\.[a-z0-9]+$/i.test(f)) f+='.html';
         return f;
       };
-      ok=(BO_AUTH.allowedMenus(BO_AUTH.user())||[]).some(m=>file(m.url)==='online-users.html');
+      ok=(BO_AUTH.allowedMenus(BO_AUTH.user())||[]).some(m=>file(m.url)==='online-users.html')
+         /* auth.js enforcePageAccess lets anyone who can see the Member module open
+            online-users.html, so the tile asks the same shared predicate - the menu row itself
+            OR a Member-module entry. Without this the tile would stay a read-out even where
+            the guard would happily swap. */
+         || (typeof BO_AUTH.memberModuleMenu==='function' && BO_AUTH.memberModuleMenu(BO_AUTH.user()));
     }catch(e){ ok=false; }
     if(ok) return;
     tile.removeAttribute('href');
