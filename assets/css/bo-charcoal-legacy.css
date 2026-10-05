@@ -3047,6 +3047,20 @@ html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).o
 html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).online-users-page.report-body.bo-charcoal .user-toolbar-actions{
   display:flex!important;flex-flow:row wrap!important;align-items:center!important;gap:10px!important;
 }
+/* Header: 12 columns inside ~1276px truncated the labels ("NAME/USERNA..." on the owner's
+   screen; measured here as Online Since / Last Seen scrollWidth 176 vs clientWidth 134).
+   The labels stay on one line and the cells give back 4px each side - ~190px over 12
+   columns. The horizontal scroll stays (12 columns cannot fit 1276px), but no half words.
+   The frame recipe (card fills the content column, footer on the frame bottom) lives in
+   bo-shell.css, not here: the drift guard refuses layout metrics on shell selectors in a
+   theme sheet, and .report-content is one of them. */
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).online-users-page.report-body.bo-charcoal thead th{
+  white-space:nowrap!important;
+  padding-left:8px!important;padding-right:8px!important;
+}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).online-users-page.report-body.bo-charcoal tbody td{
+  padding-left:8px!important;padding-right:8px!important;
+}
 @media(max-width:1024px){
   html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).online-users-page.report-body.bo-charcoal .quick-stats.user-stats.online-user-stats,
   html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).online-users-page.report-body.bo-charcoal .quick-stats.user-stats.online-user-stats{
