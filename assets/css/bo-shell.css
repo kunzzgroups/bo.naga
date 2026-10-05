@@ -192,15 +192,15 @@ html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .repor
    data-menu-key on plain links and on the nav-group-direct anchors, never on the group
    <button>s - so one rail read 38px on a row and 12px on the next. Measured on index.html
    before this block: a.nav-group-btn = `10px 38px 10px 12px`, button.nav-group-btn =
-   `11px 12px`, both 209x44. The 1px on top is the part worth unifying: every module sheet
-   that pins the row at all uses 10px (main-dashboard-executive.css:168, main-admin-detail-
-   executive.css:154, menu-management-executive.css:111, menu-permission-executive.css:268,
-   brand-overview-executive.css:206). Stated once here as the shell's own metric: rows keep
-   the left/top/bottom they had, the buttons lose the stray 1px, and a row that can carry a
-   pin keeps its 38px. */
+   `11px 12px`, both 209x44. The value to unify on is not the module sheets' one: the rail's
+   own row rule is reports.css:49 `.report-nav a{...padding:9px 10px...}` - what every page
+   shows where no sheet overrode it, and the value the user pointed at in DevTools (red-circled
+   `padding: 9px 10px` under "padding 与其他页面不一样"). The sub rows already sit on that
+   rhythm (`.report-sub`: 9px 38px 9px 10px). Stated once here as the shell's own metric:
+   every row 9px 10px, and a row that can carry a pin keeps its 38px. */
 html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav > a,
 html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn{
-  padding:10px 12px!important;
+  padding:9px 10px!important;
 }
 html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav a[data-menu-key]{
   padding-right:38px!important;
