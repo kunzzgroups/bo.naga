@@ -99,7 +99,9 @@ html[data-bo-theme="dark"] .report-sidebar .nav-group-list:not(.rounded-select-m
 .bo-dashboard-unpin:hover{background:rgba(0,0,0,.28);color:#fff}
 .bo-global-quicknav a.active .bo-dashboard-unpin{color:#92400E;background:rgba(146,64,14,.12)}
 .bo-global-quicknav a.active .bo-dashboard-unpin:hover{background:rgba(146,64,14,.22)}
-.report-nav a[data-menu-key]{position:relative;padding-right:38px}
+/* The pin anchors here. Its 38px reserve lives in bo-shell.css now: stated once as the
+   shell's metric, it reaches every row that can carry a pin instead of only the <a> rows. */
+.report-nav a[data-menu-key]{position:relative}
 .bo-sidebar-pin{position:absolute;right:9px;top:50%;transform:translateY(-50%);width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:7px;opacity:0;cursor:pointer;font-size:14px;z-index:3}
 .report-nav a[data-menu-key]:hover .bo-sidebar-pin,.report-nav a[data-menu-key]:focus-within .bo-sidebar-pin,.bo-sidebar-pin.is-pinned{opacity:1}
 .bo-sidebar-pin:hover{background:rgba(217,119,6,.12)}

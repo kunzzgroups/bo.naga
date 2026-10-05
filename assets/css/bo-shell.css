@@ -185,6 +185,36 @@ html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .repor
   line-height:15.6px!important;
 }
 
+/* 0e-pre. Rail rows: one padding for every row, and the pin's space reserved only where a pin
+   can actually appear.
+   bo-global-quicknav.css reserved `.report-nav a[data-menu-key]{padding-right:38px}` for the
+   `.bo-sidebar-pin` button (26px wide at right:9px). Only <a> rows get a pin - auth.js emits
+   data-menu-key on plain links and on the nav-group-direct anchors, never on the group
+   <button>s - so one rail read 38px on a row and 12px on the next. Measured on index.html
+   before this block: a.nav-group-btn = `10px 38px 10px 12px`, button.nav-group-btn =
+   `11px 12px`, both 209x44. The value to unify on is not the module sheets' one: the rail's
+   own row rule is reports.css:49 `.report-nav a{...padding:9px 10px...}` - what every page
+   shows where no sheet overrode it, and the value the user pointed at in DevTools (red-circled
+   `padding: 9px 10px` under "padding 与其他页面不一样"). The sub rows already sit on that
+   rhythm (`.report-sub`: 9px 38px 9px 10px). Stated once here as the shell's own metric:
+   every row 9px 10px, and a row that can carry a pin keeps its 38px. */
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav > a,
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn{
+  padding:9px 10px!important;
+}
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav a[data-menu-key]{
+  padding-right:38px!important;
+}
+/* The collapsed rail (sidebar-mini) centres its icons with `padding:12px 0`. The module
+   sheets that pin row padding at 10px 12px!important outrank reports.css's own
+   `body.sidebar-mini .nav-group-btn{padding:12px 0}` (and its justify-content), so the mini
+   rows lost their centring on exactly those pages. Same guard, so both states hold. */
+html:not(#bo-charcoal-off) body.sidebar-mini .report-shell .report-sidebar .report-nav > a,
+html:not(#bo-charcoal-off) body.sidebar-mini .report-shell .report-sidebar .report-nav .nav-group-btn{
+  padding:12px 0!important;
+  justify-content:center!important;
+}
+
 /* 0e. Logout block. The wallet family pads the sidebar footer 10px 10px 12px, which
    makes it 3px taller and lifts the Logout button 2px versus every other BO page.
    8 of 11 sampled pages use the flat 10px. */

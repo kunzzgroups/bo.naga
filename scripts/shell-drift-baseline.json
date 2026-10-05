@@ -1,6 +1,6 @@
 {
   "note": "Shell metric declarations that already existed when the guard was added. Delete an entry once that declaration is removed from the theme sheet.",
-  "updated": "2026-09-29",
+  "updated": "2026-10-05",
   "entries": [
     "assets\\css\\access-control-executive.css :: html:not(#bo-charcoal-off) body.bo-access-control .user-title-wrap > div:not(.user-title-icon) :: gap",
     "assets\\css\\access-control-executive.css :: html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control:has(.table-card) .report-content :: flex",
@@ -601,7 +601,6 @@
     "assets\\css\\bo-global-quicknav.css :: .bo-sidebar-pin:focus :: padding",
     "assets\\css\\bo-global-quicknav.css :: .bo-sidebar-pin:focus-visible :: padding",
     "assets\\css\\bo-global-quicknav.css :: .bo-sidebar-pin:hover :: padding",
-    "assets\\css\\bo-global-quicknav.css :: .report-nav a[data-menu-key] :: padding-right",
     "assets\\css\\bo-global-quicknav.css :: .report-sidebar .bo-rail-label :: font-size",
     "assets\\css\\bo-global-quicknav.css :: .report-sidebar .bo-rail-label :: font-weight",
     "assets\\css\\bo-global-quicknav.css :: .report-sidebar .bo-rail-label :: line-height",
