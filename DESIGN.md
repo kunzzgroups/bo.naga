@@ -6429,14 +6429,14 @@ recompute `totalPages` from what is held, clamp the requested page, and clamp th
 Reference implementation: `vip-exp-log.js` / `vip-reward-log.js` (b8d0cd93). Fixed: those two,
 `player-game-ranking.js`, `win-lose-report.js`, `rebate-management.js` (Audit + Reconciliation tabs).
 Measured already correct: `member-management`, `operations-report`, `casino-report`,
-`main-admin/merchant-security` (chunked 500-row loop). Open: `provider-bet-report.js` (has the same
-un-clamped footer expression at `:432` and no append loop). Dead script with the same shape, loaded by no
+`main-admin/merchant-security` (chunked 500-row loop). Later fixed there too: `provider-bet-report.js`
+(f747d178) — it had the same un-clamped footer expression at `:432` and no append loop. Dead script with the same shape, loaded by no
 page: `member-deposit.js`.
 
 **3. A first column that looks like a serial but is not** — `report-table-sort.js` renumbers the first
 column only when its heading is exactly `#`, so a listing titled `ID` both prints a database key and
 silently keeps that renumbering path dead. Fixed: `transaction-report` (7ce604d4, heading `#` + row
-ordinal continuing across pages). Open: `provider-bet-report.js:449`.
+ordinal continuing across pages). Fixed last: `provider-bet-report.js:449` (f747d178).
 
 Delegation lesson: a brief that says "read-only" must also say "no fixes — report only". A sweep agent
 asked for a report implemented its findings in the working tree instead; the changes were correct and
