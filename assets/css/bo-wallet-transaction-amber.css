@@ -5211,3 +5211,16 @@ body.bo-wallet-tx.promotion-log-page .bo-filter-row > .field:has(#dbgStatus){
     flex:1 1 100%!important;
   }
 }
+
+/* The Date Range popup is clipped and painted under without this. Measured in the dashboard
+   frame on wallet-ledger.html: the popup is 390x318 at (33,182) with z-index 1300 and .show
+   set, yet elementFromPoint at its centre returned DIV#ledgerTableScroll.bo-tx-table-body -
+   the field's z-index was auto (the later table subtree painted over it) and .filter-card
+   clipped it (overflow:hidden). The outer dashboard chrome was innocent: the top-document hit
+   at the same point is the iframe itself. Lift the field into its own layer and let the card
+   show the popup; below 576px reports.css's own .filter-card{overflow:hidden} still applies,
+   because this rule only matches from 576px up. */
+@media(min-width:576px){
+  body.bo-wallet-tx .report-main .filter-card{overflow:visible!important;}
+  body.bo-wallet-tx .report-main .filter-card .bo-range-field{position:relative!important;z-index:1310!important;}
+}
