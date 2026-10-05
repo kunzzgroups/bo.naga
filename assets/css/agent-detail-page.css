@@ -341,3 +341,47 @@ html[data-bo-theme="dark"] body:not(#bo-charcoal-off).report-body.bo-charcoal.ag
   border-color:rgba(255,255,255,.18)!important;
   transform:translateY(-1px);
 }
+
+/* ============================================================================
+   Form dropdowns — reports.js rewrites every <select> into
+   .rounded-select-wrap > .rounded-select-btn + .rounded-select-menu, so the control
+   the user sees here is that button, not a native select.
+
+   Two defects were measured on this page (both invisible on an empty state):
+
+   1. THE MENU WAS CLIPPED BY THE CARD. The BO ladder's light card carries
+      `overflow:hidden` (bo-charcoal-shell.css, § Create / Edit Admin), and the menu is an
+      absolutely-positioned panel (max-height 280) — with five options it measured
+      246..440 against a card that ended at 308, and `elementFromPoint` at the menu's
+      middle returned the *next section's h3*: the panel was cut off mid-row.
+      `main-merchant-detail-executive.css:4082` already records this exact call for
+      .mprr-card ("NOT copied from .mac-section: its overflow:hidden — this card holds the
+      house custom selects … that would be clipped by the card bounds"), and the rail does
+      not need the clip (it is inset 12px, so it clears the 8px corner).
+   2. THE TRIGGER WAS ON THE WRONG TIER. bo-charcoal-primitives.css states
+      `.rounded-select-btn` at 40px / radius 8 — the dialog tier. Inside a `.mac-field` the
+      neighbours are 44px / radius 10 (the form tier, and the hidden native select itself is
+      already 44px), so the row showed a 4px step: measured 44 against 40 on the same row.
+      Both the trigger and its menu now read as the field they belong to.
+
+   platform note: admin-user-create.html has the same pair (40px trigger beside a 44px
+   input, `overflow:hidden` card) — that page is the one this shape was copied from, not a
+   page that fixed it.
+   ============================================================================ */
+html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .mac-section{
+  overflow:visible!important;
+}
+html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .mac-field > .rounded-select-wrap,
+html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .mac-field > .rounded-select-wrap > .rounded-select-btn{
+  width:100%!important;
+}
+html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .mac-field > .rounded-select-wrap > .rounded-select-btn{
+  height:44px!important;
+  min-height:44px!important;
+  border-radius:10px!important;
+  font-size:13.5px!important;
+  font-weight:600!important;
+}
+html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .mac-field > .rounded-select-wrap > .rounded-select-menu{
+  border-radius:10px!important;
+}

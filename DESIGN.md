@@ -6362,3 +6362,42 @@ content's left edge, active/inactive type, Back link geometry/colours matching t
 gradient + border, 0 page errors. Guards re-run clean (`check-shell-drift` OK · `check-global-collisions`
 0 · `check-spa-readiness` 136 · `check-control-height` 0 · `check-asset-pins` clean apart from the
 pre-existing `rebate-management.js` pin).
+
+#### The form dropdowns: a clipped menu and a trigger on the wrong tier (2026-10-05, fourth pass)
+
+Owner: "这些下拉选单的css都需要去检查 并且修复", with the open Parent Agent menu cut off mid-row on the
+live page.
+
+`reports.js` rewrites every `<select>` into `.rounded-select-wrap > .rounded-select-btn +
+.rounded-select-menu` (bo-charcoal-primitives.css §3), so what the form shows is that button, not a
+native select. Two defects, both measured on `agent-detail.html?new=1`, both invisible on the empty
+one-option state:
+
+- **the menu was clipped by the card.** The BO ladder's light card carries `overflow:hidden`
+  (bo-charcoal-shell.css § Create / Edit Admin) and the menu is an absolutely positioned panel
+  (`max-height:280`) — with five options it measured 246..440 against a card that ends at 308, and
+  `elementFromPoint` at the *middle of the open menu* returned the next section's `<h3>`: the panel
+  was cut off mid-row, exactly as reported. `main-merchant-detail-executive.css:4082` already
+  records the call for `.mprr-card` — "NOT copied from .mac-section: its `overflow:hidden` … this
+  card holds the house custom selects … that would be clipped by the card bounds" — and the rail
+  does not need the clip (it is inset 12px, so it clears the 8px corner). This page's cards are now
+  `overflow:visible`, and the open menu hit-tests to itself over the following card.
+- **the trigger sat on the dialog tier.** `bo-charcoal-primitives.css` states
+  `.rounded-select-btn` at **40px / radius 8**; its neighbours inside a `.mac-field` are **44px /
+  radius 10** (the form tier — and the hidden native select itself already computes 44px), so the
+  row had a 4px step: measured 44 against 40 on the same line. The trigger and its menu are now
+  44px / radius 10 inside `.mac-field`, i.e. the same field the label and help text belong to.
+
+**Not a page-specific quirk:** `admin-user-create.html` carries the same pair (40px trigger beside
+a 44px input, `overflow:hidden` card) — that page is where this shape was copied from, not a page
+that fixed it. The two declarations are page-scoped here because the ladder and the primitives
+sheet are shared; if the other create pages are moved onto them, the rules belong in
+`bo-charcoal-primitives.css` / the ladder instead.
+
+**Verified** headless, light and dark, 1560×1000: all seven form dropdowns (`#parentAgentId`,
+`#agentStatus`, `#monthlyKpiEnabled`, `#kpiPeriod`, `#kpiBasis`, `#carryForwardEnabled`,
+`#redShareEnabled`) report `label === selected option text` after a `?id=` load (reports.js patches
+the `value` setter, so `fill()` stays in sync), the open menu (5 options, 194px tall) paints above
+the following card with every row hit-testable, the menu inside the last card is fully in the
+viewport once the field is scrolled to, and the panel keeps the house cream/charcoal fill with the
+amber selected row. 0 page errors.
