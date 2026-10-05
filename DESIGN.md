@@ -6433,8 +6433,7 @@ Reference implementation: `vip-exp-log.js` / `vip-reward-log.js` (b8d0cd93). Fix
 `player-game-ranking.js`, `win-lose-report.js`, `rebate-management.js` (Audit + Reconciliation tabs).
 Measured already correct: `member-management`, `operations-report`, `casino-report`,
 `main-admin/merchant-security` (chunked 500-row loop). Later fixed there too: `provider-bet-report.js`
-(f747d178) — it had the same un-clamped footer expression at `:432` and no append loop. Dead script with the same shape, loaded by no
-page: `member-deposit.js`.
+(f747d178) — it had the same un-clamped footer expression at `:432` and no append loop. NOTE: `member-deposit.js` is NOT a dead script - `member-transaction-page.js:111` loads it lazily via `ensureModule` for member-deposit.html's deposit tab (an HTML-only grep misses that); its All-pager defect is still open.
 
 **3. A first column that looks like a serial but is not** — `report-table-sort.js` renumbers the first
 column only when its heading is exactly `#`, so a listing titled `ID` both prints a database key and
