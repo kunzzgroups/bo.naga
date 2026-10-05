@@ -12,7 +12,7 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
       rel="stylesheet"
     />
-    <link href="assets/css/reports.css?v=31e784eb" rel="stylesheet" />
+    <link href="assets/css/reports.css?v=31d020be" rel="stylesheet" />
     <link href="assets/css/bo-ui-standard.css?v=817727e7" rel="stylesheet" />
     <style>
       .brand-table-wrap {
@@ -97,6 +97,13 @@
         background: #fff;
         font-size: 12px;
         font-weight: 700;
+      }
+      /* Dark: this badge stayed pure white with a #475467 label - measured with
+data-bo-theme=dark it read bg rgb(255,255,255), color rgb(71,84,103), border rgb(208,213,221). */
+      html[data-bo-theme="dark"] .provider-pricing-badge {
+        background: #383A46;
+        border-color: rgba(255, 255, 255, .14);
+        color: #D4D4D8;
       }
       .provider-charge-row {
         padding: 14px 16px !important;

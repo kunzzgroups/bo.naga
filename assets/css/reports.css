@@ -455,6 +455,17 @@ body.report-body{margin:0;background:var(--bg);color:var(--text);font-family:Int
 /* Game management pages */
 .manage-page-grid{display:grid;grid-template-columns:minmax(320px,420px) minmax(0,1fr);gap:18px;align-items:start}
 .manage-form-card,.manage-list-card{background:#FFF8EB;border:1px solid #EADCC8;border-radius:18px;box-shadow:0 8px 24px rgba(217,119,6,.06);padding:18px;min-width:0}
+/* Dark: the management card surface had no dark pair - measured on language.html with
+data-bo-theme=dark it still painted rgb(255,248,235) with a rgb(234,220,200) border while the
+card's own contents were already dark (labels rgb(217,119,6), inputs rgb(42,44,54)), so the page
+read as a cream island with dark-adapted controls inside. Five pages carry this card:
+bonus-category-item, game, language, promotion, _md-preview-bonus-title. */
+html[data-bo-theme="dark"] .manage-form-card,
+html[data-bo-theme="dark"] .manage-list-card{
+  background:#383A46 !important;  /* its sibling rule in this sheet states the cream with !important, so this one has to match the origin, not only the specificity */
+  border-color:rgba(255,255,255,.14) !important;
+  box-shadow:none !important;
+}
 .manage-form-card{position:sticky;top:82px}
 .manage-list{display:grid;gap:12px}
 .manage-card{border:1px solid #EADCC8;border-radius:18px;background:#FFF8EB;box-shadow:0 10px 26px rgba(217,119,6,.05);display:grid;grid-template-columns:118px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px;min-width:0}

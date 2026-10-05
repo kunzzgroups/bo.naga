@@ -6401,3 +6401,43 @@ the `value` setter, so `fill()` stays in sync), the open menu (5 options, 194px 
 the following card with every row hit-testable, the menu inside the last card is fully in the
 viewport once the field is scrolled to, and the panel keeps the house cream/charcoal fill with the
 amber selected row. 0 page errors.
+
+## Sweep: the three recurring bug classes, and what is left (2026-10-05)
+
+A read-only sweep of the whole back office (158 pages, every CSS sheet, every listing script) for the
+three defects this stretch kept hitting. Definitions, status and recipes, so they are not rediscovered
+page by page:
+
+**1. A dark-mode "light island"** — a rule that paints a light surface, chip or text and never got an
+`html[data-bo-theme="dark"]` counterpart. Fingerprint used by the sweep: for every light declaration whose
+selector is not dark-scoped, ask whether any dark rule shares the same subject (the rightmost compound);
+none means candidate, then measure the computed value in dark before calling it a conclusion.
+Fixed so far: the report filter strips and footers (7fcc9ac3), the VIP log select (30a19ad9), Agent
+Performance's filter card / avatar / status pill, the three report lists (b325d8be), plus
+`.cur-card` (currency-management), the bulk-wallet modal (index), `.manage-form-card`,
+`.section-title.bonus-item-strip`, `.provider-pricing-badge`, `.main-mod-footer`.
+Still open, and deliberately not half-fixed: the cream `.bonus-item-strip` band and the dark
+`.btn-label` drawn on it are ONE object — changing either alone makes the strip unreadable, so they need
+a measured pass together. Small text islands also await measurement (`.slider-upload-placeholder`,
+`reports.css`'s `.permission-empty`, the `frontend-display.html` inline colour-picker rules).
+
+**2. "All" against an endpoint that caps its own size** — the server answers with its cap (100) and still
+reports the real total, so All renders one page of rows under the *server's* page count, and clicking a
+rung then asks for "page 3 of a 10000-row page": the footer prints `20001 to 370 of 370`. Four
+protections make it correct — append the remaining pages in the size the endpoint actually served,
+recompute `totalPages` from what is held, clamp the requested page, and clamp the footer's from/to.
+Reference implementation: `vip-exp-log.js` / `vip-reward-log.js` (b8d0cd93). Fixed: those two,
+`player-game-ranking.js`, `win-lose-report.js`, `rebate-management.js` (Audit + Reconciliation tabs).
+Measured already correct: `member-management`, `operations-report`, `casino-report`,
+`main-admin/merchant-security` (chunked 500-row loop). Open: `provider-bet-report.js` (has the same
+un-clamped footer expression at `:432` and no append loop). Dead script with the same shape, loaded by no
+page: `member-deposit.js`.
+
+**3. A first column that looks like a serial but is not** — `report-table-sort.js` renumbers the first
+column only when its heading is exactly `#`, so a listing titled `ID` both prints a database key and
+silently keeps that renumbering path dead. Fixed: `transaction-report` (7ce604d4, heading `#` + row
+ordinal continuing across pages). Open: `provider-bet-report.js:449`.
+
+Delegation lesson: a brief that says "read-only" must also say "no fixes — report only". A sweep agent
+asked for a report implemented its findings in the working tree instead; the changes were correct and
+landed, but they had to be extracted, verified and landed by hand.
