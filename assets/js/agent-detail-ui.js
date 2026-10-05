@@ -3,7 +3,32 @@
   const $=(s,r=document)=>r.querySelector(s);
   const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
   if(document.body.dataset.agentDetail!=='1') return;
-  function show(section){
+  const isNewAgent=()=>new URLSearchParams(location.search).get('new')==='1';
+  /* One file serves two jobs: creating an agent (?new=1) and reviewing one (?id=N). The mode
+     cannot live in the markup - the topbar and the fixed action band are shared by both - so
+     it is applied here. It also has to be re-applied on every entry: a swap replaces the header
+     and re-derives the pinned title from the target document, and it re-runs this script each
+     time, so the call below is what a later entry sees. `agent-create-mode` is what
+     agent-detail-create.css uses to drop the tab strip and the identity summary. */
+  function applyDetailMode(){
+    const isNew=isNewAgent();
+    document.body.classList.toggle('agent-create-mode',isNew);
+    const heading=$('#agentPageTitle')||$('.report-topbar .user-title-wrap h1');
+    if(heading) heading.textContent=isNew?'Create New Agent':'Agent Details';
+    const icon=$('.report-topbar .user-title-icon i');
+    if(icon) icon.className=isNew?'bi bi-person-plus':'bi bi-person-workspace';
+    const submitLabel=$('#agentSubmitLabel');
+    if(submitLabel) submitLabel.textContent=isNew?'Create Agent':'Save Agent';
+    return isNew;
+  }
+  const isNew=applyDetailMode();
+  /* `bo:spa:content` is dispatched after the router has finished the swap - header replaced,
+     title re-derived - so this is the last word on the mode for a swap into this page. Guarded
+     on the file name because the listener outlives the navigation away from it. */
+  document.addEventListener('bo:spa:content',()=>{
+    if(String(location.pathname).split('/').pop().toLowerCase()==='agent-detail.html') applyDetailMode();
+  });
+  function show(section,opts){
     $$('.agent-detail-panel').forEach(p=>p.classList.toggle('is-active',p.dataset.agentPanel===section));
     $$('[data-agent-section]').forEach(b=>{
       const on=b.dataset.agentSection===section;
@@ -11,21 +36,22 @@
       b.setAttribute('aria-selected',on?'true':'false');
     });
     const panel=$('.agent-detail-panel.is-active');
-    if(panel) panel.scrollIntoView({block:'start',behavior:'smooth'});
+    /* Create mode has one visible panel and no tab strip, and the page should stay at the top
+       (scrolling to a panel that starts under the header pushes the title out of view). */
+    if(panel&&!(opts&&opts.noScroll)) panel.scrollIntoView({block:'start',behavior:'smooth'});
   }
-  $('#backAgentList')?.addEventListener('click',()=>{location.href='agent-management.html';});
+  /* "Back to Agents" is an anchor now (the house back-link recipe); no click handler. */
   $$('[data-agent-section]').forEach(b=>b.addEventListener('click',()=>{
-    const isNew=new URLSearchParams(location.search).get('new')==='1';
-    if(isNew && b.dataset.agentSection!=='details'){
+    const isNewMode=new URLSearchParams(location.search).get('new')==='1';
+    if(isNewMode && b.dataset.agentSection!=='details'){
       window.BO_DIALOG?.alert?.('Save the new agent first before opening this section.',{title:'Save Agent First',type:'info'});
       return;
     }
     show(b.dataset.agentSection);
   }));
   const params=new URLSearchParams(location.search);
-  if(params.get('new')==='1'){
-    if($('#agentDetailHeading')) $('#agentDetailHeading').textContent='Create New Agent';
-    show('details');
+  if(isNew){
+    show('details',{noScroll:true});
   } else {
     let requested=params.get('section')||'overview';
     if(requested==='settings') requested='details';
@@ -35,8 +61,9 @@
   }
   window.addEventListener('agent:detail-loaded',e=>{
     const a=e.detail||{};
-    const h=$('#agentDetailHeading');
-    if(h) h.textContent=(a.name||'Agent')+' · '+(a.code||'');
+    /* The toolbar no longer carries a "name · code" heading - the tab strip holds that
+       position - so this only re-applies the mode and paints the identity summary. */
+    applyDetailMode();
     const host=$('#agentDetailSummaryTop');
     if(host){
       const money=v=>'RM '+Number(v||0).toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2});

@@ -66,6 +66,7 @@ body[data-agent-detail="1"] .agent-detail-tabs{display:flex;gap:8px;flex-wrap:wr
 body[data-agent-detail="1"] .agent-detail-toolbar{position:sticky;top:72px;z-index:20;}
 @media(max-width:900px){body[data-agent-detail="1"] .agent-detail-toolbar{position:static;}body[data-agent-detail="1"] .agent-detail-tabs{justify-content:flex-start;}}
 </style><link href="assets/css/brand-agent-standard.css?v=4f68348a" rel="stylesheet"/>
+<link href="assets/css/main-admin-detail-executive.css?v=485e6656" rel="stylesheet"/>
 <link href="assets/css/bo-account-chip.css?v=c8730135" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-shell.css?v=b43bfd5f" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-legacy.css?v=8ed5566f" rel="stylesheet" />
@@ -328,8 +329,9 @@ html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-a
   border-radius:8px!important; color:var(--ad-ink)!important; font-weight:700!important;
 }
 html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-agent-detail="1"] .agent-detail-toolbar #backAgentList:hover{ background:var(--ad-well)!important; }
-</style><link href="assets/css/bo-global-quicknav.css?v=7bad56b7" rel="stylesheet" data-bo-quicknav-css="1"/></head>
-<body class="report-body brand-agent-standard bo-charcoal bo-account-chip agent-detail-page" data-agent-detail="1">
+</style><link href="assets/css/agent-detail-page.css?v=ead0c007" rel="stylesheet" />
+<link href="assets/css/bo-global-quicknav.css?v=7bad56b7" rel="stylesheet" data-bo-quicknav-css="1"/></head>
+<body class="report-body brand-agent-standard bo-charcoal bo-account-chip agent-detail-page main-admin-create-page" data-agent-detail="1">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
 <div class="report-brand">
@@ -339,12 +341,10 @@ html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-a
 </aside>
 <div class="sidebar-overlay" data-close-sidebar=""></div>
 <main class="report-main">
-<header class="report-topbar" data-bo-topbar data-bo-title="Agent Details" data-bo-icon="bi-person-workspace"></header>
+<header class="report-topbar" data-bo-topbar data-bo-title="Agent Details" data-bo-icon="bi-person-workspace" data-bo-h1-id="agentPageTitle"></header>
 <script src="assets/js/bo-topbar.js?v=a7466d81"></script>
-<section class="report-content"><div class="table-card agent-detail-toolbar mb-3">
+<section class="report-content"><div class="table-card agent-detail-toolbar mb-3" id="agentDetailToolbar">
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-<div><span class="fw-bold" id="agentDetailHeading">Agent</span>
-</div>
 <div class="agent-detail-tabs" role="tablist">
 <button class="clean-btn primary" data-agent-section="overview"><i class="bi bi-grid"></i> Overview</button>
 <button class="clean-btn" data-agent-section="details"><i class="bi bi-pencil-square"></i> Details</button>
@@ -353,12 +353,12 @@ html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-a
 <button class="clean-btn" data-agent-section="bonus"><i class="bi bi-gift"></i> Bonus / Ad Expense</button>
 <button class="clean-btn" data-agent-section="adjustments"><i class="bi bi-sliders"></i> Adjustments</button>
 <button class="clean-btn" data-agent-section="history"><i class="bi bi-clock-history"></i> Activity Log</button>
-</div> <button class="clean-btn" id="backAgentList" type="button"><i class="bi bi-arrow-left"></i> Back to Agents</button>
+</div> <a class="mad-btn mad-btn-ghost agent-toolbar-back" id="backAgentList" href="agent-management.html"><i class="bi bi-arrow-left"></i> Back to Agents</a>
 </div>
 </div><div id="agentDetailSummaryTop" class="agent-detail-summary mb-3"></div><div class="table-card mb-3" style="display:none!important"><div class="d-flex justify-content-between align-items-center mb-3"><div><h5 class="mb-1">Agents</h5><small class="text-muted">Select an agent to review players, reports, settlement and wallet.</small></div><button class="clean-btn primary" id="agentQuickAdd"><i class="bi bi-plus-lg"></i> Add Agent</button></div><div class="bo-filter-row"><div class="field wide"><label>Search</label><input class="form-control" id="agentQuickSearch" placeholder="Agent name / code / portal username"/></div><div class="field"><label>Status</label><select class="form-select" id="agentQuickStatus"><option value="">All</option><option value="1">Active</option><option value="0">Disabled</option></select></div></div><div class="brand-overview-table-wrap mt-3"><table class="report-table table-clean"><thead><tr><th>Agent</th><th>Players</th><th>Commission</th><th>Wallet</th><th>Red Share</th><th>KPI</th><th>Status</th><th>Actions</th></tr></thead><tbody id="agentQuickRows"></tbody></table></div></div><div id="agentLegacyWorkspace">
 <div class="agent-grid">
-<div class="cardx agent-detail-panel is-active agent-admin-overview" data-agent-panel="overview">
-  <div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-grid"></i></span><div><h5>Overview</h5><small>Current performance and commission summary for this agent.</small></div></div></div>
+<div class="mac-section agent-detail-panel is-active agent-admin-overview" data-agent-panel="overview">
+  <header class="mac-section-head mac-section-head-rich"><span class="mac-section-icon" aria-hidden="true"><i class="bi bi-grid"></i></span><div class="mac-section-copy"><h3>Overview</h3><p>Current performance and commission summary for this agent.</p></div></header>
   <div class="agent-admin-overview-grid" id="agentOverviewMetrics"></div>
   <div class="agent-admin-overview-lower">
     <div class="agent-admin-info-card"><h6>Agent Information</h6><div id="agentOverviewInfo" class="agent-info-list"></div></div>
@@ -371,83 +371,211 @@ html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-a
 </div>
 <div class="mt-3" id="agentList"></div>
 </div>
-<div class="cardx agent-detail-panel" data-agent-panel="details">
-<div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-pencil-square"></i></span><div><h5 id="formTitle">Agent Details</h5><small>Edit agent configuration and portal access.</small></div></div></div>
-<form class="row g-3" id="agentForm"><input id="agentId" type="hidden"/>
-<div class="col-md-4"><label class="form-label">Code</label><input class="form-control" id="agentCode" required=""/></div>
-<div class="col-md-8"><label class="form-label">Name</label><input class="form-control" id="agentName" required=""/></div>
-<div class="col-md-4"><label class="form-label">Agent Profit %</label><input class="form-control" id="commissionPercent" max="100" min="0" step="0.01" type="number" value="0"/></div>
-<div class="col-md-4"><label class="form-label">Minimum Settlement <span class="text-muted">(Root only)</span></label><input class="form-control" id="minimumSettlementAmount" min="0" step="0.01" type="number" value="0"/>
-<div class="form-text">0 = no minimum. Enforced by Spring Boot when the agent submits a
-                                    withdrawal.</div>
-</div>
-<div class="col-md-4"><label class="form-label">Status</label><select class="form-select" id="agentStatus">
-<option value="1">Active</option>
-<option value="0">Disabled</option>
-</select></div>
-<div class="col-md-6"><label class="form-label">Parent Agent (optional)</label><select class="form-select" id="parentAgentId">
-<option value="">No parent / direct agent</option>
-</select></div>
-<div class="col-md-6"><label class="form-label">Agent Portal Username</label><input autocomplete="off" class="form-control" id="loginUsername"/></div>
-<div class="col-md-6"><label class="form-label">New Portal Password</label><input autocomplete="new-password" class="form-control" id="newPassword" minlength="6" placeholder="Leave blank to keep current" type="password"/></div>
-<div class="col-12">
-<hr/><b>Red Share Mode (Win �?/ Loss +)</b>
-</div>
-<div class="col-md-6"><label class="form-label">Enabled</label><select class="form-select" id="redShareEnabled">
-<option value="0">No</option>
-<option value="1">Yes</option>
-</select></div>
-<div class="col-md-6"><label class="form-label">Daily Capital / Principal</label><input class="form-control" id="dailyCapitalAmount" min="0" step="0.01" type="number" value="0"/></div>
-<div class="col-12">
-<hr/><b>KPI Target & Reset Cycle</b>
-</div>
-<div class="col-md-4"><label class="form-label">KPI Enabled</label><select class="form-select" id="monthlyKpiEnabled">
-<option value="0">No</option>
-<option value="1">Yes</option>
-</select></div>
-<div class="col-md-4"><label class="form-label">KPI Amount</label><input class="form-control" id="monthlyKpiAmount" min="0" step="0.01" type="number" value="0"/></div>
-<div class="col-md-4"><label class="form-label">KPI Reset Cycle</label><select class="form-select" id="kpiPeriod"><option value="DAILY">Daily</option><option value="WEEKLY">Weekly (Mon-Sun)</option><option value="BIWEEKLY">Every 2 Weeks</option><option value="MONTHLY" selected>Monthly</option></select></div>
-<div class="col-md-4"><label class="form-label">KPI Basis</label><select class="form-select" id="kpiBasis">
-<option value="HOUSE_WIN">Customer Loss</option>
-<option value="TURNOVER">Turnover</option>
-</select></div>
-<div class="col-md-4"><label class="form-label">Carry Forward</label><select class="form-select" id="carryForwardEnabled">
-<option value="0">No</option>
-<option value="1">Yes</option>
-</select></div>
-<div class="col-md-4"><label class="form-label">Max Carry Amount (optional)</label><input class="form-control" id="carryForwardMaxAmount" min="0" step="0.01" type="number"/>
-</div>
-<div class="col-md-4"><label class="form-label">Max Carry Cycles (optional)</label><input class="form-control" id="carryForwardMaxMonths" min="1" step="1" type="number"/>
-</div>
-<div class="col-12">
-<hr/><b>Agent Portal Menu Access</b>
-<div class="small text-muted mt-1">Choose exactly which modules this agent account can
-                                    open. Dashboard is recommended.</div>
-<div class="row g-2 mt-1" id="agentPortalMenuAccess">
-<div class="col-md-4"><label class="form-check"><input checked="" class="form-check-input" data-agent-menu="" type="checkbox" value="dashboard"/>
-                                            Dashboard</label></div>
-<div class="col-md-4"><label class="form-check"><input checked="" class="form-check-input" data-agent-menu="" type="checkbox" value="players"/> My
-                                            Players</label></div>
-<div class="col-md-4"><label class="form-check"><input checked="" class="form-check-input" data-agent-menu="" type="checkbox" value="bet_report"/> Bet
-                                            Report</label></div>
-<div class="col-md-4"><label class="form-check"><input checked="" class="form-check-input" data-agent-menu="" type="checkbox" value="settlement"/> Settlement /
-                                            Withdraw</label></div>
-<div class="col-md-4"><label class="form-check"><input checked="" class="form-check-input" data-agent-menu="" type="checkbox" value="wallet"/> Wallet
-                                            Ledger</label></div>
-</div>
-</div>
-<div class="col-12"><button class="clean-btn primary" type="submit"><i class="bi bi-save"></i> Save Agent</button><span class="small ms-2" id="agentMsg"></span></div>
+<div class="agent-detail-panel agent-mac-panel" data-agent-panel="details">
+<!-- agent-management.js writes this node in both modes (fill / newAgent); the ladder's own
+     heading is the numbered section head below, so it stays out of the way. -->
+<span id="formTitle" hidden>Agent Details</span>
+<form class="mac-form agent-mac-form" id="agentForm"><input id="agentId" type="hidden"/>
+
+  <!-- 1. Agent Profile -->
+  <section class="mac-section">
+    <header class="mac-section-head mac-section-head-rich">
+      <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-person-vcard"></i></span>
+      <div class="mac-section-copy">
+        <h3>1. Agent Profile</h3>
+        <p>Who this agent is, where it sits in the tree, and whether the account is live.</p>
+      </div>
+      <a class="mad-btn mad-btn-ghost mac-back-section" href="agent-management.html"><i class="bi bi-arrow-left"></i> Back to Agents</a>
+    </header>
+    <div class="mac-fields agent-mac-grid-4">
+      <label class="mac-field" for="agentCode">
+        <span class="mac-label">Code <b>*</b></span>
+        <input class="form-control" id="agentCode" required="" autocomplete="off" placeholder="Example: AG1001"/>
+        <small>Unique agent code used in reports, settlement and the listing.</small>
+      </label>
+      <label class="mac-field" for="agentName">
+        <span class="mac-label">Name <b>*</b></span>
+        <input class="form-control" id="agentName" required="" autocomplete="organization" placeholder="Example: Skyline Partner"/>
+        <small>Display name shown in the agent list and activity log.</small>
+      </label>
+      <label class="mac-field" for="parentAgentId">
+        <span class="mac-label">Parent Agent</span>
+        <select class="form-select" id="parentAgentId">
+          <option value="">No parent / direct agent</option>
+        </select>
+        <small>Optional. Empty keeps this agent under the brand root.</small>
+      </label>
+      <label class="mac-field" for="agentStatus">
+        <span class="mac-label">Status</span>
+        <select class="form-select" id="agentStatus">
+          <option value="1">Active</option>
+          <option value="0">Disabled</option>
+        </select>
+        <small>Disabled agents cannot sign in to the agent portal.</small>
+      </label>
+    </div>
+  </section>
+
+  <!-- 2. Commission & Settlement -->
+  <section class="mac-section">
+    <header class="mac-section-head mac-section-head-rich">
+      <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-percent"></i></span>
+      <div class="mac-section-copy">
+        <h3>2. Commission &amp; Settlement</h3>
+        <p>How this agent earns, and the floor a withdrawal request has to clear.</p>
+      </div>
+    </header>
+    <div class="mac-fields agent-mac-grid-2">
+      <label class="mac-field" for="commissionPercent">
+        <span class="mac-label">Agent Profit %</span>
+        <input class="form-control" id="commissionPercent" max="100" min="0" step="0.01" type="number" value="0"/>
+        <small>Share of the agent's customer loss paid out as commission.</small>
+      </label>
+      <label class="mac-field" for="minimumSettlementAmount">
+        <span class="mac-label">Minimum Settlement <span class="agent-mac-hint">(Root only)</span></span>
+        <input class="form-control" id="minimumSettlementAmount" min="0" step="0.01" type="number" value="0"/>
+        <small>0 = no minimum. Enforced by Spring Boot when the agent submits a withdrawal.</small>
+      </label>
+    </div>
+  </section>
+
+  <!-- 3. KPI Target & Reset Cycle -->
+  <section class="mac-section">
+    <header class="mac-section-head mac-section-head-rich">
+      <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-bullseye"></i></span>
+      <div class="mac-section-copy">
+        <h3>3. KPI Target &amp; Reset Cycle</h3>
+        <p>Target this agent has to hit, how the cycle resets, and what carries over.</p>
+      </div>
+    </header>
+    <div class="agent-mac-stack">
+      <div class="mac-fields agent-mac-grid-4">
+        <label class="mac-field" for="monthlyKpiEnabled">
+          <span class="mac-label">KPI Enabled</span>
+          <select class="form-select" id="monthlyKpiEnabled">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </label>
+        <label class="mac-field" for="monthlyKpiAmount">
+          <span class="mac-label">KPI Amount</span>
+          <input class="form-control" id="monthlyKpiAmount" min="0" step="0.01" type="number" value="0"/>
+        </label>
+        <label class="mac-field" for="kpiPeriod">
+          <span class="mac-label">KPI Reset Cycle</span>
+          <select class="form-select" id="kpiPeriod">
+            <option value="DAILY">Daily</option>
+            <option value="WEEKLY">Weekly (Mon-Sun)</option>
+            <option value="BIWEEKLY">Every 2 Weeks</option>
+            <option value="MONTHLY" selected="">Monthly</option>
+          </select>
+        </label>
+        <label class="mac-field" for="kpiBasis">
+          <span class="mac-label">KPI Basis</span>
+          <select class="form-select" id="kpiBasis">
+            <option value="HOUSE_WIN">Customer Loss</option>
+            <option value="TURNOVER">Turnover</option>
+          </select>
+        </label>
+      </div>
+      <div class="mac-fields agent-mac-grid-3">
+        <label class="mac-field" for="carryForwardEnabled">
+          <span class="mac-label">Carry Forward</span>
+          <select class="form-select" id="carryForwardEnabled">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </label>
+        <label class="mac-field" for="carryForwardMaxAmount">
+          <span class="mac-label">Max Carry Amount</span>
+          <input class="form-control" id="carryForwardMaxAmount" min="0" step="0.01" type="number" placeholder="No limit"/>
+          <small>Optional ceiling for the carried shortfall.</small>
+        </label>
+        <label class="mac-field" for="carryForwardMaxMonths">
+          <span class="mac-label">Max Carry Cycles</span>
+          <input class="form-control" id="carryForwardMaxMonths" min="1" step="1" type="number" placeholder="No limit"/>
+          <small>Optional number of cycles a shortfall may roll over.</small>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Red Share Mode -->
+  <section class="mac-section">
+    <header class="mac-section-head mac-section-head-rich">
+      <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-arrow-left-right"></i></span>
+      <div class="mac-section-copy">
+        <h3>4. Red Share Mode</h3>
+        <p>Win (&#8722;) / Loss (+): the agent's daily capital absorbs the day's result.</p>
+      </div>
+    </header>
+    <div class="mac-fields agent-mac-grid-2">
+      <label class="mac-field" for="redShareEnabled">
+        <span class="mac-label">Enabled</span>
+        <select class="form-select" id="redShareEnabled">
+          <option value="0">No</option>
+          <option value="1">Yes</option>
+        </select>
+      </label>
+      <label class="mac-field" for="dailyCapitalAmount">
+        <span class="mac-label">Daily Capital / Principal</span>
+        <input class="form-control" id="dailyCapitalAmount" min="0" step="0.01" type="number" value="0"/>
+        <small>Capital this agent carries into each day of Red Share mode.</small>
+      </label>
+    </div>
+  </section>
+
+  <!-- 5. Portal Access -->
+  <section class="mac-section">
+    <header class="mac-section-head mac-section-head-rich">
+      <span class="mac-section-icon" aria-hidden="true"><i class="bi bi-person-badge"></i></span>
+      <div class="mac-section-copy">
+        <h3>5. Portal Access</h3>
+        <p>Agent portal login and the modules this account may open inside it.</p>
+      </div>
+    </header>
+    <div class="agent-mac-stack">
+      <div class="mac-fields agent-mac-grid-2">
+        <label class="mac-field" for="loginUsername">
+          <span class="mac-label">Agent Portal Username</span>
+          <input autocomplete="off" class="form-control" id="loginUsername" placeholder="Portal login handle"/>
+          <small>Leave blank to keep the portal account disabled.</small>
+        </label>
+        <label class="mac-field" for="newPassword">
+          <span class="mac-label">New Portal Password</span>
+          <input autocomplete="new-password" class="form-control" id="newPassword" minlength="6" placeholder="Leave blank to keep current" type="password"/>
+        </label>
+      </div>
+      <div class="mac-field agent-mac-menu-field">
+        <span class="mac-label">Agent Portal Menu Access</span>
+        <div class="agent-menu-grid" id="agentPortalMenuAccess">
+          <label class="agent-menu-opt"><input checked="" class="form-check-input" data-agent-menu="" type="checkbox" value="dashboard"/><span>Dashboard</span></label>
+          <label class="agent-menu-opt"><input checked="" class="form-check-input" data-agent-menu="" type="checkbox" value="players"/><span>My Players</span></label>
+          <label class="agent-menu-opt"><input checked="" class="form-check-input" data-agent-menu="" type="checkbox" value="bet_report"/><span>Bet Report</span></label>
+          <label class="agent-menu-opt"><input checked="" class="form-check-input" data-agent-menu="" type="checkbox" value="settlement"/><span>Settlement / Withdraw</span></label>
+          <label class="agent-menu-opt"><input checked="" class="form-check-input" data-agent-menu="" type="checkbox" value="wallet"/><span>Wallet Ledger</span></label>
+        </div>
+        <small>Choose exactly which modules this agent account can open. Dashboard is recommended.</small>
+      </div>
+    </div>
+  </section>
+
+  <footer class="mac-footer-actions agent-mac-footer">
+    <span class="agent-form-msg" id="agentMsg" role="status"></span>
+    <a class="mad-btn mad-btn-ghost" href="agent-management.html"><i class="bi bi-x-lg"></i> Cancel</a>
+    <button class="mad-btn mad-btn-navy" type="submit"><i class="bi bi-check2"></i> <span id="agentSubmitLabel">Save Agent</span></button>
+  </footer>
 </form>
 </div>
 </div>
 <div class="mt-4" hidden="" id="agentDetail">
 <div class="agent-grid">
-<div class="cardx agent-detail-panel" data-agent-panel="players">
-<div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-people"></i></span><div><h5>Assigned Players</h5><small>Players currently assigned to this agent.</small></div></div><button class="clean-btn primary" id="openAssignPlayers" type="button"><i class="bi bi-person-plus"></i> Assign Players</button></div>
+<div class="mac-section agent-detail-panel" data-agent-panel="players">
+<header class="mac-section-head mac-section-head-rich"><span class="mac-section-icon" aria-hidden="true"><i class="bi bi-people"></i></span><div class="mac-section-copy"><h3>Assigned Players</h3><p>Players currently assigned to this agent.</p></div><button class="clean-btn primary" id="openAssignPlayers" type="button"><i class="bi bi-person-plus"></i> Assign Players</button></header>
 <div class="brand-overview-table-wrap mt-3"><table class="report-table table-clean"><thead><tr><th>Player</th><th>Name</th><th>Mobile</th><th>Status</th></tr></thead><tbody id="assignedPlayerRows"></tbody></table></div>
 </div>
-<div class="cardx agent-detail-panel" data-agent-panel="settlement" style="display:none!important" aria-hidden="true">
-<div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-receipt"></i></span><div><h5>Settlement</h5><small>Review commission, KPI and payout status for the selected KPI cycle.</small></div></div></div>
+<div class="mac-section agent-detail-panel" data-agent-panel="settlement" style="display:none!important" aria-hidden="true">
+<header class="mac-section-head mac-section-head-rich"><span class="mac-section-icon" aria-hidden="true"><i class="bi bi-receipt"></i></span><div class="mac-section-copy"><h3>Settlement</h3><p>Review commission, KPI and payout status for the selected KPI cycle.</p></div></header>
 <div class="d-flex gap-2 align-items-end flex-wrap">
 <div><label class="form-label">KPI Cycle Date</label><input class="form-control" id="reportMonth" type="date"/></div><button class="clean-btn" id="loadReport"><i class="bi bi-arrow-clockwise"></i> Load Report</button><button class="clean-btn primary" id="settleMonth"><i class="bi bi-receipt"></i> Settle Cycle</button>
 </div>
@@ -457,8 +585,8 @@ html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-a
 </div>
 </div>
 <div class="agent-grid mt-3">
-<div class="cardx agent-detail-panel" data-agent-panel="portal" style="display:none!important" aria-hidden="true">
-<div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-share"></i></span><div><h5>Agent Referral / Portal</h5><small>Player registration link and Agent Portal access.</small></div></div></div>
+<div class="mac-section agent-detail-panel" data-agent-panel="portal" style="display:none!important" aria-hidden="true">
+<header class="mac-section-head mac-section-head-rich"><span class="mac-section-icon" aria-hidden="true"><i class="bi bi-share"></i></span><div class="mac-section-copy"><h3>Agent Referral / Portal</h3><p>Player registration link and Agent Portal access.</p></div></header>
 <div class="small text-muted mb-1">Agent Code</div>
 <div class="fw-bold" id="agentReferralCode">-</div><label class="form-label mt-2">Registration Link</label>
 <div class="input-group"><input class="form-control" id="agentReferralUrl" readonly=""/><button class="clean-btn input-join-btn" id="copyReferral" type="button"><i class="bi bi-copy"></i> Copy</button>
@@ -470,11 +598,8 @@ html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-a
 <div class="small text-muted mt-1">The agent logs in here using Agent Portal Username /
                                 Password configured above.</div>
 </div>
-<div class="cardx agent-detail-panel" data-agent-panel="wallet" style="display:none!important" aria-hidden="true">
-<div class="agent-section-head">
-<div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-wallet2"></i></span><div><h5>Agent Wallet</h5><small>Commission credits, payouts and manual adjustments.</small></div></div>
-<button class="clean-btn primary" id="openWalletAdjust" type="button"><i class="bi bi-plus-circle"></i> Adjust Wallet</button>
-</div>
+<div class="mac-section agent-detail-panel" data-agent-panel="wallet" style="display:none!important" aria-hidden="true">
+<header class="mac-section-head mac-section-head-rich"><span class="mac-section-icon" aria-hidden="true"><i class="bi bi-wallet2"></i></span><div class="mac-section-copy"><h3>Agent Wallet</h3><p>Commission credits, payouts and manual adjustments.</p></div><button class="clean-btn primary" id="openWalletAdjust" type="button"><i class="bi bi-plus-circle"></i> Adjust Wallet</button></header>
 <div class="agent-balance-card"><span class="agent-balance-icon"><i class="bi bi-wallet2"></i></span><div><small>Current Wallet Balance</small><strong id="agentWalletBalance">0.00</strong><span>Available Agent Wallet balance</span></div></div>
 <div class="brand-overview-table-wrap mt-3">
 <table class="report-table table-clean">
@@ -493,8 +618,8 @@ html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-a
 </div>
 </div>
 <div class="agent-grid mt-3">
-<div class="cardx agent-detail-panel" data-agent-panel="bets">
-<div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-graph-up-arrow"></i></span><div><h5>Betting & Win/Loss Report</h5><small>Betting activity, customer P/L and commission for players assigned to this agent.</small></div></div></div>
+<div class="mac-section agent-detail-panel" data-agent-panel="bets">
+<header class="mac-section-head mac-section-head-rich"><span class="mac-section-icon" aria-hidden="true"><i class="bi bi-graph-up-arrow"></i></span><div class="mac-section-copy"><h3>Betting & Win/Loss Report</h3><p>Betting activity, customer P/L and commission for players assigned to this agent.</p></div></header>
 <div class="ops-filter bo-filter-row">
 <div class="field"><label>From</label><input data-range-default="today" id="adminAgentBetFrom" type="date"/></div>
 <div class="field"><label>To</label><input id="adminAgentBetTo" type="date"/></div>
@@ -519,18 +644,18 @@ html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-a
 </table>
 </div>
 </div>
-<div class="cardx agent-detail-panel" data-agent-panel="bonus">
-  <div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-gift"></i></span><div><h5>Bonus / Advertising Expenses</h5><small>Agent bonus and advertising reimbursement activity.</small></div></div></div>
+<div class="mac-section agent-detail-panel" data-agent-panel="bonus">
+  <header class="mac-section-head mac-section-head-rich"><span class="mac-section-icon" aria-hidden="true"><i class="bi bi-gift"></i></span><div class="mac-section-copy"><h3>Bonus / Advertising Expenses</h3><p>Agent bonus and advertising reimbursement activity.</p></div></header>
   <div class="agent-admin-overview-grid" id="agentBonusExpenseSummary"></div>
   <div class="agent-admin-info-card mt-3"><div class="d-flex justify-content-between align-items-center gap-2"><div><h6 class="mb-1">Related Management</h6><small class="text-muted">Review this agent's bonus and advertising reimbursement from the dedicated Agent Management pages.</small></div><div class="d-flex gap-2 flex-wrap"><a class="clean-btn" href="agent-reimbursement-admin.html"><i class="bi bi-receipt"></i> Reimbursement / Ad Claim</a><a class="clean-btn" href="agent-promotion-admin.html"><i class="bi bi-megaphone"></i> Promotion</a></div></div></div>
 </div>
-<div class="cardx agent-detail-panel" data-agent-panel="adjustments">
-  <div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-sliders"></i></span><div><h5>Adjustments</h5><small>Manual balance adjustment and wallet ledger for this agent.</small></div></div><button class="clean-btn primary" id="openWalletAdjust2" type="button"><i class="bi bi-plus-circle"></i> Add Adjustment</button></div>
+<div class="mac-section agent-detail-panel" data-agent-panel="adjustments">
+  <header class="mac-section-head mac-section-head-rich"><span class="mac-section-icon" aria-hidden="true"><i class="bi bi-sliders"></i></span><div class="mac-section-copy"><h3>Adjustments</h3><p>Manual balance adjustment and wallet ledger for this agent.</p></div><button class="clean-btn primary" id="openWalletAdjust2" type="button"><i class="bi bi-plus-circle"></i> Add Adjustment</button></header>
   <div class="agent-balance-card"><span class="agent-balance-icon"><i class="bi bi-wallet2"></i></span><div><small>Available Balance</small><strong id="agentWalletBalance2">0.00</strong><span>Current agent wallet balance</span></div></div>
   <div class="brand-overview-table-wrap mt-3"><table class="report-table table-clean"><thead><tr><th>Time</th><th>Type</th><th>Amount</th><th>Balance</th><th>Remark</th></tr></thead><tbody id="agentWalletRows2"></tbody></table></div>
 </div>
-<div class="cardx agent-detail-panel" data-agent-panel="history">
-<div class="agent-section-head"><div class="agent-section-title"><span class="agent-section-icon"><i class="bi bi-clock-history"></i></span><div><h5>Activity Log</h5><small>Settlement and payout activity for this agent.</small></div></div></div>
+<div class="mac-section agent-detail-panel" data-agent-panel="history">
+<header class="mac-section-head mac-section-head-rich"><span class="mac-section-icon" aria-hidden="true"><i class="bi bi-clock-history"></i></span><div class="mac-section-copy"><h3>Activity Log</h3><p>Settlement and payout activity for this agent.</p></div></header>
 <div class="brand-overview-table-wrap mt-3">
 <table class="report-table table-clean">
 <thead>
@@ -578,7 +703,7 @@ html body:not(#bo-charcoal-off).report-body.bo-charcoal.agent-detail-page[data-a
 <script src="assets/js/reports.js?v=f5cb7d42"></script>
 <script src="assets/js/bo-date-range.js?v=fa37bacd"></script>
 <script src="assets/js/agent-management.js?v=a0ee3e39"></script>
-<script src="assets/js/agent-detail-ui.js?v=bf5f85ec"></script><script defer="" src="assets/js/bo-ui-standard.js?v=83c736eb"></script>
+<script src="assets/js/agent-detail-ui.js?v=225d448b"></script><script defer="" src="assets/js/bo-ui-standard.js?v=83c736eb"></script>
 <script src="assets/js/bo-theme.js?v=d78603d9"></script>
 <script src="assets/js/bo-account-chip.js?v=94cb2c63"></script>
 <script src="assets/js/bo-spa-manifest.js?v=1.0.0"></script><script src="assets/js/bo-spa.js?v=ad7d4784"></script>
