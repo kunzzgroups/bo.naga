@@ -289,16 +289,26 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       syncCategoryMsLabel();
       el.providerCategoryIds.dispatchEvent(new Event('change', { bubbles: true }));
     });
-    document.addEventListener('click', function(e){
+    /* Per-entry init of a page-private file: the handler closes over THIS entry's `parts`, and
+       the document outlives the frame - a plain addEventListener stacked one more per entry
+       (measured: game-provider-create.html +3, game-provider.html +1 at :292/:298/:758). Slot
+       replace keeps the newest closure. */
+    if(window.__boGpCatClick) document.removeEventListener('click',window.__boGpCatClick);
+    window.__boGpCatClick=function(e){
       const menu = document.getElementById('providerCategoryMenu') || parts.menu;
       if(!menu || menu.hidden) return;
       if(parts.root.contains(e.target) || menu.contains(e.target)) return;
       closeCategoryMs();
-    });
-    document.addEventListener('keydown', function(e){
+    };
+    document.addEventListener('click', window.__boGpCatClick);
+    if(window.__boGpCatEsc) document.removeEventListener('keydown',window.__boGpCatEsc);
+    window.__boGpCatEsc=function(e){
       if(e.key === 'Escape') closeCategoryMs();
-    });
-    window.addEventListener('resize', function(){ if(!(document.getElementById('providerCategoryMenu') || parts.menu).hidden) positionCategoryMsMenu(); });
+    };
+    document.addEventListener('keydown', window.__boGpCatEsc);
+    if(window.__boGpCatResize) window.removeEventListener('resize',window.__boGpCatResize);
+    window.__boGpCatResize=function(){ if(!(document.getElementById('providerCategoryMenu') || parts.menu).hidden) positionCategoryMsMenu(); };
+    window.addEventListener('resize', window.__boGpCatResize);
     window.addEventListener('scroll', function(){
       const menu = document.getElementById('providerCategoryMenu') || parts.menu;
       if(menu && !menu.hidden) positionCategoryMsMenu();
@@ -755,7 +765,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
   if(form) form.addEventListener('submit', save);
   const toggleBoPasswordBtn=document.getElementById('toggleBoPasswordBtn'); if(toggleBoPasswordBtn && el.boPassword) toggleBoPasswordBtn.addEventListener('click', ()=>{ const show=el.boPassword.type==='password'; el.boPassword.type=show?'text':'password'; toggleBoPasswordBtn.innerHTML=show?'<i class="bi bi-eye-slash"></i>':'<i class="bi bi-eye"></i>'; });
   if(el.apiActionConfigs) el.apiActionConfigs.addEventListener('input', () => { syncWalletFlowFromJson(); syncWithdrawNegativeFromJson(); syncPullLogTimingFromJson(); }); if(walletFlow) walletFlow.addEventListener('change', () => { try{ syncWalletFlowToJson(); }catch(err){ setStatus('API Action Configs JSON invalid: ' + err.message, 'error'); } }); if(withdrawNegativeAmount) withdrawNegativeAmount.addEventListener('change', () => { try{ syncWithdrawNegativeToJson(); }catch(err){ setStatus('API Action Configs JSON invalid: ' + err.message, 'error'); } });
-  if(pullLogTimingEnabled) pullLogTimingEnabled.addEventListener('change', syncPullLogTimingToJson); [pullLogWindowValue,pullLogWindowUnit,pullLogEndDelaySeconds,pullLogTimezone,pullLogDateTimeFormat].filter(Boolean).forEach(node => node.addEventListener('change', () => { if(pullLogTimingEnabled?.checked) syncPullLogTimingToJson(); })); const formatActionBtn=document.getElementById('formatActionConfigBtn'); if(formatActionBtn) formatActionBtn.addEventListener('click', formatActionConfig); if(resetBtn) resetBtn.addEventListener('click', reset); if(toggleApiDebugToolsBtn) toggleApiDebugToolsBtn.addEventListener('click', openApiDebugTools); if(closeApiDebugToolsBtn) closeApiDebugToolsBtn.addEventListener('click', closeApiDebugTools); if(apiDebugToolsModal){ apiDebugToolsModal.addEventListener('click', e => { if(e.target === apiDebugToolsModal) closeApiDebugTools(); }); } document.addEventListener('keydown', e => { if(e.key === 'Escape' && apiDebugToolsModal && apiDebugToolsModal.classList.contains('show')) closeApiDebugTools(); }); if(providerSearchInput){ providerSearchInput.addEventListener('input', render); providerSearchInput.addEventListener('search', render); } if(list) list.addEventListener('click', async e => {
+  if(pullLogTimingEnabled) pullLogTimingEnabled.addEventListener('change', syncPullLogTimingToJson); [pullLogWindowValue,pullLogWindowUnit,pullLogEndDelaySeconds,pullLogTimezone,pullLogDateTimeFormat].filter(Boolean).forEach(node => node.addEventListener('change', () => { if(pullLogTimingEnabled?.checked) syncPullLogTimingToJson(); })); const formatActionBtn=document.getElementById('formatActionConfigBtn'); if(formatActionBtn) formatActionBtn.addEventListener('click', formatActionConfig); if(resetBtn) resetBtn.addEventListener('click', reset); if(toggleApiDebugToolsBtn) toggleApiDebugToolsBtn.addEventListener('click', openApiDebugTools); if(closeApiDebugToolsBtn) closeApiDebugToolsBtn.addEventListener('click', closeApiDebugTools); if(apiDebugToolsModal){ apiDebugToolsModal.addEventListener('click', e => { if(e.target === apiDebugToolsModal) closeApiDebugTools(); }); } if(window.__boGpDebugEsc) document.removeEventListener('keydown',window.__boGpDebugEsc); window.__boGpDebugEsc=e => { if(e.key === 'Escape' && apiDebugToolsModal && apiDebugToolsModal.classList.contains('show')) closeApiDebugTools(); }; document.addEventListener('keydown', window.__boGpDebugEsc); if(providerSearchInput){ providerSearchInput.addEventListener('input', render); providerSearchInput.addEventListener('search', render); } if(list) list.addEventListener('click', async e => {
     const foldBtn=e.target.closest('[data-provider-fold]');
     if(foldBtn){
       const card=foldBtn.closest('.provider-card');

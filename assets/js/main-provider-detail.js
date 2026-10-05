@@ -494,5 +494,10 @@
     mo.observe(filtersRoot, { childList: true, subtree: true });
   }
 
-  setInterval(updateSyncLabel, 15000);
+  /* main-provider-report.js already stores this timer in a window slot and clears the previous
+     one; this file did not, and it is page-private - so the router re-runs it on every entry and
+     each entry left another 15s interval running against detached nodes for the rest of the
+     session. Same one-slot shape as its sibling. */
+  if(window.__boProviderDetailSyncTimer) clearInterval(window.__boProviderDetailSyncTimer);
+  window.__boProviderDetailSyncTimer=setInterval(updateSyncLabel, 15000);
 })();

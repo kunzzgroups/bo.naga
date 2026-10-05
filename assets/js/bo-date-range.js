@@ -115,6 +115,16 @@
      idempotent per input pair (data-range-built). One slot per document: a re-execution of
      this file replaces the previous hook so the listeners cannot stack. */
   if(window.__boDateRangeSpaBound) document.removeEventListener('bo:spa:content-mounted',window.__boDateRangeSpaBound);
-  window.__boDateRangeSpaBound=()=>PAIRS.forEach(p=>build(document.getElementById(p[0]),document.getElementById(p[1])));
+  window.__boDateRangeSpaBound=()=>{
+    /* The frame replacing the one this file built into leaves the previous entry's hosts
+       detached but its document-level listeners alive. This file's own release mechanism
+       (__boDateRangeUnbind, called at the top on a re-run) never fires on the SPA path
+       because a file several pages load is REPLAYED, not re-executed - measured 10x
+       index<->member-deposit: outside-click listeners at bo-date-range.js:97 grew by two per
+       entry (one per date pair). The hosts are detached by the time this hook fires, so this
+       is the moment to let them go. build() below is still idempotent per pair. */
+    if(window.__boDateRangeUnbind) window.__boDateRangeUnbind();
+    PAIRS.forEach(p=>build(document.getElementById(p[0]),document.getElementById(p[1])));
+  };
   document.addEventListener('bo:spa:content-mounted',window.__boDateRangeSpaBound);
 })();

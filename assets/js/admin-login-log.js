@@ -92,7 +92,13 @@
     const trigger=document.getElementById('refDateTrigger'),picker=document.getElementById('refRangePicker');if(!trigger||!picker)return;
     const [todayFrom,todayTo]=presetRange('today');refDatePicker.view=new Date(todayFrom+'T00:00:00');setDateRange(todayFrom,todayTo,'today',false);
     trigger.addEventListener('click',e=>{e.stopPropagation();picker.classList.toggle('show');refDatePicker.mode='days';renderCalendar();});
-    document.addEventListener('click',e=>{if(!e.target.closest('.ref-range-wrap'))picker.classList.remove('show');});
+    /* Document-level and the picker is a fresh node every entry: without a release this
+       registered one more outside-click handler per entry and each one kept its own detached
+       picker alive (measured: admin-login-log.js:95 +1 per entry). One slot, newest handler
+       wins - the newest picker is the only live one. */
+    if(window.__boRefPickerOutsideClick) document.removeEventListener('click',window.__boRefPickerOutsideClick);
+    window.__boRefPickerOutsideClick=e=>{if(!e.target.closest('.ref-range-wrap'))picker.classList.remove('show')};
+    document.addEventListener('click',window.__boRefPickerOutsideClick);
     document.querySelectorAll('[data-range-preset]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();const key=btn.dataset.rangePreset,[a,b]=presetRange(key);refDatePicker.view=new Date(a+'T00:00:00');setDateRange(a,b,key,true);picker.classList.remove('show');}));
     document.getElementById('refCalPrev')?.addEventListener('click',e=>{e.stopPropagation();if(refDatePicker.mode==='years')refDatePicker.yearPageStart-=12;else refDatePicker.view.setMonth(refDatePicker.view.getMonth()-1);renderCalendar();});
     document.getElementById('refCalNext')?.addEventListener('click',e=>{e.stopPropagation();if(refDatePicker.mode==='years')refDatePicker.yearPageStart+=12;else refDatePicker.view.setMonth(refDatePicker.view.getMonth()+1);renderCalendar();});

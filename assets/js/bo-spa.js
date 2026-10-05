@@ -159,6 +159,13 @@
 
   function href_of(a) { try { return new URL(a.href, location.href); } catch (e) { return null; } }
 
+  /* Same-origin test for a script src. A relative path resolves against this document and is
+     therefore ours; anything absolute on another host is a library (see collectScripts). */
+  function sameOrigin(src) {
+    try { return new URL(src, location.href).origin === location.origin; }
+    catch (e) { return false; }
+  }
+
   function here() { return location.pathname + location.search; }
 
   /* Seed what this document already has, so a swap only ever ADDS what the target page
@@ -591,6 +598,15 @@
            timers, document listeners, injected containers - and re-running them is exactly the
            duplication the first version guarded against. PAGE_KEYS is the set the current
            document loaded, updated on every swap. */
+        /* A script served from ANOTHER origin is document infrastructure, not page code: the
+           Bootstrap bundle (22 pages) and the Firebase compat pair (98 pages) are libraries,
+           and executing one a second time in the same document does not "build the page" -
+           it re-installs the library's own document listeners and replaces the global object
+           the page's earlier code still holds. Measured: re-entering agent-detail.html added
+           15 bootstrap.bundle.min.js document listeners per entry (81 -> 94 in one hop),
+           while the page's own scripts added none. A library the document has not run yet
+           still runs (EXECUTED is false), so the first arrival is unchanged. */
+        if (EXECUTED[key] && !sameOrigin(src)) return;
         if (EXECUTED[key] && PAGE_KEYS[key]) {
           /* Replayed, not re-run - unless there is NOTHING to replay. A file that first ran
              during a swap registered no DOMContentLoaded listener (readyState was already
@@ -1127,7 +1143,25 @@
           if (run[i].src) rerun[String(run[i].src).split('?')[0].split('/').pop()] = 1;
         }
         for (var j = reg.length - 1; j >= 0; j--) {
-          if (reg[j] && reg[j].s && rerun[reg[j].s]) reg.splice(j, 1);
+          if (reg[j] && reg[j].s && rerun[reg[j].s]) {
+            /* Dropping the entry is not enough: it is only THIS file's handle on the listener.
+               The head wrapper let the native registration through, so the listener stays on
+               `document` for the life of the document and keeps the re-run script's whole
+               closure alive - element references included. Measured 10x index<->member-deposit
+               with DOMDebugger.getEventListeners: member-management.js:1306 and
+               bo-seg-bounce.js:157 each gained one listener per entry (16 -> 28 document click
+               listeners over ten hops). The script runs again right below and registers a
+               fresh listener, so the old one is dead weight. Both capture phases are removed
+               because the wrapper only records `once`, not the full options object; removing a
+               listener that was never added is a no-op. */
+            try {
+              if (reg[j].t && reg[j].t.removeEventListener) {
+                reg[j].t.removeEventListener('DOMContentLoaded', reg[j].f, false);
+                reg[j].t.removeEventListener('DOMContentLoaded', reg[j].f, true);
+              }
+            } catch (e) {}
+            reg.splice(j, 1);
+          }
         }
       })();
 

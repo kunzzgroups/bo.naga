@@ -39,12 +39,22 @@
   async function saveEndpoint(form){const fd=new FormData(form);const body={id:fd.get('id')||null,gatewayId:selectedId(),actionType:form.dataset.endpointForm,enabled:form.elements.enabled.checked?1:0,httpMethod:fd.get('httpMethod'),contentType:fd.get('contentType'),path:fd.get('path'),headersTemplate:fd.get('headersTemplate')||'{}',bodyTemplate:fd.get('bodyTemplate')||'{}',successPath:fd.get('successPath'),successValues:fd.get('successValues'),messagePath:fd.get('messagePath'),transactionIdPath:fd.get('transactionIdPath'),redirectUrlPath:fd.get('redirectUrlPath'),redirectTransform:fd.get('redirectTransform'),transactionStatusPath:fd.get('transactionStatusPath')};try{await api(ep('PAYMENT_GATEWAY_ENDPOINT_SAVE'),{method:'POST',body:JSON.stringify(body)});await load();notify(form.dataset.endpointForm+' endpoint saved.');}catch(e){notify(e.message,'error');}}
   async function saveChannel(e){e.preventDefault();if(!selected)return;const body={id:$('pgChannelId').value||null,gatewayId:selected.id,displayName:$('pgChannelName').value,direction:$('pgChannelDirection').value,providerCode:$('pgChannelCode').value,status:Number($('pgChannelStatus').value),minAmount:$('pgChannelMin').value||0,maxAmount:$('pgChannelMax').value||0,sortOrder:Number($('pgChannelSort').value||0),requestVariablesJson:$('pgChannelVars').value||'{}'};try{await api(ep('PAYMENT_GATEWAY_CHANNEL_SAVE'),{method:'POST',body:JSON.stringify(body)});$('pgChannelForm').hidden=true;await load();notify('Gateway channel saved.');}catch(e){notify(e.message,'error');}}
   function loadS1PayTemplate(){resetGateway();$('pgCode').value='S1PAY';$('pgName').value='S1PAY';$('pgBaseUrl').value='https://s.s1pay.site';$('pgAdminUrl').value='https://ag.s1pay.site';$('pgStatus').value='0';$('pgDeposit').checked=true;$('pgWithdraw').checked=false;$('pgDepositChannelSelection').value='0';$('pgCredentials').value=pretty('{"username":"","password":"","token":"","secret":""}');$('pgDepositCallbackUrl').value=(location.origin+'/api/payment-gateway/callback/S1PAY');$('pgCallbackReference').value='ReferenceId|referenceId|UserReference';$('pgCallbackStatus').value='Status|status|TransactionStatus|Data.TransactionStatus';$('pgCallbackMap').value=pretty('{"1":"SUCCESS","2":"VOIDED","3":"FAILED","4":"REJECTED","5":"PROCESSING","6":"PROCESSING","7":"FAILED","8":"REFUNDED"}');$('pgCallbackVerifyMode').value='NONE';$('pgDepositStatusPollEnabled').value='1';$('pgNotes').value='S1PAY template from API v1.0.33. Payout requires SecretParam from provider; keep WITHDRAW disabled until it is supplied.';notify('S1PAY base template loaded. Save the gateway, then configure endpoints and channels.');}
-  document.addEventListener('click',e=>{
+  /* Page-private file: the router re-runs it on every entry, and the document outlives the
+     frame - each entry left another click/submit/keydown behind (measured: payment-gateway.html
+     +3 per entry, payment-gateway.js:42/47/64). One slot per binding. */
+  if(window.__boPgClick) document.removeEventListener('click',window.__boPgClick);
+  window.__boPgClick=e=>{
     const edit=e.target.closest('[data-edit-gateway]');
     if(edit){selected=gateways.find(g=>String(g.id)===String(edit.dataset.editGateway));if(selected){fillGateway(selected);renderConfig();openGatewayModal();}}
     const b=e.target.closest('[data-edit-channel]');if(b&&selected){const c=(selected.channels||[]).find(x=>String(x.id)===String(b.dataset.editChannel));editChannel(c);}
-  });
-  document.addEventListener('submit',e=>{if(e.target.matches('[data-endpoint-form]')){e.preventDefault();saveEndpoint(e.target);}});
+  };
+  document.addEventListener('click',window.__boPgClick);
+  if(window.__boPgSubmit) document.removeEventListener('submit',window.__boPgSubmit);
+  window.__boPgSubmit=e=>{if(e.target.matches('[data-endpoint-form]')){e.preventDefault();saveEndpoint(e.target);}};
+  document.addEventListener('submit',window.__boPgSubmit);
+  if(window.__boPgEsc) document.removeEventListener('keydown',window.__boPgEsc);
+  window.__boPgEsc=e=>{if(e.key==='Escape'&&$('pgGatewayModal').classList.contains('show'))closeGatewayModal();};
+  document.addEventListener('keydown',window.__boPgEsc);
   document.addEventListener('DOMContentLoaded',()=>{
     $('pgGatewayForm').addEventListener('submit',saveGateway);
     $('pgChooseLogo').addEventListener('click',()=>$('pgLogoFile').click());
@@ -61,7 +71,8 @@
     $('pgCloseModal').addEventListener('click',closeGatewayModal);
     $('pgCloseModalBottom').addEventListener('click',closeGatewayModal);
     $('pgGatewayModal').addEventListener('click',e=>{if(e.target===$('pgGatewayModal'))closeGatewayModal();});
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('pgGatewayModal').classList.contains('show'))closeGatewayModal();});
+    /* The Escape handler is bound once at file scope (the __boPgEsc slot), so it is not
+       registered again here - a second registration would stack on every entry. */
     load().catch(e=>notify(e.message,'error'));
   });
 })();

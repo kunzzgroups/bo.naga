@@ -172,17 +172,25 @@
 
   window.BO_MAIN_CURRENCY={state,code:active,set:setCurrency,load:ensureConfig,ready:ensureConfig};
 
-  document.addEventListener('click',e=>{
+  /* This file is loaded by ~158 pages but the router only skips a script the page being left
+     ALSO loads - so a hop from a page that does not (Main pages, legacy layouts) re-executes it,
+     and these two document-level bindings stacked one more each time (measured: contact-sync.html
+     +2 per entry, main-currency-runtime.js:175/181). One slot per binding: replace, never stack. */
+  if(window.__boMainCurrencyClick) document.removeEventListener('click',window.__boMainCurrencyClick);
+  window.__boMainCurrencyClick=e=>{
     const b=e.target.closest&&e.target.closest('.mre-currency-seg [data-currency],.np-currency-seg [data-currency]');
     if(!b)return;
     e.preventDefault();
     setCurrency(b.dataset.currency,true);
-  });
-  document.addEventListener('change',e=>{
+  };
+  document.addEventListener('click',window.__boMainCurrencyClick);
+  if(window.__boMainCurrencyChange) document.removeEventListener('change',window.__boMainCurrencyChange);
+  window.__boMainCurrencyChange=e=>{
     const sel=e.target.closest&&e.target.closest('select.mre-currency-select');
     if(!sel)return;
     setCurrency(sel.value,true);
-  });
+  };
+  document.addEventListener('change',window.__boMainCurrencyChange);
 
   /* SPA swap (bo-spa.js): ~158 pages load this file, so the router owns it as a SHARED script and
      never runs it again on a hop - it is absent from BO_SPA's __boScriptTimes for a swap and

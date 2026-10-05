@@ -100,15 +100,25 @@
     if(searchInput) searchInput.addEventListener('input', renderInbox);
     if(refreshBtn) refreshBtn.addEventListener('click', listenConversations);
 
-    document.addEventListener('keydown', handleTemplateHotkey);
+    /* Document-level bindings of a file the router re-runs on every entry: the document
+       outlives the frame, so a plain addEventListener left three more listeners behind each
+       time (measured: livechat.html +5 per entry, this block plus installNotificationSoundUnlock
+       below). One slot per binding - replace, never stack. */
+    if(window.__boLivechatHotkey) document.removeEventListener('keydown',window.__boLivechatHotkey);
+    window.__boLivechatHotkey=handleTemplateHotkey;
+    document.addEventListener('keydown',window.__boLivechatHotkey);
     if(editCancel) editCancel.addEventListener('click', cancelEditing);
-    document.addEventListener('click', function(e){
+    if(window.__boLivechatMsgClose) document.removeEventListener('click',window.__boLivechatMsgClose);
+    window.__boLivechatMsgClose=function(e){
       if(!e.target.closest('.livechat-msg-actions')) document.querySelectorAll('.livechat-msg-menu.show').forEach(function(m){m.classList.remove('show');});
       if(!e.target.closest('.livechat-inbox-menu,.livechat-inbox-pin')) hideInboxMenu();
-    });
-    document.addEventListener('keydown', function(e){
+    };
+    document.addEventListener('click',window.__boLivechatMsgClose);
+    if(window.__boLivechatEsc) document.removeEventListener('keydown',window.__boLivechatEsc);
+    window.__boLivechatEsc=function(e){
       if(e.key === 'Escape') hideInboxMenu();
-    });
+    };
+    document.addEventListener('keydown',window.__boLivechatEsc);
 
     if(attachBtn && fileInput){
       attachBtn.addEventListener('click', function(){ fileInput.click(); });
@@ -807,12 +817,23 @@
   }
 
   function installNotificationSoundUnlock(){
+    /* The unlock handlers remove themselves on the first interaction, but a page entered and
+       left without one kept them - and this file re-runs on every entry, so pointerdown /
+       keydown / touchstart accumulated (measured on livechat.html). One slot: the previous
+       triple is removed before the new one is armed. */
+    if(window.__boLivechatUnlock){
+      document.removeEventListener('pointerdown', window.__boLivechatUnlock, true);
+      document.removeEventListener('keydown', window.__boLivechatUnlock, true);
+      document.removeEventListener('touchstart', window.__boLivechatUnlock, true);
+    }
     const unlock = function(){
       unlockNotificationSound();
       document.removeEventListener('pointerdown', unlock, true);
       document.removeEventListener('keydown', unlock, true);
       document.removeEventListener('touchstart', unlock, true);
+      window.__boLivechatUnlock = null;
     };
+    window.__boLivechatUnlock = unlock;
     document.addEventListener('pointerdown', unlock, true);
     document.addEventListener('keydown', unlock, true);
     document.addEventListener('touchstart', unlock, true);

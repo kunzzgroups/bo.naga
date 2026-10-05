@@ -236,9 +236,15 @@
   }
   function bindAutofit(){
     publishAutofit();
-    document.addEventListener('change', function(e){
+    /* This file is in SHARED_REPLAY and is re-executed whenever the page being left does not
+       load it, so `bindAutofit` runs again on re-entry; the listener is on `document`, which is
+       never swapped. One slot on window - replace, never stack (measured:
+       report-table-split.js:239 +1 per entry on report pages). */
+    if(window.__boAutofitChangeBound) document.removeEventListener('change',window.__boAutofitChangeBound);
+    window.__boAutofitChangeBound=function(e){
       if(e.target && e.target.closest && e.target.closest('.mad-footer')) publishAutofit();
-    });
+    };
+    document.addEventListener('change',window.__boAutofitChangeBound);
     publishAutofit();
   }
 

@@ -1,4 +1,9 @@
 (function(){
+  /* Release slot, same shape as bo-date-range.js: the previous entry's hosts are detached by the
+     time the content-mounted hook fires, but the outside-click listener this file put on
+     `document` for each of them stayed (measured: +1 per entry on bank-deposit-usage.html). */
+  const unbinds=[];
+  window.__boDateRangeBankUsageUnbind=()=>{ unbinds.forEach(fn=>fn()); unbinds.length=0; };
   const PAIRS=[['betFrom','betTo'],['txFrom','txTo'],['sessionFrom','sessionTo'],['ledgerFrom','ledgerTo'],['casinoFrom','casinoTo'],['reportFrom','reportTo'],['manualFrom','manualTo'],['wlFrom','wlTo'],['depositFrom','depositTo'],['withdrawFrom','withdrawTo'],['usageFrom','usageTo']];
   const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const pad=n=>String(n).padStart(2,'0');
@@ -59,13 +64,19 @@
     monthBtn.addEventListener('click',e=>{e.stopPropagation();mode=mode==='months'?'days':'months';render()});yearBtn.addEventListener('click',e=>{e.stopPropagation();yearPageStart=view.getFullYear()-5;mode=mode==='years'?'days':'years';render()});
     monthGrid.addEventListener('click',e=>{const b=e.target.closest('[data-month]');if(!b)return;const selectedMonth=Number(b.dataset.month),selectedYear=view.getFullYear();view=new Date(selectedYear,selectedMonth,1);commit(new Date(selectedYear,selectedMonth,1),new Date(selectedYear,selectedMonth+1,0));mode='days';render();pop.classList.remove('show')});
     yearGrid.addEventListener('click',e=>{const b=e.target.closest('[data-year]');if(!b)return;const selectedYear=Number(b.dataset.year);view=new Date(selectedYear,0,1);commit(new Date(selectedYear,0,1),new Date(selectedYear,11,31));mode='days';render();pop.classList.remove('show')});
-    document.addEventListener('click',e=>{const path=typeof e.composedPath==='function'?e.composedPath():[];if(!host.contains(e.target)&&!path.includes(host))pop.classList.remove('show')});syncText();render();
+    const outsideClick=e=>{const path=typeof e.composedPath==='function'?e.composedPath():[];if(!host.contains(e.target)&&!path.includes(host))pop.classList.remove('show')};
+    document.addEventListener('click',outsideClick);
+    unbinds.push(()=>document.removeEventListener('click',outsideClick));
+    syncText();render();
   }
   /* SPA: build on every entry, before the first paint - the DOMContentLoaded boot alone leaves
      the raw inputs on screen for the whole script window, and a run that happened during a swap
      registers no listener at all. One slot per document; build() is idempotent per pair. */
   if(window.__boDateRangeBankUsageSpaBound) document.removeEventListener('bo:spa:content-mounted',window.__boDateRangeBankUsageSpaBound);
-  window.__boDateRangeBankUsageSpaBound=()=>PAIRS.forEach(p=>build(document.getElementById(p[0]),document.getElementById(p[1])));
+  window.__boDateRangeBankUsageSpaBound=()=>{
+    if(window.__boDateRangeBankUsageUnbind) window.__boDateRangeBankUsageUnbind();
+    PAIRS.forEach(p=>build(document.getElementById(p[0]),document.getElementById(p[1])));
+  };
   document.addEventListener('bo:spa:content-mounted',window.__boDateRangeBankUsageSpaBound);
   document.addEventListener('DOMContentLoaded',()=>PAIRS.forEach(p=>build(document.getElementById(p[0]),document.getElementById(p[1]))));
 })();

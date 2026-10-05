@@ -105,6 +105,14 @@
   // auth.js re-injects the whole chip from its own markup on every /me refresh; re-apply on
   // those structural reinjects only, so a click in flight is never disturbed.
   new MutationObserver(run).observe(host,{childList:true});
+  /* Document-level, so it cannot be left to the element marker above: that marker lives on the
+     topbar host, and the router replaces the whole topbar with a clone on every swap - so
+     `bind()` runs again on the next entry and registered one more listener every time
+     (measured 10x index<->member-deposit: bo-account-chip.js:97 grew by one per entry). One
+     slot on window, the pattern bo-date-range and friends already use: the handler is one
+     function, so re-binding is replace, not stack. */
+  if(window.__boAccountChipProfileBound) document.removeEventListener('bo:profile-updated',window.__boAccountChipProfileBound);
+  window.__boAccountChipProfileBound=run;
   document.addEventListener('bo:profile-updated',run);
   setTimeout(enhance,80);
   setTimeout(enhance,400);

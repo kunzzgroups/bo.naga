@@ -220,7 +220,11 @@
       hideActTip();
     });
   }
-  document.addEventListener('click',e=>{
+  /* Page-private file re-run on every entry; the document outlives the frame - each entry left
+     another click handler (measured: promotion-debug.html +1 per entry at :223). Slot: the
+     newest closure wins (the status track and rows it works on are this entry's). */
+  if(window.__boPlClick) document.removeEventListener('click',window.__boPlClick);
+  window.__boPlClick=e=>{
     const statusTab=e.target.closest('[data-pl-status]');
     if(statusTab&&statusTrack()?.contains(statusTab)){
       e.preventDefault();
@@ -236,9 +240,14 @@
     }
     const b=e.target.closest('[data-act]');
     if(b){hideActTip();const tr=b.closest('tr');action(tr.dataset.id,b.dataset.act);}
-  });
-  window.addEventListener('scroll',hideActTip,true);
-  window.addEventListener('resize',hideActTip);
+  };
+  document.addEventListener('click',window.__boPlClick);
+  if(window.__boPlScroll) window.removeEventListener('scroll',window.__boPlScroll,true);
+  window.__boPlScroll=hideActTip;
+  window.addEventListener('scroll',window.__boPlScroll,true);
+  if(window.__boPlResize) window.removeEventListener('resize',window.__boPlResize);
+  window.__boPlResize=hideActTip;
+  window.addEventListener('resize',window.__boPlResize);
   $('dbgKeyword')?.addEventListener('keydown',e=>{if(e.key==='Enter'){page=0;load();}});
   $('dbgPageSize')?.addEventListener('change',()=>{page=0;paintRows(lastRows);});
 
