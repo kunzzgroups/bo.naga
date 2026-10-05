@@ -6443,3 +6443,28 @@ ordinal continuing across pages). Fixed last: `provider-bet-report.js:449` (f747
 Delegation lesson: a brief that says "read-only" must also say "no fixes — report only". A sweep agent
 asked for a report implemented its findings in the working tree instead; the changes were correct and
 landed, but they had to be extracted, verified and landed by hand.
+
+## The sidebar rail: one padding per row, pin space only where a pin can appear (2026-10-05)
+
+`bo-global-quicknav.css` reserved `.report-nav a[data-menu-key]{padding-right:38px}` for the
+`.bo-sidebar-pin` button (26px wide at `right:9px`). Only `<a>` rows can carry a pin — auth.js emits
+`data-menu-key` on plain links and on the `nav-group-direct` anchors, never on the group `<button>`s —
+so one rail read 38px on the Member row and 12px on the group button beside it. Reported by the user as
+"padding 与其他页面不一样". Measured on index.html before the fix: `a.nav-group-btn` =
+`10px 38px 10px 12px`, `button.nav-group-btn` = `11px 12px`, both 209x44 — across pages the same row was
+identical (member-detail.html: same 38px), so this was a per-row-type difference, not per-page drift.
+
+- The row padding is stated once in `bo-shell.css`: `10px 12px` (the 10 that every module sheet that
+  pins the row already used — main-dashboard-executive.css:168, main-admin-detail-executive.css:154,
+  menu-management-executive.css:111, menu-permission-executive.css:268,
+  brand-overview-executive.css:206) plus `padding-right:38px` for `a[data-menu-key]`, where a pin exists.
+  After: direct row `10px 38px 10px 12px` (unchanged), group row `10px 12px` (the stray 1px gone), both
+  239x44 in the harness.
+- Mini state: the module sheets' `10px 12px!important` outranks reports.css's own
+  `body.sidebar-mini .nav-group-btn{padding:12px 0}` and its `justify-content:center`, so the collapsed
+  rail lost its centring on exactly those pages. `bo-shell.css` now states `padding:12px 0;
+  justify-content:center` inside the same guard. Not click-verified yet — the read-only probe cannot
+  toggle the rail (it adds the class by hand and the rail re-renders over it).
+- `bo-global-quicknav.css` keeps only `position:relative` (the pin's anchor); its 38px reserve moved to
+  the shell. `scripts/shell-drift-baseline.json` went 2616 → 2615 declarations, one entry removed with
+  its declaration, and `check-shell-drift.js` reports OK.
