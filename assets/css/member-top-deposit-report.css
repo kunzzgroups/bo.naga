@@ -1,1 +1,10 @@
 .mtd-scroll{overflow:auto;max-height:calc(100vh - 330px)}.mtd-scroll .report-table{min-width:2350px}.mtd-scroll th{white-space:nowrap}.mtd-scroll td{white-space:nowrap}.mtd-scroll tbody tr:last-child td{font-weight:600}.mtd-negative{color:#dc3545}.mtd-positive{color:#198754}
+
+/* Member Top Deposit only: match the current Agent Performance report shell/filter rhythm. */
+.member-top-deposit-report-page .report-content{min-width:0}
+.member-top-deposit-report-page .filter-card{position:relative;z-index:20;overflow:visible!important}
+.member-top-deposit-report-page .filter-card .bo-filter-row{display:grid!important;grid-template-columns:minmax(320px,1.55fr) minmax(220px,.95fr)!important;gap:10px!important;align-items:end!important}
+.member-top-deposit-report-page .filter-card .field{min-width:0!important}
+.member-top-deposit-report-page .filter-card #mtdSort{width:100%!important;min-width:0!important}
+.member-top-deposit-report-page .table-card{min-width:0}
+@media(max-width:700px){.member-top-deposit-report-page .filter-card .bo-filter-row{grid-template-columns:1fr!important}}
