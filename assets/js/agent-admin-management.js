@@ -371,7 +371,12 @@ async function claimPage(){
   render(true);
 }
 async function payoutPage(){
-  let rows=await settlementData(),currentPage=1;
+  /* SPA-safe guard: the settlement request is asynchronous. If navigation changes while it is
+     in flight, never render into the DOM of the next page. */
+  const pageAtStart=currentPage();
+  let rows=await settlementData(),currentPageNo=1;
+  if(currentPage()!==pageAtStart||pageAtStart!=='agent-payout-admin.html'||!$('agentPayoutMetrics')||!$('agentPayoutRows'))return;
+  let currentPage=currentPageNo;
   const render=resetPage=>{
     if(resetPage)currentPage=1;
     const q=($('agentPayoutSearch')?.value||'').toLowerCase(),st=$('agentPayoutStatus')?.value||'', [from,to]=range('agentPayoutFrom','agentPayoutTo');
@@ -425,12 +430,17 @@ async function promotionPage(){
 
 const AGENT_ADMIN_PAGES={'agent-management.html':1,'agent-commission-admin.html':1,'agent-payout-admin.html':1,'agent-settlement-admin.html':1,'agent-reimbursement-admin.html':1,'agent-promotion-admin.html':1};
 async function init(){
+  const requestedPage=currentPage();
   /* Shared by six pages, so a swap between two of them keeps the already-executed copy and runs
      only its registered listeners - and the listener below fires on EVERY swap, including into
      pages that are not ours. Leave before any DOM work when the document that just arrived is
      not one of the six. */
-  if(!AGENT_ADMIN_PAGES[currentPage()])return;
-  BO_AUTH.requireLogin();await BO_AUTH.refreshMe();stabilizeAgentAdminDropdowns();const p=currentPage();try{if(p==='agent-management.html')await agentsPage();else if(p==='agent-commission-admin.html')await commissionPage();else if(p==='agent-settlement-admin.html')await settlementPage();else if(p==='agent-reimbursement-admin.html')await claimPage();else if(p==='agent-payout-admin.html')await payoutPage();else if(p==='agent-promotion-admin.html')await promotionPage();}catch(e){console.error(e);window.BO_DIALOG?.alert?.(e.message,{title:'Agent Management',type:'error'});}finally{stabilizeAgentAdminDropdowns();}}
+  if(!AGENT_ADMIN_PAGES[requestedPage])return;
+  BO_AUTH.requireLogin();await BO_AUTH.refreshMe();
+  /* refreshMe() is asynchronous. A fast SPA tab/page switch can complete before it returns;
+     in that case this is an old page boot and must not touch the newly mounted page. */
+  if(currentPage()!==requestedPage)return;
+  stabilizeAgentAdminDropdowns();const p=requestedPage;try{if(p==='agent-management.html')await agentsPage();else if(p==='agent-commission-admin.html')await commissionPage();else if(p==='agent-settlement-admin.html')await settlementPage();else if(p==='agent-reimbursement-admin.html')await claimPage();else if(p==='agent-payout-admin.html')await payoutPage();else if(p==='agent-promotion-admin.html')await promotionPage();}catch(e){console.error(e);window.BO_DIALOG?.alert?.(e.message,{title:'Agent Management',type:'error'});}finally{stabilizeAgentAdminDropdowns();}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 /* Every entry, not only the first. Measured from promotion.html -> Agents -> its tabs: the FIRST
    tab rendered, and every later one showed no cards and no rows until a reload. This file had
