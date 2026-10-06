@@ -370,14 +370,19 @@ async function claimPage(){
   };
   render(true);
 }
-async function payoutPage(){
-  /* SPA-safe guard: the settlement request is asynchronous. If navigation changes while it is
-     in flight, never render into the DOM of the next page. */
+async function payoutPage(runToken){
+  /* SPA-safe guard: pathname alone is not enough. A rapid Payout -> other tab -> Payout cycle can
+     return to the same pathname while an older async/render callback is still alive. The run token
+     makes every callback from an older mount inert, and DOM presence is rechecked before each render. */
   const pageAtStart=currentRoutePage();
+  const isActive=()=>window.__boAgentAdminRunToken===runToken&&currentRoutePage()===pageAtStart&&pageAtStart==='agent-payout-admin.html';
   let rows=await settlementData(),currentPageNo=1;
-  if(currentRoutePage()!==pageAtStart||pageAtStart!=='agent-payout-admin.html'||!$('agentPayoutMetrics')||!$('agentPayoutRows'))return;
+  if(!isActive()||!$('agentPayoutMetrics')||!$('agentPayoutRows'))return;
   let currentPage=currentPageNo;
   const render=resetPage=>{
+    if(!isActive())return;
+    const metricsEl=$('agentPayoutMetrics'),rowsEl=$('agentPayoutRows'),showingEl=$('agentPayoutShowing'),pagerEl=$('agentPayoutPager');
+    if(!metricsEl||!rowsEl||!showingEl||!pagerEl)return;
     if(resetPage)currentPage=1;
     const q=($('agentPayoutSearch')?.value||'').toLowerCase(),st=$('agentPayoutStatus')?.value||'', [from,to]=range('agentPayoutFrom','agentPayoutTo');
     const base=rows.filter(x=>(!q||[x.id,x.agentCode,x.agentName].some(v=>String(v||'').toLowerCase().includes(q)))&&inRange(x.createdAt,from,to));
@@ -386,13 +391,13 @@ async function payoutPage(){
     document.querySelector('[data-status-count="all"]')?.replaceChildren(document.createTextNode('('+base.length+')'));
     const filtered=base.filter(x=>!st||stOf(x)===st);
     const poPending=filtered.filter(x=>stOf(x)==='PENDING');
-    $('agentPayoutMetrics').innerHTML=metric('bi-people','Pending Count',whole(poPending.length),'Overview total')+metric('bi-cash-stack','Pending Amount','RM '+money(poPending.reduce((a,x)=>a+Number(x.requestedAmount||0),0)),'Overview total')+metric('bi-check2-circle','Approved',whole(filtered.filter(x=>stOf(x)==='APPROVED').length),'Selected period')+metric('bi-wallet2','Paid',whole(filtered.filter(x=>stOf(x)==='PAID').length),'Selected period');
+    metricsEl.innerHTML=metric('bi-people','Pending Count',whole(poPending.length),'Overview total')+metric('bi-cash-stack','Pending Amount','RM '+money(poPending.reduce((a,x)=>a+Number(x.requestedAmount||0),0)),'Overview total')+metric('bi-check2-circle','Approved',whole(filtered.filter(x=>stOf(x)==='APPROVED').length),'Selected period')+metric('bi-wallet2','Paid',whole(filtered.filter(x=>stOf(x)==='PAID').length),'Selected period');
     const size=pageSizeOf('agentPayoutPageSize','agentPayoutRows'),total=filtered.length,totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
     if(currentPage>totalPages)currentPage=totalPages;
     const start=Number.isFinite(size)?(currentPage-1)*size:0,pageRows=Number.isFinite(size)?filtered.slice(start,start+size):filtered;
-    $('agentPayoutRows').innerHTML=pageRows.map(x=>'<tr><td>#'+esc(x.id)+'</td><td><b>'+esc(x.agentName||'-')+'</b><small class="d-block">'+esc(x.agentCode||'')+'</small></td><td>'+esc(dt(x.createdAt))+'</td><td>RM '+money(x.requestedAmount)+'</td><td>'+(x.bankName?esc(x.bankName)+'<small class="d-block">**** '+esc(String(x.bankAccountNumber||'').slice(-4))+'</small>':'Registered payout account')+'</td><td>'+status(x.settlementStatus)+'</td><td>'+esc(x.paymentReference||'-')+'</td><td>'+(String(x.settlementStatus).toUpperCase()==='APPROVED'?'<button class="pay-btn" data-pay="'+x.id+'" title="Mark Paid"><i class="bi bi-cash-stack"></i></button>':'-')+'</td></tr>').join('')||'<tr><td colspan="8" class="table-empty">No payout requests.</td></tr>';
-    $('agentPayoutShowing').textContent='Showing '+(total?start+1:0)+' to '+(total?Math.min(start+pageRows.length,total):0)+' of '+total+' entries';
-    $('agentPayoutPager').innerHTML=pageButtons(currentPage,totalPages,'payout-page','Payout table');
+    rowsEl.innerHTML=pageRows.map(x=>'<tr><td>#'+esc(x.id)+'</td><td><b>'+esc(x.agentName||'-')+'</b><small class="d-block">'+esc(x.agentCode||'')+'</small></td><td>'+esc(dt(x.createdAt))+'</td><td>RM '+money(x.requestedAmount)+'</td><td>'+(x.bankName?esc(x.bankName)+'<small class="d-block">**** '+esc(String(x.bankAccountNumber||'').slice(-4))+'</small>':'Registered payout account')+'</td><td>'+status(x.settlementStatus)+'</td><td>'+esc(x.paymentReference||'-')+'</td><td>'+(String(x.settlementStatus).toUpperCase()==='APPROVED'?'<button class="pay-btn" data-pay="'+x.id+'" title="Mark Paid"><i class="bi bi-cash-stack"></i></button>':'-')+'</td></tr>').join('')||'<tr><td colspan="8" class="table-empty">No payout requests.</td></tr>';
+    showingEl.textContent='Showing '+(total?start+1:0)+' to '+(total?Math.min(start+pageRows.length,total):0)+' of '+total+' entries';
+    pagerEl.innerHTML=pageButtons(currentPage,totalPages,'payout-page','Payout table');
     evenFillTableRows('agentPayoutRows','agentPayoutPageSize',render);
   };
   ['agentPayoutSearch','agentPayoutFrom','agentPayoutTo','agentPayoutStatus'].forEach(id=>$(id)?.addEventListener(id==='agentPayoutSearch'?'input':'change',()=>render(true)));
@@ -431,6 +436,8 @@ async function promotionPage(){
 const AGENT_ADMIN_PAGES={'agent-management.html':1,'agent-commission-admin.html':1,'agent-payout-admin.html':1,'agent-settlement-admin.html':1,'agent-reimbursement-admin.html':1,'agent-promotion-admin.html':1};
 async function init(){
   const requestedPage=currentRoutePage();
+  const runToken=(window.__boAgentAdminRunToken||0)+1;
+  window.__boAgentAdminRunToken=runToken;
   /* Shared by six pages, so a swap between two of them keeps the already-executed copy and runs
      only its registered listeners - and the listener below fires on EVERY swap, including into
      pages that are not ours. Leave before any DOM work when the document that just arrived is
@@ -439,8 +446,8 @@ async function init(){
   BO_AUTH.requireLogin();await BO_AUTH.refreshMe();
   /* refreshMe() is asynchronous. A fast SPA tab/page switch can complete before it returns;
      in that case this is an old page boot and must not touch the newly mounted page. */
-  if(currentRoutePage()!==requestedPage)return;
-  stabilizeAgentAdminDropdowns();const p=requestedPage;try{if(p==='agent-management.html')await agentsPage();else if(p==='agent-commission-admin.html')await commissionPage();else if(p==='agent-settlement-admin.html')await settlementPage();else if(p==='agent-reimbursement-admin.html')await claimPage();else if(p==='agent-payout-admin.html')await payoutPage();else if(p==='agent-promotion-admin.html')await promotionPage();}catch(e){console.error(e);window.BO_DIALOG?.alert?.(e.message,{title:'Agent Management',type:'error'});}finally{stabilizeAgentAdminDropdowns();}}
+  if(currentRoutePage()!==requestedPage||window.__boAgentAdminRunToken!==runToken)return;
+  stabilizeAgentAdminDropdowns();const p=requestedPage;try{if(p==='agent-management.html')await agentsPage();else if(p==='agent-commission-admin.html')await commissionPage();else if(p==='agent-settlement-admin.html')await settlementPage();else if(p==='agent-reimbursement-admin.html')await claimPage();else if(p==='agent-payout-admin.html')await payoutPage(runToken);else if(p==='agent-promotion-admin.html')await promotionPage();}catch(e){console.error(e);window.BO_DIALOG?.alert?.(e.message,{title:'Agent Management',type:'error'});}finally{stabilizeAgentAdminDropdowns();}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 /* Every entry, not only the first. Measured from promotion.html -> Agents -> its tabs: the FIRST
    tab rendered, and every later one showed no cards and no rows until a reload. This file had
