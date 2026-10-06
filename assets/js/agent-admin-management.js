@@ -235,10 +235,15 @@ function stabilizeAgentAdminDropdowns(){
   }
 }
 
-async function agentsPage(){
+function agentPageActive(runToken,page){return window.__boAgentAdminRunToken===runToken&&currentRoutePage()===page;}
+
+async function agentsPage(runToken){
   let rows=await loadAgents();
+  const isActive=()=>agentPageActive(runToken,'agent-management.html');
+  if(!isActive())return;
   let currentPage=1;
   const render=(resetPage)=>{
+    if(!isActive())return;
     if(resetPage)currentPage=1;
     const q=($('adminAgentSearch')?.value||'').toLowerCase(),st=$('adminAgentStatus')?.value||'', [from,to]=range('adminAgentFrom','adminAgentTo');
     const base=rows.filter(a=>(!q||[a.code,a.name,a.loginUsername].some(v=>String(v||'').toLowerCase().includes(q)))&&inRange(a.createdAt,from,to));
@@ -260,6 +265,7 @@ async function agentsPage(){
     $('adminAgentsPager').innerHTML=pageButtons(currentPage,totalPages,'agent-page','Agent table');
     evenFillTableRows('adminAgentsRows','adminAgentsPageSize',render);
   };
+  if(!isActive()||!$('adminAgentsPager'))return;
   $('adminAgentsPager').addEventListener('click',e=>{const b=e.target.closest('[data-agent-page]');if(!b||b.disabled)return;currentPage=Number(b.dataset.agentPage)||1;render(false);});
   $('adminAgentsPageSize')?.addEventListener('change',()=>{clearLockedAutoSize('adminAgentsRows');render(true);});
   bindAutoFitPageSize('adminAgentsPageSize','adminAgentsRows',render);
@@ -285,10 +291,13 @@ async function agentsPage(){
   render(true);
 }
 
-async function commissionPage(){
+async function commissionPage(runToken){
   const agents=await loadAgents();
+  const isActive=()=>agentPageActive(runToken,'agent-commission-admin.html');
+  if(!isActive())return;
   let currentPage=1;
   async function render(resetPage){
+    if(!isActive())return;
     if(resetPage)currentPage=1;
     const q=($('agentCommissionSearch')?.value||'').toLowerCase(),[from,to]=range('agentCommissionFrom','agentCommissionTo');
     const list=agents.filter(a=>!q||[a.code,a.name].some(v=>String(v||'').toLowerCase().includes(q)));
@@ -303,6 +312,7 @@ async function commissionPage(){
       },{});
       return {a,r};
     }));
+    if(!isActive())return;
     let totalBet=0,pl=0,com=0;
     reports.forEach(x=>{totalBet+=Number(x.r.totalTurnover||0);pl+=Number(x.r.customerLoss||0);com+=Number(x.r.availableCommission||0)});
     $('agentCommissionMetrics').innerHTML=metric('bi-cash-stack','Total Bet','RM '+money(totalBet),'Selected KPI cycles')+metric('bi-graph-up-arrow','Customer P/L','RM '+money(pl),'Loss + / Win -')+metric('bi-percent','Commission','RM '+money(com),'Available commission')+metric('bi-people','Agents',whole(reports.length),'Selected agents');
@@ -327,13 +337,16 @@ async function commissionPage(){
   await render(true);
 }
 async function settlementData(){return await req('/api/admin/brand-agent/settlements')||[]}
-async function settlementPage(){let rows=await settlementData(),currentPage=1;const render=resetPage=>{if(resetPage)currentPage=1;const q=($('agentSettlementAdminSearch')?.value||'').toLowerCase(),st=$('agentSettlementAdminStatus')?.value||'', [from,to]=range('agentSettlementAdminFrom','agentSettlementAdminTo');const base=rows.filter(x=>(!q||[x.id,x.agentCode,x.agentName].some(v=>String(v||'').toLowerCase().includes(q)))&&inRange(x.createdAt,from,to));const stOf=x=>String(x.settlementStatus||'').toUpperCase();['PENDING','APPROVED','PAID','REJECTED'].forEach(s=>{document.querySelector('[data-status-count="'+s+'"]')?.replaceChildren(document.createTextNode('('+base.filter(x=>stOf(x)===s).length+')'))});document.querySelector('[data-status-count="all"]')?.replaceChildren(document.createTextNode('('+base.length+')'));const filtered=base.filter(x=>!st||stOf(x)===st);const pending=filtered.filter(x=>String(x.settlementStatus).toUpperCase()==='PENDING');$('agentSettlementMetrics').innerHTML=metric('bi-people','Pending Count',whole(pending.length),'Overview total')+metric('bi-cash-stack','Pending Amount','RM '+money(pending.reduce((a,x)=>a+Number(x.requestedAmount||0),0)),'Overview total')+metric('bi-check2-circle','Approved',whole(filtered.filter(x=>String(x.settlementStatus).toUpperCase()==='APPROVED').length),'Selected period')+metric('bi-wallet2','Paid',whole(filtered.filter(x=>String(x.settlementStatus).toUpperCase()==='PAID').length),'Selected period');const size=pageSizeOf('agentSettlementAdminPageSize','agentSettlementAdminRows'),total=filtered.length,totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));if(currentPage>totalPages)currentPage=totalPages;const start=Number.isFinite(size)?(currentPage-1)*size:0,pageRows=Number.isFinite(size)?filtered.slice(start,start+size):filtered;$('agentSettlementAdminRows').innerHTML=pageRows.map(x=>`<tr><td>${esc(dt(x.createdAt))}</td><td><b>${esc(x.agentName||'-')}</b><small class="d-block">${esc(x.agentCode||'')}</small></td><td>${esc(x.periodFrom||x.settlementMonth)} - ${esc(x.periodTo||'')}</td><td>RM ${money(x.totalTurnover)}</td><td class="${Number(x.houseWin||0)>=0?'money-positive':'money-negative'}">RM ${money(x.houseWin)}</td><td><b>RM ${money(x.requestedAmount)}</b></td><td>${status(x.settlementStatus)}</td><td><div class="agent-approval-actions">${String(x.settlementStatus).toUpperCase()==='PENDING'?`<button class="approve-btn" data-settle-approve="${x.id}" title="Approve"><i class="bi bi-check-lg"></i></button><button class="reject-btn" data-settle-reject="${x.id}" title="Reject"><i class="bi bi-x-lg"></i></button>`:''}</div></td></tr>`).join('')||'<tr><td colspan="8" class="table-empty">No settlement requests.</td></tr>';$('agentSettlementAdminShowing').textContent='Showing '+(total?start+1:0)+' to '+(total?Math.min(start+pageRows.length,total):0)+' of '+total+' entries';$('agentSettlementAdminPager').innerHTML=pageButtons(currentPage,totalPages,'settlement-page','Settlement table');evenFillTableRows('agentSettlementAdminRows','agentSettlementAdminPageSize',render);};['agentSettlementAdminSearch','agentSettlementAdminFrom','agentSettlementAdminTo','agentSettlementAdminStatus'].forEach(id=>$(id)?.addEventListener(id==='agentSettlementAdminSearch'?'input':'change',()=>render(true)));$('agentSettlementAdminPageSize')?.addEventListener('change',()=>{clearLockedAutoSize('agentSettlementAdminRows');render(true);});$('agentSettlementAdminPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-settlement-page]');if(!b||b.disabled)return;currentPage=Number(b.dataset.settlementPage)||1;render(false);});bindAutoFitPageSize('agentSettlementAdminPageSize','agentSettlementAdminRows',render);document.querySelectorAll('[data-status-pill]').forEach(tab=>tab.addEventListener('click',()=>{const value=tab.dataset.statusPill??'';const select=$('agentSettlementAdminStatus');if(select){select.value=value;select.dispatchEvent(new Event('change',{bubbles:true}));}document.querySelectorAll('[data-status-pill]').forEach(x=>{const on=x===tab;x.classList.toggle('is-active',on);x.setAttribute('aria-pressed',String(on));});}));const settlementStatusTrack=document.querySelector('.agent-status-tabs');if(settlementStatusTrack&&window.BO_SEG_BOUNCE){window.BO_SEG_BOUNCE.mount(settlementStatusTrack,{button:':scope > .bo-tx-tab',anim:'bounce'});}$('agentSettlementAdminRows').onclick=async e=>{const ap=e.target.closest('[data-settle-approve]'),rj=e.target.closest('[data-settle-reject]');if(ap){await req('/api/admin/brand-agent/settlement/'+ap.dataset.settleApprove+'/approve',{method:'POST',body:'{}'});rows=await settlementData();render(true)}if(rj){const reason=await BO_DIALOG.prompt('Enter rejection reason','',{title:'Reject Settlement',inputLabel:'Reason'});if(reason){await req('/api/admin/brand-agent/settlement/'+rj.dataset.settleReject+'/reject',{method:'POST',body:JSON.stringify({reason})});rows=await settlementData();render(true)}}};render(true);}
+async function settlementPage(runToken){let rows=await settlementData();const isActive=()=>agentPageActive(runToken,'agent-settlement-admin.html');if(!isActive())return;let currentPage=1;const render=resetPage=>{if(!isActive())return;if(resetPage)currentPage=1;const q=($('agentSettlementAdminSearch')?.value||'').toLowerCase(),st=$('agentSettlementAdminStatus')?.value||'', [from,to]=range('agentSettlementAdminFrom','agentSettlementAdminTo');const base=rows.filter(x=>(!q||[x.id,x.agentCode,x.agentName].some(v=>String(v||'').toLowerCase().includes(q)))&&inRange(x.createdAt,from,to));const stOf=x=>String(x.settlementStatus||'').toUpperCase();['PENDING','APPROVED','PAID','REJECTED'].forEach(s=>{document.querySelector('[data-status-count="'+s+'"]')?.replaceChildren(document.createTextNode('('+base.filter(x=>stOf(x)===s).length+')'))});document.querySelector('[data-status-count="all"]')?.replaceChildren(document.createTextNode('('+base.length+')'));const filtered=base.filter(x=>!st||stOf(x)===st);const pending=filtered.filter(x=>String(x.settlementStatus).toUpperCase()==='PENDING');$('agentSettlementMetrics').innerHTML=metric('bi-people','Pending Count',whole(pending.length),'Overview total')+metric('bi-cash-stack','Pending Amount','RM '+money(pending.reduce((a,x)=>a+Number(x.requestedAmount||0),0)),'Overview total')+metric('bi-check2-circle','Approved',whole(filtered.filter(x=>String(x.settlementStatus).toUpperCase()==='APPROVED').length),'Selected period')+metric('bi-wallet2','Paid',whole(filtered.filter(x=>String(x.settlementStatus).toUpperCase()==='PAID').length),'Selected period');const size=pageSizeOf('agentSettlementAdminPageSize','agentSettlementAdminRows'),total=filtered.length,totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));if(currentPage>totalPages)currentPage=totalPages;const start=Number.isFinite(size)?(currentPage-1)*size:0,pageRows=Number.isFinite(size)?filtered.slice(start,start+size):filtered;$('agentSettlementAdminRows').innerHTML=pageRows.map(x=>`<tr><td>${esc(dt(x.createdAt))}</td><td><b>${esc(x.agentName||'-')}</b><small class="d-block">${esc(x.agentCode||'')}</small></td><td>${esc(x.periodFrom||x.settlementMonth)} - ${esc(x.periodTo||'')}</td><td>RM ${money(x.totalTurnover)}</td><td class="${Number(x.houseWin||0)>=0?'money-positive':'money-negative'}">RM ${money(x.houseWin)}</td><td><b>RM ${money(x.requestedAmount)}</b></td><td>${status(x.settlementStatus)}</td><td><div class="agent-approval-actions">${String(x.settlementStatus).toUpperCase()==='PENDING'?`<button class="approve-btn" data-settle-approve="${x.id}" title="Approve"><i class="bi bi-check-lg"></i></button><button class="reject-btn" data-settle-reject="${x.id}" title="Reject"><i class="bi bi-x-lg"></i></button>`:''}</div></td></tr>`).join('')||'<tr><td colspan="8" class="table-empty">No settlement requests.</td></tr>';$('agentSettlementAdminShowing').textContent='Showing '+(total?start+1:0)+' to '+(total?Math.min(start+pageRows.length,total):0)+' of '+total+' entries';$('agentSettlementAdminPager').innerHTML=pageButtons(currentPage,totalPages,'settlement-page','Settlement table');evenFillTableRows('agentSettlementAdminRows','agentSettlementAdminPageSize',render);};['agentSettlementAdminSearch','agentSettlementAdminFrom','agentSettlementAdminTo','agentSettlementAdminStatus'].forEach(id=>$(id)?.addEventListener(id==='agentSettlementAdminSearch'?'input':'change',()=>render(true)));$('agentSettlementAdminPageSize')?.addEventListener('change',()=>{clearLockedAutoSize('agentSettlementAdminRows');render(true);});$('agentSettlementAdminPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-settlement-page]');if(!b||b.disabled)return;currentPage=Number(b.dataset.settlementPage)||1;render(false);});bindAutoFitPageSize('agentSettlementAdminPageSize','agentSettlementAdminRows',render);document.querySelectorAll('[data-status-pill]').forEach(tab=>tab.addEventListener('click',()=>{const value=tab.dataset.statusPill??'';const select=$('agentSettlementAdminStatus');if(select){select.value=value;select.dispatchEvent(new Event('change',{bubbles:true}));}document.querySelectorAll('[data-status-pill]').forEach(x=>{const on=x===tab;x.classList.toggle('is-active',on);x.setAttribute('aria-pressed',String(on));});}));const settlementStatusTrack=document.querySelector('.agent-status-tabs');if(settlementStatusTrack&&window.BO_SEG_BOUNCE){window.BO_SEG_BOUNCE.mount(settlementStatusTrack,{button:':scope > .bo-tx-tab',anim:'bounce'});}$('agentSettlementAdminRows').onclick=async e=>{const ap=e.target.closest('[data-settle-approve]'),rj=e.target.closest('[data-settle-reject]');if(ap){await req('/api/admin/brand-agent/settlement/'+ap.dataset.settleApprove+'/approve',{method:'POST',body:'{}'});rows=await settlementData();render(true)}if(rj){const reason=await BO_DIALOG.prompt('Enter rejection reason','',{title:'Reject Settlement',inputLabel:'Reason'});if(reason){await req('/api/admin/brand-agent/settlement/'+rj.dataset.settleReject+'/reject',{method:'POST',body:JSON.stringify({reason})});rows=await settlementData();render(true)}}};render(true);}
 
-async function claimPage(){
+async function claimPage(runToken){
   let rows=await req('/api/admin/brand-agent/ad-claims')||[];
+  const isActive=()=>agentPageActive(runToken,'agent-reimbursement-admin.html');
+  if(!isActive())return;
   let currentPage=1;
   const claimDate=x=>x.createdAt||x.created_at||x.submittedAt||x.submitted_at||x.claimDate||x.claim_date||x.date;
   const render=resetPage=>{
+    if(!isActive())return;
     if(resetPage)currentPage=1;
     const q=($('agentClaimSearch')?.value||'').toLowerCase(),st=$('agentClaimStatus')?.value||'', [from,to]=range('agentClaimFrom','agentClaimTo');
     const base=rows.filter(x=>(!q||[x.id,x.agentCode,x.agentName].some(v=>String(v||'').toLowerCase().includes(q)))&&inRange(claimDate(x),from,to));
@@ -410,12 +423,16 @@ async function payoutPage(runToken){
   $('agentPayoutRows').onclick=async e=>{const b=e.target.closest('[data-pay]');if(!b)return;const ref=await BO_DIALOG.prompt('Enter payment reference','',{title:'Mark Payout Paid',inputLabel:'Payment reference'});if(ref==null)return;await req('/api/admin/brand-agent/settlement/'+b.dataset.pay+'/pay',{method:'POST',body:JSON.stringify({paymentReference:ref})});rows=await settlementData();render(true);};
   render(true);
 }
-async function promotionPage(){
+async function promotionPage(runToken){
+  const isActive=()=>agentPageActive(runToken,'agent-promotion-admin.html');
+  if(!isActive())return;
   let currentPage=1,rows=[];
   const render=async resetPage=>{
+    if(!isActive())return;
     if(resetPage)currentPage=1;
     const [from,to]=range('agentPromotionFrom','agentPromotionTo'),q=($('agentPromotionSearch')?.value||'').toLowerCase();
     try{rows=await req('/api/admin/operations/promotion-report?from='+encodeURIComponent(from)+'&to='+encodeURIComponent(to))||[]}catch(e){rows=[];}
+    if(!isActive())return;
     const filtered=rows.filter(x=>!q||[x.name,x.promotionCode].some(v=>String(v||'').toLowerCase().includes(q)));
     const size=pageSizeOf('agentPromotionPageSize','agentPromotionRows'),total=filtered.length,totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
     if(currentPage>totalPages)currentPage=totalPages;
@@ -447,7 +464,7 @@ async function init(){
   /* refreshMe() is asynchronous. A fast SPA tab/page switch can complete before it returns;
      in that case this is an old page boot and must not touch the newly mounted page. */
   if(currentRoutePage()!==requestedPage||window.__boAgentAdminRunToken!==runToken)return;
-  stabilizeAgentAdminDropdowns();const p=requestedPage;try{if(p==='agent-management.html')await agentsPage();else if(p==='agent-commission-admin.html')await commissionPage();else if(p==='agent-settlement-admin.html')await settlementPage();else if(p==='agent-reimbursement-admin.html')await claimPage();else if(p==='agent-payout-admin.html')await payoutPage(runToken);else if(p==='agent-promotion-admin.html')await promotionPage();}catch(e){console.error(e);window.BO_DIALOG?.alert?.(e.message,{title:'Agent Management',type:'error'});}finally{stabilizeAgentAdminDropdowns();}}
+  stabilizeAgentAdminDropdowns();const p=requestedPage;try{if(p==='agent-management.html')await agentsPage(runToken);else if(p==='agent-commission-admin.html')await commissionPage(runToken);else if(p==='agent-settlement-admin.html')await settlementPage(runToken);else if(p==='agent-reimbursement-admin.html')await claimPage(runToken);else if(p==='agent-payout-admin.html')await payoutPage(runToken);else if(p==='agent-promotion-admin.html')await promotionPage(runToken);}catch(e){console.error(e);window.BO_DIALOG?.alert?.(e.message,{title:'Agent Management',type:'error'});}finally{if(agentPageActive(runToken,requestedPage))stabilizeAgentAdminDropdowns();}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 /* Every entry, not only the first. Measured from promotion.html -> Agents -> its tabs: the FIRST
    tab rendered, and every later one showed no cards and no rows until a reload. This file had
