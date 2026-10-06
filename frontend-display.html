@@ -245,6 +245,7 @@ body.frontend-display-page .fd-panel .rounded-select-wrap.fd-menu-up .rounded-se
 /* Rows whose control is a select, not a switch: one full-width row, copy left / control right.
    In a half-width cell the 160-280px control track crushed the copy column to 0px. */
 #fd-sec-visibility #frontendDisplayBrandRow,
+#fd-sec-visibility #mobileHeaderLogoPositionRow,
 #fd-sec-visibility #boSidebarInteractionRow{
   grid-column:1 / -1;
   grid-template-columns:minmax(0,1fr) minmax(200px,320px);
@@ -900,6 +901,7 @@ html[data-bo-theme="dark"] #fd-sec-limits .display-setting-row:last-child{ borde
   #fd-sec-live #liveTransactionModeRow,
   #fd-sec-live #liveTransactionRefreshRow,
   #fd-sec-visibility #frontendDisplayBrandRow,
+  #fd-sec-visibility #mobileHeaderLogoPositionRow,
   #fd-sec-visibility #boSidebarInteractionRow{
     grid-template-columns:minmax(0,1fr) minmax(140px,220px);
     align-items:center;
@@ -939,6 +941,7 @@ html[data-bo-theme="dark"] #fd-sec-limits .display-setting-row:last-child{ borde
   .display-setting-row,
   #fd-sec-limits .display-setting-row,
   #fd-sec-visibility #frontendDisplayBrandRow,
+  #fd-sec-visibility #mobileHeaderLogoPositionRow,
   #fd-sec-visibility #boSidebarInteractionRow{ grid-template-columns:1fr; gap:10px; }
   .fd-control{ justify-content:flex-start; }
   body.frontend-display-page .fd-save-bar{
@@ -997,7 +1000,7 @@ html[data-bo-theme="dark"] #fd-sec-limits .display-setting-row:last-child{ borde
           <div class="display-setting-row" id="mobileHeaderLogoPositionRow">
             <div class="display-setting-copy">
               <h2>Mobile Header Logo Position</h2>
-              <p>Choose whether the BO Layout Section logo stays centered or sits beside the template icon on the Naga frontend.</p>
+              <p>Choose mobile logo position.</p>
             </div>
             <div class="fd-control">
               <select id="mobileHeaderLogoPosition" class="display-setting-select" aria-label="Mobile header logo position">
