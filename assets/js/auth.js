@@ -222,6 +222,7 @@
     'transaction-report.html':{label:'Transaction',order:7,module:'report'},
     'casino-provider-winloss-report.html':{label:'Provider Win/Loss',order:8,module:'report'},
     'agent-performance-report.html':{label:'Agent Performance',order:9,module:'report'},
+    'member-top-deposit-report.html':{label:'Top Deposit',order:10,module:'report'},
     // Game Management. Order and labels follow the sidebar flyout.
     'game-provider.html':{label:'Provider',order:1,module:'game'},
     'player-provider-session.html':{label:'Provider Sessions',order:2,module:'game'},
