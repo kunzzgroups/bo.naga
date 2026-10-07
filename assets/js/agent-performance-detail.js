@@ -160,7 +160,11 @@ async function init(){
   ]);
   const a=(r.rows||[])[0]||{};
   $('detailName').textContent=`${a.agentCode||('Agent #'+id)} · ${a.agentName||''}`;
-  $('detailSubtitle').textContent=`${r.brand?.brandName||''} · ${from} - ${to}`;
+  /* This page has no #detailSubtitle element (the line was carried over from the report page, whose
+     header has one), so the write crashed the whole load with "Cannot set properties of null
+     (setting 'textContent')". Write it only where the element exists. */
+  const detailSubtitle=$('detailSubtitle');
+  if(detailSubtitle) detailSubtitle.textContent=`${r.brand?.brandName||''} · ${from} - ${to}`;
   $('detailKpis').innerHTML=
     card('bi-people','Players',num(a.totalPlayers))+
     card('bi-coin','Turnover','RM '+money(a.turnover))+
@@ -198,4 +202,4 @@ async function init(){
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>init().catch(e=>BO_DIALOG.alert(e.message,{title:'Agent Performance',type:'error'})));
 else init().catch(e=>BO_DIALOG.alert(e.message,{title:'Agent Performance',type:'error'}));
-})();
+})();
