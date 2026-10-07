@@ -57,6 +57,24 @@ function params(pg,sz){const q=new URLSearchParams({fromDate:wlFrom.value,toDate
 function renderPages(){const w=document.getElementById('wlPager');if(!w)return;const total=Math.max(1,Number(totalPages)||1);const current=Math.max(1,Math.min(Number(page)||1,total));const pages=[];const add=n=>{if(n>=1&&n<=total&&!pages.includes(n))pages.push(n)};add(1);for(let n=current-2;n<=current+2;n++)add(n);add(total);pages.sort((a,b)=>a-b);let html='';html+=`<button type="button" class="smart-page first" data-page="1" ${current<=1?'disabled':''} title="First page" aria-label="First page"><i class="bi bi-chevron-bar-left" aria-hidden="true"></i></button>`;html+=`<button type="button" class="smart-page nav-text" data-page="${current-1}" ${current<=1?'disabled':''} title="Previous page" aria-label="Previous page"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>`;let prev=0;pages.forEach(n=>{if(prev&&n-prev>1)html+='<span class="smart-page-ellipsis" aria-hidden="true">&hellip;</span>';html+=`<button type="button" class="smart-page${n===current?' active':''}" data-page="${n}" ${n===current?'aria-current="page"':''}>${n}</button>`;prev=n});html+=`<button type="button" class="smart-page nav-text" data-page="${current+1}" ${current>=total?'disabled':''} title="Next page" aria-label="Next page"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>`;html+=`<button type="button" class="smart-page last" data-page="${total}" ${current>=total?'disabled':''} title="Last page" aria-label="Last page"><i class="bi bi-chevron-bar-right" aria-hidden="true"></i></button>`;w.innerHTML=html}
 function renderInfo(rowCount){const info=document.getElementById('wlPageInfo');if(!info)return;const from=totalElements&&rowCount?Math.min((page-1)*pageSize+1,totalElements):0;const to=totalElements?Math.min((page-1)*pageSize+rowCount,totalElements):0;info.textContent=`Showing ${from} to ${to} of ${totalElements} entries`}
 let wlLoadSeq=0;
+/* The tiles are the page's own summary and must read ALL TIME: the owner's rule is that they do not
+   move with the date range or the "Show N entries" size - only the table follows those. Same endpoint,
+   same non-range filters, but no fromDate/toDate, and page/size 1 so the response stays tiny (the
+   summary is the server's aggregate over the whole filtered set, not over the returned page). */
+async function loadAllTimeTotals(){
+  const q=new URLSearchParams({page:1,size:1});
+  if(wlCategory.value)q.set('category',wlCategory.value);
+  if(wlProvider.value)q.set('providerCode',wlProvider.value);
+  if(wlVip.value!=='')q.set('vipTier',wlVip.value);
+  try{
+    const j=await api(API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS.WIN_LOSE_REPORT_LIST+'?'+q);
+    const d=j.data||{}, sum=d.summary||{}, pg=d.pagination||{};
+    document.getElementById('wlTotalBet').textContent=money(sum.total_bet||sum.totalBet);
+    document.getElementById('wlValidBet').textContent=money(sum.valid_bet||sum.validBet);
+    document.getElementById('wlWinLose').textContent=money(sum.win_lose||sum.winLose);
+    document.getElementById('wlMembers').textContent=Number(pg.totalElements||0).toLocaleString();
+  }catch(e){/* leave the tiles rather than show a partial total */}
+}
 async function load(){const loadSeq=++wlLoadSeq;pageSize=currentPageSize();/* A stale rung must not ask for a page the report no longer has (see the All block below). */page=Math.min(Math.max(1,page||1),Math.max(1,totalPages));try{const j=await api(API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS.WIN_LOSE_REPORT_LIST+'?'+params());if(loadSeq!==wlLoadSeq)return;const d=j.data||{}, rows=d.content||[];let pg=d.pagination||{};const sum=d.summary||{};
 /* "All" asks for size 10000, but the endpoint caps size: it answers with the cap and still reports
    the real total, so All used to read "Showing 1 to 100 of 370" with the server's page count printed
@@ -67,7 +85,7 @@ if(page===1&&rows.length&&rows.length<wanted){const chunk=rows.length;for(let np
 /* Every row is in hand, so the report IS one page: leaving the server's totalPages kept rungs under
    a list that was already complete. */
 pg=Object.assign({},pg,{totalPages:Math.max(1,Math.ceil(Number(pg.totalElements||rows.length)/Math.max(1,rows.length)))});pageSize=rows.length;}
-wlTotalBet.textContent=money(sum.total_bet||sum.totalBet);wlValidBet.textContent=money(sum.valid_bet||sum.validBet);wlWinLose.textContent=money(sum.win_lose||sum.winLose);wlMembers.textContent=Number(pg.totalElements||0).toLocaleString();wlBody.innerHTML=rows.length?rows.map((r,i)=>`<tr><td>${(page-1)*pageSize+i+1}</td><td><a href="member-detail.html?memberId=${encodeURIComponent(r.member_id||r.memberId)}"><b>${esc(r.username)}</b></a></td><td>${esc(vipLabel(r.vip_tier??r.vipTier??0))}</td><td>${money(r.total_bet||r.totalBet)}</td><td>${money(r.valid_bet||r.validBet)}</td><td><span class="status-pill ${num(r.win_lose||r.winLose)>=0?'active':'off'}">${money(r.win_lose||r.winLose)}</span></td></tr>`).join(''):'<tr><td colspan="6">No records found.</td></tr>';totalPages=Number(pg.totalPages)||1;totalElements=Number(pg.totalElements||0);renderPages();renderInfo(rows.length);
+/* Tiles are painted by loadAllTimeTotals, never from this ranged response. */wlBody.innerHTML=rows.length?rows.map((r,i)=>`<tr><td>${(page-1)*pageSize+i+1}</td><td><a href="member-detail.html?memberId=${encodeURIComponent(r.member_id||r.memberId)}"><b>${esc(r.username)}</b></a></td><td>${esc(vipLabel(r.vip_tier??r.vipTier??0))}</td><td>${money(r.total_bet||r.totalBet)}</td><td>${money(r.valid_bet||r.validBet)}</td><td><span class="status-pill ${num(r.win_lose||r.winLose)>=0?'active':'off'}">${money(r.win_lose||r.winLose)}</span></td></tr>`).join(''):'<tr><td colspan="6">No records found.</td></tr>';totalPages=Number(pg.totalPages)||1;totalElements=Number(pg.totalElements||0);renderPages();renderInfo(rows.length);
 /* One refinement per session, the casino pages' pattern: the fit resolved before the
    request was measured from the placeholder row, so it is re-measured from real rows
    once they exist and the page is reloaded only if the two disagree. */
@@ -83,7 +101,7 @@ let queued=0;
 // Collapse rapid preset/filter clicks into one request.  This also prevents the
 // same control being clicked several times from making the listing visually jump.
 const reload=()=>{clearTimeout(queued);queued=setTimeout(()=>{page=1;load()},120)};
-wlCategory.addEventListener('change',()=>{fillProviders();reload()});wlProvider.addEventListener('change',reload);wlVip.addEventListener('change',reload);wlFrom.addEventListener('change',reload);wlTo.addEventListener('change',reload);wlPager.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(!b||b.disabled)return;const n=Number(b.dataset.page);if(n>=1&&n<=totalPages&&n!==page){page=n;load()}});wlPageSize.addEventListener('change',()=>{pageSizeLock=null;autoRefined=false;page=1;load()});load();
+wlCategory.addEventListener('change',()=>{fillProviders();reload();loadAllTimeTotals()});wlProvider.addEventListener('change',()=>{reload();loadAllTimeTotals()});wlVip.addEventListener('change',()=>{reload();loadAllTimeTotals()});wlFrom.addEventListener('change',reload);wlTo.addEventListener('change',reload);wlPager.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(!b||b.disabled)return;const n=Number(b.dataset.page);if(n>=1&&n<=totalPages&&n!==page){page=n;load()}});wlPageSize.addEventListener('change',()=>{pageSizeLock=null;autoRefined=false;page=1;load()});load();loadAllTimeTotals();
 /* In auto mode the fit follows the panel: the family's other pages re-fit on resize
    (casino-report.js, player-game-ranking.js), so a window resize that changes how many
    rows fit re-requests that many instead of leaving the panel short or over-filled. */

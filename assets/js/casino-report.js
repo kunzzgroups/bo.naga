@@ -22,14 +22,18 @@
     if(!res.ok || json.status === 'error') throw new Error(json.message || 'Request failed');
     return json;
   }
-  function params(){
+  function params(opts){
     const p = new URLSearchParams();
     const from = document.getElementById('casinoFrom')?.value || '';
     const to = document.getElementById('casinoTo')?.value || '';
     // Date Range is now the single source of truth for every casino report.
     p.set('period', 'custom');
+    /* allTime: the KPI strips are all time (owner: 卡片 total 显示所有 不会被 date Range 和 Entry 影响);
+       the tables keep the range. */
+    if(!(opts && opts.allTime)){
     if(from) p.set('from', from);
     if(to) p.set('to', to);
+    }
     return p.toString();
   }
   function setMetric(id, value, isMoney){ const el=document.getElementById(id); if(el) el.textContent = isMoney ? money(value) : whole(value); }
@@ -168,7 +172,7 @@
     const range = document.getElementById('casinoRangeText');
     if(range) range.textContent = `Showing report from ${data.from || '-'} to ${data.to || '-'}`;
   }
-  function renderOverview(data){
+  function renderOverview(data, opts){
     const dw = data.depositWithdraw || {};
     const deposit = dw.deposit || {};
     const withdraw = dw.withdraw || {};
@@ -177,6 +181,7 @@
     const adjustment = data.adjustment || {};
     const bonusRows = Array.isArray(data.bonus) ? data.bonus : [];
     const bonusTotal = bonusRows.reduce((s,r)=>s+num(r.bonusAmount),0);
+    if(!(opts && opts.skipTiles)){
     setMetric('crDeposit', approvedAmount(deposit), true);
     setMetric('crAdjustmentIn', adjustment.adjustmentIn, true);
     setMetric('crAdjustmentOut', adjustment.adjustmentOut, true);
@@ -194,6 +199,7 @@
     setMetric('crPendingWithdraw', pendingAmount(withdraw), true);
     setMetric('crFailedDeposit', failedAmount(deposit), true);
     setMetric('crFailedWithdraw', failedAmount(withdraw), true);
+    }
     const missing = Array.isArray(data.missingReports) ? data.missingReports : [];
     const el = document.getElementById('crReportsCovered');
     if(el){
@@ -301,11 +307,11 @@
   function render(data){
     renderCommon(data);
     const dw = data.depositWithdraw || {};
-    renderOverview(data);
+    renderOverview(data, {skipTiles:true});
     renderBreakdown(data.breakdown || []);
     renderProvider(data.providerDaily || data.provider || []);
     renderStatus(data.depositWithdrawDaily || []);
-    renderDepositWithdrawStats(data.depositWithdrawDaily || []);
+    /* Tiles: loadAllTimeTiles (all time). The dated rows still fill every table above. */
     renderBonus(Array.isArray(data.bonusDaily) ? data.bonusDaily : (Array.isArray(data.bonus) ? data.bonus : []));
   }
   let reportLoadSeq = 0;
@@ -386,6 +392,18 @@
       renderTablePage(state);
     });
 
+    /* Strips only: the same endpoints without from/to (owner's rule; see paintOverviewTiles' callers).
+       The ranged response keeps rendering every table. */
+    async function loadAllTimeTiles(){
+      try{
+        const json = await api(url() + '?' + params({allTime:true}));
+        const d = json.data || {};
+        renderOverview(d);
+        renderDepositWithdrawStats(d.depositWithdrawDaily || []);
+      }catch(e){/* leave the strips rather than show a partial total */}
+    }
+
     load();
+    loadAllTimeTiles();
   });
 })();

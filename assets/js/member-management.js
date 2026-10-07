@@ -831,7 +831,11 @@
     const table=document.querySelector('.user-main-table tbody');
     const cards=document.querySelector('.member-card-list');
     if(!table) return;
-    updateStats(rows);
+    /* The tiles are painted from the unfiltered member list (loadMembers -> updateStats(allMembers))
+       and never from this page's slice. Owner's rule: the cards show everything and must not move
+       with the date range or the "Show N entries" page size. Summing `rows` here meant every page
+       step, size change and filter wrote a partial total into "Total Users / All registered users"
+       (measured before: the tiles were the slice's counts while the caption promised all). */
     renderTableHead();
     if(!rows.length){
       table.innerHTML='<tr><td colspan="'+visibleColCount()+'">No member found.</td></tr>';

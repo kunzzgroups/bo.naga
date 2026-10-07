@@ -332,6 +332,21 @@
     });
   }
   function metric(id, v){ const el=document.getElementById(id); if(el) el.textContent = money(v); }
+  /* Page-level tiles, same rule as wallet-ledger.html: everything, unpaged, unaffected by the size
+     select or a page step. Fetched once (and after a wallet adjust), never summed from the rows of
+     the page on screen. */
+  let allTimeRows = null;
+  async function loadAllTimeTotals(){
+    try{
+      const json = await api(url('MEMBER_WALLET_LIST') + '?' + query({all:true}));
+      const data = json.data || {};
+      allTimeRows = sortRows(Array.isArray(data.content) ? data.content : (Array.isArray(data) ? data : []));
+      updateMetrics(allTimeRows);
+    }catch(e){
+      /* Leave the tiles as they are rather than show a total that is only part of the list. */
+    }
+  }
+
   function updateMetrics(rows){
     metric('mwMainTotal', rows.reduce((s,r)=>s+num(r.mainWalletBalance),0));
     metric('mwProviderTotal', rows.reduce((s,r)=>s+num(r.providerWalletBalance),0));
@@ -368,7 +383,7 @@
     if(!body) return;
     currentRows = rows;
     syncSortHeaders();
-    updateMetrics(rows);
+    /* Tiles come from loadAllTimeTotals (see above), never from this page's rows. */
     if(!rows.length){ body.innerHTML = '<tr><td colspan="16">No wallet records found.</td></tr>'; }
     else body.innerHTML = rows.map(r => {
       const wl = num(r.winLoss);
@@ -425,7 +440,7 @@
         const next=money(row.totalBalance);
         if(totalCell.textContent!==next) totalCell.textContent=next;
       }
-      if(!quiet) updateMetrics(currentRows);
+      if(!quiet) loadAllTimeTotals();
       return true;
     }catch(e){
       console.warn('Provider balance live sync failed for member', row.memberId, e);
@@ -443,7 +458,7 @@
     for(const row of targets){
       if(await syncMemberProviderBalance(row,{quiet:true})) changed=true;
     }
-    if(changed) updateMetrics(currentRows);
+    if(changed) if (allTimeRows) updateMetrics(allTimeRows); else loadAllTimeTotals();
   }
 
   async function load(){
@@ -462,6 +477,8 @@
         const json = await api(url('MEMBER_WALLET_LIST') + '?' + query({all:true}));
         const data = json.data || {};
         const all = sortRows(Array.isArray(data.content) ? data.content : []);
+        allTimeRows = all;
+        updateMetrics(all);
         const total = all.length;
         totalPages = Math.max(1, Math.ceil(total / pageSize) || 1);
         page = Math.max(1, Math.min(page, totalPages));
@@ -474,7 +491,7 @@
       const data = json.data || {};
       render(sortRows(Array.isArray(data.content) ? data.content : []), data.pagination || {});
     }catch(e){
-      updateMetrics([]);
+      if (allTimeRows) updateMetrics(allTimeRows);
       if(body) body.innerHTML='<tr><td colspan="16" class="text-danger">'+esc(e.message || 'Load failed')+'</td></tr>';
       notifyDashboardReady();
     }finally{
@@ -508,7 +525,7 @@
         const totalCell=document.querySelector('[data-total-balance-cell="'+CSS.escape(String(memberId))+'"]');
         if(providerCell) providerCell.textContent=money(listedRow.providerWalletBalance);
         if(totalCell) totalCell.textContent=money(listedRow.totalBalance);
-        updateMetrics(currentRows);
+        if (allTimeRows) updateMetrics(allTimeRows); else loadAllTimeTotals();
       }
       const sorted=rows.slice().sort((a,b)=>num(b.balance??b.providerBalance??b.walletBalance)-num(a.balance??a.providerBalance??a.walletBalance));
       const totalLeft=sorted.reduce((sum,r)=>sum+num(r.balance??r.providerBalance??r.walletBalance),0);
@@ -583,6 +600,7 @@
       clearLockedAutoSize();
       syncAutofitMode();
       load();
+      loadAllTimeTotals();
     }));
   });
 })();
