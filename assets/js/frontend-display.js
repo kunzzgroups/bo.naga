@@ -493,11 +493,11 @@
 
   async function loadBrandFeatureAccess(){
     try{
-      const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/brands/'+selectedTargetBrandId+'/features',{headers:headers(false),cache:'no-store'});
+      const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/merchants/'+selectedTargetBrandId+'/features',{headers:headers(false),cache:'no-store'});
       const j=await r.json().catch(()=>({}));
       if(!r.ok||j.status==='error') throw new Error(j.message||'Unable to load brand feature access');
       brandFeatureAccess=j.data||brandFeatureAccess;
-    }catch(e){brandFeatureAccess={socialPluginEnabled:0,leaderboardEnabled:1,vipEnabled:1};}
+    }catch(e){brandFeatureAccess={socialPluginEnabled:0,leaderboardEnabled:0,vipEnabled:0};}
     if(socialPluginSettings) socialPluginSettings.style.display=Number(brandFeatureAccess.socialPluginEnabled)===1?'contents':'none';
     if(leaderboardFeatureRow) leaderboardFeatureRow.style.display=Number(brandFeatureAccess.leaderboardEnabled)===1?'':'none';
     if(vipFeatureRow) vipFeatureRow.style.display=Number(brandFeatureAccess.vipEnabled)===1?'':'none';
