@@ -8,6 +8,8 @@
   let lockedAutoSize = null;
   let autofitReloading = false;
   let autofitSettled = false;
+  /* Whether the first response has been fitted to the wrap (see fitFirstPaint). */
+  let firstPaintFitted = false;
 
   /* MD Show N: - · 10 · 20 · 50 · 100 · All (− = auto-fit, All = 10000) */
   function tableBodyScroll(){
@@ -129,7 +131,7 @@
     page = 1;
     autofitSettled = false;
     autofitReloading = true;
-    Promise.resolve(load()).finally(() => {
+    Promise.resolve(load({ silent: true })).finally(() => {
       autofitReloading = false;
       requestAnimationFrame(() => {
         if (autofitOverflows(tableBodyScroll(), [...($('txBody')?.querySelectorAll('tr') || [])].filter(tr => !isPlaceholderRow(tr))) && lockedAutoSize > 5) {
@@ -165,7 +167,7 @@
     page = 1;
     autofitSettled = false;
     autofitReloading = true;
-    Promise.resolve(load()).finally(() => {
+    Promise.resolve(load({ silent: true })).finally(() => {
       autofitReloading = false;
       requestAnimationFrame(() => {
         const painted = [...($('txBody')?.querySelectorAll('tr') || [])].filter(tr => !isPlaceholderRow(tr));
@@ -202,8 +204,24 @@
       lockedAutoSize = size;
       pageSize = size;
       page = 1;
+      /* The settle corrects the page size DOWNWARD from the rows it has just painted, so the rows for
+         the new size are already in hand: slice them instead of paying a round trip, and never wipe
+         the table back to "Loading..." for it (that wipe is what the owner saw as 闪烁). A correction
+         that needs MORE rows than were fetched still fetches, silently. */
+      if (lastRows.length >= size && size > 0) {
+        autofitReloading = true;
+        paintRows(lastRows.slice(0, size));
+        if (isAutoPageSize($('txSize')?.value)) evenFillRowHeights();
+        /* No resetEvenFill here: verifyAndLock -> evenFillRowHeights resets and re-stretches in one
+           pass. Clearing first moved the rows twice (a CLS entry of 0.0228 with src TR|TR|TR|TR|TR,
+           which the page did not have before this path existed). */
+        return Promise.resolve().then(() => {
+          autofitReloading = false;
+          verifyAndLock();
+        });
+      }
       autofitReloading = true;
-      return Promise.resolve(load()).finally(() => {
+      return Promise.resolve(load({ silent: true })).finally(() => {
         autofitReloading = false;
         verifyAndLock();
       });
@@ -320,17 +338,31 @@
       scroll._boEvenFillTimer = setTimeout(() => {
         if (autofitReloading) return;
         const prev = lockedAutoSize;
+        /* Measure from NATURAL row heights: the evenfill-stretched height is our own paint, and
+           measuring it made the "did the size change?" test flip between two answers (10 -> 11 -> 10),
+           each flip buying a reload. resetEvenFill first, then read. */
+        resetEvenFill();
+        void scroll.offsetHeight;
         const next = measureAutoPageSize();
-        if (autofitSettled && prev != null && next === prev) { evenFillRowHeights(); return; }
+        if (prev != null && next === prev) { autofitSettled = true; evenFillRowHeights(); return; }
         clearLockedAutoSize();
         pageSize = resolvePageSize();
         page = 1;
-        load();
+        load({ silent: true });
       }, 180);
     };
     window.addEventListener('resize', resolve);
+    /* Only the rail state is a body class we care about. Watching every class mutation re-resolved on
+       whatever else the shell toggles during load (measured: a reload at t=2.2s that nothing asked
+       for, with the placeholder back on screen). */
+    let railMini = document.body.classList.contains('sidebar-mini');
     try {
-      new MutationObserver(resolve).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+      new MutationObserver(() => {
+        const now = document.body.classList.contains('sidebar-mini');
+        if (now === railMini) return;
+        railMini = now;
+        resolve();
+      }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
     } catch (e) {}
   }
 
@@ -575,19 +607,10 @@
     }
   };
 
-  async function load(){
-    if (activeListController) activeListController.abort();
-    activeListController = new AbortController();
-    const controller = activeListController;
-    const timeout = setTimeout(() => controller.abort(), 15000);
-    try{
-      $('txBody').innerHTML = '<tr><td colspan="9" class="text-center py-4 text-muted">Loading...</td></tr>';
-      const data = await get(endpoint('PROVIDER_WALLET_TRANSACTION_LIST') + '?' + query(), controller.signal);
-      lastRows = readList(data);
-      totalPages = readTotalPages(data);
-      totalElements = readTotalElements(data);
-      publishPagerMeta(totalElements, pageSize);
-      $('txBody').innerHTML = lastRows.length ? lastRows.map((x,i) => `
+  /* Paint a page of rows. Callers pass either the whole fetched page or a prefix of it (see
+     reloadAt), so `i` in the onclick still indexes lastRows. */
+  function rowHtml(x, i){
+    return `
         <tr>
           <td>${esc(x.id)}</td>
           <td><b>${esc(x.providerCode || x.provider_code || '-')}</b></td>
@@ -598,9 +621,91 @@
           <td><span class="pwt-url" title="${esc(x.apiUrl || x.api_url || '')}">${esc(x.apiUrl || x.api_url || '-')}</span></td>
           <td>${esc(dt(x.createdAt || x.created_at))}</td>
           <td><button class="clean-btn pwt-payload-btn" type="button" onclick="showProviderTxPayload(${i})"><i class="bi bi-braces"></i> Payload</button></td>
-        </tr>`).join('') : '<tr><td colspan="9" class="text-center py-4 text-muted">No records</td></tr>';
-      renderPages();
-      renderInfo(lastRows.length);
+        </tr>`;
+  }
+
+  function paintRows(rows){
+    const body = $('txBody');
+    if (!body) return;
+    body.innerHTML = rows.length ? rows.map((row, i) => rowHtml(row, i)).join('')
+      : '<tr><td colspan="9" class="text-center py-4 text-muted">No records</td></tr>';
+    renderPages();
+    renderInfo(rows.length);
+  }
+
+  /* Fit the FIRST paint to the wrap before it is committed.
+     The size the page asks for before any row exists comes from a cold measure that floors the row
+     height at 40px; the real rows here are ~55px, so the first paint landed two rows too tall and then
+     corrected itself one frame later - five rows re-flow, which is the row-level layout shift the owner
+     saw as 闪烁 (measured: CLS entry at t=1150, src TR|TR|TR|TR|TR). Paint the candidates into a hidden
+     copy of the same table (same width, same classes, so the cascade matches), read the natural row
+     height off it, and only commit the rows that fit. */
+  function fitFirstPaint(rows){
+    const scroll = tableBodyScroll();
+    const body = $('txBody');
+    const table = body && body.closest('table');
+    if (!scroll || !body || !table || !rows.length) return rows;
+    if (!isAutoPageSize($('txSize')?.value)) return rows;
+    const head = scroll.querySelector('thead');
+    const headH = head ? Math.ceil(head.getBoundingClientRect().height) : 0;
+    const avail = Math.max(0, Math.floor(scroll.clientHeight) - headH);
+    if (!avail) return rows;
+    let rowH = 0;
+    try {
+      const probe = document.createElement('div');
+      probe.setAttribute('aria-hidden', 'true');
+      probe.style.cssText = 'position:absolute;left:-10000px;top:0;visibility:hidden;pointer-events:none;width:'
+        + Math.floor(table.getBoundingClientRect().width) + 'px';
+      /* A DEEP clone of the table with its tbody swapped for the candidates: the <colgroup>/<thead>
+         carry the column widths, and without them the probe's cells wrap differently and measure a
+         shorter row (55px against the real 63px), which made the first paint ask for two rows too
+         many and then compress them - a 45-60px row jump. */
+      const clone = table.cloneNode(true);
+      const oldBody = clone.querySelector('tbody');
+      if (oldBody) oldBody.remove();
+      const tbody = document.createElement('tbody');
+      tbody.innerHTML = rows.slice(0, 12).map((row, i) => rowHtml(row, i)).join('');
+      clone.appendChild(tbody);
+      probe.appendChild(clone);
+      document.body.appendChild(probe);
+      const first = tbody.querySelector('tr');
+      rowH = first ? Math.ceil(first.getBoundingClientRect().height) : 0;
+      probe.remove();
+    } catch (e) { rowH = 0; }
+    if (!rowH) return rows;
+    const fit = Math.max(5, Math.min(rows.length, Math.floor(avail / rowH) || rows.length));
+    return rows.slice(0, fit);
+  }
+
+  async function load(opts){
+    if (activeListController) activeListController.abort();
+    activeListController = new AbortController();
+    const controller = activeListController;
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    /* The autofit paths re-load by themselves while the table already shows rows; replacing those
+       rows with a one-line "Loading..." and then painting the new count is the flash the owner still
+       saw on the live page (paint 14 rows -> wipe -> paint 10). A load the user asked for keeps it. */
+    const silent = !!(opts && opts.silent) && lastRows.length > 0;
+    try{
+      if (!silent) $('txBody').innerHTML = '<tr><td colspan="9" class="text-center py-4 text-muted">Loading...</td></tr>';
+      const data = await get(endpoint('PROVIDER_WALLET_TRANSACTION_LIST') + '?' + query(), controller.signal);
+      lastRows = readList(data);
+      totalPages = readTotalPages(data);
+      totalElements = readTotalElements(data);
+      /* First paint of an auto-sized page: commit what fits, so there is no correction a frame later.
+         The flag is explicit because `lockedAutoSize` is already set by init, which silently skipped
+         this fit: the first paint then painted 14 rows of 63px, the settle sliced them to 10 and
+         evenfill compressed them to 55 - an ~80px jump of the rows, the last visible flicker. */
+      const fitted = firstPaintFitted ? lastRows : fitFirstPaint(lastRows);
+      firstPaintFitted = true;
+      if (fitted.length !== lastRows.length) { pageSize = fitted.length; lockedAutoSize = fitted.length; }
+      publishPagerMeta(totalElements, pageSize);
+      paintRows(fitted);
+      /* Equalise the row heights in the SAME task as the paint. evenfill is what makes these rows fill
+         the wrap (natural heights vary - a long URL wraps to two lines, 63px, a short one to 51px) and
+         leaving it to scheduleEvenFill's two frames showed the un-equalised rows for one frame first:
+         a 45-60px row move, the last visible flicker on this page. */
+      if (isAutoPageSize($('txSize')?.value)) evenFillRowHeights();
       if (!autofitReloading) scheduleEvenFill();
     }catch(e){
       if (e && e.name === 'AbortError') return;

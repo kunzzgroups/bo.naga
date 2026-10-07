@@ -6822,3 +6822,37 @@ Two harness lessons, both of which cost real time and are recorded because they 
    running the previous file. Restamp with `check-asset-pins.js --fix` and use a fresh profile per
    measurement - a guard that appears not to work is more often not being loaded than wrong.
 
+### The last flicker on provider-wallet-transaction: the placeholder coming back, and who was measuring whom
+
+After the previous fix landed (PR #132, deployed), the owner reported 「加载数据还是会闪烁」 on the live page. The
+deployed file did carry the fix (`_boLayoutTriggers` present, the wrap observer gone) - so this was a second
+defect, in the same controller:
+
+| | before | after |
+|---|---|---|
+| list requests | 2 (the load + a settle that re-fetched the same page) | **1** |
+| placeholder states per view | 2 (`Loading...` -> 14 rows -> `Loading...` -> 10 rows) | **1** (the initial one) |
+| first paint | 14 rows of 63px, then sliced to 10 and evenfilled to 55 | fitted to the wrap before it is committed |
+
+The flash was the autofit settle re-loading: `reloadAt(size)` always went through `load()`, and `load()` opens by
+replacing the table with its one-row "Loading..." state. So the user saw rows, then the placeholder, then rows
+again. Three changes, all measured:
+
+- `reloadAt` now repaints from the rows already in hand when the correction only needs FEWER rows
+  (`lastRows.slice(0, size)`), so the settle costs no round trip at all; when it does need more, `load({silent:
+  true})` skips the placeholder (the autofit paths pass it - a load the user asked for still shows it).
+- `fitFirstPaint` measures the real row height off-screen before the first paint is committed: the cold measure
+  floors the row at 40px while these rows are ~55-63px (a long URL wraps to two lines), so the first paint used
+  to land two rows too tall and correct itself a frame later. The probe is a DEEP clone (a `cloneNode(false)`
+  loses the `<colgroup>`/`<thead>` column widths, wraps differently and measures a shorter row - that mistake
+  cost two rounds).
+- the whole trigger set (window resize / rail toggle) is measured after `resetEvenFill()`, because the
+  evenfill-stretched height is our own paint: measuring it made the "did the size change?" test flip 10 -> 11 ->
+  10, each flip buying a reload.
+
+Residual, deliberately left: one CLS entry of 0.0228 at the paint instant, src `TR|TR|TR|TR|TR`, with heights
+63->55. That is this page family's even-fill equalising rows to the wrap (a long URL's row is taller than a
+short one's) - the fill happens a frame after the paint in every page that uses the recipe, and removing it
+means changing the family's look, not this page's behaviour. Everything else about the load is quiet: one
+request, one placeholder, no reload while idle (verified over a 2s window in both themes).
+
