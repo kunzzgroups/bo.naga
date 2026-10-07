@@ -6871,3 +6871,35 @@ roles into it still exists.
 Verified in both themes on the harness: rows render `['Edit', 'Delete']`, and no `a[href*="bonus-category-item"]`
 is left in the document.
 
+### The KPI tiles are page-level totals now (they were the current page's totals)
+
+Owner: 「这全部页面 带有卡片的total 显示所有 不会被date Range和Entry影响」 - the tiles must show everything and must
+not move when the date range or the "Show N entries" page size changes; only the table follows the filters.
+
+Measured before, on wallet-ledger.html (fixture paginated like the real endpoint): the tiles were summed from
+`data.content`, so auto (8 rows) showed 70/90/110/90, entries=50 showed 340/380/420/570, and narrowing the date
+range to an empty day took them to 0/0/0/0 - while their captions read "All time deposits", "All time bets".
+
+Fixed on the three pages whose tiles were fed the page slice:
+
+- **wallet-ledger.html** - `render()` no longer calls `updateMetrics(rows)`; a new `loadAllTimeTotals()` fetches
+  the same list **unfiltered and unpaged** (`?size=` all) once per page view and sums that.
+- **member-wallet.html** - same shape: the tiles had four writers, three of them the current slice; they all
+  read the all-time set now (and a wallet adjust re-fetches it once).
+- **index.html (User Management)** - one line: `renderMembers()` stopped calling `updateStats(rows)`. The page
+  already fetched the member list unfiltered (`loadMembers()` -> `updateStats(allMembers)`); the page slice was
+  overwriting "Total Users / All registered users" on every page step, size change and filter.
+
+Acceptance, measured on the harness with paginated fixtures - the four checks are the rule the owner stated:
+
+| page | cards after entries change | cards after range change | cards after keyword | table still follows |
+|---|---|---|---|---|
+| wallet-ledger | unchanged 810/870/930/2040 | unchanged (range emptied) | - | yes (8 -> 18 -> 1 rows) |
+| member-wallet | unchanged 4650/2325/3255/1245 | - (no range in its request) | - | yes (11 -> 20 rows) |
+| index.html | unchanged 40/40/4820/0 | - (request carries no range) | unchanged | yes (8 -> 20 rows) |
+
+Not yet done, and not hidden: the pages whose tiles follow the date range through a *summary* (win-lose-report,
+casino-deposit-withdraw-report, casino-overview-report, agent-performance-report/-detail, the agent-admin
+family, promotion-debug, agent-wallet, agent-bet-report) still sum over the selected period. Making those
+all-time means calling their summary **without from/to** - one extra request each - which is the next batch.
+

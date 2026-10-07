@@ -495,6 +495,24 @@
     return p.toString();
   }
   function metric(id, v){ const el=document.getElementById(id); if(el) el.textContent = money(v); }
+  /* The tiles are a PAGE-LEVEL summary: the owner's rule is that they show everything (all time, all
+     rows) and do not move when the date range or the "Show N entries" page size changes - those two
+     only drive the table. They used to be summed from the rows of the CURRENT page
+     (`updateMetrics(data.content)` in render), so changing the page size changed the totals
+     (measured: entries auto -> 50 turned 70/90/110/90 into 340/380/420/570) and narrowing the range
+     took them to 0. Fetched once, unfiltered and unpaged, and summed here. */
+  let allTimeRows = null;
+  async function loadAllTimeTotals(){
+    try{
+      const json = await api(url('WALLET_LEDGER_LIST') + '?size=' + resolvePageSize('all'));
+      const data = json.data || {};
+      allTimeRows = Array.isArray(data.content) ? data.content : [];
+      updateMetrics(allTimeRows);
+    }catch(e){
+      /* Leave the tiles untouched rather than show a total that is only part of the ledger. */
+    }
+  }
+
   function updateMetrics(rows){
     const byType = rows.reduce((m,r)=>{ m[r.ledgerType] = (m[r.ledgerType] || 0) + num(r.amount); return m; },{});
     metric('wlDeposit', (byType.DEPOSIT || 0) + (byType.ADMIN_DEPOSIT || 0));
@@ -504,7 +522,7 @@
   }
   function render(rows, pagination, meta){
     const body=document.getElementById('walletLedgerBody'); if(!body) return;
-    updateMetrics(rows);
+    /* Tiles are painted by loadAllTimeTotals, never from this page's rows (see above). */
     if(!rows.length){ body.innerHTML='<tr><td colspan="15">No ledger records found.</td></tr>'; }
     else body.innerHTML = rows.map(r => {
       const amt = num(r.amount);
@@ -646,6 +664,7 @@
       clearLockedAutoSize();
       syncAutofitMode();
       load();
+      loadAllTimeTotals();
     }));
   });
 })();
