@@ -922,6 +922,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  /* Closing a popover when the click lands elsewhere is bound all over this app in the BUBBLE phase
+     (`document.addEventListener('click', ...)` here, in bo-date-range.js, member-management.js and the
+     brand pickers), and a large share of the controls that sit next to those popovers call
+     stopPropagation() on their own click: the Columns button, the rounded-select buttons, the profile
+     buttons, the rail rows. Any click on one of those therefore never reached the closers of the
+     popovers it did not belong to - the owner's report, with the date range open: 「点击空白不会收起
+     菜单」 (and clicking the Columns button left it open, reproduced with real Chromium input).
+     One capture-phase listener on document cannot be swallowed by a later stopPropagation, so every
+     popover closes when the click is outside it - and each keeps its own containment test, so a click
+     inside a popover still belongs to that popover. */
+  boDocSlot('PopoverClose', 'click', function(e){
+    var t = e.target;
+    if (!t || typeof t.closest !== 'function') return;
+    if (!t.closest('.bo-range-field') && !t.closest('.bo-range-pop')) {
+      document.querySelectorAll('.bo-range-pop.show').forEach(function(p){ p.classList.remove('show'); });
+    }
+    if (!t.closest('.column-menu-wrap')) {
+      document.querySelectorAll('.column-menu').forEach(function(m){ if (!m.hidden) m.hidden = true; });
+    }
+    if (!t.closest('.rounded-select-wrap')) {
+      document.querySelectorAll('.rounded-select-menu.show').forEach(function(m){ m.classList.remove('show'); });
+      document.querySelectorAll('.rounded-select-btn.open').forEach(function(b){ b.classList.remove('open'); });
+    }
+    if (!t.closest('.report-profile-wrap') && !t.closest('.dropdown')) {
+      document.querySelectorAll('.report-profile-menu.show').forEach(function(m){ m.classList.remove('show'); });
+    }
+  }, true);
+
   function boot(){
     // SPA replay re-dispatches DOMContentLoaded; the observer below is cumulative, so guard inside boot (it also runs via setTimeout).
     if(window.__boSelectSyncBooted) return; window.__boSelectSyncBooted=1;
