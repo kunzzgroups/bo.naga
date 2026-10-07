@@ -264,12 +264,21 @@ const GAME_API_SUB_CATEGORY = {
     }));
   }
 
+  /* Re-resolve the auto page size only on layout changes this controller did NOT cause: a window
+     resize, or the rail collapsing/expanding (reports.js toggles `body.sidebar-mini`; a class change
+     can never be our own paint).
+     The wrap observer that used to be here had already been narrowed from the list to the wrap, but
+     evenFill writes the list's height INSIDE the wrap and every render rewrites it, so the paint came
+     back as a resize and the page re-rendered itself to re-settle: measured on
+     game-sub-category.html, four shifts of the wrap of ~0.10 each after the data landed (CLS 0.41).
+     Trigger shape is the fix, not a flag: nothing this page writes can fire a window resize or a
+     body-class change. The resolved size is still compared before re-rendering, so a trigger that
+     changes nothing costs no work (agent-admin-management.js `bindAutoFitPageSize` does the same). */
   function bindEvenFillObserver() {
-    /* Observe the viewport wrap — never the list. evenFill writes list.style.height,
-       which re-fired a list observer → clearLocked → re-render → flicker loop. */
     const host = tableWrap || panel;
-    if (!host || host._boEvenFillObs) return;
-    host._boEvenFillObs = new ResizeObserver(() => {
+    if (!host || host._boLayoutTriggers) return;
+    host._boLayoutTriggers = true;
+    const resolve = () => {
       if (!isAutoPageSize(pageSizeEl?.value)) return;
       if (autofitReloading) return;
       clearTimeout(host._boEvenFillTimer);
@@ -293,9 +302,12 @@ const GAME_API_SUB_CATEGORY = {
         lockedAutoSize = next;
         renderList(currentItems, true);
         scheduleAutofit();
-      }, 48);
-    });
-    host._boEvenFillObs.observe(host);
+      }, 120);
+    };
+    window.addEventListener('resize', resolve);
+    try {
+      new MutationObserver(resolve).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    } catch (e) {}
   }
 
   function categoryName(catId) {

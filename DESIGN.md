@@ -6779,3 +6779,46 @@ Verified: `check-shell-drift.js` OK (the metric went into `bo-shell.css`, which 
 pages (bonus-category-item, promotion, rebate-management) x two themes: `padding:12px 0`, `justify-content:center`,
 `dx(icon.cx - row.cx) = 0`.
 
+### Two list pages that would not rest: the auto page size was reacting to its own paint
+
+Owner: 「provider-wallet-transaction.html 和 game-sub-category.html 加载数据不顺畅需要调整」. Measured with the
+harness API stubbed at 900ms (like the real one), instruments installed from t=0 (fetch log with caller,
+LayoutShift, MutationObserver):
+
+| | before | after |
+|---|---|---|
+| `provider-wallet-transaction` list requests for one view | **8** in 5s, one every ~950ms, forever | **2** (the initial load + one legitimate settle), then quiet |
+| `game-sub-category` CLS | **0.4139** (four wrap shifts of ~0.10) | **0.0084** |
+
+Both pages carry the same "auto page size + even fill" controller, and both watched their own work:
+`bindEvenFillObserver` put a `ResizeObserver` on the row wrap, while `evenFillRowHeights` writes row and
+table heights INSIDE that wrap and every `load()` first rewrites the body to its one-row "Loading..."
+state. So each paint came back as a layout change, the callback cleared the size lock, re-resolved the size
+by measuring the rows it had just painted, and re-loaded - and each load re-rendered the body, which changed
+the wrap again.
+
+Instrumented on provider-wallet (sizes taken from the request URLs, callers from the stack):
+
+    LOAD   t=273   size=14                            the page's own first load
+    SETTLE t=1208  rows=14 avail=555 natural=770 ovf=True target=10     a legitimate settle
+    LOAD   t=1209  size=10   <- reloadAt <- settleAutofitFromPaint
+    LOAD   t=1333  size=14   <- the wrap observer: re-measured the painted rows, landed back on 14
+    LOAD   t=2257  size=13   <- shrinkAutofitIfOverflow <- evenFillRowHeights   ... and so on to 10, forever
+
+The fix is the trigger shape, not a flag: re-resolve only on layout changes this controller did NOT cause -
+`window.resize`, and the rail collapsing/expanding (`reports.js` toggles `body.sidebar-mini`; a class change
+can never be our own paint) - and keep the house's own guard from `agent-admin-management.js`
+(`bindAutoFitPageSize`): compare the resolved size before re-rendering/re-loading, so a trigger that changes
+nothing costs no round trip. A real resize still re-resolves (verified: it settles on a new row count) and
+paging still works (one request for a page click on provider-wallet, client-side for game-sub-category).
+
+Two harness lessons, both of which cost real time and are recorded because they will happen again:
+
+1. **A fixture that ignores `size` invents the defect.** The first stub returned all 60 rows whatever
+   `size` was asked for, so the page painted 60 rows into a 599px wrap, every pass read that as an overflow
+   and shrank the request - a loop the harness created. The stub honours `page`/`size` now.
+2. **Patching JS without restamping its `?v=` pin measures the cached old file.** `assets/js/*.js?v=<hash>`
+   is what makes Chrome fetch a new revision; three rounds of "the guard did not work" were the browser
+   running the previous file. Restamp with `check-asset-pins.js --fix` and use a fresh profile per
+   measurement - a guard that appears not to work is more often not being loaded than wrong.
+

@@ -297,20 +297,41 @@
     }));
   }
 
+  /* Re-resolve the auto page size only on layout changes this controller did NOT cause: a window
+     resize, or the rail collapsing/expanding (reports.js toggles `body.sidebar-mini`, and a class
+     change can never be our own paint).
+     A ResizeObserver on the wrap cannot be used here. `evenFillRowHeights` sets row and table heights
+     INSIDE it, and every `load()` first rewrites the body to its one-row "Loading..." state, so the
+     observer read the controller's own work as a layout change: it cleared the size lock, re-resolved
+     (which measures the just-painted rows and lands back on the initial 14), and re-loaded. Measured
+     on provider-wallet-transaction.html with a 900ms API, instrumented: the page walked
+     size 14 -> 10 (a legitimate settle) -> back to 14 (this path) -> 13 -> 12 -> 11 -> 10 -> ..., one
+     list request every ~950ms, 8 in the first 5s, and it never rested. The remaining guard is the
+     house's own (`agent-admin-management.js` `bindAutoFitPageSize`): compare the resolved size before
+     re-loading, so a trigger that changes nothing costs no round trip. */
   function bindEvenFillObserver(){
     const scroll = tableBodyScroll();
-    if (!scroll || scroll._boEvenFillObs) return;
-    scroll._boEvenFillObs = new ResizeObserver(() => {
+    if (!scroll || scroll._boLayoutTriggers) return;
+    scroll._boLayoutTriggers = true;
+    const resolve = () => {
+      if (autofitReloading) return;
+      if (!isAutoPageSize($('txSize')?.value)) return;
       clearTimeout(scroll._boEvenFillTimer);
       scroll._boEvenFillTimer = setTimeout(() => {
-        if (!isAutoPageSize($('txSize')?.value)) return;
+        if (autofitReloading) return;
+        const prev = lockedAutoSize;
+        const next = measureAutoPageSize();
+        if (autofitSettled && prev != null && next === prev) { evenFillRowHeights(); return; }
         clearLockedAutoSize();
         pageSize = resolvePageSize();
         page = 1;
         load();
-      }, 120);
-    });
-    scroll._boEvenFillObs.observe(scroll);
+      }, 180);
+    };
+    window.addEventListener('resize', resolve);
+    try {
+      new MutationObserver(resolve).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    } catch (e) {}
   }
 
   /* VIP EXP Log specimen: First · Prev · pages · Next · Last */
