@@ -498,10 +498,14 @@
       if(!r.ok||j.status==='error') throw new Error(j.message||'Unable to load brand feature access');
       brandFeatureAccess=j.data||brandFeatureAccess;
     }catch(e){brandFeatureAccess={socialPluginEnabled:0,leaderboardEnabled:0,vipEnabled:0};}
-    if(socialPluginSettings) socialPluginSettings.style.display=Number(brandFeatureAccess.socialPluginEnabled)===1?'contents':'none';
-    if(leaderboardFeatureRow) leaderboardFeatureRow.style.display=Number(brandFeatureAccess.leaderboardEnabled)===1?'':'none';
-    if(vipFeatureRow) vipFeatureRow.style.display=Number(brandFeatureAccess.vipEnabled)===1?'':'none';
-    if(Number(brandFeatureAccess.socialPluginEnabled)===1) await loadTelegramConfig();
+    const featureOn=(value)=>value===true||value===1||String(value).toLowerCase()==='true'||String(value)==='1';
+    const socialAllowed=featureOn(brandFeatureAccess.socialPluginEnabled);
+    const leaderboardAllowed=featureOn(brandFeatureAccess.leaderboardEnabled);
+    const vipAllowed=featureOn(brandFeatureAccess.vipEnabled);
+    if(socialPluginSettings) socialPluginSettings.style.display=socialAllowed?'contents':'none';
+    if(leaderboardFeatureRow){leaderboardFeatureRow.style.display=leaderboardAllowed?'':'none';leaderboardFeatureRow.style.visibility='visible';}
+    if(vipFeatureRow){vipFeatureRow.style.display=vipAllowed?'':'none';vipFeatureRow.style.visibility='visible';}
+    if(socialAllowed) await loadTelegramConfig();
   }
   async function loadTelegramConfig(){
     const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/brands/'+selectedTargetBrandId+'/telegram',{headers:headers(false),cache:'no-store'});
