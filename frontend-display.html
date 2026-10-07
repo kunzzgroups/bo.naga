@@ -254,6 +254,36 @@ body.frontend-display-page .fd-panel .rounded-select-wrap.fd-menu-up .rounded-se
   border-bottom:1px solid #EADCC8;
   background:transparent;
 }
+#fd-sec-visibility .fd-social-plugin-settings{
+  grid-column:1 / -1;
+  grid-template-columns:1fr;
+  background:transparent;
+}
+/* Social settings follow the same full-width row structure as Collapsed Sidebar.
+   Keep one Telegram setting per row so the Visibility section remains aligned. */
+#fd-sec-visibility .fd-social-field{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(200px,320px);
+  align-items:center;
+  gap:10px 16px;
+  min-width:0;
+  padding:12px 14px;
+  border-bottom:1px solid #EADCC8;
+  background:transparent;
+}
+#fd-sec-visibility .fd-social-field .fd-control{
+  display:flex;
+  justify-content:stretch;
+  min-width:0;
+  margin:0;
+}
+#fd-sec-visibility .fd-social-field .form-control{
+  width:100%;
+  min-width:0;
+}
+@media (max-width:700px){
+  #fd-sec-visibility .fd-social-field{ grid-template-columns:1fr; }
+}
 #fd-sec-visibility .fd-switch-tile{
   grid-template-columns:minmax(0,1fr) auto;
   align-items:center;
@@ -1031,16 +1061,16 @@ html[data-bo-theme="dark"] #fd-sec-limits .display-setting-row:last-child{ borde
       </select>
     </div>
   </div>
-          <div id="socialPluginSettings" style="display:none">
-    <div class="display-setting-row">
+          <div id="socialPluginSettings" class="fd-social-plugin-settings" style="display:none">
+    <div class="fd-social-field">
       <div class="display-setting-copy"><h2>Telegram Bot Token</h2><p>Configure this brand's own Telegram LiveChat bot. Leave blank to keep the current token.</p></div>
       <div class="fd-control"><input id="telegramBotToken" class="form-control" type="password" autocomplete="new-password" placeholder="Keep current token"></div>
     </div>
-    <div class="display-setting-row">
+    <div class="fd-social-field">
       <div class="display-setting-copy"><h2>Telegram Bot ID</h2><p>Automatically detected from Telegram after the token is saved.</p></div>
       <div class="fd-control"><input id="telegramBotId" class="form-control" type="text" readonly></div>
     </div>
-    <div class="display-setting-row">
+    <div class="fd-social-field">
       <div class="display-setting-copy"><h2>Telegram Bot Username</h2><p>Automatically detected from Telegram after the token is saved.</p></div>
       <div class="fd-control"><input id="telegramBotUsername" class="form-control" type="text" readonly></div>
     </div>
@@ -1296,7 +1326,7 @@ html[data-bo-theme="dark"] #fd-sec-limits .display-setting-row:last-child{ borde
 <script src="assets/js/config.js?v=e7312672"></script>
 <script src="assets/js/brand-context.js?v=27360386"></script>
 <script src="assets/js/main-currency-runtime.js?v=2b28e860"></script>
-<script src="assets/js/currency-runtime.js?v=b63c89fb"></script><script src="assets/js/reports.js?v=a96450f8"></script><script src="assets/js/auth.js?v=7d4bd3c8"></script><script src="assets/js/frontend-display.js?v=1.0.25"></script>
+<script src="assets/js/currency-runtime.js?v=b63c89fb"></script><script src="assets/js/reports.js?v=a96450f8"></script><script src="assets/js/auth.js?v=7d4bd3c8"></script><script src="assets/js/frontend-display.js?v=1.0.26"></script>
 
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>

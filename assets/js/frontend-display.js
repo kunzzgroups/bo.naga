@@ -502,7 +502,7 @@
     const socialAllowed=featureOn(brandFeatureAccess.socialPluginEnabled);
     const leaderboardAllowed=featureOn(brandFeatureAccess.leaderboardEnabled);
     const vipAllowed=featureOn(brandFeatureAccess.vipEnabled);
-    if(socialPluginSettings) socialPluginSettings.style.display=socialAllowed?'contents':'none';
+    if(socialPluginSettings) socialPluginSettings.style.display=socialAllowed?'grid':'none';
     if(leaderboardFeatureRow){leaderboardFeatureRow.style.display=leaderboardAllowed?'':'none';leaderboardFeatureRow.style.visibility='visible';}
     if(vipFeatureRow){vipFeatureRow.style.display=vipAllowed?'':'none';vipFeatureRow.style.visibility='visible';}
     if(socialAllowed) await loadTelegramConfig();
