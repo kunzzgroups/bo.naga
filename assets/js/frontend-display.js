@@ -511,7 +511,7 @@
     if(socialAllowed) await loadTelegramConfig();
   }
   async function loadTelegramConfig(){
-    const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/brands/'+selectedTargetBrandId+'/telegram',{headers:headers(false),cache:'no-store'});
+    const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/frontend/telegram',{headers:headers(false),cache:'no-store'});
     const j=await r.json().catch(()=>({}));
     if(!r.ok||j.status==='error') throw new Error(j.message||'Unable to load Telegram setting');
     const d=j.data||{};
@@ -523,7 +523,7 @@
     if(Number(brandFeatureAccess.socialPluginEnabled)!==1||!telegramBotToken) return;
     const token=String(telegramBotToken.value||'').trim();
     if(!token) return;
-    const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/brands/'+selectedTargetBrandId+'/telegram',{method:'POST',headers:headers(true),body:JSON.stringify({botToken:token,webhookBaseUrl:location.origin})});
+    const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/frontend/telegram',{method:'POST',headers:headers(true),body:JSON.stringify({botToken:token,webhookBaseUrl:location.origin})});
     const j=await r.json().catch(()=>({}));
     if(!r.ok||j.status==='error') throw new Error(j.message||'Unable to save Telegram bot');
     telegramBotToken.value='';
