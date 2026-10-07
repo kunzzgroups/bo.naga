@@ -242,9 +242,11 @@
       ? 'Promotions without a bonus category title'
       : 'ID: ' + esc(cat.id) + ' <span>&bull;</span> Sort: ' + esc(cat.sortOrder == null ? 0 : cat.sortOrder) +
         ' <span>&bull;</span> ' + count + ' promotion' + (count === 1 ? '' : 's');
+    /* Two actions, not three: the owner's ruling is that managing a category's bonus items is the same
+       job as the "Add Promotion Bonus" flow, so the row's "Manage Items" link (which was the only
+       product entry point to bonus-category-item.html) is gone. Edit stays (this category's own form)
+       and Delete stays. */
     var actions = synthetic ? '' : (
-      '<a class="icon-action-btn is-view" data-tip="Manage Items" aria-label="Manage Items"' +
-        ' href="bonus-category-item.html?titleId=' + esc(key) + '"><i class="bi bi-collection" aria-hidden="true"></i></a>' +
       '<a class="icon-action-btn is-edit edit" data-tip="Edit" aria-label="Edit"' +
         ' href="bonus-category-title-edit.html?id=' + encodeURIComponent(key) + '"><i class="bi bi-pencil-square" aria-hidden="true"></i></a>' +
       '<button class="icon-action-btn is-reject delete btn-delete" data-tip="Delete" aria-label="Delete" type="button"' +

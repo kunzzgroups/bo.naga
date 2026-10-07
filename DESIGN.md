@@ -6856,3 +6856,18 @@ short one's) - the fill happens a frame after the paint in every page that uses 
 means changing the family's look, not this page's behaviour. Everything else about the load is quiet: one
 request, one placeholder, no reload while idle (verified over a 2s window in both themes).
 
+### Promotion Bonus: a row action removed, and a page left without a door
+
+Owner, looking at `promotion.html`: 「Manage Item跟Add Bonus是同一个功能，Manage Item可以删」. The row's first
+action (a `bi-collection` link, tooltip "Manage Items") pointed at `bonus-category-item.html?titleId=<key>`,
+and that link was the **only product entry point to that page** - every other reference in the tree is a
+`.tmp-*` scratch copy, and `auth.js` only maps the page's sidebar row and its menu permission onto
+`promotion.html`. The action is gone (Edit and Delete stay, so a row shows two buttons); the page itself is
+left in place, reachable by URL only, until the owner decides whether it becomes a step of the promotion flow,
+something else, or is deleted with its script and its CSS. Removing the link is safe against the page's own
+permission check: nobody can reach it by accident any more, and the mapping that let `bonus_category_title`
+roles into it still exists.
+
+Verified in both themes on the harness: rows render `['Edit', 'Delete']`, and no `a[href*="bonus-category-item"]`
+is left in the document.
+
