@@ -1080,9 +1080,15 @@ body.report-body.bo-charcoal.sidebar-mini .report-sidebar:hover .nav-group-btn.a
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.sidebar-mini .report-sidebar:hover .report-nav > a:not(.report-sub).active,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.sidebar-mini .nav-group-btn.active,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.sidebar-mini .report-sidebar:hover .nav-group-btn.active{
-    background:linear-gradient(90deg, rgba(245,158,11,.16) 0%, rgba(245,158,11,.05) 45%, transparent 100%)!important;
+    /* The cell mirrors the light theme's fill instead of a 90deg band that fades to transparent at
+       the right: a left-weighted fill under a centred icon is what actually reads as "the box and the
+       icon don't line up" (选中框格和Icon 没对齐), even once the icon is centred. Vertical, so the
+       cell is symmetric about the icon, and radius 10 like the light rule has. */
+    background:linear-gradient(180deg, rgba(245,158,11,.20) 0%, rgba(245,158,11,.10) 100%)!important;
     color:#FBBF24!important;
+    border-radius:10px!important;
     box-shadow:
+      inset 0 0 0 1px rgba(245,158,11,.20),
       inset 0 1px 0 rgba(245,158,11,.18),
       inset 0 -1px 0 rgba(245,158,11,.10),
       0 0 28px rgba(245,158,11,.12)!important;

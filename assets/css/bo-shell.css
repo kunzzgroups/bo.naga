@@ -220,8 +220,18 @@ html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .repor
 /* The collapsed rail (sidebar-mini) centres its icons with `padding:12px 0`. The module
    sheets that pin row padding at 10px 12px!important outrank reports.css's own
    `body.sidebar-mini .nav-group-btn{padding:12px 0}` (and its justify-content), so the mini
-   rows lost their centring on exactly those pages. Same guard, so both states hold. */
+   rows lost their centring on exactly those pages. Same guard, so both states hold.
+   `a[data-menu-key]` is in the list for the second half of the same problem: the 38px
+   `padding-right` that reserves room for the pin (rule just above) has no pin to reserve in the
+   collapsed state - bo-global-quicknav.css hides it there
+   (`body.sidebar-mini .report-sidebar .report-nav > a[data-menu-key] > .bo-sidebar-pin{display:none}`)
+   - so `justify-content:center` was centring the icon inside the 0..13px that were left, and every
+   rail icon sat off-centre. Measured on bonus-category-item.html collapsed: row 10..61 (cx 36),
+   icon 6..28 (cx 17), i.e. 19px left of its own row; the owner reported it off the active cell,
+   whose box is the whole row and so made the offset visible (选中框格和Icon 没对齐). The expanded
+   rail keeps the 38px: the pin is a real control there. */
 html:not(#bo-charcoal-off) body.sidebar-mini .report-shell .report-sidebar .report-nav > a,
+html:not(#bo-charcoal-off) body.sidebar-mini .report-shell .report-sidebar .report-nav a[data-menu-key],
 html:not(#bo-charcoal-off) body.sidebar-mini .report-shell .report-sidebar .report-nav .nav-group-btn{
   padding:12px 0!important;
   justify-content:center!important;

@@ -6749,3 +6749,33 @@ The measurements below are the harness at 1568x819, before -> after.
   `bo-ui-button`, whose 36px rung wins; the declaration in the footer is documented as the fallback rather
   than escalated).
 
+### The collapsed rail: the selected cell and its icon (both themes, not just dark)
+
+Owner's report, with a dark screenshot of the rail: 「收起的时候 选中框格和Icon 没对齐」. The measurement says
+the icon was not in its cell at all - **in both themes**:
+
+| | row (the cell) | icon | icon centre - row centre |
+|---|---|---|---|
+| collapsed, before | x 10..61, cx 36 | x 6..28, **cx 17** | **-19px** (4px of it outside the row) |
+| collapsed, after | x 10..61, cx 36 | x 25..47, cx 36 | 0 (gaps 15 / 14) |
+
+The cause is a reservation whose reason had been removed: every rail row that can carry a pin reserves
+`padding-right: 38px` (`bo-shell.css`, for the 26px `.bo-sidebar-pin`), but `bo-global-quicknav.css` hides the
+pin in the collapsed rail (`body.sidebar-mini ... > .bo-sidebar-pin{display:none}`). The rail's mini rule sets
+`padding: 12px 0; justify-content: center`, which the module sheets outranked - so the fix for *that* was already
+there, and it was centring the icon inside the 0..13px the reservation left over. `a[data-menu-key]` is in that
+mini rule's selector list now: in a 72px rail with no pin, the reservation is released. Only the collapsed state
+- the expanded rail measures `9px 38px 9px 10px` with the pin as a real control, untouched.
+
+The second half was the paint, not the geometry. The dark mini cell was
+`linear-gradient(90deg, rgba(245,158,11,.16), … transparent)` with no border-radius: a left-weighted band that
+fades out at the right, so even with the icon centred the visible box reads as off-centre against it. It mirrors
+the light cell now (vertical amber tint, radius 10, amber ring), and the two themes' active cells finally agree.
+Light-mode pages had the same 19px offset - the zoomed crops of both themes, before and after, are in
+`.pi-tmp-fix3/rail-before-after.png`.
+
+Verified: `check-shell-drift.js` OK (the metric went into `bo-shell.css`, which owns it), `check-asset-pins.js`
+0 stale, `check-global-collisions.js`, `check-spa-readiness.js`, `pin-spa.js` - all OK. Measured after on three
+pages (bonus-category-item, promotion, rebate-management) x two themes: `padding:12px 0`, `justify-content:center`,
+`dx(icon.cx - row.cx) = 0`.
+
