@@ -413,8 +413,8 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     <p><span data-i18n="minimum_withdrawal">Minimum Withdrawal:</span> <b data-min-withdraw-display>&nbsp;</b></p>
   </div>
   <div class="money-btns">
-    <button type="button" aria-label="Deposit" onclick="location.href='deposit.html'"><img src="assets/custom/images/deposit.png" alt="DEPOSIT" decoding="async" loading="eager" fetchpriority="high"></button>
-    <button type="button" aria-label="Withdraw" onclick="location.href='withdraw.html'"><img src="assets/custom/images/withdraw.png" alt="WITHDRAW" decoding="async" loading="eager" fetchpriority="high"></button>
+    <button type="button" aria-label="Deposit" data-balance-nav="deposit.html"><img src="assets/custom/images/deposit.png" alt="DEPOSIT" decoding="async" loading="eager" fetchpriority="high"></button>
+    <button type="button" aria-label="Withdraw" data-balance-nav="withdraw.html"><img src="assets/custom/images/withdraw.png" alt="WITHDRAW" decoding="async" loading="eager" fetchpriority="high"></button>
   </div>
 </div>`,
         'frontend-header': `<div data-layout-section="home-header"></div>
