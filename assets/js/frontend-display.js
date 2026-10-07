@@ -26,6 +26,13 @@
   const liveTransactionRandomMaxPrice=document.getElementById('liveTransactionRandomMaxPrice');
   const brandTarget=document.getElementById('frontendDisplayBrandTarget');
   const brandTargetRow=document.getElementById('frontendDisplayBrandRow');
+  const socialPluginSettings=document.getElementById('socialPluginSettings');
+  const telegramBotToken=document.getElementById('telegramBotToken');
+  const telegramBotId=document.getElementById('telegramBotId');
+  const telegramBotUsername=document.getElementById('telegramBotUsername');
+  const leaderboardFeatureRow=document.getElementById('leaderboardFeatureRow');
+  const vipFeatureRow=document.getElementById('vipFeatureRow');
+  let brandFeatureAccess={socialPluginEnabled:0,leaderboardEnabled:1,vipEnabled:1};
   let selectedTargetBrandId=Number(localStorage.getItem('bo_active_brand_id')||1)||1;
   const marqueeEditor=document.getElementById('marqueeEditor');
   const marqueeContent=document.getElementById('marqueeContent');
@@ -484,6 +491,39 @@
     liveTransactionRandomPriceRow?.classList.toggle('is-hidden',!random);
   }
 
+  async function loadBrandFeatureAccess(){
+    try{
+      const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/brands/'+selectedTargetBrandId+'/features',{headers:headers(false),cache:'no-store'});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||j.status==='error') throw new Error(j.message||'Unable to load brand feature access');
+      brandFeatureAccess=j.data||brandFeatureAccess;
+    }catch(e){brandFeatureAccess={socialPluginEnabled:0,leaderboardEnabled:1,vipEnabled:1};}
+    if(socialPluginSettings) socialPluginSettings.style.display=Number(brandFeatureAccess.socialPluginEnabled)===1?'contents':'none';
+    if(leaderboardFeatureRow) leaderboardFeatureRow.style.display=Number(brandFeatureAccess.leaderboardEnabled)===1?'':'none';
+    if(vipFeatureRow) vipFeatureRow.style.display=Number(brandFeatureAccess.vipEnabled)===1?'':'none';
+    if(Number(brandFeatureAccess.socialPluginEnabled)===1) await loadTelegramConfig();
+  }
+  async function loadTelegramConfig(){
+    const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/brands/'+selectedTargetBrandId+'/telegram',{headers:headers(false),cache:'no-store'});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||j.status==='error') throw new Error(j.message||'Unable to load Telegram setting');
+    const d=j.data||{};
+    if(telegramBotToken) telegramBotToken.value='';
+    if(telegramBotId) telegramBotId.value=String(d.botId||'');
+    if(telegramBotUsername) telegramBotUsername.value=String(d.botUsername||'');
+  }
+  async function saveTelegramConfig(){
+    if(Number(brandFeatureAccess.socialPluginEnabled)!==1||!telegramBotToken) return;
+    const token=String(telegramBotToken.value||'').trim();
+    if(!token) return;
+    const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/brands/'+selectedTargetBrandId+'/telegram',{method:'POST',headers:headers(true),body:JSON.stringify({botToken:token,webhookBaseUrl:location.origin})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||j.status==='error') throw new Error(j.message||'Unable to save Telegram bot');
+    telegramBotToken.value='';
+    if(telegramBotId) telegramBotId.value=String(j.data?.botId||'');
+    if(telegramBotUsername) telegramBotUsername.value=String(j.data?.botUsername||'');
+  }
+
   async function load(){
     setMessage('Loading...');
     const response=await fetch(endpoint+(endpoint.includes('?')?'&':'?')+'_cfg='+Date.now(),{headers:headers(false),cache:'no-store'});
@@ -512,6 +552,7 @@
     renderLiveTransactionMode();
     if(marqueeEditor){ marqueeEditor.innerHTML=data.marqueeContent||''; applyMarqueeBackground(DEFAULT_MARQUEE_BG_COLOR); if(marqueeTextColorBar) marqueeTextColorBar.style.backgroundColor=DEFAULT_MARQUEE_TEXT_COLOR; syncMarquee(); }
     await loadInstallSetting();
+    await loadBrandFeatureAccess();
     setMessage('');
   }
 
@@ -596,6 +637,7 @@
       if(json.data){ if(mobileHeaderLogoPosition) mobileHeaderLogoPosition.value=String(json.data.mobileHeaderLogoPosition||mobileHeaderLogoPositionValue).toUpperCase()==='LEFT'?'LEFT':'CENTER'; minDeposit.value=Number(json.data.minDepositAmount||depositValue).toFixed(2); minWithdrawal.value=Number(json.data.minWithdrawalAmount||withdrawalValue).toFixed(2); if(rebateThreshold) rebateThreshold.value=Number(json.data.rebateAutoCreditThreshold??rebateThresholdValue).toFixed(2); if(marqueeEnabled) syncSelectValue(marqueeEnabled,json.data.marqueeEnabled); if(leaderboardEnabled) syncSelectValue(leaderboardEnabled,json.data.leaderboardEnabled); if(topupRewardEnabled) syncSelectValue(topupRewardEnabled,json.data.topupRewardEnabled); if(vipSidebarEnabled) syncSelectValue(vipSidebarEnabled,json.data.vipSidebarEnabled); if(liveTransactionEnabled) syncSelectValue(liveTransactionEnabled,json.data.liveTransactionEnabled); if(liveTransactionMode){liveTransactionMode.value=String(json.data.liveTransactionMode||liveTransactionModeValue).toUpperCase()==='FAKE'?'FAKE':'REAL';liveTransactionMode.dispatchEvent(new Event('change',{bubbles:true}));} if(liveTransactionIntervalSeconds) liveTransactionIntervalSeconds.value=String(json.data.liveTransactionIntervalSeconds||liveTransactionIntervalValue); if(liveTransactionRandomMinSeconds) liveTransactionRandomMinSeconds.value=String(json.data.liveTransactionRandomMinSeconds||liveTransactionRandomMinSecondsValue); if(liveTransactionRandomMaxSeconds) liveTransactionRandomMaxSeconds.value=String(json.data.liveTransactionRandomMaxSeconds||liveTransactionRandomMaxSecondsValue); if(liveTransactionRandomMinRows) liveTransactionRandomMinRows.value=String(json.data.liveTransactionRandomMinRows||liveTransactionRandomMinRowsValue); if(liveTransactionRandomMaxRows) liveTransactionRandomMaxRows.value=String(json.data.liveTransactionRandomMaxRows||liveTransactionRandomMaxRowsValue); if(liveTransactionRandomMinPrice) liveTransactionRandomMinPrice.value=Number(json.data.liveTransactionRandomMinPrice??liveTransactionRandomMinPriceValue).toFixed(2); if(liveTransactionRandomMaxPrice) liveTransactionRandomMaxPrice.value=Number(json.data.liveTransactionRandomMaxPrice??liveTransactionRandomMaxPriceValue).toFixed(2); renderLiveTransactionMode(); if(marqueeEditor){marqueeEditor.innerHTML=json.data.marqueeContent||marqueeHtml;syncMarquee();} }
       await saveInstallSetting();
       await saveBoSidebarInteraction();
+      await saveTelegramConfig();
       setMessage('Frontend display settings saved successfully.','success');
     }catch(error){
       setMessage(error.message,'error');

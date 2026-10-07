@@ -533,7 +533,7 @@
         if(!socialChannel || !externalConversationId || !externalMessageId) throw new Error('This social message cannot be recalled because its external message ID is unavailable.');
         const configBase=String((window.API_CONFIG&&window.API_CONFIG.BASE_URL)||window.API_BASE_URL||'').replace(/\/$/,'');
         const headers=Object.assign({'Content-Type':'application/json'},(window.BO_AUTH&&typeof window.BO_AUTH.authHeader==='function')?window.BO_AUTH.authHeader():{});
-        const response=await fetch(configBase+'/integrations/social/recall',{method:'POST',headers:headers,body:JSON.stringify({channel:socialChannel,conversationId:externalConversationId,messageId:externalMessageId})});
+        const response=await fetch(configBase+'/integrations/social/recall',{method:'POST',headers:headers,body:JSON.stringify({brandId:Number(selectedConversation.brandId||activeBrandId||1),channel:socialChannel,conversationId:externalConversationId,messageId:externalMessageId})});
         const payload=await response.json().catch(function(){return {};});
         if(!response.ok || payload.status==='error') throw new Error(payload.message||('Social recall failed HTTP '+response.status));
       }
@@ -573,7 +573,7 @@
         if(!socialChannel || !externalConversationId) throw new Error('Social conversation routing data is missing.');
         const configBase=String((window.API_CONFIG&&window.API_CONFIG.BASE_URL)||window.API_BASE_URL||'').replace(/\/$/,'');
         const headers=Object.assign({'Content-Type':'application/json'},(window.BO_AUTH&&typeof window.BO_AUTH.authHeader==='function')?window.BO_AUTH.authHeader():{});
-        const response=await fetch(configBase+'/integrations/social/send',{method:'POST',headers:headers,body:JSON.stringify({channel:socialChannel,conversationId:externalConversationId,content:text})});
+        const response=await fetch(configBase+'/integrations/social/send',{method:'POST',headers:headers,body:JSON.stringify({brandId:Number(selectedConversation.brandId||activeBrandId||1),channel:socialChannel,conversationId:externalConversationId,content:text})});
         const payload=await response.json().catch(function(){return {};});
         if(!response.ok || payload.status==='error') throw new Error(payload.message||('Social reply failed HTTP '+response.status));
         var socialExternalMessageId=String((payload.data&&payload.data.message_id)||'');
