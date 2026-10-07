@@ -95,7 +95,7 @@
       const j=await BO_BRAND.context(true);
       const d=j&&j.data?j.data:{};
       const brands=Array.isArray(d.brands)?d.brands:[];
-      selectedTargetBrandId=Number(localStorage.getItem('bo_active_brand_id')||d.activeBrandId||d.adminBrandId||1)||1;
+      selectedTargetBrandId=d.master?(Number(localStorage.getItem('bo_active_brand_id')||d.activeBrandId||1)||1):(Number(d.adminBrandId||d.activeBrandId||1)||1);
       if(d.master&&brandTarget&&brands.length){
         brandTarget.innerHTML=brands.filter(b=>Number(b.status)!==0).map(b=>`<option value="${Number(b.id)}">${String(b.name||b.code||('Brand '+b.id)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}</option>`).join('');
         if(!brands.some(b=>Number(b.id)===selectedTargetBrandId)) selectedTargetBrandId=Number(d.activeBrandId||brands[0].id||1)||1;
