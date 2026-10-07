@@ -547,11 +547,14 @@
     try{
       const attachments = await uploadFiles(files);
       const selectedConversation = conversations.find(function(c){ return c.id === selectedId; }) || {};
-      if(String(selectedConversation.source || '').toUpperCase() === 'CHATWOOT'){
+      if(String(selectedConversation.source || '').toUpperCase() === 'SOCIAL'){
         if(attachments.length) throw new Error('External social-channel attachments are not enabled yet. Please send text only.');
+        const socialChannel=String(selectedConversation.channel || '').toUpperCase();
+        const externalConversationId=String(selectedConversation.externalConversationId || '');
+        if(!socialChannel || !externalConversationId) throw new Error('Social conversation routing data is missing.');
         const configBase=String((window.API_CONFIG&&window.API_CONFIG.BASE_URL)||window.API_BASE_URL||'').replace(/\/$/,'');
         const headers=Object.assign({'Content-Type':'application/json'},(window.BO_AUTH&&typeof window.BO_AUTH.authHeader==='function')?window.BO_AUTH.authHeader():{});
-        const response=await fetch(configBase+'/integrations/chatwoot/send',{method:'POST',headers:headers,body:JSON.stringify({conversationId:String(selectedConversation.externalConversationId||''),content:text})});
+        const response=await fetch(configBase+'/integrations/social/send',{method:'POST',headers:headers,body:JSON.stringify({channel:socialChannel,conversationId:externalConversationId,content:text})});
         const payload=await response.json().catch(function(){return {};});
         if(!response.ok || payload.status==='error') throw new Error(payload.message||('Social reply failed HTTP '+response.status));
       }
