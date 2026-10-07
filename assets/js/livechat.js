@@ -546,6 +546,15 @@
     renderAttachPreview();
     try{
       const attachments = await uploadFiles(files);
+      const selectedConversation = conversations.find(function(c){ return c.id === selectedId; }) || {};
+      if(String(selectedConversation.source || '').toUpperCase() === 'CHATWOOT'){
+        if(attachments.length) throw new Error('External social-channel attachments are not enabled yet. Please send text only.');
+        const configBase=String((window.API_CONFIG&&window.API_CONFIG.BASE_URL)||window.API_BASE_URL||'').replace(/\/$/,'');
+        const headers=Object.assign({'Content-Type':'application/json'},(window.BO_AUTH&&typeof window.BO_AUTH.authHeader==='function')?window.BO_AUTH.authHeader():{});
+        const response=await fetch(configBase+'/integrations/chatwoot/send',{method:'POST',headers:headers,body:JSON.stringify({conversationId:String(selectedConversation.externalConversationId||''),content:text})});
+        const payload=await response.json().catch(function(){return {};});
+        if(!response.ok || payload.status==='error') throw new Error(payload.message||('Social reply failed HTTP '+response.status));
+      }
       const admin = (window.BO_AUTH && window.BO_AUTH.user && window.BO_AUTH.user()) || {};
       const now = firebase.firestore.FieldValue.serverTimestamp();
       await db.collection('conversations').doc(selectedId).collection('messages').add({
