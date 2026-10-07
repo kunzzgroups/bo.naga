@@ -51,10 +51,12 @@
     return Number.isFinite(n)&&n>0?n:20;
   }
   async function request(path, opt){const res=await fetch(api(path),{headers:{'Content-Type':'application/json',...auth()},...opt});const json=await res.json().catch(()=>({}));if(!res.ok||json.status==='error')throw new Error(json.message||'Request failed');return json.data;}
-  function endpoint(){
+  function endpoint(opts){
     const qs=new URLSearchParams();
-    if($('dbgFrom')?.value) qs.set('from',$('dbgFrom').value);
-    if($('dbgTo')?.value) qs.set('to',$('dbgTo').value);
+    if(!(opts && opts.noRange)){
+      if($('dbgFrom')?.value) qs.set('from',$('dbgFrom').value);
+      if($('dbgTo')?.value) qs.set('to',$('dbgTo').value);
+    }
     const q=($('dbgKeyword').value||'').trim();
     if(q){
       /* Pure digits → promotion ID; otherwise member / mobile keyword */
@@ -82,11 +84,22 @@
     page=0;
     paintRows(lastRows);
   }
-  function updateCounts(rows){
-    const active=rows.filter(x=>x.status==='ACTIVE').length;
-    const completed=rows.filter(x=>x.status==='COMPLETED').length;
-    const forfeited=rows.filter(x=>x.status==='FORFEITED').length;
-    $('dbgTotal').textContent=rows.length;
+  /* Tiles are all time: counts from the endpoint WITHOUT the date range. */
+  let allTimeRows = null;
+  async function loadAllTimeCounts(){
+    try{
+      const rows = await request(endpoint({noRange:true}));
+      allTimeRows = Array.isArray(rows) ? rows : [];
+      updateCounts(null, allTimeRows);
+    }catch(e){}
+  }
+
+  function updateCounts(rows, tileSource){
+    const tile = Array.isArray(tileSource) ? tileSource : (allTimeRows || rows);
+    const active=tile.filter(x=>x.status==='ACTIVE').length;
+    const completed=tile.filter(x=>x.status==='COMPLETED').length;
+    const forfeited=tile.filter(x=>x.status==='FORFEITED').length;
+    $('dbgTotal').textContent=tile.length;
     $('dbgActive').textContent=active;
     $('dbgCompleted').textContent=completed;
     $('dbgForfeited').textContent=forfeited;
@@ -161,7 +174,8 @@
     paintRows(lastRows);
   }
   async function load(){try{set('Loading claims…','');const rows=await request(endpoint());render(rows);set('','ok');}catch(e){tbody.innerHTML='<tr><td colspan="9" class="pl-empty-cell">'+esc(e.message)+'</td></tr>';updateShowing(0,0,0);renderPager(0,0,true);set(e.message,'err');}}
-  async function action(id,act){try{let path='/admin/promotion/debug/'+act, body={claimId:id}; if(act==='progress'){let amount=await BO_DIALOG.prompt('Enter the valid bet / winover amount:','10',{title:'Add Progress',inputLabel:'Amount',confirmText:'Add'}); if(amount===null)return; body.amount=Number(amount||0); path='/admin/promotion/debug/add-progress';} if(act==='reset'&&!(await BO_DIALOG.confirm('Reset will DELETE this claim, then member can claim again. Continue?', {title:'Reset Claim', confirmText:'Reset'})))return; if(act==='forfeit'&&!(await BO_DIALOG.confirm('Forfeit this promotion claim?', {title:'Forfeit Claim', confirmText:'Forfeit'})))return; await request(path,{method:'POST',body:JSON.stringify(body)}); set('Claim updated','ok'); await load();}catch(e){set(e.message,'err');}}
+  async function action(id,act){try{let path='/admin/promotion/debug/'+act, body={claimId:id}; if(act==='progress'){let amount=await BO_DIALOG.prompt('Enter the valid bet / winover amount:','10',{title:'Add Progress',inputLabel:'Amount',confirmText:'Add'}); if(amount===null)return; body.amount=Number(amount||0); path='/admin/promotion/debug/add-progress';} if(act==='reset'&&!(await BO_DIALOG.confirm('Reset will DELETE this claim, then member can claim again. Continue?', {title:'Reset Claim', confirmText:'Reset'})))return; if(act==='forfeit'&&!(await BO_DIALOG.confirm('Forfeit this promotion claim?', {title:'Forfeit Claim', confirmText:'Forfeit'})))return; await request(path,{method:'POST',body:JSON.stringify(body)}); set('Claim updated','ok'); await load();
+  loadAllTimeCounts();}catch(e){set(e.message,'err');}}
   function ensureActTip(){
     let tip=document.getElementById('plActTip');
     if(tip) return tip;
