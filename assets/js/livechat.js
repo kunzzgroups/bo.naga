@@ -57,6 +57,7 @@
       return;
     }
     await resolveActiveBrand();
+    try{ lastUnreadTotal = Number(localStorage.getItem('bo_livechat_last_unread_total_brand_' + String(activeBrandId || 0)) || 0); }catch(e){ lastUnreadTotal = 0; }
     listenTemplates();
     listenConversations();
   }
@@ -68,6 +69,11 @@
       if(window.BO_BRAND && typeof window.BO_BRAND.context === 'function'){
         const payload = await window.BO_BRAND.context(false);
         const data = payload && payload.data ? payload.data : {};
+        if(!data.master && Number(data.adminBrandId || 0) > 0){
+          activeBrandId = Number(data.adminBrandId);
+        }else if(data.master && Number(data.activeBrandId || 0) > 0 && !localStorage.getItem('bo_active_brand_id')){
+          activeBrandId = Number(data.activeBrandId);
+        }
         const brands = Array.isArray(data.brands) ? data.brands : [];
         const brand = brands.find(function(b){ return Number(b.id) === activeBrandId; });
         if(brand){
@@ -842,7 +848,7 @@
       if(latest) notifyIncoming(latest);
     }
     lastUnreadTotal = total;
-    localStorage.setItem('bo_livechat_last_unread_total', String(total));
+    localStorage.setItem('bo_livechat_last_unread_total_brand_' + String(activeBrandId || 0), String(total));
   }
 
   function requestBrowserNotificationPermission(){
