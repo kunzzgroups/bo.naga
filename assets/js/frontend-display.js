@@ -493,7 +493,7 @@
 
   async function loadBrandFeatureAccess(){
     try{
-      const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/merchants/'+selectedTargetBrandId+'/features',{headers:headers(false),cache:'no-store'});
+      const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/frontend/feature-access',{headers:headers(false),cache:'no-store'});
       const j=await r.json().catch(()=>({}));
       if(!r.ok||j.status==='error') throw new Error(j.message||'Unable to load brand feature access');
       brandFeatureAccess=j.data||brandFeatureAccess;
