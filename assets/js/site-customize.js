@@ -405,6 +405,18 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     // when no custom section has been saved yet. CSS and JS intentionally stay empty,
     // so the frontend continues using assets/css/style.css and its existing shell logic.
     const DEFAULT_SECTION_HTML = {
+        'home-right-balance': `<div class="balance-box">
+  <div class="balance-text">
+    <p data-i18n="balance_label">Balance:</p>
+    <h3 data-main-wallet-balance>&nbsp;</h3>
+    <p><span data-i18n="minimum_deposit">Minimum Deposit:</span> <b data-min-deposit-display>&nbsp;</b></p>
+    <p><span data-i18n="minimum_withdrawal">Minimum Withdrawal:</span> <b data-min-withdraw-display>&nbsp;</b></p>
+  </div>
+  <div class="money-btns">
+    <button type="button" aria-label="Deposit" onclick="location.href='deposit.html'"><img src="assets/custom/images/deposit.png" alt="DEPOSIT" decoding="async" loading="eager" fetchpriority="high"></button>
+    <button type="button" aria-label="Withdraw" onclick="location.href='withdraw.html'"><img src="assets/custom/images/withdraw.png" alt="WITHDRAW" decoding="async" loading="eager" fetchpriority="high"></button>
+  </div>
+</div>`,
         'frontend-header': `<div data-layout-section="home-header"></div>
 <div class="logo-box mobile-style-logo">
   <img class="site-logo" src="assets/custom/images/logo.png" decoding="async" loading="eager" fetchpriority="high" alt="Logo">
