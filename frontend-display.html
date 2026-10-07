@@ -367,6 +367,40 @@
       min-width: 0;
     }
 
+    .fd-inline-help {
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #d97706;
+      font: inherit;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      cursor: pointer;
+    }
+
+    .fd-telegram-guide {
+      width: min(560px, calc(100vw - 32px));
+      max-height: calc(100vh - 40px);
+      padding: 0;
+      border: 1px solid #eadcc8;
+      border-radius: 16px;
+      background: #fffaf2;
+      color: #1f1f1f;
+      box-shadow: 0 20px 60px rgba(70, 45, 15, .22);
+    }
+
+    .fd-telegram-guide::backdrop { background: rgba(22, 18, 13, .48); }
+    .fd-telegram-guide-head { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 20px; border-bottom:1px solid #eadcc8; }
+    .fd-telegram-guide-head h2 { margin:0; font-size:18px; }
+    .fd-telegram-guide-close { width:34px; height:34px; border:1px solid #eadcc8; border-radius:10px; background:#fffaf2; cursor:pointer; font-size:22px; line-height:1; }
+    .fd-telegram-guide-body { padding:18px 20px 20px; overflow:auto; }
+    .fd-telegram-guide-body ol { margin:0; padding-left:22px; }
+    .fd-telegram-guide-body li { margin:0 0 12px; line-height:1.5; }
+    .fd-telegram-guide-body li:last-child { margin-bottom:0; }
+    .fd-telegram-guide-note { margin:16px 0 0; padding:12px 14px; border:1px solid #eadcc8; border-radius:10px; background:#fff5e6; line-height:1.45; }
+    .fd-telegram-guide a { color:#d97706; font-weight:700; }
+
     @media (max-width:700px) {
       #fd-sec-visibility .fd-social-field {
         grid-template-columns: 1fr;
@@ -1717,7 +1751,7 @@
                     <div class="fd-social-field">
                       <div class="display-setting-copy">
                         <h2>Telegram Bot Token</h2>
-                        <p>Configure this brand's own Telegram LiveChat bot. Leave blank to keep the current token.</p>
+                        <p>Configure this brand's own Telegram LiveChat bot. Leave blank to keep the current token. <button type="button" class="fd-inline-help" id="telegramBotTokenHelp" aria-haspopup="dialog" aria-controls="telegramBotTokenGuide">How to get token?</button></p>
                       </div>
                       <div class="fd-control"><input id="telegramBotToken" class="form-control" type="password"
                           autocomplete="new-password"></div>
@@ -2088,13 +2122,33 @@
       </footer>
     </main>
   </div>
+
+  <dialog class="fd-telegram-guide" id="telegramBotTokenGuide" aria-labelledby="telegramBotTokenGuideTitle">
+    <div class="fd-telegram-guide-head">
+      <h2 id="telegramBotTokenGuideTitle">How to get a Telegram Bot Token</h2>
+      <button type="button" class="fd-telegram-guide-close" id="telegramBotTokenGuideClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="fd-telegram-guide-body">
+      <ol>
+        <li>Open Telegram and go to <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer">@BotFather</a>.</li>
+        <li>Send <strong>/newbot</strong> and follow BotFather's instructions.</li>
+        <li>Enter a display name for your bot.</li>
+        <li>Create a unique bot username. Telegram bot usernames must end with <strong>bot</strong>, for example <strong>MyBrandSupportBot</strong>.</li>
+        <li>After the bot is created, BotFather will send you the HTTP API token.</li>
+        <li>Copy that token, paste it into <strong>Telegram Bot Token</strong> above, then click <strong>Save Setting</strong>.</li>
+        <li>After saving, <strong>Telegram Bot ID</strong> and <strong>Telegram Bot Username</strong> are detected automatically. The webhook is configured by the system.</li>
+      </ol>
+      <p class="fd-telegram-guide-note"><strong>Security:</strong> Keep the bot token private. Do not send it in chat, screenshots, or public messages. If it is exposed, revoke it in BotFather and create a new token.</p>
+    </div>
+  </dialog>
+
   <script src="assets/js/config.js?v=e7312672"></script>
   <script src="assets/js/brand-context.js?v=27360386"></script>
   <script src="assets/js/main-currency-runtime.js?v=2b28e860"></script>
   <script src="assets/js/currency-runtime.js?v=b63c89fb"></script>
   <script src="assets/js/reports.js?v=a96450f8"></script>
   <script src="assets/js/auth.js?v=7d4bd3c8"></script>
-  <script src="assets/js/frontend-display.js?v=1.0.26"></script>
+  <script src="assets/js/frontend-display.js?v=1.0.28"></script>
 
   <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>

@@ -30,6 +30,9 @@
   const telegramBotToken=document.getElementById('telegramBotToken');
   const telegramBotId=document.getElementById('telegramBotId');
   const telegramBotUsername=document.getElementById('telegramBotUsername');
+  const telegramBotTokenHelp=document.getElementById('telegramBotTokenHelp');
+  const telegramBotTokenGuide=document.getElementById('telegramBotTokenGuide');
+  const telegramBotTokenGuideClose=document.getElementById('telegramBotTokenGuideClose');
   const leaderboardFeatureRow=document.getElementById('leaderboardFeatureRow');
   const vipFeatureRow=document.getElementById('vipFeatureRow');
   let brandFeatureAccess={socialPluginEnabled:0,leaderboardEnabled:1,vipEnabled:1};
@@ -784,6 +787,18 @@
     };
     document.addEventListener('click',window.__fdMenuPlace,true);
   }
+
+
+  if(telegramBotTokenHelp&&telegramBotTokenGuide){
+    telegramBotTokenHelp.addEventListener('click',()=>{
+      if(typeof telegramBotTokenGuide.showModal==='function') telegramBotTokenGuide.showModal();
+      else telegramBotTokenGuide.setAttribute('open','');
+    });
+  }
+  telegramBotTokenGuideClose?.addEventListener('click',()=>telegramBotTokenGuide?.close());
+  telegramBotTokenGuide?.addEventListener('click',e=>{
+    if(e.target===telegramBotTokenGuide) telegramBotTokenGuide.close();
+  });
 
   chooseInstallAppLogo?.addEventListener('click',()=>installAppLogoFile?.click());
   installAppLogoFile?.addEventListener('change',async e=>{
