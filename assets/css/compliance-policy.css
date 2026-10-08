@@ -1072,3 +1072,10 @@ html[data-bo-theme="dark"] body.compliance-policy-page .policy-modal-foot .clean
     transition: none;
   }
 }
+
+/* Content-sized columns. Measured on the rendered page: with the listing table's fixed layout,
+   a 24-character cell value paints 5 cell(s) past their own box here, and these cells do not
+   clip - the text lands on top of the next column, the same fault the Payout page showed with
+   "Registered payout account". The wrapper keeps its horizontal scroll, so nothing is lost.
+   (The listing frame's fixed layout is overridden here, page-scoped, so no other table changes.) */
+body.compliance-policy-page .policy-table-wrap .report-table{table-layout:auto!important}

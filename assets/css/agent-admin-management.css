@@ -1217,8 +1217,14 @@ body.agent-payout-page .table-footer .smart-page{
 /* Settlement reuses the Payout frame (body carries both classes) but lists one extra
    column — Period — whose "2026-09-01 - 2026-09-15" value is wider than the equal share
    the frame's fixed layout hands it, so the range painted over Total Bet. Content-sized
-   columns are the fix; min-width on the wrapper still keeps the horizontal scroll. */
-body.agent-settlement-page .table-card .report-table{
+   columns are the fix; min-width on the wrapper still keeps the horizontal scroll.
+
+   Payout has the same fault on its own columns, measured on the rendered page: the frame's
+   fixed layout hands BANK / METHOD 146px, and the cell's own text — "Registered payout
+   account", the fallback the row template prints when `bankName` is empty — needs 170px, so
+   it painted 37px into STATUS; the request-date column was 8px over as well. One rule for
+   both bodies: columns are content-sized, the wrapper's min-width still scrolls. */
+body:is(.agent-settlement-page,.agent-payout-page) .table-card .report-table{
   table-layout:auto!important;
 }
 
