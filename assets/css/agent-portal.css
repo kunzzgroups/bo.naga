@@ -2244,3 +2244,65 @@ html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.age
 html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .report-main{
   height:100vh!important;min-height:0!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P34 - the pager is the app-wide ".smart-page" recipe, copied from its single source of truth
+
+   Owner: "pagination的设计与bo和main 有点不一样 需要去修改统一".
+   Measured BO (agent-management.html), Main (main-admin-detail.html) and this page, then read the recipe
+   out of the sheet that owns it: assets/css/bo-charcoal-legacy.css, the app-wide .smart-page / .page-btn
+   block (light, dark, hover, disabled - all four states are specified there).
+
+     idle        background #F3F4F6, border 1px transparent, colour #9CA3AF, radius 8px, height 36px
+     idle hover  background #E5E7EB, colour #374151
+     current     linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%), border 1px #D97706,
+                 colour #FFFFFF, box-shadow 0 1px 2px rgba(180,83,9,.3) + inset 0 1px 0 rgba(255,255,255,.35)
+     disabled    background #F3F4F6, colour #9CA3AF, opacity 1, cursor not-allowed
+     dark idle   background #383A46, border rgba(255,255,255,.12), colour #A1A1AA
+     dark hover  background #444654, border rgba(255,255,255,.18), colour #E7E5E4
+     dark current  border #F59E0B, colour #2A2C36, shadows rgba(0,0,0,.35) / 0 0 0 1px rgba(245,158,11,.35)
+                   / 0 2px 10px rgba(245,158,11,.28)
+     dark disabled background #2A2C36, border rgba(255,255,255,.06), colour #52525B
+     footer band  background #FFF8EB, border-top 1px solid #EADCC8, colour #57534E
+     type         700 / 13px (measured on BO; this page was 12.5px)
+
+   Before: this page's pager was cream buttons (bg #FFF8EB, colour #57534E) with a visible border, and a
+   translucent amber current page with dark amber text - three differences from both BO and Main, which
+   share the same pager. Bo's footer also carries the top hairline the band is defined with, so the footer
+   now has it too; the filter band's own hairline stays removed as asked last round.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern #agentPlayerPagination button{
+  background:#F3F4F6!important;border:1px solid transparent!important;color:#9CA3AF!important;
+  border-radius:8px!important;height:36px!important;min-height:36px!important;
+  font-size:13px!important;font-weight:700!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern #agentPlayerPagination button:not(.active):hover{
+  background:#E5E7EB!important;color:#374151!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern #agentPlayerPagination button.active{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border:1px solid #D97706!important;color:#FFFFFF!important;
+  box-shadow:0 1px 2px rgba(180,83,9,.3),inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern #agentPlayerPagination button:disabled{
+  background:#F3F4F6!important;color:#9CA3AF!important;opacity:1!important;cursor:not-allowed!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern #agentPlayerPagination button{
+  background:#383A46!important;border:1px solid rgba(255,255,255,.12)!important;color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern #agentPlayerPagination button:not(.active):hover{
+  background:#444654!important;border-color:rgba(255,255,255,.18)!important;color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern #agentPlayerPagination button.active{
+  border-color:#F59E0B!important;color:#2A2C36!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.35),0 0 0 1px rgba(245,158,11,.35),0 2px 10px rgba(245,158,11,.28)!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern #agentPlayerPagination button:disabled{
+  background:#2A2C36!important;border-color:rgba(255,255,255,.06)!important;color:#52525B!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel .agent-table-footer{
+  background:#FFF8EB!important;border-top:1px solid #EADCC8!important;color:#57534E!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel .agent-table-footer{
+  background:#383A46!important;border-top-color:rgba(255,255,255,.14)!important;
+}
