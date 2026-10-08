@@ -1194,3 +1194,69 @@ html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.report-body.agent-report-b
 html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent .agent-nav-chevron{
   color:#F5F5F4!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P3 - one radius scale.
+   Enumerating every border-radius in this sheet turned up EIGHT values in play - 3, 6, 7, 9, 10, 12,
+   14 and 16px - while the BO shell runs three: 8px for cards and controls, 10px for rail rows,
+   999px for pill badges (and 0 on table header cells). That scatter is a large part of why the same
+   components read as a different product.
+   Measured before: .agent-kpi-card / .agent-panel / the dashboard grid 12px, th 8px 0 0, the group
+   row 0. After: cards and controls 8px, rail rows 10px, pills 999px, th 0.
+   Scoped by the repo's id guard plus .agent-report-body/.agent-modern, so it can never reach a BO
+   page and never loses a specificity fight to a class-based rule.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-kpi-card,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-player-stat-card,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-panel,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-sidebar-card,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-summary-card,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-withdraw-kpi,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-withdraw-panel,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-modal-card,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-bank-modal,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-bank-account-item,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-sidebar-profile-menu,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-promotion-info,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-config-item,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-expanded-provider,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-quick-grid a,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-inline-report-grid > div,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern #agentReportMetrics.quick-stats .metric,
+/* The shared card classes too: the portal's .table-card measured 16px against the BO's 8px on
+   agent-wallet and agent-bonus, which the .agent-* list alone did not cover. */
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .table-card,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-card{
+  border-radius:8px!important;
+}
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-kpi-card .agent-card-action,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-view-btn,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-tag-btn,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-pagination button,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-tag,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-panel-title select,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-report-expand-btn,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-withdraw-submit,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-bank-actions button,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-modal-head button,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-reimburse-form input,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-reimburse-form textarea,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-sidebar-utils a{
+  border-radius:8px!important;
+}
+/* Rail rows: 10px, the BO's own value - including the group row, which sat at 0 while its siblings
+   were 10px (measured). */
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent:hover{
+  border-radius:10px!important;
+}
+/* Pill badges are fully round in the BO (.status-pill is 999px); the portal had a 6px chip. */
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-vip-pill{
+  border-radius:999px!important;
+}
+/* Table header cells are square in the BO - the portal rounded the first and last. */
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-mini-table th,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agent-player-table th,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern th{
+  border-radius:0!important;
+}
