@@ -266,10 +266,12 @@
     for(const c of candidates){const byType=methods.filter(m=>norm(m.methodType)===c);if(byType.length===1)return byType[0];}
     return null;
   }
-  async function loadApprovedDeposits(){
+  async function loadApprovedDeposits(allTime){
     let all=[],p=1,guard=0;
-    const from=document.getElementById('depositFrom')?.value||'';
-    const to=document.getElementById('depositTo')?.value||'';
+    /* allTime: the bank strip is a page-level summary - all time, unaffected by the date range or the
+       page size (owner's rule: 带有卡片的 total 显示所有). The table keeps its own filters. */
+    const from=allTime?'':(document.getElementById('depositFrom')?.value||'');
+    const to=allTime?'':(document.getElementById('depositTo')?.value||'');
     while(guard++<500){
       const params=new URLSearchParams({page:String(p),size:'100'});
       if(from)params.set('dateFrom',from);
@@ -291,12 +293,12 @@
      matchDepositBank() the chips use, which is what keeps the strip's Deposit and the rows
      below it in agreement. BANK_BALANCE_API.md asks for the server-side parameter that
      would retire this. */
-  async function loadBankRows(){
+  async function loadBankRows(allTime){
     const all=[];
-    const kw=document.getElementById('depositKeyword')?.value.trim();
-    const status=document.getElementById('depositStatus')?.value.trim();
-    const from=document.getElementById('depositFrom')?.value||'';
-    const to=document.getElementById('depositTo')?.value||'';
+    const kw=allTime?'':(document.getElementById('depositKeyword')?.value.trim());
+    const status=allTime?'':(document.getElementById('depositStatus')?.value.trim());
+    const from=allTime?'':(document.getElementById('depositFrom')?.value||'');
+    const to=allTime?'':(document.getElementById('depositTo')?.value||'');
     let p=1,guard=0;
     while(guard++<500){
       const params=new URLSearchParams({page:String(p),size:'100'});
@@ -328,16 +330,17 @@
       // Fresh payment methods: `bankUsage` moves with every approved deposit/withdrawal, so a
       // cached balance would print a stale number right after an approval.
       const [methods,dated,filtered]=await Promise.all([
-        paymentMethods(true),loadApprovedDeposits(),loadBankRows()
+        paymentMethods(true),loadApprovedDeposits(true),loadBankRows(true)
       ]);
       if(!methods.length){
         bankIndex=null;
         host.innerHTML='<span class="bo-bank-chip is-empty">No payment methods</span>';
         return;
       }
-      // `dated` counts the pending requests (the date range only: a pending request is news
-      // whether or not the table is showing approved rows). `filtered` sums every bank's total
-      // under the table's own filters, which is what the Deposit column reports.
+      // `dated` counts every pending request and `filtered` sums every bank's total - both unfiltered
+      // and all time, because the strip is a page-level summary (owner's rule). It used to follow the
+      // date range and the table's filters so the figures would agree with the rows below; the ruling
+      // puts the page total above the row detail instead.
       const previous=bankIndex;
       bankIndex=new Map(methods.map(function(m){
         const name=String(m.bankName||m.displayName||('Bank #'+m.id)).trim();

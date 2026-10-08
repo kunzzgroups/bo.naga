@@ -143,10 +143,12 @@
   }
   /* The date range on its own, every status but rejected: this is what the pending badges count.
      A pending request is news whether or not the table is currently showing approved rows. */
-  async function loadDatedWithdrawals(){
+  async function loadDatedWithdrawals(allTime){
     let all=[],p=1,guard=0;
-    const from=document.getElementById('withdrawFrom')?.value||'';
-    const to=document.getElementById('withdrawTo')?.value||'';
+    /* allTime: the bank strip is a page-level summary - all time, unaffected by the date range or the
+       page size (owner's rule: 带有卡片的 total 显示所有). The table keeps its own filters. */
+    const from=allTime?'':(document.getElementById('withdrawFrom')?.value||'');
+    const to=allTime?'':(document.getElementById('withdrawTo')?.value||'');
     while(guard++<500){
       const params=new URLSearchParams({page:String(p),size:'100'});
       if(from)params.set('dateFrom',from);
@@ -168,12 +170,12 @@
      endpoint has no bank parameter, so the bank is applied here with the same
      matchWithdrawBank() the matrix uses. BANK_BALANCE_API.md asks for the server-side
      parameter that would retire this. */
-  async function loadBankRows(){
+  async function loadBankRows(allTime){
     const all=[];
-    const kw=document.getElementById('withdrawKeyword')?.value.trim();
-    const status=document.getElementById('withdrawStatus')?.value.trim();
-    const from=document.getElementById('withdrawFrom')?.value||'';
-    const to=document.getElementById('withdrawTo')?.value||'';
+    const kw=allTime?'':(document.getElementById('withdrawKeyword')?.value.trim());
+    const status=allTime?'':(document.getElementById('withdrawStatus')?.value.trim());
+    const from=allTime?'':(document.getElementById('withdrawFrom')?.value||'');
+    const to=allTime?'':(document.getElementById('withdrawTo')?.value||'');
     let p=1,guard=0;
     while(guard++<500){
       const params=new URLSearchParams({page:String(p),size:'100'});
@@ -192,8 +194,10 @@
     }
     return all;
   }
-  /* A card per bank, every bank complete without a click. `flow` is this bank's total under the
-     table's current filters, so the figures beside the panel agree with the rows below it. */
+  /* A card per bank, every bank complete without a click. `flow` is this bank's ALL-TIME total and
+     `pending` counts every dated request: the strip is a page-level summary and does not move with the
+     date range or the page size (owner's rule), where it used to follow the table's filters so the two
+     would agree. */
   async function renderBankCards(){
     if(!ownsView())return;
     const host=bankHost();
@@ -205,7 +209,7 @@
       // Fresh payment methods: `bankUsage` moves with every approved deposit/withdrawal, so a
       // cached balance would print a stale number right after an approval.
       const [methods,dated,filtered]=await Promise.all([
-        paymentMethods(true),loadDatedWithdrawals(),loadBankRows()
+        paymentMethods(true),loadDatedWithdrawals(true),loadBankRows(true)
       ]);
       if(!methods.length){
         bankIndex=null;
