@@ -457,7 +457,7 @@ async function promotionPage(runToken){
   await render(true);
 }
 
-const AGENT_ADMIN_PAGES={'agent-management.html':1,'agent-commission-admin.html':1,'agent-payout-admin.html':1,'agent-settlement-admin.html':1,'agent-reimbursement-admin.html':1,'agent-promotion-admin.html':1};
+const AGENT_ADMIN_PAGES={'agent-management.html':1,'agent-commission-admin.html':1,'agent-settlement-admin.html':1,'agent-reimbursement-admin.html':1,'agent-promotion-admin.html':1};
 async function init(){
   const requestedPage=currentRoutePage();
   const runToken=(window.__boAgentAdminRunToken||0)+1;

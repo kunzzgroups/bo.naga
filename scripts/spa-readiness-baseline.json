@@ -5,6 +5,7 @@
     "currency-management.html": "legacy .report-main layout: declares its own frame with data-bo-frame, and ships no bo-shell.css / standard topbar",
     "provider-detail.html": "detail page with its own header markup",
     "contact-sync.html": "legacy layout, its own header markup",
-    "brand-detail.html": "detail page with its own header markup"
+    "brand-detail.html": "detail page with its own header markup",
+    "agent-payout-admin.html": "redirect stub: it forwards to agent-settlement-admin.html (the two screens were the same, so the tab was deleted). It renders for a moment and never swaps in, so it carries none of the shell markers"
   }
 }
