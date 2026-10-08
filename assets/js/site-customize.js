@@ -1050,7 +1050,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
                the module in the HTTP cache would keep the old behaviour for the whole session.
                Recompute it after editing assets/js/layout-section.js:
                sha1 of the file with CRLF normalised to LF, first 8 hex chars. */
-            const cm6Url = new URL('assets/js/layout-section.js?v=d85021fc', window.location.href).href;
+            const cm6Url = new URL('assets/js/layout-section.js?v=e078af6c', window.location.href).href;
             const mod = await import(cm6Url);
             cmEditors = mod.mountLayoutCodeEditors({
                 html: htmlEditor,
