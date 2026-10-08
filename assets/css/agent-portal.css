@@ -2389,3 +2389,26 @@ html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.age
 html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .report-main{
   height:100vh!important;height:100dvh!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P39 - the footer's dropdown opens upward, so it is not clipped by the card
+
+   Owner: "展开有问题" - the crop shows the top edge of a rounded panel peeking out below the card,
+   which is the menu with everything but its first few pixels cut off.
+
+   Measured, forcing .show on the menu instead of clicking (a click opens a platform picker and wedges
+   the debug session):
+     menu          158px tall, position:absolute, top:46px -> box 878..1036
+     wrap          832..872 (position:relative)
+     card          194..884, overflow-y:hidden
+   so the menu hung 152px past the card's bottom edge and 136px past the visible viewport, and the card
+   clipped it. Room ABOVE the footer, still inside the card: 638px.
+
+   The card is meant to clip - it is what makes the table's rounded corners work, and BO sets it the same
+   way - so the dropdown is what moves: anchored to the bottom of the field, it now unfolds upward where
+   there is room, instead of downward past the edge. Scoped to the footer, so a select higher up the page
+   still opens downward as before.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel .agent-table-footer .rounded-select-wrap .rounded-select-menu{
+  top:auto!important;bottom:100%!important;margin:0 0 6px 0!important;
+}
