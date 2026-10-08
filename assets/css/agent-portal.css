@@ -1355,3 +1355,32 @@ html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] #agentTre
 html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] #agentTrendChart polyline{
   stroke:#F59E0B!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P6 - the rail frame itself (owner: "需要 继续").
+   The last measurable difference in the shell: the portal hard-coded its rail to 250px
+   (.agent-modern .report-sidebar{width:250px}) and the content offset to match, while --sidebar-w is
+   230px on BOTH shells - bo-shell.css:197 sets it, and bo-charcoal-shell.css's own sidebar wallpaper
+   gradient is derived from it (calc(var(--sidebar-w,280px) * .72) etc). So the portal's rail was 20px
+   wider than the BO's and its rows 205px against 209px, with .report-sidebar carrying its own
+   padding (20px 12px 18px) while the BO leaves that to .report-nav (12px 10px 10px).
+   Rather than copy 230 as another literal, the rail and the content offset now read the variable -
+   the BO's own mechanism - so a future change to --sidebar-w moves both shells together.
+   :not(.sidebar-mini) is deliberate: the collapsed rail has its own width and the portal's
+   sidebar-mini block already owns the margin in that state.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page]:not(.sidebar-mini) .report-sidebar{
+  width:var(--sidebar-w,230px)!important;padding:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page]:not(.sidebar-mini) .report-main{
+  margin-left:var(--sidebar-w,230px)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page] .report-sidebar .report-brand{
+  height:64px!important;padding:0 14px!important;
+}
+
+/* P6b - the content frame's own inset. Measured 18px 20px 28px against the BO's 12px 18px 16px;
+   every page inside the portal was therefore padded a little wider than the same page in the BO. */
+html:not(#bo-charcoal-off) body[data-agent-page] .report-content{
+  padding:12px 18px 16px!important;
+}
