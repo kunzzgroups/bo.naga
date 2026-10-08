@@ -88,6 +88,26 @@ components:
 
 Former **Deep Navy Cyan** (`#123B66` / `#21A6D7` / `#072647` / `#08131F`) is **retired**. Do not reintroduce navy/cyan as brand identity.
 
+## Rail typography: synthetic 900 is kept, deliberately
+
+All three shells render their sidebar rows through the same markup and the same one rule:
+`<aside class="report-sidebar"><nav class="report-nav">` (Main does too - verified, and no `main-*.css`
+overrides it) plus `bo-shell.css` `.report-nav > a { font-size:14px; font-weight:900 }`. The family on
+all three is the same `ui-sans-serif, "Segoe UI", system-ui, sans-serif`, which on Windows resolves to a
+face whose heaviest weight is below 900 - so the browser **synthesises** the bold, and at high zoom the
+strokes look blotted together.
+
+`reports.css` already documents this exact trap in its own words ("without this face Windows system-ui
+collapses weight 600-900 into one stroke, so sidebar L1 looks regular") and ships Inter VF for it. The
+portal's pages still load those faces, and they sit `unloaded` - nothing requests the family, because
+the stack names `ui-sans-serif` first.
+
+Decision (owner, 2026-10-08): **keep parity**. All three panels look identical, synthetic weight and
+all, and that was chosen over crisper glyphs on the portal alone. To reverse it later, name `Inter`
+first in the rail's stack - but note the consequence measured at decision time: doing it for the portal
+only breaks the three-way parity, and doing it for all three means editing the BO's own typography, i.e.
+a cross-shell change rather than a portal fix.
+
 ## Agent Portal: profile and password share one page, like BO
 
 `agent-profile.html` carries BO's second card - `admin-form-card admin-wide-card admin-password-card`
