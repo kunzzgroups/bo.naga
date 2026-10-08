@@ -1825,3 +1825,26 @@ html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page].agent-rep
 html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-tab-buttons button.active{
   background:rgba(245,158,11,.2)!important;color:#F59E0B!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P18 - the filter bar lives inside the table card (owner: "被标记的 应该放在table里 像其bo和main 一样")
+
+   BO's arrangement, measured: the filter band is the table card's own header - wallet-ledger's is
+   .table-card > .filter-card, 57px tall, padding 10px 14px, and agent-management.html's band also holds
+   the status tabs beside the date and search. The portal's players page kept the filters in a SEPARATE
+   card above the table, so the page read as two unrelated blocks.
+
+   The markup move is in agent-players.html: the .agent-filter-panel now sits inside
+   .agent-player-list-panel, after the tabs row and before the table. This styles it as a band rather
+   than a card - no radius of its own, the card's own padding rhythm, and the hairline that separates
+   the header from the table. The ids are untouched, which is what keeps the page's JS bound to them.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-player-list-panel > .agent-filter-panel,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-player-list-panel > .agent-panel.agent-filter-panel{
+  border-radius:0!important;margin:0!important;padding:12px 16px 14px!important;
+  background:transparent!important;box-shadow:none!important;
+  border-bottom:1px solid #EADCC8!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-player-list-panel > .agent-list-tabs{
+  padding:12px 16px 0!important;
+}
