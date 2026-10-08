@@ -1043,3 +1043,61 @@ body[data-agent-page] h1{
   font-family:ui-sans-serif,"Segoe UI",system-ui,sans-serif!important;
   font-size:22px!important;font-weight:900!important;letter-spacing:-.02em!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P1 - header anatomy.
+   SSOT: bo-charcoal-shell.css "Topbar anatomy (system.md) - Deposit specimen: 64px - pad-y 0 -
+   items centered" (--bo-header-h:64px, height/min/max + align-items:center).
+   10 of the 12 portal pages already render <header class="report-topbar"> and inherit that anatomy
+   from bo-charcoal-shell.css. Only three carry a custom head, and they were the outliers:
+     agent-dashboard / agent-players   .agent-modern-head  151px / 106px  (pad 22px 30px 18px)
+     agent-player-detail               .agent-detail-head  106px          (pad 22px 30px 18px)
+   ------------------------------------------------------------------------------------------------ */
+body[data-agent-page] .agent-modern-head,
+body[data-agent-page] .agent-detail-head{
+  height:64px!important;min-height:64px!important;max-height:64px!important;
+  box-sizing:border-box!important;padding:0 20px!important;
+  align-items:center!important;flex-wrap:nowrap!important;gap:14px!important;
+}
+body[data-agent-page] .agent-modern-head > div,
+body[data-agent-page] .agent-detail-head > div{min-width:0!important}
+body[data-agent-page] .agent-modern-head h1,
+body[data-agent-page] .agent-detail-head h1{line-height:1.2!important;margin:0!important}
+/* The greeting was a 15px second row of its own. In the 64px anatomy it is the topbar's subtitle
+   line (the same slot BO pages give data-bo-subtitle): small, muted, one line, ellipsised. */
+body[data-agent-page] .agent-modern-head p,
+body[data-agent-page] .agent-detail-head p{
+  font-size:11px!important;line-height:1.3!important;margin:1px 0 0!important;
+  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  color:#6B360C!important;opacity:.72!important;
+}
+/* The clock line ("Asia/Kuala_Lumpur - 08 Oct 2026 14:51:47") is 230px wide; inline and small it
+   fits, and it steps aside before it can force the action group to wrap. */
+body[data-agent-page] #agentLastUpdated{
+  font-size:11px!important;white-space:nowrap!important;color:#6B360C!important;opacity:.72!important;
+}
+html[data-bo-theme="dark"] body[data-agent-page] .agent-modern-head p,
+html[data-bo-theme="dark"] body[data-agent-page] .agent-detail-head p,
+html[data-bo-theme="dark"] body[data-agent-page] #agentLastUpdated{
+  color:#F5F5F4!important;opacity:.62!important;
+}
+@media(max-width:1200px){body[data-agent-page] #agentLastUpdated{display:none!important}}
+
+/* P1b - the action group must stay on one row.
+   Measured: .agent-head-actions kept flex-wrap:wrap, so inside a 64px bar it broke into 4 rows
+   (date range 390 / refresh 96, then the clock small at 924, then the theme toggle + profile 205)
+   and hung 21.75px below the header's bottom edge. nowrap + min-width:0 lets the title truncate and
+   the clock ellipsise instead of stacking. */
+body[data-agent-page] .agent-modern-head .agent-head-actions,
+body[data-agent-page] .agent-detail-head .agent-head-actions{
+  display:flex!important;flex-wrap:nowrap!important;align-items:center!important;
+  justify-content:flex-end!important;gap:10px!important;min-width:0!important;
+}
+body[data-agent-page] .agent-modern-head .agent-head-actions > *,
+body[data-agent-page] .agent-detail-head .agent-head-actions > *{flex:0 0 auto!important}
+body[data-agent-page] .agent-modern-head .agent-head-actions > .bo-range-field,
+body[data-agent-page] .agent-modern-head .agent-head-actions > #agentLastUpdated{
+  flex:0 1 auto!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+body[data-agent-page] .agent-modern-head > div:first-of-type,
+body[data-agent-page] .agent-detail-head > div:first-of-type{flex:1 1 auto!important;min-width:0!important}
