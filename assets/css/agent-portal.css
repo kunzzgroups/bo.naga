@@ -1384,3 +1384,66 @@ html:not(#bo-charcoal-off) body[data-agent-page] .report-sidebar .report-brand{
 html:not(#bo-charcoal-off) body[data-agent-page] .report-content{
   padding:12px 18px 16px!important;
 }
+
+/* ================================================================================================
+   B1 - the dashboard's layout joins the BO dashboard  (owner: "dashboard的页面需要重新规划设计一下
+   要参考main和bo的设计风格 但不要去大改动现在的展示功能")
+
+   Function is untouched: the same four KPI values, the same five widgets, the same links. What
+   follows is the BO's own geometry, taken from the BO dashboard itself (index.html):
+
+   .report-content          display flex, column, gap 16px, padding 18px 18px 16px
+   .quick-stats.user-stats  grid, repeat(4, minmax(0,1fr)), gap 14px            (reports.css:1357)
+   .user-metric             flex, align center, gap 22px, min-height 92px,
+                            padding 18px 22px, radius 16px, #FFF8EB, 1px #EADCC8,
+                            box-shadow 0 10px 26px rgba(217,119,6,.05)          (reports.css:1358)
+   .user-metric small       11px/600 #57534E      (the label above the value)
+   .user-metric strong      23px, line-height 1.05, margin 5px 0 2px
+   .user-metric span        12px/700 #57534E      (the line under the value)
+   .filter-card             radius 16px, box-shadow 0 8px 22px rgba(217,119,6,.04)  (reports.css:1364)
+
+   Note this also corrects an over-reach in P3: the BO runs TWO card radii - 16px for the
+   tile/filter family (.user-metric, .filter-card) and 8px for .table-card - and P3 had flattened
+   the portal's KPI tiles to 8px. They are 16px again, which is what the BO actually uses.
+
+   Measured before -> after: KPI tile 133px tall at radius 8, padding 20px, gap 16, label 14px/400
+   -> 104px tall at radius 16, padding 18px 22px, gap 22, label 11px/600, value 23px.
+   ================================================================================================ */
+html:not(#bo-charcoal-off) body[data-agent-page="dashboard"] .report-content{
+  display:flex!important;flex-direction:column!important;gap:16px!important;padding:18px 18px 16px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-cards{
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-card,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-player-stat-card{
+  display:flex!important;align-items:center!important;gap:22px!important;min-height:92px!important;
+  padding:18px 22px!important;border-radius:16px!important;background:#FFF8EB!important;
+  border:1px solid #EADCC8!important;box-shadow:0 10px 26px rgba(217,119,6,.05)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-card .agent-kpi-icon{
+  width:52px!important;height:52px!important;border-radius:50%!important;flex:0 0 auto!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-card > div > span{
+  font-size:11px!important;font-weight:600!important;color:#57534E!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-card strong{
+  font-size:23px!important;line-height:1.05!important;margin:5px 0 2px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-card small{
+  font-size:12px!important;font-weight:700!important;color:#57534E!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-panel{
+  box-shadow:0 8px 22px rgba(217,119,6,.04)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-card .agent-card-action{
+  height:24px!important;line-height:22px!important;padding:0 10px!important;
+  font-size:12px!important;font-weight:700!important;margin-top:4px!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-card{
+  background:#2A2C36!important;border-color:rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-card > div > span,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-card small{
+  color:#D6D3D1!important;
+}
