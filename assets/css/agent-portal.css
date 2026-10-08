@@ -2174,3 +2174,45 @@ html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.age
 html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel .agent-table-footer > *{
   max-height:36px!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P32 - the list card fills the remaining viewport height, like the Agent page
+
+   Owner: "table应该要对齐屏幕的行高 而不是根据数据的展示的少 而缩短".
+
+   BO does not use a calc() for this - it is a flex chain (measured on agent-management.html at
+   1440x900): MAIN.report-main is display:flex/column, SECTION.report-content is flex:1 1 0% in that
+   column, and DIV.table-card is display:flex/column with flex:1 1 auto, so the card absorbs every pixel
+   left after the filter toolbar, and the table body carries the slack. Card measured 682 = 900 - 200
+   (its top) - 18 (the content frame's bottom padding).
+
+   In the portal that chain was broken at three points, so the card simply hugged its content:
+     .report-main              display:block   (BO: flex column)
+     .report-content           display:grid    (BO: flex column, flex:1 1 0%)
+     .agent-player-list-panel  display:block   (BO: flex column, flex:1 1 auto)
+
+   Reconnected here, page-scoped. The grid is kept (it lays out the KPI row above the card) but its
+   second row is now 1fr, the card is a flex column, and the table wrapper takes the leftover height
+   with its own scroll - so a long list scrolls inside the card and the footer stays put, which is the
+   BO's behaviour as well. Nothing moves when the row count changes.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .report-main{
+  display:flex!important;flex-direction:column!important;min-height:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .report-main > .report-content.agent-player-page{
+  flex:1 1 0%!important;min-height:0!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+  align-content:stretch!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel{
+  display:flex!important;flex-direction:column!important;min-height:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel > .agent-filter-panel{
+  flex:0 0 auto!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel > .table-wrap{
+  flex:1 1 auto!important;min-height:0!important;overflow:auto!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel > .agent-table-footer{
+  flex:0 0 auto!important;margin-top:auto!important;
+}
