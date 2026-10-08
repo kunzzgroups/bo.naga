@@ -504,11 +504,8 @@
       const idStr = String(row.id);
       const showSelectCol = statusPill === 'suspended' || statusPill === 'all';
       const checked = canDelete && selectedAdminIds.has(idStr) ? ' checked' : '';
-      const selectHtml = !showSelectCol
-        ? ''
-        : (canDelete
-          ? '<label class="mad-row-check"><input type="checkbox" class="mad-row-check-input" data-admin-select="' + esc(row.id) + '"' + checked + ' aria-label="Select ' + esc(row.displayName || row.username || 'administrator') + '"><span class="mad-row-check-box" aria-hidden="true"></span></label>'
-          : '<span class="mad-row-check mad-row-check-spacer" aria-hidden="true"></span>');
+        const selectHtml = '';   /* The selection column is gone: the other Main-panel lists have none either
+           (owner: "要去除 因为其他页面都没有"). Per-row delete in the Actions column is untouched. */
       const deleteBtn = canDelete
         ? '<button class="mad-icon-btn mad-delete-btn is-danger" type="button" data-tip="Delete" aria-label="Delete" data-id="' + esc(row.id) + '"><i class="bi bi-trash3" aria-hidden="true"></i></button>'
         : '';

@@ -383,11 +383,8 @@
    const canDelete=!active(b);
    const idStr=String(b.id);
    const checked=canDelete&&selectedMerchantIds.has(idStr)?' checked':'';
-   const selectHtml=!showSelectCol
-     ?''
-     :(canDelete
-       ?`<label class="mad-row-check"><input type="checkbox" class="mad-row-check-input" data-merchant-select="${esc(b.id)}"${checked} aria-label="Select ${esc(b.code||b.name||'merchant')}"><span class="mad-row-check-box" aria-hidden="true"></span></label>`
-       :'<span class="mad-row-check mad-row-check-spacer" aria-hidden="true"></span>');
+        const selectHtml = '';   /* The selection column is gone: the other Main-panel lists have none either
+           (owner: "要去除 因为其他页面都没有"). Per-row delete in the Actions column is untouched. */
    const deleteBtn=canDelete
      ?`<button class="mad-merchant-icon-btn is-danger" data-delete="${esc(b.id)}" type="button" data-tip="Delete" aria-label="Delete merchant"><i class="bi bi-trash3" aria-hidden="true"></i></button>`
      :'';
