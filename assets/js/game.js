@@ -1008,6 +1008,30 @@ const GAME_API_HUB = {
   resetBtn.addEventListener('click', resetForm);
   if (downloadImagesBtn) downloadImagesBtn.addEventListener('click', downloadAllImages);
 
+  /* The ... trigger opens the panel that holds Download Images; a click outside or Escape closes it. */
+  (function(){
+    const moreBtn = document.getElementById('gameMoreBtn');
+    const morePanel = document.getElementById('gameMorePanel');
+    if (!moreBtn || !morePanel) return;
+    const setOpen = (open) => {
+      morePanel.hidden = !open;
+      moreBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+    moreBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setOpen(morePanel.hidden);
+    });
+    document.addEventListener('click', (e) => {
+      if (morePanel.hidden) return;
+      if (e.target.closest && e.target.closest('#gameMore')) return;
+      setOpen(false);
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !morePanel.hidden) setOpen(false); });
+    /* picking the action closes the menu, then the button's own handler runs */
+    downloadImagesBtn?.addEventListener('click', () => setOpen(false));
+  })();
+
   refreshBtn.addEventListener('click', async () => {
     await loadSetup();
     await loadGames();
