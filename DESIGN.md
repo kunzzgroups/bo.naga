@@ -6903,3 +6903,38 @@ casino-deposit-withdraw-report, casino-overview-report, agent-performance-report
 family, promotion-debug, agent-wallet, agent-bet-report) still sum over the selected period. Making those
 all-time means calling their summary **without from/to** - one extra request each - which is the next batch.
 
+### The KPI strips, page-wide: every page's tiles are page-level totals now
+
+Owner's rule, stated once and applied to every page that has a strip: 「带有卡片的 total 显示所有 不会被
+date Range 和 Entry 影响」 - the tiles show everything (all time, every row) and must not move when the date
+range or the "Show N entries" size changes. Only the table follows those.
+
+What that meant per page, and what it cost:
+
+- **Tiles summed from the current page's rows** (the worst case - the page size changed a "total"):
+  wallet-ledger, member-wallet, index.html (User Management), rebate-log + daily-rebate-report,
+  member-deposit + member-withdraw (the bank strip's pending count and per-bank total). Each now fetches
+  its data once, unfiltered and unpaged, and sums that.
+- **Tiles summed from the ranged set** (the date range moved a "total"): win-lose-report,
+  casino-overview-report + casino-deposit-withdraw-report, agent-performance-report, promotion-debug,
+  agent-bet-report, manual-rebate-approval, and the four agent admin pages. Each calls its own endpoint
+  again without from/to - the non-range filters (category / provider / VIP / brand / player / status) stay -
+  and paints the strip from that. The agent admin pages' captions said "Selected period" for a period-scoped
+  number; they read "All time" now.
+- **Already correct, unchanged**: agent-wallet (`/agent/ledger` carries no range), rebate-management +
+  daily-rebate-setting (their counts come from unpaged rule/batch lists), admin-login-log, admin-user,
+  online-users, ip-whitelist-security.
+- **Deliberately not changed**: agent-commission-admin - its tiles are per-day report requests over the
+  selected range (one request per day, capped at 366), so an all-time tile there would be a 366-request
+  sweep; its caption "Selected KPI cycles" is truthful. main-accounting-settlement belongs to the Main panel,
+  a different shell, and is out of this scope.
+
+Measured (acceptance = the tiles identical before/after a range or size change, the table still following):
+wallet-ledger (810/870/930/2040 through 8 -> 18 -> 1 rows), member-wallet (4650/2325/3255/1245 through
+11 -> 20 rows), index.html (40/40/4820/0 through a size change and a keyword filter), win-lose-report
+(30,000/27,000/1,800/24 while "Showing 1 to 10 of 24" became "of 10"), and the two casino pages (3,000/1,500/
+300/150 with the ranged call landing as summary?period=custom&from=2026-09-17&to=2026-09-17). The rest are
+code-verified: node --check plus every tile expression read back, with the behavioural run flagged as needing
+a fixture (the member pages need their tab context - `ownsView()` - which the offline harness made zero list
+calls against).
+

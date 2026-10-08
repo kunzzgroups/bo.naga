@@ -8,7 +8,22 @@ function updateSelection(){const n=allMatching?Number($('sumMembers').textConten
 function syncRange(){const f=$('manualFrom'),t=$('manualTo');if(f&&t){const from=f.value||today(),to=t.value||from;f.value=from;t.value=to;$('dateFilter').value=to;return{from,to};}const d=$('dateFilter').value||today();return{from:d,to:d};}
 /* Only the newest request may write: a filter change fires load() while an earlier request is
    still in flight, and a slow response used to overwrite the row set a newer filter asked for. */
-async function load(){const seq=++loadSeq;const range=syncRange();const size=resolvePageSize($('pageSize').value),q=new URLSearchParams({date:range.to,dateFrom:range.from,dateTo:range.to,page,size});if($('searchFilter').value.trim())q.set('search',$('searchFilter').value.trim());if($('statusFilter').value)q.set('status',$('statusFilter').value);$('rows').innerHTML='<tr><td colspan="9" class="table-empty">Loading...</td></tr>';try{const d=await request(base+'/api/admin/rebate/manual-approval?'+q)||{};if(seq!==loadSeq)return;current=d.content||[];last=Math.max(0,(d.totalPages||0)-1);$('rows').innerHTML=current.length?current.map(x=>'<tr><td><input class="row-check" type="checkbox" data-id="'+x.memberId+'" '+(!x.approvable?'disabled':'')+' '+(selected.has(x.memberId)||allMatching?'checked':'')+'></td><td><div class="table-primary">'+esc(x.username)+'</div><small>#'+esc(x.memberId)+'</small></td><td>'+money(x.liveValidTurnover)+'</td><td>'+money(x.slotValidTurnover)+'</td><td>'+money(x.soccerValidTurnover)+'</td><td><b>'+money(x.totalValidTurnover)+'</b></td><td><b>'+money(x.totalRebateAmount)+'</b></td><td>'+status(x.status)+'</td><td><button class="icon-action-btn view" data-detail="'+x.memberId+'" title="View"><i class="bi bi-eye"></i></button></td></tr>').join(''):'<tr><td colspan="9" class="table-empty">No rebate records found.</td></tr>';const from=d.numberOfElements?d.number*size+1:0,to=d.number*size+(d.numberOfElements||0);$('showing').textContent='Showing '+from+' to '+to+' of '+(d.totalElements||0)+' entries';$('sumMembers').textContent=Number(d.totalElements||0).toLocaleString('en-US');$('sumRebate').textContent=money(current.reduce((s,x)=>s+Number(x.totalRebateAmount||0),0));$('sumDate').textContent=(range.from===range.to?range.to:(range.from+' - '+range.to));renderPager(d.number||0,d.totalPages||0);updateSelection();}catch(e){if(seq!==loadSeq)return;$('rows').innerHTML='<tr><td colspan="9" class="table-empty">'+esc(e.message)+'</td></tr>';if(window.BO_DIALOG)BO_DIALOG.alert(e.message,{title:'Unable to Load',type:'error'});}}
+/* The summary strip is a page-level total: all time, unaffected by the date range or the "Show N
+   entries" size (owner's rule). Same endpoint, same search/status filters, no date bounds. */
+async function loadAllTimeTotals(){
+  const q=new URLSearchParams({page:1,size:'10000'});
+  if($('searchFilter')?.value.trim())q.set('search',$('searchFilter').value.trim());
+  if($('statusFilter')?.value)q.set('status',$('statusFilter').value);
+  try{
+    const d=await (await fetch(base+'/api/admin/rebate/manual-approval?'+q,{headers:{'Content-Type':'application/json',...(window.BO_AUTH?BO_AUTH.authHeader():{})}})).json();
+    const data=d&&d.data?d.data:(d||{});
+    const rows=Array.isArray(data.content)?data.content:[];
+    $('sumMembers').textContent=Number(data.totalElements||rows.length||0).toLocaleString('en-US');
+    $('sumRebate').textContent=money(rows.reduce((a,x)=>a+Number(x.totalRebateAmount||0),0));
+    $('sumDate').textContent='All time';
+  }catch(e){/* leave the strip rather than show a partial total */}
+}
+async function load(){const seq=++loadSeq;const range=syncRange();const size=resolvePageSize($('pageSize').value),q=new URLSearchParams({date:range.to,dateFrom:range.from,dateTo:range.to,page,size});if($('searchFilter').value.trim())q.set('search',$('searchFilter').value.trim());if($('statusFilter').value)q.set('status',$('statusFilter').value);$('rows').innerHTML='<tr><td colspan="9" class="table-empty">Loading...</td></tr>';try{const d=await request(base+'/api/admin/rebate/manual-approval?'+q)||{};if(seq!==loadSeq)return;current=d.content||[];last=Math.max(0,(d.totalPages||0)-1);$('rows').innerHTML=current.length?current.map(x=>'<tr><td><input class="row-check" type="checkbox" data-id="'+x.memberId+'" '+(!x.approvable?'disabled':'')+' '+(selected.has(x.memberId)||allMatching?'checked':'')+'></td><td><div class="table-primary">'+esc(x.username)+'</div><small>#'+esc(x.memberId)+'</small></td><td>'+money(x.liveValidTurnover)+'</td><td>'+money(x.slotValidTurnover)+'</td><td>'+money(x.soccerValidTurnover)+'</td><td><b>'+money(x.totalValidTurnover)+'</b></td><td><b>'+money(x.totalRebateAmount)+'</b></td><td>'+status(x.status)+'</td><td><button class="icon-action-btn view" data-detail="'+x.memberId+'" title="View"><i class="bi bi-eye"></i></button></td></tr>').join(''):'<tr><td colspan="9" class="table-empty">No rebate records found.</td></tr>';const from=d.numberOfElements?d.number*size+1:0,to=d.number*size+(d.numberOfElements||0);$('showing').textContent='Showing '+from+' to '+to+' of '+(d.totalElements||0)+' entries';/* Tiles: loadAllTimeTotals() paints them from an all-time call (see below). */renderPager(d.number||0,d.totalPages||0);updateSelection();}catch(e){if(seq!==loadSeq)return;$('rows').innerHTML='<tr><td colspan="9" class="table-empty">'+esc(e.message)+'</td></tr>';if(window.BO_DIALOG)BO_DIALOG.alert(e.message,{title:'Unable to Load',type:'error'});}}
 function renderPager(cur,total){
   const pages=Math.max(1,Number(total)||0);
   const page=Math.max(0,Math.min(Number(cur)||0,Math.max(0,pages-1)));
@@ -47,4 +62,4 @@ try{
 }
 $('dateFilter').value=$('manualTo')?$('manualTo').value:y;
 load();
-})();
+loadAllTimeTotals();})();
