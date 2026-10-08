@@ -2481,3 +2481,39 @@ html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.ag
 html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern .table-card > [class*=table-footer] .rounded-select-wrap .rounded-select-menu{
   top:auto!important;bottom:100%!important;margin:0 0 6px 0!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P41 - on agent-products the filter band lives inside the table card, like on the players page
+
+   Owner: "我是说设计要跟players统一" -> chosen: 全统一：连结构一起.
+
+   The page was: filter card on top, KPI row, table card. The players page - and BO's own listing
+   pages - are: KPI row first, then one card holding the filter band, the table and its footer. The
+   filter block was moved into the card as its first child (markup move, no logic touched), the
+   Providers badge toolbar was removed, the four stacked labels and the Search button were removed, and
+   the fields now filter as they change - the same behaviour as the players page.
+
+   The band keeps the BO's geometry it inherits inside the card: flow position at 1/1, 14px 16px padding,
+   no bottom hairline (the filter band's hairline stays removed here exactly as asked there), and the
+   date-range control's own <label>Date Range</label> - built by bo-date-range.js - is hidden like the
+   one on the players page.
+
+   Not changed, because measurement said it was already identical: the table header on both pages is
+   #FFE8CC on #6B360C, 11px/700, 0.44px tracking, uppercase, with a 1px #EADCC8 rule under it.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern .table-card > .filter-card{
+  flex:0 0 auto!important;padding:14px 16px!important;margin:0!important;
+  border-radius:0!important;border-bottom:0!important;background:transparent!important;box-shadow:none!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern .table-card > .filter-card .field > label:not(.bo-search-control){
+  display:none!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern .table-card .bo-range-field > label{
+  display:none!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern .table-card > .filter-card .referral-filter-grid{
+  align-items:center!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern .table-card .bo-range-field{
+  width:100%!important;max-width:100%!important;min-width:0!important;
+}
