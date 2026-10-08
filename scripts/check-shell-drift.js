@@ -54,6 +54,16 @@ const SHELL_SELECTOR = new RegExp([
    recorded as a duplicate it is not. */
 const MAIN_SHELL_SCOPE = /data-bo-shell\s*=\s*["']?main/;
 
+/* The Agent Portal is the third shell. AGENTS.md is explicit that it keeps its own rail and
+   topbar and must not be unified with the BO - but its rail is built on the same `.report-nav` /
+   `.report-sidebar` / `.report-content` class names, so the list above catches it too. This
+   arrived with the portal/BO design alignment: the BO SSOT's ~378 scoped declarations never
+   reached the portal, so matching it means writing the same metrics in the portal's own sheet,
+   on selectors the portal alone can match. `data-agent-page` is stamped on the body of all 12
+   portal pages by the pages themselves and appears on no BO or Main page (verified), so a rule
+   scoped by [data-agent-page] is never BO shell drift - the same reasoning as MAIN_SHELL_SCOPE. */
+const AGENT_SHELL_SCOPE = /\[data-agent-page/;
+
 /* Layout metrics - the properties that caused every drift so far. Colour, background,
    border-colour, box-shadow and custom properties are deliberately NOT listed. */
 const BANNED = [
@@ -97,7 +107,7 @@ function scan(css) {
         body.replace(/([-a-z]+)\s*:/gi, (m, p) => { props.push(p.toLowerCase()); return m; });
         for (const part of head.split(',')) {
           const sel = part.replace(/\s+/g, ' ').trim();
-          if (SHELL_SELECTOR.test(sel) && !MAIN_SHELL_SCOPE.test(sel)) {
+          if (SHELL_SELECTOR.test(sel) && !MAIN_SHELL_SCOPE.test(sel) && !AGENT_SHELL_SCOPE.test(sel)) {
             for (const p of props) if (BANNED.includes(p)) out.push({ selector: sel, property: p });
           }
         }

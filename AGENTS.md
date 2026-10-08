@@ -104,6 +104,11 @@ in any stylesheet other than `bo-shell.css`. It is wired into
 after the deletion check and that check's `[ -z "$deleted" ] && exit 0` silently skips it
 (this mistake was made once and caught by testing, not by reading).
 
+Two shells are out of this guard's scope by construction, because AGENTS.md forbids unifying them
+with the BO: a rule scoped by `data-bo-shell="main"` (the Main panel) and a rule scoped by
+`[data-agent-page]` (the Agent Portal). Both attributes are stamped per page, appear on no BO page,
+and therefore make a selector that a BO page can never match.
+
 `scripts/shell-drift-baseline.json` records the declarations that already existed, so the
 guard is enforceable today: only new drift fails. Remove a baseline entry when you remove
 its declaration.

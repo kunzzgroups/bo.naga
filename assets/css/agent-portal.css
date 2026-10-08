@@ -1101,3 +1101,96 @@ body[data-agent-page] .agent-modern-head .agent-head-actions > #agentLastUpdated
 }
 body[data-agent-page] .agent-modern-head > div:first-of-type,
 body[data-agent-page] .agent-detail-head > div:first-of-type{flex:1 1 auto!important;min-width:0!important}
+
+/* ------------------------------------------------------------------------------------------------
+   P2 - the rail joins the BO anatomy.
+   SSOT: bo-shell.css (0d) plus the row's measured internals:
+     .report-nav   padding 12px 10px 10px, gap 3px, flex column      (the portal already had this:
+                                                                      a bo-charcoal-scoped rule reaches it)
+     row           min-height 42px, padding 9px 38px 9px 10px, flex, align center, gap 8px,
+                   font 14px/900, line-height 21px, letter-spacing normal
+     row icon      box 18x17, line-height 16.8px, margin-right 8px
+   The portal measured 46px rows at padding 11px 12px, a 22x29 icon box at offset 12, and a cream
+   gradient on EVERY row (BO fills only the active row). Its group row
+   (button.report-nav-item.agent-nav-parent) carried a solid linear-gradient(204deg, #D97706 ...)
+   block; BO's own SSOT kills exactly that shape - "Beat reports.css cream .nav-group cards - L1
+   sits on opaque sidebar" (background transparent, border 0, box-shadow none).
+   ------------------------------------------------------------------------------------------------ */
+body[data-agent-page] .report-nav{
+  padding:12px 10px 10px!important;gap:3px!important;
+  display:flex!important;flex-direction:column!important;
+}
+body[data-agent-page] .report-nav > a,
+body[data-agent-page] .report-nav .report-nav-item{
+  min-height:42px!important;height:42px!important;max-height:42px!important;
+  box-sizing:border-box!important;padding:9px 10px!important;
+  display:flex!important;align-items:center!important;gap:8px!important;
+  font-size:14px!important;font-weight:900!important;line-height:21px!important;
+  letter-spacing:normal!important;background-image:none!important;
+}
+body[data-agent-page] .report-nav a[data-menu-key]{padding-right:38px!important}
+body[data-agent-page] .report-nav > a > i,
+body[data-agent-page] .report-nav > a > .bi,
+body[data-agent-page] .report-nav .report-nav-item > i,
+body[data-agent-page] .report-nav .report-nav-item > .bi{
+  font-size:14px!important;line-height:16.8px!important;display:block!important;
+  width:18px!important;margin:0 8px 0 0!important;text-align:center!important;
+}
+body[data-agent-page] .report-nav > a > span,
+body[data-agent-page] .report-nav .report-nav-item > span{
+  line-height:16.8px!important;display:flex!important;align-items:center!important;
+}
+/* The group row is a plain rail row in the BO shell - no fill, no border, no shadow. */
+body[data-agent-page] .report-nav .agent-nav-group,
+body[data-agent-page] .report-nav .agent-nav-parent{
+  background:transparent!important;background-image:none!important;
+  border:0!important;box-shadow:none!important;
+}
+body[data-agent-page] .report-nav .agent-nav-sub{padding:0 0 4px 18px!important}
+body[data-agent-page] .report-nav .agent-nav-sub .report-nav-item{
+  min-height:36px!important;height:auto!important;padding:8px 10px!important;
+  font-size:13px!important;font-weight:600!important;line-height:15.6px!important;
+}
+
+/* ------------------------------------------------------------------------------------------------
+   P2b - the rail row fills, decided by specificity rather than by guesswork.
+   A probe that walks document.styleSheets and asks "which rules match this row and set a
+   background?" showed the fill is fought over by five !important declarations, so the winner is
+   simply the most specific one:
+     reports.css                         .report-nav > a                          #57534E old charcoal
+     bo-ui-standard.css                  .report-sidebar .report-nav > a:not(...) #57534E
+     bo-charcoal-shell.css  (6 classes)  html:not([dark]) body.report-body.bo-charcoal
+                                         .report-sidebar .report-nav > a:not(.report-sub)  <- the cream #FFF8EF
+     bo-charcoal-agent.css  (5 classes)  ... .agent-modern .report-nav-item.active / .agent-nav-parent
+   The BO shell's own answer to the same shape is an id guard - "The id-guard matches the idiom the
+   theme sheets use so this wins on BO pages only" (bo-shell.css 0d) - so this uses it too, scoped
+   additionally by .agent-report-body + .agent-modern, which no BO page carries. Id-level beats any
+   number of classes, so nothing here depends on sheet order.
+   The ACTIVE row keeps its fill: measured, the portal and the BO paint it with the same
+   linear-gradient(135deg, #FFF8EF 0%, #FFE8CC ...) - that one already matched.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav > a:not(.active),
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav .report-nav-item:not(.active){
+  background-image:none!important;background-color:transparent!important;
+}
+/* The group row: BO keeps it a plain rail row ("Beat reports.css cream .nav-group cards - L1 sits
+   on opaque sidebar": background transparent, border 0, box-shadow none). The portal painted it
+   with a solid linear-gradient(204deg, #D97706, #D97706) and white text, so the text colour has to
+   come back with the fill. */
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-group,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent i,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent .bi,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent span,
+html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent .agent-nav-chevron{
+  background:transparent!important;background-image:none!important;
+  border:0!important;box-shadow:none!important;color:#6B360C!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-group,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent i,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent .bi,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent span,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent .agent-nav-chevron{
+  color:#F5F5F4!important;
+}
