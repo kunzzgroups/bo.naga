@@ -1784,11 +1784,9 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern 
 }
 
 /* P16b - the list footer band. BO's table footer is 65px tall with padding 14px 16px; the portal's
-   pagination row measured 36px with no padding at all, so the row sat tight against the table's last
-   line instead of reading as a footer. */
-html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-player-list-foot,
-html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-list-foot,
-html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-table-foot,
-html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-pagination-wrap{
+   measured 55px with padding 13px 0px 6px, so the row sat tight against the table's last line instead of
+   reading as a footer. .agent-table-footer is the class the page actually renders (found in the DOM, not
+   guessed - an earlier revision of this rule listed names that matched nothing). */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-table-footer{
   padding:14px 16px!important;
 }
