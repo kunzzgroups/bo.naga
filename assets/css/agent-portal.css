@@ -1475,3 +1475,45 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern 
   height:44px!important;min-height:44px!important;border-radius:14px!important;gap:12px!important;
   align-items:center!important;padding:0!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P7 - the topbar's own controls, against the BO's (owner circled them: the hamburger and the
+   date-range + Refresh group).
+
+   Measured, portal vs BO:
+     hamburger      36x36 radius 8      ->  BO 42x42 radius 11
+     date trigger   fixed 390px radius 10  ->  BO 240px, min-width 0 / max-width 100%, radius 8
+     date field     flex 0 0 390px      ->  sized by its content, like the BO's
+     Refresh        96x36 solid #383A46 ->  the BO's topbar controls are ghost: #FFF8EB on a
+                                            1px #EADCC8 border, radius 8 (.bo-theme-btn)
+   The 390px was a fixed three-column footprint from the era when the portal's filter bars held a
+   date field of their own; in the 64px topbar it left a long empty pill, which is what the circle
+   points at. Content-sized, it reads like every BO page's date control.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-modern-head .hamb,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-topbar .hamb{
+  width:42px!important;min-width:42px!important;max-width:42px!important;
+  height:42px!important;min-height:42px!important;max-height:42px!important;border-radius:11px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-head-actions .bo-range-field{
+  flex:0 1 auto!important;width:auto!important;min-width:0!important;max-width:100%!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-head-actions .bo-range-trigger{
+  width:auto!important;min-width:0!important;max-width:100%!important;
+  height:36px!important;border-radius:8px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-head-actions .bo-range-pop{
+  width:auto!important;min-width:280px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-refresh-btn{
+  background:#FFF8EB!important;color:rgb(24,25,28)!important;
+  border:1px solid #EADCC8!important;border-radius:8px!important;height:36px!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-refresh-btn{
+  background:#2A2C36!important;color:#F5F5F4!important;border-color:rgba(255,255,255,.14)!important;
+}
+/* the collapsed rail: BO centres its rows and leaves no room for a chevron */
+html:not(#bo-charcoal-off) body.agent-modern.sidebar-mini .report-sidebar .report-nav .agent-nav-chevron,
+html:not(#bo-charcoal-off) body.agent-modern.sidebar-mini .report-sidebar:hover .report-nav .agent-nav-chevron{
+  display:none!important;
+}
