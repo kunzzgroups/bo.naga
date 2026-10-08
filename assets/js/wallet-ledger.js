@@ -587,11 +587,28 @@
       const resolved=(typedKeyword && typedKeyword!==urlMemberId) ? await resolveLedgerMemberId(typedKeyword) : null;
       if(generation!==loadGeneration) return;
       const requestParams=params(resolved);
-      const json = await api(url('WALLET_LEDGER_LIST') + '?' + requestParams);
+      let json = await api(url('WALLET_LEDGER_LIST') + '?' + requestParams);
       /* A newer filter/page/autofit request owns the table. Never let an older,
          slower response overwrite newer data. */
       if(generation!==loadGeneration) return;
-      const data = json.data || {};
+      let data = json.data || {};
+      /* One search box, and a game code is exactly what people type into it. Digits route to memberId, so
+         typing a numeric game code looked up a member that does not exist and the table came back empty
+         (owner: "输入游戏 没有显示筛选结果"). When the plain search finds nothing and no game code was given
+         in its own field, ask the same question with gameCode before reporting that there are no records -
+         the member/provider question is asked first, so nothing that used to match stops matching. */
+      const typedGame=document.getElementById('ledgerGame')?.value.trim() || '';
+      if(typedKeyword && !typedGame && !(Array.isArray(data.content) && data.content.length)){
+        const retry=new URLSearchParams(requestParams);
+        retry.delete('memberId');
+        retry.delete('providerCode');
+        retry.delete('keyword');
+        retry.set('gameCode',typedKeyword);
+        const jsonGame=await api(url('WALLET_LEDGER_LIST') + '?' + retry.toString());
+        if(generation!==loadGeneration) return;
+        const dataGame=jsonGame.data || {};
+        if(Array.isArray(dataGame.content) && dataGame.content.length){ json=jsonGame; data=dataGame; }
+      }
       render(Array.isArray(data.content) ? data.content : [], data.pagination || {}, data);
     }catch(e){
       if(generation!==loadGeneration) return;
