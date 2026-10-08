@@ -178,10 +178,16 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .mode-intro{
 
 /* ---- Inner layout fills shell below tabs · panels side-by-side ---- */
 body.bo-wallet-tx.bulk-adjustment-page .bulk-operation-layout,
+/* The columns fill the frame. The old height:100% never did: it resolved against an auto-height parent
+   and came out at the content's own height, which is the empty band under the cards the owner circled.
+   The row grows to fill its panel and never shrinks below its content (flex:1 0 auto), so the cards
+   reach the bottom of the frame; the two lists have no cap and grow with them, scrolling inside their
+   card when the roster is long. When the submit feedback and the result card need room, the row yields
+   only as far as its content allows and the mode panel scrolls (overflow-y:auto) - measured: neither
+   the alert nor the result card overlaps anything at 1440x900, 1280x720 or 1152x700. */
 body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-operation-layout{
-  flex:0 0 auto;
-  
-  height:auto;
+  flex:1 1 auto;
+  height:100%;
   display:grid;
   /* Desktop split: Select Members 60% · Configure 40% */
   grid-template-columns:minmax(0,3fr) minmax(280px,2fr);
@@ -195,7 +201,7 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-operation-shell .bulk-operati
   flex-direction:column;
   min-width:0;
   min-height:0;
-  height:auto;
+  height:100%;
   background:#FFFCF7;
   border:1px solid #DCC9A8;
   border-radius:8px;
@@ -257,8 +263,8 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-panel-ops .operation-form-gri
 }
 body.bo-wallet-tx.bulk-adjustment-page .bulk-panel-ops .selected-table-wrap,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-panel-ops .selected-table-wrap{
-  flex:0 1 auto;
-  min-height:0; max-height:min(300px,34vh);
+  flex:1 1 auto;
+  min-height:0; 
 }
 body.bo-wallet-tx.bulk-adjustment-page .operation-footer,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .operation-footer{
@@ -447,9 +453,9 @@ html body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .clean-
 /* ---- Member picker: clickable cards · columns follow container width ---- */
 body.bo-wallet-tx.bulk-adjustment-page .member-picker-list,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list{
-  flex:0 1 auto;
+  flex:1 1 auto;
   min-height:0;
-  max-height:min(420px,45vh);
+  max-height:none;
   border:1px solid #EADCC8;
   border-radius:8px;
   overflow-x:hidden;
@@ -743,7 +749,7 @@ body.bo-wallet-tx.bulk-adjustment-page .selected-table-wrap,
    Batch Result card (measured: status y610-665 against the card's y636-867). The flexible list is the
    part that must absorb that, so it shrinks to whatever is left and scrolls instead of clipping. */
 body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table-wrap{
-  flex:0 1 auto;
+  flex:1 1 auto;
   min-height:0;
   min-width:0;
   border:1px solid #EADCC8;
