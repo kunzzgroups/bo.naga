@@ -1260,3 +1260,49 @@ html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern .agen
 html:not(#bo-charcoal-off) body.report-body.agent-report-body.agent-modern th{
   border-radius:0!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P4 - tables.
+   SSOT: four BO pages measured identically (member-deposit, index, wallet-ledger, rebate-log):
+     th  11px/700, letter-spacing 0.44px, uppercase, bg #FFE8CC, pad 12px, radius 0
+     td  13px/700, pad 10px 12px, bg #FFF8EB, border-bottom 1px #EADCC8
+   Dark, two pages identical: th bg #1F2128 / #E7E5E4, td bg #3A3C48 / #F5F5F4, borders
+   rgba(255,255,255,.14) and .12.
+   The portal measured th 12px/700 with no tracking and no transform on #F5EBDC, and td 12px/400
+   (weight 400) on a transparent background - a visibly lighter, smaller table than every BO page.
+   The 700 on body cells is real, not a page quirk: all four BO pages report it.
+   The [data-agent-page] attribute is in the selector on purpose - it is what the drift guard's
+   exemption keys on, and these are metric properties (font-size/letter-spacing/padding) which the
+   guard would otherwise have to flag. It is also what keeps every rule here off BO pages.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page] table thead th,
+html:not(#bo-charcoal-off) body[data-agent-page] .agent-mini-table th,
+html:not(#bo-charcoal-off) body[data-agent-page] .agent-player-table th,
+html:not(#bo-charcoal-off) body[data-agent-page] .agent-detail-table th{
+  font-size:11px!important;font-weight:700!important;letter-spacing:.44px!important;
+  text-transform:uppercase!important;background:rgb(255,232,204)!important;
+  padding:10px 12px!important;border-radius:0!important;
+  /* the BO's light header text is the brown rail colour, not near-black (measured 107,54,12) */
+  color:rgb(107,54,12)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page] table tbody td,
+html:not(#bo-charcoal-off) body[data-agent-page] .agent-mini-table td,
+html:not(#bo-charcoal-off) body[data-agent-page] .agent-player-table td,
+html:not(#bo-charcoal-off) body[data-agent-page] .agent-detail-table td{
+  font-size:13px!important;font-weight:700!important;background:rgb(255,248,235)!important;
+  padding:10px 12px!important;border-bottom-color:rgb(234,220,200)!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] table thead th,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] .agent-mini-table th,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] .agent-player-table th,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] .agent-detail-table th{
+  background:rgb(31,33,40)!important;color:rgb(231,229,228)!important;
+  border-bottom-color:rgba(255,255,255,.14)!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] table tbody td,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] .agent-mini-table td,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] .agent-player-table td,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] .agent-detail-table td{
+  background:rgb(58,60,72)!important;color:rgb(245,245,244)!important;
+  border-bottom-color:rgba(255,255,255,.12)!important;
+}
