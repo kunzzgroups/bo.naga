@@ -2256,48 +2256,12 @@ html body.page-game.report-body:not(#bo-filter-standard-off):not(#bo-filter-stan
 }
 
 
-/* Download Images lives behind the ... trigger: the strip needs the room (measured - search 150 + four
-   selects at 180 for unclipped menus + the action group + gaps came to about 1310 inside a 1260 content box,
-   so something had to go), and the button keeps its id, so game.js still binds it. */
-html body.page-game.report-body .game-filter-card .game-more{
-  position:relative!important;
-  display:inline-flex!important;
-  flex:0 0 auto!important;
-}
-
-html body.page-game.report-body .game-filter-card .game-more-btn{
+/* Download Images is an icon button in the strip: the label cost about 110px, which was the difference
+   between one line and two (the four selects need their 180px for unclipped option labels). The title and
+   aria-label carry the name. */
+html body.page-game.report-body .game-filter-card .game-icon-btn{
   width:36px!important;
   min-width:36px!important;
   justify-content:center!important;
   padding:0!important;
-}
-
-html body.page-game.report-body .game-filter-card .game-more-panel{
-  position:absolute!important;
-  top:calc(100% + 6px)!important;
-  right:0!important;
-  z-index:40!important;
-  display:flex!important;
-  flex-direction:column!important;
-  gap:6px!important;
-  min-width:210px!important;
-  padding:8px!important;
-  border:1px solid #EADCC8!important;
-  border-radius:10px!important;
-  background:#FFFCF7!important;
-  box-shadow:0 12px 28px rgba(92,74,48,.18)!important;
-}
-
-html body.page-game.report-body .game-filter-card .game-more-panel[hidden]{
-  display:none!important;
-}
-
-html body.page-game.report-body .game-filter-card .game-more-panel .clean-btn{
-  justify-content:flex-start!important;
-  width:100%!important;
-}
-
-html[data-bo-theme="dark"] body.page-game.report-body .game-filter-card .game-more-panel{
-  background:#2A2C36!important;
-  border-color:rgba(255,255,255,.14)!important;
 }
