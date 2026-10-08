@@ -99,7 +99,7 @@ html body.page-game.report-body .game-filter-card,
 html body.page-game.report-body .game-filter-card.bo-filter-row,
 html body.page-game.report-body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .game-filter-card.bo-filter-row{
   display:flex!important;
-  flex-flow:row nowrap!important;
+  flex-flow:row wrap!important;
   align-items:center!important;
   justify-content:flex-start!important;
   gap:10px!important;
@@ -285,6 +285,12 @@ html body.page-game.report-body:not(#bo-filter-standard-off):not(#bo-filter-stan
   order:99!important;
   background:transparent!important;
   box-shadow:none!important;
+}
+
+/* The action group sits at the right end of the strip, including the row it wraps onto. Declared after
+   the group's own rule because that rule sets margin with !important and the later one wins the tie. */
+html body.page-game.report-body .game-filter-card .game-toolbar-title{
+  margin-left:auto!important;
 }
 
 /* Filter select ?beat bo-ui-standard (compact for 4 filters + search) */
@@ -2197,4 +2203,25 @@ html body.page-game .game-summary-grid{display:none!important}
     flex:1 1 auto!important;
     min-width:0!important;
   }
+}
+
+
+/* Four selects plus a search box and three buttons: capping the selects keeps them from pushing the
+   actions off the strip (measured at 1553px: the strip's contents wanted 1545px of 1528, so it wrapped). */
+html body.page-game.report-body .game-filter-card .bo-filter-select-item > select{
+  max-width:168px!important;
+}
+
+/* The strip's own rules set margin:0 on the action group with a long, very specific selector, so these two
+   have to match that specificity and come last. Without them the trailing Add Game button was pushed past
+   the card's right edge and clipped (owner: "Add Game Button" ??: button right 1552 against a card right of
+   1528, and it did not move when the card narrowed); wrapping alone left it mid-row instead of at the end. */
+html body.page-game.report-body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .game-filter-card.bo-filter-row > .game-toolbar-title.section-title{
+  margin-left:auto!important;
+  flex:0 0 auto!important;
+}
+
+/* The spacer did this job by eating the free space, which is what pushed the actions onto a third row. */
+html body.page-game.report-body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .game-filter-card.bo-filter-row > .game-filter-spacer{
+  display:none!important;
 }
