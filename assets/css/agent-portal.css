@@ -1447,3 +1447,31 @@ html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page].agent-rep
 html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-card small{
   color:#D6D3D1!important;
 }
+
+/* ================================================================================================
+   B2 - the account chip is the BO's standard one  (owner: "agent 卡片的点入直接可查看profile和change
+   password这点需要去统一")
+
+   The chip is now BO's markup - one <a class="bo-account-link"> with .report-avatar and a
+   .bo-account-meta stack (name + role) - and its click goes where BO's goes: bo-account-chip.js
+   points every BO chip at the account settings page's password section (href profile.html#password,
+   title "Account settings / Change password"), so one click reaches the profile AND the password
+   form. The portal keeps its two pages, so the chip links to agent-profile.html, which now carries
+   the same Change Password door. The dropdown that used to hang off this chip is gone; everything it
+   offered is still reachable in one click (profile = the chip, password = the door on the profile
+   page, logout = the rail footer).
+
+   Measured against a BO page, the two chips already agree on everything except two values, which is
+   what this block supplies:
+     avatar 40x40 radius 12 amber          identical
+     name 14px/700, role 11px/500 #71717A  identical
+     dark: avatar #F59E0B, role #F59E0B    identical
+     chip  132x44 radius 14                portal was 133x40 radius 0   <- fixed here
+   The markup deliberately does NOT carry data-bo-profile: that host attribute makes
+   bo-account-chip.js label the role from BO_AUTH, which the portal does not load, and it would
+   overwrite the agent's own role line with "Admin".
+   ================================================================================================ */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-actions .bo-account-link{
+  height:44px!important;min-height:44px!important;border-radius:14px!important;gap:12px!important;
+  align-items:center!important;padding:0!important;
+}
