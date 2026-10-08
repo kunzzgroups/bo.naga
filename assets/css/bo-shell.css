@@ -574,3 +574,42 @@ html[data-bo-theme="dark"] .report-shell .report-main .report-topbar[data-bo-top
    consistent, and 1b above removes the reason the sheets used to shrink it (an
    unshrinkable title). If a smaller phone size is preferred, add one breakpoint here -
    it is a one-line change. */
+
+/* Rail typography: the bundled Inter, not the system face at 900.
+   Inter VF is shipped by reports.css (@font-face, weight 100-900); naming it first here gives the rail a
+   real 900 with open counters instead of the window's own heavy face, whose D/P/R close up at 14px
+   (owner: "还是有点被吃掉的感觉"). Same declaration as reports.css and agent-portal.css - the three
+   sheets are loaded by different sets of pages, so one copy each is what makes every page agree.
+   font-family is not a drift-guard metric property, so this adds no shell drift. */
+html body.report-body .report-shell .report-sidebar .report-nav > a,
+html body.report-body .report-shell .report-sidebar .report-nav > a span,
+html body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn,
+html body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn span,
+html body.report-body .report-shell .report-sidebar .report-nav .report-sub,
+html body.report-body .report-shell .report-sidebar .report-nav .report-sub span,
+html body.report-body .report-shell .report-sidebar .bo-sidebar-logout,
+html body.report-body .report-shell .report-sidebar .bo-sidebar-logout span{
+  font-family:Inter, ui-sans-serif, "Segoe UI", system-ui, sans-serif!important;
+}
+
+/* Rail typography: the label spans need the row line-height */
+html body.report-body .report-shell .report-sidebar .report-nav > a span,
+html body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn span,
+html body.report-body .report-shell .report-sidebar .report-nav .report-sub span{
+  /* the same line-height the portal had to take: 14px of Inter needs more than the inherited
+     14 x 1.2 = 16.8px box, or the capitals are clipped at the top (bo-shell.css gives the row
+     21px but the label spans never received it). */
+  line-height:21px!important;
+}
+
+  /* The label span must not carry a rounded, clipping box. bo-charcoal-shell.css gives the rail's
+     label spans border-radius:10px (copied from the active-row pill, which belongs on the ROW), and
+     reports.css gives them overflow:hidden - so a 21px-tall text box was being rounded by 10px, and its
+     four corners were cutting the glyphs. Measured on the agent rail before this: the span itself
+     reported border-radius 10px + overflow hidden while the anchor reported overflow visible, which is
+     why the row looked fine and the letters did not (owner: "好像是border radius的问题"). */
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav > a span,
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn span,
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .report-sub span{
+  border-radius:0!important;
+}

@@ -7895,3 +7895,34 @@ html[data-bo-theme="dark"] body.member-detail-page a.md-btn-ghost:hover{
   background-image:linear-gradient(180deg,#383A46 0%,#2C2E38 100%)!important;
   border-color:rgba(255,255,255,.18)!important;color:#F5F5F4!important;
 }
+
+
+/* ================================================================================================
+   Rail typography: use the bundled Inter, all three shells at once
+   (owner: "还是有点被吃掉的感觉" -> chose Inter 900, three-way)
+
+   The rail rows are 14px at font-weight 900. On the system stack (ui-sans-serif -> Segoe UI on
+   Windows) that face's own 900 is heavy enough at 14px to close the counters of D / P / R - which is
+   the "被吃掉" the owner sees, and it is not synthesis: a control row rendered with
+   font-synthesis:none came out identical.
+
+   Inter VF is already shipped by this same sheet (@font-face, weight 100-900) and the portal loads the
+   faces but never requested them, because the stacks name ui-sans-serif first. Naming Inter first in
+   the rail only, with the same fallbacks behind it, gives a real 900 with open counters.
+
+   Why here and not bo-shell.css: this is the one sheet all THREE shells link - BO (bo-shell.css does
+   not reach Main) and Main (which links no bo-shell.css at all) and the portal (agent-portal.css is
+   portal-only). One declaration therefore lands identically everywhere instead of three copies that
+   can drift apart. font-family is not one of the drift guard's banned metric properties, so this does
+   not create shell drift; the guard is run on it either way.
+   ================================================================================================ */
+html body.report-body .report-shell .report-sidebar .report-nav > a,
+html body.report-body .report-shell .report-sidebar .report-nav > a span,
+html body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn,
+html body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn span,
+html body.report-body .report-shell .report-sidebar .report-nav .report-sub,
+html body.report-body .report-shell .report-sidebar .report-nav .report-sub span,
+html body.report-body .report-shell .report-sidebar .bo-sidebar-logout,
+html body.report-body .report-shell .report-sidebar .bo-sidebar-logout span{
+  font-family:Inter, ui-sans-serif, "Segoe UI", system-ui, sans-serif!important;
+}

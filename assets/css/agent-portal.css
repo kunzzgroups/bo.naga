@@ -1676,3 +1676,28 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern 
 html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-subitem > span{
   line-height:21px!important;
 }
+
+/* P14 - rail family (same declaration as reports.css and bo-shell.css; the three sheets are loaded by
+   different page sets, and this is the portal's owner sheet). */
+html body.report-body .report-shell .report-sidebar .report-nav > a,
+html body.report-body .report-shell .report-sidebar .report-nav > a span,
+html body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn,
+html body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn span,
+html body.report-body .report-shell .report-sidebar .report-nav .report-sub,
+html body.report-body .report-shell .report-sidebar .report-nav .report-sub span,
+html body.report-body .report-shell .report-sidebar .bo-sidebar-logout,
+html body.report-body .report-shell .report-sidebar .bo-sidebar-logout span{
+  font-family:Inter, ui-sans-serif, "Segoe UI", system-ui, sans-serif!important;
+}
+
+  /* The label span must not carry a rounded, clipping box. bo-charcoal-shell.css gives the rail's
+     label spans border-radius:10px (copied from the active-row pill, which belongs on the ROW), and
+     reports.css gives them overflow:hidden - so a 21px-tall text box was being rounded by 10px, and its
+     four corners were cutting the glyphs. Measured on the agent rail before this: the span itself
+     reported border-radius 10px + overflow hidden while the anchor reported overflow visible, which is
+     why the row looked fine and the letters did not (owner: "好像是border radius的问题"). */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav > a span,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent span,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-subitem span{
+  border-radius:0!important;
+}
