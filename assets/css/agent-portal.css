@@ -1867,3 +1867,33 @@ html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.age
 html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters > .agent-tab-buttons{
   display:flex!important;align-items:center!important;gap:8px!important;padding-bottom:2px!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P23 - the footer becomes the BO's three-slot band, and the pager gets first/last
+   (owner: "统一设计还是不够一样 还得需要")
+
+   BO's agent-management.html footer: [Show [10] entries] ... [Showing 1 to 2 of 2 entries] ... [pager],
+   and its pager carries first, previous, the numbers and last - the portal's had previous, numbers, next.
+   Both are now there; the page-size select writes the playerPageSize the page already keeps and re-renders.
+   The dot on the Active tab is the BO's own mark for the live status.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-table-footer{
+  display:flex!important;align-items:center!important;gap:12px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-table-footer > .agent-page-size{
+  flex:1 1 0!important;font-size:12px!important;color:#6B360C!important;display:flex!important;align-items:center!important;gap:8px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-table-footer > #agentPlayersShowing{
+  flex:0 0 auto!important;text-align:center!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-table-footer > .agent-pagination{
+  flex:1 1 0!important;display:flex!important;justify-content:flex-end!important;gap:6px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-page-size select{
+  height:36px!important;border-radius:8px!important;font-size:13px!important;
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;color:rgb(24,25,28)!important;padding:0 8px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button[data-player-tab="1"]::before{
+  content:""!important;display:inline-block!important;width:6px!important;height:6px!important;
+  border-radius:50%!important;background:#16A34A!important;margin-right:6px!important;vertical-align:middle!important;
+}
