@@ -360,3 +360,16 @@ html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin.i
 }
 html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin.is-pinned { color:#8b4513!important; }
 html body .report-sidebar .report-nav a[data-menu-key] > button.bo-sidebar-pin::-moz-focus-inner { border:0!important; padding:0!important; }
+
+/* The sidebar's DIRECT rows and its group rows, transparent in night mode - the same value and shape
+   bo-charcoal-shell.css already uses, but that rule is written under body.bo-charcoal and the Main panel
+   keeps its own body classes (menu-permission.html is ...menu-permission-page bo-access-control). With
+   bo-charcoal absent, the light paper rule from reports.css (.nav-group{background:#FFF8EB}) was the only one
+   left in night mode, which is the light pill the owner saw on the Access Control parent row. Scoped with
+   :not(.bo-charcoal) so the BO pages keep the rules they already have. */
+html[data-bo-theme="dark"] body.report-body:not(.bo-charcoal) .report-sidebar .report-nav > .nav-group,
+html[data-bo-theme="dark"] body.report-body:not(.bo-charcoal) .report-sidebar .report-nav > a,
+html[data-bo-theme="dark"] body.report-body:not(.bo-charcoal) .report-sidebar .nav-group{
+  background:transparent!important;
+  border-color:rgba(255,255,255,.08)!important;
+}
