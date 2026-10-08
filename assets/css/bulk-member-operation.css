@@ -91,20 +91,12 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-mode-switch{
 }
 
 body.bo-wallet-tx.bulk-adjustment-page .bulk-mode-panel,
-/* The desktop frame was locked to the viewport (height:100% down the chain) and the mode panel clipped
-   (overflow:hidden). The right column's content is 817px against a 462px row, so its tail painted
-   outside the column and the submit feedback landed on the Latest Batch Result card; unlocking the
-   panels alone only moves that clipping to the shell, whose content frame is itself overflow:hidden
-   (measured: .report-main and .report-content both scrollHeight == height == the viewport).
-   The model this file already uses for Excel upload (#excelModePanel{overflow:auto}) is the answer:
-   the frame stays locked, the mode panel is the scroll region, and the columns and the two member
-   lists are content-sized with their own max-height, so nothing paints over anything else. */
 body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-mode-panel{
   flex:1 1 auto;
   min-height:0;
   display:flex;
   flex-direction:column;
-  overflow-y:auto;
+  overflow:hidden;
 }
 body.bo-wallet-tx.bulk-adjustment-page .bulk-mode-panel[hidden],
 body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-mode-panel[hidden]{
@@ -189,7 +181,7 @@ body.bo-wallet-tx.bulk-adjustment-page .bulk-operation-layout,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-operation-layout{
   flex:1 1 auto;
   min-height:0;
-  height:auto;
+  height:100%;
   display:grid;
   /* Desktop split: Select Members 60% · Configure 40% */
   grid-template-columns:minmax(0,3fr) minmax(280px,2fr);
@@ -203,7 +195,7 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-operation-shell .bulk-operati
   flex-direction:column;
   min-width:0;
   min-height:0;
-  height:auto;
+  height:100%;
   background:#FFFCF7;
   border:1px solid #DCC9A8;
   border-radius:8px;
@@ -265,8 +257,8 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-panel-ops .operation-form-gri
 }
 body.bo-wallet-tx.bulk-adjustment-page .bulk-panel-ops .selected-table-wrap,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-panel-ops .selected-table-wrap{
-  flex:none;
-  min-height:0; max-height:min(300px,34vh);
+  flex:1 1 auto;
+  min-height:0;
 }
 body.bo-wallet-tx.bulk-adjustment-page .operation-footer,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .operation-footer{
@@ -455,9 +447,9 @@ html body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .clean-
 /* ---- Member picker: clickable cards · columns follow container width ---- */
 body.bo-wallet-tx.bulk-adjustment-page .member-picker-list,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list{
-  flex:none;
+  flex:1 1 auto;
   min-height:0;
-  max-height:min(420px,45vh);
+  max-height:none;
   border:1px solid #EADCC8;
   border-radius:8px;
   overflow-x:hidden;
@@ -746,9 +738,13 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .member-secondary{
 
 /* ---- Selected table — quiet premium ledger ---- */
 body.bo-wallet-tx.bulk-adjustment-page .selected-table-wrap,
+/* The right column is a locked row child: its content fitted until the submit feedback and the result
+   card took their share of the frame, and then its tail painted outside the column - over the Latest
+   Batch Result card (measured: status y610-665 against the card's y636-867). The flexible list is the
+   part that must absorb that, so it shrinks to whatever is left and scrolls instead of clipping. */
 body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table-wrap{
-  flex:none;
-  min-height:0;
+  flex:1 1 auto;
+  min-height:120px;
   min-width:0;
   border:1px solid #EADCC8;
   border-radius:10px;
