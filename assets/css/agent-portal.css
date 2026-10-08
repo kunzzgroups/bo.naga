@@ -1629,3 +1629,30 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern 
 html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent > .bi{
   opacity:1!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P12 - the rail labels lose the inherited negative tracking  (owner circled the first letter of
+   every label: they read as if jammed into the next one)
+
+   Measured, portal vs BO on the same row:
+     BO      label span  letter-spacing: normal
+     portal  label span  letter-spacing: -0.14px      (= -0.01em at 14px)
+   P2 normalised the tracking on the ROW but not on the label span, and the span is where it is
+   actually inherited from - built from the group button, whose open state carries the -0.01em. This is
+   the exact failure the BO's own shell documents, and the wording matches what was happening here:
+   "Some themes put a -0.01em tracking on the OPEN group's button ... which the label span inherits as
+   -0.14px at 14px ... Normalise the whole rail to no tracking - label spans included, since that is
+   where it was actually inherited." (bo-shell.css, 0d)
+
+   Same list the BO normalises: rows, group buttons, sub rows - and the spans inside each.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav > a,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav > a span,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .report-nav-item span,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent span,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-subitem,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-subitem span,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .agent-sidebar-utils a span{
+  letter-spacing:normal!important;
+}
