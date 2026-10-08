@@ -1656,3 +1656,23 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern 
 html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .agent-sidebar-utils a span{
   letter-spacing:normal!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P13 - the rail labels were being clipped (owner: "是line height问题"; and they were right)
+
+   Measured on the portal's rail before this:
+     plain <a> rows (and the active one)  span line-height 16.8px, box 16.8px, overflow hidden,
+                                          glyph box 19px -> 2.2px over the top edge, clipped
+     group <button> (Finance)             same numbers but overflow VISIBLE -> not clipped
+   That is the whole of "除了 finance 其他第一个字都是不标准的": the capitals lose the top of their
+   strokes on the four rows whose span clips, and the one row that does not clip looks normal.
+
+   16.8px is 14px x 1.2 - the inherited default ratio. The house value for these rows is 21px, which is
+   what bo-shell.css gives the row itself; the label spans simply never received it. 21px fits the 19px
+   glyph box, so the clipping is gone without touching the 42px row height or its centring.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .report-nav-item > span,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent > span,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-subitem > span{
+  line-height:21px!important;
+}
