@@ -1742,3 +1742,53 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern 
 html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-standard-filter{
   border-radius:16px!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P16 - the players tile internals and the table's first column (owner: 去参考跟bo的设计 还有table)
+
+   Measured, portal vs BO:
+     tile          118px tall, padding 18px 22px, gap 22px      -> 104px, padding 16px 18px, gap 24px
+     tile label    14px/400                                     -> 11px/600
+     tile value    22px/700                                     -> 23px/900
+     tile caption  11px/600                                     -> 12px/800
+     th/td first   padding 10px 12px                            -> 10px 16px 10px 12px  (the BO indents
+                                                                   the first column by 16px, not 12px)
+   Why the tile typography was still wrong after B1: the players page's card is .agent-player-stat-card
+   with <b> for the value and a plain <span> for the label, while B1 wrote .agent-kpi-card strong. The
+   rules below cover both shapes.
+   The table's row height difference (41 vs 51) is NOT a style difference - the BO's sampled row carries a
+   two-line cell - so it is left alone.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-player-stat-card,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-card{
+  padding:16px 18px!important;gap:24px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-player-stat-card > div > span,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-card > div > span{
+  font-size:11px!important;font-weight:600!important;color:#57534E!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-player-stat-card > div > b,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-player-stat-card > div > strong,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-card > div > b,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-card strong{
+  font-size:23px!important;font-weight:900!important;line-height:1.05!important;margin:5px 0 2px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-player-stat-card > div > small,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-card small{
+  font-size:12px!important;font-weight:800!important;color:#71717A!important;
+}
+/* the BO indents the table's first column by 16px on both the header and the cells */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern table thead th:first-child,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern table tbody td:first-child{
+  padding-left:16px!important;
+}
+
+/* P16b - the list footer band. BO's table footer is 65px tall with padding 14px 16px; the portal's
+   pagination row measured 36px with no padding at all, so the row sat tight against the table's last
+   line instead of reading as a footer. */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-player-list-foot,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-list-foot,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-table-foot,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-pagination-wrap{
+  padding:14px 16px!important;
+}
