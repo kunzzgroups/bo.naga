@@ -976,6 +976,132 @@
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     }
 
+    .fd-color-grad {
+      margin: 10px 0 2px;
+    }
+
+    .fd-color-grad-modes {
+      display: flex;
+      gap: 4px;
+      padding: 3px;
+      border-radius: 9px;
+      background: #F1E7D6;
+    }
+
+    .fd-color-grad-mode {
+      flex: 1 1 0;
+      border: 0;
+      padding: 5px 8px;
+      border-radius: 7px;
+      background: transparent;
+      color: #7A6A55;
+      font: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .fd-color-grad-mode.is-active {
+      background: #FFFFFF;
+      color: #18191C;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .12);
+    }
+
+    .fd-color-grad-body {
+      margin-top: 8px;
+    }
+
+    .fd-color-grad-preview {
+      height: 26px;
+      border: 1px solid rgba(0, 0, 0, .12);
+      border-radius: 7px;
+    }
+
+    .fd-color-grad-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .fd-color-grad-stops {
+      display: flex;
+      flex: 1 1 auto;
+      gap: 4px;
+    }
+
+    .fd-color-grad-stop {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border: 1px solid rgba(0, 0, 0, .12);
+      border-radius: 7px;
+      padding: 4px 8px;
+      background: #FFFDF8;
+      color: #5C4A30;
+      font: inherit;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .fd-color-grad-stop.is-active {
+      border-color: #F59E0B;
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, .25);
+    }
+
+    .fd-color-grad-dot {
+      width: 12px;
+      height: 12px;
+      border: 1px solid rgba(0, 0, 0, .15);
+      border-radius: 4px;
+    }
+
+    .fd-color-grad-angle {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #5C4A30;
+      font-size: 11px;
+    }
+
+    .fd-color-grad-angle input {
+      width: 54px;
+      padding: 4px 6px;
+      border: 1px solid rgba(0, 0, 0, .12);
+      border-radius: 7px;
+      font: inherit;
+      font-size: 11px;
+    }
+
+    html[data-bo-theme="dark"] .fd-color-grad-modes {
+      background: #3A3C48;
+    }
+
+    html[data-bo-theme="dark"] .fd-color-grad-mode {
+      color: #C7C7CC;
+    }
+
+    html[data-bo-theme="dark"] .fd-color-grad-mode.is-active {
+      background: #4A4D5C;
+      color: #F5F5F4;
+    }
+
+    html[data-bo-theme="dark"] .fd-color-grad-stop {
+      background: #2A2C36;
+      border-color: rgba(255, 255, 255, .14);
+      color: #E7E5E4;
+    }
+
+    html[data-bo-theme="dark"] .fd-color-grad-angle {
+      color: #C7C7CC;
+    }
+
+    html[data-bo-theme="dark"] .fd-color-grad-angle input {
+      background: #2A2C36;
+      border-color: rgba(255, 255, 255, .14);
+      color: #F5F5F4;
+    }
+
     .fd-color-swatches {
       display: grid;
       grid-template-columns: repeat(8, 1fr);
@@ -2072,6 +2198,30 @@
                               <code id="fdColorPopHexLabel">#18191C</code>
                             </div>
                           </div>
+                          <div class="fd-color-grad" id="fdColorGrad" hidden>
+                            <div class="fd-color-grad-modes" role="tablist" aria-label="Colour type">
+                              <button type="button" class="fd-color-grad-mode is-active" data-fd-color-type="solid"
+                                role="tab" aria-selected="true">Solid</button>
+                              <button type="button" class="fd-color-grad-mode" data-fd-color-type="gradient"
+                                role="tab" aria-selected="false">Gradient</button>
+                            </div>
+                            <div class="fd-color-grad-body" id="fdColorGradBody" hidden>
+                              <div class="fd-color-grad-preview" id="fdColorGradPreview" aria-hidden="true"></div>
+                              <div class="fd-color-grad-row">
+                                <div class="fd-color-grad-stops" role="group"
+                                  aria-label="Gradient stop being edited">
+                                  <button type="button" class="fd-color-grad-stop is-active"
+                                    data-fd-grad-stop="from" aria-pressed="true"><span class="fd-color-grad-dot"
+                                      id="fdColorGradDotFrom"></span>Start</button>
+                                  <button type="button" class="fd-color-grad-stop" data-fd-grad-stop="to"
+                                    aria-pressed="false"><span class="fd-color-grad-dot"
+                                      id="fdColorGradDotTo"></span>End</button>
+                                </div>
+                                <label class="fd-color-grad-angle">Angle<input type="number" id="fdColorGradAngle"
+                                    min="0" max="360" step="5" value="90" aria-label="Gradient angle"><span>deg</span></label>
+                              </div>
+                            </div>
+                          </div>
                           <div class="fd-color-swatches" id="fdColorSwatches" role="listbox"
                             aria-label="Preset colours"></div>
                           <div class="fd-color-spectrum" id="fdColorSpectrum">
@@ -2148,7 +2298,7 @@
   <script src="assets/js/currency-runtime.js?v=b63c89fb"></script>
   <script src="assets/js/reports.js?v=a96450f8"></script>
   <script src="assets/js/auth.js?v=7d4bd3c8"></script>
-  <script src="assets/js/frontend-display.js?v=a01277f9"></script>
+  <script src="assets/js/frontend-display.js?v=d285117b"></script>
 
   <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>

@@ -60,6 +60,10 @@
   const fdColorR=document.getElementById('fdColorR');
   const fdColorG=document.getElementById('fdColorG');
   const fdColorB=document.getElementById('fdColorB');
+  const fdColorGrad=document.getElementById('fdColorGrad');
+  const fdColorGradBody=document.getElementById('fdColorGradBody');
+  const fdColorGradPreview=document.getElementById('fdColorGradPreview');
+  const fdColorGradAngle=document.getElementById('fdColorGradAngle');
   const DEFAULT_MARQUEE_TEXT_COLOR='#18191C';
   const DEFAULT_MARQUEE_BG_COLOR='#F5EBDC';
   const MARQUEE_COLOR_PRESETS=[
@@ -69,6 +73,10 @@
   let marqueeColorMode='text';
   let marqueeBgValue=DEFAULT_MARQUEE_BG_COLOR;
   let marqueeTextValue=DEFAULT_MARQUEE_TEXT_COLOR;
+  /* Background colour may be a gradient. The value handed to the editor, the chip and the preview is then
+     a CSS linear-gradient string, which is also what a saved value would carry, so nothing that renders it
+     with `background` has to learn a new format. `stop` is which end the spectrum/RGB/hex fields edit. */
+  let marqueeBgGrad={ on:false, from:DEFAULT_MARQUEE_BG_COLOR, to:'#E8C98A', angle:90, stop:'from' };
   let pickerHsv={h:30,s:0,v:0.11};
   let spectrumDragging=null;
   const installAppDisplayName=document.getElementById('installAppDisplayName');
@@ -265,8 +273,67 @@
     return 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')';
   }
 
+  function isGradientValue(value){
+    return /^linear-gradient\(/i.test(String(value==null?'':value).trim());
+  }
+
+  function gradientCss(){
+    const angle=Math.max(0,Math.min(360,Math.round(Number(marqueeBgGrad.angle)||0)));
+    return 'linear-gradient('+angle+'deg, '+marqueeBgGrad.from+' 0%, '+marqueeBgGrad.to+' 100%)';
+  }
+
+  /* Reads back exactly the shape this picker writes. Anything else (a solid, a foreign gradient) leaves the
+     state alone and is treated as a solid. */
+  function parseGradientValue(value){
+    const m=/^linear-gradient\(\s*([0-9.]+)deg\s*,\s*(#[0-9a-fA-F]{3,8})\s+0%\s*,\s*(#[0-9a-fA-F]{3,8})\s+100%\s*\)$/i.exec(String(value==null?'':value).trim());
+    if(!m) return false;
+    marqueeBgGrad.on=true;
+    marqueeBgGrad.angle=clamp(Number(m[1])||90,0,360);
+    marqueeBgGrad.from=normalizeHexColor(m[2],marqueeBgGrad.from);
+    marqueeBgGrad.to=normalizeHexColor(m[3],marqueeBgGrad.to);
+    return true;
+  }
+
+  function marqueeBgCss(){
+    return marqueeBgGrad.on?gradientCss():marqueeBgValue;
+  }
+
+  function activeGradStopHex(){
+    return marqueeBgGrad.stop==='to'?marqueeBgGrad.to:marqueeBgGrad.from;
+  }
+
+  function setActiveGradStop(hex){
+    if(marqueeBgGrad.stop==='to'){ marqueeBgGrad.to=hex; } else { marqueeBgGrad.from=hex; }
+  }
+
+  /* The Solid / Gradient switch and the stop chips only mean something for the background colour, and the
+     gradient body only when a gradient is active. */
+  function syncGradUI(){
+    if(fdColorGrad) fdColorGrad.hidden=marqueeColorMode!=='bg';
+    if(fdColorGradBody) fdColorGradBody.hidden=!marqueeBgGrad.on;
+    document.querySelectorAll('[data-fd-color-type]').forEach(function(b){
+      const on=(b.dataset.fdColorType==='gradient')===marqueeBgGrad.on;
+      b.classList.toggle('is-active',on);
+      b.setAttribute('aria-selected',on?'true':'false');
+    });
+    document.querySelectorAll('[data-fd-grad-stop]').forEach(function(b){
+      const on=b.dataset.fdGradStop===marqueeBgGrad.stop;
+      b.classList.toggle('is-active',on);
+      b.setAttribute('aria-pressed',on?'true':'false');
+    });
+    const dotFrom=document.getElementById('fdColorGradDotFrom');
+    const dotTo=document.getElementById('fdColorGradDotTo');
+    if(dotFrom) dotFrom.style.background=marqueeBgGrad.from;
+    if(dotTo) dotTo.style.background=marqueeBgGrad.to;
+    if(fdColorGradPreview) fdColorGradPreview.style.background=gradientCss();
+    if(fdColorGradAngle&&document.activeElement!==fdColorGradAngle){
+      fdColorGradAngle.value=String(Math.round(marqueeBgGrad.angle));
+    }
+  }
+
   function currentMarqueeColor(){
-    return marqueeColorMode==='bg'?marqueeBgValue:marqueeTextValue;
+    if(marqueeColorMode!=='bg') return marqueeTextValue;
+    return marqueeBgGrad.on?activeGradStopHex():marqueeBgValue;
   }
 
   function syncSpectrumControls(hex){
@@ -289,6 +356,7 @@
 
   function syncColorPopoverUI(hex){
     const value=normalizeHexColor(hex,currentMarqueeColor());
+    syncGradUI();
     if(fdColorPopChip) fdColorPopChip.style.background=value;
     if(fdColorPopHexLabel) fdColorPopHexLabel.textContent=value;
     if(fdColorPopHex) fdColorPopHex.value=value;
@@ -415,7 +483,14 @@
 
   function applyPopoverColor(value){
     const hex=normalizeHexColor(value,currentMarqueeColor());
-    if(marqueeColorMode==='bg') applyMarqueeBackground(hex);
+    if(marqueeColorMode==='bg'){
+      if(marqueeBgGrad.on){
+        setActiveGradStop(hex);
+        applyMarqueeBackground(gradientCss());
+      }else{
+        applyMarqueeBackground(hex);
+      }
+    }
     else applyMarqueeTextColor(hex);
     syncColorPopoverUI(hex);
   }
@@ -432,16 +507,23 @@
   }
 
   function applyMarqueeBackground(value){
-    const hex=normalizeHexColor(value,DEFAULT_MARQUEE_BG_COLOR);
-    marqueeBgValue=hex;
-    if(marqueeBgColorChip) marqueeBgColorChip.style.backgroundColor=hex;
+    if(isGradientValue(value)){
+      parseGradientValue(value);
+    }else{
+      marqueeBgGrad.on=false;
+      marqueeBgValue=normalizeHexColor(value,DEFAULT_MARQUEE_BG_COLOR);
+    }
+    const css=marqueeBgCss();
+    if(marqueeBgColorChip) marqueeBgColorChip.style.background=css;
     // Live preview always shows the real storefront colour.
-    if(marqueePreviewBar) marqueePreviewBar.style.backgroundColor=hex;
+    if(marqueePreviewBar) marqueePreviewBar.style.background=css;
     // Editor chrome follows admin theme: keep light default out of dark mode so the page stays charcoal.
     if(marqueeEditor){
-      const useThemeChrome=isDarkTheme() && hex.toUpperCase()===DEFAULT_MARQUEE_BG_COLOR.toUpperCase();
-      marqueeEditor.style.backgroundColor=useThemeChrome?'':hex;
+      const useThemeChrome=isDarkTheme() && !marqueeBgGrad.on
+        && marqueeBgValue.toUpperCase()===DEFAULT_MARQUEE_BG_COLOR.toUpperCase();
+      marqueeEditor.style.background=useThemeChrome?'':css;
     }
+    syncGradUI();
   }
 
   function applyMarqueeTextColor(value){
@@ -700,6 +782,36 @@
       input?.addEventListener('keydown',function(e){
         if(e.key==='Enter'){ e.preventDefault(); applyRgbInputs(); }
       });
+    });
+    /* Solid / Gradient, which end the spectrum is editing, and the angle. The switch only exists for the
+       background colour (syncGradUI hides it otherwise) because a gradient is a background, not an ink. */
+    document.querySelectorAll('[data-fd-color-type]').forEach(function(b){
+      b.addEventListener('click',function(e){
+        e.preventDefault();
+        const want=b.dataset.fdColorType==='gradient';
+        if(want===marqueeBgGrad.on) return;
+        if(want){
+          if(marqueeBgGrad.from===marqueeBgGrad.to) marqueeBgGrad.to=marqueeBgValue;
+          marqueeBgGrad.on=true;
+          applyMarqueeBackground(gradientCss());
+          syncColorPopoverUI(activeGradStopHex());
+        }else{
+          marqueeBgGrad.on=false;
+          applyMarqueeBackground(marqueeBgValue);
+          syncColorPopoverUI(marqueeBgValue);
+        }
+      });
+    });
+    document.querySelectorAll('[data-fd-grad-stop]').forEach(function(b){
+      b.addEventListener('click',function(e){
+        e.preventDefault();
+        marqueeBgGrad.stop=b.dataset.fdGradStop==='to'?'to':'from';
+        syncColorPopoverUI(activeGradStopHex());
+      });
+    });
+    fdColorGradAngle?.addEventListener('input',function(){
+      marqueeBgGrad.angle=clamp(Number(fdColorGradAngle.value)||0,0,360);
+      applyMarqueeBackground(gradientCss());
     });
     bindSpectrumPointer(fdColorSv,updateSvFromEvent,'sv');
     bindSpectrumPointer(fdColorHue,updateHueFromEvent,'hue');
