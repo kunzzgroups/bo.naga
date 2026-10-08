@@ -399,11 +399,19 @@
   }
 
   function addGradStop(pos){
-    const at=clamp(pos==null?50:pos,0,100);
+    if(marqueeBgGrad.stops.length>=8) return;
     const sorted=marqueeBgGrad.stops.slice().sort(function(a,b){ return a.pos-b.pos; });
+    let at=(pos==null?null:clamp(pos,0,100));
+    /* Always land on a free position - the midpoint of the widest gap. Asking for 50 when a stop already
+       holds 50 produced "#7C3AED 50%, #7C3AED 50%" from the Add button (measured), which reads as a bug
+       rather than as two stops you cannot tell apart. */
+    if(at==null||sorted.some(function(st){ return Math.abs(st.pos-at)<1; })){
+      let best=0, gap=-1;
+      for(let n=0;n<sorted.length-1;n++){ const g=sorted[n+1].pos-sorted[n].pos; if(g>gap){ gap=g; best=n; } }
+      at=Math.round((sorted[best].pos+sorted[best+1].pos)/2);
+    }
     let colour=sorted[0].color, alpha=sorted[0].alpha;
     for(let n=0;n<sorted.length;n++){ if(sorted[n].pos<=at){ colour=sorted[n].color; alpha=sorted[n].alpha; } }
-    if(marqueeBgGrad.stops.length>=8) return;
     marqueeBgGrad.stops.push({ color:colour, pos:at, alpha:alpha });
     marqueeBgGrad.stops.sort(function(a,b){ return a.pos-b.pos; });
     marqueeBgGrad.active=marqueeBgGrad.stops.findIndex(function(st){ return st.pos===at; });
