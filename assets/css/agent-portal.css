@@ -1608,3 +1608,24 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern 
 html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-actions .report-avatar i{
   font-size:18px!important;line-height:18px!important;color:#FFFFFF!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P11 - the rail icons stop being dimmed  (owner circled rows 2-5 of the rail)
+
+   Measured on the portal's rail, expanded:
+     Dashboard (active)  icon opacity 1
+     My Players / Products / Reports / Promotion   icon opacity 0.72   <- the four rows in the circle
+     Finance (group)     icon opacity 1
+   The labels are all at opacity 1, so it is the icons alone that wash out over the cream rail - which
+   is what "字体被淹没" describes.
+
+   Recorded honestly: the BO dims its inactive rail icons the same way (measured 0.72 on a BO page),
+   so this is the owner's preference overriding a house mannerism rather than a BO mismatch. Deleting
+   this block restores the BO behaviour.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .report-nav-item > i,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .report-nav-item > .bi,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent > i,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent > .bi{
+  opacity:1!important;
+}
