@@ -2216,3 +2216,31 @@ html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.age
 html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel > .agent-table-footer{
   flex:0 0 auto!important;margin-top:auto!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P33 - the page column gets a definite height, so a long list scrolls inside the card
+
+   P32 was verified with the fixture's default 10 rows and, with that data, the card filled the screen
+   and nothing scrolled. Re-tested with 24 rows it broke: the card grew to 1323px, the table wrapper to
+   1193px with no scroll of its own, and the PAGE scrolled instead - my commit message for P32 claimed
+   "no page-level vertical scroll" on evidence that only held for a short list. Corrected here.
+
+   Measured cause, walking up from the card with 24 rows:
+     .agent-player-list-panel       1323px   (should be the leftover space)
+     .report-content (grid)         1468px   grid-template-rows resolved to "102.6px 1322.5px"
+     .report-main                   1532px   <- was content-driven, so nothing above could bound the grid
+     .report-shell                  1532px   min-height:900px only, no definite height
+   BO's .report-main measures height:900px at a 900px viewport - a definite height is what makes
+   flex:1 1 0% and a 1fr grid row mean "the remaining space" instead of "as tall as the content".
+   Without it every bound in P32 was self-referential.
+
+   So the page column is pinned to the viewport here. With a definite height the chain closes: the grid's
+   second row is the leftover, the card is bounded to it, the table wrapper scrolls internally and the
+   footer stays at the card's bottom edge whatever the row count.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .report-shell{
+  height:100vh!important;min-height:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .report-main{
+  height:100vh!important;min-height:0!important;
+}
