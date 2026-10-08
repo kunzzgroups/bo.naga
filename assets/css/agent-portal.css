@@ -1790,3 +1790,38 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern 
 html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-table-footer{
   padding:14px 16px!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P17 - the pager's current page and the tab pills take the BO's values
+   (owner: "参考图二" - a BO page, agent-management.html)
+
+   Measured on that BO page:
+     pager, current page    background rgba(217,119,6,0.16)   colour #B45309   radius 8px
+     pager buttons          height 36px, padding 0 14px
+     Show [n] entries       68x36 select - the portal's band has none at all (separate JS change)
+     tab pills              height 36px, padding 0 14px, radius 999px, 12.5px/700
+   Measured on the portal's players page: the current page button was #FFF8EB with rgb(24,25,28) - i.e.
+   indistinguishable from its neighbours - and the tab buttons are square-ish bo-ui-button-secondary.
+   The two rules below use the BO's own values, taken from the same page's pager.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-pagination button.active,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-pagination .active,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-pagination [aria-current="page"]{
+  background:rgba(217,119,6,.16)!important;color:#B45309!important;border-color:rgba(217,119,6,.3)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-pagination button{
+  height:36px!important;border-radius:8px!important;font-size:12.5px!important;font-weight:700!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-tab-buttons button{
+  height:36px!important;border-radius:999px!important;font-size:12.5px!important;font-weight:700!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-tab-buttons button{
+  padding:0 14px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-tab-buttons button.active{
+  background:rgba(217,119,6,.16)!important;color:#B45309!important;border-color:rgba(217,119,6,.3)!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-pagination button.active,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-tab-buttons button.active{
+  background:rgba(245,158,11,.2)!important;color:#F59E0B!important;
+}
