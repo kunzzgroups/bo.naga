@@ -1,5 +1,5 @@
 (function(){
- const cfg=window.BULK_OPERATION_CONFIG||{}; const state={members:[],filtered:[],selected:new Map(),promotions:[],loading:false};
+ let cfg=window.BULK_OPERATION_CONFIG||{}; const state={members:[],filtered:[],selected:new Map(),promotions:[],loading:false};
  const $=id=>document.getElementById(id); const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const money=v=>(Number(v)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
  async function jsonFetch(url,opt={}){const r=await fetch(url,opt);const j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw new Error(j.message||'Request failed');return j;}
@@ -69,5 +69,23 @@
  async function submit(){const ids=[...state.selected.keys()],amount=Number($('bulkAmount').value),type=$('bulkType').value,reasonCode=$('bulkReason').value.trim(),remark=$('bulkRemark').value.trim(),status=$('bulkStatus'),promotion=cfg.mode==='bonus'?selectedPromotion():null;if(!ids.length||!amount||amount<=0||!remark){status.className='alert alert-danger mt-3';status.textContent='Please select at least one member, enter an amount and add a remark.';return}if(cfg.mode==='bonus'&&!promotion){status.className='alert alert-danger mt-3';status.textContent='Please select which promotion bonus this adjustment belongs to.';return}const promoText=promotion?`\nPromotion: ${promotion.name}${promotion.promotionCode?' ['+promotion.promotionCode+']':''}`:'';if(!(await BO_DIALOG.confirm(`${type} ${money(amount)} for ${ids.length} selected member(s)?${promoText}`,{title:cfg.mode==='bonus'?'Confirm Bulk Promotion Bonus':'Confirm Bulk Adjustment',confirmText:'Confirm'})))return;const btn=$('bulkSubmit');btn.disabled=true;status.className='alert alert-info mt-3';status.textContent='Processing batch...';try{let payload,url;if(cfg.mode==='bonus'){payload={memberIds:ids,promotionId:Number(promotion.id),amount:type==='DEBIT'?-amount:amount,reasonCode,remark,referenceNo:'BO-BONUS-'+Date.now()};url=API_CONFIG.BASE_URL+'/admin/operations/bulk-bonus'}else{payload={memberIds:ids,adjustmentType:type,amount,reasonCode,remark,insufficientPolicy:'SKIP',referenceNo:'BO-BULK-'+Date.now()};url=API_CONFIG.BASE_URL+'/admin/member-wallet/bulk-adjustment'}const j=await jsonFetch(url,{method:'POST',headers:{'Content-Type':'application/json',...BO_AUTH.authHeader()},body:JSON.stringify(payload)});status.className='alert alert-success mt-3';status.textContent=j.message||'Batch completed.';showResult(j.data||{});/* The result is the point of submitting: put it in front of the user instead of leaving it below the
    fold (the owner: "submit后 不容易察觉submit后的数据"). The frame is the scroll container now. */
 try{$('batchResult')?.scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}await loadMembers()}catch(e){status.className='alert alert-danger mt-3';status.textContent=e.message}finally{btn.disabled=false}}
+ /* bulk-adjustment.html and bulk-bonus-adjustment.html load THIS one file, and the SPA re-runs a page's
+    scripts on a swap except the files the page you are leaving also loads - so arriving at the Bonus tab by
+    swapping skipped this script entirely: cfg still said mode:'adjustment' (read at parse time from the
+    document that was current then) and loadPromotions() bails on that, which left the promotion list empty
+    (owner: "切换至 Bonus Adjustment 后 promotion 的下拉选单没有选项"). Re-read the config from the document
+    that is now mounted and redo the work that depends on it. Listeners are NOT re-bound - they survive the
+    swap and binding again would run the filters twice. */
+ document.addEventListener('bo:spa:content',()=>{
+  if(!document.querySelector('.bulk-operation-shell')) return;
+  cfg=window.BULK_OPERATION_CONFIG||{};
+  state.selected.clear();
+  state.filtered=state.members.slice();
+  renderMembers();
+  renderSelected();
+  updateSummary();
+  loadMembers();
+  loadPromotions();
+ });
  document.addEventListener('DOMContentLoaded',()=>{BO_AUTH.requireLogin?.();BO_AUTH.renderProfile?.();BO_AUTH.renderSidebar?.();$('memberSearch').addEventListener('input',filter);$('memberSearchBtn').onclick=filter;$('clearSelectionBtn').onclick=()=>{state.selected.clear();renderMembers();renderSelected()};$('bulkAmount').addEventListener('input',updateSummary);$('bulkPromotion')?.addEventListener('change',updatePromotionHelp);$('bulkSubmit').onclick=submit;renderSelected();loadMembers();loadPromotions()});
 })();
