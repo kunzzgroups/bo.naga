@@ -487,6 +487,12 @@
     if(keyword && keyword === urlMemberId) p.set('memberId', urlMemberId);
     else if(keyword && resolvedMemberId) p.set('memberId', resolvedMemberId);
     else applyKeyword(p, keyword);
+    /* The table shows a GAME column (r.gameCode) and could not filter by it: any numeric input went out as
+       memberId, so typing a game code like "013" searched member 13 and the table came back empty (owner:
+       "输入游戏 没有显示筛选结果"). The game travels as gameCode - the same field the column renders and the
+       name the sibling pages use. */
+    const game = document.getElementById('ledgerGame')?.value.trim();
+    if(game) p.set('gameCode', game);
     p.set('types', effectiveTypeList().join(','));
     if(from) p.set('from', from);
     if(to) p.set('to', to);
@@ -529,9 +535,11 @@
          broken" (owner: "输入游戏 没有显示筛选结果"). The backend has no game parameter today, so the
          honest answer is to name what this field does search. */
       const typed=keywordValue();
-      const why=typed
-        ? 'No ledger records for "'+esc(typed)+'". This search matches a member ID, a member username or a '
-          + 'PROVIDER code - not a game name.'
+      const game = document.getElementById('ledgerGame')?.value.trim();
+      const why=(typed||game)
+        ? 'No ledger records for '+(typed?'"'+esc(typed)+'"':'')+(typed&&game?' and ':'')
+          + (game?'game "'+esc(game)+'"':'')+'. Search matches a member ID, a member username or a PROVIDER '
+          + 'code; a game code goes in the Game field.'
         : 'No ledger records found.';
       body.innerHTML='<tr><td colspan="15">'+why+'</td></tr>';
     }
@@ -622,6 +630,8 @@
     on(window,'resize',syncLedgerHScroll);
     const runSearch=()=>{ page=1; clearLockedAutoSize(); syncAutofitMode(); load(); };
     document.getElementById('ledgerSearchBtn')?.addEventListener('click', runSearch);
+    /* Enter in either text field runs the search, the way a filter row is expected to behave. */
+    document.getElementById('ledgerGame')?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); runSearch(); } });
     document.getElementById('ledgerKeyword')?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); runSearch(); } });
     ['ledgerFrom','ledgerTo'].forEach(id=>document.getElementById(id)?.addEventListener('change', runSearch));
     // Footer "Show N entries" mirrors #ledgerSize (Deposit/Withdraw / MD contract)
@@ -635,6 +645,7 @@
       load();
     });
     document.getElementById('ledgerResetBtn')?.addEventListener('click', ()=>{
+      const gameReset=document.getElementById('ledgerGame'); if(gameReset) gameReset.value='';
       if(keywordInput()) keywordInput().value='';
       urlMemberId='';
       setSelectedTypes([]);
