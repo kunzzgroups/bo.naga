@@ -131,6 +131,11 @@
     });
   }
   let autofitReloading=false;
+  /* The size the autofit has already asked for. Without it every round asked again: the natural row height
+     drifts as rows are added, so each reload computed a slightly larger size and fired another ledger
+     request - measured 6 sequential ones per search with the API slowed to 400ms, which is the lag the
+     owner reported ("会卡 当搜索时"). Reset by any load that is not the autofit's own. */
+  let lastAutofitSize=null;
   function shrinkAutofitIfOverflow(){
     if(autofitReloading) return;
     if(!isAutoPageSize(document.getElementById('ledgerSize')?.value)) return;
@@ -210,6 +215,11 @@
     if(gap<rowH) return;
     const next=Math.max(5,Math.min(200,Math.floor(avail/rowH)||rows.length));
     if(next<=rows.length) return;
+    /* One reload per resolved size: asking again for a size we already loaded is what made the table re-fetch
+"
+       itself in a chain. */
+    if(next===lastAutofitSize) return;
+    lastAutofitSize=next;
     lockedAutoSize=next;
     pageSize=next;
     autofitReloading=true;
@@ -618,6 +628,7 @@
     syncLedgerHScroll();
   }
   async function load(){
+    if(!autofitReloading) lastAutofitSize=null;
     const body=document.getElementById('walletLedgerBody');
     const generation=++loadGeneration;
     const hasRenderedRows=!!body?.querySelector('tr:not(.bo-table-fill) td:not([colspan])');
