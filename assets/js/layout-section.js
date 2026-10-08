@@ -567,7 +567,9 @@ export function mountLayoutCodeEditors(textareas) {
         `<span class="layout-find-tot">0</span>`;
       return matches;
     }
-    let idx = currentMatchIndex(matches);
+    const queryChanged = q.search !== lastFindQuery;
+    lastFindQuery = q.search;
+    let idx = queryChanged ? 0 : currentMatchIndex(matches);
     if (idx < 0) idx = 0;
     if (jumpToMatch) {
       const keepFindFocus = document.activeElement === findInput;
@@ -604,7 +606,13 @@ export function mountLayoutCodeEditors(textareas) {
     return true;
   }
 
-  findInput?.addEventListener('input', () => refreshFind(true));
+  /* Typing a query must land on the FIRST match. It used to be positioned by currentMatchIndex(), which
+     continues from the caret in the last-focused pane - so typing "alpha" with the caret at the end of the
+     CSS pane jumped straight to 4/5 and the first three matches could only be reached by wrapping around
+     (measured). The caret rule still applies while the query is unchanged: Ctrl+F with the same text, Next,
+     Prev and F3 all keep continuing from where the user was. */
+  let lastFindQuery = null;
+  findInput?.addEventListener('input', () => { lastFindQuery = null; refreshFind(true); });
   findNextBtn?.addEventListener('click', () => jumpFind(1));
   findPrev?.addEventListener('click', () => jumpFind(-1));
   findInput?.addEventListener('keydown', (event) => {

@@ -204,7 +204,6 @@
     // redirect stub onto the portal's agent-withdraw.html, so none of them is a row here.
     'agent-management.html':{label:'Agents',order:1,module:'agent'},
     'agent-commission-admin.html':{label:'Agent Commission',order:2,module:'agent'},
-    'agent-payout-admin.html':{label:'Withdraw / Payout',order:3,module:'agent'},
     'agent-settlement-admin.html':{label:'Agent Settlement',order:4,module:'agent'},
     'agent-reimbursement-admin.html':{label:'Reimbursement / Ad Claim',order:5,module:'agent'},
     'agent-promotion-admin.html':{label:'Agent Promotion',order:6,module:'agent'},
