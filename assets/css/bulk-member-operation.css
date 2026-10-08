@@ -96,7 +96,7 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-mode-panel{
   min-height:0;
   display:flex;
   flex-direction:column;
-  overflow:hidden;
+  overflow-y:auto;
 }
 body.bo-wallet-tx.bulk-adjustment-page .bulk-mode-panel[hidden],
 body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-mode-panel[hidden]{
@@ -179,9 +179,9 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .mode-intro{
 /* ---- Inner layout fills shell below tabs · panels side-by-side ---- */
 body.bo-wallet-tx.bulk-adjustment-page .bulk-operation-layout,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-operation-layout{
-  flex:1 1 auto;
-  min-height:0;
-  height:100%;
+  flex:0 0 auto;
+  
+  height:auto;
   display:grid;
   /* Desktop split: Select Members 60% · Configure 40% */
   grid-template-columns:minmax(0,3fr) minmax(280px,2fr);
@@ -195,7 +195,7 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-operation-shell .bulk-operati
   flex-direction:column;
   min-width:0;
   min-height:0;
-  height:100%;
+  height:auto;
   background:#FFFCF7;
   border:1px solid #DCC9A8;
   border-radius:8px;
@@ -257,8 +257,8 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-panel-ops .operation-form-gri
 }
 body.bo-wallet-tx.bulk-adjustment-page .bulk-panel-ops .selected-table-wrap,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-panel-ops .selected-table-wrap{
-  flex:1 1 auto;
-  min-height:0;
+  flex:0 1 auto;
+  min-height:0; max-height:min(300px,34vh);
 }
 body.bo-wallet-tx.bulk-adjustment-page .operation-footer,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .operation-footer{
@@ -447,9 +447,9 @@ html body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .clean-
 /* ---- Member picker: clickable cards · columns follow container width ---- */
 body.bo-wallet-tx.bulk-adjustment-page .member-picker-list,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list{
-  flex:1 1 auto;
+  flex:0 1 auto;
   min-height:0;
-  max-height:none;
+  max-height:min(420px,45vh);
   border:1px solid #EADCC8;
   border-radius:8px;
   overflow-x:hidden;
@@ -743,8 +743,8 @@ body.bo-wallet-tx.bulk-adjustment-page .selected-table-wrap,
    Batch Result card (measured: status y610-665 against the card's y636-867). The flexible list is the
    part that must absorb that, so it shrinks to whatever is left and scrolls instead of clipping. */
 body.bo-wallet-tx.bulk-bonus-adjustment-page .selected-table-wrap{
-  flex:1 1 auto;
-  min-height:120px;
+  flex:0 1 auto;
+  min-height:0;
   min-width:0;
   border:1px solid #EADCC8;
   border-radius:10px;
