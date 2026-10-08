@@ -2206,12 +2206,6 @@ html body.page-game .game-summary-grid{display:none!important}
 }
 
 
-/* Four selects plus a search box and three buttons: capping the selects keeps them from pushing the
-   actions off the strip (measured at 1553px: the strip's contents wanted 1545px of 1528, so it wrapped). */
-html body.page-game.report-body .game-filter-card .bo-filter-select-item > select{
-  max-width:168px!important;
-}
-
 /* The strip's own rules set margin:0 on the action group with a long, very specific selector, so these two
    have to match that specificity and come last. Without them the trailing Add Game button was pushed past
    the card's right edge and clipped (owner: "Add Game Button" ??: button right 1552 against a card right of
@@ -2224,4 +2218,50 @@ html body.page-game.report-body:not(#bo-filter-standard-off):not(#bo-filter-stan
 /* The spacer did this job by eating the free space, which is what pushed the actions onto a third row. */
 html body.page-game.report-body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .game-filter-card.bo-filter-row > .game-filter-spacer{
   display:none!important;
+}
+
+
+/* One line for the whole strip (measured: search 190 + four selects at 150 + the action group 431 + the card's
+   padding came to 1299 against a 1279 card, so it wrapped with 20px to spare). The selects are content-sized
+   with a ceiling rather than pinned at 128px: at that width their own labels read "All Sub Cate..." and, worse,
+   the OPEN MENU inherited the narrow trigger and clipped the option labels ("SLOTS - IMPERIUM", "SLOT -
+   KONGKONG" - the owner's screenshot). Now they take what they need up to 180px and shrink to 104px when the
+   strip is tight, and the menu is free of the trigger's width. */
+html body.page-game.report-body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .game-filter-card.bo-filter-row > label.bo-filter-input-item.bo-filter-item,
+html body.page-game.report-body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .game-filter-card.bo-filter-row > label.bo-filter-input-item.bo-filter-item .game-search-control{
+  flex:0 0 150px!important;
+  width:150px!important;
+  min-width:0!important;
+  max-width:150px!important;
+}
+
+html body.page-game.report-body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .game-filter-card.bo-filter-row > label.bo-filter-select-item.bo-filter-item{
+  flex:0 1 auto!important;
+  width:auto!important;
+  /* The open list is sized from its trigger by the shared select component (it set 151px against 174px of
+     content - the owner's clipped "SLOTS - IMPERIUM"), and it cannot be widened from CSS. So the triggers are
+     wide enough for their own options instead: this is the measured width of the longest one. */
+  min-width:180px!important;
+  max-width:200px!important;
+}
+
+/* The trigger stays the label's own width; the list is free to be wider so its options are readable. */
+html body.page-game.report-body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .game-filter-card.bo-filter-row > label.bo-filter-select-item.bo-filter-item .rounded-select-wrap > .rounded-select-menu{
+  /* max-content, not auto: the list is not positioned, so auto meant the trigger's width and clipped the
+     option labels (measured: 151px wide against 174px of content). */
+  /* min-width, not width: the list's own rule pins width, and min-width outranks width in CSS - so this
+     is what actually frees the option labels (measured before: 151px wide against 174px of content). */
+  min-width:max-content!important;
+  max-width:min(340px, 70vw)!important;
+}
+
+
+/* Download Images is an icon button in the strip: the label cost about 110px, which was the difference
+   between one line and two (the four selects need their 180px for unclipped option labels). The title and
+   aria-label carry the name. */
+html body.page-game.report-body .game-filter-card .game-icon-btn{
+  width:36px!important;
+  min-width:36px!important;
+  justify-content:center!important;
+  padding:0!important;
 }
