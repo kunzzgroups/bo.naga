@@ -2206,12 +2206,6 @@ html body.page-game .game-summary-grid{display:none!important}
 }
 
 
-/* Four selects plus a search box and three buttons: capping the selects keeps them from pushing the
-   actions off the strip (measured at 1553px: the strip's contents wanted 1545px of 1528, so it wrapped). */
-html body.page-game.report-body .game-filter-card .bo-filter-select-item > select{
-  max-width:168px!important;
-}
-
 /* The strip's own rules set margin:0 on the action group with a long, very specific selector, so these two
    have to match that specificity and come last. Without them the trailing Add Game button was pushed past
    the card's right edge and clipped (owner: "Add Game Button" ??: button right 1552 against a card right of
@@ -2224,4 +2218,25 @@ html body.page-game.report-body:not(#bo-filter-standard-off):not(#bo-filter-stan
 /* The spacer did this job by eating the free space, which is what pushed the actions onto a third row. */
 html body.page-game.report-body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .game-filter-card.bo-filter-row > .game-filter-spacer{
   display:none!important;
+}
+
+
+/* One line for the whole strip (measured: search 190 + four selects at 150 + the action group 431 + the
+   card's padding = 1299 against a 1279 card, so it wrapped with 20px to spare). These caps bring it to about
+   1171; wrapping and the right-aligned action group still cover a narrow window. They mirror the shape of the
+   rules they override - including `label.` and one extra class, because a first attempt with a shorter
+   selector lost the tie (measured: the label stayed 150px and the search box 190px). */
+html body.page-game.report-body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .game-filter-card.bo-filter-row > label.bo-filter-input-item.bo-filter-item,
+html body.page-game.report-body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .game-filter-card.bo-filter-row > label.bo-filter-input-item.bo-filter-item .game-search-control{
+  flex:0 0 150px!important;
+  width:150px!important;
+  min-width:0!important;
+  max-width:150px!important;
+}
+
+html body.page-game.report-body:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .game-filter-card.bo-filter-row > label.bo-filter-select-item.bo-filter-item{
+  flex:0 0 128px!important;
+  width:128px!important;
+  min-width:0!important;
+  max-width:128px!important;
 }
