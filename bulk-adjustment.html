@@ -22,7 +22,7 @@
 <link href="assets/css/bo-ui-standard.css?v=817727e7" rel="stylesheet"/>
 <link href="assets/css/bo-targeted-fixes.css?v=3147d00a" rel="stylesheet"/>
 <link href="assets/css/bo-wallet-transaction-amber.css?v=876e2491" rel="stylesheet"/>
-<link href="assets/css/bulk-member-operation.css?v=4a39f511" rel="stylesheet"/>
+<link href="assets/css/bulk-member-operation.css?v=4e1a318e" rel="stylesheet"/>
 <link href="assets/css/bulk-adjustment-import.css?v=8bd55021" rel="stylesheet"/>
 <link href="assets/css/bo-account-chip.css?v=c8730135" rel="stylesheet"/>
 <link href="assets/css/bo-charcoal-shell.css?v=6ceb4a37" rel="stylesheet"/>
@@ -60,7 +60,12 @@
 <section class="report-content">
   <nav class="bulk-family-tabs" aria-label="Bulk adjustment type">
     <a class="bulk-family-tab is-active" href="bulk-adjustment.html?tab=winlose" aria-current="page">Win/Lose Adjustment</a>
-    <a class="bulk-family-tab" href="bulk-adjustment.html?tab=bonus">Bonus Adjustment</a>
+    <!-- Points at the Bonus document itself, not at ?tab=bonus: the same-path form only reached it through
+       the inline redirect in <head>, which a router swap never runs (the document is not re-parsed), and a
+       real navigation for it flickers. A different pathname is a swappable target, so this tab swaps
+       smoothly and auth.js adopts this same href for the module row. The ?tab=bonus redirect stays for
+       old bookmarks. -->
+    <a class="bulk-family-tab" href="bulk-bonus-adjustment.html?combined=1">Bonus Adjustment</a>
   </nav>
   <div class="bulk-operation-shell">
     <div class="bulk-mode-switch" role="tablist" aria-label="Bulk adjustment mode">
@@ -114,9 +119,9 @@
               <button class="btn-primary-clean" id="bulkSubmit" type="button"><i class="bi bi-check2-circle"></i> Submit Selected Adjustment</button>
             </div>
           </div>
-          <div id="bulkStatus"></div>
         </section>
       </div>
+      <div id="bulkStatus"></div>
       <section class="bulk-panel batch-result" id="batchResult" hidden></section>
     </div>
 
@@ -256,9 +261,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=c41fc3b0"></script>
-<script src="assets/js/livechat-global-notification.js?v=1.0.40"></script>
+<script src="assets/js/livechat-global-notification.js?v=6bb96bce"></script>
 <script src="assets/js/bo-theme.js?v=d78603d9"></script>
 <script src="assets/js/bo-account-chip.js?v=57839162"></script>
-<script src="assets/js/bo-spa-manifest.js?v=e5bdb091"></script><script src="assets/js/bo-spa.js?v=a458ab39"></script>
+<script src="assets/js/bo-spa-manifest.js?v=e5bdb091"></script><script src="assets/js/bo-spa.js?v=4df7a52c"></script>
 </body>
 </html>
