@@ -2306,3 +2306,39 @@ html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.age
 html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel .agent-table-footer{
   background:#383A46!important;border-top-color:rgba(255,255,255,.14)!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P35 - the Show [n] field hugs its select, and the frame stops being a scroll container
+
+   Owner: "show entries的下拉选单宽度没有统一 而且点击后是通过屏幕的overflow-y去展开 不像bo和main那样
+   展开（锁死一个屏幕 是没有overflow-y的）".
+
+   1. width. The <select> itself measured 64x36 already; what was wide was its wrapper. P23 had given
+      .agent-table-footer > .agent-page-size flex:1 1 0 (the slot stretched to hold the three footer
+      regions), and that selector carries the extra child combinator, so P26's .agent-page-size rule lost
+      at equal importance and the slot kept stretching: measured 253px at 1280, 320px at 1440, 373px at
+      1600. It is a control slot, not a spacer, so it now hugs its select - min-width raised to BO's
+      measured 68px - and the free space stays in the middle slot, which is where BO puts it.
+
+   2. overflow. Measured on BO: .table-card, .report-content and .report-main are all overflow-y:hidden, so
+      the page is locked and only the table wrapper scrolls. This page had visible / auto / visible, which
+      made the content frame a scroll container - and a native <select> near the bottom of a scroll
+      container is what makes the browser scroll it open ("通过屏幕的overflow-y去展开"). Hidden here, as on
+      BO. The table wrapper keeps its own overflow, which is the one scroll the design is meant to have.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .report-content .agent-player-list-panel .agent-table-footer > .agent-page-size,
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel .agent-table-footer > .agent-page-size{
+  flex:0 0 auto!important;width:auto!important;min-width:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel .agent-page-size select{
+  flex:0 0 auto!important;width:auto!important;min-width:68px!important;max-width:96px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .report-main{
+  overflow:hidden!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .report-main > .report-content.agent-player-page{
+  overflow:hidden!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel{
+  overflow:hidden!important;
+}
