@@ -1999,3 +1999,72 @@ html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.age
 html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button.active:hover{
   background:rgba(217,119,6,.14)!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P27 - the locked status-pill recipe, copied from the BO's own sheet
+
+   Owner pointed at https://bo.titanx7.com/agent-management.html and said my comparison basis was
+   wrong. It was: I had been reading the tab BUTTON's background, which is transparent by design -
+   BO paints the selected frame with a separate element (.bo-seg-thumb, driven by bo-seg-bounce.js)
+   and ships a fallback for the case where that thumb is absent. That fallback is the exact recipe
+   below, lifted verbatim from
+   assets/css/agent-admin-management.css "Status filter pills - locked recipe":
+
+     selected frame   #FFFCF7 + linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 55%,#F3E8D6 100%)
+                      1px solid #E0D0B8, box-shadow 0 1px 2px rgba(24,25,28,.08), 0 2px 8px rgba(92,74,48,.10)
+     tab              height 36px, padding 0 14px, radius 999px, gap 8px, 12.5px/700, idle #71717A
+     hover (not active)  color #18191C, background rgba(24,25,28,.04)   <- the grey pill in the screenshot
+     active text      #18191C
+     dots             6x6, IDLE #B8C0CC (status 1) / #C4C0D0 (status 0), no dot for "All",
+                      and only the SELECTED tab is coloured: #059669 (active) / #DC2626 (inactive)
+     dark             thumb #2A2C36 + linear-gradient(180deg,#383A46 0%,#2A2C36 100%),
+                      border rgba(255,255,255,.14), shadows rgba(0,0,0,.35)/rgba(0,0,0,.25), idle text #A1A1AA
+
+   The amber hover added a moment ago is wrong and is replaced by the grey one; the owner's screenshot
+   shows exactly this pair - "All" selected (cream capsule) and "Suspend" hovered (grey pill).
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button{
+  height:36px!important;padding:0 14px!important;border-radius:999px!important;gap:8px!important;
+  border:1px solid transparent!important;box-sizing:border-box!important;
+  font-size:12.5px!important;font-weight:700!important;line-height:1!important;
+  color:rgb(113,113,122)!important;box-shadow:none!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button.active{
+  background-color:#FFFCF7!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 55%,#F3E8D6 100%)!important;
+  border:1px solid #E0D0B8!important;
+  box-shadow:0 1px 2px rgba(24,25,28,.08),0 2px 8px rgba(92,74,48,.10)!important;
+  color:#18191C!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button:hover:not(.active){
+  color:#18191C!important;background:rgba(24,25,28,.04)!important;
+}
+/* dots: muted unless the tab is the selected one (BO: "muted idle, green/red only when selected") */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button[data-player-tab="1"]::before,
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button[data-player-tab="0"]::before,
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button[data-player-tab="new"]::before{
+  background:#B8C0CC!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button[data-player-tab="1"].active::before{
+  background:#059669!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button[data-player-tab="0"].active::before{
+  background:#DC2626!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button[data-player-tab="new"].active::before{
+  background:#D97706!important;
+}
+/* dark: BO's own night thumb */
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button.active{
+  background-color:#2A2C36!important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%)!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.25)!important;
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button:hover:not(.active){
+  color:#F5F5F4!important;background:rgba(255,255,255,.06)!important;
+}
