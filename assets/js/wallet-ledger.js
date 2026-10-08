@@ -433,6 +433,7 @@
      internal id before the ledger request leaves. Cache per typed value; on any failure the
      house classifier above applies unchanged. */
   const resolvedMemberIds=new Map();
+  let memberCandidates=[];
   async function resolveLedgerMemberId(value){
     const key=String(value||'').trim().toLowerCase();
     if(!key) return null;
@@ -447,10 +448,22 @@
         const rows=Array.isArray(data)?data:(Array.isArray(data.content)?data.content:[]);
         const exact=rows.find(r=>{
           if(!r) return false;
-          return [r.username,r.mobile,r.memberUsername].some(v=>String(v==null?'':v).trim().toLowerCase()===key)
+          return [r.username,r.mobile,r.memberUsername,r.fullName,r.name].some(v=>String(v==null?'':v).trim().toLowerCase()===key)
             || String(r.memberId==null?'':r.memberId).trim()===String(value).trim();
         });
         if(exact && exact.memberId!=null && String(exact.memberId).trim()) found=String(exact.memberId).trim();
+        /* A fragment is what people actually type - a mobile prefix, half a username (owner: "我输入119
+           搜索可是没有搜索成功", against the mobile 1198989898). The lookup's own keyword search already
+           returned the candidates, so one hit is unambiguous and becomes the member; several are offered in
+           the field's datalist (carrying their ids) and named in the empty state, instead of being ignored. */
+        else{
+          memberCandidates=rows.map(r=>({ id:String(r && r.memberId==null?'':r.memberId).trim(),
+                                          label:[r&&r.username,r&&r.mobile,r&&(r.fullName||r.name)].filter(Boolean).join(' · ') }))
+                               .filter(c=>c.id);
+          if(memberCandidates.length===1) found=memberCandidates[0].id;
+          const box=document.getElementById('ledgerMemberList');
+          if(box) box.innerHTML=memberCandidates.map(c=>'<option value="'+esc(c.id)+'">'+esc(c.label||c.id)+'</option>').join('');
+        }
       }
     }catch(e){ found=null; }
     resolvedMemberIds.set(key, found);
@@ -563,10 +576,14 @@
          honest answer is to name what this field does search. */
       const typed=keywordValue();
       const game = document.getElementById('ledgerGame')?.value.trim();
+      const candidates=typed?memberCandidates:[];
       const why=(typed||game)
         ? 'No ledger records for '+(typed?'"'+esc(typed)+'"':'')+(typed&&game?' and ':'')
           + (game?'game "'+esc(game)+'"':'')+'. Search matches a member ID, a member username or a PROVIDER '
           + 'code; a game code goes in the Game field.'
+          + (candidates.length>1? ' '+candidates.length+' members match: '
+              + candidates.slice(0,3).map(c=>esc(c.label||c.id)+' (#'+esc(c.id)+')').join(', ')
+              + '.' : '')
         : 'No ledger records found.';
       body.innerHTML='<tr><td colspan="15">'+why+'</td></tr>';
     }
