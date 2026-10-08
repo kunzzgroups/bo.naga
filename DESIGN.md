@@ -108,6 +108,26 @@ first in the rail's stack - but note the consequence measured at decision time: 
 only breaks the three-way parity, and doing it for all three means editing the BO's own typography, i.e.
 a cross-shell change rather than a portal fix.
 
+**Follow-up evidence, gathered when the owner pointed at the symptom** ("除了 finance 其他第一个字都是不标准的" - the caps look wrong, Finance looks fine). It is not the first letter, and it is not Finance being treated differently:
+
+- moving a label's first glyph out of first position changes nothing (`"D"` measured 10.625px as the first
+  character, 10.641px after an `x` - no substitute font is involved), and the `<a>` rows and the
+  `<button>` group row resolve to the same family, weight, size and tracking;
+- the cause is the synthesised 900: Segoe UI has no such weight, so the browser faux-bolds it, and the
+  denser capitals (D, M, P, R - bowls and closed counters) fatten visibly while `F` (one stem, two arms)
+  stays clean. That is the whole of "Finance looks standard".
+
+A/B measured on the same string at 14px/900: the system stack renders 457.83px wide, the bundled Inter
+face 465.36px, with `serif` at 444.33px and `monospace` at 559.13px as controls to prove the instrument
+could detect a difference at all (the first two attempts at this measurement were wrong: one while the
+Inter face was still `loading`, one where a flex column stretched every sample to the same width and the
+container was measured instead of the text).
+
+Decision re-confirmed with that evidence in hand: **keep the system stack**. Reversing it is the same
+one-line change named above, and doing it for all three shells at once is what keeps the parity this
+decision is about.
+
+
 ## Agent Portal: profile and password share one page, like BO
 
 `agent-profile.html` carries BO's second card - `admin-form-card admin-wide-card admin-password-card`
