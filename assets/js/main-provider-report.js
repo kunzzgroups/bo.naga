@@ -29,6 +29,7 @@ let historyPage=1;
 let statusPill='active';
 let syncedAt=Date.now();
 let currency=(sessionStorage.getItem('bo_main_report_currency')||'MYR').toUpperCase();
+const selectedMerchantId=new URLSearchParams(location.search).get('merchant');
 
 function showEmptyProviders(){
   currentProviders=[];
@@ -314,7 +315,7 @@ function renderProviders(){
     const codeLabel=r.code?('#'+r.code):'';
     return `<tr>
       <td><div class="mre-provider"><span class="mre-mark${r.mark}">${esc(r.initials)}</span>
-        <div class="mre-provider-copy"><b>${esc(r.name)}</b>${codeLabel?`<span class="mre-code">${esc(codeLabel)}</span>`:''}</div></div></td>
+        <div class="mre-provider-copy" data-report-provider-link="${esc(r.code)}"><b>${esc(r.name)}</b>${codeLabel?`<span class="mre-code">${esc(codeLabel)}</span>`:''}</div></div></td>
       <td class="mre-category">${esc(r.categoryLabel||'—')}</td>
       <td class="mre-num">${amountHtml(r.gross)}</td>
       <td class="mre-num">${money(r.payable)}</td>
@@ -625,6 +626,42 @@ function setupSettlement(){
 }
 
 let providerReportLoadSeq=0;
+function merchantProviderReport(data, merchantId){
+  const matching=(data.brands||[]).filter(x=>String(x.brandId??x.merchantId??'')===merchantId);
+  const providersByCode=new Map((data.providers||[]).map(x=>[String(x.providerCode||'').toUpperCase(),x]));
+  const grouped=new Map();
+  matching.forEach(x=>{
+    const code=String(x.providerCode||'').trim();
+    if(!code) return;
+    const key=code.toUpperCase(), global=providersByCode.get(key)||{};
+    let row=grouped.get(key);
+    if(!row){
+      row={providerCode:code,providerName:x.providerName||global.providerName||code,
+        category:x.category||global.category,gameCategory:x.gameCategory||global.gameCategory,
+        providerType:x.providerType||global.providerType,status:x.status||global.status,
+        turnover:0,houseResult:0,betCount:0,brandCharge:0,
+        upstreamProviderPayable:0,providerMargin:0,brandCount:1};
+      grouped.set(key,row);
+    }
+    row.turnover+=Number(x.turnover||0);
+    row.houseResult+=Number(x.houseResult||0);
+    row.betCount+=Number(x.betCount||0);
+    row.brandCharge+=Number(x.brandCharge||0);
+    row.upstreamProviderPayable+=Number(x.providerPayableShare??x.upstreamProviderPayable??0);
+    row.providerMargin+=Number(x.platformMargin??x.providerMargin??0);
+  });
+  const providers=[...grouped.values()];
+  const summary=providers.reduce((a,x)=>{
+    a.turnover+=x.turnover;
+    a.houseResult+=x.houseResult;
+    a.brandCharge+=x.brandCharge;
+    a.upstreamProviderPayable+=x.upstreamProviderPayable;
+    a.providerMargin+=x.providerMargin;
+    return a;
+  },{turnover:0,houseResult:0,brandCharge:0,upstreamProviderPayable:0,providerMargin:0});
+  return {providers,brands:matching,summary};
+}
+
 async function load(){const loadSeq=++providerReportLoadSeq;
   if(FORCE_EMPTY_UI){
     showEmptyProviders();
@@ -635,11 +672,13 @@ async function load(){const loadSeq=++providerReportLoadSeq;
   try{
     const [d,acc,ov,merchants]=await Promise.all([api('/admin/main/reports/provider-settlement'+qs()),api('/admin/main/reports/accounting'+qs()).catch(()=>({brands:[]})),api('/admin/main/overview'+qs()).catch(()=>({brands:[]})),api('/admin/merchants').catch(()=>api('/admin/brands').catch(()=>[]))]);if(loadSeq!==providerReportLoadSeq)return;
     merchantDirectory=Array.isArray(merchants)?merchants:(merchants?.rows||merchants?.items||[]);
-    renderSummary(d.summary||{});
-    currentProviders=normalizeProviders(d.providers||[]);
+    const report=selectedMerchantId!==null?merchantProviderReport(d,selectedMerchantId):d;
+    const onlyMerchant=rows=>selectedMerchantId===null?rows:(rows||[]).filter(x=>String(x.brandId??x.merchantId??x.id??'')===selectedMerchantId);
+    renderSummary(report.summary||{});
+    currentProviders=normalizeProviders(report.providers||[]);
     updateCounts();
     applyProviderFilters();
-    brandPage=1;renderBrands(d.brands||[],acc.brands||[],ov.brands||[]);
+    brandPage=1;renderBrands(report.brands||[],onlyMerchant(acc.brands),onlyMerchant(ov.brands));
     syncedAt=Date.now();
     updateSyncLabel();
   }catch(e){
@@ -768,6 +807,15 @@ function setupFilters(){
   });
   $('reportExport')?.addEventListener('click',exportCsv);
   $('reportSyncLabel')?.addEventListener('click',()=>{load();});
+  if(window.__boMreMerchantListClick) document.removeEventListener('click',window.__boMreMerchantListClick);
+  window.__boMreMerchantListClick=e=>{
+    const link=e.target.closest('[data-report-provider-link]');
+    if(!link || !link.closest('#providerReportRows')) return;
+    const u=new URL('main-merchant-detail.html',location.href);
+    u.searchParams.set('providerCode',link.getAttribute('data-report-provider-link'));
+    location.href=u.toString();
+  };
+  document.addEventListener('click',window.__boMreMerchantListClick);
   if(window.__boMreHistoryClick) document.removeEventListener('click',window.__boMreHistoryClick);
   window.__boMreHistoryClick=e=>{
     const view=e.target.closest('[data-mre-view]');

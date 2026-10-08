@@ -659,7 +659,7 @@
               <i class="bi bi-chevron-${open ? 'down' : 'right'}" aria-hidden="true"></i>
             </button>
             <span class="mmr-mark${r.mark}">${esc(r.initials)}</span>
-            <div class="mmr-merchant-copy">
+            <div class="mmr-merchant-copy" data-report-merchant-link="${esc(String(r.id||r.code||''))}">
               <b>${esc(r.name)}${codeLabel ? ` <span class="mmr-code">${esc(codeLabel)}</span>` : ''}</b>
               <small>${esc(r.tierLabel)}</small>
             </div>
@@ -848,6 +848,13 @@
     });
 
     $('wlRows')?.addEventListener('click', (e) => {
+      const merchantLink = e.target.closest('[data-report-merchant-link]');
+      if (merchantLink) {
+        const u = new URL('main_merchant_report.html', location.href);
+        u.searchParams.set('merchant', merchantLink.getAttribute('data-report-merchant-link'));
+        location.href = u.toString();
+        return;
+      }
       const copyBtn = e.target.closest('[data-wl-copy]');
       if (copyBtn) {
         e.preventDefault();

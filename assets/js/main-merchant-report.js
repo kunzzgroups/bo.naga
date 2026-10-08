@@ -13,6 +13,9 @@ let merchantPageSize=10;
 const MARKS=['','teal','violet','amber','rose','slate'];
 /** Temporary: hide report rows until real data is ready. Set false to restore API display. */
 const FORCE_EMPTY_UI=false;
+// A drill-down is scoped to the explicitly requested merchant; never fall back to another brand.
+const requestedMerchantId=new URLSearchParams(window.location.search).get('merchant');
+
 
 let currentMerchants=[];
 let merchantMeta=[];
@@ -239,7 +242,7 @@ function renderTable(){
     const txnLabel=r.txns? (num(r.txns)+' txns') : '';
     return `<tr>
       <td><div class="mmr-merchant"><span class="mmr-mark${r.mark}">${esc(r.initials)}</span>
-        <div class="mmr-merchant-copy"><b>${esc(r.name)}${codeLabel?` <span class="mmr-code">${esc(codeLabel)}</span>`:''}</b>
+        <div class="mmr-merchant-copy" data-report-provider-link="${esc(String(r.id||r.code||''))}"><b>${esc(r.name)}${codeLabel?` <span class="mmr-code">${esc(codeLabel)}</span>`:''}</b>
         <small>${esc(r.tierLabel)}</small></div></div></td>
       <td class="mre-num"><b>${money(r.totalBet)}</b></td>
       <td class="mre-num"><b>${money(r.validBet)}</b></td>
@@ -275,7 +278,10 @@ async function load(){const loadSeq=++merchantReportLoadSeq;
   try{
     const [d,merchants]=await Promise.all([api('/admin/main/reports/provider-settlement'+qs()),api('/admin/merchants').catch(()=>api('/admin/brands').catch(()=>[]))]);if(loadSeq!==merchantReportLoadSeq)return;
     merchantMeta=Array.isArray(merchants)?merchants:(merchants?.rows||merchants?.items||[]);
-    currentMerchants=normalizeMerchants(d.brands||[]);
+    const reportRows=normalizeMerchants(d.brands||[]);
+    currentMerchants=requestedMerchantId===null ? reportRows : reportRows.filter(row=>
+      String(row.id??'')===requestedMerchantId
+    );
     updateCounts();
     applyFilters();
     syncedAt=Date.now();
@@ -354,6 +360,13 @@ function setupFilters(){
   $('reportExport')?.addEventListener('click',exportCsv);
   $('reportSyncLabel')?.addEventListener('click',()=>{load();});
   listen(document,'click',e=>{
+    const providerLink=e.target.closest('[data-report-provider-link]');
+    if(providerLink){
+      const u=new URL('main_provider_report.html',location.href);
+      u.searchParams.set('merchant',providerLink.getAttribute('data-report-provider-link'));
+      location.href=u.toString();
+      return;
+    }
     const view=e.target.closest('[data-mmr-view]');
     if(view){
       const id=view.getAttribute('data-mmr-view');
