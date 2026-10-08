@@ -1595,3 +1595,16 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern 
   height:42px!important;min-height:42px!important;max-height:42px!important;border-radius:11px!important;
   flex:0 0 auto!important;
 }
+
+/* P10 - the avatar glyph, the second half of the owner's report ("还有agent的icon").
+   BO's avatar is <span class="report-avatar"><i class="bi bi-person"></i></span> - a glyph, not
+   initials - measured at 40x40 amber with an 18x18 white icon inside. The portal's chip rendered
+   initials instead, and the owner's screenshot showed a glyph: two renderings of the same slot, which
+   is how a slot ends up looking blotted. It now ships BO's own markup, and the glyph is sized here so
+   it cannot depend on whatever the base sheet happens to give an <i> inside the avatar. */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-actions .report-avatar{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-actions .report-avatar i{
+  font-size:18px!important;line-height:18px!important;color:#FFFFFF!important;
+}
