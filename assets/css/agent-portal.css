@@ -1936,3 +1936,42 @@ html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.age
 html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button[data-player-tab="new"]{
   padding-left:14px!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P25 - the band loses its decorative rules  (owner: "border线条去除，apply filter要去除，各种underline
+   还有整齐美观")
+
+   Removed from the players page's header:
+     the band's own bottom hairline        (added in P18 to separate the header from the table)
+     the tab strip's bottom border         (the page's own underline under All / Active / Inactive / New)
+     the Apply Filters button              (the fields already re-render on input/change - verified: typing
+                                            into the search takes the list from 10 rows to 3 with no button)
+   and the date control's radius comes down to the BO's 8px.
+
+   VIP Tier stays: it was never meant to go. Removing it last round was a misreading of "vip的下拉选单是有的".
+   With the button gone the grid is re-cut for tabs + search + date + VIP, so the row still fills.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-filter-panel,
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel > .agent-filter-panel{
+  border-bottom:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons,
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters > .agent-tab-buttons{
+  border-bottom:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters .bo-range-trigger,
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-actions .bo-range-trigger{
+  border-radius:8px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters{
+  grid-template-columns:auto minmax(220px,1.25fr) minmax(200px,1.05fr) minmax(150px,.8fr)!important;
+}
+
+/* P25b - the band hairline, outranked by the rule that added it.
+   P18's selector carries one more class (.agent-player-list-panel) than the P25 rule that tries to remove the
+   border, so at equal importance P18 kept winning and the hairline stayed. Adding .report-content to the
+   chain - the same device used throughout this sheet - takes it one class past P18. */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .report-content .agent-player-list-panel > .agent-filter-panel,
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .report-content .agent-filter-panel{
+  border-bottom:0!important;border-top:0!important;
+}
