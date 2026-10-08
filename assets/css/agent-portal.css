@@ -1517,3 +1517,43 @@ html:not(#bo-charcoal-off) body.agent-modern.sidebar-mini .report-sidebar .repor
 html:not(#bo-charcoal-off) body.agent-modern.sidebar-mini .report-sidebar:hover .report-nav .agent-nav-chevron{
   display:none!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P8 - the collapsed rail, measured against the BO's collapsed rail for the first time.
+   The harness could not show the BO in that state until the pref its own script reads
+   (bo_sidebar_mini, reports.js readMiniPref) was set for it; with both rails collapsed side by side:
+     rail width      72                  = 72
+     nav row         BO 51x42 at left 10    portal 46x46 at left 18
+     row icon        BO 22x17 at left 25    portal 19x19 at left 32
+     logout row      BO 51x47              portal 35x48
+     group chevron   BO absent             portal absent (fixed in P7)
+   The portal hard-coded a 46px square per row (body[data-agent-page].agent-report-body.agent-modern.sidebar-mini .report-nav-item
+   {width:46px}) while the BO lets the row fill the rail's own padding - 51px - and keeps the 42px
+   height every row has when expanded. The icon inside gets a wider box in the BO's collapsed state
+   (22px against 18px expanded) to keep the glyph centred in the narrower rail.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern.sidebar-mini .report-sidebar .report-nav{
+  padding:12px 10px 10px!important;gap:3px!important;
+}
+/* The rail's own padding is 0 in the BO's collapsed state too - all of the inset comes from
+   .report-nav's 10px. The portal kept 8px here, which is what pushed every collapsed row 8px right
+   and shaved 16px off its width (measured row 35x42 at left 18 against the BO's 51x42 at left 10). */
+body[data-agent-page].agent-report-body.agent-modern.sidebar-mini .report-sidebar{
+  padding:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern.sidebar-mini .report-sidebar .report-nav-item,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern.sidebar-mini .report-sidebar:hover .report-nav-item{
+  width:100%!important;min-width:0!important;max-width:none!important;
+  height:42px!important;min-height:42px!important;max-height:42px!important;
+  padding:12px 0!important;justify-content:center!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern.sidebar-mini .report-sidebar .report-nav-item i,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern.sidebar-mini .report-sidebar .report-nav-item .bi{
+  width:22px!important;line-height:16.8px!important;margin:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern.sidebar-mini .report-sidebar .bo-sidebar-account-footer{
+  padding:10px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern.sidebar-mini .report-sidebar .bo-sidebar-logout{
+  width:100%!important;
+}
