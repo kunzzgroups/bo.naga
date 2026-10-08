@@ -1557,3 +1557,30 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern.
 html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern.sidebar-mini .report-sidebar .bo-sidebar-logout{
   width:100%!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P9 - the rail toggle moves into the rail (owner circled the topbar hamburger with an arrow
+   pointing left).
+
+   BO's arrangement, measured: its .report-brand is justify-content space-between and holds
+   <button class="hamb dashboard-sidebar-toggle"> 42x42 radius 11 at the rail's right edge
+   (left 173 in a 230px rail); the BO TOPBAR has no hamburger at all (0x0); and when the rail is
+   collapsed the button stays - the brand row goes justify-content:center and the button sits at
+   left 20 of 71, i.e. the way back out of the collapsed state.
+
+   The portal had its hamburger only in the topbar, which is why it appeared to belong to the
+   content rather than to the rail. It is injected into .report-brand by agent-portal.js now, and the
+   topbar copy is hidden so there is exactly one, where BO has it.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern:not(.sidebar-mini) .report-sidebar .report-brand{
+  justify-content:space-between!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-modern-head > .hamb,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-topbar > .hamb{
+  display:none!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-brand .hamb{
+  width:42px!important;min-width:42px!important;max-width:42px!important;
+  height:42px!important;min-height:42px!important;max-height:42px!important;border-radius:11px!important;
+  flex:0 0 auto!important;
+}
