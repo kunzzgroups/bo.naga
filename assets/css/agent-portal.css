@@ -1897,3 +1897,42 @@ html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.age
   content:""!important;display:inline-block!important;width:6px!important;height:6px!important;
   border-radius:50%!important;background:#16A34A!important;margin-right:6px!important;vertical-align:middle!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P24 - the tab pills take the BO's tab recipe (owner: "图一和图二的差距")
+
+   Measured on BO's agent-management.html, all three tabs:
+     every tab        background transparent, border transparent, height 36, padding 0 14px, radius 999px
+     selected         colour rgb(24,25,28)   + its status dot 6px rgb(5,150,105)  (green)
+     unselected       colour rgb(113,113,122) + 6px rgb(196,192,208)              (grey)
+     a tab with no status ("All") has no dot at all
+   So the BO distinguishes tabs by text weight/colour and a status dot - NOT by a filled pill. This page
+   was filling the selected tab with rgba(217,119,6,.16) and giving every tab a background and a border,
+   which is the difference the owner is pointing at.
+
+   The VIP Tier select goes with it: BO's band is tabs + date + search + primary, with no such filter.
+   The page's JS reads agentPlayerVip through optional chaining and the listener loop guards each element,
+   so removing it cannot throw.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button{
+  background:transparent!important;border-color:transparent!important;
+  color:rgb(113,113,122)!important;font-size:12.5px!important;font-weight:700!important;
+  height:36px!important;padding:0 14px!important;border-radius:999px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button.active{
+  background:transparent!important;border-color:transparent!important;color:rgb(24,25,28)!important;
+}
+/* the dot belongs to the tab's status, not to being selected: BO's "All" carries none, and its green
+   dot stays on the Active tab whichever tab is currently selected. */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button[data-player-tab="1"]::before{
+  content:""!important;display:inline-block!important;width:6px!important;height:6px!important;
+  border-radius:50%!important;background:rgb(5,150,105)!important;margin-right:6px!important;vertical-align:middle!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button[data-player-tab="0"]::before{
+  content:""!important;display:inline-block!important;width:6px!important;height:6px!important;
+  border-radius:50%!important;background:rgb(196,192,208)!important;margin-right:6px!important;vertical-align:middle!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button[data-player-tab=""],
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button[data-player-tab="new"]{
+  padding-left:14px!important;
+}
