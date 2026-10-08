@@ -1848,3 +1848,22 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern 
 html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-player-list-panel > .agent-list-tabs{
   padding:12px 16px 0!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P22 - the players filter band is one row, tabs first  (owner: "status 和 last active 的下拉选单可以
+   去除了 然后再帮我再优化设计 以bo和main的类似页面去统一")
+
+   With those two selects gone the band has four controls instead of six, which is what makes BO's single
+   row possible: its agent-management.html band is [status tabs] [date] [search] ……… [Create Agent].
+   The tab buttons have moved into the filter row, and the page's own grid - which was already six columns
+   for six controls, with align-items:end - is now five for the four that remain plus the tabs in front.
+
+   Scoped to this page: .agent-player-filters is shared by the products, wallet and withdraw pages, whose
+   grids must keep their own column counts.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters{
+  grid-template-columns:auto minmax(220px,1.2fr) minmax(190px,1fr) minmax(140px,.8fr) auto!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters > .agent-tab-buttons{
+  display:flex!important;align-items:center!important;gap:8px!important;padding-bottom:2px!important;
+}
