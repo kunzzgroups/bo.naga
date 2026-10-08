@@ -74,7 +74,7 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-family-tab:focus-visible{
 body.bo-wallet-tx.bulk-adjustment-page .bulk-operation-shell,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-operation-shell{
   flex:1 1 auto;
-  min-height:0;
+  
   display:flex;
   flex-direction:column;
   background:#FFF8EB;
@@ -93,10 +93,10 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-mode-switch{
 body.bo-wallet-tx.bulk-adjustment-page .bulk-mode-panel,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-mode-panel{
   flex:1 1 auto;
-  min-height:0;
+  
   display:flex;
   flex-direction:column;
-  overflow-y:auto;
+  overflow:visible;
 }
 body.bo-wallet-tx.bulk-adjustment-page .bulk-mode-panel[hidden],
 body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-mode-panel[hidden]{
@@ -187,7 +187,7 @@ body.bo-wallet-tx.bulk-adjustment-page .bulk-operation-layout,
    the alert nor the result card overlaps anything at 1440x900, 1280x720 or 1152x700. */
 body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-operation-layout{
   flex:1 1 auto;
-  height:100%;
+  height:auto;
   display:grid;
   /* Desktop split: Select Members 60% · Configure 40% */
   grid-template-columns:minmax(0,3fr) minmax(280px,2fr);
@@ -201,7 +201,7 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-operation-shell .bulk-operati
   flex-direction:column;
   min-width:0;
   min-height:0;
-  height:100%;
+  height:auto;
   background:#FFFCF7;
   border:1px solid #DCC9A8;
   border-radius:8px;
@@ -264,7 +264,7 @@ body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-panel-ops .operation-form-gri
 body.bo-wallet-tx.bulk-adjustment-page .bulk-panel-ops .selected-table-wrap,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .bulk-panel-ops .selected-table-wrap{
   flex:1 1 auto;
-  min-height:0; 
+  min-height:0; max-height:min(320px,36vh); 
 }
 body.bo-wallet-tx.bulk-adjustment-page .operation-footer,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .operation-footer{
@@ -455,7 +455,7 @@ body.bo-wallet-tx.bulk-adjustment-page .member-picker-list,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-list{
   flex:1 1 auto;
   min-height:0;
-  max-height:none;
+  max-height:min(60vh,640px);
   border:1px solid #EADCC8;
   border-radius:8px;
   overflow-x:hidden;
@@ -1648,4 +1648,15 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .clean-b
   body.bo-wallet-tx.bulk-bonus-adjustment-page .operation-actions .btn-primary-clean{
     width:100%;
   }
+}
+
+/* The scroll belongs to the page, not to a card. The mode panel kept the inner scrollbar, which put the
+   Latest Batch Result behind a scroll region the user had to find; the content frame scrolls instead, so
+   the scrollbar sits at the shell's edge and the result is reached by scrolling the page like anywhere
+   else. Reports only what it must: the columns keep their own floor (min-height), so this appears only
+   when the feedback and the result genuinely need more room than the frame has. */
+body.bo-wallet-tx.bulk-adjustment-page .report-content,
+body.bo-wallet-tx.bulk-bonus-adjustment-page .report-content{
+  /* the shell decides this inline/installed-first; the page needs the frame to scroll instead */
+  overflow-y:auto!important;
 }
