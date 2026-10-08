@@ -2342,3 +2342,23 @@ html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.age
 html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel{
   overflow:hidden!important;
 }
+
+/* P36 - the entries select takes the BO's type weight
+
+   Compared the same control on BO (agent-management.html), Main (main-admin-detail.html /
+   main-merchant-detail.html) and this page:
+
+                   width  radius  padding  weight  size   rest border      focus
+     BO            68     8       8px      700     13px   1px #DCC9A8      #D97706 + rgba(217,119,6,.14) 0 0 0 3px
+     Main          84     10      12px     800     13px   1px #DCC9A8      same ring
+     this page     68     8       8px      400     13px   1px #DCC9A8      same ring
+
+   BO and Main differ from each other in width, radius, padding and weight; this page already matches BO
+   in all of them except one - the weight was 400 against BO's 700, which is visible on the number itself.
+   Set to BO's 700. Nothing else touched: the shared field border and the focus ring were already identical
+   on all three (measured, resting and focused).
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel .agent-page-size select,
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel .agent-table-footer select{
+  font-weight:700!important;font-size:13px!important;
+}
