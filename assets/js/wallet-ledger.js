@@ -523,7 +523,18 @@
   function render(rows, pagination, meta){
     const body=document.getElementById('walletLedgerBody'); if(!body) return;
     /* Tiles are painted by loadAllTimeTotals, never from this page's rows (see above). */
-    if(!rows.length){ body.innerHTML='<tr><td colspan="15">No ledger records found.</td></tr>'; }
+    if(!rows.length){
+      /* Say WHY the table is empty. The search matches a member id / username and a PROVIDER code - a game
+         name goes out as providerCode=GATES+OF+OLYMPUS and can never match, which reads as "the filter is
+         broken" (owner: "输入游戏 没有显示筛选结果"). The backend has no game parameter today, so the
+         honest answer is to name what this field does search. */
+      const typed=keywordValue();
+      const why=typed
+        ? 'No ledger records for "'+esc(typed)+'". This search matches a member ID, a member username or a '
+          + 'PROVIDER code - not a game name.'
+        : 'No ledger records found.';
+      body.innerHTML='<tr><td colspan="15">'+why+'</td></tr>';
+    }
     else body.innerHTML = rows.map(r => {
       const amt = num(r.amount);
       const status = r.status || '-';
