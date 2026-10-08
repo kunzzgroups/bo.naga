@@ -660,3 +660,42 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-merchant-report-page
   body.main-admin-detail-page.main-merchant-report-page:not(.main-provider-family-page) .mad-footer-info{grid-area:info;grid-column:auto;justify-self:center;white-space:normal;text-align:center}
   body.main-admin-detail-page.main-merchant-report-page:not(.main-provider-family-page) .mad-footer-right{grid-area:pager;grid-column:auto;justify-self:end}
 }
+
+
+/* The list's options in night mode. The button and the menu are themed above (measured: #2A2C36 in both,
+   so they were never the problem) - but the options were not, and the shared dark rules for
+   .rounded-select-option are scoped to the BO shell (bo-charcoal...), which the Main panel does not use.
+   Measured in dark mode before this: the active option amber, and 10/20/50/100/All at rgb(255,248,235)
+   with near-black text - the white pills in the owner's screenshot. Same per-access-page shape as the
+   rest of this sheet. */
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-page-size-control .rounded-select-menu .rounded-select-option,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-page-size-control .rounded-select-menu .rounded-select-option,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-page-size-control .rounded-select-menu .rounded-select-option,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_provider_detail"] .mad-page-size-control .rounded-select-menu .rounded-select-option,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_provider_report"] .mad-page-size-control .rounded-select-menu .rounded-select-option,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_report"] .mad-page-size-control .rounded-select-menu .rounded-select-option{
+  background:transparent!important;
+  color:#F4EFE6!important;
+}
+
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-page-size-control .rounded-select-menu .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-page-size-control .rounded-select-menu .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-page-size-control .rounded-select-menu .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_provider_detail"] .mad-page-size-control .rounded-select-menu .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_provider_report"] .mad-page-size-control .rounded-select-menu .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_report"] .mad-page-size-control .rounded-select-menu .rounded-select-option:hover,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-page-size-control .rounded-select-menu .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-page-size-control .rounded-select-menu .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-page-size-control .rounded-select-menu .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_provider_detail"] .mad-page-size-control .rounded-select-menu .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_provider_report"] .mad-page-size-control .rounded-select-menu .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_report"] .mad-page-size-control .rounded-select-menu .rounded-select-option.active,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_detail"] .mad-page-size-control .rounded-select-menu .rounded-select-option.is-selected,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_admin_security"] .mad-page-size-control .rounded-select-menu .rounded-select-option.is-selected,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_merchant_detail"] .mad-page-size-control .rounded-select-menu .rounded-select-option.is-selected,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_provider_detail"] .mad-page-size-control .rounded-select-menu .rounded-select-option.is-selected,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_provider_report"] .mad-page-size-control .rounded-select-menu .rounded-select-option.is-selected,
+html[data-bo-theme="dark"] body.main-admin-detail-page[data-access-page="main_report"] .mad-page-size-control .rounded-select-menu .rounded-select-option.is-selected{
+  background:rgba(255,255,255,.12)!important;
+  color:#FFFFFF!important;
+}
