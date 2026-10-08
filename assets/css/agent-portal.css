@@ -1975,3 +1975,27 @@ html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.age
 html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .report-content .agent-filter-panel{
   border-bottom:0!important;border-top:0!important;
 }
+
+/* P26 - the footer select stops stretching, and the tabs get the BO's hover pill
+   (owner: "就差一点就统一设计标准与bo和main了 你再去参考图二的页面")
+
+   BO's Show [n] select measures 68x36; this page's filled its whole flex slot, so the row read as
+   "Show [empty space] entries" instead of a control. The slot still stretches - only the select is sized.
+   BO's selected tab is transparent like the unselected ones (colour is what marks it), and the white pill
+   in the reference screenshot is that tab's hover state, so the hover pill is added here too.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-page-size select{
+  flex:0 0 auto!important;width:auto!important;min-width:64px!important;max-width:96px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-page-size{
+  flex:0 0 auto!important;justify-content:flex-start!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-table-footer > #agentPlayersShowing{
+  flex:1 1 auto!important;text-align:center!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button:hover{
+  background:rgba(217,119,6,.10)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button.active:hover{
+  background:rgba(217,119,6,.14)!important;
+}
