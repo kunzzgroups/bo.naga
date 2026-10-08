@@ -1119,3 +1119,13 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-global-input{
   background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;color:#F5F5F4!important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-global-input-wrap span{color:#D4D4D8!important}
+
+/* The hidden attribute must win. .mad-row-check is displayed by a class rule (and by several page rules
+   further down), so the header's select-all - which the markup ships as hidden and the JS unhides only once
+   there is something to select - was painted on an empty table anyway: that is the lone white square the owner
+   circled on main-admin-detail.html and main-merchant-detail.html. Nothing about the behaviour changes; the
+   element simply stays hidden until the JS says otherwise. */
+.mad-row-check[hidden],
+.mad-select-all-check[hidden]{
+  display:none!important;
+}

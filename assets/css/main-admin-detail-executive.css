@@ -10028,3 +10028,24 @@ html body.report-body .report-content .mac-section,
 html body.report-body .report-content section.mac-section{
   overflow:visible!important;
 }
+
+/* The row / select-all checkboxes, same look as the BO pages (bo-charcoal-primitives.css). Those rules are all
+   scoped to body.bo-charcoal, which the Main panel does not carry, so its boxes rendered as bare white squares
+   - the artefact the owner circled. Same values, scoped to this page family instead. */
+body.main-admin-detail-page input[type="checkbox"].mad-row-check-input,
+body.main-admin-detail-page .mad-row-check-input,
+body.main-admin-detail-page input[type="checkbox"]{
+  accent-color:#D97706;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page .mad-row-check-box{
+  background:#F5EBDC!important;border:1px solid #DCC9A8!important;
+}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page .mad-row-check-input:checked + .mad-row-check-box{
+  background:#D97706!important;border-color:#D97706!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-row-check-box{
+  background:#2A2C36!important;border:1px solid rgba(255,255,255,.12)!important;
+}
+html[data-bo-theme="dark"] body.main-admin-detail-page .mad-row-check-input:checked + .mad-row-check-box{
+  background:#F59E0B!important;border-color:#F59E0B!important;
+}
