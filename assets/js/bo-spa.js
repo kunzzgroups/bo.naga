@@ -352,7 +352,14 @@
     if (!href || href.charAt(0) === '#' || /^(mailto:|tel:|javascript:)/i.test(href)) return false;
     var u = href_of(a);
     if (!u || u.origin !== location.origin) return false;
-    if (u.pathname === location.pathname && u.search === location.search) return false;
+    /* Same document, any query: leave it to the browser. A swap replaces the content frame and re-runs
+       that frame's scripts, but it never re-parses the document - so a page whose view is decided by an
+       inline script reading location.search (bulk-adjustment.html?tab=bonus redirects to the bonus page
+       from exactly such a script) would swap in an identical frame and appear to do nothing: the tab
+       highlight moved, the content did not. Measured with a real click on "Bonus Adjustment" from
+       bulk-adjustment.html?tab=winlose: the URL and both mode panels were untouched. A real navigation
+       re-runs that script, which is the only thing that can honour the new query. */
+    if (u.pathname === location.pathname) return false;
     if (!/\.html$/.test(u.pathname)) return false;
     /* Is the destination actually swappable? Knowing this BEFORE the fetch is the whole
        point of the manifest: without it the router fetched the target document, noticed it
