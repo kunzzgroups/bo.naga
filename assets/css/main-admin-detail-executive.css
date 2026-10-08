@@ -10015,3 +10015,16 @@ body.main-merchant-detail-page #madEditWorkspace .mac-input-group.is-suffix .mac
   border-top-left-radius:0!important;
   border-bottom-left-radius:0!important;
 }
+
+/* The section must not clip the selects it holds. This sheet's own note on .mprr-card says it best:
+   ".mac-section ... its overflow:hidden. The reference can afford it because nothing in it opens a popup;
+   this card holds the house custom selects (reports.js rewrites every select into .rounded-select-wrap) whose
+   menu is an absolutely-positioned 280px panel that would be clipped by the card bounds."
+   The create forms ARE such a card - main-provider-create.html and main-merchant-create.html hold selects
+   whose menus were cut off at the section's bottom edge (measured on the rendered page: the menu's box ended
+   at 598 while the section ended at 491, and the Game Category list lost its last options). The rail the clip
+   was protecting clears the corner by its own insets, so nothing here needs it. */
+html body.report-body .report-content .mac-section,
+html body.report-body .report-content section.mac-section{
+  overflow:visible!important;
+}
