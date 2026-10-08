@@ -381,7 +381,7 @@
 
     .fd-telegram-guide {
       width: min(560px, calc(100vw - 32px));
-      max-height: calc(100vh - 40px);
+      max-height: calc(100vh - 24px);
       padding: 0;
       border: 1px solid #eadcc8;
       border-radius: 16px;
@@ -895,7 +895,7 @@
       /* The gradient controls made this dialog taller than a laptop screen (measured 862px of content in
          836px of room at 1440x900, and it was worse at 720px), so the bottom - the swatches and the hex
          field - was unreachable. It keeps its own ceiling and scrolls inside that instead. */
-      max-height: calc(100vh - 96px);
+      max-height: calc(100vh - 40px);
       overflow-y: auto;
       overscroll-behavior: contain;
       display: none;
@@ -945,8 +945,8 @@
     .fd-color-pop-preview {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 8px 10px;
+      gap: 8px;
+      padding: 6px 8px;
       border: 1px solid #EADCC8;
       border-radius: 10px;
       background: #F5EBDC;
@@ -1158,6 +1158,11 @@
       margin-top: 6px;
     }
 
+    .fd-color-grad-foot .fd-color-grad-presets {
+      flex: 1 1 auto;
+      margin-top: 0;
+    }
+
     .fd-color-grad-css {
       flex: 1 1 auto;
       overflow: hidden;
@@ -1240,7 +1245,7 @@
     .fd-color-sv {
       position: relative;
       width: 100%;
-      height: 148px;
+      height: 118px;
       border-radius: 10px;
       border: 1px solid #DCC9A8;
       cursor: crosshair;
@@ -2317,25 +2322,20 @@
                               </div>
                               <div class="fd-color-grad-bar" id="fdColorGradBar" role="group"
                                 aria-label="Gradient stops, drag a handle to move it"></div>
-                              <p class="fd-color-grad-tip">Drag a handle to move it; click the bar to add one.</p>
-                              <div class="fd-color-grad-dirs" id="fdColorGradDirs" role="group"
-                                aria-label="Gradient direction"></div>
                               <div class="fd-color-grad-row">
                                 <button type="button" class="fd-color-grad-btn" id="fdColorGradAdd">+ Stop</button>
                                 <button type="button" class="fd-color-grad-btn" id="fdColorGradRemove">&minus; Stop</button>
                                 <label class="fd-color-grad-num">Angle<input type="number" id="fdColorGradAngle"
                                     min="0" max="360" step="5" value="135" aria-label="Gradient angle"></label>
-                                <label class="fd-color-grad-num">Pos<input type="number" id="fdColorGradPos" min="0"
-                                    max="100" step="1" value="0" aria-label="Stop position"></label>
                               </div>
                               <label class="fd-color-grad-opacity">Opacity<input type="range"
                                   id="fdColorGradOpacity" min="0" max="100" step="1" value="100"
                                   aria-label="Stop opacity"><span id="fdColorGradOpacityLabel">100%</span></label>
-                              <div class="fd-color-grad-presets" id="fdColorGradPresets" role="listbox"
-                                aria-label="Gradient presets"></div>
                               <div class="fd-color-grad-foot">
-                                <span class="fd-color-grad-css" id="fdColorGradCss"></span>
-                                <button type="button" class="fd-color-grad-btn" id="fdColorGradCopy">Copy CSS</button>
+                                <div class="fd-color-grad-presets" id="fdColorGradPresets" role="listbox"
+                                  aria-label="Gradient presets"></div>
+                                <span class="fd-color-grad-css" id="fdColorGradCss" hidden></span>
+                                <button type="button" class="fd-color-grad-btn" id="fdColorGradCopy">Copy</button>
                               </div>
                             </div>
                           </div>
@@ -2360,7 +2360,6 @@
                             <input type="text" class="fd-color-pop-hex" id="fdColorPopHex" value="#18191C" maxlength="220"
                               spellcheck="false" aria-label="Hex colour">
                           </div>
-                          <p class="fd-color-pop-hint">Drag the spectrum, edit RGB, type a hex, or paste a gradient CSS.</p>
                         </div>
                       </div>
                       <div id="marqueeEditor" class="marquee-editor" contenteditable="true"
