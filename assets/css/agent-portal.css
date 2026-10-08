@@ -1306,3 +1306,52 @@ html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] .agent-de
   background:rgb(58,60,72)!important;color:rgb(245,245,244)!important;
   border-bottom-color:rgba(255,255,255,.12)!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P5 - status pills and the trend chart.
+   The BO's canonical pill is reports.css:674 - .status-pill{display:inline-flex;align-items:center;
+   border-radius:999px;padding:3px 8px;background:#dcfce7;color:#166534;font-weight:800;
+   font-size:11px} with .off in #FEE2E2/#B91C1C - and it is measured on the BO pages as
+   rgb(220,252,231)/rgb(22,101,52). The portal renders BOTH .status-pill (from statusPill() in
+   agent-portal.js) and its own .agent-status, each with its own palette: measured
+   rgb(236,253,243)/rgb(22,128,61) for agent-status.active against the BO's
+   rgb(220,252,231)/rgb(22,101,52). Same semantics, different values - the kind of difference that
+   reads as "a different product" without either one looking wrong on its own.
+   Dark values are the BO's own: rgba(16,185,129,.16)/#34D399 positive, rgba(248,113,113,.16)/#FCA5A5
+   negative (bo-charcoal-legacy.css).
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page] .status-pill,
+html:not(#bo-charcoal-off) body[data-agent-page] .agent-status{
+  display:inline-flex!important;align-items:center!important;border-radius:999px!important;
+  padding:3px 8px!important;font-weight:800!important;font-size:11px!important;
+  background:#DCFCE7!important;color:#166534!important;border:1px solid rgba(22,101,52,.22)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page] .status-pill.off,
+html:not(#bo-charcoal-off) body[data-agent-page] .status-pill.inactive,
+html:not(#bo-charcoal-off) body[data-agent-page] .agent-status.inactive{
+  background:#FEE2E2!important;color:#B91C1C!important;border-color:rgba(185,28,28,.22)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page] .status-pill.pending,
+html:not(#bo-charcoal-off) body[data-agent-page] .agent-status.pending{
+  background:#FFEDD5!important;color:#EA580C!important;border-color:rgba(234,88,12,.35)!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] .status-pill,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] .agent-status{
+  background:rgba(16,185,129,.16)!important;color:#34D399!important;border-color:rgba(52,211,153,.28)!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] .status-pill.off,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] .status-pill.inactive,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] .agent-status.inactive{
+  background:rgba(248,113,113,.16)!important;color:#FCA5A5!important;border-color:rgba(252,165,165,.28)!important;
+}
+/* The trend line was the only blue left in a BO-family palette whose accent is amber. The stroke
+   is set on the SVG element by the JS, so this is a CSS override rather than a value change - and
+   the dark variant gets the BO's dark amber. */
+html:not(#bo-charcoal-off) body[data-agent-page] #agentTrendChart path[stroke],
+html:not(#bo-charcoal-off) body[data-agent-page] #agentTrendChart polyline{
+  stroke:#D97706!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] #agentTrendChart path[stroke],
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page] #agentTrendChart polyline{
+  stroke:#F59E0B!important;
+}
