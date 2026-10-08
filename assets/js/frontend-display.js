@@ -664,6 +664,23 @@
     }
     fdColorPop.style.left=Math.round(left)+'px';
     fdColorPop.style.top=Math.round(top)+'px';
+    /* The dialog has a ceiling of its own now (the gradient controls made it tall), and it is measured HERE,
+       in layout, because while it is display:none offsetHeight is 0 and the flip below used to run on the
+       420px fallback: the bottom then sat past the screen edge (measured 961 in a 900px viewport and 1238 in
+       a 700px one, with the swatches and the hex field unreachable). Clamping the final top keeps the whole
+       dialog on screen at any height; its own overflow handles what does not fit vertically. */
+    /* Re-clamp a frame later, when the dialog is really in layout: the caller adds .is-open around this
+       call, so measuring here returns 0 and the maths fell back to 420px - the bottom then sat past the
+       screen edge (measured 961 in a 900px viewport, 764 in 720, 724 in 700). Only ever moves it up. */
+    const clampToViewport=function(){
+      if(!fdColorPop) return;
+      const height=fdColorPop.offsetHeight;
+      if(!height) return;
+      const maxTop=Math.max(pad,window.innerHeight-height-pad);
+      const now=parseFloat(fdColorPop.style.top)||0;
+      if(now>maxTop) fdColorPop.style.top=Math.round(maxTop)+'px';
+    };
+    if(window.requestAnimationFrame) window.requestAnimationFrame(clampToViewport); else setTimeout(clampToViewport,0);
   }
 
   function closeColorPopover(){
