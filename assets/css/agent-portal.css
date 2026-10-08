@@ -1701,3 +1701,44 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern 
 html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-subitem span{
   border-radius:0!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P15 - the players page's KPI tiles take the BO's tile-icon recipe
+   (owner: "这个页面也帮我优化一下 去参考bo和main")
+
+   Measured on a rendered BO page (.metric-icon, four tiles, all identical):
+     background rgba(217,119,6,0.12)   glyph colour rgb(217,119,6)   size 52px   glyphs outline
+   Measured on the portal's players page before this:
+     .agent-stat-icon  52px circle, background #F5EBDC (neutral cream), glyph colour inherited dark,
+     and the glyphs were -fill variants (bi-people-fill, bi-person-fill, bi-bar-chart-fill) - a filled
+     family inside a shell whose icons are outline everywhere else.
+
+   The caption line under each value: BO uses weight 600 #71717A, the portal left it at 400.
+   The filter card: BO's .filter-card is radius 16px, this panel measured 8px.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-stat-icon,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-icon,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-summary-icon{
+  background:rgba(217,119,6,.12)!important;color:rgb(217,119,6)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-stat-icon i,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-icon i,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-summary-icon i{
+  color:rgb(217,119,6)!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-stat-icon,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-icon{
+  background:rgba(245,158,11,.16)!important;color:#F59E0B!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-stat-icon i,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-icon i{
+  color:#F59E0B!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-player-stat-card small,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-kpi-card small{
+  font-weight:600!important;color:#71717A!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-filter-panel,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-standard-filter{
+  border-radius:16px!important;
+}
