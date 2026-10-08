@@ -88,6 +88,33 @@ components:
 
 Former **Deep Navy Cyan** (`#123B66` / `#21A6D7` / `#072647` / `#08131F`) is **retired**. Do not reintroduce navy/cyan as brand identity.
 
+## Agent Portal: profile and password share one page, like BO
+
+`agent-profile.html` carries BO's second card - `admin-form-card admin-wide-card admin-password-card`
+with `id="password"` - holding the portal's own change-password form verbatim. This is what BO does
+(`profile.html` has `.admin-profile-card` and `.admin-password-card#password` side by side), and it is
+what makes `bo-account-chip.js`'s account chip work: that chip is a link to `profile.html#password`,
+one click to the profile and the password form together. The portal's chip points at
+`agent-profile.html#password` for the same reason.
+
+`agent-change-password.html` is now a redirect stub to that anchor, so the old menu entry, links and
+bookmarks keep working. `initPassword()` used to be called only in the `page === 'password'` branch;
+it now also runs on the profile page (it self-guards on the form's existence), otherwise a form living
+on the profile page would have been inert.
+
+**A verification note, recorded because the first attempt got it wrong.** The commit that made this
+change claimed the redirect stub "was opened and lands on agent-profile.html#password". It does not -
+not in the offline harness. That harness injects `<base href="/">` into every page it builds, so a
+relative target resolves against the repository root instead of the page's own directory, and the
+probe landed on the root copy of `agent-profile.html`, whose token is absent, which bounced it to
+`agent-login.html`. The claim was written before the measurement came back. What was re-checked
+afterwards, in the two halves that can be checked offline: the built stub's target literal is
+`location.replace('agent-profile.html#password'` and the real page contains no `<base>` element, so
+the relative target resolves as intended in the browser; and the destination carries the `#password`
+section, the form, its 3 fields, and a live handler (a 3-character new password returns "New password
+must be at least 8 characters."). **Measure before claiming** - the harness's `<base>` is a trap for
+any relative redirect.
+
 ## Overview
 
 Backoffice is a desktop-first ops panel. Visual world: **Charcoal structure + Amber interaction**.
