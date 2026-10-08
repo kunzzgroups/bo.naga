@@ -26,6 +26,16 @@
   const liveTransactionRandomMaxPrice=document.getElementById('liveTransactionRandomMaxPrice');
   const brandTarget=document.getElementById('frontendDisplayBrandTarget');
   const brandTargetRow=document.getElementById('frontendDisplayBrandRow');
+  const socialPluginSettings=document.getElementById('socialPluginSettings');
+  const telegramBotToken=document.getElementById('telegramBotToken');
+  const telegramBotId=document.getElementById('telegramBotId');
+  const telegramBotUsername=document.getElementById('telegramBotUsername');
+  const telegramBotTokenHelp=document.getElementById('telegramBotTokenHelp');
+  const telegramBotTokenGuide=document.getElementById('telegramBotTokenGuide');
+  const telegramBotTokenGuideClose=document.getElementById('telegramBotTokenGuideClose');
+  const leaderboardFeatureRow=document.getElementById('leaderboardFeatureRow');
+  const vipFeatureRow=document.getElementById('vipFeatureRow');
+  let brandFeatureAccess={socialPluginEnabled:0,leaderboardEnabled:1,vipEnabled:1};
   let selectedTargetBrandId=Number(localStorage.getItem('bo_active_brand_id')||1)||1;
   const marqueeEditor=document.getElementById('marqueeEditor');
   const marqueeContent=document.getElementById('marqueeContent');
@@ -88,7 +98,7 @@
       const j=await BO_BRAND.context(true);
       const d=j&&j.data?j.data:{};
       const brands=Array.isArray(d.brands)?d.brands:[];
-      selectedTargetBrandId=Number(localStorage.getItem('bo_active_brand_id')||d.activeBrandId||d.adminBrandId||1)||1;
+      selectedTargetBrandId=d.master?(Number(localStorage.getItem('bo_active_brand_id')||d.activeBrandId||1)||1):(Number(d.adminBrandId||d.activeBrandId||1)||1);
       if(d.master&&brandTarget&&brands.length){
         brandTarget.innerHTML=brands.filter(b=>Number(b.status)!==0).map(b=>`<option value="${Number(b.id)}">${String(b.name||b.code||('Brand '+b.id)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}</option>`).join('');
         if(!brands.some(b=>Number(b.id)===selectedTargetBrandId)) selectedTargetBrandId=Number(d.activeBrandId||brands[0].id||1)||1;
@@ -484,6 +494,43 @@
     liveTransactionRandomPriceRow?.classList.toggle('is-hidden',!random);
   }
 
+  async function loadBrandFeatureAccess(){
+    try{
+      const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/frontend/feature-access',{headers:headers(false),cache:'no-store'});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||j.status==='error') throw new Error(j.message||'Unable to load brand feature access');
+      brandFeatureAccess=j.data||brandFeatureAccess;
+    }catch(e){brandFeatureAccess={socialPluginEnabled:0,leaderboardEnabled:0,vipEnabled:0};}
+    const featureOn=(value)=>value===true||value===1||String(value).toLowerCase()==='true'||String(value)==='1';
+    const socialAllowed=featureOn(brandFeatureAccess.socialPluginEnabled);
+    const leaderboardAllowed=featureOn(brandFeatureAccess.leaderboardEnabled);
+    const vipAllowed=featureOn(brandFeatureAccess.vipEnabled);
+    if(socialPluginSettings) socialPluginSettings.style.display=socialAllowed?'grid':'none';
+    if(leaderboardFeatureRow){leaderboardFeatureRow.style.display=leaderboardAllowed?'':'none';leaderboardFeatureRow.style.visibility='visible';}
+    if(vipFeatureRow){vipFeatureRow.style.display=vipAllowed?'':'none';vipFeatureRow.style.visibility='visible';}
+    if(socialAllowed) await loadTelegramConfig();
+  }
+  async function loadTelegramConfig(){
+    const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/frontend/telegram',{headers:headers(false),cache:'no-store'});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||j.status==='error') throw new Error(j.message||'Unable to load Telegram setting');
+    const d=j.data||{};
+    if(telegramBotToken) telegramBotToken.value='';
+    if(telegramBotId) telegramBotId.value=String(d.botId||'');
+    if(telegramBotUsername) telegramBotUsername.value=String(d.botUsername||'');
+  }
+  async function saveTelegramConfig(){
+    if(Number(brandFeatureAccess.socialPluginEnabled)!==1||!telegramBotToken) return;
+    const token=String(telegramBotToken.value||'').trim();
+    if(!token) return;
+    const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/frontend/telegram',{method:'POST',headers:headers(true),body:JSON.stringify({botToken:token,webhookBaseUrl:location.origin})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||j.status==='error') throw new Error(j.message||'Unable to save Telegram bot');
+    telegramBotToken.value='';
+    if(telegramBotId) telegramBotId.value=String(j.data?.botId||'');
+    if(telegramBotUsername) telegramBotUsername.value=String(j.data?.botUsername||'');
+  }
+
   async function load(){
     setMessage('Loading...');
     const response=await fetch(endpoint+(endpoint.includes('?')?'&':'?')+'_cfg='+Date.now(),{headers:headers(false),cache:'no-store'});
@@ -512,6 +559,7 @@
     renderLiveTransactionMode();
     if(marqueeEditor){ marqueeEditor.innerHTML=data.marqueeContent||''; applyMarqueeBackground(DEFAULT_MARQUEE_BG_COLOR); if(marqueeTextColorBar) marqueeTextColorBar.style.backgroundColor=DEFAULT_MARQUEE_TEXT_COLOR; syncMarquee(); }
     await loadInstallSetting();
+    await loadBrandFeatureAccess();
     setMessage('');
   }
 
@@ -596,6 +644,7 @@
       if(json.data){ if(mobileHeaderLogoPosition) mobileHeaderLogoPosition.value=String(json.data.mobileHeaderLogoPosition||mobileHeaderLogoPositionValue).toUpperCase()==='LEFT'?'LEFT':'CENTER'; minDeposit.value=Number(json.data.minDepositAmount||depositValue).toFixed(2); minWithdrawal.value=Number(json.data.minWithdrawalAmount||withdrawalValue).toFixed(2); if(rebateThreshold) rebateThreshold.value=Number(json.data.rebateAutoCreditThreshold??rebateThresholdValue).toFixed(2); if(marqueeEnabled) syncSelectValue(marqueeEnabled,json.data.marqueeEnabled); if(leaderboardEnabled) syncSelectValue(leaderboardEnabled,json.data.leaderboardEnabled); if(topupRewardEnabled) syncSelectValue(topupRewardEnabled,json.data.topupRewardEnabled); if(vipSidebarEnabled) syncSelectValue(vipSidebarEnabled,json.data.vipSidebarEnabled); if(liveTransactionEnabled) syncSelectValue(liveTransactionEnabled,json.data.liveTransactionEnabled); if(liveTransactionMode){liveTransactionMode.value=String(json.data.liveTransactionMode||liveTransactionModeValue).toUpperCase()==='FAKE'?'FAKE':'REAL';liveTransactionMode.dispatchEvent(new Event('change',{bubbles:true}));} if(liveTransactionIntervalSeconds) liveTransactionIntervalSeconds.value=String(json.data.liveTransactionIntervalSeconds||liveTransactionIntervalValue); if(liveTransactionRandomMinSeconds) liveTransactionRandomMinSeconds.value=String(json.data.liveTransactionRandomMinSeconds||liveTransactionRandomMinSecondsValue); if(liveTransactionRandomMaxSeconds) liveTransactionRandomMaxSeconds.value=String(json.data.liveTransactionRandomMaxSeconds||liveTransactionRandomMaxSecondsValue); if(liveTransactionRandomMinRows) liveTransactionRandomMinRows.value=String(json.data.liveTransactionRandomMinRows||liveTransactionRandomMinRowsValue); if(liveTransactionRandomMaxRows) liveTransactionRandomMaxRows.value=String(json.data.liveTransactionRandomMaxRows||liveTransactionRandomMaxRowsValue); if(liveTransactionRandomMinPrice) liveTransactionRandomMinPrice.value=Number(json.data.liveTransactionRandomMinPrice??liveTransactionRandomMinPriceValue).toFixed(2); if(liveTransactionRandomMaxPrice) liveTransactionRandomMaxPrice.value=Number(json.data.liveTransactionRandomMaxPrice??liveTransactionRandomMaxPriceValue).toFixed(2); renderLiveTransactionMode(); if(marqueeEditor){marqueeEditor.innerHTML=json.data.marqueeContent||marqueeHtml;syncMarquee();} }
       await saveInstallSetting();
       await saveBoSidebarInteraction();
+      await saveTelegramConfig();
       setMessage('Frontend display settings saved successfully.','success');
     }catch(error){
       setMessage(error.message,'error');
@@ -738,6 +787,18 @@
     };
     document.addEventListener('click',window.__fdMenuPlace,true);
   }
+
+
+  if(telegramBotTokenHelp&&telegramBotTokenGuide){
+    telegramBotTokenHelp.addEventListener('click',()=>{
+      if(typeof telegramBotTokenGuide.showModal==='function') telegramBotTokenGuide.showModal();
+      else telegramBotTokenGuide.setAttribute('open','');
+    });
+  }
+  telegramBotTokenGuideClose?.addEventListener('click',()=>telegramBotTokenGuide?.close());
+  telegramBotTokenGuide?.addEventListener('click',e=>{
+    if(e.target===telegramBotTokenGuide) telegramBotTokenGuide.close();
+  });
 
   chooseInstallAppLogo?.addEventListener('click',()=>installAppLogoFile?.click());
   installAppLogoFile?.addEventListener('change',async e=>{

@@ -57,6 +57,7 @@
       return;
     }
     await resolveActiveBrand();
+    try{ lastUnreadTotal = Number(localStorage.getItem('bo_livechat_last_unread_total_brand_' + String(activeBrandId || 0)) || 0); }catch(e){ lastUnreadTotal = 0; }
     listenTemplates();
     listenConversations();
   }
@@ -68,6 +69,11 @@
       if(window.BO_BRAND && typeof window.BO_BRAND.context === 'function'){
         const payload = await window.BO_BRAND.context(false);
         const data = payload && payload.data ? payload.data : {};
+        if(!data.master && Number(data.adminBrandId || 0) > 0){
+          activeBrandId = Number(data.adminBrandId);
+        }else if(data.master && Number(data.activeBrandId || 0) > 0 && !localStorage.getItem('bo_active_brand_id')){
+          activeBrandId = Number(data.activeBrandId);
+        }
         const brands = Array.isArray(data.brands) ? data.brands : [];
         const brand = brands.find(function(b){ return Number(b.id) === activeBrandId; });
         if(brand){
@@ -387,6 +393,13 @@
     }catch(e){if(!conversationId || selectedId === conversationId) box.textContent='Member summary unavailable';}
   }
 
+  function conversationPlatformLabel(conv){
+    const source=String((conv&&conv.source)||'').toUpperCase();
+    const channel=String((conv&&conv.channel)||'').toUpperCase();
+    if(source==='SOCIAL' && channel) return channel.charAt(0)+channel.slice(1).toLowerCase();
+    return 'Website';
+  }
+
   function selectConversation(id){
     cancelEditing();
     selectedId = id;
@@ -394,7 +407,7 @@
     setComposerVisible(true);
     renderInbox();
     const conv = conversations.find(c => c.id === id) || {id:id};
-    roomHead.innerHTML = '<div class="livechat-room-id"><div class="livechat-room-avatar">' + esc(initials(conv.memberName || 'M')) + '</div><div class="livechat-room-id-copy"><h2>' + esc(conv.memberName || 'Member') + '</h2><p>' + esc(conv.memberUsername || conv.id) + '</p></div></div>';
+    roomHead.innerHTML = '<div class="livechat-room-id"><div class="livechat-room-avatar">' + esc(initials(conv.memberName || 'M')) + '</div><div class="livechat-room-id-copy"><h2>' + esc(conv.memberName || 'Member') + '</h2><p>' + esc(conv.memberUsername || conv.id) + ' · ' + esc(conversationPlatformLabel(conv)) + '</p></div></div>';
     loadMemberCasinoStats(conv.memberUsername || conv.id, id);
     markConversationRead(id);
     if(unsubscribeMessages){ unsubscribeMessages(); unsubscribeMessages = null; }
@@ -518,6 +531,18 @@
   async function recallMessage(messageId,msg){
     if(!(await BO_DIALOG.confirm('Recall this message?', {title:'Recall Message'}))) return;
     try{
+      const selectedConversation = conversations.find(function(c){ return c.id === selectedId; }) || {};
+      if(String(selectedConversation.source || '').toUpperCase() === 'SOCIAL'){
+        const socialChannel=String(selectedConversation.channel || '').toUpperCase();
+        const externalConversationId=String(selectedConversation.externalConversationId || '');
+        const externalMessageId=String(msg.externalMessageId || '');
+        if(!socialChannel || !externalConversationId || !externalMessageId) throw new Error('This social message cannot be recalled because its external message ID is unavailable.');
+        const configBase=String((window.API_CONFIG&&window.API_CONFIG.BASE_URL)||window.API_BASE_URL||'').replace(/\/$/,'');
+        const headers=Object.assign({'Content-Type':'application/json'},(window.BO_AUTH&&typeof window.BO_AUTH.authHeader==='function')?window.BO_AUTH.authHeader():{});
+        const response=await fetch(configBase+'/integrations/social/recall',{method:'POST',headers:headers,body:JSON.stringify({brandId:Number(selectedConversation.brandId||activeBrandId||1),channel:socialChannel,conversationId:externalConversationId,messageId:externalMessageId})});
+        const payload=await response.json().catch(function(){return {};});
+        if(!response.ok || payload.status==='error') throw new Error(payload.message||('Social recall failed HTTP '+response.status));
+      }
       await db.collection('conversations').doc(selectedId).collection('messages').doc(messageId).update({recalled:true,originalText:msg.text||'',text:'',attachments:[],recalledAt:firebase.firestore.FieldValue.serverTimestamp()});
       if(editingMessageId===messageId) cancelEditing();
     }catch(e){BO_DIALOG.alert(e.message||'Recall failed.',{title:'Recall Failed',type:'error'});}
@@ -554,9 +579,10 @@
         if(!socialChannel || !externalConversationId) throw new Error('Social conversation routing data is missing.');
         const configBase=String((window.API_CONFIG&&window.API_CONFIG.BASE_URL)||window.API_BASE_URL||'').replace(/\/$/,'');
         const headers=Object.assign({'Content-Type':'application/json'},(window.BO_AUTH&&typeof window.BO_AUTH.authHeader==='function')?window.BO_AUTH.authHeader():{});
-        const response=await fetch(configBase+'/integrations/social/send',{method:'POST',headers:headers,body:JSON.stringify({channel:socialChannel,conversationId:externalConversationId,content:text})});
+        const response=await fetch(configBase+'/integrations/social/send',{method:'POST',headers:headers,body:JSON.stringify({brandId:Number(selectedConversation.brandId||activeBrandId||1),channel:socialChannel,conversationId:externalConversationId,content:text})});
         const payload=await response.json().catch(function(){return {};});
         if(!response.ok || payload.status==='error') throw new Error(payload.message||('Social reply failed HTTP '+response.status));
+        var socialExternalMessageId=String((payload.data&&payload.data.message_id)||'');
       }
       const admin = (window.BO_AUTH && window.BO_AUTH.user && window.BO_AUTH.user()) || {};
       const now = firebase.firestore.FieldValue.serverTimestamp();
@@ -565,7 +591,10 @@
         senderName: admin.displayName || admin.username || 'Admin',
         text: text,
         attachments: attachments,
-        createdAt: now
+        createdAt: now,
+        source: String(selectedConversation.source || '').toUpperCase() === 'SOCIAL' ? 'SOCIAL' : 'WEBSITE',
+        channel: String(selectedConversation.source || '').toUpperCase() === 'SOCIAL' ? String(selectedConversation.channel || '').toUpperCase() : 'WEBSITE',
+        externalMessageId: typeof socialExternalMessageId === 'string' ? socialExternalMessageId : ''
       });
       await db.collection('conversations').doc(selectedId).set({
         lastMessage: text || (attachments.length ? '[Attachment]' : ''),
@@ -819,7 +848,7 @@
       if(latest) notifyIncoming(latest);
     }
     lastUnreadTotal = total;
-    localStorage.setItem('bo_livechat_last_unread_total', String(total));
+    localStorage.setItem('bo_livechat_last_unread_total_brand_' + String(activeBrandId || 0), String(total));
   }
 
   function requestBrowserNotificationPermission(){

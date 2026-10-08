@@ -11,8 +11,8 @@
   var audioUnlocked = false;
   var queuedSound = false;
   var firstSnapshot = true;
-  var lastUnreadTotal = Number(localStorage.getItem('bo_livechat_last_unread_total') || 0);
-  var lastIncomingTime = Number(localStorage.getItem('bo_livechat_last_incoming_time') || 0);
+  var lastUnreadTotal = 0;
+  var lastIncomingTime = 0;
   var currentUnreadTotal = 0;
   var latestUnreadConversation = null;
   var unsubscribe = null;
@@ -27,9 +27,17 @@
   async function init(){
     // SPA replay re-dispatches DOMContentLoaded; installSoundUnlock()/startReminderLoop() add document/window listeners and timers that accumulate, so init once.
     if(window.__BO_LIVECHAT_INITED) return; window.__BO_LIVECHAT_INITED=1;
+    await resolveActiveBrand();
+    if(!hasLivechatPermission()){
+      currentUnreadTotal = 0;
+      queuedSound = false;
+      stopCurrentSound();
+      updatePageIndicators(0);
+      return;
+    }
+    loadBrandNotificationState();
     installSoundUnlock();
     requestNotificationPermission();
-    await resolveActiveBrand();
     startListener();
     startReminderLoop();
   }
@@ -41,6 +49,14 @@
       if(window.BO_BRAND && typeof window.BO_BRAND.context === 'function'){
         var payload = await window.BO_BRAND.context(false);
         var data = payload && payload.data ? payload.data : {};
+        // Tenant/brand admins must always use the backend-resolved brand. Never let a
+        // stale bo_active_brand_id from another login make this global listener hear
+        // another tenant's conversations.
+        if(!data.master && Number(data.adminBrandId || 0) > 0){
+          activeBrandId = Number(data.adminBrandId);
+        }else if(data.master && Number(data.activeBrandId || 0) > 0 && !localStorage.getItem('bo_active_brand_id')){
+          activeBrandId = Number(data.activeBrandId);
+        }
         var brands = Array.isArray(data.brands) ? data.brands : [];
         var brand = brands.find(function(b){ return Number(b.id) === activeBrandId; });
         if(brand){
@@ -51,6 +67,37 @@
       }
     }catch(e){}
     if(activeBrandId === 1 && activeBrandDomains.indexOf('titanx7.com') === -1) activeBrandDomains.push('titanx7.com','www.titanx7.com');
+  }
+
+  function hasLivechatPermission(){
+    try{
+      var user = window.BO_AUTH && typeof window.BO_AUTH.user === 'function' ? window.BO_AUTH.user() : {};
+      var menus = window.BO_AUTH && typeof window.BO_AUTH.allowedMenus === 'function'
+        ? window.BO_AUTH.allowedMenus(user)
+        : (Array.isArray(user && user.menus) ? user.menus : []);
+      return menus.some(function(m){
+        var url = String(m && m.url || '').split('?')[0].split('#')[0].toLowerCase();
+        var file = url.split('/').pop();
+        var key = String(m && m.menuKey || '').toLowerCase();
+        return file === 'livechat.html' || key === 'livechat' || key === 'live_chat';
+      });
+    }catch(e){
+      return false;
+    }
+  }
+
+  function stateKey(name){
+    return 'bo_livechat_' + name + '_brand_' + String(activeBrandId || 0);
+  }
+
+  function loadBrandNotificationState(){
+    try{
+      lastUnreadTotal = Number(localStorage.getItem(stateKey('last_unread_total')) || 0);
+      lastIncomingTime = Number(localStorage.getItem(stateKey('last_incoming_time')) || 0);
+    }catch(e){
+      lastUnreadTotal = 0;
+      lastIncomingTime = 0;
+    }
   }
 
   function belongsToActiveBrand(item){
@@ -80,6 +127,16 @@
   }
 
   function handleSnapshot(snapshot){
+    if(!hasLivechatPermission()){
+      currentUnreadTotal = 0;
+      latestUnreadConversation = null;
+      queuedSound = false;
+      stopCurrentSound();
+      clearReminderClaim();
+      updatePageIndicators(0);
+      if(unsubscribe){ try{ unsubscribe(); }catch(e){} unsubscribe = null; }
+      return;
+    }
     var total = 0;
     var latestIncoming = null;
     var latestIncomingMs = 0;
@@ -134,6 +191,16 @@
   function startReminderLoop(){
     if (reminderTimer) clearInterval(reminderTimer);
     reminderTimer = setInterval(function(){
+      if(!hasLivechatPermission()){
+        currentUnreadTotal = 0;
+        queuedSound = false;
+        stopCurrentSound();
+        clearReminderClaim();
+        updatePageIndicators(0);
+        if(unsubscribe){ try{ unsubscribe(); }catch(e){} unsubscribe = null; }
+        if(reminderTimer){ clearInterval(reminderTimer); reminderTimer = null; }
+        return;
+      }
       if (currentUnreadTotal <= 0) return;
       if (!claimReminderSound()) return;
       playSound();
@@ -143,21 +210,21 @@
   function claimReminderSound(){
     var now = Date.now();
     try{
-      var previous = Number(localStorage.getItem('bo_livechat_reminder_sound_at') || 0);
+      var previous = Number(localStorage.getItem(stateKey('reminder_sound_at')) || 0);
       if (previous && now - previous < REMINDER_LOCK_MS) return false;
-      localStorage.setItem('bo_livechat_reminder_sound_at', String(now));
+      localStorage.setItem(stateKey('reminder_sound_at'), String(now));
     }catch(e){}
     return true;
   }
 
   function clearReminderClaim(){
-    try{ localStorage.removeItem('bo_livechat_reminder_sound_at'); }catch(e){}
+    try{ localStorage.removeItem(stateKey('reminder_sound_at')); }catch(e){}
   }
 
   function persistState(total, incomingMs){
     try{
-      localStorage.setItem('bo_livechat_last_unread_total', String(total));
-      localStorage.setItem('bo_livechat_last_incoming_time', String(incomingMs || 0));
+      localStorage.setItem(stateKey('last_unread_total'), String(total));
+      localStorage.setItem(stateKey('last_incoming_time'), String(incomingMs || 0));
     }catch(e){}
   }
 
@@ -173,9 +240,9 @@
     var key = [conversation.id || '', messageTime || 0, conversation.lastMessage || ''].join('|');
     var now = Date.now();
     try{
-      var previous = JSON.parse(localStorage.getItem('bo_livechat_global_sound_lock') || '{}');
+      var previous = JSON.parse(localStorage.getItem(stateKey('global_sound_lock')) || '{}');
       if (previous.key === key && now - Number(previous.time || 0) < 10000) return false;
-      localStorage.setItem('bo_livechat_global_sound_lock', JSON.stringify({key:key, time:now}));
+      localStorage.setItem(stateKey('global_sound_lock'), JSON.stringify({key:key, time:now}));
     }catch(e){}
     return true;
   }
@@ -205,6 +272,11 @@
     document.addEventListener('keydown', unlock, true);
     document.addEventListener('touchstart', unlock, true);
     window.addEventListener('focus', function(){
+      if(!hasLivechatPermission()){
+        queuedSound = false;
+        stopCurrentSound();
+        return;
+      }
       if (queuedSound && currentUnreadTotal > 0) playSound();
       else if (currentUnreadTotal <= 0) queuedSound = false;
     });
@@ -239,6 +311,11 @@
   }
 
   function playSound(){
+    if(!hasLivechatPermission()){
+      queuedSound = false;
+      stopCurrentSound();
+      return;
+    }
     if (currentUnreadTotal <= 0) return;
     try{
       var player = getAudio();
@@ -254,6 +331,7 @@
   }
 
   function notifyIncoming(conversation){
+    if(!hasLivechatPermission()) return;
     playSound();
     try{
       if ('Notification' in window && Notification.permission === 'granted'){
