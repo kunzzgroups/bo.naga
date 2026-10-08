@@ -2068,3 +2068,109 @@ html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="players"]
 html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-tab-buttons button:hover:not(.active){
   color:#F5F5F4!important;background:rgba(255,255,255,.06)!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P28 - one card, and BO's geometry inside it
+
+   Owner: "你要对齐的重点其实不是单纯 table 宽度，而是 Table Container / Filter Header / Table Body /
+   Pagination 的整体结构要跟图二统一 ... 请先检查当前 My Players 与 Agent 页面现有 DOM/CSS，找出造成
+   table 区域无法对齐的具体 CSS 原因". Measured both, layer by layer, at 1440x900:
+
+                                    BO (agent-management)        portal (was)
+     card padding                   0                            16px 16px 8px
+     toolbar wrapper from card      1 / 1                       17 / 17
+     toolbar control row from card  16 / 18                      29 / 34
+     toolbar row height             37 (36px控件, vertically centred)  64
+     table width                    1166 (= card content width)   1132
+     table header text left edge    261 (card+13)                282
+     footer from card               1 / 1, padding 14px 16px, h 64  17/17, h 68
+
+   Two causes, both above:
+     1. the card carried its own 16px padding, so the toolbar, the table and the footer were each inset
+        another 16px - the table came out 34px narrower than the card and the header text sat 21px right
+        of where the reference puts it. BO's card is a bare container (padding 0); each band brings its own.
+     2. every control carried a stacked <span> label (Search / Date Range / VIP Tier), which made the
+        toolbar 64px where BO's is 37px. BO labels nothing - the search carries its placeholder, the date
+        its value, the select its option - so the labels are hidden and the row is one line again.
+
+   Nothing else changes: no DOM rewrite, no JS, no API, no filter logic. The table stays table-layout:auto
+   like BO's (measured), and the first-cell padding goes 16px -> BO's measured 12px.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel{
+  padding:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel > .agent-filter-panel{
+  padding:14px 16px!important;margin:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters > label > span,
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-filter-panel .agent-player-filters > label > span{
+  display:none!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters > label{
+  display:flex!important;align-items:center!important;flex-direction:row!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters > .agent-tab-buttons{
+  align-self:center!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel > .table-wrap{
+  padding:0!important;margin:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel .agent-table-footer{
+  padding:14px 16px!important;margin:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel thead th:first-child,
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel tbody td:first-child{
+  padding-left:12px!important;
+}
+
+/* ------------------------------------------------------------------------------------------------
+   P29 - the date control stops being 390px wide, and the toolbar row is one line tall
+
+   P28 removed the stacked <span> labels, but the Date Range control keeps a label INSIDE its own
+   wrapper (.bo-range-field carries "Date Range" above the trigger), so the row still measured 61px
+   against the BO's 37px. The same wrapper is also 390px wide inside a 228px grid column, which is what
+   made the toolbar read as misaligned: the field overflowed its column instead of filling it.
+   The panel's own padding is set one class past the P18 rule, which was still winning at equal
+   importance (12px 16px 14px instead of the BO's 14px 16px).
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .report-content .agent-player-list-panel > .agent-filter-panel{
+  padding:14px 16px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters{
+  align-items:center!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters .bo-range-field{
+  width:100%!important;max-width:100%!important;min-width:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters .bo-range-field > span,
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters .bo-range-field > label > span,
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters > label > span{
+  display:none!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters .bo-range-field .bo-range-trigger{
+  width:100%!important;min-width:0!important;
+}
+
+/* P30 - the range control's label is a <label>, not a <span>.
+   bo-date-range.js builds '<label>Date Range</label><button class="bo-range-trigger">...' into
+   .bo-range-field, so P29's span-scoped rule missed it and the control stayed 61px tall (18px label +
+   36px trigger + gap) against the BO's 37px row. Measured source: assets/js/bo-date-range.js build(). */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters .bo-range-field > label{
+  display:none!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters .bo-range-field,
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters > label,
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-filters > .agent-tab-buttons{
+  min-height:0!important;height:36px!important;
+}
+
+/* P31 - the footer is BO's 64px band.
+   BO measures 64 (14px band padding + a 36px control). This page's came out 68 because one child in
+   the row is 40px tall; the band is pinned to the BO's height with its content centred, so the toolbar
+   -> header -> body -> footer chain closes with the same rhythm as the reference. */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel .agent-table-footer{
+  height:64px!important;min-height:0!important;align-items:center!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel .agent-table-footer > *{
+  max-height:36px!important;
+}
