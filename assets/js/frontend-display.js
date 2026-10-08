@@ -509,6 +509,12 @@
   function applyMarqueeBackground(value){
     if(isGradientValue(value)){
       parseGradientValue(value);
+    }else if(marqueeBgGrad.on){
+      /* A plain colour arriving while a gradient is on is one of its stops: the spectrum, the hue bar, a
+         swatch and the RGB fields all hand a hex over through here. Without this the gradient was switched
+         off by any of them (the owner: "gradient 点颜色会突然跳回 solid"). Turning the gradient off is the
+         Solid switch's job, and it clears `on` before calling, so it still reaches the branch below. */
+      setActiveGradStop(normalizeHexColor(value,activeGradStopHex()));
     }else{
       marqueeBgGrad.on=false;
       marqueeBgValue=normalizeHexColor(value,DEFAULT_MARQUEE_BG_COLOR);
