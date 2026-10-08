@@ -1498,6 +1498,17 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern 
 html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-head-actions .bo-range-field{
   flex:0 1 auto!important;width:auto!important;min-width:0!important;max-width:100%!important;
 }
+/* P7b - the popover was being clipped away, and this is a regression P7 introduced.
+   .bo-range-field carried overflow:hidden before this batch; with the field pinned at 390px the
+   popover (360px wide) fitted inside it, so nobody noticed. Content-sizing the field to 225px put the
+   popover outside its parent's box: measured, the pop path 679,57 360x318 was inside the viewport but
+   its parent's bottom edge is 50, and elementFromPoint on a day cell returned DIV.agent-kpi-card -
+   i.e. every click on the opened calendar landed on the card behind it (owner: "date range 点不到").
+   The popover is an absolutely positioned child of this field, so the field has to let it out. */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-head-actions .bo-range-field,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-head-actions .bo-range-trigger{
+  overflow:visible!important;
+}
 html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .agent-head-actions .bo-range-trigger{
   width:auto!important;min-width:0!important;max-width:100%!important;
   height:36px!important;border-radius:8px!important;
