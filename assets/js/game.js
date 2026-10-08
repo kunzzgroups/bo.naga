@@ -954,9 +954,16 @@ const GAME_API_HUB = {
 
   async function downloadAllImages() {
     if (!downloadImagesBtn) return;
-    const original = downloadImagesBtn.innerHTML;
+    /* Icon only, even while it works: writing the "Downloading..." label in here put about 110px back into
+       the strip, which is exactly what pushed it onto two rows (the owner's screenshot of the running
+       download). The icon changes and the title/aria-label carry the state instead. */
+    const originalIcon = downloadImagesBtn.innerHTML;
+    const originalLabel = downloadImagesBtn.getAttribute('title') || 'Download Images';
     downloadImagesBtn.disabled = true;
-    downloadImagesBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Downloading...';
+    downloadImagesBtn.setAttribute('aria-busy', 'true');
+    downloadImagesBtn.setAttribute('title', 'Downloading...');
+    downloadImagesBtn.setAttribute('aria-label', 'Downloading images');
+    downloadImagesBtn.innerHTML = '<i class="bi bi-hourglass-split" aria-hidden="true"></i>';
     setStatus('Downloading only game images that are not yet labelled as downloaded...', '');
     try {
       const res = await fetch(GAME_API_HUB.downloadImages, { method: 'POST' });
@@ -969,7 +976,10 @@ const GAME_API_HUB = {
       setStatus(err.message || 'Image download failed.', 'error');
     } finally {
       downloadImagesBtn.disabled = false;
-      downloadImagesBtn.innerHTML = original;
+      downloadImagesBtn.removeAttribute('aria-busy');
+      downloadImagesBtn.setAttribute('title', originalLabel);
+      downloadImagesBtn.setAttribute('aria-label', 'Download Images');
+      downloadImagesBtn.innerHTML = originalIcon;
     }
   }
 
