@@ -2362,3 +2362,30 @@ html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.age
 html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .agent-player-list-panel .agent-table-footer select{
   font-weight:700!important;font-size:13px!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P38 - the page column is measured against the VISIBLE viewport, not 100vh
+
+   Owner: "展开不了" with the footer cut off at the bottom edge of the window.
+
+   100vh is the viewport without the browser's own chrome, so in a window that has a bottom bar or a
+   side panel the tallest layout overshoots the area the user can actually see: the card's bottom lands
+   below the visible edge, the footer is clipped by it, and the Show [n] control - which is the last
+   thing in the card - ends up half outside the window. That matches the screenshot exactly: the card's
+   bottom sits flush with the window's bottom and the control is truncated.
+
+   Dynamic viewport units are the fix: 100dvh follows the visible area as the browser's chrome appears
+   and disappears. The 100vh line is kept first as the fallback for anything without dvh support.
+
+   Reverted in the same pass: an earlier attempt in this session set pointer-events:none on the
+   decorative .rounded-select-wrap/.rounded-select-btn so clicks would fall through to the native select.
+   It was removed rather than shipped because the measurement contradicted it - clicking that control
+   opens a platform picker (the debug session blocks on it every time), so the click does reach something
+   that works, and the change would have replaced the custom menu with the native one for no reason.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .report-shell{
+  height:100vh!important;height:100dvh!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="players"].agent-report-body.agent-modern .report-main{
+  height:100vh!important;height:100dvh!important;
+}
