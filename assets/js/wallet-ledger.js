@@ -433,6 +433,7 @@
      internal id before the ledger request leaves. Cache per typed value; on any failure the
      house classifier above applies unchanged. */
   const resolvedMemberIds=new Map();
+  let memberCandidates=[];
   async function resolveLedgerMemberId(value){
     const key=String(value||'').trim().toLowerCase();
     if(!key) return null;
@@ -447,10 +448,22 @@
         const rows=Array.isArray(data)?data:(Array.isArray(data.content)?data.content:[]);
         const exact=rows.find(r=>{
           if(!r) return false;
-          return [r.username,r.mobile,r.memberUsername].some(v=>String(v==null?'':v).trim().toLowerCase()===key)
+          return [r.username,r.mobile,r.memberUsername,r.fullName,r.name].some(v=>String(v==null?'':v).trim().toLowerCase()===key)
             || String(r.memberId==null?'':r.memberId).trim()===String(value).trim();
         });
         if(exact && exact.memberId!=null && String(exact.memberId).trim()) found=String(exact.memberId).trim();
+        /* A fragment is what people actually type - a mobile prefix, half a username (owner: "我输入119
+           搜索可是没有搜索成功", against the mobile 1198989898). The lookup's own keyword search already
+           returned the candidates, so one hit is unambiguous and becomes the member; several are offered in
+           the field's datalist (carrying their ids) and named in the empty state, instead of being ignored. */
+        else{
+          memberCandidates=rows.map(r=>({ id:String(r && r.memberId==null?'':r.memberId).trim(),
+                                          label:[r&&r.username,r&&r.mobile,r&&(r.fullName||r.name)].filter(Boolean).join(' · ') }))
+                               .filter(c=>c.id);
+          if(memberCandidates.length===1) found=memberCandidates[0].id;
+          const box=document.getElementById('ledgerMemberList');
+          if(box) box.innerHTML=memberCandidates.map(c=>'<option value="'+esc(c.id)+'">'+esc(c.label||c.id)+'</option>').join('');
+        }
       }
     }catch(e){ found=null; }
     resolvedMemberIds.set(key, found);
@@ -477,6 +490,33 @@
       if(to) to.value = '';
     }
   }
+  /* A partial game code should find its game. The ledger endpoint matches the value it is given, so the
+     page asks the game list once and completes what can be completed: an exact code passes through, a
+     typed fragment that matches exactly one game becomes that game's code, and a fragment that matches
+     several is left alone - the field's datalist already lists them, so the user can pick one. */
+  let gameIndex=null;
+  async function loadGameIndex(){
+    if(gameIndex) return gameIndex;
+    gameIndex=[];
+    try{
+      const j=await api(API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS.GAME_LIST);
+      const list=Array.isArray(j)?j:(j.data||[]);
+      gameIndex=list.map(g=>({ code:String(g.gameCode||g.code||'').trim(), name:String(g.gameName||g.name||'').trim() }))
+                    .filter(g=>g.code);
+      const box=document.getElementById('ledgerGameList');
+      if(box) box.innerHTML=gameIndex.map(g=>'<option value="'+esc(g.code)+'">'+esc(g.name||g.code)+'</option>').join('');
+    }catch(e){ gameIndex=[]; }
+    return gameIndex;
+  }
+  function resolveGameCode(typed){
+    const raw=String(typed||'').trim();
+    if(!raw||!gameIndex||!gameIndex.length) return raw;
+    const t=raw.toUpperCase();
+    if(gameIndex.some(g=>g.code.toUpperCase()===t)) return raw;
+    const hits=gameIndex.filter(g=>g.code.toUpperCase().indexOf(t)>=0 || (g.name||'').toUpperCase().indexOf(t)>=0);
+    return hits.length===1?hits[0].code:raw;
+  }
+
   function params(resolvedMemberId){
     const p = new URLSearchParams();
     const keyword = keywordValue();
@@ -487,6 +527,12 @@
     if(keyword && keyword === urlMemberId) p.set('memberId', urlMemberId);
     else if(keyword && resolvedMemberId) p.set('memberId', resolvedMemberId);
     else applyKeyword(p, keyword);
+    /* The table shows a GAME column (r.gameCode) and could not filter by it: any numeric input went out as
+       memberId, so typing a game code like "013" searched member 13 and the table came back empty (owner:
+       "输入游戏 没有显示筛选结果"). The game travels as gameCode - the same field the column renders and the
+       name the sibling pages use. */
+    const game = resolveGameCode(document.getElementById('ledgerGame')?.value.trim());
+    if(game) p.set('gameCode', game);
     p.set('types', effectiveTypeList().join(','));
     if(from) p.set('from', from);
     if(to) p.set('to', to);
@@ -523,7 +569,24 @@
   function render(rows, pagination, meta){
     const body=document.getElementById('walletLedgerBody'); if(!body) return;
     /* Tiles are painted by loadAllTimeTotals, never from this page's rows (see above). */
-    if(!rows.length){ body.innerHTML='<tr><td colspan="15">No ledger records found.</td></tr>'; }
+    if(!rows.length){
+      /* Say WHY the table is empty. The search matches a member id / username and a PROVIDER code - a game
+         name goes out as providerCode=GATES+OF+OLYMPUS and can never match, which reads as "the filter is
+         broken" (owner: "输入游戏 没有显示筛选结果"). The backend has no game parameter today, so the
+         honest answer is to name what this field does search. */
+      const typed=keywordValue();
+      const game = document.getElementById('ledgerGame')?.value.trim();
+      const candidates=typed?memberCandidates:[];
+      const why=(typed||game)
+        ? 'No ledger records for '+(typed?'"'+esc(typed)+'"':'')+(typed&&game?' and ':'')
+          + (game?'game "'+esc(game)+'"':'')+'. Search matches a member ID, a member username or a PROVIDER '
+          + 'code; a game code goes in the Game field.'
+          + (candidates.length>1? ' '+candidates.length+' members match: '
+              + candidates.slice(0,3).map(c=>esc(c.label||c.id)+' (#'+esc(c.id)+')').join(', ')
+              + '.' : '')
+        : 'No ledger records found.';
+      body.innerHTML='<tr><td colspan="15">'+why+'</td></tr>';
+    }
     else body.innerHTML = rows.map(r => {
       const amt = num(r.amount);
       const status = r.status || '-';
@@ -568,11 +631,28 @@
       const resolved=(typedKeyword && typedKeyword!==urlMemberId) ? await resolveLedgerMemberId(typedKeyword) : null;
       if(generation!==loadGeneration) return;
       const requestParams=params(resolved);
-      const json = await api(url('WALLET_LEDGER_LIST') + '?' + requestParams);
+      let json = await api(url('WALLET_LEDGER_LIST') + '?' + requestParams);
       /* A newer filter/page/autofit request owns the table. Never let an older,
          slower response overwrite newer data. */
       if(generation!==loadGeneration) return;
-      const data = json.data || {};
+      let data = json.data || {};
+      /* One search box, and a game code is exactly what people type into it. Digits route to memberId, so
+         typing a numeric game code looked up a member that does not exist and the table came back empty
+         (owner: "输入游戏 没有显示筛选结果"). When the plain search finds nothing and no game code was given
+         in its own field, ask the same question with gameCode before reporting that there are no records -
+         the member/provider question is asked first, so nothing that used to match stops matching. */
+      const typedGame=document.getElementById('ledgerGame')?.value.trim() || '';
+      if(typedKeyword && !typedGame && !(Array.isArray(data.content) && data.content.length)){
+        const retry=new URLSearchParams(requestParams);
+        retry.delete('memberId');
+        retry.delete('providerCode');
+        retry.delete('keyword');
+        retry.set('gameCode',resolveGameCode(typedKeyword));
+        const jsonGame=await api(url('WALLET_LEDGER_LIST') + '?' + retry.toString());
+        if(generation!==loadGeneration) return;
+        const dataGame=jsonGame.data || {};
+        if(Array.isArray(dataGame.content) && dataGame.content.length){ json=jsonGame; data=dataGame; }
+      }
       render(Array.isArray(data.content) ? data.content : [], data.pagination || {}, data);
     }catch(e){
       if(generation!==loadGeneration) return;
@@ -611,6 +691,8 @@
     on(window,'resize',syncLedgerHScroll);
     const runSearch=()=>{ page=1; clearLockedAutoSize(); syncAutofitMode(); load(); };
     document.getElementById('ledgerSearchBtn')?.addEventListener('click', runSearch);
+    /* Enter in either text field runs the search, the way a filter row is expected to behave. */
+    document.getElementById('ledgerGame')?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); runSearch(); } });
     document.getElementById('ledgerKeyword')?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); runSearch(); } });
     ['ledgerFrom','ledgerTo'].forEach(id=>document.getElementById(id)?.addEventListener('change', runSearch));
     // Footer "Show N entries" mirrors #ledgerSize (Deposit/Withdraw / MD contract)
@@ -624,6 +706,7 @@
       load();
     });
     document.getElementById('ledgerResetBtn')?.addEventListener('click', ()=>{
+      const gameReset=document.getElementById('ledgerGame'); if(gameReset) gameReset.value='';
       if(keywordInput()) keywordInput().value='';
       urlMemberId='';
       setSelectedTypes([]);
@@ -665,6 +748,7 @@
       syncAutofitMode();
       load();
       loadAllTimeTotals();
+    loadGameIndex();
     }));
   });
 })();
