@@ -477,6 +477,33 @@
       if(to) to.value = '';
     }
   }
+  /* A partial game code should find its game. The ledger endpoint matches the value it is given, so the
+     page asks the game list once and completes what can be completed: an exact code passes through, a
+     typed fragment that matches exactly one game becomes that game's code, and a fragment that matches
+     several is left alone - the field's datalist already lists them, so the user can pick one. */
+  let gameIndex=null;
+  async function loadGameIndex(){
+    if(gameIndex) return gameIndex;
+    gameIndex=[];
+    try{
+      const j=await api(API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS.GAME_LIST);
+      const list=Array.isArray(j)?j:(j.data||[]);
+      gameIndex=list.map(g=>({ code:String(g.gameCode||g.code||'').trim(), name:String(g.gameName||g.name||'').trim() }))
+                    .filter(g=>g.code);
+      const box=document.getElementById('ledgerGameList');
+      if(box) box.innerHTML=gameIndex.map(g=>'<option value="'+esc(g.code)+'">'+esc(g.name||g.code)+'</option>').join('');
+    }catch(e){ gameIndex=[]; }
+    return gameIndex;
+  }
+  function resolveGameCode(typed){
+    const raw=String(typed||'').trim();
+    if(!raw||!gameIndex||!gameIndex.length) return raw;
+    const t=raw.toUpperCase();
+    if(gameIndex.some(g=>g.code.toUpperCase()===t)) return raw;
+    const hits=gameIndex.filter(g=>g.code.toUpperCase().indexOf(t)>=0 || (g.name||'').toUpperCase().indexOf(t)>=0);
+    return hits.length===1?hits[0].code:raw;
+  }
+
   function params(resolvedMemberId){
     const p = new URLSearchParams();
     const keyword = keywordValue();
@@ -491,7 +518,7 @@
        memberId, so typing a game code like "013" searched member 13 and the table came back empty (owner:
        "输入游戏 没有显示筛选结果"). The game travels as gameCode - the same field the column renders and the
        name the sibling pages use. */
-    const game = document.getElementById('ledgerGame')?.value.trim();
+    const game = resolveGameCode(document.getElementById('ledgerGame')?.value.trim());
     if(game) p.set('gameCode', game);
     p.set('types', effectiveTypeList().join(','));
     if(from) p.set('from', from);
@@ -603,7 +630,7 @@
         retry.delete('memberId');
         retry.delete('providerCode');
         retry.delete('keyword');
-        retry.set('gameCode',typedKeyword);
+        retry.set('gameCode',resolveGameCode(typedKeyword));
         const jsonGame=await api(url('WALLET_LEDGER_LIST') + '?' + retry.toString());
         if(generation!==loadGeneration) return;
         const dataGame=jsonGame.data || {};
@@ -704,6 +731,7 @@
       syncAutofitMode();
       load();
       loadAllTimeTotals();
+    loadGameIndex();
     }));
   });
 })();
