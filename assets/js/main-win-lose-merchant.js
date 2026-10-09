@@ -7,7 +7,7 @@
    workspace state, which is the point of a drill-down.
 
    This is the block that used to expand inline on the list (main-win-lose-report.js), moved
-   to a page of its own: the same table, the same Copy for Excel / CSV actions. */
+   to a page of its own: the same table, the same Copy report / CSV actions. */
 (() => {
   'use strict';
 
