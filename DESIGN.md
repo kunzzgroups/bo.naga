@@ -7100,7 +7100,23 @@ card, its box exactly the panel's (254..1544 at 1568).
 Re-measured after: 1568 / 1280 / 1024 / 768 / 390, both themes — no horizontal overflow, no page errors,
 `doubleFrame: false`, the tiles and the card flush with the heading row's edges at every width, and the edge
 states (no params, unknown `brandId`, API error, a 61-character merchant name, a suspended merchant, a merchant
-with no provider rows) each render one clean message. #### The status pills' counts are never a colour of their own (2026-10-09, owner: "你知道我色盲 就不要为难我啦 你看 为什么maintenance （0)有颜色？ 与左右显示的不一样")
+with no provider rows) each render one clean message. #### The count under a money value carries no unit word (2026-10-09, owner: "bo和main的 txns字符需要移除")
+
+The small count under Total In (Win/Lose list, merchant report) and beside Total Bet (the merchant drill-down's
+KPI) said "2,541 txns"; the BO's agent performance report put " tx" under Deposit / Withdraw
+(`agent-performance-report.js:39`). The number stays, the word goes - on both panels:
+
+- `main-win-lose-report.js`, `main-merchant-report.js`, `main-win-lose-merchant.js` -> the sub-line is the bare
+  count (`2,541`)
+- `assets/js/agent-performance-report.js` -> `RM 1,250.50` over `7` instead of `7 tx`
+
+Measured with stubs: the three Main pages render `hasTxnsText: false` with the counts intact; the BO page renders
+`hasTxnsWord: false`, Deposit `RM 1,250.50`/`7` and Withdraw `RM 300.00`/`3`, 0 page errors. Nothing else in the tree
+carries the word (`grep -rn "txns"` over every shipped .html/.js/.css now only matches the variable names
+`txns`/`txnCount`, which are never printed). **The first sweep missed the BO one** because the search was piped
+through `head` - the lesson is in the count: a truncated grep is not a search.
+
+#### The status pills' counts are never a colour of their own (2026-10-09, owner: "你知道我色盲 就不要为难我啦 你看 为什么maintenance （0)有颜色？ 与左右显示的不一样")
 
 On the provider report the Maintenance pill's count carried `is-warn-count`, which this file had mapped to the
 amber-deep attention role (and the dark twin in `main-merchant-report-executive.css:17-20` to `#F79009`). The
