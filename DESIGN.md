@@ -7005,3 +7005,41 @@ code-verified: node --check plus every tile expression read back, with the behav
 a fixture (the member pages need their tab context - `ownsView()` - which the offline harness made zero list
 calls against).
 
+
+### Win/Lose Report: the merchant breakdown is a page, not an inline expansion (2026-10-09, owner: “我不要下拉展开 我要点击后去到独立整页 并且要有back to list按键统一款”)
+
+The merchant row's action was a chevron in the Merchant cell that expanded the provider breakdown underneath the
+row. It is now the family eye in a last `Action` column (the sibling report pages' recipe: `mad-icon-btn` inside
+`mre-actions mad-actions`, 40x40, radius 8), and the click leaves the list for
+**`main-win-lose-merchant.html`** — the same breakdown as a page: identity · period · status · currency in a
+heading row, the five totals as `.mre-history-kpis` tiles, then the provider table with its Copy for Excel / CSV
+actions. Files: `assets/js/main-win-lose-merchant.js`, `assets/css/main-win-lose-merchant.css`.
+
+**`Back to list` is the family's own recipe, and it sits where BO puts it.** The link is the last child of the
+heading row and carries `.mad-btn.mad-btn-ghost`, so its fill is `main-report-charcoal.css`'s (341-380) — the
+same three-stop cream gradient / `#DCC9A8` border the list's Reset / Export use, and the same recipe the agent
+portal's back control was moved onto. Measured (1568x900, light): 113x36, padding `0 14px`, radius 8,
+`12.5px/700`, text `#18191C` on `linear-gradient(#FFFCF7 0%, #F5EBDC 55%, #EDE4D4 100%)`, border `#DCC9A8`,
+19px inside the row's right edge; dark takes `#4A4C58 → #383A46 → #2C2E38` / `rgba(255,255,255,.12)` /
+`#F5F5F4`. Only the geometry (36px rung, no-wrap, right end) is stated by the page sheet.
+
+**The drill-down carries the view, both ways.** The eye builds its URL from the range and the filters actually
+in effect (`brandId`, `from`, `to`, `currency`, `pill`, `tier`, `status`, `q`); `Back to list` hands the same
+parameters back, and `main-exec-date-range.js` already reads `from`/`to` from the URL while the list restores
+the four filters in `setup()`. Measured round trip: opened the list at `?from=2026-10-01&to=2026-10-08&pill=all&tier=1&status=active&q=aurora`
+(1 of 2 rows), clicked the eye, got the merchant page for `brandId=1` (2 providers, consumed 1,620,000.00),
+clicked `Back to list` — the pill, tier, status, keyword and the 01/10/2026 - 08/10/2026 range came back, and
+the row count was the same 1. The list's inline detail rows and their machinery (expansion state, the per-row
+Copy for Excel / CSV handlers) are deleted; a row's live `Export` still flattens providers, so the loader's
+provider grouping stayed.
+
+**The page has no menu row, so auth.js inherits one.** It joined the Report workspace's exception in
+`enforcePageAccess` (whoever may open Win/Lose Report, `win-lose-report.html` or Provider Report may open it)
+and `sidebarActivePage` keeps the rail lit on Win/Lose Report. Measured both ways on the harness: a MAIN
+account whose menus carry the report renders it; a MAIN account whose menus do not still lands on
+`main-profile.html`. The page is in the SPA manifest (all five markers), so a rail click may swap into it; the
+eye itself is a JS navigation and the back link is not in `LINKS`, so both are ordinary page loads.
+
+**This page's panel hugs its content.** `.mad-panel` is `flex:1` so the list's footer sits on the frame's
+bottom edge; the drill-down's table is as long as the merchant has providers, so its panel is `flex:0 0 auto`
+instead of stretching to the viewport with a blank half under the table.

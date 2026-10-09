@@ -103,6 +103,8 @@
     if(p==='main-balance-adjustment.html') return 'main-balance-overview.html';
     if(p==='main-provider-settlement.html' || p==='main-provider-balance.html' || p==='main-provider-transactions.html') return 'main_provider_report.html';
     if(p==='main-merchant-balance.html' || p==='main-merchant-transactions.html') return 'main_merchant_report.html';
+    // The merchant drill-down of the Win/Lose Report lights the same rail row its list does.
+    if(p==='main-win-lose-merchant.html') return 'main-win-lose-report.html';
     if(p==='brand-detail.html') return 'brand-management.html';
     if(p==='member-detail.html') return 'index.html';
     if(p==='provider-detail.html') return 'main-accounting-report.html';
@@ -697,7 +699,10 @@
       // Win/Lose Report and Provider Report are sibling tabs of one Report workspace.
       // A role configured with either entry may open both tabs, so changing the DB menu
       // URL between the two does not make the other tab disappear or redirect away.
-      if(!allowed && (currentFile() === 'main-win-lose-report.html' || currentFile() === 'win-lose-report.html' || currentFile() === 'main_provider_report.html')){
+      // The merchant drill-down (main-win-lose-merchant.html) is that workspace's third
+      // page: it has no menu row of its own, and whoever can open either tab can open it -
+      // same shape as brand-detail.html's inheritance above.
+      if(!allowed && (currentFile() === 'main-win-lose-report.html' || currentFile() === 'win-lose-report.html' || currentFile() === 'main_provider_report.html' || currentFile() === 'main-win-lose-merchant.html')){
         allowed = menus.some(function(m){
           const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
           const key = String(m.menuKey || '').toLowerCase();

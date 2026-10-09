@@ -1,0 +1,100 @@
+/* Win/Lose Report — the drill-down page (one merchant's provider consumption).
+
+   The list's eye opens this page (main-win-lose-merchant.html?brandId=…&from=…&to=…); it is
+   the block that used to expand inline, given a page and a heading row: identity, period,
+   status, the totals strip and the provider table. `Back to list` is the family's ghost
+   button at the right end of that row — the same `.mad-btn.mad-btn-ghost` fill the list's
+   Reset / Export carry, which is also BO's cream-gradient recipe
+   (main-report-charcoal.css 341-380 light, 366-380 dark).
+
+   Loaded after the family sheets: `.mmr-mark` / `.mmr-merchant-copy` / `.wl-*` /
+   `.mre-history-kpis` come from main-report-charcoal-content.css and
+   main-win-lose-report.css, where the two modes are already stated. This file adds only
+   what those cannot know — the heading row that belongs to this page alone. */
+
+body.main-win-lose-merchant-page .wlm-head{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px 18px;
+  padding:16px 18px;
+  margin-bottom:16px;
+  min-width:0;
+  border:1px solid #EADCC8;
+  border-radius:16px;
+  background:var(--bo-surface,#FFF8EB);
+  box-shadow:var(--bo-shadow,0 1px 2px rgba(60,48,32,.06));
+}
+
+body.main-win-lose-merchant-page .wlm-identity{
+  display:flex;align-items:center;gap:10px;min-width:0;flex:0 1 auto;
+}
+body.main-win-lose-merchant-page .wlm-identity .mmr-merchant-copy b{white-space:normal}
+
+/* Period + status + currency, pushed to the right of the identity; the back link takes the
+   last seat, which is where BO keeps a list's back control (heading row's right end). */
+body.main-win-lose-merchant-page .wlm-meta{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px;
+  margin-left:auto;min-width:0;
+}
+body.main-win-lose-merchant-page .wlm-period{
+  display:inline-flex;align-items:center;gap:8px;
+  height:28px;padding:0 10px;
+  border:1px solid #EADCC8;border-radius:8px;background:#FFF8EB;
+  color:#57534E;font-size:12px;font-weight:700;white-space:nowrap;
+}
+body.main-win-lose-merchant-page .wlm-currency{
+  font-size:12px;font-weight:800;letter-spacing:.02em;color:#57534E;
+}
+body.main-win-lose-merchant-page .wlm-status{
+  height:28px;padding:0 10px;border-radius:8px;
+}
+body.main-win-lose-merchant-page .wlm-status.is-active{
+  background:rgba(18,183,106,.12);color:#027A48;
+}
+body.main-win-lose-merchant-page .wlm-status.is-suspended{
+  background:#FEF3F2;color:#B42318;
+}
+
+body.main-win-lose-merchant-page .wlm-back{
+  flex:0 0 auto;
+  display:inline-flex!important;align-items:center;justify-content:center;gap:8px;
+  height:36px!important;min-height:36px!important;
+  padding:0 14px!important;
+  border-radius:8px;
+  font-size:12.5px!important;font-weight:700!important;
+  text-decoration:none!important;
+  white-space:nowrap;
+}
+
+body.main-win-lose-merchant-page .wlm-kpis{margin-bottom:16px}
+/* The list's panel is the frame (`flex:1`, so the table's footer sits on the bottom edge);
+   this page's table is as long as the merchant has providers, so the card hugs it instead
+   of stretching to the viewport and leaving a blank half. */
+body.main-win-lose-merchant-page .mre-panel{padding:16px 18px 18px;flex:0 0 auto;min-height:0}
+
+/* The list indents the breakdown under the merchant row it came from (38px past the mark);
+   on its own page the block starts at the panel's edge. */
+body.main-win-lose-merchant-page .wl-breakdown{margin:0}
+
+html[data-bo-theme="dark"] body.main-win-lose-merchant-page .wlm-head{
+  border-color:rgba(255,255,255,.14);
+  background:var(--bo-surface,#2A2C36);
+  box-shadow:none;
+}
+html[data-bo-theme="dark"] body.main-win-lose-merchant-page .wlm-period{
+  border-color:rgba(255,255,255,.14);background:#2A2C36;color:#D4D4D8;
+}
+html[data-bo-theme="dark"] body.main-win-lose-merchant-page .wlm-currency{color:#D4D4D8}
+html[data-bo-theme="dark"] body.main-win-lose-merchant-page .wlm-status.is-active{
+  background:rgba(18,183,106,.16);color:#6CE9A6;
+}
+html[data-bo-theme="dark"] body.main-win-lose-merchant-page .wlm-status.is-suspended{
+  background:rgba(239,51,64,.16);color:#FF8A90;
+}
+
+@media (max-width:900px){
+  body.main-win-lose-merchant-page .wlm-head{padding:14px}
+  body.main-win-lose-merchant-page .wlm-meta{margin-left:0}
+  body.main-win-lose-merchant-page .wlm-back{width:100%}
+}
