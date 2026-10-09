@@ -7100,7 +7100,22 @@ card, its box exactly the panel's (254..1544 at 1568).
 Re-measured after: 1568 / 1280 / 1024 / 768 / 390, both themes — no horizontal overflow, no page errors,
 `doubleFrame: false`, the tiles and the card flush with the heading row's edges at every width, and the edge
 states (no params, unknown `brandId`, API error, a 61-character merchant name, a suspended merchant, a merchant
-with no provider rows) each render one clean message. #### Provider Report: the row's name is not a link, and its eye opens a Merchant List page (2026-10-09, owner: "这个页面的也把名字能点的功能去除 并且在最后一排添加action 眼睛 期望跳转页面Provider Report 点击 眼睛 > 跳转去Merchant List 独立页面")
+with no provider rows) each render one clean message. #### The status pills' counts are never a colour of their own (2026-10-09, owner: "你知道我色盲 就不要为难我啦 你看 为什么maintenance （0)有颜色？ 与左右显示的不一样")
+
+On the provider report the Maintenance pill's count carried `is-warn-count`, which this file had mapped to the
+amber-deep attention role (and the dark twin in `main-merchant-report-executive.css:17-20` to `#F79009`). The
+owner is colour-blind, so an attention tint is not a signal they can read - and the neighbours do not have it:
+measured (light, Active selected) Active/All counts sat at the pill's own colour (`rgb(113,113,122)`, near-black
+when selected) while Maintenance was rust `rgb(180,83,9)`, including at `(0)` and while selected.
+
+`.mad-pill-count.is-warn-count` now takes `color:inherit!important` in both modes, exactly like the plain count -
+the count is never a third colour beside its neighbours, and the selected pill's own amber fill is still the state
+cue. Measured after (light and dark, each pill selected in turn): every count equals its pill's colour
+(`rgb(113,113,122)` unselected / `rgb(24,25,28)` selected; dark `rgb(138,143,152)` / `rgb(255,255,255)`), 0 page
+errors. The Win/Lose list and the merchant report share the same rule and the same markup, and were measured the
+same way. The pattern also exists off these pages (`main-provider-executive.css:28`, `main-admin-detail-executive.css:4315`).
+
+#### Provider Report: the row's name is not a link, and its eye opens a Merchant List page (2026-10-09, owner: "这个页面的也把名字能点的功能去除 并且在最后一排添加action 眼睛 期望跳转页面Provider Report 点击 眼睛 > 跳转去Merchant List 独立页面")
 
 `main_provider_report.html` (Provider Management) carried main's related link on the provider cell
 (`data-report-provider-link` -> `main-merchant-detail.html?providerCode=…`, a page that ignores the parameter);
