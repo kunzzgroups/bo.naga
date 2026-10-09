@@ -392,7 +392,7 @@
    const creditBtn=`<button class="mad-merchant-icon-btn mad-merchant-credit-btn" data-credit="${esc(b.id)}" type="button" data-tip="Add / reclaim credit" aria-label="Add or reclaim credit"><i class="bi bi-plus-lg" aria-hidden="true"></i></button>`;
    const resetPassBtn=`<button class="mad-merchant-icon-btn mad-merchant-key-btn" data-reset-pass="${esc(b.id)}" type="button" data-tip="Reset password" aria-label="Reset password"><i class="bi bi-key" aria-hidden="true"></i></button>`;
    return `<tr class="mad-row${canDelete?' is-suspended-row':''}">`+
-     `<td data-label="Merchant"><div class="mad-user">${selectHtml}<span class="mad-avatar">${esc(avatarInitials(b))}</span><div class="mad-user-copy"><b>${esc(b.code||'-')}</b><div class="mad-user-meta">#${esc(b.id)}</div></div></div></td>`+
+     `<td data-label="Merchant"><div class="mad-user">${selectHtml}<span class="mad-avatar">${esc(avatarInitials(b))}</span><div class="mad-user-copy"><b data-report-merchant-provider="${esc(String(b.id))}">${esc(b.code||'-')}</b><div class="mad-user-meta">#${esc(b.id)}</div></div></div></td>`+
      `<td data-label="Company"><b>${esc(b.name||'-')}</b><small class="d-block text-muted">${esc(b.primaryDomain||'-')}</small></td>`+
      `<td data-label="Role"><span class="mad-role ${roleTone(rn)}">${esc(rn)}</span></td>`+
      `<td data-label="Currency">${esc(b.currency||'MYR')}</td>`+
@@ -1254,6 +1254,13 @@
  });
  bulkDeleteBtn?.addEventListener('click',()=>deleteMerchantsByIds([...selectedMerchantIds]));
  body?.addEventListener('click',e=>{
+  const merchantLink=e.target.closest('[data-report-merchant-provider]');
+  if(merchantLink){
+   const u=new URL('main_provider_report.html',location.href);
+   u.searchParams.set('merchant',merchantLink.getAttribute('data-report-merchant-provider'));
+   location.href=u.toString();
+   return;
+  }
   const viewBtn=e.target.closest('[data-view]');
   if(viewBtn){ open(viewBtn.dataset.view); return; }
 

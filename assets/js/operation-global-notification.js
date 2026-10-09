@@ -29,8 +29,28 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 
+  // Respect the same database-driven menu assignments used by BO_AUTH.
+  // A global header script must never grant notification audio by itself.
+  function mayNotifyWallet(){
+    if (!window.BO_AUTH || !BO_AUTH.token()) return false;
+    var user = BO_AUTH.user && BO_AUTH.user();
+    var menus = BO_AUTH.allowedMenus && BO_AUTH.allowedMenus(user);
+    if (!Array.isArray(menus)) return false;
+    return menus.some(function(menu){
+      var url = String(menu.url || '').split(/[?#]/)[0].split('/').pop().toLowerCase();
+      return url === 'member-deposit.html' || url === 'member-withdraw.html';
+    });
+  }
+  function enforceWalletPermission(){
+    if (mayNotifyWallet()) return true;
+    stopAudio('wallet');
+    queued = [];
+    releaseLeader();
+    return false;
+  }
+
   function init(){
-    if (!window.BO_AUTH || !window.API_CONFIG || !BO_AUTH.token()) return;
+    if (!window.BO_AUTH || !window.API_CONFIG || !BO_AUTH.token() || !mayNotifyWallet()) return;
     // SPA replay re-dispatches DOMContentLoaded; this leaks a Worker, a setInterval and
     // document/window listeners, so init once. Guard sits AFTER the session check above so
     // a first call that had no token yet does not burn the one attempt.
@@ -68,7 +88,7 @@
   }
   function touchLeader(){if(isLeader())try{localStorage.setItem(LEADER_KEY,JSON.stringify({owner:TAB_ID,time:Date.now()}));}catch(e){} }
   function releaseLeader(){try{var x=readLeader();if(x&&x.owner===TAB_ID)localStorage.removeItem(LEADER_KEY);}catch(e){}}
-  function leaderTick(){if(!isLeader())return;touchLeader();check(false);}
+  function leaderTick(){if(!enforceWalletPermission())return;if(!isLeader()){stopAudio('wallet');return;}touchLeader();check(false);}
   function startBackgroundPolling(){
     // Only one BO tab polls the API. Other tabs receive counts through BroadcastChannel/localStorage.
     // This prevents N open BO tabs from multiplying notification DB traffic N times.
@@ -164,6 +184,7 @@
   }
 
   async function check(initial){
+    if (!enforceWalletPermission()) return;
     if (busy) return;
     busy = true;
     try{
@@ -230,9 +251,10 @@
   }
 
   function repeatPendingSounds(){
+    if (!enforceWalletPermission()) return;
     // Exactly one BO tab is allowed to own notification audio. Counts are still
     // broadcast to every open tab, but background tabs must never replay the sound.
-    if (!isLeader()) return;
+    if (!isLeader()) { stopAudio('wallet'); return; }
     var pending = getPending();
     // Deposit/withdraw continues repeating until either wallet header icon is opened.
     if (pending.wallet) queueSound('wallet');
@@ -269,6 +291,7 @@
   };
 
   function unlockAudio(){
+    if (!enforceWalletPermission()) return;
     if (unlocked) return;
     var sounds = [getAudio('wallet')];
     Promise.all(sounds.map(function(player){
@@ -293,7 +316,7 @@
 
   function queueSound(kind){
     if (queued.indexOf(kind) === -1) queued.push(kind);
-    if (unlocked) flushQueue();
+    if (unlocked && isLeader()) flushQueue();
   }
 
   function claimPlay(kind){
@@ -318,10 +341,10 @@
   }
 
   function flushQueue(){
-    if (!queued.length || !unlocked) return;
+    if (!queued.length || !unlocked || !isLeader()) return;
     var kind = queued.shift();
     if (!getPending()[kind]) return flushQueue();
-    if (!claimPlay(kind)) return;
+    if (!isLeader() || !claimPlay(kind)) return;
     play(kind).then(function(played){
       // Do not let a background tab that Chrome blocked from autoplay silence all other BO tabs.
       if (!played) releasePlayLock(kind);
@@ -330,10 +353,13 @@
   }
 
   function play(kind){
+    if (!enforceWalletPermission()) return Promise.resolve(false);
     return new Promise(function(resolve){
       try{
         var player = getAudio(kind);
-        player.pause();
+        if (!isLeader() || !getPending()[kind]) { resolve(false); return; }
+        // Do not restart an audible notification while its previous playback is active.
+        if (!player.paused && !player.ended) { resolve(true); return; }
         player.currentTime = 0;
         player.muted = false;
         var p = player.play();
