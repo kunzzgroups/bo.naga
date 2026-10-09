@@ -7127,10 +7127,17 @@ its rows had no action of their own. Now: the name is text, and a seventh **Acti
   `main-provider-report-executive.css`, because the fixed layout summed to 100% over six columns and a seventh would
   have been laid out at zero; the eye's seat in its cell (12px padding, left-aligned in ~101px) is the same as the
   Win/Lose list's Action column, measured on both.
-- **The chain unwinds one step at a time**: the merchant page (`main-win-lose-merchant.js`) now honours a `back`
-  parameter the same way the BO provider page does, so Provider Report -> Merchant List -> a merchant -> Back lands
-  back on the Merchant List, and its own Back to list then reaches the report. Without `back` it still goes to the
-  Win/Lose list with `pill`/`tier`/`status`/`q` (measured, unchanged).
+- **The merchant row's eye goes one level deeper into the same report**: the Provider Report in its for-merchant
+  mode, `main_provider_report.html?merchant=<id>&from=&to=` - the mode main's own links already use
+  (`main_merchant-report.js:365`, `main-merchant-detail.js:1259`). Owner, looking at this page: "我点action view
+  merchant list 后 他里面有一个merchant 我再点眼睛 应该看到的页面是 provider report(for merchant) 来自bo的吧？" Measured on
+  Aurora Play: the table shows that merchant's two providers and the tiles read 1,120,000 turnover / 22,200 payable /
+  4,300 collect - the same numbers as the rows, because both are scoped to the merchant. `providerCode` is
+  deliberately not carried: pre-filling the search box filters the table to one provider while the tiles stay
+  merchant-wide (measured: tiles 22,200 against a 14,000 table).
+- The merchant page (`main-win-lose-merchant.js`) still honours a `back` parameter the same way the BO provider page
+  does, so any link into it can unwind one step at a time; without `back` it goes to the Win/Lose list with
+  `pill`/`tier`/`status`/`q` (measured, unchanged).
 - `main-provider-merchant-list.html` is in the SPA manifest (markers copied from its twin), `auth.js` lets either report
   tab open it and lights the rail row the account holds, and its pins are stamped like every other page's.
 

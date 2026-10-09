@@ -95,15 +95,17 @@
     return `<span class="mre-ggr ${cls}"><b>${sign}${money(n)}</b></span>`;
   }
 
-  /* The merchant's own page - its provider consumption - with this page as its way back, so the
-     chain list -> merchant -> provider -> merchant list unwinds one step at a time. */
+  /* The merchant's own half of this report: the Provider Report in the `?merchant=` mode main's own
+     links use (`main_merchant_report.js:365`, `main-merchant-detail.js:1259`) - that merchant's
+     providers, with the page's KPI strip scoped to the same merchant, so the table and the tiles
+     agree. Owner, on this page's row eye: "应该看到的页面是 provider report(for merchant)".
+     Deliberately no `providerCode`: pre-filling the search box would filter the table to this one
+     provider while the tiles stayed merchant-wide (measured: tiles 22,200 against a 14,000 table). */
   function merchantPageUrl(m) {
-    const u = new URL('main-win-lose-merchant.html', location.href);
-    u.searchParams.set('brandId', m.id);
+    const u = new URL('main_provider_report.html', location.href);
+    u.searchParams.set('merchant', m.id);
     if (from) u.searchParams.set('from', from);
     if (to) u.searchParams.set('to', to);
-    u.searchParams.set('currency', currency);
-    u.searchParams.set('back', location.pathname + location.search);
     return u.toString();
   }
 
@@ -277,7 +279,7 @@
         <td class="mre-num">${amountHtml(m.margin)}</td>
         <td class="mre-num"><b>${count(m.bets)}</b></td>
         <td><div class="mre-actions mad-actions">
-          <a class="mad-icon-btn pml-merchant-open" href="${esc(merchantPageUrl(m))}" title="View merchant records" aria-label="View merchant records"><i class="bi bi-eye" aria-hidden="true"></i></a>
+          <a class="mad-icon-btn pml-merchant-open" href="${esc(merchantPageUrl(m))}" title="Open in the Provider Report" aria-label="Open in the Provider Report"><i class="bi bi-eye" aria-hidden="true"></i></a>
         </div></td>
       </tr>`;
     }).join('');
