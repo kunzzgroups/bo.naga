@@ -378,6 +378,21 @@
     // 全去除"). The date range auto-applies as soon as a complete range is chosen — see
     // autoLoadSelectedRange below — so the row needs no trigger at all.
 
+    /* A link may carry the page it was opened from (`back`): the filter row then ends with the
+       family's `Back to list` (recipe in bo-report-family.css), pointing one step back - the
+       Win/Lose merchant page whose provider rows send it. Relative page targets only. */
+    const backTarget=LINK_PARAMS.get('back')||'';
+    if(/^\/?[a-z0-9._-]+\.html(\?|#|$)/i.test(backTarget) && !document.querySelector('.bo-report-back')){
+      const row=document.querySelector('.report-main .bo-filter-row');
+      if(row){
+        const a=document.createElement('a');
+        a.className='bo-report-back';
+        a.href=backTarget;
+        a.innerHTML='<i class="bi bi-arrow-left" aria-hidden="true"></i> Back to list';
+        row.appendChild(a);
+      }
+    }
+
     // Match Referral Network behaviour: once a complete date range is selected,
     // refresh the report immediately without requiring the Search button.
     let dateRangeLoadTimer = null;

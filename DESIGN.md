@@ -7126,6 +7126,24 @@ https://bo.titanx7.com/casino-provider-winloss-report.html 的provider api". The
   Provider Report for the Main account and on Report for the BO account (whose module tab row marks
   *Provider Win/Loss*), no horizontal overflow, zero page errors.
 
+**`Back to list` on the BO page - the same control, one step back.** Owner, on the landed page: "需要back to list 按键".
+The merchant page now sends `back=<its own path+query>`, and `casino-report.js` renders the family's
+`Back to list` into the filter row when that parameter is present (`^/?name.html` targets only - a crafted
+`back` cannot point anywhere else). The recipe lives in `bo-report-family.css` as `.bo-report-back` (the family's
+eleven pages already load that sheet, and none of them carried a back control): 36px, radius 8, padding 0 14px,
+12.5px/700, the three-stop cream gradient on a 1px `#DCC9A8` border, the 1px lift on hover, the 2px amber
+focus ring, and the family's dark surface under `data-bo-theme="dark"` - the same values as
+`promotion-form-page.css` `.pform-back`, `.mrc-back-list`, `.agent-back-to-list` and `.mad-btn.mad-btn-ghost`.
+It sits at the row's right end (`margin-left:auto`), which is where BO keeps a list's back control; the row is
+`display:flex` from `bo-ui-standard.css`.
+
+Measured (1568 light, the Main account): 117x36, right edge flush with the row (gap 0), `#18191C` on
+`linear-gradient(#FFFCF7, #F5EBDC 55%, #EDE4D4)`, border `#DCC9A8`, no underline; clicking it lands back on
+`main-win-lose-merchant.html?brandId=1&from=2026-10-01&to=2026-10-09&currency=MYR&pill=active` (h1
+"Provider Consumption"). Without a `back` parameter - the BO account opening the page from its own menu - no
+control is rendered. The chain is one step back at a time: list -> merchant page -> provider page -> merchant
+page -> list, and the merchant page's own `Back to list` still leads to the report list.
+
 **Kept from the earlier passes, in case the destination moves again:** the subtable's 8th column and the
 7 -> 8 colspans; `provider-detail.html`'s access + crumb fix (it is still the Provider Report's *own* row
 drill-down, reachable from that report's rows); and `main_provider_report.html`'s `?providerCode=`/range

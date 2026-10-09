@@ -139,6 +139,9 @@
     u.searchParams.set('providerCode', p.code || '');
     if (from) u.searchParams.set('from', from);
     if (to) u.searchParams.set('to', to);
+    /* One step back: this page with its own state, so its `Back to list` still leads to the
+       report list, and the operator returns to the merchant they were inspecting. */
+    u.searchParams.set('back', location.pathname + location.search);
     return u.toString();
   }
 
