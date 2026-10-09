@@ -476,7 +476,9 @@
     tbody.innerHTML = rows.map((r) => {
       const key = String(r.id || r.code || r.name);
       const codeLabel = r.code ? (`#${r.code}`) : '';
-      const txnLabel = r.txns ? (`${num(r.txns)} txns`) : '';
+      /* The count under Total In is the run's bet count; the word "txns" after it is gone
+         (owner: "bo和main的 txns字符需要移除"). */
+      const txnLabel = r.txns ? num(r.txns) : '';
       return `<tr class="wl-row">
         <td>
           <div class="wl-merchant">

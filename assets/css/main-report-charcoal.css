@@ -4915,9 +4915,13 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
                no counterpart on these pages at all: this file neutralises
                `is-active-count` / `is-danger-count` but never `is-warn-count`,
                which is the Maintenance count on the provider report
-               (`#mreCountMaintenance`). Mapped to the amber-deep attention
-               role; the dark twin is main-merchant-report-executive.css:17-20
-               (`#F79009`).
+               (`#mreCountMaintenance`). It was mapped to the amber-deep
+               attention role, and then the colour-blind owner read it exactly
+               the way a colour-blind reader must: as a number the neighbours do
+               not have ("为什么maintenance（0)有颜色？与左右显示的不一样"). The count now inherits its
+               pill's colour like the plain one does - the selected state is
+               already the pill's own amber fill, so nothing is lost, and `(0)`
+               can never look like an alert.
      :251-271  `.mre-mark` plus its is-teal / is-violet / is-amber / is-rose /
                is-slate variants â all five resolved to the SAME cyan wash
                `rgba(33,166,215,.14)` with `--bo-navy` text. A decorative
@@ -4933,7 +4937,7 @@ html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="mai
 
 /* ---- Light ---- */
 html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-pill-count.is-warn-count{
-  color:var(--bo-cyan-deep)!important;
+  color:inherit!important;
   background:transparent!important;
   padding:0!important;
   min-width:0!important;
@@ -4959,7 +4963,7 @@ html:not([data-bo-theme="dark"]) body.main-admin-detail-page:is([data-access-pag
 
 /* ---- Dark ---- */
 html[data-bo-theme="dark"] body.main-admin-detail-page:is([data-access-page="main_report"],[data-access-page="main_provider_report"],[data-access-page="main_merchant_report"],[data-access-page="main_merchant_balance_report"],[data-access-page="main_merchant_transaction_report"],[data-access-page="main_provider_balance_report"],[data-access-page="main_provider_transaction_report"],[data-access-page="main_provider_settlement_report"]) .mad-pill-count.is-warn-count{
-  color:var(--bo-cyan)!important;
+  color:inherit!important;
   background:transparent!important;
   padding:0!important;
   min-width:0!important;
