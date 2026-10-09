@@ -2685,5 +2685,54 @@ html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="player_ga
 html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern #agentGameReportPagination button.active{border-color:#F59E0B!important;color:#2A2C36!important;box-shadow:0 1px 2px rgba(0,0,0,.35),0 0 0 1px rgba(245,158,11,.35),0 2px 10px rgba(245,158,11,.28)!important}
 html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern #agentGameReportPagination button:disabled{background:#2A2C36!important;border-color:rgba(255,255,255,.06)!important;color:#52525B!important}
 html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .agent-table-footer .rounded-select-wrap .rounded-select-menu{top:auto!important;bottom:100%!important;margin:0 0 6px 0!important}
-html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .agent-back-to-list{margin-right:4px!important;text-decoration:none!important;display:inline-flex!important;align-items:center!important;gap:8px!important}
 html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .user-toolbar{flex:0 0 auto!important;margin:0!important;padding:0!important}
+
+/* ------------------------------------------------------------------------------------------------
+   P54 - the Back to list link, placed and styled the way BO does it
+
+   Owner: "back to list的按键位置和设计都不对 需要统一bo那样".
+
+   BO keeps this link at the RIGHT END OF THE SECTION'S HEADING ROW, not in the topbar: the promotion form
+   pages put it inside their <h4> (pform-back), and the Main create pages do the same in .mrc-card-head
+   (mrc-back-list). The styling is the family's locked recipe, copied verbatim from
+   assets/css/promotion-form-page.css where its own comment lists the pages it covers (vip-level-edit
+   .vle-back-list, payment-method-create #pmBackLink, game-category-edit .banner-edit-back): 36px tall,
+   radius 8, padding 0 14px, 12.5px/700, a three-stop cream gradient on a 1px #DCC9A8 border, the three
+   shadows, and on hover the #FFF8EB -> #F3E8D6 gradient with a #D97706 border and a 1px lift.
+
+   The heading row is made a flex row (the title's own wrapper is the card's toolbar) so margin-left:auto
+   can push the link to the right edge exactly as BO's recipe does. Dark mode takes the family's dark
+   surface instead of the cream.
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .user-toolbar{display:flex!important;align-items:center!important;gap:12px!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .agent-back-to-list{
+  margin-left:auto!important;flex:0 0 auto!important;display:inline-flex!important;
+  align-items:center!important;justify-content:center!important;gap:7px!important;
+  height:36px!important;min-height:36px!important;padding:0 14px!important;
+  border:1px solid #DCC9A8!important;border-radius:8px!important;
+  background-color:#F5EBDC!important;
+  background-image:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 55%,#EDE4D4 100%)!important;
+  color:#18191C!important;font-size:12.5px!important;font-weight:700!important;line-height:1!important;
+  text-decoration:none!important;
+  box-shadow:0 1px 2px rgba(60,48,32,.06),0 2px 6px rgba(120,80,20,.08),inset 0 1px 0 rgba(255,255,255,.55)!important;
+  transition:background-image .16s ease,border-color .16s ease,transform .16s ease!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .agent-back-to-list i{font-size:14px!important;line-height:1!important;color:inherit!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .agent-back-to-list:hover,
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .agent-back-to-list:focus-visible{
+  background-image:linear-gradient(180deg,#FFF8EB 0%,#F3E8D6 100%)!important;
+  border-color:#D97706!important;color:#18191C!important;transform:translateY(-1px)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .agent-back-to-list:focus-visible{outline:2px solid #D97706!important;outline-offset:2px!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .agent-back-to-list:active{transform:translateY(1px)!important}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .agent-back-to-list{
+  background-color:#2A2C36!important;
+  background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%)!important;
+  border-color:rgba(255,255,255,.14)!important;color:#F5F5F4!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .agent-back-to-list:hover,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .agent-back-to-list:focus-visible{
+  background-image:linear-gradient(180deg,#444654 0%,#383A46 100%)!important;
+  border-color:#F59E0B!important;color:#FFFFFF!important;
+}
