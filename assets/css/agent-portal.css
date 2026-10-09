@@ -2588,3 +2588,57 @@ html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="products"
 html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern .table-card > .agent-table-footer .rounded-select-wrap .rounded-select-menu{
   top:auto!important;bottom:100%!important;margin:0 0 6px 0!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P48 - agent-bet-report: one card, two tabs, and the players page's band / table / pager
+
+   Owner: "这个页面有两个table要分两个tab去展示 像bo和main 并且设计要求像player和report那样去重新设计规划".
+
+   The page had two stacked table cards, each headed by a badge pill ("Player Betting Summary", "Provider
+   Report"), under a separate filter card. It is now one card, as on the players page: the filter band is
+   the card's first row, the two badge titles have become the tab row (BO's locked pill recipe), each table
+   lives in its own pane with only the active one shown, and the card ends in the same footer/pager.
+
+   Values are the ones the players and products pages measure, page scoped:
+     frame          locked to the visible viewport (100dvh), so the page itself never scrolls
+     band           full-bleed 1/1, padding 14px 16px, no labels, filters apply as they change
+     tabs           the locked recipe - idle #71717A, selected #FFFCF7 + gradient to #F3E8D6 with a 1px
+                    #E0D0B8 frame, dark thumb #2A2C36 + gradient to #383A46
+     table          BO's header (#FFE8CC on #6B360C, 11px/700, 0.44px, uppercase), first cell 12px
+     footer         #FFF8EB with a 1px #EADCC8 top rule at 64px (dark #383A46 / rgba(255,255,255,.14))
+     pager          the app-wide .page-btn recipe, four states, light and dark
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .report-shell{height:100vh!important;height:100dvh!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .report-main{height:100vh!important;height:100dvh!important;display:flex!important;flex-direction:column!important;min-height:0!important;overflow:hidden!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .report-main > .report-content{flex:1 1 0%!important;min-height:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;align-content:stretch!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .report-content > .table-card{padding:0!important;margin-bottom:0!important;display:flex!important;flex-direction:column!important;flex:1 1 auto!important;min-height:0!important;overflow:hidden!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .filter-card{flex:0 0 auto!important;padding:14px 16px!important;margin:0!important;border-radius:0!important;border-bottom:0!important;background:transparent!important;box-shadow:none!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .filter-card .field > label:not(.bo-search-control){display:none!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card .bo-range-field > label{display:none!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .filter-card .referral-filter-grid{align-items:center!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card .bo-range-field{width:100%!important;max-width:100%!important;min-width:0!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .agent-tab-buttons{flex:0 0 auto!important;display:flex!important;gap:6px!important;align-items:center!important;padding:0 16px 10px!important;border-bottom:0!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .agent-tab-buttons button{height:36px!important;padding:0 14px!important;border-radius:999px!important;gap:8px!important;border:1px solid transparent!important;box-sizing:border-box!important;font-size:12.5px!important;font-weight:700!important;line-height:1!important;color:rgb(113,113,122)!important;box-shadow:none!important;background:transparent!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .agent-tab-buttons button.active{background-color:#FFFCF7!important;background-image:linear-gradient(180deg,#FFFCF7 0%,#FFF8EB 55%,#F3E8D6 100%)!important;border:1px solid #E0D0B8!important;box-shadow:0 1px 2px rgba(24,25,28,.08),0 2px 8px rgba(92,74,48,.10)!important;color:#18191C!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .agent-tab-buttons button:hover:not(.active){color:#18191C!important;background:rgba(24,25,28,.04)!important}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .agent-tab-buttons button.active{background-color:#2A2C36!important;background-image:linear-gradient(180deg,#383A46 0%,#2A2C36 100%)!important;border-color:rgba(255,255,255,.14)!important;box-shadow:0 1px 2px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.25)!important;color:#F5F5F4!important}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .agent-tab-buttons button{color:#A1A1AA!important}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .agent-tab-buttons button:hover:not(.active){color:#F5F5F4!important;background:rgba(255,255,255,.06)!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .table-wrap{flex:1 1 auto!important;min-height:0!important;overflow:auto!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card .report-table thead th:first-child,
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card .report-table tbody td:first-child{padding-left:12px!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .agent-table-footer{flex:0 0 auto!important;height:64px!important;min-height:0!important;padding:14px 16px!important;display:flex!important;align-items:center!important;gap:12px!important;background:#FFF8EB!important;border-top:1px solid #EADCC8!important;color:#57534E!important}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .agent-table-footer{background:#383A46!important;border-top-color:rgba(255,255,255,.14)!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .agent-table-footer > .agent-page-size{flex:0 0 auto!important;display:flex!important;align-items:center!important;gap:6px!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .agent-table-footer > .agent-page-size select{flex:0 0 auto!important;width:auto!important;min-width:68px!important;max-width:96px!important;height:36px!important;font-size:13px!important;font-weight:700!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .agent-table-footer > #agentReportsShowing{flex:1 1 auto!important;text-align:center!important;font-size:13px!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .agent-table-footer > .agent-pagination{flex:0 0 auto!important;display:flex!important;align-items:center!important;gap:6px!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern #agentReportPagination button{background:#F3F4F6!important;border:1px solid transparent!important;color:#9CA3AF!important;border-radius:8px!important;height:36px!important;min-height:36px!important;font-size:13px!important;font-weight:700!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern #agentReportPagination button:not(.active):hover{background:#E5E7EB!important;color:#374151!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern #agentReportPagination button.active{background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;border:1px solid #D97706!important;color:#FFFFFF!important;box-shadow:0 1px 2px rgba(180,83,9,.3),inset 0 1px 0 rgba(255,255,255,.35)!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern #agentReportPagination button:disabled{background:#F3F4F6!important;color:#9CA3AF!important;opacity:1!important;cursor:not-allowed!important}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern #agentReportPagination button{background:#383A46!important;border:1px solid rgba(255,255,255,.12)!important;color:#A1A1AA!important}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern #agentReportPagination button:not(.active):hover{background:#444654!important;border-color:rgba(255,255,255,.18)!important;color:#E7E5E4!important}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern #agentReportPagination button.active{border-color:#F59E0B!important;color:#2A2C36!important;box-shadow:0 1px 2px rgba(0,0,0,.35),0 0 0 1px rgba(245,158,11,.35),0 2px 10px rgba(245,158,11,.28)!important}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern #agentReportPagination button:disabled{background:#2A2C36!important;border-color:rgba(255,255,255,.06)!important;color:#52525B!important}
+html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .agent-table-footer .rounded-select-wrap .rounded-select-menu{top:auto!important;bottom:100%!important;margin:0 0 6px 0!important}
