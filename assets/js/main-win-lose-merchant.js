@@ -280,18 +280,14 @@
     }
     box.style.display = '';
     box.innerHTML = [
-      summaryCard('Total Bet', money(merchant.totalBet), txnHint(merchant.txns)),
+      /* No count beside Total Bet: the word "txns" went first, then the number it sat beside
+         (owner: "txns的小数字也要去除 … main的report也是"). */
+      summaryCard('Total Bet', money(merchant.totalBet), ''),
       summaryCard('Total ValidBet', money(merchant.validBet), validRateHint(merchant)),
       summaryCard('Total In', money(merchant.totalIn), ''),
       summaryCard('Total Out', money(merchant.totalOut), ''),
       summaryCard('Total Win/Lose', winLoseHtml(merchant.winLose), merchant.winLosePct ? `${money(merchant.winLosePct)}% of valid bet` : '')
     ].join('');
-  }
-
-  /* The count beside Total Bet is the run's bet count; the word "txns" after it is gone
-     (owner: "bo和main的 txns字符需要移除"). */
-  function txnHint(txns) {
-    return txns ? Number(txns).toLocaleString('en-MY') : '';
   }
 
   function validRateHint(row) {

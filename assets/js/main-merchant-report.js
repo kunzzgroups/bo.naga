@@ -239,16 +239,15 @@ function renderTable(){
 
   tbody.innerHTML=rows.map(r=>{
     const codeLabel=r.code?('#'+r.code):'';
-    /* The count under Total In is the run's bet count; the word "txns" after it is gone
-       (owner: "bo和main的 txns字符需要移除"). */
-    const txnLabel=r.txns? num(r.txns) : '';
+    /* No count under Total In: the word "txns" went first, then the number it sat beside
+       (owner: "txns的小数字也要去除 … main的report也是"). The cell is the money alone. */
     return `<tr>
       <td><div class="mmr-merchant"><span class="mmr-mark${r.mark}">${esc(r.initials)}</span>
         <div class="mmr-merchant-copy" data-report-provider-link="${esc(String(r.id||r.code||''))}"><b>${esc(r.name)}${codeLabel?` <span class="mmr-code">${esc(codeLabel)}</span>`:''}</b>
         <small>${esc(r.tierLabel)}</small></div></div></td>
       <td class="mre-num"><b>${money(r.totalBet)}</b></td>
       <td class="mre-num"><b>${money(r.validBet)}</b></td>
-      <td class="mre-num"><div class="mmr-stack"><b>${money(r.totalIn)}</b>${txnLabel?`<small>${esc(txnLabel)}</small>`:''}</div></td>
+      <td class="mre-num"><div class="mmr-stack"><b>${money(r.totalIn)}</b></div></td>
       <td class="mre-num"><b>${money(r.totalOut)}</b></td>
       <td class="mre-num">${winLoseHtml(r.winLose,r.winLosePct)}</td>
       <td><div class="mmr-actions mad-actions">

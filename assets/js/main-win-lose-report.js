@@ -476,9 +476,8 @@
     tbody.innerHTML = rows.map((r) => {
       const key = String(r.id || r.code || r.name);
       const codeLabel = r.code ? (`#${r.code}`) : '';
-      /* The count under Total In is the run's bet count; the word "txns" after it is gone
-         (owner: "bo和main的 txns字符需要移除"). */
-      const txnLabel = r.txns ? num(r.txns) : '';
+      /* No count under Total In: the word "txns" went first, then the number it sat beside
+         (owner: "txns的小数字也要去除 … main的report也是"). The cell is the money alone. */
       return `<tr class="wl-row">
         <td>
           <div class="wl-merchant">
@@ -491,7 +490,7 @@
         </td>
         <td class="mre-num"><b>${money(r.totalBet)}</b></td>
         <td class="mre-num"><b>${money(r.validBet)}</b></td>
-        <td class="mre-num"><div class="mmr-stack"><b>${money(r.totalIn)}</b>${txnLabel ? `<small>${esc(txnLabel)}</small>` : ''}</div></td>
+        <td class="mre-num"><div class="mmr-stack"><b>${money(r.totalIn)}</b></div></td>
         <td class="mre-num"><b>${money(r.totalOut)}</b></td>
         <td class="mre-num">${winLoseHtml(r.winLose)}</td>
         <td><div class="mre-actions mad-actions">

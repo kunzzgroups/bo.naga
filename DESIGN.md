@@ -7110,8 +7110,12 @@ KPI) said "2,541 txns"; the BO's agent performance report put " tx" under Deposi
   count (`2,541`)
 - `assets/js/agent-performance-report.js` -> `RM 1,250.50` over `7` instead of `7 tx`
 
-Measured with stubs: the three Main pages render `hasTxnsText: false` with the counts intact; the BO page renders
-`hasTxnsWord: false`, Deposit `RM 1,250.50`/`7` and Withdraw `RM 300.00`/`3`, 0 page errors. Nothing else in the tree
+**Then the counts themselves went too** (owner: "txns的小数字也要去除 刚刚都没有去除完整 main的report也是"): the sub-line under
+Total In (list + merchant report), the count beside Total Bet (the drill-down's KPI), and the Deposit / Withdraw
+counts on the BO agent report are no longer rendered at all - the cell is the money alone. Measured with stubs: the
+Win/Lose list and the merchant report have no `.mmr-stack small` in their rows, the drill-down's Total Bet tile
+carries no note, the BO page's Deposit / Withdraw cells read `RM 0.00` / `RM 1,250.50` / `RM 300.00` with no
+sub-lines, and 0 page errors on all four. Nothing else in the tree
 carries the word (`grep -rn "txns"` over every shipped .html/.js/.css now only matches the variable names
 `txns`/`txnCount`, which are never printed). **The first sweep missed the BO one** because the search was piped
 through `head` - the lesson is in the count: a truncated grep is not a search.
