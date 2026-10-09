@@ -7120,6 +7120,18 @@ the 8 presets and a 42-cell calendar with the range highlighted; picking This We
 overflow, the row wraps below 1024 (the field is 260px wide, as on the list) and stacks at 390, 0 page errors. The
 dead `.wlm-period` rules were removed with the pill.
 
+#### …and the filters apply themselves (2026-10-10, owner: "再把reset 和搜索按键去除 也确保以上功能都能使用")
+
+The Reset / Search pair is gone from the filter row; each control applies itself, which is what the BO's own report
+pages do (`agent-performance-report.js`: selects and dates on `change`, the keyword after a 400ms pause or on Enter).
+The grid drops its trailing `auto` track (`1.3fr .8fr 1fr .9fr .9fr`). Clearing a control IS the reset - the option
+lists and an emptied box carry their own "All".
+
+Measured with a stub that records every `/agent/promotions` request: on load `…&q=&status=&type=`; status ->
+`status=ACTIVE`; type -> `type=CASHBACK`; the two dates -> `from=2026-08-01&to=2026-08-31`; typing "bonus" leaves the
+other three in place and fires after the pause with `q=bonus&status=ACTIVE&type=CASHBACK`. No `#agentBonusReset` /
+`#agentBonusSearch` in the DOM, the KPI strip and the table repaint on each, 0 page errors.
+
 #### …and the card lost its title, with the filters moved in (2026-10-10, owner: "table的上面标题可以去除 让框中的放进去")
 
 Two more BO details from the same pass, against `promotion-debug.html` (the BO's own Promotion Log: module row, KPI strip,
