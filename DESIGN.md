@@ -7120,6 +7120,21 @@ the 8 presets and a 42-cell calendar with the range highlighted; picking This We
 overflow, the row wraps below 1024 (the field is 260px wide, as on the list) and stacks at 390, 0 page errors. The
 dead `.wlm-period` rules were removed with the pill.
 
+#### …and the card lost its title, with the filters moved in (2026-10-10, owner: "table的上面标题可以去除 让框中的放进去")
+
+Two more BO details from the same pass, against `promotion-debug.html` (the BO's own Promotion Log: module row, KPI strip,
+then ONE card whose first row is the filter row, then the table head):
+
+- The three panel title bars (`.user-toolbar` with the "Campaigns List" / "Recent Claims" / "Promotion Overview" badges)
+  are gone - the tab row names each panel, and the BO keeps no title above its table.
+- The filter card moved from the page column into the campaigns table card, as its first row
+  (`<div class="table-card agent-promo-campaign-card"><div class="filter-card mb-3 agent-filter-card">…`), which is
+  also what the sibling agent page does (`agent-promotion-admin.html`). Inside the card its own frame - reports.css
+  paints `.filter-card` with a border, a fill and a shadow, `!important` - read as a box inside a box
+  ("卡中卡" again), so `body.agent-modern .agent-promo-campaign-card .filter-card` flattens it (three classes to
+  out-rank that base). Measured after: the filter row sits flat above the table head, the card is 16px from the KPI
+  strip, the row 16px below the tab row, 0 page errors.
+
 #### The agent bonus page's tables are tabs, in the BO/Main module row's own design (2026-10-10, owner: "要给每个table 分tab" then "像bo/main的tab页面设计" / "参考bo的设计排版")
 
 `agent-bonus.html` stacked three blocks - the campaigns table, a half-width claims table and the promotion overview -

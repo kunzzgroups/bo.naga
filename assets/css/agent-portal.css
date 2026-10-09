@@ -65,6 +65,14 @@
    states `margin:0` on `.bo-module-tabs`, so the single-class rule was a no-op (measured: the row
    still sat flush, gapBelow 0). */
 body.agent-modern .agent-bonus-tabs{margin-bottom:16px}
+/* BO's layout for this card (its Promotion Log: filters directly above the table, no title bar): the
+   filter row now lives inside `.agent-promo-campaign-card`, so the card's own frame - reports.css
+   paints `.filter-card` with a border, a fill and a shadow - would be a box inside a box. Flattened;
+   three classes to out-rank that `!important` base. */
+body.agent-modern .agent-promo-campaign-card .filter-card{
+  border:0!important;background:transparent!important;box-shadow:none!important;
+  padding:2px 0 0!important;margin-bottom:14px!important;
+}
 .agent-bonus-panel{display:none}.agent-bonus-panel.is-active{display:block}
 .agent-detail-tabs{display:flex;gap:8px;border-bottom:1px solid #e9edf2;margin:-2px -2px 12px}.agent-detail-tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;font-size:11px;color:#57534E}.agent-detail-tabs button.active{color:#1267df;border-bottom-color:#1267df;font-weight:700}.agent-detail-table{width:100%;border-collapse:collapse;font-size:11px}.agent-detail-table th{background:#F5EBDC;text-align:left;padding:10px;color:#57534E}.agent-detail-table td{padding:10px;border-bottom:1px solid #eef1f4}.agent-info-list{display:grid;gap:10px}.agent-info-row{display:flex;justify-content:space-between;gap:18px;font-size:11px}.agent-info-row span{color:#71717A}.agent-info-row b{font-weight:500;text-align:right}.agent-tags{display:flex;flex-wrap:wrap;gap:8px}.agent-tag{display:inline-flex;align-items:center;gap:5px;border-radius:7px;padding:6px 9px;background:#fff4df;color:#9b6500;font-size:10px}.agent-tag:nth-child(2){background:#eef4ff;color:#1768e5}.agent-tag:nth-child(3){background:#eaf9ef;color:#12844b}.agent-tag:nth-child(4){background:#f3eafe;color:#7c3aed}.agent-overview-empty{height:285px;display:grid;place-items:center;color:#78716C;font-size:12px;border:1px dashed #e2e8f0;border-radius:8px}
 @media(max-width:1300px){.agent-kpi-cards,.agent-player-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.agent-dashboard-grid{grid-template-columns:1fr 1fr}.agent-trend-panel{grid-column:1/-1}.agent-player-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.agent-detail-main{grid-template-columns:1fr}.agent-player-identity{grid-template-columns:1fr 1fr}.agent-tags-inline{grid-column:1/-1}.agent-quick-grid{grid-template-columns:repeat(3,1fr)}}
