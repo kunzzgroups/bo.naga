@@ -103,9 +103,26 @@
     if(p==='main-balance-adjustment.html') return 'main-balance-overview.html';
     if(p==='main-provider-settlement.html' || p==='main-provider-balance.html' || p==='main-provider-transactions.html') return 'main_provider_report.html';
     if(p==='main-merchant-balance.html' || p==='main-merchant-transactions.html') return 'main_merchant_report.html';
+    // The merchant drill-down of the Win/Lose Report lights the same rail row its list does.
+    if(p==='main-win-lose-merchant.html') return 'main-win-lose-report.html';
+    if(p==='casino-provider-winloss-report.html'){
+      /* The BO Report module's Provider Win/Loss page, also reached from the Main panel's
+         provider rows. Light the row the account actually holds: its own BO menu when it has
+         one, otherwise the Main Report workspace it came through. */
+      const heldProv=(window.BO_AUTH && window.BO_AUTH.allowedMenus ? window.BO_AUTH.allowedMenus() : []).map(function(m){ return pageFile(m.url || ''); });
+      if(heldProv.indexOf('casino-provider-winloss-report.html') === -1 && heldProv.indexOf('main_provider_report.html') !== -1) return 'main_provider_report.html';
+      return p;
+    }
     if(p==='brand-detail.html') return 'brand-management.html';
     if(p==='member-detail.html') return 'index.html';
-    if(p==='provider-detail.html') return 'main-accounting-report.html';
+    if(p==='provider-detail.html'){
+      /* BO's provider drill-down, and the Report workspace's: the Win/Lose merchant page's
+         provider rows and the Provider Report's own row action both open it. Light whichever
+         entry the account actually holds, so the rail never goes dark on a page that was
+         reached from it. */
+      const held=(window.BO_AUTH && window.BO_AUTH.allowedMenus ? window.BO_AUTH.allowedMenus() : []).map(function(m){ return pageFile(m.url || ''); });
+      return held.indexOf('main-accounting-report.html') !== -1 ? 'main-accounting-report.html' : 'main_provider_report.html';
+    }
     if(p==='slider-edit.html') return 'slider.html';
     if(p==='promotion-edit.html') return 'promotion.html';
     // Bonus Category Title is no longer its own page: a promotion carries
@@ -697,11 +714,39 @@
       // Win/Lose Report and Provider Report are sibling tabs of one Report workspace.
       // A role configured with either entry may open both tabs, so changing the DB menu
       // URL between the two does not make the other tab disappear or redirect away.
-      if(!allowed && (currentFile() === 'main-win-lose-report.html' || currentFile() === 'win-lose-report.html' || currentFile() === 'main_provider_report.html')){
+      // The merchant drill-down (main-win-lose-merchant.html) is that workspace's third
+      // page: it has no menu row of its own, and whoever can open either tab can open it -
+      // same shape as brand-detail.html's inheritance above.
+      if(!allowed && (currentFile() === 'main-win-lose-report.html' || currentFile() === 'win-lose-report.html' || currentFile() === 'main_provider_report.html' || currentFile() === 'main-win-lose-merchant.html')){
         allowed = menus.some(function(m){
           const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
           const key = String(m.menuKey || '').toLowerCase();
           return file === 'main-win-lose-report.html' || file === 'win-lose-report.html' || file === 'main_provider_report.html' || key === 'main_provider_report' || key === 'main_win_lose_report';
+        });
+      }
+      /* provider-detail.html (Provider Details) is that workspace's provider drill-down as well
+         as Provider Settlement's: both the merchant page's provider rows and the Provider
+         Report's row action open it. It inherits the accounting menu above; an account that
+         holds the report but not that menu was bounced to its landing page from the eye
+         (measured: a MAIN account with the Report menus landed on main-dashboard.html).
+         Same source of truth as the tabs - either report entry may open it. */
+      if(!allowed && currentFile() === 'provider-detail.html'){
+        allowed = menus.some(function(m){
+          const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
+          const key = String(m.menuKey || '').toLowerCase();
+          return file === 'main-win-lose-report.html' || file === 'win-lose-report.html' || file === 'main_provider_report.html' || file === 'main-win-lose-merchant.html' || file === 'main-accounting-report.html' || key === 'main_provider_report' || key === 'main_win_lose_report' || key === 'main_accounting_report';
+        });
+      }
+      /* The BO Report module's Provider Win/Loss page is the other end of the merchant page's
+         provider rows (owner: "Merchant Report 点击游戏 -> Provider Report"). BO accounts reach
+         it through the module's own menus; a Main account holding the Report workspace but no
+         BO report menu was bounced from that eye - same shape as provider-detail.html above.
+         Either report entry may open it. */
+      if(!allowed && currentFile() === 'casino-provider-winloss-report.html'){
+        allowed = menus.some(function(m){
+          const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
+          const key = String(m.menuKey || '').toLowerCase();
+          return file === 'casino-provider-winloss-report.html' || file === 'main-win-lose-report.html' || file === 'win-lose-report.html' || file === 'main_provider_report.html' || file === 'main-win-lose-merchant.html' || key === 'main_provider_report' || key === 'main_win_lose_report';
         });
       }
       /* Online Users belongs to the Member module. Its menu row is ROOT-configured and the BO

@@ -7005,3 +7005,157 @@ code-verified: node --check plus every tile expression read back, with the behav
 a fixture (the member pages need their tab context - `ownsView()` - which the offline harness made zero list
 calls against).
 
+
+### Win/Lose Report: the merchant breakdown is a page, not an inline expansion (2026-10-09, owner: “我不要下拉展开 我要点击后去到独立整页 并且要有back to list按键统一款”)
+
+The merchant row's action was a chevron in the Merchant cell that expanded the provider breakdown underneath the
+row. It is now the family eye in a last `Action` column (the sibling report pages' recipe: `mad-icon-btn` inside
+`mre-actions mad-actions`, 40x40, radius 8), and the click leaves the list for
+**`main-win-lose-merchant.html`** — the same breakdown as a page: identity · period · status · currency in a
+heading row, the five totals as `.mre-history-kpis` tiles, then the provider table with its Copy for Excel / CSV
+actions. Files: `assets/js/main-win-lose-merchant.js`, `assets/css/main-win-lose-merchant.css`.
+
+**`Back to list` is the family's own recipe, and it sits where BO puts it.** The link is the last child of the
+heading row and carries `.mad-btn.mad-btn-ghost`, so its fill is `main-report-charcoal.css`'s (341-380) — the
+same three-stop cream gradient / `#DCC9A8` border the list's Reset / Export use, and the same recipe the agent
+portal's back control was moved onto. Measured (1568x900, light): 113x36, padding `0 14px`, radius 8,
+`12.5px/700`, text `#18191C` on `linear-gradient(#FFFCF7 0%, #F5EBDC 55%, #EDE4D4 100%)`, border `#DCC9A8`,
+19px inside the row's right edge; dark takes `#4A4C58 → #383A46 → #2C2E38` / `rgba(255,255,255,.12)` /
+`#F5F5F4`. Only the geometry (36px rung, no-wrap, right end) is stated by the page sheet.
+
+**The drill-down carries the view, both ways.** The eye builds its URL from the range and the filters actually
+in effect (`brandId`, `from`, `to`, `currency`, `pill`, `tier`, `status`, `q`); `Back to list` hands the same
+parameters back, and `main-exec-date-range.js` already reads `from`/`to` from the URL while the list restores
+the four filters in `setup()`. Measured round trip: opened the list at `?from=2026-10-01&to=2026-10-08&pill=all&tier=1&status=active&q=aurora`
+(1 of 2 rows), clicked the eye, got the merchant page for `brandId=1` (2 providers, consumed 1,620,000.00),
+clicked `Back to list` — the pill, tier, status, keyword and the 01/10/2026 - 08/10/2026 range came back, and
+the row count was the same 1. The list's inline detail rows and their machinery (expansion state, the per-row
+Copy for Excel / CSV handlers) are deleted; a row's live `Export` still flattens providers, so the loader's
+provider grouping stayed.
+
+**The page has no menu row, so auth.js inherits one.** It joined the Report workspace's exception in
+`enforcePageAccess` (whoever may open Win/Lose Report, `win-lose-report.html` or Provider Report may open it)
+and `sidebarActivePage` keeps the rail lit on Win/Lose Report. Measured both ways on the harness: a MAIN
+account whose menus carry the report renders it; a MAIN account whose menus do not still lands on
+`main-profile.html`. The page is in the SPA manifest (all five markers), so a rail click may swap into it; the
+eye itself is a JS navigation and the back link is not in `LINKS`, so both are ordinary page loads.
+
+**This page's panel hugs its content, and contributes nothing to the paint.** `.mad-panel` is `flex:1` so the
+list's footer sits on the frame's bottom edge; the drill-down's table is as long as the merchant has providers,
+so its panel is `flex:0 0 auto` instead of stretching to the viewport with a blank half under the table.
+
+#### Refinement pass — what the review measured, and what it changed
+
+The first cut shipped with the panel painting its own card (`#FFF8EB` + `#EADCC8` hairline, `flex:1`) around
+the breakdown block, which paints the same card (radius 14, same fills, plus the amber accent bar): two
+identical frames one inside the other, measured `doubleFrame: true` at every width and in both modes. The panel
+is a transparent wrapper now — `border:0 / background:transparent` — and the breakdown is the page's single
+card, its box exactly the panel's (254..1544 at 1568).
+
+- **The override had to out-rank, not merely load later.** The family paints `.mre-panel` at (0,4,2) with
+  `!important` in both modes (`main-report-charcoal.css` 4275 / 4300). A `(0,2,1) + !important` attempt was
+  silently beaten and the double frame stayed; the rule now carries the page's three body classes plus the
+  access-page `:is()` — (0,5,2).
+- **The KPI strip was inset 16px from the row above.** `main-provider-report-executive.css:720` gives
+  `.mre-history-kpis` `padding:14px 16px 4px` for its own page, where the strip sits inside a panel; here the
+  strip is a direct child of the workspace, so its tiles measured x=270 against a heading row at x=254.
+  `padding:0` on this page lines the tiles up with the row and the card.
+- **The status chip's own rules were dead.** The markup carried `mad-status is-active` without the page's
+  `wlm-status`, so the family's table pill painted it (24px, radius 999, `#D1FAE5`) and every `.wlm-status`
+  rule in the page sheet was a no-op. The chip now keeps that family pill, and the period chip was changed to
+  match it exactly (24px tall, radius 999, 11.5px/700) instead of the 28px/8px box it had: two chips on one row
+  should not disagree about their radius. The dead tint rules were deleted rather than left as no-ops.
+- **Five tiles at 390px measured 58px wide**, labels stacked four lines deep. Two columns at ≤600px (176px
+  tiles). The family's own strip has a `grid-template-columns:1fr` collapse at ≤1000px
+  (`main-provider-report-executive.css:729`), but the later family sheet re-states the 5-column grid without a
+  media query, so that collapse never applies anywhere today — worth its own decision, not touched here.
+- **The back link could not be made full-width on a phone.** `main-admin-detail-executive.css` pins every
+  `.mad-btn` to `width:auto!important`, so a plain `width:100%` is a no-op — measured 113px at 390px, and the
+  sibling's own `.mprr-back` mobile rule (`main-merchant-profit-record.css:546`) is that same no-op today.
+  `width:100%!important` + `justify-content:center` at ≤600px; from 768px up the link stays the content-width
+  113x36 button flush with the row's right edge (gap 19px = the row's 18px padding + 1px border).
+- **No merchant, no strip.** With no `brandId`, an unknown one, or a failed request, the strip stayed as an
+  18px empty band (its own padding). `renderSummary()` hides it; the page then reads: heading row, card with
+  the message, and nothing else.
+- **The two file actions match the list's contract again.** The TSV/CSV writer was simplified when the code
+  moved onto the page; it is back to CRLF lines, tab/newline/quote escaping and a UTF-8 BOM on the download,
+  so an Excel paste behaves exactly as it did from the list's inline block. Verified with the document focused
+  (`navigator.clipboard.writeText` refuses an unfocused document — headless starts unfocused, which is what the
+  first "Copy failed" measurement was).
+
+- **The page could not be scrolled at all.** Owner, on the real page with a 22-provider merchant: “我滑动不了
+  table”. The frame is what decides: `.report-content` / `.mre-workspace` are `overflow:hidden` with `flex:1`,
+  and this page has no inner scroller — the list's table wrap carries `max-height:min(68vh,720px);
+  overflow:auto` for exactly that reason — so the card ran past the viewport bottom and stopped.
+  `documentElement.scrollHeight == clientHeight` (748/748), `window.scrollTo(0,700)` stayed at 0, and the wrap's
+  own `scrollHeight == clientHeight`, so rows 8+ were unreachable. Measured with 25 provider rows at 1568 and at
+  390. The page now scrolls as a page: `body.main-win-lose-merchant-page .report-content{overflow-y:auto}` — the
+  same statement the other Main detail pages make (`agent-admin-management.css:669`, `rebate-pages.css:863`,
+  `bo-advertisement-popup-md.css:609`). After: frame `scrollHeight` 1622 vs `clientHeight` 684, scrolls to its end
+  (938) with the last row in view at both widths. **No sticky table head, deliberately**: `.wl-breakdown-scroll`
+  keeps `overflow-x:auto` (the subtable is 880px min-width), and any ancestor with a scrolling mechanism is the
+  scrollport a sticky child resolves against — it never scrolls vertically, so the header would never pin
+  (measured: `thead th` top = -352 after a 700px frame scroll).
+
+Re-measured after: 1568 / 1280 / 1024 / 768 / 390, both themes — no horizontal overflow, no page errors,
+`doubleFrame: false`, the tiles and the card flush with the heading row's edges at every width, and the edge
+states (no params, unknown `brandId`, API error, a 61-character merchant name, a suspended merchant, a merchant
+with no provider rows) each render one clean message. #### The provider row's eye: that provider, in the BO's Provider Win/Loss report (2026-10-09, owner: "Merchant Report 点击游戏 > 跳转去Provider Report（链接BO）", then "因为我要去细看provider下面的merchant的game report")
+
+Three destinations were tried before this one landed: `provider-detail.html` (Provider Details), then the Main workspace's
+Provider Report tab. The owner's answer to the second was "你应该去拿bo的
+https://bo.titanx7.com/casino-provider-winloss-report.html 的provider api". The final shape:
+
+- The eye is an `Action`-column **anchor** (40x40 `.mad-icon-btn`; `text-decoration:none` is the only page-local rule,
+  so middle-click works) carrying `providerCode` plus the `from`/`to` in effect, targeting
+  **`casino-provider-winloss-report.html`** - the BO Report module's Provider Win/Loss page.
+- That page learned to be a link target (`casino-report.js`; seven pages carry its pin):
+  - `?providerCode=` filters the daily rows **client-side before they are paged**, so both the rows and the
+    "Showing X to Y of Z entries" count/ladder follow the filter;
+  - `?from=`/`?to=` fill the two hidden inputs and dispatch `change`, which is exactly what `bo-date-range.js`
+    listens on to re-label its pill. Deliberately done **before** the page binds `autoLoadSelectedRange`, so
+    presetting the range is not a second request (measured: one
+    `/admin/casino-report/summary?period=custom&from=…&to=…` call, plus the strip's all-time call).
+- Access: the page belongs to the BO's Report module. A MAIN account that holds the report workspace but no BO
+  report menu was bounced from the eye (the same shape as `provider-detail.html` earlier), so
+  `enforcePageAccess` admits it through either entry and `sidebarActivePage()` lights the row the account
+  actually holds - its own BO menu when it has one, otherwise the Main Provider Report row.
+- Measured (1568 light, stub data): the merchant page's eye carries
+  `casino-provider-winloss-report.html?providerCode=PGS&from=2026-10-01&to=2026-10-09`; the landing shows the
+  range pill `01/10/2026 - 09/10/2026`, only the two PGS day rows, "Showing 1 to 2 of 2 entries", the rail on
+  Provider Report for the Main account and on Report for the BO account (whose module tab row marks
+  *Provider Win/Loss*), no horizontal overflow, zero page errors.
+
+**`Back to list` on the BO page - the same control, one step back.** Owner, on the landed page: "需要back to list 按键"
+(and then, on a URL opened without the parameter: "没有back to list 按键" - the control is now unconditional).
+The merchant page sends `back=<its own path+query>`; opened from a menu instead, the target is chosen from the
+account's own menus. Only `^/?name.html` targets are accepted, so a crafted `back` cannot point anywhere else. The recipe lives in `bo-report-family.css` as `.bo-report-back` (the family's
+eleven pages already load that sheet, and none of them carried a back control): 36px, radius 8, padding 0 14px,
+12.5px/700, the three-stop cream gradient on a 1px `#DCC9A8` border, the 1px lift on hover, the 2px amber
+focus ring, and the family's dark surface under `data-bo-theme="dark"` - the same values as
+`promotion-form-page.css` `.pform-back`, `.mrc-back-list`, `.agent-back-to-list` and `.mad-btn.mad-btn-ghost`.
+It sits at the row's right end (`margin-left:auto`), which is where BO keeps a list's back control; the row is
+`display:flex` from `bo-ui-standard.css`.
+
+The fallback is menu-driven, so the control never points at a page the account cannot open: the BO report
+module's **Overview** (`casino-overview-report.html`, + the range) for an account whose menus carry that module,
+otherwise the Main report workspace's **Win/Lose list** (`main-win-lose-report.html`, + the range).
+
+Measured (1568 light, three cases, stub data): with `back=<merchant page>` it is 117x36 with its right edge flush
+with the row (gap 0), `#18191C` on `linear-gradient(#FFFCF7, #F5EBDC 55%, #EDE4D4)`, border `#DCC9A8`, no
+underline, and it lands back on `main-win-lose-merchant.html?brandId=1&from=2026-10-01&to=2026-10-09&currency=MYR&pill=active`
+(h1 "Provider Consumption"); for the Main account with no parameter it points at
+`main-win-lose-report.html?from=2026-01-01&to=2026-12-31`; for the BO account with no parameter at
+`casino-overview-report.html?from=2026-01-01&to=2026-12-31`. The chain is one step back at a time: list ->
+merchant page -> provider page -> merchant page -> list, and the merchant page's own `Back to list` still leads
+to the report list.
+
+**Kept from the earlier passes, in case the destination moves again:** the subtable's 8th column and the
+7 -> 8 colspans; `provider-detail.html`'s access + crumb fix (it is still the Provider Report's *own* row
+drill-down, reachable from that report's rows); and `main_provider_report.html`'s `?providerCode=`/range
+support - now unused by this page, but that report is linkable with a provider and a range if anything wants it.
+
+**Known, not introduced here:** every Main panel page's
+`h1` overflows its `.user-title-wrap` at 390px and slides under the action buttons (measured on
+`main-win-lose-report.html`, `main-merchant-balance.html`, `main-merchant-transactions.html` and this page
+alike) — a shell condition, for the shell's own pass.

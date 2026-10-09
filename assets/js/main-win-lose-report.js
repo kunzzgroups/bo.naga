@@ -52,7 +52,6 @@
   let searchQ = '';
   let currency = 'MYR';
   let range = null;
-  let expanded = new Set();
 
   async function api(path) {
     const r = await fetch(API_CONFIG.BASE_URL + path, {
@@ -357,208 +356,35 @@
     return `<span class="mmr-wl wl-wl ${cls}"><b>${sign}${money(n)}</b></span>`;
   }
 
-  function shareHtml(pct) {
-    const n = Math.max(0, Math.min(100, Number(pct) || 0));
-    return `<div class="wl-share-cell" title="${money(n)}%">
-      <b>${money(n)}%</b>
-      <span class="wl-share-track" aria-hidden="true"><i style="width:${n.toFixed(2)}%"></i></span>
-    </div>`;
-  }
-
-  function findMerchant(key) {
-    return merchants.find((r) => String(r.id || r.code || r.name) === String(key))
-      || filtered.find((r) => String(r.id || r.code || r.name) === String(key));
-  }
-
-  function periodLabel() {
-    if (!range) return '';
-    const [a, b] = range.get();
-    return a && b ? `${a} ~ ${b}` : (a || '');
-  }
-
-  function excelRowsForMerchant(row) {
-    const lines = [
-      ['Period', 'Merchant', 'Merchant Code', 'Currency'],
-      [periodLabel(), row.name || '', row.code || '', currency],
-      [],
-      ['Provider', 'Total Bet', 'Total ValidBet', 'Total In', 'Total Out', 'Win/Lose']
-    ];
-    (row.providers || []).forEach((p) => {
-      lines.push([
-        p.code || p.name || '',
-        p.totalBet,
-        p.validBet,
-        p.totalIn,
-        p.totalOut,
-        p.winLose
-      ]);
-    });
-    lines.push([
-      'Total',
-      row.totalBet,
-      row.validBet,
-      row.totalIn,
-      row.totalOut,
-      row.winLose
-    ]);
-    return lines;
-  }
-
-  function toTsv(lines) {
-    return lines.map((row) => row.map((v) => {
-      const s = String(v ?? '');
-      if (/[\t\n\r"]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
-      return s;
-    }).join('\t')).join('\r\n');
-  }
-
-  function toCsv(lines) {
-    return lines.map((row) => row.map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
-  }
-
-  async function copyText(text) {
-    if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(text);
-      return;
-    }
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.setAttribute('readonly', '');
-    ta.style.position = 'fixed';
-    ta.style.left = '-9999px';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-  }
-
-  function flashCopyBtn(btn, ok) {
-    if (!btn) return;
-    const prev = btn.innerHTML;
-    btn.classList.toggle('is-copied', !!ok);
-    btn.innerHTML = ok
-      ? '<i class="bi bi-check2" aria-hidden="true"></i> Copied'
-      : '<i class="bi bi-exclamation-circle" aria-hidden="true"></i> Failed';
-    setTimeout(() => {
-      btn.classList.remove('is-copied');
-      btn.innerHTML = prev;
-    }, 1600);
-  }
-
-  async function copyMerchantExcel(key, btn) {
-    const row = findMerchant(key);
-    if (!row) return;
-    try {
-      await copyText(toTsv(excelRowsForMerchant(row)));
-      flashCopyBtn(btn, true);
-    } catch (e) {
-      console.error(e);
-      flashCopyBtn(btn, false);
-    }
-  }
-
-  function downloadMerchantExcel(key) {
-    const row = findMerchant(key);
-    if (!row) return;
+  /* The eye leaves the list: one merchant's provider consumption on a page of its own
+     (main-win-lose-merchant.html). The link carries the range and the filters actually in
+     effect, so that page's `Back to list` returns to this view rather than to the defaults. */
+  function drillUrl(row) {
+    const u = new URL('main-win-lose-merchant.html', location.href);
     const [a, b] = range ? range.get() : ['', ''];
-    const blob = new Blob(['\ufeff' + toCsv(excelRowsForMerchant(row))], {
-      type: 'text/csv;charset=utf-8'
+    if (row.id != null) u.searchParams.set('brandId', String(row.id));
+    if (a) u.searchParams.set('from', a);
+    if (b) u.searchParams.set('to', b);
+    if (currency) u.searchParams.set('currency', currency);
+    if (statusPill) u.searchParams.set('pill', statusPill);
+    const tier = $('wlTierFilter')?.value || '';
+    if (tier) u.searchParams.set('tier', tier);
+    const st = $('wlStatusFilter')?.value || '';
+    if (st) u.searchParams.set('status', st);
+    const term = ($('wlSearchInput')?.value || '').trim();
+    if (term) u.searchParams.set('q', term);
+    return u.toString();
+  }
+
+  /* One writer for the pill row — the click, the Reset button and the pill a drill-down hands
+     back all go through it, so the three can never disagree about which pill is lit. */
+  function syncStatusPills(value) {
+    statusPill = value;
+    document.querySelectorAll('[data-wl-status]').forEach((b) => {
+      const on = b.getAttribute('data-wl-status') === value;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    const code = row.code || row.id || 'merchant';
-    link.download = `win-lose-${code}-${a || 'from'}-${b || 'to'}.csv`;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(link.href), 500);
-  }
-
-  function breakdownActions(row) {
-    const key = esc(String(row.id || row.code || row.name));
-    return `<div class="wl-breakdown-actions">
-      <span class="wl-consumed"><em>Total Consumed</em><b>${money(row.consumed)}</b><span>pts</span></span>
-      <button type="button" class="wl-excel-btn" data-wl-copy="${key}" title="Copy table for Excel paste">
-        <i class="bi bi-clipboard" aria-hidden="true"></i> Copy for Excel
-      </button>
-      <button type="button" class="wl-excel-btn is-ghost" data-wl-csv="${key}" title="Download CSV">
-        <i class="bi bi-download" aria-hidden="true"></i> CSV
-      </button>
-    </div>`;
-  }
-
-  function breakdownHtml(row) {
-    const providers = row.providers || [];
-    if (!providers.length) {
-      return `<div class="wl-breakdown">
-        <div class="wl-breakdown-head">
-          <div class="wl-breakdown-title">
-            <span class="wl-breakdown-icon" aria-hidden="true"><i class="bi bi-diagram-3"></i></span>
-            <div>
-              <h6>Provider Consumption</h6>
-              <small>Turnover &amp; 消耗分数</small>
-            </div>
-          </div>
-          ${breakdownActions(row)}
-        </div>
-        <div class="wl-breakdown-empty">No provider-level rows for this merchant in the selected period.</div>
-      </div>`;
-    }
-
-    const body = providers.map((p) => {
-      const same = String(p.name || '').toUpperCase() === String(p.code || '').toUpperCase();
-      const codeLabel = p.code && !same ? `#${p.code}` : '';
-      const status = p.active ? 'is-on' : 'is-off';
-      return `<tr>
-        <td>
-          <div class="wl-provider">
-            <span class="wl-prov-mark${p.mark} ${status}" aria-hidden="true">${esc(p.initials)}</span>
-            <div class="wl-provider-copy">
-              <b>${esc(p.name)}</b>
-              ${codeLabel ? `<span class="wl-pcode">${esc(codeLabel)}</span>` : ''}
-            </div>
-          </div>
-        </td>
-        <td class="mre-num"><b>${money(p.totalBet)}</b></td>
-        <td class="mre-num"><b>${money(p.validBet)}</b></td>
-        <td class="mre-num"><b>${money(p.totalIn)}</b></td>
-        <td class="mre-num"><b>${money(p.totalOut)}</b></td>
-        <td class="mre-num">${winLoseHtml(p.winLose)}</td>
-        <td class="mre-num">${shareHtml(p.share)}</td>
-      </tr>`;
-    }).join('');
-
-    return `<div class="wl-breakdown" data-wl-merchant="${esc(String(row.id || row.code || row.name))}">
-      <div class="wl-breakdown-head">
-        <div class="wl-breakdown-title">
-          <span class="wl-breakdown-icon" aria-hidden="true"><i class="bi bi-diagram-3"></i></span>
-          <div>
-            <h6>Provider Consumption</h6>
-            <small>Turnover &amp; 消耗分数 · ${num(providers.length)} providers · ready for Excel</small>
-          </div>
-        </div>
-        ${breakdownActions(row)}
-      </div>
-      <div class="wl-breakdown-scroll">
-        <table class="wl-subtable" data-wl-excel-table>
-          <colgroup>
-            <col class="wl-col-prov"/>
-            <col/><col/><col/><col/><col/>
-            <col class="wl-col-share"/>
-          </colgroup>
-          <thead>
-            <tr>
-              <th>Provider</th>
-              <th class="mre-num">Total Bet</th>
-              <th class="mre-num">Valid Bet</th>
-              <th class="mre-num">Total In</th>
-              <th class="mre-num">Total Out</th>
-              <th class="mre-num">Win/Lose</th>
-              <th class="mre-num">Share</th>
-            </tr>
-          </thead>
-          <tbody>${body}</tbody>
-        </table>
-      </div>
-    </div>`;
   }
 
   function applyFilters() {
@@ -643,21 +469,17 @@
     if (foot) foot.hidden = !total;
 
     if (!rows.length) {
-      tbody.innerHTML = '<tr><td colspan="6" class="mad-empty">No merchant win/lose data for this date range.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" class="mad-empty">No merchant win/lose data for this date range.</td></tr>';
       return;
     }
 
     tbody.innerHTML = rows.map((r) => {
       const key = String(r.id || r.code || r.name);
-      const open = expanded.has(key);
       const codeLabel = r.code ? (`#${r.code}`) : '';
       const txnLabel = r.txns ? (`${num(r.txns)} txns`) : '';
-      return `<tr class="wl-row${open ? ' is-open' : ''}" data-wl-key="${esc(key)}">
+      return `<tr class="wl-row">
         <td>
           <div class="wl-merchant">
-            <button type="button" class="wl-expand" data-wl-toggle="${esc(key)}" aria-expanded="${open ? 'true' : 'false'}" aria-label="${open ? 'Collapse' : 'Expand'} provider breakdown">
-              <i class="bi bi-chevron-${open ? 'down' : 'right'}" aria-hidden="true"></i>
-            </button>
             <span class="mmr-mark${r.mark}">${esc(r.initials)}</span>
             <div class="mmr-merchant-copy" data-report-merchant-link="${esc(String(r.id||r.code||''))}">
               <b>${esc(r.name)}${codeLabel ? ` <span class="mmr-code">${esc(codeLabel)}</span>` : ''}</b>
@@ -670,9 +492,9 @@
         <td class="mre-num"><div class="mmr-stack"><b>${money(r.totalIn)}</b>${txnLabel ? `<small>${esc(txnLabel)}</small>` : ''}</div></td>
         <td class="mre-num"><b>${money(r.totalOut)}</b></td>
         <td class="mre-num">${winLoseHtml(r.winLose)}</td>
-      </tr>
-      <tr class="wl-detail-row"${open ? '' : ' hidden'} data-wl-detail="${esc(key)}">
-        <td colspan="6">${breakdownHtml(r)}</td>
+        <td><div class="mre-actions mad-actions">
+          <button type="button" class="wl-expand mad-icon-btn" data-wl-open="${esc(drillUrl(r))}" title="View provider consumption" aria-label="View provider consumption"><i class="bi bi-eye" aria-hidden="true"></i></button>
+        </div></td>
       </tr>`;
     }).join('');
   }
@@ -682,7 +504,7 @@
     const loadSeq = ++reportLoadSeq;
     try {
       if ($('wlRows')) {
-        $('wlRows').innerHTML = '<tr><td colspan="6" class="mad-empty">Loading win/lose report…</td></tr>';
+        $('wlRows').innerHTML = '<tr><td colspan="7" class="mad-empty">Loading win/lose report…</td></tr>';
       }
       if ($('wlFoot')) $('wlFoot').hidden = true;
 
@@ -707,7 +529,7 @@
         ? 'Unable to reach server. Start local API on :8080 or open the BO on the same host as /api.'
         : (e.message || 'Unable to load win/lose report');
       if ($('wlRows')) {
-        $('wlRows').innerHTML = `<tr><td colspan="6" class="mad-empty text-danger">${esc(msg)}</td></tr>`;
+        $('wlRows').innerHTML = `<tr><td colspan="7" class="mad-empty text-danger">${esc(msg)}</td></tr>`;
       }
       if ($('wlFoot')) $('wlFoot').hidden = true;
       if ($('wlInfo')) $('wlInfo').textContent = 'Showing 0 to 0 of 0 merchants';
@@ -762,20 +584,23 @@
     range = MAIN_DATE_RANGE.init({
       prefix: 'winLose',
       defaultPreset:'today',
-      onChange: () => {
-        expanded.clear();
-        load();
-      }
+      onChange: () => load()
     });
+
+    /* The drill-down's Back to list hands the whole view back: from/to are read by
+       main-exec-date-range.js itself, the four filters here. */
+    const url = new URLSearchParams(location.search);
+    if (url.get('pill')) syncStatusPills(url.get('pill'));
+    if (url.get('tier')) $('wlTierFilter').value = url.get('tier');
+    if (url.get('status')) $('wlStatusFilter').value = url.get('status');
+    if (url.get('q')) {
+      $('wlSearchInput').value = url.get('q');
+      searchQ = url.get('q');
+    }
 
     document.querySelectorAll('[data-wl-status]').forEach((btn) => {
       btn.addEventListener('click', () => {
-        statusPill = btn.getAttribute('data-wl-status') || 'all';
-        document.querySelectorAll('[data-wl-status]').forEach((b) => {
-          const on = b === btn;
-          b.classList.toggle('is-active', on);
-          b.setAttribute('aria-pressed', on ? 'true' : 'false');
-        });
+        syncStatusPills(btn.getAttribute('data-wl-status') || 'all');
         applyFilters();
       });
     });
@@ -803,13 +628,7 @@
       if ($('wlTierFilter')) $('wlTierFilter').value = '';
       if ($('wlStatusFilter')) $('wlStatusFilter').value = '';
       searchQ = '';
-      statusPill = 'active';
-      expanded.clear();
-      document.querySelectorAll('[data-wl-status]').forEach((b) => {
-        const on = b.getAttribute('data-wl-status') === 'active';
-        b.classList.toggle('is-active', on);
-        b.setAttribute('aria-pressed', on ? 'true' : 'false');
-      });
+      syncStatusPills('active');
       applyFilters();
     });
 
@@ -848,6 +667,9 @@
     });
 
     $('wlRows')?.addEventListener('click', (e) => {
+      /* main's related link (row template carries data-report-merchant-link): the merchant cell
+         opens the merchant report page. Kept alongside this branch's eye, which opens the
+         merchant's provider-consumption drill-down. */
       const merchantLink = e.target.closest('[data-report-merchant-link]');
       if (merchantLink) {
         const u = new URL('main_merchant_report.html', location.href);
@@ -855,27 +677,10 @@
         location.href = u.toString();
         return;
       }
-      const copyBtn = e.target.closest('[data-wl-copy]');
-      if (copyBtn) {
-        e.preventDefault();
-        e.stopPropagation();
-        copyMerchantExcel(copyBtn.getAttribute('data-wl-copy'), copyBtn);
-        return;
-      }
-      const csvBtn = e.target.closest('[data-wl-csv]');
-      if (csvBtn) {
-        e.preventDefault();
-        e.stopPropagation();
-        downloadMerchantExcel(csvBtn.getAttribute('data-wl-csv'));
-        return;
-      }
-      const btn = e.target.closest('[data-wl-toggle]');
+      const btn = e.target.closest('[data-wl-open]');
       if (!btn) return;
-      const key = btn.getAttribute('data-wl-toggle');
-      if (!key) return;
-      if (expanded.has(key)) expanded.delete(key);
-      else expanded.add(key);
-      render();
+      e.preventDefault();
+      location.href = btn.getAttribute('data-wl-open');
     });
 
     $('reportExport')?.addEventListener('click', exportCsv);

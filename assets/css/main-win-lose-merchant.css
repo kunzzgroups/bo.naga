@@ -1,0 +1,134 @@
+/* Win/Lose Report — the drill-down page (one merchant's provider consumption).
+
+   The list's eye opens this page (main-win-lose-merchant.html?brandId=…&from=…&to=…); it is
+   the block that used to expand inline, given a page and a heading row: identity, period,
+   status, the totals strip and the provider table. `Back to list` is the family's ghost
+   button at the right end of that row — the same `.mad-btn.mad-btn-ghost` fill the list's
+   Reset / Export carry, which is also BO's cream-gradient recipe
+   (main-report-charcoal.css 341-380 light, 366-380 dark).
+
+   Loaded after the family sheets: `.mmr-mark` / `.mmr-merchant-copy` / `.wl-*` /
+   `.mre-history-kpis` come from main-report-charcoal-content.css and
+   main-win-lose-report.css, where the two modes are already stated. This file adds only
+   what those cannot know — the heading row that belongs to this page alone. */
+
+body.main-win-lose-merchant-page .wlm-head{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px 18px;
+  padding:16px 18px;
+  margin-bottom:16px;
+  min-width:0;
+  border:1px solid #EADCC8;
+  border-radius:14px;
+  background:var(--bo-surface,#FFF8EB);
+  box-shadow:var(--bo-shadow,0 1px 2px rgba(60,48,32,.06));
+}
+
+body.main-win-lose-merchant-page .wlm-identity{
+  display:flex;align-items:center;gap:10px;min-width:0;flex:0 1 auto;
+}
+body.main-win-lose-merchant-page .wlm-identity .mmr-merchant-copy b{white-space:normal}
+
+/* Period + status + currency, pushed to the right of the identity; the back link takes the
+   last seat, which is where BO keeps a list's back control (heading row's right end). */
+body.main-win-lose-merchant-page .wlm-meta{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px;
+  margin-left:auto;min-width:0;
+}
+body.main-win-lose-merchant-page .wlm-period{
+  display:inline-flex;align-items:center;gap:8px;
+  height:24px;padding:0 10px;
+  border:1px solid #EADCC8;border-radius:999px;background:#FFF8EB;
+  color:#57534E;font-size:11.5px;font-weight:700;white-space:nowrap;
+}
+body.main-win-lose-merchant-page .wlm-currency{
+  font-size:12px;font-weight:800;letter-spacing:.02em;color:#57534E;
+}
+body.main-win-lose-merchant-page .wlm-status{
+  height:24px;border-radius:999px;
+}
+
+body.main-win-lose-merchant-page .wlm-back{
+  flex:0 0 auto;
+  display:inline-flex!important;align-items:center;justify-content:center;gap:8px;
+  height:36px!important;min-height:36px!important;
+  padding:0 14px!important;
+  border-radius:8px;
+  font-size:12.5px!important;font-weight:700!important;
+  text-decoration:none!important;
+  white-space:nowrap;
+}
+
+body.main-win-lose-merchant-page .wlm-kpis{
+  /* The provider sheet's strip sits inside a padded panel (14px/16px) so its tiles are inset;
+     here the strip is a direct child of the workspace, and the tiles must line up with the
+     heading row above and the card below — measured before: tiles at x=270 against a row at
+     x=254. */
+  padding:0!important;
+  margin:0 0 16px!important;
+}
+/* The panel is the workspace frame on the list (`.mad-panel` is flex:1 there, because the
+   list's footer sits on the frame's bottom edge). This page's single card is the breakdown
+   block, so the panel contributes nothing to the paint — before this, two identical frames
+   (same #FFF8EB, same #EADCC8 hairline) sat one inside the other.
+   The family paints `.mre-panel` at (0,4,2) with `!important` in both modes
+   (main-report-charcoal.css 4275 / 4300), so this has to out-rank it, not merely load later:
+   a (0,2,1) + `!important` attempt lost and the double frame stayed. */
+body.main-win-lose-merchant-page.main-win-lose-page.main-admin-detail-page:is([data-access-page="main_report"]) .mre-panel{
+  padding:0;
+  flex:0 0 auto;
+  min-height:0;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+/* The list indents the breakdown under the merchant row it came from (38px past the mark);
+   on its own page the block starts at the panel's edge. */
+body.main-win-lose-merchant-page .wl-breakdown{margin:0}
+
+/* A detail page scrolls as a page: the frame is the scroll container, as it is on the other
+   Main detail pages (agent-admin-management.css:669, rebate-pages.css:863,
+   bo-advertisement-popup-md.css:609 all state `body.<page> .report-content{overflow:auto}`).
+   The listing frame keeps its own inner scroller instead, which is why the list needs none of
+   this. Without it the frame clips: `.report-content` / `.mre-workspace` are `overflow:hidden`
+   with `flex:1` in this family, so a 22-provider merchant was cut off at the viewport bottom
+   and there was nothing to scroll — `documentElement.scrollHeight == clientHeight`, and the
+   wrap's `scrollHeight == clientHeight` too. Measured with 25 rows before the fix, and with
+   the frame scrolling after it the whole page moves (frame `scrollHeight` 1622 vs `clientHeight`
+   684).
+   **No sticky table head, deliberately.** `.wl-breakdown-scroll` keeps `overflow-x:auto` (the
+   subtable is 880px min-width), and an ancestor with any scrolling mechanism is the scrollport a
+   sticky child resolves against — it never scrolls vertically, so the header never pins
+   (measured: `thead th` top = -352 after a 700px frame scroll). */
+body.main-win-lose-merchant-page .report-content{overflow-y:auto}
+
+/* The provider row's action — the same eye as the lists, linking to the provider's own page
+   (`provider-detail.html`, built by providerReportUrl in the page script). The anchor gets the
+   family's eye geometry from `.mad-actions > .mad-icon-btn`; only the underline is this page's. */
+body.main-win-lose-merchant-page .wl-subtable .wlm-col-action{width:64px}
+body.main-win-lose-merchant-page .wlm-provider-open{text-decoration:none!important}
+
+html[data-bo-theme="dark"] body.main-win-lose-merchant-page .wlm-head{
+  border-color:rgba(255,255,255,.14);
+  background:var(--bo-surface,#2A2C36);
+  box-shadow:var(--bo-shadow,none);
+}
+html[data-bo-theme="dark"] body.main-win-lose-merchant-page .wlm-period{
+  border-color:rgba(255,255,255,.14);background:#2A2C36;color:#D4D4D8;
+}
+html[data-bo-theme="dark"] body.main-win-lose-merchant-page .wlm-currency{color:#D4D4D8}
+
+@media (max-width:600px){
+  body.main-win-lose-merchant-page .wlm-head{padding:14px}
+  body.main-win-lose-merchant-page .wlm-meta{margin-left:0;width:100%}
+  /* Five tiles at 390px measured 58px wide — labels stacked four lines deep. Two columns
+     keep the value readable on a phone. */
+  body.main-win-lose-merchant-page .wlm-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  /* `main-admin-detail-executive.css` pins every `.mad-btn` to `width:auto!important`, so a
+     plain `width:100%` here is a no-op (measured: the link stayed 113px wide at 390). The
+     sibling's own `.mprr-back` mobile rule is that no-op today. */
+  body.main-win-lose-merchant-page .wlm-back{width:100%!important;justify-content:center}
+}

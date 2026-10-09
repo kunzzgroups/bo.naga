@@ -10,6 +10,14 @@
     return document.body.getAttribute('data-report-page') || document.querySelector('[data-report-page]')?.getAttribute('data-report-page') || 'overview';
   }
   function url(){ return API_CONFIG.BASE_URL + (API_CONFIG.ENDPOINTS.CASINO_REPORT_SUMMARY || '/admin/casino-report/summary'); }
+  /* A link may carry what it was opened for - the Win/Lose merchant page's provider rows send
+     `providerCode` plus the range they were looking at. The range goes into the two hidden
+     inputs (`bo-date-range.js` listens on their `change` to re-label its pill), and the provider
+     filters the daily rows before they are paged, so the count and the ladder follow it. */
+  const LINK_PARAMS = new URLSearchParams(location.search);
+  const LINK_PROVIDER = String(LINK_PARAMS.get('providerCode') || '').trim().toUpperCase();
+  const LINK_FROM = LINK_PARAMS.get('from') || '';
+  const LINK_TO = LINK_PARAMS.get('to') || '';
   function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   function num(v){ const n = Number(v || 0); return Number.isFinite(n) ? n : 0; }
   function money(v){ return num(v).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}); }
@@ -21,6 +29,12 @@
     const json = await res.json().catch(()=>({}));
     if(!res.ok || json.status === 'error') throw new Error(json.message || 'Request failed');
     return json;
+  }
+  function backToListFallback(){
+    const menus=(window.BO_AUTH&&BO_AUTH.allowedMenus?BO_AUTH.allowedMenus():[]).map(function(m){ return String((m&&m.url)||'').split('/').pop().split('?')[0].toLowerCase(); });
+    const qs=(LINK_FROM&&LINK_TO)?('?from='+encodeURIComponent(LINK_FROM)+'&to='+encodeURIComponent(LINK_TO)):'';
+    const boReport=menus.indexOf('casino-overview-report.html')!==-1||menus.indexOf('casino-provider-winloss-report.html')!==-1;
+    return (boReport?'casino-overview-report.html':'main-win-lose-report.html')+qs;
   }
   function params(opts){
     const p = new URLSearchParams();
@@ -226,6 +240,7 @@
   }
   function renderProvider(rows){
     rows = (rows || []).filter(function(r){ return hasAnyData(r, ['activeMembers','betCount','betAmount','validBetAmount','payout','memberWinLoss','companyWinLoss']); });
+    if(LINK_PROVIDER) rows = rows.filter(function(r){ return String(r.providerCode || '').toUpperCase() === LINK_PROVIDER; });
     mountRows('crProviderBody', rows.map(r=>`<tr><td><b>${esc(r.date || '-')}</b></td><td><b>${esc(r.providerCode)}</b></td><td>${whole(r.activeMembers)}</td><td>${whole(r.betCount)}</td><td>${money(r.betAmount)}</td><td>${money(r.validBetAmount)}</td><td>${money(r.payout)}</td><td class="${num(r.memberWinLoss)<0?'text-danger':'text-success'}">${money(r.memberWinLoss)}</td><td class="${num(r.companyWinLoss)<0?'text-danger':'text-success'}"><b>${money(r.companyWinLoss)}</b></td></tr>`), 'No provider bet records.');
   }
   /* The deposit/withdraw row set, in one place: the table below and the KPI strip above it have to
@@ -353,9 +368,39 @@
     const unbinds=[];
     const on=(target,type,fn,opt)=>{ target.addEventListener(type,fn,opt); unbinds.push(()=>target.removeEventListener(type,fn,opt)); };
     window.__boCasinoReportUnbind=()=>{ unbinds.forEach(fn=>fn()); unbinds.length=0; };
+
+    /* The range a link carried: fill the hidden inputs, then let `bo-date-range.js` re-label its
+       pill (it listens on their `change`). Deliberately BEFORE `autoLoadSelectedRange` is bound
+       below, so presetting the range is not a second load. */
+    if(LINK_FROM && LINK_TO){
+      const f=document.getElementById('casinoFrom'), t=document.getElementById('casinoTo');
+      if(f && t){
+        f.value=LINK_FROM; t.value=LINK_TO;
+        f.dispatchEvent(new Event('change',{bubbles:true}));
+        t.dispatchEvent(new Event('change',{bubbles:true}));
+      }
+    }
     // No Search / Reset buttons on this family (owner: "report的所有reset，search，refresh按键
     // 全去除"). The date range auto-applies as soon as a complete range is chosen — see
     // autoLoadSelectedRange below — so the row needs no trigger at all.
+
+    /* `Back to list`. It is the page the link came from (`back`, sent by the Win/Lose merchant
+       page's provider rows); opened from a menu instead, it is the list that account actually
+       has - the BO report module's Overview, or the Main report workspace's Win/Lose list - so
+       the control is always there and never points at a page the account cannot open. Relative
+       page targets only. */
+    const backParam=LINK_PARAMS.get('back')||'';
+    const backTarget=/^\/?[a-z0-9._-]+\.html(\?|#|$)/i.test(backParam)?backParam:backToListFallback();
+    if(!document.querySelector('.bo-report-back')){
+      const row=document.querySelector('.report-main .bo-filter-row');
+      if(row){
+        const a=document.createElement('a');
+        a.className='bo-report-back';
+        a.href=backTarget;
+        a.innerHTML='<i class="bi bi-arrow-left" aria-hidden="true"></i> Back to list';
+        row.appendChild(a);
+      }
+    }
 
     // Match Referral Network behaviour: once a complete date range is selected,
     // refresh the report immediately without requiring the Search button.
