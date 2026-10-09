@@ -88,6 +88,73 @@ components:
 
 Former **Deep Navy Cyan** (`#123B66` / `#21A6D7` / `#072647` / `#08131F`) is **retired**. Do not reintroduce navy/cyan as brand identity.
 
+## Rail typography: synthetic 900 is kept, deliberately
+
+All three shells render their sidebar rows through the same markup and the same one rule:
+`<aside class="report-sidebar"><nav class="report-nav">` (Main does too - verified, and no `main-*.css`
+overrides it) plus `bo-shell.css` `.report-nav > a { font-size:14px; font-weight:900 }`. The family on
+all three is the same `ui-sans-serif, "Segoe UI", system-ui, sans-serif`, which on Windows resolves to a
+face whose heaviest weight is below 900 - so the browser **synthesises** the bold, and at high zoom the
+strokes look blotted together.
+
+`reports.css` already documents this exact trap in its own words ("without this face Windows system-ui
+collapses weight 600-900 into one stroke, so sidebar L1 looks regular") and ships Inter VF for it. The
+portal's pages still load those faces, and they sit `unloaded` - nothing requests the family, because
+the stack names `ui-sans-serif` first.
+
+Decision (owner, 2026-10-08): **keep parity**. All three panels look identical, synthetic weight and
+all, and that was chosen over crisper glyphs on the portal alone. To reverse it later, name `Inter`
+first in the rail's stack - but note the consequence measured at decision time: doing it for the portal
+only breaks the three-way parity, and doing it for all three means editing the BO's own typography, i.e.
+a cross-shell change rather than a portal fix.
+
+**Follow-up evidence, gathered when the owner pointed at the symptom** ("除了 finance 其他第一个字都是不标准的" - the caps look wrong, Finance looks fine). It is not the first letter, and it is not Finance being treated differently:
+
+- moving a label's first glyph out of first position changes nothing (`"D"` measured 10.625px as the first
+  character, 10.641px after an `x` - no substitute font is involved), and the `<a>` rows and the
+  `<button>` group row resolve to the same family, weight, size and tracking;
+- the cause is the synthesised 900: Segoe UI has no such weight, so the browser faux-bolds it, and the
+  denser capitals (D, M, P, R - bowls and closed counters) fatten visibly while `F` (one stem, two arms)
+  stays clean. That is the whole of "Finance looks standard".
+
+A/B measured on the same string at 14px/900: the system stack renders 457.83px wide, the bundled Inter
+face 465.36px, with `serif` at 444.33px and `monospace` at 559.13px as controls to prove the instrument
+could detect a difference at all (the first two attempts at this measurement were wrong: one while the
+Inter face was still `loading`, one where a flex column stretched every sample to the same width and the
+container was measured instead of the text).
+
+Decision re-confirmed with that evidence in hand: **keep the system stack**. Reversing it is the same
+one-line change named above, and doing it for all three shells at once is what keeps the parity this
+decision is about.
+
+
+## Agent Portal: profile and password share one page, like BO
+
+`agent-profile.html` carries BO's second card - `admin-form-card admin-wide-card admin-password-card`
+with `id="password"` - holding the portal's own change-password form verbatim. This is what BO does
+(`profile.html` has `.admin-profile-card` and `.admin-password-card#password` side by side), and it is
+what makes `bo-account-chip.js`'s account chip work: that chip is a link to `profile.html#password`,
+one click to the profile and the password form together. The portal's chip points at
+`agent-profile.html#password` for the same reason.
+
+`agent-change-password.html` is now a redirect stub to that anchor, so the old menu entry, links and
+bookmarks keep working. `initPassword()` used to be called only in the `page === 'password'` branch;
+it now also runs on the profile page (it self-guards on the form's existence), otherwise a form living
+on the profile page would have been inert.
+
+**A verification note, recorded because the first attempt got it wrong.** The commit that made this
+change claimed the redirect stub "was opened and lands on agent-profile.html#password". It does not -
+not in the offline harness. That harness injects `<base href="/">` into every page it builds, so a
+relative target resolves against the repository root instead of the page's own directory, and the
+probe landed on the root copy of `agent-profile.html`, whose token is absent, which bounced it to
+`agent-login.html`. The claim was written before the measurement came back. What was re-checked
+afterwards, in the two halves that can be checked offline: the built stub's target literal is
+`location.replace('agent-profile.html#password'` and the real page contains no `<base>` element, so
+the relative target resolves as intended in the browser; and the destination carries the `#password`
+section, the form, its 3 fields, and a live handler (a 3-character new password returns "New password
+must be at least 8 characters."). **Measure before claiming** - the harness's `<base>` is a trap for
+any relative redirect.
+
 ## Overview
 
 Backoffice is a desktop-first ops panel. Visual world: **Charcoal structure + Amber interaction**.

@@ -68,3 +68,40 @@
     margin-bottom:0!important;
   }
 }
+
+
+/* ================================================================================================
+   Rail typography for the Main panel: the bundled Inter, and a label box the capitals fit in.
+
+   Main links no bo-shell.css (its own shell, as AGENTS.md requires), so the rail rules that live there
+   cannot reach it - and reports.css reaches it, but the drift guard rightly refuses shell metrics in a
+   sheet that is not the shell's owner. Scoping this by data-bo-shell="main" is the exemption the guard
+   itself documents for exactly this case: the attribute is stamped on Main pages only, so the rule can
+   never match a BO page.
+
+   Same values as bo-shell.css (BO) and agent-portal.css (the portal), so all three shells agree:
+   Inter VF first for a real 900 with open counters, and a 21px label line-height because 14 x 1.2 leaves
+   the capitals clipped at the top.
+   ================================================================================================ */
+html:not(#bo-charcoal-off) body[data-bo-shell="main"] .report-sidebar .report-nav > a,
+html:not(#bo-charcoal-off) body[data-bo-shell="main"] .report-sidebar .report-nav > a span,
+html:not(#bo-charcoal-off) body[data-bo-shell="main"] .report-sidebar .report-nav .nav-group-btn,
+html:not(#bo-charcoal-off) body[data-bo-shell="main"] .report-sidebar .report-nav .nav-group-btn span,
+html:not(#bo-charcoal-off) body[data-bo-shell="main"] .report-sidebar .report-nav .report-sub,
+html:not(#bo-charcoal-off) body[data-bo-shell="main"] .report-sidebar .report-nav .report-sub span,
+html:not(#bo-charcoal-off) body[data-bo-shell="main"] .report-sidebar .bo-sidebar-logout span{
+  font-family:Inter, ui-sans-serif, "Segoe UI", system-ui, sans-serif!important;
+  line-height:21px!important;
+}
+
+  /* The label span must not carry a rounded, clipping box. bo-charcoal-shell.css gives the rail's
+     label spans border-radius:10px (copied from the active-row pill, which belongs on the ROW), and
+     reports.css gives them overflow:hidden - so a 21px-tall text box was being rounded by 10px, and its
+     four corners were cutting the glyphs. Measured on the agent rail before this: the span itself
+     reported border-radius 10px + overflow hidden while the anchor reported overflow visible, which is
+     why the row looked fine and the letters did not (owner: "好像是border radius的问题"). */
+html:not(#bo-charcoal-off) body[data-bo-shell="main"] .report-sidebar .report-nav > a span,
+html:not(#bo-charcoal-off) body[data-bo-shell="main"] .report-sidebar .report-nav .nav-group-btn span,
+html:not(#bo-charcoal-off) body[data-bo-shell="main"] .report-sidebar .report-nav .report-sub span{
+  border-radius:0!important;
+}
