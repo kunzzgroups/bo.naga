@@ -27,9 +27,12 @@
 
   const params = new URLSearchParams(location.search);
   const brandId = params.get('brandId') || '';
-  const from = params.get('from') || '';
-  const to = params.get('to') || '';
+  /* `let`, not `const`: the range is editable on this page (MAIN_DATE_RANGE), so the two values
+     move with the picker - the query, the heading and `Back to list` all follow them. */
+  let from = params.get('from') || '';
+  let to = params.get('to') || '';
   let currency = String(params.get('currency') || '').toUpperCase();
+  let range = null;
 
   let merchant = null;
   let providers = [];
@@ -256,7 +259,6 @@
     }
     if ($('wlmMark')) $('wlmMark').textContent = initials(merchant?.name, merchant?.code || brandId);
     if ($('wlmTier')) $('wlmTier').textContent = merchant ? merchant.tierLabel : '—';
-    if ($('wlmPeriodText')) $('wlmPeriodText').textContent = periodLabel();
     if ($('wlmCurrency')) $('wlmCurrency').textContent = `(${currency})`;
     if ($('wlmStatus')) {
       const suspended = merchant?.status === 'suspended';
@@ -441,6 +443,26 @@
     return `?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to2)}`;
   }
 
+  /* The list's own date field, on this page: `main-exec-date-range.js` reads `from`/`to` from the
+     URL, writes the two hidden inputs and calls back on every change. The callback keeps this
+     page's own state (`from`/`to`, the address bar, the Back to list target) in step and asks for
+     the new range's rows - the operator no longer has to go back to the list to move the dates. */
+  function setupRange() {
+    if (!window.MAIN_DATE_RANGE) return;
+    range = MAIN_DATE_RANGE.init({
+      prefix: 'wlm',
+      defaultPreset: 'today',
+      onChange: (a, b) => {
+        from = a; to = b;
+        const u = new URL(location.href);
+        if (a) u.searchParams.set('from', a);
+        if (b) u.searchParams.set('to', b);
+        history.replaceState(null, '', u);
+        load();
+      }
+    });
+  }
+
   function setup() {
     BO_AUTH.requireLogin();
     currency = String(
@@ -450,6 +472,7 @@
       || 'MYR'
     ).toUpperCase();
     if ($('wlmCurrency')) $('wlmCurrency').textContent = `(${currency})`;
+    setupRange();
     $('wlmCopy')?.addEventListener('click', () => copyForExcel($('wlmCopy')));
     $('wlmCsv')?.addEventListener('click', downloadCsv);
     load();

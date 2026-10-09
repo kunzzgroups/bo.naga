@@ -7100,7 +7100,27 @@ card, its box exactly the panel's (254..1544 at 1568).
 Re-measured after: 1568 / 1280 / 1024 / 768 / 390, both themes — no horizontal overflow, no page errors,
 `doubleFrame: false`, the tiles and the card flush with the heading row's edges at every width, and the edge
 states (no params, unknown `brandId`, API error, a 61-character merchant name, a suspended merchant, a merchant
-with no provider rows) each render one clean message. #### The count under a money value carries no unit word (2026-10-09, owner: "bo和main的 txns字符需要移除")
+with no provider rows) each render one clean message. #### The merchant drill-down can move its own dates now (2026-10-09, owner: "Merchant report小眼睛>Provider Consumption 页面不能改date Range要退回母级页面才能修改日期")
+
+`main-win-lose-merchant.html` showed the range as a read-only pill, so a different period meant going back to the list,
+changing it there and coming back. The pill is replaced by the family's own date field
+(`.field.ref-date-field.mre-date-field.main-exec-date-field` + `MAIN_DATE_RANGE.init({prefix:'wlm'})`, the same
+component and the same 8 presets / calendar the list uses), and the page's `from`/`to` are `let` now.
+
+On a change the page keeps itself in step: it re-runs `load()` with the new range, rewrites the address bar
+(`history.replaceState`, so a refresh or a shared link carries the period) and re-derives `Back to list` - which is
+the point of a drill-down: the range you set here is the range the list comes back to. The +1-day convention on the
+request's `to` is the list's own (`main-provider-report.js:62`).
+
+Measured (stub API): the field renders `01/10/2026 - 09/10/2026` from the carried URL and is 260x36; opening it shows
+the 8 presets and a 42-cell calendar with the range highlighted; picking This Week moves the label to
+`04/10/2026 - 10/10/2026`, the URL to `…&from=2026-10-04&to=2026-10-10`, the request to
+`provider-settlement?from=2026-10-04&to=2026-10-11` (the +1), re-renders the rows, and rewrites Back to list to
+`main-win-lose-report.html?from=2026-10-04&to=2026-10-10&pill=active`. 1568/1280/1024/768/390 x light+dark: no page
+overflow, the row wraps below 1024 (the field is 260px wide, as on the list) and stacks at 390, 0 page errors. The
+dead `.wlm-period` rules were removed with the pill.
+
+#### The count under a money value carries no unit word (2026-10-09, owner: "bo和main的 txns字符需要移除")
 
 The small count under Total In (Win/Lose list, merchant report) and beside Total Bet (the merchant drill-down's
 KPI) said "2,541 txns"; the BO's agent performance report put " tx" under Deposit / Withdraw
