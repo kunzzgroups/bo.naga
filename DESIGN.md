@@ -7083,6 +7083,20 @@ card, its box exactly the panel's (254..1544 at 1568).
   (`navigator.clipboard.writeText` refuses an unfocused document — headless starts unfocused, which is what the
   first "Copy failed" measurement was).
 
+- **The page could not be scrolled at all.** Owner, on the real page with a 22-provider merchant: “我滑动不了
+  table”. The frame is what decides: `.report-content` / `.mre-workspace` are `overflow:hidden` with `flex:1`,
+  and this page has no inner scroller — the list's table wrap carries `max-height:min(68vh,720px);
+  overflow:auto` for exactly that reason — so the card ran past the viewport bottom and stopped.
+  `documentElement.scrollHeight == clientHeight` (748/748), `window.scrollTo(0,700)` stayed at 0, and the wrap's
+  own `scrollHeight == clientHeight`, so rows 8+ were unreachable. Measured with 25 provider rows at 1568 and at
+  390. The page now scrolls as a page: `body.main-win-lose-merchant-page .report-content{overflow-y:auto}` — the
+  same statement the other Main detail pages make (`agent-admin-management.css:669`, `rebate-pages.css:863`,
+  `bo-advertisement-popup-md.css:609`). After: frame `scrollHeight` 1622 vs `clientHeight` 684, scrolls to its end
+  (938) with the last row in view at both widths. **No sticky table head, deliberately**: `.wl-breakdown-scroll`
+  keeps `overflow-x:auto` (the subtable is 880px min-width), and any ancestor with a scrolling mechanism is the
+  scrollport a sticky child resolves against — it never scrolls vertically, so the header would never pin
+  (measured: `thead th` top = -352 after a 700px frame scroll).
+
 Re-measured after: 1568 / 1280 / 1024 / 768 / 390, both themes — no horizontal overflow, no page errors,
 `doubleFrame: false`, the tiles and the card flush with the heading row's edges at every width, and the edge
 states (no params, unknown `brandId`, API error, a 61-character merchant name, a suspended merchant, a merchant

@@ -89,6 +89,22 @@ body.main-win-lose-merchant-page.main-win-lose-page.main-admin-detail-page:is([d
    on its own page the block starts at the panel's edge. */
 body.main-win-lose-merchant-page .wl-breakdown{margin:0}
 
+/* A detail page scrolls as a page: the frame is the scroll container, as it is on the other
+   Main detail pages (agent-admin-management.css:669, rebate-pages.css:863,
+   bo-advertisement-popup-md.css:609 all state `body.<page> .report-content{overflow:auto}`).
+   The listing frame keeps its own inner scroller instead, which is why the list needs none of
+   this. Without it the frame clips: `.report-content` / `.mre-workspace` are `overflow:hidden`
+   with `flex:1` in this family, so a 22-provider merchant was cut off at the viewport bottom
+   and there was nothing to scroll — `documentElement.scrollHeight == clientHeight`, and the
+   wrap's `scrollHeight == clientHeight` too. Measured with 25 rows before the fix, and with
+   the frame scrolling after it the whole page moves (frame `scrollHeight` 1622 vs `clientHeight`
+   684). The table header stays pinned via `position:sticky` while the card scrolls past. */
+body.main-win-lose-merchant-page .report-content{overflow-y:auto}
+/* No sticky table head here, deliberately: `.wl-breakdown-scroll` keeps `overflow-x:auto` (the
+   subtable is 880px min-width), and an ancestor with any scrolling mechanism is the scrollport a
+   sticky child resolves against — it does not scroll vertically, so the header would never pin.
+   Measured: `thead th` top = -352 after a 700px frame scroll. */
+
 html[data-bo-theme="dark"] body.main-win-lose-merchant-page .wlm-head{
   border-color:rgba(255,255,255,.14);
   background:var(--bo-surface,#2A2C36);
