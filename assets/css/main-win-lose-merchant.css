@@ -98,12 +98,18 @@ body.main-win-lose-merchant-page .wl-breakdown{margin:0}
    and there was nothing to scroll — `documentElement.scrollHeight == clientHeight`, and the
    wrap's `scrollHeight == clientHeight` too. Measured with 25 rows before the fix, and with
    the frame scrolling after it the whole page moves (frame `scrollHeight` 1622 vs `clientHeight`
-   684). The table header stays pinned via `position:sticky` while the card scrolls past. */
-body.main-win-lose-merchant-page .report-content{overflow-y:auto}
-/* No sticky table head here, deliberately: `.wl-breakdown-scroll` keeps `overflow-x:auto` (the
+   684).
+   **No sticky table head, deliberately.** `.wl-breakdown-scroll` keeps `overflow-x:auto` (the
    subtable is 880px min-width), and an ancestor with any scrolling mechanism is the scrollport a
-   sticky child resolves against — it does not scroll vertically, so the header would never pin.
-   Measured: `thead th` top = -352 after a 700px frame scroll. */
+   sticky child resolves against — it never scrolls vertically, so the header never pins
+   (measured: `thead th` top = -352 after a 700px frame scroll). */
+body.main-win-lose-merchant-page .report-content{overflow-y:auto}
+
+/* The provider row's action — the same eye as the lists, linking to the provider's own page
+   (`provider-detail.html`, built by providerReportUrl in the page script). The anchor gets the
+   family's eye geometry from `.mad-actions > .mad-icon-btn`; only the underline is this page's. */
+body.main-win-lose-merchant-page .wl-subtable .wlm-col-action{width:64px}
+body.main-win-lose-merchant-page .wlm-provider-open{text-decoration:none!important}
 
 html[data-bo-theme="dark"] body.main-win-lose-merchant-page .wlm-head{
   border-color:rgba(255,255,255,.14);

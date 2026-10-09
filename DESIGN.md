@@ -7100,7 +7100,38 @@ card, its box exactly the panel's (254..1544 at 1568).
 Re-measured after: 1568 / 1280 / 1024 / 768 / 390, both themes — no horizontal overflow, no page errors,
 `doubleFrame: false`, the tiles and the card flush with the heading row's edges at every width, and the edge
 states (no params, unknown `brandId`, API error, a 61-character merchant name, a suspended merchant, a merchant
-with no provider rows) each render one clean message. **Known, not introduced here:** every Main panel page's
+with no provider rows) each render one clean message. #### The provider row's eye: one provider's own report (2026-10-09, owner: "这些 provider 我有没有办法就是单独看他们的 merchant report？")
+
+The provider table's rows are data only, and drilling from one of them is the same gesture the merchant row already
+has: an `Action` column with the family's eye (`.mad-icon-btn` inside `.mre-actions mad-actions`, 40x40) linking
+to **`provider-detail.html`** — the Provider Details page the sibling Provider Report's row action opens, so the
+two reports drill to the same place. The link carries `providerCode`, `providerName` and the `from`/`to` actually
+in effect; that page reads all four (`provider-detail-executive.js` takes its range from the URL and keeps it in
+sync), renders its own date control, and lists the provider's rows per brand (Intra-Range Turnover / Payable
+Amount / Balance Due / Settlement Period / Status). The subtable grew one column (8 total; `colgroup` +
+`wlm-col-action` at 64px) and the empty-state colspans moved 7 -> 8.
+
+It is an anchor, not a button + `location.href` — middle-click works, and the family's `.mad-icon-btn` paints it
+(measured: 40x40, `#57534E`, no underline, amber hover). Only `text-decoration:none` is this page's.
+
+**Two things to know about that destination, both by design and neither hidden.** It is a **BO-shell page**
+(`data-bo-shell="bo"`, charcoal + amber, its own rail), which is allowed to be served in the Main portal
+(`menu-management.html` is such a page) and therefore looks of a family with this one; and its back arrow goes to
+`main-accounting-report.html`, not back to this page. Its access is the **Accounting Report** menu
+(`auth.js`: `provider-detail.html` inherits `main-accounting-report.html`), where this page inherits the Report
+workspace — so an account that can open Win/Lose Report but not the accounting report would be bounced from the
+provider eye. That asymmetry is the reason the alternative — a Main-panel provider page mirroring the merchant
+one, inheriting the same Report access — was offered and not taken; if a role ever exists with one menu and not
+the other, the cheaper fix is to add `provider-detail.html` to the Report workspace's exception in
+`enforcePageAccess` rather than to build a page.
+
+Measured (1568 light, root account, stub API): the two provider rows each carry
+`provider-detail.html?providerCode=PGS&providerName=PG+Soft&from=2026-10-01&to=2026-10-09`; clicking the first
+lands on `PG Soft — Provider Details` with the range `01/10/2026 - 09/10/2026` and two brand rows (Aurora Play,
+Nova Casino). Rows are 61px now against 54.1 before — the 40px well sets the row (the list's own rows are 53px
+with the same well), and no width overflows at 1568 / 1280 / 1024 / 768 / 390 in either mode.
+
+**Known, not introduced here:** every Main panel page's
 `h1` overflows its `.user-title-wrap` at 390px and slides under the action buttons (measured on
 `main-win-lose-report.html`, `main-merchant-balance.html`, `main-merchant-transactions.html` and this page
 alike) — a shell condition, for the shell's own pass.

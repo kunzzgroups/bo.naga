@@ -131,6 +131,19 @@
     </div>`;
   }
 
+  /* The provider's own drill-down: the page the sibling Provider Report's row action opens
+     (`provider-detail.html` — Provider Details: this provider's rows per brand for the range,
+     with its own date control). It carries the range actually in effect. It is a BO-shell page
+     and needs the Accounting Report permission — see DESIGN.md for the contract. */
+  function providerReportUrl(p) {
+    const u = new URL('provider-detail.html', location.href);
+    u.searchParams.set('providerCode', p.code || '');
+    if (p.name && p.name !== p.code) u.searchParams.set('providerName', p.name);
+    if (from) u.searchParams.set('from', from);
+    if (to) u.searchParams.set('to', to);
+    return u.toString();
+  }
+
   function summaryCard(label, value, hint) {
     return `<div class="report-summary-card">
       <small>${esc(label)}</small>
@@ -272,11 +285,11 @@
     const tbody = $('wlmRows');
     if (!tbody) return;
     if (!brandId) {
-      tbody.innerHTML = '<tr><td colspan="7" class="mad-empty">No merchant was passed to this page — open it from the Win/Lose Report\'s eye.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" class="mad-empty">No merchant was passed to this page — open it from the Win/Lose Report\'s eye.</td></tr>';
       return;
     }
     if (!providers.length) {
-      tbody.innerHTML = '<tr><td colspan="7" class="mad-empty">No provider-level rows for this merchant in the selected period.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" class="mad-empty">No provider-level rows for this merchant in the selected period.</td></tr>';
       return;
     }
     tbody.innerHTML = providers.map((p) => {
@@ -299,6 +312,9 @@
         <td class="mre-num"><b>${money(p.totalOut)}</b></td>
         <td class="mre-num">${winLoseHtml(p.winLose)}</td>
         <td class="mre-num">${shareHtml(p.share)}</td>
+        <td><div class="mre-actions mad-actions">
+          <a class="mad-icon-btn wlm-provider-open" href="${esc(providerReportUrl(p))}" title="View provider report" aria-label="View provider report"><i class="bi bi-eye" aria-hidden="true"></i></a>
+        </div></td>
       </tr>`;
     }).join('');
   }
@@ -322,7 +338,7 @@
     const seq = ++loadSeq;
     try {
       if ($('wlmRows')) {
-        $('wlmRows').innerHTML = '<tr><td colspan="7" class="mad-empty">Loading providers…</td></tr>';
+        $('wlmRows').innerHTML = '<tr><td colspan="8" class="mad-empty">Loading providers…</td></tr>';
       }
       const [settlement, directory] = await Promise.all([
         api('/admin/main/reports/provider-settlement' + apiQuery()),
@@ -401,7 +417,7 @@
         ? 'Unable to reach server. Start local API on :8080 or open the BO on the same host as /api.'
         : (e.message || 'Unable to load provider consumption');
       if ($('wlmRows')) {
-        $('wlmRows').innerHTML = `<tr><td colspan="7" class="mad-empty text-danger">${esc(msg)}</td></tr>`;
+        $('wlmRows').innerHTML = `<tr><td colspan="8" class="mad-empty text-danger">${esc(msg)}</td></tr>`;
       }
       if ($('wlmConsumed')) $('wlmConsumed').textContent = money(0);
     }
