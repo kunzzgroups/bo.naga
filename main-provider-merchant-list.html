@@ -20,7 +20,7 @@
 <link href="assets/css/bo-account-chip.css?v=c8730135" rel="stylesheet"/>
 <link href="assets/css/main-report-charcoal.css?v=f20bf566" rel="stylesheet"/>
 <link href="assets/css/main-report-charcoal-content.css?v=5ba7ca02" rel="stylesheet"/>
-<link href="assets/css/main-provider-merchant-list.css?v=55e78ed2" rel="stylesheet"/>
+<link href="assets/css/main-provider-merchant-list.css?v=9b2edb42" rel="stylesheet"/>
 <link href="assets/css/bo-input-fill.css?v=1ab80f49" rel="stylesheet"/>
 <link href="assets/css/main-mobile-responsive.css?v=9022ed30" rel="stylesheet">
 <link href="assets/css/bo-table-zebra.css?v=7860fc7a" rel="stylesheet"/>
@@ -76,7 +76,45 @@
       </div>
     </div>
     <div class="pml-meta">
-      <span class="pml-period" id="pmlPeriod"><i class="bi bi-calendar3" aria-hidden="true"></i><span id="pmlPeriodText">—</span></span>
+      <!-- The range is editable here too (owner: "这个页面也要啊 日期选项"). Same field and component as the
+           report list, and the same URL contract: a range set here is the range the report comes back to. -->
+      <div class="field ref-date-field mre-date-field main-mod-date main-exec-date-field pml-date-field">
+        <input type="hidden" id="pmlFrom"/>
+        <input type="hidden" id="pmlTo"/>
+        <div class="ref-range-wrap">
+          <button class="ref-range-trigger mre-date-trigger" id="pmlDateTrigger" type="button" aria-label="Select date range" aria-expanded="false">
+            <span class="ref-range-icon"><i class="bi bi-calendar3"></i></span>
+            <span id="pmlDateLabel">Select date range</span>
+            <i class="bi bi-chevron-down ms-auto"></i>
+          </button>
+          <div class="ref-range-picker" id="pmlRangePicker">
+            <div class="ref-range-presets">
+              <button data-pml-preset="today" type="button">Today</button>
+              <button data-pml-preset="yesterday" type="button">Yesterday</button>
+              <button data-pml-preset="thisWeek" type="button">This Week</button>
+              <button data-pml-preset="lastWeek" type="button">Last Week</button>
+              <button data-pml-preset="thisMonth" type="button">This Month</button>
+              <button data-pml-preset="lastMonth" type="button">Last Month</button>
+              <button data-pml-preset="thisYear" type="button">This Year</button>
+              <button data-pml-preset="lastYear" type="button">Last Year</button>
+            </div>
+            <div class="ref-range-calendar">
+              <div class="ref-cal-head">
+                <button id="pmlCalPrev" type="button"><i class="bi bi-chevron-left"></i></button>
+                <button class="ref-head-pick" id="pmlCalMonth" type="button"></button>
+                <button class="ref-head-pick" id="pmlCalYear" type="button"></button>
+                <button id="pmlCalNext" type="button"><i class="bi bi-chevron-right"></i></button>
+              </div>
+              <div class="ref-cal-month-grid" id="pmlCalMonthGrid"></div>
+              <div class="ref-cal-year-grid" id="pmlCalYearGrid"></div>
+              <div class="ref-cal-day-view" id="pmlCalDayView">
+                <div class="ref-cal-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+                <div class="ref-cal-days" id="pmlCalDays"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <span class="pml-currency mre-cur-label" id="pmlCurrency">(MYR)</span>
     </div>
     <a class="mad-btn mad-btn-ghost pml-back" id="pmlBack" href="main_provider_report.html"><i class="bi bi-arrow-left" aria-hidden="true"></i> Back to list</a>
@@ -142,7 +180,8 @@
 <script src="assets/js/currency-runtime.js?v=b63c89fb"></script>
 <script src="assets/js/reports.js?v=a96450f8"></script>
 <script src="assets/js/auth.js?v=8c4968dc"></script>
-<script src="assets/js/main-provider-merchant-list.js?v=460868c6"></script>
+<script src="assets/js/main-exec-date-range.js?v=c48bd797"></script>
+<script src="assets/js/main-provider-merchant-list.js?v=99cfad52"></script>
 <script src="assets/js/bo-ui-standard.js?v=890f213b"></script>
 <script src="assets/js/bo-theme.js?v=d78603d9"></script>
 <script src="assets/js/bo-account-chip.js?v=57839162"></script>

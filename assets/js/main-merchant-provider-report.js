@@ -33,8 +33,10 @@
   const params = new URLSearchParams(location.search);
   const brandId = String(params.get('brandId') || '').trim();
   const merchantNameParam = params.get('merchantName') || '';
-  const from = params.get('from') || '';
-  const to = params.get('to') || '';
+  /* `let`, not `const`: the range is editable on this page (MAIN_DATE_RANGE), so these move with
+     the picker - the query, the heading and Back to list all follow them. */
+  let from = params.get('from') || '';
+  let to = params.get('to') || '';
   const backParam = params.get('back') || '';
   let currency = String(params.get('currency') || '').toUpperCase();
 
@@ -66,16 +68,20 @@
      Provider Report -> Merchant List -> this page unwinds one step at a time. Without it the
      report itself is the parent. */
   function backHref() {
+    /* The range comes back up the chain: whatever period is set here is the one the page behind
+       this one (the Merchant List, or the report) returns to. */
+    const apply = (u) => {
+      if (from) u.searchParams.set('from', from);
+      if (to) u.searchParams.set('to', to);
+      return u.toString();
+    };
     if (backParam && /^[^:]*\.html(\?|$)/.test(backParam)) {
       try {
         const u = new URL(backParam, location.href);
-        if (u.origin === location.origin) return u.toString();
+        if (u.origin === location.origin) return apply(u);
       } catch (e) { /* fall through to the report */ }
     }
-    const u = new URL('main_provider_report.html', location.href);
-    if (from) u.searchParams.set('from', from);
-    if (to) u.searchParams.set('to', to);
-    return u.toString();
+    return apply(new URL('main_provider_report.html', location.href));
   }
 
   function initials(name, code) {
@@ -256,7 +262,6 @@
         ? [merchant.tierLabel, `${count(providers.length)} provider${providers.length === 1 ? '' : 's'}`].filter(Boolean).join(' · ')
         : '—';
     }
-    if ($('mprPeriodText')) $('mprPeriodText').textContent = periodLabel();
     if ($('mprCurrency')) $('mprCurrency').textContent = `(${currency})`;
     if ($('mprBack')) $('mprBack').href = backHref();
     if (name && brandId) document.title = `${name} · Provider Report`;
@@ -450,6 +455,24 @@
     return `?from=${encodeURIComponent(from)}&to=${encodeURIComponent(addDay(to))}`;
   }
 
+  /* The same date field its twins carry: `main-exec-date-range.js` reads `from`/`to` from the URL
+     and calls back on every change, so the range can be moved here instead of a level up. */
+  function setupRange() {
+    if (!window.MAIN_DATE_RANGE) return;
+    MAIN_DATE_RANGE.init({
+      prefix: 'mpr',
+      defaultPreset: 'today',
+      onChange: (a, b) => {
+        from = a; to = b;
+        const u = new URL(location.href);
+        if (a) u.searchParams.set('from', a);
+        if (b) u.searchParams.set('to', b);
+        history.replaceState(null, '', u);
+        load();
+      }
+    });
+  }
+
   function setup() {
     BO_AUTH.requireLogin();
     currency = String(
@@ -459,6 +482,7 @@
       || 'MYR'
     ).toUpperCase();
     if ($('mprCurrency')) $('mprCurrency').textContent = `(${currency})`;
+    setupRange();
     $('mprCopy')?.addEventListener('click', () => copyForExcel($('mprCopy')));
     $('mprCsv')?.addEventListener('click', downloadCsv);
     load();

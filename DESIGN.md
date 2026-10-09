@@ -7120,6 +7120,21 @@ the 8 presets and a 42-cell calendar with the range highlighted; picking This We
 overflow, the row wraps below 1024 (the field is 260px wide, as on the list) and stacks at 390, 0 page errors. The
 dead `.wlm-period` rules were removed with the pill.
 
+#### All three drill-down pages carry the range field (owner: "这个页面也要啊 日期选项")
+
+The Merchant List (`main-provider-merchant-list.html`) and the merchant's Provider Report
+(`main-merchant-provider-report.html`) now carry the same date field as the merchant drill-down, with prefixes
+`pml` / `mpr` - same component, same eight presets, same 260x36 seat in the heading row, same URL contract. The
+dead `.pml-period` / `.mpr-period` rules went with the pills.
+
+Their `backHref()` now applies the current `from`/`to` to whatever it returns, so a period set on one of these
+pages travels up the chain: measured, picking Last Month on the Merchant List moved its own URL to
+`…&from=2026-09-01&to=2026-09-30`, re-queried `provider-settlement?from=2026-09-01&to=2026-10-01` (the +1 day) and
+rewrote Back to list to `main_provider_report.html?from=2026-09-01&to=2026-09-30`; the merchant Provider Report did
+the same one level deeper, its Back landing on the Merchant List with the new range. The owner had also shown the
+merchant drill-down still on a pill - that page had been given the field in the previous commit; the pin moves with
+it, so a refresh (Ctrl+F5 if a cached page holds the old script) shows it. 0 page errors on all three.
+
 #### The count under a money value carries no unit word (2026-10-09, owner: "bo和main的 txns字符需要移除")
 
 The small count under Total In (Win/Lose list, merchant report) and beside Total Bet (the merchant drill-down's

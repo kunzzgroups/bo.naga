@@ -33,8 +33,10 @@
   const providerCode = String(params.get('providerCode') || '').trim();
   const providerNameParam = params.get('providerName') || '';
   const categoryParam = params.get('category') || '';
-  const from = params.get('from') || '';
-  const to = params.get('to') || '';
+  /* `let`, not `const`: the range is editable on this page (MAIN_DATE_RANGE), so these move with
+     the picker - the query, the heading and Back to list all follow them. */
+  let from = params.get('from') || '';
+  let to = params.get('to') || '';
   const backParam = params.get('back') || '';
   let currency = String(params.get('currency') || '').toUpperCase();
 
@@ -67,16 +69,20 @@
      report's own URL (it carries `?merchant=` when the report was opened filtered by a merchant),
      so a link that came from somewhere else in the chain still unwinds one step at a time. */
   function backHref() {
+    /* The range comes back up the chain: whatever period is set here is the one the page behind
+       this one returns to (the same rule the merchant drill-down follows). */
+    const apply = (u) => {
+      if (from) u.searchParams.set('from', from);
+      if (to) u.searchParams.set('to', to);
+      return u.toString();
+    };
     if (backParam && /^[^:]*\.html(\?|$)/.test(backParam)) {
       try {
         const u = new URL(backParam, location.href);
-        if (u.origin === location.origin) return u.toString();
+        if (u.origin === location.origin) return apply(u);
       } catch (e) { /* fall through to the report */ }
     }
-    const u = new URL('main_provider_report.html', location.href);
-    if (from) u.searchParams.set('from', from);
-    if (to) u.searchParams.set('to', to);
-    return u.toString();
+    return apply(new URL('main_provider_report.html', location.href));
   }
 
   function initials(name, code) {
@@ -220,7 +226,6 @@
         ? [provider.category, `${count(merchants.length)} merchant${merchants.length === 1 ? '' : 's'}`].filter(Boolean).join(' · ')
         : '—';
     }
-    if ($('pmlPeriodText')) $('pmlPeriodText').textContent = periodLabel();
     if ($('pmlCurrency')) $('pmlCurrency').textContent = `(${currency})`;
     if ($('pmlBack')) $('pmlBack').href = backHref();
     if (name && providerCode) document.title = `${provider?.code || providerCode} · Merchant List`;
@@ -404,6 +409,26 @@
     return `?from=${encodeURIComponent(from)}&to=${encodeURIComponent(addDay(to))}`;
   }
 
+  /* The report list's own date field, on this page: `main-exec-date-range.js` reads `from`/`to`
+     from the URL, writes the two hidden inputs and calls back on every change. The callback keeps
+     this page's state (its query, the address bar, its Back to list) in step - the operator no
+     longer has to go back to the report to move the dates. */
+  function setupRange() {
+    if (!window.MAIN_DATE_RANGE) return;
+    MAIN_DATE_RANGE.init({
+      prefix: 'pml',
+      defaultPreset: 'today',
+      onChange: (a, b) => {
+        from = a; to = b;
+        const u = new URL(location.href);
+        if (a) u.searchParams.set('from', a);
+        if (b) u.searchParams.set('to', b);
+        history.replaceState(null, '', u);
+        load();
+      }
+    });
+  }
+
   function setup() {
     BO_AUTH.requireLogin();
     currency = String(
@@ -413,6 +438,7 @@
       || 'MYR'
     ).toUpperCase();
     if ($('pmlCurrency')) $('pmlCurrency').textContent = `(${currency})`;
+    setupRange();
     $('pmlCopy')?.addEventListener('click', () => copyForExcel($('pmlCopy')));
     $('pmlCsv')?.addEventListener('click', downloadCsv);
     load();
