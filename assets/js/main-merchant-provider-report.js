@@ -91,6 +91,28 @@
     return m ? (' is-' + m) : '';
   }
 
+  /* The Game Category column reads the same way the report's own does
+     (`main-provider-report.js:101-114`): a hint from the row's fields when there is one, and the
+     same brandCount heuristic when there is not - which is the usual case, because the
+     `brands` rows carry no category at all and the aggregated `providers` row may not either
+     (owner, on this page: "没有 game category" - every row read `—`). Copying the derivation, not
+     the raw field, is what keeps the two pages showing the same word. */
+  function categoryKey(x) {
+    const hint = String(x.category || x.gameCategory || x.providerType || x.desc || '').toLowerCase();
+    if (/live/.test(hint) && /slot/.test(hint)) return 'mixed';
+    if (/live|casino/.test(hint)) return 'live';
+    if (/sport/.test(hint)) return 'sports';
+    if (/slot/.test(hint)) return 'slots';
+    const brands = Number(x.brandCount || 0);
+    if (brands >= 4) return 'mixed';
+    if (brands >= 2) return 'live';
+    return 'slots';
+  }
+
+  function categoryLabel(key) {
+    return ({ slots: 'Slots', live: 'Live Casino', sports: 'Sports', mixed: 'Slots & Live Casino' })[key] || 'Game Provider';
+  }
+
   function tierKey(x) {
     const t = x.tier ?? x.merchantTier ?? x.brandTier ?? x.level ?? x.planType;
     const s = String(t || '').toLowerCase();
@@ -336,7 +358,6 @@
     return {
       code,
       name: first.providerName || first.vendorName || code,
-      category: first.gameCategory || first.categoryLabel || first.category || '',
       ...t
     };
   }
@@ -374,10 +395,11 @@
         .map(([key, list], i) => {
           const p = providerFromRows(key, list);
           const global = globalByCode.get(key) || {};
-          const category = p.category || global.gameCategory || global.categoryLabel || global.category || '';
           return {
             ...p,
-            category,
+            /* The provider's own row wins where it exists (it carries brandCount, which the
+               heuristic needs); without one the pair's fields answer. */
+            category: categoryLabel(categoryKey({ ...list[0], ...global })),
             name: p.name || global.providerName || key,
             mark: markClass(i),
             initials: initials(p.name || global.providerName, key)
