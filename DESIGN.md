@@ -7100,7 +7100,21 @@ card, its box exactly the panel's (254..1544 at 1568).
 Re-measured after: 1568 / 1280 / 1024 / 768 / 390, both themes — no horizontal overflow, no page errors,
 `doubleFrame: false`, the tiles and the card flush with the heading row's edges at every width, and the edge
 states (no params, unknown `brandId`, API error, a 61-character merchant name, a suspended merchant, a merchant
-with no provider rows) each render one clean message. #### The provider row's eye: that provider, in the BO's Provider Win/Loss report (2026-10-09, owner: "Merchant Report 点击游戏 > 跳转去Provider Report（链接BO）", then "因为我要去细看provider下面的merchant的game report")
+with no provider rows) each render one clean message. #### The merchant name is not a link (2026-10-09, owner: "我点击名字会去到 merchant management的页面 不应该吧？ 麻烦帮我去除这个功能")
+
+main's "Add related link for each report" (6365af53, Wang Zai) had put a `data-report-merchant-link` on the Win/Lose list's merchant
+cell, so clicking a merchant's *name* jumped to `main_merchant_report.html?merchant=…` — while this workspace's own
+gesture for that row is the **eye** in the Action column. The owner hit the name by accident and asked for it to go. The
+attribute and its click branch are gone from `main-win-lose-report.js`; the list now reads: the name is text, the eye is
+the action. Measured: clicking the name stays on `/main-win-lose-report.html?from=…&to=…`, clicking the eye opens
+`main-win-lose-merchant.html?brandId=…`.
+
+**The same commit's related links on three other pages are left alone** (they are another developer's work on pages the
+owner has not asked about): `main_merchant_report.html` merchant name -> `main_provider_report.html?merchant=…`,
+`main_provider_report.html` provider name -> `main-merchant-detail.html?providerCode=…`, and `main-merchant-detail.html`'s merchant code ->
+`main_provider_report.html?merchant=…`. They are one clause each if the owner wants the same treatment there.
+
+#### The provider row's eye: that provider, in the BO's Provider Win/Loss report (2026-10-09, owner: "Merchant Report 点击游戏 > 跳转去Provider Report（链接BO）", then "因为我要去细看provider下面的merchant的game report")
 
 Three destinations were tried before this one landed: `provider-detail.html` (Provider Details), then the Main workspace's
 Provider Report tab. The owner's answer to the second was "你应该去拿bo的
