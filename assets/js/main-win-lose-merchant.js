@@ -19,6 +19,10 @@
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
+  /* The copy hands numbers to the spreadsheet, not strings: the page's own sums are floats, so a
+     pasted total could read 519.5799999999999 against the page's 519.58 (measured). Two decimals,
+     exactly what the page shows. */
+  const n2 = (v) => Math.round(Number(v || 0) * 100) / 100;
   const MARKS = ['', 'teal', 'violet', 'amber', 'rose', 'slate'];
 
   const params = new URLSearchParams(location.search);
@@ -164,17 +168,18 @@
 
   /* ---------- the table's own copy / download, as the list's block had ---------- */
 
+  /* The paste starts at the table itself: this used to be headed by a
+     Period / Merchant / Merchant Code / Currency row, which the operator does not want in the
+     spreadsheet (owner: "这个被框中的部分我不要被copy到"). The page - and the CSV's file name -
+     still carry which merchant and which range this is. */
   function excelRows() {
     const lines = [
-      ['Period', 'Merchant', 'Merchant Code', 'Currency'],
-      [periodLabel(), merchant?.name || '', merchant?.code || '', currency],
-      [],
       ['Provider', 'Total Bet', 'Total ValidBet', 'Total In', 'Total Out', 'Win/Lose']
     ];
     providers.forEach((p) => {
-      lines.push([p.code || p.name || '', p.totalBet, p.validBet, p.totalIn, p.totalOut, p.winLose]);
+      lines.push([p.code || p.name || '', n2(p.totalBet), n2(p.validBet), n2(p.totalIn), n2(p.totalOut), n2(p.winLose)]);
     });
-    lines.push(['Total', merchant?.totalBet || 0, merchant?.validBet || 0, merchant?.totalIn || 0, merchant?.totalOut || 0, merchant?.winLose || 0]);
+    lines.push(['Total', n2(merchant?.totalBet), n2(merchant?.validBet), n2(merchant?.totalIn), n2(merchant?.totalOut), n2(merchant?.winLose)]);
     return lines;
   }
 

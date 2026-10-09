@@ -22,6 +22,10 @@
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
+  /* The copy hands numbers to the spreadsheet, not strings: the page's own sums are floats, so a
+     pasted total could read 519.5799999999999 against the page's 519.58 (measured). Two decimals,
+     exactly what the page shows. */
+  const n2 = (v) => Math.round(Number(v || 0) * 100) / 100;
   const count = (v) => Number(v || 0).toLocaleString('en-MY');
   const MARKS = ['', 'teal', 'violet', 'amber', 'rose', 'slate'];
 
@@ -123,19 +127,19 @@
 
   function tableRows() {
     return merchants.map((m) => [
-      m.name, m.code, m.turnover, m.gross, m.receivable, m.payable, m.margin, m.bets
+      m.name, m.code, n2(m.turnover), n2(m.gross), n2(m.receivable), n2(m.payable), n2(m.margin), m.bets
     ]);
   }
 
+  /* The paste starts at the table itself: the Period / Provider / Category / Currency row that
+     used to head it is not wanted in the spreadsheet (owner: "这个被框中的部分我不要被copy到").
+     The page and the CSV's file name still carry which provider and which range this is. */
   function excelRows() {
     const lines = [
-      ['Period', 'Provider', 'Provider Code', 'Category', 'Currency'],
-      [periodLabel(), provider?.name || '', provider?.code || providerCode, provider?.category || '', currency],
-      [],
       ['Merchant', 'Merchant Code', 'Turnover', 'Gross Amount', 'Merchant Receivable', 'Pay to Provider', 'Company Margin', 'Bets']
     ];
     tableRows().forEach((r) => lines.push(r));
-    lines.push(['Total', '', provider?.turnover || 0, provider?.gross || 0, provider?.receivable || 0, provider?.payable || 0, provider?.margin || 0, provider?.bets || 0]);
+    lines.push(['Total', '', n2(provider?.turnover), n2(provider?.gross), n2(provider?.receivable), n2(provider?.payable), n2(provider?.margin), provider?.bets || 0]);
     return lines;
   }
 

@@ -7012,7 +7012,7 @@ The merchant row's action was a chevron in the Merchant cell that expanded the p
 row. It is now the family eye in a last `Action` column (the sibling report pages' recipe: `mad-icon-btn` inside
 `mre-actions mad-actions`, 40x40, radius 8), and the click leaves the list for
 **`main-win-lose-merchant.html`** — the same breakdown as a page: identity · period · status · currency in a
-heading row, the five totals as `.mre-history-kpis` tiles, then the provider table with its Copy for Excel / CSV
+heading row, the five totals as `.mre-history-kpis` tiles, then the provider table with its Copy report / CSV
 actions. Files: `assets/js/main-win-lose-merchant.js`, `assets/css/main-win-lose-merchant.css`.
 
 **`Back to list` is the family's own recipe, and it sits where BO puts it.** The link is the last child of the
@@ -7132,7 +7132,7 @@ its rows had no action of their own. Now: the name is text, and a seventh **Acti
   `assets/css/main-merchant-provider-report.css`), the exact mirror of this list: identity (merchant, tier,
   provider count), period pill, currency, `Back to list` at the right end, five tiles and the report's table read
   per provider - Provider | Game Category | Turnover | Gross Amount | Merchant Receivable | Pay to Provider |
-  Company Margin | Bets | Action, with Copy for Excel / CSV. Its row eye continues the chain into the BO's
+  Company Margin | Bets | Action, with Copy report / CSV. Its row eye continues the chain into the BO's
   Provider Win/Loss for that provider, carrying this page as its `back`.
   The owner rejected the two stop-gaps before it, in order: the shared tabbed report
   (`main_provider_report.html?merchant=…`: "怎么是跳去main的provider report？") and then this branch's
@@ -7143,6 +7143,15 @@ its rows had no action of their own. Now: the name is text, and a seventh **Acti
   8,200 / +1,700 / 4,211) whose sums are the tiles. `Back to list` returns to the Merchant List with its state,
   which then returns to the report. Edge state (no `brandId`) renders one message with the strip hidden.
   1568 / 1280 / 1024 / 768 / 390 x light+dark: no page-level overflow, 0 page errors, no double frame.
+- **The clipboard button says "Copy report", and the paste starts at the table** (owner: "把copy for excel的字句 改为
+  copy report" then, on the pasted sheet, "这个被框中的部分我不要被copy到"). All three drill-down pages of the family carry
+  the same label and the same shape: the `Period / … / Currency` prelude that used to head the copy is gone, so the
+  first pasted row is the table's own header, and the values are rounded to two decimals on the way out
+  (`n2`) - the page's own sums are floats, so a total had pasted as 519.5799999999999 against the page's 519.58
+  (measured). The CSV download already had no prelude and now rounds the same way. Measured after: the Win/Lose
+  merchant page pastes `Provider | Total Bet | Total ValidBet | Total In | Total Out | Win/Lose` then the rows and a
+  clean `Total 519.58 …`, the Merchant List `Merchant | Merchant Code | Turnover | …`, the merchant Provider Report
+  `Provider | Provider Code | Game Category | …`; 0 page errors.
   **`providerCode` is not carried** from the list into this page: the merchant's whole provider line is the point
   of it, and on the tabbed page pre-filling the search box had filtered the table to one provider while the tiles
   stayed merchant-wide (measured: tiles 22,200 against a 14,000 table).
