@@ -288,8 +288,10 @@
     ].join('');
   }
 
+  /* The count beside Total Bet is the run's bet count; the word "txns" after it is gone
+     (owner: "bo和main的 txns字符需要移除"). */
   function txnHint(txns) {
-    return txns ? `${Number(txns).toLocaleString('en-MY')} txns` : '';
+    return txns ? Number(txns).toLocaleString('en-MY') : '';
   }
 
   function validRateHint(row) {
