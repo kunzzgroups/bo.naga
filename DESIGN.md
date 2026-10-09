@@ -7127,14 +7127,25 @@ its rows had no action of their own. Now: the name is text, and a seventh **Acti
   `main-provider-report-executive.css`, because the fixed layout summed to 100% over six columns and a seventh would
   have been laid out at zero; the eye's seat in its cell (12px padding, left-aligned in ~101px) is the same as the
   Win/Lose list's Action column, measured on both.
-- **The merchant row's eye goes one level deeper into the same report**: the Provider Report in its for-merchant
-  mode, `main_provider_report.html?merchant=<id>&from=&to=` - the mode main's own links already use
-  (`main_merchant-report.js:365`, `main-merchant-detail.js:1259`). Owner, looking at this page: "我点action view
-  merchant list 后 他里面有一个merchant 我再点眼睛 应该看到的页面是 provider report(for merchant) 来自bo的吧？" Measured on
-  Aurora Play: the table shows that merchant's two providers and the tiles read 1,120,000 turnover / 22,200 payable /
-  4,300 collect - the same numbers as the rows, because both are scoped to the merchant. `providerCode` is
-  deliberately not carried: pre-filling the search box filters the table to one provider while the tiles stay
-  merchant-wide (measured: tiles 22,200 against a 14,000 table).
+- **The merchant row's eye opens the merchant's own Provider Report - a page of its own**
+  (`main-merchant-provider-report.html` + `assets/js/main-merchant-provider-report.js` +
+  `assets/css/main-merchant-provider-report.css`), the exact mirror of this list: identity (merchant, tier,
+  provider count), period pill, currency, `Back to list` at the right end, five tiles and the report's table read
+  per provider - Provider | Game Category | Turnover | Gross Amount | Merchant Receivable | Pay to Provider |
+  Company Margin | Bets | Action, with Copy for Excel / CSV. Its row eye continues the chain into the BO's
+  Provider Win/Loss for that provider, carrying this page as its `back`.
+  The owner rejected the two stop-gaps before it, in order: the shared tabbed report
+  (`main_provider_report.html?merchant=…`: "怎么是跳去main的provider report？") and then this branch's
+  Win/Lose merchant page - what they asked for is "merchant 的 provider report … 单独的". Measured on Aurora Play:
+  identity "Aurora Play #MC001 / Tier 3 Standard · 2 providers", tiles -3,500 gross / 22,200 payable (1.98% of
+  turnover) / +4,500 margin / +4,300 receivable / 2 providers - 13,211 bets, and the two provider rows
+  (PG Soft 700,000 turnover / -12,000 gross / 3,400 / 14,000 / +2,800 / 9,000; SBOBET 420,000 / +8,500 / 900 /
+  8,200 / +1,700 / 4,211) whose sums are the tiles. `Back to list` returns to the Merchant List with its state,
+  which then returns to the report. Edge state (no `brandId`) renders one message with the strip hidden.
+  1568 / 1280 / 1024 / 768 / 390 x light+dark: no page-level overflow, 0 page errors, no double frame.
+  **`providerCode` is not carried** from the list into this page: the merchant's whole provider line is the point
+  of it, and on the tabbed page pre-filling the search box had filtered the table to one provider while the tiles
+  stayed merchant-wide (measured: tiles 22,200 against a 14,000 table).
 - The merchant page (`main-win-lose-merchant.js`) still honours a `back` parameter the same way the BO provider page
   does, so any link into it can unwind one step at a time; without `back` it goes to the Win/Lose list with
   `pill`/`tier`/`status`/`q` (measured, unchanged).

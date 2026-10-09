@@ -95,17 +95,19 @@
     return `<span class="mre-ggr ${cls}"><b>${sign}${money(n)}</b></span>`;
   }
 
-  /* The merchant's own half of this report: the Provider Report in the `?merchant=` mode main's own
-     links use (`main_merchant_report.js:365`, `main-merchant-detail.js:1259`) - that merchant's
-     providers, with the page's KPI strip scoped to the same merchant, so the table and the tiles
-     agree. Owner, on this page's row eye: "应该看到的页面是 provider report(for merchant)".
-     Deliberately no `providerCode`: pre-filling the search box would filter the table to this one
-     provider while the tiles stayed merchant-wide (measured: tiles 22,200 against a 14,000 table). */
+  /* The merchant's own provider report: a standalone page of the same shape as this one, read the
+     other way round (`main-merchant-provider-report.html`, the report's table for one merchant).
+     `back` is this list, so the chain Provider Report -> this list -> that page unwinds one step at
+     a time. Owner: "应该是 merchant 的 provider report 吧 单独的" (after the shared
+     `main_provider_report.html?merchant=` - the report page itself - was not what they meant). */
   function merchantPageUrl(m) {
-    const u = new URL('main_provider_report.html', location.href);
-    u.searchParams.set('merchant', m.id);
+    const u = new URL('main-merchant-provider-report.html', location.href);
+    u.searchParams.set('brandId', m.id);
+    if (m.name) u.searchParams.set('merchantName', m.name);
     if (from) u.searchParams.set('from', from);
     if (to) u.searchParams.set('to', to);
+    u.searchParams.set('currency', currency);
+    u.searchParams.set('back', location.pathname + location.search);
     return u.toString();
   }
 
@@ -279,7 +281,7 @@
         <td class="mre-num">${amountHtml(m.margin)}</td>
         <td class="mre-num"><b>${count(m.bets)}</b></td>
         <td><div class="mre-actions mad-actions">
-          <a class="mad-icon-btn pml-merchant-open" href="${esc(merchantPageUrl(m))}" title="Open in the Provider Report" aria-label="Open in the Provider Report"><i class="bi bi-eye" aria-hidden="true"></i></a>
+          <a class="mad-icon-btn pml-merchant-open" href="${esc(merchantPageUrl(m))}" title="Open that merchant's Provider Report" aria-label="Open that merchant's Provider Report"><i class="bi bi-eye" aria-hidden="true"></i></a>
         </div></td>
       </tr>`;
     }).join('');
