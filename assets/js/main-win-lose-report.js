@@ -643,7 +643,7 @@
     if (foot) foot.hidden = !total;
 
     if (!rows.length) {
-      tbody.innerHTML = '<tr><td colspan="6" class="mad-empty">No merchant win/lose data for this date range.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" class="mad-empty">No merchant win/lose data for this date range.</td></tr>';
       return;
     }
 
@@ -655,9 +655,6 @@
       return `<tr class="wl-row${open ? ' is-open' : ''}" data-wl-key="${esc(key)}">
         <td>
           <div class="wl-merchant">
-            <button type="button" class="wl-expand" data-wl-toggle="${esc(key)}" aria-expanded="${open ? 'true' : 'false'}" aria-label="${open ? 'Collapse' : 'Expand'} provider breakdown">
-              <i class="bi bi-chevron-${open ? 'down' : 'right'}" aria-hidden="true"></i>
-            </button>
             <span class="mmr-mark${r.mark}">${esc(r.initials)}</span>
             <div class="mmr-merchant-copy">
               <b>${esc(r.name)}${codeLabel ? ` <span class="mmr-code">${esc(codeLabel)}</span>` : ''}</b>
@@ -670,9 +667,12 @@
         <td class="mre-num"><div class="mmr-stack"><b>${money(r.totalIn)}</b>${txnLabel ? `<small>${esc(txnLabel)}</small>` : ''}</div></td>
         <td class="mre-num"><b>${money(r.totalOut)}</b></td>
         <td class="mre-num">${winLoseHtml(r.winLose)}</td>
+        <td><div class="mre-actions mad-actions">
+          <button type="button" class="wl-expand mad-icon-btn" data-wl-toggle="${esc(key)}" aria-expanded="${open ? 'true' : 'false'}" title="${open ? 'Hide' : 'View'} provider breakdown" aria-label="${open ? 'Hide' : 'View'} provider breakdown"><i class="bi bi-eye" aria-hidden="true"></i></button>
+        </div></td>
       </tr>
       <tr class="wl-detail-row"${open ? '' : ' hidden'} data-wl-detail="${esc(key)}">
-        <td colspan="6">${breakdownHtml(r)}</td>
+        <td colspan="7">${breakdownHtml(r)}</td>
       </tr>`;
     }).join('');
   }
@@ -682,7 +682,7 @@
     const loadSeq = ++reportLoadSeq;
     try {
       if ($('wlRows')) {
-        $('wlRows').innerHTML = '<tr><td colspan="6" class="mad-empty">Loading win/lose report…</td></tr>';
+        $('wlRows').innerHTML = '<tr><td colspan="7" class="mad-empty">Loading win/lose report…</td></tr>';
       }
       if ($('wlFoot')) $('wlFoot').hidden = true;
 
@@ -707,7 +707,7 @@
         ? 'Unable to reach server. Start local API on :8080 or open the BO on the same host as /api.'
         : (e.message || 'Unable to load win/lose report');
       if ($('wlRows')) {
-        $('wlRows').innerHTML = `<tr><td colspan="6" class="mad-empty text-danger">${esc(msg)}</td></tr>`;
+        $('wlRows').innerHTML = `<tr><td colspan="7" class="mad-empty text-danger">${esc(msg)}</td></tr>`;
       }
       if ($('wlFoot')) $('wlFoot').hidden = true;
       if ($('wlInfo')) $('wlInfo').textContent = 'Showing 0 to 0 of 0 merchants';

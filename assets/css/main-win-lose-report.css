@@ -237,9 +237,8 @@ body.main-win-lose-page .wl-merchant{
 }
 
 body.main-win-lose-page .wl-expand{
-  flex:0 0 28px;
-  width:28px;
-  height:28px;
+  /* The row action is the family eye: the well is `.mad-actions > .mad-icon-btn`
+     (40px, radius 8, both palettes); this class carries the row's open state. */
   border:0;
   border-radius:8px;
   background:transparent;
