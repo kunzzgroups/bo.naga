@@ -10,6 +10,14 @@
     return document.body.getAttribute('data-report-page') || document.querySelector('[data-report-page]')?.getAttribute('data-report-page') || 'overview';
   }
   function url(){ return API_CONFIG.BASE_URL + (API_CONFIG.ENDPOINTS.CASINO_REPORT_SUMMARY || '/admin/casino-report/summary'); }
+  /* A link may carry what it was opened for - the Win/Lose merchant page's provider rows send
+     `providerCode` plus the range they were looking at. The range goes into the two hidden
+     inputs (`bo-date-range.js` listens on their `change` to re-label its pill), and the provider
+     filters the daily rows before they are paged, so the count and the ladder follow it. */
+  const LINK_PARAMS = new URLSearchParams(location.search);
+  const LINK_PROVIDER = String(LINK_PARAMS.get('providerCode') || '').trim().toUpperCase();
+  const LINK_FROM = LINK_PARAMS.get('from') || '';
+  const LINK_TO = LINK_PARAMS.get('to') || '';
   function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   function num(v){ const n = Number(v || 0); return Number.isFinite(n) ? n : 0; }
   function money(v){ return num(v).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}); }
@@ -226,6 +234,7 @@
   }
   function renderProvider(rows){
     rows = (rows || []).filter(function(r){ return hasAnyData(r, ['activeMembers','betCount','betAmount','validBetAmount','payout','memberWinLoss','companyWinLoss']); });
+    if(LINK_PROVIDER) rows = rows.filter(function(r){ return String(r.providerCode || '').toUpperCase() === LINK_PROVIDER; });
     mountRows('crProviderBody', rows.map(r=>`<tr><td><b>${esc(r.date || '-')}</b></td><td><b>${esc(r.providerCode)}</b></td><td>${whole(r.activeMembers)}</td><td>${whole(r.betCount)}</td><td>${money(r.betAmount)}</td><td>${money(r.validBetAmount)}</td><td>${money(r.payout)}</td><td class="${num(r.memberWinLoss)<0?'text-danger':'text-success'}">${money(r.memberWinLoss)}</td><td class="${num(r.companyWinLoss)<0?'text-danger':'text-success'}"><b>${money(r.companyWinLoss)}</b></td></tr>`), 'No provider bet records.');
   }
   /* The deposit/withdraw row set, in one place: the table below and the KPI strip above it have to
@@ -353,6 +362,18 @@
     const unbinds=[];
     const on=(target,type,fn,opt)=>{ target.addEventListener(type,fn,opt); unbinds.push(()=>target.removeEventListener(type,fn,opt)); };
     window.__boCasinoReportUnbind=()=>{ unbinds.forEach(fn=>fn()); unbinds.length=0; };
+
+    /* The range a link carried: fill the hidden inputs, then let `bo-date-range.js` re-label its
+       pill (it listens on their `change`). Deliberately BEFORE `autoLoadSelectedRange` is bound
+       below, so presetting the range is not a second load. */
+    if(LINK_FROM && LINK_TO){
+      const f=document.getElementById('casinoFrom'), t=document.getElementById('casinoTo');
+      if(f && t){
+        f.value=LINK_FROM; t.value=LINK_TO;
+        f.dispatchEvent(new Event('change',{bubbles:true}));
+        t.dispatchEvent(new Event('change',{bubbles:true}));
+      }
+    }
     // No Search / Reset buttons on this family (owner: "report的所有reset，search，refresh按键
     // 全去除"). The date range auto-applies as soon as a complete range is chosen — see
     // autoLoadSelectedRange below — so the row needs no trigger at all.

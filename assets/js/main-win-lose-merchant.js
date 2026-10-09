@@ -131,11 +131,11 @@
     </div>`;
   }
 
-  /* The provider's own report: the Report workspace's Provider Report tab (`main_provider_report.html`),
-     opened filtered to this provider - the page reads `providerCode` into its search box and takes the
-     range from the URL. That page's own rows still drill on to Provider Details. */
+  /* The provider's own report: the BO's Provider Win/Loss Report (`casino-provider-winloss-report.html`),
+     opened filtered to this provider - that page reads `providerCode` into its daily-row filter and
+     takes the range from the URL, so the table is this provider's day-by-day bet / win-loss. */
   function providerReportUrl(p) {
-    const u = new URL('main_provider_report.html', location.href);
+    const u = new URL('casino-provider-winloss-report.html', location.href);
     u.searchParams.set('providerCode', p.code || '');
     if (from) u.searchParams.set('from', from);
     if (to) u.searchParams.set('to', to);

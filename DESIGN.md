@@ -7100,45 +7100,36 @@ card, its box exactly the panel's (254..1544 at 1568).
 Re-measured after: 1568 / 1280 / 1024 / 768 / 390, both themes — no horizontal overflow, no page errors,
 `doubleFrame: false`, the tiles and the card flush with the heading row's edges at every width, and the edge
 states (no params, unknown `brandId`, API error, a 61-character merchant name, a suspended merchant, a merchant
-with no provider rows) each render one clean message. #### The provider row's eye: that provider, in the Provider Report (2026-10-09, owner: "Merchant Report 点击游戏 > 跳转去Provider Report（链接BO）")
+with no provider rows) each render one clean message. #### The provider row's eye: that provider, in the BO's Provider Win/Loss report (2026-10-09, owner: "Merchant Report 点击游戏 > 跳转去Provider Report（链接BO）", then "因为我要去细看provider下面的merchant的game report")
 
-The provider table's rows are data only; drilling from one is the same gesture the merchant row already has - an
-`Action` column with the family's eye (`.mad-icon-btn` inside `.mre-actions mad-actions`, 40x40). The first cut
-pointed it at `provider-detail.html` (Provider Details), which is what the Provider Report's *own* row action
-opens; the owner's answer was "加载的页面不对". The destination is this workspace's **Provider Report** tab,
-`main_provider_report.html`, so the second drill-down of the report pair lands on the report tab exactly as the
-first one (the merchant eye) lands on the merchant page.
+Three destinations were tried before this one landed: `provider-detail.html` (Provider Details), then the Main workspace's
+Provider Report tab. The owner's answer to the second was "你应该去拿bo的
+https://bo.titanx7.com/casino-provider-winloss-report.html 的provider api". The final shape:
 
-The subtable grew one column (8 total; `colgroup` + `wlm-col-action` at 64px) and the empty-state colspans moved
-7 -> 8. The eye is an anchor, not a button + `location.href`, so middle-click works; the family's `.mad-icon-btn`
-paints it (measured 40x40, `#57534E`, no underline, amber hover) and only `text-decoration:none` is this page's.
-The link carries `providerCode` and the `from`/`to` in effect.
+- The eye is an `Action`-column **anchor** (40x40 `.mad-icon-btn`; `text-decoration:none` is the only page-local rule,
+  so middle-click works) carrying `providerCode` plus the `from`/`to` in effect, targeting
+  **`casino-provider-winloss-report.html`** - the BO Report module's Provider Win/Loss page.
+- That page learned to be a link target (`casino-report.js`; seven pages carry its pin):
+  - `?providerCode=` filters the daily rows **client-side before they are paged**, so both the rows and the
+    "Showing X to Y of Z entries" count/ladder follow the filter;
+  - `?from=`/`?to=` fill the two hidden inputs and dispatch `change`, which is exactly what `bo-date-range.js`
+    listens on to re-label its pill. Deliberately done **before** the page binds `autoLoadSelectedRange`, so
+    presetting the range is not a second request (measured: one
+    `/admin/casino-report/summary?period=custom&from=…&to=…` call, plus the strip's all-time call).
+- Access: the page belongs to the BO's Report module. A MAIN account that holds the report workspace but no BO
+  report menu was bounced from the eye (the same shape as `provider-detail.html` earlier), so
+  `enforcePageAccess` admits it through either entry and `sidebarActivePage()` lights the row the account
+  actually holds - its own BO menu when it has one, otherwise the Main Provider Report row.
+- Measured (1568 light, stub data): the merchant page's eye carries
+  `casino-provider-winloss-report.html?providerCode=PGS&from=2026-10-01&to=2026-10-09`; the landing shows the
+  range pill `01/10/2026 - 09/10/2026`, only the two PGS day rows, "Showing 1 to 2 of 2 entries", the rail on
+  Provider Report for the Main account and on Report for the BO account (whose module tab row marks
+  *Provider Win/Loss*), no horizontal overflow, zero page errors.
 
-**The Provider Report had to learn two things to be a link target**, both small and both in
-`main-provider-report.js` (loaded by four pages, so its pin moved on all four):
-
-- `?providerCode=` pre-fills its provider search box (`#mreSearchInput`) - the same client-side filter the
-  operator can clear - and puts the status pill on **All** rather than leaving the default Active, so a provider
-  that is not Active cannot land on an empty table.
-- `from`/`to` in the URL become the picker's range (`setupDatePicker`); without them it opens on today, as it
-  always has, and the preset highlight is only cleared when the range really came from a link.
-
-Measured (1568 light, the owner's account shape, stub data): the eye on `brandId=1` carries
-`main_provider_report.html?providerCode=PGS&from=2026-01-01&to=2026-12-31`; the landing shows the Provider Report
-tab active, search `PGS`, pill **All (3)**, range `01 Jan 2026 - 31 Dec 2026`, and "Showing 1 to 1 of 1
-providers" - the single PG Soft row - with the rail lit on Provider Report and zero page errors.
-
-**`provider-detail.html` is still the Provider Report's own row drill-down, and its access was fixed in the same
-pass.** It inherits the *Accounting Report* menu in `auth.js` while this workspace holds the *Report* menus, and
-the owner's account has the latter only: measured before, opening it landed on `main-dashboard.html`.
-`enforcePageAccess` now admits it through either entry (the report tabs or the accounting menu - the BO path is
-unchanged), `sidebarActivePage()` lights whichever of the two rows the account actually holds, and
-`provider-detail-executive.js` derives its crumb's first link, its back button and its no-`providerCode`
-fall-back from the same menus ("Provider Settlement" for the accounting audience, "Provider Report" for the
-report one), so the label always names the page it opens.
-
-Rows are 61px now against 54.1 before - the 40px well sets the row (the list's own rows are 53px with the same
-well) - and no width overflows at 1568 / 1280 / 1024 / 768 / 390 in either mode.
+**Kept from the earlier passes, in case the destination moves again:** the subtable's 8th column and the
+7 -> 8 colspans; `provider-detail.html`'s access + crumb fix (it is still the Provider Report's *own* row
+drill-down, reachable from that report's rows); and `main_provider_report.html`'s `?providerCode=`/range
+support - now unused by this page, but that report is linkable with a provider and a range if anything wants it.
 
 **Known, not introduced here:** every Main panel page's
 `h1` overflows its `.user-title-wrap` at 390px and slides under the action buttons (measured on
