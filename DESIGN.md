@@ -7126,10 +7126,10 @@ https://bo.titanx7.com/casino-provider-winloss-report.html 的provider api". The
   Provider Report for the Main account and on Report for the BO account (whose module tab row marks
   *Provider Win/Loss*), no horizontal overflow, zero page errors.
 
-**`Back to list` on the BO page - the same control, one step back.** Owner, on the landed page: "需要back to list 按键".
-The merchant page now sends `back=<its own path+query>`, and `casino-report.js` renders the family's
-`Back to list` into the filter row when that parameter is present (`^/?name.html` targets only - a crafted
-`back` cannot point anywhere else). The recipe lives in `bo-report-family.css` as `.bo-report-back` (the family's
+**`Back to list` on the BO page - the same control, one step back.** Owner, on the landed page: "需要back to list 按键"
+(and then, on a URL opened without the parameter: "没有back to list 按键" - the control is now unconditional).
+The merchant page sends `back=<its own path+query>`; opened from a menu instead, the target is chosen from the
+account's own menus. Only `^/?name.html` targets are accepted, so a crafted `back` cannot point anywhere else. The recipe lives in `bo-report-family.css` as `.bo-report-back` (the family's
 eleven pages already load that sheet, and none of them carried a back control): 36px, radius 8, padding 0 14px,
 12.5px/700, the three-stop cream gradient on a 1px `#DCC9A8` border, the 1px lift on hover, the 2px amber
 focus ring, and the family's dark surface under `data-bo-theme="dark"` - the same values as
@@ -7137,12 +7137,18 @@ focus ring, and the family's dark surface under `data-bo-theme="dark"` - the sam
 It sits at the row's right end (`margin-left:auto`), which is where BO keeps a list's back control; the row is
 `display:flex` from `bo-ui-standard.css`.
 
-Measured (1568 light, the Main account): 117x36, right edge flush with the row (gap 0), `#18191C` on
-`linear-gradient(#FFFCF7, #F5EBDC 55%, #EDE4D4)`, border `#DCC9A8`, no underline; clicking it lands back on
-`main-win-lose-merchant.html?brandId=1&from=2026-10-01&to=2026-10-09&currency=MYR&pill=active` (h1
-"Provider Consumption"). Without a `back` parameter - the BO account opening the page from its own menu - no
-control is rendered. The chain is one step back at a time: list -> merchant page -> provider page -> merchant
-page -> list, and the merchant page's own `Back to list` still leads to the report list.
+The fallback is menu-driven, so the control never points at a page the account cannot open: the BO report
+module's **Overview** (`casino-overview-report.html`, + the range) for an account whose menus carry that module,
+otherwise the Main report workspace's **Win/Lose list** (`main-win-lose-report.html`, + the range).
+
+Measured (1568 light, three cases, stub data): with `back=<merchant page>` it is 117x36 with its right edge flush
+with the row (gap 0), `#18191C` on `linear-gradient(#FFFCF7, #F5EBDC 55%, #EDE4D4)`, border `#DCC9A8`, no
+underline, and it lands back on `main-win-lose-merchant.html?brandId=1&from=2026-10-01&to=2026-10-09&currency=MYR&pill=active`
+(h1 "Provider Consumption"); for the Main account with no parameter it points at
+`main-win-lose-report.html?from=2026-01-01&to=2026-12-31`; for the BO account with no parameter at
+`casino-overview-report.html?from=2026-01-01&to=2026-12-31`. The chain is one step back at a time: list ->
+merchant page -> provider page -> merchant page -> list, and the merchant page's own `Back to list` still leads
+to the report list.
 
 **Kept from the earlier passes, in case the destination moves again:** the subtable's 8th column and the
 7 -> 8 colspans; `provider-detail.html`'s access + crumb fix (it is still the Provider Report's *own* row

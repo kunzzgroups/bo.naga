@@ -30,6 +30,12 @@
     if(!res.ok || json.status === 'error') throw new Error(json.message || 'Request failed');
     return json;
   }
+  function backToListFallback(){
+    const menus=(window.BO_AUTH&&BO_AUTH.allowedMenus?BO_AUTH.allowedMenus():[]).map(function(m){ return String((m&&m.url)||'').split('/').pop().split('?')[0].toLowerCase(); });
+    const qs=(LINK_FROM&&LINK_TO)?('?from='+encodeURIComponent(LINK_FROM)+'&to='+encodeURIComponent(LINK_TO)):'';
+    const boReport=menus.indexOf('casino-overview-report.html')!==-1||menus.indexOf('casino-provider-winloss-report.html')!==-1;
+    return (boReport?'casino-overview-report.html':'main-win-lose-report.html')+qs;
+  }
   function params(opts){
     const p = new URLSearchParams();
     const from = document.getElementById('casinoFrom')?.value || '';
@@ -378,11 +384,14 @@
     // 全去除"). The date range auto-applies as soon as a complete range is chosen — see
     // autoLoadSelectedRange below — so the row needs no trigger at all.
 
-    /* A link may carry the page it was opened from (`back`): the filter row then ends with the
-       family's `Back to list` (recipe in bo-report-family.css), pointing one step back - the
-       Win/Lose merchant page whose provider rows send it. Relative page targets only. */
-    const backTarget=LINK_PARAMS.get('back')||'';
-    if(/^\/?[a-z0-9._-]+\.html(\?|#|$)/i.test(backTarget) && !document.querySelector('.bo-report-back')){
+    /* `Back to list`. It is the page the link came from (`back`, sent by the Win/Lose merchant
+       page's provider rows); opened from a menu instead, it is the list that account actually
+       has - the BO report module's Overview, or the Main report workspace's Win/Lose list - so
+       the control is always there and never points at a page the account cannot open. Relative
+       page targets only. */
+    const backParam=LINK_PARAMS.get('back')||'';
+    const backTarget=/^\/?[a-z0-9._-]+\.html(\?|#|$)/i.test(backParam)?backParam:backToListFallback();
+    if(!document.querySelector('.bo-report-back')){
       const row=document.querySelector('.report-main .bo-filter-row');
       if(row){
         const a=document.createElement('a');
