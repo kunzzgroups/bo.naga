@@ -2643,3 +2643,47 @@ html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="reports"]
 html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern #agentReportPagination button.active{border-color:#F59E0B!important;color:#2A2C36!important;box-shadow:0 1px 2px rgba(0,0,0,.35),0 0 0 1px rgba(245,158,11,.35),0 2px 10px rgba(245,158,11,.28)!important}
 html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern #agentReportPagination button:disabled{background:#2A2C36!important;border-color:rgba(255,255,255,.06)!important;color:#52525B!important}
 html:not(#bo-charcoal-off) body[data-agent-page="reports"].agent-report-body.agent-modern .table-card > .agent-table-footer .rounded-select-wrap .rounded-select-menu{top:auto!important;bottom:100%!important;margin:0 0 6px 0!important}
+
+/* ------------------------------------------------------------------------------------------------
+   P53 - agent-player-game-report: the same card treatment, plus a Back to list button
+
+   Owner: "这个页面要优化一下 并且有一个back to list的按键在右上角".
+
+   The page had a large in-card heading, a table hugging its content, no footer, and no way back. It now
+   matches the family: the frame is locked to the visible viewport (100dvh) and the card fills it, the
+   heading is a small band row (the topbar already carries the page title), the table takes the leftover
+   height with its own scroll, and the card ends in the same footer/pager as the other list pages.
+
+   Values are the ones measured on the players/products pages:
+     band        14px 16px padding, 13px/700 on #57534E (the range the report was opened with is in the URL)
+     table       first header/body cell 12px
+     footer      64px, #FFF8EB with a 1px #EADCC8 top rule (dark #383A46 / rgba(255,255,255,.14))
+     pager       the app-wide .page-btn recipe, four states, light and dark
+     back link   the page's own toolbar button style (agent-export-btn), in the topbar's right-hand group
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .report-shell{height:100vh!important;height:100dvh!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .report-main{height:100vh!important;height:100dvh!important;display:flex!important;flex-direction:column!important;min-height:0!important;overflow:hidden!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .report-main > .report-content{flex:1 1 0%!important;min-height:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .report-content > .table-card{padding:0!important;margin-bottom:0!important;display:flex!important;flex-direction:column!important;flex:1 1 auto!important;min-height:0!important;overflow:hidden!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card #agentGameReportTitle{flex:0 0 auto!important;margin:0!important;padding:14px 16px!important;font-size:13px!important;font-weight:700!important;color:#57534E!important;letter-spacing:0!important}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card #agentGameReportTitle{color:#D4D4D8!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .table-wrap{flex:1 1 auto!important;min-height:0!important;overflow:auto!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card .report-table thead th:first-child,
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card .report-table tbody td:first-child{padding-left:12px!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .agent-table-footer{flex:0 0 auto!important;height:64px!important;min-height:0!important;padding:14px 16px!important;display:flex!important;align-items:center!important;gap:12px!important;background:#FFF8EB!important;border-top:1px solid #EADCC8!important;color:#57534E!important}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .agent-table-footer{background:#383A46!important;border-top-color:rgba(255,255,255,.14)!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .agent-table-footer > .agent-page-size{flex:0 0 auto!important;display:flex!important;align-items:center!important;gap:6px!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .agent-table-footer > .agent-page-size select{flex:0 0 auto!important;width:auto!important;min-width:68px!important;max-width:96px!important;height:36px!important;font-size:13px!important;font-weight:700!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .agent-table-footer > #agentGameReportShowing{flex:1 1 auto!important;text-align:center!important;font-size:13px!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .agent-table-footer > .agent-pagination{flex:0 0 auto!important;display:flex!important;align-items:center!important;gap:6px!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern #agentGameReportPagination button{background:#F3F4F6!important;border:1px solid transparent!important;color:#9CA3AF!important;border-radius:8px!important;height:36px!important;min-height:36px!important;font-size:13px!important;font-weight:700!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern #agentGameReportPagination button:not(.active):hover{background:#E5E7EB!important;color:#374151!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern #agentGameReportPagination button.active{background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;border:1px solid #D97706!important;color:#FFFFFF!important;box-shadow:0 1px 2px rgba(180,83,9,.3),inset 0 1px 0 rgba(255,255,255,.35)!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern #agentGameReportPagination button:disabled{background:#F3F4F6!important;color:#9CA3AF!important;opacity:1!important;cursor:not-allowed!important}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern #agentGameReportPagination button{background:#383A46!important;border:1px solid rgba(255,255,255,.12)!important;color:#A1A1AA!important}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern #agentGameReportPagination button:not(.active):hover{background:#444654!important;border-color:rgba(255,255,255,.18)!important;color:#E7E5E4!important}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern #agentGameReportPagination button.active{border-color:#F59E0B!important;color:#2A2C36!important;box-shadow:0 1px 2px rgba(0,0,0,.35),0 0 0 1px rgba(245,158,11,.35),0 2px 10px rgba(245,158,11,.28)!important}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern #agentGameReportPagination button:disabled{background:#2A2C36!important;border-color:rgba(255,255,255,.06)!important;color:#52525B!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .agent-table-footer .rounded-select-wrap .rounded-select-menu{top:auto!important;bottom:100%!important;margin:0 0 6px 0!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .agent-back-to-list{margin-right:4px!important;text-decoration:none!important;display:inline-flex!important;align-items:center!important;gap:8px!important}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .user-toolbar{flex:0 0 auto!important;margin:0!important;padding:0!important}
