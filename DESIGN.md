@@ -7120,6 +7120,26 @@ the 8 presets and a 42-cell calendar with the range highlighted; picking This We
 overflow, the row wraps below 1024 (the field is 260px wide, as on the list) and stacks at 390, 0 page errors. The
 dead `.wlm-period` rules were removed with the pill.
 
+#### …and the row has one field recipe (2026-10-10, owner: "把奇怪的border去除 再调整 统一设计即可")
+
+Two leftovers from the pass above: the row mixed a #EADCC8 search frame with #DCC9A8 selects and an r10 date trigger
+(the frame and trigger are painted by the site-wide filter standard, the selects by the field standard), and the
+portal's own titles were still on two fields while the rest had none.
+
+- Every control in the row now takes the field standard - 36px, `1px var(--bo-field-border)`, radius 8,
+  `var(--bo-field-fill)` - through seven `:not(#…)` steps (the repo's escalation idiom; the base carries four).
+  Measured after: search / both selects / date trigger all read `rgb(220,201,168)` at radius 8.
+- The remaining titles are hidden (`label:not(.bo-search-control)`), so the row is one 36px line and the
+  placeholders and option texts carry the meaning.
+- **Widths are not settable from CSS here**: a content-sizing script writes them inline
+  (`data-bo-content-sized`; measured on the Status field: `style="--bo-select-width: 90px; width: 90px !important; …"`),
+  so its option text is what sets a column's width. "All Types" measures 145 and reads whole; "All Statuses"
+  measures 120 and still ellipsises to "All St…" because that script does not reserve the chevron's gutter - the row
+  gives ~26px back (`select{padding-right:26px}`), which removed the *overflow* (`scrollWidth == clientWidth`) but not
+  the ellipsis. Left for its own pass: the fix belongs in that script, and it would help every agent page.
+- The earlier attempt to set the columns (`width:140px!important` at five and then seven `:not(#…)` steps, and
+  `--bo-select-width` at the row) is removed: inline `!important` beats any sheet, so those rules were dead.
+
 #### …and the filters apply themselves (2026-10-10, owner: "再把reset 和搜索按键去除 也确保以上功能都能使用")
 
 The Reset / Search pair is gone from the filter row; each control applies itself, which is what the BO's own report
