@@ -7114,16 +7114,30 @@ Amount / Balance Due / Settlement Period / Status). The subtable grew one column
 It is an anchor, not a button + `location.href` — middle-click works, and the family's `.mad-icon-btn` paints it
 (measured: 40x40, `#57534E`, no underline, amber hover). Only `text-decoration:none` is this page's.
 
-**Two things to know about that destination, both by design and neither hidden.** It is a **BO-shell page**
-(`data-bo-shell="bo"`, charcoal + amber, its own rail), which is allowed to be served in the Main portal
-(`menu-management.html` is such a page) and therefore looks of a family with this one; and its back arrow goes to
-`main-accounting-report.html`, not back to this page. Its access is the **Accounting Report** menu
-(`auth.js`: `provider-detail.html` inherits `main-accounting-report.html`), where this page inherits the Report
-workspace — so an account that can open Win/Lose Report but not the accounting report would be bounced from the
-provider eye. That asymmetry is the reason the alternative — a Main-panel provider page mirroring the merchant
-one, inheriting the same Report access — was offered and not taken; if a role ever exists with one menu and not
-the other, the cheaper fix is to add `provider-detail.html` to the Report workspace's exception in
-`enforcePageAccess` rather than to build a page.
+**The first cut bounced the owner off the page, and the fix is one auth rule plus one label.**
+`provider-detail.html`'s access was the **Accounting Report** menu (`auth.js`: it inherits
+`main-accounting-report.html`), while this page inherits the Report workspace — and the owner's MAIN account
+holds the Report menus and not the accounting one. Measured before the fix, with their menu shape: the eye
+landed on `main-dashboard.html` (the landing page), the same bounce `enforcePageAccess` gives any page the menus
+do not cover. Now:
+
+- `enforcePageAccess` lets `provider-detail.html` in through **either** entry — the report tabs (Win/Lose Report,
+  `win-lose-report.html`, Provider Report, and the merchant drill-down) or the accounting menu, which keeps the
+  BO path unchanged. Measured after: the same account lands on `PG Soft — Provider Details` with the range
+  `01/10/2026 - 09/10/2026` and the two brands that use PGS, zero page errors.
+- The page's own way back had the same hole: its crumb is `[←] Provider Settlement > <provider>`
+  (`main-accounting-report.html`), which that account cannot open either. `provider-detail-executive.js` now
+  picks the crumb's first link, the back button and the no-`providerCode` fall-back from the account's menus —
+  "Provider Settlement" when it holds that menu (BO behaviour, measured unchanged), **"Provider Report"** when it
+  only holds the report — so the label always names the page it opens.
+- `sidebarActivePage()` lights whichever of the two rows the account holds, so the rail is never dark on a page
+  reached from it (measured: "Provider Report" lit for the report account, "Provider Settlement" for the
+  accounting one, nothing for an account with neither).
+
+The destination is still a **BO-shell page** (`data-bo-shell="bo"`, charcoal + amber, its own rail), which the
+Main portal is allowed to serve (`menu-management.html` is such a page) and which therefore reads as the same
+family as this one. That was the trade accepted when the alternative — a Main-panel provider page mirroring the
+merchant one — was declined.
 
 Measured (1568 light, root account, stub API): the two provider rows each carry
 `provider-detail.html?providerCode=PGS&providerName=PG+Soft&from=2026-10-01&to=2026-10-09`; clicking the first

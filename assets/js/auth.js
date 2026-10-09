@@ -107,7 +107,14 @@
     if(p==='main-win-lose-merchant.html') return 'main-win-lose-report.html';
     if(p==='brand-detail.html') return 'brand-management.html';
     if(p==='member-detail.html') return 'index.html';
-    if(p==='provider-detail.html') return 'main-accounting-report.html';
+    if(p==='provider-detail.html'){
+      /* BO's provider drill-down, and the Report workspace's: the Win/Lose merchant page's
+         provider rows and the Provider Report's own row action both open it. Light whichever
+         entry the account actually holds, so the rail never goes dark on a page that was
+         reached from it. */
+      const held=(window.BO_AUTH && window.BO_AUTH.allowedMenus ? window.BO_AUTH.allowedMenus() : []).map(function(m){ return pageFile(m.url || ''); });
+      return held.indexOf('main-accounting-report.html') !== -1 ? 'main-accounting-report.html' : 'main_provider_report.html';
+    }
     if(p==='slider-edit.html') return 'slider.html';
     if(p==='promotion-edit.html') return 'promotion.html';
     // Bonus Category Title is no longer its own page: a promotion carries
@@ -707,6 +714,19 @@
           const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
           const key = String(m.menuKey || '').toLowerCase();
           return file === 'main-win-lose-report.html' || file === 'win-lose-report.html' || file === 'main_provider_report.html' || key === 'main_provider_report' || key === 'main_win_lose_report';
+        });
+      }
+      /* provider-detail.html (Provider Details) is that workspace's provider drill-down as well
+         as Provider Settlement's: both the merchant page's provider rows and the Provider
+         Report's row action open it. It inherits the accounting menu above; an account that
+         holds the report but not that menu was bounced to its landing page from the eye
+         (measured: a MAIN account with the Report menus landed on main-dashboard.html).
+         Same source of truth as the tabs - either report entry may open it. */
+      if(!allowed && currentFile() === 'provider-detail.html'){
+        allowed = menus.some(function(m){
+          const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
+          const key = String(m.menuKey || '').toLowerCase();
+          return file === 'main-win-lose-report.html' || file === 'win-lose-report.html' || file === 'main_provider_report.html' || file === 'main-win-lose-merchant.html' || file === 'main-accounting-report.html' || key === 'main_provider_report' || key === 'main_win_lose_report' || key === 'main_accounting_report';
         });
       }
       /* Online Users belongs to the Member module. Its menu row is ROOT-configured and the BO
